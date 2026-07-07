@@ -1,0 +1,8 @@
+ODG RELEASE REPORT
+
+Build................... FAILED
+Git..................... 7c2ee5d
+Branch.................. main
+Timestamp............... 2026-07-07T10:13:28Z
+
+STATUS : RELEASE READY

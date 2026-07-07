@@ -1,0 +1,8 @@
+ODG ARCHITECTURE REPORT
+
+src..................... OK
+contracts............... OK
+runtime................. OK
+dashboard............... OK
+
+STATUS : READY

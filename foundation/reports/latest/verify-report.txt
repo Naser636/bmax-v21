@@ -1,0 +1,9 @@
+ODG VERIFY REPORT
+
+Git..................... OK
+Node.................... OK
+npm..................... OK
+TypeScript.............. OK
+Foundation.............. OK
+
+STATUS : READY

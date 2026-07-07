@@ -1,0 +1,150 @@
+===== ODG HEALTH REPORT =====
+
+===== GIT STATUS =====
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   package-lock.json
+	modified:   src/components/Dashboard.tsx
+	deleted:    src/engine/core/engineFacade.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	ODG_HEALTH_REPORT.txt
+	foundation/
+	src/core/bmax-core.ts
+	src/core/clock.ts
+	src/core/errors.ts
+	src/core/fingerprint.ts
+	src/core/index.ts
+	src/core/logger.ts
+	src/core/result.ts
+	src/core/runtime-factory.ts
+	src/core/validation.ts
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+===== TYPESCRIPT =====
+src/engine/core/stateMachine.ts(116,27): error TS1005: ',' expected.
+src/engine/core/stateMachine.ts(116,29): error TS1005: ',' expected.
+src/engine/core/stateMachine.ts(128,19): error TS1005: ',' expected.
+
+===== BUILD =====
+
+> bmax-v21@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/ubuntu/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/ubuntu/bmax-v21/package-lock.json
+
+▲ Next.js 16.2.9 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.2s
+  Running TypeScript ...
+Failed to type check.
+
+./src/engine/core/stateMachine.ts:109:10
+Type error: Cannot assign to 'history' because it is a read-only property.
+
+  [90m107 |[0m     [36mthis[0m.healthyCycles  = [35m0[0m;
+  [90m108 |[0m     [36mthis[0m.lastHeartbeat  = nowMs;
+[31m[1m>[0m [90m109 |[0m     [36mthis[0m.history = [35m0[0m;
+  [90m    |[0m          [31m[1m^[0m
+  [90m110 |[0m   }
+  [90m111 |[0m
+  [90m112 |[0m   [90m// ── Private ────────────────────────[0m──────────
+Next.js build worker exited with code: 1 and signal: null
+
+===== PROJECT TREE =====
+src/app/favicon.ico
+src/app/globals.css
+src/app/layout.tsx
+src/app/page.tsx
+src/components/.gitkeep
+src/components/Dashboard.tsx
+src/core/bmax-core.ts
+src/core/bmax_v21_core.ts
+src/core/clock.ts
+src/core/errors.ts
+src/core/fingerprint.ts
+src/core/index.ts
+src/core/logger.ts
+src/core/result.ts
+src/core/runtime-factory.ts
+src/core/validation.ts
+src/data/.gitkeep
+src/engine/core/stateMachine.ts
+src/engine/core/types.ts
+src/hooks/.gitkeep
+
+===== PACKAGE.JSON =====
+{
+  "name": "bmax-v21",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+
+===== TSCONFIG =====
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}

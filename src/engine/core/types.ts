@@ -106,7 +106,7 @@ export enum SystemState {
   export interface EngineSnapshot {
     systemState:   SystemState;
     marketMode:    MarketMode;
-    operationMode: OqerationMode;
+    operationMode: OperationMode;
     pnlState:      PnLState;
     queueSize:     number;
     lastAuditEvents: AuditEvent[];

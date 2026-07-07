@@ -1,0 +1,10 @@
+ODG FOUNDATION REPORT
+
+Git..................... OK
+Node.................... v22.22.1
+npm..................... 9.2.0
+package.json............ OK
+tsconfig.json........... OK
+src..................... OK
+
+STATUS : READY

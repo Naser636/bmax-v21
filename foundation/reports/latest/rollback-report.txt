@@ -1,0 +1,6 @@
+ODG ROLLBACK REPORT
+
+Git Repository.......... OK
+Rollback Capability..... READY
+
+STATUS : READY

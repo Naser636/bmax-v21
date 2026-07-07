@@ -1,0 +1,10 @@
+ODG DOCTOR REPORT
+
+Git..................... OK
+Node.................... v22.22.1
+npm..................... 9.2.0
+TypeScript.............. Version 5.9.3
+Package Lock............ OK
+Node Modules............ OK
+
+STATUS : HEALTHY
