@@ -5,6 +5,7 @@ import { addDecision } from "@/core/decision-registry";
 import { getRuntimeContext } from "@/core/runtime-service";
 import { createEvidence } from "@/core/evidence-engine";
 import { addTimelineEvent } from "@/core/timeline-registry";
+import { addEvent } from "@/core/event-registry";
 
 export function evaluateCapability(
   capability: Capability
@@ -34,6 +35,13 @@ export function evaluateCapability(
     timestamp: Date.now(),
     type: "DECISION_CREATED",
     message: `Décision ${decision.id} créée`,
+  });
+
+  addEvent({
+    id: crypto.randomUUID(),
+    type: "DECISION_CREATED",
+    timestamp: Date.now(),
+    payload: decision,
   });
 
   return decision;
