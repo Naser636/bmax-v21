@@ -8,10 +8,8 @@ import { addTimelineEvent } from "@/core/timeline-registry";
 import { addEvent } from "@/core/event-registry";
 import { evaluateValue } from "@/core/value-engine";
 import { createKnowledge } from "@/core/knowledge-engine";
-import {
-  getDefaultPolicy,
-  isPolicyEnabled,
-} from "@/core/policy-engine";
+import { getDefaultPolicy, isPolicyEnabled } from "@/core/policy-engine";
+import { evaluateRisk } from "@/core/risk-engine";
 
 export function evaluateCapability(
   capability: Capability
@@ -39,6 +37,8 @@ export function evaluateCapability(
           message: `Policy '${policy.name}' interdit cette décision.`,
         },
   };
+
+  evaluateRisk(decision);
 
   addDecision(decision);
   createEvidence(decision);
