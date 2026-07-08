@@ -6,6 +6,7 @@ import { getRuntimeContext } from "@/core/runtime-service";
 import { createEvidence } from "@/core/evidence-engine";
 import { addTimelineEvent } from "@/core/timeline-registry";
 import { addEvent } from "@/core/event-registry";
+import { evaluateValue } from "@/core/value-engine";
 
 export function evaluateCapability(
   capability: Capability
@@ -30,6 +31,8 @@ export function evaluateCapability(
   addDecision(decision);
 
   createEvidence(decision);
+
+  evaluateValue(decision);
 
   addTimelineEvent({
     timestamp: Date.now(),
