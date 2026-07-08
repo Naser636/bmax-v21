@@ -13,6 +13,7 @@ export default function Dashboard({ metrics }: DashboardProps) {
     values,
     knowledge,
     memories,
+    policies,
   } = getDashboardState();
 
   return (
@@ -26,19 +27,20 @@ export default function Dashboard({ metrics }: DashboardProps) {
       <ul>
         <li>Recommandation : {decision.recommendation}</li>
         <li>Confiance : {decision.confidence}</li>
-        <li>ID : {decision.id}</li>
         <li>Code : {decision.reason.code}</li>
-        <li>Justification : {decision.reason.message}</li>
       </ul>
 
       <h2>Value Metrics</h2>
-      <p>Valeurs calculées : {values.length}</p>
+      <p>{values.length}</p>
 
       <h2>Knowledge Base</h2>
-      <p>Connaissances : {knowledge.length}</p>
+      <p>{knowledge.length}</p>
 
       <h2>Memory Store</h2>
-      <p>Mémoires : {memories.length}</p>
+      <p>{memories.length}</p>
+
+      <h2>Policies</h2>
+      <p>{policies.length}</p>
     </main>
   );
 }

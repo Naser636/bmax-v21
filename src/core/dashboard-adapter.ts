@@ -3,6 +3,7 @@ import { evaluateCapability } from "@/core/decision-engine";
 import { getValueMetrics } from "@/core/value-service";
 import { getKnowledgeBase } from "@/core/knowledge-service";
 import { getMemoryStore } from "@/core/memory-service";
+import { getPolicyStore } from "@/core/policy-service";
 
 export function getDashboardState() {
   const decision = evaluateCapability(capabilities[0]);
@@ -13,5 +14,6 @@ export function getDashboardState() {
     values: getValueMetrics(),
     knowledge: getKnowledgeBase(),
     memories: getMemoryStore(),
+    policies: getPolicyStore(),
   };
 }
