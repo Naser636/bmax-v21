@@ -8,3 +8,7 @@ export function getDefaultPolicy(): Policy {
     enabled: true,
   };
 }
+
+export function isPolicyEnabled(policy: Policy): boolean {
+  return policy.enabled;
+}
