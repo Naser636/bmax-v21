@@ -21,6 +21,8 @@ export default function Dashboard({ metrics }: DashboardProps) {
         <li>Recommandation : {decision.recommendation}</li>
         <li>Confiance : {decision.confidence}</li>
         <li>ID : {decision.id}</li>
+        <li>Code : {decision.reason.code}</li>
+        <li>Justification : {decision.reason.message}</li>
       </ul>
     </main>
   );
