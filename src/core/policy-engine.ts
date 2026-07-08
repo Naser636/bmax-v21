@@ -2,7 +2,6 @@ import { Policy } from "@/contracts/policy";
 import { addPolicy } from "@/core/policy-registry";
 
 export function getDefaultPolicy(): Policy {
-
   const policy = {
     id: crypto.randomUUID(),
     name: "Default Policy",
@@ -17,4 +16,11 @@ export function getDefaultPolicy(): Policy {
 
 export function isPolicyEnabled(policy: Policy): boolean {
   return policy.enabled;
+}
+
+export function disablePolicy(policy: Policy): Policy {
+  return {
+    ...policy,
+    enabled: false,
+  };
 }
