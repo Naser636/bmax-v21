@@ -1,6 +1,7 @@
 import { Decision } from "@/contracts/decision";
 import { Knowledge } from "@/contracts/knowledge";
 import { addKnowledge } from "@/core/knowledge-registry";
+import { createMemory } from "@/core/memory-engine";
 
 export function createKnowledge(decision: Decision): Knowledge {
 
@@ -12,6 +13,8 @@ export function createKnowledge(decision: Decision): Knowledge {
   };
 
   addKnowledge(knowledge);
+
+  createMemory(knowledge);
 
   return knowledge;
 }
