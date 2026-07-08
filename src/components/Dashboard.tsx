@@ -7,7 +7,13 @@ interface DashboardProps {
 export default function Dashboard({ metrics }: DashboardProps) {
   void metrics;
 
-  const { capability, decision, values, knowledge } = getDashboardState();
+  const {
+    capability,
+    decision,
+    values,
+    knowledge,
+    memories,
+  } = getDashboardState();
 
   return (
     <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -30,6 +36,9 @@ export default function Dashboard({ metrics }: DashboardProps) {
 
       <h2>Knowledge Base</h2>
       <p>Connaissances : {knowledge.length}</p>
+
+      <h2>Memory Store</h2>
+      <p>Mémoires : {memories.length}</p>
     </main>
   );
 }
