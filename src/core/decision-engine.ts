@@ -3,6 +3,7 @@ import { Decision } from "@/contracts/decision";
 import { Reason } from "@/contracts/reason";
 import { addDecision } from "@/core/decision-registry";
 import { getRuntimeContext } from "@/core/runtime-service";
+import { createEvidence } from "@/core/evidence-engine";
 
 export function evaluateCapability(
   capability: Capability
@@ -22,10 +23,11 @@ export function evaluateCapability(
     },
   };
 
-  // Le runtime est récupéré et sera utilisé dans les prochains blocs.
   void runtime;
 
   addDecision(decision);
+
+  createEvidence(decision);
 
   return decision;
 }
