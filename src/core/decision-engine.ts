@@ -7,6 +7,7 @@ import { createEvidence } from "@/core/evidence-engine";
 import { addTimelineEvent } from "@/core/timeline-registry";
 import { addEvent } from "@/core/event-registry";
 import { evaluateValue } from "@/core/value-engine";
+import { createKnowledge } from "@/core/knowledge-engine";
 
 export function evaluateCapability(
   capability: Capability
@@ -33,6 +34,8 @@ export function evaluateCapability(
   createEvidence(decision);
 
   evaluateValue(decision);
+
+  createKnowledge(decision);
 
   addTimelineEvent({
     timestamp: Date.now(),
