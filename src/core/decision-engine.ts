@@ -4,6 +4,7 @@ import { Reason } from "@/contracts/reason";
 import { addDecision } from "@/core/decision-registry";
 import { getRuntimeContext } from "@/core/runtime-service";
 import { createEvidence } from "@/core/evidence-engine";
+import { addTimelineEvent } from "@/core/timeline-registry";
 
 export function evaluateCapability(
   capability: Capability
@@ -28,6 +29,12 @@ export function evaluateCapability(
   addDecision(decision);
 
   createEvidence(decision);
+
+  addTimelineEvent({
+    timestamp: Date.now(),
+    type: "DECISION_CREATED",
+    message: `Décision ${decision.id} créée`,
+  });
 
   return decision;
 }
