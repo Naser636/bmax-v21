@@ -8,12 +8,14 @@ import { addTimelineEvent } from "@/core/timeline-registry";
 import { addEvent } from "@/core/event-registry";
 import { evaluateValue } from "@/core/value-engine";
 import { createKnowledge } from "@/core/knowledge-engine";
-import { getDefaultPolicy, isPolicyEnabled } from "@/core/policy-engine";
+import {
+  getDefaultPolicy,
+  isPolicyEnabled,
+} from "@/core/policy-engine";
 
 export function evaluateCapability(
   capability: Capability
 ): Decision & { reason: Reason } {
-
   const runtime = getRuntimeContext();
   const policy = getDefaultPolicy();
 
@@ -30,16 +32,15 @@ export function evaluateCapability(
     reason: accepted
       ? {
           code: "CAPABILITY_VALID",
-          message: "La capability est enregistrée et prête à être utilisée.",
+          message: `Policy '${policy.name}' autorise cette décision.`,
         }
       : {
           code: "POLICY_DISABLED",
-          message: "La policy interdit cette décision.",
+          message: `Policy '${policy.name}' interdit cette décision.`,
         },
   };
 
   addDecision(decision);
-
   createEvidence(decision);
   evaluateValue(decision);
   createKnowledge(decision);
