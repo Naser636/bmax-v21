@@ -42,9 +42,10 @@ export function evaluateCapability(
 
   if (risk.level === "HIGH") {
     decision.recommendation = "REJECT";
+    decision.confidence = 0.0;
     decision.reason = {
       code: "RISK_HIGH",
-      message: "Décision refusée à cause d'un risque élevé.",
+      message: risk.reason,
     };
   }
 
