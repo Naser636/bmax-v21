@@ -25,6 +25,12 @@ export function evaluateCapability(
 
   void runtime;
 
+  addTimelineEvent({
+    timestamp: Date.now(),
+    type: "POLICY",
+    message: `Policy ${policy.name}`,
+  });
+
   const enabled = isPolicyEnabled(policy);
   const confidence = enabled ? 1.0 : 0.0;
   const accepted = enabled && isConfidenceAllowed(confidence, policy);
@@ -48,6 +54,12 @@ export function evaluateCapability(
 
   const risk = evaluateRisk(decision);
 
+  addTimelineEvent({
+    timestamp: Date.now(),
+    type: "RISK",
+    message: risk.level,
+  });
+
   if (risk.level === "HIGH") {
     decision.recommendation = "REJECT";
     decision.confidence = 0.0;
@@ -67,8 +79,14 @@ export function evaluateCapability(
 
   addTimelineEvent({
     timestamp: Date.now(),
-    type: "DECISION_CREATED",
-    message: `Décision ${decision.id} créée`,
+    type: "DECISION",
+    message: decision.recommendation,
+  });
+
+  addTimelineEvent({
+    timestamp: Date.now(),
+    type: "AUDIT",
+    message: "Audit enregistré",
   });
 
   addEvent({
