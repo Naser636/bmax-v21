@@ -1,5 +1,6 @@
 import { Policy } from "@/contracts/policy";
 import { addPolicy } from "@/core/policy-registry";
+import { config } from "@/core/config";
 
 export function getDefaultPolicy(): Policy {
   const policy: Policy = {
@@ -7,7 +8,7 @@ export function getDefaultPolicy(): Policy {
     name: "Default Policy",
     version: "1.0.0",
     enabled: true,
-    minConfidence: 0.8,
+    minConfidence: config.policy.minConfidence,
   };
 
   addPolicy(policy);
