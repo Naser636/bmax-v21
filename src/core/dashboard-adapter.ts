@@ -5,6 +5,7 @@ import { getKnowledgeBase } from "@/core/knowledge-service";
 import { getMemoryStore } from "@/core/memory-service";
 import { getPolicyStore } from "@/core/policy-service";
 import { getRiskStore, getHighRisks } from "@/core/risk-service";
+import { getExplanationStore } from "@/core/explanation-service";
 
 export function getDashboardState() {
   const decision = evaluateCapability(capabilities[0]);
@@ -18,5 +19,6 @@ export function getDashboardState() {
     policies: getPolicyStore(),
     risks: getRiskStore(),
     highRisks: getHighRisks(),
+    explanations: getExplanationStore(),
   };
 }
