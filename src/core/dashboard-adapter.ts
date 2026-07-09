@@ -4,7 +4,7 @@ import { getValueMetrics } from "@/core/value-service";
 import { getKnowledgeBase } from "@/core/knowledge-service";
 import { getMemoryStore } from "@/core/memory-service";
 import { getPolicyStore } from "@/core/policy-service";
-import { getRiskStore } from "@/core/risk-service";
+import { getRiskStore, getHighRisks } from "@/core/risk-service";
 
 export function getDashboardState() {
   const decision = evaluateCapability(capabilities[0]);
@@ -17,5 +17,6 @@ export function getDashboardState() {
     memories: getMemoryStore(),
     policies: getPolicyStore(),
     risks: getRiskStore(),
+    highRisks: getHighRisks(),
   };
 }
