@@ -5,6 +5,7 @@ import { addDecision } from "@/core/decision-registry";
 import { getRuntimeContext } from "@/core/runtime-service";
 import { createEvidence } from "@/core/evidence-engine";
 import { createExplanation } from "@/core/explanation-engine";
+import { createAudit } from "@/core/audit-engine";
 import { addTimelineEvent } from "@/core/timeline-registry";
 import { addEvent } from "@/core/event-registry";
 import { evaluateValue } from "@/core/value-engine";
@@ -51,6 +52,7 @@ export function evaluateCapability(
   }
 
   createExplanation(decision);
+  createAudit(decision);
 
   addDecision(decision);
   createEvidence(decision);
