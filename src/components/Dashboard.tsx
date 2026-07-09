@@ -15,6 +15,8 @@ export default function Dashboard({ metrics }: DashboardProps) {
     memories,
     policies,
     risks,
+    highRisks,
+    explanations,
   } = getDashboardState();
 
   return (
@@ -45,6 +47,12 @@ export default function Dashboard({ metrics }: DashboardProps) {
 
       <h2>Risks</h2>
       <p>{risks.length}</p>
+
+      <h2>High Risks</h2>
+      <p>{highRisks.length}</p>
+
+      <h2>Explanations</h2>
+      <p>{explanations.length}</p>
     </main>
   );
 }
