@@ -3,4 +3,5 @@ export interface Policy {
   name: string;
   version: string;
   enabled: boolean;
+  minConfidence: number;
 }
