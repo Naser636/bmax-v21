@@ -7,6 +7,7 @@ import { getPolicyStore } from "@/core/policy-service";
 import { getRiskStore, getHighRisks } from "@/core/risk-service";
 import { getExplanationStore } from "@/core/explanation-service";
 import { getAuditEntries } from "@/core/audit-service";
+import { getUnifiedTrace } from "@/core/trace-service";
 
 export function getDashboardState() {
   const decision = evaluateCapability(capabilities[0]);
@@ -22,5 +23,6 @@ export function getDashboardState() {
     highRisks: getHighRisks(),
     explanations: getExplanationStore(),
     audits: getAuditEntries(),
+    trace: getUnifiedTrace(),
   };
 }

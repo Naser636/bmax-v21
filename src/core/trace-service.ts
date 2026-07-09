@@ -1,11 +1,19 @@
+import { getDecisions } from "@/core/decision-registry";
+import { getEvidenceStore } from "@/core/audit-registry";
 import { getAuditEntries } from "@/core/audit-service";
-import { getTimelineEvents } from "@/core/timeline-service";
-import { getEvents } from "@/core/event-registry";
+import { getTimeline } from "@/core/timeline-registry";
+import { getKnowledgeBase } from "@/core/knowledge-service";
+import { getMemoryStore } from "@/core/memory-service";
+import { getExplanationStore } from "@/core/explanation-service";
 
-export function getTrace() {
+export function getUnifiedTrace() {
   return {
-    audit: getAuditEntries(),
-    timeline: getTimelineEvents(),
-    events: getEvents(),
+    decisions: getDecisions(),
+    evidences: getEvidenceStore(),
+    audits: getAuditEntries(),
+    timeline: getTimeline(),
+    knowledge: getKnowledgeBase(),
+    memories: getMemoryStore(),
+    explanations: getExplanationStore(),
   };
 }
