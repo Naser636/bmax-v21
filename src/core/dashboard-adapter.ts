@@ -6,6 +6,7 @@ import { getMemoryStore } from "@/core/memory-service";
 import { getPolicyStore } from "@/core/policy-service";
 import { getRiskStore, getHighRisks } from "@/core/risk-service";
 import { getExplanationStore } from "@/core/explanation-service";
+import { getAuditEntries } from "@/core/audit-service";
 
 export function getDashboardState() {
   const decision = evaluateCapability(capabilities[0]);
@@ -20,5 +21,6 @@ export function getDashboardState() {
     risks: getRiskStore(),
     highRisks: getHighRisks(),
     explanations: getExplanationStore(),
+    audits: getAuditEntries(),
   };
 }
