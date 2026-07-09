@@ -38,7 +38,15 @@ export function evaluateCapability(
         },
   };
 
-  evaluateRisk(decision);
+  const risk = evaluateRisk(decision);
+
+  if (risk.level === "HIGH") {
+    decision.recommendation = "REJECT";
+    decision.reason = {
+      code: "RISK_HIGH",
+      message: "Décision refusée à cause d'un risque élevé.",
+    };
+  }
 
   addDecision(decision);
   createEvidence(decision);
