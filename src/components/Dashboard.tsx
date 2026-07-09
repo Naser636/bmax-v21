@@ -17,6 +17,7 @@ export default function Dashboard({ metrics }: DashboardProps) {
     risks,
     highRisks,
     explanations,
+    audits,
   } = getDashboardState();
 
   return (
@@ -53,6 +54,9 @@ export default function Dashboard({ metrics }: DashboardProps) {
 
       <h2>Explanations</h2>
       <p>{explanations.length}</p>
+
+      <h2>Audits</h2>
+      <p>{audits.length}</p>
     </main>
   );
 }
