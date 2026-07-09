@@ -3,11 +3,12 @@ import { Memory } from "@/contracts/memory";
 import { addMemory } from "@/core/memory-registry";
 
 export function createMemory(knowledge: Knowledge): Memory {
-
-  const memory = {
+  const memory: Memory = {
     id: crypto.randomUUID(),
     knowledgeId: knowledge.id,
     summary: knowledge.lesson,
+    result: knowledge.result,
+    score: knowledge.score,
     createdAt: Date.now(),
   };
 
