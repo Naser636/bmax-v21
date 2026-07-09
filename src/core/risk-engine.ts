@@ -3,17 +3,24 @@ import { Risk } from "@/contracts/risk";
 import { addRisk } from "@/core/risk-registry";
 
 export function evaluateRisk(decision: Decision): Risk {
+  const score = 1 - decision.confidence;
+  const limit = 0.20;
+
   const level: Risk["level"] =
-    decision.confidence >= 0.8 ? "LOW" : "HIGH";
+    score >= 0.80 ? "HIGH"
+    : score >= 0.50 ? "MEDIUM"
+    : "LOW";
 
   const risk: Risk = {
     id: crypto.randomUUID(),
     decisionId: decision.id,
+    score,
+    limit,
     level,
     reason:
-      level === "LOW"
-        ? "Risque faible."
-        : "Confiance insuffisante : risque élevé.",
+      score > limit
+        ? "La limite de risque est dépassée."
+        : "Le risque est acceptable.",
     createdAt: Date.now(),
   };
 
