@@ -3,5 +3,8 @@ export interface Explanation {
   decisionId: string;
   summary: string;
   details: string;
+  policy: string;
+  risk: string;
+  runtime: string;
   createdAt: number;
 }
