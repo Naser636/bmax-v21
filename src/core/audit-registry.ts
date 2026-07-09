@@ -1,11 +1,11 @@
-import { Evidence } from "@/contracts/evidence";
+import { Audit } from "@/contracts/audit";
 
-const auditLog: Evidence[] = [];
+const audits: Audit[] = [];
 
-export function addEvidence(evidence: Evidence): void {
-  auditLog.push(evidence);
+export function addAudit(audit: Audit): void {
+  audits.push(audit);
 }
 
-export function getAuditLog(): Evidence[] {
-  return [...auditLog];
+export function getAudits(): Audit[] {
+  return [...audits];
 }
