@@ -1,3 +1,5 @@
+import type { ObservabilityState } from "@/core/observability-state";
+
 export type MissionState =
   | "CREATED"
   | "SCHEDULED"
@@ -27,6 +29,7 @@ export interface MissionContext {
   connector?: unknown;
   http?: unknown;
   maintenance?: unknown;
+  observability?: ObservabilityState;
 
   results: unknown[];
 

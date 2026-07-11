@@ -20,13 +20,26 @@ async function main() {
   context.logs.forEach(log => console.log(`✓ ${log}`));
   console.log("");
 
+  console.log("OBSERVABILITY");
+
+  if (context.observability) {
+    console.log("✓ Enabled");
+    console.log(`Workflow : ${context.observability.metrics.workflowDurationMs} ms`);
+    console.log(`Steps    : ${context.results.length}`);
+    console.log(`Errors   : ${context.errors.length}`);
+  }
+
+  console.log("");
+
   console.log("RESULTS");
   console.log(`✓ ${context.results.length} étape(s) exécutée(s)`);
+
   console.log("");
 
   console.log("METRICS");
   console.log(`Temps total : ${context.metrics.durationMs ?? 0} ms`);
   console.log(`Erreurs : ${context.errors.length}`);
+
   console.log("");
 
   console.log("========================================================");

@@ -6,6 +6,7 @@ import { executeQualification } from "@/core/workflow-qualification";
 import { executeConnector } from "@/core/workflow-connector";
 import { executeHttp } from "@/core/workflow-http";
 import { executeMaintenance } from "@/core/workflow-maintenance";
+import { observabilityDemo } from "@/core/observability-demo";
 
 export class WorkflowEngine {
   async execute(context: MissionContext): Promise<MissionContext> {
@@ -28,9 +29,20 @@ export class WorkflowEngine {
 
     await executeMaintenance(context);
 
+    context.observability = await observabilityDemo();
+
     context.metrics.finishedAt = Date.now();
     context.metrics.durationMs =
       context.metrics.finishedAt - context.metrics.startedAt;
+
+    if (context.observability) {
+      context.observability.metrics.workflowDurationMs =
+        context.metrics.durationMs ?? 0;
+      context.observability.metrics.totalSteps =
+        context.results.length;
+      context.observability.metrics.totalErrors =
+        context.errors.length;
+    }
 
     context.state = "COMPLETED";
 
