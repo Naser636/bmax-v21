@@ -1,3 +1,12 @@
+import { evaluateCapability } from "@/core/decision-engine";
+import { opportunityToCapability } from "@/core/opportunity-decision-adapter";
+import { ExplanationEngine } from "@/core/explanation-engine";
+import { sourceRegistry } from "@/core/source-registry";
+import { ConnectorManager } from "@/core/connector-manager";
+import { DecisionPipeline } from "@/core/decision-pipeline";
+import { OpportunityEngine } from "@/core/opportunity-engine";
+import { FusionEngine } from "@/core/fusion-engine";
+import { DiscoveryEngine } from "@/core/discovery-engine";
 import { MissionContext } from "@/core/mission-context";
 import { executeScheduler } from "@/core/workflow-scheduler";
 import { executeHealth } from "@/core/workflow-health";
@@ -28,6 +37,44 @@ export class WorkflowEngine {
     await executeHttp(context);
 
     await executeMaintenance(context);
+
+    const discovery = new DiscoveryEngine();
+    const discovered = await discovery.execute();
+
+    context.discovery = discovered;
+
+    const fusion = new FusionEngine();
+    const fused = fusion.execute(discovered.items);
+    context.fusion = fused;
+
+    const opportunities = new OpportunityEngine().execute();
+    context.opportunities = opportunities;
+
+    const manager = new ConnectorManager();
+    context.connector = manager.select();
+
+    context.sources = sourceRegistry;
+
+    const decision = new DecisionPipeline().execute(opportunities);
+    context.decision = decision;
+
+    if (decision.accepted && decision.opportunity) {
+      const capability =
+        opportunityToCapability(decision.opportunity);
+
+      context.decisionEngine =
+        evaluateCapability(capability);
+    }
+
+    context.explanation =
+      new ExplanationEngine().execute({
+        id: crypto.randomUUID(),
+        capability: "workflow",
+        recommendation: decision.accepted ? "ACCEPT" : "REJECT",
+        confidence: decision.accepted ? 1 : 0,
+        timestamp: Date.now(),
+      });
+
 
     context.observability = await observabilityDemo();
 

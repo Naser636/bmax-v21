@@ -1,4 +1,6 @@
-import { Opportunity } from "@/contracts/opportunity";
+import type { Opportunity } from "@/contracts/opportunity";
+
+export type { Opportunity };
 
 export function createOpportunity(
   title: string,
@@ -12,4 +14,16 @@ export function createOpportunity(
     source,
     createdAt: Date.now(),
   };
+}
+
+export class OpportunityEngine {
+  execute(): Opportunity[] {
+    return [
+      createOpportunity(
+        "Demo Opportunity",
+        "Demo Opportunity",
+        "BOAMP"
+      ),
+    ];
+  }
 }

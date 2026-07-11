@@ -31,6 +31,14 @@ export interface MissionContext {
   maintenance?: unknown;
   observability?: ObservabilityState;
 
+  discovery?: unknown;
+  fusion?: unknown;
+  opportunities?: unknown[];
+  decision?: unknown;
+  sources?: unknown[];
+  explanation?: unknown;
+  decisionEngine?: unknown;
+
   results: unknown[];
 
   logs: string[];

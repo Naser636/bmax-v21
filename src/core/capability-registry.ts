@@ -1,10 +1,22 @@
-import { Capability } from "@/contracts/capability";
+export interface CapabilityDefinition {
+  id: string;
+  name: string;
+  version: string;
+  enabled: boolean;
+}
 
-export const capabilities: Capability[] = [
+/*
+ * Bootstrap de compatibilité.
+ * Le registre sera rempli dynamiquement au Sprint 12,
+ * mais une capacité minimale est conservée pour les composants existants.
+ */
+export const capabilityRegistry: CapabilityDefinition[] = [
   {
-    id: "decision-engine",
-    name: "Decision Engine",
-    version: "1.0.0",
-    description: "Premier moteur de décision d'ODG",
+    id: "workflow",
+    name: "Workflow",
+    version: "2.0",
+    enabled: true,
   },
 ];
+
+export const capabilities = capabilityRegistry;

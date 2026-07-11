@@ -29,6 +29,71 @@ async function main() {
     console.log(`Errors   : ${context.errors.length}`);
   }
 
+
+  console.log("DISCOVERY");
+
+  if (context.discovery) {
+    console.log("✓ Discovery executed");
+  }
+
+  console.log("");
+
+  console.log("FUSION");
+
+  if (context.fusion) {
+    console.log("✓ Fusion completed");
+  }
+
+  console.log("");
+
+  console.log("OPPORTUNITIES");
+
+  if (context.opportunities) {
+    console.log(`✓ ${context.opportunities.length} opportunity(ies)`);
+  }
+
+  console.log("");
+
+  console.log("DECISION");
+
+  if (context.decision) {
+    console.log("✓ Decision generated");
+  }
+
+  console.log("");
+
+  console.log("CONNECTOR");
+
+  if (context.connector) {
+    console.log("✓ Connector selected");
+  }
+
+  console.log("");
+
+  console.log("SOURCES");
+
+  if (context.sources) {
+    console.log(`✓ ${context.sources.length} source(s)`);
+  }
+
+  console.log("");
+
+
+  console.log("");
+
+  console.log("DECISION ENGINE");
+
+  if (context.decisionEngine) {
+    console.log("✓ Decision Engine executed");
+  }
+
+  console.log("EXPLANATION");
+
+  if (context.explanation) {
+    console.log("✓ Explanation generated");
+  }
+
+  console.log("");
   console.log("");
 
   console.log("RESULTS");
