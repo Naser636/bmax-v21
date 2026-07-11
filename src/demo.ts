@@ -1,4 +1,5 @@
 import { recoveryDemo } from "@/core/recovery-demo";
+import { maintenanceDemo } from "@/core/maintenance-demo";
 
 async function main() {
   console.log("========================================================");
@@ -17,11 +18,15 @@ async function main() {
   console.log("");
 
   console.log("RECOVERY");
-
   const recovery = await recoveryDemo();
-
   console.log(recovery.recovered ? "✓ Récupération automatique" : "✓ Système sain");
   console.log(recovery.message);
+  console.log("");
+
+  console.log("MAINTENANCE");
+  const maintenance = await maintenanceDemo();
+  console.log(maintenance.completed ? "✓ Maintenance exécutée" : "❌ Maintenance échouée");
+  console.log(`Tâches exécutées : ${maintenance.tasks.length}`);
   console.log("");
 
   console.log("CAPACITÉS VALIDÉES");
@@ -31,7 +36,7 @@ async function main() {
   console.log("BOAMP Foundation    ✅");
   console.log("Integration         ✅");
   console.log("Recovery            ✅");
-  console.log("Maintenance         ⏳");
+  console.log("Maintenance         ✅");
   console.log("Scheduler           ⏳");
   console.log("Observability       ⏳");
   console.log("Opportunity         ⏳");
