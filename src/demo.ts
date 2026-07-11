@@ -1,5 +1,6 @@
 import { recoveryDemo } from "@/core/recovery-demo";
 import { maintenanceDemo } from "@/core/maintenance-demo";
+import { schedulerDemo } from "@/core/scheduler-demo";
 
 async function main() {
   console.log("========================================================");
@@ -29,6 +30,12 @@ async function main() {
   console.log(`Tâches exécutées : ${maintenance.tasks.length}`);
   console.log("");
 
+  console.log("SCHEDULER");
+  const scheduler = await schedulerDemo();
+  console.log(scheduler.executed ? "✓ Mission planifiée exécutée" : "❌ Exécution échouée");
+  console.log(`Mission : ${scheduler.mission}`);
+  console.log("");
+
   console.log("CAPACITÉS VALIDÉES");
   console.log("HTTP Runtime        ✅");
   console.log("Health              ✅");
@@ -37,7 +44,7 @@ async function main() {
   console.log("Integration         ✅");
   console.log("Recovery            ✅");
   console.log("Maintenance         ✅");
-  console.log("Scheduler           ⏳");
+  console.log("Scheduler           ✅");
   console.log("Observability       ⏳");
   console.log("Opportunity         ⏳");
   console.log("Decision            ⏳");
