@@ -1,59 +1,36 @@
-import { recoveryDemo } from "@/core/recovery-demo";
-import { maintenanceDemo } from "@/core/maintenance-demo";
-import { schedulerDemo } from "@/core/scheduler-demo";
+import { workflowDemo } from "@/core/workflow-demo";
 
 async function main() {
+  const context = await workflowDemo();
+
   console.log("========================================================");
   console.log("ODG V2 - MISSION EXECUTION REPORT");
   console.log("========================================================");
   console.log("");
 
   console.log("MISSION");
-  console.log("✓ Objectif reçu");
+  console.log(`✓ ${context.missionId}`);
   console.log("");
 
-  console.log("INFRASTRUCTURE");
-  console.log("✓ Health");
-  console.log("✓ HTTP");
-  console.log("✓ Connecteur");
+  console.log("STATE");
+  console.log(`✓ ${context.state}`);
   console.log("");
 
-  console.log("RECOVERY");
-  const recovery = await recoveryDemo();
-  console.log(recovery.recovered ? "✓ Récupération automatique" : "✓ Système sain");
-  console.log(recovery.message);
+  console.log("WORKFLOW");
+  context.logs.forEach(log => console.log(`✓ ${log}`));
   console.log("");
 
-  console.log("MAINTENANCE");
-  const maintenance = await maintenanceDemo();
-  console.log(maintenance.completed ? "✓ Maintenance exécutée" : "❌ Maintenance échouée");
-  console.log(`Tâches exécutées : ${maintenance.tasks.length}`);
+  console.log("RESULTS");
+  console.log(`✓ ${context.results.length} étape(s) exécutée(s)`);
   console.log("");
 
-  console.log("SCHEDULER");
-  const scheduler = await schedulerDemo();
-  console.log(scheduler.executed ? "✓ Mission planifiée exécutée" : "❌ Exécution échouée");
-  console.log(`Mission : ${scheduler.mission}`);
-  console.log("");
-
-  console.log("CAPACITÉS VALIDÉES");
-  console.log("HTTP Runtime        ✅");
-  console.log("Health              ✅");
-  console.log("Qualification       ✅");
-  console.log("BOAMP Foundation    ✅");
-  console.log("Integration         ✅");
-  console.log("Recovery            ✅");
-  console.log("Maintenance         ✅");
-  console.log("Scheduler           ✅");
-  console.log("Observability       ⏳");
-  console.log("Opportunity         ⏳");
-  console.log("Decision            ⏳");
-  console.log("Learning            ⏳");
+  console.log("METRICS");
+  console.log(`Temps total : ${context.metrics.durationMs ?? 0} ms`);
+  console.log(`Erreurs : ${context.errors.length}`);
   console.log("");
 
   console.log("========================================================");
-  console.log("STATUT");
-  console.log("Mission exécutée");
+  console.log("MISSION SUCCESS");
   console.log("========================================================");
 }
 
