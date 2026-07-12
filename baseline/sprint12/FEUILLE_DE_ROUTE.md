@@ -50,7 +50,7 @@ Chaque bloc doit être le plus grand possible tout en restant :
 
 ⬜ F0 Préparation du chantier
 ⬜ F1 Audit final
-⬜ F2 Contrats
+✅ F2 — Typage
 ⬜ F3 Typage
 ⬜ F4 Nettoyage
 ⬜ F5 Architecture
