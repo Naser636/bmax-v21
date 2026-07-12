@@ -7,8 +7,11 @@ export async function executeHttp(
   // Le moteur HTTP existant sera branché ici.
 
   const http = {
-    success: true,
     status: 200,
+    headers: {},
+    data: {
+      success: true,
+    },
   };
 
   context.http = http;

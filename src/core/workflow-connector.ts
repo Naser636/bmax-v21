@@ -9,8 +9,8 @@ export async function executeConnector(
   // Le connecteur réel sera branché ici.
 
   const connector = {
-    connected: true,
     name: "BOAMP",
+    available: true,
   };
 
   context.connector = connector;

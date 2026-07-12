@@ -9,7 +9,9 @@ export async function executeHealth(
   const healthy = true;
 
   context.health = {
+    component: "WorkflowHealth",
     healthy,
+    message: healthy ? "OK" : "FAILED",
   };
 
   context.logs.push(
