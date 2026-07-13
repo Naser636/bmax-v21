@@ -1,12 +1,12 @@
-import { RuntimeOS } from "./runtime-os";
+import { RuntimeDirector } from "./runtime-director";
 import fs from "node:fs";
 
-const runtime = new RuntimeOS();
+const runtime = new RuntimeDirector();
 
-const result = runtime.run({
-  objective: "Build Runtime",
+const result = runtime.execute({
+  objective: "Autonomous Runtime",
   missionId: "runtime.demo",
-  missionName: "Runtime OS"
+  missionName: "Runtime Director"
 });
 
 fs.mkdirSync("runtime/generated", { recursive: true });
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("RUNTIME OS READY");
+console.log("RUNTIME DIRECTOR READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
