@@ -1,12 +1,12 @@
-import { RuntimeGovernor } from "./runtime-governor";
+import { RuntimeSupervisor } from "./runtime-supervisor";
 import fs from "node:fs";
 
-const runtime = new RuntimeGovernor();
+const runtime = new RuntimeSupervisor();
 
 const result = runtime.execute({
   objective: "Autonomous Runtime",
   missionId: "runtime.demo",
-  missionName: "Runtime Governor"
+  missionName: "Runtime Supervisor"
 });
 
 fs.mkdirSync("runtime/generated", { recursive: true });
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("RUNTIME GOVERNOR READY");
+console.log("RUNTIME SUPERVISOR READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
