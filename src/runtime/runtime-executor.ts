@@ -4,10 +4,12 @@ import { ExecutionPlanner } from "./execution-planner";
 import { ExecutionMemory } from "./execution-memory";
 import { EventBus } from "./event-bus";
 import { SystemLoader } from "./system-loader";
+import { MissionEngine } from "./mission-engine";
 
 export class RuntimeExecutor {
 
   private readonly system = new SystemLoader();
+  private readonly engine = new MissionEngine();
   private readonly loader = new MissionLoader();
   private readonly orchestrator = new MissionOrchestrator();
   private readonly planner = new ExecutionPlanner();
@@ -15,6 +17,8 @@ export class RuntimeExecutor {
   private readonly events = new EventBus();
 
   execute(id: string, name: string) {
+
+    this.engine.bootstrap();
 
     const runtimeSystem = this.system.load();
 
