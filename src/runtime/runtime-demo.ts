@@ -1,11 +1,11 @@
-import { RuntimeExecutor } from "./runtime-executor";
+import { RuntimeKernel } from "./runtime-kernel";
 import fs from "node:fs";
 
-const runtime = new RuntimeExecutor();
+const runtime = new RuntimeKernel();
 
 const result = runtime.execute(
   "runtime.demo",
-  "Mission Engine Bootstrap"
+  "Mission Engine Kernel"
 );
 
 fs.mkdirSync("runtime/generated", { recursive: true });
@@ -16,6 +16,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("MISSION ENGINE READY");
+console.log("RUNTIME KERNEL READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
