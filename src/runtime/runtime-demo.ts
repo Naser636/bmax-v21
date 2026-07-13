@@ -1,12 +1,12 @@
-import { MissionRouter } from "./mission-router";
+import { RuntimeBootstrap } from "./runtime-bootstrap";
 import fs from "node:fs";
 
-const runtime = new MissionRouter();
+const runtime = new RuntimeBootstrap();
 
-const result = runtime.route({
-  objective: "Execute Runtime Mission",
+const result = runtime.run({
+  objective: "Build Runtime",
   missionId: "runtime.demo",
-  missionName: "Mission Router Bootstrap"
+  missionName: "Runtime Bootstrap"
 });
 
 fs.mkdirSync("runtime/generated", { recursive: true });
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("MISSION ROUTER READY");
+console.log("RUNTIME BOOTSTRAP READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
