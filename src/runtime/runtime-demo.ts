@@ -1,12 +1,12 @@
-import { RuntimeShell } from "./runtime-shell";
+import { RuntimeDaemon } from "./runtime-daemon";
 import fs from "node:fs";
 
-const runtime = new RuntimeShell();
+const runtime = new RuntimeDaemon();
 
 const result = runtime.execute({
   objective: "Build Runtime",
   missionId: "runtime.demo",
-  missionName: "Runtime Shell"
+  missionName: "Runtime Daemon"
 });
 
 fs.mkdirSync("runtime/generated", { recursive: true });
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("RUNTIME SHELL READY");
+console.log("RUNTIME DAEMON READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
