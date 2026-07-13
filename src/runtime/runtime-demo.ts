@@ -1,12 +1,12 @@
-import { MissionDispatcher } from "./mission-dispatcher";
+import { MissionController } from "./mission-controller";
 import fs from "node:fs";
 
-const runtime = new MissionDispatcher();
+const runtime = new MissionController();
 
-const result = runtime.dispatch(
-  "runtime.demo",
-  "Mission Engine Dispatcher"
-);
+const result = runtime.execute({
+  id: "runtime.demo",
+  name: "Mission Controller Bootstrap"
+});
 
 fs.mkdirSync("runtime/generated", { recursive: true });
 
@@ -16,6 +16,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("MISSION DISPATCHER READY");
+console.log("MISSION CONTROLLER READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
