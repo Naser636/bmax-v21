@@ -1,13 +1,13 @@
-import { RuntimeBootstrap } from "./runtime-bootstrap";
+import { RuntimeCLI } from "./runtime-cli";
 import fs from "node:fs";
 
-const runtime = new RuntimeBootstrap();
+const runtime = new RuntimeCLI();
 
-const result = runtime.run({
-  objective: "Build Runtime",
-  missionId: "runtime.demo",
-  missionName: "Runtime Bootstrap"
-});
+const result = runtime.run(
+  "Build Runtime",
+  "runtime.demo",
+  "Runtime CLI"
+);
 
 fs.mkdirSync("runtime/generated", { recursive: true });
 
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("RUNTIME BOOTSTRAP READY");
+console.log("RUNTIME CLI READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
