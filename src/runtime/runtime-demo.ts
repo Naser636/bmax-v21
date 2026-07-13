@@ -1,12 +1,12 @@
-import { RuntimeSupervisor } from "./runtime-supervisor";
+import { RuntimeAutopilot } from "./runtime-autopilot";
 import fs from "node:fs";
 
-const runtime = new RuntimeSupervisor();
+const runtime = new RuntimeAutopilot();
 
-const result = runtime.execute({
+const result = runtime.run({
   objective: "Autonomous Runtime",
   missionId: "runtime.demo",
-  missionName: "Runtime Supervisor"
+  missionName: "Runtime Autopilot"
 });
 
 fs.mkdirSync("runtime/generated", { recursive: true });
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("RUNTIME SUPERVISOR READY");
+console.log("RUNTIME AUTOPILOT READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
