@@ -1,13 +1,13 @@
-import { RuntimeCLI } from "./runtime-cli";
+import { RuntimeAgent } from "./runtime-agent";
 import fs from "node:fs";
 
-const runtime = new RuntimeCLI();
+const runtime = new RuntimeAgent();
 
-const result = runtime.run(
-  "Build Runtime",
-  "runtime.demo",
-  "Runtime CLI"
-);
+const result = runtime.execute({
+  objective: "Build Runtime",
+  missionId: "runtime.demo",
+  missionName: "Runtime Agent"
+});
 
 fs.mkdirSync("runtime/generated", { recursive: true });
 
@@ -17,6 +17,6 @@ fs.writeFileSync(
 );
 
 console.log("======================================");
-console.log("RUNTIME CLI READY");
+console.log("RUNTIME AGENT READY");
 console.log("runtime/generated/runtime-execution.json");
 console.log("======================================");
