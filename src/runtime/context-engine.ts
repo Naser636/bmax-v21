@@ -9,15 +9,15 @@ export class ContextEngine {
   }
 
   analyze() {
-    return this.discover();
+    return this.context.generate();
   }
 
   validate() {
-    return this.discover();
+    return this.context.generate();
   }
 
   build() {
-    return this.discover();
+    return this.context.generate();
   }
 
 }
