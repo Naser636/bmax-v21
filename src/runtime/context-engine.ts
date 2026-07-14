@@ -28,12 +28,15 @@ export class ContextEngine {
     const capabilities = this.registry.build();
     const planner = this.planner.build();
 
-    return {
+    const runtime = {
+      generatedAt: new Date().toISOString(),
       project,
       business,
       capabilities,
       planner
     };
+
+    return runtime;
   }
 
 }
