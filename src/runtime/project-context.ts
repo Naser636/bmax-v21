@@ -30,4 +30,9 @@ export class ProjectContext {
     return this.context;
   }
 
+
+  current() {
+    return this.context;
+  }
+
 }
