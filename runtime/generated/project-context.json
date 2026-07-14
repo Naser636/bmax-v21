@@ -1,39 +1,45 @@
-./.next/app-path-routes-manifest.json
-./.next/build-manifest.json
-./.next/export-marker.json
-./.next/fallback-build-manifest.json
-./.next/images-manifest.json
-./.next/next-minimal-server.js.nft.json
-./.next/next-server.js.nft.json
-./.next/package.json
-./.next/prerender-manifest.json
-./.next/required-server-files.json
-./.next/routes-manifest.json
-./AGENTS.md
-./CHANGELOG.md
-./CLAUDE.md
-./README.md
-./docs/ARCHITECTURE.md
-./docs/ARCHITECTURE_MAP.md
-./docs/CAPABILITIES.md
-./docs/CONSTITUTION_EDG_v1.md
-./docs/FEUILLE_DE_ROUTE.md
-./docs/FOUNDATION_STATUS.md
-./docs/HISTORIQUE_FONDATIONS.md
-./docs/METHODE_DE_TRAVAIL.md
-./docs/PROJECT_RULES.md
-./docs/ROADMAP.md
-./docs/SPRINT_10_REPORT.md
-./docs/SPRINT_11_REPORT.md
-./docs/SPRINT_6_REPORT.md
-./docs/SPRINT_7_REPORT.md
-./docs/SPRINT_8_REPORT.md
-./docs/SPRINT_9_REPORT.md
-./factory/README.md
-./node_modules/.package-lock.json
-./package-lock.json
-./package.json
-./tsconfig.json
-generatedAt=2026-07-14T17:12:43+00:00
-gitCommit=755950d
-branch=sprint-21-knowledge-engine
+{
+  "files": [
+    "./.next/app-path-routes-manifest.json",
+    "./.next/build-manifest.json",
+    "./.next/export-marker.json",
+    "./.next/fallback-build-manifest.json",
+    "./.next/images-manifest.json",
+    "./.next/next-minimal-server.js.nft.json",
+    "./.next/next-server.js.nft.json",
+    "./.next/package.json",
+    "./.next/prerender-manifest.json",
+    "./.next/required-server-files.json",
+    "./.next/routes-manifest.json",
+    "./AGENTS.md",
+    "./CHANGELOG.md",
+    "./CLAUDE.md",
+    "./README.md",
+    "./docs/ARCHITECTURE.md",
+    "./docs/ARCHITECTURE_MAP.md",
+    "./docs/CAPABILITIES.md",
+    "./docs/CONSTITUTION_EDG_v1.md",
+    "./docs/FEUILLE_DE_ROUTE.md",
+    "./docs/FOUNDATION_STATUS.md",
+    "./docs/HISTORIQUE_FONDATIONS.md",
+    "./docs/METHODE_DE_TRAVAIL.md",
+    "./docs/PROJECT_RULES.md",
+    "./docs/ROADMAP.md",
+    "./docs/SPRINT_10_REPORT.md",
+    "./docs/SPRINT_11_REPORT.md",
+    "./docs/SPRINT_6_REPORT.md",
+    "./docs/SPRINT_7_REPORT.md",
+    "./docs/SPRINT_8_REPORT.md",
+    "./docs/SPRINT_9_REPORT.md",
+    "./factory/README.md",
+    "./node_modules/.package-lock.json",
+    "./package-lock.json",
+    "./package.json",
+    "./tsconfig.json",
+    "generatedAt=2026-07-14T17:12:43+00:00",
+    "gitCommit=755950d",
+  ],
+  "generatedAt": "2026-07-14T17:12:43+00:00",
+  "gitCommit": "755950d",
+  "branch": "sprint-21-knowledge-engine"
+}
