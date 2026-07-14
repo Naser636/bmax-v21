@@ -1,7 +1,9 @@
 export interface AutonomousPlanningModel {
   generatedAt: string;
+  mission: string;
   selectedObjective: string;
   roadmap: string[];
+  validations: string[];
   status: string;
 }
 
@@ -13,8 +15,10 @@ export class AutonomousPlanner {
 
     this.model = {
       generatedAt: new Date().toISOString(),
+      mission: "",
       selectedObjective: "",
       roadmap: [],
+      validations: [],
       status: "READY"
     };
 
