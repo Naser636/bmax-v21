@@ -25,3 +25,15 @@ export function createMissionIntent(
     mode: "UNKNOWN"
   };
 }
+
+export function validateMissionIntent(
+  intent: MissionIntent
+): boolean {
+  return Boolean(
+    intent.mission &&
+    intent.type &&
+    intent.objective &&
+    intent.priority &&
+    intent.mode
+  );
+}
