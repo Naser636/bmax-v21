@@ -1,5 +1,7 @@
 export interface ExecutionPlannerModel {
   generatedAt: string;
+  mission: string;
+  nextObjective: string;
   steps: string[];
   status: string;
 }
@@ -11,6 +13,8 @@ export class ExecutionPlannerContext {
   build(): ExecutionPlannerModel {
     this.model = {
       generatedAt: new Date().toISOString(),
+      mission: "",
+      nextObjective: "",
       steps: [],
       status: "READY"
     };
