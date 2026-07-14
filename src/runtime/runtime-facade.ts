@@ -17,7 +17,7 @@ return this.runtime;
 }
 
 report(data:unknown){
-return this.reporter.report(data);
+return this.reporter.report({ health: this.health.check(true, this.runtime.capabilities().length), result: data });
 }
 
 }
