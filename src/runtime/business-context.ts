@@ -6,16 +6,19 @@ export interface BusinessContextModel {
   projectCommit: string;
 }
 
+import { ProjectContext } from "./project-context";
+
 export class BusinessContext {
 
   private context?: BusinessContextModel;
 
-  build(): BusinessContextModel {
+  build(project: ReturnType<ProjectContext["generate"]>): BusinessContextModel {
+
     this.context = {
       generatedAt: new Date().toISOString(),
       domain: "UNKNOWN",
-      projectBranch: "",
-      projectCommit: "",
+      projectBranch: project.branch,
+      projectCommit: project.gitCommit,
       objectives: []
     };
 
