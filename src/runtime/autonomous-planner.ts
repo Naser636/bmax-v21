@@ -11,14 +11,19 @@ export class AutonomousPlanner {
 
   private model?: AutonomousPlanningModel;
 
-  build(): AutonomousPlanningModel {
+  build(
+    mission = "",
+    selectedObjective = "",
+    roadmap: string[] = [],
+    validations: string[] = []
+  ): AutonomousPlanningModel {
 
     this.model = {
       generatedAt: new Date().toISOString(),
-      mission: "",
-      selectedObjective: "",
-      roadmap: [],
-      validations: [],
+      mission,
+      selectedObjective,
+      roadmap,
+      validations,
       status: "READY"
     };
 

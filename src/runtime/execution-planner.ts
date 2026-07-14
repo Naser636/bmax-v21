@@ -27,7 +27,7 @@ export class ExecutionPlanner {
   create(id: string, name: string): TechnicalPlan {
 
     const execution = this.orchestrator.buildPlan(id, name);
-    const planning = this.autonomous.build();
+    const planning = this.autonomous.build(id, execution.nextObjective ?? "", execution.objectives, execution.steps.map(step => step.name));
 
     const steps: TechnicalStep[] = [];
 
