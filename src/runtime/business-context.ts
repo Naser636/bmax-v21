@@ -6,12 +6,20 @@ export interface BusinessContextModel {
 
 export class BusinessContext {
 
+  private context?: BusinessContextModel;
+
   build(): BusinessContextModel {
-    return {
+    this.context = {
       generatedAt: new Date().toISOString(),
       domain: "UNKNOWN",
       objectives: []
     };
+
+    return this.context;
+  }
+
+  current() {
+    return this.context;
   }
 
 }
