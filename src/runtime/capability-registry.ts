@@ -26,7 +26,7 @@ export class CapabilityRegistry {
     this.model = {
       generatedAt: new Date().toISOString(),
       available: this.capabilities,
-      missing: []
+      missing: ["ProjectContext Engine","BusinessContext","Capability Registry","Plugin Manager","Event Bus","Reporter","Documentation Engine","Release Manager","Knowledge Engine","Learning Engine"]
     };
 
     return this.model;
