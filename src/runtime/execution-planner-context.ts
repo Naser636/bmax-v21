@@ -6,12 +6,20 @@ export interface ExecutionPlannerModel {
 
 export class ExecutionPlannerContext {
 
+  private model?: ExecutionPlannerModel;
+
   build(): ExecutionPlannerModel {
-    return {
+    this.model = {
       generatedAt: new Date().toISOString(),
       steps: [],
       status: "READY"
     };
+
+    return this.model;
+  }
+
+  current(): ExecutionPlannerModel | undefined {
+    return this.model;
   }
 
 }
