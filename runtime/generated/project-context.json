@@ -36,8 +36,7 @@
     "./package-lock.json",
     "./package.json",
     "./tsconfig.json",
-    "generatedAt=2026-07-14T17:12:43+00:00",
-    "gitCommit=755950d",
+    "gitCommit=755950d"
   ],
   "generatedAt": "2026-07-14T17:12:43+00:00",
   "gitCommit": "755950d",
