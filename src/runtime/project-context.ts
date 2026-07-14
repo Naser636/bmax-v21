@@ -3,6 +3,13 @@ import { execSync } from "node:child_process";
 
 export class ProjectContext {
 
+  private context?: {
+    generatedAt: string;
+    gitCommit: string;
+    branch: string;
+    files: string[];
+  };
+
   generate(output = "runtime/generated/project-context.json") {
 
     const files = execSync(
@@ -17,8 +24,10 @@ export class ProjectContext {
       files
     };
 
+    this.context = context;
+
     writeFileSync(output, JSON.stringify(context,null,2));
-    return context;
+    return this.context;
   }
 
 }
