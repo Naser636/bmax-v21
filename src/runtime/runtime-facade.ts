@@ -9,7 +9,7 @@ private readonly reporter=new RuntimeReporter();
 private readonly health=new RuntimeHealth();
 
 status(){
-return this.health.check();
+return this.health.check(true, this.runtime.capabilities().length);
 }
 
 runtimeService(){
