@@ -7,6 +7,7 @@ import { SystemLoader } from "./system-loader";
 import { MissionEngine } from "./mission-engine";
 import { CapabilityRegistry } from "./capability-registry";
 import { RuntimeReporter } from "./runtime-reporter";
+import { RuntimeState } from "./runtime-state";
 
 export class RuntimeExecutor {
 
@@ -19,12 +20,14 @@ export class RuntimeExecutor {
   private readonly events = new EventBus();
   private readonly registry = new CapabilityRegistry();
   private readonly reporter = new RuntimeReporter();
+  private readonly state = new RuntimeState();
 
   execute(id: string, name: string) {
 
     this.engine.bootstrap();
 
     const runtimeSystem = this.system.load();
+    this.state.initialize(runtimeSystem);
 
     this.events.publish("MissionStarted", {
       id,
@@ -58,6 +61,8 @@ export class RuntimeExecutor {
       logicalSteps: plan.steps.length,
       technicalSteps: technical.steps.length
     });
+
+    this.state.complete();
 
     this.events.publish("MissionCompleted", { id });
 
