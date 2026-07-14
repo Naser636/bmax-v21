@@ -2,6 +2,7 @@ import {
   MissionOrchestrator,
   ExecutionPlan
 } from "./mission-orchestrator";
+import { AutonomousPlanner } from "./autonomous-planner";
 
 export interface TechnicalStep {
   id: string;
@@ -12,18 +13,21 @@ export interface TechnicalStep {
 
 export interface TechnicalPlan {
   execution: ExecutionPlan;
+  planning: ReturnType<AutonomousPlanner["build"]>;
   steps: TechnicalStep[];
 }
 
 export class ExecutionPlanner {
 
   constructor(
-    private readonly orchestrator = new MissionOrchestrator()
+    private readonly orchestrator = new MissionOrchestrator(),
+    private readonly autonomous = new AutonomousPlanner()
   ) {}
 
   create(id: string, name: string): TechnicalPlan {
 
     const execution = this.orchestrator.buildPlan(id, name);
+    const planning = this.autonomous.build();
 
     const steps: TechnicalStep[] = [];
 
@@ -47,6 +51,7 @@ export class ExecutionPlanner {
 
     return {
       execution,
+      planning,
       steps
     };
   }
