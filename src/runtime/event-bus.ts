@@ -12,6 +12,8 @@ export class EventBus {
   private readonly handlers =
     new Map<string, RuntimeEventHandler[]>();
 
+  private readonly history: RuntimeEvent[] = [];
+
   subscribe(
     type: string,
     handler: RuntimeEventHandler
@@ -34,12 +36,22 @@ export class EventBus {
       payload
     };
 
+    this.history.push(event);
+
     const handlers = this.handlers.get(type) ?? [];
 
     for (const handler of handlers) {
       handler(event);
     }
 
+  }
+
+  events(): RuntimeEvent[] {
+    return [...this.history];
+  }
+
+  clear(): void {
+    this.history.length = 0;
   }
 
 }

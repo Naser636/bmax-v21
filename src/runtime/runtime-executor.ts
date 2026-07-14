@@ -5,6 +5,8 @@ import { ExecutionMemory } from "./execution-memory";
 import { EventBus } from "./event-bus";
 import { SystemLoader } from "./system-loader";
 import { MissionEngine } from "./mission-engine";
+import { CapabilityRegistry } from "./capability-registry";
+import { RuntimeReporter } from "./runtime-reporter";
 
 export class RuntimeExecutor {
 
@@ -15,6 +17,8 @@ export class RuntimeExecutor {
   private readonly planner = new ExecutionPlanner();
   private readonly memory = new ExecutionMemory();
   private readonly events = new EventBus();
+  private readonly registry = new CapabilityRegistry();
+  private readonly reporter = new RuntimeReporter();
 
   execute(id: string, name: string) {
 
@@ -29,27 +33,30 @@ export class RuntimeExecutor {
     });
 
     const mission = this.loader.load(id, name);
-
     const plan = this.orchestrator.buildPlan(id, name);
-
     const technical = this.planner.create(id, name);
 
+    for (const step of technical.steps) {
+      this.registry.register({
+        id: step.id,
+        name: step.capability
+      });
+    }
+
     this.memory.append(id, "MissionStarted", { name });
-
     this.memory.append(id, "SystemLoaded", runtimeSystem);
-
     this.memory.append(id, "PlanCreated", {
       steps: plan.steps.length
     });
-
     this.memory.append(id, "TechnicalPlanCreated", {
       steps: technical.steps.length
     });
 
-    this.memory.append(id, "CapabilityAnalysis", {
+    const report = this.reporter.report({
+      mission: id,
+      capabilities: this.registry.all(),
       logicalSteps: plan.steps.length,
-      technicalSteps: technical.steps.length,
-      capabilities: technical.steps.map(s => s.capability)
+      technicalSteps: technical.steps.length
     });
 
     this.events.publish("MissionCompleted", { id });
@@ -59,6 +66,8 @@ export class RuntimeExecutor {
       runtimeSystem,
       logicalSteps: plan.steps.length,
       technicalSteps: technical.steps.length,
+      capabilities: this.registry.all(),
+      report,
       history: this.memory.history(id)
     };
   }

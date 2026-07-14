@@ -9,18 +9,24 @@ export interface ExecutionStep {
 export interface ExecutionPlan {
   mission: RuntimeMission;
   steps: ExecutionStep[];
+  objectives: string[];
+  nextObjective: string | null;
 }
 
 export class MissionOrchestrator {
+
   constructor(
     private readonly loader = new MissionLoader()
   ) {}
 
   buildPlan(id: string, name: string): ExecutionPlan {
+
     const mission = this.loader.load(id, name);
 
     return {
       mission,
+      objectives: mission.brain.objectives,
+      nextObjective: mission.brain.nextObjective,
       steps: [
         { id: "LOAD", name: "Load ProjectContext", status: "PENDING" },
         { id: "PLAN", name: "Build Execution Plan", status: "PENDING" },
@@ -30,4 +36,5 @@ export class MissionOrchestrator {
       ]
     };
   }
+
 }
