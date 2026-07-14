@@ -1,12 +1,14 @@
 import { ProjectContext } from "./project-context";
 import { BusinessContext } from "./business-context";
 import { CapabilityRegistry } from "./capability-registry";
+import { ExecutionPlannerContext } from "./execution-planner-context";
 
 export class ContextEngine {
 
   private readonly context = new ProjectContext();
   private readonly business = new BusinessContext();
   private readonly registry = new CapabilityRegistry();
+  private readonly planner = new ExecutionPlannerContext();
 
   discover() {
     return this.context.generate();
@@ -24,15 +26,14 @@ export class ContextEngine {
     const project = this.context.generate();
     const business = this.business.build(project);
     const capabilities = this.registry.build();
+    const planner = this.planner.build();
 
-    const runtime = {
-      generatedAt: new Date().toISOString(),
+    return {
       project,
       business,
-      capabilities
+      capabilities,
+      planner
     };
-
-    return runtime;
   }
 
 }
