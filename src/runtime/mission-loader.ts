@@ -14,7 +14,7 @@ export interface RuntimeMission {
 export class MissionLoader {
   constructor(
     private readonly projectContextPath =
-      "runtime/generated/project-context.json",
+      "runtime/generated/project-context.snapshot",
     private readonly brainPath =
       "runtime/brain/MASTER_PLAN.md"
   ) {}
