@@ -12,6 +12,7 @@ export interface CapabilityRegistryModel {
 export class CapabilityRegistry {
 
   private readonly capabilities: Capability[] = [];
+  private model?: CapabilityRegistryModel;
 
   register(capability: Capability): void {
     this.capabilities.push(capability);
@@ -22,11 +23,17 @@ export class CapabilityRegistry {
   }
 
   build(): CapabilityRegistryModel {
-    return {
+    this.model = {
       generatedAt: new Date().toISOString(),
       available: this.capabilities,
       missing: []
     };
+
+    return this.model;
+  }
+
+  current(): CapabilityRegistryModel | undefined {
+    return this.model;
   }
 
 }
