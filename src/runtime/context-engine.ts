@@ -25,11 +25,14 @@ export class ContextEngine {
     const business = this.business.build(project);
     const capabilities = this.registry.build();
 
-    return {
+    const runtime = {
+      generatedAt: new Date().toISOString(),
       project,
       business,
       capabilities
     };
+
+    return runtime;
   }
 
 }
