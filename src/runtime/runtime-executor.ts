@@ -41,6 +41,7 @@ export class RuntimeExecutor {
     const plan = this.orchestrator.buildPlan(id, name);
     const technical = this.planner.create(id, name);
     this.implementation.prepare(id);
+    this.implementation.prepareExecution(id, name);
 
     for (const step of technical.steps) {
       this.registry.register({

@@ -1,3 +1,6 @@
+import { ExecutionPlanner } from "./execution-planner";
+import { MissionIntent } from "./mission-intent";
+
 export type ImplementationState =
   | "READY"
   | "PLANNING"
@@ -15,6 +18,7 @@ export interface ImplementationCheckpoint {
 export interface ImplementationPlan {
   generatedAt: string;
   mission: string;
+  intent?: MissionIntent;
   nextCapability: string;
   roadmap: string[];
   checkpoints: ImplementationCheckpoint[];
@@ -23,38 +27,39 @@ export interface ImplementationPlan {
 
 export class ImplementationEngine {
 
+  private readonly planner = new ExecutionPlanner();
+
   private plan?: ImplementationPlan;
 
   prepare(mission: string): ImplementationPlan {
+
     this.plan = {
       generatedAt: new Date().toISOString(),
       mission,
       nextCapability: "",
       roadmap: [],
-      checkpoints: [
-        { name: "PLAN", completed: false },
-        { name: "IMPLEMENT", completed: false },
-        { name: "VALIDATE", completed: false },
-        { name: "COMMIT", completed: false }
-      ],
+      checkpoints: [],
       state: "READY"
     };
 
     return this.plan;
   }
 
-  transition(state: ImplementationState): void {
-    if (this.plan) {
-      this.plan.state = state;
-    }
+
+  buildExecutionPlan(id: string, name: string) {
+    return this.planner.create(id, name);
   }
 
-  pause(): void {
-    this.transition("PAUSED");
-  }
 
-  resume(): void {
-    this.transition("EXECUTING");
+  prepareExecution(id: string, name: string) {
+
+    const plan = this.buildExecutionPlan(id, name);
+
+    return {
+      mission: id,
+      executionPlan: plan,
+      implementation: this.plan
+    };
   }
 
   current(): ImplementationPlan | undefined {
