@@ -1,3 +1,5 @@
+import * as fs from "node:fs";
+
 export interface RuntimeSystem {
   constitution: string;
   roadmap: string;
@@ -5,13 +7,19 @@ export interface RuntimeSystem {
   standards: string;
 }
 
+function loadOrFallback(path: string): string {
+  return fs.existsSync(path)
+    ? fs.readFileSync(path, "utf8")
+    : path;
+}
+
 export class SystemLoader {
   load(): RuntimeSystem {
     return {
-      constitution: "runtime/system/CONSTITUTION.md",
-      roadmap: "runtime/system/ROADMAP.md",
-      policies: "runtime/system/POLICIES.md",
-      standards: "runtime/system/STANDARDS.md"
+      constitution: loadOrFallback("runtime/system/CONSTITUTION.md"),
+      roadmap: loadOrFallback("runtime/system/ROADMAP.md"),
+      policies: loadOrFallback("runtime/system/POLICIES.md"),
+      standards: loadOrFallback("runtime/system/STANDARDS.md")
     };
   }
 }

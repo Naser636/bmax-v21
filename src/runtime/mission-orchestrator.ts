@@ -1,4 +1,5 @@
 import { MissionLoader, RuntimeMission } from "./mission-loader";
+import { MissionIntent } from "./mission-intent";
 
 export interface ExecutionStep {
   id: string;
@@ -7,6 +8,7 @@ export interface ExecutionStep {
 }
 
 export interface ExecutionPlan {
+  intent?: MissionIntent;
   mission: RuntimeMission;
   steps: ExecutionStep[];
   objectives: string[];
@@ -19,11 +21,12 @@ export class MissionOrchestrator {
     private readonly loader = new MissionLoader()
   ) {}
 
-  buildPlan(id: string, name: string): ExecutionPlan {
+  buildPlan(id: string, name: string, intent?: MissionIntent): ExecutionPlan {
 
     const mission = this.loader.load(id, name);
 
     return {
+      intent,
       mission,
       objectives: mission.brain.objectives,
       nextObjective: mission.brain.nextObjective,

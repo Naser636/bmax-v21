@@ -9,8 +9,12 @@ export class RuntimeKernel {
 
   execute(id: string, name: string) {
     this.engine.bootstrap();
+
     this.context.state.currentMission = id;
     const result = this.executor.execute(id, name);
-    return { runtimeState: this.context.state, ...result };
+
+    return {
+      runtimeState: this.context.state,      ...result
+    };
   }
 }

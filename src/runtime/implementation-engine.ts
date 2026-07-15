@@ -1,6 +1,7 @@
 import { ExecutionPlanner } from "./execution-planner";
 import { RuntimeReporter } from "./runtime-reporter";
 import { MissionIntent } from "./mission-intent";
+import { RuntimeContext } from "./runtime-context";
 
 export type ImplementationState =
   | "READY"
@@ -31,13 +32,16 @@ export class ImplementationEngine {
   private readonly planner = new ExecutionPlanner();
   private readonly reporter = new RuntimeReporter();
 
+  private readonly context = RuntimeContext.get();
+
   private plan?: ImplementationPlan;
 
-  prepare(mission: string): ImplementationPlan {
+  prepare(mission: string, intent?: MissionIntent): ImplementationPlan {
 
     this.plan = {
       generatedAt: new Date().toISOString(),
       mission,
+      intent,
       nextCapability: "",
       roadmap: [],
       checkpoints: [],
@@ -48,17 +52,18 @@ export class ImplementationEngine {
   }
 
 
-  buildExecutionPlan(id: string, name: string) {
-    return this.planner.create(id, name);
+  buildExecutionPlan(id: string, name: string, intent?: MissionIntent) {
+    return this.planner.create(id, name, intent);
   }
 
 
   prepareExecution(id: string, name: string) {
 
-    const plan = this.buildExecutionPlan(id, name);
+    const plan = this.buildExecutionPlan(id, name, this.plan?.intent);
 
     return {
       mission: id,
+      intent: this.plan?.intent,
       executionPlan: plan,
       implementation: this.plan
     };

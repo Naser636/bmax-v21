@@ -2,6 +2,7 @@ import {
   MissionOrchestrator,
   ExecutionPlan
 } from "./mission-orchestrator";
+import { MissionIntent } from "./mission-intent";
 import { AutonomousPlanner } from "./autonomous-planner";
 
 export interface TechnicalStep {
@@ -24,9 +25,9 @@ export class ExecutionPlanner {
     private readonly autonomous = new AutonomousPlanner()
   ) {}
 
-  create(id: string, name: string): TechnicalPlan {
+  create(id: string, name: string, intent?: MissionIntent): TechnicalPlan {
 
-    const execution = this.orchestrator.buildPlan(id, name);
+    const execution = this.orchestrator.buildPlan(id, name, intent);
     const planning = this.autonomous.build(id, execution.nextObjective ?? "", execution.objectives, execution.steps.map(step => step.name));
 
     const steps: TechnicalStep[] = [];

@@ -1,9 +1,10 @@
 import { MissionLoader } from "./mission-loader";
+import { createMissionIntent } from "./mission-intent";
 import { MissionOrchestrator } from "./mission-orchestrator";
 import { ExecutionPlanner } from "./execution-planner";
 import { ExecutionMemory } from "./execution-memory";
 import { EventBus } from "./event-bus";
-import { SystemLoader } from "./system-loader";
+import { RuntimeContext } from "./runtime-context";
 import { MissionEngine } from "./mission-engine";
 import { CapabilityRegistry } from "./capability-registry";
 import { RuntimeReporter } from "./runtime-reporter";
@@ -12,7 +13,7 @@ import { ImplementationEngine } from "./implementation-engine";
 
 export class RuntimeExecutor {
 
-  private readonly system = new SystemLoader();
+  private readonly context = RuntimeContext.get();
   private readonly engine = new MissionEngine();
   private readonly loader = new MissionLoader();
   private readonly orchestrator = new MissionOrchestrator();
@@ -28,7 +29,7 @@ export class RuntimeExecutor {
 
     this.engine.bootstrap();
 
-    const runtimeSystem = this.system.load();
+    const runtimeSystem = this.context.system;
     this.state.initialize(runtimeSystem);
 
     this.events.publish("MissionStarted", {
@@ -38,9 +39,11 @@ export class RuntimeExecutor {
     });
 
     const mission = this.loader.load(id, name);
-    const plan = this.orchestrator.buildPlan(id, name);
+    const intent = createMissionIntent(id);
+    const plan = this.orchestrator.buildPlan(id, name, intent);
     const technical = this.implementation.createTechnicalPlan(id, name);
-    this.implementation.prepare(id);
+    const executionPlan = this.planner.create(id, name, intent);
+    this.implementation.prepare(id, intent);
     this.implementation.prepareExecution(id, name);
 
     for (const step of technical.steps) {
@@ -56,7 +59,8 @@ export class RuntimeExecutor {
       steps: plan.steps.length
     });
     this.memory.append(id, "TechnicalPlanCreated", {
-      steps: technical.steps.length
+      steps: technical.steps.length,
+      executionSteps: executionPlan.steps.length
     });
 
     const report = this.implementation.generateReport({
