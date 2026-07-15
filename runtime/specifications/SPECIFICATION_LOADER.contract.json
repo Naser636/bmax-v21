@@ -1,0 +1,23 @@
+{
+  "name": "SpecificationLoader",
+  "version": "1.0.0",
+  "objective": "Load and validate implementation specifications before mission planning.",
+  "inputs": [
+    "mission",
+    "runtime/specifications/<MISSION>.md"
+  ],
+  "outputs": [
+    "specification",
+    "runtime/generated/mission-plan.json"
+  ],
+  "responsibilities": [
+    "Locate specification",
+    "Validate specification",
+    "Expose specification to MissionLoader"
+  ],
+  "constraints": [
+    "Never modify source code",
+    "Never execute patches",
+    "Fallback if specification is missing"
+  ]
+}
