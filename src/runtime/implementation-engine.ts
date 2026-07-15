@@ -1,4 +1,5 @@
 import { ExecutionPlanner } from "./execution-planner";
+import { RuntimeReporter } from "./runtime-reporter";
 import { MissionIntent } from "./mission-intent";
 
 export type ImplementationState =
@@ -28,6 +29,7 @@ export interface ImplementationPlan {
 export class ImplementationEngine {
 
   private readonly planner = new ExecutionPlanner();
+  private readonly reporter = new RuntimeReporter();
 
   private plan?: ImplementationPlan;
 
@@ -60,6 +62,21 @@ export class ImplementationEngine {
       executionPlan: plan,
       implementation: this.plan
     };
+  }
+
+
+  createTechnicalPlan(id: string, name: string) {
+    return this.planner.create(id, name);
+  }
+
+
+  generateReport(data: {
+    mission: string;
+    capabilities: unknown[];
+    logicalSteps: number;
+    technicalSteps: number;
+  }) {
+    return this.reporter.report(data);
   }
 
   current(): ImplementationPlan | undefined {

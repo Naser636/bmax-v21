@@ -39,7 +39,7 @@ export class RuntimeExecutor {
 
     const mission = this.loader.load(id, name);
     const plan = this.orchestrator.buildPlan(id, name);
-    const technical = this.planner.create(id, name);
+    const technical = this.implementation.createTechnicalPlan(id, name);
     this.implementation.prepare(id);
     this.implementation.prepareExecution(id, name);
 
@@ -59,7 +59,7 @@ export class RuntimeExecutor {
       steps: technical.steps.length
     });
 
-    const report = this.reporter.report({
+    const report = this.implementation.generateReport({
       mission: id,
       capabilities: this.registry.all(),
       logicalSteps: plan.steps.length,
