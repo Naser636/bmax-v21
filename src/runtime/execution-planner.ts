@@ -13,6 +13,7 @@ export interface TechnicalStep {
 }
 
 export interface TechnicalPlan {
+  intent?: MissionIntent;
   execution: ExecutionPlan;
   planning: ReturnType<AutonomousPlanner["build"]>;
   steps: TechnicalStep[];
@@ -51,6 +52,7 @@ export class ExecutionPlanner {
     }
 
     return {
+      intent,
       execution,
       planning,
       steps

@@ -71,7 +71,7 @@ export class ImplementationEngine {
 
 
   createTechnicalPlan(id: string, name: string) {
-    return this.planner.create(id, name);
+    return this.planner.create(id, name, this.plan?.intent);
   }
 
 
