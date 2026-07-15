@@ -8,6 +8,7 @@ import { MissionEngine } from "./mission-engine";
 import { CapabilityRegistry } from "./capability-registry";
 import { RuntimeReporter } from "./runtime-reporter";
 import { RuntimeState } from "./runtime-state";
+import { ImplementationEngine } from "./implementation-engine";
 
 export class RuntimeExecutor {
 
@@ -21,6 +22,7 @@ export class RuntimeExecutor {
   private readonly registry = new CapabilityRegistry();
   private readonly reporter = new RuntimeReporter();
   private readonly state = new RuntimeState();
+  private readonly implementation = new ImplementationEngine();
 
   execute(id: string, name: string) {
 
@@ -38,6 +40,7 @@ export class RuntimeExecutor {
     const mission = this.loader.load(id, name);
     const plan = this.orchestrator.buildPlan(id, name);
     const technical = this.planner.create(id, name);
+    this.implementation.prepare(id);
 
     for (const step of technical.steps) {
       this.registry.register({
