@@ -1,0 +1,11 @@
+{
+  "command": "claude",
+  "args": ["-p", "--output-format", "json", "--permission-mode", "manual"],
+  "timeoutMs": 120000,
+  "maxRetries": 2,
+  "backoffMs": 1500,
+  "pollMs": 2000,
+  "lockTtlMs": 300000,
+  "logFile": "runtime/generated/fleet/bridge.log",
+  "locksDir": "runtime/generated/fleet/locks"
+}
