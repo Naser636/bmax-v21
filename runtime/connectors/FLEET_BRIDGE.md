@@ -83,3 +83,52 @@ cat runtime/generated/fleet/bridge.log
 # 6. (Optional, live) real round-trip:
 node runtime/core/fleet-dispatcher.js FLEET_SMOKE && node runtime/core/fleet-bridge.js --once
 ```
+
+## Pipeline integration
+
+The Fleet exchange is wired into the ODG execution pipeline as a single stage,
+`runtime/core/fleet-stage.js`, positioned by `pipeline-builder.js` **before
+"Decision Engine"**:
+
+```
+… Knowledge Engine → [Fleet Bridge] → Decision Engine → …
+```
+
+- **One-shot only.** The stage drives `Dispatcher → Bridge (drainOnce) → Collector`
+  and returns; it never starts watch mode. Watch mode (`node fleet-bridge.js`)
+  remains reserved for standalone daemon deployments.
+- **Single enable/disable authority.** `pipeline-builder.js` only *positions*
+  the stage. Whether it runs is decided entirely inside `fleet-stage.js`, from:
+  `ODG_FLEET` env var  >  `runtime/connectors/fleet-pipeline.json`  >  default **OFF**.
+  When disabled the stage prints `Fleet: DISABLED (skipped)` and exits 0 — an
+  inert no-op, so the pipeline behaves exactly as before.
+- **Exit-code policy** (`fleet-pipeline.json`):
+  - `failOpen: true` (default) — Dispatcher/Bridge/Collector failures log a
+    warning and exit 0; the pipeline continues (non-blocking).
+  - `failOpen: false` — any failure exits 1; `odg-run.js` STOPs the mission.
+
+### Config — `runtime/connectors/fleet-pipeline.json`
+
+| key | default | meaning |
+|---|---|---|
+| `enabled` | `false` | run the Fleet exchange during the pipeline |
+| `failOpen` | `true` | Fleet failures are non-blocking |
+
+`ODG_FLEET=on|off` overrides `enabled` at runtime.
+
+### Pipeline validation
+
+```bash
+# Builder positions the stage (always present, inert when disabled):
+node runtime/core/pipeline-builder.js
+node -e "console.log(require('./runtime/generated/runtime-pipeline.json').map(s=>s[0]))"
+
+# Disabled (default) — inert no-op, exit 0:
+node runtime/core/fleet-stage.js FLEET_PIPE_TEST
+
+# Enabled, offline: Dispatcher → Bridge → Collector → VALIDATED:
+ODG_FLEET=on FLEET_BRIDGE_MOCK=1 node runtime/core/fleet-stage.js FLEET_PIPE_TEST
+
+# Full pipeline smoke, enabled end-to-end:
+ODG_FLEET=on FLEET_BRIDGE_MOCK=1 node runtime/bin/odg-run.js FLEET_PIPE_TEST
+```

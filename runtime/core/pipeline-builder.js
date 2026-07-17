@@ -32,6 +32,21 @@ pipeline.push(
     ["Mission Ledger","runtime/core/mission-ledger.js"]
 );
 
+// Fleet Bridge stage. pipeline-builder ONLY defines its position; whether it
+// does anything at runtime is decided entirely by fleet-stage.js (env
+// ODG_FLEET / fleet-pipeline.json). Position is anchored by stage NAME, never a
+// numeric index (ProjectContext is conditional, so indices shift):
+//   - immediately BEFORE "Decision Engine";
+//   - fallback: immediately BEFORE "Mission Ledger" if Decision Engine absent.
+// Idempotent: never adds a duplicate if the builder runs more than once.
+const FLEET_STAGE = ["Fleet Bridge","runtime/core/fleet-stage.js"];
+if(!pipeline.some(s => s[0] === FLEET_STAGE[0])){
+    let anchor = pipeline.findIndex(s => s[0] === "Decision Engine");
+    if(anchor === -1) anchor = pipeline.findIndex(s => s[0] === "Mission Ledger");
+    if(anchor === -1) anchor = pipeline.length; // last resort: append
+    pipeline.splice(anchor, 0, FLEET_STAGE);
+}
+
 fs.writeFileSync(
     "runtime/generated/runtime-pipeline.json",
     JSON.stringify(pipeline,null,2)
