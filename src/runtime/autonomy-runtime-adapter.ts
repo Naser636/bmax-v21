@@ -33,6 +33,7 @@ import { ARTIFACT_CONTRACT_VERSION } from "@/contracts/documentation";
 
 const GENERATED = "runtime/generated";
 const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
+const MISSION_REPORT = `${GENERATED}/mission-report.json`;
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
@@ -170,18 +171,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   }
 
   private buildDocumentationProof(mission: string): DocumentationProof | null {
-    const payload = this.readJson<Record<string, unknown>>(
-      `${MSTD_GENERATED}/${mission}.json`,
-    );
-    if (!payload || typeof payload !== "object") return null;
-    const artifacts: Artifact[] = [
-      {
-        kind: "generated",
-        id: mission,
-        version: "1.0.0",
-        payload: payload as Record<string, unknown>,
-      },
-    ];
+    const artifacts = this.documentableArtifacts(mission);
+    if (artifacts.length === 0) return null;
     const inputs: DocumentationInputs = {
       artifactContractVersion: ARTIFACT_CONTRACT_VERSION,
       requestId: mission,
@@ -189,6 +180,34 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     };
     const result = this.documentation.generate(inputs);
     return result.ok ? result.proof : null;
+  }
+
+  /**
+   * Real, already-materialized artifacts of the just-executed mission, fed to the existing
+   * Documentation Engine. Two provenance paths are supported so a mission run via EITHER runner
+   * yields a proof:
+   *   - `runtime/mission-standard/generated/<mission>.json` — the Mission-Standard engine output
+   *     (the `odg mission <NAME>` path);
+   *   - `runtime/generated/mission-report.json` — the canonical pipeline output written by
+   *     odg-run.js for the current mission (the `odg autonomy` path). It is mission-scoped, so we
+   *     only accept it when its own `mission` field matches the mission we just ran.
+   */
+  private documentableArtifacts(mission: string): Artifact[] {
+    const artifacts: Artifact[] = [];
+
+    const mstd = this.readJson<Record<string, unknown>>(
+      `${MSTD_GENERATED}/${mission}.json`,
+    );
+    if (mstd && typeof mstd === "object") {
+      artifacts.push({ kind: "generated", id: mission, version: "1.0.0", payload: mstd });
+    }
+
+    const report = this.readJson<Record<string, unknown>>(MISSION_REPORT);
+    if (report && typeof report === "object" && report.mission === mission) {
+      artifacts.push({ kind: "report", id: mission, version: "1.0.0", payload: report });
+    }
+
+    return artifacts;
   }
 
   private collectArtifacts(mission: string): ReleaseArtifactRef[] {
@@ -203,6 +222,12 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       if (fs.existsSync(this.resolve(c.path))) {
         refs.push({ kind: c.kind, id: mission, version: "1.0.0" });
       }
+    }
+    // Canonical pipeline output (odg-run.js path): the mission report is a real, mission-scoped
+    // artifact. Pin it so a mission executed by `odg autonomy` has at least one releasable artifact.
+    const report = this.readJson<{ mission?: string }>(MISSION_REPORT);
+    if (report && report.mission === mission) {
+      refs.push({ kind: "report", id: `${mission}:mission-report`, version: "1.0.0" });
     }
     return refs;
   }

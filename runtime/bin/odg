@@ -8,6 +8,9 @@ case "$MISSION" in
     shift
     ./runtime/mission-standard/bin/mse "$@"
     ;;
+  autonomy)
+    ./runtime/bin/odg-autonomy.js
+    ;;
   verify)
     ./runtime/bin/odg-verify.js
     ;;
@@ -23,6 +26,7 @@ case "$MISSION" in
     echo "======================================"
     echo "Usage:"
     echo "  odg mission <NAME>"
+    echo "  odg autonomy"
     echo "  odg status"
     echo "  odg verify"
     echo "  odg freeze"
