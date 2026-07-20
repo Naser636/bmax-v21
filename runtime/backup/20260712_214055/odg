@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MISSION="${1:-help}"
+
+case "$MISSION" in
+  mission)
+    shift
+    ./runtime/mission-standard/bin/mse "$@"
+    ;;
+  verify)
+    ./runtime/bin/odg-verify.js
+    ;;
+  status)
+    ./runtime/bin/odg-status.js
+    ;;
+  freeze)
+    ./runtime/bin/odg-freeze.js
+    ;;
+  *)
+    echo "======================================"
+    echo "ODG RUNTIME"
+    echo "======================================"
+    echo "Usage:"
+    echo "  odg mission <NAME>"
+    echo "  odg status"
+    echo "  odg verify"
+    echo "  odg freeze"
+    exit 1
+    ;;
+esac

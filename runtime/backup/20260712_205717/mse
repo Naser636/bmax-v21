@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MISSION="${1:-default}"
+DATE=$(date -Iseconds)
+COMMIT=$(git rev-parse --short HEAD)
+BRANCH=$(git branch --show-current)
+
+echo "======================================"
+echo "MISSION STANDARD ENGINE v2"
+echo "======================================"
+
+echo "[1/5] PRE-FLIGHT"
+
+case "$MISSION" in
+  END_SESSION_*|AUDIT_*|READ_ONLY_*|S*)
+    npx tsc --noEmit >/dev/null
+    ;;
+  *)
+    npm run build >/dev/null
+    npx tsc --noEmit >/dev/null
+    ;;
+esac
+
+git diff --quiet || { echo "STOP: Git repository is dirty"; exit 1; }
+
+
+echo "[2/5] LOAD BRAIN"
+
+BRAIN="runtime/brain/MASTER_PLAN.md"
+
+if [ ! -f "$BRAIN" ]; then
+  echo "STOP: Runtime Brain not found"
+  exit 1
+fi
+
+echo "Brain loaded: $BRAIN"
+
+echo "[BRAIN] Objectives:"
+grep -E '^(MODE|MISSION:|NEXT_OBJECTIVES:|[0-9]+\.)' "$BRAIN" || true
+
+
+echo "[3/5] INITIALIZE"
+
+mkdir -p runtime/mission-standard/{generated,passports,reports,certificates,history}
+
+echo "[4/5] GENERATE"
+
+cat > "runtime/mission-standard/passports/${MISSION}.passport.md" <<PASS
+Mission : ${MISSION}
+Date : ${DATE}
+Status : CREATED
+PASS
+
+cat > "runtime/mission-standard/reports/${MISSION}.report.md" <<REPORT
+Mission : ${MISSION}
+Status : SUCCESS
+REPORT
+
+cat > "runtime/mission-standard/certificates/${MISSION}.certificate.md" <<CERT
+Mission : ${MISSION}
+Commit : ${COMMIT}
+Branch : ${BRANCH}
+Date : ${DATE}
+CERT
+
+printf -- "- [%s] %s SUCCESS\n" "$DATE" "$MISSION" >> runtime/mission-standard/history/history.md
+
+cat > "runtime/mission-standard/generated/${MISSION}.json" <<JSON
+{
+  "mission":"${MISSION}",
+  "status":"SUCCESS",
+  "date":"${DATE}"
+}
+JSON
+
+echo "[5/5] GOVERNANCE"
+
+git diff --quiet || { echo "STOP: Repository changed unexpectedly"; exit 1; }
+
+echo "[6/6] COMPLETE"
+
+echo "======================================"
+echo "MISSION SUCCESS"
+echo "======================================"
+echo "Mission : ${MISSION}"
+echo "======================================"

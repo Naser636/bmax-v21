@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ODG Runtime generated artifacts — never versioned; regenerated in-run and
+# bootstrapped on cold start (see runtime/bin/odg-bootstrap.js).
+/runtime/generated/

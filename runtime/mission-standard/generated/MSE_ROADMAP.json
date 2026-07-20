@@ -1,0 +1,21 @@
+{
+  "engine":"Mission Standard Engine",
+  "version":"2.0",
+  "status":"ACTIVE",
+  "completed":[
+    "Standard mission lifecycle",
+    "Governance validation",
+    "Mission artifacts",
+    "Mission entrypoint",
+    "Fast governance mode"
+  ],
+  "next":[
+    "Automatic END_SESSION package",
+    "Automatic ZIP generation",
+    "Automatic Execution Board update",
+    "Automatic Roadmap update",
+    "Automatic Documentation synchronization",
+    "Automatic Baseline management"
+  ],
+  "rule":"Every mission ends with one official End Session package."
+}

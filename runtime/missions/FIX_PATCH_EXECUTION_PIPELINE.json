@@ -1,0 +1,7 @@
+{
+  "mission":"FIX_PATCH_EXECUTION_PIPELINE",
+  "priority":"CRITICAL",
+  "mode":"REPAIR",
+  "continue_until_complete":true,
+  "description":"Identify the root cause of PROCESS_TODOS and PROCESS_FIXMES failures, repair the Patch Executor and Patch Engine, re-execute all failed actions, execute all previously skipped actions, implement every missing capability that is achievable, validate every repair with evidence, and produce a complete audit explaining what was fixed, what remains blocked, and why."
+}

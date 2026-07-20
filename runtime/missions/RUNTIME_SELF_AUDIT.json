@@ -1,0 +1,20 @@
+{
+  "mission": "RUNTIME_SELF_AUDIT",
+  "priority": "CRITICAL",
+  "mode": "AUDIT",
+  "description": "Produce a complete evidence-based audit of the Runtime state after all previously executed missions.",
+  "objectives": [
+    "Verify every previously executed mission.",
+    "List every file created or modified.",
+    "List every Runtime component added or changed.",
+    "Compare current Runtime against the previous state.",
+    "Identify completed objectives.",
+    "Identify partially completed objectives.",
+    "Identify unfinished objectives.",
+    "Measure autonomy improvements.",
+    "Measure capability evolution.",
+    "Measure execution pipeline evolution.",
+    "Generate evidence only. Do not guess.",
+    "Produce a final audit report with conclusions and next priorities."
+  ]
+}

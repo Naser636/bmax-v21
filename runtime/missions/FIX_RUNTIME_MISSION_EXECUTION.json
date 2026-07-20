@@ -1,0 +1,116 @@
+{
+  "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+  "priority": "CRITICAL",
+  "mode": "SEQUENTIAL",
+  "continue_until_complete": true,
+  "description": "Repair the Runtime so mission objectives drive execution instead of static actions.",
+  "objectives": [
+    {
+      "id": "ANALYZE_CURRENT_PIPELINE",
+      "priority": 1,
+      "goal": "Identify why mission objectives are ignored.",
+      "done_when": [
+        "Root cause identified.",
+        "Execution flow documented.",
+        "Blocking component identified."
+      ]
+    },
+    {
+      "id": "REMOVE_STATIC_ACTIONS",
+      "priority": 1,
+      "goal": "Remove hardcoded actions from the Decision Engine.",
+      "done_when": [
+        "PROCESS_TODOS is no longer hardcoded.",
+        "PROCESS_FIXMES is no longer hardcoded.",
+        "IMPLEMENT_MISSING_CAPABILITIES is no longer hardcoded.",
+        "Decision Engine produces contextual actions."
+      ]
+    },
+    {
+      "id": "LINK_MISSION_TO_DECISION_ENGINE",
+      "priority": 1,
+      "goal": "Decision Engine must consume mission objectives.",
+      "done_when": [
+        "Objectives are loaded.",
+        "Objectives influence generated actions.",
+        "Different missions generate different actions."
+      ]
+    },
+    {
+      "id": "LINK_EXECUTION_PLANNER",
+      "priority": 1,
+      "goal": "Execution Planner must generate steps from mission objectives.",
+      "done_when": [
+        "Planner no longer generates generic plans.",
+        "Planner reflects objective dependencies."
+      ]
+    },
+    {
+      "id": "LINK_PATCH_ENGINE",
+      "priority": 1,
+      "goal": "Patch Engine must execute mission actions instead of generic actions.",
+      "done_when": [
+        "Patch Engine consumes dynamic actions.",
+        "Patch Engine ignores removed static actions."
+      ]
+    },
+    {
+      "id": "LINK_PATCH_EXECUTOR",
+      "priority": 1,
+      "goal": "Patch Executor executes generated mission actions.",
+      "done_when": [
+        "Executed actions match mission objectives.",
+        "No generic execution remains."
+      ]
+    },
+    {
+      "id": "VALIDATE_FULL_PIPELINE",
+      "priority": 1,
+      "goal": "Validate complete Runtime behavior.",
+      "done_when": [
+        "Mission objectives appear in Decision Engine output.",
+        "Mission objectives appear in Patch Engine output.",
+        "Mission objectives appear in Patch Executor output.",
+        "Pipeline finishes successfully."
+      ]
+    },
+    {
+      "id": "SELF_TEST",
+      "priority": 2,
+      "goal": "Verify Runtime with multiple missions.",
+      "done_when": [
+        "Different missions produce different execution plans.",
+        "Different missions produce different decisions.",
+        "Static behavior eliminated."
+      ]
+    },
+    {
+      "id": "GENERATE_PROOF",
+      "priority": 2,
+      "goal": "Generate execution evidence.",
+      "done_when": [
+        "Decision report generated.",
+        "Validation report generated.",
+        "Mission ledger updated.",
+        "Proofs stored in runtime/generated."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Root cause fixed.",
+    "Static actions removed.",
+    "Mission objectives drive execution.",
+    "Validation successful.",
+    "Tests passed.",
+    "Mission ledger updated.",
+    "Proofs generated."
+  ],
+  "completion": [
+    "Runtime executes mission objectives instead of generic actions.",
+    "Decision Engine is fully mission-driven.",
+    "Execution Planner is mission-driven.",
+    "Patch Engine is mission-driven.",
+    "Patch Executor is mission-driven.",
+    "No hardcoded generic execution remains."
+  ]
+}

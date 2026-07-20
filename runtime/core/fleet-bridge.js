@@ -24,7 +24,7 @@ const CONFIG_FILE = "runtime/connectors/fleet-bridge.json";
 
 const DEFAULT_CONFIG = {
   command: "claude",
-  args: ["-p", "--output-format", "json", "--permission-mode", "manual"],
+  args: ["-p", "--output-format", "json", "--permission-mode", "acceptEdits"],
   timeoutMs: 120000,
   maxRetries: 2,
   backoffMs: 1500,

@@ -1,0 +1,4 @@
+Mission : MARKETING_CAPABILITY_REGISTRY
+Commit : 9fd7265
+Branch : sprint-01
+Date : 2026-07-12T16:26:48+00:00

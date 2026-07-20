@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-15T15:41:29.027Z",
+  "risk": {
+    "todoThreshold": 0,
+    "fixmeThreshold": 0,
+    "relativeImportThreshold": 100,
+    "packageImportThreshold": 500
+  },
+  "autonomy": {
+    "allowAutomaticExecution": false,
+    "requireValidation": true,
+    "requireEvidence": true
+  },
+  "governance": {
+    "strategy": "DETERMINISM_FIRST",
+    "reusePolicy": "REUSE_BEFORE_CREATE"
+  }
+}

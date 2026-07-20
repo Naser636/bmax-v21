@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-07-12T13:00:30.798Z",
+  "session": {
+    "session": "20260712_125653",
+    "date": "2026-07-12T12:56:53+00:00",
+    "sprint": "15",
+    "commit": "9fd7265",
+    "branch": "sprint-01",
+    "status": "SPRINT_15_FROZEN"
+  },
+  "project": {
+    "name": "ODG",
+    "runtime": "Business Decision Runtime",
+    "sprint": 13,
+    "block": "F13.02"
+  },
+  "runtimeStatus": {
+    "generatedAt": "2026-07-12T10:44:00.835Z",
+    "project": {
+      "name": "ODG",
+      "runtime": "Business Decision Runtime",
+      "sprint": 13,
+      "block": "F13.02"
+    },
+    "runtime": "READY",
+    "foundation": "FROZEN",
+    "nextMission": "Sprint13 Complete",
+    "inventory": {
+      "engines": 41,
+      "services": 34,
+      "registries": 34,
+      "contexts": 7,
+      "missions": 8,
+      "orchestrators": 11,
+      "events": 17,
+      "contracts": 25
+    }
+  },
+  "runtimeVerify": {
+    "generatedAt": "2026-07-12T10:44:01.048Z",
+    "build": true,
+    "typescript": true,
+    "gitClean": true
+  },
+  "runtimeAnalysis": {
+    "generatedAt": "2026-07-12T11:43:07.017Z",
+    "status": "READY",
+    "summary": {
+      "repositoryFiles": 519,
+      "runtimeFiles": 17,
+      "coreFiles": 264,
+      "missions": 7
+    },
+    "diagnostic": [
+      "Fondations stables",
+      "Runtime Bootstrap opérationnel",
+      "Mission Planner opérationnel",
+      "Mission Dispatcher opérationnel",
+      "Mission Controller opérationnel"
+    ],
+    "nextPriorities": [
+      "Fusion progressive avec src/core",
+      "Brancher les missions sur le Runtime existant",
+      "Remplacer progressivement les scripts par des missions",
+      "Préparer odg run"
+    ]
+  },
+  "architecture": {
+    "keep": [
+      "Aucun composant existant n'est supprimé"
+    ],
+    "extend": [
+      "Les composants existants sont étendus via des adaptateurs"
+    ],
+    "connect": [
+      "Le Runtime devient un orchestrateur au-dessus de l'existant"
+    ]
+  }
+}

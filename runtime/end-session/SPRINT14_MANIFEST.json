@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-12T11:44:57.262Z",
+  "sprint": 14,
+  "status": "FROZEN",
+  "generated": [
+    "current-mission.json",
+    "execution-board.json",
+    "mission-plan.json",
+    "mission-queue.json",
+    "mission-registry.json",
+    "project-context.json",
+    "repository-intelligence.json",
+    "runtime-analysis.json",
+    "runtime-execution.json",
+    "runtime-freeze.json",
+    "runtime-integration-plan.json",
+    "runtime-report.json",
+    "runtime-state.json",
+    "runtime-status.json",
+    "runtime-verify.json"
+  ]
+}

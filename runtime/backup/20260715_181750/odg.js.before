@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+const fs=require("fs");
+const path=require("path");
+const {spawnSync}=require("child_process");
+
+const command=process.argv[2];
+const mission=process.argv[3];
+
+if(command!=="mission" || !mission){
+    console.error("Usage: node runtime/bin/odg.js mission <MISSION>");
+    process.exit(1);
+}
+
+const source=path.join(__dirname,"../templates/project-context-engine.template.js");
+const dest=path.join(__dirname,"../core/project-context-engine.js");
+
+if(
+    mission==="PROJECT_CONTEXT_ENGINE_V1" &&
+    !fs.existsSync(dest)
+){
+    console.log("[ODG] Installing ProjectContext Engine...");
+    fs.copyFileSync(source,dest);
+}
+
+const result=spawnSync(
+    "node",
+    ["runtime/bin/odg-run.js",mission],
+    {stdio:"inherit"}
+);
+
+process.exit(result.status??0);

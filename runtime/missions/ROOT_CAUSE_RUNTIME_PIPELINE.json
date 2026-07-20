@@ -1,0 +1,110 @@
+{
+  "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+  "priority": "CRITICAL",
+  "mode": "ANALYZE_AND_REPAIR",
+  "continue_until_complete": true,
+  "description": "Find and repair the root cause preventing mission objectives from driving Runtime execution.",
+  "global_rules": [
+    "Continue until root cause is identified or governance blocks execution.",
+    "Prefer internal analysis first.",
+    "Use available AI capabilities only when they provide additional value.",
+    "Validate every proposed fix before applying it.",
+    "Record every decision, finding and proof."
+  ],
+  "objectives": [
+    {
+      "id": "TRACE_MISSION_FLOW",
+      "priority": 1,
+      "goal": "Trace the complete mission lifecycle from Mission Interpreter to Patch Executor.",
+      "done_when": [
+        "Every stage input is identified.",
+        "Every stage output is identified.",
+        "Data flow is documented."
+      ]
+    },
+    {
+      "id": "VERIFY_ROADMAP_LOADING",
+      "priority": 1,
+      "goal": "Verify that roadmap objectives are actually loaded and preserved.",
+      "done_when": [
+        "Mission objectives located.",
+        "Mission objectives verified after Mission Loader.",
+        "Evidence generated."
+      ]
+    },
+    {
+      "id": "VERIFY_EXECUTION_PLANNER",
+      "priority": 1,
+      "goal": "Verify whether Execution Planner consumes mission objectives.",
+      "done_when": [
+        "Planner input verified.",
+        "Planner output verified.",
+        "Missing links identified."
+      ]
+    },
+    {
+      "id": "VERIFY_DECISION_ENGINE",
+      "priority": 1,
+      "goal": "Determine why Decision Engine always generates identical actions.",
+      "done_when": [
+        "Root cause identified.",
+        "Hardcoded logic located.",
+        "Dynamic inputs verified."
+      ]
+    },
+    {
+      "id": "VERIFY_PATCH_PIPELINE",
+      "priority": 1,
+      "goal": "Verify Patch Engine and Patch Executor receive mission-specific actions.",
+      "done_when": [
+        "Patch Engine input verified.",
+        "Patch Executor input verified.",
+        "Execution path documented."
+      ]
+    },
+    {
+      "id": "REPAIR_PIPELINE",
+      "priority": 1,
+      "goal": "Repair the broken connection preventing mission-driven execution.",
+      "done_when": [
+        "Mission objectives reach Decision Engine.",
+        "Generated actions differ between missions.",
+        "Generic hardcoded execution removed where appropriate."
+      ]
+    },
+    {
+      "id": "SELF_VALIDATION",
+      "priority": 2,
+      "goal": "Validate the repair using multiple different missions.",
+      "done_when": [
+        "Different missions produce different plans.",
+        "Different missions produce different decisions.",
+        "Pipeline executes mission-specific actions."
+      ]
+    },
+    {
+      "id": "GENERATE_ROOT_CAUSE_REPORT",
+      "priority": 2,
+      "goal": "Produce a complete diagnostic report.",
+      "done_when": [
+        "Root cause documented.",
+        "Files modified documented.",
+        "Evidence generated.",
+        "Mission ledger updated."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Root cause identified.",
+    "Root cause repaired or explicitly justified if not repairable.",
+    "Mission-specific execution verified.",
+    "Validation successful.",
+    "Evidence generated.",
+    "Mission ledger updated."
+  ],
+  "completion": [
+    "Runtime executes mission objectives instead of generic actions.",
+    "Decision Engine behavior changes according to mission content.",
+    "Pipeline validated with multiple missions."
+  ]
+}

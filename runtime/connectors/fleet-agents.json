@@ -1,0 +1,10 @@
+{
+  "agents": [
+    {
+      "id": "claude",
+      "kind": "file-mailbox",
+      "capabilities": ["patch-proposal"],
+      "enabled": true
+    }
+  ]
+}

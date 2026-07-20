@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+
+const PLAN_FILE = "runtime/generated/patch-plan.json";
+
+if (!fs.existsSync(PLAN_FILE)) {
+  console.error("STOP: patch-plan.json not found");
+  process.exit(1);
+}
+
+const plan = JSON.parse(fs.readFileSync(PLAN_FILE, "utf8"));
+
+console.log("======================================");
+console.log("PATCH EXECUTOR v1");
+console.log("======================================");
+console.log("Mission :", plan.mission);
+console.log("Priority:", plan.priority);
+console.log();
+
+const results = [];
+
+for (const patch of plan.patches) {
+  console.log("EXECUTE:", patch.action);
+
+  results.push({
+    id: patch.id,
+    action: patch.action,
+    previousStatus: patch.status,
+    status: "SIMULATED"
+  });
+}
+
+const report = {
+  generatedAt: new Date().toISOString(),
+  mission: plan.mission,
+  simulated: true,
+  executed: results.length,
+  results
+};
+
+fs.writeFileSync(
+  "runtime/generated/patch-execution.json",
+  JSON.stringify(report, null, 2)
+);
+
+console.log();
+console.log("Executed :", results.length);
+console.log("Output   : runtime/generated/patch-execution.json");
+console.log("======================================");

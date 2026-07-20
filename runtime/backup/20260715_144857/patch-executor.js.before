@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const { execSync } = require("child_process");
+
+const plan = JSON.parse(
+  fs.readFileSync("runtime/generated/patch-plan.json","utf8")
+);
+
+const report = {
+  generatedAt: new Date().toISOString(),
+  mission: plan.mission,
+  executed: []
+};
+
+for (const patch of plan.patches) {
+
+  console.log("EXECUTE:", patch.action);
+
+  switch (patch.action) {
+
+    case "PROCESS_TODOS":
+      try{
+        const todos = execSync(
+          'grep -RIn "TODO\\|FIXME" src runtime || true',
+          {encoding:"utf8"}
+        );
+
+        fs.mkdirSync("runtime/generated",{recursive:true});
+
+        fs.writeFileSync(
+          "runtime/generated/todo-report.txt",
+          todos
+        );
+
+        report.executed.push({
+          action:patch.action,
+          status:"DONE",
+          output:"runtime/generated/todo-report.txt"
+        });
+
+      }catch(e){
+        report.executed.push({
+          action:patch.action,
+          status:"FAILED"
+        });
+      }
+      break;
+
+    default:
+
+      if(patch.action==="PROCESS_FIXMES"){
+try{
+const fixmes=execSync('grep -RIn "FIXME" src runtime || true',{encoding:"utf8"});
+fs.writeFileSync("runtime/generated/fixme-report.txt",fixmes);
+report.executed.push({action:patch.action,status:"DONE",output:"runtime/generated/fixme-report.txt"});
+}catch(e){
+report.executed.push({action:patch.action,status:"FAILED"});}
+}else{
+report.executed.push({action:patch.action,status:"SKIPPED"});
+}
+
+  }
+
+}
+
+fs.writeFileSync(
+  "runtime/generated/patch-execution.json",
+  JSON.stringify(report,null,2)
+);
+
+console.log("======================================");
+console.log("PATCH EXECUTOR v2");
+console.log("======================================");
+console.log("Executed :",report.executed.length);
+console.log("======================================");

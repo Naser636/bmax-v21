@@ -1,0 +1,69 @@
+{
+  "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+  "priority": "CRITICAL",
+  "mode": "AUTONOMOUS",
+  "continue_until_complete": true,
+  "owner": "ODG_RUNTIME",
+  "description": "Achieve maximum Runtime autonomy by identifying, prioritizing, implementing, validating and documenting every improvement required for autonomous mission execution.",
+  "global_rules": [
+    "The Runtime is responsible for completing this mission.",
+    "Continue working until all achievable objectives are completed.",
+    "Do not stop because a pipeline stage has finished.",
+    "Stop only if governance blocks execution, the mission is completed or a real blocking issue is demonstrated.",
+    "Always analyse before modifying.",
+    "Always validate after modifying.",
+    "Always generate evidence.",
+    "Always update the mission ledger.",
+    "Create follow-up objectives automatically when new problems are discovered.",
+    "Prioritize Runtime autonomy over new business features."
+  ],
+  "execution_policy": {
+    "use_internal_capabilities_first": true,
+    "use_external_ai_when_available": true,
+    "external_ai_goal": "Use available AI systems only when they can improve analysis, implementation, validation or problem solving.",
+    "validate_all_external_results": true,
+    "keep_final_decision_inside_runtime": true
+  },
+  "primary_objectives": [
+    "Identify every blocker preventing full Runtime autonomy.",
+    "Repair architecture weaknesses.",
+    "Repair execution weaknesses.",
+    "Repair Decision Engine weaknesses.",
+    "Repair Execution Planner weaknesses.",
+    "Repair Patch Engine weaknesses.",
+    "Repair Patch Executor weaknesses.",
+    "Repair validation weaknesses.",
+    "Repair mission execution weaknesses.",
+    "Improve Runtime robustness.",
+    "Improve Runtime resilience.",
+    "Improve Runtime observability.",
+    "Improve Runtime memory.",
+    "Improve Runtime self-diagnosis.",
+    "Improve Runtime self-healing.",
+    "Improve Runtime continuous execution."
+  ],
+  "continuous_loop": [
+    "Analyse",
+    "Prioritize",
+    "Plan",
+    "Implement",
+    "Validate",
+    "Measure",
+    "Document",
+    "Learn",
+    "Continue"
+  ],
+  "definition_of_done": [
+    "Every identified issue has been analysed.",
+    "Every fix has been validated.",
+    "Evidence has been generated.",
+    "Mission ledger updated.",
+    "Runtime autonomy has increased.",
+    "No remaining fix is achievable without governance or human approval."
+  ],
+  "completion": [
+    "Runtime has completed every achievable improvement.",
+    "All remaining blockers are documented with evidence.",
+    "Runtime is ready for the next autonomous mission."
+  ]
+}

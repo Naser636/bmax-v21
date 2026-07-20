@@ -1,0 +1,25 @@
+# Runtime Connection Plan
+
+## SAFE_CONNECT
+- src/runtime/capability-registry.ts
+- src/runtime/event-bus.ts
+- src/runtime/execution-memory.ts
+- src/runtime/plugin-registry.ts
+- src/runtime/runtime-events.ts
+- src/runtime/runtime-health.ts
+- src/runtime/runtime-reporter.ts
+- src/runtime/runtime-types.ts
+
+## MANUAL_REVIEW
+- src/runtime/execution-planner.ts
+- src/runtime/index.ts
+- src/runtime/mission-loader.ts
+- src/runtime/mission-orchestrator.ts
+- src/runtime/runtime-demo.ts
+- src/runtime/runtime-executor.ts
+- src/runtime/runtime-facade.ts
+- src/runtime/runtime-service.ts
+- src/runtime/runtime-state.ts
+
+## ISOLATED_KEEP
+

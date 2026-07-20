@@ -1,0 +1,2 @@
+Mission : RUNTIME_HANDSHAKE_SCAN
+Status : SUCCESS

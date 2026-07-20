@@ -1,0 +1,2 @@
+Mission : INVENTORY_RUNTIME
+Status : SUCCESS

@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+class ProjectContextEngine {
+
+    constructor(mission){
+        this.mission=mission;
+    }
+
+    async run(){
+        console.log("======================================");
+        console.log("PROJECT CONTEXT ENGINE v1");
+        console.log("======================================");
+        console.log("Mission :",this.mission);
+        console.log("Status  : READY");
+        console.log("======================================");
+    }
+
+}
+
+module.exports=ProjectContextEngine;
+
+if(require.main===module){
+    const mission=process.argv[2]||"UNKNOWN";
+    new ProjectContextEngine(mission)
+        .run()
+        .then(()=>process.exit(0))
+        .catch(e=>{
+            console.error(e);
+            process.exit(1);
+        });
+}

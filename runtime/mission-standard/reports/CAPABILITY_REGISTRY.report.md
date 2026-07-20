@@ -1,0 +1,2 @@
+Mission : CAPABILITY_REGISTRY
+Status : SUCCESS

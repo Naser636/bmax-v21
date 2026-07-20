@@ -2,12 +2,20 @@
 
 const fs=require("fs");
 
-const registry=JSON.parse(
-    fs.readFileSync(
-        "runtime/generated/capability-registry.json",
-        "utf8"
-    )
-);
+// COLD-START FALLBACK (capability-registry.json)
+// pipeline-builder runs at startup, BEFORE the "Capability Registry" stage has
+// produced runtime/generated/capability-registry.json. On a fresh clone / empty
+// runtime/generated the file is absent. Fall back to an empty registry object so
+// the pipeline can still be built. An empty registry exposes no `available`
+// capabilities, so — via the existing `registry.available||[]` guard below — the
+// conditional ProjectContext Engine stage is simply omitted, identical to the
+// steady-state case where the file exists without an `available` field. No
+// runtime data is invented; the pipeline contents and stage ordering are
+// unchanged.
+const REGISTRY_PATH="runtime/generated/capability-registry.json";
+const registry=fs.existsSync(REGISTRY_PATH)
+    ?JSON.parse(fs.readFileSync(REGISTRY_PATH,"utf8"))
+    :{};
 
 const pipeline=[
     ["Mission Interpreter","runtime/core/mission-interpreter.js"],

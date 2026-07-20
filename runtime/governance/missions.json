@@ -1,0 +1,12 @@
+{
+  "SELF_ANALYZE_RUNTIME": {
+    "objective": "Analyze runtime",
+    "priority": "HIGH",
+    "mode": "ANALYZE"
+  },
+  "AUTONOMY_LEVEL_1": {
+    "objective": "Increase autonomy",
+    "priority": "CRITICAL",
+    "mode": "EVOLVE"
+  }
+}

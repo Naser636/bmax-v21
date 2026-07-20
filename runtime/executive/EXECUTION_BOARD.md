@@ -1,0 +1,92 @@
+# ODG EXECUTION BOARD
+
+## runtime/generated
+- current-mission.json
+- mission-plan.json
+- mission-queue.json
+- mission-registry.json
+- project-context.json
+- repository-intelligence.json
+- runtime-analysis.json
+- runtime-execution.json
+- runtime-freeze.json
+- runtime-integration-plan.json
+- runtime-report.json
+- runtime-state.json
+- runtime-status.json
+- runtime-verify.json
+
+## runtime/reports
+- END_SESSION.report.md
+- F13.01.report.md
+- F13.02.report.md
+- F13.03.report.md
+- F13.04.report.md
+- F13.05.report.md
+- F13.06.report.md
+- F13.07.report.md
+- F13.08.report.md
+- F13.09.report.md
+- F13.10.report.md
+
+## runtime/passports
+- END_SESSION.passport.md
+- F13.01.passport.md
+- F13.02.passport.md
+- F13.03.passport.md
+- F13.04.passport.md
+- F13.05.passport.md
+- F13.06.passport.md
+- F13.07.passport.md
+- F13.08.passport.md
+- F13.09.passport.md
+- F13.10.passport.md
+
+## runtime/certificates
+- END_SESSION.certificate.md
+- F13.01.certificate.md
+- F13.02.certificate.md
+- F13.03.certificate.md
+- F13.04.certificate.md
+- F13.05.certificate.md
+- F13.06.certificate.md
+- F13.07.certificate.md
+- F13.08.certificate.md
+- F13.09.certificate.md
+- F13.10.certificate.md
+
+## runtime/history
+- execution-history.md
+
+## runtime/integration
+- RUNTIME_INTEGRATION_20260712_113107.md
+- RUNTIME_INTEGRATION_PLAN.md
+
+## runtime/intelligence
+- REPOSITORY_INTELLIGENCE.md
+
+## runtime/missions
+- MISSION_REGISTRY.md
+
+## runtime/planner
+- MISSION_PLAN.md
+
+## runtime/dispatcher
+- MISSION_QUEUE.md
+
+## runtime/controller
+- MISSION_CONTROLLER.md
+
+## runtime/bootstrap
+- RUNTIME_BOOTSTRAP.md
+
+## runtime/analysis
+- RUNTIME_CTO_ANALYSIS.md
+
+## runtime/end-session
+- END_OF_SESSION_REPORT.md
+- NEXT_SESSION.md
+- SESSION_20260712_112100.zip
+- SESSION_MANIFEST.json
+- SESSION_STATE.json
+
