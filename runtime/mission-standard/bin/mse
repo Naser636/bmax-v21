@@ -90,7 +90,27 @@ JSON
 
 echo "[5/5] GOVERNANCE"
 
-git diff --quiet || { echo "STOP: Repository changed unexpectedly"; exit 1; }
+# The mission engine is DESIGNED to write its own artifacts in [4/5] GENERATE
+# (passport, report, certificate, generated JSON, and the tracked history log).
+# Governance therefore must not treat those expected outputs as tampering — it
+# verifies only that nothing changed OUTSIDE the artifact directories, which is
+# the real safety intent (catch stray edits to source made by the pipeline or
+# build). This keeps the check deterministic and side-effect free.
+UNEXPECTED_CHANGES=$(git status --porcelain -- \
+  ':(exclude)runtime/mission-standard/generated' \
+  ':(exclude)runtime/mission-standard/passports' \
+  ':(exclude)runtime/mission-standard/reports' \
+  ':(exclude)runtime/mission-standard/certificates' \
+  ':(exclude)runtime/mission-standard/history')
+
+if [ -n "$UNEXPECTED_CHANGES" ]; then
+  echo "STOP: Repository changed unexpectedly"
+  echo
+  echo "Changes outside mission artifact directories:"
+  echo "$UNEXPECTED_CHANGES"
+  echo
+  exit 1
+fi
 
 echo "[6/6] COMPLETE"
 
