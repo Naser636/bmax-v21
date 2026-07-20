@@ -30,6 +30,19 @@ import type {
 } from "@/contracts/documentation";
 import { DocumentationEngine } from "@/core/documentation-engine";
 import { ARTIFACT_CONTRACT_VERSION } from "@/contracts/documentation";
+import {
+  PROVIDER_CONTRACT_VERSION,
+  createClaudeProvider,
+  missionRequiresProvider,
+  toPipelineOutcome,
+} from "@/providers";
+import type {
+  EngineeringProviderPort,
+  ProviderMission,
+  ProviderObjective,
+  ProviderOutcome,
+  RoutableMission,
+} from "@/providers";
 
 const GENERATED = "runtime/generated";
 const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
@@ -40,14 +53,50 @@ const VERIFY = `${GENERATED}/runtime-verify.json`;
 const BRAIN = "runtime/brain/MASTER_PLAN.md";
 const MSTD_GENERATED = "runtime/mission-standard/generated";
 const PIPELINE = "runtime/bin/odg-run.js";
+const MISSIONS_DIR = "runtime/missions";
+const VERIFIER = "runtime/bin/odg-verify.js";
+
+// Pinned provider defaults (contract §2). ODG owns these; the adapter never lets Claude choose them.
+const PROVIDER_MODEL = "claude-opus-4-8";
+const PROVIDER_MAX_TURNS = 25;
+
+/** Raw shape of an existing runtime/missions/*.json file (read-only; no new format introduced). */
+interface RawMission {
+  mission?: string;
+  priority?: string;
+  mode?: string;
+  objectives?: Array<string | { id?: string; goal?: string; done_when?: unknown }>;
+  definition_of_done?: unknown;
+  completion?: unknown;
+  authorized_paths?: unknown;
+  authorizedPaths?: unknown;
+  requires_engineering?: boolean;
+  requiresEngineering?: boolean;
+}
 
 export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private readonly documentation = new DocumentationEngine();
   // Missions released this session, so readPlanState excludes them and the loop advances (design §3).
   private readonly archivedThisSession = new Set<string>();
   private lastReleaseRef: string | null = null;
+  // Lazily constructed so local-only runs never even instantiate a provider (cost minimization).
+  private provider: EngineeringProviderPort | null = null;
+  // One provider invocation per mission per session: a repeat reuses the recorded outcome, and an
+  // identical re-run in a later session is served by the provider's on-disk cache (no live call).
+  private readonly providerRuns = new Map<string, ProviderOutcome>();
 
-  constructor(private readonly cwd: string = process.cwd()) {}
+  /**
+   * @param cwd      mission workspace (defaults to process.cwd()).
+   * @param provider optional pre-built engineering provider. Production leaves it undefined and the
+   *                 real Claude adapter is created lazily on first use; tests inject a fake so the
+   *                 full route can be exercised without a live (paid) provider call.
+   */
+  constructor(
+    private readonly cwd: string = process.cwd(),
+    provider?: EngineeringProviderPort,
+  ) {
+    this.provider = provider ?? null;
+  }
 
   /** Stage 1 — deterministic selection inputs from existing artifacts (design §2 Stage 1). */
   readPlanState(): AutonomyPlanState {
@@ -94,13 +143,126 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     };
   }
 
-  /** Stage 3 — launch the EXISTING pipeline unchanged (design §2 Stage 3). */
+  /**
+   * Stage 3 — execute the mission (design §2 Stage 3 / Provider Contract §1).
+   *
+   * ODG decides IF an engineering provider is needed via the provider-owned predicate
+   * `missionRequiresProvider()`. Only when it returns true is the Claude Provider Adapter invoked —
+   * exactly once per mission. Every other (local / deterministic) mission runs the EXISTING pipeline
+   * unchanged and never calls Claude. This is the only branch added; the pipeline path is byte-for-
+   * byte what it was.
+   */
   runPipeline(mission: string): PipelineOutcome {
+    const spec = this.readMissionJson(mission);
+    if (missionRequiresProvider(this.toRoutable(spec))) {
+      return this.runViaProvider(mission, spec);
+    }
     const r = spawnSync("node", [PIPELINE, mission], {
       cwd: this.cwd,
       stdio: "inherit",
     });
     return { pipelineOk: r.status === 0 };
+  }
+
+  // --- provider execute path (Provider Contract §1/§2) --------------------
+
+  /** Route the execute stage to the injected engineering provider, exactly once per mission. */
+  private runViaProvider(mission: string, spec: RawMission | null): PipelineOutcome {
+    let outcome = this.providerRuns.get(mission);
+    if (!outcome) {
+      // The provider is the ONLY place a provider process is spawned (contract §1); its own
+      // content-addressed cache short-circuits an identical re-request without a live call.
+      outcome = this.getProvider().execute({
+        providerContractVersion: PROVIDER_CONTRACT_VERSION,
+        mission: this.buildProviderMission(mission, spec),
+        model: PROVIDER_MODEL,
+        maxTurns: PROVIDER_MAX_TURNS,
+      });
+      this.providerRuns.set(mission, outcome);
+    }
+    // A clean run refreshes the same evidence surface odg-run.js would leave, so the UNCHANGED
+    // gatherEvidence() → Release Manager path decides completion (contract §1 steps 6-7).
+    if (outcome.classification === "OK") this.refreshVerifyEvidence();
+    return toPipelineOutcome(outcome);
+  }
+
+  private getProvider(): EngineeringProviderPort {
+    if (!this.provider) {
+      this.provider = createClaudeProvider({ cwd: this.cwd, model: PROVIDER_MODEL });
+    }
+    return this.provider;
+  }
+
+  /** Refresh build/typescript/gitClean evidence via the EXISTING verifier (best-effort). */
+  private refreshVerifyEvidence(): void {
+    // Reuse the same verifier `odg verify` runs. Its gates are judged later by the Release Manager,
+    // so a failing gate must not throw here — it only writes runtime-verify.json.
+    if (!fs.existsSync(this.resolve(VERIFIER))) return;
+    spawnSync("node", [VERIFIER], { cwd: this.cwd, stdio: "inherit" });
+  }
+
+  /** Map an existing mission JSON onto the minimal routing shape (Provider Contract §0/§1). */
+  private toRoutable(spec: RawMission | null): RoutableMission {
+    return {
+      mode: spec?.mode,
+      authorizedPaths: this.authorizedPaths(spec),
+      requiresEngineering: spec?.requires_engineering ?? spec?.requiresEngineering,
+    };
+  }
+
+  /**
+   * Assemble the ProviderMission from EXISTING artifacts (contract §3): the mission JSON where
+   * present, falling back to the generated contract, plus deterministic selection context. Pure
+   * function of repo state — no timestamps, no randomness (DETERMINISM_FIRST).
+   */
+  private buildProviderMission(mission: string, spec: RawMission | null): ProviderMission {
+    const contract = this.generateContract(mission);
+    const state = this.readPlanState();
+    const source = this.readSource();
+    return {
+      mission: spec?.mission ?? mission,
+      priority: spec?.priority ?? contract.priority,
+      mode: spec?.mode ?? contract.mode,
+      objectives: this.providerObjectives(mission, spec),
+      definitionOfDone: this.strings(spec?.definition_of_done) ?? contract.definition_of_done,
+      completion: this.strings(spec?.completion) ?? contract.completion,
+      authorizedPaths: this.authorizedPaths(spec),
+      context: {
+        repoRoot: this.cwd,
+        branch: source.branch ?? "",
+        headCommit: source.commit ?? "",
+        masterPlanObjectives: state.masterPlanObjectives,
+        missingCapabilities: state.missingCapabilities,
+      },
+    };
+  }
+
+  private providerObjectives(mission: string, spec: RawMission | null): ProviderObjective[] {
+    const raw = spec?.objectives;
+    if (Array.isArray(raw) && raw.length > 0) {
+      return raw.map((o, i) => {
+        const id = `${this.slug(mission)}_${i + 1}`;
+        if (typeof o === "string") return { id, goal: o, done_when: [] };
+        return {
+          id: typeof o.id === "string" ? o.id : id,
+          goal: typeof o.goal === "string" ? o.goal : "",
+          done_when: this.strings(o.done_when) ?? [],
+        };
+      });
+    }
+    return this.generateContract(mission).objectives;
+  }
+
+  private authorizedPaths(spec: RawMission | null): string[] {
+    return this.strings(spec?.authorized_paths ?? spec?.authorizedPaths) ?? [];
+  }
+
+  private strings(value: unknown): string[] | null {
+    return Array.isArray(value) ? value.filter((s): s is string => typeof s === "string") : null;
+  }
+
+  private readMissionJson(mission: string): RawMission | null {
+    return this.readJson<RawMission>(`${MISSIONS_DIR}/${mission}.json`);
   }
 
   /** Stage 4 — collect evidence from existing capabilities (design §2 Stage 4). */
