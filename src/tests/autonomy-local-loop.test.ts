@@ -52,7 +52,22 @@ function check(cond: boolean, label: string): void {
 
 // --- 1) LOCAL ROUTING: a plain mission is NOT sent to a provider ---------------------------------
 
-const spec = { mission: MISSION, priority: "NORMAL", mode: "SEQUENTIAL" };
+// A complete Mission Contract: since generateContract() loads the REAL mission file and requires
+// real objectives (no self-synthesized default), the fixture declares its own — exactly as every
+// real roadmap mission does. It stays a PLAIN local mission (no authorizedPaths / requiresEngineering)
+// so routing still bypasses the provider.
+const spec = {
+  mission: MISSION,
+  priority: "NORMAL",
+  mode: "SEQUENTIAL",
+  objectives: [
+    {
+      id: "LOCAL_AUTONOMY_PROOF",
+      goal: "Prove the local autonomy loop drives a plain mission to RELEASE.",
+      done_when: ["Pipeline executed without error.", "Release Manager returns RELEASE."],
+    },
+  ],
+};
 check(
   missionRequiresProvider({ mode: spec.mode }) === false,
   "LOCAL ROUTING: a mission with no write scope / engineering flag stays on the local pipeline",
@@ -156,10 +171,12 @@ const cfg = { autonomyContractVersion: AUTONOMY_CONTRACT_VERSION };
 {
   // A fresh adapter re-reads plan state; capability-registry still lists the mission as missing, but
   // the (stubbed) ledger recorded nothing, so we simulate the ledger having advanced by marking the
-  // mission complete exactly as a real ledger write would — proving selection excludes it.
+  // mission complete exactly as a real ledger write would — a PROVEN entry (proven: true), which is
+  // the only shape mission-ledger.js writes for a validation-proven execution. selectNextMission must
+  // exclude it; a bare unproven record must NOT close the mission (see readPlanState).
   fs.writeFileSync(
     path.join(ws, "runtime", "generated", "mission-ledger.json"),
-    JSON.stringify({ entries: [{ mission: MISSION }] }),
+    JSON.stringify({ entries: [{ mission: MISSION, proven: true }] }),
   );
   const ports = new AutonomyRuntimeAdapter(ws);
   const result = new RuntimeAutonomy().run(cfg, ports);

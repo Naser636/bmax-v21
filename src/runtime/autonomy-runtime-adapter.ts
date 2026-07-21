@@ -125,9 +125,20 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         : [];
     }
 
-    const ledger = this.readJson<{ entries?: Array<{ mission?: string }> }>(LEDGER);
+    // A mission counts as completed ONLY when the ledger holds a PROVEN entry for it (proven === true,
+    // which mission-ledger.js sets exclusively for validation-proven executions). The ledger is an
+    // immutable history of proof EVENTS, not a list of closed missions: a mission merely *recorded*
+    // once — e.g. an unproven CREATED run — must not be treated as done, or it could never be
+    // re-executed. Filtering on `proven` is what makes selectNextMission the "first roadmap mission
+    // not yet PROVEN in the ledger" the comment above already promises. Read-only: the ledger's
+    // immutability is untouched (mission-ledger.js is unchanged), and the filter is a pure function of
+    // its content, so determinism holds.
+    const ledger = this.readJson<{ entries?: Array<{ mission?: string; proven?: boolean }> }>(LEDGER);
     const ledgerMissions = Array.isArray(ledger?.entries)
-      ? ledger!.entries.map((e) => e?.mission).filter((m): m is string => typeof m === "string")
+      ? ledger!.entries
+          .filter((e) => e?.proven === true)
+          .map((e) => e?.mission)
+          .filter((m): m is string => typeof m === "string")
       : [];
 
     const completedMissions = Array.from(
