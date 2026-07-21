@@ -65,5 +65,167 @@
     "Runtime has completed every achievable improvement.",
     "All remaining blockers are documented with evidence.",
     "Runtime is ready for the next autonomous mission."
+  ],
+  "objectives": [
+    {
+      "id": "OBJ_001",
+      "priority": "CRITICAL",
+      "goal": "Identify every blocker preventing full Runtime autonomy.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_002",
+      "priority": "CRITICAL",
+      "goal": "Repair architecture weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_003",
+      "priority": "CRITICAL",
+      "goal": "Repair execution weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_004",
+      "priority": "CRITICAL",
+      "goal": "Repair Decision Engine weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_005",
+      "priority": "CRITICAL",
+      "goal": "Repair Execution Planner weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_006",
+      "priority": "CRITICAL",
+      "goal": "Repair Patch Engine weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_007",
+      "priority": "CRITICAL",
+      "goal": "Repair Patch Executor weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_008",
+      "priority": "CRITICAL",
+      "goal": "Repair validation weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_009",
+      "priority": "CRITICAL",
+      "goal": "Repair mission execution weaknesses.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_010",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime robustness.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_011",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime resilience.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_012",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime observability.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_013",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime memory.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_014",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime self-diagnosis.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_015",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime self-healing.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    },
+    {
+      "id": "OBJ_016",
+      "priority": "CRITICAL",
+      "goal": "Improve Runtime continuous execution.",
+      "done_when": [
+        "Implementation completed.",
+        "Evidence generated.",
+        "Validation successful."
+      ]
+    }
   ]
 }
