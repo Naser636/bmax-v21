@@ -1,0 +1,44 @@
+{
+  "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Ajouter OpenAIProviderAdapter et l'intégrer dans la ProviderFactory sans modifier RuntimeAutonomy, ProviderOrchestrator ni les contrats existants.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Créer src/providers/openai-provider-adapter.ts.",
+      "done_when": [
+        "OpenAIProviderAdapter implémente EngineeringProviderPort."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Étendre ProviderFactory.",
+      "done_when": [
+        "ProviderFactory sélectionne Claude ou OpenAI.",
+        "Le choix est piloté par configuration."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Préserver la compatibilité.",
+      "done_when": [
+        "Claude continue de fonctionner.",
+        "Aucun contrat Runtime n'est modifié."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Valider le support multi-provider.",
+      "done_when": [
+        "Le Runtime peut utiliser OpenAI sans modifier RuntimeAutonomy.",
+        "Le Runtime peut utiliser Claude ou OpenAI via la ProviderFactory."
+      ]
+    }
+  ]
+}
