@@ -6,6 +6,19 @@ DATE=$(date -Iseconds)
 COMMIT=$(git rev-parse --short HEAD)
 BRANCH=$(git branch --show-current)
 
+# Mission artifact directories the engine writes ITSELF in [4/5] GENERATE
+# (passport, report, certificate, generated JSON, and the tracked history log).
+# Single source of truth, shared by the pre-flight and the post-run governance
+# check so both agree on exactly which paths are Runtime-owned outputs. Any path
+# OUTSIDE these directories is real source/business work and must still block.
+ARTIFACT_EXCLUDES=(
+  ':(exclude)runtime/mission-standard/generated'
+  ':(exclude)runtime/mission-standard/passports'
+  ':(exclude)runtime/mission-standard/reports'
+  ':(exclude)runtime/mission-standard/certificates'
+  ':(exclude)runtime/mission-standard/history'
+)
+
 echo "======================================"
 echo "MISSION STANDARD ENGINE v2"
 echo "======================================"
@@ -22,14 +35,21 @@ case "$MISSION" in
     ;;
 esac
 
-git diff --quiet || {
+# Ignore ONLY the Runtime's own mission artifacts (written by a previous
+# mission's [4/5] GENERATE step) so successive missions chain without manual
+# cleanup. Uses the SAME exclusion set as the post-run governance check below,
+# and the SAME `git diff` scope as before (tracked, unstaged modifications) —
+# any change to a source or business file outside the artifact directories is
+# still reported and still stops the pre-flight.
+DIRTY_TRACKED=$(git diff --name-only -- "${ARTIFACT_EXCLUDES[@]}")
+if [ -n "$DIRTY_TRACKED" ]; then
 echo "STOP: Git repository is dirty"
 echo
-echo "Modified tracked files:"
-git diff --name-only
+echo "Modified tracked files (outside mission artifacts):"
+echo "$DIRTY_TRACKED"
 echo
 exit 1
-}
+fi
 
 
 echo "[2/5] LOAD BRAIN"
@@ -96,12 +116,7 @@ echo "[5/5] GOVERNANCE"
 # verifies only that nothing changed OUTSIDE the artifact directories, which is
 # the real safety intent (catch stray edits to source made by the pipeline or
 # build). This keeps the check deterministic and side-effect free.
-UNEXPECTED_CHANGES=$(git status --porcelain -- \
-  ':(exclude)runtime/mission-standard/generated' \
-  ':(exclude)runtime/mission-standard/passports' \
-  ':(exclude)runtime/mission-standard/reports' \
-  ':(exclude)runtime/mission-standard/certificates' \
-  ':(exclude)runtime/mission-standard/history')
+UNEXPECTED_CHANGES=$(git status --porcelain -- "${ARTIFACT_EXCLUDES[@]}")
 
 if [ -n "$UNEXPECTED_CHANGES" ]; then
   echo "STOP: Repository changed unexpectedly"
