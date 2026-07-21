@@ -13,9 +13,15 @@ try {
   recordMission = null;
 }
 
-function pickAgent() {
+function pickAgent(requestedAgent) {
   const registry = envelope.readJsonSafe("runtime/connectors/fleet-agents.json");
   const agents = (registry && registry.agents) || [];
+  // Explicit routing : honour a requested agent only if it is enabled.
+  if (requestedAgent) {
+    const wanted = agents.find(a => a.enabled && a.id === requestedAgent);
+    return wanted ? wanted.id : null;
+  }
+  // Default (unchanged) : first enabled agent.
   const agent = agents.find(a => a.enabled);
   return agent ? agent.id : null;
 }
@@ -28,10 +34,14 @@ function readInstruction() {
   }
 }
 
-function dispatch(mission) {
-  const agent = pickAgent();
+function dispatch(mission, requestedAgent) {
+  const agent = pickAgent(requestedAgent);
   if (!agent) {
-    throw new Error("No enabled agent in fleet-agents.json");
+    throw new Error(
+      requestedAgent
+        ? "Requested agent not enabled in fleet-agents.json: " + requestedAgent
+        : "No enabled agent in fleet-agents.json"
+    );
   }
 
   // Reuse: consume the artifact produced by engineering-brief-builder.
@@ -63,7 +73,8 @@ module.exports = { dispatch };
 
 if (require.main === module) {
   const mission = process.argv[2] || "BUILD_RUNTIME";
-  const r = dispatch(mission);
+  const requestedAgent = process.argv[3]; // optional : route to a specific agent
+  const r = dispatch(mission, requestedAgent);
   console.log("======================================");
   console.log("FLEET DISPATCHER");
   console.log("======================================");

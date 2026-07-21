@@ -186,6 +186,17 @@ function extractProposal(raw, request) {
   return null;
 }
 
+// Resolve how to invoke a given agent. Per-agent overrides live under
+// cfg.agents[<id>]; when absent we fall back to the top-level command/args so
+// the original single-agent (Claude) behaviour is preserved unchanged.
+function resolveAgentCommand(cfg, agentId) {
+  const perAgent = (cfg.agents && cfg.agents[agentId]) || null;
+  return {
+    command: (perAgent && perAgent.command) || cfg.command,
+    args: (perAgent && perAgent.args) || cfg.args
+  };
+}
+
 function invokeAgent(cfg, request) {
   if (process.env.FLEET_BRIDGE_MOCK === "1") {
     return {
@@ -193,14 +204,16 @@ function invokeAgent(cfg, request) {
       proposal: {
         mission: request.mission,
         summary:
-          "[MOCK] Fleet Bridge round-trip for " + request.mission,
+          "[MOCK] Fleet Bridge round-trip for " + request.mission +
+          " via " + request.agent,
         actions: ["acknowledge request", "return structured proposal"]
       }
     };
   }
 
+  const { command, args } = resolveAgentCommand(cfg, request.agent);
   const prompt = buildPrompt(request);
-  const res = spawnSync(cfg.command, cfg.args, {
+  const res = spawnSync(command, args, {
     input: prompt,
     encoding: "utf8",
     timeout: cfg.timeoutMs,
@@ -406,6 +419,7 @@ module.exports = {
   tryClaim,
   releaseClaim,
   extractProposal,
+  resolveAgentCommand,
   invokeAgent
 };
 

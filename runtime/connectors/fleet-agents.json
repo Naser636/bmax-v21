@@ -5,6 +5,12 @@
       "kind": "file-mailbox",
       "capabilities": ["patch-proposal"],
       "enabled": true
+    },
+    {
+      "id": "chatgpt",
+      "kind": "file-mailbox",
+      "capabilities": ["patch-proposal"],
+      "enabled": true
     }
   ]
 }

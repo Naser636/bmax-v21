@@ -1,6 +1,16 @@
 {
   "command": "claude",
   "args": ["-p", "--output-format", "json", "--permission-mode", "acceptEdits"],
+  "agents": {
+    "claude": {
+      "command": "claude",
+      "args": ["-p", "--output-format", "json", "--permission-mode", "acceptEdits"]
+    },
+    "chatgpt": {
+      "command": "codex",
+      "args": ["exec", "--json"]
+    }
+  },
   "timeoutMs": 120000,
   "maxRetries": 2,
   "backoffMs": 1500,
