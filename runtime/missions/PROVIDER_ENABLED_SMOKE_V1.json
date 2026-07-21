@@ -1,0 +1,29 @@
+{
+  "mission": "PROVIDER_ENABLED_SMOKE_V1",
+  "priority": "NORMAL",
+  "mode": "IMPLEMENT",
+  "description": "First official provider-enabled ODG mission. A deliberately minimal engineering task whose sole purpose is to exercise the full Claude Provider Adapter route end-to-end. The Runtime decides on its own to call the provider — the mission declares an explicit write scope (authorizedPaths) and opts in with requiresEngineering, so missionRequiresProvider() returns true. The provider is invoked exactly once; an identical re-execution is served by the provider's existing on-disk cache with no live call. The provider never decides completion: only the Release Manager does.",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "src/app/provider-smoke/**"
+  ],
+  "objectives": [
+    {
+      "id": "PROVIDER_SMOKE_MARKER",
+      "goal": "Create a single minimal marker file under the authorized path recording that the engineering provider executed this mission.",
+      "done_when": [
+        "Exactly one file exists under src/app/provider-smoke/.",
+        "No file outside the authorized write scope is modified.",
+        "Build and TypeScript remain green."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective completed strictly within the authorized write scope.",
+    "Validation successful (build, typescript, gitClean).",
+    "Mission ledger updated."
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ]
+}

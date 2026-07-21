@@ -161,7 +161,14 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       cwd: this.cwd,
       stdio: "inherit",
     });
-    return { pipelineOk: r.status === 0 };
+    const pipelineOk = r.status === 0;
+    // A clean LOCAL run refreshes the same build/typescript/gitClean evidence surface the provider
+    // path produces (via the EXISTING verifier), so the UNCHANGED gatherEvidence() → Release Manager
+    // decision is made on CURRENT evidence — not a stale runtime-verify.json from an earlier run.
+    // The pipeline itself has no verify stage, so without this the local autonomy path would gate on
+    // whatever odg-verify last wrote (or nothing, on a fresh clone).
+    if (pipelineOk) this.refreshVerifyEvidence();
+    return { pipelineOk };
   }
 
   // --- provider execute path (Provider Contract §1/§2) --------------------
