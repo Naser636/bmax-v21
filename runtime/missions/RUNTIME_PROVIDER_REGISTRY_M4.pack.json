@@ -1,0 +1,24 @@
+{
+  "evidencePackContractVersion": "1.0.0",
+  "mission": "RUNTIME_PROVIDER_REGISTRY_M4",
+  "itemCount": 3,
+  "items": [
+    {
+      "kind": "contract",
+      "id": "src/contracts/provider-registry.ts",
+      "hash": "c4f37804"
+    },
+    {
+      "kind": "core",
+      "id": "src/core/provider-registry.ts",
+      "hash": "01c1237d"
+    },
+    {
+      "kind": "test",
+      "id": "src/tests/provider-registry.test.ts",
+      "hash": "61c34447"
+    }
+  ],
+  "sealHash": "b41c4967",
+  "complete": true
+}
