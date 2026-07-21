@@ -65,7 +65,6 @@ const interpretation = rules[mission] || (() => {
 })();
 
 const result={
-    generatedAt:new Date().toISOString(),
     mission,
     roadmapLoaded:roadmap!=="NO_ROADMAP",
     roadmapVersion:roadmap.split("\n")[0]||"",

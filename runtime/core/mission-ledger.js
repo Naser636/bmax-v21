@@ -14,6 +14,18 @@ function readJsonSafe(file) {
 }
 
 function recordMission(mission) {
+  // Proven-only gate: never record a mission the Validation Engine explicitly marked NOT validated.
+  // In the odg-run / mse path the Validation Engine writes mission-report.json for THIS mission and
+  // exits non-zero when it is not proven (so this stage is not even reached). This check is the
+  // defensive backstop: if a mission-report for this exact mission exists and is not validated, the
+  // ledger refuses to append. (The autonomy provider path archives only after a Release Manager
+  // RELEASE; there the report may be absent or for another mission, so it is not blocked here.)
+  const report = readJsonSafe("runtime/generated/mission-report.json");
+  if (report && report.mission === mission && report.validated !== true) {
+    console.warn(`[MissionLedger] Refusing to record "${mission}": validation not proven (status=${report.status}).`);
+    return { skipped: true, reason: "UNPROVEN", entry: { mission } };
+  }
+
   const governance = authorizeMission(mission);
 
   const plan = readJsonSafe("runtime/generated/mission-plan.json") || {};
@@ -28,7 +40,10 @@ function recordMission(mission) {
     constitutionVersion: governance.constitutionVersion,
     policyVersion: governance.policyVersion,
     strategy: governance.strategy,
-    objectives: Array.isArray(plan.objectives) ? plan.objectives.length : 0
+    objectives: Array.isArray(plan.objectives) ? plan.objectives.length : 0,
+    // Only proven executions reach this point (see the gate above), so every entry is proven.
+    proven: true,
+    validated: report && report.mission === mission ? report.validated === true : undefined
   };
 
   if (context && context.project) {

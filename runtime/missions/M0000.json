@@ -1,0 +1,41 @@
+{
+  "mission": "M0000",
+  "priority": "P0",
+  "mode": "AUDIT",
+  "description": "Establish the official Runtime architectural baseline. No code modification, no patch, no provider (read-only). Transcribed from runtime/system/ROADMAP.md § M0000.",
+  "objectives": [
+    {
+      "id": "ARCHITECTURE_COMPLIANCE_REPORT",
+      "goal": "Produce the ArchitectureComplianceReport.",
+      "done_when": ["Runtime architectural baseline captured."]
+    },
+    {
+      "id": "RESPONSIBILITY_INVENTORY",
+      "goal": "Produce the ResponsibilityInventory.",
+      "done_when": ["Each component's single responsibility recorded."]
+    },
+    {
+      "id": "DEPENDENCY_REPORT",
+      "goal": "Produce the DependencyReport.",
+      "done_when": ["Internal and external dependencies inventoried."]
+    },
+    {
+      "id": "CONTRACT_INVENTORY",
+      "goal": "Produce the ContractInventory.",
+      "done_when": ["Public contracts inventoried."]
+    },
+    {
+      "id": "EXTENSION_POINT_INVENTORY",
+      "goal": "Produce the ExtensionPointInventory.",
+      "done_when": ["Extension points inventoried."]
+    }
+  ],
+  "definition_of_done": [
+    "Official Runtime baseline established.",
+    "No source code modified (read-only mission)."
+  ],
+  "completion": [
+    "Architecture baseline is recorded.",
+    "Mission ledger updated with a proven M0000 entry."
+  ]
+}

@@ -80,15 +80,30 @@ mkdir -p runtime/mission-standard/{generated,passports,reports,certificates,hist
 
 echo "[4/5] GENERATE"
 
+# Derive the REAL verdict from the pipeline's evidence-based Validation Engine output rather than
+# hardcoding SUCCESS. The pipeline's Validation Engine exits non-zero (halting odg-run.js, and this
+# script under `set -e`) when the mission is not proven, so reaching this point already implies a
+# validated mission — but the artifacts still reflect the actual, sourced status for traceability.
+REPORT_STATUS=$(node -e "try{process.stdout.write(String(require('./runtime/generated/mission-report.json').status||'UNKNOWN'))}catch(e){process.stdout.write('UNKNOWN')}")
+REPORT_VALIDATED=$(node -e "try{process.stdout.write(String(require('./runtime/generated/mission-report.json').validated===true))}catch(e){process.stdout.write('false')}")
+
+if [ "$REPORT_VALIDATED" != "true" ] || [ "$REPORT_STATUS" != "SUCCESS" ]; then
+  echo "STOP: mission not proven by the Validation Engine (status=${REPORT_STATUS}, validated=${REPORT_VALIDATED})."
+  echo "No SUCCESS artifact will be written."
+  exit 1
+fi
+
 cat > "runtime/mission-standard/passports/${MISSION}.passport.md" <<PASS
 Mission : ${MISSION}
 Date : ${DATE}
-Status : CREATED
+Status : ${REPORT_STATUS}
+Validated : ${REPORT_VALIDATED}
 PASS
 
 cat > "runtime/mission-standard/reports/${MISSION}.report.md" <<REPORT
 Mission : ${MISSION}
-Status : SUCCESS
+Status : ${REPORT_STATUS}
+Validated : ${REPORT_VALIDATED}
 REPORT
 
 cat > "runtime/mission-standard/certificates/${MISSION}.certificate.md" <<CERT
@@ -96,15 +111,16 @@ Mission : ${MISSION}
 Commit : ${COMMIT}
 Branch : ${BRANCH}
 Date : ${DATE}
+Status : ${REPORT_STATUS}
 CERT
 
-printf -- "- [%s] %s SUCCESS\n" "$DATE" "$MISSION" >> runtime/mission-standard/history/history.md
+printf -- "- [%s] %s %s\n" "$DATE" "$MISSION" "$REPORT_STATUS" >> runtime/mission-standard/history/history.md
 
 cat > "runtime/mission-standard/generated/${MISSION}.json" <<JSON
 {
   "mission":"${MISSION}",
-  "status":"SUCCESS",
-  "date":"${DATE}"
+  "status":"${REPORT_STATUS}",
+  "validated":${REPORT_VALIDATED}
 }
 JSON
 

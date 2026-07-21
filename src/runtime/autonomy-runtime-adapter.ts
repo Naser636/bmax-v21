@@ -51,6 +51,7 @@ const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
 const BRAIN = "runtime/brain/MASTER_PLAN.md";
+const ROADMAP_MANIFEST = "runtime/governance/ROADMAP.json";
 const MSTD_GENERATED = "runtime/mission-standard/generated";
 const PIPELINE = "runtime/bin/odg-run.js";
 const MISSIONS_DIR = "runtime/missions";
@@ -100,11 +101,29 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
 
   /** Stage 1 — deterministic selection inputs from existing artifacts (design §2 Stage 1). */
   readPlanState(): AutonomyPlanState {
-    const masterPlanObjectives = this.readMasterPlanObjectives();
-    const registry = this.readJson<{ missingCapabilities?: string[] }>(REGISTRY);
-    const missingCapabilities = Array.isArray(registry?.missingCapabilities)
-      ? registry!.missingCapabilities
+    // Official roadmap manifest is the primary source (runtime/governance/ROADMAP.json): the ordered
+    // list of missions the Runtime executes autonomously. Every roadmap mission is a candidate, so
+    // the pure selectNextMission (frozen) reduces to "first roadmap mission not yet proven in the
+    // ledger" — the loop advances in roadmap order. The frozen selection FUNCTION is unchanged; only
+    // its INPUT artifact is the manifest instead of the exhausted capability master plan.
+    const manifest = this.readJson<{ missions?: Array<{ id?: string }> }>(ROADMAP_MANIFEST);
+    const manifestIds = Array.isArray(manifest?.missions)
+      ? manifest!.missions.map((m) => m?.id).filter((m): m is string => typeof m === "string")
       : [];
+
+    let masterPlanObjectives: string[];
+    let missingCapabilities: string[];
+    if (manifestIds.length > 0) {
+      masterPlanObjectives = manifestIds;
+      missingCapabilities = manifestIds;
+    } else {
+      // Backward-compatible fallback: the legacy capability master plan + registry (pre-manifest).
+      masterPlanObjectives = this.readMasterPlanObjectives();
+      const registry = this.readJson<{ missingCapabilities?: string[] }>(REGISTRY);
+      missingCapabilities = Array.isArray(registry?.missingCapabilities)
+        ? registry!.missingCapabilities
+        : [];
+    }
 
     const ledger = this.readJson<{ entries?: Array<{ mission?: string }> }>(LEDGER);
     const ledgerMissions = Array.isArray(ledger?.entries)
@@ -118,28 +137,38 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     return { masterPlanObjectives, missingCapabilities, completedMissions };
   }
 
-  /** Stage 2 — assemble a Mission Contract in the EXISTING runtime/missions/*.json shape. */
+  /**
+   * Stage 2 — load the REAL Mission Contract from runtime/missions/<MISSION>.json.
+   *
+   * The generic synthesized contract is removed (the "generic replay" blockage): a mission with no
+   * real definition on disk THROWS here, which the pure core turns into a CONTRACT_INVALID halt
+   * (design §3, R-Human) — a real blocker for a human to author the mission, never a fabricated one.
+   * Objectives (both the string and the {id,goal,done_when} shapes) come from the mission itself, so
+   * different missions produce different contracts. Missing definition_of_done / completion metadata
+   * falls back to sensible defaults; the mission-specific OBJECTIVES are always real.
+   */
   generateContract(mission: string): MissionContract {
+    const spec = this.readMissionJson(mission);
+    if (!spec) {
+      throw new Error(
+        `No mission contract at ${MISSIONS_DIR}/${mission}.json — author the mission definition before it can execute.`,
+      );
+    }
+    const objectives = this.providerObjectives(mission, spec);
+    if (objectives.length === 0) {
+      throw new Error(`Mission contract "${mission}" declares no objectives.`);
+    }
     return {
-      mission,
-      priority: "NORMAL",
-      mode: "SEQUENTIAL",
-      objectives: [
-        {
-          id: this.slug(mission),
-          goal: `Deliver capability: ${mission}.`,
-          done_when: [
-            "Pipeline executed without error.",
-            "Release Manager returns RELEASE on complete evidence.",
-          ],
-        },
-      ],
-      definition_of_done: [
+      mission: spec.mission ?? mission,
+      priority: typeof spec.priority === "string" ? spec.priority : "NORMAL",
+      mode: typeof spec.mode === "string" ? spec.mode : "SEQUENTIAL",
+      objectives,
+      definition_of_done: this.strings(spec.definition_of_done) ?? [
         "Objective completed.",
         "Validation successful.",
         "Mission ledger updated.",
       ],
-      completion: ["Release Manager decision is RELEASE."],
+      completion: this.strings(spec.completion) ?? ["Release Manager decision is RELEASE."],
     };
   }
 
@@ -257,7 +286,10 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         };
       });
     }
-    return this.generateContract(mission).objectives;
+    // No objectives on the spec → return empty; generateContract() treats this as a real blocker
+    // (no self-synthesized generic objective). This also breaks the previous generateContract↔here
+    // recursion now that generateContract calls this helper.
+    return [];
   }
 
   private authorizedPaths(spec: RawMission | null): string[] {

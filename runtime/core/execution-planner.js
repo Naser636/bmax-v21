@@ -7,7 +7,6 @@ fs.readFileSync("runtime/generated/mission-plan.json","utf8")
 );
 
 const execution={
-generatedAt:new Date().toISOString(),
 mission:plan.mission,
 status:"READY",
 steps:[
