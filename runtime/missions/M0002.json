@@ -1,0 +1,35 @@
+{
+  "mission": "M0002",
+  "priority": "P0",
+  "mode": "AUDIT",
+  "description": "Build Runtime foundations. Transcribed from runtime/system/ROADMAP.md § M0002 (no new architecture).",
+  "objectives": [
+    {
+      "id": "CONTRACTS",
+      "goal": "Contracts.",
+      "done_when": ["Public contracts exist for the runtime foundations."]
+    },
+    {
+      "id": "INTERFACES",
+      "goal": "Interfaces.",
+      "done_when": ["Foundation interfaces are defined."]
+    },
+    {
+      "id": "ARTIFACTS",
+      "goal": "Artifacts.",
+      "done_when": ["Runtime artifacts are produced and immutable."]
+    },
+    {
+      "id": "EXTENSION_POINTS",
+      "goal": "Extension points.",
+      "done_when": ["Extension points are available for future capabilities."]
+    }
+  ],
+  "definition_of_done": [
+    "Runtime is provider-independent and ready for future capabilities."
+  ],
+  "completion": [
+    "Runtime foundations are established.",
+    "Mission ledger updated with a proven M0002 entry."
+  ]
+}

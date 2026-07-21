@@ -1,0 +1,45 @@
+{
+  "mission": "M0001",
+  "priority": "P0",
+  "mode": "AUDIT",
+  "description": "Introduce the Mission Framework. Transcribed from runtime/system/ROADMAP.md § M0001 (no new architecture).",
+  "objectives": [
+    {
+      "id": "MISSION_CONTRACT",
+      "goal": "Mission Contract.",
+      "done_when": ["Mission Contract shape is defined and loadable."]
+    },
+    {
+      "id": "MISSION_REGISTRY",
+      "goal": "Mission Registry.",
+      "done_when": ["Missions can be registered and enumerated."]
+    },
+    {
+      "id": "MISSION_LOADER",
+      "goal": "Mission Loader.",
+      "done_when": ["A mission definition can be loaded from disk."]
+    },
+    {
+      "id": "MISSION_VALIDATOR",
+      "goal": "Mission Validator.",
+      "done_when": ["A mission definition can be validated."]
+    },
+    {
+      "id": "MISSION_STATE_MACHINE",
+      "goal": "Mission State Machine.",
+      "done_when": ["Mission lifecycle states and transitions exist."]
+    },
+    {
+      "id": "MISSION_LEDGER",
+      "goal": "Mission Ledger.",
+      "done_when": ["Completed missions are recorded in an append-only ledger."]
+    }
+  ],
+  "definition_of_done": [
+    "ODG can load, validate and track missions."
+  ],
+  "completion": [
+    "Mission Framework is available.",
+    "Mission ledger updated with a proven M0001 entry."
+  ]
+}
