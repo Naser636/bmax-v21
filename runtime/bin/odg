@@ -6,7 +6,21 @@ MISSION="${1:-help}"
 case "$MISSION" in
   mission)
     shift
-    ./runtime/mission-standard/bin/mse "$@"
+    # Engineering missions (missionRequiresProvider === true) are driven through the EXISTING
+    # RuntimeAutonomy + AutonomyRuntimeAdapter so the execute stage routes to the Claude Provider
+    # Adapter. The single-mission driver decides: it exits 3 for any local / deterministic mission
+    # (or one it can't route), and only then do we run the Mission-Standard engine exactly as before
+    # — so local missions keep their existing behaviour unchanged.
+    if node_modules/.bin/tsx src/runtime/mission-cli.ts "$@"; then
+      exit 0
+    else
+      rc=$?
+      if [ "$rc" -eq 3 ]; then
+        ./runtime/mission-standard/bin/mse "$@"
+      else
+        exit "$rc"
+      fi
+    fi
     ;;
   autonomy)
     ./runtime/bin/odg-autonomy.js

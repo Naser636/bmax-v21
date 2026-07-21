@@ -1,0 +1,57 @@
+{
+  "mission": "PREPARE_ENGINEERING_BRIEF",
+  "priority": "CRITICAL",
+  "mode": "READ_ONLY",
+  "continue_until_complete": true,
+  "description": "Préparer automatiquement un Engineering Brief complet pour la mission courante sans appeler de Provider et sans modifier le dépôt.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Analyser l'état du dépôt.",
+      "done_when": [
+        "Le dépôt est inventorié.",
+        "Les modifications en cours sont identifiées."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Analyser les preuves Runtime.",
+      "done_when": [
+        "Les rapports Runtime sont lus.",
+        "Les journaux et validations sont corrélés."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Identifier la cause racine.",
+      "done_when": [
+        "Une Root Cause unique ou hiérarchisée est produite.",
+        "Chaque conclusion est associée à une preuve."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Préparer le Patch Plan.",
+      "done_when": [
+        "Les fichiers à modifier sont listés.",
+        "Les responsabilités à modifier sont identifiées.",
+        "Le Patch Plan minimal est produit."
+      ]
+    },
+    {
+      "id": "OBJ-005",
+      "priority": 5,
+      "goal": "Préparer l'exécution Provider.",
+      "done_when": [
+        "Les tests à exécuter sont définis.",
+        "La Definition of Done est produite.",
+        "Le Provider Brief est généré.",
+        "Aucun Provider n'a été appelé."
+      ]
+    }
+  ]
+}
