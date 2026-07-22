@@ -6,6 +6,8 @@ export * from "./capability-registry";
 export * from "./plugin-registry";
 export * from "./mission-loader";
 export * from "./mission-orchestrator";
+export * from "./mission-migration";
+export * from "./local-mission-runner";
 export * from "./execution-planner";
 export * from "./event-bus";
 export * from "./runtime-health";

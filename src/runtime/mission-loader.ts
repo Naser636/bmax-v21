@@ -21,9 +21,7 @@ export class MissionLoader {
 
   load(id: string, name: string): RuntimeMission {
 
-    const projectContext = JSON.parse(
-      fs.readFileSync(this.projectContextPath, "utf8")
-    );
+    const projectContext = this.readProjectContext();
 
     let brain = {
       loaded: false,
@@ -53,5 +51,26 @@ export class MissionLoader {
       projectContext,
       brain
     };
+  }
+
+  /**
+   * Read the project-context snapshot defensively. The snapshot is meant to be JSON
+   * (see ProjectContext.generate), but a legacy/stale snapshot may be a plain text
+   * listing. Rather than crash the whole Runtime — which would make local mission
+   * execution impossible — fall back to the raw content or null so a mission can still
+   * be planned and executed by src/runtime.
+   */
+  private readProjectContext(): unknown {
+    let raw: string;
+    try {
+      raw = fs.readFileSync(this.projectContextPath, "utf8");
+    } catch {
+      return null;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return { raw };
+    }
   }
 }

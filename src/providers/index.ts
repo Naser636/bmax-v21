@@ -13,11 +13,13 @@ export {
   isFrozenPath,
   missionRequiresProvider,
   renderMissionPrompt,
+  toPipelineFailure,
   toPipelineOutcome,
 } from "./provider-port";
 
 export type {
   EngineeringProviderPort,
+  PipelineFailureData,
   ProviderClassification,
   ProviderContext,
   ProviderDescription,

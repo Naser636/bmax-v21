@@ -202,13 +202,31 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       stdio: "inherit",
     });
     const pipelineOk = r.status === 0;
+    if (!pipelineOk) {
+      // Never surface a bare boolean: report the launcher, its exit code and the failing signal.
+      // stdout/stderr were streamed live to the console (stdio:"inherit"), so they are not captured
+      // here — we honestly omit them rather than invent empty strings.
+      return {
+        pipelineOk: false,
+        diagnostics: {
+          stage: "local-pipeline",
+          reason: r.signal ? "KILLED_BY_SIGNAL" : "NON_ZERO_EXIT",
+          message: r.error
+            ? `Failed to launch ${PIPELINE}: ${r.error.message}`
+            : `${PIPELINE} exited with code ${r.status ?? "null"}${r.signal ? ` (signal ${r.signal})` : ""}. See the streamed pipeline output above.`,
+          provider: PIPELINE,
+          exitCode: r.status,
+          ...(r.error ? { exception: r.error.message } : {}),
+        },
+      };
+    }
     // A clean LOCAL run refreshes the same build/typescript/gitClean evidence surface the provider
     // path produces (via the EXISTING verifier), so the UNCHANGED gatherEvidence() → Release Manager
     // decision is made on CURRENT evidence — not a stale runtime-verify.json from an earlier run.
     // The pipeline itself has no verify stage, so without this the local autonomy path would gate on
     // whatever odg-verify last wrote (or nothing, on a fresh clone).
-    if (pipelineOk) this.refreshVerifyEvidence();
-    return { pipelineOk };
+    this.refreshVerifyEvidence();
+    return { pipelineOk: true };
   }
 
   // --- provider execute path (Provider Contract §1/§2) --------------------

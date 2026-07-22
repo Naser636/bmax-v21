@@ -58,9 +58,46 @@ export interface MissionContract {
   completion: string[];
 }
 
+/**
+ * Structured diagnostics for a FAILED pipeline launch (design §2 Stage 3).
+ *
+ * The founding rule of this seam: a failure is NEVER hidden behind a bare boolean. When
+ * `pipelineOk` is false the outcome carries the real reason so the halt is self-explanatory.
+ * Every field except `stage`/`reason`/`message` is optional and populated ONLY when actually
+ * observed — no field is ever invented. Kept as plain data (no Error, no provider coupling) so it
+ * flows unchanged from the provider seam through the pure core into the halt.
+ */
+export interface PipelineFailure {
+  /** Which stage produced the failure — e.g. "provider-execution", "scope-enforcement", "local-pipeline". */
+  stage: string;
+  /** Short machine code for the failure class — e.g. the provider classification or "NON_ZERO_EXIT". */
+  reason: string;
+  /** Human-readable summary of what went wrong. */
+  message: string;
+  /** Process exit code when a process was launched (null when killed by signal / never started). */
+  exitCode?: number | null;
+  /** Provider / launcher identity that produced the failure (e.g. "claude-code", "odg-run.js"). */
+  provider?: string;
+  /** Captured standard error, when available. */
+  stderr?: string;
+  /** Captured standard output, when available. */
+  stdout?: string;
+  /** Thrown-exception message, when the failure originated from an exception. */
+  exception?: string;
+  /** Provider-certified blocker text, when the provider reported a BLOCKED stop. */
+  blocker?: string;
+  /** Working-tree paths changed outside the mission's authorized scope (contract §9). */
+  unauthorizedChanges?: string[];
+}
+
 /** Result of launching the existing pipeline (design §2 Stage 3). Never modifies odg-run.js. */
 export interface PipelineOutcome {
   pipelineOk: boolean;
+  /**
+   * Present iff `pipelineOk === false`. Carries the real, structured reason for the failure so the
+   * core can build a self-explanatory halt instead of surfacing an opaque `{ pipelineOk: false }`.
+   */
+  diagnostics?: PipelineFailure;
 }
 
 /**
@@ -128,6 +165,8 @@ export interface AutonomyHalt {
   record?: ReleaseRecord;
   /** Present when the halt was a Release Manager error (EVIDENCE_INCOMPLETE). */
   releaseError?: ReleaseManagerError;
+  /** Present when the halt was an EXECUTION_FAILED with structured pipeline diagnostics. */
+  pipeline?: PipelineFailure;
 }
 
 /** Result of an autonomy run — always returned as data (design §4). */

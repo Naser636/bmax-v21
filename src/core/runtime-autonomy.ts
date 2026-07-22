@@ -26,6 +26,8 @@ import {
   type AutonomyStatus,
   type CompletedCycle,
   type MissionContract,
+  type PipelineFailure,
+  type PipelineOutcome,
   type RuntimeAutonomyDescription,
 } from "@/contracts/runtime-autonomy";
 import {
@@ -178,7 +180,7 @@ export class RuntimeAutonomy {
       }
 
       // 3. Launch the EXISTING pipeline — business logic untouched.
-      let pipeline: { pipelineOk: boolean };
+      let pipeline: PipelineOutcome;
       try {
         pipeline = ports.runPipeline(mission);
       } catch (err) {
@@ -186,15 +188,30 @@ export class RuntimeAutonomy {
           "EXECUTION_FAILED",
           completed,
           cycles,
-          this.halt(mission, "EXECUTION_FAILED", `runPipeline threw: ${msg(err)}`),
+          this.haltPipeline(mission, {
+            stage: "runPipeline",
+            reason: "EXCEPTION",
+            message: `runPipeline threw: ${msg(err)}`,
+            exception: msg(err),
+          }),
         );
       }
       if (!pipeline || pipeline.pipelineOk !== true) {
+        // Never re-emit an opaque `{ pipelineOk: false }`: carry the structured diagnostics the
+        // pipeline seam produced (provider classification, exit code, stderr, blocker, …) into the
+        // halt, or synthesize a minimal one if a port returned failure without diagnostics.
+        const failure: PipelineFailure = pipeline?.diagnostics ?? {
+          stage: "runPipeline",
+          reason: "UNKNOWN",
+          message: pipeline
+            ? "Pipeline reported failure without diagnostics."
+            : "runPipeline returned no outcome.",
+        };
         return this.result(
           "EXECUTION_FAILED",
           completed,
           cycles,
-          this.halt(mission, "EXECUTION_FAILED", `Pipeline failed for "${mission}".`),
+          this.haltPipeline(mission, failure),
         );
       }
 
@@ -367,6 +384,37 @@ export class RuntimeAutonomy {
     return { mission, reason, message };
   }
 
+  /**
+   * Build an EXECUTION_FAILED halt from structured pipeline diagnostics. The `message` is rendered
+   * self-explanatory (stage / reason / exit code / provider / captured streams), and the raw
+   * structured object is attached as `pipeline` for programmatic consumers — so the Runtime never
+   * again surfaces a bare `{ pipelineOk: false }`.
+   */
+  private haltPipeline(mission: string, failure: PipelineFailure): AutonomyHalt {
+    return {
+      mission,
+      reason: "EXECUTION_FAILED",
+      message: this.renderPipelineFailure(failure),
+      pipeline: failure,
+    };
+  }
+
+  /** Render pipeline diagnostics into a human-readable, multi-line detail. Only present fields shown. */
+  private renderPipelineFailure(f: PipelineFailure): string {
+    const lines: string[] = [];
+    lines.push(`Pipeline failed at stage "${f.stage}" (${f.reason}): ${f.message}`);
+    if (f.provider) lines.push(`  provider   : ${f.provider}`);
+    if (f.exitCode !== undefined) lines.push(`  exitCode   : ${f.exitCode}`);
+    if (f.blocker) lines.push(`  blocker    : ${f.blocker}`);
+    if (f.unauthorizedChanges && f.unauthorizedChanges.length > 0) {
+      lines.push(`  unauthorized: ${f.unauthorizedChanges.join(", ")}`);
+    }
+    if (f.exception) lines.push(`  exception  : ${f.exception}`);
+    if (f.stderr) lines.push(`  stderr     :\n${indent(f.stderr)}`);
+    if (f.stdout) lines.push(`  stdout     :\n${indent(f.stdout)}`);
+    return lines.join("\n");
+  }
+
   private result(
     status: AutonomyStatus,
     completed: CompletedCycle[],
@@ -386,6 +434,14 @@ export class RuntimeAutonomy {
 
 function msg(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+/** Indent a (possibly multi-line) captured stream so it reads as a nested block in the halt detail. */
+function indent(text: string): string {
+  return text
+    .split(/\r?\n/)
+    .map((l) => `    ${l}`)
+    .join("\n");
 }
 
 export { CAPABILITY_NAME };

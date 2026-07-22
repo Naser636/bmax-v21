@@ -152,12 +152,91 @@ export interface EngineeringProviderPort {
 }
 
 /**
+ * Structured failure diagnostics carried across the `PipelineOutcome` seam. Structurally identical
+ * to the contract's `PipelineFailure` (src/contracts/runtime-autonomy.ts) but declared HERE so this
+ * module keeps its zero-import-from-core discipline (contract §0); TypeScript structural typing
+ * makes the two assignable. Populated only from fields actually present on the outcome — never
+ * invented.
+ */
+export interface PipelineFailureData {
+  stage: string;
+  reason: string;
+  message: string;
+  exitCode?: number | null;
+  provider?: string;
+  stderr?: string;
+  stdout?: string;
+  blocker?: string;
+  unauthorizedChanges?: string[];
+}
+
+/** Max captured stream length carried in diagnostics — enough to explain, bounded so a halt stays legible. */
+const DIAGNOSTIC_STREAM_LIMIT = 4000;
+
+function tail(text: string): string | undefined {
+  if (!text) return undefined;
+  const trimmed = text.trim();
+  if (!trimmed) return undefined;
+  return trimmed.length > DIAGNOSTIC_STREAM_LIMIT
+    ? `…${trimmed.slice(-DIAGNOSTIC_STREAM_LIMIT)}`
+    : trimmed;
+}
+
+/** Map a non-OK classification to the pipeline stage that produced it (for the halt). */
+function stageForFailure(outcome: ProviderOutcome): string {
+  if (outcome.unauthorizedChanges.length > 0) return "scope-enforcement";
+  switch (outcome.classification) {
+    case "INTERRUPTED":
+      return "provider-timeout";
+    case "BLOCKED":
+      return "provider-report";
+    case "SKIPPED":
+      return "provider-skipped";
+    default:
+      return "provider-execution";
+  }
+}
+
+/**
+ * Build structured diagnostics from a non-OK provider outcome. This is what stops the Runtime from
+ * hiding the real failure behind a boolean: every meaningful field the adapter observed
+ * (classification, exit code, provider identity, blocker, unauthorized changes, captured streams,
+ * diagnostic breadcrumbs) is preserved for the halt. Absent fields are omitted, never faked.
+ */
+export function toPipelineFailure(outcome: ProviderOutcome): PipelineFailureData {
+  const summary =
+    outcome.diagnostics.length > 0
+      ? outcome.diagnostics.join("; ")
+      : outcome.result?.blocker ?? `provider returned ${outcome.classification}`;
+  const failure: PipelineFailureData = {
+    stage: stageForFailure(outcome),
+    reason: outcome.classification,
+    message: summary,
+    provider: outcome.provider,
+  };
+  if (outcome.raw.exitCode !== undefined) failure.exitCode = outcome.raw.exitCode;
+  const stderr = tail(outcome.raw.stderr);
+  if (stderr) failure.stderr = stderr;
+  const stdout = tail(outcome.raw.stdout);
+  if (stdout) failure.stdout = stdout;
+  if (outcome.result?.blocker) failure.blocker = outcome.result.blocker;
+  if (outcome.unauthorizedChanges.length > 0) {
+    failure.unauthorizedChanges = outcome.unauthorizedChanges;
+  }
+  return failure;
+}
+
+/**
  * Structural bridge to the frozen `PipelineOutcome` seam (`AutonomyRuntimePorts.runPipeline`).
  * A future, explicitly-authorized edge mission can drop a provider into that seam without any
- * change to src/core: `{ pipelineOk }` is exactly what the core consumes.
+ * change to src/core: `{ pipelineOk }` is exactly what the core consumes. On failure the outcome
+ * ALSO carries structured `diagnostics` so the core never surfaces a bare `{ pipelineOk: false }`.
  */
-export function toPipelineOutcome(outcome: ProviderOutcome): { pipelineOk: boolean } {
-  return { pipelineOk: outcome.classification === "OK" };
+export function toPipelineOutcome(
+  outcome: ProviderOutcome,
+): { pipelineOk: boolean; diagnostics?: PipelineFailureData } {
+  if (outcome.classification === "OK") return { pipelineOk: true };
+  return { pipelineOk: false, diagnostics: toPipelineFailure(outcome) };
 }
 
 // ---------------------------------------------------------------------------

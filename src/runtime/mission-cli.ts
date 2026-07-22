@@ -1,22 +1,19 @@
 /*
- * Runtime Autonomy — single-mission CLI entrypoint (`odg mission <MISSION>`, provider route)
+ * Runtime — unified single-mission CLI entrypoint (`odg mission <MISSION>`)
  *
- * The one new piece required to let `odg mission <MISSION>` execute an ENGINEERING mission through
- * the Claude Provider Adapter. It is pure wiring and adds no business logic of its own:
+ * The unified entry point for every mission (UNIFY_RUNTIME_EXECUTION). MissionOrchestrator plans
+ * the mission first (OBJ-001) and the Runtime then chooses ONE of three routes:
  *
- *   - it reuses the EXISTING autonomous core (src/core/runtime-autonomy.ts) and the EXISTING
- *     Runtime adapter (src/runtime/autonomy-runtime-adapter.ts) verbatim;
- *   - the provider routing decision, the provider call, evidence gathering, the Release Manager
- *     decision and the ledger archive are ALL the adapter's / core's own behaviour — untouched;
- *   - the only thing this file contributes is scoping the Autonomy Cycle to the ONE mission named
- *     on the command line (SingleMissionAdapter) so the same loop runs it and then reports
- *     PLAN_COMPLETE.
+ *   1. PROVIDER  — an ENGINEERING mission (missionRequiresProvider === true) is driven through the
+ *      EXISTING RuntimeAutonomy + AutonomyRuntimeAdapter so the execute stage reaches the Claude
+ *      Provider Adapter. Unchanged from before; scoped to ONE mission via SingleMissionAdapter.
+ *   2. LOCAL     — a migrated mission (mission-migration.ts) is executed entirely inside
+ *      src/runtime via MissionOrchestrator → RuntimeExecutor. It no longer exits FALLBACK_TO_MSE
+ *      (OBJ-002).
+ *   3. FALLBACK  — any mission not yet migrated keeps the existing Mission-Standard engine (`mse`)
+ *      exactly as before, signalled by exiting FALLBACK_TO_MSE (OBJ-003).
  *
- * Compatibility: a mission that does NOT require a provider (local / deterministic — the existing
- * roadmap missions) is left entirely to the existing Mission-Standard engine (`mse`). This entry
- * point signals that by exiting with FALLBACK_TO_MSE, and the `odg` launcher then runs `mse`
- * exactly as before. No local mission path is changed.
- *
+ * The set of migrated missions and the migration report (OBJ-004) live in mission-migration.ts.
  * No foundation, contract, governance, provider or engine file is modified here.
  */
 
@@ -31,6 +28,10 @@ import {
 import type { ReleaseRecord } from "@/contracts/release";
 import { AutonomyRuntimeAdapter } from "@/runtime/autonomy-runtime-adapter";
 import { missionRequiresProvider, type RoutableMission } from "@/providers";
+import { MissionOrchestrator } from "./mission-orchestrator";
+import { createMissionIntent } from "./mission-intent";
+import { LocalMissionRunner } from "./local-mission-runner";
+import { isMigratedMission, renderMigrationReport } from "./mission-migration";
 
 /** Exit code telling the `odg` launcher to fall back to the existing Mission-Standard engine. */
 const FALLBACK_TO_MSE = 3;
@@ -99,24 +100,12 @@ class SingleMissionAdapter extends AutonomyRuntimeAdapter {
   }
 }
 
-function main(): number {
-  const mission = process.argv[2];
-  if (!mission) {
-    console.error("Usage: tsx src/runtime/mission-cli.ts <MISSION>");
-    return 1;
-  }
-
-  const spec = readMissionSpec(mission);
-  // No mission definition here, or a local / deterministic mission ⇒ keep the EXISTING mse path.
-  if (!spec || !missionRequiresProvider(toRoutable(spec))) {
-    return FALLBACK_TO_MSE;
-  }
-
-  console.log("======================================");
-  console.log("ODG MISSION — ENGINEERING PROVIDER ROUTE");
-  console.log("======================================");
-  console.log("Mission    :", mission);
-  console.log("Decision   : missionRequiresProvider = true");
+/**
+ * Provider route (unchanged behaviour): drive an ENGINEERING mission through the EXISTING
+ * RuntimeAutonomy + AutonomyRuntimeAdapter so the execute stage reaches the Claude Provider
+ * Adapter. Terminal-outcome mapping is identical to `odg autonomy`.
+ */
+function runProviderRoute(mission: string): number {
   console.log("Route      : RuntimeAutonomy → AutonomyRuntimeAdapter → ClaudeProviderAdapter");
   console.log("--------------------------------------");
 
@@ -145,11 +134,95 @@ function main(): number {
   }
   console.log("======================================");
 
-  // Same terminal-outcome mapping as `odg autonomy` (RUNTIME_AUTONOMY_DESIGN_v1.md §3):
-  //   PLAN_COMPLETE → clean success (0); BLOCKED → human decision required (2); else failure (1).
+  // RUNTIME_AUTONOMY_DESIGN_v1.md §3: PLAN_COMPLETE → 0; BLOCKED → 2; else failure → 1.
   if (result.status === "PLAN_COMPLETE") return 0;
   if (result.status === "BLOCKED") return 2;
   return 1;
+}
+
+/**
+ * Local route (OBJ-002): execute a migrated mission entirely inside src/runtime via the
+ * MissionOrchestrator → RuntimeExecutor pipeline. Never falls back to mse.
+ */
+function runLocalRoute(mission: string): number {
+  console.log("Route      : MissionOrchestrator → RuntimeExecutor (local, src/runtime)");
+  console.log("--------------------------------------");
+
+  const outcome = new LocalMissionRunner().run(mission, mission);
+
+  if (!outcome.ok) {
+    console.log("Status     : LOCAL_EXECUTION_FAILED");
+    console.log("Detail     :", outcome.error);
+    console.log("======================================");
+    return 1;
+  }
+
+  const exec = outcome.execution as {
+    logicalSteps?: number;
+    technicalSteps?: number;
+    capabilities?: unknown[];
+  };
+  console.log("Status     : LOCAL_COMPLETE");
+  console.log("Logical    :", exec.logicalSteps ?? 0, "steps");
+  console.log("Technical  :", exec.technicalSteps ?? 0, "steps");
+  console.log("Capabilities:", exec.capabilities?.length ?? 0);
+  console.log("======================================");
+  return 0;
+}
+
+function main(): number {
+  const mission = process.argv[2];
+  if (!mission) {
+    console.error("Usage: tsx src/runtime/mission-cli.ts <MISSION>");
+    return 1;
+  }
+
+  // Inspection helper (OBJ-004): print the migration report and exit without routing.
+  if (mission === "--migration-report") {
+    console.log(renderMigrationReport());
+    return 0;
+  }
+
+  const spec = readMissionSpec(mission);
+
+  console.log("======================================");
+  console.log("ODG MISSION — UNIFIED RUNTIME ENTRY");
+  console.log("======================================");
+  console.log("Mission    :", mission);
+
+  // OBJ-001: MissionOrchestrator is the single entry point — every mission is planned here
+  // first; the Runtime then chooses local vs provider execution.
+  try {
+    const plan = new MissionOrchestrator().buildPlan(
+      mission,
+      mission,
+      createMissionIntent(mission),
+    );
+    console.log("Orchestrator: plan built (" + plan.steps.length + " steps)");
+  } catch (e) {
+    console.log("Orchestrator: plan unavailable (" + (e as Error).message + ")");
+  }
+
+  // OBJ-004: always surface the migration status as evidence of what src/runtime owns.
+  console.log("--------------------------------------");
+  console.log(renderMigrationReport());
+  console.log("--------------------------------------");
+
+  // Route selection — the Runtime chooses local vs provider vs fallback.
+  if (spec && missionRequiresProvider(toRoutable(spec))) {
+    console.log("Decision   : missionRequiresProvider = true → PROVIDER");
+    return runProviderRoute(mission);
+  }
+
+  if (isMigratedMission(mission)) {
+    console.log("Decision   : migrated local mission → LOCAL RUNTIME");
+    return runLocalRoute(mission);
+  }
+
+  // OBJ-003: everything not yet migrated keeps the Mission-Standard fallback.
+  console.log("Decision   : not migrated → FALLBACK_TO_MSE");
+  console.log("======================================");
+  return FALLBACK_TO_MSE;
 }
 
 process.exit(main());
