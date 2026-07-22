@@ -1,0 +1,80 @@
+{
+  "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+  "priority": "CRITICAL",
+  "mode": "AUTONOMOUS_ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Stabiliser le Runtime ODG et préparer automatiquement toutes les prochaines missions d'ingénierie.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Vérifier complètement le Runtime.",
+      "done_when": [
+        "Pipeline validé.",
+        "Governance validée.",
+        "Runtime Health Report généré."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Scanner complètement le dépôt.",
+      "done_when": [
+        "Dette technique identifiée.",
+        "TODO/FIXME identifiés.",
+        "Modules morts détectés.",
+        "Architecture Report généré."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Corriger automatiquement tout ce qui peut être corrigé sans Provider.",
+      "done_when": [
+        "Toutes les réparations automatiques appliquées.",
+        "Les preuves sont générées."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Pour chaque anomalie restante, générer automatiquement un Engineering Brief.",
+      "done_when": [
+        "Chaque anomalie possède un Engineering Brief.",
+        "Chaque Brief contient une Definition of Done.",
+        "Chaque Brief contient les tests à exécuter."
+      ]
+    },
+    {
+      "id": "OBJ-005",
+      "priority": 5,
+      "goal": "Utiliser un Provider uniquement lorsqu'une correction ne peut pas être réalisée localement.",
+      "done_when": [
+        "ODG tente d'abord la correction locale.",
+        "Si un Provider est nécessaire, sélectionner automatiquement le Provider disponible.",
+        "Si aucun Provider n'est disponible, générer un Patch Request prêt à être exécuté."
+      ]
+    },
+    {
+      "id": "OBJ-006",
+      "priority": 6,
+      "goal": "Valider toutes les corrections.",
+      "done_when": [
+        "Build OK.",
+        "Tests OK.",
+        "Governance OK.",
+        "Evidence Pack généré."
+      ]
+    },
+    {
+      "id": "OBJ-007",
+      "priority": 7,
+      "goal": "Mettre à jour automatiquement la mémoire d'ODG.",
+      "done_when": [
+        "Knowledge mise à jour.",
+        "Mission Ledger mis à jour.",
+        "Roadmap suivante générée automatiquement."
+      ]
+    }
+  ]
+}
