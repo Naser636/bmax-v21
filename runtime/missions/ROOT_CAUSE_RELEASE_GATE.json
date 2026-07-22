@@ -1,0 +1,39 @@
+{
+  "mission": "ROOT_CAUSE_RELEASE_GATE",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "requiresEngineering": true,
+  "continue_until_complete": true,
+  "description": "Identifier automatiquement la cause racine du NO_RELEASE, proposer le patch minimal, puis préparer son exécution.",
+  "authorizedPaths": [
+    "src/core/**",
+    "src/runtime/**",
+    "runtime/**"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "goal": "Identifier la cause racine.",
+      "done_when": [
+        "Le composant responsable est identifié.",
+        "La règle bloquante est identifiée."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "goal": "Produire un patch minimal.",
+      "done_when": [
+        "Les fichiers à modifier sont listés.",
+        "Le patch est proposé."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "goal": "Préparer l'exécution.",
+      "done_when": [
+        "Le Provider Engineering est prêt à être appelé.",
+        "Le Validation Engine peut vérifier le résultat."
+      ]
+    }
+  ]
+}

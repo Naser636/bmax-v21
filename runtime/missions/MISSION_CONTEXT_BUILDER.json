@@ -1,0 +1,59 @@
+{
+  "mission": "MISSION_CONTEXT_BUILDER",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Construire MissionContextBuilder afin de fournir une représentation officielle et unique du contexte d'une mission pour l'ensemble des moteurs ODG.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Créer MissionContextBuilder.",
+      "done_when": [
+        "MissionContextBuilder existe.",
+        "MissionContext est produit par une seule source officielle."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Construire RuntimeContext à partir du dépôt.",
+      "done_when": [
+        "Le dépôt est analysé.",
+        "Le RuntimeContext est complet.",
+        "Aucun moteur ne reconstruit son propre contexte."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Intégrer MissionContextBuilder au Runtime.",
+      "done_when": [
+        "Mission Engine utilise MissionContextBuilder.",
+        "Les contrats publics restent inchangés."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Préparer les futures capacités.",
+      "done_when": [
+        "Capability Registry pourra utiliser MissionContext.",
+        "Policy Engine pourra utiliser MissionContext.",
+        "EngineeringBriefGenerator pourra utiliser MissionContext."
+      ]
+    }
+  ],
+  "constraints": [
+    "Respecter la Constitution.",
+    "Respecter les Policies.",
+    "Ne modifier aucun contrat public.",
+    "Conserver la compatibilité du Runtime."
+  ],
+  "deliverables": [
+    "MissionContextBuilder",
+    "MissionContext",
+    "Tests",
+    "Evidence"
+  ]
+}

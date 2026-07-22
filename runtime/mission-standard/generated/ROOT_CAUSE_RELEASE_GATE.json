@@ -1,0 +1,71 @@
+{
+  "mission": "ROOT_CAUSE_RELEASE_GATE",
+  "providerContractVersion": "1.0.0",
+  "mode": "ENGINEERING",
+  "status": "DIAGNOSED",
+  "summary": "NO_RELEASE is caused by a single red gate: gitClean. The tracked bookkeeping file runtime/mission-standard/history/history.md is modified, so odg-verify.js's `git diff --quiet` exits non-zero and records gitClean:false, which fails ReleaseManager.allGreen().",
+  "OBJ-001": {
+    "goal": "Identifier la cause racine.",
+    "responsibleComponent": {
+      "gate": "gitClean",
+      "decisionAuthority": "src/core/release-manager.ts",
+      "evidenceProducer": "runtime/bin/odg-verify.js",
+      "evidenceFile": "runtime/generated/runtime-verify.json",
+      "evidenceRelay": "src/runtime/autonomy-runtime-adapter.ts (gatherEvidence)",
+      "gateConsumer": "src/core/runtime-autonomy.ts (assembleReleaseInputs -> ReleaseManager.decide)"
+    },
+    "blockingRule": "ReleaseManager.allGreen() (src/core/release-manager.ts:373-381) requires gates.gitClean === true; gitClean is derived from validation.gitClean which is false.",
+    "chain": [
+      "runtime/bin/odg-verify.js runs `git diff --quiet`; on non-zero exit it sets gitClean=false.",
+      "`git diff --quiet` exits 1 because the TRACKED file runtime/mission-standard/history/history.md is modified (proven: excluding that path, `git diff --quiet` exits 0).",
+      "runtime/generated/runtime-verify.json => {build:true, typescript:true, gitClean:false}.",
+      "AutonomyRuntimeAdapter.gatherEvidence copies gitClean:false into ReleaseEvidence.validation.gitClean.",
+      "RuntimeAutonomy.assembleReleaseInputs -> ReleaseManager.decide -> evaluateGates -> allGreen() is false -> decision NO_RELEASE (Runtime status BLOCKED)."
+    ],
+    "evidence": {
+      "runtimeVerify": {"build": true, "typescript": true, "gitClean": false, "generatedAt": "2026-07-22T12:54:42.679Z"},
+      "gitDiffQuietExit": 1,
+      "gitDiffQuietExcludingHistoryExit": 0,
+      "soleTrackedModification": "runtime/mission-standard/history/history.md",
+      "untrackedFilesCount": 32,
+      "note": "The 32 untracked files (mission-standard artifacts + missions) do NOT affect `git diff --quiet` and are all within this mission's authorizedPaths (runtime/**), so they neither trip gitClean nor the provider scope check."
+    }
+  },
+  "OBJ-002": {
+    "goal": "Produire un patch minimal.",
+    "filesToModify": {
+      "recommended_structural": [".gitignore"],
+      "alternative_surgical": ["runtime/bin/odg-verify.js"],
+      "operational_immediate": ["runtime/mission-standard/history/history.md (git restore / commit — no code change)"]
+    },
+    "proposedPatch": {
+      "recommended_structural": {
+        "rationale": "runtime/generated/ is already gitignored; the per-run history ledger is likewise regenerated on every mission run and must not gate a release. Untrack it so it stops dirtying the tree — consistent with existing convention and non-destructive to the file on disk.",
+        "steps": [
+          "git rm --cached runtime/mission-standard/history/history.md",
+          "append to .gitignore:\n\n# Runtime per-run mission bookkeeping (regenerated every mission run;\n# tracking it deadlocks the Release Manager gitClean gate).\n/runtime/mission-standard/history/history.md"
+        ]
+      },
+      "alternative_surgical": {
+        "rationale": "Keep history.md tracked but exclude churned bookkeeping from the gitClean check inside the verifier.",
+        "diff": "runtime/bin/odg-verify.js: replace `cp.execSync(\"git diff --quiet\")` with `cp.execSync(\"git diff --quiet -- ':(exclude)runtime/mission-standard/history/history.md'\")`"
+      },
+      "operational_immediate": {
+        "rationale": "No code change; the current NO_RELEASE is purely a dirty-tree artifact. Cleaning the tracked modification flips gitClean to true immediately.",
+        "command": "git checkout -- runtime/mission-standard/history/history.md   # or commit the bookkeeping"
+      }
+    },
+    "note": "Per the mission done_when the patch is PROPOSED, not applied: weakening/altering the release gate is a Release-Manager-owned policy decision, and history.md is pre-existing bookkeeping this provider did not author, so it is not discarded here."
+  },
+  "OBJ-003": {
+    "goal": "Preparer l'execution.",
+    "providerEngineeringReady": {
+      "ready": true,
+      "evidence": "ROOT_CAUSE_RELEASE_GATE.json declares requiresEngineering:true and mode:ENGINEERING, so missionRequiresProvider() (src/providers/provider-port.ts:261) returns true and AutonomyRuntimeAdapter.runPipeline routes to createClaudeProvider (ClaudeProviderAdapter). authorizedPaths=[src/core/**, src/runtime/**, runtime/**]."
+    },
+    "validationEngineReady": {
+      "ready": true,
+      "evidence": "runtime/bin/odg-verify.js executed successfully at 2026-07-22T12:54:42Z, producing runtime/generated/runtime-verify.json with build:true, typescript:true, gitClean:false. The Validation Engine can verify the result end-to-end; only the gitClean gate is red."
+    }
+  }
+}

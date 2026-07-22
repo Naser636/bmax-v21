@@ -1,0 +1,32 @@
+{
+  "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "requiresEngineering": true,
+  "continue_until_complete": true,
+  "authorizedPaths": [
+    "runtime/**",
+    "src/core/**",
+    "src/runtime/**",
+    "src/tests/**"
+  ],
+  "description": "Lorsque la mission est BLOCKED, produire automatiquement un Root Cause Report contenant la cause, le composant responsable, le patch minimal proposé et la mission suivante.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "goal": "Produire runtime/generated/root-cause-report.json"
+    },
+    {
+      "id": "OBJ-002",
+      "goal": "Identifier automatiquement le composant bloquant"
+    },
+    {
+      "id": "OBJ-003",
+      "goal": "Proposer le patch minimal"
+    },
+    {
+      "id": "OBJ-004",
+      "goal": "Préparer automatiquement la mission corrective"
+    }
+  ]
+}
