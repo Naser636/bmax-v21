@@ -41,5 +41,18 @@
         "Liste des missions restant à migrer."
       ]
     }
+  ],
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "src/runtime/**"
+  ],
+  "definition_of_done": [
+    "Mission exécutée uniquement dans le périmètre autorisé.",
+    "Validation build et TypeScript réussie.",
+    "Aucune modification hors src/runtime/**.",
+    "Mission ledger mis à jour."
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
   ]
 }
