@@ -12,5 +12,6 @@ export * from "./execution-planner";
 export * from "./event-bus";
 export * from "./runtime-health";
 export * from "./runtime-reporter";
+export * from "./snapshot-engine";
 export * from "./runtime-service";
 export * from "./runtime-facade";
