@@ -1,0 +1,39 @@
+{
+  "mission": "MASTER_PLAN_V1",
+  "priority": "CRITICAL",
+  "mode": "AUTONOMOUS_ORCHESTRATION",
+  "continue_until_complete": true,
+  "description": "Orchestration complète des feuilles de route ODG.",
+  "roadmaps": [
+    {
+      "id": "ROADMAP_01",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "continue_on_success": true
+    },
+    {
+      "id": "ROADMAP_02",
+      "mission": "ROADMAP_ARCHITECTURE_SCAN_V1",
+      "continue_on_success": true
+    },
+    {
+      "id": "ROADMAP_03",
+      "mission": "ROADMAP_TECHNICAL_DEBT_V1",
+      "continue_on_success": true
+    },
+    {
+      "id": "ROADMAP_04",
+      "mission": "ROADMAP_ENGINEERING_FACTORY_V1",
+      "continue_on_success": true
+    },
+    {
+      "id": "ROADMAP_05",
+      "mission": "ROADMAP_PROVIDER_EXECUTION_V1",
+      "continue_on_success": true
+    },
+    {
+      "id": "ROADMAP_06",
+      "mission": "ROADMAP_KNOWLEDGE_UPDATE_V1",
+      "continue_on_success": true
+    }
+  ]
+}
