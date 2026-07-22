@@ -1,0 +1,7 @@
+{
+  "mission": "ENABLE_MASTER_PLAN_EXECUTION",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Permettre à MASTER_PLAN_V1 d'exécuter automatiquement les roadmaps."
+}

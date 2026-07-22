@@ -1,0 +1,7 @@
+{
+  "mission": "UNIFY_RUNTIME_EXECUTION",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Faire de src/runtime l'orchestrateur unique du Runtime."
+}

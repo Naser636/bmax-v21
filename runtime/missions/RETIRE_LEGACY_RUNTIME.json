@@ -1,0 +1,7 @@
+{
+  "mission": "RETIRE_LEGACY_RUNTIME",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Supprimer runtime/mission-standard uniquement lorsque plus aucune mission ne dépend du fallback."
+}
