@@ -21,8 +21,11 @@ cp.execSync("npx tsc --noEmit",{stdio:"ignore"});
 verify.typescript=false;
 }
 
-// TEMP PATCH: ignore global git cleanliness
-verify.gitClean=true;
+try{
+cp.execSync("git diff --quiet");
+}catch{
+verify.gitClean=false;
+}
 
 fs.writeFileSync(
 "runtime/generated/runtime-verify.json",
