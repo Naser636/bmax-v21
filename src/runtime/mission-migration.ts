@@ -25,6 +25,7 @@ export const MIGRATED_MISSIONS: readonly string[] = [
   "M0001",
   "M0002",
   "RUNTIME_SELF_AUDIT",
+  "UNIFY_RUNTIME_EXECUTION",
 ];
 
 /** True when a mission is executed locally by src/runtime (i.e. must NOT fall back to mse). */

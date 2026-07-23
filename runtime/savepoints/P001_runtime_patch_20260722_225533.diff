@@ -1,0 +1,284 @@
+diff --git a/runtime/missions/ENABLE_MASTER_PLAN_EXECUTION.json b/runtime/missions/ENABLE_MASTER_PLAN_EXECUTION.json
+index 4839954..3b9951c 100644
+--- a/runtime/missions/ENABLE_MASTER_PLAN_EXECUTION.json
++++ b/runtime/missions/ENABLE_MASTER_PLAN_EXECUTION.json
+@@ -3,5 +3,34 @@
+   "priority": "CRITICAL",
+   "mode": "ENGINEERING",
+   "continue_until_complete": true,
+-  "description": "Permettre à MASTER_PLAN_V1 d'exécuter automatiquement les roadmaps."
++  "description": "Permettre à MASTER_PLAN_V1 d'exécuter automatiquement les roadmaps.",
++  "objectives": [
++    {
++      "id": "LOAD_MASTER_PLAN_ROADMAPS",
++      "priority": 1,
++      "goal": "Charger les roadmaps déclarées par MASTER_PLAN_V1.",
++      "done_when": [
++        "Les roadmaps de MASTER_PLAN_V1 sont inventoriées.",
++        "Chaque roadmap est résolue vers une mission exécutable."
++      ]
++    },
++    {
++      "id": "ENABLE_SEQUENTIAL_ROADMAP_EXECUTION",
++      "priority": 1,
++      "goal": "Exécuter les roadmaps du Master Plan dans l'ordre déclaré.",
++      "done_when": [
++        "Les roadmaps s'enchaînent selon continue_on_success.",
++        "Une roadmap en échec interrompt l'orchestration."
++      ]
++    },
++    {
++      "id": "VALIDATE_MASTER_PLAN_EXECUTION",
++      "priority": 2,
++      "goal": "Valider que MASTER_PLAN_V1 exécute les roadmaps de bout en bout.",
++      "done_when": [
++        "L'orchestration se termine sans intervention humaine superflue.",
++        "Une preuve d'exécution du Master Plan est générée."
++      ]
++    }
++  ]
+ }
+\ No newline at end of file
+diff --git a/src/runtime/autonomy-runtime-adapter.ts b/src/runtime/autonomy-runtime-adapter.ts
+index accd545..b7ffc1c 100644
+--- a/src/runtime/autonomy-runtime-adapter.ts
++++ b/src/runtime/autonomy-runtime-adapter.ts
+@@ -43,6 +43,7 @@ import type {
+   ProviderOutcome,
+   RoutableMission,
+ } from "@/providers";
++import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
+ 
+ const GENERATED = "runtime/generated";
+ const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
+@@ -77,6 +78,10 @@ interface RawMission {
+ 
+ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
+   private readonly documentation = new DocumentationEngine();
++  // Receives the provider's produced patch and decides whether it is fit for validation (OBJ-003).
++  private readonly patchEngine = new ProviderPatchEngine();
++  // The receipt of the last provider patch received this session, per mission (evidence / audit).
++  private readonly patchReceipts = new Map<string, PatchReceipt>();
+   // Missions released this session, so readPlanState excludes them and the loop advances (design §3).
+   private readonly archivedThisSession = new Set<string>();
+   private lastReleaseRef: string | null = null;
+@@ -245,9 +250,16 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
+       });
+       this.providerRuns.set(mission, outcome);
+     }
+-    // A clean run refreshes the same evidence surface odg-run.js would leave, so the UNCHANGED
+-    // gatherEvidence() → Release Manager path decides completion (contract §1 steps 6-7).
+-    if (outcome.classification === "OK") this.refreshVerifyEvidence();
++    // OBJ-003: the Patch Engine RECEIVES the provider's result (the working-tree patch) and decides,
++    // from observed evidence, whether it is fit for validation. Its receipt — never the provider's
++    // own prose — is what triggers the Validation Engine (odg-verify.js) to refresh the same
++    // build/typescript/gitClean surface odg-run.js would leave, so the UNCHANGED gatherEvidence() →
++    // Release Manager path decides completion (contract §1 steps 6-7). `readyForValidation` holds
++    // exactly when the run was clean and in-scope, so the evidence refresh happens on precisely the
++    // runs it did before — the Patch Engine makes the seam explicit without changing behaviour.
++    const receipt = this.patchEngine.receive(mission, outcome);
++    this.patchReceipts.set(mission, receipt);
++    if (receipt.readyForValidation) this.refreshVerifyEvidence();
+     return toPipelineOutcome(outcome);
+   }
+ 
+@@ -432,14 +444,42 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
+       artifacts.push({ kind: "generated", id: mission, version: "1.0.0", payload: mstd });
+     }
+ 
+-    const report = this.readJson<Record<string, unknown>>(MISSION_REPORT);
+-    if (report && typeof report === "object" && report.mission === mission) {
++    const report = this.readCanonicalMissionReport(mission);
++    if (report) {
+       artifacts.push({ kind: "report", id: mission, version: "1.0.0", payload: report });
+     }
+ 
+     return artifacts;
+   }
+ 
++  /**
++   * Read runtime/generated/mission-report.json ONLY when it satisfies the SAME canonical verdict the
++   * Mission-Standard (MSE) pipeline enforces before it writes a SUCCESS artifact
++   * (runtime/mission-standard/bin/mse, step [4/5] GENERATE): the report must be mission-scoped AND
++   * carry the Validation Engine's proof — `validated === true` AND `status === "SUCCESS"`.
++   *
++   * This reuses the Validation Engine's own verdict — the `validated`/`status` fields are written by
++   * exactly one component, runtime/core/validation-engine.js — instead of re-deriving proof here, so
++   * the Provider / `odg autonomy` path and the MSE path accept EXACTLY the same canonical contract.
++   * An absent, stale (different mission), unproven (`validated !== true`) or BLOCKED
++   * (`status !== "SUCCESS"`) report yields null: no documentation proof and no releasable artifact is
++   * built from it, so the Release Manager returns EVIDENCE_INCOMPLETE rather than a false MISSION
++   * SUCCESS (design §0 founding invariant — mandatory evidence must be present to release).
++   */
++  private readCanonicalMissionReport(mission: string): Record<string, unknown> | null {
++    const report = this.readJson<Record<string, unknown>>(MISSION_REPORT);
++    if (
++      report &&
++      typeof report === "object" &&
++      report.mission === mission &&
++      report.validated === true &&
++      report.status === "SUCCESS"
++    ) {
++      return report;
++    }
++    return null;
++  }
++
+   private collectArtifacts(mission: string): ReleaseArtifactRef[] {
+     const refs: ReleaseArtifactRef[] = [];
+     const candidates: Array<{ kind: ReleaseArtifactRef["kind"]; path: string }> = [
+@@ -453,10 +493,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
+         refs.push({ kind: c.kind, id: mission, version: "1.0.0" });
+       }
+     }
+-    // Canonical pipeline output (odg-run.js path): the mission report is a real, mission-scoped
+-    // artifact. Pin it so a mission executed by `odg autonomy` has at least one releasable artifact.
+-    const report = this.readJson<{ mission?: string }>(MISSION_REPORT);
+-    if (report && report.mission === mission) {
++    // Canonical pipeline output (odg-run.js / Validation Engine): pin the mission report ONLY when it
++    // passes the SAME canonical verdict the MSE pipeline demands (mission-scoped + validated + SUCCESS).
++    // A stale or unproven report is not a releasable artifact, so `odg autonomy` never releases a
++    // mission whose canonical proof is absent — identical acceptance to the MSE path.
++    if (this.readCanonicalMissionReport(mission)) {
+       refs.push({ kind: "report", id: `${mission}:mission-report`, version: "1.0.0" });
+     }
+     return refs;
+diff --git a/src/runtime/index.ts b/src/runtime/index.ts
+index 3d1eebb..fac3b0f 100644
+--- a/src/runtime/index.ts
++++ b/src/runtime/index.ts
+@@ -8,6 +8,7 @@ export * from "./mission-loader";
+ export * from "./mission-orchestrator";
+ export * from "./mission-migration";
+ export * from "./local-mission-runner";
++export * from "./patch-engine";
+ export * from "./execution-planner";
+ export * from "./event-bus";
+ export * from "./runtime-health";
+diff --git a/src/runtime/patch-engine.ts b/src/runtime/patch-engine.ts
+index e69de29..f0cfe81 100644
+--- a/src/runtime/patch-engine.ts
++++ b/src/runtime/patch-engine.ts
+@@ -0,0 +1,122 @@
++/*
++ * Provider Patch Engine — Runtime edge (integration glue)
++ *
++ * The missing seam between the engineering provider and validation, required by the
++ * IMPLEMENT_ENGINEERING_PROVIDER mission (OBJ-003: "Le Patch Engine reçoit le résultat.
++ * Le Validation Engine vérifie automatiquement.").
++ *
++ * A provider's only real engineering output is the working-tree diff it produced (Provider Contract
++ * §6 — "The provider invents no artifact type. It only fills the working tree."). This module is the
++ * Runtime-owned component that RECEIVES that result — the provider's normalized `ProviderOutcome` —
++ * and turns it into a structured `PatchReceipt`: a decision, grounded in observed evidence, about
++ * whether the patch is fit to be handed to the Validation Engine.
++ *
++ * Design rules (mirroring the rest of the Runtime edge):
++ *   - RECEIVES, NEVER DECIDES COMPLETION. It reports whether the patch is ready for validation; the
++ *     Validation Engine verifies it and the Release Manager remains the sole completion authority
++ *     (Provider Contract §0 invariant 1). A `readyForValidation` receipt is an input to validation,
++ *     never a substitute for it.
++ *   - EVIDENCE, NOT NARRATIVE. The receipt is derived only from the provider's classification and the
++ *     ground-truth `changedFiles` / `unauthorizedChanges` the adapter observed — never from the
++ *     provider's own `status` prose (Provider Contract §0 invariant 3, §4.2).
++ *   - PURE & DETERMINISTIC. No time, no randomness, no I/O — the same outcome yields the same receipt
++ *     (DETERMINISM_FIRST). It imports only provider TYPES, so it stays decoupled from src/core.
++ *   - ADDITIVE. It introduces no new persistence format; it normalizes an existing shape.
++ */
++
++import type { ProviderClassification, ProviderOutcome } from "@/providers";
++
++/**
++ * Disposition of a received patch:
++ *   RECEIVED — the provider produced real, in-scope working-tree changes → validate them.
++ *   EMPTY    — a clean run that changed nothing (e.g. the mission was already satisfied, or a
++ *              marker / cached run). Still fit for validation: the Validation Engine + Release
++ *              Manager decide whether "no change" is acceptable for the mission (never this engine).
++ *   REJECTED — the patch cannot be validated: the provider did not finish cleanly (BLOCKED / FAILED /
++ *              INTERRUPTED / SKIPPED) or it touched paths outside the mission's write scope.
++ */
++export type PatchStatus = "RECEIVED" | "EMPTY" | "REJECTED";
++
++/** Normalized, evidence-grounded record of the patch the provider handed the Runtime. */
++export interface PatchReceipt {
++  mission: string;
++  provider: string;
++  status: PatchStatus;
++  /** Provider classification this receipt was derived from (traceability). */
++  classification: ProviderClassification;
++  /** Ground-truth changed paths observed in the working tree (the actual patch). */
++  changedFiles: string[];
++  /** Objective ids the provider reported addressing (advisory; not proof). */
++  objectivesAddressed: string[];
++  /** Commands the provider reported running (advisory; audit trail). */
++  commandsRun: string[];
++  /** Changed paths that violated the mission write scope / touched a frozen root (Contract §9). */
++  unauthorizedChanges: string[];
++  /**
++   * True when the patch is fit to be forwarded to the Validation Engine — i.e. the provider ran
++   * cleanly (classification OK) and left nothing outside the authorized scope. This is exactly the
++   * condition under which the Runtime should trigger validation of the patch, and NEVER an assertion
++   * that the mission is done.
++   */
++  readyForValidation: boolean;
++  /** Human-legible reason a patch was REJECTED (from the outcome's diagnostics), else null. */
++  reason: string | null;
++}
++
++/**
++ * Runtime-owned Patch Engine. Stateless: one call per provider result.
++ */
++export class ProviderPatchEngine {
++  /**
++   * Receive a provider result and normalize it into a Patch Receipt.
++   *
++   * The disposition is a pure function of the outcome's observable evidence:
++   *   - unauthorized changes present         → REJECTED (scope violation, Contract §9 layer 4)
++   *   - classification not OK                → REJECTED (provider did not cleanly produce a patch)
++   *   - OK with observed changed files       → RECEIVED (a real patch to validate)
++   *   - OK with no changed files             → EMPTY    (a clean no-op; still forwarded to validation)
++   */
++  receive(mission: string, outcome: ProviderOutcome): PatchReceipt {
++    const base = {
++      mission,
++      provider: outcome.provider,
++      classification: outcome.classification,
++      changedFiles: [...outcome.changedFiles],
++      objectivesAddressed: outcome.result ? [...outcome.result.objectivesAddressed] : [],
++      commandsRun: outcome.result ? [...outcome.result.commandsRun] : [],
++      unauthorizedChanges: [...outcome.unauthorizedChanges],
++    };
++
++    if (outcome.unauthorizedChanges.length > 0) {
++      return {
++        ...base,
++        status: "REJECTED",
++        readyForValidation: false,
++        reason: `patch touches paths outside the mission scope: ${outcome.unauthorizedChanges.join(", ")}`,
++      };
++    }
++
++    if (outcome.classification !== "OK") {
++      return {
++        ...base,
++        status: "REJECTED",
++        readyForValidation: false,
++        reason: this.diagnose(outcome),
++      };
++    }
++
++    return {
++      ...base,
++      status: outcome.changedFiles.length > 0 ? "RECEIVED" : "EMPTY",
++      readyForValidation: true,
++      reason: null,
++    };
++  }
++
++  /** Best explanation for a non-OK outcome, drawn only from fields the adapter actually populated. */
++  private diagnose(outcome: ProviderOutcome): string {
++    if (outcome.diagnostics.length > 0) return outcome.diagnostics.join("; ");
++    if (outcome.result?.blocker) return outcome.result.blocker;
++    return `provider returned ${outcome.classification}`;
++  }
++}

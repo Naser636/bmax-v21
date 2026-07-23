@@ -43,3 +43,9 @@ next-env.d.ts
 # ODG Runtime generated artifacts — never versioned; regenerated in-run and
 # bootstrapped on cold start (see runtime/bin/odg-bootstrap.js).
 /runtime/generated/
+
+# ODG Runtime history ledger — regenerated on EVERY mission run (append-only),
+# so tracking it permanently re-dirties the tree and pins the Release "gitClean"
+# gate red (RootCauseEngine.isBookkeeping, src/runtime/root-cause-engine.ts).
+# Same rationale as /runtime/generated/ above; the file stays on disk, untracked.
+/runtime/mission-standard/history/

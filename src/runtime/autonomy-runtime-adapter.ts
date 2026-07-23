@@ -43,6 +43,7 @@ import type {
   ProviderOutcome,
   RoutableMission,
 } from "@/providers";
+import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 
 const GENERATED = "runtime/generated";
 const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
@@ -77,6 +78,10 @@ interface RawMission {
 
 export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private readonly documentation = new DocumentationEngine();
+  // Receives the provider's produced patch and decides whether it is fit for validation (OBJ-003).
+  private readonly patchEngine = new ProviderPatchEngine();
+  // The receipt of the last provider patch received this session, per mission (evidence / audit).
+  private readonly patchReceipts = new Map<string, PatchReceipt>();
   // Missions released this session, so readPlanState excludes them and the loop advances (design §3).
   private readonly archivedThisSession = new Set<string>();
   private lastReleaseRef: string | null = null;
@@ -245,9 +250,16 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       });
       this.providerRuns.set(mission, outcome);
     }
-    // A clean run refreshes the same evidence surface odg-run.js would leave, so the UNCHANGED
-    // gatherEvidence() → Release Manager path decides completion (contract §1 steps 6-7).
-    if (outcome.classification === "OK") this.refreshVerifyEvidence();
+    // OBJ-003: the Patch Engine RECEIVES the provider's result (the working-tree patch) and decides,
+    // from observed evidence, whether it is fit for validation. Its receipt — never the provider's
+    // own prose — is what triggers the Validation Engine (odg-verify.js) to refresh the same
+    // build/typescript/gitClean surface odg-run.js would leave, so the UNCHANGED gatherEvidence() →
+    // Release Manager path decides completion (contract §1 steps 6-7). `readyForValidation` holds
+    // exactly when the run was clean and in-scope, so the evidence refresh happens on precisely the
+    // runs it did before — the Patch Engine makes the seam explicit without changing behaviour.
+    const receipt = this.patchEngine.receive(mission, outcome);
+    this.patchReceipts.set(mission, receipt);
+    if (receipt.readyForValidation) this.refreshVerifyEvidence();
     return toPipelineOutcome(outcome);
   }
 
@@ -432,12 +444,40 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       artifacts.push({ kind: "generated", id: mission, version: "1.0.0", payload: mstd });
     }
 
-    const report = this.readJson<Record<string, unknown>>(MISSION_REPORT);
-    if (report && typeof report === "object" && report.mission === mission) {
+    const report = this.readCanonicalMissionReport(mission);
+    if (report) {
       artifacts.push({ kind: "report", id: mission, version: "1.0.0", payload: report });
     }
 
     return artifacts;
+  }
+
+  /**
+   * Read runtime/generated/mission-report.json ONLY when it satisfies the SAME canonical verdict the
+   * Mission-Standard (MSE) pipeline enforces before it writes a SUCCESS artifact
+   * (runtime/mission-standard/bin/mse, step [4/5] GENERATE): the report must be mission-scoped AND
+   * carry the Validation Engine's proof — `validated === true` AND `status === "SUCCESS"`.
+   *
+   * This reuses the Validation Engine's own verdict — the `validated`/`status` fields are written by
+   * exactly one component, runtime/core/validation-engine.js — instead of re-deriving proof here, so
+   * the Provider / `odg autonomy` path and the MSE path accept EXACTLY the same canonical contract.
+   * An absent, stale (different mission), unproven (`validated !== true`) or BLOCKED
+   * (`status !== "SUCCESS"`) report yields null: no documentation proof and no releasable artifact is
+   * built from it, so the Release Manager returns EVIDENCE_INCOMPLETE rather than a false MISSION
+   * SUCCESS (design §0 founding invariant — mandatory evidence must be present to release).
+   */
+  private readCanonicalMissionReport(mission: string): Record<string, unknown> | null {
+    const report = this.readJson<Record<string, unknown>>(MISSION_REPORT);
+    if (
+      report &&
+      typeof report === "object" &&
+      report.mission === mission &&
+      report.validated === true &&
+      report.status === "SUCCESS"
+    ) {
+      return report;
+    }
+    return null;
   }
 
   private collectArtifacts(mission: string): ReleaseArtifactRef[] {
@@ -453,10 +493,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         refs.push({ kind: c.kind, id: mission, version: "1.0.0" });
       }
     }
-    // Canonical pipeline output (odg-run.js path): the mission report is a real, mission-scoped
-    // artifact. Pin it so a mission executed by `odg autonomy` has at least one releasable artifact.
-    const report = this.readJson<{ mission?: string }>(MISSION_REPORT);
-    if (report && report.mission === mission) {
+    // Canonical pipeline output (odg-run.js / Validation Engine): pin the mission report ONLY when it
+    // passes the SAME canonical verdict the MSE pipeline demands (mission-scoped + validated + SUCCESS).
+    // A stale or unproven report is not a releasable artifact, so `odg autonomy` never releases a
+    // mission whose canonical proof is absent — identical acceptance to the MSE path.
+    if (this.readCanonicalMissionReport(mission)) {
       refs.push({ kind: "report", id: `${mission}:mission-report`, version: "1.0.0" });
     }
     return refs;

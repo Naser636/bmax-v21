@@ -47,8 +47,6 @@
   "authorizedPaths": [
     "src/runtime/**",
     "src/providers/**",
-    "runtime/**",
-    "src/tests/**",
-    ".gitignore"
+    "runtime/**"
   ]
 }

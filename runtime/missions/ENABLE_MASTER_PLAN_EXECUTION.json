@@ -3,5 +3,34 @@
   "priority": "CRITICAL",
   "mode": "ENGINEERING",
   "continue_until_complete": true,
-  "description": "Permettre à MASTER_PLAN_V1 d'exécuter automatiquement les roadmaps."
+  "description": "Permettre à MASTER_PLAN_V1 d'exécuter automatiquement les roadmaps.",
+  "objectives": [
+    {
+      "id": "LOAD_MASTER_PLAN_ROADMAPS",
+      "priority": 1,
+      "goal": "Charger les roadmaps déclarées par MASTER_PLAN_V1.",
+      "done_when": [
+        "Les roadmaps de MASTER_PLAN_V1 sont inventoriées.",
+        "Chaque roadmap est résolue vers une mission exécutable."
+      ]
+    },
+    {
+      "id": "ENABLE_SEQUENTIAL_ROADMAP_EXECUTION",
+      "priority": 1,
+      "goal": "Exécuter les roadmaps du Master Plan dans l'ordre déclaré.",
+      "done_when": [
+        "Les roadmaps s'enchaînent selon continue_on_success.",
+        "Une roadmap en échec interrompt l'orchestration."
+      ]
+    },
+    {
+      "id": "VALIDATE_MASTER_PLAN_EXECUTION",
+      "priority": 2,
+      "goal": "Valider que MASTER_PLAN_V1 exécute les roadmaps de bout en bout.",
+      "done_when": [
+        "L'orchestration se termine sans intervention humaine superflue.",
+        "Une preuve d'exécution du Master Plan est générée."
+      ]
+    }
+  ]
 }

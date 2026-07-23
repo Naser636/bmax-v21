@@ -94,11 +94,13 @@ function makeWorkspace(): string {
     JSON.stringify({ build: true, typescript: true, gitClean: true }),
   );
 
-  // A mission-scoped report artifact so the Documentation Engine yields a proof and there is at
-  // least one releasable artifact — exactly what odg-run.js leaves behind on the real path.
+  // A mission-scoped report carrying the Validation Engine's canonical verdict
+  // (validated === true, status === "SUCCESS") so the Documentation Engine yields a proof and there
+  // is at least one releasable artifact — exactly what odg-run.js / validation-engine.js leaves
+  // behind on the real path, and exactly the contract the adapter now enforces on BOTH paths.
   fs.writeFileSync(
     path.join(generated, "mission-report.json"),
-    JSON.stringify({ mission: MISSION, status: "OK", objectives: [MISSION] }),
+    JSON.stringify({ mission: MISSION, status: "SUCCESS", validated: true, objectives: [MISSION] }),
   );
 
   // A real git repo: AutonomyRuntimeAdapter.readSource() runs `git` directly in the workspace.

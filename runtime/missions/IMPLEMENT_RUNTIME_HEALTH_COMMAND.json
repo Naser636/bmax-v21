@@ -1,0 +1,58 @@
+{
+  "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Créer la commande unique 'odg' qui affiche l'état complet du Runtime à partir des artefacts existants.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Créer la commande 'odg'.",
+      "done_when": [
+        "La commande 'odg' existe.",
+        "Elle est exécutable."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Lire les artefacts Runtime existants.",
+      "done_when": [
+        "runtime-state.json chargé.",
+        "runtime-status.json chargé.",
+        "capability-registry.json chargé.",
+        "mission-ledger.json chargé."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Afficher un Dashboard unifié.",
+      "done_when": [
+        "Health affiché.",
+        "Progress affiché.",
+        "Blockers affichés.",
+        "Next Action affichée.",
+        "Working Rules affichées.",
+        "Sortie inférieure à 100 lignes."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Capitaliser la capacité.",
+      "done_when": [
+        "Evidence produite.",
+        "Knowledge mis à jour.",
+        "Mission Ledger mis à jour."
+      ]
+    }
+  ],
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/**",
+    "src/**",
+    "bin/**"
+  ]
+}
