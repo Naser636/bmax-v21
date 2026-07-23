@@ -6,17 +6,26 @@ DATE=$(date -Iseconds)
 COMMIT=$(git rev-parse --short HEAD)
 BRANCH=$(git branch --show-current)
 
-# Mission artifact directories the engine writes ITSELF in [4/5] GENERATE
-# (passport, report, certificate, generated JSON, and the tracked history log).
+# Mission artifact paths the Runtime writes ITSELF during a run — the engine's
+# own [4/5] GENERATE outputs (passport, report, certificate, generated JSON, and
+# the tracked history log) PLUS the per-mission evidence document a Provider
+# emits alongside its mission contract (runtime/missions/<MISSION>.evidence.md).
 # Single source of truth, shared by the pre-flight and the post-run governance
 # check so both agree on exactly which paths are Runtime-owned outputs. Any path
-# OUTSIDE these directories is real source/business work and must still block.
+# OUTSIDE these — including the mission CONTRACT itself (runtime/missions/*.json)
+# — is real source/business work and must still block.
+#
+# The evidence exclude is scoped to `*.evidence.md` only (NOT the whole
+# runtime/missions directory): the mission Loader's input contracts
+# (runtime/missions/<MISSION>.json) are still governed, only the generated
+# evidence artifact is recognised as an expected Runtime output.
 ARTIFACT_EXCLUDES=(
   ':(exclude)runtime/mission-standard/generated'
   ':(exclude)runtime/mission-standard/passports'
   ':(exclude)runtime/mission-standard/reports'
   ':(exclude)runtime/mission-standard/certificates'
   ':(exclude)runtime/mission-standard/history'
+  ':(exclude)runtime/missions/*.evidence.md'
 )
 
 echo "======================================"
