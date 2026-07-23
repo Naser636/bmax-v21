@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MISSION="${1:-help}"
+MISSION="${1:-health}"
 
 case "$MISSION" in
+  health|dashboard)
+    ./runtime/bin/odg-health.js
+    ;;
   mission)
     shift
     # Engineering missions (missionRequiresProvider === true) are driven through the EXISTING
@@ -39,6 +42,8 @@ case "$MISSION" in
     echo "ODG RUNTIME"
     echo "======================================"
     echo "Usage:"
+    echo "  odg                 (health dashboard)"
+    echo "  odg health"
     echo "  odg mission <NAME>"
     echo "  odg autonomy"
     echo "  odg status"
