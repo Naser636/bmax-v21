@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-07-15T15:39:54.485Z",
+  "component": "Governance Kernel",
+  "version": "v1",
+  "responsibilities": [
+    "Load Constitution",
+    "Load Policies",
+    "Resolve Capability",
+    "Authorize State Transition"
+  ],
+  "forbiddenResponsibilities": [
+    "Read Git",
+    "Modify source code",
+    "Execute patches",
+    "Call runtime engines directly",
+    "Write business artifacts"
+  ],
+  "inputs": [
+    "Mission",
+    "Policies",
+    "Constitution",
+    "Current State"
+  ],
+  "outputs": [
+    "Decision",
+    "Authorized Capability",
+    "Next State"
+  ]
+}

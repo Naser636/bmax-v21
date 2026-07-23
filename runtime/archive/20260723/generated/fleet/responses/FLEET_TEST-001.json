@@ -1,0 +1,11 @@
+{
+  "requestId": "FLEET_TEST-001",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-17T03:30:00.000Z",
+  "proposal": {
+    "mission": "FLEET_TEST",
+    "summary": "Proposition de test du premier echange ODG-agent",
+    "actions": ["analyser", "proposer un patch minimal"]
+  }
+}

@@ -1,0 +1,6 @@
+PATCH_ID=P001
+TARGET=runtime/bin/odg-status.js
+TASK=Replace console.log("STATUS : READY") with a Runtime Foundation Dashboard.
+INPUTS=runtime/generated/runtime-state.json,runtime/generated/runtime-status.json,runtime/generated/capability-registry.json,runtime/generated/mission-ledger.json
+CONSTRAINTS=Modify one file only;No architecture changes;No new files;Keep CLI compatibility.
+EXPECTED_OUTPUT=Unified dashboard showing Runtime, Capabilities, Last Mission, Next Mission, Recommended Action.

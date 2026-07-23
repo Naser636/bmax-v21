@@ -1,0 +1,22 @@
+runtime/missions/FIX_RUNTIME_MISSION_EXECUTION.json:23:        "PROCESS_TODOS is no longer hardcoded.",
+runtime/missions/FIX_PATCH_EXECUTION_PIPELINE.json:6:  "description":"Identify the root cause of PROCESS_TODOS and PROCESS_FIXMES failures, repair the Patch Executor and Patch Engine, re-execute all failed actions, execute all previously skipped actions, implement every missing capability that is achievable, validate every repair with evidence, and produce a complete audit explaining what was fixed, what remains blocked, and why."
+runtime/governance/contracts/04_RUNTIME_QUALITY.contract.md:19:- Aucun TODO/FIXME ajouté sans justification.
+runtime/core/decision-engine.js:29:    actions.push("PROCESS_TODOS");
+runtime/core/knowledge-engine.js:45:  todos+=(txt.match(/TODO/g)||[]).length;
+runtime/core/knowledge-engine.js:90:console.log("TODO       :",todos);
+runtime/backup/20260715_183545/decision-engine.js.before:24:    actions.push("PROCESS_TODOS");
+runtime/backup/20260715_184941/decision-engine.js.before:26:    actions.push("PROCESS_TODOS");
+runtime/backup/20260715_144737/patch-executor.js.before:22:    case "PROCESS_TODOS":
+runtime/backup/20260715_144737/patch-executor.js.before:25:          'grep -RIn "TODO\\|FIXME" src runtime || true',
+runtime/backup/20260715_183332/decision-engine.js.before:14:    actions.push("PROCESS_TODOS");
+runtime/backup/20260715_185455/decision-engine.js.before:33:    actions.push("PROCESS_TODOS");
+runtime/backup/20260715_234743/patch-executor.js:26:      case "PROCESS_TODOS": {
+runtime/backup/20260715_234743/patch-executor.js:27:        const out = execSync('grep -RIn "TODO" src runtime || true',{encoding:"utf8"});
+runtime/backup/20260715_144857/patch-executor.js.before:22:    case "PROCESS_TODOS":
+runtime/backup/20260715_144857/patch-executor.js.before:25:          'grep -RIn "TODO\\|FIXME" src runtime || true',
+runtime/backup/20260715_185627/decision-engine.js.before:36:    actions.push("PROCESS_TODOS");
+runtime/backup/20260715_145052/patch-executor.js.before:26:      case "PROCESS_TODOS": {
+runtime/backup/20260715_145052/patch-executor.js.before:27:        const out = execSync('grep -RIn "TODO" src runtime || true',{encoding:"utf8"});
+runtime/reports/S21_BLOCKS_STATUS.md:6:State: TODO
+runtime/reports/mission-loader-analysis-20260715-224901.md:176:## 9. TODO / FIXME
+runtime/todo/F13.03_MISSION_LOADER.todo.md:3:Status: TODO

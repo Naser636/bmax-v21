@@ -1,0 +1,39 @@
+src/runtime/runtime-demo.ts:const result = runtime.execute({
+src/runtime/runtime-context.ts:      RuntimeContext.instance.engine.bootstrap();
+src/runtime/runtime-daemon.ts:  execute(mission: RuntimeMission) {
+src/runtime/runtime-daemon.ts:    return this.shell.execute({
+src/runtime/runtime-host.ts:    return this.daemon.execute({
+src/runtime/runtime-executor.ts:export class RuntimeExecutor {
+src/runtime/runtime-executor.ts:  execute(id: string, name: string) {
+src/runtime/runtime-executor.ts:    this.engine.bootstrap();
+src/runtime/runtime-entry.ts:  execute(request: RuntimeRequest) {
+src/runtime/mission-router.ts:    return this.controller.execute({
+src/runtime/mission-controller.ts:import { MissionDispatcher } from "./mission-dispatcher";
+src/runtime/mission-controller.ts:  private readonly dispatcher = new MissionDispatcher();
+src/runtime/mission-controller.ts:  execute(request: MissionRequest) {
+src/runtime/mission-controller.ts:    return this.dispatcher.dispatch(id, name);
+src/runtime/runtime-kernel.ts:import { RuntimeExecutor } from "./runtime-executor";
+src/runtime/runtime-kernel.ts:export class RuntimeKernel {
+src/runtime/runtime-kernel.ts:  private readonly executor = new RuntimeExecutor();
+src/runtime/runtime-kernel.ts:  execute(id: string, name: string) {
+src/runtime/runtime-kernel.ts:    this.engine.bootstrap();
+src/runtime/runtime-kernel.ts:    const result = this.executor.execute(id, name);
+src/runtime/runtime-agent.ts:  execute(order: RuntimeOrder) {
+src/runtime/runtime-director.ts:  execute(objective: RuntimeObjective) {
+src/runtime/runtime-shell.ts:  execute(command: ShellCommand) {
+src/runtime/runtime-shell.ts:    return this.agent.execute({
+src/runtime/runtime-autopilot.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-autopilot.ts:    return this.supervisor.execute({
+src/runtime/runtime-supervisor.ts:  execute(order: RuntimeMissionOrder) {
+src/runtime/runtime-supervisor.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-supervisor.ts:    return this.governor.execute({
+src/runtime/runtime-bootstrap.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-governor.ts:  execute(goal: RuntimeGoal) {
+src/runtime/runtime-governor.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-governor.ts:    return this.director.execute({
+src/runtime/mission-engine.ts:  bootstrap(): RuntimeState {
+src/runtime/mission-dispatcher.ts:import { RuntimeKernel } from "./runtime-kernel";
+src/runtime/mission-dispatcher.ts:export class MissionDispatcher {
+src/runtime/mission-dispatcher.ts:  private readonly kernel = new RuntimeKernel();
+src/runtime/mission-dispatcher.ts:  dispatch(id: string, name: string) {
+src/runtime/mission-dispatcher.ts:    return this.kernel.execute(id, name);

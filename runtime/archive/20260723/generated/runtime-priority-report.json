@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-07-22T23:14:04.593Z",
+  "priority": [
+    {
+      "priority": 1,
+      "id": "OBJ-001",
+      "goal": "Faire de MissionOrchestrator le point d'entrée unique.",
+      "done_when": [
+        "Toutes les missions passent par MissionOrchestrator.",
+        "Le Runtime choisit ensuite l'exécution locale ou Provider."
+      ]
+    },
+    {
+      "priority": 2,
+      "id": "OBJ-002",
+      "goal": "Intégrer les missions locales dans le Runtime TypeScript.",
+      "done_when": [
+        "mission-cli ne retourne plus EXIT_CODE=3 pour les missions supportées.",
+        "Les missions locales sont exécutées par src/runtime."
+      ]
+    },
+    {
+      "priority": 3,
+      "id": "OBJ-003",
+      "goal": "Conserver le fallback uniquement pour les missions non migrées.",
+      "done_when": [
+        "Le fallback Mission Standard est limité aux missions restantes.",
+        "Aucune régression fonctionnelle."
+      ]
+    },
+    {
+      "priority": 4,
+      "id": "OBJ-004",
+      "goal": "Produire un rapport de migration.",
+      "done_when": [
+        "Liste des missions migrées.",
+        "Liste des missions restant à migrer."
+      ]
+    }
+  ],
+  "nextMission": "IMPLEMENT_MISSION_ORCHESTRATOR",
+  "reason": "OBJ-001 is the highest-priority missing capability."
+}

@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-15T15:18:26.174Z",
+  "capability": "ProjectContext Engine",
+  "mode": "BUILD",
+  "target": "ProjectContext Engine",
+  "strategy": "REUSE_BEFORE_CREATE",
+  "implementation": {
+    "status": "READY",
+    "create": [
+      "runtime/core/project-context-engine.js"
+    ],
+    "reuse": [
+      "decision-engine.js",
+      "knowledge-engine.js",
+      "patch-engine.js",
+      "validation-engine.js"
+    ],
+    "outputs": [
+      "runtime/generated/project-context-runtime.json"
+    ]
+  }
+}

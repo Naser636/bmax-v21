@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-07-15T15:12:13.940Z",
+  "capability": "ProjectContext Engine",
+  "selectedComponents": [
+    "decision-engine.js",
+    "knowledge-engine.js",
+    "patch-engine.js",
+    "validation-engine.js"
+  ],
+  "fallback": [],
+  "decision": "REUSE_EXISTING_COMPONENTS"
+}

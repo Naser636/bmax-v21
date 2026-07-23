@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-07-22T23:16:05.116Z",
+  "queue": [
+    {
+      "objective": "OBJ-001",
+      "mission": "IMPLEMENT_MISSION_ORCHESTRATOR",
+      "goal": "Faire de MissionOrchestrator le point d'entrée unique.",
+      "status": "PENDING"
+    },
+    {
+      "objective": "OBJ-002",
+      "mission": "MIGRATE_LOCAL_MISSIONS",
+      "goal": "Intégrer les missions locales dans le Runtime TypeScript.",
+      "status": "PENDING"
+    },
+    {
+      "objective": "OBJ-003",
+      "mission": "REMOVE_STANDARD_FALLBACK",
+      "goal": "Conserver le fallback uniquement pour les missions non migrées.",
+      "status": "PENDING"
+    },
+    {
+      "objective": "OBJ-004",
+      "mission": "GENERATE_MIGRATION_REPORT",
+      "goal": "Produire un rapport de migration.",
+      "status": "PENDING"
+    }
+  ]
+}

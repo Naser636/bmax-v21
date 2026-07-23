@@ -1,0 +1,39 @@
+src/runtime/execution-planner.ts:      this.orchestrator.buildPlan(id, name);
+src/runtime/execution-planner.ts:  create(id: string, name: string): TechnicalPlan {
+src/runtime/mission-controller.ts:  execute(request: MissionRequest) {
+src/runtime/mission-dispatcher.ts:    return this.kernel.execute(id, name);
+src/runtime/mission-engine.ts:      this.state.initialize(this.loader.load());
+src/runtime/mission-engine.ts:  bootstrap(): RuntimeState {
+src/runtime/mission-loader.ts:  load(id: string, name: string): RuntimeMission {
+src/runtime/mission-orchestrator.ts:    const mission = this.loader.load(id, name);
+src/runtime/mission-orchestrator.ts:  buildPlan(id: string, name: string): ExecutionPlan {
+src/runtime/mission-router.ts:    return this.controller.execute({
+src/runtime/runtime-agent.ts:  execute(order: RuntimeOrder) {
+src/runtime/runtime-autopilot.ts:    return this.supervisor.execute({
+src/runtime/runtime-autopilot.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-bootstrap.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-context.ts:      RuntimeContext.instance.engine.bootstrap();
+src/runtime/runtime-daemon.ts:    return this.shell.execute({
+src/runtime/runtime-daemon.ts:  execute(mission: RuntimeMission) {
+src/runtime/runtime-demo.ts:const result = runtime.execute({
+src/runtime/runtime-director.ts:  execute(objective: RuntimeObjective) {
+src/runtime/runtime-entry.ts:  execute(request: RuntimeRequest) {
+src/runtime/runtime-executor.ts:    const mission = this.loader.load(id, name);
+src/runtime/runtime-executor.ts:    const plan = this.orchestrator.buildPlan(id, name);
+src/runtime/runtime-executor.ts:    const runtimeSystem = this.system.load();
+src/runtime/runtime-executor.ts:    const technical = this.planner.create(id, name);
+src/runtime/runtime-executor.ts:    this.engine.bootstrap();
+src/runtime/runtime-executor.ts:  execute(id: string, name: string) {
+src/runtime/runtime-governor.ts:    return this.director.execute({
+src/runtime/runtime-governor.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-governor.ts:  execute(goal: RuntimeGoal) {
+src/runtime/runtime-host.ts:    return this.daemon.execute({
+src/runtime/runtime-kernel.ts:    const result = this.executor.execute(id, name);
+src/runtime/runtime-kernel.ts:    this.engine.bootstrap();
+src/runtime/runtime-kernel.ts:  execute(id: string, name: string) {
+src/runtime/runtime-shell.ts:    return this.agent.execute({
+src/runtime/runtime-shell.ts:  execute(command: ShellCommand) {
+src/runtime/runtime-supervisor.ts:    return this.governor.execute({
+src/runtime/runtime-supervisor.ts:    this.context.engine.bootstrap();
+src/runtime/runtime-supervisor.ts:  execute(order: RuntimeMissionOrder) {
+src/runtime/system-loader.ts:  load(): RuntimeSystem {

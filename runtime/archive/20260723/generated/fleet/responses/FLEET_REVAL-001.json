@@ -1,0 +1,15 @@
+{
+  "requestId": "FLEET_REVAL-001",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-17T05:13:09.397Z",
+  "attempt": 1,
+  "proposal": {
+    "mission": "FLEET_REVAL",
+    "summary": "[MOCK] Fleet Bridge round-trip for FLEET_REVAL",
+    "actions": [
+      "acknowledge request",
+      "return structured proposal"
+    ]
+  }
+}

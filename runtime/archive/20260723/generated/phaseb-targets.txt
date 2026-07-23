@@ -1,0 +1,12 @@
+src/runtime/runtime-context.ts:7:  readonly state = new RuntimeState();
+src/runtime/runtime-service.ts:13:readonly events=new EventBus();
+src/runtime/runtime-executor.ts:19:  private readonly events = new EventBus();
+src/runtime/runtime-executor.ts:20:  private readonly registry = new CapabilityRegistry();
+src/runtime/runtime-executor.ts:21:  private readonly reporter = new RuntimeReporter();
+src/runtime/runtime-facade.ts:3:import {RuntimeHealth} from "./runtime-health";
+src/runtime/runtime-facade.ts:8:private readonly reporter=new RuntimeReporter();
+src/runtime/runtime-facade.ts:9:private readonly health=new RuntimeHealth();
+src/runtime/mission-engine.ts:6:  private readonly state = new RuntimeState();
+src/runtime/runtime-health.ts:1:export interface RuntimeHealthStatus {
+src/runtime/runtime-health.ts:8:export class RuntimeHealth {
+src/runtime/runtime-health.ts:10:  check(initialized = true, capabilities = 0): RuntimeHealthStatus {

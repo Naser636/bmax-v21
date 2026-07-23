@@ -1,5 +1,5 @@
 Mission : IMPLEMENT_PROVIDER_FACTORY
-Commit : 95b0a4e
-Branch : mission/fleet-first-exchange
-Date : 2026-07-21T23:36:26+00:00
+Commit : 798b3ac
+Branch : runtime/mission-context-builder
+Date : 2026-07-23T17:20:05+00:00
 Status : SUCCESS

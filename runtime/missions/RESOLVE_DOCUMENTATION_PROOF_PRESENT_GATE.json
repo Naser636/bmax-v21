@@ -1,0 +1,29 @@
+{
+  "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "requiresEngineering": true,
+  "continue_until_complete": true,
+  "description": "Corrective mission auto-prepared by ROOT_CAUSE_ENGINE_V1: clear the red \"documentationProofPresent\" Release gate so the Release Manager can reach RELEASE.",
+  "authorizedPaths": [
+    "runtime/**"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "goal": "Apply the minimal patch proposed for the \"documentationProofPresent\" gate.",
+      "done_when": [
+        "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+        "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "goal": "Confirm the \"documentationProofPresent\" gate is green.",
+      "done_when": [
+        "runtime/bin/odg-verify.js has been re-run.",
+        "runtime/generated/runtime-verify.json reports documentationProofPresent:true."
+      ]
+    }
+  ]
+}

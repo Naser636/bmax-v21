@@ -1,0 +1,17 @@
+export interface ImplementationPlan {
+  generatedAt: string;
+  mission: string;
+  status: string;
+}
+
+export class ImplementationEngine {
+
+  prepare(mission: string): ImplementationPlan {
+    return {
+      generatedAt: new Date().toISOString(),
+      mission,
+      status: "READY"
+    };
+  }
+
+}

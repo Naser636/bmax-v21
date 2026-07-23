@@ -1,0 +1,69 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "ROOT_CAUSE_RELEASE_GATE",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003"
+    ],
+    "changedFiles": [
+      "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md"
+    ],
+    "commandsRun": [
+      "git status --short",
+      "git diff --quiet; echo $?",
+      "git diff --name-only",
+      "cat runtime/bin/odg-verify.js",
+      "cat runtime/bin/odg-verify.js.pre_patch",
+      "diff runtime/bin/odg-verify.js.pre_patch runtime/bin/odg-verify.js",
+      "cat .gitignore",
+      "git check-ignore runtime/generated/runtime-verify.json",
+      "git check-ignore runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+      "git diff runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+      "cat runtime/generated/runtime-verify.json"
+    ],
+    "blocker": null,
+    "notes": "Diagnostic (ENGINEERING) mission; per OBJ-002 done_when the patch is PROPOSED not applied, so no source/gitignore changes were made and no commit created. OBJ-001: responsible component = the gitClean evidence gate; blocking rule = ReleaseManager.allGreen() requires gates.gitClean===true (src/core/release-manager.ts:373-381, gate at :364). Root cause = self-dirtying deadlock: runtime/mission-standard/certificates/ and passports/ are tracked but regenerated every run (16 files, only Commit:/Date: header churn), so git diff --quiet always exits 1; identical class to the already-gitignored runtime/generated/ and history/. A masking defect also exists: runtime/bin/odg-verify.js has a TEMP PATCH hardcoding gitClean=true (pre-patch preserved as odg-verify.js.pre_patch), making the gate a false positive. OBJ-002 files to modify listed: .gitignore + git rm --cached the two dirs; revert the TEMP PATCH; extend RootCauseEngine.isBookkeeping (root-cause-engine.ts:406-411) which currently matches only history/. OBJ-003: Provider Engineering routes via missionRequiresProvider() (ENGINEERING mode); Validation Engine runs odg-verify.js (build+tsc green) and can verify — all 5 gates go green once the proposed patch lands. Fresh evidence captured in the updated report artifact."
+  },
+  "sessionId": "15ea550b-df99-42f9-bb77-3a1bf819c20b",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/FIX_RUNTIME_MISSION_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/FIX_RUNTIME_MISSION_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md",
+    "runtime/mission-standard/certificates/ENABLE_MASTER_PLAN_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PATCH_ACTIONS.certificate.md",
+    "runtime/mission-standard/generated/ENABLE_MASTER_PLAN_EXECUTION.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PATCH_ACTIONS.json",
+    "runtime/mission-standard/passports/ENABLE_MASTER_PLAN_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PATCH_ACTIONS.passport.md",
+    "runtime/mission-standard/reports/ENABLE_MASTER_PLAN_EXECUTION.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PATCH_ACTIONS.report.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":226995,\"duration_api_ms\":227367,\"ttft_ms\":4968,\"ttft_stream_ms\":1414,\"time_to_request_ms\":201,\"num_turns\":21,\"result\":\"{ \\\"mission\\\": \\\"ROOT_CAUSE_RELEASE_GATE\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\"], \\\"changedFiles\\\": [\\\"runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md\\\"], \\\"commandsRun\\\": [\\\"git status --short\\\", \\\"git diff --quiet; echo $?\\\", \\\"git diff --name-only\\\", \\\"cat runtime/bin/odg-verify.js\\\", \\\"cat runtime/bin/odg-verify.js.pre_patch\\\", \\\"diff runtime/bin/odg-verify.js.pre_patch runtime/bin/odg-verify.js\\\", \\\"cat .gitignore\\\", \\\"git check-ignore runtime/generated/runtime-verify.json\\\", \\\"git check-ignore runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md\\\", \\\"git diff runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md\\\", \\\"cat runtime/generated/runtime-verify.json\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Diagnostic (ENGINEERING) mission; per OBJ-002 done_when the patch is PROPOSED not applied, so no source/gitignore changes were made and no commit created. OBJ-001: responsible component = the gitClean evidence gate; blocking rule = ReleaseManager.allGreen() requires gates.gitClean===true (src/core/release-manager.ts:373-381, gate at :364). Root cause = self-dirtying deadlock: runtime/mission-standard/certificates/ and passports/ are tracked but regenerated every run (16 files, only Commit:/Date: header churn), so git diff --quiet always exits 1; identical class to the already-gitignored runtime/generated/ and history/. A masking defect also exists: runtime/bin/odg-verify.js has a TEMP PATCH hardcoding gitClean=true (pre-patch preserved as odg-verify.js.pre_patch), making the gate a false positive. OBJ-002 files to modify listed: .gitignore + git rm --cached the two dirs; revert the TEMP PATCH; extend RootCauseEngine.isBookkeeping (root-cause-engine.ts:406-411) which currently matches only history/. OBJ-003: Provider Engineering routes via missionRequiresProvider() (ENGINEERING mode); Validation Engine runs odg-verify.js (build+tsc green) and can verify — all 5 gates go green once the proposed patch lands. Fresh evidence captured in the updated report artifact.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"15ea550b-df99-42f9-bb77-3a1bf819c20b\",\"total_cost_usd\":1.0930927499999998,\"usage\":{\"input_tokens\":6448,\"cache_creation_input_tokens\":46947,\"cache_read_input_tokens\":685892,\"output_tokens\":16937,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":46947},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":917,\"cache_read_input_tokens\":63205,\"cache_creation_input_tokens\":469,\"cache_creation\":{\"ephemeral_5m_input_tokens\":469,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":978,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001063,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":6448,\"outputTokens\":16937,\"cacheReadInputTokens\":685892,\"cacheCreationInputTokens\":46947,\"webSearchRequests\":0,\"costUSD\":1.0920297499999998,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"fd26d8da-ca5e-499b-a711-cc20af9cd62f\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

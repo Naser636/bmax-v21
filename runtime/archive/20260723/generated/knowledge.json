@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-07-23T19:20:17.805Z",
+  "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+  "status": "READY",
+  "project": {
+    "sourceFiles": 684,
+    "classes": 160,
+    "imports": 943,
+    "exports": 692,
+    "todos": 16,
+    "fixmes": 15,
+    "relativeImports": 181,
+    "packageImports": 777
+  },
+  "knownCapabilities": [
+    "Mission Loader",
+    "Execution Planner",
+    "ProjectContext",
+    "Runtime Brain",
+    "ProjectContext Engine"
+  ],
+  "missingCapabilities": [
+    {
+      "id": "OBJ-001",
+      "goal": "Apply the minimal patch proposed for the \"documentationProofPresent\" gate.",
+      "done_when": [
+        "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+        "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "goal": "Confirm the \"documentationProofPresent\" gate is green.",
+      "done_when": [
+        "runtime/bin/odg-verify.js has been re-run.",
+        "runtime/generated/runtime-verify.json reports documentationProofPresent:true."
+      ]
+    }
+  ]
+}

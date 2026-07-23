@@ -1,0 +1,37 @@
+src/core/trace-runner.ts:import { getUnifiedTrace } from "@/core/trace-service";
+src/core/trace-runner.ts:  return getUnifiedTrace();
+src/core/trace-service.ts:export function getUnifiedTrace() {
+src/core/connector-dispatcher.ts:export async function dispatchConnector(
+src/core/bmax_v21_core.ts:      // Healthy cycle — apply hysteresis before returning to ACTIVE
+src/core/dashboard-adapter.ts:import { getUnifiedTrace } from "@/core/trace-service";
+src/core/dashboard-adapter.ts:    trace: getUnifiedTrace(),
+src/tests/regression.test.ts:import { getUnifiedTrace } from "@/core/trace-service";
+src/tests/regression.test.ts:const trace = getUnifiedTrace();
+src/tests/connector-dispatcher.test.ts:import { dispatchConnector } from "@/core/connector-dispatcher";
+src/tests/connector-dispatcher.test.ts:  console.assert(await dispatchConnector(new ApiConnector()));
+src/tests/connector-dispatcher.test.ts:  console.log("Connector Dispatcher OK");
+src/runtime/mission-controller.ts:import { MissionDispatcher } from "./mission-dispatcher";
+src/runtime/mission-controller.ts:  private readonly dispatcher = new MissionDispatcher();
+src/runtime/mission-controller.ts:    return this.dispatcher.dispatch(id, name);
+src/runtime/mission-dispatcher.ts:export class MissionDispatcher {
+src/runtime/mission-dispatcher.ts:  dispatch(id: string, name: string) {
+runtime/bin/odg-verify.js:cp.execSync("git diff --quiet");
+runtime/bin/odg-run.js:["Patch Engine","runtime/core/patch-engine.js"],
+runtime/core/patch-engine.js:const patch={
+runtime/core/patch-engine.js:    patches:decision.actions.map((action,index)=>({
+runtime/core/patch-engine.js:"runtime/generated/patch-plan.json",
+runtime/core/patch-engine.js:JSON.stringify(patch,null,2)
+runtime/core/patch-engine.js:console.log("PATCH ENGINE v3");
+runtime/core/patch-engine.js:console.log("Mission  :",patch.mission);
+runtime/core/patch-engine.js:console.log("Priority :",patch.priority);
+runtime/core/patch-engine.js:console.log("Actions  :",patch.actions.length);
+runtime/core/patch-engine.js:for(const a of patch.actions)
+runtime/core/validation-engine.js:const patch=JSON.parse(
+runtime/core/validation-engine.js:  fs.readFileSync("runtime/generated/patch-plan.json","utf8")
+runtime/core/validation-engine.js:  mission:patch.mission,
+runtime/core/validation-engine.js:  action:patch.action,
+runtime/core/validation-engine.js:  totalPatches:patch.patches.length,
+runtime/core/validation-engine.js:      analyzed:patch.summary.analyzedFiles,
+runtime/core/validation-engine.js:      missingCapabilities:patch.summary.missingCapabilities,
+runtime/core/validation-engine.js:      readyToImplement:patch.patches.length,
+runtime/core/validation-engine.js:console.log("Patches   :",report.totalPatches);

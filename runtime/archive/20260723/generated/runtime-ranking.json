@@ -1,0 +1,261 @@
+[
+  {
+    "file": "src/runtime/index.ts",
+    "classes": 0,
+    "imports": 0,
+    "exports": 14,
+    "score": 42
+  },
+  {
+    "file": "src/runtime/runtime-executor.ts",
+    "classes": 1,
+    "imports": 7,
+    "exports": 1,
+    "score": 22
+  },
+  {
+    "file": "src/runtime/runtime-service.ts",
+    "classes": 1,
+    "imports": 5,
+    "exports": 1,
+    "score": 18
+  },
+  {
+    "file": "src/runtime/execution-planner.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 3,
+    "score": 16
+  },
+  {
+    "file": "src/runtime/mission-orchestrator.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 3,
+    "score": 16
+  },
+  {
+    "file": "src/runtime/mission-controller.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 2,
+    "score": 15
+  },
+  {
+    "file": "src/runtime/runtime-autopilot.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 2,
+    "score": 15
+  },
+  {
+    "file": "src/runtime/runtime-bootstrap.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 2,
+    "score": 15
+  },
+  {
+    "file": "src/runtime/runtime-governor.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 2,
+    "score": 15
+  },
+  {
+    "file": "src/runtime/runtime-supervisor.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 2,
+    "score": 15
+  },
+  {
+    "file": "src/runtime/event-bus.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 3,
+    "score": 14
+  },
+  {
+    "file": "src/runtime/runtime-facade.ts",
+    "classes": 1,
+    "imports": 3,
+    "exports": 1,
+    "score": 14
+  },
+  {
+    "file": "src/runtime/runtime-kernel.ts",
+    "classes": 1,
+    "imports": 3,
+    "exports": 1,
+    "score": 14
+  },
+  {
+    "file": "src/runtime/mission-loader.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/mission-router.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-agent.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-daemon.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-director.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-entry.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-host.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-os.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/runtime-shell.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 2,
+    "score": 13
+  },
+  {
+    "file": "src/runtime/mission-dispatcher.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 1,
+    "score": 12
+  },
+  {
+    "file": "src/runtime/mission-engine.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 1,
+    "score": 12
+  },
+  {
+    "file": "src/runtime/runtime-context.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 1,
+    "score": 12
+  },
+  {
+    "file": "src/runtime/runtime-state.ts",
+    "classes": 1,
+    "imports": 2,
+    "exports": 1,
+    "score": 12
+  },
+  {
+    "file": "src/runtime/capability-registry.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 2,
+    "score": 11
+  },
+  {
+    "file": "src/runtime/execution-memory.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 2,
+    "score": 11
+  },
+  {
+    "file": "src/runtime/plugin-registry.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 2,
+    "score": 11
+  },
+  {
+    "file": "src/runtime/system-loader.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 2,
+    "score": 11
+  },
+  {
+    "file": "src/runtime/runtime-cli.ts",
+    "classes": 1,
+    "imports": 1,
+    "exports": 1,
+    "score": 10
+  },
+  {
+    "file": "src/runtime/runtime-health.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 1,
+    "score": 8
+  },
+  {
+    "file": "src/runtime/runtime-reporter.ts",
+    "classes": 1,
+    "imports": 0,
+    "exports": 1,
+    "score": 8
+  },
+  {
+    "file": "src/runtime/runtime-types.ts",
+    "classes": 0,
+    "imports": 0,
+    "exports": 2,
+    "score": 6
+  },
+  {
+    "file": "src/runtime/runtime-demo.ts",
+    "classes": 0,
+    "imports": 2,
+    "exports": 0,
+    "score": 4
+  },
+  {
+    "file": "src/runtime/runtime-events.ts",
+    "classes": 0,
+    "imports": 0,
+    "exports": 1,
+    "score": 3
+  },
+  {
+    "file": "src/runtime/patch-engine.ts",
+    "classes": 0,
+    "imports": 0,
+    "exports": 0,
+    "score": 0
+  }
+]

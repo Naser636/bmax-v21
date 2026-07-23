@@ -1,0 +1,15 @@
+{
+  "requestId": "FLEET_PIPE_SMOKE-001",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-17T05:27:53.822Z",
+  "attempt": 1,
+  "proposal": {
+    "mission": "FLEET_PIPE_SMOKE",
+    "summary": "[MOCK] Fleet Bridge round-trip for FLEET_PIPE_SMOKE",
+    "actions": [
+      "acknowledge request",
+      "return structured proposal"
+    ]
+  }
+}

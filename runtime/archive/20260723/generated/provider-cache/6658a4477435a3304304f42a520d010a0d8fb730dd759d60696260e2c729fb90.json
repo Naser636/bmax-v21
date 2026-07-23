@@ -1,0 +1,77 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "ROOT_CAUSE_RELEASE_GATE",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003"
+    ],
+    "changedFiles": [
+      "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md"
+    ],
+    "commandsRun": [
+      "git diff --quiet; echo exit=$?",
+      "git diff --name-only",
+      "git diff -- runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+      "grep -nE 'generated|history|certificates|passports|mission-standard' .gitignore",
+      "cat runtime/bin/odg-verify.js.pre_patch; diff runtime/bin/odg-verify.js.pre_patch runtime/bin/odg-verify.js",
+      "git diff --quiet -- . ':(exclude)runtime/mission-standard/certificates' ':(exclude)runtime/mission-standard/passports' ':(exclude)runtime/mission-standard/reports' ':(exclude)runtime/mission-standard/generated'; echo exit=$?",
+      "git status --porcelain | grep '^??'",
+      "git diff --name-only | sed -E 's#(runtime/mission-standard/[^/]+)/.*#\\1#' | sort | uniq -c",
+      "grep -n missionRequiresProvider src/providers/provider-port.ts",
+      "grep -n 'runtime-verify|gitClean' src/runtime/autonomy-runtime-adapter.ts",
+      "git rev-parse HEAD"
+    ],
+    "blocker": null,
+    "notes": "OBJ-001: sole red gate is gitClean. Responsible component = the gitClean evidence gate, not the Release Manager. Blocking rule = ReleaseManager.allGreen() requires gates.gitClean===true (src/core/release-manager.ts:373-381; evaluated at :364). Evidence producer = runtime/bin/odg-verify.js. Root cause = self-dirtying deadlock: 23 tracked files under runtime/mission-standard/{certificates,passports,reports,generated} are regenerated per-run (certificates/passports churn only Commit:/Date: headers), so `git diff --quiet` exits 1; excluding those 4 dirs exits 0 (proven). Masking defect: odg-verify.js lines 24-25 `// TEMP PATCH` hardcodes verify.gitClean=true (vs odg-verify.js.pre_patch real check), making the gate a false positive. OBJ-002: minimal patch proposed (not applied) — (1) gitignore + `git rm --cached -r` the 4 dirs (mirrors existing .gitignore:45,51 for generated/ + history/); (2) revert TEMP PATCH to `git diff --quiet` check — must land WITH (1) or gitClean honestly regresses to NO_RELEASE; (3) extend RootCauseEngine.isBookkeeping (src/runtime/root-cause-engine.ts:406-411) to the 4 dirs. OBJ-003: Provider Engineering routing ready via missionRequiresProvider (src/providers/provider-port.ts:261); Validation Engine ready — odg-verify runs npm build + tsc and writes runtime/generated/runtime-verify.json, relayed by AutonomyRuntimeAdapter.gatherEvidence (src/runtime/autonomy-runtime-adapter.ts:53). Patch NOT applied because step 1 requires editing .gitignore (repo root, outside AUTHORIZED_PATHS) plus `git rm --cached`/commit (prohibited by Runtime); this matches the done_when, which requires proposal only. Deliverable = the refreshed diagnostic report. RELEASE remains the Release Manager's decision."
+  },
+  "sessionId": "c1efc21b-d4da-434e-a0d5-7a64771f9a15",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/FIX_RUNTIME_MISSION_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/RUNTIME_FULL_AUTONOMY_EXECUTION.certificate.md",
+    "runtime/mission-standard/generated/RUNTIME_FULL_AUTONOMY_EXECUTION.json",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/FIX_RUNTIME_MISSION_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/RUNTIME_FULL_AUTONOMY_EXECUTION.passport.md",
+    "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md",
+    "runtime/mission-standard/reports/RUNTIME_FULL_AUTONOMY_EXECUTION.report.md",
+    "runtime/mission-standard/certificates/ENABLE_MASTER_PLAN_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PATCH_ACTIONS.certificate.md",
+    "runtime/mission-standard/evidence/",
+    "runtime/mission-standard/generated/ENABLE_MASTER_PLAN_EXECUTION.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PATCH_ACTIONS.json",
+    "runtime/mission-standard/passports/ENABLE_MASTER_PLAN_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PATCH_ACTIONS.passport.md",
+    "runtime/mission-standard/reports/ENABLE_MASTER_PLAN_EXECUTION.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PATCH_ACTIONS.report.md",
+    "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":205550,\"duration_api_ms\":205792,\"ttft_ms\":6750,\"ttft_stream_ms\":2597,\"time_to_request_ms\":199,\"num_turns\":19,\"result\":\"The mission's three objectives are diagnostic/proposal — all satisfied with live evidence, and the deliverable report is refreshed against the current tree. The only working-tree source change is the report (already tracked). Applying the fix is out of scope (requires `.gitignore` outside AUTHORIZED_PATHS + prohibited `git rm --cached`/commits), and the done_when requires proposal only.\\n\\n{ \\\"mission\\\": \\\"ROOT_CAUSE_RELEASE_GATE\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\"], \\\"changedFiles\\\": [\\\"runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md\\\"], \\\"commandsRun\\\": [\\\"git diff --quiet; echo exit=$?\\\", \\\"git diff --name-only\\\", \\\"git diff -- runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md\\\", \\\"grep -nE 'generated|history|certificates|passports|mission-standard' .gitignore\\\", \\\"cat runtime/bin/odg-verify.js.pre_patch; diff runtime/bin/odg-verify.js.pre_patch runtime/bin/odg-verify.js\\\", \\\"git diff --quiet -- . ':(exclude)runtime/mission-standard/certificates' ':(exclude)runtime/mission-standard/passports' ':(exclude)runtime/mission-standard/reports' ':(exclude)runtime/mission-standard/generated'; echo exit=$?\\\", \\\"git status --porcelain | grep '^??'\\\", \\\"git diff --name-only | sed -E 's#(runtime/mission-standard/[^/]+)/.*#\\\\\\\\1#' | sort | uniq -c\\\", \\\"grep -n missionRequiresProvider src/providers/provider-port.ts\\\", \\\"grep -n 'runtime-verify|gitClean' src/runtime/autonomy-runtime-adapter.ts\\\", \\\"git rev-parse HEAD\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"OBJ-001: sole red gate is gitClean. Responsible component = the gitClean evidence gate, not the Release Manager. Blocking rule = ReleaseManager.allGreen() requires gates.gitClean===true (src/core/release-manager.ts:373-381; evaluated at :364). Evidence producer = runtime/bin/odg-verify.js. Root cause = self-dirtying deadlock: 23 tracked files under runtime/mission-standard/{certificates,passports,reports,generated} are regenerated per-run (certificates/passports churn only Commit:/Date: headers), so `git diff --quiet` exits 1; excluding those 4 dirs exits 0 (proven). Masking defect: odg-verify.js lines 24-25 `// TEMP PATCH` hardcodes verify.gitClean=true (vs odg-verify.js.pre_patch real check), making the gate a false positive. OBJ-002: minimal patch proposed (not applied) — (1) gitignore + `git rm --cached -r` the 4 dirs (mirrors existing .gitignore:45,51 for generated/ + history/); (2) revert TEMP PATCH to `git diff --quiet` check — must land WITH (1) or gitClean honestly regresses to NO_RELEASE; (3) extend RootCauseEngine.isBookkeeping (src/runtime/root-cause-engine.ts:406-411) to the 4 dirs. OBJ-003: Provider Engineering routing ready via missionRequiresProvider (src/providers/provider-port.ts:261); Validation Engine ready — odg-verify runs npm build + tsc and writes runtime/generated/runtime-verify.json, relayed by AutonomyRuntimeAdapter.gatherEvidence (src/runtime/autonomy-runtime-adapter.ts:53). Patch NOT applied because step 1 requires editing .gitignore (repo root, outside AUTHORIZED_PATHS) plus `git rm --cached`/commit (prohibited by Runtime); this matches the done_when, which requires proposal only. Deliverable = the refreshed diagnostic report. RELEASE remains the Release Manager's decision.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"c1efc21b-d4da-434e-a0d5-7a64771f9a15\",\"total_cost_usd\":0.9237707500000001,\"usage\":{\"input_tokens\":20,\"cache_creation_input_tokens\":51615,\"cache_read_input_tokens\":384378,\"output_tokens\":16313,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":51615},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":1966,\"cache_read_input_tokens\":50906,\"cache_creation_input_tokens\":709,\"cache_creation\":{\"ephemeral_5m_input_tokens\":709,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":978,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001063,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":20,\"outputTokens\":16313,\"cacheReadInputTokens\":384378,\"cacheCreationInputTokens\":51615,\"webSearchRequests\":0,\"costUSD\":0.92270775,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"e946dc66-1475-494b-a02d-9e468b9a16bc\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

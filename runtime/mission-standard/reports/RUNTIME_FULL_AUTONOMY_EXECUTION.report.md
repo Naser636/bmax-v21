@@ -1,2 +1,3 @@
 Mission : RUNTIME_FULL_AUTONOMY_EXECUTION
 Status : SUCCESS
+Validated : true

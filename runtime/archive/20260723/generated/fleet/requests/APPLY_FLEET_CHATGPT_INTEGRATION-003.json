@@ -1,0 +1,32 @@
+{
+  "requestId": "APPLY_FLEET_CHATGPT_INTEGRATION-003",
+  "agent": "claude",
+  "status": "FAILED",
+  "mission": "APPLY_FLEET_CHATGPT_INTEGRATION",
+  "createdAt": "2026-07-17T13:16:47.100Z",
+  "attempt": 1,
+  "brief": {
+    "generatedAt": "2026-07-16T10:29:24.410Z",
+    "mission": "IMPLEMENT_DEVELOPER_ENGINE_V1",
+    "priority": "HIGH",
+    "project": {
+      "files": 1805,
+      "directories": 220
+    },
+    "actions": [
+      "PROCESS_TODOS",
+      "PROCESS_FIXMES",
+      "ANALYZE_DEPENDENCIES",
+      "OPTIMIZE_DEPENDENCIES",
+      "IMPLEMENT_MISSING_CAPABILITIES"
+    ],
+    "knownCapabilities": 5,
+    "missingCapabilities": 9,
+    "objective": "Produce the minimum safe implementation. Reuse existing code whenever possible."
+  },
+  "instruction": "# Mission : APPLY_FLEET_CHATGPT_INTEGRATION\n\nOBJECTIF\n\nIntégrer effectivement ChatGPT comme second agent Fleet dans ODG Runtime.\n\nPRINCIPE\n\nODG doit réaliser cette mission de manière autonome.\n\nIl doit :\n- privilégier ses propres mécanismes et connaissances ;\n- réutiliser au maximum l'architecture existante (Reuse Before Create) ;\n- utiliser Claude uniquement lorsque cela est nécessaire pour produire ou valider une implémentation ;\n- utiliser toutes les capacités Fleet déjà disponibles sans en créer de nouvelles inutilement.\n\nCONTRAINTES OBLIGATOIRES\n\n- Sécurité maximale.\n- Aucun refactoring.\n- Patch minimal.\n- Aucun comportement existant modifié.\n- Aucune régression.\n- Compatibilité complète avec l'architecture Runtime.\n- Compatibilité complète avec Fleet.\n- Compatibilité complète avec Claude.\n- Préserver l'intégralité des fonctionnalités existantes.\n- Rollback complet garanti.\n- Validation systématique avant toute modification.\n- Ne casser aucun composant existant.\n- Réutiliser tous les composants existants avant d'en créer de nouveaux.\n\nOBJECTIFS TECHNIQUES\n\n- Ajouter ChatGPT comme agent Fleet.\n- Étendre le registre Fleet existant.\n- Ajouter uniquement les composants indispensables.\n- Adapter le Dispatcher uniquement si nécessaire.\n- Permettre le routage vers Claude ou ChatGPT.\n- Conserver la compatibilité avec toutes les missions existantes.\n\nVALIDATION\n\nAvant de terminer :\n\n- vérifier que Claude fonctionne toujours ;\n- vérifier que ChatGPT est enregistré ;\n- vérifier que les deux agents répondent correctement ;\n- vérifier que tous les tests Fleet passent ;\n- vérifier que le Runtime reste entièrement compatible.\n\nLa priorité absolue est la sécurité, la stabilité et la préservation de l'architecture ODG existante.\n",
+  "deliveredAt": "2026-07-17T13:16:47.106Z",
+  "pid": 428652,
+  "failedAt": "2026-07-17T13:16:55.112Z",
+  "reason": "Agent exited 1: "
+}

@@ -1,0 +1,3080 @@
+[
+  {
+    "file": "src/app/layout.tsx",
+    "imports": 3,
+    "exports": 2,
+    "lines": 34
+  },
+  {
+    "file": "src/app/page.tsx",
+    "imports": 2,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/components/Dashboard.tsx",
+    "imports": 1,
+    "exports": 1,
+    "lines": 63
+  },
+  {
+    "file": "src/contracts/audit.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/contracts/boamp-connector.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/contracts/capability.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/contracts/connector-interface.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/contracts/connector.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/constraint.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/contracts/data-record.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/contracts/decision.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/discovery.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/contracts/evidence.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/explanation.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/contracts/goal.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/contracts/http-client.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/contracts/knowledge.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/contracts/memory.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/contracts/mission.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/opportunity.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/orchestrator.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/contracts/policy.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/reason.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/contracts/risk.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/contracts/simulation.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/system-health.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/contracts/value.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/contracts/verification.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/api-connector.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 16
+  },
+  {
+    "file": "src/core/audit-engine.ts",
+    "imports": 6,
+    "exports": 1,
+    "lines": 27
+  },
+  {
+    "file": "src/core/audit-registry.ts",
+    "imports": 2,
+    "exports": 4,
+    "lines": 22
+  },
+  {
+    "file": "src/core/audit-runner.ts",
+    "imports": 4,
+    "exports": 1,
+    "lines": 17
+  },
+  {
+    "file": "src/core/audit-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/bmax-core.ts",
+    "imports": 5,
+    "exports": 5,
+    "lines": 98
+  },
+  {
+    "file": "src/core/bmax_v21_core.ts",
+    "imports": 1,
+    "exports": 9,
+    "lines": 462
+  },
+  {
+    "file": "src/core/boamp-config.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 3
+  },
+  {
+    "file": "src/core/boamp-connector.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 15
+  },
+  {
+    "file": "src/core/boamp-dashboard.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/boamp-engine-version.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/boamp-event-log.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/boamp-event.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/boamp-export.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-filter.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-health.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/boamp-history.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/boamp-import.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-metrics.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/boamp-monitor.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-normalizer.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/boamp-parser.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-policy.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/boamp-query.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/boamp-registry.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/boamp-request.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/boamp-response.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/boamp-result.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/boamp-runner.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-search-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/boamp-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/boamp-status.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/boamp-summary.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-url-builder.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-validator.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/boamp-version.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/capability-registry.ts",
+    "imports": 0,
+    "exports": 3,
+    "lines": 23
+  },
+  {
+    "file": "src/core/clock.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 10
+  },
+  {
+    "file": "src/core/config.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/connector-audit.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/connector-bootstrap.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-cache.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 17
+  },
+  {
+    "file": "src/core/connector-config.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/connector-context.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-dashboard.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/connector-dispatcher.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/connector-event-log.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/connector-event.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/connector-executor.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/connector-factory.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 15
+  },
+  {
+    "file": "src/core/connector-failover.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 14
+  },
+  {
+    "file": "src/core/connector-health-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/connector-health-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-heartbeat.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/connector-history.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/connector-lifecycle.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 14
+  },
+  {
+    "file": "src/core/connector-loader.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/connector-manager.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 14
+  },
+  {
+    "file": "src/core/connector-metrics.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 15
+  },
+  {
+    "file": "src/core/connector-monitor.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 14
+  },
+  {
+    "file": "src/core/connector-orchestrator.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-pipeline.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 13
+  },
+  {
+    "file": "src/core/connector-policy.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/connector-pool.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 16
+  },
+  {
+    "file": "src/core/connector-registry-runtime.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 17
+  },
+  {
+    "file": "src/core/connector-registry-service.ts",
+    "imports": 1,
+    "exports": 3,
+    "lines": 21
+  },
+  {
+    "file": "src/core/connector-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/connector-report.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/connector-resolver.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-router.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-runtime.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-scheduler.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/connector-selector.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/connector-session.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/connector-snapshot.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/connector-state.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/connector-statistics.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 16
+  },
+  {
+    "file": "src/core/connector-telemetry.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/connector-validator.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/constraint-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/constraint-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/constraint-service.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/dashboard-adapter.ts",
+    "imports": 10,
+    "exports": 1,
+    "lines": 29
+  },
+  {
+    "file": "src/core/dashboard-runner.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/data-deduplicator.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/data-filter.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/data-normalizer.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/data-qualification-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/data-quality-dashboard.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/data-quality-engine-version.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/data-quality-event-log.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/data-quality-event.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/data-quality-export.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/data-quality-health.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/data-quality-history.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/data-quality-import.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/data-quality-metrics.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/data-quality-monitor.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/data-quality-policy.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/data-quality-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/data-quality-report.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/data-quality-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/data-quality-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/data-quality-status.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/data-quality-summary.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/data-quality-version.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/data-score.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/data-validator.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/decision-engine.ts",
+    "imports": 14,
+    "exports": 1,
+    "lines": 101
+  },
+  {
+    "file": "src/core/decision-pipeline.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 16
+  },
+  {
+    "file": "src/core/decision-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/decision-runner.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/discovery-engine.ts",
+    "imports": 2,
+    "exports": 2,
+    "lines": 25
+  },
+  {
+    "file": "src/core/discovery-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/discovery-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/errors.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/event-registry.ts",
+    "imports": 0,
+    "exports": 3,
+    "lines": 17
+  },
+  {
+    "file": "src/core/evidence-engine.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 18
+  },
+  {
+    "file": "src/core/explanation-engine.ts",
+    "imports": 2,
+    "exports": 2,
+    "lines": 24
+  },
+  {
+    "file": "src/core/explanation-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/explanation-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/fingerprint.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/fusion-engine.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/goal-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/goal-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/goal-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/http-api-key.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/http-bearer.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/http-client-factory.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/http-client.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 25
+  },
+  {
+    "file": "src/core/http-connector-adapter.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/http-connector-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 17
+  },
+  {
+    "file": "src/core/http-error.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/http-headers.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/http-json.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 8
+  },
+  {
+    "file": "src/core/http-logger.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/http-oauth.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/http-options.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/http-query.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 11
+  },
+  {
+    "file": "src/core/http-rate-limiter.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/http-request-builder.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 19
+  },
+  {
+    "file": "src/core/http-request-queue.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 16
+  },
+  {
+    "file": "src/core/http-request.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/http-response-validator.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/http-response.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/http-retry.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 17
+  },
+  {
+    "file": "src/core/http-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/http-status.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/http-timeout.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/http-token-manager.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 18
+  },
+  {
+    "file": "src/core/http-url-builder.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/index.ts",
+    "imports": 0,
+    "exports": 7,
+    "lines": 8
+  },
+  {
+    "file": "src/core/integration-context.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/integration-demo.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/integration-health.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/integration-mission.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/integration-orchestrator.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/integration-pipeline.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/integration-result.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/integration-search.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/integration-service.ts",
+    "imports": 4,
+    "exports": 1,
+    "lines": 25
+  },
+  {
+    "file": "src/core/knowledge-engine.ts",
+    "imports": 4,
+    "exports": 1,
+    "lines": 23
+  },
+  {
+    "file": "src/core/knowledge-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/knowledge-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/knowledge-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/logger.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 16
+  },
+  {
+    "file": "src/core/maintenance-demo.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 21
+  },
+  {
+    "file": "src/core/maintenance-engine.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 18
+  },
+  {
+    "file": "src/core/maintenance-state.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/maintenance-task.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/memory-engine.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 19
+  },
+  {
+    "file": "src/core/memory-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/memory-service.ts",
+    "imports": 2,
+    "exports": 2,
+    "lines": 15
+  },
+  {
+    "file": "src/core/mission-context.ts",
+    "imports": 13,
+    "exports": 3,
+    "lines": 60
+  },
+  {
+    "file": "src/core/mission-engine.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 17
+  },
+  {
+    "file": "src/core/mission-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/mission-service.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 14
+  },
+  {
+    "file": "src/core/observability-demo.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/observability-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 21
+  },
+  {
+    "file": "src/core/observability-metrics.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/observability-state.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/opportunity-decision-adapter.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 14
+  },
+  {
+    "file": "src/core/opportunity-engine.ts",
+    "imports": 1,
+    "exports": 3,
+    "lines": 30
+  },
+  {
+    "file": "src/core/opportunity-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/opportunity-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/opportunity-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 13
+  },
+  {
+    "file": "src/core/orchestrator-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/orchestrator-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/orchestrator-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 15
+  },
+  {
+    "file": "src/core/orchestrator-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/policy-engine.ts",
+    "imports": 3,
+    "exports": 4,
+    "lines": 36
+  },
+  {
+    "file": "src/core/policy-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/policy-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/recovery-action.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/recovery-check.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/recovery-demo.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 19
+  },
+  {
+    "file": "src/core/recovery-engine.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 31
+  },
+  {
+    "file": "src/core/recovery-state.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/result.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 13
+  },
+  {
+    "file": "src/core/risk-engine.ts",
+    "imports": 4,
+    "exports": 1,
+    "lines": 32
+  },
+  {
+    "file": "src/core/risk-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/risk-service.ts",
+    "imports": 2,
+    "exports": 2,
+    "lines": 11
+  },
+  {
+    "file": "src/core/runtime-context.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 16
+  },
+  {
+    "file": "src/core/runtime-factory.ts",
+    "imports": 2,
+    "exports": 2,
+    "lines": 15
+  },
+  {
+    "file": "src/core/runtime-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/scheduler-demo.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 13
+  },
+  {
+    "file": "src/core/scheduler-engine.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 17
+  },
+  {
+    "file": "src/core/scheduler-job.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/scheduler-state.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/simulation-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 15
+  },
+  {
+    "file": "src/core/simulation-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/simulation-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/simulation-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/source-registry.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 22
+  },
+  {
+    "file": "src/core/system-health-alert.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/system-health-check.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/system-health-dashboard.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 11
+  },
+  {
+    "file": "src/core/system-health-engine-version.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/system-health-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/system-health-event-log.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/system-health-event.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/system-health-export.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/system-health-history.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 14
+  },
+  {
+    "file": "src/core/system-health-import.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/system-health-metrics.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 13
+  },
+  {
+    "file": "src/core/system-health-monitor.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/system-health-notifier.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 4
+  },
+  {
+    "file": "src/core/system-health-policy.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/system-health-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 16
+  },
+  {
+    "file": "src/core/system-health-report.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/system-health-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/core/system-health-scheduler.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/system-health-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/system-health-state.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 5
+  },
+  {
+    "file": "src/core/system-health-status.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 10
+  },
+  {
+    "file": "src/core/system-health-summary.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/system-health-validator.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 8
+  },
+  {
+    "file": "src/core/system-health-version.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 2
+  },
+  {
+    "file": "src/core/system-runner.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/timeline-registry.ts",
+    "imports": 0,
+    "exports": 3,
+    "lines": 16
+  },
+  {
+    "file": "src/core/timeline-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/trace-runner.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/trace-service.ts",
+    "imports": 7,
+    "exports": 1,
+    "lines": 20
+  },
+  {
+    "file": "src/core/validation.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 21
+  },
+  {
+    "file": "src/core/value-engine.ts",
+    "imports": 6,
+    "exports": 1,
+    "lines": 41
+  },
+  {
+    "file": "src/core/value-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/value-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/value-service.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/core/verification-engine.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 15
+  },
+  {
+    "file": "src/core/verification-registry.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 12
+  },
+  {
+    "file": "src/core/verification-runner.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/core/verification-service.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 12
+  },
+  {
+    "file": "src/core/web-connector.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 16
+  },
+  {
+    "file": "src/core/workflow-connector.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 24
+  },
+  {
+    "file": "src/core/workflow-demo.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 18
+  },
+  {
+    "file": "src/core/workflow-engine.ts",
+    "imports": 18,
+    "exports": 1,
+    "lines": 99
+  },
+  {
+    "file": "src/core/workflow-health.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 23
+  },
+  {
+    "file": "src/core/workflow-http.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 25
+  },
+  {
+    "file": "src/core/workflow-maintenance.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 17
+  },
+  {
+    "file": "src/core/workflow-qualification.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 21
+  },
+  {
+    "file": "src/core/workflow-recovery.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 19
+  },
+  {
+    "file": "src/core/workflow-scheduler.ts",
+    "imports": 2,
+    "exports": 1,
+    "lines": 17
+  },
+  {
+    "file": "src/demo/demo.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 10
+  },
+  {
+    "file": "src/demo.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 116
+  },
+  {
+    "file": "src/engine/core/stateMachine.ts",
+    "imports": 1,
+    "exports": 3,
+    "lines": 136
+  },
+  {
+    "file": "src/engine/core/types.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 114
+  },
+  {
+    "file": "src/runtime/capability-registry.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 10
+  },
+  {
+    "file": "src/runtime/event-bus.ts",
+    "imports": 0,
+    "exports": 3,
+    "lines": 46
+  },
+  {
+    "file": "src/runtime/execution-memory.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 42
+  },
+  {
+    "file": "src/runtime/execution-planner.ts",
+    "imports": 1,
+    "exports": 3,
+    "lines": 41
+  },
+  {
+    "file": "src/runtime/index.ts",
+    "imports": 0,
+    "exports": 14,
+    "lines": 15
+  },
+  {
+    "file": "src/runtime/mission-loader.ts",
+    "imports": 1,
+    "exports": 2,
+    "lines": 27
+  },
+  {
+    "file": "src/runtime/mission-orchestrator.ts",
+    "imports": 1,
+    "exports": 3,
+    "lines": 34
+  },
+  {
+    "file": "src/runtime/plugin-registry.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 10
+  },
+  {
+    "file": "src/runtime/runtime-demo.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 22
+  },
+  {
+    "file": "src/runtime/runtime-events.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 7
+  },
+  {
+    "file": "src/runtime/runtime-executor.ts",
+    "imports": 5,
+    "exports": 1,
+    "lines": 41
+  },
+  {
+    "file": "src/runtime/runtime-facade.ts",
+    "imports": 3,
+    "exports": 1,
+    "lines": 24
+  },
+  {
+    "file": "src/runtime/runtime-health.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/runtime/runtime-reporter.ts",
+    "imports": 0,
+    "exports": 1,
+    "lines": 9
+  },
+  {
+    "file": "src/runtime/runtime-service.ts",
+    "imports": 5,
+    "exports": 1,
+    "lines": 16
+  },
+  {
+    "file": "src/runtime/runtime-state.ts",
+    "imports": 1,
+    "exports": 1,
+    "lines": 6
+  },
+  {
+    "file": "src/runtime/runtime-types.ts",
+    "imports": 0,
+    "exports": 2,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/api-connector.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/audit-runner.test.ts",
+    "imports": 8,
+    "exports": 0,
+    "lines": 30
+  },
+  {
+    "file": "src/tests/boamp-config.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-connector.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-contract.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/boamp-dashboard.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-engine-version.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-event-log.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/boamp-event.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-export.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-filter.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-health.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-history.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-import.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-metrics.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-monitor.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-normalizer.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-parser.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-policy.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-query.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-registry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-request.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-response.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-result.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-runner.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-search-service.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-service.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-status.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/boamp-summary.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-url-builder.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/boamp-validator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/boamp-version.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/capability-registry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/connector-audit.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/connector-bootstrap.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/connector-cache.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/connector-config.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/connector-context.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-dashboard.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/connector-dispatcher.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/connector-event-log.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/connector-event.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/connector-executor.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-factory.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/connector-failover.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 17
+  },
+  {
+    "file": "src/tests/connector-health-engine.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-health-service.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-heartbeat.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-history.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/connector-lifecycle.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 22
+  },
+  {
+    "file": "src/tests/connector-loader.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-manager.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/connector-metrics.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 18
+  },
+  {
+    "file": "src/tests/connector-monitor.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 18
+  },
+  {
+    "file": "src/tests/connector-orchestrator.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 17
+  },
+  {
+    "file": "src/tests/connector-pipeline.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 17
+  },
+  {
+    "file": "src/tests/connector-policy.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-pool.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-registry-runtime.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 16
+  },
+  {
+    "file": "src/tests/connector-registry-service.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 10
+  },
+  {
+    "file": "src/tests/connector-report.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/connector-resolver.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/connector-router.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/connector-runtime.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/connector-scheduler.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 18
+  },
+  {
+    "file": "src/tests/connector-selector.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 16
+  },
+  {
+    "file": "src/tests/connector-session.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 9
+  },
+  {
+    "file": "src/tests/connector-snapshot.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/connector-state.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/connector-statistics.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 19
+  },
+  {
+    "file": "src/tests/connector-telemetry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/connector-validator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/constraint.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/dashboard-runner.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/dashboard.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 10
+  },
+  {
+    "file": "src/tests/data-deduplicator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-filter.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-normalizer.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-qualification-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-dashboard.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-engine-version.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/data-quality-event-log.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/data-quality-event.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-quality-export.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/data-quality-health.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 7
+  },
+  {
+    "file": "src/tests/data-quality-history.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-quality-import.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/data-quality-metrics.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-monitor.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-policy.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-quality-registry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/data-quality-report.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-runner.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/data-quality-service.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-status.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/data-quality-summary.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/data-quality-version.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/data-record.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-score.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/data-validator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/decision-runner.test.ts",
+    "imports": 7,
+    "exports": 0,
+    "lines": 30
+  },
+  {
+    "file": "src/tests/discovery-runner.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 19
+  },
+  {
+    "file": "src/tests/fusion-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/goal.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 9
+  },
+  {
+    "file": "src/tests/http-api-key.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/http-bearer.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/http-client-factory.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/http-client.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/http-connector-adapter.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/http-connector-registry.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 16
+  },
+  {
+    "file": "src/tests/http-error.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 9
+  },
+  {
+    "file": "src/tests/http-headers.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/http-json.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/http-logger.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/http-oauth.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/http-options.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/http-query.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/http-rate-limiter.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/http-request-builder.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/http-request-queue.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/http-request.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/http-response-validator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/http-response.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/http-retry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 18
+  },
+  {
+    "file": "src/tests/http-service.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 9
+  },
+  {
+    "file": "src/tests/http-status.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/http-timeout.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/http-token-manager.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 17
+  },
+  {
+    "file": "src/tests/http-url-builder.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/integration-context.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/integration-demo.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/integration-health.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/integration-mission.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/integration-orchestrator.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 18
+  },
+  {
+    "file": "src/tests/integration-pipeline.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/integration-result.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/integration-search.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/integration-service.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/integration.test.ts",
+    "imports": 2,
+    "exports": 0,
+    "lines": 10
+  },
+  {
+    "file": "src/tests/knowledge-runner.test.ts",
+    "imports": 8,
+    "exports": 0,
+    "lines": 29
+  },
+  {
+    "file": "src/tests/maintenance-demo.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/maintenance-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/mission-context.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/observability-demo.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/observability-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/opportunity-decision-adapter.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 16
+  },
+  {
+    "file": "src/tests/opportunity-runner.test.ts",
+    "imports": 5,
+    "exports": 0,
+    "lines": 22
+  },
+  {
+    "file": "src/tests/opportunity.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/orchestrator-runner.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 9
+  },
+  {
+    "file": "src/tests/orchestrator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 9
+  },
+  {
+    "file": "src/tests/policy.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/recovery-demo.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/recovery-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/regression.test.ts",
+    "imports": 3,
+    "exports": 0,
+    "lines": 17
+  },
+  {
+    "file": "src/tests/risk.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/scheduler-demo.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/scheduler-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/simulation-runner.test.ts",
+    "imports": 6,
+    "exports": 0,
+    "lines": 25
+  },
+  {
+    "file": "src/tests/simulation.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 13
+  },
+  {
+    "file": "src/tests/source-registry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/system-health-alert.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 10
+  },
+  {
+    "file": "src/tests/system-health-check.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-dashboard.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/system-health-engine-version.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/system-health-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 16
+  },
+  {
+    "file": "src/tests/system-health-event-log.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/system-health-event.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/system-health-export.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-history.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/system-health-import.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-metrics.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/system-health-monitor.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/system-health-notifier.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-policy.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/system-health-registry.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/system-health-report.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/system-health-runner.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-scheduler.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-service.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-state.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/system-health-status.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 10
+  },
+  {
+    "file": "src/tests/system-health-summary.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/system-health-validator.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 14
+  },
+  {
+    "file": "src/tests/system-health-version.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/system-health.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/system-runner.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 11
+  },
+  {
+    "file": "src/tests/trace-runner.test.ts",
+    "imports": 9,
+    "exports": 0,
+    "lines": 33
+  },
+  {
+    "file": "src/tests/universal-http-client.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 8
+  },
+  {
+    "file": "src/tests/value-runner.test.ts",
+    "imports": 8,
+    "exports": 0,
+    "lines": 29
+  },
+  {
+    "file": "src/tests/verification-runner.test.ts",
+    "imports": 4,
+    "exports": 0,
+    "lines": 20
+  },
+  {
+    "file": "src/tests/verification.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 12
+  },
+  {
+    "file": "src/tests/web-connector.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 15
+  },
+  {
+    "file": "src/tests/workflow-connector.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-demo.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-engine.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-health.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-http.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-maintenance.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-observability.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-qualification.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-recovery.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  },
+  {
+    "file": "src/tests/workflow-scheduler.test.ts",
+    "imports": 1,
+    "exports": 0,
+    "lines": 6
+  }
+]

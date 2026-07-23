@@ -1,0 +1,80 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [
+      "src/runtime/patch-engine.ts",
+      "src/runtime/autonomy-runtime-adapter.ts",
+      "src/runtime/index.ts",
+      "src/tests/provider-patch-engine.test.ts",
+      "src/tests/provider-canonical-contract.test.ts",
+      "src/tests/provider-enabled-mission.test.ts",
+      "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md",
+      "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json"
+    ],
+    "commandsRun": [
+      "npx tsc --noEmit",
+      "npx tsx src/tests/provider-patch-engine.test.ts",
+      "npx tsx src/tests/provider-enabled-mission.test.ts",
+      "npx tsx src/tests/provider-canonical-contract.test.ts",
+      "npx tsx src/tests/claude-provider-adapter.test.ts",
+      "npx tsx src/tests/claude-provider-integration.test.ts",
+      "npx tsx src/tests/provider-orchestrator.test.ts",
+      "npx tsx src/tests/provider-registry.test.ts"
+    ],
+    "blocker": null,
+    "notes": "Capability was already implemented in the working tree from prior sessions; this session verified it end-to-end rather than editing. OBJ-001 core lives in already-committed src/providers/provider-port.ts + claude-provider-adapter.ts (clean in working tree); the OBJ-002/003 glue (patch-engine.ts + autonomy-runtime-adapter.ts wiring), tests, evidence, and prepared next mission are the working-tree deliverable listed in changedFiles. Fresh verification: tsc exit 0, all 7 provider tests green. No commits created. The gitClean/canonical-mission-report release preconditions are the Release Manager's gate and are not forced here; unrelated pre-existing dirty files under runtime/mission-standard/** and a stray runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json.bak remain in the tree and were left untouched."
+  },
+  "sessionId": "29ff8bbf-6a88-4053-9683-c4cccee28084",
+  "changedFiles": [
+    ".gitignore",
+    "runtime/bin/odg-status.js",
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/FIX_RUNTIME_MISSION_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/generated/FIX_PATCH_EXECUTION_PIPELINE.json",
+    "runtime/mission-standard/history/history.md",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/FIX_RUNTIME_MISSION_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/reports/FIX_PATCH_EXECUTION_PIPELINE.report.md",
+    "runtime/missions/ENABLE_MASTER_PLAN_EXECUTION.json",
+    "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "src/runtime/autonomy-runtime-adapter.ts",
+    "src/runtime/index.ts",
+    "src/runtime/local-mission-runner.ts",
+    "src/runtime/mission-migration.ts",
+    "src/runtime/patch-engine.ts",
+    "src/tests/provider-enabled-mission.test.ts",
+    "runtime/backup/20260722_225936/",
+    "runtime/backup/20260722_231000_odg-status.js",
+    "runtime/bin/odg-next.js",
+    "runtime/bin/odg-orchestrator.js",
+    "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md",
+    "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json.bak",
+    "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json",
+    "runtime/savepoints/",
+    "src/tests/provider-canonical-contract.test.ts",
+    "src/tests/provider-patch-engine.test.ts"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":125360,\"duration_api_ms\":108381,\"ttft_ms\":4917,\"ttft_stream_ms\":1391,\"time_to_request_ms\":246,\"num_turns\":13,\"result\":\"The mission's capability is fully present, wired, and independently verified this session. Summary of what I confirmed:\\n\\n- **OBJ-001** — Engineering Provider exists and is selectable: `src/providers/provider-port.ts` (`EngineeringProviderPort`, `missionRequiresProvider`) + `src/providers/claude-provider-adapter.ts`; selection proven by `provider-orchestrator` / `provider-registry` tests (all green).\\n- **OBJ-002** — Runtime calls the provider automatically after the Brief, no CTO call: `src/runtime/autonomy-runtime-adapter.ts` `runPipeline()` → `runViaProvider()`; proven by `provider-enabled-mission.test.ts` (routing + exactly-one-call + cache).\\n- **OBJ-003** — Patch Engine receives the result, Validation Engine verifies: `src/runtime/patch-engine.ts` (`ProviderPatchEngine.receive`) wired into `runViaProvider()`, `readyForValidation` → `refreshVerifyEvidence()`; proven by `provider-patch-engine.test.ts`.\\n- **OBJ-004** — Result capitalized: evidence at `runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md`, next mission `runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json` prepared.\\n\\nFresh evidence gathered this session: `npx tsc --noEmit` exit 0; all 7 provider tests pass.\\n\\nI made no code edits — the capability was already implemented and I verified it end-to-end rather than churning working files. The clean-tree / canonical-report release preconditions are the Release Manager's gate (per prior knowledge), not mine to force.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_ENGINEERING_PROVIDER\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [\\\"src/runtime/patch-engine.ts\\\", \\\"src/runtime/autonomy-runtime-adapter.ts\\\", \\\"src/runtime/index.ts\\\", \\\"src/tests/provider-patch-engine.test.ts\\\", \\\"src/tests/provider-canonical-contract.test.ts\\\", \\\"src/tests/provider-enabled-mission.test.ts\\\", \\\"runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md\\\", \\\"runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json\\\"], \\\"commandsRun\\\": [\\\"npx tsc --noEmit\\\", \\\"npx tsx src/tests/provider-patch-engine.test.ts\\\", \\\"npx tsx src/tests/provider-enabled-mission.test.ts\\\", \\\"npx tsx src/tests/provider-canonical-contract.test.ts\\\", \\\"npx tsx src/tests/claude-provider-adapter.test.ts\\\", \\\"npx tsx src/tests/claude-provider-integration.test.ts\\\", \\\"npx tsx src/tests/provider-orchestrator.test.ts\\\", \\\"npx tsx src/tests/provider-registry.test.ts\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability was already implemented in the working tree from prior sessions; this session verified it end-to-end rather than editing. OBJ-001 core lives in already-committed src/providers/provider-port.ts + claude-provider-adapter.ts (clean in working tree); the OBJ-002/003 glue (patch-engine.ts + autonomy-runtime-adapter.ts wiring), tests, evidence, and prepared next mission are the working-tree deliverable listed in changedFiles. Fresh verification: tsc exit 0, all 7 provider tests green. No commits created. The gitClean/canonical-mission-report release preconditions are the Release Manager's gate and are not forced here; unrelated pre-existing dirty files under runtime/mission-standard/** and a stray runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json.bak remain in the tree and were left untouched.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"29ff8bbf-6a88-4053-9683-c4cccee28084\",\"total_cost_usd\":0.52896075,\"usage\":{\"input_tokens\":17,\"cache_creation_input_tokens\":29523,\"cache_read_input_tokens\":307288,\"output_tokens\":7584,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":29523},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":2820,\"cache_read_input_tokens\":44285,\"cache_creation_input_tokens\":1965,\"cache_creation\":{\"ephemeral_5m_input_tokens\":1965,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1048,\"outputTokens\":13,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001113,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":17,\"outputTokens\":7584,\"cacheReadInputTokens\":307288,\"cacheCreationInputTokens\":29523,\"webSearchRequests\":0,\"costUSD\":0.5278477500000001,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"0e97171a-158d-473c-8443-dcd47d5a01a6\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

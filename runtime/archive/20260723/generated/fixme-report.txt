@@ -1,0 +1,20 @@
+runtime/missions/FIX_RUNTIME_MISSION_EXECUTION.json:24:        "PROCESS_FIXMES is no longer hardcoded.",
+runtime/missions/FIX_PATCH_EXECUTION_PIPELINE.json:6:  "description":"Identify the root cause of PROCESS_TODOS and PROCESS_FIXMES failures, repair the Patch Executor and Patch Engine, re-execute all failed actions, execute all previously skipped actions, implement every missing capability that is achievable, validate every repair with evidence, and produce a complete audit explaining what was fixed, what remains blocked, and why."
+runtime/governance/contracts/04_RUNTIME_QUALITY.contract.md:19:- Aucun TODO/FIXME ajouté sans justification.
+runtime/core/decision-engine.js:32:    actions.push("PROCESS_FIXMES");
+runtime/core/knowledge-engine.js:46:  fixmes+=(txt.match(/FIXME/g)||[]).length;
+runtime/core/knowledge-engine.js:91:console.log("FIXME      :",fixmes);
+runtime/backup/20260715_183545/decision-engine.js.before:27:    actions.push("PROCESS_FIXMES");
+runtime/backup/20260715_184941/decision-engine.js.before:29:    actions.push("PROCESS_FIXMES");
+runtime/backup/20260715_144737/patch-executor.js.before:25:          'grep -RIn "TODO\\|FIXME" src runtime || true',
+runtime/backup/20260715_183332/decision-engine.js.before:17:    actions.push("PROCESS_FIXMES");
+runtime/backup/20260715_185455/decision-engine.js.before:36:    actions.push("PROCESS_FIXMES");
+runtime/backup/20260715_234743/patch-executor.js:33:      case "PROCESS_FIXMES": {
+runtime/backup/20260715_234743/patch-executor.js:34:        const out = execSync('grep -RIn "FIXME" src runtime || true',{encoding:"utf8"});
+runtime/backup/20260715_144857/patch-executor.js.before:25:          'grep -RIn "TODO\\|FIXME" src runtime || true',
+runtime/backup/20260715_144857/patch-executor.js.before:52:      if(patch.action==="PROCESS_FIXMES"){
+runtime/backup/20260715_144857/patch-executor.js.before:54:const fixmes=execSync('grep -RIn "FIXME" src runtime || true',{encoding:"utf8"});
+runtime/backup/20260715_185627/decision-engine.js.before:39:    actions.push("PROCESS_FIXMES");
+runtime/backup/20260715_145052/patch-executor.js.before:33:      case "PROCESS_FIXMES": {
+runtime/backup/20260715_145052/patch-executor.js.before:34:        const out = execSync('grep -RIn "FIXME" src runtime || true',{encoding:"utf8"});
+runtime/reports/mission-loader-analysis-20260715-224901.md:176:## 9. TODO / FIXME

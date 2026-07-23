@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-07-15T15:16:11.397Z",
+  "capability": "ProjectContext Engine",
+  "decision": "REUSE_EXISTING_COMPONENTS",
+  "components": [
+    {
+      "component": "decision-engine.js",
+      "rationale": "Transforms project metrics into engineering actions."
+    },
+    {
+      "component": "knowledge-engine.js",
+      "rationale": "Provides repository inventory and project knowledge."
+    },
+    {
+      "component": "patch-engine.js",
+      "rationale": "Builds executable patch plans from engineering decisions."
+    },
+    {
+      "component": "validation-engine.js",
+      "rationale": "Validates generated artifacts before integration."
+    }
+  ]
+}

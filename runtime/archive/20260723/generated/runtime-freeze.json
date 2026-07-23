@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-07-20T16:24:15.253Z",
+  "status": "FROZEN",
+  "artifacts": [
+    "runtime-report.json",
+    "runtime-status.json",
+    "runtime-verify.json"
+  ]
+}

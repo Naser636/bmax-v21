@@ -1,0 +1,41 @@
+===== CRITICAL COMPONENTS =====
+CRITICAL  ./runtime-context
+MEDIUM    ./system-loader
+MEDIUM    ./mission-loader
+MEDIUM    ./mission-engine
+MEDIUM    node:fs
+MEDIUM    ./runtime-state
+MEDIUM    ./mission-orchestrator
+MEDIUM    ./execution-planner
+MEDIUM    ./execution-memory
+MEDIUM    ./event-bus
+LOW       ./runtime-types
+LOW       ./runtime-supervisor
+LOW       ./runtime-shell
+LOW       ./runtime-service
+LOW       ./runtime-reporter
+LOW       ./runtime-os
+LOW       ./runtime-kernel
+LOW       ./runtime-host
+LOW       ./runtime-health
+LOW       ./runtime-governor
+LOW       ./runtime-executor
+LOW       ./runtime-entry
+LOW       ./runtime-director
+LOW       ./runtime-daemon
+LOW       ./runtime-cli
+LOW       ./runtime-bootstrap
+LOW       ./runtime-autopilot
+LOW       ./runtime-agent
+LOW       ./mission-router
+LOW       ./mission-dispatcher
+LOW       ./mission-controller
+
+===== POTENTIAL ORPHANS =====
+capability-registry
+index
+patch-engine
+plugin-registry
+runtime-demo
+runtime-events
+runtime-facade

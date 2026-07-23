@@ -1,0 +1,683 @@
+src/demo.ts:1:import { workflowDemo } from "@/core/workflow-demo";
+src/demo.ts:4:  const context = await workflowDemo();
+src/demo.ts:7:  console.log("ODG V2 - MISSION EXECUTION REPORT");
+src/demo.ts:19:  console.log("WORKFLOW");
+src/demo.ts:27:    console.log(`Workflow : ${context.observability.metrics.workflowDurationMs} ms`);
+src/demo.ts:36:    console.log("✓ Discovery executed");
+src/demo.ts:44:    console.log("✓ Fusion completed");
+src/demo.ts:57:  console.log("DECISION");
+src/demo.ts:59:  if (context.decision) {
+src/demo.ts:60:    console.log("✓ Decision generated");
+src/demo.ts:68:    console.log("✓ Connector selected");
+src/demo.ts:84:  console.log("DECISION ENGINE");
+src/demo.ts:86:  if (context.decisionEngine) {
+src/demo.ts:87:    console.log("✓ Decision Engine executed");
+src/demo.ts:93:    console.log("✓ Explanation generated");
+src/core/goal-engine.ts:9:    createdAt: Date.now(),
+src/core/integration-search.ts:1:import { runBoampSearch } from "@/core/boamp-runner";
+src/core/integration-search.ts:4:  return runBoampSearch(query);
+src/core/scheduler-state.ts:3:  executed: boolean;
+src/core/boamp-config.ts:1:export const BOAMP_BASE_URL =
+src/core/boamp-config.ts:2:  "https://www.boamp.fr";
+src/core/recovery-engine.ts:27:      message: "Recovery completed",
+src/core/boamp-event-log.ts:1:import { BoampEvent } from "@/core/boamp-event";
+src/core/boamp-event-log.ts:3:const events: BoampEvent[] = [];
+src/core/boamp-event-log.ts:5:export function addBoampEvent(event: BoampEvent) {
+src/core/boamp-event-log.ts:9:export function getBoampEvents() {
+src/core/system-runner.ts:1:import { runDashboard } from "@/core/dashboard-runner";
+src/core/system-runner.ts:4:  return runDashboard();
+src/core/knowledge-engine.ts:1:import { Decision } from "@/contracts/decision";
+src/core/knowledge-engine.ts:6:export function createKnowledge(decision: Decision): Knowledge {
+src/core/knowledge-engine.ts:9:    decisionId: decision.id,
+src/core/knowledge-engine.ts:11:    result: decision.recommendation,
+src/core/knowledge-engine.ts:12:    context: "Decision Engine",
+src/core/knowledge-engine.ts:13:    score: decision.confidence,
+src/core/knowledge-engine.ts:14:    createdAt: Date.now(),
+src/core/value-engine.ts:1:import { Decision } from "@/contracts/decision";
+src/core/value-engine.ts:8:export function evaluateValue(decision: Decision): Value {
+src/core/value-engine.ts:10:  const risk = evaluateRisk(decision);
+src/core/value-engine.ts:13:  let score = decision.confidence;
+src/core/value-engine.ts:31:    decisionId: decision.id,
+src/core/value-engine.ts:34:    createdAt: Date.now(),
+src/core/maintenance-state.ts:2:  completed: boolean;
+src/core/discovery-engine.ts:13:    createdAt: Date.now(),
+src/core/discovery-engine.ts:20:      source: "BOAMP",
+src/core/boamp-dashboard.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-dashboard.ts:3:export function buildBoampDashboard(results: BoampResult[]) {
+src/core/connector-audit.ts:7:    audited: events.length,
+src/core/workflow-connector.ts:12:    name: "BOAMP",
+src/core/workflow-connector.ts:19:    `Connector executed: ${connector.name}`
+src/core/boamp-query.ts:1:export interface BoampQuery {
+src/core/decision-engine.ts:2:import { Decision } from "@/contracts/decision";
+src/core/decision-engine.ts:4:import { addDecision } from "@/core/decision-registry";
+src/core/decision-engine.ts:5:import { getRuntimeContext } from "@/core/runtime-service";
+src/core/decision-engine.ts:22:): Decision & { reason: Reason } {
+src/core/decision-engine.ts:23:  const runtime = getRuntimeContext();
+src/core/decision-engine.ts:26:  void runtime;
+src/core/decision-engine.ts:36:  const accepted = enabled && isConfidenceAllowed(confidence, policy);
+src/core/decision-engine.ts:38:  const decision = {
+src/core/decision-engine.ts:41:    recommendation: accepted ? "ACCEPT" : "REJECT",
+src/core/decision-engine.ts:44:    reason: accepted
+src/core/decision-engine.ts:55:  const risk = evaluateRisk(decision);
+src/core/decision-engine.ts:64:    decision.recommendation = "REJECT";
+src/core/decision-engine.ts:65:    decision.confidence = 0.0;
+src/core/decision-engine.ts:66:    decision.reason = {
+src/core/decision-engine.ts:72:  createExplanation(decision);
+src/core/decision-engine.ts:73:  createAudit(decision);
+src/core/decision-engine.ts:75:  addDecision(decision);
+src/core/decision-engine.ts:76:  createEvidence(decision);
+src/core/decision-engine.ts:77:  evaluateValue(decision);
+src/core/decision-engine.ts:78:  createKnowledge(decision);
+src/core/decision-engine.ts:82:    type: "DECISION",
+src/core/decision-engine.ts:83:    message: decision.recommendation,
+src/core/decision-engine.ts:94:    type: "DECISION_CREATED",
+src/core/decision-engine.ts:96:    payload: decision,
+src/core/decision-engine.ts:99:  return decision;
+src/core/boamp-parser.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-parser.ts:3:export function parseBoampResults(data: unknown): BoampResult[] {
+src/core/boamp-parser.ts:4:  return Array.isArray(data) ? (data as BoampResult[]) : [];
+src/core/connector-dashboard.ts:3:export function buildConnectorDashboard(
+src/core/boamp-service.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-service.ts:3:export class BoampService {
+src/core/boamp-service.ts:4:  constructor(private readonly results: BoampResult[]) {}
+src/core/boamp-service.ts:6:  getAll(): BoampResult[] {
+src/core/workflow-scheduler.ts:12:    `Scheduler executed: ${scheduler.mission}`
+src/core/risk-engine.ts:1:import { Decision } from "@/contracts/decision";
+src/core/risk-engine.ts:6:export function evaluateRisk(decision: Decision): Risk {
+src/core/risk-engine.ts:7:  const score = 1 - decision.confidence;
+src/core/risk-engine.ts:17:    decisionId: decision.id,
+src/core/risk-engine.ts:25:    createdAt: Date.now(),
+src/core/boamp-connector.ts:2:import { BoampConnector } from "@/contracts/boamp-connector";
+src/core/boamp-connector.ts:4:export class DefaultBoampConnector implements BoampConnector {
+src/core/boamp-connector.ts:11:      `https://www.boamp.fr/recherche?text=${encodeURIComponent(query)}`
+src/core/boamp-search-service.ts:1:import { DefaultBoampConnector } from "@/core/boamp-connector";
+src/core/boamp-search-service.ts:3:export class BoampSearchService {
+src/core/boamp-search-service.ts:5:    public readonly connector = new DefaultBoampConnector()
+src/core/memory-engine.ts:12:    createdAt: Date.now(),
+src/core/workflow-maintenance.ts:12:    `Maintenance completed (${maintenance.tasks.length} tasks)`
+src/core/boamp-import.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-import.ts:3:export function importBoamp(json: string): BoampResult[] {
+src/core/boamp-import.ts:4:  return JSON.parse(json) as BoampResult[];
+src/core/trace-service.ts:1:import { getDecisions } from "@/core/decision-registry";
+src/core/trace-service.ts:11:    decisions: getDecisions(),
+src/core/connector-registry-runtime.ts:1:import { ConnectorRuntime } from "@/core/connector-runtime";
+src/core/connector-registry-runtime.ts:3:const runtimes = new Map<string, ConnectorRuntime>();
+src/core/connector-registry-runtime.ts:5:export function registerRuntime(
+src/core/connector-registry-runtime.ts:7:  runtime: ConnectorRuntime
+src/core/connector-registry-runtime.ts:9:  runtimes.set(name, runtime);
+src/core/connector-registry-runtime.ts:12:export function getRuntime(
+src/core/connector-registry-runtime.ts:14:): ConnectorRuntime | undefined {
+src/core/connector-registry-runtime.ts:15:  return runtimes.get(name);
+src/core/decision-registry.ts:1:import { Decision } from "@/contracts/decision";
+src/core/decision-registry.ts:3:const registry: Decision[] = [];
+src/core/decision-registry.ts:5:export function addDecision(decision: Decision): void {
+src/core/decision-registry.ts:6:  registry.push(decision);
+src/core/decision-registry.ts:9:export function getDecisions(): Decision[] {
+src/core/runtime-context.ts:1:import { SystemState, MarketMode, OperationMode } from "@/engine/core/types";
+src/core/runtime-context.ts:3:export interface RuntimeContext {
+src/core/runtime-context.ts:5:  marketMode: MarketMode;
+src/core/runtime-context.ts:7:  startedAt: number;
+src/core/runtime-context.ts:10:export const runtimeContext: RuntimeContext = {
+src/core/runtime-context.ts:12:  marketMode: MarketMode.CLASSIC_SPREAD,
+src/core/runtime-context.ts:14:  startedAt: Date.now(),
+src/core/boamp-health.ts:1:export function isBoampHealthy(): boolean {
+src/core/explanation-engine.ts:1:import { Decision } from "@/contracts/decision";
+src/core/explanation-engine.ts:5:  decision: Decision
+src/core/explanation-engine.ts:9:    decisionId: decision.id,
+src/core/explanation-engine.ts:10:    summary: decision.recommendation,
+src/core/explanation-engine.ts:11:    details: decision.recommendation,
+src/core/explanation-engine.ts:14:    runtime: "",
+src/core/explanation-engine.ts:15:    createdAt: Date.now(),
+src/core/explanation-engine.ts:20:  execute(decision: Decision): Explanation {
+src/core/explanation-engine.ts:21:    return createExplanation(decision);
+src/core/boamp-url-builder.ts:1:import { BOAMP_BASE_URL } from "@/core/boamp-config";
+src/core/boamp-url-builder.ts:3:export function buildBoampUrl(query: string): string {
+src/core/boamp-url-builder.ts:4:  return `${BOAMP_BASE_URL}/recherche?text=${encodeURIComponent(query)}`;
+src/core/runtime-service.ts:1:import { runtimeContext } from "@/core/runtime-context";
+src/core/runtime-service.ts:3:export function getRuntimeContext() {
+src/core/runtime-service.ts:4:  return runtimeContext;
+src/core/boamp-result.ts:1:export interface BoampResult {
+src/core/boamp-engine-version.ts:1:export const BOAMP_ENGINE_VERSION = "1.0.0";
+src/core/constraint-service.ts:6:  constraint: Omit<Constraint, "id" | "createdAt">
+src/core/simulation-engine.ts:11:    selected: false,
+src/core/simulation-engine.ts:12:    createdAt: Date.now(),
+src/core/integration-result.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/integration-result.ts:5:  results: BoampResult[];
+src/core/workflow-demo.ts:2:import { WorkflowEngine } from "@/core/workflow-engine";
+src/core/workflow-demo.ts:4:export async function workflowDemo(): Promise<MissionContext> {
+src/core/workflow-demo.ts:7:    state: "CREATED",
+src/core/workflow-demo.ts:14:  const workflow = new WorkflowEngine();
+src/core/workflow-demo.ts:16:  return workflow.execute(context);
+src/core/workflow-http.ts:20:    `HTTP request completed (${http.status})`
+src/core/audit-engine.ts:2:import { Decision } from "@/contracts/decision";
+src/core/audit-engine.ts:6:import { runtimeContext } from "@/core/runtime-context";
+src/core/audit-engine.ts:8:export function createAudit(decision: Decision): Audit {
+src/core/audit-engine.ts:10:  const risk = evaluateRisk(decision);
+src/core/audit-engine.ts:14:    decisionId: decision.id,
+src/core/audit-engine.ts:15:    action: decision.recommendation,
+src/core/audit-engine.ts:16:    actor: "DecisionEngine",
+src/core/audit-engine.ts:19:    runtime: `${runtimeContext.systemState}/${runtimeContext.operationMode}`,
+src/core/evidence-engine.ts:1:import { Decision } from "@/contracts/decision";
+src/core/evidence-engine.ts:5:export function createEvidence(decision: Decision): Evidence {
+src/core/evidence-engine.ts:8:    decisionId: decision.id,
+src/core/evidence-engine.ts:9:    source: "DecisionEngine",
+src/core/evidence-engine.ts:10:    createdAt: Date.now(),
+src/core/evidence-engine.ts:11:    hash: `${decision.id}-${Date.now()}`,
+src/core/knowledge-runner.ts:1:import { Decision } from "@/contracts/decision";
+src/core/knowledge-runner.ts:4:export function runKnowledge(decision: Decision) {
+src/core/knowledge-runner.ts:5:  return createKnowledge(decision);
+src/core/data-quality-dashboard.ts:3:export function buildDataQualityDashboard(records: DataRecord[]) {
+src/core/connector-manager.ts:9:      name: "BOAMP",
+src/core/runtime-factory.ts:4:export interface RuntimeDependencies {
+src/core/runtime-factory.ts:9:export interface RuntimeFactory<TConfig, TRuntime> {
+src/core/runtime-factory.ts:12:    dependencies: RuntimeDependencies
+src/core/runtime-factory.ts:13:  ): TRuntime;
+src/core/system-health-dashboard.ts:3:export function buildHealthDashboard(
+src/core/decision-pipeline.ts:3:export interface DecisionResult {
+src/core/decision-pipeline.ts:4:  accepted: boolean;
+src/core/decision-pipeline.ts:8:export class DecisionPipeline {
+src/core/decision-pipeline.ts:9:  execute(opportunities: Opportunity[]): DecisionResult {
+src/core/decision-pipeline.ts:11:      accepted: opportunities.length > 0,
+src/core/workflow-health.ts:12:    component: "WorkflowHealth",
+src/core/bmax-core.ts:5:import { createValidationReport, type ValidationReport } from "./validation";
+src/core/bmax-core.ts:26:export interface RuntimeDependencies {
+src/core/bmax-core.ts:36:    private readonly deps: RuntimeDependencies
+src/core/bmax-core.ts:74:  validate(): ValidationReport {
+src/core/bmax-core.ts:88:    return createValidationReport(
+src/core/system-health-report.ts:3:export function buildSystemHealthReport(
+src/core/validation.ts:3:export interface ValidationReport {
+src/core/validation.ts:10:export function createValidationReport(
+src/core/validation.ts:13:): ValidationReport {
+src/core/boamp-response.ts:1:export interface BoampResponse {
+src/core/data-quality-metrics.ts:3:export function computeDataQualityMetrics(records: DataRecord[]) {
+src/core/data-quality-report.ts:3:export function buildDataQualityReport(records: DataRecord[]) {
+src/core/index.ts:7:export * from "./runtime-factory";
+src/core/boamp-filter.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-filter.ts:3:export function filterBoampResults(results: BoampResult[]): BoampResult[] {
+src/core/dashboard-runner.ts:1:import { getDashboardState } from "@/core/dashboard-adapter";
+src/core/dashboard-runner.ts:3:export function runDashboard() {
+src/core/dashboard-runner.ts:4:  return getDashboardState();
+src/core/value-runner.ts:1:import { Decision } from "@/contracts/decision";
+src/core/value-runner.ts:4:export function runValue(decision: Decision) {
+src/core/value-runner.ts:5:  return evaluateValue(decision);
+src/core/observability-metrics.ts:2:  workflowDurationMs: number;
+src/core/constraint-engine.ts:4:  constraint: Omit<Constraint, "id" | "createdAt">
+src/core/constraint-engine.ts:8:    createdAt: Date.now(),
+src/core/boamp-normalizer.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-normalizer.ts:3:export function normalizeBoampResult(result: BoampResult): BoampResult {
+src/core/connector-runtime.ts:3:export class ConnectorRuntime {
+src/core/boamp-metrics.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-metrics.ts:3:export function computeBoampMetrics(results: BoampResult[]) {
+src/core/audit-runner.ts:1:import { Decision } from "@/contracts/decision";
+src/core/audit-runner.ts:7:  decision: Decision & { reason: Reason }
+src/core/audit-runner.ts:9:  const explanation = createExplanation(decision);
+src/core/audit-runner.ts:10:  const audit = createAudit(decision);
+src/core/data-score.ts:3:export function computeDataScore(record: DataRecord): number {
+src/core/boamp-export.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-export.ts:3:export function exportBoamp(results: BoampResult[]): string {
+src/core/boamp-summary.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-summary.ts:3:export function summarizeBoamp(results: BoampResult[]): string {
+src/core/boamp-runner.ts:1:import { DefaultBoampConnector } from "@/core/boamp-connector";
+src/core/boamp-runner.ts:3:export async function runBoampSearch(query: string) {
+src/core/boamp-runner.ts:4:  return new DefaultBoampConnector().search(query);
+src/core/integration-service.ts:1:import { isBoampHealthy } from "@/core/boamp-health";
+src/core/integration-service.ts:2:import { runBoampSearch } from "@/core/boamp-runner";
+src/core/integration-service.ts:7:  if (!isBoampHealthy()) {
+src/core/integration-service.ts:8:    throw new Error("BOAMP unavailable");
+src/core/integration-service.ts:11:  const raw = await runBoampSearch(query);
+src/core/integration-service.ts:14:    source: "BOAMP",
+src/core/workflow-engine.ts:1:import { evaluateCapability } from "@/core/decision-engine";
+src/core/workflow-engine.ts:2:import { opportunityToCapability } from "@/core/opportunity-decision-adapter";
+src/core/workflow-engine.ts:6:import { DecisionPipeline } from "@/core/decision-pipeline";
+src/core/workflow-engine.ts:11:import { executeScheduler } from "@/core/workflow-scheduler";
+src/core/workflow-engine.ts:12:import { executeHealth } from "@/core/workflow-health";
+src/core/workflow-engine.ts:13:import { executeRecovery } from "@/core/workflow-recovery";
+src/core/workflow-engine.ts:14:import { executeQualification } from "@/core/workflow-qualification";
+src/core/workflow-engine.ts:15:import { executeConnector } from "@/core/workflow-connector";
+src/core/workflow-engine.ts:16:import { executeHttp } from "@/core/workflow-http";
+src/core/workflow-engine.ts:17:import { executeMaintenance } from "@/core/workflow-maintenance";
+src/core/workflow-engine.ts:20:export class WorkflowEngine {
+src/core/workflow-engine.ts:22:    context.metrics.startedAt = Date.now();
+src/core/workflow-engine.ts:58:    const decision = new DecisionPipeline().execute(opportunities);
+src/core/workflow-engine.ts:59:    context.decision = decision;
+src/core/workflow-engine.ts:61:    if (decision.accepted && decision.opportunity) {
+src/core/workflow-engine.ts:63:        opportunityToCapability(decision.opportunity);
+src/core/workflow-engine.ts:65:      context.decisionEngine =
+src/core/workflow-engine.ts:72:        capability: "workflow",
+src/core/workflow-engine.ts:73:        recommendation: decision.accepted ? "ACCEPT" : "REJECT",
+src/core/workflow-engine.ts:74:        confidence: decision.accepted ? 1 : 0,
+src/core/workflow-engine.ts:83:      context.metrics.finishedAt - context.metrics.startedAt;
+src/core/workflow-engine.ts:86:      context.observability.metrics.workflowDurationMs =
+src/core/workflow-engine.ts:94:    context.state = "COMPLETED";
+src/core/bmax_v21_core.ts:3: * Pure business logic — no React, no frontend, no external dependencies.
+src/core/bmax_v21_core.ts:20:export enum MarketMode {
+src/core/bmax_v21_core.ts:36:  marketMode: MarketMode;
+src/core/bmax_v21_core.ts:41:  totalRejected: number;
+src/core/bmax_v21_core.ts:50:  marketMode: MarketMode;
+src/core/bmax_v21_core.ts:69:export interface ClassicMarketTick {
+src/core/bmax_v21_core.ts:123:  private marketMode: MarketMode;
+src/core/bmax_v21_core.ts:130:  private totalRejected = 0;
+src/core/bmax_v21_core.ts:131:  private startedAt: number = Date.now();
+src/core/bmax_v21_core.ts:148:    marketMode: MarketMode = MarketMode.SOLANA_SNIPER,
+src/core/bmax_v21_core.ts:152:    this.marketMode = marketMode;
+src/core/bmax_v21_core.ts:157:      marketMode,
+src/core/bmax_v21_core.ts:176:   * @param aggregatedRiskScore  0.0 → 1.0
+src/core/bmax_v21_core.ts:178:  public monitorSafetyGates(aggregatedRiskScore: number): SystemState {
+src/core/bmax_v21_core.ts:186:    const risk = Math.max(0, Math.min(1, aggregatedRiskScore));
+src/core/bmax_v21_core.ts:224:      this.totalRejected += 1;
+src/core/bmax_v21_core.ts:238:  public executeClassicSpread(tick: ClassicMarketTick): SimulationEvent {
+src/core/bmax_v21_core.ts:244:      this.totalRejected += 1;
+src/core/bmax_v21_core.ts:272:      marketMode: this.marketMode,
+src/core/bmax_v21_core.ts:277:      totalRejected: this.totalRejected,
+src/core/bmax_v21_core.ts:278:      uptimeMs: Date.now() - this.startedAt,
+src/core/bmax_v21_core.ts:290:    this.totalRejected = 0;
+src/core/bmax_v21_core.ts:292:    this.startedAt = Date.now();
+src/core/bmax_v21_core.ts:299:    this.writeAudit("ENGINE_RESET", { ts: this.startedAt });
+src/core/bmax_v21_core.ts:369:      marketMode: MarketMode.SOLANA_SNIPER,
+src/core/bmax_v21_core.ts:397:  private simulateClassicSpread(tick: ClassicMarketTick): SimulationEvent {
+src/core/bmax_v21_core.ts:416:      marketMode: MarketMode.CLASSIC_SPREAD,
+src/core/bmax_v21_core.ts:428:  private generateSpreadPnL(tick: ClassicMarketTick, spread: number): number {
+src/core/mission-engine.ts:14:    createdAt: Date.now(),
+src/core/boamp-history.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-history.ts:3:const history: BoampResult[][] = [];
+src/core/boamp-history.ts:5:export function addBoampHistory(results: BoampResult[]) {
+src/core/boamp-history.ts:9:export function getBoampHistory() {
+src/core/maintenance-engine.ts:13:      completed: true,
+src/core/boamp-validator.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/core/boamp-validator.ts:3:export function validateBoampResult(result: BoampResult): boolean {
+src/core/integration-health.ts:1:import { isBoampHealthy } from "@/core/boamp-health";
+src/core/integration-health.ts:4:  return isBoampHealthy();
+src/core/orchestrator-engine.ts:8:    createdAt: Date.now(),
+src/core/decision-runner.ts:3:import { evaluateCapability } from "@/core/decision-engine";
+src/core/decision-runner.ts:5:export function runDecision(simulation: Simulation) {
+src/core/observability-engine.ts:8:        workflowDurationMs: 0,
+src/core/capability-registry.ts:15:    id: "workflow",
+src/core/capability-registry.ts:16:    name: "Workflow",
+src/core/boamp-request.ts:1:export interface BoampRequest {
+src/core/source-registry.ts:13:    id: "boamp",
+src/core/source-registry.ts:14:    name: "BOAMP",
+src/core/mission-context.ts:4:import type { Decision } from "@/contracts/decision";
+src/core/mission-context.ts:7:import type { DecisionResult } from "@/core/decision-pipeline";
+src/core/mission-context.ts:16:  | "CREATED"
+src/core/mission-context.ts:22:  | "COMPLETED"
+src/core/mission-context.ts:27:  startedAt?: number;
+src/core/mission-context.ts:49:  decision?: DecisionResult;
+src/core/mission-context.ts:52:  decisionEngine?: Decision;
+src/core/dashboard-adapter.ts:2:import { evaluateCapability } from "@/core/decision-engine";
+src/core/dashboard-adapter.ts:12:export function getDashboardState() {
+src/core/dashboard-adapter.ts:13:  const decision = evaluateCapability(capabilities[0]);
+src/core/dashboard-adapter.ts:17:    decision,
+src/core/boamp-registry.ts:1:import { DefaultBoampConnector } from "@/core/boamp-connector";
+src/core/boamp-registry.ts:3:const connector = new DefaultBoampConnector();
+src/core/boamp-registry.ts:5:export function getBoampConnector() {
+src/core/scheduler-engine.ts:12:      executed: true,
+src/core/boamp-policy.ts:1:export interface BoampPolicy {
+src/core/boamp-version.ts:1:export const BOAMP_CONNECTOR_VERSION = "1.0.0";
+src/core/verification-engine.ts:12:    createdAt: Date.now(),
+src/core/opportunity-engine.ts:15:    createdAt: Date.now(),
+src/core/opportunity-engine.ts:25:        "BOAMP"
+src/core/connector-report.ts:3:export function createConnectorReport(
+src/core/connector-state.ts:3:  | "CONNECTED"
+src/core/connector-state.ts:4:  | "DISCONNECTED"
+src/core/boamp-event.ts:1:export interface BoampEvent {
+src/core/boamp-status.ts:1:export type BoampStatus =
+src/core/boamp-monitor.ts:1:export class BoampMonitor {
+src/core/workflow-qualification.ts:17:  context.logs.push("Qualification completed");
+src/tests/data-quality-metrics.test.ts:1:import { computeDataQualityMetrics } from "@/core/data-quality-metrics";
+src/tests/data-quality-metrics.test.ts:3:const metrics = computeDataQualityMetrics([]);
+src/tests/integration.test.ts:2:import { evaluateCapability } from "@/core/decision-engine";
+src/tests/integration.test.ts:4:const decision = evaluateCapability(capabilities[0]);
+src/tests/integration.test.ts:6:console.assert(decision.recommendation === "ACCEPT" || decision.recommendation === "REJECT");
+src/tests/integration.test.ts:7:console.assert(decision.reason.code.length > 0);
+src/tests/connector-registry-runtime.test.ts:2:import { ConnectorRuntime } from "@/core/connector-runtime";
+src/tests/connector-registry-runtime.test.ts:4:  registerRuntime,
+src/tests/connector-registry-runtime.test.ts:5:  getRuntime,
+src/tests/connector-registry-runtime.test.ts:6:} from "@/core/connector-registry-runtime";
+src/tests/connector-registry-runtime.test.ts:8:registerRuntime(
+src/tests/connector-registry-runtime.test.ts:10:  new ConnectorRuntime(new ApiConnector(), "api")
+src/tests/connector-registry-runtime.test.ts:13:console.assert(getRuntime("api") !== undefined);
+src/tests/connector-registry-runtime.test.ts:15:console.log("Connector Registry Runtime OK");
+src/tests/workflow-health.test.ts:1:import { executeHealth } from "@/core/workflow-health";
+src/tests/workflow-health.test.ts:5:console.log("Workflow Health OK");
+src/tests/opportunity-decision-adapter.test.ts:1:import { opportunityToCapability } from "@/core/opportunity-decision-adapter";
+src/tests/opportunity-decision-adapter.test.ts:7:  source: "BOAMP",
+src/tests/opportunity-decision-adapter.test.ts:8:  createdAt: Date.now(),
+src/tests/opportunity-decision-adapter.test.ts:15:console.log("Opportunity Decision Adapter OK");
+src/tests/boamp-runner.test.ts:1:import { runBoampSearch } from "@/core/boamp-runner";
+src/tests/boamp-runner.test.ts:3:console.assert(typeof runBoampSearch === "function");
+src/tests/boamp-runner.test.ts:5:console.log("BOAMP Runner OK");
+src/tests/http-query.test.ts:4:  q: "boamp",
+src/tests/http-query.test.ts:8:console.assert(query.includes("q=boamp"));
+src/tests/connector-report.test.ts:1:import { createConnectorReport } from "@/core/connector-report";
+src/tests/connector-report.test.ts:3:const report = createConnectorReport([
+src/tests/connector-report.test.ts:11:console.assert(report.total === 1);
+src/tests/connector-report.test.ts:12:console.assert(report.up === 1);
+src/tests/connector-report.test.ts:14:console.log("Connector Report OK");
+src/tests/boamp-event-log.test.ts:2:  addBoampEvent,
+src/tests/boamp-event-log.test.ts:3:  getBoampEvents,
+src/tests/boamp-event-log.test.ts:4:} from "@/core/boamp-event-log";
+src/tests/boamp-event-log.test.ts:6:addBoampEvent({
+src/tests/boamp-event-log.test.ts:11:console.assert(getBoampEvents().length === 1);
+src/tests/boamp-event-log.test.ts:13:console.log("BOAMP Event Log OK");
+src/tests/data-deduplicator.test.ts:5:    { source: "boamp", payload: {} },
+src/tests/data-deduplicator.test.ts:6:    { source: "boamp", payload: {} },
+src/tests/workflow-demo.test.ts:1:import { workflowDemo } from "@/core/workflow-demo";
+src/tests/workflow-demo.test.ts:3:console.assert(typeof workflowDemo === "function");
+src/tests/workflow-demo.test.ts:5:console.log("Workflow Demo OK");
+src/tests/boamp-status.test.ts:1:import { BoampStatus } from "@/core/boamp-status";
+src/tests/boamp-status.test.ts:3:const status: BoampStatus = "READY";
+src/tests/boamp-status.test.ts:7:console.log("BOAMP Status OK");
+src/tests/integration-service.test.ts:5:console.log("Integration Workflow OK");
+src/tests/data-validator.test.ts:5:    source: "boamp",
+src/tests/boamp-event.test.ts:1:import { BoampEvent } from "@/core/boamp-event";
+src/tests/boamp-event.test.ts:3:const event: BoampEvent = {
+src/tests/boamp-event.test.ts:10:console.log("BOAMP Event OK");
+src/tests/data-filter.test.ts:5:    { source: "boamp", payload: {} },
+src/tests/data-quality-registry.test.ts:7:  source: "boamp",
+src/tests/workflow-scheduler.test.ts:1:import { executeScheduler } from "@/core/workflow-scheduler";
+src/tests/workflow-scheduler.test.ts:5:console.log("Workflow Scheduler OK");
+src/tests/regression.test.ts:2:import { evaluateCapability } from "@/core/decision-engine";
+src/tests/regression.test.ts:9:console.assert(trace.decisions.length > 0);
+src/tests/system-health-dashboard.test.ts:1:import { buildHealthDashboard } from "@/core/system-health-dashboard";
+src/tests/system-health-dashboard.test.ts:3:const dashboard = buildHealthDashboard([
+src/tests/system-health-dashboard.test.ts:11:console.assert(dashboard.total === 1);
+src/tests/system-health-dashboard.test.ts:13:console.log("System Health Dashboard OK");
+src/tests/boamp-history.test.ts:2:  addBoampHistory,
+src/tests/boamp-history.test.ts:3:  getBoampHistory,
+src/tests/boamp-history.test.ts:4:} from "@/core/boamp-history";
+src/tests/boamp-history.test.ts:6:addBoampHistory([]);
+src/tests/boamp-history.test.ts:8:console.assert(getBoampHistory().length === 1);
+src/tests/boamp-history.test.ts:10:console.log("BOAMP History OK");
+src/tests/boamp-registry.test.ts:1:import { getBoampConnector } from "@/core/boamp-registry";
+src/tests/boamp-registry.test.ts:3:console.assert(getBoampConnector() !== undefined);
+src/tests/boamp-registry.test.ts:5:console.log("BOAMP Registry OK");
+src/tests/data-normalizer.test.ts:4:  source: " BOAMP ",
+src/tests/data-normalizer.test.ts:8:console.assert(record.source === "boamp");
+src/tests/boamp-search-service.test.ts:1:import { BoampSearchService } from "@/core/boamp-search-service";
+src/tests/boamp-search-service.test.ts:3:const service = new BoampSearchService();
+src/tests/boamp-search-service.test.ts:7:console.log("BOAMP Search Service OK");
+src/tests/boamp-export.test.ts:1:import { exportBoamp } from "@/core/boamp-export";
+src/tests/boamp-export.test.ts:3:console.assert(exportBoamp([]) === "[]");
+src/tests/boamp-export.test.ts:5:console.log("BOAMP Export OK");
+src/tests/mission-context.test.ts:5:  state: "CREATED",
+src/tests/mission-context.test.ts:12:console.assert(context.state === "CREATED");
+src/tests/data-record.test.ts:4:  source: "boamp",
+src/tests/data-record.test.ts:8:console.assert(record.source === "boamp");
+src/tests/boamp-summary.test.ts:1:import { summarizeBoamp } from "@/core/boamp-summary";
+src/tests/boamp-summary.test.ts:3:console.assert(summarizeBoamp([]) === "0 results");
+src/tests/boamp-summary.test.ts:5:console.log("BOAMP Summary OK");
+src/tests/boamp-policy.test.ts:1:import { BoampPolicy } from "@/core/boamp-policy";
+src/tests/boamp-policy.test.ts:3:const policy: BoampPolicy = {
+src/tests/boamp-policy.test.ts:10:console.log("BOAMP Policy OK");
+src/tests/workflow-http.test.ts:1:import { executeHttp } from "@/core/workflow-http";
+src/tests/workflow-http.test.ts:5:console.log("Workflow HTTP OK");
+src/tests/data-quality-dashboard.test.ts:1:import { buildDataQualityDashboard } from "@/core/data-quality-dashboard";
+src/tests/data-quality-dashboard.test.ts:3:const dashboard = buildDataQualityDashboard([]);
+src/tests/data-quality-dashboard.test.ts:5:console.assert(dashboard.total === 0);
+src/tests/data-quality-dashboard.test.ts:7:console.log("Data Quality Dashboard OK");
+src/tests/boamp-validator.test.ts:1:import { validateBoampResult } from "@/core/boamp-validator";
+src/tests/boamp-validator.test.ts:4:  validateBoampResult({
+src/tests/boamp-validator.test.ts:10:console.log("BOAMP Validator OK");
+src/tests/boamp-connector.test.ts:1:import { DefaultBoampConnector } from "@/core/boamp-connector";
+src/tests/boamp-connector.test.ts:3:const connector = new DefaultBoampConnector();
+src/tests/boamp-connector.test.ts:7:console.log("BOAMP Connector OK");
+src/tests/workflow-recovery.test.ts:1:import { executeRecovery } from "@/core/workflow-recovery";
+src/tests/workflow-recovery.test.ts:5:console.log("Workflow Recovery OK");
+src/tests/data-quality-report.test.ts:1:import { buildDataQualityReport } from "@/core/data-quality-report";
+src/tests/data-quality-report.test.ts:3:const report = buildDataQualityReport([]);
+src/tests/data-quality-report.test.ts:5:console.assert(report.total === 0);
+src/tests/data-quality-report.test.ts:7:console.log("Data Quality Report OK");
+src/tests/boamp-version.test.ts:1:import { BOAMP_CONNECTOR_VERSION } from "@/core/boamp-version";
+src/tests/boamp-version.test.ts:3:console.assert(BOAMP_CONNECTOR_VERSION === "1.0.0");
+src/tests/boamp-version.test.ts:5:console.log("BOAMP Version OK");
+src/tests/boamp-normalizer.test.ts:1:import { normalizeBoampResult } from "@/core/boamp-normalizer";
+src/tests/boamp-normalizer.test.ts:3:const result = normalizeBoampResult({
+src/tests/boamp-normalizer.test.ts:10:console.log("BOAMP Normalizer OK");
+src/tests/boamp-query.test.ts:1:import { BoampQuery } from "@/core/boamp-query";
+src/tests/boamp-query.test.ts:3:const query: BoampQuery = { text: "cloud" };
+src/tests/boamp-query.test.ts:7:console.log("BOAMP Query OK");
+src/tests/connector-dashboard.test.ts:1:import { buildConnectorDashboard } from "@/core/connector-dashboard";
+src/tests/connector-dashboard.test.ts:3:const dashboard = buildConnectorDashboard([
+src/tests/connector-dashboard.test.ts:11:console.assert(dashboard.total === 1);
+src/tests/connector-dashboard.test.ts:12:console.assert(dashboard.online === 1);
+src/tests/connector-dashboard.test.ts:14:console.log("Connector Dashboard OK");
+src/tests/boamp-import.test.ts:1:import { importBoamp } from "@/core/boamp-import";
+src/tests/boamp-import.test.ts:3:console.assert(importBoamp("[]").length === 0);
+src/tests/boamp-import.test.ts:5:console.log("BOAMP Import OK");
+src/tests/connector-state.test.ts:3:const state: ConnectorState = "CONNECTED";
+src/tests/connector-state.test.ts:5:console.assert(state === "CONNECTED");
+src/tests/boamp-config.test.ts:1:import { BOAMP_BASE_URL } from "@/core/boamp-config";
+src/tests/boamp-config.test.ts:4:  BOAMP_BASE_URL.startsWith("https://")
+src/tests/boamp-config.test.ts:7:console.log("BOAMP Config OK");
+src/tests/simulation.test.ts:10:console.assert(simulation.selected === false);
+src/tests/opportunity-runner.test.ts:11:  "Trouver des appels d'offres",
+src/tests/boamp-url-builder.test.ts:1:import { buildBoampUrl } from "@/core/boamp-url-builder";
+src/tests/boamp-url-builder.test.ts:3:console.assert(buildBoampUrl("test").includes("test"));
+src/tests/boamp-url-builder.test.ts:5:console.log("BOAMP URL Builder OK");
+src/tests/workflow-connector.test.ts:1:import { executeConnector } from "@/core/workflow-connector";
+src/tests/workflow-connector.test.ts:5:console.log("Workflow Connector OK");
+src/tests/connector-audit.test.ts:11:console.assert(result.audited === 1);
+src/tests/boamp-service.test.ts:1:import { BoampService } from "@/core/boamp-service";
+src/tests/boamp-service.test.ts:3:const service = new BoampService([]);
+src/tests/boamp-service.test.ts:7:console.log("BOAMP Service OK");
+src/tests/system-runner.test.ts:6:console.assert(system.decision !== undefined);
+src/tests/connector-runtime.test.ts:2:import { ConnectorRuntime } from "@/core/connector-runtime";
+src/tests/connector-runtime.test.ts:4:const runtime = new ConnectorRuntime(
+src/tests/connector-runtime.test.ts:9:console.assert(runtime.name === "api");
+src/tests/connector-runtime.test.ts:11:console.log("Connector Runtime OK");
+src/tests/boamp-parser.test.ts:1:import { parseBoampResults } from "@/core/boamp-parser";
+src/tests/boamp-parser.test.ts:3:console.assert(parseBoampResults([]).length === 0);
+src/tests/boamp-parser.test.ts:5:console.log("BOAMP Parser OK");
+src/tests/knowledge-runner.test.ts:7:import { runDecision } from "@/core/decision-runner";
+src/tests/knowledge-runner.test.ts:14:  "Trouver des appels d'offres",
+src/tests/knowledge-runner.test.ts:22:const decision = runDecision(simulation);
+src/tests/knowledge-runner.test.ts:23:const knowledge = runKnowledge(decision);
+src/tests/knowledge-runner.test.ts:25:console.assert(knowledge.decisionId === decision.id);
+src/tests/knowledge-runner.test.ts:26:console.assert(knowledge.result === decision.recommendation);
+src/tests/workflow-qualification.test.ts:1:import { executeQualification } from "@/core/workflow-qualification";
+src/tests/workflow-qualification.test.ts:5:console.log("Workflow Qualification OK");
+src/tests/dashboard.test.ts:1:import { getDashboardState } from "@/core/dashboard-adapter";
+src/tests/dashboard.test.ts:3:const dashboard = getDashboardState();
+src/tests/dashboard.test.ts:5:console.assert(dashboard.capability !== undefined);
+src/tests/dashboard.test.ts:6:console.assert(dashboard.decision !== undefined);
+src/tests/dashboard.test.ts:7:console.assert(dashboard.trace !== undefined);
+src/tests/dashboard.test.ts:9:console.log("Dashboard test OK");
+src/tests/boamp-engine-version.test.ts:1:import { BOAMP_ENGINE_VERSION } from "@/core/boamp-engine-version";
+src/tests/boamp-engine-version.test.ts:3:console.assert(BOAMP_ENGINE_VERSION === "1.0.0");
+src/tests/boamp-engine-version.test.ts:5:console.log("BOAMP Engine Version OK");
+src/tests/data-score.test.ts:1:import { computeDataScore } from "@/core/data-score";
+src/tests/data-score.test.ts:4:  computeDataScore({
+src/tests/data-score.test.ts:5:    source: "boamp",
+src/tests/workflow-maintenance.test.ts:1:import { executeMaintenance } from "@/core/workflow-maintenance";
+src/tests/workflow-maintenance.test.ts:5:console.log("Workflow Maintenance OK");
+src/tests/dashboard-runner.test.ts:1:import { runDashboard } from "@/core/dashboard-runner";
+src/tests/dashboard-runner.test.ts:3:const dashboard = runDashboard();
+src/tests/dashboard-runner.test.ts:5:console.assert(dashboard.capability !== undefined);
+src/tests/dashboard-runner.test.ts:6:console.assert(dashboard.decision !== undefined);
+src/tests/dashboard-runner.test.ts:7:console.assert(Array.isArray(dashboard.values));
+src/tests/dashboard-runner.test.ts:8:console.assert(Array.isArray(dashboard.audits));
+src/tests/dashboard-runner.test.ts:10:console.log("Dashboard Runner OK");
+src/tests/workflow-engine.test.ts:1:import { WorkflowEngine } from "@/core/workflow-engine";
+src/tests/workflow-engine.test.ts:3:console.assert(typeof WorkflowEngine === "function");
+src/tests/workflow-engine.test.ts:5:console.log("Workflow Engine OK");
+src/tests/simulation-runner.test.ts:12:  "Trouver des appels d'offres",
+src/tests/decision-runner.test.ts:7:import { runDecision } from "@/core/decision-runner";
+src/tests/decision-runner.test.ts:13:  "Trouver des appels d'offres",
+src/tests/decision-runner.test.ts:21:const decision = runDecision(simulation);
+src/tests/decision-runner.test.ts:23:console.assert(decision.id.length > 0);
+src/tests/decision-runner.test.ts:25:  decision.recommendation === "ACCEPT" ||
+src/tests/decision-runner.test.ts:26:  decision.recommendation === "REJECT"
+src/tests/decision-runner.test.ts:29:console.log("Decision Runner OK");
+src/tests/boamp-filter.test.ts:1:import { filterBoampResults } from "@/core/boamp-filter";
+src/tests/boamp-filter.test.ts:4:  filterBoampResults([
+src/tests/boamp-filter.test.ts:10:console.log("BOAMP Filter OK");
+src/tests/boamp-monitor.test.ts:1:import { BoampMonitor } from "@/core/boamp-monitor";
+src/tests/boamp-monitor.test.ts:3:const monitor = new BoampMonitor();
+src/tests/boamp-monitor.test.ts:7:console.log("BOAMP Monitor OK");
+src/tests/audit-runner.test.ts:7:import { runDecision } from "@/core/decision-runner";
+src/tests/audit-runner.test.ts:14:  "Trouver des appels d'offres",
+src/tests/audit-runner.test.ts:22:const decision = runDecision(simulation);
+src/tests/audit-runner.test.ts:24:const result = runAudit(decision);
+src/tests/audit-runner.test.ts:26:console.assert(result.audit.decisionId === decision.id);
+src/tests/audit-runner.test.ts:27:console.assert(result.explanation.decisionId === decision.id);
+src/tests/boamp-metrics.test.ts:1:import { computeBoampMetrics } from "@/core/boamp-metrics";
+src/tests/boamp-metrics.test.ts:3:console.assert(computeBoampMetrics([]).total === 0);
+src/tests/boamp-metrics.test.ts:5:console.log("BOAMP Metrics OK");
+src/tests/boamp-health.test.ts:1:import { isBoampHealthy } from "@/core/boamp-health";
+src/tests/boamp-health.test.ts:3:console.assert(isBoampHealthy());
+src/tests/boamp-health.test.ts:5:console.log("BOAMP Health OK");
+src/tests/boamp-contract.test.ts:1:import { BoampConnector } from "@/contracts/boamp-connector";
+src/tests/boamp-contract.test.ts:3:const connector: BoampConnector = {
+src/tests/boamp-contract.test.ts:11:console.log("BOAMP Contract OK");
+src/tests/discovery-runner.test.ts:9:  "Trouver des appels d'offres",
+src/tests/workflow-observability.test.ts:5:console.log("Workflow Observability OK");
+src/tests/http-logger.test.ts:5:logger.info("Request started");
+src/tests/boamp-result.test.ts:1:import { BoampResult } from "@/core/boamp-result";
+src/tests/boamp-result.test.ts:3:const result: BoampResult = {
+src/tests/boamp-result.test.ts:10:console.log("BOAMP Result OK");
+src/tests/boamp-response.test.ts:1:import { BoampResponse } from "@/core/boamp-response";
+src/tests/boamp-response.test.ts:3:const response: BoampResponse = { items: [] };
+src/tests/boamp-response.test.ts:7:console.log("BOAMP Response OK");
+src/tests/data-quality-event-log.test.ts:7:  source: "boamp",
+src/tests/trace-runner.test.ts:7:import { runDecision } from "@/core/decision-runner";
+src/tests/trace-runner.test.ts:15:  "Trouver des appels d'offres",
+src/tests/trace-runner.test.ts:23:const decision = runDecision(simulation);
+src/tests/trace-runner.test.ts:25:runAudit(decision);
+src/tests/trace-runner.test.ts:29:console.assert(Array.isArray(trace.decisions));
+src/tests/boamp-request.test.ts:1:import { BoampRequest } from "@/core/boamp-request";
+src/tests/boamp-request.test.ts:3:const request: BoampRequest = { query: "informatique" };
+src/tests/boamp-request.test.ts:7:console.log("BOAMP Request OK");
+src/tests/value-runner.test.ts:7:import { runDecision } from "@/core/decision-runner";
+src/tests/value-runner.test.ts:14:  "Trouver des appels d'offres",
+src/tests/value-runner.test.ts:22:const decision = runDecision(simulation);
+src/tests/value-runner.test.ts:23:const value = runValue(decision);
+src/tests/value-runner.test.ts:25:console.assert(value.decisionId === decision.id);
+src/tests/boamp-dashboard.test.ts:1:import { buildBoampDashboard } from "@/core/boamp-dashboard";
+src/tests/boamp-dashboard.test.ts:3:console.assert(buildBoampDashboard([]).total === 0);
+src/tests/boamp-dashboard.test.ts:5:console.log("BOAMP Dashboard OK");
+src/tests/system-health-report.test.ts:1:import { buildSystemHealthReport } from "@/core/system-health-report";
+src/tests/system-health-report.test.ts:3:const report = buildSystemHealthReport([
+src/tests/system-health-report.test.ts:11:console.assert(report.total === 1);
+src/tests/system-health-report.test.ts:12:console.assert(report.healthy === 1);
+src/tests/system-health-report.test.ts:14:console.log("System Health Report OK");
+src/tests/verification-runner.test.ts:10:  "Trouver des appels d'offres",
+src/tests/data-quality-event.test.ts:4:  source: "boamp",
+src/tests/data-quality-event.test.ts:8:console.assert(event.source === "boamp");
+src/components/Dashboard.tsx:1:import { getDashboardState } from "@/core/dashboard-adapter";
+src/components/Dashboard.tsx:3:interface DashboardProps {
+src/components/Dashboard.tsx:7:export default function Dashboard({ metrics }: DashboardProps) {
+src/components/Dashboard.tsx:12:    decision,
+src/components/Dashboard.tsx:21:  } = getDashboardState();
+src/components/Dashboard.tsx:30:      <h2>Decision</h2>
+src/components/Dashboard.tsx:32:        <li>Recommandation : {decision.recommendation}</li>
+src/components/Dashboard.tsx:33:        <li>Confiance : {decision.confidence}</li>
+src/components/Dashboard.tsx:34:        <li>Code : {decision.reason.code}</li>
+src/runtime/runtime-demo.ts:1:import { RuntimeExecutor } from "./runtime-executor";
+src/runtime/runtime-demo.ts:4:const runtime = new RuntimeExecutor();
+src/runtime/runtime-demo.ts:6:const result = runtime.execute(
+src/runtime/runtime-demo.ts:7:  "runtime.demo",
+src/runtime/runtime-demo.ts:11:fs.mkdirSync("runtime/generated", { recursive: true });
+src/runtime/runtime-demo.ts:14:  "runtime/generated/runtime-execution.json",
+src/runtime/runtime-demo.ts:19:console.log("MISSION EXECUTED");
+src/runtime/runtime-demo.ts:20:console.log("runtime/generated/runtime-execution.json");
+src/runtime/event-bus.ts:1:export interface RuntimeEvent<T = unknown> {
+src/runtime/event-bus.ts:7:export type RuntimeEventHandler<T = unknown> =
+src/runtime/event-bus.ts:8:  (event: RuntimeEvent<T>) => void;
+src/runtime/event-bus.ts:13:    new Map<string, RuntimeEventHandler[]>();
+src/runtime/event-bus.ts:17:    handler: RuntimeEventHandler
+src/runtime/event-bus.ts:31:    const event: RuntimeEvent<T> = {
+src/runtime/runtime-service.ts:7:export class RuntimeService{
+src/runtime/runtime-executor.ts:7:export class RuntimeExecutor{
+src/runtime/runtime-executor.ts:17:    this.events.publish("MissionStarted",{id,name});
+src/runtime/runtime-executor.ts:25:    this.memory.append(id,"MissionStarted",{name});
+src/runtime/runtime-executor.ts:26:    this.memory.append(id,"PlanCreated",{steps:plan.steps.length});
+src/runtime/runtime-executor.ts:27:    this.memory.append(id,"TechnicalPlanCreated",{steps:technical.steps.length});
+src/runtime/runtime-executor.ts:29:    this.events.publish("MissionCompleted",{id});
+src/runtime/runtime-facade.ts:1:import {RuntimeService} from "./runtime-service";
+src/runtime/runtime-facade.ts:2:import {RuntimeReporter} from "./runtime-reporter";
+src/runtime/runtime-facade.ts:3:import {RuntimeHealth} from "./runtime-health";
+src/runtime/runtime-facade.ts:5:export class RuntimeFacade{
+src/runtime/runtime-facade.ts:7:private readonly runtime=new RuntimeService();
+src/runtime/runtime-facade.ts:8:private readonly reporter=new RuntimeReporter();
+src/runtime/runtime-facade.ts:9:private readonly health=new RuntimeHealth();
+src/runtime/runtime-facade.ts:15:runtimeService(){
+src/runtime/runtime-facade.ts:16:return this.runtime;
+src/runtime/runtime-facade.ts:19:report(data:unknown){
+src/runtime/runtime-facade.ts:20:return this.reporter.report(data);
+src/runtime/mission-loader.ts:3:export interface RuntimeMission {
+src/runtime/mission-loader.ts:6:  projectContext: unknown;
+src/runtime/mission-loader.ts:11:    private readonly projectContextPath =
+src/runtime/mission-loader.ts:12:      "runtime/generated/project-context.json"
+src/runtime/mission-loader.ts:15:  load(id: string, name: string): RuntimeMission {
+src/runtime/mission-loader.ts:16:    const projectContext = JSON.parse(
+src/runtime/mission-loader.ts:17:      fs.readFileSync(this.projectContextPath, "utf8")
+src/runtime/mission-loader.ts:23:      projectContext
+src/runtime/index.ts:1:export * from "./runtime-types";
+src/runtime/index.ts:2:export * from "./runtime-state";
+src/runtime/index.ts:3:export * from "./runtime-events";
+src/runtime/index.ts:11:export * from "./runtime-health";
+src/runtime/index.ts:12:export * from "./runtime-reporter";
+src/runtime/index.ts:13:export * from "./runtime-service";
+src/runtime/index.ts:14:export * from "./runtime-facade";
+src/runtime/runtime-events.ts:1:export enum RuntimeEventType{
+src/runtime/runtime-events.ts:2:MissionStarted="MissionStarted",
+src/runtime/runtime-events.ts:3:MissionCompleted="MissionCompleted",
+src/runtime/runtime-events.ts:5:CapabilityExecuted="CapabilityExecuted"
+src/runtime/runtime-state.ts:1:import {RuntimeStatus} from "./runtime-types";
+src/runtime/runtime-state.ts:2:export class RuntimeState{
+src/runtime/runtime-state.ts:3:status:RuntimeStatus="READY";
+src/runtime/mission-orchestrator.ts:1:import { MissionLoader, RuntimeMission } from "./mission-loader";
+src/runtime/mission-orchestrator.ts:10:  mission: RuntimeMission;
+src/runtime/mission-orchestrator.ts:25:        { id: "LOAD", name: "Load ProjectContext", status: "PENDING" },
+src/runtime/mission-orchestrator.ts:29:        { id: "REPORT", name: "Generate Report", status: "PENDING" }
+src/runtime/runtime-health.ts:1:export class RuntimeHealth{
+src/runtime/runtime-reporter.ts:1:export class RuntimeReporter{
+src/runtime/runtime-reporter.ts:2:report(input:unknown){
+src/runtime/runtime-reporter.ts:4:generatedAt:new Date().toISOString(),
+src/runtime/runtime-types.ts:1:export type RuntimeStatus="READY"|"RUNNING"|"FAILED"|"DONE";
+src/runtime/runtime-types.ts:2:export interface RuntimeMetadata{
+src/runtime/runtime-types.ts:4:generatedAt:string;
+src/contracts/value.ts:3:  decisionId: string;
+src/contracts/value.ts:6:  createdAt: number;
+src/contracts/orchestrator.ts:5:  createdAt: number;
+src/contracts/boamp-connector.ts:1:export interface BoampConnector {
+src/contracts/risk.ts:3:  decisionId: string;
+src/contracts/risk.ts:8:  createdAt: number;
+src/contracts/memory.ts:7:  createdAt: number;
+src/contracts/audit.ts:3:  decisionId: string;
+src/contracts/audit.ts:8:  runtime: string;
+src/contracts/decision.ts:1:export interface Decision {
+src/contracts/goal.ts:5:  createdAt: number;
+src/contracts/explanation.ts:3:  decisionId: string;
+src/contracts/explanation.ts:8:  runtime: string;
+src/contracts/explanation.ts:9:  createdAt: number;
+src/contracts/mission.ts:6:  createdAt: number;
+src/contracts/simulation.ts:5:  selected: boolean;
+src/contracts/simulation.ts:6:  createdAt: number;
+src/contracts/verification.ts:6:  createdAt: number;
+src/contracts/connector.ts:6:  createdAt: number;
+src/contracts/opportunity.ts:6:  createdAt: number;
+src/contracts/knowledge.ts:3:  decisionId: string;
+src/contracts/knowledge.ts:8:  createdAt: number;
+src/contracts/evidence.ts:3:  decisionId: string;
+src/contracts/evidence.ts:5:  createdAt: number;
+src/contracts/constraint.ts:7:  createdAt: number;
+src/demo/demo.ts:2:import { evaluateCapability } from "@/core/decision-engine";
+src/demo/demo.ts:3:import { getDecisions } from "@/core/decision-registry";
+src/demo/demo.ts:5:const decision = evaluateCapability(capabilities[0]);
+src/demo/demo.ts:8:console.log(decision);
+src/demo/demo.ts:9:console.log("Décisions enregistrées :", getDecisions().length);
+src/app/page.tsx:2:import Dashboard from "@/components/Dashboard";
+src/app/page.tsx:8:  return <Dashboard metrics={metrics} />;
+src/app/layout.tsx:17:  description: "Generated by create next app",
+src/engine/core/types.ts:15:  export enum MarketMode {
+src/engine/core/types.ts:31:  // ── Market data ──────────────────────────────
+src/engine/core/types.ts:33:  export interface MarketSnapshot {
+src/engine/core/types.ts:45:    marketMode:          MarketMode;
+src/engine/core/types.ts:49:    maxSnapshotAgeMs:    number;   // snapshot older than this is rejected
+src/engine/core/types.ts:68:    createdAtMs:    number;
+src/engine/core/types.ts:75:    accepted:      boolean;
+src/engine/core/types.ts:80:    executedAtMs:  number;
+src/engine/core/types.ts:90:    totalRejected:  number;
+src/engine/core/types.ts:104:  // ── Engine facade snapshot (what the Dashboard sees) ──
+src/engine/core/types.ts:108:    marketMode:    MarketMode;

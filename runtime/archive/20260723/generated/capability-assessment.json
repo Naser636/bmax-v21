@@ -1,0 +1,44 @@
+[
+  {
+    "domain": "Marketing",
+    "components": 1,
+    "maturity": "PROTOTYPE",
+    "reusable": true
+  },
+  {
+    "domain": "Commerce",
+    "components": 12,
+    "maturity": "INTERMEDIATE",
+    "reusable": true
+  },
+  {
+    "domain": "Procurement",
+    "components": 0,
+    "maturity": "NONE",
+    "reusable": false
+  },
+  {
+    "domain": "PublicTenders",
+    "components": 151,
+    "maturity": "ADVANCED",
+    "reusable": true
+  },
+  {
+    "domain": "Governance",
+    "components": 79,
+    "maturity": "ADVANCED",
+    "reusable": true
+  },
+  {
+    "domain": "AIStudio",
+    "components": 74,
+    "maturity": "ADVANCED",
+    "reusable": true
+  },
+  {
+    "domain": "Intelligence",
+    "components": 62,
+    "maturity": "ADVANCED",
+    "reusable": true
+  }
+]

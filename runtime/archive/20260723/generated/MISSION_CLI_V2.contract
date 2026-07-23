@@ -1,0 +1,25 @@
+MISSION=MISSION_CLI_V2
+
+PATCH_SCOPE
+- src/runtime/mission-cli.ts
+
+LEGACY
+- odg <MISSION_ID>
+
+NEW_COMMANDS
+- odg mission <MISSION_ID>
+- odg health
+- odg migration
+- odg verify
+
+MUST_NOT_CHANGE
+- RuntimeKernel
+- MissionOrchestrator
+- ExecutionPlanner
+- runLocalRoute
+- runProviderRoute
+
+SUCCESS_CRITERIA
+- Backward compatible
+- Compile PASS
+- Existing tests PASS

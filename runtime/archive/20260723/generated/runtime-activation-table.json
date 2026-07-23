@@ -1,0 +1,108 @@
+{
+  "generatedAt": "2026-07-12T13:10:15.216Z",
+  "strategy": "EXTEND_ONLY",
+  "connectors": [
+    {
+      "component": "src/runtime/capability-registry.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/event-bus.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/execution-memory.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/plugin-registry.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-events.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-health.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-reporter.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-types.ts",
+      "phase": "SAFE_CONNECT",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/execution-planner.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/index.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/mission-loader.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/mission-orchestrator.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-demo.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-executor.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-facade.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-service.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    },
+    {
+      "component": "src/runtime/runtime-state.ts",
+      "phase": "MANUAL_REVIEW",
+      "enabled": false,
+      "status": "READY"
+    }
+  ]
+}

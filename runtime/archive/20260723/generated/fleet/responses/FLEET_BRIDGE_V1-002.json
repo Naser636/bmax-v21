@@ -1,0 +1,15 @@
+{
+  "requestId": "FLEET_BRIDGE_V1-002",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-17T05:05:22.858Z",
+  "attempt": 1,
+  "proposal": {
+    "mission": "FLEET_BRIDGE_V1",
+    "summary": "[MOCK] Fleet Bridge round-trip for FLEET_BRIDGE_V1",
+    "actions": [
+      "acknowledge request",
+      "return structured proposal"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-07-15T16:19:01.418Z",
+  "version": 1,
+  "pipelineMode": "DYNAMIC",
+  "authority": "Governance Kernel",
+  "execution": [
+    "Governance Decision",
+    "Capability Resolution",
+    "Load Implementation",
+    "Execute Component",
+    "Collect Evidence",
+    "Validate"
+  ],
+  "sourceOfTruth": "runtime/generated/governed-capability-registry.json"
+}

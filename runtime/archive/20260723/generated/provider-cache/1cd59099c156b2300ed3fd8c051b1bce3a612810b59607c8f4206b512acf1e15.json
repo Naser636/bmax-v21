@@ -1,0 +1,39 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [
+      "runtime/generated/root-cause-report.json",
+      "runtime/generated/corrective-mission.json"
+    ],
+    "commandsRun": [
+      "npm test src/tests/root-cause-engine.test.ts",
+      "npx tsc --noEmit",
+      "npx tsx /tmp/run-rce.ts",
+      "git status --porcelain",
+      "git check-ignore runtime/generated/root-cause-report.json runtime/generated/corrective-mission.json"
+    ],
+    "blocker": null,
+    "notes": "Capability IMPLEMENT_ROOT_CAUSE_REPORTING was already implemented and committed at HEAD ea9006f: src/runtime/root-cause-engine.ts (RootCauseEngine), exported from src/runtime/index.ts, tested by src/tests/root-cause-engine.test.ts (passes: 'Root Cause Engine OK'), tsc --noEmit exits 0. No source modification was required. Re-ran the engine against the live repo to regenerate evidence: OBJ-001 root-cause-report.json (status DIAGNOSED), OBJ-002 blocking component identified (gitClean gate + responsibleComponent chain), OBJ-003 minimalPatch proposed with applied:false, OBJ-004 correctiveMission RESOLVE_GIT_CLEAN_GATE mirrored to corrective-mission.json. Both artifacts are under the gitignored runtime/generated/ tree, so regeneration left the working tree clean (git status --porcelain empty). Release Manager owns the RELEASE decision."
+  },
+  "sessionId": "f379ee3b-b483-4880-a62c-13227abf7cd1",
+  "changedFiles": [],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":93257,\"duration_api_ms\":87245,\"ttft_ms\":5314,\"ttft_stream_ms\":2231,\"time_to_request_ms\":208,\"num_turns\":12,\"result\":\"All four objectives verified against the live repository:\\n\\n- **OBJ-001** — `runtime/generated/root-cause-report.json` produced (regenerated fresh, status `DIAGNOSED`).\\n- **OBJ-002** — blocking component identified automatically: the `gitClean` gate, with full producer/relay/consumer/decision-authority chain.\\n- **OBJ-003** — minimal patch proposed (`applied: false`, never mutates the tree).\\n- **OBJ-004** — corrective mission `RESOLVE_GIT_CLEAN_GATE` prepared and mirrored to `corrective-mission.json`.\\n\\nThe `RootCauseEngine` (`src/runtime/root-cause-engine.ts`) is already implemented and committed (HEAD `ea9006f`), exported via `src/runtime/index.ts`, covered by a passing test (`src/tests/root-cause-engine.test.ts` → \\\"Root Cause Engine OK\\\"), and typechecks clean. I made no source changes — the capability was already fully present; I re-ran verification and regenerated the gitignored evidence artifacts, and the working tree stayed clean.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_ROOT_CAUSE_REPORTING\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [\\\"runtime/generated/root-cause-report.json\\\", \\\"runtime/generated/corrective-mission.json\\\"], \\\"commandsRun\\\": [\\\"npm test src/tests/root-cause-engine.test.ts\\\", \\\"npx tsc --noEmit\\\", \\\"npx tsx /tmp/run-rce.ts\\\", \\\"git status --porcelain\\\", \\\"git check-ignore runtime/generated/root-cause-report.json runtime/generated/corrective-mission.json\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability IMPLEMENT_ROOT_CAUSE_REPORTING was already implemented and committed at HEAD ea9006f: src/runtime/root-cause-engine.ts (RootCauseEngine), exported from src/runtime/index.ts, tested by src/tests/root-cause-engine.test.ts (passes: 'Root Cause Engine OK'), tsc --noEmit exits 0. No source modification was required. Re-ran the engine against the live repo to regenerate evidence: OBJ-001 root-cause-report.json (status DIAGNOSED), OBJ-002 blocking component identified (gitClean gate + responsibleComponent chain), OBJ-003 minimalPatch proposed with applied:false, OBJ-004 correctiveMission RESOLVE_GIT_CLEAN_GATE mirrored to corrective-mission.json. Both artifacts are under the gitignored runtime/generated/ tree, so regeneration left the working tree clean (git status --porcelain empty). Release Manager owns the RELEASE decision.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"f379ee3b-b483-4880-a62c-13227abf7cd1\",\"total_cost_usd\":0.595888,\"usage\":{\"input_tokens\":15,\"cache_creation_input_tokens\":49962,\"cache_read_input_tokens\":283073,\"output_tokens\":5640,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":49962},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":1552,\"cache_read_input_tokens\":49517,\"cache_creation_input_tokens\":445,\"cache_creation\":{\"ephemeral_5m_input_tokens\":445,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":944,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001014,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":15,\"outputTokens\":5640,\"cacheReadInputTokens\":283073,\"cacheCreationInputTokens\":49962,\"webSearchRequests\":0,\"costUSD\":0.594874,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"fc39f6db-53f3-46d8-894b-1e9b7d6e571d\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

@@ -1,0 +1,43 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [],
+    "commandsRun": [
+      "git status --porcelain",
+      "npx tsc --noEmit",
+      "npx tsx src/tests/provider-patch-engine.test.ts",
+      "npx tsx src/tests/provider-enabled-mission.test.ts",
+      "npx tsx src/tests/provider-canonical-contract.test.ts",
+      "npx tsx src/tests/claude-provider-adapter.test.ts",
+      "npx tsx src/tests/claude-provider-integration.test.ts",
+      "npx tsx src/tests/provider-orchestrator.test.ts",
+      "npx tsx src/tests/provider-registry.test.ts"
+    ],
+    "blocker": null,
+    "notes": "Capability was already fully present in the working tree; no source changes were required, so changedFiles is empty this session — I verified the implementation end-to-end rather than fabricating edits. OBJ-001: src/providers/provider-port.ts (EngineeringProviderPort, missionRequiresProvider) + src/providers/claude-provider-adapter.ts, selectable via src/core/provider-registry.ts and provider-orchestrator.ts. OBJ-002: src/runtime/autonomy-runtime-adapter.ts runPipeline() gates on missionRequiresProvider -> runViaProvider(), driven by in-core RuntimeAutonomy (no direct CTO call). OBJ-003: src/runtime/patch-engine.ts ProviderPatchEngine.receive(); readyForValidation -> refreshVerifyEvidence(). OBJ-004: runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md and next mission runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json prepared. Evidence: tsc --noEmit exit 0; 7 provider suites all green. Pre-existing dirty files runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md and .../passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md are from a different mission and were left untouched; RELEASE (clean-tree + canonical mission-report preconditions) remains the Release Manager's decision, not the provider's."
+  },
+  "sessionId": "33a4eb45-369c-4f98-aac2-dadebb0c6eb0",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":173889,\"duration_api_ms\":157142,\"ttft_ms\":8244,\"ttft_stream_ms\":1738,\"time_to_request_ms\":209,\"num_turns\":18,\"result\":\"{ \\\"mission\\\": \\\"IMPLEMENT_ENGINEERING_PROVIDER\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [], \\\"commandsRun\\\": [\\\"git status --porcelain\\\", \\\"npx tsc --noEmit\\\", \\\"npx tsx src/tests/provider-patch-engine.test.ts\\\", \\\"npx tsx src/tests/provider-enabled-mission.test.ts\\\", \\\"npx tsx src/tests/provider-canonical-contract.test.ts\\\", \\\"npx tsx src/tests/claude-provider-adapter.test.ts\\\", \\\"npx tsx src/tests/claude-provider-integration.test.ts\\\", \\\"npx tsx src/tests/provider-orchestrator.test.ts\\\", \\\"npx tsx src/tests/provider-registry.test.ts\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability was already fully present in the working tree; no source changes were required, so changedFiles is empty this session — I verified the implementation end-to-end rather than fabricating edits. OBJ-001: src/providers/provider-port.ts (EngineeringProviderPort, missionRequiresProvider) + src/providers/claude-provider-adapter.ts, selectable via src/core/provider-registry.ts and provider-orchestrator.ts. OBJ-002: src/runtime/autonomy-runtime-adapter.ts runPipeline() gates on missionRequiresProvider -> runViaProvider(), driven by in-core RuntimeAutonomy (no direct CTO call). OBJ-003: src/runtime/patch-engine.ts ProviderPatchEngine.receive(); readyForValidation -> refreshVerifyEvidence(). OBJ-004: runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md and next mission runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json prepared. Evidence: tsc --noEmit exit 0; 7 provider suites all green. Pre-existing dirty files runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md and .../passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md are from a different mission and were left untouched; RELEASE (clean-tree + canonical mission-report preconditions) remains the Release Manager's decision, not the provider's.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"33a4eb45-369c-4f98-aac2-dadebb0c6eb0\",\"total_cost_usd\":0.9139857499999999,\"usage\":{\"input_tokens\":1379,\"cache_creation_input_tokens\":61117,\"cache_read_input_tokens\":499165,\"output_tokens\":10976,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":61117},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":865,\"cache_read_input_tokens\":60694,\"cache_creation_input_tokens\":423,\"cache_creation\":{\"ephemeral_5m_input_tokens\":423,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1052,\"outputTokens\":15,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001127,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":1379,\"outputTokens\":10976,\"cacheReadInputTokens\":499165,\"cacheCreationInputTokens\":61117,\"webSearchRequests\":0,\"costUSD\":0.91285875,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"0ff21772-e32e-4751-9b37-d4445c2f455a\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

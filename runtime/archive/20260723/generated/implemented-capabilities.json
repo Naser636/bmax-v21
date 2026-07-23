@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-07-21T12:37:26.184Z",
+  "source": "runtime/generated/capability-registry.json",
+  "requested": 9,
+  "implemented": 9,
+  "capabilities": [
+    {
+      "capability": "BusinessContext",
+      "slug": "businesscontext",
+      "className": "BusinessContext",
+      "scaffold": "runtime/generated/capabilities/businesscontext.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Capability Registry",
+      "slug": "capability-registry",
+      "className": "CapabilityRegistry",
+      "scaffold": "runtime/generated/capabilities/capability-registry.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Plugin Manager",
+      "slug": "plugin-manager",
+      "className": "PluginManager",
+      "scaffold": "runtime/generated/capabilities/plugin-manager.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Event Bus",
+      "slug": "event-bus",
+      "className": "EventBus",
+      "scaffold": "runtime/generated/capabilities/event-bus.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Reporter",
+      "slug": "reporter",
+      "className": "Reporter",
+      "scaffold": "runtime/generated/capabilities/reporter.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Documentation Engine",
+      "slug": "documentation-engine",
+      "className": "DocumentationEngine",
+      "scaffold": "runtime/generated/capabilities/documentation-engine.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Release Manager",
+      "slug": "release-manager",
+      "className": "ReleaseManager",
+      "scaffold": "runtime/generated/capabilities/release-manager.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Knowledge Engine",
+      "slug": "knowledge-engine",
+      "className": "KnowledgeEngine",
+      "scaffold": "runtime/generated/capabilities/knowledge-engine.js",
+      "status": "SCAFFOLDED"
+    },
+    {
+      "capability": "Learning Engine",
+      "slug": "learning-engine",
+      "className": "LearningEngine",
+      "scaffold": "runtime/generated/capabilities/learning-engine.js",
+      "status": "SCAFFOLDED"
+    }
+  ]
+}

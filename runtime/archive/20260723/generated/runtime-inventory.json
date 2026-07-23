@@ -1,0 +1,371 @@
+[
+  {
+    "file": "src/runtime/capability-registry.ts",
+    "classes": [
+      "class CapabilityRegistry"
+    ],
+    "interfaces": [
+      "interface Capability"
+    ],
+    "exports": 2,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/event-bus.ts",
+    "classes": [
+      "class EventBus"
+    ],
+    "interfaces": [
+      "interface RuntimeEvent"
+    ],
+    "exports": 3,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/execution-memory.ts",
+    "classes": [
+      "class ExecutionMemory"
+    ],
+    "interfaces": [
+      "interface ExecutionRecord"
+    ],
+    "exports": 2,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/execution-planner.ts",
+    "classes": [
+      "class ExecutionPlanner"
+    ],
+    "interfaces": [
+      "interface TechnicalStep",
+      "interface TechnicalPlan"
+    ],
+    "exports": 3,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/index.ts",
+    "classes": [],
+    "interfaces": [],
+    "exports": 14,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/mission-controller.ts",
+    "classes": [
+      "class MissionController"
+    ],
+    "interfaces": [
+      "interface MissionRequest"
+    ],
+    "exports": 2,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/mission-dispatcher.ts",
+    "classes": [
+      "class MissionDispatcher"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/mission-engine.ts",
+    "classes": [
+      "class MissionEngine"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/mission-loader.ts",
+    "classes": [
+      "class MissionLoader"
+    ],
+    "interfaces": [
+      "interface RuntimeMission"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/mission-orchestrator.ts",
+    "classes": [
+      "class MissionOrchestrator"
+    ],
+    "interfaces": [
+      "interface ExecutionStep",
+      "interface ExecutionPlan"
+    ],
+    "exports": 3,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/mission-router.ts",
+    "classes": [
+      "class MissionRouter"
+    ],
+    "interfaces": [
+      "interface RuntimeObjective"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/patch-engine.ts",
+    "classes": [],
+    "interfaces": [],
+    "exports": 0,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/plugin-registry.ts",
+    "classes": [
+      "class PluginRegistry"
+    ],
+    "interfaces": [
+      "interface Plugin"
+    ],
+    "exports": 2,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/runtime-agent.ts",
+    "classes": [
+      "class RuntimeAgent"
+    ],
+    "interfaces": [
+      "interface RuntimeOrder"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-autopilot.ts",
+    "classes": [
+      "class RuntimeAutopilot"
+    ],
+    "interfaces": [
+      "interface RuntimeObjective"
+    ],
+    "exports": 2,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-bootstrap.ts",
+    "classes": [
+      "class RuntimeBootstrap"
+    ],
+    "interfaces": [
+      "interface RuntimeCommand"
+    ],
+    "exports": 2,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-cli.ts",
+    "classes": [
+      "class RuntimeCLI"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-context.ts",
+    "classes": [
+      "class RuntimeContext"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-daemon.ts",
+    "classes": [
+      "class RuntimeDaemon"
+    ],
+    "interfaces": [
+      "interface RuntimeMission"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-demo.ts",
+    "classes": [],
+    "interfaces": [],
+    "exports": 0,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-director.ts",
+    "classes": [
+      "class RuntimeDirector"
+    ],
+    "interfaces": [
+      "interface RuntimeObjective"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-entry.ts",
+    "classes": [
+      "class RuntimeEntry"
+    ],
+    "interfaces": [
+      "interface RuntimeRequest"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-events.ts",
+    "classes": [],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/runtime-executor.ts",
+    "classes": [
+      "class RuntimeExecutor"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 7
+  },
+  {
+    "file": "src/runtime/runtime-facade.ts",
+    "classes": [
+      "class RuntimeFacade"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 3
+  },
+  {
+    "file": "src/runtime/runtime-governor.ts",
+    "classes": [
+      "class RuntimeGovernor"
+    ],
+    "interfaces": [
+      "interface RuntimeGoal"
+    ],
+    "exports": 2,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-health.ts",
+    "classes": [
+      "class RuntimeHealth"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/runtime-host.ts",
+    "classes": [
+      "class RuntimeHost"
+    ],
+    "interfaces": [
+      "interface RuntimeRequest"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-kernel.ts",
+    "classes": [
+      "class RuntimeKernel"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 3
+  },
+  {
+    "file": "src/runtime/runtime-os.ts",
+    "classes": [
+      "class RuntimeOS"
+    ],
+    "interfaces": [
+      "interface RuntimeTask"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-reporter.ts",
+    "classes": [
+      "class RuntimeReporter"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/runtime-service.ts",
+    "classes": [
+      "class RuntimeService"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 5
+  },
+  {
+    "file": "src/runtime/runtime-shell.ts",
+    "classes": [
+      "class RuntimeShell"
+    ],
+    "interfaces": [
+      "interface ShellCommand"
+    ],
+    "exports": 2,
+    "imports": 1
+  },
+  {
+    "file": "src/runtime/runtime-state.ts",
+    "classes": [
+      "class RuntimeState"
+    ],
+    "interfaces": [],
+    "exports": 1,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-supervisor.ts",
+    "classes": [
+      "class RuntimeSupervisor"
+    ],
+    "interfaces": [
+      "interface RuntimeMissionOrder"
+    ],
+    "exports": 2,
+    "imports": 2
+  },
+  {
+    "file": "src/runtime/runtime-types.ts",
+    "classes": [],
+    "interfaces": [
+      "interface RuntimeMetadata"
+    ],
+    "exports": 2,
+    "imports": 0
+  },
+  {
+    "file": "src/runtime/system-loader.ts",
+    "classes": [
+      "class SystemLoader"
+    ],
+    "interfaces": [
+      "interface RuntimeSystem"
+    ],
+    "exports": 2,
+    "imports": 0
+  }
+]

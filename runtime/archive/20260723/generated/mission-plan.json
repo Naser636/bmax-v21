@@ -1,0 +1,32 @@
+{
+  "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+  "source": "runtime/missions/RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE.json",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/**"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "goal": "Apply the minimal patch proposed for the \"documentationProofPresent\" gate.",
+      "done_when": [
+        "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+        "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "goal": "Confirm the \"documentationProofPresent\" gate is green.",
+      "done_when": [
+        "runtime/bin/odg-verify.js has been re-run.",
+        "runtime/generated/runtime-verify.json reports documentationProofPresent:true."
+      ]
+    }
+  ],
+  "nextObjective": "OBJ-001",
+  "definitionOfDone": [],
+  "completion": [],
+  "status": "READY_FOR_EXECUTION"
+}

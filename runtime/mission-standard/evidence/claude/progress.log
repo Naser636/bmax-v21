@@ -1,0 +1,11 @@
+[1] Located active release gate: runtime/mission-standard/bin/mse [5/5] GOVERNANCE
+    -> emits "STOP: Repository changed unexpectedly" via `git status --porcelain -- $ARTIFACT_EXCLUDES`
+[2] Confirmed Mission Loader input dir = runtime/missions/<MISSION>.json (autonomy-runtime-adapter.ts:170,345)
+[3] Confirmed evidence convention: 7 committed *.evidence.md siblings already live in runtime/missions/
+[4] Root cause: ARTIFACT_EXCLUDES whitelist never registered the Provider evidence artifact path
+[5] Chose fix option 3 (register as mission artifact); rejected 1 (move), 2 (gitignore), 4 (n/a)
+[6] Verified pathspec scope empirically: evidence excluded; stray .json + src/** still reported
+[7] Applied one-line exclude to mse ARTIFACT_EXCLUDES + comment; `bash -n` syntax OK
+[8] Added src/tests/mse-governance-gate.test.ts -> 6/6 checks PASS (exit 0)
+[9] Ran related tests (ai-evidence-guard, autonomy-local-loop, release-manager) -> all PASS
+[10] Wrote session artifacts under runtime/generated/claude-session/. No commit.

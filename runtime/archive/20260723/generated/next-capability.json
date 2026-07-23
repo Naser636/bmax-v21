@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-07-15T15:03:53.277Z",
+  "capability": "ProjectContext Engine",
+  "objective": "Prepare implementation",
+  "status": "READY",
+  "inputs": [
+    "runtime/generated/capability-registry.json",
+    "runtime/generated/knowledge.json",
+    "runtime/generated/project-context.json"
+  ],
+  "outputs": [
+    "runtime/generated/implementation-plan.json"
+  ]
+}

@@ -1,0 +1,38 @@
+export type ImplementationState =
+  | "READY"
+  | "PLANNING"
+  | "WAITING_APPROVAL"
+  | "EXECUTING"
+  | "VALIDATING"
+  | "COMPLETED";
+
+export interface ImplementationPlan {
+  generatedAt: string;
+  mission: string;
+  nextCapability: string;
+  roadmap: string[];
+  state: ImplementationState;
+}
+
+export class ImplementationEngine {
+
+  private plan?: ImplementationPlan;
+
+  prepare(mission: string): ImplementationPlan {
+
+    this.plan = {
+      generatedAt: new Date().toISOString(),
+      mission,
+      nextCapability: "",
+      roadmap: [],
+      state: "READY"
+    };
+
+    return this.plan;
+  }
+
+  current(): ImplementationPlan | undefined {
+    return this.plan;
+  }
+
+}

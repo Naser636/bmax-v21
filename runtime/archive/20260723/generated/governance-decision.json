@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-15T15:44:30.973Z",
+  "status": "AUTHORIZED",
+  "mission": "RUNTIME_GOVERNANCE_CHECK",
+  "constitutionVersion": 1,
+  "policyVersion": 1,
+  "appliedPrinciples": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "EVIDENCE_REQUIRED",
+    "ONE_RESPONSIBILITY_PER_COMPONENT",
+    "ARTIFACTS_ARE_IMMUTABLE",
+    "ROLLBACK_MUST_ALWAYS_BE_POSSIBLE",
+    "PIPELINE_IS_REPRODUCIBLE"
+  ],
+  "appliedPolicies": {
+    "strategy": "DETERMINISM_FIRST",
+    "reuse": "REUSE_BEFORE_CREATE",
+    "requireValidation": true
+  },
+  "nextState": "QUALIFIED"
+}

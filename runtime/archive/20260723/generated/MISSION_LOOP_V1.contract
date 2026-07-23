@@ -1,0 +1,32 @@
+MISSION=MISSION_LOOP_V1
+
+OBJECTIVE
+Create the Runtime autonomous execution loop.
+
+LOOP
+1. Select next eligible mission
+2. Verify dependencies
+3. Build execution plan
+4. Execute mission
+5. Compile
+6. Run affected tests
+7. Record evidence
+8. Promote if successful
+9. Continue until blocked or complete
+
+STOP CONDITIONS
+- Build failure
+- Test failure
+- Policy violation
+- Human approval required
+
+MUST NOT CHANGE
+- RuntimeKernel
+- MissionOrchestrator
+- PatchEngine
+- ExecutionPlanner
+
+SUCCESS
+- Runtime executes successive missions autonomously
+- Every decision recorded in mission-ledger
+- Loop stops only on proven blocker

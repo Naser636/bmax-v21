@@ -1,0 +1,57 @@
+runtime/bin/odg-status.js:const ctx=JSON.parse(fs.readFileSync("runtime/generated/project-context.json","utf8"));
+runtime/core/decision-engine.js:fs.readFileSync("runtime/generated/knowledge.json","utf8")
+runtime/core/patch-engine.js:fs.readFileSync("runtime/generated/decision.json","utf8")
+runtime/core/patch-engine.js:fs.readFileSync("runtime/generated/capability-registry.json","utf8")
+runtime/core/mission-loader.js:    fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/core/mission-loader.js:const brain = fs.readFileSync(
+runtime/core/mission-loader.js:    "runtime/brain/MASTER_PLAN.md",
+runtime/core/capability-registry.js:    fs.readFileSync("runtime/generated/execution-plan.json","utf8")
+runtime/core/validation-engine.js:  fs.readFileSync("runtime/generated/patch-plan.json","utf8")
+runtime/core/mission-interpreter.js:    ?fs.readFileSync(roadmapPath,"utf8")
+runtime/core/mission-interpreter.js:console.log("MISSION INTERPRETER v2");
+runtime/core/knowledge-engine.js:  fs.readFileSync("runtime/generated/execution-plan.json","utf8")
+runtime/core/knowledge-engine.js:  fs.readFileSync("runtime/generated/capability-registry.json","utf8")
+runtime/core/knowledge-engine.js:  const txt=fs.readFileSync(file,"utf8");
+runtime/core/execution-planner.js:fs.readFileSync("runtime/generated/mission-plan.json","utf8")
+runtime/backup/20260712_202759/odg-run.js:fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/backup/20260712_204200-odg-run.js:fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/backup/20260712_204318-odg-run.js:fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/backup/20260712_235813/runtime-service.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260712_235813/runtime-service.ts:readonly loader=new MissionLoader();
+runtime/backup/20260712_235813/runtime-executor.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260712_235813/runtime-executor.ts:  private readonly loader=new MissionLoader();
+runtime/backup/20260712_205205-mission-loader.js:    fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/backup/20260712_205205-mission-loader.js:const brain = fs.readFileSync(
+runtime/backup/20260712_205205-mission-loader.js:    "runtime/brain/MASTER_PLAN.md",
+runtime/backup/20260713_010102/runtime-service.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_010102/runtime-service.ts:readonly loader=new MissionLoader();
+runtime/backup/20260713_010102/runtime-executor.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_010102/runtime-executor.ts:  private readonly loader=new MissionLoader();
+runtime/backup/20260713_010746/runtime-service.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_010746/runtime-service.ts:readonly loader=new MissionLoader();
+runtime/backup/20260713_010746/runtime-executor.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_010746/runtime-executor.ts:  private readonly loader=new MissionLoader();
+runtime/backup/20260712_205310-execution-planner.js:fs.readFileSync("runtime/generated/mission-plan.json","utf8")
+runtime/backup/20260713_010229/runtime-service.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_010229/runtime-service.ts:readonly loader=new MissionLoader();
+runtime/backup/20260713_010229/runtime-executor.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_010229/runtime-executor.ts:  private readonly loader=new MissionLoader();
+runtime/backup/20260712_205033-mission-loader.js:    fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/backup/20260712_205033-mission-loader.js:const brain = fs.readFileSync(
+runtime/backup/20260712_205033-mission-loader.js:    "runtime/brain/MASTER_PLAN.md",
+runtime/backup/20260712_220527/runtime-executor.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260712_220527/runtime-executor.ts:  private readonly loader=new MissionLoader();
+runtime/backup/20260713_011959/runtime-service.ts:import {MissionLoader} from "./mission-loader";
+runtime/backup/20260713_011959/runtime-service.ts:readonly loader=new MissionLoader();
+runtime/backup/20260713_011959/mission-loader.ts:export class MissionLoader {
+runtime/backup/20260713_011959/mission-loader.ts:      fs.readFileSync(this.projectContextPath, "utf8")
+runtime/generated/export/odg-run.js:fs.readFileSync("runtime/generated/project-context.json","utf8")
+runtime/generated/source-review/odg-run.js:fs.readFileSync("runtime/generated/project-context.json","utf8")
+src/runtime/runtime-service.ts:import {MissionLoader} from "./mission-loader";
+src/runtime/runtime-service.ts:readonly loader=new MissionLoader();
+src/runtime/runtime-executor.ts:import { MissionLoader } from "./mission-loader";
+src/runtime/runtime-executor.ts:  private readonly loader = new MissionLoader();
+src/runtime/mission-loader.ts:export class MissionLoader {
+src/runtime/mission-loader.ts:      fs.readFileSync(this.projectContextPath, "utf8")
+src/runtime/mission-orchestrator.ts:import { MissionLoader, RuntimeMission } from "./mission-loader";
+src/runtime/mission-orchestrator.ts:    private readonly loader = new MissionLoader()

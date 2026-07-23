@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-07-15T15:06:20.922Z",
+  "capability": "ProjectContext Engine",
+  "status": "READY",
+  "reusableComponents": [
+    "capability-registry.js",
+    "decision-engine.js",
+    "execution-planner.js",
+    "knowledge-engine.js",
+    "mission-interpreter.js",
+    "mission-loader.js",
+    "mission-loader.next.js",
+    "patch-engine.js",
+    "patch-executor.js",
+    "specification-loader.js",
+    "validation-engine.js"
+  ],
+  "nextStep": "Select reusable components before implementation"
+}

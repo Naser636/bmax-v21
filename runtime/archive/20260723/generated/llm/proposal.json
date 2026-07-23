@@ -1,0 +1,8 @@
+{
+  "mission": "FLEET_CHATGPT_OK",
+  "summary": "[MOCK] Fleet Bridge round-trip for FLEET_CHATGPT_OK via chatgpt",
+  "actions": [
+    "acknowledge request",
+    "return structured proposal"
+  ]
+}

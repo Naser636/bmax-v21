@@ -1,0 +1,77 @@
+[
+  {
+    "runtime": "runtime/capability-registry.ts",
+    "related": [
+      "core/capability-registry.ts",
+      "tests/capability-registry.test.ts"
+    ]
+  },
+  {
+    "runtime": "runtime/event-bus.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/execution-memory.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/execution-planner.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/index.ts",
+    "related": [
+      "core/index.ts"
+    ]
+  },
+  {
+    "runtime": "runtime/mission-loader.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/mission-orchestrator.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/plugin-registry.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-demo.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-events.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-executor.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-facade.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-health.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-reporter.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-service.ts",
+    "related": [
+      "core/runtime-service.ts"
+    ]
+  },
+  {
+    "runtime": "runtime/runtime-state.ts",
+    "related": []
+  },
+  {
+    "runtime": "runtime/runtime-types.ts",
+    "related": []
+  }
+]

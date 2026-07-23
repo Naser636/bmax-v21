@@ -1,0 +1,11 @@
+{
+  "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+  "roadmapLoaded": true,
+  "roadmapVersion": "# ODG Runtime Roadmap",
+  "interpretation": {
+    "objective": "RESOLVE DOCUMENTATION PROOF PRESENT GATE",
+    "priority": "NORMAL",
+    "mode": "UNKNOWN",
+    "category": "GENERAL"
+  }
+}

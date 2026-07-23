@@ -1,0 +1,32 @@
+{
+  "requestId": "FLEET_CHATGPT_INTEGRATION-001",
+  "agent": "claude",
+  "status": "FAILED",
+  "mission": "FLEET_CHATGPT_INTEGRATION",
+  "createdAt": "2026-07-17T12:50:18.082Z",
+  "attempt": 1,
+  "brief": {
+    "generatedAt": "2026-07-16T10:29:24.410Z",
+    "mission": "IMPLEMENT_DEVELOPER_ENGINE_V1",
+    "priority": "HIGH",
+    "project": {
+      "files": 1805,
+      "directories": 220
+    },
+    "actions": [
+      "PROCESS_TODOS",
+      "PROCESS_FIXMES",
+      "ANALYZE_DEPENDENCIES",
+      "OPTIMIZE_DEPENDENCIES",
+      "IMPLEMENT_MISSING_CAPABILITIES"
+    ],
+    "knownCapabilities": 5,
+    "missingCapabilities": 9,
+    "objective": "Produce the minimum safe implementation. Reuse existing code whenever possible."
+  },
+  "instruction": "# Mission : Intégration de ChatGPT dans Fleet (Phase 2)\n\nObjectif :\nAjouter ChatGPT comme second agent Fleet en réutilisant l'architecture existante.\n\nContraintes obligatoires :\n- Reuse Before Create.\n- Patch minimal.\n- Aucune régression.\n- Aucun refactoring.\n- Conserver Claude entièrement fonctionnel.\n- Supporter plusieurs agents Fleet.\n- Ne modifier que les composants nécessaires.\n- Mettre à jour fleet-agents.json.\n- Ajouter le connecteur ChatGPT en réutilisant le protocole Fleet existant.\n- Adapter le Dispatcher uniquement si nécessaire pour permettre la sélection de l'agent.\n- Conserver la compatibilité avec toutes les missions existantes.\n- Produire un rapport de validation.\n- Fournir un rollback complet.\n\nCritères de validation :\n- Claude fonctionne toujours.\n- ChatGPT apparaît dans le registre Fleet.\n- Une mission peut être routée vers Claude ou ChatGPT.\n- Aucun composant Runtime existant n'est cassé.\n",
+  "deliveredAt": "2026-07-17T12:50:18.084Z",
+  "pid": 422835,
+  "failedAt": "2026-07-17T12:56:24.855Z",
+  "reason": "Agent timed out after 120000ms"
+}

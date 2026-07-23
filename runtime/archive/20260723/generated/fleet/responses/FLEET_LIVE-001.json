@@ -1,0 +1,21 @@
+{
+  "requestId": "FLEET_LIVE-001",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-17T05:07:00.147Z",
+  "attempt": 1,
+  "proposal": {
+    "mission": "FLEET_BRIDGE_V1",
+    "summary": "PATCH PLAN (pre-approval, no files written). Proposes a Fleet Bridge daemon that watches runtime/generated/fleet/requests/ for new request JSON, processes each exactly once via a claimed/lockfile marker, invokes Claude Code through the existing integration mechanism, and writes structured JSON to runtime/generated/fleet/responses/ with retries, timeouts, and error handling. Additive only: no changes to the existing Fleet protocol, envelope, or dispatcher. Awaiting approval before implementation per OUTPUT step 5.",
+    "actions": [
+      "PLAN: fleet-bridge daemon = chokidar/fs.watch on requests dir + poll fallback; per-file dedupe via .processing/.done markers so each request runs exactly once even across restarts.",
+      "PLAN: request lifecycle = detect -> claim (atomic rename to .processing) -> validate schema -> invoke Claude Code via existing runtime/core/fleet-bridge.js integration -> write responses/<id>.json (atomic write then rename) -> mark .done.",
+      "PLAN: reliability = configurable maxRetries with exponential backoff, per-request timeout that emits a structured timeout response, and an error envelope {ok:false,error,stack,requestId} on failure; all exchanges appended to runtime/generated/fleet/log/exchange.log (JSONL).",
+      "FILES-CREATE: runtime/core/fleet-bridge-service.js (daemon/watcher + processor), runtime/bin/fleet-bridge.js (CLI entrypoint start/stop/status), docs/fleet-bridge.md (design + ops), test/fleet-bridge.spec.js (unit + integration smoke).",
+      "FILES-MODIFY: none required for protocol; only package.json scripts (fleet:bridge, fleet:bridge:test) — existing runtime/core/fleet-bridge.js reused as the Claude Code invocation adapter, not rewritten.",
+      "RISKS: (1) race/double-processing under concurrent watchers -> mitigated by atomic rename claim; (2) partial writes read as valid -> mitigated by write-to-temp-then-rename; (3) Claude Code invocation hang -> mitigated by hard timeout + child kill; (4) unbounded log growth -> mitigated by JSONL + optional rotation; (5) schema drift with existing protocol -> mitigated by reusing fleet-envelope.js validators, no protocol edits.",
+      "VALIDATION: (a) npm run fleet:bridge -- --once to drain existing requests; (b) drop a sample request JSON into runtime/generated/fleet/requests/ and assert a matching responses/<id>.json appears with {ok:true}; (c) inject malformed + timeout requests and assert structured error responses + log entries; (d) restart daemon mid-run and confirm no request is processed twice (marker check); (e) node --test test/fleet-bridge.spec.js.",
+      "STATUS: HOLD_FOR_APPROVAL — implementation (OUTPUT step 5) not started; reply APPROVE to proceed with the additive, protocol-preserving build above."
+    ]
+  }
+}

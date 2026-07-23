@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-07-15T16:27:13.294Z",
+  "status": "READY",
+  "mode": "DYNAMIC_EXECUTION",
+  "implementation": "runtime/core/execution-planner.js",
+  "checks": {
+    "governance": true,
+    "capabilityResolved": true,
+    "implementationExists": true,
+    "executionContract": true
+  }
+}

@@ -1,0 +1,2 @@
+{ "requestId": "FLEET_BAD-001", "agent": "claude", "status": "ANSWERED",
+  "proposal": { "mission": "FLEET_BAD", "summary": "sans actions" } }

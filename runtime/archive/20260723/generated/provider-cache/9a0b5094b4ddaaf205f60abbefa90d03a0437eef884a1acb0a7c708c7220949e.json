@@ -1,0 +1,82 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [
+      "src/runtime/root-cause-engine.ts",
+      "src/tests/root-cause-engine.test.ts",
+      "src/runtime/index.ts",
+      "runtime/generated/root-cause-report.json",
+      "runtime/generated/corrective-mission.json"
+    ],
+    "commandsRun": [
+      "git diff src/runtime/index.ts",
+      "npm test src/tests/root-cause-engine.test.ts",
+      "npx tsc --noEmit",
+      "npm test",
+      "npx tsx /tmp/rce-run.ts"
+    ],
+    "blocker": null,
+    "notes": "RootCauseEngine (src/runtime/root-cause-engine.ts, exported via src/runtime/index.ts) implements automated Root Cause Reporting for a BLOCKED/NO_RELEASE mission, mirroring the existing SnapshotEngine convention (standalone engine, resilient execSync/fs, version-stamped structured return, writes only to the gitignored runtime/generated/ tree). OBJ-001: engine.report() produces runtime/generated/root-cause-report.json (regenerated live against the current repo at 2026-07-22T13:19:49Z; status=DIAGNOSED). OBJ-002: rootCause.responsibleComponent identifies the blocking component for the first red gate in ReleaseManager gate order (live diagnosis: gitClean -> runtime/bin/odg-verify.js 'git diff --quiet', decisionAuthority src/core/release-manager.ts). OBJ-003: minimalPatch proposes a minimal, PROPOSED-never-applied fix (.gitignore + untrack the regenerated history ledger). OBJ-004: correctiveMission prepares a ready-to-run engineering Mission Contract (RESOLVE_GIT_CLEAN_GATE), mirrored to runtime/generated/corrective-mission.json. Validation: dedicated test src/tests/root-cause-engine.test.ts passes ('Root Cause Engine OK'); npx tsc --noEmit exits 0; full suite (218 test files) exits 0. Note: the live report correctly diagnoses the current tree's gitClean gate as red due to tracked bookkeeping (runtime/mission-standard/history/history.md) plus the mission's own src/runtime/index.ts change — consistent with the known clean-tree release precondition; this is diagnostic output, not a blocker to the engineering deliverable. Completion/RELEASE is the Release Manager's decision."
+  },
+  "sessionId": "2dc19590-1d52-478c-bcc6-f8e544880a94",
+  "changedFiles": [
+    "runtime/mission-standard/history/history.md",
+    "src/runtime/index.ts",
+    "runtime/mission-standard/certificates/IMPLEMENT_ENGINEERING_PROVIDER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+    "runtime/mission-standard/generated/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "runtime/mission-standard/generated/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PROVIDER_FACTORY.json",
+    "runtime/mission-standard/generated/MISSION_CONTEXT_BUILDER.json",
+    "runtime/mission-standard/generated/PREPARE_ENGINEERING_BRIEF.json",
+    "runtime/mission-standard/generated/ROADMAP_RUNTIME_STABILIZATION_V1.json",
+    "runtime/mission-standard/generated/ROOT_CAUSE_RELEASE_GATE.json",
+    "runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+    "runtime/mission-standard/passports/IMPLEMENT_ENGINEERING_PROVIDER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+    "runtime/mission-standard/reports/IMPLEMENT_ENGINEERING_PROVIDER.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PROVIDER_FACTORY.report.md",
+    "runtime/mission-standard/reports/MISSION_CONTEXT_BUILDER.report.md",
+    "runtime/mission-standard/reports/PREPARE_ENGINEERING_BRIEF.report.md",
+    "runtime/mission-standard/reports/ROADMAP_RUNTIME_STABILIZATION_V1.report.md",
+    "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md",
+    "runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+    "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "runtime/missions/IMPLEMENT_ROOT_CAUSE_REPORTING.json",
+    "runtime/missions/MISSION_CONTEXT_BUILDER.json",
+    "runtime/missions/ROOT_CAUSE_RELEASE_GATE.json",
+    "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak",
+    "src/runtime/root-cause-engine.ts",
+    "src/tests/root-cause-engine.test.ts"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":776759,\"duration_api_ms\":152041,\"ttft_ms\":5274,\"ttft_stream_ms\":2212,\"time_to_request_ms\":253,\"num_turns\":21,\"result\":\"All objectives are satisfied and validated. Producing the final result.\\n\\n```json\\n{\\n  \\\"mission\\\": \\\"IMPLEMENT_ROOT_CAUSE_REPORTING\\\",\\n  \\\"providerContractVersion\\\": \\\"1.0.0\\\",\\n  \\\"status\\\": \\\"DONE\\\",\\n  \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"],\\n  \\\"changedFiles\\\": [\\n    \\\"src/runtime/root-cause-engine.ts\\\",\\n    \\\"src/tests/root-cause-engine.test.ts\\\",\\n    \\\"src/runtime/index.ts\\\",\\n    \\\"runtime/generated/root-cause-report.json\\\",\\n    \\\"runtime/generated/corrective-mission.json\\\"\\n  ],\\n  \\\"commandsRun\\\": [\\n    \\\"git diff src/runtime/index.ts\\\",\\n    \\\"npm test src/tests/root-cause-engine.test.ts\\\",\\n    \\\"npx tsc --noEmit\\\",\\n    \\\"npm test\\\",\\n    \\\"npx tsx /tmp/rce-run.ts\\\"\\n  ],\\n  \\\"blocker\\\": null,\\n  \\\"notes\\\": \\\"RootCauseEngine (src/runtime/root-cause-engine.ts, exported via src/runtime/index.ts) implements automated Root Cause Reporting for a BLOCKED/NO_RELEASE mission, mirroring the existing SnapshotEngine convention (standalone engine, resilient execSync/fs, version-stamped structured return, writes only to the gitignored runtime/generated/ tree). OBJ-001: engine.report() produces runtime/generated/root-cause-report.json (regenerated live against the current repo at 2026-07-22T13:19:49Z; status=DIAGNOSED). OBJ-002: rootCause.responsibleComponent identifies the blocking component for the first red gate in ReleaseManager gate order (live diagnosis: gitClean -> runtime/bin/odg-verify.js 'git diff --quiet', decisionAuthority src/core/release-manager.ts). OBJ-003: minimalPatch proposes a minimal, PROPOSED-never-applied fix (.gitignore + untrack the regenerated history ledger). OBJ-004: correctiveMission prepares a ready-to-run engineering Mission Contract (RESOLVE_GIT_CLEAN_GATE), mirrored to runtime/generated/corrective-mission.json. Validation: dedicated test src/tests/root-cause-engine.test.ts passes ('Root Cause Engine OK'); npx tsc --noEmit exits 0; full suite (218 test files) exits 0. Note: the live report correctly diagnoses the current tree's gitClean gate as red due to tracked bookkeeping (runtime/mission-standard/history/history.md) plus the mission's own src/runtime/index.ts change — consistent with the known clean-tree release precondition; this is diagnostic output, not a blocker to the engineering deliverable. Completion/RELEASE is the Release Manager's decision.\\\"\\n}\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"2dc19590-1d52-478c-bcc6-f8e544880a94\",\"total_cost_usd\":0.7745837500000001,\"usage\":{\"input_tokens\":24,\"cache_creation_input_tokens\":40487,\"cache_read_input_tokens\":583704,\"output_tokens\":9142,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":40487},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":1482,\"cache_read_input_tokens\":56197,\"cache_creation_input_tokens\":1017,\"cache_creation\":{\"ephemeral_5m_input_tokens\":1017,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":948,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001018,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":24,\"outputTokens\":9142,\"cacheReadInputTokens\":583704,\"cacheCreationInputTokens\":40487,\"webSearchRequests\":0,\"costUSD\":0.7735657499999999,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4ae9a885-ac5d-4385-b912-5805832f6785\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

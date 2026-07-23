@@ -1,0 +1,816 @@
+===== src/runtime/capability-registry.ts =====
+export interface Capability{
+id:string;
+name:string;
+}
+export class CapabilityRegistry{
+private readonly capabilities=new Map<string,Capability>();
+register(c:Capability){this.capabilities.set(c.id,c);}
+all(){return [...this.capabilities.values()];}
+}
+
+===== src/runtime/event-bus.ts =====
+export interface RuntimeEvent<T = unknown> {
+  type: string;
+  timestamp: string;
+  payload: T;
+}
+
+export type RuntimeEventHandler<T = unknown> =
+  (event: RuntimeEvent<T>) => void;
+
+export class EventBus {
+
+  private readonly handlers =
+    new Map<string, RuntimeEventHandler[]>();
+
+  subscribe(
+    type: string,
+    handler: RuntimeEventHandler
+  ): void {
+
+    const list = this.handlers.get(type) ?? [];
+    list.push(handler);
+    this.handlers.set(type, list);
+
+  }
+
+  publish<T>(
+    type: string,
+    payload: T
+  ): void {
+
+    const event: RuntimeEvent<T> = {
+      type,
+      timestamp: new Date().toISOString(),
+      payload
+    };
+
+    const handlers = this.handlers.get(type) ?? [];
+
+    for (const handler of handlers) {
+      handler(event);
+    }
+
+  }
+
+}
+
+===== src/runtime/execution-memory.ts =====
+export interface ExecutionRecord {
+  missionId: string;
+  event: string;
+  timestamp: string;
+  payload?: unknown;
+}
+
+export class ExecutionMemory {
+
+  private readonly records: ExecutionRecord[] = [];
+
+  append(
+    missionId: string,
+    event: string,
+    payload?: unknown
+  ): void {
+    this.records.push({
+      missionId,
+      event,
+      timestamp: new Date().toISOString(),
+      payload
+    });
+  }
+
+  history(missionId?: string): ExecutionRecord[] {
+    if (!missionId) {
+      return [...this.records];
+    }
+
+    return this.records.filter(r => r.missionId === missionId);
+  }
+
+  all(): ExecutionRecord[] {
+    return [...this.records];
+  }
+
+  clear(): void {
+    this.records.length = 0;
+  }
+
+}
+
+===== src/runtime/execution-planner.ts =====
+import {
+  MissionOrchestrator,
+  ExecutionPlan
+} from "./mission-orchestrator";
+
+export interface TechnicalStep {
+  id: string;
+  capability: string;
+  plugin: string | null;
+  status: "READY";
+}
+
+export interface TechnicalPlan {
+  execution: ExecutionPlan;
+  steps: TechnicalStep[];
+}
+
+export class ExecutionPlanner {
+  constructor(
+    private readonly orchestrator = new MissionOrchestrator()
+  ) {}
+
+  create(id: string, name: string): TechnicalPlan {
+
+    const execution =
+      this.orchestrator.buildPlan(id, name);
+
+    const steps = execution.steps.map(step => ({
+      id: step.id,
+      capability: step.name,
+      plugin: null,
+      status: "READY" as const
+    }));
+
+    return {
+      execution,
+      steps
+    };
+  }
+}
+
+===== src/runtime/index.ts =====
+export * from "./runtime-types";
+export * from "./runtime-state";
+export * from "./runtime-events";
+export * from "./execution-memory";
+export * from "./capability-registry";
+export * from "./plugin-registry";
+export * from "./mission-loader";
+export * from "./mission-orchestrator";
+export * from "./execution-planner";
+export * from "./event-bus";
+export * from "./runtime-health";
+export * from "./runtime-reporter";
+export * from "./runtime-service";
+export * from "./runtime-facade";
+
+===== src/runtime/mission-controller.ts =====
+import { MissionDispatcher } from "./mission-dispatcher";
+import { RuntimeContext } from "./runtime-context";
+
+export interface MissionRequest {
+  id: string;
+  name: string;
+}
+
+export class MissionController {
+  private readonly dispatcher = new MissionDispatcher();
+  private readonly context = RuntimeContext.get();
+
+  execute(request: MissionRequest) {
+    const { id, name } = request;
+
+    this.context.state.currentMission = id;
+
+    return this.dispatcher.dispatch(id, name);
+  }
+}
+
+===== src/runtime/mission-dispatcher.ts =====
+import { RuntimeContext } from "./runtime-context";
+import { RuntimeKernel } from "./runtime-kernel";
+
+export class MissionDispatcher {
+  private readonly context = RuntimeContext.get();
+  private readonly kernel = new RuntimeKernel();
+
+  dispatch(id: string, name: string) {
+    this.context.state.currentMission = id;
+
+    return this.kernel.execute(id, name);
+  }
+}
+
+===== src/runtime/mission-engine.ts =====
+import { SystemLoader } from "./system-loader";
+import { RuntimeState } from "./runtime-state";
+
+export class MissionEngine {
+  private readonly loader = new SystemLoader();
+  private readonly state = new RuntimeState();
+
+  bootstrap(): RuntimeState {
+    if (!this.state.isInitialized()) {
+      this.state.initialize(this.loader.load());
+    }
+
+    return this.state;
+  }
+}
+
+===== src/runtime/mission-loader.ts =====
+import fs from "node:fs";
+
+export interface RuntimeMission {
+  id: string;
+  name: string;
+  projectContext: unknown;
+}
+
+export class MissionLoader {
+  constructor(
+    private readonly projectContextPath =
+      "runtime/generated/project-context.json"
+  ) {}
+
+  load(id: string, name: string): RuntimeMission {
+    const projectContext = JSON.parse(
+      fs.readFileSync(this.projectContextPath, "utf8")
+    );
+
+    return {
+      id,
+      name,
+      projectContext
+    };
+  }
+}
+
+===== src/runtime/mission-orchestrator.ts =====
+import { MissionLoader, RuntimeMission } from "./mission-loader";
+
+export interface ExecutionStep {
+  id: string;
+  name: string;
+  status: "PENDING";
+}
+
+export interface ExecutionPlan {
+  mission: RuntimeMission;
+  steps: ExecutionStep[];
+}
+
+export class MissionOrchestrator {
+  constructor(
+    private readonly loader = new MissionLoader()
+  ) {}
+
+  buildPlan(id: string, name: string): ExecutionPlan {
+    const mission = this.loader.load(id, name);
+
+    return {
+      mission,
+      steps: [
+        { id: "LOAD", name: "Load ProjectContext", status: "PENDING" },
+        { id: "PLAN", name: "Build Execution Plan", status: "PENDING" },
+        { id: "VERIFY", name: "Verify Governance", status: "PENDING" },
+        { id: "EXECUTE", name: "Execute Mission", status: "PENDING" },
+        { id: "REPORT", name: "Generate Report", status: "PENDING" }
+      ]
+    };
+  }
+}
+
+===== src/runtime/mission-router.ts =====
+import { MissionController } from "./mission-controller";
+
+export interface RuntimeObjective {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class MissionRouter {
+  private readonly controller = new MissionController();
+
+  route(objective: RuntimeObjective) {
+    return this.controller.execute({
+      id: objective.missionId,
+      name: objective.missionName
+    });
+  }
+}
+
+===== src/runtime/patch-engine.ts =====
+
+===== src/runtime/plugin-registry.ts =====
+export interface Plugin{
+id:string;
+version:string;
+}
+export class PluginRegistry{
+private readonly plugins=new Map<string,Plugin>();
+register(p:Plugin){this.plugins.set(p.id,p);}
+all(){return [...this.plugins.values()];}
+}
+
+===== src/runtime/runtime-agent.ts =====
+import { RuntimeCLI } from "./runtime-cli";
+
+export interface RuntimeOrder {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeAgent {
+  private readonly cli = new RuntimeCLI();
+
+  execute(order: RuntimeOrder) {
+    return this.cli.run(
+      order.objective,
+      order.missionId,
+      order.missionName
+    );
+  }
+}
+
+===== src/runtime/runtime-autopilot.ts =====
+import { RuntimeSupervisor } from "./runtime-supervisor";
+import { RuntimeContext } from "./runtime-context";
+
+export interface RuntimeObjective {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeAutopilot {
+  private readonly supervisor = new RuntimeSupervisor();
+  private readonly context = RuntimeContext.get();
+
+  run(objective: RuntimeObjective) {
+    this.context.engine.bootstrap();
+
+    return this.supervisor.execute({
+      objective: objective.objective,
+      missionId: objective.missionId,
+      missionName: objective.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-bootstrap.ts =====
+import { MissionRouter } from "./mission-router";
+import { RuntimeContext } from "./runtime-context";
+
+export interface RuntimeCommand {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeBootstrap {
+  private readonly context = RuntimeContext.get();
+  private readonly router = new MissionRouter();
+
+  run(command: RuntimeCommand) {
+    this.context.engine.bootstrap();
+
+    return this.router.route({
+      objective: command.objective,
+      missionId: command.missionId,
+      missionName: command.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-cli.ts =====
+import { RuntimeBootstrap } from "./runtime-bootstrap";
+
+export class RuntimeCLI {
+  private readonly runtime = new RuntimeBootstrap();
+
+  run(objective: string, missionId: string, missionName: string) {
+    return this.runtime.run({
+      objective,
+      missionId,
+      missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-context.ts =====
+import { RuntimeState } from "./runtime-state";
+import { MissionEngine } from "./mission-engine";
+
+export class RuntimeContext {
+  private static instance: RuntimeContext;
+
+  readonly state = new RuntimeState();
+  readonly engine = new MissionEngine();
+
+  private constructor() {}
+
+  static get(): RuntimeContext {
+    if (!RuntimeContext.instance) {
+      RuntimeContext.instance = new RuntimeContext();
+      RuntimeContext.instance.engine.bootstrap();
+    }
+
+    return RuntimeContext.instance;
+  }
+}
+
+===== src/runtime/runtime-daemon.ts =====
+import { RuntimeShell } from "./runtime-shell";
+
+export interface RuntimeMission {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeDaemon {
+  private readonly shell = new RuntimeShell();
+
+  execute(mission: RuntimeMission) {
+    return this.shell.execute({
+      objective: mission.objective,
+      missionId: mission.missionId,
+      missionName: mission.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-demo.ts =====
+import { RuntimeEntry } from "./runtime-entry";
+import fs from "node:fs";
+
+const runtime = new RuntimeEntry();
+
+const result = runtime.execute({
+  objective: "Autonomous Runtime",
+  missionId: "runtime.demo",
+  missionName: "Runtime Entry"
+});
+
+fs.mkdirSync("runtime/generated", { recursive: true });
+
+fs.writeFileSync(
+  "runtime/generated/runtime-execution.json",
+  JSON.stringify(result, null, 2)
+);
+
+console.log("======================================");
+console.log("RUNTIME ENTRY READY");
+console.log("runtime/generated/runtime-execution.json");
+console.log("======================================");
+
+===== src/runtime/runtime-director.ts =====
+import { RuntimeOS } from "./runtime-os";
+
+export interface RuntimeObjective {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeDirector {
+  private readonly runtime = new RuntimeOS();
+
+  execute(objective: RuntimeObjective) {
+    return this.runtime.run({
+      objective: objective.objective,
+      missionId: objective.missionId,
+      missionName: objective.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-entry.ts =====
+import { RuntimeAutopilot } from "./runtime-autopilot";
+
+export interface RuntimeRequest {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeEntry {
+  private readonly runtime = new RuntimeAutopilot();
+
+  execute(request: RuntimeRequest) {
+    return this.runtime.run({
+      objective: request.objective,
+      missionId: request.missionId,
+      missionName: request.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-events.ts =====
+export enum RuntimeEventType{
+MissionStarted="MissionStarted",
+MissionCompleted="MissionCompleted",
+MissionFailed="MissionFailed",
+CapabilityExecuted="CapabilityExecuted"
+}
+
+===== src/runtime/runtime-executor.ts =====
+import { MissionLoader } from "./mission-loader";
+import { MissionOrchestrator } from "./mission-orchestrator";
+import { ExecutionPlanner } from "./execution-planner";
+import { ExecutionMemory } from "./execution-memory";
+import { EventBus } from "./event-bus";
+import { SystemLoader } from "./system-loader";
+import { MissionEngine } from "./mission-engine";
+
+export class RuntimeExecutor {
+
+  private readonly system = new SystemLoader();
+  private readonly engine = new MissionEngine();
+  private readonly loader = new MissionLoader();
+  private readonly orchestrator = new MissionOrchestrator();
+  private readonly planner = new ExecutionPlanner();
+  private readonly memory = new ExecutionMemory();
+  private readonly events = new EventBus();
+
+  execute(id: string, name: string) {
+
+    this.engine.bootstrap();
+
+    const runtimeSystem = this.system.load();
+
+    this.events.publish("MissionStarted", {
+      id,
+      name,
+      runtimeSystem
+    });
+
+    const mission = this.loader.load(id, name);
+
+    const plan = this.orchestrator.buildPlan(id, name);
+
+    const technical = this.planner.create(id, name);
+
+    this.memory.append(id, "MissionStarted", { name });
+
+    this.memory.append(id, "SystemLoaded", runtimeSystem);
+
+    this.memory.append(id, "PlanCreated", {
+      steps: plan.steps.length
+    });
+
+    this.memory.append(id, "TechnicalPlanCreated", {
+      steps: technical.steps.length
+    });
+
+    this.memory.append(id, "CapabilityAnalysis", {
+      logicalSteps: plan.steps.length,
+      technicalSteps: technical.steps.length,
+      capabilities: technical.steps.map(s => s.capability)
+    });
+
+    this.events.publish("MissionCompleted", { id });
+
+    return {
+      mission,
+      runtimeSystem,
+      logicalSteps: plan.steps.length,
+      technicalSteps: technical.steps.length,
+      history: this.memory.history(id)
+    };
+  }
+}
+
+===== src/runtime/runtime-facade.ts =====
+import {RuntimeService} from "./runtime-service";
+import {RuntimeReporter} from "./runtime-reporter";
+import {RuntimeHealth} from "./runtime-health";
+
+export class RuntimeFacade{
+
+private readonly runtime=new RuntimeService();
+private readonly reporter=new RuntimeReporter();
+private readonly health=new RuntimeHealth();
+
+status(){
+return this.health.check();
+}
+
+runtimeService(){
+return this.runtime;
+}
+
+report(data:unknown){
+return this.reporter.report(data);
+}
+
+}
+
+===== src/runtime/runtime-governor.ts =====
+import { RuntimeDirector } from "./runtime-director";
+import { RuntimeContext } from "./runtime-context";
+
+export interface RuntimeGoal {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeGovernor {
+  private readonly director = new RuntimeDirector();
+  private readonly context = RuntimeContext.get();
+
+  execute(goal: RuntimeGoal) {
+    this.context.engine.bootstrap();
+
+    return this.director.execute({
+      objective: goal.objective,
+      missionId: goal.missionId,
+      missionName: goal.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-health.ts =====
+export class RuntimeHealth{
+check(){
+return{
+status:"HEALTHY",
+timestamp:new Date().toISOString()
+};
+}
+}
+
+===== src/runtime/runtime-host.ts =====
+import { RuntimeDaemon } from "./runtime-daemon";
+
+export interface RuntimeRequest {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeHost {
+  private readonly daemon = new RuntimeDaemon();
+
+  run(request: RuntimeRequest) {
+    return this.daemon.execute({
+      objective: request.objective,
+      missionId: request.missionId,
+      missionName: request.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-kernel.ts =====
+import { MissionEngine } from "./mission-engine";
+import { RuntimeExecutor } from "./runtime-executor";
+import { RuntimeContext } from "./runtime-context";
+
+export class RuntimeKernel {
+  private readonly engine = new MissionEngine();
+  private readonly executor = new RuntimeExecutor();
+  private readonly context = RuntimeContext.get();
+
+  execute(id: string, name: string) {
+    this.engine.bootstrap();
+    this.context.state.currentMission = id;
+    const result = this.executor.execute(id, name);
+    return { runtimeState: this.context.state, ...result };
+  }
+}
+
+===== src/runtime/runtime-os.ts =====
+import { RuntimeHost } from "./runtime-host";
+
+export interface RuntimeTask {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeOS {
+  private readonly host = new RuntimeHost();
+
+  run(task: RuntimeTask) {
+    return this.host.run({
+      objective: task.objective,
+      missionId: task.missionId,
+      missionName: task.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-reporter.ts =====
+export class RuntimeReporter{
+report(input:unknown){
+return{
+generatedAt:new Date().toISOString(),
+result:input
+};
+}
+}
+
+===== src/runtime/runtime-service.ts =====
+import {MissionLoader} from "./mission-loader";
+import {MissionOrchestrator} from "./mission-orchestrator";
+import {ExecutionPlanner} from "./execution-planner";
+import {ExecutionMemory} from "./execution-memory";
+import {EventBus} from "./event-bus";
+
+export class RuntimeService{
+
+readonly loader=new MissionLoader();
+readonly orchestrator=new MissionOrchestrator();
+readonly planner=new ExecutionPlanner();
+readonly memory=new ExecutionMemory();
+readonly events=new EventBus();
+
+}
+
+===== src/runtime/runtime-shell.ts =====
+import { RuntimeAgent } from "./runtime-agent";
+
+export interface ShellCommand {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeShell {
+  private readonly agent = new RuntimeAgent();
+
+  execute(command: ShellCommand) {
+    return this.agent.execute({
+      objective: command.objective,
+      missionId: command.missionId,
+      missionName: command.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-state.ts =====
+import { RuntimeStatus } from "./runtime-types";
+import { RuntimeSystem } from "./system-loader";
+
+export class RuntimeState {
+  status: RuntimeStatus = "READY";
+  currentMission?: string;
+  system?: RuntimeSystem;
+
+  initialize(system: RuntimeSystem): void {
+    this.system = system;
+  }
+
+  isInitialized(): boolean {
+    return this.system !== undefined;
+  }
+}
+
+===== src/runtime/runtime-supervisor.ts =====
+import { RuntimeGovernor } from "./runtime-governor";
+import { RuntimeContext } from "./runtime-context";
+
+export interface RuntimeMissionOrder {
+  objective: string;
+  missionId: string;
+  missionName: string;
+}
+
+export class RuntimeSupervisor {
+  private readonly governor = new RuntimeGovernor();
+  private readonly context = RuntimeContext.get();
+
+  execute(order: RuntimeMissionOrder) {
+    this.context.engine.bootstrap();
+
+    return this.governor.execute({
+      objective: order.objective,
+      missionId: order.missionId,
+      missionName: order.missionName
+    });
+  }
+}
+
+===== src/runtime/runtime-types.ts =====
+export type RuntimeStatus="READY"|"RUNNING"|"FAILED"|"DONE";
+export interface RuntimeMetadata{
+version:string;
+generatedAt:string;
+}
+
+===== src/runtime/system-loader.ts =====
+export interface RuntimeSystem {
+  constitution: string;
+  roadmap: string;
+  policies: string;
+  standards: string;
+}
+
+export class SystemLoader {
+  load(): RuntimeSystem {
+    return {
+      constitution: "runtime/system/CONSTITUTION.md",
+      roadmap: "runtime/system/ROADMAP.md",
+      policies: "runtime/system/POLICIES.md",
+      standards: "runtime/system/STANDARDS.md"
+    };
+  }
+}
+

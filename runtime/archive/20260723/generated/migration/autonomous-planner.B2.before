@@ -1,0 +1,19 @@
+export interface AutonomousPlanningModel {
+  generatedAt: string;
+  selectedObjective: string;
+  roadmap: string[];
+  status: string;
+}
+
+export class AutonomousPlanner {
+
+  build(): AutonomousPlanningModel {
+    return {
+      generatedAt: new Date().toISOString(),
+      selectedObjective: "",
+      roadmap: [],
+      status: "READY"
+    };
+  }
+
+}

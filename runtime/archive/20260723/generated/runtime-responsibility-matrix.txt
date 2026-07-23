@@ -1,0 +1,151 @@
+===== capability-registry.ts =====
+export class CapabilityRegistry{
+
+===== event-bus.ts =====
+export class EventBus {
+
+===== execution-memory.ts =====
+export class ExecutionMemory {
+
+===== execution-planner.ts =====
+export class ExecutionPlanner {
+  constructor(
+  create(id: string, name: string): TechnicalPlan {
+      this.orchestrator.buildPlan(id, name);
+
+===== index.ts =====
+
+===== mission-controller.ts =====
+export class MissionController {
+  execute(request: MissionRequest) {
+    return this.dispatcher.dispatch(id, name);
+
+===== mission-dispatcher.ts =====
+export class MissionDispatcher {
+  dispatch(id: string, name: string) {
+    return this.kernel.execute(id, name);
+
+===== mission-engine.ts =====
+export class MissionEngine {
+  bootstrap(): RuntimeState {
+      this.state.initialize(this.loader.load());
+
+===== mission-loader.ts =====
+export class MissionLoader {
+  constructor(
+  load(id: string, name: string): RuntimeMission {
+
+===== mission-orchestrator.ts =====
+export class MissionOrchestrator {
+  constructor(
+  buildPlan(id: string, name: string): ExecutionPlan {
+    const mission = this.loader.load(id, name);
+
+===== mission-router.ts =====
+export class MissionRouter {
+    return this.controller.execute({
+
+===== patch-engine.ts =====
+
+===== plugin-registry.ts =====
+export class PluginRegistry{
+
+===== runtime-agent.ts =====
+export class RuntimeAgent {
+  execute(order: RuntimeOrder) {
+
+===== runtime-autopilot.ts =====
+export class RuntimeAutopilot {
+    this.context.engine.bootstrap();
+    return this.supervisor.execute({
+
+===== runtime-bootstrap.ts =====
+export class RuntimeBootstrap {
+    this.context.engine.bootstrap();
+
+===== runtime-cli.ts =====
+export class RuntimeCLI {
+
+===== runtime-context.ts =====
+export class RuntimeContext {
+  private constructor() {}
+      RuntimeContext.instance.engine.bootstrap();
+
+===== runtime-daemon.ts =====
+export class RuntimeDaemon {
+  execute(mission: RuntimeMission) {
+    return this.shell.execute({
+
+===== runtime-demo.ts =====
+const result = runtime.execute({
+
+===== runtime-director.ts =====
+export class RuntimeDirector {
+  execute(objective: RuntimeObjective) {
+
+===== runtime-entry.ts =====
+export class RuntimeEntry {
+  execute(request: RuntimeRequest) {
+
+===== runtime-events.ts =====
+
+===== runtime-executor.ts =====
+export class RuntimeExecutor {
+  execute(id: string, name: string) {
+    this.engine.bootstrap();
+    const runtimeSystem = this.system.load();
+    const mission = this.loader.load(id, name);
+    const plan = this.orchestrator.buildPlan(id, name);
+    const technical = this.planner.create(id, name);
+
+===== runtime-facade.ts =====
+export class RuntimeFacade{
+
+===== runtime-governor.ts =====
+export class RuntimeGovernor {
+  execute(goal: RuntimeGoal) {
+    this.context.engine.bootstrap();
+    return this.director.execute({
+
+===== runtime-health.ts =====
+export class RuntimeHealth{
+
+===== runtime-host.ts =====
+export class RuntimeHost {
+    return this.daemon.execute({
+
+===== runtime-kernel.ts =====
+export class RuntimeKernel {
+  execute(id: string, name: string) {
+    this.engine.bootstrap();
+    const result = this.executor.execute(id, name);
+
+===== runtime-os.ts =====
+export class RuntimeOS {
+
+===== runtime-reporter.ts =====
+export class RuntimeReporter{
+
+===== runtime-service.ts =====
+export class RuntimeService{
+
+===== runtime-shell.ts =====
+export class RuntimeShell {
+  execute(command: ShellCommand) {
+    return this.agent.execute({
+
+===== runtime-state.ts =====
+export class RuntimeState {
+
+===== runtime-supervisor.ts =====
+export class RuntimeSupervisor {
+  execute(order: RuntimeMissionOrder) {
+    this.context.engine.bootstrap();
+    return this.governor.execute({
+
+===== runtime-types.ts =====
+
+===== system-loader.ts =====
+export class SystemLoader {
+  load(): RuntimeSystem {
+

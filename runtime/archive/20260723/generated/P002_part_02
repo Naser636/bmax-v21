@@ -1,0 +1,793 @@
+6Z",
+      "mission": "M0001",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:14:34.921Z",
+      "mission": "M0002",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:14:55.157Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:15:14.421Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:16:08.137Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:17:22.331Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:41:37.240Z",
+      "mission": "FIX_PATCH_EXECUTION_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:43:43.927Z",
+      "mission": "IMPLEMENT_PATCH_ACTIONS",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T19:44:03.026Z",
+      "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 16,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:13:16.445Z",
+      "mission": "PREPARE_ENGINEERING_BRIEF",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:32:34.446Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:34:09.045Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:36:45.254Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:38:17.515Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:49:54.491Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:51:19.794Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:51:19.976Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:51:21.034Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:52:36.006Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:52:36.027Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-21T23:52:36.028Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T00:09:33.254Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T00:11:45.789Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T00:30:57.869Z",
+      "mission": "UNIFY_RUNTIME_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T12:18:04.859Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T12:23:11.348Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T13:36:43.416Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T14:35:12.970Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T14:46:06.448Z",
+      "mission": "FIX_PATCH_EXECUTION_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T14:54:32.101Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T14:59:38.656Z",
+      "mission": "PREPARE_ENGINEERING_BRIEF",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:09:08.671Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:16:15.627Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:18:13.453Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:20:22.994Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:21:16.106Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:26:28.159Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:26:30.746Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T16:51:51.278Z",
+      "mission": "ENABLE_MASTER_PLAN_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T17:38:17.744Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T17:58:26.557Z",
+      "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 16,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T17:59:50.604Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T21:47:23.151Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T21:50:41.673Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T22:00:43.398Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T22:06:28.405Z",
+      "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T22:08:39.545Z",
+      "mission": "UNIFY_RUNTIME_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    }
+  ]
+}

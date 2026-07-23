@@ -1,0 +1,15 @@
+{
+  "requestId": "FLEET_PIPE_TEST-002",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-17T05:27:06.530Z",
+  "attempt": 1,
+  "proposal": {
+    "mission": "FLEET_PIPE_TEST",
+    "summary": "[MOCK] Fleet Bridge round-trip for FLEET_PIPE_TEST",
+    "actions": [
+      "acknowledge request",
+      "return structured proposal"
+    ]
+  }
+}

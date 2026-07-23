@@ -1,0 +1,74 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "ROOT_CAUSE_RELEASE_GATE",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003"
+    ],
+    "changedFiles": [
+      "runtime/mission-standard/generated/ROOT_CAUSE_RELEASE_GATE.json",
+      "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md"
+    ],
+    "commandsRun": [
+      "node runtime/bin/odg-verify.js",
+      "git diff --quiet",
+      "git diff --quiet -- ':(exclude)runtime/mission-standard/history/history.md'",
+      "git status --porcelain",
+      "node -e (route check ROOT_CAUSE_RELEASE_GATE.json)"
+    ],
+    "blocker": null,
+    "notes": "OBJ-001: Root cause = the single red gate `gitClean`. Blocking rule: ReleaseManager.allGreen() (src/core/release-manager.ts:373-381) requires gates.gitClean===true. Chain: runtime/bin/odg-verify.js runs `git diff --quiet` (exit 1) -> runtime/generated/runtime-verify.json {build:true,typescript:true,gitClean:false} -> AutonomyRuntimeAdapter.gatherEvidence relays it -> RuntimeAutonomy.decide -> NO_RELEASE. Proven sole cause: `git diff --quiet` excluding runtime/mission-standard/history/history.md exits 0; that tracked, modified ledger file is the only thing tripping the gate (32 untracked files do not affect `git diff --quiet` and are all within authorizedPaths). OBJ-002: minimal patch PROPOSED (not applied, per done_when and because altering the release gate is Release-Manager policy and history.md is pre-existing bookkeeping not authored here): (1) operational — `git checkout -- runtime/mission-standard/history/history.md` flips gitClean true immediately [file: history.md]; (2) recommended structural — untrack/ignore the regenerated ledger like runtime/generated/ already is [file: .gitignore + git rm --cached]; (3) surgical — exclude bookkeeping in the verifier [file: runtime/bin/odg-verify.js]. OBJ-003: Provider Engineering ready (requiresEngineering:true + mode:ENGINEERING -> missionRequiresProvider() true -> routes to createClaudeProvider); Validation Engine ready (odg-verify.js ran end-to-end at 2026-07-22T12:54:42Z, only gitClean red). This mission itself cannot reach RELEASE until the tracked working-tree change is cleaned; completion is the Release Manager's decision, not this provider's."
+  },
+  "sessionId": "736873ea-9b6c-4a19-b9cd-2b948e477836",
+  "changedFiles": [
+    "runtime/mission-standard/history/history.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_ENGINEERING_PROVIDER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+    "runtime/mission-standard/generated/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "runtime/mission-standard/generated/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PROVIDER_FACTORY.json",
+    "runtime/mission-standard/generated/MISSION_CONTEXT_BUILDER.json",
+    "runtime/mission-standard/generated/PREPARE_ENGINEERING_BRIEF.json",
+    "runtime/mission-standard/generated/ROADMAP_RUNTIME_STABILIZATION_V1.json",
+    "runtime/mission-standard/generated/ROOT_CAUSE_RELEASE_GATE.json",
+    "runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+    "runtime/mission-standard/passports/IMPLEMENT_ENGINEERING_PROVIDER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+    "runtime/mission-standard/reports/IMPLEMENT_ENGINEERING_PROVIDER.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PROVIDER_FACTORY.report.md",
+    "runtime/mission-standard/reports/MISSION_CONTEXT_BUILDER.report.md",
+    "runtime/mission-standard/reports/PREPARE_ENGINEERING_BRIEF.report.md",
+    "runtime/mission-standard/reports/ROADMAP_RUNTIME_STABILIZATION_V1.report.md",
+    "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md",
+    "runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+    "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "runtime/missions/MISSION_CONTEXT_BUILDER.json",
+    "runtime/missions/ROOT_CAUSE_RELEASE_GATE.json",
+    "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":347861,\"duration_api_ms\":329815,\"ttft_ms\":6311,\"ttft_stream_ms\":2681,\"time_to_request_ms\":218,\"num_turns\":23,\"result\":\"{ \\\"mission\\\": \\\"ROOT_CAUSE_RELEASE_GATE\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\"], \\\"changedFiles\\\": [\\\"runtime/mission-standard/generated/ROOT_CAUSE_RELEASE_GATE.json\\\", \\\"runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md\\\"], \\\"commandsRun\\\": [\\\"node runtime/bin/odg-verify.js\\\", \\\"git diff --quiet\\\", \\\"git diff --quiet -- ':(exclude)runtime/mission-standard/history/history.md'\\\", \\\"git status --porcelain\\\", \\\"node -e (route check ROOT_CAUSE_RELEASE_GATE.json)\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"OBJ-001: Root cause = the single red gate `gitClean`. Blocking rule: ReleaseManager.allGreen() (src/core/release-manager.ts:373-381) requires gates.gitClean===true. Chain: runtime/bin/odg-verify.js runs `git diff --quiet` (exit 1) -> runtime/generated/runtime-verify.json {build:true,typescript:true,gitClean:false} -> AutonomyRuntimeAdapter.gatherEvidence relays it -> RuntimeAutonomy.decide -> NO_RELEASE. Proven sole cause: `git diff --quiet` excluding runtime/mission-standard/history/history.md exits 0; that tracked, modified ledger file is the only thing tripping the gate (32 untracked files do not affect `git diff --quiet` and are all within authorizedPaths). OBJ-002: minimal patch PROPOSED (not applied, per done_when and because altering the release gate is Release-Manager policy and history.md is pre-existing bookkeeping not authored here): (1) operational — `git checkout -- runtime/mission-standard/history/history.md` flips gitClean true immediately [file: history.md]; (2) recommended structural — untrack/ignore the regenerated ledger like runtime/generated/ already is [file: .gitignore + git rm --cached]; (3) surgical — exclude bookkeeping in the verifier [file: runtime/bin/odg-verify.js]. OBJ-003: Provider Engineering ready (requiresEngineering:true + mode:ENGINEERING -> missionRequiresProvider() true -> routes to createClaudeProvider); Validation Engine ready (odg-verify.js ran end-to-end at 2026-07-22T12:54:42Z, only gitClean red). This mission itself cannot reach RELEASE until the tracked working-tree change is cleaned; completion is the Release Manager's decision, not this provider's.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"736873ea-9b6c-4a19-b9cd-2b948e477836\",\"total_cost_usd\":1.5023030000000002,\"usage\":{\"input_tokens\":31,\"cache_creation_input_tokens\":67716,\"cache_read_input_tokens\":964658,\"output_tokens\":23821,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":67716},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":952,\"cache_read_input_tokens\":82989,\"cache_creation_input_tokens\":1454,\"cache_creation\":{\"ephemeral_5m_input_tokens\":1454,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":984,\"outputTokens\":17,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001069,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":31,\"outputTokens\":23821,\"cacheReadInputTokens\":964658,\"cacheCreationInputTokens\":67716,\"webSearchRequests\":0,\"costUSD\":1.5012340000000002,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"2c54f27e-6d49-40d4-9db7-e184a3680be0\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

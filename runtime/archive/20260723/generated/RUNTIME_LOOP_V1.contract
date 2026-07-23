@@ -1,0 +1,22 @@
+MISSION=RUNTIME_LOOP_V1
+
+LOOP
+1. Observe
+2. Evaluate (policies)
+3. Select
+4. Execute
+5. Verify
+6. Learn
+7. Repeat
+
+POLICIES
+- Governance
+- Leverage
+- Risk
+- Budget
+- Provider Selection
+
+SUCCESS
+- One Runtime Loop
+- Pluggable policies
+- No duplicated orchestration

@@ -1,0 +1,4188 @@
+{
+  "generatedAt": "2026-07-12T13:04:35.108Z",
+  "strategy": "READ_ONLY",
+  "integrationPoints": [
+    {
+      "file": "src/app/layout.tsx",
+      "imports": [
+        "next",
+        "next/font/google"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/app/page.tsx",
+      "imports": [
+        "@/core/bmax_v21_core",
+        "@/components/Dashboard"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/components/Dashboard.tsx",
+      "imports": [
+        "@/core/dashboard-adapter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/audit.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/boamp-connector.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/capability.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/connector-interface.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/connector.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/constraint.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/data-record.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/decision.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/discovery.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/evidence.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/explanation.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/goal.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/http-client.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/knowledge.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/memory.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/mission.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/opportunity.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/orchestrator.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/policy.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/reason.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/risk.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/simulation.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/system-health.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/value.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/contracts/verification.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/api-connector.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/audit-engine.ts",
+      "imports": [
+        "@/contracts/audit",
+        "@/contracts/decision",
+        "@/core/audit-registry",
+        "@/core/policy-engine",
+        "@/core/risk-engine",
+        "@/core/runtime-context"
+      ],
+      "importsCount": 6,
+      "runtime": false
+    },
+    {
+      "file": "src/core/audit-registry.ts",
+      "imports": [
+        "@/contracts/audit",
+        "@/contracts/evidence"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/audit-runner.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/contracts/reason",
+        "@/core/audit-engine",
+        "@/core/explanation-engine"
+      ],
+      "importsCount": 4,
+      "runtime": false
+    },
+    {
+      "file": "src/core/audit-service.ts",
+      "imports": [
+        "@/contracts/audit",
+        "@/core/audit-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/bmax-core.ts",
+      "imports": [
+        "./clock",
+        "./logger",
+        "./errors",
+        "./result",
+        "./validation"
+      ],
+      "importsCount": 5,
+      "runtime": false
+    },
+    {
+      "file": "src/core/bmax_v21_core.ts",
+      "imports": [
+        "crypto"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-config.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-connector.ts",
+      "imports": [
+        "@/core/http-client",
+        "@/contracts/boamp-connector"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-dashboard.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-engine-version.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-event-log.ts",
+      "imports": [
+        "@/core/boamp-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-event.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-export.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-filter.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-health.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-history.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-import.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-metrics.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-monitor.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-normalizer.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-parser.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-policy.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-query.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-registry.ts",
+      "imports": [
+        "@/core/boamp-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-request.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-response.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-result.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-runner.ts",
+      "imports": [
+        "@/core/boamp-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-search-service.ts",
+      "imports": [
+        "@/core/boamp-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-service.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-status.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-summary.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-url-builder.ts",
+      "imports": [
+        "@/core/boamp-config"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-validator.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/boamp-version.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/capability-registry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/clock.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/config.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-audit.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-bootstrap.ts",
+      "imports": [
+        "@/core/connector-config",
+        "@/core/connector-loader"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-cache.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-config.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-context.ts",
+      "imports": [
+        "@/contracts/connector-interface",
+        "@/core/connector-state"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-dashboard.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-dispatcher.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-event-log.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-event.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-executor.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-factory.ts",
+      "imports": [
+        "@/contracts/connector-interface",
+        "@/core/api-connector",
+        "@/core/web-connector"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-failover.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-health-engine.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-health-service.ts",
+      "imports": [
+        "@/contracts/connector-interface",
+        "@/core/connector-health-engine"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-heartbeat.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-history.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-lifecycle.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-loader.ts",
+      "imports": [
+        "@/core/connector-config",
+        "@/core/connector-factory"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-manager.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-metrics.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-monitor.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-orchestrator.ts",
+      "imports": [
+        "@/contracts/connector-interface",
+        "@/core/connector-pipeline"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-pipeline.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-policy.ts",
+      "imports": [
+        "@/core/connector-config"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-pool.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-registry-runtime.ts",
+      "imports": [
+        "@/core/connector-runtime"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-registry-service.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-registry.ts",
+      "imports": [
+        "@/contracts/connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-report.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-resolver.ts",
+      "imports": [
+        "@/core/connector-config",
+        "@/core/connector-loader"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-router.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-runtime.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-scheduler.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-selector.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-session.ts",
+      "imports": [
+        "@/contracts/connector-interface",
+        "@/core/connector-state"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-snapshot.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-state.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-statistics.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-telemetry.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/connector-validator.ts",
+      "imports": [
+        "@/core/connector-config"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/constraint-engine.ts",
+      "imports": [
+        "@/contracts/constraint"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/constraint-registry.ts",
+      "imports": [
+        "@/contracts/constraint"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/constraint-service.ts",
+      "imports": [
+        "@/contracts/constraint",
+        "@/core/constraint-engine",
+        "@/core/constraint-registry"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/dashboard-adapter.ts",
+      "imports": [
+        "@/core/capability-registry",
+        "@/core/decision-engine",
+        "@/core/value-service",
+        "@/core/knowledge-service",
+        "@/core/memory-service",
+        "@/core/policy-service",
+        "@/core/risk-service",
+        "@/core/explanation-service",
+        "@/core/audit-service",
+        "@/core/trace-service"
+      ],
+      "importsCount": 10,
+      "runtime": false
+    },
+    {
+      "file": "src/core/dashboard-runner.ts",
+      "imports": [
+        "@/core/dashboard-adapter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-deduplicator.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-filter.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-normalizer.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-qualification-engine.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-dashboard.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-engine-version.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-event-log.ts",
+      "imports": [
+        "@/core/data-quality-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-event.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-export.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-health.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-history.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-import.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-metrics.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-monitor.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-policy.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-registry.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-report.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-runner.ts",
+      "imports": [
+        "@/core/data-qualification-engine",
+        "@/contracts/data-record"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-service.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-status.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-summary.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-quality-version.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-score.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/data-validator.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/decision-engine.ts",
+      "imports": [
+        "@/contracts/capability",
+        "@/contracts/decision",
+        "@/contracts/reason",
+        "@/core/decision-registry",
+        "@/core/runtime-service",
+        "@/core/evidence-engine",
+        "@/core/explanation-engine",
+        "@/core/audit-engine",
+        "@/core/timeline-registry",
+        "@/core/event-registry",
+        "@/core/value-engine",
+        "@/core/knowledge-engine",
+        "@/core/policy-engine",
+        "@/core/risk-engine"
+      ],
+      "importsCount": 14,
+      "runtime": false
+    },
+    {
+      "file": "src/core/decision-pipeline.ts",
+      "imports": [
+        "@/contracts/opportunity"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/decision-registry.ts",
+      "imports": [
+        "@/contracts/decision"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/decision-runner.ts",
+      "imports": [
+        "@/contracts/simulation",
+        "@/core/capability-registry",
+        "@/core/decision-engine"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/discovery-engine.ts",
+      "imports": [
+        "@/contracts/discovery",
+        "@/contracts/connector"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/discovery-runner.ts",
+      "imports": [
+        "@/contracts/mission",
+        "@/core/discovery-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/discovery-service.ts",
+      "imports": [
+        "@/core/discovery-engine",
+        "@/core/connector-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/errors.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/event-registry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/evidence-engine.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/contracts/evidence",
+        "@/core/audit-registry"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/explanation-engine.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/contracts/explanation"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/explanation-registry.ts",
+      "imports": [
+        "@/contracts/explanation"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/explanation-service.ts",
+      "imports": [
+        "@/contracts/explanation",
+        "@/core/explanation-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/fingerprint.ts",
+      "imports": [
+        "node:crypto"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/fusion-engine.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/goal-engine.ts",
+      "imports": [
+        "@/contracts/goal"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/goal-registry.ts",
+      "imports": [
+        "@/contracts/goal"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/goal-service.ts",
+      "imports": [
+        "@/core/goal-engine",
+        "@/core/goal-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-api-key.ts",
+      "imports": [
+        "@/core/http-headers"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-bearer.ts",
+      "imports": [
+        "@/core/http-headers"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-client-factory.ts",
+      "imports": [
+        "@/contracts/http-client",
+        "@/core/http-client"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-client.ts",
+      "imports": [
+        "@/contracts/http-client"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-connector-adapter.ts",
+      "imports": [
+        "@/contracts/http-client"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-connector-registry.ts",
+      "imports": [
+        "@/core/http-connector-adapter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-error.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-headers.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-json.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-logger.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-oauth.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-options.ts",
+      "imports": [
+        "@/core/http-headers"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-query.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-rate-limiter.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-request-builder.ts",
+      "imports": [
+        "@/core/http-headers",
+        "@/core/http-request"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-request-queue.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-request.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-response-validator.ts",
+      "imports": [
+        "@/core/http-response",
+        "@/core/http-status"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-response.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-retry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-service.ts",
+      "imports": [
+        "@/contracts/http-client"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-status.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-timeout.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-token-manager.ts",
+      "imports": [
+        "@/core/http-oauth"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/http-url-builder.ts",
+      "imports": [
+        "@/core/http-query"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/index.ts",
+      "imports": [
+        "./clock",
+        "./logger",
+        "./fingerprint",
+        "./errors",
+        "./result",
+        "./validation",
+        "./runtime-factory"
+      ],
+      "importsCount": 7,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-context.ts",
+      "imports": [
+        "@/core/integration-mission"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-demo.ts",
+      "imports": [
+        "@/core/integration-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-health.ts",
+      "imports": [
+        "@/core/boamp-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-mission.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-orchestrator.ts",
+      "imports": [
+        "@/core/integration-context",
+        "@/core/integration-pipeline"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-pipeline.ts",
+      "imports": [
+        "@/core/integration-context",
+        "@/core/integration-result"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-result.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-search.ts",
+      "imports": [
+        "@/core/boamp-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/integration-service.ts",
+      "imports": [
+        "@/core/boamp-health",
+        "@/core/boamp-runner",
+        "@/core/data-qualification-engine",
+        "@/contracts/data-record"
+      ],
+      "importsCount": 4,
+      "runtime": false
+    },
+    {
+      "file": "src/core/knowledge-engine.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/contracts/knowledge",
+        "@/core/knowledge-registry",
+        "@/core/memory-engine"
+      ],
+      "importsCount": 4,
+      "runtime": false
+    },
+    {
+      "file": "src/core/knowledge-registry.ts",
+      "imports": [
+        "@/contracts/knowledge"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/knowledge-runner.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/core/knowledge-engine"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/knowledge-service.ts",
+      "imports": [
+        "@/core/knowledge-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/logger.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/maintenance-demo.ts",
+      "imports": [
+        "@/core/maintenance-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/maintenance-engine.ts",
+      "imports": [
+        "@/core/maintenance-task",
+        "@/core/maintenance-state"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/maintenance-state.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/maintenance-task.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/memory-engine.ts",
+      "imports": [
+        "@/contracts/knowledge",
+        "@/contracts/memory",
+        "@/core/memory-registry"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/memory-registry.ts",
+      "imports": [
+        "@/contracts/memory"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/memory-service.ts",
+      "imports": [
+        "@/contracts/memory",
+        "@/core/memory-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/mission-context.ts",
+      "imports": [
+        "@/core/observability-state",
+        "@/contracts/discovery",
+        "@/contracts/opportunity",
+        "@/contracts/decision",
+        "@/contracts/explanation",
+        "@/core/fusion-engine",
+        "@/core/decision-pipeline",
+        "@/core/source-registry",
+        "@/core/connector-manager",
+        "@/contracts/system-health",
+        "@/core/recovery-state",
+        "@/core/maintenance-state",
+        "@/core/http-response"
+      ],
+      "importsCount": 13,
+      "runtime": false
+    },
+    {
+      "file": "src/core/mission-engine.ts",
+      "imports": [
+        "@/contracts/mission",
+        "@/contracts/goal"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/mission-registry.ts",
+      "imports": [
+        "@/contracts/mission"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/mission-service.ts",
+      "imports": [
+        "@/contracts/goal",
+        "@/core/mission-engine",
+        "@/core/mission-registry"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/observability-demo.ts",
+      "imports": [
+        "@/core/observability-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/observability-engine.ts",
+      "imports": [
+        "@/core/observability-state"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/observability-metrics.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/observability-state.ts",
+      "imports": [
+        "@/core/observability-metrics"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/opportunity-decision-adapter.ts",
+      "imports": [
+        "@/contracts/capability",
+        "@/contracts/opportunity"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/opportunity-engine.ts",
+      "imports": [
+        "@/contracts/opportunity"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/opportunity-registry.ts",
+      "imports": [
+        "@/contracts/opportunity"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/opportunity-runner.ts",
+      "imports": [
+        "@/contracts/verification",
+        "@/core/opportunity-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/opportunity-service.ts",
+      "imports": [
+        "@/core/opportunity-engine",
+        "@/core/opportunity-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/orchestrator-engine.ts",
+      "imports": [
+        "@/contracts/orchestrator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/orchestrator-registry.ts",
+      "imports": [
+        "@/contracts/orchestrator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/orchestrator-runner.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/orchestrator-service.ts",
+      "imports": [
+        "@/core/orchestrator-engine",
+        "@/core/orchestrator-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/policy-engine.ts",
+      "imports": [
+        "@/contracts/policy",
+        "@/core/policy-registry",
+        "@/core/config"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/policy-registry.ts",
+      "imports": [
+        "@/contracts/policy"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/policy-service.ts",
+      "imports": [
+        "@/core/policy-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/recovery-action.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/recovery-check.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/recovery-demo.ts",
+      "imports": [
+        "@/core/recovery-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/recovery-engine.ts",
+      "imports": [
+        "@/core/recovery-action",
+        "@/core/recovery-check",
+        "@/core/recovery-state"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/core/recovery-state.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/result.ts",
+      "imports": [
+        "./errors"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/risk-engine.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/contracts/risk",
+        "@/core/risk-registry",
+        "@/core/config"
+      ],
+      "importsCount": 4,
+      "runtime": false
+    },
+    {
+      "file": "src/core/risk-registry.ts",
+      "imports": [
+        "@/contracts/risk"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/risk-service.ts",
+      "imports": [
+        "@/core/risk-registry",
+        "@/contracts/risk"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/runtime-context.ts",
+      "imports": [
+        "@/engine/core/types"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/runtime-factory.ts",
+      "imports": [
+        "./clock",
+        "./logger"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/runtime-service.ts",
+      "imports": [
+        "@/core/runtime-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/scheduler-demo.ts",
+      "imports": [
+        "@/core/scheduler-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/scheduler-engine.ts",
+      "imports": [
+        "@/core/scheduler-job",
+        "@/core/scheduler-state"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/scheduler-job.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/scheduler-state.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/simulation-engine.ts",
+      "imports": [
+        "@/contracts/simulation"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/simulation-registry.ts",
+      "imports": [
+        "@/contracts/simulation"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/simulation-runner.ts",
+      "imports": [
+        "@/contracts/opportunity",
+        "@/core/simulation-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/simulation-service.ts",
+      "imports": [
+        "@/core/simulation-engine",
+        "@/core/simulation-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/source-registry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-alert.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-check.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-dashboard.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-engine-version.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-engine.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-event-log.ts",
+      "imports": [
+        "@/core/system-health-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-event.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-export.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-history.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-import.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-metrics.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-monitor.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-notifier.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-policy.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-registry.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-report.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-runner.ts",
+      "imports": [
+        "@/core/system-health-engine",
+        "@/contracts/system-health"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-scheduler.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-service.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-state.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-status.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-summary.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-validator.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-health-version.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/system-runner.ts",
+      "imports": [
+        "@/core/dashboard-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/timeline-registry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/core/timeline-service.ts",
+      "imports": [
+        "@/core/timeline-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/trace-runner.ts",
+      "imports": [
+        "@/core/trace-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/trace-service.ts",
+      "imports": [
+        "@/core/decision-registry",
+        "@/core/audit-registry",
+        "@/core/audit-service",
+        "@/core/timeline-registry",
+        "@/core/knowledge-service",
+        "@/core/memory-service",
+        "@/core/explanation-service"
+      ],
+      "importsCount": 7,
+      "runtime": false
+    },
+    {
+      "file": "src/core/validation.ts",
+      "imports": [
+        "./fingerprint"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/value-engine.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/contracts/value",
+        "@/core/value-registry",
+        "@/core/policy-engine",
+        "@/core/risk-engine",
+        "@/core/memory-service"
+      ],
+      "importsCount": 6,
+      "runtime": false
+    },
+    {
+      "file": "src/core/value-registry.ts",
+      "imports": [
+        "@/contracts/value"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/value-runner.ts",
+      "imports": [
+        "@/contracts/decision",
+        "@/core/value-engine"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/value-service.ts",
+      "imports": [
+        "@/core/value-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/verification-engine.ts",
+      "imports": [
+        "@/contracts/verification"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/verification-registry.ts",
+      "imports": [
+        "@/contracts/verification"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/verification-runner.ts",
+      "imports": [
+        "@/contracts/connector",
+        "@/core/verification-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/verification-service.ts",
+      "imports": [
+        "@/core/verification-engine",
+        "@/core/verification-registry"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/web-connector.ts",
+      "imports": [
+        "@/contracts/connector-interface"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-connector.ts",
+      "imports": [
+        "@/core/mission-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-demo.ts",
+      "imports": [
+        "@/core/mission-context",
+        "@/core/workflow-engine"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-engine.ts",
+      "imports": [
+        "@/core/decision-engine",
+        "@/core/opportunity-decision-adapter",
+        "@/core/explanation-engine",
+        "@/core/source-registry",
+        "@/core/connector-manager",
+        "@/core/decision-pipeline",
+        "@/core/opportunity-engine",
+        "@/core/fusion-engine",
+        "@/core/discovery-engine",
+        "@/core/mission-context",
+        "@/core/workflow-scheduler",
+        "@/core/workflow-health",
+        "@/core/workflow-recovery",
+        "@/core/workflow-qualification",
+        "@/core/workflow-connector",
+        "@/core/workflow-http",
+        "@/core/workflow-maintenance",
+        "@/core/observability-demo"
+      ],
+      "importsCount": 18,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-health.ts",
+      "imports": [
+        "@/core/mission-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-http.ts",
+      "imports": [
+        "@/core/mission-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-maintenance.ts",
+      "imports": [
+        "@/core/mission-context",
+        "@/core/maintenance-demo"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-qualification.ts",
+      "imports": [
+        "@/core/mission-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-recovery.ts",
+      "imports": [
+        "@/core/mission-context",
+        "@/core/recovery-demo"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/core/workflow-scheduler.ts",
+      "imports": [
+        "@/core/mission-context",
+        "@/core/scheduler-demo"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/demo/demo.ts",
+      "imports": [
+        "@/core/capability-registry",
+        "@/core/decision-engine",
+        "@/core/decision-registry"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/demo.ts",
+      "imports": [
+        "@/core/workflow-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/engine/core/stateMachine.ts",
+      "imports": [
+        "./types"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/engine/core/types.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": false
+    },
+    {
+      "file": "src/runtime/capability-registry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/event-bus.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/execution-memory.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/execution-planner.ts",
+      "imports": [
+        "./mission-orchestrator"
+      ],
+      "importsCount": 1,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/index.ts",
+      "imports": [
+        "./runtime-types",
+        "./runtime-state",
+        "./runtime-events",
+        "./execution-memory",
+        "./capability-registry",
+        "./plugin-registry",
+        "./mission-loader",
+        "./mission-orchestrator",
+        "./execution-planner",
+        "./event-bus",
+        "./runtime-health",
+        "./runtime-reporter",
+        "./runtime-service",
+        "./runtime-facade"
+      ],
+      "importsCount": 14,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/mission-loader.ts",
+      "imports": [
+        "node:fs"
+      ],
+      "importsCount": 1,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/mission-orchestrator.ts",
+      "imports": [
+        "./mission-loader"
+      ],
+      "importsCount": 1,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/plugin-registry.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-demo.ts",
+      "imports": [
+        "./runtime-executor",
+        "node:fs"
+      ],
+      "importsCount": 2,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-events.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-executor.ts",
+      "imports": [
+        "./mission-loader",
+        "./mission-orchestrator",
+        "./execution-planner",
+        "./execution-memory",
+        "./event-bus"
+      ],
+      "importsCount": 5,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-facade.ts",
+      "imports": [
+        "./runtime-service",
+        "./runtime-reporter",
+        "./runtime-health"
+      ],
+      "importsCount": 3,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-health.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-reporter.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-service.ts",
+      "imports": [
+        "./mission-loader",
+        "./mission-orchestrator",
+        "./execution-planner",
+        "./execution-memory",
+        "./event-bus"
+      ],
+      "importsCount": 5,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-state.ts",
+      "imports": [
+        "./runtime-types"
+      ],
+      "importsCount": 1,
+      "runtime": true
+    },
+    {
+      "file": "src/runtime/runtime-types.ts",
+      "imports": [],
+      "importsCount": 0,
+      "runtime": true
+    },
+    {
+      "file": "src/tests/api-connector.test.ts",
+      "imports": [
+        "@/core/api-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/audit-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner",
+        "@/core/simulation-runner",
+        "@/core/decision-runner",
+        "@/core/audit-runner"
+      ],
+      "importsCount": 8,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-config.test.ts",
+      "imports": [
+        "@/core/boamp-config"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-connector.test.ts",
+      "imports": [
+        "@/core/boamp-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-contract.test.ts",
+      "imports": [
+        "@/contracts/boamp-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-dashboard.test.ts",
+      "imports": [
+        "@/core/boamp-dashboard"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-engine-version.test.ts",
+      "imports": [
+        "@/core/boamp-engine-version"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-event-log.test.ts",
+      "imports": [
+        "@/core/boamp-event-log"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-event.test.ts",
+      "imports": [
+        "@/core/boamp-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-export.test.ts",
+      "imports": [
+        "@/core/boamp-export"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-filter.test.ts",
+      "imports": [
+        "@/core/boamp-filter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-health.test.ts",
+      "imports": [
+        "@/core/boamp-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-history.test.ts",
+      "imports": [
+        "@/core/boamp-history"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-import.test.ts",
+      "imports": [
+        "@/core/boamp-import"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-metrics.test.ts",
+      "imports": [
+        "@/core/boamp-metrics"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-monitor.test.ts",
+      "imports": [
+        "@/core/boamp-monitor"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-normalizer.test.ts",
+      "imports": [
+        "@/core/boamp-normalizer"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-parser.test.ts",
+      "imports": [
+        "@/core/boamp-parser"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-policy.test.ts",
+      "imports": [
+        "@/core/boamp-policy"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-query.test.ts",
+      "imports": [
+        "@/core/boamp-query"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-registry.test.ts",
+      "imports": [
+        "@/core/boamp-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-request.test.ts",
+      "imports": [
+        "@/core/boamp-request"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-response.test.ts",
+      "imports": [
+        "@/core/boamp-response"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-result.test.ts",
+      "imports": [
+        "@/core/boamp-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-runner.test.ts",
+      "imports": [
+        "@/core/boamp-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-search-service.test.ts",
+      "imports": [
+        "@/core/boamp-search-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-service.test.ts",
+      "imports": [
+        "@/core/boamp-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-status.test.ts",
+      "imports": [
+        "@/core/boamp-status"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-summary.test.ts",
+      "imports": [
+        "@/core/boamp-summary"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-url-builder.test.ts",
+      "imports": [
+        "@/core/boamp-url-builder"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-validator.test.ts",
+      "imports": [
+        "@/core/boamp-validator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/boamp-version.test.ts",
+      "imports": [
+        "@/core/boamp-version"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/capability-registry.test.ts",
+      "imports": [
+        "@/core/capability-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-audit.test.ts",
+      "imports": [
+        "@/core/connector-audit"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-bootstrap.test.ts",
+      "imports": [
+        "@/core/connector-bootstrap"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-cache.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-cache"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-config.test.ts",
+      "imports": [
+        "@/core/connector-config"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-context.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-context"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-dashboard.test.ts",
+      "imports": [
+        "@/core/connector-dashboard"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-dispatcher.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-dispatcher"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-event-log.test.ts",
+      "imports": [
+        "@/core/connector-event-log"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-event.test.ts",
+      "imports": [
+        "@/core/connector-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-executor.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-executor"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-factory.test.ts",
+      "imports": [
+        "@/core/connector-factory"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-failover.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-failover"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-health-engine.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-health-engine"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-health-service.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-health-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-heartbeat.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-heartbeat"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-history.test.ts",
+      "imports": [
+        "@/core/connector-history"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-lifecycle.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-lifecycle"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-loader.test.ts",
+      "imports": [
+        "@/core/connector-loader"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-manager.test.ts",
+      "imports": [
+        "@/core/connector-manager"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-metrics.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-metrics"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-monitor.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-monitor"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-orchestrator.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-orchestrator"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-pipeline.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-pipeline"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-policy.test.ts",
+      "imports": [
+        "@/core/connector-policy"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-pool.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-pool"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-registry-runtime.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-runtime",
+        "@/core/connector-registry-runtime"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-registry-service.test.ts",
+      "imports": [
+        "@/core/connector-registry-service",
+        "@/core/api-connector"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-report.test.ts",
+      "imports": [
+        "@/core/connector-report"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-resolver.test.ts",
+      "imports": [
+        "@/core/connector-resolver"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-router.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-router"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-runtime.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-runtime"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-scheduler.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-scheduler"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-selector.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-selector"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-session.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/connector-session"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-snapshot.test.ts",
+      "imports": [
+        "@/core/connector-snapshot"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-state.test.ts",
+      "imports": [
+        "@/core/connector-state"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-statistics.test.ts",
+      "imports": [
+        "@/core/api-connector",
+        "@/core/web-connector",
+        "@/core/connector-statistics"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-telemetry.test.ts",
+      "imports": [
+        "@/core/connector-telemetry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/connector-validator.test.ts",
+      "imports": [
+        "@/core/connector-validator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/constraint.test.ts",
+      "imports": [
+        "@/core/constraint-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/dashboard-runner.test.ts",
+      "imports": [
+        "@/core/dashboard-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/dashboard.test.ts",
+      "imports": [
+        "@/core/dashboard-adapter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-deduplicator.test.ts",
+      "imports": [
+        "@/core/data-deduplicator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-filter.test.ts",
+      "imports": [
+        "@/core/data-filter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-normalizer.test.ts",
+      "imports": [
+        "@/core/data-normalizer"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-qualification-engine.test.ts",
+      "imports": [
+        "@/core/data-qualification-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-dashboard.test.ts",
+      "imports": [
+        "@/core/data-quality-dashboard"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-engine-version.test.ts",
+      "imports": [
+        "@/core/data-quality-engine-version"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-event-log.test.ts",
+      "imports": [
+        "@/core/data-quality-event-log"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-event.test.ts",
+      "imports": [
+        "@/core/data-quality-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-export.test.ts",
+      "imports": [
+        "@/core/data-quality-export"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-health.test.ts",
+      "imports": [
+        "@/core/data-quality-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-history.test.ts",
+      "imports": [
+        "@/core/data-quality-history"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-import.test.ts",
+      "imports": [
+        "@/core/data-quality-import"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-metrics.test.ts",
+      "imports": [
+        "@/core/data-quality-metrics"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-monitor.test.ts",
+      "imports": [
+        "@/core/data-quality-monitor"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-policy.test.ts",
+      "imports": [
+        "@/core/data-quality-policy"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-registry.test.ts",
+      "imports": [
+        "@/core/data-quality-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-report.test.ts",
+      "imports": [
+        "@/core/data-quality-report"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-runner.test.ts",
+      "imports": [
+        "@/core/data-quality-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-service.test.ts",
+      "imports": [
+        "@/core/data-quality-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-status.test.ts",
+      "imports": [
+        "@/core/data-quality-status"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-summary.test.ts",
+      "imports": [
+        "@/core/data-quality-summary"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-quality-version.test.ts",
+      "imports": [
+        "@/core/data-quality-version"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-record.test.ts",
+      "imports": [
+        "@/contracts/data-record"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-score.test.ts",
+      "imports": [
+        "@/core/data-score"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/data-validator.test.ts",
+      "imports": [
+        "@/core/data-validator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/decision-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner",
+        "@/core/simulation-runner",
+        "@/core/decision-runner"
+      ],
+      "importsCount": 7,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/discovery-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/fusion-engine.test.ts",
+      "imports": [
+        "@/core/fusion-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/goal.test.ts",
+      "imports": [
+        "@/core/goal-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-api-key.test.ts",
+      "imports": [
+        "@/core/http-api-key"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-bearer.test.ts",
+      "imports": [
+        "@/core/http-bearer"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-client-factory.test.ts",
+      "imports": [
+        "@/core/http-client-factory"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-client.test.ts",
+      "imports": [
+        "@/contracts/http-client"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-connector-adapter.test.ts",
+      "imports": [
+        "@/core/http-client-factory",
+        "@/core/http-connector-adapter"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-connector-registry.test.ts",
+      "imports": [
+        "@/core/http-client-factory",
+        "@/core/http-connector-adapter",
+        "@/core/http-connector-registry"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-error.test.ts",
+      "imports": [
+        "@/core/http-error"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-headers.test.ts",
+      "imports": [
+        "@/core/http-headers"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-json.test.ts",
+      "imports": [
+        "@/core/http-json"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-logger.test.ts",
+      "imports": [
+        "@/core/http-logger"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-oauth.test.ts",
+      "imports": [
+        "@/core/http-oauth"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-options.test.ts",
+      "imports": [
+        "@/core/http-options"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-query.test.ts",
+      "imports": [
+        "@/core/http-query"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-rate-limiter.test.ts",
+      "imports": [
+        "@/core/http-rate-limiter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-request-builder.test.ts",
+      "imports": [
+        "@/core/http-request-builder"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-request-queue.test.ts",
+      "imports": [
+        "@/core/http-request-queue"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-request.test.ts",
+      "imports": [
+        "@/core/http-request"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-response-validator.test.ts",
+      "imports": [
+        "@/core/http-response-validator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-response.test.ts",
+      "imports": [
+        "@/core/http-response"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-retry.test.ts",
+      "imports": [
+        "@/core/http-retry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-service.test.ts",
+      "imports": [
+        "@/core/http-client-factory",
+        "@/core/http-service"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-status.test.ts",
+      "imports": [
+        "@/core/http-status"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-timeout.test.ts",
+      "imports": [
+        "@/core/http-timeout"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-token-manager.test.ts",
+      "imports": [
+        "@/core/http-token-manager"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/http-url-builder.test.ts",
+      "imports": [
+        "@/core/http-url-builder"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-context.test.ts",
+      "imports": [
+        "@/core/integration-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-demo.test.ts",
+      "imports": [
+        "@/core/integration-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-health.test.ts",
+      "imports": [
+        "@/core/integration-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-mission.test.ts",
+      "imports": [
+        "@/core/integration-mission"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-orchestrator.test.ts",
+      "imports": [
+        "@/core/integration-orchestrator",
+        "@/core/integration-pipeline"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-pipeline.test.ts",
+      "imports": [
+        "@/core/integration-pipeline"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-result.test.ts",
+      "imports": [
+        "@/core/integration-result"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-search.test.ts",
+      "imports": [
+        "@/core/integration-search"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration-service.test.ts",
+      "imports": [
+        "@/core/integration-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/integration.test.ts",
+      "imports": [
+        "@/core/capability-registry",
+        "@/core/decision-engine"
+      ],
+      "importsCount": 2,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/knowledge-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner",
+        "@/core/simulation-runner",
+        "@/core/decision-runner",
+        "@/core/knowledge-runner"
+      ],
+      "importsCount": 8,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/maintenance-demo.test.ts",
+      "imports": [
+        "@/core/maintenance-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/maintenance-engine.test.ts",
+      "imports": [
+        "@/core/maintenance-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/mission-context.test.ts",
+      "imports": [
+        "@/core/mission-context"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/observability-demo.test.ts",
+      "imports": [
+        "@/core/observability-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/observability-engine.test.ts",
+      "imports": [
+        "@/core/observability-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/opportunity-decision-adapter.test.ts",
+      "imports": [
+        "@/core/opportunity-decision-adapter"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/opportunity-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner"
+      ],
+      "importsCount": 5,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/opportunity.test.ts",
+      "imports": [
+        "@/core/opportunity-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/orchestrator-runner.test.ts",
+      "imports": [
+        "@/core/orchestrator-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/orchestrator.test.ts",
+      "imports": [
+        "@/core/orchestrator-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/policy.test.ts",
+      "imports": [
+        "@/core/policy-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/recovery-demo.test.ts",
+      "imports": [
+        "@/core/recovery-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/recovery-engine.test.ts",
+      "imports": [
+        "@/core/recovery-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/regression.test.ts",
+      "imports": [
+        "@/core/capability-registry",
+        "@/core/decision-engine",
+        "@/core/trace-service"
+      ],
+      "importsCount": 3,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/risk.test.ts",
+      "imports": [
+        "@/core/risk-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/scheduler-demo.test.ts",
+      "imports": [
+        "@/core/scheduler-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/scheduler-engine.test.ts",
+      "imports": [
+        "@/core/scheduler-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/simulation-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner",
+        "@/core/simulation-runner"
+      ],
+      "importsCount": 6,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/simulation.test.ts",
+      "imports": [
+        "@/core/simulation-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/source-registry.test.ts",
+      "imports": [
+        "@/core/source-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-alert.test.ts",
+      "imports": [
+        "@/core/system-health-alert"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-check.test.ts",
+      "imports": [
+        "@/core/system-health-check"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-dashboard.test.ts",
+      "imports": [
+        "@/core/system-health-dashboard"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-engine-version.test.ts",
+      "imports": [
+        "@/core/system-health-engine-version"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-engine.test.ts",
+      "imports": [
+        "@/core/system-health-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-event-log.test.ts",
+      "imports": [
+        "@/core/system-health-event-log"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-event.test.ts",
+      "imports": [
+        "@/core/system-health-event"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-export.test.ts",
+      "imports": [
+        "@/core/system-health-export"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-history.test.ts",
+      "imports": [
+        "@/core/system-health-history"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-import.test.ts",
+      "imports": [
+        "@/core/system-health-import"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-metrics.test.ts",
+      "imports": [
+        "@/core/system-health-metrics"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-monitor.test.ts",
+      "imports": [
+        "@/core/system-health-monitor"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-notifier.test.ts",
+      "imports": [
+        "@/core/system-health-notifier"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-policy.test.ts",
+      "imports": [
+        "@/core/system-health-policy"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-registry.test.ts",
+      "imports": [
+        "@/core/system-health-registry"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-report.test.ts",
+      "imports": [
+        "@/core/system-health-report"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-runner.test.ts",
+      "imports": [
+        "@/core/system-health-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-scheduler.test.ts",
+      "imports": [
+        "@/core/system-health-scheduler"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-service.test.ts",
+      "imports": [
+        "@/core/system-health-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-state.test.ts",
+      "imports": [
+        "@/core/system-health-state"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-status.test.ts",
+      "imports": [
+        "@/core/system-health-status"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-summary.test.ts",
+      "imports": [
+        "@/core/system-health-summary"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-validator.test.ts",
+      "imports": [
+        "@/core/system-health-validator"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health-version.test.ts",
+      "imports": [
+        "@/core/system-health-version"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-health.test.ts",
+      "imports": [
+        "@/contracts/system-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/system-runner.test.ts",
+      "imports": [
+        "@/core/system-runner"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/trace-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner",
+        "@/core/simulation-runner",
+        "@/core/decision-runner",
+        "@/core/audit-runner",
+        "@/core/trace-runner"
+      ],
+      "importsCount": 9,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/universal-http-client.test.ts",
+      "imports": [
+        "@/core/http-client"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/value-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner",
+        "@/core/opportunity-runner",
+        "@/core/simulation-runner",
+        "@/core/decision-runner",
+        "@/core/value-runner"
+      ],
+      "importsCount": 8,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/verification-runner.test.ts",
+      "imports": [
+        "@/core/goal-service",
+        "@/core/mission-service",
+        "@/core/discovery-runner",
+        "@/core/verification-runner"
+      ],
+      "importsCount": 4,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/verification.test.ts",
+      "imports": [
+        "@/core/verification-service"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/web-connector.test.ts",
+      "imports": [
+        "@/core/web-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-connector.test.ts",
+      "imports": [
+        "@/core/workflow-connector"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-demo.test.ts",
+      "imports": [
+        "@/core/workflow-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-engine.test.ts",
+      "imports": [
+        "@/core/workflow-engine"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-health.test.ts",
+      "imports": [
+        "@/core/workflow-health"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-http.test.ts",
+      "imports": [
+        "@/core/workflow-http"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-maintenance.test.ts",
+      "imports": [
+        "@/core/workflow-maintenance"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-observability.test.ts",
+      "imports": [
+        "@/core/observability-demo"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-qualification.test.ts",
+      "imports": [
+        "@/core/workflow-qualification"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-recovery.test.ts",
+      "imports": [
+        "@/core/workflow-recovery"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    },
+    {
+      "file": "src/tests/workflow-scheduler.test.ts",
+      "imports": [
+        "@/core/workflow-scheduler"
+      ],
+      "importsCount": 1,
+      "runtime": false
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [],
+    "commandsRun": [
+      "git status --porcelain",
+      "git log --oneline -- src/providers/provider-port.ts src/providers/claude-provider-adapter.ts",
+      "npx tsc --noEmit",
+      "npm test -- src/tests/claude-provider-adapter.test.ts src/tests/claude-provider-integration.test.ts src/tests/provider-enabled-mission.test.ts src/tests/provider-orchestrator.test.ts src/tests/provider-registry.test.ts"
+    ],
+    "blocker": null,
+    "notes": "Capability already implemented and committed on branch runtime/mission-context-builder (commit 4eb620b INTEGRATE_CLAUDE_PROVIDER_V1, refined in 3a506ad). No source changes were required; all four objectives are satisfied by existing, type-checking, tested code. Verified: tsc --noEmit clean (exit 0); all 5 provider test suites pass — provider-enabled-mission.test.ts proves the Runtime auto-routes an engineering mission to the provider, calls it exactly once, and runs to PLAN_COMPLETE / Release Manager RELEASE (OBJ-001..004). Provider source is tracked and clean; only working-tree deltas are ODG mission-standard/ scaffolding artifacts, not source. Did not author any mission-report.json or force a completion artifact — completion is the Release Manager's decision (per provider-mission-clean-tree note, the provider path's EVIDENCE_INCOMPLETE / clean-tree preconditions are runtime concerns handled outside this mission's authorized scope)."
+  },
+  "sessionId": "8b453032-63f2-4c1e-8d34-53372a9de3d7",
+  "changedFiles": [
+    "runtime/mission-standard/history/history.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_ENGINEERING_PROVIDER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+    "runtime/mission-standard/generated/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "runtime/mission-standard/generated/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PROVIDER_FACTORY.json",
+    "runtime/mission-standard/generated/MISSION_CONTEXT_BUILDER.json",
+    "runtime/mission-standard/generated/PREPARE_ENGINEERING_BRIEF.json",
+    "runtime/mission-standard/generated/ROADMAP_RUNTIME_STABILIZATION_V1.json",
+    "runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+    "runtime/mission-standard/passports/IMPLEMENT_ENGINEERING_PROVIDER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+    "runtime/mission-standard/reports/IMPLEMENT_ENGINEERING_PROVIDER.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PROVIDER_FACTORY.report.md",
+    "runtime/mission-standard/reports/MISSION_CONTEXT_BUILDER.report.md",
+    "runtime/mission-standard/reports/PREPARE_ENGINEERING_BRIEF.report.md",
+    "runtime/mission-standard/reports/ROADMAP_RUNTIME_STABILIZATION_V1.report.md",
+    "runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+    "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json",
+    "runtime/missions/MISSION_CONTEXT_BUILDER.json",
+    "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":202347,\"duration_api_ms\":186676,\"ttft_ms\":3495,\"ttft_stream_ms\":1918,\"time_to_request_ms\":220,\"num_turns\":20,\"result\":\"I now have complete ground truth. Here is what I found and verified:\\n\\n**State of the mission `IMPLEMENT_ENGINEERING_PROVIDER`:** The engineering-provider capability is already fully implemented and committed on branch `runtime/mission-context-builder`. No source changes were required this session — I verified the capability end-to-end rather than rebuilding it.\\n\\n**Evidence gathered (all four objectives map to real, tested code):**\\n- **OBJ-001** (provider exists + Runtime can select it): `ClaudeProviderAdapter` implements `EngineeringProviderPort` (`src/providers/claude-provider-adapter.ts`); selection via `missionRequiresProvider()` (`src/providers/provider-port.ts`) plus the frozen `ProviderRegistry`/`ProviderOrchestrator`. `provider-registry.test.ts` and `provider-orchestrator.test.ts` pass.\\n- **OBJ-002** (Runtime auto-invokes after the brief, no direct CTO call): `AutonomyRuntimeAdapter.runPipeline → runViaProvider` (`src/runtime/autonomy-runtime-adapter.ts`). `provider-enabled-mission.test.ts` proves ROUTING + exactly-ONE call + run to `PLAN_COMPLETE`.\\n- **OBJ-003** (result → Patch/Validation): `toPipelineOutcome()` feeds the frozen core seam; `refreshVerifyEvidence()` runs the validator; working-tree changes observed as evidence. Covered by `claude-provider-integration.test.ts` (exit 0).\\n- **OBJ-004** (capitalize): `gatherEvidence()` + `archive()` (mission-ledger) + Documentation proof → Release Manager RELEASE, asserted in `provider-enabled-mission.test.ts`.\\n\\n**Verification results:** `tsc --noEmit` clean (exit 0); all 5 provider test suites pass (adapter, integration, enabled-mission, orchestrator, registry). Provider source files are tracked and clean; the only working-tree changes are ODG runtime scaffolding artifacts (not source). I made no source edits and did not fabricate any completion artifact — completion is the Release Manager's decision.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_ENGINEERING_PROVIDER\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [], \\\"commandsRun\\\": [\\\"git status --porcelain\\\", \\\"git log --oneline -- src/providers/provider-port.ts src/providers/claude-provider-adapter.ts\\\", \\\"npx tsc --noEmit\\\", \\\"npm test -- src/tests/claude-provider-adapter.test.ts src/tests/claude-provider-integration.test.ts src/tests/provider-enabled-mission.test.ts src/tests/provider-orchestrator.test.ts src/tests/provider-registry.test.ts\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability already implemented and committed on branch runtime/mission-context-builder (commit 4eb620b INTEGRATE_CLAUDE_PROVIDER_V1, refined in 3a506ad). No source changes were required; all four objectives are satisfied by existing, type-checking, tested code. Verified: tsc --noEmit clean (exit 0); all 5 provider test suites pass — provider-enabled-mission.test.ts proves the Runtime auto-routes an engineering mission to the provider, calls it exactly once, and runs to PLAN_COMPLETE / Release Manager RELEASE (OBJ-001..004). Provider source is tracked and clean; only working-tree deltas are ODG mission-standard/ scaffolding artifacts, not source. Did not author any mission-report.json or force a completion artifact — completion is the Release Manager's decision (per provider-mission-clean-tree note, the provider path's EVIDENCE_INCOMPLETE / clean-tree preconditions are runtime concerns handled outside this mission's authorized scope).\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"8b453032-63f2-4c1e-8d34-53372a9de3d7\",\"total_cost_usd\":1.012478,\"usage\":{\"input_tokens\":24,\"cache_creation_input_tokens\":55566,\"cache_read_input_tokens\":679481,\"output_tokens\":12969,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":55566},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":2672,\"cache_read_input_tokens\":71425,\"cache_creation_input_tokens\":868,\"cache_creation\":{\"ephemeral_5m_input_tokens\":868,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1040,\"outputTokens\":13,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0011049999999999999,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":24,\"outputTokens\":12969,\"cacheReadInputTokens\":679481,\"cacheCreationInputTokens\":55566,\"webSearchRequests\":0,\"costUSD\":1.0113729999999999,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"501d2ee9-6a4e-4b55-9ccf-b95f6189620d\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

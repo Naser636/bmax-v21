@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-07-15T16:24:51.722Z",
+  "mode": "DYNAMIC_EXECUTION",
+  "capability": "Execution Planner",
+  "implementation": "runtime/core/execution-planner.js",
+  "contract": {
+    "input": "Mission",
+    "output": "Execution Result",
+    "authority": "Governance Kernel"
+  },
+  "ready": true
+}

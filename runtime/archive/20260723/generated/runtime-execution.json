@@ -1,0 +1,63 @@
+{
+  "mission": {
+    "id": "runtime.demo",
+    "name": "Sprint13 Demonstration",
+    "projectContext": {
+      "id": "project-context",
+      "version": "13.0.0",
+      "generatedAt": "2026-07-12T10:31:45.731Z",
+      "project": {
+        "name": "ODG",
+        "runtime": "Business Decision Runtime",
+        "sprint": 13,
+        "block": "F13.02"
+      },
+      "foundation": {
+        "status": "FROZEN",
+        "workflow": true,
+        "missionContext": true,
+        "contracts": true
+      },
+      "runtimeInventory": {
+        "engines": 41,
+        "services": 34,
+        "registries": 34,
+        "contexts": 7,
+        "missions": 8,
+        "orchestrators": 11,
+        "events": 17,
+        "contracts": 25
+      },
+      "nextMission": "F13.03 Mission Loader",
+      "inventoryFile": "runtime/.generated/runtime-inventory.json"
+    }
+  },
+  "logicalSteps": 5,
+  "technicalSteps": 5,
+  "history": [
+    {
+      "missionId": "runtime.demo",
+      "event": "MissionStarted",
+      "timestamp": "2026-07-12T11:09:14.520Z",
+      "payload": {
+        "name": "Sprint13 Demonstration"
+      }
+    },
+    {
+      "missionId": "runtime.demo",
+      "event": "PlanCreated",
+      "timestamp": "2026-07-12T11:09:14.520Z",
+      "payload": {
+        "steps": 5
+      }
+    },
+    {
+      "missionId": "runtime.demo",
+      "event": "TechnicalPlanCreated",
+      "timestamp": "2026-07-12T11:09:14.520Z",
+      "payload": {
+        "steps": 5
+      }
+    }
+  ]
+}

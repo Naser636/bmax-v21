@@ -1,0 +1,32 @@
+{
+  "requestId": "FLEET_FAIL_CLOSED-001",
+  "agent": "claude",
+  "status": "FAILED",
+  "mission": "FLEET_FAIL_CLOSED",
+  "createdAt": "2026-07-17T05:27:30.057Z",
+  "attempt": 1,
+  "brief": {
+    "generatedAt": "2026-07-16T10:29:24.410Z",
+    "mission": "IMPLEMENT_DEVELOPER_ENGINE_V1",
+    "priority": "HIGH",
+    "project": {
+      "files": 1805,
+      "directories": 220
+    },
+    "actions": [
+      "PROCESS_TODOS",
+      "PROCESS_FIXMES",
+      "ANALYZE_DEPENDENCIES",
+      "OPTIMIZE_DEPENDENCIES",
+      "IMPLEMENT_MISSING_CAPABILITIES"
+    ],
+    "knownCapabilities": 5,
+    "missingCapabilities": 9,
+    "objective": "Produce the minimum safe implementation. Reuse existing code whenever possible."
+  },
+  "instruction": "MISSION: FLEET_BRIDGE_V1\n\nOBJECTIVE:\nDesign and implement the missing Fleet Bridge that enables autonomous communication between ODG Runtime and Claude Code.\n\nTASKS:\n- Produce a Patch Plan first.\n- After approval, implement a new Fleet Bridge service.\n- Watch runtime/generated/fleet/requests/.\n- Detect new request JSON files automatically.\n- Process each request exactly once.\n- Invoke Claude Code using the existing integration mechanism.\n- Receive a structured JSON response.\n- Write the response into runtime/generated/fleet/responses/.\n- Support retries, timeouts and error handling.\n- Log all exchanges.\n- Keep compatibility with the current Runtime.\n- Do not modify existing Fleet protocol unless strictly necessary.\n- Update documentation and provide validation commands.\n\nOUTPUT:\n1. Patch Plan\n2. Files to create/modify\n3. Risks\n4. Validation procedure\n5. Implementation (only after approval)\n",
+  "deliveredAt": "2026-07-17T05:27:30.062Z",
+  "pid": 417762,
+  "failedAt": "2026-07-17T05:27:30.068Z",
+  "reason": "Agent spawn error: spawnSync __no_such_binary__ ENOENT"
+}

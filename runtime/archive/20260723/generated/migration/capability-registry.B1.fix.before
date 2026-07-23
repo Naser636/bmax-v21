@@ -1,0 +1,17 @@
+export interface CapabilityRegistryModel {
+  generatedAt: string;
+  available: string[];
+  missing: string[];
+}
+
+export class CapabilityRegistry {
+
+  build(): CapabilityRegistryModel {
+    return {
+      generatedAt: new Date().toISOString(),
+      available: [],
+      missing: []
+    };
+  }
+
+}

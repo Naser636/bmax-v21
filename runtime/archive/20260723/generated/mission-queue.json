@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-07-12T11:40:25.753Z",
+  "count": 7,
+  "queue": [
+    {
+      "order": 1,
+      "mission": "PREFLIGHT",
+      "name": "Repository Preflight",
+      "state": "QUEUED"
+    },
+    {
+      "order": 2,
+      "mission": "RUNTIME_INTEGRATION",
+      "name": "Runtime Integration Audit",
+      "state": "QUEUED"
+    },
+    {
+      "order": 3,
+      "mission": "RUNTIME_FUSION",
+      "name": "Runtime Fusion Matrix",
+      "state": "QUEUED"
+    },
+    {
+      "order": 4,
+      "mission": "REPOSITORY_INTELLIGENCE",
+      "name": "Repository Intelligence",
+      "state": "QUEUED"
+    },
+    {
+      "order": 5,
+      "mission": "BUILD_PROJECT_CONTEXT",
+      "name": "Project Context",
+      "state": "QUEUED"
+    },
+    {
+      "order": 6,
+      "mission": "VERIFY_RUNTIME",
+      "name": "Runtime Verify",
+      "state": "QUEUED"
+    },
+    {
+      "order": 7,
+      "mission": "FREEZE_RUNTIME",
+      "name": "Runtime Freeze",
+      "state": "QUEUED"
+    }
+  ]
+}

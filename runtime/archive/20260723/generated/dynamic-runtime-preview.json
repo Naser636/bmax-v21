@@ -1,0 +1,7 @@
+{
+  "generatedAt": "2026-07-15T16:22:03.781Z",
+  "capability": "Execution Planner",
+  "implementation": "runtime/core/execution-planner.js",
+  "exists": true,
+  "ready": true
+}

@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-07-23T19:20:17.579Z",
+  "status": "READY",
+  "capabilities": [
+    "Mission Loader",
+    "Execution Planner",
+    "ProjectContext",
+    "Runtime Brain",
+    "ProjectContext Engine"
+  ],
+  "missingCapabilities": [
+    {
+      "id": "OBJ-001",
+      "goal": "Apply the minimal patch proposed for the \"documentationProofPresent\" gate.",
+      "done_when": [
+        "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+        "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "goal": "Confirm the \"documentationProofPresent\" gate is green.",
+      "done_when": [
+        "runtime/bin/odg-verify.js has been re-run.",
+        "runtime/generated/runtime-verify.json reports documentationProofPresent:true."
+      ]
+    }
+  ]
+}

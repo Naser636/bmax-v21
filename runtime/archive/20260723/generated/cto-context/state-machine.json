@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-15T15:51:38.951Z",
+  "initialState": "CREATED",
+  "terminalState": "ARCHIVED",
+  "transitions": {
+    "CREATED": [
+      "QUALIFIED"
+    ],
+    "QUALIFIED": [
+      "ANALYZED"
+    ],
+    "ANALYZED": [
+      "PLANNED"
+    ],
+    "PLANNED": [
+      "PREPARED"
+    ],
+    "PREPARED": [
+      "VALIDATED"
+    ],
+    "VALIDATED": [
+      "EXECUTED"
+    ],
+    "EXECUTED": [
+      "VERIFIED"
+    ],
+    "VERIFIED": [
+      "RELEASED"
+    ],
+    "RELEASED": [
+      "ARCHIVED"
+    ],
+    "ARCHIVED": []
+  },
+  "principles": [
+    "Only Governance Kernel authorizes transitions",
+    "Transitions are deterministic",
+    "Rollback requires explicit governance decision",
+    "Every transition produces evidence"
+  ]
+}

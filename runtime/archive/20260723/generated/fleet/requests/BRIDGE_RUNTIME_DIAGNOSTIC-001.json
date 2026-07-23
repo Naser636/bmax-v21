@@ -1,0 +1,32 @@
+{
+  "requestId": "BRIDGE_RUNTIME_DIAGNOSTIC-001",
+  "agent": "claude",
+  "status": "FAILED",
+  "mission": "BRIDGE_RUNTIME_DIAGNOSTIC",
+  "createdAt": "2026-07-17T12:03:05.883Z",
+  "attempt": 1,
+  "brief": {
+    "generatedAt": "2026-07-16T10:29:24.410Z",
+    "mission": "IMPLEMENT_DEVELOPER_ENGINE_V1",
+    "priority": "HIGH",
+    "project": {
+      "files": 1805,
+      "directories": 220
+    },
+    "actions": [
+      "PROCESS_TODOS",
+      "PROCESS_FIXMES",
+      "ANALYZE_DEPENDENCIES",
+      "OPTIMIZE_DEPENDENCIES",
+      "IMPLEMENT_MISSING_CAPABILITIES"
+    ],
+    "knownCapabilities": 5,
+    "missingCapabilities": 9,
+    "objective": "Produce the minimum safe implementation. Reuse existing code whenever possible."
+  },
+  "instruction": "MISSION: BRIDGE_RUNTIME_DIAGNOSTIC\n\nOBJECTIVE:\nDiagnose why Fleet requests remain in PENDING state.\n\nREQUIREMENTS:\n- Inspect the Fleet Bridge runtime.\n- Determine whether the Bridge service is currently running.\n- Determine whether it is running in watch mode or one-shot mode.\n- Verify whether the Bridge is monitoring runtime/generated/fleet/requests/.\n- Explain why recent requests remain in PENDING.\n- Identify the exact blocking component if any.\n- If the Bridge is stopped, explain how it should normally be started by the Runtime.\n- Do not modify any file.\n- Do not implement any change.\n- Produce only a diagnostic report with the root cause and the recommended corrective action.\n",
+  "deliveredAt": "2026-07-17T12:09:38.248Z",
+  "pid": 422835,
+  "failedAt": "2026-07-17T12:15:43.342Z",
+  "reason": "Agent timed out after 120000ms"
+}

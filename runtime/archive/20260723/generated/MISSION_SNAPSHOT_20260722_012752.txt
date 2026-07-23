@@ -1,0 +1,141 @@
+===== MISSION SNAPSHOT =====
+
+## Runtime status
+STATUS : READY
+
+## Verify
+VERIFY : {
+  generatedAt: '2026-07-22T01:27:52.560Z',
+  build: true,
+  typescript: true,
+  gitClean: false
+}
+
+## Git
+ M runtime/mission-standard/history/history.md
+ M src/core/runtime-autonomy.ts
+ M src/runtime/index.ts
+ M src/runtime/mission-cli.ts
+ M src/runtime/mission-loader.ts
+?? runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md
+?? runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md
+?? runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md
+?? runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md
+?? runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md
+?? runtime/mission-standard/generated/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.json
+?? runtime/mission-standard/generated/IMPLEMENT_PROVIDER_FACTORY.json
+?? runtime/mission-standard/generated/PREPARE_ENGINEERING_BRIEF.json
+?? runtime/mission-standard/generated/ROADMAP_RUNTIME_STABILIZATION_V1.json
+?? runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json
+?? runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md
+?? runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md
+?? runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md
+?? runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md
+?? runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md
+?? runtime/mission-standard/reports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.report.md
+?? runtime/mission-standard/reports/IMPLEMENT_PROVIDER_FACTORY.report.md
+?? runtime/mission-standard/reports/PREPARE_ENGINEERING_BRIEF.report.md
+?? runtime/mission-standard/reports/ROADMAP_RUNTIME_STABILIZATION_V1.report.md
+?? runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md
+?? runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak
+?? src/runtime/local-mission-runner.ts
+?? src/runtime/mission-migration.ts
+
+## Current branch
+runtime/provider-error-surface-1
+
+## Last mission
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T00:11:45.789Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    },
+    {
+      "recordedAt": "2026-07-22T00:30:57.869Z",
+      "mission": "UNIFY_RUNTIME_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true,
+      "projectFiles": 1805,
+      "projectDirectories": 220
+    }
+  ]
+}
+## Runtime route
+src/runtime/autonomy-runtime-adapter.ts:36:  missionRequiresProvider,
+src/runtime/autonomy-runtime-adapter.ts:190:   * `missionRequiresProvider()`. Only when it returns true is the Claude Provider Adapter invoked —
+src/runtime/autonomy-runtime-adapter.ts:197:    if (missionRequiresProvider(this.toRoutable(spec))) {
+src/runtime/mission-cli.ts:7: *   1. PROVIDER  — an ENGINEERING mission (missionRequiresProvider === true) is driven through the
+src/runtime/mission-cli.ts:30:import { missionRequiresProvider, type RoutableMission } from "@/providers";
+src/runtime/mission-cli.ts:77: * which owns the missionRequiresProvider → ClaudeProviderAdapter routing — gatherEvidence, archive)
+src/runtime/mission-cli.ts:212:  if (spec && missionRequiresProvider(toRoutable(spec))) {
+src/runtime/mission-cli.ts:213:    console.log("Decision   : missionRequiresProvider = true → PROVIDER");
+src/core/provider-orchestrator.ts:5: *   1. resolves the needed CAPABILITY first (reusing the validated `missionRequiresProvider`), then
+src/core/provider-orchestrator.ts:19:import { missionRequiresProvider } from "@/providers";
+src/core/provider-orchestrator.ts:97:   * `missionRequiresProvider` predicate (no duplication, no governance change): an engineering
+src/core/provider-orchestrator.ts:101:    const needed = missionRequiresProvider(mission);
+
+## Pipeline
+src/runtime/autonomy-runtime-adapter.ts:195:  runPipeline(mission: string): PipelineOutcome {
+src/core/runtime-autonomy.ts:183:        pipeline = ports.runPipeline(mission);
+
+## Provider
+src/runtime/autonomy-runtime-adapter.ts:35:  createClaudeProvider,
+src/runtime/autonomy-runtime-adapter.ts:238:      this.provider = createClaudeProvider({ cwd: this.cwd, model: PROVIDER_MODEL });
+src/providers/index.ts:34:  createClaudeProvider,
+
+## Last generated artifacts
+2026-07-21 12:37 runtime/generated/capabilities/documentation-engine.js
+2026-07-21 12:37 runtime/generated/capabilities/event-bus.js
+2026-07-21 12:37 runtime/generated/capabilities/knowledge-engine.js
+2026-07-21 12:37 runtime/generated/capabilities/learning-engine.js
+2026-07-21 12:37 runtime/generated/capabilities/plugin-manager.js
+2026-07-21 12:37 runtime/generated/capabilities/release-manager.js
+2026-07-21 12:37 runtime/generated/capabilities/reporter.js
+2026-07-21 12:37 runtime/generated/dependency-optimization.json
+2026-07-21 12:37 runtime/generated/dependency-report.txt
+2026-07-21 12:37 runtime/generated/fixme-report.txt
+2026-07-21 12:37 runtime/generated/implemented-capabilities.json
+2026-07-21 12:37 runtime/generated/todo-report.txt
+2026-07-21 23:43 runtime/generated/ENGINEERING_BRIEF_PATCH_EXECUTOR.md
+2026-07-21 23:51 runtime/generated/llm/proposal-analysis.json
+2026-07-21 23:51 runtime/generated/llm/proposal.json
+2026-07-21 23:52 runtime/generated/fleet/bridge.log
+2026-07-22 00:30 runtime/generated/capability-registry.json
+2026-07-22 00:30 runtime/generated/decision.json
+2026-07-22 00:30 runtime/generated/execution-plan.json
+2026-07-22 00:30 runtime/generated/knowledge.json
+2026-07-22 00:30 runtime/generated/mission-interpretation.json
+2026-07-22 00:30 runtime/generated/mission-ledger.json
+2026-07-22 00:30 runtime/generated/mission-plan.json
+2026-07-22 00:30 runtime/generated/mission-report.json
+2026-07-22 00:30 runtime/generated/patch-execution.json
+2026-07-22 00:30 runtime/generated/patch-plan.json
+2026-07-22 00:30 runtime/generated/runtime-pipeline.json
+2026-07-22 01:27 runtime/generated/runtime-status.json
+2026-07-22 01:28 runtime/generated/MISSION_SNAPSHOT_20260722_012752.txt
+2026-07-22 01:28 runtime/generated/runtime-verify.json

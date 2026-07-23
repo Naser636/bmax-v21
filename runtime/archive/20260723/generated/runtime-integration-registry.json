@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-07-12T13:02:47.637Z",
+  "strategy": "EXTEND_ONLY",
+  "components": [
+    {
+      "component": "src/runtime/capability-registry.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/event-bus.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/execution-memory.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/execution-planner.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/index.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/mission-loader.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/mission-orchestrator.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/plugin-registry.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-demo.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-events.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-executor.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-facade.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-health.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-reporter.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-service.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-state.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    },
+    {
+      "component": "src/runtime/runtime-types.ts",
+      "integrationStatus": "PENDING",
+      "action": "CONNECT"
+    }
+  ]
+}

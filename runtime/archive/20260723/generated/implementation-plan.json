@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-07-15T15:05:10.559Z",
+  "capability": "ProjectContext Engine",
+  "status": "READY",
+  "phases": [
+    "Inventory existing components",
+    "Detect reusable modules",
+    "Design integration",
+    "Implement incrementally",
+    "Run validation",
+    "Commit",
+    "Update roadmap"
+  ]
+}

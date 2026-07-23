@@ -1,0 +1,28 @@
+MISSION=GOVERNANCE_LOOP_V1
+
+OBJECTIVE
+Supervise the Runtime autonomously.
+
+RESPONSIBILITIES
+- Observe Runtime health
+- Observe Mission Ledger
+- Select the next eligible mission
+- Start Mission Loop
+- Detect blockers
+- Stop on policy violation
+- Request human approval only for promotion
+
+INPUTS
+- Mission Ledger
+- Runtime Health
+- Migration Status
+- Policies
+
+OUTPUTS
+- Next Mission
+- Decision
+- Runtime State
+
+SUCCESS
+- Runtime drives itself
+- Human validates promotions only

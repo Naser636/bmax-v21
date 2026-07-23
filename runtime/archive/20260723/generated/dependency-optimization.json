@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-07-21T12:37:26.176Z",
+  "source": "runtime/generated/dependency-report.txt",
+  "totalImports": 919,
+  "uniqueModules": 350,
+  "externalVsInternal": {
+    "internal": 823,
+    "external": 96
+  },
+  "topModules": [
+    {
+      "module": "fs",
+      "count": 43
+    },
+    {
+      "module": "@/contracts/connector-interface",
+      "count": 24
+    },
+    {
+      "module": "@/core/api-connector",
+      "count": 24
+    },
+    {
+      "module": "child_process",
+      "count": 19
+    },
+    {
+      "module": "@/contracts/system-health",
+      "count": 18
+    },
+    {
+      "module": "@/contracts/data-record",
+      "count": 18
+    },
+    {
+      "module": "@/core/web-connector",
+      "count": 13
+    },
+    {
+      "module": "@/core/boamp-result",
+      "count": 13
+    },
+    {
+      "module": "./mission-loader",
+      "count": 13
+    },
+    {
+      "module": "./execution-planner",
+      "count": 13
+    },
+    {
+      "module": "@/contracts/decision",
+      "count": 12
+    },
+    {
+      "module": "./mission-orchestrator",
+      "count": 12
+    },
+    {
+      "module": "./execution-memory",
+      "count": 12
+    },
+    {
+      "module": "./event-bus",
+      "count": 12
+    },
+    {
+      "module": "@/core/goal-service",
+      "count": 11
+    },
+    {
+      "module": "node:fs",
+      "count": 11
+    },
+    {
+      "module": "@/core/mission-context",
+      "count": 10
+    },
+    {
+      "module": "@/core/mission-service",
+      "count": 10
+    },
+    {
+      "module": "@/core/discovery-runner",
+      "count": 9
+    },
+    {
+      "module": "./runtime-context",
+      "count": 9
+    }
+  ],
+  "duplicateImports": [
+    {
+      "file": "src/tests/autonomy-local-loop.test.ts",
+      "module": "fs",
+      "count": 2
+    }
+  ],
+  "suggestions": [
+    "Module \"fs\" is imported 43 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/contracts/connector-interface\" is imported 24 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/core/api-connector\" is imported 24 times — consider a shared barrel/facade to centralize it.",
+    "Module \"child_process\" is imported 19 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/contracts/system-health\" is imported 18 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/contracts/data-record\" is imported 18 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/core/web-connector\" is imported 13 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/core/boamp-result\" is imported 13 times — consider a shared barrel/facade to centralize it.",
+    "Module \"./mission-loader\" is imported 13 times — consider a shared barrel/facade to centralize it.",
+    "Module \"./execution-planner\" is imported 13 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/contracts/decision\" is imported 12 times — consider a shared barrel/facade to centralize it.",
+    "Module \"./mission-orchestrator\" is imported 12 times — consider a shared barrel/facade to centralize it.",
+    "Module \"./execution-memory\" is imported 12 times — consider a shared barrel/facade to centralize it.",
+    "Module \"./event-bus\" is imported 12 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/core/goal-service\" is imported 11 times — consider a shared barrel/facade to centralize it.",
+    "Module \"node:fs\" is imported 11 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/core/mission-context\" is imported 10 times — consider a shared barrel/facade to centralize it.",
+    "Module \"@/core/mission-service\" is imported 10 times — consider a shared barrel/facade to centralize it.",
+    "Duplicate import of \"fs\" in src/tests/autonomy-local-loop.test.ts (2×) — merge into a single import."
+  ]
+}

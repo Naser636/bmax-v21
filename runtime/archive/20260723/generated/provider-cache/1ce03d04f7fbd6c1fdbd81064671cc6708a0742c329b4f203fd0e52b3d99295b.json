@@ -1,0 +1,65 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [
+      "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md"
+    ],
+    "commandsRun": [
+      "./runtime/bin/odg health",
+      "./runtime/bin/odg",
+      "./runtime/bin/odg health | wc -l",
+      "test -x runtime/bin/odg",
+      "test -x runtime/bin/odg-health.js"
+    ],
+    "blocker": null,
+    "notes": "odg health command and odg-health.js were already committed at a835750 and satisfy OBJ-001..003 (dashboard renders 5 sections in 37 lines, <100-line contract, exit 0, reads all four generated artefacts). The mission-ledger already recorded a CAPITALIZED entry (capability: 'Runtime Health Command') referencing runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md, which did not exist on disk; this mission produced that missing evidence artefact (OBJ-004). No frozen file, generated artefact, or contract/core source was modified. Release/gitClean gates over the full tree remain the Release Manager's decision."
+  },
+  "sessionId": "71cc92f1-e635-4865-b02d-26951ade59d1",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/FIX_RUNTIME_MISSION_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/FIX_RUNTIME_MISSION_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md",
+    "runtime/mission-standard/certificates/ENABLE_MASTER_PLAN_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PATCH_ACTIONS.certificate.md",
+    "runtime/mission-standard/generated/ENABLE_MASTER_PLAN_EXECUTION.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PATCH_ACTIONS.json",
+    "runtime/mission-standard/passports/ENABLE_MASTER_PLAN_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PATCH_ACTIONS.passport.md",
+    "runtime/mission-standard/reports/ENABLE_MASTER_PLAN_EXECUTION.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PATCH_ACTIONS.report.md",
+    "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":143907,\"duration_api_ms\":141837,\"ttft_ms\":5192,\"ttft_stream_ms\":3075,\"time_to_request_ms\":222,\"num_turns\":15,\"result\":\"The evidence artifact referenced by the mission ledger now exists on disk. Mission deliverables verified:\\n\\n- **OBJ-001** — `runtime/bin/odg` + `runtime/bin/odg-health.js` exist, are executable, and run (exit 0).\\n- **OBJ-002** — all four artifacts (`runtime-state`, `runtime-status`, `capability-registry`, `mission-ledger`) load.\\n- **OBJ-003** — dashboard renders all five sections in 37 lines (< 100).\\n- **OBJ-004** — evidence produced; ledger/knowledge entry (`capability: \\\"Runtime Health Command\\\"`) already recorded by the Runtime engine.\\n\\nNo frozen file, generated artifact, or contract/core source was modified — only the additive evidence file under the authorized `runtime/**` path.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_RUNTIME_HEALTH_COMMAND\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [\\\"runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md\\\"], \\\"commandsRun\\\": [\\\"./runtime/bin/odg health\\\", \\\"./runtime/bin/odg\\\", \\\"./runtime/bin/odg health | wc -l\\\", \\\"test -x runtime/bin/odg\\\", \\\"test -x runtime/bin/odg-health.js\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"odg health command and odg-health.js were already committed at a835750 and satisfy OBJ-001..003 (dashboard renders 5 sections in 37 lines, <100-line contract, exit 0, reads all four generated artefacts). The mission-ledger already recorded a CAPITALIZED entry (capability: 'Runtime Health Command') referencing runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md, which did not exist on disk; this mission produced that missing evidence artefact (OBJ-004). No frozen file, generated artefact, or contract/core source was modified. Release/gitClean gates over the full tree remain the Release Manager's decision.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"71cc92f1-e635-4865-b02d-26951ade59d1\",\"total_cost_usd\":0.74967475,\"usage\":{\"input_tokens\":23,\"cache_creation_input_tokens\":47907,\"cache_read_input_tokens\":386468,\"output_tokens\":10229,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":47907},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":923,\"cache_read_input_tokens\":45158,\"cache_creation_input_tokens\":2749,\"cache_creation\":{\"ephemeral_5m_input_tokens\":2749,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1087,\"outputTokens\":19,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001182,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":23,\"outputTokens\":10229,\"cacheReadInputTokens\":386468,\"cacheCreationInputTokens\":47907,\"webSearchRequests\":0,\"costUSD\":0.7484927499999999,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"4e764624-9cc2-4e43-a641-ae8fcd3dbd87\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

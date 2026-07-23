@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-07-15T16:15:23.260Z",
+  "governance": "ACTIVE",
+  "capabilities": {
+    "Mission Loader": "runtime/core/mission-loader.js",
+    "Execution Planner": "runtime/core/execution-planner.js",
+    "Capability Registry": "runtime/core/capability-registry.js",
+    "Knowledge Engine": "runtime/core/knowledge-engine.js",
+    "Decision Engine": "runtime/core/decision-engine.js",
+    "Patch Engine": "runtime/core/patch-engine.js",
+    "Patch Executor": "runtime/core/patch-executor.js",
+    "Validation Engine": "runtime/core/validation-engine.js"
+  }
+}

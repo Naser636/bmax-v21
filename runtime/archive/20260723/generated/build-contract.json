@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-07-15T15:19:38.644Z",
+  "target": "ProjectContext Engine",
+  "strategy": "REUSE_BEFORE_CREATE",
+  "file": "runtime/core/project-context-engine.js",
+  "responsibilities": [
+    "Load project context",
+    "Normalize project metadata",
+    "Expose reusable runtime context",
+    "Generate runtime/generated/project-context-runtime.json"
+  ],
+  "inputs": [
+    "runtime/generated/project-context.json",
+    "runtime/generated/knowledge.json"
+  ],
+  "outputs": [
+    "runtime/generated/project-context-runtime.json"
+  ],
+  "validation": [
+    "Output file exists",
+    "Valid JSON",
+    "No source modification"
+  ]
+}

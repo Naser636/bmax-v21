@@ -1,0 +1,66 @@
+{"at":"2026-07-17T05:05:22.856Z","event":"DELIVERED","requestId":"FLEET_BRIDGE_IMPLEMENTATION-001","mission":"FLEET_BRIDGE_IMPLEMENTATION","pid":416201}
+{"at":"2026-07-17T05:05:22.857Z","event":"ANSWERED","requestId":"FLEET_BRIDGE_IMPLEMENTATION-001","mission":"FLEET_BRIDGE_IMPLEMENTATION","attempts":1,"actions":2}
+{"at":"2026-07-17T05:05:22.858Z","event":"DELIVERED","requestId":"FLEET_BRIDGE_V1-002","mission":"FLEET_BRIDGE_V1","pid":416201}
+{"at":"2026-07-17T05:05:22.858Z","event":"ANSWERED","requestId":"FLEET_BRIDGE_V1-002","mission":"FLEET_BRIDGE_V1","attempts":1,"actions":2}
+{"at":"2026-07-17T05:05:22.859Z","event":"DELIVERED","requestId":"FLEET_TEST-002","mission":"FLEET_TEST","pid":416201}
+{"at":"2026-07-17T05:05:22.859Z","event":"ANSWERED","requestId":"FLEET_TEST-002","mission":"FLEET_TEST","attempts":1,"actions":2}
+{"at":"2026-07-17T05:05:54.077Z","event":"DELIVERED","requestId":"FLEET_RACE-001","mission":"FLEET_RACE","pid":416319}
+{"at":"2026-07-17T05:05:54.078Z","event":"ANSWERED","requestId":"FLEET_RACE-001","mission":"FLEET_RACE","attempts":1,"actions":2}
+{"at":"2026-07-17T05:05:54.079Z","event":"DELIVERED","requestId":"FLEET_SMOKE-001","mission":"FLEET_SMOKE","pid":416319}
+{"at":"2026-07-17T05:05:54.079Z","event":"ANSWERED","requestId":"FLEET_SMOKE-001","mission":"FLEET_SMOKE","attempts":1,"actions":2}
+{"at":"2026-07-17T05:06:33.860Z","event":"DELIVERED","requestId":"FLEET_LIVE-001","mission":"FLEET_LIVE","pid":416574}
+{"at":"2026-07-17T05:07:00.149Z","event":"ANSWERED","requestId":"FLEET_LIVE-001","mission":"FLEET_LIVE","attempts":1,"actions":8}
+{"at":"2026-07-17T05:13:09.396Z","event":"DELIVERED","requestId":"FLEET_REVAL-001","mission":"FLEET_REVAL","pid":416909}
+{"at":"2026-07-17T05:13:09.397Z","event":"ANSWERED","requestId":"FLEET_REVAL-001","mission":"FLEET_REVAL","attempts":1,"actions":2}
+{"at":"2026-07-17T05:13:10.602Z","event":"DELIVERED","requestId":"FLEET_REVAL_RACE-001","mission":"FLEET_REVAL_RACE","pid":416971}
+{"at":"2026-07-17T05:13:10.604Z","event":"ANSWERED","requestId":"FLEET_REVAL_RACE-001","mission":"FLEET_REVAL_RACE","attempts":1,"actions":2}
+{"at":"2026-07-17T05:25:28.175Z","event":"DELIVERED","requestId":"FLEET_PIPE_TEST-001","mission":"FLEET_PIPE_TEST","pid":417556}
+{"at":"2026-07-17T05:25:28.176Z","event":"ANSWERED","requestId":"FLEET_PIPE_TEST-001","mission":"FLEET_PIPE_TEST","attempts":1,"actions":2}
+{"at":"2026-07-17T05:27:06.529Z","event":"DELIVERED","requestId":"FLEET_PIPE_TEST-002","mission":"FLEET_PIPE_TEST","pid":417687}
+{"at":"2026-07-17T05:27:06.530Z","event":"ANSWERED","requestId":"FLEET_PIPE_TEST-002","mission":"FLEET_PIPE_TEST","attempts":1,"actions":2}
+{"at":"2026-07-17T05:27:29.844Z","event":"DELIVERED","requestId":"FLEET_FAIL_OPEN-001","mission":"FLEET_FAIL_OPEN","pid":417752}
+{"at":"2026-07-17T05:27:29.851Z","event":"FAILED","requestId":"FLEET_FAIL_OPEN-001","mission":"FLEET_FAIL_OPEN","attempts":1,"reason":"Agent spawn error: spawnSync __no_such_binary__ ENOENT"}
+{"at":"2026-07-17T05:27:30.062Z","event":"DELIVERED","requestId":"FLEET_FAIL_CLOSED-001","mission":"FLEET_FAIL_CLOSED","pid":417762}
+{"at":"2026-07-17T05:27:30.069Z","event":"FAILED","requestId":"FLEET_FAIL_CLOSED-001","mission":"FLEET_FAIL_CLOSED","attempts":1,"reason":"Agent spawn error: spawnSync __no_such_binary__ ENOENT"}
+{"at":"2026-07-17T05:27:53.821Z","event":"DELIVERED","requestId":"FLEET_PIPE_SMOKE-001","mission":"FLEET_PIPE_SMOKE","pid":417967}
+{"at":"2026-07-17T05:27:53.822Z","event":"ANSWERED","requestId":"FLEET_PIPE_SMOKE-001","mission":"FLEET_PIPE_SMOKE","attempts":1,"actions":2}
+{"at":"2026-07-17T12:04:29.993Z","event":"DELIVERED","requestId":"AUTONOMY_CHECK-001","mission":"AUTONOMY_CHECK","pid":421778}
+{"at":"2026-07-17T12:05:21.520Z","event":"ANSWERED","requestId":"AUTONOMY_CHECK-001","mission":"AUTONOMY_CHECK","attempts":1,"actions":7}
+{"at":"2026-07-17T12:05:21.522Z","event":"DELIVERED","requestId":"AUTONOMY_CONFIRMATION-001","mission":"AUTONOMY_CONFIRMATION","pid":421778}
+{"at":"2026-07-17T12:06:44.294Z","event":"ANSWERED","requestId":"AUTONOMY_CONFIRMATION-001","mission":"AUTONOMY_CONFIRMATION","attempts":1,"actions":6}
+{"at":"2026-07-17T12:06:44.297Z","event":"DELIVERED","requestId":"AUTONOMY_PROOF-001","mission":"AUTONOMY_PROOF","pid":421778}
+{"at":"2026-07-17T12:09:38.249Z","event":"DELIVERED","requestId":"BRIDGE_RUNTIME_DIAGNOSTIC-001","mission":"BRIDGE_RUNTIME_DIAGNOSTIC","pid":422835}
+{"at":"2026-07-17T12:15:43.343Z","event":"FAILED","requestId":"BRIDGE_RUNTIME_DIAGNOSTIC-001","mission":"BRIDGE_RUNTIME_DIAGNOSTIC","attempts":3,"reason":"Agent timed out after 120000ms"}
+{"at":"2026-07-17T12:15:43.344Z","event":"DELIVERED","requestId":"EXECUTION_STATUS-001","mission":"EXECUTION_STATUS","pid":422835}
+{"at":"2026-07-17T12:15:55.925Z","event":"ANSWERED","requestId":"EXECUTION_STATUS-001","mission":"EXECUTION_STATUS","attempts":1,"actions":6}
+{"at":"2026-07-17T12:15:55.928Z","event":"DELIVERED","requestId":"MISSION_EXECUTION_CONFIRMATION-001","mission":"MISSION_EXECUTION_CONFIRMATION","pid":422835}
+{"at":"2026-07-17T12:17:25.641Z","event":"ANSWERED","requestId":"MISSION_EXECUTION_CONFIRMATION-001","mission":"MISSION_EXECUTION_CONFIRMATION","attempts":1,"actions":8}
+{"at":"2026-07-17T12:17:25.642Z","event":"DELIVERED","requestId":"RESUME_AND_STATUS-001","mission":"RESUME_AND_STATUS","pid":422835}
+{"at":"2026-07-17T12:18:15.917Z","event":"DELIVERED","requestId":"WATCH_TEST-001","mission":"WATCH_TEST","pid":424696}
+{"at":"2026-07-17T12:18:27.508Z","event":"ANSWERED","requestId":"WATCH_TEST-001","mission":"WATCH_TEST","attempts":1,"actions":4}
+{"at":"2026-07-17T12:18:30.088Z","event":"ANSWERED","requestId":"RESUME_AND_STATUS-001","mission":"RESUME_AND_STATUS","attempts":1,"actions":8}
+{"at":"2026-07-17T12:18:30.091Z","event":"DELIVERED","requestId":"ROADMAP_AUTONOMOUS_EXECUTION-001","mission":"ROADMAP_AUTONOMOUS_EXECUTION","pid":422835}
+{"at":"2026-07-17T12:19:39.197Z","event":"ANSWERED","requestId":"ROADMAP_AUTONOMOUS_EXECUTION-001","mission":"ROADMAP_AUTONOMOUS_EXECUTION","attempts":1,"actions":6}
+{"at":"2026-07-17T12:19:39.199Z","event":"DELIVERED","requestId":"ROADMAP_NEXT-001","mission":"ROADMAP_NEXT","pid":422835}
+{"at":"2026-07-17T12:25:40.327Z","event":"ANSWERED","requestId":"ROADMAP_NEXT-001","mission":"ROADMAP_NEXT","attempts":3,"actions":6}
+{"at":"2026-07-17T12:46:06.237Z","event":"DELIVERED","requestId":"CHATGPT_CONNECTIVITY_TEST-001","mission":"CHATGPT_CONNECTIVITY_TEST","pid":422835}
+{"at":"2026-07-17T12:46:20.080Z","event":"ANSWERED","requestId":"CHATGPT_CONNECTIVITY_TEST-001","mission":"CHATGPT_CONNECTIVITY_TEST","attempts":1,"actions":4}
+{"at":"2026-07-17T12:50:18.085Z","event":"DELIVERED","requestId":"FLEET_CHATGPT_INTEGRATION-001","mission":"FLEET_CHATGPT_INTEGRATION","pid":422835}
+{"at":"2026-07-17T12:55:55.889Z","event":"DELIVERED","requestId":"APPLY_FLEET_CHATGPT_INTEGRATION-001","mission":"APPLY_FLEET_CHATGPT_INTEGRATION","pid":426719}
+{"at":"2026-07-17T12:56:03.869Z","event":"FAILED","requestId":"APPLY_FLEET_CHATGPT_INTEGRATION-001","mission":"APPLY_FLEET_CHATGPT_INTEGRATION","attempts":3,"reason":"Agent exited 1: "}
+{"at":"2026-07-17T12:56:24.856Z","event":"FAILED","requestId":"FLEET_CHATGPT_INTEGRATION-001","mission":"FLEET_CHATGPT_INTEGRATION","attempts":3,"reason":"Agent timed out after 120000ms"}
+{"at":"2026-07-17T13:11:52.014Z","event":"DELIVERED","requestId":"APPLY_FLEET_CHATGPT_INTEGRATION-002","mission":"APPLY_FLEET_CHATGPT_INTEGRATION","pid":422835}
+{"at":"2026-07-17T13:16:47.107Z","event":"DELIVERED","requestId":"APPLY_FLEET_CHATGPT_INTEGRATION-003","mission":"APPLY_FLEET_CHATGPT_INTEGRATION","pid":428652}
+{"at":"2026-07-17T13:16:55.113Z","event":"FAILED","requestId":"APPLY_FLEET_CHATGPT_INTEGRATION-003","mission":"APPLY_FLEET_CHATGPT_INTEGRATION","attempts":3,"reason":"Agent exited 1: "}
+{"at":"2026-07-17T13:21:51.439Z","event":"DELIVERED","requestId":"AUTONOMOUS_FLEET_DIAGNOSTIC_AND_REPAIR-001","mission":"AUTONOMOUS_FLEET_DIAGNOSTIC_AND_REPAIR","pid":428652}
+{"at":"2026-07-17T13:21:59.560Z","event":"FAILED","requestId":"AUTONOMOUS_FLEET_DIAGNOSTIC_AND_REPAIR-001","mission":"AUTONOMOUS_FLEET_DIAGNOSTIC_AND_REPAIR","attempts":3,"reason":"Agent exited 1: "}
+{"at":"2026-07-21T23:49:54.499Z","event":"DELIVERED","requestId":"FLEET_CLAUDE_SMOKE-001","mission":"FLEET_CLAUDE_SMOKE","pid":563582}
+{"at":"2026-07-21T23:50:02.558Z","event":"FAILED","requestId":"FLEET_CLAUDE_SMOKE-001","mission":"FLEET_CLAUDE_SMOKE","attempts":3,"reason":"Agent exited 1: "}
+{"at":"2026-07-21T23:51:19.797Z","event":"DELIVERED","requestId":"FLEET_CLAUDE_OK-001","mission":"FLEET_CLAUDE_OK","pid":563582}
+{"at":"2026-07-21T23:51:20.179Z","event":"DELIVERED","requestId":"FLEET_CHATGPT_OK-001","mission":"FLEET_CHATGPT_OK","pid":630404}
+{"at":"2026-07-21T23:51:20.180Z","event":"ANSWERED","requestId":"FLEET_CHATGPT_OK-001","mission":"FLEET_CHATGPT_OK","attempts":1,"actions":2}
+{"at":"2026-07-21T23:51:27.748Z","event":"FAILED","requestId":"FLEET_CLAUDE_OK-001","mission":"FLEET_CLAUDE_OK","attempts":3,"reason":"Agent exited 1: "}
+{"at":"2026-07-21T23:52:22.818Z","event":"DELIVERED","requestId":"SYNC_CLAUDE-001","mission":"SYNC_CLAUDE","pid":630681}
+{"at":"2026-07-21T23:52:22.818Z","event":"ANSWERED","requestId":"SYNC_CLAUDE-001","mission":"SYNC_CLAUDE","attempts":1,"actions":2}
+{"at":"2026-07-21T23:52:22.820Z","event":"DELIVERED","requestId":"SYNC_CHATGPT-001","mission":"SYNC_CHATGPT","pid":630681}
+{"at":"2026-07-21T23:52:22.820Z","event":"ANSWERED","requestId":"SYNC_CHATGPT-001","mission":"SYNC_CHATGPT","attempts":1,"actions":2}

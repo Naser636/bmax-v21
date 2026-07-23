@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-12T10:41:34.134Z",
+  "runtime": "ODG",
+  "status": "READY",
+  "project": {
+    "name": "ODG",
+    "runtime": "Business Decision Runtime",
+    "sprint": 13,
+    "block": "F13.02"
+  },
+  "mission": {
+    "id": "runtime.demo",
+    "name": "Runtime Demonstration"
+  },
+  "steps": [
+    "LOAD_PROJECT_CONTEXT",
+    "LOAD_MISSION",
+    "BUILD_PLAN",
+    "VERIFY",
+    "READY"
+  ]
+}

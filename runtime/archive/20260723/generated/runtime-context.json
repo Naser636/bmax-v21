@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-15T19:08:20.042Z",
+  "mission": "AUTONOMOUS_RUNTIME_BUILDER",
+  "project": {
+    "root": "/home/ubuntu/bmax-v21",
+    "files": 1805,
+    "directories": 220,
+    "errors": 0
+  }
+}

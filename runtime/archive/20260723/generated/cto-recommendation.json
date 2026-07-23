@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-07-15T15:17:19.613Z",
+  "capability": "ProjectContext Engine",
+  "status": "READY",
+  "recommendation": {
+    "nextCapability": "ProjectContext Engine",
+    "strategy": "REUSE_BEFORE_CREATE",
+    "confidence": "HIGH",
+    "nextAction": "Build ProjectContext Engine by extending the selected reusable components.",
+    "reusableComponents": [
+      "decision-engine.js",
+      "knowledge-engine.js",
+      "patch-engine.js",
+      "validation-engine.js"
+    ]
+  }
+}

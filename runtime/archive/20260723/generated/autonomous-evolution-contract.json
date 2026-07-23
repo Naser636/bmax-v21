@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-15T16:44:23.409Z",
+  "mission": "RUNTIME_AUTONOMOUS_EVOLUTION_V1",
+  "phases": [
+    "LOAD_RUNTIME_CONTEXT",
+    "DISCOVER_REPOSITORY",
+    "QUALIFY_MISSION",
+    "BUILD_MISSION_PLAN",
+    "REUSE_ANALYSIS",
+    "BUILD_PATCH_PLAN",
+    "GOVERNANCE_GATE",
+    "HUMAN_VALIDATION",
+    "EXECUTION",
+    "CAPITALIZATION",
+    "NEXT_MISSION"
+  ],
+  "executionPolicy": {
+    "mode": "SEQUENTIAL",
+    "stopOnMissingCapability": true,
+    "stopOnConstitutionViolation": true,
+    "rollbackOnFailure": true,
+    "produceEvidence": true
+  },
+  "successCriteria": [
+    "All completed phases validated",
+    "Evidence produced",
+    "Rollback available",
+    "Next mission prepared"
+  ]
+}

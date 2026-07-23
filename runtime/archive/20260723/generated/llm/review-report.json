@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-07-16T11:23:44.551Z",
+  "mission": "TEST",
+  "summary": "Pipeline OK",
+  "actions": [
+    "Validate pipeline"
+  ],
+  "analysis": {
+    "generatedAt": "2026-07-16T11:21:29.244Z",
+    "mission": "TEST",
+    "valid": true,
+    "actions": 1,
+    "readyForHumanReview": true
+  },
+  "humanDecision": "PENDING"
+}

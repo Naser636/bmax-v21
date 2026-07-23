@@ -1,0 +1,71 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [],
+    "commandsRun": [
+      "git status --short",
+      "npx tsc --noEmit",
+      "npx tsx src/tests/root-cause-engine.test.ts",
+      "npx tsx /tmp/run_rce.ts",
+      "git check-ignore runtime/generated/root-cause-report.json runtime/generated/corrective-mission.json",
+      "git log --oneline -1 -- src/runtime/root-cause-engine.ts"
+    ],
+    "blocker": null,
+    "notes": "Capability was already implemented and committed at ea9006f; no source changes needed. Verified green: tsc exit 0, test prints 'Root Cause Engine OK'. Live run produced all four objective artifacts — root-cause-report.json (OBJ-001), responsibleComponent mapping (OBJ-002), minimalPatch applied:false (OBJ-003), corrective-mission.json RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE (OBJ-004). Both artifacts are gitignored so changedFiles is empty (no tracked churn). DoD 'Mission ledger updated' and 'RELEASE' are Runtime/Release-Manager-side and out of provider scope."
+  },
+  "sessionId": "dad240c8-174a-4016-9321-c5601dc56bb6",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/FIX_RUNTIME_MISSION_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PROVIDER_FACTORY.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/RUNTIME_FULL_AUTONOMY_EXECUTION.certificate.md",
+    "runtime/mission-standard/generated/RUNTIME_FULL_AUTONOMY_EXECUTION.json",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/FIX_RUNTIME_MISSION_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_OPENAI_PROVIDER_ADAPTER.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PROVIDER_FACTORY.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/RUNTIME_FULL_AUTONOMY_EXECUTION.passport.md",
+    "runtime/mission-standard/reports/ROOT_CAUSE_RELEASE_GATE.report.md",
+    "runtime/mission-standard/reports/RUNTIME_FULL_AUTONOMY_EXECUTION.report.md",
+    "runtime/mission-standard/certificates/ENABLE_MASTER_PLAN_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_PATCH_ACTIONS.certificate.md",
+    "runtime/mission-standard/evidence/",
+    "runtime/mission-standard/generated/ENABLE_MASTER_PLAN_EXECUTION.json",
+    "runtime/mission-standard/generated/IMPLEMENT_PATCH_ACTIONS.json",
+    "runtime/mission-standard/passports/ENABLE_MASTER_PLAN_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_PATCH_ACTIONS.passport.md",
+    "runtime/mission-standard/reports/ENABLE_MASTER_PLAN_EXECUTION.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_PATCH_ACTIONS.report.md",
+    "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":93892,\"duration_api_ms\":86089,\"ttft_ms\":9586,\"ttft_stream_ms\":7075,\"time_to_request_ms\":221,\"num_turns\":14,\"result\":\"The capability is fully present, committed, and green. All verification complete. Here is my assessment:\\n\\n**IMPLEMENT_ROOT_CAUSE_REPORTING is already implemented and verified in the tree** — no source changes were required.\\n\\nEvidence:\\n- Engine `src/runtime/root-cause-engine.ts` committed at `ea9006f`, exported from `src/runtime/index.ts`; test `src/tests/root-cause-engine.test.ts` passes (\\\"Root Cause Engine OK\\\").\\n- `npx tsc --noEmit` → exit 0; no working-tree churn on the source files.\\n- Ran the engine live against the repo (`report(\\\"IMPLEMENT_ROOT_CAUSE_REPORTING\\\")`):\\n  - **OBJ-001**: wrote `runtime/generated/root-cause-report.json` (gitignored, no tracked churn) ✓\\n  - **OBJ-002**: `rootCause.responsibleComponent` auto-identifies the blocking component (`documentationProofPresent` → `src/core/documentation-engine.ts`) ✓\\n  - **OBJ-003**: `minimalPatch` proposed (`applied:false`, never mutates the tree) ✓\\n  - **OBJ-004**: `correctiveMission` (`RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE`) auto-prepared and mirrored to `runtime/generated/corrective-mission.json` ✓\\n\\nThe DoD items \\\"Mission ledger updated\\\" and \\\"Release Manager decision is RELEASE\\\" are Runtime-side concerns (the `history.md` ledger is appended by the mission pipeline, and RELEASE is the Release Manager's call), not something I fabricate as a capability provider. I produced evidence only; no commits, no frozen-file edits.\\n\\n```json\\n{\\n  \\\"mission\\\": \\\"IMPLEMENT_ROOT_CAUSE_REPORTING\\\",\\n  \\\"providerContractVersion\\\": \\\"1.0.0\\\",\\n  \\\"status\\\": \\\"DONE\\\",\\n  \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"],\\n  \\\"changedFiles\\\": [],\\n  \\\"commandsRun\\\": [\\n    \\\"git status --short\\\",\\n    \\\"npx tsc --noEmit\\\",\\n    \\\"npx tsx src/tests/root-cause-engine.test.ts\\\",\\n    \\\"npx tsx /tmp/run_rce.ts\\\",\\n    \\\"git check-ignore runtime/generated/root-cause-report.json runtime/generated/corrective-mission.json\\\",\\n    \\\"git log --oneline -1 -- src/runtime/root-cause-engine.ts\\\"\\n  ],\\n  \\\"blocker\\\": null,\\n  \\\"notes\\\": \\\"Capability was already implemented and committed at ea9006f; no source changes needed. Verified green: tsc exit 0, test prints 'Root Cause Engine OK'. Live run produced all four objective artifacts — root-cause-report.json (OBJ-001), responsibleComponent mapping (OBJ-002), minimalPatch applied:false (OBJ-003), corrective-mission.json RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE (OBJ-004). Both artifacts are gitignored so changedFiles is empty (no tracked churn). DoD 'Mission ledger updated' and 'RELEASE' are Runtime/Release-Manager-side and out of provider scope.\\\"\\n}\\n```\",\"stop_reason\":\"end_turn\",\"session_id\":\"dad240c8-174a-4016-9321-c5601dc56bb6\",\"total_cost_usd\":0.5640662499999999,\"usage\":{\"input_tokens\":22,\"cache_creation_input_tokens\":39965,\"cache_read_input_tokens\":358074,\"output_tokens\":5365,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":39965},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":1599,\"cache_read_input_tokens\":39055,\"cache_creation_input_tokens\":910,\"cache_creation\":{\"ephemeral_5m_input_tokens\":910,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":943,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001013,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":22,\"outputTokens\":5365,\"cacheReadInputTokens\":358074,\"cacheCreationInputTokens\":39965,\"webSearchRequests\":0,\"costUSD\":0.56305325,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"8cdd6e8e-7c5c-4f0a-921e-bb9780a65bd4\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

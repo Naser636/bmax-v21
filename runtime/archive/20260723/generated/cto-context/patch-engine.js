@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+
+const fs=require("fs");
+
+const runtimeContext=JSON.parse(
+    fs.readFileSync(
+        "runtime/generated/runtime-context.json",
+        "utf8"
+    )
+);
+
+const decision=JSON.parse(
+fs.readFileSync("runtime/generated/decision.json","utf8")
+);
+
+const registry=JSON.parse(
+fs.readFileSync("runtime/generated/capability-registry.json","utf8")
+);
+
+const patch={
+    generatedAt:new Date().toISOString(),
+    mission:decision.mission,
+    status:"READY",
+    priority:decision.priority,
+    actions:decision.actions,
+    summary:{
+        analyzedFiles:decision.metrics.sourceFiles,
+        missingCapabilities:registry.missingCapabilities.length
+    },
+    patches:decision.actions.map((action,index)=>({
+        id:index+1,
+        action,
+        priority:decision.priority,
+        status:"PLANNED"
+    }))
+};
+
+fs.writeFileSync(
+"runtime/generated/patch-plan.json",
+JSON.stringify(patch,null,2)
+);
+
+console.log("======================================");
+console.log("PATCH ENGINE v3");
+console.log("======================================");
+console.log("Mission  :",patch.mission);
+console.log("Context Files :",runtimeContext.project.files);
+console.log("Context Dirs  :",runtimeContext.project.directories);
+console.log("Priority :",patch.priority);
+console.log("Actions  :",patch.actions.length);
+
+for(const a of patch.actions)
+    console.log(" -",a);
+
+console.log("======================================");
