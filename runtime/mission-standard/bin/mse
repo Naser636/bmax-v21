@@ -25,6 +25,7 @@ ARTIFACT_EXCLUDES=(
   ':(exclude)runtime/mission-standard/reports'
   ':(exclude)runtime/mission-standard/certificates'
   ':(exclude)runtime/mission-standard/history'
+  ':(exclude)runtime/mission-standard/evidence'
   ':(exclude)runtime/missions/*.evidence.md'
 )
 
