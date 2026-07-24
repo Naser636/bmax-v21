@@ -49,3 +49,22 @@ next-env.d.ts
 # gate red (RootCauseEngine.isBookkeeping, src/runtime/root-cause-engine.ts).
 # Same rationale as /runtime/generated/ above; the file stays on disk, untracked.
 /runtime/mission-standard/history/
+
+# ODG Runtime security backups — kernel tarball + SHA-256 manifest emitted by the
+# secure-backup subsystem. MUST be preserved on disk (disaster-recovery), but is
+# binary/regenerated per run and must never be versioned. Kept on disk, untracked.
+/runtime/security/
+
+# ODG Runtime secure-backup RELEASE snapshots — a point-in-time kernel checksum +
+# git-head/git-status capture written by the secure-backup subsystem (SECURE_*),
+# distinct from the tracked engineering release records under runtime/releases/.
+# Generated backup snapshots; preserved on disk, never versioned.
+/runtime/releases/SECURE_*/
+
+# ODG Runtime report ARCHIVES — timestamped snapshots of reports that already live
+# (and stay tracked) under runtime/reports/. Regenerated on archival; not versioned.
+/runtime/reports/archive/
+
+# Ad-hoc scratch report output at the repo root (e.g. redirected command dumps).
+# Not part of the Runtime tree; kept on disk if present, never versioned.
+/rapport_complet.txt
