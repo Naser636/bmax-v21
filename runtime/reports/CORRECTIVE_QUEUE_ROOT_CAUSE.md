@@ -1,0 +1,103 @@
+# Root Cause Report + Patch Plan — Corrective-Mission Queue
+
+Mission: `SELF_ENGINEERING_RUNTIME_KERNEL`
+Scope: every corrective mission in `runtime/missions/pending/` that the Runtime cannot repair
+autonomously, with a demonstrated root cause and a minimal patch plan for each (mission criterion 10).
+
+All findings below are evidence-based (observed from the contract files and the mission ledger on
+2026-07-24). This report covers the **deferred** nominations only; the authorized corrective mission
+`FIX_CORRECTIVE_QUEUE_INTAKE` was qualified and released autonomously (see the ledger — proven,
+ARCHIVED — and `src/tests/corrective-queue-intake.test.ts`).
+
+---
+
+## Shared root cause (intake layer)
+
+The autonomous loop (`odg autonomy`) builds its work-list in
+`AutonomyRuntimeAdapter.readPlanState()`. Before this mission, that work-list was sourced **only**
+from `runtime/governance/ROADMAP.json`; nothing enumerated `runtime/missions/pending/`, so no
+corrective mission could ever be selected — the loop reported `PLAN_COMPLETE` with 0 cycles.
+
+**Repaired mechanism (minimal):** `readCorrectiveQueue()` now enumerates the pending queue and
+`readPlanState()` prepends the **authorized** corrective missions ahead of roadmap progress. A
+nomination is authorized — and therefore executable — only when all three hold:
+
+1. the pending record declares `status === "AUTHORIZED"` (the human / governance gate);
+2. a real Mission Contract exists at `runtime/missions/<mission>.json`;
+3. that contract declares at least one objective (the same guard the Mission Loader enforces).
+
+Every nomination below fails gate 1 (all are `PENDING_REPAIR`) **and** gate 2 (no `FIX_*.json`
+corrective contract exists). Deferral is therefore **correct**, not a bug: promoting any of them to
+`AUTHORIZED` and executing it without authoring the corrective contract would bypass
+`HUMAN_VALIDATION`. Each remains a human / governance decision, documented here.
+
+---
+
+## Per-mission root cause + patch plan
+
+### 1. `FIX_CLEAN_RUNTIME_WORKSPACE` → target `CLEAN_RUNTIME_WORKSPACE`
+- **Root cause:** the target contract declares `objective` (string) + `doneWhen`, not an
+  `objectives[]` array; the Mission Loader (`runtime/core/mission-loader.js`) rejects it with
+  "declares no objectives".
+- **Patch plan (minimal):** rewrite the target to
+  `objectives: [{ id, goal: <existing objective>, done_when: <existing doneWhen> }]`. Then author
+  `runtime/missions/FIX_CLEAN_RUNTIME_WORKSPACE.json` as the corrective contract and set the pending
+  record `status: "AUTHORIZED"`. The loop will then run it.
+- **Authorization:** human (contract shape change + authorization).
+
+### 2. `FIX_MASTER_PLAN_V1` → target `MASTER_PLAN_V1`
+- **Root cause:** `MASTER_PLAN_V1` is an **orchestration** contract (`roadmaps[]`, no `objectives`).
+  The pipeline has no roadmap-orchestration executor, and 5 of its 6 referenced roadmaps
+  (`ROADMAP_ARCHITECTURE_SCAN_V1`, `ROADMAP_TECHNICAL_DEBT_V1`, `ROADMAP_ENGINEERING_FACTORY_V1`,
+  `ROADMAP_PROVIDER_EXECUTION_V1`, `ROADMAP_KNOWLEDGE_UPDATE_V1`) have **no** mission contract.
+- **Patch plan (needs a design decision, so NOT auto-applied):**
+  - Option A — give `MASTER_PLAN_V1` executable `objectives`, one per roadmap, each resolving to a
+    real mission the autonomy loop already runs; author the 5 missing roadmap contracts.
+  - Option B — add a roadmap-orchestration capability that expands `roadmaps[]` into sub-missions
+    (larger; a new mechanism — deferred until the smaller options are ruled out).
+- **Authorization:** human (design decision + authoring 5 missing contracts).
+
+### 3. `FIX_PROVIDER_ENABLED_SMOKE_V1` → target `PROVIDER_ENABLED_SMOKE_V1`
+- **Root cause:** target has objectives but is an ENGINEERING mission
+  (`requiresEngineering` + `authorizedPaths`) that routes to the Claude Provider; the recorded
+  blocker is "Validation Engine failed" (not yet proven in the ledger).
+- **Patch plan:** author `FIX_PROVIDER_ENABLED_SMOKE_V1` as an ENGINEERING corrective contract with
+  `authorized_paths`, authorize it, and let the loop route it to the provider. Not deterministically
+  auto-repairable (an external, paid provider run is required).
+- **Authorization:** human (provider run has cost / external side effects).
+
+### 4. `FIX_RETIRE_LEGACY_RUNTIME` → target `RETIRE_LEGACY_RUNTIME`
+- **Root cause:** the target is a stub — `description` only, no `objectives`.
+- **Patch plan:** author objectives defining what "retire legacy runtime" concretely removes/keeps
+  and the `authorized_paths`; author the corrective contract; authorize.
+- **Authorization:** human (scope of retirement is a product decision).
+
+### 5 & 6. `FIX_RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack` / `FIX_RUNTIME_PROVIDER_REGISTRY_M4.pack`
+- **Root cause:** the "targets" are **evidence-pack artifacts**
+  (`{ evidencePackContractVersion, items, sealHash, complete }`), not mission contracts. The
+  nominations were generated by pointing the repair generator at a `.pack.json` evidence file as if
+  it were a mission — they can never load as missions.
+- **Patch plan:** **retract** both erroneous nominations (delete the two pending records). The
+  underlying M3/M4 provider work already has real contracts/evidence; no corrective mission is
+  warranted.
+- **Authorization:** human confirmation to retract (housekeeping, no repair mission).
+
+### 7. `FIX_UNIFY_RUNTIME_EXECUTION` → target `UNIFY_RUNTIME_EXECUTION`
+- **Root cause:** target has 4 objectives and is an ENGINEERING mission; the recorded blocker is
+  "Validation Engine failed" and it is not yet proven in the ledger.
+- **Patch plan:** author `FIX_UNIFY_RUNTIME_EXECUTION` as an ENGINEERING corrective contract with
+  `authorized_paths`, authorize it, and let the loop execute it (provider or local engineering).
+- **Authorization:** human (engineering scope + authorization).
+
+---
+
+## How to promote any deferred mission
+
+1. Fix / author the **target** contract so it declares real `objectives[]`.
+2. Author `runtime/missions/<FIX_NAME>.json` — the corrective Mission Contract (objectives,
+   `definition_of_done`, `completion`; add `authorized_paths` + `requires_engineering` if it edits
+   code).
+3. Set the pending record `status: "AUTHORIZED"`.
+4. Run `odg autonomy` — `readCorrectiveQueue()` folds it into the work-list, the frozen selector
+   nominates it ahead of roadmap progress, and the existing pipeline + Release Manager drive it to
+   RELEASE. No mechanism change is needed; the intake is already in place.

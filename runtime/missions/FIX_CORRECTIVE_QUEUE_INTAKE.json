@@ -1,0 +1,26 @@
+{
+  "mission": "FIX_CORRECTIVE_QUEUE_INTAKE",
+  "priority": "CRITICAL",
+  "mode": "AUDIT",
+  "description": "Authorized corrective mission proving the Runtime automatically qualifies and executes a corrective mission from runtime/missions/pending/ once it is authorized. Read-only (no code modification, no patch, no provider): the repaired mechanism is AutonomyRuntimeAdapter.readCorrectiveQueue, exercised end-to-end by the autonomy loop that selects and releases this mission ahead of roadmap progress.",
+  "objectives": [
+    {
+      "id": "CORRECTIVE_QUEUE_OBSERVED",
+      "goal": "Confirm the pending corrective queue is enumerated and this authorized mission is folded into the autonomy work-list.",
+      "done_when": ["Authorized corrective mission is selected by the autonomy loop before roadmap missions."]
+    },
+    {
+      "id": "CORRECTIVE_QUEUE_RELEASED",
+      "goal": "Drive the authorized corrective mission to RELEASE through the existing local pipeline and Release Manager.",
+      "done_when": ["Release Manager returns RELEASE.", "A proven ledger entry is recorded for this mission."]
+    }
+  ],
+  "definition_of_done": [
+    "The autonomy loop executed a corrective mission taken from the pending queue.",
+    "No source code modified (read-only mission)."
+  ],
+  "completion": [
+    "Corrective-queue intake is demonstrated by a proven ledger entry.",
+    "Release Manager decision is RELEASE."
+  ]
+}

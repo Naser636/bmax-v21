@@ -56,6 +56,9 @@ const ROADMAP_MANIFEST = "runtime/governance/ROADMAP.json";
 const MSTD_GENERATED = "runtime/mission-standard/generated";
 const PIPELINE = "runtime/bin/odg-run.js";
 const MISSIONS_DIR = "runtime/missions";
+// The corrective-mission queue: repair missions the Runtime proposes for itself, awaiting
+// authorization. A record here is a NOMINATION, never an authorization to run (see readCorrectiveQueue).
+const PENDING_DIR = `${MISSIONS_DIR}/pending`;
 const VERIFIER = "runtime/bin/odg-verify.js";
 
 // Pinned provider defaults (contract §2). ODG owns these; the adapter never lets Claude choose them.
@@ -150,7 +153,79 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       new Set([...ledgerMissions, ...this.archivedThisSession]),
     );
 
+    // Fold the AUTHORIZED corrective-mission queue into the work-list AHEAD of roadmap progress:
+    // a self-proposed repair, once authorized, is executed before the Runtime advances the roadmap.
+    // The frozen selectNextMission is untouched — it still returns "the first work-list entry that is
+    // missing and not completed"; we only enrich its INPUT with the corrective ids (deduped, order
+    // preserved). Unauthorized nominations are NOT added here, so they can never silently run — they
+    // stay a human/RootCauseEngine concern (never bypass HUMAN_VALIDATION). Prepending to BOTH lists
+    // keeps a corrective id both a candidate (masterPlanObjectives) and "missing" (missingCapabilities)
+    // so the selector nominates it exactly as it does a roadmap mission.
+    const corrective = this.readCorrectiveQueue().authorized;
+    if (corrective.length > 0) {
+      masterPlanObjectives = Array.from(new Set([...corrective, ...masterPlanObjectives]));
+      missingCapabilities = Array.from(new Set([...corrective, ...missingCapabilities]));
+    }
+
     return { masterPlanObjectives, missingCapabilities, completedMissions };
+  }
+
+  /**
+   * Enumerate the corrective-mission queue (runtime/missions/pending/*.json) and split it into
+   * missions AUTHORIZED to run autonomously vs. DEFERRED (awaiting human authoring/authorization).
+   *
+   * A pending record is only a NOMINATION. It becomes an authorized, executable corrective mission —
+   * and is folded into the autonomous work-list by readPlanState — ONLY when all three hold, so an
+   * unauthored repair marker can never silently run (never bypass HUMAN_VALIDATION / never disable a
+   * guard):
+   *   1. the record explicitly declares `status === "AUTHORIZED"` (the human/governance gate);
+   *   2. a real Mission Contract exists at runtime/missions/<mission>.json;
+   *   3. that contract declares at least one objective (the SAME guard the Mission Loader enforces),
+   *      so an authorized-but-empty contract is still refused rather than run vacuously.
+   * Every other record is DEFERRED with a concrete reason — a real blocker for a human / the
+   * RootCauseEngine, never executed here. Deterministic: filenames are read in sorted order and the
+   * result is a pure function of the queue's contents (no timestamp, no randomness).
+   */
+  readCorrectiveQueue(): {
+    authorized: string[];
+    deferred: Array<{ mission: string; reason: string }>;
+  } {
+    const authorized: string[] = [];
+    const deferred: Array<{ mission: string; reason: string }> = [];
+    let files: string[];
+    try {
+      files = fs
+        .readdirSync(this.resolve(PENDING_DIR))
+        .filter((f) => f.endsWith(".json"))
+        .sort();
+    } catch {
+      return { authorized, deferred };
+    }
+    for (const file of files) {
+      const record = this.readJson<{ mission?: string; status?: string }>(`${PENDING_DIR}/${file}`);
+      const mission = record?.mission ?? file.replace(/\.json$/, "");
+      if (record?.status !== "AUTHORIZED") {
+        deferred.push({
+          mission,
+          reason: `not authorized (status=${record?.status ?? "MISSING"}); a human/governance decision is required before it can run`,
+        });
+        continue;
+      }
+      const spec = this.readMissionJson(mission);
+      if (!spec) {
+        deferred.push({
+          mission,
+          reason: `authorized but has no Mission Contract at ${MISSIONS_DIR}/${mission}.json — author the contract before it can execute`,
+        });
+        continue;
+      }
+      if (this.providerObjectives(mission, spec).length === 0) {
+        deferred.push({ mission, reason: `contract declares no objectives (Mission Loader guard)` });
+        continue;
+      }
+      authorized.push(mission);
+    }
+    return { authorized, deferred };
   }
 
   /**
