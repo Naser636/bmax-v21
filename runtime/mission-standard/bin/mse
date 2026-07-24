@@ -35,28 +35,26 @@ echo "======================================"
 
 echo "[1/5] PRE-FLIGHT"
 
-BUILD_OK=false
-TSC_OK=false
-case "$MISSION" in
-  END_SESSION_*|AUDIT_*|READ_ONLY_*|S*)
-    npx tsc --noEmit >/dev/null
-    TSC_OK=true
-    ;;
-  *)
-    npm run build >/dev/null
-    BUILD_OK=true
-    npx tsc --noEmit >/dev/null
-    TSC_OK=true
-    ;;
-esac
-
-# Record the pre-flight verdict as machine-readable evidence for the Validation Engine's build/type
-# capability probes. set -e guarantees we only reach the *_OK=true assignments when the command
-# actually passed, so this file always reflects the real pre-flight result. Written under the
-# git-ignored runtime/generated tree, so it never affects the dirty-tree governance checks below.
+# Verification is owned by ONE canonical pipeline: runtime/bin/odg-verify.js. It is the single
+# source of truth for build / typescript / git evidence and the ONLY writer of
+# runtime/generated/runtime-verify.json (the file the Validation Engine reads). The pre-flight no
+# longer re-implements build/tsc — doing so used to WRITE A SECOND, DIVERGING runtime-verify.json
+# (its mission-name `case` classified engineering missions like SELF_ENGINEERING_* as read-only and
+# recorded build=false, silently overriding the canonical verifier). It now INVOKES the canonical
+# verifier and reads back its verdict. runtime-verify.json lives under the git-ignored
+# runtime/generated tree, so it never affects the dirty-tree governance checks below.
 mkdir -p runtime/generated
-printf '{\n  "build": %s,\n  "typescript": %s,\n  "source": "mse pre-flight",\n  "mission": "%s"\n}\n' \
-  "$BUILD_OK" "$TSC_OK" "$MISSION" > runtime/generated/runtime-verify.json
+node runtime/bin/odg-verify.js "$MISSION"
+
+# Fail fast if the canonical gates are red so the mission halts before the pipeline runs (the
+# verifier itself never exits non-zero; it records the verdict, we gate on it here).
+BUILD_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').build===true))}catch(e){process.stdout.write('false')}")
+TSC_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').typescript===true))}catch(e){process.stdout.write('false')}")
+
+if [ "$BUILD_OK" != "true" ] || [ "$TSC_OK" != "true" ]; then
+  echo "STOP: canonical verifier reported failing gates (build=${BUILD_OK}, typescript=${TSC_OK})."
+  exit 1
+fi
 
 # Ignore ONLY the Runtime's own mission artifacts (written by a previous
 # mission's [4/5] GENERATE step) so successive missions chain without manual
