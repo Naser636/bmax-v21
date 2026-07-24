@@ -47,6 +47,8 @@ import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 
 const GENERATED = "runtime/generated";
 const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
+const PATCH_PLAN = `${GENERATED}/patch-plan.json`;
+const PATCH_EXECUTION = `${GENERATED}/patch-execution.json`;
 const MISSION_REPORT = `${GENERATED}/mission-report.json`;
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
@@ -60,6 +62,10 @@ const MISSIONS_DIR = "runtime/missions";
 // authorization. A record here is a NOMINATION, never an authorization to run (see readCorrectiveQueue).
 const PENDING_DIR = `${MISSIONS_DIR}/pending`;
 const VERIFIER = "runtime/bin/odg-verify.js";
+// The SOLE author of the canonical mission verdict (validated/status). The provider path feeds it
+// real, materialized plan/patch/execution evidence and lets it re-verify — it never writes the
+// verdict itself (design: exactly one component writes validated/status).
+const VALIDATION_ENGINE = "runtime/core/validation-engine.js";
 
 // Pinned provider defaults (contract §2). ODG owns these; the adapter never lets Claude choose them.
 const PROVIDER_MODEL = "claude-opus-4-8";
@@ -334,8 +340,73 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // runs it did before — the Patch Engine makes the seam explicit without changing behaviour.
     const receipt = this.patchEngine.receive(mission, outcome);
     this.patchReceipts.set(mission, receipt);
-    if (receipt.readyForValidation) this.refreshVerifyEvidence();
+    if (receipt.readyForValidation) {
+      this.refreshVerifyEvidence();
+      // The provider path bypasses odg-run.js, so the pipeline stages that write the canonical
+      // mission-scoped runtime/generated/mission-report.json never run — leaving documentableArtifacts
+      // with nothing and buildDocumentationProof returning null (Release gate documentationProofPresent
+      // = false). Materialize the SAME plan/patch/execution evidence the pipeline's earlier stages
+      // produce, from the provider's REAL receipt (mission id + ground-truth changedFiles), then let the
+      // Validation Engine — the SOLE author of validated/status — re-verify and write the report. The
+      // verdict is NOT asserted here: the Validation Engine still computes it from real evidence
+      // (working-tree changes in scope + build/tsc gates), so an unproven mission still yields BLOCKED.
+      this.writeProviderValidationEvidence(mission, spec, receipt);
+    }
     return toPipelineOutcome(outcome);
+  }
+
+  /**
+   * Provider path only: reconstruct the plan/patch/execution artifacts the local pipeline's earlier
+   * stages write, from the provider's real receipt, then run the Validation Engine so it authors the
+   * canonical mission-scoped runtime/generated/mission-report.json. Mission-plan/patch-plan/execution
+   * mirror the shapes runtime/core/validation-engine.js consumes; the engineering gate it applies is
+   * checked against the REAL working tree, and build/tsc come from the just-refreshed verifier — no
+   * verdict is fabricated here.
+   */
+  private writeProviderValidationEvidence(
+    mission: string,
+    spec: RawMission | null,
+    receipt: PatchReceipt,
+  ): void {
+    // The Validation Engine is the sole author of the verdict. If it is absent (e.g. a sandboxed
+    // harness that supplies its own canonical mission-report.json), leave the existing report
+    // untouched rather than materializing half of the pipeline's inputs. Mirrors refreshVerifyEvidence.
+    if (!fs.existsSync(this.resolve(VALIDATION_ENGINE))) return;
+
+    const objectives = this.providerObjectives(mission, spec);
+    const missionId = spec?.mission ?? mission;
+
+    const plan = {
+      mission: missionId,
+      mode: typeof spec?.mode === "string" ? spec.mode : "IMPLEMENT",
+      requiresEngineering: spec?.requiresEngineering === true,
+      authorizedPaths: this.authorizedPaths(spec),
+      objectives: objectives.map((o) => ({ id: o.id, goal: o.goal, done_when: o.done_when })),
+      definitionOfDone: this.strings(spec?.definition_of_done) ?? [],
+    };
+    const patchPlan = {
+      mission: missionId,
+      patches: objectives.map((o) => ({ objective: o.id, files: receipt.changedFiles })),
+    };
+    const execution = {
+      mission: missionId,
+      executed: objectives.map((o) => ({ action: o.id, status: "APPLIED" })),
+    };
+
+    this.writeJson(MISSION_PLAN, plan);
+    this.writeJson(PATCH_PLAN, patchPlan);
+    this.writeJson(PATCH_EXECUTION, execution);
+
+    // Sole author of the verdict — writes runtime/generated/mission-report.json from real evidence.
+    // It exits non-zero on a BLOCKED verdict but still writes the (unvalidated) report first, so this
+    // is best-effort: a genuinely unproven mission leaves a non-SUCCESS report and never releases.
+    spawnSync("node", [VALIDATION_ENGINE, mission], { cwd: this.cwd, stdio: "inherit" });
+  }
+
+  private writeJson(relPath: string, value: unknown): void {
+    const abs = this.resolve(relPath);
+    fs.mkdirSync(abs.slice(0, abs.lastIndexOf("/")), { recursive: true });
+    fs.writeFileSync(abs, JSON.stringify(value, null, 2));
   }
 
   private getProvider(): EngineeringProviderPort {
