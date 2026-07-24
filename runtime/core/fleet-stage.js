@@ -32,12 +32,39 @@ function falsy(v) {
   return ["off", "0", "false", "no"].includes(String(v).trim().toLowerCase());
 }
 
-function resolveConfig() {
+// Read the per-mission Fleet declaration from its contract, if any. A mission may opt IN to the
+// Fleet exchange directly in its contract (self-describing, reproducible, no env var needed):
+//   "fleet": true                              → enable, use configured agent
+//   "fleet": { "enabled": true }               → enable, use configured agent
+//   "fleet": { "enabled": true, "deterministic": true } → enable + offline deterministic agent
+// Absent → no opinion (leaves the default OFF posture untouched for every legacy mission).
+function readContractFleet(mission) {
+  const spec = envelope.readJsonSafe(`runtime/missions/${mission}.json`);
+  if (!spec || spec.fleet === undefined) return null;
+  if (spec.fleet === true) return { enabled: true, deterministic: false };
+  if (spec.fleet && typeof spec.fleet === "object") {
+    return {
+      enabled: Boolean(spec.fleet.enabled),
+      deterministic: Boolean(spec.fleet.deterministic)
+    };
+  }
+  return null;
+}
+
+function resolveConfig(mission) {
   const file = envelope.readJsonSafe(CONFIG_FILE) || {};
   const cfg = {
     enabled: Boolean(file.enabled), // default false
-    failOpen: file.failOpen === undefined ? true : Boolean(file.failOpen)
+    failOpen: file.failOpen === undefined ? true : Boolean(file.failOpen),
+    deterministic: false
   };
+
+  // Precedence: ODG_FLEET env > mission contract > fleet-pipeline.json > built-in default.
+  const contract = mission ? readContractFleet(mission) : null;
+  if (contract) {
+    cfg.enabled = contract.enabled;
+    cfg.deterministic = contract.deterministic;
+  }
 
   const env = process.env.ODG_FLEET;
   if (env !== undefined && env !== "") {
@@ -67,7 +94,7 @@ function finish(cfg, ok, reason) {
 
 function run() {
   const mission = process.argv[2] || "BUILD_RUNTIME";
-  const cfg = resolveConfig();
+  const cfg = resolveConfig(mission);
 
   console.log("======================================");
   console.log("FLEET STAGE");
@@ -79,6 +106,14 @@ function run() {
     console.log("Fleet: DISABLED (skipped)");
     console.log("======================================");
     process.exit(0);
+  }
+
+  // Deterministic mode drives the bridge's built-in offline agent (FLEET_BRIDGE_MOCK) so the full
+  // Dispatcher → Bridge → Collector exchange completes reproducibly, with no external LLM CLI and no
+  // wall-clock/network non-determinism in the OUTCOME. Reuses the existing mechanism unchanged.
+  if (cfg.deterministic && !process.env.FLEET_BRIDGE_MOCK) {
+    process.env.FLEET_BRIDGE_MOCK = "1";
+    console.log("Agent    : offline-deterministic (built-in)");
   }
 
   console.log("Policy   :", cfg.failOpen ? "fail-open" : "fail-closed");

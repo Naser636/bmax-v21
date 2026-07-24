@@ -65,11 +65,18 @@ const objectives = rawObjectives.map((o, i) => {
     if (typeof o === "string") {
         return { id: `${slug(mission, "OBJ")}_${i + 1}`, goal: o, done_when: [] };
     }
-    return {
+    const normalized = {
         id: typeof o.id === "string" ? o.id : `${slug(mission, "OBJ")}_${i + 1}`,
         goal: typeof o.goal === "string" ? o.goal : "",
         done_when: asStrings(o.done_when),
     };
+    // Optional concrete edit payload for engineering objectives. Preserved verbatim so the
+    // Patch Engine can turn a symbolic objective into a real, file-modifying patch. Absent on
+    // legacy/read-only objectives, which stay symbolic (backward compatible).
+    if (o.patch && typeof o.patch === "object") {
+        normalized.patch = o.patch;
+    }
+    return normalized;
 });
 
 if (objectives.length === 0) {
@@ -96,6 +103,17 @@ const plan = {
     completion: asStrings(spec.completion),
     status: "READY_FOR_EXECUTION",
 };
+
+// Optional machine-checkable capability probes (spec.verify). Each entry is
+// { capability, evidence } where `evidence` names a probe the Validation Engine knows how to run
+// against real generated artifacts. Absent on legacy missions ⇒ the Validation Engine adds no extra
+// gate, so behaviour is unchanged. Present ⇒ the mission's Definition of Done becomes genuinely
+// verified rather than merely asserted.
+if (Array.isArray(spec.verify)) {
+    plan.verify = spec.verify
+        .filter((v) => v && typeof v === "object" && typeof v.evidence === "string")
+        .map((v) => ({ capability: String(v.capability || v.evidence), evidence: v.evidence }));
+}
 
 fs.mkdirSync("runtime/generated", { recursive: true });
 fs.writeFileSync(

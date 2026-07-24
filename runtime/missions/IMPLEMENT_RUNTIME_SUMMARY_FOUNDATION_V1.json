@@ -1,0 +1,18 @@
+{
+  "id": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+  "priority": "HIGH",
+  "mode": "IMPLEMENT",
+  "objective": "Extend the Runtime architecture without breaking existing behavior.",
+  "objectives": [
+    "Extend the Runtime architecture without breaking existing behavior."
+  ],
+  "goals": [
+    "Produce a complete Runtime Summary Foundation capability.",
+    "Implement every missing capability required for this mission.",
+    "Generate every required artifact, evidence, reports and registry updates.",
+    "Execute the complete engineering workflow until verification.",
+    "Preserve existing architecture and behavior.",
+    "Reuse existing capabilities whenever possible.",
+    "Produce a validated implementation ready for the next mission."
+  ]
+}

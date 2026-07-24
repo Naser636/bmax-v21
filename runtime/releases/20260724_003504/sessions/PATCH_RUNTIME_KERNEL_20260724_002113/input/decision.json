@@ -1,0 +1,62 @@
+{
+  "mission": "PATCH_RUNTIME_KERNEL",
+  "mode": "IMPLEMENT",
+  "status": "READY",
+  "priority": "CRITICAL",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/",
+    "src/",
+    "foundation/"
+  ],
+  "actions": [
+    "PATCH_RUNTIME_KERNEL_1",
+    "PATCH_RUNTIME_KERNEL_2",
+    "PATCH_RUNTIME_KERNEL_3",
+    "PATCH_RUNTIME_KERNEL_4",
+    "PATCH_RUNTIME_KERNEL_5",
+    "PATCH_RUNTIME_KERNEL_6"
+  ],
+  "objectives": [
+    {
+      "id": "PATCH_RUNTIME_KERNEL_1",
+      "goal": "Determine whether the Runtime Kernel can modify itself.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_2",
+      "goal": "If self-modification is unavailable, identify the exact missing kernel capability.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_3",
+      "goal": "Generate a concrete Patch Plan.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_4",
+      "goal": "Apply the Patch Plan if supported.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_5",
+      "goal": "Rebuild and revalidate.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_6",
+      "goal": "If repair is impossible, produce explicit evidence describing the blocking kernel capability.",
+      "done_when": []
+    }
+  ],
+  "metrics": {
+    "sourceFiles": 684,
+    "classes": 160,
+    "imports": 943,
+    "exports": 692,
+    "todos": 16,
+    "fixmes": 15,
+    "relativeImports": 181,
+    "packageImports": 777
+  }
+}

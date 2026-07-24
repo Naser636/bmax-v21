@@ -1,0 +1,107 @@
+{
+  "id":"ROADMAP_PHASE_4_FLEET_AND_PROVIDERS",
+  "priority":"HIGH",
+  "mode":"IMPLEMENT",
+
+  "fleet":{ "enabled":true, "deterministic":true },
+
+  "verify":[
+    { "capability":"Fleet exchange (Dispatcher → Bridge → Collector)", "evidence":"fleet-request-validated" },
+    { "capability":"Build gate", "evidence":"build-green" },
+    { "capability":"TypeScript gate", "evidence":"typescript-green" }
+  ],
+
+  "objective":"Complete the Fleet and Capability Provider architecture until the Runtime can orchestrate multiple providers in a governed, resilient and observable manner.",
+
+  "executionPolicy":{
+    "continuous":true,
+    "autoRetry":true,
+    "reuseBeforeCreate":true,
+    "verifyBeforeModify":true,
+    "stopOnlyWhenBlocked":true,
+    "generateEvidence":true,
+    "generateFinalReport":true
+  },
+
+  "objectives":[
+
+    "Audit Fleet architecture.",
+
+    "Verify Capability Registry.",
+
+    "Verify Provider Registry.",
+
+    "Verify Provider Bridge.",
+
+    "Verify Provider Adapters.",
+
+    "Verify Dispatcher.",
+
+    "Verify Mailbox.",
+
+    "Verify Collector.",
+
+    "Verify Retry Strategy.",
+
+    "Verify Timeout Strategy.",
+
+    "Verify Correlation IDs.",
+
+    "Verify Execution Envelope.",
+
+    "Verify Provider Policies.",
+
+    "Verify Cost Monitoring.",
+
+    "Verify Provider Failover.",
+
+    "Verify Fleet Diagnostics.",
+
+    "Reuse existing provider implementations whenever possible.",
+
+    "Repair only missing or defective provider capabilities.",
+
+    "Never replace validated implementations.",
+
+    "Run Build after every engineering action.",
+
+    "Run TypeScript validation after every engineering action.",
+
+    "Run Runtime validation after every engineering action.",
+
+    "Continue until every Fleet capability is validated.",
+
+    "If a blocker cannot be solved autonomously, generate a complete evidence-based report in runtime/reports and continue with the remaining objectives."
+  ],
+
+  "definitionOfDone":[
+
+    "Fleet validated.",
+
+    "Capability Registry finalized.",
+
+    "Provider Registry finalized.",
+
+    "Dispatcher operational.",
+
+    "Mailbox operational.",
+
+    "Collector operational.",
+
+    "Provider policies validated.",
+
+    "Retry strategy validated.",
+
+    "Failover validated.",
+
+    "Diagnostics validated.",
+
+    "Generated artefacts regenerated.",
+
+    "Repository coherent.",
+
+    "Mission archived.",
+
+    "Final report generated."
+  ]
+}

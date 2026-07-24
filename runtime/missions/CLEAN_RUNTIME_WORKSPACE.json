@@ -1,0 +1,14 @@
+{
+  "mission":"CLEAN_RUNTIME_WORKSPACE",
+  "version":"1.0",
+  "status":"DRAFT",
+  "mode":"ENGINEERING",
+  "priority":"NORMAL",
+  "authorizedPaths":["runtime/**"],
+  "objective":"CLEAN_RUNTIME_WORKSPACE",
+  "doneWhen":[
+    "Mission completed successfully",
+    "Evidence generated",
+    "Report generated"
+  ]
+}

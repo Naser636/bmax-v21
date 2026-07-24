@@ -1,0 +1,27 @@
+{
+  "id": "AUDIT_RUNTIME_STATE_MACHINE",
+  "priority": "CRITICAL",
+  "mode": "IMPLEMENT",
+  "objective": "Audit, repair and finalize the Runtime State Machine using repository evidence.",
+  "objectives": [
+    "Discover, using repository evidence only, why the Mission Interpreter does not fully honor mission priority and mode.",
+    "Discover why the Mission Ledger always remains in CREATED despite successful validation.",
+    "Locate every Runtime component responsible for mission state transitions.",
+    "Verify whether the expected Runtime state machine exists and whether it is actually invoked.",
+    "If the required logic exists but is not executed, identify the root cause and repair it.",
+    "If the required logic does not exist, implement it using the current Runtime architecture without breaking compatibility.",
+    "Re-execute the complete Runtime pipeline after every repair.",
+    "Repeat diagnosis and execution until the Runtime reaches a consistent validated state or no further autonomous progress is possible.",
+    "Generate complete evidence for every conclusion, modification and remaining blocker.",
+    "Leave the repository in a coherent state with updated artefacts, reports, ledger and evidence."
+  ],
+  "definitionOfDone": [
+    "Mission Interpreter uses the mission contract consistently.",
+    "Mission Ledger reaches its correct final state.",
+    "Runtime state transitions are evidenced.",
+    "Capability Registry is consistent.",
+    "Validation succeeds.",
+    "Repository integrity preserved.",
+    "Mission archived or remaining blockers fully justified with evidence."
+  ]
+}

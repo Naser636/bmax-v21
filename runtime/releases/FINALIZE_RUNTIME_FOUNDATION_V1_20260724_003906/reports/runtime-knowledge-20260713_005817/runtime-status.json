@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-07-13T00:55:02.834Z",
+  "project": {
+    "name": "ODG",
+    "runtime": "Business Decision Runtime",
+    "sprint": 13,
+    "block": "F13.02"
+  },
+  "runtime": "READY",
+  "foundation": "FROZEN",
+  "nextMission": "Sprint13 Complete",
+  "inventory": {
+    "engines": 41,
+    "services": 34,
+    "registries": 34,
+    "contexts": 7,
+    "missions": 8,
+    "orchestrators": 11,
+    "events": 17,
+    "contracts": 25
+  }
+}

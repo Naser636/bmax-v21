@@ -1,0 +1,17 @@
+{
+  "id":"BOOTSTRAP_RUNTIME_ENGINEERING",
+  "priority":"CRITICAL",
+  "mode":"IMPLEMENT",
+  "objective":"Bootstrap the Runtime engineering capability itself.",
+  "objectives":[
+    "Verify whether the Runtime can modify its own kernel.",
+    "If autonomous kernel modification is unavailable, identify the exact missing capability.",
+    "Generate an Engineering Backlog describing the minimum implementation required.",
+    "Generate an executable Patch Plan.",
+    "If the engineering provider exists, invoke it and apply the generated patch.",
+    "Rebuild, revalidate and repeat until completion or until a blocking capability is formally evidenced."
+  ],
+  "definitionOfDone":[
+    "Runtime Kernel repaired OR blocking capability formally evidenced with an engineering backlog and patch plan."
+  ]
+}

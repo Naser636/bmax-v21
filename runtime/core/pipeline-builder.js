@@ -37,7 +37,13 @@ pipeline.push(
     ["Patch Engine","runtime/core/patch-engine.js"],
     ["Patch Executor","runtime/core/patch-executor.js"],
     ["Validation Engine","runtime/core/validation-engine.js"],
-    ["Mission Ledger","runtime/core/mission-ledger.js"]
+    // Governance lifecycle advances AFTER validation (consumes mission-report.json) and BEFORE the
+    // Ledger, so the Ledger records the real achieved state instead of a hardcoded "CREATED".
+    ["Mission Lifecycle","runtime/core/mission-lifecycle.js"],
+    ["Mission Ledger","runtime/core/mission-ledger.js"],
+    // Final report is the last stage: it summarises the proven evidence for the run (DoD: "Final
+    // report generated"). Non-blocking by design.
+    ["Final Report","runtime/core/final-report.js"]
 );
 
 // Fleet Bridge stage. pipeline-builder ONLY defines its position; whether it

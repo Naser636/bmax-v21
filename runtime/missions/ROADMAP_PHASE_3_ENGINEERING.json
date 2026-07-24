@@ -1,0 +1,97 @@
+{
+  "id":"ROADMAP_PHASE_3_ENGINEERING",
+  "priority":"CRITICAL",
+  "mode":"IMPLEMENT",
+
+  "objective":"Complete the Engineering Runtime until it can autonomously analyse, plan, patch, validate and archive engineering missions.",
+
+  "executionPolicy":{
+    "continuous":true,
+    "autoRetry":true,
+    "reuseBeforeCreate":true,
+    "verifyBeforeModify":true,
+    "stopOnlyWhenBlocked":true,
+    "generateEvidence":true,
+    "generateFinalReport":true
+  },
+
+  "objectives":[
+
+    "Audit the complete Engineering Runtime.",
+
+    "Verify Knowledge Engine.",
+
+    "Verify Repository Discovery.",
+
+    "Verify Architecture Discovery.",
+
+    "Verify Dependency Graph.",
+
+    "Verify Planning Engine.",
+
+    "Verify Decision Engine.",
+
+    "Verify Patch Engine.",
+
+    "Verify Patch Executor.",
+
+    "Verify Validation Engine.",
+
+    "Verify Evidence Manager.",
+
+    "Verify Release Manager.",
+
+    "Verify Workspace Cleaner.",
+
+    "Verify Engineering Reports.",
+
+    "Repair only missing or defective engineering capabilities.",
+
+    "Never replace an existing validated implementation.",
+
+    "Always reuse existing components before creating new ones.",
+
+    "After every engineering correction rebuild generated artefacts.",
+
+    "Run Build after every correction.",
+
+    "Run TypeScript validation after every correction.",
+
+    "Run Runtime validation after every correction.",
+
+    "Repeat the complete engineering cycle until every objective is validated.",
+
+    "If autonomous completion is impossible generate a complete evidence-based report in runtime/reports and continue with the remaining objectives."
+  ],
+
+  "definitionOfDone":[
+
+    "Knowledge Engine validated.",
+
+    "Planning Engine validated.",
+
+    "Decision Engine validated.",
+
+    "Patch Engine validated.",
+
+    "Patch Executor validated.",
+
+    "Validation Engine validated.",
+
+    "Evidence Manager validated.",
+
+    "Release Manager validated.",
+
+    "Workspace Cleaner validated.",
+
+    "Engineering reports generated.",
+
+    "Repository coherent.",
+
+    "Generated artefacts regenerated.",
+
+    "Mission archived.",
+
+    "Final engineering report generated."
+  ]
+}

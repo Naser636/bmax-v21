@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const { authorizeMission } = require("./governance-kernel");
+const { computeLifecycle, markArchived } = require("./mission-lifecycle");
 
 const LEDGER_FILE = "runtime/generated/mission-ledger.json";
 
@@ -31,12 +32,27 @@ function recordMission(mission) {
   const plan = readJsonSafe("runtime/generated/mission-plan.json") || {};
   const context = readJsonSafe("runtime/generated/runtime-context.json");
 
+  // Governance lifecycle: advance the state machine from evidence, then archive (recording a proven
+  // mission in this immutable ledger IS its archival). The recorded `state` is therefore the REAL
+  // achieved governance state — no longer hardcoded to "CREATED". markArchived is a no-op unless the
+  // lifecycle reached RELEASED and governance authorizes RELEASED → ARCHIVED.
+  let lifecycle;
+  try {
+    computeLifecycle(mission);
+    lifecycle = markArchived(mission);
+  } catch (e) {
+    lifecycle = null;
+    console.warn("[MissionLedger] Lifecycle unavailable (recording CREATED):", e.message);
+  }
+
   const entry = {
     recordedAt: new Date().toISOString(),
     mission: plan.mission || mission,
-    state: governance.currentState,
+    state: lifecycle ? lifecycle.achieved : governance.currentState,
     authorized: governance.authorized,
     nextStates: governance.nextStates,
+    lifecyclePath: lifecycle ? lifecycle.path : undefined,
+    archived: lifecycle ? lifecycle.archived === true : undefined,
     constitutionVersion: governance.constitutionVersion,
     policyVersion: governance.policyVersion,
     strategy: governance.strategy,

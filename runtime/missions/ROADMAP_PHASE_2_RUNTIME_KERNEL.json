@@ -1,0 +1,85 @@
+{
+  "id":"ROADMAP_PHASE_2_RUNTIME_KERNEL",
+  "priority":"CRITICAL",
+  "mode":"IMPLEMENT",
+
+  "objective":"Complete the Runtime Kernel until it becomes deterministic, autonomous, resilient and capable of executing engineering missions end-to-end.",
+
+  "executionPolicy":{
+    "continuous":true,
+    "autoRetry":true,
+    "reuseBeforeCreate":true,
+    "verifyBeforeModify":true,
+    "stopOnlyWhenBlocked":true,
+    "generateEvidence":true,
+    "generateFinalReport":true
+  },
+
+  "objectives":[
+
+    "Audit every Runtime Kernel component.",
+
+    "Verify Scheduler implementation.",
+
+    "Verify Mission Queue implementation.",
+
+    "Verify State Manager.",
+
+    "Verify Runtime Context generation.",
+
+    "Verify Checkpoint Store.",
+
+    "Verify Recovery Engine.",
+
+    "Verify Execution Sandbox.",
+
+    "Verify Event Ledger.",
+
+    "Verify Runtime Host Supervisor.",
+
+    "Repair only missing or defective Runtime capabilities.",
+
+    "Never replace an existing validated implementation.",
+
+    "Run Build after every engineering action.",
+
+    "Run TypeScript validation after every engineering action.",
+
+    "Run Runtime validation after every engineering action.",
+
+    "Restart the complete mission automatically after every successful repair.",
+
+    "Continue until every Runtime Kernel capability is validated.",
+
+    "If a blocker cannot be solved autonomously, generate a complete evidence-based report in runtime/reports and continue with the next objective."
+  ],
+
+  "definitionOfDone":[
+
+    "Scheduler validated.",
+
+    "Mission Queue validated.",
+
+    "State Manager validated.",
+
+    "Checkpoint Store validated.",
+
+    "Recovery Engine validated.",
+
+    "Execution Sandbox validated.",
+
+    "Runtime Host Supervisor validated.",
+
+    "Runtime deterministic.",
+
+    "Runtime resilient.",
+
+    "Runtime verification successful.",
+
+    "Generated artefacts regenerated.",
+
+    "Mission archived.",
+
+    "Final report generated."
+  ]
+}

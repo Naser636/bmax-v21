@@ -35,15 +35,28 @@ echo "======================================"
 
 echo "[1/5] PRE-FLIGHT"
 
+BUILD_OK=false
+TSC_OK=false
 case "$MISSION" in
   END_SESSION_*|AUDIT_*|READ_ONLY_*|S*)
     npx tsc --noEmit >/dev/null
+    TSC_OK=true
     ;;
   *)
     npm run build >/dev/null
+    BUILD_OK=true
     npx tsc --noEmit >/dev/null
+    TSC_OK=true
     ;;
 esac
+
+# Record the pre-flight verdict as machine-readable evidence for the Validation Engine's build/type
+# capability probes. set -e guarantees we only reach the *_OK=true assignments when the command
+# actually passed, so this file always reflects the real pre-flight result. Written under the
+# git-ignored runtime/generated tree, so it never affects the dirty-tree governance checks below.
+mkdir -p runtime/generated
+printf '{\n  "build": %s,\n  "typescript": %s,\n  "source": "mse pre-flight",\n  "mission": "%s"\n}\n' \
+  "$BUILD_OK" "$TSC_OK" "$MISSION" > runtime/generated/runtime-verify.json
 
 # Ignore ONLY the Runtime's own mission artifacts (written by a previous
 # mission's [4/5] GENERATE step) so successive missions chain without manual

@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-07-12T11:38:22.871Z",
+  "count": 7,
+  "missions": [
+    {
+      "id": "PREFLIGHT",
+      "name": "Repository Preflight",
+      "status": "READY"
+    },
+    {
+      "id": "RUNTIME_INTEGRATION",
+      "name": "Runtime Integration Audit",
+      "status": "READY"
+    },
+    {
+      "id": "RUNTIME_FUSION",
+      "name": "Runtime Fusion Matrix",
+      "status": "READY"
+    },
+    {
+      "id": "REPOSITORY_INTELLIGENCE",
+      "name": "Repository Intelligence",
+      "status": "READY"
+    },
+    {
+      "id": "BUILD_PROJECT_CONTEXT",
+      "name": "Project Context",
+      "status": "READY"
+    },
+    {
+      "id": "VERIFY_RUNTIME",
+      "name": "Runtime Verify",
+      "status": "READY"
+    },
+    {
+      "id": "FREEZE_RUNTIME",
+      "name": "Runtime Freeze",
+      "status": "READY"
+    }
+  ]
+}

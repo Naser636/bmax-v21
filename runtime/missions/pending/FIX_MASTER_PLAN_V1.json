@@ -1,0 +1,8 @@
+{
+  "mission":"FIX_MASTER_PLAN_V1",
+  "depends_on":"MASTER_PLAN_V1",
+  "reason":"mission contract runtime/missions/MASTER_PLAN_V1.json declares no objectives.",
+  "priority":"CRITICAL",
+  "generated_by":"ODG",
+  "status":"PENDING_REPAIR"
+}

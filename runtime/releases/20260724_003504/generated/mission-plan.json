@@ -1,0 +1,48 @@
+{
+  "mission": "PATCH_RUNTIME_KERNEL",
+  "source": "runtime/missions/PATCH_RUNTIME_KERNEL.json",
+  "priority": "CRITICAL",
+  "mode": "IMPLEMENT",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/",
+    "src/",
+    "foundation/"
+  ],
+  "objectives": [
+    {
+      "id": "PATCH_RUNTIME_KERNEL_1",
+      "goal": "Determine whether the Runtime Kernel can modify itself.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_2",
+      "goal": "If self-modification is unavailable, identify the exact missing kernel capability.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_3",
+      "goal": "Generate a concrete Patch Plan.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_4",
+      "goal": "Apply the Patch Plan if supported.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_5",
+      "goal": "Rebuild and revalidate.",
+      "done_when": []
+    },
+    {
+      "id": "PATCH_RUNTIME_KERNEL_6",
+      "goal": "If repair is impossible, produce explicit evidence describing the blocking kernel capability.",
+      "done_when": []
+    }
+  ],
+  "nextObjective": "PATCH_RUNTIME_KERNEL_1",
+  "definitionOfDone": [],
+  "completion": [],
+  "status": "READY_FOR_EXECUTION"
+}

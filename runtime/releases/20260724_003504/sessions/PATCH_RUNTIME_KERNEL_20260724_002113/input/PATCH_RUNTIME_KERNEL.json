@@ -1,0 +1,17 @@
+{
+  "id":"PATCH_RUNTIME_KERNEL",
+  "priority":"CRITICAL",
+  "mode":"IMPLEMENT",
+  "objective":"Implement the missing Runtime Kernel capability required to complete mission execution.",
+  "objectives":[
+    "Determine whether the Runtime Kernel can modify itself.",
+    "If self-modification is unavailable, identify the exact missing kernel capability.",
+    "Generate a concrete Patch Plan.",
+    "Apply the Patch Plan if supported.",
+    "Rebuild and revalidate.",
+    "If repair is impossible, produce explicit evidence describing the blocking kernel capability."
+  ],
+  "definitionOfDone":[
+    "Runtime Kernel repaired OR blocking capability evidenced."
+  ]
+}

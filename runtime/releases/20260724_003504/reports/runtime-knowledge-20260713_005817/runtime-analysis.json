@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-07-12T11:43:07.017Z",
+  "status": "READY",
+  "summary": {
+    "repositoryFiles": 519,
+    "runtimeFiles": 17,
+    "coreFiles": 264,
+    "missions": 7
+  },
+  "diagnostic": [
+    "Fondations stables",
+    "Runtime Bootstrap opérationnel",
+    "Mission Planner opérationnel",
+    "Mission Dispatcher opérationnel",
+    "Mission Controller opérationnel"
+  ],
+  "nextPriorities": [
+    "Fusion progressive avec src/core",
+    "Brancher les missions sur le Runtime existant",
+    "Remplacer progressivement les scripts par des missions",
+    "Préparer odg run"
+  ]
+}

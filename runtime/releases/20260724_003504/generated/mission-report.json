@@ -1,0 +1,51 @@
+{
+  "mission": "PATCH_RUNTIME_KERNEL",
+  "status": "SUCCESS",
+  "validated": true,
+  "mode": "IMPLEMENT",
+  "checks": {
+    "objectiveCoverage": true,
+    "noFailedActions": true,
+    "engineeringPerformed": true,
+    "buildGate": true,
+    "typescriptGate": true,
+    "gatesEvaluated": true,
+    "objectives": 6,
+    "planned": 6,
+    "executed": 6,
+    "failed": 0,
+    "engineering": true,
+    "scopedChanges": [
+      "runtime/archive/20260723/generated/claude-session/progress.log",
+      "runtime/archive/20260723/generated/fleet/bridge.log",
+      "runtime/archive/20260723/generated/full-mission-campaign.log",
+      "runtime/archive/20260723/generated/migration/mission-loader.js.bak",
+      "runtime/archive/20260723/generated/migration/runtime-executor.ts.20260714-101736.bak",
+      "runtime/archive/20260723/generated/provider-session/engineering-provider.log",
+      "runtime/bin/odg-run.js.bak",
+      "runtime/bin/odg-verify.js.bak",
+      "runtime/mission-standard/evidence/claude/progress.log",
+      "runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json.bak",
+      "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak",
+      "runtime/missions/AUDIT_RUNTIME_STATE_MACHINE.json",
+      "runtime/missions/BOOTSTRAP_RUNTIME_ENGINEERING.json",
+      "runtime/missions/CLEAN_RUNTIME_WORKSPACE.json",
+      "runtime/missions/FINALIZE_RUNTIME_FOUNDATION_V1.json",
+      "runtime/missions/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.json",
+      "runtime/missions/PATCH_RUNTIME_KERNEL.json",
+      "runtime/missions/PATCH_RUNTIME_KERNEL.json.bak",
+      "runtime/missions/RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS.json",
+      "runtime/missions/SELF_ENGINEERING_RUNTIME_KERNEL.json",
+      "runtime/missions/pending/",
+      "runtime/reports/MISSION_BATCH_20260723_195648.log"
+    ]
+  },
+  "definitionOfDone": [],
+  "unmet": [],
+  "totalPatches": 6,
+  "summary": {
+    "objectives": 6,
+    "executed": 6,
+    "failed": 0
+  }
+}

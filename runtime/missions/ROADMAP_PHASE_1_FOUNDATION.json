@@ -1,0 +1,83 @@
+{
+  "id":"ROADMAP_PHASE_1_FOUNDATION",
+  "priority":"CRITICAL",
+  "mode":"IMPLEMENT",
+
+  "objective":"Industrialize the ODG Runtime Foundation until every mandatory foundation capability is operational, validated and reusable.",
+
+  "executionPolicy":{
+    "continuous":true,
+    "autoRetry":true,
+    "reuseBeforeCreate":true,
+    "verifyBeforeModify":true,
+    "stopOnlyWhenBlocked":true,
+    "generateEvidence":true,
+    "generateFinalReport":true
+  },
+
+  "objectives":[
+
+    "Audit the Runtime Foundation.",
+
+    "Verify every existing component before modifying it.",
+
+    "Repair only missing or defective capabilities.",
+
+    "Never replace an existing working implementation.",
+
+    "Complete the Mission Lifecycle.",
+
+    "Complete the Capability Registry.",
+
+    "Complete the Mission Ledger.",
+
+    "Complete the Runtime Verify pipeline.",
+
+    "Complete the Workspace Cleaner.",
+
+    "Complete the Release Manager.",
+
+    "Complete the Evidence Manager.",
+
+    "Complete Repository Health.",
+
+    "Complete Runtime Diagnostics.",
+
+    "Rebuild generated artefacts after every successful correction.",
+
+    "Run build after every engineering action.",
+
+    "Run TypeScript validation after every engineering action.",
+
+    "Run Runtime validation after every engineering action.",
+
+    "Continue automatically until every foundation capability is validated.",
+
+    "If a blocker cannot be solved autonomously, generate a complete evidence-based report in runtime/reports and continue with the next objective."
+  ],
+
+  "definitionOfDone":[
+
+    "Mission Lifecycle completed.",
+
+    "Workspace Cleaner operational.",
+
+    "Release Manager operational.",
+
+    "Evidence Manager operational.",
+
+    "Repository Health operational.",
+
+    "Mission Ledger finalized.",
+
+    "Capability Registry finalized.",
+
+    "Runtime Verify successful.",
+
+    "Repository coherent.",
+
+    "Generated artefacts regenerated.",
+
+    "Final report generated."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "id":"ROADMAP_PHASE_5_ENTERPRISE",
+  "priority":"HIGH",
+  "mode":"IMPLEMENT",
+
+  "fleet":{ "enabled":true, "deterministic":true },
+
+  "verify":[
+    { "capability":"Fleet exchange (resilience/observability)", "evidence":"fleet-request-validated" },
+    { "capability":"Build gate", "evidence":"build-green" },
+    { "capability":"TypeScript gate", "evidence":"typescript-green" }
+  ],
+
+  "objective":"Finalize the ODG platform until it is production-ready and fully operational.",
+
+  "executionPolicy":{
+    "continuous":true,
+    "autoRetry":true,
+    "reuseBeforeCreate":true,
+    "verifyBeforeModify":true,
+    "stopOnlyWhenBlocked":true,
+    "generateEvidence":true,
+    "generateFinalReport":true
+  },
+
+  "objectives":[
+    "Audit the complete platform.",
+    "Verify governance.",
+    "Verify security.",
+    "Verify observability.",
+    "Verify resilience.",
+    "Verify documentation.",
+    "Run full build.",
+    "Run TypeScript validation.",
+    "Run Runtime validation.",
+    "Run end-to-end validation.",
+    "Repair only missing or defective capabilities.",
+    "Never replace validated implementations.",
+    "Regenerate generated artefacts.",
+    "Generate final industrialization report."
+  ],
+
+  "definitionOfDone":[
+    "Platform validated.",
+    "Build successful.",
+    "Runtime verification successful.",
+    "Repository coherent.",
+    "Evidence generated.",
+    "Mission archived.",
+    "Production ready."
+  ]
+}

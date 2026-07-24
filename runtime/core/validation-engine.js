@@ -79,6 +79,46 @@ const buildOk = verify ? verify.build === true : true;
 const typescriptOk = verify ? verify.typescript === true : true;
 const gatesEvaluated = verify !== null;
 
+// 5. Capability probes (only when the mission contract declares `verify`). Each probe is a pure
+// check against real generated artifacts, turning the mission's Definition of Done into machine-
+// verified evidence. Missions with no `verify` block get NO extra gate (behaviour unchanged).
+const missionId = plan.mission || patch.mission;
+function runProbe(evidence) {
+    switch (evidence) {
+        case "fleet-request-validated": {
+            // The Fleet exchange (Dispatcher → Bridge → Collector) must have driven at least one
+            // request for THIS mission to the VALIDATED terminal status.
+            const dir = "runtime/generated/fleet/requests";
+            let files = [];
+            try { files = fs.readdirSync(dir); } catch { return { ok: false, detail: "no fleet requests dir" }; }
+            const mine = files
+                .filter((f) => f.startsWith(missionId + "-") && f.endsWith(".json"))
+                .map((f) => readJsonSafe(`${dir}/${f}`))
+                .filter(Boolean);
+            const validated = mine.filter((r) => r.status === "VALIDATED");
+            return validated.length > 0
+                ? { ok: true, detail: `${validated.length}/${mine.length} fleet request(s) VALIDATED` }
+                : { ok: false, detail: `no VALIDATED fleet request for ${missionId} (${mine.length} found)` };
+        }
+        case "build-green":
+            return verify && verify.build === true
+                ? { ok: true, detail: "runtime-verify.json build=true" }
+                : { ok: false, detail: "build gate not green (runtime-verify.json)" };
+        case "typescript-green":
+            return verify && verify.typescript === true
+                ? { ok: true, detail: "runtime-verify.json typescript=true" }
+                : { ok: false, detail: "typescript gate not green (runtime-verify.json)" };
+        default:
+            return { ok: false, detail: `unknown evidence probe "${evidence}"` };
+    }
+}
+const verifyChecks = Array.isArray(plan.verify) ? plan.verify : [];
+const capabilityResults = verifyChecks.map((v) => {
+    const r = runProbe(v.evidence);
+    return { capability: v.capability, evidence: v.evidence, ok: r.ok, detail: r.detail };
+});
+const capabilitiesOk = capabilityResults.every((r) => r.ok);
+
 const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
@@ -92,9 +132,11 @@ const checks = {
     failed: failed.length,
     engineering: isEngineering,
     scopedChanges,
+    capabilities: capabilityResults,
+    capabilitiesOk,
 };
 
-const validated = coverageOk && noFailures && engineeringOk && buildOk && typescriptOk;
+const validated = coverageOk && noFailures && engineeringOk && buildOk && typescriptOk && capabilitiesOk;
 
 const unmet = [];
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
@@ -102,6 +144,7 @@ if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f)
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
+for (const c of capabilityResults.filter((r) => !r.ok)) unmet.push(`Capability "${c.capability}" not proven: ${c.detail}.`);
 
 const report = {
     mission: patch.mission,
@@ -133,6 +176,7 @@ console.log("Coverage  :", coverageOk ? "OK" : "INCOMPLETE", `(${executed.length
 console.log("Failures  :", failed.length);
 if (isEngineering) console.log("Engineering:", engineeringOk ? `OK (${scopedChanges.length} changed)` : "NONE in scope");
 if (gatesEvaluated) console.log("Gates     :", `build=${buildOk} tsc=${typescriptOk}`);
+for (const c of capabilityResults) console.log("Capability:", `${c.ok ? "OK  " : "FAIL"} ${c.capability} (${c.detail})`);
 console.log("Validated :", validated);
 console.log("Status    :", report.status);
 if (!validated) {

@@ -29,17 +29,51 @@ if (!decision || !Array.isArray(decision.objectives)) {
 
 const objectivesById = new Map(decision.objectives.map((o) => [o.id, o]));
 
+/*
+ * Normalize an objective's optional `patch` payload into a list of concrete edits.
+ *
+ * This is what makes the Patch Plan REAL rather than symbolic: an edit carries a `target`
+ * (the file to modify) plus exactly one payload — a full-file `content`, or a unified `diff`.
+ * An objective may declare a single edit object or an array of them. Objectives with no patch
+ * payload produce no edits and stay symbolic (PLANNED), exactly as before.
+ *
+ * Pure and order-preserving ⇒ deterministic: identical objectives yield identical edits.
+ */
+function normalizeEdits(objective) {
+    if (!objective || !objective.patch) return [];
+    const raw = Array.isArray(objective.patch) ? objective.patch : [objective.patch];
+    const edits = [];
+    for (const e of raw) {
+        if (!e || typeof e !== "object") continue;
+        const target =
+            typeof e.target === "string" ? e.target :
+            typeof e.path === "string" ? e.path :
+            typeof e.file === "string" ? e.file : null;
+        if (!target) continue;
+        if (typeof e.content === "string") {
+            edits.push({ target, content: e.content });
+        } else if (typeof e.diff === "string") {
+            edits.push({ target, diff: e.diff });
+        }
+    }
+    return edits;
+}
+
 const patches = decision.actions.map((action, index) => {
     const objective = objectivesById.get(action) || null;
-    return {
+    const edits = normalizeEdits(objective);
+    const patch = {
         id: index + 1,
         action,
         objectiveId: action,
         goal: objective ? objective.goal : "",
         done_when: objective ? objective.done_when : [],
         priority: decision.priority,
-        status: "PLANNED",
+        status: edits.length ? "READY_TO_APPLY" : "PLANNED",
     };
+    // Only real patches carry `edits`; symbolic patches keep their historical shape untouched.
+    if (edits.length) patch.edits = edits;
+    return patch;
 });
 
 const patch = {

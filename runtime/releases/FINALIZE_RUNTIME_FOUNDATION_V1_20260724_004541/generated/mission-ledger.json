@@ -1,0 +1,1761 @@
+{
+  "generatedAt": "2026-07-24T00:10:33.931Z",
+  "count": 117,
+  "entries": [
+    {
+      "recordedAt": "2026-07-23T19:56:52.011Z",
+      "mission": "ENABLE_MASTER_PLAN_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:56:54.728Z",
+      "mission": "FIX_PATCH_EXECUTION_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:56:57.443Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:00.333Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:03.080Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:05.658Z",
+      "mission": "IMPLEMENT_PATCH_ACTIONS",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:08.211Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:10.936Z",
+      "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:13.644Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:16.427Z",
+      "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:19.260Z",
+      "mission": "M0000",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:22.001Z",
+      "mission": "M0001",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:24.821Z",
+      "mission": "M0002",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:28.195Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:30.962Z",
+      "mission": "PREPARE_ENGINEERING_BRIEF",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:36.156Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:39.509Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:42.366Z",
+      "mission": "ROOT_CAUSE_RELEASE_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:45.230Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:47.901Z",
+      "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 16,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T19:57:52.320Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:05:49.985Z",
+      "mission": "ENABLE_MASTER_PLAN_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:05:52.581Z",
+      "mission": "FIX_PATCH_EXECUTION_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:05:55.092Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:05:57.701Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:00.481Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:02.980Z",
+      "mission": "IMPLEMENT_PATCH_ACTIONS",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:05.422Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:08.164Z",
+      "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:10.799Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:13.270Z",
+      "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:15.899Z",
+      "mission": "M0000",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:18.463Z",
+      "mission": "M0001",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:21.201Z",
+      "mission": "M0002",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:24.640Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:27.250Z",
+      "mission": "PREPARE_ENGINEERING_BRIEF",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:32.467Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:36.028Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:38.592Z",
+      "mission": "ROOT_CAUSE_RELEASE_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:40.979Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:43.490Z",
+      "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 16,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:06:47.514Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:44:08.014Z",
+      "mission": "M0000",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:45:56.894Z",
+      "mission": "ENABLE_MASTER_PLAN_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:45:59.795Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:02.488Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:05.101Z",
+      "mission": "IMPLEMENT_PATCH_ACTIONS",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:07.916Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:10.742Z",
+      "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:13.462Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:16.321Z",
+      "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:19.147Z",
+      "mission": "M0000",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:21.906Z",
+      "mission": "M0001",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:24.732Z",
+      "mission": "M0002",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:28.421Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:31.076Z",
+      "mission": "PREPARE_ENGINEERING_BRIEF",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:36.584Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:40.311Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:43.309Z",
+      "mission": "ROOT_CAUSE_RELEASE_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:46.120Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:49.079Z",
+      "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 16,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T20:46:53.664Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:14.165Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:16.779Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:20.239Z",
+      "mission": "ENABLE_MASTER_PLAN_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:22.989Z",
+      "mission": "FIX_PATCH_EXECUTION_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:25.859Z",
+      "mission": "FIX_RUNTIME_MISSION_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 9,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:28.590Z",
+      "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:31.338Z",
+      "mission": "IMPLEMENT_OPENAI_PROVIDER_ADAPTER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:33.981Z",
+      "mission": "IMPLEMENT_PATCH_ACTIONS",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:36.649Z",
+      "mission": "IMPLEMENT_PROVIDER_FACTORY",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:39.404Z",
+      "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:42.122Z",
+      "mission": "IMPLEMENT_RUNTIME_AUTONOMY_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:44.961Z",
+      "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:47.657Z",
+      "mission": "M0000",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:50.364Z",
+      "mission": "M0001",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:53.299Z",
+      "mission": "M0002",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:56.956Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:27:59.835Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:03.131Z",
+      "mission": "MISSION_CONTEXT_BUILDER",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 4,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:05.911Z",
+      "mission": "PREPARE_ENGINEERING_BRIEF",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 5,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:11.182Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:13.794Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:19.287Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:22.709Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:25.551Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:29.135Z",
+      "mission": "ROADMAP_RUNTIME_STABILIZATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:31.968Z",
+      "mission": "ROOT_CAUSE_RELEASE_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 3,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:34.764Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:37.506Z",
+      "mission": "RUNTIME_FULL_AUTONOMY_EXECUTION",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 16,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:41.148Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:43.633Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:47.771Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:50.403Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:53.611Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:28:58.712Z",
+      "mission": "ROOT_CAUSE_RUNTIME_PIPELINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:29:01.233Z",
+      "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 2,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T22:29:23.186Z",
+      "mission": "RUNTIME_SELF_AUDIT",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 12,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:07:58.116Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:11:18.587Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:03.216Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:05.840Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:08.456Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:11.073Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:13.667Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:16.401Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:19.157Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:21.739Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:24.455Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:16:27.187Z",
+      "mission": "IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 1,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:26:43.860Z",
+      "mission": "FINALIZE_RUNTIME_FOUNDATION_V1",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 7,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:31:25.850Z",
+      "mission": "AUDIT_RUNTIME_STATE_MACHINE",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 10,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:36:24.556Z",
+      "mission": "RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 10,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:53:51.351Z",
+      "mission": "SELF_ENGINEERING_RUNTIME_KERNEL",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 8,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-23T23:58:11.860Z",
+      "mission": "BOOTSTRAP_RUNTIME_ENGINEERING",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-24T00:00:44.132Z",
+      "mission": "PATCH_RUNTIME_KERNEL",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    },
+    {
+      "recordedAt": "2026-07-24T00:10:33.931Z",
+      "mission": "PATCH_RUNTIME_KERNEL",
+      "state": "CREATED",
+      "authorized": true,
+      "nextStates": [
+        "QUALIFIED"
+      ],
+      "constitutionVersion": 1,
+      "policyVersion": 1,
+      "strategy": "DETERMINISM_FIRST",
+      "objectives": 6,
+      "proven": true,
+      "validated": true
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "mission": "PATCH_RUNTIME_KERNEL",
+  "executed": [
+    {
+      "action": "PATCH_RUNTIME_KERNEL_1",
+      "objectiveId": "PATCH_RUNTIME_KERNEL_1",
+      "status": "RECORDED"
+    },
+    {
+      "action": "PATCH_RUNTIME_KERNEL_2",
+      "objectiveId": "PATCH_RUNTIME_KERNEL_2",
+      "status": "RECORDED"
+    },
+    {
+      "action": "PATCH_RUNTIME_KERNEL_3",
+      "objectiveId": "PATCH_RUNTIME_KERNEL_3",
+      "status": "RECORDED"
+    },
+    {
+      "action": "PATCH_RUNTIME_KERNEL_4",
+      "objectiveId": "PATCH_RUNTIME_KERNEL_4",
+      "status": "RECORDED"
+    },
+    {
+      "action": "PATCH_RUNTIME_KERNEL_5",
+      "objectiveId": "PATCH_RUNTIME_KERNEL_5",
+      "status": "RECORDED"
+    },
+    {
+      "action": "PATCH_RUNTIME_KERNEL_6",
+      "objectiveId": "PATCH_RUNTIME_KERNEL_6",
+      "status": "RECORDED"
+    }
+  ]
+}

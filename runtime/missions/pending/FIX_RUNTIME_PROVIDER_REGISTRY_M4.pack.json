@@ -1,0 +1,8 @@
+{
+  "mission":"FIX_RUNTIME_PROVIDER_REGISTRY_M4.pack",
+  "depends_on":"RUNTIME_PROVIDER_REGISTRY_M4.pack",
+  "reason":"mission contract runtime/missions/RUNTIME_PROVIDER_REGISTRY_M4.pack.json declares no objectives.",
+  "priority":"CRITICAL",
+  "generated_by":"ODG",
+  "status":"PENDING_REPAIR"
+}

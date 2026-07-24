@@ -1,0 +1,22 @@
+ D runtime/archive/20260723/generated/claude-session/progress.log
+ D runtime/archive/20260723/generated/fleet/bridge.log
+ D runtime/archive/20260723/generated/full-mission-campaign.log
+ D runtime/archive/20260723/generated/migration/mission-loader.js.bak
+ D runtime/archive/20260723/generated/migration/runtime-executor.ts.20260714-101736.bak
+ D runtime/archive/20260723/generated/provider-session/engineering-provider.log
+ D runtime/bin/odg-run.js.bak
+ D runtime/bin/odg-verify.js.bak
+ D runtime/mission-standard/evidence/claude/progress.log
+ D runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.json.bak
+ D runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak
+?? runtime/missions/AUDIT_RUNTIME_STATE_MACHINE.json
+?? runtime/missions/BOOTSTRAP_RUNTIME_ENGINEERING.json
+?? runtime/missions/CLEAN_RUNTIME_WORKSPACE.json
+?? runtime/missions/FINALIZE_RUNTIME_FOUNDATION_V1.json
+?? runtime/missions/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.json
+?? runtime/missions/PATCH_RUNTIME_KERNEL.json
+?? runtime/missions/RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS.json
+?? runtime/missions/SELF_ENGINEERING_RUNTIME_KERNEL.json
+?? runtime/missions/pending/
+?? runtime/reports/MISSION_BATCH_20260723_195648.log
+?? runtime/sessions/

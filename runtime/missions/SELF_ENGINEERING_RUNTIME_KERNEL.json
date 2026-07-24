@@ -1,0 +1,19 @@
+{
+  "id":"SELF_ENGINEERING_RUNTIME_KERNEL",
+  "priority":"CRITICAL",
+  "mode":"IMPLEMENT",
+  "objective":"Repair the Runtime Kernel using autonomous engineering.",
+  "objectives":[
+    "Determine whether autonomous kernel engineering is supported.",
+    "If supported, identify every Runtime Kernel component requiring modification.",
+    "Generate an engineering plan.",
+    "Apply every required Runtime Kernel modification.",
+    "Rebuild.",
+    "Revalidate.",
+    "Repeat until Runtime completion is reached.",
+    "If autonomous kernel engineering is not supported, produce explicit evidence identifying the missing capability preventing self-engineering."
+  ],
+  "definitionOfDone":[
+    "Runtime repaired OR missing capability formally evidenced."
+  ]
+}

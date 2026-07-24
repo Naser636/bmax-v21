@@ -1,0 +1,24 @@
+{
+  "id": "FINALIZE_RUNTIME_FOUNDATION_V1",
+  "priority": "CRITICAL",
+  "mode": "IMPLEMENT",
+  "objective": "Finalize the Runtime Foundation until it reaches a consistent and validated state.",
+  "objectives": [
+    "Determine why the Runtime Foundation is not fully finalized despite a successful pipeline.",
+    "Investigate every remaining blocker using repository evidence.",
+    "Implement every missing capability that is required.",
+    "Repair every detected defect affecting Runtime completion.",
+    "Re-run the complete engineering workflow after each correction.",
+    "Continue until the Runtime reaches a fully validated end state or no further autonomous progress is possible.",
+    "If completion is impossible, generate a complete evidence-based report explaining every remaining blocker."
+  ],
+  "definitionOfDone": [
+    "Mission Ledger finalized.",
+    "Capability Registry consistent.",
+    "Validation successful.",
+    "Repository left in a coherent state.",
+    "Generated artefacts updated.",
+    "Evidence collected.",
+    "Mission archived or fully explained."
+  ]
+}

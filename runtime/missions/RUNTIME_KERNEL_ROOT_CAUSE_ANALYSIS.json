@@ -1,0 +1,24 @@
+{
+  "id":"RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS",
+  "priority":"CRITICAL",
+  "mode":"ANALYZE",
+  "objective":"Produce an evidence-based root cause analysis of the Runtime Kernel.",
+  "objectives":[
+    "Locate the implementation of the Mission Interpreter.",
+    "Locate the implementation of the Mission Ledger.",
+    "Locate the Runtime state transition implementation.",
+    "Determine where mission priority and mode are read.",
+    "Determine why the Interpreter reports NORMAL and UNKNOWN.",
+    "Determine why the Mission Ledger never leaves CREATED.",
+    "Determine whether the state transition code exists.",
+    "If it exists, explain why it is never executed.",
+    "If it does not exist, identify the exact missing Runtime capability.",
+    "Produce an evidence-based engineering report identifying every file that must be modified to repair the Runtime Kernel."
+  ],
+  "definitionOfDone":[
+    "Root cause identified.",
+    "Files responsible identified.",
+    "Evidence produced.",
+    "Engineering report generated."
+  ]
+}
