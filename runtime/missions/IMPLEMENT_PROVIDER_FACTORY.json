@@ -1,47 +1,13 @@
 {
-  "mission": "IMPLEMENT_PROVIDER_FACTORY",
+  "name": "IMPLEMENT_PROVIDER_FACTORY",
+  "mode": "AUTONOMOUS_FACTORY",
   "priority": "CRITICAL",
-  "mode": "ENGINEERING",
-  "continue_until_complete": true,
-  "description": "Créer une ProviderFactory afin de découpler RuntimeAutonomy des implémentations de Providers.",
+  "requiresEngineering": false,
   "objectives": [
-    {
-      "id": "OBJ-001",
-      "priority": 1,
-      "goal": "Créer src/providers/provider-factory.ts.",
-      "done_when": [
-        "ProviderFactory.create() existe.",
-        "La Factory retourne EngineeringProviderPort."
-      ]
-    },
-    {
-      "id": "OBJ-002",
-      "priority": 2,
-      "goal": "Déplacer la création des Providers dans la Factory.",
-      "done_when": [
-        "La Factory encapsule createClaudeProvider().",
-        "Aucun autre fichier ne crée directement un Provider."
-      ]
-    },
-    {
-      "id": "OBJ-003",
-      "priority": 3,
-      "goal": "Modifier autonomy-runtime-adapter.ts.",
-      "done_when": [
-        "createClaudeProvider() est remplacé par ProviderFactory.create().",
-        "Le comportement actuel est inchangé."
-      ]
-    },
-    {
-      "id": "OBJ-004",
-      "priority": 4,
-      "goal": "Préparer le support multi-provider.",
-      "done_when": [
-        "EngineeringProviderPort est conservé.",
-        "RuntimeAutonomy n'est pas modifié.",
-        "ProviderOrchestrator n'est pas modifié.",
-        "Le Runtime est prêt à recevoir OpenAIProviderAdapter."
-      ]
-    }
+    "IMPLEMENT_PROVIDER_SELECTION_FROM_AVAILABLE_PROVIDERS",
+    "SELECT_OPENAI_WHEN_CLAUDE_IS_UNAVAILABLE",
+    "IMPLEMENT_AUTOMATIC_PROVIDER_FAILOVER",
+    "GENERATE_ROOT_CAUSE_IF_NO_PROVIDER_IS_AVAILABLE",
+    "PROMOTE_PROVIDER_FACTORY_TO_RUNTIME_KERNEL"
   ]
 }
