@@ -1,0 +1,24 @@
+{
+  "name": "RUNTIME_SELF_EVOLUTION_V1",
+  "mode": "AUTONOMOUS_FACTORY",
+  "priority": "CRITICAL",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "src/runtime/**",
+    "src/providers/**",
+    "src/core/**",
+    "runtime/generated/**"
+  ],
+  "objectives": [
+    "ANALYZE_THE_COMPLETE_RUNTIME",
+    "IDENTIFY_ALL_ROOT_CAUSES_BLOCKING_SELF_ENGINEERING",
+    "GENERATE_ENGINEERING_BRIEF",
+    "GENERATE_REAL_PATCH_PLAN",
+    "APPLY_ONLY_VERIFIED_PATCHES",
+    "BUILD_AND_RUN_ALL_VALIDATIONS",
+    "ROLLBACK_IF_A_GATE_FAILS",
+    "REPEAT_UNTIL_NO_ENGINEERING_BLOCKER_REMAINS",
+    "PROMOTE_NEW_RUNTIME_STATE",
+    "GENERATE_A_SINGLE_EXECUTIVE_REPORT_WITH_REMAINING_BLOCKERS_ONLY"
+  ]
+}
