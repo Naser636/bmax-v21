@@ -1,0 +1,19 @@
+{
+  "name": "PROVIDER_FAILOVER_TO_OPENAI",
+  "mode": "AUTONOMOUS_FACTORY",
+  "priority": "CRITICAL",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "src/runtime/**",
+    "src/providers/**"
+  ],
+  "objectives": [
+    "USE_OPENAI_PROVIDER_IF_CLAUDE_IS_UNAVAILABLE",
+    "CONTINUE_THE_ENGINEERING_MISSION",
+    "IF_OPENAI_CANNOT_BE_USED_EXPLAIN_EXACTLY_WHY",
+    "REPORT_THE_PRECISE_BLOCKING_COMPONENT",
+    "REPORT_THE_EXACT_CONFIGURATION_OR_RESOURCE_MISSING",
+    "REPORT_THE_SINGLE_NEXT_ACTION_REQUIRED",
+    "STOP_ONLY_IF_NO_PROVIDER_CAN_CONTINUE"
+  ]
+}
