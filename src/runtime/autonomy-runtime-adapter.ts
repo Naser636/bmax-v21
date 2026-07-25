@@ -53,6 +53,11 @@ const MISSION_REPORT = `${GENERATED}/mission-report.json`;
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
+// Checkpoint: the resume marker written after every RELEASE so an interrupted autonomy run can be
+// resumed EXACTLY where it stopped. The ledger already makes resume correct (a proven mission is
+// excluded from re-selection), so this artifact is the explicit, human-readable record of it — the
+// last released mission + everything released this session — never a second source of truth.
+const CHECKPOINT = `${GENERATED}/autonomy-checkpoint.json`;
 const BRAIN = "runtime/brain/MASTER_PLAN.md";
 const ROADMAP_MANIFEST = "runtime/governance/ROADMAP.json";
 const MSTD_GENERATED = "runtime/mission-standard/generated";
@@ -523,6 +528,37 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     });
     this.archivedThisSession.add(mission);
     this.lastReleaseRef = record.requestId;
+    this.writeCheckpoint(mission);
+  }
+
+  /**
+   * Write the resume checkpoint after a RELEASE (best-effort; never throws — a checkpoint failure
+   * must not fail an otherwise-successful mission). On restart the loop re-reads the ledger and
+   * skips proven missions, so this file is purely observability + a precise "resume after" marker.
+   */
+  private writeCheckpoint(mission: string): void {
+    try {
+      const prior = this.readJson<{ releasedThisSession?: string[] }>(CHECKPOINT);
+      const released = Array.isArray(prior?.releasedThisSession) ? prior!.releasedThisSession : [];
+      if (!released.includes(mission)) released.push(mission);
+      const abs = this.resolve(CHECKPOINT);
+      fs.mkdirSync(abs.slice(0, abs.lastIndexOf("/")), { recursive: true });
+      fs.writeFileSync(
+        abs,
+        JSON.stringify(
+          {
+            updatedAt: new Date().toISOString(),
+            lastReleased: mission,
+            releasedThisSession: released,
+            resumeAfter: mission,
+          },
+          null,
+          2,
+        ),
+      );
+    } catch {
+      /* best-effort: checkpoint is observability, not a gate */
+    }
   }
 
   // --- helpers ------------------------------------------------------------

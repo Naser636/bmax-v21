@@ -21,6 +21,24 @@
       "title": "Foundation Layer",
       "contract": "runtime/missions/M0002.json",
       "requiresEngineering": false
+    },
+    {
+      "id": "CLEAN_RUNTIME_WORKSPACE",
+      "title": "Clean Runtime Workspace",
+      "contract": "runtime/missions/CLEAN_RUNTIME_WORKSPACE.json",
+      "requiresEngineering": true
+    },
+    {
+      "id": "PROVIDER_ENABLED_SMOKE_V1",
+      "title": "Provider-Enabled Smoke",
+      "contract": "runtime/missions/PROVIDER_ENABLED_SMOKE_V1.json",
+      "requiresEngineering": true
+    },
+    {
+      "id": "UNIFY_RUNTIME_EXECUTION",
+      "title": "Unify Runtime Execution",
+      "contract": "runtime/missions/UNIFY_RUNTIME_EXECUTION.json",
+      "requiresEngineering": true
     }
   ]
 }

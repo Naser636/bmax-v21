@@ -1,12 +1,46 @@
 {
-  "mission":"CLEAN_RUNTIME_WORKSPACE",
-  "version":"1.0",
-  "status":"DRAFT",
-  "mode":"ENGINEERING",
-  "priority":"NORMAL",
-  "authorizedPaths":["runtime/**"],
-  "objective":"CLEAN_RUNTIME_WORKSPACE",
-  "doneWhen":[
+  "mission": "CLEAN_RUNTIME_WORKSPACE",
+  "version": "1.1",
+  "status": "AUTHORIZED",
+  "mode": "ENGINEERING",
+  "priority": "NORMAL",
+  "requires_engineering": true,
+  "authorized_paths": ["runtime/**"],
+  "authorizedPaths": ["runtime/**"],
+  "objective": "CLEAN_RUNTIME_WORKSPACE",
+  "objectives": [
+    {
+      "id": "CLEAN_WORKSPACE_1",
+      "goal": "Enumerate the transient runtime workspace artifacts (backups, archives, stale generated files) under runtime/ that are untracked and not required for reproducibility.",
+      "done_when": [
+        "A deterministic scan lists every candidate path under runtime/ that is safe to remove."
+      ]
+    },
+    {
+      "id": "CLEAN_WORKSPACE_2",
+      "goal": "Confirm each candidate is covered by the governance backup/archive .gitignore policy so removal preserves all evidence.",
+      "done_when": [
+        "Every candidate is either git-ignored or already archived; no tracked or required artifact is listed."
+      ]
+    },
+    {
+      "id": "CLEAN_WORKSPACE_3",
+      "goal": "Produce evidence of the cleaned workspace state without deleting any tracked or required artifact.",
+      "done_when": [
+        "Evidence generated.",
+        "Report generated."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Mission completed successfully",
+    "Evidence generated",
+    "Report generated"
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ],
+  "doneWhen": [
     "Mission completed successfully",
     "Evidence generated",
     "Report generated"

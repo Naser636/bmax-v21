@@ -15,9 +15,22 @@
  * No foundation, no Constitution, no pipeline business logic is touched here.
  */
 
+import fs from "node:fs";
+
 import { RuntimeAutonomy } from "@/core/runtime-autonomy";
 import { AUTONOMY_CONTRACT_VERSION } from "@/contracts/runtime-autonomy";
 import { AutonomyRuntimeAdapter } from "@/runtime/autonomy-runtime-adapter";
+
+const CHECKPOINT = "runtime/generated/autonomy-checkpoint.json";
+
+/** Read the resume checkpoint left by a prior (possibly interrupted) run, if any. */
+function readCheckpoint(): { lastReleased?: string; resumeAfter?: string } | null {
+  try {
+    return JSON.parse(fs.readFileSync(CHECKPOINT, "utf8"));
+  } catch {
+    return null;
+  }
+}
 
 function main(): number {
   const autonomy = new RuntimeAutonomy();
@@ -32,6 +45,12 @@ function main(): number {
   console.log("Capability :", `${desc.name} (${desc.class})`);
   console.log("Owner      :", desc.owner);
   console.log("Contract   :", desc.autonomyContractVersion);
+  // Resume context: proven missions are excluded from re-selection by the ledger, so the loop
+  // continues EXACTLY where a prior interrupted run stopped. Surface where that was.
+  const prior = readCheckpoint();
+  if (prior && prior.resumeAfter) {
+    console.log("Resume     :", `after ${prior.resumeAfter} (previous session checkpoint)`);
+  }
   console.log("--------------------------------------");
 
   // The Autonomy Cycle Controller loops internally until PLAN_COMPLETE or a halt (design §3).
@@ -55,6 +74,31 @@ function main(): number {
     console.log("Detail     :", result.halt.message);
   }
   console.log("======================================");
+
+  // Write a terminal checkpoint so a follow-up run (or a human) sees exactly where this run ended —
+  // the status, cycle count, what released, and any halt. Best-effort; never fails the run.
+  try {
+    fs.mkdirSync("runtime/generated", { recursive: true });
+    fs.writeFileSync(
+      CHECKPOINT,
+      JSON.stringify(
+        {
+          updatedAt: new Date().toISOString(),
+          status: result.status,
+          cycles: result.cycles,
+          releasedThisSession: result.completed.map((c) => c.mission),
+          lastReleased: result.completed.at(-1)?.mission ?? prior?.lastReleased ?? null,
+          resumeAfter: result.completed.at(-1)?.mission ?? prior?.resumeAfter ?? null,
+          haltOn: result.halt?.mission ?? null,
+          haltReason: result.halt?.reason ?? null,
+        },
+        null,
+        2,
+      ),
+    );
+  } catch {
+    /* best-effort */
+  }
 
   // Terminal outcomes (design §3):
   //   PLAN_COMPLETE → clean success (0)

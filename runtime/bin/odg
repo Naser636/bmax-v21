@@ -5,7 +5,14 @@ MISSION="${1:-health}"
 
 case "$MISSION" in
   health|dashboard)
+    # Refresh the coherent Runtime state (runtime-state / status / queue / registry / scan) BEFORE
+    # rendering so the read-only Dashboard always reflects the current repo state — never a stale or
+    # empty runtime-state.json (Pipeline/Brain UNKNOWN) or a hard-coded SYSTEM_READY next mission.
+    ./runtime/bin/odg-state.js >/dev/null
     ./runtime/bin/odg-health.js
+    ;;
+  state)
+    ./runtime/bin/odg-state.js
     ;;
   mission)
     shift
@@ -26,12 +33,18 @@ case "$MISSION" in
     fi
     ;;
   autonomy)
-    ./runtime/bin/odg-autonomy.js
+    # Refresh coherent state first so the queue/registry the loop and dashboard read are current,
+    # then run the autonomy loop; refresh again afterwards so the Dashboard reflects any advance.
+    ./runtime/bin/odg-state.js >/dev/null
+    ./runtime/bin/odg-autonomy.js; rc=$?
+    ./runtime/bin/odg-state.js >/dev/null || true
+    exit "$rc"
     ;;
   verify)
     ./runtime/bin/odg-verify.js
     ;;
   status)
+    ./runtime/bin/odg-state.js >/dev/null
     ./runtime/bin/odg-status.js
     ;;
   freeze)
