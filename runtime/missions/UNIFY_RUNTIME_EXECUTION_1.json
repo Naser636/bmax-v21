@@ -1,0 +1,13 @@
+{
+  "name": "UNIFY_RUNTIME_EXECUTION_1",
+  "mode": "IMPLEMENT",
+  "priority": "HIGH",
+  "parent": "UNIFY_RUNTIME_EXECUTION",
+  "objectives": [
+    "IMPLEMENT_SINGLE_RUNTIME_ENTRYPOINT",
+    "REGISTER_RUNTIME_ENTRY",
+    "VERIFY_RUNTIME_ENTRY",
+    "GENERATE_EVIDENCE",
+    "UPDATE_LEDGER"
+  ]
+}
