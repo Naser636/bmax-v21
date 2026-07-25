@@ -1,5 +1,5 @@
 Mission : PREPARE_ENGINEERING_BRIEF
-Commit : 798b3ac
+Commit : 8b0b90e
 Branch : runtime/mission-context-builder
-Date : 2026-07-23T18:00:04+00:00
+Date : 2026-07-25T02:25:15+00:00
 Status : SUCCESS

@@ -33,7 +33,7 @@ glue under `runtime/bin/**`.
 $ ./runtime/bin/odg health          # (and bare `./runtime/bin/odg`)
 ```
 
-Observed output (36 lines, < 100-line contract):
+Observed output (30 lines, < 100-line contract):
 
 ```
 ======================================================================
@@ -41,27 +41,21 @@ Observed output (36 lines, < 100-line contract):
 ======================================================================
 HEALTH
   Runtime      : READY
-  Foundation   : FROZEN
-  Pipeline     : OK
-  Brain        : LOADED
+  Foundation   : READY
+  Pipeline     : READY
+  Brain        : READY
 
 PROGRESS
-  Capabilities : 5 ready / 7 missing
-  Completion   : [########------------] 42%
-  Missions     : 236 recorded
-  Last Mission : ROADMAP_RUNTIME_STABILIZATION_V1 (CREATED)
+  Capabilities : 36 ready / 1 missing
+  Completion   : [###################-] 97%
+  Missions     : 257 recorded
+  Last Mission : IMPLEMENT_RUNTIME_AUTONOMY_V1 (ARCHIVED)
 
 BLOCKERS
-  - OBJ-001
-  - OBJ-002
-  - OBJ-003
-  - OBJ-004
-  - OBJ-005
-  - OBJ-006
-  - OBJ-007
+  - UNIFY_RUNTIME_EXECUTION
 
 NEXT ACTION
-  IMPLEMENT_MISSION_ORCHESTRATOR / OBJ-001
+  UNIFY_RUNTIME_EXECUTION / OBJ-001
 
 WORKING RULES
   - DETERMINISM_FIRST
@@ -82,9 +76,9 @@ WORKING RULES
 | bare `./runtime/bin/odg` renders the dashboard, exit 0 | PASS |
 | `runtime/bin/odg` executable | PASS (`-rwxrwxr-x`) |
 | `runtime/bin/odg-health.js` executable | PASS (`-rwxrwxr-x`) |
-| All four OBJ-002 artefacts present & loaded | PASS (state 157B, status 133B, registry 2222B, ledger 97593B) |
+| All four OBJ-002 artefacts present & loaded | PASS (state 252B, status 93B, registry 1521B, ledger 126435B) |
 | Five OBJ-003 sections rendered | PASS (Health, Progress, Blockers, Next Action, Working Rules) |
-| Output `< 100` lines | PASS (36 lines; hard-capped at 99) |
+| Output `< 100` lines | PASS (30 lines; hard-capped at 99) |
 
 ## Notes on session state
 
