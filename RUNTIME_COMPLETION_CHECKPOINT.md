@@ -161,8 +161,19 @@ traces provider. Les 3 fixes fonctionnent ENSEMBLE. Suite complète 223 verte.
 - Récupération locale (recoverLocally) — OBSERVÉE fonctionnelle (re-diagnostic avant provider)
 - Rollback sur NO_RELEASE — OBSERVÉ (marker reverté au run #1 échoué)
 
-## Prochaines actions (task #8 restant)
-1. `odg autonomy` complet : confirmer boucle cohérente + arbre propre + skip missions prouvées (resume)
-2. Missions enfants : confirmer folding de la queue corrective (FIX_CORRECTIVE_QUEUE_INTAKE authorized)
-3. Décider : conserver ou nettoyer AUTONOMY_E2E_SMOKE + commit livrable (artefact de test)
-4. Rapport final
+## Autonomie complète — vérifications
+- `odg autonomy` (arbre propre, roadmap+queue tout prouvé) → PLAN_COMPLETE, Cycles 0, exit 0,
+  « Resume: after AUTONOMY_E2E_SMOKE » → reprise via checkpoint + skip idempotent OK.
+- Missions enfants : readCorrectiveQueue folde AUTONOMY_E2E_LOOP (AUTHORIZED+contrat+objectifs) en tête,
+  defère les PENDING_REPAIR → mécanisme enfant OK.
+
+## EN COURS — preuve finale full-loop (/tmp/loop.log)
+Injecté AUTONOMY_E2E_LOOP comme mission corrective AUTHORIZED (contrat + pending nomination, commités).
+`odg autonomy` doit : sélectionner AUTONOMY_E2E_LOOP → provider crée src/app/autonomy-loop/marker →
+validation → commit livrable → gitClean true → RELEASE → skip FIX_CORRECTIVE_QUEUE_INTAKE (prouvé) →
+PLAN_COMPLETE avec Cycles≥1 et Released contenant AUTONOMY_E2E_LOOP.
+
+## Prochaines actions
+1. Attendre /tmp/loop.log → vérifier Cycles≥1 + Released AUTONOMY_E2E_LOOP + arbre propre + ledger
+2. Nettoyage artefacts de test (AUTONOMY_E2E_* + pending) selon décision
+3. Rapport final si plus aucun blocage interne
