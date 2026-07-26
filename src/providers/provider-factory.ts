@@ -92,7 +92,11 @@ export function defaultAvailabilityEnv(runner: ProviderProcessRunner = defaultRu
   return {
     env: process.env,
     hasBinary: (bin) => {
-      const r = runner("command", ["-v", bin], { cwd: process.cwd() });
+      // `command -v` is a SHELL BUILTIN, not an executable — spawning it directly (as
+      // `runner("command", …)` did) fails with ENOENT and made EVERY binary look absent, so the
+      // Claude provider was always reported UNAVAILABLE even with `claude` on PATH. Run it through
+      // a shell so PATH resolution actually happens. `bin` is a controlled constant (claude/codex).
+      const r = runner("sh", ["-c", `command -v ${bin}`], { cwd: process.cwd() });
       return r.status === 0 && r.stdout.trim().length > 0;
     },
   };
