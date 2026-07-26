@@ -1,2 +1,0 @@
-Mission : BUSINESS_MODEL_ANALYSIS
-Status : SUCCESS

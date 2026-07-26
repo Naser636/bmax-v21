@@ -1,2 +1,0 @@
-Mission : AUTONOMY_LEVEL_1
-Status : SUCCESS

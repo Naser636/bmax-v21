@@ -1,2 +1,0 @@
-Mission : PLUGIN_MANAGER
-Status : SUCCESS

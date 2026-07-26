@@ -1,2 +1,0 @@
-Mission : SELF_ANALYZE_RUNTIME
-Status : SUCCESS

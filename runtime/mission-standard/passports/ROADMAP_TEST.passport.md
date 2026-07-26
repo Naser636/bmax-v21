@@ -1,3 +1,0 @@
-Mission : ROADMAP_TEST
-Date : 2026-07-14T02:00:21+00:00
-Status : CREATED

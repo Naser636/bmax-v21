@@ -1,3 +1,0 @@
-Mission : IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1
-Status : SUCCESS
-Validated : true

@@ -1,2 +1,0 @@
-Mission : RUNTIME_INTEGRATION
-Status : SUCCESS

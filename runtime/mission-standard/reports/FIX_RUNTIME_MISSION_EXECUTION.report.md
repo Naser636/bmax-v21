@@ -1,3 +1,0 @@
-Mission : FIX_RUNTIME_MISSION_EXECUTION
-Status : SUCCESS
-Validated : true

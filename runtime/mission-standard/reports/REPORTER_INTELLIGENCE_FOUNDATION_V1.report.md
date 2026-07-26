@@ -1,3 +1,0 @@
-Mission : REPORTER_INTELLIGENCE_FOUNDATION_V1
-Status : SUCCESS
-Validated : true

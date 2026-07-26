@@ -1,2 +1,0 @@
-Mission : BUSINESS_GOAL_ANALYSIS
-Status : SUCCESS

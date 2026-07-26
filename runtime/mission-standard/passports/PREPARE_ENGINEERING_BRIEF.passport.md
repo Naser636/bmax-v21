@@ -1,4 +1,0 @@
-Mission : PREPARE_ENGINEERING_BRIEF
-Date : 2026-07-25T18:48:26+00:00
-Status : SUCCESS
-Validated : true

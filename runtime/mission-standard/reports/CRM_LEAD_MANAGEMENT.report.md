@@ -1,2 +1,0 @@
-Mission : CRM_LEAD_MANAGEMENT
-Status : SUCCESS

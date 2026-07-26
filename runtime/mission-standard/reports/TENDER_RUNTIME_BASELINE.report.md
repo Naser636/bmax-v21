@@ -1,2 +1,0 @@
-Mission : TENDER_RUNTIME_BASELINE
-Status : SUCCESS

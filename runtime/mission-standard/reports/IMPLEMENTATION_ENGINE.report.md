@@ -1,2 +1,0 @@
-Mission : IMPLEMENTATION_ENGINE
-Status : SUCCESS

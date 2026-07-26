@@ -1,2 +1,0 @@
-Mission : MARKETING_STRATEGY
-Status : SUCCESS

@@ -1,2 +1,0 @@
-Mission : MISSION_INTERPRETER_V3_B4
-Status : SUCCESS

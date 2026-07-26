@@ -1,2 +1,0 @@
-Mission : END_SESSION_SPRINT17
-Status : SUCCESS

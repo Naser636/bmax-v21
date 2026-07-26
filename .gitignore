@@ -50,6 +50,19 @@ next-env.d.ts
 # Same rationale as /runtime/generated/ above; the file stays on disk, untracked.
 /runtime/mission-standard/history/
 
+# ODG Runtime per-mission EVIDENCE — the Mission-Standard engine's [4/5] GENERATE
+# outputs (passport, report, certificate, generated JSON). Rewritten on EVERY run
+# with the current commit/branch/date (mse:117-146), so tracking them permanently
+# re-dirties the tree — the exact churn the former `gitClean = true` hack masked
+# in runtime/bin/odg-verify.js. The engine ALREADY excludes these paths from its
+# governance gate (mse:22-30, ARTIFACT_EXCLUDES); the honest odg-verify gitClean
+# check mirrors that. Same policy as /runtime/mission-standard/history/ above:
+# preserved on disk (evidence), never versioned.
+/runtime/mission-standard/generated/
+/runtime/mission-standard/passports/
+/runtime/mission-standard/reports/
+/runtime/mission-standard/certificates/
+
 # ODG Runtime security backups — kernel tarball + SHA-256 manifest emitted by the
 # secure-backup subsystem. MUST be preserved on disk (disaster-recovery), but is
 # binary/regenerated per run and must never be versioned. Kept on disk, untracked.

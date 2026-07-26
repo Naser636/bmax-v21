@@ -1,2 +1,0 @@
-Mission : ADVERTISING_EXECUTION
-Status : SUCCESS

@@ -1,4 +1,0 @@
-Mission : ARBITRAGE_PRICE_COLLECTION
-Commit : 9fd7265
-Branch : sprint-01
-Date : 2026-07-12T16:56:03+00:00

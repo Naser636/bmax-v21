@@ -1,2 +1,0 @@
-Mission : TENDER_SOURCE_DISCOVERY
-Status : SUCCESS

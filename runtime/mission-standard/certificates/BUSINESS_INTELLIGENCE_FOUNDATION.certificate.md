@@ -1,4 +1,0 @@
-Mission : BUSINESS_INTELLIGENCE_FOUNDATION
-Commit : 9fd7265
-Branch : sprint-01
-Date : 2026-07-12T16:42:47+00:00

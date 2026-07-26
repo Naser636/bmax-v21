@@ -1,2 +1,0 @@
-Mission : AUTONOMOUS_CTO_ENGINE
-Status : SUCCESS

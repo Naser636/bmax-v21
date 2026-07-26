@@ -1,2 +1,0 @@
-Mission : INTEGRATION_VALIDATION
-Status : SUCCESS

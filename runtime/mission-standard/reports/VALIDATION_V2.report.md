@@ -1,2 +1,0 @@
-Mission : VALIDATION_V2
-Status : SUCCESS

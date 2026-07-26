@@ -21,8 +21,32 @@ cp.execSync("npx tsc --noEmit",{stdio:"ignore"});
 verify.typescript=false;
 }
 
-// TEMP PATCH: ignore global git cleanliness
-verify.gitClean=true;
+// gitClean — HONEST working-tree check, scoped to the SAME Runtime-owned artifact paths the
+// Mission-Standard engine excludes from its governance gate (runtime/mission-standard/bin/mse:22-30).
+// Those directories hold per-mission evidence the Runtime regenerates on EVERY run (passport, report,
+// certificate, generated JSON, history log) and are git-ignored — so they must never count as "dirty".
+// Any change OUTSIDE them is real source/business work and legitimately makes the tree unclean.
+// This replaces a former `gitClean = true` hard-code that masked the tree state unconditionally.
+const ARTIFACT_EXCLUDES = [
+  ":(exclude)runtime/mission-standard/generated",
+  ":(exclude)runtime/mission-standard/passports",
+  ":(exclude)runtime/mission-standard/reports",
+  ":(exclude)runtime/mission-standard/certificates",
+  ":(exclude)runtime/mission-standard/history",
+  ":(exclude)runtime/mission-standard/evidence",
+  ":(exclude)runtime/missions/*.evidence.md",
+];
+try {
+  const porcelain = cp
+    .execSync(`git status --porcelain -- ${ARTIFACT_EXCLUDES.map((p) => `'${p}'`).join(" ")}`, {
+      encoding: "utf8",
+    })
+    .trim();
+  verify.gitClean = porcelain.length === 0;
+} catch {
+  // If git is unavailable the tree cannot be proven clean — fail closed.
+  verify.gitClean = false;
+}
 
 // documentationProofPresent — the derived Release gate (src/core/release-manager.ts:367-369).
 // It is NOT a shell check like build/typescript; the Release Manager sets it true when the

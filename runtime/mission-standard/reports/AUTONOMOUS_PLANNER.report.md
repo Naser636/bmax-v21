@@ -1,2 +1,0 @@
-Mission : AUTONOMOUS_PLANNER
-Status : SUCCESS

@@ -1,3 +1,0 @@
-Mission : TEST_RUNTIME_CHAIN
-Date : 2026-07-14T12:40:46+00:00
-Status : CREATED

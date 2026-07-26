@@ -1,2 +1,0 @@
-Mission : BUSINESS_CONTEXT
-Status : SUCCESS
