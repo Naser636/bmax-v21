@@ -173,7 +173,21 @@ Injecté AUTONOMY_E2E_LOOP comme mission corrective AUTHORIZED (contrat + pendin
 validation → commit livrable → gitClean true → RELEASE → skip FIX_CORRECTIVE_QUEUE_INTAKE (prouvé) →
 PLAN_COMPLETE avec Cycles≥1 et Released contenant AUTONOMY_E2E_LOOP.
 
-## Prochaines actions
-1. Attendre /tmp/loop.log → vérifier Cycles≥1 + Released AUTONOMY_E2E_LOOP + arbre propre + ledger
-2. Nettoyage artefacts de test (AUTONOMY_E2E_* + pending) selon décision
-3. Rapport final si plus aucun blocage interne
+## ✅ AUTONOMIE COMPLÈTE PROUVÉE (task #8 terminé)
+- `odg autonomy` a SÉLECTIONNÉ la mission enfant AUTONOMY_E2E_LOOP (queue corrective, ahead roadmap),
+  l'a exécutée via le PROVIDER Claude réel, commité le livrable (a54b51b), gitClean true, RELEASE →
+  **Cycles: 1, Released: AUTONOMY_E2E_LOOP, PLAN_COMPLETE, EXIT=0**, arbre propre.
+- Reprise idempotente : 2e `odg autonomy` → « Resume: after AUTONOMY_E2E_LOOP », Cycles 0, rien
+  ré-exécuté (skip via ledger), arbre propre.
+- Récupération d'erreur : boucle recoverLocally (re-diagnostic/re-validation) + rollback sur NO_RELEASE
+  OBSERVÉS. Le run #1 échoué (scope) puis corrigé puis réussi = reprise après erreur.
+- Missions enfants : readCorrectiveQueue folde AUTHORIZED, defère PENDING_REPAIR ; exécution enfant OK.
+- Dashboard cohérent : READY partout, 57 capacités, 100%, 513 missions, arbre propre.
+
+## Preuves (commits)
+41de9d9 fix#1 hasBinary · ef564d0 fix#2+#3 · 0edb029 livrable AUTONOMY_E2E_SMOKE ·
+a54b51b livrable AUTONOMY_E2E_LOOP (auto-commité par la boucle) · ledger : 2 missions ARCHIVED.
+
+## Reste
+1. Suite complète finale + build (en cours /tmp/test-final.log, /tmp/build-final.log)
+2. Rapport final — aucun blocage interne restant ; provider réellement dispo (pas de blocage externe)
