@@ -1,0 +1,29 @@
+{
+  "mission": "AUTONOMY_E2E_LOOP",
+  "priority": "NORMAL",
+  "mode": "IMPLEMENT",
+  "description": "End-to-end verification of the FULL autonomy loop driving a corrective (child) mission. Injected as an AUTHORIZED nomination in the corrective queue (runtime/missions/pending/), it must be folded ahead of the roadmap, selected by the Autonomy Cycle, executed via the engineering provider, and RELEASED — proving odg autonomy is autonomous end-to-end, not just odg mission.",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "src/app/autonomy-loop/**"
+  ],
+  "objectives": [
+    {
+      "id": "AUTONOMY_LOOP_MARKER",
+      "goal": "Create a single minimal marker file under src/app/autonomy-loop/ confirming the autonomy loop drove this child mission end-to-end.",
+      "done_when": [
+        "Exactly one file exists under src/app/autonomy-loop/.",
+        "No file outside the authorized write scope is modified.",
+        "Build and TypeScript remain green."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective completed strictly within the authorized write scope.",
+    "Validation successful (build, typescript, gitClean).",
+    "Mission ledger updated."
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ]
+}

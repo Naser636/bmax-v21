@@ -1,0 +1,5 @@
+{
+  "mission": "AUTONOMY_E2E_LOOP",
+  "status": "AUTHORIZED",
+  "reason": "End-to-end autonomy-loop verification (child/corrective mission)."
+}
