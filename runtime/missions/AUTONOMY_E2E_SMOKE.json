@@ -1,0 +1,29 @@
+{
+  "mission": "AUTONOMY_E2E_SMOKE",
+  "priority": "NORMAL",
+  "mode": "IMPLEMENT",
+  "description": "End-to-end autonomy verification. A minimal engineering mission whose deliverable is a single marker file the provider must create under a fresh authorized path. Exercises the full provider route: local-first -> local recovery exhausted -> provider creates the in-scope file -> Validation Engine proves it -> the Runtime commits the authorized deliverable -> gitClean true -> Release Manager RELEASE -> evidence + ledger. The provider never decides completion; only the Release Manager does.",
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "src/app/autonomy-e2e/**"
+  ],
+  "objectives": [
+    {
+      "id": "AUTONOMY_E2E_MARKER",
+      "goal": "Create a single minimal marker file under src/app/autonomy-e2e/ recording that the engineering provider executed this mission end-to-end.",
+      "done_when": [
+        "Exactly one file exists under src/app/autonomy-e2e/.",
+        "No file outside the authorized write scope is modified.",
+        "Build and TypeScript remain green."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective completed strictly within the authorized write scope.",
+    "Validation successful (build, typescript, gitClean).",
+    "Mission ledger updated."
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ]
+}

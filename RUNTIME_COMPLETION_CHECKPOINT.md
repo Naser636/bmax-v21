@@ -106,8 +106,47 @@ providers, reprise après erreur, missions d'ingénierie, missions enfants, auto
 - `claude` présent (/usr/local/bin/claude) + ANTHROPIC_API_KEY SET → provider Claude EXÉCUTABLE en vrai
 - OPENAI_API_KEY absent, codex absent → failover OpenAI indisponible (blocage externe attendu, normal)
 
+## BLOCAGE #2 TROUVÉ + CORRIGÉ (obstacle central à l'autonomie d'ingénierie)
+- **Symptôme** : mission provider → pipeline SUCCESS/RELEASED (validation OK, ledger ARCHIVED) MAIS
+  autonomie externe BLOCKED : « Release Manager returned NO_RELEASE ; rollbackRef preserved ». EXIT=2.
+- **Cause racine** : contradiction structurelle. La Validation Engine EXIGE un changement in-scope
+  (engineeringOk = scopedChanges>0) ; le Release Manager (FROZEN) EXIGE gitClean=true. Le livrable de
+  la mission (fichier créé par le provider) rend gitClean=false → NO_RELEASE. Aucune mission
+  d'ingénierie ne peut jamais release.
+- **Fix** : `src/runtime/autonomy-runtime-adapter.ts` — après que la Validation Engine a PROUVÉ la
+  mission (report SUCCESS+validated), `commitAuthorizedDeliverable()` committe EXACTEMENT le scope
+  autorisé (le commit = source reproductible + rollbackRef), puis refresh verify → gitClean=true →
+  RELEASE. No-op si rien à committer (cache/local/non-eng/tests fake) → tests inchangés.
+- **Note rollback** : le Runtime annule les changements sur NO_RELEASE (bon). Mon commit intervient
+  AVANT decide/rollback, donc sur RELEASE il n'y a pas de rollback → le livrable persiste.
+- **Vérifié (partiel)** : tsc vert ; provider-enabled-mission / canonical-contract / integration /
+  runtime-autonomy / release-manager tous OK.
+
+## BLOCAGE #3 TROUVÉ + CORRIGÉ (robustesse conditions réelles)
+- **Symptôme** : test e2e réel AUTONOMY_E2E_SMOKE → le provider Claude CRÉE bien src/app/autonomy-e2e/
+  MARKER.md (réel, $0.34, 8 turns, il confirme le scope), MAIS EXECUTION_FAILED au stage
+  "scope-enforcement" : « unauthorized changes outside mission scope: RUNTIME_COMPLETION_CHECKPOINT.md,
+  src/runtime/autonomy-runtime-adapter.ts, runtime/missions/AUTONOMY_E2E_SMOKE.json ».
+- **Cause racine** : `ClaudeProviderAdapter.observeChangedFiles()` capture l'état ABSOLU de l'arbre
+  (`git status --porcelain`) → impute au provider mes changements TRACKÉS pré-existants (non commités).
+- **Fix** : `src/providers/claude-provider-adapter.ts` — capturer une BASELINE des fichiers changés
+  AVANT le spawn du provider, puis ne retenir que le delta (post − baseline). Le provider n'est
+  responsable QUE de ce qu'il a écrit. En boucle autonomie propre, baseline vide → comportement
+  inchangé. Test fixture `fakeRunner` mis à jour pour modéliser (propre avant / sale après provider).
+- **Vérifié** : tsc vert ; claude-provider-adapter + integration + enabled-mission + canonical OK.
+
+## Fichiers modifiés phase 2 (à committer après suite verte)
+- src/providers/provider-factory.ts (fix #1 hasBinary)
+- src/runtime/autonomy-runtime-adapter.ts (fix #2 commitAuthorizedDeliverable)
+- src/providers/claude-provider-adapter.ts (fix #3 baseline delta)
+- src/tests/claude-provider-adapter.test.ts (fixture baseline)
+- runtime/missions/AUTONOMY_E2E_SMOKE.json (mission de test e2e)
+- (fix #1 déjà commité en 41de9d9)
+
 ## Prochaines actions
-1. Commit du fix hasBinary
-2. Test end-to-end RÉEL : supprimer le marker existant → mission smoke → claude crée le fichier →
-   validation → RELEASE → evidence (certificat/passport/ledger)
-3. Observer un éventuel hang (aucun timeoutMs sur le spawn provider) → ajouter garde si besoin
+1. Attendre suite complète /tmp/test-run-3.log (attendu exit 0)
+2. Commit fixes #2/#3 + test + mission
+3. Nettoyer marker résiduel → re-run e2e AUTONOMY_E2E_SMOKE depuis arbre PROPRE →
+   attendu : provider crée marker → scope OK (baseline vide) → validation → commit livrable →
+   gitClean true → RELEASE → ledger ARCHIVED (Cycles=1, Released=1)
+4. Puis : reprise après erreur + missions enfants + `odg autonomy` complet

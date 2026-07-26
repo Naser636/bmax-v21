@@ -475,6 +475,17 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // verdict is NOT asserted here: the Validation Engine still computes it from real evidence
       // (working-tree changes in scope + build/tsc gates), so an unproven mission still yields BLOCKED.
       this.writeProviderValidationEvidence(mission, spec, receipt);
+      // An engineering mission's deliverable IS the in-scope working-tree change the provider produced.
+      // That change legitimately makes gitClean FALSE — yet the frozen Release Manager gates RELEASE on
+      // gitClean, so without this an engineering mission could NEVER release (the Validation Engine
+      // requires an in-scope change; the Release Manager requires none). Now that the Validation Engine
+      // has PROVEN the deliverable (SUCCESS), commit exactly the authorized scope: the commit is the
+      // release's reproducible source and rollback point, and gitClean becomes legitimately true. Only
+      // re-refresh the verifier when a commit actually happened, so cache-hit / no-change / local /
+      // non-engineering runs (and the fake-provider tests) are byte-for-byte unaffected.
+      if (this.commitAuthorizedDeliverable(mission, spec)) {
+        this.refreshVerifyEvidence();
+      }
     }
     return toPipelineOutcome(outcome);
   }
@@ -531,6 +542,51 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     const abs = this.resolve(relPath);
     fs.mkdirSync(abs.slice(0, abs.lastIndexOf("/")), { recursive: true });
     fs.writeFileSync(abs, JSON.stringify(value, null, 2));
+  }
+
+  /**
+   * Commit the mission's authorized in-scope deliverable once the Validation Engine has PROVEN it
+   * (mission-report status SUCCESS + validated true). This resolves the structural tension between the
+   * Validation Engine — which REQUIRES an in-scope working-tree change to call an engineering mission
+   * done — and the frozen Release Manager — which REQUIRES gitClean to RELEASE. The proven change
+   * becomes a commit: the release's reproducible source and its rollback point, after which gitClean is
+   * legitimately true. Tightly scoped and best-effort: only paths under authorized_paths are staged; a
+   * run with nothing to commit in scope (provider cache hit, no change) or no usable git repo is a
+   * no-op. Returns true IFF a commit was created (the sole trigger for a gitClean re-check).
+   */
+  private commitAuthorizedDeliverable(mission: string, spec: RawMission | null): boolean {
+    const authorized = this.authorizedPaths(spec);
+    if (authorized.length === 0) return false;
+    const report = this.readJson<{ status?: string; validated?: boolean }>(MISSION_REPORT);
+    if (report?.validated !== true || report?.status !== "SUCCESS") return false;
+    // Reduce globbed authorized paths (e.g. "src/app/x/**") to committable path prefixes.
+    const prefixes = authorized
+      .map((p) => p.replace(/[*].*$/, "").replace(/\/+$/, ""))
+      .filter((p) => p.length > 0);
+    if (prefixes.length === 0) return false;
+    try {
+      const porcelain = execFileSync("git", ["status", "--porcelain", "--", ...prefixes], {
+        cwd: this.cwd,
+        encoding: "utf8",
+      }).trim();
+      if (porcelain.length === 0) return false; // nothing changed in scope — pure no-op
+      execFileSync("git", ["add", "--", ...prefixes], { cwd: this.cwd, stdio: "ignore" });
+      execFileSync(
+        "git",
+        [
+          "-c",
+          "commit.gpgsign=false",
+          "commit",
+          "-m",
+          `ODG mission ${mission}: release authorized deliverable`,
+        ],
+        { cwd: this.cwd, stdio: "ignore" },
+      );
+      return true;
+    } catch {
+      // A commit failure leaves gitClean false → the Release Manager returns NO_RELEASE (safe).
+      return false;
+    }
   }
 
   /**

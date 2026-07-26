@@ -76,7 +76,10 @@ function fakeRunner(opts: {
   const run: ProviderProcessRunner = (bin, args) => {
     if (bin === "git") {
       calls.git++;
-      return { status: 0, stdout: opts.gitPorcelain ?? "", stderr: "" };
+      // Model reality for the adapter's pre-run baseline: the working tree is clean BEFORE the
+      // provider runs (no claude call yet) and shows the scripted porcelain only AFTER it has run.
+      // This lets post-run enforcement attribute changes to the provider, not to a pre-existing tree.
+      return { status: 0, stdout: calls.claude > 0 ? (opts.gitPorcelain ?? "") : "", stderr: "" };
     }
     calls.claude++;
     lastArgs = args;

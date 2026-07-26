@@ -131,6 +131,14 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
       }
     }
 
+    // Baseline the working tree BEFORE the provider runs so post-run enforcement attributes to the
+    // provider ONLY the paths IT dirtied — not tracked changes that were already present at session
+    // start (contract §9 layer 4 is about what the PROVIDER wrote, not the operator's pre-existing
+    // work). In a proper autonomy loop each mission commits its deliverable, so this set is empty and
+    // behaviour is unchanged; it only makes a real, dirty-tree run robust instead of failing on
+    // unrelated uncommitted files. (git-ignored regenerated artifacts never appear in porcelain.)
+    const baseline = new Set(this.observeChangedFiles());
+
     const args = this.buildArgs(request, userPrompt, readOnly);
     const proc = this.run(this.bin, args, { cwd: this.cwd, timeoutMs: this.timeoutMs });
 
@@ -169,9 +177,10 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
       });
     }
 
-    // 3) Post-run enforcement (contract §9 layer 4): observe real working-tree changes and reject
-    //    anything outside the mission's write scope or inside a frozen root.
-    const changedFiles = this.observeChangedFiles();
+    // 3) Post-run enforcement (contract §9 layer 4): observe the working-tree changes the PROVIDER
+    //    introduced (post-run set minus the pre-run baseline) and reject anything outside the
+    //    mission's write scope or inside a frozen root.
+    const changedFiles = this.observeChangedFiles().filter((f) => !baseline.has(f));
     const unauthorizedChanges = changedFiles.filter(
       (f) => !this.isAuthorized(f, request.mission.authorizedPaths),
     );
