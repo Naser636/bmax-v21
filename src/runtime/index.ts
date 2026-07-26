@@ -17,5 +17,8 @@ export * from "./snapshot-engine";
 export * from "./root-cause-engine";
 export * from "./autonomous-execution-engine";
 export * from "./autonomous-execution-adapter";
+export * from "./persistent-autonomy-controller";
+export * from "./persistent-autonomy-controller-adapter";
+export * from "./provider-failover-engine";
 export * from "./runtime-service";
 export * from "./runtime-facade";

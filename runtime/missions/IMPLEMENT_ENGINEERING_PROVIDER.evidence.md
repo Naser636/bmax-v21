@@ -89,6 +89,30 @@ Provider Canonical Contract OK
 | Provider Canonical Contract test (regression) | PASS |
 | Claude Provider Adapter / Integration tests | PASS |
 
+## Re-verification — 2026-07-26 @ HEAD 12391861
+
+Runtime re-issued the mission with `missing_capabilities: [IMPLEMENT_ENGINEERING_PROVIDER]`; the
+capability is in fact already present and committed at HEAD. Re-verified this run (no source changes):
+
+| Check | Result |
+|-------|--------|
+| `npx tsc --noEmit` | PASS (exit 0) |
+| `claude-provider-adapter.test.ts` | Claude Provider Adapter OK |
+| `claude-provider-integration.test.ts` | Claude Provider Integration OK |
+| `provider-canonical-contract.test.ts` | Provider Canonical Contract OK (4 PASS) |
+| `provider-enabled-mission.test.ts` | Provider Enabled Mission OK (9 PASS) |
+| `provider-orchestrator.test.ts` | Provider Orchestrator OK (19 PASS) |
+| `provider-patch-engine.test.ts` | Provider Patch Engine OK (6 PASS) |
+| `provider-registry.test.ts` | Provider Registry OK (25 PASS) |
+
+All 7 provider suites green (63 assertions), `tsc` exit 0. Source wiring confirmed at HEAD:
+OBJ-001 `src/providers/provider-port.ts` + `claude-provider-adapter.ts` (selectable via
+`src/core/provider-registry.ts` / `provider-orchestrator.ts`); OBJ-002
+`src/runtime/autonomy-runtime-adapter.ts` `runPipeline()` gates on `missionRequiresProvider()`
+(line 288) → `runViaProvider()`, driven by in-core `RuntimeAutonomy`, no CTO call; OBJ-003
+`src/runtime/patch-engine.ts` `ProviderPatchEngine.receive()` → `readyForValidation`; OBJ-004 this
+file + next mission `runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.json`.
+
 ## Notes on session state
 
 At session start the working tree already carried the provider-integration seam

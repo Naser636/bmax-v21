@@ -41,3 +41,41 @@ export type {
   ProviderProcessResult,
   ProviderProcessRunner,
 } from "./claude-provider-adapter";
+
+export {
+  OpenAIProviderAdapter,
+  createOpenAIProvider,
+  OPENAI_API_KEY_ENV,
+} from "./openai-provider-adapter";
+
+export type { OpenAIProviderOptions } from "./openai-provider-adapter";
+
+export {
+  available,
+  unavailable,
+  isAvailabilityAware,
+} from "./provider-availability";
+
+export type {
+  AvailabilityAware,
+  AvailabilityCheck,
+  AvailabilityEnv,
+  ProviderAvailability,
+} from "./provider-availability";
+
+export {
+  CLAUDE_CREDENTIAL_ENVS,
+  claudeAvailability,
+  createDefaultFailoverChain,
+  defaultAvailabilityEnv,
+  resolveEngineeringProvider,
+  selectProviderWithFailover,
+} from "./provider-factory";
+
+export type {
+  FailoverCandidate,
+  FailoverChainOptions,
+  FailoverDecision,
+  FailoverHalt,
+  ProviderRole,
+} from "./provider-factory";

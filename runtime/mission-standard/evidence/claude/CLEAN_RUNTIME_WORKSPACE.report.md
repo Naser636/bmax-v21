@@ -3,45 +3,51 @@
 Mission : CLEAN_RUNTIME_WORKSPACE
 Mode : ENGINEERING
 Status : DONE
-Scanned : 2026-07-25
+Scanned : 2026-07-26
 Branch : runtime/mission-context-builder
-Head : 8b0b90e7453a4973f62b80e742263049a79e379f
+Head : 12391861f6caa4f9a787bd78c8554a828046dae7
 
 ## Summary
 
 Deterministic scan of transient runtime workspace artifacts under `runtime/`.
-Every candidate was verified `git check-ignore`-ignored **and** untracked
-before it could be removed. No tracked or required artifact was deleted.
+Every candidate was verified `git check-ignore`-ignored **and** untracked before
+it could be removed. No tracked or required artifact was deleted (`git diff
+--name-status` reports zero tracked deletions). The workspace is now clean:
+a post-cleanup rescan reports **0** safe-to-remove candidates and **0** blocked.
 
 | Bucket | Count |
 | --- | --- |
-| Safe-to-remove (removed) | 9 |
+| Safe-to-remove (removed this run) | 2 |
 | Required — preserved | 4 |
 | Blocked (tracked/required, refused) | 0 |
+| Safe-to-remove remaining after cleanup | 0 |
 
-`runtime/generated/` disk footprint: **7.8M → 896K** after cleanup.
+`runtime/generated/` disk footprint: **1.2M** after cleanup.
 
 ## Objective coverage
 
 - **CLEAN_WORKSPACE_1** — `runtime/scripts/clean-runtime-workspace.js` produces a
-  deterministic, rule-driven scan (fixed extension rules + sorted filesystem walk;
-  no timestamps/randomness). Output: `CLEAN_RUNTIME_WORKSPACE-scan.json`.
-- **CLEAN_WORKSPACE_2** — each candidate is asserted git-ignored and not tracked;
-  any tracked/non-ignored path is demoted to PRESERVE and never removed.
-  `git diff --name-status` confirms **zero tracked deletions**.
-- **CLEAN_WORKSPACE_3** — cleanup applied; evidence JSON + this report generated.
+  deterministic, rule-driven scan (fixed extension rules + a sorted top-level walk
+  of `runtime/generated/`; no timestamps or randomness influence classification).
+  Output: `CLEAN_RUNTIME_WORKSPACE-scan.json`.
+- **CLEAN_WORKSPACE_2** — each candidate is asserted `git check-ignore`-ignored
+  **and** not tracked before removal; any tracked or non-ignored path is demoted to
+  `blocked` and refused. This run: blocked = 0, so every candidate was covered by
+  the governance `/runtime/generated/` .gitignore policy. Required roots
+  (`runtime/security`, `runtime/releases/SECURE_*`,
+  `runtime/mission-standard/history`, `runtime/reports/archive`) were confirmed
+  git-ignored and preserved.
+- **CLEAN_WORKSPACE_3** — cleanup applied; the evidence JSON (clean-state rescan)
+  and this report were generated. No tracked or required artifact was deleted.
 
 ## Removed (SAFE_TO_REMOVE) — stale scratch, git-ignored, regenerated on demand
 
-- `runtime/generated/odg-roadmap-compile.txt` (7.2 MB compile dump)
-- `runtime/generated/FINAL_VALIDATION_20260724_201800.md` (one-off dump)
-- `runtime/generated/_rc_probe.ts` (scratch probe)
-- `runtime/generated/eval-documentation-proof-gate.ts` (scratch eval)
-- `runtime/generated/autonomy-run.log`, `autonomy-run2.log`
-- `runtime/generated/health.log`, `status.log`, `verify.log`
+- `runtime/generated/provider-skipped.txt` (provider dry-run diagnostic dump)
+- `runtime/generated/runtime-failures.txt` (transient failure list)
 
-All are under the `/runtime/generated/` governance policy (regenerated in-run and
-bootstrapped on cold start by `runtime/bin/odg-bootstrap.js`).
+Both are top-level scratch under the `/runtime/generated/` governance policy
+(regenerated in-run and bootstrapped on cold start by
+`runtime/bin/odg-bootstrap.js`).
 
 ## Preserved (REQUIRED — never removed)
 
@@ -51,8 +57,18 @@ bootstrapped on cold start by `runtime/bin/odg-bootstrap.js`).
 - `runtime/reports/archive/` — timestamped report archive snapshots
 
 Live runtime state (`mission-report.json`, `decision.json`, `runtime-state.json`,
-`mission-ledger.json`, `project-context.json`, and the `fleet/`, `llm/`,
-`provider-cache/`, `provider-trace/`, `reports/` subtrees) was left untouched.
+`mission-ledger.json`, `project-context.json`, and the `execution/`, `fleet/`,
+`llm/`, `provider-cache/`, `provider-trace/`, `reports/` subtrees) was left
+untouched — the scanner walks only the top level of `runtime/generated/` and never
+recurses into subtrees or touches `*.json` state.
+
+## Safety guarantees
+
+- Tracked roots that superficially look like backups/archives
+  (`runtime/backup/`, `runtime/archive/`, tracked `runtime/releases/`) are NOT
+  git-ignored and are therefore never classified as removable.
+- Dry-run by default; `--apply` is required to remove. Idempotent — a second
+  `--apply` reports safe = 0, removed = 0.
 
 ## Reproduce
 

@@ -74,10 +74,37 @@ const scopedChanges = isEngineering ? changedPathsInScope() : [];
 const engineeringOk = !isEngineering || scopedChanges.length > 0;
 
 // 4. Build / type gates (if evidence present).
-const verify = readJsonSafe("runtime/generated/runtime-verify.json");
-const buildOk = verify ? verify.build === true : true;
-const typescriptOk = verify ? verify.typescript === true : true;
+//
+// BUILD_GATE_AUTONOMY: a red build / TypeScript gate NO LONGER stops the pipeline here. Instead the
+// Validation Engine DELEGATES to the Build Recovery Engine, which runs a bounded, evidence-guarded
+// self-repair loop and hands control back. The gate is then judged on that FRESH evidence:
+//   - recovered green            → validation continues and the mission can be promoted;
+//   - no improvement demonstrable → the Provider is authorized (by the recovery engine) and the
+//                                   mission stays BLOCKED locally.
+let verify = readJsonSafe("runtime/generated/runtime-verify.json");
+let buildOk = verify ? verify.build === true : true;
+let typescriptOk = verify ? verify.typescript === true : true;
 const gatesEvaluated = verify !== null;
+
+let recovery = null;
+if (gatesEvaluated && (!buildOk || !typescriptOk)) {
+    const bre = require("./build-recovery-engine");
+    const targetMission = plan.mission || patch.mission;
+    recovery = bre.recover({
+        authorizedPaths,
+        mission: targetMission,
+        cwd: process.cwd(),
+    });
+    buildOk = recovery.build;
+    typescriptOk = recovery.typescript;
+    // Judge the capability probes below against the fresh gate too. In-memory only: odg-verify.js
+    // remains the SOLE writer of runtime-verify.json on disk (the verification pipeline stays
+    // unified — we override this run's verdict from fresher evidence, we do not rewrite the file).
+    verify = { ...(verify || {}), build: buildOk, typescript: typescriptOk };
+    const stamp = new Date().toISOString();
+    bre.writeReport(targetMission, recovery, stamp);
+    bre.writeProviderAuthorization(targetMission, recovery, stamp);
+}
 
 // 5. Capability probes (only when the mission contract declares `verify`). Each probe is a pure
 // check against real generated artifacts, turning the mission's Definition of Done into machine-
@@ -167,6 +194,15 @@ fs.writeFileSync(
     "runtime/generated/mission-report.json",
     JSON.stringify(report, null, 2)
 );
+
+// BUILD_GATE_AUTONOMY delegated run: the gate was red and the Build Recovery Engine ran. Per the
+// capability contract, emit ONLY the focused summary (Root Cause / files / iterations / Build /
+// TypeScript / Validation / Mission promue) — not the general verbose block.
+if (recovery) {
+    const bre = require("./build-recovery-engine");
+    bre.printSummary(recovery, { validated, promoted: validated });
+    process.exit(validated ? 0 : 1);
+}
 
 console.log("======================================");
 console.log("VALIDATION ENGINE v3 (evidence-based)");

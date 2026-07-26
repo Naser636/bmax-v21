@@ -14,6 +14,10 @@
 
 import fs from "node:fs";
 import { spawnSync, execFileSync } from "node:child_process";
+import { createRequire } from "node:module";
+
+// Bridge to the existing CommonJS Runtime components (runtime/core/*.js) from this ESM adapter.
+const requireCjs = createRequire(import.meta.url);
 
 import type {
   AutonomyPlanState,
@@ -32,7 +36,6 @@ import { DocumentationEngine } from "@/core/documentation-engine";
 import { ARTIFACT_CONTRACT_VERSION } from "@/contracts/documentation";
 import {
   PROVIDER_CONTRACT_VERSION,
-  createClaudeProvider,
   missionRequiresProvider,
   toPipelineOutcome,
 } from "@/providers";
@@ -41,15 +44,27 @@ import type {
   ProviderMission,
   ProviderObjective,
   ProviderOutcome,
+  ProviderRequest,
   RoutableMission,
 } from "@/providers";
 import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
+import { RootCauseEngine, type MinimalPatch } from "./root-cause-engine";
+import {
+  haltOutcome,
+  runMissionWithFailover,
+  type FailoverMissionReport,
+} from "./provider-failover-engine";
 
 const GENERATED = "runtime/generated";
 const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
 const PATCH_PLAN = `${GENERATED}/patch-plan.json`;
 const PATCH_EXECUTION = `${GENERATED}/patch-execution.json`;
 const MISSION_REPORT = `${GENERATED}/mission-report.json`;
+// The failover decision evidence written on every provider run: which provider was selected, and —
+// for the OpenAI failover target — the exact blocking component / missing config / next action if it
+// is unusable (mission PROVIDER_FAILOVER_TO_OPENAI, objectives 3-7). Never a source of truth for the
+// verdict; pure evidence so the provider selection is auditable.
+const FAILOVER_REPORT = `${GENERATED}/provider-failover-report.json`;
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
@@ -71,6 +86,11 @@ const VERIFIER = "runtime/bin/odg-verify.js";
 // real, materialized plan/patch/execution evidence and lets it re-verify — it never writes the
 // verdict itself (design: exactly one component writes validated/status).
 const VALIDATION_ENGINE = "runtime/core/validation-engine.js";
+
+// LOCAL_FIRST recovery bound: how many diagnose → reuse-known-patch → re-validate passes the Runtime
+// attempts locally before it may conclude, by evidence, that it cannot progress without a provider.
+// Small and finite: each pass must apply a NEW in-scope patch or the loop stops (see recoverLocally).
+const LOCAL_RECOVERY_MAX_ATTEMPTS = 3;
 
 // Pinned provider defaults (contract §2). ODG owns these; the adapter never lets Claude choose them.
 const PROVIDER_MODEL = "claude-opus-4-8";
@@ -120,28 +140,40 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
 
   /** Stage 1 — deterministic selection inputs from existing artifacts (design §2 Stage 1). */
   readPlanState(): AutonomyPlanState {
-    // Official roadmap manifest is the primary source (runtime/governance/ROADMAP.json): the ordered
-    // list of missions the Runtime executes autonomously. Every roadmap mission is a candidate, so
-    // the pure selectNextMission (frozen) reduces to "first roadmap mission not yet proven in the
-    // ledger" — the loop advances in roadmap order. The frozen selection FUNCTION is unchanged; only
-    // its INPUT artifact is the manifest instead of the exhausted capability master plan.
-    const manifest = this.readJson<{ missions?: Array<{ id?: string }> }>(ROADMAP_MANIFEST);
-    const manifestIds = Array.isArray(manifest?.missions)
-      ? manifest!.missions.map((m) => m?.id).filter((m): m is string => typeof m === "string")
-      : [];
-
+    // The autonomous work-list is the SAME coherent forward gap the Runtime dashboard computes
+    // (runtime/core/runtime-model.js): every mission CONTRACT on disk that is executable (declares
+    // objectives) and is not yet PROVEN in the ledger, ordered roadmap-first then alphabetical.
+    //
+    // Root cause this replaces: the work-list was sourced from the ROADMAP.json manifest ALONE. Once
+    // the handful of seed roadmap missions are proven, the manifest yields an EMPTY plan and the
+    // Autonomy Cycle terminates PLAN_COMPLETE with Cycles=0 — even though executable missions (e.g.
+    // AUTONOMOUS_EXECUTION_WITH_FALLBACK) still sit unproven on disk. They were never candidates
+    // because they are absent from the manifest. Reusing the dashboard's model makes `odg autonomy`
+    // and the dashboard's "Next Mission" one source of truth. The frozen selectNextMission FUNCTION
+    // is untouched — only its INPUT work-list is corrected.
     let masterPlanObjectives: string[];
     let missingCapabilities: string[];
-    if (manifestIds.length > 0) {
-      masterPlanObjectives = manifestIds;
-      missingCapabilities = manifestIds;
+    const workList = this.readRuntimeModelQueue();
+    if (workList !== null) {
+      masterPlanObjectives = workList;
+      missingCapabilities = workList;
     } else {
-      // Backward-compatible fallback: the legacy capability master plan + registry (pre-manifest).
-      masterPlanObjectives = this.readMasterPlanObjectives();
-      const registry = this.readJson<{ missingCapabilities?: string[] }>(REGISTRY);
-      missingCapabilities = Array.isArray(registry?.missingCapabilities)
-        ? registry!.missingCapabilities
+      // Fallback (only when the model cannot be loaded, e.g. a stripped checkout): the roadmap
+      // manifest, else the legacy master plan + capability registry. Preserves prior behaviour.
+      const manifest = this.readJson<{ missions?: Array<{ id?: string }> }>(ROADMAP_MANIFEST);
+      const manifestIds = Array.isArray(manifest?.missions)
+        ? manifest!.missions.map((m) => m?.id).filter((m): m is string => typeof m === "string")
         : [];
+      if (manifestIds.length > 0) {
+        masterPlanObjectives = manifestIds;
+        missingCapabilities = manifestIds;
+      } else {
+        masterPlanObjectives = this.readMasterPlanObjectives();
+        const registry = this.readJson<{ missingCapabilities?: string[] }>(REGISTRY);
+        missingCapabilities = Array.isArray(registry?.missingCapabilities)
+          ? registry!.missingCapabilities
+          : [];
+      }
     }
 
     // A mission counts as completed ONLY when the ledger holds a PROVEN entry for it (proven === true,
@@ -277,17 +309,109 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   /**
    * Stage 3 — execute the mission (design §2 Stage 3 / Provider Contract §1).
    *
-   * ODG decides IF an engineering provider is needed via the provider-owned predicate
-   * `missionRequiresProvider()`. Only when it returns true is the Claude Provider Adapter invoked —
-   * exactly once per mission. Every other (local / deterministic) mission runs the EXISTING pipeline
-   * unchanged and never calls Claude. This is the only branch added; the pipeline path is byte-for-
-   * byte what it was.
+   * LOCAL_FIRST. ODG ALWAYS runs the local deterministic pipeline first (build → tests → patch →
+   * validation). The engineering provider is OPTIONAL: it is reached only when the LOCAL run PROVES
+   * it cannot progress AND the mission genuinely needs engineering code work
+   * (`missionRequiresProvider()`). It is NEVER reached when local already succeeded — so a missing or
+   * unavailable provider can never block a mission that can continue locally. When the provider IS
+   * used, control returns immediately to the LOCAL flow: its outcome feeds the SAME
+   * gatherEvidence() → Release Manager path, then the next mission runs locally again. The existing
+   * provider failover (Claude → OpenAI, then runtime-failover halt) is preserved, just moved behind
+   * the local attempt.
    */
   runPipeline(mission: string): PipelineOutcome {
     const spec = this.readMissionJson(mission);
-    if (missionRequiresProvider(this.toRoutable(spec))) {
+
+    // (1) LOCAL first — the deterministic pipeline (build → tests → patch → validation).
+    const local = this.runLocalPipeline(mission);
+    if (local.pipelineOk) return local;
+
+    // (2) LOCAL RECOVERY — the mandatory step BEFORE any provider. Diagnose the root cause locally,
+    //     reuse the known in-scope patch, regenerate the local evidence surface and re-validate
+    //     (build/tests). The provider is NOT the first fallback: it is reached ONLY once local
+    //     recovery has PROVEN, by evidence, that the Runtime cannot progress locally.
+    const recovery = this.recoverLocally(mission, local);
+    if (recovery.outcome.pipelineOk) return recovery.outcome;
+
+    // (3) PROVIDER — last resort only. Reached solely when local recovery is proven exhausted AND the
+    //     mission genuinely needs engineering code work. The existing Claude → OpenAI failover is
+    //     preserved unchanged; control returns immediately to the LOCAL flow afterwards (the provider
+    //     outcome feeds the SAME gatherEvidence() → Release Manager path, then the next mission runs
+    //     locally again). A missing/unavailable provider can never block a mission recoverable locally.
+    if (recovery.exhausted && missionRequiresProvider(this.toRoutable(spec))) {
       return this.runViaProvider(mission, spec);
     }
+    return recovery.outcome;
+  }
+
+  /**
+   * LOCAL RECOVERY (the decision point the mission targets). Between a failed local pipeline and any
+   * provider, the Runtime exhausts what it can do ITSELF, grounded in evidence:
+   *
+   *   Root Cause locale  → RootCauseEngine.diagnose() reads the CURRENT evidence (runtime-verify.json,
+   *                        mission-report.json, git) and names the blocking Release gate. Mutates nothing.
+   *   Preuves + patchs   → the engine IS the Runtime's known-patch knowledge base: each gate maps to a
+   *     connus              KNOWN minimal patch. A patch confined to the regenerable runtime/generated/
+   *                        surface is one the Runtime may author WITHOUT a provider; an empty patch
+   *                        (build/typescript) or one touching tracked source needs a provider to author
+   *                        the code fix — that absence of an in-scope local patch IS the evidence the
+   *                        Runtime cannot progress locally.
+   *   Patch LOCAL +      → apply the in-scope patch by regenerating the evidence surface (the existing
+   *     Validation/Build/   verifier: npm build + tsc + git) and re-running the deterministic pipeline,
+   *     Tests               then re-diagnose. A pass that yields no NEW in-scope patch stops the loop.
+   *
+   * Returns the last local outcome and whether local recovery is exhausted (the caller only escalates
+   * to the provider when it is). Bounded by LOCAL_RECOVERY_MAX_ATTEMPTS; never throws.
+   */
+  private recoverLocally(
+    mission: string,
+    initial: PipelineOutcome,
+  ): { outcome: PipelineOutcome; exhausted: boolean } {
+    const engine = new RootCauseEngine({ cwd: this.cwd, generatedDir: GENERATED });
+    const tried = new Set<string>();
+    let last = initial;
+
+    for (let attempt = 0; attempt < LOCAL_RECOVERY_MAX_ATTEMPTS; attempt++) {
+      const report = engine.diagnose(mission);
+      const patch = report.minimalPatch;
+
+      // No diagnosable blocker, or the known patch is not confined to the Runtime's safe local
+      // surface: there is no automatic LOCAL action left — proven local exhaustion.
+      if (report.status !== "DIAGNOSED" || !patch || !this.isLocallyApplicable(patch)) {
+        return { outcome: last, exhausted: true };
+      }
+      // No NEW in-scope patch this run (the same known patch was already applied) — stop, don't spin.
+      const sig = JSON.stringify([patch.filesToModify, patch.steps]);
+      if (tried.has(sig)) return { outcome: last, exhausted: true };
+      tried.add(sig);
+
+      // Apply the in-scope patch locally: regenerate the evidence surface, then re-run Validation →
+      // Build → Tests via the deterministic pipeline. If it now progresses, recovery succeeded LOCALLY.
+      this.refreshVerifyEvidence();
+      last = this.runLocalPipeline(mission);
+      if (last.pipelineOk) return { outcome: last, exhausted: false };
+    }
+    return { outcome: last, exhausted: true };
+  }
+
+  /**
+   * A known minimal patch is applicable LOCALLY iff every target is confined to the regenerable
+   * runtime/generated/ tree — the only surface the Runtime may author without a provider. An empty
+   * target set (a build/typescript fix that must edit source) or any tracked-source target is left to
+   * a provider, which holds the authorization to author that code.
+   */
+  private isLocallyApplicable(patch: MinimalPatch): boolean {
+    const targets = patch.filesToModify;
+    const prefix = GENERATED.replace(/\/+$/, "") + "/";
+    return targets.length > 0 && targets.every((f) => f === GENERATED || f.startsWith(prefix));
+  }
+
+  /**
+   * The LOCAL execute path — the EXISTING deterministic pipeline (odg-run.js). Behaviour is
+   * byte-for-byte what runPipeline did before; it is extracted only so runPipeline can try it FIRST
+   * (LOCAL_FIRST) and use its failure as the single proof that the Runtime cannot progress locally.
+   */
+  private runLocalPipeline(mission: string): PipelineOutcome {
     const r = spawnSync("node", [PIPELINE, mission], {
       cwd: this.cwd,
       stdio: "inherit",
@@ -328,12 +452,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     if (!outcome) {
       // The provider is the ONLY place a provider process is spawned (contract §1); its own
       // content-addressed cache short-circuits an identical re-request without a live call.
-      outcome = this.getProvider().execute({
-        providerContractVersion: PROVIDER_CONTRACT_VERSION,
-        mission: this.buildProviderMission(mission, spec),
-        model: PROVIDER_MODEL,
-        maxTurns: PROVIDER_MAX_TURNS,
-      });
+      outcome = this.executeWithFailover(mission, spec);
       this.providerRuns.set(mission, outcome);
     }
     // OBJ-003: the Patch Engine RECEIVES the provider's result (the working-tree patch) and decides,
@@ -414,11 +533,46 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     fs.writeFileSync(abs, JSON.stringify(value, null, 2));
   }
 
-  private getProvider(): EngineeringProviderPort {
-    if (!this.provider) {
-      this.provider = createClaudeProvider({ cwd: this.cwd, model: PROVIDER_MODEL });
+  /**
+   * Provider selection WITH failover (mission PROVIDER_FAILOVER_TO_OPENAI). The Runtime — not the
+   * provider — owns the decision of which engineering provider executes this mission:
+   *   - An injected provider (tests / an explicit override) bypasses selection and runs directly, so
+   *     the deterministic test seam is untouched.
+   *   - Otherwise the default chain is resolved: Claude primary → OpenAI failover (objective 1). When
+   *     a provider is AVAILABLE the engineering mission CONTINUES on it (objective 2); the OpenAI
+   *     adapter is only ever constructed and spawned when Claude is unavailable and OpenAI is usable.
+   *   - When NO provider can continue the Runtime STOPS (objective 7) with a BLOCKED outcome naming
+   *     the exact blocking component, missing configuration and single next action (objectives 3-6).
+   * The failover report is persisted as evidence on every provider run so the selection is auditable
+   * even on the happy path (where OpenAI is never invoked but its readiness is still reported).
+   */
+  private executeWithFailover(mission: string, spec: RawMission | null): ProviderOutcome {
+    const request: ProviderRequest = {
+      providerContractVersion: PROVIDER_CONTRACT_VERSION,
+      mission: this.buildProviderMission(mission, spec),
+      model: PROVIDER_MODEL,
+      maxTurns: PROVIDER_MAX_TURNS,
+    };
+    if (this.provider) {
+      return this.provider.execute(request);
     }
-    return this.provider;
+    const run = runMissionWithFailover(request, {
+      claude: { cwd: this.cwd, model: PROVIDER_MODEL },
+      openai: { cwd: this.cwd },
+    });
+    this.persistFailoverReport(mission, run.report);
+    if (run.executed && run.outcome) return run.outcome;
+    // No provider can continue → synthesize the actionable BLOCKED outcome (objectives 3-7).
+    return haltOutcome(request, run.report);
+  }
+
+  /** Best-effort evidence: record which provider was selected and why (never breaks the run). */
+  private persistFailoverReport(mission: string, report: FailoverMissionReport): void {
+    try {
+      this.writeJson(FAILOVER_REPORT, { ...report, mission });
+    } catch {
+      /* evidence capture is best-effort — a write failure must not abort mission execution */
+    }
   }
 
   /** Refresh build/typescript/gitClean evidence via the EXISTING verifier (best-effort). */
@@ -562,6 +716,28 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   }
 
   // --- helpers ------------------------------------------------------------
+
+  /**
+   * The forward work-list, from the SAME coherent model the Runtime dashboard uses
+   * (runtime/core/runtime-model.js): executable-but-unproven mission contracts in roadmap-then-
+   * alphabetical order. Returns the ordered mission ids (possibly empty when nothing remains), or
+   * null when the model cannot be loaded — then readPlanState falls back to the roadmap manifest.
+   * Read-only and best-effort; the frozen selectNextMission still consumes this as plain input.
+   */
+  private readRuntimeModelQueue(): string[] | null {
+    try {
+      const { computeRuntimeModel } = requireCjs(
+        `${this.cwd}/runtime/core/runtime-model.js`,
+      ) as { computeRuntimeModel: (root: string) => { queue?: Array<{ mission?: unknown }> } };
+      const model = computeRuntimeModel(this.cwd);
+      const queue = Array.isArray(model?.queue) ? model.queue : [];
+      return queue
+        .map((q) => q?.mission)
+        .filter((m): m is string => typeof m === "string");
+    } catch {
+      return null;
+    }
+  }
 
   private readMasterPlanObjectives(): string[] {
     // Prefer the pipeline-produced plan; fall back to parsing the Master Plan directly.

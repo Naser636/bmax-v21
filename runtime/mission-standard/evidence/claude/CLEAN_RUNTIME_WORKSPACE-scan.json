@@ -1,119 +1,45 @@
 {
   "mission": "CLEAN_RUNTIME_WORKSPACE",
-  "scannedAt": "2026-07-25",
+  "scannedAt": "2026-07-26",
   "repoRoot": "/home/ubuntu/bmax-v21",
-  "apply": true,
+  "apply": false,
   "summary": {
-    "candidatesSafeToRemove": 9,
+    "candidatesSafeToRemove": 0,
     "preservedRequired": 4,
     "blockedTrackedOrRequired": 0
   },
-  "safeToRemove": [
-    {
-      "path": "runtime/generated/FINAL_VALIDATION_20260724_201800.md",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/_rc_probe.ts",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/autonomy-run.log",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/autonomy-run2.log",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/eval-documentation-proof-gate.ts",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/health.log",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/odg-roadmap-compile.txt",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/status.log",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    },
-    {
-      "path": "runtime/generated/verify.log",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "stale-scratch (log/probe/one-off dump); regenerated on demand"
-    }
-  ],
+  "safeToRemove": [],
   "preserved": [
-    {
-      "path": "runtime/security",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "required-preserve (backup/archive/history)"
-    },
-    {
-      "path": "runtime/reports/archive",
-      "gitIgnored": true,
-      "tracked": false,
-      "removable": true,
-      "reason": "required-preserve (backup/archive/history)"
-    },
     {
       "path": "runtime/mission-standard/history",
       "gitIgnored": true,
       "tracked": false,
-      "removable": true,
+      "removable": false,
       "reason": "required-preserve (backup/archive/history)"
     },
     {
       "path": "runtime/releases/SECURE_20260724_021018",
       "gitIgnored": true,
       "tracked": false,
-      "removable": true,
+      "removable": false,
+      "reason": "required-preserve (backup/archive/history)"
+    },
+    {
+      "path": "runtime/reports/archive",
+      "gitIgnored": true,
+      "tracked": false,
+      "removable": false,
+      "reason": "required-preserve (backup/archive/history)"
+    },
+    {
+      "path": "runtime/security",
+      "gitIgnored": true,
+      "tracked": false,
+      "removable": false,
       "reason": "required-preserve (backup/archive/history)"
     }
   ],
   "blocked": [],
-  "removed": [
-    "runtime/generated/FINAL_VALIDATION_20260724_201800.md",
-    "runtime/generated/_rc_probe.ts",
-    "runtime/generated/autonomy-run.log",
-    "runtime/generated/autonomy-run2.log",
-    "runtime/generated/eval-documentation-proof-gate.ts",
-    "runtime/generated/health.log",
-    "runtime/generated/odg-roadmap-compile.txt",
-    "runtime/generated/status.log",
-    "runtime/generated/verify.log"
-  ],
+  "removed": [],
   "remainingAfterApply": []
 }

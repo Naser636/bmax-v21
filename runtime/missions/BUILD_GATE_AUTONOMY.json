@@ -1,0 +1,82 @@
+{
+  "mission": "BUILD_GATE_AUTONOMY",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Rendre le gate Build/TypeScript autonome: le Validation Engine ne s'arrête plus sur build=false ou typescript=false, il délègue à un nouveau Build Recovery Engine qui répare localement en boucle et n'autorise le Provider qu'en dernier recours.",
+  "authorized_paths": [
+    "runtime/core/**",
+    "runtime/config/**",
+    "src/runtime/**"
+  ],
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Le Validation Engine délègue un gate rouge au lieu de s'arrêter.",
+      "done_when": [
+        "Le Validation Engine ne quitte plus immédiatement quand build=false ou typescript=false.",
+        "Il invoque le Build Recovery Engine et juge le gate sur l'évidence fraîche."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Le Build Recovery Engine lance le build, récupère toutes les erreurs TypeScript et les classe par Root Cause.",
+      "done_when": [
+        "Le build est lancé.",
+        "Toutes les erreurs TypeScript sont collectées.",
+        "Chaque erreur est classée par Root Cause."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Appliquer uniquement des correctifs locaux autorisés et relancer le build tant que les erreurs diminuent.",
+      "done_when": [
+        "Seuls les correctifs de l'allow-list sont appliqués, uniquement dans les authorized_paths.",
+        "Le build est relancé automatiquement à chaque itération.",
+        "La boucle continue tant que le nombre d'erreurs diminue.",
+        "Chaque itération sans amélioration est annulée (rollback)."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Rendre le contrôle au Validation Engine, ou autoriser le Provider en dernier recours.",
+      "done_when": [
+        "Le contrôle est rendu quand build=true et typescript=true.",
+        "Le Provider n'est autorisé QUE lorsqu'aucune amélioration n'est démontrée."
+      ]
+    },
+    {
+      "id": "OBJ-005",
+      "priority": 5,
+      "goal": "Afficher uniquement le résumé final du gate.",
+      "done_when": [
+        "La sortie finale contient uniquement: Root Cause, fichier(s) modifié(s), itérations Build, Build, TypeScript, Validation, Mission promue."
+      ]
+    }
+  ],
+  "constraints": [
+    "Ne pas modifier la Roadmap.",
+    "Ne pas modifier le Scheduler.",
+    "Ne pas modifier le Mission Engine.",
+    "N'appliquer que des correctifs locaux autorisés."
+  ],
+  "definition_of_done": [
+    "Build Recovery Engine implémenté et testé.",
+    "Validation Engine délègue les gates rouges.",
+    "Provider autorisé uniquement sans amélioration démontrée."
+  ],
+  "verify": [
+    { "capability": "BUILD_GATE_AUTONOMY", "evidence": "typescript-green" },
+    { "capability": "BUILD_GATE_AUTONOMY", "evidence": "build-green" }
+  ],
+  "deliverables": [
+    "runtime/core/build-recovery-engine.js",
+    "runtime/config/build-recovery.json",
+    "runtime/core/build-recovery-engine.test.js",
+    "Evidence"
+  ]
+}

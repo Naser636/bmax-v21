@@ -1,0 +1,40 @@
+{
+  "policy": "BUILD_GATE_AUTONOMY",
+  "description": "Authorized-local-fix allow-list for the Build Recovery Engine. ODG owns this policy; the engine may ONLY apply the fixers declared here, ONLY inside the mission's authorized paths, and ONLY while the total TypeScript error count strictly decreases. Anything not listed is left for the Provider.",
+  "typecheckCommand": ["npx", "tsc", "--noEmit", "--pretty", "false"],
+  "buildCommand": ["npm", "run", "build"],
+  "buildTimeoutMs": 420000,
+  "maxIterations": 12,
+  "authorizedFixers": [
+    {
+      "code": "TS6133",
+      "rootCause": "unused-import",
+      "fixer": "removeUnusedImport",
+      "note": "'X' is declared but its value is never read — remove the unused import specifier only (never a local binding, which may exist for side effects)."
+    },
+    {
+      "code": "TS2304",
+      "rootCause": "undefined-symbol",
+      "fixer": "applySuggestion",
+      "note": "Cannot find name 'X'. Did you mean 'Y'? — apply the compiler's own rename suggestion."
+    },
+    {
+      "code": "TS2551",
+      "rootCause": "undefined-symbol",
+      "fixer": "applySuggestion",
+      "note": "Property 'X' does not exist ... Did you mean 'Y'? — apply the compiler's own rename suggestion."
+    },
+    {
+      "code": "TS2552",
+      "rootCause": "undefined-symbol",
+      "fixer": "applySuggestion",
+      "note": "Cannot find name 'X'. Did you mean 'Y'? — apply the compiler's own rename suggestion."
+    },
+    {
+      "code": "TS2783",
+      "rootCause": "duplicate-property-overwrite",
+      "fixer": "reorderSpreadOverwrite",
+      "note": "'X' is specified more than once, so this usage will be overwritten — move the explicit shorthand property after the spread so the explicit value wins."
+    }
+  ]
+}
