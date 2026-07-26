@@ -15,5 +15,7 @@ export * from "./runtime-health";
 export * from "./runtime-reporter";
 export * from "./snapshot-engine";
 export * from "./root-cause-engine";
+export * from "./autonomous-execution-engine";
+export * from "./autonomous-execution-adapter";
 export * from "./runtime-service";
 export * from "./runtime-facade";
