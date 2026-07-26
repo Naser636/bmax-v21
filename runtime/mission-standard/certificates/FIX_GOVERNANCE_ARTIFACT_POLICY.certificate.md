@@ -1,5 +1,5 @@
 Mission : FIX_GOVERNANCE_ARTIFACT_POLICY
-Commit : 8b0b90e
+Commit : da66e67
 Branch : runtime/mission-context-builder
-Date : 2026-07-25T10:21:37+00:00
+Date : 2026-07-25T11:54:19+00:00
 Status : SUCCESS
