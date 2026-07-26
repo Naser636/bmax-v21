@@ -143,10 +143,26 @@ providers, reprise après erreur, missions d'ingénierie, missions enfants, auto
 - runtime/missions/AUTONOMY_E2E_SMOKE.json (mission de test e2e)
 - (fix #1 déjà commité en 41de9d9)
 
-## Prochaines actions
-1. Attendre suite complète /tmp/test-run-3.log (attendu exit 0)
-2. Commit fixes #2/#3 + test + mission
-3. Nettoyer marker résiduel → re-run e2e AUTONOMY_E2E_SMOKE depuis arbre PROPRE →
-   attendu : provider crée marker → scope OK (baseline vide) → validation → commit livrable →
-   gitClean true → RELEASE → ledger ARCHIVED (Cycles=1, Released=1)
-4. Puis : reprise après erreur + missions enfants + `odg autonomy` complet
+## ✅ TEST END-TO-END RÉEL RÉUSSI (preuve d'autonomie d'ingénierie)
+Commits : 41de9d9 (fix#1), ef564d0 (fix#2+#3), 0edb029 (livrable auto-commité par le Runtime).
+Run `odg mission AUTONOMY_E2E_SMOKE` depuis arbre propre :
+- local BLOCKED (NONE in scope) → récupération locale (re-diagnostic + re-validation) →
+- PROVIDER Claude réel crée src/app/autonomy-e2e/MARKER.md → scope OK (baseline vide) →
+- Validation `Engineering: OK (1 changed)` `Validated: true` `SUCCESS` →
+- commitAuthorizedDeliverable → `gitClean: true` → Release Manager RELEASE →
+- **PLAN_COMPLETE, Cycles: 1, Released: AUTONOMY_E2E_SMOKE, EXIT=0**.
+Preuves : commit 0edb029 (marker tracké), ledger AUTONOMY_E2E_SMOKE, arbre propre (porcelain 0),
+traces provider. Les 3 fixes fonctionnent ENSEMBLE. Suite complète 223 verte.
+
+## Bilan blocages autonomie
+- #1 hasBinary (provider jamais dispo) — CORRIGÉ + vérifié
+- #2 gitClean vs engineering (jamais release) — CORRIGÉ + vérifié end-to-end
+- #3 scope-enforcement arbre sale — CORRIGÉ + vérifié
+- Récupération locale (recoverLocally) — OBSERVÉE fonctionnelle (re-diagnostic avant provider)
+- Rollback sur NO_RELEASE — OBSERVÉ (marker reverté au run #1 échoué)
+
+## Prochaines actions (task #8 restant)
+1. `odg autonomy` complet : confirmer boucle cohérente + arbre propre + skip missions prouvées (resume)
+2. Missions enfants : confirmer folding de la queue corrective (FIX_CORRECTIVE_QUEUE_INTAKE authorized)
+3. Décider : conserver ou nettoyer AUTONOMY_E2E_SMOKE + commit livrable (artefact de test)
+4. Rapport final
