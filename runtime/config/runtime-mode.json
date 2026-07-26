@@ -1,0 +1,7 @@
+{
+  "mode":"LOCAL",
+  "allowProviders":true,
+  "providersEnabled":false,
+  "providerActivation":"MANUAL_ONLY",
+  "fallback":"LOCAL_RUNTIME"
+}

@@ -1,0 +1,18 @@
+{
+  "id":"RUNTIME_EXECUTION_MODE_FINALIZATION",
+  "name":"RUNTIME_EXECUTION_MODE_FINALIZATION",
+  "mode":"LOCAL",
+  "priority":"HIGH",
+  "provider":"none",
+  "engineering":true,
+  "objectives":[
+    "Implement RuntimeMode LOCAL/PROVIDER",
+    "ProviderOrchestrator reads RuntimeMode",
+    "AutonomyRuntimeAdapter reads RuntimeMode",
+    "LOCAL forbids external providers",
+    "PROVIDER enables external providers",
+    "Update Capability Registry",
+    "Generate evidence",
+    "Release mission"
+  ]
+}

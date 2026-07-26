@@ -1,0 +1,12 @@
+{
+  "mode": "LOCAL_ONLY",
+  "externalProvidersEnabled": false,
+  "defaultProvider": "local-runtime",
+  "fallbackProvider": "local-runtime",
+  "deny": [
+    "ClaudeProviderAdapter",
+    "OpenAIProviderAdapter",
+    "GeminiProviderAdapter"
+  ],
+  "onExternalRequest": "FAIL_FAST"
+}
