@@ -1,0 +1,75 @@
+{
+  "version": "ROOT_CAUSE_ENGINE_V1",
+  "generatedAt": "2026-07-25T03:41:08.760Z",
+  "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+  "gates": {
+    "build": true,
+    "typescript": true,
+    "gitClean": true,
+    "missionPipeline": true,
+    "documentationProofPresent": false
+  },
+  "blockingGates": [
+    "documentationProofPresent"
+  ],
+  "status": "DIAGNOSED",
+  "summary": "NO_RELEASE root cause: the \"documentationProofPresent\" gate is red. Responsible component: src/core/documentation-engine.ts (via AutonomyRuntimeAdapter.buildDocumentationProof).",
+  "rootCause": {
+    "gate": "documentationProofPresent",
+    "responsibleComponent": {
+      "gate": "documentationProofPresent",
+      "decisionAuthority": "src/core/release-manager.ts",
+      "evidenceProducer": "src/core/documentation-engine.ts (via AutonomyRuntimeAdapter.buildDocumentationProof)",
+      "evidenceFile": "runtime/generated/mission-report.json | runtime/mission-standard/generated/<mission>.json",
+      "evidenceRelay": "src/runtime/autonomy-runtime-adapter.ts (gatherEvidence)",
+      "gateConsumer": "src/core/runtime-autonomy.ts (assembleReleaseInputs -> ReleaseManager.decide)"
+    },
+    "blockingRule": "ReleaseManager.allGreen() (src/core/release-manager.ts:373-381) requires every gate === true; this gate is false, so decide() returns decision:NO_RELEASE (Runtime status BLOCKED).",
+    "detail": "No mission-scoped artifact was found, so AutonomyRuntimeAdapter.buildDocumentationProof produced no proof. Produce runtime/generated/mission-report.json (mission-matched) or runtime/mission-standard/generated/<mission>.json.",
+    "evidence": {
+      "gate": "documentationProofPresent",
+      "observedValue": false,
+      "evidenceFile": "runtime/generated/mission-report.json | runtime/mission-standard/generated/<mission>.json"
+    }
+  },
+  "minimalPatch": {
+    "rationale": "No mission-scoped artifact exists, so no Documentation Proof can be built. Producing one lets the Documentation Engine emit the proof the Release Manager requires.",
+    "filesToModify": [
+      "runtime/generated/mission-report.json"
+    ],
+    "steps": [
+      "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+      "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof."
+    ],
+    "applied": false
+  },
+  "correctiveMission": {
+    "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+    "priority": "CRITICAL",
+    "mode": "ENGINEERING",
+    "requiresEngineering": true,
+    "continue_until_complete": true,
+    "description": "Corrective mission auto-prepared by ROOT_CAUSE_ENGINE_V1: clear the red \"documentationProofPresent\" Release gate so the Release Manager can reach RELEASE.",
+    "authorizedPaths": [
+      "runtime/**"
+    ],
+    "objectives": [
+      {
+        "id": "OBJ-001",
+        "goal": "Apply the minimal patch proposed for the \"documentationProofPresent\" gate.",
+        "done_when": [
+          "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+          "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof."
+        ]
+      },
+      {
+        "id": "OBJ-002",
+        "goal": "Confirm the \"documentationProofPresent\" gate is green.",
+        "done_when": [
+          "runtime/bin/odg-verify.js has been re-run.",
+          "runtime/generated/runtime-verify.json reports documentationProofPresent:true."
+        ]
+      }
+    ]
+  }
+}

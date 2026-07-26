@@ -1,0 +1,44 @@
+========== ODG DASHBOARD CONSISTENCY ==========
+
+MISSION COMPLETED:
+======================================
+ODG FOUNDATION DASHBOARD
+======================================
+Runtime            : READY
+Foundation         : READY
+Capabilities       : 45
+Missing            : 7
+Last Mission       : RUNTIME_FULL_AUTONOMY_EXECUTION
+Next Mission       : UNIFY_RUNTIME_EXECUTION
+Objective          : UNIFY_RUNTIME_EXECUTION_1
+Goal               : MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT
+Queue Remaining    : 7
+======================================
+
+===== REQUIRED ANALYSIS =====
+Do NOT execute another mission.
+Analyze only.
+
+Identify precisely:
+1. Which file computes 'Next Mission'.
+2. Which function computes 'Next Mission'.
+3. Which file computes 'Queue Remaining'.
+4. Which function computes 'Queue Remaining'.
+5. Which artifact is read (runtime-state.json, runtime-status.json, mission-queue.json, ledger, or another source).
+6. Which artifact should have been updated after RUNTIME_FULL_AUTONOMY_EXECUTION.
+7. Which artifact was NOT updated.
+8. Show the expected value.
+9. Show the actual value.
+10. Explain exactly why the Dashboard still displays UNIFY_RUNTIME_EXECUTION.
+11. Propose the minimal repair.
+12. Specify whether the problem is:
+    - execution
+    - state persistence
+    - queue generation
+    - dashboard rendering
+    - mission lifecycle
+13. Give the exact file(s) and function(s) to modify.
+14. Give an implementation plan.
+15. Give the confidence percentage.
+
+========== END ==========

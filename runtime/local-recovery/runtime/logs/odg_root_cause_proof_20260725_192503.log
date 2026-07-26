@@ -1,0 +1,250 @@
+========== ODG ROOT CAUSE PROOF ==========
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : ROOT_CAUSE_RUNTIME_PIPELINE
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T19:25:04.543Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'ROOT_CAUSE_RUNTIME_PIPELINE',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : ROOT_CAUSE_RUNTIME_PIPELINE
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: ROOT CAUSE RUNTIME PIPELINE
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : ROOT_CAUSE_RUNTIME_PIPELINE
+Contract   : runtime/missions/ROOT_CAUSE_RUNTIME_PIPELINE.json
+Mode       : ANALYZE_AND_REPAIR
+Objectives : 8
+Next       : TRACE_MISSION_FLOW
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : ROOT_CAUSE_RUNTIME_PIPELINE
+Next : TRACE_MISSION_FLOW
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : ROOT_CAUSE_RUNTIME_PIPELINE
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : ROOT_CAUSE_RUNTIME_PIPELINE
+Mode     : ANALYZE_AND_REPAIR
+Priority : CRITICAL
+Actions  : 8 (one per objective)
+ - TRACE_MISSION_FLOW
+ - VERIFY_ROADMAP_LOADING
+ - VERIFY_EXECUTION_PLANNER
+ - VERIFY_DECISION_ENGINE
+ - VERIFY_PATCH_PIPELINE
+ - REPAIR_PIPELINE
+ - SELF_VALIDATION
+ - GENERATE_ROOT_CAUSE_REPORT
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : ROOT_CAUSE_RUNTIME_PIPELINE
+Priority : CRITICAL
+Patches  : 8
+ - #1 TRACE_MISSION_FLOW
+ - #2 VERIFY_ROADMAP_LOADING
+ - #3 VERIFY_EXECUTION_PLANNER
+ - #4 VERIFY_DECISION_ENGINE
+ - #5 VERIFY_PATCH_PIPELINE
+ - #6 REPAIR_PIPELINE
+ - #7 SELF_VALIDATION
+ - #8 GENERATE_ROOT_CAUSE_REPORT
+======================================
+
+>>> Patch Executor
+EXECUTE: TRACE_MISSION_FLOW
+EXECUTE: VERIFY_ROADMAP_LOADING
+EXECUTE: VERIFY_EXECUTION_PLANNER
+EXECUTE: VERIFY_DECISION_ENGINE
+EXECUTE: VERIFY_PATCH_PIPELINE
+EXECUTE: REPAIR_PIPELINE
+EXECUTE: SELF_VALIDATION
+EXECUTE: GENERATE_ROOT_CAUSE_REPORT
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 8
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : ROOT_CAUSE_RUNTIME_PIPELINE
+Coverage  : OK (8/8)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : ROOT_CAUSE_RUNTIME_PIPELINE
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : ROOT_CAUSE_RUNTIME_PIPELINE
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 413
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : ROOT_CAUSE_RUNTIME_PIPELINE
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/ROOT_CAUSE_RUNTIME_PIPELINE.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+[6/6] COMPLETE
+======================================
+MISSION SUCCESS
+======================================
+Mission : ROOT_CAUSE_RUNTIME_PIPELINE
+======================================
+
+===== REQUIRED OUTPUT =====
+1. Root cause
+2. Blocking rule
+3. Blocking file
+4. Blocking function
+5. Blocking condition
+6. Missing state transition
+7. Why auto-repair did not execute
+8. Minimal corrective mission
+9. Evidence
+======================================
+ODG FOUNDATION DASHBOARD
+======================================
+Runtime            : READY
+Foundation         : READY
+Capabilities       : 45
+Missing            : 7
+Last Mission       : ROOT_CAUSE_RUNTIME_PIPELINE
+Next Mission       : UNIFY_RUNTIME_EXECUTION
+Objective          : UNIFY_RUNTIME_EXECUTION_1
+Goal               : MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT
+Queue Remaining    : 7
+======================================
+========== END ==========

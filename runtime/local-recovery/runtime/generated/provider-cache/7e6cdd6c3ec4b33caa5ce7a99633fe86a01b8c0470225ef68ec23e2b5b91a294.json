@@ -1,0 +1,72 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ROOT_CAUSE_REPORTING",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [],
+    "commandsRun": [
+      "npx tsc --noEmit",
+      "npx tsx src/tests/root-cause-engine.test.ts"
+    ],
+    "blocker": null,
+    "notes": "Capability already implemented and verified green in the working tree: src/runtime/root-cause-engine.ts (RootCauseEngine), exported from src/runtime/index.ts, test src/tests/root-cause-engine.test.ts passes ('Root Cause Engine OK'), tsc --noEmit exit 0. OBJ-001 report() writes gitignored runtime/generated/root-cause-report.json; OBJ-002 responsibleComponent maps each red gate to its owning component chain; OBJ-003 minimalPatch proposes a fix (applied:false, never mutates tree); OBJ-004 correctiveMission mirrored to runtime/generated/corrective-mission.json. No source files modified by this run. Completion/RELEASE is the Release Manager's decision."
+  },
+  "sessionId": "a1d97d08-8898-4fee-92b9-52505609124f",
+  "changedFiles": [
+    "runtime/bin/odg-health.js",
+    "runtime/mission-standard/certificates/ENABLE_MASTER_PLAN_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/RUNTIME_FULL_AUTONOMY_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/SELF_ENGINEERING_RUNTIME_KERNEL.certificate.md",
+    "runtime/mission-standard/passports/ENABLE_MASTER_PLAN_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/RUNTIME_FULL_AUTONOMY_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/SELF_ENGINEERING_RUNTIME_KERNEL.passport.md",
+    "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md",
+    "runtime/mission-standard/certificates/BOOTSTRAP_RUNTIME_ENGINEERING.certificate.md",
+    "runtime/mission-standard/certificates/FINALIZE_RUNTIME_FOUNDATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/FIX_CORRECTIVE_QUEUE_INTAKE.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/PATCH_RUNTIME_KERNEL.certificate.md",
+    "runtime/mission-standard/generated/BOOTSTRAP_RUNTIME_ENGINEERING.json",
+    "runtime/mission-standard/generated/FINALIZE_RUNTIME_FOUNDATION_V1.json",
+    "runtime/mission-standard/generated/FIX_CORRECTIVE_QUEUE_INTAKE.json",
+    "runtime/mission-standard/generated/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.json",
+    "runtime/mission-standard/generated/PATCH_RUNTIME_KERNEL.json",
+    "runtime/mission-standard/passports/BOOTSTRAP_RUNTIME_ENGINEERING.passport.md",
+    "runtime/mission-standard/passports/FINALIZE_RUNTIME_FOUNDATION_V1.passport.md",
+    "runtime/mission-standard/passports/FIX_CORRECTIVE_QUEUE_INTAKE.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.passport.md",
+    "runtime/mission-standard/passports/PATCH_RUNTIME_KERNEL.passport.md",
+    "runtime/mission-standard/reports/BOOTSTRAP_RUNTIME_ENGINEERING.report.md",
+    "runtime/mission-standard/reports/FINALIZE_RUNTIME_FOUNDATION_V1.report.md",
+    "runtime/mission-standard/reports/FIX_CORRECTIVE_QUEUE_INTAKE.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.report.md",
+    "runtime/mission-standard/reports/PATCH_RUNTIME_KERNEL.report.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":43874,\"duration_api_ms\":39877,\"ttft_ms\":4225,\"ttft_stream_ms\":1595,\"time_to_request_ms\":230,\"num_turns\":9,\"result\":\"All evidence is green:\\n- `npx tsc --noEmit` → exit 0\\n- `src/tests/root-cause-engine.test.ts` → \\\"Root Cause Engine OK\\\", exit 0\\n\\nThe `IMPLEMENT_ROOT_CAUSE_REPORTING` capability is already fully present in the working tree — `src/runtime/root-cause-engine.ts` (`RootCauseEngine`), exported from `src/runtime/index.ts:17`, with passing test `src/tests/root-cause-engine.test.ts`. It satisfies all four objectives:\\n- **OBJ-001**: `report()` writes `runtime/generated/root-cause-report.json` (test asserts the artifact is written and is untracked/gitignored).\\n- **OBJ-002**: `responsibleComponent` maps each red Release gate → its producer/relay/consumer/decisionAuthority chain.\\n- **OBJ-003**: `minimalPatch` proposes a minimal fix (always `applied:false` — it proposes, never mutates).\\n- **OBJ-004**: `correctiveMission` is auto-prepared and mirrored to `runtime/generated/corrective-mission.json`.\\n\\nI made no source changes (the capability pre-exists and verifies green). RELEASE remains the Release Manager's decision.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_ROOT_CAUSE_REPORTING\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [], \\\"commandsRun\\\": [\\\"npx tsc --noEmit\\\", \\\"npx tsx src/tests/root-cause-engine.test.ts\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability already implemented and verified green in the working tree: src/runtime/root-cause-engine.ts (RootCauseEngine), exported from src/runtime/index.ts, test src/tests/root-cause-engine.test.ts passes ('Root Cause Engine OK'), tsc --noEmit exit 0. OBJ-001 report() writes gitignored runtime/generated/root-cause-report.json; OBJ-002 responsibleComponent maps each red gate to its owning component chain; OBJ-003 minimalPatch proposes a fix (applied:false, never mutates tree); OBJ-004 correctiveMission mirrored to runtime/generated/corrective-mission.json. No source files modified by this run. Completion/RELEASE is the Release Manager's decision.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"a1d97d08-8898-4fee-92b9-52505609124f\",\"total_cost_usd\":0.4234735,\"usage\":{\"input_tokens\":11,\"cache_creation_input_tokens\":43628,\"cache_read_input_tokens\":162955,\"output_tokens\":2730,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":43628},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":1321,\"cache_read_input_tokens\":43148,\"cache_creation_input_tokens\":480,\"cache_creation\":{\"ephemeral_5m_input_tokens\":480,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":946,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001016,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":11,\"outputTokens\":2730,\"cacheReadInputTokens\":162955,\"cacheCreationInputTokens\":43628,\"webSearchRequests\":0,\"costUSD\":0.42245750000000004,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"c9d896ed-f6e4-4f51-8427-84f5c85d3aaa\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

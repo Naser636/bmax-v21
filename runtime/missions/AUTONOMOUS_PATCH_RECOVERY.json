@@ -1,0 +1,25 @@
+{
+  "id": "AUTONOMOUS_PATCH_RECOVERY",
+  "name": "AUTONOMOUS_PATCH_RECOVERY",
+  "mode": "LOCAL",
+  "priority": "HIGH",
+  "provider": "none",
+  "objectives": [
+    "Reconnect AutonomousExecutionEngine to the Runtime pipeline",
+    "Reuse local artifacts only",
+    "Validate integration",
+    "Apply safe wiring",
+    "Verify runtime",
+    "Repair dashboard"
+  ],
+  "steps": [
+    "discover-runtime",
+    "discover-entrypoints",
+    "discover-missing-wiring",
+    "reuse-local-artifacts",
+    "validate",
+    "apply",
+    "verify",
+    "repair-dashboard"
+  ]
+}

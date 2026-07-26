@@ -1,0 +1,37 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002"
+    ],
+    "changedFiles": [
+      "runtime/generated/corrective-mission.json",
+      "runtime/generated/eval-documentation-proof-gate.ts",
+      "runtime/generated/runtime-verify.json"
+    ],
+    "commandsRun": [
+      "npx tsx runtime/generated/eval-documentation-proof-gate.ts",
+      "node runtime/bin/odg-verify.js",
+      "git status --porcelain",
+      "git diff --quiet"
+    ],
+    "blocker": null,
+    "notes": "The minimal patch (odg-verify.js documentationProofPresent derivation + the mission-scoped artifact runtime/mission-standard/generated/RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE.json) was already present in the tree, but the last verifier run resolved mission:null because the gitignored mission pointer (runtime/generated/corrective-mission.json) had been cleaned away, so documentationProofPresent was false. OBJ-001: re-materialized the corrective-mission.json pointer (RootCauseEngine's mirror target, format matches archive) and re-ran the release evaluation against the REAL frozen core (AutonomyRuntimeAdapter.gatherEvidence + ReleaseManager.decide) via runtime/generated/eval-documentation-proof-gate.ts — output: documentationProof.inputsHash='1beb9158c72cd0e2' (non-empty), decision=RELEASE, gates.documentationProofPresent=true. OBJ-002: re-ran node runtime/bin/odg-verify.js — runtime/generated/runtime-verify.json now reports {build:true, typescript:true, gitClean:true, mission:'RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE', documentationProofPresent:true}. All changes are under AUTHORIZED_PATHS (runtime/**) and gitignored (runtime/generated/); working tree remains clean (git diff --quiet exit 0), so the gitClean gate is unaffected. No frozen src/contracts, src/core, or src/runtime file was modified. Mission-ledger advancement to RELEASE/ARCHIVED and the proven archive remain the Release Manager's post-decision step per mission constraints; completion is not self-declared."
+  },
+  "sessionId": "a51cc7ac-6d6a-49fa-9b57-344aef08cd75",
+  "changedFiles": [],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":198731,\"duration_api_ms\":177200,\"ttft_ms\":3215,\"ttft_stream_ms\":1669,\"time_to_request_ms\":233,\"num_turns\":22,\"result\":\"{ \\\"mission\\\": \\\"RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\"], \\\"changedFiles\\\": [\\\"runtime/generated/corrective-mission.json\\\", \\\"runtime/generated/eval-documentation-proof-gate.ts\\\", \\\"runtime/generated/runtime-verify.json\\\"], \\\"commandsRun\\\": [\\\"npx tsx runtime/generated/eval-documentation-proof-gate.ts\\\", \\\"node runtime/bin/odg-verify.js\\\", \\\"git status --porcelain\\\", \\\"git diff --quiet\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"The minimal patch (odg-verify.js documentationProofPresent derivation + the mission-scoped artifact runtime/mission-standard/generated/RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE.json) was already present in the tree, but the last verifier run resolved mission:null because the gitignored mission pointer (runtime/generated/corrective-mission.json) had been cleaned away, so documentationProofPresent was false. OBJ-001: re-materialized the corrective-mission.json pointer (RootCauseEngine's mirror target, format matches archive) and re-ran the release evaluation against the REAL frozen core (AutonomyRuntimeAdapter.gatherEvidence + ReleaseManager.decide) via runtime/generated/eval-documentation-proof-gate.ts — output: documentationProof.inputsHash='1beb9158c72cd0e2' (non-empty), decision=RELEASE, gates.documentationProofPresent=true. OBJ-002: re-ran node runtime/bin/odg-verify.js — runtime/generated/runtime-verify.json now reports {build:true, typescript:true, gitClean:true, mission:'RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE', documentationProofPresent:true}. All changes are under AUTHORIZED_PATHS (runtime/**) and gitignored (runtime/generated/); working tree remains clean (git diff --quiet exit 0), so the gitClean gate is unaffected. No frozen src/contracts, src/core, or src/runtime file was modified. Mission-ledger advancement to RELEASE/ARCHIVED and the proven archive remain the Release Manager's post-decision step per mission constraints; completion is not self-declared.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"a51cc7ac-6d6a-49fa-9b57-344aef08cd75\",\"total_cost_usd\":1.0009620000000001,\"usage\":{\"input_tokens\":1168,\"cache_creation_input_tokens\":43700,\"cache_read_input_tokens\":815036,\"output_tokens\":12537,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":43700},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":848,\"cache_read_input_tokens\":61956,\"cache_creation_input_tokens\":618,\"cache_creation\":{\"ephemeral_5m_input_tokens\":618,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":984,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001054,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":1168,\"outputTokens\":12537,\"cacheReadInputTokens\":815036,\"cacheCreationInputTokens\":43700,\"webSearchRequests\":0,\"costUSD\":0.999908,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"1a768387-f477-4d2c-bcf9-cef6f4b3937c\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

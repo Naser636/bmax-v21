@@ -1,0 +1,16 @@
+{
+  "requestId": "FLEET_SELFTEST-001",
+  "agent": "claude",
+  "status": "VALIDATED",
+  "mission": "FLEET_SELFTEST",
+  "createdAt": "2026-07-24T01:22:45.731Z",
+  "attempt": 1,
+  "brief": {
+    "mission": "FLEET_SELFTEST"
+  },
+  "instruction": "",
+  "deliveredAt": "2026-07-24T01:22:45.737Z",
+  "pid": 834661,
+  "answeredAt": "2026-07-24T01:22:45.738Z",
+  "validatedAt": "2026-07-24T01:22:46.191Z"
+}

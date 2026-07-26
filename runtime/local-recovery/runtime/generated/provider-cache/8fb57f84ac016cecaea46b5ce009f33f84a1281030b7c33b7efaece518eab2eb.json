@@ -1,0 +1,36 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "PROVIDER_ENABLED_SMOKE_V1",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "PROVIDER_SMOKE_MARKER"
+    ],
+    "changedFiles": [
+      "src/app/provider-smoke/MARKER.md"
+    ],
+    "commandsRun": [
+      "git status --porcelain",
+      "git ls-files src/app/provider-smoke/",
+      "npx tsc --noEmit",
+      "npm run build"
+    ],
+    "blocker": null,
+    "notes": "Refreshed the single authorized marker src/app/provider-smoke/MARKER.md to record this execution (head_commit updated 798b3ac->8b0b90e). Exactly one file exists under src/app/provider-smoke/; no files outside the authorized scope were modified. TypeScript typecheck passed (exit 0) and Next.js production build passed (exit 0); the .md marker does not register as a route. Change left in the working tree only — no commit created per Runtime policy; gitClean/ledger finalization is deferred to the Release Manager."
+  },
+  "sessionId": "a439399a-ff0c-48b8-869c-a8105a204339",
+  "changedFiles": [
+    "src/app/provider-smoke/MARKER.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":75576,\"duration_api_ms\":57958,\"ttft_ms\":6325,\"ttft_stream_ms\":1767,\"time_to_request_ms\":205,\"num_turns\":10,\"result\":\"All green: TypeScript exit 0, build exit 0, and `/provider-smoke` is correctly a non-routing marker (not in the route table, so the app router is unaffected). Only the single authorized marker file changed; it's left in the working tree per Runtime policy (no commit).\\n\\n{ \\\"mission\\\": \\\"PROVIDER_ENABLED_SMOKE_V1\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"PROVIDER_SMOKE_MARKER\\\"], \\\"changedFiles\\\": [\\\"src/app/provider-smoke/MARKER.md\\\"], \\\"commandsRun\\\": [\\\"git status --porcelain\\\", \\\"git ls-files src/app/provider-smoke/\\\", \\\"npx tsc --noEmit\\\", \\\"npm run build\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Refreshed the single authorized marker src/app/provider-smoke/MARKER.md to record this execution (head_commit updated 798b3ac->8b0b90e). Exactly one file exists under src/app/provider-smoke/; no files outside the authorized scope were modified. TypeScript typecheck passed (exit 0) and Next.js production build passed (exit 0); the .md marker does not register as a route. Change left in the working tree only — no commit created per Runtime policy; gitClean/ledger finalization is deferred to the Release Manager.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"a439399a-ff0c-48b8-869c-a8105a204339\",\"total_cost_usd\":0.3840739999999999,\"usage\":{\"input_tokens\":17,\"cache_creation_input_tokens\":28722,\"cache_read_input_tokens\":213605,\"output_tokens\":3864,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":28722},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":698,\"cache_read_input_tokens\":28308,\"cache_creation_input_tokens\":414,\"cache_creation\":{\"ephemeral_5m_input_tokens\":414,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1004,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.0010739999999999999,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":17,\"outputTokens\":3864,\"cacheReadInputTokens\":213605,\"cacheCreationInputTokens\":28722,\"webSearchRequests\":0,\"costUSD\":0.38299999999999995,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"13b9a24f-b652-4b94-94fc-ec6eab53f01f\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

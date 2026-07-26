@@ -1,0 +1,37 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "PROVIDER_ENABLED_SMOKE_V1",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "PROVIDER_SMOKE_MARKER"
+    ],
+    "changedFiles": [],
+    "commandsRun": [
+      "git status --porcelain",
+      "git ls-files src/app/provider-smoke/",
+      "git check-ignore -v src/app/provider-smoke/MARKER.md",
+      "git log --oneline -1 -- src/app/provider-smoke/MARKER.md",
+      "git cat-file -e HEAD:src/app/provider-smoke/MARKER.md",
+      "git diff --stat HEAD -- src/app/provider-smoke/",
+      "npx tsc --noEmit",
+      "npx next build",
+      "find src/app/provider-smoke -type f"
+    ],
+    "blocker": null,
+    "notes": "Objective PROVIDER_SMOKE_MARKER is satisfied idempotently. Exactly one authorized-scope file exists — src/app/provider-smoke/MARKER.md — committed in HEAD (07c0084) and recording that the engineering provider executed this mission. All done_when criteria are met: exactly one file under src/app/provider-smoke/, no file modified outside the authorized write scope, and build + TypeScript green (both exit 0). Working tree is clean (gitClean=true). I made no working-tree changes this run: the marker was already present, and re-writing it (e.g. to refresh the stale internal head_commit field, which is not part of any done_when) would dirty the tracked file and break gitClean, which I cannot resolve since commits are forbidden. The 'Mission ledger updated' DoD item lives under runtime/ (frozen, not in AUTHORIZED_PATHS) and is the Release Manager/Runtime's responsibility, not the provider's. changedFiles is empty because no files were modified this invocation."
+  },
+  "sessionId": "dcb3edf0-781f-4138-b37c-3e4320fec492",
+  "changedFiles": [],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":140648,\"duration_api_ms\":122595,\"ttft_ms\":15034,\"ttft_stream_ms\":1854,\"time_to_request_ms\":198,\"num_turns\":13,\"result\":\"All validation gates pass. Summary of evidence:\\n\\n- **Exactly one file** under `src/app/provider-smoke/` → `MARKER.md` (committed in HEAD `07c0084`).\\n- **No file outside authorized scope modified** → working tree clean (`git status` empty).\\n- **TypeScript green** → `tsc --noEmit` exit 0.\\n- **Build green** → `next build` exit 0; marker `.md` correctly non-routing.\\n- **gitClean** → tree clean; no commits created.\\n\\nThe objective is idempotent and already satisfied by a prior provider run; the marker records that the engineering provider executed this mission. Re-writing it would dirty the tree and break `gitClean` without an authorized commit, so I left it untouched. The \\\"Mission ledger updated\\\" DoD item falls under `runtime/` (frozen, not in AUTHORIZED_PATHS) and is the Release Manager/Runtime's responsibility.\\n\\n{ \\\"mission\\\": \\\"PROVIDER_ENABLED_SMOKE_V1\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"PROVIDER_SMOKE_MARKER\\\"], \\\"changedFiles\\\": [], \\\"commandsRun\\\": [\\\"git status --porcelain\\\", \\\"git ls-files src/app/provider-smoke/\\\", \\\"git check-ignore -v src/app/provider-smoke/MARKER.md\\\", \\\"git log --oneline -1 -- src/app/provider-smoke/MARKER.md\\\", \\\"git cat-file -e HEAD:src/app/provider-smoke/MARKER.md\\\", \\\"git diff --stat HEAD -- src/app/provider-smoke/\\\", \\\"npx tsc --noEmit\\\", \\\"npx next build\\\", \\\"find src/app/provider-smoke -type f\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Objective PROVIDER_SMOKE_MARKER is satisfied idempotently. Exactly one authorized-scope file exists — src/app/provider-smoke/MARKER.md — committed in HEAD (07c0084) and recording that the engineering provider executed this mission. All done_when criteria are met: exactly one file under src/app/provider-smoke/, no file modified outside the authorized write scope, and build + TypeScript green (both exit 0). Working tree is clean (gitClean=true). I made no working-tree changes this run: the marker was already present, and re-writing it (e.g. to refresh the stale internal head_commit field, which is not part of any done_when) would dirty the tracked file and break gitClean, which I cannot resolve since commits are forbidden. The 'Mission ledger updated' DoD item lives under runtime/ (frozen, not in AUTHORIZED_PATHS) and is the Release Manager/Runtime's responsibility, not the provider's. changedFiles is empty because no files were modified this invocation.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"dcb3edf0-781f-4138-b37c-3e4320fec492\",\"total_cost_usd\":0.48749000000000003,\"usage\":{\"input_tokens\":19,\"cache_creation_input_tokens\":20358,\"cache_read_input_tokens\":292901,\"output_tokens\":8509,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":20358},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":1482,\"cache_read_input_tokens\":36707,\"cache_creation_input_tokens\":378,\"cache_creation\":{\"ephemeral_5m_input_tokens\":378,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":912,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.000982,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":19,\"outputTokens\":8509,\"cacheReadInputTokens\":292901,\"cacheCreationInputTokens\":20358,\"webSearchRequests\":0,\"costUSD\":0.486508,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"a840ba5b-c094-4b43-9568-dffc307855f2\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

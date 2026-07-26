@@ -1,0 +1,11 @@
+{
+  "mission": "AUDIT_RUNTIME_STATE_MACHINE",
+  "roadmapLoaded": true,
+  "roadmapVersion": "# ODG Runtime Roadmap",
+  "interpretation": {
+    "objective": "AUDIT RUNTIME STATE MACHINE",
+    "priority": "NORMAL",
+    "mode": "UNKNOWN",
+    "category": "GENERAL"
+  }
+}

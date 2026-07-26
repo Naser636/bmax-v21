@@ -1,0 +1,82 @@
+========== ODG QUEUE CHECK ==========
+
+===== runtime/generated/runtime-status.json =====
+{
+  "runtime": "READY",
+  "foundation": "READY",
+  "nextMission": "UNIFY_RUNTIME_EXECUTION"
+}
+===== runtime/generated/runtime-state.json =====
+{
+  "generatedAt": "2026-07-25T19:18:19.544Z",
+  "status": "READY",
+  "runtime": "READY",
+  "foundation": "READY",
+  "pipeline": "READY",
+  "brain": "READY",
+  "lastMission": "SELF_ENGINEERING_RUNTIME_V2",
+  "nextMission": "UNIFY_RUNTIME_EXECUTION"
+}
+===== runtime/generated/runtime-mission-queue.json =====
+{
+  "generatedAt": "2026-07-25T19:18:19.544Z",
+  "queue": [
+    {
+      "mission": "UNIFY_RUNTIME_EXECUTION",
+      "objective": "UNIFY_RUNTIME_EXECUTION_1",
+      "goal": "MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT",
+      "requiresEngineering": false,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "AUTONOMOUS_EXECUTION_WITH_FALLBACK",
+      "objective": "AUTONOMOUS_EXECUTION_WITH_FALLBACK_1",
+      "goal": "EXECUTE_THE_ASSIGNED_ENGINEERING_MISSION",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "PERSISTENT_AUTONOMY_CONTROLLER_V1",
+      "objective": "PERSISTENT_AUTONOMY_CONTROLLER_V1_1",
+      "goal": "EXECUTE_THE_ASSIGNED_MISSION",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "PROVIDER_FAILOVER_TO_OPENAI",
+      "objective": "PROVIDER_FAILOVER_TO_OPENAI_1",
+      "goal": "USE_OPENAI_PROVIDER_IF_CLAUDE_IS_UNAVAILABLE",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "PROVIDER_RESILIENCE_FOUNDATION_V1",
+      "objective": "PROVIDER_RESILIENCE_FOUNDATION_V1_1",
+      "goal": "REPLACE_FAIL_FAST_PROVIDER_EXECUTION_BY_A_RESILIENCE_LOOP",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "RUNTIME_EVOLUTION_PROGRAM_V1",
+      "objective": "RUNTIME_EVOLUTION_PROGRAM_V1_1",
+      "goal": "DISCOVER_ALL_PENDING_RUNTIME_MISSIONS",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "RUNTIME_SELF_EVOLUTION_V1",
+      "objective": "RUNTIME_SELF_EVOLUTION_V1_1",
+      "goal": "ANALYZE_THE_COMPLETE_RUNTIME",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    }
+  ]
+}
+========== END ==========

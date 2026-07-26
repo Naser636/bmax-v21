@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-07-25T23:31:10.470Z",
+  "totalMissions": 56,
+  "executable": 52,
+  "proven": 46,
+  "executableUnproven": [
+    "AUTONOMOUS_EXECUTION_WITH_FALLBACK",
+    "PERSISTENT_AUTONOMY_CONTROLLER_V1",
+    "PROVIDER_FAILOVER_TO_OPENAI",
+    "PROVIDER_RESILIENCE_FOUNDATION_V1",
+    "RUNTIME_EVOLUTION_PROGRAM_V1",
+    "RUNTIME_SELF_EVOLUTION_V1"
+  ],
+  "incompleteContracts": [
+    {
+      "mission": "MASTER_PLAN_V1",
+      "objectives": 0,
+      "proven": false,
+      "kind": "orchestration-plan",
+      "disposition": "SKIPPED",
+      "reason": "file is an orchestration plan, not a leaf mission contract",
+      "repairNominated": true
+    },
+    {
+      "mission": "RETIRE_LEGACY_RUNTIME",
+      "objectives": 0,
+      "proven": false,
+      "kind": "mission",
+      "disposition": "NEEDS_CONTRACT",
+      "reason": "mission contract declares no objectives (Mission Loader guard)",
+      "repairNominated": true
+    },
+    {
+      "mission": "RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack",
+      "objectives": 0,
+      "proven": false,
+      "kind": "evidence-pack",
+      "disposition": "SKIPPED",
+      "reason": "file is an evidence pack, not a mission contract",
+      "repairNominated": true
+    },
+    {
+      "mission": "RUNTIME_PROVIDER_REGISTRY_M4.pack",
+      "objectives": 0,
+      "proven": false,
+      "kind": "evidence-pack",
+      "disposition": "SKIPPED",
+      "reason": "file is an evidence pack, not a mission contract",
+      "repairNominated": true
+    }
+  ],
+  "brokenContracts": [],
+  "roadmap": [
+    "M0000",
+    "M0001",
+    "M0002",
+    "CLEAN_RUNTIME_WORKSPACE",
+    "PROVIDER_ENABLED_SMOKE_V1",
+    "UNIFY_RUNTIME_EXECUTION"
+  ],
+  "roadmapResolves": true
+}

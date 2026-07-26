@@ -1,0 +1,43 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_ENGINEERING_PROVIDER",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [],
+    "commandsRun": [
+      "git status",
+      "git rev-parse HEAD",
+      "npx tsc --noEmit",
+      "npm test -- src/tests/provider-patch-engine.test.ts src/tests/provider-enabled-mission.test.ts src/tests/provider-canonical-contract.test.ts src/tests/claude-provider-adapter.test.ts src/tests/claude-provider-integration.test.ts src/tests/provider-orchestrator.test.ts src/tests/provider-registry.test.ts",
+      "git ls-files --error-unmatch <provider files>"
+    ],
+    "blocker": null,
+    "notes": "Capability already implemented, committed, and green in the tree; no source changes required this session. Verified: tsc exit 0; 7 provider suites pass (63 PASS, exit 0 — the lone 'FAIL' grep match is the substring 'FAILED' in a passing test name). All four objectives map to real committed code: OBJ-001 src/providers/provider-port.ts + claude-provider-adapter.ts selectable via src/core/provider-registry.ts/provider-orchestrator.ts; OBJ-002 src/runtime/autonomy-runtime-adapter.ts:277 missionRequiresProvider→runViaProvider driven by in-core RuntimeAutonomy (no CTO call); OBJ-003 src/runtime/patch-engine.ts ProviderPatchEngine.receive→refreshVerifyEvidence; OBJ-004 runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md. RELEASE remains the Release Manager's decision (clean-tree/build gates over full tree). Only working-tree churn is pre-existing unrelated runtime/mission-standard/** edits, left untouched."
+  },
+  "sessionId": "c0e13103-fa30-42c3-b4cd-bf050e3e044c",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/FIX_PATCH_EXECUTION_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/FIX_RUNTIME_MISSION_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/passports/FIX_PATCH_EXECUTION_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/FIX_RUNTIME_MISSION_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":88656,\"duration_api_ms\":67754,\"ttft_ms\":3206,\"ttft_stream_ms\":1697,\"time_to_request_ms\":231,\"num_turns\":13,\"result\":\"The capability is fully present, committed, and green — no changes were required this session. Every objective maps to real code with passing tests:\\n\\n- **OBJ-001** — `src/providers/provider-port.ts` (`EngineeringProviderPort`, `missionRequiresProvider`) + `src/providers/claude-provider-adapter.ts`; selectable via `src/core/provider-registry.ts` / `provider-orchestrator.ts`.\\n- **OBJ-002** — `src/runtime/autonomy-runtime-adapter.ts:277` gates `runPipeline()` on `missionRequiresProvider` → `runViaProvider()`, driven by in-core `RuntimeAutonomy` (no CTO call).\\n- **OBJ-003** — `src/runtime/patch-engine.ts` `ProviderPatchEngine.receive()` → `readyForValidation` → `refreshVerifyEvidence()`.\\n- **OBJ-004** — `runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md` + prepared next mission.\\n\\nVerification observed: `npx tsc --noEmit` exit 0; 7 provider suites green (63 PASS, exit 0; the single \\\"FAIL\\\" grep hit is the substring \\\"FAILED\\\" inside a passing test name). The only working-tree churn is pre-existing unrelated `runtime/mission-standard/**` edits — outside this mission and untouched.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_ENGINEERING_PROVIDER\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [], \\\"commandsRun\\\": [\\\"git status\\\", \\\"git rev-parse HEAD\\\", \\\"npx tsc --noEmit\\\", \\\"npm test -- src/tests/provider-patch-engine.test.ts src/tests/provider-enabled-mission.test.ts src/tests/provider-canonical-contract.test.ts src/tests/claude-provider-adapter.test.ts src/tests/claude-provider-integration.test.ts src/tests/provider-orchestrator.test.ts src/tests/provider-registry.test.ts\\\", \\\"git ls-files --error-unmatch <provider files>\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability already implemented, committed, and green in the tree; no source changes required this session. Verified: tsc exit 0; 7 provider suites pass (63 PASS, exit 0 — the lone 'FAIL' grep match is the substring 'FAILED' in a passing test name). All four objectives map to real committed code: OBJ-001 src/providers/provider-port.ts + claude-provider-adapter.ts selectable via src/core/provider-registry.ts/provider-orchestrator.ts; OBJ-002 src/runtime/autonomy-runtime-adapter.ts:277 missionRequiresProvider→runViaProvider driven by in-core RuntimeAutonomy (no CTO call); OBJ-003 src/runtime/patch-engine.ts ProviderPatchEngine.receive→refreshVerifyEvidence; OBJ-004 runtime/missions/IMPLEMENT_ENGINEERING_PROVIDER.evidence.md. RELEASE remains the Release Manager's decision (clean-tree/build gates over full tree). Only working-tree churn is pre-existing unrelated runtime/mission-standard/** edits, left untouched.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"c0e13103-fa30-42c3-b4cd-bf050e3e044c\",\"total_cost_usd\":0.35603349999999995,\"usage\":{\"input_tokens\":19,\"cache_creation_input_tokens\":16826,\"cache_read_input_tokens\":264966,\"output_tokens\":4687,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":16826},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":1423,\"cache_read_input_tokens\":32693,\"cache_creation_input_tokens\":860,\"cache_creation\":{\"ephemeral_5m_input_tokens\":860,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1048,\"outputTokens\":14,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001118,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":19,\"outputTokens\":4687,\"cacheReadInputTokens\":264966,\"cacheCreationInputTokens\":16826,\"webSearchRequests\":0,\"costUSD\":0.35491549999999994,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"82c6fa6c-08f8-4756-aa23-812f42899736\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

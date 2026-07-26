@@ -1,0 +1,54 @@
+========== UNIFY ROOT CAUSE ==========
+
+[QUEUE ENTRY]
+      "mission": "UNIFY_RUNTIME_EXECUTION",
+      "objective": "UNIFY_RUNTIME_EXECUTION_1",
+      "goal": "MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT",
+      "requiresEngineering": false,
+      "priority": "CRITICAL",
+      "status": "PENDING"
+    },
+    {
+      "mission": "AUTONOMOUS_EXECUTION_WITH_FALLBACK",
+      "objective": "AUTONOMOUS_EXECUTION_WITH_FALLBACK_1",
+      "goal": "EXECUTE_THE_ASSIGNED_ENGINEERING_MISSION",
+      "requiresEngineering": true,
+      "priority": "CRITICAL",
+
+[LEDGER]
+5865:      "mission": "UNIFY_RUNTIME_EXECUTION_1",
+7745:      "mission": "UNIFY_RUNTIME_EXECUTION_1",
+8417:      "mission": "UNIFY_RUNTIME_EXECUTION_1",
+
+[MISSION CONTRACT]
+{
+  "name": "UNIFY_RUNTIME_EXECUTION",
+  "mode": "IMPLEMENT",
+  "priority": "CRITICAL",
+  "objectives": [
+    "MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT",
+    "REMOVE_LEGACY_RUNTIME_ENTRYPOINTS",
+    "REGISTER_ALL_CAPABILITIES",
+    "UNIFY_EXECUTION_PIPELINE",
+    "VALIDATE_DETERMINISM",
+    "GENERATE_RUNTIME_SUMMARY",
+    "PROMOTE_RUNTIME_V1"
+  ]
+}
+
+[CHILD MISSION]
+{
+  "name": "UNIFY_RUNTIME_EXECUTION_1",
+  "mode": "IMPLEMENT",
+  "priority": "HIGH",
+  "parent": "UNIFY_RUNTIME_EXECUTION",
+  "objectives": [
+    "IMPLEMENT_SINGLE_RUNTIME_ENTRYPOINT",
+    "REGISTER_RUNTIME_ENTRY",
+    "VERIFY_RUNTIME_ENTRY",
+    "GENERATE_EVIDENCE",
+    "UPDATE_LEDGER"
+  ]
+}
+
+========== END ==========

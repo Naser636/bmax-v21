@@ -1,0 +1,52 @@
+========== ODG ENGINEERING BRIEF ==========
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : IMPLEMENT_ROOT_CAUSE_REPORTING
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : missionRequiresProvider = true → PROVIDER
+Route      : RuntimeAutonomy → AutonomyRuntimeAdapter → ClaudeProviderAdapter
+--------------------------------------
+--------------------------------------
+Status     : EXECUTION_FAILED
+Cycles     : 1
+Released   : (none)
+Halt on    : IMPLEMENT_ROOT_CAUSE_REPORTING
+Reason     : EXECUTION_FAILED
+Detail     : Pipeline failed at stage "provider-execution" (FAILED): provider process failed (exit=1, is_error=true, subtype=success)
+  provider   : claude-code
+  exitCode   : 1
+  stdout     :
+    {"type":"result","subtype":"success","is_error":true,"api_error_status":400,"duration_ms":472,"duration_api_ms":0,"num_turns":1,"result":"Credit balance is too low","stop_reason":"stop_sequence","session_id":"240e6348-d4d1-45e5-80ee-0df243fa04ef","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"api_error","fast_mode_state":"off","uuid":"fc12010e-f985-4f66-9b14-c1cb0a82a941"}
+======================================
+
+===== REQUIRED ENGINEERING OUTPUT =====
+- Files to modify
+- Functions to modify
+- Missing Runtime capability
+- Missing contracts
+- Missing state transitions
+- Required evidence model
+- Required auto-repair hook
+- Patch plan
+- Estimated implementation order
+======================================
+ODG FOUNDATION DASHBOARD
+======================================
+Runtime            : READY
+Foundation         : READY
+Capabilities       : 45
+Missing            : 7
+Last Mission       : ROOT_CAUSE_RUNTIME_PIPELINE
+Next Mission       : UNIFY_RUNTIME_EXECUTION
+Objective          : UNIFY_RUNTIME_EXECUTION_1
+Goal               : MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT
+Queue Remaining    : 7
+======================================
+========== END ==========

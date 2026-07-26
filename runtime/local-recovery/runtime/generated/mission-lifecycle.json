@@ -1,0 +1,75 @@
+{
+  "mission": "AUDIT_RUNTIME_STATE_MACHINE",
+  "initialState": "CREATED",
+  "achieved": "ARCHIVED",
+  "terminalState": "ARCHIVED",
+  "archived": true,
+  "path": [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED"
+  ],
+  "transitions": [
+    {
+      "from": "CREATED",
+      "to": "QUALIFIED",
+      "ok": true,
+      "evidence": "contract present (runtime/missions/AUDIT_RUNTIME_STATE_MACHINE.json)"
+    },
+    {
+      "from": "QUALIFIED",
+      "to": "ANALYZED",
+      "ok": true,
+      "evidence": "mission-plan.json (10 objectives)"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "PLANNED",
+      "ok": true,
+      "evidence": "decision.json + patch-plan.json (10 patches)"
+    },
+    {
+      "from": "PLANNED",
+      "to": "PREPARED",
+      "ok": true,
+      "evidence": "patch-plan.json status=READY"
+    },
+    {
+      "from": "PREPARED",
+      "to": "VALIDATED",
+      "ok": true,
+      "evidence": "mission-report.json validated=true"
+    },
+    {
+      "from": "VALIDATED",
+      "to": "EXECUTED",
+      "ok": true,
+      "evidence": "patch-execution.json (10 executed, 0 failed)"
+    },
+    {
+      "from": "EXECUTED",
+      "to": "VERIFIED",
+      "ok": true,
+      "evidence": "validation gates green (mission-report validated=true)"
+    },
+    {
+      "from": "VERIFIED",
+      "to": "RELEASED",
+      "ok": true,
+      "evidence": "mission proven — release authorized by governance"
+    },
+    {
+      "from": "RELEASED",
+      "to": "ARCHIVED",
+      "ok": true,
+      "evidence": "recorded in immutable mission ledger"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "IMPLEMENT_RUNTIME_HEALTH_COMMAND",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "OBJ-001",
+      "OBJ-002",
+      "OBJ-003",
+      "OBJ-004"
+    ],
+    "changedFiles": [
+      "runtime/bin/odg-health.js",
+      "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md"
+    ],
+    "commandsRun": [
+      "node --check runtime/bin/odg-health.js",
+      "./runtime/bin/odg",
+      "./runtime/bin/odg health",
+      "npm run build",
+      "npx tsc --noEmit",
+      "git status --short",
+      "git diff --stat runtime/bin/odg-health.js"
+    ],
+    "blocker": null,
+    "notes": "Capability was already implemented and committed (odg dispatcher + odg-health.js; ledger CAPITALIZED). Verified all four objectives against the working tree: OBJ-001 both entrypoints present+executable; OBJ-002 all four artefacts loaded via read(); OBJ-003 five sections rendered, exit 0, 35 lines (<100), deterministic (two runs diff-clean); OBJ-004 evidence refreshed + ledger entry present. One additive read-only correction to odg-health.js: runtime-state.json is a legacy artefact with no producer in the current runtime (absent on a verified tree), which caused Pipeline/Brain to render UNKNOWN. They now fall back to the current real artefacts that carry the signal — runtime-verify.json (build&&typescript -> OK) and the versioned runtime/brain/MASTER_PLAN.md (-> LOADED) — while still preferring runtime-state.json when present. No value fabricated, no generated/frozen artefact mutated. The stale evidence (which claimed runtime-state.json present at 157B with Pipeline=OK/Brain=LOADED, 236 missions) was rewritten to match the current verified run (206 missions, 5 ready / 6 missing). build + tsc --noEmit pass. Only unauthorized-path churn in the tree (tracked certificates/passports/generated) is pre-existing and not touched by this mission; build/gitClean full-tree gates remain the Release Manager's to judge."
+  },
+  "sessionId": "3da4fcbd-e128-44f6-b8ea-1e63c07b8087",
+  "changedFiles": [
+    "runtime/bin/odg-health.js",
+    "runtime/mission-standard/certificates/ENABLE_MASTER_PLAN_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_AUTONOMY_V1.certificate.md",
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/RUNTIME_FULL_AUTONOMY_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/SELF_ENGINEERING_RUNTIME_KERNEL.certificate.md",
+    "runtime/mission-standard/passports/ENABLE_MASTER_PLAN_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_AUTONOMY_V1.passport.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/RUNTIME_FULL_AUTONOMY_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/SELF_ENGINEERING_RUNTIME_KERNEL.passport.md",
+    "runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md",
+    "runtime/mission-standard/certificates/BOOTSTRAP_RUNTIME_ENGINEERING.certificate.md",
+    "runtime/mission-standard/certificates/FINALIZE_RUNTIME_FOUNDATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/FIX_CORRECTIVE_QUEUE_INTAKE.certificate.md",
+    "runtime/mission-standard/certificates/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/PATCH_RUNTIME_KERNEL.certificate.md",
+    "runtime/mission-standard/generated/BOOTSTRAP_RUNTIME_ENGINEERING.json",
+    "runtime/mission-standard/generated/FINALIZE_RUNTIME_FOUNDATION_V1.json",
+    "runtime/mission-standard/generated/FIX_CORRECTIVE_QUEUE_INTAKE.json",
+    "runtime/mission-standard/generated/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.json",
+    "runtime/mission-standard/generated/PATCH_RUNTIME_KERNEL.json",
+    "runtime/mission-standard/passports/BOOTSTRAP_RUNTIME_ENGINEERING.passport.md",
+    "runtime/mission-standard/passports/FINALIZE_RUNTIME_FOUNDATION_V1.passport.md",
+    "runtime/mission-standard/passports/FIX_CORRECTIVE_QUEUE_INTAKE.passport.md",
+    "runtime/mission-standard/passports/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.passport.md",
+    "runtime/mission-standard/passports/PATCH_RUNTIME_KERNEL.passport.md",
+    "runtime/mission-standard/reports/BOOTSTRAP_RUNTIME_ENGINEERING.report.md",
+    "runtime/mission-standard/reports/FINALIZE_RUNTIME_FOUNDATION_V1.report.md",
+    "runtime/mission-standard/reports/FIX_CORRECTIVE_QUEUE_INTAKE.report.md",
+    "runtime/mission-standard/reports/IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1.report.md",
+    "runtime/mission-standard/reports/PATCH_RUNTIME_KERNEL.report.md"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":313960,\"duration_api_ms\":292997,\"ttft_ms\":5110,\"ttft_stream_ms\":2023,\"time_to_request_ms\":238,\"num_turns\":28,\"result\":\"All objectives verified with evidence; build and typecheck green; changes are additive, read-only, deterministic, and confined to authorized paths.\\n\\n{ \\\"mission\\\": \\\"IMPLEMENT_RUNTIME_HEALTH_COMMAND\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"OBJ-001\\\", \\\"OBJ-002\\\", \\\"OBJ-003\\\", \\\"OBJ-004\\\"], \\\"changedFiles\\\": [\\\"runtime/bin/odg-health.js\\\", \\\"runtime/missions/IMPLEMENT_RUNTIME_HEALTH_COMMAND.evidence.md\\\"], \\\"commandsRun\\\": [\\\"node --check runtime/bin/odg-health.js\\\", \\\"./runtime/bin/odg\\\", \\\"./runtime/bin/odg health\\\", \\\"npm run build\\\", \\\"npx tsc --noEmit\\\", \\\"git status --short\\\", \\\"git diff --stat runtime/bin/odg-health.js\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Capability was already implemented and committed (odg dispatcher + odg-health.js; ledger CAPITALIZED). Verified all four objectives against the working tree: OBJ-001 both entrypoints present+executable; OBJ-002 all four artefacts loaded via read(); OBJ-003 five sections rendered, exit 0, 35 lines (<100), deterministic (two runs diff-clean); OBJ-004 evidence refreshed + ledger entry present. One additive read-only correction to odg-health.js: runtime-state.json is a legacy artefact with no producer in the current runtime (absent on a verified tree), which caused Pipeline/Brain to render UNKNOWN. They now fall back to the current real artefacts that carry the signal — runtime-verify.json (build&&typescript -> OK) and the versioned runtime/brain/MASTER_PLAN.md (-> LOADED) — while still preferring runtime-state.json when present. No value fabricated, no generated/frozen artefact mutated. The stale evidence (which claimed runtime-state.json present at 157B with Pipeline=OK/Brain=LOADED, 236 missions) was rewritten to match the current verified run (206 missions, 5 ready / 6 missing). build + tsc --noEmit pass. Only unauthorized-path churn in the tree (tracked certificates/passports/generated) is pre-existing and not touched by this mission; build/gitClean full-tree gates remain the Release Manager's to judge.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"3da4fcbd-e128-44f6-b8ea-1e63c07b8087\",\"total_cost_usd\":1.5300845,\"usage\":{\"input_tokens\":45,\"cache_creation_input_tokens\":67552,\"cache_read_input_tokens\":1104157,\"output_tokens\":22177,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":67552},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":1019,\"cache_read_input_tokens\":66324,\"cache_creation_input_tokens\":1228,\"cache_creation\":{\"ephemeral_5m_input_tokens\":1228,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":1091,\"outputTokens\":13,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.001156,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":45,\"outputTokens\":22177,\"cacheReadInputTokens\":1104157,\"cacheCreationInputTokens\":67552,\"webSearchRequests\":0,\"costUSD\":1.5289285,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"1bfc58ea-f1fe-497f-b86f-bbefd9e0870c\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

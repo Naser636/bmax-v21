@@ -1,0 +1,80 @@
+{
+  "provider": "claude-code",
+  "classification": "OK",
+  "providerExecuted": true,
+  "fromCache": false,
+  "result": {
+    "mission": "CLEAN_RUNTIME_WORKSPACE",
+    "providerContractVersion": "1.0.0",
+    "status": "DONE",
+    "objectivesAddressed": [
+      "CLEAN_WORKSPACE_1",
+      "CLEAN_WORKSPACE_2",
+      "CLEAN_WORKSPACE_3"
+    ],
+    "changedFiles": [
+      "runtime/scripts/clean-runtime-workspace.js",
+      "runtime/mission-standard/evidence/claude/CLEAN_RUNTIME_WORKSPACE-scan.json",
+      "runtime/mission-standard/evidence/claude/CLEAN_RUNTIME_WORKSPACE.report.md"
+    ],
+    "commandsRun": [
+      "git status --ignored --porcelain runtime/",
+      "git check-ignore <candidates>",
+      "git ls-files runtime/generated runtime/security runtime/reports/archive",
+      "node runtime/scripts/clean-runtime-workspace.js",
+      "node runtime/scripts/clean-runtime-workspace.js --apply",
+      "git diff --name-status"
+    ],
+    "blocker": null,
+    "notes": "Deterministic scan (runtime/scripts/clean-runtime-workspace.js) enumerated transient artifacts under runtime/ and classified each; every candidate asserted git-ignored AND untracked before removal, tracked/required paths demoted to PRESERVE. Removed 9 stale-scratch files under runtime/generated/ (logs, scratch .ts probes, one-off FINAL_VALIDATION dump, 7.2MB odg-roadmap-compile.txt); runtime/generated/ shrank 7.8M->896K. Preserved 4 required roots: runtime/security/ (DR backups), runtime/releases/SECURE_20260724_021018/, runtime/mission-standard/history/, runtime/reports/archive/. Live runtime-state JSON left intact. git diff confirms ZERO tracked deletions; blocked=0. Removed files were git-ignored/untracked so absent from git changedFiles; evidence JSON + report persisted under runtime/mission-standard/evidence/claude/. Re-run is idempotent (safeToRemove now 0). No commits created."
+  },
+  "sessionId": "5884095c-f0db-4c62-840e-bdaf7907ffab",
+  "changedFiles": [
+    "runtime/mission-standard/certificates/MISSION_CONTEXT_BUILDER.certificate.md",
+    "runtime/mission-standard/certificates/PREPARE_ENGINEERING_BRIEF.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_RUNTIME_STABILIZATION_V1.certificate.md",
+    "runtime/mission-standard/certificates/ROOT_CAUSE_RUNTIME_PIPELINE.certificate.md",
+    "runtime/mission-standard/certificates/RUNTIME_FULL_AUTONOMY_EXECUTION.certificate.md",
+    "runtime/mission-standard/certificates/SELF_ENGINEERING_RUNTIME_KERNEL.certificate.md",
+    "runtime/mission-standard/passports/MISSION_CONTEXT_BUILDER.passport.md",
+    "runtime/mission-standard/passports/PREPARE_ENGINEERING_BRIEF.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_RUNTIME_STABILIZATION_V1.passport.md",
+    "runtime/mission-standard/passports/ROOT_CAUSE_RUNTIME_PIPELINE.passport.md",
+    "runtime/mission-standard/passports/RUNTIME_FULL_AUTONOMY_EXECUTION.passport.md",
+    "runtime/mission-standard/passports/SELF_ENGINEERING_RUNTIME_KERNEL.passport.md",
+    "runtime/mission-standard/certificates/AUDIT_RUNTIME_STATE_MACHINE.certificate.md",
+    "runtime/mission-standard/certificates/BOOTSTRAP_RUNTIME_ENGINEERING.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_PHASE_3_ENGINEERING.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_PHASE_4_FLEET_AND_PROVIDERS.certificate.md",
+    "runtime/mission-standard/certificates/ROADMAP_PHASE_5_ENTERPRISE.certificate.md",
+    "runtime/mission-standard/certificates/RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS.certificate.md",
+    "runtime/mission-standard/evidence/claude/CLEAN_RUNTIME_WORKSPACE-scan.json",
+    "runtime/mission-standard/evidence/claude/CLEAN_RUNTIME_WORKSPACE.report.md",
+    "runtime/mission-standard/generated/AUDIT_RUNTIME_STATE_MACHINE.json",
+    "runtime/mission-standard/generated/BOOTSTRAP_RUNTIME_ENGINEERING.json",
+    "runtime/mission-standard/generated/ROADMAP_PHASE_3_ENGINEERING.json",
+    "runtime/mission-standard/generated/ROADMAP_PHASE_4_FLEET_AND_PROVIDERS.json",
+    "runtime/mission-standard/generated/ROADMAP_PHASE_5_ENTERPRISE.json",
+    "runtime/mission-standard/generated/RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS.json",
+    "runtime/mission-standard/passports/AUDIT_RUNTIME_STATE_MACHINE.passport.md",
+    "runtime/mission-standard/passports/BOOTSTRAP_RUNTIME_ENGINEERING.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_PHASE_3_ENGINEERING.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_PHASE_4_FLEET_AND_PROVIDERS.passport.md",
+    "runtime/mission-standard/passports/ROADMAP_PHASE_5_ENTERPRISE.passport.md",
+    "runtime/mission-standard/passports/RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS.passport.md",
+    "runtime/mission-standard/reports/AUDIT_RUNTIME_STATE_MACHINE.report.md",
+    "runtime/mission-standard/reports/BOOTSTRAP_RUNTIME_ENGINEERING.report.md",
+    "runtime/mission-standard/reports/ROADMAP_PHASE_3_ENGINEERING.report.md",
+    "runtime/mission-standard/reports/ROADMAP_PHASE_4_FLEET_AND_PROVIDERS.report.md",
+    "runtime/mission-standard/reports/ROADMAP_PHASE_5_ENTERPRISE.report.md",
+    "runtime/mission-standard/reports/RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS.report.md",
+    "runtime/scripts/clean-runtime-workspace.js"
+  ],
+  "unauthorizedChanges": [],
+  "raw": {
+    "exitCode": 0,
+    "stdout": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":false,\"api_error_status\":null,\"duration_ms\":250774,\"duration_api_ms\":248988,\"ttft_ms\":3123,\"ttft_stream_ms\":1491,\"time_to_request_ms\":213,\"num_turns\":21,\"result\":\"{ \\\"mission\\\": \\\"CLEAN_RUNTIME_WORKSPACE\\\", \\\"providerContractVersion\\\": \\\"1.0.0\\\", \\\"status\\\": \\\"DONE\\\", \\\"objectivesAddressed\\\": [\\\"CLEAN_WORKSPACE_1\\\", \\\"CLEAN_WORKSPACE_2\\\", \\\"CLEAN_WORKSPACE_3\\\"], \\\"changedFiles\\\": [\\\"runtime/scripts/clean-runtime-workspace.js\\\", \\\"runtime/mission-standard/evidence/claude/CLEAN_RUNTIME_WORKSPACE-scan.json\\\", \\\"runtime/mission-standard/evidence/claude/CLEAN_RUNTIME_WORKSPACE.report.md\\\"], \\\"commandsRun\\\": [\\\"git status --ignored --porcelain runtime/\\\", \\\"git check-ignore <candidates>\\\", \\\"git ls-files runtime/generated runtime/security runtime/reports/archive\\\", \\\"node runtime/scripts/clean-runtime-workspace.js\\\", \\\"node runtime/scripts/clean-runtime-workspace.js --apply\\\", \\\"git diff --name-status\\\"], \\\"blocker\\\": null, \\\"notes\\\": \\\"Deterministic scan (runtime/scripts/clean-runtime-workspace.js) enumerated transient artifacts under runtime/ and classified each; every candidate asserted git-ignored AND untracked before removal, tracked/required paths demoted to PRESERVE. Removed 9 stale-scratch files under runtime/generated/ (logs, scratch .ts probes, one-off FINAL_VALIDATION dump, 7.2MB odg-roadmap-compile.txt); runtime/generated/ shrank 7.8M->896K. Preserved 4 required roots: runtime/security/ (DR backups), runtime/releases/SECURE_20260724_021018/, runtime/mission-standard/history/, runtime/reports/archive/. Live runtime-state JSON left intact. git diff confirms ZERO tracked deletions; blocked=0. Removed files were git-ignored/untracked so absent from git changedFiles; evidence JSON + report persisted under runtime/mission-standard/evidence/claude/. Re-run is idempotent (safeToRemove now 0). No commits created.\\\" }\",\"stop_reason\":\"end_turn\",\"session_id\":\"5884095c-f0db-4c62-840e-bdaf7907ffab\",\"total_cost_usd\":1.152396,\"usage\":{\"input_tokens\":31,\"cache_creation_input_tokens\":54264,\"cache_read_input_tokens\":680282,\"output_tokens\":18876,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":54264},\"inference_geo\":\"global\",\"iterations\":[{\"input_tokens\":1,\"output_tokens\":738,\"cache_read_input_tokens\":53758,\"cache_creation_input_tokens\":506,\"cache_creation\":{\"ephemeral_5m_input_tokens\":506,\"ephemeral_1h_input_tokens\":0},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-haiku-4-5-20251001\":{\"inputTokens\":990,\"outputTokens\":12,\"cacheReadInputTokens\":0,\"cacheCreationInputTokens\":0,\"webSearchRequests\":0,\"costUSD\":0.00105,\"contextWindow\":200000,\"maxOutputTokens\":32000},\"claude-opus-4-8\":{\"inputTokens\":31,\"outputTokens\":18876,\"cacheReadInputTokens\":680282,\"cacheCreationInputTokens\":54264,\"webSearchRequests\":0,\"costUSD\":1.151346,\"contextWindow\":1000000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"uuid\":\"9c9b5047-75ad-4043-8476-641d369f40bf\"}\n",
+    "stderr": ""
+  },
+  "diagnostics": []
+}

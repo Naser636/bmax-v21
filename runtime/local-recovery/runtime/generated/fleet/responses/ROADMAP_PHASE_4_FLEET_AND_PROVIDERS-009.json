@@ -1,0 +1,15 @@
+{
+  "requestId": "ROADMAP_PHASE_4_FLEET_AND_PROVIDERS-009",
+  "agent": "claude",
+  "status": "ANSWERED",
+  "answeredAt": "2026-07-25T12:02:06.486Z",
+  "attempt": 1,
+  "proposal": {
+    "mission": "ROADMAP_PHASE_4_FLEET_AND_PROVIDERS",
+    "summary": "[MOCK] Fleet Bridge round-trip for ROADMAP_PHASE_4_FLEET_AND_PROVIDERS via claude",
+    "actions": [
+      "acknowledge request",
+      "return structured proposal"
+    ]
+  }
+}

@@ -1,0 +1,147 @@
+========== ODG STATUS SOURCE ==========
+
+[STATUS COMMAND]
+runtime/llm/engineering-brief-builder.js:22:    knownCapabilities:knowledge.knownCapabilities.length,
+runtime/llm/engineering-brief-builder.js:23:    missingCapabilities:knowledge.missingCapabilities.length,
+runtime/llm/response-parser.js:8:  console.error("Missing response");
+runtime/llm/response-parser.js:35:  console.log("Missing:", missing.join(", "));
+runtime/archive/20260723/generated/cto-context/patch-engine.js:28:        missingCapabilities:registry.missingCapabilities.length
+runtime/bin/odg-state.js:8: * runtime-mission-queue.json (→ Next Mission stuck on SYSTEM_READY), and capability-registry.json
+runtime/bin/odg-state.js:68:    missingCapabilities: model.missingCapabilities,
+runtime/bin/odg-state.js:113:    `Capabilities : ${model.capabilities.length} proven`,
+runtime/bin/odg-state.js:115:    `Next Mission : ${model.nextMission}`,
+runtime/bin/odg-health.js:31:const caps = read(G("capability-registry.json"), { capabilities: [], missingCapabilities: [] });
+runtime/bin/odg-health.js:39:const missing = Array.isArray(caps.missingCapabilities) ? caps.missingCapabilities : [];
+runtime/bin/odg-health.js:72:L.push(`  Capabilities : ${capList.length} ready / ${missing.length} missing`);
+runtime/bin/odg-health.js:75:L.push(`  Last Mission : ${lastEntry.mission ?? state.lastMission ?? "N/A"} (${lastEntry.state ?? "?"})`);
+runtime/bin/odg-status.js:18:console.log("ODG FOUNDATION DASHBOARD");
+runtime/bin/odg-status.js:22:console.log("Capabilities       :",(caps.capabilities||[]).length);
+runtime/bin/odg-status.js:23:console.log("Missing            :",(caps.missingCapabilities||[]).length);
+runtime/bin/odg-status.js:24:console.log("Last Mission       :",lastMission);
+runtime/bin/odg-status.js:25:console.log("Next Mission       :",next?.mission??"SYSTEM_READY");
+runtime/bin/odg-status.js:28:console.log("Queue Remaining    :",queue.queue.filter(m=>m.status==="PENDING").length);
+runtime/core/fleet-collector.js:30:    throw new Error("Missing requestId");
+runtime/core/mission-loader.next.js:8:    console.error("STOP: Missing mission name");
+runtime/core/mission-loader.js:25:    console.error("STOP: Missing mission name");
+runtime/core/capability-registry.js:7: * "missingCapabilities". So after any mission the Dashboard advertised that mission's own
+runtime/core/capability-registry.js:31:  missingCapabilities: model.missingCapabilities,
+runtime/core/capability-registry.js:41:console.log("Missing   :", registry.missingCapabilities.length);
+runtime/core/knowledge-engine.js:73:  knownCapabilities:registry.capabilities,
+runtime/core/knowledge-engine.js:74:  missingCapabilities:registry.missingCapabilities
+runtime/core/runtime-model.js:9: *   - runtime/generated/runtime-mission-queue.json  was absent → Next Mission fell back to the
+runtime/core/runtime-model.js:22: * contract at all) can never be proposed as a runnable "Next Mission".
+runtime/core/runtime-model.js:152:  //     for the missions dir), with a concrete reason. It can never be a runnable "Next Mission".
+runtime/core/runtime-model.js:177:  const missingCapabilities = executableUnproven.map((m) => ({
+runtime/core/runtime-model.js:226:    missingCapabilities,
+runtime/backup/20260712_205205-mission-loader.js:8:    console.error("STOP: Missing mission name");
+runtime/backup/20260722_231000_odg-status.js:23:console.log("ODG FOUNDATION DASHBOARD");
+runtime/backup/20260722_231000_odg-status.js:27:console.log("Capabilities       :", (caps.capabilities || []).length);
+runtime/backup/20260722_231000_odg-status.js:28:console.log("Missing            :", (caps.missingCapabilities || []).length);
+runtime/backup/20260722_231000_odg-status.js:29:console.log("Last Mission       :", lastMission);
+runtime/backup/20260722_231000_odg-status.js:30:console.log("Next Mission       :", status.nextMission ?? "N/A");
+runtime/backup/20260722_231000_odg-status.js:32:  (caps.missingCapabilities || []).length
+runtime/backup/20260722_231000_odg-status.js:33:    ? caps.missingCapabilities[0].id
+runtime/backup/20260715_234743/patch-engine.js:28:        missingCapabilities:registry.missingCapabilities.length
+runtime/backup/20260712_205033-mission-loader.js:8:    console.error("STOP: Missing mission name");
+src/providers/provider-port.ts:56:  missingCapabilities: string[];
+src/providers/provider-port.ts:319:  lines.push(`- missing_capabilities: [${m.context.missingCapabilities.join(", ")}]`);
+src/core/runtime-autonomy.ts:59:    Array.isArray(plan.missingCapabilities) ? plan.missingCapabilities : [],
+src/tests/knowledge-promotion-gate.test.ts:56:const rAiMissing = cap.decide(base({ aiDerived: true }));
+src/tests/knowledge-promotion-gate.test.ts:57:check(rAiMissing.ok === true && rAiMissing.decision.blockers.includes("AI_EVIDENCE_QUARANTINED"), "block: AI-derived without explicit admissibility is blocked");
+src/tests/provider-enabled-mission.test.ts:89:  fs.writeFileSync(path.join(generated, "capability-registry.json"), JSON.stringify({ missingCapabilities: [MISSION] }));
+src/tests/constitution-compliance.test.ts:38:const rMissing = cap.evaluate(base(missing));
+src/tests/constitution-compliance.test.ts:40:  rMissing.ok === true && rMissing.report.compliant === false &&
+src/tests/constitution-compliance.test.ts:41:    rMissing.report.violations.some((v) => v.principle === "EVIDENCE_REQUIRED" && v.reason === "NOT_ATTESTED"),
+src/tests/claude-provider-adapter.test.ts:44:      missingCapabilities: ["X"],
+src/tests/autonomy-local-loop.test.ts:119:    JSON.stringify({ missingCapabilities: [MISSION] }),
+src/tests/provider-canonical-contract.test.ts:80:    JSON.stringify({ missingCapabilities: [MISSION] }),
+src/tests/snapshot-engine.test.ts:56:// Missing directories degrade gracefully to empty inventories.
+src/tests/runtime-autonomy.test.ts:23:    missingCapabilities: ["B", "C"],
+src/tests/runtime-autonomy.test.ts:31:    missingCapabilities: ["B", "C"],
+src/tests/runtime-autonomy.test.ts:39:    missingCapabilities: [],
+src/tests/runtime-autonomy.test.ts:86:      missingCapabilities: objectives,
+src/runtime/snapshot-engine.ts:112:   * as repo-relative POSIX paths, sorted. Missing directories yield [].
+src/runtime/autonomy-runtime-adapter.ts:134:    let missingCapabilities: string[];
+src/runtime/autonomy-runtime-adapter.ts:137:      missingCapabilities = manifestIds;
+src/runtime/autonomy-runtime-adapter.ts:141:      const registry = this.readJson<{ missingCapabilities?: string[] }>(REGISTRY);
+src/runtime/autonomy-runtime-adapter.ts:142:      missingCapabilities = Array.isArray(registry?.missingCapabilities)
+src/runtime/autonomy-runtime-adapter.ts:143:        ? registry!.missingCapabilities
+src/runtime/autonomy-runtime-adapter.ts:173:    // keeps a corrective id both a candidate (masterPlanObjectives) and "missing" (missingCapabilities)
+src/runtime/autonomy-runtime-adapter.ts:178:      missingCapabilities = Array.from(new Set([...corrective, ...missingCapabilities]));
+src/runtime/autonomy-runtime-adapter.ts:181:    return { masterPlanObjectives, missingCapabilities, completedMissions };
+src/runtime/autonomy-runtime-adapter.ts:249:   * different missions produce different contracts. Missing definition_of_done / completion metadata
+src/runtime/autonomy-runtime-adapter.ts:463:        missingCapabilities: state.missingCapabilities,
+src/runtime/mission-cli.ts:90:      missingCapabilities: [this.missionId],
+src/runtime/mission-cli.ts:168:  console.log("Capabilities:", exec.capabilities?.length ?? 0);
+src/runtime/root-cause-engine.ts:198:      const anyMissing = RELEASE_GATE_ORDER.some((g) => gates[g] === null);
+src/runtime/root-cause-engine.ts:201:        status: anyMissing ? "EVIDENCE_MISSING" : "NO_BLOCKER",
+src/runtime/root-cause-engine.ts:202:        summary: anyMissing
+src/contracts/runtime-autonomy.ts:35: *   - missingCapabilities  : capability-registry.json.missingCapabilities
+src/contracts/runtime-autonomy.ts:40:  missingCapabilities: string[];
+src/contracts/provider-adapter.ts:23:  /** Capabilities this provider can serve. Empty ⇒ it serves nothing and is never selected. */
+src/contracts/constitution-compliance.ts:31:  /** Explicit attestation per principle. Missing ⇒ treated as not attested ⇒ violation. */
+.runtime-patches/mission-loader.js:8:    console.error("STOP: Missing mission name");
+.runtime-patches/capability-registry.js:18:    missingCapabilities: execution.objectives.filter(
+.runtime-patches/capability-registry.js:37:console.log("Missing   :", registry.missingCapabilities.length);
+
+[UNIFY_RUNTIME_EXECUTION]
+runtime/missions/UNIFY_RUNTIME_EXECUTION_1.json:2:  "name": "UNIFY_RUNTIME_EXECUTION_1",
+runtime/missions/UNIFY_RUNTIME_EXECUTION_1.json:5:  "parent": "UNIFY_RUNTIME_EXECUTION",
+runtime/missions/pending/FIX_UNIFY_RUNTIME_EXECUTION.json:2:  "mission":"FIX_UNIFY_RUNTIME_EXECUTION",
+runtime/missions/pending/FIX_UNIFY_RUNTIME_EXECUTION.json:3:  "depends_on":"UNIFY_RUNTIME_EXECUTION",
+runtime/missions/UNIFY_RUNTIME_EXECUTION.json:2:  "name": "UNIFY_RUNTIME_EXECUTION",
+runtime/archive/20260723/generated/mission-ledger.json:2166:      "mission": "UNIFY_RUNTIME_EXECUTION",
+runtime/archive/20260723/generated/mission-ledger.json:2557:      "mission": "UNIFY_RUNTIME_EXECUTION",
+runtime/archive/20260723/generated/provider-cache/9a0b5094b4ddaaf205f60abbefa90d03a0437eef884a1acb0a7c708c7220949e.json:43:    "runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+runtime/archive/20260723/generated/provider-cache/9a0b5094b4ddaaf205f60abbefa90d03a0437eef884a1acb0a7c708c7220949e.json:51:    "runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+runtime/archive/20260723/generated/provider-cache/9a0b5094b4ddaaf205f60abbefa90d03a0437eef884a1acb0a7c708c7220949e.json:58:    "runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+runtime/archive/20260723/generated/provider-cache/9a0b5094b4ddaaf205f60abbefa90d03a0437eef884a1acb0a7c708c7220949e.json:66:    "runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+runtime/archive/20260723/generated/provider-cache/9a0b5094b4ddaaf205f60abbefa90d03a0437eef884a1acb0a7c708c7220949e.json:71:    "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak",
+runtime/archive/20260723/generated/provider-cache/5fc6c518cb2a2f87be6be72ca67f0bd3d76d833c47af8f8dbf936a3a880a663d.json:38:    "runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+runtime/archive/20260723/generated/provider-cache/5fc6c518cb2a2f87be6be72ca67f0bd3d76d833c47af8f8dbf936a3a880a663d.json:46:    "runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+runtime/archive/20260723/generated/provider-cache/5fc6c518cb2a2f87be6be72ca67f0bd3d76d833c47af8f8dbf936a3a880a663d.json:53:    "runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+runtime/archive/20260723/generated/provider-cache/5fc6c518cb2a2f87be6be72ca67f0bd3d76d833c47af8f8dbf936a3a880a663d.json:61:    "runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+runtime/archive/20260723/generated/provider-cache/5fc6c518cb2a2f87be6be72ca67f0bd3d76d833c47af8f8dbf936a3a880a663d.json:65:    "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak"
+runtime/archive/20260723/generated/provider-cache/be53c5475062838aa1a4e2eed2914c0b70226b397d6c6fc8ac99c16918dfecfc.json:35:    "runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+runtime/archive/20260723/generated/provider-cache/be53c5475062838aa1a4e2eed2914c0b70226b397d6c6fc8ac99c16918dfecfc.json:42:    "runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+runtime/archive/20260723/generated/provider-cache/be53c5475062838aa1a4e2eed2914c0b70226b397d6c6fc8ac99c16918dfecfc.json:49:    "runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+runtime/archive/20260723/generated/provider-cache/be53c5475062838aa1a4e2eed2914c0b70226b397d6c6fc8ac99c16918dfecfc.json:56:    "runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+runtime/archive/20260723/generated/provider-cache/be53c5475062838aa1a4e2eed2914c0b70226b397d6c6fc8ac99c16918dfecfc.json:59:    "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak"
+runtime/governance/ROADMAP.json:38:      "id": "UNIFY_RUNTIME_EXECUTION",
+runtime/governance/ROADMAP.json:40:      "contract": "runtime/missions/UNIFY_RUNTIME_EXECUTION.json",
+runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION_1.json:2:  "mission":"UNIFY_RUNTIME_EXECUTION_1",
+runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json:2:  "mission":"UNIFY_RUNTIME_EXECUTION",
+runtime/generated/mission-ledger.json:5865:      "mission": "UNIFY_RUNTIME_EXECUTION_1",
+runtime/generated/mission-ledger.json:7745:      "mission": "UNIFY_RUNTIME_EXECUTION_1",
+runtime/generated/mission-ledger.json:8417:      "mission": "UNIFY_RUNTIME_EXECUTION_1",
+runtime/generated/capability-registry.json:49:    "UNIFY_RUNTIME_EXECUTION_1"
+runtime/generated/capability-registry.json:53:      "id": "UNIFY_RUNTIME_EXECUTION",
+runtime/generated/knowledge.json:60:    "UNIFY_RUNTIME_EXECUTION_1"
+runtime/generated/knowledge.json:64:      "id": "UNIFY_RUNTIME_EXECUTION",
+runtime/generated/mission-scan.json:7:    "UNIFY_RUNTIME_EXECUTION",
+runtime/generated/mission-scan.json:60:    "UNIFY_RUNTIME_EXECUTION"
+runtime/generated/provider-trace/PROVIDER_ENABLED_SMOKE_V1.latest.json:11:    "# MISSION: PROVIDER_ENABLED_SMOKE_V1\nPROVIDER_CONTRACT_VERSION: 1.0.0\nPRIORITY: NORMAL\nMODE: IMPLEMENT\n\n## OBJECTIVES\n- id: PROVIDER_SMOKE_MARKER\n  goal: Create a single minimal marker file under the authorized path recording that the engineering provider executed this mission.\n  done_when:\n    - Exactly one file exists under src/app/provider-smoke/.\n    - No file outside the authorized write scope is modified.\n    - Build and TypeScript remain green.\n\n## DEFINITION_OF_DONE\n- Objective completed strictly within the authorized write scope.\n- Validation successful (build, typescript, gitClean).\n- Mission ledger updated.\n\n## COMPLETION\n- Release Manager decision is RELEASE.\n\n## AUTHORIZED_PATHS\n- src/app/provider-smoke/**\n\n## CONTEXT\n- repo_root: /home/ubuntu/bmax-v21\n- branch: runtime/mission-context-builder\n- head_commit: 8b0b90e7453a4973f62b80e742263049a79e379f\n- master_plan_objectives: [FIX_CORRECTIVE_QUEUE_INTAKE, M0000, M0001, M0002, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1, UNIFY_RUNTIME_EXECUTION]\n- missing_capabilities: [FIX_CORRECTIVE_QUEUE_INTAKE, M0000, M0001, M0002, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1, UNIFY_RUNTIME_EXECUTION]\n\n## REQUIRED_OUTPUT\nReturn a final message that is a single JSON object matching the RESULT SCHEMA:\n{ \"mission\": string, \"providerContractVersion\": \"1.0.0\", \"status\": \"DONE\"|\"BLOCKED\",\n  \"objectivesAddressed\": string[], \"changedFiles\": string[], \"commandsRun\": string[],\n  \"blocker\": string|null, \"notes\"?: string }",
+runtime/generated/provider-trace/PROVIDER_ENABLED_SMOKE_V1.latest.json:27:  "command": "claude -p '# MISSION: PROVIDER_ENABLED_SMOKE_V1\nPROVIDER_CONTRACT_VERSION: 1.0.0\nPRIORITY: NORMAL\nMODE: IMPLEMENT\n\n## OBJECTIVES\n- id: PROVIDER_SMOKE_MARKER\n  goal: Create a single minimal marker file under the authorized path recording that the engineering provider executed this mission.\n  done_when:\n    - Exactly one file exists under src/app/provider-smoke/.\n    - No file outside the authorized write scope is modified.\n    - Build and TypeScript remain green.\n\n## DEFINITION_OF_DONE\n- Objective completed strictly within the authorized write scope.\n- Validation successful (build, typescript, gitClean).\n- Mission ledger updated.\n\n## COMPLETION\n- Release Manager decision is RELEASE.\n\n## AUTHORIZED_PATHS\n- src/app/provider-smoke/**\n\n## CONTEXT\n- repo_root: /home/ubuntu/bmax-v21\n- branch: runtime/mission-context-builder\n- head_commit: 8b0b90e7453a4973f62b80e742263049a79e379f\n- master_plan_objectives: [FIX_CORRECTIVE_QUEUE_INTAKE, M0000, M0001, M0002, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1, UNIFY_RUNTIME_EXECUTION]\n- missing_capabilities: [FIX_CORRECTIVE_QUEUE_INTAKE, M0000, M0001, M0002, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1, UNIFY_RUNTIME_EXECUTION]\n\n## REQUIRED_OUTPUT\nReturn a final message that is a single JSON object matching the RESULT SCHEMA:\n{ \"mission\": string, \"providerContractVersion\": \"1.0.0\", \"status\": \"DONE\"|\"BLOCKED\",\n  \"objectivesAddressed\": string[], \"changedFiles\": string[], \"commandsRun\": string[],\n  \"blocker\": string|null, \"notes\"?: string }' --output-format json --model claude-opus-4-8 --max-turns 25 --append-system-prompt 'You are an engineering capability provider invoked by the ODG Runtime.\n- Execute ONLY the mission described below. Do not expand scope.\n- Do NOT modify any frozen Runtime file unless the mission'\\''s AUTHORIZED_PATHS explicitly lists it.\n  Frozen roots: runtime/, src/contracts/, src/core/, docs/*_DESIGN_v1.md, docs/*_SPEC_v1.md.\n- Do NOT create commits. Do NOT push. Leave changes in the working tree only.\n- Produce evidence, never claims. You do not decide completion; the Release Manager does.\n- On any ambiguity or blocked precondition, STOP and report the blocker. Do not guess.\n- Your FINAL message MUST be a single JSON object matching the RESULT SCHEMA. No prose around it.' --add-dir /home/ubuntu/bmax-v21 --permission-mode acceptEdits --allowedTools 'Read,Edit,Write,Bash,Grep,Glob'",
+runtime/generated/runtime-status.json:4:  "nextMission": "UNIFY_RUNTIME_EXECUTION"
+runtime/generated/project-context.json:917:    "./runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+runtime/generated/project-context.json:1081:    "./runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+runtime/generated/project-context.json:1243:    "./runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+runtime/generated/project-context.json:1405:    "./runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+runtime/generated/project-context.json:1457:    "./runtime/missions/UNIFY_RUNTIME_EXECUTION.json",
+runtime/generated/project-context.json:1464:    "./runtime/missions/pending/FIX_UNIFY_RUNTIME_EXECUTION.json",
+runtime/generated/runtime-state.json:9:  "nextMission": "UNIFY_RUNTIME_EXECUTION"
+runtime/generated/runtime-mission-queue.json:5:      "mission": "UNIFY_RUNTIME_EXECUTION",
+runtime/generated/runtime-mission-queue.json:6:      "objective": "UNIFY_RUNTIME_EXECUTION_1",
+runtime/releases/20260724_003504/generated/project-context.json:916:    "./runtime/mission-standard/certificates/UNIFY_RUNTIME_EXECUTION.certificate.md",
+runtime/releases/20260724_003504/generated/project-context.json:1080:    "./runtime/mission-standard/generated/UNIFY_RUNTIME_EXECUTION.json",
+runtime/releases/20260724_003504/generated/project-context.json:1242:    "./runtime/mission-standard/passports/UNIFY_RUNTIME_EXECUTION.passport.md",
+runtime/releases/20260724_003504/generated/project-context.json:1404:    "./runtime/mission-standard/reports/UNIFY_RUNTIME_EXECUTION.report.md",
+runtime/releases/20260724_003504/generated/project-context.json:1448:    "./runtime/missions/UNIFY_RUNTIME_EXECUTION.json",
+runtime/releases/20260724_003504/generated/mission-report.json:29:      "runtime/missions/UNIFY_RUNTIME_EXECUTION.json.bak",
+src/runtime/mission-migration.ts:2: * Mission execution migration registry (UNIFY_RUNTIME_EXECUTION, OBJ-003 / OBJ-004).
+src/runtime/mission-migration.ts:28:  "UNIFY_RUNTIME_EXECUTION",
+src/runtime/mission-migration.ts:76:    "MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION",
+src/runtime/mission-cli.ts:4: * The unified entry point for every mission (UNIFY_RUNTIME_EXECUTION). MissionOrchestrator plans
+src/runtime/local-mission-runner.ts:2: * Local mission runner (UNIFY_RUNTIME_EXECUTION, OBJ-002).
+
+========== END ==========

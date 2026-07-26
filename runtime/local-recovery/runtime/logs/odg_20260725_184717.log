@@ -1,0 +1,2225 @@
+===== ENABLE_CHILD_MISSION_AUTO_GENERATION =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:47:18.591Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'ENABLE_CHILD_MISSION_AUTO_GENERATION',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: ENABLE CHILD MISSION AUTO GENERATION
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Contract   : runtime/missions/ENABLE_CHILD_MISSION_AUTO_GENERATION.json
+Mode       : IMPLEMENT
+Objectives : 7
+Next       : ENABLE_CHILD_MISSION_AUTO_GENERATION_1
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Next : ENABLE_CHILD_MISSION_AUTO_GENERATION_1
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Mode     : IMPLEMENT
+Priority : CRITICAL
+Actions  : 7 (one per objective)
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_1
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_2
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_3
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_4
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_5
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_6
+ - ENABLE_CHILD_MISSION_AUTO_GENERATION_7
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Priority : CRITICAL
+Patches  : 7
+ - #1 ENABLE_CHILD_MISSION_AUTO_GENERATION_1
+ - #2 ENABLE_CHILD_MISSION_AUTO_GENERATION_2
+ - #3 ENABLE_CHILD_MISSION_AUTO_GENERATION_3
+ - #4 ENABLE_CHILD_MISSION_AUTO_GENERATION_4
+ - #5 ENABLE_CHILD_MISSION_AUTO_GENERATION_5
+ - #6 ENABLE_CHILD_MISSION_AUTO_GENERATION_6
+ - #7 ENABLE_CHILD_MISSION_AUTO_GENERATION_7
+======================================
+
+>>> Patch Executor
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_1
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_2
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_3
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_4
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_5
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_6
+EXECUTE: ENABLE_CHILD_MISSION_AUTO_GENERATION_7
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 7
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Coverage  : OK (7/7)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : ENABLE_CHILD_MISSION_AUTO_GENERATION
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : ENABLE_CHILD_MISSION_AUTO_GENERATION
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 400
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : ENABLE_CHILD_MISSION_AUTO_GENERATION
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/ENABLE_CHILD_MISSION_AUTO_GENERATION.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== ENABLE_MASTER_PLAN_EXECUTION =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : ENABLE_MASTER_PLAN_EXECUTION
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:47:41.446Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'ENABLE_MASTER_PLAN_EXECUTION',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : ENABLE_MASTER_PLAN_EXECUTION
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: ENABLE MASTER PLAN EXECUTION
+Priority : HIGH
+Mode     : PLAN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : ENABLE_MASTER_PLAN_EXECUTION
+Contract   : runtime/missions/ENABLE_MASTER_PLAN_EXECUTION.json
+Mode       : ENGINEERING
+Objectives : 3
+Next       : LOAD_MASTER_PLAN_ROADMAPS
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : ENABLE_MASTER_PLAN_EXECUTION
+Next : LOAD_MASTER_PLAN_ROADMAPS
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : ENABLE_MASTER_PLAN_EXECUTION
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : ENABLE_MASTER_PLAN_EXECUTION
+Mode     : ENGINEERING
+Priority : CRITICAL
+Actions  : 3 (one per objective)
+ - LOAD_MASTER_PLAN_ROADMAPS
+ - ENABLE_SEQUENTIAL_ROADMAP_EXECUTION
+ - VALIDATE_MASTER_PLAN_EXECUTION
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : ENABLE_MASTER_PLAN_EXECUTION
+Priority : CRITICAL
+Patches  : 3
+ - #1 LOAD_MASTER_PLAN_ROADMAPS
+ - #2 ENABLE_SEQUENTIAL_ROADMAP_EXECUTION
+ - #3 VALIDATE_MASTER_PLAN_EXECUTION
+======================================
+
+>>> Patch Executor
+EXECUTE: LOAD_MASTER_PLAN_ROADMAPS
+EXECUTE: ENABLE_SEQUENTIAL_ROADMAP_EXECUTION
+EXECUTE: VALIDATE_MASTER_PLAN_EXECUTION
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 3
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : ENABLE_MASTER_PLAN_EXECUTION
+Coverage  : OK (3/3)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : ENABLE_MASTER_PLAN_EXECUTION
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : ENABLE_MASTER_PLAN_EXECUTION
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 401
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : ENABLE_MASTER_PLAN_EXECUTION
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/ENABLE_MASTER_PLAN_EXECUTION.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== MISSION_CONTEXT_BUILDER =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : MISSION_CONTEXT_BUILDER
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:48:03.659Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'MISSION_CONTEXT_BUILDER',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : MISSION_CONTEXT_BUILDER
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: MISSION CONTEXT BUILDER
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : MISSION_CONTEXT_BUILDER
+Contract   : runtime/missions/MISSION_CONTEXT_BUILDER.json
+Mode       : ENGINEERING
+Objectives : 4
+Next       : OBJ-001
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : MISSION_CONTEXT_BUILDER
+Next : OBJ-001
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : MISSION_CONTEXT_BUILDER
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : MISSION_CONTEXT_BUILDER
+Mode     : ENGINEERING
+Priority : CRITICAL
+Actions  : 4 (one per objective)
+ - OBJ-001
+ - OBJ-002
+ - OBJ-003
+ - OBJ-004
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : MISSION_CONTEXT_BUILDER
+Priority : CRITICAL
+Patches  : 4
+ - #1 OBJ-001
+ - #2 OBJ-002
+ - #3 OBJ-003
+ - #4 OBJ-004
+======================================
+
+>>> Patch Executor
+EXECUTE: OBJ-001
+EXECUTE: OBJ-002
+EXECUTE: OBJ-003
+EXECUTE: OBJ-004
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 4
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : MISSION_CONTEXT_BUILDER
+Coverage  : OK (4/4)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : MISSION_CONTEXT_BUILDER
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : MISSION_CONTEXT_BUILDER
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 402
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : MISSION_CONTEXT_BUILDER
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/MISSION_CONTEXT_BUILDER.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== PREPARE_ENGINEERING_BRIEF =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : PREPARE_ENGINEERING_BRIEF
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:48:27.045Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'PREPARE_ENGINEERING_BRIEF',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : PREPARE_ENGINEERING_BRIEF
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: PREPARE ENGINEERING BRIEF
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : PREPARE_ENGINEERING_BRIEF
+Contract   : runtime/missions/PREPARE_ENGINEERING_BRIEF.json
+Mode       : READ_ONLY
+Objectives : 5
+Next       : OBJ-001
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : PREPARE_ENGINEERING_BRIEF
+Next : OBJ-001
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : PREPARE_ENGINEERING_BRIEF
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : PREPARE_ENGINEERING_BRIEF
+Mode     : READ_ONLY
+Priority : CRITICAL
+Actions  : 5 (one per objective)
+ - OBJ-001
+ - OBJ-002
+ - OBJ-003
+ - OBJ-004
+ - OBJ-005
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : PREPARE_ENGINEERING_BRIEF
+Priority : CRITICAL
+Patches  : 5
+ - #1 OBJ-001
+ - #2 OBJ-002
+ - #3 OBJ-003
+ - #4 OBJ-004
+ - #5 OBJ-005
+======================================
+
+>>> Patch Executor
+EXECUTE: OBJ-001
+EXECUTE: OBJ-002
+EXECUTE: OBJ-003
+EXECUTE: OBJ-004
+EXECUTE: OBJ-005
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 5
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : PREPARE_ENGINEERING_BRIEF
+Coverage  : OK (5/5)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : PREPARE_ENGINEERING_BRIEF
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : PREPARE_ENGINEERING_BRIEF
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 403
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : PREPARE_ENGINEERING_BRIEF
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/PREPARE_ENGINEERING_BRIEF.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== ENGINEERING_PIPELINE_FOUNDATION =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : ENGINEERING_PIPELINE_FOUNDATION
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:48:48.783Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'ENGINEERING_PIPELINE_FOUNDATION',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : ENGINEERING_PIPELINE_FOUNDATION
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: ENGINEERING PIPELINE FOUNDATION
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : ENGINEERING_PIPELINE_FOUNDATION
+Contract   : runtime/missions/ENGINEERING_PIPELINE_FOUNDATION.json
+Mode       : IMPLEMENT
+Objectives : 9
+Next       : ENGINEERING_PIPELINE_FOUNDATION_1
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : ENGINEERING_PIPELINE_FOUNDATION
+Next : ENGINEERING_PIPELINE_FOUNDATION_1
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : ENGINEERING_PIPELINE_FOUNDATION
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : ENGINEERING_PIPELINE_FOUNDATION
+Mode     : IMPLEMENT
+Priority : CRITICAL
+Actions  : 9 (one per objective)
+ - ENGINEERING_PIPELINE_FOUNDATION_1
+ - ENGINEERING_PIPELINE_FOUNDATION_2
+ - ENGINEERING_PIPELINE_FOUNDATION_3
+ - ENGINEERING_PIPELINE_FOUNDATION_4
+ - ENGINEERING_PIPELINE_FOUNDATION_5
+ - ENGINEERING_PIPELINE_FOUNDATION_6
+ - ENGINEERING_PIPELINE_FOUNDATION_7
+ - ENGINEERING_PIPELINE_FOUNDATION_8
+ - ENGINEERING_PIPELINE_FOUNDATION_9
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : ENGINEERING_PIPELINE_FOUNDATION
+Priority : CRITICAL
+Patches  : 9
+ - #1 ENGINEERING_PIPELINE_FOUNDATION_1
+ - #2 ENGINEERING_PIPELINE_FOUNDATION_2
+ - #3 ENGINEERING_PIPELINE_FOUNDATION_3
+ - #4 ENGINEERING_PIPELINE_FOUNDATION_4
+ - #5 ENGINEERING_PIPELINE_FOUNDATION_5
+ - #6 ENGINEERING_PIPELINE_FOUNDATION_6
+ - #7 ENGINEERING_PIPELINE_FOUNDATION_7
+ - #8 ENGINEERING_PIPELINE_FOUNDATION_8
+ - #9 ENGINEERING_PIPELINE_FOUNDATION_9
+======================================
+
+>>> Patch Executor
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_1
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_2
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_3
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_4
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_5
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_6
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_7
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_8
+EXECUTE: ENGINEERING_PIPELINE_FOUNDATION_9
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 9
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : ENGINEERING_PIPELINE_FOUNDATION
+Coverage  : OK (9/9)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : ENGINEERING_PIPELINE_FOUNDATION
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : ENGINEERING_PIPELINE_FOUNDATION
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 404
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : ENGINEERING_PIPELINE_FOUNDATION
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/ENGINEERING_PIPELINE_FOUNDATION.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== FIX_RUNTIME_MISSION_EXECUTION =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : FIX_RUNTIME_MISSION_EXECUTION
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:49:10.428Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'FIX_RUNTIME_MISSION_EXECUTION',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : FIX_RUNTIME_MISSION_EXECUTION
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: FIX RUNTIME MISSION EXECUTION
+Priority : HIGH
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : FIX_RUNTIME_MISSION_EXECUTION
+Contract   : runtime/missions/FIX_RUNTIME_MISSION_EXECUTION.json
+Mode       : SEQUENTIAL
+Objectives : 9
+Next       : ANALYZE_CURRENT_PIPELINE
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : FIX_RUNTIME_MISSION_EXECUTION
+Next : ANALYZE_CURRENT_PIPELINE
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : FIX_RUNTIME_MISSION_EXECUTION
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : FIX_RUNTIME_MISSION_EXECUTION
+Mode     : SEQUENTIAL
+Priority : CRITICAL
+Actions  : 9 (one per objective)
+ - ANALYZE_CURRENT_PIPELINE
+ - REMOVE_STATIC_ACTIONS
+ - LINK_MISSION_TO_DECISION_ENGINE
+ - LINK_EXECUTION_PLANNER
+ - LINK_PATCH_ENGINE
+ - LINK_PATCH_EXECUTOR
+ - VALIDATE_FULL_PIPELINE
+ - SELF_TEST
+ - GENERATE_PROOF
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : FIX_RUNTIME_MISSION_EXECUTION
+Priority : CRITICAL
+Patches  : 9
+ - #1 ANALYZE_CURRENT_PIPELINE
+ - #2 REMOVE_STATIC_ACTIONS
+ - #3 LINK_MISSION_TO_DECISION_ENGINE
+ - #4 LINK_EXECUTION_PLANNER
+ - #5 LINK_PATCH_ENGINE
+ - #6 LINK_PATCH_EXECUTOR
+ - #7 VALIDATE_FULL_PIPELINE
+ - #8 SELF_TEST
+ - #9 GENERATE_PROOF
+======================================
+
+>>> Patch Executor
+EXECUTE: ANALYZE_CURRENT_PIPELINE
+EXECUTE: REMOVE_STATIC_ACTIONS
+EXECUTE: LINK_MISSION_TO_DECISION_ENGINE
+EXECUTE: LINK_EXECUTION_PLANNER
+EXECUTE: LINK_PATCH_ENGINE
+EXECUTE: LINK_PATCH_EXECUTOR
+EXECUTE: VALIDATE_FULL_PIPELINE
+EXECUTE: SELF_TEST
+EXECUTE: GENERATE_PROOF
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 9
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : FIX_RUNTIME_MISSION_EXECUTION
+Coverage  : OK (9/9)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : FIX_RUNTIME_MISSION_EXECUTION
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : FIX_RUNTIME_MISSION_EXECUTION
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 405
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : FIX_RUNTIME_MISSION_EXECUTION
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/FIX_RUNTIME_MISSION_EXECUTION.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== IMPLEMENT_PATCH_ACTIONS =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : IMPLEMENT_PATCH_ACTIONS
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:49:32.687Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'IMPLEMENT_PATCH_ACTIONS',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : IMPLEMENT_PATCH_ACTIONS
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: IMPLEMENT PATCH ACTIONS
+Priority : HIGH
+Mode     : IMPLEMENT
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : IMPLEMENT_PATCH_ACTIONS
+Contract   : runtime/missions/IMPLEMENT_PATCH_ACTIONS.json
+Mode       : IMPLEMENT
+Objectives : 1
+Next       : IMPLEMENT_PATCH_ACTIONS
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : IMPLEMENT_PATCH_ACTIONS
+Next : IMPLEMENT_PATCH_ACTIONS
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : IMPLEMENT_PATCH_ACTIONS
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : IMPLEMENT_PATCH_ACTIONS
+Mode     : IMPLEMENT
+Priority : CRITICAL
+Actions  : 1 (one per objective)
+ - IMPLEMENT_PATCH_ACTIONS
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : IMPLEMENT_PATCH_ACTIONS
+Priority : CRITICAL
+Patches  : 1
+ - #1 IMPLEMENT_PATCH_ACTIONS
+======================================
+
+>>> Patch Executor
+EXECUTE: IMPLEMENT_PATCH_ACTIONS
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 1
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : IMPLEMENT_PATCH_ACTIONS
+Coverage  : OK (1/1)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : IMPLEMENT_PATCH_ACTIONS
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : IMPLEMENT_PATCH_ACTIONS
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 406
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : IMPLEMENT_PATCH_ACTIONS
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/IMPLEMENT_PATCH_ACTIONS.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== PATCH_RUNTIME_KERNEL =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : PATCH_RUNTIME_KERNEL
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:49:54.878Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'PATCH_RUNTIME_KERNEL',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : PATCH_RUNTIME_KERNEL
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: PATCH RUNTIME KERNEL
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : PATCH_RUNTIME_KERNEL
+Contract   : runtime/missions/PATCH_RUNTIME_KERNEL.json
+Mode       : IMPLEMENT
+Objectives : 6
+Next       : PATCH_RUNTIME_KERNEL_1
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : PATCH_RUNTIME_KERNEL
+Next : PATCH_RUNTIME_KERNEL_1
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : PATCH_RUNTIME_KERNEL
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : PATCH_RUNTIME_KERNEL
+Mode     : IMPLEMENT
+Priority : CRITICAL
+Actions  : 6 (one per objective)
+ - PATCH_RUNTIME_KERNEL_1
+ - PATCH_RUNTIME_KERNEL_2
+ - PATCH_RUNTIME_KERNEL_3
+ - PATCH_RUNTIME_KERNEL_4
+ - PATCH_RUNTIME_KERNEL_5
+ - PATCH_RUNTIME_KERNEL_6
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : PATCH_RUNTIME_KERNEL
+Priority : CRITICAL
+Patches  : 6
+ - #1 PATCH_RUNTIME_KERNEL_1
+ - #2 PATCH_RUNTIME_KERNEL_2
+ - #3 PATCH_RUNTIME_KERNEL_3
+ - #4 PATCH_RUNTIME_KERNEL_4
+ - #5 PATCH_RUNTIME_KERNEL_5
+ - #6 PATCH_RUNTIME_KERNEL_6
+======================================
+
+>>> Patch Executor
+EXECUTE: PATCH_RUNTIME_KERNEL_1
+EXECUTE: PATCH_RUNTIME_KERNEL_2
+EXECUTE: PATCH_RUNTIME_KERNEL_3
+EXECUTE: PATCH_RUNTIME_KERNEL_4
+EXECUTE: PATCH_RUNTIME_KERNEL_5
+EXECUTE: PATCH_RUNTIME_KERNEL_6
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 6
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : PATCH_RUNTIME_KERNEL
+Coverage  : OK (6/6)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : PATCH_RUNTIME_KERNEL
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : PATCH_RUNTIME_KERNEL
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 407
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : PATCH_RUNTIME_KERNEL
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/PATCH_RUNTIME_KERNEL.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== IMPLEMENT_RUNTIME_AUTONOMY_V1 =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:50:17.057Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'IMPLEMENT_RUNTIME_AUTONOMY_V1',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: IMPLEMENT RUNTIME AUTONOMY V1
+Priority : HIGH
+Mode     : IMPLEMENT
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Contract   : runtime/missions/IMPLEMENT_RUNTIME_AUTONOMY_V1.json
+Mode       : SEQUENTIAL
+Objectives : 6
+Next       : REMOVE_STATIC_DECISIONS
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Next : REMOVE_STATIC_DECISIONS
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Mode     : SEQUENTIAL
+Priority : CRITICAL
+Actions  : 6 (one per objective)
+ - REMOVE_STATIC_DECISIONS
+ - ENABLE_DYNAMIC_MISSION_EXECUTION
+ - ENABLE_AUTONOMOUS_LOOP
+ - IMPLEMENT_SELF_VALIDATION
+ - IMPLEMENT_PROGRESS_TRACKING
+ - IMPLEMENT_SELF_IMPROVEMENT
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Priority : CRITICAL
+Patches  : 6
+ - #1 REMOVE_STATIC_DECISIONS
+ - #2 ENABLE_DYNAMIC_MISSION_EXECUTION
+ - #3 ENABLE_AUTONOMOUS_LOOP
+ - #4 IMPLEMENT_SELF_VALIDATION
+ - #5 IMPLEMENT_PROGRESS_TRACKING
+ - #6 IMPLEMENT_SELF_IMPROVEMENT
+======================================
+
+>>> Patch Executor
+EXECUTE: REMOVE_STATIC_DECISIONS
+EXECUTE: ENABLE_DYNAMIC_MISSION_EXECUTION
+EXECUTE: ENABLE_AUTONOMOUS_LOOP
+EXECUTE: IMPLEMENT_SELF_VALIDATION
+EXECUTE: IMPLEMENT_PROGRESS_TRACKING
+EXECUTE: IMPLEMENT_SELF_IMPROVEMENT
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 6
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Coverage  : OK (6/6)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : IMPLEMENT_RUNTIME_AUTONOMY_V1
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : IMPLEMENT_RUNTIME_AUTONOMY_V1
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 408
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : IMPLEMENT_RUNTIME_AUTONOMY_V1
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/IMPLEMENT_RUNTIME_AUTONOMY_V1.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+===== RUNTIME_EVOLUTION_PROGRAM_V1 =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : RUNTIME_EVOLUTION_PROGRAM_V1
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : missionRequiresProvider = true → PROVIDER
+Route      : RuntimeAutonomy → AutonomyRuntimeAdapter → ClaudeProviderAdapter
+--------------------------------------
+--------------------------------------
+Status     : EXECUTION_FAILED
+Cycles     : 1
+Released   : (none)
+Halt on    : RUNTIME_EVOLUTION_PROGRAM_V1
+Reason     : EXECUTION_FAILED
+Detail     : Pipeline failed at stage "provider-execution" (FAILED): provider process failed (exit=1, is_error=true, subtype=success)
+  provider   : claude-code
+  exitCode   : 1
+  stdout     :
+    {"type":"result","subtype":"success","is_error":true,"api_error_status":400,"duration_ms":530,"duration_api_ms":0,"num_turns":1,"result":"Credit balance is too low","stop_reason":"stop_sequence","session_id":"eb46d2f7-b71c-4613-9bf6-6bde20361bc9","total_cost_usd":0,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0,"web_fetch_requests":0},"service_tier":"standard","cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"inference_geo":"","iterations":[],"speed":"standard"},"modelUsage":{},"permission_denials":[],"terminal_reason":"api_error","fast_mode_state":"off","uuid":"d206331a-da48-4e9d-a220-d15ce7809011"}
+======================================
+===== SELF_ENGINEERING_RUNTIME_V2 =====
+======================================
+ODG MISSION — UNIFIED RUNTIME ENTRY
+======================================
+Mission    : SELF_ENGINEERING_RUNTIME_V2
+Orchestrator: plan built (5 steps)
+--------------------------------------
+MIGRATION REPORT — UNIFY_RUNTIME_EXECUTION
+Runtime         : src/runtime
+Migrated  (5)   : M0000, M0001, M0002, RUNTIME_SELF_AUDIT, UNIFY_RUNTIME_EXECUTION
+Remaining (51)   : AUDIT_RUNTIME_STATE_MACHINE, AUTONOMOUS_EXECUTION_WITH_FALLBACK, BOOTSTRAP_RUNTIME_ENGINEERING, BOOTSTRAP_RUNTIME_FOUNDATION, CLEAN_RUNTIME_WORKSPACE, ENABLE_CHILD_MISSION_AUTO_GENERATION, ENABLE_MASTER_PLAN_EXECUTION, ENGINEERING_PIPELINE_FOUNDATION, FINALIZE_RUNTIME_FOUNDATION_V1, FIX_CORRECTIVE_QUEUE_INTAKE, FIX_GOVERNANCE_ARTIFACT_POLICY, FIX_PATCH_EXECUTION_PIPELINE, FIX_RUNTIME_MISSION_EXECUTION, IMPLEMENT_ENGINEERING_PROVIDER, IMPLEMENT_OPENAI_PROVIDER_ADAPTER, IMPLEMENT_PATCH_ACTIONS, IMPLEMENT_PROVIDER_FACTORY, IMPLEMENT_ROOT_CAUSE_REPORTING, IMPLEMENT_RUNTIME_AUTONOMY_V1, IMPLEMENT_RUNTIME_HEALTH_COMMAND, IMPLEMENT_RUNTIME_SUMMARY_FOUNDATION_V1, MASTER_AUTONOMY_V1, MASTER_PLAN_V1, MISSION_CONTEXT_BUILDER, PATCH_RUNTIME_KERNEL, PERSISTENT_AUTONOMY_CONTROLLER_V1, PREPARE_ENGINEERING_BRIEF, PROVIDER_ENABLED_SMOKE_V1, PROVIDER_FAILOVER_TO_OPENAI, PROVIDER_ORCHESTRATOR_ROOT_CAUSE, PROVIDER_RESILIENCE_FOUNDATION_V1, REPORTER_INTELLIGENCE_FOUNDATION_V1, RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE, RETIRE_LEGACY_RUNTIME, ROADMAP_PHASE_1_FOUNDATION, ROADMAP_PHASE_2_RUNTIME_KERNEL, ROADMAP_PHASE_3_ENGINEERING, ROADMAP_PHASE_4_FLEET_AND_PROVIDERS, ROADMAP_PHASE_5_ENTERPRISE, ROADMAP_RUNTIME_STABILIZATION_V1, ROOT_CAUSE_RELEASE_GATE, ROOT_CAUSE_RUNTIME_PIPELINE, RUNTIME_EVOLUTION_PROGRAM_V1, RUNTIME_FULL_AUTONOMY_EXECUTION, RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS, RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack, RUNTIME_PROVIDER_REGISTRY_M4.pack, RUNTIME_SELF_EVOLUTION_V1, SELF_ENGINEERING_RUNTIME_KERNEL, SELF_ENGINEERING_RUNTIME_V2, UNIFY_RUNTIME_EXECUTION_1
+--------------------------------------
+Decision   : not migrated → FALLBACK_TO_MSE
+======================================
+======================================
+MISSION STANDARD ENGINE v2
+======================================
+[1/5] PRE-FLIGHT
+VERIFY : {
+  generatedAt: '2026-07-25T18:50:42.376Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'SELF_ENGINEERING_RUNTIME_V2',
+  documentationProofPresent: true
+}
+[2/5] LOAD BRAIN
+Brain loaded: runtime/brain/MASTER_PLAN.md
+[BRAIN] Objectives:
+MODE=AUTONOMOUS_FACTORY
+MISSION:
+NEXT_OBJECTIVES:
+1. Mission Loader
+2. ProjectContext Engine
+3. BusinessContext
+4. Capability Registry
+5. Execution Planner
+6. Plugin Manager
+7. Event Bus
+8. Reporter
+9. Documentation Engine
+10. Release Manager
+11. Knowledge Engine
+12. Learning Engine
+[3/5] INITIALIZE
+[PIPELINE] Launching Runtime...
+PIPELINE BUILDER READY
+Stages : 13
+Governance : AUTHORIZED
+Next State : QUALIFIED
+======================================
+ODG RUNTIME PIPELINE
+======================================
+
+>>> Mission Interpreter
+======================================
+MISSION INTERPRETER v2
+======================================
+Mission  : SELF_ENGINEERING_RUNTIME_V2
+Roadmap  : LOADED
+Version  : # ODG Runtime Roadmap
+Objective: SELF ENGINEERING RUNTIME V2
+Priority : NORMAL
+Mode     : UNKNOWN
+======================================
+
+>>> Mission Loader
+======================================
+MISSION LOADER
+======================================
+Mission    : SELF_ENGINEERING_RUNTIME_V2
+Contract   : runtime/missions/SELF_ENGINEERING_RUNTIME_V2.json
+Mode       : AUTONOMOUS_FACTORY
+Objectives : 9
+Next       : SELF_ENGINEERING_RUNTIME_V2_1
+Engineering: no (read-only/local)
+Status     : READY_FOR_EXECUTION
+Output     : runtime/generated/mission-plan.json
+======================================
+
+>>> Execution Planner
+======================================
+EXECUTION PLANNER
+======================================
+Mission : SELF_ENGINEERING_RUNTIME_V2
+Next : SELF_ENGINEERING_RUNTIME_V2_1
+Steps : 7
+Output : runtime/generated/execution-plan.json
+======================================
+
+>>> Capability Registry
+======================================
+CAPABILITY REGISTRY
+======================================
+Available : 45
+Missing   : 7
+Output    : runtime/generated/capability-registry.json
+======================================
+
+>>> Knowledge Engine
+======================================
+KNOWLEDGE ENGINE v5
+======================================
+Files      : 690
+Classes    : 160
+Imports    : 952
+RelImports : 181
+PkgImports : 786
+TODO       : 16
+FIXME      : 15
+======================================
+
+>>> Fleet Bridge
+======================================
+FLEET STAGE
+======================================
+Mission  : SELF_ENGINEERING_RUNTIME_V2
+Enabled  : false
+Fleet: DISABLED (skipped)
+======================================
+
+>>> Decision Engine
+======================================
+DECISION ENGINE v4 (mission-driven)
+======================================
+Mission  : SELF_ENGINEERING_RUNTIME_V2
+Mode     : AUTONOMOUS_FACTORY
+Priority : CRITICAL
+Actions  : 9 (one per objective)
+ - SELF_ENGINEERING_RUNTIME_V2_1
+ - SELF_ENGINEERING_RUNTIME_V2_2
+ - SELF_ENGINEERING_RUNTIME_V2_3
+ - SELF_ENGINEERING_RUNTIME_V2_4
+ - SELF_ENGINEERING_RUNTIME_V2_5
+ - SELF_ENGINEERING_RUNTIME_V2_6
+ - SELF_ENGINEERING_RUNTIME_V2_7
+ - SELF_ENGINEERING_RUNTIME_V2_8
+ - SELF_ENGINEERING_RUNTIME_V2_9
+======================================
+
+>>> Patch Engine
+======================================
+PATCH ENGINE v4 (mission-driven)
+======================================
+Mission  : SELF_ENGINEERING_RUNTIME_V2
+Priority : CRITICAL
+Patches  : 9
+ - #1 SELF_ENGINEERING_RUNTIME_V2_1
+ - #2 SELF_ENGINEERING_RUNTIME_V2_2
+ - #3 SELF_ENGINEERING_RUNTIME_V2_3
+ - #4 SELF_ENGINEERING_RUNTIME_V2_4
+ - #5 SELF_ENGINEERING_RUNTIME_V2_5
+ - #6 SELF_ENGINEERING_RUNTIME_V2_6
+ - #7 SELF_ENGINEERING_RUNTIME_V2_7
+ - #8 SELF_ENGINEERING_RUNTIME_V2_8
+ - #9 SELF_ENGINEERING_RUNTIME_V2_9
+======================================
+
+>>> Patch Executor
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_1
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_2
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_3
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_4
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_5
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_6
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_7
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_8
+EXECUTE: SELF_ENGINEERING_RUNTIME_V2_9
+======================================
+PATCH EXECUTOR v4
+======================================
+Executed : 9
+======================================
+
+>>> Validation Engine
+======================================
+VALIDATION ENGINE v3 (evidence-based)
+======================================
+Mission   : SELF_ENGINEERING_RUNTIME_V2
+Coverage  : OK (9/9)
+Failures  : 0
+Gates     : build=true tsc=true
+Validated : true
+Status    : SUCCESS
+======================================
+
+>>> Mission Lifecycle
+======================================
+MISSION LIFECYCLE (governance-driven)
+======================================
+Mission  : SELF_ENGINEERING_RUNTIME_V2
+Achieved : RELEASED
+Path     : CREATED → QUALIFIED → ANALYZED → PLANNED → PREPARED → VALIDATED → EXECUTED → VERIFIED → RELEASED
+Output   : runtime/generated/mission-lifecycle.json
+======================================
+
+>>> Mission Ledger
+======================================
+MISSION LEDGER
+======================================
+Mission   : SELF_ENGINEERING_RUNTIME_V2
+State     : ARCHIVED
+Recorded  : YES
+Entries   : 409
+Output    : runtime/generated/mission-ledger.json
+======================================
+
+>>> Final Report
+======================================
+FINAL REPORT
+======================================
+Mission  : SELF_ENGINEERING_RUNTIME_V2
+State    : ARCHIVED
+Status   : SUCCESS
+Output   : runtime/generated/reports/SELF_ENGINEERING_RUNTIME_V2.final-report.md
+======================================
+
+======================================
+PIPELINE SUCCESS
+======================================
+[4/5] GENERATE
+[5/5] GOVERNANCE
+STOP: Repository changed unexpectedly
+
+Changes outside mission artifact directories:
+?? runtime/logs/
+
+VERIFY : {
+  generatedAt: '2026-07-25T18:51:03.209Z',
+  build: true,
+  typescript: true,
+  gitClean: true,
+  mission: 'RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE',
+  documentationProofPresent: true
+}
+======================================
+ODG FOUNDATION DASHBOARD
+======================================
+Runtime            : READY
+Foundation         : READY
+Capabilities       : 45
+Missing            : 7
+Last Mission       : SELF_ENGINEERING_RUNTIME_V2
+Next Mission       : UNIFY_RUNTIME_EXECUTION
+Objective          : UNIFY_RUNTIME_EXECUTION_1
+Goal               : MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT
+Queue Remaining    : 7
+======================================

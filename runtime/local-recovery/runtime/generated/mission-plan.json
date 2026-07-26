@@ -1,0 +1,64 @@
+{
+  "mission": "AUDIT_RUNTIME_STATE_MACHINE",
+  "source": "runtime/missions/AUDIT_RUNTIME_STATE_MACHINE.json",
+  "priority": "CRITICAL",
+  "mode": "IMPLEMENT",
+  "requiresEngineering": false,
+  "authorizedPaths": [],
+  "objectives": [
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_1",
+      "goal": "Discover, using repository evidence only, why the Mission Interpreter does not fully honor mission priority and mode.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_2",
+      "goal": "Discover why the Mission Ledger always remains in CREATED despite successful validation.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_3",
+      "goal": "Locate every Runtime component responsible for mission state transitions.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_4",
+      "goal": "Verify whether the expected Runtime state machine exists and whether it is actually invoked.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_5",
+      "goal": "If the required logic exists but is not executed, identify the root cause and repair it.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_6",
+      "goal": "If the required logic does not exist, implement it using the current Runtime architecture without breaking compatibility.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_7",
+      "goal": "Re-execute the complete Runtime pipeline after every repair.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_8",
+      "goal": "Repeat diagnosis and execution until the Runtime reaches a consistent validated state or no further autonomous progress is possible.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_9",
+      "goal": "Generate complete evidence for every conclusion, modification and remaining blocker.",
+      "done_when": []
+    },
+    {
+      "id": "AUDIT_RUNTIME_STATE_MACHINE_10",
+      "goal": "Leave the repository in a coherent state with updated artefacts, reports, ledger and evidence.",
+      "done_when": []
+    }
+  ],
+  "nextObjective": "AUDIT_RUNTIME_STATE_MACHINE_1",
+  "definitionOfDone": [],
+  "completion": [],
+  "status": "READY_FOR_EXECUTION"
+}

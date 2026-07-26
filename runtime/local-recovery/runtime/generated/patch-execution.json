@@ -1,0 +1,55 @@
+{
+  "mission": "AUDIT_RUNTIME_STATE_MACHINE",
+  "executed": [
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_1",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_1",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_2",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_2",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_3",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_3",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_4",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_4",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_5",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_5",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_6",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_6",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_7",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_7",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_8",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_8",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_9",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_9",
+      "status": "RECORDED"
+    },
+    {
+      "action": "AUDIT_RUNTIME_STATE_MACHINE_10",
+      "objectiveId": "AUDIT_RUNTIME_STATE_MACHINE_10",
+      "status": "RECORDED"
+    }
+  ]
+}
