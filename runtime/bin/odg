@@ -19,14 +19,15 @@ case "$MISSION" in
     # Engineering missions (missionRequiresProvider === true) are driven through the EXISTING
     # RuntimeAutonomy + AutonomyRuntimeAdapter so the execute stage routes to the Claude Provider
     # Adapter. The single-mission driver decides: it exits 3 for any local / deterministic mission
-    # (or one it can't route), and only then do we run the Mission-Standard engine exactly as before
-    # — so local missions keep their existing behaviour unchanged.
+    # (or one it can't route), and only then do we run the modern local fallback
+    # (runtime/bin/odg-fallback.sh) — the exact relocation of the retired Mission-Standard engine,
+    # proven byte-for-byte behaviour-equivalent — so local missions keep their existing behaviour.
     if node_modules/.bin/tsx src/runtime/mission-cli.ts "$@"; then
       exit 0
     else
       rc=$?
       if [ "$rc" -eq 3 ]; then
-        ./runtime/mission-standard/bin/mse "$@"
+        ./runtime/bin/odg-fallback.sh "$@"
       else
         exit "$rc"
       fi

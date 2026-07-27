@@ -156,7 +156,7 @@ const COMPONENTS: Record<ReleaseGateName, Omit<ResponsibleComponent, "gate">> = 
     decisionAuthority: "src/core/release-manager.ts",
     evidenceProducer: "src/core/documentation-engine.ts (via AutonomyRuntimeAdapter.buildDocumentationProof)",
     evidenceFile:
-      "runtime/generated/mission-report.json | runtime/mission-standard/generated/<mission>.json",
+      "runtime/generated/mission-report.json | runtime/generated/mission-artifacts/generated/<mission>.json",
     evidenceRelay: "src/runtime/autonomy-runtime-adapter.ts (gatherEvidence)",
     gateConsumer: "src/core/runtime-autonomy.ts (assembleReleaseInputs -> ReleaseManager.decide)",
   },
@@ -314,11 +314,11 @@ export class RootCauseEngine {
   /**
    * The Documentation Proof gate is derived, not persisted as a boolean: the adapter builds it from
    * a mission-scoped artifact. Mirror that check so the report is accurate — proof is present iff a
-   * mission-matched report.json OR the mission-standard generated artifact exists.
+   * mission-matched report.json OR the relocated mission-artifacts generated artifact exists.
    */
   private observeDocumentationProof(mission: string | null): boolean | null {
     if (!mission) return null;
-    const mstd = this.exists(`runtime/mission-standard/generated/${mission}.json`);
+    const mstd = this.exists(`runtime/generated/mission-artifacts/generated/${mission}.json`);
     const report = this.readJson<{ mission?: string }>(
       `${DEFAULT_GENERATED}/mission-report.json`,
     );
@@ -351,7 +351,7 @@ export class RootCauseEngine {
       case "missionPipeline":
         return "The mission pipeline (odg-run.js / provider) did not report success, so missionPipeline is false. Re-run the pipeline and capture its diagnostics.";
       case "documentationProofPresent":
-        return "No mission-scoped artifact was found, so AutonomyRuntimeAdapter.buildDocumentationProof produced no proof. Produce runtime/generated/mission-report.json (mission-matched) or runtime/mission-standard/generated/<mission>.json.";
+        return "No mission-scoped artifact was found, so AutonomyRuntimeAdapter.buildDocumentationProof produced no proof. Produce runtime/generated/mission-report.json (mission-matched) or runtime/generated/mission-artifacts/generated/<mission>.json.";
       default:
         return "";
     }
@@ -405,7 +405,7 @@ export class RootCauseEngine {
 
   private isBookkeeping(file: string): boolean {
     return (
-      file.startsWith("runtime/mission-standard/history/") ||
+      file.startsWith("runtime/generated/mission-artifacts/history/") ||
       /(^|\/)history\.md$/.test(file)
     );
   }
@@ -489,7 +489,7 @@ export class RootCauseEngine {
           "the Documentation Engine emit the proof the Release Manager requires.",
         filesToModify: ["runtime/generated/mission-report.json"],
         steps: [
-          "Produce a mission-matched runtime/generated/mission-report.json (or runtime/mission-standard/generated/<mission>.json).",
+          "Produce a mission-matched runtime/generated/mission-report.json (or runtime/generated/mission-artifacts/generated/<mission>.json).",
           "Re-run the release evaluation so gatherEvidence rebuilds the Documentation Proof.",
         ],
         applied: false,

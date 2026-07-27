@@ -26,6 +26,13 @@ export const MIGRATED_MISSIONS: readonly string[] = [
   "M0002",
   "RUNTIME_SELF_AUDIT",
   "UNIFY_RUNTIME_EXECUTION",
+  // Read-only / audit / analyze missions (same class as RUNTIME_SELF_AUDIT): their contracts
+  // declare no code modification and no provider, so the Runtime's deterministic plan/report
+  // pipeline reproduces them faithfully with no side effects. Verified green via LocalMissionRunner.
+  "FIX_CORRECTIVE_QUEUE_INTAKE",
+  "PROVIDER_ORCHESTRATOR_ROOT_CAUSE",
+  "PREPARE_ENGINEERING_BRIEF",
+  "RUNTIME_KERNEL_ROOT_CAUSE_ANALYSIS",
 ];
 
 /** True when a mission is executed locally by src/runtime (i.e. must NOT fall back to mse). */

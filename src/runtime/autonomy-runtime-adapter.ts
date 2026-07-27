@@ -75,7 +75,7 @@ const VERIFY = `${GENERATED}/runtime-verify.json`;
 const CHECKPOINT = `${GENERATED}/autonomy-checkpoint.json`;
 const BRAIN = "runtime/brain/MASTER_PLAN.md";
 const ROADMAP_MANIFEST = "runtime/governance/ROADMAP.json";
-const MSTD_GENERATED = "runtime/mission-standard/generated";
+const MSTD_GENERATED = "runtime/generated/mission-artifacts/generated";
 const PIPELINE = "runtime/bin/odg-run.js";
 const MISSIONS_DIR = "runtime/missions";
 // The corrective-mission queue: repair missions the Runtime proposes for itself, awaiting
@@ -877,8 +877,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * Real, already-materialized artifacts of the just-executed mission, fed to the existing
    * Documentation Engine. Two provenance paths are supported so a mission run via EITHER runner
    * yields a proof:
-   *   - `runtime/mission-standard/generated/<mission>.json` — the Mission-Standard engine output
-   *     (the `odg mission <NAME>` path);
+   *   - `runtime/generated/mission-artifacts/generated/<mission>.json` — the local fallback engine
+   *     output (the `odg mission <NAME>` path);
    *   - `runtime/generated/mission-report.json` — the canonical pipeline output written by
    *     odg-run.js for the current mission (the `odg autonomy` path). It is mission-scoped, so we
    *     only accept it when its own `mission` field matches the mission we just ran.
@@ -903,8 +903,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
 
   /**
    * Read runtime/generated/mission-report.json ONLY when it satisfies the SAME canonical verdict the
-   * Mission-Standard (MSE) pipeline enforces before it writes a SUCCESS artifact
-   * (runtime/mission-standard/bin/mse, step [4/5] GENERATE): the report must be mission-scoped AND
+   * local fallback pipeline enforces before it writes a SUCCESS artifact
+   * (runtime/bin/odg-fallback.sh, step [4/5] GENERATE): the report must be mission-scoped AND
    * carry the Validation Engine's proof — `validated === true` AND `status === "SUCCESS"`.
    *
    * This reuses the Validation Engine's own verdict — the `validated`/`status` fields are written by
@@ -932,9 +932,9 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private collectArtifacts(mission: string): ReleaseArtifactRef[] {
     const refs: ReleaseArtifactRef[] = [];
     const candidates: Array<{ kind: ReleaseArtifactRef["kind"]; path: string }> = [
-      { kind: "certificate", path: `runtime/mission-standard/certificates/${mission}.certificate.md` },
-      { kind: "passport", path: `runtime/mission-standard/passports/${mission}.passport.md` },
-      { kind: "report", path: `runtime/mission-standard/reports/${mission}.report.md` },
+      { kind: "certificate", path: `runtime/generated/mission-artifacts/certificates/${mission}.certificate.md` },
+      { kind: "passport", path: `runtime/generated/mission-artifacts/passports/${mission}.passport.md` },
+      { kind: "report", path: `runtime/generated/mission-artifacts/reports/${mission}.report.md` },
       { kind: "generated", path: `${MSTD_GENERATED}/${mission}.json` },
     ];
     for (const c of candidates) {

@@ -22,18 +22,12 @@ verify.typescript=false;
 }
 
 // gitClean — HONEST working-tree check, scoped to the SAME Runtime-owned artifact paths the
-// Mission-Standard engine excludes from its governance gate (runtime/mission-standard/bin/mse:22-30).
+// local fallback engine excludes from its governance gate (runtime/bin/odg-fallback.sh).
 // Those directories hold per-mission evidence the Runtime regenerates on EVERY run (passport, report,
 // certificate, generated JSON, history log) and are git-ignored — so they must never count as "dirty".
 // Any change OUTSIDE them is real source/business work and legitimately makes the tree unclean.
 // This replaces a former `gitClean = true` hard-code that masked the tree state unconditionally.
 const ARTIFACT_EXCLUDES = [
-  ":(exclude)runtime/mission-standard/generated",
-  ":(exclude)runtime/mission-standard/passports",
-  ":(exclude)runtime/mission-standard/reports",
-  ":(exclude)runtime/mission-standard/certificates",
-  ":(exclude)runtime/mission-standard/history",
-  ":(exclude)runtime/mission-standard/evidence",
   ":(exclude)runtime/missions/*.evidence.md",
 ];
 try {
@@ -53,7 +47,7 @@ try {
 // mission's DocumentationProof carries a non-empty inputsHash, and that proof is built by
 // AutonomyRuntimeAdapter.buildDocumentationProof from a mission-scoped artifact. Mirror that
 // exact acceptance here so the persisted evidence reflects the gate:
-//   present iff runtime/mission-standard/generated/<mission>.json exists
+//   present iff runtime/generated/mission-artifacts/generated/<mission>.json exists
 //           OR  runtime/generated/mission-report.json is mission-matched + validated + SUCCESS
 // (identical to documentableArtifacts + RootCauseEngine.observeDocumentationProof).
 function resolveMission(){
@@ -73,7 +67,7 @@ return null;
 
 function documentationProofPresent(mission){
 if(!mission)return false;
-if(fs.existsSync(`runtime/mission-standard/generated/${mission}.json`))return true;
+if(fs.existsSync(`runtime/generated/mission-artifacts/generated/${mission}.json`))return true;
 try{
 const r=JSON.parse(fs.readFileSync("runtime/generated/mission-report.json","utf8"));
 return r&&r.mission===mission&&r.validated===true&&r.status==="SUCCESS";

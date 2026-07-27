@@ -20,7 +20,7 @@ function scratchRepo(): string {
   git("config user.email t@t.t");
   git("config user.name t");
   fs.mkdirSync(path.join(dir, "runtime/generated"), { recursive: true });
-  fs.mkdirSync(path.join(dir, "runtime/mission-standard/history"), { recursive: true });
+  fs.mkdirSync(path.join(dir, "runtime/generated/mission-artifacts/history"), { recursive: true });
   return dir;
 }
 
@@ -76,7 +76,7 @@ function writeVerify(dir: string, gates: Record<string, boolean>): void {
 // --- gitClean root cause: bookkeeping churn ------------------------------
 {
   const dir = scratchRepo();
-  const ledger = "runtime/mission-standard/history/history.md";
+  const ledger = "runtime/generated/mission-artifacts/history/history.md";
   fs.writeFileSync(path.join(dir, ledger), "v1\n");
   execSync("git add -A && git commit -q -m init", { cwd: dir, stdio: "ignore" });
   fs.writeFileSync(path.join(dir, ledger), "v1\nv2\n"); // tracked modification
