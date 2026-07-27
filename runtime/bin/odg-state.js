@@ -40,11 +40,13 @@ function main() {
     generatedAt,
     status: model.status,
     runtime: model.runtime,
+    converged: model.converged,
     foundation: model.foundation,
     pipeline: model.pipeline,
     brain: model.brain,
     lastMission: model.lastMission,
     nextMission: model.nextMission,
+    outstanding: model.outstanding,
   });
 
   // Legacy status artefact — now carries a REAL nextMission instead of a hard-coded SYSTEM_READY.
@@ -82,10 +84,21 @@ function main() {
   R.push(`- Proven capabilities: ${model.scan.proven}`);
   R.push(`- Executable & not yet proven (queue): ${model.queue.length}`);
   R.push("");
+  R.push(`- Outstanding gaps (queue empty but work remains): ${model.outstanding.length}`);
+  R.push(`- Converged: ${model.converged ? "YES" : "NO"}`);
+  R.push("");
   R.push("## Executable mission queue (deterministic order)");
-  if (model.queue.length === 0) R.push("- (none — SYSTEM_READY)");
+  if (model.queue.length === 0) {
+    R.push(model.converged ? "- (none — converged)" : "- (none runnable — see outstanding gaps below)");
+  }
   for (const q of model.queue) {
     R.push(`- **${q.mission}** — ${q.goal ?? ""}${q.requiresEngineering ? "  _(requires provider)_" : ""}`);
+  }
+  R.push("");
+  R.push("## Outstanding gaps (work remaining, not yet runnable)");
+  if (model.outstanding.length === 0) R.push("- (none)");
+  for (const o of model.outstanding) {
+    R.push(`- **${o.mission}** — ${o.reason}${o.repairNominated ? "  _(repair nominated)_" : ""}`);
   }
   R.push("");
   R.push("## Incomplete / non-executable contracts");
@@ -112,6 +125,7 @@ function main() {
     `Brain        : ${model.brain}`,
     `Capabilities : ${model.capabilities.length} proven`,
     `Queue        : ${model.queue.length} executable / ${model.scan.incompleteContracts.length} incomplete`,
+    `Outstanding  : ${model.outstanding.length} gap(s)  (converged: ${model.converged ? "YES" : "NO"})`,
     `Next Mission : ${model.nextMission}`,
     "======================================",
   ];

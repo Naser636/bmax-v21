@@ -180,6 +180,18 @@ function computeRuntimeModel(root = process.cwd()) {
     requiresEngineering: m.requiresEngineering,
   }));
 
+  // --- outstanding gaps (queue is empty but work remains) ------------------------------------
+  // A real mission contract that declares no runnable objectives (disposition NEEDS_CONTRACT) is
+  // work that will NEVER appear in the executable queue, yet it is unfinished. The mission mandate
+  // is explicit: "Ne jamais conclure SYSTEM_READY uniquement parce que la Queue est vide." So the
+  // headline must not claim convergence while any NEEDS_CONTRACT gap exists. (SKIPPED items — an
+  // evidence pack or orchestration plan in the missions dir — are the wrong artifact kind, not
+  // pending work, so they are excluded here.)
+  const outstanding = incompleteContracts
+    .filter((c) => c.disposition === "NEEDS_CONTRACT" && !c.proven)
+    .map((c) => ({ mission: c.mission, reason: c.reason, repairNominated: c.repairNominated }));
+  const converged = queue.length === 0 && outstanding.length === 0;
+
   // --- pipeline health -----------------------------------------------------------------------
   const pipelineStages = readJson(G("runtime-pipeline.json"));
   const hasPipeline = Array.isArray(pipelineStages) && pipelineStages.length > 0;
@@ -209,7 +221,17 @@ function computeRuntimeModel(root = process.cwd()) {
   const foundationMissions = ["M0000", "M0001", "M0002"];
   const foundation = foundationMissions.every((m) => provenSet.has(m)) ? "READY" : "DEGRADED";
 
-  const nextMission = queue.length > 0 ? queue[0].mission : "SYSTEM_READY";
+  // Honest Next Mission: the runnable queue first; otherwise the first outstanding gap requiring a
+  // contract/decision; only truly "SYSTEM_READY" when nothing runnable AND nothing outstanding.
+  const nextMission =
+    queue.length > 0
+      ? queue[0].mission
+      : outstanding.length > 0
+        ? outstanding[0].mission
+        : "SYSTEM_READY";
+  // Core-runtime HEALTH (pipeline + brain) is deliberately separate from campaign CONVERGENCE: the
+  // runtime can be healthy (READY) while gaps remain outstanding. `converged` is the honest
+  // "nothing left to do" signal; `runtime` stays the load-bearing health headline (unchanged).
   const runtime = pipeline === "READY" && brain === "READY" ? "READY" : "DEGRADED";
 
   return {
@@ -219,11 +241,13 @@ function computeRuntimeModel(root = process.cwd()) {
     pipeline,
     brain,
     status: runtime,
+    converged,
     lastMission,
     nextMission,
     // registries
     capabilities,
     missingCapabilities,
+    outstanding,
     // queue + scan detail
     queue,
     scan: {
