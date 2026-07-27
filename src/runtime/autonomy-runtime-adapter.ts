@@ -151,6 +151,14 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // because they are absent from the manifest. Reusing the dashboard's model makes `odg autonomy`
     // and the dashboard's "Next Mission" one source of truth. The frozen selectNextMission FUNCTION
     // is untouched — only its INPUT work-list is corrected.
+    // MISSION CONTRACT FACTORY: before computing the forward work-list, materialise any roadmap
+    // mission whose contract file is missing. A roadmap entry with no contract on disk never appears
+    // in the runtime-model queue (it lists only executable contracts), so it would be silently
+    // skipped and the campaign could never reach it "from the roadmap alone". The factory generates a
+    // complete, Mission-Loader-conformant contract for each gap; it is idempotent (an already-
+    // executable contract is left untouched), so re-running it every cycle never churns the tree.
+    this.materialiseRoadmapContracts();
+
     let masterPlanObjectives: string[];
     let missingCapabilities: string[];
     const workList = this.readRuntimeModelQueue();
@@ -780,6 +788,33 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * null when the model cannot be loaded — then readPlanState falls back to the roadmap manifest.
    * Read-only and best-effort; the frozen selectNextMission still consumes this as plain input.
    */
+  /**
+   * Mission Contract Factory bridge: generate a complete Mission-Loader-conformant contract for
+   * every roadmap mission whose contract file is missing (runtime/core/mission-contract-factory.js).
+   * This is what lets the campaign run "from the roadmap alone" — a roadmap entry with no contract is
+   * otherwise invisible to the runtime-model queue below. Idempotent and best-effort: an existing
+   * executable contract is left untouched, and any failure (e.g. a stripped checkout without the
+   * factory module) degrades to "generate nothing" rather than breaking selection.
+   */
+  private materialiseRoadmapContracts(): void {
+    try {
+      const factory = requireCjs(
+        `${this.cwd}/runtime/core/mission-contract-factory.js`,
+      ) as {
+        generateMissing: (
+          root: string,
+          opts?: { write?: boolean },
+        ) => { generated?: Array<{ mission?: string; path?: string }> };
+      };
+      const report = factory.generateMissing(this.cwd, { write: true });
+      for (const g of report?.generated ?? []) {
+        if (g?.path) console.log(`[mission-contract-factory] generated contract: ${g.path}`);
+      }
+    } catch {
+      /* best-effort: absence of the factory must never break mission selection */
+    }
+  }
+
   private readRuntimeModelQueue(): string[] | null {
     try {
       const { computeRuntimeModel } = requireCjs(

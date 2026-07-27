@@ -33,12 +33,22 @@ case "$MISSION" in
     fi
     ;;
   autonomy)
+    # Mission Contract Factory: materialise any roadmap mission that has no contract yet BEFORE the
+    # loop computes its work-list, so the campaign runs the full roadmap "from the roadmap alone".
+    # Idempotent — a no-op once every roadmap mission already has an executable contract.
+    ./runtime/bin/odg-generate-contracts.js >/dev/null
     # Refresh coherent state first so the queue/registry the loop and dashboard read are current,
     # then run the autonomy loop; refresh again afterwards so the Dashboard reflects any advance.
     ./runtime/bin/odg-state.js >/dev/null
     ./runtime/bin/odg-autonomy.js; rc=$?
     ./runtime/bin/odg-state.js >/dev/null || true
     exit "$rc"
+    ;;
+  generate-contracts|contracts)
+    # Mission Contract Factory: materialise every roadmap mission whose contract is missing so the
+    # campaign can run "from the roadmap alone". Forwards flags (e.g. --dry-run).
+    shift
+    ./runtime/bin/odg-generate-contracts.js "$@"
     ;;
   verify)
     ./runtime/bin/odg-verify.js
@@ -58,6 +68,7 @@ case "$MISSION" in
     echo "  odg                 (health dashboard)"
     echo "  odg health"
     echo "  odg mission <NAME>"
+    echo "  odg generate-contracts [--dry-run]"
     echo "  odg autonomy"
     echo "  odg status"
     echo "  odg verify"
