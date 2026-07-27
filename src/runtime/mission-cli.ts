@@ -209,14 +209,14 @@ function main(): number {
   console.log("--------------------------------------");
 
   // Route selection — the Runtime chooses local vs provider vs fallback.
-  if (spec && missionRequiresProvider(toRoutable(spec))) {
-    console.log("Decision   : missionRequiresProvider = true → PROVIDER");
-    return runProviderRoute(mission);
-  }
-
   if (isMigratedMission(mission)) {
     console.log("Decision   : migrated local mission → LOCAL RUNTIME");
     return runLocalRoute(mission);
+  }
+
+  if (spec && missionRequiresProvider(toRoutable(spec))) {
+    console.log("Decision   : missionRequiresProvider = true → PROVIDER");
+    return runProviderRoute(mission);
   }
 
   // OBJ-003: everything not yet migrated keeps the Mission-Standard fallback.
