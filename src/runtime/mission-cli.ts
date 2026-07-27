@@ -32,6 +32,17 @@ import { MissionOrchestrator } from "./mission-orchestrator";
 import { createMissionIntent } from "./mission-intent";
 import { LocalMissionRunner } from "./local-mission-runner";
 import { isMigratedMission, renderMigrationReport } from "./mission-migration";
+import { runConverge } from "./converge-cli";
+
+/**
+ * Missions that mean "drive the whole Runtime to convergence" rather than run a single mission.
+ * The literal success-criterion command `odg mission RUNTIME_FULL_AUTONOMY_EXECUTION` is routed to
+ * the Convergence Orchestrator; any mission JSON declaring `mode: "convergence"` is too. Every other
+ * mission keeps the unchanged local / provider / mse single-mission routing below.
+ */
+function isConvergenceMission(mission: string, spec: RawMission | null): boolean {
+  return mission === "RUNTIME_FULL_AUTONOMY_EXECUTION" || spec?.mode === "convergence";
+}
 
 /** Exit code telling the `odg` launcher to fall back to the existing Mission-Standard engine. */
 const FALLBACK_TO_MSE = 3;
@@ -184,6 +195,14 @@ function main(): number {
   }
 
   const spec = readMissionSpec(mission);
+
+  // Convergence route: `odg mission RUNTIME_FULL_AUTONOMY_EXECUTION` (and any mode:"convergence"
+  // mission) is not a single mission — delegate to the Convergence Orchestrator. Non-breaking: every
+  // other mission name falls through to the unchanged single-mission routing below.
+  if (isConvergenceMission(mission, spec)) {
+    console.log("Decision   : convergence mission → CONVERGENCE ORCHESTRATOR");
+    return runConverge();
+  }
 
   console.log("======================================");
   console.log("ODG MISSION — UNIFIED RUNTIME ENTRY");

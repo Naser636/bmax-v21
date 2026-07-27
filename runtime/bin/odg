@@ -44,6 +44,15 @@ case "$MISSION" in
     ./runtime/bin/odg-state.js >/dev/null || true
     exit "$rc"
     ;;
+  converge)
+    # Convergence Orchestrator: one command drives the Runtime to convergence and emits a
+    # campaign-level convergence report. Reuses the SAME state refresh discipline as `autonomy`
+    # (the orchestrator itself front-loads contract generation via odg-generate-contracts.js).
+    ./runtime/bin/odg-state.js >/dev/null
+    ./runtime/bin/odg-converge.js; rc=$?
+    ./runtime/bin/odg-state.js >/dev/null || true
+    exit "$rc"
+    ;;
   generate-contracts|contracts)
     # Mission Contract Factory: materialise every roadmap mission whose contract is missing so the
     # campaign can run "from the roadmap alone". Forwards flags (e.g. --dry-run).
@@ -70,6 +79,7 @@ case "$MISSION" in
     echo "  odg mission <NAME>"
     echo "  odg generate-contracts [--dry-run]"
     echo "  odg autonomy"
+    echo "  odg converge        (drive to convergence + report)"
     echo "  odg status"
     echo "  odg verify"
     echo "  odg freeze"
