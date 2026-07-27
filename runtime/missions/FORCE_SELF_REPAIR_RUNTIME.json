@@ -1,0 +1,33 @@
+{
+  "id": "FORCE_SELF_REPAIR_RUNTIME",
+  "type": "SELF_ENGINEERING",
+  "mode": "FORCE_EXECUTION",
+  "priority": "CRITICAL",
+
+  "objective": "Rendre le Runtime autonome jusqu'à obtenir une exécution complète.",
+
+  "context": {
+    "known_failure": [
+      "engineering-brief-builder.js échoue car runtime/generated/runtime-context.json est absent",
+      "knowledge-engine.js produit knowledge.json mais pas runtime-context.json",
+      "odg-autonomy termine avec PLAN_COMPLETE et Cycles=0"
+    ]
+  },
+
+  "rules": [
+    "Ne jamais terminer sur PLAN_COMPLETE.",
+    "Si un prérequis manque, le créer.",
+    "Si un pipeline est incomplet, le compléter.",
+    "Si un composant manque, le générer.",
+    "Si un patch est nécessaire, le produire puis l'appliquer.",
+    "Continuer jusqu'à obtenir une exécution réelle."
+  ],
+
+  "success": [
+    "runtime/generated/runtime-context.json existe",
+    "engineering-brief-builder.js s'exécute sans erreur",
+    "au moins un patch est APPLIED",
+    "Cycles > 0",
+    "Status = COMPLETED"
+  ]
+}
