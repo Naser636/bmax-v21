@@ -5,6 +5,7 @@ const fs=require("fs");
 const {authorizeMission}=require("../core/governance-kernel");
 const {bootstrap}=require("./odg-bootstrap");
 const checkpoint=require("../core/checkpoint-engine");
+const {loadRuntimeContext}=require("../core/runtime-context-loader");
 
 // COLD-START PREP (Runtime Bootstrap)
 // Ensure the git-ignored runtime/generated directory and its single orphan
@@ -26,10 +27,12 @@ const governance=authorizeMission(mission);
 
 let runtimeContext=null;
 try{
-    runtimeContext=JSON.parse(
-        fs.readFileSync("runtime/generated/runtime-context.json","utf8")
-    );
-}catch{}
+    // Guarantee RuntimeContext before the pipeline: the existing loader generates
+    // runtime/generated/runtime-context.json on demand (via project-context-engine.js) if absent.
+    runtimeContext=loadRuntimeContext(mission);
+}catch(e){
+    console.error("RuntimeContext : UNAVAILABLE ("+e.message+")");
+}
 
 
 if(!governance.authorized){
