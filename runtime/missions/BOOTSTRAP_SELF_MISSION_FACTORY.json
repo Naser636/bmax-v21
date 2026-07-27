@@ -1,0 +1,66 @@
+{
+  "mission": "BOOTSTRAP_SELF_MISSION_FACTORY",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Construire localement les capacités permettant au Runtime de créer, valider, migrer et exécuter ses propres contrats de mission sans dépendance à un Provider externe.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Auditer toutes les capacités Runtime existantes.",
+      "done_when": ["Toutes les capacités existantes sont inventoriées."]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Créer une Mission Contract Factory locale.",
+      "done_when": ["Le Runtime peut générer un contrat JSON valide."]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Créer un Contract Validator.",
+      "done_when": ["Chaque contrat est validé avant exécution."]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Créer un Migration Engine.",
+      "done_when": ["Les anciens contrats peuvent être convertis automatiquement."]
+    },
+    {
+      "id": "OBJ-005",
+      "priority": 5,
+      "goal": "Migrer automatiquement les missions compatibles.",
+      "done_when": ["Les missions migrables sont converties sans changer leur comportement."]
+    },
+    {
+      "id": "OBJ-006",
+      "priority": 6,
+      "goal": "Exécuter automatiquement les missions migrées.",
+      "done_when": ["Les missions autorisées sont exécutées avec validation Build et TypeScript."]
+    },
+    {
+      "id": "OBJ-007",
+      "priority": 7,
+      "goal": "Produire les preuves et mettre à jour la connaissance.",
+      "done_when": ["Evidence, Knowledge et Capability Registry sont mis à jour."]
+    },
+    {
+      "id": "OBJ-008",
+      "priority": 8,
+      "goal": "Rendre le Runtime autonome pour créer ses futures missions.",
+      "done_when": ["Le Runtime peut créer, valider et exécuter un nouveau contrat de mission localement."]
+    }
+  ],
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/**",
+    "src/runtime/**",
+    "src/providers/**",
+    "src/infrastructure/**",
+    "src/tests/**",
+    "docs/**"
+  ]
+}
