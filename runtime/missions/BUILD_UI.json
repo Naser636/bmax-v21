@@ -1,0 +1,84 @@
+{
+  "mission": "BUILD_UI",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "authorized_paths": [
+    "runtime/**"
+  ],
+  "description": "Auto-generated contract for roadmap mission BUILD_UI (Build Ui).",
+  "objectives": [
+    {
+      "id": "BUILD_UI_1",
+      "goal": "Build Ui",
+      "done_when": [
+        "Objective \"Build Ui\" satisfied.",
+        "Validation Engine reports success.",
+        "Authorized patch applied."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective \"Build Ui\" satisfied.",
+    "Validation Engine reports success.",
+    "Authorized patch applied."
+  ],
+  "source": "mission-contract-factory",
+  "authorizedPaths": [
+    "runtime/**"
+  ],
+  "status": "AUTHORIZED",
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/**"
+    ],
+    "network": false
+  },
+  "lifecycle": [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED"
+  ],
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST"
+  ],
+  "evidence": [
+    "runtime/generated/mission-plan.json",
+    "runtime/generated/mission-report.json",
+    "runtime/generated/mission-ledger.json"
+  ],
+  "checkpoints": [
+    {
+      "id": "BUILD_UI_1__PLANNED",
+      "when": "mission-plan.json generated"
+    },
+    {
+      "id": "BUILD_UI_1__VALIDATED",
+      "when": "Validation Engine reports success"
+    },
+    {
+      "id": "BUILD_UI_1__RELEASED",
+      "when": "mission ledger entry proven"
+    }
+  ],
+  "ledger": {
+    "mission": "BUILD_UI",
+    "capability": "BUILD_UI",
+    "status": "PENDING",
+    "proven": false
+  },
+  "generatedBy": "mission-contract-factory"
+}
