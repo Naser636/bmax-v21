@@ -15,5 +15,13 @@
   "governance": {
     "strategy": "DETERMINISM_FIRST",
     "reusePolicy": "REUSE_BEFORE_CREATE"
+  },
+  "contractOnDemand": {
+    "enabled": true,
+    "capabilities": [
+      "DYNAMIC_MISSION_CONTRACT_FACTORY",
+      "AUTONOMOUS_CONTRACT_EVOLUTION"
+    ],
+    "description": "Governs Contract On Demand: when an unknown mission is requested and this policy is enabled, the Mission Contract Factory synthesizes a complete, valid contract and the pipeline resumes without human authoring. Set enabled=false (or ODG_CONTRACT_ON_DEMAND=0) to restore the strict STOP-for-authoring behaviour."
   }
 }

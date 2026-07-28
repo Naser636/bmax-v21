@@ -29,13 +29,39 @@ if (!mission) {
 const CONTRACT_PATH = path.join("runtime", "missions", `${mission}.json`);
 
 if (!fs.existsSync(CONTRACT_PATH)) {
+    // CONTRACT ON DEMAND (DYNAMIC_MISSION_CONTRACT_FACTORY). When governance authorizes it, an unknown
+    // mission is no longer a hard blocker: the Mission Contract Factory synthesizes a complete,
+    // Mission-Loader-conformant contract for it and the pipeline resumes immediately — no human
+    // authoring, no closed list of pre-written contracts. The strict STOP below is preserved as the
+    // fallback for a genuinely failed generation or when the policy disables on-demand generation.
+    try {
+        const factory = require("./mission-contract-factory");
+        if (factory.isOnDemandEnabled(process.cwd())) {
+            const result = factory.generateForMission(process.cwd(), mission, { write: true });
+            if (result.generated && fs.existsSync(CONTRACT_PATH)) {
+                console.log("======================================");
+                console.log("MISSION LOADER — CONTRACT ON DEMAND");
+                console.log("======================================");
+                console.log(`No contract for "${mission}" — synthesized one automatically.`);
+                console.log("Generated  :", result.path);
+                console.log("Resuming the normal pipeline with the generated contract.");
+                console.log("======================================");
+            }
+        }
+    } catch (err) {
+        // Never let the factory's absence/failure change behaviour: fall through to the strict STOP.
+        console.error(`[mission-loader] Contract On Demand unavailable: ${err.message}`);
+    }
+}
+
+if (!fs.existsSync(CONTRACT_PATH)) {
     console.error("======================================");
     console.error("MISSION LOADER");
     console.error("======================================");
     console.error(`BLOCKED: no mission contract for "${mission}".`);
     console.error(`Expected a real mission definition at: ${CONTRACT_PATH}`);
     console.error("The Runtime no longer replays a generic pipeline for undefined missions.");
-    console.error("Author the mission contract (or add it to the roadmap manifest) and re-run.");
+    console.error("Author the mission contract (or enable Contract On Demand) and re-run.");
     console.error("======================================");
     process.exit(1);
 }

@@ -80,6 +80,32 @@ const mission=resolveMission();
 verify.mission=mission;
 verify.documentationProofPresent=documentationProofPresent(mission);
 
+// generatedContracts — Verify the contracts the Mission Contract Factory produced (Contract On
+// Demand / DYNAMIC_MISSION_CONTRACT_FACTORY). Every contract stamped `generatedBy:
+// "mission-contract-factory"` must satisfy the SAME structural guard the Mission Loader enforces
+// (reused from mission-synthesizer.isValidContract — no re-derivation), so an auto-generated
+// contract can never slip an invalid definition into the pipeline. Purely additive evidence: it
+// never weakens the build/typescript/gitClean gates the Release Manager reads.
+function verifyGeneratedContracts(){
+  const out={total:0,valid:0,invalid:[]};
+  let synth;
+  try{synth=require("../core/mission-synthesizer");}catch{return out;}
+  let files=[];
+  try{files=fs.readdirSync("runtime/missions").filter((f)=>f.endsWith(".json")).sort();}catch{return out;}
+  for(const f of files){
+    let raw;
+    try{raw=JSON.parse(fs.readFileSync(`runtime/missions/${f}`,"utf8"));}catch{continue;}
+    if(!raw||raw.generatedBy!=="mission-contract-factory")continue;
+    out.total+=1;
+    if(synth.isValidContract(raw))out.valid+=1;
+    else out.invalid.push(f.replace(/\.json$/,""));
+  }
+  return out;
+}
+const generatedContracts=verifyGeneratedContracts();
+verify.generatedContracts=generatedContracts;
+verify.generatedContractsValid=generatedContracts.invalid.length===0;
+
 fs.writeFileSync(
 "runtime/generated/runtime-verify.json",
 JSON.stringify(verify,null,2)

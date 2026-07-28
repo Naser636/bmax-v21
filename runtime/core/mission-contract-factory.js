@@ -40,6 +40,37 @@ const synth = require("./mission-synthesizer");
 
 const ROADMAP_REL = path.join("runtime", "governance", "ROADMAP.json");
 const MISSIONS_REL = path.join("runtime", "missions");
+const POLICIES_REL = path.join("runtime", "policies", "runtime-policies.json");
+
+// The canonical governance lifecycle chain (mirrors runtime/governance/state-machine.json). Declared
+// on every generated contract so a synthesized mission carries the SAME lifecycle the Mission
+// Lifecycle Driver walks — it is descriptive metadata, never a second source of truth (the driver
+// still reads state-machine.json at run time).
+const LIFECYCLE_STATES = [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED",
+];
+
+// The governance policies a generated contract runs under, using the EXISTING policy vocabulary
+// (runtime/policies/runtime-policies.json governance.strategy / reusePolicy + the LOCAL_FIRST
+// execution discipline the adapter enforces). Descriptive, deterministic.
+const CONTRACT_POLICIES = ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST"];
+
+// The runtime artifacts a mission run is expected to produce as its evidence surface (git-ignored,
+// regenerated every run). Lets Verify/Converge treat a generated contract as a normal Runtime proof.
+const CONTRACT_EVIDENCE = [
+    "runtime/generated/mission-plan.json",
+    "runtime/generated/mission-report.json",
+    "runtime/generated/mission-ledger.json",
+];
 
 function readJson(file) {
     try {
@@ -47,6 +78,23 @@ function readJson(file) {
     } catch {
         return null;
     }
+}
+
+/*
+ * Is Contract On Demand authorized? The two capabilities this factory delivers
+ * (DYNAMIC_MISSION_CONTRACT_FACTORY / AUTONOMOUS_CONTRACT_EVOLUTION) are governed like every other
+ * Runtime capability: their enablement lives in runtime/policies/runtime-policies.json under
+ * `contractOnDemand.enabled`. An operator/CI can force the answer with ODG_CONTRACT_ON_DEMAND
+ * (`0`/`false` disables, any other value enables) without editing policy — used by tests and by a
+ * strict flow that wants the historical "STOP for human authoring" behaviour back.
+ */
+function isOnDemandEnabled(root = process.cwd()) {
+    const env = process.env.ODG_CONTRACT_ON_DEMAND;
+    if (typeof env === "string" && env.length > 0) {
+        return !(env === "0" || env.toLowerCase() === "false");
+    }
+    const policies = readJson(path.join(root, POLICIES_REL));
+    return !!(policies && policies.contractOnDemand && policies.contractOnDemand.enabled === true);
 }
 
 /** The ordered roadmap entries that name a mission id (invalid entries are dropped). */
@@ -132,6 +180,21 @@ function buildContract(entry) {
         authorizedPaths,
         status: "AUTHORIZED",
         completion: ["Release Manager decision is RELEASE."],
+        // Permissions the mission runs under — the SAME facts the Mission Loader derives
+        // (requires_engineering ⇐ authorized_paths non-empty). Declared explicitly so a synthesized
+        // contract states its boundary without a consumer having to re-derive it. Network is never
+        // granted by the factory (deterministic, local-first).
+        permissions: {
+            engineering,
+            authorizedPaths,
+            network: false,
+        },
+        // Governance lifecycle this mission advances through (state-machine.json) — descriptive.
+        lifecycle: LIFECYCLE_STATES.slice(),
+        // Governance policies in force — reuse the existing policy vocabulary.
+        policies: CONTRACT_POLICIES.slice(),
+        // Evidence surface the run is expected to produce (Verify/Converge read these as normal proofs).
+        evidence: CONTRACT_EVIDENCE.slice(),
         checkpoints: [
             { id: `${objectiveId}__PLANNED`, when: "mission-plan.json generated" },
             { id: `${objectiveId}__VALIDATED`, when: "Validation Engine reports success" },
@@ -141,6 +204,18 @@ function buildContract(entry) {
         source: "mission-contract-factory",
         generatedBy: "mission-contract-factory",
     };
+}
+
+/*
+ * Humanize a mission id into a readable title/goal for a contract generated ON DEMAND (no roadmap
+ * entry): "DYNAMIC_MISSION_CONTRACT_FACTORY" → "Dynamic Mission Contract Factory". Deterministic.
+ */
+function humanizeId(id) {
+    return String(id || "")
+        .replace(/[_\-]+/g, " ")
+        .trim()
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /*
@@ -178,10 +253,67 @@ function generateMissing(root = process.cwd(), options = {}) {
     return report;
 }
 
+/*
+ * CONTRACT ON DEMAND (DYNAMIC_MISSION_CONTRACT_FACTORY).
+ *
+ * Generate a complete, Mission-Loader-conformant contract for an ARBITRARY mission id — one that is
+ * NOT required to appear in the roadmap manifest. This is what removes the dependency on a CLOSED
+ * list of pre-written contracts: any mission the Runtime is asked to run can be materialised on the
+ * fly, then the normal pipeline resumes.
+ *
+ * Behaviour:
+ *   - If an executable contract already exists on disk, it is REUSED verbatim (backward compatible —
+ *     an existing hand-written contract is never overwritten). Returns {reused:true}.
+ *   - Otherwise a contract is BUILT from the roadmap entry when one exists (so roadmap hints such as
+ *     requiresEngineering are honoured), else synthesized from the id alone (+ optional `hints`),
+ *     validated with the SAME structural guard the Mission Loader enforces, and (by default) written
+ *     to runtime/missions/<id>.json — the exact location every runner consumes. Returns
+ *     {generated:true}. An invalid build is surfaced ({invalid:true}) rather than written.
+ *
+ * Pure apart from the single opt-in write; deterministic (buildContract has no wall-clock/randomness),
+ * so re-generating an identical mission never churns the tree.
+ */
+function generateForMission(root = process.cwd(), missionId, options = {}) {
+    const write = options.write !== false;
+    const entryLike = { id: missionId };
+    const target = contractPathFor(root, entryLike);
+    const rel = path.relative(root, target);
+
+    // Reuse an already-executable contract untouched (backward compatibility / no churn).
+    if (!isContractMissing(root, entryLike)) {
+        return { mission: missionId, path: rel, generated: false, reused: true, contract: readJson(target) };
+    }
+
+    // Prefer the roadmap entry (honours declared hints); else synthesize from the id alone.
+    const roadmapEntry = readRoadmap(root).find((e) => e.id === missionId);
+    const entry = roadmapEntry || {
+        id: missionId,
+        title: humanizeId(missionId),
+        ...(options.hints && typeof options.hints === "object" ? options.hints : {}),
+    };
+
+    const contract = buildContract(entry);
+    if (!synth.isValidContract(contract)) {
+        return { mission: missionId, path: rel, generated: false, reused: false, invalid: true, contract: null };
+    }
+
+    if (write) {
+        fs.mkdirSync(path.dirname(target), { recursive: true });
+        fs.writeFileSync(target, JSON.stringify(contract, null, 2) + "\n");
+    }
+    return { mission: missionId, path: rel, generated: true, reused: false, contract };
+}
+
 module.exports = {
     readRoadmap,
     contractPathFor,
     isContractMissing,
     buildContract,
     generateMissing,
+    generateForMission,
+    isOnDemandEnabled,
+    humanizeId,
+    LIFECYCLE_STATES,
+    CONTRACT_POLICIES,
+    CONTRACT_EVIDENCE,
 };

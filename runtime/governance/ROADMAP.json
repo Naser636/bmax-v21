@@ -39,6 +39,18 @@
       "title": "Unify Runtime Execution",
       "contract": "runtime/missions/UNIFY_RUNTIME_EXECUTION.json",
       "requiresEngineering": true
+    },
+    {
+      "id": "DYNAMIC_MISSION_CONTRACT_FACTORY",
+      "title": "Dynamic Mission Contract Factory (Contract On Demand)",
+      "contract": "runtime/missions/DYNAMIC_MISSION_CONTRACT_FACTORY.json",
+      "requiresEngineering": true
+    },
+    {
+      "id": "AUTONOMOUS_CONTRACT_EVOLUTION",
+      "title": "Autonomous Contract Evolution",
+      "contract": "runtime/missions/AUTONOMOUS_CONTRACT_EVOLUTION.json",
+      "requiresEngineering": true
     }
   ]
 }

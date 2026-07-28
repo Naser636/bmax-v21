@@ -105,4 +105,51 @@ const dry = factory.generateMissing(dryRoot, { write: false });
 ok("dry-run reports the gap", dry.generated.map((g) => g.mission).join(",") === "DRY_GAP");
 ok("dry-run wrote no file", fs.existsSync(path.join(dryRoot, "runtime", "missions", "DRY_GAP.json")) === false);
 
+console.log("Case 6 — buildContract fills the FULL contract shape (lifecycle/permissions/evidence/policies)");
+const full = factory.buildContract({ id: "FULL_GAP", title: "Full gap", requiresEngineering: true });
+ok("permissions block present + reflects engineering", full.permissions && full.permissions.engineering === true && full.permissions.network === false);
+ok("permissions.authorizedPaths mirrors authorized_paths", JSON.stringify(full.permissions.authorizedPaths) === JSON.stringify(full.authorized_paths));
+ok("lifecycle states declared (CREATED..ARCHIVED)", Array.isArray(full.lifecycle) && full.lifecycle[0] === "CREATED" && full.lifecycle[full.lifecycle.length - 1] === "ARCHIVED");
+ok("policies declared (existing vocabulary)", Array.isArray(full.policies) && full.policies.includes("DETERMINISM_FIRST"));
+ok("evidence surface declared", Array.isArray(full.evidence) && full.evidence.some((e) => e.includes("mission-report.json")));
+
+console.log("Case 7 — Contract On Demand: generateForMission synthesizes an ARBITRARY (non-roadmap) mission");
+const odRoot = fs.mkdtempSync(path.join(os.tmpdir(), "mcf-od-"));
+fs.mkdirSync(path.join(odRoot, "runtime", "missions"), { recursive: true });
+fs.mkdirSync(path.join(odRoot, "runtime", "governance"), { recursive: true });
+fs.writeFileSync(path.join(odRoot, "runtime", "governance", "ROADMAP.json"), JSON.stringify({ missions: [] }, null, 2));
+const od = factory.generateForMission(odRoot, "SOME_BRAND_NEW_MISSION", { write: true });
+ok("reports generated (not reused)", od.generated === true && od.reused === false);
+ok("wrote the contract to the conventional path", fs.existsSync(path.join(odRoot, "runtime", "missions", "SOME_BRAND_NEW_MISSION.json")));
+const odContract = JSON.parse(fs.readFileSync(path.join(odRoot, "runtime", "missions", "SOME_BRAND_NEW_MISSION.json"), "utf8"));
+ok("on-demand contract is Loader-valid", synth.isValidContract(odContract) === true);
+ok("on-demand contract is stamped generatedBy factory", odContract.generatedBy === "mission-contract-factory");
+ok("goal humanized from id", odContract.objectives[0].goal.includes("Some Brand New Mission"));
+
+console.log("Case 8 — generateForMission REUSES an existing executable contract untouched (backward compat)");
+fs.writeFileSync(
+    path.join(odRoot, "runtime", "missions", "HAND_WRITTEN.json"),
+    JSON.stringify({ mission: "HAND_WRITTEN", objectives: [{ id: "H1", goal: "authored by a human" }] }, null, 2),
+);
+const beforeHW = fs.readFileSync(path.join(odRoot, "runtime", "missions", "HAND_WRITTEN.json"), "utf8");
+const reuse = factory.generateForMission(odRoot, "HAND_WRITTEN", { write: true });
+ok("reports reused (not generated)", reuse.reused === true && reuse.generated === false);
+ok("existing contract left byte-identical", fs.readFileSync(path.join(odRoot, "runtime", "missions", "HAND_WRITTEN.json"), "utf8") === beforeHW);
+
+console.log("Case 9 — isOnDemandEnabled is governed by policy + env override");
+const polDir = path.join(odRoot, "runtime", "policies");
+fs.mkdirSync(polDir, { recursive: true });
+fs.writeFileSync(path.join(polDir, "runtime-policies.json"), JSON.stringify({ contractOnDemand: { enabled: true } }, null, 2));
+const savedEnv = process.env.ODG_CONTRACT_ON_DEMAND;
+delete process.env.ODG_CONTRACT_ON_DEMAND;
+ok("enabled when policy enables it", factory.isOnDemandEnabled(odRoot) === true);
+fs.writeFileSync(path.join(polDir, "runtime-policies.json"), JSON.stringify({ contractOnDemand: { enabled: false } }, null, 2));
+ok("disabled when policy disables it", factory.isOnDemandEnabled(odRoot) === false);
+process.env.ODG_CONTRACT_ON_DEMAND = "1";
+ok("env override forces enabled", factory.isOnDemandEnabled(odRoot) === true);
+process.env.ODG_CONTRACT_ON_DEMAND = "0";
+ok("env override forces disabled", factory.isOnDemandEnabled(odRoot) === false);
+if (savedEnv === undefined) delete process.env.ODG_CONTRACT_ON_DEMAND;
+else process.env.ODG_CONTRACT_ON_DEMAND = savedEnv;
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

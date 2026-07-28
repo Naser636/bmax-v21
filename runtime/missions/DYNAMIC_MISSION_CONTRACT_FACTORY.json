@@ -1,0 +1,49 @@
+{
+  "mission": "DYNAMIC_MISSION_CONTRACT_FACTORY",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Industrialiser la gestion des contrats de mission : le Runtime peut exécuter toute nouvelle mission sans contrat pré-écrit. La Mission Contract Factory génère un contrat complet à la demande pour une mission inconnue, supprimant la dépendance à une liste fermée de contrats.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Générer un contrat complet à la demande pour une mission inconnue (Contract On Demand).",
+      "done_when": [
+        "mission-contract-factory.generateForMission produit un contrat pour un id arbitraire.",
+        "Le contrat déclare objectifs, lifecycle, permissions, engineering mode, evidence, policies, authorized paths.",
+        "Le contrat est valide selon le garde structurel du Mission Loader (mission-synthesizer.isValidContract)."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Supprimer la dépendance à une liste fermée de contrats.",
+      "done_when": [
+        "Une mission absente de la ROADMAP peut être matérialisée.",
+        "Un contrat déjà présent est réutilisé sans écrasement (compatibilité totale)."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Reprendre immédiatement l'exécution normale après génération.",
+      "done_when": [
+        "Le Mission Loader génère puis charge le contrat sans intervention humaine.",
+        "La génération est gouvernée par la policy contractOnDemand.enabled."
+      ]
+    }
+  ],
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/**"
+  ],
+  "definition_of_done": [
+    "Contract On Demand implémenté et testé.",
+    "Aucune régression sur les contrats existants.",
+    "Capacité enregistrée et gouvernée."
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ]
+}

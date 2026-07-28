@@ -262,11 +262,19 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         });
         continue;
       }
-      const spec = this.readMissionJson(mission);
+      let spec = this.readMissionJson(mission);
+      if (!spec) {
+        // CONTRACT ON DEMAND: an AUTHORIZED corrective mission whose contract is not yet written is no
+        // longer permanently deferred — synthesize it (when governance authorizes on-demand) so the
+        // authorized repair can run. Human authorization is still required (status must be AUTHORIZED);
+        // only the mechanical authoring is automated. A disabled policy keeps the original deferral.
+        this.materialiseOnDemand(mission);
+        spec = this.readMissionJson(mission);
+      }
       if (!spec) {
         deferred.push({
           mission,
-          reason: `authorized but has no Mission Contract at ${MISSIONS_DIR}/${mission}.json — author the contract before it can execute`,
+          reason: `authorized but has no Mission Contract at ${MISSIONS_DIR}/${mission}.json — author the contract (or enable Contract On Demand) before it can execute`,
         });
         continue;
       }
@@ -290,10 +298,17 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * falls back to sensible defaults; the mission-specific OBJECTIVES are always real.
    */
   generateContract(mission: string): MissionContract {
-    const spec = this.readMissionJson(mission);
+    // CONTRACT ON DEMAND: an unknown mission is synthesized (when governance authorizes it) rather
+    // than treated as a hard blocker, so the provider/autonomy path can continue. A disabled policy
+    // or a failed generation leaves spec null and the original CONTRACT_INVALID blocker stands.
+    let spec = this.readMissionJson(mission);
+    if (!spec) {
+      this.materialiseOnDemand(mission);
+      spec = this.readMissionJson(mission);
+    }
     if (!spec) {
       throw new Error(
-        `No mission contract at ${MISSIONS_DIR}/${mission}.json — author the mission definition before it can execute.`,
+        `No mission contract at ${MISSIONS_DIR}/${mission}.json — author the mission definition (or enable Contract On Demand) before it can execute.`,
       );
     }
     const objectives = this.providerObjectives(mission, spec);
@@ -812,6 +827,38 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       }
     } catch {
       /* best-effort: absence of the factory must never break mission selection */
+    }
+  }
+
+  /**
+   * CONTRACT ON DEMAND (DYNAMIC_MISSION_CONTRACT_FACTORY): for a SPECIFIC mission that has no contract
+   * on disk, synthesize a complete, Mission-Loader-conformant one when governance authorizes it
+   * (runtime-policies.json contractOnDemand.enabled) — so an unknown mission no longer blocks the
+   * autonomy loop or the provider path. Returns true iff a usable contract now exists on disk (either
+   * freshly generated or already present). Idempotent and best-effort: an existing executable contract
+   * is reused untouched, and any failure (missing factory, disabled policy) degrades to "no contract",
+   * preserving the prior strict behaviour. No new architecture — the CJS factory is the sole author.
+   */
+  private materialiseOnDemand(mission: string): boolean {
+    try {
+      const factory = requireCjs(
+        `${this.cwd}/runtime/core/mission-contract-factory.js`,
+      ) as {
+        isOnDemandEnabled: (root: string) => boolean;
+        generateForMission: (
+          root: string,
+          missionId: string,
+          opts?: { write?: boolean },
+        ) => { generated?: boolean; reused?: boolean; path?: string };
+      };
+      if (!factory.isOnDemandEnabled(this.cwd)) return false;
+      const result = factory.generateForMission(this.cwd, mission, { write: true });
+      if (result?.generated && result.path) {
+        console.log(`[mission-contract-factory] on-demand contract: ${result.path}`);
+      }
+      return result?.generated === true || result?.reused === true;
+    } catch {
+      return false;
     }
   }
 

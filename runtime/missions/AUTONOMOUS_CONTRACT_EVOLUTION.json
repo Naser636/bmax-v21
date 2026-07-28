@@ -1,0 +1,59 @@
+{
+  "mission": "AUTONOMOUS_CONTRACT_EVOLUTION",
+  "priority": "CRITICAL",
+  "mode": "ENGINEERING",
+  "continue_until_complete": true,
+  "description": "Rendre la génération de contrats utilisable de bout en bout par delegate, autonomy et les futures missions : une mission inconnue ne bloque plus l'autonomie, Verify vérifie les contrats générés et Converge les traite comme des preuves Runtime normales.",
+  "objectives": [
+    {
+      "id": "OBJ-001",
+      "priority": 1,
+      "goal": "Adapter Runtime Autonomy pour qu'une mission inconnue ne bloque plus l'autonomie quand la génération est autorisée.",
+      "done_when": [
+        "AutonomyRuntimeAdapter.generateContract matérialise un contrat à la demande au lieu d'échouer.",
+        "readCorrectiveQueue matérialise un contrat pour une mission AUTHORIZED sans contrat."
+      ]
+    },
+    {
+      "id": "OBJ-002",
+      "priority": 2,
+      "goal": "Adapter Verify pour vérifier les contrats générés automatiquement.",
+      "done_when": [
+        "odg-verify.js valide chaque contrat generatedBy=mission-contract-factory.",
+        "runtime-verify.json expose generatedContracts + generatedContractsValid."
+      ]
+    },
+    {
+      "id": "OBJ-003",
+      "priority": 3,
+      "goal": "Adapter Converge pour que les nouveaux contrats deviennent des preuves Runtime normales.",
+      "done_when": [
+        "odg-generate-contracts.js (Step 1 de converge) audite et gate les contrats générés.",
+        "Un contrat généré invalide fait remonter un état PARTIAL de l'étape contracts."
+      ]
+    },
+    {
+      "id": "OBJ-004",
+      "priority": 4,
+      "goal": "Enregistrer et gouverner la capacité comme les autres.",
+      "done_when": [
+        "Capacité déclarée dans runtime-policies.json (contractOnDemand.capabilities).",
+        "Mission inscrite à la ROADMAP.",
+        "Utilisable par delegate, autonomy et les futures missions."
+      ]
+    }
+  ],
+  "requiresEngineering": true,
+  "authorizedPaths": [
+    "runtime/**",
+    "src/**"
+  ],
+  "definition_of_done": [
+    "Autonomy, Verify et Converge adaptés sans régression.",
+    "Kernel, Gouvernance, Ledger, Evidence, Lifecycle et Provider Architecture conservés.",
+    "Capacité enregistrée et gouvernée."
+  ],
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ]
+}
