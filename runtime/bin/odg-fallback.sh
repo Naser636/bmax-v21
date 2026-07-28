@@ -29,6 +29,34 @@ ARTIFACT_EXCLUDES=(
 # The engine's own [4/5] outputs (passport/report/certificate/history/generated JSON) are written
 # under runtime/generated/ (git-ignored), so git never reports them and they need no pathspec
 # exclusion here — only the Provider-emitted mission evidence needs registering.
+#
+# Contract-On-Demand contracts synthesised for the active mission are Runtime-owned bookkeeping:
+# content-stamped `generatedBy: "mission-contract-factory"`, idempotently regenerated on EVERY run,
+# and already certified structurally valid by odg-verify.js's generatedContractsValid gate. Like the
+# evidence files above they must never count as an "unexpected" repository change — otherwise the
+# factory re-materialises them each run, churning runtime/missions/, so the [5/5] governance gate can
+# never pass for a contract-on-demand mission (the observed "STOP: Repository changed unexpectedly").
+# Excluded by CONTENT stamp ONLY — identical discipline to runtime/bin/odg-verify.js's
+# generatedContractExcludes() — so a hand-authored contract or any real source change is still judged
+# honestly and governance/determinism/auditability stay fully intact.
+GENERATED_CONTRACT_EXCLUDES=()
+while IFS= read -r line; do
+  [ -n "$line" ] && GENERATED_CONTRACT_EXCLUDES+=("$line")
+done < <(node -e '
+  const fs = require("fs");
+  let files = [];
+  try { files = fs.readdirSync("runtime/missions").filter((f) => f.endsWith(".json")).sort(); }
+  catch { process.exit(0); }
+  for (const f of files) {
+    try {
+      const c = JSON.parse(fs.readFileSync("runtime/missions/" + f, "utf8"));
+      if (c && c.generatedBy === "mission-contract-factory") console.log(":(exclude)runtime/missions/" + f);
+    } catch {}
+  }
+')
+if [ "${#GENERATED_CONTRACT_EXCLUDES[@]}" -gt 0 ]; then
+  ARTIFACT_EXCLUDES+=("${GENERATED_CONTRACT_EXCLUDES[@]}")
+fi
 
 echo "======================================"
 echo "ODG LOCAL FALLBACK (modern)"
