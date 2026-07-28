@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "mode": "LOCAL",
+  "resources": [
+    {
+      "id": "anthropic",
+      "kind": "PROVIDER",
+      "type": "anthropic",
+      "enabled": false,
+      "priority": 50,
+      "config": {
+        "apiKeyEnv": "ANTHROPIC_API_KEY",
+        "model": "claude-opus-4-8"
+      }
+    },
+    {
+      "id": "openai",
+      "kind": "PROVIDER",
+      "type": "openai",
+      "enabled": false,
+      "priority": 40,
+      "config": {
+        "apiKeyEnv": "OPENAI_API_KEY",
+        "model": ""
+      }
+    },
+    {
+      "id": "gemini",
+      "kind": "PROVIDER",
+      "type": "gemini",
+      "enabled": false,
+      "priority": 30,
+      "config": {
+        "apiKeyEnv": "GOOGLE_API_KEY",
+        "model": ""
+      }
+    },
+    {
+      "id": "mistral",
+      "kind": "PROVIDER",
+      "type": "mistral",
+      "enabled": false,
+      "priority": 30,
+      "config": {
+        "apiKeyEnv": "MISTRAL_API_KEY",
+        "model": ""
+      }
+    },
+    {
+      "id": "azure-openai",
+      "kind": "PROVIDER",
+      "type": "azure-openai",
+      "enabled": false,
+      "priority": 30,
+      "config": {
+        "apiKeyEnv": "AZURE_OPENAI_API_KEY",
+        "baseUrl": "",
+        "model": ""
+      }
+    },
+    {
+      "id": "ollama",
+      "kind": "LOCAL",
+      "type": "ollama",
+      "enabled": false,
+      "priority": 60,
+      "config": {
+        "baseUrl": "http://localhost:11434",
+        "model": ""
+      }
+    },
+    {
+      "id": "local",
+      "kind": "LOCAL",
+      "type": "local",
+      "enabled": false,
+      "priority": 70,
+      "config": {
+        "command": ""
+      }
+    },
+    {
+      "id": "internal",
+      "kind": "TOOL",
+      "type": "internal",
+      "enabled": false,
+      "priority": 80,
+      "config": {
+        "command": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "enabled": false,
+  "features": {
+    "goalAnalysis": false,
+    "goal": false,
+    "intent": false,
+    "strategy": false,
+    "resourceAllocation": false,
+    "constitution": false
+  },
+  "extensions": [
+    { "name": "goal-oriented-vnext", "version": "GOAL_ORIENTED_PIPELINE_V1", "entry": "src/runtime/vnext/index.ts", "status": "RECOGNIZED_INACTIVE" },
+    { "name": "universal-resource-vnext", "version": "RESOURCE_REGISTRY_V1", "entry": "src/runtime/vnext/index.ts", "status": "RECOGNIZED_INACTIVE" }
+  ]
+}
