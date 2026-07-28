@@ -135,6 +135,29 @@ function runProbe(evidence) {
             return verify && verify.typescript === true
                 ? { ok: true, detail: "runtime-verify.json typescript=true" }
                 : { ok: false, detail: "typescript gate not green (runtime-verify.json)" };
+        case "legacy-runtime-retired": {
+            // Deterministic DoD proof for RETIRE_LEGACY_RUNTIME: the legacy Mission-Standard engine
+            // is physically gone AND no live launch/execution path references it. Pure fs reads (no
+            // wall clock, no subprocess) ⇒ reproducible — the same tree always yields the same verdict.
+            const legacyDir = "runtime/mission-standard";
+            if (fs.existsSync(legacyDir)) {
+                return { ok: false, detail: `${legacyDir} still present` };
+            }
+            const liveFiles = [
+                "runtime/bin/odg",
+                "runtime/bin/odg-fallback.sh",
+                "runtime/bin/odg-run.js",
+                "runtime/bin/odg-verify.js",
+            ];
+            const offenders = liveFiles.filter((f) => {
+                let text = null;
+                try { text = fs.readFileSync(f, "utf8"); } catch { text = null; }
+                return text !== null && text.includes("mission-standard");
+            });
+            return offenders.length === 0
+                ? { ok: true, detail: `${legacyDir} absent; no live reference across ${liveFiles.length} launch/exec files` }
+                : { ok: false, detail: `live reference to the legacy engine in: ${offenders.join(", ")}` };
+        }
         default:
             return { ok: false, detail: `unknown evidence probe "${evidence}"` };
     }

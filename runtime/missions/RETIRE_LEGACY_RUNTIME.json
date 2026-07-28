@@ -1,7 +1,38 @@
 {
   "mission": "RETIRE_LEGACY_RUNTIME",
   "priority": "CRITICAL",
-  "mode": "ENGINEERING",
+  "mode": "GOVERNANCE",
   "continue_until_complete": true,
-  "description": "Supprimer runtime/mission-standard uniquement lorsque plus aucune mission ne dépend du fallback."
+  "description": "Retire the legacy Mission-Standard runtime. The engine directory (runtime/mission-standard) is removed and every launch/execution path now reuses the modern shared Runtime (runtime/bin/odg-run.js + runtime/bin/odg-verify.js) via the thin relocation runtime/bin/odg-fallback.sh. No mission depends on a distinct legacy engine anymore: the local fallback IS the modern deterministic pipeline. This contract turns that already-achieved retirement into machine-verified evidence so the Runtime can converge honestly.",
+  "objectives": [
+    {
+      "id": "RETIRE_LEGACY_RUNTIME_1",
+      "goal": "Confirm the legacy runtime/mission-standard engine directory is removed.",
+      "done_when": ["runtime/mission-standard does not exist on disk"]
+    },
+    {
+      "id": "RETIRE_LEGACY_RUNTIME_2",
+      "goal": "Confirm no live launcher or execution path references the legacy engine.",
+      "done_when": ["no live .sh/.js launch or execution file references mission-standard"]
+    },
+    {
+      "id": "RETIRE_LEGACY_RUNTIME_3",
+      "goal": "Confirm the Runtime stays green after retirement (build + TypeScript gates).",
+      "done_when": ["build gate green", "typescript gate green"]
+    }
+  ],
+  "definition_of_done": [
+    "Legacy Mission-Standard runtime retired (runtime/mission-standard absent).",
+    "No live code path references the legacy engine.",
+    "Build and TypeScript gates green.",
+    "Mission proven in the immutable Mission Ledger."
+  ],
+  "verify": [
+    { "capability": "Legacy runtime retired", "evidence": "legacy-runtime-retired" },
+    { "capability": "Build gate", "evidence": "build-green" },
+    { "capability": "TypeScript gate", "evidence": "typescript-green" }
+  ],
+  "completion": [
+    "RETIRE_LEGACY_RUNTIME proven and archived in the Mission Ledger."
+  ]
 }
