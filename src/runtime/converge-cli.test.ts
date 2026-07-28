@@ -103,7 +103,9 @@ console.log("Convergence Orchestrator — composition + exit-code mapping");
   check(report.status === "PLAN_COMPLETE", "status carried through");
   check(report.provenMissions === 2, "proven-mission count aggregated from ledger");
   check(report.remainingWork === 1, "remaining forward work read from queue");
-  check(report.rootCause.present === true, "root-cause presence aggregated");
+  // CONVERGED xor BLOCKED: a stale root-cause-report.json left on disk by an earlier blocked run
+  // must NOT be surfaced as a live blocker on a PLAN_COMPLETE (converged, no-halt) run.
+  check(report.rootCause.present === false, "converged run suppresses stale root-cause");
   check(report.contracts.ok === true, "contract step recorded");
   check(report.migration === "MIGRATION REPORT — stub", "migration text embedded");
   check(report.generatedAt === "2026-07-27T00:00:00.000Z", "injected timestamp used (deterministic)");
@@ -130,6 +132,8 @@ console.log("Convergence Orchestrator — composition + exit-code mapping");
   const report = JSON.parse([...h.writes].find(([p]) => p.endsWith(".json"))![1]);
   check(report.converged === false, "converged flag false on BLOCKED");
   check(report.halt && report.halt.reason === "BLOCKED", "halt reason captured");
+  // The other direction of the invariant: a non-converged run DOES surface its root cause.
+  check(report.rootCause.present === true, "BLOCKED run surfaces the root cause");
 }
 
 // 4. Any other failure → exit 1.
