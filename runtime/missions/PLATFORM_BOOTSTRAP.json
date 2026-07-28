@@ -1,0 +1,24 @@
+{
+  "mission": "PLATFORM_BOOTSTRAP",
+  "priority": "P0",
+  "mode": "SEQUENTIAL",
+  "description": "Official registration of the PLATFORM_BOOTSTRAP mission in the Runtime mission catalog. Minimal contract so the Mission Loader recognizes the mission and stops replaying the generic pipeline. No source code modification, no patch, no provider (read-only registration).",
+  "objectives": [
+    {
+      "id": "PLATFORM_BOOTSTRAP_REGISTERED",
+      "goal": "Register PLATFORM_BOOTSTRAP as an official mission contract.",
+      "done_when": [
+        "runtime/missions/PLATFORM_BOOTSTRAP.json exists and is a valid mission contract.",
+        "The Mission Loader loads PLATFORM_BOOTSTRAP without the \"no mission contract\" block."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "PLATFORM_BOOTSTRAP is recognized by the Mission Loader.",
+    "No Runtime component, Kernel, or Policy modified (read-only registration)."
+  ],
+  "completion": [
+    "The Mission Loader loads the PLATFORM_BOOTSTRAP contract.",
+    "The Runtime no longer blocks on a missing mission contract for PLATFORM_BOOTSTRAP."
+  ]
+}
