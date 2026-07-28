@@ -27,8 +27,29 @@ verify.typescript=false;
 // certificate, generated JSON, history log) and are git-ignored — so they must never count as "dirty".
 // Any change OUTSIDE them is real source/business work and legitimately makes the tree unclean.
 // This replaces a former `gitClean = true` hard-code that masked the tree state unconditionally.
+// Factory-generated mission contracts (Contract On Demand / DYNAMIC_MISSION_CONTRACT_FACTORY) are
+// Runtime-regenerated bookkeeping: idempotent, stamped `generatedBy: "mission-contract-factory"`, and
+// already certified structurally valid below by the generatedContractsValid gate. Like the evidence
+// files above they must never count as a "dirty" tree — otherwise the factory re-materialises them on
+// EVERY run, churning runtime/missions/, so gitClean can never be true and the Release Manager returns
+// NO_RELEASE for every contract-on-demand mission (the structural contradiction this resolves).
+// Excluded by CONTENT stamp only, so a hand-authored contract or any real source change still makes the
+// tree unclean and is judged honestly.
+function generatedContractExcludes() {
+  const out = [];
+  let files = [];
+  try { files = fs.readdirSync("runtime/missions").filter((f) => f.endsWith(".json")).sort(); }
+  catch { return out; }
+  for (const f of files) {
+    let raw;
+    try { raw = JSON.parse(fs.readFileSync(`runtime/missions/${f}`, "utf8")); } catch { continue; }
+    if (raw && raw.generatedBy === "mission-contract-factory") out.push(`:(exclude)runtime/missions/${f}`);
+  }
+  return out;
+}
 const ARTIFACT_EXCLUDES = [
   ":(exclude)runtime/missions/*.evidence.md",
+  ...generatedContractExcludes(),
 ];
 try {
   const porcelain = cp
