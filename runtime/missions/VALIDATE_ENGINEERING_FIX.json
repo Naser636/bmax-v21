@@ -1,0 +1,84 @@
+{
+  "mission": "VALIDATE_ENGINEERING_FIX",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "authorized_paths": [
+    "runtime/**"
+  ],
+  "description": "Auto-generated contract for roadmap mission VALIDATE_ENGINEERING_FIX (Validate Engineering Fix).",
+  "objectives": [
+    {
+      "id": "VALIDATE_ENGINEERING_FIX_1",
+      "goal": "Validate Engineering Fix",
+      "done_when": [
+        "Objective \"Validate Engineering Fix\" satisfied.",
+        "Validation Engine reports success.",
+        "Authorized patch applied."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective \"Validate Engineering Fix\" satisfied.",
+    "Validation Engine reports success.",
+    "Authorized patch applied."
+  ],
+  "source": "mission-contract-factory",
+  "authorizedPaths": [
+    "runtime/**"
+  ],
+  "status": "AUTHORIZED",
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/**"
+    ],
+    "network": false
+  },
+  "lifecycle": [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED"
+  ],
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST"
+  ],
+  "evidence": [
+    "runtime/generated/mission-plan.json",
+    "runtime/generated/mission-report.json",
+    "runtime/generated/mission-ledger.json"
+  ],
+  "checkpoints": [
+    {
+      "id": "VALIDATE_ENGINEERING_FIX_1__PLANNED",
+      "when": "mission-plan.json generated"
+    },
+    {
+      "id": "VALIDATE_ENGINEERING_FIX_1__VALIDATED",
+      "when": "Validation Engine reports success"
+    },
+    {
+      "id": "VALIDATE_ENGINEERING_FIX_1__RELEASED",
+      "when": "mission ledger entry proven"
+    }
+  ],
+  "ledger": {
+    "mission": "VALIDATE_ENGINEERING_FIX",
+    "capability": "VALIDATE_ENGINEERING_FIX",
+    "status": "PENDING",
+    "proven": false
+  },
+  "generatedBy": "mission-contract-factory"
+}
