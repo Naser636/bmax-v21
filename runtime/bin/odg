@@ -70,6 +70,22 @@ case "$MISSION" in
   freeze)
     ./runtime/bin/odg-freeze.js
     ;;
+  system-ready)
+    # SYSTEM READY orchestrator — Mode Économie Maximale.
+    # Pure orchestration of the EXISTING subcommands (verify → freeze → status). It duplicates no
+    # logic, runs no global audit, and makes no network call: each step is literally the same
+    # `odg <cmd>` a user runs by hand, re-invoked through "$0" so there stays a single source of
+    # truth for every step's behaviour.
+    # Fail-fast: the first step whose exit code is non-zero aborts the chain and that exact code is
+    # returned to the caller; the remaining steps never run. Only when all three succeed is the
+    # single final "SYSTEM READY" report emitted.
+    "$0" verify || exit $?
+    "$0" freeze || exit $?
+    "$0" status || exit $?
+    echo "======================================"
+    echo "SYSTEM READY"
+    echo "======================================"
+    ;;
   *)
     echo "======================================"
     echo "ODG RUNTIME"
@@ -84,6 +100,7 @@ case "$MISSION" in
     echo "  odg status"
     echo "  odg verify"
     echo "  odg freeze"
+    echo "  odg system-ready    (verify -> freeze -> status, fail-fast)"
     exit 1
     ;;
 esac
