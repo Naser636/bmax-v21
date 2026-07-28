@@ -1,0 +1,78 @@
+{
+  "mission": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS",
+  "priority": "NORMAL",
+  "mode": "SEQUENTIAL",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "description": "Auto-generated contract for roadmap mission IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS (Implement Validation Engine Idempotent Success).",
+  "objectives": [
+    {
+      "id": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS_1",
+      "goal": "Implement Validation Engine Idempotent Success",
+      "done_when": [
+        "Objective \"Implement Validation Engine Idempotent Success\" satisfied.",
+        "Validation Engine reports success.",
+        "Read-only evidence produced."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective \"Implement Validation Engine Idempotent Success\" satisfied.",
+    "Validation Engine reports success.",
+    "Read-only evidence produced."
+  ],
+  "source": "mission-contract-factory",
+  "authorizedPaths": [],
+  "status": "AUTHORIZED",
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ],
+  "permissions": {
+    "engineering": false,
+    "authorizedPaths": [],
+    "network": false
+  },
+  "lifecycle": [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED"
+  ],
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST"
+  ],
+  "evidence": [
+    "runtime/generated/mission-plan.json",
+    "runtime/generated/mission-report.json",
+    "runtime/generated/mission-ledger.json"
+  ],
+  "checkpoints": [
+    {
+      "id": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS_1__PLANNED",
+      "when": "mission-plan.json generated"
+    },
+    {
+      "id": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS_1__VALIDATED",
+      "when": "Validation Engine reports success"
+    },
+    {
+      "id": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS_1__RELEASED",
+      "when": "mission ledger entry proven"
+    }
+  ],
+  "ledger": {
+    "mission": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS",
+    "capability": "IMPLEMENT_VALIDATION_ENGINE_IDEMPOTENT_SUCCESS",
+    "status": "PENDING",
+    "proven": false
+  },
+  "generatedBy": "mission-contract-factory"
+}
