@@ -108,6 +108,9 @@ console.assert(missionRequiresProvider({ authorizedPaths: ["src/app/**"] }) === 
 console.assert(missionRequiresProvider({ authorizedPaths: [] }) === false, "no scope ⇒ not required");
 console.assert(missionRequiresProvider({ mode: "AUDIT", authorizedPaths: ["x"] }) === false, "audit ⇒ not required");
 console.assert(missionRequiresProvider({ requiresEngineering: true }) === true, "explicit flag ⇒ required");
+console.assert(missionRequiresProvider({ mode: "ENGINEERING" }) === true, "engineering mode ⇒ required (no paths yet)");
+console.assert(missionRequiresProvider({ mode: "IMPLEMENT" }) === true, "implement mode ⇒ required (no paths yet)");
+console.assert(missionRequiresProvider({ mode: "SEQUENTIAL" }) === false, "plain local mode ⇒ stays local");
 
 // --- deterministic prompt (contract §3) -------------------------------------
 

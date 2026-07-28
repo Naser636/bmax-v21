@@ -253,15 +253,24 @@ export interface RoutableMission {
 
 const READ_ONLY_MODES = new Set(["AUDIT", "READ_ONLY", "REPORT", "STATUS", "SELF_AUDIT"]);
 
+// Modes whose contract IS a code-authoring (engineering) mission. An explicit engineering mode is a
+// first-class provider signal — symmetric to READ_ONLY_MODES — so a mission that DECLARES itself
+// engineering requires the provider even when its contract has not (yet) enumerated authorized_paths.
+// Escalation to the provider stays gated LOCAL_FIRST downstream (AutonomyRuntimeAdapter.runPipeline),
+// so this never forces a paid call for a mission the Runtime can already complete locally.
+const ENGINEERING_MODES = new Set(["ENGINEERING", "IMPLEMENT", "FIX", "REPAIR", "REFACTOR"]);
+
 /**
  * ODG-owned predicate: call an engineering provider ONLY when the mission genuinely needs code
- * work (contract §1). Read-only / audit missions, and missions with no write scope and no explicit
- * engineering flag, return false — so ODG never pays for an unnecessary call (cost minimization).
+ * work (contract §1). Read-only / audit missions, and missions with no write scope, no explicit
+ * engineering flag and no engineering mode, return false — so ODG never pays for an unnecessary
+ * call (cost minimization).
  */
 export function missionRequiresProvider(mission: RoutableMission): boolean {
   if (mission.requiresEngineering === true) return true;
   const mode = (mission.mode ?? "").toUpperCase();
   if (READ_ONLY_MODES.has(mode)) return false;
+  if (ENGINEERING_MODES.has(mode)) return true;
   return Array.isArray(mission.authorizedPaths) && mission.authorizedPaths.length > 0;
 }
 
