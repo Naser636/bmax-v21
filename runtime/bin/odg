@@ -45,6 +45,13 @@ case "$MISSION" in
     ./runtime/bin/odg-state.js >/dev/null || true
     exit "$rc"
     ;;
+  delegate)
+    # ODG Delegate Provider — ODG supervises Claude Code. Loads ONLY the target mission's contract,
+    # emits a file-scoped Delegation Brief (Claude Code never sees the whole repo), then reuses the
+    # existing verify → converge → Mission Ledger archive pipeline around the received patch.
+    shift
+    ./runtime/bin/odg-delegate.js "$@"
+    ;;
   converge)
     # Convergence Orchestrator: one command drives the Runtime to convergence and emits a
     # campaign-level convergence report. Reuses the SAME state refresh discipline as `autonomy`
@@ -94,6 +101,7 @@ case "$MISSION" in
     echo "  odg                 (health dashboard)"
     echo "  odg health"
     echo "  odg mission <NAME>"
+    echo "  odg delegate <NAME> [--prepare-only]  (supervise Claude Code with a file-scoped brief)"
     echo "  odg generate-contracts [--dry-run]"
     echo "  odg autonomy"
     echo "  odg converge        (drive to convergence + report)"

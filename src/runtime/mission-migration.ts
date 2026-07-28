@@ -44,7 +44,35 @@ export interface MigrationReport {
   runtime: "src/runtime";
   migrated: string[];
   remaining: string[];
+  /**
+   * Discovered artifacts that are NOT executable missions — master plans and *.pack evidence packs
+   * whose contract declares no objectives. The Mission Loader STOPs on them by design ("declares no
+   * objectives"); they are governance artifacts, not missions to migrate, so they are reported
+   * separately and never counted in `remaining`.
+   */
+  nonExecutable: string[];
   total: number;
+}
+
+/**
+ * True when a discovered artifact is a *real executable mission* — i.e. its contract declares at
+ * least one objective. This mirrors the Mission Loader's own objectives gate exactly
+ * (objectives.length === 0 → STOP "declares no objectives"), so the migration report classifies an
+ * artifact as executable if and only if the Loader would actually run it. Read-only and tolerant:
+ * a missing or malformed contract is treated as non-executable.
+ */
+export function isExecutableMission(
+  mission: string,
+  dir = path.join("runtime", "missions"),
+): boolean {
+  try {
+    const spec = JSON.parse(fs.readFileSync(path.join(dir, `${mission}.json`), "utf8")) as {
+      objectives?: unknown;
+    };
+    return Array.isArray(spec.objectives) && spec.objectives.length > 0;
+  } catch {
+    return false;
+  }
 }
 
 /** Best-effort, read-only discovery of every mission id declared under runtime/missions. */
@@ -99,17 +127,25 @@ export function provenMissions(
 export function buildMigrationReport(
   missions = discoverMissions(),
   proven = provenMissions(),
+  dir = path.join("runtime", "missions"),
 ): MigrationReport {
-  const known = new Set(missions);
   const provenSet = new Set(proven);
   const isMigrated = (m: string): boolean => isMigratedMission(m) || provenSet.has(m);
-  const migrated = [...new Set([...MIGRATED_MISSIONS, ...proven, ...missions.filter(isMigrated)])].sort();
-  const remaining = missions.filter((m) => !isMigrated(m)).sort();
+  // Only real executable missions (contracts that declare objectives) can be "remaining to migrate".
+  // Non-executable artifacts (master plans, *.pack evidence packs) declare none — the Mission Loader
+  // STOPs on them by design — so they are reported separately and never inflate the Remaining count.
+  const executable = new Set(missions.filter((m) => isExecutableMission(m, dir)));
+  const nonExecutable = missions.filter((m) => !executable.has(m)).sort();
+  const migrated = [
+    ...new Set([...MIGRATED_MISSIONS, ...proven, ...[...executable].filter(isMigrated)]),
+  ].sort();
+  const remaining = [...executable].filter((m) => !isMigrated(m)).sort();
   return {
     runtime: "src/runtime",
     migrated,
     remaining,
-    total: known.size,
+    nonExecutable,
+    total: new Set(missions).size,
   };
 }
 
@@ -120,5 +156,6 @@ export function renderMigrationReport(report: MigrationReport = buildMigrationRe
     `Runtime         : ${report.runtime}`,
     `Migrated  (${report.migrated.length})   : ${report.migrated.join(", ") || "(none)"}`,
     `Remaining (${report.remaining.length})   : ${report.remaining.join(", ") || "(none)"}`,
+    `Non-exec  (${report.nonExecutable.length})   : ${report.nonExecutable.join(", ") || "(none)"}`,
   ].join("\n");
 }
