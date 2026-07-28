@@ -80,6 +80,46 @@ function readJson(file) {
     }
 }
 
+// Mission modes/verbs that DECLARE a mission as code-authoring (engineering). Mirrors the runtime's
+// established engineering-mode vocabulary (src/providers/provider-port.ts ENGINEERING_MODES) so the
+// factory classifies a synthesized mission the SAME way the provider router does — no second source
+// of truth. Word-boundary matched (case-insensitive) against the mission id/title/goal/description.
+const ENGINEERING_INTENT = [
+    "ENGINEERING", "IMPLEMENT", "FIX", "REPAIR", "REFACTOR",
+    "BUILD", "CREATE", "GENERATE", "MIGRATE", "ENABLE", "EVOLVE", "SCAFFOLD", "INTEGRATE",
+];
+const ENGINEERING_INTENT_RE = new RegExp(`\\b(${ENGINEERING_INTENT.join("|")})\\b`, "i");
+
+function entryText(entry) {
+    return [entry.id, entry.title, entry.goal, entry.description]
+        .filter((s) => typeof s === "string")
+        .join(" ");
+}
+
+/*
+ * Resolve whether a mission AUTHORIZES CODE GENERATION (engineering). Precedence, strongest first:
+ *   1. an explicit engineering flag (requiresEngineering / requires_engineering) — true OR false wins,
+ *      so a mission can always force read-only regardless of its title;
+ *   2. explicitly declared authorized_paths (non-empty ⇒ engineering);
+ *   3. an explicit engineering mode (ENGINEERING / IMPLEMENT / FIX / REPAIR / REFACTOR);
+ *   4. an engineering intent inferred from the mission id/title/goal/description text.
+ *
+ * (4) is what fixes the "always resolved as read-only/local" blocker for CONTRACT ON DEMAND missions
+ * synthesized from an id alone (generateForMission): they carry no explicit flag, so previously they
+ * ALWAYS fell through to engineering=false. Their own contract text is the signal that they authorize
+ * code generation. Pure/deterministic — a function of `entry` only.
+ */
+function resolveEngineering(entry) {
+    if (entry.requiresEngineering === true || entry.requires_engineering === true) return true;
+    if (entry.requiresEngineering === false || entry.requires_engineering === false) return false;
+    const explicitPaths = Array.isArray(entry.authorized_paths)
+        ? entry.authorized_paths
+        : Array.isArray(entry.authorizedPaths) ? entry.authorizedPaths : null;
+    if (explicitPaths && explicitPaths.length > 0) return true;
+    if (ENGINEERING_INTENT.includes(String(entry.mode || "").toUpperCase())) return true;
+    return ENGINEERING_INTENT_RE.test(entryText(entry));
+}
+
 /*
  * Is Contract On Demand authorized? The two capabilities this factory delivers
  * (DYNAMIC_MISSION_CONTRACT_FACTORY / AUTONOMOUS_CONTRACT_EVOLUTION) are governed like every other
@@ -142,7 +182,7 @@ function isContractMissing(root, entry) {
  * Pure: a deterministic function of `entry` only.
  */
 function buildContract(entry) {
-    const engineering = entry.requiresEngineering === true || entry.requires_engineering === true;
+    const engineering = resolveEngineering(entry);
 
     // Honour explicit authorized paths from the roadmap entry; otherwise use a safe runtime-scoped
     // default when the mission is engineering, or none for a read-only mission.
