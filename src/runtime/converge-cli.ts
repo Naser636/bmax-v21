@@ -128,11 +128,19 @@ function buildReport(
   const rootCause = seams.readJson("root-cause-report.json");
   const queue = seams.readJson("runtime-mission-queue.json");
 
+  // A root cause is a LIVE blocking signal only when the campaign did NOT converge (BLOCKED / halt /
+  // non-terminal). When the run reached PLAN_COMPLETE there is nothing blocking, so a
+  // root-cause-report.json left on disk by an EARLIER blocked run (generated/ is git-ignored, so it
+  // persists) must NOT be surfaced as a live NO_RELEASE blocker — that would make a CONVERGED report
+  // also assert a blocker, the exact incoherent state the runtime must never end in (CONVERGED xor
+  // BLOCKED). We therefore gate the root cause on the honest convergence verdict.
+  const converged = result.status === "PLAN_COMPLETE" && result.halt == null;
+
   return {
     report: "RUNTIME_CONVERGENCE",
     generatedAt: seams.now(),
     autonomyContractVersion: result.autonomyContractVersion,
-    converged: result.status === "PLAN_COMPLETE",
+    converged,
     status: result.status,
     planComplete: result.planComplete,
     cycles: result.cycles,
@@ -145,9 +153,10 @@ function buildReport(
     provenMissions: countProven(ledger),
     remainingWork: queueDepth(queue),
     checkpoint: checkpoint ?? null,
-    rootCause: rootCause
-      ? { present: true, summary: (rootCause as { summary?: unknown }).summary ?? null }
-      : { present: false },
+    rootCause:
+      !converged && rootCause
+        ? { present: true, summary: (rootCause as { summary?: unknown }).summary ?? null }
+        : { present: false },
   };
 }
 
