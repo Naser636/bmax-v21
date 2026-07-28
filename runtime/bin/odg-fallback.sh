@@ -23,9 +23,7 @@ BRANCH=$(git branch --show-current)
 # Runtime-owned artifact paths (git-ignored, regenerated every run). Identical set
 # to the legacy engine so the pre-flight and post-run governance checks agree on
 # exactly which paths are Runtime outputs; any change OUTSIDE them is real work.
-ARTIFACT_EXCLUDES=(
-  ':(exclude)runtime/missions/*.evidence.md'
-)
+#
 # The engine's own [4/5] outputs (passport/report/certificate/history/generated JSON) are written
 # under runtime/generated/ (git-ignored), so git never reports them and they need no pathspec
 # exclusion here — only the Provider-emitted mission evidence needs registering.
@@ -39,24 +37,38 @@ ARTIFACT_EXCLUDES=(
 # Excluded by CONTENT stamp ONLY — identical discipline to runtime/bin/odg-verify.js's
 # generatedContractExcludes() — so a hand-authored contract or any real source change is still judged
 # honestly and governance/determinism/auditability stay fully intact.
-GENERATED_CONTRACT_EXCLUDES=()
-while IFS= read -r line; do
-  [ -n "$line" ] && GENERATED_CONTRACT_EXCLUDES+=("$line")
-done < <(node -e '
-  const fs = require("fs");
-  let files = [];
-  try { files = fs.readdirSync("runtime/missions").filter((f) => f.endsWith(".json")).sort(); }
-  catch { process.exit(0); }
-  for (const f of files) {
-    try {
-      const c = JSON.parse(fs.readFileSync("runtime/missions/" + f, "utf8"));
-      if (c && c.generatedBy === "mission-contract-factory") console.log(":(exclude)runtime/missions/" + f);
-    } catch {}
-  }
-')
-if [ "${#GENERATED_CONTRACT_EXCLUDES[@]}" -gt 0 ]; then
-  ARTIFACT_EXCLUDES+=("${GENERATED_CONTRACT_EXCLUDES[@]}")
-fi
+#
+# ROOT CAUSE FIX: this exclude set is (re)computed from the CURRENT tree, never snapshotted once at
+# startup. The Mission Loader synthesises runtime/missions/<MISSION>.json ON DEMAND *during* the
+# pipeline run (node runtime/bin/odg-run.js), i.e. AFTER the pre-flight was taken — so a snapshot
+# built before the run would miss that just-generated, factory-stamped contract and the [5/5]
+# governance gate would flag the Runtime's own expected artifact as an unexpected change. Recomputing
+# immediately before each check keeps every run's synthesized contract recognised, while any file that
+# is NOT a factory-stamped contract still counts as real work.
+compute_artifact_excludes() {
+  # Closing paren stays at column 0 so the single-source-of-truth exclusion set is parseable straight
+  # out of this script (src/tests/mse-governance-gate.test.ts couples to it verbatim).
+  ARTIFACT_EXCLUDES=(
+    ':(exclude)runtime/missions/*.evidence.md'
+)
+  local line
+  while IFS= read -r line; do
+    [ -n "$line" ] && ARTIFACT_EXCLUDES+=("$line")
+  done < <(node -e '
+    const fs = require("fs");
+    let files = [];
+    try { files = fs.readdirSync("runtime/missions").filter((f) => f.endsWith(".json")).sort(); }
+    catch { process.exit(0); }
+    for (const f of files) {
+      try {
+        const c = JSON.parse(fs.readFileSync("runtime/missions/" + f, "utf8"));
+        if (c && c.generatedBy === "mission-contract-factory") console.log(":(exclude)runtime/missions/" + f);
+      } catch {}
+    }
+  ')
+}
+
+compute_artifact_excludes
 
 echo "======================================"
 echo "ODG LOCAL FALLBACK (modern)"
@@ -150,6 +162,11 @@ cat > "runtime/generated/mission-artifacts/generated/${MISSION}.json" <<JSON
 JSON
 
 echo "[5/5] GOVERNANCE"
+
+# Recompute the exclude set from the tree AS IT IS NOW: the pipeline may have synthesized this
+# mission's factory-stamped contract on demand (see compute_artifact_excludes above). Any file that
+# is not such a Runtime artifact still surfaces as an unexpected change below.
+compute_artifact_excludes
 
 UNEXPECTED_CHANGES=$(git status --porcelain -- "${ARTIFACT_EXCLUDES[@]}")
 
