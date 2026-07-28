@@ -1,0 +1,78 @@
+{
+  "mission": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE",
+  "priority": "NORMAL",
+  "mode": "SEQUENTIAL",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "description": "Auto-generated contract for roadmap mission FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE (Fix Validation Engine Idempotent Evidence).",
+  "objectives": [
+    {
+      "id": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE_1",
+      "goal": "Fix Validation Engine Idempotent Evidence",
+      "done_when": [
+        "Objective \"Fix Validation Engine Idempotent Evidence\" satisfied.",
+        "Validation Engine reports success.",
+        "Read-only evidence produced."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Objective \"Fix Validation Engine Idempotent Evidence\" satisfied.",
+    "Validation Engine reports success.",
+    "Read-only evidence produced."
+  ],
+  "source": "mission-contract-factory",
+  "authorizedPaths": [],
+  "status": "AUTHORIZED",
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ],
+  "permissions": {
+    "engineering": false,
+    "authorizedPaths": [],
+    "network": false
+  },
+  "lifecycle": [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED"
+  ],
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST"
+  ],
+  "evidence": [
+    "runtime/generated/mission-plan.json",
+    "runtime/generated/mission-report.json",
+    "runtime/generated/mission-ledger.json"
+  ],
+  "checkpoints": [
+    {
+      "id": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE_1__PLANNED",
+      "when": "mission-plan.json generated"
+    },
+    {
+      "id": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE_1__VALIDATED",
+      "when": "Validation Engine reports success"
+    },
+    {
+      "id": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE_1__RELEASED",
+      "when": "mission ledger entry proven"
+    }
+  ],
+  "ledger": {
+    "mission": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE",
+    "capability": "FIX_VALIDATION_ENGINE_IDEMPOTENT_EVIDENCE",
+    "status": "PENDING",
+    "proven": false
+  },
+  "generatedBy": "mission-contract-factory"
+}
