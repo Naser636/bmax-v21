@@ -174,6 +174,42 @@ const cfg = { autonomyContractVersion: AUTONOMY_CONTRACT_VERSION };
   );
 }
 
+// --- 4) PROVEN-COLLISION (root cause) ------------------------------------------------------------
+// The production defect: an AUTHORIZED corrective mission whose NAME already has a proven entry in
+// the immutable ledger was silently dropped by selection (it counted as "completed"), so the loop
+// halted PLAN_COMPLETE / Cycles=0 even though authorized work was queued — while `odg delegate`,
+// which runs a named mission unconditionally, reached RELEASED. A standing authorization must still
+// run. This fixture marks the authorized corrective mission proven in the ledger, then proves it is
+// still selectable and still executed by the loop.
+{
+  const ws2 = makeWorkspace();
+  fs.writeFileSync(
+    path.join(ws2, "runtime", "generated", "mission-ledger.json"),
+    JSON.stringify({ entries: [{ mission: AUTHORIZED, proven: true }] }),
+  );
+
+  const plan = new AutonomyRuntimeAdapter(ws2).readPlanState();
+  check(
+    !plan.completedMissions.includes(AUTHORIZED),
+    "PROVEN-COLLISION: an authorized corrective mission is NOT masked by a prior proven ledger entry",
+  );
+  check(
+    plan.masterPlanObjectives[0] === AUTHORIZED,
+    "PROVEN-COLLISION: the (proven-named) authorized corrective mission is still prepended",
+  );
+
+  const result = new RuntimeAutonomy().run(cfg, new AutonomyRuntimeAdapter(ws2));
+  check(
+    result.cycles >= 1 && result.completed[0]?.mission === AUTHORIZED,
+    "PROVEN-COLLISION: the loop runs a cycle and releases the authorized corrective mission FIRST",
+  );
+  check(
+    result.status === "PLAN_COMPLETE",
+    "PROVEN-COLLISION: the loop still terminates cleanly (no infinite re-selection)",
+  );
+  fs.rmSync(ws2, { recursive: true, force: true });
+}
+
 fs.rmSync(ws, { recursive: true, force: true });
 
 if (failures > 0) {

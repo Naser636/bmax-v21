@@ -200,10 +200,6 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
           .filter((m): m is string => typeof m === "string")
       : [];
 
-    const completedMissions = Array.from(
-      new Set([...ledgerMissions, ...this.archivedThisSession]),
-    );
-
     // Fold the AUTHORIZED corrective-mission queue into the work-list AHEAD of roadmap progress:
     // a self-proposed repair, once authorized, is executed before the Runtime advances the roadmap.
     // The frozen selectNextMission is untouched — it still returns "the first work-list entry that is
@@ -213,6 +209,24 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // keeps a corrective id both a candidate (masterPlanObjectives) and "missing" (missingCapabilities)
     // so the selector nominates it exactly as it does a roadmap mission.
     const corrective = this.readCorrectiveQueue().authorized;
+
+    const completedSet = new Set([...ledgerMissions, ...this.archivedThisSession]);
+    // ROOT CAUSE (odg autonomy terminated PLAN_COMPLETE / Cycles=0 while `odg delegate` reached
+    // RELEASED): an AUTHORIZED corrective mission is an EXPLICIT, governance-approved instruction to
+    // run NOW — precisely what `odg delegate <NAME>` honours unconditionally. A prior proven ledger
+    // entry for the SAME name must therefore NOT mask it: otherwise the frozen selectNextMission drops
+    // it (its `missing ∧ !completed` test fails because the name is in completedMissions), so the loop
+    // selects nothing and halts with zero cycles even though authorized work is queued. The ONLY thing
+    // that marks a corrective mission done for selection is a release THIS session (archivedThisSession)
+    // — which is what terminates the loop after it runs (and the core's processed/STALLED guard still
+    // backs that up), so this cannot re-select forever. Governance retires the standing authorization
+    // by removing its pending record. The frozen selectNextMission FUNCTION is untouched; only its
+    // `completedMissions` INPUT is corrected.
+    for (const id of corrective) {
+      if (!this.archivedThisSession.has(id)) completedSet.delete(id);
+    }
+    const completedMissions = Array.from(completedSet);
+
     if (corrective.length > 0) {
       masterPlanObjectives = Array.from(new Set([...corrective, ...masterPlanObjectives]));
       missingCapabilities = Array.from(new Set([...corrective, ...missingCapabilities]));
