@@ -255,7 +255,7 @@ export function activateAndExecute(mission: ActivationMission, opts: ActivationO
       providerExecuted: run.outcome ? run.outcome.providerExecuted : false,
       classification: run.outcome ? run.outcome.classification : (run.report.canContinue ? "READY" : "BLOCKED"),
       response: res ? { status: res.status, objectivesAddressed: res.objectivesAddressed, changedFiles: res.changedFiles, notes: res.notes ?? null } : null,
-      blocker: run.outcome ? run.outcome.result.blocker : (run.report.canContinue ? null : run.report.haltNextAction),
+      blocker: run.outcome ? (res ? res.blocker : null) : (run.report.canContinue ? null : run.report.haltNextAction),
     },
     failover: {
       selectedProvider: run.report.selectedProvider,
