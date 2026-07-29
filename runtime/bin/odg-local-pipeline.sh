@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Modern local-mission fallback (RETIRE_LEGACY_RUNTIME rewiring).
+# Local-mission execution route of the ONE Runtime (single-entrypoint consolidation).
 #
-# This is the exact relocation of the now-retired legacy Mission-Standard engine
-# into the modern Runtime bin. It contains NO
-# execution logic of its own: it reuses the SAME shared, already-modern
-# components the legacy engine reused — runtime/bin/odg-verify.js (verification)
+# This is NOT a fallback to a second engine — the legacy engine is gone and there is
+# a single execution pipeline. It contains NO
+# execution logic of its own: it reuses the SAME shared components the rest of the
+# Runtime uses — runtime/bin/odg-verify.js (verification)
 # and runtime/bin/odg-run.js (the real staged pipeline). The gates it applies
 # (build/tsc pre-flight, dirty-tree pre/post governance, report validated+SUCCESS)
 # are LOAD-BEARING: the pipeline's Patch Executor runs BEFORE the Validation

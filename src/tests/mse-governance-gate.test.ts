@@ -10,7 +10,7 @@
  *
  * The fix registers runtime/missions/*.evidence.md as a Runtime-owned artifact in the SAME
  * single-source-of-truth exclusion set the gate already uses. This test parses ARTIFACT_EXCLUDES
- * straight out of runtime/bin/odg-fallback.sh (so it stays coupled to the real script) and
+ * straight out of runtime/bin/odg-local-pipeline.sh (so it stays coupled to the real script) and
  * runs the exact governance pathspec against a throwaway git repo, asserting:
  *   1. an untracked <MISSION>.evidence.md is IGNORED (the mission chains, no false STOP);
  *   2. a stray source edit is STILL reported (the gate has not gone blind);
@@ -29,7 +29,7 @@ function check(cond: boolean, label: string): void {
 }
 
 // --- Parse the real exclusion set out of the mse script -----------------------------------------
-const mseSource = fs.readFileSync("runtime/bin/odg-fallback.sh", "utf8");
+const mseSource = fs.readFileSync("runtime/bin/odg-local-pipeline.sh", "utf8");
 // Match to the closing paren at the start of a line — entries contain `:(exclude)` whose own
 // `)` would otherwise end a naive non-greedy match early.
 const arrayBlock = mseSource.match(/ARTIFACT_EXCLUDES=\(([\s\S]*?)\n\)/);

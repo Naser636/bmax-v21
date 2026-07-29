@@ -16,22 +16,13 @@ case "$MISSION" in
     ;;
   mission)
     shift
-    # Engineering missions (missionRequiresProvider === true) are driven through the EXISTING
-    # RuntimeAutonomy + AutonomyRuntimeAdapter so the execute stage routes to the Claude Provider
-    # Adapter. The single-mission driver decides: it exits 3 for any local / deterministic mission
-    # (or one it can't route), and only then do we run the modern local fallback
-    # (runtime/bin/odg-fallback.sh) — the exact relocation of the retired Mission-Standard engine,
-    # proven byte-for-byte behaviour-equivalent — so local missions keep their existing behaviour.
-    if node_modules/.bin/tsx src/runtime/mission-cli.ts "$@"; then
-      exit 0
-    else
-      rc=$?
-      if [ "$rc" -eq 3 ]; then
-        ./runtime/bin/odg-fallback.sh "$@"
-      else
-        exit "$rc"
-      fi
-    fi
+    # Single entrypoint: mission-cli.ts is THE unified mission driver. It plans every mission, then
+    # routes it to exactly one execution path of the ONE Runtime — migrated-local (in src/runtime),
+    # provider (RuntimeAutonomy → Claude Provider Adapter for engineering missions), or the local
+    # execution pipeline (runtime/bin/odg-local-pipeline.sh → odg-verify + odg-run). It always drives
+    # the mission to a terminal outcome and returns its real exit code; there is no FALLBACK protocol
+    # and no second engine to dispatch to.
+    exec node_modules/.bin/tsx src/runtime/mission-cli.ts "$@"
     ;;
   autonomy)
     # Mission Contract Factory: materialise any roadmap mission that has no contract yet BEFORE the

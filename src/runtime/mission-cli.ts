@@ -8,10 +8,11 @@
  *      EXISTING RuntimeAutonomy + AutonomyRuntimeAdapter so the execute stage reaches the Claude
  *      Provider Adapter. Unchanged from before; scoped to ONE mission via SingleMissionAdapter.
  *   2. LOCAL     — a migrated mission (mission-migration.ts) is executed entirely inside
- *      src/runtime via MissionOrchestrator → RuntimeExecutor. It no longer exits FALLBACK_TO_MSE
- *      (OBJ-002).
- *   3. FALLBACK  — any mission not yet migrated keeps the existing Mission-Standard engine (`mse`)
- *      exactly as before, signalled by exiting FALLBACK_TO_MSE (OBJ-003).
+ *      src/runtime via MissionOrchestrator → RuntimeExecutor (OBJ-002).
+ *   3. LOCAL PIPELINE — any other deterministic mission is driven through the ONE Runtime's local
+ *      execution pipeline (runtime/bin/odg-local-pipeline.sh → odg-verify + odg-run). This is a
+ *      first-class route, NOT a fallback to a second engine: mission-cli drives it directly and
+ *      returns its real terminal exit code, so there is a single entrypoint and no FALLBACK protocol.
  *
  * The set of migrated missions and the migration report (OBJ-004) live in mission-migration.ts.
  * No foundation, contract, governance, provider or engine file is modified here.
@@ -19,6 +20,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 
 import { RuntimeAutonomy } from "@/core/runtime-autonomy";
 import {
@@ -43,9 +45,6 @@ import { runConverge } from "./converge-cli";
 function isConvergenceMission(mission: string, spec: RawMission | null): boolean {
   return mission === "RUNTIME_FULL_AUTONOMY_EXECUTION" || spec?.mode === "convergence";
 }
-
-/** Exit code telling the `odg` launcher to fall back to the existing Mission-Standard engine. */
-const FALLBACK_TO_MSE = 3;
 
 /** Raw shape of an existing runtime/missions/*.json file (read-only; no new format introduced). */
 interface RawMission {
@@ -181,6 +180,25 @@ function runLocalRoute(mission: string): number {
   return 0;
 }
 
+/**
+ * Local-pipeline route (single-entrypoint consolidation): a deterministic local mission is a
+ * first-class route of the ONE Runtime. mission-cli drives the local execution pipeline directly
+ * (runtime/bin/odg-local-pipeline.sh → odg-verify pre-flight + odg-run staged pipeline + governance
+ * gates) and returns its real terminal exit code. There is no second engine and no FALLBACK exit
+ * protocol for the launcher to dispatch.
+ */
+function runLocalPipelineRoute(mission: string): number {
+  console.log("Decision   : local deterministic mission → LOCAL PIPELINE (one Runtime)");
+  console.log("Route      : odg-local-pipeline.sh → odg-verify + odg-run");
+  console.log("======================================");
+  const r = spawnSync(
+    "bash",
+    [path.join("runtime", "bin", "odg-local-pipeline.sh"), mission],
+    { stdio: "inherit" },
+  );
+  return r.status ?? 1;
+}
+
 function main(): number {
   const mission = process.argv[2];
   if (!mission) {
@@ -238,10 +256,9 @@ function main(): number {
     return runProviderRoute(mission);
   }
 
-  // OBJ-003: everything not yet migrated keeps the Mission-Standard fallback.
-  console.log("Decision   : not migrated → FALLBACK_TO_MSE");
-  console.log("======================================");
-  return FALLBACK_TO_MSE;
+  // Single-entrypoint consolidation: every other deterministic mission is driven through the one
+  // Runtime's local execution pipeline directly — no fallback exit code, no second engine.
+  return runLocalPipelineRoute(mission);
 }
 
 process.exit(main());

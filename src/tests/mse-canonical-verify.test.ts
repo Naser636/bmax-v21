@@ -22,7 +22,7 @@ function check(cond: boolean, label: string): void {
   else { failures++; console.error(`  FAIL  ${label}`); }
 }
 
-const mse = fs.readFileSync("runtime/bin/odg-fallback.sh", "utf8");
+const mse = fs.readFileSync("runtime/bin/odg-local-pipeline.sh", "utf8");
 const verifier = fs.readFileSync("runtime/bin/odg-verify.js", "utf8");
 
 // 1. The pre-flight delegates to the canonical verifier.

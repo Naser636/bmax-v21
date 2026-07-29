@@ -6,7 +6,7 @@
  * `{status:"OK"}` with no `validated` field, or a BLOCKED / unproven report) as sufficient evidence,
  * so a mission could reach RELEASE without the Validation Engine's proof — a false MISSION SUCCESS.
  *
- * The local fallback pipeline (runtime/bin/odg-fallback.sh, step [4/5]) writes a SUCCESS artifact ONLY when
+ * The local execution pipeline (runtime/bin/odg-local-pipeline.sh, step [4/5]) writes a SUCCESS artifact ONLY when
  * the report is mission-scoped AND `validated === true` AND `status === "SUCCESS"`. The adapter must
  * now enforce EXACTLY that same canonical verdict on the Provider path.
  *

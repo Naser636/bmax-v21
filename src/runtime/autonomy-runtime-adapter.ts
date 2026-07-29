@@ -965,7 +965,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   /**
    * Read runtime/generated/mission-report.json ONLY when it satisfies the SAME canonical verdict the
    * local fallback pipeline enforces before it writes a SUCCESS artifact
-   * (runtime/bin/odg-fallback.sh, step [4/5] GENERATE): the report must be mission-scoped AND
+   * (runtime/bin/odg-local-pipeline.sh, step [4/5] GENERATE): the report must be mission-scoped AND
    * carry the Validation Engine's proof — `validated === true` AND `status === "SUCCESS"`.
    *
    * This reuses the Validation Engine's own verdict — the `validated`/`status` fields are written by

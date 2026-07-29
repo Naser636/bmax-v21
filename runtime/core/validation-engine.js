@@ -145,7 +145,7 @@ function runProbe(evidence) {
             }
             const liveFiles = [
                 "runtime/bin/odg",
-                "runtime/bin/odg-fallback.sh",
+                "runtime/bin/odg-local-pipeline.sh",
                 "runtime/bin/odg-run.js",
                 "runtime/bin/odg-verify.js",
             ];
@@ -157,6 +157,41 @@ function runProbe(evidence) {
             return offenders.length === 0
                 ? { ok: true, detail: `${legacyDir} absent; no live reference across ${liveFiles.length} launch/exec files` }
                 : { ok: false, detail: `live reference to the legacy engine in: ${offenders.join(", ")}` };
+        }
+        case "samurai-output-mode": {
+            // Deterministic DoD proof for the Samurai / summary output mode: the pipeline driver
+            // prints a compact one-line-per-stage summary BY DEFAULT and tees the full transcript to
+            // a run-log artifact, gated on ODG_VERBOSE for the historical live stream. Pure fs reads.
+            let src = null;
+            try { src = fs.readFileSync("runtime/bin/odg-run.js", "utf8"); } catch { src = null; }
+            if (src === null) return { ok: false, detail: "runtime/bin/odg-run.js not found" };
+            const missing = [];
+            if (!/process\.env\.ODG_VERBOSE/.test(src)) missing.push("ODG_VERBOSE gate");
+            if (!/runtime\/generated\/logs/.test(src) || !/appendFileSync\(\s*RUN_LOG/.test(src)) missing.push("run-log tee");
+            if (!/encoding:\s*["']utf8["']/.test(src)) missing.push("captured stage output");
+            return missing.length === 0
+                ? { ok: true, detail: "odg-run.js: default summary + run-log artifact, ODG_VERBOSE-gated live stream" }
+                : { ok: false, detail: `samurai output mode incomplete: missing ${missing.join(", ")}` };
+        }
+        case "single-runtime-entrypoint": {
+            // Deterministic DoD proof for the single-entrypoint consolidation: the FALLBACK_TO_MSE
+            // exit protocol and the "fallback engine" script are gone, mission-cli.ts is the one
+            // mission driver, and the local execution route is a first-class pipeline. Pure fs reads.
+            const offenders = [];
+            let cli = null;
+            try { cli = fs.readFileSync("src/runtime/mission-cli.ts", "utf8"); } catch { cli = null; }
+            if (cli === null) return { ok: false, detail: "src/runtime/mission-cli.ts not found" };
+            if (cli.includes("FALLBACK_TO_MSE")) offenders.push("mission-cli.ts still references FALLBACK_TO_MSE");
+            if (fs.existsSync("runtime/bin/odg-fallback.sh")) offenders.push("legacy odg-fallback.sh still present");
+            if (!fs.existsSync("runtime/bin/odg-local-pipeline.sh")) offenders.push("odg-local-pipeline.sh missing");
+            let launcher = null;
+            try { launcher = fs.readFileSync("runtime/bin/odg", "utf8"); } catch { launcher = null; }
+            if (launcher === null || !/exec\s+node_modules\/\.bin\/tsx\s+src\/runtime\/mission-cli\.ts/.test(launcher)) {
+                offenders.push("odg launcher does not exec the single mission-cli entrypoint");
+            }
+            return offenders.length === 0
+                ? { ok: true, detail: "single entrypoint: FALLBACK_TO_MSE removed, one mission driver, local pipeline first-class" }
+                : { ok: false, detail: offenders.join("; ") };
         }
         default:
             return { ok: false, detail: `unknown evidence probe "${evidence}"` };

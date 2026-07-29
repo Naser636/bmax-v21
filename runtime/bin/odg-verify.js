@@ -22,7 +22,7 @@ verify.typescript=false;
 }
 
 // gitClean — HONEST working-tree check, scoped to the SAME Runtime-owned artifact paths the
-// local fallback engine excludes from its governance gate (runtime/bin/odg-fallback.sh).
+// local execution pipeline excludes from its governance gate (runtime/bin/odg-local-pipeline.sh).
 // Those directories hold per-mission evidence the Runtime regenerates on EVERY run (passport, report,
 // certificate, generated JSON, history log) and are git-ignored — so they must never count as "dirty".
 // Any change OUTSIDE them is real source/business work and legitimately makes the tree unclean.

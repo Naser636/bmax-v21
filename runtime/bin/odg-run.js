@@ -2,7 +2,21 @@
 
 const {spawnSync}=require("child_process");
 const fs=require("fs");
+const path=require("path");
 const {authorizeMission}=require("../core/governance-kernel");
+
+// SAMURAI OUTPUT MODE (IMPLEMENT_SAMURAI_OUTPUT_MODE / IMPLEMENT_SUMMARY_OUTPUT_MODE).
+//
+// By DEFAULT the pipeline prints a compact one-line-per-stage summary (~20-30 lines total) and
+// streams every stage's full stdout/stderr to an artifact log under runtime/generated/logs/ instead
+// of the console. Set ODG_VERBOSE=1 to restore the historical behaviour (every stage streamed live
+// via stdio:"inherit") — the exact same env-flag convention the runtime already uses for ODG_FLEET /
+// ODG_CONTRACT_ON_DEMAND. No stage logic, ordering or checkpoint behaviour changes; only where each
+// stage's detailed output is written.
+const VERBOSE=process.env.ODG_VERBOSE==="1"||process.env.ODG_VERBOSE==="true";
+function fmtDuration(ms){
+    return ms>=1000?(ms/1000).toFixed(1)+"s":ms+"ms";
+}
 const {bootstrap}=require("./odg-bootstrap");
 const checkpoint=require("../core/checkpoint-engine");
 const {loadRuntimeContext}=require("../core/runtime-context-loader");
@@ -50,8 +64,20 @@ if(runtimeContext){
 }
 
 console.log("======================================");
-console.log("ODG RUNTIME PIPELINE");
+console.log("ODG RUNTIME PIPELINE :",mission);
 console.log("======================================");
+
+// Detailed per-stage output is teed here in summary (default) mode so the console stays a ~20-30
+// line summary while the full pipeline transcript is always preserved as an inspectable artifact.
+const LOG_DIR=path.join("runtime","generated","logs");
+const RUN_LOG=path.join(LOG_DIR,mission+".run.log");
+if(!VERBOSE){
+    fs.mkdirSync(LOG_DIR,{recursive:true});
+    fs.writeFileSync(RUN_LOG,"ODG RUNTIME PIPELINE — "+mission+"\n");
+    console.log("Output     : summary (full log →",RUN_LOG+")");
+}else{
+    console.log("Output     : verbose (ODG_VERBOSE=1)");
+}
 
 // CHECKPOINT / RESUME
 // Open (or resume) the durable checkpoint for this mission. `resumeIndex` is the first stage that is
@@ -86,26 +112,48 @@ for(let i=0;i<pipeline.length;i++){
         continue; // proven DONE in a previous run — do not re-execute
     }
 
-    console.log("\n>>>",name);
     cp=checkpoint.stageRunning(cp,i);
+    const started=Date.now();
 
-    const r=spawnSync(
-        "node",
-        [file,mission],
-        {stdio:"inherit"}
-    );
+    let r;
+    if(VERBOSE){
+        // Historical behaviour: stream every stage live to the console.
+        console.log("\n>>>",name);
+        r=spawnSync("node",[file,mission],{stdio:"inherit"});
+    }else{
+        // Summary behaviour: capture the stage transcript, append it to the run-log artifact, and
+        // print a single result line. On failure the captured tail is still surfaced to the console
+        // so a broken run is never silent even in summary mode.
+        r=spawnSync("node",[file,mission],{encoding:"utf8"});
+        const transcript=(r.stdout||"")+(r.stderr||"");
+        fs.appendFileSync(RUN_LOG,`\n===== >>> ${name} (exit ${r.status}) =====\n${transcript}`);
+    }
+    const elapsed=Date.now()-started;
 
     if(r.status!==0){
         cp=checkpoint.stageFailed(cp,i,`${name} exited with status ${r.status}`);
+        if(!VERBOSE){
+            const transcript=(r.stdout||"")+(r.stderr||"");
+            const tail=transcript.trim().split("\n").slice(-20).join("\n");
+            console.error(`>>> ${name}  FAIL  (${fmtDuration(elapsed)})`);
+            if(tail)console.error("--- last output ---\n"+tail+"\n-------------------");
+            console.error("Full log   :",RUN_LOG);
+        }
         console.error("STOP:",name,"failed");
         process.exit(r.status);
     }
 
+    if(!VERBOSE){
+        console.log(`>>> ${name.padEnd(28)} OK   (${fmtDuration(elapsed)})`);
+    }
     cp=checkpoint.stageDone(cp,i);
 }
 
 checkpoint.complete(cp);
 
 console.log("\n======================================");
-console.log("PIPELINE SUCCESS");
+console.log("PIPELINE SUCCESS —",stageNames.length+"/"+stageNames.length,"stages");
+if(!VERBOSE){
+    console.log("Full log   :",RUN_LOG);
+}
 console.log("======================================");

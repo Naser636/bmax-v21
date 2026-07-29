@@ -15,7 +15,6 @@
  * Consumed by:
  *   - runtime/bin/odg-health.js   (reads runtime-state.json / capability-registry.json / queue)
  *   - runtime/bin/odg-status.js   (reads runtime-status.json / capability-registry.json / queue)
- *   - runtime/bin/odg-next.js     (reads runtime-mission-queue.json)
  */
 "use strict";
 
