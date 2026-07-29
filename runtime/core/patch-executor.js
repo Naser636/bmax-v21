@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const capabilityExecutors = require("./capability-executors");
 
 const GENERATED_DIR = "runtime/generated";
 
@@ -394,17 +395,33 @@ for (const patch of plan.patches) {
         break;
       }
 
-      default:
-        // Mission-driven objective step. The generic legacy actions above are kept for backward
-        // compatibility, but a mission-derived objective has no generic side-effect to run here:
-        // real engineering is performed by the provider path, and read-only/audit objectives are
-        // discharged by planning + evidence. We RECORD the objective as processed (not SKIPPED, not
-        // FAILED) so the evidence-based Validation Engine can confirm full objective coverage.
+      default: {
+        // Mission-driven objective step. FIRST try to map the objective to a REAL capability
+        // executor (capability-executors.js). If one matches, it actually runs the capability's
+        // business logic and produces an evidence artifact — closing the Mission → Capability →
+        // Execution → Evidence chain that was previously a no-op. A capability that throws falls to
+        // the outer catch and is recorded FAILED (which blocks validation).
+        const executor = capabilityExecutors.resolve(patch);
+        if (executor) {
+          const result = executor.run();
+          report.executed.push({
+            action: patch.action,
+            objectiveId: patch.objectiveId || patch.action,
+            status: "EXECUTED",
+            capability: result.capability,
+            evidence: result.evidence,
+          });
+          break;
+        }
+        // No capability maps to this objective: it is a genuinely read-only/planning objective,
+        // discharged by planning + evidence. RECORD it (not SKIPPED, not FAILED) so the
+        // evidence-based Validation Engine can confirm full objective coverage.
         report.executed.push({
           action: patch.action,
           objectiveId: patch.objectiveId || patch.action,
           status: "RECORDED"
         });
+      }
     }
   } catch (e) {
     report.executed.push({

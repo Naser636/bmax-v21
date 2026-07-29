@@ -50,6 +50,21 @@ const coverageOk = objectiveCount > 0 && plannedCount === objectiveCount && exec
 // 2. No failed actions.
 const noFailures = failed.length === 0;
 
+// 2b. Evidence integrity — a capability that claims it EXECUTED must have produced the evidence
+// artifact it points to. This removes the class of false MISSION SUCCESS where a capability is
+// recorded as run without actually producing any proof: an `evidence` path that is missing or empty
+// on disk fails the mission. Entries without an `evidence` field (legacy read-only RECORDED steps)
+// are unaffected, so existing missions keep their behaviour.
+const evidenceEntries = executed.filter((e) => e && typeof e.evidence === "string");
+const missingEvidence = evidenceEntries.filter((e) => {
+    try {
+        return !(fs.statSync(e.evidence).size > 0);
+    } catch {
+        return true;
+    }
+});
+const evidenceOk = missingEvidence.length === 0;
+
 // 3. Engineering performed (write-scope missions only).
 const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
 const isEngineering = plan.requiresEngineering === true && authorizedPaths.length > 0;
@@ -207,6 +222,7 @@ const capabilitiesOk = capabilityResults.every((r) => r.ok);
 const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
+    evidenceIntegrity: evidenceOk,
     engineeringPerformed: engineeringOk,
     buildGate: buildOk,
     typescriptGate: typescriptOk,
@@ -221,11 +237,12 @@ const checks = {
     capabilitiesOk,
 };
 
-const validated = coverageOk && noFailures && engineeringOk && buildOk && typescriptOk && capabilitiesOk;
+const validated = coverageOk && noFailures && evidenceOk && engineeringOk && buildOk && typescriptOk && capabilitiesOk;
 
 const unmet = [];
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f) => f.action).join(", ")}.`);
+if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evidence: ${missingEvidence.map((e) => e.evidence).join(", ")}.`);
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
@@ -268,6 +285,7 @@ console.log("======================================");
 console.log("Mission   :", report.mission);
 console.log("Coverage  :", coverageOk ? "OK" : "INCOMPLETE", `(${executed.length}/${objectiveCount})`);
 console.log("Failures  :", failed.length);
+if (evidenceEntries.length) console.log("Evidence  :", evidenceOk ? `OK (${evidenceEntries.length} artifact(s))` : `MISSING (${missingEvidence.length})`);
 if (isEngineering) console.log("Engineering:", engineeringOk ? `OK (${scopedChanges.length} changed)` : "NONE in scope");
 if (gatesEvaluated) console.log("Gates     :", `build=${buildOk} tsc=${typescriptOk}`);
 for (const c of capabilityResults) console.log("Capability:", `${c.ok ? "OK  " : "FAIL"} ${c.capability} (${c.detail})`);

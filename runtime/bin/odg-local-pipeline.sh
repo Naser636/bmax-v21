@@ -87,15 +87,36 @@ if [ "$BUILD_OK" != "true" ] || [ "$TSC_OK" != "true" ]; then
   exit 1
 fi
 
-DIRTY_TRACKED=$(git diff --name-only -- "${ARTIFACT_EXCLUDES[@]}")
-if [ -n "$DIRTY_TRACKED" ]; then
-echo "STOP: Git repository is dirty"
-echo
-echo "Modified tracked files (outside mission artifacts):"
-echo "$DIRTY_TRACKED"
-echo
-exit 1
-fi
+# ROOT CAUSE FIX (circular finalization deadlock): the pre-flight dirty-tree STOP is unconditional,
+# but FINALIZE_*/CLOSEOUT_* missions exist PRECISELY to commit/finalize pending Runtime work — the
+# very work that makes the tree dirty. Requiring gitClean=true BEFORE they run is circular: they can
+# never run to produce the clean tree the gate demands. For those mission classes we DO NOT hard-STOP
+# on a dirty tree here; we let the mission run its own finalization first. Governance is NOT weakened:
+# the [5/5] post-run gate below still requires the tree to end clean (gitClean=true), so a finalize
+# mission that fails to actually finalize still fails. Every OTHER mission keeps the byte-for-byte
+# pre-flight STOP (the Patch Executor must never run on a dirty/red tree).
+case "$MISSION" in
+  FINALIZE_*|CLOSEOUT_*)
+    DIRTY_TRACKED=$(git diff --name-only -- "${ARTIFACT_EXCLUDES[@]}")
+    if [ -n "$DIRTY_TRACKED" ]; then
+      echo "NOTE: tree is dirty on entry; ${MISSION} is a finalization mission and will finalize it."
+      echo "Pending tracked files (to be finalized by this mission):"
+      echo "$DIRTY_TRACKED"
+      echo
+    fi
+    ;;
+  *)
+    DIRTY_TRACKED=$(git diff --name-only -- "${ARTIFACT_EXCLUDES[@]}")
+    if [ -n "$DIRTY_TRACKED" ]; then
+      echo "STOP: Git repository is dirty"
+      echo
+      echo "Modified tracked files (outside mission artifacts):"
+      echo "$DIRTY_TRACKED"
+      echo
+      exit 1
+    fi
+    ;;
+esac
 
 echo "[2/5] LOAD BRAIN"
 
