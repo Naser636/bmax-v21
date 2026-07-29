@@ -135,6 +135,39 @@ const PROBES = {
             ? { ok: true, detail: "single entrypoint: FALLBACK_TO_MSE removed, one mission driver, local pipeline first-class" }
             : { ok: false, detail: offenders.join("; ") };
     },
+
+    "capability-probes-finalized"() {
+        // Deterministic DoD proof for FINALIZE_CAPABILITY_PROBES: the probe framework is a real,
+        // named registry AND it is actually wired into the two consumers that make its verdicts
+        // matter — the Validation Engine (executes the proofs) and the Mission Contract Factory
+        // (declares them from intent). Pure fs reads; the framework proving its own finalization.
+        const offenders = [];
+        let self = null;
+        try { self = fs.readFileSync("runtime/core/capability-probes.js", "utf8"); } catch { self = null; }
+        if (self === null) return { ok: false, detail: "runtime/core/capability-probes.js not found" };
+        if (!/const PROBES = \{/.test(self)) offenders.push("no named PROBES registry");
+        if (!/function evaluate\(/.test(self)) offenders.push("no evaluate() required-proof gate");
+        if (!/module\.exports = \{[^}]*evaluate/.test(self)) offenders.push("evaluate not exported");
+
+        let engine = null;
+        try { engine = fs.readFileSync("runtime/core/validation-engine.js", "utf8"); } catch { engine = null; }
+        if (engine === null) offenders.push("validation-engine.js not found");
+        else if (!/require\(["']\.\/capability-probes["']\)/.test(engine) || !/\.evaluate\(/.test(engine)) {
+            offenders.push("Validation Engine does not execute the probe framework");
+        }
+
+        let factory = null;
+        try { factory = fs.readFileSync("runtime/core/mission-contract-factory.js", "utf8"); } catch { factory = null; }
+        if (factory === null) offenders.push("mission-contract-factory.js not found");
+        else if (!/resolveVerifyProbes/.test(factory)) {
+            offenders.push("Contract Factory does not declare probes from intent");
+        }
+
+        const registered = Object.keys(PROBES).length;
+        return offenders.length === 0
+            ? { ok: true, detail: `probe framework finalized: ${registered} registered probes, wired into Validation Engine + Contract Factory` }
+            : { ok: false, detail: offenders.join("; ") };
+    },
 };
 
 // Run a single named probe. Unknown probe → not ok (a required proof for an unregistered capability

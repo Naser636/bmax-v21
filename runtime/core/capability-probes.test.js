@@ -98,4 +98,23 @@ inTempCwd((mod) => {
     ok("no declared proofs → no gate (ok, none missing)", none.ok === true && none.results.length === 0);
 });
 
+// 5. capability-probes-finalized proves the framework's own finalization against the real repo tree
+// (registry present + exported, wired into the Validation Engine and the Contract Factory).
+(function () {
+    const prev = process.cwd();
+    const repoRoot = path.resolve(__dirname, "..", "..");
+    process.chdir(repoRoot);
+    try {
+        delete require.cache[MODULE];
+        const mod = require(MODULE);
+        const r = mod.runProbe("capability-probes-finalized", {});
+        ok("capability-probes-finalized proven in the real tree", r.ok === true);
+        ok("finalization detail names the registered probe count", /registered probes/.test(r.detail));
+        const gate = mod.evaluate([{ capability: "Capability Probe Framework", evidence: "capability-probes-finalized" }], {});
+        ok("declared as a required proof → evaluate.ok is true", gate.ok === true && gate.missingRequired.length === 0);
+    } finally {
+        process.chdir(prev);
+    }
+})();
+
 console.log(`\nCapability Probe Framework: ${passed} assertions passed.`);
