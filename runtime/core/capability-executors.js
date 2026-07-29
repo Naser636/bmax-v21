@@ -26,6 +26,11 @@ const { spawnSync } = require("child_process");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
+const PROVIDER_ACTIVATION_EVIDENCE = path.join(GENERATED_DIR, "provider-activation.json");
+// tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
+// Registry + Orchestrator and runs the selected provider — the socle→provider edge.
+const TSX_CLI = path.join("node_modules", "tsx", "dist", "cli.mjs");
+const PROVIDER_ACTIVATION_ENTRY = path.join("src", "runtime", "provider-activation.ts");
 
 // ---------------------------------------------------------------------------
 // Connectivity Audit — real business logic.
@@ -167,6 +172,53 @@ const EXECUTORS = [
             let report = null;
             try { report = JSON.parse(fs.readFileSync(out, "utf8")); } catch { /* evidence unparseable */ }
             return { capability: "Connectivity Audit", evidence: out, summary: report ? report.summary : null };
+        },
+    },
+    {
+        // Provider Activation — the Business-Capability socle's edge to the Providers. Activates the
+        // Provider Registry + Orchestrator (src/core/*), lets the Runtime deterministically SELECT a
+        // provider for the objective's capability, and runs it through the real Claude/OpenAI adapter
+        // bridge — emitting evidence (provider selected + response or precise failure cause). Runs
+        // WITHOUT --execute so certification never triggers an unsolicited paid provider call; a live
+        // run is an explicit operator action. Executed as a bounded subprocess so the executor loop
+        // stays synchronous while the TS seam runs.
+        capability: "Provider Activation",
+        matches(patch) { return /provider/.test(haystack(patch)); },
+        run(patch) {
+            const out = PROVIDER_ACTIVATION_EVIDENCE;
+            try { fs.rmSync(out, { force: true }); } catch { /* ignore */ }
+            const mission = {
+                mission: (patch && (patch.objectiveId || patch.action)) || "PROVIDER_ACTIVATION",
+                mode: "ENGINEERING",
+                requiresEngineering: true,
+                objectives: [{
+                    id: (patch && patch.objectiveId) || "OBJ-1",
+                    goal: (patch && patch.goal) || "",
+                    done_when: Array.isArray(patch && patch.done_when) ? patch.done_when : [],
+                }],
+            };
+            fs.mkdirSync(GENERATED_DIR, { recursive: true });
+            const missionFile = path.join(GENERATED_DIR, "provider-activation.mission.json");
+            fs.writeFileSync(missionFile, JSON.stringify(mission, null, 2));
+            const res = spawnSync(process.execPath, [TSX_CLI, PROVIDER_ACTIVATION_ENTRY, missionFile, out], { encoding: "utf8", timeout: 60000 });
+            const evidenceExists = fs.existsSync(out) && fs.statSync(out).size > 0;
+            if (res.status !== 0 || !evidenceExists) {
+                throw new Error(
+                    `Provider Activation did not complete (status=${res.status}, evidence=${evidenceExists}): ` +
+                    String(res.stderr || (res.error && res.error.message) || "")
+                );
+            }
+            let report = null;
+            try { report = JSON.parse(fs.readFileSync(out, "utf8")); } catch { /* evidence unparseable */ }
+            return {
+                capability: "Provider Activation",
+                evidence: out,
+                summary: report ? {
+                    decision: report.orchestration.decision,
+                    selectedProvider: report.orchestration.selectedProvider,
+                    classification: report.execution.classification,
+                } : null,
+            };
         },
     },
 ];

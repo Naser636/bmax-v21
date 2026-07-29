@@ -1,12 +1,13 @@
 {
-  "mode": "LOCAL_ONLY",
-  "externalProvidersEnabled": false,
-  "defaultProvider": "local-runtime",
-  "fallbackProvider": "local-runtime",
-  "deny": [
-    "ClaudeProviderAdapter",
-    "OpenAIProviderAdapter",
-    "GeminiProviderAdapter"
+  "mode": "ENGINEERING_ENABLED",
+  "externalProvidersEnabled": true,
+  "defaultProvider": "claude",
+  "fallbackProvider": "openai",
+  "providers": [
+    { "id": "claude", "priority": 100, "capabilities": ["engineering"] },
+    { "id": "openai", "priority": 50, "capabilities": ["engineering"] }
   ],
-  "onExternalRequest": "FAIL_FAST"
+  "onExternalRequest": "ORCHESTRATE",
+  "enforcedBy": "src/runtime/provider-activation.ts",
+  "note": "Enforced by the Provider Activation seam: the Registry + Orchestrator select a provider per this policy, and real calls run through the Claude/OpenAI adapters. Set externalProvidersEnabled=false to return to a local-only posture — the seam then reports a precise policy-deny cause instead of calling."
 }
