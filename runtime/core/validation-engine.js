@@ -141,103 +141,18 @@ if (gatesEvaluated && (!buildOk || !typescriptOk)) {
     bre.writeProviderAuthorization(targetMission, recovery, stamp);
 }
 
-// 5. Capability probes (only when the mission contract declares `verify`). Each probe is a pure
-// check against real generated artifacts, turning the mission's Definition of Done into machine-
-// verified evidence. Missions with no `verify` block get NO extra gate (behaviour unchanged).
+// 5. Capability proofs — the Capability Probe Framework (runtime/core/capability-probes.js) turns
+// the mission contract's `verify` block into machine-verified evidence against real generated
+// artifacts. Each proof is REQUIRED by default (opt out with `required: false`); SUCCESS is blocked
+// whenever a required proof is missing — an unregistered probe or an absent/failing evidence
+// artifact. Missions with no `verify` block declare no proofs, so they get NO extra gate.
+const probes = require("./capability-probes");
 const missionId = plan.mission || patch.mission;
-function runProbe(evidence) {
-    switch (evidence) {
-        case "fleet-request-validated": {
-            // The Fleet exchange (Dispatcher → Bridge → Collector) must have driven at least one
-            // request for THIS mission to the VALIDATED terminal status.
-            const dir = "runtime/generated/fleet/requests";
-            let files = [];
-            try { files = fs.readdirSync(dir); } catch { return { ok: false, detail: "no fleet requests dir" }; }
-            const mine = files
-                .filter((f) => f.startsWith(missionId + "-") && f.endsWith(".json"))
-                .map((f) => readJsonSafe(`${dir}/${f}`))
-                .filter(Boolean);
-            const validated = mine.filter((r) => r.status === "VALIDATED");
-            return validated.length > 0
-                ? { ok: true, detail: `${validated.length}/${mine.length} fleet request(s) VALIDATED` }
-                : { ok: false, detail: `no VALIDATED fleet request for ${missionId} (${mine.length} found)` };
-        }
-        case "build-green":
-            return verify && verify.build === true
-                ? { ok: true, detail: "runtime-verify.json build=true" }
-                : { ok: false, detail: "build gate not green (runtime-verify.json)" };
-        case "typescript-green":
-            return verify && verify.typescript === true
-                ? { ok: true, detail: "runtime-verify.json typescript=true" }
-                : { ok: false, detail: "typescript gate not green (runtime-verify.json)" };
-        case "legacy-runtime-retired": {
-            // Deterministic DoD proof for RETIRE_LEGACY_RUNTIME: the legacy Mission-Standard engine
-            // is physically gone AND no live launch/execution path references it. Pure fs reads (no
-            // wall clock, no subprocess) ⇒ reproducible — the same tree always yields the same verdict.
-            const legacyDir = "runtime/mission-standard";
-            if (fs.existsSync(legacyDir)) {
-                return { ok: false, detail: `${legacyDir} still present` };
-            }
-            const liveFiles = [
-                "runtime/bin/odg",
-                "runtime/bin/odg-local-pipeline.sh",
-                "runtime/bin/odg-run.js",
-                "runtime/bin/odg-verify.js",
-            ];
-            const offenders = liveFiles.filter((f) => {
-                let text = null;
-                try { text = fs.readFileSync(f, "utf8"); } catch { text = null; }
-                return text !== null && text.includes("mission-standard");
-            });
-            return offenders.length === 0
-                ? { ok: true, detail: `${legacyDir} absent; no live reference across ${liveFiles.length} launch/exec files` }
-                : { ok: false, detail: `live reference to the legacy engine in: ${offenders.join(", ")}` };
-        }
-        case "samurai-output-mode": {
-            // Deterministic DoD proof for the Samurai / summary output mode: the pipeline driver
-            // prints a compact one-line-per-stage summary BY DEFAULT and tees the full transcript to
-            // a run-log artifact, gated on ODG_VERBOSE for the historical live stream. Pure fs reads.
-            let src = null;
-            try { src = fs.readFileSync("runtime/bin/odg-run.js", "utf8"); } catch { src = null; }
-            if (src === null) return { ok: false, detail: "runtime/bin/odg-run.js not found" };
-            const missing = [];
-            if (!/process\.env\.ODG_VERBOSE/.test(src)) missing.push("ODG_VERBOSE gate");
-            if (!/runtime\/generated\/logs/.test(src) || !/appendFileSync\(\s*RUN_LOG/.test(src)) missing.push("run-log tee");
-            if (!/encoding:\s*["']utf8["']/.test(src)) missing.push("captured stage output");
-            return missing.length === 0
-                ? { ok: true, detail: "odg-run.js: default summary + run-log artifact, ODG_VERBOSE-gated live stream" }
-                : { ok: false, detail: `samurai output mode incomplete: missing ${missing.join(", ")}` };
-        }
-        case "single-runtime-entrypoint": {
-            // Deterministic DoD proof for the single-entrypoint consolidation: the FALLBACK_TO_MSE
-            // exit protocol and the "fallback engine" script are gone, mission-cli.ts is the one
-            // mission driver, and the local execution route is a first-class pipeline. Pure fs reads.
-            const offenders = [];
-            let cli = null;
-            try { cli = fs.readFileSync("src/runtime/mission-cli.ts", "utf8"); } catch { cli = null; }
-            if (cli === null) return { ok: false, detail: "src/runtime/mission-cli.ts not found" };
-            if (cli.includes("FALLBACK_TO_MSE")) offenders.push("mission-cli.ts still references FALLBACK_TO_MSE");
-            if (fs.existsSync("runtime/bin/odg-fallback.sh")) offenders.push("legacy odg-fallback.sh still present");
-            if (!fs.existsSync("runtime/bin/odg-local-pipeline.sh")) offenders.push("odg-local-pipeline.sh missing");
-            let launcher = null;
-            try { launcher = fs.readFileSync("runtime/bin/odg", "utf8"); } catch { launcher = null; }
-            if (launcher === null || !/exec\s+node_modules\/\.bin\/tsx\s+src\/runtime\/mission-cli\.ts/.test(launcher)) {
-                offenders.push("odg launcher does not exec the single mission-cli entrypoint");
-            }
-            return offenders.length === 0
-                ? { ok: true, detail: "single entrypoint: FALLBACK_TO_MSE removed, one mission driver, local pipeline first-class" }
-                : { ok: false, detail: offenders.join("; ") };
-        }
-        default:
-            return { ok: false, detail: `unknown evidence probe "${evidence}"` };
-    }
-}
 const verifyChecks = Array.isArray(plan.verify) ? plan.verify : [];
-const capabilityResults = verifyChecks.map((v) => {
-    const r = runProbe(v.evidence);
-    return { capability: v.capability, evidence: v.evidence, ok: r.ok, detail: r.detail };
-});
-const capabilitiesOk = capabilityResults.every((r) => r.ok);
+const capabilityEval = probes.evaluate(verifyChecks, { missionId, verify });
+const capabilityResults = capabilityEval.results;
+const capabilitiesOk = capabilityEval.ok;
+const missingRequiredProofs = capabilityEval.missingRequired;
 
 const checks = {
     objectiveCoverage: coverageOk,
@@ -266,7 +181,7 @@ if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evide
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
-for (const c of capabilityResults.filter((r) => !r.ok)) unmet.push(`Capability "${c.capability}" not proven: ${c.detail}.`);
+for (const c of missingRequiredProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
 
 const report = {
     mission: patch.mission,
@@ -308,7 +223,7 @@ console.log("Failures  :", failed.length);
 if (evidenceEntries.length) console.log("Evidence  :", evidenceOk ? `OK (${evidenceEntries.length} artifact(s))` : `MISSING (${missingEvidence.length})`);
 if (isEngineering) console.log("Engineering:", engineeringOk ? `OK (${scopedChanges.length} changed, ${deliverableInScope.length} committed in scope)` : "NONE in scope");
 if (gatesEvaluated) console.log("Gates     :", `build=${buildOk} tsc=${typescriptOk}`);
-for (const c of capabilityResults) console.log("Capability:", `${c.ok ? "OK  " : "FAIL"} ${c.capability} (${c.detail})`);
+for (const c of capabilityResults) console.log("Capability:", `${c.ok ? "OK  " : "FAIL"} ${c.capability}${c.required ? "" : " [optional]"} (${c.detail})`);
 console.log("Validated :", validated);
 console.log("Status    :", report.status);
 if (!validated) {
