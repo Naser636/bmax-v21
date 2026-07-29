@@ -152,4 +152,15 @@ ok("env override forces disabled", factory.isOnDemandEnabled(odRoot) === false);
 if (savedEnv === undefined) delete process.env.ODG_CONTRACT_ON_DEMAND;
 else process.env.ODG_CONTRACT_ON_DEMAND = savedEnv;
 
+console.log("Case 10 — intent implies capability proofs (verify) the Validation Engine executes");
+const conn = factory.buildContract({ id: "RUN_CONNECTIVITY_AUDIT", title: "Run Connectivity Audit", requiresEngineering: false });
+ok("connectivity mission declares a verify block", Array.isArray(conn.verify) && conn.verify.length === 1);
+ok("declared probe is the registered internet-reachable evidence", conn.verify[0].evidence === "internet-reachable");
+ok("declared contract stays Loader-valid with verify", synth.isValidContract(conn) === true);
+const internet = factory.buildContract({ id: "INTERNET_CONNECTIVITY_AUDIT", title: "Internet Connectivity Audit" });
+ok("internet mission also declares the probe", Array.isArray(internet.verify) && internet.verify[0].evidence === "internet-reachable");
+const unrelated = factory.buildContract({ id: "READ_ONLY_GAP", title: "A read-only gap", requiresEngineering: false });
+ok("unrelated mission declares NO verify block (unchanged behaviour)", unrelated.verify === undefined);
+ok("resolveVerifyProbes de-duplicates by evidence", factory.resolveVerifyProbes({ id: "X", title: "connectivity internet check" }).length === 1);
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

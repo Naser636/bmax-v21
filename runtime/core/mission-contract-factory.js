@@ -97,6 +97,44 @@ function entryText(entry) {
 }
 
 /*
+ * Machine-checkable capability probes a synthesized contract DECLARES from its intent. Each rule maps
+ * an intent regex (matched case-insensitively against the mission id/title/goal/description) to the
+ * probe descriptor(s) to declare when it matches. The `evidence` names are the SAME probes the
+ * Capability Probe Framework already registers (runtime/core/capability-probes.js) — no new probe, no
+ * second source of truth. Declaring them is what makes the Validation Engine EXECUTE the probes and
+ * report capability proofs, instead of the report reading "no capability probes declared".
+ *
+ * Connectivity/internet missions are the one registered probe (`internet-reachable`) that otherwise
+ * has no declaration home: the framework's internet capability gate reuses the Connectivity Audit
+ * connector's evidence, so a mission whose intent is to reach the network declares that proof.
+ */
+const PROBE_INTENT = [
+    {
+        match: /\b(connectivity|internet)\b/i,
+        probes: [{ capability: "Internet reachable (Connectivity Audit)", evidence: "internet-reachable" }],
+    },
+];
+
+/*
+ * Resolve the capability proofs a mission's intent implies. Pure/deterministic (a function of `entry`
+ * only). De-duplicated by evidence name so overlapping rules never declare the same probe twice.
+ */
+function resolveVerifyProbes(entry) {
+    const text = entryText(entry);
+    const out = [];
+    const seen = new Set();
+    for (const rule of PROBE_INTENT) {
+        if (!rule.match.test(text)) continue;
+        for (const p of rule.probes) {
+            if (seen.has(p.evidence)) continue;
+            seen.add(p.evidence);
+            out.push({ capability: p.capability, evidence: p.evidence });
+        }
+    }
+    return out;
+}
+
+/*
  * Resolve whether a mission AUTHORIZES CODE GENERATION (engineering). Precedence, strongest first:
  *   1. an explicit engineering flag (requiresEngineering / requires_engineering) — true OR false wins,
  *      so a mission can always force read-only regardless of its title;
@@ -213,9 +251,13 @@ function buildContract(entry) {
     });
 
     const objectiveId = base.objectives[0].id;
+    // Capability proofs the mission's intent implies — declared so the Validation Engine executes
+    // them and reports capability proofs (empty ⇒ omitted, so unrelated missions are unchanged).
+    const verify = resolveVerifyProbes(entry);
 
     return {
         ...base,
+        ...(verify.length ? { verify } : {}),
         // authorizedPaths alias some engineering contracts/consumers read alongside authorized_paths.
         authorizedPaths,
         status: "AUTHORIZED",
@@ -348,6 +390,7 @@ module.exports = {
     readRoadmap,
     contractPathFor,
     isContractMissing,
+    resolveVerifyProbes,
     buildContract,
     generateMissing,
     generateForMission,
