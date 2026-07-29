@@ -78,6 +78,20 @@ next-env.d.ts
 # (and stay tracked) under runtime/reports/. Regenerated on archival; not versioned.
 /runtime/reports/archive/
 
+# ODG Runtime generated mission CONTRACTS — the Mission Contract Factory / contract-
+# on-demand synthesizer writes runtime/missions/<id>.json (generatedBy: "mission-
+# contract-factory") for every roadmap AND on-demand mission it runs, so each run
+# leaves untracked churn that permanently re-dirties the tree. odg-verify ALREADY
+# excludes these by content stamp from its gitClean gate (odg-verify.js:38-52); this
+# rule makes plain `git status` agree, giving every mission a deterministic clean
+# finish. Regenerable on demand (re-synthesized from ROADMAP.json or mission intent);
+# kept on disk for resume, never versioned. Contracts already tracked stay tracked
+# (git honours the index over .gitignore) — the archived released contracts under
+# runtime/missions/ are preserved. A NEW hand-authored contract must be added with
+# `git add -f runtime/missions/<id>.json`.
+/runtime/missions/*.json
+/runtime/missions/*.evidence.md
+
 # Ad-hoc scratch report output at the repo root (e.g. redirected command dumps).
 # Not part of the Runtime tree; kept on disk if present, never versioned.
 /rapport_complet.txt
