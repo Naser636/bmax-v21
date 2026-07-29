@@ -1,0 +1,89 @@
+{
+  "mission": "FINALIZE_CURRENT_MISSION",
+  "priority": "NORMAL",
+  "mode": "SEQUENTIAL",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "description": "Thin finalize mission: drive the currently-open Runtime work through the EXISTING validation → certification → mission ledger → archive lifecycle to a terminal, proven state. Reuses the local execution pipeline byte-for-byte; authors no new logic.",
+  "objectives": [
+    {
+      "id": "FINALIZE_CURRENT_MISSION_1",
+      "goal": "Validate the current Runtime state with the existing Validation Engine.",
+      "done_when": [
+        "Validation Engine reports success.",
+        "Read-only evidence produced."
+      ]
+    },
+    {
+      "id": "FINALIZE_CURRENT_MISSION_2",
+      "goal": "Certify the mission via the existing passport/report/certificate artifacts.",
+      "done_when": [
+        "Certification artifacts produced by the existing pipeline.",
+        "Read-only evidence produced."
+      ]
+    },
+    {
+      "id": "FINALIZE_CURRENT_MISSION_3",
+      "goal": "Record and archive the mission through the existing Mission Ledger.",
+      "done_when": [
+        "Mission Ledger entry proven.",
+        "Repository left in a coherent, clean state."
+      ]
+    }
+  ],
+  "definition_of_done": [
+    "Validation Engine reports success.",
+    "Certification artifacts produced by the existing pipeline.",
+    "Mission Ledger entry proven.",
+    "Repository left in a coherent, clean state."
+  ],
+  "source": "hand-authored",
+  "authorizedPaths": [],
+  "status": "AUTHORIZED",
+  "completion": [
+    "Release Manager decision is RELEASE."
+  ],
+  "permissions": {
+    "engineering": false,
+    "authorizedPaths": [],
+    "network": false
+  },
+  "lifecycle": [
+    "CREATED",
+    "QUALIFIED",
+    "ANALYZED",
+    "PLANNED",
+    "PREPARED",
+    "VALIDATED",
+    "EXECUTED",
+    "VERIFIED",
+    "RELEASED",
+    "ARCHIVED"
+  ],
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST"
+  ],
+  "evidence": [
+    "runtime/generated/mission-plan.json",
+    "runtime/generated/mission-report.json",
+    "runtime/generated/mission-ledger.json"
+  ],
+  "checkpoints": [
+    {
+      "id": "FINALIZE_CURRENT_MISSION_1__VALIDATED",
+      "when": "Validation Engine reports success"
+    },
+    {
+      "id": "FINALIZE_CURRENT_MISSION_3__RELEASED",
+      "when": "mission ledger entry proven"
+    }
+  ],
+  "ledger": {
+    "mission": "FINALIZE_CURRENT_MISSION",
+    "capability": "FINALIZE_CURRENT_MISSION",
+    "status": "PENDING",
+    "proven": false
+  }
+}
