@@ -1,35 +1,40 @@
 /*
- * OpenAI Provider Adapter — ODG ↔ OpenAI engineering provider (contract §10)
+ * OpenAI Provider Adapter — ODG ↔ OpenAI engineering provider (contract §10), via the OpenAI SDK.
  *
  * A second EngineeringProviderPort implementation, added strictly per the contract's extension rule:
  * "adding OpenAI / Gemini / Codex means adding a class that implements the port and re-exporting it —
- * nothing in src/core or src/contracts changes" (provider-port.ts header, contract §10). It spawns
- * the OpenAI engineering CLI (`codex`) exactly as a human runs it headlessly — one non-interactive
- * call per mission — mirroring the ClaudeProviderAdapter's boundaries.
+ * nothing in src/core or src/contracts changes" (provider-port.ts header, contract §10).
  *
- * What this adapter adds over the Claude one is a REQUIRED availability preflight: OpenAI is not the
- * default engineering provider in this repo, so before any (paid, side-effecting) call it verifies
- * its two hard prerequisites — an API credential and the engineering CLI binary. When either is
- * missing it returns a structured, non-throwing outcome that names the exact blocking component, the
- * exact missing resource, and the single next action (mission PROVIDER_FAILOVER_TO_OPENAI, objectives
- * 3–6). It NEVER pretends to have run.
+ * TRANSPORT — the OpenAI SDK, NOT the `codex` CLI. The Runtime talks to OpenAI through the official
+ * `openai` package (src/providers/openai-sdk-call.ts). Consequences:
+ *   - There is NO external-binary prerequisite. The single hard requirement is a credential
+ *     (`OPENAI_API_KEY`); the SDK is a bundled library dependency that is always present. So the
+ *     availability preflight checks the key ALONE — no `codex` on PATH is ever required again.
+ *   - The engineering provider returns its work as a RESULT-SCHEMA message (a plan / diff / verdict);
+ *     it does not itself mutate the working tree. The Runtime's existing Patch Executor applies any
+ *     diff the model returns, so this adapter observes NO working-tree changes and reports none —
+ *     honest ground truth for a text-transport provider.
+ *
+ * The frozen EngineeringProviderPort.execute() is SYNCHRONOUS. The OpenAI SDK is async, so — without
+ * touching the port signature or any other file — the default caller spawns the SDK sidecar with
+ * spawnSync (mirroring the Claude adapter's one-process-per-mission boundary). The caller is
+ * injected, so conformance tests exercise the full contract WITHOUT a real (paid) call.
  *
  * Boundaries honoured (identical to the Claude adapter):
  *   - ODG decides IF this runs; the adapter only executes the handed mission and returns data.
  *   - The provider never decides completion — the Release Manager does. This module imports nothing
  *     from src/core or src/contracts.
- *   - Additive: modifies no foundation and no existing file; reuses the deterministic prompt renderer
- *     and RESULT SCHEMA from provider-port.ts.
- *   - The process runner is injected, so conformance tests exercise the full contract WITHOUT calling
- *     the real (paid) CLI.
+ *   - Additive: reuses the deterministic prompt renderer and RESULT SCHEMA from provider-port.ts.
  */
 
 import { spawnSync } from "node:child_process";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 
 import {
   GUARDRAIL_SYSTEM_PROMPT,
   PROVIDER_CONTRACT_VERSION,
-  isFrozenPath,
   renderMissionPrompt,
   type EngineeringProviderPort,
   type ProviderDescription,
@@ -45,63 +50,107 @@ import {
   type AvailabilityEnv,
   type ProviderAvailability,
 } from "./provider-availability";
-import type { ProviderProcessResult, ProviderProcessRunner } from "./claude-provider-adapter";
+import { callOpenAiChat, type OpenAiChatEnvelope, type OpenAiChatInput } from "./openai-sdk-call";
 
-/** The env var the OpenAI CLI/SDK reads for authentication. */
+/** The env var the OpenAI SDK reads for authentication. */
 export const OPENAI_API_KEY_ENV = "OPENAI_API_KEY";
 
-/** Default OpenAI engineering-CLI binary (OpenAI's coding agent). */
-const DEFAULT_BIN = "codex";
-/** Default pinned model id (contract §2 reproducibility). */
-const DEFAULT_MODEL = "gpt-5-codex";
+/** Default pinned model id (contract §2 reproducibility). Overridable via option or OPENAI_MODEL. */
+const DEFAULT_MODEL = "gpt-4o-mini";
 
-const WRITE_TOOLS = "read,edit,write,shell";
-const READONLY_TOOLS = "read";
+/**
+ * A synchronous OpenAI chat caller — the injected boundary. The default spawns the SDK sidecar via
+ * spawnSync (real call); tests inject a fake that returns a canned envelope (zero cost).
+ */
+export type OpenAiChatCaller = (input: OpenAiChatInput & { cwd?: string }) => OpenAiChatEnvelope;
 
 export interface OpenAIProviderOptions {
   /** Working directory / mission workspace. Defaults to process.cwd(). */
   cwd?: string;
-  /** Pinned model id (contract §2). */
+  /** Pinned model id (contract §2). Defaults to OPENAI_MODEL or gpt-4o-mini. */
   model?: string;
-  /** Path to the OpenAI engineering CLI binary (default `codex`). */
-  bin?: string;
+  /** API credential; defaults to process.env.OPENAI_API_KEY. Never written to evidence. */
+  apiKey?: string;
+  /** Optional custom base URL (Azure / gateway / proxy). */
+  baseURL?: string;
+  /** Output token ceiling (cost bound). */
+  maxOutputTokens?: number;
   /** Per-call wall-clock budget in ms (contract §7.1 timeout → INTERRUPTED). */
   timeoutMs?: number;
-  /** Injected process runner — override in tests. */
-  run?: ProviderProcessRunner;
+  /** When set, the adapter writes a secret-free real-call proof object to this path after a call. */
+  proofPath?: string;
+  /** Injected chat caller — override in tests (zero cost). Default spawns the real SDK sidecar. */
+  call?: OpenAiChatCaller;
 }
 
-const defaultRunner: ProviderProcessRunner = (bin, args, opts) => {
-  const r = spawnSync(bin, args, {
-    cwd: opts.cwd,
-    timeout: opts.timeoutMs,
+/** Unique-ish temp request filenames without Math.random/Date (deterministic within a process). */
+let sidecarSeq = 0;
+
+/** Default caller: spawn the SDK sidecar synchronously through tsx and parse its envelope. */
+const defaultCaller: OpenAiChatCaller = (input) => {
+  const empty: OpenAiChatEnvelope = {
+    ok: false,
+    text: "",
+    model: null,
+    id: null,
+    finishReason: null,
+    usage: null,
+    created: null,
+    error: null,
+  };
+  const cwd = input.cwd ?? process.cwd();
+  const reqFile = path.join(os.tmpdir(), `odg-openai-req-${process.pid}-${sidecarSeq++}.json`);
+  // The credential travels to the sidecar via the request file (a private temp file), never argv.
+  const { cwd: _cwd, ...payload } = input;
+  try {
+    fs.writeFileSync(reqFile, JSON.stringify(payload));
+  } catch (e) {
+    return { ...empty, error: `could not stage sidecar request: ${String((e as Error)?.message ?? e)}` };
+  }
+  const tsxCli = path.join(cwd, "node_modules", "tsx", "dist", "cli.mjs");
+  const sidecar = path.join(cwd, "src", "providers", "openai-sdk-call.ts");
+  const r = spawnSync("node", [tsxCli, sidecar, reqFile], {
+    cwd,
+    timeout: input.timeoutMs,
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
   });
-  const err = r.error as NodeJS.ErrnoException | undefined;
-  return {
-    status: r.status,
-    stdout: r.stdout ?? "",
-    stderr: r.stderr ?? "",
-    signal: r.signal ?? null,
-    timedOut: err?.code === "ETIMEDOUT" || (r.status === null && r.signal != null),
-  };
+  try {
+    fs.unlinkSync(reqFile);
+  } catch {
+    /* best-effort cleanup */
+  }
+  const out = (r.stdout ?? "").trim();
+  if (!out) {
+    return { ...empty, error: `OpenAI SDK sidecar produced no output (status=${r.status}) ${(r.stderr ?? "").trim()}`.trim() };
+  }
+  try {
+    return JSON.parse(out) as OpenAiChatEnvelope;
+  } catch {
+    return { ...empty, error: `unparseable OpenAI SDK sidecar output: ${out.slice(0, 500)}` };
+  }
 };
 
 export class OpenAIProviderAdapter implements EngineeringProviderPort, AvailabilityAware {
-  readonly name = "openai-codex";
+  readonly name = "openai-sdk";
   private readonly cwd: string;
   private readonly model: string;
-  private readonly bin: string;
+  private readonly apiKey: string | undefined;
+  private readonly baseURL: string | undefined;
+  private readonly maxOutputTokens: number | undefined;
   private readonly timeoutMs: number | undefined;
-  private readonly run: ProviderProcessRunner;
+  private readonly proofPath: string | undefined;
+  private readonly call: OpenAiChatCaller;
 
   constructor(opts: OpenAIProviderOptions = {}) {
     this.cwd = opts.cwd ?? process.cwd();
-    this.model = opts.model ?? DEFAULT_MODEL;
-    this.bin = opts.bin ?? DEFAULT_BIN;
+    this.model = opts.model ?? process.env.OPENAI_MODEL ?? DEFAULT_MODEL;
+    this.apiKey = opts.apiKey;
+    this.baseURL = opts.baseURL;
+    this.maxOutputTokens = opts.maxOutputTokens;
     this.timeoutMs = opts.timeoutMs;
-    this.run = opts.run ?? defaultRunner;
+    this.proofPath = opts.proofPath;
+    this.call = opts.call ?? defaultCaller;
   }
 
   describe(): ProviderDescription {
@@ -114,15 +163,14 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
   }
 
   /**
-   * Availability preflight (mission objectives 3–6). Two hard prerequisites, each inspected and
-   * reported as evidence:
-   *   1) an API credential — `OPENAI_API_KEY` — else no request can authenticate;
-   *   2) the engineering CLI binary — `codex` — else there is no way to edit files headlessly.
-   * The verdict is a pure function of the injected env; it performs no network or paid call.
+   * Availability preflight. With the SDK transport there is exactly ONE hard prerequisite: an API
+   * credential (`OPENAI_API_KEY`, or an injected apiKey). The SDK itself is a bundled library, so no
+   * binary is ever required. The verdict is a pure function of the injected env (env-first, with the
+   * configured apiKey as a fallback); it performs no network or paid call.
    */
   checkAvailability(env: AvailabilityEnv): ProviderAvailability {
-    const hasKey = typeof env.env[OPENAI_API_KEY_ENV] === "string" && env.env[OPENAI_API_KEY_ENV] !== "";
-    const hasBin = env.hasBinary(this.bin);
+    const key = env.env[OPENAI_API_KEY_ENV] ?? this.apiKey;
+    const hasKey = typeof key === "string" && key !== "";
     const checks: AvailabilityCheck[] = [
       {
         requirement: `env:${OPENAI_API_KEY_ENV}`,
@@ -130,134 +178,87 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
         detail: hasKey ? `${OPENAI_API_KEY_ENV} is set` : `${OPENAI_API_KEY_ENV} is not set`,
       },
       {
-        requirement: `binary:${this.bin}`,
-        satisfied: hasBin,
-        detail: hasBin ? `\`${this.bin}\` found on PATH` : `\`${this.bin}\` not found on PATH`,
+        requirement: "sdk:openai",
+        satisfied: true,
+        detail: "openai SDK bundled (no external CLI / `codex` binary required)",
       },
     ];
-
-    if (hasKey && hasBin) return available(this.name, checks);
-
-    // Report the credential first (it is the resource an operator most commonly forgets), then the
-    // binary. Only ONE next action is surfaced — the first unmet prerequisite (contract "single next
-    // action"): fix the credential before worrying about the binary.
-    if (!hasKey) {
-      return unavailable(this.name, {
-        blockingComponent: `${this.name} credential preflight`,
-        missingConfiguration: `environment variable ${OPENAI_API_KEY_ENV}`,
-        nextAction: `Provision an OpenAI API key and export ${OPENAI_API_KEY_ENV} in the Runtime environment.`,
-        checks,
-      });
-    }
+    if (hasKey) return available(this.name, checks);
     return unavailable(this.name, {
-      blockingComponent: `${this.name} engineering-CLI preflight`,
-      missingConfiguration: `executable \`${this.bin}\` (OpenAI engineering CLI) on PATH`,
-      nextAction: `Install the OpenAI engineering CLI so \`${this.bin}\` resolves on PATH (e.g. \`npm i -g @openai/codex\`).`,
+      blockingComponent: `${this.name} credential preflight`,
+      missingConfiguration: `environment variable ${OPENAI_API_KEY_ENV}`,
+      nextAction: `Provision an OpenAI API key and export ${OPENAI_API_KEY_ENV} in the Runtime environment.`,
       checks,
     });
   }
 
   execute(request: ProviderRequest): ProviderOutcome {
-    // Preflight FIRST: never spawn a call we know cannot authenticate or edit (cost + honesty).
-    const env: AvailabilityEnv = {
-      env: process.env,
-      hasBinary: (bin) => binaryOnPath(this.run, this.cwd, bin),
-    };
-    const availability = this.checkAvailability(env);
+    // Preflight FIRST: never attempt a call we know cannot authenticate (cost + honesty).
+    const availability = this.checkAvailability(this.availabilityEnv());
     if (!availability.available) {
       return this.unavailableOutcome(request, availability);
     }
 
-    const readOnly = request.mission.authorizedPaths.length === 0;
+    // ONE real (or injected) OpenAI Chat Completions call per mission. Guardrail preamble as the
+    // system message; the deterministically rendered mission as the user message.
     const userPrompt = renderMissionPrompt(request);
-    const args = this.buildArgs(request, userPrompt, readOnly);
-    const proc = this.run(this.bin, args, { cwd: this.cwd, timeoutMs: this.timeoutMs });
+    const envelope = this.call({
+      model: this.model,
+      system: GUARDRAIL_SYSTEM_PROMPT,
+      user: userPrompt,
+      apiKey: this.apiKey,
+      baseURL: this.baseURL,
+      maxOutputTokens: this.maxOutputTokens,
+      timeoutMs: this.timeoutMs,
+      cwd: this.cwd,
+    });
 
-    // 1) Interruption (contract §7.1 / §8): resumable.
-    if (proc.timedOut || (proc.status === null && proc.signal)) {
-      return this.finish({
-        classification: "INTERRUPTED",
-        result: null,
-        changedFiles: [],
-        unauthorizedChanges: [],
-        proc,
-        diagnostics: [`interrupted (signal=${proc.signal ?? "timeout"})`],
-      });
-    }
+    // Emit the secret-free real-call proof BEFORE classifying, so a failed call is still evidenced.
+    this.writeProof(request, envelope);
 
-    const result = this.parseResult(proc.stdout, request.mission.mission);
+    const result = this.parseResult(envelope.text, request.mission.mission);
 
-    // 2) Process failure (contract §7.1) → FAILED.
-    if (proc.status !== 0) {
-      return this.finish({
-        classification: "FAILED",
-        result,
-        changedFiles: [],
-        unauthorizedChanges: [],
-        proc,
-        diagnostics: [`provider process failed (exit=${proc.status})`],
-      });
-    }
-
-    // 3) Post-run scope enforcement (contract §9 layer 4).
-    const changedFiles = this.observeChangedFiles();
-    const unauthorizedChanges = changedFiles.filter(
-      (f) => !this.isAuthorized(f, request.mission.authorizedPaths),
-    );
-    if (unauthorizedChanges.length > 0) {
+    // 1) The real call failed (network / auth / API error) → FAILED (a real attempt WAS made).
+    if (!envelope.ok) {
       return this.finish({
         classification: "FAILED",
         result,
-        changedFiles,
-        unauthorizedChanges,
-        proc,
-        diagnostics: [`unauthorized changes outside mission scope: ${unauthorizedChanges.join(", ")}`],
+        envelope,
+        diagnostics: [`OpenAI SDK call failed: ${envelope.error ?? "(no detail)"}`],
       });
     }
 
-    // 4) Provider-certified stop → BLOCKED.
+    // 2) Provider-certified stop → BLOCKED.
     if (result?.status === "BLOCKED") {
       return this.finish({
         classification: "BLOCKED",
         result,
-        changedFiles,
-        unauthorizedChanges: [],
-        proc,
+        envelope,
         diagnostics: [`provider reported BLOCKED: ${result.blocker ?? "(no reason)"}`],
       });
     }
 
-    // 5) Clean run → OK.
+    // 3) A real response was received → OK. `result` may be null when the model returned no strict
+    //    RESULT JSON; the response id + usage in the proof are the ground truth of the real call.
     return this.finish({
       classification: "OK",
       result,
-      changedFiles,
-      unauthorizedChanges: [],
-      proc,
-      diagnostics: [],
+      envelope,
+      diagnostics: this.callDiagnostics(envelope),
     });
   }
 
-  // --- command construction ------------------------------------------------
+  // --- availability view -----------------------------------------------------
 
-  private buildArgs(request: ProviderRequest, userPrompt: string, readOnly: boolean): string[] {
-    // `codex exec` is the non-interactive (headless) form; flags mirror the Claude adapter's intent.
-    const args = ["exec"];
-    if (request.resumeSessionId) args.push("--resume", request.resumeSessionId);
-    args.push("--model", this.model);
-    args.push("--output-format", "json");
-    args.push("--cd", request.mission.context.repoRoot);
-    args.push("--allowed-tools", readOnly ? READONLY_TOOLS : WRITE_TOOLS);
-    if (readOnly) args.push("--sandbox", "read-only");
-    // Guardrails are injected as a system preamble prepended to the mission prompt.
-    args.push("--prompt", `${GUARDRAIL_SYSTEM_PROMPT}\n\n${userPrompt}`);
-    return args;
+  /** The env the preflight observes at execution time (process env; no binary probing needed). */
+  private availabilityEnv(): AvailabilityEnv {
+    return { env: process.env, hasBinary: () => true };
   }
 
-  // --- parsing -------------------------------------------------------------
+  // --- parsing ---------------------------------------------------------------
 
-  private parseResult(stdout: string, mission: string): ProviderResult | null {
-    const json = extractJsonObject(stdout);
+  private parseResult(text: string, mission: string): ProviderResult | null {
+    const json = extractJsonObject(text);
     if (!json) return null;
     try {
       const raw = JSON.parse(json) as Partial<ProviderResult>;
@@ -280,31 +281,47 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
     }
   }
 
-  // --- working-tree evidence & scope enforcement (contract §9) -------------
+  // --- real-call proof (secret-free) -----------------------------------------
 
-  private observeChangedFiles(): string[] {
-    const r = this.run("git", ["status", "--porcelain"], { cwd: this.cwd });
-    if (r.status !== 0) return [];
-    return r.stdout
-      .split(/\r?\n/)
-      .map((l) => l.trim())
-      .filter(Boolean)
-      .map((l) => {
-        const body = l.replace(/^[ MADRCU?!]{1,2}\s+/, "");
-        const arrow = body.indexOf(" -> ");
-        return arrow >= 0 ? body.slice(arrow + 4) : body;
-      });
+  /** Write the real-call proof object to `proofPath` (never a secret). Best-effort; no throw. */
+  private writeProof(request: ProviderRequest, envelope: OpenAiChatEnvelope): void {
+    if (!this.proofPath) return;
+    const proof = {
+      capability: "OpenAI Provider Execution",
+      provider: this.name,
+      transport: "openai-sdk (chat.completions)",
+      ranAt: new Date().toISOString(),
+      mission: request.mission.mission,
+      requestedModel: this.model,
+      servedModel: envelope.model,
+      responseId: envelope.id,
+      finishReason: envelope.finishReason,
+      usage: envelope.usage,
+      ok: envelope.ok,
+      error: envelope.error,
+      responseTextPreview: envelope.text.slice(0, 800),
+      resultParsed: this.parseResult(envelope.text, request.mission.mission),
+      secretsExposed: false as const,
+    };
+    try {
+      fs.mkdirSync(path.dirname(this.proofPath), { recursive: true });
+      fs.writeFileSync(this.proofPath, JSON.stringify(proof, null, 2));
+    } catch {
+      /* proof is best-effort — never let it break the mission path */
+    }
   }
 
-  private isAuthorized(file: string, authorizedPaths: string[]): boolean {
-    if (isFrozenPath(file)) return authorizedPaths.some((p) => matchGlob(file, p));
-    if (authorizedPaths.length === 0) return false;
-    return authorizedPaths.some((p) => matchGlob(file, p));
+  private callDiagnostics(envelope: OpenAiChatEnvelope): string[] {
+    const lines = [`openai-sdk call OK (model=${envelope.model ?? this.model}, id=${envelope.id ?? "?"})`];
+    if (envelope.usage) {
+      lines.push(`tokens: prompt=${envelope.usage.promptTokens}, completion=${envelope.usage.completionTokens}, total=${envelope.usage.totalTokens}`);
+    }
+    return lines;
   }
 
-  // --- outcome assembly ----------------------------------------------------
+  // --- outcome assembly ------------------------------------------------------
 
-  /** A structured, non-throwing outcome for the "cannot run" case. classification BLOCKED, no call made. */
+  /** Structured, non-throwing outcome for the "cannot run" case. BLOCKED, no call made. */
   private unavailableOutcome(
     request: ProviderRequest,
     availability: ProviderAvailability,
@@ -340,21 +357,26 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
   private finish(p: {
     classification: ProviderOutcome["classification"];
     result: ProviderResult | null;
-    changedFiles: string[];
-    unauthorizedChanges: string[];
-    proc: ProviderProcessResult;
+    envelope: OpenAiChatEnvelope;
     diagnostics: string[];
   }): ProviderOutcome {
     return {
       provider: this.name,
       classification: p.classification,
+      // A real attempt WAS made (the SDK call), whether it returned a response or an error.
       providerExecuted: true,
       fromCache: false,
       result: p.result,
-      sessionId: null,
-      changedFiles: p.changedFiles,
-      unauthorizedChanges: p.unauthorizedChanges,
-      raw: { exitCode: p.proc.status, stdout: p.proc.stdout, stderr: p.proc.stderr },
+      sessionId: p.envelope.id,
+      // Text-transport provider: it mutates nothing in the working tree. The model's declared
+      // changed files (if any) live in `result.changedFiles`; the adapter observes none itself.
+      changedFiles: [],
+      unauthorizedChanges: [],
+      raw: {
+        exitCode: p.envelope.ok ? 0 : 1,
+        stdout: p.envelope.text,
+        stderr: p.envelope.error ?? "",
+      },
       diagnostics: p.diagnostics,
     };
   }
@@ -365,17 +387,7 @@ export function createOpenAIProvider(opts: OpenAIProviderOptions = {}): Engineer
   return new OpenAIProviderAdapter(opts);
 }
 
-// --- shared helpers (module-local; no coupling to the Claude adapter) ------
-
-/** Resolve whether `bin` exists on PATH using the injected runner (`command -v`). Deterministic. */
-function binaryOnPath(run: ProviderProcessRunner, cwd: string, bin: string): boolean {
-  try {
-    const r = run("command", ["-v", bin], { cwd });
-    return r.status === 0 && r.stdout.trim().length > 0;
-  } catch {
-    return false;
-  }
-}
+// --- shared helpers (module-local; no coupling to the Claude adapter) --------
 
 /** Pull a single JSON object out of possibly-decorated text (fenced block or braces). */
 function extractJsonObject(text: string): string | null {
@@ -385,21 +397,4 @@ function extractJsonObject(text: string): string | null {
   const last = text.lastIndexOf("}");
   if (first >= 0 && last > first) return text.slice(first, last + 1);
   return null;
-}
-
-function matchGlob(file: string, pattern: string): boolean {
-  const f = file.replace(/^\.?\//, "");
-  const p = pattern.replace(/^\.?\//, "");
-  if (f === p) return true;
-  if (p.endsWith("/")) return f.startsWith(p);
-  const regex = new RegExp(
-    "^" +
-      p
-        .replace(/[.+^${}()|[\]\\]/g, "\\$&")
-        .replace(/\*\*/g, " ")
-        .replace(/\*/g, "[^/]*")
-        .replace(/ /g, ".*") +
-      "$",
-  );
-  return regex.test(f);
 }
