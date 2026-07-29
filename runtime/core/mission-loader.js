@@ -130,15 +130,21 @@ const plan = {
     status: "READY_FOR_EXECUTION",
 };
 
-// Optional machine-checkable capability probes (spec.verify). Each entry is
-// { capability, evidence } where `evidence` names a probe the Validation Engine knows how to run
-// against real generated artifacts. Absent on legacy missions ⇒ the Validation Engine adds no extra
-// gate, so behaviour is unchanged. Present ⇒ the mission's Definition of Done becomes genuinely
-// verified rather than merely asserted.
+// Machine-checkable capability probes (spec.verify). Each entry is { capability, evidence, required? }
+// where `evidence` names a probe the Validation Engine knows how to run against real generated
+// artifacts. Absent on legacy missions ⇒ the Validation Engine adds no extra gate, so behaviour is
+// unchanged. Present ⇒ the mission's Definition of Done becomes genuinely verified rather than merely
+// asserted. `required` is carried through verbatim (opt out with `required: false`) so the Validation
+// Engine's optional-proof handling — a proof that is recorded but never blocks SUCCESS — actually
+// reaches the gate; a dropped flag would silently force every declared proof to be required.
 if (Array.isArray(spec.verify)) {
     plan.verify = spec.verify
         .filter((v) => v && typeof v === "object" && typeof v.evidence === "string")
-        .map((v) => ({ capability: String(v.capability || v.evidence), evidence: v.evidence }));
+        .map((v) => {
+            const entry = { capability: String(v.capability || v.evidence), evidence: v.evidence };
+            if (v.required === false) entry.required = false;
+            return entry;
+        });
 }
 
 fs.mkdirSync("runtime/generated", { recursive: true });
