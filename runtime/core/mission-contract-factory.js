@@ -110,7 +110,9 @@ function entryText(entry) {
  */
 const PROBE_INTENT = [
     {
-        match: /\b(connectivity|internet)\b/i,
+        // Connectivity / internet / "online" intent all require the network: a mission to explore
+        // online opportunities cannot be proven without proving the Internet is actually reachable.
+        match: /\b(connectivity|internet|online)\b/i,
         probes: [{ capability: "Internet reachable (Connectivity Audit)", evidence: "internet-reachable" }],
     },
 ];

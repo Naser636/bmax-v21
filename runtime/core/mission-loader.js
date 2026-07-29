@@ -147,6 +147,36 @@ if (Array.isArray(spec.verify)) {
         });
 }
 
+// Runtime-level enforcement of REQUIRED capability proofs — a mission's INTENT can imply proofs its
+// contract omits (a stale or hand-authored `verify`-less contract), and completion must be forbidden
+// until those proofs are produced. A mission to reach/explore the Internet, for example, MUST prove
+// Internet reachability. The Mission Loader therefore derives the intent-implied proofs from the SAME
+// resolver the Contract Factory declares from (mission-contract-factory.resolveVerifyProbes — one
+// source of truth, no second vocabulary) and MERGES any not already declared as REQUIRED proofs. This
+// closes the hole where such a mission could reach MISSION SUCCESS with NO capability proof at all;
+// the Validation Engine's required-proof gate then blocks until the probe's real evidence exists.
+// De-duplicated by evidence name; missions with no intent-implied proof are entirely unaffected.
+try {
+    const { resolveVerifyProbes } = require("./mission-contract-factory");
+    const implied = resolveVerifyProbes({
+        id: mission,
+        title: spec.mission,
+        goal: objectives.map((o) => o.goal).filter(Boolean).join(" "),
+        description: spec.description,
+    });
+    if (implied.length > 0) {
+        const declared = Array.isArray(plan.verify) ? plan.verify : (plan.verify = []);
+        const seen = new Set(declared.map((v) => v.evidence));
+        for (const p of implied) {
+            if (seen.has(p.evidence)) continue;
+            seen.add(p.evidence);
+            declared.push({ capability: p.capability, evidence: p.evidence });
+        }
+    }
+} catch (err) {
+    console.error(`[mission-loader] capability-proof derivation unavailable: ${err.message}`);
+}
+
 fs.mkdirSync("runtime/generated", { recursive: true });
 fs.writeFileSync(
     "runtime/generated/mission-plan.json",

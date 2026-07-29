@@ -36,6 +36,10 @@ function inTempCwd(fn) {
 inTempCwd((mod) => {
     const audit = mod.resolve({ objectiveId: "RUN_CONNECTIVITY_AUDIT_1", goal: "Run Connectivity Audit" });
     ok("resolves a connectivity objective to the Connectivity Audit capability", audit && audit.capability === "Connectivity Audit");
+    // "online" / "internet" intent must ALSO reach the Connectivity Audit, so the evidence exists for
+    // the internet-reachable proof such missions are now REQUIRED to satisfy.
+    const online = mod.resolve({ objectiveId: "EXPLORE_ONLINE_OPPORTUNITIES_1", goal: "Explore Online Opportunities" });
+    ok("resolves an online-opportunity objective to the Connectivity Audit capability", online && online.capability === "Connectivity Audit");
     ok("does NOT resolve an unrelated objective", mod.resolve({ objectiveId: "REFACTOR_X_1", goal: "Refactor module X" }) === null);
 });
 

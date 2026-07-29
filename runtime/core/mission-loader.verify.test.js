@@ -65,4 +65,41 @@ ok("failing REQUIRED proof blocks (evaluate.ok=false)", evaluation.ok === false)
 ok("only the required proof is counted as missing", evaluation.missingRequired.length === 1 && evaluation.missingRequired[0].evidence === "internet-reachable");
 ok("failing OPTIONAL proof is reported but not blocking", evaluation.results[1].ok === false && evaluation.results[1].required === false);
 
+// ---------------------------------------------------------------------------
+// Runtime-level enforcement: a mission whose INTENT is to go online but whose contract declares NO
+// `verify` block must still be REQUIRED to prove Internet reachability. The loader derives that proof
+// from intent (same resolver the Contract Factory uses) so completion is forbidden until the evidence
+// exists — the hole that let EXPLORE_ONLINE_OPPORTUNITIES reach SUCCESS with no capability proof.
+// ---------------------------------------------------------------------------
+const ONLINE_MISSION = "EXPLORE_ONLINE_OPPORTUNITIES";
+const dir2 = fs.mkdtempSync(path.join(os.tmpdir(), "loader-online-test-"));
+fs.mkdirSync(path.join(dir2, "runtime", "missions"), { recursive: true });
+fs.writeFileSync(
+    path.join(dir2, "runtime", "missions", `${ONLINE_MISSION}.json`),
+    // Deliberately NO `verify` block — the intent alone must trigger the required proof.
+    JSON.stringify({ objectives: [{ id: `${ONLINE_MISSION}_1`, goal: "Explore Online Opportunities" }] })
+);
+
+execFileSync("node", [LOADER, ONLINE_MISSION], { cwd: dir2, stdio: "ignore" });
+const onlinePlan = JSON.parse(fs.readFileSync(path.join(dir2, "runtime", "generated", "mission-plan.json"), "utf8"));
+
+ok("loader injects a required proof from online intent (contract declared none)", Array.isArray(onlinePlan.verify) && onlinePlan.verify.some((v) => v.evidence === "internet-reachable"));
+ok("the injected proof is REQUIRED (blocks by default)", onlinePlan.verify.find((v) => v.evidence === "internet-reachable").required === undefined);
+
+// With no connectivity evidence, the Validation Engine's gate must BLOCK this mission…
+process.chdir(dir2);
+let onlineEval, onlineEvalWithEvidence;
+try {
+    onlineEval = probes.evaluate(onlinePlan.verify, { missionId: ONLINE_MISSION, verify: null });
+    // …and PASS only once the Connectivity Audit connector's real evidence reports reachable=true.
+    fs.mkdirSync("runtime/generated", { recursive: true });
+    fs.writeFileSync("runtime/generated/connectivity-audit.json", JSON.stringify({ internet: { reachable: true }, summary: { http: "2/2 reachable" } }));
+    onlineEvalWithEvidence = probes.evaluate(onlinePlan.verify, { missionId: ONLINE_MISSION, verify: null });
+} finally {
+    process.chdir(prev);
+}
+
+ok("completion FORBIDDEN without evidence (evaluate.ok=false)", onlineEval.ok === false && onlineEval.missingRequired.some((m) => m.evidence === "internet-reachable"));
+ok("completion ALLOWED once real Internet capability evidence exists", onlineEvalWithEvidence.ok === true);
+
 console.log(`\nMission Contract verify → Validation Engine wire: ${passed} assertions passed.`);

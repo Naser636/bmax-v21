@@ -159,6 +159,8 @@ ok("declared probe is the registered internet-reachable evidence", conn.verify[0
 ok("declared contract stays Loader-valid with verify", synth.isValidContract(conn) === true);
 const internet = factory.buildContract({ id: "INTERNET_CONNECTIVITY_AUDIT", title: "Internet Connectivity Audit" });
 ok("internet mission also declares the probe", Array.isArray(internet.verify) && internet.verify[0].evidence === "internet-reachable");
+const online = factory.buildContract({ id: "EXPLORE_ONLINE_OPPORTUNITIES", title: "Explore Online Opportunities", requiresEngineering: false });
+ok("online-opportunity mission declares the internet-reachable proof", Array.isArray(online.verify) && online.verify[0].evidence === "internet-reachable");
 const unrelated = factory.buildContract({ id: "READ_ONLY_GAP", title: "A read-only gap", requiresEngineering: false });
 ok("unrelated mission declares NO verify block (unchanged behaviour)", unrelated.verify === undefined);
 ok("resolveVerifyProbes de-duplicates by evidence", factory.resolveVerifyProbes({ id: "X", title: "connectivity internet check" }).length === 1);

@@ -155,7 +155,10 @@ function haystack(patch) {
 const EXECUTORS = [
     {
         capability: "Connectivity Audit",
-        matches(patch) { return /connectivity/.test(haystack(patch)); },
+        // Any objective whose intent is the network — connectivity, internet, or exploring what is
+        // available "online" — is discharged by the real Connectivity Audit, so its evidence exists
+        // for the internet-reachable proof the mission is now REQUIRED to satisfy.
+        matches(patch) { return /\b(connectivity|internet|online)\b/.test(haystack(patch)); },
         run() {
             const out = CONNECTIVITY_EVIDENCE;
             try { fs.rmSync(out, { force: true }); } catch { /* ignore */ }
