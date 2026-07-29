@@ -159,3 +159,19 @@ console.log("Engineering:", requiresEngineering ? "YES (authorized paths)" : "no
 console.log("Status     :", plan.status);
 console.log("Output     : runtime/generated/mission-plan.json");
 console.log("======================================");
+
+// OFFICIAL MISSION CONTEXT. The Mission Engine now composes its context through the single official
+// source (MissionContextBuilder) instead of leaving every downstream engine to re-derive it. This is
+// additive and best-effort: mission-plan.json above is unchanged (public contract preserved) and the
+// builder runs in "cache-only" mode so it never spawns a repository scan or blocks the load. It emits
+// runtime/generated/mission-context.json for Capability Registry / Policy Engine / Brief Generator.
+try {
+    const { buildMissionContext } = require("./mission-context-builder");
+    const context = buildMissionContext(mission, { runtime: "cache-only", write: true });
+    console.log(
+        "Context    : runtime/generated/mission-context.json",
+        context.runtimeComplete ? "(runtime resolved)" : "(runtime pending)"
+    );
+} catch (err) {
+    console.error(`[mission-loader] MissionContext not emitted: ${err.message}`);
+}
