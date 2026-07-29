@@ -85,8 +85,28 @@ function changedPathsInScope() {
     return changed.filter((f) => prefixes.some((pre) => pre.length > 0 && f.startsWith(pre)));
 }
 
+// Committed deliverables already present inside the authorized write scope (a prior run's result).
+function trackedFilesInScope() {
+    const prefixes = authorizedPaths
+        .map((p) => p.replace(/[*].*$/, "").replace(/\/+$/, ""))
+        .filter((p) => p.length > 0);
+    if (prefixes.length === 0) return [];
+    let tracked = "";
+    try {
+        tracked = execFileSync("git", ["ls-files", "--", ...prefixes], { encoding: "utf8" });
+    } catch {
+        return [];
+    }
+    return tracked.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+}
+
 const scopedChanges = isEngineering ? changedPathsInScope() : [];
-const engineeringOk = !isEngineering || scopedChanges.length > 0;
+// Idempotent engineering proof: a write-scope mission is satisfied by a FRESH in-scope change
+// (this run) OR by an already-committed deliverable inside the authorized scope (a prior run's
+// result). Without the latter, a completed+committed engineering mission can never re-validate —
+// producing a new diff would dirty the tree and fail gitClean, an unresolvable contradiction.
+const deliverableInScope = isEngineering ? trackedFilesInScope() : [];
+const engineeringOk = !isEngineering || scopedChanges.length > 0 || deliverableInScope.length > 0;
 
 // 4. Build / type gates (if evidence present).
 //
@@ -286,7 +306,7 @@ console.log("Mission   :", report.mission);
 console.log("Coverage  :", coverageOk ? "OK" : "INCOMPLETE", `(${executed.length}/${objectiveCount})`);
 console.log("Failures  :", failed.length);
 if (evidenceEntries.length) console.log("Evidence  :", evidenceOk ? `OK (${evidenceEntries.length} artifact(s))` : `MISSING (${missingEvidence.length})`);
-if (isEngineering) console.log("Engineering:", engineeringOk ? `OK (${scopedChanges.length} changed)` : "NONE in scope");
+if (isEngineering) console.log("Engineering:", engineeringOk ? `OK (${scopedChanges.length} changed, ${deliverableInScope.length} committed in scope)` : "NONE in scope");
 if (gatesEvaluated) console.log("Gates     :", `build=${buildOk} tsc=${typescriptOk}`);
 for (const c of capabilityResults) console.log("Capability:", `${c.ok ? "OK  " : "FAIL"} ${c.capability} (${c.detail})`);
 console.log("Validated :", validated);

@@ -3,11 +3,14 @@
   "externalProvidersEnabled": true,
   "defaultProvider": "claude",
   "fallbackProvider": "openai",
+  "executionPolicy": "LOCAL_FIRST",
+  "localExecutionTarget": 0.95,
+  "providerUse": "ONLY_WHEN_LOCAL_IMPOSSIBLE",
   "providers": [
     { "id": "claude", "priority": 100, "capabilities": ["engineering"] },
     { "id": "openai", "priority": 50, "capabilities": ["engineering"] }
   ],
   "onExternalRequest": "ORCHESTRATE",
   "enforcedBy": "src/runtime/provider-activation.ts",
-  "note": "Enforced by the Provider Activation seam: the Registry + Orchestrator select a provider per this policy, and real calls run through the Claude/OpenAI adapters. Set externalProvidersEnabled=false to return to a local-only posture — the seam then reports a precise policy-deny cause instead of calling."
+  "note": "LOCAL_FIRST posture: ODG ALWAYS runs the local deterministic pipeline (build → tests → patch → validation) and local recovery first; an AI provider is reached ONLY when local execution is PROVEN impossible (AutonomyRuntimeAdapter.runPipeline: local → recovery → provider only when recovery.exhausted && missionRequiresProvider). Target ≥95% of missions execute entirely locally. External providers stay registered/AVAILABLE for that last-resort case; set externalProvidersEnabled=false for a strict local-only posture — the seam then reports a precise policy-deny cause instead of calling."
 }

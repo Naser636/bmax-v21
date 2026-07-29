@@ -42,7 +42,7 @@ import {
 import { defaultAvailabilityEnv } from "@/providers/provider-factory";
 import type { AvailabilityEnv } from "@/providers/provider-availability";
 import type { ClaudeProviderOptions } from "@/providers/claude-provider-adapter";
-import type { OpenAIProviderOptions } from "@/providers/openai-provider-adapter";
+import { OpenAIProviderAdapter, type OpenAIProviderOptions } from "@/providers/openai-provider-adapter";
 import { runMissionWithFailover } from "@/runtime/provider-failover-engine";
 
 /** Shape of runtime/config/provider-policy.json (only the fields this seam reads). */
@@ -51,6 +51,16 @@ export interface ProviderPolicy {
   externalProvidersEnabled?: boolean;
   defaultProvider?: string;
   fallbackProvider?: string;
+  /**
+   * LOCAL_FIRST posture (default). The Runtime runs the local deterministic pipeline + local recovery
+   * first and reaches a provider ONLY when local execution is proven impossible; providers stay
+   * registered for that last-resort case. Enforced behaviourally by AutonomyRuntimeAdapter.runPipeline.
+   */
+  executionPolicy?: "LOCAL_FIRST" | "PROVIDER_FIRST";
+  /** Fraction of missions expected to execute entirely locally (evidence target, default 0.95). */
+  localExecutionTarget?: number;
+  /** When a provider may be used under LOCAL_FIRST (surfaced as evidence). */
+  providerUse?: string;
   /** Optional explicit provider table; defaults to the built-in Claude(primary)/OpenAI(failover). */
   providers?: Array<{ id: string; priority: number; capabilities?: string[] }>;
 }
@@ -73,6 +83,14 @@ export interface ActivationOptions {
    * true only when the operator explicitly asks for a live run.
    */
   execute?: boolean;
+  /**
+   * Pin the provider to execute, bypassing the deterministic failover chain. The chain selects Claude
+   * (primary) whenever Claude is AVAILABLE, so the OpenAI SDK — though AVAILABLE — is otherwise never
+   * the executed provider. Setting this to "openai" is the explicit PROVE_OPENAI_PROVIDER_EXECUTION
+   * proof path: it runs the OpenAI adapter directly (a live call). Selection architecture is untouched;
+   * this is an operator override, never the default. Unset ⇒ normal Claude→OpenAI failover.
+   */
+  forceProvider?: "openai";
   /** Injected adapter options (test hook: a fake process runner exercises the real .execute() path). */
   claude?: ClaudeProviderOptions;
   openai?: OpenAIProviderOptions;
@@ -87,6 +105,10 @@ export interface ActivationEvidence {
     externalProvidersEnabled: boolean;
     defaultProvider: string;
     fallbackProvider: string;
+    /** LOCAL_FIRST posture surfaced from runtime/config/provider-policy.json (default LOCAL_FIRST). */
+    executionPolicy: string;
+    localExecutionTarget: number;
+    providerUse: string;
     enforced: true;
   };
   registry: { contractVersion: string; registered: string[] };
@@ -163,6 +185,12 @@ export function activateAndExecute(mission: ActivationMission, opts: ActivationO
   const externalProvidersEnabled = policy.externalProvidersEnabled === true;
   const defaultProvider = policy.defaultProvider ?? "claude";
   const fallbackProvider = policy.fallbackProvider ?? "openai";
+  // LOCAL_FIRST is the default posture: a provider is only ever the last resort behind local
+  // execution + local recovery (enforced by AutonomyRuntimeAdapter.runPipeline). Surface it as
+  // evidence on every activation so the posture is machine-visible, not just documented.
+  const executionPolicy = policy.executionPolicy ?? "LOCAL_FIRST";
+  const localExecutionTarget = typeof policy.localExecutionTarget === "number" ? policy.localExecutionTarget : 0.95;
+  const providerUse = policy.providerUse ?? "ONLY_WHEN_LOCAL_IMPOSSIBLE";
 
   // 1) REGISTRY: register the concrete providers, then snapshot into the ORCHESTRATOR. This is the
   //    activation — Registry is the source of truth for discovery, Orchestrator owns selection.
@@ -185,7 +213,7 @@ export function activateAndExecute(mission: ActivationMission, opts: ActivationO
   const base = {
     capability: "Provider Activation" as const,
     ranAt: new Date().toISOString(),
-    policy: { mode, externalProvidersEnabled, defaultProvider, fallbackProvider, enforced: true as const },
+    policy: { mode, externalProvidersEnabled, defaultProvider, fallbackProvider, executionPolicy, localExecutionTarget, providerUse, enforced: true as const },
     registry: {
       contractVersion: PROVIDER_REGISTRY_CONTRACT_VERSION,
       registered: registry.list().map((d) => `${d.id}(priority=${d.priority}, enabled=${d.enabled})`),
@@ -238,6 +266,37 @@ export function activateAndExecute(mission: ActivationMission, opts: ActivationO
   //    readiness WITHOUT an unsolicited paid call; execute:true spawns the real provider CLI.
   const request = toProviderRequest(mission);
   const env = opts.env ?? defaultAvailabilityEnv();
+
+  // 3a) EXPLICIT OpenAI proof path (PROVE_OPENAI_PROVIDER_EXECUTION). The failover chain would select
+  //     Claude (primary) since Claude is AVAILABLE, so a real OpenAI call would never occur. When the
+  //     operator pins "openai", execute the OpenAI adapter directly — a live SDK call — and record a
+  //     secret-free real-call proof. No selection/failover/orchestrator code is changed.
+  if (opts.forceProvider === "openai") {
+    const adapter = new OpenAIProviderAdapter({
+      ...opts.openai,
+      proofPath: opts.openai?.proofPath ?? path.join("runtime", "generated", "openai-provider-execution.json"),
+    });
+    const outcome = adapter.execute(request);
+    const res = outcome.result;
+    return {
+      ...base,
+      orchestration,
+      execution: {
+        attempted: true,
+        executed: true,
+        providerExecuted: outcome.providerExecuted,
+        classification: outcome.classification,
+        response: res ? { status: res.status, objectivesAddressed: res.objectivesAddressed, changedFiles: res.changedFiles, notes: res.notes ?? null } : null,
+        blocker: res ? res.blocker : null,
+      },
+      failover: {
+        selectedProvider: outcome.provider,
+        canContinue: outcome.classification !== "BLOCKED",
+        providerLines: [`${outcome.provider}: ${outcome.classification}${outcome.sessionId ? ` (id=${outcome.sessionId})` : ""}`, ...outcome.diagnostics],
+      },
+    };
+  }
+
   const run = runMissionWithFailover(request, {
     env,
     claude: opts.claude,
@@ -286,13 +345,17 @@ if (invokedDirectly) {
   const missionArg = process.argv[2];
   const outArg = process.argv[3] || path.join("runtime", "generated", "provider-activation.json");
   const execute = process.argv.includes("--execute");
+  // `--provider openai` (or `--openai`) pins the OpenAI adapter for an explicit live proof; pinning
+  // implies execution (a pinned proof is inherently a live run).
+  const provIdx = process.argv.indexOf("--provider");
+  const forceProvider = process.argv.includes("--openai") || process.argv[provIdx + 1] === "openai" ? "openai" : undefined;
   let mission: ActivationMission = { mode: "ENGINEERING", requiresEngineering: true, mission: "PROVIDER_ACTIVATION_SMOKE" };
   try {
     if (missionArg && fs.existsSync(missionArg)) mission = JSON.parse(fs.readFileSync(missionArg, "utf8")) as ActivationMission;
   } catch {
     /* fall back to the default smoke mission */
   }
-  const evidence = activateAndExecute(mission, { policy: readProviderPolicy(), execute });
+  const evidence = activateAndExecute(mission, { policy: readProviderPolicy(), execute: execute || forceProvider === "openai", forceProvider });
   try {
     fs.mkdirSync(path.dirname(outArg), { recursive: true });
     fs.writeFileSync(outArg, JSON.stringify(evidence, null, 2));
