@@ -13,7 +13,7 @@
 
 | ID | Claim | Source | Command / Test | Artifact | Evidence | Status |
 |---|---|---|---|---|---|---|
-- `P0-001` | Repository snapshot observed at `2026-09-04T22:45:05+00:00` | Source: Git repository | Command: repository snapshot check | Artifact: `docs/audit/phase-0/PHASE_0_TRUTH_CERTIFICATE.md` | Evidence: branch=`runtime/mission-context-builder`, HEAD=`3dd1c14d3e20cebb29a97f1f912b808292937a53`, working_tree=`DIRTY`, certificate=`PRESENT`; `git status --short` shows only the certificate as untracked | **OBSERVED** |
+| P0-001 | Repository snapshot observed at `2026-09-04T22:45:05+00:00` | Git repository | Repository snapshot check | `docs/audit/phase-0/PHASE_0_TRUTH_CERTIFICATE.md` | branch=`runtime/mission-context-builder`; HEAD=`3dd1c14d3e20cebb29a97f1f912b808292937a53`; working_tree=`DIRTY`; certificate=`PRESENT`; `git status --short` showed only this certificate as untracked | **OBSERVED** |
 
 ## Certification Gates
 
