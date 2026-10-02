@@ -2622,3 +2622,42 @@ Git-tracked evidence artifact — it does not re-derive it.
 
 STATUS: M0000 VERIFIED for scope "canonical runtime execution + ledger completion gate" (proof
 91d0b57); documentary-deliverable semantic re-certification remains out of scope and NOT claimed.
+
+## P0-CURRENT-053 — M0002 VERIFIED (CANONICAL RUNTIME EXECUTION + LEDGER COMPLETION GATE)
+HEAD: eff4781 (execution, unchanged before/after). Documentation only — modifies ONLY this carnet.
+No mission re-executed; ledger neither read nor modified as proof; no code/test/contract/runtime/
+roadmap/Truth Lock(TRUTH_LOCK_5_MISSIONS.md)/V5/MEMORY.md change; no new file. This entry records a
+verdict ALREADY established by the durable, Git-tracked evidence artifact — it does not re-derive it.
+
+--- DURABLE PROOF (admissible source) ---
+  docs/audit/truth-lock/M0002_RUNTIME_PROOF.md
+  proof commit = 698d3daedbed0927eed4fb40748cc56e4195aca6
+
+--- OBSERVED REALITY (verbatim from the runtime verify pass, HEAD eff4781) ---
+  - M0002 executed ONCE by its canonical LOCAL route (runtime/bin/odg mission M0002 →
+    src/runtime/mission-cli.ts; decision: migrated local mission → LOCAL RUNTIME; no provider).
+    Contract = runtime/missions/M0002.json (mode AUDIT, read-only, requires_engineering=false).
+  - exit 0 / Status LOCAL_COMPLETE (8 logical / 12 technical steps / 12 capabilities).
+  - validated = true; mission-report.json = { mission:M0002, validated:true, status:SUCCESS }.
+  - ledger delta 892 → 893 (+1); the single appended entry: mission=M0002, proven=true,
+    validated=true, state=ARCHIVED, objectives=0.
+  - NO other mission registered by this run (appended missions = ["M0002"]).
+  - objectives=0 is the effect of the stale runtime/generated/mission-plan.json being correctly
+    IGNORED for identity AND objectives by fix a51c48c — NOT a claim that M0002 has zero objectives
+    (its contract declares four: CONTRACTS, INTERFACES, ARTIFACTS, EXTENSION_POINTS).
+  - Git clean before and after; no code/contract/roadmap modified.
+
+--- VERDICT ---
+  VERIFIED — M0002 canonical runtime execution + ledger completion gate.
+
+--- LIMITATIONS (verdict MUST NOT be widened beyond the proven scope) ---
+  - This verdict does NOT individually certify the four objectives (CONTRACTS, INTERFACES,
+    ARTIFACTS, EXTENSION_POINTS).
+  - This verdict does NOT certify the full Definition of Done ("Runtime is provider-independent and
+    ready for future capabilities.").
+  - The mission-report is mission-level and carries no objective→evidence attribution.
+  - The ephemeral/git-ignored mission-ledger is NOT the durable proof (P0-CURRENT-045); the durable
+    proof is the tracked artifact M0002_RUNTIME_PROOF.md cited above.
+
+STATUS: M0002 VERIFIED for scope "canonical runtime execution + ledger completion gate" (proof
+698d3da); four-objective and full-DoD certification remain out of scope and NOT claimed.
