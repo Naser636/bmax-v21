@@ -2101,3 +2101,27 @@ excluded). No code/contract/check change; no authorization change.
 
 STATUS: CAMPAIGN 04 VALUE/THRESHOLD REVIEW RECORDED (d64329c). Campaign 04 still OPEN/INCOMPLETE;
 semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-039 — CAMPAIGN 04 SERIES-NON-INCREASING REVIEW (READ-ONLY) (COMMITTED)
+HEAD: e19a079. Read-only review of the single series/temporal clause only. No code/contract/check
+change; no authorization change.
+
+--- FINDINGS ---
+  - Clause: BUILD_GATE_AUTONOMY/OBJ-003 — "La boucle continue tant que le nombre d'erreurs diminue."
+  - Series demanded: the error count per repair iteration.
+  - Candidate source: the Build Recovery Engine report — but it does NOT retain the per-iteration
+    series (the counts are ephemeral loop variables; the engine enforces the strict-improvement-or-
+    rollback invariant in-loop but emits only a summary), and runtime/generated is git-ignored.
+  - A precise temporal definition is required: stop condition, equality / terminal plateau, rollback.
+  - Reproducibility not guaranteed: depends on build/tsc output, the chosen fixes, and the environment.
+  - An honest check would first require a NEW evidence producer + a precise temporal specification.
+  - False positive: using iterations>0 as proof of decrease, or accepting a truncated series.
+  - False negative possible if a legitimate terminal plateau is rejected.
+  - VERDICT: BLOCKED / NON-VERIFIABLE as-is, consistent with P0-034 (family 5).
+
+--- STATUS ---
+  Campaign 04 remains OPEN / INCOMPLETE. No check created, no authorization changed. No Campaign 05,
+  no S7, no follow-up.
+
+STATUS: CAMPAIGN 04 SERIES-NON-INCREASING REVIEW RECORDED (e19a079). Campaign 04 still OPEN/INCOMPLETE;
+semantic done_when proof still BLOCKED.
