@@ -38,6 +38,20 @@ function recordMission(mission) {
   const scopedPlan = plan && plan.mission === mission ? plan : {};
   const context = readJsonSafe("runtime/generated/runtime-context.json");
 
+  // Run identity for idempotent recording (A2). Two LEGITIMATE finalizers can record the SAME mission
+  // in ONE run: the pipeline's "Mission Ledger" stage AND AutonomyRuntimeAdapter.archive() on a
+  // RELEASE decision. Deduplicate by (mission, run) using the EXISTING per-run token the Checkpoint
+  // Engine already stamps — pipeline-checkpoint.startedAt — reused, NOT invented: it is set once per
+  // odg-run.js invocation (checkpoint-engine.begin), stays stable across that run and its archive
+  // finalizer, and is fresh on the next execution. It is trusted ONLY when the checkpoint belongs to
+  // THIS mission, so a stale checkpoint from another mission (e.g. the TS LOCAL route, which never
+  // writes it) yields no run id and the historical append-always behaviour is preserved.
+  const checkpoint = readJsonSafe("runtime/generated/pipeline-checkpoint.json");
+  const runId =
+    checkpoint && checkpoint.mission === mission && typeof checkpoint.startedAt === "string"
+      ? checkpoint.startedAt
+      : null;
+
   // Governance lifecycle: advance the state machine from evidence, then archive (recording a proven
   // mission in this immutable ledger IS its archival). The recorded `state` is therefore the REAL
   // achieved governance state — no longer hardcoded to "CREATED". markArchived is a no-op unless the
@@ -54,6 +68,7 @@ function recordMission(mission) {
   const entry = {
     recordedAt: new Date().toISOString(),
     mission: mission,
+    runId: runId || undefined,
     state: lifecycle ? lifecycle.achieved : governance.currentState,
     authorized: governance.authorized,
     nextStates: governance.nextStates,
@@ -83,6 +98,17 @@ function recordMission(mission) {
       return { skipped: true, entry };
     }
     entries = Array.isArray(existing.entries) ? existing.entries : [];
+  }
+
+  // Idempotence by (mission, run): if this exact (mission, runId) is already recorded in THIS run, the
+  // append is a redundant SECOND finalizer (pipeline stage + archive) — return a NO-OP rather than a
+  // duplicate entry. Guarded on a real runId, so a null run id (no mission-matched checkpoint) keeps
+  // the original append-always behaviour. Never masks a different mission (keyed on mission), a
+  // different run (different startedAt), a failure or an unproven result (the proven-only gate above
+  // still runs first and is untouched).
+  if (runId && entries.some((e) => e.mission === mission && e.runId === runId)) {
+    console.warn(`[MissionLedger] Skipping duplicate record of "${mission}" for run ${runId} (idempotent).`);
+    return { skipped: true, reason: "DUPLICATE_RUN", entry, count: entries.length };
   }
 
   entries.push(entry);
