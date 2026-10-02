@@ -1927,3 +1927,42 @@ created, no code changed, Campaign 04 status UNCHANGED.
 
 STATUS: CAMPAIGN 04 SEMANTIC-CONTRACT SIMULATION RECORDED (62c93d6). Campaign 04 still OPEN/INCOMPLETE;
 semantic done_when proof still BLOCKED; semantic-contract decision still REQUIRED. No Campaign 05, no S7.
+
+## P0-CURRENT-034 — CTO DECISION — CAMPAIGN 04 SEMANTIC CHECK SCOPE (COMMITTED)
+HEAD at decision: 3f387cb. This formalizes an ARCHITECTURE / SCOPE decision over the five missing
+parameterized-check families (from the P0-CURRENT-033 simulation). It does NOT authorize
+implementation, and it is NOT a closure of Campaign 04.
+
+--- DECISION PER FAMILY ---
+  1. ARTIFACT-NONEMPTY — AUTHORIZED to REUSE the existing evidence-integrity mechanism. No new engine.
+     The future check may prove ONLY that the declared artifact exists and is non-empty — NEVER its
+     semantic correctness.
+  2. SCOPE-CLEAN — AUTHORIZED to REUSE the existing changedPathsInScope()/gitClean mechanism. No new
+     engine. The future check MUST keep the same context and moment-of-observation rules to avoid a
+     false "clean" after commit.
+  3. FILE-COUNT / FILE-EXISTENCE — AUTHORIZED IN PRINCIPLE as a new minimal parameterized check that
+     reuses the probe engine + existing filesystem helpers. BEFORE implementation, the observation
+     source must be explicitly fixed and deterministic; the tracked-files vs raw-worktree ambiguity
+     MUST NOT be left implicit.
+  4. CONFIG-EQ — AUTHORIZED ONLY AS AN OBSERVATION/PROXY. It may NEVER be presented as semantic proof
+     of a behavior such as "the generation is governed by the policy". A config-eq PASS means ONLY that
+     the declared value matches the observed value.
+  5. SERIES-NON-INCREASING — BLOCKED. Do NOT create this check now. It first requires a real evidence
+     source, a precise temporal definition, and a determinism analysis.
+
+--- NON-NEGOTIABLE RULES (carried forward) ---
+  no automatic done_when text interpretation; no keyword mapping; explicit per-clause binding; AND
+  between clauses; default-deny; unknown check = MISSING; unbound clause = NOT-DECLARED; a failing
+  check = NOT-PROVEN; no promotion of a proxy into semantic proof; no coupling to SUCCESS; no change to
+  validation-engine or orchestrator in this step; no new proof engine; reuse before creating; Campaign
+  04 stays OPEN/INCOMPLETE until the full semantic contract is implemented AND proven.
+
+--- SCOPE OF THIS ENTRY ---
+  Architecture/scope decision ONLY. No code changed, no probe created, no contract defined, no build or
+  test run. Implementation of families 1–4 remains UNAUTHORIZED and gated on a separate explicit step
+  (family 3 additionally gated on fixing its source semantics; family 4 restricted to proxy; family 5
+  BLOCKED). This entry does NOT close Campaign 04.
+
+STATUS: CTO DECISION RECORDED — CAMPAIGN 04 SEMANTIC CHECK SCOPE (3f387cb). Implementation NOT
+authorized by this entry. Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+No Campaign 05, no S7, no follow-up selected.
