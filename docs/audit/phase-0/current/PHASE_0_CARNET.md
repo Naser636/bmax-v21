@@ -1772,3 +1772,44 @@ predicate → probe/evidence → verification result.
 
 STATUS: CAMPAIGN 04 — SEMANTIC CONTRACT GAP RECORDED (738a7d2). No new semantic contract created;
 Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-031 — CANONICAL AUTHORITY REVIEW: SEMANTIC CONTRACT DECISION REQUIRED (COMMITTED)
+HEAD: fcc6a55. Read-only canonical authority review; NO files modified during the review. It asked
+whether the currently authoritative master/governance documents already define an objective-level
+done_when proof model, before any semantic contract is considered.
+  CANONICAL FINDING: "CANONICAL SEMANTIC CONTRACT NOT DEFINED — DECISION REQUIRED".
+
+--- AUTHORITATIVE SOURCES REVIEWED (historical/archive/generated/release material excluded) ---
+  runtime/system/CONSTITUTION.md, docs/CONSTITUTION_EDG_v1.md, runtime/system/ROADMAP.md,
+  runtime/governance/ROADMAP.json, runtime/brain/MASTER_PLAN.md, runtime/governance/RUNTIME_ROADMAP.md,
+  docs/ROADMAP.md. (src/runtime/vnext/constitution-engine.ts is implementation, not canon — excluded.)
+
+--- THE CANON DOES NOT DEFINE ---
+  - how done_when becomes machine-verifiable;
+  - an objective → predicate/assertion relationship;
+  - an expected ↔ actual objective-level comparison;
+  - objective-level proof semantics;
+  - a structured per-objective verification contract;
+  - any authorization for introducing such a semantic contract.
+  (DoD appears only as free-text per mission; validation granularity is mission/report/milestone.
+  "Campaign" is not a canonical master concept — it lives only in this Phase-0 carnet audit log.)
+
+--- GOVERNING CONSTRAINTS FOUND (bear on any future decision) ---
+  - reuse before creating; extend before rewriting; validate before concluding; stop on blocking
+    errors; human approval before implementation (runtime/system/CONSTITUTION.md);
+  - no new engine after v1.0; new functionality must be a Capability or an extension of an existing
+    engine; proofs are part of the patrimony (docs/CONSTITUTION_EDG_v1.md).
+
+--- STATUS ---
+  - Campaign 04 remains OPEN / INCOMPLETE.
+  - Semantic done_when proof remains BLOCKED.
+  - The missing semantic contract is a DECISION REQUIRED item (not defined by the canon).
+  - No semantic contract is defined by this checkpoint. No implementation is authorized by it.
+  - Campaign 05 remains NOT CANONICALLY DEFINED. No S7. No follow-up selected.
+
+CRITICAL: this checkpoint records ONLY the absence of a canonical definition and the resulting
+decision requirement. It does NOT define, design, propose, or authorize the missing semantic
+contract.
+
+STATUS: CANONICAL SEMANTIC CONTRACT NOT DEFINED — DECISION REQUIRED (fcc6a55). Campaign 04 still
+OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
