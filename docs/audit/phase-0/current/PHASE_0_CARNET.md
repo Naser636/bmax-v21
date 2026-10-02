@@ -2201,3 +2201,37 @@ canonical location. No code/contract/check change; no new authorization.
 
 STATUS: CANONICAL AUTHORITY REVIEW RECORDED — DECISION REQUIRED (1356b78). Campaign 04 still
 OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-042 — CTO DECISION (b): done_when REMAINS NON-MACHINE-VERIFIABLE — PERIMETER CLOSED (COMMITTED)
+HEAD at decision: e65d301. Explicit CTO decision, option (b) of P0-CURRENT-041: done_when REMAINS
+NON-MACHINE-VERIFIABLE. The Campaign 04 perimeter is CLOSED WITHOUT creating or authorizing any
+done_when → machine-check → objective-level proof contract. Record only; no code/check/contract
+change; no SUCCESS coupling; no done_when interpretation.
+
+--- 1. VALID / REUSABLE (stands) ---
+  The committed observations/primitives remain valid and reusable AS OBSERVATIONS ONLY (never wired
+  to SUCCESS, never a done_when proof): objective attribution (d3b0cf0), objectives[].proof authoring
+  + read-only observation (3c1d133 / 74a2d25), artifact-nonempty + scope-clean (2992ca5), file-count
+  (4f7a26e), config-eq A-type (ece565d). Their recorded proofs stand as behaviour tests, not as proof
+  of any done_when clause.
+
+--- 2. REMAINS NON-MACHINE-VERIFIABLE ---
+  The semantics of free-text done_when (per-clause expected↔actual). By this decision there will be
+  NO machine binding for it. Attribution + proxy observations do NOT establish it.
+
+--- 3. DEFINITIVELY OUT OF THIS CAMPAIGN'S PERIMETER ---
+  done_when → machine-check → objective-level proof contract; VALUE/THRESHOLD; SERIES-NON-INCREASING;
+  runtime-behavioural; governance/human; behavioural B-type config; boilerplate/non-verifiable
+  clauses. None is authorized or implemented; all stay out of scope under this closure.
+
+--- 4. CLOSURE IS NOT A CERTIFICATION ---
+  Closing the perimeter is NOT a certification/proof of done_when. No semantic done_when proof is
+  claimed or obtained. Objective-level done_when proof remains unachieved by explicit decision, not by
+  success.
+
+--- 5. NO NEXT CAMPAIGN CREATED ---
+  This decision creates NO Campaign 05 and NO S7 and selects no follow-up. Any future work on this
+  topic would require a new, explicit canonical scope + authorization.
+
+STATUS: CAMPAIGN 04 PERIMETER CLOSED BY CTO DECISION (b) (e65d301). done_when remains
+NON-MACHINE-VERIFIABLE; closure is NOT a done_when certification; no Campaign 05, no S7.
