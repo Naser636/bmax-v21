@@ -23,10 +23,17 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+// Reuse the existing in-scope tracked-file predicate (single implementation) for the "not tracked"
+// cross-check; there is NO pre-existing git-ignored-artifact scanner to reuse, so CLEAN_WORKSPACE_1's
+// candidate scan is implemented here against git directly (not a duplicate of any existing helper).
+const { trackedFilesInScope } = require("./scope-observer");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
 const PROVIDER_ACTIVATION_EVIDENCE = path.join(GENERATED_DIR, "provider-activation.json");
+const CLEAN_WORKSPACE_SCAN_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-scan.json");
+const CLEAN_WORKSPACE_COVERAGE_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-coverage.json");
+const CLEAN_WORKSPACE_REPORT_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-report.json");
 // tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
 // Registry + Orchestrator and runs the selected provider — the socle→provider edge.
 const TSX_CLI = path.join("node_modules", "tsx", "dist", "cli.mjs");
@@ -152,7 +159,88 @@ function haystack(patch) {
         .toLowerCase();
 }
 
+// Deterministic, read-only workspace scan helpers (CLEAN_WORKSPACE). NOTHING is deleted: these only
+// observe git state and write evidence under runtime/generated/. No pre-existing scanner helper
+// covers the git-ignored candidate set, so it is derived from git here.
+function gitLines(args) {
+    const res = spawnSync("git", args, { encoding: "utf8" });
+    if (res.status !== 0) {
+        throw new Error(`git ${args.join(" ")} failed (status=${res.status}): ${String(res.stderr || "").trim()}`);
+    }
+    return String(res.stdout || "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean).sort();
+}
+// Candidate transient artifacts = git-IGNORED files under runtime/ (safe-to-remove by the existing
+// .gitignore/backup/archive policy). Sorted for a reproducible artifact.
+function scanTransientRuntimeArtifacts() {
+    return gitLines(["ls-files", "--others", "--ignored", "--exclude-standard", "--", "runtime"]);
+}
+function writeEvidence(out, obj) {
+    fs.mkdirSync(GENERATED_DIR, { recursive: true });
+    fs.writeFileSync(out, JSON.stringify(obj, null, 2));
+    return out;
+}
+
 const EXECUTORS = [
+    {
+        // Clean Workspace — REAL execution of CLEAN_WORKSPACE_1/2/3 (scan → confirm policy → report).
+        // STRICTLY matched on the objectiveId prefix so goal/done_when are never consulted and no other
+        // mission's objective is captured. Deletes NOTHING; each step writes a deterministic,
+        // non-empty, objective-specific evidence artifact so the chain records EXECUTED (not RECORDED).
+        capability: "Clean Workspace",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("CLEAN_WORKSPACE_");
+        },
+        run(patch) {
+            const id = patch.objectiveId;
+            if (id === "CLEAN_WORKSPACE_1") {
+                const candidates = scanTransientRuntimeArtifacts();
+                const out = writeEvidence(CLEAN_WORKSPACE_SCAN_EVIDENCE, {
+                    objective: id, candidateCount: candidates.length, candidates, deleted: 0,
+                });
+                return { capability: "Clean Workspace", evidence: out, summary: { candidateCount: candidates.length } };
+            }
+            if (id === "CLEAN_WORKSPACE_2") {
+                // Candidates are git-ignored by construction (policy-covered). Cross-check NONE is
+                // tracked/required (reuse trackedFilesInScope). Self-sufficient: re-scan if step 1's
+                // artifact is absent.
+                let candidates;
+                try { candidates = JSON.parse(fs.readFileSync(CLEAN_WORKSPACE_SCAN_EVIDENCE, "utf8")).candidates; }
+                catch { candidates = null; }
+                if (!Array.isArray(candidates)) candidates = scanTransientRuntimeArtifacts();
+                const tracked = new Set(trackedFilesInScope(["runtime/**"]));
+                const violations = candidates.filter((p) => tracked.has(p));
+                const out = writeEvidence(CLEAN_WORKSPACE_COVERAGE_EVIDENCE, {
+                    objective: id,
+                    total: candidates.length,
+                    confirmedCovered: candidates.length - violations.length,
+                    anyTrackedOrRequired: violations.length > 0,
+                    violations,
+                });
+                if (violations.length > 0) {
+                    throw new Error(`CLEAN_WORKSPACE_2: ${violations.length} candidate(s) tracked/required: ${violations.join(", ")}`);
+                }
+                return { capability: "Clean Workspace", evidence: out, summary: { confirmedCovered: candidates.length } };
+            }
+            if (id === "CLEAN_WORKSPACE_3") {
+                const readJson = (p) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } };
+                const scan = readJson(CLEAN_WORKSPACE_SCAN_EVIDENCE);
+                const coverage = readJson(CLEAN_WORKSPACE_COVERAGE_EVIDENCE);
+                const candidatesScanned = scan && typeof scan.candidateCount === "number"
+                    ? scan.candidateCount
+                    : scanTransientRuntimeArtifacts().length;
+                const out = writeEvidence(CLEAN_WORKSPACE_REPORT_EVIDENCE, {
+                    objective: id,
+                    candidatesScanned,
+                    coverageConfirmed: !!coverage && coverage.anyTrackedOrRequired === false,
+                    deleted: 0,
+                    trackedRemoved: [],
+                    note: "Read-only workspace audit: no tracked or required artifact was deleted.",
+                });
+                return { capability: "Clean Workspace", evidence: out, summary: { candidatesScanned, deleted: 0 } };
+            }
+            throw new Error(`Clean Workspace: unsupported objectiveId "${id}"`);
+        },
+    },
     {
         capability: "Connectivity Audit",
         // Any objective whose intent is the network — connectivity, internet, or exploring what is
@@ -228,7 +316,12 @@ const EXECUTORS = [
 
 function resolve(patch) {
     if (!patch || typeof patch !== "object") return null;
-    return EXECUTORS.find((e) => e.matches(patch)) || null;
+    const matched = EXECUTORS.find((e) => e.matches(patch)) || null;
+    // Bind the matched patch to run() so an executor that needs the objective context (Clean Workspace
+    // branches on patch.objectiveId) receives it, even though the Patch Executor calls run() with no
+    // argument. The spread preserves `capability`/`matches`; connectivity's run() ignores the extra
+    // arg and provider's run(patch) already tolerates it, so existing executors behave identically.
+    return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
 module.exports = { resolve, runAudit, EXECUTORS, CONNECTIVITY_EVIDENCE };
