@@ -41,6 +41,43 @@ const VERDICT = Object.freeze({
   INCONSISTENT: "INCONSISTENT",
 });
 
+// Campaign 04 (read-only consumption): the OBSERVED state of an objective's DECLARED proof probe.
+// This observes a machine PROXY predicate via the existing capability-probes registry — it is
+// explicitly NOT a done_when proof, NOT an objective verdict, and NOT SUCCESS. Path A attribution
+// (VERDICT, above) is computed independently and is NEVER affected by this observation.
+const OBSERVED = Object.freeze({
+  PASSED: "PROBE-PASSED",
+  FAILED: "PROBE-FAILED",
+  MISSING: "PROBE-MISSING",
+  NONE: "NO-PROOF-BINDING",
+});
+const PROOF_NOTE = "observed proxy predicate only — not a done_when proof and not an objective verdict";
+
+// Reuse the EXISTING registry (no new probe, no duplicated probe implementation).
+const capabilityProbes = require("./capability-probes");
+
+/**
+ * Observe (READ-ONLY) an objective's DECLARED proof probe through the EXISTING capability-probes
+ * registry. Never interprets done_when. An unknown/unregistered name ⇒ MISSING (never a pass). A
+ * registered probe is executed via the injected runner and recorded as PASSED/FAILED. The result is
+ * a declared-proof OBSERVATION only; callers must never read it as a proof of the objective.
+ */
+function observeProof(proof, known, run, ctx) {
+  if (proof === null) {
+    return { proof: null, observed: OBSERVED.NONE, detail: "objective declares no proof binding", note: PROOF_NOTE };
+  }
+  if (!known(proof)) {
+    return { proof, observed: OBSERVED.MISSING, detail: `no registered probe named "${proof}"`, note: PROOF_NOTE };
+  }
+  const r = run(proof, ctx) || {};
+  return {
+    proof,
+    observed: r.ok === true ? OBSERVED.PASSED : OBSERVED.FAILED,
+    detail: typeof r.detail === "string" ? r.detail : null,
+    note: PROOF_NOTE,
+  };
+}
+
 /**
  * @param {object|null} plan       parsed mission-plan.json (used only for a coverage cross-check)
  * @param {object|null} patch      parsed patch-plan.json (the per-objective EXPECTED side)
@@ -49,8 +86,15 @@ const VERDICT = Object.freeze({
  *        exists AND is non-empty. Injected so the core stays pure/testable.
  * @returns {{objectives: Array, summary: object}}
  */
-function attributeObjectives(plan, patch, execution, evidenceProbe) {
+function attributeObjectives(plan, patch, execution, evidenceProbe, probeRunner, probeKnown, probeCtx) {
   const probe = typeof evidenceProbe === "function" ? evidenceProbe : () => false;
+  // Proof-observation injectables default to the EXISTING capability-probes registry (reuse, not
+  // duplicate). Tests inject fakes to stay hermetic. These never influence the Path A verdict.
+  const run = typeof probeRunner === "function" ? probeRunner : capabilityProbes.runProbe;
+  const known = typeof probeKnown === "function"
+    ? probeKnown
+    : (name) => Object.prototype.hasOwnProperty.call(capabilityProbes.PROBES, name);
+  const ctx = probeCtx && typeof probeCtx === "object" ? probeCtx : {};
 
   const patches = patch && Array.isArray(patch.patches) ? patch.patches : [];
   const executed = execution && Array.isArray(execution.executed) ? execution.executed : [];
@@ -105,7 +149,16 @@ function attributeObjectives(plan, patch, execution, evidenceProbe) {
     return { ...base, verdict: VERDICT.RECORDED_NO_EVIDENCE, status, evidence, reason: why };
   });
 
-  const count = (v) => objectives.filter((o) => o.verdict === v).length;
+  // Campaign 04 consumption: attach a SEPARATE, read-only declared-proof OBSERVATION per objective.
+  // The Path A verdict objects above are spread UNCHANGED — the observation never alters attribution.
+  const objectivesOut = objectives.map((attr, i) => {
+    const p = patches[i];
+    const proof = p && typeof p.proof === "string" && p.proof ? p.proof : null;
+    return { ...attr, declaredProof: observeProof(proof, known, run, ctx) };
+  });
+
+  const count = (v) => objectivesOut.filter((o) => o.verdict === v).length;
+  const countObserved = (v) => objectivesOut.filter((o) => o.declaredProof.observed === v).length;
   const planObjectiveCount = plan && Array.isArray(plan.objectives) ? plan.objectives.length : null;
   const warnings = [];
   if (planObjectiveCount !== null && planObjectiveCount !== patches.length) {
@@ -113,21 +166,26 @@ function attributeObjectives(plan, patch, execution, evidenceProbe) {
   }
 
   const summary = {
-    total: objectives.length,
+    total: objectivesOut.length,
     evidenced: count(VERDICT.EVIDENCED),
     recordedNoEvidence: count(VERDICT.RECORDED_NO_EVIDENCE),
     failed: count(VERDICT.FAILED),
     unmatched: count(VERDICT.UNMATCHED),
     inconsistent: count(VERDICT.INCONSISTENT),
+    // Declared-proof OBSERVATION tallies (proxy predicates only; never a done_when proof).
+    proofPassed: countObserved(OBSERVED.PASSED),
+    proofFailed: countObserved(OBSERVED.FAILED),
+    proofMissing: countObserved(OBSERVED.MISSING),
+    proofUnbound: countObserved(OBSERVED.NONE),
     // This analyzer never asserts done_when satisfaction — stated explicitly in the output.
     doneWhenEvaluated: false,
     warnings,
   };
 
-  return { objectives, summary };
+  return { objectives: objectivesOut, summary };
 }
 
-module.exports = { attributeObjectives, VERDICT };
+module.exports = { attributeObjectives, VERDICT, OBSERVED };
 
 // ---------------------------------------------------------------------------
 // Read-only CLI: read the three already-produced artifacts and PRINT the attribution. Writes
@@ -153,12 +211,19 @@ if (require.main === module) {
     process.exit(1);
   }
 
-  const result = attributeObjectives(plan, patch, execution, evidenceProbe);
+  // Build the SAME probe ctx the mission-level gate uses, so declared-proof observation reuses the
+  // existing registry against real evidence. Observation only — the SUCCESS gate is NOT touched.
+  const verify = readJsonSafe(path.join(GENERATED_DIR, "runtime-verify.json"));
+  const probeCtx = { missionId: (plan && plan.mission) || (patch && patch.mission), verify };
+  const result = attributeObjectives(plan, patch, execution, evidenceProbe, undefined, undefined, probeCtx);
   console.log("======================================");
-  console.log("OBJECTIVE ATTRIBUTION (Campaign 04 — Path A, read-only; done_when NOT evaluated)");
+  console.log("OBJECTIVE ATTRIBUTION (Campaign 04 — read-only; done_when NOT evaluated)");
+  console.log("Path A verdict + declared-proof OBSERVATION (proxy predicate, NOT a done_when proof)");
   console.log("======================================");
   for (const o of result.objectives) {
-    console.log(`  ${o.objectiveId === null ? "(no objectiveId)" : o.objectiveId} : ${o.verdict} — ${o.reason}`);
+    const dp = o.declaredProof;
+    const proofStr = dp.observed === "NO-PROOF-BINDING" ? "" : `  [proof:${dp.proof} => ${dp.observed}]`;
+    console.log(`  ${o.objectiveId === null ? "(no objectiveId)" : o.objectiveId} : ${o.verdict} — ${o.reason}${proofStr}`);
   }
   console.log("--------------------------------------");
   console.log(JSON.stringify(result.summary));

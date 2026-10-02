@@ -112,4 +112,81 @@ console.log("Case 9 — a patch without objectiveId is UNMATCHED (never a PASS)"
   ok("missing objectiveId on patch ⇒ UNMATCHED", r.objectives[0].verdict === VERDICT.UNMATCHED);
 }
 
+console.log("Case 10 — declared-proof OBSERVATION via the existing registry (read-only; NOT done_when proof)");
+{
+  // Injected fakes = the existing capability-probes mechanism, hermetically: build-green passes,
+  // typescript-green fails; only those two names are "registered".
+  const known = (name) => name === "build-green" || name === "typescript-green";
+  const run = (name) => (name === "build-green" ? { ok: true, detail: "fake build green" } : { ok: false, detail: "fake not green" });
+  const evProbe = (p) => p === "a.json";
+
+  const plan10 = { objectives: [{ id: "OBJ-1" }, { id: "OBJ-2" }, { id: "OBJ-3" }, { id: "OBJ-4" }, { id: "OBJ-5" }] };
+  const patch10 = { patches: [
+    { objectiveId: "OBJ-1", done_when: ["x"], proof: "build-green" },      // bound, PASSES; Path A EVIDENCED
+    { objectiveId: "OBJ-2", done_when: ["x"], proof: "typescript-green" }, // bound, FAILS
+    { objectiveId: "OBJ-3", done_when: ["x"], proof: "no-such-probe" },    // unknown ⇒ MISSING
+    { objectiveId: "OBJ-4", done_when: ["x"] },                            // no proof ⇒ NONE
+    { objectiveId: "OBJ-5", done_when: ["x"], proof: "build-green" },      // MIS-BINDING: passes but Path A = RECORDED
+  ] };
+  const exec10 = { executed: [
+    { objectiveId: "OBJ-1", status: "EXECUTED", evidence: "a.json" },
+    { objectiveId: "OBJ-2", status: "RECORDED" },
+    { objectiveId: "OBJ-3", status: "RECORDED" },
+    { objectiveId: "OBJ-4", status: "RECORDED" },
+    { objectiveId: "OBJ-5", status: "RECORDED" },
+  ] };
+
+  const r = attributeObjectives(plan10, patch10, exec10, evProbe, run, known, { fake: true });
+  const m = Object.fromEntries(r.objectives.map((o) => [o.objectiveId, o]));
+
+  // a. bound existing probe is executed and observed
+  ok("a: OBJ-1 declared proof observed PROBE-PASSED", m["OBJ-1"].declaredProof.observed === "PROBE-PASSED");
+  ok("a: observation carries the probe's detail (executed via registry)", m["OBJ-1"].declaredProof.detail === "fake build green");
+
+  // b. a passing probe is NOT labelled PROVEN / done_when-satisfied / SUCCESS / VERIFIED
+  {
+    const blob = JSON.stringify(r).toLowerCase();
+    ok("b: no 'proven' anywhere", !blob.includes("proven"));
+    ok("b: no 'satisfied' anywhere", !blob.includes("satisfied"));
+    ok("b: no 'verified' anywhere", !blob.includes("verified"));
+    ok("b: no 'success' anywhere", !blob.includes("success"));
+    ok("b: declaredProof carries the proxy-only note", /not a done_when proof/.test(m["OBJ-1"].declaredProof.note));
+  }
+
+  // c. failing probe recorded as failed
+  ok("c: OBJ-2 observed PROBE-FAILED", m["OBJ-2"].declaredProof.observed === "PROBE-FAILED");
+
+  // d. unknown probe recorded as missing / non-pass
+  ok("d: OBJ-3 observed PROBE-MISSING", m["OBJ-3"].declaredProof.observed === "PROBE-MISSING");
+  ok("d: unknown probe is never a pass", m["OBJ-3"].declaredProof.observed !== "PROBE-PASSED");
+
+  // e. absent proof remains inert
+  ok("e: OBJ-4 observed NO-PROOF-BINDING", m["OBJ-4"].declaredProof.observed === "NO-PROOF-BINDING");
+  ok("e: OBJ-4 proof is null", m["OBJ-4"].declaredProof.proof === null);
+
+  // f. done_when is never interpreted
+  ok("f: doneWhenEvaluated stays false", r.objectives.every((o) => o.doneWhenEvaluated === false) && r.summary.doneWhenEvaluated === false);
+
+  // g. Path A attribution is EXACTLY unchanged by proof consumption
+  //    (compare verdicts to a proof-free 4-arg run of the same inputs).
+  {
+    const base = attributeObjectives(plan10, patch10, exec10, evProbe); // no proof params
+    const sameVerdicts = r.objectives.every((o, i) => o.verdict === base.objectives[i].verdict);
+    ok("g: proof consumption does not change any Path A verdict", sameVerdicts);
+    ok("g: OBJ-1 verdict is EVIDENCED from Path A (evidence), not from the probe", m["OBJ-1"].verdict === VERDICT.EVIDENCED);
+  }
+
+  // mis-binding visibility: OBJ-5 probe PASSES but the objective is only RECORDED — the pass must
+  // stay a declared-proof OBSERVATION and NEVER become an objective proof/verdict.
+  ok("mis-bind: OBJ-5 probe observed PROBE-PASSED", m["OBJ-5"].declaredProof.observed === "PROBE-PASSED");
+  ok("mis-bind: OBJ-5 Path A verdict stays RECORDED-NO-EVIDENCE", m["OBJ-5"].verdict === VERDICT.RECORDED_NO_EVIDENCE);
+  ok("mis-bind: OBJ-5 is NOT EVIDENCED despite the probe pass", m["OBJ-5"].verdict !== VERDICT.EVIDENCED);
+
+  // observation tallies are exact and separate from attribution counts
+  ok("tallies: 2 proofPassed (OBJ-1, OBJ-5)", r.summary.proofPassed === 2);
+  ok("tallies: 1 proofFailed", r.summary.proofFailed === 1);
+  ok("tallies: 1 proofMissing", r.summary.proofMissing === 1);
+  ok("tallies: 1 proofUnbound", r.summary.proofUnbound === 1);
+}
+
 console.log(`\nOBJECTIVE ATTRIBUTION — ${passed} assertions passed.`);
