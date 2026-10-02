@@ -2733,3 +2733,44 @@ Documentation only; records a fix ALREADY proven and committed.
     from A2.
 
 STATUS: A2 FIXED and committed (1d689c6); A3 OPEN; CLEAN_RUNTIME_WORKSPACE NOT re-run / NOT certified.
+
+## P0-CURRENT-056 — A3 FIX: GATE RECORDED NO-OP OBJECTIVES (engineering-scoped)
+HEAD: d8fa25e. Minimal fix for anomaly A3 observed during the CLEAN_RUNTIME_WORKSPACE runtime verify.
+Documentation only; records a fix ALREADY proven and committed.
+
+--- ESTABLISHED FACTS ---
+  - A3 CONFIRMED by isolated reproduction: an engineering objective with a done_when demanding an
+    artifact was discharged as a RECORDED no-op (patch-executor), classified RECORDED-NO-EVIDENCE by
+    objective-attribution, yet validation-engine returned SUCCESS/validated=true (would RELEASE) with
+    the required artifact ABSENT.
+  - Defect: a RECORDED no-op entry satisfied objective coverage; the evidence-integrity check only
+    inspects entries that declare an `evidence` field, and done_when is never machine-evaluated.
+  - Localization: patch-executor.js:419-423 emits status "RECORDED" for an objective mapped to neither
+    an `edits` patch nor a capability executor; validation-engine.js coverageOk (L49) + evidenceOk
+    (exempts no-`evidence` entries) let it reach validated=true.
+  - Fix: validation-engine.js now fails validation when an execution entry has the literal status
+    "RECORDED", but ONLY when isEngineering (= plan.requiresEngineering===true &&
+    authorizedPaths.length>0 — the existing flag). The signal is the literal executor status (not the
+    broader objective-attribution verdict, which also tags APPLIED/DONE and would over-block real
+    engineering); no done_when parsed; patch-executor and objective-attribution untouched.
+  - AUDIT missions M0000/M0001/M0002 explicitly PRESERVED: isEngineering=false (mode AUDIT,
+    requires_engineering absent/false, authorized_paths empty) ⇒ guard inert ⇒ historical behaviour.
+  - Targeted test src/runtime/validation-engine-recorded-noop.test.ts: 5/5 PASS (RECORDED engineering
+    BLOCKED; EXECUTED+evidence SUCCESS; APPLIED SUCCESS; AUDIT RECORDED SUCCESS). Regressions:
+    provider-enabled-mission PASS, objective-attribution 45. next build: PASS. diff-check: CLEAN.
+  - Commit: d8fa25eac93152a6efee13daf59b7cfdfc78d563 ("ODG: gate recorded no-op objectives for
+    engineering missions"), exactly two files (validation-engine.js + test).
+
+--- LIMITATIONS (do NOT widen) ---
+  - No in-situ runtime validation yet: the block/pass behaviour is proven only in isolated
+    reproduction, not via a live odg mission (CLEAN_RUNTIME_WORKSPACE / M000x NOT re-run).
+  - NO mission certification may be inferred from this fix.
+  - AUDIT RECORDED no-ops remain OUT of this guard's scope (read-only missions can still reach SUCCESS
+    on RECORDED objectives — a deliberate scope choice to spare M000x; any equivalent AUDIT rigor is a
+    separate policy decision).
+  - An engineering mission declared requiresEngineering:true but WITHOUT authorized_paths has
+    isEngineering=false ⇒ guard inert (edge case; such a mission cannot produce a scoped change anyway).
+  - A1 (0ada3b1) and A2 (1d689c6) unchanged.
+
+STATUS: A3 FIXED and committed (d8fa25e), engineering-scoped; AUDIT M000x preserved; no in-situ run;
+A1/A2 intact; CLEAN_RUNTIME_WORKSPACE NOT re-run / NOT certified.
