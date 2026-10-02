@@ -1603,3 +1603,51 @@ STATUS: CAMPAIGN 04 OPEN — SCOPE DEFINED (DEFINITION ONLY). HEAD at definition
 clean. NEXT AUTHORIZED ACTION (GATED ON USER APPROVAL): a read-only feasibility analysis of a
 per-objective done_when ↔ actual-outcome ↔ evidence binding, presented BEFORE any edit. Nothing
 else is authorized by this entry.
+
+## P0-CURRENT-027 — CAMPAIGN 04 PATH (A): PER-OBJECTIVE EVIDENCE-BACKED ATTRIBUTION (COMMITTED)
+Feasibility was analysed read-only, then the user authorized Path (A) ONLY. Path (A) is a
+per-objective EVIDENCE-BACKED ATTRIBUTION — it makes each objective's result machine-comparable by
+joining the already-produced artifacts; it is explicitly NOT a semantic proof that `done_when` is
+satisfied.
+  Commit: d3b0cf07a32c357d6cf610cf4ade04e7e2abc770 — "ODG: implement Campaign 04 objective
+  attribution".
+
+--- WHAT WAS ADDED (two NEW files only; no existing file touched) ---
+  runtime/core/objective-attribution.js — pure attributeObjectives(plan, patch, execution,
+    evidenceProbe); read-only require.main CLI reads the 3 existing generated artifacts and PRINTS
+    only (writes nothing, gates nothing, exit 0 always).
+  runtime/core/objective-attribution.test.js — targeted proof.
+
+--- JOIN + VERDICTS ---
+  Join BY objectiveId: patch-plan.patches[].{objectiveId, done_when}  ↔
+    patch-execution.executed[].{objectiveId, status, evidence}.
+  Per-objective verdict:
+    EVIDENCED            matched + status EXECUTED + evidence present and non-empty.
+    RECORDED-NO-EVIDENCE matched + recorded but no usable evidence (incl. EXECUTED w/ empty evidence).
+    FAILED               matched + status FAILED.
+    UNMATCHED            no execution entry for the objectiveId (incl. a patch with no objectiveId).
+    INCONSISTENT         more than one execution entry for the objectiveId.
+  Missing/ambiguous joins are reported explicitly and NEVER converted to a PASS.
+
+--- PROOFS (all green) ---
+  Targeted test ......... 23/23 assertions PASS (EVIDENCED / RECORDED-NO-EVIDENCE / FAILED /
+    UNMATCHED / INCONSISTENT; EXECUTED-but-empty-evidence ⇒ not EVIDENCED; exact summary counts).
+  runtime/core/*.test.js. 20/20 PASS (19 pre-existing unchanged + 1 new).
+  git diff --check ...... clean.
+
+--- INVARIANTS / NON-INTERFERENCE ---
+  - INVARIANT PROVEN: doneWhenEvaluated=false everywhere; done_when is carried as CONTEXT only; the
+    result produces no "satisfied"/"proven" claim; RECORDED is never upgraded to a proof.
+  - NO change to validation-engine; NO change to the SUCCESS gate; NO change to the contracts,
+    mission-loader or mission-orchestrator; NO new runtime or primitive.
+  - Read-only: the mechanism writes NO new evidence artifact and the mission-level path is intact.
+
+--- EXPLICIT STATUS ---
+  Path (A) delivers an EVIDENCE-BACKED ATTRIBUTION, NOT a semantic proof that done_when is satisfied.
+  Campaign 04 semantic done_when proof remains BLOCKED (free-text done_when has no honest machine
+  binding — same blocker as S5, at objective granularity). Campaign 04 remains OPEN / INCOMPLETE.
+  The continuation requires an EXPLICIT decision on how to treat the semantic blocker; that decision
+  is deliberately NOT made in this entry. No S7 created, no follow-up selected.
+
+STATUS: CAMPAIGN 04 PATH (A) COMMITTED (d3b0cf0). Campaign 04 still OPEN/INCOMPLETE; semantic
+done_when proof still BLOCKED.
