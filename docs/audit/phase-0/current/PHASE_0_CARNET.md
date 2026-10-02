@@ -2774,3 +2774,38 @@ Documentation only; records a fix ALREADY proven and committed.
 
 STATUS: A3 FIXED and committed (d8fa25e), engineering-scoped; AUDIT M000x preserved; no in-situ run;
 A1/A2 intact; CLEAN_RUNTIME_WORKSPACE NOT re-run / NOT certified.
+
+## P0-CURRENT-057 — CLEAN_WORKSPACE OBJECTIVE EXECUTOR (real execution, not RECORDED)
+HEAD: 0ac6886. Makes CLEAN_RUNTIME_WORKSPACE's objectives really executable so they no longer hit the
+A3 RECORDED-no-op block. Documentation only; records a change ALREADY proven and committed.
+
+--- ESTABLISHED FACTS ---
+  - Implemented by EXTENSION of the existing capability-executor registry (runtime/core/
+    capability-executors.js) — no new engine, no new pipeline, no new execution route.
+  - CLEAN_WORKSPACE_1/2/3 are now really executed (status EXECUTED + evidence), matched STRICTLY on
+    objectiveId prefix "CLEAN_WORKSPACE_" (goal/done_when never consulted; no other mission captured).
+  - Evidence produced per objective (runtime/generated/): _1 clean-workspace-scan.json (git-ignored
+    transient candidates under runtime/**), _2 clean-workspace-coverage.json (each candidate
+    policy-covered AND not tracked), _3 clean-workspace-report.json (deleted=0, trackedRemoved=[]).
+  - NO deletion implemented (read-only audit, conforms to the contract's "without deleting").
+  - Scan strictly limited to runtime/** (git ls-files --others --ignored --exclude-standard -- runtime).
+  - Tracked safety verified: --others excludes tracked files; trackedFilesInScope cross-check
+    (reused, not duplicated) throws on any tracked/required violation.
+  - Determinism (sorted, no timestamp) and non-destructivity (no rm/unlink) verified in pre-commit.
+  - resolve() binds the matched patch to run() (Patch Executor calls run() with no arg); connectivity/
+    provider unchanged; sole consumers = patch-executor + capability-executors.test.js.
+  - Tests: src/runtime/clean-workspace-executor.test.ts 9/9; regression capability-executors.test.js
+    16 assertions; A3 guard PASS; next build PASS; pre-commit forensic PASS.
+  - Commit: 0ac6886c5d940ca1c9d5e271b0f431f2e81bc26e ("ODG: implement Clean Workspace objective
+    executor"), exactly two files (capability-executors.js + test).
+
+--- LIMITATIONS (do NOT widen) ---
+  - NO in-situ runtime validation yet: CLEAN_RUNTIME_WORKSPACE NOT re-run; also unverified live that
+    the Patch Engine emits patches with objectiveId=CLEAN_WORKSPACE_* for this executor to catch.
+  - NO certification of CLEAN_RUNTIME_WORKSPACE may be inferred from this change.
+  - resolve() now passes the real patch to provider.run(patch) (was undefined) — tolerated, benign,
+    not exercised by tests.
+  - A1 (0ada3b1), A2 (1d689c6), A3 (d8fa25e) unchanged.
+
+STATUS: CLEAN_WORKSPACE executor implemented + committed (0ac6886); no in-situ run; no mission
+certification; A1/A2/A3 intact.
