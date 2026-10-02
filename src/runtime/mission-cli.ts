@@ -176,6 +176,10 @@ function runLocalRoute(mission: string): number {
   console.log("Logical    :", exec.logicalSteps ?? 0, "steps");
   console.log("Technical  :", exec.technicalSteps ?? 0, "steps");
   console.log("Capabilities:", exec.capabilities?.length ?? 0);
+  // Ledger seam: the LOCAL route hands its honest verdict to the EXISTING recordMission writer
+  // (proven-only gate). Only a validated run obtains a proven ledger entry; no cascade, no bypass.
+  console.log("Validated  :", outcome.validated === true);
+  console.log("Ledger     : recordMission invoked via LOCAL route (proven-only gate applies)");
   console.log("======================================");
   return 0;
 }
