@@ -1,4 +1,4 @@
-import { MissionLoader, RuntimeMission, ObjectiveSpec } from "./mission-loader";
+import { MissionLoader, RuntimeMission, ObjectiveSpec, MissionPolicies } from "./mission-loader";
 import { MissionIntent } from "./mission-intent";
 
 export interface ExecutionStep {
@@ -23,6 +23,8 @@ export interface ExecutionPlan {
   objectives: string[];
   nextObjective: string | null;
   dependencies: PlanDependency[];
+  // S2: the mission's governance, carried verbatim (transport only; not enforced here).
+  policies: MissionPolicies;
 }
 
 export class MissionOrchestrator {
@@ -75,7 +77,9 @@ export class MissionOrchestrator {
       objectives: mission.brain.objectives,
       nextObjective: mission.brain.nextObjective,
       steps,
-      dependencies
+      dependencies,
+      // S2: carry the mission's governance verbatim (transport only; not enforced here).
+      policies: mission.policies
     };
   }
 

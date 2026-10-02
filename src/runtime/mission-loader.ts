@@ -10,12 +10,24 @@ export interface ObjectiveSpec {
   dependsOn: string[];
 }
 
+// S2 (Campaign 03): the mission's governance, carried VERBATIM from its contract into the plan.
+// Transport only — no interpretation and no enforcement here. Existing readers (mission-cli,
+// autonomy-runtime-adapter, provider-activation, runtime/core) keep reading the contract directly.
+export interface MissionPolicies {
+  policies: string[];
+  permissions: unknown | null;
+  authorizedPaths: string[];
+  executionPolicy: unknown | null;
+}
+
 export interface RuntimeMission {
   id: string;
   name: string;
   projectContext: unknown;
   // S1: the mission's INTENT, derived from its own contract (not a static stub).
   intent: MissionIntent;
+  // S2: the mission's governance, carried verbatim from its contract.
+  policies: MissionPolicies;
   brain: {
     loaded: boolean;
     objectives: string[];
@@ -57,8 +69,46 @@ export class MissionLoader {
       name,
       projectContext,
       intent: this.deriveIntent(id),
+      policies: this.readPolicies(id),
       brain
     };
+  }
+
+  /**
+   * S2: carry the mission's governance from its contract VERBATIM (transport only; no
+   * interpretation, no enforcement). Tolerant: a missing/malformed contract yields safe empty
+   * defaults. authorizedPaths accepts either `authorized_paths` or `authorizedPaths` (as the
+   * existing readers do). Pure (contract read; no Date/randomness).
+   */
+  private readPolicies(id: string): MissionPolicies {
+    let contract: {
+      policies?: unknown;
+      permissions?: unknown;
+      authorized_paths?: unknown;
+      authorizedPaths?: unknown;
+      executionPolicy?: unknown;
+    } = {};
+    try {
+      contract = JSON.parse(fs.readFileSync(`${this.missionsDir}/${id}.json`, "utf8"));
+    } catch {
+      contract = {};
+    }
+
+    const policies = Array.isArray(contract.policies)
+      ? contract.policies.filter((p: unknown): p is string => typeof p === "string")
+      : [];
+
+    const rawPaths = contract.authorized_paths ?? contract.authorizedPaths;
+    const authorizedPaths = Array.isArray(rawPaths)
+      ? rawPaths.filter((p: unknown): p is string => typeof p === "string")
+      : [];
+
+    const permissions =
+      contract.permissions !== undefined ? contract.permissions : null;
+    const executionPolicy =
+      contract.executionPolicy !== undefined ? contract.executionPolicy : null;
+
+    return { policies, permissions, authorizedPaths, executionPolicy };
   }
 
   /**
