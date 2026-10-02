@@ -2918,3 +2918,37 @@ Uses only the established canonical run evidence — mission NOT re-executed.
 
 STATUS: UNIFY_RUNTIME_EXECUTION VERIFIED for canonical LOCAL execution + ledger gate ONLY; 7
 objectives / done_when / provider-generation NOT certified.
+
+## P0-CURRENT-061 — DYNAMIC_MISSION_CONTRACT_FACTORY ACCEPTED ON EXISTING PROOF (no fresh run)
+HEAD: ea645cf. CTO decision-gate: the roadmap mission is CLOSED/ACCEPTED on the already-admissible
+Truth Lock VERIFIED record — NO new runtime execution. Documentation only; no code/contract/ledger
+change, no mission run, no provider, no new proof artifact.
+
+--- ADMISSIBLE EVIDENCE CROSS-REFERENCED (already present) ---
+  docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md §4 — VERDICT VERIFIED, two durable concordant sources:
+    (a) runtime/missions/DYNAMIC_MISSION_CONTRACT_FACTORY.evidence.md — "39 assertions passed"
+    (b) runtime/reports/DYNAMIC_MISSION_CONTRACT_FACTORY_REPORT.md — "39 assertions passed",
+        "npm test … exit 0, aucune régression".
+
+--- PER-OBJECTIVE COVERAGE (done_when evidenced by the 39-assertion suite) ---
+  OBJ-001 generateForMission produces a valid full-shape contract (mission-synthesizer.isValidContract);
+  OBJ-002 non-roadmap id materialized + existing contract reused without overwrite ({reused:true});
+  OBJ-003 Mission Loader unknown→generate→validate→resume, governed by policy.contractOnDemand.enabled.
+
+--- WHY NO FRESH RUN ---
+  A fresh canonical run would be strictly weaker/non-additive: the LOCAL route yields only a
+  mission-level verdict (no per-objective evidence), and the engineering/pipeline route would BLOCK on
+  A3 (OBJ-001/2/3 RECORDED, no executor) or consume the provider with no added certification.
+
+--- VERDICT (bounded) ---
+  VERIFIED — Contract-On-Demand capability implemented + tested (39 assertions, npm test exit 0, no
+  regression); the 3 objectives' done_when evidenced by the test suite; two concordant durable sources.
+
+--- LIMITATIONS ---
+  - Both admissible artifacts are mission-authored deliverables (not an independent third-party
+    certificate); this acceptance is the human/CTO control-pass confirmation that they suffice.
+  - Ephemeral ledger (latest PLANNED/proven) carries no force of contradiction (corrected rule 8).
+  - A1 (0ada3b1), A2 (1d689c6), A3 (d8fa25e), Clean Workspace executor (0ac6886) unchanged.
+
+DECISION: ACCEPT_EXISTING_PROOF — DYNAMIC_MISSION_CONTRACT_FACTORY closed on existing Truth Lock
+evidence; no fresh runtime execution required.
