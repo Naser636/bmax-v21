@@ -8,6 +8,12 @@ export interface ObjectiveSpec {
   // A4-strict (Phase 1): OPTIONAL declarative dependencies — ids of other objectives in the
   // same contract that must precede this one. Empty when the contract declares none.
   dependsOn: string[];
+  // Campaign 04 (Path B authoring): OPTIONAL explicit proof binding — the NAME of a probe/evidence
+  // already registered in capability-probes that authoritatively verifies this objective's expected
+  // outcome. TRANSPORT ONLY here: carried VERBATIM, never interpreted, never evaluated, and never
+  // turned into a verdict by the loader; done_when is NOT used as a binding. null when the objective
+  // declares no proof (= no semantic proof declared). Consumption as a gate is NOT authorized yet.
+  proof: string | null;
 }
 
 // S2 (Campaign 03): the mission's governance, carried VERBATIM from its contract into the plan.
@@ -258,10 +264,13 @@ export class MissionLoader {
               : [],
             dependsOn: Array.isArray(o.dependsOn)
               ? o.dependsOn.filter((d: unknown): d is string => typeof d === "string")
-              : []
+              : [],
+            // Campaign 04: carry the OPTIONAL proof binding verbatim (an opaque probe name).
+            // Absent / non-string / empty ⇒ null. No lookup, no evaluation, no verdict here.
+            proof: typeof o.proof === "string" && o.proof ? o.proof : null
           };
         }
-        return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [], dependsOn: [] };
+        return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [], dependsOn: [], proof: null };
       })
       .filter(s => s.goal.length > 0);
   }
@@ -280,7 +289,8 @@ export class MissionLoader {
         id: "OBJECTIVE_1",
         goal: `Fulfil mission ${id}: ${label}`,
         doneWhen: [`Mission ${id} objectives are satisfied.`],
-        dependsOn: []
+        dependsOn: [],
+        proof: null
       }
     ];
   }
@@ -293,7 +303,7 @@ export class MissionLoader {
       .split(/\r?\n/)
       .map(l => l.trim())
       .filter(l => /^\d+\./.test(l))
-      .map((l, i) => ({ id: `OBJECTIVE_${i + 1}`, goal: l, doneWhen: [], dependsOn: [] }));
+      .map((l, i) => ({ id: `OBJECTIVE_${i + 1}`, goal: l, doneWhen: [], dependsOn: [], proof: null }));
   }
 
   /**
