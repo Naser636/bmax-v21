@@ -2125,3 +2125,51 @@ change; no authorization change.
 
 STATUS: CAMPAIGN 04 SERIES-NON-INCREASING REVIEW RECORDED (e19a079). Campaign 04 still OPEN/INCOMPLETE;
 semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-040 — CAMPAIGN 04 EVIDENCE SYNTHESIS (NOT A SUCCESS DECLARATION)
+HEAD: 5648634. Consolidation of evidence ALREADY recorded for Campaign 04 (entries P0-026 → P0-039).
+No repository rescan, no new analysis, no new check, no code/contract change. This is an evidence
+synthesis, NOT a success declaration.
+
+--- 1. IMPLEMENTED AND PROVEN (committed, with recorded proofs) ---
+  - Objective attribution (Path A) — objectiveId join EXPECTED↔ACTUAL↔EVIDENCE (commit d3b0cf0).
+  - Objective proof binding authored — optional objectives[].proof, transport-only (3c1d133).
+  - Proof-binding consumption as OBSERVATION — read-only via capability-probes (74a2d25).
+  - ARTIFACT-NONEMPTY + SCOPE-CLEAN — reuse, behavior-preserving delegation (2992ca5).
+  - FILE-COUNT — git-tracked source, positive existence/count (4f7a26e).
+  - CONFIG-EQ — A-type file-backed observation (ece565d).
+  Proofs recorded: targeted tests green, runtime/core regression green, gate verdict preserved.
+  "Proven" here = the stated behaviour of each primitive/observation is exercised and green — NOT a
+  semantic proof of done_when.
+
+--- 2. OBSERVED / PROXY ONLY (never a done_when proof) ---
+  - CONFIG-EQ observes strictly "the config file contains the declared value" (A-type) — NEVER that
+    the system uses or is governed by it (B-type).
+  - The proof-binding consumption is a declared-proof OBSERVATION of a proxy predicate, labelled as
+    such; a probe PASS is never PROVEN / satisfied / VERIFIED / SUCCESS.
+  - artifact-nonempty/file-count prove existence/number only, never content or conformance.
+  - None of these is wired into the SUCCESS gate.
+
+--- 3. NOT PROVEN / BLOCKED ---
+  - The complete semantic binding done_when → machine predicate: BLOCKED (semantic-contract gap,
+    P0-030/031; corpus heterogeneous + ~39% boilerplate, P0-032/033).
+  - VALUE/THRESHOLD: FAISABLE MAIS NON AUTORISÉ + NON-VERIFIABLE as-is (no declared source, P0-038).
+  - SERIES-NON-INCREASING: BLOCKED / NON-VERIFIABLE (no per-iteration series, non-deterministic, P0-039/034).
+  - Runtime behavioural, governance/human, behavioural B-type config: BLOCKED (P0-033/037).
+  - Boilerplate / no-machine-condition clauses (~39%): NON-VERIFIABLE by design.
+
+--- 4. REAL VERDICT ---
+  Campaign 04 = OPEN / INCOMPLETE. Justification: the campaign's gate is OBJECTIVE-LEVEL PROOF of
+  done_when; what exists is attribution + evidence-backed OBSERVATIONS/primitives (families 1-4) that
+  are NOT consumed as a gate and do NOT prove a done_when clause's semantics. The core binding
+  done_when → predicate remains BLOCKED and the behavioural/governance/temporal families remain
+  BLOCKED or unauthorized. Green tests do NOT promote this to COMPLETE.
+
+--- 5. NEXT GATE ---
+  The canonical Master/roadmap does NOT define a next gate for this (P0-031: no objective-level proof
+  model; "Campaign" is not a Master concept). Therefore: DECISION REQUIRED — a CTO/authoring decision
+  on the semantic contract (or an explicit scope) is the precondition to any further step. No
+  Campaign 05, no S7, no follow-up is defined or selected here. STOP.
+
+STATUS: CAMPAIGN 04 EVIDENCE SYNTHESIS RECORDED (5648634). Campaign 04 OPEN/INCOMPLETE; semantic
+done_when proof BLOCKED; next step = DECISION REQUIRED.
