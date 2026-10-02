@@ -2398,3 +2398,43 @@ modified, no code/contract/runtime/roadmap/V5/Campaign/S7 touched.
 STATUS: TRUTH LOCK EVIDENCE RECORD COMMITTED (fe8028a) — docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md
 tracked; 5 verdicts recorded (1 VERIFIED, 4 UNKNOWN); NOT a certification; reviewer control pass still
 pending.
+
+## P0-CURRENT-048 — CANONICAL NEXT-STEP DETERMINATION AFTER TRUTH LOCK: NO CANONICAL NEXT STEP (READ-ONLY) (COMMITTED)
+HEAD: 368e95b. Read-only determination over the currently authoritative canonical sources only
+(runtime/system/CONSTITUTION.md, docs/CONSTITUTION_EDG_v1.md, runtime/system/ROADMAP.md,
+runtime/governance/ROADMAP.json, runtime/brain/MASTER_PLAN.md, runtime/governance/RUNTIME_ROADMAP.md,
+docs/ROADMAP.md) with the committed Truth Lock record as context only. Documentation only — modifies
+ONLY this carnet; no mission inspected/rescanned/executed, no code/contract/runtime/roadmap/V5/
+Campaign/S7/MEMORY.md touched, no next step invented.
+
+--- DETERMINATION ---
+  NO CANONICAL NEXT STEP — DECISION REQUIRED.
+
+--- BASIS ---
+  1. The Truth Lock is COMPLETE and durably recorded (report committed fe8028a, P0-CURRENT-047). It
+     certifies nothing (TRUTH_LOCK_5_MISSIONS.md; P0-CURRENT-046 item 3) and defines no follow-on work
+     (P0-CURRENT-044 items 8/9; P0-CURRENT-046 scope).
+  2. The Truth Lock does NOT authorize any follow-on mission or runtime work.
+  3. No canonical source defines a UNIQUE next ODG action after the Truth Lock (consistent with
+     P0-CURRENT-041/043: "Campaign" / objective-level proof are not canonical concepts).
+  4. The autonomy loop (runtime/governance/ROADMAP.json) and the PRIORITY-0 missions
+     (runtime/system/ROADMAP.md: M0000/M0001/M0002) remain GATED by explicit CTO approval
+     (RUNTIME_ROADMAP.md PRINCIPES #2/#7; CONSTITUTION.md principle 7); not auto-selectable/auto-run.
+  5. The HUMAN/CTO Truth Lock reviewer control pass (P0-CURRENT-046 item 7) is the ONLY already-open
+     gate, but it is a HUMAN decision, not an ODG runtime mission.
+  6. MASTER_PLAN NEXT_OBJECTIVES and docs/ROADMAP sprints are legacy/foundational and do NOT constitute
+     a canonically authorized next step.
+
+--- NON-INFERENCE (held) ---
+  No authorization is inferred from historical proven/archived states, ledger state, chronology, green
+  tests, or the Truth Lock itself. Historical "proven/archived" is NOT current certification.
+
+--- MINIMUM DECISION REQUIRED (CTO / human authority) ---
+  EITHER (a) perform/record the HUMAN/CTO Truth Lock reviewer control pass on
+  docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md (the one gate already open, P0-CURRENT-046 item 7);
+  OR (b) issue a NEW explicit canonical scope + authorization for one named mission/objective.
+  Until that decision, NO ODG execution is authorized.
+
+STATUS: NO CANONICAL NEXT STEP — DECISION REQUIRED (368e95b). Truth Lock complete, not a certification;
+autonomy/PRIORITY-0 missions gated on CTO approval; reviewer control pass (human) is the only open
+gate; no next step invented.
