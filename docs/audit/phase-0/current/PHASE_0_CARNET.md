@@ -2543,3 +2543,47 @@ code, no ROOT CAUSE #1 fix, no ledger route, no routing bypass, no ROADMAP / run
 STATUS: M0000 CLOSED ON DOCUMENTARY BASELINE BY CTO DECISION (OPTION i) (1c5d5ff) — ROADMAP DoD
 satisfied; runtime ledger/proof gate NOT satisfied and intentionally not fabricated; M0000 is NOT
 runtime-certified; ledger-route fix + ROOT CAUSE #1 remain distinct unauthorized engineering work.
+
+## P0-CURRENT-051 — ROOT CAUSE #1 FORENSIC: PROVEN HISTORICALLY AND ALREADY RESOLVED (DOCUMENTATION ONLY)
+HEAD: b7b7a16. Read-only forensic re-verification of ROOT CAUSE #1 ("mission-invariant plan"),
+reusing already-established evidence (P0-CURRENT-016→019) and confirming it against the current tree.
+Documentation only — modifies ONLY this carnet. No code/test/contract/runtime/roadmap/Truth Lock/V5/
+Campaign/S7/MEMORY.md change; no mission executed; no src/runtime rescan beyond confirming the fix;
+no new file. CORRECTION: an earlier remark (M0000 execution blocker) that called ROOT CAUSE #1 "still
+open" was imprecise — it referenced the pre-fix P0-013 era, not the current HEAD.
+
+--- VERDICT ---
+  ROOT CAUSE #1 = PROVEN HISTORICALLY AND ALREADY RESOLVED. The defect no longer reproduces on the
+  current tree. NO new patch is required or authorized.
+
+--- HISTORICAL LOCALIZATION (cause) ---
+  - src/runtime/mission-loader.ts — objectives sourced from the global runtime/brain/MASTER_PLAN.md,
+    ignoring mission id/name (A1 root).
+  - src/runtime/mission-orchestrator.ts — flat, mission-invariant plan template; no semantic fields,
+    no dependency edges (A2/A3/A4).
+
+--- FIX ALREADY PRESENT ---
+  - Commit 06a0d68 ("fix(runtime): make objectives and plan a function of the mission (ROOT CAUSE #1)")
+    — 2 files (mission-loader.ts resolveObjectives contract-first + MASTER_PLAN last-resort;
+    mission-orchestrator.ts semantic ExecutionStep + PlanDependency + deriveDependencies).
+  - 06a0d68 is an ANCESTOR of HEAD (verified: git merge-base --is-ancestor 06a0d68 HEAD = YES);
+    guard wiring 29e73bd and certified carnet 7040d16 are also in HEAD history.
+
+--- CURRENT WIRED PROOF (reproduced read-only this session; tree unchanged) ---
+  - src/runtime/phase0-certification.test.ts = 8/8 PASS, exit 0 (A1-A4 incl. A2 = C2 witness
+    "plan signature differs for different missions"; B1-B4).
+  - src/runtime/phase0-a4-strict.test.ts = 5/5 PASS (declared dependsOn → directed edges: FWD/REV/
+    CYCLE-broken/UNKNOWN-ignored).
+
+--- EVIDENCE TRAIL ---
+  P0-CURRENT-016 (localization + plan) → 017 (green proof pre-commit) → 018 (commit 06a0d68) →
+  019 (Phase 0 CERTIFIED, harness wired into npm test). Both guards are tracked and part of the
+  npm test surface.
+
+--- CONSEQUENCE ---
+  No minimum patch is to be prepared or applied for ROOT CAUSE #1: it is already fixed, committed, and
+  guarded. The fix files and the two guards MUST remain unchanged (do not revert; do not restore/delete
+  the .pre-semantic-planner backup; do not touch execution-planner.ts).
+
+STATUS: ROOT CAUSE #1 ALREADY RESOLVED (b7b7a16) — fix 06a0d68 ∈ HEAD; guards 8/8 + 5/5 PASS;
+no further patch required or authorized.
