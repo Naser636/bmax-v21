@@ -63,11 +63,27 @@ export class RuntimeExecutor {
       executionSteps: executionPlan.steps.length
     });
 
+    // ROOT CAUSE #2: the verdict must be a function of the work actually recorded
+    // this run. objectivesTotal = the steps the executor attempts to register;
+    // objectivesExecuted = the steps actually recorded in the registry. The proof
+    // is PASS only when every attempted step was recorded. (Deep objective
+    // *semantics* remain ROOT CAUSE #1 — out of scope here.)
+    const objectivesTotal = technical.steps.length;
+    const objectivesExecuted = this.registry.all().length;
+    const verification = { required: 0, passed: 0 };
+    const proof = {
+      verdict: objectivesExecuted === objectivesTotal ? "PASS" : "FAIL"
+    };
+
     const report = this.implementation.generateReport({
       mission: id,
       capabilities: this.registry.all(),
       logicalSteps: plan.steps.length,
-      technicalSteps: technical.steps.length
+      technicalSteps: technical.steps.length,
+      objectivesTotal,
+      objectivesExecuted,
+      verification,
+      proof
     });
 
     this.state.complete();

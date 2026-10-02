@@ -80,6 +80,10 @@ export class ImplementationEngine {
     capabilities: unknown[];
     logicalSteps: number;
     technicalSteps: number;
+    objectivesTotal?: number;
+    objectivesExecuted?: number;
+    verification?: { required: number; passed: number };
+    proof?: { verdict: string };
   }) {
     return this.reporter.report(data);
   }
