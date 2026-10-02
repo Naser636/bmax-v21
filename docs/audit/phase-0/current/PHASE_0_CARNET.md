@@ -2002,3 +2002,41 @@ implemented by REUSE. Strictly limited scope; no design change.
 
 STATUS: CAMPAIGN 04 ARTIFACT-NONEMPTY + SCOPE-CLEAN COMMITTED (2992ca5). Observation/primitives only;
 gate behaviour preserved; Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-036 — CAMPAIGN 04 FILE-COUNT CHECK IMPLEMENTED (git-tracked source) (COMMITTED)
+Per the CTO decision (P0-CURRENT-034, family 3) and the read-only pre-implementation analysis (which
+fixed the observation source), the positive file-count/existence check was implemented by reuse.
+  Commit: 4f7a26ef36e3f40450e010fed85cdf132b640877 — "ODG: implement Campaign 04 file-count check
+  (git-tracked source)".
+
+--- WHAT WAS IMPLEMENTED (1 file + its test) ---
+  - FILE-COUNT positive existence/count implemented in runtime/core/scope-observer.js as
+    fileCount(path, count?) → {ok, detail}.
+  - Observation source FIXED to GIT-TRACKED (git ls-files); raw-worktree EXCLUDED for positive
+    counting ⇒ untracked/ignored files never produce a false positive; deterministic for a committed
+    state.
+  - Params: path + optional exact count. count omitted ⇒ ok iff ≥1 tracked file under path; count
+    given ⇒ ok iff exactly `count` tracked files.
+  - Proves existence / number ONLY — never content or semantic conformance.
+  - Reuses trackedFilesInScope() (the shared module's git ls-files lookup) — no new engine.
+
+--- PROOFS (recorded; not re-run here) ---
+  Targeted test: 26/26 PASS (incl. a hermetic no-false-positive case: a git-ignored dir with on-disk
+  files reports ZERO tracked). runtime/core regression: 21/21 PASS. Runtime-verify of the gate:
+  Validation Engine verdict preserved (status=SUCCESS, validated=true; its imports unchanged). git
+  diff --check clean.
+
+--- INVARIANTS / NON-INTERFERENCE ---
+  - config-eq and series-non-increasing NOT implemented (families 4 & 5).
+  - Absence "on disk" clauses remain on the existing raw-fs existence probes (out of this check);
+    tracked-vs-ignored classification remains OUT OF SCOPE.
+  - NO coupling to SUCCESS; NO validation-engine/orchestrator change; NO new proof engine; NO
+    done_when interpretation.
+
+--- STATUS ---
+  Campaign 04 remains OPEN / INCOMPLETE. The complete semantic proof of done_when remains BLOCKED
+  (file-count is an observation/primitive, not a per-clause semantic proof consumed as a gate).
+  Campaign 05 NOT CANONICALLY DEFINED. No S7. No follow-up selected.
+
+STATUS: CAMPAIGN 04 FILE-COUNT COMMITTED (4f7a26e). Observation/primitive only (git-tracked source);
+gate behaviour preserved; Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
