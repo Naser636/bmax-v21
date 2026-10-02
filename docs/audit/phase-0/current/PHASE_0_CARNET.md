@@ -2259,3 +2259,32 @@ rescan; archive/backup/generated/releases excluded). Documentation only.
 
 STATUS: NO CANONICAL NEXT STEP — DECISION REQUIRED (b2f15e7). Campaign 04 closed; no new canonical
 work defined; any next step requires an explicit canonical scope + CTO authorization.
+
+## P0-CURRENT-044 — CTO DECISION: MINIMAL TRUTH LOCK AUTHORIZED (SCOPE ONLY) (COMMITTED)
+HEAD at decision: 092c11e. Explicit CTO decision authorizing a minimal, bounded Truth Lock to attempt
+to resolve the state of the 5 historical missions that remain UNKNOWN (ledger conflict / ephemeral
+artifact; see P0-CURRENT-043 and the reconciliation review). Scope/authorization ONLY — no evidence
+produced, no code, no contract, no check, no durable proof written at this stage.
+
+--- DECISION ---
+  1. The 5 historical missions remain UNKNOWN at this stage: M0000, CLEAN_RUNTIME_WORKSPACE,
+     PROVIDER_ENABLED_SMOKE_V1, DYNAMIC_MISSION_CONTRACT_FACTORY, AUTONOMOUS_CONTRACT_EVOLUTION.
+  2. A MINIMAL, BOUNDED Truth Lock is AUTHORIZED to attempt to resolve their state.
+  3. This authorization CERTIFIES NO mission retroactively.
+  4. No ephemeral ledger data counts as sufficient proof on its own.
+  5. Every conclusion MUST rest on verifiable, traceable evidence.
+  6. Allowed verdicts: VERIFIED / NOT VERIFIED / UNKNOWN / CONFLICT.
+  7. Any contradiction stays CONFLICT until a documented resolution.
+  8. Perimeter = ONLY the 5 named missions.
+  9. No V5, no new mission, no runtime audit, and no correction begins before the Truth Lock
+     procedure itself is validated.
+  10. The Truth Lock procedure MUST be defined, reviewed, and validated BEFORE any durable proof is
+      written.
+
+--- SCOPE OF THIS ENTRY ---
+  Scope/authorization record only. No code, no contract, no check, no proof artifact produced. No
+  Campaign 05, no S7. Next action (separate, gated): define the Truth Lock procedure for review BEFORE
+  any evidence writing.
+
+STATUS: MINIMAL TRUTH LOCK AUTHORIZED — PROCEDURE PENDING DEFINITION/REVIEW (092c11e). 5 missions
+still UNKNOWN; no retroactive certification; nothing produced yet.
