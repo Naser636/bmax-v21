@@ -1556,3 +1556,50 @@ Campaign 03 — Semantic Mission Compiler — is CLOSED.
      from a step number.
 STATUS: CAMPAIGN 03 CLOSED. HEAD = c75b528 at closure; worktree clean. No code changed, no test
 created or run, no S7 created, no follow-up selected as next work.
+
+## P0-CURRENT-026 — CAMPAIGN 04 — OBJECTIVE → OUTCOME PROOF (CANONICAL SCOPE; DEFINITION ONLY)
+This entry OFFICIALLY OPENS and SCOPES Campaign 04. It defines WHAT the campaign must achieve; it
+does NOT choose a technical solution, an implementation, a new runtime, or a new primitive, and it
+starts no feasibility analysis. Scope-definition only.
+
+--- CANONICAL SCOPE ---
+  Campaign  : 04 — OBJECTIVE → OUTCOME PROOF
+  Gate      : OBJECTIVE-LEVEL PROOF
+  Objective : make each objective's result machine-comparable and evidence-backed.
+  Target chain (per objective):
+    OBJECTIVE → EXPECTED OUTCOME → ACTUAL OUTCOME → EVIDENCE → VERIFICATION → PROOF
+  Initial perimeter: establish a demonstrable binding between a SPECIFIC objective's `done_when`
+    (its expected outcome), that objective's REAL result (actual outcome), and the corresponding
+    EVIDENCE — such that an objective can be judged PROVEN/NOT-PROVEN on its own, not only at the
+    mission level.
+
+--- STARTING STATE (forensic from P0-CURRENT-025 report; preserved verbatim as the baseline) ---
+  - Per-objective `done_when` EXISTS and is transported (Campaign 03 S3; guarded by S6 27/27):
+    runtime/missions/<id>.json objectives[].done_when → mission-loader.ts → mission-orchestrator.ts
+    step.postconditions/verificationRequirements; also carried in runtime/core (mission-loader.js,
+    patch-engine.js). Used today only as TEXT, not as a per-objective verified gate.
+  - Per-objective ACTUAL OUTCOME is currently NOT bound to its objective: capability-executors.js
+    produce {capability, evidence, status} entries, but none is compared against the originating
+    objective's `done_when`.
+  - EVIDENCE exists at the action/execution level (real artifact files; evidence-integrity gate
+    = path present & non-empty).
+  - VERIFICATION today is principally MISSION-level: validation-engine.js (coverage COUNT, no-FAILED,
+    evidence integrity, gitClean, build/tsc) + capability-probes.js (contract `verify[]` → REQUIRED
+    proofs keyed by evidence NAME). Honest and evidence-based, but not per-objective.
+  - Path A (src/runtime/runtime-reporter.ts) verification = {required:0, passed:0} is a
+    NON-AUTHORITATIVE structural tautology.
+  - OBJECTIVE-LEVEL PROOF = currently BLOCKED: expected (done_when) and actual (evidence) both
+    exist but are DECOUPLED at objective granularity; no comparator binds a specific objective to
+    its own evidenced outcome.
+  - NO new root cause is declared. The Path-A 0/0 tautology is a prior recorded finding, not a
+    Campaign-04 root cause.
+
+--- EXPLICITLY NOT DONE HERE ---
+  No technical solution chosen; no implementation; no new runtime/primitive; src/runtime,
+  runtime/core and the contracts UNTOUCHED; no test created or run; no build; no feasibility
+  analysis started; no S7 created; no follow-up selected.
+
+STATUS: CAMPAIGN 04 OPEN — SCOPE DEFINED (DEFINITION ONLY). HEAD at definition = 7e1ad31; worktree
+clean. NEXT AUTHORIZED ACTION (GATED ON USER APPROVAL): a read-only feasibility analysis of a
+per-objective done_when ↔ actual-outcome ↔ evidence binding, presented BEFORE any edit. Nothing
+else is authorized by this entry.
