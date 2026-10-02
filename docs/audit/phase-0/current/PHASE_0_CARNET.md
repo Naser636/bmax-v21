@@ -2661,3 +2661,36 @@ verdict ALREADY established by the durable, Git-tracked evidence artifact — it
 
 STATUS: M0002 VERIFIED for scope "canonical runtime execution + ledger completion gate" (proof
 698d3da); four-objective and full-DoD certification remain out of scope and NOT claimed.
+
+## P0-CURRENT-054 — A1 FIX: VERIFY-MISSION LABELING (reproduced → fixed → committed)
+HEAD: 0ada3b1. Minimal engineering fix for anomaly A1 observed during the CLEAN_RUNTIME_WORKSPACE
+runtime verify. Records a fix ALREADY proven and committed; this carnet entry is documentation only.
+
+--- ESTABLISHED FACTS ---
+  - A1 reproduced BEFORE the fix: `node runtime/bin/odg-verify.js` with no argv[2], while
+    runtime/generated/corrective-mission.json held a stale pointer, stamped runtime-verify.json with
+    the foreign mission RESOLVE_DOCUMENTATION_PROOF_PRESENT_GATE (fresh generatedAt confirmed the
+    re-stamp — not a residual file).
+  - Cause: AutonomyRuntimeAdapter.refreshVerifyEvidence() invoked odg-verify.js with NO mission, so
+    odg-verify.resolveMission() fell back to the global stale corrective-mission.json pointer.
+  - Fix: the authoritative current mission is now passed explicitly to odg-verify.js (argv[2], which
+    the verifier already prefers); odg-verify.js itself is unchanged.
+  - Production file: src/runtime/autonomy-runtime-adapter.ts (all four refreshVerifyEvidence call
+    sites pass `mission`; signature + conditional spawn updated).
+  - Targeted test: src/runtime/verify-mission-label.test.ts — behavioral, runs the real verifier in
+    an isolated cwd with a stale corrective pointer; A1 test 3/3 PASS.
+  - Regression src/tests/mse-canonical-verify.test.ts: 6/6 PASS (odg-verify sole-writer contract intact).
+  - next build: PASS. git diff --check: CLEAN. Git tree clean after commit.
+  - Commit: 0ada3b1e6825c8d9c482ee2f219d00750e0bb646 ("ODG: fix verify mission labeling"),
+    exactly two files (adapter + test).
+
+--- LIMITATIONS (do NOT widen) ---
+  - The fix covers verifier invocations via AutonomyRuntimeAdapter; any other direct odg-verify.js
+    call with no argv[2] remains out of this patch's scope.
+  - The stale runtime/generated/corrective-mission.json pointer was NOT cleaned (neutralized in
+    effect, not removed).
+  - CLEAN_RUNTIME_WORKSPACE was NOT re-run after the patch; no in-situ provider-run proof yet.
+  - A2 (double ledger record) and A3 (RECORDED no-op objectives) remain OPEN.
+  - No certification of CLEAN_RUNTIME_WORKSPACE may be inferred from this fix.
+
+STATUS: A1 FIXED and committed (0ada3b1); A2/A3 open; CLEAN_RUNTIME_WORKSPACE NOT certified.
