@@ -424,7 +424,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
 
       // Apply the in-scope patch locally: regenerate the evidence surface, then re-run Validation →
       // Build → Tests via the deterministic pipeline. If it now progresses, recovery succeeded LOCALLY.
-      this.refreshVerifyEvidence();
+      this.refreshVerifyEvidence(mission);
       last = this.runLocalPipeline(mission);
       if (last.pipelineOk) return { outcome: last, exhausted: false };
     }
@@ -477,7 +477,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // decision is made on CURRENT evidence — not a stale runtime-verify.json from an earlier run.
     // The pipeline itself has no verify stage, so without this the local autonomy path would gate on
     // whatever odg-verify last wrote (or nothing, on a fresh clone).
-    this.refreshVerifyEvidence();
+    this.refreshVerifyEvidence(mission);
     return { pipelineOk: true };
   }
 
@@ -502,7 +502,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     const receipt = this.patchEngine.receive(mission, outcome);
     this.patchReceipts.set(mission, receipt);
     if (receipt.readyForValidation) {
-      this.refreshVerifyEvidence();
+      this.refreshVerifyEvidence(mission);
       // The provider path bypasses odg-run.js, so the pipeline stages that write the canonical
       // mission-scoped runtime/generated/mission-report.json never run — leaving documentableArtifacts
       // with nothing and buildDocumentationProof returning null (Release gate documentationProofPresent
@@ -521,7 +521,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // re-refresh the verifier when a commit actually happened, so cache-hit / no-change / local /
       // non-engineering runs (and the fake-provider tests) are byte-for-byte unaffected.
       if (this.commitAuthorizedDeliverable(mission, spec)) {
-        this.refreshVerifyEvidence();
+        this.refreshVerifyEvidence(mission);
       }
     }
     return toPipelineOutcome(outcome);
@@ -669,11 +669,14 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   }
 
   /** Refresh build/typescript/gitClean evidence via the EXISTING verifier (best-effort). */
-  private refreshVerifyEvidence(): void {
+  private refreshVerifyEvidence(mission?: string): void {
     // Reuse the same verifier `odg verify` runs. Its gates are judged later by the Release Manager,
     // so a failing gate must not throw here — it only writes runtime-verify.json.
+    // Pass the authoritative current mission as argv[2] (odg-verify.js already prefers it) so the
+    // stamped runtime-verify.json carries THIS mission — not a stale corrective-mission.json pointer
+    // that odg-verify.js falls back to when invoked with no argument (A1).
     if (!fs.existsSync(this.resolve(VERIFIER))) return;
-    spawnSync("node", [VERIFIER], { cwd: this.cwd, stdio: "inherit" });
+    spawnSync("node", mission ? [VERIFIER, mission] : [VERIFIER], { cwd: this.cwd, stdio: "inherit" });
   }
 
   /** Map an existing mission JSON onto the minimal routing shape (Provider Contract §0/§1). */
