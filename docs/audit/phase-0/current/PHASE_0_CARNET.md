@@ -2173,3 +2173,31 @@ synthesis, NOT a success declaration.
 
 STATUS: CAMPAIGN 04 EVIDENCE SYNTHESIS RECORDED (5648634). Campaign 04 OPEN/INCOMPLETE; semantic
 done_when proof BLOCKED; next step = DECISION REQUIRED.
+
+## P0-CURRENT-041 — CANONICAL AUTHORITY REVIEW: NEXT DECISION (READ-ONLY) (COMMITTED)
+HEAD: 1356b78. Read-only review of the named canonical documents only (archive/backup/generated/
+releases excluded). ODG_FINAL_EXECUTION_MASTER.md / ODG_FINAL_MASTER_FICHE_*.md do NOT exist in any
+canonical location. No code/contract/check change; no new authorization.
+
+--- FINDINGS ---
+  1. AUTHORITY: CTO / human. RUNTIME_ROADMAP ("exécuter uniquement après validation du CTO"),
+     CONSTITUTION principle 7 ("human approval before implementation"), MASTER_PLAN ("Human validates
+     structural decisions"). The missing semantic contract is a structural decision ⇒ CTO/human.
+  2. EXISTING CONTRACT: none. No canonical document defines or authorizes a done_when → machine-check
+     → objective-level proof model (consistent with P0-031).
+  3. NEXT STEP: no canonical step exists after this blocker; "Campaign" and "objective-level proof"
+     are not concepts of the canonical Master (it enumerates missions M0000… only).
+  4. MINIMAL DECISION REQUIRED: a CTO/human decision to EITHER
+       (a) explicitly define and authorize the semantic contract done_when → machine-check, as a
+           Capability/extension and NOT a new engine; OR
+       (b) decide that done_when stays non-machine-verifiable and close this perimeter.
+  5. FORBIDDEN BEFORE THAT DECISION: implement the semantic contract; create new checks beyond the
+     already-authorized families; couple anything to the SUCCESS gate; create a new engine; interpret
+     done_when; promote a proxy into proof; define Campaign 05 / S7; treat the absence of a rule as an
+     authorization.
+
+--- CONCLUSION ---
+  DECISION REQUIRED. Campaign 04 remains OPEN / INCOMPLETE. No Campaign 05, no S7, no follow-up.
+
+STATUS: CANONICAL AUTHORITY REVIEW RECORDED — DECISION REQUIRED (1356b78). Campaign 04 still
+OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
