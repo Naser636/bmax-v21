@@ -20,7 +20,8 @@
  */
 
 const fs = require("fs");
-const { execFileSync } = require("child_process");
+// Scope + evidence primitives live in ONE shared module (no second concurrent implementation).
+const { changedPathsInScope, trackedFilesInScope, artifactNonEmpty } = require("./scope-observer");
 
 function readJsonSafe(file) {
     try {
@@ -56,56 +57,22 @@ const noFailures = failed.length === 0;
 // on disk fails the mission. Entries without an `evidence` field (legacy read-only RECORDED steps)
 // are unaffected, so existing missions keep their behaviour.
 const evidenceEntries = executed.filter((e) => e && typeof e.evidence === "string");
-const missingEvidence = evidenceEntries.filter((e) => {
-    try {
-        return !(fs.statSync(e.evidence).size > 0);
-    } catch {
-        return true;
-    }
-});
+// Reuse the shared evidence-integrity predicate (existence + non-emptiness); behaviour unchanged.
+const missingEvidence = evidenceEntries.filter((e) => !artifactNonEmpty(e.evidence).ok);
 const evidenceOk = missingEvidence.length === 0;
 
 // 3. Engineering performed (write-scope missions only).
 const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
 const isEngineering = plan.requiresEngineering === true && authorizedPaths.length > 0;
 
-function changedPathsInScope() {
-    let porcelain = "";
-    try {
-        porcelain = execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" });
-    } catch {
-        return [];
-    }
-    const changed = porcelain
-        .split(/\r?\n/)
-        .map((l) => l.slice(3).trim()) // strip the 2-char status + space
-        .filter(Boolean);
-    // Normalize authorized paths (drop glob tails like /** or *) to a prefix match.
-    const prefixes = authorizedPaths.map((p) => p.replace(/[*].*$/, "").replace(/\/+$/, ""));
-    return changed.filter((f) => prefixes.some((pre) => pre.length > 0 && f.startsWith(pre)));
-}
-
-// Committed deliverables already present inside the authorized write scope (a prior run's result).
-function trackedFilesInScope() {
-    const prefixes = authorizedPaths
-        .map((p) => p.replace(/[*].*$/, "").replace(/\/+$/, ""))
-        .filter((p) => p.length > 0);
-    if (prefixes.length === 0) return [];
-    let tracked = "";
-    try {
-        tracked = execFileSync("git", ["ls-files", "--", ...prefixes], { encoding: "utf8" });
-    } catch {
-        return [];
-    }
-    return tracked.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-}
-
-const scopedChanges = isEngineering ? changedPathsInScope() : [];
+// Scope observation delegated to the shared scope-observer module (single implementation; same
+// context and moment-of-observation rules). No behaviour change — same inputs, same results.
+const scopedChanges = isEngineering ? changedPathsInScope(authorizedPaths) : [];
 // Idempotent engineering proof: a write-scope mission is satisfied by a FRESH in-scope change
 // (this run) OR by an already-committed deliverable inside the authorized scope (a prior run's
 // result). Without the latter, a completed+committed engineering mission can never re-validate —
 // producing a new diff would dirty the tree and fail gitClean, an unresolvable contradiction.
-const deliverableInScope = isEngineering ? trackedFilesInScope() : [];
+const deliverableInScope = isEngineering ? trackedFilesInScope(authorizedPaths) : [];
 const engineeringOk = !isEngineering || scopedChanges.length > 0 || deliverableInScope.length > 0;
 
 // 4. Build / type gates (if evidence present).
