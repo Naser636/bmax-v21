@@ -30,6 +30,12 @@ function recordMission(mission) {
   const governance = authorizeMission(mission);
 
   const plan = readJsonSafe("runtime/generated/mission-plan.json") || {};
+  // The authoritative mission identity is this function's argument — every caller passes it
+  // (odg-run/mse, fleet dispatcher/collector, the LOCAL route adapter). mission-plan.json is a
+  // GLOBAL artifact written only by the Mission Loader; the LOCAL route never regenerates it, so a
+  // stale plan from a previous pipeline must not relabel this entry or lend it another mission's
+  // objectives. Only trust plan-derived fields when the plan is coherent with the calling mission.
+  const scopedPlan = plan && plan.mission === mission ? plan : {};
   const context = readJsonSafe("runtime/generated/runtime-context.json");
 
   // Governance lifecycle: advance the state machine from evidence, then archive (recording a proven
@@ -47,7 +53,7 @@ function recordMission(mission) {
 
   const entry = {
     recordedAt: new Date().toISOString(),
-    mission: plan.mission || mission,
+    mission: mission,
     state: lifecycle ? lifecycle.achieved : governance.currentState,
     authorized: governance.authorized,
     nextStates: governance.nextStates,
@@ -56,7 +62,7 @@ function recordMission(mission) {
     constitutionVersion: governance.constitutionVersion,
     policyVersion: governance.policyVersion,
     strategy: governance.strategy,
-    objectives: Array.isArray(plan.objectives) ? plan.objectives.length : 0,
+    objectives: Array.isArray(scopedPlan.objectives) ? scopedPlan.objectives.length : 0,
     // Only proven executions reach this point (see the gate above), so every entry is proven.
     proven: true,
     validated: report && report.mission === mission ? report.validated === true : undefined
