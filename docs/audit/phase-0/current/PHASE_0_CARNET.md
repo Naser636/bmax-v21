@@ -1213,3 +1213,80 @@ NEXT AUTHORIZED ACTION (ONE — GATED ON USER APPROVAL):
 STOP (analysis only, no further follow-up). If/when authorized as a SEPARATE Phase-1 campaign,
 implement M1-M4 above (optional contract dependsOn → loader carry → orchestrator honor →
 A4-strict test over a committed fixture), then re-prove the P0-011 guard + C1 baseline.
+
+================================================================================
+# CAMPAIGN 3 (PHASE 1) — A4-STRICT (declared dependsOn reflected as directed edges)
+================================================================================
+
+## P0-CURRENT-021 — A4-STRICT IMPLEMENTED + GREEN PROOF (PRE-COMMIT)
+User approved ("GO") the Phase-1 A4-strict campaign: implement ONLY M1-M4 from P0-020.
+Forensic-first, maximal reuse of existing structures, no new unnecessary mechanism, explicit
+and TESTED behaviour for unknown ids and cycles. No other topic touched (backup/cleanup/ODG
+strategy untouched). Ran the A4-strict test, npm test, runtime/core and build. NO commit — STOPPED.
+
+--- FORENSIC (read-only, before change) ---
+  ObjectiveSpec is constructed ONLY in mission-loader (3 paths) and consumed by the orchestrator
+  via mission.brain.objectiveSpecs — safe to extend. MissionLoader(missionsDir) and
+  MissionOrchestrator(loader) are injectable → the test can load committed fixtures from a
+  dedicated dir WITHOUT polluting runtime/missions (so discoverMissions / migration counts are
+  unaffected). tsconfig includes **/*.ts (test files are typechecked by build); JSON is not.
+
+--- CHANGES APPLIED (reuse existing structures; additive) ---
+  M1 FIXTURES (data): src/runtime/__fixtures__/a4/{FWD,REV,CYCLE,UNKNOWN}.json — minimal
+     committable objective contracts exercising the OPTIONAL `dependsOn` field. Real
+     runtime/missions/*.json are NOT modified (dependsOn stays optional; 0/152 use it).
+  M2 LOADER: ObjectiveSpec gains `dependsOn: string[]`; readContractObjectives carries it from
+     the contract (filtered string[]; default []); the string[] / fallback / global paths set [].
+  M3 ORCHESTRATOR: new objectiveDependencies(specs) computes each objective step's dependencies:
+     DECLARATIVE mode when ANY objective declares dependsOn (step deps = resolved dependsOn via an
+     objective-id→OBJECTIVE_n map; a non-declaring objective is a root), else the LEGACY POSITIONAL
+     chain (preserved verbatim for all 152 real contracts). deriveDependencies (unchanged) turns
+     step.dependencies into {from,to} edges — so a reversed dependsOn reverses the edge.
+     Explicit, tested edge rules: unknown id → skipped (no edge); self-ref → skipped; cycle-closing
+     edge → skipped via a reachability check (graph kept acyclic deterministically by contract
+     order; building never loops).
+  M4 TEST (wired): src/runtime/phase0-a4-strict.test.ts — loads the fixtures through an injected
+     loader and asserts the edges; added to npm test (src/runtime/*.test.ts glob). Read-only,
+     writes no artifact.
+
+--- PROOF (all green) ---
+  A4-strict standalone: 5/5 PASS, exit 0 —
+    FWD 'B dependsOn A' ⇒ edge A→B (not B→A);
+    REV reversed declaration ⇒ edge B→A (not A→B);   ← this is the P0-010-strict reversal
+    CYCLE A↔B ⇒ no bidirectional edge, deterministic break keeps B→A drops A→B, build does not loop;
+    UNKNOWN dependsOn 'GHOST' ⇒ ignored (no edge, empty deps).
+  P0-011 certification (standalone + in-suite): still 8/8 CERT=PASS.
+  npm test: EXIT 0; "ALL PASS"; 349 PASS; 0 FAIL (log c1-npm-test-a4.log). A4-strict block runs
+    in-suite 5/5; the P0-011 cert block still shows 8/8.
+  runtime/core/*.test.js → 19/19 PASS, 0 FAIL.
+  npm run build → EXIT 0; TypeScript OK (new ObjectiveSpec field + test typecheck clean); 4/4 pages
+    (log c1-build-a4.log).
+
+--- INVARIANTS C1-C5 ---
+  C1 green: npm test 349 PASS/0 FAIL (+5 A4-strict vs 343), 19/19 core, build OK.
+  C2 witness: unchanged (contract-less missions use the positional path) — still flipped (A2 PASS).
+  C3 determinism: objectiveDependencies is a pure function of specs/order; reachability is
+    deterministic; no Date/random. Holds.
+  C4 migrated missions: all real contracts declare NO dependsOn ⇒ declarative=false ⇒ legacy
+    positional chain preserved ⇒ their plans are byte-unchanged. Holds.
+  C5 worktree: only the intended new/modified files; the test writes nothing. Holds.
+  P0-011: remains 8/8 PASS.
+
+VERDICT: A4-STRICT PROVEN — declared dependsOn is reflected as directed edges and reverses with
+the declaration; unknown ids and cycles handled explicitly and tested; C1-C5 held and P0-011
+still 8/8. STATUS: GREEN — PRE-COMMIT, AWAITING EXPLICIT COMMIT AUTHORIZATION. No commit made.
+
+WORKTREE (now):
+  M  src/runtime/mission-loader.ts          (M2 — dependsOn carried)
+  M  src/runtime/mission-orchestrator.ts    (M3 — dependsOn honoured, cycle-safe)
+  ?? src/runtime/__fixtures__/a4/           (M1 — FWD/REV/CYCLE/UNKNOWN fixtures)
+  ?? src/runtime/phase0-a4-strict.test.ts   (M4 — wired A4-strict test)
+  (this carnet is also modified by this entry)
+  HEAD 6d6b977. No production file outside the two listed; nothing deleted; backup untouched.
+
+NEXT AUTHORIZED ACTION (ONE — GATED ON USER APPROVAL):
+Await explicit commit authorization. Proposed commit (code+fixtures+test together):
+  git add src/runtime/mission-loader.ts src/runtime/mission-orchestrator.ts \
+          src/runtime/__fixtures__/a4 src/runtime/phase0-a4-strict.test.ts
+  git commit -m "feat(runtime): honour declared objective dependsOn as plan edges + A4-strict test"
+The carnet would be committed separately (as in prior steps). No follow-up started.
