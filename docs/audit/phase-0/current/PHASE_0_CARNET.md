@@ -2334,3 +2334,33 @@ durable proof produced.
 
 STATUS: TRUTH LOCK PROCEDURE PROPOSED/CORRECTED — PENDING DECISION GATE (4a333d9). Not applied; 5
 missions still UNKNOWN; no mission certified.
+
+## P0-CURRENT-046 — CTO VALIDATION GATE: TRUTH LOCK PROCEDURE VALIDATED (COMMITTED)
+HEAD at validation: f3a15d0. CTO validation of the corrected Truth Lock procedure recorded at
+P0-CURRENT-045. Documentation only — the procedure is validated but STILL NOT APPLIED; no mission is
+certified and no durable Truth Lock proof is produced by this entry.
+
+--- CTO VALIDATION ---
+  1. As CTO, the corrected Truth Lock procedure (P0-CURRENT-045) is VALIDATED.
+  2. The corrected verdict rules are CONFIRMED: CONFLICT requires at least two ADMISSIBLE contradictory
+     sources (or two incompatible admissible verdicts); an INSUFFICIENT source can never create a
+     CONFLICT; tracked VERIFIED + ledger PLANNED ⇒ VERIFIED (not CONFLICT); tracked VERIFIED + tracked
+     NOT VERIFIED ⇒ CONFLICT; absence of admissible proof ⇒ UNKNOWN.
+  3. NO retroactive certification is granted, and the Truth Lock is NOT applied yet.
+  4. Independent reviewer for this control pass = the HUMAN / CTO owner (the user).
+  5. Future durable Truth Lock artifact location is FIXED at: docs/audit/truth-lock/
+  6. That location is Git-tracked and OUTSIDE runtime/generated.
+  7. The reviewer / control pass MUST be performed before any durable certification is accepted.
+
+--- DECISION GATE STATUS (P0-CURRENT-045 §C) ---
+  (1) CTO validation = DONE (this entry). (2) Durable artifact location = FIXED (docs/audit/truth-lock/,
+  Git-tracked, outside runtime/generated). (3) Independent reviewer = DESIGNATED (human/CTO owner).
+  All three gate conditions are now recorded; durable certification remains gated on the reviewer
+  control pass per item 7.
+
+--- SCOPE OF THIS ENTRY ---
+  Documentation only; modifies only this carnet. No mission inspected/rescanned, no Truth Lock applied,
+  no mission certified, no durable proof created, no code/contract/runtime/roadmap/V5/Campaign/S7 touched.
+
+STATUS: TRUTH LOCK PROCEDURE VALIDATED — ARTIFACT LOCATION docs/audit/truth-lock/ FIXED; REVIEWER =
+HUMAN/CTO; NOT APPLIED; 5 missions still UNKNOWN; no certification (f3a15d0).
