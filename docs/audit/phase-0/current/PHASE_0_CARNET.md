@@ -2809,3 +2809,40 @@ A3 RECORDED-no-op block. Documentation only; records a change ALREADY proven and
 
 STATUS: CLEAN_WORKSPACE executor implemented + committed (0ac6886); no in-situ run; no mission
 certification; A1/A2/A3 intact.
+
+## P0-CURRENT-058 — CLEAN_RUNTIME_WORKSPACE VERIFIED (runtime execution + objective evidence + RELEASE)
+HEAD: ffaf979. Records a durable verdict ALREADY established by a Git-tracked proof; documentation only.
+
+--- DURABLE PROOF (admissible source) ---
+  docs/audit/truth-lock/CLEAN_RUNTIME_WORKSPACE_RUNTIME_PROOF.md
+  proof commit = ffaf979f2fa106fe229c85b9ca19b3150dcb1ee9
+
+--- OBSERVED REALITY (fresh run, HEAD 7fef17b; a stale pipeline-checkpoint was moved aside/preserved
+    so all stages replayed) ---
+  - `runtime/bin/odg mission CLEAN_RUNTIME_WORKSPACE` — fresh full run, 13/13 stages, exit 0.
+  - CLEAN_WORKSPACE_1/2/3 all status EXECUTED (capability "Clean Workspace") with non-empty evidence
+    (clean-workspace-scan.json / -coverage.json / -report.json).
+  - Validation: SUCCESS, validated=true, coverageOk=true, evidenceOk=true, noRecordedNoOp=true,
+    recordedNoOp=[], unmet=[].
+  - A3 verified in-situ: no RECORDED no-op — objectives genuinely executed with evidence.
+  - A1 verified in-situ: runtime-verify.json mission=CLEAN_RUNTIME_WORKSPACE (fresh @22:17:31),
+    consistent with mission-report (no stale corrective-mission relabel).
+  - A2 verified in-situ: ledger 895→896 (+1), exactly one entry per (mission, runId); the duplicate
+    finalizer was idempotently skipped ("Recorded: SKIPPED").
+  - RELEASE legitimately earned: PLAN_COMPLETE / Released CLEAN_RUNTIME_WORKSPACE (gates green +
+    real objective evidence).
+  - Provider NOT called (LOCAL pipeline succeeded). scopedChanges=[]; NO deletion (read-only audit).
+
+--- VERDICT ---
+  VERIFIED — CLEAN_RUNTIME_WORKSPACE canonical runtime execution + objective evidence + RELEASE gate.
+
+--- LIMITATIONS (do NOT widen) ---
+  - Verdict limited to runtime execution + objective evidence + RELEASE gate; NOT an over-
+    certification of the mission's overall documentary content/policy correctness beyond what the
+    three evidence artifacts state.
+  - The ephemeral/git-ignored mission-ledger is NOT the durable proof (P0-CURRENT-045); the tracked
+    artifact above is.
+  - A1 (0ada3b1), A2 (1d689c6), A3 (d8fa25e) and the Clean Workspace executor (0ac6886) unchanged.
+
+STATUS: CLEAN_RUNTIME_WORKSPACE VERIFIED (proof ffaf979) for runtime execution + objective evidence +
+RELEASE gate; A1/A2/A3 in-situ confirmed; broader documentary certification NOT claimed.
