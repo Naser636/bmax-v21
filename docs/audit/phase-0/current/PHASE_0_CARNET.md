@@ -2883,3 +2883,38 @@ HEAD: e03a197. Records a durable verdict ALREADY established by a Git-tracked pr
 
 STATUS: PROVIDER_ENABLED_SMOKE_V1 VERIFIED for execution + Provider Activation evidence + RELEASE gate;
 live Claude/Max generation NOT certified (providerExecuted=false).
+
+## P0-CURRENT-060 — UNIFY_RUNTIME_EXECUTION VERIFIED (canonical LOCAL execution + ledger gate ONLY)
+HEAD: 789400e. Records a durable verdict ALREADY established by a Git-tracked proof; documentation only.
+Uses only the established canonical run evidence — mission NOT re-executed.
+
+--- DURABLE PROOF (admissible source) ---
+  docs/audit/truth-lock/UNIFY_RUNTIME_EXECUTION_RUNTIME_PROOF.md
+
+--- OBSERVED REALITY (run `env -u ANTHROPIC_API_KEY runtime/bin/odg mission UNIFY_RUNTIME_EXECUTION`) ---
+  - Decision: migrated local mission → LOCAL RUNTIME (MissionOrchestrator → RuntimeExecutor, src/runtime).
+  - exit 0, LOCAL_COMPLETE (11 logical / 18 technical / 18 capabilities), Validated: true.
+  - mission-report = {mission:UNIFY_RUNTIME_EXECUTION, validated:true, status:SUCCESS} (mission-level
+    RuntimeReporter honest gate; not fabricated).
+  - Ledger 897→898 (+1): one entry proven=true/validated=true/ARCHIVED, objectives=0, runId=null
+    (LOCAL route, single finalizer, append-once). Provider NOT involved. Git clean; no file change.
+
+--- CRITICAL SCOPE STATEMENT ---
+  The 7 objectives (MAKE_MISSION_ORCHESTRATOR_SINGLE_ENTRY_POINT, REMOVE_LEGACY_RUNTIME_ENTRYPOINTS,
+  REGISTER_ALL_CAPABILITIES, UNIFY_EXECUTION_PIPELINE, VALIDATE_DETERMINISM, GENERATE_RUNTIME_SUMMARY,
+  PROMOTE_RUNTIME_V1) were NOT individually executed/evidenced; no per-objective artifact; done_when
+  NOT machine-evaluated (contract objectives are plain strings; LOCAL TS route does not traverse the
+  odg-run/validation-engine per-objective gate, so A3's RECORDED guard does not apply here). No
+  provider / live Claude(Max) generation occurred or is certified.
+
+--- VERDICT ---
+  VERIFIED — UNIFY_RUNTIME_EXECUTION canonical LOCAL runtime execution + ledger completion gate.
+  Explicitly NOT a certification of the 7 objectives, their done_when, or provider/live generation.
+
+--- LIMITATIONS ---
+  - Mission-level verdict only (same scope class as M0000/M0001/M0002).
+  - Ephemeral ledger is not the durable proof (P0-CURRENT-045); the tracked artifact above is.
+  - A1 (0ada3b1), A2 (1d689c6), A3 (d8fa25e), Clean Workspace executor (0ac6886) unchanged.
+
+STATUS: UNIFY_RUNTIME_EXECUTION VERIFIED for canonical LOCAL execution + ledger gate ONLY; 7
+objectives / done_when / provider-generation NOT certified.
