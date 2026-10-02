@@ -2846,3 +2846,40 @@ HEAD: ffaf979. Records a durable verdict ALREADY established by a Git-tracked pr
 
 STATUS: CLEAN_RUNTIME_WORKSPACE VERIFIED (proof ffaf979) for runtime execution + objective evidence +
 RELEASE gate; A1/A2/A3 in-situ confirmed; broader documentary certification NOT claimed.
+
+## P0-CURRENT-059 — PROVIDER_ENABLED_SMOKE_V1 VERIFIED (exec + Provider Activation evidence + RELEASE)
+HEAD: e03a197. Records a durable verdict ALREADY established by a Git-tracked proof; documentation only.
+
+--- DURABLE PROOF (admissible source) ---
+  docs/audit/truth-lock/PROVIDER_ENABLED_SMOKE_V1_RUNTIME_PROOF.md
+
+--- OBSERVED REALITY (run `env -u ANTHROPIC_API_KEY runtime/bin/odg mission PROVIDER_ENABLED_SMOKE_V1`) ---
+  - Fresh full run, 13/13 stages, exit 0; contract mode IMPLEMENT, authorized_paths src/app/provider-smoke/**.
+  - Objective PROVIDER_SMOKE_MARKER → EXECUTED, capability "Provider Activation", evidence
+    runtime/generated/provider-activation.json (non-empty).
+  - Validation SUCCESS, validated=true, noRecordedNoOp=true, recordedNoOp=[], scopedChanges=[], unmet=[].
+  - A1 in-situ: runtime-verify.json mission=PROVIDER_ENABLED_SMOKE_V1 (fresh @22:36:26), consistent.
+  - A2 in-situ: ledger 896→897 (+1), one entry per (mission,runId), duplicate finalizer skipped.
+  - A3 in-situ: objective EXECUTED, not RECORDED.
+  - RELEASE: PLAN_COMPLETE / Released PROVIDER_ENABLED_SMOKE_V1.
+  - No "Credit balance too low": running with ANTHROPIC_API_KEY unset routes Claude Code to the
+    claude.ai/Max subscription (auth status: claude.ai/firstParty/max). No key/config/repo change.
+  - Deliverable src/app/provider-smoke/MARKER.md pre-existing and tracked; HEAD unchanged; tree clean.
+
+--- CRITICAL SCOPE STATEMENT ---
+  Provider was SELECTED (decision=PROVIDER_SELECTED, selectedProvider=claude) but NOT executed:
+  provider-activation.json execution.executed=false, providerExecuted=false (classification BLOCKED).
+  The "Provider Activation" capability activates/selects WITHOUT a paid generation; the LOCAL pipeline
+  succeeded before the autonomy live-generation route. NO live Claude/Max generation call was consumed.
+
+--- VERDICT ---
+  VERIFIED — PROVIDER_ENABLED_SMOKE_V1 canonical runtime execution + Provider Activation objective
+  evidence + RELEASE gate. Explicitly NOT a certification of end-to-end LIVE Claude/Max generation.
+
+--- LIMITATIONS ---
+  - Does NOT certify live provider generation (providerExecuted=false).
+  - Ephemeral ledger is not the durable proof (P0-CURRENT-045); the tracked artifact above is.
+  - A1 (0ada3b1), A2 (1d689c6), A3 (d8fa25e), Clean Workspace executor (0ac6886) unchanged.
+
+STATUS: PROVIDER_ENABLED_SMOKE_V1 VERIFIED for execution + Provider Activation evidence + RELEASE gate;
+live Claude/Max generation NOT certified (providerExecuted=false).
