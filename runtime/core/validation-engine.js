@@ -65,6 +65,18 @@ const evidenceOk = missingEvidence.length === 0;
 const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
 const isEngineering = plan.requiresEngineering === true && authorizedPaths.length > 0;
 
+// 2c. No RECORDED no-op coverage for ENGINEERING missions (A3). The Patch Executor marks an objective
+// `RECORDED` when it maps to NEITHER a real `edits` patch NOR a capability executor — a symbolic no-op
+// with no evidence (exactly the objective-attribution RECORDED-NO-EVIDENCE verdict, consumed here as
+// the literal executor status so no done_when is parsed and no new semantics are introduced). For a
+// write-scope ENGINEERING mission such a no-op must NOT count as satisfied coverage, otherwise the
+// mission reaches SUCCESS/RELEASE without doing the work its objective describes. Scoped to
+// isEngineering so read-only AUDIT missions (no authorized paths) keep their historical behaviour.
+// Only the literal no-op status is caught: EXECUTED(+evidence), APPLIED (real file edits) and DONE
+// (legacy actions that write an output artifact) are unaffected.
+const recordedNoOp = executed.filter((e) => e && e.status === "RECORDED");
+const noRecordedNoOp = !isEngineering || recordedNoOp.length === 0;
+
 // Scope observation delegated to the shared scope-observer module (single implementation; same
 // context and moment-of-observation rules). No behaviour change — same inputs, same results.
 const scopedChanges = isEngineering ? changedPathsInScope(authorizedPaths) : [];
@@ -125,6 +137,8 @@ const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
     evidenceIntegrity: evidenceOk,
+    noRecordedNoOp,
+    recordedNoOp: recordedNoOp.map((e) => e.objectiveId || e.action),
     engineeringPerformed: engineeringOk,
     buildGate: buildOk,
     typescriptGate: typescriptOk,
@@ -139,12 +153,13 @@ const checks = {
     capabilitiesOk,
 };
 
-const validated = coverageOk && noFailures && evidenceOk && engineeringOk && buildOk && typescriptOk && capabilitiesOk;
+const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk;
 
 const unmet = [];
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f) => f.action).join(", ")}.`);
 if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evidence: ${missingEvidence.map((e) => e.evidence).join(", ")}.`);
+if (!noRecordedNoOp) unmet.push(`Objective(s) recorded as a no-op without evidence (RECORDED): ${recordedNoOp.map((e) => e.objectiveId || e.action).join(", ")}.`);
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
