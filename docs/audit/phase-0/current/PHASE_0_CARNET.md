@@ -2952,3 +2952,35 @@ change, no mission run, no provider, no new proof artifact.
 
 DECISION: ACCEPT_EXISTING_PROOF — DYNAMIC_MISSION_CONTRACT_FACTORY closed on existing Truth Lock
 evidence; no fresh runtime execution required.
+
+## P0-CURRENT-062 — AUTONOMOUS_CONTRACT_EVOLUTION CTO CONTROL-PASS ACCEPTANCE (existing evidence only)
+HEAD: 3d97252. CTO decision-gate on the LAST roadmap mission. Documentation only; no mission run, no
+executor, no production-code/contract change, no provider, no tests, no new proof artifact.
+
+--- PREFLIGHT (matches the established forensic) ---
+  - Git clean at HEAD 3d97252.
+  - Contract runtime/missions/AUTONOMOUS_CONTRACT_EVOLUTION.json: mode ENGINEERING,
+    requiresEngineering=true, authorizedPaths ["runtime/**","src/**"], completion "Release Manager
+    decision is RELEASE", objectives OBJ-001..OBJ-004.
+  - Durable evidence present + git-tracked: runtime/missions/AUTONOMOUS_CONTRACT_EVOLUTION.evidence.md
+    (verdicts: converge-cli.test ALL PASS; mission-contract-factory.test 39 assertions).
+  - Confirmed NO second durable concordant source (no runtime/reports/*_REPORT.md) — matches the
+    TRUTH_LOCK_5_MISSIONS §5 UNKNOWN rationale (two-source bar unmet).
+
+--- BOUNDED VERDICT (CTO control-pass) ---
+  VERIFIED — AUTONOMOUS_CONTRACT_EVOLUTION capability implemented + tested; existing durable evidence
+  accepted by CTO control-pass; single durable mission-authored source; no fresh runtime execution
+  required because the identified runtime routes would be non-additive.
+
+--- LIMITATIONS (explicit) ---
+  - Single durable admissible source, NOT two-source corroboration.
+  - Evidence is mission-authored, NOT an independent third-party certificate.
+  - No fresh runtime execution performed.
+  - The four objectives (OBJ-001..004) are supported by the existing evidence/tests, but this
+    acceptance does NOT claim a new runtime-execution certification.
+  - Ephemeral runtime-verify evidence (e.g. generatedContractsValid observed live this session) is
+    NOT used as durable proof.
+  - A1 (0ada3b1), A2 (1d689c6), A3 (d8fa25e), Clean Workspace executor (0ac6886) unchanged.
+
+DECISION: CTO CONTROL-PASS ACCEPTANCE — AUTONOMOUS_CONTRACT_EVOLUTION accepted on existing durable
+evidence; no fresh runtime execution required. (All 8 ROADMAP missions now dispositioned.)
