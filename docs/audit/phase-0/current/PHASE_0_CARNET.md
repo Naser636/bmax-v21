@@ -2694,3 +2694,42 @@ runtime verify. Records a fix ALREADY proven and committed; this carnet entry is
   - No certification of CLEAN_RUNTIME_WORKSPACE may be inferred from this fix.
 
 STATUS: A1 FIXED and committed (0ada3b1); A2/A3 open; CLEAN_RUNTIME_WORKSPACE NOT certified.
+
+## P0-CURRENT-055 — A2 FIX: LEDGER DUPLICATE-RECORD IDEMPOTENCE (reproduced → fixed → committed)
+HEAD: 1d689c6. Minimal fix for anomaly A2 observed during the CLEAN_RUNTIME_WORKSPACE runtime verify.
+Documentation only; records a fix ALREADY proven and committed.
+
+--- ESTABLISHED FACTS ---
+  - A2 reproduced and confirmed: the run appended TWO ledger entries for CLEAN_RUNTIME_WORKSPACE
+    (893→895), both the same mission (20:56:16.776 and 20:56:38.230). Controlled isolated repro:
+    two recordMission calls ⇒ 2 entries; 1 call ⇒ +1 (recordMission does NOT duplicate internally).
+  - Cause: two DISTINCT finalizers write the ledger in the same run (not a retry, not internal dup).
+    * LOCAL-success: pipeline "Mission Ledger" stage (pipeline-builder.js) + archive() both record.
+    * PROVIDER-recovered: archive() can be the SOLE recorder (the local pipeline stage was refused by
+      the proven-only gate because validation only passed after the provider fix, and runViaProvider
+      bypasses odg-run.js so the pipeline ledger stage never re-runs).
+  - Removing archive()'s ledger write is therefore FORBIDDEN (it would drop the sole record on the
+    provider path → missions never "proven" → odg autonomy non-convergence).
+  - Solution retained: make recordMission idempotent by (mission, run) in runtime/core/mission-ledger.js.
+  - runId REUSED (not invented): pipeline-checkpoint.startedAt (checkpoint-engine.begin), already
+    stamped before the patch — trusted ONLY when the checkpoint is mission-matched, so the TS LOCAL
+    route (which never writes it) keeps the historical append-always behaviour.
+  - Behaviour: first record ⇒ append; second (mission, run) ⇒ DUPLICATE_RUN / NO-OP; new run (new
+    startedAt) ⇒ new append; different mission ⇒ new append; proven-only gate + mission-match UNCHANGED.
+  - Targeted test src/runtime/mission-ledger-idempotent.test.ts: 8/8 PASS. Regressions:
+    mission-ledger-label 4/4, local-mission-runner-ledger PASS, objective-attribution 45,
+    verify-mission-label (A1) 3/3. next build: PASS. diff-check: CLEAN.
+  - Commit: 1d689c6325a7c84792b31301a203d5cdb37892c1 ("ODG: fix ledger duplicate record
+    idempotence"), exactly two files (mission-ledger.js + test).
+
+--- LIMITATIONS (do NOT widen) ---
+  - No in-situ RuntimeAutonomy re-run yet: the real +1 behaviour (LOCAL-success and provider) is
+    proven only in isolated reproduction, not via a live odg mission.
+  - The "single odg-run.js per cycle" assumption (startedAt stable across both finalizers) was
+    verified by reading runPipeline, NOT by a new run.
+  - A same-millisecond startedAt collision between two executions of the same mission is not handled.
+  - A3 (RECORDED no-op objectives) remains OPEN.
+  - CLEAN_RUNTIME_WORKSPACE was NOT re-run after the patch; NO certification of it may be inferred
+    from A2.
+
+STATUS: A2 FIXED and committed (1d689c6); A3 OPEN; CLEAN_RUNTIME_WORKSPACE NOT re-run / NOT certified.
