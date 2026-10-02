@@ -2075,3 +2075,29 @@ change; no status change. CONFIG-EQ was committed at ece565d; this entry records
 
 STATUS: CAMPAIGN 04 REMAINING-FAMILIES REVIEW RECORDED (ece565d). Campaign 04 still OPEN/INCOMPLETE;
 semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-038 — CAMPAIGN 04 VALUE/THRESHOLD REVIEW (READ-ONLY) (COMMITTED)
+HEAD: d64329c. Read-only review of the point-in-time VALUE/THRESHOLD family only (series/temporal
+excluded). No code/contract/check change; no authorization change.
+
+--- FINDINGS ---
+  - After excluding false positives (the scan caught "pipeline" via the substring "line", and
+    boilerplate), exactly ONE genuine VALUE/THRESHOLD clause exists:
+    IMPLEMENT_RUNTIME_HEALTH_COMMAND/OBJ-003 — "Sortie inférieure à 100 lignes."
+  - The threshold requires the `odg health` command output to be < 100 lines.
+  - A deterministic observable would be required: an artifact capturing precisely that output.
+  - No dedicated, declared, reliable artifact of that output currently exists; runtime/generated is
+    git-ignored / ephemeral.
+  - A line-count-max(path, max) check could be honest ONLY after an explicit deterministic source is
+    declared.
+  - High false-positive risk if one measures a global run-log or an ephemeral source.
+  - VERDICT: FAISABLE MAIS NON AUTORISÉ (family not authorized by P0-034); and NON-VERIFIABLE as-is
+    for lack of a deterministic source.
+  - The other scan hits were false positives and are NOT thresholds.
+
+--- STATUS ---
+  Campaign 04 remains OPEN / INCOMPLETE. No check created, no authorization changed. No Campaign 05,
+  no S7, no follow-up.
+
+STATUS: CAMPAIGN 04 VALUE/THRESHOLD REVIEW RECORDED (d64329c). Campaign 04 still OPEN/INCOMPLETE;
+semantic done_when proof still BLOCKED.
