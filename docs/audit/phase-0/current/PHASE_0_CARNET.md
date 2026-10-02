@@ -2587,3 +2587,38 @@ open" was imprecise — it referenced the pre-fix P0-013 era, not the current HE
 
 STATUS: ROOT CAUSE #1 ALREADY RESOLVED (b7b7a16) — fix 06a0d68 ∈ HEAD; guards 8/8 + 5/5 PASS;
 no further patch required or authorized.
+
+## P0-CURRENT-052 — M0000 VERIFIED (CANONICAL RUNTIME EXECUTION + LEDGER COMPLETION GATE)
+HEAD: a51c48c (execution). Documentation only — modifies ONLY this carnet. No mission re-executed;
+ledger neither read nor modified as proof; no code/test/contract/runtime/roadmap/Truth Lock/V5/
+MEMORY.md change; no new file. This entry records a verdict ALREADY established by the durable,
+Git-tracked evidence artifact — it does not re-derive it.
+
+--- DURABLE PROOF (admissible source) ---
+  docs/audit/truth-lock/M0000_RUNTIME_PROOF.md
+  proof commit = 91d0b57a88c0f02a1c08e2b4eb1a01f95bc06490
+
+--- OBSERVED REALITY (verbatim from the runtime verify pass, HEAD a51c48c) ---
+  - M0000 executed ONCE by its canonical LOCAL route (runtime/bin/odg mission M0000 →
+    src/runtime/mission-cli.ts; decision: migrated local mission → LOCAL RUNTIME; no provider).
+  - exit 0 / Status LOCAL_COMPLETE.
+  - validated = true; mission-report.json = { mission:M0000, validated:true, status:SUCCESS }.
+  - ledger delta +1; the single appended entry: mission=M0000, proven=true, validated=true,
+    state=ARCHIVED, authorized=true, objectives=0.
+  - NO other mission registered by this run (appended missions = ["M0000"]).
+  - stale runtime/generated/mission-plan.json (belonging to REFACTOR_MISSION_CONTRACT_FACTORY_TO_
+    SEMANTIC_PLANNER) was correctly ignored for identity AND objectives — live confirmation of
+    fix a51c48c (pre-patch code would have mislabelled the entry).
+
+--- VERDICT ---
+  VERIFIED — M0000 canonical runtime execution + ledger completion gate.
+
+--- LIMITATIONS (verdict MUST NOT be widened beyond the proven scope) ---
+  - This verdict does NOT semantically re-certify M0000's five documentary deliverables; it certifies
+    ONLY the observed scope (canonical execution + ledger completion gate + identity correctness
+    under a stale plan).
+  - The ephemeral/git-ignored mission-ledger is NOT the durable proof (P0-CURRENT-045); the durable
+    proof is the tracked artifact M0000_RUNTIME_PROOF.md cited above.
+
+STATUS: M0000 VERIFIED for scope "canonical runtime execution + ledger completion gate" (proof
+91d0b57); documentary-deliverable semantic re-certification remains out of scope and NOT claimed.
