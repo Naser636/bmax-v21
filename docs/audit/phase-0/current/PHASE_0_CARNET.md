@@ -2438,3 +2438,51 @@ Campaign/S7/MEMORY.md touched, no next step invented.
 STATUS: NO CANONICAL NEXT STEP — DECISION REQUIRED (368e95b). Truth Lock complete, not a certification;
 autonomy/PRIORITY-0 missions gated on CTO approval; reviewer control pass (human) is the only open
 gate; no next step invented.
+
+## P0-CURRENT-049 — HUMAN/CTO CONTROL PASS: TRUTH LOCK EVIDENCE RECORD ACCEPTED (DOCUMENTATION ONLY)
+HEAD: 25a2482. The already-authorized HUMAN/CTO reviewer control pass (the open gate per
+P0-CURRENT-046 item 7) was performed on docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md, using ONLY the
+committed Truth Lock report + the validated procedure (P0-CURRENT-045) + the CTO validation
+(P0-CURRENT-046) + the committed-record entry (P0-CURRENT-047) + the next-step determination
+(P0-CURRENT-048). Evidence collection was NOT redone; no mission inspected/rescanned/executed.
+Documentation only — modifies ONLY this carnet; no Truth Lock report / code / contract / runtime /
+roadmap / V5 / Campaign / S7 / MEMORY.md touched.
+
+--- CONTROL PERFORMED (per the P0-046 item-7 gate; each verdict checked, not re-collected) ---
+  For each mission the control confirmed: the report applies the validated admissibility rules
+  (P0-045 rules 5-10); the stated sources match the report; no INSUFFICIENT source was used to create a
+  CONFLICT; UNKNOWN was retained wherever the two-source VERIFIED threshold was unmet; no verdict was
+  silently upgraded; the report claims NO retroactive certification (report lines 3, 114-115).
+  - M0000 = UNKNOWN .......................... contract-only INSUFFICIENT; no tracked verdict ⇒ rule 9. OK
+  - CLEAN_RUNTIME_WORKSPACE = UNKNOWN ........ contract-only INSUFFICIENT; no tracked verdict ⇒ rule 9. OK
+  - PROVIDER_ENABLED_SMOKE_V1 = UNKNOWN ...... one durable verdict only; PENDING_REPAIR/trace
+      INSUFFICIENT (no CONFLICT, rule 8); two-source bar unmet ⇒ UNKNOWN. OK
+  - DYNAMIC_MISSION_CONTRACT_FACTORY = VERIFIED  two concordant durable tracked artifacts named in the
+      report (…FACTORY.evidence.md "39 assertions passed" + reports/…_REPORT.md "39 assertions passed",
+      "exit 0, aucune régression"); ledger PLANNED INSUFFICIENT → not CONFLICT (rule 8) ⇒ VERIFIED
+      (rule 5). OK
+  - AUTONOMOUS_CONTRACT_EVOLUTION = UNKNOWN .. one durable verdict only; ledger PLANNED INSUFFICIENT;
+      no concordant 2nd durable source ⇒ UNKNOWN. OK
+  RESULT: no documentary inconsistency found.
+
+--- CONTROL DECISION ---
+  ACCEPT. The Truth Lock evidence record is an ACCURATE application of the validated procedure.
+  The five verdicts remain UNCHANGED:
+    1. M0000 = UNKNOWN
+    2. CLEAN_RUNTIME_WORKSPACE = UNKNOWN
+    3. PROVIDER_ENABLED_SMOKE_V1 = UNKNOWN
+    4. DYNAMIC_MISSION_CONTRACT_FACTORY = VERIFIED
+    5. AUTONOMOUS_CONTRACT_EVOLUTION = UNKNOWN
+
+--- LIMITS OF THIS ACCEPTANCE (explicit) ---
+  - Acceptance of the evidence record is NOT certification of the five missions.
+  - No UNKNOWN mission is certified; the four UNKNOWN missions REMAIN UNKNOWN.
+  - DYNAMIC_MISSION_CONTRACT_FACTORY remains VERIFIED ONLY within the Truth Lock evidence record and
+    with its documented limitations (both artifacts are mission-authored deliverables, not an
+    independent third-party certificate — report §4); it is NOT converted into any broader runtime
+    certification.
+  - No mission was executed or rescanned during the control pass.
+
+STATUS: HUMAN/CTO CONTROL PASS COMPLETE — TRUTH LOCK EVIDENCE RECORD ACCEPTED (25a2482) as an accurate
+application of the validated procedure. Five verdicts unchanged (1 VERIFIED within-record, 4 UNKNOWN);
+acceptance is NOT mission certification; no mission executed or rescanned.
