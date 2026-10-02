@@ -20,6 +20,21 @@ export interface MissionPolicies {
   executionPolicy: unknown | null;
 }
 
+// S3 (Campaign 03 — Semantic Mission Compiler): the mission's CONTRACT outcome fields,
+// carried VERBATIM from its contract into the plan. Transport only — no interpretation and
+// no enforcement here (DoD/completion are NOT gated; verify is NOT merged into step
+// verificationRequirements). A single verify entry binds a CAPABILITY to the EVIDENCE that
+// proves it, exactly as the contract declares.
+export interface VerifyRequirement {
+  capability: string;
+  evidence: string;
+}
+export interface MissionContract {
+  definitionOfDone: string[];
+  completion: string[];
+  verify: VerifyRequirement[];
+}
+
 export interface RuntimeMission {
   id: string;
   name: string;
@@ -28,6 +43,8 @@ export interface RuntimeMission {
   intent: MissionIntent;
   // S2: the mission's governance, carried verbatim from its contract.
   policies: MissionPolicies;
+  // S3: the mission's CONTRACT outcome fields (DoD/completion/verify), carried verbatim.
+  contract: MissionContract;
   brain: {
     loaded: boolean;
     objectives: string[];
@@ -70,8 +87,52 @@ export class MissionLoader {
       projectContext,
       intent: this.deriveIntent(id),
       policies: this.readPolicies(id),
+      contract: this.readContract(id),
       brain
     };
+  }
+
+  /**
+   * S3: carry the mission's CONTRACT outcome fields from its contract VERBATIM (transport
+   * only; no interpretation, no enforcement). Tolerant: a missing/malformed contract yields
+   * safe empty defaults. definitionOfDone accepts either `definition_of_done` or
+   * `definitionOfDone` (as the existing readers do). verify keeps only well-formed
+   * {capability, evidence} string pairs, preserved as declared. Pure (contract read; no
+   * Date/randomness).
+   */
+  private readContract(id: string): MissionContract {
+    let contract: {
+      definition_of_done?: unknown;
+      definitionOfDone?: unknown;
+      completion?: unknown;
+      verify?: unknown;
+    } = {};
+    try {
+      contract = JSON.parse(fs.readFileSync(`${this.missionsDir}/${id}.json`, "utf8"));
+    } catch {
+      contract = {};
+    }
+
+    const asStrings = (v: unknown): string[] =>
+      Array.isArray(v) ? v.filter((x: unknown): x is string => typeof x === "string") : [];
+
+    const rawDoD = contract.definition_of_done ?? contract.definitionOfDone;
+    const definitionOfDone = asStrings(rawDoD);
+    const completion = asStrings(contract.completion);
+
+    const verify: VerifyRequirement[] = Array.isArray(contract.verify)
+      ? contract.verify
+          .filter(
+            (v: unknown): v is { capability: string; evidence: string } =>
+              !!v &&
+              typeof v === "object" &&
+              typeof (v as any).capability === "string" &&
+              typeof (v as any).evidence === "string"
+          )
+          .map(v => ({ capability: v.capability, evidence: v.evidence }))
+      : [];
+
+    return { definitionOfDone, completion, verify };
   }
 
   /**

@@ -1,4 +1,4 @@
-import { MissionLoader, RuntimeMission, ObjectiveSpec, MissionPolicies } from "./mission-loader";
+import { MissionLoader, RuntimeMission, ObjectiveSpec, MissionPolicies, MissionContract } from "./mission-loader";
 import { MissionIntent } from "./mission-intent";
 
 export interface ExecutionStep {
@@ -25,6 +25,9 @@ export interface ExecutionPlan {
   dependencies: PlanDependency[];
   // S2: the mission's governance, carried verbatim (transport only; not enforced here).
   policies: MissionPolicies;
+  // S3: the mission's CONTRACT outcome fields (DoD/completion/verify), carried verbatim
+  // (transport only; not interpreted or enforced here).
+  contract: MissionContract;
 }
 
 export class MissionOrchestrator {
@@ -79,7 +82,9 @@ export class MissionOrchestrator {
       steps,
       dependencies,
       // S2: carry the mission's governance verbatim (transport only; not enforced here).
-      policies: mission.policies
+      policies: mission.policies,
+      // S3: carry the mission's CONTRACT outcome fields verbatim (transport only).
+      contract: mission.contract
     };
   }
 
