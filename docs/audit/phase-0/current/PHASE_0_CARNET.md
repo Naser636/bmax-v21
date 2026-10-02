@@ -1859,3 +1859,71 @@ contract, does NOT propose a schema, and does NOT convert these observations int
 
 STATUS: CAMPAIGN 04 done_when CORPUS ANALYSIS RECORDED (7469b86). Evidence only; no design; decision
 still REQUIRED; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-033 — CAMPAIGN 04 SEMANTIC-CONTRACT SIMULATION ON 5 REAL OBJECTIVES (COMMITTED)
+HEAD: 62c93d6. Read-only paper simulation of the design-study binding (OPTIONAL, per-done_when-clause,
+author-declared check reusing the capability-probes engine) against 5 REAL objectives. No code, no new
+semantic contract, no new probe; validation-engine / SUCCESS / orchestrator untouched. All 5 objectives
+currently carry proof=null (0/152 declared); the ONLY registered checks are build-green,
+typescript-green, internet-reachable (+ mission-specific ones). Honest baseline today: every clause is
+NOT-DECLARED ⇒ objective NOT-PROVEN (default-deny). Below, the "if declared" column simulates an
+author-declared binding (never inferred from text).
+
+--- PER-CASE SIMULATION (clause → check / params / observed evidence / simulated result) ---
+  1 BUILD/TS  AUTONOMY_E2E_LOOP/AUTONOMY_LOOP_MARKER dw[2] "Build and TypeScript remain green."
+      → checks build-green + typescript-green (EXIST); params none; evidence runtime-verify.json.
+      Today NOT-DECLARED; if declared+true ⇒ PROVEN-BY-DECLARED-CHECK (this clause only; global gate).
+  2 FILE     same objective dw[0] "Exactly one file exists under src/app/autonomy-loop/."
+      → hypothetical files-count-under (NOT registered); params {path, count:1}; evidence dir listing.
+      ⇒ MISSING (unknown check) → NOT-PROVEN. (dw[1] negative-scope → also MISSING.)
+      Objective AND over dw[0..2]: even if dw[2] passes, dw[0]/dw[1] MISSING ⇒ objective NOT-PROVEN.
+  3 CONFIG   DYNAMIC_MISSION_CONTRACT_FACTORY/OBJ-003 dw[1] "...gouvernée par la policy
+      contractOnDemand.enabled." → hypothetical config-eq (NOT registered); params {file,key,equals};
+      evidence policy value. ⇒ MISSING → NOT-PROVEN. Even a real config-eq PASS proves only "flag=value",
+      NOT the behavioral claim (proxy). (dw[0] runtime-behavior → MISSING. AND ⇒ NOT-PROVEN.)
+  4 VALUE    BUILD_GATE_AUTONOMY/OBJ-003 dw[2] "...tant que le nombre d'erreurs diminue."
+      → hypothetical series-non-increasing (NOT registered); params {series,metric,relation};
+      evidence a per-iteration metric log (not currently emitted). ⇒ MISSING → NOT-PROVEN. A build-green
+      PASS must NOT be promoted to prove this temporal invariant (forbidden false positive).
+  5 GOV      FIX_CORRECTIVE_QUEUE_INTAKE/CORRECTIVE_QUEUE_RELEASED dw[0] "Release Manager returns RELEASE."
+      → GOVERNANCE (kind=governance); evidence = authority's recorded decision/ledger for this mission.
+      ⇒ GOVERNANCE — never auto-PROVEN by code; PROVEN only if the authority record says RELEASE.
+      (dw[1] "a proven ledger entry is recorded" = artifact-exists but circular with SUCCESS.)
+
+--- INVARIANTS CONFIRMED BY THE SIMULATION ---
+  per-clause binding (never one-per-objective); AND across clauses (cases 2 & 3 NOT-PROVEN despite one
+  bindable clause); default-deny (NOT-DECLARED / MISSING / fail ⇒ NOT-PROVEN); no automatic text
+  interpretation (bindings are author-declared; today all NOT-DECLARED); no PROVEN from a general probe
+  (case 4); no SUCCESS/validation-engine/orchestrator change (paper only); no new proof engine (reuse
+  runProbe; absent checks = MISSING, not created).
+
+--- A. WHAT THE CONTRACT ACTUALLY LETS YOU PROVE ---
+  Only clauses an author EXPLICITLY binds to a REGISTERED check whose predicate is a real point-in-time
+  fact over an artifact — today the build/typescript/internet shape (case 1). Per-clause
+  PROVEN-BY-DECLARED-CHECK, AND-combined per objective, default-deny elsewhere. Honest, attributable,
+  non-fabricating objective-level observation.
+
+--- B. WHAT IT DOES NOT LET YOU PROVE ---
+  Anything with no registered check (file-count, config, metric-series, scope-negative — cases 2,3,4);
+  process/temporal invariants (case 4); governance decisions by code alone (case 5); behavioral claims
+  ("est gouvernée par", "sans intervention humaine"); the ~39% boilerplate. It cannot detect mis-binding,
+  so it never proves "done_when semantically true" — only "the declared check passed". One bindable
+  clause never proves a multi-clause objective.
+
+--- C. REMAINING CTO-DECISION AMBIGUITIES (preserved verbatim from the simulation) ---
+  1. Create the missing parameterized checks? (file-count, scope-clean, config-eq, series-non-increasing,
+     artifact-nonempty) — each is a NEW probe (currently forbidden); authorize which + their predicates.
+  2. Proxy vs semantic honesty bar: when a static check only approximates a behavioral clause, is a PASS
+     acceptable as proof, or must it be surfaced proxy-only?
+  3. Governance observation: read the Release Manager decision as evidence WITHOUT circularity with
+     SUCCESS (the ledger entry is both the clause and the success record).
+  4. Negative/whole-tree clauses ("no file outside scope"): the check's scope, cost, determinism.
+  5. Evidence-production dependency: metric-series clauses require the engine to EMIT the series first.
+  6. Boilerplate/unbindable clauses in multi-clause objectives: objective stays permanently NOT-PROVEN,
+     or authors drop/annotate boilerplate? A policy call.
+
+IMPORTANT: documentation of a read-only simulation ONLY — no semantic contract defined, no probe
+created, no code changed, Campaign 04 status UNCHANGED.
+
+STATUS: CAMPAIGN 04 SEMANTIC-CONTRACT SIMULATION RECORDED (62c93d6). Campaign 04 still OPEN/INCOMPLETE;
+semantic done_when proof still BLOCKED; semantic-contract decision still REQUIRED. No Campaign 05, no S7.
