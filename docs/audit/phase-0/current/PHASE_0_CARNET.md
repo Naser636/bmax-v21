@@ -2364,3 +2364,37 @@ certified and no durable Truth Lock proof is produced by this entry.
 
 STATUS: TRUTH LOCK PROCEDURE VALIDATED — ARTIFACT LOCATION docs/audit/truth-lock/ FIXED; REVIEWER =
 HUMAN/CTO; NOT APPLIED; 5 missions still UNKNOWN; no certification (f3a15d0).
+
+## P0-CURRENT-047 — TRUTH LOCK EVIDENCE RECORD COMMITTED (DOCUMENTATION ONLY)
+HEAD at record: fe8028a. Records that the Truth Lock 5-mission evidence record was committed
+successfully to the Git-tracked location fixed by P0-CURRENT-046. Documentation only — this entry
+modifies ONLY this carnet; no mission inspected/rescanned/re-executed, no verdict changed, no report
+modified, no code/contract/runtime/roadmap/V5/Campaign/S7 touched.
+
+--- COMMIT ---
+  - Commit: fe8028a5e73fba125bd6048d09cfeb6bc9814fd5
+  - Message: "ODG: commit Truth Lock 5-mission evidence record"
+  - Durable report (exact, unmodified): docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md
+    (new file, 115 insertions; Git-tracked, outside runtime/generated — per P0-CURRENT-046 item 5/6).
+
+--- RECORDED VERDICTS (as committed; unchanged) ---
+  1. M0000 ............................. UNKNOWN
+  2. CLEAN_RUNTIME_WORKSPACE .......... UNKNOWN
+  3. PROVIDER_ENABLED_SMOKE_V1 ........ UNKNOWN
+  4. DYNAMIC_MISSION_CONTRACT_FACTORY . VERIFIED
+  5. AUTONOMOUS_CONTRACT_EVOLUTION .... UNKNOWN
+
+--- PRE/POST-COMMIT CHECKS ---
+  - git diff --check: CLEAN (exit 0) — working tree and staged content both checked; no whitespace/
+    conflict errors.
+  - Post-commit worktree: CLEAN (git status --short --untracked-files=all = empty).
+
+--- NATURE / LIMITS ---
+  - This commit is an EVIDENCE RECORD ONLY and does NOT constitute certification of the 5 missions.
+  - No mission was re-executed; no verdict was changed.
+  - Durable certification remains gated on the HUMAN/CTO independent reviewer control pass
+    (P0-CURRENT-046 item 7).
+
+STATUS: TRUTH LOCK EVIDENCE RECORD COMMITTED (fe8028a) — docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md
+tracked; 5 verdicts recorded (1 VERIFIED, 4 UNKNOWN); NOT a certification; reviewer control pass still
+pending.
