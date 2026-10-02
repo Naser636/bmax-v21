@@ -1966,3 +1966,39 @@ implementation, and it is NOT a closure of Campaign 04.
 STATUS: CTO DECISION RECORDED — CAMPAIGN 04 SEMANTIC CHECK SCOPE (3f387cb). Implementation NOT
 authorized by this entry. Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
 No Campaign 05, no S7, no follow-up selected.
+
+## P0-CURRENT-035 — CAMPAIGN 04 ARTIFACT-NONEMPTY + SCOPE-CLEAN IMPLEMENTED (COMMITTED)
+Per the CTO decision (P0-CURRENT-034, families 1 & 2 only), the two authorized observations were
+implemented by REUSE. Strictly limited scope; no design change.
+  Commit: 2992ca5ed7cf6d318412600ba4ee1a2032891cba — "ODG: implement Campaign 04 artifact-nonempty
+  and scope-clean checks".
+
+--- WHAT WAS IMPLEMENTED (3 files) ---
+  - ARTIFACT-NONEMPTY implemented BY REUSE of the evidence-integrity predicate: proves the declared
+    artifact EXISTS and is NON-EMPTY only — NEVER semantic correctness.
+  - SCOPE-CLEAN implemented BY REUSE of the changedPathsInScope()/gitClean logic, same context and
+    moment of observation: no working-tree change lies OUTSIDE the authorized scope.
+  - NEW runtime/core/scope-observer.js (single shared implementation of the scope + evidence
+    primitives) and NEW runtime/core/scope-observer.test.js.
+  - runtime/core/validation-engine.js REFACTORED by behavior-preserving DELEGATION to scope-observer
+    (the private scope closures + the inline evidence predicate now live once, in the shared module).
+
+--- PROOFS (recorded; not re-run here) ---
+  Targeted test: 13/13 PASS. runtime/core regression: 21/21 PASS. Runtime-verify of the gate: the
+  Validation Engine verdict is PRESERVED — status/validated and all seven boolean gates byte-identical
+  to baseline (the only report delta was scopedChanges reflecting the uncommitted in-scope edits, i.e.
+  working-tree state, not logic). git diff --check clean.
+
+--- INVARIANTS / NON-INTERFERENCE ---
+  - NO implementation of file-count/file-existence, config-eq, or series-non-increasing (families 3/4/5).
+  - NO coupling to SUCCESS; scopeClean is NOT wired into the gate (observation only).
+  - NO orchestrator change; NO new proof engine; NO second concurrent implementation (delegation).
+  - NO automatic done_when interpretation; NO keyword mapping.
+
+--- STATUS ---
+  Campaign 04 remains OPEN / INCOMPLETE. The complete semantic proof of done_when remains BLOCKED
+  (these are observations/primitives, not a per-clause semantic proof; no clause binding is consumed as
+  a gate). Campaign 05 NOT CANONICALLY DEFINED. No S7. No follow-up selected.
+
+STATUS: CAMPAIGN 04 ARTIFACT-NONEMPTY + SCOPE-CLEAN COMMITTED (2992ca5). Observation/primitives only;
+gate behaviour preserved; Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
