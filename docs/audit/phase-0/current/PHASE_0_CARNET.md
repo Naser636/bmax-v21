@@ -1138,3 +1138,78 @@ Await explicit commit authorization. On approval, commit ONLY the new test
 src/runtime/phase0-certification.test.ts (message scoped to wiring the Phase 0 certification
 guard), leaving the .pre-semantic-planner backup and the carnet out of the commit. No
 follow-up (A4-strict, backup deletion) is started.
+
+## P0-CURRENT-020 — FOLLOW-UP ANALYSIS: A4-STRICT (DECLARED dependsOn) — ANALYSIS ONLY
+User authorized ONLY this analysis. Read-only forensic: NO file modified or created (beyond
+this carnet entry, which is documentation and changes no code), no patch, no commit. This
+examines whether the P0-010-strict A4 criterion is PROVABLE and, if not, the exact cause and
+the minimum change required (described, NOT implemented).
+
+--- CRITERION UNDER TEST (carnet P0-010) ---
+A4 (strict): "a mission declaring 'B depends on A' yields an edge/ordering A→B; reversing the
+  declaration reverses the edge." This is STRONGER than the wired/harness A4, which only asserts
+  a dependency STRUCTURE is PRESENT (satisfied today by an order-derived linear chain).
+
+--- EVIDENCE (read-only, measured this step) ---
+E1  Declarative-dependency source in the mission contracts: NONE.
+    Scanned all 152 runtime/missions/*.json for dependsOn|depends|requires|after|needs|
+    blockedBy|predecessors|order|dependencies|inputs|prereq ⇒ 0/152 files match.
+E2  Union of KEYS inside objective objects across ALL contracts (117 object[] + 32 string[]):
+    {id:225, goal:225, done_when:221, priority:94, patch:1}. NO dependency-like key exists on
+    any objective anywhere. objective-objects carrying a dependency key = 0.
+E3  No declarative-dep schema/type in source: grep dependsOn|declaredDepend|dependencyOrder in
+    src/runtime (non-test) ⇒ none.
+E4  Runtime plan path reads NO dependency source: mission-loader.ts / mission-orchestrator.ts
+    reference only runtime/missions/<id>.json, runtime/brain/MASTER_PLAN.md and the
+    project-context snapshot (grep ROADMAP/dependsOn/requires ⇒ none). The contracts are
+    "transcribed from runtime/system/ROADMAP.md" (per M0000's description), but ROADMAP is a
+    HUMAN authoring source OFF the runtime plan path — the Loader never reads it, so any ordering
+    there cannot reach the plan.
+E5  Loader normalization DROPS everything but three fields: ObjectiveSpec = {id, goal, doneWhen}
+    (mission-loader.ts:3-7). readContractObjectives keeps id/goal/done_when only — so even
+    `priority`/`patch` (which DO exist, E2) and any hypothetical dependsOn are discarded.
+E6  Orchestrator derives edges from ORDER, not declaration: mission-orchestrator.ts:44 sets
+    `prior = index===0 ? "LOAD" : OBJECTIVE_${index}` and :50 `dependencies: [prior]`;
+    deriveDependencies (:96) turns step.dependencies into {from,to} edges. The chain is purely
+    positional (array order), so there is nothing a reversed declaration could flip.
+
+--- A4-STRICT STATUS: NOT PROVABLE (and correctly recorded as out of certification) ---
+Exact cause = a THREE-layer gap, each independently sufficient:
+  (1) DATA: no contract declares a dependency (E1/E2) — there is no "B depends on A" to test.
+  (2) SCHEMA/CARRY: ObjectiveSpec has no dependsOn field and the loader drops non-{id,goal,
+      doneWhen} keys (E3/E5) — a declaration could not be carried even if authored.
+  (3) DERIVATION: the orchestrator builds edges from array order, never from a declaration
+      (E6) — reversing a declaration has no effect on the plan.
+The current A4 (presence) is genuinely GREEN; A4-strict is unfalsifiable today because the
+declarative input it asserts over does not exist anywhere on the runtime path.
+
+--- MINIMUM CHANGE REQUIRED (DESCRIBED ONLY — NOT IMPLEMENTED) ---
+To make A4-strict provable, the minimum is four small, additive parts:
+  M1 CONTRACT SCHEMA (data): allow an OPTIONAL `dependsOn: string[]` on an objective object in
+     runtime/missions/<id>.json, referencing other objective ids in the same contract. At least
+     one fixture/contract must declare it (and a reversed-order variant) to be testable.
+  M2 LOADER (carry): add `dependsOn: string[]` to ObjectiveSpec and populate it in
+     readContractObjectives (default []), so the declaration survives normalization.
+  M3 ORCHESTRATOR (honor): when a spec has dependsOn, set that step's `dependencies` from the
+     referenced OBJECTIVE_ ids INSTEAD OF (or in addition to) the positional `prior`; keep the
+     positional fallback when dependsOn is empty. deriveDependencies already emits edges from
+     step.dependencies, so reversing dependsOn reverses the edges — satisfying A4-strict.
+  M4 TEST (prove): add an A4-strict probe (in phase0-certification.test.ts or a sibling) over a
+     fixture declaring "B dependsOn A" (edge A→B) and its reverse (edge B→A). To stay hermetic
+     and keep the worktree clean, prefer a tiny COMMITTED fixture contract or a MissionLoader
+     pointed at an in-repo fixtures dir — NOT a file written at test time.
+  Risk/notes: additive and back-compatible (dependsOn optional; M0000-style contracts unaffected);
+  must preserve C1-C5 and re-run the P0-011 guard + C1 baseline; must guard against cycles /
+  unknown ids in dependsOn (validate or ignore-with-reason). This is a Phase-1-class enhancement,
+  NOT a Phase-0 certification gap.
+
+VERDICT: A4-strict is NOT currently provable; cause and minimum change are localized and
+recorded. No code changed, no file created, nothing committed. STATUS: ANALYSIS COMPLETE.
+
+WORKTREE (now): HEAD 7040d16. This carnet is modified (uncommitted) by this analysis entry;
+no other change. ?? src/runtime/mission-orchestrator.ts.pre-semantic-planner (pre-existing backup).
+
+NEXT AUTHORIZED ACTION (ONE — GATED ON USER APPROVAL):
+STOP (analysis only, no further follow-up). If/when authorized as a SEPARATE Phase-1 campaign,
+implement M1-M4 above (optional contract dependsOn → loader carry → orchestrator honor →
+A4-strict test over a committed fixture), then re-prove the P0-011 guard + C1 baseline.
