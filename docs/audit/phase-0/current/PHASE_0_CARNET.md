@@ -2984,3 +2984,39 @@ executor, no production-code/contract change, no provider, no tests, no new proo
 
 DECISION: CTO CONTROL-PASS ACCEPTANCE — AUTONOMOUS_CONTRACT_EVOLUTION accepted on existing durable
 evidence; no fresh runtime execution required. (All 8 ROADMAP missions now dispositioned.)
+
+## P0-CURRENT-063 — PHASE 0 CLOSURE (bounded; converged on the recorded scopes only)
+HEAD: a33f591. Documentation-only closure entry. No proof artifact created; no code/contract/runtime/
+ledger/provider change; no mission or test executed.
+
+--- SOLE CONVERGENCE BASIS ---
+  docs/audit/phase-0/PHASE_0_ROADMAP_CONVERGENCE_SUMMARY.md
+  convergence commit = a33f591990a3b8024d6e812c16a6b50c48126d44
+
+--- PREFLIGHT (all passed) ---
+  - Convergence summary exists and is git-committed (a33f591).
+  - All 8 canonical ROADMAP missions dispositioned exactly as recorded (summary table, 8 rows):
+    M0000, M0001, M0002, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1, UNIFY_RUNTIME_EXECUTION
+    (fresh runtime proof); DYNAMIC_MISSION_CONTRACT_FACTORY (ACCEPT_EXISTING_PROOF, two-source);
+    AUTONOMOUS_CONTRACT_EVOLUTION (CTO control-pass, single-source).
+  - Git working tree clean; no contradiction has appeared since the convergence commit.
+
+--- CLOSURE VERDICT (bounded) ---
+  PHASE 0 CLOSED / CONVERGED for the documented scopes ONLY. This is NOT objective-level
+  certification, NOT certification of live provider generation (PROVIDER_ENABLED_SMOKE_V1 only
+  SELECTED claude; providerExecuted=false), and NOT authorization of any roadmap beyond the 8
+  canonical entries already dispositioned.
+
+--- LIMITATIONS CARRIED FORWARD (unchanged) ---
+  - done_when/objective-level completion for M0000/M0001/M0002/UNIFY NOT certified (mission-level only).
+  - Durable proofs are mission-authored, not independent third-party certificates; AUTONOMOUS_CONTRACT_
+    EVOLUTION rests on a single durable source (CTO control-pass override of the two-source bar).
+  - Ephemeral ledger / runtime-verify are NOT durable proof.
+  - Residual engineering note: unwired engineering objectives rely on the LOCAL route or hit the A3
+    guard; the stale-checkpoint-masks-re-execution observation was handled operationally, not filed as
+    its own carnet root-cause entry. A1/A2/A3 fixes + Clean Workspace executor remain committed
+    (0ada3b1, 1d689c6, d8fa25e, 0ac6886).
+  - No next step beyond the authoritative 8-entry ROADMAP is implied or authorized.
+
+STATUS: PHASE 0 CLOSED (bounded/converged, basis a33f591); scopes and non-certifications as recorded;
+no new roadmap step authorized.
