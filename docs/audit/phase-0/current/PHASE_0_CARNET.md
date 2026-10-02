@@ -1813,3 +1813,49 @@ contract.
 
 STATUS: CANONICAL SEMANTIC CONTRACT NOT DEFINED — DECISION REQUIRED (fcc6a55). Campaign 04 still
 OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-032 — CAMPAIGN 04 done_when CORPUS ANALYSIS (COMMITTED)
+HEAD: 7469b86. Read-only analysis of the REAL 152 mission contracts, classifying actual done_when
+clauses by wording only. Documentation of forensic evidence — NOT a design and NOT a proposal.
+
+--- CORPUS SIZE ---
+  152 contracts; 537 objectives; 221 objectives with done_when; 556 total done_when clauses; 186
+  objectives with >1 clause; 0 objectives currently carrying objectives[].proof in the 152 contracts;
+  215 clauses (~39%) are generated boilerplate ("Objective X satisfied." / "Validation Engine reports
+  success." / "Read-only evidence produced." / "Mission ledger updated."). Keyword classification is
+  explicitly LOSSY and is NOT semantic proof.
+
+--- OBSERVED CATEGORY COUNTS (per clause; a MULTI clause counts in each matched category) ---
+  OTHER 325 · EVIDENCE 98 · CONFIG 45 · RUNTIME 34 · BUILD 25 · FILE 23 · API_NET 22 · DATA 5 ·
+  TEST 4 · HUMAN 2 · 24 MULTI-matched clauses.
+
+--- PROBE FINDING ---
+  Existing GENERAL probes (build-green/typescript-green, internet-reachable) directly overlap only a
+  small subset. Genuinely relevant overlap after the boilerplate/mission-name caveat ≈ 35/556 (~6%).
+  Category overlap is NOT proof: existing probes prove their OWN predicates, not done_when semantics.
+  The other general-probe hits were false positives from mission-name words (e.g. OpenAI/Online).
+
+--- OBSERVED RECURRING CLAUSE/PREDICATE SHAPES (counted, not proposed) ---
+  1 Build/type gate · 2 File/artifact existence · 3 Scope/negative condition · 4 Config/state
+  equality · 5 Artifact/report produced · 6 Runtime result · 7 Value comparison · 8 Named
+  capability/connectivity · 9 Human/governance decision · 10 Boilerplate/unclassifiable.
+
+--- FORENSIC CONCLUSIONS ---
+  - The corpus is heterogeneous; many objectives contain multiple heterogeneous clauses.
+  - Free-text wording does not reveal the intended machine predicate.
+  - The intended predicate / evidence / threshold / authority is ABSENT from the source.
+  - Therefore automatic semantic inference from done_when is UNSAFE.
+  - No existing probe can be promoted to a done_when proof merely by wording/category overlap.
+  - Honest objective-level proof requires an EXPLICIT author-declared machine relationship.
+  - This CONFIRMS the previously recorded semantic-contract decision requirement (P0-CURRENT-031).
+
+IMPORTANT: this checkpoint documents forensic evidence ONLY. It does NOT define the semantic
+contract, does NOT propose a schema, and does NOT convert these observations into a design.
+
+--- STATUS ---
+  Campaign 04 OPEN / INCOMPLETE. Semantic done_when proof BLOCKED. Semantic-contract decision still
+  REQUIRED. No implementation authorized by this checkpoint. Campaign 05 NOT CANONICALLY DEFINED.
+  No S7. No follow-up.
+
+STATUS: CAMPAIGN 04 done_when CORPUS ANALYSIS RECORDED (7469b86). Evidence only; no design; decision
+still REQUIRED; semantic done_when proof still BLOCKED.
