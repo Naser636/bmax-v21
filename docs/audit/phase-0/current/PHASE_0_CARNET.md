@@ -2288,3 +2288,49 @@ produced, no code, no contract, no check, no durable proof written at this stage
 
 STATUS: MINIMAL TRUTH LOCK AUTHORIZED — PROCEDURE PENDING DEFINITION/REVIEW (092c11e). 5 missions
 still UNKNOWN; no retroactive certification; nothing produced yet.
+
+## P0-CURRENT-045 — TRUTH LOCK PROCEDURE: PROPOSED / CORRECTED (NOT YET APPLIED) (COMMITTED)
+HEAD: 4a333d9. Records the proposed Truth Lock procedure (authorized in principle by P0-CURRENT-044),
+with the reviewed correction to point 8. Documentation only — NOT applied; no mission certified; no
+durable proof produced.
+
+--- PERIMETER / SOURCES (summary) ---
+  Perimeter = ONLY the 5 missions (M0000, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1,
+  DYNAMIC_MISSION_CONTRACT_FACTORY, AUTONOMOUS_CONTRACT_EVOLUTION); read-only; no execution.
+  ADMISSIBLE (trust desc.): tracked committed artifacts (certificate/passport, .evidence.md WITH an
+  explicit verdict, contracts) > Phase-0 carnet > commit messages (context only).
+  INSUFFICIENT ALONE: gitignored/ephemeral ledger; state PLANNED/CREATED/ARCHIVED alone; proven=true
+  alone; commit alone; contract alone; narrative .evidence.md without a verdict.
+  METHOD: collect + cross-reference admissible sources; NO ledger reconstruction, NO re-execution.
+
+--- VERDICT RULES 5–10 (corrected) ---
+  5. VERIFIED — ≥1 tracked source with an EXPLICIT validation verdict, concordant with ≥1 other
+     admissible source, and no contradiction between ADMISSIBLE sources.
+  6. NOT VERIFIED — a tracked admissible source explicitly shows failure/non-validation/rollback.
+  7. UNKNOWN — no tracked source with a verdict (only insufficient sources), and no admissible
+     contradiction. Insufficient sources (alone or combined) ⇒ UNKNOWN, never CONFLICT.
+  8. CONFLICT (CORRECTED) — requires AT LEAST TWO ADMISSIBLE contradictory sources, or two
+     incompatible admissible verdicts. A source classified INSUFFICIENT by point 3 can NEVER create a
+     CONFLICT with an admissible source (it has NO force of contradiction).
+       - tracked VERIFIED + ledger PLANNED  ⇒ VERIFIED (NOT conflict; ledger is insufficient).
+       - tracked VERIFIED + tracked NOT VERIFIED ⇒ CONFLICT.
+  9. ABSENCE OF ADMISSIBLE PROOF ⇒ UNKNOWN (never VERIFIED by default, never inferred from absence).
+  10. CONTRADICTION — only between ADMISSIBLE sources ⇒ CONFLICT, held until a DOCUMENTED resolution;
+     no arbitrary preference. A divergence involving an insufficient source is NOT a contradiction.
+
+--- DURABLE ARTIFACT (future, not produced here) ---
+  Per mission: HEAD, mission, sources examined (tracked paths), method, observations, verdict
+  {VERIFIED/NOT VERIFIED/UNKNOWN/CONFLICT}, limits, unknowns — a Git-tracked file (outside
+  runtime/generated).
+
+--- C. DECISION GATE (before any writing) ---
+  (1) CTO validates this corrected procedure; (2) the Git-tracked location of the durable artifact is
+  fixed (outside runtime/generated); (3) an independent reviewer is designated. Without all three: no
+  writing, no certification.
+
+--- SCOPE OF THIS ENTRY ---
+  Documentation only. No code, no check, no durable proof, no certification, no rescan, no mission, no
+  V5/Campaign/S7. The procedure is NOT applied at this stage.
+
+STATUS: TRUTH LOCK PROCEDURE PROPOSED/CORRECTED — PENDING DECISION GATE (4a333d9). Not applied; 5
+missions still UNKNOWN; no mission certified.
