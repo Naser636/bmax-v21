@@ -1692,3 +1692,41 @@ source ONLY — not its consumption as a gate. This checkpoint records that auth
 
 STATUS: CAMPAIGN 04 PROOF-BINDING AUTHORED (3c1d133). Campaign 04 still OPEN/INCOMPLETE; binding
 not yet consumed; no gate change.
+
+## P0-CURRENT-029 — CAMPAIGN 04 PROOF-BINDING CONSUMPTION AS OBSERVATION (COMMITTED)
+A read-only forensic confirmed the honest consumption path: evaluate the objective's DECLARED proof
+probe via the EXISTING capability-probes registry as an OBSERVATION only. The user authorized exactly
+that — not a gate. This checkpoint records it.
+  Commit: 74a2d25ecfc9454ad20e07ca24ed94143d1a84a0 — "ODG: consume Campaign 04 proof binding as
+  observation".
+
+--- WHAT WAS DONE (two files; runtime/core/objective-attribution.js + its targeted test) ---
+  - objectives[].proof is now CONSUMED only as a read-only OBSERVED proxy predicate.
+  - The EXISTING capability-probes registry is REUSED (PROBES membership + runProbe, injected;
+    defaults to the real registry; the CLI builds the same {missionId, verify} ctx the gate uses).
+  - Per-objective observation state `declaredProof.observed` ∈ {PROBE-PASSED, PROBE-FAILED,
+    PROBE-MISSING (unknown/unregistered), NO-PROOF-BINDING (absent)}.
+  - Unknown/unregistered probe names NEVER pass (PROBE-MISSING).
+  - Path A attribution verdicts remain UNCHANGED (verdict objects spread unchanged; proven green: a
+    proof-free run yields byte-identical verdicts).
+  - done_when remains untouched and unparsed (doneWhenEvaluated=false).
+  - A probe PASS is NEVER PROVEN / satisfied / VERIFIED / SUCCESS — it is a declared proxy only; a
+    MIS-BINDING (e.g. proof:"build-green" on an unrelated RECORDED objective) is visible as
+    PROBE-PASSED but never upgrades the objective's verdict.
+
+--- PROOFS (recorded; all green) ---
+  Targeted test runtime/core/objective-attribution.test.js: 45 assertions PASS (Path A Cases 1–9
+  intact + Case 10 a–g + mis-binding + observation tallies). runtime/core: 20/20 PASS.
+  git diff --check clean.
+
+--- INVARIANTS / NON-INTERFERENCE ---
+  - NO validation-engine or SUCCESS-gate integration (observation only).
+  - runtime/missions: 0 contracts modified. NO new probe. NO new primitive. mission-loader untouched.
+
+--- EXPLICIT STATUS ---
+  Semantic done_when proof remains BLOCKED (a probe proves a declared proxy predicate, never the
+  free-text done_when). Campaign 04 remains OPEN / INCOMPLETE. Campaign 05 is NOT canonically
+  defined. No S7 exists. No follow-up selected.
+
+STATUS: CAMPAIGN 04 PROOF CONSUMED AS OBSERVATION (74a2d25). Observation only; no gate; Campaign 04
+still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
