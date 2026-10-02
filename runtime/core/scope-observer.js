@@ -96,10 +96,39 @@ function scopeClean(authorizedPaths, changedPaths) {
     : { ok: false, detail: `change(s) outside authorized scope: ${outOfScope.join(", ")}` };
 }
 
+// FILE-COUNT / FILE-EXISTENCE (CTO decision family 3, source FIXED to git-tracked).
+// Positive existence / exact count of GIT-TRACKED files under a path. Raw-worktree is explicitly
+// EXCLUDED (untracked/ignored files never count) so the observation is deterministic for a committed
+// state. Reuses trackedFilesInScope (git ls-files) — no new engine. Proves existence/number ONLY,
+// never content or semantic conformance. Absence "on disk" clauses are NOT handled here (they use the
+// existing raw-fs existence probes); tracked-vs-ignored classification is out of scope.
+//
+//   count omitted ⇒ ok iff ≥1 tracked file exists under path.
+//   count given   ⇒ ok iff exactly `count` tracked files exist under path.
+// trackedProvider is injectable (defaults to the real git-tracked lookup) for hermetic tests.
+function fileCount(p, count, trackedProvider) {
+  if (typeof p !== "string" || !p) return { ok: false, detail: "no path declared" };
+  if (count !== undefined && (typeof count !== "number" || !Number.isInteger(count) || count < 0)) {
+    return { ok: false, detail: `invalid count parameter: ${JSON.stringify(count)}` };
+  }
+  const provider = typeof trackedProvider === "function" ? trackedProvider : (x) => trackedFilesInScope([x]);
+  const tracked = provider(p);
+  const n = Array.isArray(tracked) ? tracked.length : 0;
+  if (count === undefined) {
+    return n >= 1
+      ? { ok: true, detail: `${n} tracked file(s) under ${p}` }
+      : { ok: false, detail: `no tracked file under ${p}` };
+  }
+  return n === count
+    ? { ok: true, detail: `exactly ${count} tracked file(s) under ${p}` }
+    : { ok: false, detail: `expected exactly ${count} tracked file(s) under ${p}, found ${n}` };
+}
+
 module.exports = {
   gitChangedPaths,
   changedPathsInScope,
   trackedFilesInScope,
   artifactNonEmpty,
   scopeClean,
+  fileCount,
 };
