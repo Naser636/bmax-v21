@@ -3020,3 +3020,27 @@ ledger/provider change; no mission or test executed.
 
 STATUS: PHASE 0 CLOSED (bounded/converged, basis a33f591); scopes and non-certifications as recorded;
 no new roadmap step authorized.
+
+## P0-CURRENT-064 — CTO DECISION: ACCEPT PHASE 0 CLOSURE AS FINAL; TAKE NO FURTHER ACTION
+HEAD: fd67bee. Documentation-only CTO decision entry. No mission executed; no code/contract/runtime/
+ledger/provider/roadmap change; no proof artifact created; nothing pushed.
+
+--- PREFLIGHT (all passed) ---
+  - HEAD = fd67bee925476066ffd56262d094f458e8672844.
+  - Tag odg-phase0-closed -> fd67bee925476066ffd56262d094f458e8672844.
+  - Working tree clean. PHASE_0_ROADMAP_CONVERGENCE_SUMMARY.md present; closure entry P0-CURRENT-063
+    present. ROADMAP.json = 8 entries, no post-Phase-0 step authorized.
+
+--- CTO DECISION ---
+  CTO DECISION — ACCEPT PHASE 0 CLOSURE AS FINAL; TAKE NO FURTHER ACTION.
+
+--- BOUNDARIES PRESERVED ---
+  - Phase 0 remains CLOSED / CONVERGED for its documented bounded scopes (basis a33f591; P0-CURRENT-063).
+  - No new roadmap step, mission ID, campaign, or implementation is authorized by this decision.
+  - The documented non-certifications/limitations remain UNCHANGED (no objective-level certification
+    for M0000/M0001/M0002/UNIFY; no live Claude/Max generation certification; mission-authored durable
+    proofs; AUTONOMOUS_CONTRACT_EVOLUTION on a single durable source via control-pass).
+  - The local checkpoint odg-phase0-closed remains the recovery reference.
+  - Future work, if any, requires a NEW explicit CTO decision and authorization.
+
+STATUS: PHASE 0 ACCEPTED AS FINAL (P0-CURRENT-064); no further action authorized.
