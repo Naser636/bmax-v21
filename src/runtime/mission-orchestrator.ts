@@ -68,7 +68,9 @@ export class MissionOrchestrator {
     const dependencies = this.deriveDependencies(steps);
 
     return {
-      intent,
+      // S1: prefer the contract-derived intent (a function of the mission); fall back to
+      // the caller-supplied intent only if the loader could not derive one.
+      intent: mission.intent ?? intent,
       mission,
       objectives: mission.brain.objectives,
       nextObjective: mission.brain.nextObjective,

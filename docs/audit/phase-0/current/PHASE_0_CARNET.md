@@ -1290,3 +1290,173 @@ Await explicit commit authorization. Proposed commit (code+fixtures+test togethe
           src/runtime/__fixtures__/a4 src/runtime/phase0-a4-strict.test.ts
   git commit -m "feat(runtime): honour declared objective dependsOn as plan edges + A4-strict test"
 The carnet would be committed separately (as in prior steps). No follow-up started.
+
+================================================================================
+# CAMPAIGN 03 — SEMANTIC MISSION COMPILER (ANALYSIS ONLY)
+================================================================================
+
+## P0-CURRENT-022 — SEMANTIC MISSION COMPILER: COVERAGE FORENSIC (ANALYSIS ONLY)
+User authorized ONLY this analysis. Read-only, forensic-first: NO code/file created or
+modified (beyond this carnet entry, which is documentation and changes no code), no new
+compiler built by anticipation, nothing committed. Goal: determine precisely whether the real
+runtime compilation of a mission already covers the ODG roadmap contract
+MISSION → INTENT → OBJECTIVES → DEPENDENCIES → CAPABILITIES → POLICIES → CONTRACTS → RESOURCES
+→ EXPECTED OUTCOMES → VERIFICATION, how each becomes the ExecutionPlan, and whether compilation
+is deterministic.
+
+--- THE REAL COMPILE PATH (odg mission → LOCAL route) ---
+MissionLoader.load(id,name) → createMissionIntent(id) → MissionOrchestrator.buildPlan(id,name,intent)
+→ (ExecutionPlanner.create → ImplementationEngine/AutonomousPlanner for the technical plan)
+→ RuntimeExecutor.execute. The ExecutionPlan is produced by buildPlan; TechnicalPlan by the planner.
+
+--- DATA AVAILABLE IN CONTRACTS (runtime/missions/*.json, 152 scanned) ---
+Top-level keys actually present include: mission/priority/mode (≈150), objectives (149),
+definition_of_done (103) / completion (102), policies (81), permissions (81),
+authorized_paths|authorizedPaths (84/100), requires_engineering (83), verify (12),
+executionPolicy (5), lifecycle/evidence/checkpoints/ledger (81). NO `capabilities` and NO
+`resources` key exists on any contract.
+
+--- PER-STAGE COVERAGE (roadmap contract vs current code) ---
+  1 MISSION .......... COMPILED — mission-loader.ts load() returns {id,name}; echoed into plan.
+  2 INTENT ........... NOT COMPILED (STUB) — mission-intent.ts:17-27 createMissionIntent returns a
+      CONSTANT {type:"GENERIC", objective:"Generic mission", priority:"NORMAL", mode:"UNKNOWN"};
+      it ignores the contract's real mode/priority/description. Intent is not a function of the mission.
+  3 OBJECTIVES ....... COMPILED — mission-loader readContractObjectives → ObjectiveSpec{id,goal,
+      doneWhen,dependsOn}; buildPlan maps them to OBJECTIVE_n steps.
+  4 DEPENDENCIES ..... COMPILED — orchestrator.objectiveDependencies (dependsOn, cycle-safe) +
+      positional fallback → plan.dependencies edge list (A4 / A4-strict, commit 400d5d0).
+  5 CAPABILITIES ..... NOT COMPILED (fabricated) — no capabilities declaration exists in contracts;
+      ExecutionPlanner.create sets TechnicalStep.capability = step.name (the objective GOAL text),
+      plugin=null (execution-planner.ts:36-52). registry.all() is therefore relabeled objectives,
+      not a declared/resolved capability model.
+  6 POLICIES ......... NOT COMPILED — contracts carry policies/permissions/authorized_paths/
+      executionPolicy (81/81/84/5) but the compile path NEVER reads them (grep over loader/
+      intent/orchestrator/planner/implementation-engine/executor/kernel/runner = no hit).
+  7 CONTRACTS ........ NOT COMPILED into the plan — the contract file is read for `objectives`
+      ONLY; its definition_of_done/completion/verify are dropped by the loader.
+  8 RESOURCES ........ NOT COMPILED — no resources field in contracts; vnext ProviderResource
+      exists but is OFF the LOCAL compile path (not referenced by buildPlan/executor).
+  9 EXPECTED OUTCOMES  PARTIAL — per-objective done_when → step.postconditions (buildPlan).
+      Contract-level definition_of_done (103) / completion (102) are NOT compiled.
+ 10 VERIFICATION ..... PARTIAL — per-objective done_when → step.verificationRequirements (buildPlan).
+      Contract-level `verify` (12) and definition_of_done/completion are NOT compiled.
+SCORE: 3 fully compiled (1,3,4), 2 partial per-objective-only (9,10), 5 absent/stub (2,5,6,7,8).
+
+--- DETERMINISM / REPRODUCIBILITY ---
+  The ExecutionPlan (buildPlan) is DETERMINISTIC & reproducible: MissionLoader (file reads),
+  createMissionIntent (constant), and objectiveDependencies (pure, order-based reachability) use
+  no Date/random. VERIFIED this session: P0-011 A2 + A4-strict are stable across runs.
+  CAVEAT (outside the ExecutionPlan): ImplementationEngine.prepare (implementation-engine.ts:42),
+  AutonomousPlanner.build and RuntimeReporter.report stamp `new Date().toISOString()` into the
+  TechnicalPlan.planning / ImplementationPlan / RuntimeReport — a nondeterministic field. It does
+  not affect the ExecutionPlan or the P0-011 stripped signature, but TechnicalPlan/report are not
+  byte-reproducible because of the timestamp.
+
+--- EXACT CAUSE OF THE GAPS ---
+  G1 INTENT: createMissionIntent is a hardcoded constant (mission-intent.ts:17-27); it never reads
+     the contract, although mode/priority ARE present in the data.
+  G2 CARRY: MissionLoader.readContractObjectives extracts ONLY `objectives`; RuntimeMission.brain
+     has no fields for policies/permissions/paths/DoD/completion/verify, so even the data that
+     EXISTS in the contract is discarded at load time.
+  G3 MODEL: the ExecutionPlan interface (mission-orchestrator.ts) has no slots for intent(real)/
+     capabilities/policies/contract/resources/expectedOutcomes(plan-level)/verification(plan-level),
+     so buildPlan has nowhere to place them even if loaded.
+  G4 NO SOURCE: capabilities and resources are absent from the contract schema entirely — there is
+     no declaration to compile (unlike policies/outcomes/verify, which exist but are dropped).
+
+--- MINIMUM CHANGE PROPOSED (DESCRIBED, NOT IMPLEMENTED; staged, additive, reuse the
+    loader→brain→plan pattern already proven by ROOT CAUSE #1 / A4-strict) ---
+  Do NOT build a whole new compiler. Close the gaps in small, independently-provable increments:
+  S1 INTENT (smallest, data already present): derive createMissionIntent from the contract
+     (mode/priority/type/description) instead of a constant — or have MissionLoader surface the
+     contract's mode/priority and buildPlan populate a real intent. One-file-ish.
+  S2 CONTRACT CARRY (data exists, currently dropped): extend RuntimeMission.brain (or a new
+     MissionContract view) + MissionLoader to load policies, permissions/authorizedPaths,
+     definitionOfDone, completion, verify (additive, default empty); no new data needed.
+  S3 PLAN MODEL (slots): extend ExecutionPlan with optional policies/contract/expectedOutcomes/
+     verification(plan-level) and populate them in buildPlan from S2. Keep all fields optional so
+     existing consumers and C1-C5 are unaffected.
+  S4 CAPABILITIES/RESOURCES (no source — do last): add OPTIONAL `capabilities?: string[]` /
+     `resources?: string[]` to the contract schema (same optional-field pattern as dependsOn),
+     carry + place them; otherwise these two stages stay honestly "declared-absent".
+  S5 GUARD: a wired certification test (sibling of phase0-certification.test.ts) asserting each of
+     the 10 stages is present AND a function of the mission, so the compiler contract cannot regress.
+  Constraints: every step additive & optional → preserve C1-C5 and keep P0-011 8/8 + A4-strict green;
+  re-prove after each increment. This is a multi-step Phase-1+ campaign, to be authorized per step.
+
+VERDICT: the current runtime is NOT yet a full Semantic Mission Compiler — it compiles MISSION,
+OBJECTIVES and DEPENDENCIES, partially compiles EXPECTED OUTCOMES and VERIFICATION (per-objective
+only), and does NOT compile INTENT (stub), CAPABILITIES, POLICIES, CONTRACTS or RESOURCES — even
+though policies/outcomes/verify DATA already exist in the contracts and are dropped at load. The
+ExecutionPlan is deterministic. STATUS: ANALYSIS COMPLETE. No code changed, no file created,
+nothing committed.
+
+WORKTREE (now): HEAD 6498183. This carnet is modified (uncommitted) by this analysis entry only;
+tree otherwise clean; nothing deleted.
+
+NEXT AUTHORIZED ACTION (ONE — GATED ON USER APPROVAL):
+STOP (analysis only, no follow-up). If/when authorized, begin with increment S1 (derive INTENT
+from the contract) as the smallest provable step — present its plan and STOP before any edit.
+
+## P0-CURRENT-023 — S1 SEMANTIC MISSION COMPILER: INTENT DERIVED FROM CONTRACT (PRE-COMMIT)
+User approved ("GO S1 — without synonyms"). Implemented ONLY S1 of Campaign 03: the compiler now
+derives a real MissionIntent from the mission's own contract instead of a static stub. Scope held:
+S2/S3/S4/S5 NOT implemented; no synonym table (EXACT enum mapping only); createMissionIntent NOT
+changed; the vnext seam NOT touched. Ran the planned proofs. NO commit — STOPPED (HEAD 6498183).
+
+--- FILES (3) ---
+  src/runtime/mission-loader.ts (+46) — production: import MissionIntent/MissionExecutionMode;
+    RuntimeMission gains `intent: MissionIntent`; new private deriveIntent(id) reads
+    runtime/missions/<id>.json and derives intent — priority verbatim (default NORMAL),
+    objective = description's 1st line (default "Generic mission"), type = RAW contract mode
+    (default "GENERIC"), mode = EXACT enum match (ANALYZE/PLAN/IMPLEMENT/VALIDATE/LEARN) else
+    UNKNOWN (raw mode preserved in type ⇒ no fidelity lost). Pure, tolerant (no Date/random).
+  src/runtime/mission-orchestrator.ts (+4/-1) — production: buildPlan returns
+    `intent: mission.intent ?? intent` (prefer the contract-derived intent; fall back to the
+    caller-supplied stub only if the loader could not derive one).
+  src/runtime/phase0-s1-intent.test.ts (new) — wired S1 guard (data-driven, read-only).
+
+--- PROOFS (exact, all green) ---
+  S1 intent test ......... 6/6 PASS, exit 0 (differs-by-mission; reflects contract
+    priority/type/mode/objective; exact IMPLEMENT mapping; non-enum→UNKNOWN with raw in type;
+    deterministic; contract-less→safe defaults).
+  P0-011 certification .... 8/8 CERT=PASS, exit 0 (intent is excluded from stripSig ⇒ A2/C2 intact).
+  A4-strict ............... ALL PASS, exit 0.
+  npm test ............... EXIT 0 — 356 PASS, 0 FAIL, "ALL PASS" (S1 block in-suite 6/6; the
+    P0-011 and A4-strict blocks still present/green).
+  runtime/core/*.test.js .. 19/19 PASS, 0 FAIL.
+  npm run build .......... EXIT 0; TypeScript OK (new intent field typechecks); 4/4 static pages.
+
+--- INVARIANTS C1-C5 ---
+  C1 green: npm test 356/0, 19/19 core, build OK.
+  C2 witness: unchanged — intent is not part of the plan signature (stripSig excludes it); A2 PASS.
+  C3 determinism: deriveIntent is a pure function of the contract (no Date/random). Holds.
+  C4 migrated missions: contracts now yield a real intent; plan steps/execution unchanged ⇒
+    terminal outcome unchanged. Holds.
+  C5 worktree: additive in-place edits to 2 production files + 1 new test; writes no artifact. Holds.
+
+--- NO FAILURE ---
+  Every proof green; no regression. Scope exactly S1.
+
+--- DELIBERATE, OUT-OF-S1-SCOPE NOTE ---
+  deriveIntent performs a SECOND tolerant read of the contract (separate from
+  readContractObjectives) — a deliberate choice to leave the proven objectives path (A1/A4)
+  byte-untouched. Cost negligible and deterministic. Consolidating to a single contract read is a
+  possible future cleanup, explicitly OUT OF S1 SCOPE (not done here).
+
+--- NOT IMPLEMENTED (held for separate authorization) ---
+  S2 (carry contract policies/permissions/paths/DoD/completion/verify), S3 (ExecutionPlan slots),
+  S4 (optional capabilities/resources schema), S5 (10-stage compiler guard). None started.
+
+STATUS: S1 PROVEN — PRE-COMMIT, AWAITING EXPLICIT COMMIT AUTHORIZATION. No commit made.
+
+WORKTREE (now): HEAD 6498183.
+  M  src/runtime/mission-loader.ts          (S1)
+  M  src/runtime/mission-orchestrator.ts    (S1)
+  ?? src/runtime/phase0-s1-intent.test.ts   (S1 — new test)
+  M  docs/audit/phase-0/current/PHASE_0_CARNET.md  (P0-022 analysis + this P0-023 entry; uncommitted)
+  Nothing deleted; no other file touched.
+
+NEXT AUTHORIZED ACTION (ONE — GATED ON USER APPROVAL):
+Await explicit commit authorization for the S1 code+test (and, separately, the carnet). No
+follow-up and no further campaign started.

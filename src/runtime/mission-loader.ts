@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { MissionIntent, MissionExecutionMode } from "./mission-intent";
 
 export interface ObjectiveSpec {
   id: string;
@@ -13,6 +14,8 @@ export interface RuntimeMission {
   id: string;
   name: string;
   projectContext: unknown;
+  // S1: the mission's INTENT, derived from its own contract (not a static stub).
+  intent: MissionIntent;
   brain: {
     loaded: boolean;
     objectives: string[];
@@ -53,7 +56,50 @@ export class MissionLoader {
       id,
       name,
       projectContext,
+      intent: this.deriveIntent(id),
       brain
+    };
+  }
+
+  /**
+   * S1: derive the mission INTENT from its own contract (runtime/missions/<id>.json).
+   * EXACT mapping only (no synonyms): `mode` is honoured only when it already matches a
+   * MissionExecutionMode, otherwise UNKNOWN — the raw contract mode is preserved in `type`
+   * so no fidelity is lost. priority/objective come from the contract, with safe defaults.
+   * Pure (contract read + mapping; no Date/randomness). createMissionIntent is NOT touched.
+   */
+  private deriveIntent(id: string): MissionIntent {
+    let contract: { mode?: unknown; priority?: unknown; description?: unknown } = {};
+    try {
+      contract = JSON.parse(fs.readFileSync(`${this.missionsDir}/${id}.json`, "utf8"));
+    } catch {
+      contract = {};
+    }
+
+    const ENUM_MODES: MissionExecutionMode[] =
+      ["ANALYZE", "PLAN", "IMPLEMENT", "VALIDATE", "LEARN"];
+    const rawMode = typeof contract.mode === "string" ? contract.mode : "";
+    const mode: MissionExecutionMode =
+      (ENUM_MODES as string[]).includes(rawMode)
+        ? (rawMode as MissionExecutionMode)
+        : "UNKNOWN";
+
+    const priority =
+      typeof contract.priority === "string" && contract.priority
+        ? contract.priority
+        : "NORMAL";
+
+    const description =
+      typeof contract.description === "string" && contract.description
+        ? contract.description.split(/\r?\n/)[0].trim()
+        : "";
+
+    return {
+      mission: id,
+      type: rawMode || "GENERIC",
+      objective: description || "Generic mission",
+      priority,
+      mode
     };
   }
 
