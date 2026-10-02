@@ -2486,3 +2486,60 @@ roadmap / V5 / Campaign / S7 / MEMORY.md touched.
 STATUS: HUMAN/CTO CONTROL PASS COMPLETE — TRUTH LOCK EVIDENCE RECORD ACCEPTED (25a2482) as an accurate
 application of the validated procedure. Five verdicts unchanged (1 VERIFIED within-record, 4 UNKNOWN);
 acceptance is NOT mission certification; no mission executed or rescanned.
+
+## P0-CURRENT-050 — CTO DECISION (OPTION i): M0000 CLOSED ON DOCUMENTARY BASELINE (NOT RUNTIME-CERTIFIED) (DOCUMENTATION ONLY)
+HEAD: 1c5d5ff. Explicit CTO decision, OPTION (i) of the M0000 next-step analysis: record and CLOSE
+M0000 on the durable documentary baseline already produced and committed, WITHOUT fabricating any
+runtime/ledger proof. Documentation only — modifies ONLY this carnet. M0000 was NOT executed; the
+ephemeral ledger (runtime/generated/mission-ledger.json) was neither read as proof nor written; no
+code, no ROOT CAUSE #1 fix, no ledger route, no routing bypass, no ROADMAP / runtime/missions/M0000.json
+/ Truth Lock / V5 / Campaign / S7 / MEMORY.md change; no campaign reopened; no new engine.
+
+--- DECISION ---
+  CTO decision = OPTION (i): close M0000 as a DOCUMENTARY BASELINE.
+
+--- DURABLE BASELINE REFERENCED ---
+  - Commit: 1c5d5ff ("ODG: record M0000 architecture baseline").
+  - Exact baseline file: docs/audit/m0000-baseline/M0000_ARCHITECTURE_BASELINE.md (Git-tracked,
+    outside runtime/generated).
+  - The five canonical M0000 deliverables it contains:
+    1. ArchitectureComplianceReport
+    2. ResponsibilityInventory
+    3. DependencyReport
+    4. ContractInventory
+    5. ExtensionPointInventory
+    (each produced read-only for the src/runtime scope with per-finding evidence paths.)
+
+--- WHY THE LEDGER/RUNTIME GATE IS NOT USED ---
+  The contract completion item "Mission ledger updated with a proven M0000 entry"
+  (runtime/missions/M0000.json) is NOT honestly executable via the current canonical route:
+  (a) M0000 ∈ MIGRATED_MISSIONS ⇒ `odg mission M0000` takes the src/runtime LOCAL route
+      (mission-cli → LocalMissionRunner) which NEVER writes the ledger (no archive call);
+  (b) the only ledger writer (runtime/core/mission-ledger.js) is reachable only via the runtime/core
+      pipeline — `odg autonomy` cascades beyond M0000 and can reach provider/engineering missions
+      (documented PROVIDER-CALL HAZARD), and invoking odg-local-pipeline.sh directly would BYPASS the
+      Runtime's own canonical routing for M0000;
+  (c) the ledger file is .gitignored/ephemeral (runtime/generated/) — exactly the artifact the
+      CTO-validated Truth Lock procedure (P0-CURRENT-045) classifies INSUFFICIENT ALONE, so a fresh
+      proven=true entry would be no durable admissible proof;
+  (d) the src/runtime verdict is step-registration coverage only (ROOT CAUSE #1 still OPEN), so
+      stamping "proven" would convert a hollow/incomplete result into PASS/VERIFIED — forbidden.
+
+--- EXPLICIT DISTINCTION PRESERVED ---
+  - ROADMAP documentary DoD (runtime/system/ROADMAP.md §M0000: "Official Runtime baseline
+    established") = SATISFIED by commit 1c5d5ff.
+  - Contract ledger/proof RUNTIME gate (runtime/missions/M0000.json completion) = NOT SATISFIED /
+    not honestly executable by the current route.
+  - M0000 = CLOSED as a DOCUMENTARY BASELINE, NOT as a runtime-certified mission.
+
+--- THIS CLOSURE IS NOT A CERTIFICATION ---
+  This decision does NOT present M0000 as runtime-proven, VERIFIED, or certified. It records a
+  documentary baseline closure only.
+
+--- DISTINCT, UNAUTHORIZED ENGINEERING WORK (explicitly deferred) ---
+  Correcting the ledger-route for migrated AUDIT missions AND closing ROOT CAUSE #1 (mission-invariant
+  plan) remain SEPARATE engineering campaigns, NOT authorized by this decision.
+
+STATUS: M0000 CLOSED ON DOCUMENTARY BASELINE BY CTO DECISION (OPTION i) (1c5d5ff) — ROADMAP DoD
+satisfied; runtime ledger/proof gate NOT satisfied and intentionally not fabricated; M0000 is NOT
+runtime-certified; ledger-route fix + ROOT CAUSE #1 remain distinct unauthorized engineering work.
