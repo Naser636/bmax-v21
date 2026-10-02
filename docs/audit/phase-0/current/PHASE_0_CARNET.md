@@ -1460,3 +1460,75 @@ WORKTREE (now): HEAD 6498183.
 NEXT AUTHORIZED ACTION (ONE — GATED ON USER APPROVAL):
 Await explicit commit authorization for the S1 code+test (and, separately, the carnet). No
 follow-up and no further campaign started.
+
+## P0-CURRENT-024 — CAMPAIGN 03 S1–S6 CANONICAL STATE (POST-S6, COMMITTED)
+Campaign 03 (Semantic Mission Compiler) is complete through its final canonical increment. Each
+step was authorized, implemented/analysed, proven, and committed separately. Numbering note: the
+P0-022 plan labelled the increments S1–S5 with the coverage GUARD as "S5"; the executed campaign
+ran as S1–S6 — S2 CONTRACT-CARRY was split into S2 (POLICIES) + S3 (CONTRACT outcomes), and the
+canonical GUARD was executed as S6. Same contract, same discipline: every step additive, transport
+only, no interpretation and no enforcement in the compiler; existing readers untouched.
+
+--- S1 — INTENT (implemented & proven; commit 728b9a1) ---
+  deriveIntent builds a real MissionIntent from the mission's OWN contract data (mode/priority/
+  type/description). EXACT enum mapping only — NO synonym table. createMissionIntent untouched.
+  Proofs: S1 intent test 6/6 PASS; regression at validation 356 PASS / 0 FAIL.
+
+--- S2 — POLICIES (implemented & proven; commit ce21df4) ---
+  Carries the mission's governance VERBATIM into plan.policies: policies / permissions /
+  authorizedPaths (snake authorized_paths OR camel authorizedPaths) / executionPolicy. Transport
+  only — no interpretation, no enforcement. Safe empty defaults ([]/null). Existing readers
+  (mission-cli, autonomy-runtime-adapter, provider-activation, runtime/core) keep reading the
+  contract directly. Proofs: S2 test 13/13 PASS; full regression 362 PASS / 0 real failure.
+
+--- S3 — CONTRACT (implemented & proven; commit 3fa7034) ---
+  Carries the CONTRACT outcome fields VERBATIM into plan.contract: definitionOfDone (snake
+  definition_of_done OR camel definitionOfDone), completion, verify[] (each entry a well-formed
+  {capability, evidence} pair; malformed entries dropped). NO artificial merge of verify[] into
+  step.verificationRequirements; NO DoD/completion enforcement. Safe defaults []. Proofs: S3 test
+  12/12 PASS; full regression green.
+
+--- S4 — RESOURCES / CAPABILITIES (analysis complete; NO-OP; no file changed) ---
+  Structured `capabilities` as a contract field: ABSENT 0/152. `resources`/`resource`/`providers`:
+  ABSENT 0/152. The only structured capability binding, verify[].capability (12/152), is ALREADY
+  transported by S3 in plan.contract.verify. `provider` (2/152) = "none" (no payload). No plan
+  consumer expects capabilities/resources. No data loss; no implementation justified (fabricating a
+  model with no source would violate the no-fabrication rule). No file modified.
+
+--- S5 — EXPECTED OUTCOMES / VERIFICATION (analysis complete; NO-OP; no file changed) ---
+  The outcome/verification data IS transported into the ExecutionPlan (S3 + per-objective
+  done_when → step.postconditions/verificationRequirements) but is dead-ended at the plan in the
+  in-process path. Path A (src/runtime: RuntimeExecutor → RuntimeReporter) computes
+  verification = { required: 0, passed: 0 } (HARDCODED) and a structural, tautological proof
+  verdict — so plan.contract.verify / definitionOfDone / completion are NOT consumed there and the
+  gate's verification branch is structurally dead (0 ≥ 0). Path B (authoritative: odg-local-
+  pipeline.sh → odg-verify + validation-engine + Release Manager, gitClean+build+tsc+evidence) is
+  where honest VERIFICATION→PROOF→SUCCESS already lives, OUTSIDE the compiler and from the raw
+  contract + external evidence. An honest in-process verification is BLOCKED on an evidence source
+  src/runtime does not have; wiring required-without-honest-passed would either fabricate PASS
+  (ROOT CAUSE #2 anti-pattern) or flip SUCCESS→FAIL broadly (enforcement change). No in-process
+  wiring added; no implementation justified; no file modified.
+
+--- S6 — COMPILER COVERAGE GUARD (implemented & proven; commit d7af5d4) ---
+  d7af5d446dad87e321dc752e2c0324cb4a8f584f — "ODG: implement and prove Campaign 03 S6 compiler
+  coverage guard". The canonical final increment: one new test, src/runtime/
+  phase0-s6-compiler-coverage.test.ts (27/27 PASS). READ-ONLY and additive — NO production file
+  changed, NO new runtime model, NO new ExecutionPlan field, NO enforcement, NO behaviour change.
+  It locks, over two genuinely contrasting committed contracts (BUILD_GATE_AUTONOMY vs
+  AUTONOMY_E2E_LOOP):
+    A. PRESENCE — the 8 source-backed stages MISSION / INTENT / OBJECTIVES / DEPENDENCIES /
+       POLICIES / CONTRACTS / EXPECTED OUTCOMES / VERIFICATION are present AND reflect the mission's
+       contract (so removing the S1/S2/S3 wiring from buildPlan turns the guard red).
+    B. FUNCTION OF THE MISSION — the two contracts compile to different per-stage values.
+    C. HONEST ABSENCE — stages 5 CAPABILITIES and 8 RESOURCES carry NO fabricated field on the plan.
+    D. DETERMINISM — same mission ⇒ byte-identical ExecutionPlan (TechnicalPlan/RuntimeReporter/
+       Date/timestamps are outside the plan and not inspected).
+  Regression (exact, all green): npm test EXIT 0, 0 real failure, with "S6 COMPILER COVERAGE
+  PROVEN", "S3 CONTRACT PROVEN", "S2 GOVERNANCE PROVEN", "S1 INTENT PROVEN", "A4-STRICT PROVEN" and
+  "PHASE 0 CERTIFIED (8/8)" all present; runtime/core 19/19 PASS; npm run build EXIT 0 (0 error TS);
+  git diff --check clean.
+
+--- FINAL STATE ---
+  HEAD = d7af5d4. Worktree clean. Campaign 03 S1–S6 complete: S1/S2/S3 implemented & proven,
+  S4 = NO-OP, S5 = NO-OP, S6 = canonical final increment (coverage guard). No architectural
+  decision changed. S7 NOT STARTED.
