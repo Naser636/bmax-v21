@@ -2040,3 +2040,38 @@ fixed the observation source), the positive file-count/existence check was imple
 
 STATUS: CAMPAIGN 04 FILE-COUNT COMMITTED (4f7a26e). Observation/primitive only (git-tracked source);
 gate behaviour preserved; Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-037 — CAMPAIGN 04 REMAINING-FAMILIES REVIEW (READ-ONLY) (COMMITTED)
+HEAD: ece565d. Read-only review of the clause families STILL open after the four implemented checks
+(artifact-nonempty, scope-clean, file-count, config-eq — not re-scanned). No code/contract/check
+change; no status change. CONFIG-EQ was committed at ece565d; this entry records only the review.
+
+--- FAMILY | STATUS | REASON ---
+  Build / TypeScript gate ............ AUTHORIZED (already covered) — probes build-green/
+      typescript-green exist and are consumed; nothing to create.
+  Named capability / connectivity .... AUTHORIZED (already covered) — internet-reachable + mission-
+      specific DoD probes exist.
+  Absence "on disk" (negative) ....... AUTHORIZED (already covered) — raw-fs fs.existsSync used by
+      legacy-runtime-retired / single-runtime-entrypoint; out of positive file-count scope.
+  Value / threshold (point-in-time) .. NOT DEFINED — not among the P0-034 authorized families; no CTO
+      decision. Technically feasible (read an artifact) but UNAUTHORIZED.
+  Series / temporal property ......... BLOCKED — P0-034 family 5: needs a real evidence source, a
+      precise temporal definition, and a determinism analysis.
+  Runtime result (behavioural) ....... BLOCKED — a B-type behavioural claim, not a point-in-time fact;
+      no honest behavioural verifier.
+  Governance / human decision ........ BLOCKED — authority decision; needs the authority's recorded
+      decision and risks circularity with SUCCESS.
+  Behavioural B-type config .......... BLOCKED — only a behavioural relationship is asserted; config-eq
+      (A-type) cannot prove it.
+  Boilerplate / no machine condition . NON-VERIFIABLE — no machine condition in the text; never
+      promoted to a proof; not implementable by design.
+
+--- CONCLUSION ---
+  No NEW family is implementable without a new contract / authorized decision. The still-open families
+  are either already covered by existing mechanisms (build/ts, connectivity, absence — nothing to do),
+  or BLOCKED (series, runtime-behavioural, governance, B-type), or NOT DEFINED (value/threshold,
+  boilerplate) and require an explicit CTO decision before any further analysis. No authorization
+  status changed. No Campaign 05, no S7, no follow-up selected.
+
+STATUS: CAMPAIGN 04 REMAINING-FAMILIES REVIEW RECORDED (ece565d). Campaign 04 still OPEN/INCOMPLETE;
+semantic done_when proof still BLOCKED.
