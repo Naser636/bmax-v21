@@ -1651,3 +1651,44 @@ satisfied.
 
 STATUS: CAMPAIGN 04 PATH (A) COMMITTED (d3b0cf0). Campaign 04 still OPEN/INCOMPLETE; semantic
 done_when proof still BLOCKED.
+
+## P0-CURRENT-028 — CAMPAIGN 04 OBJECTIVE PROOF BINDING: AUTHORING CHECKPOINT (COMMITTED)
+The semantic blocker was treated as BLOCKED (free-text done_when is not a machine predicate); a
+read-only feasibility analysis then found the honest path is an EXPLICIT, optional objective-level
+proof binding reusing the existing capability-probes registry. The user authorized AUTHORING of that
+source ONLY — not its consumption as a gate. This checkpoint records that authoring.
+  Commit: 3c1d133e556c125fa9e28c41d42133f8ffad0590 — "ODG: author Campaign 04 objective proof
+  binding".
+
+--- WHAT WAS AUTHORED ---
+  Objective: author the OPTIONAL objective-level proof binding field. Model: objectives[].proof =
+    <name of a probe/evidence already registered in capability-probes>.
+  - objectives[].proof is OPTIONAL and OPAQUE (a verbatim probe NAME, not interpreted).
+  - It is transported VERBATIM through the mission loader (src/runtime/mission-loader.ts:
+    ObjectiveSpec gains `proof: string | null`; readContractObjectives reads it; fallback
+    constructors set null) and rides to the plan via plan.mission.brain.objectiveSpecs — NO
+    orchestrator/step change, NO new ExecutionPlan/ExecutionStep field.
+  - ABSENT / non-string / empty ⇒ null (no proof declared; inert).
+  - UNKNOWN probe names are CARRIED but NEVER evaluated or passed (no lookup/verdict in the loader).
+  - done_when is NOT used as a proof binding; no NLP.
+  - NO probe execution was implemented.
+
+--- PROOFS (recorded; all green) ---
+  Targeted transport test src/runtime/phase0-c04-proof-binding.test.ts: 8/8 PASS.
+  tsc --noEmit: 0 errors. npm test: EXIT 0, 0 real failures — C04 PROOF-BINDING TRANSPORT PROVEN +
+  S1/S2/S3 + S6 COMPILER COVERAGE + PHASE 0 CERTIFIED (8/8) + A4-STRICT all PROVEN (C1–C5 intact).
+  runtime/core: 20/20 PASS. git diff --check clean.
+
+--- INVARIANTS / NON-INTERFERENCE ---
+  - NO SUCCESS/validation-engine gate was changed; mission-level path intact.
+  - 0/152 existing mission contracts were modified; no `proof` was auto-injected into any contract.
+  - No new probe, primitive or runtime.
+
+--- EXPLICIT STATUS ---
+  This checkpoint authors a SOURCE only; it does NOT consume the binding and does NOT close
+  Campaign 04. Campaign 04 semantic done_when proof remains OPEN/INCOMPLETE — a mission declaring
+  objectives[].proof is not yet verified anywhere (consumption is a separate, unauthorized step).
+  No S7 exists. No follow-up campaign is selected.
+
+STATUS: CAMPAIGN 04 PROOF-BINDING AUTHORED (3c1d133). Campaign 04 still OPEN/INCOMPLETE; binding
+not yet consumed; no gate change.
