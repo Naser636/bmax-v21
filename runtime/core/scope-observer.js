@@ -124,6 +124,70 @@ function fileCount(p, count, trackedProvider) {
     : { ok: false, detail: `expected exactly ${count} tracked file(s) under ${p}, found ${n}` };
 }
 
+// Tolerant JSON reader — same idiom already present in decision-engine/patch-engine/
+// capability-probes/fleet-envelope. No neutral shared util module exists to import from, and
+// coupling this module to the fleet envelope would be inappropriate, so the 5-line idiom is reused
+// here directly (not a new engine).
+function readJsonSafe(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+// Dotted-path lookup over PLAIN OBJECT nodes only. Intermediate arrays / non-objects ⇒ not found.
+// The final value may be of any JSON type (incl. array/object).
+function getByPath(obj, dottedKey) {
+  const parts = String(dottedKey).split(".");
+  let cur = obj;
+  for (const part of parts) {
+    if (cur === null || typeof cur !== "object" || Array.isArray(cur) ||
+        !Object.prototype.hasOwnProperty.call(cur, part)) {
+      return { found: false, value: undefined };
+    }
+    cur = cur[part];
+  }
+  return { found: true, value: cur };
+}
+
+// Strictly-typed equality, NO coercion. Primitives by === (so true !== "true", 1 !== "1"). Arrays:
+// same length AND element-wise strict-equal IN ORDER. Objects: same key set AND strict-equal values.
+function strictEqual(a, b) {
+  if (typeof a !== typeof b) return false;
+  if (a === b) return true;
+  if (a === null || b === null) return a === b;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    return a.every((x, i) => strictEqual(x, b[i]));
+  }
+  if (typeof a === "object") {
+    const ka = Object.keys(a), kb = Object.keys(b);
+    if (ka.length !== kb.length) return false;
+    return ka.every((k) => Object.prototype.hasOwnProperty.call(b, k) && strictEqual(a[k], b[k]));
+  }
+  return false;
+}
+
+// CONFIG-EQ (CTO decision family 4) — A-TYPE, FILE-BACKED OBSERVATION ONLY.
+// Observes EXACTLY "the configuration file contains the declared value at the declared key". It reads
+// ONLY the given git-tracked config file (NEVER process.env), compares strictly (no coercion), and is
+// default-deny. A PASS means "declared value == observed value at file:key" and NOTHING MORE — it is
+// NEVER evidence that the system uses, is governed by, or behaves per that value (B-type claims stay
+// out of scope / BLOCKED). `detail` describes only the observed value and its match, never behaviour.
+function configEq(file, key, equals) {
+  if (typeof file !== "string" || !file) return { ok: false, detail: "no config file declared" };
+  if (typeof key !== "string" || !key) return { ok: false, detail: "no config key declared" };
+  if (equals === undefined) return { ok: false, detail: "no expected value declared" };
+  const cfg = readJsonSafe(file);
+  if (cfg === null || typeof cfg !== "object") return { ok: false, detail: `config file absent or invalid (${file})` };
+  const { found, value } = getByPath(cfg, key);
+  if (!found) return { ok: false, detail: `key not found: ${key} in ${file}` };
+  return strictEqual(value, equals)
+    ? { ok: true, detail: `observed value at ${file}:${key} equals the declared value (${JSON.stringify(value)})` }
+    : { ok: false, detail: `observed ${JSON.stringify(value)} != declared ${JSON.stringify(equals)} at ${file}:${key}` };
+}
+
 module.exports = {
   gitChangedPaths,
   changedPathsInScope,
@@ -131,4 +195,5 @@ module.exports = {
   artifactNonEmpty,
   scopeClean,
   fileCount,
+  configEq,
 };

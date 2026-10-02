@@ -90,4 +90,36 @@ ok("real: path normalization — 'src/app/**' behaves like 'src/app'",
 ok("real: git-ignored dir with on-disk files ⇒ no tracked file (no raw-worktree false positive)",
   so.fileCount("runtime/generated").ok === false && so.fileCount("runtime/generated", 0).ok === true);
 
+// ---- CONFIG-EQ (A-type, file-backed observation only) ----
+console.log("config-eq (file-backed, strict, no coercion)");
+const CFG = "runtime/policies/runtime-policies.json"; // real git-tracked config
+const ABSENT = "runtime/policies/__does_not_exist__.json";
+// Read expected values dynamically from the real file to avoid brittleness.
+const realCfg = JSON.parse(fs.readFileSync(CFG, "utf8"));
+const realEnabled = realCfg.contractOnDemand.enabled;           // boolean
+const realCaps = realCfg.contractOnDemand.capabilities;         // array (ordered)
+
+ok("real file + key + identical value ⇒ PASS", so.configEq(CFG, "contractOnDemand.enabled", realEnabled).ok === true);
+ok("value different ⇒ FAIL", so.configEq(CFG, "contractOnDemand.enabled", !realEnabled).ok === false);
+ok("type different without coercion ⇒ FAIL (bool vs string)", so.configEq(CFG, "contractOnDemand.enabled", String(realEnabled)).ok === false);
+ok("key absent ⇒ FAIL", so.configEq(CFG, "contractOnDemand.doesNotExist", 1).ok === false);
+ok("nested dotted path resolves", so.configEq(CFG, "contractOnDemand.enabled", realEnabled).ok === true);
+ok("file absent/invalid ⇒ FAIL", so.configEq(ABSENT, "x", 1).ok === false);
+ok("structured array — exact order ⇒ PASS", so.configEq(CFG, "contractOnDemand.capabilities", realCaps.slice()).ok === true);
+ok("structured array — reversed order ⇒ FAIL", so.configEq(CFG, "contractOnDemand.capabilities", realCaps.slice().reverse()).ok === (realCaps.length <= 1));
+ok("structured array — subset ⇒ FAIL", so.configEq(CFG, "contractOnDemand.capabilities", realCaps.slice(0, Math.max(0, realCaps.length - 1))).ok === false);
+ok("invalid params (no file) ⇒ FAIL", so.configEq("", "k", 1).ok === false);
+ok("invalid params (no key) ⇒ FAIL", so.configEq(CFG, "", 1).ok === false);
+ok("invalid params (no expected value) ⇒ FAIL", so.configEq(CFG, "contractOnDemand.enabled").ok === false);
+ok("detail speaks only of observed value/match, never a behavioural claim",
+  // Behavioural-claim words only (the file path legitimately contains the token "runtime").
+  !/\b(governed|is used|uses this|behaviou?r|effectively|respects|honou?rs)\b/i.test(so.configEq(CFG, "contractOnDemand.enabled", realEnabled).detail));
+
+// Environment variable is NEVER consulted: even if an env var mirrors the key, config-eq ignores it.
+process.env.CONTRACTONDEMAND_ENABLED = String(realEnabled);
+ok("env var never used (key only in env ⇒ FAIL)", so.configEq(CFG, "CONTRACTONDEMAND_ENABLED", realEnabled).ok === false);
+delete process.env.CONTRACTONDEMAND_ENABLED;
+ok("source performs no process.env access (property/index), only mentions it in a comment",
+  !/process\.env[.[]/.test(fs.readFileSync("runtime/core/scope-observer.js", "utf8")));
+
 console.log(`\nSCOPE OBSERVER — ${passed} assertions passed.`);
