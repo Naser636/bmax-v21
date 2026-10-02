@@ -1532,3 +1532,27 @@ only, no interpretation and no enforcement in the compiler; existing readers unt
   HEAD = d7af5d4. Worktree clean. Campaign 03 S1–S6 complete: S1/S2/S3 implemented & proven,
   S4 = NO-OP, S5 = NO-OP, S6 = canonical final increment (coverage guard). No architectural
   decision changed. S7 NOT STARTED.
+
+## P0-CURRENT-025 — CAMPAIGN 03 CLOSURE (DOCUMENTARY)
+Campaign 03 — Semantic Mission Compiler — is CLOSED.
+  1. The campaign is COMPLETE. No further increment is owed by its canonical plan.
+  2. S1–S6 are consumed and checkpointed (commits 728b9a1 S1, ce21df4 S2, 3fa7034 S3,
+     d7af5d4 S6; carnet state recorded in c75b528).
+  3. S4 = NO-OP — honest absence of a contractual source (no `capabilities`/`resources` field
+     exists in any contract; nothing to compile, nothing fabricated).
+  4. S5 = NO-OP — honest absence of an evidence source in the in-process path (the outcome/
+     verification data is transported but cannot be honestly verified in src/runtime; the
+     authoritative validation lives outside the compiler). No in-process wiring added.
+  5. S6 = the LAST canonical increment — the compiler coverage GUARD (proven 27/27).
+  6. NO S7 is defined anywhere in the current roadmap/carnet. The canonical plan (P0-022,
+     lines ~1370–1385) enumerated S1–S5 with the GUARD as its terminal step; that plan is fully
+     consumed. The only literal "S7" token in this carnet is the "S7 NOT STARTED" status line in
+     P0-CURRENT-024 — a status marker, not a scope definition.
+  7. Historical follow-ups flagged in earlier entries (e.g. the A4-strict `dependsOn` schema
+     extension / unknown-id validation noted in P0-020, lines ~961/1203/1213) are NOT to be
+     auto-promoted into an "S7". They remain flagged candidates only.
+  8. Any NEW campaign MUST receive an explicit canonical scope — defined in this roadmap/carnet
+     and authorized — BEFORE any analysis or implementation begins. No scope is to be inferred
+     from a step number.
+STATUS: CAMPAIGN 03 CLOSED. HEAD = c75b528 at closure; worktree clean. No code changed, no test
+created or run, no S7 created, no follow-up selected as next work.
