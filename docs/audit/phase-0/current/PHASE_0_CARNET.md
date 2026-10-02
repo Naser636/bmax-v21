@@ -2235,3 +2235,27 @@ change; no SUCCESS coupling; no done_when interpretation.
 
 STATUS: CAMPAIGN 04 PERIMETER CLOSED BY CTO DECISION (b) (e65d301). done_when remains
 NON-MACHINE-VERIFIABLE; closure is NOT a done_when certification; no Campaign 05, no S7.
+
+## P0-CURRENT-043 — CANONICAL ROADMAP CHECK: NO CANONICAL NEXT STEP (READ-ONLY) (COMMITTED)
+HEAD: b2f15e7. Read-only review of the named canonical roadmap/governance sources only (no ledger
+rescan; archive/backup/generated/releases excluded). Documentation only.
+
+--- FINDINGS ---
+  - runtime/governance/RUNTIME_ROADMAP.md: STATUT = READY; current objective = map/integrate the
+    src/runtime engines (replace simplified engines with the most advanced ones).
+  - runtime/governance/ROADMAP.json: holds the already-listed canonical autonomy missions (M0000,
+    M0001, M0002, CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1, UNIFY_RUNTIME_EXECUTION,
+    DYNAMIC_MISSION_CONTRACT_FACTORY, AUTONOMOUS_CONTRACT_EVOLUTION).
+  - Those listed missions are HISTORICALLY recorded as proven/archived in prior carnets, but their
+    real current state MUST NOT be asserted without a ledger rescan (not performed here).
+  - No NEW canonical step is defined after this state; MASTER_PLAN NEXT_OBJECTIVES and docs/ROADMAP
+    sprints are legacy/foundational engines already built; nothing in the canon addresses
+    done_when / objective-level proof / "Campaign".
+  - Campaign 04 is non-canonical and CLOSED (P0-042).
+  - No next work is to be invented.
+
+--- VERDICT ---
+  NO CANONICAL NEXT STEP — DECISION REQUIRED. No Campaign 05, no S7, no follow-up selected.
+
+STATUS: NO CANONICAL NEXT STEP — DECISION REQUIRED (b2f15e7). Campaign 04 closed; no new canonical
+work defined; any next step requires an explicit canonical scope + CTO authorization.
