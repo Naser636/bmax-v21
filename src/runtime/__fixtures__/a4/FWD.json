@@ -1,0 +1,9 @@
+{
+  "mission": "A4_FWD",
+  "mode": "AUDIT",
+  "description": "A4-strict fixture: objective B declares dependsOn A (expect edge A->B).",
+  "objectives": [
+    { "id": "A", "goal": "Objective A", "done_when": ["A done"] },
+    { "id": "B", "goal": "Objective B", "done_when": ["B done"], "dependsOn": ["A"] }
+  ]
+}

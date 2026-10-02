@@ -1,0 +1,9 @@
+{
+  "mission": "A4_REV",
+  "mode": "AUDIT",
+  "description": "A4-strict fixture: reversed declaration — objective A declares dependsOn B (expect edge B->A).",
+  "objectives": [
+    { "id": "A", "goal": "Objective A", "done_when": ["A done"], "dependsOn": ["B"] },
+    { "id": "B", "goal": "Objective B", "done_when": ["B done"] }
+  ]
+}

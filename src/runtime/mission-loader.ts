@@ -4,6 +4,9 @@ export interface ObjectiveSpec {
   id: string;
   goal: string;
   doneWhen: string[];
+  // A4-strict (Phase 1): OPTIONAL declarative dependencies — ids of other objectives in the
+  // same contract that must precede this one. Empty when the contract declares none.
+  dependsOn: string[];
 }
 
 export interface RuntimeMission {
@@ -95,10 +98,13 @@ export class MissionLoader {
                 : `Objective ${i + 1}`,
             doneWhen: Array.isArray(o.done_when)
               ? o.done_when.filter((d: unknown): d is string => typeof d === "string")
+              : [],
+            dependsOn: Array.isArray(o.dependsOn)
+              ? o.dependsOn.filter((d: unknown): d is string => typeof d === "string")
               : []
           };
         }
-        return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [] };
+        return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [], dependsOn: [] };
       })
       .filter(s => s.goal.length > 0);
   }
@@ -116,7 +122,8 @@ export class MissionLoader {
       {
         id: "OBJECTIVE_1",
         goal: `Fulfil mission ${id}: ${label}`,
-        doneWhen: [`Mission ${id} objectives are satisfied.`]
+        doneWhen: [`Mission ${id} objectives are satisfied.`],
+        dependsOn: []
       }
     ];
   }
@@ -129,7 +136,7 @@ export class MissionLoader {
       .split(/\r?\n/)
       .map(l => l.trim())
       .filter(l => /^\d+\./.test(l))
-      .map((l, i) => ({ id: `OBJECTIVE_${i + 1}`, goal: l, doneWhen: [] }));
+      .map((l, i) => ({ id: `OBJECTIVE_${i + 1}`, goal: l, doneWhen: [], dependsOn: [] }));
   }
 
   /**

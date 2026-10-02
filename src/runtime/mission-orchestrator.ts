@@ -1,4 +1,4 @@
-import { MissionLoader, RuntimeMission } from "./mission-loader";
+import { MissionLoader, RuntimeMission, ObjectiveSpec } from "./mission-loader";
 import { MissionIntent } from "./mission-intent";
 
 export interface ExecutionStep {
@@ -40,18 +40,18 @@ export class MissionOrchestrator {
     // dependencies, postconditions and verificationRequirements derived from the
     // mission's own objective spec — so two semantically different missions produce
     // different steps (and therefore a different plan signature).
-    const objectiveSteps: ExecutionStep[] = specs.map((spec, index) => {
-      const prior = index === 0 ? "LOAD" : `OBJECTIVE_${index}`;
-      return {
-        id: `OBJECTIVE_${index + 1}`,
-        name: spec.goal,
-        status: "PENDING" as const,
-        actions: [spec.goal],
-        dependencies: [prior],
-        postconditions: spec.doneWhen,
-        verificationRequirements: spec.doneWhen
-      };
-    });
+    // A4-strict: step dependencies honour the contract's declared dependsOn when present
+    // (cycle-safe), otherwise fall back to the positional chain.
+    const objectiveDeps = this.objectiveDependencies(specs);
+    const objectiveSteps: ExecutionStep[] = specs.map((spec, index) => ({
+      id: `OBJECTIVE_${index + 1}`,
+      name: spec.goal,
+      status: "PENDING" as const,
+      actions: [spec.goal],
+      dependencies: objectiveDeps[index],
+      postconditions: spec.doneWhen,
+      verificationRequirements: spec.doneWhen
+    }));
 
     const lastObjective =
       specs.length > 0 ? `OBJECTIVE_${specs.length}` : "LOAD";
@@ -101,6 +101,74 @@ export class MissionOrchestrator {
       }
     }
     return edges;
+  }
+
+  /**
+   * A4-strict: compute each objective step's dependency set.
+   *  - If ANY objective declares `dependsOn`, the plan is in DECLARATIVE mode: a step's
+   *    dependencies come from its own dependsOn (resolved from objective id → OBJECTIVE_n
+   *    step id); an objective that declares none becomes a root (no positional edge).
+   *  - If NONE declares dependsOn (every real contract today), fall back to the legacy
+   *    POSITIONAL chain (OBJECTIVE_k depends on the prior step) — preserving existing plans.
+   * Explicit, tested edge behaviour:
+   *  - unknown id (no matching objective) → skipped (no edge);
+   *  - self-reference → skipped;
+   *  - cycle-closing edge → skipped (the dependency graph is kept acyclic, deterministically
+   *    by contract order), so building never loops.
+   */
+  private objectiveDependencies(specs: ObjectiveSpec[]): string[][] {
+    const stepIdOf = (i: number) => `OBJECTIVE_${i + 1}`;
+
+    const idToStep = new Map<string, string>();
+    specs.forEach((s, i) => {
+      if (s.id && !idToStep.has(s.id)) idToStep.set(s.id, stepIdOf(i));
+    });
+
+    const declarative = specs.some(s => (s.dependsOn?.length ?? 0) > 0);
+
+    const adjacency = new Map<string, Set<string>>();
+    const addEdge = (from: string, to: string): void => {
+      if (!adjacency.has(from)) adjacency.set(from, new Set());
+      adjacency.get(from)!.add(to);
+    };
+    // Is `to` reachable from `from` following the edges accepted so far?
+    const reaches = (from: string, to: string): boolean => {
+      const seen = new Set<string>();
+      const stack = [from];
+      while (stack.length) {
+        const node = stack.pop()!;
+        if (node === to) return true;
+        if (seen.has(node)) continue;
+        seen.add(node);
+        for (const next of adjacency.get(node) ?? []) stack.push(next);
+      }
+      return false;
+    };
+
+    return specs.map((spec, index) => {
+      const self = stepIdOf(index);
+      const declared = spec.dependsOn ?? [];
+
+      if (declared.length > 0) {
+        const resolved: string[] = [];
+        for (const ref of declared) {
+          const target = idToStep.get(ref);
+          if (!target || target === self) continue;      // unknown id or self-ref: skip
+          if (reaches(self, target)) continue;           // would close a cycle: skip
+          resolved.push(target);
+          addEdge(target, self);
+        }
+        return resolved;                                 // may be empty (all unknown/cyclic)
+      }
+
+      if (declarative) {
+        return [];                                       // declarative mode: non-declaring objective is a root
+      }
+
+      const prior = index === 0 ? "LOAD" : `OBJECTIVE_${index}`;
+      addEdge(prior, self);
+      return [prior];                                    // legacy positional fallback
+    });
   }
 
 }
