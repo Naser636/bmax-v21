@@ -1730,3 +1730,45 @@ that — not a gate. This checkpoint records it.
 
 STATUS: CAMPAIGN 04 PROOF CONSUMED AS OBSERVATION (74a2d25). Observation only; no gate; Campaign 04
 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
+
+## P0-CURRENT-030 — CAMPAIGN 04 FINAL done_when FORENSIC: SEMANTIC CONTRACT GAP (COMMITTED)
+HEAD at forensic: 738a7d2. Read-only forensic; NO files modified during the analysis. It searched
+the authoritative runtime for an existing machine-readable relationship OBJECTIVE → done_when →
+predicate → probe/evidence → verification result.
+  FINAL CLASSIFICATION: "NO EXISTING BINDING — SEMANTIC CONTRACT GAP".
+
+--- ESTABLISHED FACTS ---
+  1. done_when remains free-text string[] END-TO-END.
+  2. No existing transformation converts done_when into a machine predicate, assertion, structured
+     condition, or executable verification condition.
+  3. mission-orchestrator copies done_when verbatim into step.postconditions and
+     step.verificationRequirements, but those values are NEVER read/evaluated (grep: no consumer).
+  4. capability-probes ARE real machine predicates, but independently defined and keyed by evidence
+     NAME (bound to the mission `verify[]` block), not to done_when.
+  5. objectives[].proof binds an objective to a probe NAME only; it does NOT bind the probe to
+     done_when semantics (the "this proves done_when" link is an author assertion, not machine-checked).
+  6. capability-executors keyword/haystack matching is ROUTING only (pick an executor), not verification.
+  7. No existing objective-level done_when verifier exists under any name.
+  8. Therefore semantic done_when satisfaction CANNOT be honestly proven with the current contract.
+  9. Reusing objectives[].proof as proof of done_when would be a PROXY and carries mis-binding /
+     false-proof risk.
+ 10. An honest solution requires an explicit machine-readable semantic contract for the done_when ↔
+     predicate/assertion relationship (e.g. an author-declared per-clause condition / probe binding).
+ 11. No such new semantic contract is authorized or implemented by this checkpoint.
+
+--- STATUS ---
+  - Path A attribution: implemented and committed (d3b0cf0).
+  - objectives[].proof authoring: implemented and committed (3c1d133).
+  - declared-proof observation: implemented and committed (74a2d25).
+  - semantic done_when proof: BLOCKED (semantic-contract gap).
+  - Campaign 04: OPEN / INCOMPLETE.
+  - Campaign 05: NOT CANONICALLY DEFINED. No S7. No follow-up selected.
+
+--- FALSE-PROOF WARNINGS ---
+  - postconditions/verificationRequirements are NOT proof (unevaluated text).
+  - keyword routing is NOT proof.
+  - a probe PASS is NOT done_when proof.
+  - mission-level verify[] is NOT objective-level done_when proof.
+
+STATUS: CAMPAIGN 04 — SEMANTIC CONTRACT GAP RECORDED (738a7d2). No new semantic contract created;
+Campaign 04 still OPEN/INCOMPLETE; semantic done_when proof still BLOCKED.
