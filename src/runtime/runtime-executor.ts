@@ -10,6 +10,7 @@ import { CapabilityRegistry } from "./capability-registry";
 import { RuntimeReporter } from "./runtime-reporter";
 import { RuntimeState } from "./runtime-state";
 import { ImplementationEngine } from "./implementation-engine";
+import { assessObjectiveEvidence } from "./objective-evidence";
 
 export class RuntimeExecutor {
 
@@ -63,27 +64,33 @@ export class RuntimeExecutor {
       executionSteps: executionPlan.steps.length
     });
 
-    // ROOT CAUSE #2: the verdict must be a function of the work actually recorded
-    // this run. objectivesTotal = the steps the executor attempts to register;
-    // objectivesExecuted = the steps actually recorded in the registry. The proof
-    // is PASS only when every attempted step was recorded. (Deep objective
-    // *semantics* remain ROOT CAUSE #1 — out of scope here.)
-    const objectivesTotal = technical.steps.length;
-    const objectivesExecuted = this.registry.all().length;
-    const verification = { required: 0, passed: 0 };
-    const proof = {
-      verdict: objectivesExecuted === objectivesTotal ? "PASS" : "FAIL"
-    };
+    // ROOT CAUSE #1: the verdict must be a function of GENUINE, mission-derived evidence —
+    // not a self-fulfilling count of the plan's own steps copied into the registry. The
+    // previous computation (objectivesExecuted = registry.all().length, which this executor
+    // had just filled with technical.steps; verification hardcoded {0,0}; verdict derived from
+    // executed === total) was a tautology that recorded EVERY mission PROVEN regardless of
+    // class or evidence. Assess the honest inputs (coverage cross-checked loader→orchestrator,
+    // and class-aware evidence per validation-engine.js:66 / artifactNonEmpty) and feed them to
+    // the UNCHANGED RuntimeReporter gate, which re-enforces coverage + verification + PASS.
+    const evidence = assessObjectiveEvidence({
+      objectiveSpecs: mission.brain.objectiveSpecs,
+      planObjectiveSteps: plan.steps.filter((s) => s.id.startsWith("OBJECTIVE_")),
+      authorizedPaths: mission.policies.authorizedPaths,
+      verify: mission.contract.verify,
+      // The read-only LOCAL route applies no code changes itself, so there is no genuine applied
+      // evidence here; an engineering mission must therefore carry declared verify evidence on disk.
+      appliedEvidenceCount: 0,
+    });
 
     const report = this.implementation.generateReport({
       mission: id,
       capabilities: this.registry.all(),
       logicalSteps: plan.steps.length,
       technicalSteps: technical.steps.length,
-      objectivesTotal,
-      objectivesExecuted,
-      verification,
-      proof
+      objectivesTotal: evidence.objectivesTotal,
+      objectivesExecuted: evidence.objectivesExecuted,
+      verification: evidence.verification,
+      proof: evidence.proof
     });
 
     this.state.complete();
