@@ -3209,3 +3209,122 @@ missions.json/Evidence/runtime/code; ODG_OPERATIONAL_DIRECTIVE.md remains a non-
 
 STATUS: OPERATIONAL CONTINUITY NOTE RECORDED (P0-CURRENT-068); GitHub/PR NOT an operational dependency;
 local VPS repo self-sufficient; Phase 0 CLOSED; continuity bootstrap complete.
+
+
+## P0-CURRENT-069 — CTO AUTHORIZATION — FIRST POST-PHASE-0 ENGINEERING STEP
+
+**Status:** AUTHORIZED
+
+**Authority:** explicit CTO instruction in current ODG working session
+
+**Repository HEAD at authorization:** `1a6c5a6f12a8167c6d8cc770c6acb0ef1783eb2b`
+
+### Decision
+
+The CTO explicitly authorizes continuation of the ODG project after Phase 0 closure.
+
+This authorization does NOT reopen Phase 0 and does NOT alter the Phase-0 closure tag.
+
+It authorizes one bounded post-Phase-0 engineering preparation/implementation campaign derived from the already-established ODG Final Master V5 supplied in the governing working context.
+
+### Target
+
+**Canonical State / Semantic Truth foundation**
+
+The target is the first implementation priority defined in the established ODG Final Master V5 implementation priority sequence.
+
+### Scope
+
+The campaign MUST:
+
+- preserve the existing nine permanent runtime primitives;
+- reuse existing state/contract/semantic infrastructure before creating anything new;
+- identify and implement only the minimum missing governed capability required for the target;
+- preserve backward compatibility;
+- remain inside the existing runtime architecture;
+- produce objective, machine-checkable evidence;
+- use forensic-first execution;
+- stop on contradiction, out-of-scope mutation, or insufficient evidence.
+
+### Explicit prohibitions
+
+This authorization does NOT authorize:
+
+- a tenth primitive;
+- a second runtime or kernel;
+- modification of the ODG Constitution;
+- replacement of the Master;
+- replacement or rewriting of the roadmap;
+- reopening or rerunning completed Phase-0 missions;
+- deletion of historical artifacts;
+- GitHub/PR operations;
+- autonomous expansion of scope;
+- promotion of UNKNOWN to VERIFIED without evidence.
+
+### Required execution chain
+
+`TRUTH LOCK → REPRODUCE/MEASURE → LOCALIZE → CLASSIFY → ROOT CAUSE → MINIMAL CHANGE → BUILD → TEST → REGRESSION → RUNTIME VERIFY → EVIDENCE → CHECKPOINT`
+
+### Acceptance boundary
+
+No certification is implied by this authorization.
+
+The campaign may conclude with `VERIFIED`, `PARTIALLY VERIFIED`, `UNKNOWN`, or `BLOCKED` according to the evidence actually produced.
+
+### Next authorized action
+
+Inspect the existing canonical state / semantic truth surfaces and determine the smallest concrete implementation gap before modifying code.
+
+**One campaign. One scope. One write-set. One evidence obligation. One stop condition.**
+
+
+## P0-CURRENT-069-R — CERTIFICATION RESULT — CANONICAL STATE FOUNDATION
+
+**Authorization:** P0-CURRENT-069 (this carnet).  **HEAD at certification:** `1a6c5a6f12a8167c6d8cc770c6acb0ef1783eb2b`.
+**Execution:** read-only; forensic-first; no code written; no tracked file changed except this carnet.
+
+### Scope of this certification (bounded — Directive §8)
+Certifies ONLY that `runtime/core/runtime-model.js` is the single, pure, deterministic
+**source of the Runtime state MODEL**, and that the sole writer is `runtime/bin/odg-state.js`.
+It does NOT certify the semantic correctness of the model's content, and does NOT address the
+"Semantic Truth" portion of the P0-CURRENT-069 target (see RESIDUAL below).
+
+### Evidence (machine-checkable; reproducible via scratchpad certify script)
+- `runtime/core/runtime-model.js` exports exactly one symbol: `computeRuntimeModel`; contains ZERO
+  `fs.write*` calls (static grep) — PURE.
+- Determinism: two independent `computeRuntimeModel()` calls are byte-identical (47166 bytes) — VERIFIED.
+- The model is timestamp-free; the only non-deterministic field `generatedAt` is isolated in the
+  writer `runtime/bin/odg-state.js` (lines 35/39/60/66/73/80) — VERIFIED.
+- Sole writer of `runtime-state.json` / `runtime-mission-queue.json` in the live tree is
+  `runtime/bin/odg-state.js`; consumers (`odg-status.js`, `odg-health.js`, `converge-cli.ts`) only READ.
+- `runtime/generated/` is gitignored (.gitignore:45) — running the writer leaves the tree clean.
+- Self-declaration confirmed: `runtime-model.js:3` — "the single deterministic source of truth for Runtime state."
+
+### Verdict
+- **Canonical State foundation: VERIFIED-PRESENT** (single / pure / deterministic source already implemented).
+  No implementation gap; "reuse before create" satisfied — nothing to build.
+- **Semantic Truth portion: BLOCKED — SPECIFICATION ABSENT.** The phrase has no definition in any
+  repository authority (Master/EDG-Constitution/Runtime-Constitution/Method). Its source document
+  ("ODG Final Master V5") is not a tracked repository artifact (Directive §14 / C-03 UNKNOWN).
+  Not designed here: inventing it would violate MASTER_PLAN ("never invent architecture") and
+  Directive §9 ("turn UNKNOWN into VERIFIED").
+
+### Checkpoint (Directive §13)
+- Master/source identity: `runtime/brain/MASTER_PLAN.md` (semantic authority); 9-primitive invariant intact.
+- Campaign/mission: P0-CURRENT-069 (first post-Phase-0 engineering step).
+- HEAD: `1a6c5a6f12a8167c6d8cc770c6acb0ef1783eb2b`.
+- Objective: certify Canonical State / Semantic Truth foundation.
+- Proven: Canonical State is the single pure deterministic source (behavioral + static evidence).
+- Changed: nothing except this carnet (authorization + result). No code, no runtime, no generated-tracked file.
+- Not proven: semantic correctness of model content (out of this scope).
+- Failed: none.
+- Unknown: "Semantic Truth" capability definition (C-03 / Final Master V5 not in repo).
+- Regression: none (no mutation).
+- Worktree: clean apart from this carnet.
+- Status: CANONICAL STATE = VERIFIED-PRESENT; SEMANTIC TRUTH = BLOCKED (spec absent). Phase 0 remains CLOSED.
+- Next authorized action: NONE without either (a) the Final Master V5 spec for "Semantic Truth", or
+  (b) a new explicit CTO authorization. STOP.
+- Stop condition: reached (insufficient evidence for Semantic Truth; no further scope authorized).
+
+STATUS: P0-CURRENT-069 CONCLUDED — Canonical State VERIFIED-PRESENT; Semantic Truth BLOCKED (spec absent);
+no code change; Phase 0 CLOSED.
