@@ -101,7 +101,7 @@ interface RawMission {
   mission?: string;
   priority?: string;
   mode?: string;
-  objectives?: Array<string | { id?: string; goal?: string; done_when?: unknown }>;
+  objectives?: Array<string | { id?: string; goal?: string; done_when?: unknown; proof?: unknown }>;
   definition_of_done?: unknown;
   completion?: unknown;
   authorized_paths?: unknown;
@@ -652,7 +652,18 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       mode: typeof spec?.mode === "string" ? spec.mode : "IMPLEMENT",
       requiresEngineering: spec?.requiresEngineering === true,
       authorizedPaths: this.authorizedPaths(spec),
-      objectives: objectives.map((o) => ({ id: o.id, goal: o.goal, done_when: o.done_when })),
+      // Carry each objective's OPT-IN proof binding (ObjectiveSpec.proof) into the plan so the
+      // Validation Engine's objective-proof gate independently verifies it. Sourced from the contract
+      // objective at the same index (providerObjectives is 1:1 with spec.objectives); absent ⇒ omitted
+      // (legacy objectives unaffected). The provider's objectivesAddressed/APPLIED never substitute.
+      objectives: objectives.map((o, i) => {
+        const raw = Array.isArray(spec?.objectives) ? spec!.objectives[i] : undefined;
+        const proof =
+          raw && typeof raw === "object" && typeof raw.proof === "string" && raw.proof ? raw.proof : undefined;
+        return proof
+          ? { id: o.id, goal: o.goal, done_when: o.done_when, proof }
+          : { id: o.id, goal: o.goal, done_when: o.done_when };
+      }),
       definitionOfDone: this.strings(spec?.definition_of_done) ?? [],
       ...(verify.length ? { verify } : {}),
     };

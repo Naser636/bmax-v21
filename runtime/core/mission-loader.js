@@ -102,6 +102,12 @@ const objectives = rawObjectives.map((o, i) => {
     if (o.patch && typeof o.patch === "object") {
         normalized.patch = o.patch;
     }
+    // Optional OPT-IN per-objective proof binding (ObjectiveSpec.proof): the NAME of a registered
+    // probe that independently verifies this objective. Carried verbatim so the Validation Engine's
+    // objective-proof gate can consume it. Absent on objectives that declare none (backward compatible).
+    if (typeof o.proof === "string" && o.proof) {
+        normalized.proof = o.proof;
+    }
     return normalized;
 });
 

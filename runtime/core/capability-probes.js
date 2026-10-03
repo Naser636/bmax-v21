@@ -199,4 +199,31 @@ function evaluate(verifyChecks, ctx) {
     return { results, ok: missingRequired.length === 0, missingRequired };
 }
 
-module.exports = { PROBES, runProbe, evaluate, CONNECTIVITY_EVIDENCE };
+// OPT-IN per-objective proof gate. An objective's OPTIONAL `proof` field (ObjectiveSpec.proof) NAMES a
+// registered probe that independently verifies that specific objective's expected outcome. This runs
+// each DECLARED objective proof through the SAME registry/runner as the `verify` block above (reuse,
+// no new probe, no done_when interpretation) and reports per-objective PASS/FAIL. An objective that
+// declares NO proof (absent / non-string / empty) is SKIPPED entirely — legacy behaviour is preserved
+// exactly (opt-in). A declared proof that FAILS or names an UNREGISTERED probe (runProbe → ok:false)
+// makes `ok` false, so the Validation Engine blocks the mission; the proof stays tied to its own
+// objective (keyed by id) and never satisfies another objective. `runner` is injectable for tests.
+// Returns { results, ok, failing } — `ok` is false iff any declared objective proof did not pass.
+function evaluateObjectiveProofs(objectives, ctx, runner) {
+    const run = typeof runner === "function" ? runner : runProbe;
+    const declared = (Array.isArray(objectives) ? objectives : []).filter(
+        (o) => o && typeof o.proof === "string" && o.proof.length > 0,
+    );
+    const results = declared.map((o) => {
+        const r = run(o.proof, ctx || {}) || {};
+        return {
+            objective: typeof o.id === "string" ? o.id : null,
+            proof: o.proof,
+            ok: r.ok === true,
+            detail: typeof r.detail === "string" ? r.detail : null,
+        };
+    });
+    const failing = results.filter((r) => !r.ok);
+    return { results, ok: failing.length === 0, failing };
+}
+
+module.exports = { PROBES, runProbe, evaluate, evaluateObjectiveProofs, CONNECTIVITY_EVIDENCE };

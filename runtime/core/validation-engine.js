@@ -133,6 +133,16 @@ const capabilityResults = capabilityEval.results;
 const capabilitiesOk = capabilityEval.ok;
 const missingRequiredProofs = capabilityEval.missingRequired;
 
+// 5b. OPT-IN per-objective proof gate (ObjectiveSpec.proof). An objective may declare a `proof` naming
+// a registered probe that independently verifies THAT objective's outcome. Objectives that declare no
+// proof are untouched (legacy behaviour). A declared proof that fails or names an unregistered probe
+// blocks SUCCESS — the provider's self-reported objectivesAddressed / APPLIED / a changed file can
+// never substitute for it, and done_when is never interpreted. Reuses the same probe registry/runner.
+const planObjectives = Array.isArray(plan.objectives) ? plan.objectives : [];
+const objectiveProofEval = probes.evaluateObjectiveProofs(planObjectives, { missionId, verify });
+const objectiveProofsOk = objectiveProofEval.ok;
+const failingObjectiveProofs = objectiveProofEval.failing;
+
 const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
@@ -151,9 +161,11 @@ const checks = {
     scopedChanges,
     capabilities: capabilityResults,
     capabilitiesOk,
+    objectiveProofs: objectiveProofEval.results,
+    objectiveProofsOk,
 };
 
-const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk;
+const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk;
 
 const unmet = [];
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
@@ -164,6 +176,7 @@ if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside autho
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
 for (const c of missingRequiredProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
+for (const p of failingObjectiveProofs) unmet.push(`Objective "${p.objective}" declared proof "${p.proof}" did not pass: ${p.detail || "no detail"}.`);
 
 const report = {
     mission: patch.mission,
