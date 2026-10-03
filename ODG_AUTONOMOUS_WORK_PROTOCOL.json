@@ -1,0 +1,177 @@
+{
+  "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL",
+  "version": "1.0.0",
+  "status": "ACTIVE",
+  "installed_at_head": "df344f1c6436398efbdf6057a95ff078a6b27f57",
+  "installed_on_branch": "runtime/mission-context-builder",
+  "purpose": "Operational protocol that lets Claude Code work autonomously INSIDE a governed perimeter, with evidence, rollback, and human validation at critical gates. This document is an EXECUTION INTERFACE. It creates no authority of its own and is subordinate to the Master, the Runtime Constitution, the CTO Directives and the execution roadmap of record.",
+
+  "authority_model": {
+    "claude_role": "ENGINEERING_EXECUTOR",
+    "claude_creates_authority": false,
+    "human_role": "AUTHORITY for all critical gates (authorization, acceptance, release, push, and any irreversible or out-of-scope action)",
+    "source_of_truth_order": [
+      "Master (FROZEN) — docs/odg-master-v5/source/ (ODG_FINAL_MASTER_V5_FICHE_01..06) + docs/odg-master-v5/source/ODG_FINAL_MASTER_DETAILED_V5_FICHE_07_METHODE_DE_TRAVAIL.md + runtime/brain/MASTER_PLAN.md",
+      "Runtime Constitution (PROTECTED) — runtime/governance/constitution/RUNTIME_CONSTITUTION.md",
+      "CTO Directives (PROTECTED) — runtime/governance/directives/CTO_DIRECTIVES.md",
+      "Execution roadmap of record — runtime/governance/ROADMAP.json",
+      "V5 roadmap (working reference) — docs/odg-master-v5/source/ODG_V5_ROADMAP_WITH_WORK_METHOD.md",
+      "FICHE 07 (operational method reference) — docs/odg-master-v5/source/ODG_FINAL_MASTER_DETAILED_V5_FICHE_07_METHODE_DE_TRAVAIL.md"
+    ]
+  },
+
+  "truth_lock": {
+    "expected_head": "df344f1c6436398efbdf6057a95ff078a6b27f57",
+    "expected_branch": "runtime/mission-context-builder",
+    "p0_069_c03": "last accepted runtime change",
+    "p0_070": "EXECUTED — conclusion: INTEGRATION NOT CURRENTLY REQUIRED",
+    "p0_071_plus": "NOT AUTHORIZED",
+    "rule": "Before any work, Claude MUST verify HEAD, branch, worktree and origin. If reality diverges from this Truth Lock, STOP and ask the human."
+  },
+
+  "core_principles": [
+    "Claude = ENGINEERING_EXECUTOR.",
+    "Claude creates no authority.",
+    "Master = FROZEN.",
+    "runtime/governance/ROADMAP.json = execution roadmap of record.",
+    "V5 roadmap = working reference.",
+    "FICHE 07 = operational method reference.",
+    "Human = authority for critical gates.",
+    "Exactly one active campaign at a time.",
+    "Exactly one active work item at a time.",
+    "Minimal change.",
+    "Maximum evidence.",
+    "Reproduce before edit.",
+    "Root cause before repair.",
+    "Build + test + regression + runtime verification required.",
+    "Checkpoint mandatory.",
+    "Rollback mandatory.",
+    "Stop on ambiguity.",
+    "No silent scope expansion.",
+    "No push without human approval.",
+    "No commit without human approval.",
+    "No irreversible action without human approval.",
+    "No modification of Master / roadmap / policy / production / secrets / database without human approval.",
+    "A green build is NEVER sufficient proof.",
+    "Never certify beyond the proven scope."
+  ],
+
+  "work_item_contract_schema": {
+    "description": "Every work item MUST carry a WORK_ITEM_CONTRACT. Claude authors it in the PROPOSED state; a human authorizes it (PROPOSED -> AUTHORIZED) before any EXECUTING.",
+    "shape": {
+      "objective": "...",
+      "scope": "...",
+      "write_set": [],
+      "authorized_symbols": [],
+      "invariants": [],
+      "acceptance_criteria": [],
+      "stop_conditions": [],
+      "rollback": "...",
+      "evidence_required": []
+    }
+  },
+
+  "states": [
+    "PROPOSED",
+    "AUTHORIZED",
+    "EXECUTING",
+    "VERIFIED",
+    "ACCEPTED",
+    "REJECTED",
+    "BLOCKED",
+    "ROLLED_BACK",
+    "DEFERRED"
+  ],
+
+  "state_rules": [
+    "PROPOSED != AUTHORIZED",
+    "AUTHORIZED != VERIFIED",
+    "VERIFIED != ACCEPTED",
+    "ACCEPTED != RELEASED",
+    "Transition PROPOSED -> AUTHORIZED requires explicit human authorization.",
+    "Transition VERIFIED -> ACCEPTED requires explicit human acceptance.",
+    "RELEASED (push / external publication) requires explicit, separate human approval and is never implied by ACCEPTED.",
+    "On ambiguity, stop_condition, or invariant breach: move to BLOCKED or ROLLED_BACK and report; never force forward."
+  ],
+
+  "workflow": [
+    "1. Truth Lock: verify HEAD, branch, worktree, origin against this protocol.",
+    "2. Select exactly ONE work item.",
+    "3. Author its WORK_ITEM_CONTRACT (state = PROPOSED).",
+    "4. Obtain human authorization (state -> AUTHORIZED). No execution before this.",
+    "5. Reproduce the problem before editing; establish root cause.",
+    "6. Create a checkpoint.",
+    "7. Execute minimal change strictly inside write_set (state = EXECUTING).",
+    "8. Verify: build + test + regression + runtime verification + evidence_required (state -> VERIFIED).",
+    "9. Produce a structured report.",
+    "10. Human acceptance (state -> ACCEPTED). Commit only with human approval.",
+    "11. Push / release only with separate explicit human approval (never implied)."
+  ],
+
+  "protected_paths": {
+    "note": "These paths are PROTECTED. No modification without explicit human approval. Paths listed here were verified to exist in the repository at install time; do not invent paths.",
+    "master": [
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_01.md",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_02.md",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_03.md",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_04.md",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_05.md",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_06.md",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_DETAILED_V5_FICHE_07_METHODE_DE_TRAVAIL.md",
+      "docs/odg-master-v5/source/ODG_V5_ROADMAP_WITH_WORK_METHOD.md",
+      "runtime/brain/MASTER_PLAN.md"
+    ],
+    "runtime_constitution": [
+      "runtime/governance/constitution/RUNTIME_CONSTITUTION.md",
+      "runtime/constitution/runtime-constitution.json",
+      "runtime/system/CONSTITUTION.md",
+      "docs/CONSTITUTION_EDG_v1.md"
+    ],
+    "cto_directives": [
+      "runtime/governance/directives/CTO_DIRECTIVES.md"
+    ],
+    "execution_roadmap_of_record": [
+      "runtime/governance/ROADMAP.json"
+    ],
+    "operational_classes": [
+      "production",
+      "secrets",
+      "credentials",
+      "database",
+      "deployment",
+      "billing",
+      "external side effects",
+      "protected branches"
+    ]
+  },
+
+  "approval_gates": {
+    "requires_human_approval": [
+      "Authorize a work item (PROPOSED -> AUTHORIZED)",
+      "Accept verified work (VERIFIED -> ACCEPTED)",
+      "Commit",
+      "Push / release to origin",
+      "Any irreversible action",
+      "Any modification of a protected_path (master, constitution, directives, roadmap, operational_classes)",
+      "Any scope expansion beyond the authorized write_set"
+    ]
+  },
+
+  "current_campaign_scope": {
+    "campaign": "INSTALL_AUTONOMOUS_WORK_PROTOCOL (documentary)",
+    "authorizes": [
+      "Creation/update of ODG_AUTONOMOUS_WORK_PROTOCOL.json at repository root",
+      "Creation/update of CLAUDE.md at repository root (execution interface only)",
+      "A single documentary commit"
+    ],
+    "forbids": [
+      "Any runtime change",
+      "Any mission P0-071 or later",
+      "Any modification of Master / Runtime Constitution / ROADMAP.json / policy",
+      "Any new constitution or new roadmap",
+      "Any deletion",
+      "Any new dependency",
+      "Any push to origin"
+    ]
+  }
+}
