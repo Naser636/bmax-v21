@@ -110,6 +110,30 @@ interface RawMission {
   requiresEngineering?: boolean;
 }
 
+/**
+ * Faithful per-objective execution attribution for the PROVIDER route (Tier 2 fix).
+ *
+ * Builds the `executed[]` entries the Validation Engine consumes from the provider's OWN report of
+ * which objectives it addressed (`objectivesAddressed`, derived verbatim from the RESULT SCHEMA the
+ * provider returned and carried on the PatchReceipt). An objective the provider reported addressing
+ * is `APPLIED`; one it did NOT is the existing no-op status `RECORDED` — explicitly non-successful,
+ * which the Validation Engine's A3 `noRecordedNoOp` gate blocks for engineering missions. This never
+ * infers execution from a changed file, never interprets `done_when`, and never fabricates APPLIED
+ * for an unaddressed objective. A genuinely full provider run (all objectives addressed) ⇒ all APPLIED.
+ * Pure function of its inputs (testable in isolation).
+ */
+export function attributeProviderExecution(
+  objectives: Array<{ id: string }>,
+  objectivesAddressed: readonly string[],
+): Array<{ action: string; objectiveId: string; status: "APPLIED" | "RECORDED" }> {
+  const addressed = new Set(objectivesAddressed);
+  return objectives.map((o) => ({
+    action: o.id,
+    objectiveId: o.id,
+    status: addressed.has(o.id) ? "APPLIED" : "RECORDED",
+  }));
+}
+
 export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private readonly documentation = new DocumentationEngine();
   // Receives the provider's produced patch and decides whether it is fit for validation (OBJ-003).
@@ -560,9 +584,19 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       mission: missionId,
       patches: objectives.map((o) => ({ objective: o.id, files: receipt.changedFiles })),
     };
+    // ROOT CAUSE (Tier 2 false execution attribution): previously EVERY objective was fabricated as
+    // `status:"APPLIED"` regardless of what the provider did, so a provider that addressed K of N
+    // objectives still presented N APPLIED entries and could reach SUCCESS. Attribute execution from
+    // the provider's OWN per-objective report (receipt.objectivesAddressed, derived verbatim from the
+    // RESULT SCHEMA `objectivesAddressed` the provider returned) — never from the mere fact that a file
+    // changed. An objective the provider did NOT report addressing is recorded as the existing no-op
+    // status "RECORDED" (NOT APPLIED): it is explicitly non-successful and, for an engineering mission,
+    // the Validation Engine's A3 `noRecordedNoOp` gate BLOCKS it. No gate is made stricter, no evidence
+    // invented, no done_when interpreted — a genuinely full provider execution (all objectives
+    // addressed) still yields all-APPLIED and passes exactly as before.
     const execution = {
       mission: missionId,
-      executed: objectives.map((o) => ({ action: o.id, status: "APPLIED" })),
+      executed: attributeProviderExecution(objectives, receipt.objectivesAddressed),
     };
 
     this.writeJson(MISSION_PLAN, plan);
