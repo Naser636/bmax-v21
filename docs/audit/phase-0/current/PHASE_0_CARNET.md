@@ -3679,3 +3679,35 @@ decision §387 does not define. The store provides authentic CAS for world-model
 stays caller-supplied until the file↔entity identity model is defined (needs the Resolver/Workgraph
 consumer §387 references, or an explicit CTO identity decision). No other dependency-ready non-speculative
 increment available → campaign STOP.
+
+### §76 IDENTITY RESOLUTION FOR LIVE CAS — FORENSIC NO-CHANGE (2026-10-03, CTO-authorized identity campaign)
+Objective: resolve the canonical TARGET identity so the §387 World Model version could back the live file-WRITE
+CAS. Inspected (mandate order) §76, §387, resolvers, action-contract target, C03, mission/objective id, patch
+edit target. Findings (repository/MASTER truth):
+- §76 (FICHE_01:876 "WRONG PROVENANCE") defines correct EVIDENCE/PROVENANCE identity = MISSION_ID /
+  MISSION_VERSION / OBJECTIVE_ID / OBJECTIVE_VERSION — an evidence-identity rule (do not repeat proof across
+  missions), NOT a per-write target-STATE identity. OBJECTIVE_VERSION is not carried in the repo today.
+- §387 World Model is explicitly ≠ REALITY ("current reality and verified evidence remain authoritative").
+  A file WRITE is reality; the World Model is epistemic belief — so it is the WRONG layer for a file-write's
+  reality compare-and-set.
+- No resolver maps a file target → canonical entity; no artifact/resource REALITY version scheme exists
+  ("artifact version" is named once (FICHE_02:1031) but undefined). patch target = a file path (forbidden as
+  identity by the mandate).
+
+ROOT CAUSE: the identities that exist (OBJECTIVE_ID = evidence/provenance; World Model item = epistemic
+belief) are NEITHER the file-WRITE's reality-state identity, and §387 forbids conflating belief with reality.
+Binding the file-WRITE CAS to either (incl. which epistemic status a mere APPLIED write would imply) is an
+UNDEFINED semantic. Fabricating it (file-path/basename/timestamp/UUID/mission-or-objective-id-without-proof,
+or promoting the epistemic World Model to the file's reality version) is explicitly forbidden. The CTO
+conditional was "si le contrat le permet" — the contract does NOT define this mapping. DECISION: **NO-CHANGE**
+to the live path. The file-WRITE CAS stays caller-supplied (plan.stateVersion), honestly enforced when supplied.
+§387 World Model remains COMPLETE+PROVEN for world-model items (its proper, authorized scope). No code touched;
+tree clean; convergence intact.
+
+CTO FRONTIER (exact minimum decision required to proceed): define the REALITY-layer canonical ARTIFACT/RESOURCE
+identity + state-version for consequential WRITE targets (distinct from the §387 epistemic World Model and from
+§76 evidence identity), OR explicitly authorize binding consequential actions to a §76 OBJECTIVE_ID canonical
+entity with a DEFINED epistemic-status-on-APPLIED semantic (accepting objective-granularity CAS, not byte-level).
+Either is a semantic/architecture decision not derivable from the current MASTER. Smallest future write-set once
+decided: a resolver target→entity-id + a per-entity reality-version store (or reuse world-model.js with the
+authorized OBJECTIVE_ID binding) + patch-executor transport + live tests. Until then: STOP.
