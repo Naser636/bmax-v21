@@ -24,6 +24,25 @@ function readJsonSafe(file) {
   }
 }
 
+/**
+ * summarizeC03(lifecycle) -> { total, validated, verified }
+ *
+ * Consumes the ADDITIVE c03Transitions the Mission Lifecycle now produces (P0-071) — read-only, and
+ * tolerant of older lifecycle objects that predate the field (treated as zero). `validated` counts
+ * records the real C03 validator accepted (ok === true); `verified` counts those whose observed
+ * verification_status is VERIFIED. Pure: no I/O, no clock — a deterministic function of its input.
+ */
+function summarizeC03(lifecycle) {
+  const recs =
+    lifecycle && Array.isArray(lifecycle.c03Transitions) ? lifecycle.c03Transitions : [];
+  const total = recs.length;
+  const validated = recs.filter((r) => r && r.ok === true).length;
+  const verified = recs.filter(
+    (r) => r && r.record && r.record.verification_status === "VERIFIED",
+  ).length;
+  return { total, validated, verified };
+}
+
 function main() {
   const mission = process.argv[2] || "BUILD_RUNTIME";
 
@@ -32,6 +51,7 @@ function main() {
   const lifecycle = readJsonSafe(path.join(GENERATED_DIR, "mission-lifecycle.json")) || {};
   const checks = report.checks || {};
 
+  const c03 = summarizeC03(lifecycle);
   const caps = Array.isArray(checks.capabilities) ? checks.capabilities : [];
   const capLines = caps.length
     ? caps.map((c) => `- ${c.ok ? "✅" : "❌"} **${c.capability}** — ${c.detail}`).join("\n")
@@ -46,6 +66,7 @@ function main() {
     `- Governance state: **${lifecycle.achieved || "CREATED"}**` +
       (lifecycle.path ? ` (path: ${lifecycle.path.join(" → ")})` : ""),
     `- Archived: **${lifecycle.archived === true}**`,
+    `- C03 transitions: **${c03.validated}/${c03.total} C03-valid** (${c03.verified} VERIFIED)`,
     "",
     "## Objectives",
     `- Declared: ${checks.objectives ?? (Array.isArray(plan.objectives) ? plan.objectives.length : 0)}`,
@@ -77,9 +98,15 @@ function main() {
   console.log("======================================");
 }
 
-try {
-  main();
-} catch (e) {
-  console.warn("[FinalReport] Non-blocking error:", e.message);
+module.exports = { summarizeC03 };
+
+// Only auto-run (and exit) when invoked as a script — the pipeline spawns `node final-report.js`, so
+// this is identical to before. `require()` (the test) imports summarizeC03 without side effects.
+if (require.main === module) {
+  try {
+    main();
+  } catch (e) {
+    console.warn("[FinalReport] Non-blocking error:", e.message);
+  }
+  process.exit(0);
 }
-process.exit(0);
