@@ -110,3 +110,50 @@ Compiled from `docs/METHODE_DE_TRAVAIL.md` (observed method; see §1 METHOD_IDEN
 ## 16. FINAL OPERATING RULE
 **MASTER FROZEN. REPOSITORY OPEN. PROOF BEGINS.**
 This Directive is a compiled, traceable working interface. It never becomes a new source of truth.
+
+---
+
+## 17. POST-GENERATION RECONCILIATION ADDENDUM (non-authoritative)
+`[REPO]/[AUTHORIZATION: CTO operational-governance reconciliation]`
+
+> This addendum is appended AFTER the compiled projection above. It does NOT rewrite the
+> compiled body (§1–§16), which is preserved verbatim as generated at HEAD `5e16de1`. It
+> records facts that became true in the repository AFTER that generation. Like the rest of
+> this file it creates NO authority and NO authorization.
+
+**Reconciliation HEAD:** `32072e1` (branch `runtime/mission-context-builder`).
+
+**Obsolete generation-time statements now superseded by repository fact.** `[REPO]`
+- §1 / §15 `METHOD_IDENTITY_STATUS` and §14 C-03 stated: "'V5' LABEL NOT PRESENT AS A
+  REPOSITORY ARTIFACT" / "'Méthode V5' NOT a repo artifact → UNKNOWN". This was true at
+  generation HEAD `5e16de1`. It is **no longer true**: the V5 working-reference artifacts
+  are now committed in the repository:
+  - `docs/odg-master-v5/source/ODG_V5_ROADMAP_WITH_WORK_METHOD.md` (commit `943beee`,
+    reconciled `32072e1`).
+  - `docs/odg-master-v5/source/ODG_FINAL_MASTER_DETAILED_V5_FICHE_07_METHODE_DE_TRAVAIL.md`
+    (commit `90e926f`).
+  The C-03 "method label" UNKNOWN is therefore reduced to a naming/provenance question only;
+  it is NOT upgraded to VERIFIED here.
+
+**Authority rule (unchanged, restated to remove ambiguity).** `[AUTHORIZATION]`
+- `runtime/governance/ROADMAP.json` REMAINS the single execution roadmap of record
+  (C-04). It is NOT modified by this reconciliation; no P0-07x entry is injected into it.
+- `ODG_V5_ROADMAP_WITH_WORK_METHOD.md` is a **working reference / detail roadmap**, NOT a
+  second execution roadmap and NOT a competing authority.
+- `ODG_FINAL_MASTER_DETAILED_V5_FICHE_07_METHODE_DE_TRAVAIL.md` is available as an
+  **operational work-method reference**. It does NOT replace `RUNTIME_CONSTITUTION` /
+  `docs/CONSTITUTION_EDG_v1.md` / the Master, and creates no new governance system.
+
+**Durable state record (post-Phase-0).** `[EVIDENCE]`
+- P0-069 / C03 = last ACCEPTED runtime change: commit `3957835`
+  (`runtime/core/state-transition.js` + test); CHECKPOINTED and CTO-ACCEPTED.
+- P0-070 = analysis EXECUTED (read-only, session); conclusion:
+  **"INTEGRATION NOT CURRENTLY REQUIRED"**. LIMITATION: no independent durable artifact was
+  produced for P0-070 beyond this record and the reconciliation note in the V5 roadmap
+  (`32072e1`); EXECUTED, NOT VERIFIED, NOT ACCEPTED.
+- P0-070 therefore produced **NO P0-071 write-set**. P0-071 (C03 producer/consumer
+  integration) and all later P0-07x remain **NOT AUTHORIZED**; each requires a separate CTO
+  authorization carrying a concrete write-set.
+
+**This addendum is NOT an authorization of P0-071 or of any post-Phase-0 implementation
+mission.** Per §6 above, no post-Phase-0 implementation mission is currently authorized.
