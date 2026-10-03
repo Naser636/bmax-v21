@@ -8,7 +8,21 @@
     "observed_repository": "/home/ubuntu/bmax-v21",
     "observed_branch": "runtime/mission-context-builder",
     "observed_head": "c0be600c97a9c9fad4bba81d3946718ce072873d",
-    "phase0_checkpoint_tag": "odg-phase0-closed -> fd67bee925476066ffd56262d094f458e8672844"
+    "observed_head_note": "generation-time HEAD (provenance). See current_verified_state for the living state.",
+    "phase0_checkpoint_tag": "odg-phase0-closed -> fd67bee925476066ffd56262d094f458e8672844",
+    "current_verified_state": {
+      "note": "Living state refreshed after push + tag parity verification. Does NOT make this manifest an authority.",
+      "operational_environment": "local VPS repository /home/ubuntu/bmax-v21",
+      "current_branch": "runtime/mission-context-builder",
+      "current_head": "6f0d5b4883eb3ffa58a5a5ae80c8f2ca6d4d038d",
+      "current_worktree": "clean",
+      "origin_branch_tip": "runtime/mission-context-builder -> 6f0d5b4883eb3ffa58a5a5ae80c8f2ca6d4d038d",
+      "phase0_status": "CLOSED",
+      "phase0_closure_tag": "odg-phase0-closed",
+      "phase0_tag_target": "fd67bee925476066ffd56262d094f458e8672844",
+      "phase0_tag_origin_parity": "verified YES",
+      "github_pr_operational_dependency": "NOT REQUIRED"
+    }
   },
   "source_registry": [
     { "source_id": "CONSTITUTION_EDG_V1", "path": "docs/CONSTITUTION_EDG_v1.md", "type": "markdown", "role": "EDG constitution (named v1)", "apparent_authority": "constitutional (by name)", "version_date": "v1 / commit date 2026-07-06", "commit": "7c2ee5d", "blob": "83e9435cc768", "status": "unknown", "relations": "layer distinct from RUNTIME_CONSTITUTION; precedence UNKNOWN" },
