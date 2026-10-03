@@ -3130,3 +3130,41 @@ historical snapshot dirs, unreferenced by active code). This decision authorizes
 
 STATUS: SNAPSHOT RETENTION POLICY RECORDED (P0-CURRENT-066); 0 deletion authorized; future cleanup
 gated by §8; Phase 0 CLOSED.
+
+## P0-CURRENT-067 — CTO CONTROL PASS: RETAIN ALL — SNAPSHOT RETENTION FINAL DECISION
+Campaign HEAD: 386b7a7823c54ae09a3c8c2ab967ded3b813e8b1. Governance/documentation decision ONLY —
+no deletion, no code/runtime change. Applies policy P0-CURRENT-066; records the conclusion of the
+read-only RETENTION ELIGIBILITY ANALYSIS.
+
+--- SCOPE ANALYZED ---
+  runtime/archive/** · runtime/backup/** · runtime/history/** · runtime/local-recovery/** ·
+  runtime/releases/** — TOTAL 917 tracked files.
+
+--- VERDICT ---
+  917 RETAIN-HISTORICAL · 0 RETAIN-ACTIVE · 0 POTENTIAL-CLEANUP (proven) · 0 deletion authorized.
+
+--- JUSTIFICATION ---
+  - Not referenced by active code (runtime/bin|core, src, governance, constitution, missions, scripts)
+    — but this alone is NOT a deletion reason (P0-066 §4).
+  - Demonstrated audit/provenance value: explicitly cited as evidence by Phase-0 audit docs
+    (docs/audit/phase-0/00-audit-index.md, 01-checkpoint.md, docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md).
+  - Recovery value: runtime/local-recovery/ holds RECOVERED_FILES.txt + a runtime snapshot;
+    .runtime-patches/odg-run.js DIFFERS from the active file (distinct recovery/diagnostic variant).
+  - Historical/regression value: runtime/releases/* (per-release captures), runtime/history/*
+    (foundations/kernel/legacy mission_standard).
+  - No artifact satisfies the five cumulative deletion conditions of P0-066 §5.
+
+--- RESIDUAL UNKNOWN ---
+  Exhaustive byte-for-byte deduplication across all 917 files was NOT performed. Per P0-066 §9
+  (when in doubt: RETAIN), this UNKNOWN stays RETAIN and does NOT block the decision. Repository size
+  alone is not a sufficient reason to reopen.
+
+--- CTO DECISION ---
+  RETAIN ALL. No future retention/cleanup campaign is currently required. Reopening would require a
+  NEW explicit CTO decision motivated by a real need, through the governed gate of P0-066 §8.
+
+--- GUARANTEES ---
+  Phase 0 remains CLOSED. ODG_OPERATIONAL_DIRECTIVE.md remains a non-authoritative projection. No new
+  concept/authority; Master/Constitution/Method/Roadmap/missions.json/Evidence unchanged.
+
+STATUS: RETAIN ALL (P0-CURRENT-067); 917 retained; 0 cleanup candidate; 0 deletion; Phase 0 CLOSED.
