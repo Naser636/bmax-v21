@@ -108,6 +108,15 @@ interface RawMission {
   authorizedPaths?: unknown;
   requires_engineering?: boolean;
   requiresEngineering?: boolean;
+  verify?: unknown;
+  description?: unknown;
+}
+
+/** A machine-checkable capability proof: a capability bound to the NAME of a registered probe. */
+interface VerifyProof {
+  capability: string;
+  evidence: string;
+  required?: boolean;
 }
 
 /**
@@ -132,6 +141,62 @@ export function attributeProviderExecution(
     objectiveId: o.id,
     status: addressed.has(o.id) ? "APPLIED" : "RECORDED",
   }));
+}
+
+/**
+ * Default intent-implied proof resolver: the SINGLE shared vocabulary the Mission Loader and the
+ * Contract Factory already use (runtime/core/mission-contract-factory.resolveVerifyProbes). Loaded
+ * via require (a .js core module) and best-effort — if unavailable the declared proofs still stand.
+ */
+function defaultResolveImpliedProofs(entry: unknown): Array<{ capability: string; evidence: string }> {
+  try {
+    const require = createRequire(import.meta.url);
+    const { resolveVerifyProbes } = require("../../runtime/core/mission-contract-factory.js") as {
+      resolveVerifyProbes: (e: unknown) => Array<{ capability: string; evidence: string }>;
+    };
+    const out = resolveVerifyProbes(entry);
+    return Array.isArray(out) ? out : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Resolve the PROVIDER route's `verify` block exactly as the LOCAL route's Mission Loader does
+ * (runtime/core/mission-loader.js:133-178), so a provider-executed mission is held to the SAME
+ * independent, machine-checked capability proofs instead of silently dropping them:
+ *   (1) the contract's DECLARED proofs (spec.verify), normalized ({capability, evidence}, optional
+ *       required:false carried verbatim);
+ *   (2) MERGED with the proofs the mission's INTENT implies, via the shared resolveVerifyProbes
+ *       resolver (one vocabulary, no second source of truth), de-duplicated by evidence name.
+ * The Validation Engine's existing required-proof gate (capability-probes.evaluate) then checks each
+ * proof against REAL evidence artifacts and BLOCKS SUCCESS on any missing/failing required proof —
+ * independent of the provider's self-reported objectivesAddressed. A mission that declares/implies no
+ * proof is unaffected (empty ⇒ no extra gate), preserving backward compatibility. Does NOT interpret
+ * done_when and does NOT treat a changed file as proof. Pure given its injected resolver.
+ */
+export function resolveProviderPlanVerify(
+  spec: RawMission | null,
+  ctx: { id: string; title?: unknown; goal?: string; description?: unknown },
+  resolveImplied: (entry: unknown) => Array<{ capability: string; evidence: string }> = defaultResolveImpliedProofs,
+): VerifyProof[] {
+  const rawDeclared = Array.isArray(spec?.verify) ? (spec!.verify as unknown[]) : [];
+  const declared: VerifyProof[] = rawDeclared
+    .filter((v): v is { capability?: unknown; evidence: string; required?: unknown } =>
+      !!v && typeof v === "object" && typeof (v as { evidence?: unknown }).evidence === "string")
+    .map((v) => {
+      const entry: VerifyProof = { capability: String(v.capability || v.evidence), evidence: v.evidence };
+      if (v.required === false) entry.required = false;
+      return entry;
+    });
+  const seen = new Set(declared.map((v) => v.evidence));
+  for (const p of resolveImplied({ id: ctx.id, title: ctx.title, goal: ctx.goal, description: ctx.description })) {
+    if (p && typeof p.evidence === "string" && !seen.has(p.evidence)) {
+      seen.add(p.evidence);
+      declared.push({ capability: p.capability, evidence: p.evidence });
+    }
+  }
+  return declared;
 }
 
 export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
@@ -572,6 +637,16 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     const objectives = this.providerObjectives(mission, spec);
     const missionId = spec?.mission ?? mission;
 
+    // Carry the mission's declared + intent-implied capability proofs into the plan so the Validation
+    // Engine independently verifies them — the LOCAL route's Mission Loader already does this; the
+    // provider route used to drop them, letting a provider-executed mission reach SUCCESS without any
+    // of its declared proofs being checked. Empty ⇒ no extra gate (unchanged for proof-less missions).
+    const verify = resolveProviderPlanVerify(spec, {
+      id: missionId,
+      title: spec?.mission,
+      goal: objectives.map((o) => o.goal).filter(Boolean).join(" "),
+      description: spec?.description,
+    });
     const plan = {
       mission: missionId,
       mode: typeof spec?.mode === "string" ? spec.mode : "IMPLEMENT",
@@ -579,6 +654,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       authorizedPaths: this.authorizedPaths(spec),
       objectives: objectives.map((o) => ({ id: o.id, goal: o.goal, done_when: o.done_when })),
       definitionOfDone: this.strings(spec?.definition_of_done) ?? [],
+      ...(verify.length ? { verify } : {}),
     };
     const patchPlan = {
       mission: missionId,
