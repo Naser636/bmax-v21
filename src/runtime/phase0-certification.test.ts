@@ -113,13 +113,23 @@ const reporter = new RuntimeReporter();
   check(r.status !== "SUCCESS", "B2 SUCCESS requires required verification/postcondition pass");
 }
 
-// B3 — absent / failed / invalid proof each BLOCKS SUCCESS.
+// B3 — the proof gate is default-deny: with objective coverage satisfied, an absent, invalid, FAIL,
+// missing-verdict or any non-PASS (e.g. PENDING) proof each BLOCKS SUCCESS, while only an explicit
+// PASS verdict is admitted. Full coverage is supplied so every case actually reaches the proof gate
+// rather than short-circuiting at the objective-coverage gate exercised by B1.
 {
-  const absent = reporter.report({ mission: M1.id });
-  const failed = reporter.report({ mission: M1.id, proof: { verdict: "FAIL" } });
-  const invalid = reporter.report({ mission: M1.id, proof: "###not-json###" });
-  const anySuccess = [absent, failed, invalid].some((r) => r.status === "SUCCESS");
-  check(!anySuccess, "B3 absent/failed/invalid proof blocks SUCCESS");
+  const base = { mission: M1.id, objectivesTotal: 1, objectivesExecuted: 1 };
+  const absent = reporter.report({ ...base });
+  const invalid = reporter.report({ ...base, proof: "###not-json###" });
+  const failed = reporter.report({ ...base, proof: { verdict: "FAIL" } });
+  const missingVerdict = reporter.report({ ...base, proof: {} });
+  const pending = reporter.report({ ...base, proof: { verdict: "PENDING" } });
+  const passed = reporter.report({ ...base, proof: { verdict: "PASS" } });
+  const noneFalselyPass = [absent, invalid, failed, missingVerdict, pending].every((r) => r.status !== "SUCCESS");
+  check(
+    noneFalselyPass && passed.status === "SUCCESS",
+    "B3 proof gate default-deny: only an explicit PASS verdict yields SUCCESS",
+  );
 }
 
 // B4 — exactly one GUARDED SUCCESS writer (not an unconditional literal).

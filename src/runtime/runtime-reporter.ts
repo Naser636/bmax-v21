@@ -34,8 +34,9 @@ export class RuntimeReporter {
 
   // ROOT CAUSE #2 gate. SUCCESS is permitted ONLY when the mission's objective
   // execution is recorded (every planned objective executed) AND every required
-  // verification/postcondition passed AND a valid, non-failing proof is present.
-  // Default-deny: any absent/failed/invalid element blocks SUCCESS.
+  // verification/postcondition passed AND a valid proof carrying an explicit
+  // PASS verdict is present.
+  // Default-deny: any absent/failed/invalid/non-PASS element blocks SUCCESS.
   private evaluate(input: unknown): { proven: boolean; reason?: string } {
 
     if (!input || typeof input !== "object") {
@@ -65,13 +66,17 @@ export class RuntimeReporter {
       }
     }
 
-    // Proof: must be a valid, non-null, non-array object whose verdict is not FAIL.
+    // Proof: must be a valid, non-null, non-array object carrying an EXPLICIT passing verdict.
+    // Default-deny (matching this gate's contract): a missing verdict, a FAIL, or any other non-PASS
+    // value (PENDING / BLOCKED / …) each blocks SUCCESS. Only an affirmative "PASS" is proof of
+    // success — treating merely "not FAIL" as sufficient let a verdict-less or pending proof
+    // masquerade as proven, the inverse of the default-deny stance applied to objective coverage above.
     const proof = o.proof;
     if (!proof || typeof proof !== "object" || Array.isArray(proof)) {
       return { proven: false, reason: "proof-absent-or-invalid" };
     }
-    if ((proof as { verdict?: unknown }).verdict === "FAIL") {
-      return { proven: false, reason: "proof-failed" };
+    if ((proof as { verdict?: unknown }).verdict !== "PASS") {
+      return { proven: false, reason: "proof-not-pass" };
     }
 
     return { proven: true };
