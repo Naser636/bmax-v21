@@ -3475,3 +3475,38 @@ queue nor outstanding, so convergence hides no real work. All 8 ROADMAP.json mis
 uncommitted=0 (matches gitClean), local==origin 0/0. No regression → no repair. ROADMAP.json declares no
 further execution surface; §76/§387 are V5 reference, not authority. HANDOFF: repository operationally
 SYSTEM_READY, awaiting the next authoritative work definition. STOP (no authorized next work).
+
+## V5 PROGRAM — STAGE 2: ACTION / CONTRACT / POLICY GATE (2026-10-03)
+
+CTO authorized resuming the full ODG V5 program (Phase 0 = foundation, not completion). Reconciled the 8
+Master V5 fiches + V5 roadmap against the repo → implementation matrix. Stage 1 (Canonical State) COMPLETE
+(state-transition.js C03). Stage 2 (Action/Contract/Policy Gate) was PARTIAL: contract/policy DATA is
+transported (mission-loader) and scope is observed POST-write (scope-observer), but there was NO
+deterministic ADMISSION gate before a consequential action — `phase0-s2/s3` tests self-document
+"transport only: no enforcement"; governance-kernel.authorizeMission only checks a lifecycle transition
+exists. Dependency (Stage 1) satisfied; all later stages sit behind it.
+
+**Canonical requirement (verified from source):** FICHE_01 §13 "No authority → no consequential action; no
+valid state → no consequential claim; no valid contract → no contractual claim; no compatible policy → no
+action"; §15 loop runs CHECK STATE→CONTRACT→POLICY→AUTHORITY before EXECUTE; FICHE_07 §6 Action Contract
+fields + 8 classes; §11 reversibility R0–R4; human authority for irreversible/high-risk (§13/§14).
+
+**Implemented (commit below):** runtime/core/action-gate.js — pure, deterministic `evaluateAction(action,
+context)` → ALLOW/DENY/ESCALATE, DENY-by-default. Reuses Stage-1 validateStateTransition for the STATE
+check (no second state source); composes transported contract/policy + context allowed-policies/
+revoked-authorities. ESCALATE (not silent ALLOW) for DELETE/TRANSACT/IRREVERSIBLE, reversibility R3/R4,
+or HIGH/CRITICAL risk/criticality — unless explicit human authority. Observational READ/ANALYZE/GENERATE
+not gated (ALLOW when well-formed). Additive standalone module + read-only CLI (prints ACTION_CONTRACT),
+same style as state-transition.js. NOT wired into the live execution point yet — proven in isolation first
+(wiring before patch-executor WRITE is the next increment).
+
+**Proof.** runtime/core/action-gate.test.js 19 assertions (ALLOW baseline; DENY per missing dimension +
+incompatible policy + absent/invalid expectedTransition; ESCALATE irreversible/high-risk; human-authority
+override; deny-precedence; observational ALLOW; malformed DENY; determinism). tsc clean; npm test 279 files
+exit 0 (new gate + all prior gates + Phase 0 8/8); next build exit 0. Write-set = 2 NEW files (no existing
+file touched → zero regression surface until wired). Commit + push; local==origin; tree clean.
+
+**Position / next.** Stage 2 gate COMPLETE in isolation. Next V5 increments (dependency order): (a) WIRE
+the gate into the live pre-WRITE point (patch-executor) so consequential actions are admission-checked,
+then (b) Stage 3 Budget + Cost Accounting (FICHE_03 §: AVAILABLE→RESERVED→COMMITTED→SPENT→RECOVERABLE→
+REMAINING), which depends on the action gate to meter per-action cost. No CTO frontier reached.
