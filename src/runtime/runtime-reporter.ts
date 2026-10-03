@@ -11,17 +11,19 @@ export interface RuntimeReport {
 
 export class RuntimeReporter {
 
-  report(input: any): RuntimeReport {
+  report(input: unknown): RuntimeReport {
 
     const gate = this.evaluate(input);
+    const o: Record<string, unknown> =
+      input && typeof input === "object" ? (input as Record<string, unknown>) : {};
 
     return {
       generatedAt: new Date().toISOString(),
-      mission: input?.mission,
-      logicalSteps: input?.logicalSteps,
-      technicalSteps: input?.technicalSteps,
-      capabilities: Array.isArray(input?.capabilities)
-        ? input.capabilities.length
+      mission: o.mission as string | undefined,
+      logicalSteps: o.logicalSteps as number | undefined,
+      technicalSteps: o.technicalSteps as number | undefined,
+      capabilities: Array.isArray(o.capabilities)
+        ? o.capabilities.length
         : 0,
       status: gate.proven ? "SUCCESS" : "FAILED",
       reason: gate.reason,
@@ -34,15 +36,17 @@ export class RuntimeReporter {
   // execution is recorded (every planned objective executed) AND every required
   // verification/postcondition passed AND a valid, non-failing proof is present.
   // Default-deny: any absent/failed/invalid element blocks SUCCESS.
-  private evaluate(input: any): { proven: boolean; reason?: string } {
+  private evaluate(input: unknown): { proven: boolean; reason?: string } {
 
     if (!input || typeof input !== "object") {
       return { proven: false, reason: "no-report-input" };
     }
 
+    const o = input as Record<string, unknown>;
+
     // Objective coverage: every planned objective must be recorded as executed.
-    const total = input.objectivesTotal;
-    const executed = input.objectivesExecuted;
+    const total = o.objectivesTotal as number;
+    const executed = o.objectivesExecuted as number;
     if (!Number.isFinite(total) || total <= 0) {
       return { proven: false, reason: "objective-coverage-absent" };
     }
@@ -51,10 +55,10 @@ export class RuntimeReporter {
     }
 
     // Verification / postconditions: when declared, all required must have passed.
-    const verification = input.verification;
+    const verification = o.verification as { required?: unknown; passed?: unknown } | null | undefined;
     if (verification !== undefined && verification !== null) {
-      const required = verification.required;
-      const passed = verification.passed;
+      const required = verification.required as number;
+      const passed = verification.passed as number;
       if (!Number.isFinite(required) || required < 0 ||
           !Number.isFinite(passed) || passed < required) {
         return { proven: false, reason: "verification-failed" };
@@ -62,11 +66,11 @@ export class RuntimeReporter {
     }
 
     // Proof: must be a valid, non-null, non-array object whose verdict is not FAIL.
-    const proof = input.proof;
+    const proof = o.proof;
     if (!proof || typeof proof !== "object" || Array.isArray(proof)) {
       return { proven: false, reason: "proof-absent-or-invalid" };
     }
-    if (proof.verdict === "FAIL") {
+    if ((proof as { verdict?: unknown }).verdict === "FAIL") {
       return { proven: false, reason: "proof-failed" };
     }
 

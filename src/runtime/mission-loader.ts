@@ -132,8 +132,8 @@ export class MissionLoader {
             (v: unknown): v is { capability: string; evidence: string } =>
               !!v &&
               typeof v === "object" &&
-              typeof (v as any).capability === "string" &&
-              typeof (v as any).evidence === "string"
+              typeof (v as Record<string, unknown>).capability === "string" &&
+              typeof (v as Record<string, unknown>).evidence === "string"
           )
           .map(v => ({ capability: v.capability, evidence: v.evidence }))
       : [];
@@ -249,25 +249,26 @@ export class MissionLoader {
     }
     const raw = Array.isArray(spec.objectives) ? spec.objectives : [];
     return raw
-      .map((o: any, i: number): ObjectiveSpec => {
+      .map((o: unknown, i: number): ObjectiveSpec => {
         if (o && typeof o === "object" && !Array.isArray(o)) {
+          const obj = o as Record<string, unknown>;
           return {
-            id: typeof o.id === "string" && o.id ? o.id : `OBJECTIVE_${i + 1}`,
+            id: typeof obj.id === "string" && obj.id ? obj.id : `OBJECTIVE_${i + 1}`,
             goal:
-              typeof o.goal === "string" && o.goal
-                ? o.goal
-                : typeof o.id === "string" && o.id
-                ? o.id
+              typeof obj.goal === "string" && obj.goal
+                ? obj.goal
+                : typeof obj.id === "string" && obj.id
+                ? obj.id
                 : `Objective ${i + 1}`,
-            doneWhen: Array.isArray(o.done_when)
-              ? o.done_when.filter((d: unknown): d is string => typeof d === "string")
+            doneWhen: Array.isArray(obj.done_when)
+              ? obj.done_when.filter((d: unknown): d is string => typeof d === "string")
               : [],
-            dependsOn: Array.isArray(o.dependsOn)
-              ? o.dependsOn.filter((d: unknown): d is string => typeof d === "string")
+            dependsOn: Array.isArray(obj.dependsOn)
+              ? obj.dependsOn.filter((d: unknown): d is string => typeof d === "string")
               : [],
             // Campaign 04: carry the OPTIONAL proof binding verbatim (an opaque probe name).
             // Absent / non-string / empty ⇒ null. No lookup, no evaluation, no verdict here.
-            proof: typeof o.proof === "string" && o.proof ? o.proof : null
+            proof: typeof obj.proof === "string" && obj.proof ? obj.proof : null
           };
         }
         return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [], dependsOn: [], proof: null };
