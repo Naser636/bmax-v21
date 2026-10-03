@@ -3649,3 +3649,33 @@ state. Requires a CTO decision on the canonical state MODEL (which entities carr
 identity OBJECTIVE_VERSION/WORKGRAPH_ID). Until then the per-run auto-CAS-version is deferred. No other
 dependency-ready, reachable, non-speculative V5 increment remains (Evidence mechanism present; Evaluation
 promotion has no live consumer; Stage 7+ need the economic/business decision) — campaign STOP at this frontier.
+
+### §387 WORLD MODEL — FIRST INCREMENT (2026-10-03, CTO-authorized)
+Contract extracted from MASTER (FICHE_06 §387): the World Model is a representation WITHIN the existing
+Canonical Domain State (NOT a separate DB/runtime) — epistemic ITEMS (fact/hypothesis/unknown/constraint/
+dependency/risk/decision/failed_attempt/validated_result/next_action), each with an epistemic STATUS
+(PROVEN/OBSERVED/INFERRED/HYPOTHESIS/UNKNOWN/CONTRADICTED/STALE/UNVERIFIED) + provenance/time/scope/
+confidence; and ≠ Authority/Contract/Policy/Reality (verified evidence stays authoritative). §9 supplies
+the state-version + compare-and-set discipline.
+
+Implemented runtime/core/world-model.js — pure, deterministic store: put (create item @v1), read,
+transition (COMPARE-AND-SET on expectedPreviousVersion; +1 version on a real epistemic status move; every
+move expressed as a C03 state_transition record and checked by the ONE shared validator — reuse, no
+second discipline), snapshot, and load/save persistence to git-ignored runtime/generated/world-model.json.
+Provenance/time passed IN (determinism). Grants no authority, asserts no reality. Clearly separated from
+runtime-model (read model), mission-lifecycle (governance state), action-gate (admission), idempotency-guard
+(decision) — proven by boundary tests (no import of runtime-model/mission-lifecycle; does require
+state-transition).
+
+Proof: runtime/core/world-model.test.js 20 assn (create/read/initial-version; controlled vocab;
+transition+version increment; CAS match→OK, stale→CONFLICT→ZERO change; expectedPreviousVersion mandatory;
+two writers lost-update detected; determinism; persistence round-trip; missing-file→empty; boundary proofs).
+tsc clean; npm test 284 files exit 0 (+ all prior V5 + Phase 0 8/8); next build exit 0. Write-set 2 NEW
+files (additive). FIRST INCREMENT COMPLETE + PROVEN (authentic per-item versioned state + CAS).
+
+SUB-FRONTIER (documented, NOT crossed): wiring this version into the patch-executor file-WRITE CAS is NOT
+done — a file is not a §387 epistemic item, so mapping a file write to a world-model item is a semantic
+decision §387 does not define. The store provides authentic CAS for world-model items; the file-WRITE CAS
+stays caller-supplied until the file↔entity identity model is defined (needs the Resolver/Workgraph
+consumer §387 references, or an explicit CTO identity decision). No other dependency-ready non-speculative
+increment available → campaign STOP.
