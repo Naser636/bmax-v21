@@ -26,6 +26,13 @@
 const fs = require("fs");
 const path = require("path");
 const { authorizeMission } = require("./governance-kernel");
+// C03 canonical state-transition contract (P0-069). Reused — NOT reimplemented — so each lifecycle
+// advance can additionally be expressed as a C03 record and checked by the ONE real validator.
+const {
+  validateStateTransition,
+  computeDifference,
+  VERIFICATION_STATUS,
+} = require("./state-transition");
 
 const GENERATED_DIR = "runtime/generated";
 const STATE_MACHINE = "runtime/governance/state-machine.json";
@@ -102,6 +109,62 @@ function loadStateMachine() {
 }
 
 /**
+ * orderedStates(sm) -> the linear chain [initialState, …, terminalState] in walk order.
+ *
+ * This is the SINGLE existing source of state ordering (the state machine itself); a state's position
+ * in this chain IS its version. No second version source is invented — the ordinal is read back from
+ * the same `sm.transitions` the lifecycle already walks, so versions are coherent and, along any real
+ * advance (from before to), strictly increasing.
+ */
+function orderedStates(sm) {
+  const order = [sm.initialState];
+  let current = sm.initialState;
+  // Bounded by the number of declared states ⇒ terminates even on a malformed (cyclic) machine.
+  const guard = Object.keys(sm.transitions).length + 1;
+  for (let i = 0; i < guard; i++) {
+    const next = (sm.transitions[current] || [])[0];
+    if (!next || order.includes(next)) break;
+    order.push(next);
+    current = next;
+  }
+  return order;
+}
+
+/**
+ * toC03Records(transitions, sm) -> one validated C03 record per lifecycle transition, ADDITIVE.
+ *
+ * Each entry mission-lifecycle already produces ({ from, to, ok, evidence }) carries exactly the four
+ * C03 dimensions, so it maps 1:1 WITHOUT inventing data:
+ *   state_before = { state: from }   action = { type: "ADVANCE", from, to }
+ *   observed_effect = { ok, evidence } state_after = { state: to }
+ * Versions come from orderedStates (the chain ordinal); `difference` reuses the C03 helper; the single
+ * evidence string becomes evidence_refs. verification_status is drawn ONLY from the C03 vocabulary and
+ * is honest: a confirmed advance (ok) is VERIFIED (proof-requiring — its evidence_ref is present); a
+ * blocked attempt (ok:false) is UNVERIFIED — never a fabricated proof, never "done"/"SUCCESS". Every
+ * record is run through the ONE real validator; the returned { ok, errors, record } is reported as-is.
+ */
+function toC03Records(transitions, sm) {
+  const order = orderedStates(sm);
+  return (transitions || []).map((t) => {
+    const state_before = { state: t.from };
+    const state_after = { state: t.to };
+    const record = {
+      state_before,
+      action: { type: "ADVANCE", from: t.from, to: t.to },
+      observed_effect: { ok: t.ok, evidence: t.evidence },
+      state_after,
+      state_version_before: order.indexOf(t.from),
+      state_version_after: order.indexOf(t.to),
+      difference: computeDifference(state_before, state_after),
+      evidence_refs: [t.evidence],
+      verification_status: t.ok ? VERIFICATION_STATUS.VERIFIED : VERIFICATION_STATUS.UNVERIFIED,
+    };
+    const result = validateStateTransition(record);
+    return { ok: result.ok, errors: result.errors, record: result.record };
+  });
+}
+
+/**
  * Compute the achieved lifecycle state for `mission` by walking the state machine from its
  * initialState, advancing while each next state's evidence predicate holds AND governance authorizes
  * the transition. Writes mission-lifecycle.json and returns the lifecycle object.
@@ -144,6 +207,9 @@ function computeLifecycle(mission) {
     archived: false,
     path: path_,
     transitions,
+    // ADDITIVE (C03 / P0-071): the same transitions expressed as validated canonical records. Existing
+    // fields above are unchanged; consumers reading them are unaffected.
+    c03Transitions: toC03Records(transitions, sm),
   };
 
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
@@ -175,12 +241,14 @@ function markArchived(mission) {
     lifecycle.achieved = sm.terminalState;
     lifecycle.path.push(sm.terminalState);
     lifecycle.archived = true;
+    // ADDITIVE (C03 / P0-071): keep the canonical records coherent with the now-archived transitions.
+    lifecycle.c03Transitions = toC03Records(lifecycle.transitions, sm);
     fs.writeFileSync(LIFECYCLE_FILE, JSON.stringify(lifecycle, null, 2));
   }
   return lifecycle;
 }
 
-module.exports = { computeLifecycle, markArchived, LIFECYCLE_FILE };
+module.exports = { computeLifecycle, markArchived, toC03Records, orderedStates, LIFECYCLE_FILE };
 
 if (require.main === module) {
   const mission = process.argv[2] || "BUILD_RUNTIME";
