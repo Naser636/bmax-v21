@@ -3619,3 +3619,33 @@ STAGE 5 LIVE COMPLETE + PROVEN (behaviour demonstrated on the concerned path, no
 is caller-supplied; a pipeline-stamped version would make CAS automatic) — a follow-up, non-blocking. Then
 Stage 6 Evaluation/Regression (baseline→attribution→promotion) if a reachable gap is demonstrated. No CTO
 frontier (economic metering remains the only deferred business-decision frontier).
+
+### CANONICAL PER-RUN STATE VERSION — FORENSIC ANALYSIS + NO-CHANGE (2026-10-03)
+Investigated whether the idempotency CAS can be auto-fed by a canonical per-run state version instead of
+the caller-supplied plan.stateVersion. Truth-chain established from repository evidence:
+- `runtime-model.js` is a READ MODEL / projection (self-declared "performs NO writes… computes ONE
+  coherent model from the artefacts that already exist on disk"). NOT a canonical state source — MUST NOT
+  be promoted to one (would misrepresent a projection as authoritative state).
+- `mission-lifecycle.js` IS a genuine canonical state driver (walks the authority state-machine.json,
+  evidence-gated per transition, governance-kernel authorized, persists mission-lifecycle.json). But its
+  version is the mission's GOVERNANCE/LIFECYCLE state (CREATED…ARCHIVED order index), at mission
+  granularity, and it runs AFTER the Validation Engine — i.e. it is NOT the state of the WRITE target.
+- No per-ENTITY / per-TARGET canonical state store with a version exists (grep: no World-Model/entity
+  state). The carnet already records §387 WORLD MODEL = MISSING and "OBJECTIVE_VERSION / STATE_VERSION /
+  WORKGRAPH_ID are not carried".
+
+ROOT CAUSE of the gap: a file WRITE's canonical state (the target's version) has no store. Using the
+mission-lifecycle version as the WRITE's expected_previous_state would be MISATTRIBUTION (wrong state's
+version), and a counter/UUID/timestamp would be a FABRICATED version — both forbidden by the mandate.
+An authentic per-target per-run version requires the §387 World Model (canonical per-entity state + §76
+provenance identity), which is a new-state-semantics ARCHITECTURE decision not derivable from existing
+contracts. DECISION: **NO-CHANGE**. The CAS stays caller-supplied (honest: the caller declares the
+expected version of whatever state it guards; the guard enforces it when supplied). No code touched;
+tree clean; convergence intact.
+
+CTO FRONTIER (architecture): implement the §387 World Model / canonical per-entity state store (depends on
+C03, already present) so STATE_before→VERSION→expected_previous_state→CAS is backed by real per-entity
+state. Requires a CTO decision on the canonical state MODEL (which entities carry state; §76 provenance
+identity OBJECTIVE_VERSION/WORKGRAPH_ID). Until then the per-run auto-CAS-version is deferred. No other
+dependency-ready, reachable, non-speculative V5 increment remains (Evidence mechanism present; Evaluation
+promotion has no live consumer; Stage 7+ need the economic/business decision) — campaign STOP at this frontier.
