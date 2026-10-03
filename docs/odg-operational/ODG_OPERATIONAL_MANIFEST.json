@@ -1,0 +1,76 @@
+{
+  "manifest": {
+    "id": "ODG_OPERATIONAL_MANIFEST",
+    "campaign": "OPERATIONAL_BOOTSTRAP_01",
+    "role": "Compiled, traceable PROJECTION of existing ODG sources. Reference-only registry.",
+    "authority_rule": "This manifest is a compiled projection; it is NEVER a new source of authority. It references sources, it does not replace or recopy them.",
+    "generated_at_utc": "2026-10-02T23:58:15Z",
+    "observed_repository": "/home/ubuntu/bmax-v21",
+    "observed_branch": "runtime/mission-context-builder",
+    "observed_head": "c0be600c97a9c9fad4bba81d3946718ce072873d",
+    "phase0_checkpoint_tag": "odg-phase0-closed -> fd67bee925476066ffd56262d094f458e8672844"
+  },
+  "source_registry": [
+    { "source_id": "CONSTITUTION_EDG_V1", "path": "docs/CONSTITUTION_EDG_v1.md", "type": "markdown", "role": "EDG constitution (named v1)", "apparent_authority": "constitutional (by name)", "version_date": "v1 / commit date 2026-07-06", "commit": "7c2ee5d", "blob": "83e9435cc768", "status": "unknown", "relations": "layer distinct from RUNTIME_CONSTITUTION; precedence UNKNOWN" },
+    { "source_id": "RUNTIME_CONSTITUTION_MD", "path": "runtime/governance/constitution/RUNTIME_CONSTITUTION.md", "type": "markdown", "role": "Runtime constitution (narrative)", "apparent_authority": "constitutional (runtime layer, by name)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "3242e8505477", "status": "unknown", "relations": "paired with runtime-constitution.json" },
+    { "source_id": "RUNTIME_CONSTITUTION_JSON", "path": "runtime/constitution/runtime-constitution.json", "type": "json", "role": "Runtime constitution (machine; carries version field)", "apparent_authority": "active governance input (consumed by governance-kernel.authorizeMission)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "a8e3cbef020f", "status": "active", "relations": "read by runtime/core/governance-kernel.js" },
+    { "source_id": "CTO_DIRECTIVES", "path": "runtime/governance/directives/CTO_DIRECTIVES.md", "type": "markdown", "role": "CTO directives", "apparent_authority": "governance directive (by name)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "b5cc81514aef", "status": "unknown", "relations": "governance layer" },
+    { "source_id": "STATE_MACHINE", "path": "runtime/governance/state-machine.json", "type": "json", "role": "Governance lifecycle state machine", "apparent_authority": "active governance input (read by governance-kernel)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "9fdb9de05877", "status": "active", "relations": "consumed by governance-kernel/mission-lifecycle" },
+    { "source_id": "GOVERNANCE_MISSIONS_JSON", "path": "runtime/governance/missions.json", "type": "json", "role": "Governance missions registry", "apparent_authority": "unknown (not confirmed as execution-of-record)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "8e4a8f987799", "status": "unknown", "relations": "possible overlap with ROADMAP.json; precedence UNKNOWN" },
+    { "source_id": "ROADMAP_JSON", "path": "runtime/governance/ROADMAP.json", "type": "json", "role": "Official machine-readable roadmap manifest (self-declared single ordered execution list; 8 missions; roadmapContractVersion 1.0.0; declares source=runtime/system/ROADMAP.md)", "apparent_authority": "roadmap-of-record for execution (explicit self-declaration)", "version_date": "commit 2026-07-28", "commit": "072a114", "blob": "0e881e07b836", "status": "active", "relations": "cites SYSTEM_ROADMAP_MD as source; narrative roadmaps are secondary" },
+    { "source_id": "SYSTEM_ROADMAP_MD", "path": "runtime/system/ROADMAP.md", "type": "markdown", "role": "Roadmap narrative cited as ROADMAP.json source (P0 missions)", "apparent_authority": "roadmap source (cited by ROADMAP.json)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "UNKNOWN", "status": "active", "relations": "named source of ROADMAP_JSON" },
+    { "source_id": "RUNTIME_ROADMAP_MD", "path": "runtime/governance/RUNTIME_ROADMAP.md", "type": "markdown", "role": "Runtime roadmap narrative/principles", "apparent_authority": "unknown (narrative)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "2881b764f4b5", "status": "unknown", "relations": "overlaps ROADMAP family" },
+    { "source_id": "DOCS_ROADMAP_MD", "path": "docs/ROADMAP.md", "type": "markdown", "role": "Sprint-oriented roadmap (Foundation/Sprint list)", "apparent_authority": "unknown (narrative)", "version_date": "commit 2026-07-11", "commit": "4910ebe", "blob": "25f22d5c4fb4", "status": "unknown", "relations": "divergent scope vs ROADMAP.json" },
+    { "source_id": "BASELINE_ROADMAP_MD", "path": "baseline/foundation-v2/ROADMAP.md", "type": "markdown", "role": "Baseline (foundation-v2) roadmap", "apparent_authority": "historical baseline", "version_date": "UNKNOWN", "commit": "UNKNOWN", "blob": "UNKNOWN", "status": "historical", "relations": "baseline snapshot" },
+    { "source_id": "MASTER_PLAN", "path": "runtime/brain/MASTER_PLAN.md", "type": "markdown", "role": "ODG Runtime Brain / Master Plan (NEXT_OBJECTIVES list, rules)", "apparent_authority": "master/brain (by name)", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "de8ba346d0b9", "status": "unknown", "relations": "referenced historically by ROOT CAUSE #1 work; not re-verified here" },
+    { "source_id": "METHODE_DE_TRAVAIL", "path": "docs/METHODE_DE_TRAVAIL.md", "type": "markdown", "role": "ODG working method", "apparent_authority": "method (by name)", "version_date": "commit 2026-07-12", "commit": "ee52dbe", "blob": "e85304c6055a", "status": "unknown", "relations": "duplicate copy at baseline/sprint12/METHODE_DE_TRAVAIL.md (divergence UNKNOWN)" },
+    { "source_id": "METHODE_DE_TRAVAIL_BASELINE", "path": "baseline/sprint12/METHODE_DE_TRAVAIL.md", "type": "markdown", "role": "ODG working method (baseline copy)", "apparent_authority": "historical baseline", "version_date": "UNKNOWN", "commit": "UNKNOWN", "blob": "UNKNOWN", "status": "historical", "relations": "copy of METHODE_DE_TRAVAIL; divergence UNKNOWN" },
+    { "source_id": "CLAUDE_INSTRUCTIONS", "path": "CLAUDE.md", "type": "markdown", "role": "Project instructions for Claude Code (imports AGENTS.md)", "apparent_authority": "active execution instruction", "version_date": "commit 2026-07-05", "commit": "00b3c66", "blob": "43c994c2d361", "status": "active", "relations": "@imports AGENTS.md" },
+    { "source_id": "AGENTS_INSTRUCTIONS", "path": "AGENTS.md", "type": "markdown", "role": "Agent/runtime instruction (imported by CLAUDE.md)", "apparent_authority": "active execution instruction", "version_date": "commit 2026-07-05", "commit": "00b3c66", "blob": "8bd0e39085d5", "status": "active", "relations": "imported by CLAUDE.md" },
+    { "source_id": "EVIDENCE_LEDGER_JSON", "path": "runtime/evidence/evidence-ledger.json", "type": "json", "role": "Evidence index/ledger (tracked)", "apparent_authority": "evidentiary record", "version_date": "commit 2026-07-20", "commit": "d28374a", "blob": "0b4c3241b92e", "status": "unknown", "relations": "distinct from the ephemeral runtime mission-ledger" },
+    { "source_id": "MISSION_LEDGER_LIVE", "path": "runtime/generated/mission-ledger.json", "type": "json", "role": "Live Mission Ledger", "apparent_authority": "INSUFFICIENT as durable proof (git-ignored/ephemeral, per PHASE_0 P0-CURRENT-045)", "version_date": "n/a (ephemeral)", "commit": "not tracked", "blob": "not tracked", "status": "ephemeral", "relations": "written by runtime/core/mission-ledger.js; tracked copies only under runtime/releases/* (historical)" },
+    { "source_id": "CHECKPOINT_LEDGER_LIVE", "path": "runtime/generated/pipeline-checkpoint.json", "type": "json", "role": "Pipeline checkpoint/resume ledger", "apparent_authority": "ephemeral runtime state", "version_date": "n/a (ephemeral)", "commit": "not tracked", "blob": "not tracked", "status": "ephemeral", "relations": "checkpoint-engine; closure checkpoint pinned by tag odg-phase0-closed" },
+    { "source_id": "RUNTIME_COMPLETION_CHECKPOINT", "path": "RUNTIME_COMPLETION_CHECKPOINT.md", "type": "markdown", "role": "Runtime completion checkpoint (narrative)", "apparent_authority": "checkpoint record", "version_date": "commit 2026-07-26", "commit": "031b397", "blob": "efa45e9164f7", "status": "unknown", "relations": "checkpoint family" },
+    { "source_id": "PHASE0_CARNET", "path": "docs/audit/phase-0/current/PHASE_0_CARNET.md", "type": "markdown", "role": "Phase-0 forensic carnet (P0-CURRENT-### entries incl. closure + CTO decisions)", "apparent_authority": "evidentiary record (this campaign)", "version_date": "commit 2026-10-02", "commit": "c0be600", "blob": "986b397ad60f", "status": "active", "relations": "basis of Phase-0 dispositions" },
+    { "source_id": "PHASE0_CONVERGENCE_SUMMARY", "path": "docs/audit/phase-0/PHASE_0_ROADMAP_CONVERGENCE_SUMMARY.md", "type": "markdown", "role": "Phase-0 roadmap convergence summary (8 missions dispositioned)", "apparent_authority": "evidentiary record", "version_date": "commit 2026-10-02", "commit": "a33f591", "blob": "d4b57e283717", "status": "active", "relations": "sole convergence basis for closure" },
+    { "source_id": "PHASE0_TRUTH_CERTIFICATE", "path": "docs/audit/phase-0/PHASE_0_TRUTH_CERTIFICATE.md", "type": "markdown", "role": "Phase-0 truth certificate", "apparent_authority": "evidentiary record", "version_date": "commit 2026-09-04", "commit": "c5a2e6d", "blob": "7c8f2444d852", "status": "unknown", "relations": "earlier truth-level record; relation to current closure UNKNOWN" },
+    { "source_id": "TRUTH_LOCK_5_MISSIONS", "path": "docs/audit/truth-lock/TRUTH_LOCK_5_MISSIONS.md", "type": "markdown", "role": "Truth Lock 5-mission evidence record", "apparent_authority": "evidentiary record", "version_date": "commit 2026-10-02", "commit": "fe8028a", "blob": "2d7565d158bd", "status": "active", "relations": "admissible source for DYNAMIC/AUTONOMOUS acceptances" },
+    { "source_id": "TRUTH_LOCK_RUNTIME_PROOFS", "path": "docs/audit/truth-lock/{M0000,M0001,M0002,CLEAN_RUNTIME_WORKSPACE,PROVIDER_ENABLED_SMOKE_V1,UNIFY_RUNTIME_EXECUTION}_RUNTIME_PROOF.md", "type": "markdown (set)", "role": "Per-mission durable runtime proofs (6)", "apparent_authority": "evidentiary record (mission-authored)", "version_date": "2026-10-02", "commit": "91d0b57/eff4781/698d3da/ffaf979/f6c4caa/d765d53", "blob": "per-file (not individually hashed here)", "status": "active", "relations": "durable proofs for Phase-0 missions 1-6" },
+    { "source_id": "S21_NEXT_ACTION", "path": "runtime/reports/S21_NEXT_ACTION.md", "type": "markdown", "role": "Sprint-21 NEXT_ACTION report", "apparent_authority": "historical report", "version_date": "UNKNOWN", "commit": "UNKNOWN", "blob": "UNKNOWN", "status": "historical", "relations": "pre-Phase-0 sprint artifact; copies under runtime/releases/*" }
+  ],
+  "authority_matrix": {
+    "note": "Apparent tiers from EXPLICIT naming/location/consumption only. Precedence BETWEEN tiers is recorded only where explicitly supported; otherwise UNKNOWN. No unsupported authority inferred.",
+    "constitutional_apparent": ["CONSTITUTION_EDG_V1", "RUNTIME_CONSTITUTION_MD", "RUNTIME_CONSTITUTION_JSON"],
+    "governance_apparent": ["CTO_DIRECTIVES", "STATE_MACHINE", "GOVERNANCE_MISSIONS_JSON"],
+    "roadmap_of_record_execution": ["ROADMAP_JSON"],
+    "roadmap_source_cited": ["SYSTEM_ROADMAP_MD"],
+    "roadmap_narrative_secondary": ["RUNTIME_ROADMAP_MD", "DOCS_ROADMAP_MD", "BASELINE_ROADMAP_MD"],
+    "master_brain_apparent": ["MASTER_PLAN"],
+    "method_apparent": ["METHODE_DE_TRAVAIL"],
+    "execution_instructions_active": ["CLAUDE_INSTRUCTIONS", "AGENTS_INSTRUCTIONS"],
+    "evidence_records_non_normative": ["EVIDENCE_LEDGER_JSON", "PHASE0_CARNET", "PHASE0_CONVERGENCE_SUMMARY", "PHASE0_TRUTH_CERTIFICATE", "TRUTH_LOCK_5_MISSIONS", "TRUTH_LOCK_RUNTIME_PROOFS"],
+    "ephemeral_not_durable_proof": ["MISSION_LEDGER_LIVE", "CHECKPOINT_LEDGER_LIVE"],
+    "checkpoint_records": ["RUNTIME_COMPLETION_CHECKPOINT", "CHECKPOINT_LEDGER_LIVE", "phase0_tag:odg-phase0-closed"],
+    "cross_tier_precedence": "UNKNOWN (not explicitly declared across tiers)"
+  },
+  "contradiction_register": [
+    { "contradiction_id": "C-01", "source_a": "ROADMAP_JSON", "source_b": "DOCS_ROADMAP_MD / RUNTIME_ROADMAP_MD / BASELINE_ROADMAP_MD", "subject": "which roadmap defines the canonical mission list", "formulation_a": "ROADMAP.json self-declares the official single ordered execution list (8 missions)", "formulation_b": "other roadmap docs enumerate sprints/objectives with divergent scope", "explicit_hierarchy": "ROADMAP.json explicitly self-declares machine-authoritative for execution and cites SYSTEM_ROADMAP_MD as its source", "status": "resolvable_by_hierarchy (execution list = ROADMAP_JSON); deeper content divergence = unknown" },
+    { "contradiction_id": "C-02", "source_a": "CONSTITUTION_EDG_V1", "source_b": "RUNTIME_CONSTITUTION_MD / RUNTIME_CONSTITUTION_JSON", "subject": "which constitution governs", "formulation_a": "EDG constitution v1 (2026-07-06)", "formulation_b": "Runtime constitution (2026-07-20), the JSON actively consumed by governance-kernel", "explicit_hierarchy": "none explicitly stated", "status": "requires_cto_decision" },
+    { "contradiction_id": "C-03", "source_a": "METHODE_DE_TRAVAIL", "source_b": "METHODE_DE_TRAVAIL_BASELINE", "subject": "working-method version of record", "formulation_a": "docs/ copy (2026-07-12)", "formulation_b": "baseline/sprint12 copy (date UNKNOWN)", "explicit_hierarchy": "none explicitly stated; contents not compared (not read)", "status": "unknown" },
+    { "contradiction_id": "C-04", "source_a": "GOVERNANCE_MISSIONS_JSON", "source_b": "ROADMAP_JSON", "subject": "mission registry vs roadmap mission list", "formulation_a": "runtime/governance/missions.json registry", "formulation_b": "ROADMAP.json ordered 8-mission list", "explicit_hierarchy": "none explicitly stated", "status": "unknown" }
+  ],
+  "compilation_inputs": {
+    "truth_lock_commands_run": ["pwd", "git status --short --branch", "git rev-parse HEAD", "git branch --show-current", "git log -5 --oneline"],
+    "search_method": "git ls-files name-filtering (excluded node_modules, /archive/, /backup/, /history/, /generated/ except where explicitly ephemeral), read-only metadata via git log/rev-parse; file contents NOT rewritten",
+    "not_found_as_named_artifacts": ["GAP_MAP (no tracked file)", "Truth Snapshot (no tracked file named as such; closest = PHASE0_TRUTH_CERTIFICATE)", "Final Master (no distinct tracked file; closest = MASTER_PLAN)"]
+  },
+  "validation_status": {
+    "manifest_is_authority": false,
+    "manifest_is_projection_only": true,
+    "sources_modified": false,
+    "runtime_master_roadmap_evidence_modified": false,
+    "campaign_executed": false,
+    "unresolved": ["cross-tier precedence UNKNOWN", "C-02/C-03/C-04 unresolved", "several version/date/blob fields UNKNOWN where not explicitly traceable"],
+    "status": "REGISTRY_COMPILED_READ_ONLY"
+  }
+}
