@@ -154,11 +154,14 @@ function runProviderRoute(mission: string): number {
  * Local route (OBJ-002): execute a migrated mission entirely inside src/runtime via the
  * MissionOrchestrator → RuntimeExecutor pipeline. Never falls back to mse.
  */
-function runLocalRoute(mission: string): number {
+export function runLocalRoute(
+  mission: string,
+  runner: LocalMissionRunner = new LocalMissionRunner(),
+): number {
   console.log("Route      : MissionOrchestrator → RuntimeExecutor (local, src/runtime)");
   console.log("--------------------------------------");
 
-  const outcome = new LocalMissionRunner().run(mission, mission);
+  const outcome = runner.run(mission, mission);
 
   if (!outcome.ok) {
     console.log("Status     : LOCAL_EXECUTION_FAILED");
@@ -181,7 +184,13 @@ function runLocalRoute(mission: string): number {
   console.log("Validated  :", outcome.validated === true);
   console.log("Ledger     : recordMission invoked via LOCAL route (proven-only gate applies)");
   console.log("======================================");
-  return 0;
+  // Exit status must reflect the HONEST verdict, not merely that execution ran without throwing.
+  // `outcome.validated` is the RuntimeReporter proof gate's result (status === "SUCCESS"); a LOCAL
+  // mission that executed but was NOT validated is a failure and must exit non-zero — matching the
+  // sibling routes (convergence returns 1 unless PLAN_COMPLETE; the local-pipeline route returns the
+  // pipeline's real non-zero on an unproven mission). Previously this returned 0 unconditionally,
+  // printing `Validated: false` yet exiting 0 (a false-success exit for `odg mission <migrated>`).
+  return outcome.validated === true ? 0 : 1;
 }
 
 /**
@@ -265,4 +274,12 @@ function main(): number {
   return runLocalPipelineRoute(mission);
 }
 
-process.exit(main());
+// Only auto-run when invoked directly as a script (not when imported by a test). Mirrors the same
+// guard converge-cli.ts uses, so importing runLocalRoute for a unit test does not execute main().
+if (
+  typeof process !== "undefined" &&
+  Array.isArray(process.argv) &&
+  /mission-cli\.ts$/.test(process.argv[1] ?? "")
+) {
+  process.exit(main());
+}
