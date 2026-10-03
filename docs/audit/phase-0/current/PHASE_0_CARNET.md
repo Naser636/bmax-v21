@@ -3564,3 +3564,35 @@ gate decision / provider call into a budget-ledger bucket (couples Stage 2 ↔ S
 ledger's exhaustion signal to the pipeline's REPLAN/ESCALATE/SAFE_STOP. Then Stage 4 Evidence (already
 largely COMPLETE in Phase 0) / Stage 5 Recovery hardening. No CTO frontier reached — Stage 3 accounting is
 pure mechanism; pricing / real-money settlement (Stage 9) is the first genuine business-decision frontier.
+
+### BUDGET SOURCE — CANONICAL ANALYSIS + ECONOMIC-METERING FRONTIER (2026-10-03)
+Repository-grounded search for a canonical budget source: FICHE_01:1110 + FICHE_04:1614-1616 (V4-15
+Resource/Budget Contract) define a NON-economic CHANGE BUDGET (allowed files/symbols, max mutations,
+semantic scope, blast radius) — its file-scope part is already `authorized_paths` (enforced by
+patch-executor + validation-engine). ECONOMIC budgets (time/compute/token/money) are canonical in concept
+(FICHE_03 §185) but NO per-mission source exists: 0 contracts declare a budget; only an unused
+`constraint.budget?` field. FRONTIER (deferred, no invented values): live ECONOMIC cost-metering needs a
+CTO decision on units + per-mission allocation + defaults-when-absent (a business decision, not derivable).
+The budget-ledger mechanism is ready to wire the moment that source exists. Advanced instead to the next
+dependency-ready work per the directed priority (Evidence → Recovery).
+
+### STAGE 5 — RECOVERY / IDEMPOTENCE, FIRST INCREMENT (2026-10-03)
+Evidence/Verification (prio 1) inspected: mechanism PRESENT (capability-probes structural/behavioral +
+evidenceIntegrity + validation-engine + objective-proof gate); no reachable missing capability — higher
+FICHE_07 §10 tiers (adversarial/independent) would be speculative without a reachable consumer, so NOT
+built. Recovery/Idempotence (prio 2) had a CONCRETE demonstrated gap: the only idempotency was the Mission
+Ledger's (mission,runId) recording-level dedup; there was NO action-level idempotency / compare-and-set
+(FICHE_07 §9), though the Stage-2 Action Contract already carries an unused idempotencyKey/expectedTransition.
+
+Implemented runtime/core/idempotency-guard.js — pure `admit(request, journal, currentVersion)` →
+PROCEED/DUPLICATE/CONFLICT + `record(journal,key,result)`. DUPLICATE_DETECTION on idempotencyKey (checked
+first — replay always safe) with RECONCILIATION to the prior result (no re-apply); COMPARE-AND-SET of
+expectedPreviousState against the canonical state VERSION (reuses state-transition's state_version_*
+discipline — no new state source); opt-in (no key + no expected-previous ⇒ unguarded PROCEED); record never
+overwrites an applied key. Pure/deterministic + read-only CLI, same style as the other core contracts.
+
+Proof: runtime/core/idempotency-guard.test.js 12 assn (PROCEED; DUPLICATE+reconcile; duplicate-before-CAS
+precedence; stale→CONFLICT; match→PROCEED; non-integer version→CONFLICT; opt-in unguarded; no-overwrite;
+full safe-replay cycle; determinism). tsc clean; npm test 282 files exit 0 (+ all prior V5 + Phase 0 8/8);
+next build exit 0. Write-set 2 NEW files (additive). FIRST INCREMENT COMPLETE; next couples the guard into
+the live action-gate/patch-executor path (duplicate/CAS before mutation).
