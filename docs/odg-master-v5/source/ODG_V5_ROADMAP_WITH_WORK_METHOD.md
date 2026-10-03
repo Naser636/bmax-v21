@@ -568,8 +568,15 @@ CANONICAL STATE TRANSITION CONTRACT
 Status:
 
 AUTHORIZED
-CURRENT
+EXECUTED — CHECKPOINTED (commit 3957835)
 FIRST IMPLEMENTATION CAMPAIGN
+
+§28 RECONCILIATION (HEAD 90e926f): P0-069 / C03 was EXECUTED and CHECKPOINTED at
+commit 3957835 (runtime/core/state-transition.js + state-transition.test.js + carnet
+entry). RUNTIME-VERIFIED: state-transition.test.js re-runs green (36 assertions).
+CTO-ACCEPTED at the prior checkpoint review. It is no longer the CURRENT pending
+campaign. The campaign specification below is preserved verbatim as the historical
+contract; only this status line is reconciled.
 
 Objective:
 
@@ -677,7 +684,14 @@ C03 INTEGRATION ANALYSIS
 
 Status:
 
-PLANNED — NOT AUTHORIZED BY THIS DOCUMENT
+ANALYSIS EXECUTED (session) — IMPLEMENTATION NOT AUTHORIZED BY THIS DOCUMENT
+
+§28 RECONCILIATION (HEAD 90e926f): the P0-070 analysis was EXECUTED read-only in
+session after P0-069 was proven; stated conclusion: "INTEGRATION NOT CURRENTLY
+REQUIRED". LIMITATION / UNKNOWN: no repository artifact was persisted for P0-070 —
+the conclusion lives only in the session transcript and is NOT independently
+repository-verifiable. Recorded here as EXECUTED; NOT VERIFIED and NOT ACCEPTED.
+C03 producer/consumer integration (P0-071) therefore remains NOT AUTHORIZED.
 
 Objective:
 
@@ -1370,21 +1384,20 @@ GREEN TESTS ≠ AUTHORIZATION FOR NEXT CAMPAIGN.
 
 The immediate authorized campaign is:
 
-P0-069 / C03 CONTRACT
+NONE — P0-069 / C03 CONTRACT is COMPLETE (EXECUTED + CHECKPOINTED, commit 3957835).
 
-After completion:
-
-STOP.
+§28 RECONCILIATION (HEAD 90e926f): P0-069 completed; P0-070 (C03 INTEGRATION
+ANALYSIS) was EXECUTED read-only in session (stated conclusion "INTEGRATION NOT
+CURRENTLY REQUIRED", no persisted repository artifact — EXECUTED, not VERIFIED, not
+ACCEPTED). No implementation campaign is currently authorized.
 
 Do not automatically begin:
 
-P0-070
 P0-071
 P0-072
 or any other campaign.
 
-The next campaign requires explicit authorization after CTO review of the
-P0-069 checkpoint.
+The next campaign requires explicit CTO authorization.
 
 
 ============================================================
@@ -1522,10 +1535,13 @@ Status:
 GOVERNED WORKING ROADMAP
 
 Current authorized campaign:
-P0-069 / C03 CONTRACT
+NONE — P0-069 / C03 CONTRACT COMPLETE (EXECUTED + CHECKPOINTED, commit 3957835);
+P0-070 analysis EXECUTED in session (conclusion "INTEGRATION NOT CURRENTLY REQUIRED",
+no persisted artifact — EXECUTED, not VERIFIED, not ACCEPTED).
 
 Current stop condition:
-STOP AFTER C03 CHECKPOINT.
+STOP — no implementation campaign authorized; P0-071 and beyond require separate CTO
+authorization.
 
 No next campaign is authorized by this document.
 
