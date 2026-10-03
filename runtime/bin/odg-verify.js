@@ -2,25 +2,6 @@
 const fs=require("fs");
 const cp=require("child_process");
 
-const verify={
-generatedAt:new Date().toISOString(),
-build:true,
-typescript:true,
-gitClean:true
-};
-
-try{
-cp.execSync("npm run build",{stdio:"ignore"});
-}catch{
-verify.build=false;
-}
-
-try{
-cp.execSync("npx tsc --noEmit",{stdio:"ignore"});
-}catch{
-verify.typescript=false;
-}
-
 // gitClean — HONEST working-tree check, scoped to the SAME Runtime-owned artifact paths the
 // local execution pipeline excludes from its governance gate (runtime/bin/odg-local-pipeline.sh).
 // Those directories hold per-mission evidence the Runtime regenerates on EVERY run (passport, report,
@@ -47,21 +28,6 @@ function generatedContractExcludes() {
   }
   return out;
 }
-const ARTIFACT_EXCLUDES = [
-  ":(exclude)runtime/missions/*.evidence.md",
-  ...generatedContractExcludes(),
-];
-try {
-  const porcelain = cp
-    .execSync(`git status --porcelain -- ${ARTIFACT_EXCLUDES.map((p) => `'${p}'`).join(" ")}`, {
-      encoding: "utf8",
-    })
-    .trim();
-  verify.gitClean = porcelain.length === 0;
-} catch {
-  // If git is unavailable the tree cannot be proven clean — fail closed.
-  verify.gitClean = false;
-}
 
 // documentationProofPresent — the derived Release gate (src/core/release-manager.ts:367-369).
 // It is NOT a shell check like build/typescript; the Release Manager sets it true when the
@@ -71,9 +37,9 @@ try {
 //   present iff runtime/generated/mission-artifacts/generated/<mission>.json exists
 //           OR  runtime/generated/mission-report.json is mission-matched + validated + SUCCESS
 // (identical to documentableArtifacts + RootCauseEngine.observeDocumentationProof).
-function resolveMission(){
+function resolveMission(explicit){
 // Prefer an explicit arg, then the active corrective mission, then the current mission.
-if(process.argv[2])return process.argv[2];
+if(explicit)return explicit;
 for(const p of [
 "runtime/generated/corrective-mission.json",
 "runtime/generated/current-mission.json"
@@ -97,10 +63,6 @@ return false;
 }
 }
 
-const mission=resolveMission();
-verify.mission=mission;
-verify.documentationProofPresent=documentationProofPresent(mission);
-
 // generatedContracts — Verify the contracts the Mission Contract Factory produced (Contract On
 // Demand / DYNAMIC_MISSION_CONTRACT_FACTORY). Every contract stamped `generatedBy:
 // "mission-contract-factory"` must satisfy the SAME structural guard the Mission Loader enforces
@@ -123,13 +85,86 @@ function verifyGeneratedContracts(){
   }
   return out;
 }
-const generatedContracts=verifyGeneratedContracts();
-verify.generatedContracts=generatedContracts;
-verify.generatedContractsValid=generatedContracts.invalid.length===0;
 
-fs.writeFileSync(
-"runtime/generated/runtime-verify.json",
-JSON.stringify(verify,null,2)
-);
+// Run the full verification and return the computed `verify` object. Side-effect: spawns
+// `npm run build` and `npx tsc --noEmit` and reads the working tree — so it is ONLY ever called
+// from the CLI entrypoint below (never on `require`, which must stay side-effect-free for tests).
+function runVerify(explicitMission){
+  const verify={
+    generatedAt:new Date().toISOString(),
+    build:true,
+    typescript:true,
+    gitClean:true
+  };
 
-console.log("VERIFY :",verify);
+  try{
+    cp.execSync("npm run build",{stdio:"ignore"});
+  }catch{
+    verify.build=false;
+  }
+
+  try{
+    cp.execSync("npx tsc --noEmit",{stdio:"ignore"});
+  }catch{
+    verify.typescript=false;
+  }
+
+  const ARTIFACT_EXCLUDES = [
+    ":(exclude)runtime/missions/*.evidence.md",
+    ...generatedContractExcludes(),
+  ];
+  try {
+    const porcelain = cp
+      .execSync(`git status --porcelain -- ${ARTIFACT_EXCLUDES.map((p) => `'${p}'`).join(" ")}`, {
+        encoding: "utf8",
+      })
+      .trim();
+    verify.gitClean = porcelain.length === 0;
+  } catch {
+    // If git is unavailable the tree cannot be proven clean — fail closed.
+    verify.gitClean = false;
+  }
+
+  const mission=resolveMission(explicitMission);
+  verify.mission=mission;
+  verify.documentationProofPresent=documentationProofPresent(mission);
+
+  const generatedContracts=verifyGeneratedContracts();
+  verify.generatedContracts=generatedContracts;
+  verify.generatedContractsValid=generatedContracts.invalid.length===0;
+
+  return verify;
+}
+
+// Truthful exit status for the ALREADY-COMPUTED verification result — the single source of truth is
+// the `verify` object this process just wrote; this never recomputes or invents a second verdict.
+// A red build, a failed TypeScript gate, or a dirty/unprovable working tree (the three shell gates the
+// Release Manager and odg-local-pipeline.sh gate on) is a FAILED verification and must exit non-zero;
+// a genuinely green tree exits 0. documentationProofPresent and generatedContractsValid are additive
+// evidence (the former is legitimately absent when no mission context is active) and are NOT turned
+// into a non-zero exit here. `--report-only` (used by odg-local-pipeline.sh's pre-flight, which does
+// its OWN content gating and deliberately tolerates a dirty tree for FINALIZE_*/CLOSEOUT_* missions)
+// generates the evidence file without propagating the exit code, preserving that pipeline exactly.
+function verifyExitCode(verify, reportOnly){
+  if(reportOnly)return 0;
+  const green = !!verify && verify.build===true && verify.typescript===true && verify.gitClean===true;
+  return green?0:1;
+}
+
+module.exports = { verifyExitCode, runVerify };
+
+if(require.main===module){
+  const args=process.argv.slice(2);
+  const reportOnly=args.includes("--report-only");
+  const explicitMission=args.find((a)=>!a.startsWith("--"));
+
+  const verify=runVerify(explicitMission);
+
+  fs.writeFileSync(
+    "runtime/generated/runtime-verify.json",
+    JSON.stringify(verify,null,2)
+  );
+
+  console.log("VERIFY :",verify);
+  process.exit(verifyExitCode(verify,reportOnly));
+}

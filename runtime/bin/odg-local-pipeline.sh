@@ -77,7 +77,12 @@ echo "======================================"
 echo "[1/5] PRE-FLIGHT"
 
 mkdir -p runtime/generated
-node runtime/bin/odg-verify.js "$MISSION"
+# --report-only: the pre-flight only needs odg-verify to STAMP runtime-verify.json; this pipeline does
+# its OWN content gating below (build/tsc at [1/5], gitClean with the FINALIZE_*/CLOSEOUT_* exception).
+# odg-verify now exits non-zero on a red/dirty verification (so `odg delegate`/`system-ready` stop
+# honestly), and under `set -e` that would abort this pre-flight before the content gates run — and
+# wrongly break the finalize-mission dirty-tree entry. report-only keeps odg-verify a pure stamper here.
+node runtime/bin/odg-verify.js "$MISSION" --report-only
 
 BUILD_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').build===true))}catch(e){process.stdout.write('false')}")
 TSC_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').typescript===true))}catch(e){process.stdout.write('false')}")
