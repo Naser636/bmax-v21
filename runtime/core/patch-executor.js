@@ -5,6 +5,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const capabilityExecutors = require("./capability-executors");
 const { admitPatchEdit } = require("./patch-action-contract");
+const idempotency = require("./idempotency-guard");
 
 const GENERATED_DIR = "runtime/generated";
 
@@ -88,6 +89,17 @@ const report = {
 };
 
 fs.mkdirSync(GENERATED_DIR, { recursive: true });
+
+// V5 Stage 5 — persistent idempotency journal (opt-in). Keyed by a patch's idempotencyKey so a REPLAY in
+// a later run is detected as a DUPLICATE and performs zero new mutation. Loaded best-effort; only written
+// back when a keyed patch actually applied, so missions that declare no idempotencyKey never touch it.
+const IDEMPOTENCY_JOURNAL = path.join(GENERATED_DIR, "idempotency-journal.json");
+let idemJournal = {};
+try {
+  const raw = JSON.parse(fs.readFileSync(IDEMPOTENCY_JOURNAL, "utf8"));
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) idemJournal = raw;
+} catch { idemJournal = {}; }
+let idemJournalChanged = false;
 
 /**
  * Run `grep -RIn <pattern> <targets...>` and stream its stdout DIRECTLY to a
@@ -201,6 +213,40 @@ for (const patch of plan.patches) {
         throw new Error(`action gate ${blocked.decision} (${blocked.target}): ${why || "not admitted"}`);
       }
 
+      // V5 Stage 5 idempotency / compare-and-set — OPT-IN per patch via idempotencyKey. Order:
+      // admission -> idempotency -> mutation. A declared key means the caller REQUIRES idempotency:
+      //   DUPLICATE (key already applied) -> ZERO new mutation, reconcile to the prior result ;
+      //   CONFLICT  (stale compare-and-set vs plan.stateVersion) -> throw BEFORE any write (FAILED) ;
+      //   PROCEED   -> fall through to mutation, then record the key after APPLIED.
+      // A patch with no idempotencyKey is unguarded (not protected — never a false promise). There is no
+      // DUPLICATE->WRITE or CONFLICT->WRITE path: DUPLICATE `continue`s and CONFLICT throws before writes.
+      const idemKey =
+        (patch.actionContract && typeof patch.actionContract.idempotencyKey === "string" && patch.actionContract.idempotencyKey) ||
+        (typeof patch.idempotencyKey === "string" && patch.idempotencyKey) ||
+        null;
+      if (idemKey) {
+        const expectedPrev =
+          patch.actionContract && patch.actionContract.expectedTransition
+            ? patch.actionContract.expectedTransition.state_version_before
+            : undefined;
+        const req = { actionId: patch.action, idempotencyKey: idemKey };
+        if (expectedPrev !== undefined) req.expectedPreviousState = expectedPrev;
+        const verdict = idempotency.admit(req, idemJournal, plan.stateVersion);
+        if (verdict.decision === "DUPLICATE") {
+          report.executed.push({
+            action: patch.action,
+            objectiveId: patch.objectiveId || patch.action,
+            status: "DUPLICATE",
+            idempotencyKey: idemKey,
+            reconciled: verdict.reconciledResult,
+          });
+          continue; // replay ⇒ zero new mutation
+        }
+        if (verdict.decision === "CONFLICT") {
+          throw new Error(`idempotency ${verdict.decision} (${idemKey}): ${verdict.detail}`);
+        }
+      }
+
       const applied = [];
       for (const edit of patch.edits) {
         if (!isAuthorizedTarget(edit.target)) {
@@ -231,6 +277,11 @@ for (const patch of plan.patches) {
         // the observed decision under enforced:false — a visible compatibility state, not a bypass.
         admission: admissions.map((a) => ({ target: a.target, decision: a.decision, enforced: a.enforced })),
       });
+      // Record the applied idempotencyKey AFTER the observed effect, so a later replay reconciles to it.
+      if (idemKey) {
+        idemJournal = idempotency.record(idemJournal, idemKey, { status: "APPLIED", files: applied });
+        idemJournalChanged = true;
+      }
       continue;
     }
 
@@ -450,6 +501,12 @@ for (const patch of plan.patches) {
       error: String(e.stack || e)
     });
   }
+}
+
+// Persist the idempotency journal ONLY when a keyed patch actually applied — missions that declare no
+// idempotencyKey never create or touch this file (byte-for-byte unchanged behaviour for legacy patches).
+if (idemJournalChanged) {
+  fs.writeFileSync(IDEMPOTENCY_JOURNAL, JSON.stringify(idemJournal, null, 2));
 }
 
 fs.writeFileSync(

@@ -3596,3 +3596,26 @@ precedence; stale→CONFLICT; match→PROCEED; non-integer version→CONFLICT; o
 full safe-replay cycle; determinism). tsc clean; npm test 282 files exit 0 (+ all prior V5 + Phase 0 8/8);
 next build exit 0. Write-set 2 NEW files (additive). FIRST INCREMENT COMPLETE; next couples the guard into
 the live action-gate/patch-executor path (duplicate/CAS before mutation).
+
+### STAGE 5 — LIVE IDEMPOTENCY/CAS WIRING COMPLETE (2026-10-03)
+Reproduced: a keyed patch REPLAYED re-executed (APPLIED twice) — no live DUPLICATE_DETECTION. Wired
+idempotency-guard into patch-executor in the order ACTION-CONTRACT ADMISSION → IDEMPOTENCY/CAS → MUTATION
+(the check sits after the Stage-2 admission throw, before the write loop). OPT-IN per patch via
+idempotencyKey (top-level for DUPLICATE detection; actionContract.expectedTransition.state_version_before
++ plan.stateVersion for compare-and-set). Persistent journal runtime/generated/idempotency-journal.json
+(gitignored) written ONLY when a keyed patch applied — legacy patches (no key) never create/touch it, so
+their behaviour is byte-for-byte unchanged (no false promise of protection). DUPLICATE → `continue` (zero
+new mutation, status DUPLICATE + reconciled prior result); CONFLICT → throw before any write (FAILED);
+record after APPLIED. No DUPLICATE→WRITE / CONFLICT→WRITE / DENY→WRITE path.
+
+Proven end-to-end (runtime/core/idempotency-live.test.js, real patch-executor): first keyed run ⇒ APPLIED
++ journal persisted; replay ⇒ DUPLICATE ⇒ zero new mutation + reconcile; ALLOW then stale CAS ⇒ CONFLICT
+⇒ zero mutation, FAILED; ALLOW + matching CAS ⇒ APPLIED; admission DENY precedes idempotency ⇒ zero
+mutation; legacy no-key ⇒ APPLIED + no journal. tsc clean; npm test 283 files exit 0 (+ all prior V5 +
+Phase 0 8/8); next build exit 0. Write-set: patch-executor.js (wiring) + idempotency-live.test.js (NEW).
+STAGE 5 LIVE COMPLETE + PROVEN (behaviour demonstrated on the concerned path, not mere presence).
+
+**Next:** couple the idempotency CAS to a REAL per-run canonical state VERSION source (today plan.stateVersion
+is caller-supplied; a pipeline-stamped version would make CAS automatic) — a follow-up, non-blocking. Then
+Stage 6 Evaluation/Regression (baseline→attribution→promotion) if a reachable gap is demonstrated. No CTO
+frontier (economic metering remains the only deferred business-decision frontier).
