@@ -3539,3 +3539,28 @@ routes + Phase 0 8/8 — no regression on the edits/APPLIED path); next build ex
 contract truthful, backward-compatible, deny/allow/escalate proven, no mutation before admission).
 
 **Next:** Stage 3 Budget + Cost Accounting — inspect dependency-readiness against FICHE_03.
+
+### STAGE 3 — BUDGET + COST ACCOUNTING, FIRST INCREMENT (2026-10-03)
+Canonical (FICHE_03 §185): budget state AVAILABLE→RESERVED→COMMITTED→SPENT→RECOVERABLE→REMAINING; unexpected
+spend triggers REPLAN/ESCALATE/SUBSTITUTE/RESTRICT/SAFE_STOP; "exhaustion is not permission to silently
+lower quality or violate authority"; buckets mission/capability/provider/token/compute/verification/
+human-attention/reserve. Dependency satisfied (Stage 2 action gate now live to meter per-action cost).
+
+Implemented runtime/core/budget-ledger.js — a PURE, deterministic ledger over CALLER-DECLARED units
+(invents NO economic value, sets NO price; real money/settlement = Stage 9, not here). Operations
+reserve/commit/spend/release return a NEW frozen ledger. Enforces: no overspend (reserve beyond AVAILABLE
+refused + exhaustion with canonical triggers, available never negative); no double-commit/double-spend
+(strict RESERVED→COMMITTED→SPENT); release = recovery (RESERVED/COMMITTED→AVAILABLE; SPENT terminal, undo
+is a NEW governed action per FICHE_07 §11); conservation total===available+reserved+committed+spent. Same
+pure-module + read-only CLI style as state-transition.js / action-gate.js.
+
+Proof: runtime/core/budget-ledger.test.js 20 assn (full lifecycle; overspend refusal + triggers + no
+mutation on refusal; exact-limit then exhaustion; no double-commit/spend; release recovery + SPENT
+terminal; bad inputs; determinism). tsc clean; npm test 281 files exit 0 (+ both Stage-2 suites + Phase 0
+8/8); next build exit 0. Write-set: 2 NEW files (additive, zero regression surface). FIRST INCREMENT COMPLETE.
+
+**Next V5 increments (dependency order):** (a) a cost-accounting ADAPTER that meters each live action
+gate decision / provider call into a budget-ledger bucket (couples Stage 2 ↔ Stage 3), and (b) wiring the
+ledger's exhaustion signal to the pipeline's REPLAN/ESCALATE/SAFE_STOP. Then Stage 4 Evidence (already
+largely COMPLETE in Phase 0) / Stage 5 Recovery hardening. No CTO frontier reached — Stage 3 accounting is
+pure mechanism; pricing / real-money settlement (Stage 9) is the first genuine business-decision frontier.
