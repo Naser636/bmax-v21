@@ -3044,3 +3044,49 @@ ledger/provider/roadmap change; no proof artifact created; nothing pushed.
   - Future work, if any, requires a NEW explicit CTO decision and authorization.
 
 STATUS: PHASE 0 ACCEPTED AS FINAL (P0-CURRENT-064); no further action authorized.
+
+## P0-CURRENT-065 — CTO CONTROL PASS: RESOLUTION C-02 / C-04 / C-06 (bootstrap unblocking only)
+HEAD: 31ecd11. Documentation-only CTO decision record. Recorded here because this carnet is the
+register already used for CTO decisions (P0-050/061/062/064) and is NON-authoritative (evidentiary):
+NOT written into runtime/governance/directives/CTO_DIRECTIVES.md, which is an ACTIVE governance
+contract (loaded before every mission) and must not be altered by this pass. No Master/Constitution/
+Roadmap/missions.json/evidence/runtime/code change; no mission executed; Phase 0 NOT reopened.
+
+--- C-02 CONSTITUTIONS ---
+  - docs/CONSTITUTION_EDG_v1.md governs the EDG perimeter.
+  - runtime/governance/constitution/RUNTIME_CONSTITUTION.md + runtime/constitution/runtime-constitution.json
+    govern the Runtime perimeter.
+  - Do NOT merge the two Constitutions; do NOT create a new Constitution.
+  - Real conflict on the SAME perimeter without an existing resolution rule ⇒ CTO_DECISION_REQUIRED.
+  - runtime-constitution.json remains the ACTIVE governance-kernel representation when a Runtime rule applies.
+
+--- C-04 ROADMAP vs MISSIONS REGISTRY ---
+  - runtime/governance/ROADMAP.json is the reference execution roadmap (self-declared official
+    machine-readable single ordered list).
+  - runtime/governance/missions.json remains a DISTINCT registry; it is NOT a second execution roadmap.
+  - Do NOT delete or modify missions.json in this step.
+  - Any future use of missions.json as authority requires explicit proof/authorization.
+
+--- C-06 OPERATIONAL COMPILATION HIERARCHY (compilation rule only) ---
+  MASTER > GOVERNANCE/AUTHORITY > METHOD > ROADMAP > CURRENT AUTHORIZATION > REPOSITORY TRUTH >
+  EVIDENCE > EXECUTION PLAN.
+  - This is a COMPILATION ordering for the future Operational Directive; it does NOT replace the
+    Master/Method truth hierarchy, does NOT make the Operational Directive an authority, and never
+    lets Claude Code invent an authorization. No new primitive/kernel/Constitution/canonical source.
+
+--- MASTER / METHOD SEMANTIC INVARIANTS (reaffirmed, not created) ---
+  - exactly 9 permanent primitives; no 10th primitive.
+  - the Master remains the semantic authority.
+  - verified reality + evidence prevail over documentary assertions for establishing truth.
+  - repository truth = observed state, not authority; evidence = proof bounded to its scope, not authorization.
+  - historical != current; PLANNED != AUTHORIZED != EXECUTED != VERIFIED != ACCEPTED != RELEASED.
+  - Phase 0 remains CLOSED; no post-Phase-0 action is authorized by this control pass.
+  - the Operational Directive will be a compiled, traceable projection — never a competing source.
+
+--- RESIDUAL ---
+  C-01/C-05 already resolved by existing hierarchy (P0-CURRENT audit). C-03 (method duplicate / "V5"
+  label absent) remains UNKNOWN and is NOT resolved here. "Méthode V5" is not present as a named repo
+  artifact; the method of record remains docs/METHODE_DE_TRAVAIL.md unless the CTO rules otherwise.
+
+STATUS: C-02/C-04/C-06 RESOLVED by CTO control pass (bootstrap unblocking); C-03 UNKNOWN; Phase 0 CLOSED;
+no new authority created; COMMAND 03 (Operational Directive) NOT started.
