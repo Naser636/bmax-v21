@@ -3428,3 +3428,38 @@ C03_CONTRACT descriptor; mutates nothing. Evidence = the green test transcript a
 **Limitations remaining (not in scope; no code written for these).** Contract + validator only — no
 runtime writer/store wired yet; §76 full provenance identity (OBJECTIVE_VERSION / WORKGRAPH_ID) and
 §387 World Model still MISSING and depend on a future increment. STOP after this checkpoint per mission.
+
+## NO-FALSE-SUCCESS CAMPAIGN + CONVERGENCE CONFIRMATION (2026-10-03)
+
+Whole-repository false-success eradication across the live verdict/exit/evidence surface, then a governed
+continuation cycle that confirmed the roadmap is CONVERGED. Branch runtime/mission-context-builder.
+
+**Repairs committed + pushed this session (each: reproduce → root cause → minimal fix → regression →
+tsc → full npm test → next build → runtime verify → commit → push, local==origin):**
+- eae5ea3 ROOT CAUSE #1 — RuntimeExecutor self-fulfilling verdict (registry-count tautology) → genuine
+  class-aware objective evidence (objective-evidence.ts).
+- d856d58 mission-ledger proven-gate default-ALLOW → default-DENY (absent/mismatched report refused).
+- 8431da8 odg-verify.js always-exit-0 → truthful exit (build/tsc/gitClean); revived odg-delegate +
+  system-ready gates; pipeline pre-flight uses --report-only.
+- abcd9df mission-cli LOCAL route exit 0 on validated:false → exit reflects validated verdict.
+- 3d0f299 provider route fabricated APPLIED for all objectives → attributed from provider
+  objectivesAddressed (unaddressed ⇒ RECORDED, A3-blocked for engineering).
+- 6a4e4cb provider route dropped contract verify proofs → resolveProviderPlanVerify propagates declared
+  + intent-implied proofs (shared resolveVerifyProbes) into the plan.
+- 7328f20 opt-in ObjectiveSpec.proof gate — capability-probes.evaluateObjectiveProofs + validation-engine
+  conjunction + plan propagation (both routes); declared proof failing/absent ⇒ mission BLOCKED.
+
+**Convergence truth (repository evidence, not memory).** computeRuntimeModel() ⇒ converged:true,
+nextMission:SYSTEM_READY, queue:[], outstanding:[]; all 8 ROADMAP.json missions
+(M0000/M0001/M0002/CLEAN_RUNTIME_WORKSPACE/PROVIDER_ENABLED_SMOKE_V1/UNIFY_RUNTIME_EXECUTION/
+DYNAMIC_MISSION_CONTRACT_FACTORY/AUTONOMOUS_CONTRACT_EVOLUTION) have contract present + proven ledger
+entry. Honest, not stale: full npm test 278 files exit 0; tree clean; `odg mission M0000` ⇒ Validated:true
+exit 0 under all strengthened gates. Phase 0 remains CERTIFIED.
+
+**Dormant (recorded, NOT reachable, not reopened per mandate):** src/runtime/objective-evidence.ts
+(migrated-local RuntimeReporter route) carries objectiveSpecs[].proof but does not gate it — unreachable
+while MIGRATED_MISSIONS are read-only audits that declare no objective proof.
+
+**Position.** No outstanding roadmap item; next runtime step is SYSTEM_READY. No CTO frontier open — the
+previously-reported ObjectiveSpec.proof frontier was authorized and implemented (7328f20). STOP at
+condition A (roadmap complete + verified; no immediately actionable safe work remains).
