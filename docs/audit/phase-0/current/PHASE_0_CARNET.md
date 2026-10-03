@@ -3328,3 +3328,103 @@ It does NOT certify the semantic correctness of the model's content, and does NO
 
 STATUS: P0-CURRENT-069 CONCLUDED — Canonical State VERIFIED-PRESENT; Semantic Truth BLOCKED (spec absent);
 no code change; Phase 0 CLOSED.
+
+
+## P0-CURRENT-069-G — GAP ANALYSIS — CANONICAL STATE / SEMANTIC TRUTH (V5 §420 #1)
+
+**Authorization:** P0-CURRENT-069.  **HEAD:** `10d7c422bc6b7280a2d0880127c364e9cea79295`.  **Mode:** read-only forensic; no code changed.
+**Target source:** Final Master V5 (non-authoritative working reference, docs/odg-master-v5/source/,
+commit 10d7c42). §420 official implementation priority #1 = "CANONICAL STATE / SEMANTIC TRUTH".
+Anchors: C03 State/Transition; §21 Canonical Domain State; §387 World Model; §73/§76/§82/§94/§398
+semantic linkage MISSION→OBJECTIVE→ACTION→OUTCOME→PROOF. Corpus gap noted: §169-174, §236-237 absent.
+
+### The target splits into two halves with DIFFERENT current status
+
+**SEMANTIC TRUTH — substantially PRESENT (reuse, do not rebuild).**
+- `src/runtime/mission-orchestrator.ts` compiles mission spec → semantic plan
+  (actions/dependencies/postconditions from done_when/verificationRequirements) = the §16/§82
+  "MISSION SPEC → COMPILER → CANONICAL MISSION OBJECT" boundary.
+- `src/runtime/phase0-s6-compiler-coverage.test.ts` certifies the full chain MISSION→INTENT→
+  OBJECTIVES→…→EXPECTED OUTCOMES→VERIFICATION and that outcomes are a function of the mission
+  (semantically different missions → different graphs) — directly answers §74.
+- `runtime/core/objective-attribution.js` joins SEMANTIC (objectiveId+done_when) to ACTUAL
+  (executed[]+status+evidence) by objectiveId, verdicts EVIDENCED/RECORDED-NO-EVIDENCE/FAILED/
+  UNMATCHED/INCONSISTENT = the §73/§76/§110 objective↔outcome↔proof linkage.
+- `src/runtime/runtime-reporter.ts`: SUCCESS requires postcondition passed AND non-failing proof
+  present (§75/§84). `autonomy-runtime-adapter.ts` is SOLE author of the canonical mission verdict (§94).
+- Partial gap: full provenance identity of §76 is incomplete — objectiveId exists, but
+  OBJECTIVE_VERSION / STATE_VERSION / WORKGRAPH_ID are not carried.
+
+**CANONICAL STATE (C03) — the genuine MISSING piece.**
+- Forensic search for `state_before / observed_effect / state_version / expected_state_after /
+  actual_state_after / evidence_refs / verification_status` across runtime/core, runtime/bin,
+  src/runtime, src/core, src/engine returned EMPTY.
+- What exists is adjacent but NOT C03: `runtime/core/runtime-model.js` = deterministic SNAPSHOT of
+  current model state (no transitions); `runtime/governance/state-machine.json` = mission LIFECYCLE
+  (CREATED→…→ARCHIVED, no per-entity observed-effect/diff/evidence); `src/core/*-state.ts` = domain
+  slices. None implements the canonical truth model `STATE_before → ACTION → OBSERVED_EFFECT →
+  STATE_after` with version (optimistic concurrency), difference, evidence_refs, verification_status.
+
+### GAP_MAP (per §102/§H classification)
+- SEMANTIC COMPILATION BOUNDARY ............. PRESENT / VERIFIED (phase0-s6 test)
+- OBJECTIVE→OUTCOME→PROOF ATTRIBUTION ........ PRESENT / VERIFIED (objective-attribution + reporter)
+- SINGLE VERDICT / SOURCE-OF-TRUTH ........... PRESENT (autonomy-runtime-adapter, runtime-model)
+- §76 FULL PROVENANCE IDENTITY (versions) .... PARTIAL (objectiveId only)
+- C03 STATE-TRANSITION RECORD ................ MISSING (root gap)
+- §387 WORLD MODEL / EPISTEMIC STATE ......... MISSING (depends on C03)
+
+### ROOT GAP
+The single smallest missing governed capability for §420 #1 is the **C03 State/Transition record
+contract**: a versioned `state_transition` schema (`STATE_before→ACTION→OBSERVED_EFFECT→STATE_after`
++ state_version + difference + evidence_refs + verification_status) with a deterministic validator.
+Per V5 §341/§391, the correct first increment is the CONTRACT + VALIDATOR, not a runtime — existing
+STATE snapshot (runtime-model), lifecycle (state-machine), and objective-attribution feed/consume it.
+
+### PROPOSED MINIMAL NEXT MISSION (not executed; awaiting go)
+- ONE OBJECTIVE: add the C03 state_transition record contract + deterministic validator + test.
+- AUTHORIZED WRITE SET (proposed): one new module under `runtime/core/` (e.g. state-transition.js) +
+  its `*.test.js`. No change to existing primitives/kernel; additive only.
+- ACCEPTANCE/PROOF: validator rejects a record missing any required field or with
+  state_version_after ≤ state_version_before; accepts a well-formed transition; test green;
+  determinism preserved; tree clean.
+- STOP CONDITION: any mutation outside the two new files ⇒ STOP; no second state source created.
+
+STATUS: GAP ANALYSIS COMPLETE — Semantic Truth substantially PRESENT; Canonical State C03 record is
+the root MISSING gap. No code changed. Awaiting go for the proposed minimal C03-contract mission.
+
+
+## P0-CURRENT-069 — C03-contract — CHECKPOINT COMPLETE (resumed after VPS disconnect)
+
+**Authorization:** P0-CURRENT-069 C03-contract (go given on the GAP ANALYSIS above). **HEAD-before:**
+`10d7c422bc6b7280a2d0880127c364e9cea79295`. The prior session had DISPLAYED the create prompt but the
+VPS dropped before any write: forensic inspection of the working tree confirmed `state-transition.js`
+did NOT exist and the only tree change was this carnet — so the authorized file was created from
+scratch (not recreated over existing work).
+
+**Files actually modified (strict write-set + authorized carnet checkpoint):**
+- `runtime/core/state-transition.js` (NEW) — the C03 contract + deterministic validator.
+- `runtime/core/state-transition.test.js` (NEW) — targeted test, 36 assertions.
+- this carnet entry (3rd file, explicitly authorized for the checkpoint record).
+No existing primitive/kernel/runtime/architecture touched; no parallel state source created.
+
+**Contract.** `STATE_before → ACTION → OBSERVED_EFFECT → STATE_after`, required fields: state_before,
+action, observed_effect, state_after, state_version_before, state_version_after, difference,
+evidence_refs, verification_status. Controlled vocabulary VERIFICATION_STATUS = VERIFIED / REJECTED /
+RECORDED / UNVERIFIED; PROOF-REQUIRING = {VERIFIED, REJECTED}. Invariants I1–I7 enforced by a pure
+`validateStateTransition` (I2 strict state_version_after > state_version_before; I3 evidence_refs is a
+string[]; I4 status membership; I5 proof-requiring ⇒ ≥1 evidence_ref; I6 a version advance implies a
+real canonical change; I7 pure/deterministic, fixed error order). Reuses the system's epistemic
+honesty — RECORDED is coverage, never a proof — consistent with objective-attribution.js.
+
+**Tests executed / results.** `node runtime/core/state-transition.test.js` ⇒ 36/36 assertions passed
+(valid accepted; malformed rejected; strict version advance; evidence_refs controlled;
+verification_status controlled; proof-requiring statuses demand evidence; deterministic; no-op change
+rejected; runtime-model-shaped snapshot compatibility). **Regression:** scope-observer 41,
+objective-attribution 45, runtime-model 17, mission-context-builder 11, checkpoint-engine 13 — all green.
+
+**Runtime verify / evidence.** `node runtime/core/state-transition.js` (read-only CLI) emits the frozen
+C03_CONTRACT descriptor; mutates nothing. Evidence = the green test transcript above + the descriptor.
+
+**Limitations remaining (not in scope; no code written for these).** Contract + validator only — no
+runtime writer/store wired yet; §76 full provenance identity (OBJECTIVE_VERSION / WORKGRAPH_ID) and
+§387 World Model still MISSING and depend on a future increment. STOP after this checkpoint per mission.
