@@ -15,15 +15,31 @@ function readJsonSafe(file) {
 }
 
 function recordMission(mission) {
-  // Proven-only gate: never record a mission the Validation Engine explicitly marked NOT validated.
-  // In the odg-run / mse path the Validation Engine writes mission-report.json for THIS mission and
-  // exits non-zero when it is not proven (so this stage is not even reached). This check is the
-  // defensive backstop: if a mission-report for this exact mission exists and is not validated, the
-  // ledger refuses to append. (The autonomy provider path archives only after a Release Manager
-  // RELEASE; there the report may be absent or for another mission, so it is not blocked here.)
+  // Proven-only gate (DEFAULT-DENY). `proven: true` is recorded ONLY when the Validation Engine's
+  // report for THIS EXACT mission says validated === true. A report that is ABSENT, belongs to
+  // ANOTHER mission, or is not validated is NOT proof, so the ledger refuses to append.
+  //
+  // Previously this gate was default-ALLOW: it refused only when a mission-matched report existed
+  // AND said validated !== true. An absent or mismatched report slipped through and was stamped
+  // `proven: true` with no evidence — reachable from callers that never ran the Validation Engine
+  // first (fleet-dispatcher records at request-dispatch time; fleet-collector on a governance-only
+  // "VALIDATED" exchange; any out-of-band `node mission-ledger.js <mission>`). Default-deny closes
+  // that bypass while preserving every legitimate caller, each of which already writes a
+  // mission-matched validated report BEFORE recording:
+  //   - mse/odg-run pipeline: the Validation Engine stage (runs before this stage, exits non-zero
+  //     and halts the pipeline when not proven);
+  //   - src/runtime LOCAL route: ledger-record-adapter writes the honest report, then records;
+  //   - autonomy RELEASE path: AutonomyRuntimeAdapter runs the Validation Engine for the mission
+  //     (writing its report) and only RELEASEs/archives on validated === true.
   const report = readJsonSafe("runtime/generated/mission-report.json");
-  if (report && report.mission === mission && report.validated !== true) {
-    console.warn(`[MissionLedger] Refusing to record "${mission}": validation not proven (status=${report.status}).`);
+  const proven = !!report && report.mission === mission && report.validated === true;
+  if (!proven) {
+    const why = !report
+      ? "no mission-report for this mission"
+      : report.mission !== mission
+        ? `report is for "${report.mission}", not "${mission}"`
+        : `validation not proven (status=${report.status})`;
+    console.warn(`[MissionLedger] Refusing to record "${mission}": ${why}.`);
     return { skipped: true, reason: "UNPROVEN", entry: { mission } };
   }
 
