@@ -70,7 +70,14 @@ function loadConfig(configPath) {
 // Match `path/to/file.ts(12,34): error TS1234: message`
 const DIAG_RE = /^(.+?)\((\d+),(\d+)\):\s+error\s+(TS\d+):\s+(.*)$/;
 
-function collectErrors(cfg, cwd) {
+// Run the typecheck once and return BOTH the parseable per-file diagnostics AND whether the process
+// exited cleanly. `exitedClean` mirrors runBuild's discipline exactly: a non-zero status, a signal
+// (e.g. timeout SIGTERM), or a spawn error all mean "typecheck not green". This matters because tsc
+// can FAIL without emitting any `path(line,col): error TSxxxx:` line — e.g. a config error (TS18003
+// "No inputs were found", TS5083 "Cannot read file 'tsconfig.json'"), a crash/OOM, or tsc not being
+// on PATH. Counting parseable diagnostics alone would then read "0 errors" and flip a provably-red
+// gate to green (a false success); carrying the exit status lets the final verdict refuse that.
+function typecheck(cfg, cwd) {
     const [cmd, ...args] = cfg.typecheckCommand;
     const r = spawnSync(cmd, args, { cwd, encoding: "utf8" });
     const out = `${r.stdout || ""}\n${r.stderr || ""}`;
@@ -86,7 +93,15 @@ function collectErrors(cfg, cwd) {
             message: m[5].trim(),
         });
     }
-    return diagnostics;
+    const exitedClean = r.status === 0 && !r.signal && !r.error;
+    return { diagnostics, exitedClean };
+}
+
+// Backward-compatible view used by the repair loop (which needs only the diagnostic COUNT to measure
+// strict improvement) and by the _internal test surface. The final verdict uses typecheck() directly
+// so it can also honour the exit status.
+function collectErrors(cfg, cwd) {
+    return typecheck(cfg, cwd).diagnostics;
 }
 
 function runBuild(cfg, cwd) {
@@ -319,8 +334,14 @@ function recover(opts = {}) {
         break;
     }
 
-    const finalDiagnostics = diagnostics.length === 0 ? [] : collectErrors(cfg, cwd);
-    const typescript = finalDiagnostics.length === 0;
+    // Final verdict — authoritative TS-green determination. Re-run the typecheck once and require BOTH
+    // zero parseable diagnostics AND a clean process exit. Zero diagnostics alone is NOT sufficient: a
+    // tsc run can exit non-zero with no file-anchored diagnostics (config error / crash / spawn
+    // failure), and treating that as green would promote a mission on a provably-red gate. Mirrors
+    // runBuild's exit-status discipline so "no parseable errors" can never masquerade as "tsc passed".
+    const finalTypecheck = typecheck(cfg, cwd);
+    const finalDiagnostics = finalTypecheck.diagnostics;
+    const typescript = finalDiagnostics.length === 0 && finalTypecheck.exitedClean;
     const build = typescript ? (wantBuild ? runBuild(cfg, cwd) : true) : false;
     const providerAuthorized = !(build && typescript);
 

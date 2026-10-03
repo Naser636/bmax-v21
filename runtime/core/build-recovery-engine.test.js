@@ -135,4 +135,50 @@ function run(dir, authorizedPaths) {
     fs.rmSync(dir, { recursive: true, force: true });
 })();
 
+// --- Case 4: a tsc failure with NO parseable diagnostics must stay RED (no false green) ----------
+// Regression for the no-false-success bypass: `collectErrors` only matched `path(line,col): error
+// TSxxxx:` lines, so a tsc run that exits non-zero WITHOUT any file-anchored diagnostic (config error
+// TS18003/TS5083, a crash/OOM, or a spawn failure) produced 0 diagnostics and the gate was declared
+// green. We reproduce that class by injecting a typecheck command that exits 1 while printing only a
+// non-anchored "No inputs were found" message. The gate MUST read red and the Provider MUST escalate.
+(function tscFailsWithoutDiagnostics() {
+    console.log("Case 4 — tsc fails with no parseable diagnostics ⇒ gate stays RED (no false green)");
+    const dir = makeProject({ "src/x.ts": "export const z = 1;\n" });
+    const r = bre.recover({
+        cwd: dir,
+        authorizedPaths: ["src"],
+        runBuild: false,
+        mission: "BUILD_GATE_AUTONOMY_TEST",
+        // Exits non-zero; the message carries "error TS18003" but NOT a `path(line,col):` prefix, so it
+        // never matches DIAG_RE ⇒ zero parseable diagnostics, the exact false-green trigger.
+        typecheckCommand: [
+            process.execPath,
+            "-e",
+            "process.stderr.write('error TS18003: No inputs were found in config file.\\n'); process.exit(1)",
+        ],
+    });
+    ok("typescript gate is RED despite 0 parseable diagnostics", r.typescript === false);
+    ok("build gate is RED (derives from red tsc)", r.build === false);
+    ok("Provider IS authorized (gate provably not green)", r.providerAuthorized === true);
+    ok("no false improvement claimed", r.improved === false);
+    fs.rmSync(dir, { recursive: true, force: true });
+})();
+
+// --- Case 5: a clean typecheck with zero diagnostics is still GREEN (fix does not over-block) ------
+(function tscCleanStaysGreen() {
+    console.log("Case 5 — clean tsc (exit 0, 0 diagnostics) ⇒ gate stays GREEN");
+    const dir = makeProject({ "src/x.ts": "export const z = 1;\n" });
+    const r = bre.recover({
+        cwd: dir,
+        authorizedPaths: ["src"],
+        runBuild: false,
+        mission: "BUILD_GATE_AUTONOMY_TEST",
+        typecheckCommand: [process.execPath, "-e", "process.exit(0)"], // exit 0, no output
+    });
+    ok("typescript gate is GREEN on a clean exit", r.typescript === true);
+    ok("build gate GREEN (runBuild:false ⇒ derives from tsc)", r.build === true);
+    ok("Provider NOT authorized on a green gate", r.providerAuthorized === false);
+    fs.rmSync(dir, { recursive: true, force: true });
+})();
+
 console.log(`\nBUILD RECOVERY ENGINE — ${passed} assertions passed.`);
