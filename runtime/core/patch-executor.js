@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const capabilityExecutors = require("./capability-executors");
+const { admitPatchEdit } = require("./patch-action-contract");
 
 const GENERATED_DIR = "runtime/generated";
 
@@ -184,6 +185,22 @@ for (const patch of plan.patches) {
     // recording the action. Symbolic patches (no `edits`) fall through to the legacy switch below,
     // so historical behavior is unchanged.
     if (Array.isArray(patch.edits) && patch.edits.length > 0) {
+      // V5 Stage 2 admission gate (FICHE_01 §13/§15): a consequential WRITE passes through the
+      // Action/Contract/Policy gate BEFORE any mutation. OBSERVE-THEN-ENFORCE — a patch that declares
+      // an explicit Action Contract (or the plan/env opts in) is ENFORCED: a non-ALLOW decision throws
+      // here, BEFORE any file is written (so a denied/escalated action mutates nothing, recorded FAILED
+      // by the outer catch). A legacy patch with no Action Contract is OBSERVED: the decision is
+      // recorded as audit (enforced:false) and the existing WRITE still executes — authorized_paths is
+      // NEVER treated as authority, so the recorded decision is a truthful DENY, not a silent grant.
+      const admissions = patch.edits.map((edit) => admitPatchEdit(patch, edit, plan));
+      const blocked = admissions.find((a) => a.enforced && a.decision !== "ALLOW");
+      if (blocked) {
+        const why = blocked.violations.length
+          ? blocked.violations.join("; ")
+          : blocked.escalation.reasons.join("; ");
+        throw new Error(`action gate ${blocked.decision} (${blocked.target}): ${why || "not admitted"}`);
+      }
+
       const applied = [];
       for (const edit of patch.edits) {
         if (!isAuthorizedTarget(edit.target)) {
@@ -210,6 +227,9 @@ for (const patch of plan.patches) {
         objectiveId: patch.objectiveId || patch.action,
         status: "APPLIED",
         files: applied,
+        // Audit the admission decision (truthful; never a success claim). For legacy patches this is
+        // the observed decision under enforced:false — a visible compatibility state, not a bypass.
+        admission: admissions.map((a) => ({ target: a.target, decision: a.decision, enforced: a.enforced })),
       });
       continue;
     }

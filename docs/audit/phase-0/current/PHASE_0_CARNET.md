@@ -3510,3 +3510,32 @@ file touched → zero regression surface until wired). Commit + push; local==ori
 the gate into the live pre-WRITE point (patch-executor) so consequential actions are admission-checked,
 then (b) Stage 3 Budget + Cost Accounting (FICHE_03 §: AVAILABLE→RESERVED→COMMITTED→SPENT→RECOVERABLE→
 REMAINING), which depends on the action gate to meter per-action cost. No CTO frontier reached.
+
+### STAGE 2 — LIVE WIRING COMPLETE (2026-10-03)
+Fiche 7 verified present + git-tracked + valid (method chain line 6; Action-Contract/evidence≠verification/
+recovery/human-authority/checkpoint/"MASTER FROZEN. REPOSITORY OPEN. PROOF BEGINS." line 147).
+
+The consequential WRITE path is the patch-executor `edits` branch (only authorized_paths file mutation).
+Reproduced: it mutated files + recorded APPLIED with ZERO pre-write admission. Wired the Stage-2 gate there.
+
+**Patch→Action-Contract model (truthful, no manufactured authority):** new runtime/core/patch-action-contract.js
+compiles a FICHE_07 §6 Action Contract for each WRITE edit from REAL data — principal "odg-runtime",
+verb=action, target=edit.target, scope=authorizedPaths (SCOPE, explicitly NOT authority), actionClass
+WRITE, reversibility R1 default (git-compensable). authority/contract/policy/criticality/risk/
+expectedTransition read ONLY from explicit patch fields (patch.actionContract or patch.*) — NEVER derived
+from authorized_paths. OBSERVE-THEN-ENFORCE: enforced iff the patch declares an explicit Action Contract
+(authority present) OR plan.enforceActionGate / env ODG_ENFORCE_ACTION_GATE=1. Under enforcement a
+non-ALLOW decision THROWS before any writeFileSync (outer catch → FAILED, zero mutation); otherwise the
+decision is recorded as `admission` audit (enforced:false) and the legacy WRITE still executes.
+
+**Proven (real patch-executor, runtime/core/action-gate-live.test.js, 15 assn):** explicit valid contract
+⇒ ALLOW ⇒ file written; enforce + missing authority ⇒ DENY ⇒ ZERO mutation + FAILED; explicit + R4 ⇒
+ESCALATE ⇒ ZERO mutation; legacy no-contract ⇒ OBSERVE ⇒ writes + truthful DENY admission (enforced:false);
+authorized_paths target ⇒ still DENY under enforcement (scope≠authority). Inspected: gate strictly precedes
+all writes (L195-201 before L211/219); no DENY→ALLOW fallback; no false APPLIED after deny; admission is
+audit (never a success claim). tsc clean; npm test 280 files exit 0 (both Stage-2 suites + A3 + provider
+routes + Phase 0 8/8 — no regression on the edits/APPLIED path); next build exit 0. Write-set: patch-executor.js
+(wiring) + patch-action-contract.js (NEW) + action-gate-live.test.js (NEW). STAGE 2 COMPLETE (gate live,
+contract truthful, backward-compatible, deny/allow/escalate proven, no mutation before admission).
+
+**Next:** Stage 3 Budget + Cost Accounting — inspect dependency-readiness against FICHE_03.
