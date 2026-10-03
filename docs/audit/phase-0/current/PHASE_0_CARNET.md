@@ -3090,3 +3090,43 @@ Roadmap/missions.json/evidence/runtime/code change; no mission executed; Phase 0
 
 STATUS: C-02/C-04/C-06 RESOLVED by CTO control pass (bootstrap unblocking); C-03 UNKNOWN; Phase 0 CLOSED;
 no new authority created; COMMAND 03 (Operational Directive) NOT started.
+
+## P0-CURRENT-066 — CTO CONTROL PASS: SNAPSHOT RETENTION POLICY (governance record only)
+HEAD: e41bc30. Governance/documentation decision ONLY. NO deletion, no code/runtime change, no
+migration/rename/cleanup. Context: the read-only CLEANUP INVENTORY (917 tracked files under the
+historical snapshot dirs, unreferenced by active code). This decision authorizes NO deletion.
+
+--- CTO RETENTION POLICY ---
+  1. PRINCIPLE — snapshots/archives are historical artifacts; "unreferenced by active code" does NOT
+     mean "deletable".
+  2. RETAIN by default any artifact under runtime/archive/**, runtime/backup/**, runtime/history/**,
+     runtime/local-recovery/**, runtime/releases/** that holds ANY of: execution/migration provenance;
+     proof or audit support; Phase-0 history; regression/comparison value; recovery/rollback
+     capability; traceability of a decision/fix/release; historical documentation of system state.
+  3. NO AUTOMATIC AGE DELETION — age alone is never a deletion reason.
+  4. NO AUTOMATIC UNREFERENCED DELETION — absence of references from runtime/bin, runtime/core, src is
+     never, by itself, authorization to delete.
+  5. DUPLICATES — a future deletion candidate ONLY if ALL hold: content demonstrably identical/strictly
+     redundant; provenance + historical value covered elsewhere; no useful reference depends on the
+     path; deletion does not reduce audit/regression/recovery capability; explicit risk analysis proves it.
+  6. LOCAL-RECOVERY PATCHES — runtime/local-recovery/.runtime-patches/**: NOT deleted now; retained
+     until explicitly proven obsolete, non-recoverable, and without provenance/regression value.
+  7. LEGACY ENGINE/KERNEL — runtime/history/mission_standard_*, runtime/history/*kernel*,
+     runtime/kernel/** remain historical until proven to carry NO provenance/audit/regression/recovery
+     value; the name alone is insufficient to conclude deletion.
+  8. FUTURE CLEANUP GATE — no real cleanup on these dirs without a SEPARATE later campaign including at
+     minimum: Truth Lock; exact scope; file inventory; duplication/obsolescence proof; reference search;
+     provenance/audit/regression/recovery analysis; deletion risk; rollback plan if applicable; exact
+     proposed-deletion list; post-deletion verification; checkpoint.
+  9. DEFAULT — when in doubt: RETAIN.
+  10. CURRENT DECISION — the 917 files currently identified under runtime/archive/**, runtime/backup/**,
+      runtime/history/**, runtime/local-recovery/**, runtime/releases/** REMAIN RETAINED. No file is
+      deleted in this campaign.
+
+--- SCOPE / GUARANTEES ---
+  This decision authorizes NO deletion. Any future deletion requires the separate governed campaign of
+  §8. Phase 0 remains CLOSED. ODG_OPERATIONAL_DIRECTIVE.md remains a non-authoritative projection. No
+  new authority created; Master/Constitution/Method/Roadmap/missions.json/Evidence unchanged.
+
+STATUS: SNAPSHOT RETENTION POLICY RECORDED (P0-CURRENT-066); 0 deletion authorized; future cleanup
+gated by §8; Phase 0 CLOSED.
