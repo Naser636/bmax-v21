@@ -3463,3 +3463,15 @@ while MIGRATED_MISSIONS are read-only audits that declare no objective proof.
 **Position.** No outstanding roadmap item; next runtime step is SYSTEM_READY. No CTO frontier open — the
 previously-reported ObjectiveSpec.proof frontier was authorized and implemented (7328f20). STOP at
 condition A (roadmap complete + verified; no immediately actionable safe work remains).
+
+### SYSTEM-READY OPERATIONAL CHECK (2026-10-03, HEAD 6eea751)
+Ran the real `odg system-ready` (verify → freeze → status, fail-fast). EXIT 0; "SYSTEM READY" emitted.
+Machine-readable (not terminal text): runtime-verify.json build=true/typescript=true/gitClean=true,
+generatedContracts 80/80 valid; runtime-freeze.json status=FROZEN. computeRuntimeModel ⇒ converged:true,
+status:READY, nextMission:SYSTEM_READY, queue:0, outstanding:0, proven 149/152. The 3 non-proven are
+NON-EXECUTABLE artifacts (MASTER_PLAN_V1 orchestration-plan; RUNTIME_PROVIDER_ORCHESTRATOR_M3.pack and
+RUNTIME_PROVIDER_REGISTRY_M4.pack evidence-packs — 0 objectives, executable=false) and appear in neither
+queue nor outstanding, so convergence hides no real work. All 8 ROADMAP.json missions PROVEN; git
+uncommitted=0 (matches gitClean), local==origin 0/0. No regression → no repair. ROADMAP.json declares no
+further execution surface; §76/§387 are V5 reference, not authority. HANDOFF: repository operationally
+SYSTEM_READY, awaiting the next authoritative work definition. STOP (no authorized next work).
