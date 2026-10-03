@@ -18,7 +18,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { MissionLoader } from "./mission-loader";
+import { MissionLoader, ObjectiveSpec } from "./mission-loader";
 import { MissionOrchestrator } from "./mission-orchestrator";
 
 let failures = 0;
@@ -68,11 +68,11 @@ for (const [id, body] of Object.entries(fixtures)) {
   fs.writeFileSync(path.join(dir, `${id}.json`), JSON.stringify(body, null, 2), "utf8");
 }
 
-const specsOf = (id: string): any[] =>
+const specsOf = (id: string): ObjectiveSpec[] =>
   new MissionLoader(undefined, undefined, dir).load(id, id).brain.objectiveSpecs;
 // Transport to the plan: the orchestrator carries RuntimeMission verbatim, so the binding is
 // reachable at plan.mission.brain.objectiveSpecs — with NO orchestrator/step change.
-const planSpecsOf = (id: string): any[] =>
+const planSpecsOf = (id: string): ObjectiveSpec[] =>
   new MissionOrchestrator(new MissionLoader(undefined, undefined, dir)).buildPlan(id, id)
     .mission.brain.objectiveSpecs;
 

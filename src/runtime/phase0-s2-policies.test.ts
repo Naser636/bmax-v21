@@ -17,7 +17,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { MissionLoader } from "./mission-loader";
+import { MissionLoader, MissionPolicies } from "./mission-loader";
 import { MissionOrchestrator } from "./mission-orchestrator";
 
 let failures = 0;
@@ -74,7 +74,7 @@ for (const [id, body] of Object.entries(fixtures)) {
   fs.writeFileSync(path.join(dir, `${id}.json`), JSON.stringify(body, null, 2), "utf8");
 }
 
-const policiesOf = (id: string): any => {
+const policiesOf = (id: string): MissionPolicies => {
   const loader = new MissionLoader(undefined, undefined, dir);
   return new MissionOrchestrator(loader).buildPlan(id, id).policies;
 };

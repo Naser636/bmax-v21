@@ -19,7 +19,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { MissionLoader } from "./mission-loader";
+import { MissionLoader, MissionContract } from "./mission-loader";
 import { MissionOrchestrator } from "./mission-orchestrator";
 
 let failures = 0;
@@ -90,7 +90,7 @@ for (const [id, body] of Object.entries(fixtures)) {
   fs.writeFileSync(path.join(dir, `${id}.json`), JSON.stringify(body, null, 2), "utf8");
 }
 
-const contractOf = (id: string): any => {
+const contractOf = (id: string): MissionContract => {
   const loader = new MissionLoader(undefined, undefined, dir);
   return new MissionOrchestrator(loader).buildPlan(id, id).contract;
 };

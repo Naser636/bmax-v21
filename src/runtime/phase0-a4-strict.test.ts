@@ -11,7 +11,7 @@
  */
 
 import { MissionLoader } from "./mission-loader";
-import { MissionOrchestrator } from "./mission-orchestrator";
+import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { createMissionIntent } from "./mission-intent";
 
 const FIXTURES = "src/runtime/__fixtures__/a4";
@@ -26,7 +26,7 @@ function check(cond: boolean, label: string): void {
   }
 }
 
-function planFor(id: string): any {
+function planFor(id: string): ExecutionPlan {
   const loader = new MissionLoader(
     "runtime/generated/project-context.snapshot",
     "runtime/brain/MASTER_PLAN.md",
@@ -35,13 +35,13 @@ function planFor(id: string): any {
   return new MissionOrchestrator(loader).buildPlan(id, id, createMissionIntent(id));
 }
 
-const stepIdByGoal = (plan: any, goal: string): string | null =>
-  plan.steps.find((s: any) => s.name === goal)?.id ?? null;
+const stepIdByGoal = (plan: ExecutionPlan, goal: string): string | null =>
+  plan.steps.find((s) => s.name === goal)?.id ?? null;
 
-function hasEdge(plan: any, fromGoal: string, toGoal: string): boolean {
+function hasEdge(plan: ExecutionPlan, fromGoal: string, toGoal: string): boolean {
   const from = stepIdByGoal(plan, fromGoal);
   const to = stepIdByGoal(plan, toGoal);
-  return !!from && !!to && plan.dependencies.some((e: any) => e.from === from && e.to === to);
+  return !!from && !!to && plan.dependencies.some((e) => e.from === from && e.to === to);
 }
 
 console.log("PHASE 1 — A4-STRICT (declared dependsOn reflected as directed edges)");
@@ -79,8 +79,8 @@ console.log("PHASE 1 — A4-STRICT (declared dependsOn reflected as directed edg
 {
   const p = planFor("UNKNOWN");
   const bId = stepIdByGoal(p, "Objective B");
-  const bStep = p.steps.find((s: any) => s.id === bId);
-  const noGhost = !p.dependencies.some((e: any) => e.from === "GHOST" || e.to === "GHOST");
+  const bStep = p.steps.find((s) => s.id === bId);
+  const noGhost = !p.dependencies.some((e) => e.from === "GHOST" || e.to === "GHOST");
   const bDeps: string[] = bStep?.dependencies ?? [];
   check(noGhost && bDeps.length === 0, "UNKNOWN: unknown dependsOn id is ignored (no edge, empty deps)");
 }

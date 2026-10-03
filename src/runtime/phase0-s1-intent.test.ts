@@ -12,7 +12,7 @@
 import fs from "node:fs";
 import { MissionLoader } from "./mission-loader";
 import { MissionOrchestrator } from "./mission-orchestrator";
-import { createMissionIntent } from "./mission-intent";
+import { createMissionIntent, MissionIntent } from "./mission-intent";
 
 let failures = 0;
 function check(cond: boolean, label: string): void {
@@ -24,10 +24,12 @@ function check(cond: boolean, label: string): void {
   }
 }
 
-const intentOf = (id: string): any =>
-  new MissionOrchestrator(new MissionLoader()).buildPlan(id, id, createMissionIntent(id)).intent;
+// buildPlan sets plan.intent = (mission.intent ?? the passed intent); this helper ALWAYS passes
+// createMissionIntent(id), so plan.intent is always defined here — the assertion is a provable invariant.
+const intentOf = (id: string): MissionIntent =>
+  new MissionOrchestrator(new MissionLoader()).buildPlan(id, id, createMissionIntent(id)).intent!;
 
-const contractOf = (id: string): any =>
+const contractOf = (id: string): Record<string, unknown> =>
   JSON.parse(fs.readFileSync(`runtime/missions/${id}.json`, "utf8"));
 
 const ENUM = ["ANALYZE", "PLAN", "IMPLEMENT", "VALIDATE", "LEARN"];

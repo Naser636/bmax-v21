@@ -21,7 +21,7 @@
 
 import fs from "node:fs";
 import { MissionLoader } from "./mission-loader";
-import { MissionOrchestrator } from "./mission-orchestrator";
+import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { RuntimeReporter } from "./runtime-reporter";
 import { createMissionIntent } from "./mission-intent";
 
@@ -37,14 +37,14 @@ function check(cond: boolean, label: string): void {
   }
 }
 
-const stripSig = (plan: any) =>
+const stripSig = (plan: ExecutionPlan) =>
   JSON.stringify({
     objectives: plan.objectives,
-    steps: (plan.steps ?? []).map((s: any) => ({ id: s.id, name: s.name, status: s.status })),
+    steps: (plan.steps ?? []).map((s) => ({ id: s.id, name: s.name, status: s.status })),
     dependencies: plan.dependencies ?? null,
-    actions: plan.actions ?? null,
-    postconditions: plan.postconditions ?? null,
-    verification: plan.verificationRequirements ?? null,
+    actions: (plan as { actions?: unknown }).actions ?? null,
+    postconditions: (plan as { postconditions?: unknown }).postconditions ?? null,
+    verification: (plan as { verificationRequirements?: unknown }).verificationRequirements ?? null,
   });
 
 // Two semantically OPPOSITE missions that MUST produce different objectives/plans.
@@ -67,9 +67,9 @@ console.log("PHASE 0 CERTIFICATION — 8 falsifiable criteria (A1-A4 / B1-B4)");
   const c2 = loader.load("RUNTIME_SELF_AUDIT", "RUNTIME_SELF_AUDIT").brain.objectives;
   let contractObjectives: string[] = [];
   try {
-    const raw = JSON.parse(fs.readFileSync(`${"runtime/missions"}/M0000.json`, "utf8")).objectives;
-    contractObjectives = (Array.isArray(raw) ? raw : []).map((o: any) =>
-      o && typeof o === "object" ? o.goal : String(o),
+    const raw: unknown = JSON.parse(fs.readFileSync(`${"runtime/missions"}/M0000.json`, "utf8")).objectives;
+    contractObjectives = (Array.isArray(raw) ? raw : []).map((o: unknown): string =>
+      o && typeof o === "object" ? ((o as Record<string, unknown>).goal as string) : String(o),
     );
   } catch { /* leave empty */ }
   const contractMatch = JSON.stringify(c1) === JSON.stringify(contractObjectives);
@@ -78,7 +78,7 @@ console.log("PHASE 0 CERTIFICATION — 8 falsifiable criteria (A1-A4 / B1-B4)");
 }
 
 // A2 — plan signature (label-stripped) is a function of the mission. This is the C2 witness.
-let plan1: any, plan2: any;
+let plan1: ExecutionPlan, plan2: ExecutionPlan;
 {
   const orch = new MissionOrchestrator();
   plan1 = orch.buildPlan(M1.id, M1.name, createMissionIntent(M1.id));
@@ -88,14 +88,14 @@ let plan1: any, plan2: any;
 
 // A3 — semantic plan fields EXIST on an objective step.
 {
-  const step = (plan1.steps ?? []).find((s: any) => /^OBJECTIVE_/.test(s.id)) ?? plan1.steps?.[0] ?? {};
+  const step = (plan1.steps ?? []).find((s) => /^OBJECTIVE_/.test(s.id)) ?? plan1.steps?.[0] ?? {};
   const need = ["actions", "dependencies", "postconditions", "verificationRequirements"];
   check(need.every((k) => k in step), "A3 semantic plan fields exist (actions/deps/postconditions/verification)");
 }
 
 // A4 — plan carries a dependency/edge structure.
 {
-  check(!!(plan1.dependencies || plan1.edges || plan1.graph), "A4 plan carries a dependency/edge structure");
+  check(!!(plan1.dependencies || (plan1 as { edges?: unknown }).edges || (plan1 as { graph?: unknown }).graph), "A4 plan carries a dependency/edge structure");
 }
 
 // ---------- ROOT CAUSE #2 ----------

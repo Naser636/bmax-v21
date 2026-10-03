@@ -29,7 +29,7 @@
 
 import fs from "node:fs";
 import { MissionLoader } from "./mission-loader";
-import { MissionOrchestrator } from "./mission-orchestrator";
+import { MissionOrchestrator, ExecutionPlan, ExecutionStep } from "./mission-orchestrator";
 
 let failures = 0;
 function check(cond: boolean, label: string): void {
@@ -49,8 +49,8 @@ const differs = (a: unknown, b: unknown): boolean => JSON.stringify(a) !== JSON.
 const A = "BUILD_GATE_AUTONOMY";
 const B = "AUTONOMY_E2E_LOOP";
 
-const planOf = (id: string): any => new MissionOrchestrator().buildPlan(id, id);
-const contractOf = (id: string): any =>
+const planOf = (id: string): ExecutionPlan => new MissionOrchestrator().buildPlan(id, id);
+const contractOf = (id: string): Record<string, unknown> =>
   JSON.parse(fs.readFileSync(`runtime/missions/${id}.json`, "utf8"));
 
 // Replicate ONLY the loader's documented, verbatim normalization so expectations are derived from
@@ -59,31 +59,41 @@ const contractOf = (id: string): any =>
 const ENUM = ["ANALYZE", "PLAN", "IMPLEMENT", "VALIDATE", "LEARN"];
 const expectedMode = (m: unknown): string =>
   typeof m === "string" && ENUM.includes(m) ? m : "UNKNOWN";
-const descLine0 = (c: any): string =>
+const descLine0 = (c: Record<string, unknown>): string =>
   typeof c.description === "string" ? c.description.split(/\r?\n/)[0].trim() : "";
 const strArr = (v: unknown): string[] =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
-const expectedAuthorizedPaths = (c: any): string[] => strArr(c.authorized_paths ?? c.authorizedPaths);
-const expectedDoD = (c: any): string[] => strArr(c.definition_of_done ?? c.definitionOfDone);
-const expectedVerify = (c: any): Array<{ capability: string; evidence: string }> =>
-  Array.isArray(c.verify)
-    ? c.verify
-        .filter(
-          (v: any) =>
-            !!v && typeof v === "object" &&
-            typeof v.capability === "string" && typeof v.evidence === "string",
-        )
-        .map((v: any) => ({ capability: v.capability, evidence: v.evidence }))
+const expectedAuthorizedPaths = (c: Record<string, unknown>): string[] => strArr(c.authorized_paths ?? c.authorizedPaths);
+const expectedDoD = (c: Record<string, unknown>): string[] => strArr(c.definition_of_done ?? c.definitionOfDone);
+const expectedVerify = (c: Record<string, unknown>): Array<{ capability: string; evidence: string }> => {
+  const vs: unknown[] = Array.isArray(c.verify) ? c.verify : [];
+  return vs
+    .filter(
+      (v): v is { capability: string; evidence: string } =>
+        !!v && typeof v === "object" &&
+        typeof (v as Record<string, unknown>).capability === "string" &&
+        typeof (v as Record<string, unknown>).evidence === "string",
+    )
+    .map((v) => ({ capability: v.capability, evidence: v.evidence }));
+};
+const expectedGoals = (c: Record<string, unknown>): string[] => {
+  const objs: unknown[] = Array.isArray(c.objectives) ? c.objectives : [];
+  return objs.map((o, i): string => {
+    if (o && typeof o === "object") {
+      const r = o as Record<string, unknown>;
+      return (r.goal as string) || (r.id as string) || `Objective ${i + 1}`;
+    }
+    return String(o);
+  });
+};
+const firstObjDoneWhen = (c: Record<string, unknown>): string[] => {
+  const objs: unknown[] = Array.isArray(c.objectives) ? c.objectives : [];
+  return objs[0] && typeof objs[0] === "object"
+    ? strArr((objs[0] as Record<string, unknown>).done_when)
     : [];
-const expectedGoals = (c: any): string[] =>
-  (Array.isArray(c.objectives) ? c.objectives : []).map((o: any, i: number) =>
-    o && typeof o === "object" ? (o.goal || o.id || `Objective ${i + 1}`) : String(o),
-  );
-const firstObjDoneWhen = (c: any): string[] =>
-  Array.isArray(c.objectives) && c.objectives[0] && typeof c.objectives[0] === "object"
-    ? strArr(c.objectives[0].done_when)
-    : [];
-const stepById = (plan: any, id: string): any => plan.steps.find((s: any) => s.id === id);
+};
+const stepById = (plan: ExecutionPlan, id: string): ExecutionStep | undefined =>
+  plan.steps.find((s) => s.id === id);
 
 console.log("S6 — SEMANTIC MISSION COMPILER COVERAGE GUARD (10-stage roadmap contract)");
 
@@ -122,8 +132,8 @@ check(
 // 4 DEPENDENCIES (A4/A4-strict; no dependsOn here ⇒ positional chain)
 check(Array.isArray(planA.dependencies) && planA.dependencies.length > 0, "stage 4 DEPENDENCIES: plan.dependencies is a non-empty edge list");
 check(
-  planA.dependencies.some((e: any) => e.from === "LOAD" && e.to === "OBJECTIVE_1") &&
-    planA.dependencies.some((e: any) => e.from === "OBJECTIVE_1" && e.to === "OBJECTIVE_2"),
+  planA.dependencies.some((e) => e.from === "LOAD" && e.to === "OBJECTIVE_1") &&
+    planA.dependencies.some((e) => e.from === "OBJECTIVE_1" && e.to === "OBJECTIVE_2"),
   "stage 4 DEPENDENCIES: positional edges LOAD→OBJECTIVE_1→OBJECTIVE_2 present",
 );
 
