@@ -1,10 +1,14 @@
 # P0-073 — STATE / ACTION / OUTCOME / PROOF Reconciliation (FORENSIC)
 
 - **Identifier:** P0-073
-- **Document type:** **FORENSIC / PREPARATION — NOT AN AUTHORIZATION.** Read-only repository
-  analysis produced to make the CTO authorization decision possible. It defines no write-set,
-  changes no runtime file, and does not implement the campaign.
-- **Campaign status in V5 roadmap:** `PLANNED — NOT AUTHORIZED` (unchanged by this document).
+- **Status:** **CLOSED — EVALUATED — NO-CHANGE NEEDED** (CTO ruling, authorized documentary closure).
+  Verdict §5(a) adopted: the chains are complementary and already unified at the `mission-lifecycle`
+  bridge; one state authority; no reconciliation change. **No runtime change.** P0-075…P0-079 remain
+  `PLANNED — NOT AUTHORIZED`.
+- **Document type:** Originated as FORENSIC / PREPARATION (read-only). This revision records the CTO
+  closure ruling only; it still defines no runtime write-set and changes no runtime file.
+- **Campaign status in V5 roadmap:** `PLANNED — NOT AUTHORIZED` (the roadmap authority is unchanged by
+  this document; this closure is recorded in the audit carnet, not in the roadmap).
 - **Evaluated at:** HEAD `bfacaae329d0b8b8613e02bcc4a22c2dfcb3cf50`, branch `runtime/mission-context-builder`
 - **Preceded by:** P0-069/C03 (state-transition contract), P0-071 (C03 ↔ mission-lifecycle producer +
   final-report consumer), P0-072 (provenance completion — NO EXPANSION NEEDED)

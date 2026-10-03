@@ -1,10 +1,15 @@
 # P0-074 — Verification Depth & Evidence Linkage (FORENSIC)
 
 - **Identifier:** P0-074
-- **Document type:** **FORENSIC / PREPARATION — NOT AN AUTHORIZATION.** Read-only analysis produced
-  to make the CTO authorization decision possible. It defines no write-set, changes no runtime file,
-  and implements nothing.
-- **Campaign status in V5 roadmap:** `PLANNED — NOT AUTHORIZED` (unchanged by this document).
+- **Status:** **CLOSED — EVALUATED — NO-CHANGE NEEDED** (CTO ruling, authorized documentary closure).
+  Verdict §6(a) adopted: the evidence/verification *separation* the campaign requires already holds by
+  construction; the *depth* axis has no current consumer and no reproducible need. **No runtime change.**
+  Re-open only when a layered-certification consumer (e.g. an authorized P0-079) demands per-layer
+  linkage. P0-075…P0-079 remain `PLANNED — NOT AUTHORIZED`.
+- **Document type:** Originated as FORENSIC / PREPARATION (read-only). This revision records the CTO
+  closure ruling only; it still defines no runtime write-set and changes no runtime file.
+- **Campaign status in V5 roadmap:** `PLANNED — NOT AUTHORIZED` (the roadmap authority is unchanged by
+  this document; this closure is recorded in the audit carnet, not in the roadmap).
 - **Evaluated at:** HEAD `ffb3fcbd3cdbeba37b6bcb09d71dcefbf685b440`, branch `runtime/mission-context-builder`
 - **Preceded by:** P0-069/C03, P0-071 (producer/consumer), P0-072 (no provenance expansion),
   P0-073 (chains complementary, one state authority)
