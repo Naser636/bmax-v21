@@ -3711,3 +3711,41 @@ entity with a DEFINED epistemic-status-on-APPLIED semantic (accepting objective-
 Either is a semantic/architecture decision not derivable from the current MASTER. Smallest future write-set once
 decided: a resolver target→entity-id + a per-entity reality-version store (or reuse world-model.js with the
 authorized OBJECTIVE_ID binding) + patch-executor transport + live tests. Until then: STOP.
+
+### DECISION A — ARTIFACT/RESOURCE REALITY STATE + LIVE CAS COMPLETE (2026-10-03, CTO-authorized)
+CTO authorized Decision A (reality-layer artifact identity + state-version + live CAS). Built
+runtime/core/artifact-state.js — the REALITY state layer, strictly distinct from §76 (evidence identity),
+§387 (epistemic belief), mission-lifecycle (governance), runtime-model (projection), action-gate
+(admission), idempotency-guard (decision), patch-executor (mutation). CANONICAL IDENTITY = normalized
+repo-relative path within the authorized write scope (Decision A authorizes the path as the resource's
+canonical resolution identity; absolute/'..' rejected; path is identity, content/version kept separate).
+STATE = {version (monotonic int, +1 per applied mutation, absent=0), contentHash (sha256 of REAL content —
+version tied to reality, not a token), provenance}. COMPARE-AND-SET: expectedPreviousVersion must equal
+current, else CONFLICT + zero change. Each transition is a C03 record validated by the shared validator.
+Pure core + git-ignored persistence (artifact-state.json). Grants no authority, asserts only observed
+content (reality), never belief.
+
+LIVE in patch-executor (OPT-IN via realityCas; order ADMISSION → IDEMPOTENCY → REALITY READ+CAS → WRITE →
+REALITY TRANSITION → EVIDENCE): a declared edit.expectedVersion is CAS'd against the artifact's current
+reality version BEFORE any write (stale ⇒ CONFLICT ⇒ throw ⇒ zero mutation, FAILED); on APPLIED each
+artifact transitions (+1, sha256 of bytes actually written, provenance=mission) and the store persists.
+No DENY/ESCALATE/DUPLICATE/STALE/CONFLICT → WRITE path. Legacy patches (no realityCas) never touch the
+store (byte-for-byte unchanged; recorded ≠ protected — no false promise).
+
+Proof: artifact-state.test.js (20 assn, isolation: identity stable/distinct, path-escape rejected,
+version/CAS/stale/zero-change, content-hash authenticity, persistence, determinism, boundary) +
+artifact-state-live.test.js (10 assn, REAL patch-executor: first write⇒APPLIED+authentic v1+persisted;
+stale⇒CONFLICT+zero mutation; match⇒v2; reload-stable; admission DENY precedes reality; legacy unchanged).
+tsc clean; npm test 286 files exit 0 (+ all prior V5 + Phase 0 8/8); next build exit 0. Write-set:
+artifact-state.js + 2 tests (NEW) + patch-executor.js (wiring). DECISION A COMPLETE + PROVEN (behaviour
+demonstrated on the live WRITE path).
+
+ATOMICITÉ (documented): the CAS is single-process optimistic (load→check→write→transition→save). Two
+concurrent patch-executor processes could both read version N and race on persistence — NOT atomic across
+processes. Within a process the CAS is proven. A multi-process lock/transaction is a separate increment,
+only if a real concurrent-writer scenario arises. No false atomicity claimed.
+
+Next V5 gaps re-swept: Evidence/Verification = mechanism present (no reachable missing capability);
+Recovery/Idempotence = idempotency+CAS now live (action-level journal + reality version); Evaluation/
+Regression = no live promotion consumer (would be speculative). Economic metering = business-decision
+frontier. No further dependency-ready, reachable, non-speculative increment without a new CTO decision.

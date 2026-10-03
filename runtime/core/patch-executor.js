@@ -6,6 +6,7 @@ const { spawnSync } = require("child_process");
 const capabilityExecutors = require("./capability-executors");
 const { admitPatchEdit } = require("./patch-action-contract");
 const idempotency = require("./idempotency-guard");
+const artifactState = require("./artifact-state");
 
 const GENERATED_DIR = "runtime/generated";
 
@@ -100,6 +101,14 @@ try {
   if (raw && typeof raw === "object" && !Array.isArray(raw)) idemJournal = raw;
 } catch { idemJournal = {}; }
 let idemJournalChanged = false;
+
+// V5 Decision A — reality artifact/resource state (canonical identity + versioned CAS). Opt-in per patch
+// (actionContract.realityCas === true): only then is an edit's target read/CAS'd/transitioned against the
+// reality store. Loaded best-effort; written back only when an opted-in write applied, so legacy patches
+// never create or touch it. runtime/generated/artifact-state.json is git-ignored Runtime state.
+const ARTIFACT_STATE_FILE = path.join(GENERATED_DIR, "artifact-state.json");
+let artifactModel = artifactState.load(ARTIFACT_STATE_FILE);
+let artifactModelChanged = false;
 
 /**
  * Run `grep -RIn <pattern> <targets...>` and stream its stdout DIRECTLY to a
@@ -247,6 +256,28 @@ for (const patch of plan.patches) {
         }
       }
 
+      // V5 Decision A reality CAS — OPT-IN (actionContract.realityCas === true). Order:
+      // admission -> idempotency -> REALITY READ + compare-and-set -> mutation -> reality transition.
+      // For each edit we READ the target artifact's current reality version; if the edit declares an
+      // `expectedVersion`, it MUST equal the current version, else CONFLICT -> throw BEFORE any write
+      // (zero mutation, FAILED). The canonical identity is the normalized repo-relative path (Decision A);
+      // authorized_paths is still SCOPE only, never authority/identity. Legacy patches (no realityCas) do
+      // not touch the reality store — recorded version ≠ silent protection (no false promise).
+      const realityCas =
+        (patch.actionContract && patch.actionContract.realityCas === true) || patch.realityCas === true;
+      if (realityCas) {
+        for (const edit of patch.edits) {
+          const id = artifactState.canonicalId(edit.target);
+          if (id === null) throw new Error(`reality CAS: "${edit.target}" is not a valid canonical artifact identity`);
+          if (Number.isInteger(edit.expectedVersion)) {
+            const cur = artifactState.currentVersion(artifactModel, id);
+            if (edit.expectedVersion !== cur) {
+              throw new Error(`reality CONFLICT (${id}): expectedVersion ${edit.expectedVersion} != current ${cur} (stale)`);
+            }
+          }
+        }
+      }
+
       const applied = [];
       for (const edit of patch.edits) {
         if (!isAuthorizedTarget(edit.target)) {
@@ -255,7 +286,7 @@ for (const patch of plan.patches) {
         if (typeof edit.content === "string") {
           fs.mkdirSync(path.dirname(edit.target), { recursive: true });
           fs.writeFileSync(edit.target, edit.content);
-          applied.push({ target: edit.target, mode: "content" });
+          applied.push({ target: edit.target, mode: "content", writtenContent: edit.content });
         } else if (typeof edit.diff === "string") {
           const original = fs.existsSync(edit.target)
             ? fs.readFileSync(edit.target, "utf8")
@@ -263,19 +294,42 @@ for (const patch of plan.patches) {
           const next = applyUnifiedDiff(original, edit.diff);
           fs.mkdirSync(path.dirname(edit.target), { recursive: true });
           fs.writeFileSync(edit.target, next);
-          applied.push({ target: edit.target, mode: "diff" });
+          applied.push({ target: edit.target, mode: "diff", writtenContent: next });
         } else {
           throw new Error(`edit for ${edit.target} has neither content nor diff`);
         }
       }
+      // V5 Decision A — reality STATE TRANSITION after the OBSERVED EFFECT (the write). For an opted-in
+      // patch each applied artifact's reality version increments by 1 (CAS on the pre-write current
+      // version, which is unchanged in this single-process run) with the sha256 of the bytes actually
+      // written. This makes the reality version authentic (tied to real content), not caller-supplied.
+      const realityRecords = [];
+      if (realityCas) {
+        for (const a of applied) {
+          const id = artifactState.canonicalId(a.target);
+          const cur = artifactState.currentVersion(artifactModel, id);
+          const r = artifactState.transition(artifactModel, a.target, {
+            expectedPreviousVersion: cur,
+            content: a.writtenContent,
+            provenance: plan.mission,
+          });
+          if (!r.ok) throw new Error(`reality transition ${r.decision} (${id}): ${r.error}`);
+          artifactModel = r.model;
+          artifactModelChanged = true;
+          realityRecords.push({ artifact: id, version: r.artifact.version, contentHash: r.artifact.contentHash });
+        }
+      }
+
       report.executed.push({
         action: patch.action,
         objectiveId: patch.objectiveId || patch.action,
         status: "APPLIED",
-        files: applied,
+        files: applied.map((a) => ({ target: a.target, mode: a.mode })),
         // Audit the admission decision (truthful; never a success claim). For legacy patches this is
         // the observed decision under enforced:false — a visible compatibility state, not a bypass.
         admission: admissions.map((a) => ({ target: a.target, decision: a.decision, enforced: a.enforced })),
+        // Reality state after the observed effect (present only for opted-in patches); authentic version.
+        ...(realityRecords.length ? { reality: realityRecords } : {}),
       });
       // Record the applied idempotencyKey AFTER the observed effect, so a later replay reconciles to it.
       if (idemKey) {
@@ -507,6 +561,12 @@ for (const patch of plan.patches) {
 // idempotencyKey never create or touch this file (byte-for-byte unchanged behaviour for legacy patches).
 if (idemJournalChanged) {
   fs.writeFileSync(IDEMPOTENCY_JOURNAL, JSON.stringify(idemJournal, null, 2));
+}
+
+// Persist the reality artifact-state ONLY when an opted-in (realityCas) patch applied — legacy patches
+// never create or touch it (byte-for-byte unchanged behaviour).
+if (artifactModelChanged) {
+  artifactState.save(ARTIFACT_STATE_FILE, artifactModel);
 }
 
 fs.writeFileSync(
