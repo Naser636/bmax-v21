@@ -3168,3 +3168,44 @@ read-only RETENTION ELIGIBILITY ANALYSIS.
   concept/authority; Master/Constitution/Method/Roadmap/missions.json/Evidence unchanged.
 
 STATUS: RETAIN ALL (P0-CURRENT-067); 917 retained; 0 cleanup candidate; 0 deletion; Phase 0 CLOSED.
+
+## P0-CURRENT-068 — CTO CONTROL PASS: OPERATIONAL CONTINUITY NOTE
+Continuity note only. Creates NO new authority; does NOT modify Master/Constitution/Method/Roadmap/
+missions.json/Evidence/runtime/code; ODG_OPERATIONAL_DIRECTIVE.md remains a non-authoritative projection.
+
+1. ENVIRONMENT
+   - ODG works operationally in the local VPS repository: /home/ubuntu/bmax-v21.
+   - This local/VPS repository is the reference operational environment for continuing ODG work.
+
+2. GITHUB / PR
+   - GitHub/PR is NOT an operational dependency of ODG.
+   - Running, executing, verifying, and governing ODG require neither GitHub nor a Pull Request.
+   - A GitHub PR is at most an external/optional operation, never a prerequisite to continue ODG work.
+   - A future session MUST NOT search for a GitHub PR to decide where to resume.
+
+3. SESSION RESTART
+   On resume: read docs/odg-operational/ODG_OPERATIONAL_DIRECTIVE.md FIRST; then the manifest
+   (ODG_OPERATIONAL_MANIFEST.json) and this carnet; use repository reality as the living state; respect
+   the existing authority hierarchy; do NOT invent a new mission or authorization.
+
+4. CURRENT STATE (at this note)
+   - branch = runtime/mission-context-builder
+   - current operational HEAD = eb2c0072acccf03535d41d092224370f77c88254
+   - worktree = clean
+   - Phase 0 = CLOSED
+   - odg-phase0-closed -> fd67bee925476066ffd56262d094f458e8672844
+   - P0-CURRENT-067 = RETAIN ALL; 917 snapshots retained; no deletion authorized.
+
+5. HEAD PROVENANCE
+   The current HEAD is a LIVING repository state at the time of this note; the carnet is the
+   chronological control record. The HEAD is NOT turned into a new authority. (Note: the manifest and
+   directive record their own earlier generation HEADs — c0be600 / 5e16de1 — by design; the living
+   operational HEAD is this carnet + the tag, not those headers.)
+
+6. AUTHORITY
+   - Operational Directive = non-authoritative projection.
+   - Master / Constitution / Method / Roadmap / Current Authorization / Repository Truth / Evidence keep
+     their existing roles. This note changes NO authority rule.
+
+STATUS: OPERATIONAL CONTINUITY NOTE RECORDED (P0-CURRENT-068); GitHub/PR NOT an operational dependency;
+local VPS repo self-sufficient; Phase 0 CLOSED; continuity bootstrap complete.
