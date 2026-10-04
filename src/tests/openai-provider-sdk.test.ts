@@ -16,7 +16,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { OpenAIProviderAdapter } from "@/providers/openai-provider-adapter";
+import { OpenAIProviderAdapter, isLocalBaseURL } from "@/providers/openai-provider-adapter";
 import { resolveEngineeringProvider } from "@/providers/provider-factory";
 import { activateAndExecute } from "@/runtime/provider-activation";
 import type { AvailabilityEnv } from "@/providers/provider-availability";
@@ -77,6 +77,22 @@ const doneEnvelope = (): OpenAiChatEnvelope => ({
   const noKey = new OpenAIProviderAdapter().checkAvailability({ env: {}, hasBinary: () => false });
   assert(noKey.available === false, "no key → unavailable");
   assert(/OPENAI_API_KEY/.test(noKey.missingConfiguration ?? ""), "missing config names OPENAI_API_KEY precisely");
+}
+
+// --- A2) LOCAL OpenAI-compatible endpoint (Ollama/LM Studio/LocalAI/vLLM) → available WITHOUT a key ---
+{
+  // local base URL + NO key ⇒ available (local servers need no credential); remote still needs a key.
+  const local = new OpenAIProviderAdapter({ baseURL: "http://localhost:11434/v1" }).checkAvailability({ env: {}, hasBinary: () => false });
+  assert(local.available === true, "local OpenAI-compatible endpoint ⇒ available without OPENAI_API_KEY");
+  assert(local.checks.some((c) => /endpoint:local/.test(c.requirement)), "availability names the local-endpoint requirement");
+
+  const remoteNoKey = new OpenAIProviderAdapter({ baseURL: "https://api.openai.com/v1" }).checkAvailability({ env: {}, hasBinary: () => false });
+  assert(remoteNoKey.available === false, "remote base URL + no key ⇒ still unavailable (no accidental key bypass)");
+
+  assert(isLocalBaseURL("http://127.0.0.1:1234/v1") === true, "isLocalBaseURL: 127.0.0.1 ⇒ local");
+  assert(isLocalBaseURL("http://localhost:8000") === true, "isLocalBaseURL: localhost ⇒ local");
+  assert(isLocalBaseURL("https://api.openai.com") === false, "isLocalBaseURL: remote host ⇒ not local");
+  assert(isLocalBaseURL(undefined) === false, "isLocalBaseURL: undefined ⇒ not local");
 }
 
 // --- B) real execute() path via injected SDK caller (zero cost) → OK + DONE -----------------------

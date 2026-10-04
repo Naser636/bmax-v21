@@ -58,6 +58,23 @@ import { callOpenAiChat, type OpenAiChatEnvelope, type OpenAiChatInput } from ".
 
 /** The env var the OpenAI SDK reads for authentication. */
 export const OPENAI_API_KEY_ENV = "OPENAI_API_KEY";
+/** Env var naming an OpenAI-COMPATIBLE base URL (e.g. a local Ollama / LM Studio / LocalAI / vLLM server). */
+export const OPENAI_BASE_URL_ENV = "OPENAI_BASE_URL";
+
+/**
+ * True when a configured base URL targets a LOCAL OpenAI-compatible endpoint (localhost/loopback). Such a
+ * server (Ollama :11434/v1, LM Studio, LocalAI, vLLM) needs NO real credential, so the adapter may be
+ * available without OPENAI_API_KEY in that — and only that — case. A remote base URL still requires a key.
+ */
+export function isLocalBaseURL(url: string | undefined): boolean {
+  if (typeof url !== "string" || url.trim() === "") return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || host === "::1";
+  } catch {
+    return false;
+  }
+}
 
 /** Default pinned model id (contract §2 reproducibility). Overridable via option or OPENAI_MODEL. */
 const DEFAULT_MODEL = "gpt-4o-mini";
@@ -150,7 +167,7 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
     this.cwd = opts.cwd ?? process.cwd();
     this.model = opts.model ?? process.env.OPENAI_MODEL ?? DEFAULT_MODEL;
     this.apiKey = opts.apiKey;
-    this.baseURL = opts.baseURL;
+    this.baseURL = opts.baseURL ?? process.env[OPENAI_BASE_URL_ENV];
     this.maxOutputTokens = opts.maxOutputTokens;
     this.timeoutMs = opts.timeoutMs;
     this.proofPath = opts.proofPath;
@@ -187,11 +204,21 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
         detail: "openai SDK bundled (no external CLI / `codex` binary required)",
       },
     ];
+    // A LOCAL OpenAI-compatible endpoint (Ollama/LM Studio/LocalAI/vLLM) needs no real credential, so a
+    // configured local base URL makes the adapter available WITHOUT OPENAI_API_KEY. Remote still needs a key.
+    if (isLocalBaseURL(this.baseURL)) {
+      checks.push({
+        requirement: `endpoint:local(${OPENAI_BASE_URL_ENV})`,
+        satisfied: true,
+        detail: `local OpenAI-compatible endpoint ${this.baseURL} — no API key required`,
+      });
+      return available(this.name, checks);
+    }
     if (hasKey) return available(this.name, checks);
     return unavailable(this.name, {
       blockingComponent: `${this.name} credential preflight`,
-      missingConfiguration: `environment variable ${OPENAI_API_KEY_ENV}`,
-      nextAction: `Provision an OpenAI API key and export ${OPENAI_API_KEY_ENV} in the Runtime environment.`,
+      missingConfiguration: `environment variable ${OPENAI_API_KEY_ENV} (or a local ${OPENAI_BASE_URL_ENV})`,
+      nextAction: `Provision an OpenAI API key and export ${OPENAI_API_KEY_ENV}, or set ${OPENAI_BASE_URL_ENV} to a local OpenAI-compatible server.`,
       checks,
     });
   }
@@ -210,7 +237,9 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
       model: this.model,
       system: GUARDRAIL_SYSTEM_PROMPT,
       user: userPrompt,
-      apiKey: this.apiKey,
+      // A local OpenAI-compatible server ignores the credential; pass a non-secret placeholder so the
+      // bundled SDK (which requires a non-empty apiKey) can reach it when no real key is configured.
+      apiKey: this.apiKey ?? (isLocalBaseURL(this.baseURL) ? "local" : undefined),
       baseURL: this.baseURL,
       maxOutputTokens: this.maxOutputTokens,
       timeoutMs: this.timeoutMs,
