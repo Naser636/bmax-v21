@@ -25,7 +25,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { isControlled, evaluateAcceptance } = require("./mechanical-acceptance");
+const { isControlled, evaluateAcceptance, commitAllowed, economicCommitAllowed } = require("./mechanical-acceptance");
 const { VERDICT: ECON_VERDICT, verdictConsistent } = require("./economic-verification");
 
 const MISSIONS_DIR = path.join("runtime", "missions");
@@ -235,6 +235,30 @@ function evaluateMissionEconomics(mission) {
   return { enforced: true, verdict, allowed: verdict === ECON_VERDICT.VERIFIED };
 }
 
+/**
+ * commitGateDecision(mission) -> { allowed, reasons }. The SINGLE read-only composition that decides whether
+ * a mission's authorized deliverable may be COMMITTED, reusing the EXISTING §7 guards — it adds no new
+ * policy, verdict, or source of truth:
+ *   - MECHANICAL: a CONTROLLED mission (control.required) must pass commitAllowed(acceptance verdict) (ACCEPT);
+ *   - ECONOMIC:   an ENFORCED mission (control.economic) must pass economicCommitAllowed(evaluateMissionEconomics).
+ * Both are OPT-IN: a mission that declares neither is a pure NO-OP ⇒ allowed:true (legacy commit behaviour
+ * unchanged). Deny-by-default follows from the underlying guards (a controlled/enforced mission with a
+ * non-ACCEPT / non-VERIFIED / missing / malformed / inconsistent verdict is refused). Pure read-only; the
+ * live commit path (AutonomyRuntimeAdapter.commitAuthorizedDeliverable) consults this before committing.
+ */
+function commitGateDecision(mission) {
+  const reasons = [];
+  const acc = evaluateMissionAcceptance(mission);
+  if (acc && acc.controlled === true && commitAllowed(acc.verdict).allowed !== true) {
+    reasons.push(`mechanical acceptance ${acc.verdict} (requires ACCEPT)`);
+  }
+  const econ = evaluateMissionEconomics(mission);
+  if (econ && econ.enforced === true && economicCommitAllowed(econ).allowed !== true) {
+    reasons.push(`economic verification ${econ.verdict} (requires VERIFIED)`);
+  }
+  return Object.freeze({ allowed: reasons.length === 0, reasons: Object.freeze(reasons) });
+}
+
 module.exports = {
   DEFAULT_REQUIRED_CHECKS,
   ECONOMIC_ENFORCEMENT_CONTRACT,
@@ -244,6 +268,7 @@ module.exports = {
   evaluateMissionAcceptance,
   economicEnforced,
   evaluateMissionEconomics,
+  commitGateDecision,
 };
 
 // ---- Read-only CLI: prints the gathered facts + verdict for a mission; mutates nothing. -------

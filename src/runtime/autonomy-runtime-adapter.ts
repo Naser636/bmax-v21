@@ -730,6 +730,25 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     if (authorized.length === 0) return false;
     const report = this.readJson<{ status?: string; validated?: boolean }>(MISSION_REPORT);
     if (report?.validated !== true || report?.status !== "SUCCESS") return false;
+    // LIVE COMMIT AUTHORIZATION (opt-in). Before committing a validated deliverable, consult the EXISTING
+    // §7 commit guards via acceptance-facts.commitGateDecision: a CONTROLLED (control.required) mission must
+    // pass mechanical acceptance (ACCEPT), and an ECONOMICALLY-ENFORCED (control.economic) mission must carry
+    // a VERIFIED economic verdict. A mission that opts into neither is a NO-OP ⇒ allowed, so legacy behaviour
+    // is byte-for-byte unchanged. A blocked opted-in mission is NOT committed (no partial mutation) — gitClean
+    // stays false so the frozen Release Manager returns NO_RELEASE, exactly as a failed commit would. Reuses
+    // the already-proven guards; adds no new policy/verdict/source of truth. Best-effort: if the gate module
+    // is absent (stripped checkout / sandbox) this degrades to the prior behaviour, and the authoritative
+    // release gate (mission-ledger.recordMission) still enforces the same guards.
+    const gate = this.loadCommitGate();
+    if (gate) {
+      const decision = gate.commitGateDecision(mission);
+      if (decision && decision.allowed !== true) {
+        const why = Array.isArray(decision.reasons) && decision.reasons.length ? decision.reasons.join("; ") : "commit gate refused";
+        // eslint-disable-next-line no-console
+        console.warn(`[AutonomyRuntimeAdapter] Not committing "${mission}": ${why}.`);
+        return false;
+      }
+    }
     // Reduce globbed authorized paths (e.g. "src/app/x/**") to committable path prefixes.
     const prefixes = authorized
       .map((p) => p.replace(/[*].*$/, "").replace(/\/+$/, ""))
@@ -829,6 +848,19 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     try {
       return requireCjs(`${this.cwd}/runtime/core/live-cost-metering.js`) as ReturnType<
         AutonomyRuntimeAdapter["loadMetering"]
+      >;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Load the read-only commit-authorization gate (CJS). Best-effort — null when unavailable. */
+  private loadCommitGate(): {
+    commitGateDecision: (mission: string) => { allowed: boolean; reasons: readonly string[] };
+  } | null {
+    try {
+      return requireCjs(`${this.cwd}/runtime/core/acceptance-facts.js`) as ReturnType<
+        AutonomyRuntimeAdapter["loadCommitGate"]
       >;
     } catch {
       return null;
