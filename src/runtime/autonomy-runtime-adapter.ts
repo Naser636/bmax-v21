@@ -69,6 +69,12 @@ const FAILOVER_REPORT = `${GENERATED}/provider-failover-report.json`;
 // Live cost-metering evidence (V5 Stage 3, D): the budget decision + ledger snapshot for a metered
 // provider call. Written ONLY when the mission declares a budget block; pure evidence, never a verdict.
 const METERING_REPORT = `${GENERATED}/cost-metering-report.json`;
+// Independent ECONOMIC VERIFICATION evidence (V5 economic-core): the economic verdict (VERIFIED/FAILED/
+// INCOMPLETE/UNKNOWN) rendered by runtime/core/economic-verification.js over the SAME metering facts +
+// the provider's OBSERVED observation. Written ONLY alongside a metered call (budget declared); pure
+// evidence, NEVER a verdict that gates release — "pipeline success ≠ economic success" is surfaced, not
+// enforced (enforcement would be a separate governance decision).
+const ECONOMIC_VERIFICATION_REPORT = `${GENERATED}/economic-verification-report.json`;
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
@@ -800,6 +806,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       },
     });
     this.persistMeteringReport(mission, result);
+    // Surface the INDEPENDENT economic verdict over the same facts as pure evidence (never a gate). The
+    // observation is read from the provider's real outcome when it ran; a pre-call refusal has none. The
+    // typed local re-widens `captured` (assigned only inside the closure, so flow-narrowed to never).
+    const providerOutcome = captured as ProviderOutcome | null;
+    this.persistEconomicVerification(mission, result, providerOutcome ? providerOutcome.observation : null);
     // The provider ran ⇒ return its real outcome (carrying E's observation). A refusal before any call
     // (malformed budget / zero or exhausted ceiling) ⇒ a BLOCKED outcome so the Release Manager halts.
     if (captured) return captured;
@@ -828,6 +839,42 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private persistMeteringReport(mission: string, result: unknown): void {
     try {
       this.writeJson(METERING_REPORT, { mission, ...(result as Record<string, unknown>) });
+    } catch {
+      /* evidence capture is best-effort — never abort a mission over it */
+    }
+  }
+
+  /** Load the pure economic-verification engine (CJS). Best-effort — null when unavailable. */
+  private loadEconomicVerification(): {
+    verifyEconomics: (facts: unknown) => { verdict: string; violations: readonly string[] };
+  } | null {
+    try {
+      return requireCjs(`${this.cwd}/runtime/core/economic-verification.js`) as ReturnType<
+        AutonomyRuntimeAdapter["loadEconomicVerification"]
+      >;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Persist the INDEPENDENT economic verdict as gitignored evidence (never a verdict that gates release).
+   * Composes the already-captured metering facts + the provider's OBSERVED observation through the pure
+   * economic-verification engine. Best-effort and side-effect-free with respect to the mission outcome:
+   * the engine performs no I/O, invents no value, and this call can neither change nor block the release —
+   * it only makes "pipeline success ≠ economic success" observable. Degrades silently if the engine is
+   * absent (stripped checkout), exactly like the metering path.
+   */
+  private persistEconomicVerification(
+    mission: string,
+    metering: unknown,
+    observation: unknown,
+  ): void {
+    try {
+      const engine = this.loadEconomicVerification();
+      if (!engine) return;
+      const verdict = engine.verifyEconomics({ metering, observation });
+      this.writeJson(ECONOMIC_VERIFICATION_REPORT, { mission, ...verdict });
     } catch {
       /* evidence capture is best-effort — never abort a mission over it */
     }

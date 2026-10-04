@@ -38,7 +38,9 @@ const REPO = process.cwd();
 // The full require() closure live-cost-metering.js needs at load time. price-resolution.js became a
 // direct dependency in b726d6b (SUPPLIED-catalog valuation); omitting it makes requireCjs() throw, so
 // loadMetering() degrades to null and the metered branch never engages — the exact D-wiring regression.
-const CORE = ["economic-unit.js", "budget-ledger.js", "budget-contract.js", "cost-accounting.js", "price-resolution.js", "live-cost-metering.js"];
+// economic-verification.js is loaded alongside live-cost-metering.js to surface the INDEPENDENT economic
+// verdict as evidence (its own closure is economic-unit + price-resolution, already present above).
+const CORE = ["economic-unit.js", "budget-ledger.js", "budget-contract.js", "cost-accounting.js", "price-resolution.js", "live-cost-metering.js", "economic-verification.js"];
 
 /** A fake engineering provider: counts calls, returns OK carrying a fixed OBSERVED token usage. */
 class FakeProvider implements EngineeringProviderPort {
@@ -104,6 +106,15 @@ console.log("V5 — D WIRING: LIVE METERING IN runViaProvider");
     check(report.decision === "SPENT" && report.snapshot?.spent === 300, "ledger SPENT exactly the OBSERVED 300 tokens");
     check(report.snapshot?.available === 700 && report.snapshot?.recovered === 1000, "remainder returned; admission reservation recovered");
   }
+  // Independent economic verdict surfaced as evidence over the SAME facts: provenanced OBSERVED usage +
+  // conserved ledger (no catalog ⇒ no valuation) ⇒ VERIFIED. It is evidence only — pipelineOk is unchanged.
+  const econPath = path.join(dir, "runtime", "generated", "economic-verification-report.json");
+  check(fs.existsSync(econPath), "an economic-verification report was written alongside metering (evidence)");
+  if (fs.existsSync(econPath)) {
+    const econ = JSON.parse(fs.readFileSync(econPath, "utf8"));
+    check(econ.mission === "M" && econ.verdict === "VERIFIED", "economic verdict VERIFIED for a clean provenanced metered run");
+    check(Array.isArray(econ.violations) && econ.violations.length === 0, "no economic violations on the clean run");
+  }
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
@@ -116,6 +127,7 @@ console.log("V5 — D WIRING: LIVE METERING IN runViaProvider");
   check(provider.calls >= 1, "no-budget mission still invokes the provider (unchanged)");
   check(outcome.pipelineOk === true, "no-budget clean run ⇒ pipelineOk true");
   check(!fs.existsSync(path.join(dir, "runtime", "generated", "cost-metering-report.json")), "no budget ⇒ NO metering report (dormant, backward compatible)");
+  check(!fs.existsSync(path.join(dir, "runtime", "generated", "economic-verification-report.json")), "no budget ⇒ NO economic-verification report (dormant too)");
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
