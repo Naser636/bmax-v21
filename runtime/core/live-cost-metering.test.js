@@ -121,5 +121,85 @@ console.log("V5 — D: LIVE COST METERING");
   check(JSON.stringify(run()) === JSON.stringify(run()), "deterministic: same inputs ⇒ same snapshot");
 }
 
+// ------------------------------------------------------------------------------------------------
+// ADDITIVE EVIDENCE-ONLY DERIVED VALUATION (wiring of a SUPPLIED price catalog).
+// The valuation NEVER feeds the ledger/spend; a missing/ambiguous/stale rule stays UNKNOWN (null, never 0);
+// absent usage stays NOT_OBSERVED (null); no catalog ⇒ dormant. No rate is invented — the catalog carries it.
+const P = require("./price-resolution");
+
+// An authoritative-style catalog with a SINGLE token rule (2 at scale 6 → 0.000002 EUR per token).
+const okCatalog = P.declarePrice(P.emptyCatalog(), {
+  id: "tok", version: 1, usageUnit: "token", currency: "EUR", rateMinor: 2, rateScale: 6, provenance: "test:catalog",
+});
+
+// 12 — SPENT run + supplied rule ⇒ COST_UNIT spend UNCHANGED, plus a separate DERIVED ASSET valuation.
+{
+  const r = M.meterProviderCall({ spec: validSpec(1000), catalog: okCatalog, execute: exec("OK", 300) });
+  check(r.decision === "SPENT" && r.snapshot.spent === 300, "spend still meters tokens-as-tokens (300), untouched by valuation");
+  check(r.valuation && r.valuation.status === "OK" && r.valuation.basis === "DERIVED", "supplied rule ⇒ DERIVED valuation status OK");
+  check(r.valuation.value && r.valuation.value.kind === "ASSET" && r.valuation.value.unit === "EUR", "valuation is a separate ASSET amount (tokens never turned into currency for the spend)");
+  check(r.valuation.value.minor === 600 && r.valuation.value.scale === 6, "EXACT DERIVED value = 300 × 2/10^6 = 0.000600 EUR");
+}
+
+// 13 — missing rule ⇒ PRICE_RULE_MISSING, value NULL (UNKNOWN, never a fabricated 0).
+{
+  const missingCatalog = P.declarePrice(P.emptyCatalog(), {
+    id: "cpu", version: 1, usageUnit: "compute-ms", currency: "EUR", rateMinor: 5, rateScale: 3, provenance: "test",
+  });
+  const r = M.meterProviderCall({ spec: validSpec(1000), catalog: missingCatalog, execute: exec("OK", 300) });
+  check(r.valuation.status === "PRICE_RULE_MISSING" && r.valuation.value === null, "no rule for the metered unit ⇒ PRICE_RULE_MISSING, amount NULL");
+  check(r.decision === "SPENT" && r.snapshot.spent === 300, "missing price does NOT block or alter the COST_UNIT spend");
+}
+
+// 14 — ambiguous rules ⇒ PRICE_RULE_AMBIGUOUS, value NULL (no silent selection).
+{
+  let cat = P.declarePrice(P.emptyCatalog(), { id: "a", version: 1, usageUnit: "token", currency: "EUR", rateMinor: 2, rateScale: 6, provenance: "t" });
+  cat = P.declarePrice(cat, { id: "b", version: 1, usageUnit: "token", currency: "EUR", rateMinor: 3, rateScale: 6, provenance: "t" });
+  const r = M.meterProviderCall({ spec: validSpec(1000), catalog: cat, execute: exec("OK", 300) });
+  check(r.valuation.status === "PRICE_RULE_AMBIGUOUS" && r.valuation.value === null, "two equally-applicable rules ⇒ PRICE_RULE_AMBIGUOUS, amount NULL");
+}
+
+// 15 — stale rule (as-of outside the effective period) ⇒ PRICE_RULE_STALE, value NULL.
+{
+  const cat = P.declarePrice(P.emptyCatalog(), {
+    id: "tok", version: 1, usageUnit: "token", currency: "EUR", rateMinor: 2, rateScale: 6,
+    effectiveFrom: "2020-01-01", effectiveTo: "2020-12-31", provenance: "t",
+  });
+  const r = M.meterProviderCall({ spec: validSpec(1000), catalog: cat, priceQuery: { asOf: "2026-01-01" }, execute: exec("OK", 300) });
+  check(r.valuation.status === "PRICE_RULE_STALE" && r.valuation.value === null, "as-of outside the effective period ⇒ PRICE_RULE_STALE, amount NULL");
+}
+
+// 16 — genuine OBSERVED zero + supplied rule ⇒ genuine DERIVED 0 (a real derived zero, not UNKNOWN).
+{
+  const r = M.meterProviderCall({ spec: validSpec(1000), catalog: okCatalog, execute: exec("OK", 0) });
+  check(r.decision === "NO_SPEND_ZERO_USAGE", "observed zero ⇒ no spend (unchanged)");
+  check(r.valuation.status === "OK" && r.valuation.basis === "DERIVED" && r.valuation.value.minor === 0, "observed 0 × rate ⇒ genuine DERIVED 0 (not UNKNOWN)");
+}
+
+// 17 — absent usage ⇒ NOT_OBSERVED: USAGE_UNKNOWN, value NULL (even with a valid catalog).
+{
+  const r = M.meterProviderCall({ spec: validSpec(1000), catalog: okCatalog, execute: exec("OK", null) });
+  check(r.valuation.status === "USAGE_UNKNOWN" && r.valuation.value === null, "absent observation ⇒ USAGE_UNKNOWN (NOT_OBSERVED), amount NULL");
+}
+
+// 18 — no catalog supplied ⇒ valuation dormant (null); existing behaviour byte-for-byte.
+{
+  const r = M.meterProviderCall({ spec: validSpec(1000), execute: exec("OK", 300) });
+  check(r.valuation === null && r.decision === "SPENT", "no catalog ⇒ valuation null (dormant), spend unchanged");
+}
+
+// 19 — DERIVED is never spent/billed: the ledger snapshot is identical with and without a catalog.
+{
+  const bare = M.meterProviderCall({ spec: validSpec(1000), execute: exec("OK", 300) }).snapshot;
+  const priced = M.meterProviderCall({ spec: validSpec(1000), catalog: okCatalog, execute: exec("OK", 300) }).snapshot;
+  check(JSON.stringify(bare) === JSON.stringify(priced), "attaching a DERIVED valuation does NOT change the ledger (never spent/billed)");
+}
+
+// 20 — determinism / replay: same inputs ⇒ byte-identical valuation.
+{
+  const run = () => M.meterProviderCall({ spec: validSpec(1000), catalog: okCatalog, execute: exec("OK", 250) }).valuation;
+  check(JSON.stringify(run()) === JSON.stringify(run()), "deterministic/replayable: same usage + same rule ⇒ identical valuation");
+}
+
 console.log(failures === 0 ? "ALL PASS — D LIVE COST METERING" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

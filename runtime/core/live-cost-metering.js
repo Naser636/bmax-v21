@@ -32,11 +32,22 @@
  * Pure/deterministic given its injected `execute` (no clock, randomness or I/O of its own — ledgers in →
  * ledger snapshot out, via the primitives' own pure ops). A read-only require.main CLI prints the descriptor.
  * This is Stage 3 COST accounting only — NOT revenue / settlement / cash / profit (later, contract-gated).
+ *
+ * ADDITIVE EVIDENCE-ONLY VALUATION (wiring of the price-resolution core): when — and ONLY when — the caller
+ * SUPPLIES a price `catalog`, this module attaches a DERIVED monetary valuation of the metered OBSERVED usage
+ * (via price-resolution.valueFromCatalog) as pure `valuation` evidence on its result. It is strictly additive:
+ *   - it NEVER feeds the ledger, the spend, or the budget decision — the COST_UNIT accounting is unchanged;
+ *   - a DERIVED value is never OBSERVED, never ESTIMATED, never BILLED, never SPENT;
+ *   - with NO catalog supplied the feature is dormant (valuation:null) — byte-for-byte the prior behaviour;
+ *   - it invents NO rate: a supplied catalog carries the rates, and a missing/ambiguous/stale rule stays
+ *     UNKNOWN with a null amount (never a fabricated 0); a genuine observed 0 priced by a rule is DERIVED 0;
+ *     absent/non-observed usage stays NOT_OBSERVED (USAGE_UNKNOWN, null). All per price-resolution verbatim.
  */
 
 const E = require("./economic-unit");
 const cost = require("./cost-accounting");
 const budgetContract = require("./budget-contract");
+const price = require("./price-resolution");
 
 const LIVE_COST_METERING_CONTRACT = Object.freeze({
   id: "V5-STAGE3-LIVE-COST-METERING",
@@ -62,8 +73,9 @@ const LIVE_COST_METERING_CONTRACT = Object.freeze({
     "no implicit unit or scale conversion (mismatch ⇒ refuse spend)",
     "no overspend: observed beyond ceiling ⇒ EXHAUSTED, reservation released",
     "admission reservation always released (recovered) when not spent",
-    "no money invented: usage is metered as usage; tokens are never turned into currency here",
-    "deterministic / pure given the injected provider call",
+    "no money invented: usage is metered as usage; tokens are never turned into currency for the SPEND",
+    "a SUPPLIED catalog yields an ADDITIVE, EVIDENCE-ONLY DERIVED valuation (never spent, never billed, never in the ledger); no catalog ⇒ dormant (valuation:null); missing/ambiguous/stale rule ⇒ UNKNOWN null, never 0",
+    "deterministic / pure given the injected provider call (valuation as-of/dimensions are explicit inputs)",
   ]),
 });
 
@@ -81,6 +93,38 @@ function observationOf(outcome) {
 function matchingObserved(observation, unit, kind) {
   const qs = Array.isArray(observation.quantities) ? observation.quantities : [];
   return qs.find((q) => isPlainObject(q) && q.unit === unit && q.kind === kind) || null;
+}
+
+/**
+ * deriveValuation(observation, alloc, outcome, catalog, priceQuery) -> an ADDITIVE, EVIDENCE-ONLY DERIVED
+ * valuation of the metered OBSERVED usage against a SUPPLIED price catalog, or null when no catalog is
+ * supplied (feature dormant — the COST_UNIT spend is untouched). It NEVER feeds the ledger/spend: the value
+ * is a DERIVED ASSET amount from price-resolution, never OBSERVED, never BILLED, never spent. Semantics are
+ * price-resolution verbatim — it prices the SAME observed quantity the budget meters (alloc.unit/kind) so the
+ * evidence and the spend describe the one observation:
+ *   - genuine OBSERVED usage in the priced unit + exactly one applicable rule ⇒ OK, DERIVED value (0×rate=0);
+ *   - OBSERVED usage + missing/ambiguous/stale rule ⇒ that status, value null (UNKNOWN, never a fabricated 0);
+ *   - usage absent / not a genuine OBSERVED observation ⇒ USAGE_UNKNOWN (NOT_OBSERVED), value null.
+ * Deterministic: the as-of / provider / model resolution dimensions are explicit INPUTS (no clock).
+ */
+function deriveValuation(observation, alloc, outcome, catalog, priceQuery) {
+  if (!isPlainObject(catalog)) return null; // no supplied catalog ⇒ dormant (backward compatible)
+  const pq = isPlainObject(priceQuery) ? priceQuery : {};
+  const query = {
+    usageUnit: alloc.unit,
+    usageKind: alloc.kind,
+    provider: isNonEmptyString(pq.provider) ? pq.provider
+      : (isPlainObject(outcome) && isNonEmptyString(outcome.provider) ? outcome.provider : null),
+    model: isNonEmptyString(pq.model) ? pq.model : null,
+    asOf: isNonEmptyString(pq.asOf) ? pq.asOf : null,
+  };
+  // Only a GENUINE OBSERVED observation in the metered unit yields a priced quantity; anything else is left
+  // to price-resolution as NOT_OBSERVED (null). ESTIMATED/ABSENT usage is never DERIVED-valued here.
+  const obs = observation.basis === "OBSERVED" ? matchingObserved(observation, alloc.unit, alloc.kind) : null;
+  const observedQ = (obs && Number.isInteger(obs.minor) && obs.minor >= 0 && Number.isInteger(obs.scale) && obs.scale >= 0)
+    ? E.quantity(alloc.unit, alloc.kind, obs.minor, obs.scale)
+    : null;
+  return price.valueFromCatalog(catalog, query, observedQ);
 }
 
 /**
@@ -103,20 +147,21 @@ function meterProviderCall(opts) {
 
   const resolved = budgetContract.resolveBudget(o.spec);
 
-  // (1a) BUDGET ABSENT — invent nothing; run the provider unchanged (backward compatible).
+  // (1a) BUDGET ABSENT — invent nothing; run the provider unchanged (backward compatible). No budget ⇒ no
+  // metered unit to value against ⇒ valuation stays dormant even if a catalog was supplied.
   if (!resolved.present) {
     const outcome = execute();
-    return Object.freeze({ present: false, valid: false, metered: false, executed: true, decision: "BUDGET_ABSENT", observed: null, spent: false, snapshot: null, outcome });
+    return Object.freeze({ present: false, valid: false, metered: false, executed: true, decision: "BUDGET_ABSENT", observed: null, spent: false, snapshot: null, outcome, valuation: null });
   }
   // (1b) BUDGET MALFORMED — clean refusal; the provider is NOT invoked.
   if (!resolved.ok) {
-    return Object.freeze({ present: true, valid: false, metered: false, executed: false, decision: "BUDGET_MALFORMED", observed: null, spent: false, snapshot: null, outcome: null, errors: resolved.errors });
+    return Object.freeze({ present: true, valid: false, metered: false, executed: false, decision: "BUDGET_MALFORMED", observed: null, spent: false, snapshot: null, outcome: null, errors: resolved.errors, valuation: null });
   }
 
   // (2) VALID budget — find the allocation for the requested bucket.
   const alloc = resolved.budget.allocations.find((a) => a.bucket === bucket) || null;
   if (!alloc) {
-    return Object.freeze({ present: true, valid: true, metered: false, executed: false, decision: "NO_BUCKET", observed: null, spent: false, snapshot: null, outcome: null });
+    return Object.freeze({ present: true, valid: true, metered: false, executed: false, decision: "NO_BUCKET", observed: null, spent: false, snapshot: null, outcome: null, valuation: null });
   }
 
   const cb0 = cost.createCostBudget(alloc.unit, alloc.kind, alloc.amount);
@@ -127,7 +172,7 @@ function meterProviderCall(opts) {
   // (2→admission) RESERVE the ceiling. A zero/exhausted ceiling refuses the call — the provider is NOT invoked.
   const admit = cost.reserve(cb0, admitId, ceilingQ);
   if (!admit.ok) {
-    return Object.freeze({ present: true, valid: true, metered: true, executed: false, decision: "REFUSED_EXHAUSTED", observed: null, spent: false, snapshot: admit.snapshot, outcome: null, exhaustion: admit.exhaustion || null });
+    return Object.freeze({ present: true, valid: true, metered: true, executed: false, decision: "REFUSED_EXHAUSTED", observed: null, spent: false, snapshot: admit.snapshot, outcome: null, exhaustion: admit.exhaustion || null, valuation: null });
   }
   let cb = admit.costBudget;
 
@@ -137,15 +182,20 @@ function meterProviderCall(opts) {
     outcome = execute();
   } catch (err) {
     const rel = cost.release(cb, admitId); // recover the admission reservation — no fictive spend
-    return Object.freeze({ present: true, valid: true, metered: true, executed: true, decision: "NO_SPEND_PROVIDER_ERROR", observed: null, spent: false, snapshot: rel.snapshot, outcome: null, error: String((err && err.message) || err) });
+    // The call threw ⇒ no observation exists ⇒ no valuation evidence (never a fabricated amount).
+    return Object.freeze({ present: true, valid: true, metered: true, executed: true, decision: "NO_SPEND_PROVIDER_ERROR", observed: null, spent: false, snapshot: rel.snapshot, outcome: null, error: String((err && err.message) || err), valuation: null });
   }
 
   // (4) Read the OBSERVED usage (E). (5) Release the admission reservation (return the remainder).
   const observation = observationOf(outcome);
   cb = cost.release(cb, admitId).costBudget;
 
+  // ADDITIVE evidence: a DERIVED valuation of the metered OBSERVED usage against any SUPPLIED catalog.
+  // Computed once from the released observation; it NEVER influences the spend decision or the ledger below.
+  const valuation = deriveValuation(observation, alloc, outcome, o.catalog, o.priceQuery);
+
   const done = (decision, observed, spent) =>
-    Object.freeze({ present: true, valid: true, metered: true, executed: true, decision, observed: observed || null, spent: !!spent, snapshot: cost.snapshot(cb), outcome });
+    Object.freeze({ present: true, valid: true, metered: true, executed: true, decision, observed: observed || null, spent: !!spent, snapshot: cost.snapshot(cb), outcome, valuation });
 
   // (6/7) SPEND only on a clean run carrying a real OBSERVED usage in the budget's unit.
   if (!isPlainObject(outcome) || outcome.classification !== "OK") return done("NO_SPEND_PROVIDER_NOT_OK", null, false);
@@ -166,14 +216,14 @@ function meterProviderCall(opts) {
   // reserve(observed) → EXHAUSTED means observed exceeds the ceiling (overspend) — refuse, no spend.
   const rsv = cost.reserve(cb, spendId, measurement);
   if (!rsv.ok) {
-    return Object.freeze({ present: true, valid: true, metered: true, executed: true, decision: rsv.decision === "EXHAUSTED" ? "EXHAUSTED" : "NO_SPEND_NO_OBSERVATION", observed: obs, spent: false, snapshot: rsv.snapshot, outcome, exhaustion: rsv.exhaustion || null });
+    return Object.freeze({ present: true, valid: true, metered: true, executed: true, decision: rsv.decision === "EXHAUSTED" ? "EXHAUSTED" : "NO_SPEND_NO_OBSERVATION", observed: obs, spent: false, snapshot: rsv.snapshot, outcome, exhaustion: rsv.exhaustion || null, valuation });
   }
   cb = cost.commit(rsv.costBudget, spendId).costBudget;
   cb = cost.spend(cb, spendId, measurement).costBudget;
   return done("SPENT", obs, true);
 }
 
-module.exports = { LIVE_COST_METERING_CONTRACT, meterProviderCall, observationOf };
+module.exports = { LIVE_COST_METERING_CONTRACT, meterProviderCall, observationOf, deriveValuation };
 
 // ---- Read-only CLI: prints the contract descriptor; mutates nothing. --------------------------
 if (require.main === module) {
