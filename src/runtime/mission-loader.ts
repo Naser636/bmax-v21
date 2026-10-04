@@ -41,6 +41,25 @@ export interface MissionContract {
   verify: VerifyRequirement[];
 }
 
+// S4 (Controlled-Execution transport): the mission's CONTROL declaration, carried VERBATIM
+// from its contract into the plan — the same transport-only pattern as policies/contract/intent.
+// This does NOT create a second control authority: the AUTHORITATIVE controlled-execution gate
+// remains the live release choke point (runtime/core/mission-ledger.recordMission, which re-reads
+// this same contract from disk by id). The field exists so the control declaration SURVIVES the
+// runtime transport path instead of being silently dropped — a runtime consumer reading the
+// RuntimeMission/plan now sees whether the mission is controlled, and mechanical-acceptance's
+// isControlled(mission) holds on the transported object.
+//
+// OPT-IN: a mission is controlled ONLY when its contract declares control.required === true. A
+// missing or malformed control declaration yields the legacy shape { required: false }, so legacy
+// missions are NEVER defaulted to controlled.
+export interface MissionControl {
+  required: boolean;
+  // OPTIONAL explicit required-checks override, carried verbatim when the contract declares it
+  // (contract key `control.required_checks`). Absent => the acceptance path's class-aware default.
+  requiredChecks?: string[];
+}
+
 export interface RuntimeMission {
   id: string;
   name: string;
@@ -51,6 +70,8 @@ export interface RuntimeMission {
   policies: MissionPolicies;
   // S3: the mission's CONTRACT outcome fields (DoD/completion/verify), carried verbatim.
   contract: MissionContract;
+  // S4: the mission's CONTROL declaration, carried verbatim (opt-in; legacy => { required:false }).
+  control: MissionControl;
   brain: {
     loaded: boolean;
     objectives: string[];
@@ -94,8 +115,43 @@ export class MissionLoader {
       intent: this.deriveIntent(id),
       policies: this.readPolicies(id),
       contract: this.readContract(id),
+      control: this.readControl(id),
       brain
     };
+  }
+
+  /**
+   * S4: carry the mission's CONTROL declaration from its contract VERBATIM (transport only; no
+   * interpretation, no enforcement — the authoritative gate is mission-ledger.recordMission, which
+   * independently re-reads this same contract). Tolerant: a missing/malformed contract or control
+   * block yields the legacy shape { required: false }. OPT-IN: `required` is true ONLY when the
+   * contract declares control.required === true, so a legacy mission is never defaulted to
+   * controlled. required_checks is carried verbatim when declared as a string[]. Pure (contract
+   * read; no Date/randomness).
+   */
+  private readControl(id: string): MissionControl {
+    let contract: { control?: unknown } = {};
+    try {
+      contract = JSON.parse(fs.readFileSync(`${this.missionsDir}/${id}.json`, "utf8"));
+    } catch {
+      contract = {};
+    }
+
+    const c = contract.control;
+    if (!c || typeof c !== "object" || Array.isArray(c)) {
+      return { required: false };
+    }
+
+    const raw = c as Record<string, unknown>;
+    const required = raw.required === true;
+    const rawChecks = raw.required_checks ?? raw.requiredChecks;
+    const requiredChecks = Array.isArray(rawChecks)
+      ? rawChecks.filter((x: unknown): x is string => typeof x === "string")
+      : undefined;
+
+    const control: MissionControl = { required };
+    if (requiredChecks) control.requiredChecks = requiredChecks;
+    return control;
   }
 
   /**
