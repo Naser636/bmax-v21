@@ -3749,3 +3749,31 @@ Next V5 gaps re-swept: Evidence/Verification = mechanism present (no reachable m
 Recovery/Idempotence = idempotency+CAS now live (action-level journal + reality version); Evaluation/
 Regression = no live promotion consumer (would be speculative). Economic metering = business-decision
 frontier. No further dependency-ready, reachable, non-speculative increment without a new CTO decision.
+
+### STAGE 3 ECONOMIC FOUNDATION — A/B/C COMPLETE + PROVEN (2026-10-04, CTO economic-model authorization)
+CTO authorized the V5 economic model (Stage 3 scope; prepares Stage 9). Built the foundation, concepts kept
+DISTINCT (COST ≠ BUDGET ≠ VALUE ≠ REVENUE ≠ CASH ≠ PROFIT ≠ SETTLEMENT), each a proven+committed increment:
+- A economic primitives — runtime/core/economic-unit.js (84e670e): exact integer minor/10^scale Quantity
+  (never float), KIND COST_UNIT vs ASSET, extensible unit REGISTRY (no hardcoded currency, no `if unit===`),
+  same-unit arithmetic only (mixing throws — no implicit FX), cost BASIS OBSERVED vs ESTIMATED, gross/fees/
+  net kept separate (net derived). Asset identity extensible (BTC = ticker+network, not a bare ticker).
+- C cost-accounting adapter — runtime/core/cost-accounting.js (f62c3c2): binds ONE budget-ledger to ONE
+  declared unit; reserve/commit (estimate ok) → SPEND requires OBSERVED (never charged before observed;
+  denied/unobserved action not charged); unit-mismatch refused; overspend ⇒ EXHAUSTED. Composes A +
+  budget-ledger (reuse, not reimplement).
+- B budget contract source — runtime/core/budget-contract.js + mission-loader transport (65f3e05): the
+  minimal canonical budget block (FICHE_03 §185 buckets × declared unit/kind/exact amount); ABSENT vs
+  DECLARED vs MALFORMED kept distinct (NO fabricated default); plan.budget transported iff well-formed
+  (backward compatible). Closes the "no mission declares a usable budget" gap.
+All: pure/deterministic, read-only CLIs, additive write-sets, tsc clean, npm test (287/288/289 files) exit 0,
+next build OK, convergence SYSTEM_READY intact.
+
+NEXT INCREMENT (defined, bounded, authorized engineering — D needs E first): LIVE cost metering on the
+PROVIDER path requires OBSERVED provider cost (E), which is NOT available today — provider-port.ts
+ProviderResult/ProviderOutcome carry NO `usage` field (openai-sdk-call observes usage but it is not plumbed
+up). Honest live SPEND needs E = surface OBSERVED usage through the provider contract (provider-port.ts +
+claude/openai adapters + failover), additive/optional; THEN D = wire cost-accounting into runViaProvider
+(reserve from plan.budget token bucket → provider call → SPEND observed usage → release on failure), tested
+with an injected provider (no live call). Not fabricated and not a frontier — a bounded provider-contract
+increment best isolated. Per "ne prétends pas connaître le coût" the estimate-only reserve-without-spend
+path is NOT shipped. STOP here with the Stage-3 foundation complete.
