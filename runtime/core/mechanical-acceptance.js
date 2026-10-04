@@ -316,6 +316,51 @@ function pushAllowed(verdict, post) {
   return Object.freeze({ allowed: ok, reason });
 }
 
+// ---- Economic commit / push gate (OPT-IN extension of §7) --------------------------------------
+// The ECONOMIC analog of the commit/push guards above: the Action Gate (this authorization boundary)
+// consumes the verdict the ECONOMIC ENGINE already produced (economic-verification.verifyEconomics,
+// surfaced via acceptance-facts.evaluateMissionEconomics) and decides commit/push. It RECOMPUTES nothing
+// and invents no verdict — it only reuses the frozen economic VERDICT vocabulary. OPT-IN and fail-closed:
+// when economic enforcement is NOT enabled (economics.enforced !== true) these are a NO-OP that always
+// allow (legacy commit/push behaviour byte-for-byte); when enabled, ONLY a VERIFIED verdict authorizes —
+// INCOMPLETE / UNKNOWN / FAILED / absent / malformed / wrong-mission (all ⇒ non-VERIFIED) refuse.
+const { VERDICT: ECON_VERDICT } = require("./economic-verification");
+
+/** economicVerdictOf(economics) — the economic verdict from an evaluateMissionEconomics-shaped result. */
+function economicVerdictOf(economics) {
+  return isPlainObject(economics) && isNonEmptyString(economics.verdict) ? economics.verdict : ECON_VERDICT.UNKNOWN;
+}
+
+/**
+ * economicCommitAllowed(economics) — economics is an { enforced, verdict } result (evaluateMissionEconomics).
+ * NO-OP (allowed) unless economic enforcement is explicitly enabled; then allowed ONLY when VERIFIED.
+ */
+function economicCommitAllowed(economics) {
+  const enforced = isPlainObject(economics) && economics.enforced === true;
+  if (!enforced) return Object.freeze({ allowed: true, enforced: false, reason: "economic enforcement not enabled — commit unaffected" });
+  const verdict = economicVerdictOf(economics);
+  const ok = verdict === ECON_VERDICT.VERIFIED;
+  return Object.freeze({ allowed: ok, enforced: true, verdict, reason: ok ? "economic verdict VERIFIED — commit authorized" : `economic verdict ${verdict} (requires VERIFIED) — commit refused` });
+}
+
+/**
+ * economicPushAllowed(economics, post) — like economicCommitAllowed, and (when enforced) additionally
+ * requires the commit it would push to exist (post.commitVerified === true), mirroring pushAllowed.
+ */
+function economicPushAllowed(economics, post) {
+  const enforced = isPlainObject(economics) && economics.enforced === true;
+  if (!enforced) return Object.freeze({ allowed: true, enforced: false, reason: "economic enforcement not enabled — push unaffected" });
+  const verdict = economicVerdictOf(economics);
+  const verified = verdict === ECON_VERDICT.VERIFIED;
+  const committed = isPlainObject(post) && post.commitVerified === true;
+  const ok = verified && committed;
+  let reason;
+  if (!verified) reason = `economic verdict ${verdict} (requires VERIFIED) — push refused`;
+  else if (!committed) reason = "commit not verified — push refused";
+  else reason = "economic verdict VERIFIED and commit verified — push authorized";
+  return Object.freeze({ allowed: ok, enforced: true, verdict, reason });
+}
+
 module.exports = {
   VERDICT,
   PRECEDENCE,
@@ -325,6 +370,8 @@ module.exports = {
   evaluateAcceptance,
   commitAllowed,
   pushAllowed,
+  economicCommitAllowed,
+  economicPushAllowed,
 };
 
 // ---- Read-only CLI: prints the contract descriptor; mutates nothing. --------------------------
