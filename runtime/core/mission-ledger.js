@@ -3,6 +3,7 @@
 const fs = require("fs");
 const { authorizeMission } = require("./governance-kernel");
 const { computeLifecycle, markArchived } = require("./mission-lifecycle");
+const { evaluateMissionAcceptance } = require("./acceptance-facts");
 
 const LEDGER_FILE = "runtime/generated/mission-ledger.json";
 
@@ -41,6 +42,30 @@ function recordMission(mission) {
         : `validation not proven (status=${report.status})`;
     console.warn(`[MissionLedger] Refusing to record "${mission}": ${why}.`);
     return { skipped: true, reason: "UNPROVEN", entry: { mission } };
+  }
+
+  // Controlled-execution gate (OPT-IN). A mission that DECLARES controlled execution
+  // (contract control.required === true) must additionally pass MECHANICAL ACCEPTANCE on FACTS before
+  // it may be recorded — i.e. released. The worker's validated report (checked above) is a CLAIM; for a
+  // controlled mission it is NOT sufficient. evaluateMissionAcceptance gathers facts read-only from the
+  // artifacts already on this path (verify booleans, checkpoint diff/status, declared evidence existence)
+  // and runs the pure evaluator. Only ACCEPT lets release continue; REJECT/BLOCKED/UNKNOWN (and any
+  // ungatherable fact) => refuse, no release. LEGACY missions (no control declared) return controlled:false
+  // and this gate is a NO-OP, so their behavior is exactly as before.
+  let acceptance;
+  try {
+    acceptance = evaluateMissionAcceptance(mission);
+  } catch (e) {
+    // Fail-closed for a declared-controlled mission; never break a legacy mission on a gather error.
+    console.warn("[MissionLedger] Acceptance evaluation error:", e.message);
+    acceptance = { controlled: false };
+  }
+  if (acceptance && acceptance.controlled === true && acceptance.verdict !== "ACCEPT") {
+    const reasons = acceptance.record
+      ? [].concat(acceptance.record.rejections, acceptance.record.blocks, acceptance.record.unknowns).filter(Boolean)
+      : [];
+    console.warn(`[MissionLedger] Refusing to record controlled mission "${mission}": mechanical acceptance ${acceptance.verdict}. ${reasons.join("; ")}`);
+    return { skipped: true, reason: "NOT_ACCEPTED", verdict: acceptance.verdict, entry: { mission } };
   }
 
   const governance = authorizeMission(mission);
