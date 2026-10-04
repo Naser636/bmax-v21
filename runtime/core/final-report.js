@@ -12,6 +12,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { attributeObjectives } = require("./objective-attribution");
 
 const GENERATED_DIR = "runtime/generated";
 const REPORTS_DIR = path.join(GENERATED_DIR, "reports");
@@ -43,6 +44,54 @@ function summarizeC03(lifecycle) {
   return { total, validated, verified };
 }
 
+/**
+ * attributionSection(plan, patch, execution, evidenceProbe) -> string[]  (markdown lines)
+ *
+ * Stage-6 (Evaluation/Regression) first increment — PER-OBJECTIVE ATTRIBUTION as read-only
+ * OBSERVABILITY. Surfaces the per-objective verdicts the existing objective-attribution analyzer
+ * already computes (EVIDENCED / RECORDED-NO-EVIDENCE / FAILED / UNMATCHED / INCONSISTENT) alongside
+ * the bare counts the report printed before. It changes NO gate and asserts NO done_when satisfaction
+ * (doneWhenEvaluated stays false), exactly as the analyzer's invariants require.
+ *
+ * Pure: a deterministic function of its inputs + the injected evidenceProbe (no clock, and no probe
+ * execution — declared-proof OBSERVATION is deliberately disabled here via no-op probe injectables, so
+ * the report stage reads the three artifacts without running anything). When patch-plan.json or
+ * patch-execution.json was not produced this run, it renders an explicit "not available" line rather
+ * than a fabricated zero-objective result.
+ */
+function attributionSection(plan, patch, execution, evidenceProbe) {
+  const lines = ["## Per-objective attribution"];
+  if (!patch || !execution) {
+    lines.push("- (not available — patch-plan.json / patch-execution.json not produced this run)");
+    return lines;
+  }
+  // No-op proof injectables: never run a probe from the report stage (observe nothing, no side effect).
+  const noProbeKnown = () => false;
+  const noProbeRun = () => ({});
+  const { objectives, summary } = attributeObjectives(
+    plan,
+    patch,
+    execution,
+    typeof evidenceProbe === "function" ? evidenceProbe : () => false,
+    noProbeRun,
+    noProbeKnown,
+    {},
+  );
+  lines.push(
+    `- Evidenced: ${summary.evidenced} · Recorded (no evidence): ${summary.recordedNoEvidence} · ` +
+      `Failed: ${summary.failed} · Unmatched: ${summary.unmatched} · Inconsistent: ${summary.inconsistent} ` +
+      `(done_when NOT evaluated)`,
+  );
+  if (objectives.length === 0) {
+    lines.push("- (no per-objective patches to attribute)");
+  } else {
+    for (const o of objectives) {
+      lines.push(`- ${o.objectiveId === null ? "(no objectiveId)" : o.objectiveId}: **${o.verdict}** — ${o.reason}`);
+    }
+  }
+  return lines;
+}
+
 function main() {
   const mission = process.argv[2] || "BUILD_RUNTIME";
 
@@ -50,6 +99,14 @@ function main() {
   const report = readJsonSafe(path.join(GENERATED_DIR, "mission-report.json")) || {};
   const lifecycle = readJsonSafe(path.join(GENERATED_DIR, "mission-lifecycle.json")) || {};
   const checks = report.checks || {};
+
+  // Stage-6 per-objective attribution (read-only observability). Null when a stage did not produce it.
+  const patchPlan = readJsonSafe(path.join(GENERATED_DIR, "patch-plan.json"));
+  const patchExecution = readJsonSafe(path.join(GENERATED_DIR, "patch-execution.json"));
+  const evidenceProbe = (p) => {
+    try { return typeof p === "string" && p.length > 0 && fs.statSync(p).size > 0; } catch { return false; }
+  };
+  const attribution = attributionSection(plan, patchPlan, patchExecution, evidenceProbe);
 
   const c03 = summarizeC03(lifecycle);
   const caps = Array.isArray(checks.capabilities) ? checks.capabilities : [];
@@ -73,6 +130,8 @@ function main() {
     `- Planned patches: ${checks.planned ?? 0}`,
     `- Executed: ${checks.executed ?? 0}`,
     `- Failed: ${checks.failed ?? 0}`,
+    "",
+    ...attribution,
     "",
     "## Capability proofs",
     capLines,
@@ -98,7 +157,7 @@ function main() {
   console.log("======================================");
 }
 
-module.exports = { summarizeC03 };
+module.exports = { summarizeC03, attributionSection };
 
 // Only auto-run (and exit) when invoked as a script — the pipeline spawns `node final-report.js`, so
 // this is identical to before. `require()` (the test) imports summarizeC03 without side effects.

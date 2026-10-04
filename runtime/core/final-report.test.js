@@ -10,7 +10,7 @@
  */
 
 const assert = require("assert");
-const { summarizeC03 } = require("./final-report");
+const { summarizeC03, attributionSection } = require("./final-report");
 const { toC03Records } = require("./mission-lifecycle");
 
 let passed = 0;
@@ -61,6 +61,67 @@ console.log("deterministic");
   const lifecycle = { c03Transitions: toC03Records(TRANSITIONS, SM) };
   ok(JSON.stringify(summarizeC03(lifecycle)) === JSON.stringify(summarizeC03(lifecycle)),
     "summarizeC03 is deterministic");
+}
+
+// ---------------------------------------------------------------------------
+// Stage-6 PER-OBJECTIVE ATTRIBUTION surfaced in the Final Report (read-only observability).
+// Feeds the REAL objective-attribution analyzer (no mock) through the report helper and asserts the
+// rendered markdown reflects each per-objective verdict, stays honest (done_when NOT evaluated), gates
+// nothing, and degrades gracefully when the artifacts are absent.
+// ---------------------------------------------------------------------------
+console.log("surfaces per-objective attribution (real analyzer, no mock)");
+{
+  const plan = { mission: "M", objectives: [{ id: "a" }, { id: "b" }, { id: "c" }, { id: "d" }] };
+  const patch = {
+    patches: [
+      { objectiveId: "obj_a", done_when: ["x"] },
+      { objectiveId: "obj_b", done_when: ["y"] },
+      { objectiveId: "obj_c", done_when: ["z"] },
+      { objectiveId: "obj_d", done_when: ["w"] }, // no execution entry ⇒ UNMATCHED
+    ],
+  };
+  const execution = {
+    executed: [
+      { objectiveId: "obj_a", status: "EXECUTED", evidence: "evidence/a.json" }, // EVIDENCED
+      { objectiveId: "obj_b", status: "EXECUTED", evidence: "evidence/missing.json" }, // no usable file
+      { objectiveId: "obj_c", status: "FAILED" }, // FAILED
+    ],
+  };
+  const evidenceProbe = (p) => p === "evidence/a.json"; // only a's evidence is present & non-empty
+  const lines = attributionSection(plan, patch, execution, evidenceProbe);
+  const md = lines.join("\n");
+
+  ok(lines[0] === "## Per-objective attribution", "renders the attribution heading");
+  ok(/Evidenced: 1 /.test(md), "summary: exactly 1 EVIDENCED");
+  ok(/Recorded \(no evidence\): 1 /.test(md), "summary: exactly 1 RECORDED-NO-EVIDENCE (evidence file absent)");
+  ok(/Failed: 1 /.test(md), "summary: exactly 1 FAILED");
+  ok(/Unmatched: 1 /.test(md), "summary: exactly 1 UNMATCHED (no execution entry)");
+  ok(/done_when NOT evaluated/.test(md), "honesty: states done_when is NOT evaluated (no fabricated proof)");
+  ok(/obj_a: \*\*EVIDENCED\*\*/.test(md), "per-objective line: obj_a EVIDENCED");
+  ok(/obj_b: \*\*RECORDED-NO-EVIDENCE\*\*/.test(md), "per-objective line: obj_b RECORDED-NO-EVIDENCE");
+  ok(/obj_c: \*\*FAILED\*\*/.test(md), "per-objective line: obj_c FAILED");
+  ok(/obj_d: \*\*UNMATCHED\*\*/.test(md), "per-objective line: obj_d UNMATCHED");
+  ok(!/satisfied|proven|SUCCESS/i.test(md), "never claims satisfied/proven/SUCCESS (changes no gate)");
+}
+
+console.log("degrades gracefully when the artifacts are absent (best-effort stage)");
+{
+  const none = attributionSection({ mission: "M" }, null, null, () => false);
+  ok(none[0] === "## Per-objective attribution", "heading present even without artifacts");
+  ok(none.some((l) => /not available/.test(l)), "renders an explicit 'not available' line (no crash, no fabricated zero)");
+}
+
+console.log("deterministic");
+{
+  const plan = { objectives: [{ id: "a" }] };
+  const patch = { patches: [{ objectiveId: "obj_a", done_when: [] }] };
+  const execution = { executed: [{ objectiveId: "obj_a", status: "EXECUTED", evidence: "e" }] };
+  const probe = () => true;
+  ok(
+    JSON.stringify(attributionSection(plan, patch, execution, probe)) ===
+      JSON.stringify(attributionSection(plan, patch, execution, probe)),
+    "attributionSection is deterministic given identical inputs",
+  );
 }
 
 console.log(`\nFINAL REPORT × C03 — ${passed} assertions passed.`);

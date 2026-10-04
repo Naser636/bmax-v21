@@ -3809,3 +3809,26 @@ NOT PROVEN / out of scope (unchanged frontier): usage→currency pricing (needs 
 provenance), and Revenue / Invoice / Collection / Cash / Profit / Capital / Settlement — no contract or live
 path exists; not claimed. NEXT AUTHORIZED: the usage→money price-rule increment requires a CTO business
 decision (which unit, which price, provenance) — STOP at that authority frontier.
+
+### STAGE 6 (EVALUATION/REGRESSION) — PER-OBJECTIVE ATTRIBUTION SURFACED IN FINAL REPORT (2026-10-04)
+CTO standing rule: a local frontier (pricing) freezes ONLY its branch; independent authorized increments
+continue. Repository-grounded forensic gap map (priorities 1,2,4,5,6) found the ONLY D-class (authorized,
+dependency-satisfied, bounded, non-speculative, no business decision) increment: wire the already-built,
+unit-tested but UNCONSUMED objective-attribution.js analyzer into the live final-report.js stage. Everything
+else in the Evaluation/Regression layer is E/F — no live PROMOTER exists (capability-metrics/learning sit
+behind the dead capability-router→local-autonomy chain; a promotion/regression gate would invent the need),
+or C (objective-proof-as-a-gate in the TS route is explicitly "not authorized yet" at mission-loader.ts:16;
+idempotency CAS authentic-version needs an undecided per-action→artifact mapping).
+CHANGE (2 files): runtime/core/final-report.js adds a pure `attributionSection(plan,patch,execution,
+evidenceProbe)` that reuses attributeObjectives (read-only; declared-proof probe OBSERVATION disabled via
+no-op injectables ⇒ the report stage runs NO probe, zero side effect) and renders a "## Per-objective
+attribution" block (EVIDENCED / RECORDED-NO-EVIDENCE / FAILED / UNMATCHED / INCONSISTENT + counts, stating
+"done_when NOT evaluated"); main() reads patch-plan.json + patch-execution.json and inserts it; absent
+artifacts ⇒ explicit "(not available)" line (no fabricated zero). + final-report.test.js (+13 assertions).
+Changes NO gate: final-report is the best-effort last stage (exit 0, never fails the pipeline); the analyzer
+never asserts done_when/satisfied/proven/SUCCESS. PROVEN: unit 21 assertions; BEHAVIOURAL — the REAL spawned
+stage (node final-report.js over real artifacts) wrote the block, distinguishing EVIDENCED (evidence file
+present) from RECORDED-NO-EVIDENCE (evidence path absent on disk) via the fs evidenceProbe, exit 0; full suite
+292 files exit 0; tsc 0; next build OK. This is observability only — NOT a promotion/regression gate (that
+stays E until a live promoter exists). NEXT: no further D-class increment in priorities 1–6 without a new
+semantic/business decision (Stage-6 promotion gate E; pricing C; objective-proof TS-gate C) — STOP.
