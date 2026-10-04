@@ -2,7 +2,10 @@
   "mission": "M0000",
   "priority": "P0",
   "mode": "AUDIT",
-  "description": "Establish the official Runtime architectural baseline. No code modification, no patch, no provider (read-only). Transcribed from runtime/system/ROADMAP.md § M0000.",
+  "status": "AUTHORIZED",
+  "control": { "required": true },
+  "evidence": ["runtime/generated/mission-report.json"],
+  "description": "Establish the official Runtime architectural baseline. No code modification, no patch, no provider (read-only). Transcribed from runtime/system/ROADMAP.md § M0000. CONTROLLED EXECUTION: this read-only mission declares control.required=true, so its release through the mission-ledger choke point requires mechanical acceptance (ACCEPT) on FACTS — authority, no failed checks, and its declared evidence artifact present — not merely a validated report claim.",
   "objectives": [
     {
       "id": "ARCHITECTURE_COMPLIANCE_REPORT",

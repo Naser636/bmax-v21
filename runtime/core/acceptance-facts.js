@@ -72,9 +72,15 @@ function gatherAcceptanceFacts(mission) {
   const forbidden = Array.isArray(contract.forbidden_paths) ? contract.forbidden_paths : undefined;
   const forbiddenConcepts = Array.isArray(contract.forbidden_concepts) ? contract.forbidden_concepts : undefined;
   const baseCommit = isNonEmptyString(contract.base_commit) ? contract.base_commit : undefined;
+  // Class-aware required checks (mirrors validation-engine.js:66 / objective-evidence.ts:82-84): an
+  // ENGINEERING mission (declares authorized_paths, or requires_engineering) must pass the build/tsc
+  // gate; a READ-ONLY mission (AUDIT/analyze — no code change) produces no build artifact, so it defaults
+  // to no required checks and is proven by its declared evidence instead. An explicit control.required_checks
+  // always wins. Only computed for a controlled mission (undefined otherwise — legacy path untouched).
+  const isEngineering = (Array.isArray(writeSet) && writeSet.length > 0) || contract.requires_engineering === true;
   const requiredChecks = Array.isArray(control && control.required_checks)
     ? control.required_checks
-    : (control ? DEFAULT_REQUIRED_CHECKS.slice() : undefined);
+    : (control ? (isEngineering ? DEFAULT_REQUIRED_CHECKS.slice() : []) : undefined);
 
   // Declared evidence artifacts: contract.evidence may be string paths or { path } objects. Probe existence.
   const declaredEvidence = Array.isArray(contract.evidence) ? contract.evidence : [];
