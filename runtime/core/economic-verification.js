@@ -20,9 +20,11 @@
  *   - economic-unit BASIS (OBSERVED|ESTIMATED) + provenance ("every economic fact has provenance").
  *
  * It is STANDALONE and additive, in the exact style of mechanical-acceptance.js / price-resolution.js: a pure
- * core + a read-only require.main CLI that only prints the contract descriptor. It is NOT wired into any live
- * gate in this increment — wiring it into a release/verify choke point is a SEPARATE, opt-in increment — so
- * no existing mission or test changes behaviour.
+ * core + a read-only require.main CLI that only prints the contract descriptor. The ONLY consumer is
+ * EVIDENCE-ONLY: AutonomyRuntimeAdapter.persistEconomicVerification writes this verdict to a gitignored
+ * economic-verification-report.json alongside the live cost-metering report when a mission declares a budget.
+ * It is NOT wired into any live GATE — the verdict never blocks or changes a release; enforcing it at a
+ * release/verify choke point would be a SEPARATE governance decision. No mission OUTCOME changes behaviour.
  *
  * IMPORTANT — it evaluates FACTS, never claims, and NEVER fabricates:
  *   - It consumes ALREADY-GATHERED, trusted facts (a live-cost-metering result + the raw OBSERVED
