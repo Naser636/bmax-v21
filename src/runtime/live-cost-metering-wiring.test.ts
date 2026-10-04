@@ -35,7 +35,10 @@ function check(cond: boolean, label: string): void {
 }
 
 const REPO = process.cwd();
-const CORE = ["economic-unit.js", "budget-ledger.js", "budget-contract.js", "cost-accounting.js", "live-cost-metering.js"];
+// The full require() closure live-cost-metering.js needs at load time. price-resolution.js became a
+// direct dependency in b726d6b (SUPPLIED-catalog valuation); omitting it makes requireCjs() throw, so
+// loadMetering() degrades to null and the metered branch never engages — the exact D-wiring regression.
+const CORE = ["economic-unit.js", "budget-ledger.js", "budget-contract.js", "cost-accounting.js", "price-resolution.js", "live-cost-metering.js"];
 
 /** A fake engineering provider: counts calls, returns OK carrying a fixed OBSERVED token usage. */
 class FakeProvider implements EngineeringProviderPort {
