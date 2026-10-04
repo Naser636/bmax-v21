@@ -175,7 +175,8 @@ module.exports = {
 if (require.main === module) {
   const mission = process.argv[2];
   if (!mission) { process.stdout.write("usage: node runtime/core/acceptance-facts.js <mission>\n"); process.exit(2); }
-  const out = { mission, controlled: controlDeclared(mission), facts: gatherAcceptanceFacts(mission) };
+  const out = { mission, controlled: controlDeclared(mission), economicEnforced: economicEnforced(mission), facts: gatherAcceptanceFacts(mission) };
   out.acceptance = evaluateMissionAcceptance(mission);
+  out.economics = evaluateMissionEconomics(mission);
   process.stdout.write(JSON.stringify(out, null, 2) + "\n");
 }
