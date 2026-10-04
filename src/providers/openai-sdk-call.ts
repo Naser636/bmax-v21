@@ -51,8 +51,13 @@ export interface OpenAiChatEnvelope {
   id: string | null;
   /** Why generation stopped (stop / length / …). */
   finishReason: string | null;
-  /** Token usage as reported by the API (evidence of a real, metered call). */
-  usage: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
+  /**
+   * Token usage as reported by the API (evidence of a real, metered call). Each count is `number | null`:
+   * a count the API did NOT report is `null`, NEVER 0 — so a MISSING usage figure is never confused with
+   * a genuine observed zero downstream (UNKNOWN ≠ 0). `usage` itself is null when the API returned no
+   * usage block at all.
+   */
+  usage: { promptTokens: number | null; completionTokens: number | null; totalTokens: number | null } | null;
   /** API-reported creation epoch (seconds). */
   created: number | null;
   /** Precise failure cause when ok:false; null on success. */
@@ -69,6 +74,27 @@ const EMPTY: OpenAiChatEnvelope = {
   created: null,
   error: null,
 };
+
+/**
+ * Normalize the SDK's raw `usage` block into the envelope's usage shape, HONESTLY. A token count the
+ * provider did not report as a finite number is preserved as `null` — NEVER coerced to 0 — so a MISSING
+ * count is never certified as an OBSERVED zero downstream (UNKNOWN ≠ 0). A genuinely reported 0 is kept
+ * as 0 (a real observed zero). An absent/null `raw` (no usage block at all) ⇒ null. Pure (no I/O).
+ */
+export function normalizeUsage(
+  raw:
+    | { prompt_tokens?: number | null; completion_tokens?: number | null; total_tokens?: number | null }
+    | null
+    | undefined,
+): { promptTokens: number | null; completionTokens: number | null; totalTokens: number | null } | null {
+  if (!raw) return null;
+  const num = (v: unknown): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
+  return {
+    promptTokens: num(raw.prompt_tokens),
+    completionTokens: num(raw.completion_tokens),
+    totalTokens: num(raw.total_tokens),
+  };
+}
 
 /**
  * Perform ONE real OpenAI Chat Completions call. Returns an evidence envelope; never throws.
@@ -90,13 +116,9 @@ export async function callOpenAiChat(input: OpenAiChatInput): Promise<OpenAiChat
       max_completion_tokens: input.maxOutputTokens ?? 1024,
     });
     const choice = resp.choices?.[0];
-    const usage = resp.usage
-      ? {
-          promptTokens: resp.usage.prompt_tokens ?? 0,
-          completionTokens: resp.usage.completion_tokens ?? 0,
-          totalTokens: resp.usage.total_tokens ?? 0,
-        }
-      : null;
+    // HONEST usage: a count the API omits stays null (NOT 0) so a missing figure is never certified as
+    // an observed zero downstream. See normalizeUsage.
+    const usage = normalizeUsage(resp.usage);
     return {
       ok: true,
       text: choice?.message?.content ?? "",

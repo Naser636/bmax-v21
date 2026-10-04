@@ -18,6 +18,7 @@ import {
 } from "@/providers/claude-provider-adapter";
 import { OpenAIProviderAdapter } from "@/providers/openai-provider-adapter";
 import type { OpenAiChatEnvelope } from "@/providers/openai-sdk-call";
+import { normalizeUsage } from "@/providers/openai-sdk-call";
 import {
   PROVIDER_CONTRACT_VERSION,
   observationOf,
@@ -130,6 +131,30 @@ console.log("V5 — E: PROVIDER OBSERVED USAGE TRANSPORT");
   const envNoUsage: OpenAiChatEnvelope = { ...envOk, usage: null };
   const outB = new OpenAIProviderAdapter({ apiKey: "sk-test", call: () => envNoUsage }).execute(request(mission()));
   check(observationOf(outB).basis === "ABSENT", "openai no usage ⇒ ABSENT");
+
+  // GAP (UNKNOWN ≠ 0): a usage block present but with a MISSING total_tokens must be ABSENT, NOT a
+  // certified observed zero. Before the fix the SDK layer coerced a missing total to 0 and the adapter
+  // certified OBSERVED:0, silently turning "unknown usage" into "zero usage".
+  const envMissingTotal: OpenAiChatEnvelope = { ...envOk, usage: { promptTokens: 300, completionTokens: 120, totalTokens: null } };
+  const outC = new OpenAIProviderAdapter({ apiKey: "sk-test", call: () => envMissingTotal }).execute(request(mission()));
+  check(observationOf(outC).basis === "ABSENT", "openai usage present but total MISSING ⇒ ABSENT (missing is never a fabricated zero)");
+
+  // A GENUINE reported zero is a real observation and stays OBSERVED:0 (distinct from missing/ABSENT).
+  const envRealZero: OpenAiChatEnvelope = { ...envOk, usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
+  const outD = new OpenAIProviderAdapter({ apiKey: "sk-test", call: () => envRealZero }).execute(request(mission()));
+  const obsD = observationOf(outD);
+  check(obsD.basis === "OBSERVED" && obsD.quantities[0].minor === 0, "openai genuine total_tokens=0 ⇒ OBSERVED:0 (a real observed zero, not ABSENT)");
+}
+
+// 4b — normalizeUsage (the SDK-layer mapping) is HONEST: a missing count stays null, never 0.
+{
+  check(normalizeUsage(undefined) === null && normalizeUsage(null) === null, "normalizeUsage: no usage block ⇒ null");
+  const miss = normalizeUsage({ prompt_tokens: 10, completion_tokens: 5 }); // total_tokens absent
+  check(miss !== null && miss.promptTokens === 10 && miss.completionTokens === 5 && miss.totalTokens === null, "normalizeUsage: missing total_tokens ⇒ null (NOT coerced to 0)");
+  const zero = normalizeUsage({ prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 });
+  check(zero !== null && zero.totalTokens === 0, "normalizeUsage: genuine reported 0 ⇒ 0 (real observed zero preserved)");
+  const nan = normalizeUsage({ total_tokens: Number.NaN } as { total_tokens: number });
+  check(nan !== null && nan.totalTokens === null, "normalizeUsage: non-finite total ⇒ null (never fabricated)");
 }
 
 // 5 — Failover PRESERVES the provider's observation verbatim (Claude selected, injected runner).

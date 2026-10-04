@@ -324,8 +324,12 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
    */
   private observeUsage(envelope: OpenAiChatEnvelope): ProviderUsageObservation {
     const u = envelope.usage;
-    const total = u && Number.isInteger(u.totalTokens) && u.totalTokens >= 0 ? u.totalTokens : null;
-    if (total === null) return absentObservation("no usage reported by provider");
+    // A reported total of 0 is a genuine OBSERVED zero; a MISSING total (null) is ABSENT, never a
+    // fabricated zero (UNKNOWN ≠ 0). `typeof t === "number"` narrows out the null case for the integer
+    // and non-negative checks.
+    const t = u ? u.totalTokens : null;
+    const total = typeof t === "number" && Number.isInteger(t) && t >= 0 ? t : null;
+    if (total === null) return absentObservation("no integer total usage reported by provider");
     const quantities: ObservedQuantity[] = [
       { unit: "token", kind: "COST_UNIT", minor: total, scale: 0 },
     ];
