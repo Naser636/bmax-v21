@@ -39,6 +39,17 @@ console.log("V5 §387 — WORLD MODEL / EPISTEMIC STATE");
   check(t.ok && t.item.version === 2 && t.item.status === "PROVEN", "transition (CAS match) ⇒ status PROVEN, version 1→2");
   check(t.item.provenance === "run-2", "transition updates provenance");
 }
+// REAL-CHANGE guard: a no-op transition (same status AND same value) is REJECTED — the version advances
+// only on a real transition (invariant), so no-op version inflation / spurious CONFLICTs cannot occur.
+{
+  let m = W.put(W.emptyModel(), "e1", { kind: "fact", status: "OBSERVED", value: { x: 1 } }).model;
+  const noop = W.transition(m, "e1", { toStatus: "OBSERVED", expectedPreviousVersion: 1 });
+  check(noop.ok === false && noop.decision === "REJECTED", "no-op transition (same status + same value) ⇒ REJECTED (no version inflation)");
+  check(W.read(noop.model, "e1").version === 1, "no-op ⇒ ZERO change (version stays 1)");
+  // a value-only change (status unchanged) is a REAL change ⇒ accepted, version advances.
+  const valOnly = W.transition(m, "e1", { toStatus: "OBSERVED", value: { x: 2 }, expectedPreviousVersion: 1 });
+  check(valOnly.ok === true && valOnly.item.version === 2, "value-only change (same status) ⇒ accepted, version 1→2 (real change)");
+}
 // Compare-and-set STALE ⇒ CONFLICT, zero change.
 {
   let m = W.put(W.emptyModel(), "e1", { kind: "fact", status: "OBSERVED" }).model;

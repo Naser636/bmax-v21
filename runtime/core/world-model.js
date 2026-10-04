@@ -133,6 +133,15 @@ function transition(model, id, change) {
   const nextVersion = it.version + 1;
   const before = { status: it.status, value: it.value };
   const after = { status: c.toStatus, value: c.value === undefined ? it.value : c.value };
+  // REAL-CHANGE guard (invariant above: "+1 on each REAL transition"). The C03 record embeds `version` in
+  // state_before/state_after, so those always differ and the validator's I6 real-change check can never fire
+  // here — enforce it on the CONTENT (status/value) instead. A move that changes neither status nor value is
+  // a no-op: reject it (no version inflation, no spurious CONFLICT for other writers, no empty-diff record),
+  // exactly as the standalone C03 validator rejects an advanced version with identical content.
+  const difference = computeDifference(before, after);
+  if (Object.keys(difference).length === 0) {
+    return fail(model, DECISION.REJECTED, "transition: no real change (toStatus and value identical to current) — version advances only on a real transition");
+  }
   // Express the move as a C03 record and validate with the ONE shared validator (reuse, not reimplement).
   const record = {
     state_before: { status: it.status, version: it.version },
@@ -141,7 +150,7 @@ function transition(model, id, change) {
     state_after: { status: c.toStatus, version: nextVersion },
     state_version_before: it.version,
     state_version_after: nextVersion,
-    difference: computeDifference(before, after),
+    difference,
     evidence_refs: Array.isArray(c.evidence_refs) ? c.evidence_refs : [],
     // Epistemic move is RECORDED coverage, not a proof verdict (honest; proof-requiring statuses would
     // demand evidence_refs — callers pass them when the transition asserts a verification conclusion).
