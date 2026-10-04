@@ -224,6 +224,48 @@ console.assert(isFrozenPath("src/app/page.tsx") === false, "app code not frozen"
   console.assert(bypass.fromCache === false && f.calls.claude === 2, "bypassCache forces live call");
 }
 
+// --- Subscription auth (opt-in): the spawned CLI env strips ANTHROPIC_API_KEY so `claude` uses its
+//     stored login instead of a depleted pay-per-use key. Offline — no live call, no secret ever read/logged.
+{
+  const must = (cond: boolean, msg: string): void => { if (!cond) throw new Error("subscription-auth: " + msg); };
+  const capture = (): { run: ProviderProcessRunner; env: () => NodeJS.ProcessEnv | undefined } => {
+    let captured: NodeJS.ProcessEnv | undefined; let seen = false;
+    const run: ProviderProcessRunner = (bin, _args, opts) => {
+      if (bin === "git") return { status: 0, stdout: "", stderr: "" };
+      seen = true; captured = opts.env;
+      return { status: 0, stdout: successEnvelope({ mission: "DEMO_CAPABILITY", providerContractVersion: "1.0.0", status: "DONE", objectivesAddressed: ["o1"], changedFiles: [], commandsRun: [], blocker: null }), stderr: "" };
+    };
+    return { run, env: () => { if (!seen) throw new Error("runner not invoked"); return captured; } };
+  };
+  // Ensure the key is present so "stripped" is meaningful; value is a placeholder only when none exists.
+  const hadKey = Object.prototype.hasOwnProperty.call(process.env, "ANTHROPIC_API_KEY");
+  if (!hadKey) process.env.ANTHROPIC_API_KEY = "PLACEHOLDER_NOT_A_REAL_KEY";
+  try {
+    const d = capture();
+    new ClaudeProviderAdapter({ run: d.run, cacheDir: freshCacheDir() }).execute(request(mission(["src/app/**"])));
+    must(d.env() === undefined, "default ⇒ child env undefined (inherits parent, behaviour unchanged)");
+
+    const o = capture();
+    new ClaudeProviderAdapter({ run: o.run, cacheDir: freshCacheDir(), preferSubscriptionAuth: true }).execute(request(mission(["src/app/**"])));
+    const e1 = o.env();
+    must(!!e1 && !("ANTHROPIC_API_KEY" in e1), "preferSubscriptionAuth ⇒ ANTHROPIC_API_KEY removed from child env");
+    must(!!e1 && e1.PATH === process.env.PATH, "only the key is stripped (other env vars preserved)");
+
+    const hadFlag = process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION;
+    process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION = "1";
+    try {
+      const g = capture();
+      new ClaudeProviderAdapter({ run: g.run, cacheDir: freshCacheDir() }).execute(request(mission(["src/app/**"])));
+      must(!!g.env() && !("ANTHROPIC_API_KEY" in (g.env() as NodeJS.ProcessEnv)), "env flag ODG_CLAUDE_PREFER_SUBSCRIPTION=1 ⇒ key removed (governed-path opt-in)");
+    } finally {
+      if (hadFlag === undefined) delete process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION; else process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION = hadFlag;
+    }
+  } finally {
+    if (!hadKey) delete process.env.ANTHROPIC_API_KEY;
+  }
+  console.log("subscription-auth env wiring OK");
+}
+
 // cleanup: cache lives under git-ignored runtime/generated, but remove the test dir anyway.
 fs.rmSync(CACHE_DIR, { recursive: true, force: true });
 

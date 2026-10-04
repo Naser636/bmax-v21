@@ -52,7 +52,7 @@ export interface ProviderProcessResult {
 export type ProviderProcessRunner = (
   bin: string,
   args: string[],
-  opts: { cwd: string; timeoutMs?: number },
+  opts: { cwd: string; timeoutMs?: number; env?: NodeJS.ProcessEnv },
 ) => ProviderProcessResult;
 
 export interface ClaudeProviderOptions {
@@ -68,6 +68,14 @@ export interface ClaudeProviderOptions {
   cacheDir?: string;
   /** Injected process runner — override in tests. */
   run?: ProviderProcessRunner;
+  /**
+   * Prefer the `claude` CLI's logged-in session (claude.ai subscription) over a pay-per-use
+   * ANTHROPIC_API_KEY: when true, the key is removed from the spawned CLI's environment so the CLI
+   * falls back to its own stored login. Default false (unchanged behaviour). Also enabled by the
+   * environment flag ODG_CLAUDE_PREFER_SUBSCRIPTION=1 so the governed path can opt in without rewiring.
+   * This uses the CLI's existing auth; it invents no credential and never reads/echoes any secret value.
+   */
+  preferSubscriptionAuth?: boolean;
 }
 
 const DEFAULT_MODEL = "claude-opus-4-8";
@@ -80,6 +88,10 @@ const defaultRunner: ProviderProcessRunner = (bin, args, opts) => {
     timeout: opts.timeoutMs,
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
+    // undefined ⇒ inherit the parent env (unchanged default). When provided, it is the parent env with
+    // ANTHROPIC_API_KEY removed so the `claude` CLI authenticates via its own logged-in session
+    // (subscription) instead of a depleted pay-per-use API key. Never carries a secret this code created.
+    ...(opts.env ? { env: opts.env } : {}),
   });
   const err = r.error as (NodeJS.ErrnoException | undefined);
   return {
@@ -99,6 +111,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
   private readonly timeoutMs: number | undefined;
   private readonly cacheDir: string;
   private readonly run: ProviderProcessRunner;
+  private readonly preferSubscriptionAuth: boolean;
 
   constructor(opts: ClaudeProviderOptions = {}) {
     this.cwd = opts.cwd ?? process.cwd();
@@ -107,6 +120,19 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     this.timeoutMs = opts.timeoutMs;
     this.cacheDir = opts.cacheDir ?? `${this.cwd}/runtime/generated/provider-cache`;
     this.run = opts.run ?? defaultRunner;
+    this.preferSubscriptionAuth = opts.preferSubscriptionAuth ?? process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION === "1";
+  }
+
+  /**
+   * The environment handed to the spawned `claude` CLI. undefined ⇒ inherit the parent env unchanged
+   * (default). When subscription auth is preferred, return the parent env with ANTHROPIC_API_KEY removed
+   * so the CLI uses its stored login. Pure: copies env, deletes one key, never reads/logs its value.
+   */
+  private childEnv(): NodeJS.ProcessEnv | undefined {
+    if (!this.preferSubscriptionAuth) return undefined;
+    const env = { ...process.env };
+    delete env.ANTHROPIC_API_KEY;
+    return env;
   }
 
   describe(): ProviderDescription {
@@ -144,7 +170,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     const baseline = new Set(this.observeChangedFiles());
 
     const args = this.buildArgs(request, userPrompt, readOnly);
-    const proc = this.run(this.bin, args, { cwd: this.cwd, timeoutMs: this.timeoutMs });
+    const proc = this.run(this.bin, args, { cwd: this.cwd, timeoutMs: this.timeoutMs, env: this.childEnv() });
 
     // 1) Interruption (contract §7.1 / §8): resumable.
     if (proc.timedOut || (proc.status === null && proc.signal)) {
