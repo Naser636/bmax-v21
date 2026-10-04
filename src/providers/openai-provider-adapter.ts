@@ -35,12 +35,16 @@ import * as path from "node:path";
 import {
   GUARDRAIL_SYSTEM_PROMPT,
   PROVIDER_CONTRACT_VERSION,
+  absentObservation,
+  observedUsage,
   renderMissionPrompt,
   type EngineeringProviderPort,
+  type ObservedQuantity,
   type ProviderDescription,
   type ProviderOutcome,
   type ProviderRequest,
   type ProviderResult,
+  type ProviderUsageObservation,
 } from "./provider-port";
 import {
   available,
@@ -311,6 +315,29 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
     }
   }
 
+  /**
+   * Transport the OBSERVED token usage the OpenAI API returned (E). The API's `usage` block carries
+   * prompt/completion/total token counts; we certify as OBSERVED the TOTAL tokens the call consumed, as
+   * an exact economic quantity (unit "token", integer minor, scale 0). The per-side breakdown is kept
+   * verbatim in `providerReported` as evidence. No money is derived here (OpenAI returns no cost figure,
+   * and tokens → currency needs a declared price rule). ABSENT when the API reported no integer usage.
+   */
+  private observeUsage(envelope: OpenAiChatEnvelope): ProviderUsageObservation {
+    const u = envelope.usage;
+    const total = u && Number.isInteger(u.totalTokens) && u.totalTokens >= 0 ? u.totalTokens : null;
+    if (total === null) return absentObservation("no usage reported by provider");
+    const quantities: ObservedQuantity[] = [
+      { unit: "token", kind: "COST_UNIT", minor: total, scale: 0 },
+    ];
+    return observedUsage(quantities, `${this.name}:api.usage.total_tokens`, {
+      promptTokens: u?.promptTokens ?? null,
+      completionTokens: u?.completionTokens ?? null,
+      totalTokens: total,
+      model: envelope.model,
+      responseId: envelope.id,
+    });
+  }
+
   private callDiagnostics(envelope: OpenAiChatEnvelope): string[] {
     const lines = [`openai-sdk call OK (model=${envelope.model ?? this.model}, id=${envelope.id ?? "?"})`];
     if (envelope.usage) {
@@ -378,6 +405,8 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
         stderr: p.envelope.error ?? "",
       },
       diagnostics: p.diagnostics,
+      // E: carry the API's OBSERVED token usage (ABSENT when none was reported — e.g. a failed call).
+      observation: this.observeUsage(p.envelope),
     };
   }
 }

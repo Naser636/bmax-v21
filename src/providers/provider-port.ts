@@ -113,6 +113,100 @@ export type ProviderClassification =
   | "INTERRUPTED"
   | "SKIPPED";
 
+// ---------------------------------------------------------------------------
+// OBSERVED provider usage transport (V5 Stage 3, increment E — FICHE_03 §176/§185).
+//
+// A provider can OBSERVE how many resources a call consumed (e.g. the token usage the Claude Code CLI
+// JSON envelope and the OpenAI API both return). Before this increment that observation was DROPPED at
+// the port boundary: ProviderOutcome had nowhere to carry it, so the common contract — and every
+// cost-accounting consumer downstream — never saw it. These types are the smallest additive contract
+// that transports the REAL observation without fabricating, defaulting, or confusing the distinct
+// concepts the Master forbids fusing (usage ≠ cost ≠ budget ≠ value ≠ currency).
+// ---------------------------------------------------------------------------
+
+/**
+ * Economic observation basis — the Master's distinction (economic-unit.js BASIS), plus explicit
+ * absence. OBSERVED and ESTIMATED are never conflated; ABSENT is never fabricated into a zero cost.
+ */
+export type ObservationBasis = "OBSERVED" | "ESTIMATED" | "ABSENT";
+
+/**
+ * An exact economic quantity, STRUCTURALLY identical to runtime/core/economic-unit.js `quantity`
+ * (opaque declared `unit` + `kind` + integer `minor` + non-negative `scale`; value = minor / 10^scale,
+ * never a float). Declared HERE so provider-port keeps its zero-import-from-core discipline (contract
+ * §0); TypeScript structural typing makes it assignable to the core Quantity, so a consumer can hand it
+ * straight to economic-unit / cost-accounting. No currency is implied: `unit` is an opaque id the
+ * PROVIDER reported (e.g. "token"), never a hardcoded EUR/USD.
+ */
+export interface ObservedQuantity {
+  unit: string;
+  kind: "COST_UNIT" | "ASSET";
+  minor: number;
+  scale: number;
+}
+
+/**
+ * What a provider actually reported about the resources ONE call consumed (E). It keeps the three
+ * states the Master forbids fusing:
+ *   OBSERVED  — the provider returned real usage data (`quantities` non-empty).
+ *   ESTIMATED — a derived/modelled figure (never certified as a real/observed cost).
+ *   ABSENT    — the provider reported nothing (NOT fabricated as zero — absence is explicit).
+ *
+ * `quantities` carries resource USAGE (e.g. tokens) as exact economic quantities. It NEVER carries a
+ * monetary cost derived from usage: converting usage → money requires a declared price rule with
+ * provenance (a later stage), so a token count is never silently turned into currency. A monetary
+ * figure a provider returns on its OWN (e.g. the Claude CLI's `total_cost_usd`) is preserved verbatim
+ * in `providerReported` as evidence — it is NOT a certified OBSERVED economic cost here and is NEVER
+ * meterable without an explicit, declared price rule.
+ */
+export interface ProviderUsageObservation {
+  basis: ObservationBasis;
+  quantities: ObservedQuantity[];
+  /** Where the observation came from — provider + source field(s). null when ABSENT. */
+  provenance: string | null;
+  /** Raw provider-reported figures preserved verbatim as evidence (never a certified cost). */
+  providerReported?: Record<string, unknown> | null;
+}
+
+/** Explicit ABSENT observation — the honest default when a provider reports no usage. Never fabricates 0. */
+export function absentObservation(reason?: string): ProviderUsageObservation {
+  return { basis: "ABSENT", quantities: [], provenance: reason ?? null };
+}
+
+/**
+ * Build an OBSERVED usage observation from quantities the provider really returned. Empty `quantities`
+ * degrade to ABSENT (there is nothing to certify), so a caller can never accidentally present an
+ * OBSERVED observation with no observed data. `providerReported` is carried through verbatim as evidence.
+ */
+export function observedUsage(
+  quantities: ObservedQuantity[],
+  provenance: string,
+  providerReported?: Record<string, unknown> | null,
+): ProviderUsageObservation {
+  if (quantities.length === 0) {
+    return providerReported === undefined
+      ? absentObservation()
+      : { basis: "ABSENT", quantities: [], provenance: null, providerReported };
+  }
+  return {
+    basis: "OBSERVED",
+    quantities,
+    provenance,
+    ...(providerReported !== undefined ? { providerReported } : {}),
+  };
+}
+
+/**
+ * Read an outcome's observation, defaulting a legacy/missing field to ABSENT. This is what makes the
+ * new field backward-compatible: an outcome built (or cached on disk) before E has `observation ===
+ * undefined`, and every consumer must treat that as ABSENT — never as a zero cost.
+ */
+export function observationOf(
+  outcome: { observation?: ProviderUsageObservation },
+): ProviderUsageObservation {
+  return outcome.observation ?? absentObservation();
+}
+
 /** Outcome of a provider invocation — always returned as data, never thrown (contract §4/§7). */
 export interface ProviderOutcome {
   provider: string;
@@ -130,6 +224,13 @@ export interface ProviderOutcome {
   unauthorizedChanges: string[];
   raw: { exitCode: number | null; stdout: string; stderr: string };
   diagnostics: string[];
+  /**
+   * The provider's OBSERVED resource usage for this call (E). OPTIONAL and additive: a provider that
+   * cannot observe usage, and any outcome built before this increment, omits it — consumers read it via
+   * observationOf(), which treats absence as ABSENT (never a fabricated zero cost). Carried through the
+   * cache verbatim, so a cached outcome preserves exactly what the live call observed.
+   */
+  observation?: ProviderUsageObservation;
 }
 
 /** Static description of a provider adapter. */

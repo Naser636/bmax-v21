@@ -15,6 +15,9 @@ export {
   renderMissionPrompt,
   toPipelineFailure,
   toPipelineOutcome,
+  absentObservation,
+  observedUsage,
+  observationOf,
 } from "./provider-port";
 
 export type {
@@ -29,6 +32,9 @@ export type {
   ProviderRequest,
   ProviderResult,
   RoutableMission,
+  ObservationBasis,
+  ObservedQuantity,
+  ProviderUsageObservation,
 } from "./provider-port";
 
 export {

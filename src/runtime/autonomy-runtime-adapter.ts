@@ -36,6 +36,7 @@ import { DocumentationEngine } from "@/core/documentation-engine";
 import { ARTIFACT_CONTRACT_VERSION } from "@/contracts/documentation";
 import {
   PROVIDER_CONTRACT_VERSION,
+  absentObservation,
   missionRequiresProvider,
   toPipelineOutcome,
 } from "@/providers";
@@ -65,6 +66,9 @@ const MISSION_REPORT = `${GENERATED}/mission-report.json`;
 // is unusable (mission PROVIDER_FAILOVER_TO_OPENAI, objectives 3-7). Never a source of truth for the
 // verdict; pure evidence so the provider selection is auditable.
 const FAILOVER_REPORT = `${GENERATED}/provider-failover-report.json`;
+// Live cost-metering evidence (V5 Stage 3, D): the budget decision + ledger snapshot for a metered
+// provider call. Written ONLY when the mission declares a budget block; pure evidence, never a verdict.
+const METERING_REPORT = `${GENERATED}/cost-metering-report.json`;
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
@@ -110,6 +114,8 @@ interface RawMission {
   requiresEngineering?: boolean;
   verify?: unknown;
   description?: unknown;
+  /** Optional declared budget block (V5 Stage 3, D). Shape validated by budget-contract.js. */
+  budget?: unknown;
 }
 
 /** A machine-checkable capability proof: a capability bound to the NAME of a registered probe. */
@@ -577,8 +583,9 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     let outcome = this.providerRuns.get(mission);
     if (!outcome) {
       // The provider is the ONLY place a provider process is spawned (contract §1); its own
-      // content-addressed cache short-circuits an identical re-request without a live call.
-      outcome = this.executeWithFailover(mission, spec);
+      // content-addressed cache short-circuits an identical re-request without a live call. When the
+      // mission declares a budget, the provider call is metered live (D) around the SAME invocation.
+      outcome = this.executeMetered(mission, spec);
       this.providerRuns.set(mission, outcome);
     }
     // OBJ-003: the Patch Engine RECEIVES the provider's result (the working-tree patch) and decides,
@@ -760,6 +767,103 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * The failover report is persisted as evidence on every provider run so the selection is auditable
    * even on the happy path (where OpenAI is never invoked but its readiness is still reported).
    */
+  /**
+   * LIVE COST METERING (V5 Stage 3, D). Branch the OBSERVED provider usage (E) onto the existing
+   * cost-accounting lifecycle, driven by the REAL provider invocation, WITHOUT creating a second budget
+   * system. Metering engages ONLY when the mission declares a `budget` block:
+   *   - No budget declared ⇒ this is a pure pass-through to executeWithFailover (byte-for-byte the prior
+   *     behaviour — the whole existing suite and every current mission are unaffected, since none declare
+   *     a budget).
+   *   - Budget declared ⇒ runtime/core/live-cost-metering.js verifies it, RESERVES the declared bucket
+   *     ceiling (admission), runs the provider via the injected `execute`, reads the OBSERVED usage, and
+   *     SPENDS exactly that usage (or refuses on malformed/exhausted/mismatch — no fictive spend). The
+   *     provider's own outcome is returned unchanged; a refusal BEFORE any call becomes a BLOCKED outcome
+   *     so the frozen Release Manager halts. The ledger snapshot is persisted as gitignored evidence only.
+   * Best-effort: if the metering module is absent (e.g. a stripped checkout) the call degrades to the
+   * unmetered path, so metering can never block a mission the Runtime could otherwise run.
+   */
+  private executeMetered(mission: string, spec: RawMission | null): ProviderOutcome {
+    if (!spec || spec.budget === undefined || spec.budget === null) {
+      return this.executeWithFailover(mission, spec);
+    }
+    const meter = this.loadMetering();
+    if (!meter) return this.executeWithFailover(mission, spec);
+
+    let captured: ProviderOutcome | null = null;
+    const result = meter.meterProviderCall({
+      spec,
+      bucket: "provider",
+      allocationId: mission,
+      execute: () => {
+        captured = this.executeWithFailover(mission, spec);
+        return captured;
+      },
+    });
+    this.persistMeteringReport(mission, result);
+    // The provider ran ⇒ return its real outcome (carrying E's observation). A refusal before any call
+    // (malformed budget / zero or exhausted ceiling) ⇒ a BLOCKED outcome so the Release Manager halts.
+    if (captured) return captured;
+    return this.budgetRefusalOutcome(mission, spec, result);
+  }
+
+  /** Load the pure live-cost-metering engine (CJS). Best-effort — null when unavailable. */
+  private loadMetering(): {
+    meterProviderCall: (opts: {
+      spec: unknown;
+      bucket?: string;
+      allocationId?: string;
+      execute: () => ProviderOutcome;
+    }) => { decision: string; outcome: ProviderOutcome | null; errors?: string[] };
+  } | null {
+    try {
+      return requireCjs(`${this.cwd}/runtime/core/live-cost-metering.js`) as ReturnType<
+        AutonomyRuntimeAdapter["loadMetering"]
+      >;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Persist the metering decision + ledger snapshot as gitignored evidence (never a verdict). */
+  private persistMeteringReport(mission: string, result: unknown): void {
+    try {
+      this.writeJson(METERING_REPORT, { mission, ...(result as Record<string, unknown>) });
+    } catch {
+      /* evidence capture is best-effort — never abort a mission over it */
+    }
+  }
+
+  /** A BLOCKED outcome for a budget gate that refused the call before the provider ever ran (D). */
+  private budgetRefusalOutcome(
+    mission: string,
+    spec: RawMission | null,
+    result: { decision: string; errors?: string[] },
+  ): ProviderOutcome {
+    const detail = result.errors && result.errors.length ? ` (${result.errors.join("; ")})` : "";
+    return {
+      provider: "runtime-budget-gate",
+      classification: "BLOCKED",
+      providerExecuted: false,
+      fromCache: false,
+      result: {
+        mission: spec?.mission ?? mission,
+        providerContractVersion: PROVIDER_CONTRACT_VERSION,
+        status: "BLOCKED",
+        objectivesAddressed: [],
+        changedFiles: [],
+        commandsRun: [],
+        blocker: `Live cost-metering refused the provider call: ${result.decision}${detail}`,
+        notes: "V5 Stage 3 live cost metering (D)",
+      },
+      sessionId: null,
+      changedFiles: [],
+      unauthorizedChanges: [],
+      raw: { exitCode: null, stdout: "", stderr: "" },
+      diagnostics: [`budget gate: ${result.decision}`],
+      observation: absentObservation(),
+    };
+  }
+
   private executeWithFailover(mission: string, spec: RawMission | null): ProviderOutcome {
     const request: ProviderRequest = {
       providerContractVersion: PROVIDER_CONTRACT_VERSION,

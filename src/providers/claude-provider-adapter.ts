@@ -26,13 +26,17 @@ import path from "node:path";
 import {
   GUARDRAIL_SYSTEM_PROMPT,
   PROVIDER_CONTRACT_VERSION,
+  absentObservation,
   isFrozenPath,
+  observedUsage,
   renderMissionPrompt,
   type EngineeringProviderPort,
+  type ObservedQuantity,
   type ProviderDescription,
   type ProviderOutcome,
   type ProviderRequest,
   type ProviderResult,
+  type ProviderUsageObservation,
 } from "./provider-port";
 
 /** Result of running an external process — the injected boundary (kept tiny & pure-ish). */
@@ -159,6 +163,8 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     const envelope = this.parseEnvelope(proc.stdout);
     const sessionId = envelope?.session_id ?? null;
     const result = this.parseResult(envelope?.result ?? proc.stdout, request.mission.mission);
+    // E: transport whatever usage the provider actually reported in the envelope (ABSENT when none).
+    const observation = this.observeUsage(envelope);
 
     // 2) Process failure / error envelope (contract §7.1) → EXECUTION_FAILED.
     if (proc.status !== 0 || envelope?.is_error === true) {
@@ -174,6 +180,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
           ...diagnostics,
           `provider process failed (exit=${proc.status}, is_error=${String(envelope?.is_error)}, subtype=${envelope?.subtype ?? "?"})`,
         ],
+        observation,
       });
     }
 
@@ -197,6 +204,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
           ...diagnostics,
           `unauthorized changes outside mission scope: ${unauthorizedChanges.join(", ")}`,
         ],
+        observation,
       });
     }
 
@@ -211,6 +219,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
         unauthorizedChanges: [],
         proc,
         diagnostics: [...diagnostics, `provider reported BLOCKED: ${result.blocker ?? "(no reason)"}`],
+        observation,
       });
       if (canCache) this.writeCache(cacheKey, outcome);
       return outcome;
@@ -226,6 +235,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
       unauthorizedChanges: [],
       proc,
       diagnostics,
+      observation,
     });
     if (canCache) this.writeCache(cacheKey, outcome);
     return outcome;
@@ -258,6 +268,9 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     session_id?: string;
     subtype?: string;
     num_turns?: number;
+    usage?: Record<string, unknown>;
+    total_cost_usd?: unknown;
+    modelUsage?: unknown;
   } | null {
     try {
       const obj = JSON.parse(stdout.trim());
@@ -265,6 +278,43 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Transport the provider's OBSERVED usage (E). The Claude Code CLI JSON envelope reports a `usage`
+   * block (input/output/cache token counts) and its own `total_cost_usd`. We certify as OBSERVED ONLY
+   * the token USAGE the envelope actually returned, as an exact economic quantity (unit "token",
+   * integer minor, scale 0) — the sum of input + output tokens, the resources this call consumed. We do
+   * NOT turn that into money: the provider's `total_cost_usd` (and the cache-token breakdown) is
+   * preserved verbatim in `providerReported` as evidence, never certified here as an OBSERVED economic
+   * cost (converting tokens → currency needs a declared price rule — a later stage). When the envelope
+   * carries no usable integer token usage, the observation is explicitly ABSENT (never a fabricated 0).
+   */
+  private observeUsage(
+    envelope: ReturnType<ClaudeProviderAdapter["parseEnvelope"]>,
+  ): ProviderUsageObservation {
+    const usage = envelope?.usage;
+    if (!usage || typeof usage !== "object") return absentObservation("no usage reported by provider");
+    const asInt = (v: unknown): number | null =>
+      typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : null;
+    const input = asInt(usage.input_tokens);
+    const output = asInt(usage.output_tokens);
+    if (input === null && output === null) {
+      return absentObservation("provider usage block carried no integer token counts");
+    }
+    const quantities: ObservedQuantity[] = [
+      { unit: "token", kind: "COST_UNIT", minor: (input ?? 0) + (output ?? 0), scale: 0 },
+    ];
+    // Raw evidence, verbatim — NOT a certified economic cost and NEVER meterable without a price rule.
+    const providerReported: Record<string, unknown> = {
+      input_tokens: input,
+      output_tokens: output,
+      cache_creation_input_tokens: usage.cache_creation_input_tokens ?? null,
+      cache_read_input_tokens: usage.cache_read_input_tokens ?? null,
+      total_cost_usd: envelope?.total_cost_usd ?? null,
+      num_turns: envelope?.num_turns ?? null,
+    };
+    return observedUsage(quantities, `${this.name}:json.usage.input_tokens+output_tokens`, providerReported);
   }
 
   private parseSessionId(stdout: string): string | null {
@@ -394,6 +444,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     unauthorizedChanges: string[];
     proc: ProviderProcessResult;
     diagnostics: string[];
+    observation?: ProviderUsageObservation;
   }): ProviderOutcome {
     return {
       provider: this.name,
@@ -406,6 +457,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
       unauthorizedChanges: p.unauthorizedChanges,
       raw: { exitCode: p.proc.status, stdout: p.proc.stdout, stderr: p.proc.stderr },
       diagnostics: p.diagnostics,
+      observation: p.observation ?? absentObservation(),
     };
   }
 }

@@ -3777,3 +3777,35 @@ claude/openai adapters + failover), additive/optional; THEN D = wire cost-accoun
 with an injected provider (no live call). Not fabricated and not a frontier — a bounded provider-contract
 increment best isolated. Per "ne prétends pas connaître le coût" the estimate-only reserve-without-spend
 path is NOT shipped. STOP here with the Stage-3 foundation complete.
+
+### STAGE 3 — E (PROVIDER OBSERVED USAGE) + D (LIVE COST METERING) COMPLETE + PROVEN (2026-10-04)
+Resumed after disconnection; verified the in-tree E/D work against repository truth rather than restarting.
+The bounded next increment the A/B/C checkpoint defined is now implemented and PROVEN (one campaign, injected
+providers only — NO live/paid provider call):
+- E provider OBSERVED usage transport — src/providers/provider-port.ts (+index.ts, claude/openai adapters):
+  additive `ProviderUsageObservation` on ProviderOutcome (basis OBSERVED|ESTIMATED|ABSENT, exact economic
+  quantities, provenance, raw `providerReported` evidence). Claude adapter certifies ONLY the envelope's
+  integer token usage (input+output, unit "token", scale 0); OpenAI adapter the API's total_tokens. The
+  provider's own `total_cost_usd` is preserved VERBATIM as evidence, NEVER certified as an economic cost —
+  no usage→currency conversion. Absence is explicit ABSENT (never a fabricated 0); legacy/missing field reads
+  as ABSENT via observationOf() (backward compatible). 18 assertions green (provider-observed-usage.test.ts),
+  incl. failover forwarding the observation unchanged.
+- D live cost metering — runtime/core/live-cost-metering.js + wiring in src/runtime/autonomy-runtime-adapter.ts
+  (executeMetered around the REAL executeWithFailover): composes budget-contract + cost-accounting +
+  economic-unit (NO second budget system). Engages ONLY when the mission declares a VALID budget: resolve →
+  RESERVE ceiling (zero/exhausted ⇒ refuse before any call) → run injected provider → read OBSERVED usage →
+  RELEASE admission → SPEND EXACTLY the observed amount. Refuses without fictive spend on provider-not-OK /
+  absent observation / unit or scale mismatch (no implicit FX) / zero usage / provider error / overspend
+  (EXHAUSTED). BUDGET ABSENT ⇒ byte-for-byte pass-through (no metering report). Malformed budget ⇒ clean
+  BLOCKED before any call. Metering report is gitignored evidence only (never a verdict). 22 assertions green
+  (live-cost-metering.test.js) + 8 BEHAVIOURAL assertions through the real runPipeline→provider→meter path
+  (live-cost-metering-wiring.test.ts: SPENT exactly observed 300, remainder 700, admission 1000 recovered;
+  no-budget ⇒ no report).
+PROVEN: economic primitives (A), budget contract (B), cost-accounting (C), provider OBSERVED usage (E), live
+metering (D), backward compatibility (no-budget path unchanged, full suite unaffected). Verification: tsc
+--noEmit exit 0; next build OK; full suite 292 files exit 0 (0 real failures — Cannot-find odg-run.js lines
+are the sandboxes' intended provider-escalation stderr); odg-verify --report-only build/tsc/contracts green.
+NOT PROVEN / out of scope (unchanged frontier): usage→currency pricing (needs a declared price rule with
+provenance), and Revenue / Invoice / Collection / Cash / Profit / Capital / Settlement — no contract or live
+path exists; not claimed. NEXT AUTHORIZED: the usage→money price-rule increment requires a CTO business
+decision (which unit, which price, provenance) — STOP at that authority frontier.
