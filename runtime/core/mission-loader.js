@@ -18,6 +18,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const budgetContract = require("./budget-contract");
 
 const mission = process.argv[2];
 
@@ -135,6 +136,15 @@ const plan = {
     completion: asStrings(spec.completion),
     status: "READY_FOR_EXECUTION",
 };
+
+// V5 Stage 3 budget SOURCE (spec.budget): carry a mission's declared budget block into the plan when it
+// is well-formed, so cost accounting can meter against it. Absent ⇒ no plan.budget key (NO fabricated
+// default — budget ABSENT stays distinct from DECLARED/EXHAUSTED). A present-but-malformed block is
+// dropped (not silently coerced); the mission simply carries no budget. Transport only (no metering here).
+{
+    const resolved = budgetContract.resolveBudget(spec);
+    if (resolved.present && resolved.ok) plan.budget = resolved.budget;
+}
 
 // Machine-checkable capability probes (spec.verify). Each entry is { capability, evidence, required? }
 // where `evidence` names a probe the Validation Engine knows how to run against real generated
