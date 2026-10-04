@@ -26,6 +26,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isControlled, evaluateAcceptance } = require("./mechanical-acceptance");
+const { VERDICT: ECON_VERDICT } = require("./economic-verification");
 
 const MISSIONS_DIR = path.join("runtime", "missions");
 const GEN = (name) => path.join("runtime", "generated", name);
@@ -129,12 +130,45 @@ function evaluateMissionAcceptance(mission) {
   return { controlled: true, verdict: record.verdict, record };
 }
 
+/**
+ * economicEnforced(mission) — true iff the mission's contract OPTS IN to economic enforcement
+ * (control.economic === true). INDEPENDENT of control.required (mechanical acceptance): a mission may opt
+ * into either, both, or neither. Absent/unreadable contract => false (legacy mission, untouched).
+ */
+function economicEnforced(mission) {
+  const c = loadContract(mission);
+  return isPlainObject(c) && isPlainObject(c.control) && c.control.economic === true;
+}
+
+/**
+ * evaluateMissionEconomics(mission) -> { enforced:true, verdict, allowed } | { enforced:false }.
+ *
+ * The ECONOMIC analog of evaluateMissionAcceptance: the thin read-only boundary where the INDEPENDENT
+ * economic verdict becomes a release condition — ONLY for a mission that opted in. It reuses the verdict
+ * ALREADY rendered by economic-verification.js (verifyEconomics) and persisted as gitignored evidence at
+ * runtime/generated/economic-verification-report.json during the metered provider run; it invents no new
+ * verdict meaning and recomputes nothing. DENY-BY-DEFAULT: a report that is ABSENT, belongs to ANOTHER
+ * mission, or carries no verdict is treated as UNKNOWN (blocked). Only the already-defined VERIFIED verdict
+ * is ALLOWED; INCOMPLETE / UNKNOWN / FAILED all block. A mission that does not opt in => enforced:false
+ * (NO-OP), so legacy behavior and non-opted-in missions are exactly as before.
+ */
+function evaluateMissionEconomics(mission) {
+  if (!economicEnforced(mission)) return { enforced: false };
+  const report = readJsonSafe(GEN("economic-verification-report.json"));
+  const verdict = (isPlainObject(report) && report.mission === mission && isNonEmptyString(report.verdict))
+    ? report.verdict
+    : ECON_VERDICT.UNKNOWN; // deny-by-default: no valid, mission-matched verdict => UNKNOWN (blocked).
+  return { enforced: true, verdict, allowed: verdict === ECON_VERDICT.VERIFIED };
+}
+
 module.exports = {
   DEFAULT_REQUIRED_CHECKS,
   loadContract,
   controlDeclared,
   gatherAcceptanceFacts,
   evaluateMissionAcceptance,
+  economicEnforced,
+  evaluateMissionEconomics,
 };
 
 // ---- Read-only CLI: prints the gathered facts + verdict for a mission; mutates nothing. -------

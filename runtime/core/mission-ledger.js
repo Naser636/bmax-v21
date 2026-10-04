@@ -3,7 +3,7 @@
 const fs = require("fs");
 const { authorizeMission } = require("./governance-kernel");
 const { computeLifecycle, markArchived } = require("./mission-lifecycle");
-const { evaluateMissionAcceptance } = require("./acceptance-facts");
+const { evaluateMissionAcceptance, evaluateMissionEconomics } = require("./acceptance-facts");
 
 const LEDGER_FILE = "runtime/generated/mission-ledger.json";
 
@@ -66,6 +66,28 @@ function recordMission(mission) {
       : [];
     console.warn(`[MissionLedger] Refusing to record controlled mission "${mission}": mechanical acceptance ${acceptance.verdict}. ${reasons.join("; ")}`);
     return { skipped: true, reason: "NOT_ACCEPTED", verdict: acceptance.verdict, entry: { mission } };
+  }
+
+  // Economic-enforcement gate (OPT-IN, INDEPENDENT of the controlled gate above). A mission whose contract
+  // declares control.economic === true must additionally carry an independent ECONOMIC VERIFICATION verdict
+  // of VERIFIED before it may be recorded — i.e. released. "Pipeline success is NOT economic success": the
+  // engineering chain passing (checked above) says nothing about whether every economic amount is truthful.
+  // evaluateMissionEconomics reads the verdict already rendered by economic-verification.js and persisted as
+  // gitignored evidence on the metered provider run; DENY-BY-DEFAULT, so an absent / mismatched / non-VERIFIED
+  // verdict (INCOMPLETE/UNKNOWN/FAILED) refuses release. Missions that do NOT opt in return enforced:false and
+  // this gate is a NO-OP, so legacy behavior is exactly as before.
+  let economics;
+  try {
+    economics = evaluateMissionEconomics(mission);
+  } catch (e) {
+    // Never break a mission on an evaluator error; a non-opted-in mission must stay legacy. (The gatherer
+    // uses only safe reads and does not throw in practice — this mirrors the controlled gate's guard.)
+    console.warn("[MissionLedger] Economic evaluation error:", e.message);
+    economics = { enforced: false };
+  }
+  if (economics && economics.enforced === true && economics.allowed !== true) {
+    console.warn(`[MissionLedger] Refusing to record economically-enforced mission "${mission}": economic verification ${economics.verdict} (requires VERIFIED).`);
+    return { skipped: true, reason: "NOT_ECONOMICALLY_VERIFIED", verdict: economics.verdict, entry: { mission } };
   }
 
   const governance = authorizeMission(mission);
