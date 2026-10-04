@@ -41,6 +41,72 @@ function nonEmptyFile(file) {
 function isPlainObject(v) { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isNonEmptyString(v) { return typeof v === "string" && v.trim().length > 0; }
 
+// ---- ECONOMIC_ENFORCEMENT_GATE_V1 — frozen contract descriptor (documents the gate's governed policy) --
+// A read-only SPEC in the exact style of ECONOMIC_VERIFICATION_CONTRACT / ACCEPTANCE_CONTRACT / ACTION_CONTRACT.
+// It DESCRIBES the behaviour implemented by economicEnforced + evaluateMissionEconomics (this module), the
+// §7 economicCommitAllowed/economicPushAllowed guards (mechanical-acceptance.js) and the release gate
+// (mission-ledger.recordMission). It is NOT a second source of truth: the code is authoritative and a
+// drift-guard test binds the declared allowed/blocking verdicts to the actual guard behaviour.
+const ECONOMIC_ENFORCEMENT_CONTRACT = Object.freeze({
+  id: "V5-ECONOMIC-CORE-ECONOMIC-ENFORCEMENT-GATE",
+  name: "ECONOMIC_ENFORCEMENT_GATE_V1",
+  policyVersion: "1.0.0",
+  purpose: "pipeline success is NOT economic success — refuse release/commit of an OPTED-IN mission whose independent economic verdict is not VERIFIED",
+  authority: "ODG Runtime governance (human-authorized LOCAL enforcement)",
+  authorityBoundary: "mission-ledger.recordMission (release) + mechanical-acceptance.economicCommitAllowed/economicPushAllowed (commit/push); economic-verification is the VERIFIER, these are the AUTHORITY",
+  verb: "admit | refuse",
+  target: "one mission's release (recordMission) and commit/push decision",
+  scope: "per-mission, OPT-IN",
+  missionScope: "missions whose contract declares control.economic === true (independent of control.required)",
+  default: "DISABLED — a mission that does not opt in is a pure NO-OP (legacy behaviour byte-for-byte)",
+  inputs: Object.freeze([
+    "runtime/missions/<mission>.json → control.economic (opt-in flag)",
+    "runtime/generated/economic-verification-report.json → { mission, verdict, violations, gaps, proofs } (gitignored evidence produced by economic-verification.verifyEconomics)",
+  ]),
+  outputs: Object.freeze([
+    "evaluateMissionEconomics → { enforced, verdict, allowed } | { enforced:false }",
+    "release refusal: { skipped:true, reason:'NOT_ECONOMICALLY_VERIFIED', verdict }",
+    "commit/push guard: { allowed, enforced, verdict, reason }",
+  ]),
+  allowedVerdicts: Object.freeze(["VERIFIED"]),
+  blockingVerdicts: Object.freeze(["FAILED", "INCOMPLETE", "UNKNOWN"]),
+  unknownHandling: "BLOCK",
+  missingEvidenceHandling: "BLOCK (UNKNOWN, deny-by-default)",
+  malformedEvidenceHandling: "BLOCK (UNKNOWN)",
+  wrongMissionEvidenceHandling: "BLOCK (UNKNOWN — identity enforced, no verdict borrowing)",
+  inconsistentEvidenceHandling: "BLOCK (UNKNOWN — verdictConsistent rejects tampered/forged evidence)",
+  invariants: Object.freeze([
+    "deny-by-default: anything other than a genuine, mission-matched, internally-consistent VERIFIED blocks",
+    "UNKNOWN is never VERIFIED; INCOMPLETE/FAILED never authorize",
+    "not opted in ⇒ NO-OP (no new requirement on legacy/other missions)",
+    "the engine VERIFIES, the gate AUTHORIZES — nothing is recomputed from raw facts, no second source of truth",
+    "DERIVED economic info is never promoted into BILLED/REVENUE/CASH/PROFIT",
+  ]),
+  failureModes: Object.freeze([
+    "evaluator throw ⇒ enforced:false (never breaks a legacy mission; gatherer uses only safe reads)",
+    "tampered/forged verdict ⇒ rejected by verdictConsistent ⇒ UNKNOWN (blocked)",
+  ]),
+  recovery: "a blocked mission makes NO durable mutation (ledger unchanged); re-run yields a fresh economic verdict",
+  idempotency: "release idempotence via the existing (mission, runId) dedup in mission-ledger; the commit/push guards are pure",
+  reversibility: "R0 — pure + opt-in; disable by removing control.economic; no external effect",
+  risk: "LOW",
+  blastRadius: "a single opted-in mission's release/commit decision",
+  evidence: "runtime/generated/economic-verification-report.json (gitignored)",
+  verification: Object.freeze([
+    "runtime/core/mission-ledger-economic.test.js",
+    "runtime/core/economic-commit-gate.test.js",
+    "runtime/core/economic-enforcement-adversarial.test.js",
+  ]),
+  stopCondition: "activating enforcement on a REAL mission requires a metered provider run to produce the verdict — an external/billable action behind a SEPARATE authority gate",
+  acceptanceCriterion: "only a genuine, mission-matched, internally-consistent VERIFIED authorizes release & commit/push; every other state blocks; non-opted-in missions are unaffected",
+  dependencies: Object.freeze([
+    "economic-verification.verifyEconomics / verdictConsistent / VERDICT",
+    "acceptance-facts.economicEnforced / evaluateMissionEconomics",
+    "mechanical-acceptance.economicCommitAllowed / economicPushAllowed",
+    "mission-ledger.recordMission",
+  ]),
+});
+
 /** Load the mission contract (cwd-relative). Absent/unreadable => null (treated as a legacy mission). */
 function loadContract(mission) {
   if (!isNonEmptyString(mission)) return null;
@@ -171,6 +237,7 @@ function evaluateMissionEconomics(mission) {
 
 module.exports = {
   DEFAULT_REQUIRED_CHECKS,
+  ECONOMIC_ENFORCEMENT_CONTRACT,
   loadContract,
   controlDeclared,
   gatherAcceptanceFacts,

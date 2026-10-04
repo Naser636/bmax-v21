@@ -22,9 +22,9 @@ const os = require("os");
 const path = require("path");
 
 const REPO = process.cwd();
-const { evaluateMissionEconomics, economicEnforced } = require(path.join(REPO, "runtime", "core", "acceptance-facts.js"));
+const { evaluateMissionEconomics, economicEnforced, ECONOMIC_ENFORCEMENT_CONTRACT } = require(path.join(REPO, "runtime", "core", "acceptance-facts.js"));
 const { economicCommitAllowed, economicPushAllowed } = require(path.join(REPO, "runtime", "core", "mechanical-acceptance.js"));
-const { verdictConsistent } = require(path.join(REPO, "runtime", "core", "economic-verification.js"));
+const { verdictConsistent, VERDICT } = require(path.join(REPO, "runtime", "core", "economic-verification.js"));
 
 let failures = 0;
 function check(cond, label) {
@@ -112,6 +112,23 @@ check(verdictConsistent({ verdict: "VERIFIED", violations: [], gaps: [], proofs:
 check(verdictConsistent({ verdict: "UNKNOWN", violations: [], gaps: [], proofs: [] }) === true, "verdictConsistent: UNKNOWN+empty ⇒ consistent");
 check(verdictConsistent({ verdict: "VERIFIED", violations: [], gaps: [], proofs: 5 }) === false, "verdictConsistent: non-array proofs ⇒ not trustworthy");
 check(verdictConsistent(null) === false, "verdictConsistent: null ⇒ false");
+
+// --- Contract drift-guard: the ECONOMIC_ENFORCEMENT_GATE_V1 descriptor must not lie about behaviour ----
+{
+  const C = ECONOMIC_ENFORCEMENT_CONTRACT;
+  // Every VERDICT the engine can emit is classified exactly once as allowed XOR blocking by the descriptor,
+  // and the descriptor's classification matches the ACTUAL guard decision for an enforced mission.
+  const all = Object.values(VERDICT);
+  const union = C.allowedVerdicts.concat(C.blockingVerdicts).sort();
+  check(JSON.stringify(union) === JSON.stringify(all.slice().sort()), "contract partitions the full VERDICT set (allowed ∪ blocking == all verdicts)");
+  check(C.allowedVerdicts.every((v) => !C.blockingVerdicts.includes(v)), "contract allowed/blocking are disjoint");
+  for (const v of all) {
+    const actual = economicCommitAllowed({ enforced: true, verdict: v }).allowed;
+    const declaredAllowed = C.allowedVerdicts.includes(v);
+    check(actual === declaredAllowed, `contract matches behaviour for verdict ${v} (declared ${declaredAllowed ? "allow" : "block"}, actual ${actual ? "allow" : "block"})`);
+  }
+  check(C.name === "ECONOMIC_ENFORCEMENT_GATE_V1" && C.default.startsWith("DISABLED"), "contract identity + deny-by-default DISABLED default declared");
+}
 
 // --- Provider-calls = 0 (structural proof) ------------------------------------------------------
 // This whole adversarial path is pure + file-based. Prove NO provider adapter was loaded by anything these
