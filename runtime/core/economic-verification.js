@@ -236,9 +236,33 @@ function requireNullValue(v, add) {
   }
 }
 
+/**
+ * verdictConsistent(record) -> boolean. Does a verification RECORD's stated `verdict` agree with the
+ * verdict IMPLIED by its OWN distilled findings (violations/gaps/proofs), under the SAME precedence
+ * verifyEconomics uses (violations⇒FAILED > gaps⇒INCOMPLETE > proofs⇒VERIFIED > none⇒UNKNOWN)?
+ *
+ * This is an EVIDENCE-INTEGRITY check, NOT a re-verification: it recomputes nothing from raw economic
+ * facts and invents no verdict — it only tests whether a record is self-consistent. A genuine
+ * verifyEconomics result ALWAYS satisfies it (same precedence), so the check has zero false negatives;
+ * an internally-contradictory record (e.g. a hand-forged "VERIFIED" that still carries violations, or a
+ * "VERIFIED" with no proof) is rejected — so a consumer can refuse to trust tampered economic evidence.
+ */
+function verdictConsistent(record) {
+  if (!isPlainObject(record)) return false;
+  const violations = Array.isArray(record.violations) ? record.violations : null;
+  const gaps = Array.isArray(record.gaps) ? record.gaps : null;
+  const proofs = Array.isArray(record.proofs) ? record.proofs : null;
+  if (violations === null || gaps === null || proofs === null) return false; // malformed shape ⇒ not trustworthy
+  const implied = violations.length > 0 ? VERDICT.FAILED
+    : gaps.length > 0 ? VERDICT.INCOMPLETE
+      : proofs.length > 0 ? VERDICT.VERIFIED
+        : VERDICT.UNKNOWN;
+  return record.verdict === implied;
+}
+
 module.exports = {
   VERDICT, PRECEDENCE, SEVERITY, FINDING, ECONOMIC_VERIFICATION_CONTRACT,
-  verifyEconomics,
+  verifyEconomics, verdictConsistent,
 };
 
 // ---- Read-only CLI: prints the contract descriptor; mutates nothing. --------------------------

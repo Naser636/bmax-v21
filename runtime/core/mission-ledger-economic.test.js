@@ -71,10 +71,20 @@ function recordIn(dir, mission) {
 // Stage an economically-enforced mission that PASSES the proven-gate (validated report) and opts into
 // economics ONLY (no control.required ⇒ the mechanical gate is a NO-OP). The economic verdict is supplied
 // separately per case.
+// Findings CONSISTENT with the stated verdict (as the real verifyEconomics always emits them): violations
+// ⇒ FAILED, gaps ⇒ INCOMPLETE, proofs ⇒ VERIFIED, all-empty ⇒ UNKNOWN. The gate rejects inconsistent
+// evidence, so faithful fixtures are required (an internally-contradictory report is a tampering case).
+function consistentReport(mission, verdict) {
+  const r = { mission, verdict, violations: [], gaps: [], proofs: [] };
+  if (verdict === "FAILED") r.violations = ["LEDGER_IMBALANCE"];
+  else if (verdict === "INCOMPLETE") r.gaps = ["MISSING_PRICE"];
+  else if (verdict === "VERIFIED") r.proofs = ["LEDGER_CONSERVED"];
+  return r;
+}
 function stageEnforced(dir, mission, verdict) {
   writeContract(dir, mission, { mission, status: "AUTHORIZED", control: { economic: true }, authorized_paths: ["runtime/core"] });
   writeReport(dir, mission, true);
-  if (verdict !== undefined) writeEcon(dir, { mission, verdict, violations: [], gaps: [], proofs: [] });
+  if (verdict !== undefined) writeEcon(dir, consistentReport(mission, verdict));
 }
 
 console.log("V5 ECONOMIC CORE — LEDGER ECONOMIC ENFORCEMENT GATE");

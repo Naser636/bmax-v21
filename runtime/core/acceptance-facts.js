@@ -26,7 +26,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isControlled, evaluateAcceptance } = require("./mechanical-acceptance");
-const { VERDICT: ECON_VERDICT } = require("./economic-verification");
+const { VERDICT: ECON_VERDICT, verdictConsistent } = require("./economic-verification");
 
 const MISSIONS_DIR = path.join("runtime", "missions");
 const GEN = (name) => path.join("runtime", "generated", name);
@@ -155,9 +155,17 @@ function economicEnforced(mission) {
 function evaluateMissionEconomics(mission) {
   if (!economicEnforced(mission)) return { enforced: false };
   const report = readJsonSafe(GEN("economic-verification-report.json"));
-  const verdict = (isPlainObject(report) && report.mission === mission && isNonEmptyString(report.verdict))
-    ? report.verdict
-    : ECON_VERDICT.UNKNOWN; // deny-by-default: no valid, mission-matched verdict => UNKNOWN (blocked).
+  // Deny-by-default: a report is trusted ONLY when it is present, for THIS mission, carries a verdict, AND
+  // is INTERNALLY CONSISTENT (its stated verdict agrees with its own violations/gaps/proofs, per the
+  // engine's own precedence). The consistency check — NOT a re-verification — rejects tampered/forged
+  // evidence (e.g. a "VERIFIED" record that still carries violations) so the gate can never be tricked
+  // into authorizing something the economic findings themselves say must be rejected. Anything else ⇒
+  // UNKNOWN (blocked).
+  const trusted = isPlainObject(report)
+    && report.mission === mission
+    && isNonEmptyString(report.verdict)
+    && verdictConsistent(report);
+  const verdict = trusted ? report.verdict : ECON_VERDICT.UNKNOWN;
   return { enforced: true, verdict, allowed: verdict === ECON_VERDICT.VERIFIED };
 }
 

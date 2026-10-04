@@ -53,10 +53,19 @@ function economicsIn(dir, mission) {
   process.chdir(dir);
   try { return evaluateMissionEconomics(mission); } finally { process.chdir(prev); }
 }
+// Findings CONSISTENT with the stated verdict (as the real verifyEconomics always emits them); the gate
+// rejects internally-inconsistent evidence, so fixtures must be faithful.
+function consistentReport(mission, verdict) {
+  const r = { mission, verdict, violations: [], gaps: [], proofs: [] };
+  if (verdict === "FAILED") r.violations = ["LEDGER_IMBALANCE"];
+  else if (verdict === "INCOMPLETE") r.gaps = ["MISSING_PRICE"];
+  else if (verdict === "VERIFIED") r.proofs = ["LEDGER_CONSERVED"];
+  return r;
+}
 // Stage an economically-enforced mission (control.economic:true) with a given economic verdict.
 function stageEnforced(dir, mission, verdict) {
   writeContract(dir, mission, { mission, status: "AUTHORIZED", control: { economic: true } });
-  if (verdict !== undefined) writeEcon(dir, { mission, verdict, violations: [], gaps: [], proofs: [] });
+  if (verdict !== undefined) writeEcon(dir, consistentReport(mission, verdict));
 }
 
 console.log("V5 ECONOMIC CORE — ECONOMIC COMMIT/PUSH GATE");
