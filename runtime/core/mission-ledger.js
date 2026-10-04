@@ -3,7 +3,9 @@
 const fs = require("fs");
 const { authorizeMission } = require("./governance-kernel");
 const { computeLifecycle, markArchived } = require("./mission-lifecycle");
-const { evaluateMissionAcceptance, evaluateMissionEconomics } = require("./acceptance-facts");
+// Required as a namespace (not destructured) so the opt-in catches below can also call the safe,
+// non-throwing controlDeclared/economicEnforced probes, and so the evaluator seam is injectable in tests.
+const acceptanceFacts = require("./acceptance-facts");
 
 const LEDGER_FILE = "runtime/generated/mission-ledger.json";
 
@@ -54,10 +56,16 @@ function recordMission(mission) {
   // and this gate is a NO-OP, so their behavior is exactly as before.
   let acceptance;
   try {
-    acceptance = evaluateMissionAcceptance(mission);
+    acceptance = acceptanceFacts.evaluateMissionAcceptance(mission);
   } catch (e) {
-    // Fail-closed for a declared-controlled mission; never break a legacy mission on a gather error.
+    // FAIL CLOSED for a declared-controlled mission (deny-by-default); never break a legacy mission.
+    // controlDeclared is an INDEPENDENT safe read (no throw), so the opt-in is honoured even when the
+    // evaluator itself errored — matching the commit-path gate (commitAuthorizedDeliverable), which also
+    // refuses on an evaluator error. A legacy mission (no control declared) proceeds exactly as before.
     console.warn("[MissionLedger] Acceptance evaluation error:", e.message);
+    if (acceptanceFacts.controlDeclared(mission)) {
+      return { skipped: true, reason: "ACCEPTANCE_EVALUATION_ERROR", entry: { mission } };
+    }
     acceptance = { controlled: false };
   }
   if (acceptance && acceptance.controlled === true && acceptance.verdict !== "ACCEPT") {
@@ -78,11 +86,16 @@ function recordMission(mission) {
   // this gate is a NO-OP, so legacy behavior is exactly as before.
   let economics;
   try {
-    economics = evaluateMissionEconomics(mission);
+    economics = acceptanceFacts.evaluateMissionEconomics(mission);
   } catch (e) {
-    // Never break a mission on an evaluator error; a non-opted-in mission must stay legacy. (The gatherer
-    // uses only safe reads and does not throw in practice — this mirrors the controlled gate's guard.)
+    // FAIL CLOSED for an economically-enforced mission (deny-by-default); never break a legacy mission.
+    // economicEnforced is an INDEPENDENT safe read (no throw), so the opt-in is honoured even on an
+    // evaluator error — consistent with the controlled gate above and the commit-path gate. A mission
+    // that did not opt in proceeds exactly as before.
     console.warn("[MissionLedger] Economic evaluation error:", e.message);
+    if (acceptanceFacts.economicEnforced(mission)) {
+      return { skipped: true, reason: "ECONOMIC_EVALUATION_ERROR", entry: { mission } };
+    }
     economics = { enforced: false };
   }
   if (economics && economics.enforced === true && economics.allowed !== true) {
