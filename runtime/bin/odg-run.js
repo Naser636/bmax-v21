@@ -19,6 +19,7 @@ function fmtDuration(ms){
 }
 const {bootstrap}=require("./odg-bootstrap");
 const checkpoint=require("../core/checkpoint-engine");
+const stageEffect=require("../core/stage-effect");
 const {loadRuntimeContext}=require("../core/runtime-context-loader");
 
 // COLD-START PREP (Runtime Bootstrap)
@@ -141,6 +142,20 @@ for(let i=0;i<pipeline.length;i++){
         }
         console.error("STOP:",name,"failed");
         process.exit(r.status);
+    }
+
+    // RC-1: a zero exit code is NOT proof the stage produced its effect. For a stage with a declared
+    // output artifact, require it to exist (non-empty) before DONE; otherwise HALT exactly like a
+    // non-zero exit (stageFailed + exit) so DONE can never mark an effect-less stage. Undeclared
+    // (conditional / non-blocking) stages are unconstrained — historical exit-0 => DONE is preserved.
+    if(!stageEffect.stageEffectOk(name,path.join("runtime","generated"))){
+        cp=checkpoint.stageFailed(cp,i,name+" exited 0 but produced no effect artifact ("+stageEffect.STAGE_OUTPUTS[name]+")");
+        if(!VERBOSE){
+            console.error(">>> "+name+"  FAIL  ("+fmtDuration(elapsed)+")  — no effect artifact");
+            console.error("Full log   :",RUN_LOG);
+        }
+        console.error("STOP:",name,"exited 0 without its effect artifact ("+stageEffect.STAGE_OUTPUTS[name]+")");
+        process.exit(1);
     }
 
     if(!VERBOSE){
