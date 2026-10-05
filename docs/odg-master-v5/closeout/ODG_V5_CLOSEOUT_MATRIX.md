@@ -136,3 +136,192 @@ A permanent/production LARGE model identity remains a CTO choice; the lifecycle 
 | ESM migration | CTO authorizes CommonJS→ESM runtime migration campaign |
 | Universal objective-proof gate | CTO authorizes opt-in→mandatory per-objective proof consumption |
 | Protocol truth-lock re-stamp | Human updates ODG_AUTONOMOUS_WORK_PROTOCOL.json (protected path) |
+
+---
+
+## 8. CAMPAIGN — MASTER METHOD SEMANTIC INTEGRATION
+
+_CTO-authorized documentary campaign: integrate the ODG FINAL EXECUTION MASTER method into the
+canonical six FICHE without duplication, regression, architectural inflation, or economic-number
+pollution. Authority order unchanged. This record creates no authority._
+
+### 8.1 Truth Lock (at execution)
+- **HEAD:** `0d414fb5eef24beabaa36efcf542ed06508a749e` · **branch:** `main` · **origin/main:** `0d414fb` (MATCH) · **worktree:** clean at start
+- **Canonical six FICHE (repository truth):** `docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_01..06.md` + FICHE 07 `..._FICHE_07_METHODE_DE_TRAVAIL.md`
+- **Ranges verified intact:** 01=0–94 · 02=95–174 · 03=175–237 · 04=238–299 · 05=300–379 · 06=380–420 → **421 sections, contiguous, zero gaps, zero duplicate numbers.**
+
+### 8.2 Source-authority discrepancy (surfaced, not assumed)
+The FINAL EXECUTION MASTER exists **only** as two *differing, untracked, `.gitignore`-excluded,
+runtime-generated* artifacts under `runtime/generated/` (`master-execution-20260905T001604Z/`
+= 1020 lines, authoritative; `odg-final-execution-20260905T000850Z/` = 215-line stub). There is
+**no tracked canonical copy.** The 1020-line file self-declares "take the current repository as the
+only initial truth" and reproduces the Master's own 9 primitives, A01–A54, 166-reference and SUPREME
+RULE verbatim → it is a **downstream projection OF this Master**, not an external upstream method.
+This is why the forensic gap map is dominated by EXISTING. The 1020-line file was read in full; the
+method was **not** reconstructed from memory.
+
+### 8.3 Semantic gap map (FINAL EXECUTION MASTER concept → canonical owner → class)
+| Concept (FEM) | Canonical owner already in Master | Class |
+|---|---|---|
+| Permanent primitives / no 10th | §230, §345, FICHE_01:1147, FICHE_02:983 | EXISTING |
+| Sacred separation | §12, §302, A54 contract | EXISTING |
+| Universal runtime / MSE loop | §15, §134, §295 | EXISTING |
+| Workgraph (proof-carrying nodes) | **§18** (exact node field list), §411, §17 | EXISTING |
+| Reality / possibility boundary (no silent promotion) | §198, §19, FICHE_04:1659, §405; "no silent" FICHE_03/05 ×8 | EXISTING |
+| Consequential action transition | §415, §17, §394 | EXISTING |
+| **TOCTOU / atomic context / state-version binding** | FICHE_01:1064 ("state versions prevent lost updates") + §394 (re-evaluate on state change) + §415 (actions expire; tool response cannot silently broaden) + §21 | **PARTIAL (mechanism-wording)** |
+| **Tool firewall** | §394 EXECUTION ENVELOPE (allowed_tools/data/network/fs/spend/compute/time/risk/authority + "may not become broader by inference"), §415, §395, FICHE_07:80–82 | EXISTING / DUPLICATE-WORDING |
+| Memory/model boundary | §22, §398, §128/§305, §260 | EXISTING |
+| Evidence / proof / provenance | §19, §20, FICHE_01:1086 (Evidence≠verification) | EXISTING |
+| Financial truth (flow≠capture≠rev≠cash≠profit≠capital) | §35, §405 | EXISTING |
+| Economic operating method (opportunity→…→settlement) | §404, §405, §406, §409, §410, FICHE_07:118 (BASELINE→…→CONTRACTUAL RIGHT→INVOICE→COLLECTION→SETTLEMENT) | EXISTING |
+| Value attribution / counterfactual | §36, §409, FICHE_07:118 | EXISTING |
+| Transaction capture / cash needs collection evidence | §44, §405, FICHE_02:686 | EXISTING |
+| Economic depth / frontier | §30, §235, §406 (L0–L6), §384 | EXISTING |
+| Capability compounding / transfer | §142/§143, §410, §317, §135 | EXISTING |
+| Failure / learning / drift | §147, §314, §370, §388, §73–97 | EXISTING |
+| Verification factory / champion-challenger / generator≠judge | §19, §309, §311, §372, §373 | EXISTING |
+| Reality harness / chaos | §418, §167, §258 | EXISTING |
+| Self-building / successor (no self-mod of governance) | §52, §139, §321–328, §633 | EXISTING |
+| Distribution | §141 | EXISTING |
+| Certification (certified for proven scope) | §40, §310, §343, §19:247 | EXISTING |
+| Autonomy ceiling / no self-expanding authority | §14, §416, §281, §345 | EXISTING |
+| Governance / Claude cannot modify the rules that judge Claude | §148, §239, §113, §255 | EXISTING |
+| Resource intelligence ladder / lightweight brain / SMALL-LARGE | §23, §24, §28, §238, §407 ("**not a rigid global ordering**") | EXISTING / DUPLICATE-WORDING |
+| Control tower / metrics | §173/§280, §337, §396 | EXISTING |
+| Failure policy (hard vs recoverable) | §132, §395, §417, FICHE_01:1095 | EXISTING |
+| Permanent invariants | §148, §155, §144 | EXISTING |
+| Execution roadmap / method / coverage / report | §192, §152, §400, 166-ref, §25-style report | EXISTING |
+| Proof strength = risk×blast×uncertainty×reversibility | §19:230, §240, §241, FICHE_01:1209, FICHE_04:130 | EXISTING |
+| Uncertainty first-class states | §19:231–245, §102, FICHE_01:1101 | EXISTING |
+| **€55B / €15B / €40B economic targets** | — | **NOT INTEGRATED BY DESIGN** |
+
+### 8.4 Decision — minimum sufficient integration
+- **INTEGRATED (new sections):** NONE. Every FEM concept already has a verified single canonical owner.
+- **REUSED:** all concepts above (EXISTING / DUPLICATE-WORDING) — retained, not duplicated.
+- **NOT INTEGRATED (deliberate):** (a) €55B/€15B/€40B numeric targets — forbidden by Campaign §4/§20;
+  (b) "immutable context hash" optimistic-concurrency *mechanism* — its **semantics** (lost-update
+  prevention, re-evaluate-on-change, action-expiry, no-silent-broadening) already exist; per the
+  SUPREME RULE ("preserve semantics, compress mechanisms") adding a mechanism name is not required;
+  (c) "tool firewall" / resource-ladder-ordering / reality-possibility chains — DUPLICATE-WORDING of
+  §394+§415+§395 / §407 / §19+§198+FICHE_07, retained at existing owners.
+- **Range-integrity constraint:** a new numbered section is impossible without violating the
+  421-section / exact-range / no-renumber invariant (Campaign §18). Confirms zero-mutation outcome.
+
+### 8.5 Validation
+- Section continuity 0–420 contiguous; 421 sections; no duplicate canonical numbers — PROVEN (inventory).
+- 9 primitives unchanged; "No tenth primitive is permitted" intact (FICHE_01:1147). A01–A54 intact. 166 reference intact (FICHE_02:255 protects it).
+- `git diff --name-only` → only this carnet. `git diff --check` → clean. Six FICHE + FICHE 07 byte-identical (zero edits).
+- TESTS / build: **N/A — documentary campaign; zero runtime/src/tests changes** (write-set excludes code). Build/test gates do not apply to Master docs.
+
+### 8.6 Status & next action
+- **STATUS: PROVEN** — forensic comparison performed; minimum sufficient integration = reuse-only, zero Master mutation; no duplication, no new primitive, no economic-number pollution, ranges intact.
+- **NEXT AUTHORIZED ACTION (exactly one, CTO-gated, optional):** If the CTO judges the explicit
+  optimistic-concurrency contract (READ VERSION → AUTHORIZE SAME VERSION → EXECUTE ONLY IF UNCHANGED →
+  COMMIT NEXT VERSION; else REJECT→RE-EVALUATE; bound as an immutable context hash) to be a *missing
+  semantic* rather than a compressed mechanism, authorize a ≤2-line extension of the **body** of §21
+  (CANONICAL DOMAIN STATE) or §415 (CANONICAL ACTION REPRESENTATION) — no new section, no renumber,
+  no range change. Otherwise: **STOP at campaign gate; no further modification.** Commit/push of this
+  carnet awaits explicit human authorization (Campaign §23).
+
+---
+
+## 9. CAMPAIGN — FINAL ECONOMIC OPERATING METHOD INTEGRATION (completeness proof)
+
+_CTO/CDO governed campaign. Deeper, method-completeness test of the economic operating method: not a
+keyword check — "can an operator follow the method from opportunity to verified economic settlement?"
+Builds on §8. Authority order unchanged. This record creates no authority._
+
+### 9.1 Truth lock (at execution)
+- **HEAD:** `0d414fb` · **branch:** `main` · **origin/main:** `0d414fb` (MATCH). Worktree carried the §8 carnet edit only (` M …CLOSEOUT_MATRIX.md`); six FICHE + FICHE 07 byte-identical.
+- Current project state preserved: FINAL EXECUTION MASTER supplies METHOD; this carnet/repo supplies CURRENT STATE. No historical "next campaign" claim from the FEM was allowed to regress repo state.
+- Authoritative method source: same gitignored generated projection read in full in §8 (`runtime/generated/master-execution-20260905T001604Z/…`). Not reconstructed from memory. (Source-authority caveat per §8.2 stands: method source is a downstream projection OF this Master, which is why the method is already canonically present.)
+
+### 9.2 End-to-end method completeness (FEM §7.1–7.35 → explicit canonical owner → verdict)
+| FEM method chain | Explicit canonical owner(s) | Verdict |
+|---|---|---|
+| 7.1 Economic conversion (opportunity→…→economic right→invoice→cash→settlement) | **§36** (`BASELINE→…→CONTRACTUAL RIGHT→INVOICE→CASH→SETTLEMENT`), §37, §30 (nine layers), §404, C16 (`DEMAND→…→SETTLEMENT→…→REINVESTMENT`); "economic right" §01:72, §03:533 | EXISTING-COMPLETE |
+| 7.2 Value/attribution (baseline→…→counterfactual→…→value) | §36, §409, §408 (red team), FICHE_07:118 | EXISTING-COMPLETE |
+| 7.3 Financial states + FLOW≠CAPTURE≠REVENUE≠CASH≠PROFIT≠CAPITAL | §35 (definitions), §01:89/485, C16 payment states (`AUTHORIZED≠…≠RECONCILED`, incl. **DUE**) + delivery-acceptance states | EXISTING-COMPLETE (richer than FEM) |
+| 7.4 Source→transformation→destination→evidence (provenance) | §20 (evidence chain: provenance/source/version), §40, C17 audit chain | EXISTING (wording variant) |
+| 7.5 Mission value ladder (method, no numbers) | §275, §406 (L0–L6), §404; numeric targets excluded by design | EXISTING-COMPLETE |
+| 7.6 Economic depth T1–T5 (access→value→flow→control/defensibility→capital→new access) | §30, §142/§143 (compounding + reinvestment), §140 (sovereignty/anti-cloning = defensibility/control), §141 (distribution), §410 (flywheel) | EXISTING-DISTRIBUTED |
+| 7.7 Distribution modes | §141 | EXISTING-COMPLETE |
+| 7.8 Economic surfaces (one ODG, not separate businesses) | §402 (general internally / value-specific commercially), §31, §403 (domain packs) | EXISTING-COMPLETE |
+| 7.9 Day-1 monetization (modes, no numbers/claims) | §31 (revenue modes), §44, §437 (pricing = hypotheses) | EXISTING-COMPLETE |
+| 7.10 Direct economic route (partnership not prerequisite) | §404, §141, §140 | EXISTING-COMPLETE |
+| 7.11 Control tower (monitor + frontier actions) | monitor: C17 audit chain, §337, §396, §280/§173. Actions: promote/restrict/retire §52/§49, expand/scale/kill §406/§404, pause/hold/wait/do-nothing/abstain §399/§952/§287–293, distribute §141, harvest/retreat §34/§406/§410, exit §49/§140 | EXISTING-DISTRIBUTED |
+| 7.12 Dependency intelligence (provider's provider; governed compute) | §397, §180, §27, C14 supply chain | EXISTING-COMPLETE |
+| 7.13 Adaptive resource ladder | §407 ("not a rigid global ordering"), §23/§24/§28, §01:330, C14 | EXISTING-COMPLETE |
+| 7.14 Proof-carrying workgraph (+ abstain/restrict/simulate/escalate/block) | **§18** (exact node field list), §411, §19 | EXISTING-COMPLETE |
+| 7.15 Objective→outcome proof (green build ≠ proof) | §110, §19, §84/§75 (historical failures) | EXISTING-COMPLETE |
+| 7.16 Consequential action integrity | §415, §17, §394, §01:1166 | EXISTING-COMPLETE |
+| 7.17 TOCTOU / state versioning (read v→authorize v→execute-if-v→commit v+1) | §01:1064 (state versions prevent lost updates), §394 (re-eval on change), §415 (action expiry/no-silent-broaden) | EXISTING-PARTIAL (explicit CAS mechanism = §8.6 deferred action) |
+| 7.18 Immutable execution context | §394 ("may not become broader by inference …"), §415 | EXISTING-PARTIAL (hash binding = §8.6 deferred) |
+| 7.19 Tool firewall | §394 (envelope), §415, §395, FICHE_07:80–82 | EXISTING |
+| 7.20 Evidence→proof→verified state | §19, §20, §40, FICHE_01:1086 | EXISTING-COMPLETE |
+| 7.21 Uncertainty model (known/unknown/uncertain/conflicted/stale/unverified) | §19 (states), §102, §01:1101 | EXISTING-COMPLETE |
+| 7.22 Hypothesis/forecast (no silent promotion) | §198, FICHE_04:1659 (governance stack), FICHE_07:103 | EXISTING-COMPLETE |
+| 7.23 Reality states | §36/C16 chains, §01:132 universal loop | EXISTING-COMPLETE |
+| 7.24 Forecasting/optionality + forecast-vs-reality calibration | §41 (signal engine), §211, §39; calibration §396 (known_biases), §408 | EXISTING (calibration distributed) |
+| 7.25 Failure/learning (+ attribution classes) | §147, §314, §73–97, §39 | EXISTING-COMPLETE |
+| 7.26 Drift (detect→…→restrict/replace/promote) | §370, §228 | EXISTING-COMPLETE |
+| 7.27 Memory tiers + world model | §22, §387, §398, §01:1061 (lifecycle) | EXISTING-COMPLETE |
+| 7.28 Attention/hot state | §165 (event-driven escalation), §247, §387 | EXISTING |
+| 7.29 Living operator loop (no separate physical runtime) | §138, §01:132 (`PERCEIVE→…→COMPOUND`) | EXISTING-COMPLETE |
+| 7.30 Autonomy levels + ceiling + abstention | §14, §416, §281, §399, §344 | EXISTING-COMPLETE |
+| 7.31 Security (distributed, not 2nd constitution) | §136, §395, FICHE_04:1599, C-security | EXISTING-COMPLETE |
+| 7.32 Self-engineering (defect→…→promote; Claude can't modify its judges) | §139, §321–328, FICHE_04:1665, §634-equiv | EXISTING-COMPLETE |
+| 7.33 Engineering contract | §112–131, §158–166, FICHE 07, FICHE_04:1665 (Rule Zero) | EXISTING-COMPLETE |
+| 7.34 Campaign law (only VERIFIED unlocks next) | §106, §105, §152 | EXISTING-COMPLETE |
+| 7.35 Checkpoint contract + ledgers | §124, FICHE 07; no separate tracked ledger files exist → this carnet is the documentary record | EXISTING-COMPLETE |
+
+### 9.3 Completeness verdict (the real test)
+**An operator CAN follow the full method end-to-end** — `OPPORTUNITY→ACCESS→AUTHORITY→CONTRACT→EXECUTION→BASELINE→INTERVENTION→OBSERVED CHANGE→COUNTERFACTUAL→MEASUREMENT→ATTRIBUTION→VERIFICATION→VERIFIED VALUE→ECONOMIC RIGHT→INVOICE→CASH→SETTLEMENT` (owners: §30→§13/§404→§17→§404/§405→§36→§36/§409→§37→§36→C16), the compounding/control continuation (§142/§143/§140/§141/§410/C16-REINVESTMENT), forecast→reality→calibration (§41/§211/§396/§408), failure→root-cause→recovery→prevention→regression (§147/§39/§73–97), and campaign→…→gate (§106/§152). No required transition is absent.
+
+### 9.4 Decision
+- **INTEGRATED (new content in the six FICHE):** NONE — every method chain already has an explicit canonical owner; the economic method is present and in several places (§35/§36/C16) more complete than the FEM projection.
+- **REUSED:** all chains above.
+- **DELIBERATELY NOT INTEGRATED:** (a) €55B/€15B/€40B and all FEM numeric targets — forbidden §8; the Master's own pre-existing pricing examples (§31/§437, already qualified as "hypotheses, not forecasts") are left untouched (non-regression — not mine to delete or add to); (b) T4 "control point/defensibility" and the frontier portfolio-verb *menu* as verbatim vocabulary — EXISTING-DISTRIBUTED, adding labels is not adding method (Campaign §10: word-similarity ≠ semantic duplication, and its converse); (c) the explicit TOCTOU compare-and-swap / context-hash *mechanism* — semantics present, mechanism compressed (SUPREME RULE) — carried as the single deferred CTO action from §8.6.
+- **No new canonical section was necessary** → no §3/§17 STOP triggered.
+
+### 9.5 Non-regression proof
+421 sections, ranges 0–94/95–174/175–237/238–299/300–379/380–420 intact; 9 primitives + "no tenth" intact (§01:1147); 166 reference intact (§02:255); A01–A54 intact (incl. governance stack FICHE_04:1659); no economic numbers added; `git diff --name-only` = this carnet only; six FICHE + FICHE 07 byte-identical; zero runtime/src/tests/providers/package changes; no authority or security boundary touched.
+
+### 9.6 Status & next action
+- **STATUS: GREEN** — complete economic operating method verified already canonically represented without regression; integration requirement satisfied by proven reuse; zero FICHE mutation, zero economic numbers, zero architecture impact.
+- **NEXT AUTHORIZED ACTION (exactly one, carried from §8.6, CTO-gated, optional):** CTO decides whether the explicit optimistic-concurrency contract (`READ v → AUTHORIZE v → EXECUTE IF STILL v → COMMIT v+1`; else `REJECT→RE-EVALUATE`; immutable context hash) is a *missing semantic* warranting a ≤2-line body extension of §21 or §415 (no new section, no renumber) — or STOP at the gate. Commit/push awaits explicit human authorization (Campaign §16).
+
+---
+
+## 10. CTO FINALIZATION — TOCTOU / STATE-FRESHNESS DETAIL CLOSED
+
+_CTO finalization command: decide whether the canonical Master already expresses the TOCTOU/
+state-freshness contract sufficiently for the complete method; if yes, make no Master change._
+
+### 10.1 Direct inspection (exact canonical text, not prior report)
+Read verbatim: §21 (CANONICAL DOMAIN STATE, FICHE_01:266–285), §415 (CANONICAL ACTION
+REPRESENTATION, FICHE_06:1025–1045), and the state-contract block **C03/C05/C06** (FICHE_01:1063–1086).
+The prior "PARTIAL" rested on a missing *mechanism token*; direct inspection located the explicit
+optimistic-concurrency contract in **C05** that the earlier audit had not isolated.
+
+### 10.2 Four required meanings → explicit canonical owner
+| # | Required meaning | Explicit canonical text | Verdict |
+|---|---|---|---|
+| 1 | Authorization bound to a known state/version | **C03** `state_transition` *requires* `state_version_before` + `state_version_after` bound to `entity_id`/`action_id`; "State versions prevent lost updates" (FICHE_01:1064–1077); §21 `STATE0→ACTION→STATE1→VERIFY→STATE2` + declared inputs/invariants | EXPLICIT |
+| 2 | Valid only if state unchanged since authorization | **C05** "version checks, **compare-and-set/atomic transitions** where required, conflict detection" (FICHE_01:1083); C03 lost-update prevention | EXPLICIT |
+| 3 | Stale authorization must not proceed | **C06** freshness `FRESH/STALE/EXPIRED/UNKNOWN` (FICHE_01:1086); **§415** "Actions expire when their authority, scope or temporal assumptions expire; a tool response cannot silently broaden an Action"; **§394** envelope re-evaluated on state change | EXPLICIT |
+| 4 | Reject / re-evaluate rather than silently execute against changed state | **C05** "conflict detection … or an explicit conflict owner"; §415/§394 re-evaluation; Master-wide "no silent action/promotion" doctrine (FICHE_03/05 ×8) | EXPLICIT |
+
+### 10.3 Decision
+- **TOCTOU DETAIL = ALREADY CANONICALLY COMPLETE.** All four meanings are explicit (C03 + C05 + C06 + §415 + §394). The requirement is METHOD/CONTRACT, which is present; a specific mechanism (immutable hash / mandatory CAS architecture) is deliberately **not** added (CTO §3 forbids implementation-recipe additions; the SUPREME RULE compresses mechanisms).
+- **MASTER CHANGED: NO.** Zero FICHE mutation. No new section, no renumber, no new terminology, no new primitive/runtime/authority/governance layer.
+- The §8.6/§9.6 carried-forward optional action is hereby **CLOSED as not-required**; no residual next campaign.
+
+### 10.4 Non-regression (re-verified)
+421 sections (0–420), ranges intact, no gaps/dups/renumber; 9 primitives + "no tenth" (§01:1147) intact; 166 reference (§02:255) intact; A01–A54 (incl. C01–C08 contract block + governance stack FICHE_04:1659) intact; 35 method chains still owned (§9.2); no economic numbers added; no other FICHE changed; zero runtime/src/tests/providers/package changes; no security/authority boundary changed.
+
+### 10.5 Final verdict
+**STATUS: GREEN.** Complete economic operating method verified canonically represented; the sole residual method detail (TOCTOU/state-freshness) is proven already explicit; no Master change required.
+
+**ECONOMIC OPERATING METHOD INTEGRATION: COMPLETE.**
