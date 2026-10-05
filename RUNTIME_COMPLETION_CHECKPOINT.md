@@ -191,3 +191,39 @@ a54b51b livrable AUTONOMY_E2E_LOOP (auto-commité par la boucle) · ledger : 2 m
 ## Reste
 1. Suite complète finale + build (en cours /tmp/test-final.log, /tmp/build-final.log)
 2. Rapport final — aucun blocage interne restant ; provider réellement dispo (pas de blocage externe)
+
+---
+
+# PHASE 3 — MASTER AUTONOMOUS CLOSEOUT (CTO-authorized, 2026-10-05)
+
+## Gate 0 — Master restoration push (AUTHORIZED EXTERNAL ACTION) — DONE
+- Pushed the already-validated Master restoration commit `160695b` to origin/main.
+- Verified: local main == origin/main == 160695b, ahead/behind 0/0, worktree clean.
+- Evidence: push `75a1053..160695b main -> main`, exit 0, UTC 2026-10-05T11:43:12Z. No force, no history rewrite.
+
+## Gate 1 — Baseline gates (read-only) — PROVEN
+- `npx tsc --noEmit` exit 0 · `npm run build` (next build) exit 0 · `npm test` 307/307 files TEST_EXIT=0.
+- `odg verify --report-only`: build/typescript/gitClean/documentationProofPresent all true; 80/80 generated contracts valid.
+- `odg health`/`odg status`: READY, Converged YES, 151 caps / 0 missing, queue 0 executable / 3 incomplete, 0 outstanding gaps.
+- Baseline delta: test files now 307 (carnet historique disait 223 ; dépôt a grandi). 307/307 vert = nouvelle baseline prouvée.
+
+## Gate 2 — Provider live (Phase 8) — partial
+- OLLAMA SMALL **PROVEN LIVE** cette session : qwen2.5:0.5b, réponse réelle via le transport gouverné
+  (OpenAIProviderAdapter + callOpenAiChat), usage 30+5=35 tok, externalCostEUR=0, exit 0.
+- Claude = PROVEN LIVE historique (0edb029/a54b51b, runs réels $0.34) — NON relancé (dépense réelle = STOP).
+- Ollama LARGE = BLOCKED BY RESOURCE (aucun grand modèle). OpenAI = BLOCKED BY RESOURCE+POLICY. LM Studio = BLOCKED BY RESOURCE.
+
+## Gate 3 — Closeout matrix — DONE
+- Créé `docs/odg-master-v5/closeout/ODG_V5_CLOSEOUT_MATRIX.md` (aucun existant ; pas de doc concurrent).
+- Classification complète PROVEN / PROVEN LIVE / NOT PROVEN / BLOCKED (RESOURCE|POLICY) / DEFERRED + conditions de levée.
+
+## Certification atteinte
+- LEVEL 1 LOCAL CONVERGED ✅ · LEVEL 2 RUNTIME PROVEN ✅ · LEVEL 3 PRODUCTION CERTIFIED ❌ (économique/cloud/LARGE/objective-gate).
+- **Plus haut niveau défendable : LEVEL 2 — RUNTIME PROVEN.**
+
+## Contradiction notée (non bloquante)
+- ODG_AUTONOMOUS_WORK_PROTOCOL.json truth_lock périmé (df344f1 / runtime/mission-context-builder) vs réalité (160695b / main).
+  Le JSON est une interface d'exécution subordonnée (CLAUDE.md) ; le truth-lock CTO in-prompt le supersède. Re-stamp = décision humaine.
+
+## Lint/dette (classée, non "corrigée")
+- 420 err / 23 warn ; 412 no-require-imports = runtime CommonJS (décision migration ESM DEFERRED). Build/tsc/tests ne gatent pas sur lint.
