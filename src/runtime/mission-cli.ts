@@ -35,6 +35,7 @@ import { createMissionIntent } from "./mission-intent";
 import { LocalMissionRunner } from "./local-mission-runner";
 import { isMigratedMission, renderMigrationReport } from "./mission-migration";
 import { runConverge } from "./converge-cli";
+import { recordOllamaRouting } from "./ollama-routing-hook";
 
 /**
  * Missions that mean "drive the whole Runtime to convergence" rather than run a single mission.
@@ -257,6 +258,14 @@ function main(): number {
   console.log("--------------------------------------");
   console.log(renderMigrationReport());
   console.log("--------------------------------------");
+
+  // ON_DEMAND_MODEL_ROUTING_V2 (opt-in, OFF by default): surface the Ollama control-plane routing decision
+  // for this mission as gitignored evidence. Strict NO-OP unless ODG_OLLAMA_CONTROL_PLANE=1 — it NEVER
+  // changes route selection, provider choice, or execution; it only records an observability decision.
+  const ocp = recordOllamaRouting(mission, spec, { cwd: process.cwd() });
+  if (ocp.enabled) {
+    console.log(`Ollama CP  : tier=${ocp.tier} model=${ocp.model ?? "(none)"} routed=${ocp.routed} risk=${ocp.risk} — ${ocp.reason}`);
+  }
 
   // Route selection — the Runtime chooses local vs provider vs fallback.
   if (isMigratedMission(mission)) {
