@@ -30,6 +30,7 @@ interface ControlPlane {
   isEnabled: () => boolean;
   decidePolicy: (task: unknown) => { tier: string; reason: string; risk: string; complexity: string; policyVersion: string };
   routeModel: (decision: unknown, models: unknown) => { ok: boolean; tier: string; model: string | null; reason: string; policyVersion: string };
+  run: (task: unknown, opts: unknown) => Promise<Record<string, unknown>>;
 }
 
 function controlPlane(cwd: string): ControlPlane | null {
@@ -100,5 +101,57 @@ export function recordOllamaRouting(
     return record;
   } catch {
     return { enabled: false }; // best-effort: observability must never break the mission path
+  }
+}
+
+export interface LocalInferenceStep {
+  /** Task profile fields consumed by the control plane's deterministic policy (kind/risk/contextTokens). */
+  task: { kind?: string; risk?: "HIGH" | "LOW"; contextTokens?: number } | Record<string, unknown>;
+  prompt: string;
+  system?: string;
+}
+
+/**
+ * executeOllamaStep(mission, step, opts) — OPT-IN governed EXECUTOR of ONE local inference step (CTO-authorized).
+ * Strict NO-OP ({ enabled:false }) unless the control-plane flag is ON (or opts.force for tests): the historic
+ * path is byte-for-byte unchanged when OFF. When ON it DELEGATES to the EXISTING control-plane run() — no new
+ * router/scheduler/lifecycle — which performs: deterministic tier policy (HIGH-risk⇒LARGE, fail-closed, no
+ * silent downgrade), concurrency scheduling, local-Ollama HTTP adapter ONLY, keep_alive/unload/AbortSignal/
+ * timeout, output validation, and a frozen evidence record. Models come from ODG_OLLAMA_SMALL/LARGE_MODEL
+ * (never auto-pulled). The verdict + metrics are also persisted to gitignored runtime/generated evidence.
+ * Not a general executor: it runs ONLY the single inference step it is handed. Never throws.
+ */
+export async function executeOllamaStep(
+  mission: string,
+  step: LocalInferenceStep,
+  opts: { cwd?: string; force?: boolean; baseUrl?: string; timeoutMs?: number; signal?: AbortSignal; httpCall?: unknown; validate?: unknown; write?: boolean } = {},
+): Promise<Record<string, unknown>> {
+  const cwd = opts.cwd ?? process.cwd();
+  try {
+    const cp = controlPlane(cwd);
+    if (!cp) return { enabled: false };
+    if (!cp.isEnabled() && opts.force !== true) return { enabled: false }; // OFF ⇒ NO-OP (rollback = unset flag)
+
+    const models = { small: process.env.ODG_OLLAMA_SMALL_MODEL, large: process.env.ODG_OLLAMA_LARGE_MODEL };
+    const record = await cp.run(step.task, {
+      force: true, // the governed flag was already checked above; delegate execution to the control plane
+      models,
+      baseUrl: opts.baseUrl ?? "http://127.0.0.1:11434",
+      prompt: step.prompt,
+      system: step.system,
+      unloadAfter: true,
+      timeoutMs: opts.timeoutMs,
+      signal: opts.signal,
+      httpCall: opts.httpCall,
+      validate: opts.validate,
+    });
+    if (opts.write !== false) {
+      const abs = path.join(cwd, "runtime", "generated", "ollama-inference-step.json");
+      fs.mkdirSync(path.dirname(abs), { recursive: true });
+      fs.writeFileSync(abs, JSON.stringify({ mission, ...record }, null, 2));
+    }
+    return record;
+  } catch (e) {
+    return { enabled: true, outcome: "TRANSPORT_ERROR", error: String(e && (e as Error).message ? (e as Error).message : e) };
   }
 }

@@ -64,9 +64,44 @@ try {
   const t1 = mapMissionToTask({ authorizedPaths: ["x"] }); const t2 = mapMissionToTask({ authorizedPaths: ["x"] });
   must(JSON.stringify(t1) === JSON.stringify(t2) && t1.kind === "code", "7. mapMissionToTask deterministic (engineering ⇒ code)");
   must(mapMissionToTask({ mode: "AUDIT", authorizedPaths: [] }).kind === "classify", "7b. audit ⇒ classify");
-} finally {
-  restore();
-}
+} catch (e) { failures++; console.log("  FAIL sync block threw:", (e as Error).message); }
 
-console.log(failures === 0 ? "ALL PASS — OLLAMA ROUTING HOOK" : `FAILURES: ${failures}`);
-process.exit(failures === 0 ? 0 : 1);
+// ---- EXECUTOR (opt-in): executeOllamaStep delegates to the control plane run() ------------------
+import("./ollama-routing-hook").then(async ({ executeOllamaStep }) => {
+  process.env.ODG_OLLAMA_SMALL_MODEL = "qwen2.5:0.5b";
+  process.env.ODG_OLLAMA_LARGE_MODEL = "qwen2.5:14b";
+  // A fake Ollama HTTP (zero cost, records URLs) so the executor runs offline without a server.
+  const urls: string[] = [];
+  const fakeHttp = async ({ url }: { url: string; body: unknown; signal?: AbortSignal }) => {
+    urls.push(url);
+    if (/\/api\/generate$/.test(url)) return { status: 200, done: true, done_reason: "unload" };
+    return { status: 200, message: { role: "assistant", content: "ODG_STEP_OK" }, eval_count: 5, prompt_eval_count: 20 };
+  };
+
+  // 8 — flag OFF ⇒ executor is a strict NO-OP (no execution, backward compatible).
+  delete process.env.ODG_OLLAMA_CONTROL_PLANE;
+  const off = await executeOllamaStep("M", { task: { kind: "classify" }, prompt: "hi" }, { cwd: REPO, write: false, httpCall: fakeHttp });
+  must(off.enabled === false && urls.length === 0, "8. executor flag OFF ⇒ NO-OP (no execution)");
+
+  // 9 — ON (force) ⇒ real step executed via control plane: OK, 1 provider call, 0 external, validated, evidence.
+  const evAbs = path.join(REPO, "runtime", "generated", "ollama-inference-step.json");
+  fs.rmSync(evAbs, { force: true });
+  const on = await executeOllamaStep("M_STEP", { task: { kind: "classify" }, prompt: "say it", system: "test" }, { cwd: REPO, force: true, httpCall: fakeHttp });
+  must(on.outcome === "OK" && on.tier === "SMALL" && on.providerCalls === 1 && on.externalCalls === 0, "9. executor ON ⇒ step executed OK (1 provider call, 0 external)");
+  must(on.outputValidated === true && on.text === "ODG_STEP_OK", "9b. output passed control-plane validation");
+  must(!!on.unload && (on.unload as { requested: boolean }).requested === true, "9c. lifecycle unload invoked (finally)");
+  must(fs.existsSync(evAbs) && JSON.parse(fs.readFileSync(evAbs, "utf8")).mission === "M_STEP", "9d. evidence persisted to gitignored runtime/generated");
+  must(!urls.some((u) => /\/api\/(pull|delete)/.test(u)), "9e. no model pull/delete");
+  must(urls.every((u) => /^http:\/\/127\.0\.0\.1:11434\//.test(u)), "9f. local Ollama only (external calls = 0)");
+  fs.rmSync(evAbs, { force: true });
+
+  // 10 — fail-closed: HIGH-risk + no large model ⇒ REFUSED, zero provider call (no silent downgrade).
+  delete process.env.ODG_OLLAMA_LARGE_MODEL;
+  urls.length = 0;
+  const fc = await executeOllamaStep("M_FC", { task: { kind: "classify", risk: "HIGH" }, prompt: "x" }, { cwd: REPO, force: true, write: false, httpCall: fakeHttp });
+  must(fc.outcome === "REFUSED" && fc.tier === "LARGE" && fc.providerCalls === 0 && urls.length === 0, "10. HIGH-risk + no large model ⇒ REFUSED, 0 call (fail-closed)");
+
+  restore();
+  console.log(failures === 0 ? "ALL PASS — OLLAMA ROUTING HOOK" : `FAILURES: ${failures}`);
+  process.exit(failures === 0 ? 0 : 1);
+}).catch((e) => { console.log("  FAIL executor block:", e?.message ?? e); restore(); process.exit(1); });
