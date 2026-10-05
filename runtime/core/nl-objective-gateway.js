@@ -91,7 +91,12 @@ function extractConstraints(normalized) {
 const EFFECT_FAMILIES = [
     // family,          signals,                                                                   actionClass,   risk,       reversibility, requiresExternal, requiresHuman
     ["DESTRUCTIVE", ["delete file", "delete the", "drop table", "drop database", "truncate", "wipe", "destroy", "erase ", "purge ", "rm -rf"], "DELETE", "CRITICAL", "R4", false, true],
-    ["FINANCIAL", ["pay ", "buy ", "purchase", "sell ", "invoice", "charge ", "transfer money", "payment", "transaction", "deposit", "withdraw", "spend "], "TRANSACT", "CRITICAL", "R4", true, true],
+    // NOTE: the bare word "transaction" is deliberately NOT a FINANCIAL signal. Like "current" below,
+    // it over-matched non-financial senses ("transactional" source repair, a DB/git "transaction log")
+    // and wrongly escalated local/ambiguous objectives to TRANSACT/CRITICAL/R4. Genuine money movement
+    // is already carried by the explicit verbs (pay/charge/transfer money/withdraw/deposit/invoice/…),
+    // so "transaction" only escalates when qualified as a money transaction (financial/payment/…).
+    ["FINANCIAL", ["pay ", "buy ", "purchase", "sell ", "invoice", "charge ", "transfer money", "payment", "financial transaction", "payment transaction", "money transaction", "bank transaction", "card transaction", "deposit", "withdraw", "spend "], "TRANSACT", "CRITICAL", "R4", true, true],
     ["DEPLOY", ["deploy", "release to production", "ship to production", "publish to", "go live", "push to prod"], "IRREVERSIBLE", "HIGH", "R3", true, true],
     ["COMMUNICATE", ["email", "send ", "post to", "publish ", "notify", " message ", "contact ", "tweet", " dm "], "COMMUNICATE", "HIGH", "R2", true, false],
     // NOTE: the bare word "current" is deliberately NOT a NETWORK signal. It over-matched local

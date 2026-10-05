@@ -240,6 +240,71 @@ console.log("== NL Objective Gateway ==");
     assertNoSideEffects("22 current-repo-state", r);
 }
 
+// 23 — P5 PERMANENT REGRESSION: runtime-internal audit/convergence/false-success/honest vocabulary
+// resolves to a LOCAL governed capability through the REAL gateway path (compile → capability-router
+// → decision-rules), while a genuine external-provider request still resolves EXTERNAL_AI. Proves the
+// P5 decision-rules fix end-to-end at the mission/objective level, with the dry-run safety invariants
+// (no provider/external/network side effect, DRY_RUN enforced) and the decision source surfaced.
+{
+    const local = [
+        ["audit the carnet for anomalies", "self-diagnostic"],
+        ["determine whether the runtime has converged", "runtime-context-loader"],
+        ["find false-success in the mission records", "self-diagnostic"],
+        ["confirm the runtime is honest about its status", "self-diagnostic"],
+    ];
+    for (const [goal, cap] of local) {
+        const r = gw.compile(goal, { currentState: "CREATED", localModelAvailable: false });
+        const chosen = r.objectives[0].capability.chosen;
+        ok(`23 P5 local: "${goal}" ⇒ LOCAL (not external-ai)`, chosen.source === "LOCAL");
+        ok(`23 P5 local: "${goal}" ⇒ ${cap}`, chosen.capability === cap);
+        ok(`23 P5 local: "${goal}" ⇒ decision source surfaced (tier)`, chosen.tier === "RULES");
+        ok(`23 P5 local: "${goal}" ⇒ not flagged missing`, r.objectives[0].capability.missingLocalCapability === false);
+        ok(`23 P5 local: "${goal}" ⇒ DRY_RUN enforced`, r.mode === "DRY_RUN");
+        assertNoSideEffects(`23 P5 local "${goal}"`, r);
+    }
+    // Genuine external-provider need is preserved: no local rule ⇒ EXTERNAL_AI last resort is chosen.
+    {
+        const g = "ask an LLM to write original prose";
+        const r = gw.compile(g, { currentState: "CREATED", localModelAvailable: false });
+        const chosen = r.objectives[0].capability.chosen;
+        ok(`23 P5 provider: "${g}" ⇒ EXTERNAL source (provider need preserved)`, chosen.source === "EXTERNAL");
+        ok(`23 P5 provider: "${g}" ⇒ external-ai capability`, chosen.capability === "external-ai");
+        ok(`23 P5 provider: "${g}" ⇒ EXTERNAL_AI tier surfaced`, chosen.tier === "EXTERNAL_AI");
+        ok(`23 P5 provider: "${g}" ⇒ missingLocalCapability true`, r.objectives[0].capability.missingLocalCapability === true);
+        ok(`23 P5 provider: "${g}" ⇒ DRY_RUN enforced (no live provider call)`, r.mode === "DRY_RUN");
+        assertNoSideEffects(`23 P5 provider "${g}"`, r);
+    }
+}
+
+// 24 — P3 REGRESSION: the bare "transaction" lexical signal no longer over-escalates local/ambiguous
+// objectives to FINANCIAL, while genuine money-movement intent still classifies FINANCIAL/TRANSACT.
+{
+    const notFinancial = [
+        "transactional source repair",
+        "repair the transactional source defects",
+        "audit the transaction log",
+        "process a transaction",
+    ];
+    for (const g of notFinancial) {
+        const c = gw.classifyObjective(g);
+        ok(`24 P3 neg: "${g}" ⇒ NOT FINANCIAL`, c.externalEffect !== "FINANCIAL");
+        ok(`24 P3 neg: "${g}" ⇒ not TRANSACT/CRITICAL/R4`, !(c.actionClass === "TRANSACT" && c.risk === "CRITICAL" && c.reversibility === "R4"));
+    }
+    const financial = [
+        "transfer money to the vendor",
+        "charge the billing account",
+        "pay the invoice",
+        "withdraw funds from the account",
+        "purchase credits",
+        "process a financial transaction",
+    ];
+    for (const g of financial) {
+        const c = gw.classifyObjective(g);
+        ok(`24 P3 pos: "${g}" ⇒ FINANCIAL (guardrail preserved)`, c.externalEffect === "FINANCIAL");
+        ok(`24 P3 pos: "${g}" ⇒ TRANSACT/CRITICAL/R4`, c.actionClass === "TRANSACT" && c.risk === "CRITICAL" && c.reversibility === "R4");
+    }
+}
+
 // Aggregate no-side-effect proof across a representative sweep.
 {
     const sweep = [

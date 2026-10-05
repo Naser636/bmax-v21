@@ -93,4 +93,19 @@ ok("explicit goals ⇒ one objective each", explicit.objectives.length === 3);
 ok("explicit goals ordered + deterministic ids",
     explicit.objectives[1].id === "EXP_2" && explicit.objectives[1].goal === "second thing");
 
+console.log("Case 11 — P4: done_when only requires 'Patch applied.' when a patch is actually attached");
+{
+    const noPatch = syn.toContract({ id: "NOPATCH", goal: "audit the runtime state and report drift" });
+    ok("no-patch ⇒ done_when excludes 'Patch applied.'", !noPatch.objectives[0].done_when.includes("Patch applied."));
+    ok("no-patch ⇒ definition_of_done excludes 'Patch applied.'", !noPatch.definition_of_done.includes("Patch applied."));
+    ok("no-patch ⇒ still requires 'Validation successful.'", noPatch.objectives[0].done_when.includes("Validation successful."));
+
+    const withPatch = syn.toContract({ id: "WITHPATCH", goal: "fix the bug", patch: { target: "runtime/x.js", diff: "@@" } });
+    ok("with-patch ⇒ 'Patch applied.' preserved", withPatch.objectives[0].done_when.includes("Patch applied."));
+    ok("with-patch ⇒ both criteria present", withPatch.objectives[0].done_when.length >= 2);
+
+    const explicit = syn.toContract({ id: "EXPLICIT_DW", goal: "do the thing", doneWhen: ["Custom criterion only."] });
+    ok("explicit doneWhen honoured verbatim", JSON.stringify(explicit.objectives[0].done_when) === JSON.stringify(["Custom criterion only."]));
+}
+
 console.log(`\nMISSION SYNTHESIZER — ${passed} assertions passed.`);

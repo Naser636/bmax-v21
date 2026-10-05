@@ -30,4 +30,15 @@ ok("FR état actuel du dépôt ⇒ runtime-context-loader", rules.match("état a
 ok("known Git request ⇒ Governed Git Branch Integration", rules.match("integrate the feature branch into main").capability === "Governed Git Branch Integration");
 ok("known Bash command ⇒ Governed Bash/Linux Command", rules.match("run the ls command").capability === "Governed Bash/Linux Command");
 
+console.log("Case 5 — runtime-internal audit/convergence vocabulary resolves LOCAL (not external-ai)");
+ok("audit ⇒ self-diagnostic", rules.match("audit the carnet for false success").capability === "self-diagnostic");
+ok("false+success ⇒ self-diagnostic", rules.match("find false-success in mission records").capability === "self-diagnostic");
+ok("honest ⇒ self-diagnostic", rules.match("verify the runtime state is honest").capability === "self-diagnostic");
+ok("converged ⇒ runtime-context-loader", rules.match("check whether the system converged").capability === "runtime-context-loader");
+ok("connectivity audit still ⇒ Connectivity Audit (first-match preserved)", rules.match("run a connectivity audit").capability === "Connectivity Audit");
+
+console.log("Case 6 — a genuine provider need is NOT captured (stays null ⇒ external-ai last resort)");
+ok("novel prose ⇒ null", rules.match("ask an LLM to write novel prose") === null);
+ok("brand new payment provider ⇒ null", rules.match("invent a brand new payment provider") === null);
+
 console.log(`\nDECISION RULES — ${passed} assertions passed.`);

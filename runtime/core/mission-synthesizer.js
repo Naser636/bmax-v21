@@ -130,10 +130,15 @@ function makeObjective(id, goal, doneWhen, patch) {
 function toContract(spec) {
     const id = spec.id || slug(spec.goal, "SYNTH_MISSION");
     const authorizedPaths = Array.isArray(spec.authorizedPaths) ? spec.authorizedPaths : [];
+    const hasPatch = !!(spec.patch && typeof spec.patch === "object");
+    // Only require "Patch applied." when a patch is actually attached. A no-patch objective (e.g. an
+    // audit/analysis) must not fabricate a patch requirement for an action that will never run. An
+    // explicit spec.doneWhen is always honoured verbatim.
     const doneWhen = Array.isArray(spec.doneWhen) && spec.doneWhen.length
         ? spec.doneWhen
-        : ["Patch applied.", "Validation successful."];
-    const hasPatch = !!(spec.patch && typeof spec.patch === "object");
+        : hasPatch
+            ? ["Patch applied.", "Validation successful."]
+            : ["Validation successful."];
 
     // Resolve the ordered action list. An explicit goals[] wins; else decompose the goal; a patch
     // (single concrete edit) forces exactly one action to keep the payload with its objective.

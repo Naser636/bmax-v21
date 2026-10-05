@@ -40,6 +40,17 @@ const RULES = [
     { all: ["depot"], capability: "runtime-context-loader" },                              // FR without accent
     { all: ["workspace", "state"], capability: "runtime-context-loader" },
     { all: ["system", "state"], capability: "runtime-context-loader" },
+    // Runtime-internal AUDIT / CONVERGENCE vocabulary. Same defect class as the diagnose/git/repo
+    // rules above (a V7 reliquat): a read-only local inspection the runtime already performs itself
+    // (self-diagnostic.js / runtime-context-loader / `odg converge`) matched no rule, so the Router
+    // saw no LOCAL tier and routed it to the external-ai last resort. Declared AFTER "connectivity"
+    // so "connectivity audit" still wins Connectivity Audit (first-match). Maps ONLY to existing
+    // capabilities — no new executor/registry/primitive. Kept tight to runtime-internal audit terms;
+    // bare "verify"/"check" are deliberately NOT signals (they would swallow a genuine provider need).
+    { all: ["audit"], capability: "self-diagnostic" },                                     // audit the runtime/carnet
+    { all: ["false", "success"], capability: "self-diagnostic" },                          // false-success forensics
+    { all: ["honest"], capability: "self-diagnostic" },                                    // "is the state honest"
+    { all: ["converge"], capability: "runtime-context-loader" },                           // converge/convergence/converged
     // --- Code-fix / build capabilities (pre-existing) ---------------------------------------------
     { all: ["unused", "import"], capability: "local-fixers", fixers: ["removeUnusedNamedImports"] },
     { all: ["trailing", "whitespace"], capability: "local-fixers", fixers: ["stripTrailingWhitespace"] },
