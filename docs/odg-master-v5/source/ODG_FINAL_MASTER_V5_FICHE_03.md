@@ -1368,3 +1368,87 @@ OPPORTUNITY COST
 This is a decision model, not a guaranteed accounting identity.
 If benchmark quality improves but unit economics deteriorate materially:
 REJECT OR RESTRICT.
+
+236. FINAL ADAPTATION PRINCIPLE
+The system must adapt to changing providers, technologies, markets, media, and operational environments without changing the constitutional truth model.
+Adaptation occurs at the resolver, policy, recipe, provider, capability, and mission layers.
+The constitutional kernel remains stable.
+
+237. CTO FINAL INTEGRATION DECISION
+The final integration decision is:
+ODG must be treated as a mission-centric governed resolution system, not as a generic agent framework.
+
+237.1 MISSION-CENTRIC, NOT AGENT-CENTRIC
+The primary unit of execution is the governed mission.
+Agents, models, tools, and providers are replaceable execution resources.
+No agent identity becomes constitutional authority.
+
+237.2 AUTONOMOUS PRODUCTION OPERATING CONTRACT
+Autonomous production is permitted only when:
+the mission is authorized;
+the objective is explicit;
+the contract is valid;
+the required capabilities are resolved;
+execution remains within policy;
+evidence is captured;
+outcome verification succeeds;
+economic/contractual acceptance is satisfied where required.
+
+237.3 HUMAN ROLE
+Human authority remains above runtime autonomy.
+The human defines or approves:
+strategic intent;
+constitutional changes;
+high-risk boundaries;
+irreversible actions;
+major economic commitments;
+external legal or contractual commitments.
+Runtime autonomy executes within those boundaries.
+
+237.4 ADAPTIVE RESOLUTION AND PROVIDER NEUTRALITY
+ODG must not become structurally dependent on one provider.
+Providers are interchangeable resolution resources.
+Selection is governed by:
+semantic fit;
+quality;
+latency;
+reliability;
+cost;
+policy;
+availability;
+evidence.
+
+237.5 PRODUCTION TRUTH AND ECONOMIC TRUTH
+A production outcome is not proven by successful execution alone.
+The system must distinguish:
+execution success;
+semantic outcome;
+verification;
+economic acceptance.
+No economic claim is certified without sufficient evidence.
+
+237.6 EXTERNAL ASSIMILATION BOUNDARY
+External frameworks, models, repositories, documents, and systems are inputs, not authorities.
+External material may be:
+OBSERVED → PARSED → CLASSIFIED → EVALUATED → VERIFIED → ASSIMILATED
+Only verified and explicitly accepted material may influence governed behavior.
+
+237.7 FINAL OPERATING DOCTRINE
+The ODG doctrine is:
+TRUTH BEFORE ACTION.
+CONTRACT BEFORE EXECUTION.
+EVIDENCE BEFORE CLAIM.
+VERIFICATION BEFORE CERTIFICATION.
+AUTHORITY BEFORE AUTONOMY.
+RECOVERY BEFORE ESCALATION.
+ECONOMIC TRUTH BEFORE ECONOMIC CLAIM.
+PROOF BEFORE PROMOTION.
+
+237.8 FINAL INTEGRITY RULE
+If the system cannot prove that a required condition is satisfied, it must not silently treat that condition as satisfied.
+The correct result is:
+UNKNOWN / PARTIAL / BLOCKED — EVIDENCE INSUFFICIENT
+If all material conditions are proven:
+STATE → ACTION → OBSERVED EFFECT → VERIFIED OUTCOME
+AND ECONOMIC/CONTRACTUAL ACCEPTANCE SATISFIED WHERE REQUIRED
+→ VERIFIED

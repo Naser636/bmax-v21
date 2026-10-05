@@ -1132,3 +1132,107 @@ validity;
 approval state.
 An asset becomes reusable because it is verified and properly scoped, not merely because it exists.
 The Asset Factory should reduce repeated generation and reduce total cost of verified resolution.
+
+169. SHOT FACTORY
+The Shot Factory turns a Shot Contract into candidate executions.
+A Shot Contract should specify, where relevant:
+narrative purpose;
+duration;
+camera;
+lens;
+framing;
+position;
+movement;
+focus;
+blocking;
+action;
+lighting;
+continuity in/out;
+audio intent;
+quality target;
+rights constraints;
+generation strategy;
+fallback strategy;
+verification requirements;
+budget.
+The Shot Factory may use deterministic composition, 2D/latent methods, 3D blocking, image-to-motion, video generation, compositing, human intervention, or hybrid methods.
+The resolver chooses the cheapest safe composition that satisfies the contract.
+
+170. RESOLUTION RECIPES
+A successful repeated mission pattern may become a Resolution Recipe before becoming a more permanent capability.
+A recipe should capture:
+situation;
+prerequisites;
+semantic objective;
+recommended resolution;
+required capabilities;
+provider options;
+cost profile;
+expected quality;
+evidence pattern;
+failure modes;
+recovery;
+limitations;
+transfer scope.
+Recipes are reusable knowledge. They are not automatically new runtime components.
+
+171. INDUSTRY PACKS
+The universal kernel remains unchanged while domain capability packs provide:
+domain state;
+domain contracts;
+policies;
+capabilities;
+verification methods;
+workgraph templates;
+asset models;
+Resolution Recipes;
+domain-specific evidence.
+Initial pack candidates:
+CINEMA
+SOFTWARE
+RESEARCH
+ENGINEERING
+DESIGN
+MARKETING
+OPERATIONS
+EDUCATION
+A new industry pack is a capability composition above the kernel, not a new kernel.
+
+172. LONG-RUNNING DURABLE MISSIONS
+ODG should support missions that survive:
+process restarts;
+provider outages;
+temporary network failures;
+machine replacement;
+delayed human approval.
+The mission state, evidence, and recovery context must remain durable enough to resume without silently losing authority or proof.
+
+173. MISSION SUPERVISOR
+Long-running missions require a supervisor that can:
+observe mission state;
+detect stalls;
+distinguish waiting from failure;
+request recovery;
+preserve evidence;
+respect authority boundaries;
+avoid unauthorized escalation;
+resume only from verified durable state.
+The supervisor is not the authority. It operates under the mission contract, policy, and governance.
+
+174. GOVERNED AUTONOMY METRICS
+Autonomy must be measured through evidence, not impression.
+Relevant metrics include:
+missions completed;
+missions blocked;
+missions recovered;
+verification success;
+recovery success;
+provider fallback;
+cost per verified outcome;
+time to verified outcome;
+human intervention rate;
+unauthorized-action count;
+rollback count;
+evidence completeness;
+economic acceptance where required.
+Autonomy is acceptable only where safety, authority, evidence, and economic/contractual acceptance are satisfied where required.
