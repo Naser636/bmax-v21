@@ -75,4 +75,89 @@ inTempCwd((mod) => {
     }
 });
 
+// --- External Research Acquisition: precedence, self-gating, dry-run zero-network, live provenance ---
+
+function writePolicy(enabled) {
+    fs.mkdirSync("runtime/config", { recursive: true });
+    fs.writeFileSync("runtime/config/provider-policy.json", JSON.stringify({ externalProvidersEnabled: enabled }));
+}
+
+// 3. Strict precedence + disjoint matcher: EXTERNAL_RESEARCH_ resolves to the research executor, and
+//    an online objective STILL resolves to Connectivity Audit (precedence did not steal it).
+inTempCwd((mod) => {
+    const r = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", goal: "Add governed external research executor" });
+    ok("EXTERNAL_RESEARCH_* resolves to External Research Acquisition", r && r.capability === "External Research Acquisition");
+    const online = mod.resolve({ objectiveId: "EXPLORE_ONLINE_OPPORTUNITIES_1", goal: "Explore Online Opportunities" });
+    ok("online objective STILL resolves to Connectivity Audit (precedence is disjoint)", online && online.capability === "Connectivity Audit");
+    const conn = mod.resolve({ objectiveId: "RUN_CONNECTIVITY_AUDIT_1", goal: "Run Connectivity Audit" });
+    ok("connectivity objective unchanged → Connectivity Audit", conn && conn.capability === "Connectivity Audit");
+});
+
+// 4. DRY-RUN is the hard default: no execute ⇒ ZERO network calls, acquired:false evidence written.
+inTempCwd((mod) => {
+    let calls = 0;
+    const fetch = () => { calls += 1; return { status: 200, body: "x" }; };
+    const exec = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: { authorized: true, source_allowlist: ["https://a.test"], fetch } });
+    const res = exec.run();
+    const ev = JSON.parse(fs.readFileSync(res.evidence, "utf8"));
+    ok("dry-run performs ZERO network calls (fetcher never invoked)", calls === 0);
+    ok("dry-run evidence records mode DRY_RUN and acquired:false", ev.mode === "DRY_RUN" && ev.acquired === false);
+    ok("dry-run captures no sources", Array.isArray(ev.sources) && ev.sources.length === 0);
+});
+
+// 5. Fail-closed: execute=true but authorization missing ⇒ throws (recorded FAILED upstream).
+inTempCwd((mod) => {
+    writePolicy(true);
+    const exec = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: { authorized: false, execute: true, source_allowlist: ["https://a.test"], fetch: () => ({ status: 200, body: "x" }) } });
+    let threw = false; try { exec.run(); } catch { threw = true; }
+    ok("live acquisition without authorization fails closed (throws)", threw === true);
+});
+
+// 6. Fail-closed: policy denies external providers ⇒ throws.
+inTempCwd((mod) => {
+    writePolicy(false);
+    const exec = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: { authorized: true, execute: true, source_allowlist: ["https://a.test"], fetch: () => ({ status: 200, body: "x" }) } });
+    let threw = false; try { exec.run(); } catch { threw = true; }
+    ok("live acquisition fails closed when provider policy disallows external providers", threw === true);
+});
+
+// 7. Live acquisition with an injected fake fetcher: per-source provenance + bound ranking.
+inTempCwd((mod) => {
+    writePolicy(true);
+    let calls = 0;
+    const fetch = (url) => { calls += 1; return { status: 200, body: `body-of-${url}`, fetched_at: "2026-01-01T00:00:00.000Z" }; };
+    const ra = {
+        authorized: true, execute: true,
+        source_allowlist: ["https://a.test", "https://b.test"],
+        items: [
+            { name: "Alpha", scores: { incomePotential: 9, demandGrowth: 10, startupCostInverse: 9, timeToRevenueInverse: 8, skillAlignment: 10 }, sources: ["https://a.test"] },
+            { name: "Beta", scores: { incomePotential: 6, demandGrowth: 4, startupCostInverse: 8, timeToRevenueInverse: 3, skillAlignment: 6 }, sources: ["https://b.test"] },
+        ],
+        fetch,
+    };
+    const exec = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: ra });
+    const res = exec.run();
+    const ev = JSON.parse(fs.readFileSync(res.evidence, "utf8"));
+    ok("live fetch called once per allowlisted source", calls === 2);
+    ok("evidence mode LIVE + acquired:true", ev.mode === "LIVE" && ev.acquired === true);
+    ok("each source carries a sha256 (64 hex) content_hash", ev.sources.every((s) => /^[0-9a-f]{64}$/.test(s.content_hash)));
+    ok("each source carries url/fetched_at/http_status/bytes/evidence_ref", ev.sources.every((s) => s.url && s.fetched_at && s.http_status === 200 && s.bytes > 0 && s.evidence_ref));
+    ok("ranking is deterministic: Alpha outranks Beta", ev.ranked[0].name === "Alpha" && ev.ranked[0].rank === 1);
+    ok("each ranked item carries a verified provenance_ref", ev.ranked.every((it) => typeof it.provenance_ref === "string" && it.provenance_ref));
+});
+
+// 8. Fail-closed: a ranked item citing an unverified (not-fetched) source ⇒ throws.
+inTempCwd((mod) => {
+    writePolicy(true);
+    const ra = {
+        authorized: true, execute: true,
+        source_allowlist: ["https://a.test"],
+        items: [{ name: "Alpha", scores: { incomePotential: 1, demandGrowth: 1, startupCostInverse: 1, timeToRevenueInverse: 1, skillAlignment: 1 }, sources: ["https://UNVERIFIED.test"] }],
+        fetch: () => ({ status: 200, body: "x" }),
+    };
+    const exec = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: ra });
+    let threw = false; try { exec.run(); } catch { threw = true; }
+    ok("ranked item citing an unverified source fails closed (throws)", threw === true);
+});
+
 console.log(`\nCapability Executors: ${passed} assertions passed.`);

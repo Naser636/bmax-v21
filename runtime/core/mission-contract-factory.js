@@ -115,6 +115,13 @@ const PROBE_INTENT = [
         match: /\b(connectivity|internet|online)\b/i,
         probes: [{ capability: "Internet reachable (Connectivity Audit)", evidence: "internet-reachable" }],
     },
+    {
+        // External research acquisition intent requires the research-acquired proof (verified per-source
+        // provenance). This is DISTINCT from connectivity/internet: reachability NEVER satisfies it, so a
+        // research mission cannot be proven by a HEAD probe. Declaration only — no new authority.
+        match: /\bexternal research\b|\bresearch acquisition\b|\bEXTERNAL_RESEARCH\b/i,
+        probes: [{ capability: "External research acquired (verified per-source provenance)", evidence: "research-acquired" }],
+    },
 ];
 
 /*

@@ -165,4 +165,11 @@ const unrelated = factory.buildContract({ id: "READ_ONLY_GAP", title: "A read-on
 ok("unrelated mission declares NO verify block (unchanged behaviour)", unrelated.verify === undefined);
 ok("resolveVerifyProbes de-duplicates by evidence", factory.resolveVerifyProbes({ id: "X", title: "connectivity internet check" }).length === 1);
 
+// External research intent declares the research-acquired proof, and is DISTINCT from connectivity.
+const research = factory.resolveVerifyProbes({ id: "ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR", title: "Add governed external research executor" });
+ok("external-research intent declares the research-acquired proof", research.some((p) => p.evidence === "research-acquired"));
+ok("external-research intent does NOT declare internet-reachable", !research.some((p) => p.evidence === "internet-reachable"));
+const onlineProbes = factory.resolveVerifyProbes({ id: "EXPLORE_ONLINE_OPPORTUNITIES", title: "Explore Online Opportunities" });
+ok("a connectivity/online mission does NOT declare research-acquired (reachability ≠ research)", !onlineProbes.some((p) => p.evidence === "research-acquired"));
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

@@ -67,6 +67,15 @@ case "$MISSION" in
     shift
     ./runtime/bin/odg-objective.js "$@"
     ;;
+  diagnose|audit)
+    # Autonomous-engineering AUDIT entry point. Pure orchestration of the EXISTING self-diagnostic
+    # seam (runtime/core/self-diagnostic.js): refresh coherent state first (same discipline as health/
+    # autonomy), then compare EXPECTED vs OBSERVED, raise an INCIDENT, and PREPARE (not apply) a bounded
+    # repair plan routed to the existing repair/rollback engines. Read-only; single bounded pass; no new
+    # scheduler. Exit 0 = no divergence, 1 = incident open/frozen (usable as a gate / post-event trigger).
+    ./runtime/bin/odg-state.js >/dev/null || true
+    ./runtime/bin/odg-diagnose.js; exit $?
+    ;;
   verify)
     ./runtime/bin/odg-verify.js
     ;;
@@ -106,6 +115,7 @@ case "$MISSION" in
     echo "  odg generate-contracts [--dry-run]"
     echo "  odg autonomy"
     echo "  odg converge        (drive to convergence + report)"
+    echo "  odg diagnose        (autonomous audit: expected-vs-observed → incident + prepared repair plan)"
     echo "  odg status"
     echo "  odg verify"
     echo "  odg freeze"

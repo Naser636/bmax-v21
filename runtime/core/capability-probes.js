@@ -23,7 +23,7 @@
 "use strict";
 
 const fs = require("fs");
-const { CONNECTIVITY_EVIDENCE } = require("./capability-executors");
+const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE } = require("./capability-executors");
 
 function readJsonSafe(file) {
     try {
@@ -78,6 +78,47 @@ const PROBES = {
         return reachable
             ? { ok: true, detail: `internet reachable per Connectivity Audit (http ${http})` }
             : { ok: false, detail: "Connectivity Audit reports internet NOT reachable" };
+    },
+
+    "research-acquired"() {
+        // Verified external-research proof. Reads ONLY the External Research Acquisition executor's
+        // evidence — NEVER the Connectivity Audit / reachability evidence. Reachability can therefore
+        // never satisfy this proof. A dry-run (acquired:false) also fails: a plan is not research.
+        // FAILS unless: evidence present, acquired===true, at least one per-source provenance record,
+        // every record carries url + fetched_at + 2xx http_status + sha256 content_hash + bytes +
+        // evidence_ref, and every ranked citation resolves to one of those verified records.
+        const ev = readJsonSafe(EXTERNAL_RESEARCH_EVIDENCE);
+        if (!ev) {
+            return { ok: false, detail: `no external research acquisition evidence at ${EXTERNAL_RESEARCH_EVIDENCE} — reachability does NOT satisfy research-acquired` };
+        }
+        if (ev.acquired !== true) {
+            return { ok: false, detail: `research not acquired (mode=${ev.mode || "unknown"}); a dry-run/plan or reachability does NOT satisfy research-acquired` };
+        }
+        const sources = Array.isArray(ev.sources) ? ev.sources : [];
+        if (sources.length === 0) {
+            return { ok: false, detail: "no per-source provenance records captured" };
+        }
+        const HEX64 = /^[0-9a-f]{64}$/;
+        const verified = new Set();
+        for (const s of sources) {
+            if (!s || typeof s !== "object") return { ok: false, detail: "malformed provenance record" };
+            if (typeof s.url !== "string" || !s.url) return { ok: false, detail: "provenance record missing url" };
+            if (typeof s.fetched_at !== "string" || !s.fetched_at) return { ok: false, detail: `provenance ${s.url} missing fetched_at` };
+            if (typeof s.http_status !== "number" || s.http_status < 200 || s.http_status > 299) return { ok: false, detail: `provenance ${s.url} not 2xx (status=${s.http_status})` };
+            if (typeof s.content_hash !== "string" || !HEX64.test(s.content_hash)) return { ok: false, detail: `provenance ${s.url} missing/invalid sha256 content_hash` };
+            if (typeof s.bytes !== "number" || s.bytes < 0) return { ok: false, detail: `provenance ${s.url} missing bytes` };
+            if (typeof s.evidence_ref !== "string" || !s.evidence_ref) return { ok: false, detail: `provenance ${s.url} missing evidence_ref` };
+            verified.add(s.url);
+        }
+        const ranked = Array.isArray(ev.ranked) ? ev.ranked : [];
+        for (const item of ranked) {
+            const cites = Array.isArray(item && item.sources) ? item.sources : [];
+            if (cites.length === 0) return { ok: false, detail: `ranked item "${item && item.name}" cites no source` };
+            for (const u of cites) {
+                if (!verified.has(u)) return { ok: false, detail: `ranked item "${item && item.name}" cites unverified source ${u}` };
+            }
+        }
+        return { ok: true, detail: `research acquired: ${sources.length} verified source(s), ${ranked.length} ranked item(s)` };
     },
 
     "legacy-runtime-retired"() {

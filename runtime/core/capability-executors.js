@@ -34,6 +34,7 @@ const PROVIDER_ACTIVATION_EVIDENCE = path.join(GENERATED_DIR, "provider-activati
 const CLEAN_WORKSPACE_SCAN_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-scan.json");
 const CLEAN_WORKSPACE_COVERAGE_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-coverage.json");
 const CLEAN_WORKSPACE_REPORT_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-report.json");
+const EXTERNAL_RESEARCH_EVIDENCE = path.join(GENERATED_DIR, "external-research-acquisition.json");
 // tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
 // Registry + Orchestrator and runs the selected provider — the socle→provider edge.
 const TSX_CLI = path.join("node_modules", "tsx", "dist", "cli.mjs");
@@ -180,6 +181,28 @@ function writeEvidence(out, obj) {
     return out;
 }
 
+// Read the provider policy POSTURE (read-only). Used by the External Research Acquisition executor to
+// honour the SAME policy the rest of the Runtime does (externalProvidersEnabled) WITHOUT introducing a
+// new policy mechanism and WITHOUT importing the provider-activation seam. Absent/unreadable ⇒ null,
+// which the executor treats as "external providers NOT allowed" (fail-closed).
+function readProviderPolicy() {
+    try {
+        return JSON.parse(fs.readFileSync(path.join("runtime", "config", "provider-policy.json"), "utf8"));
+    } catch {
+        return null;
+    }
+}
+
+// Resolve the injected fetcher for a live acquisition. By DESIGN there is NO built-in network client:
+// a live fetch requires an explicitly injected synchronous fetcher (operator/caller provided, or a
+// test's fake). This guarantees dry-run and the whole JSON pipeline make ZERO network calls — a
+// fetcher cannot survive JSON transport, so a disk-driven mission can only ever dry-run, never fetch.
+function resolveFetcher(ra, patch) {
+    if (ra && typeof ra.fetch === "function") return ra.fetch;
+    if (patch && typeof patch.__fetch === "function") return patch.__fetch;
+    return null;
+}
+
 const EXECUTORS = [
     {
         // Clean Workspace — REAL execution of CLEAN_WORKSPACE_1/2/3 (scan → confirm policy → report).
@@ -239,6 +262,108 @@ const EXECUTORS = [
                 return { capability: "Clean Workspace", evidence: out, summary: { candidatesScanned, deleted: 0 } };
             }
             throw new Error(`Clean Workspace: unsupported objectiveId "${id}"`);
+        },
+    },
+    {
+        // External Research Acquisition — the governed external-data node. It is placed BEFORE the
+        // Connectivity Audit entry so first-match resolution can never route a research objective to
+        // the reachability probe, and it matches ONLY the strict, disjoint objectiveId prefix
+        // EXTERNAL_RESEARCH_ (never a loose online/internet keyword). Path B (patch-executor) runs
+        // capabilities BEFORE any governance authorization, so this executor SELF-GATES and is
+        // fail-closed: dry-run is the hard default (ZERO network), and a live acquisition requires an
+        // explicit research_acquisition authorization transported on the patch, execute===true, the
+        // provider policy allowing external providers, a non-empty source allowlist, AND an injected
+        // fetcher. Reachability is NEVER treated as research.
+        capability: "External Research Acquisition",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("EXTERNAL_RESEARCH_");
+        },
+        run(patch) {
+            const ra = (patch && patch.research_acquisition && typeof patch.research_acquisition === "object" && !Array.isArray(patch.research_acquisition))
+                ? patch.research_acquisition : null;
+            const authorized = !!ra && ra.authorized === true;
+            const execute = !!ra && ra.execute === true;
+            const allowlist = ra && Array.isArray(ra.source_allowlist)
+                ? ra.source_allowlist.filter((u) => typeof u === "string" && u) : [];
+            const policy = readProviderPolicy();
+            const policyAllows = !!policy && policy.externalProvidersEnabled === true;
+
+            // DRY-RUN DEFAULT (hard): execute not set ⇒ plan-only, ZERO network. The fetcher is never
+            // consulted. The emitted evidence records acquired:false so the research-acquired proof
+            // CANNOT be satisfied by a dry run (reachability/plan ≠ research).
+            if (!execute) {
+                const out = writeEvidence(EXTERNAL_RESEARCH_EVIDENCE, {
+                    capability: "External Research Acquisition",
+                    objective: patch.objectiveId,
+                    mode: "DRY_RUN",
+                    acquired: false,
+                    authorized,
+                    policyAllows,
+                    plannedSources: allowlist,
+                    sources: [],
+                    ranked: [],
+                    note: "Dry-run default: no network access performed. Live acquisition requires research_acquisition.authorized=true, execute=true, provider policy externalProvidersEnabled=true, a non-empty source_allowlist, and an injected fetcher.",
+                });
+                return { capability: "External Research Acquisition", evidence: out, summary: { mode: "DRY_RUN", acquired: false } };
+            }
+
+            // LIVE path — fail closed on ANY missing/invalid gate (a throw is recorded FAILED by the
+            // Patch Executor, which blocks validation). Order: authorization → policy → allowlist →
+            // fetcher. None of these is assumed to have been checked upstream.
+            if (!authorized) throw new Error("External Research Acquisition BLOCKED: research_acquisition.authorized is not true");
+            if (!policyAllows) throw new Error("External Research Acquisition BLOCKED: provider policy externalProvidersEnabled is not true");
+            if (allowlist.length === 0) throw new Error("External Research Acquisition BLOCKED: empty source_allowlist");
+            const fetcher = resolveFetcher(ra, patch);
+            if (!fetcher) throw new Error("External Research Acquisition BLOCKED: no fetcher injected (zero built-in network client by design)");
+
+            const crypto = require("crypto");
+            const sources = [];
+            for (const url of allowlist) {
+                const res = fetcher(url) || {};
+                const status = typeof res.status === "number" ? res.status : 0;
+                const body = typeof res.body === "string" ? res.body : "";
+                const content_hash = crypto.createHash("sha256").update(body).digest("hex");
+                sources.push({
+                    url,
+                    fetched_at: typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : new Date().toISOString(),
+                    http_status: status,
+                    content_hash,
+                    bytes: Buffer.byteLength(body),
+                    evidence_ref: EXTERNAL_RESEARCH_EVIDENCE,
+                });
+            }
+            // Only 2xx fetches count as verified provenance a citation may bind to.
+            const verifiedUrls = new Set(sources.filter((s) => s.http_status >= 200 && s.http_status <= 299).map((s) => s.url));
+
+            // Bind each candidate item's citations to captured provenance; a citation to an unverified
+            // source fails closed. Candidate items (names + dimension scores) are an auditable INPUT on
+            // the authorization block — the executor never invents research data.
+            const items = ra && Array.isArray(ra.items) ? ra.items : [];
+            const ranking = require("./research-ranking");
+            const bound = items.map((it) => {
+                const cites = Array.isArray(it && it.sources) ? it.sources : [];
+                for (const u of cites) {
+                    if (!verifiedUrls.has(u)) {
+                        throw new Error(`External Research Acquisition BLOCKED: item "${it && it.name}" cites unverified source ${u}`);
+                    }
+                }
+                return { ...it, provenance_ref: cites[0] || null };
+            });
+            const ranked = bound.length ? ranking.rank(bound) : [];
+
+            const acquired = sources.length > 0 && sources.every((s) => s.http_status >= 200 && s.http_status <= 299);
+            const out = writeEvidence(EXTERNAL_RESEARCH_EVIDENCE, {
+                capability: "External Research Acquisition",
+                objective: patch.objectiveId,
+                mode: "LIVE",
+                acquired,
+                authorized: true,
+                policyAllows: true,
+                sources,
+                ranked,
+            });
+            if (!acquired) throw new Error("External Research Acquisition BLOCKED: no 2xx source acquired");
+            return { capability: "External Research Acquisition", evidence: out, summary: { mode: "LIVE", acquired, sources: sources.length, ranked: ranked.length } };
         },
     },
     {
@@ -324,7 +449,7 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, CONNECTIVITY_EVIDENCE };
+module.exports = { resolve, runAudit, EXECUTORS, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE };
 
 // Direct invocation: run the Connectivity Audit and write its evidence artifact.
 if (require.main === module) {

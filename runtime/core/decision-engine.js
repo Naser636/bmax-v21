@@ -47,6 +47,12 @@ const result = {
     metrics, // context only; does not influence actions
 };
 
+// Transport-only: carry the research_acquisition authorization block verbatim toward the Patch Engine.
+// Absent ⇒ no key (other missions unaffected). No authority/policy decision is made here.
+if (plan.research_acquisition && typeof plan.research_acquisition === "object") {
+    result.research_acquisition = plan.research_acquisition;
+}
+
 fs.mkdirSync("runtime/generated", { recursive: true });
 fs.writeFileSync(
     "runtime/generated/decision.json",

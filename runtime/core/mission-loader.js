@@ -193,6 +193,14 @@ try {
     console.error(`[mission-loader] capability-proof derivation unavailable: ${err.message}`);
 }
 
+// Transport-only: carry the mission's research_acquisition authorization block verbatim so the
+// downstream Decision Engine → Patch Engine → capability executor can self-gate on it. Absent ⇒ no
+// key (every other mission is byte-for-byte unaffected). This introduces NO authority and NO policy:
+// it is data the self-gating executor reads and FAILS CLOSED on.
+if (spec.research_acquisition && typeof spec.research_acquisition === "object" && !Array.isArray(spec.research_acquisition)) {
+    plan.research_acquisition = spec.research_acquisition;
+}
+
 fs.mkdirSync("runtime/generated", { recursive: true });
 fs.writeFileSync(
     "runtime/generated/mission-plan.json",

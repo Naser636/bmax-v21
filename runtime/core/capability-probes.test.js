@@ -117,4 +117,71 @@ inTempCwd((mod) => {
     }
 })();
 
+// --- research-acquired probe: evidence-only, provenance/hash/2xx/citation, NO connectivity fallback ---
+const HASH64 = "a".repeat(64);
+function writeResearch(obj) {
+    fs.writeFileSync("runtime/generated/external-research-acquisition.json", JSON.stringify(obj, null, 2));
+}
+function validResearch() {
+    return {
+        capability: "External Research Acquisition",
+        mode: "LIVE",
+        acquired: true,
+        sources: [
+            { url: "https://example.test/a", fetched_at: "2026-01-01T00:00:00.000Z", http_status: 200, content_hash: HASH64, bytes: 10, evidence_ref: "runtime/generated/external-research-acquisition.json" },
+        ],
+        ranked: [{ name: "X", sources: ["https://example.test/a"], provenance_ref: "https://example.test/a" }],
+    };
+}
+
+inTempCwd((mod) => {
+    const r = mod.runProbe("research-acquired", {});
+    ok("research-acquired FAILS with no evidence (reachability never satisfies it)", r.ok === false && /reachability does NOT satisfy/.test(r.detail));
+});
+
+inTempCwd((mod) => {
+    // A dry-run (plan only) MUST NOT satisfy the proof.
+    writeResearch({ mode: "DRY_RUN", acquired: false, sources: [], ranked: [] });
+    ok("research-acquired FAILS for a dry-run (acquired:false)", mod.runProbe("research-acquired", {}).ok === false);
+});
+
+inTempCwd((mod) => {
+    // Connectivity reachable but NO external-research evidence ⇒ still FAIL (no fallback to connectivity).
+    writeAudit(true);
+    const r = mod.runProbe("research-acquired", {});
+    ok("research-acquired does NOT fall back to connectivity-audit evidence", r.ok === false && /external research acquisition evidence/.test(r.detail));
+    // And prove the file it reads is the research evidence, not the connectivity one.
+    ok("internet-reachable still passes from the same connectivity evidence (independent probe)", mod.runProbe("internet-reachable", {}).ok === true);
+});
+
+inTempCwd((mod) => {
+    writeResearch(validResearch());
+    const r = mod.runProbe("research-acquired", {});
+    ok("research-acquired PASSES for valid live provenance + bound citation", r.ok === true && /verified source/.test(r.detail));
+});
+
+inTempCwd((mod) => {
+    const bad = validResearch(); bad.sources[0].http_status = 404;
+    writeResearch(bad);
+    ok("research-acquired FAILS on non-2xx provenance", mod.runProbe("research-acquired", {}).ok === false);
+});
+
+inTempCwd((mod) => {
+    const bad = validResearch(); bad.sources[0].content_hash = "nothex";
+    writeResearch(bad);
+    ok("research-acquired FAILS on invalid sha256 content_hash", mod.runProbe("research-acquired", {}).ok === false);
+});
+
+inTempCwd((mod) => {
+    const bad = validResearch(); bad.ranked[0].sources = ["https://example.test/UNVERIFIED"];
+    writeResearch(bad);
+    ok("research-acquired FAILS when a ranked item cites an unverified source", mod.runProbe("research-acquired", {}).ok === false);
+});
+
+inTempCwd((mod) => {
+    const bad = validResearch(); delete bad.sources[0].evidence_ref;
+    writeResearch(bad);
+    ok("research-acquired FAILS on missing evidence_ref", mod.runProbe("research-acquired", {}).ok === false);
+});
+
 console.log(`\nCapability Probe Framework: ${passed} assertions passed.`);

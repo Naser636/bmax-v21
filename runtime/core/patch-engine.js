@@ -73,6 +73,12 @@ const patches = decision.actions.map((action, index) => {
     };
     // Only real patches carry `edits`; symbolic patches keep their historical shape untouched.
     if (edits.length) patch.edits = edits;
+    // Transport-only: carry the mission's research_acquisition authorization block onto each patch so
+    // the self-gating capability executor (which runs before governance authorization) can read it
+    // from its already-available patch payload. Absent ⇒ no key (other missions unaffected).
+    if (decision.research_acquisition && typeof decision.research_acquisition === "object") {
+        patch.research_acquisition = decision.research_acquisition;
+    }
     return patch;
 });
 
