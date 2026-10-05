@@ -227,3 +227,19 @@ a54b51b livrable AUTONOMY_E2E_LOOP (auto-commité par la boucle) · ledger : 2 m
 
 ## Lint/dette (classée, non "corrigée")
 - 420 err / 23 warn ; 412 no-require-imports = runtime CommonJS (décision migration ESM DEFERRED). Build/tsc/tests ne gatent pas sur lint.
+
+## Gate 4 — Closeout commit poussé + Ollama LARGE (2e cycle CTO, 2026-10-05)
+- Push: `160695b..176d727 main -> main`, UTC 2026-10-05T11:56:53Z, exit 0, fast-forward (no force/rewrite).
+  main == origin/main == 176d727, worktree clean.
+- Design LARGE récupéré (NON réinventé) : ON_DEMAND_MODEL_ROUTING_V2 / OCP_V1 (runtime/core/ollama-control-plane.js).
+  Contrat : HTTP-only, JAMAIS pull/delete/download ; modèle LARGE pré-provisionné via config/env ; décision LARGE
+  sans modèle large ⇒ REFUSED (fail-closed, pas de downgrade silencieux).
+- VPS mesuré : 22Gi RAM (21 dispo), 184G disk libre, Ollama 0.35.1, seul qwen2.5:0.5b (SMALL) installé, rien de résident.
+- Preuve RÉELLE (module réel vs Ollama réel, exit 0) :
+  [A] routing LARGE réel ; [B] REFUSED fail-closed (0 appel, pas de downgrade) ; [C] inférence réelle + unload
+  confirmé par le serveur contre le modèle résident SMALL (ollama ps vide après) ; [D] aucune URL pull/delete.
+- Inférence LARGE réelle = BLOCKED BY POLICY : aucune identité de modèle LARGE dans les archives (interdiction
+  d'inventer) + design interdit le pull. Ressource suffisante ; le blocage est autorité/design, pas ressource.
+- État léger VPS re-vérifié après : ps vide, SMALL intact, RAM/disk baseline, Ollama healthy, worktree propre.
+- Step 6 : aucun défaut réel (comportement conforme au contrat) → aucune modif de code.
+- Matrix mise à jour (10a PROVEN path / 10b BLOCKED BY POLICY + conditions de levée).
