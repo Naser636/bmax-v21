@@ -91,10 +91,15 @@ function observe(generatedDir, opts = {}) {
   const exec = readJsonSafe(path.join(dir, "patch-execution.json"));
   const executed = exec && Array.isArray(exec.executed) ? exec.executed : [];
   const probe = typeof opts.runProbe === "function" ? opts.runProbe : null;
+  // RC-4: the INDEPENDENT validation verdict (validation-engine writes mission-report.json). Read-only
+  // and injectable (opts.verdict) so detection consumes SUCCESS/BLOCKED. Absent => null (nothing to
+  // contradict); self-diagnostic never writes this file and never weakens validation's gate.
+  const verdict = opts.verdict !== undefined ? opts.verdict : readJsonSafe(path.join(dir, "mission-report.json"));
   return {
     executed,
     executedOrder: executed.map((e) => e.objectiveId || e.action).filter(Boolean),
     runProbe: probe, // optional injected probe runner (reuse capability-probes) for proof verification
+    verdict, // RC-4: validation verdict (mission-report.json) or null
     generatedDir: dir,
   };
 }
@@ -133,6 +138,18 @@ function detectDivergences(expected, observed, opts = {}) {
         add("missing-output", id, `non-empty evidence at ${e.evidence}`, "absent/empty", [e.evidence], "ERROR");
     }
     if (e.status === "FAILED") add("failed-action", id, "no failed action", `FAILED: ${String(e.error || "").slice(0, 120)}`, [e.evidence].filter(Boolean), "ERROR");
+  }
+
+  // 4b. recorded-noop (RC-4): a RECORDED objective on an ENGINEERING mission produced NEITHER a real
+  // edit NOR a capability execution+evidence (the same no-op class validation-engine blocks via
+  // noRecordedNoOp). It is a real divergence here so diagnose can no longer call it NO_DIVERGENCE.
+  // Scoped to engineering so read-only AUDIT missions keep their behaviour (no false positive).
+  if (expected.engineering) {
+    for (const e of observed.executed) {
+      if (e && e.status === "RECORDED") {
+        add("recorded-noop", e.objectiveId || e.action, "real effect (edit or capability execution + evidence)", "RECORDED no-op (no effect)", [], "ERROR");
+      }
+    }
   }
 
   // 5. missing / unexpected permissions: an executed edit touched a target outside the authorized set,
@@ -177,6 +194,16 @@ function detectDivergences(expected, observed, opts = {}) {
     }
   }
 
+  // 9. validation-blocked (RC-4): consume the INDEPENDENT validation verdict (mission-report.json). If
+  // validation judged the mission BLOCKED / not validated, the two signals would otherwise contradict
+  // each other, so diagnose MUST surface a divergence and can never report NO_DIVERGENCE. Read-only:
+  // the verdict file is never written here and validation's gate is never weakened. An absent verdict
+  // adds nothing (there is no verdict to contradict).
+  if (observed.verdict && (observed.verdict.status === "BLOCKED" || observed.verdict.validated === false)) {
+    const unmet = Array.isArray(observed.verdict.unmet) ? observed.verdict.unmet : [];
+    add("validation-blocked", observed.verdict.mission || expected.mission, "validation SUCCESS (validated=true)", (observed.verdict.status || "BLOCKED") + " (validated=" + observed.verdict.validated + ")", unmet, "ERROR");
+  }
+
   // Deterministic order so the incident id is stable regardless of detection order.
   div.sort((a, b) => (a.category + String(a.firstDifferenceAt)).localeCompare(b.category + String(b.firstDifferenceAt)));
   return div;
@@ -213,6 +240,12 @@ const HYPOTHESES = {
   ],
   "regression": [{ cause: "a recent change broke a previously-green proof", test: "proof green on baseline commit but red now" }],
   "failed-action": [{ cause: "the capability threw during execution", test: "re-run the capability in isolation and capture the error" }],
+  "recorded-noop": [
+    { cause: "no capability executor resolved for the objective and no real edit was produced (capability-resolution gap, see RC-3)", test: "capabilityExecutors.resolve(patch) is non-null OR the patch carries real edits" },
+  ],
+  "validation-blocked": [
+    { cause: "the independent Validation Engine judged the mission BLOCKED (unmet evidence)", test: "mission-report.json status is SUCCESS AND validated is true" },
+  ],
 };
 
 function hypothesize(divergence) {
@@ -301,6 +334,11 @@ const REPAIR_ROUTES = {
   "failed-invariant": { action: "HUMAN_APPROVAL_REQUIRED", mechanism: "C03 state-transition review", protected: true },
   "wrong-execution-order": { action: "HUMAN_APPROVAL_REQUIRED", mechanism: "decision/contract ordering review" },
   "required-proof-unsatisfied": { action: "HUMAN_APPROVAL_REQUIRED", mechanism: "capability must actually produce the proof" },
+  // RC-4: both new categories are NEVER auto-repaired (PREPARE_NOT_APPLY preserved). recorded-noop names
+  // the capability-resolution gap (RC-3 territory) without implementing it; validation-blocked defers to
+  // the authoritative verdict's unmet evidence.
+  "recorded-noop": { action: "HUMAN_APPROVAL_REQUIRED", mechanism: "capability resolution must produce a real effect (RC-3) - not auto-applied", protected: true },
+  "validation-blocked": { action: "HUMAN_APPROVAL_REQUIRED", mechanism: "resolve the validation unmet-evidence (verdict is authoritative)" },
 };
 
 function classifyRepairability(divergence) {

@@ -161,4 +161,58 @@ inTempCwd((mod) => {
   ok("frozen incident carries an escalation note", /loop protection/i.test(last.note || ""));
 });
 
+// 12. RC-4 — a RECORDED no-op on an ENGINEERING mission is a divergence (not NO_DIVERGENCE).
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  writeExec([{ objectiveId: "OBJ_1", status: "RECORDED" }]);
+  const r = mod.diagnose({ now: "T0" });
+  ok("RECORDED on engineering mission is a recorded-noop divergence", r.divergences.some((d) => d.category === "recorded-noop" && d.firstDifferenceAt === "OBJ_1"));
+  ok("engineering RECORDED is NOT converged", r.converged === false);
+  ok("engineering RECORDED raises an OPEN incident", r.incident && r.incident.status === "OPEN");
+});
+
+// 13. RC-4 — a RECORDED on a read-only AUDIT mission is NOT a divergence (no false positive).
+inTempCwd((mod) => {
+  writePlan({ mission: "A", requiresEngineering: false, authorizedPaths: [], objectives: [{ id: "OBJ_1" }] });
+  writeExec([{ objectiveId: "OBJ_1", status: "RECORDED" }]);
+  const r = mod.diagnose({ now: "T0" });
+  ok("RECORDED on AUDIT mission adds no recorded-noop divergence", !r.divergences.some((d) => d.category === "recorded-noop"));
+  ok("AUDIT RECORDED stays converged / no incident", r.converged === true && r.incident === null);
+});
+
+// 14. RC-4 — an independent BLOCKED verdict (mission-report.json on disk) forbids NO_DIVERGENCE.
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }]);
+  fs.writeFileSync("runtime/generated/mission-report.json", JSON.stringify({ mission: "M", status: "BLOCKED", validated: false, unmet: ["engineering changed nothing"] }));
+  const r = mod.diagnose({ now: "T0" });
+  ok("BLOCKED verdict yields a validation-blocked divergence", r.divergences.some((d) => d.category === "validation-blocked"));
+  ok("BLOCKED verdict means diagnose is NOT converged", r.converged === false);
+  ok("BLOCKED verdict means summary is not NO_DIVERGENCE", r.summary !== "NO_DIVERGENCE");
+});
+
+// 15. RC-4 — a SUCCESS verdict adds no divergence (no false positive); clean observed stays converged.
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }]);
+  fs.writeFileSync("runtime/generated/mission-report.json", JSON.stringify({ mission: "M", status: "SUCCESS", validated: true }));
+  const r = mod.diagnose({ now: "T0" });
+  ok("SUCCESS verdict adds no validation-blocked divergence", !r.divergences.some((d) => d.category === "validation-blocked"));
+  ok("SUCCESS verdict + clean observed stays converged / no incident", r.converged === true && r.incident === null);
+});
+
+// 16. RC-4 — audit() surfaces a BLOCKED verdict as an incident (so odg-diagnose would exit 1) WITHOUT
+//     editing odg-diagnose.js, and keeps PREPARE_NOT_APPLY with the new route never AUTO.
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }]);
+  const out = mod.audit({ now: "T0", verdict: { mission: "M", status: "BLOCKED", validated: false } });
+  ok("audit() raises an incident for a BLOCKED verdict (odg-diagnose would exit 1)", out.incident && out.incident.status === "OPEN");
+  ok("audit() stays PREPARE_NOT_APPLY", out.mode === "PREPARE_NOT_APPLY");
+  ok("validation-blocked is never AUTO (HUMAN_APPROVAL_REQUIRED, nothing auto-repairable)", out.repairPlan.humanApprovalRequired.some((x) => x.category === "validation-blocked") && out.repairPlan.autoRepairable.length === 0);
+});
+
 console.log(`\nSelf-Diagnostic — ${passed} assertions passed.`);
