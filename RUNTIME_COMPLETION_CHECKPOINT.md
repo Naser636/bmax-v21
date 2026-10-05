@@ -243,3 +243,22 @@ a54b51b livrable AUTONOMY_E2E_LOOP (auto-commité par la boucle) · ledger : 2 m
 - État léger VPS re-vérifié après : ps vide, SMALL intact, RAM/disk baseline, Ollama healthy, worktree propre.
 - Step 6 : aucun défaut réel (comportement conforme au contrat) → aucune modif de code.
 - Matrix mise à jour (10a PROVEN path / 10b BLOCKED BY POLICY + conditions de levée).
+
+## Gate 5 — Ollama LARGE RÉEL PROUVÉ LIVE (3e cycle CTO, 2026-10-05)
+- Autorisation CTO explicite de déterminer la procédure minimale du test LARGE réel.
+- Inventaire tests : couverture OCP déjà COMPLÈTE (policy/router/scheduler/lifecycle/security/validation/contrat) →
+  aucun test redondant ajouté (changement minimal).
+- Méthode (réutilisée, non réinventée) : OCP_V1 + provisioning out-of-band (ollama pull), le control plane ne pull/rm jamais.
+- Modèle LARGE temporaire : qwen2.5:3b (même famille que le SMALL résident 0.5b, 6× params). Seul choix de jugement
+  (aucune identité LARGE dans les archives ; CTO a délégué la procédure minimale).
+- Baseline → pull (15s, 1.9GB) → run réel → rm → baseline. Disk net 0 (9812MB avant/après), RAM ~21.5GB dispo, SMALL intact.
+- Preuve RÉELLE (module réel vs Ollama réel + qwen2.5:3b réel, exit 0, ALL_CASES_PASS) :
+  MAIN : classify=LARGE → route=qwen2.5:3b exact → inférence réelle OK (1 appel, 0 externe, 7226ms, réponse "a + b;")
+  → output validé → keep_alive 30s → unload demandé ET CONFIRMÉ par le serveur → ps vide après.
+  NEG : LARGE-absent⇒REFUSED(0 appel) ; invalid-model⇒TRANSPORT_ERROR ; cancel⇒CANCELLED ; bad-output⇒VALIDATION_FAILED.
+  Aucun downgrade silencieux ; aucun pull/delete par le control plane (URLs = chat+generate seulement).
+- VPS LÉGER prouvé de bout en bout : SMALL seul → LARGE temporaire → inférence → unload → cleanup → SMALL seul.
+- Preuves : scratchpad ollama-large-real.log, large-baseline.txt, large-after.txt, large-pull.log.
+- Step 6 : aucun défaut (comportement conforme) → aucune modif de code runtime/src.
+- NOTE: ce cycle = NO COMMIT / NO PUSH (restriction explicite du tour). Carnet + matrix mis à jour comme evidence,
+  NON committés, en attente d'autorisation de commit/push. Worktree a 2 docs modifiés (attendu).

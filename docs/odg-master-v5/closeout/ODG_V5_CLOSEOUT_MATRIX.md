@@ -44,8 +44,8 @@ This document is a documentary closeout record. It creates no authority._
 | 7 | Objective-proof (ObjectiveSpec, control.required opt-in) | src/runtime/mission-loader.ts; tests green | **PROVEN** (opt-in); universal gate **DEFERRED** |
 | 8 | Recovery / idempotence / adversarial paths | economic-enforcement-adversarial, checkpoint-engine, provider negative paths in 307 suite | **PROVEN** (test level) |
 | 9 | Executor / control plane (opt-in, deny-by-default, cloud allowlist) | ON_DEMAND_MODEL_ROUTING_V2 opt-in (commits cfeae71/df7aa20/75a1053) + tests | **PROVEN** (code+tests; OFF by default) |
-| 10a | Ollama LARGE path governance (routing/fail-closed/no-pull/unload) | OCP_V1 real run this session (A/B/C/D all true) | **PROVEN** |
-| 10b | Ollama LARGE real large inference | no authorized large-model identity; design forbids pull | **BLOCKED BY POLICY** |
+| 10a | Ollama LARGE path governance (routing/fail-closed/no-pull/unload) | OCP_V1 real run (A/B/C/D all true) | **PROVEN** |
+| 10b | Ollama LARGE real large inference (full lifecycle) | CTO-authorized temp pull qwen2.5:3b: classify=LARGE→route exact→real infer(OK,7226ms,"a + b;")→validate→unload server-confirmed→rm→light state restored; 4 real negative paths pass | **PROVEN LIVE (this session)** |
 | 11 | OpenAI cloud live | OPENAI_API_KEY unset, codex absent | **BLOCKED BY RESOURCE** + **BLOCKED BY POLICY** (no cloud policy) |
 | 12 | LM Studio live | host :1234 down | **BLOCKED BY RESOURCE** |
 | 13 | Real economic mission / economic CLAIM certification | no price catalog with rate VALUES; no spending authorization | **BLOCKED BY POLICY** |
@@ -61,7 +61,7 @@ This document is a documentary closeout record. It creates no authority._
 | Claude | bin `/usr/local/bin/claude` + ANTHROPIC_API_KEY SET | prior real runs documented (not re-run) | PROVEN LIVE (historical) |
 | Ollama SMALL | ollama UP, qwen2.5:0.5b | real governed inference, cost €0, exit 0 | **PROVEN LIVE (this session)** |
 | Ollama LARGE — path governance | ollama UP (22Gi RAM, 184G disk free) | OCP_V1 driven real: LARGE routing, fail-closed REFUSED (no downgrade, 0 calls), no pull/delete, real unload confirmed | **PROVEN (this session)** |
-| Ollama LARGE — real large inference | no authorized large-model identity | not executed | **BLOCKED BY POLICY** (see below) |
+| Ollama LARGE — real large inference | CTO-authorized temp qwen2.5:3b | full lifecycle real: classify→route→infer(OK,7226ms)→validate→unload confirmed→rm→light state; 4 neg paths | **PROVEN LIVE (this session)** |
 | OpenAI cloud | key UNSET | — | BLOCKED BY RESOURCE + POLICY |
 | LM Studio | :1234 down | — | BLOCKED BY RESOURCE |
 
@@ -81,12 +81,19 @@ Real proof executed this session (drove the real module against the real local O
 - **[D]** URLs touched = only `/api/chat` + `/api/generate` → **never** `/api/pull|delete|create|push|copy` (no download/install).
 - **VPS light state verified:** before/after `ollama ps` empty, RAM ~21Gi free, disk 9.6G used (unchanged), SMALL model intact, Ollama healthy, repo worktree clean.
 
-**Why real large inference is BLOCKED BY POLICY (not merely resource):** RAM (22Gi) and disk (184G) are sufficient,
-but (1) **no concrete LARGE model identity exists in any authoritative record** (missions/carnet/docs/evidence searched)
-— the human's rule forbids inventing one; and (2) the authorized OCP design **forbids auto-pull**, so obtaining a
-large model would be an unauthorized external download + persistent install and a silent change to the design.
-**Release condition:** CTO specifies an authorized LARGE model identity AND authorizes obtaining it (temporary pull
-with cleanup) outside the current no-pull design — i.e. a design/authority decision, not routine engineering.
+**Real large inference — RESOLVED (PROVEN LIVE this session).** Under explicit CTO authorization to determine the
+minimal acquisition procedure, a genuine larger-tier model (`qwen2.5:3b`, same family, 6× the resident 0.5b) was
+**temporarily** provisioned out-of-band (`ollama pull`, free, 15s), driven through the authorized OCP_V1 control
+plane for a real HIGH-risk code task, then **removed** (`ollama rm`). The control plane itself never pulled/deleted
+(only `/api/chat` + `/api/generate`). Measured evidence:
+- classify ⇒ LARGE · route ⇒ exact `qwen2.5:3b` · real inference OK (1 provider call, 0 external, 7226ms, answer `"a + b;"`) · output validated.
+- keep_alive 30s · unload requested AND **server-confirmed** ("server acknowledged unload") · `ollama ps` empty after.
+- 4 real negative paths: LARGE-absent⇒REFUSED(0 calls), invalid-model⇒TRANSPORT_ERROR, cancel⇒CANCELLED, bad-output⇒VALIDATION_FAILED. No silent downgrade in any case.
+- **VPS light state restored:** before/after disk 9812MB used (net 0), RAM ~21.5GB free, SMALL intact, Ollama healthy, repo clean.
+
+**One documented judgment call:** no LARGE model identity existed in authoritative records; the CTO delegated
+"détermine la procédure minimale pour le test", so `qwen2.5:3b` was selected as the minimal credible larger tier.
+A permanent/production LARGE model identity remains a CTO choice; the lifecycle mechanism is now proven.
 
 ---
 
@@ -122,7 +129,7 @@ with cleanup) outside the current no-pull design — i.e. a design/authority dec
 
 | Item | Exact release condition (human/CTO decision required) |
 |------|--------------------------------------------------------|
-| Ollama LARGE (real inference) | CTO names an authorized LARGE model identity + authorizes obtaining it (temp pull+cleanup) outside the no-pull OCP design. Path governance already PROVEN. |
+| Ollama LARGE (real inference) | RESOLVED — PROVEN LIVE this session via temp qwen2.5:3b (pull→use→rm). Remaining CTO choice: a permanent/production LARGE model identity + whether temp-pull becomes the standing provisioning method. |
 | OpenAI cloud | Provide authorized OPENAI_API_KEY + explicit cloud-spending policy |
 | LM Studio | Start an authorized LM Studio host |
 | Economic CLAIM / real economic mission | CTO authorizes rate VALUES source + billed-cost governance + spending |
