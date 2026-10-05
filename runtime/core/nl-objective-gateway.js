@@ -94,7 +94,12 @@ const EFFECT_FAMILIES = [
     ["FINANCIAL", ["pay ", "buy ", "purchase", "sell ", "invoice", "charge ", "transfer money", "payment", "transaction", "deposit", "withdraw", "spend "], "TRANSACT", "CRITICAL", "R4", true, true],
     ["DEPLOY", ["deploy", "release to production", "ship to production", "publish to", "go live", "push to prod"], "IRREVERSIBLE", "HIGH", "R3", true, true],
     ["COMMUNICATE", ["email", "send ", "post to", "publish ", "notify", " message ", "contact ", "tweet", " dm "], "COMMUNICATE", "HIGH", "R2", true, false],
-    ["NETWORK", ["online", "internet", " web", "scrape", "crawl", "fetch ", "download", "http", "url", "market", "opportunit", "browse", "search the", "live data", "real-time", "current "], "ANALYZE", "MEDIUM", "R0", true, false],
+    // NOTE: the bare word "current" is deliberately NOT a NETWORK signal. It over-matched local
+    // repository reads ("current repository state" / "current repo state") — a V7 reliquat. True
+    // "need live external data" intent is already carried by "live data" / "real-time" plus the
+    // concrete transport signals (online/internet/web/http/url/fetch/download/scrape/crawl), so the
+    // mere presence of "current" never alone classifies a request NETWORK.
+    ["NETWORK", ["online", "internet", " web", "scrape", "crawl", "fetch ", "download", "http", "url", "market", "opportunit", "browse", "search the", "live data", "real-time"], "ANALYZE", "MEDIUM", "R0", true, false],
 ];
 
 function classifyObjective(goal) {

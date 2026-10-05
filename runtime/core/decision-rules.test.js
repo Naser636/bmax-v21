@@ -23,4 +23,11 @@ ok("UPPERCASE still matches", rules.match("FIX TRAILING WHITESPACE").capability 
 console.log("Case 3 — a miss returns null (falls through to next tier)");
 ok("unknown goal ⇒ null", rules.match("invent a brand new payment provider") === null);
 
+console.log("Case 4 — local system capabilities resolve LOCAL (incl. FR 'dépôt' vocabulary)");
+ok("diagnostic ⇒ self-diagnostic", rules.match("run a governed diagnostic").capability === "self-diagnostic");
+ok("repository state ⇒ runtime-context-loader", rules.match("inspect the repository state").capability === "runtime-context-loader");
+ok("FR état actuel du dépôt ⇒ runtime-context-loader", rules.match("état actuel du dépôt").capability === "runtime-context-loader");
+ok("known Git request ⇒ Governed Git Branch Integration", rules.match("integrate the feature branch into main").capability === "Governed Git Branch Integration");
+ok("known Bash command ⇒ Governed Bash/Linux Command", rules.match("run the ls command").capability === "Governed Bash/Linux Command");
+
 console.log(`\nDECISION RULES — ${passed} assertions passed.`);

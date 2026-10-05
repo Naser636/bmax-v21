@@ -220,6 +220,26 @@ console.log("== NL Objective Gateway ==");
     ok("21 reuse: classifier flags destructive as CRITICAL", gw.classifyObjective("delete the production database").risk === "CRITICAL");
 }
 
+// 22 — V8 reliquat: the bare word "current" must NOT alone classify a request NETWORK. A local
+// repository-state read is LOCAL (NONE), while a genuine external/live-data request stays NETWORK.
+{
+    const localReads = ["current repository state", "current repo state", "état actuel du dépôt", "état actuel du repository"];
+    localReads.forEach((g) => {
+        const c = gw.classifyObjective(g);
+        ok(`22 current-not-network: "${g}" ⇒ not NETWORK`, c.externalEffect !== "NETWORK");
+        ok(`22 current-not-network: "${g}" ⇒ requiresExternal false`, c.requiresExternal === false);
+    });
+    const realNetwork = ["find commercial opportunities online", "fetch data from the remote server", "scrape the web for prices", "get real-time market data"];
+    realNetwork.forEach((g) => {
+        ok(`22 real-network preserved: "${g}" ⇒ NETWORK`, gw.classifyObjective(g).externalEffect === "NETWORK");
+    });
+    // The repository-state request resolves to a LOCAL capability end-to-end (no external-ai substitute).
+    const r = gw.compile("current repository state", { currentState: "CREATED" });
+    ok("22 current repository state ⇒ LOCAL capability", r.objectives[0].capability.chosen.source === "LOCAL");
+    ok("22 current repository state ⇒ READY_DRY_RUN", r.status === "READY_DRY_RUN");
+    assertNoSideEffects("22 current-repo-state", r);
+}
+
 // Aggregate no-side-effect proof across a representative sweep.
 {
     const sweep = [

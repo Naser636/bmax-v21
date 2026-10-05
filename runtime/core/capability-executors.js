@@ -27,9 +27,18 @@ const { spawnSync } = require("child_process");
 // cross-check; there is NO pre-existing git-ignored-artifact scanner to reuse, so CLEAN_WORKSPACE_1's
 // candidate scan is implemented here against git directly (not a duplicate of any existing helper).
 const { trackedFilesInScope } = require("./scope-observer");
+// The Governed Git Branch Integration capability (local, fast-forward-only, C03-recorded). This is a
+// capability IMPLEMENTATION the single registry routes to — NOT a second executor/evidence system.
+const gitBranchIntegration = require("./git-branch-integration");
+// The Governed Bash/Linux Command capability (parse→analyse→action-gate→genuine-isolation sandbox→
+// observed-effect→C03). Another capability IMPLEMENTATION the single registry routes to — not a second
+// command engine, policy, authority, evidence or sandbox system.
+const bashGovernor = require("./bash-command-governor");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
+const GIT_BRANCH_INTEGRATION_EVIDENCE = path.join(GENERATED_DIR, "git-branch-integration.json");
+const BASH_COMMAND_EVIDENCE = path.join(GENERATED_DIR, "bash-command.json");
 const PROVIDER_ACTIVATION_EVIDENCE = path.join(GENERATED_DIR, "provider-activation.json");
 const CLEAN_WORKSPACE_SCAN_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-scan.json");
 const CLEAN_WORKSPACE_COVERAGE_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-coverage.json");
@@ -204,6 +213,93 @@ function resolveFetcher(ra, patch) {
 }
 
 const EXECUTORS = [
+    {
+        // Governed Git Branch Integration — local, fast-forward-only branch integration recorded as a
+        // C03 state transition. STRICTLY matched on the objectiveId prefix (disjoint from every other
+        // executor) and placed FIRST so first-match resolution can never route it elsewhere. The spec
+        // (target/source/execute/authorization) is transported on the patch; the engine SELF-GATES and
+        // is fail-closed: dry-run is the hard default (ZERO git mutation, no remote), a live BLOCKED /
+        // HUMAN_APPROVAL_REQUIRED outcome writes honest evidence then throws so the mission fails closed.
+        capability: "Governed Git Branch Integration",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("GIT_BRANCH_INTEGRATION");
+        },
+        run(patch) {
+            const spec = (patch && patch.git_branch_integration && typeof patch.git_branch_integration === "object" && !Array.isArray(patch.git_branch_integration))
+                ? patch.git_branch_integration : {};
+            const request = {
+                objectiveId: patch.objectiveId,
+                target: spec.target,
+                source: spec.source,
+                execute: spec.execute === true,
+                authorization: spec.authorization,
+                protectedBranches: spec.protectedBranches,
+            };
+            // The engine owns the C03 record but not the artifact path; bind the real evidence path into
+            // the record's evidence_refs so a VERIFIED transition carries a real reference (C03 I5).
+            const finalize = (evidence) => {
+                if (evidence && evidence.state_transition && typeof evidence.state_transition === "object") {
+                    evidence.state_transition.evidence_refs = [GIT_BRANCH_INTEGRATION_EVIDENCE];
+                }
+                return writeEvidence(GIT_BRANCH_INTEGRATION_EVIDENCE, evidence);
+            };
+            try {
+                const evidence = gitBranchIntegration.run(request, { cwd: process.cwd() });
+                const out = finalize(evidence);
+                return {
+                    capability: "Governed Git Branch Integration",
+                    evidence: out,
+                    summary: { mode: evidence.mode, outcome: evidence.outcome, integrated: evidence.integrated, pushed: evidence.pushed },
+                };
+            } catch (e) {
+                if (e && e.evidence) { try { finalize(e.evidence); } catch { /* ignore */ } }
+                throw e;
+            }
+        },
+    },
+    {
+        // Governed Bash/Linux Command — the governed path for an (un)familiar shell command. STRICTLY
+        // matched on the objectiveId prefix (disjoint). The command spec is transported on the patch;
+        // the governor SELF-GATES (deny-by-default via action-gate) and is fail-closed: dry-run is the
+        // hard default (no execution); a live BLOCKED / HUMAN_APPROVAL_REQUIRED / EFFECT_DIVERGENCE
+        // writes honest evidence then throws so the mission fails closed; EXECUTED / SANDBOX_OBSERVED /
+        // ANALYZED return governed evidence. NEVER hands the string to a shell (argv only).
+        capability: "Governed Bash/Linux Command",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("BASH_COMMAND");
+        },
+        run(patch) {
+            const spec = (patch && patch.bash_command && typeof patch.bash_command === "object" && !Array.isArray(patch.bash_command))
+                ? patch.bash_command : {};
+            const request = {
+                objectiveId: patch.objectiveId,
+                command: spec.command,
+                execute: spec.execute === true,
+                envAllowlist: spec.envAllowlist,
+                authorization: spec.authorization,
+                timeoutMs: spec.timeoutMs,
+                allowedPolicies: spec.allowedPolicies,
+                revokedAuthorities: spec.revokedAuthorities,
+            };
+            const evidence = bashGovernor.govern(request, {});
+            if (evidence && evidence.state_transition && typeof evidence.state_transition === "object") {
+                evidence.state_transition.evidence_refs = [BASH_COMMAND_EVIDENCE];
+            }
+            const out = writeEvidence(BASH_COMMAND_EVIDENCE, evidence);
+            const STOP = [bashGovernor.OUTCOME.BLOCKED, bashGovernor.OUTCOME.HUMAN_APPROVAL_REQUIRED, bashGovernor.OUTCOME.EFFECT_DIVERGENCE];
+            if (request.execute && STOP.includes(evidence.outcome)) {
+                const err = new Error(`Governed Bash/Linux Command ${evidence.outcome}: ${evidence.reason}`);
+                err.outcome = evidence.outcome;
+                err.evidence = out;
+                throw err;
+            }
+            return {
+                capability: "Governed Bash/Linux Command",
+                evidence: out,
+                summary: { outcome: evidence.outcome, decision: evidence.decision, exitCode: evidence.execution ? evidence.execution.exitCode : null },
+            };
+        },
+    },
     {
         // Clean Workspace — REAL execution of CLEAN_WORKSPACE_1/2/3 (scan → confirm policy → report).
         // STRICTLY matched on the objectiveId prefix so goal/done_when are never consulted and no other
@@ -449,7 +545,7 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE };
+module.exports = { resolve, runAudit, EXECUTORS, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE };
 
 // Direct invocation: run the Connectivity Audit and write its evidence artifact.
 if (require.main === module) {

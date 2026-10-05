@@ -122,6 +122,22 @@ const PROBE_INTENT = [
         match: /\bexternal research\b|\bresearch acquisition\b|\bEXTERNAL_RESEARCH\b/i,
         probes: [{ capability: "External research acquired (verified per-source provenance)", evidence: "research-acquired" }],
     },
+    {
+        // Governed git branch integration intent requires the git-branch-integrated proof (a real,
+        // VERIFIED, local, fast-forward-only C03 transition). A dry-run or no-op never satisfies it, so
+        // a branch-integration mission cannot be proven without an actual governed integration having
+        // occurred. Declaration only — the capability self-gates authority; this adds none.
+        match: /\bbranch integration\b|\bfast[- ]forward\b|\bGIT_BRANCH_INTEGRATION\b|\bintegrate .*branch\b/i,
+        probes: [{ capability: "Governed git branch integration (local, ff-only, C03-verified)", evidence: "git-branch-integrated" }],
+    },
+    {
+        // Governed bash/linux command intent requires the bash-command-governed proof: the command was
+        // handled under governance (parsed, action-gated, run only in genuine isolation) with NO raw
+        // shell execution. A dry-run or governed refusal never satisfies it. Declaration only — the
+        // capability self-gates authority (deny-by-default); this adds none.
+        match: /\bbash\b|\bshell command\b|\blinux command\b|\brun (a |the )?command\b|\bBASH_COMMAND\b/i,
+        probes: [{ capability: "Governed bash/linux command (no raw shell, sandboxed, C03-verified)", evidence: "bash-command-governed" }],
+    },
 ];
 
 /*

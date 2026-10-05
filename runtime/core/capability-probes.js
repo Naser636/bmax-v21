@@ -23,7 +23,8 @@
 "use strict";
 
 const fs = require("fs");
-const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE } = require("./capability-executors");
+const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE } = require("./capability-executors");
+const { validateStateTransition } = require("./state-transition");
 
 function readJsonSafe(file) {
     try {
@@ -119,6 +120,73 @@ const PROBES = {
             }
         }
         return { ok: true, detail: `research acquired: ${sources.length} verified source(s), ${ranked.length} ranked item(s)` };
+    },
+
+    "git-branch-integrated"() {
+        // Verified governed-git proof. Reads ONLY the Governed Git Branch Integration executor's
+        // evidence. A dry-run (outcome=DRY_RUN) or a no-op (ALREADY_UP_TO_DATE) does NOT satisfy it:
+        // only a real, VERIFIED fast-forward transition counts. FAILS unless: evidence present,
+        // outcome===INTEGRATED, integrated===true, pushed===false (local-only), merge_commit===false,
+        // and the embedded C03 state_transition VALIDATES and its observed tip matches state_after.
+        const ev = readJsonSafe(GIT_BRANCH_INTEGRATION_EVIDENCE);
+        if (!ev) {
+            return { ok: false, detail: `no git branch integration evidence at ${GIT_BRANCH_INTEGRATION_EVIDENCE} — run the Governed Git Branch Integration capability first` };
+        }
+        if (ev.outcome !== "INTEGRATED" || ev.integrated !== true) {
+            return { ok: false, detail: `no real integration (outcome=${ev.outcome}); a dry-run or already-up-to-date no-op does NOT satisfy git-branch-integrated` };
+        }
+        if (ev.pushed !== false || ev.merge_commit !== false) {
+            return { ok: false, detail: `integration violated local-only/ff-only invariants (pushed=${ev.pushed}, merge_commit=${ev.merge_commit})` };
+        }
+        const t = ev.state_transition;
+        if (!t || typeof t !== "object") {
+            return { ok: false, detail: "integration evidence carries no C03 state_transition record" };
+        }
+        const v = validateStateTransition(t);
+        if (!v.ok) {
+            return { ok: false, detail: `C03 state_transition invalid: ${v.errors.join("; ")}` };
+        }
+        if (t.verification_status !== "VERIFIED") {
+            return { ok: false, detail: `state_transition not VERIFIED (status=${t.verification_status})` };
+        }
+        const observedTo = t.observed_effect && t.observed_effect.to;
+        const afterTip = t.state_after && t.state_after.targetSha;
+        if (!observedTo || observedTo !== afterTip) {
+            return { ok: false, detail: `observed tip (${observedTo}) does not match state_after (${afterTip})` };
+        }
+        return { ok: true, detail: `branch "${ev.target}" fast-forwarded to ${observedTo} (${t.observed_effect.commits_advanced} commit(s)); local-only, no merge, C03 VERIFIED` };
+    },
+
+    "bash-command-governed"() {
+        // Verified governed-shell proof. Reads ONLY the Governed Bash/Linux Command executor's evidence.
+        // Always requires shellExecution===false (the string was NEVER handed to a shell; argv only).
+        // A dry-run (ANALYZED) or a governed refusal does NOT satisfy it — only a command the capability
+        // actually exercised safely: EXECUTED (VERIFIED C03 + sandbox network off + no effect divergence)
+        // or SANDBOX_OBSERVED (unknown profiled in isolation with network off, trust withheld).
+        const ev = readJsonSafe(BASH_COMMAND_EVIDENCE);
+        if (!ev) {
+            return { ok: false, detail: `no bash command evidence at ${BASH_COMMAND_EVIDENCE} — run the Governed Bash/Linux Command capability first` };
+        }
+        if (ev.shellExecution !== false) {
+            return { ok: false, detail: "evidence does not assert shellExecution=false (raw shell execution is forbidden)" };
+        }
+        if (ev.outcome === "EXECUTED") {
+            const t = ev.state_transition;
+            if (!t || typeof t !== "object") return { ok: false, detail: "EXECUTED without a C03 state_transition record" };
+            const v = validateStateTransition(t);
+            if (!v.ok) return { ok: false, detail: `C03 state_transition invalid: ${v.errors.join("; ")}` };
+            if (t.verification_status !== "VERIFIED") return { ok: false, detail: `state_transition not VERIFIED (status=${t.verification_status})` };
+            const iso = ev.execution && ev.execution.isolation;
+            if (!iso || iso.network !== false || iso.envCleared !== true) return { ok: false, detail: "execution lacked genuine isolation (network/env)" };
+            return { ok: true, detail: `command "${ev.parsed.command}" executed in genuine isolation (exit ${ev.execution.exitCode}, network off, env cleared); C03 VERIFIED` };
+        }
+        if (ev.outcome === "SANDBOX_OBSERVED") {
+            const iso = ev.execution && ev.execution.isolation;
+            if (!iso || iso.network !== false) return { ok: false, detail: "sandbox observation lacked network isolation" };
+            if (ev.humanApprovalRequired !== true) return { ok: false, detail: "unknown command profiled but trust not withheld (humanApprovalRequired must be true)" };
+            return { ok: true, detail: `unknown command "${ev.parsed.command}" profiled in isolation (network off); trust withheld pending human review` };
+        }
+        return { ok: false, detail: `command not governed-executed (outcome=${ev.outcome}); a dry-run or governed refusal does NOT satisfy bash-command-governed` };
     },
 
     "legacy-runtime-retired"() {
