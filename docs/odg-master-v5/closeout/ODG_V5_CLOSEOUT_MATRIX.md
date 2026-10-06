@@ -370,6 +370,55 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 21. DOCUMENTATION CLOSEOUT — DISCOVER_LOCAL_RESOLVER_ALLOCATOR_ACTIVATION_V1 (NO ACTION)
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** DISCOVER_LOCAL_RESOLVER_ALLOCATOR_ACTIVATION_V1 (read-only discovery; no-action closeout).
+- **Question:** is the Resolver (`capability-router.js`) / Allocator (vnext `resource-allocation-engine.ts`)
+  absence from the official LOCAL `src/runtime` execution path a defect, a disconnected capability, or an
+  intentional staged/semantic state?
+- **Finding — Resolver:** `runtime/core/capability-router.js` is the canonical tier-router
+  (Memory → Rules → Local LLM → External AI, last resort). It is **live and tested** — imported by
+  `runtime/core/nl-objective-gateway.js` (dry-run NL projection) and `runtime/core/local-autonomy.js`
+  (P8 stack), with its own `capability-router.test.js`. It has **zero `src/runtime` importers**, but that
+  is **intentional semantic separation, not a defect**: the official LOCAL path answers a different
+  question at a different layer.
+- **Finding — LOCAL dispatch:** `RuntimeExecutor` (`src/runtime/runtime-executor.ts`) selects a capability
+  via `capability-executors.resolve(patch)` — a **deterministic objective → producer dispatch** matching on
+  `objectiveId` prefix (`CLEAN_WORKSPACE_`, `EXTERNAL_RESEARCH_`, `GIT_BRANCH_INTEGRATION`, `BASH_COMMAND`,
+  …). This is **NOT a Resolver bypass**: it picks the concrete producer an already-named objective requires,
+  whereas the tier-Resolver picks a *source/tier* for a fix. The read-only LOCAL route has no fix-routing
+  decision to make, so it needs this seam, not the tier-Resolver. The dispatch introduces no authority (each
+  producer carries its own governance).
+- **Finding — Allocator / vnext:** `src/runtime/vnext/resource-allocation-engine.ts` (and the wider vnext
+  Goal/Strategy/Resource/Constitution layer) are **RECOGNIZED_INACTIVE**: `runtime/config/vnext.json` ships
+  `enabled:false` with every feature false; `src/runtime/vnext/activation.ts` is default-OFF, master-gated,
+  **Kernel-isolated** ("Nothing in the Runtime calls this module today; it is the prepared seam for a FUTURE
+  wiring. Present behavior is strictly identical."). There is **no non-test LOCAL caller** of the Allocator,
+  and the LOCAL route requires no resource/provider allocation. This is an **intentional staged capability**,
+  already documented in `runtime/architecture/VNEXT_ACTIVATION.md` (R1 = wire `withVNext` into a *future
+  optional* `odg goal`, never the current `odg`/`odg autonomy` path) and §13's limitation note
+  ("Resolver/Allocator still off-path").
+- **Classification:** Resolver / LOCAL-dispatch = **E (documentation/semantic mismatch — the audit conflated
+  "no `src/` importer" with "disconnected")**; Allocator / vnext = **C (intentional staged capability)**. No
+  **A (real defect)**, no **B (test-coverage gap)** (both components are tested), no **D (dead capability)**
+  (the Resolver is live elsewhere; the Allocator is a recognized, prepared, inactive seam).
+- **No correctness/security/governance defect reproduced.** Activating either would require forbidden new
+  work: a Resolver↔executor mapping, or resource/provider candidates + allocation policy (overlapping the
+  authority-vocabulary / economic-policy frontiers) — all out of scope for stabilization.
+- **Action:** **NO ACTION** — no repair, no test-only closure, no activation, no new architecture, no mission
+  contract change. The staged/semantic state is honest and already documented; this entry records that
+  conclusion.
+- **Files touched:** `docs/odg-master-v5/closeout/ODG_V5_CLOSEOUT_MATRIX.md` (this record only). No runtime,
+  test, vnext activation, config, or contract file changed.
+- **Capability development (GOVERNED_TEST_PROOF_ANALYSIS):** applied here as an independent read-only analysis
+  whose outcome was *disprove/assess-as-intentional*. It produced **no genuine coverage gap + verified minimal
+  test-only closure**, so it **does NOT** advance the Skill CANDIDATE → TESTED; the Skill remains **CANDIDATE**.
+- **Status:** VERIFIED, not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 20. DOCUMENTATION CLOSEOUT — FIX_EXPERT_INSTANCE_DOCUMENT_V1
 
 - **Date (UTC):** 2026-10-06
