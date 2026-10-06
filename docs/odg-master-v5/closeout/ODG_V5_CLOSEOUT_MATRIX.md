@@ -370,6 +370,40 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 23. TEST-COVERAGE CLOSURE — DISCOVER_LEDGER_IMMUTABILITY_BOUNDARY_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** DISCOVER_LEDGER_IMMUTABILITY_BOUNDARY_V1 (read-only governed coverage analysis that
+  reproduced ONE genuine gap and landed a minimal test-only closure). Applied `GOVERNED_TEST_PROOF_ANALYSIS`.
+- **Gap reproduced:** the mission-ledger append-only **immutability boundary** — an existing but
+  corrupt/unreadable `mission-ledger.json` — was **covered by no test**. The runtime behavior at
+  `runtime/core/mission-ledger.js:167-177` already correctly refuses to overwrite an unreadable ledger
+  (`readJsonSafe` ⇒ `null` ⇒ `console.warn(...)` ⇒ `return { skipped: true, entry }`, BEFORE the write at
+  line 190+), preserving past evidence even for an otherwise-proven mission. The invariant was correct but
+  **unasserted**; a grep of all `src/runtime/*.test.ts` found no other test exercising this branch.
+- **Coverage classification:** the corrupt/unreadable-ledger immutability branch of `recordMission` on the
+  live path = **genuinely uncovered** (the reproduced gap). Existing runtime behavior was correct and was
+  **not** changed; the audit premise was NOT stale and the fix is test-only.
+- **Minimal closure (test-only):** added one case (case 6) to the EXISTING
+  `src/runtime/mission-ledger-idempotent.test.ts`. It writes a proven report (passes the proven-only gate),
+  writes a corrupt (non-JSON) existing ledger, then records. Asserts: (1) a corrupt existing ledger causes
+  `recordMission` to **skip** (`skipped === true`, append refused); (2) the existing ledger remains
+  **byte-for-byte unchanged** (past evidence NOT overwritten). No runtime/production file changed; no new
+  test file.
+- **Tests:** `mission-ledger-idempotent.test.ts` **11/11 PASS** incl. the 2 new assertions; full regression
+  `npm test` **exit 0** — **325 test files**, **52 `ALL PASS` banners**, no genuine failures (the `FAIL`/
+  `Error:` strings in output are expected fail-closed assertion labels and an intentional quarantine-sandbox
+  negative path).
+- **Files touched:** `src/runtime/mission-ledger-idempotent.test.ts` (+16, test-only), this matrix (record).
+  No runtime, contract, vnext, Resolver/Allocator/authority/Profile/Instance/registry/learning change.
+- **Capability development (GOVERNED_TEST_PROOF_ANALYSIS):** another successful genuine-gap + minimal
+  test-only closure application. The skill remains **TESTED** (the grade already earned at §22); this
+  application does **not** by itself change that grade to CERTIFIED.
+- **Status:** VERIFIED, not CERTIFIED.
+- **Release state:** commit `176fe0d`, pushed to `origin/main`; working tree clean.
+
+---
+
 ## 22. TEST-COVERAGE CLOSURE — DISCOVER_RUNTIME_EXECUTOR_DISPATCH_COVERAGE_V1
 
 - **Date (UTC):** 2026-10-06
