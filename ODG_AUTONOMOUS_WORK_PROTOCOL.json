@@ -21,12 +21,12 @@
   },
 
   "truth_lock": {
-    "expected_head": "df344f1c6436398efbdf6057a95ff078a6b27f57",
-    "expected_branch": "runtime/mission-context-builder",
+    "expected_head": "POLICY — no frozen SHA; HEAD is the current tip of main and advances as authorized commits land",
+    "expected_branch": "main",
     "p0_069_c03": "last accepted runtime change",
     "p0_070": "EXECUTED — conclusion: INTEGRATION NOT CURRENTLY REQUIRED",
     "p0_071_plus": "NOT AUTHORIZED",
-    "rule": "Before any work, Claude MUST verify HEAD, branch, worktree and origin. If reality diverges from this Truth Lock, STOP and ask the human."
+    "rule": "Before any work, Claude MUST verify the Truth Lock policy: (1) current branch == main, (2) upstream tracking branch == origin/main, (3) working tree clean. HEAD is NOT pinned to a frozen SHA (it advances as authorized commits land). If branch, upstream, or worktree-clean diverges, STOP and ask the human."
   },
 
   "core_principles": [
