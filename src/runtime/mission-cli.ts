@@ -180,6 +180,14 @@ export function runLocalRoute(
   console.log("Logical    :", exec.logicalSteps ?? 0, "steps");
   console.log("Technical  :", exec.technicalSteps ?? 0, "steps");
   console.log("Capabilities:", exec.capabilities?.length ?? 0);
+  // Read-only Expert Instance surface (declarative metadata; NOT on any decision path).
+  if (outcome.expertInstance) {
+    const xi = outcome.expertInstance;
+    console.log(
+      "Expert     :",
+      `${xi.role} (${xi.profile_status}); authority_scope=[${xi.authority_scope.join(", ")}]`,
+    );
+  }
   // Ledger seam: the LOCAL route hands its honest verdict to the EXISTING recordMission writer
   // (proven-only gate). Only a validated run obtains a proven ledger entry; no cascade, no bypass.
   console.log("Validated  :", outcome.validated === true);
