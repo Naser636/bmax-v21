@@ -38,6 +38,13 @@ export interface ObjectiveEvidenceInput {
   requiresEngineering?: boolean;
   /** Genuine applied/executed effects observed THIS run (0 on the read-only LOCAL route). */
   appliedEvidenceCount?: number;
+  /**
+   * Current run's start time (epoch ms). When provided, a declared evidence artifact counts only
+   * when it was produced AT OR AFTER the run started (run-ownership/freshness) — a stale artifact
+   * left by a prior/unrelated run no longer satisfies the gate. When ABSENT, freshness is not
+   * enforced (backward-compatible), but the regular-file + non-empty requirements still apply.
+   */
+  runStartedAtMs?: number;
   /** Evidence-existence predicate; default mirrors scope-observer.artifactNonEmpty (exists + size>0). */
   evidenceExists?: (p: string) => boolean;
 }
@@ -51,14 +58,31 @@ export interface ObjectiveEvidence {
   reason?: string;
 }
 
-/** Default evidence predicate — EXISTS and NON-EMPTY on disk (mirrors artifactNonEmpty). */
-function defaultEvidenceExists(p: string): boolean {
-  if (typeof p !== "string" || !p) return false;
-  try {
-    return fs.statSync(p).size > 0;
-  } catch {
-    return false;
-  }
+/**
+ * Build the default evidence predicate. An artifact qualifies as evidence only when it:
+ *   1. is a REGULAR FILE (a directory — size ~4096 on Linux — or any non-file never qualifies), AND
+ *   2. is NON-EMPTY (size > 0, mirrors scope-observer.artifactNonEmpty), AND
+ *   3. is OWNED BY THIS RUN when a run start time is known: its mtime is at or after runStartedAtMs
+ *      (a stale artifact from a prior/unrelated run — runtime/generated/ is git-ignored and never
+ *      cleared — is rejected). Freshness is only enforced when runStartedAtMs is a finite number;
+ *      absent it, behaviour is backward-compatible (regular-file + non-empty only).
+ */
+export function makeEvidenceExists(runStartedAtMs?: number): (p: string) => boolean {
+  const enforceFreshness =
+    typeof runStartedAtMs === "number" && Number.isFinite(runStartedAtMs);
+  return (p: string): boolean => {
+    if (typeof p !== "string" || !p) return false;
+    let st: fs.Stats;
+    try {
+      st = fs.statSync(p);
+    } catch {
+      return false;
+    }
+    if (!st.isFile()) return false; // directories / non-regular files never qualify
+    if (st.size <= 0) return false; // must be non-empty
+    if (enforceFreshness && st.mtimeMs < (runStartedAtMs as number)) return false; // stale ⇒ not this run's
+    return true;
+  };
 }
 
 /**
@@ -75,7 +99,7 @@ function defaultEvidenceExists(p: string): boolean {
  *     none declared the recorded analysis is sufficient, preserving the existing AUDIT contract.
  */
 export function assessObjectiveEvidence(input: ObjectiveEvidenceInput): ObjectiveEvidence {
-  const evidenceExists = input.evidenceExists ?? defaultEvidenceExists;
+  const evidenceExists = input.evidenceExists ?? makeEvidenceExists(input.runStartedAtMs);
 
   // Mission class — faithful to validation-engine.js:66 (authorized paths are the operative signal;
   // the loader sets requiresEngineering true exactly when authorized_paths is non-empty).

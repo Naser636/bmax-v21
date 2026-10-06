@@ -325,3 +325,45 @@ optimistic-concurrency contract in **C05** that the earlier audit had not isolat
 **STATUS: GREEN.** Complete economic operating method verified canonically represented; the sole residual method detail (TOCTOU/state-freshness) is proven already explicit; no Master change required.
 
 **ECONOMIC OPERATING METHOD INTEGRATION: COMPLETE.**
+
+---
+
+## 11. RUNTIME REPAIR LOG — FIX_EVIDENCE_RUN_OWNERSHIP_V1
+
+_Recorded here per CTO option A (the on-main closeout record). `ODG_STABILIZATION_5RC_CLOSURE.md`
+is not on `main` (it lives only on the unmerged `stabilization` branch / locked worktree), so this
+existing matrix is the authorized home; no new repair-history document was created._
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_EVIDENCE_RUN_OWNERSHIP_V1 (defect repair; discovery-authorized)
+- **Defect:** `src/runtime/objective-evidence.ts` evidence predicate `defaultEvidenceExists` counted an
+  artifact as present on `fs.statSync(p).size > 0` alone — with (a) no run-ownership/freshness binding and
+  (b) no regular-file check (a directory is ~4096 B on Linux ⇒ passed).
+- **Reproduction:** `runtime/generated/` is git-ignored and never cleared on the LOCAL route. A stale
+  `*.json` left by a prior/unrelated run satisfied an engineering mission's declared `verify[].evidence`
+  gate (`objective-evidence.ts:95,100-102`), driving `proof=PASS → report SUCCESS → validated=true →
+  mission-ledger proven` with NO capability executed this run. A `verify[].evidence` path resolving to a
+  directory likewise passed.
+- **Root cause:** evidence existence was conflated with evidence ownership; the predicate asserted only
+  size>0 and did not bind the artifact to the current run nor require a regular file.
+- **Files touched:** `src/runtime/objective-evidence.ts` (repair), `src/runtime/objective-evidence.ownership.test.ts`
+  (new regression), this matrix (record). No other file; no execution wiring; no authority/architecture change.
+- **Repair:** replaced `defaultEvidenceExists` with `makeEvidenceExists(runStartedAtMs?)` — rejects
+  non-regular files (`!st.isFile()`) and empty files unconditionally, and when the current run's start time
+  is supplied via the new optional `ObjectiveEvidenceInput.runStartedAtMs`, requires `st.mtimeMs >=
+  runStartedAtMs` (stale artifact ⇒ rejected). Backward-compatible when `runStartedAtMs` is absent
+  (regular-file + non-empty only). Freshness enforcement is DORMANT until a future, separately-authorized
+  one-line caller change in `runtime-executor.ts` passes the run start (that file is out of this write-set;
+  execution wiring deliberately deferred).
+- **Tests:** `objective-evidence.ownership.test.ts` — 11/11 (directory fails both modes, empty fails, missing
+  fails, legacy valid passes, fresh passes, stale fails; assess() end-to-end STALE⇒FAIL / FRESH⇒PASS /
+  DIRECTORY⇒FAIL / read-only-compat⇒PASS). Existing `objective-evidence.test.ts` still green (ROOT CAUSE #1
+  gate compat). `npx tsc --noEmit` exit 0. `runtime/core/*.test.js` 60/60.
+- **Evidence:** test output + `git status --porcelain` showing exactly the three files below.
+- **Before/after:** BEFORE — stale leftover or directory ⇒ evidence counted ⇒ engineering mission PASS by
+  construction. AFTER — directory/empty never qualify (active now); with a run start time, only this-run
+  artifacts qualify ⇒ stale leftovers can no longer manufacture SUCCESS.
+- **Limitations:** freshness is dormant until the caller passes `runStartedAtMs`; the directory/empty
+  hardening is active immediately. Known vacuous-coverage / double-recompute / discarded-plan defects remain
+  out of scope. Honesty rule applies: this repair is **VERIFIED** (tested green), not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
