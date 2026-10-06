@@ -370,6 +370,36 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 18. RUNTIME REPAIR LOG — FIX_DOUBLE_RECOMPUTE_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_DOUBLE_RECOMPUTE_V1 (runtime control-flow repair; plan reuse)
+- **Defect (from A-to-Z audit):** `LocalMissionRunner.run` built an `ExecutionPlan` (`local-mission-runner.ts:60`) but
+  called `kernel.execute(id,name)` with no plan, so `RuntimeExecutor.execute` re-ran `loader.load` +
+  `orchestrator.buildPlan` + `ExecutionPlanner.create` (`runtime-executor.ts:~44-48`) — the plan was built twice
+  per run; the runner's returned `result.plan` was NOT the executed plan (inefficiency + a TOCTOU risk that the
+  returned plan could diverge from the verdict).
+- **Repair:** added an OPTIONAL `plan?: ExecutionPlan` parameter to `RuntimeKernel.execute` and
+  `RuntimeExecutor.execute`. When supplied, the executor REUSES that exact plan (mission = `plan.mission`,
+  intent = `plan.intent ?? createMissionIntent(id)`) and SKIPS the second load + buildPlan + ExecutionPlanner.create;
+  the `executionSteps` log count is derived from the reused plan. `LocalMissionRunner` passes its already-built
+  plan, so `result.plan` === the executed plan. No plan supplied ⇒ the standalone build path is unchanged
+  (backward-compatible). `createTechnicalPlan` and the evidence/verdict pipeline are untouched.
+- **Files touched:** `src/runtime/local-mission-runner.ts`, `src/runtime/runtime-kernel.ts`,
+  `src/runtime/runtime-executor.ts`, `src/runtime/runtime-executor.plan-reuse.test.ts` (new), this matrix.
+  `mission-cli.ts`'s separate third build is **explicitly EXCLUDED** (separable, a different site).
+- **Tests:** `runtime-executor.plan-reuse.test.ts` 3/3 — executor reuses a divergent 3-objective supplied plan
+  (proves no rebuild); no-plan path still builds a 2-objective mission (backward-compat); counting orchestrator
+  proves the runner builds the plan exactly ONCE. e2e verdicts unchanged (CLEAN_WORKSPACE 5/5, External Research
+  5/5, objective-evidence ALL PASS, expert/ownership/probe green); `runtime/core/*.test.js` 60/60; `tsc --noEmit` 0.
+- **Runtime impact:** eliminates the duplicate load+buildPlan+create on the LOCAL path; verdict/evidence semantics
+  unchanged (same deterministic plan). Signatures gain an additive optional param only.
+- **Architecture integrity:** no new primitive/runtime/Resolver/Allocator/authority/Profile/Instance/registry/learning;
+  no mission contract; mission-cli untouched.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 17. TEST-HONESTY REPAIR LOG — FIX_COVERAGE_TEST_HONESTY_V1
 
 - **Date (UTC):** 2026-10-06

@@ -59,7 +59,9 @@ export class LocalMissionRunner {
       // OBJ-001: the orchestrator is the single entry point for every mission.
       const plan = this.orchestrator.buildPlan(id, name, intent);
       // OBJ-002: the mission is executed by src/runtime, not the mse fallback.
-      const execution = this.kernel.execute(id, name);
+      // FIX_DOUBLE_RECOMPUTE_V1: pass the plan just built so the executor REUSES it (no second
+      // load + buildPlan + ExecutionPlanner.create). result.plan is therefore the executed plan.
+      const execution = this.kernel.execute(id, name, plan);
       // Derive the verdict from the honest reporter gate (no fabrication), then hand it to the
       // EXISTING ledger writer. recordMission's proven-only gate refuses an unvalidated result,
       // so only genuinely-validated migrated missions obtain a proven ledger entry.

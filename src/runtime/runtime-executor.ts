@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
-import { MissionLoader } from "./mission-loader";
-import { createMissionIntent } from "./mission-intent";
-import { MissionOrchestrator } from "./mission-orchestrator";
+import { MissionLoader, RuntimeMission } from "./mission-loader";
+import { createMissionIntent, MissionIntent } from "./mission-intent";
+import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { ExecutionPlanner } from "./execution-planner";
 import { ExecutionMemory } from "./execution-memory";
 import { EventBus } from "./event-bus";
@@ -28,7 +28,7 @@ export class RuntimeExecutor {
   private readonly state = new RuntimeState();
   private readonly implementation = new ImplementationEngine();
 
-  execute(id: string, name: string) {
+  execute(id: string, name: string, suppliedPlan?: ExecutionPlan) {
 
     this.engine.bootstrap();
 
@@ -41,11 +41,28 @@ export class RuntimeExecutor {
       runtimeSystem
     });
 
-    const mission = this.loader.load(id, name);
-    const intent = createMissionIntent(id);
-    const plan = this.orchestrator.buildPlan(id, name, intent);
+    // FIX_DOUBLE_RECOMPUTE_V1: REUSE the plan the caller (LocalMissionRunner) already built instead of
+    // re-loading + re-planning. When a plan is supplied, the second load + buildPlan +
+    // ExecutionPlanner.create sequence is SKIPPED and the exact supplied plan drives execution. When no
+    // plan is supplied (standalone callers), build it exactly as before (backward-compatible).
+    let mission: RuntimeMission;
+    let intent: MissionIntent;
+    let plan: ExecutionPlan;
+    if (suppliedPlan) {
+      plan = suppliedPlan;
+      mission = suppliedPlan.mission;
+      intent = suppliedPlan.intent ?? createMissionIntent(id);
+    } else {
+      mission = this.loader.load(id, name);
+      intent = createMissionIntent(id);
+      plan = this.orchestrator.buildPlan(id, name, intent);
+    }
     const technical = this.implementation.createTechnicalPlan(id, name);
-    const executionPlan = this.planner.create(id, name, intent);
+    // ExecutionPlanner.create belongs to the skipped second-construction sequence; its only use here is the
+    // executionSteps log count, derived from the reused plan when a plan is supplied.
+    const executionSteps = suppliedPlan
+      ? plan.steps.length
+      : this.planner.create(id, name, intent).steps.length;
     this.implementation.prepare(id, intent);
     this.implementation.prepareExecution(id, name);
 
@@ -63,7 +80,7 @@ export class RuntimeExecutor {
     });
     this.memory.append(id, "TechnicalPlanCreated", {
       steps: technical.steps.length,
-      executionSteps: executionPlan.steps.length
+      executionSteps
     });
 
     // CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1 — self-scoping capability dispatch. For each mission
