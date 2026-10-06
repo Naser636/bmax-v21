@@ -370,6 +370,30 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 16. TRUTH REPAIR LOG — FIX_ECONOMIC_VERIFICATION_TRUTH_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_ECONOMIC_VERIFICATION_TRUTH_V1 (honesty repair; doc-in-code + test, zero runtime behavior change)
+- **Findings (from ODG_REPOSITORY_A_TO_Z_TRUTH_AUDIT_V1):** (1) `economic-verification.js:23-27` header claimed the
+  verdict is "EVIDENCE-ONLY … NOT wired into any live GATE" — stale/false: it gates release at
+  `mission-ledger.js:101-103` (`NOT_ECONOMICALLY_VERIFIED`) via `acceptance-facts.evaluateMissionEconomics`, and
+  commit/push via `mechanical-acceptance.js:327` — both OPT-IN on `control.economic===true`. (2)
+  `economic-enforcement-adversarial.test.js:98` assertion `economicEnforced("M") === false || true` is always
+  true (proves nothing; wrong cwd); the intent is already proven in-sandbox at the following lines.
+- **Repair:** (1) replaced ONLY the header comment to state the verifier is persisted as evidence AND wired into
+  live OPT-IN release + commit/push gates that BLOCK a non-VERIFIED economically-enforced mission, with a NO-OP
+  for missions that don't declare `control.economic`; it is the VERIFIER, the choke points are the AUTHORITY.
+  (2) removed ONLY the vacuous `|| true` assertion; the correct in-sandbox `check(e === false, …)` remains.
+- **Files touched:** `runtime/core/economic-verification.js` (comment only), `runtime/core/economic-enforcement-adversarial.test.js`
+  (one vacuous line removed), this matrix. No other file; no mission contract; no executable change.
+- **Tests:** `economic-enforcement-adversarial.test.js` PASS (intent still asserted, −1 vacuous assertion);
+  `runtime/core/*.test.js` 60/60; `tsc --noEmit` exit 0; `economic-verification.js` CLI descriptor unchanged.
+- **Runtime impact:** NONE (comment + test only). No verdict/gate/mission-outcome change.
+- **Architecture integrity:** no primitive/runtime/Resolver/Allocator/authority/Profile/Instance/registry/learning change.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 15. RUNTIME CHANGE LOG — CONNECT_SECOND_PRODUCER_EXTERNAL_RESEARCH_DRYRUN_V1
 
 - **Date (UTC):** 2026-10-06

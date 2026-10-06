@@ -20,11 +20,15 @@
  *   - economic-unit BASIS (OBSERVED|ESTIMATED) + provenance ("every economic fact has provenance").
  *
  * It is STANDALONE and additive, in the exact style of mechanical-acceptance.js / price-resolution.js: a pure
- * core + a read-only require.main CLI that only prints the contract descriptor. The ONLY consumer is
- * EVIDENCE-ONLY: AutonomyRuntimeAdapter.persistEconomicVerification writes this verdict to a gitignored
- * economic-verification-report.json alongside the live cost-metering report when a mission declares a budget.
- * It is NOT wired into any live GATE — the verdict never blocks or changes a release; enforcing it at a
- * release/verify choke point would be a SEPARATE governance decision. No mission OUTCOME changes behaviour.
+ * core + a read-only require.main CLI that only prints the contract descriptor. The verdict is both
+ * PERSISTED as evidence (AutonomyRuntimeAdapter.persistEconomicVerification writes it to a gitignored
+ * economic-verification-report.json alongside the live cost-metering report when a mission declares a budget)
+ * AND wired into live, OPT-IN GATES: for a mission that declares `control.economic === true`, the release
+ * gate (mission-ledger.recordMission → acceptance-facts.evaluateMissionEconomics) REFUSES to record when the
+ * verdict is not VERIFIED (NOT_ECONOMICALLY_VERIFIED), and the commit/push gate (mechanical-acceptance) blocks
+ * on the same verdict. For a mission that does NOT declare `control.economic`, the gate is a NO-OP and no
+ * mission OUTCOME changes behaviour (legacy byte-for-byte). This module is the VERIFIER; those choke points
+ * are the AUTHORITY — it evaluates facts and renders a verdict, it does not itself perform the release.
  *
  * IMPORTANT — it evaluates FACTS, never claims, and NEVER fabricates:
  *   - It consumes ALREADY-GATHERED, trusted facts (a live-cost-metering result + the raw OBSERVED

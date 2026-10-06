@@ -95,7 +95,6 @@ const OPTIN = { economic: true };
   const econ = econIn(d, "M");
   check(econ.enforced === false, "NOT opted in + forged report present ⇒ gate dormant (enforced:false), not forced active"); }
 { const d = sandbox({ required: true }); // controlled (mechanical) but NOT control.economic
-  check(economicEnforced("M") === false || true, "control.required alone does NOT enable economic enforcement");
   const prev = process.cwd(); process.chdir(d); const e = economicEnforced("M"); process.chdir(prev);
   check(e === false, "control.required (mechanical) is INDEPENDENT ⇒ economic gate stays off"); }
 
