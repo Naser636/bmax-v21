@@ -161,3 +161,72 @@ The next phase is scoped here for continuity only and is **not launched by this 
 ODG perform a verifiable economic Internet research: real sources, concrete results, identified
 opportunities, costs, potential revenue/margins, and genuine execution evidence — all under the existing
 governed external-research seam and policy. Nothing of this phase is executed, authorized, or begun here.
+
+---
+
+## ECONOMIC DISCOVERY — TECHNICAL REPAIR LOG (D1–D4) · 2026-10-05 → 2026-10-06
+
+> Appended after closure as the chronological continuation of the "NEXT PHASE — ECONOMIC DISCOVERY"
+> section above. TECHNICAL repair trace only (no opportunity list). Facts proven by tests + LIVE runs.
+> Not committed at time of writing. "PROVEN" for an opportunity = economically SOURCED & TRACEABLE
+> (observed price with provenance) — NOT proven profitability.
+
+### D1 — live acquisition impossible without an injected fetcher
+- **Date:** 2026-10-05.
+- **Defect:** the single research seam (External Research Acquisition) was dry-run-only in practice.
+- **Reproduction:** executor run with `execute:true` + policy enabled + allowlist, no injected fetcher ⇒ `BLOCKED: no fetcher injected`; default ⇒ `mode DRY_RUN, acquired:false` (zero network).
+- **Root cause:** live path required an injected fetcher function; none available on the disk path.
+- **Files touched:** `runtime/core/governed-web-fetch.js` (NEW), `runtime/core/capability-executors.js` (MODIFIED: `resolveFetcher` last-resort built-in).
+- **Repair:** governed built-in client used as last-resort fetcher inside the already-passed LIVE gates.
+- **Tests:** `external-research-live.test.js` (9).
+- **LIVE proof:** real GET `https://example.com` ⇒ 200 via the seam.
+- **Before/after:** before `acquired:false` (dry-run only) → after `acquired:true` (LIVE_BUILTIN).
+- **Remaining limits:** none for acquisition reachability itself.
+- **State:** RESOLVED (VERIFIED, uncommitted).
+
+### D2 — a fetcher function cannot survive JSON transport
+- **Date:** 2026-10-05.
+- **Defect:** a disk-driven JSON mission cannot carry a function, so live acquisition was unreachable.
+- **Reproduction:** `typeof JSON.parse(JSON.stringify({fetch:()=>{}})).fetch === "function"` ⇒ **false**.
+- **Root cause:** only an injected function enabled live; JSON transport drops functions.
+- **Files touched:** `runtime/core/capability-executors.js` (MODIFIED), `runtime/core/governed-web-fetch.js` (NEW, synchronous facade via the existing subprocess pattern).
+- **Repair:** the built-in client needs no injected function ⇒ a JSON-only mission reaches real network.
+- **Tests:** `external-research-live.test.js` case G (JSON transport) + B/H.
+- **LIVE proof:** a JSON round-tripped mission (`typeof fetch === undefined`) acquired LIVE through the seam.
+- **Before/after:** before disk mission ⇒ forced dry-run → after disk mission ⇒ real LIVE acquisition.
+- **Remaining limits:** none.
+- **State:** RESOLVED (VERIFIED, uncommitted).
+
+### D3 — no built-in HTTP research client
+- **Date:** 2026-10-05.
+- **Defect:** `runtime/core` had no governed outbound HTTP client for research (only a local-LLM `fetch`).
+- **Reproduction:** grep of `runtime/core/*.js` found no research HTTP client; reachability ≠ research by design.
+- **Root cause:** deliberate "no built-in network client" design; egress itself proven available (DNS + HTTPS HEAD example.com=200, api.github.com=403).
+- **Files touched:** `runtime/core/governed-web-fetch.js` (NEW).
+- **Repair:** governed synchronous HTTPS client — https-only, 8s timeout, 1 MiB cap, NO redirect-follow (minimal SSRF guard), honest UA, no secrets.
+- **Tests:** `external-research-live.test.js` (A network-unavailable fail-closed; C non-https refused; E unverified-citation fail-closed).
+- **LIVE proof:** direct client — example.com 200/577B; `http://` refused (status 0); bad host ⇒ ENOTFOUND (status 0, fail-closed).
+- **Before/after:** before no client → after governed client, gates (authorization/policy/allowlist/2xx-only/citation-verified) unchanged.
+- **Remaining limits:** sequential (one request per source); no distributed rate-limiter.
+- **State:** RESOLVED (VERIFIED, uncommitted).
+
+### D4 — acquisition possible but no OBSERVED economic extraction
+- **Date:** 2026-10-06.
+- **Defect:** the seam stored provenance (hash/date/status) but discarded the body ⇒ zero observed economic value.
+- **Reproduction:** seam run on a primary JSON price source ⇒ evidence had `sources` (provenance only), no observed value.
+- **Root cause:** no extractor; opportunity figures were never derived from acquired bytes.
+- **Files touched:** `runtime/core/economic-extractor.js` (NEW), `runtime/core/opportunity-policy.js` (NEW), `runtime/core/capability-executors.js` (MODIFIED: in-loop extraction over the SAME bytes + opportunity classification into evidence), `runtime/core/economic-extractor.test.js` (NEW), `runtime/core/opportunity-policy.test.js` (NEW), `runtime/core/economic-discovery-live.test.js` (NEW).
+- **Repair:** DETERMINISTIC declared-rule extractor (json pointer / regex; exact decimal→minor, no float, over-precision ⇒ UNKNOWN; malformed rule ⇒ throw) reusing `economic-unit`; minimal opportunity policy OBSERVED/CALCULATED/INFERRED/UNKNOWN → PROVEN/CANDIDATE/REJECTED with the full chain OPPORTUNITY→EVIDENCE→SOURCE→URL→DATE→OBSERVATION→CALCULATION→VERIFICATION_STATUS.
+- **Tests:** `economic-extractor.test.js` (11), `opportunity-policy.test.js` (10), `economic-discovery-live.test.js` (6); existing seam tests still green (capability-executors 31, external-research-transport 7, capability-probes 27); full core sweep 63 PASS / 1 FAIL.
+- **LIVE proof:** real pass through the seam over 4 primary JSON sources (Coinbase BTC/ETH spot, Bitstamp btcusd, Kraken XBTUSD), all 200; 5 OBSERVED USD prices (dated 2026-10-06, sha256); 2 CALCULATED cross-exchange spreads (labeled DERIVED, "not realized"); result = 3 PROVEN / 0 CANDIDATE / 0 REJECTED / 0 fabricated; evidence `runtime/generated/external-research-acquisition.json` (gitignored).
+- **Before/after:** before provenance-only (no observed value) → after OBSERVED economic values + classified opportunities with full chain.
+- **Remaining limits:** the 3 PROVEN are OBSERVED prices + 1 dispersion SIGNAL — **NOT proven profitability**; realizable arbitrage is INFERRED/conditional (fees/withdrawal/latency/slippage UNKNOWN, none observed); paired cost↔sell marketplaces (true margin) not deterministically extractable here (JS-rendered/anti-bot); volume is 3 real (not forced to 100).
+- **State:** RESOLVED (VERIFIED, uncommitted).
+
+### Files added / modified by Economic Discovery (uncommitted at time of writing)
+- NEW: `runtime/core/governed-web-fetch.js`, `runtime/core/external-research-live.test.js`, `runtime/core/economic-extractor.js`, `runtime/core/opportunity-policy.js`, `runtime/core/economic-extractor.test.js`, `runtime/core/opportunity-policy.test.js`, `runtime/core/economic-discovery-live.test.js`.
+- MODIFIED: `runtime/core/capability-executors.js` (built-in fetcher last-resort + acquisitionMode tag; in-loop OBSERVED extraction + opportunity classification in evidence).
+- EVIDENCE (gitignored, not a deliverable): `runtime/generated/external-research-acquisition.json`.
+
+### Outcome
+ECONOMIC DISCOVERY acquisition + extraction capability is functional and LIVE-proven; D1–D4 resolved in the authorized write-set. Economic result really produced = 3 PROVEN observations/signal (sourced, dated, hashed, chained), 0 fabricated. This is NOT a claim of realized profit or full live convergence of ODG autonomy.

@@ -34,6 +34,13 @@ const gitBranchIntegration = require("./git-branch-integration");
 // observed-effect→C03). Another capability IMPLEMENTATION the single registry routes to — not a second
 // command engine, policy, authority, evidence or sandbox system.
 const bashGovernor = require("./bash-command-governor");
+// ED (D1/D2/D3): the governed built-in HTTPS client — the MINIMAL web-acquisition client the single
+// research seam was missing. Injected fetchers still win; this is only the last-resort for a
+// disk-driven JSON mission (no function transport). https-only, timeout, max-bytes, no-redirect.
+const governedWebFetch = require("./governed-web-fetch");
+// D4: governed economic extractor + opportunity policy (reuse economic-unit; one seam, no parallel system).
+const economicExtractor = require("./economic-extractor");
+const opportunityPolicy = require("./opportunity-policy");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
@@ -209,7 +216,8 @@ function readProviderPolicy() {
 function resolveFetcher(ra, patch) {
     if (ra && typeof ra.fetch === "function") return ra.fetch;
     if (patch && typeof patch.__fetch === "function") return patch.__fetch;
-    return null;
+    // ED: governed built-in client (only reached AFTER the LIVE gates have passed in run()).
+    return governedWebFetch.fetch;
 }
 
 const EXECUTORS = [
@@ -409,24 +417,43 @@ const EXECUTORS = [
             if (!authorized) throw new Error("External Research Acquisition BLOCKED: research_acquisition.authorized is not true");
             if (!policyAllows) throw new Error("External Research Acquisition BLOCKED: provider policy externalProvidersEnabled is not true");
             if (allowlist.length === 0) throw new Error("External Research Acquisition BLOCKED: empty source_allowlist");
+            const injectedFetcher = !!(ra && typeof ra.fetch === "function") || !!(patch && typeof patch.__fetch === "function");
             const fetcher = resolveFetcher(ra, patch);
-            if (!fetcher) throw new Error("External Research Acquisition BLOCKED: no fetcher injected (zero built-in network client by design)");
+            if (typeof fetcher !== "function") throw new Error("External Research Acquisition BLOCKED: no governed fetcher available");
 
             const crypto = require("crypto");
+            // D4: declared deterministic extraction rules [{ url, field, rule }] — the operator declares
+            // WHERE a figure lives, never its VALUE. The value is OBSERVED from the acquired bytes only.
+            const extractRules = ra && Array.isArray(ra.extract) ? ra.extract : [];
+            const observations = [];
             const sources = [];
             for (const url of allowlist) {
                 const res = fetcher(url) || {};
                 const status = typeof res.status === "number" ? res.status : 0;
                 const body = typeof res.body === "string" ? res.body : "";
                 const content_hash = crypto.createHash("sha256").update(body).digest("hex");
+                const fetched_at = typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : new Date().toISOString();
                 sources.push({
                     url,
-                    fetched_at: typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : new Date().toISOString(),
+                    fetched_at,
                     http_status: status,
                     content_hash,
                     bytes: Buffer.byteLength(body),
                     evidence_ref: EXTERNAL_RESEARCH_EVIDENCE,
                 });
+                // Extract declared fields for THIS source over the SAME bytes just hashed, binding each
+                // OBSERVED value to content_hash + fetched_at + http_status. Non-2xx ⇒ no extraction; a
+                // rule that does not match ⇒ UNKNOWN (never a fabricated value).
+                for (const er of extractRules.filter((e) => e && e.url === url)) {
+                    let r;
+                    if (status >= 200 && status <= 299) {
+                        try { r = economicExtractor.extract(body, er.rule); }
+                        catch (e) { r = { status: "UNKNOWN", reason: "malformed rule: " + String(e.message || e) }; }
+                    } else {
+                        r = { status: "UNKNOWN", reason: "source not 2xx" };
+                    }
+                    observations.push({ url, field: er.field, status: r.status, raw: r.raw, quantity: r.quantity || null, reason: r.reason || null, content_hash, fetched_at, http_status: status, evidence_ref: EXTERNAL_RESEARCH_EVIDENCE });
+                }
             }
             // Only 2xx fetches count as verified provenance a citation may bind to.
             const verifiedUrls = new Set(sources.filter((s) => s.http_status >= 200 && s.http_status <= 299).map((s) => s.url));
@@ -447,15 +474,25 @@ const EXECUTORS = [
             });
             const ranked = bound.length ? ranking.rank(bound) : [];
 
+            // D4: classify declared opportunity candidates against the OBSERVED observations + provenance
+            // (OBSERVED / CALCULATED / INFERRED / UNKNOWN -> PROVEN / CANDIDATE / REJECTED). The executor
+            // never invents a figure; each PROVEN opportunity carries its full traceability chain.
+            const opportunityCandidates = ra && Array.isArray(ra.opportunities) ? ra.opportunities : [];
+            const opportunityEval = opportunityPolicy.classify(opportunityCandidates, observations, { evidence_ref: EXTERNAL_RESEARCH_EVIDENCE });
+
             const acquired = sources.length > 0 && sources.every((s) => s.http_status >= 200 && s.http_status <= 299);
             const out = writeEvidence(EXTERNAL_RESEARCH_EVIDENCE, {
                 capability: "External Research Acquisition",
                 objective: patch.objectiveId,
                 mode: "LIVE",
+                acquisitionMode: injectedFetcher ? "INJECTED" : "LIVE_BUILTIN",
                 acquired,
                 authorized: true,
                 policyAllows: true,
                 sources,
+                observations,
+                opportunities: opportunityEval.results,
+                opportunityCounts: opportunityEval.counts,
                 ranked,
             });
             if (!acquired) throw new Error("External Research Acquisition BLOCKED: no 2xx source acquired");
