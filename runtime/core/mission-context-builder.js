@@ -25,6 +25,8 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
+const assembler = require("./expert-profile-assembler"); // durable profile → §303 Expert Instance (read-only)
+
 const VERSION = "1.0.0";
 const SOURCE = "MissionContextBuilder";
 
@@ -105,6 +107,30 @@ function buildMissionContext(mission, opts = {}) {
         typeof project.directories === "number"
     );
 
+    // §304→§303: a declarative, mission-scoped Expert Instance attached to the one official
+    // MissionContext. READ-ONLY metadata — nothing in the runtime currently reads MissionContext,
+    // so this field is inert (it introduces no enforcement and changes no Resolver/Allocator/
+    // Executor/Verification semantics). Profile selection reuses the EXISTING mission signal:
+    // an explicitly declared plan.expertProfile ("ECONOMIC"/"ENGINEERING") if present, else
+    // requiresEngineering ⇒ ENGINEERING (the default software-executor profile). No authority is
+    // invented: the runtime carries no authority verb-array, so authority is the empty set and
+    // authority_scope stays [] (§307 — authority is never self-granted from the profile).
+    let expertInstance = null;
+    try {
+        const declared = typeof plan.expertProfile === "string" ? plan.expertProfile.toUpperCase() : null;
+        const profileId = declared === "ECONOMIC" ? "economic" : "engineering";
+        const profile = assembler.loadProfile(`runtime/profiles/${profileId}.json`);
+        const objectives = Array.isArray(plan.objectives) ? plan.objectives : [];
+        expertInstance = assembler.compileInstance(profile, {
+            mission_id: mission,
+            objective_id: plan.nextObjective || (objectives[0] && objectives[0].id) || null,
+            authority: [],
+            expected_output: Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : [],
+        });
+    } catch (e) {
+        expertInstance = null;
+    }
+
     const context = {
         version: VERSION,
         source: SOURCE,
@@ -119,6 +145,7 @@ function buildMissionContext(mission, opts = {}) {
         nextObjective: plan.nextObjective || null,
         definitionOfDone: Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : [],
         completion: Array.isArray(plan.completion) ? plan.completion : [],
+        expertInstance,
         contract: {
             path: plan.source || null,
             status: plan.status || null,
