@@ -93,5 +93,23 @@ check(spec.mode === "AUDIT", "M0000 is an AUDIT mission (mode=AUDIT)");
   }
 }
 
+// D — producer/execution FAILURE fails the mission CLOSED and writes NOTHING. The RuntimeExecutor
+//     dispatch runs a matched producer with no try/catch (runtime-executor.ts:108), so a producer that
+//     THROWS propagates out of kernel.execute; LocalMissionRunner.run catches it and returns
+//     { ok:false, error } BEFORE recordLedger is ever reached. This locks the documented invariant
+//     (runtime-executor.ts:91-92: "a capability that throws … LocalMissionRunner records nothing — no
+//     ledger write") and the "no producer" (case B: recorder called, validated=false) vs "producer
+//     failed" (here: recorder NEVER called) distinction. Injected throwing kernel mirrors case B's
+//     injected-kernel idiom (returns FAILED there, throws here).
+{
+  const calls: Array<{ m: string; v: boolean; s: string }> = [];
+  const spy = (m: string, v: boolean, s: string) => { calls.push({ m, v, s }); };
+  const throwingKernel = { execute: () => { throw new Error("producer failed"); } } as unknown as RuntimeKernel;
+  const out = new LocalMissionRunner(undefined, throwingKernel, spy).run("M0000");
+  check(out.ok === false, "throwing execution ⇒ ok:false (mission fails closed)");
+  check(out.error === "producer failed", "the producer failure message is propagated into the result");
+  check(calls.length === 0, "ledger recorder NEVER called on a throw (records nothing — no ledger write)");
+}
+
 console.log(failures === 0 ? "ALL PASS — MIGRATED AUDIT LEDGER ROUTE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

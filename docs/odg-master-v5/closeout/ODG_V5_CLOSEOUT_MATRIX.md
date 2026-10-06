@@ -370,6 +370,48 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 22. TEST-COVERAGE CLOSURE — DISCOVER_RUNTIME_EXECUTOR_DISPATCH_COVERAGE_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** DISCOVER_RUNTIME_EXECUTOR_DISPATCH_COVERAGE_V1 (read-only governed coverage analysis that
+  reproduced ONE genuine gap and landed a minimal test-only closure). Applied `GOVERNED_TEST_PROOF_ANALYSIS`.
+- **Gap reproduced:** the LOCAL dispatch invariant documented at `src/runtime/runtime-executor.ts:91-92`
+  ("a capability that throws propagates and fails the mission closed — LocalMissionRunner records nothing, no
+  ledger write") was **asserted by no test on the live path**. Existing coverage proved "no producer"
+  (unmatched objective ⇒ no dispatch ⇒ probe-absent FAILED, recorder still called with validated=false:
+  clean-workspace/external-research case 2 + ledger case B) and "producer succeeds" (case 1), but **not**
+  "producer FAILED (threw)". The executor dispatch (`runtime-executor.ts:108`) has no try/catch, so a producer
+  throw propagates out of `kernel.execute`; `LocalMissionRunner.run` catches it and returns `{ok:false,error}`
+  BEFORE `recordLedger` is reached — a path with zero existing assertions.
+- **Coverage classification:** "no producer" = **end-to-end covered**; "producer succeeds" = **end-to-end
+  covered**; unit producer-throw (`capability-executors.test.js:112-119`) = **direct (producer in isolation)**;
+  "producer failed ⇒ ok:false ⇒ no ledger write" on the LocalMissionRunner path = **genuinely uncovered**
+  (the reproduced gap). The audit premise was NOT stale and the existing coverage was NOT vacuous.
+- **Minimal closure (test-only):** added one case (D, 3 assertions) to the EXISTING
+  `src/runtime/local-mission-runner-ledger.test.ts`, reusing its injected-kernel + spy-recorder idiom (case B
+  injects a kernel that RETURNS FAILED; case D injects one that THROWS). Asserts: throwing execution ⇒
+  `ok:false`; the failure message is propagated; the ledger recorder is **NEVER** called (records nothing).
+  Layer note: RuntimeExecutor's propagation is structural (no try/catch at the dispatch); this case locks the
+  runner's fail-closed + no-ledger-write contract. No runtime/production file changed; no new test file.
+- **Tests:** `local-mission-runner-ledger.test.ts` all PASS incl. the 3 new assertions; regression green —
+  `local-mission-runner.expert` 6/6, `runtime-executor.clean-workspace` 5/5, `runtime-executor.external-research`
+  5/5, `runtime-executor.plan-reuse` 3/3, `mission-cli-local-exit` PASS, `capability-executors.test.js` 31/31;
+  `tsc --noEmit` exit 0.
+- **Files touched:** `src/runtime/local-mission-runner-ledger.test.ts` (+18, test-only), this matrix (record).
+  No runtime, contract, vnext, Resolver/Allocator/authority/Profile/Instance/registry/learning change.
+- **Capability development (GOVERNED_TEST_PROOF_ANALYSIS) — PROMOTION EVIDENCE:** this is the **third
+  independent application** and the **second** that both (1) reproduced a genuine coverage gap and (2) landed a
+  verified minimal test-only closure (the first was FIX_VALIDATION_ENGINE_FAILED_ACTION_TEST_V1; the
+  disprove-as-benign branch is separately evidenced by DISCOVER_MISSION_CLI_DISCARDED_PLAN_V1 /
+  DISCOVER_ECONOMIC_ENFORCEMENT_RUNTIME_ACTIVATION_V1 / DISCOVER_LOCAL_RESOLVER_ALLOCATOR_ACTIVATION_V1).
+  Mirroring the sibling skill's two-independent-instances convention, the **evidence now satisfies
+  CANDIDATE → TESTED**. The Skill-document flip to TESTED is a **separate authorized documentation action**
+  (not performed here); this entry records that the promotion evidence is earned.
+- **Status:** VERIFIED, not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 21. DOCUMENTATION CLOSEOUT — DISCOVER_LOCAL_RESOLVER_ALLOCATOR_ACTIVATION_V1 (NO ACTION)
 
 - **Date (UTC):** 2026-10-06
