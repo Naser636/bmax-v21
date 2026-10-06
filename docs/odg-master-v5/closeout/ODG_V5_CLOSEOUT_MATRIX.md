@@ -370,6 +370,44 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 25. RUNTIME REPAIR LOG — FIX_VALIDATION_ENGINE_PROBE_FRESHNESS_V1
+
+- **Date (UTC):** 2026-10-06
+- **Genuine demonstrated defect:** `validation-engine.js` evaluated the freshness-bearing capability probes
+  (`clean-workspace-scanned`, `external-research-dry-run-planned`) with ctx `{ missionId, verify }` — **no
+  `runStartedAtMs`**. The run-ownership branch (`capability-probes.js:101-109,140-148`) only fires when that
+  field is a finite number, so on the canonical mse engineering route the freshness protection
+  (ADD_PROBE_RUN_OWNERSHIP_V1) was INERT. `runtime/generated/` is never cleared, so a valid prior-run
+  artifact persisted and satisfied the proof. Two REAL non-migrated ENGINEERING missions depend on these
+  probes (`CLEAN_RUNTIME_WORKSPACE`, `EXTERNAL_RESEARCH_DRYRUN_PROBE`); the LOCAL route already wired
+  `runStartedAtMs` (`runtime-executor.ts:96,131`), the mse route did not (asymmetry).
+- **Exact causal reproduction (read-only, pre-repair):** drove the real `node runtime/core/validation-engine.js`
+  in an isolated temp cwd with a structurally-valid `clean-workspace-scan.json` stamped mtime 1 h in the past
+  ⇒ `status=SUCCESS, validated=true, capabilitiesOk=true`, probe falsely reporting "scanned this run".
+  Causal isolation on the same artifact: `probes.evaluate` WITHOUT `runStartedAtMs` ⇒ ok=true (accepted);
+  WITH `runStartedAtMs=now` ⇒ ok=false "stale … not produced this run". The missing wiring was the sole cause.
+- **Minimal repair (`runtime/core/validation-engine.js`):** derive `runStartedAtMs` from the EXISTING
+  mission-matched `pipeline-checkpoint.startedAt` (no new timestamp source; same mission-match guard as
+  `mission-ledger.js:126-129`) and thread it into both `probes.evaluate(...)` and
+  `probes.evaluateObjectiveProofs(...)`. Untrusted/mismatched checkpoint ⇒ `undefined` ⇒ probes keep
+  content-only behaviour (backward-compatible). `capability-probes.js` and all other gates UNCHANGED.
+- **Real choke-point integration test (`src/runtime/validation-engine-probe-freshness.test.ts`):** drives the
+  REAL `validation-engine.js` (not `runProbe`) in a throwaway git repo with every non-probe gate satisfied so
+  the probe is the SOLE decider. STALE scan (mtime < checkpoint.startedAt) ⇒ BLOCKED/validated=false/exit 1,
+  capabilitiesOk=false; FRESH scan (mtime > startedAt) ⇒ SUCCESS/validated=true/exit 0. 5/5 PASS.
+- **Verification evidence:** focused 5/5 PASS; regression green — `capability-probes` 47 assertions,
+  `objective-evidence.ownership` 11 assertions, `validation-engine-recorded-noop`, `objective-proof-gate`,
+  `provider-verify-propagation`, `mission-ledger-{proven-gate,controlled,economic,idempotent}`,
+  `local-mission-runner-ledger` all ALL PASS; full `npm test` **exit 0** (326 files, 53 ALL PASS);
+  `npx tsc --noEmit` exit 0.
+- **Exact files changed:** `runtime/core/validation-engine.js` (+~11, probe ctx wiring only),
+  `src/runtime/validation-engine-probe-freshness.test.ts` (new integration test), this matrix (record).
+- **No unrelated changes:** no `capability-probes.js`, no other gate, no contract/vnext/authority/registry
+  change; the runtime diff is exactly the two probe-ctx call sites + the checkpoint-derived run start.
+- **Status:** VERIFIED. (No Skill promoted.)
+
+---
+
 ## 24. TEST-COVERAGE CLOSURE — DISCOVER_LEDGER_REPLAY_IDEMPOTENCE_V1
 
 - **Date (UTC):** 2026-10-06

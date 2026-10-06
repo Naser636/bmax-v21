@@ -127,8 +127,20 @@ if (gatesEvaluated && (!buildOk || !typescriptOk)) {
 // artifact. Missions with no `verify` block declare no proofs, so they get NO extra gate.
 const probes = require("./capability-probes");
 const missionId = plan.mission || patch.mission;
+// RUN-OWNERSHIP wiring (ADD_PROBE_RUN_OWNERSHIP_V1 parity with the LOCAL route runtime-executor.ts:96):
+// supply the current run's start time so freshness-bearing probes (clean-workspace-scanned,
+// external-research-dry-run-planned) REJECT a stale prior-run artifact — runtime/generated is never
+// cleared, so a leftover otherwise satisfied them here. The run start is the EXISTING per-run token
+// pipeline-checkpoint.startedAt (no new timestamp source), trusted ONLY when the checkpoint belongs to
+// THIS mission (same mission-match guard as mission-ledger.js:126-129); otherwise undefined and the
+// probes keep their content-only behaviour (backward-compatible).
+const checkpoint = readJsonSafe("runtime/generated/pipeline-checkpoint.json");
+const runStartedAtMs =
+    checkpoint && checkpoint.mission === missionId && typeof checkpoint.startedAt === "string"
+        ? Date.parse(checkpoint.startedAt)
+        : undefined;
 const verifyChecks = Array.isArray(plan.verify) ? plan.verify : [];
-const capabilityEval = probes.evaluate(verifyChecks, { missionId, verify });
+const capabilityEval = probes.evaluate(verifyChecks, { missionId, verify, runStartedAtMs });
 const capabilityResults = capabilityEval.results;
 const capabilitiesOk = capabilityEval.ok;
 const missingRequiredProofs = capabilityEval.missingRequired;
@@ -139,7 +151,7 @@ const missingRequiredProofs = capabilityEval.missingRequired;
 // blocks SUCCESS — the provider's self-reported objectivesAddressed / APPLIED / a changed file can
 // never substitute for it, and done_when is never interpreted. Reuses the same probe registry/runner.
 const planObjectives = Array.isArray(plan.objectives) ? plan.objectives : [];
-const objectiveProofEval = probes.evaluateObjectiveProofs(planObjectives, { missionId, verify });
+const objectiveProofEval = probes.evaluateObjectiveProofs(planObjectives, { missionId, verify, runStartedAtMs });
 const objectiveProofsOk = objectiveProofEval.ok;
 const failingObjectiveProofs = objectiveProofEval.failing;
 
