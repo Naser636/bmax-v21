@@ -1,0 +1,17 @@
+{
+  "mission": "EXTERNAL_RESEARCH_DRYRUN_PROBE",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "authorized_paths": ["runtime/**"],
+  "authorizedPaths": ["runtime/**"],
+  "objectives": [
+    {
+      "id": "EXTERNAL_RESEARCH_1",
+      "goal": "Produce a governed External Research dry-run plan (no network); prove the capability is connected to the LOCAL route.",
+      "done_when": ["A deterministic DRY_RUN plan artifact is produced this run."]
+    }
+  ],
+  "verify": [
+    { "capability": "External Research Acquisition", "evidence": "external-research-dry-run-planned" }
+  ]
+}

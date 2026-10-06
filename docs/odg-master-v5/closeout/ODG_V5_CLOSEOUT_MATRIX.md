@@ -370,6 +370,40 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 15. RUNTIME CHANGE LOG — CONNECT_SECOND_PRODUCER_EXTERNAL_RESEARCH_DRYRUN_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** CONNECT_SECOND_PRODUCER_EXTERNAL_RESEARCH_DRYRUN_V1 (second independent producer connection;
+  validates the CANDIDATE Skill `GOVERNED_CAPABILITY_CONNECTION`)
+- **Purpose:** connect a SECOND, genuinely independent read-only producer — External Research Acquisition in
+  its DRY-RUN default — to the LOCAL route, closing producer→evidence→probe→verdict, to exercise the Skill on
+  a producer the dispatch was not tailored to.
+- **Files touched:** `runtime/core/capability-probes.js` (new probe `external-research-dry-run-planned`),
+  `runtime/missions/EXTERNAL_RESEARCH_DRYRUN_PROBE.json` (new minimal contract, objective `EXTERNAL_RESEARCH_1`),
+  `runtime/core/capability-probes.test.js` (probe cases), `src/runtime/runtime-executor.external-research.test.ts`
+  (new e2e), this matrix. **`runtime-executor.ts` NOT modified** — the generic self-scoping dispatch (130f7f4)
+  already resolves `EXTERNAL_RESEARCH_*`. No new primitive/runtime/Resolver/Allocator/authority/Profile/
+  Instance/registry/learning mechanism; no producer behavior change.
+- **Probe:** `external-research-dry-run-planned` reads `runtime/generated/external-research-acquisition.json`;
+  ok iff `mode==="DRY_RUN"`, `acquired===false`, `sources` empty array, `ranked` array, `objective` string; plus
+  run-ownership `mtimeMs >= runStartedAtMs` when the stamp is supplied (reused). It proves DRY-RUN PLANNING
+  ONLY — **not** actual acquisition. `research-acquired` (LIVE acquisition gate) is unchanged and still FAILS a
+  dry-run (test-asserted).
+- **Dispatch:** with the minimal patch `{objectiveId,goal}` the producer's hard DRY-RUN default fires (zero
+  network, deterministic artifact) before evidence assessment; non-matching objective ⇒ no dispatch.
+- **Tests:** new e2e 5/5 (dispatch+artifact, mission SUCCESS, non-match no-dispatch, required-probe-absent FAIL,
+  stale ⇒ FAIL); `capability-probes.test.js` 47 (positive/LIVE/acquired/non-empty-sources/malformed/absent/
+  fresh/stale + research-acquired unaffected); `objective-evidence`/`.probe`/`.ownership`/`.expert` +
+  `runtime-executor.clean-workspace` green; `tsc --noEmit` 0; `runtime/core/*.test.js` 60/60.
+- **Before/after:** BEFORE — only CLEAN_WORKSPACE_1 proved the connection pattern. AFTER — a second,
+  independent read-only producer is connected end-to-end with enforced run-ownership.
+- **Skill promotion:** this satisfies the §7 CANDIDATE→TESTED condition of
+  `docs/SKILL_GOVERNED_CAPABILITY_CONNECTION_v1.md` **by evidence**. Updating that doc's lifecycle to TESTED is a
+  SEPARATE, human-authorized work item (the Skill file is not in this write-set). Honesty rule: VERIFIED, not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 14. RUNTIME REPAIR LOG — ADD_PROBE_RUN_OWNERSHIP_V1
 
 - **Date (UTC):** 2026-10-06

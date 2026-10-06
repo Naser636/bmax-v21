@@ -110,6 +110,45 @@ const PROBES = {
         return { ok: true, detail: `clean workspace scanned this run: ${scan.candidateCount} transient candidate(s), 0 deleted` };
     },
 
+    "external-research-dry-run-planned"(ctx) {
+        // Verified READ-ONLY proof that the External Research Acquisition capability produced a governed
+        // DRY-RUN PLAN this run (CONNECT_SECOND_PRODUCER_EXTERNAL_RESEARCH_DRYRUN_V1). It proves DRY-RUN
+        // execution/planning ONLY — it is NOT proof of actual external research acquisition. Real
+        // acquisition is gated solely by `research-acquired` (unchanged), which correctly FAILS a dry-run.
+        // The dry-run performs ZERO network I/O and writes a deterministic artifact (no timestamps/random).
+        const ev = readJsonSafe(EXTERNAL_RESEARCH_EVIDENCE);
+        if (!ev) {
+            return { ok: false, detail: `no external research evidence at ${EXTERNAL_RESEARCH_EVIDENCE} — run the External Research Acquisition capability first` };
+        }
+        if (ev.mode !== "DRY_RUN") {
+            return { ok: false, detail: `evidence is not a DRY_RUN plan (mode=${ev.mode}); this probe proves planning only, never acquisition` };
+        }
+        if (ev.acquired !== false) {
+            return { ok: false, detail: `dry-run plan must not claim acquisition (acquired=${ev.acquired})` };
+        }
+        if (!Array.isArray(ev.sources) || ev.sources.length !== 0) {
+            return { ok: false, detail: "dry-run plan must carry zero fetched sources" };
+        }
+        if (!Array.isArray(ev.ranked)) {
+            return { ok: false, detail: "dry-run plan missing ranked array" };
+        }
+        if (typeof ev.objective !== "string" || !ev.objective) {
+            return { ok: false, detail: "dry-run plan missing objective id" };
+        }
+        // RUN-OWNERSHIP (reuses runStartedAtMs): when the run start is known, the artifact must have been
+        // produced AT OR AFTER the run started — a stale leftover from a prior run is REJECTED.
+        const runStartedAtMs = ctx && typeof ctx.runStartedAtMs === "number" && Number.isFinite(ctx.runStartedAtMs)
+            ? ctx.runStartedAtMs : null;
+        if (runStartedAtMs !== null) {
+            let mtimeMs;
+            try { mtimeMs = fs.statSync(EXTERNAL_RESEARCH_EVIDENCE).mtimeMs; } catch { return { ok: false, detail: "external research evidence stat failed" }; }
+            if (mtimeMs < runStartedAtMs) {
+                return { ok: false, detail: `stale external research plan (mtime ${Math.round(mtimeMs)} < run start ${runStartedAtMs}); not produced this run` };
+            }
+        }
+        return { ok: true, detail: `external research DRY-RUN plan produced this run (objective ${ev.objective}; no network, 0 sources)` };
+    },
+
     "internet-reachable"() {
         // Reuse the Connectivity Audit connector's evidence (Provider/Connector architecture) rather
         // than performing network I/O here — the executor already reached the network and recorded an

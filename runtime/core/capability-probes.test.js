@@ -223,4 +223,36 @@ inTempCwd((mod) => {
     ok("typescript-green: ignores runStartedAtMs", mod.runProbe("typescript-green", { runStartedAtMs: 9e15, verify: { typescript: false } }).ok === false);
 });
 
+// external-research-dry-run-planned — proves DRY-RUN PLANNING only (never acquisition); run-owned.
+inTempCwd((mod) => {
+    const p = "runtime/generated/external-research-acquisition.json";
+    const dryRun = (over) => JSON.stringify(Object.assign({ capability: "External Research Acquisition", objective: "EXTERNAL_RESEARCH_1", mode: "DRY_RUN", acquired: false, sources: [], ranked: [] }, over || {}));
+    let r = mod.runProbe("external-research-dry-run-planned", {});
+    ok("ext-research-dry-run: no evidence → MISSING (not ok)", r.ok === false && /no external research evidence/.test(r.detail));
+    fs.writeFileSync(p, dryRun());
+    ok("ext-research-dry-run: valid DRY_RUN plan → proven", mod.runProbe("external-research-dry-run-planned", {}).ok === true);
+    fs.writeFileSync(p, dryRun({ mode: "LIVE" }));
+    ok("ext-research-dry-run: LIVE mode → not ok (planning only)", mod.runProbe("external-research-dry-run-planned", {}).ok === false);
+    fs.writeFileSync(p, dryRun({ acquired: true }));
+    ok("ext-research-dry-run: acquired=true → not ok", mod.runProbe("external-research-dry-run-planned", {}).ok === false);
+    fs.writeFileSync(p, dryRun({ sources: ["https://x.test"] }));
+    ok("ext-research-dry-run: non-empty sources → not ok", mod.runProbe("external-research-dry-run-planned", {}).ok === false);
+    fs.writeFileSync(p, "{not json");
+    ok("ext-research-dry-run: malformed → not ok", mod.runProbe("external-research-dry-run-planned", {}).ok === false);
+});
+
+// external-research-dry-run-planned RUN-OWNERSHIP + research-acquired LIVE semantics UNAFFECTED.
+inTempCwd((mod) => {
+    const p = "runtime/generated/external-research-acquisition.json";
+    const valid = JSON.stringify({ capability: "External Research Acquisition", objective: "EXTERNAL_RESEARCH_1", mode: "DRY_RUN", acquired: false, sources: [], ranked: [] });
+    const RUN = 1000000000000;
+    fs.writeFileSync(p, valid); fs.utimesSync(p, (RUN + 5000) / 1000, (RUN + 5000) / 1000);
+    ok("ext-research-dry-run: FRESH (mtime >= runStart) → proven", mod.runProbe("external-research-dry-run-planned", { runStartedAtMs: RUN }).ok === true);
+    fs.writeFileSync(p, valid); fs.utimesSync(p, (RUN - 5000) / 1000, (RUN - 5000) / 1000);
+    ok("ext-research-dry-run: STALE (mtime < runStart) → not ok (run-ownership)", mod.runProbe("external-research-dry-run-planned", { runStartedAtMs: RUN }).ok === false);
+    // The canonical LIVE acquisition probe must still FAIL a dry-run artifact — semantics unchanged.
+    fs.writeFileSync(p, valid);
+    ok("research-acquired: dry-run artifact still NOT ok (LIVE semantics unchanged)", mod.runProbe("research-acquired", {}).ok === false);
+});
+
 console.log(`\nCapability Probe Framework: ${passed} assertions passed.`);
