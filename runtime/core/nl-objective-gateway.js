@@ -42,6 +42,7 @@ const synth = require("./mission-synthesizer");       // NL → Mission-Loader c
 const router = require("./capability-router");         // objective → capability tier plan (existing)
 const gate = require("./action-gate");                 // deterministic POLICY/AUTHORITY/RISK admission (existing)
 const kernel = require("./governance-kernel");         // state-machine authorization (existing)
+const assembler = require("./expert-profile-assembler"); // durable profile → mission-scoped §303 Expert Instance (existing, read-only)
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const PROVIDER_POLICY_PATH = path.join(ROOT, "runtime", "config", "provider-policy.json");
@@ -167,6 +168,8 @@ function buildWorkgraph(objectives) {
  *   allowedPolicies    string[]— policy keys the governance context permits (passed to action-gate).
  *   revokedAuthorities string[]— authority keys revoked in context (passed to action-gate).
  *   authority          string|object — authority basis to attach to consequential planned actions.
+ *   missionAuthority   string[] — authority keys the mission already carries; bounds the Expert Instance
+ *                      authority_scope (intersection only — never increases authority). Default [].
  *   externalProvidersEnabled boolean — override the provider-policy flag (else read from disk).
  */
 function compile(rawObjective, opts) {
@@ -298,6 +301,26 @@ function compile(rawObjective, opts) {
     const anyEscalate = decisions.includes("ESCALATE");
     const admissionAggregate = anyDeny ? "DENY" : anyEscalate ? "ESCALATE" : "ALLOW";
 
+    // Stage I.b — Expert binding (read-only §304→§303→§307). Compile a mission-scoped Expert Instance
+    // from the durable profile the objective family indicates (FINANCIAL ⇒ ECONOMIC, else ENGINEERING;
+    // reusing the existing classifier, no new one). Pure: reads profile JSON, executes nothing, and
+    // grants NO authority — authority_scope is the intersection with the mission authority passed in
+    // (opts.missionAuthority, default []); it is never self-granted from the profile (§307).
+    let expert;
+    try {
+        const anyFinancial = perObjective.some((p) => p.classification.externalEffect === "FINANCIAL");
+        const profileFile = anyFinancial ? "runtime/profiles/economic.json" : "runtime/profiles/engineering.json";
+        const profile = assembler.loadProfile(profileFile);
+        expert = assembler.compileInstance(profile, {
+            mission_id: contract.mission,
+            objective_id: (contract.objectives[0] && contract.objectives[0].id) || null,
+            authority: Array.isArray(opts.missionAuthority) ? opts.missionAuthority : [],
+            expected_output: requirements,
+        });
+    } catch (e) {
+        expert = { error: String((e && e.message) || e) };
+    }
+
     // Stage J — Result. A dry-run NEVER reports EXECUTED/VERIFIED/CERTIFIED.
     let status;
     let recovery = "NONE";
@@ -320,6 +343,7 @@ function compile(rawObjective, opts) {
         authority,
         policy: { strategy, externalProvidersEnabled, allowedPolicies: opts.allowedPolicies || null },
         objectives: perObjective,
+        expert,
         admission: admissionAggregate,
         verification: "NOT_EXECUTED (dry-run)",
         evidence: "NONE (dry-run)",
