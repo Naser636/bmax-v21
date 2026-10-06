@@ -370,6 +370,32 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 17. TEST-HONESTY REPAIR LOG — FIX_COVERAGE_TEST_HONESTY_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_COVERAGE_TEST_HONESTY_V1 (test-only honesty repair; zero production-code change)
+- **Finding (from ODG_REPOSITORY_A_TO_Z_TRUTH_AUDIT_V1):** `objective-evidence.test.ts` case 8 asserted the
+  `objective-coverage-incomplete` branch by INJECTING fewer `planObjectiveSteps` than `objectiveSpecs` — a state
+  the real `RuntimeExecutor` cannot produce. The orchestrator builds exactly one `OBJECTIVE_n` step per spec
+  (`mission-orchestrator.ts:51`) and the executor filters those same steps (`runtime-executor.ts:117`), so
+  end-to-end `objectivesExecuted === objectivesTotal` always; the injected unequal input was impossible-in-prod.
+- **Evidence verdict:** the production `coverage-incomplete` branch (`objective-evidence.ts:180` + mirror
+  `runtime-reporter.ts:55`) is defensive logic guarding a real invariant — tautological under current
+  construction but NOT obsolete. The defect was the dishonest TEST, not the production logic.
+- **Repair:** replaced case 8 with an HONEST invariant test driven by the real `LocalMissionRunner` (a
+  two-objective mission) asserting `objectivesExecuted === objectivesTotal` from `execution.report.result`.
+  The reachable `coverage-absent` negative case (case 7) is preserved. The defensive production branch is
+  intentionally RETAINED in both `objective-evidence.ts` and `runtime-reporter.ts` (NOT removed).
+- **Files touched:** `src/runtime/objective-evidence.test.ts` (case 8 only), this matrix. No production code,
+  no mission contract, no Resolver/Allocator/authority/Profile/Instance/registry/learning change.
+- **Tests:** `objective-evidence.test.ts` ALL PASS (incl. the new invariant case); `runtime/core/*.test.js`
+  60/60; `tsc --noEmit` exit 0. No environment failure; no product defect.
+- **Runtime impact:** NONE (test-only).
+- **Related (EXCLUDED):** the double-recompute defect (`runtime-executor.ts:46`) is a separate work item.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 16. TRUTH REPAIR LOG — FIX_ECONOMIC_VERIFICATION_TRUTH_V1
 
 - **Date (UTC):** 2026-10-06

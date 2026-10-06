@@ -143,16 +143,34 @@ console.log("ROOT CAUSE #1 — PROVEN REQUIRES GENUINE OBJECTIVE EVIDENCE");
     "no declared objectives ⇒ FAIL (coverage absent)");
 }
 
-// 8 — coverage incomplete (orchestrator built fewer steps than declared objectives) ⇒ FAIL.
+// 8 — HONEST coverage invariant via the REAL LocalMissionRunner. The orchestrator builds exactly one
+//     OBJECTIVE_ step per declared objective (mission-orchestrator.ts), so end-to-end
+//     objectivesExecuted === objectivesTotal ALWAYS. (This replaces a prior fabricated unit case that
+//     injected fewer planObjectiveSteps than objectiveSpecs — a state the real RuntimeExecutor cannot
+//     produce. The defensive coverage-incomplete branch in objective-evidence.ts / runtime-reporter.ts
+//     is intentionally RETAINED as a guard against a future orchestrator change; it is simply not
+//     reachable under current construction, which this invariant test documents honestly.)
 {
-  const e = assessObjectiveEvidence({
-    objectiveSpecs: [spec("OBJ1"), spec("OBJ2")],
-    planObjectiveSteps: [step("OBJECTIVE_1")],
-    authorizedPaths: [],
-    verify: [],
-  });
-  check(e.proof.verdict === "FAIL" && e.reason === "objective-coverage-incomplete",
-    "declared>built objectives ⇒ FAIL (coverage incomplete)");
+  const id = "__COVERAGE_INVARIANT__";
+  const missionFile = path.join("runtime", "missions", `${id}.json`);
+  const spy = () => ({ skipped: true });
+  try {
+    fs.writeFileSync(missionFile, JSON.stringify({
+      mission: id, mode: "ANALYZE", requires_engineering: false,
+      objectives: [
+        { id: "COV_A", goal: "first read-only objective", done_when: ["noted"] },
+        { id: "COV_B", goal: "second read-only objective", done_when: ["noted"] },
+      ],
+    }));
+    const out = new LocalMissionRunner(undefined, undefined, spy).run(id);
+    const result = (out.execution as { report?: { result?: { objectivesTotal?: number; objectivesExecuted?: number } } })?.report?.result;
+    const total = result?.objectivesTotal;
+    const executed = result?.objectivesExecuted;
+    check(total === 2 && executed === 2 && executed === total,
+      "real LocalMissionRunner: objectivesExecuted === objectivesTotal (one step per objective; coverage invariant holds)");
+  } finally {
+    fs.rmSync(missionFile, { force: true });
+  }
 }
 
 // 9 — END-TO-END through the real LocalMissionRunner: an engineering mission whose declared proof
