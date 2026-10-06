@@ -22,6 +22,7 @@
  *    declared evidence artifact counts as present only when it EXISTS and is NON-EMPTY on disk.
  */
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import { ObjectiveSpec, VerifyRequirement } from "./mission-loader";
 import { ExecutionStep } from "./mission-orchestrator";
 
@@ -45,7 +46,16 @@ export interface ObjectiveEvidenceInput {
    * enforced (backward-compatible), but the regular-file + non-empty requirements still apply.
    */
   runStartedAtMs?: number;
-  /** Evidence-existence predicate; default mirrors scope-observer.artifactNonEmpty (exists + size>0). */
+  /**
+   * Probe-resolution context. `verify[].evidence` is canonically a REGISTERED PROBE NAME (not a file
+   * path) — the same contract validation-engine.js uses. When this ctx is supplied, a declared
+   * evidence name counts present iff `capability-probes.runProbe(name, probeCtx).ok === true`. The
+   * shape is the EXISTING probe ctx `{ missionId, verify }` (verify = the runtime-verify.json booleans),
+   * NOT a new context model. When absent, evidence falls back to the artifact-path predicate below
+   * (so the artifact-path schema and injected-predicate callers are unchanged).
+   */
+  probeCtx?: { missionId?: string; verify?: unknown };
+  /** Evidence predicate; default = probe resolution when probeCtx is given, else artifact-path (exists+file+non-empty+freshness). */
   evidenceExists?: (p: string) => boolean;
 }
 
@@ -86,6 +96,34 @@ export function makeEvidenceExists(runStartedAtMs?: number): (p: string) => bool
 }
 
 /**
+ * Probe-resolution predicate — a declared `verify[].evidence` NAME counts present iff the EXISTING
+ * capability-probes registry's `runProbe(name, ctx)` returns `{ok:true}`. Reuses the canonical runner
+ * and ctx shape (validation-engine.js:131); invents no registry/probe. An unknown probe name returns
+ * `{ok:false}` (never throws), so an unregistered proof simply fails. CommonJS registry loaded via
+ * createRequire (this module runs under tsx). If the registry cannot be loaded, every name fails
+ * closed (returns false) rather than throwing on the execution path.
+ */
+export function makeProbeExists(ctx: { missionId?: string; verify?: unknown }): (name: string) => boolean {
+  let runProbe: (name: string, c: unknown) => { ok?: boolean };
+  try {
+    const req = createRequire(import.meta.url);
+    runProbe = (req("../../runtime/core/capability-probes.js") as {
+      runProbe: (name: string, c: unknown) => { ok?: boolean };
+    }).runProbe;
+  } catch {
+    return () => false;
+  }
+  return (name: string): boolean => {
+    if (typeof name !== "string" || !name) return false;
+    try {
+      return runProbe(name, ctx).ok === true;
+    } catch {
+      return false;
+    }
+  };
+}
+
+/**
  * Compute the honest proof inputs for a mission run. Pure except for the injected (default
  * fs-backed) evidence predicate. The returned verdict is PASS only when:
  *   - the mission genuinely declares at least one objective, AND
@@ -99,7 +137,12 @@ export function makeEvidenceExists(runStartedAtMs?: number): (p: string) => bool
  *     none declared the recorded analysis is sufficient, preserving the existing AUDIT contract.
  */
 export function assessObjectiveEvidence(input: ObjectiveEvidenceInput): ObjectiveEvidence {
-  const evidenceExists = input.evidenceExists ?? makeEvidenceExists(input.runStartedAtMs);
+  // Precedence: an explicitly injected predicate wins (tests / artifact-path callers); otherwise, when
+  // a probe ctx is supplied, verify[].evidence is resolved as a registered probe NAME (canonical);
+  // otherwise fall back to the artifact-path predicate (unchanged fs/freshness behaviour).
+  const evidenceExists =
+    input.evidenceExists ??
+    (input.probeCtx ? makeProbeExists(input.probeCtx) : makeEvidenceExists(input.runStartedAtMs));
 
   // Mission class — faithful to validation-engine.js:66 (authorized paths are the operative signal;
   // the loader sets requiresEngineering true exactly when authorized_paths is non-empty).

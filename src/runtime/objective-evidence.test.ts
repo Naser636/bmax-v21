@@ -155,41 +155,51 @@ console.log("ROOT CAUSE #1 — PROVEN REQUIRES GENUINE OBJECTIVE EVIDENCE");
     "declared>built objectives ⇒ FAIL (coverage incomplete)");
 }
 
-// 9 — END-TO-END through the real LocalMissionRunner: an engineering mission whose objective is
-//     genuinely NOT achieved is recorded FAILED (OLD code recorded it SUCCESS). The mission file
-//     and any evidence artifact live under git-ignored paths and are removed afterwards.
+// 9 — END-TO-END through the real LocalMissionRunner: an engineering mission whose declared proof
+//     (a REGISTERED capability probe — `verify[].evidence` is a probe NAME, never a filesystem path)
+//     does NOT pass is recorded FAILED (OLD code recorded it SUCCESS); once the canonical probe
+//     genuinely passes, the SAME mission is honestly PROVEN. The proof is driven through the existing
+//     build-green / typescript-green probes, which read the runtime-verify.json booleans the executor
+//     already supplies as probe ctx. Mission file + runtime-verify.json live under git-ignored paths;
+//     any prior runtime-verify.json is saved and restored.
 {
   const id = "__ROOTCAUSE1_REG__";
   const missionFile = path.join("runtime", "missions", `${id}.json`);
-  const evidence = path.join("runtime", "generated", "__rootcause1_reg_evidence__.json");
+  const rvPath = path.join("runtime", "generated", "runtime-verify.json");
   const hadGenerated = fs.existsSync(path.join("runtime", "generated"));
+  const priorRv = (() => { try { return fs.readFileSync(rvPath, "utf8"); } catch { return null; } })();
   try {
     fs.mkdirSync(path.join("runtime", "generated"), { recursive: true });
-    fs.rmSync(evidence, { force: true });
     fs.writeFileSync(missionFile, JSON.stringify({
       mission: id, mode: "IMPLEMENT", requires_engineering: true,
       authorized_paths: ["runtime/nowhere/**"],
-      objectives: [{ id: "OBJ1", goal: "write a module that never got written", done_when: [`${evidence} exists`] }],
-      verify: [{ capability: "WRITE_MODULE", evidence }],
+      objectives: [{ id: "OBJ1", goal: "ship a change proven by the build + typescript gates", done_when: ["build-green", "typescript-green"] }],
+      verify: [
+        { capability: "Build", evidence: "build-green" },
+        { capability: "TypeScript", evidence: "typescript-green" },
+      ],
     }));
 
     // Spy recorder so the test writes nothing to the real ledger/report.
     const spy = () => ({ skipped: true });
 
+    // Unachieved: the canonical build/typescript probes are RED ⇒ declared proof fails ⇒ FAILED.
+    fs.writeFileSync(rvPath, JSON.stringify({ build: false, typescript: false }));
     const unachieved = new LocalMissionRunner(undefined, undefined, spy).run(id);
     const status1 = (unachieved.execution as { report?: { status?: string } })?.report?.status;
     check(status1 === "FAILED" && unachieved.validated === false,
-      "END-TO-END engineering objective NOT achieved ⇒ FAILED (false-success closed)");
+      "END-TO-END engineering proof NOT satisfied ⇒ FAILED (false-success closed)");
 
-    // Now genuinely produce the declared evidence → the SAME mission is honestly PROVEN.
-    fs.writeFileSync(evidence, JSON.stringify({ proof: true }));
+    // Achieved: the SAME registered probes now pass ⇒ the SAME mission is honestly PROVEN.
+    fs.writeFileSync(rvPath, JSON.stringify({ build: true, typescript: true }));
     const achieved = new LocalMissionRunner(undefined, undefined, spy).run(id);
     const status2 = (achieved.execution as { report?: { status?: string } })?.report?.status;
     check(status2 === "SUCCESS" && achieved.validated === true,
-      "END-TO-END same mission WITH genuine evidence ⇒ SUCCESS (not over-blocked)");
+      "END-TO-END same mission WITH genuine probe evidence ⇒ SUCCESS (not over-blocked)");
   } finally {
     fs.rmSync(missionFile, { force: true });
-    fs.rmSync(evidence, { force: true });
+    if (priorRv === null) fs.rmSync(rvPath, { force: true });
+    else fs.writeFileSync(rvPath, priorRv);
     if (!hadGenerated) fs.rmSync(path.join("runtime", "generated"), { recursive: true, force: true });
   }
 }

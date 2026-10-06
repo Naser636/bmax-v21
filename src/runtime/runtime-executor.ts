@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { MissionLoader } from "./mission-loader";
 import { createMissionIntent } from "./mission-intent";
 import { MissionOrchestrator } from "./mission-orchestrator";
@@ -77,8 +78,13 @@ export class RuntimeExecutor {
       planObjectiveSteps: plan.steps.filter((s) => s.id.startsWith("OBJECTIVE_")),
       authorizedPaths: mission.policies.authorizedPaths,
       verify: mission.contract.verify,
+      // `verify[].evidence` is a REGISTERED PROBE NAME (canonical; same as validation-engine.js). Resolve
+      // it through the probe registry using the EXISTING ctx shape { missionId, verify } — verify = the
+      // runtime-verify.json booleans the probes already read. No new context model; artifact-path evidence
+      // is a different schema and is untouched here.
+      probeCtx: { missionId: id, verify: this.readRuntimeVerify() },
       // The read-only LOCAL route applies no code changes itself, so there is no genuine applied
-      // evidence here; an engineering mission must therefore carry declared verify evidence on disk.
+      // evidence here; an engineering mission must therefore carry declared verify evidence (probes).
       appliedEvidenceCount: 0,
     });
 
@@ -106,5 +112,19 @@ export class RuntimeExecutor {
       report,
       history: this.memory.history(id)
     };
+  }
+
+  /**
+   * Read the EXISTING runtime-verify.json booleans (odg-verify.js is their sole writer) so the
+   * build-green / typescript-green probes can resolve on this route — the same artifact and ctx the
+   * Validation Engine uses (validation-engine.js:98,131). Returns undefined when absent; probes then
+   * fail closed (never throw). This reads only an existing artifact; it writes nothing.
+   */
+  private readRuntimeVerify(): unknown {
+    try {
+      return JSON.parse(fs.readFileSync("runtime/generated/runtime-verify.json", "utf8"));
+    } catch {
+      return undefined;
+    }
   }
 }

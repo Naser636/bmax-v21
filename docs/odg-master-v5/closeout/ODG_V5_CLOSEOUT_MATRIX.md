@@ -367,3 +367,42 @@ existing matrix is the authorized home; no new repair-history document was creat
   hardening is active immediately. Known vacuous-coverage / double-recompute / discarded-plan defects remain
   out of scope. Honesty rule applies: this repair is **VERIFIED** (tested green), not CERTIFIED.
 - **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
+## 12. RUNTIME REPAIR LOG — FIX_TS_EVIDENCE_PROBE_RESOLUTION_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_TS_EVIDENCE_PROBE_RESOLUTION_V1 (defect repair; discovery-authorized)
+- **Defect:** `verify[].evidence` is canonically a REGISTERED PROBE NAME (all 29 contract entries; consumed by
+  `validation-engine.js:131` via `capability-probes.evaluate`), but the TS LOCAL executor path interpreted it
+  as a filesystem path — `objective-evidence.ts` fed each `verify[].evidence` to `fs.statSync`. The same field
+  carried two contradictory contracts (probe key in runtime/core; fs path in src/runtime).
+- **Reproduction:** an engineering mission declaring `verify:[{capability:…,evidence:"build-green"}]` (a probe
+  name) could never resolve as a file on the LOCAL route ⇒ `presentEvidence=0` ⇒ `engineering-evidence-missing`
+  FAIL, even though the canonical probe would pass. Conversely the VE route resolved the same token as a probe.
+- **Root cause:** divergent consumers of one declared field, with no adapter; the TS path never called the
+  probe registry.
+- **Files touched:** `src/runtime/objective-evidence.ts` (probe resolution), `src/runtime/runtime-executor.ts`
+  (supplies the existing `{missionId, verify}` probe ctx), `src/runtime/objective-evidence.probe.test.ts` (new),
+  `src/runtime/objective-evidence.test.ts` (case #9 only — migrated to the canonical probe-name contract),
+  this matrix (record). No Resolver/Allocator/execution-semantics/authority/primitive/provider change.
+- **Repair:** added `makeProbeExists(ctx)` to `objective-evidence.ts` — resolves a declared `verify[].evidence`
+  NAME via the existing `capability-probes.runProbe(name, ctx)` (unknown ⇒ `{ok:false}`, never throws). Default
+  predicate = probe resolution when `probeCtx` is supplied, else the artifact-path predicate; an injected
+  `evidenceExists` still wins (back-compat). `runtime-executor.ts` passes `probeCtx:{missionId, verify}` where
+  `verify` = the existing `runtime-verify.json` booleans (read-only; writes nothing). No dual-resolution; no
+  filesystem-path reinterpretation of `verify[].evidence`.
+- **Tests:** `objective-evidence.probe.test.ts` 9/9 (known-ok, failing-ctx, unknown⇒fail, engineering PASS/FAIL,
+  injected-predicate precedence, fs-fallback, read-only compat); migrated `objective-evidence.test.ts` all PASS
+  (case #9 now proves the probe-name contract through the real runner); `objective-evidence.ownership.test.ts`
+  11/11; `local-mission-runner.expert.test.ts` 6/6; `tsc --noEmit` exit 0; `runtime/core/*.test.js` 60/60.
+- **Evidence:** test output + `git status --porcelain` showing exactly the five files below.
+- **Before/after:** BEFORE — probe-name `verify[].evidence` silently un-resolvable on the TS route (engineering
+  missions FAIL; two gates disagree). AFTER — the TS route resolves the same probe names as the Validation
+  Engine; one verification vocabulary; artifact-path evidence remains a separate schema.
+- **Limitations:** four contracts declare network-derived probes (`internet-reachable` ×3, `research-acquired`);
+  routing those through the LOCAL route makes that verdict depend on a prior audit artifact (same dependency VE
+  already has). Freshness (`runStartedAtMs`) is NOT used for probe evidence — it remains for the separate
+  artifact-path schema only. Honesty rule: VERIFIED (tested green), not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
