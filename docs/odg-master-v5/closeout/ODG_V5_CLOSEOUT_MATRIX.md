@@ -370,6 +370,55 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 19. TRUTH REPAIR LOG — FIX_GOVERNANCE_AUTHORIZATION_TAUTOLOGY_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_GOVERNANCE_AUTHORIZATION_TAUTOLOGY_V1 (truth/governance repair; discovery-authorized — see
+  DISCOVER_GOVERNANCE_AUTHORIZATION_TAUTOLOGY_V1).
+- **Defect (from A-to-Z audit / discovery):** `governance-kernel.authorizeMission` computed
+  `authorized = (stateMachine.transitions[currentState] || []).length > 0` (`governance-kernel.js:14-15`) and
+  returned it as `authorized`. That value is ONLY a lifecycle-state fact — "does `currentState` have an outgoing
+  edge in `state-machine.json`?" — and is `true` for every non-terminal state, `false` only for the terminal
+  `ARCHIVED`. It never inspects the `mission` argument, its contract authority, policy authorization, or any
+  authority source, even though the constitution and policies are loaded (their `.version`/`.strategy` are used
+  for display only). Naming a state-graph adjacency `authorized` misrepresented it as an authority decision.
+- **Reproduction:** `authorizeMission(m, "CREATED")` returns `authorized: true` for every mission name, including
+  `""`, `"../../etc/passwd"`, and nonsense tokens; across all states only `ARCHIVED` yields `false`. The value is
+  a property of the state graph, not of the mission.
+- **Severity (unchanged by this repair):** truth/governance defect, NOT an execution bypass. On the LOCAL path the
+  value is reached only inside the ledger tail (`mission-ledger.js:106/148-150`, where it is recorded into the
+  entry, not gated) and `mission-lifecycle.js:188/230` (a gate that, being tautologically true for every forward
+  transition, never blocks). The real LOCAL admission controls (RuntimeReporter proof gate + the proven-only
+  ledger gate) are independent of it.
+- **Repair (minimal truth-preserving separation; NO authority source invented):** surface the honest fact under
+  its real name `transitionPossible` (the state-adjacency computation), add an explicit `authorityEnforced: false`
+  that DECLARES the absence of any consulted authority source (it invents no allowlist, permission, policy rule,
+  or vocabulary), and retain `authorized` as a documented backward-compatibility ALIAS whose VALUE is unchanged
+  (`=== transitionPossible`). Because the value of every pre-existing field is byte-identical, no caller's
+  behaviour changes. No per-mission authority allowlist; no claim that a real authority decision now exists.
+- **Files touched:** `runtime/core/governance-kernel.js` (truth-labeling + `transitionPossible`/`authorityEnforced`),
+  `runtime/core/governance-kernel.test.js` (new, the minimal proof), this matrix (record). No caller edited
+  (`mission-ledger`/`mission-lifecycle`/`nl-objective-gateway`/`fleet-collector`/`odg-run` all read the preserved
+  `authorized` alias unchanged); mission-cli, RuntimeKernel, RuntimeExecutor, Resolver, Allocator,
+  Expert/Profile/Instance, registry, learning paths all untouched.
+- **Tests:** `governance-kernel.test.js` 12/12 — `transitionPossible` mirrors real adjacency (true non-terminal /
+  false terminal), `authorized === transitionPossible` (no verdict change), `authorityEnforced === false`, no
+  authority/permission/allowlist field added, and result is IDENTICAL across unrelated mission names (proof no
+  authority source exists). Regression: `mission-lifecycle.verify.test.js` 11/11, `nl-objective-gateway.test.js`
+  156/0, `mission-ledger-label`/`mission-ledger-idempotent` PASS, LOCAL-path `local-mission-runner.expert` 6/6 +
+  `runtime-executor.plan-reuse` 3/3 + `runtime-executor.clean-workspace` 5/5; `tsc --noEmit` exit 0.
+- **Before/after:** BEFORE — a state-graph adjacency was presented as `authorized`, implying an authority decision
+  that was never made. AFTER — the lifecycle fact is named `transitionPossible`, authority non-enforcement is
+  explicit (`authorityEnforced: false`), and `authorized` survives as an honestly-documented compatibility alias.
+  No execution verdict or evidence semantics change.
+- **Limitations:** this repair makes the kernel HONEST; it does NOT add authority enforcement. A real per-mission
+  authority decision (FICHE_01 §13 "no authority → no consequential action") still does not exist and requires an
+  authority source that is not present in-repo (§387 World Model / authority-vocabulary) — a standing CTO
+  frontier, explicitly OUT of this write-set. Honesty rule: VERIFIED (tested green), not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 18. RUNTIME REPAIR LOG — FIX_DOUBLE_RECOMPUTE_V1
 
 - **Date (UTC):** 2026-10-06
