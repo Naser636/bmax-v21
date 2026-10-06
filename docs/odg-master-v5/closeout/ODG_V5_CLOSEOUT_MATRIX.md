@@ -370,6 +370,58 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 20. DOCUMENTATION CLOSEOUT — FIX_EXPERT_INSTANCE_DOCUMENT_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** FIX_EXPERT_INSTANCE_DOCUMENT_V1 (documentation/semantic closeout; discovery-authorized — see
+  DISCOVER_EXPERT_INSTANCE_CONSUME_OR_DOCUMENT_V1). Closes the one-line limitation recorded in §13
+  ("Expert Instance still downstream-dead") with an explicit, honest status; adds NO runtime/test/contract change.
+- **Subject:** the mission-scoped §303 Expert Instance introduced by the campaign
+  `EXPERT_PROFILE_ASSEMBLY_V1` (90795a2) → `WIRE_EXPERT_PROFILE_ASSEMBLER_V1` (fa12c7a) →
+  `ATTACH_EXPERT_INSTANCE_TO_MISSION_CONTEXT_V1` (00cc185) → `CONSUME_EXPERT_INSTANCE_ON_EXECUTION_PATH_V1`
+  (5f136e1). Canon: `ODG_FINAL_MASTER_V5_FICHE_05` §302/§303/§304/§305/§307/§308.
+- **Operational status (as discovered, read-only):**
+  - **Created** by `runtime/core/expert-profile-assembler.js:compileInstance` — a pure, read-only §303 data
+    record (executes nothing, grants no authority; `authority_scope` is the §307 intersection, never a superset).
+  - **Attached** to the official MissionContext at `runtime/core/mission-context-builder.js:148` as
+    `context.expertInstance` — a field no component reads (the builder's own comment self-documents it as inert;
+    the `MissionContext` type used by `src/core/workflow-*.ts` is a different, unrelated `@/core/mission-context`).
+  - **On the LocalMissionRunner path** (`src/runtime/local-mission-runner.ts:74`) it is compiled AFTER the verdict
+    and returned on the result; the only runtime reader is a `console.log` surface in `src/runtime/mission-cli.ts:184-189`.
+  - The NL-objective gateway (`nl-objective-gateway.js:314`) compiles its own instance onto a DRY_RUN result
+    object; it never influences the gateway's status. No reader exists on any execution/verification/ledger path.
+- **Finding — intentional read-only status (the explicit statements required by this closeout):**
+  - The §303 mission-scoped Expert Instance is **intentionally read-only and OFF the decision path** at the
+    current lifecycle stage. It cannot influence execution, resolution, allocation, evidence, verification,
+    recovery, reporting, or ledger state.
+  - Its current status is **"not yet consumed", NOT "incorrectly disconnected".** No downstream component is
+    designed to read it and starved by a wiring defect; all four campaign commits are deliberately labelled
+    read-only / inert / dry-run / off-decision-path (the 4th, despite its name, delivered "surface … read-only,
+    off decision path").
+  - The instance is **correctly produced and correctly bounded** (§303 required fields present; authority is the
+    §307 intersection with the mission authority; only certified components are bound).
+  - **`authority_scope = []` is intentional** because the mission-authority vocabulary/source is **not currently
+    defined** in-repo (every call site passes `mission.authority = []`; there is no authority verb-array to
+    intersect). This is the same absent-authority-source condition recorded in §19.
+  - Downstream **enforcement/consumption is deliberately deferred** until the separate **authority-vocabulary CTO
+    frontier** is resolved (the §308 ACTIVE profile stage). It is not a defect that it is unenforced today.
+  - **Connecting it now would require inventing** a mapping between the profile's capability/validator component
+    names and the existing execution (objective-id dispatch) / probe (`verify[]`) vocabulary, OR inventing
+    authority semantics for a non-empty `authority_scope`. Both are **outside this mission** and would change
+    execution/verification behaviour.
+- **Decision:** documentation-only closeout (option B of the discovery). No consumption is canonically required at
+  the current (CERTIFIED-profile, not-yet-ACTIVE) stage; meaningful consumption is blocked on the authority-vocabulary
+  frontier, which this item does not resolve.
+- **Files touched:** `docs/odg-master-v5/closeout/ODG_V5_CLOSEOUT_MATRIX.md` (this record only). No runtime file, no
+  test, no mission contract, no new document.
+- **Architecture integrity:** **no new primitive, runtime, Resolver, Allocator, authority mechanism, or expert
+  runtime is introduced.** This is a documentation/semantic closeout only; runtime and execution/verification
+  behaviour are **unchanged** (byte-for-byte — no code path altered).
+- **Status:** **VERIFIED, not CERTIFIED.**
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 19. TRUTH REPAIR LOG — FIX_GOVERNANCE_AUTHORIZATION_TAUTOLOGY_V1
 
 - **Date (UTC):** 2026-10-06
