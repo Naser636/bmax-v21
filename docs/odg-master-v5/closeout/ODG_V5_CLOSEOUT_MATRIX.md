@@ -370,6 +370,55 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 24. TEST-COVERAGE CLOSURE — DISCOVER_LEDGER_REPLAY_IDEMPOTENCE_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** DISCOVER_LEDGER_REPLAY_IDEMPOTENCE_V1 (read-only governed discovery of ledger replay,
+  duplicate submission, and idempotence integrity on the official LOCAL/admission path that reproduced ONE
+  genuine gap and landed a minimal test-only closure). Applied `GOVERNED_TEST_PROOF_ANALYSIS`.
+- **Gap reproduced:** the **successful APPEND path** of `recordMission` — a second LEGITIMATE admission of the
+  same mission under a DISTINCT run (count 1 → 2) — was asserted **only by ledger count**
+  (`mission-ledger-idempotent.test.ts` case 2: `ledgerCount(dir) === 2`), never by **preservation of the
+  prior accepted record**. `recordMission` reads the existing entries then pushes
+  (`runtime/core/mission-ledger.js:176,190`) and never rewrites a prior one, but no test inspected
+  `entries[0]` after the second append. The sibling corrupt/unreadable REFUSE branch was already locked at
+  §23 (DISCOVER_LEDGER_IMMUTABILITY_BOUNDARY_V1); the normal APPEND branch was not.
+- **Why count-only coverage was insufficient:** a count check inspects a single integer. A regression that
+  mutated, relabelled, re-timestamped, re-sorted or in-place-rewrote `entries[0]` while still producing
+  count 2 would pass unnoticed. Count-only therefore does NOT prove the direct runtime answers to "can a
+  second submission overwrite/mutate the first accepted record?" (NO) or "can replay create two
+  contradictory authoritative outcomes?" (NO) — it is vacuous w.r.t. prior-entry integrity.
+- **Coverage classification:** same-run dedup (`DUPLICATE_RUN`, count unchanged) = **direct** (idempotent
+  case 1; controlled case 9); distinct-run count = **direct-on-count** (case 2); stale/foreign checkpoint ⇒
+  append-always = **direct** (case 5); gates-run-before-dedup (no replay bypass) = **direct** (proven-gate /
+  controlled / economic / failclosed suites); corrupt-REFUSE immutability = **direct** (case 6); **success-path
+  append-only prior-entry preservation = genuinely uncovered** (the reproduced gap). All replay cases drive
+  the REAL `recordMission` — the single admission choke point every route (pipeline stage, autonomy archive,
+  LOCAL adapter) calls — so the coverage is at the authoritative seam, not a vacuous unit mock.
+- **Minimal closure (test-only):** added one case (case 7, 3 assertions) to the EXISTING
+  `src/runtime/mission-ledger-idempotent.test.ts`, reusing its `sandbox`/`writeReport`/`writeCheckpoint`/
+  `recordIn` harness. It records run 1, snapshots `entries[0]`, records a DISTINCT run 2, then asserts:
+  (1) 2 entries (append — the first is not dropped); (2) `entries[0]` is preserved **field-for-field** vs the
+  frozen snapshot (append-only, not mutated/relabelled); (3) `entries[1]` is the **new distinct run 2**
+  (`runId` = the second token, ≠ `entries[0].runId`) — not a rewrite of the first (no contradictory outcome).
+  No runtime/production file changed; no new test file.
+- **Tests:** `mission-ledger-idempotent.test.ts` **14/14 PASS** incl. the 3 new assertions; ledger/local-runner
+  regression green — `mission-ledger-proven-gate` / `mission-ledger-controlled` / `mission-ledger-economic` /
+  `mission-ledger-failclosed` / `mission-ledger-label` / `local-mission-runner-ledger` all ALL PASS; full
+  regression `npm test` **exit 0** — **325 test files**, **52 `ALL PASS` banners**, no genuine failures;
+  `npx tsc --noEmit` exit 0.
+- **Files touched:** `src/runtime/mission-ledger-idempotent.test.ts` (+26, test-only), this matrix (record).
+  No runtime, contract, vnext, Resolver/Allocator/authority/Profile/Instance/registry/learning change.
+- **Capability development (GOVERNED_TEST_PROOF_ANALYSIS):** another successful genuine-gap + minimal
+  test-only closure application. The skill remains **TESTED** (the grade earned at §22); this application does
+  **not** promote it to CERTIFIED — no existing certification criterion beyond the already-earned TESTED
+  evidence is satisfied by this closure alone.
+- **Status:** VERIFIED, not CERTIFIED.
+- **Release state:** committed and pushed to `origin/main`; working tree clean (commit SHA recorded with the
+  commit below).
+
+---
+
 ## 23. TEST-COVERAGE CLOSURE — DISCOVER_LEDGER_IMMUTABILITY_BOUNDARY_V1
 
 - **Date (UTC):** 2026-10-06

@@ -142,5 +142,31 @@ console.log("A2 — IDEMPOTENT MISSION LEDGER (mission, run)");
     "corrupted ledger left byte-for-byte intact (past evidence NOT overwritten)");
 }
 
+// 7 — APPEND-ONLY ON THE SUCCESS PATH: a second LEGITIMATE admission (same mission, DISTINCT run) ADDS a
+//     new entry WITHOUT mutating, relabelling, re-timestamping, re-sorting or dropping the first accepted
+//     record. recordMission reads the existing entries then pushes (mission-ledger.js:176,190) — it never
+//     rewrites a prior one. Case 6 locked the corrupt/unreadable REFUSE branch; this locks the normal
+//     APPEND branch — the direct runtime answer to "can a second submission mutate the first accepted
+//     record?" (NO) and "can replay create two contradictory authoritative outcomes?" (NO). The existing
+//     case-2 assertion (ledgerCount === 2) alone cannot catch a prior-entry mutation/relabel regression
+//     because it inspects only the integer count, never entries[0].
+{
+  const dir = sandbox();
+  writeReport(dir, "M_APPEND", true);
+  writeCheckpoint(dir, "M_APPEND", "2026-10-02T21:00:00.000Z");
+  recordIn(dir, "M_APPEND");
+  const afterFirst = JSON.parse(fs.readFileSync(G(dir, "mission-ledger.json"), "utf8"));
+  const firstSnapshot = JSON.stringify(afterFirst.entries[0]); // the accepted record, frozen before replay
+  writeCheckpoint(dir, "M_APPEND", "2026-10-02T21:10:00.000Z"); // distinct run ⇒ legitimate second append
+  recordIn(dir, "M_APPEND");
+  const afterSecond = JSON.parse(fs.readFileSync(G(dir, "mission-ledger.json"), "utf8"));
+  check(afterSecond.entries.length === 2, "second distinct-run admission ⇒ 2 entries (append, first not dropped)");
+  check(JSON.stringify(afterSecond.entries[0]) === firstSnapshot,
+    "first accepted record preserved field-for-field after the second append (append-only, not mutated/relabelled)");
+  check(afterSecond.entries[1].runId === "2026-10-02T21:10:00.000Z" &&
+    afterSecond.entries[1].runId !== afterSecond.entries[0].runId,
+    "the second entry is the NEW distinct run, not a rewrite of the first (no contradictory outcome)");
+}
+
 console.log(failures === 0 ? "ALL PASS — A2 IDEMPOTENT MISSION LEDGER" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
