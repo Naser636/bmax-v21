@@ -126,5 +126,21 @@ console.log("A2 — IDEMPOTENT MISSION LEDGER (mission, run)");
   check(ledgerCount(dir) === 2, "stale/foreign checkpoint ⇒ no run id ⇒ historical append-always preserved");
 }
 
+// 6 — IMMUTABILITY: a corrupted/unreadable existing ledger is NEVER overwritten. recordMission reads
+//     the ledger before appending (mission-ledger.js:167-177); when the existing file is unreadable it
+//     returns { skipped:true } and leaves the file byte-for-byte intact ("do NOT overwrite past
+//     evidence"), even for an otherwise-proven mission. This locks the append-only integrity branch so
+//     past evidence can never be clobbered by a later admission.
+{
+  const dir = sandbox();
+  writeReport(dir, "M_IMMUT", true);
+  const corrupt = "}{ this is not valid json — prior evidence";
+  fs.writeFileSync(G(dir, "mission-ledger.json"), corrupt);
+  const r = recordIn(dir, "M_IMMUT");
+  check(r.skipped === true, "corrupted existing ledger ⇒ recordMission skips (append refused)");
+  check(fs.readFileSync(G(dir, "mission-ledger.json"), "utf8") === corrupt,
+    "corrupted ledger left byte-for-byte intact (past evidence NOT overwritten)");
+}
+
 console.log(failures === 0 ? "ALL PASS — A2 IDEMPOTENT MISSION LEDGER" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
