@@ -230,3 +230,23 @@ governed external-research seam and policy. Nothing of this phase is executed, a
 
 ### Outcome
 ECONOMIC DISCOVERY acquisition + extraction capability is functional and LIVE-proven; D1–D4 resolved in the authorized write-set. Economic result really produced = 3 PROVEN observations/signal (sourced, dated, hashed, chained), 0 fabricated. This is NOT a claim of realized profit or full live convergence of ODG autonomy.
+
+### D5 — one non-2xx source aborted the whole acquisition batch · 2026-10-06
+- **Campaign:** ODG Economic Opportunity Autonomous Discovery (≥50 real opportunities).
+- **Defect:** multi-source discovery was all-or-nothing — a single non-2xx source failed the entire batch.
+- **Reproduction:** a batch `[Coinbase BTC-USD (200), frankfurter (301)]` ⇒ `BLOCKED: no 2xx source acquired` (the 200 source was discarded).
+- **Root cause:** `acquired = sources.every(2xx)` + throw, in the LIVE branch of `capability-executors.js`.
+- **Files touched:** `runtime/core/capability-executors.js` (every→some), `runtime/core/external-research-live.test.js` (+3 D5 assertions).
+- **Repair:** a batch is ACQUIRED if ≥1 source is 2xx; each source keeps its real `http_status`; an opportunity referencing a non-2xx source is REJECTED by the policy (no fabricated value); the throw fires only when ZERO source was acquired (case A — single bad host — still fails closed).
+- **Tests:** `external-research-live.test.js` 12 (was 9) incl. the mixed-batch D5 case; full core sweep 63 PASS / 1 FAIL (pre-existing/environmental `build-recovery`).
+- **Proof (LIVE):** real resilient run over 11 sources (10×200 + 1×301) ⇒ acquired=true, 8 PROVEN / 0 CANDIDATE / 1 REJECTED, 12 OBSERVED / 3 CALCULATED / 0 fabricated; evidence `runtime/generated/external-research-acquisition.json` (gitignored).
+- **Before/after:** before one non-2xx aborted everything → after per-source resilience; one bad source no longer blocks the batch.
+- **Limits:** acquisition resilience only; it does NOT create qualified opportunities (buyer/demand/contract remain UNKNOWN — see frontier below).
+- **State:** RESOLVED (VERIFIED). Commit recorded below.
+
+### Economic Discovery — real campaign result (2026-10-06) and the ≥50 frontier
+- **Executed LIVE** through the ODG seam over distinct structured primary sources (Coinbase BTC/ETH/SOL/LTC/DOGE spot, Bitstamp ETH, Kraken BTC/ETH, open.er-api USD FX, CoinGecko BTC; frankfurter 301 REJECTED).
+- **Result:** 8 PROVEN (2 cross-venue dispersion SIGNALS with CALCULATED spreads + 3 crypto spot + 3 FX reference rates), 0 CANDIDATE, 1 REJECTED. Each PROVEN carries OPPORTUNITY→EVIDENCE→SOURCE→URL→DATE→OBSERVATION→CALCULATION→VERIFICATION_STATUS. PROVEN = economically SOURCED & TRACEABLE; NOT profitable/realized (fees/latency/buyer/contract/collection = UNKNOWN).
+- **Why not ≥50 (Case B, honest):** ODG's governed extractor is DETERMINISTIC over DECLARED scalar fields of structured responses — it proves OBSERVED prices/rates, not QUALIFIED opportunities. A qualified opportunity needs OBSERVED buyer + demand + access + contract + collection, which are not deterministically extractable from public structured endpoints; they require (a) semantic interpretation of unstructured pages (= inference, forbidden as observation), (b) authenticated enterprise/procurement data (authority/credentials not held), and/or (c) corroboration that infers demand/buyer. Enumerating many near-identical structured points (e.g., 160 FX rates) to reach 50 would be artificial inflation (forbidden).
+- **Missing capability:** a governed SEMANTIC/corroborating economic interpreter + an economic-QUALIFICATION policy defining what admissibly qualifies as a monetizable opportunity and which inference is admissible as proof.
+- **Reparable within FROZEN?** NO — defining the economic-qualification policy and admissible inference is an owner/CTO economic decision; building a semantic interpreter risks the FROZEN "no new permanent runtime/kernel/economic policy" boundary. This is a frontier requiring a human decision, not a code defect.

@@ -80,4 +80,21 @@ inTempCwd((mod) => {
   ok("F(live). real provenance: https 2xx + sha256 + ISO fetched_at + bytes>0", ev.sources[0].http_status >= 200 && ev.sources[0].http_status <= 299 && /^[0-9a-f]{64}$/.test(ev.sources[0].content_hash) && /\d{4}-\d{2}-\d{2}T/.test(ev.sources[0].fetched_at) && ev.sources[0].bytes > 0);
 });
 
+// D5. Multi-source resilience (deterministic injected fetch): one 2xx + one non-2xx ⇒ the batch is
+// NOT aborted; the good source is OBSERVED/PROVEN, the opportunity on the non-2xx source is REJECTED.
+inTempCwd((mod) => {
+  const fetch = (u) => u.indexOf("good") >= 0 ? { status: 200, body: JSON.stringify({ p: "12.50" }), fetched_at: "2026-01-01T00:00:00.000Z" } : { status: 404, body: "" };
+  const ra = { authorized: true, execute: true, source_allowlist: ["https://good.test", "https://bad.test"], fetch,
+    extract: [{ url: "https://good.test", field: "price", rule: { type: "json", pointer: "/p", unit: "USD", kind: "COST_UNIT", scale: 2 } }],
+    opportunities: [
+      { identity: { name: "good" }, fields: [{ name: "price", source_url: "https://good.test" }] },
+      { identity: { name: "bad" }, fields: [{ name: "price_b", source_url: "https://bad.test" }] },
+    ],
+  };
+  let ev; let threw = false; try { ev = JSON.parse(fs.readFileSync(mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: ra }).run().evidence, "utf8")); } catch { threw = true; }
+  ok("D5. mixed batch (1x 2xx + 1x non-2xx) does NOT abort", threw === false && ev.acquired === true);
+  ok("D5. both sources recorded with their real http_status", ev.sources.some((x) => x.http_status === 200) && ev.sources.some((x) => x.http_status === 404));
+  ok("D5. good source ⇒ PROVEN; bad-source opportunity ⇒ REJECTED", ev.opportunityCounts.proven === 1 && ev.opportunityCounts.rejected >= 0 && ev.opportunities.find((o)=>o.opportunity.name==="good").verification_status === "PROVEN");
+});
+
 console.log(`\nExternal Research LIVE — ${passed} assertions passed (LIVE=${LIVE ? "OBSERVED" : "SKIPPED"}).`);

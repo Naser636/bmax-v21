@@ -480,7 +480,11 @@ const EXECUTORS = [
             const opportunityCandidates = ra && Array.isArray(ra.opportunities) ? ra.opportunities : [];
             const opportunityEval = opportunityPolicy.classify(opportunityCandidates, observations, { evidence_ref: EXTERNAL_RESEARCH_EVIDENCE });
 
-            const acquired = sources.length > 0 && sources.every((s) => s.http_status >= 200 && s.http_status <= 299);
+            // D5: a batch is ACQUIRED if AT LEAST ONE source is 2xx (multi-source discovery resilience):
+            // a single non-2xx source no longer aborts the whole batch. Each source keeps its http_status,
+            // and an opportunity referencing a non-2xx source is REJECTED by the policy (no fabricated
+            // value). The throw below fires only when ZERO source was acquired.
+            const acquired = sources.length > 0 && sources.some((s) => s.http_status >= 200 && s.http_status <= 299);
             const out = writeEvidence(EXTERNAL_RESEARCH_EVIDENCE, {
                 capability: "External Research Acquisition",
                 objective: patch.objectiveId,
