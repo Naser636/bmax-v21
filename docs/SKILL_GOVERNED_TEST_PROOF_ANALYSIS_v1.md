@@ -1,16 +1,18 @@
 # Skill — GOVERNED_TEST_PROOF_ANALYSIS
 
 - **Skill id:** `GOVERNED_TEST_PROOF_ANALYSIS`
-- **Lifecycle:** **CANDIDATE** (observation/design only; NOT TESTED, NOT CERTIFIED)
+- **Lifecycle:** **TESTED** (TESTED but **NOT CERTIFIED**) — promoted from CANDIDATE on two independent
+  genuine-gap + verified-minimal-test-only-closure applications (see §7)
 - **Classification:** Read-only test/evidence-coverage analysis procedure (NOT a new engine, primitive,
   registry, runtime, or authority)
 - **Authority:** Observation / design only — no write, commit, push, or production-code authority. It is
   explicitly SEPARATE from authority and grants no permission to edit, commit, push, or alter runtime code.
-- **Provenance:** two independent applications —
-  (1) `DISCOVER_EVIDENCE_TEST_COVERAGE_V1` → `FIX_VALIDATION_ENGINE_FAILED_ACTION_TEST_V1` (released
-  `d6a6365`): found a genuine VE-invariant coverage gap (no-FAILED-actions) and closed it with a verified
-  test-only addition; (2) `DISCOVER_MISSION_CLI_DISCARDED_PLAN_V1` (read-only at HEAD `d6a6365`): disproved
-  an audit "discarded plan" finding as benign (no action). Recorded alongside the sibling skill
+- **Provenance:** five independent applications across both outcome branches —
+  gap-find-and-close: (1) `DISCOVER_EVIDENCE_TEST_COVERAGE_V1` → `FIX_VALIDATION_ENGINE_FAILED_ACTION_TEST_V1`
+  (released `d6a6365`, closeout §17/§12-lineage); (2) `DISCOVER_RUNTIME_EXECUTOR_DISPATCH_COVERAGE_V1`
+  (released `cbbd0e4`, closeout §22). Disprove-as-benign / reject stale premise:
+  `DISCOVER_MISSION_CLI_DISCARDED_PLAN_V1`, `DISCOVER_ECONOMIC_ENFORCEMENT_RUNTIME_ACTIVATION_V1`,
+  `DISCOVER_LOCAL_RESOLVER_ALLOCATOR_ACTIVATION_V1` (closeout §21). Recorded alongside the sibling skill
   `GOVERNED_CAPABILITY_CONNECTION` (`docs/SKILL_GOVERNED_CAPABILITY_CONNECTION_v1.md`).
 - **Scope:** Discovery + design only. Every test addition or repair it specifies requires a separate,
   human-authorized WORK_ITEM contract (PROPOSED → AUTHORIZED).
@@ -88,13 +90,28 @@ Resolver, Allocator, authority model, Expert/Profile/Instance, registry, or lear
 into unrelated test cleanup; must NOT claim a runtime defect without a reproduction. Any test addition or
 repair it describes is a separate human-authorized work item (PROPOSED → AUTHORIZED).
 
-## 7. Promotion CANDIDATE → TESTED — NOT YET
+## 7. Promotion CANDIDATE → TESTED — SATISFIED
 
-Two independent applications exist (see Provenance), but they evidence **different** outcome branches: one
-**gap-find-and-close** (`FIX_VALIDATION_ENGINE_FAILED_ACTION_TEST_V1`, a verified test-only closure) and one
-**disprove-as-benign** (`DISCOVER_MISSION_CLI_DISCARDED_PLAN_V1`, correct no-action). Mirroring the sibling
-skill's convention (two independent instances of the SAME distinctive outcome promoted
-`GOVERNED_CAPABILITY_CONNECTION`), promotion to TESTED requires **one more independent application that both
-finds a genuine coverage gap AND produces a verified minimal test-only closure** — so the repair-closure
-branch is proven twice across independent targets. Until that exists, the Skill remains **CANDIDATE**. This
-document does not claim the Skill is TESTED or CERTIFIED.
+The promotion test — the distinctive **gap-find-and-close** outcome proven by **two independent applications
+that each (a) reproduced a genuine coverage/proof gap AND (b) landed a verified minimal test-only closure**,
+mirroring the sibling skill's two-independent-instances convention (`GOVERNED_CAPABILITY_CONNECTION`) — is
+**now satisfied**:
+
+1. **`FIX_VALIDATION_ENGINE_FAILED_ACTION_TEST_V1`** (released `d6a6365`) — genuine gap: a `FAILED` execution
+   entry ⇒ Validation Engine `BLOCKED`/`validated=false`/exit 1 was proven by no VE-subprocess test (the
+   no-FAILED-actions invariant). Closure: one case added to `validation-engine-recorded-noop.test.ts`,
+   verified green (focused + regression + `tsc`).
+2. **`DISCOVER_RUNTIME_EXECUTOR_DISPATCH_COVERAGE_V1`** (released `cbbd0e4`, closeout §22) — genuine gap: a
+   producer that THROWS on the live `LocalMissionRunner` path ⇒ `{ok:false}` ⇒ the ledger recorder is NEVER
+   called ("records nothing") was asserted by no test. Closure: one case added to
+   `local-mission-runner-ledger.test.ts`, verified green (focused + regression + `tsc`).
+
+The Skill also demonstrated the **disprove-as-benign / reject-stale-premise** branch across three further
+independent applications (`DISCOVER_MISSION_CLI_DISCARDED_PLAN_V1`,
+`DISCOVER_ECONOMIC_ENFORCEMENT_RUNTIME_ACTIVATION_V1`, `DISCOVER_LOCAL_RESOLVER_ALLOCATOR_ACTIVATION_V1`),
+each correctly ending in no-action with cited evidence and no unnecessary change.
+
+Lifecycle is therefore **TESTED**. The Skill is **TESTED but NOT CERTIFIED**: certification remains a separate
+lifecycle step requiring broader evidence and scope than these applications (e.g. sustained use across the
+roadmap and across modules beyond the LOCAL execution/validation surface). This document does not claim the
+Skill is CERTIFIED.
