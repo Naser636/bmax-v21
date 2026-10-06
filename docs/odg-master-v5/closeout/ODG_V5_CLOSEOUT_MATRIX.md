@@ -370,6 +370,34 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 26. SKILL GRADE DECISION — GOVERNED_TEST_PROOF_ANALYSIS (NO PROMOTION)
+
+- **Date (UTC):** 2026-10-06
+- **Decision:** Governed TESTED→CERTIFIED promotion assessment of the Skill `GOVERNED_TEST_PROOF_ANALYSIS`
+  (`docs/SKILL_GOVERNED_TEST_PROOF_ANALYSIS_v1.md`). **Outcome: NOT PROMOTED — remains TESTED.**
+- **Criteria reviewed (read-only):** Skill doc §7 (lines 93–117) defines ONLY the CANDIDATE→TESTED test
+  (already earned) and explicitly defers certification as "a separate lifecycle step requiring broader
+  evidence and scope … e.g. sustained use across the roadmap and across modules beyond the LOCAL
+  execution/validation surface"; Master `ODG_FINAL_MASTER_V5_FICHE_06.md` lines 465–483 fixes the canonical
+  lifecycle `… TESTED → VERIFIED → CERTIFIED FOR SCOPE …` with `TESTED ≠ VERIFIED ≠ CERTIFIED`; this matrix
+  §22 line 452–453 records "no existing certification criterion beyond the already-earned TESTED evidence."
+- **Criteria UNMET (exactly):** (1) **No documented TESTED→CERTIFIED criterion exists** for this Skill —
+  promotion would require inventing a bar (forbidden). (2) **Intervening VERIFIED grade skipped** — the Skill
+  is TESTED, never promoted to VERIFIED (per-work-item "VERIFIED" statuses concern the closures, not the
+  Skill grade). (3) **The doc's own informal bar is unmet** — all five recorded applications sit on the LOCAL
+  execution/validation surface (validation-engine, local-mission-runner, mission-cli, economic-enforcement,
+  local-resolver-allocator); no cross-module breadth is recorded. The verified **P0-069** closure is a
+  canonical-state/state-transition certification, NOT a recorded GOVERNED_TEST_PROOF_ANALYSIS gap-closure, so
+  it does not broaden the surface. (4) Certification is **FOR SCOPE** (Master line 471) — no certified scope
+  defined or authorized.
+- **No criterion invented or relaxed.** Honesty rule upheld: `TESTED ≠ VERIFIED ≠ CERTIFIED`.
+- **Action:** **NO PROMOTION.** Skill document UNCHANGED; no runtime change; no new document; no Skill-doc
+  edit. This matrix entry is the sole record of the decision.
+- **Files touched:** `docs/odg-master-v5/closeout/ODG_V5_CLOSEOUT_MATRIX.md` (this record only).
+- **Status:** Grade decision recorded; Skill lifecycle remains **TESTED** (not CERTIFIED).
+
+---
+
 ## 25. RUNTIME REPAIR LOG — FIX_VALIDATION_ENGINE_PROBE_FRESHNESS_V1
 
 - **Date (UTC):** 2026-10-06
