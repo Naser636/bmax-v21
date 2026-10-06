@@ -115,5 +115,16 @@ console.log("A3 — VALIDATION REFUSES RECORDED NO-OP COVERAGE");
   check(out.validated === true && out.status === "SUCCESS" && out.exit === 0, "AUDIT RECORDED no-op ⇒ SUCCESS (guard inert for read-only missions)");
 }
 
+// 5 — A FAILED execution entry ⇒ BLOCKED (invariant 2: "no FAILED actions"). The sandbox has exactly
+//     one objective and one patch, so a single FAILED entry keeps coverage (1/1/1), engineering (seeded
+//     committed in-scope file) and the build/tsc gates satisfied — isolating the FAILED-action gate as
+//     the SOLE block reason, confirmed by the unmet message naming the failure.
+{
+  const dir = sandbox();
+  const out = runValidation(dir, [{ action: "OBJ1", objectiveId: "OBJ1", status: "FAILED" }]);
+  check(out.validated === false && out.status === "BLOCKED" && out.exit === 1, "FAILED action ⇒ BLOCKED (exit 1)");
+  check((out.unmet || []).some((u) => u.includes("FAILED")), "unmet names the FAILED action (blocked for the right reason)");
+}
+
 console.log(failures === 0 ? "ALL PASS — A3 RECORDED NO-OP GUARD" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
