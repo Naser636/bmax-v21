@@ -184,4 +184,23 @@ inTempCwd((mod) => {
     ok("research-acquired FAILS on missing evidence_ref", mod.runProbe("research-acquired", {}).ok === false);
 });
 
+// clean-workspace-scanned proves the read-only Clean Workspace CLEAN_WORKSPACE_1 scan evidence.
+inTempCwd((mod) => {
+    const scanPath = "runtime/generated/clean-workspace-scan.json";
+    let r = mod.runProbe("clean-workspace-scanned", {});
+    ok("clean-workspace-scanned: no evidence → MISSING (not ok)", r.ok === false && /clean-workspace scan evidence/.test(r.detail));
+
+    fs.writeFileSync(scanPath, JSON.stringify({ objective: "CLEAN_WORKSPACE_1", candidateCount: 2, candidates: ["runtime/generated/a", "runtime/generated/b"], deleted: 0 }));
+    ok("clean-workspace-scanned: valid read-only scan → proven", mod.runProbe("clean-workspace-scanned", {}).ok === true);
+
+    fs.writeFileSync(scanPath, JSON.stringify({ objective: "CLEAN_WORKSPACE_1", candidateCount: 2, candidates: ["only-one"], deleted: 0 }));
+    ok("clean-workspace-scanned: candidates length != candidateCount → not ok", mod.runProbe("clean-workspace-scanned", {}).ok === false);
+
+    fs.writeFileSync(scanPath, JSON.stringify({ objective: "CLEAN_WORKSPACE_1", candidateCount: 0, candidates: [], deleted: 3 }));
+    ok("clean-workspace-scanned: deleted!=0 → not ok (read-only violated)", mod.runProbe("clean-workspace-scanned", {}).ok === false);
+
+    fs.writeFileSync(scanPath, JSON.stringify({ objective: "SOMETHING_ELSE", candidateCount: 0, candidates: [], deleted: 0 }));
+    ok("clean-workspace-scanned: wrong objective → not ok", mod.runProbe("clean-workspace-scanned", {}).ok === false);
+});
+
 console.log(`\nCapability Probe Framework: ${passed} assertions passed.`);

@@ -23,8 +23,14 @@
 "use strict";
 
 const fs = require("fs");
+const path = require("path");
 const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE } = require("./capability-executors");
 const { validateStateTransition } = require("./state-transition");
+
+// The Clean Workspace capability (capability-executors.js) writes its CLEAN_WORKSPACE_1 scan here
+// (same relative GENERATED_DIR). Defined locally (the constant is not exported) to avoid an
+// out-of-scope change; it stays in lockstep with the producer's path.
+const CLEAN_WORKSPACE_SCAN_EVIDENCE = path.join("runtime", "generated", "clean-workspace-scan.json");
 
 function readJsonSafe(file) {
     try {
@@ -64,6 +70,31 @@ const PROBES = {
         return ctx.verify && ctx.verify.typescript === true
             ? { ok: true, detail: "runtime-verify.json typescript=true" }
             : { ok: false, detail: "typescript gate not green (runtime-verify.json)" };
+    },
+
+    "clean-workspace-scanned"() {
+        // Verified READ-ONLY workspace-scan proof (CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1). Reads ONLY
+        // the Clean Workspace capability's CLEAN_WORKSPACE_1 scan evidence. A read-only scan: `deleted`
+        // MUST be 0, and `candidates` must be a well-formed list whose length matches `candidateCount`.
+        // Absent/malformed evidence (e.g. the capability never ran this route) ⇒ MISSING proof (ok:false).
+        // Structure-only assertion (no specific count) ⇒ the verdict is environment-independent.
+        const scan = readJsonSafe(CLEAN_WORKSPACE_SCAN_EVIDENCE);
+        if (!scan) {
+            return { ok: false, detail: `no clean-workspace scan evidence at ${CLEAN_WORKSPACE_SCAN_EVIDENCE} — run the Clean Workspace capability first` };
+        }
+        if (scan.objective !== "CLEAN_WORKSPACE_1") {
+            return { ok: false, detail: `scan evidence is not a CLEAN_WORKSPACE_1 scan (objective=${scan.objective})` };
+        }
+        if (typeof scan.candidateCount !== "number" || scan.candidateCount < 0) {
+            return { ok: false, detail: "scan evidence missing/invalid candidateCount" };
+        }
+        if (!Array.isArray(scan.candidates) || scan.candidates.length !== scan.candidateCount) {
+            return { ok: false, detail: "scan candidates do not match candidateCount" };
+        }
+        if (scan.deleted !== 0) {
+            return { ok: false, detail: `clean workspace must be read-only (deleted=${scan.deleted})` };
+        }
+        return { ok: true, detail: `clean workspace scanned: ${scan.candidateCount} transient candidate(s), 0 deleted` };
     },
 
     "internet-reachable"() {

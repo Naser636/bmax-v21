@@ -370,6 +370,45 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 13. RUNTIME CHANGE LOG — CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1 (first real capability execution on the TS LOCAL route)
+- **Frontier closed:** the LOCAL route (`RuntimeExecutor.execute`) planned + reported but ran NO capability —
+  `capability-executors.js` had zero `src/` importers, so the producer→evidence→probe→verdict loop never
+  closed on this path. This connects the smallest safe producer (read-only `CLEAN_WORKSPACE_1`).
+- **Root cause:** no dispatch seam between a mission objective and the existing capability registry on the TS
+  path (only the JS Path-B `patch-executor.js:529` dispatched).
+- **Files touched:** `src/runtime/runtime-executor.ts` (self-scoping dispatch), `runtime/core/capability-probes.js`
+  (new `clean-workspace-scanned` probe), `runtime/missions/CLEAN_RUNTIME_WORKSPACE.json` (canonical
+  `verify[].evidence` probe binding), `src/runtime/runtime-executor.clean-workspace.test.ts` (new),
+  `runtime/core/capability-probes.test.js` (probe cases), this matrix. No new primitive/runtime/authority/
+  Resolver/Allocator/provider; no mapping layer; no dual-resolution.
+- **Change:** before `assessObjectiveEvidence`, for each objective the executor calls the EXISTING
+  `capability-executors.resolve({objectiveId, goal})`; a match runs the capability (producing its evidence this
+  run), a non-match is left untouched (no dispatch). Mirrors the proven Path-B model. New probe
+  `clean-workspace-scanned` verifies the scan artifact read-only (`objective===CLEAN_WORKSPACE_1`,
+  `candidates.length===candidateCount`, `deleted===0`) — structure-only ⇒ environment-independent verdict.
+- **Authority/write-scope:** `CLEAN_WORKSPACE_1` writes only `runtime/generated/clean-workspace-scan.json`;
+  consumes no `authorized_paths`, no action-gate, no git mutation.
+- **Failure/recovery:** a capability that throws propagates ⇒ `LocalMissionRunner` returns `{ok:false}`, no
+  ledger write (fail-closed); a missing/malformed artifact ⇒ probe `{ok:false}` ⇒ FAILED. No rollback needed
+  (nothing mutated).
+- **Tests:** `runtime-executor.clean-workspace.test.ts` 4/4 (dispatch+artifact, real mission SUCCESS, non-match
+  no-dispatch, required-probe-absent FAIL); `capability-probes.test.js` 32 (incl. 5 new clean-workspace-scanned
+  cases); existing `objective-evidence`/`.probe`/`.ownership`/`local-mission-runner.expert` green; `tsc --noEmit`
+  exit 0; `runtime/core/*.test.js` 60/60.
+- **Before/after:** BEFORE — LOCAL route produced no evidence; engineering missions could only pass on prior
+  artifacts. AFTER — a matching objective runs a real read-only capability that produces fresh evidence, verified
+  by a registered probe, end-to-end through the real `LocalMissionRunner`.
+- **Limitations:** self-scoping dispatch currently matches only the existing registry prefixes (CLEAN_WORKSPACE_*,
+  etc.); only CLEAN_WORKSPACE_1 is loop-closed with a probe. Probe evidence has no run-ownership stamp — freshness
+  holds by dispatch-before-assess ordering, not enforced. Resolver/Allocator still off-path; Expert Instance still
+  downstream-dead; vacuous-coverage/double-recompute/discarded-plan remain open. VERIFIED, not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 12. RUNTIME REPAIR LOG — FIX_TS_EVIDENCE_PROBE_RESOLUTION_V1
 
 - **Date (UTC):** 2026-10-06

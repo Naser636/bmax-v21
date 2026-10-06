@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import { MissionLoader } from "./mission-loader";
 import { createMissionIntent } from "./mission-intent";
 import { MissionOrchestrator } from "./mission-orchestrator";
@@ -64,6 +65,31 @@ export class RuntimeExecutor {
       steps: technical.steps.length,
       executionSteps: executionPlan.steps.length
     });
+
+    // CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1 — self-scoping capability dispatch. For each mission
+    // objective, if the EXISTING capability-executors registry matches its id, run the capability so it
+    // produces its evidence artifact THIS run (closing Mission → Capability → Execution → Evidence).
+    // Objectives matched by no executor are untouched (no dispatch) — existing behaviour preserved. This
+    // mirrors the proven Path-B dispatch in runtime/core/patch-executor.js; it adds no mapping layer,
+    // Resolver, Allocator, primitive, or authority. A capability that throws propagates and fails the
+    // mission closed (LocalMissionRunner records nothing — no ledger write).
+    const capabilityExecutors = createRequire(import.meta.url)(
+      "../../runtime/core/capability-executors.js",
+    ) as {
+      resolve: (
+        patch: { objectiveId: string; goal?: string },
+      ) => { run: () => { capability: string; evidence: string } } | null;
+    };
+    for (const spec of mission.brain.objectiveSpecs) {
+      const executor = capabilityExecutors.resolve({ objectiveId: spec.id, goal: spec.goal });
+      if (!executor) continue; // no capability maps to this objective → no dispatch (unchanged)
+      const result = executor.run();
+      this.memory.append(id, "CapabilityExecuted", {
+        objectiveId: spec.id,
+        capability: result.capability,
+        evidence: result.evidence,
+      });
+    }
 
     // ROOT CAUSE #1: the verdict must be a function of GENUINE, mission-derived evidence —
     // not a self-fulfilling count of the plan's own steps copied into the registry. The

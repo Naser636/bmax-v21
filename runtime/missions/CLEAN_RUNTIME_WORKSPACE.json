@@ -32,6 +32,9 @@
       ]
     }
   ],
+  "verify": [
+    { "capability": "Clean Workspace", "evidence": "clean-workspace-scanned" }
+  ],
   "definition_of_done": [
     "Mission completed successfully",
     "Evidence generated",
