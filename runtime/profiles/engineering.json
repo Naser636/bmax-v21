@@ -1,0 +1,47 @@
+{
+  "id": "ENGINEERING",
+  "title": "Software / Engineering Expert Profile",
+  "canon": "ODG_FINAL_MASTER_V5_FICHE_05 §302/§303/§307; FICHE_06 §31 (engineering projection); FICHE_07 §17",
+  "durable": true,
+  "knowledge": [
+    "CLAIM -> REPRODUCE -> ROOT CAUSE -> MINIMAL FIX -> VERIFY -> CHECKPOINT loop (FICHE_06 §31)",
+    "A green build is never sufficient proof; evidence_required gates acceptance"
+  ],
+  "skills": [
+    "governed-build-recovery (loop-while-improving, rollback-guarded)",
+    "governed-local-git-integration (ff-only, C03-recorded)",
+    "governed-shell-execution (net-off, env-cleared sandbox)"
+  ],
+  "tools": ["git", "node", "bubblewrap-sandbox"],
+  "constraints": [
+    "no silent scope expansion beyond authorized write_set",
+    "no commit/push/irreversible action without human approval",
+    "no modification of Master / Constitution / CTO Directives / ROADMAP / protected branches"
+  ],
+  "capabilities": [
+    { "name": "capability-dispatch", "role": "capability", "file": "runtime/core/capability-executors.js", "test": "runtime/core/capability-executors.test.js" },
+    { "name": "build-recovery", "role": "capability", "file": "runtime/core/build-recovery-engine.js", "test": "runtime/core/build-recovery-engine.test.js" },
+    { "name": "git-branch-integration", "role": "capability", "file": "runtime/core/git-branch-integration.js", "test": "runtime/core/git-branch-integration.test.js" },
+    { "name": "bash-command-governor", "role": "capability", "file": "runtime/core/bash-command-governor.js", "test": "runtime/core/bash-command-governor.test.js" },
+    { "name": "patch-executor", "role": "capability", "file": "runtime/core/patch-executor.js", "test": null }
+  ],
+  "validators": [
+    { "name": "mechanical-acceptance", "role": "validator", "file": "runtime/core/mechanical-acceptance.js", "test": "runtime/core/mechanical-acceptance.test.js" },
+    { "name": "local-test-gate", "role": "validator", "file": "runtime/core/local-test-gate.js", "test": "runtime/core/local-test-gate.test.js" },
+    { "name": "validation-engine", "role": "validator", "file": "runtime/core/validation-engine.js", "test": null }
+  ],
+  "performance_history": [],
+  "failure_knowledge": [
+    "red build/tsc -> delegate to build-recovery-engine; Provider only on no-improvement",
+    "out-of-scope diff -> mechanical-acceptance REJECT"
+  ],
+  "permission_scope": {
+    "authority": ["read_repo", "run_local_tests", "apply_patch_in_write_set", "local_ff_git_integration"],
+    "data_scope": "mission",
+    "policy_scope": "inherit"
+  },
+  "evidence_obligations": [
+    "build+test+regression+runtime verification",
+    "diff restricted to authorized write_set"
+  ]
+}

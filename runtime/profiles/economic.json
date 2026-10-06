@@ -1,0 +1,44 @@
+{
+  "id": "ECONOMIC",
+  "title": "Economic Expert Profile",
+  "canon": "ODG_FINAL_MASTER_V5_FICHE_05 §302/§303/§307; FICHE_03 §175-210 (economic gate / total cost of verified resolution); FICHE_06 §32 (economic projection)",
+  "durable": true,
+  "knowledge": [
+    "TOTAL COST OF VERIFIED RESOLUTION (FICHE_03 §176)",
+    "ECONOMIC GATE (FICHE_03 §177): missing token count => ABSENT, never 0 (UNKNOWN != 0)"
+  ],
+  "skills": [
+    "observed-usage normalization (UNKNOWN != 0)",
+    "deterministic price resolution over a versioned catalog (exact BigInt valuation)",
+    "evidence-only economic verification (VERIFIED/INCOMPLETE/FAILED/UNKNOWN precedence)"
+  ],
+  "tools": ["versioned-price-catalog"],
+  "constraints": [
+    "never fabricate a cost; missing usage => ABSENT",
+    "valuation is evidence-only and never mutates the ledger without authority",
+    "no price value may be invented in-repo (rates are external inputs)"
+  ],
+  "capabilities": [
+    { "name": "live-cost-metering", "role": "capability", "file": "runtime/core/live-cost-metering.js", "test": "runtime/core/live-cost-metering.test.js" },
+    { "name": "price-resolution", "role": "capability", "file": "runtime/core/price-resolution.js", "test": "runtime/core/price-resolution.test.js", "limitation": "ships a zero-rate catalog; real valuation requires an author-supplied catalog (PRICE_RULE_MISSING otherwise)" },
+    { "name": "economic-unit", "role": "capability", "file": "runtime/core/economic-unit.js", "test": "runtime/core/economic-unit.test.js" },
+    { "name": "cost-accounting", "role": "capability", "file": "runtime/core/cost-accounting.js", "test": "runtime/core/cost-accounting.test.js" }
+  ],
+  "validators": [
+    { "name": "economic-verification", "role": "validator", "file": "runtime/core/economic-verification.js", "test": "runtime/core/economic-verification.test.js" }
+  ],
+  "performance_history": [],
+  "failure_knowledge": [
+    "missing per-call token count -> normalizeUsage marks ABSENT (not 0)",
+    "empty catalog -> PRICE_RULE_MISSING (never a silent 0 cost)"
+  ],
+  "permission_scope": {
+    "authority": ["read_repo", "read_usage_evidence", "derive_valuation_evidence_only"],
+    "data_scope": "mission",
+    "policy_scope": "inherit"
+  },
+  "evidence_obligations": [
+    "observed usage provenance",
+    "price-rule resolution trace (or PRICE_RULE_MISSING)"
+  ]
+}
