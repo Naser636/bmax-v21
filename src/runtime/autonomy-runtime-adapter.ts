@@ -61,6 +61,11 @@ const MISSION_PLAN = `${GENERATED}/mission-plan.json`;
 const PATCH_PLAN = `${GENERATED}/patch-plan.json`;
 const PATCH_EXECUTION = `${GENERATED}/patch-execution.json`;
 const MISSION_REPORT = `${GENERATED}/mission-report.json`;
+// The EXISTING per-run freshness token the Validation Engine already consumes (validation-engine.js:137-141)
+// and the Checkpoint Engine already stamps on the LOCAL route (checkpoint-engine.begin). The provider route
+// reuses the SAME artifact + `startedAt` field (no second timestamp source) so freshness-bearing probes get
+// a mission-scoped run start instead of falling back to content-only. (P0-070 / FIX_PROVIDER_VALIDATION_PROBE_FRESHNESS_V1)
+const PIPELINE_CHECKPOINT = `${GENERATED}/pipeline-checkpoint.json`;
 // The failover decision evidence written on every provider run: which provider was selected, and —
 // for the OpenAI failover target — the exact blocking component / missing config / next action if it
 // is unusable (mission PROVIDER_FAILOVER_TO_OPENAI, objectives 3-7). Never a source of truth for the
@@ -153,6 +158,27 @@ export function attributeProviderExecution(
     objectiveId: o.id,
     status: addressed.has(o.id) ? "APPLIED" : "RECORDED",
   }));
+}
+
+/**
+ * Build the mission-scoped run-start checkpoint the provider route supplies to the Validation Engine so
+ * its EXISTING freshness mechanism (runStartedAtMs, validation-engine.js:137-141) activates on this route
+ * — reusing the exact `pipeline-checkpoint.json` {mission, startedAt} shape the Checkpoint Engine already
+ * writes on the LOCAL route (NO second timestamp source, NO VE change, NO provider checkpoint redesign).
+ *
+ * DENY-SAFE: returns null when the mission identity or run start is absent, so a run that cannot be
+ * mission-bound writes NO checkpoint and the Validation Engine keeps its content-only fallback rather than
+ * trusting an unknown run as fresh. `startedAt` is captured once at the provider run's start (same source
+ * as checkpoint-engine.begin), so a prior-run clean-workspace-scanned / external-research-dry-run-planned
+ * artifact (mtime < startedAt) is rejected as stale instead of falsely satisfying this mission. (P0-070)
+ */
+export function providerRunStartCheckpoint(
+  missionId: string | null | undefined,
+  startedAtIso: string | null | undefined,
+): { mission: string; startedAt: string } | null {
+  if (typeof missionId !== "string" || !missionId) return null;
+  if (typeof startedAtIso !== "string" || !startedAtIso) return null;
+  return { mission: missionId, startedAt: startedAtIso };
 }
 
 /**
@@ -586,6 +612,10 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
 
   /** Route the execute stage to the injected engineering provider, exactly once per mission. */
   private runViaProvider(mission: string, spec: RawMission | null): PipelineOutcome {
+    // Capture this provider run's start ONCE, before the provider executes, so any artifact genuinely
+    // produced during the run is fresh (mtime >= start) while prior-run leftovers are stale. Same source
+    // as checkpoint-engine.begin (wall-clock at run start); supplied to the Validation Engine below. (P0-070)
+    const runStartedAt = new Date().toISOString();
     let outcome = this.providerRuns.get(mission);
     if (!outcome) {
       // The provider is the ONLY place a provider process is spawned (contract §1); its own
@@ -613,7 +643,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // Validation Engine — the SOLE author of validated/status — re-verify and write the report. The
       // verdict is NOT asserted here: the Validation Engine still computes it from real evidence
       // (working-tree changes in scope + build/tsc gates), so an unproven mission still yields BLOCKED.
-      this.writeProviderValidationEvidence(mission, spec, receipt);
+      this.writeProviderValidationEvidence(mission, spec, receipt, runStartedAt);
       // An engineering mission's deliverable IS the in-scope working-tree change the provider produced.
       // That change legitimately makes gitClean FALSE — yet the frozen Release Manager gates RELEASE on
       // gitClean, so without this an engineering mission could NEVER release (the Validation Engine
@@ -641,6 +671,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     mission: string,
     spec: RawMission | null,
     receipt: PatchReceipt,
+    runStartedAt: string,
   ): void {
     // The Validation Engine is the sole author of the verdict. If it is absent (e.g. a sandboxed
     // harness that supplies its own canonical mission-report.json), leave the existing report
@@ -702,6 +733,15 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     this.writeJson(MISSION_PLAN, plan);
     this.writeJson(PATCH_PLAN, patchPlan);
     this.writeJson(PATCH_EXECUTION, execution);
+
+    // Supply the mission-scoped run start the Validation Engine's EXISTING freshness gate consumes
+    // (validation-engine.js:137-141): without it the provider route left runStartedAtMs undefined and the
+    // freshness-bearing probes fell back to content-only, letting a prior-run artifact falsely satisfy this
+    // mission (P0-070 / V11). Deny-safe: no checkpoint when the mission identity is absent (VE then keeps
+    // content-only — the pre-existing behaviour, never a fabricated-fresh run). git-ignored; LOCAL/MSE write
+    // their own via checkpoint-engine, so this is additive and does not touch the LOCAL route.
+    const runStart = providerRunStartCheckpoint(missionId, runStartedAt);
+    if (runStart) this.writeJson(PIPELINE_CHECKPOINT, runStart);
 
     // Sole author of the verdict — writes runtime/generated/mission-report.json from real evidence.
     // It exits non-zero on a BLOCKED verdict but still writes the (unvalidated) report first, so this

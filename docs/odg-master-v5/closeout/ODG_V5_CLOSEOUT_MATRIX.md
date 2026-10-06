@@ -370,6 +370,44 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 27. RUNTIME REPAIR LOG — FIX_PROVIDER_VALIDATION_PROBE_FRESHNESS_V1 (P0-070)
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** P0-070 / FIX_PROVIDER_VALIDATION_PROBE_FRESHNESS_V1 (defect repair; adversarial V11-authorized).
+- **Genuine demonstrated false-positive (V11):** on the PROVIDER route a VALID but STALE probe artifact left
+  by a prior mission/run made the REAL `validation-engine.js` return `SUCCESS/validated=true` ⇒ PROVEN/ledger
+  admission. Root cause: the provider route (`autonomy-runtime-adapter.ts`) never wrote
+  `pipeline-checkpoint.json`, so VE derived `runStartedAtMs=undefined` (`validation-engine.js:137-141`) and the
+  two freshness-bearing probes (`clean-workspace-scanned`, `external-research-dry-run-planned`) fell back to
+  content-only (`capability-probes.js:103,142`). LOCAL/MSE routes already supply the token; the provider route did not.
+- **Invariant restored:** a prior-run `clean-workspace-scanned` / `external-research-dry-run-planned` artifact
+  (mtime < this run's start) MUST NOT satisfy the current provider validation when freshness is required.
+- **Minimal repair (`src/runtime/autonomy-runtime-adapter.ts` only):** reuse the EXISTING per-run token — the
+  provider seam now writes the SAME mission-scoped `runtime/generated/pipeline-checkpoint.json`
+  `{mission, startedAt}` that `checkpoint-engine.begin` writes on the LOCAL route, captured once at the provider
+  run start (`new Date().toISOString()` — NO second timestamp source), right before spawning VE. VE is UNCHANGED
+  ⇒ LOCAL/MSE behaviour byte-for-byte identical. Deny-safe pure helper `providerRunStartCheckpoint` returns null
+  when the mission identity/run start is absent, so an unknown run writes no checkpoint and VE keeps content-only
+  (never a fabricated-fresh run). Mission identity + provider attribution unchanged; no new authority introduced.
+- **Causal regression (`src/runtime/provider-probe-freshness.test.ts`, drives the REAL `validation-engine.js`):**
+  for BOTH freshness probes — **A** stale prior artifact + current provider run ⇒ **BLOCKED** (was SUCCESS pre-fix);
+  **B** artifact absent ⇒ **BLOCKED**; **C** artifact fresh for this run ⇒ **SUCCESS** (all other predicates pass).
+  Plus deny-safe unit on the helper (missing mission / missing start ⇒ null) and a mission-identity-binding
+  assertion (VE's mission-match guard ignores a foreign-mission checkpoint). Deterministic (artifact mtimes set
+  explicitly relative to run start); 14/14 PASS, verified stable across 5 consecutive runs.
+- **Full regression:** `npx tsc --noEmit` exit 0; `runtime/core/*.test.js` 61/61; LOCAL/MSE freshness
+  (`validation-engine-probe-freshness`), provider (`provider-attribution`, `provider-verify-propagation`),
+  `objective-proof-gate`, `validation-engine-recorded-noop`, `mission-ledger-idempotent` all PASS; full `npm test`
+  **exit 0** (no `not ok`). Pristine-HEAD `npm test` confirmed green before the repair (no new red introduced).
+- **Exact files changed:** `src/runtime/autonomy-runtime-adapter.ts` (seam: constant + exported deny-safe helper +
+  mission-scoped checkpoint write before VE), `src/runtime/provider-probe-freshness.test.ts` (new regression),
+  this matrix (record). No `validation-engine.js`, `capability-probes.js`, or other runtime/gate/contract change.
+- **Final state:** VERIFIED. Closes the V11 provider freshness residual (GENUINE GAP) — the provider route now
+  enforces the same run-ownership freshness as LOCAL/MSE; a stale cross-run/cross-mission artifact can no longer
+  produce an authoritative SUCCESS/PROVEN on the provider route.
+
+---
+
 ## 26. SKILL GRADE DECISION — GOVERNED_TEST_PROOF_ANALYSIS (NO PROMOTION)
 
 - **Date (UTC):** 2026-10-06
