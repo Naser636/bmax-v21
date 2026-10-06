@@ -1,7 +1,8 @@
 # Skill — GOVERNED_CAPABILITY_CONNECTION
 
 - **Skill id:** `GOVERNED_CAPABILITY_CONNECTION`
-- **Lifecycle:** **CANDIDATE** (NOT TESTED, NOT CERTIFIED)
+- **Lifecycle:** **TESTED** (TESTED but **NOT CERTIFIED**) — promoted from CANDIDATE on two independently
+  verified producer connections (see §7)
 - **Classification:** Read-only engineering procedure (NOT a new engine, primitive, registry, or authority)
 - **Authority:** Observation / design only — no write, commit, push, or repair authority
 - **Provenance:** commits `473d172` (FIX_TS_EVIDENCE_PROBE_RESOLUTION_V1), `130f7f4`
@@ -69,8 +70,10 @@ recorded in the closeout matrix.
 ## 5. Limitations
 
 Applies ONLY to existing read-only producers coupled to a dispatching objective. It does not design
-new producers, authority, or execution semantics beyond the dispatch seam. **`CLEAN_WORKSPACE_1` is
-the only proven instance**; generalization to any other producer is designed-but-unproven.
+new producers, authority, or execution semantics beyond the dispatch seam. **Two proven instances
+exist: `CLEAN_WORKSPACE_1` and External Research Acquisition (DRY_RUN)**; generalization to producers
+requiring structured patch inputs (e.g. Governed Git Branch Integration, Governed Bash Command) is
+designed-but-unproven.
 
 ## 6. Authority boundary (what this Skill is explicitly NOT authorized to do)
 
@@ -80,9 +83,17 @@ NOT reinterpret `verify[].evidence` as a filesystem path; must NOT invent a new 
 primitive, agent runtime, provider, or automated learning mechanism. Any implementation it describes
 is a separate human-authorized work item.
 
-## 7. CANDIDATE → TESTED promotion
+## 7. Promotion CANDIDATE → TESTED — SATISFIED
 
-Minimum promotion test: apply this Skill to connect a **second**, independently-authorized existing
-read-only producer end-to-end and demonstrate the same green loop and run-ownership on a
-non-`CLEAN_WORKSPACE` producer. One successful second instance moves the lifecycle CANDIDATE → TESTED.
-This document does not claim the Skill is TESTED or CERTIFIED.
+The promotion test — apply this Skill to connect a **second**, independently-authorized existing
+read-only, non-`CLEAN_WORKSPACE` producer end-to-end with the same green loop and run-ownership — is
+**now satisfied by two independently verified producer connections**:
+
+1. **`CLEAN_WORKSPACE_1`** — first proven producer connection (released `130f7f4`; run-ownership `b421f22`).
+2. **External Research Acquisition — DRY_RUN** — second, independent producer connection (released
+   `8b25829`), with enforced run-ownership and green end-to-end verification.
+
+Lifecycle is therefore **TESTED**. The Skill is **TESTED but NOT CERTIFIED**: certification remains a
+separate lifecycle step requiring broader evidence and scope than these two producer connections (e.g.
+producers that need structured inputs, and sustained use across the roadmap). This document does not
+claim the Skill is CERTIFIED.
