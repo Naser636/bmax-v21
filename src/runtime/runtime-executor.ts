@@ -73,6 +73,11 @@ export class RuntimeExecutor {
     // mirrors the proven Path-B dispatch in runtime/core/patch-executor.js; it adds no mapping layer,
     // Resolver, Allocator, primitive, or authority. A capability that throws propagates and fails the
     // mission closed (LocalMissionRunner records nothing — no ledger write).
+    // Run-ownership reference (ADD_PROBE_RUN_OWNERSHIP_V1): captured from the EXISTING
+    // RuntimeState.startedAt (set by state.initialize above, BEFORE any capability dispatch below).
+    // Reuses the existing runStartedAtMs concept — no new ownership framework or context model.
+    const runStartedAtMs = this.state.startedAt ? Date.parse(this.state.startedAt) : undefined;
+
     const capabilityExecutors = createRequire(import.meta.url)(
       "../../runtime/core/capability-executors.js",
     ) as {
@@ -99,16 +104,20 @@ export class RuntimeExecutor {
     // class or evidence. Assess the honest inputs (coverage cross-checked loader→orchestrator,
     // and class-aware evidence per validation-engine.js:66 / artifactNonEmpty) and feed them to
     // the UNCHANGED RuntimeReporter gate, which re-enforces coverage + verification + PASS.
+    // `verify[].evidence` is a REGISTERED PROBE NAME (canonical; same as validation-engine.js). Resolve
+    // it through the probe registry using the EXISTING ctx shape { missionId, verify } — verify = the
+    // runtime-verify.json booleans the probes already read. `runStartedAtMs` lets an ARTIFACT-BACKED
+    // probe (e.g. clean-workspace-scanned) confirm its evidence was produced THIS run (run-ownership);
+    // content-derived probes (build-green/typescript-green) ignore it. No new context model; artifact-
+    // path evidence is a different schema and is untouched here. Built as a local so the extra field
+    // passes structurally without widening the ObjectiveEvidenceInput.probeCtx type.
+    const probeCtx = { missionId: id, verify: this.readRuntimeVerify(), runStartedAtMs };
     const evidence = assessObjectiveEvidence({
       objectiveSpecs: mission.brain.objectiveSpecs,
       planObjectiveSteps: plan.steps.filter((s) => s.id.startsWith("OBJECTIVE_")),
       authorizedPaths: mission.policies.authorizedPaths,
       verify: mission.contract.verify,
-      // `verify[].evidence` is a REGISTERED PROBE NAME (canonical; same as validation-engine.js). Resolve
-      // it through the probe registry using the EXISTING ctx shape { missionId, verify } — verify = the
-      // runtime-verify.json booleans the probes already read. No new context model; artifact-path evidence
-      // is a different schema and is untouched here.
-      probeCtx: { missionId: id, verify: this.readRuntimeVerify() },
+      probeCtx,
       // The read-only LOCAL route applies no code changes itself, so there is no genuine applied
       // evidence here; an engineering mission must therefore carry declared verify evidence (probes).
       appliedEvidenceCount: 0,

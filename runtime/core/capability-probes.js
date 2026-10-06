@@ -72,12 +72,12 @@ const PROBES = {
             : { ok: false, detail: "typescript gate not green (runtime-verify.json)" };
     },
 
-    "clean-workspace-scanned"() {
+    "clean-workspace-scanned"(ctx) {
         // Verified READ-ONLY workspace-scan proof (CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1). Reads ONLY
         // the Clean Workspace capability's CLEAN_WORKSPACE_1 scan evidence. A read-only scan: `deleted`
         // MUST be 0, and `candidates` must be a well-formed list whose length matches `candidateCount`.
         // Absent/malformed evidence (e.g. the capability never ran this route) ⇒ MISSING proof (ok:false).
-        // Structure-only assertion (no specific count) ⇒ the verdict is environment-independent.
+        // Structure-only assertion (no specific count) ⇒ the content verdict is environment-independent.
         const scan = readJsonSafe(CLEAN_WORKSPACE_SCAN_EVIDENCE);
         if (!scan) {
             return { ok: false, detail: `no clean-workspace scan evidence at ${CLEAN_WORKSPACE_SCAN_EVIDENCE} — run the Clean Workspace capability first` };
@@ -94,7 +94,20 @@ const PROBES = {
         if (scan.deleted !== 0) {
             return { ok: false, detail: `clean workspace must be read-only (deleted=${scan.deleted})` };
         }
-        return { ok: true, detail: `clean workspace scanned: ${scan.candidateCount} transient candidate(s), 0 deleted` };
+        // RUN-OWNERSHIP (ADD_PROBE_RUN_OWNERSHIP_V1): when the current run's start time is known, the scan
+        // artifact must have been produced AT OR AFTER the run started — a stale leftover from a prior run
+        // (which no capability re-produced this run) is REJECTED. Reuses the existing runStartedAtMs concept
+        // carried on the probe ctx; when absent, behaviour is unchanged (content checks only).
+        const runStartedAtMs = ctx && typeof ctx.runStartedAtMs === "number" && Number.isFinite(ctx.runStartedAtMs)
+            ? ctx.runStartedAtMs : null;
+        if (runStartedAtMs !== null) {
+            let mtimeMs;
+            try { mtimeMs = fs.statSync(CLEAN_WORKSPACE_SCAN_EVIDENCE).mtimeMs; } catch { return { ok: false, detail: "scan evidence stat failed" }; }
+            if (mtimeMs < runStartedAtMs) {
+                return { ok: false, detail: `stale clean-workspace scan (mtime ${Math.round(mtimeMs)} < run start ${runStartedAtMs}); not produced this run` };
+            }
+        }
+        return { ok: true, detail: `clean workspace scanned this run: ${scan.candidateCount} transient candidate(s), 0 deleted` };
     },
 
     "internet-reachable"() {

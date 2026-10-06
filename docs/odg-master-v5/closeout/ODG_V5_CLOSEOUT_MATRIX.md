@@ -370,6 +370,43 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 14. RUNTIME REPAIR LOG — ADD_PROBE_RUN_OWNERSHIP_V1
+
+- **Date (UTC):** 2026-10-06
+- **Work item:** ADD_PROBE_RUN_OWNERSHIP_V1 (defect repair; discovery-authorized)
+- **Defect:** the artifact-backed probe `clean-workspace-scanned` verified evidence *content* only, with no
+  binding to the current run. Freshness held solely by the executor's dispatch-before-assess ordering, which
+  fires only when an objective id matches the producer's registry prefix.
+- **Reproduction (fresh process, real LOCAL route):** a mission declaring `verify:clean-workspace-scanned` on a
+  NON-matching objective id (⇒ no dispatch), with a stale-but-valid `runtime/generated/clean-workspace-scan.json`
+  present, recorded SUCCESS/validated=true on the stale leftover. (Not reachable via the shipped governed
+  contract `CLEAN_RUNTIME_WORKSPACE.json`, whose ids dispatch the producer; reachable by any mis-authored/future
+  contract or cross-mission stale artifact.)
+- **Root cause:** evidence presence was conflated with evidence run-ownership for an artifact-backed probe.
+- **Files touched:** `src/runtime/runtime-executor.ts` (capture run start from the existing
+  RuntimeState.startedAt before dispatch; thread it via the existing `probeCtx` as `runStartedAtMs`),
+  `runtime/core/capability-probes.js` (`clean-workspace-scanned` adds `mtimeMs >= runStartedAtMs` when the stamp
+  is present), `runtime/core/capability-probes.test.js` + `src/runtime/runtime-executor.clean-workspace.test.ts`
+  (coverage), this matrix. No producer/Resolver/Allocator/authority/primitive/provider change; no new framework
+  or context model; `verify[].evidence` stays a probe name (no path reinterpretation).
+- **Repair:** reuse the EXISTING `runStartedAtMs` concept. The executor captures `Date.parse(state.startedAt)`
+  (set at init, before any dispatch) and passes it in `probeCtx`; the artifact-backed probe requires the scan
+  file `mtimeMs >= runStartedAtMs` (>=, as designed) in addition to its structural checks. When the stamp is
+  absent, behaviour is unchanged (content checks only — backward-compatible). Content-derived probes
+  (build-green/typescript-green) ignore it entirely.
+- **Tests:** `runtime-executor.clean-workspace.test.ts` 5/5 (incl. the reproduced stale case now ⇒ FAILED);
+  `capability-probes.test.js` 38 (fresh passes, stale fails, absent fails, no-stamp content-only, build/ts
+  unaffected); `objective-evidence`/`.probe`/`.ownership`/`local-mission-runner.expert` green; `tsc --noEmit`
+  exit 0; `runtime/core/*.test.js` 60/60.
+- **Before/after:** BEFORE — a stale scan from a prior run could satisfy the probe when no dispatch occurred.
+  AFTER — an artifact older than the run start is rejected; only evidence produced this run counts.
+- **Limitations:** run-ownership covers the artifact-backed `clean-workspace-scanned` probe; content-derived
+  probes need no stamp. Coarse-FS mtime granularity could in principle false-stale a same-instant write — `>=`
+  and capturing `startedAt` before dispatch avoid it in practice. VERIFIED, not CERTIFIED.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 13. RUNTIME CHANGE LOG — CONNECT_FIRST_PRODUCER_CLEAN_WORKSPACE_V1
 
 - **Date (UTC):** 2026-10-06

@@ -87,6 +87,27 @@ try {
     }
   }
 
+  // 3 — Run-ownership (ADD_PROBE_RUN_OWNERSHIP_V1): a STALE pre-existing scan artifact must NOT satisfy
+  //     the probe when the current run did not (re)produce it (non-matching objective ⇒ no dispatch).
+  //     This is the exact gap reproduced pre-repair (then SUCCESS); it must now fail closed.
+  {
+    const id = "__CWS_STALE__";
+    const file = writeMission(id, "NONMATCH_OBJECTIVE");
+    fs.writeFileSync(scanPath, JSON.stringify({ objective: "CLEAN_WORKSPACE_1", candidateCount: 0, candidates: [], deleted: 0 }));
+    const old = 1_000_000_000; // ~2001-09, long before this run's start
+    fs.utimesSync(scanPath, old, old);
+    try {
+      const out = new LocalMissionRunner(undefined, undefined, spy).run(id);
+      ok("stale pre-run scan artifact (no dispatch) ⇒ FAILED (run-ownership enforced)", () => {
+        const status = (out.execution as { report?: { status?: string } })?.report?.status;
+        assert.strictEqual(status, "FAILED");
+        assert.strictEqual(out.validated, false);
+      });
+    } finally {
+      fs.rmSync(file, { force: true });
+    }
+  }
+
   console.log(`\nruntime-executor.clean-workspace: ${passed} assertions passed`);
 } finally {
   restore(scanPath, priorScan);

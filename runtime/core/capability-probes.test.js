@@ -203,4 +203,24 @@ inTempCwd((mod) => {
     ok("clean-workspace-scanned: wrong objective → not ok", mod.runProbe("clean-workspace-scanned", {}).ok === false);
 });
 
+// clean-workspace-scanned RUN-OWNERSHIP (ADD_PROBE_RUN_OWNERSHIP_V1): freshness via runStartedAtMs.
+inTempCwd((mod) => {
+    const scanPath = "runtime/generated/clean-workspace-scan.json";
+    const valid = JSON.stringify({ objective: "CLEAN_WORKSPACE_1", candidateCount: 0, candidates: [], deleted: 0 });
+    const RUN = 1000000000000;
+    fs.writeFileSync(scanPath, valid); fs.utimesSync(scanPath, (RUN + 5000) / 1000, (RUN + 5000) / 1000);
+    ok("clean-workspace-scanned: FRESH artifact (mtime >= runStart) → proven", mod.runProbe("clean-workspace-scanned", { runStartedAtMs: RUN }).ok === true);
+    fs.writeFileSync(scanPath, valid); fs.utimesSync(scanPath, (RUN - 5000) / 1000, (RUN - 5000) / 1000);
+    ok("clean-workspace-scanned: STALE artifact (mtime < runStart) → NOT ok (run-ownership)", mod.runProbe("clean-workspace-scanned", { runStartedAtMs: RUN }).ok === false);
+    ok("clean-workspace-scanned: no runStartedAtMs → content-only (unchanged, proven)", mod.runProbe("clean-workspace-scanned", {}).ok === true);
+    fs.rmSync(scanPath, { force: true });
+    ok("clean-workspace-scanned: absent + runStartedAtMs → NOT ok", mod.runProbe("clean-workspace-scanned", { runStartedAtMs: RUN }).ok === false);
+});
+
+// Content-derived probes are UNAFFECTED by runStartedAtMs (no mtime semantics; ctx.verify drives them).
+inTempCwd((mod) => {
+    ok("build-green: ignores runStartedAtMs (ctx.verify.build drives)", mod.runProbe("build-green", { runStartedAtMs: 9e15, verify: { build: true } }).ok === true);
+    ok("typescript-green: ignores runStartedAtMs", mod.runProbe("typescript-green", { runStartedAtMs: 9e15, verify: { typescript: false } }).ok === false);
+});
+
 console.log(`\nCapability Probe Framework: ${passed} assertions passed.`);
