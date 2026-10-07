@@ -635,6 +635,12 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // content-addressed cache short-circuits an identical re-request without a live call. When the
       // mission declares a budget, the provider call is metered live (D) around the SAME invocation.
       outcome = this.executeMetered(mission, spec, pipelineDiagnostics);
+      // V43 — GOVERNED APPLY (default engineering path). The provider only PROPOSED edits (it had no
+      // Write/Edit/Bash); ODG now applies them through the governed patch-executor — exactly once per
+      // mission, BEFORE the receipt/validation/commit downstream observes the tree. A missing/malformed/
+      // out-of-scope/failed proposal becomes a governed FAILED outcome; there is NEVER a fallback to the
+      // provider writing the repository directly. Cached so a later cache-hit re-run never re-applies.
+      outcome = this.applyGovernedProposal(mission, spec, outcome);
       this.providerRuns.set(mission, outcome);
     }
     // OBJ-003: the Patch Engine RECEIVES the provider's result (the working-tree patch) and decides,
@@ -670,6 +676,78 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       }
     }
     return toPipelineOutcome(outcome);
+  }
+
+  /**
+   * V43 — governed apply is the DEFAULT for an engineering mission (non-empty write scope). The provider
+   * is denied Write/Edit/Bash and ODG applies its proposal via the governed patch-executor. An operator
+   * can EXPLICITLY (never silently, never as a failure fallback) retain the legacy direct-write path with
+   * ODG_PROVIDER_DIRECT_WRITE=1 — a documented escape hatch, default OFF. Read-only missions (no write
+   * scope) never reach a write path, so this returns false for them.
+   */
+  private useGovernedApply(spec: RawMission | null): boolean {
+    if (process.env.ODG_PROVIDER_DIRECT_WRITE === "1") return false;
+    return this.authorizedPaths(spec).length > 0;
+  }
+
+  /**
+   * Apply the provider's PROPOSAL through the EXISTING governed patch-executor (runtime/core via the
+   * patch-proposal-apply adapter). The provider wrote nothing — this is where the repository is actually
+   * changed, by ODG, under authorizedPaths + action gate + idempotency + reality C03 + evidence.
+   *
+   *   - governed apply inactive (explicit legacy opt-out / read-only) → outcome unchanged.
+   *   - provider not clean (BLOCKED/FAILED/…) or no proposal → outcome unchanged (the EMPTY/REJECTED
+   *     receipt path then decides honestly; an engineering mission with no in-scope change still BLOCKS).
+   *   - proposal applied → outcome's changedFiles become the GROUND-TRUTH targets the executor wrote.
+   *   - proposal malformed/out-of-scope/failed → governed FAILED outcome. NEVER a direct provider write.
+   */
+  private applyGovernedProposal(
+    mission: string,
+    spec: RawMission | null,
+    outcome: ProviderOutcome,
+  ): ProviderOutcome {
+    if (!this.useGovernedApply(spec)) return outcome;
+    const edits = outcome.classification === "OK" ? outcome.result?.proposedEdits : undefined;
+    if (!edits || edits.length === 0) return outcome;
+
+    const fail = (reason: string): ProviderOutcome => ({
+      ...outcome,
+      classification: "FAILED",
+      changedFiles: [],
+      unauthorizedChanges: [],
+      diagnostics: [...outcome.diagnostics, `governed apply: ${reason}`],
+    });
+
+    let res: {
+      applied: boolean;
+      reason: string;
+      executed: Array<{ status: string; files?: Array<{ target: string }> }>;
+    };
+    try {
+      const mod = requireCjs("../../runtime/core/patch-proposal-apply.js") as {
+        applyProposal: (opts: {
+          mission: string;
+          authorizedPaths: string[];
+          proposedEdits: unknown;
+          cwd: string;
+        }) => typeof res;
+      };
+      res = mod.applyProposal({
+        mission: spec?.mission ?? mission,
+        authorizedPaths: this.authorizedPaths(spec),
+        proposedEdits: edits,
+        cwd: this.cwd,
+      });
+    } catch (e) {
+      return fail(`executor error: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    if (!res.applied) return fail(`not applied (${res.reason})`);
+
+    // Ground-truth: the targets the governed executor actually wrote (scope already enforced by it).
+    const changedFiles = res.executed
+      .filter((x) => x.status === "APPLIED")
+      .flatMap((x) => (Array.isArray(x.files) ? x.files.map((f) => f.target) : []));
+    return { ...outcome, changedFiles, unauthorizedChanges: [] };
   }
 
   /**
@@ -1010,6 +1088,10 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       mission: this.buildProviderMission(mission, spec, pipelineDiagnostics),
       model: PROVIDER_MODEL,
       maxTurns: PROVIDER_MAX_TURNS,
+      // V43 — governed apply is the DEFAULT engineering path: the provider is denied Write/Edit/Bash and
+      // PROPOSES edits; ODG applies them. Both real adapters honour this (Claude via plan-mode tools; the
+      // OpenAI adapter never writes the tree at all). Read-only missions are unaffected.
+      proposeOnly: this.useGovernedApply(spec),
     };
     if (this.provider) {
       return this.provider.execute(request);

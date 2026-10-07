@@ -44,6 +44,7 @@ import {
   type ProviderOutcome,
   type ProviderRequest,
   type ProviderResult,
+  type ProposedEdit,
   type ProviderUsageObservation,
 } from "./provider-port";
 import {
@@ -296,6 +297,18 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
     try {
       const raw = JSON.parse(json) as Partial<ProviderResult>;
       if (raw.status !== "DONE" && raw.status !== "BLOCKED") return null;
+      // V43 — carry PROPOSED edits (govern-the-apply): same structural filter as the Claude adapter so
+      // the OpenAI failover delivers through the governed patch-executor too (it never writes the tree).
+      const proposedEdits = Array.isArray(raw.proposedEdits)
+        ? raw.proposedEdits.filter(
+            (e): e is ProposedEdit =>
+              !!e &&
+              typeof e === "object" &&
+              typeof (e as ProposedEdit).target === "string" &&
+              (typeof (e as ProposedEdit).content === "string") !==
+                (typeof (e as ProposedEdit).diff === "string"),
+          )
+        : undefined;
       return {
         mission: typeof raw.mission === "string" ? raw.mission : mission,
         providerContractVersion:
@@ -308,6 +321,7 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
         commandsRun: Array.isArray(raw.commandsRun) ? raw.commandsRun : [],
         blocker: typeof raw.blocker === "string" ? raw.blocker : null,
         notes: typeof raw.notes === "string" ? raw.notes : undefined,
+        ...(proposedEdits && proposedEdits.length ? { proposedEdits } : {}),
       };
     } catch {
       return null;

@@ -408,6 +408,46 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 37. RUNTIME CHANGE LOG — GOVERNED_APPLY_DEFAULT_ENGINEERING_V1 (V43)
+
+- **Date (UTC):** 2026-10-07 · **Actual executor:** Claude Code (all inspection/edits/tests/commit; no
+  independent "NOTRE AGENT" process exists — V40/V41). This change makes the **runtime default** flip real.
+- **Objective:** make V42 propose→governed-apply the DEFAULT engineering path. Provider = reason/propose;
+  ODG = authorize + apply + evidence + validate + accept. Reuses the V42 executor; no new brain/primitive/state.
+- **Path map + classification:** the production engineering route is a SINGLE path
+  (`runViaProvider → executeMetered → executeWithFailover → provider.execute`). **Class A (migrated now):**
+  content/diff edits — both real adapters are propose-safe (Claude via plan-mode tools; OpenAI never writes
+  the tree). **Class C (cannot be represented → fail-closed, NOT silent fallback):** file DELETION — the
+  proposal schema has no delete; no provider can delete (no Write/Bash), so a delete-intent mission simply
+  cannot mutate — documented limitation, never a direct-write escape.
+- **Default authority boundary (after):** engineering requests carry `proposeOnly: useGovernedApply(spec)`
+  (true for any non-empty write scope). The Claude adapter then spawns `--permission-mode plan
+  --allowedTools Read,Grep,Glob` (ZERO Write/Edit/Bash). `runViaProvider` applies the provider's
+  `proposedEdits` via `patch-proposal-apply.js → patch-executor.js` (authorizedPaths + action gate +
+  idempotency + reality C03 + evidence), exactly ONCE per mission (cached), BEFORE receipt/validation/commit.
+- **No hidden fallback:** a missing/empty/malformed/out-of-scope/failed proposal ⇒ governed **FAILED**
+  outcome (REJECTED receipt ⇒ no commit ⇒ BLOCKED). There is NO path from governed apply to the provider
+  writing directly. The only direct-write surface is an EXPLICIT, documented opt-out
+  `ODG_PROVIDER_DIRECT_WRITE=1` (default OFF; never reached on failure).
+- **Write-set (strict — 3 + matrix):** `src/runtime/autonomy-runtime-adapter.ts` (`proposeOnly` on the
+  request; `useGovernedApply` + `applyGovernedProposal`); `src/providers/openai-provider-adapter.ts` (parse
+  `proposedEdits`, symmetric with Claude); `src/tests/governed-apply-default.test.ts` (**new**); this matrix.
+  patch-executor / patch-proposal-apply / provider-port unchanged from V42.
+- **Decisive integration test (offline, REAL ClaudeProviderAdapter + stubbed process):** default run ⇒
+  provider args are plan+`Read,Grep,Glob`, NO Write/Edit/Bash/acceptEdits; **ODG (patch-executor) writes the
+  in-scope file, the provider does not**; mission RELEASEs. A/B: `ODG_PROVIDER_DIRECT_WRITE=1` ⇒ acceptEdits+Write.
+  Security: an out-of-scope proposed target is never written anywhere.
+- **Tests/regression:** `governed-apply-default.test.ts` 7/7; `propose-apply-boundary.test.ts` (V42) intact;
+  `tsc --noEmit` 0; **npm test 332 files ALL PASS** (src/tests + src/runtime + runtime/core); `next build` 0.
+- **A/B measured:** actual writer flips from `claude`(acceptEdits) → `node patch-executor.js`(ODG) on the
+  DEFAULT path; provider write-tool surface eliminated; proof model unchanged (same gates/validation/ledger).
+- **Unmigrated / remaining:** deletion missions (Class C, fail-closed); OpenAI failover now parses
+  proposedEdits but its live delivery is unproven offline (no paid call); **no live provider call made**.
+- **Honesty:** VERIFIED (tested offline), not CERTIFIED. The default engineering authority boundary is now
+  the governed ODG path; the provider cannot write the repository directly on the default path.
+
+---
+
 ## 36. RUNTIME CHANGE LOG — PROVIDER_PROPOSE_GOVERNED_APPLY_V1 (V42)
 
 - **Date (UTC):** 2026-10-07 · **Inspected + implemented by:** Claude Code (truthfully — no independent
