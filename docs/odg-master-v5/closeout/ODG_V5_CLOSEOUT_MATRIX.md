@@ -408,6 +408,44 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 29. RUNTIME CHANGE LOG — PREDICTIVE_VERIFICATION_PLAN_V1 (V32)
+
+- **Date (UTC):** 2026-10-07
+- **Gap:** the provider received human-readable `done_when`/`definitionOfDone` but NOT the machine-checkable
+  verification it would be gated on — the resolved `verify[]` probes (`resolveProviderPlanVerify`, already
+  computed for the validation gate), per-objective `proof` names, and the engineering class gates
+  (build/tsc). So the author worked blind to the exact checks, inviting an author→validate→re-author loop.
+- **Design (Phase 3):** a small ADVISORY `VerificationPlan` on `ProviderContext` —
+  {requiredChecks, relevantProbes, objectiveProofs, expectedEvidence, classGates, expectedFailureModes}.
+  Derived PURELY from the CURRENT contract (declared + intent-implied verify via the shared resolver, object
+  proofs, `requires_engineering`) — **never inferred from historical memory**. Failure modes are the
+  deterministic INVERSE of the required checks, not a prediction from past success.
+- **Files touched (write-set, strict — 4):** `src/providers/provider-port.ts` (`VerificationPlan` type +
+  pure `buildVerificationPlan()` + optional `ProviderContext.verificationPlan` + additive prompt render);
+  `src/runtime/autonomy-runtime-adapter.ts` (`buildProviderMission` wires it via the EXISTING
+  `resolveProviderPlanVerify`, guarded, omitted when empty); `src/providers/verification-plan.test.ts`
+  (**new** adversarial); this matrix. No second verification engine, no new resolver/vocabulary, no new
+  store/primitive/authority.
+- **Authority / proof preserved:** the plan is INPUT ONLY — it marks nothing successful; the Validation
+  Engine (`capability-probes.evaluate` + objective-proof gate + build/tsc) re-checks ALL of it independently
+  and remains the sole truth. PREDICTION/PLAN/MEMORY ↛ PROOF. Runtime gains no authoring authority; every
+  gate unchanged; `recordMission` release choke point unchanged.
+- **Tests:** `verification-plan.test.ts` 3/3 (correct engineering plan; adversarial 1–12 — non-engineering ⇒
+  no class gates, corrupted/malformed ⇒ empty & no-throw, dedup, optional-vs-required, empty ⇒ fail-closed,
+  plan carries no success/proof verdict; prompt A/B — cold renders nothing, warm renders an advisory,
+  NOT-proof-labelled plan naming the real gates); `tsc --noEmit` exit 0; TS provider/adapter/ledger/runner
+  regression **17/17**; `runtime/core/*.test.js` **64/64**.
+- **Measured gain:** the plan demonstrably reaches the provider prompt as advisory input (offline, real
+  `renderMissionPrompt`). Provider-side rediscovery/iteration reduction is **UNMEASURED** (provider execution
+  hazard-gated) — **no 10× claimed**; only plan assembly + prompt delivery are measured.
+- **Before/after:** BEFORE — author blind to the probe/class gates ⇒ risk of author→fail→re-author. AFTER —
+  the author is handed the exact checks + deterministic failure modes upfront, advisory and re-verified,
+  reducing rediscovery without reducing the proof standard. Honesty: VERIFIED (tested + offline-exercised),
+  not CERTIFIED. Limitation: class gates attach only on explicit `requires_engineering` (never inferred);
+  expectedEvidence lists canonical probe names, not raw artifact paths.
+
+---
+
 ## 28. RUNTIME CHANGE LOG — PRE_AUTHORED_REUSE_CANDIDATE_V1 (V31)
 
 - **Date (UTC):** 2026-10-07

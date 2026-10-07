@@ -48,9 +48,10 @@ import type {
   ProviderRequest,
   RoutableMission,
 } from "@/providers";
-// V31 — advisory pre-authoring precedent type (public provider surface; imported directly to keep the
-// bounded write-set at this file + the helper, without touching the providers barrel).
-import type { KnownSolutionCandidate } from "../providers/provider-port";
+// V31/V32 — advisory pre-authoring types + the pure verification-plan builder (public provider surface;
+// imported directly to keep the bounded write-set at this file + helper, without touching the barrel).
+import type { KnownSolutionCandidate, VerificationPlan } from "../providers/provider-port";
+import { buildVerificationPlan } from "../providers/provider-port";
 import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 import { RootCauseEngine, type MinimalPatch } from "./root-cause-engine";
 import {
@@ -1061,8 +1062,40 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         // V31 — advisory verified-precedent candidates (read-only, fail-closed). INPUT to the provider
         // only; it grants the Runtime no authoring authority and changes no gate.
         knownSolutions: this.buildKnownSolutions(mission, spec),
+        // V32 — advisory predictive verification plan (what the Validation Engine will re-check). Derived
+        // from the CURRENT contract only; advisory INPUT, never proof. Omitted when empty.
+        verificationPlan: this.buildVerificationPlan(mission, spec),
       },
     };
+  }
+
+  /**
+   * V32 — assemble the advisory predictive verification plan for this mission from the CURRENT contract:
+   * the SAME resolved verify proofs the Validation Engine gates on (resolveProviderPlanVerify — one
+   * vocabulary, no second resolver), plus per-objective proofs and the class gates when engineering is
+   * required. Pure/deterministic shaping via buildVerificationPlan. READ-ONLY, fail-closed: any error or
+   * an empty plan ⇒ undefined (the prompt renders nothing; cold missions stay byte-identical). It is
+   * advisory INPUT only — never proof, acceptance, or authority; the Validation Engine re-checks all of it.
+   */
+  private buildVerificationPlan(mission: string, spec: RawMission | null): VerificationPlan | undefined {
+    try {
+      const objs = this.providerObjectives(mission, spec);
+      const first = objs[0] ?? { id: this.slug(mission), goal: "" };
+      const verifyProofs = resolveProviderPlanVerify(spec, { id: first.id, title: spec?.mission, goal: first.goal });
+      const objectiveProofs = (Array.isArray(spec?.objectives) ? spec!.objectives : [])
+        .map((o) => (o && typeof o === "object" && typeof (o as { proof?: unknown }).proof === "string" ? (o as { proof: string }).proof : null))
+        .filter((p): p is string => !!p);
+      const plan = buildVerificationPlan({
+        verifyProofs,
+        objectiveProofs,
+        requiresEngineering: spec?.requires_engineering ?? spec?.requiresEngineering,
+      });
+      const nonEmpty =
+        plan.classGates.length > 0 || plan.relevantProbes.length > 0 || plan.objectiveProofs.length > 0;
+      return nonEmpty ? plan : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   /**

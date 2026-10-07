@@ -62,6 +62,66 @@ export interface KnownSolutionCandidate {
   status: "VERIFIED_PRECEDENT";
 }
 
+/**
+ * An ADVISORY predictive verification plan for a mission (V32). It tells the author WHAT the ODG
+ * Validation Engine will independently re-check — probe gates, per-objective proofs, class gates
+ * (build/typescript) — and the deterministic failure modes those checks imply, so the author can
+ * produce the required evidence on the first pass. It is NOT proof, acceptance, or authority: nothing
+ * here marks anything successful; the current governed validation chain remains the sole truth.
+ * Derived purely from the CURRENT mission contract (declared + intent-implied verify, object proofs,
+ * class) — never inferred from historical memory.
+ */
+export interface VerificationPlan {
+  requiredChecks: string[];
+  relevantProbes: Array<{ capability: string; evidence: string; required: boolean }>;
+  objectiveProofs: string[];
+  expectedEvidence: string[];
+  classGates: string[];
+  expectedFailureModes: string[];
+}
+
+/**
+ * Pure, deterministic assembly of a {@link VerificationPlan} from already-resolved current-contract
+ * inputs. No I/O, no time, no randomness, no memory. Fail-closed: empty/invalid inputs ⇒ empty plan.
+ * Class gates are attached ONLY when the mission explicitly requires engineering (never inferred).
+ */
+export function buildVerificationPlan(input: {
+  verifyProofs?: Array<{ capability?: unknown; evidence?: unknown; required?: unknown }>;
+  objectiveProofs?: unknown[];
+  requiresEngineering?: boolean;
+}): VerificationPlan {
+  const seen = new Set<string>();
+  const relevantProbes = (Array.isArray(input.verifyProofs) ? input.verifyProofs : [])
+    .filter((p) => p && typeof (p as { evidence?: unknown }).evidence === "string" && (p as { evidence: string }).evidence)
+    .map((p) => {
+      const evidence = String((p as { evidence: string }).evidence);
+      return { capability: String((p as { capability?: unknown }).capability || evidence), evidence, required: (p as { required?: unknown }).required !== false };
+    })
+    .filter((p) => (seen.has(p.evidence) ? false : (seen.add(p.evidence), true)))
+    .sort((a, b) => a.evidence.localeCompare(b.evidence));
+
+  const objectiveProofs = [...new Set(
+    (Array.isArray(input.objectiveProofs) ? input.objectiveProofs : []).filter((s): s is string => typeof s === "string" && !!s),
+  )].sort();
+
+  const classGates = input.requiresEngineering === true
+    ? ["build: must stay green (npm build exit 0)", "typescript: must compile (tsc --noEmit exit 0)"]
+    : [];
+
+  const requiredProbeNames = relevantProbes.filter((p) => p.required).map((p) => p.evidence);
+  const requiredChecks = [...classGates.map((g) => g.split(":")[0]), ...requiredProbeNames, ...objectiveProofs];
+  const expectedEvidence = relevantProbes.map((p) => p.evidence);
+  const expectedFailureModes = [
+    ...(input.requiresEngineering === true
+      ? ["validation BLOCKS if the build turns red", "validation BLOCKS if TypeScript fails to compile"]
+      : []),
+    ...requiredProbeNames.map((e) => `validation BLOCKS if required probe "${e}" evidence is absent/failing`),
+    ...objectiveProofs.map((e) => `validation BLOCKS if objective-proof "${e}" does not pass`),
+  ];
+
+  return { requiredChecks, relevantProbes, objectiveProofs, expectedEvidence, classGates, expectedFailureModes };
+}
+
 /** Deterministic selection context echoed into the prompt (contract §3.2 CONTEXT). */
 export interface ProviderContext {
   repoRoot: string;
@@ -74,6 +134,11 @@ export interface ProviderContext {
    * Reduces provider rediscovery without granting the Runtime any authoring authority.
    */
   knownSolutions?: KnownSolutionCandidate[];
+  /**
+   * V32 — advisory predictive verification plan (optional, defaults absent). Tells the author what the
+   * Validation Engine will independently re-check. NOT proof; marks nothing successful.
+   */
+  verificationPlan?: VerificationPlan;
 }
 
 /**
@@ -457,6 +522,27 @@ export function renderMissionPrompt(request: ProviderRequest): string {
         `  - objective ${k.objectiveId}: previously solved & validated in ${k.historicalMission ?? "a prior mission"} ` +
           `touching [${k.targets.join(", ")}] (reuseCount=${k.reuseCount})`,
       );
+    }
+  }
+  // V32 — advisory predictive verification plan: what the Validation Engine will independently re-check.
+  // NOT proof; produce the evidence these checks require so the first authored pass validates. Rendered
+  // only when present and non-empty (a mission with no declared/implied verification renders nothing).
+  const vp = m.context.verificationPlan;
+  if (
+    vp &&
+    (vp.classGates.length > 0 || vp.relevantProbes.length > 0 || vp.objectiveProofs.length > 0 || vp.expectedFailureModes.length > 0)
+  ) {
+    lines.push("");
+    lines.push("## VERIFICATION_PLAN");
+    lines.push("- advisory only — ODG's Validation Engine independently re-checks ALL of this; it is NOT proof and marks nothing successful.");
+    if (vp.classGates.length > 0) lines.push(`- class_gates: [${vp.classGates.join("; ")}]`);
+    if (vp.relevantProbes.length > 0) {
+      lines.push(`- probes_that_will_gate: [${vp.relevantProbes.map((p) => (p.required ? p.evidence : `${p.evidence} (optional)`)).join(", ")}]`);
+    }
+    if (vp.objectiveProofs.length > 0) lines.push(`- objective_proofs: [${vp.objectiveProofs.join(", ")}]`);
+    if (vp.expectedFailureModes.length > 0) {
+      lines.push("- expected_failure_modes (produce evidence to avoid these):");
+      for (const f of vp.expectedFailureModes) lines.push(`  - ${f}`);
     }
   }
   lines.push("");
