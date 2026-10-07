@@ -122,6 +122,23 @@ export function buildVerificationPlan(input: {
   return { requiredChecks, relevantProbes, objectiveProofs, expectedEvidence, classGates, expectedFailureModes };
 }
 
+/**
+ * Pure, deterministic derivation of the verification gates currently reporting RED, from the EXISTING
+ * runtime-verify.json booleans ({build, typescript, gitClean}) ODG already persists and the Release
+ * decision already reads. ONLY an explicit `false` counts as failing (undefined/true ⇒ not claimed
+ * failing — fail-closed). Stable gate order. No I/O; the caller supplies the already-read object.
+ */
+export function deriveFailingChecks(
+  verify: { build?: unknown; typescript?: unknown; gitClean?: unknown } | null | undefined,
+): string[] {
+  if (!verify || typeof verify !== "object") return [];
+  const out: string[] = [];
+  for (const gate of ["build", "typescript", "gitClean"] as const) {
+    if ((verify as Record<string, unknown>)[gate] === false) out.push(gate);
+  }
+  return out;
+}
+
 /** Deterministic selection context echoed into the prompt (contract §3.2 CONTEXT). */
 export interface ProviderContext {
   repoRoot: string;
@@ -139,6 +156,12 @@ export interface ProviderContext {
    * Validation Engine will independently re-check. NOT proof; marks nothing successful.
    */
   verificationPlan?: VerificationPlan;
+  /**
+   * V36 — gates the local verification currently reports RED (from the already-persisted
+   * runtime-verify.json). Advisory INPUT only — tells the author what is failing NOW so it fixes those
+   * first; NOT proof. Optional, omitted when nothing is failing/known.
+   */
+  currentFailingChecks?: string[];
 }
 
 /**
@@ -544,6 +567,14 @@ export function renderMissionPrompt(request: ProviderRequest): string {
       lines.push("- expected_failure_modes (produce evidence to avoid these):");
       for (const f of vp.expectedFailureModes) lines.push(`  - ${f}`);
     }
+  }
+  // V36 — gates currently RED per the local verification (advisory INPUT; NOT proof). The provider was
+  // reached because the local pipeline could not pass — fix these first. The Validation Engine re-checks.
+  if (Array.isArray(m.context.currentFailingChecks) && m.context.currentFailingChecks.length > 0) {
+    lines.push("");
+    lines.push("## CURRENT_FAILING_CHECKS");
+    lines.push("- advisory — the local verification currently reports these gates RED; prioritise fixing them. NOT proof; the Validation Engine re-checks independently.");
+    lines.push(`- failing: [${m.context.currentFailingChecks.join(", ")}]`);
   }
   lines.push("");
   lines.push("## REQUIRED_OUTPUT");

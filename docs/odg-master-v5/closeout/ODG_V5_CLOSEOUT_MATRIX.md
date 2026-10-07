@@ -408,6 +408,42 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 31. RUNTIME CHANGE LOG — CURRENT_FAILING_CHECKS_PROPAGATION_V1 (V36)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
+- **Bottleneck (candidate F — computed but not propagated):** the current verification gate status
+  `{build, typescript, gitClean}` is already computed, persisted in `runtime/generated/runtime-verify.json`,
+  and read by `gatherEvidence` for the Release decision — but the gates currently RED were **never surfaced
+  to provider reasoning**, even though the provider is reached precisely because the local pipeline could not
+  pass. "Available to verification, absent in provider reasoning."
+- **Signal reused (zero new state):** the EXISTING `runtime-verify.json` booleans. No new store, no new
+  persisted state, no new feedback channel, no fabricated signal.
+- **Files touched (write-set, strict — 4):** `src/providers/provider-port.ts` (pure `deriveFailingChecks()`
+  + optional `ProviderContext.currentFailingChecks` + additive prompt render); `src/runtime/
+  autonomy-runtime-adapter.ts` (`buildProviderMission` populates it from the SAME `VERIFY` artifact
+  `gatherEvidence` reads, guarded); `src/providers/current-failing-checks.test.ts` (**new**); this matrix.
+- **Behaviour:** ONLY an explicit `false` gate is reported failing (undefined/true/absent/malformed ⇒ not
+  claimed — fail-closed, stable gate order); rendered as advisory `## CURRENT_FAILING_CHECKS` ("prioritise
+  fixing; NOT proof; the Validation Engine re-checks"). Omitted entirely when nothing is failing/known, so
+  cold missions render byte-identically.
+- **Authority / proof preserved:** advisory INPUT only — grants no authority, writes nothing, proves nothing,
+  releases nothing; the Validation Engine + Release Manager + `recordMission` remain the sole truth. Current
+  reality > current contract > current evidence > this advisory context.
+- **Tests:** `current-failing-checks.test.ts` 2/2 (pure derivation incl. adversarial stale/missing/malformed/
+  non-boolean/unknown ⇒ fail-closed; prompt A/B — cold renders nothing, warm names the red gates labelled
+  advisory/NOT-proof); `tsc --noEmit` exit 0; TS provider/adapter/ledger/runner regression **19/19**;
+  `runtime/core/*.test.js` **67/67**.
+- **A/B:** CONTROL (no failing-checks context) renders no block; TREATMENT (gates red) surfaces exactly the
+  failing gate names — proven offline through the real `renderMissionPrompt`. Provider-side iteration
+  reduction is **UNMEASURED** (provider execution hazard-gated) — **no 10× claimed**.
+- **Before/after:** BEFORE — on escalation the provider was told the plan (V32) but not what was RED NOW,
+  re-running build/tsc to discover it. AFTER — the already-computed red gates are handed over as advisory
+  input. Honesty: VERIFIED (tested + offline-exercised), not CERTIFIED. Limitation: reflects whatever
+  `runtime-verify.json` holds at build time (the adapter refreshes it on the local path); advisory, so
+  staleness cannot mislead truth — the Validation Engine re-checks.
+
+---
+
 ## 30. RUNTIME CHANGE LOG — INFORMATION_GAIN_NEXT_CHECK_V1 (V33)
 
 - **Date (UTC):** 2026-10-07

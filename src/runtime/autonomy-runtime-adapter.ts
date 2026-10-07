@@ -51,7 +51,7 @@ import type {
 // V31/V32 — advisory pre-authoring types + the pure verification-plan builder (public provider surface;
 // imported directly to keep the bounded write-set at this file + helper, without touching the barrel).
 import type { KnownSolutionCandidate, VerificationPlan } from "../providers/provider-port";
-import { buildVerificationPlan } from "../providers/provider-port";
+import { buildVerificationPlan, deriveFailingChecks } from "../providers/provider-port";
 import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 import { RootCauseEngine, type MinimalPatch } from "./root-cause-engine";
 import {
@@ -1065,8 +1065,28 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         // V32 — advisory predictive verification plan (what the Validation Engine will re-check). Derived
         // from the CURRENT contract only; advisory INPUT, never proof. Omitted when empty.
         verificationPlan: this.buildVerificationPlan(mission, spec),
+        // V36 — gates currently RED, reused from the already-persisted runtime-verify.json (the SAME
+        // artifact the Release decision reads). Advisory INPUT only; no new state, never proof. Omitted
+        // when nothing is failing/known.
+        currentFailingChecks: this.buildCurrentFailingChecks(),
       },
     };
+  }
+
+  /**
+   * V36 — the verification gates currently reporting RED, derived (pure) from the EXISTING
+   * runtime-verify.json that `gatherEvidence` already reads. READ-ONLY, fail-closed: absent/malformed ⇒
+   * undefined (omitted). It propagates computed-but-undelivered intelligence to provider reasoning as
+   * advisory INPUT — it grants no authority, is never proof, and the Validation Engine re-checks all gates.
+   */
+  private buildCurrentFailingChecks(): string[] | undefined {
+    try {
+      const verify = this.readJson<{ build?: boolean; typescript?: boolean; gitClean?: boolean }>(VERIFY);
+      const failing = deriveFailingChecks(verify);
+      return failing.length > 0 ? failing : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   /**
