@@ -3861,3 +3861,33 @@ errors; next build green; A3/action-gate/action-gate-live/nl-gateway/capability-
 mission-ledger regression green. Write-set = exactly those 5 files (no scope expansion). NOT CERTIFIED beyond
 scope: making ESCALATE resumable would require editing action-gate-live.test.js (outside write-set) — the
 exact boundary, reported not bypassed. Mission scenario (authz/capability UNAVAILABLE = absence) fully covered.
+
+### SEMANTIC MISSION ENTRYPOINT — NATURAL INTENT → GOVERNED MISSION → EXECUTION (2026-10-07)
+CTO priority: HUMAN NATURAL INTENT → ODG INTERPRETATION → EXISTING GOVERNED MISSION/PLAN → EXECUTION;
+the user must no longer need mission names, file names, pipeline names, or internal commands. INSPECTION
+(targeted, no full scan): the semantic half already existed — `odg objective "<nl>"` (runtime/bin/odg-
+objective.js) → nl-objective-gateway.compile → mission-synthesizer contract + capability-router + action-
+gate + governance-kernel, returning a governed DRY-RUN projection (READY_DRY_RUN / AMBIGUOUS / BLOCKED /
+DENIED / ESCALATE). The execution half already existed — `odg mission <NAME>` (src/runtime/mission-cli.ts)
+plans + routes (provider / migrated-local / local-pipeline) and mission-loader synthesizes a contract
+on-demand (gitignored runtime/missions/<id>.json) when absent. THE MISSING SEAM: nothing connected a clean
+NL interpretation to execution — the gateway explicitly refused execution and told the user to run
+`odg mission <NAME>` (which requires knowing the name). NOT a NO-ACTION.
+CHANGE (commit b338815; 3 files, reuse-only, no second runtime/authority/primitive): runtime/bin/odg-
+objective.js gains `--execute` — a thin seam that (1) compiles via the UNCHANGED gateway (still dry-run,
+never executes), (2) on READY_DRY_RUN materializes the governed mission through the EXISTING on-demand
+lifecycle WITHOUT clobbering (resolve-to-existing when runtime/missions/<id>.json exists, else write the
+gateway contract), (3) delegates execution verbatim to the EXISTING unified entrypoint `odg mission <id>`
+so every downstream gate (action-gate, validation PARTIAL/BLOCKED, ledger proven-gate, local-pipeline
+gitClean) still applies; AMBIGUOUS/BLOCKED/DENIED/ESCALATE STOP before any execution and report what is
+needed. Default `odg objective` behaviour is byte-identical (dry-run JSON). odg router: `objective|do`
+alias + usage. Focused lock src/runtime/semantic-entrypoint.test.ts (19 assertions): valid / ambiguous /
+unknown-capability / authorization-boundary (zero spawn + zero write) / execution-routing (on-demand write
++ verbatim delegate) / resolve-to-existing (reuse never clobber) / dry-run preserved.
+PROVEN: focused 19/19; tsc --noEmit 0 errors; nl-objective-gateway regression 156/156; dry-run default
+unchanged. NON-DESTRUCTIVE REAL PROOF: `odg objective "audit the runtime state" --execute` routed NL →
+AUDIT_THE_RUNTIME_STATE → odg mission → LOCAL pipeline; first (pre-commit) run correctly HALTED at the
+pipeline's own gitClean gate (deferring to governance, not bypassing); post-commit clean run reached
+PIPELINE SUCCESS 13/13 → MISSION SUCCESS exit 0 (and reused the existing on-demand contract — resolve-to-
+existing confirmed). Tracked tree clean after both runs (all pipeline artifacts gitignored). Write-set =
+exactly the 3 files. No second authority, no new primitive; ESCALATE/Fleet/providers/Internet untouched.
