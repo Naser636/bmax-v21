@@ -3891,3 +3891,39 @@ pipeline's own gitClean gate (deferring to governance, not bypassing); post-comm
 PIPELINE SUCCESS 13/13 → MISSION SUCCESS exit 0 (and reused the existing on-demand contract — resolve-to-
 existing confirmed). Tracked tree clean after both runs (all pipeline artifacts gitignored). Write-set =
 exactly the 3 files. No second authority, no new primitive; ESCALATE/Fleet/providers/Internet untouched.
+
+### REPAIR SEMANTIC INTENT → EXECUTABLE OBJECTIVES — bounded id + zero-evidence false-success guard (2026-10-07)
+CTO repair (seam ONLY; targeted inspection, no full scan): odg-objective.js / nl-objective-gateway.js /
+semantic-entrypoint.test.ts / mission-cli.ts and directly-related tests. ROOT CAUSE reproduced: the prior
+closeout above records the exact defect — `odg objective "<sentence>" --execute` slugged the WHOLE natural-
+language sentence into the mission id (mission-synthesizer.fromRequest → slug(text): "audit the runtime
+state and report findings" ⇒ mission AUDIT_THE_RUNTIME_STATE_AND_REPORT_FINDINGS, and every objective id
+inherited the sentence), routed it, and reported "MISSION SUCCESS exit 0" because the 13 pipeline stages ran
+— though the read-only synthesized contract (no authorized_paths, done_when=["Validation successful."], no
+verify-evidence) could not possibly prove the requested objective was executed. Two defects: (1) raw user
+sentence used as the governed identifier; (2) SUCCESS reported with ZERO per-objective execution evidence.
+CHANGE (reuse-only, no second runtime/authority/primitive/executor; gateway + synthesizer + mission-cli
+LEFT UNCHANGED — their gates are already honest, recorded NO-ACTION): the SEAM (runtime/bin/odg-objective.js)
+now owns the routing identity. (1) decide() re-keys a clean projection onto a BOUNDED, deterministic governed
+id `NL_<MODE>_<sha256(normalizedObjective)[0..8]>` (≤20 chars, same intent ⇒ same id so resolve-to-existing
+stays stable), re-basing objective ids too; the human-readable goal is preserved verbatim (objective.goal /
+description / new `synthesizedFrom`). The raw sentence is NEVER the identifier. (2) run(--execute) no longer
+forwards the raw pipeline exit as the verdict: new pure classifyOutcome(decision, pipelineExit) maps it to an
+HONEST verdict — SUCCESS only when exit 0 AND the resolved contract declares a REAL evidence binding
+(authorized_paths non-empty per validation-engine.js:66, or verify[].evidence per objective-evidence.ts);
+exit 0 with NO binding ⇒ PARTIAL (NO_OBJECTIVE_EVIDENCE_BINDING, exact reason); non-zero exit ⇒ BLOCKED. A
+green pipeline is never SUCCESS on its own. Ambiguous/unknown/denied boundaries unchanged (ASK/STOP, zero
+side effects). Default dry-run preserved, now also surfacing the bounded `resolvedMission`.
+PROVEN: focused src/runtime/semantic-entrypoint.test.ts rewritten to the 8 CTO-required adversarial cases —
+decomposition / existing-mission resolution / bounded synthesis / ambiguous / unknown / authorization /
+zero-evidence false-success / real-execution-routing — 38/38 PASS. tsc --noEmit 0 errors. nl-objective-
+gateway regression 156/156 + expert 8/8 (gateway untouched). NON-DESTRUCTIVE REAL PROOFS: (a) real dry-run
+`odg objective "audit the runtime state and report findings"` ⇒ resolvedMission=NL_ANALYZE_1FB9235B (bounded;
+gateway label AUDIT_THE_RUNTIME_STATE_AND_REPORT_FINDINGS retained only as traceability), writes nothing; (b)
+real `odg objective "audit the runtime state" --execute` ⇒ bounded id NL_ANALYZE_FDDCBAB2, routed verbatim to
+`odg mission NL_ANALYZE_FDDCBAB2` → LOCAL pipeline (no provider), pipeline exited 1 ⇒ seam Verdict=BLOCKED
+"requested objective is NOT proven" exit 3 — NOT a false SUCCESS. (The exact exit-0-green-no-evidence ⇒
+PARTIAL path is locked by classifyOutcome injected-exit tests.) Tracked tree clean after both runs (bounded
+contract runtime/missions/NL_ANALYZE_FDDCBAB2.json is gitignored). Write-set = exactly odg-objective.js +
+semantic-entrypoint.test.ts + this carnet. No second authority/primitive/executor; per-action authorization,
+dependency handling, no-self-authorization and human gates preserved (all enforced by the unchanged downstream).
