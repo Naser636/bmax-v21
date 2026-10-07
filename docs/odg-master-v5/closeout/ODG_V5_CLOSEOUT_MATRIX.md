@@ -408,6 +408,48 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 40. RUNTIME CHANGE LOG — PROVIDER_SUBSCRIPTION_FIRST_AUTH_V1 (V59)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code (no independent "NOTRE AGENT" process exists).
+  First system-wake repair: maximum reuse, minimum new mechanism, authority boundaries unchanged.
+- **Problem:** the governed engineering path authenticated Claude with `ANTHROPIC_API_KEY` by default. A
+  depleted/absent key still "won" the availability probe (probe checks presence, not validity), so V56 failed
+  with api_error 400 "Credit balance is too low" and never used the working claude.ai subscription — and paid
+  tokens would be spent even when a €0 subscription login exists.
+- **Root cause (V58):** `claude-provider-adapter` defaults `preferSubscriptionAuth=false`; the governed path
+  (`provider-factory.createDefaultFailoverChain`) constructed Claude with only `{cwd,model}`, so the paid key
+  was always preferred; no code detected a usable subscription login.
+- **Fix (minimal, cost-safe):** in `src/providers/provider-factory.ts` — new pure helpers
+  `subscriptionLoginAvailable()` (cheap deterministic signal: `CLAUDE_CODE_OAUTH_TOKEN` env OR the CLI
+  credentials file `~/.claude/.credentials.json`; NEVER a live/paid call) and `governedClaudeSubscriptionPref()`
+  (explicit caller value > `ODG_CLAUDE_USE_API_KEY=1`⇒key > `ODG_CLAUDE_PREFER_SUBSCRIPTION=1`⇒subscription >
+  prefer subscription IFF a login exists, else `undefined` = adapter's historical default). The chain now
+  builds Claude with `preferSubscriptionAuth: governedClaudeSubscriptionPref(...)`. No login ⇒ unchanged
+  (key-only/CI never regress). Adapter default untouched (direct-caller conformance test stays green).
+- **Authority invariants (unchanged):** PROVIDER=PROPOSE, PATCH-EXECUTOR=WRITE, VALIDATION-ENGINE=VERIFY,
+  RELEASEMANAGER=ACCEPT. This changes authentication only — never authority, never a new writer/primitive.
+  Fleet untouched/OFF; Codex not installed/not a dependency; vnext/PersistentAutonomyController untouched.
+- **Tests:** `src/tests/provider-auth-routing.test.ts` (**new**, offline, injected runner — no paid call):
+  10 assertions — login-signal (token/file/none), all 4 pref branches, and the governed chain strips
+  `ANTHROPIC_API_KEY` from the spawned CLI env when a login exists (subscription, €0) and inherits it under
+  `ODG_CLAUDE_USE_API_KEY=1`. Direct-adapter conformance intact. `npm test` **335 files ALL PASS** (0 assertion
+  failures); `tsc --noEmit` 0; `next build` 0.
+- **Real verification:** live `odg mission AUTONOMY_E2E_LOOP` with **NO** auth flag → **no credit error** (the
+  depleted key was auto-stripped; the provider authored under the subscription login), Validation Engine
+  **SUCCESS** (build+tsc real), `Engineering: OK (1 changed, 1 committed in scope)`. ReleaseManager correctly
+  returned **NO_RELEASE** only because the verification ran with this repair uncommitted (gitClean=false) — the
+  byproduct marker commit was reset; no paid Anthropic call was made.
+- **Result:** the governed default is now cost-safe subscription-first; a depleted/absent API key no longer
+  wins or spends tokens; the proven V57 subscription path is the default without any manual flag.
+- **Remaining seam(s) (deferred, recorded — NOT implemented):** (1) **availability-truth** — `claudeAvailability`
+  still can't detect a depleted key and doesn't yet count a login-only (no-key) env as "available"; cheap fix =
+  let the probe accept `subscriptionLoginAvailable()` as a credential. (2) **Ollama engineering authoring** —
+  reachable with minimal reuse via the OpenAI-compatible adapter pointed at `:11434/v1` added as a failover
+  candidate (propose-only); own mission. (3) **execution-failure failover** — retry-safe because the provider
+  only PROPOSES (no pre-apply write), but changes `provider-failover-engine` behavior; own mission.
+
+---
+
 ## 39. RUNTIME CHANGE LOG — WAKE_1_RESOLVER_ROUTER_CONNECT_V1 (V49)
 
 - **Date (UTC):** 2026-10-07 · **Actual executor:** Claude Code (inspection, edit, tests, commit; no

@@ -18,6 +18,9 @@
  */
 
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 import { createClaudeProvider } from "./claude-provider-adapter";
 import { createOpenAIProvider, OpenAIProviderAdapter } from "./openai-provider-adapter";
@@ -143,6 +146,46 @@ export function claudeAvailability(env: AvailabilityEnv): ProviderAvailability {
   });
 }
 
+// --- governed Claude auth policy (V59) --------------------------------------
+
+/**
+ * Cheap, deterministic signal that the Claude Code CLI has a usable SUBSCRIPTION login (claude.ai),
+ * independent of any ANTHROPIC_API_KEY: a `CLAUDE_CODE_OAUTH_TOKEN` env, or the CLI's stored
+ * credentials file. Pure filesystem/env read — NEVER a paid/live call. Injected deps keep it testable.
+ */
+export function subscriptionLoginAvailable(
+  env: NodeJS.ProcessEnv = process.env,
+  fileExists: (p: string) => boolean = (p) => {
+    try {
+      return fs.existsSync(p);
+    } catch {
+      return false;
+    }
+  },
+  homedir: () => string = os.homedir,
+): boolean {
+  const tok = env.CLAUDE_CODE_OAUTH_TOKEN;
+  if (typeof tok === "string" && tok !== "") return true;
+  return fileExists(path.join(homedir(), ".claude", ".credentials.json"));
+}
+
+/**
+ * Resolve `preferSubscriptionAuth` for the GOVERNED engineering path (V59 cost-safe default). Order:
+ *   1. an explicit caller value wins (tests / direct callers);
+ *   2. `ODG_CLAUDE_USE_API_KEY=1` ⇒ force direct API-key usage (key-only / CI opt-out);
+ *   3. `ODG_CLAUDE_PREFER_SUBSCRIPTION=1` ⇒ force subscription (existing opt-in, preserved);
+ *   4. otherwise prefer the SUBSCRIPTION login WHEN one is detected (so a depleted/absent
+ *      ANTHROPIC_API_KEY never wins and no paid tokens are spent) — else `undefined`, which leaves the
+ *      adapter's historical default (inherit env / API key) untouched, so key-only envs never regress.
+ * The provider still only PROPOSES; this changes authentication only, never authority.
+ */
+export function governedClaudeSubscriptionPref(opts?: ClaudeProviderOptions): boolean | undefined {
+  if (opts && typeof opts.preferSubscriptionAuth === "boolean") return opts.preferSubscriptionAuth;
+  if (process.env.ODG_CLAUDE_USE_API_KEY === "1") return false;
+  if (process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION === "1") return true;
+  return subscriptionLoginAvailable() ? true : undefined;
+}
+
 // --- chain construction ------------------------------------------------------
 
 export interface FailoverChainOptions {
@@ -162,7 +205,10 @@ export function createDefaultFailoverChain(opts: FailoverChainOptions = {}): Fai
       name: "claude-code",
       role: "primary",
       probe: claudeAvailability,
-      create: () => createClaudeProvider(opts.claude),
+      // V59 — cost-safe default: on the governed path prefer the Claude SUBSCRIPTION login when one
+      // exists, so a depleted/absent ANTHROPIC_API_KEY never wins and no paid tokens are spent. Falls
+      // back to the adapter's historical default (API key) when no login is detected (no regression).
+      create: () => createClaudeProvider({ ...opts.claude, preferSubscriptionAuth: governedClaudeSubscriptionPref(opts.claude) }),
     },
     {
       name: openaiProbe.name,
