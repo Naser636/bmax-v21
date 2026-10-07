@@ -79,6 +79,13 @@ const patches = decision.actions.map((action, index) => {
     if (decision.research_acquisition && typeof decision.research_acquisition === "object") {
         patch.research_acquisition = decision.research_acquisition;
     }
+    // Transport-only: carry the objective's explicit Action Contract (human authority for a consequential
+    // WRITE) onto the patch so the Patch Executor's action-gate (admitPatchEdit) ENFORCES it before any
+    // mutation. authorized_paths remains SCOPE, never authority (FICHE_01 §13). Absent ⇒ no key, so the
+    // edit stays OBSERVED (legacy) and other missions are unaffected. Mirrors the research transport above.
+    if (objective && objective.actionContract && typeof objective.actionContract === "object") {
+        patch.actionContract = objective.actionContract;
+    }
     return patch;
 });
 

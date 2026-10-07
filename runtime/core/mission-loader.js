@@ -103,6 +103,12 @@ const objectives = rawObjectives.map((o, i) => {
     if (o.patch && typeof o.patch === "object") {
         normalized.patch = o.patch;
     }
+    // Optional explicit Action Contract carrying the HUMAN authority for a consequential WRITE. Preserved
+    // verbatim (transport only, never interpreted here) so the Patch Executor's action-gate ENFORCES the
+    // human authority before any mutation. Absent on read-only/legacy objectives (backward compatible).
+    if (o.actionContract && typeof o.actionContract === "object") {
+        normalized.actionContract = o.actionContract;
+    }
     // Optional OPT-IN per-objective proof binding (ObjectiveSpec.proof): the NAME of a registered
     // probe that independently verifies this objective. Carried verbatim so the Validation Engine's
     // objective-proof gate can consume it. Absent on objectives that declare none (backward compatible).

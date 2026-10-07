@@ -4142,3 +4142,49 @@ operator control; deliberately NOT removed — turning it off is the strict loca
 closed with a precise policy-deny cause). Next recommended frontier: per-grant live-grant rotation / refreshing an
 existing (gitignored) contract's authorization on re-run (documented above); unrelated git/bash live execution and
 Fleet/provider systems remain out of scope.
+
+### REMISE À NIVEAU AVANT SECOND EXAMEN — débloquer l'ingénierie LOCALE gouvernée d'ODG (2026-10-07)
+Mandat humain borné : corriger uniquement les 4 lacunes de l'échec du 1er permis (récupération, mission
+d'ingénierie end-to-end, apprentissage, continuité mixte). Claude Code = surface d'ingénierie (n'a PAS passé
+l'examen ni exécuté les missions à la place d'ODG). DIAGNOSTIC (lecture d'abord) : les 4 mécanismes EXISTENT et
+sont câblés (build-recovery↔validation-engine ; local-fixers+patch-executor ; post-release-learning→patch-memory +
+WAKE-1 replay dans decision-engine ; ACTION_AUTHZ_PARTIAL+dependsOn). Ils partagent UNE cause racine qui les
+rendait non pilotables : il n'existait AUCUN chemin d'EXÉCUTION D'INGÉNIERIE LOCALE gouvernée qu'ODG puisse piloter
+— un CATCH-22 : patch-executor exige authorized_paths pour appliquer une édition, mais missionRequiresProvider
+envoie TOUTE mission à authorized_paths vers le PROVIDER (auteur), donc une édition locale pré-autorisée ne pouvait
+jamais s'appliquer localement ; et même routée, l'autorité humaine de l'édition était PERDUE (mission-loader.js CJS
+ne portait pas actionContract ; patch-engine non plus), donc l'édition restait OBSERVED (enforced:false) au lieu de
+gouvernée. RÉPARATIONS (réutilisation seule, aucune architecture/orchestrateur/autorité parallèle) :
+FIX A (src/runtime/mission-cli.ts) — missionIsPreAuthoredEngineering() : une mission conséquente portant DÉJÀ ses
+éditions concrètes (authorized_paths + objective.patch) est routée vers le pipeline LOCAL existant (apply
+déterministe par ODG) AVANT le test provider ; une mission sans éditions va toujours au provider pour être AUTORÉE
+(inchangé). Résout le catch-22, sans toucher missionRequiresProvider.
+FIX C (runtime/core/patch-engine.js) + FIX C2 (runtime/core/mission-loader.js CJS) — transport verbatim de
+l'actionContract de l'objectif (contrat→mission-plan→decision→patch), parallèle au transport research_acquisition
+existant, afin que l'action-gate du Patch Executor ENFORCE l'autorité humaine avant toute mutation (authorized_paths
+reste SCOPE, jamais autorité — FICHE_01 §13).
+FIX B (runtime/core/capability-authorization.js + decision-rules.js + runtime/bin/odg-objective.js) — capacité
+conséquente « Governed Source Edit » (WRITE/R1/LOW) ; règles résolveur {edit,file}/{modify,file}/{apply,edit} ;
+buildSourceEditBinding() construit authorized_paths + objective.patch + actionContract(autorité humaine) À PARTIR
+du grant humain (la phrase ne produit JAMAIS l'édition) ; odg-objective applyAuthorization branche cette capacité.
+Fail-closed : sans grant / grant malformé / mauvaise mission ⇒ rien n'est lié, aucune exécution.
+POURQUOI ÇA DÉBLOQUE LES 4 : avec une mission d'ingénierie LOCALE pilotable, (2) ODG fait intention→décision→
+autorisation→édition bornée→apply→validation→ledger lui-même ; (1) la récupération (build-recovery) se déclenche
+dans la validation du pipeline local sur un build rouge récupérable d'un fichier autorisé ; (3) l'apprentissage
+s'enregistre (post-release-learning sur APPLIED prouvé) et se réutilise (WAKE-1 replay) ; (4) la continuité mixte
+fonctionne (patch-executor fait un BLOCKED résumable par action pour une édition non autorisée pendant que les
+siblings autorisés s'appliquent ; validation surface PARTIAL selon dependsOn). AUCUN de 1/3/4 n'a nécessité de code
+nouveau — ils étaient déjà câblés et dépendaient uniquement du chemin d'ingénierie locale (FIX A/B/C/C2).
+PREUVES (unit/stage, arbre volontairement dirty par les réparations ⇒ le pipeline complet gitClean tourne
+POST-commit) : (1) le seam écrit un contrat d'ingénierie gouverné (authorized_paths + objective.patch +
+actionContract.authority mission-bound + human:true) ; (2) le Patch Executor ENFORCE (enforced:true, action-gate
+ALLOW) et APPLIQUE réellement l'édition sur une cible scratch gitignored ; (3) nouveau test focalisé
+src/runtime/nl-engineering-edit.test.ts 14/14 (résolution, binding depuis le grant, route locale, fail-closed
+sans grant / édition vide / mauvaise mission) ; régression complète runtime/core 68/68 + src/runtime 43/43 ; tsc 0 ;
+git/bash/research non régressés. ODG reste l'autorité d'exécution : Claude Code n'a écrit aucune édition de source
+applicative — il a réparé les seams ; l'édition réelle est produite par le grant HUMAIN et appliquée par ODG.
+Write-set = mission-cli.ts + capability-authorization.js + decision-rules.js + patch-engine.js + mission-loader.js +
+odg-objective.js + nl-engineering-edit.test.ts + ce carnet. PRÊT POUR LE SECOND EXAMEN (épreuves live à exécuter
+par ODG) : gap 2 (édition d'ingénierie end-to-end), gap 1 (récupération), gap 4 (continuité mixte), gap 3
+(apprentissage/réutilisation). FRONTIÈRE HUMAINE conservée : une édition conséquente exige toujours un grant humain
+explicite portant la cible + l'édition concrète ; ODG n'invente jamais une édition depuis une phrase.

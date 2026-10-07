@@ -48,6 +48,12 @@ const CONSEQUENTIAL_CAPABILITIES = Object.freeze({
     "Governed Git Branch Integration": Object.freeze({ actionClass: "IRREVERSIBLE", risk: "HIGH", reversibility: "R3", executorPrefix: "GIT_BRANCH_INTEGRATION", probe: "git-branch-integrated", safeProbe: null }),
     "Governed Bash/Linux Command": Object.freeze({ actionClass: "WRITE", risk: "HIGH", reversibility: "R2", executorPrefix: "BASH_COMMAND", probe: "bash-command-governed", safeProbe: null }),
     "External Research Acquisition": Object.freeze({ actionClass: "COMMUNICATE", risk: "HIGH", reversibility: "R2", executorPrefix: "EXTERNAL_RESEARCH", probe: "research-acquired", safeProbe: "external-research-dry-run-planned" }),
+    // Governed Source Edit — a bounded, reversible (git-compensable R1) local file WRITE applied by the
+    // EXISTING Patch Executor under action-gate. The concrete edit AND the authorized paths come from the
+    // human grant's scope (never the sentence); ODG only applies + validates deterministically. Not a
+    // capability-executor (no executorPrefix/probe): the engineering evidence is the applied change +
+    // green build/tests validated by the local pipeline (authorized_paths is the evidence-class signal).
+    "Governed Source Edit": Object.freeze({ actionClass: "WRITE", risk: "LOW", reversibility: "R1", executorPrefix: null, probe: null, safeProbe: null }),
 });
 
 function isConsequentialCapability(capability) {
@@ -116,6 +122,31 @@ function buildExecutorSpec(capability, grantScope) {
     const a = SPEC_ADAPTERS[capability];
     if (!a || !isPlainObject(grantScope)) return null;
     return { field: a.field, value: a.fromScope(grantScope) };
+}
+
+// Build the EXISTING engineering-edit binding (authorized_paths + objective.patch + an action-contract
+// carrying the human authority) from a VALIDATED Governed Source Edit grant. The edits and paths are the
+// human's (from grant scope) — ODG never invents source from the sentence. The action-contract makes the
+// Patch Executor's action-gate ENFORCE the human authority before any mutation. Returns null on malformed
+// scope (fail-closed). `authority` is the grant-derived authority object produced by authorizeCapability.
+function buildSourceEditBinding(grantScope, authority) {
+    if (!isPlainObject(grantScope) || !isPlainObject(authority)) return null;
+    const paths = (Array.isArray(grantScope.authorized_paths) ? grantScope.authorized_paths : [])
+        .filter((p) => typeof p === "string" && p.length > 0);
+    const edits = (Array.isArray(grantScope.edits) ? grantScope.edits : [])
+        .filter((e) => e && typeof e === "object" && typeof e.target === "string" &&
+            (typeof e.content === "string" || typeof e.diff === "string"))
+        .map((e) => (typeof e.content === "string" ? { target: e.target, content: e.content } : { target: e.target, diff: e.diff }));
+    if (paths.length === 0 || edits.length === 0) return null;
+    const actionContract = {
+        authority,
+        contract: { id: authority.mission },
+        policy: "DETERMINISM_FIRST",
+        actionClass: "WRITE",
+        reversibility: "R1",
+        expectedTransition: plannedToPrepared(),
+    };
+    return { authorized_paths: paths, patch: edits, actionContract };
 }
 
 // Project a carried executor spec value back into grant-scope shape for the containment check.
@@ -329,6 +360,7 @@ module.exports = {
     isConsequentialCapability,
     defaultScopeSatisfied,
     buildExecutorSpec,
+    buildSourceEditBinding,
     requestedScopeOf,
     CONSEQUENTIAL_CAPABILITIES,
     SPEC_ADAPTERS,

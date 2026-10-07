@@ -193,6 +193,25 @@ function applyAuthorization(decision, grant, now) {
             // (non-destructive, dry-run) probe when it has one; the capability spec/parameters come from
             // the human grant's scope, never invented here. Absent a safe probe (git/bash), the LIVE probe
             // is bound and the safe-mode run honestly cannot reach SUCCESS (fail-closed, reported).
+            // Governed Source Edit — a bounded local file WRITE. The human grant's scope carries the
+            // authorized paths AND the concrete edit; ODG applies them via the EXISTING Patch Executor
+            // (local pipeline) under an action-contract that ENFORCES the human authority at apply time.
+            // The sentence never produces the edit. authorized_paths is the evidence-class signal.
+            if (r.capability === "Governed Source Edit") {
+                const binding = authz.buildSourceEditBinding(d.evidence.scope, d.authority);
+                const obj = decision.contract.objectives[r.index];
+                if (binding && obj) {
+                    decision.contract.authorized_paths = binding.authorized_paths;
+                    decision.contract.requires_engineering = true;
+                    obj.patch = binding.patch;
+                    obj.actionContract = binding.actionContract;
+                    obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true, mode: "GOVERNED_EDIT" };
+                    authorizations.push({ ...d.evidence, boundProbe: null, dispatchObjectiveId: obj.id, engineering: true });
+                } else {
+                    blockers.push({ code: "MALFORMED_EDIT_GRANT", capability: r.capability, objective: r.objectiveId, detail: "grant scope must carry authorized_paths and at least one concrete edit (target + content/diff)" });
+                }
+                continue;
+            }
             // A LIVE grant (the human explicitly set scope.live) binds the capability's LIVE probe (real
             // evidence); otherwise the non-destructive SAFE dry-run probe. The sentence never sets live.
             const live = !!(d.evidence && d.evidence.scope && d.evidence.scope.live === true);

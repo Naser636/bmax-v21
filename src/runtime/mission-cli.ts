@@ -57,7 +57,34 @@ interface RawMission {
   authorizedPaths?: unknown;
   requires_engineering?: boolean;
   requiresEngineering?: boolean;
-  objectives?: { id?: string; goal?: string }[];
+  objectives?: { id?: string; goal?: string; patch?: unknown }[];
+}
+
+/**
+ * ODG-LOCAL ENGINEERING EXECUTION signal. `missionRequiresProvider` sends EVERY authorized_paths mission
+ * to the provider — on the assumption the provider must AUTHOR the change. But when the mission already
+ * carries its concrete edits (objective.patch with target+content/diff), the authoring is DONE: nothing
+ * is left but DETERMINISTIC local application (Patch Engine → Patch Executor under action-gate +
+ * authorized_paths) + validation + ledger. Forcing such a mission to the provider was a catch-22 that
+ * made a bounded LOCAL engineering mission impossible (authorized_paths ⇒ provider; no authorized_paths ⇒
+ * the edit can't apply). This signal routes a pre-authored engineering mission to the EXISTING local
+ * pipeline so ODG executes it itself — no provider call, no authoring. Bounded: requires authorized_paths
+ * AND at least one objective carrying a concrete edit; a mission with NO edits still goes to the provider
+ * to be authored (unchanged). Reuses the existing local pipeline — no second runtime/engine.
+ */
+export function missionIsPreAuthoredEngineering(spec: RawMission | null): boolean {
+  if (!spec) return false;
+  const paths = spec.authorized_paths ?? spec.authorizedPaths;
+  const hasPaths = Array.isArray(paths) && paths.some((p) => typeof p === "string" && p.length > 0);
+  if (!hasPaths) return false;
+  const objs = Array.isArray(spec.objectives) ? spec.objectives : [];
+  const hasConcreteEdit = objs.some((o) => {
+    const raw = o && (o as { patch?: unknown }).patch;
+    const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+    return list.some((e) => e && typeof e === "object" && typeof (e as { target?: unknown }).target === "string" &&
+      (typeof (e as { content?: unknown }).content === "string" || typeof (e as { diff?: unknown }).diff === "string"));
+  });
+  return hasConcreteEdit;
 }
 
 /**
@@ -311,6 +338,15 @@ function main(): number {
   if (isMigratedMission(mission)) {
     console.log("Decision   : migrated local mission → LOCAL RUNTIME");
     return runLocalRoute(mission);
+  }
+
+  // ODG-local engineering: a mission that ALREADY carries its concrete edits needs no provider to
+  // author — only deterministic local application. Route it to the local pipeline BEFORE the provider
+  // check so ODG executes bounded engineering itself (apply → validate → ledger), governed by the
+  // action-gate at apply time. A mission with no edits still falls through to the provider to be authored.
+  if (spec && missionIsPreAuthoredEngineering(spec)) {
+    console.log("Decision   : pre-authored engineering mission (edits present) → LOCAL PIPELINE (ODG deterministic apply)");
+    return runLocalPipelineRoute(mission);
   }
 
   if (spec && missionRequiresProvider(toRoutable(spec))) {

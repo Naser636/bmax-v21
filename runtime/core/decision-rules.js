@@ -43,6 +43,13 @@ const RULES = [
     // requires an explicit human grant (capability-authorization) before any engagement.
     { all: ["external", "research"], capability: "External Research Acquisition" },
     { all: ["research", "acquisition"], capability: "External Research Acquisition" },
+    // Governed Source Edit — a bounded local file WRITE applied by the EXISTING Patch Executor. Same
+    // resolver-recognition pattern: recognition is NOT authorization — it is a CONSEQUENTIAL capability
+    // that still requires an explicit human grant (whose scope carries the authorized paths AND the
+    // concrete edit) before anything is written. Tight (both words) so only an explicit edit intent matches.
+    { all: ["edit", "file"], capability: "Governed Source Edit" },
+    { all: ["modify", "file"], capability: "Governed Source Edit" },
+    { all: ["apply", "edit"], capability: "Governed Source Edit" },
     { all: ["repository"], capability: "runtime-context-loader" },                         // inspect repo/workspace state
     { all: ["repo", "state"], capability: "runtime-context-loader" },
     { all: ["dépôt"], capability: "runtime-context-loader" },                              // FR: "état du dépôt" (reuse, no new capability)
