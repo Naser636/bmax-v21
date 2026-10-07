@@ -58,12 +58,15 @@ case "$MISSION" in
     shift
     ./runtime/bin/odg-generate-contracts.js "$@"
     ;;
-  objective)
-    # Natural-Language Objective Gateway (DRY-RUN): compile a raw natural-language objective into the
-    # governed projection (intent → objective → requirements → dependencies → capabilities → contract →
-    # authority → policy → risk → workgraph → planned actions → result) WITHOUT executing anything,
-    # calling any provider, touching the network, or writing any state. Delegates to the existing
-    # Mission Synthesizer / Capability Router / Action Gate / Governance Kernel.
+  objective|do)
+    # Semantic mission entrypoint — HUMAN NATURAL INTENT → ODG INTERPRETATION → GOVERNED MISSION →
+    # EXECUTION. Default (DRY-RUN): compile a raw natural-language objective into the governed projection
+    # (intent → objective → requirements → dependencies → capabilities → contract → authority → policy →
+    # risk → workgraph → planned actions → result) WITHOUT executing anything, calling any provider,
+    # touching the network, or writing any state. With --execute: a thin seam routes a CLEAN projection
+    # to the EXISTING unified entrypoint (odg mission), resolving to an existing governed contract or
+    # synthesizing one on-demand — the user never needs a mission/file/pipeline name. Delegates to the
+    # existing Mission Synthesizer / Capability Router / Action Gate / Governance Kernel / mission-cli.
     shift
     ./runtime/bin/odg-objective.js "$@"
     ;;
@@ -110,7 +113,8 @@ case "$MISSION" in
     echo "  odg                 (health dashboard)"
     echo "  odg health"
     echo "  odg mission <NAME>"
-    echo "  odg objective \"<natural-language objective>\"  (dry-run governed compilation)"
+    echo "  odg objective \"<natural-language objective>\"             (dry-run governed compilation)"
+    echo "  odg objective \"<natural-language objective>\" --execute   (interpret → governed mission → run)"
     echo "  odg delegate <NAME> [--prepare-only]  (supervise Claude Code with a file-scoped brief)"
     echo "  odg generate-contracts [--dry-run]"
     echo "  odg autonomy"
