@@ -3927,3 +3927,40 @@ PARTIAL path is locked by classifyOutcome injected-exit tests.) Tracked tree cle
 contract runtime/missions/NL_ANALYZE_FDDCBAB2.json is gitignored). Write-set = exactly odg-objective.js +
 semantic-entrypoint.test.ts + this carnet. No second authority/primitive/executor; per-action authorization,
 dependency handling, no-self-authorization and human gates preserved (all enforced by the unchanged downstream).
+
+### MAKE THE NL ENTRYPOINT GENUINELY EXECUTABLE — capability→probe binding + capability-executing route (2026-10-07)
+CTO continuation from the frontier above: synthesized NL missions were read-only/no-op (no evidence binding) so
+every NL --execute honestly resolved to PARTIAL/BLOCKED — syntactically routed, not genuinely executed. TARGETED
+INSPECTION (no full scan): capability-router (resolves a capability per objective via decision-rules) → mission-
+synthesizer (never set authorized_paths/verify) → capability-probes (PROBES registry + evaluate/evaluateObjective-
+Proofs required-proof gates, consumed by validation-engine.js:154/165) → capability-executors (the ONLY Mission→
+Capability→Execution→Evidence dispatcher, invoked ONLY by src/runtime/runtime-executor.ts:106 — NOT by patch-
+executor/odg-run) → mission-cli routes (migrated→runLocalRoute[RuntimeExecutor], provider, else local-pipeline).
+ROOT CAUSE of the frontier (two connected gaps): (1) the synthesized contract declared NO capability evidence
+binding, and (2) a synthesized NL mission routed to the local-pipeline, which NEVER dispatches capability-
+executors — so even a bound capability could not execute. CHANGE (reuse-only, no new runtime/authority/primitive/
+executor; 3 source files): (a) nl-objective-gateway.js — CAPABILITY_PROBE table binds a RESOLVED capability to its
+EXISTING probe and emits it as contract.verify {capability,evidence} + per-objective ObjectiveSpec.proof; ONLY
+read-only, NL-goal-dispatchable, non-self-authorizing capabilities are auto-bound (Connectivity Audit→internet-
+reachable). Consequential capabilities (Governed Git Branch Integration / Governed Bash/Linux Command / External
+Research Acquisition) self-gate deny-by-default and REQUIRE a human authorization transported on the objective — a
+sentence can never self-authorize them (NO-SELF-AUTHORIZATION), so they are deliberately NOT auto-bound. (b)
+mission-cli.ts — nlMissionResolvesCapability(): an NL_-namespaced mission whose objective resolves to a capability-
+executor is routed to the EXISTING runLocalRoute (RuntimeExecutor dispatches the capability + gates on genuine
+objective-evidence), not the local-pipeline. Bounded to the NL_ namespace so every other mission keeps its exact
+current route. (c) odg-objective.js — contractHasEvidenceBinding also recognises per-objective proof. FAIL-CLOSED:
+a bound objective passes ONLY when its probe genuinely verifies the capability's evidence; an unbound/ no-probe
+objective stays honestly PARTIAL. PROVEN: new src/runtime/nl-executable-objective.test.ts 16/16 (binding, no-probe-
+stays-unbound, no-self-authorization exclusion of 3 consequential capabilities, NL route signal + bounded blast
+radius); semantic-entrypoint 38/38 + gateway 156/156 + expert 8/8 + mission-cli-local-exit + objective-evidence
+regression all green; tsc --noEmit 0. ONE REAL NON-DESTRUCTIVE NL MISSION: `odg objective "audit the connectivity"
+--execute` ⇒ bounded NL_ANALYZE_D61B6843 → mission-cli Decision "NL capability-backed mission → LOCAL RUNTIME" →
+RuntimeExecutor DISPATCHED the Connectivity Audit capability (real network probe: dns 3/3, http 2/2, providers 2/2,
+ranAt 20:45:23 THIS run) → internet-reachable probe {ok:true} on that fresh evidence → objective-evidence gate PASS
+→ Validated:true → ledger recorded NL_ANALYZE_D61B6843 proven:true → seam Verdict=SUCCESS exit 0. GENUINE Mission→
+Capability→Execution→Evidence→Validation for a natural-language intent (not a hollow 13-stage pass). Tracked tree
+clean (connectivity-audit.json + the bounded contract are gitignored). Write-set = nl-objective-gateway.js +
+mission-cli.ts + odg-objective.js + nl-executable-objective.test.ts + this carnet. FRONTIER REMAINING (reported,
+not bypassed): the CAPABILITY_PROBE table currently binds exactly one read-only capability; extending genuine NL
+execution to the consequential capabilities is a GOVERNANCE BOUNDARY — it requires a human-authorized transport
+(authorization carried on the objective), which the semantic entrypoint must NOT synthesize on its own.

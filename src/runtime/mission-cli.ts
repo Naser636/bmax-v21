@@ -21,6 +21,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
+
+const require_ = createRequire(import.meta.url);
 
 import { RuntimeAutonomy } from "@/core/runtime-autonomy";
 import {
@@ -54,6 +57,35 @@ interface RawMission {
   authorizedPaths?: unknown;
   requires_engineering?: boolean;
   requiresEngineering?: boolean;
+  objectives?: { id?: string; goal?: string }[];
+}
+
+/**
+ * Route signal for the semantic entrypoint (`odg objective` → runtime/bin/odg-objective.js, id
+ * namespace "NL_"). A capability-backed NL mission must run on the route that ACTUALLY executes
+ * capabilities — the RuntimeExecutor LOCAL route dispatches the EXISTING capability-executors registry
+ * and gates on genuine objective evidence; the local-pipeline route never dispatches capability-
+ * executors, so a synthesized NL mission would "pass" there without any capability running. This reuses
+ * the EXISTING runLocalRoute and the EXISTING capability-executors registry as the only routing signal;
+ * it is bounded to the NL_ namespace so every other mission keeps its exact current route selection.
+ * No second runtime / mission system is introduced — only route selection among existing routes.
+ */
+export function nlMissionResolvesCapability(
+  mission: string,
+  spec: RawMission | null,
+): boolean {
+  if (!mission.startsWith("NL_") || !spec) return false;
+  const objs = Array.isArray(spec.objectives) ? spec.objectives : [];
+  if (objs.length === 0) return false;
+  let executors: { resolve: (p: { objectiveId?: string; goal?: string }) => unknown };
+  try {
+    executors = require_("../../runtime/core/capability-executors.js") as {
+      resolve: (p: { objectiveId?: string; goal?: string }) => unknown;
+    };
+  } catch {
+    return false; // registry unavailable ⇒ fail closed to the unchanged local-pipeline route
+  }
+  return objs.some((o) => executors.resolve({ objectiveId: o.id, goal: o.goal }) != null);
 }
 
 function readMissionSpec(mission: string): RawMission | null {
@@ -284,6 +316,14 @@ function main(): number {
   if (spec && missionRequiresProvider(toRoutable(spec))) {
     console.log("Decision   : missionRequiresProvider = true → PROVIDER");
     return runProviderRoute(mission);
+  }
+
+  // Semantic entrypoint: a capability-backed NL mission must run on the route that actually EXECUTES
+  // its capability and gates on real objective evidence (RuntimeExecutor → capability-executors),
+  // not the local-pipeline (which never dispatches capability-executors). Bounded to the NL_ namespace.
+  if (nlMissionResolvesCapability(mission, spec)) {
+    console.log("Decision   : NL capability-backed mission → LOCAL RUNTIME (capability execution + evidence)");
+    return runLocalRoute(mission);
   }
 
   // Single-entrypoint consolidation: every other deterministic mission is driven through the one

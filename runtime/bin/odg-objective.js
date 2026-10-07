@@ -78,6 +78,8 @@ function contractHasEvidenceBinding(contract) {
     if (Array.isArray(paths) && paths.length > 0) return true;
     const verify = contract.verify;
     if (Array.isArray(verify) && verify.some((v) => v && typeof v.evidence === "string" && v.evidence.length > 0)) return true;
+    const objs = contract.objectives;
+    if (Array.isArray(objs) && objs.some((o) => o && typeof o.proof === "string" && o.proof.length > 0)) return true;
     return false;
 }
 

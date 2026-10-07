@@ -108,6 +108,25 @@ const EFFECT_FAMILIES = [
     ["NETWORK", ["online", "internet", " web", "scrape", "crawl", "fetch ", "download", "http", "url", "market", "opportunit", "browse", "search the", "live data", "real-time"], "ANALYZE", "MEDIUM", "R0", true, false],
 ];
 
+// ---- Capability → registered evidence probe binding --------------------------------------------
+// Maps a RESOLVED local capability (capability-router → decision-rules) to the EXISTING capability-
+// probes probe that machine-verifies its outcome. Declaring it in the synthesized contract turns a
+// read-only no-op objective into a genuinely verifiable one: the objective-evidence / Validation
+// Engine gate then REQUIRES that probe to pass (fail-closed), closing Mission → Capability →
+// Execution → Evidence for a natural-language intent. Reuses EXISTING probe names only (no new probe).
+//
+// ONLY read-only capabilities whose executor runs WITHOUT a human-authorized transport are auto-bound.
+// A consequential capability (Governed Git Branch Integration / Governed Bash/Linux Command / External
+// Research Acquisition) self-gates deny-by-default and REQUIRES a human authorization carried on the
+// objective — a natural-language sentence can never self-authorize it (no-self-authorization), so it is
+// deliberately NOT auto-bound here. Those remain reachable only through an explicitly-authored mission.
+const CAPABILITY_PROBE = {
+    "Connectivity Audit": "internet-reachable",
+};
+function probeForCapability(capability) {
+    return (capability && CAPABILITY_PROBE[capability]) || null;
+}
+
 function classifyObjective(goal) {
     const g = String(goal || "").toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
@@ -284,6 +303,23 @@ function compile(rawObjective, opts) {
         };
     });
 
+    // Stage H.b — Evidence binding. Bind each objective's RESOLVED capability to its registered probe
+    // (when one exists), so the synthesized contract declares a REAL, machine-checkable evidence
+    // requirement instead of a tautological done_when. The binding is emitted both as the contract
+    // `verify` block (objective-evidence + Validation Engine required-proof gate) and as the per-
+    // objective `proof` (Validation Engine evaluateObjectiveProofs). A green pipeline over an unbound
+    // objective can no longer read as SUCCESS; a bound objective passes only when its probe genuinely
+    // verifies the capability's evidence. Pure: declares the requirement; it NEVER runs the probe here.
+    const verify = [];
+    perObjective.forEach((p, i) => {
+        const probe = probeForCapability(p.capability.chosen.capability);
+        if (probe && contract.objectives[i]) {
+            contract.objectives[i].proof = probe;
+            verify.push({ capability: p.capability.chosen.capability, evidence: probe });
+        }
+    });
+    if (verify.length) contract.verify = verify;
+
     // Stage I — Authority (existing Governance Kernel: is a state transition permitted at all?).
     let authority;
     try {
@@ -362,6 +398,8 @@ module.exports = {
     detectAmbiguity,
     extractConstraints,
     buildWorkgraph,
+    probeForCapability,
+    CAPABILITY_PROBE,
 };
 
 // ---- Read-only CLI: compile an objective and print the governed dry-run projection as JSON. ------
