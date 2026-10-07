@@ -9,10 +9,66 @@
  * PROCESS_TODOS / PROCESS_FIXMES / IMPLEMENT_MISSING_CAPABILITIES generation is removed; repo
  * metrics from knowledge.json are kept only as optional, non-driving context.
  *
- * Deterministic: output is a pure function of the mission plan (no wall-clock stamp).
+ * Deterministic: output is a pure function of the mission plan AND the (git-ignored) Patch Memory
+ * state — identical plan + identical memory ⇒ identical decision.json (no wall-clock stamp). With an
+ * empty Patch Memory (fresh clone), behaviour is byte-identical to the pre-WAKE-1 engine.
  */
 
 const fs = require("fs");
+
+// WAKE-1 — canonical RESOLVER. The live decision path consults the EXISTING tiered Capability Router
+// (Memory → Rules → Local LLM → External AI, runtime/core/capability-router.js). Only the Memory tier
+// yields a reusable artifact HERE: a previously-APPLIED, validated patch for this objective's signature,
+// replayed as the objective's optional `patch` payload — the SAME field the Patch Engine already
+// consumes. Every other tier (and any router error) attaches NOTHING, so a no-precedent objective is
+// byte-identical to prior behaviour (deterministic fallthrough). The router NEVER writes or executes:
+// its edits are a DECISION INPUT that the Patch Executor applies under authorizedPaths and the
+// Validation Engine re-checks — no new primitive, no new stage, no new authority, no governance bypass.
+let router = null;
+try {
+    router = require("./capability-router");
+} catch {
+    router = null; // router absent ⇒ pre-WAKE-1 behaviour (no memory reuse)
+}
+
+// A router Memory result is reusable only if it is a non-empty list of well-formed edits, each naming a
+// target and carrying EXACTLY ONE of content/diff (the Patch Executor's contract). Anything else is
+// rejected here (never attached) — a malformed precedent can never become a silent action.
+function isReusableEdits(edits) {
+    return (
+        Array.isArray(edits) &&
+        edits.length > 0 &&
+        edits.every(
+            (e) =>
+                e &&
+                typeof e === "object" &&
+                typeof e.target === "string" &&
+                e.target.length > 0 &&
+                (typeof e.content === "string") !== (typeof e.diff === "string"),
+        )
+    );
+}
+
+// Resolve a reusable Memory patch for one objective, or null. Memory-first, fail-closed. An objective
+// that already carries an author-provided `patch` is left untouched (never overridden).
+function memoryPatchFor(objective) {
+    if (!router || !objective || typeof objective.id !== "string") return null;
+    if (objective.patch) return null;
+    try {
+        const routed = router.route({ goal: objective.goal, objectiveId: objective.id });
+        if (
+            routed &&
+            routed.chosen &&
+            routed.chosen.tier === "PATCH_MEMORY" &&
+            isReusableEdits(routed.chosen.edits)
+        ) {
+            return routed.chosen.edits;
+        }
+    } catch {
+        /* fail closed: any router/memory error ⇒ no reuse, exact prior behaviour */
+    }
+    return null;
+}
 
 function readJsonSafe(file) {
     try {
@@ -35,6 +91,14 @@ const metrics = knowledge && knowledge.project ? knowledge.project : null;
 // One action per mission objective, in contract order. This is what makes execution mission-scoped.
 const actions = plan.objectives.map((o) => o.id);
 
+// WAKE-1 — enrich each objective with a reusable Memory patch when the Capability Router has one for
+// its signature. Pure/order-preserving: ids (and therefore `actions`) are unchanged; only an optional
+// `patch` is added on a Memory hit. No hit ⇒ the objective passes through verbatim (prior behaviour).
+const objectives = plan.objectives.map((o) => {
+    const mem = memoryPatchFor(o);
+    return mem ? { ...o, patch: mem } : o;
+});
+
 const result = {
     mission: plan.mission,
     mode: plan.mode,
@@ -43,7 +107,7 @@ const result = {
     requiresEngineering: plan.requiresEngineering === true,
     authorizedPaths: Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [],
     actions,
-    objectives: plan.objectives,
+    objectives,
     metrics, // context only; does not influence actions
 };
 

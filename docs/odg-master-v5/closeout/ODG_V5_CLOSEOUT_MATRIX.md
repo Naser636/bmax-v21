@@ -408,6 +408,42 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 39. RUNTIME CHANGE LOG — WAKE_1_RESOLVER_ROUTER_CONNECT_V1 (V49)
+
+- **Date (UTC):** 2026-10-07 · **Actual executor:** Claude Code (inspection, edit, tests, commit; no
+  independent "NOTRE AGENT" process exists). WAKE-1 of the V48 wake plan only. No new primitive/runtime/
+  stage/authority; patch-executor, validation-engine, ReleaseManager, provider propose-only, Fleet-OFF all unchanged.
+- **Gap:** the live LOCAL resolver stage (`decision-engine.js`) resolved objectives independently and never
+  reached the EXISTING tiered router (`capability-router.js`: Memory→Rules→LocalLLM→ExternalAI), so verified
+  Patch-Memory precedents were never reused on the real path (V47/V48 RESOLVER=PARTIAL).
+- **Connector (smallest legal):** `decision-engine.js` now consults `capability-router.route({goal,objectiveId})`
+  per objective; ONLY a `PATCH_MEMORY` tier hit with well-formed edits is replayed as that objective's optional
+  `patch` payload — the SAME field `patch-engine.normalizeEdits` already consumes. Every other tier, any router
+  error, a malformed/corrupt precedent, or an author-provided `patch` ⇒ attaches NOTHING (byte-identical prior
+  behaviour, deterministic fallthrough, fail-closed). The router NEVER writes/executes: its edits are a DECISION
+  INPUT the Patch Executor applies under authorizedPaths and the Validation Engine re-checks.
+- **Contracts preserved:** `decision.json` / `patch-plan.json` schemas unchanged (objective `patch` was already
+  optional). Task shape `{goal,objectiveId}` matches the existing `nl-objective-gateway.js:226` call. Memory
+  signature = `rootCause|objectiveId|target` (lowercased); decision-time lookup keys on objectiveId.
+- **Write-set (strict — 2 + matrix):** `runtime/core/decision-engine.js` (resolver connector + helpers);
+  `runtime/core/wake1-resolver-connect.test.js` (**new** adversarial); this matrix. No test weakened.
+- **Tests:** `wake1-resolver-connect.test.js` 12/12 — (1) valid precedent⇒replayed; (2) no precedent⇒no patch;
+  (3/4/5) stale/wrong-objective/wrong-target⇒signature miss⇒no reuse; (6) out-of-scope replay⇒patch-executor
+  FAILED, file NOT written; (7) malformed precedent⇒not attached; (8) corrupt memory⇒no crash+no reuse;
+  (9) decision.json contract intact; (10) patch-executor is the writer (in-scope APPLIED, file written by ODG).
+  Regression: `capability-router.test.js` 10, `patch-memory.test.js` 7 intact; **npm test 334 files ALL PASS**
+  (0 assertion failures); `tsc --noEmit` 0; `next build` 0.
+- **Authority result:** no new authority. Reuse is Memory-first + deterministic fallthrough; replayed edits are
+  governed by patch-executor (sole writer, authorizedPaths) and re-validated (replay ≠ proof). No ExternalAI
+  execution authority added; router's EXTERNAL_AI tier is never acted on here.
+- **Measured gain:** the canonical RESOLVER now reaches the tiered router on the live path; a verified precedent
+  is reusable (proven by seeded test) instead of silently bypassed. Empty memory ⇒ unchanged behaviour.
+- **Remaining WAKE steps:** WAKE-2 (executable memory replay through resolver), 3 (optional patch-plan
+  dependsOn), 4 (allocator), 5 (workers/Fleet govern), 6 (recovery seam), 7 (learning reuse), 8 (orchestrator façade).
+- **Honesty:** VERIFIED (tested offline), not CERTIFIED. No live provider call.
+
+---
+
 ## 38. RUNTIME CHANGE LOG — FLEET_GOVERNED_AUTHORITY_V1 (V45)
 
 - **Date (UTC):** 2026-10-07 · **Actual executor:** Claude Code (all inspection/edits/tests/commit; no
