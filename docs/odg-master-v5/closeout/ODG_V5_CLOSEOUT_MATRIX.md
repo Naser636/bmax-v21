@@ -408,6 +408,43 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 33. RUNTIME CHANGE LOG — PIPELINE_DIAGNOSTICS_PROPAGATION_V1 (V38)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
+- **Bottleneck (V37's named frontier):** `runLocalPipeline` computes `PipelineOutcome.diagnostics`
+  (`{stage, reason, exitCode, provider, message, …}`) for a failed local run, `runPipeline` holds it on
+  `recovery.outcome`, but it was **dropped** at the `runViaProvider` call — the provider (invoked precisely
+  because the local pipeline failed) never learned the failure stage/reason/exit code.
+- **Signal reused (zero new state):** the EXISTING in-memory `PipelineOutcome.diagnostics`. Not persisted,
+  not duplicated, not recomputed — threaded through the existing private call chain as one optional param.
+- **Minimal threading proven:** `runPipeline → runViaProvider → executeMetered → executeWithFailover →
+  buildProviderMission`, all private methods in ONE file; each gains an optional `pipelineDiagnostics?`
+  param (default undefined ⇒ backward-compatible). Because it is threaded in-memory from THIS run, it is
+  inherently current and mission-bound — no staleness/identity guard needed (unlike V36/V37 disk re-reads).
+- **Files touched (write-set, strict — 4):** `src/providers/provider-port.ts` (`PipelineDiagnosticsSummary`
+  type + pure `summarizePipelineDiagnostics()` + optional `ProviderContext.pipelineDiagnostics` + additive
+  prompt render); `src/runtime/autonomy-runtime-adapter.ts` (thread the param through the 5 chain points,
+  populate context via the summarizer); `src/providers/pipeline-diagnostics.test.ts` (**new**); this matrix.
+  No new store/state/primitive/authority; execution semantics unchanged (the param is read-only context).
+- **Behaviour:** surfaces ONLY already-existing diagnostics facts; emitted when a stage or reason is present,
+  else omitted (fail-closed). A successful local pipeline never reaches the provider, so no diagnostics are
+  propagated when there was no failure — coherent by construction. PROPOSED patches / invented fields excluded.
+- **Authority / proof preserved:** advisory INPUT only — no authority, nothing written/proven; provider still
+  passes action-gate + authorizedPaths + validation; `recordMission` unchanged. Current evidence wins.
+- **Tests:** `pipeline-diagnostics.test.ts` 2/2 (facts-only + adversarial — missing/empty/malformed/partial/
+  non-number-exitCode/multiple-unauthorized ⇒ fail-closed; prompt A/B — cold renders nothing, warm names
+  stage/reason/exit-code labelled advisory/NOT-proof); `tsc --noEmit` exit 0 (all 5 threaded signatures
+  type-check); TS provider/adapter/ledger/runner regression **24/24**; `runtime/core/*.test.js` **67/67**.
+- **A/B:** CONTROL (no failure context) renders no block; TREATMENT (local failed) surfaces stage/reason/
+  exit-code/launcher — proven offline through the real `renderMissionPrompt`. Provider-side reduction
+  **UNMEASURED** (provider execution hazard-gated) — **no 10× claimed**.
+- **Before/after:** BEFORE — the local failure's stage/reason/exit-code was computed then dropped; the provider
+  started blind to why local failed. AFTER — it is handed over as advisory input. Honesty: VERIFIED (tested +
+  offline-exercised), not CERTIFIED. Limitation: stdout/stderr are intentionally not captured (`stdio:"inherit"`
+  streams live), so only the structured fields are surfaced.
+
+---
+
 ## 32. RUNTIME CHANGE LOG — ROOT_CAUSE_DIAGNOSIS_PROPAGATION_V1 (V37)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT

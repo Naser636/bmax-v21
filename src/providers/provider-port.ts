@@ -197,6 +197,49 @@ export function summarizeRootCause(
   };
 }
 
+/**
+ * An ADVISORY summary of the local pipeline failure that forced provider escalation (V38). It carries
+ * ONLY the factual fields ODG already computed in `PipelineOutcome.diagnostics` (stage / reason /
+ * exitCode / launcher / message / unauthorized changes). It is threaded in-memory from the current run —
+ * so it is inherently current and mission-bound (no staleness) — and is NOT proof: the provider still
+ * authors under the current contract and the Validation Engine re-checks.
+ */
+export interface PipelineDiagnosticsSummary {
+  stage: string;
+  reason: string;
+  exitCode: number | null;
+  launcher: string | null;
+  message: string | null;
+  unauthorizedChanges: string[];
+}
+
+/**
+ * Pure, fail-closed summary of `PipelineOutcome.diagnostics`. Emits ONLY when at least a stage or reason
+ * is present; absent/empty/malformed ⇒ undefined (omit). Surfaces no field that is not already part of
+ * the diagnostics object; invents no confidence/causality. No I/O; caller supplies the in-memory object.
+ */
+export function summarizePipelineDiagnostics(
+  diag:
+    | { stage?: unknown; reason?: unknown; exitCode?: unknown; provider?: unknown; message?: unknown; unauthorizedChanges?: unknown }
+    | null
+    | undefined,
+): PipelineDiagnosticsSummary | undefined {
+  if (!diag || typeof diag !== "object") return undefined;
+  const stage = typeof diag.stage === "string" && diag.stage ? diag.stage : null;
+  const reason = typeof diag.reason === "string" && diag.reason ? diag.reason : null;
+  if (!stage && !reason) return undefined; // empty / malformed ⇒ omit (fail-closed)
+  return {
+    stage: stage ?? "unknown",
+    reason: reason ?? "unknown",
+    exitCode: typeof diag.exitCode === "number" ? diag.exitCode : null,
+    launcher: typeof diag.provider === "string" && diag.provider ? diag.provider : null,
+    message: typeof diag.message === "string" && diag.message ? diag.message : null,
+    unauthorizedChanges: Array.isArray(diag.unauthorizedChanges)
+      ? diag.unauthorizedChanges.filter((p): p is string => typeof p === "string")
+      : [],
+  };
+}
+
 /** Deterministic selection context echoed into the prompt (contract §3.2 CONTEXT). */
 export interface ProviderContext {
   repoRoot: string;
@@ -226,6 +269,11 @@ export interface ProviderContext {
    * current-mission diagnosis exists.
    */
   rootCauseDiagnosis?: RootCauseDiagnosis;
+  /**
+   * V38 — advisory summary of the local pipeline failure (from this run's in-memory
+   * PipelineOutcome.diagnostics). Advisory INPUT only; NOT proof. Optional, omitted when absent/empty.
+   */
+  pipelineDiagnostics?: PipelineDiagnosticsSummary;
 }
 
 /**
@@ -652,6 +700,21 @@ export function renderMissionPrompt(request: ProviderRequest): string {
     if (rc.evidenceRef) lines.push(`- evidence: ${rc.evidenceRef}`);
     if (rc.blockingRule) lines.push(`- violated_rule: ${rc.blockingRule}`);
     if (rc.reason) lines.push(`- reason: ${rc.reason}`);
+  }
+  // V38 — advisory local-pipeline failure summary (why you were invoked). NOT proof; the Validation
+  // Engine re-checks. Rendered only when present.
+  const pd = m.context.pipelineDiagnostics;
+  if (pd && (pd.stage || pd.reason)) {
+    lines.push("");
+    lines.push("## PIPELINE_DIAGNOSTICS");
+    lines.push("- advisory — the local pipeline failed as below (this is why the provider was invoked). NOT proof; the Validation Engine re-checks independently.");
+    lines.push(
+      `- stage: ${pd.stage}; reason: ${pd.reason}` +
+        (pd.exitCode !== null ? `; exit_code: ${pd.exitCode}` : "") +
+        (pd.launcher ? `; launcher: ${pd.launcher}` : ""),
+    );
+    if (pd.message) lines.push(`- message: ${pd.message}`);
+    if (pd.unauthorizedChanges.length > 0) lines.push(`- unauthorized_changes: [${pd.unauthorizedChanges.join(", ")}]`);
   }
   lines.push("");
   lines.push("## REQUIRED_OUTPUT");

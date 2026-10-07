@@ -51,7 +51,7 @@ import type {
 // V31/V32 — advisory pre-authoring types + the pure verification-plan builder (public provider surface;
 // imported directly to keep the bounded write-set at this file + helper, without touching the barrel).
 import type { KnownSolutionCandidate, VerificationPlan } from "../providers/provider-port";
-import { buildVerificationPlan, deriveFailingChecks, summarizeRootCause } from "../providers/provider-port";
+import { buildVerificationPlan, deriveFailingChecks, summarizeRootCause, summarizePipelineDiagnostics } from "../providers/provider-port";
 import type { RootCauseDiagnosis } from "../providers/provider-port";
 import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 import { RootCauseEngine, type MinimalPatch } from "./root-cause-engine";
@@ -511,7 +511,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     //     outcome feeds the SAME gatherEvidence() → Release Manager path, then the next mission runs
     //     locally again). A missing/unavailable provider can never block a mission recoverable locally.
     if (recovery.exhausted && missionRequiresProvider(this.toRoutable(spec))) {
-      return this.runViaProvider(mission, spec);
+      // V38 — thread this run's in-memory local-failure diagnostics to the provider as advisory context.
+      return this.runViaProvider(mission, spec, recovery.outcome.diagnostics);
     }
     return recovery.outcome;
   }
@@ -619,7 +620,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   // --- provider execute path (Provider Contract §1/§2) --------------------
 
   /** Route the execute stage to the injected engineering provider, exactly once per mission. */
-  private runViaProvider(mission: string, spec: RawMission | null): PipelineOutcome {
+  private runViaProvider(
+    mission: string,
+    spec: RawMission | null,
+    pipelineDiagnostics?: PipelineOutcome["diagnostics"],
+  ): PipelineOutcome {
     // Capture this provider run's start ONCE, before the provider executes, so any artifact genuinely
     // produced during the run is fresh (mtime >= start) while prior-run leftovers are stale. Same source
     // as checkpoint-engine.begin (wall-clock at run start); supplied to the Validation Engine below. (P0-070)
@@ -629,7 +634,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // The provider is the ONLY place a provider process is spawned (contract §1); its own
       // content-addressed cache short-circuits an identical re-request without a live call. When the
       // mission declares a budget, the provider call is metered live (D) around the SAME invocation.
-      outcome = this.executeMetered(mission, spec);
+      outcome = this.executeMetered(mission, spec, pipelineDiagnostics);
       this.providerRuns.set(mission, outcome);
     }
     // OBJ-003: the Patch Engine RECEIVES the provider's result (the working-tree patch) and decides,
@@ -855,12 +860,16 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * Best-effort: if the metering module is absent (e.g. a stripped checkout) the call degrades to the
    * unmetered path, so metering can never block a mission the Runtime could otherwise run.
    */
-  private executeMetered(mission: string, spec: RawMission | null): ProviderOutcome {
+  private executeMetered(
+    mission: string,
+    spec: RawMission | null,
+    pipelineDiagnostics?: PipelineOutcome["diagnostics"],
+  ): ProviderOutcome {
     if (!spec || spec.budget === undefined || spec.budget === null) {
-      return this.executeWithFailover(mission, spec);
+      return this.executeWithFailover(mission, spec, pipelineDiagnostics);
     }
     const meter = this.loadMetering();
-    if (!meter) return this.executeWithFailover(mission, spec);
+    if (!meter) return this.executeWithFailover(mission, spec, pipelineDiagnostics);
 
     let captured: ProviderOutcome | null = null;
     const result = meter.meterProviderCall({
@@ -868,7 +877,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       bucket: "provider",
       allocationId: mission,
       execute: () => {
-        captured = this.executeWithFailover(mission, spec);
+        captured = this.executeWithFailover(mission, spec, pipelineDiagnostics);
         return captured;
       },
     });
@@ -991,10 +1000,14 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     };
   }
 
-  private executeWithFailover(mission: string, spec: RawMission | null): ProviderOutcome {
+  private executeWithFailover(
+    mission: string,
+    spec: RawMission | null,
+    pipelineDiagnostics?: PipelineOutcome["diagnostics"],
+  ): ProviderOutcome {
     const request: ProviderRequest = {
       providerContractVersion: PROVIDER_CONTRACT_VERSION,
-      mission: this.buildProviderMission(mission, spec),
+      mission: this.buildProviderMission(mission, spec, pipelineDiagnostics),
       model: PROVIDER_MODEL,
       maxTurns: PROVIDER_MAX_TURNS,
     };
@@ -1045,7 +1058,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * present, falling back to the generated contract, plus deterministic selection context. Pure
    * function of repo state — no timestamps, no randomness (DETERMINISM_FIRST).
    */
-  private buildProviderMission(mission: string, spec: RawMission | null): ProviderMission {
+  private buildProviderMission(
+    mission: string,
+    spec: RawMission | null,
+    pipelineDiagnostics?: PipelineOutcome["diagnostics"],
+  ): ProviderMission {
     const contract = this.generateContract(mission);
     const state = this.readPlanState();
     const source = this.readSource();
@@ -1077,6 +1094,9 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         // (written by recoverLocally this run). Advisory INPUT only; no new state, never proof/patch.
         // Omitted unless a current-mission DIAGNOSED report exists.
         rootCauseDiagnosis: this.buildRootCauseDiagnosis(mission),
+        // V38 — advisory summary of THIS run's local-pipeline failure, threaded in-memory (not persisted).
+        // Advisory INPUT only; inherently current + mission-bound; never proof. Omitted when absent/empty.
+        pipelineDiagnostics: summarizePipelineDiagnostics(pipelineDiagnostics),
       },
     };
   }
