@@ -193,7 +193,10 @@ function applyAuthorization(decision, grant, now) {
             // (non-destructive, dry-run) probe when it has one; the capability spec/parameters come from
             // the human grant's scope, never invented here. Absent a safe probe (git/bash), the LIVE probe
             // is bound and the safe-mode run honestly cannot reach SUCCESS (fail-closed, reported).
-            const chosenProbe = d.safeProbe || d.probe;
+            // A LIVE grant (the human explicitly set scope.live) binds the capability's LIVE probe (real
+            // evidence); otherwise the non-destructive SAFE dry-run probe. The sentence never sets live.
+            const live = !!(d.evidence && d.evidence.scope && d.evidence.scope.live === true);
+            const chosenProbe = live ? d.probe : (d.safeProbe || d.probe);
             const obj = decision.contract.objectives[r.index];
             // Build the EXISTING capability-executor spec STRICTLY from the human grant's scope (the
             // privileged parameters come from the human, never the sentence) so it can be transported to
@@ -202,7 +205,7 @@ function applyAuthorization(decision, grant, now) {
             if (obj) {
                 if (d.executorPrefix) obj.id = `${d.executorPrefix}_${r.index + 1}`;
                 obj.proof = chosenProbe;
-                obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true, boundProbe: chosenProbe, mode: d.safeProbe ? "SAFE_DRY_RUN" : "LIVE" };
+                obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true, boundProbe: chosenProbe, mode: live ? "LIVE" : "SAFE_DRY_RUN" };
                 if (execSpec) obj.capabilitySpec = execSpec;
             }
             verify.push({ capability: r.capability, evidence: chosenProbe });

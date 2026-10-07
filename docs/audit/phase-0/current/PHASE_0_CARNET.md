@@ -4099,3 +4099,46 @@ pre-existing resolve-to-existing semantics: a re-run of the same intent reuses t
 CHANGED grant/scope is not re-materialised onto an existing contract file — the execution-chokepoint gate still
 re-validates whatever grant is carried (stale/expired ⇒ BLOCKED), so it is not a safety hole, but refreshing an
 existing contract's authorization is the next recommended frontier if live-grant rotation is pursued.
+
+### LIVE GOVERNED EXTERNAL RESEARCH — bounded read-only network fetch through the existing path (2026-10-07)
+CTO continuation to close the LIVE External Research frontier. ODG (sole decision authority) DECIDED the smallest
+seam; Claude Code (engineering surface) executed the edits ODG specified. INSPECTION (targeted): the LIVE gate was
+already complete (executor LIVE path requires authorized+policyAllows+allowlist+fetcher; provider-policy
+externalProvidersEnabled is ALREADY true — an existing operator control, left untouched, so NO global permission is
+created); the ONLY gap was resolveFetcher accepting ONLY a function (ra.fetch / patch.__fetch), which cannot survive
+JSON transport — so a disk-driven mission could never obtain a fetcher ⇒ dry-run only. ODG CHANGED (reuse-only; no
+second runtime/authority/registry/resolver/agent/primitive; no provider bypass; no global/permanent permission; no
+self-authorization): (1) capability-executors.js — added the ONE built-in bounded read-only client: httpGetBounded
+(GET only, follows NO redirects, NO Authorization/cookies/custom headers, hard byte cap + timeout, https/http only —
+file:// refused) run via a `--http-get` child-process worker with a CLEARED env (so it can never read a credential),
+wrapped synchronously by governedHttpGet (clamps ≤1 MB / ≤15 s) so the executor's sync loop is unchanged — the SAME
+subprocess pattern the Connectivity Audit already uses; resolveFetcher now ALSO resolves the JSON-safe NAME
+"governed-http-get" → this client (a name carries no code; reachable only AFTER the executor's existing LIVE gate).
+(2) capability-authorization.js — the research SPEC adapter carries the fetcher NAME + per-request byte/time limits
+from the HUMAN grant scope, and ONLY when the human set scope.live===true (never defaulted, never from the sentence).
+(3) odg-objective.js — a LIVE grant (scope.live) binds the capability's LIVE probe (research-acquired, real evidence)
+instead of the dry-run probe; records mode=LIVE. The sentence never sets live/fetcher/allowlist — all come from the
+explicit --authorize grant. The execution-chokepoint gate (runtime-executor, prior mission) re-validates the grant
+before any fetch, so an absent/expired/wrong-mission/scope-exceeded grant ⇒ the executor never runs ⇒ ZERO network.
+PROVEN: new external-research-live.test.js 14 assertions (real bounded fetch vs in-process server: GET-only, NO
+Authorization header, byte-limit truncation, time-limit fail-closed, file:// refused; executor LIVE provenance:
+no-fetcher⇒BLOCKED-no-network, only-allowlisted-sources-reached, fresh sha256/bytes/2xx provenance, off-allowlist
+citation⇒BLOCKED, non-2xx⇒acquired=false⇒BLOCKED, NAME resolves to the real client); consequential-executor-gate
+now 11/11 (added LIVE-spec + no-grant ⇒ no network); capability-authorization 32; full sweep runtime/core 68/68 +
+src/runtime 43/43; tsc --noEmit 0. ONE REAL BOUNDED LIVE PROOF: `odg objective "acquire external research on
+pricing" --execute --authorize '<grant live:true fetcher:governed-http-get planned_sources:[https://example.com]
+max_bytes:65536 timeout_ms:8000>'` ⇒ RuntimeExecutor LIVE path performed a REAL bounded GET of https://example.com →
+http_status 200, bytes 577 (≤ cap), sha256 content_hash, fetched_at — mode LIVE, acquired=true, research-acquired
+probe {ok:true}, ledger proven:true, Verdict=SUCCESS. Control: the SAME intent with NO --authorize ⇒ BLOCKED
+(NO_AUTHORIZATION) and NO evidence file written (zero network). Repository UNTOUCHED (tracked tree = only the source/
+test changes; all evidence gitignored). Write-set = capability-executors.js + capability-authorization.js +
+odg-objective.js + consequential-executor-gate.test.ts + external-research-live.test.js + this carnet. The 10
+required proofs: no-grant⇒no-net ✓; expired/wrong-mission/scope⇒no-net ✓ (chokepoint); only-allowed-sources ✓;
+limits enforced ✓; repo untouched ✓; fresh evidence ✓; failed-fetch⇒BLOCKED ✓; no-credential-leak/escalation ✓
+(cleared-env subprocess, no auth header, allowlist-bound); live success⇒genuine evidence/validation ✓; NL cannot
+infer authorization ✓. REMAINING GOVERNANCE BOUNDARY (reported, not bypassed): LIVE research now works end-to-end,
+but it still requires the operator's provider-policy externalProvidersEnabled=true kill-switch to be on (an EXISTING
+operator control; deliberately NOT removed — turning it off is the strict local-only posture and makes LIVE fail
+closed with a precise policy-deny cause). Next recommended frontier: per-grant live-grant rotation / refreshing an
+existing (gitignored) contract's authorization on re-run (documented above); unrelated git/bash live execution and
+Fleet/provider systems remain out of scope.

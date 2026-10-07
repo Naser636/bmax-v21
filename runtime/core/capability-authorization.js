@@ -66,13 +66,20 @@ const SPEC_ADAPTERS = Object.freeze({
     "External Research Acquisition": Object.freeze({
         field: "research_acquisition",
         fromScope(scope) {
-            return {
+            const live = scope.live === true;
+            const spec = {
                 authorized: true,
-                execute: scope.live === true,
+                execute: live, // the capability's LIVE/network flag — armed ONLY when the human set scope.live
                 source_allowlist: Array.isArray(scope.planned_sources) ? scope.planned_sources : [],
                 objective: typeof scope.objective === "string" ? scope.objective : null,
                 items: Array.isArray(scope.items) ? scope.items : [],
             };
+            // The live fetcher is NAMED explicitly by the human grant (never defaulted, never from the
+            // sentence) and only when LIVE; per-request byte/time limits ride alongside, bounded here.
+            if (live && typeof scope.fetcher === "string") spec.fetcher = scope.fetcher;
+            if (live && Number.isFinite(scope.max_bytes)) spec.maxBytes = scope.max_bytes;
+            if (live && Number.isFinite(scope.timeout_ms)) spec.timeoutMs = scope.timeout_ms;
+            return spec;
         },
         requestedScope(v) {
             return { objective: v && v.objective, planned_sources: (v && v.source_allowlist) || [] };

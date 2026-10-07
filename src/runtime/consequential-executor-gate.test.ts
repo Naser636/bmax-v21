@@ -95,6 +95,13 @@ try {
     const r = runFresh({ id: "EXTERNAL_RESEARCH_1", goal: "acquire external research on pricing", done_when: ["Validation successful."], proof: "external-research-dry-run-planned", authorization: grant({ mission: "SOME_OTHER_MISSION" }), capabilitySpec: spec() });
     check(!r.evidenceProduced && !r.validated, "grant bound to another mission ⇒ executor blocked (no transfer)");
   }
+
+  // 6. LIVE spec with NO grant ⇒ the chokepoint blocks BEFORE the executor ⇒ NO network fetch happens.
+  {
+    const liveSpec = { field: "research_acquisition", value: { authorized: true, execute: true, source_allowlist: ["http://127.0.0.1:1/"], objective: "pricing", items: [], fetcher: "governed-http-get", maxBytes: 1000, timeoutMs: 500 } };
+    const r = runFresh({ id: "EXTERNAL_RESEARCH_1", goal: "acquire external research on pricing", done_when: ["Validation successful."], proof: "research-acquired", capabilitySpec: liveSpec });
+    check(!r.evidenceProduced && !r.validated, "LIVE spec + NO grant ⇒ executor never runs ⇒ NO network (fail-closed)");
+  }
 } finally {
   try { fs.rmSync(CONTRACT, { force: true }); } catch { /* ignore */ }
   try { fs.rmSync(EVIDENCE, { force: true }); } catch { /* ignore */ }

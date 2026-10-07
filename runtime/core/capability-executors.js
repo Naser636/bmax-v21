@@ -209,7 +209,66 @@ function readProviderPolicy() {
 function resolveFetcher(ra, patch) {
     if (ra && typeof ra.fetch === "function") return ra.fetch;
     if (patch && typeof patch.__fetch === "function") return patch.__fetch;
+    // GOVERNED, JSON-SAFE live fetcher selection. A grant (never the sentence) may NAME the one built-in
+    // bounded read-only fetcher; a name is the ONLY thing that survives JSON transport, so no code is
+    // ever carried. This is reachable solely AFTER the LIVE gate above (authorized + policy + allowlist),
+    // so naming it does not itself authorize anything. Per-request byte/time limits ride on the spec.
+    if (ra && ra.fetcher === "governed-http-get") {
+        return (url) => governedHttpGet(url, { maxBytes: ra.maxBytes, timeoutMs: ra.timeoutMs });
+    }
     return null;
+}
+
+// ---- Governed bounded read-only HTTP(S) GET — the ONLY built-in network client -------------------
+// Reachable solely via a NAMED selection inside an explicitly human-authorized LIVE research grant.
+// GET only; follows NO redirects (a 3xx is returned as-is ⇒ non-2xx ⇒ never verified provenance); sends
+// NO Authorization/cookies/custom headers; caps bytes AND time; writes NOTHING. Runs in a child process
+// with a CLEARED environment, so it can never read a credential (no privilege escalation / leakage). The
+// subprocess keeps the executor's synchronous loop synchronous — the SAME pattern the Connectivity Audit
+// already uses — without adding an async model.
+function httpGetBounded(rawUrl, maxBytes, timeoutMs) {
+    return new Promise((resolve) => {
+        let u;
+        try { u = new URL(rawUrl); } catch { return resolve({ status: 0, body: "", error: "invalid url" }); }
+        if (u.protocol !== "https:" && u.protocol !== "http:") return resolve({ status: 0, body: "", error: "unsupported protocol" });
+        const mod = u.protocol === "https:" ? require("https") : require("http");
+        const req = mod.request(u, { method: "GET", timeout: timeoutMs }, (res) => {
+            const chunks = [];
+            let bytes = 0;
+            let truncated = false;
+            res.on("data", (d) => {
+                if (truncated) return;
+                bytes += d.length;
+                if (bytes <= maxBytes) chunks.push(d);
+                else { truncated = true; req.destroy(); } // hard byte cap: stop reading past the limit
+            });
+            res.on("end", () => resolve({
+                status: res.statusCode || 0,
+                body: Buffer.concat(chunks).slice(0, maxBytes).toString("utf8"),
+                fetched_at: new Date().toISOString(),
+                truncated,
+                bytes: Math.min(bytes, maxBytes),
+            }));
+            res.on("error", () => resolve({ status: res.statusCode || 0, body: Buffer.concat(chunks).toString("utf8"), fetched_at: new Date().toISOString(), truncated }));
+        });
+        req.on("timeout", () => { req.destroy(); resolve({ status: 0, body: "", error: "timeout" }); });
+        req.on("error", (e) => resolve({ status: 0, body: "", error: e.code || String(e.message || e) }));
+        req.end();
+    });
+}
+
+// Synchronous wrapper usable inside the executor's sync loop: runs httpGetBounded in a child process with
+// a CLEARED env and clamps bounds to hard ceilings (≤1 MB, ≤15 s). Returns the fetch verdict JSON.
+function governedHttpGet(url, opts) {
+    const maxBytes = Math.min(Math.max(1, (opts && opts.maxBytes) || 262144), 1048576);
+    const timeoutMs = Math.min(Math.max(250, (opts && opts.timeoutMs) || 5000), 15000);
+    const res = spawnSync(process.execPath, [__filename, "--http-get", url, String(maxBytes), String(timeoutMs)], {
+        encoding: "utf8", timeout: timeoutMs + 3000, env: {}, maxBuffer: maxBytes + 65536,
+    });
+    if (res.status !== 0 || !res.stdout) {
+        return { status: 0, body: "", error: String((res.stderr || "").trim() || (res.error && res.error.message) || "fetch subprocess failed") };
+    }
+    try { return JSON.parse(res.stdout); } catch { return { status: 0, body: "", error: "unparseable fetch result" }; }
 }
 
 const EXECUTORS = [
@@ -545,10 +604,19 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE };
+module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE };
 
-// Direct invocation: run the Connectivity Audit and write its evidence artifact.
+// Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
+// (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.
 if (require.main === module) {
+    if (process.argv[2] === "--http-get") {
+        const url = process.argv[3];
+        const maxBytes = parseInt(process.argv[4], 10) || 262144;
+        const timeoutMs = parseInt(process.argv[5], 10) || 5000;
+        httpGetBounded(url, maxBytes, timeoutMs)
+            .then((r) => { process.stdout.write(JSON.stringify(r)); process.exit(0); })
+            .catch((e) => { process.stdout.write(JSON.stringify({ status: 0, body: "", error: String((e && e.message) || e) })); process.exit(0); });
+    } else {
     const out = process.argv[2] || CONNECTIVITY_EVIDENCE;
     runAudit()
         .then((report) => {
@@ -565,4 +633,5 @@ if (require.main === module) {
             } catch { /* ignore */ }
             process.exit(1);
         });
+    }
 }
