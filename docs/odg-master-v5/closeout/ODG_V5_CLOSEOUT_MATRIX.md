@@ -408,6 +408,47 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 38. RUNTIME CHANGE LOG — FLEET_GOVERNED_AUTHORITY_V1 (V45)
+
+- **Date (UTC):** 2026-10-07 · **Actual executor:** Claude Code (all inspection/edits/tests/commit; no
+  independent "NOTRE AGENT" process). One governed execution model; no second write authority; no new brain.
+- **Classification:** B (small seam) — **remove latent write authority**, NOT a governed-apply port.
+- **Audit correction (truth over labels):** the mission premise "Fleet worker → acceptEdits → direct tree
+  write" is INACCURATE. Fleet is a PROPOSAL exchange: `fleet-bridge` prompts the worker for ONLY a
+  `{mission, summary, actions[]}` JSON and consumes just that from stdout; `fleet-collector` validates
+  (response-parser) + analyses (proposal-analyzer) + governance-gates + records — it NEVER applies worker
+  tree-writes. The `--permission-mode acceptEdits` was **unused, latent write authority** (a hazard: a worker
+  could write files Fleet neither captures, validates, nor applies), not the delivery mechanism.
+- **Current Fleet flow:** dispatcher(request envelope: mission/brief/instruction) → bridge(worker, exactly-
+  once O_EXCL) → textual proposal → collector(validate+analyse+governance) → VALIDATED + ledger. No apply.
+- **New Fleet flow:** identical, except the worker is invoked **read-only** (`--permission-mode plan
+  --allowedTools Read,Grep,Glob`). Since Fleet produces a textual proposal and applies nothing, there is NO
+  engineering source-authoring to route through patch-executor — so no governed-apply wiring is added (would
+  be dead code). The write authority is simply withdrawn.
+- **Write-set (strict — 3 + matrix):** `runtime/core/fleet-bridge.js` (DEFAULT_CONFIG args → read-only);
+  `runtime/connectors/fleet-bridge.json` (top-level + `agents.claude` args → read-only); **new**
+  `runtime/core/fleet-authority.test.js`; this matrix. No executor created; patch-executor/patch-proposal-apply
+  untouched; collector/envelope/dispatcher/wire-protocol unchanged.
+- **Authority (Phase 2):** the Fleet Claude worker now receives ZERO Write/Edit/Bash/acceptEdits (proven).
+  No hidden fallback. Fleet is default OFF regardless. **Actual writer on any governed engineering apply
+  remains `node patch-executor.js` (ODG)** — Fleet does not write at all.
+- **Tests:** `fleet-authority.test.js` 6/6 (default + named-agent read-only; proposal round-trip intact via
+  MOCK); existing `fleet-bridge.test.js` (lock concurrency) intact; `tsc` 0; **npm test 333 files ALL PASS**
+  (0 assertion failures); `next build` 0.
+- **A/B:** CONTROL (pre-V45) worker args carried `acceptEdits` (write-capable); TREATMENT worker args are
+  plan + `Read,Grep,Glob` (read-only). Proposal exchange output byte-identical (bridge consumes only the JSON).
+- **Adversarial:** write-token scan (`acceptEdits/Edit/Write/Bash/bypassPermissions/dangerously`) over the
+  resolved default + named-agent commands ⇒ none present.
+- **Measured gain:** the second (latent) write-authority surface in the ODG system is removed; the only
+  Claude write surface left is the explicit V43 opt-out `ODG_PROVIDER_DIRECT_WRITE=1`.
+- **Remaining limitation:** the `chatgpt`/`codex exec` Fleet agent args are unchanged (no verified read-only
+  flag; Fleet consumes only its textual proposal, so no writes are applied regardless). Documented residual.
+- **Next frontier:** (1) a verified read-only/sandbox flag for the codex Fleet agent; (2) IF Fleet is ever to
+  author source, have it emit `proposedEdits` and route via `patch-proposal-apply` (reuse, no new executor).
+- **Honesty:** VERIFIED (tested offline), not CERTIFIED. No live provider call.
+
+---
+
 ## 37. RUNTIME CHANGE LOG — GOVERNED_APPLY_DEFAULT_ENGINEERING_V1 (V43)
 
 - **Date (UTC):** 2026-10-07 · **Actual executor:** Claude Code (all inspection/edits/tests/commit; no

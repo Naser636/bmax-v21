@@ -24,7 +24,12 @@ const CONFIG_FILE = "runtime/connectors/fleet-bridge.json";
 
 const DEFAULT_CONFIG = {
   command: "claude",
-  args: ["-p", "--output-format", "json", "--permission-mode", "acceptEdits"],
+  // V45 — ONE GOVERNED EXECUTION MODEL. The Fleet worker is a PROPOSAL producer: the bridge consumes
+  // only its {mission, summary, actions} JSON and never applies worker tree-writes (the collector
+  // validates/analyses/governance-gates the textual proposal). So the worker needs NO write authority.
+  // Denying Write/Edit/Bash here removes the latent second write authority (was acceptEdits) with zero
+  // change to the proposal exchange — consistent with V42/V43 (provider proposes, ODG governs the apply).
+  args: ["-p", "--output-format", "json", "--permission-mode", "plan", "--allowedTools", "Read,Grep,Glob"],
   timeoutMs: 120000,
   maxRetries: 2,
   backoffMs: 1500,
