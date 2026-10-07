@@ -31,9 +31,11 @@ const path = require("path");
 const crypto = require("crypto");
 const { spawnSync } = require("child_process");
 const gateway = require(path.join(__dirname, "..", "core", "nl-objective-gateway.js"));
+const authz = require(path.join(__dirname, "..", "core", "capability-authorization.js"));
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const MISSIONS_DIR = path.join(ROOT, "runtime", "missions");
+const GENERATED_DIR = path.join(ROOT, "runtime", "generated");
 
 // ---- Bounded governed mission identity -----------------------------------------------------------
 // ROOT CAUSE (CTO repair): the gateway's Mission Synthesizer labels its contract by slugging the WHOLE
@@ -149,6 +151,57 @@ function route(mission, io) {
     return typeof r.status === "number" ? r.status : 1;
 }
 
+// The consequential capabilities the gateway resolved for this decision, each as an authorization
+// REQUEST (capability + current mission + objective). READ-ONLY capabilities are absent — they never
+// pass through the human-authorization seam. Derived from the gateway's own per-objective capability
+// resolution (decision.result.objectives); the raw sentence is never read here.
+function consequentialRequests(decision) {
+    const objectives = (decision.result && decision.result.objectives) || [];
+    const out = [];
+    objectives.forEach((p, i) => {
+        const capability = p && p.capability && p.capability.chosen && p.capability.chosen.capability;
+        if (capability && authz.isConsequentialCapability(capability)) {
+            out.push({ index: i, capability, objectiveId: (p.objective && p.objective.id) || null });
+        }
+    });
+    return out;
+}
+
+// Apply the EXPLICIT human-authorization grant (NEVER synthesized from the sentence) to each
+// consequential objective. An objective whose capability is authorized is bound to its evidence probe
+// and carries the grant to the governed executor; an unauthorized one stays unbound and BLOCKED (fail-
+// closed) so the downstream per-action gate keeps it PARTIAL while any authorized objective proceeds.
+// Returns { authorizations, blockers } and records the authorization decisions as evidence.
+function applyAuthorization(decision, grant, now) {
+    const requests = consequentialRequests(decision);
+    const verify = Array.isArray(decision.contract.verify) ? decision.contract.verify.slice() : [];
+    const authorizations = [];
+    const blockers = [];
+    for (const r of requests) {
+        // Pass the human grant verbatim to the validator (it enforces the capability/mission/scope/
+        // expiry match itself and reports the precise reason, e.g. CAPABILITY_MISMATCH). A single grant
+        // that matches one objective's capability authorizes ONLY that one; others fail closed.
+        const d = authz.authorizeCapability(
+            { capability: r.capability, mission: decision.mission, requestedScope: {} },
+            grant,
+            { now },
+        );
+        if (d.decision === "ALLOW") {
+            const obj = decision.contract.objectives[r.index];
+            if (obj) {
+                obj.proof = d.probe;
+                obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true };
+            }
+            verify.push({ capability: r.capability, evidence: d.probe });
+            authorizations.push(d.evidence);
+        } else {
+            blockers.push({ code: d.code, capability: r.capability, objective: r.objectiveId, detail: d.detail });
+        }
+    }
+    if (verify.length) decision.contract.verify = verify;
+    return { requests, authorizations, blockers };
+}
+
 // Orchestrate the seam. execute=false (default) ⇒ dry-run JSON print only (behaviour preserved exactly).
 function run(raw, opts, io) {
     const execute = !!(opts && opts.execute);
@@ -180,6 +233,39 @@ function run(raw, opts, io) {
         return 2;
     }
 
+    // Consequential-capability gate: a consequential capability (git / bash / external research) may be
+    // executed ONLY under an EXPLICIT human authorization grant supplied out-of-band (opts.authorize) —
+    // NEVER manufactured from the natural-language sentence. Absent/invalid ⇒ the objective is BLOCKED
+    // (fail-closed) and never routed to execution. The grant is validated by the governed transport seam
+    // (capability-authorization → action-gate), and exactly what was authorized is recorded as evidence.
+    const consequential = consequentialRequests(decision);
+    if (consequential.length > 0) {
+        const grant = opts && opts.authorize ? opts.authorize : null;
+        const now = opts && Number.isFinite(opts.now) ? opts.now : Date.now();
+        const authResult = applyAuthorization(decision, grant, now);
+        if (authResult.authorizations.length > 0) {
+            const evFile = path.join(GENERATED_DIR, `capability-authorization-${decision.mission}.json`);
+            const writeFileSync = (io && io.writeFileSync) || fs.writeFileSync;
+            const mkdirSync = (io && io.mkdirSync) || fs.mkdirSync;
+            mkdirSync(GENERATED_DIR, { recursive: true });
+            writeFileSync(evFile, JSON.stringify({ mission: decision.mission, authorizations: authResult.authorizations }, null, 2));
+            for (const a of authResult.authorizations) log(`Authorized : ${a.capability} for ${a.mission} (issuer ${a.issuer}, expires ${a.expiresAt}) — evidence recorded`);
+        }
+        if (authResult.blockers.length > 0) {
+            log("Consequential capability NOT authorized — human authorization required (not synthesized from the sentence):");
+            for (const b of authResult.blockers) log(`  - ${b.code} [${b.capability}${b.objective ? " / " + b.objective : ""}]: ${b.detail}`);
+            // Fail-closed: no authorized objective to route ⇒ BLOCKED before any execution. (When some
+            // objectives ARE authorized, routing continues; the unauthorized ones remain unbound ⇒ PARTIAL.)
+            if (authResult.authorizations.length === 0) {
+                log(`Recovery   : supply an explicit human authorization grant: --authorize '{"capability":"<cap>","mission":"${decision.mission}","scope":{...},"expiresAt":<ms>,"execute":true,"human":true}'`);
+                log("======================================");
+                log("Verdict    : BLOCKED");
+                log("Reason     : consequential capability requires an explicit human authorization that ODG must not self-create.");
+                return 2;
+            }
+        }
+    }
+
     // EXECUTE — resolve to a governed contract (existing reused, else bounded synthesis), then delegate
     // to the existing governed pipeline. The seam does NOT trust the pipeline exit alone: it maps the
     // real terminal code + the contract's evidence binding to an honest verdict (SUCCESS only when the
@@ -196,16 +282,35 @@ function run(raw, opts, io) {
     return outcome.code;
 }
 
-module.exports = { decide, materializeContract, route, run, boundedMissionId, toBoundedContract, contractHasEvidenceBinding, classifyOutcome };
+module.exports = { decide, materializeContract, route, run, boundedMissionId, toBoundedContract, contractHasEvidenceBinding, classifyOutcome, consequentialRequests, applyAuthorization };
+
+// Parse an EXPLICIT human-authorization grant from the CLI: `--authorize '<json>'` or `--authorize @file`.
+// This is the out-of-band human channel; the grant is NEVER derived from the objective sentence. A
+// malformed value fails closed to null (⇒ the consequential capability stays BLOCKED).
+function parseAuthorize(args) {
+    const i = args.indexOf("--authorize");
+    if (i === -1 || i + 1 >= args.length) return null;
+    let raw = args[i + 1];
+    try {
+        if (raw.startsWith("@")) raw = fs.readFileSync(raw.slice(1), "utf8");
+        const g = JSON.parse(raw);
+        return g && typeof g === "object" ? g : null;
+    } catch {
+        return null;
+    }
+}
 
 // ---- CLI ---------------------------------------------------------------------------------------
 if (require.main === module) {
     const args = process.argv.slice(2);
     const execute = args.includes("--execute") || args.includes("--run");
-    const raw = args.filter((a) => a !== "--execute" && a !== "--run").join(" ");
+    const authorize = parseAuthorize(args);
+    const ai = args.indexOf("--authorize");
+    const control = new Set(["--execute", "--run", "--authorize", ai !== -1 ? args[ai + 1] : null]);
+    const raw = args.filter((a) => !control.has(a)).join(" ");
     if (!raw.trim()) {
-        process.stderr.write('Usage: odg objective "<natural-language objective>" [--execute]\n');
+        process.stderr.write('Usage: odg objective "<natural-language objective>" [--execute] [--authorize \'<grant-json>\'|@file]\n');
         process.exit(2);
     }
-    process.exit(run(raw, { execute }, null));
+    process.exit(run(raw, { execute, authorize }, null));
 }

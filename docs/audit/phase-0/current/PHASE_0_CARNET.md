@@ -3964,3 +3964,47 @@ mission-cli.ts + odg-objective.js + nl-executable-objective.test.ts + this carne
 not bypassed): the CAPABILITY_PROBE table currently binds exactly one read-only capability; extending genuine NL
 execution to the consequential capabilities is a GOVERNANCE BOUNDARY — it requires a human-authorized transport
 (authorization carried on the objective), which the semantic entrypoint must NOT synthesize on its own.
+
+### GOVERNED HUMAN-AUTHORIZATION TRANSPORT SEAM FOR CONSEQUENTIAL CAPABILITIES (2026-10-07)
+CTO continuation from the exact boundary above: a consequential capability (Governed Git Branch Integration /
+Governed Bash/Linux Command / External Research Acquisition) may be executed via the NL entrypoint ONLY under an
+EXPLICIT human authorization transported to the governed path — never manufactured from the sentence. TARGETED
+INSPECTION (no full scan): action-gate.js ALREADY validates authority mission-binding (cross-mission reuse→DENY),
+expiry (expiresAt<now→DENY), revocation and a human-authority escalation gate (authority.human===true), deny-by-
+default — but NO executor passes it missionId/now (so those checks were inert) and it models NEITHER capability
+identity NOR capability scope. Each consequential executor had its own ad-hoc authorization field (git
+allow_protected / bash object / research authorized+execute) — no uniform grant. NOT a NO-ACTION. CHANGE (reuse-
+only, no second authority/runtime/primitive/global-switch/permanent-permission/provider-bypass): (a) NEW
+runtime/core/capability-authorization.js — a pure VALIDATOR+TRANSPORT. authorizeCapability(request, grant, ctx)
+DELEGATES the authoritative admission to the EXISTING action-gate (composes it as the action's authority object)
+and ADDS the two dimensions action-gate lacks: explicit capability identity + capability scope. Fail-closed,
+deny-by-default, injected clock (no I/O). Enforces every CTO invariant: capability identity (CAPABILITY_MISMATCH),
+mission binding/no-transfer (MISSION_MISMATCH), scope/limits (SCOPE_EXCEEDED; default recursive containment,
+injectable), expiry/never-permanent (NO_EXPIRY/EXPIRED), execute permission (EXECUTE_NOT_PERMITTED), human-issued-
+only i.e. ODG-cannot-self-authorize (NOT_HUMAN_ISSUED), never-global (NO_CAPABILITY/NO_MISSION/NO_SCOPE),
+revocation (REVOKED by id or capability), no-clock fail-closed (NO_CLOCK), read-only-cap-never-here
+(NOT_CONSEQUENTIAL); on ALLOW it returns the capability's EXISTING probe + an evidence record of exactly what was
+authorized (capability/mission/issuer/scope/expiry + composed action-gate decision). (b) odg-objective.js — new
+EXPLICIT input `--authorize '<grant-json>'|@file` (parsed from argv; NEVER from the objective sentence); run(--
+execute) detects consequential capabilities from the gateway's own per-objective resolution and, fail-closed,
+BLOCKS (exit 2, zero spawn, zero contract write) unless a valid human grant authorizes them — an authorized
+objective is bound to its probe + carries the grant to the executor + the authorization-used record is written to
+gitignored runtime/generated/capability-authorization-<mission>.json; unauthorized objectives stay unbound so the
+existing per-action PARTIAL keeps them blocked while any authorized objective proceeds. The gateway still NEVER
+synthesizes a grant. PROVEN: capability-authorization.test.js 26 assertions = the 10 CTO cases (valid/missing/
+wrong-mission/expired/scope-exceeded/no-self-auth/independent-continue/evidence-visible/never-permanent-or-global/
+revoke-fail-closed); nl-authorization.test.ts 16/16 (gateway-never-self-authorizes, no-grant BLOCKED, valid-grant
+binds+records+routes, wrong-capability/expired/wrong-mission BLOCKED, read-only unaffected); semantic-entrypoint
+38/38 + nl-executable 16/16 + gateway 156/156 + action-gate(+live) regression green; tsc --noEmit 0. ONE REAL NON-
+DESTRUCTIVE PROOF (safest consequential capability = git, dry-run): (A) real CLI `odg objective "integrate the
+branch into main" --execute` with NO --authorize ⇒ BLOCKED, reason NO_AUTHORIZATION, zero execution, exit 2; (B)
+valid human grant ⇒ authorizeCapability ALLOW (composed action-gate=ALLOW, probe git-branch-integrated) → the REAL
+Governed Git Branch Integration executor ran in DRY-RUN (outcome=DRY_RUN, integrated=false, pushed=false — zero git
+mutation) and the authorization-used evidence was recorded; without the grant the executor is never invoked.
+Tracked tree clean (all evidence gitignored). Write-set = capability-authorization.js (+test) + odg-objective.js +
+nl-authorization.test.ts + this carnet. Preserves per-action authorization, PARTIAL/BLOCKED, no-self-authorization,
+no elevation beyond granted scope, human gates; fail-closed throughout. BOUNDARY REPORTED (not bypassed): genuine
+END-TO-END execution of a prefix-dispatched consequential capability (git/bash/research) via the NL route is still
+gated by a SEPARATE, previously-documented dispatch boundary — capability-executors matches those by a strict
+objectiveId prefix (GIT_BRANCH_INTEGRATION/BASH_COMMAND/EXTERNAL_RESEARCH_) + a transported spec, which the NL_
+synthesis path does not produce; connecting that is a distinct frontier from authorization and was NOT bundled here.
