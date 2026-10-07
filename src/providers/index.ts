@@ -76,6 +76,13 @@ export {
   defaultAvailabilityEnv,
   resolveEngineeringProvider,
   selectProviderWithFailover,
+  OLLAMA_DEFAULT_BASE_URL,
+  OLLAMA_BASE_URL_ENV,
+  OLLAMA_MODEL_ENV,
+  ollamaBaseURL,
+  ollamaModel,
+  ollamaAvailability,
+  createOllamaProvider,
 } from "./provider-factory";
 
 export type {
@@ -83,5 +90,6 @@ export type {
   FailoverChainOptions,
   FailoverDecision,
   FailoverHalt,
+  OllamaProviderOptions,
   ProviderRole,
 } from "./provider-factory";

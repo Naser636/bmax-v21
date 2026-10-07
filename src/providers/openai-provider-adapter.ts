@@ -89,6 +89,13 @@ export type OpenAiChatCaller = (input: OpenAiChatInput & { cwd?: string }) => Op
 export interface OpenAIProviderOptions {
   /** Working directory / mission workspace. Defaults to process.cwd(). */
   cwd?: string;
+  /**
+   * Provider identity reported by `describe().name` and carried on every outcome. Defaults to
+   * "openai-sdk" (unchanged for existing callers). A reuse seam pointing this same adapter at a LOCAL
+   * OpenAI-compatible server (e.g. Ollama) sets a truthful name (e.g. "ollama-local") so evidence names
+   * the provider that actually proposed — without any new adapter class or transport.
+   */
+  providerName?: string;
   /** Pinned model id (contract §2). Defaults to OPENAI_MODEL or gpt-4o-mini. */
   model?: string;
   /** API credential; defaults to process.env.OPENAI_API_KEY. Never written to evidence. */
@@ -154,7 +161,7 @@ const defaultCaller: OpenAiChatCaller = (input) => {
 };
 
 export class OpenAIProviderAdapter implements EngineeringProviderPort, AvailabilityAware {
-  readonly name = "openai-sdk";
+  readonly name: string;
   private readonly cwd: string;
   private readonly model: string;
   private readonly apiKey: string | undefined;
@@ -165,6 +172,7 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
   private readonly call: OpenAiChatCaller;
 
   constructor(opts: OpenAIProviderOptions = {}) {
+    this.name = opts.providerName ?? "openai-sdk";
     this.cwd = opts.cwd ?? process.cwd();
     this.model = opts.model ?? process.env.OPENAI_MODEL ?? DEFAULT_MODEL;
     this.apiKey = opts.apiKey;

@@ -25,7 +25,7 @@ import path from "node:path";
 import { createClaudeProvider } from "./claude-provider-adapter";
 import { createOpenAIProvider, OpenAIProviderAdapter } from "./openai-provider-adapter";
 import type { ClaudeProviderOptions, ProviderProcessRunner } from "./claude-provider-adapter";
-import type { OpenAIProviderOptions } from "./openai-provider-adapter";
+import type { OpenAIProviderOptions, OpenAiChatCaller } from "./openai-provider-adapter";
 import {
   available,
   unavailable,
@@ -197,6 +197,99 @@ export function governedClaudeSubscriptionPref(opts?: ClaudeProviderOptions): bo
   if (process.env.ODG_CLAUDE_USE_API_KEY === "1") return false;
   if (process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION === "1") return true;
   return subscriptionLoginAvailable() ? true : undefined;
+}
+
+// --- Ollama: governed LOCAL OpenAI-compatible provider (V61) -----------------
+//
+// The already-live local Ollama service exposes an OpenAI-compatible endpoint (/v1/chat/completions).
+// So it needs NO new adapter, transport, writer, or runtime primitive: the EXISTING OpenAIProviderAdapter
+// already satisfies EngineeringProviderPort against any OpenAI-compatible base URL. We REUSE it, pinned at
+// the local Ollama endpoint. Because that adapter is text-transport it mutates NOTHING in the working tree
+// (ProviderOutcome.changedFiles is always []) — Ollama can only PROPOSE (proposedEdits); ODG's governed
+// patch-executor remains the sole applier. localhost ⇒ no API key is required and no paid token is spent.
+
+/** Default local Ollama OpenAI-compatible endpoint (loopback ⇒ no credential, external cost €0). */
+export const OLLAMA_DEFAULT_BASE_URL = "http://127.0.0.1:11434/v1";
+/** Env overriding the local Ollama base URL (still must be local to stay credential-free / cost €0). */
+export const OLLAMA_BASE_URL_ENV = "ODG_OLLAMA_BASE_URL";
+/** Env pinning the Ollama model id (contract §2 reproducibility). There is NO cloud default. */
+export const OLLAMA_MODEL_ENV = "ODG_OLLAMA_MODEL";
+
+/** Resolve the local Ollama base URL from the injected env (default = loopback :11434/v1). */
+export function ollamaBaseURL(env: Record<string, string | undefined> = process.env): string {
+  const v = env[OLLAMA_BASE_URL_ENV];
+  return typeof v === "string" && v.trim() !== "" ? v : OLLAMA_DEFAULT_BASE_URL;
+}
+
+/** Resolve the pinned Ollama model id (option wins, else ODG_OLLAMA_MODEL). No cloud default. */
+export function ollamaModel(
+  opts: { model?: string } = {},
+  env: Record<string, string | undefined> = process.env,
+): string | undefined {
+  if (typeof opts.model === "string" && opts.model.trim() !== "") return opts.model;
+  const v = env[OLLAMA_MODEL_ENV];
+  return typeof v === "string" && v.trim() !== "" ? v : undefined;
+}
+
+/**
+ * GOVERNED availability for the local Ollama provider. Reuses the OpenAIProviderAdapter's own local-URL
+ * preflight (loopback ⇒ available WITHOUT a key), then fail-closed adds ONE Ollama-specific requirement: a
+ * model must be pinned (ODG_OLLAMA_MODEL or an injected option), so a doomed "model not found" call is never
+ * attempted. Pure function of the injected env — no network / paid call. A non-local base URL stays subject
+ * to the adapter's credential rule (so this can never silently become a paid remote provider).
+ */
+export function ollamaAvailability(
+  env: AvailabilityEnv,
+  opts: { model?: string; baseURL?: string } = {},
+): ProviderAvailability {
+  const name = "ollama-local";
+  const baseURL = opts.baseURL ?? ollamaBaseURL(env.env);
+  const base = new OpenAIProviderAdapter({ providerName: name, baseURL }).checkAvailability(env);
+  if (!base.available) return base;
+  const model = ollamaModel(opts, env.env);
+  if (model) {
+    return available(name, [
+      ...base.checks,
+      { requirement: `model:${OLLAMA_MODEL_ENV}`, satisfied: true, detail: `Ollama model pinned: ${model}` },
+    ]);
+  }
+  return unavailable(name, {
+    blockingComponent: `${name} model preflight`,
+    missingConfiguration: `a pinned local model (${OLLAMA_MODEL_ENV})`,
+    nextAction: `Export ${OLLAMA_MODEL_ENV}=<an installed ollama model, e.g. qwen2.5:0.5b> (see \`ollama list\`).`,
+    checks: [
+      ...base.checks,
+      { requirement: `model:${OLLAMA_MODEL_ENV}`, satisfied: false, detail: `${OLLAMA_MODEL_ENV} is not set` },
+    ],
+  });
+}
+
+/**
+ * Construct the governed, PROPOSE-ONLY local Ollama EngineeringProviderPort by REUSING the existing
+ * OpenAIProviderAdapter pointed at the local Ollama endpoint. Identity is "ollama-local" (truthful
+ * evidence). The adapter never writes the tree; proposals flow to the governed patch-executor. No new
+ * class, transport, writer, primitive, or dependency. Not auto-added to the default failover chain —
+ * selection/preference remains a separate governed decision.
+ */
+/** Options for the governed local Ollama provider (all optional; model falls back to ODG_OLLAMA_MODEL). */
+export interface OllamaProviderOptions {
+  cwd?: string;
+  model?: string;
+  baseURL?: string;
+  proofPath?: string;
+  /** Injected chat caller — the adapter's existing test boundary (zero cost). Default = real transport. */
+  call?: OpenAiChatCaller;
+}
+
+export function createOllamaProvider(opts: OllamaProviderOptions = {}): EngineeringProviderPort {
+  return createOpenAIProvider({
+    cwd: opts.cwd,
+    providerName: "ollama-local",
+    baseURL: opts.baseURL ?? ollamaBaseURL(),
+    model: ollamaModel(opts),
+    proofPath: opts.proofPath,
+    ...(opts.call ? { call: opts.call } : {}),
+  });
 }
 
 // --- chain construction ------------------------------------------------------

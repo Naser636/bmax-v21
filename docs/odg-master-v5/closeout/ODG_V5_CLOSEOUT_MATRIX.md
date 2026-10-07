@@ -408,6 +408,48 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 42. RUNTIME CHANGE LOG — WAKE_OLLAMA_GOVERNED_PROVIDER_V1 (V61)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code (no independent "NOTRE AGENT" process exists).
+  Closes the V60 §41 deferred seam ("Ollama engineering authoring via OpenAI-compatible adapter at
+  `:11434/v1`, propose-only"). Minimal, reuse-only; authority boundaries unchanged.
+- **Determination (inspect-first):** the already-live local Ollama service exposes an OpenAI-COMPATIBLE
+  endpoint (`/v1/models`, `/v1/chat/completions` — verified live: `qwen2.5:0.5b` returns a real completion
+  with usage). The EXISTING `OpenAIProviderAdapter` already satisfies `EngineeringProviderPort` against any
+  OpenAI-compatible base URL and already treats a loopback URL as credential-free (`isLocalBaseURL`). So NO
+  new adapter, transport, writer, runtime primitive, or dependency is needed — only a thin factory reuse seam
+  to give it a truthful identity and a fail-closed model preflight.
+- **Change (minimal seam):** `openai-provider-adapter.ts` — optional `providerName` (defaults "openai-sdk";
+  zero behaviour change for existing callers) so a reused instance names itself truthfully. `provider-factory.ts`
+  — `createOllamaProvider()` (reuses `createOpenAIProvider` pinned at the local Ollama endpoint, identity
+  "ollama-local", model from `ODG_OLLAMA_MODEL`, no cloud default) + `ollamaAvailability()` (local ⇒ available
+  WITHOUT a key when a model is pinned; fail-closed UNAVAILABLE when no model; a NON-local base URL still
+  requires a credential — it can never silently become a paid remote). `index.ts` — re-exports. NOT auto-added
+  to the default failover chain (selection/preference remains a separate governed decision).
+- **Authority invariants (proven, unchanged):** PROVIDER=PROPOSE, PATCH-EXECUTOR=WRITE, VALIDATION-ENGINE=VERIFY,
+  RELEASEMANAGER=ACCEPT. The reused adapter is TEXT TRANSPORT: every outcome has `changedFiles:[]` and
+  `unauthorizedChanges:[]` — Ollama can only PROPOSE (`proposedEdits`); it structurally cannot mutate the tree.
+  ODG's governed patch-executor remains the sole applier. No paid call (localhost; external cost €0).
+- **Tests:** `src/tests/ollama-provider.test.ts` (new, 15 assertions): conformance + truthful identity;
+  availability (local+model⇒available-no-key, local+no-model⇒fail-closed UNAVAILABLE, non-local⇒credential
+  required); AUTHORITY propose-only (returns one proposedEdit, wrote NOTHING to the tree); **LIVE** against the
+  real local Ollama (`qwen2.5:0.5b`, OBSERVED usage, cost €0, zero tree writes), reachability-gated/SKIP in CI.
+  `npm test` ALL PASS (exit 0); `tsc --noEmit` 0; `next build` 0.
+- **Real mission result (port boundary = the governed provider seam):** `createOllamaProvider().execute()` drove
+  the REAL local Ollama end-to-end — classification OK, `provider=ollama-local`, OBSERVED token usage, cost €0,
+  `changedFiles:[]`. The provider PROPOSED; it applied nothing.
+- **Result:** the live Ollama service is now a named, governed, PROPOSE-ONLY `EngineeringProviderPort` via pure
+  reuse. A local model can author proposals at external cost €0; governance (patch-executor/validation/release)
+  is unchanged and un-bypassed.
+- **Remaining seam(s) (deferred — not done here, by design):** (1) wiring Ollama into the default failover
+  chain / a LOCAL-FIRST selection preference is a separate CTO decision (cost/quality trade-off; default stays
+  Claude-subscription-first per V59/V60); (2) a full `odg autonomy` end-to-end mission authored by Ollama was
+  NOT run — the 0.5b model's authoring quality + the documented live-CLI hang hazard make a real tree-mutating
+  mission unsafe/low-value; the governed port was proven live instead. NOT CERTIFIED beyond the proven scope.
+- **Checkpoint status:** VERIFIED, uncommitted on `main`. Commit/push await explicit human authorization.
+
+---
+
 ## 41. RUNTIME CHANGE LOG — PROVIDER_AVAILABILITY_TRUTH_V1 (V60)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code (no independent "NOTRE AGENT" process exists).
