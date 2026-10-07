@@ -3832,3 +3832,32 @@ present) from RECORDED-NO-EVIDENCE (evidence path absent on disk) via the fs evi
 292 files exit 0; tsc 0; next build OK. This is observability only — NOT a promotion/regression gate (that
 stays E until a live promoter exists). NEXT: no further D-class increment in priorities 1–6 without a new
 semantic/business decision (Stage-6 promotion gate E; pricing C; objective-proof TS-gate C) — STOP.
+
+### ACTION AUTHORIZATION + PARTIAL PROGRESS — PER-ACTION AUTHZ, HONEST RESUMABLE PARTIAL (2026-10-07)
+CTO mission: a mission whose requested capability/authorization is UNAVAILABLE was recorded as a global
+NO-OP/BLOCKED instead of executing its permitted independent actions. ROOT CAUSE (reproduced, read-only):
+the execution loop was ALREADY per-action (patch-executor.js skip-and-continue; runtime-executor.ts mirror),
+but the VERDICT was a single global AND in validation-engine.js with only SUCCESS/BLOCKED — one RECORDED
+(A3) or FAILED objective flipped the whole mission to BLOCKED and discarded the proven independent progress.
+No PARTIAL state; no distinction between illegitimate no-op (RECORDED), true error (FAILED), and
+legitimately-blocked-resumable. The per-action authority evaluator (action-gate.js) already existed and was
+REUSED — no second authority, no new primitive.
+CHANGE (commit 7b74678; 5 files): action-gate.js rejects cross-mission (authority.mission != ctx.missionId)
+and expired (authority.expiresAt < ctx.now) reuse (ctx-injected, stays pure, inert without comparand);
+patch-action-contract.js threads missionId/now + classifyRefusal() marks ONLY authority-absence resumable
+(ESCALATE/expired/cross-mission/revoked/contract/policy/state stay HARD — ESCALATE deliberately left hard to
+not disturb out-of-scope action-gate-live lock); patch-executor.js records a resumable refusal as a new
+per-action status BLOCKED (zero mutation, continue) and a declared-unavailable capability as BLOCKED not
+RECORDED; validation-engine.js adds the PARTIAL verdict (proven>0, no FAILED, no illegitimate RECORDED [A3
+preserved], gates green, no proven->blocked dependsOn) and adds noBlocked to SUCCESS to close a false-DONE
+hole — PARTIAL => validated:false => exit!=0 => ledger (mission-ledger.js:38, validated===true) never
+RELEASEs. New adversarial lock src/runtime/action-authorization-partial.test.ts (29 assertions).
+PROVEN: new suite 29/29 (self-authz denied, expired denied, cross-mission denied, executor-bypass fails
+closed, refusal+independent-continuation => PARTIAL, resume-after-authorization => SUCCESS); NON-DESTRUCTIVE
+REAL MISSION PROOF — cases 6 & 10 drive the real patch-executor + validation-engine in throwaway git repos
+(mixed mission => PARTIAL with completed/blocked lists, OBJ written / blocked OBJ zero-mutation; grant
+authority + re-run => SUCCESS, both effects preserved). Verification: full npm test exit 0; tsc --noEmit 0
+errors; next build green; A3/action-gate/action-gate-live/nl-gateway/capability-executors/governance-kernel/
+mission-ledger regression green. Write-set = exactly those 5 files (no scope expansion). NOT CERTIFIED beyond
+scope: making ESCALATE resumable would require editing action-gate-live.test.js (outside write-set) — the
+exact boundary, reported not bypassed. Mission scenario (authz/capability UNAVAILABLE = absence) fully covered.
