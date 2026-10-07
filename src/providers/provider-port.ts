@@ -139,6 +139,64 @@ export function deriveFailingChecks(
   return out;
 }
 
+/**
+ * An ADVISORY root-cause diagnosis of the local failure that forced provider escalation (V37). It
+ * carries ONLY facts ODG's RootCauseEngine already computed and persisted this run — the blocking
+ * Release gate, the component that produces it, the evidence file it is read from, the violated rule,
+ * and the human-readable reason. It is NOT proof, a patch, or authority: the provider still authors
+ * under the current contract and the Validation Engine re-checks. Never carries the PROPOSED minimalPatch.
+ */
+export interface RootCauseDiagnosis {
+  blockingGate: string;
+  blockingGates: string[];
+  evidenceProducer: string | null;
+  evidenceRef: string | null;
+  blockingRule: string | null;
+  reason: string;
+}
+
+/**
+ * Pure, deterministic, fail-closed summary of a persisted RootCauseReport for the CURRENT mission. Emits
+ * a diagnosis ONLY when the report is genuinely DIAGNOSED, bound to `currentMission` (freshness/identity),
+ * and carries a usable root cause. Any other state (absent/malformed/stale/wrong-mission/NO_BLOCKER/
+ * EVIDENCE_MISSING) ⇒ undefined (omit). No I/O; the caller supplies the already-read report object.
+ */
+export function summarizeRootCause(
+  report:
+    | {
+        status?: unknown;
+        mission?: unknown;
+        blockingGates?: unknown;
+        rootCause?: {
+          gate?: unknown;
+          blockingRule?: unknown;
+          detail?: unknown;
+          responsibleComponent?: { evidenceProducer?: unknown; evidenceFile?: unknown } | null;
+        } | null;
+      }
+    | null
+    | undefined,
+  currentMission: string,
+): RootCauseDiagnosis | undefined {
+  if (!report || typeof report !== "object") return undefined;
+  if (report.status !== "DIAGNOSED") return undefined; // only a real diagnosis, never a guess
+  if (typeof report.mission !== "string" || report.mission !== currentMission) return undefined; // identity/freshness
+  const rc = report.rootCause;
+  if (!rc || typeof rc !== "object" || typeof rc.gate !== "string" || !rc.gate) return undefined;
+  const comp = rc.responsibleComponent && typeof rc.responsibleComponent === "object" ? rc.responsibleComponent : null;
+  const blockingGates = Array.isArray(report.blockingGates)
+    ? report.blockingGates.filter((g): g is string => typeof g === "string")
+    : [];
+  return {
+    blockingGate: rc.gate,
+    blockingGates,
+    evidenceProducer: comp && typeof comp.evidenceProducer === "string" ? comp.evidenceProducer : null,
+    evidenceRef: comp && typeof comp.evidenceFile === "string" ? comp.evidenceFile : null,
+    blockingRule: typeof rc.blockingRule === "string" ? rc.blockingRule : null,
+    reason: typeof rc.detail === "string" ? rc.detail : "",
+  };
+}
+
 /** Deterministic selection context echoed into the prompt (contract §3.2 CONTEXT). */
 export interface ProviderContext {
   repoRoot: string;
@@ -162,6 +220,12 @@ export interface ProviderContext {
    * first; NOT proof. Optional, omitted when nothing is failing/known.
    */
   currentFailingChecks?: string[];
+  /**
+   * V37 — advisory root-cause diagnosis of the local failure (from the already-persisted
+   * root-cause-report.json). Advisory INPUT only; NOT proof or a patch. Optional, omitted unless a
+   * current-mission diagnosis exists.
+   */
+  rootCauseDiagnosis?: RootCauseDiagnosis;
 }
 
 /**
@@ -575,6 +639,19 @@ export function renderMissionPrompt(request: ProviderRequest): string {
     lines.push("## CURRENT_FAILING_CHECKS");
     lines.push("- advisory — the local verification currently reports these gates RED; prioritise fixing them. NOT proof; the Validation Engine re-checks independently.");
     lines.push(`- failing: [${m.context.currentFailingChecks.join(", ")}]`);
+  }
+  // V37 — advisory root-cause diagnosis of the local failure (already computed by ODG this run). NOT
+  // proof, NOT a patch — author the fix under the current contract; the Validation Engine re-checks.
+  const rc = m.context.rootCauseDiagnosis;
+  if (rc && rc.blockingGate) {
+    lines.push("");
+    lines.push("## ROOT_CAUSE_DIAGNOSIS");
+    lines.push("- advisory — ODG's local recovery diagnosed the blocking Release gate below. NOT proof; fix the cause, the Validation Engine re-checks independently.");
+    lines.push(`- blocking_gate: ${rc.blockingGate}${rc.evidenceProducer ? ` (produced by: ${rc.evidenceProducer})` : ""}`);
+    if (rc.blockingGates.length > 1) lines.push(`- all_red_gates: [${rc.blockingGates.join(", ")}]`);
+    if (rc.evidenceRef) lines.push(`- evidence: ${rc.evidenceRef}`);
+    if (rc.blockingRule) lines.push(`- violated_rule: ${rc.blockingRule}`);
+    if (rc.reason) lines.push(`- reason: ${rc.reason}`);
   }
   lines.push("");
   lines.push("## REQUIRED_OUTPUT");

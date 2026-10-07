@@ -51,7 +51,8 @@ import type {
 // V31/V32 — advisory pre-authoring types + the pure verification-plan builder (public provider surface;
 // imported directly to keep the bounded write-set at this file + helper, without touching the barrel).
 import type { KnownSolutionCandidate, VerificationPlan } from "../providers/provider-port";
-import { buildVerificationPlan, deriveFailingChecks } from "../providers/provider-port";
+import { buildVerificationPlan, deriveFailingChecks, summarizeRootCause } from "../providers/provider-port";
+import type { RootCauseDiagnosis } from "../providers/provider-port";
 import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 import { RootCauseEngine, type MinimalPatch } from "./root-cause-engine";
 import {
@@ -87,6 +88,9 @@ const ECONOMIC_VERIFICATION_REPORT = `${GENERATED}/economic-verification-report.
 const REGISTRY = `${GENERATED}/capability-registry.json`;
 const LEDGER = `${GENERATED}/mission-ledger.json`;
 const VERIFY = `${GENERATED}/runtime-verify.json`;
+// V37 — the RootCauseEngine's persisted diagnosis for the current run (git-ignored). Already written by
+// recoverLocally's engine.diagnose(); re-read here (never recomputed) to propagate it to the provider.
+const ROOT_CAUSE_REPORT = `${GENERATED}/root-cause-report.json`;
 // Checkpoint: the resume marker written after every RELEASE so an interrupted autonomy run can be
 // resumed EXACTLY where it stopped. The ledger already makes resume correct (a proven mission is
 // excluded from re-selection), so this artifact is the explicit, human-readable record of it — the
@@ -1069,8 +1073,28 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         // artifact the Release decision reads). Advisory INPUT only; no new state, never proof. Omitted
         // when nothing is failing/known.
         currentFailingChecks: this.buildCurrentFailingChecks(),
+        // V37 — advisory root-cause diagnosis, reused from the already-persisted root-cause-report.json
+        // (written by recoverLocally this run). Advisory INPUT only; no new state, never proof/patch.
+        // Omitted unless a current-mission DIAGNOSED report exists.
+        rootCauseDiagnosis: this.buildRootCauseDiagnosis(mission),
       },
     };
+  }
+
+  /**
+   * V37 — the root-cause diagnosis of the local failure, re-read (never recomputed) from the EXISTING
+   * root-cause-report.json that `recoverLocally` already persists via RootCauseEngine.diagnose(). Pure
+   * summary via summarizeRootCause, bound to THIS mission (identity/freshness). READ-ONLY, fail-closed:
+   * absent/malformed/stale/wrong-mission/NO_BLOCKER ⇒ undefined (omitted). Advisory INPUT only — grants no
+   * authority, is never proof or a patch, and the Validation Engine re-checks every gate.
+   */
+  private buildRootCauseDiagnosis(mission: string): RootCauseDiagnosis | undefined {
+    try {
+      const report = this.readJson<Parameters<typeof summarizeRootCause>[0]>(ROOT_CAUSE_REPORT);
+      return summarizeRootCause(report, mission);
+    } catch {
+      return undefined;
+    }
   }
 
   /**

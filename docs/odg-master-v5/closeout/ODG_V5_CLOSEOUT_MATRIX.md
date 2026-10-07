@@ -408,6 +408,44 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 32. RUNTIME CHANGE LOG — ROOT_CAUSE_DIAGNOSIS_PROPAGATION_V1 (V37)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
+- **Hypothesis confirmed:** `RootCauseEngine.diagnose()` computes a blocking-Release-gate diagnosis and
+  **persists `runtime/generated/root-cause-report.json`** (mission-bound: status / gates / blockingGates /
+  rootCause{gate, responsibleComponent, blockingRule, detail}) during `recoverLocally` — but recoverLocally
+  returns only `{outcome, exhausted}`, so the diagnosis is **dropped before the provider** is invoked. The
+  provider (reached precisely because local recovery was exhausted) re-derived the failure from scratch.
+- **Signal reused (zero new state):** the EXISTING persisted `root-cause-report.json` — re-read in
+  `buildProviderMission` exactly like V36 re-reads `runtime-verify.json`. No threading, no new store, no new
+  persisted state, no recomputation, no fabricated diagnosis.
+- **Files touched (write-set, strict — 4):** `src/providers/provider-port.ts` (`RootCauseDiagnosis` type +
+  pure `summarizeRootCause()` + optional `ProviderContext.rootCauseDiagnosis` + additive prompt render);
+  `src/runtime/autonomy-runtime-adapter.ts` (`ROOT_CAUSE_REPORT` const + guarded `buildRootCauseDiagnosis`
+  wired into `buildProviderMission`); `src/providers/root-cause-diagnosis.test.ts` (**new**); this matrix.
+- **Behaviour:** surfaces ONLY already-computed facts — blocking gate, the producer component, the evidence
+  file ref, the violated rule, the human reason, and all red gates. Emitted ONLY when the report is
+  `status==="DIAGNOSED"` AND `mission===` the current mission (identity/freshness). The PROPOSED `minimalPatch`
+  is deliberately NOT surfaced (the provider authors under the current contract). Omitted otherwise ⇒ cold
+  prompt byte-identical.
+- **Authority / proof preserved:** advisory INPUT only — grants no authority, writes nothing, proves nothing,
+  is not a patch; the provider still passes action-gate + authorizedPaths + validation; `recordMission`
+  unchanged. Current reality / current evidence win — a stale or wrong-mission report is omitted.
+- **Tests:** `root-cause-diagnosis.test.ts` 3/3 (valid current-mission facts-only; adversarial 1–16 —
+  none/malformed/stale/wrong-mission/NO_BLOCKER/EVIDENCE_MISSING/no-rootCause/malformed-gate ⇒ omit,
+  partial-component ⇒ nulls no-throw, multiple causes preserved; prompt A/B — cold renders nothing, warm
+  renders advisory/NOT-proof diagnosis naming gate+producer); `tsc --noEmit` exit 0; TS provider/adapter/
+  ledger/runner regression **22/22**; `runtime/core/*.test.js` **67/67**.
+- **A/B:** CONTROL (no diagnosis) renders no block; TREATMENT (DIAGNOSED, current mission) surfaces the gate /
+  producer / evidence / rule / reason — proven offline through the real `renderMissionPrompt`. Provider-side
+  reduction is **UNMEASURED** (provider execution hazard-gated) — **no 10× claimed**.
+- **Before/after:** BEFORE — the local diagnosis was persisted then dropped; the provider re-diagnosed. AFTER —
+  the already-computed blocking gate + reason reach the provider as advisory input. Honesty: VERIFIED (tested
+  + offline-exercised), not CERTIFIED. Limitation: reflects whatever `root-cause-report.json` holds (written by
+  recoverLocally this run); advisory, so staleness cannot mislead truth — the Validation Engine re-checks.
+
+---
+
 ## 31. RUNTIME CHANGE LOG — CURRENT_FAILING_CHECKS_PROPAGATION_V1 (V36)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
