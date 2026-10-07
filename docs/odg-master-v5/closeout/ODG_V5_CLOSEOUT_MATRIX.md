@@ -408,6 +408,46 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 30. RUNTIME CHANGE LOG — INFORMATION_GAIN_NEXT_CHECK_V1 (V33)
+
+- **Date (UTC):** 2026-10-07
+- **Gap:** `self-diagnostic` already attaches, per divergence, candidate causes + the smallest
+  discriminating check, but lists them in a stable-id sort order — it never RANKS the checks to pick the
+  single most-informative one. With several simultaneous divergences the Agent had no "run THIS first" signal.
+- **Design (Phase 3, simple deterministic — no probabilistic math):** a pure, memory-free `rankChecks(incident)`
+  that scores each candidate diagnostic check from the incident alone — `safetyClass` (OBSERVE vs MUTATE),
+  `severity` (CRITICAL/ERROR), `informationGain` (causes discriminated + shared-discriminator bonus), `cost`,
+  `reversible`, `blastRadius` — and orders best-first: **OBSERVE before MUTATE → higher severity → higher
+  information gain → lower cost → deterministic (category,test) tiebreak.** Ties/missing data ⇒ the safe head
+  of the stable order (never a silent collapse). `diagnose` attaches advisory `rankedChecks` + `nextCheck`.
+- **Files touched (write-set, strict — 3):** `runtime/core/self-diagnostic.js` (pure `rankChecks()` +
+  `MUTATION_HINT` classifier + attach advisory `rankedChecks`/`nextCheck`, exported); `runtime/core/
+  self-diagnostic-ranking.test.js` (**new** adversarial); this matrix. No second diagnostic engine, no new
+  store/primitive/authority; no memory (current incident only).
+- **Identity preserved:** the ranking is attached AFTER the stable `id` is computed (id is a pure function of
+  divergences), so incident identity/de-duplication/loop-protection is byte-for-byte unchanged.
+- **Governance (Phase 7):** the selector chooses only WHAT TO INVESTIGATE NEXT — never what is authorized,
+  written, proven, accepted, or released. Read-only; mutates no governed state; marks nothing successful;
+  hypotheses are ordered, never collapsed. A MUTATE/irreversible check can never outrank a safe OBSERVE one.
+- **Self-improvement (Phase 8):** NOT implemented — storing a diagnostic STRATEGY would need a second
+  diagnostic-memory system (patch-memory keys solutions, not strategies); forbidden here. The ranker is
+  purely current-incident, which also matches "current evidence decides." Deferred as a future frontier.
+- **Tests:** `self-diagnostic-ranking.test.js` 3/3 (severity+info-gain ordering; adversarial 1–12 — safe
+  OBSERVE outranks high-severity MUTATE, stable tiebreak on ties, corrupted/missing-test excluded & no-throw,
+  empty ⇒ no suggestion/escalate, incomplete evidence never fabricates; diagnose attaches advisory fields
+  without changing incident id); existing `self-diagnostic*.test.js` 2/2 (regression); `runtime/core/*.test.js`
+  **67/67**; `odg diagnose` live-consumer smoke clean.
+- **Measured gain:** the ranker deterministically reorders multi-divergence incidents (CRITICAL/most-
+  discriminating first) and surfaces `nextCheck` through `odg diagnose`. End-to-end convergence-time reduction
+  on live incidents is **UNMEASURED** (no live failing incident exercised) — **no 10× claimed**; only the
+  ranking logic + attachment are measured.
+- **Before/after:** BEFORE — checks offered in detection order; the Agent might investigate a low-value lead
+  first. AFTER — the smallest safe, most-discriminating check is suggested first, advisory and non-authoritative.
+  Honesty: VERIFIED (tested + smoke-exercised), not CERTIFIED. Limitation: diagnostic checks are uniformly
+  cheap read-only observations today, so ordering is driven mainly by safety + severity + discrimination.
+
+---
+
 ## 29. RUNTIME CHANGE LOG — PREDICTIVE_VERIFICATION_PLAN_V1 (V32)
 
 - **Date (UTC):** 2026-10-07

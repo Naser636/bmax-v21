@@ -221,6 +221,92 @@ function hypothesize(divergence) {
 }
 
 /*
+ * V33 — OPTIMAL NEXT-CHECK SELECTION (pure, deterministic, ADVISORY).
+ *
+ * Given an incident (divergences + their candidate causes/tests), rank the candidate DIAGNOSTIC CHECKS
+ * so the Agent runs the most informative one FIRST, instead of executing them in detection order. This
+ * chooses WHAT TO INVESTIGATE NEXT — never what is authorized, written, proven, accepted, or released.
+ * It reads only the current incident (NO memory, NO repository I/O), mutates no governed state, and
+ * marks nothing successful. The hypotheses are left intact — uncertainty is ordered, never collapsed.
+ *
+ * Deterministic model (simple by design — no probabilistic math): each check is scored on dimensions
+ * all derivable from the incident itself —
+ *   safetyClass     : OBSERVE (read-only predicate) vs MUTATE (a test that would change state). A
+ *                     mutating/irreversible check is NEVER preferred over a safe one.
+ *   severityWeight  : the check's divergence is CRITICAL (2) or ERROR (1).
+ *   informationGain : how many competing causes it discriminates (its divergence's candidate count)
+ *                     PLUS a bonus when the SAME test discriminates across multiple divergences.
+ *   cost / reversible / blastRadius : OBSERVE ⇒ cheap / reversible / zero-blast.
+ * Order (best first): OBSERVE before MUTATE → higher severity → higher information gain → lower cost →
+ * deterministic (category, test) tiebreak. Ties / missing data ⇒ the safest deterministic fallback
+ * (the natural head of this stable order), never a silent collapse.
+ */
+const MUTATION_HINT = /\b(apply|commit|push|delete|remove|modify|write|overwrite|mutate|rebuild|install)\b/i;
+
+function classifyCheck(test) {
+  // Every current discriminating `test` is a read-only predicate description; a future test that
+  // implies a state change is conservatively treated as MUTATE so it can never outrank a safe check.
+  return MUTATION_HINT.test(String(test || "")) ? "MUTATE" : "OBSERVE";
+}
+
+function rankChecks(incident) {
+  try {
+    const groups = incident && Array.isArray(incident.hypotheses) ? incident.hypotheses : [];
+    const sevByDivergence = new Map(
+      (incident && Array.isArray(incident.divergences) ? incident.divergences : []).map((d) => [d.category, d.severity]),
+    );
+    // How many distinct divergences each test string discriminates (shared-discriminator bonus).
+    const sharedCount = new Map();
+    for (const g of groups) {
+      const seenHere = new Set();
+      for (const c of (Array.isArray(g.candidates) ? g.candidates : [])) {
+        const t = c && typeof c.test === "string" ? c.test : null;
+        if (t && !seenHere.has(t)) { seenHere.add(t); sharedCount.set(t, (sharedCount.get(t) || 0) + 1); }
+      }
+    }
+    const checks = [];
+    for (const g of groups) {
+      const candidates = Array.isArray(g.candidates) ? g.candidates : [];
+      const discriminates = candidates.length; // a check here distinguishes among this many causes
+      for (const c of candidates) {
+        if (!c || typeof c.test !== "string" || !c.test) continue; // unavailable diagnostic ⇒ skip
+        const safetyClass = classifyCheck(c.test);
+        const severity = sevByDivergence.get(g.divergence) === "CRITICAL" ? "CRITICAL" : "ERROR";
+        const severityWeight = severity === "CRITICAL" ? 2 : 1;
+        const informationGain = discriminates + (Math.max(1, sharedCount.get(c.test) || 1) - 1);
+        const cost = 1; // all diagnostic observations are cheap; present for the model, uniform today
+        checks.push({
+          divergence: g.divergence,
+          at: g.at,
+          cause: c.cause,
+          test: c.test,
+          safetyClass,
+          reversible: safetyClass === "OBSERVE",
+          blastRadius: 0,
+          severity,
+          informationGain,
+          cost,
+          // Advisory display score (sort still uses the explicit tuple below to avoid collisions).
+          score: (safetyClass === "OBSERVE" ? 1000 : 0) + severityWeight * 100 + informationGain * 10 - cost,
+          supportedBy: Array.isArray(c.supportedBy) ? c.supportedBy : [],
+        });
+      }
+    }
+    checks.sort((a, b) => {
+      if (a.safetyClass !== b.safetyClass) return a.safetyClass === "OBSERVE" ? -1 : 1; // safe first
+      const sev = (b.severity === "CRITICAL" ? 2 : 1) - (a.severity === "CRITICAL" ? 2 : 1);
+      if (sev !== 0) return sev;                                   // higher severity first
+      if (b.informationGain !== a.informationGain) return b.informationGain - a.informationGain; // more gain
+      if (a.cost !== b.cost) return a.cost - b.cost;               // cheaper first
+      return (a.divergence + "|" + a.test).localeCompare(b.divergence + "|" + b.test); // stable tiebreak
+    });
+    return checks;
+  } catch {
+    return []; // fail-closed: never throw; an unrankable incident yields no suggestion (escalate)
+  }
+}
+
+/*
  * RAISE INCIDENT — persist/update the incident ledger via the existing autonomy-store. Loop protection:
  * a re-raised incident (same stable id) increments attempts; at maxAttempts it is FROZEN and must be
  * escalated (never iterated endlessly).
@@ -247,6 +333,10 @@ function raiseIncident(divergences, opts = {}) {
     hypotheses: divergences.map((d) => ({ divergence: d.category, at: d.firstDifferenceAt, candidates: hypothesize(d) })),
     note: status === "FROZEN" ? "Repeated/oscillating incident frozen — escalate (loop protection)." : null,
   };
+  // V33 — advisory optimal next-check ranking (pure, read-only; NOT part of the stable id above, so it
+  // never changes incident identity/de-duplication). Suggests which diagnostic to run first; decides nothing.
+  incident.rankedChecks = rankChecks(incident);
+  incident.nextCheck = incident.rankedChecks.length > 0 ? incident.rankedChecks[0] : null;
   ledger.incidents[id] = incident;
   store.write(INCIDENTS_FILE, ledger);
   return incident;
@@ -365,6 +455,7 @@ module.exports = {
   observe,
   detectDivergences,
   hypothesize,
+  rankChecks,
   raiseIncident,
   diagnose,
   classifyRepairability,
