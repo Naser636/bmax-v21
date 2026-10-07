@@ -195,6 +195,19 @@ function recordMission(mission) {
     JSON.stringify({ generatedAt: entry.recordedAt, count: entries.length, entries }, null, 2)
   );
 
+  // V28 — governed post-release experience accumulation (ADVISORY, non-authoritative). Runs ONLY after
+  // the ledger entry for THIS proven mission has been written above, and ONLY on a genuine new append
+  // (every refusal/duplicate path returned earlier). It consumes ONLY this mission's validated
+  // mission-report + APPLIED patch-execution evidence and records reusable experience via the EXISTING
+  // capability-learning → patch-memory path. Fully guarded and lazily required: a learning failure NEVER
+  // changes the already-written record, the release decision, the entry, or this return value (release
+  // authority semantics unchanged; CRITICAL ORDER 1–7). Memory is advisory experience, never proof.
+  try {
+    require("./post-release-learning").accumulate(mission);
+  } catch (e) {
+    console.warn("[MissionLedger] Post-release learning (advisory) failed:", e && e.message);
+  }
+
   return { skipped: false, entry, count: entries.length };
 }
 

@@ -408,6 +408,53 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 27. RUNTIME CHANGE LOG — GOVERNED_POST_RELEASE_EXPERIENCE_ACCUMULATION_V1 (V28)
+
+- **Date (UTC):** 2026-10-07
+- **Gap closed (V27):** the EXISTING `capability-learning.learn()` → `patch-memory` mechanism had **zero live
+  callers** — every real completion path (node `odg-run`→ledger, LOCAL `local-mission-runner`→
+  `ledger-record-adapter`, fleet dispatcher/collector) terminates at `mission-ledger.recordMission` and none
+  invoked learning. Verified experience therefore never accumulated; the reuse READ path (router Tier‑1
+  `patch-memory.lookup`) had nothing to reuse. (V27 diagnosed; repair deferred to this authorized mission.)
+- **Convergence point selected (Option A):** the single universal convergence for all routes is the body of
+  `mission-ledger.recordMission`. Learning is invoked there **only on a genuine new append** (every
+  refusal/duplicate path returns earlier) and **only after the ledger file is written**.
+- **Files touched (write-set, strict):** `runtime/core/mission-ledger.js` (the one convergence call-site —
+  a guarded, lazily-required, post-write advisory call; release semantics, gates, `entry`, and return value
+  unchanged); `runtime/core/post-release-learning.js` (**new** minimal adapter); `runtime/core/
+  post-release-learning.test.js` (**new** seam test); this matrix. No new store/skill/agent/hook/MCP/
+  architecture; `recordMission`’s proven-only + acceptance + economic gates are untouched.
+- **Adapter behaviour:** reads ONLY this mission’s `mission-report.json` (requires `mission===this` and
+  `validated===true`) and `patch-execution.json` (requires `mission===this`), builds the EXISTING `learn()`
+  report from **APPLIED** execution entries only (real file edits; EXECUTED/RECORDED excluded), edits derived
+  solely from the APPLIED evidence (**never the plan**), preserving signature `rootCause|objectiveId|target`.
+  Absent/mismatched/stale/no‑APPLIED evidence ⇒ **zero** entries (fail closed). Memory is never treated as proof.
+- **Critical order honoured:** validate → `recordMission` records the already‑validated mission → ONLY THEN
+  advisory learning. A learning failure NEVER turns a recorded mission into FAILED and NEVER mutates
+  authoritative state (guarded by try/catch at the seam; `VERIFIED SUCCESS → RELEASE AUTHORITY` unchanged).
+- **Acceptance A–J:** all green. A one entry on validated+APPLIED · B replay no duplicate (idempotent by
+  signature) · C failed→0 · D unvalidated→0 · E validated-no-APPLIED→0 · F wrong-mission→0 · G stale→0 ·
+  H forced learning failure → mission stays recorded (proven live through the real `recordMission`) · I reuse
+  is edits-only via router Tier‑1 (no authority field; still re-enters patch-executor + validation) · J V26 A/B
+  intact (cold signature ≠ PATCH_MEMORY, warm = PATCH_MEMORY).
+- **Verification:** `post-release-learning.test.js` 1/1 (A–J); `runtime/core/*.test.js` **62/62**; TS ledger
+  route (`mission-ledger-idempotent`, `local-mission-runner-ledger`, `mission-ledger-label`) **3/3**;
+  `tsc --noEmit` exit 0; live E2E through real `recordMission` (learning fires 0→1; guard holds on failure)
+  with git-ignored runtime state snapshotted & restored; tracked tree = exactly the write-set.
+- **Before/after:** BEFORE — verified success never became verified experience (patch-memory empty in prod).
+  AFTER — a validated engineering mission with real APPLIED edits accumulates exactly one reusable
+  patch-memory entry, post-release and advisory, feeding the existing reuse-before-explore router (V26).
+- **Governance:** no authority/write-scope increase, no certification/promotion, memory remains advisory
+  experience only; current mission contract, authorization, action-gate, freshness and validation stay
+  authoritative. Honesty rule: VERIFIED (tested green + live-exercised), not CERTIFIED.
+- **Limitations:** APPLIED evidence persists edit **targets/modes**, not edit **bodies** (patch-execution.json
+  stores no body and the plan is an off-limits source), so a replayed entry proposes targets that still re-enter
+  all gates rather than a self-applying diff. Same-mission temporal freshness relies on the mission-identity
+  binding across both artifacts (no per-run token exists in `patch-execution.json`). Richer replay bodies would
+  be a separate authorized mission.
+
+---
+
 ## 26. SKILL GRADE DECISION — GOVERNED_TEST_PROOF_ANALYSIS (NO PROMOTION)
 
 - **Date (UTC):** 2026-10-06
