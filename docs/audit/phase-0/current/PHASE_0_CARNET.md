@@ -4053,3 +4053,49 @@ mode; genuine LIVE acquisition remains gated by the executor's own fail-closed a
 fetcher. git/bash consequential capabilities have NO non-destructive proof path from NL (their probes require a real
 ff / sandbox effect), so an authorized git/bash NL intent routes + dispatches but honestly BLOCKS at validation
 (no false SUCCESS) — a genuine boundary, not a defect.
+
+### HUMAN-AUTHORIZED CAPABILITY SPEC TRANSPORT INTO THE EXECUTOR + EXECUTION-CHOKEPOINT GATE (2026-10-07)
+CTO continuation from the exact frontier documented above (runtime-executor passed only {objectiveId, goal} to
+capability-executors, so a consequential capability's concrete spec/scope could not reach the executor). ODG (sole
+orchestrator) DECIDED the minimum governed transport seam and a directly-dependent test repair; Claude Code (the
+engineering surface) executed the edits ODG specified — Claude made no autonomous decision. ODG CHANGED (reuse-only,
+no second runtime/authority/registry/resolver/agent/primitive, no provider bypass, no global permission):
+(1) capability-authorization.js — SPEC_ADAPTERS map each consequential capability to its EXISTING executor patch
+key (research_acquisition / git_branch_integration / bash_command); buildExecutorSpec(cap, grantScope) builds that
+spec STRICTLY from the HUMAN grant's scope (privileged params from the human, never the sentence; network/live flag
+defaults OFF ⇒ dry-run/safe); requestedScopeOf(cap, specValue) projects a carried spec back to grant-scope shape for
+the containment check. (2) odg-objective.js — on ALLOW, attaches obj.capabilitySpec={field,value} (built from the
+grant scope) alongside the bounded dispatch id + probe + authorization. (3) mission-loader.ts — carries the optional
+`authorization` + `capabilitySpec` VERBATIM onto ObjectiveSpec (transport only; never trusted/interpreted there).
+(4) runtime-executor.ts — injects the carried spec into the resolve patch under the executor's own key (SPEC
+TRANSPORT) AND adds a GOVERNED EXECUTION-CHOKEPOINT GATE: before running a CONSEQUENTIAL executor it re-validates
+the human grant via capability-authorization (mission binding, expiry, capability identity, scope containment,
+human-issued, execute) against the live run clock, fail-closed — an unauthorized/expired/mismatched/scope-exceeding
+objective is NEVER run (CapabilityBlocked), produces no evidence ⇒ not SUCCESS, while any independently-authorized
+objective proceeds. This closes the direct-objectiveId BYPASS (a crafted consequential objectiveId reaching
+runtime-executor via `odg mission <id>` is blocked without a valid grant), not just the NL entrypoint. DIRECTLY
+DEPENDENT TEST REPAIR (method §12): runtime-executor.external-research.test.ts case 1 asserted External Research
+(a consequential capability) dispatched WITHOUT authorization — precisely the gap now closed; aligned it to carry a
+valid human grant + the human-granted spec (NOT a gate weakening — it ADDS the required authorization).
+PROVEN: new consequential-executor-gate.test.ts 10/10 (valid⇒runs+validates+spec-transported, no-grant⇒bypass
+blocked no-evidence, expired⇒blocked, scope-exceeded⇒blocked, wrong-mission⇒blocked); capability-authorization now
+32 assertions (+spec-transport +scope-containment-at-execution); nl-consequential-dispatch 13 + nl-authorization 16
++ semantic-entrypoint 38 + nl-executable 16 + decision-rules 19 + gateway 156; FULL SWEEP src/runtime 43/43 +
+runtime/core 67/67; tsc --noEmit 0. ONE REAL NON-DESTRUCTIVE PROOF (External Research, dry-run, ZERO network):
+`odg objective "acquire external research on pricing" --execute` ⇒ BLOCKED NO_AUTHORIZATION without a grant; WITH an
+explicit human grant ⇒ the grant's concrete planned_sources were built into research_acquisition, carried through
+mission-loader into runtime-executor, the execution-chokepoint gate ALLOWed (mission/expiry/scope/human verified),
+the REAL External Research executor ran in DRY-RUN and its evidence carried plannedSources=["https://standards.
+example.org/pricing"] (SPEC TRANSPORT proven) with 0 fetched, external-research-dry-run-planned probe {ok:true},
+ledger proven:true, Verdict=SUCCESS. Tracked tree clean (all evidence gitignored). Write-set = capability-
+authorization.js(+test) + odg-objective.js + mission-loader.ts + runtime-executor.ts + runtime-executor.external-
+research.test.ts + consequential-executor-gate.test.ts + this carnet. NO second runtime/authority/primitive; ODG
+invents no authorization/identity/scope from NL. REMAINING BOUNDARIES (reported, not bypassed): (a) LIVE (network)
+research still unreachable from the NL entrypoint by design (executor needs an operator-injected fetcher that cannot
+survive JSON transport); the seam reaches only the DRY-RUN safe mode. (b) git/bash remain unprovable non-
+destructively from NL (their probes require a real ff / sandbox effect) — an authorized git/bash NL intent now
+transports its spec + is gated + dispatched, but honestly BLOCKS at validation (no false SUCCESS). (c) MINOR
+pre-existing resolve-to-existing semantics: a re-run of the same intent reuses the prior gitignored contract, so a
+CHANGED grant/scope is not re-materialised onto an existing contract file — the execution-chokepoint gate still
+re-validates whatever grant is carried (stale/expired ⇒ BLOCKED), so it is not a safety hole, but refreshing an
+existing contract's authorization is the next recommended frontier if live-grant rotation is pursued.

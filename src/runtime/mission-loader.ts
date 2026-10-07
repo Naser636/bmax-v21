@@ -14,6 +14,13 @@ export interface ObjectiveSpec {
   // turned into a verdict by the loader; done_when is NOT used as a binding. null when the objective
   // declares no proof (= no semantic proof declared). Consumption as a gate is NOT authorized yet.
   proof: string | null;
+  // Human-authorization transport (odg-objective → capability-authorization). Carried VERBATIM, never
+  // interpreted or trusted here: `authorization` is the explicit human grant (capability/mission/scope/
+  // expiry/execute/human) re-validated downstream at the executor chokepoint; `capabilitySpec` is the
+  // EXISTING capability-executor spec { field, value } built by ODG from the human grant's scope (never
+  // from the sentence). Both absent/null for ordinary objectives (unchanged behaviour).
+  authorization?: Record<string, unknown> | null;
+  capabilitySpec?: { field: string; value: Record<string, unknown> } | null;
 }
 
 // S2 (Campaign 03): the mission's governance, carried VERBATIM from its contract into the plan.
@@ -324,10 +331,23 @@ export class MissionLoader {
               : [],
             // Campaign 04: carry the OPTIONAL proof binding verbatim (an opaque probe name).
             // Absent / non-string / empty ⇒ null. No lookup, no evaluation, no verdict here.
-            proof: typeof obj.proof === "string" && obj.proof ? obj.proof : null
+            proof: typeof obj.proof === "string" && obj.proof ? obj.proof : null,
+            // Human-authorization transport — carried VERBATIM (null when absent). Never trusted here;
+            // re-validated at the executor chokepoint (runtime-executor → capability-authorization).
+            authorization:
+              obj.authorization && typeof obj.authorization === "object" && !Array.isArray(obj.authorization)
+                ? (obj.authorization as Record<string, unknown>)
+                : null,
+            capabilitySpec:
+              obj.capabilitySpec &&
+              typeof obj.capabilitySpec === "object" &&
+              !Array.isArray(obj.capabilitySpec) &&
+              typeof (obj.capabilitySpec as Record<string, unknown>).field === "string"
+                ? (obj.capabilitySpec as { field: string; value: Record<string, unknown> })
+                : null
           };
         }
-        return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [], dependsOn: [], proof: null };
+        return { id: `OBJECTIVE_${i + 1}`, goal: String(o), doneWhen: [], dependsOn: [], proof: null, authorization: null, capabilitySpec: null };
       })
       .filter(s => s.goal.length > 0);
   }
@@ -347,7 +367,9 @@ export class MissionLoader {
         goal: `Fulfil mission ${id}: ${label}`,
         doneWhen: [`Mission ${id} objectives are satisfied.`],
         dependsOn: [],
-        proof: null
+        proof: null,
+        authorization: null,
+        capabilitySpec: null
       }
     ];
   }
@@ -360,7 +382,7 @@ export class MissionLoader {
       .split(/\r?\n/)
       .map(l => l.trim())
       .filter(l => /^\d+\./.test(l))
-      .map((l, i) => ({ id: `OBJECTIVE_${i + 1}`, goal: l, doneWhen: [], dependsOn: [], proof: null }));
+      .map((l, i) => ({ id: `OBJECTIVE_${i + 1}`, goal: l, doneWhen: [], dependsOn: [], proof: null, authorization: null, capabilitySpec: null }));
   }
 
   /**

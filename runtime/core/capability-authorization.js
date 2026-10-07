@@ -54,6 +54,70 @@ function isConsequentialCapability(capability) {
     return Object.prototype.hasOwnProperty.call(CONSEQUENTIAL_CAPABILITIES, capability);
 }
 
+// Capability → EXISTING executor spec adapter. `field` is the patch key the capability-executor already
+// reads (git_branch_integration / bash_command / research_acquisition); `fromScope` builds that spec
+// STRICTLY from the HUMAN grant's scope (the privileged parameters come from the human, NEVER the
+// sentence); `requestedScope` projects a carried spec back into grant-scope shape so the authorization
+// gate can verify the concrete request stays WITHIN the grant (scope containment at execution). The
+// network/live flag defaults OFF (scope.live===true to arm it) so the transported spec is dry-run/safe
+// by default; a live effect still self-gates in the executor (fail-closed) and, for research, additionally
+// requires an operator-injected fetcher that cannot survive JSON transport.
+const SPEC_ADAPTERS = Object.freeze({
+    "External Research Acquisition": Object.freeze({
+        field: "research_acquisition",
+        fromScope(scope) {
+            return {
+                authorized: true,
+                execute: scope.live === true,
+                source_allowlist: Array.isArray(scope.planned_sources) ? scope.planned_sources : [],
+                objective: typeof scope.objective === "string" ? scope.objective : null,
+                items: Array.isArray(scope.items) ? scope.items : [],
+            };
+        },
+        requestedScope(v) {
+            return { objective: v && v.objective, planned_sources: (v && v.source_allowlist) || [] };
+        },
+    }),
+    "Governed Git Branch Integration": Object.freeze({
+        field: "git_branch_integration",
+        fromScope(scope) {
+            return {
+                target: scope.target,
+                source: scope.source,
+                execute: scope.live === true,
+                authorization: { allow_protected: scope.allow_protected === true },
+            };
+        },
+        requestedScope(v) {
+            return { target: v && v.target, source: v && v.source };
+        },
+    }),
+    "Governed Bash/Linux Command": Object.freeze({
+        field: "bash_command",
+        fromScope(scope) {
+            return { command: scope.command, execute: scope.live === true };
+        },
+        requestedScope(v) {
+            return { command: v && v.command };
+        },
+    }),
+});
+
+// Build the EXISTING capability-executor spec from a human grant's scope. Returns { field, value } or
+// null when the capability has no adapter. Pure; invents nothing beyond what the grant scope declares.
+function buildExecutorSpec(capability, grantScope) {
+    const a = SPEC_ADAPTERS[capability];
+    if (!a || !isPlainObject(grantScope)) return null;
+    return { field: a.field, value: a.fromScope(grantScope) };
+}
+
+// Project a carried executor spec value back into grant-scope shape for the containment check.
+function requestedScopeOf(capability, specValue) {
+    const a = SPEC_ADAPTERS[capability];
+    if (!a || !isPlainObject(specValue)) return undefined;
+    return a.requestedScope(specValue);
+}
+
 function isPlainObject(v) {
     return v !== null && typeof v === "object" && !Array.isArray(v);
 }
@@ -257,7 +321,10 @@ module.exports = {
     authorizeCapability,
     isConsequentialCapability,
     defaultScopeSatisfied,
+    buildExecutorSpec,
+    requestedScopeOf,
     CONSEQUENTIAL_CAPABILITIES,
+    SPEC_ADAPTERS,
 };
 
 // Read-only CLI: print the governed consequential-capability registry; mutates nothing.

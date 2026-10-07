@@ -129,4 +129,28 @@ console.log("CAPABILITY AUTHORIZATION — GOVERNED HUMAN-AUTHORIZATION TRANSPORT
     ok("10 a READ-ONLY capability may never be routed through this human-auth seam", authz.authorizeCapability(req({ capability: "Connectivity Audit" }), validGrant({ capability: "Connectivity Audit" }), CTX).code === "NOT_CONSEQUENTIAL");
 }
 
+// 11. Spec transport — the executor spec is built STRICTLY from the human grant scope (never invented).
+{
+    const rs = authz.buildExecutorSpec("External Research Acquisition", { objective: "pricing", planned_sources: ["https://a.org"] });
+    ok("11 research spec field is the executor's existing key", rs.field === "research_acquisition");
+    ok("11 research spec carries the human-granted sources + objective", JSON.stringify(rs.value.source_allowlist) === JSON.stringify(["https://a.org"]) && rs.value.objective === "pricing");
+    ok("11 research spec defaults to dry-run (execute=false) unless scope.live", rs.value.execute === false);
+    ok("11 scope.live===true arms the live flag", authz.buildExecutorSpec("External Research Acquisition", { live: true }).value.execute === true);
+    const gs = authz.buildExecutorSpec("Governed Git Branch Integration", { target: "t", source: "s" });
+    ok("11 git spec field + params come from scope", gs.field === "git_branch_integration" && gs.value.target === "t" && gs.value.source === "s");
+    ok("11 no adapter / non-object scope ⇒ null", authz.buildExecutorSpec("Connectivity Audit", { x: 1 }) === null && authz.buildExecutorSpec("External Research Acquisition", null) === null);
+}
+
+// 12. Scope containment at execution — a carried spec that exceeds the grant scope is DENIED.
+{
+    const grant = validGrant({ capability: "External Research Acquisition", scope: { objective: "pricing", planned_sources: ["https://good.org"] } });
+    const within = authz.requestedScopeOf("External Research Acquisition", { source_allowlist: ["https://good.org"], objective: "pricing" });
+    const beyond = authz.requestedScopeOf("External Research Acquisition", { source_allowlist: ["https://evil.org"], objective: "pricing" });
+    ok("12 requestedScopeOf projects the spec back to grant-scope shape", JSON.stringify(within) === JSON.stringify({ objective: "pricing", planned_sources: ["https://good.org"] }));
+    const okReq = { capability: "External Research Acquisition", mission: MISSION, requestedScope: within };
+    const badReq = { capability: "External Research Acquisition", mission: MISSION, requestedScope: beyond };
+    ok("12 spec within grant scope ⇒ ALLOW", authz.authorizeCapability(okReq, grant, CTX).decision === "ALLOW");
+    ok("12 spec beyond grant scope ⇒ DENY SCOPE_EXCEEDED", authz.authorizeCapability(badReq, grant, CTX).code === "SCOPE_EXCEEDED");
+}
+
 console.log(`\ncapability-authorization: ${passed} assertions passed`);

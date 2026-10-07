@@ -195,13 +195,18 @@ function applyAuthorization(decision, grant, now) {
             // is bound and the safe-mode run honestly cannot reach SUCCESS (fail-closed, reported).
             const chosenProbe = d.safeProbe || d.probe;
             const obj = decision.contract.objectives[r.index];
+            // Build the EXISTING capability-executor spec STRICTLY from the human grant's scope (the
+            // privileged parameters come from the human, never the sentence) so it can be transported to
+            // the executor. carried verbatim as { field, value } under obj.capabilitySpec.
+            const execSpec = authz.buildExecutorSpec(r.capability, d.evidence.scope);
             if (obj) {
                 if (d.executorPrefix) obj.id = `${d.executorPrefix}_${r.index + 1}`;
                 obj.proof = chosenProbe;
                 obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true, boundProbe: chosenProbe, mode: d.safeProbe ? "SAFE_DRY_RUN" : "LIVE" };
+                if (execSpec) obj.capabilitySpec = execSpec;
             }
             verify.push({ capability: r.capability, evidence: chosenProbe });
-            authorizations.push({ ...d.evidence, boundProbe: chosenProbe, dispatchObjectiveId: obj ? obj.id : null });
+            authorizations.push({ ...d.evidence, boundProbe: chosenProbe, dispatchObjectiveId: obj ? obj.id : null, capabilitySpec: execSpec || null });
         } else {
             blockers.push({ code: d.code, capability: r.capability, objective: r.objectiveId, detail: d.detail });
         }

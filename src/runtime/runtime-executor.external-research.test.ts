@@ -2,11 +2,17 @@
  * Tests for CONNECT_SECOND_PRODUCER_EXTERNAL_RESEARCH_DRYRUN_V1.
  * Run: node_modules/.bin/tsx src/runtime/runtime-executor.external-research.test.ts
  *
- * Second independent read-only producer validating GOVERNED_CAPABILITY_CONNECTION: the generic
- * self-scoping dispatch (unchanged runtime-executor.ts) runs the External Research Acquisition
- * capability in its DRY-RUN default (zero network), which writes a deterministic plan artifact THIS
- * run; the new `external-research-dry-run-planned` probe verifies it and the mission is PROVEN. A
- * non-matching objective triggers NO dispatch; a stale pre-run artifact fails closed (run-ownership).
+ * Second independent read-only producer validating GOVERNED_CAPABILITY_CONNECTION: the self-scoping
+ * dispatch runs the External Research Acquisition capability in its DRY-RUN default (zero network),
+ * which writes a deterministic plan artifact THIS run; the `external-research-dry-run-planned` probe
+ * verifies it and the mission is PROVEN. A non-matching objective triggers NO dispatch; a stale pre-run
+ * artifact fails closed (run-ownership).
+ *
+ * GOVERNED_HUMAN_AUTHORIZATION_TRANSPORT_V1: External Research is a CONSEQUENTIAL capability, so the
+ * execution-chokepoint gate (runtime-executor → capability-authorization) now requires an EXPLICIT
+ * human grant carried on the objective before dispatch (defense-in-depth). Case 1 therefore carries a
+ * valid human grant + the human-granted spec; without it the executor would be blocked fail-closed
+ * (covered by consequential-executor-gate.test.ts).
  *
  * Deterministic + self-cleaning: throwaway git-ignored mission files; saves/restores the shared
  * external-research artifact; spy ledger recorder so nothing touches the real ledger.
@@ -24,12 +30,19 @@ const evi = path.join("runtime", "generated", "external-research-acquisition.jso
 const prior = (() => { try { return fs.readFileSync(evi, "utf8"); } catch { return null; } })();
 const spy = () => ({ skipped: true });
 
-function writeMission(id: string, objectiveId: string): string {
+function writeMission(id: string, objectiveId: string, authorized = false): string {
   const file = path.join("runtime", "missions", `${id}.json`);
+  // A valid human grant for the consequential External Research capability, bound to THIS mission.
+  const governance = authorized
+    ? {
+        authorization: { capability: "External Research Acquisition", mission: id, scope: { objective: "plan", planned_sources: ["https://src.example.org"] }, expiresAt: Date.now() + 600_000, execute: true, human: true, issuer: "akabi@algonaser.fr" },
+        capabilitySpec: { field: "research_acquisition", value: { authorized: true, execute: false, source_allowlist: ["https://src.example.org"], objective: "plan", items: [] } },
+      }
+    : {};
   fs.writeFileSync(file, JSON.stringify({
     mission: id, mode: "ENGINEERING", requires_engineering: true,
     authorized_paths: ["runtime/**"], authorizedPaths: ["runtime/**"],
-    objectives: [{ id: objectiveId, goal: "produce a governed research dry-run plan (no network)", done_when: ["plan produced"] }],
+    objectives: [{ id: objectiveId, goal: "produce a governed research dry-run plan (no network)", done_when: ["plan produced"], ...governance }],
     verify: [{ capability: "External Research Acquisition", evidence: "external-research-dry-run-planned" }],
   }));
   return file;
@@ -41,7 +54,7 @@ try {
   // 1 — Matching objective: EXTERNAL_RESEARCH_1 dispatches the DRY-RUN producer, writes a plan, SUCCEEDS.
   {
     const id = "__ER_DISPATCH__";
-    const file = writeMission(id, "EXTERNAL_RESEARCH_1");
+    const file = writeMission(id, "EXTERNAL_RESEARCH_1", true); // consequential ⇒ requires a human grant
     fs.rmSync(evi, { force: true });
     try {
       const out = new LocalMissionRunner(undefined, undefined, spy).run(id);

@@ -95,16 +95,70 @@ export class RuntimeExecutor {
     // Reuses the existing runStartedAtMs concept — no new ownership framework or context model.
     const runStartedAtMs = this.state.startedAt ? Date.parse(this.state.startedAt) : undefined;
 
-    const capabilityExecutors = createRequire(import.meta.url)(
+    const require_ = createRequire(import.meta.url);
+    const capabilityExecutors = require_(
       "../../runtime/core/capability-executors.js",
     ) as {
       resolve: (
-        patch: { objectiveId: string; goal?: string },
-      ) => { run: () => { capability: string; evidence: string } } | null;
+        patch: Record<string, unknown>,
+      ) => { capability: string; run: () => { capability: string; evidence: string } } | null;
     };
+    // GOVERNED CONSEQUENTIAL-CAPABILITY GATE at the execution chokepoint (defense-in-depth, independent
+    // of the NL entrypoint): a consequential capability runs ONLY under a valid human grant carried on
+    // the objective (re-validated here against mission/expiry/scope/capability/human), fail-closed.
+    const authz = require_("../../runtime/core/capability-authorization.js") as {
+      isConsequentialCapability: (c: string) => boolean;
+      authorizeCapability: (
+        req: { capability: string; mission: string; requestedScope?: unknown },
+        grant: unknown,
+        ctx: { now: number },
+      ) => { decision: string; code?: string; detail?: string; evidence?: unknown };
+      requestedScopeOf: (c: string, v: unknown) => unknown;
+    };
+    const nowMs = runStartedAtMs ?? Date.now();
     for (const spec of mission.brain.objectiveSpecs) {
-      const executor = capabilityExecutors.resolve({ objectiveId: spec.id, goal: spec.goal });
+      // Transport the human-authorized concrete capability spec to the EXISTING executor: the privileged
+      // parameters came from the human grant's scope (built by odg-objective), carried verbatim through
+      // the loader, and are injected here under the exact patch key the executor already reads.
+      const resolvePatch: Record<string, unknown> = { objectiveId: spec.id, goal: spec.goal };
+      if (spec.authorization) resolvePatch.authorization = spec.authorization;
+      if (spec.capabilitySpec && spec.capabilitySpec.field) {
+        resolvePatch[spec.capabilitySpec.field] = spec.capabilitySpec.value;
+      }
+      const executor = capabilityExecutors.resolve(resolvePatch);
       if (!executor) continue; // no capability maps to this objective → no dispatch (unchanged)
+
+      // Consequential capability ⇒ require a valid human grant before running (fail-closed). An
+      // unauthorized objective is NOT executed (produces no evidence ⇒ its proof fails ⇒ the mission is
+      // not SUCCESS), while any independently-authorized objective still proceeds.
+      if (authz.isConsequentialCapability(executor.capability)) {
+        const decision = authz.authorizeCapability(
+          {
+            capability: executor.capability,
+            mission: id,
+            requestedScope: spec.capabilitySpec
+              ? authz.requestedScopeOf(executor.capability, spec.capabilitySpec.value)
+              : undefined,
+          },
+          spec.authorization ?? null,
+          { now: nowMs },
+        );
+        if (decision.decision !== "ALLOW") {
+          this.memory.append(id, "CapabilityBlocked", {
+            objectiveId: spec.id,
+            capability: executor.capability,
+            code: decision.code,
+            detail: decision.detail,
+          });
+          continue; // fail-closed: never run a consequential capability without a valid human grant
+        }
+        this.memory.append(id, "CapabilityAuthorized", {
+          objectiveId: spec.id,
+          capability: executor.capability,
+          authorization: decision.evidence,
+        });
+      }
+
       const result = executor.run();
       this.memory.append(id, "CapabilityExecuted", {
         objectiveId: spec.id,
