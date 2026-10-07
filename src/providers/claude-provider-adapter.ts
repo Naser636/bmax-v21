@@ -32,6 +32,7 @@ import {
   renderMissionPrompt,
   type EngineeringProviderPort,
   type ObservedQuantity,
+  type ProposedEdit,
   type ProviderDescription,
   type ProviderOutcome,
   type ProviderRequest,
@@ -147,11 +148,15 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
   execute(request: ProviderRequest): ProviderOutcome {
     const diagnostics: string[] = [];
     const readOnly = request.mission.authorizedPaths.length === 0;
+    // V42 — PROPOSE-ONLY denies Write/Edit/Bash even for a mission WITH a write scope: the provider
+    // proposes, ODG applies. `noWrite` is what gates the spawned CLI's tools/permission; `readOnly`
+    // still means "no write scope at all" and is unchanged for legacy callers (proposeOnly undefined).
+    const noWrite = readOnly || request.proposeOnly === true;
     const userPrompt = renderMissionPrompt(request);
 
     // Cost minimization (contract §7.1): reuse a prior identical, terminal result. Resume runs and
     // explicit bypass always call live; a changed head_commit changes the prompt ⇒ changes the key.
-    const cacheKey = this.cacheKey(userPrompt, readOnly);
+    const cacheKey = this.cacheKey(userPrompt, noWrite);
     const canCache = !request.bypassCache && !request.resumeSessionId;
     if (canCache) {
       const cached = this.readCache(cacheKey);
@@ -169,7 +174,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     // unrelated uncommitted files. (git-ignored regenerated artifacts never appear in porcelain.)
     const baseline = new Set(this.observeChangedFiles());
 
-    const args = this.buildArgs(request, userPrompt, readOnly);
+    const args = this.buildArgs(request, userPrompt, noWrite);
     const proc = this.run(this.bin, args, { cwd: this.cwd, timeoutMs: this.timeoutMs, env: this.childEnv() });
 
     // 1) Interruption (contract §7.1 / §8): resumable.
@@ -269,7 +274,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
 
   // --- command construction (contract §2) ---------------------------------
 
-  private buildArgs(request: ProviderRequest, userPrompt: string, readOnly: boolean): string[] {
+  private buildArgs(request: ProviderRequest, userPrompt: string, noWrite: boolean): string[] {
     const args: string[] = [];
     if (request.resumeSessionId) args.push("--resume", request.resumeSessionId);
     args.push("-p", userPrompt);
@@ -278,7 +283,9 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     args.push("--max-turns", String(request.maxTurns));
     args.push("--append-system-prompt", GUARDRAIL_SYSTEM_PROMPT);
     args.push("--add-dir", request.mission.context.repoRoot);
-    if (readOnly) {
+    if (noWrite) {
+      // Read-only mission OR V42 propose-only: plan mode + read-only tools. The spawned CLI is handed
+      // NO Write/Edit/Bash, so it physically cannot modify the repository — ODG applies any proposal.
       args.push("--permission-mode", "plan", "--allowedTools", READONLY_TOOLS);
     } else {
       args.push("--permission-mode", "acceptEdits", "--allowedTools", WRITE_TOOLS);
@@ -353,6 +360,18 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     try {
       const raw = JSON.parse(json) as Partial<ProviderResult>;
       if (raw.status !== "DONE" && raw.status !== "BLOCKED") return null;
+      // V42 — carry PROPOSED edits verbatim (structurally filtered), never applying them here. Each must
+      // name a target and exactly one of content/diff; malformed entries are dropped, not guessed.
+      const proposedEdits = Array.isArray(raw.proposedEdits)
+        ? raw.proposedEdits.filter(
+            (e): e is ProposedEdit =>
+              !!e &&
+              typeof e === "object" &&
+              typeof (e as ProposedEdit).target === "string" &&
+              (typeof (e as ProposedEdit).content === "string") !==
+                (typeof (e as ProposedEdit).diff === "string"),
+          )
+        : undefined;
       return {
         mission: typeof raw.mission === "string" ? raw.mission : mission,
         providerContractVersion:
@@ -365,6 +384,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
         commandsRun: Array.isArray(raw.commandsRun) ? raw.commandsRun : [],
         blocker: typeof raw.blocker === "string" ? raw.blocker : null,
         notes: typeof raw.notes === "string" ? raw.notes : undefined,
+        ...(proposedEdits && proposedEdits.length ? { proposedEdits } : {}),
       };
     } catch {
       return null;

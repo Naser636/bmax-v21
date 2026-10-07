@@ -303,6 +303,26 @@ export interface ProviderRequest {
   resumeSessionId?: string | null;
   /** When true, ODG forces a fresh call and ignores any cached result (contract §7.1 cost note). */
   bypassCache?: boolean;
+  /**
+   * V42 — PROPOSE-ONLY engineering: the provider READS/REASONS and returns `proposedEdits`, but is
+   * denied Write/Edit/Bash so it CANNOT modify the repository. ODG alone applies the proposal via the
+   * governed patch-executor. When set, the adapter runs plan-mode + read-only tools even though the
+   * mission has a non-empty write scope. Default/undefined ⇒ unchanged (direct-write) behaviour.
+   */
+  proposeOnly?: boolean;
+}
+
+/**
+ * V42 — a single edit a PROPOSE-ONLY provider authored WITHOUT touching the tree. It is a PROPOSAL,
+ * never an applied change: ODG's governed patch-executor (runtime/core/patch-executor.js) is the sole
+ * applier and independently enforces authorizedPaths, the action gate, idempotency and reality C03.
+ * `target` is a repo-relative path; exactly one of `content` (full file) or `diff` (unified diff).
+ */
+export interface ProposedEdit {
+  objectiveId?: string;
+  target: string;
+  content?: string;
+  diff?: string;
 }
 
 /** The normalized RESULT SCHEMA every provider must return (contract §4.2). Advisory only. */
@@ -315,6 +335,12 @@ export interface ProviderResult {
   commandsRun: string[];
   blocker: string | null;
   notes?: string;
+  /**
+   * V42 — set only on a PROPOSE-ONLY run: the edits the provider authored for ODG to apply under
+   * governance. Absent/empty on legacy (direct-write) runs. NEVER applied by the provider — a proposal
+   * only. ODG marshals these into the existing patch-executor, which is the authority that performs them.
+   */
+  proposedEdits?: ProposedEdit[];
 }
 
 /**
@@ -728,6 +754,24 @@ export function renderMissionPrompt(request: ProviderRequest): string {
     if (pd.unauthorizedChanges.length > 0) lines.push(`- unauthorized_changes: [${pd.unauthorizedChanges.join(", ")}]`);
   }
   lines.push("");
+  if (request.proposeOnly) {
+    // V42 PROPOSE-ONLY: the provider is denied Write/Edit/Bash and MUST NOT modify the tree. It returns
+    // the edits it WOULD make as `proposedEdits`; ODG's governed patch-executor applies them under
+    // authorizedPaths + action gate. A DONE with no proposedEdits authors nothing and is not accepted.
+    lines.push("## EXECUTION_MODE: PROPOSE_ONLY");
+    lines.push("- You have READ-ONLY tools only. Do NOT modify, create, or delete any file. Do NOT run Bash.");
+    lines.push("- Author the change as data: return each edit in `proposedEdits`, confined to AUTHORIZED_PATHS.");
+    lines.push("- Each edit: { target: repo-relative path, and EXACTLY ONE of content (full file) OR diff (unified) }.");
+    lines.push("- ODG alone applies the proposal under governance. status DONE with empty proposedEdits is NOT accepted.");
+    lines.push("");
+    lines.push("## REQUIRED_OUTPUT");
+    lines.push("Return a final message that is a single JSON object matching the RESULT SCHEMA:");
+    lines.push('{ "mission": string, "providerContractVersion": "1.0.0", "status": "DONE"|"BLOCKED",');
+    lines.push('  "objectivesAddressed": string[], "changedFiles": string[], "commandsRun": string[],');
+    lines.push('  "blocker": string|null, "notes"?: string,');
+    lines.push('  "proposedEdits": [ { "objectiveId"?: string, "target": string, "content"?: string, "diff"?: string } ] }');
+    return lines.join("\n");
+  }
   lines.push("## REQUIRED_OUTPUT");
   lines.push("Return a final message that is a single JSON object matching the RESULT SCHEMA:");
   lines.push(

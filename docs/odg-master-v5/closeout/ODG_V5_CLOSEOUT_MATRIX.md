@@ -408,6 +408,78 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 36. RUNTIME CHANGE LOG — PROVIDER_PROPOSE_GOVERNED_APPLY_V1 (V42)
+
+- **Date (UTC):** 2026-10-07 · **Inspected + implemented by:** Claude Code (truthfully — no independent
+  "NOTRE AGENT" process exists; V40/V41 proved this). This seam MOVES repository execution authority OFF
+  Claude Code for propose-only engineering runs.
+- **Classification:** B (small missing seam) resolved by **path A** — the EXISTING governed
+  `runtime/core/patch-executor.js` is reused unchanged as the sole applier. No revival, no new executor,
+  no new brain, no parallel runtime.
+- **Boundary before:** engineering missions spawned `claude --permission-mode acceptEdits --allowedTools
+  Read,Edit,Write,Bash,Grep,Glob` — **Claude Code wrote the tree itself** (`claude-provider-adapter.ts`);
+  ODG only observed `git status` afterward. **Boundary after (propose-only):** the provider runs
+  `--permission-mode plan --allowedTools Read,Grep,Glob` (ZERO Write/Edit/Bash), returns a
+  `proposedEdits[]` proposal, and **ODG alone applies it** via patch-executor.
+- **Flow:** PROVIDER (read/reason/propose) → `ProviderResult.proposedEdits` → `patch-proposal-apply.js`
+  (marshal, ODG-authoritative mission+scope, atomic reject of malformed) → `patch-executor.js`
+  (authorizedPaths + action gate + idempotency + reality C03 + evidence) → `patch-execution.json` →
+  Validation Engine → acceptance. Authority re-enforced by the executor; the adapter applies nothing itself.
+- **Write-set (strict — 4 + matrix):** `src/providers/provider-port.ts` (`ProposedEdit` type,
+  `ProviderResult.proposedEdits`, `ProviderRequest.proposeOnly`, propose-only prompt render);
+  `src/providers/claude-provider-adapter.ts` (honour `proposeOnly` ⇒ plan+read-only tools; parse
+  proposedEdits); `runtime/core/patch-proposal-apply.js` (**new** smallest adapter, reuses executor);
+  `src/tests/propose-apply-boundary.test.ts` (**new**); this matrix. **autonomy-runtime-adapter.ts NOT
+  touched** — production `runViaProvider` still uses acceptEdits (see limitation).
+- **Decisive test + A/B (offline):** provider with ZERO write tools proposes `out/app.ts`; file ABSENT after
+  the provider call, PRESENT only after `applyProposal` runs — proving **ODG (the patch-executor child) is
+  the writer, not Claude**. A/B: CONTROL ⇒ acceptEdits+Write; TREATMENT ⇒ plan+no-Write.
+- **Adversarial (all reject safely, no out-of-scope write):** target outside authorizedPaths ⇒ FAILED, file
+  unwritten; malformed (no content/diff) ⇒ atomic MALFORMED_PROPOSAL (no plan, no spawn); ambiguous
+  (content+diff) ⇒ rejected; DONE with empty proposal ⇒ NO_PROPOSAL (not accepted); diff context-mismatch ⇒
+  FAILED (no half-applied file); empty scope ⇒ refused; mission identity is ODG's, never the provider's self-report.
+- **Tests:** `propose-apply-boundary.test.ts` PASS; `tsc --noEmit` exit 0; provider/adapter TS regression
+  9/9 (incl. the unchanged claude-provider-adapter conformance); `runtime/core/*.test.js` 64/64.
+- **Measured gain:** actual writer process flips from `claude` (acceptEdits) to `node patch-executor.js`
+  (ODG) for propose-only runs; provider write-tool surface eliminated; same governed proof model (no gate
+  weakened). **Limitation:** the production autonomy loop (`runViaProvider`) still defaults to acceptEdits —
+  flipping it to propose-only alters the proof model for EVERY engineering mission and is OUTSIDE this
+  bounded write-set; deferred to explicit authorization (next frontier). **No live provider call made.**
+- **Honesty:** VERIFIED (tested, offline), not CERTIFIED; the boundary is proven real at tool/authority level.
+
+---
+
+## 35. AUDIT LOG — RESOLVE_PROVIDER_PLAN_VERIFY_DOUBLE_EXEC (V40) — NO-ACTION (piste closed)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
+- **Piste:** suspected redundant double execution of `resolveProviderPlanVerify` in the Provider assembly.
+- **1. Call graph (confirmed):** ONE `runViaProvider(mission,spec)` reaches BOTH sites — (A) `executeMetered
+  → executeWithFailover → buildProviderMission → buildVerificationPlan` (`autonomy-runtime-adapter.ts:1148`,
+  V32 advisory plan, only on a fresh run — cache miss `providerRuns`); (B) `writeProviderValidationEvidence`
+  (`:701`, the verify[] the Validation Engine gates on, only when `receipt.readyForValidation`).
+- **2. Executed twice?** YES — on a fresh, in-scope, clean provider run both fire exactly once each.
+- **3. Inputs/outputs compared:** inputs DIFFER. (A) ctx = first objective only `{id:first.id, goal:first.goal,
+  title}`, no description. (B) ctx = `{id:missionId, goal=ALL objective goals joined, title, description}`.
+  The `declared` half (from `spec.verify`) is identical; the intent-IMPLIED half (`resolveVerifyProbes`, which
+  regex-matches over `id+title+goal+description`) can diverge because (B) sees strictly more text.
+- **4. Redundancy measured:** NOT redundant. Adversarial proof (spec with probe keywords only in a NON-first
+  objective + description): `resolveVerifyProbes(ctxA)=[]` vs `resolveVerifyProbes(ctxB)=[internet-reachable,
+  research-acquired]` → outputs provably differ (`IDENTICAL:false`). The two sites compute two distinct values
+  by design (V32 §29 already documents one SHARED resolver, two consumers — not one cached call). The function
+  is a pure array-map + short-string regex; no I/O, no measurable cost.
+- **5/6. Decision — PISTE CLOSED, no write-set.** Caching/reusing one result for the other would change the
+  advisory plan (A) and/or the gated verify[] (B) — a behaviour/authority change with no proof of benefit,
+  forbidden (no new state, no dedup without proof, measure-first). **Next candidate examined:**
+  `providerObjectives(mission,spec)` recomputes ~4× per fresh run with identical inputs — a REAL but trivial
+  pure recompute; memoizing it requires NEW state (forbidden) for zero measurable gain ⇒ also NO-ACTION. The
+  one genuine double-recompute in this area (`runtime-executor.ts:46`) was already fixed (FIX_DOUBLE_RECOMPUTE_V1,
+  §18). No bottleneck in Provider assembly is repairable under the V40 constraints.
+- **Files touched:** this matrix only (audit record). No runtime/source/test/contract/authority change.
+- **Evidence:** call-graph read (`:632`,`:659`,`:701`,`:1010`,`:1088`,`:1148`); live adversarial node proof
+  of divergence; `tsc --noEmit` exit 0 at HEAD 18e46cc (baseline green, unchanged). Honesty: VERIFIED finding.
+
+---
+
 ## 34. MEASUREMENT + COMPRESSION LOG — COMPOSED_PROVIDER_CONTEXT_V1 (V39)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
