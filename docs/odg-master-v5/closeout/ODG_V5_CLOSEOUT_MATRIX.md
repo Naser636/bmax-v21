@@ -408,6 +408,50 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 28. RUNTIME CHANGE LOG — PRE_AUTHORED_REUSE_CANDIDATE_V1 (V31)
+
+- **Date (UTC):** 2026-10-07
+- **Frontier (V30→V31):** V30 fixed a hard boundary — the Runtime must NOT author tracked source; the
+  provider remains the author. V31 captures the reuse/convergence benefit **before** authoring, as a
+  high-quality INPUT to the existing authorized provider path, with **zero authority change**.
+- **Gap found:** `buildProviderMission.context` carried repo/plan context but **no prior verified
+  experience**, so the provider re-derived solutions even for objectives with a validated precedent in
+  patch-memory (V28). `patch-memory` was never read on the provider path.
+- **Representation chosen (Phase 3):** **C** (target + evidence reference), NOT **D** (full edit body).
+  A candidate carries NO edit body — zero new persisted state — so it cannot be mistaken for a replayable
+  authority; the provider re-authors under the current contract.
+- **Files touched (write-set, strict — 5):** `runtime/core/provider-reuse-candidate.js` (**new** pure,
+  read-only, fail-closed candidate builder); `runtime/core/provider-reuse-candidate.test.js` (**new**
+  adversarial); `src/providers/provider-port.ts` (optional `ProviderContext.knownSolutions` +
+  `KnownSolutionCandidate` type + additive prompt rendering); `src/runtime/autonomy-runtime-adapter.ts`
+  (`buildProviderMission` wires `context.knownSolutions` via a guarded `buildKnownSolutions`); this matrix.
+  No new store/engine/db/primitive/agent/MCP; providers barrel untouched; nine-primitive kernel intact.
+- **Behaviour:** for each CURRENT objective, matches patch-memory by objective identity against the
+  canonical (lower-cased) signature (same semantics as the V26 router lookup), then **revalidates current
+  reality** — every surfaced target must still EXIST on disk AND fall within the CURRENT mission's
+  `authorizedPaths`. Any mismatch / stale / deleted / out-of-scope / corrupted / read-only-mission ⇒ **no
+  candidate** (fail-closed; provider gets the cold problem unchanged). Deterministic (no time/randomness).
+- **Authority preserved:** the candidate is ADVISORY INPUT only — never authority, proof, execution, or
+  acceptance. Runtime gains NO tracked-source authoring authority; action-gate, `authorizedPaths`,
+  validation and `recordMission` remain exactly authoritative; historical memory never self-validates.
+- **Tests:** `provider-reuse-candidate.test.js` 2/2 (cold/warm A/B + adversarial 1–12: exact, similar,
+  changed target/rootCause/contract/scope/repo-state, stale, wrong-mission, conflicting, corrupted,
+  no-longer-appropriate); `runtime/core/*.test.js` **64/64**; TS provider/adapter/ledger/runner regression
+  **14/14**; `tsc --noEmit` exit 0; offline A/B through the real `renderMissionPrompt` (cold prompt
+  unchanged; warm prompt carries the precedent + target + historical mission, labelled advisory-only).
+- **Measured gain:** the precedent demonstrably reaches the provider prompt as advisory input (offline,
+  real render). The provider-side rediscovery reduction itself is **UNMEASURED** (provider execution is
+  hazard-gated) — **no 10× claimed**; only the candidate-assembly and prompt-delivery are measured.
+- **Before/after:** BEFORE — provider re-derived even for previously-solved objectives; V28 experience
+  never reached it. AFTER — a validated precedent (where + which mission) is handed to the provider as a
+  revalidated, advisory hint, removing rediscovery without removing governance.
+- **Limitations:** representation C names targets, not bodies, so the provider still authors the change
+  (by design — the V30 authority boundary stands). Objective-identity matching uses the canonical
+  signature's objectiveId component; cross-objective rootCause nuance is not a discriminator (safe:
+  advisory + revalidated). Honesty: VERIFIED (tested + offline-exercised), not CERTIFIED.
+
+---
+
 ## 27. RUNTIME CHANGE LOG — GOVERNED_POST_RELEASE_EXPERIENCE_ACCUMULATION_V1 (V28)
 
 - **Date (UTC):** 2026-10-07

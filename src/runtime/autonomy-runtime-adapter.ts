@@ -48,6 +48,9 @@ import type {
   ProviderRequest,
   RoutableMission,
 } from "@/providers";
+// V31 — advisory pre-authoring precedent type (public provider surface; imported directly to keep the
+// bounded write-set at this file + the helper, without touching the providers barrel).
+import type { KnownSolutionCandidate } from "../providers/provider-port";
 import { ProviderPatchEngine, type PatchReceipt } from "./patch-engine";
 import { RootCauseEngine, type MinimalPatch } from "./root-cause-engine";
 import {
@@ -1055,8 +1058,34 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         headCommit: source.commit ?? "",
         masterPlanObjectives: state.masterPlanObjectives,
         missingCapabilities: state.missingCapabilities,
+        // V31 — advisory verified-precedent candidates (read-only, fail-closed). INPUT to the provider
+        // only; it grants the Runtime no authoring authority and changes no gate.
+        knownSolutions: this.buildKnownSolutions(mission, spec),
       },
     };
+  }
+
+  /**
+   * V31 — assemble advisory verified-precedent candidates for this mission's objectives from the
+   * EXISTING patch-memory, revalidated against current reality (target exists + within authorizedPaths).
+   * READ-ONLY, fail-closed: any error ⇒ [] (the provider receives the cold problem, unchanged). This is
+   * INPUT ONLY — it grants the Runtime no tracked-source authoring authority and changes no gate.
+   */
+  private buildKnownSolutions(mission: string, spec: RawMission | null): KnownSolutionCandidate[] {
+    try {
+      const mod = requireCjs("../../runtime/core/provider-reuse-candidate.js") as {
+        buildCandidates: (
+          objectives: Array<{ id: string }>,
+          opts: { cwd: string; authorizedPaths: string[] },
+        ) => KnownSolutionCandidate[];
+      };
+      return mod.buildCandidates(this.providerObjectives(mission, spec), {
+        cwd: this.cwd,
+        authorizedPaths: this.authorizedPaths(spec),
+      });
+    } catch {
+      return [];
+    }
   }
 
   private providerObjectives(mission: string, spec: RawMission | null): ProviderObjective[] {

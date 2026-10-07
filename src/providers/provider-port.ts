@@ -47,6 +47,21 @@ export interface ProviderObjective {
   done_when: string[];
 }
 
+/**
+ * A verified prior-experience precedent for one objective (V31). ADVISORY INPUT ONLY — it is NOT
+ * authority, proof, execution, or acceptance. Assembled read-only from patch-memory and revalidated
+ * against current reality; the provider remains the author and every gate stays authoritative. Carries
+ * NO edit body (representation C): it names where a validated change previously landed, not how to apply it.
+ */
+export interface KnownSolutionCandidate {
+  objectiveId: string;
+  signature: string;
+  targets: string[];
+  historicalMission: string | null;
+  reuseCount: number;
+  status: "VERIFIED_PRECEDENT";
+}
+
 /** Deterministic selection context echoed into the prompt (contract §3.2 CONTEXT). */
 export interface ProviderContext {
   repoRoot: string;
@@ -54,6 +69,11 @@ export interface ProviderContext {
   headCommit: string;
   masterPlanObjectives: string[];
   missingCapabilities: string[];
+  /**
+   * V31 — verified precedents for this mission's objectives (advisory INPUT; optional, defaults absent).
+   * Reduces provider rediscovery without granting the Runtime any authoring authority.
+   */
+  knownSolutions?: KnownSolutionCandidate[];
 }
 
 /**
@@ -427,6 +447,18 @@ export function renderMissionPrompt(request: ProviderRequest): string {
   lines.push(`- head_commit: ${m.context.headCommit}`);
   lines.push(`- master_plan_objectives: [${m.context.masterPlanObjectives.join(", ")}]`);
   lines.push(`- missing_capabilities: [${m.context.missingCapabilities.join(", ")}]`);
+  // V31 — verified precedents (advisory INPUT, NOT authority/proof): prior validated solutions for
+  // these objectives. They remove rediscovery; you MUST still author the change under the CURRENT
+  // contract and authorizedPaths, and it is independently validated afterwards. Rendered only when present.
+  if (Array.isArray(m.context.knownSolutions) && m.context.knownSolutions.length > 0) {
+    lines.push("- known_solutions (verified precedents; advisory input only — re-author under the current contract):");
+    for (const k of m.context.knownSolutions) {
+      lines.push(
+        `  - objective ${k.objectiveId}: previously solved & validated in ${k.historicalMission ?? "a prior mission"} ` +
+          `touching [${k.targets.join(", ")}] (reuseCount=${k.reuseCount})`,
+      );
+    }
+  }
   lines.push("");
   lines.push("## REQUIRED_OUTPUT");
   lines.push("Return a final message that is a single JSON object matching the RESULT SCHEMA:");
