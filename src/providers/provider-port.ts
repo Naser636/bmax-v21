@@ -682,11 +682,22 @@ export function renderMissionPrompt(request: ProviderRequest): string {
   }
   // V36 — gates currently RED per the local verification (advisory INPUT; NOT proof). The provider was
   // reached because the local pipeline could not pass — fix these first. The Validation Engine re-checks.
-  if (Array.isArray(m.context.currentFailingChecks) && m.context.currentFailingChecks.length > 0) {
-    lines.push("");
-    lines.push("## CURRENT_FAILING_CHECKS");
-    lines.push("- advisory — the local verification currently reports these gates RED; prioritise fixing them. NOT proof; the Validation Engine re-checks independently.");
-    lines.push(`- failing: [${m.context.currentFailingChecks.join(", ")}]`);
+  // V39 COMPRESSION (meaning-preserving): when a ROOT_CAUSE_DIAGNOSIS is present and already names EVERY
+  // failing gate (as blocking_gate / all_red_gates), this block is a pure restatement — suppress it. No
+  // gate name is lost (they remain in the diagnosis). Kept whenever it carries a gate the diagnosis omits.
+  const failingChecks = Array.isArray(m.context.currentFailingChecks) ? m.context.currentFailingChecks : [];
+  if (failingChecks.length > 0) {
+    const rcd = m.context.rootCauseDiagnosis;
+    const namedByRootCause = rcd
+      ? new Set<string>([rcd.blockingGate, ...(Array.isArray(rcd.blockingGates) ? rcd.blockingGates : [])].filter(Boolean))
+      : null;
+    const fullyCovered = !!namedByRootCause && failingChecks.every((g) => namedByRootCause.has(g));
+    if (!fullyCovered) {
+      lines.push("");
+      lines.push("## CURRENT_FAILING_CHECKS");
+      lines.push("- advisory — the local verification currently reports these gates RED; prioritise fixing them. NOT proof; the Validation Engine re-checks independently.");
+      lines.push(`- failing: [${failingChecks.join(", ")}]`);
+    }
   }
   // V37 — advisory root-cause diagnosis of the local failure (already computed by ODG this run). NOT
   // proof, NOT a patch — author the fix under the current contract; the Validation Engine re-checks.

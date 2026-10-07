@@ -408,6 +408,46 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 34. MEASUREMENT + COMPRESSION LOG — COMPOSED_PROVIDER_CONTEXT_V1 (V39)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
+- **Mission:** measure the composed effect of V32+V36+V37+V38 provider-advisory context BEFORE adding more,
+  and compress only if clearly justified. No authority/verification/contract/execution-semantics change.
+- **Measurement method:** deterministic, reproducible A/B over the REAL `renderMissionPrompt` (CONTROL =
+  pre-V32 baseline context; TREATMENT = the four composed blocks). Provider *behaviour* (attempts, convergence,
+  latency) is **NOT measured** — it is hazard-gated (real external adapters) and there is NO reasoning-capable
+  sandbox; a canned mock returns prompt-independent output, so a behavioural delta could only be fabricated.
+  Strongest honest proxy = prompt composition (information retained / overhead / duplication).
+- **Measured deltas (real render):** CONTROL 693 chars / 32 lines → TREATMENT 2260 chars / 60 lines =
+  **+226% chars, +28 lines**; advisory blocks 0 → 4; **7 actionable facts retained** that the baseline never
+  surfaced (internet-reachable, legacy-runtime-retired, build, gitClean, odg-verify.js, NON_ZERO_EXIT,
+  tsc error). **No contradiction** across blocks (build is consistently: a required gate, currently red, and
+  the primary root cause).
+- **Context-overhead / duplication result:** material repetition found — `build` restated across 3 blocks,
+  `gitClean` across 2. Root: V36 `CURRENT_FAILING_CHECKS` is a pure restatement of gates V37
+  `ROOT_CAUSE_DIAGNOSIS` already names (blocking_gate + all_red_gates).
+- **Implementation (one clearly-justified, meaning-preserving compression):** in `renderMissionPrompt`,
+  suppress `CURRENT_FAILING_CHECKS` IFF a `ROOT_CAUSE_DIAGNOSIS` is present AND names EVERY failing gate — no
+  gate name is lost (they remain in the diagnosis). The block is KEPT whenever it carries a gate the diagnosis
+  omits, or when no diagnosis is present. No information removed merely for tokens.
+- **Files touched (write-set, strict — 3):** `src/providers/provider-port.ts` (render-layer compression guard
+  only); `src/providers/composed-context.test.ts` (**new** — records the A/B + the compression contract); this
+  matrix. No new store/state/primitive/authority; no change to V32/V36/V37/V38 data or semantics.
+- **Adversarial / cases:** all-four present ✓; single block ✓; conflicting — none possible (distinct lenses);
+  stale-disk (V36/V37) vs in-memory (V38) coexist ✓; missing/malformed ⇒ block omitted (prior tests) ✓;
+  successful local pipeline ⇒ no diagnostics propagated ✓; subset-suppress / superset-keep / no-RC-keep all
+  tested ✓; non-engineering ⇒ no class gates (V32) ✓; authority/proof unaffected — advisory only ✓.
+- **Tests:** `composed-context.test.ts` 2/2 (A/B info-retained + bounded-overhead regression guard;
+  compression subset/superset/no-RC); `tsc --noEmit` exit 0; TS provider/adapter/ledger/runner regression
+  **26/26** (incl. V36 renderer test intact); `runtime/core/*.test.js` **67/67**.
+- **Decision:** measurable composition benefit EXISTS (7 facts retained, no contradiction) ⇒ architecture KEPT;
+  measured redundancy ⇒ one minimal meaning-preserving compression applied. **No 10× claimed.**
+- **What is proven:** the composed context retains real, non-contradictory information the baseline lacked, now
+  without the redundant red-gate restatement. **What remains unmeasured:** the actual provider-side operational
+  advantage (hazard-gated; no reasoning sandbox). Honesty: VERIFIED (measured proxy + tested), not CERTIFIED.
+
+---
+
 ## 33. RUNTIME CHANGE LOG — PIPELINE_DIAGNOSTICS_PROPAGATION_V1 (V38)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** NOTRE AGENT
