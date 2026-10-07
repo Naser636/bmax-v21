@@ -12,7 +12,9 @@ import {
   subscriptionLoginAvailable,
   governedClaudeSubscriptionPref,
   createDefaultFailoverChain,
+  claudeAvailability,
 } from "@/providers/provider-factory";
+import type { AvailabilityEnv } from "@/providers/provider-availability";
 import { PROVIDER_CONTRACT_VERSION, type ProviderMission, type ProviderRequest } from "@/providers/provider-port";
 import type { ProviderProcessRunner } from "@/providers/claude-provider-adapter";
 
@@ -87,5 +89,17 @@ try {
   fs.rmSync(cacheBase + "-b", { recursive: true, force: true });
 }
 
+// --- 4. V60 claudeAvailability — a subscription login counts as a credential ---
+const availEnv = (o: Partial<AvailabilityEnv> & { envVars?: Record<string, string>; bin?: boolean; login?: boolean }): AvailabilityEnv => ({
+  env: pe(o.envVars ?? {}),
+  hasBinary: () => o.bin !== false,
+  ...(o.login === undefined ? {} : { hasSubscriptionLogin: () => o.login === true }),
+});
+must(claudeAvailability(availEnv({ envVars: { ANTHROPIC_API_KEY: "k" }, login: false })).available === true, "V60: API key + binary ⇒ available (unchanged)");
+must(claudeAvailability(availEnv({ envVars: {}, login: true })).available === true, "V60: login-only (no key) + binary ⇒ AVAILABLE (gap closed)");
+must(claudeAvailability(availEnv({ envVars: {}, login: false })).available === false, "V60: no key + no login ⇒ unavailable (credential preflight)");
+must(claudeAvailability(availEnv({ envVars: {}, login: true, bin: false })).available === false, "V60: login but no CLI ⇒ unavailable (CLI preflight)");
+must(claudeAvailability(availEnv({ envVars: {} })).available === false, "V60: login-signal omitted + no key ⇒ unavailable (prior behaviour preserved)");
+
 if (failures > 0) { console.error(`\nprovider-auth-routing: ${failures} FAILED`); process.exit(1); }
-console.log("\nV59 provider auth routing OK");
+console.log("\nV59/V60 provider auth routing + availability-truth OK");

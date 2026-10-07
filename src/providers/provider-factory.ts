@@ -102,12 +102,18 @@ export function defaultAvailabilityEnv(runner: ProviderProcessRunner = defaultRu
       const r = runner("sh", ["-c", `command -v ${bin}`], { cwd: process.cwd() });
       return r.status === 0 && r.stdout.trim().length > 0;
     },
+    // V60 — the cheap, deterministic subscription-login signal (same source V59 routes auth by).
+    hasSubscriptionLogin: () => subscriptionLoginAvailable(),
   };
 }
 
 /**
  * Claude availability probe. The Claude adapter itself is not modified; its two prerequisites — the
- * `claude` CLI and a credential (API key OR Claude Code session token) — are inspected here.
+ * `claude` CLI and a CREDENTIAL — are inspected here. V60: a credential is an API key / OAuth token
+ * env, OR a Claude Code SUBSCRIPTION login (the cheap deterministic signal). This closes the
+ * availability-truth gap where a login-only env (no API key) was falsely reported UNAVAILABLE even
+ * though the governed path (V59) authenticates via that very login. (Depleted-key detection remains
+ * impossible without a paid call; V59's subscription-first default already sidesteps it.)
  */
 export function claudeAvailability(env: AvailabilityEnv): ProviderAvailability {
   const name = "claude-code";
@@ -115,13 +121,20 @@ export function claudeAvailability(env: AvailabilityEnv): ProviderAvailability {
     const v = env.env[k];
     return typeof v === "string" && v !== "";
   });
-  const hasCredential = credentialEnv !== undefined;
+  const hasCredentialEnv = credentialEnv !== undefined;
+  const hasLogin = typeof env.hasSubscriptionLogin === "function" ? env.hasSubscriptionLogin() === true : false;
+  const hasCredential = hasCredentialEnv || hasLogin;
   const hasBin = env.hasBinary(CLAUDE_BIN);
+  const credentialDetail = hasCredentialEnv
+    ? `${credentialEnv} is set`
+    : hasLogin
+      ? "Claude Code subscription login present"
+      : `none of ${CLAUDE_CREDENTIAL_ENVS.join(", ")} is set and no subscription login`;
   const checks: AvailabilityCheck[] = [
     {
-      requirement: `env:${CLAUDE_CREDENTIAL_ENVS.join("|")}`,
+      requirement: `env:${CLAUDE_CREDENTIAL_ENVS.join("|")}|subscription-login`,
       satisfied: hasCredential,
-      detail: hasCredential ? `${credentialEnv} is set` : `none of ${CLAUDE_CREDENTIAL_ENVS.join(", ")} is set`,
+      detail: credentialDetail,
     },
     {
       requirement: `binary:${CLAUDE_BIN}`,
@@ -140,8 +153,8 @@ export function claudeAvailability(env: AvailabilityEnv): ProviderAvailability {
   }
   return unavailable(name, {
     blockingComponent: `${name} credential preflight`,
-    missingConfiguration: `a Claude credential (${CLAUDE_CREDENTIAL_ENVS.join(" or ")})`,
-    nextAction: `Authenticate Claude Code or export ${CLAUDE_CREDENTIAL_ENVS[0]}.`,
+    missingConfiguration: `a Claude credential (${CLAUDE_CREDENTIAL_ENVS.join(" or ")}) or a Claude Code subscription login`,
+    nextAction: `Authenticate Claude Code (subscription login) or export ${CLAUDE_CREDENTIAL_ENVS[0]}.`,
     checks,
   });
 }

@@ -21,6 +21,12 @@ export interface AvailabilityEnv {
   env: Record<string, string | undefined>;
   /** True when an executable is resolvable on PATH. Injected so tests never touch the real system. */
   hasBinary: (bin: string) => boolean;
+  /**
+   * V60 — true when a Claude Code SUBSCRIPTION login exists (claude.ai), independent of any API key:
+   * a cheap, deterministic signal (OAuth token env OR the CLI credentials file). Optional and injected
+   * so checks stay pure/mockable; when omitted, a check treats it as absent (prior behaviour).
+   */
+  hasSubscriptionLogin?: () => boolean;
 }
 
 /**

@@ -408,6 +408,39 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 41. RUNTIME CHANGE LOG — PROVIDER_AVAILABILITY_TRUTH_V1 (V60)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code (no independent "NOTRE AGENT" process exists).
+  V59 deferred-seam #1. Minimal, reuse-only; authority boundaries unchanged.
+- **Problem:** `claudeAvailability` treated a credential as present ONLY if `ANTHROPIC_API_KEY`/
+  `CLAUDE_CODE_OAUTH_TOKEN` was set. A login-only env (no API key but a working claude.ai subscription
+  login) was therefore falsely reported **UNAVAILABLE** — contradicting V59, which authenticates the
+  governed path via exactly that login.
+- **Root cause:** the probe had no notion of the subscription login; it inspected env vars + binary only.
+- **Fix (minimal):** `provider-availability.ts` — add optional, injectable `hasSubscriptionLogin?()` to
+  `AvailabilityEnv`. `provider-factory.ts` — `defaultAvailabilityEnv` wires it to the V59
+  `subscriptionLoginAvailable()` (cheap/deterministic; env OAuth token OR `~/.claude/.credentials.json`;
+  NEVER a live/paid call); `claudeAvailability` now satisfies the credential requirement when an env
+  credential OR a login is present, with truthful checks/detail and an updated unavailable next-action.
+  Omitted signal ⇒ treated as absent (prior behaviour preserved). **Depleted-key detection is still
+  impossible without a paid call (unchanged); V59's subscription-first default already sidesteps it.**
+- **Authority invariants (unchanged):** PROVIDER=PROPOSE, PATCH-EXECUTOR=WRITE, VALIDATION-ENGINE=VERIFY,
+  RELEASEMANAGER=ACCEPT. Availability truth only — no new primitive/writer/runtime; Fleet OFF; Codex not a
+  dependency; vnext/PersistentAutonomyController untouched.
+- **Tests:** `src/tests/provider-auth-routing.test.ts` extended (+5, 15 total, offline, no paid call):
+  API-key⇒available (unchanged), **login-only (no key)⇒AVAILABLE (gap closed)**, no-key+no-login⇒unavailable
+  (credential preflight), login+no-CLI⇒unavailable (CLI preflight), omitted-signal+no-key⇒unavailable
+  (prior behaviour). `npm test` **335 files ALL PASS** (0 assertion failures); `tsc --noEmit` 0; `next build` 0.
+- **Real verification (cheap, no paid call):** live `claudeAvailability(defaultAvailabilityEnv())` ⇒
+  `available:true`, `loginDetected:true`.
+- **Result:** the engineering availability verdict is now truthful for subscription-only environments; a
+  login-only host correctly presents Claude as available and routes via V59's subscription-first auth.
+- **Remaining seam(s) (deferred):** Ollama engineering authoring via OpenAI-compatible adapter at
+  `:11434/v1` (propose-only, own mission); execution-failure failover (retry-safe — provider only proposes;
+  own mission). Depleted-key live detection intentionally NOT added (would require a paid call).
+
+---
+
 ## 40. RUNTIME CHANGE LOG — PROVIDER_SUBSCRIPTION_FIRST_AUTH_V1 (V59)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code (no independent "NOTRE AGENT" process exists).
