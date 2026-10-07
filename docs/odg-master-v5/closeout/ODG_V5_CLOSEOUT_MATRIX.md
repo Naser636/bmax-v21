@@ -408,6 +408,41 @@ existing matrix is the authorized home; no new repair-history document was creat
 
 ---
 
+## 43. AUDIT LOG — FINALIZE_ODG_DIRECT_ENTRYPOINT_V1 (V63) — NO-ACTION (entrypoint already ready)
+
+- **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code. Read-only finalization audit. V61 committed +
+  pushed first (`405c536`, HEAD==origin/main, tree clean). This entry records the genuine V63 finding; it is
+  the ONLY file changed by V63 and is left UNCOMMITTED (V63 authorized pushing the V61 commit only).
+- **Question:** the minimum remaining work so a human can work directly through the real ODG entrypoint on the
+  VPS, with ODG owning orchestration and deciding when a provider is required.
+- **Finding — the direct entrypoint ALREADY works; no missing seam; NO code change made.** Exact command:
+  **`./runtime/bin/odg mission <MISSION>`** (dispatcher `runtime/bin/odg` → `src/runtime/mission-cli.ts`, "THE
+  unified mission driver"). Sibling human commands (unchanged): `odg autonomy` (roadmap-selected loop),
+  `odg converge`, `odg health|status|verify|diagnose`.
+- **Orchestration ownership (read-confirmed):** `mission-cli` plans every mission via `MissionOrchestrator`
+  first, then the ONE Runtime selects exactly one route — LOCAL (migrated → `LocalMissionRunner`), PROVIDER
+  (`RuntimeAutonomy` → `AutonomyRuntimeAdapter` → Claude Provider Adapter), or LOCAL PIPELINE
+  (`odg-local-pipeline.sh` → odg-verify + odg-run). Mission SELECTION is ODG-owned (human names a single
+  mission; `RuntimeAutonomy.selectNextMission` drives `odg autonomy`/`converge` from the roadmap).
+- **Governance map (read-confirmed in `autonomy-runtime-adapter.ts`):** (1) ODG owns selection+orchestration —
+  YES; (2) local work runs WITHOUT a provider — YES (LOCAL_FIRST: the deterministic local pipeline always runs
+  first); (3) Claude is called ONLY when provider authoring is genuinely required — YES (`missionRequiresProvider`
+  AND local could not progress; never when local already succeeded); (4) provider is PROPOSE-only — YES
+  (`proposeOnly: useGovernedApply`, provider denied Write/Edit/Bash); (5) patch-executor is the SOLE writer —
+  YES (ODG applies the proposal via `runtime/core/patch-executor.js`); (6) Validation Engine + Release Manager
+  remain in the path — YES (`validation-engine.js` gate → gatherEvidence → Release Manager / mission-ledger
+  proven-only gate).
+- **Real smoke (bounded, safe, NO paid call):** `./runtime/bin/odg mission RUNTIME_SELF_AUDIT` → plan 16 steps →
+  Decision: migrated local mission → LOCAL RUNTIME → 28 technical steps → **Validated: true** → ledger
+  recordMission (proven-only gate) → **exit 0**. Zero provider calls, external cost €0; tree stayed clean
+  (only gitignored `runtime/generated|state` touched); HEAD==origin/main (`405c536`).
+- **Result:** NO seam was missing; per V63 no repair was invented. The human can submit/run ODG missions
+  directly today via `./runtime/bin/odg mission <MISSION>`.
+- **Next action:** (optional) human decides whether to commit this closeout entry; otherwise none — the
+  entrypoint is ready as-is.
+
+---
+
 ## 42. RUNTIME CHANGE LOG — WAKE_OLLAMA_GOVERNED_PROVIDER_V1 (V61)
 
 - **Date (UTC):** 2026-10-07 · **Executed by:** Claude Code (no independent "NOTRE AGENT" process exists).
