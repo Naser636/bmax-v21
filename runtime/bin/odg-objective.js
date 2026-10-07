@@ -187,13 +187,21 @@ function applyAuthorization(decision, grant, now) {
             { now },
         );
         if (d.decision === "ALLOW") {
+            // Bind the EXISTING capability executor: assign the objectiveId the executor matches (its
+            // dispatch PREFIX, derived from the resolved capability identity — NOT from the sentence) and
+            // bind the probe that verifies real objective evidence. ODG defaults to the capability's SAFE
+            // (non-destructive, dry-run) probe when it has one; the capability spec/parameters come from
+            // the human grant's scope, never invented here. Absent a safe probe (git/bash), the LIVE probe
+            // is bound and the safe-mode run honestly cannot reach SUCCESS (fail-closed, reported).
+            const chosenProbe = d.safeProbe || d.probe;
             const obj = decision.contract.objectives[r.index];
             if (obj) {
-                obj.proof = d.probe;
-                obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true };
+                if (d.executorPrefix) obj.id = `${d.executorPrefix}_${r.index + 1}`;
+                obj.proof = chosenProbe;
+                obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true, boundProbe: chosenProbe, mode: d.safeProbe ? "SAFE_DRY_RUN" : "LIVE" };
             }
-            verify.push({ capability: r.capability, evidence: d.probe });
-            authorizations.push(d.evidence);
+            verify.push({ capability: r.capability, evidence: chosenProbe });
+            authorizations.push({ ...d.evidence, boundProbe: chosenProbe, dispatchObjectiveId: obj ? obj.id : null });
         } else {
             blockers.push({ code: d.code, capability: r.capability, objective: r.objectiveId, detail: d.detail });
         }

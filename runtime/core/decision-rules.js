@@ -34,6 +34,15 @@ const RULES = [
     { all: ["shell"], capability: "Governed Bash/Linux Command" },
     { all: ["command"], capability: "Governed Bash/Linux Command" },                       // run a known command
     { all: ["connectivity"], capability: "Connectivity Audit" },
+    // External Research Acquisition — the EXISTING governed external-data node (capability-executors.js,
+    // dry-run default = ZERO network). Same resolver-gap class as the rules above: the capability,
+    // executor and probes (external-research-dry-run-planned / research-acquired) all exist, but NO rule
+    // mapped a natural-language research request to it, so the Router routed it to the external-ai last
+    // resort (MISSING_CAPABILITY). Both words required (tight), so only a genuine external-research
+    // request matches. Recognition is NOT authorization — it is a CONSEQUENTIAL capability and still
+    // requires an explicit human grant (capability-authorization) before any engagement.
+    { all: ["external", "research"], capability: "External Research Acquisition" },
+    { all: ["research", "acquisition"], capability: "External Research Acquisition" },
     { all: ["repository"], capability: "runtime-context-loader" },                         // inspect repo/workspace state
     { all: ["repo", "state"], capability: "runtime-context-loader" },
     { all: ["dépôt"], capability: "runtime-context-loader" },                              // FR: "état du dépôt" (reuse, no new capability)

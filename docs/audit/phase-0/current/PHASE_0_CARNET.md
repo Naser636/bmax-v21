@@ -4008,3 +4008,48 @@ END-TO-END execution of a prefix-dispatched consequential capability (git/bash/r
 gated by a SEPARATE, previously-documented dispatch boundary — capability-executors matches those by a strict
 objectiveId prefix (GIT_BRANCH_INTEGRATION/BASH_COMMAND/EXTERNAL_RESEARCH_) + a transported spec, which the NL_
 synthesis path does not produce; connecting that is a distinct frontier from authorization and was NOT bundled here.
+
+### NL → RESOLUTION → AUTHORIZED CAPABILITY DISPATCH → EXECUTOR → EVIDENCE → SUCCESS (2026-10-07)
+CTO continuation from the exact dispatch boundary above. ODG (primary agent/sole orchestrator) DETERMINED, by
+targeted inspection (no rescan), that the chain was already MOSTLY present and needed only a seam, NOT core edits:
+(1) mission-loader.ts:312 ALREADY carries a contract objective's explicit `id` onto ObjectiveSpec and :327 its
+`proof`; (2) mission-orchestrator builds POSITIONAL `OBJECTIVE_n` plan-steps (so objective-evidence coverage is
+unaffected by the objective's real id); (3) runtime-executor.ts dispatches capability-executors by `spec.id` prefix;
+(4) the External Research executor's DRY-RUN is the hard default (ZERO network) and the `external-research-dry-run-
+planned` probe verifies it fresh (run-ownership). THE MISSING SEAM had two parts: (a) a DEPENDENT DEFECT — the
+resolver (decision-rules.js) had NO rule mapping a natural-language research request to the EXISTING "External
+Research Acquisition" capability, so it fell through to external-ai (MISSING_CAPABILITY); and (b) nothing turned a
+resolved consequential capability + a human grant into the executor's dispatch objectiveId + evidence-probe binding.
+ODG CHANGED (seam-only, reuse-only; NO second runtime/authority/agent/registry/resolver/primitive, NO core mission-
+loader/runtime-executor/orchestrator edit, NO provider bypass, NO global permission): (i) decision-rules.js — added
+two tight rules ({external,research} / {research,acquisition}) → "External Research Acquisition" (repairing the
+dependent resolver gap in the same mission, method §12); (ii) capability-authorization.js — each consequential
+capability now carries its EXISTING capability-executors dispatch `executorPrefix` + a `safeProbe` (the probe
+satisfiable in the non-destructive dry-run/analysis mode; External Research = external-research-dry-run-planned;
+git/bash = null since their proof needs a real/sandbox effect), returned on ALLOW; (iii) odg-objective.js
+applyAuthorization — on a VALID human grant, assigns the objective the executor's dispatch id (`<prefix>_n`, derived
+from the capability IDENTITY, NEVER the sentence) and binds the SAFE probe (capability parameters/scope come from the
+HUMAN grant, never invented); no/invalid grant ⇒ nothing bound, fail-closed (unchanged). ODG invents no
+authorization/identity/scope/authority from natural language: identity via the existing resolver, authority+scope
+from the human grant, dispatch-id from the capability registry. Claude Code executed NOTHING here — ODG made every
+decision and change; Claude Code (this engineering surface) only edited files under ODG's governed method.
+PROVEN: nl-consequential-dispatch.test.ts 13/13 (resolver maps research intent, authorized⇒prefix-id+safe-probe
+bound, no-grant⇒nothing bound, per-capability prefix derivation, git-has-no-safe-probe honesty); capability-
+authorization 26 + nl-authorization 16 + semantic-entrypoint 38 + nl-executable 16 + decision-rules 19 + capability-
+probes + external-research-transport + gateway 156 regression all green; tsc --noEmit 0. ONE REAL NON-DESTRUCTIVE
+PROOF (safest consequential capability = External Research, dry-run, ZERO network): (A) `odg objective "acquire
+external research on pricing" --execute` with NO --authorize ⇒ BLOCKED (NO_AUTHORIZATION), exit 2, zero execution;
+(B) same intent WITH an explicit human grant (--authorize) ⇒ resolved NL_ANALYZE_C3F758CF, authorization recorded,
+Decision "NL capability-backed mission → LOCAL RUNTIME", RuntimeExecutor DISPATCHED the real External Research
+executor in DRY-RUN (mode=DRY_RUN, acquired=false, 0 sources, objective=EXTERNAL_RESEARCH_1, produced THIS run) →
+external-research-dry-run-planned probe {ok:true} → objective-evidence PASS → Validated:true → ledger proven:true →
+seam Verdict=SUCCESS exit 0. GENUINE NL → resolution → human-authorized capability dispatch → EXISTING executor →
+real evidence → validation → SUCCESS, with fail-closed when unauthorized. Tracked tree clean (all evidence
+gitignored). Write-set = decision-rules.js + capability-authorization.js + odg-objective.js + nl-consequential-
+dispatch.test.ts + this carnet. GOVERNANCE BOUNDARIES PRESERVED/REPORTED: a LIVE (network) research acquisition is
+NOT reachable from the NL entrypoint by design — it requires an injected fetcher that cannot survive JSON transport
+(the executor's deliberate zero-built-in-network-client safety), so the entrypoint can only reach the DRY-RUN safe
+mode; genuine LIVE acquisition remains gated by the executor's own fail-closed authorization + an operator-injected
+fetcher. git/bash consequential capabilities have NO non-destructive proof path from NL (their probes require a real
+ff / sandbox effect), so an authorized git/bash NL intent routes + dispatches but honestly BLOCKS at validation
+(no false SUCCESS) — a genuine boundary, not a defect.

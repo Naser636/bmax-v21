@@ -38,10 +38,16 @@ const { evaluateAction, DECISION } = require("./action-gate");
 // The consequential capabilities this seam governs, mapped to the conservative action descriptor used
 // for the composed action-gate admission and to the EXISTING capability-probes probe that verifies the
 // capability's real evidence. Reuses existing capability names + probe names only (no new vocabulary).
+// Each consequential capability carries: the conservative action descriptor for the composed action-gate
+// admission; the EXISTING capability-executors dispatch id PREFIX (so an authorized objective can be
+// assigned the objectiveId the executor matches — reuse, not a new router); the LIVE evidence probe;
+// and the SAFE (non-destructive, dry-run/analysis) probe when the capability has one. External Research
+// has a genuine safe dry-run probe (zero network); git/bash have none (their proof needs a real/sandbox
+// effect), so `safeProbe` is null and a safe-mode run there honestly cannot reach SUCCESS.
 const CONSEQUENTIAL_CAPABILITIES = Object.freeze({
-    "Governed Git Branch Integration": Object.freeze({ actionClass: "IRREVERSIBLE", risk: "HIGH", reversibility: "R3", probe: "git-branch-integrated" }),
-    "Governed Bash/Linux Command": Object.freeze({ actionClass: "WRITE", risk: "HIGH", reversibility: "R2", probe: "bash-command-governed" }),
-    "External Research Acquisition": Object.freeze({ actionClass: "COMMUNICATE", risk: "HIGH", reversibility: "R2", probe: "research-acquired" }),
+    "Governed Git Branch Integration": Object.freeze({ actionClass: "IRREVERSIBLE", risk: "HIGH", reversibility: "R3", executorPrefix: "GIT_BRANCH_INTEGRATION", probe: "git-branch-integrated", safeProbe: null }),
+    "Governed Bash/Linux Command": Object.freeze({ actionClass: "WRITE", risk: "HIGH", reversibility: "R2", executorPrefix: "BASH_COMMAND", probe: "bash-command-governed", safeProbe: null }),
+    "External Research Acquisition": Object.freeze({ actionClass: "COMMUNICATE", risk: "HIGH", reversibility: "R2", executorPrefix: "EXTERNAL_RESEARCH", probe: "research-acquired", safeProbe: "external-research-dry-run-planned" }),
 });
 
 function isConsequentialCapability(capability) {
@@ -235,7 +241,16 @@ function authorizeCapability(request, grant, ctx) {
         usedAt: ctx.now,
         gate: gate.evidence,
     });
-    return Object.freeze({ decision: DECISION.ALLOW, code: "AUTHORIZED", detail: "human authorization valid for this capability, mission and scope", evidence, authority, probe: reg.probe });
+    return Object.freeze({
+        decision: DECISION.ALLOW,
+        code: "AUTHORIZED",
+        detail: "human authorization valid for this capability, mission and scope",
+        evidence,
+        authority,
+        probe: reg.probe,
+        safeProbe: reg.safeProbe,
+        executorPrefix: reg.executorPrefix,
+    });
 }
 
 module.exports = {
