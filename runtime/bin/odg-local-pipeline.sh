@@ -197,6 +197,41 @@ compute_artifact_excludes
 UNEXPECTED_CHANGES=$(git status --porcelain -- "${ARTIFACT_EXCLUDES[@]}")
 
 if [ -n "$UNEXPECTED_CHANGES" ]; then
+  # The tree is dirty with changes outside the Runtime's own artifacts. gitClean is NOT weakened: a
+  # dirty tree is NEVER called clean. But we are PAST [4/5], so this mission is VALIDATED + proven
+  # (status=SUCCESS, validated=true). Two honest, distinct terminal states:
+  #   (a) EVERY dirty path lies INSIDE the mission's authorized_paths ⇒ this is the proven engineering
+  #       DELIVERABLE awaiting the HUMAN commit gate ⇒ VALIDATED_PENDING_COMMIT (exit 20). NOT a
+  #       success (no SUCCESS artifact written) and NOT a failure. ODG never auto-commits.
+  #   (b) ANY dirty path lies OUTSIDE authorized_paths ⇒ a genuine unexpected change ⇒ hard STOP
+  #       (exit 1), byte-for-byte the previous behaviour (and the case for a mission with NO scope).
+  SCOPE_VERDICT=$(MISSION="$MISSION" CHANGES="$UNEXPECTED_CHANGES" node -e '
+    const fs = require("fs");
+    const mission = process.env.MISSION;
+    let paths = [];
+    try {
+      const c = JSON.parse(fs.readFileSync("runtime/missions/" + mission + ".json", "utf8"));
+      const p = c.authorized_paths || c.authorizedPaths || [];
+      paths = (Array.isArray(p) ? p : []).map((x) => String(x).replace(/[*].*$/, "").replace(/\/+$/, "")).filter(Boolean);
+    } catch {}
+    // porcelain lines: "XY <path>" (and "XY <old> -> <new>" for renames — take the new path).
+    const files = String(process.env.CHANGES || "").split("\n")
+      .map((l) => l.slice(3).trim())
+      .map((p) => (p.includes(" -> ") ? p.split(" -> ").pop() : p))
+      .filter(Boolean);
+    const inScope = (f) => paths.some((pre) => f === pre || f.startsWith(pre + "/"));
+    const outside = files.filter((f) => !inScope(f));
+    // PENDING_COMMIT only when the mission declares scope AND every dirty path is inside it.
+    process.stdout.write(paths.length > 0 && files.length > 0 && outside.length === 0 ? "PENDING_COMMIT" : "OUTSIDE");
+  ')
+  if [ "$SCOPE_VERDICT" = "PENDING_COMMIT" ]; then
+    echo "VALIDATED_PENDING_COMMIT: mission validated + proven; the engineering deliverable is ENTIRELY within"
+    echo "authorized_paths and awaits the HUMAN commit gate (ODG never auto-commits; tree is NOT clean)."
+    echo "Pending (authorized) changes:"
+    echo "$UNEXPECTED_CHANGES"
+    echo
+    exit 20
+  fi
   echo "STOP: Repository changed unexpectedly"
   echo
   echo "Changes outside mission artifact directories:"

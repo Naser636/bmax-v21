@@ -91,6 +91,17 @@ function contractHasEvidenceBinding(contract) {
 // pipeline's own validation gate was actually proving the requested objective. Otherwise the outcome
 // is PARTIAL / BLOCKED with the exact reason — never a false DONE. Pure: no side effects.
 function classifyOutcome(decision, pipelineExit) {
+    // VALIDATED_PENDING_COMMIT (governed pipeline exit 20): the objective was EXECUTED, VALIDATED and
+    // recorded PROVEN, and the engineering deliverable lies ENTIRELY within authorized_paths but is not
+    // yet committed. This is NOT a failure and NOT a fabricated SUCCESS — it faithfully reports that the
+    // work is proven and awaits the HUMAN commit gate (ODG never auto-commits; gitClean is not weakened).
+    if (pipelineExit === 20) {
+        return {
+            verdict: "VALIDATED_PENDING_COMMIT",
+            code: 10,
+            reason: "The requested objective was executed, validated and recorded PROVEN; the engineering deliverable is within authorized_paths and awaits the HUMAN commit gate (ODG never auto-commits). Commit the authorized change to reach a clean terminal SUCCESS.",
+        };
+    }
     if (pipelineExit !== 0) {
         return {
             verdict: "BLOCKED",
@@ -130,17 +141,26 @@ function decide(raw, opts) {
 }
 
 // Materialize the resolved mission to a contract file through the EXISTING on-demand lifecycle
-// (runtime/missions/<id>.json, gitignored). An EXISTING contract is reused (never clobbered); otherwise
-// the gateway's governed contract is written. io is injectable for tests. Returns { missionFile, reused }.
-function materializeContract(decision, io) {
+// (runtime/missions/<id>.json, gitignored). io is injectable for tests. Returns { missionFile, reused,
+// rewritten }.
+//
+// Resolve-to-existing reuse is correct for a PURE (read-only, no-grant) re-run of the same intent — same
+// id ⇒ same contract ⇒ idempotent. But when a FRESH human grant was applied (`force`), the resolved
+// contract now carries THIS grant's authorization/scope/edit, which may differ from a stale contract
+// left by an earlier run of the same intent. Silently reusing the stale file would IGNORE the new grant
+// (observed defect). So a grant-bearing decision ALWAYS re-materializes the current contract (grant
+// rotation). The fresh grant was already fail-closed validated upstream (mission-bind/expiry/scope), so
+// this never writes an unauthorized contract; it only ensures the file reflects the grant actually used.
+function materializeContract(decision, io, force) {
     const existsSync = (io && io.existsSync) || fs.existsSync;
     const writeFileSync = (io && io.writeFileSync) || fs.writeFileSync;
     const mkdirSync = (io && io.mkdirSync) || fs.mkdirSync;
     const file = path.join(MISSIONS_DIR, decision.mission + ".json");
-    if (existsSync(file)) return { missionFile: file, reused: true };
+    const exists = existsSync(file);
+    if (exists && !force) return { missionFile: file, reused: true };
     mkdirSync(MISSIONS_DIR, { recursive: true });
     writeFileSync(file, JSON.stringify(decision.contract, null, 2));
-    return { missionFile: file, reused: false };
+    return { missionFile: file, reused: false, rewritten: exists };
 }
 
 // Route a governed mission to EXECUTION through the EXISTING unified entrypoint (odg mission → mission-cli).
@@ -274,10 +294,12 @@ function run(raw, opts, io) {
     // (fail-closed) and never routed to execution. The grant is validated by the governed transport seam
     // (capability-authorization → action-gate), and exactly what was authorized is recorded as evidence.
     const consequential = consequentialRequests(decision);
+    let grantApplied = false;
     if (consequential.length > 0) {
         const grant = opts && opts.authorize ? opts.authorize : null;
         const now = opts && Number.isFinite(opts.now) ? opts.now : Date.now();
         const authResult = applyAuthorization(decision, grant, now);
+        grantApplied = authResult.authorizations.length > 0;
         if (authResult.authorizations.length > 0) {
             const evFile = path.join(GENERATED_DIR, `capability-authorization-${decision.mission}.json`);
             const writeFileSync = (io && io.writeFileSync) || fs.writeFileSync;
@@ -305,8 +327,10 @@ function run(raw, opts, io) {
     // to the existing governed pipeline. The seam does NOT trust the pipeline exit alone: it maps the
     // real terminal code + the contract's evidence binding to an honest verdict (SUCCESS only when the
     // objective was validated against a real evidence binding; else PARTIAL / BLOCKED with the reason).
-    const mat = materializeContract(decision, io);
-    log(`Mission    : ${decision.mission} (${mat.reused ? "existing governed contract reused" : "contract synthesized on-demand"})`);
+    // A fresh human grant (grantApplied) forces re-materialization so a stale contract from an earlier
+    // run of the SAME intent can never silently override the current grant (grant rotation, P2 fix).
+    const mat = materializeContract(decision, io, grantApplied);
+    log(`Mission    : ${decision.mission} (${mat.rewritten ? "contract re-materialized for the fresh grant" : mat.reused ? "existing governed contract reused" : "contract synthesized on-demand"})`);
     log(`Route      : odg mission ${decision.mission}  (governed pipeline — all gates enforced)`);
     log("======================================");
     const pipelineExit = route(decision.mission, io);

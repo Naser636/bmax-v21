@@ -4188,3 +4188,50 @@ odg-objective.js + nl-engineering-edit.test.ts + ce carnet. PRÊT POUR LE SECOND
 par ODG) : gap 2 (édition d'ingénierie end-to-end), gap 1 (récupération), gap 4 (continuité mixte), gap 3
 (apprentissage/réutilisation). FRONTIÈRE HUMAINE conservée : une édition conséquente exige toujours un grant humain
 explicite portant la cible + l'édition concrète ; ODG n'invente jamais une édition depuis une phrase.
+
+### REMISE À NIVEAU APRÈS EXAMEN N°2 — verdict terminal d'ingénierie + rotation de grant (2026-10-07)
+Mandat CTO borné : corriger UNIQUEMENT les défauts révélés par l'examen N°2 (échec). Claude Code = surface
+d'ingénierie (ne passe pas l'examen). Point de retour sûr : 105a29c (arbre propre).
+P1 — DÉFAUT TERMINAL D'INGÉNIERIE. CAUSE RACINE : l'examen a prouvé édition APPLIED + action-gate
+ALLOW/enforced:true + Validation Engine exit 0 + ledger proven/validated/RELEASED/ARCHIVED + mission-report
+SUCCESS, MAIS verdict terminal BLOCKED. La porte [5/5] de odg-local-pipeline.sh fait exit 1 dès qu'il existe un
+changement hors-artefacts — y compris le LIVRABLE d'ingénierie autorisé non commité — alors même que [4/5] a déjà
+prouvé validated+SUCCESS. Contradiction verdict↔ledger : PROVEN+VALIDATED + livrable non commité = BLOCKED.
+FIX (sans affaiblir gitClean, sans faux succès, sans auto-commit, sans supprimer la protection de commit) :
+odg-local-pipeline.sh [5/5] — quand l'arbre est sale hors-artefacts, partitionner les changements contre les
+authorized_paths de la mission (nous sommes PASSÉ [4/5] ⇒ mission prouvée) : si TOUT changement est DANS
+authorized_paths ⇒ état terminal distinct VALIDATED_PENDING_COMMIT (exit 20, aucun artefact SUCCESS écrit, l'arbre
+n'est JAMAIS déclaré propre, ODG ne committe pas) ; tout changement HORS scope ⇒ STOP exit 1 inchangé (et cas d'une
+mission sans scope). odg-objective.js classifyOutcome : exit 20 ⇒ verdict VALIDATED_PENDING_COMMIT (code 10), ni
+SUCCESS (0) ni BLOCKED-échec (3) — reflète fidèlement « prouvé et validé, en attente du gate humain de commit ».
+P2 — GRANT FRAIS. CAUSE RACINE : materializeContract réutilisait silencieusement un contrat existant (même id
+d'intention) et ignorait un grant frais (l'examen N°2 a d'abord bloqué ainsi). FIX : un grant humain valide
+appliqué (grantApplied) force la RE-matérialisation du contrat (rotation) ; une ré-exécution PURE (sans grant)
+réutilise toujours (idempotent). Fail-closed inchangé : un grant expiré/mauvais-scope/mauvais-mission est refusé
+en amont (authorizeCapability) AVANT toute matérialisation — on ne réécrit jamais un contrat non autorisé.
+P3 — RÉCUPÉRATION & CONTINUITÉ MIXTE (inspection). (A) RÉCUPÉRATION : build-recovery-engine est déjà invoqué par
+validation-engine et borné aux authorized_paths (scopePrefixes/inScope) ; il devient DÉMONTRABLE dès que le chemin
+d'ingénierie local tourne (P1) — un build rouge récupérable d'un fichier autorisé déclenche la récupération puis la
+validation. NO-ACTION (mécanisme prêt, repose sur P1). (B) CONTINUITÉ MIXTE : le BLOCKED-résumable par action +
+PARTIAL + dependsOn existent dans patch-executor/validation-engine (prouvés en unité). MAIS piloter en live une
+mission MIXTE via l'entrée NL+grant exige un modèle multi-grant / autorisation par-objectif que le modèle actuel
+(un grant → objectifs correspondants) ne fournit pas — c'est une DÉCISION DE CONCEPTION, pas un seam minimal ;
+je NE l'invente PAS (règle « aucune nouvelle architecture »). FRONTIÈRE signalée.
+P4 — APPRENTISSAGE/RÉUTILISATION (inspection → FRONTIÈRE). Défaut plus profond que l'objectiveId seul : la LOOKUP
+(memoryPatchFor → router.route({goal, objectiveId}) → patch-memory.lookup) calcule la signature
+`rootCause|objectiveId|target` avec rootCause et target VIDES (non fournis à la lecture), tandis que
+l'ENREGISTREMENT (post-release-learning) l'écrit `|objectiveId|target`. Les deux ne peuvent JAMAIS coïncider
+(target manquant à la lecture) et l'objectiveId est spécifique à la mission ⇒ la réutilisation ne peut jamais
+aboutir (ni inter-mission, ni même intra-mission). Corriger proprement = REDESIGN de la clé de réutilisation
+(signature stable + disponibilité de la cible au moment de la lecture) — hors « seam minimal », risque de nouveau
+mécanisme. JE M'ARRÊTE et signale la frontière (conforme au mandat). La mémoire reste advisory ; toute réutilisation
+serait de toute façon revalidée par le pipeline.
+PREUVES (unit/stage ; pipeline complet gitClean vérifié POST-commit sur arbre propre) : classifyOutcome exit20⇒
+VALIDATED_PENDING_COMMIT/10, exit0⇒SUCCESS, exit1/2⇒BLOCKED ; materializeContract reuse(no-force)/rewrite(force) ;
+[5/5] scope-partition in-scope⇒PENDING_COMMIT, hors-scope/mixte⇒OUTSIDE (gitClean NON affaibli) ; nouveau test
+src/runtime/engineering-terminal-verdict.test.ts 8/8 ; régression runtime/core 68/68 + src/runtime 44/44 ; tsc 0 ;
+bash -n odg-local-pipeline.sh OK. Write-set = odg-local-pipeline.sh + odg-objective.js + engineering-terminal-
+verdict.test.ts + ce carnet. PRÊT POUR EXAMEN N°3 : épreuve 1 (verdict terminal honnête VALIDATED_PENDING_COMMIT),
+P2 grant frais, épreuve 2 récupération (repose sur P1). RESTE NON PROUVÉ / FRONTIÈRES : continuité mixte live
+(modèle multi-grant à décider) ; réutilisation d'apprentissage (clé de signature à redéfinir) — aucune des deux
+n'est un seam minimal ; signalées pour décision CTO, non inventées.
