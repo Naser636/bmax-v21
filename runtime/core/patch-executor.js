@@ -214,12 +214,33 @@ for (const patch of plan.patches) {
       // recorded as audit (enforced:false) and the existing WRITE still executes — authorized_paths is
       // NEVER treated as authority, so the recorded decision is a truthful DENY, not a silent grant.
       const admissions = patch.edits.map((edit) => admitPatchEdit(patch, edit, plan));
-      const blocked = admissions.find((a) => a.enforced && a.decision !== "ALLOW");
-      if (blocked) {
-        const why = blocked.violations.length
-          ? blocked.violations.join("; ")
-          : blocked.escalation.reasons.join("; ");
-        throw new Error(`action gate ${blocked.decision} (${blocked.target}): ${why || "not admitted"}`);
+      const refusals = admissions.filter((a) => a.enforced && a.decision !== "ALLOW");
+      // A HARD refusal (contract/policy/state defect, malformed action, or MISUSED authority — expired,
+      // cross-mission, revoked) is a real violation: throw BEFORE any write (recorded FAILED). Permission
+      // reuse is NEVER downgraded into a friendly resumable state (least privilege preserved).
+      const hardRefusal = refusals.find((a) => a.refusal && a.refusal.resumable === false);
+      if (hardRefusal) {
+        const why = hardRefusal.violations.length
+          ? hardRefusal.violations.join("; ")
+          : hardRefusal.escalation.reasons.join("; ");
+        throw new Error(`action gate ${hardRefusal.decision} (${hardRefusal.target}): ${why || "not admitted"}`);
+      }
+      // A RESUMABLE refusal (ESCALATE for human authority, or authority simply not yet granted) is an
+      // honest, resumable per-action BLOCKED — recorded with ZERO mutation (we stop before any write).
+      // Independent sibling patches keep executing; the Validation Engine surfaces PARTIAL, and supplying
+      // the authority lets a re-run resume this action to SUCCESS. This is NOT a no-op RECORDED and NOT a
+      // FAILED error — it is the per-action authorization boundary made explicit.
+      const resumableRefusal = refusals.find((a) => a.refusal && a.refusal.resumable === true);
+      if (resumableRefusal) {
+        report.executed.push({
+          action: patch.action,
+          objectiveId: patch.objectiveId || patch.action,
+          status: "BLOCKED",
+          decision: resumableRefusal.decision,
+          needs: resumableRefusal.refusal.reason,
+          target: resumableRefusal.target,
+        });
+        continue;
       }
 
       // V5 Stage 5 idempotency / compare-and-set — OPT-IN per patch via idempotencyKey. Order:
@@ -538,9 +559,26 @@ for (const patch of plan.patches) {
           });
           break;
         }
-        // No capability maps to this objective: it is a genuinely read-only/planning objective,
-        // discharged by planning + evidence. RECORD it (not SKIPPED, not FAILED) so the
-        // evidence-based Validation Engine can confirm full objective coverage.
+        // No capability maps to this objective. TWO distinct cases:
+        //   (a) The objective DECLARES it requires a capability (requiresCapability / blockedReason) and
+        //       none is available/registered: this is the "requested capability is unavailable" boundary.
+        //       Record an honest, resumable per-action BLOCKED — NOT a no-op RECORDED — so independent
+        //       siblings still execute and the Validation Engine surfaces PARTIAL (resumable once the
+        //       capability is provisioned). This is the per-action evaluation the mission requires.
+        //   (b) Otherwise it is a genuinely read-only/planning objective, discharged by planning +
+        //       evidence: RECORD it (A3 behaviour unchanged — not SKIPPED, not FAILED).
+        if (patch.requiresCapability === true || typeof patch.blockedReason === "string") {
+          report.executed.push({
+            action: patch.action,
+            objectiveId: patch.objectiveId || patch.action,
+            status: "BLOCKED",
+            decision: "CAPABILITY_UNAVAILABLE",
+            needs: (typeof patch.blockedReason === "string" && patch.blockedReason)
+              ? patch.blockedReason
+              : `no registered capability resolves objective "${patch.objectiveId || patch.action}"`,
+          });
+          break;
+        }
         report.executed.push({
           action: patch.action,
           objectiveId: patch.objectiveId || patch.action,

@@ -67,14 +67,52 @@ function hasExplicitActionContract(patch) {
   return patch.authority !== undefined; // an explicitly-declared authority = an action-contract patch
 }
 
+// Classify a non-ALLOW gate decision as RESUMABLE (a legitimate authorization that is simply not granted
+// YET — the action can proceed once a human/operator supplies it) vs a HARD refusal (a contract/policy/
+// state defect, a malformed action, a MISUSED authority — expired/cross-mission/revoked — or an ESCALATE
+// for an irreversible/high-risk action). The RESUMABLE class is the ONLY one that may be recorded as a
+// per-action BLOCKED (⇒ PARTIAL, resumable); everything else stays a FAILED action (⇒ total BLOCKED).
+// This keeps least-privilege intact: permission reuse (expired/cross-mission/revoked) is NEVER rescued
+// into a friendly resumable state, and an irreversible/high-risk ESCALATE fails CLOSED (zero mutation,
+// hard stop) exactly as before — matching the mission scenario, which is "the requested authorization /
+// capability is UNAVAILABLE (absent)", not escalation of a dangerous action.
+//   - DENY whose SOLE deficiency is authority ABSENCE ("no authority") ⇒ resumable (not yet granted).
+//   - ESCALATE (irreversible / high-risk needs human authority)        ⇒ hard (unchanged fail-closed).
+//   - any other DENY (incl. expired/cross-mission/revoked authority)   ⇒ hard.
+function classifyRefusal(gate) {
+  if (!gate || gate.decision === "ALLOW") return { refused: false, resumable: false, reason: null };
+  if (gate.decision === "ESCALATE") {
+    const reasons = (gate.escalation && gate.escalation.reasons) || [];
+    return { refused: true, resumable: false, reason: "requires human authority: " + reasons.join("; ") };
+  }
+  // DENY. Resumable only when the authority is simply ABSENT and no other dimension / identity failed.
+  const c = gate.checks || {};
+  const authAbsent = !!(c.authority && c.authority.ok === false && c.authority.detail === "no authority");
+  const othersOk = !!(c.state && c.state.ok && c.contract && c.contract.ok && c.policy && c.policy.ok);
+  const dimPrefixes = ["STATE:", "CONTRACT:", "POLICY:", "AUTHORITY:"];
+  const nonDimViolations = (gate.violations || []).filter((v) => !dimPrefixes.some((p) => v.startsWith(p)));
+  const resumable = authAbsent && othersOk && nonDimViolations.length === 0;
+  return {
+    refused: true,
+    resumable,
+    reason: resumable ? "authority not yet granted for this action" : (gate.violations || []).join("; "),
+  };
+}
+
 // Admit a WRITE edit: compile the Action Contract and evaluate the gate. Returns a decision record with
 // `enforced` (whether a non-ALLOW must block) alongside the raw gate result. Never mutates anything.
+// The gate ctx carries the CURRENT mission identity (plan.mission) and an injected clock (plan.now,
+// epoch ms) so the gate can reject cross-mission and expired authority reuse — both inert when the
+// comparand is absent (the gate never invents a mission id or a clock). `refusal` classifies a non-ALLOW
+// for the executor: resumable ⇒ per-action BLOCKED; hard ⇒ FAILED.
 function admitPatchEdit(patch, edit, plan, env) {
   const e = env && typeof env === "object" ? env : (typeof process !== "undefined" ? process.env : {});
   const action = compileActionContract(patch, edit, plan);
   const ctx = {};
   if (plan && Array.isArray(plan.allowedPolicies)) ctx.allowedPolicies = plan.allowedPolicies;
   if (plan && Array.isArray(plan.revokedAuthorities)) ctx.revokedAuthorities = plan.revokedAuthorities;
+  if (plan && typeof plan.mission === "string" && plan.mission) ctx.missionId = plan.mission;
+  if (plan && Number.isFinite(plan.now)) ctx.now = plan.now;
   const gate = evaluateAction(action, ctx);
   const enforce =
     hasExplicitActionContract(patch) ||
@@ -86,7 +124,9 @@ function admitPatchEdit(patch, edit, plan, env) {
     enforced: enforce === true,
     violations: gate.violations,
     escalation: gate.escalation,
+    checks: gate.checks,
+    refusal: classifyRefusal(gate),
   };
 }
 
-module.exports = { compileActionContract, hasExplicitActionContract, admitPatchEdit };
+module.exports = { compileActionContract, hasExplicitActionContract, admitPatchEdit, classifyRefusal };

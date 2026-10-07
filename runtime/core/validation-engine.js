@@ -45,6 +45,17 @@ const plannedCount = Array.isArray(patch.patches) ? patch.patches.length : 0;
 const executed = Array.isArray(execution.executed) ? execution.executed : [];
 const failed = executed.filter((e) => e && e.status === "FAILED");
 
+// Per-action authorization boundary (ACTION_AUTHZ_PARTIAL): an action the Patch Executor recorded as
+// BLOCKED is NOT a failure and NOT an illegitimate no-op — it is an honest, resumable boundary (the
+// requested authorization/capability is not available YET; zero mutation occurred). PROVEN actions are
+// the ones that did real, evidenced work (real file edits, a capability execution, a legacy DONE output,
+// or an idempotent DUPLICATE replay). These two sets let the verdict distinguish "partial honest
+// progress" from "nothing done" and from "a true failure".
+const PROVEN_STATUSES = ["APPLIED", "EXECUTED", "DONE", "DUPLICATE"];
+const blockedActions = executed.filter((e) => e && e.status === "BLOCKED");
+const provenActions = executed.filter((e) => e && PROVEN_STATUSES.includes(e.status));
+const noBlocked = blockedActions.length === 0;
+
 // 1. Objective coverage.
 const coverageOk = objectiveCount > 0 && plannedCount === objectiveCount && executed.length === plannedCount;
 
@@ -155,6 +166,22 @@ const objectiveProofEval = probes.evaluateObjectiveProofs(planObjectives, { miss
 const objectiveProofsOk = objectiveProofEval.ok;
 const failingObjectiveProofs = objectiveProofEval.failing;
 
+// ACTION_AUTHZ_PARTIAL — dependency-aware partial progress. A blocked action is tolerable ONLY when the
+// PROVEN actions do not DEPEND on it: progress may never be claimed for work whose prerequisite is itself
+// blocked. Dependencies are an OPTIONAL additive `dependsOn: [objectiveId...]` on an objective; absent ⇒
+// every objective is independent (backward-compatible). This reuses the objective shape — no scheduler,
+// no new primitive — and is consulted ONLY here, as a safety condition on the PARTIAL verdict.
+const blockedObjectiveIds = new Set(blockedActions.map((e) => e.objectiveId || e.action));
+const provenObjectiveIds = new Set(provenActions.map((e) => e.objectiveId || e.action));
+const dependencyViolations = planObjectives
+    .filter((o) => o && provenObjectiveIds.has(o.id) && Array.isArray(o.dependsOn)
+        && o.dependsOn.some((d) => blockedObjectiveIds.has(d)))
+    .map((o) => o.id);
+const dependencyOk = dependencyViolations.length === 0;
+// A declared per-objective proof that fails is fatal ONLY when it belongs to a PROVEN objective; a blocked
+// objective's own proof being unmet is expected (its work has not run) and must not sink the whole mission.
+const failingProvenObjectiveProofs = failingObjectiveProofs.filter((p) => !blockedObjectiveIds.has(p.objective));
+
 const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
@@ -175,9 +202,38 @@ const checks = {
     capabilitiesOk,
     objectiveProofs: objectiveProofEval.results,
     objectiveProofsOk,
+    noBlocked,
+    blockedActions: blockedActions.map((e) => e.objectiveId || e.action),
+    dependencyOk,
+    dependencyViolations,
 };
 
-const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk;
+// SUCCESS requires full proof AND no outstanding blocked action. Adding `noBlocked` closes the false-DONE
+// hole: a per-action BLOCKED entry is neither FAILED nor RECORDED, so without this it would slip through
+// every existing gate and a not-actually-done mission would be stamped SUCCESS.
+const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
+
+// PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
+// SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
+// NO illegitimate RECORDED no-ops (A3 preserved), coverage/evidence/engineering/build/tsc and mission-level
+// capability proofs all hold, every PROVEN objective's own declared proof passes, and no proven objective
+// depends on a blocked one. `validated` stays false ⇒ the Ledger never RELEASEs (no false DONE); the blocked
+// actions remain to-do and a re-run (once the authorization/capability is supplied) resumes them.
+const partialEligible =
+    !noBlocked &&
+    provenActions.length > 0 &&
+    noFailures &&
+    noRecordedNoOp &&
+    coverageOk &&
+    evidenceOk &&
+    engineeringOk &&
+    buildOk &&
+    typescriptOk &&
+    capabilitiesOk &&
+    failingProvenObjectiveProofs.length === 0 &&
+    dependencyOk;
+
+const status = validated ? "SUCCESS" : partialEligible ? "PARTIAL" : "BLOCKED";
 
 const unmet = [];
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
@@ -189,11 +245,25 @@ if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).")
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
 for (const c of missingRequiredProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
 for (const p of failingObjectiveProofs) unmet.push(`Objective "${p.objective}" declared proof "${p.proof}" did not pass: ${p.detail || "no detail"}.`);
+for (const b of blockedActions) unmet.push(`Objective "${b.objectiveId || b.action}" is BLOCKED (${b.decision || "BLOCKED"}) — ${b.needs || "authorization/capability not available"}.`);
+if (!dependencyOk) unmet.push(`Proven objective(s) depend on a blocked prerequisite: ${dependencyViolations.join(", ")}.`);
+
+// Honest partition for the report consumer: what genuinely completed vs what remains blocked (resumable).
+const completed = provenActions.map((e) => e.objectiveId || e.action);
+const blocked = blockedActions.map((e) => ({
+    objective: e.objectiveId || e.action,
+    decision: e.decision || "BLOCKED",
+    needs: e.needs || null,
+    target: e.target || null,
+}));
 
 const report = {
     mission: patch.mission,
-    status: validated ? "SUCCESS" : "BLOCKED",
+    status,
     validated,
+    partial: status === "PARTIAL",
+    completed,
+    blocked,
     mode: plan.mode,
     checks,
     definitionOfDone: Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : [],
@@ -233,6 +303,16 @@ if (gatesEvaluated) console.log("Gates     :", `build=${buildOk} tsc=${typescrip
 for (const c of capabilityResults) console.log("Capability:", `${c.ok ? "OK  " : "FAIL"} ${c.capability}${c.required ? "" : " [optional]"} (${c.detail})`);
 console.log("Validated :", validated);
 console.log("Status    :", report.status);
+if (status === "PARTIAL") {
+    // Honest partial progress: the completed work stands and is recorded; the blocked actions remain
+    // to-do and a re-run resumes them. validated=false ⇒ exit non-zero ⇒ the Ledger never RELEASEs.
+    console.log("--------------------------------------");
+    console.log(`PARTIAL — ${completed.length} completed, ${blocked.length} blocked (resumable):`);
+    for (const b of blocked) console.log(` - ${b.objective}: BLOCKED (${b.decision}) — ${b.needs || "authorization/capability not available"}`);
+    console.log("Completed :", completed.join(", ") || "(none)");
+    console.log("======================================");
+    process.exit(1);
+}
 if (!validated) {
     console.error("--------------------------------------");
     console.error("BLOCKED — unmet evidence:");

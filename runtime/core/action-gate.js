@@ -177,11 +177,24 @@ function evaluateAction(action, context) {
     checks.policy = { ok: true, detail: "policy present and compatible" };
   }
 
-  // CHECK AUTHORITY — declared, and not revoked by context.
+  // CHECK AUTHORITY — declared, bound to THIS mission, unexpired, and not revoked by context.
+  // Cross-mission and expiry are validated ONLY when the authority object declares the relevant field
+  // AND the context supplies the comparand (ctx.missionId / ctx.now). Absent either, the check is inert
+  // (backward-compatible) — the gate never invents a clock or a mission identity of its own (stays pure).
+  const authMission =
+    isPlainObject(action.authority) && isNonEmptyString(action.authority.mission) ? action.authority.mission : null;
+  const authExpiresAt =
+    isPlainObject(action.authority) && Number.isFinite(action.authority.expiresAt) ? action.authority.expiresAt : null;
   if (!consequential) {
     checks.authority = { ok: true, detail: "no authority required (observational action)" };
   } else if (!isPresent(action.authority)) {
     checks.authority = { ok: false, detail: "no authority" };
+  } else if (authMission !== null && isNonEmptyString(ctx.missionId) && authMission !== ctx.missionId) {
+    // An authority stamped for another mission is NOT valid here — cross-mission permission reuse is denied.
+    checks.authority = { ok: false, detail: `authority issued for mission "${authMission}", not current mission "${ctx.missionId}" (cross-mission reuse)` };
+  } else if (authExpiresAt !== null && Number.isFinite(ctx.now) && authExpiresAt < ctx.now) {
+    // An authority whose validity window has lapsed is NOT valid — expired permission reuse is denied.
+    checks.authority = { ok: false, detail: `authority expired (expiresAt ${authExpiresAt} < now ${ctx.now})` };
   } else if (Array.isArray(ctx.revokedAuthorities) && ctx.revokedAuthorities.includes(authorityKey(action.authority))) {
     checks.authority = { ok: false, detail: "authority revoked/insufficient in context" };
   } else {
