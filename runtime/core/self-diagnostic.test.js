@@ -161,4 +161,48 @@ inTempCwd((mod) => {
   ok("frozen incident carries an escalation note", /loop protection/i.test(last.note || ""));
 });
 
+// 12. mission-context-stale: the persisted plan names a DIFFERENT mission than what actually executed.
+//     The diagnostic must raise EXACTLY ONE honest CRITICAL divergence and SUPPRESS the same-mission
+//     comparisons (no fabricated missing-output for objectives of a mission that never ran here) — the
+//     exact real-world defect: expected NL_IMPLEMENT_* vs observed ADD_GOVERNED_EXTERNAL_RESEARCH_*.
+inTempCwd((mod) => {
+  writePlan(PLAN); // mission "M", objectives OBJ_1/OBJ_2
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  fs.writeFileSync("runtime/generated/patch-execution.json", JSON.stringify({
+    mission: "OTHER_MISSION",
+    executed: [{ objectiveId: "OTHER_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }],
+  }));
+  const r = mod.diagnose({ now: "T0" });
+  ok("stale context ⇒ raises mission-context-stale (CRITICAL)", r.divergences.some((d) => d.category === "mission-context-stale" && d.severity === "CRITICAL"));
+  ok("stale context ⇒ it is the ONLY divergence (same-mission checks suppressed)", r.divergences.length === 1);
+  ok("stale context ⇒ NO fabricated missing-output for OBJ_1/OBJ_2", !r.divergences.some((d) => d.category === "missing-output"));
+  ok("divergence names BOTH missions (expected M, observed OTHER_MISSION)", r.divergences[0].firstDifferenceAt === "M" && String(r.divergences[0].observed).includes("OTHER_MISSION"));
+  ok("report surfaces the observed mission identity", r.observed.mission === "OTHER_MISSION");
+  ok("incident hypothesis points at the un-refreshed context", r.incident.hypotheses[0].candidates.some((c) => c.test.includes("patch-execution.json")));
+});
+
+// 13. identity-gated: when expected and observed missions MATCH, the stale guard does NOT fire and real
+//     same-mission divergences are still detected (the guard is identity-scoped, not a blanket suppressor).
+inTempCwd((mod) => {
+  writePlan(PLAN); // mission "M"
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  fs.writeFileSync("runtime/generated/patch-execution.json", JSON.stringify({
+    mission: "M",
+    executed: [{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }],
+  }));
+  const r = mod.diagnose({ now: "T0" });
+  ok("matching mission ⇒ NO mission-context-stale", !r.divergences.some((d) => d.category === "mission-context-stale"));
+  ok("matching mission ⇒ the REAL missing-output (OBJ_2) is still detected", r.divergences.some((d) => d.category === "missing-output" && d.firstDifferenceAt === "OBJ_2"));
+});
+
+// 14. backward compatible: a legacy exec artifact with NO mission stamp ⇒ guard dormant, prior behaviour.
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }]); // no mission field
+  const r = mod.diagnose({ now: "T0" });
+  ok("no observed mission stamp ⇒ no stale-context divergence (legacy artifacts safe)", !r.divergences.some((d) => d.category === "mission-context-stale"));
+  ok("no observed mission stamp ⇒ observed.mission is null", r.observed.mission === null);
+});
+
 console.log(`\nSelf-Diagnostic — ${passed} assertions passed.`);

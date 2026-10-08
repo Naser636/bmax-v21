@@ -92,6 +92,10 @@ function observe(generatedDir, opts = {}) {
   const executed = exec && Array.isArray(exec.executed) ? exec.executed : [];
   const probe = typeof opts.runProbe === "function" ? opts.runProbe : null;
   return {
+    // The mission the OBSERVED execution actually belongs to (the live pipeline stamps it on
+    // patch-execution.json). Null when unknown. Reconciled against the EXPECTED mission before any
+    // same-mission comparison, so a stale persisted context can never be diagnosed as the live run.
+    mission: exec && typeof exec.mission === "string" ? exec.mission : null,
     executed,
     executedOrder: executed.map((e) => e.objectiveId || e.action).filter(Boolean),
     runProbe: probe, // optional injected probe runner (reuse capability-probes) for proof verification
@@ -109,6 +113,26 @@ function detectDivergences(expected, observed, opts = {}) {
   const div = [];
   const add = (category, firstDifferenceAt, exp, obs, evidence, severity) =>
     div.push({ category, firstDifferenceAt, expected: exp, observed: obs, evidence_refs: evidence || [], severity: severity || "ERROR" });
+
+  // 0. mission-context-stale: the EXPECTED context (persisted mission-plan / mission-context) names a
+  //    DIFFERENT mission than the one the OBSERVED execution actually belongs to. Every same-mission
+  //    check below (missing-output / order / permissions / required-proof) would then compare objectives
+  //    across two UNRELATED missions — fabricating divergences (objective of mission A is "missing"
+  //    because mission B ran). When both identities are known and differ, the ONLY honest divergence is
+  //    that the persisted context is stale relative to what executed: emit it and STOP (re-derive the
+  //    context from the active mission before diagnosing). When either identity is unknown, behaviour is
+  //    unchanged (backward compatible — same-mission runs and legacy artifacts without a mission stamp).
+  if (expected.mission && observed.mission && expected.mission !== observed.mission) {
+    add(
+      "mission-context-stale",
+      expected.mission,
+      `observed execution belongs to mission ${expected.mission}`,
+      `execution belongs to mission ${observed.mission}`,
+      ["runtime/generated/patch-execution.json", "runtime/generated/mission-plan.json"],
+      "CRITICAL",
+    );
+    return div;
+  }
 
   const execById = new Map(observed.executed.map((e) => [e.objectiveId || e.action, e]));
 
@@ -203,6 +227,9 @@ const HYPOTHESES = {
   ],
   "contradictory-result": [
     { cause: "executor returned EXECUTED without emitting its evidence artifact", test: "evidence path present AND file non-empty" },
+  ],
+  "mission-context-stale": [
+    { cause: "the persisted mission-context/plan was not refreshed for the active mission before diagnosing (a prior mission's context leaked in)", test: "mission-plan.json .mission === patch-execution.json .mission" },
   ],
   "missing-permission": [{ cause: "engineering contract omitted authorized_paths", test: "contract.authorized_paths length > 0" }],
   "unexpected-permission": [{ cause: "patch targeted a path outside the authorized write-set", test: "every edit.target ∈ authorizedPaths" }],
@@ -357,7 +384,7 @@ function diagnose(opts = {}) {
     tool: "self-diagnostic",
     mission: expected.mission,
     expected,
-    observed: { executed: observed.executed, executedOrder: observed.executedOrder },
+    observed: { mission: observed.mission, executed: observed.executed, executedOrder: observed.executedOrder },
     divergences,
     incident,
     converged: divergences.length === 0,
