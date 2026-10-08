@@ -26,6 +26,29 @@ function isAuthorizedTarget(target) {
   return authorizedPrefixes.some((pre) => norm === pre || norm.startsWith(pre + "/"));
 }
 
+// PROTECTED-GOVERNANCE PATHS (defense-in-depth, INDEPENDENT of authorized_paths). The governance
+// subtree holds artifacts the protocol marks human-approval-only (ROADMAP / CTO directives). A broad
+// write scope — notably the factory default "runtime/**" — structurally SUBSUMES this subtree, so
+// authorized_paths ALONE would let a mission or a provider proposal overwrite it. authorized_paths is
+// SCOPE, never AUTHORITY: being inside a granted scope does NOT authorize writing a governance artifact.
+// (The EDG Constitution is already protected elsewhere by exact path; this closes the proven asymmetry
+// that runtime/governance/** had no exact-path backstop at the write point.)
+const PROTECTED_GOVERNANCE_PREFIXES = ["runtime/governance"];
+function isProtectedGovernanceTarget(target) {
+  const norm = path.normalize(String(target || ""));
+  if (path.isAbsolute(norm) || norm === ".." || norm.startsWith(".." + path.sep)) return false;
+  return PROTECTED_GOVERNANCE_PREFIXES.some((pre) => norm === pre || norm.startsWith(pre + "/"));
+}
+// Writing a protected-governance path requires an EXPLICIT elevated authorization — the same opt-in idiom
+// as the git protected-branch gate (allow_protected), NEVER derived from authorized_paths. It is read
+// ONLY from the PLAN (the ODG-authored, mission-level decision), NEVER from the patch's own fields: a
+// patch is authored by the worker/provider, so letting it carry its own authority would be exactly the
+// self-authorization ("scope/worker becomes authority") this guard exists to prevent. Absent ⇒ not
+// authorized (fail-closed).
+function planAllowsProtectedGovernance() {
+  return plan.allowProtectedGovernance === true;
+}
+
 /**
  * Apply a unified diff to `original` and return the resulting text.
  *
@@ -239,6 +262,27 @@ for (const patch of plan.patches) {
           decision: resumableRefusal.decision,
           needs: resumableRefusal.refusal.reason,
           target: resumableRefusal.target,
+        });
+        continue;
+      }
+
+      // PROTECTED-GOVERNANCE BOUNDARY — BEFORE idempotency / reality / any write (zero mutation). If ANY
+      // edit targets the governance subtree and no EXPLICIT elevated authorization is present, this is a
+      // resumable per-action BLOCKED (exactly like the authz boundary above): scope is not authority, so a
+      // broad "runtime/**" grant never implicitly authorizes overwriting ROADMAP / CTO directives. Grant the
+      // elevated authority (plan.allowProtectedGovernance / actionContract.allow_protected) and a re-run
+      // resumes. Checked across ALL edits first so a multi-edit patch mutates nothing partially.
+      const governanceEdit = patch.edits.find(
+        (e) => e && typeof e.target === "string" && isProtectedGovernanceTarget(e.target),
+      );
+      if (governanceEdit && !planAllowsProtectedGovernance()) {
+        report.executed.push({
+          action: patch.action,
+          objectiveId: patch.objectiveId || patch.action,
+          status: "BLOCKED",
+          decision: "ESCALATE",
+          needs: `writing a protected governance path (${governanceEdit.target}) requires an explicit ODG-level elevated authorization (plan.allowProtectedGovernance); authorized_paths is scope, not authority, and a patch cannot self-authorize it`,
+          target: governanceEdit.target,
         });
         continue;
       }
