@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preuves — ODG Engineering &amp; Technical Intelligence</title>
+  <meta name="description" content="Démonstrations techniques synthétiques d'ODG, chacune avec son périmètre, sa vérification et ses limites. Aucun client, témoignage, certification ou chiffre inventé.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="ODG — accueil">
+        <svg class="mark" viewBox="0 0 32 32" role="img" aria-hidden="true" focusable="false">
+          <rect x="1" y="1" width="30" height="30" rx="8" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"></rect>
+          <circle cx="16" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.4" style="color:var(--accent)"></circle>
+          <line x1="16" y1="16" x2="23" y2="23" stroke="currentColor" stroke-width="2.4" style="color:var(--accent)"></line>
+        </svg>
+        <span>ODG</span>
+      </a>
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="services.html">Services</a>
+        <a href="method.html">Méthode</a>
+        <a href="proofs.html" aria-current="page">Preuves</a>
+        <a href="pricing.html">Tarifs</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" style="padding-block:clamp(2.5rem,6vw,4rem)">
+      <div class="container">
+        <p class="kicker">Preuves</p>
+        <h1>Des démonstrations, documentées honnêtement.</h1>
+        <p class="lede">Les éléments ci-dessous sont des <strong>démonstrations techniques synthétiques</strong>
+          réalisées par ODG dans un environnement de travail contrôlé. Ce ne sont <strong>pas</strong> des
+          projets clients. Aucun client, témoignage, certification ou chiffre commercial n'est présenté.
+          Chaque démonstration précise son périmètre, sa vérification et ses limites.</p>
+      </div>
+    </section>
+
+    <section class="section-soft">
+      <div class="container">
+        <h2>Démonstrations techniques</h2>
+        <div class="grid cols-2" role="list" style="margin-top:1.5rem">
+
+          <article class="card svc" role="listitem">
+            <span class="badge">Démonstration synthétique</span>
+            <h3>Parseur CSV → JSON robuste</h3>
+            <dl>
+              <dt>Ce que ça montre</dt><dd>Gestion correcte des champs entre guillemets, virgules et retours-ligne embarqués, guillemets échappés, CRLF, BOM et lignes incomplètes.</dd>
+              <dt>Vérification</dt><dd>Suite de tests automatisés exécutée, 7 assertions au vert (cas limites inclus).</dd>
+              <dt>Périmètre</dt><dd>Une bibliothèque de parsing, typée, sans dépendance.</dd>
+              <dt>Limites</dt><dd>Démonstration isolée&nbsp;; pas un produit livré à un client&nbsp;; non éprouvée à grande échelle en production.</dd>
+            </dl>
+            <p style="margin-top:.7rem;font-size:.9rem"><strong>Vérifier&nbsp;:</strong> <a href="proofs/csv2json.ts">csv2json.ts</a> · <a href="proofs/csv2json.test.ts">csv2json.test.ts</a> · <a href="proofs/README.md">comment reproduire</a> — <code>npx tsx csv2json.test.ts</code> → 7 assertions.</p>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <span class="badge">Démonstration synthétique</span>
+            <h3>Cœur de plateforme de données</h3>
+            <dl>
+              <dt>Ce que ça montre</dt><dd>Ingestion avec validation de schéma stricte, puis requêtes avec filtre, regroupement et agrégations (somme, moyenne, min, max, comptage).</dd>
+              <dt>Vérification</dt><dd>Suite de tests automatisés, 14 assertions au vert, dont la gestion honnête des groupes vides.</dd>
+              <dt>Périmètre</dt><dd>Le noyau technique d'une plateforme de données, en mémoire.</dd>
+              <dt>Limites</dt><dd>Pas d'interface ni de persistance&nbsp;; démonstration de capacité, pas une solution complète.</dd>
+            </dl>
+            <p style="margin-top:.7rem;font-size:.9rem"><strong>Vérifier&nbsp;:</strong> <a href="proofs/platform.ts">platform.ts</a> · <a href="proofs/platform.test.ts">platform.test.ts</a> · <a href="proofs/README.md">comment reproduire</a> — <code>npx tsx platform.test.ts</code> → 14 assertions.</p>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <span class="badge">Démonstration synthétique</span>
+            <h3>Cœur de télémétrie IoT</h3>
+            <dl>
+              <dt>Ce que ça montre</dt><dd>Réception de mesures validées, agrégation par fenêtres de temps, et déclenchement d'alertes sur seuils.</dd>
+              <dt>Vérification</dt><dd>Suite de tests automatisés, 17 assertions au vert, dont les bornes exactes de seuil.</dd>
+              <dt>Périmètre</dt><dd>Le noyau d'ingestion et d'alerting d'une plateforme IoT.</dd>
+              <dt>Limites</dt><dd>Sans intégration matérielle réelle ni mise à l'échelle&nbsp;; démonstration du traitement, pas du déploiement.</dd>
+            </dl>
+            <p style="margin-top:.7rem;font-size:.9rem"><strong>Vérifier&nbsp;:</strong> <a href="proofs/iot.ts">iot.ts</a> · <a href="proofs/iot.test.ts">iot.test.ts</a> · <a href="proofs/README.md">comment reproduire</a> — <code>npx tsx iot.test.ts</code> → 17 assertions.</p>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <span class="badge">Contribution préparée</span>
+            <h3>Tests pour un projet open-source</h3>
+            <dl>
+              <dt>Ce que ça montre</dt><dd>Des tests ciblés et significatifs ajoutés au cœur d'un vrai projet open-source, exécutés contre son code réel.</dd>
+              <dt>Vérification</dt><dd>Nouveaux tests au vert (10 assertions) et tests existants non régressés, dans une copie locale isolée.</dd>
+              <dt>Périmètre</dt><dd>Amélioration de couverture d'un module précis.</dd>
+              <dt>Limites</dt><dd>Contribution <strong>préparée, non soumise</strong>&nbsp;; l'intégration dépend des mainteneurs du projet.</dd>
+            </dl>
+            <p style="margin-top:.7rem;font-size:.9rem"><strong>Vérifier&nbsp;:</strong> <a href="proofs/literest-sanitizers.test.ts">literest-sanitizers.test.ts</a> · <a href="proofs/README.md">comment reproduire</a> (sur le dépôt public outerbase/starbasedb) — 10 assertions.</p>
+          </article>
+
+        </div>
+        <p style="margin-top:1.25rem" class="note" role="note">
+          Lorsque nous réaliserons des projets clients, tout résultat publié ici précisera son périmètre,
+          sa méthode de vérification et ses limites — et ne sera jamais présenté comme un résultat client
+          sans vérification explicite et accord du client concerné.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 ODG — Engineering &amp; Technical Intelligence</span>
+      <span><a href="legal.html">Mentions légales &amp; confidentialité</a></span>
+    </div>
+  </footer>
+</body>
+</html>

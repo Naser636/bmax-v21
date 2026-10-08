@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services — ODG Engineering &amp; Technical Intelligence</title>
+  <meta name="description" content="Les services ODG : diagnostic technique, réparation de bugs, tests et fiabilité, API et intégrations, automatisation, audit technique et développement ciblé. Pour chaque offre : problème traité, résultat attendu, livrable, limites et prochaine étape.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="ODG — accueil">
+        <svg class="mark" viewBox="0 0 32 32" role="img" aria-hidden="true" focusable="false">
+          <rect x="1" y="1" width="30" height="30" rx="8" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"></rect>
+          <circle cx="16" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.4" style="color:var(--accent)"></circle>
+          <line x1="16" y1="16" x2="23" y2="23" stroke="currentColor" stroke-width="2.4" style="color:var(--accent)"></line>
+        </svg>
+        <span>ODG</span>
+      </a>
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="services.html" aria-current="page">Services</a>
+        <a href="method.html">Méthode</a>
+        <a href="proofs.html">Preuves</a>
+        <a href="pricing.html">Tarifs</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" style="padding-block:clamp(2.5rem,6vw,4rem)">
+      <div class="container">
+        <p class="kicker">Services</p>
+        <h1>Des interventions ciblées, expliquées simplement.</h1>
+        <p class="lede">Chaque offre précise le problème traité, le résultat attendu, le livrable, ses limites
+          et la prochaine étape. Aucun tarif n'est publié tant qu'il n'est pas validé, et aucune promesse
+          n'est présentée comme un résultat sans vérification.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="contact.html">Décrire mon problème</a>
+          <a class="btn btn-ghost" href="proofs.html">Voir les preuves</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-soft">
+      <div class="container">
+        <h2>Nos services actuels</h2>
+        <div class="grid cols-2" role="list" style="margin-top:1.5rem">
+
+          <article class="card svc" role="listitem">
+            <h3><span class="ico" aria-hidden="true">◎</span> Diagnostic technique</h3>
+            <dl>
+              <dt>Problème traité</dt><dd>Un comportement anormal dont la cause n'est pas claire.</dd>
+              <dt>Résultat attendu</dt><dd>Une cause racine identifiée et expliquée, distincte du symptôme.</dd>
+              <dt>Livrable</dt><dd>Un rapport de diagnostic&nbsp;: reproduction, cause, options de correction.</dd>
+              <dt>Limites</dt><dd>Le diagnostic n'inclut pas la correction&nbsp;; certaines causes exigent un accès à votre environnement.</dd>
+              <dt>Prochaine étape</dt><dd>Décider de la correction à cadrer, ou s'arrêter au diagnostic.</dd>
+            </dl>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <h3><span class="ico" aria-hidden="true">⟲</span> Réparation de bugs</h3>
+            <dl>
+              <dt>Problème traité</dt><dd>Un bug identifié et reproductible.</dd>
+              <dt>Résultat attendu</dt><dd>Le comportement correct rétabli, sans régression introduite.</dd>
+              <dt>Livrable</dt><dd>La correction minimale, accompagnée d'un test qui protège contre le retour du bug.</dd>
+              <dt>Limites</dt><dd>Un bug non reproductible passe d'abord par un diagnostic&nbsp;; pas de refonte non demandée.</dd>
+              <dt>Prochaine étape</dt><dd>Vérification conjointe du correctif, puis clôture.</dd>
+            </dl>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <h3><span class="ico" aria-hidden="true">✓</span> Tests et fiabilité</h3>
+            <dl>
+              <dt>Problème traité</dt><dd>Un code fragile, peu testé, où chaque changement fait peur.</dd>
+              <dt>Résultat attendu</dt><dd>Des tests utiles qui révèlent les problèmes et sécurisent les évolutions.</dd>
+              <dt>Livrable</dt><dd>Une suite de tests ciblée et exécutable, avec le périmètre couvert indiqué.</dd>
+              <dt>Limites</dt><dd>Les tests réduisent le risque, ils ne le suppriment pas&nbsp;; la couverture totale n'est pas un objectif en soi.</dd>
+              <dt>Prochaine étape</dt><dd>Étendre la couverture aux zones les plus sensibles si nécessaire.</dd>
+            </dl>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <h3><span class="ico" aria-hidden="true">⇄</span> API et intégrations</h3>
+            <dl>
+              <dt>Problème traité</dt><dd>Des outils ou services qui doivent communiquer de façon fiable.</dd>
+              <dt>Résultat attendu</dt><dd>Une intégration claire, documentée et maintenable.</dd>
+              <dt>Livrable</dt><dd>Le connecteur ou l'endpoint, sa documentation et ses tests.</dd>
+              <dt>Limites</dt><dd>Dépend des accès et des limites des services tiers concernés.</dd>
+              <dt>Prochaine étape</dt><dd>Recette sur un cas réel, puis mise en production côté client.</dd>
+            </dl>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <h3><span class="ico" aria-hidden="true">⚙</span> Automatisation</h3>
+            <dl>
+              <dt>Problème traité</dt><dd>Des tâches répétitives, manuelles et sources d'erreurs.</dd>
+              <dt>Résultat attendu</dt><dd>Un flux automatisé, prévisible et vérifiable.</dd>
+              <dt>Livrable</dt><dd>Le script ou le flux, avec sa documentation d'usage et ses garde-fous.</dd>
+              <dt>Limites</dt><dd>On automatise un processus déjà clair&nbsp;; un processus flou se clarifie d'abord.</dd>
+              <dt>Prochaine étape</dt><dd>Observation sur quelques exécutions réelles avant généralisation.</dd>
+            </dl>
+          </article>
+
+          <article class="card svc" role="listitem">
+            <h3><span class="ico" aria-hidden="true">⌕</span> Audit technique &amp; développement ciblé</h3>
+            <dl>
+              <dt>Problème traité</dt><dd>Un doute sur l'existant, ou un besoin précis à réaliser.</dd>
+              <dt>Résultat attendu</dt><dd>Une évaluation claire, ou une fonctionnalité précise livrée sans sur-ingénierie.</dd>
+              <dt>Livrable</dt><dd>Un rapport d'audit avec priorités, ou la fonctionnalité demandée testée.</dd>
+              <dt>Limites</dt><dd>L'audit observe et recommande&nbsp;; les corrections sont cadrées séparément.</dd>
+              <dt>Prochaine étape</dt><dd>Choisir les priorités à traiter, ou recetter la fonctionnalité livrée.</dd>
+            </dl>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <span class="badge">Évolution</span>
+        <h2>Et ensuite&nbsp;?</h2>
+        <p class="lede">Nous prévoyons, plus tard, des offres adaptées par métier (artisans du bâtiment,
+          boulangeries, commerçants, petites entreprises, consulting). Ces offres ne sont pas encore
+          disponibles&nbsp;: elles seront ouvertes progressivement, uniquement sur la base de résultats
+          réellement observés. Aujourd'hui, les services ci-dessus s'appliquent à tous.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 ODG — Engineering &amp; Technical Intelligence</span>
+      <span><a href="legal.html">Mentions légales &amp; confidentialité</a></span>
+    </div>
+  </footer>
+</body>
+</html>
