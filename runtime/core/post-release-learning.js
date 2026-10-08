@@ -66,6 +66,10 @@ function buildLearnReport(mission, deps) {
             objectiveId: e.objectiveId || e.action,
             // Preserved verbatim if the execution evidence carries it; signature() tolerates its absence.
             rootCause: e.rootCause,
+            // The mission-independent problem identity used as the reuse key. Carried verbatim from the
+            // APPLIED execution evidence (the Patch Executor records the objective's goal on each APPLIED
+            // entry); signature() tolerates its absence (falls back to objectiveId for older evidence).
+            goal: e.goal,
             // Edits derive SOLELY from the APPLIED execution evidence — never from the plan.
             edits: e.files.map((f) => ({ target: f.target, mode: f.mode })),
         }));

@@ -21,7 +21,7 @@ function eligible(mission = MISSION) {
         execution: {
             mission,
             executed: [
-                { action: "OBJ_A", objectiveId: "OBJ_A", status: "APPLIED", files: [{ target: "runtime/core/x.js", mode: "diff" }] },
+                { action: "OBJ_A", objectiveId: "OBJ_A", goal: "replay applied edit", status: "APPLIED", files: [{ target: "runtime/core/x.js", mode: "diff" }] },
                 { action: "CAP", objectiveId: "OBJ_CAP", status: "EXECUTED", capability: "Connectivity Audit", evidence: "runtime/generated/connectivity-audit.json" },
                 { action: "OBJ_RO", objectiveId: "OBJ_RO", status: "RECORDED" },
             ],
@@ -109,10 +109,15 @@ test("V28 post-release learning seam — acceptance A–J", () => {
         }
 
         // I — reuse of the resulting entry stays advisory: the router proposes it (Tier-1) as edits-only
-        // with NO authority/permission field, so replay still re-enters patch-executor + validation.
-        const task = { goal: "replay applied edit", objectiveId: "OBJ_A", target: "runtime/core/x.js" };
+        // with NO authority/permission field, so replay still re-enters patch-executor + validation. The
+        // lookup deliberately uses a DIFFERENT objectiveId than the one that was learned (OBJ_A) but the
+        // SAME goal — proving genuine INTER-MISSION reuse: a solution proven under one mission is found
+        // again from a different mission/objective for the same problem (mission-independent goal key).
+        // Lookup shape mirrors the LIVE decision-engine lookup (route({goal, objectiveId}) — no target),
+        // so the stored precedent (keyed on the mission-independent goal) is actually found.
+        const task = { goal: "replay applied edit", objectiveId: "OTHER_MISSION_OBJ" };
         const decision = router.route(task, { localModelAvailable: false });
-        assert.strictEqual(decision.chosen.tier, "PATCH_MEMORY", "I: memory hit wins Tier-1");
+        assert.strictEqual(decision.chosen.tier, "PATCH_MEMORY", "I: memory hit wins Tier-1 (inter-mission, same goal)");
         assert.strictEqual(decision.usesExternalAI, false, "I: no external escalation on a hit");
         assert.deepStrictEqual(Object.keys(decision.chosen).sort(), ["action", "edits", "source", "tier"], "I: hit is edits-only — no authority/permission field");
 

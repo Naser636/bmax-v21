@@ -45,10 +45,16 @@ function learn(report) {
         });
         const edits = Array.isArray(o.edits) ? o.edits : [];
         if (success && edits.length > 0) {
+            // Key the stored solution on the mission-independent PROBLEM identity (goal), so the same
+            // recurring problem is reusable across different missions. objectiveId is kept only as a
+            // fallback inside signature() for goalless callers, and the target is deliberately NOT part
+            // of the live key: the decision-time lookup (decision-engine) has no target, so including it
+            // here would make the record and the lookup compute different keys and the precedent would
+            // never be found. The concrete edits (and their targets) are still stored on the entry.
             const rec = patchMemory.record({
                 rootCause: o.rootCause,
+                goal: o.goal,
                 objectiveId: o.objectiveId || o.id,
-                target: edits[0] && edits[0].target,
                 mission: report.mission,
                 edits,
             });

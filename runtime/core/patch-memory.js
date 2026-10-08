@@ -23,16 +23,30 @@ function emptyDB() {
 
 /*
  * A stable signature for a problem. Derived from the fields the Runtime already has at decision
- * time — root cause (from Root Cause Engine), objective id, and the target file — so the same
+ * time — root cause (from Root Cause Engine), the PROBLEM identity, and the target file — so the same
  * recurring problem always maps to the same key. Pure function ⇒ deterministic.
+ *
+ * INTER-MISSION REUSE (fix): the problem identity is the normalized GOAL, NOT the objective id. An
+ * objective id is mission-specific (missions label objectives `<MISSION>_<n>`), so keying on it made a
+ * solution proven under mission A unreachable from mission B even for the identical problem. The goal
+ * text is the stable, mission-independent identity of "the same problem", so a validated solution is now
+ * reusable across different missions. objectiveId remains only a fallback for older callers that carry
+ * no goal. Whitespace is collapsed and case folded so trivially-different phrasings of the same goal map
+ * to the same key. The target stays part of the key for callers that supply it symmetrically on both the
+ * record and the lookup side; the live record/lookup paths leave it empty (the decision-time lookup has
+ * no target), keeping those two sides symmetric so a real precedent is actually found.
  */
+function norm(value) {
+    return String(value == null ? "" : value).trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function problemKey(task) {
+    return norm(task && task.goal) || norm(task && task.objectiveId);
+}
+
 function signature(task) {
-    const parts = [
-        task && task.rootCause ? String(task.rootCause) : "",
-        task && task.objectiveId ? String(task.objectiveId) : "",
-        task && task.target ? String(task.target) : "",
-    ];
-    return parts.join("|").toLowerCase();
+    if (typeof task === "string") return task;
+    return [norm(task && task.rootCause), problemKey(task), norm(task && task.target)].join("|");
 }
 
 // Record a solution that WORKED (edits that were APPLIED + validated). Idempotent by signature:

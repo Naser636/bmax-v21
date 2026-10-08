@@ -54,4 +54,18 @@ inTempCwd((pm) => {
     ok("hit() increments reuseCount", pm.hit(TASK) === 1 && pm.hit(TASK) === 2);
 });
 
+console.log("Case 4 — inter-mission reuse: the goal is the key, the objective id is NOT");
+inTempCwd((pm) => {
+    // A solution proven under mission A's objective is reusable from mission B for the SAME problem
+    // (goal), even though every mission labels its objectives <MISSION>_<n> (so the ids never match).
+    const learned = { goal: "add governed telemetry flag", objectiveId: "MISSION_A_1" };
+    const want = { goal: "add governed telemetry flag", objectiveId: "MISSION_B_1" };
+    ok("same goal, different objective id ⇒ same signature", pm.signature(learned) === pm.signature(want));
+    pm.record({ ...learned, mission: "MISSION_A", edits: EDITS });
+    ok("lookup from a different mission's objective replays the proven edits",
+        JSON.stringify(pm.lookup(want)) === JSON.stringify(EDITS));
+    ok("a different goal does NOT reuse", pm.lookup({ goal: "unrelated problem", objectiveId: "MISSION_B_2" }) === null);
+    ok("goal key is whitespace/case-insensitive", pm.signature({ goal: "  Add   Governed Telemetry FLAG " }) === pm.signature({ goal: "add governed telemetry flag" }));
+});
+
 console.log(`\nPATCH MEMORY — ${passed} assertions passed.`);

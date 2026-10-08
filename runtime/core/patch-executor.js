@@ -344,6 +344,10 @@ for (const patch of plan.patches) {
       report.executed.push({
         action: patch.action,
         objectiveId: patch.objectiveId || patch.action,
+        // The objective's goal — the mission-independent problem identity. Recorded on the APPLIED
+        // evidence so post-release learning can key the reusable solution on the problem (reusable across
+        // missions) rather than on the mission-specific objective id. Absent ⇒ learning falls back.
+        ...(typeof patch.goal === "string" && patch.goal ? { goal: patch.goal } : {}),
         status: "APPLIED",
         files: applied.map((a) => ({ target: a.target, mode: a.mode })),
         // Audit the admission decision (truthful; never a success claim). For legacy patches this is

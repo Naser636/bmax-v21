@@ -187,25 +187,54 @@ function consequentialRequests(decision) {
     return out;
 }
 
-// Apply the EXPLICIT human-authorization grant (NEVER synthesized from the sentence) to each
+// Normalize the human-authorization input into a list of candidate grants. A mixed mission may carry
+// several objectives with DIFFERENT authorizations, so the grant input is a COLLECTION: either a single
+// grant object (back-compat) or an array of grants. Non-objects are dropped (fail-closed). Absent ⇒ [].
+function normalizeGrants(grantOrGrants) {
+    if (Array.isArray(grantOrGrants)) return grantOrGrants.filter((g) => g && typeof g === "object");
+    return grantOrGrants && typeof grantOrGrants === "object" ? [grantOrGrants] : [];
+}
+
+// Authorize ONE consequential objective against the supplied grants. Each grant is passed verbatim to the
+// governed validator (capability-authorization → action-gate), which enforces capability/mission/scope/
+// expiry/revocation itself. Grants whose declared capability matches the request are tried FIRST (their
+// denial is the most informative), then the rest; the first ALLOW wins. With exactly one grant this is
+// byte-identical to the prior single-grant behaviour. No grant at all ⇒ the validator's NO_AUTHORIZATION
+// (fail-closed). A grant authorizes ONLY the one objective it matches — never all of them.
+function authorizeOne(request, grants, now) {
+    const req = { capability: request.capability, mission: request.mission, requestedScope: {} };
+    if (grants.length === 0) return authz.authorizeCapability(req, null, { now });
+    const ordered = [
+        ...grants.filter((g) => g.capability === request.capability),
+        ...grants.filter((g) => g.capability !== request.capability),
+    ];
+    let firstDeny = null;
+    for (const g of ordered) {
+        const d = authz.authorizeCapability(req, g, { now });
+        if (d.decision === "ALLOW") return d;
+        if (!firstDeny) firstDeny = d; // the capability-matching denial, when present, is the most precise
+    }
+    return firstDeny;
+}
+
+// Apply the EXPLICIT human-authorization grant(s) (NEVER synthesized from the sentence) to each
 // consequential objective. An objective whose capability is authorized is bound to its evidence probe
 // and carries the grant to the governed executor; an unauthorized one stays unbound and BLOCKED (fail-
 // closed) so the downstream per-action gate keeps it PARTIAL while any authorized objective proceeds.
-// Returns { authorizations, blockers } and records the authorization decisions as evidence.
-function applyAuthorization(decision, grant, now) {
+// `grantOrGrants` is a single grant (back-compat) OR a list, so a MIXED mission can authorize several
+// objectives — each with its OWN grant — in one invocation. Returns { authorizations, blockers } and
+// records the authorization decisions as evidence.
+function applyAuthorization(decision, grantOrGrants, now) {
     const requests = consequentialRequests(decision);
+    const grants = normalizeGrants(grantOrGrants);
     const verify = Array.isArray(decision.contract.verify) ? decision.contract.verify.slice() : [];
     const authorizations = [];
     const blockers = [];
     for (const r of requests) {
-        // Pass the human grant verbatim to the validator (it enforces the capability/mission/scope/
-        // expiry match itself and reports the precise reason, e.g. CAPABILITY_MISMATCH). A single grant
-        // that matches one objective's capability authorizes ONLY that one; others fail closed.
-        const d = authz.authorizeCapability(
-            { capability: r.capability, mission: decision.mission, requestedScope: {} },
-            grant,
-            { now },
-        );
+        // Match this objective to its OWN grant among the supplied grants (capability-matching first).
+        // A grant that matches one objective's capability authorizes ONLY that one; others fail closed,
+        // so a mixed mission drives authorized + unauthorized objectives together (⇒ PARTIAL downstream).
+        const d = authorizeOne({ capability: r.capability, mission: decision.mission }, grants, now);
         if (d.decision === "ALLOW") {
             // Bind the EXISTING capability executor: assign the objectiveId the executor matches (its
             // dispatch PREFIX, derived from the resolved capability identity — NOT from the sentence) and
@@ -341,34 +370,47 @@ function run(raw, opts, io) {
     return outcome.code;
 }
 
-module.exports = { decide, materializeContract, route, run, boundedMissionId, toBoundedContract, contractHasEvidenceBinding, classifyOutcome, consequentialRequests, applyAuthorization };
+module.exports = { decide, materializeContract, route, run, boundedMissionId, toBoundedContract, contractHasEvidenceBinding, classifyOutcome, consequentialRequests, applyAuthorization, normalizeGrants, authorizeOne, parseAuthorize };
 
 // Parse an EXPLICIT human-authorization grant from the CLI: `--authorize '<json>'` or `--authorize @file`.
 // This is the out-of-band human channel; the grant is NEVER derived from the objective sentence. A
-// malformed value fails closed to null (⇒ the consequential capability stays BLOCKED).
+// MIXED mission with several objectives/authorizations is supported by (a) repeating `--authorize` once
+// per grant, and/or (b) a single `--authorize '[...]'` JSON array. Each value may also be `@file`. The
+// collected grants are returned as a list together with the arg INDEXES consumed (flag + its value), so
+// the CLI can strip them all from the natural-language sentence (not just the first). A malformed value
+// fails closed — that grant is skipped (⇒ its consequential capability stays BLOCKED) — but its indexes
+// are still consumed so a broken JSON blob never leaks into the sentence.
 function parseAuthorize(args) {
-    const i = args.indexOf("--authorize");
-    if (i === -1 || i + 1 >= args.length) return null;
-    let raw = args[i + 1];
-    try {
-        if (raw.startsWith("@")) raw = fs.readFileSync(raw.slice(1), "utf8");
-        const g = JSON.parse(raw);
-        return g && typeof g === "object" ? g : null;
-    } catch {
-        return null;
+    const grants = [];
+    const consumed = new Set();
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] !== "--authorize" || i + 1 >= args.length) continue;
+        consumed.add(i);
+        consumed.add(i + 1);
+        let raw = args[i + 1];
+        try {
+            if (raw.startsWith("@")) raw = fs.readFileSync(raw.slice(1), "utf8");
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) grants.push(...parsed.filter((g) => g && typeof g === "object"));
+            else if (parsed && typeof parsed === "object") grants.push(parsed);
+        } catch {
+            /* malformed ⇒ skip this grant (fail-closed); its indexes stay consumed */
+        }
     }
+    // Back-compat: a single grant is returned as the lone object; multiple ⇒ the list. null ⇒ none.
+    const authorize = grants.length === 0 ? null : grants.length === 1 ? grants[0] : grants;
+    return { authorize, consumed };
 }
 
 // ---- CLI ---------------------------------------------------------------------------------------
 if (require.main === module) {
     const args = process.argv.slice(2);
     const execute = args.includes("--execute") || args.includes("--run");
-    const authorize = parseAuthorize(args);
-    const ai = args.indexOf("--authorize");
-    const control = new Set(["--execute", "--run", "--authorize", ai !== -1 ? args[ai + 1] : null]);
-    const raw = args.filter((a) => !control.has(a)).join(" ");
+    const { authorize, consumed } = parseAuthorize(args);
+    const control = new Set(["--execute", "--run"]);
+    const raw = args.filter((a, i) => !consumed.has(i) && !control.has(a)).join(" ");
     if (!raw.trim()) {
-        process.stderr.write('Usage: odg objective "<natural-language objective>" [--execute] [--authorize \'<grant-json>\'|@file]\n');
+        process.stderr.write('Usage: odg objective "<natural-language objective>" [--execute] [--authorize \'<grant-json>\'|@file ...]\n');
         process.exit(2);
     }
     process.exit(run(raw, { execute, authorize }, null));

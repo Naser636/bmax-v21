@@ -32,12 +32,15 @@ function sandbox() {
 }
 function writeJson(p, o) { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, JSON.stringify(o, null, 2)); }
 function readJson(p) { return JSON.parse(fs.readFileSync(p, "utf8")); }
-// The signature decision-engine computes for lookup: route({goal,objectiveId}) ⇒ rootCause/target empty.
-function sig(objectiveId) { return ["", String(objectiveId), ""].join("|").toLowerCase(); }
-function seedMemory(d, objectiveId, edits) {
+// The signature decision-engine computes for lookup: route({goal,objectiveId}) keys on the mission-
+// independent GOAL (rootCause/target empty, objectiveId a fallback only). Seeding therefore keys on the
+// objective's goal — the stable cross-mission problem identity, which is exactly what enables a precedent
+// proven under one mission/objective to be reused by another for the same goal.
+function sig(goal) { return ["", String(goal).trim().replace(/\s+/g, " ").toLowerCase(), ""].join("|"); }
+function seedMemory(d, goal, edits) {
   writeJson(path.join(d, "runtime", "generated", "autonomy", "patch-memory.json"), {
     version: 1,
-    entries: { [sig(objectiveId)]: { signature: sig(objectiveId), mission: "SEED", edits, reuseCount: 0, learnedAt: "2026-01-01T00:00:00.000Z" } },
+    entries: { [sig(goal)]: { signature: sig(goal), mission: "SEED", edits, reuseCount: 0, learnedAt: "2026-01-01T00:00:00.000Z" } },
   });
 }
 function runDecision(d, plan) {
@@ -51,10 +54,12 @@ function objPatch(decision, id) { const o = (decision.objectives || []).find((x)
 {
   const d = sandbox();
   const edits = [{ target: "out/app.ts", content: "export const ok = 1;\n" }];
-  seedMemory(d, "OBJ_MEM", edits);
+  // Precedent learned under SEED mission for goal "do x"; current mission W1 reuses it for the SAME goal
+  // under a DIFFERENT objective id — genuine inter-mission reuse.
+  seedMemory(d, "do x", edits);
   const { status, decision } = runDecision(d, { mission: "W1", mode: "IMPLEMENT", priority: "NORMAL", requiresEngineering: true, authorizedPaths: ["out/"], objectives: [{ id: "OBJ_MEM", goal: "do x", done_when: [] }] });
   ok("decision-engine exits 0", status === 0);
-  ok("1: valid precedent ⇒ Memory edits replayed into objective.patch", JSON.stringify(objPatch(decision, "OBJ_MEM")) === JSON.stringify(edits));
+  ok("1: valid precedent (same goal, other mission) ⇒ Memory edits replayed into objective.patch", JSON.stringify(objPatch(decision, "OBJ_MEM")) === JSON.stringify(edits));
   ok("9: decision.json contract intact (mission/mode/actions/authorizedPaths)", decision.mission === "W1" && decision.mode === "IMPLEMENT" && JSON.stringify(decision.actions) === JSON.stringify(["OBJ_MEM"]) && JSON.stringify(decision.authorizedPaths) === JSON.stringify(["out/"]));
   fs.rmSync(d, { recursive: true, force: true });
 }
@@ -66,18 +71,20 @@ function objPatch(decision, id) { const o = (decision.objectives || []).find((x)
   ok("2: no precedent ⇒ objective has NO patch (byte-identical prior behaviour)", objPatch(decision, "OBJ_NONE") === undefined);
 }
 
-// === 3/4/5. stale / wrong-objective / wrong-target ⇒ signature mismatch ⇒ no reuse ==
+// === 3/4/5. stale / different-problem / wrong-target ⇒ signature mismatch ⇒ no reuse ==
 {
   const d = sandbox();
-  seedMemory(d, "OBJ_OTHER", [{ target: "out/app.ts", content: "x" }]); // precedent for a DIFFERENT objective id
+  seedMemory(d, "a completely different problem", [{ target: "out/app.ts", content: "x" }]); // precedent for a DIFFERENT goal
   const { decision } = runDecision(d, { mission: "W1", mode: "IMPLEMENT", authorizedPaths: ["out/"], objectives: [{ id: "OBJ_WANTED", goal: "z", done_when: [] }] });
-  ok("3/4/5: wrong-objective precedent ⇒ not reused (signature mismatch)", objPatch(decision, "OBJ_WANTED") === undefined);
+  ok("3/4/5: different-goal precedent ⇒ not reused (signature mismatch)", objPatch(decision, "OBJ_WANTED") === undefined);
 }
 
 // === 7. malformed precedent edits ⇒ rejected, never attached ==================
 {
   const d = sandbox();
-  seedMemory(d, "OBJ_BAD", [{ note: "no target, no content/diff" }]);
+  // Seed under the SAME goal "z" as the current objective, so the ONLY reason it is not attached is the
+  // malformed edit shape (not a signature miss).
+  seedMemory(d, "z", [{ note: "no target, no content/diff" }]);
   const { decision } = runDecision(d, { mission: "W1", mode: "IMPLEMENT", authorizedPaths: ["out/"], objectives: [{ id: "OBJ_BAD", goal: "z", done_when: [] }] });
   ok("7: malformed precedent ⇒ not attached (objective stays symbolic)", objPatch(decision, "OBJ_BAD") === undefined);
 }
@@ -102,8 +109,8 @@ function runChain(d, plan) {
 {
   // in-scope replay ⇒ patch-executor (ODG) writes the file
   const d = sandbox();
-  seedMemory(d, "OBJ_APPLY", [{ target: "out/applied.ts", content: "export const A = 1;\n" }]);
-  const { report } = runChain(d, { mission: "W1", mode: "IMPLEMENT", requiresEngineering: true, authorizedPaths: ["out/"], objectives: [{ id: "OBJ_APPLY", goal: "z", done_when: [] }] });
+  seedMemory(d, "apply in scope", [{ target: "out/applied.ts", content: "export const A = 1;\n" }]);
+  const { report } = runChain(d, { mission: "W1", mode: "IMPLEMENT", requiresEngineering: true, authorizedPaths: ["out/"], objectives: [{ id: "OBJ_APPLY", goal: "apply in scope", done_when: [] }] });
   ok("10: patch-executor is the writer — in-scope replay APPLIED", !!report && report.executed.some((e) => e.status === "APPLIED"));
   ok("10: file written by ODG patch-executor, not the router", fs.existsSync(path.join(d, "out", "applied.ts")));
   fs.rmSync(d, { recursive: true, force: true });
@@ -111,8 +118,8 @@ function runChain(d, plan) {
 {
   // 6. out-of-scope replay target ⇒ patch-executor rejects; nothing written outside scope; no bypass
   const d = sandbox();
-  seedMemory(d, "OBJ_EVIL", [{ target: "src/evil.ts", content: "nope" }]);
-  const { report } = runChain(d, { mission: "W1", mode: "IMPLEMENT", requiresEngineering: true, authorizedPaths: ["out/"], objectives: [{ id: "OBJ_EVIL", goal: "z", done_when: [] }] });
+  seedMemory(d, "escape the scope", [{ target: "src/evil.ts", content: "nope" }]);
+  const { report } = runChain(d, { mission: "W1", mode: "IMPLEMENT", requiresEngineering: true, authorizedPaths: ["out/"], objectives: [{ id: "OBJ_EVIL", goal: "escape the scope", done_when: [] }] });
   ok("6: out-of-scope replay ⇒ patch-executor FAILED (governed rejection)", !!report && report.executed.some((e) => e.status === "FAILED"));
   ok("6: out-of-scope file NOT written (no bypass)", !fs.existsSync(path.join(d, "src", "evil.ts")));
   fs.rmSync(d, { recursive: true, force: true });

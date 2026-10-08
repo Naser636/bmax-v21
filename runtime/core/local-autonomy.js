@@ -30,10 +30,14 @@ function handle(request, opts) {
     opts = opts || {};
     const contract = synth.fromRequest(request, opts.spec);
     const objective = contract.objectives[0];
+    // Live reuse key = the mission-independent PROBLEM identity (rootCause + normalized goal), matching
+    // the canonical decision-engine route task ({goal, objectiveId}). Deliberately NO `target`: Patch
+    // Memory now keys inter-mission reuse on the goal, and the record side (capability-learning) stores
+    // no target, so including one here would make the lookup signature asymmetric with the record and a
+    // proven precedent would never be found. The concrete per-file target still rides on the stored edits.
     const task = {
         goal: objective.goal,
         objectiveId: objective.id,
-        target: objective.patch && objective.patch.target,
         rootCause: opts.rootCause,
     };
     const decision = router.route(task, opts);
