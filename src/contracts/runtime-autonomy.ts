@@ -143,6 +143,7 @@ export interface AutonomyRunConfig {
 export type AutonomyStatus =
   | "PLAN_COMPLETE" // nothing left to select — clean success
   | "BLOCKED" // Release Manager returned NO_RELEASE (certified refusal)
+  | "VALIDATED_PENDING_COMMIT" // proven deliverable(s) awaiting the HUMAN commit gate — ODG never auto-commits
   | "EVIDENCE_INCOMPLETE" // Release Manager returned an error (no decision possible)
   | "EXECUTION_FAILED" // the existing pipeline failed
   | "CONTRACT_INVALID" // the generated Mission Contract failed validation

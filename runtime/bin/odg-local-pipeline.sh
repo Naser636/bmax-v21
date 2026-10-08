@@ -196,6 +196,22 @@ compute_artifact_excludes
 
 UNEXPECTED_CHANGES=$(git status --porcelain -- "${ARTIFACT_EXCLUDES[@]}")
 
+# S3 (review N4 remediation) — make the runtime-verify.json ARTIFACT coherent with the POST-APPLICATION
+# tree. The [1/5] pre-flight stamped gitClean BEFORE the Patch Executor ran, so a mission that applied an
+# in-scope deliverable left the artifact claiming gitClean:true while the tree is actually dirty (the N3
+# finding). Re-stamp gitClean here from the SAME artifact-scoped porcelain the governance gate below uses,
+# so any reader of runtime-verify.json sees the REAL post-apply state. Artifact coherence only — the
+# governance decision below still derives from UNEXPECTED_CHANGES directly; control flow is unchanged.
+CHANGES="$UNEXPECTED_CHANGES" node -e '
+  const fs = require("fs");
+  const f = "runtime/generated/runtime-verify.json";
+  try {
+    const v = JSON.parse(fs.readFileSync(f, "utf8"));
+    v.gitClean = String(process.env.CHANGES || "").trim().length === 0;
+    fs.writeFileSync(f, JSON.stringify(v, null, 2));
+  } catch { /* best-effort: artifact absent ⇒ nothing to re-stamp */ }
+' || true
+
 if [ -n "$UNEXPECTED_CHANGES" ]; then
   # The tree is dirty with changes outside the Runtime's own artifacts. gitClean is NOT weakened: a
   # dirty tree is NEVER called clean. But we are PAST [4/5], so this mission is VALIDATED + proven

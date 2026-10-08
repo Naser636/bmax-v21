@@ -861,7 +861,15 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     if (authorized.length === 0) return false;
     const report = this.readJson<{ status?: string; validated?: boolean }>(MISSION_REPORT);
     if (report?.validated !== true || report?.status !== "SUCCESS") return false;
-    // LIVE COMMIT AUTHORIZATION (opt-in). Before committing a validated deliverable, consult the EXISTING
+    // D1 (review N4 remediation) — ODG NEVER auto-commits. A git commit is a HUMAN-authority gate
+    // (protocol: "No commit without human approval"; "ODG never auto-commits"). The autonomy path must
+    // leave a validated engineering deliverable in the working tree as VALIDATED_PENDING_COMMIT — exactly
+    // like the `odg objective` path — instead of creating a commit on its own. The machine commit-gate
+    // below (acceptance-facts) is NOT human approval and must never substitute for it. The ONLY way to
+    // authorize the commit is an EXPLICIT, out-of-band human opt-in: ODG_HUMAN_COMMIT_APPROVED=1 (same
+    // documented escape-hatch idiom as ODG_PROVIDER_DIRECT_WRITE). Default OFF ⇒ no commit (fail-closed).
+    if (process.env.ODG_HUMAN_COMMIT_APPROVED !== "1") return false;
+    // LIVE COMMIT AUTHORIZATION (opt-in, applies ONLY after the human approval above). Before committing a validated deliverable, consult the EXISTING
     // §7 commit guards via acceptance-facts.commitGateDecision: a CONTROLLED (control.required) mission must
     // pass mechanical acceptance (ACCEPT), and an ECONOMICALLY-ENFORCED (control.economic) mission must carry
     // a VERIFIED economic verdict. A mission that opts into neither is a NO-OP ⇒ allowed, so legacy behaviour

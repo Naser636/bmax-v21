@@ -33,6 +33,7 @@ import {
 import {
   RELEASE_CONTRACT_VERSION,
   type ReleaseInputs,
+  type ReleaseRecord,
 } from "@/contracts/release";
 import { ReleaseManager } from "@/core/release-manager";
 
@@ -117,6 +118,12 @@ export class RuntimeAutonomy {
 
     // Progress tracking guarantees halting even if a port fails to advance state (design §3, R2).
     const processed = new Set<string>();
+    // D2/S4 (review N4 remediation): a mission the Release Manager refuses (NO_RELEASE) must NOT livelock
+    // and must NOT be force-advanced by an autonomous commit (see D1). It is ESCALATED and DEFERRED so the
+    // loop can CONTINUE to the next realizable mission; the run halts only when selection genuinely exhausts.
+    // `completed` still holds ONLY true RELEASE records — an escalated mission never counts as released.
+    const escalations: { mission: string; record: ReleaseRecord }[] = [];
+    const deferred = new Set<string>();
     let cycles = 0;
 
     while (cycles < maxCycles) {
@@ -133,9 +140,20 @@ export class RuntimeAutonomy {
         );
       }
 
-      const mission = selectNextMission(plan);
+      const mission = selectNextMission({
+        ...plan,
+        // Enrich selectNextMission's INPUT with the deferred (escalated) ids — the same technique the
+        // adapter already uses for corrective ids — so an escalated mission is skipped and the loop
+        // advances to the next realizable one. The frozen selectNextMission FUNCTION is untouched.
+        completedMissions: [
+          ...(Array.isArray(plan.completedMissions) ? plan.completedMissions : []),
+          ...deferred,
+        ],
+      });
       if (mission === null) {
-        return this.result("PLAN_COMPLETE", completed, cycles, null);
+        // Selection exhausted: PLAN_COMPLETE when nothing was escalated; otherwise an HONEST escalation
+        // terminal that never claims RELEASE (D2/S4).
+        return this.concludeRun(completed, cycles, escalations);
       }
 
       // Defensive: selection returned an already-processed mission ⇒ no progress ⇒ halt (R2).
@@ -239,12 +257,13 @@ export class RuntimeAutonomy {
         });
       }
       if (decision.record.decision === "NO_RELEASE") {
-        return this.result("BLOCKED", completed, cycles, {
-          mission,
-          reason: "BLOCKED",
-          message: `Release Manager returned NO_RELEASE for "${mission}"; rollbackRef preserved.`,
-          record: decision.record,
-        });
+        // D2/S4: do NOT halt the whole plan here and do NOT force-advance by committing (D1). ESCALATE
+        // the certified refusal and DEFER the mission so the loop continues to the next realizable one;
+        // the honest terminal is computed once selection exhausts (concludeRun). An escalated mission is
+        // never added to `completed` — it did not RELEASE. rollbackRef stays preserved in the record.
+        escalations.push({ mission, record: decision.record });
+        deferred.add(mission);
+        continue;
       }
 
       // 6. RELEASE ⇒ archive via existing Mission Ledger and advance.
@@ -413,6 +432,47 @@ export class RuntimeAutonomy {
     if (f.stderr) lines.push(`  stderr     :\n${indent(f.stderr)}`);
     if (f.stdout) lines.push(`  stdout     :\n${indent(f.stdout)}`);
     return lines.join("\n");
+  }
+
+  /**
+   * Terminal classification when selectNextMission exhausts (D2/S4). PLAN_COMPLETE when nothing was
+   * escalated; otherwise an HONEST escalation terminal that NEVER claims RELEASE:
+   *   - every escalation is VALIDATED_PENDING_COMMIT (all release gates green EXCEPT gitClean, i.e. a
+   *     PROVEN deliverable whose only blocker is the uncommitted working tree) ⇒ the deliverable(s)
+   *     await the HUMAN commit gate (D1 — ODG never auto-commits) ⇒ status VALIDATED_PENDING_COMMIT;
+   *   - otherwise at least one genuine blocker ⇒ status BLOCKED (back-compatible terminal).
+   * The halt carries the LAST escalation's certified record (data, not narrative), preserving the prior
+   * NO_RELEASE halt contract (status BLOCKED, completed holds only RELEASE records, halt.record present).
+   */
+  private concludeRun(
+    completed: CompletedCycle[],
+    cycles: number,
+    escalations: { mission: string; record: ReleaseRecord }[],
+  ): AutonomyRunResult {
+    if (escalations.length === 0) {
+      return this.result("PLAN_COMPLETE", completed, cycles, null);
+    }
+    const isPendingCommit = (r: ReleaseRecord): boolean =>
+      r.decision === "NO_RELEASE" &&
+      r.gates.build === true &&
+      r.gates.typescript === true &&
+      r.gates.missionPipeline === true &&
+      r.gates.documentationProofPresent === true &&
+      r.gates.gitClean === false;
+    const allPendingCommit = escalations.every((e) => isPendingCommit(e.record));
+    const status: AutonomyStatus = allPendingCommit ? "VALIDATED_PENDING_COMMIT" : "BLOCKED";
+    const last = escalations[escalations.length - 1];
+    const pending = escalations.filter((e) => isPendingCommit(e.record)).map((e) => e.mission);
+    const blockers = escalations.filter((e) => !isPendingCommit(e.record)).map((e) => e.mission);
+    const message = allPendingCommit
+      ? `Validated, PROVEN deliverable(s) awaiting the HUMAN commit gate (ODG never auto-commits): ${pending.join(", ")}. Review and commit, or set ODG_HUMAN_COMMIT_APPROVED=1 for a human-authorized commit, then re-run.`
+      : `Release Manager returned NO_RELEASE; human decision required. Blocked: ${blockers.join(", ") || "(none)"}${pending.length ? `; pending-commit: ${pending.join(", ")}` : ""}.`;
+    return this.result(status, completed, cycles, {
+      mission: last.mission,
+      reason: status,
+      message,
+      record: last.record,
+    });
   }
 
   private result(

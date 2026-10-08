@@ -86,11 +86,23 @@ function norm(s) {
     return String(s || "").toLowerCase();
 }
 
+// S2 (review N4 remediation) — a keyword matches only at a WORD BOUNDARY start, never as a mid-word
+// substring. The prior `g.includes(kw)` let "la[test]" satisfy the `test` rule and "pro[file]" the
+// `file` rule — brittle, wrong capability resolution. Anchoring on `\b<kw>` keeps the DELIBERATE stem
+// rules (e.g. "diagnos" → diagnose/diagnostic, "test" → tests) while rejecting incidental substrings.
+// Keywords are alphanumeric today; metacharacters are escaped defensively so a future keyword is safe.
+function escapeRe(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function hasWord(g, kw) {
+    return new RegExp("\\b" + escapeRe(kw)).test(g);
+}
+
 // Return the first matching template, or null (a miss ⇒ fall through to Patch Memory / LLM / AI).
 function match(goal) {
     const g = norm(goal);
     for (const rule of RULES) {
-        if (rule.all.every((kw) => g.includes(kw))) {
+        if (rule.all.every((kw) => hasWord(g, kw))) {
             return { capability: rule.capability, fixers: rule.fixers || null };
         }
     }

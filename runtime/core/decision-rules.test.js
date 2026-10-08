@@ -41,4 +41,19 @@ console.log("Case 6 — a genuine provider need is NOT captured (stays null ⇒ 
 ok("novel prose ⇒ null", rules.match("ask an LLM to write novel prose") === null);
 ok("brand new payment provider ⇒ null", rules.match("invent a brand new payment provider") === null);
 
+console.log("Case 7 — S2 (review N4): keywords match at WORD BOUNDARIES, not as mid-word substrings");
+// Regression for the N3 finding: "la[test]" wrongly resolved local-test-gate, "pro[file]" would resolve
+// Governed Source Edit. Word-boundary matching rejects the incidental substring while preserving the
+// deliberate stems ("test"→tests, "diagnos"→diagnose) and genuine whole-word hits.
+ok("'fetch the latest release notes' does NOT resolve local-test-gate (no 'test' substring hit)",
+  (rules.match("fetch the latest release notes") || {}).capability !== "local-test-gate");
+ok("'update the user profile page' does NOT resolve Governed Source Edit (no 'file' substring hit)",
+  (rules.match("update the user profile page") || {}).capability !== "Governed Source Edit");
+ok("'run the tests' STILL ⇒ local-test-gate (whole-word / stem preserved)",
+  rules.match("run the tests").capability === "local-test-gate");
+ok("'edit the config file' STILL ⇒ Governed Source Edit (genuine whole words)",
+  rules.match("edit the config file").capability === "Governed Source Edit");
+ok("'run a diagnostic' STILL ⇒ self-diagnostic (deliberate 'diagnos' stem preserved)",
+  rules.match("run a diagnostic").capability === "self-diagnostic");
+
 console.log(`\nDECISION RULES — ${passed} assertions passed.`);

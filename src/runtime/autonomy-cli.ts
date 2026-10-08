@@ -100,11 +100,14 @@ function main(): number {
     /* best-effort */
   }
 
-  // Terminal outcomes (design §3):
-  //   PLAN_COMPLETE → clean success (0)
-  //   BLOCKED       → Release Manager NO_RELEASE, human decision required (2)
-  //   any other halt→ operational failure (1)
+  // Terminal outcomes (design §3; review N4 remediation adds VALIDATED_PENDING_COMMIT):
+  //   PLAN_COMPLETE            → clean success (0)
+  //   VALIDATED_PENDING_COMMIT → proven deliverable(s) await the HUMAN commit gate; ODG never
+  //                              auto-commits (D1). Human decision required (2), NOT a failure.
+  //   BLOCKED                  → Release Manager NO_RELEASE, human decision required (2)
+  //   any other halt           → operational failure (1)
   if (result.status === "PLAN_COMPLETE") return 0;
+  if (result.status === "VALIDATED_PENDING_COMMIT") return 2;
   if (result.status === "BLOCKED") return 2;
   return 1;
 }

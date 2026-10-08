@@ -31,6 +31,21 @@ try {
     router = null; // router absent ⇒ pre-WAKE-1 behaviour (no memory reuse)
 }
 
+// C4 (review N4 remediation) — REAL reuse accounting. The Capability Router's Memory tier LOOKS UP a
+// precedent (pure) but nothing ever marked it USED, so patch-memory.reuseCount stayed 0 forever even
+// when a precedent was genuinely replayed (observed in exam N3). Here — the ONE place a precedent's
+// edits are actually attached to a mission objective and handed to the Patch Executor — we record the
+// reuse via patch-memory.hit(), using the SAME task key the router/lookup keyed on. This runs only in
+// the live Decision STAGE (once per mission execution), NEVER in the pure dry-run gateway, so routing
+// stays side-effect-free and decision.json stays deterministic (reuseCount is a metrics field, not an
+// output). Best-effort: absent module ⇒ reuse is simply not counted (prior behaviour).
+let patchMemory = null;
+try {
+    patchMemory = require("./patch-memory");
+} catch {
+    patchMemory = null;
+}
+
 // A router Memory result is reusable only if it is a non-empty list of well-formed edits, each naming a
 // target and carrying EXACTLY ONE of content/diff (the Patch Executor's contract). Anything else is
 // rejected here (never attached) — a malformed precedent can never become a silent action.
@@ -96,7 +111,18 @@ const actions = plan.objectives.map((o) => o.id);
 // `patch` is added on a Memory hit. No hit ⇒ the objective passes through verbatim (prior behaviour).
 const objectives = plan.objectives.map((o) => {
     const mem = memoryPatchFor(o);
-    return mem ? { ...o, patch: mem } : o;
+    if (!mem) return o;
+    // C4 — a precedent is genuinely being REUSED (its edits are attached to this objective and will be
+    // applied by the Patch Executor): count it on the matching entry, using the SAME task key the router
+    // keyed on. Fail-closed/best-effort: a miss or module error never affects the decision.
+    if (patchMemory) {
+        try {
+            patchMemory.hit({ goal: o.goal, objectiveId: o.id });
+        } catch {
+            /* reuse accounting is advisory — never block the decision on it */
+        }
+    }
+    return { ...o, patch: mem };
 });
 
 const result = {
