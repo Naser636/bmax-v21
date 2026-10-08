@@ -20,7 +20,7 @@ type Obj = { id: string; patch?: unknown; actionContract?: { authority?: { missi
 type Decision = { mission?: string; contract?: { objectives: Obj[]; authorized_paths?: string[]; requires_engineering?: boolean } };
 const seam = require_(path.join(REPO, "runtime", "bin", "odg-objective.js")) as {
   decide: (raw: string) => Decision;
-  applyAuthorization: (d: unknown, grant: unknown, now: number) => { authorizations: unknown[]; blockers: { code: string }[] };
+  applyAuthorization: (d: unknown, grant: unknown, now: number) => { authorizations: unknown[]; blockers: { code: string }[]; notes: { code: string }[] };
   consequentialRequests: (d: unknown) => { capability: string }[];
 };
 
@@ -64,20 +64,29 @@ console.log("NL GOVERNED ENGINEERING EDIT — HUMAN-AUTHORIZED LOCAL APPLY");
   check(missionIsPreAuthoredEngineering(null) === false, "no spec ⇒ fail closed");
 }
 
-// === 4. No grant / malformed grant ⇒ fail-closed (nothing bound, not executed). ===================
+// === 4. No grant / malformed / cross-mission grant ⇒ NOTHING BOUND (honest PARTIAL, not a hard block). =
+//     Governed Source Edit is the LOCAL-REVERSIBLE tier (capability-authorization.js humanGrantRequired:false,
+//     lightened in 2345b36): an absent / malformed / mission-mismatched grant no longer HARD-blocks — it is a
+//     transparent NOTE and the mission routes UNBOUND (governed downstream by the action-gate + Patch Executor
+//     scope guard + verification). The invariant that MUST still hold, and is asserted here, is the real
+//     governance boundary: NOTHING is bound (authorizations:0) and NO scope is fabricated (authorized_paths
+//     empty) — the grant never transfers authority — while the EXACT reason is still surfaced (same codes),
+//     now classified as a note. Sensitive tiers (git/bash/research) keep the hard BLOCKER — see
+//     nl-consequential-dispatch.test.ts / nl-authorization.test.ts.
 {
   const d1 = seam.decide(INTENT);
   const r1 = seam.applyAuthorization(d1, null, NOW);
-  check(r1.authorizations.length === 0 && r1.blockers.some((b) => b.code === "NO_AUTHORIZATION"), "no grant ⇒ NO_AUTHORIZATION, nothing bound");
+  check(r1.authorizations.length === 0 && r1.notes.some((n) => n.code === "NO_AUTHORIZATION"), "no grant ⇒ NO_AUTHORIZATION note, nothing bound");
   check(!d1.contract!.authorized_paths || d1.contract!.authorized_paths.length === 0, "no grant ⇒ no authorized_paths (never executed locally)");
 
   const d2 = seam.decide(INTENT);
   const r2 = seam.applyAuthorization(d2, grant(d2.mission as string, { scope: { authorized_paths: ["runtime/generated/exam-scratch"], edits: [] } }), NOW);
-  check(r2.blockers.some((b) => b.code === "NO_SCOPE" || b.code === "MALFORMED_EDIT_GRANT"), "grant with no concrete edit ⇒ fail-closed");
+  check(r2.authorizations.length === 0 && r2.notes.some((n) => n.code === "NO_SCOPE" || n.code === "MALFORMED_EDIT_GRANT"), "grant with no concrete edit ⇒ fail-closed note, nothing bound");
 
   const d3 = seam.decide(INTENT);
   const r3 = seam.applyAuthorization(d3, grant("SOME_OTHER_MISSION"), NOW);
-  check(r3.blockers.some((b) => b.code === "MISSION_MISMATCH"), "grant bound to another mission ⇒ MISSION_MISMATCH (no transfer)");
+  check(r3.authorizations.length === 0 && r3.notes.some((n) => n.code === "MISSION_MISMATCH"), "grant bound to another mission ⇒ MISSION_MISMATCH note (no transfer, nothing bound)");
+  check(!d3.contract!.authorized_paths || d3.contract!.authorized_paths.length === 0, "cross-mission grant ⇒ no authorized_paths (no authority transfer)");
 }
 
 console.log(failures === 0 ? "ALL PASS — NL GOVERNED ENGINEERING EDIT" : `FAILURES: ${failures}`);
