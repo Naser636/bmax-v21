@@ -25,6 +25,17 @@ ok("default done_when supplied", c.objectives[0].done_when.length >= 2);
 console.log("Case 2 — read-only spec has engineering off");
 ok("no authorized_paths ⇒ requires_engineering false", syn.toContract({ goal: "just look" }).requires_engineering === false);
 
+console.log("Case 2b — scope is GROUNDED on path tokens the goal names (NL engineering objective)");
+// Regression: a natural-language objective that names its target files must become a correctly-scoped
+// engineering mission, not a no-scope read-only contract. This is the fix for the `odg objective` route
+// (fromRequest → toContract), whose target can live OUTSIDE runtime/** (e.g. src/runtime/**).
+const grounded = syn.toContract({ goal: "fix autonomy continuation in src/runtime/autonomy-cli.ts and src/runtime/autonomy-runtime-adapter.ts" });
+ok("named paths grounded into authorized_paths", JSON.stringify(grounded.authorized_paths) === JSON.stringify(["src/runtime/autonomy-cli.ts", "src/runtime/autonomy-runtime-adapter.ts"]));
+ok("grounded scope ⇒ requires_engineering true", grounded.requires_engineering === true);
+ok("explicit authorizedPaths still wins verbatim over derivation", JSON.stringify(syn.toContract({ goal: "touch src/a.ts", authorizedPaths: ["runtime/x.js"] }).authorized_paths) === JSON.stringify(["runtime/x.js"]));
+ok("goal with NO path token stays read-only (backward compatible)", syn.toContract({ goal: "audit the runtime state and report drift" }).requires_engineering === false);
+ok("derivePaths is the shared extractor", JSON.stringify(syn.derivePaths("a src/runtime/autonomy-cli.ts b")) === JSON.stringify(["src/runtime/autonomy-cli.ts"]));
+
 console.log("Case 3 — fromRequest resolves the local capability via P4 rules");
 const r = syn.fromRequest("remove the unused import");
 ok("request becomes a valid contract", syn.isValidContract(r) === true);

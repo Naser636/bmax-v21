@@ -112,6 +112,31 @@ function decompose(goal) {
     return [trimmed];
 }
 
+/*
+ * Derive an authorized-path SCOPE from the path-like tokens a text names. A token counts only when it
+ * carries a directory separator AND a file-ish extension (e.g. "src/runtime/x.ts") — the SAME shape the
+ * Delegation Brief derives (runtime/bin/odg-delegate.js). Pure/deterministic, de-duplicated and
+ * order-preserving; empty when the text grounds no path. This is the ONE place a scope is grounded from
+ * free text, so every synthesis entrypoint agrees: `fromRequest` (a natural-language objective) and the
+ * Mission Contract Factory both reach the mission's real target instead of a blind default — crucially
+ * a target OUTSIDE runtime/** (e.g. src/runtime/**) that a runtime-scoped guess could never reach.
+ * Recognition is NOT authorization: authorized_paths is SCOPE; the action-gate / human grants still
+ * govern every write.
+ */
+function derivePaths(text) {
+    const re = /[A-Za-z0-9_./-]+\.[A-Za-z0-9]+/g;
+    const out = [];
+    const seen = new Set();
+    let m;
+    while ((m = re.exec(String(text || ""))) !== null) {
+        const tok = m[0];
+        if (!tok.includes("/") || seen.has(tok)) continue;
+        seen.add(tok);
+        out.push(tok);
+    }
+    return out;
+}
+
 // Build a single objective. done_when / patch are shared inputs; the id is deterministic.
 function makeObjective(id, goal, doneWhen, patch) {
     const objective = { id, goal, done_when: doneWhen };
@@ -129,7 +154,13 @@ function makeObjective(id, goal, doneWhen, patch) {
 // also happens to read as multiple actions is not split when a patch is attached).
 function toContract(spec) {
     const id = spec.id || slug(spec.goal, "SYNTH_MISSION");
-    const authorizedPaths = Array.isArray(spec.authorizedPaths) ? spec.authorizedPaths : [];
+    // Scope precedence: an explicit authorizedPaths wins verbatim (even [] = deliberately read-only);
+    // otherwise GROUND the scope on the path tokens the request names in its own goal/description, so a
+    // natural-language engineering objective ("fix X in src/runtime/a.ts") becomes a correctly-scoped
+    // engineering mission instead of a no-scope read-only contract. No named path ⇒ [] (unchanged).
+    const authorizedPaths = Array.isArray(spec.authorizedPaths)
+        ? spec.authorizedPaths
+        : derivePaths([spec.goal, spec.description].filter((s) => typeof s === "string").join(" "));
     const hasPatch = !!(spec.patch && typeof spec.patch === "object");
     // Only require "Patch applied." when a patch is actually attached. A no-patch objective (e.g. an
     // audit/analysis) must not fabricate a patch requirement for an action that will never run. An
@@ -205,4 +236,4 @@ function isValidContract(c) {
     );
 }
 
-module.exports = { toContract, fromRequest, isValidContract, slug, decompose };
+module.exports = { toContract, fromRequest, isValidContract, slug, decompose, derivePaths };

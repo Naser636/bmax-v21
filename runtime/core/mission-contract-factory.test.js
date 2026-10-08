@@ -172,4 +172,28 @@ ok("external-research intent does NOT declare internet-reachable", !research.som
 const onlineProbes = factory.resolveVerifyProbes({ id: "EXPLORE_ONLINE_OPPORTUNITIES", title: "Explore Online Opportunities" });
 ok("a connectivity/online mission does NOT declare research-acquired (reachability ≠ research)", !onlineProbes.some((p) => p.evidence === "research-acquired"));
 
+console.log("Case 11 — scope is GROUNDED on the mission's own path tokens, not a blind runtime/** guess");
+// Regression for FIX_AUTONOMY_*: the real target lived in src/runtime/** (outside runtime/**), yet the
+// factory fabricated authorized_paths=['runtime/**'], which the Delegation Brief then inherited — so the
+// brief handed Claude Code a WRONG scope and the repair could never be delegated. A mission that NAMES
+// its target in its own text must now scope to THAT path.
+const grounded = factory.buildContract({
+    id: "FIX_SOMETHING",
+    title: "Fix something",
+    goal: "Repair the loop in src/runtime/autonomy-cli.ts so it continues after a blocked mission",
+    requiresEngineering: true,
+});
+ok("derives the named target path (reaches outside runtime/**)", grounded.authorized_paths.includes("src/runtime/autonomy-cli.ts"));
+ok("does NOT fabricate the blind runtime/** default when a path is grounded", !grounded.authorized_paths.includes("runtime/**"));
+ok("grounded-scope contract stays Loader-valid", synth.isValidContract(grounded) === true);
+ok("brief would derive the SAME scope (factory ↔ delegate agree)", JSON.stringify(factory.derivePathScope({ goal: "x src/runtime/autonomy-cli.ts y" })) === JSON.stringify(["src/runtime/autonomy-cli.ts"]));
+
+// Backward compatible: a mission whose text grounds NO path keeps the safe engineering default.
+const noPath = factory.buildContract({ id: "FIX_GENERIC", title: "Fix generic thing", requiresEngineering: true });
+ok("no grounded path ⇒ safe runtime/** default preserved (backward compatible)", noPath.authorized_paths.includes("runtime/**"));
+
+// An explicitly-declared scope is honoured verbatim and NEVER widened by derivation (no scope creep).
+const explicitScoped = factory.buildContract({ id: "X_EXPLICIT", title: "names src/foo.ts in title", authorized_paths: ["runtime/core/x.js"], requiresEngineering: true });
+ok("explicit authorized_paths honoured verbatim (derivation never widens it)", JSON.stringify(explicitScoped.authorized_paths) === JSON.stringify(["runtime/core/x.js"]));
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

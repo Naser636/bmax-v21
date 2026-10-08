@@ -229,6 +229,23 @@ function isContractMissing(root, entry) {
 }
 
 /*
+ * Derive an authorized-path SCOPE from the path-like tokens a mission names in its OWN text
+ * (id / title / goal / description). A token counts only when it carries a directory separator AND a
+ * file-ish extension — the SAME shape the Delegation Brief derives (runtime/bin/odg-delegate.js), so a
+ * synthesized contract and its brief agree on scope. Pure/deterministic: a function of `entry` text
+ * only (no filesystem), de-duplicated and order-preserving. Empty when the text grounds no path — the
+ * caller then falls back to the safe engineering default. This grounds the scope on the mission's own
+ * declared target instead of a blind `runtime/**` guess (which the delegate's brief then inherited),
+ * so a mission whose target lives OUTSIDE runtime/** (e.g. a src/runtime/** file) is finally reachable.
+ * It never WIDENS an explicitly-declared scope — the caller only consults this when none was declared.
+ */
+function derivePathScope(entry) {
+    // Reuse the ONE path-token extractor in the synthesizer (the shared schema source) so the factory
+    // and the NL `fromRequest` path ground scope identically — no second, drifting implementation.
+    return synth.derivePaths(entryText(entry));
+}
+
+/*
  * Build a COMPLETE, Mission-Loader-conformant contract for a roadmap entry.
  *
  * The canonical base schema (mission / objectives / definition_of_done / mode / priority /
@@ -247,14 +264,27 @@ function isContractMissing(root, entry) {
 function buildContract(entry) {
     const engineering = resolveEngineering(entry);
 
-    // Honour explicit authorized paths from the roadmap entry; otherwise use a safe runtime-scoped
-    // default when the mission is engineering, or none for a read-only mission.
+    // Resolve the mission's authorized-path SCOPE. Precedence:
+    //   1. an explicit scope on the entry — honoured verbatim (even an explicit [] = deliberately
+    //      read-only), NEVER widened;
+    //   2. else a scope DERIVED from the path tokens the mission names in its own text — so a
+    //      synthesized contract targets the file(s) it actually concerns (incl. a target outside
+    //      runtime/**, e.g. src/runtime/**) instead of a blind, over-broad, sometimes-WRONG runtime/**
+    //      guess, and agrees with the scope the Delegation Brief derives the same way;
+    //   3. else the safe runtime-scoped default for an engineering mission whose text grounds no path,
+    //      or none for a read-only mission (backward compatible).
     const explicitPaths = Array.isArray(entry.authorized_paths)
         ? entry.authorized_paths
         : Array.isArray(entry.authorizedPaths)
             ? entry.authorizedPaths
             : null;
-    const authorizedPaths = explicitPaths || (engineering ? ["runtime/**"] : []);
+    let authorizedPaths;
+    if (explicitPaths) {
+        authorizedPaths = explicitPaths;
+    } else {
+        const derived = derivePathScope(entry);
+        authorizedPaths = derived.length ? derived : (engineering ? ["runtime/**"] : []);
+    }
 
     const goal = String(entry.title || entry.goal || entry.id);
     const doneWhen = [
@@ -416,6 +446,7 @@ module.exports = {
     contractPathFor,
     isContractMissing,
     resolveVerifyProbes,
+    derivePathScope,
     buildContract,
     generateMissing,
     generateForMission,

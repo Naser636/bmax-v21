@@ -32,6 +32,10 @@ const crypto = require("crypto");
 const { spawnSync } = require("child_process");
 const gateway = require(path.join(__dirname, "..", "core", "nl-objective-gateway.js"));
 const authz = require(path.join(__dirname, "..", "core", "capability-authorization.js"));
+// Reuse the ONE path-token extractor (mission-synthesizer.derivePaths) so this seam recognises a
+// sentence-derived scope with the SAME grammar the synthesizer used to GROUND it — no second, drifting
+// implementation. Used only to DISCOUNT self-named scope from the evidence-binding check (see below).
+const synth = require(path.join(__dirname, "..", "core", "mission-synthesizer.js"));
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const MISSIONS_DIR = path.join(ROOT, "runtime", "missions");
@@ -74,10 +78,21 @@ function toBoundedContract(result, boundedId) {
 // own signals (validation-engine.js:66 — authorized_paths is the engineering/applied-effect class
 // signal; objective-evidence.ts — verify[].evidence is the declared evidence binding). A contract with
 // neither CANNOT prove its objective was executed, so a green pipeline over it is not proof of SUCCESS.
-function contractHasEvidenceBinding(contract) {
+// `sentenceDerivedPaths` (optional): the path tokens the ORIGINATING natural-language objective itself
+// named. authorized_paths that is NOTHING MORE than this self-named scope is NOT an execution-evidence
+// binding — scope recognised from the user's own words proves nothing was executed (a green pipeline over
+// a self-named scope is not SUCCESS). GOVERNED scope — a human grant's bound paths, or an explicitly
+// declared roadmap scope — carries entries BEYOND the sentence and DOES bind. Omitted (non-NL callers) ⇒
+// the discount is off and any non-empty authorized_paths binds, preserving the prior behaviour exactly.
+function contractHasEvidenceBinding(contract, sentenceDerivedPaths) {
     if (!contract || typeof contract !== "object") return false;
     const paths = contract.authorized_paths != null ? contract.authorized_paths : contract.authorizedPaths;
-    if (Array.isArray(paths) && paths.length > 0) return true;
+    if (Array.isArray(paths) && paths.length > 0) {
+        const selfNamed = new Set(Array.isArray(sentenceDerivedPaths) ? sentenceDerivedPaths : []);
+        // Any authorized path NOT merely echoed from the sentence is a governed/explicit evidence binding.
+        // If every path is self-named scope, fall through to the real evidence checks (verify / proof).
+        if (paths.some((p) => !selfNamed.has(p))) return true;
+    }
     const verify = contract.verify;
     if (Array.isArray(verify) && verify.some((v) => v && typeof v.evidence === "string" && v.evidence.length > 0)) return true;
     const objs = contract.objectives;
@@ -90,7 +105,7 @@ function contractHasEvidenceBinding(contract) {
 // because the 13 pipeline stages ran"): SUCCESS also requires a declared evidence binding so that the
 // pipeline's own validation gate was actually proving the requested objective. Otherwise the outcome
 // is PARTIAL / BLOCKED with the exact reason — never a false DONE. Pure: no side effects.
-function classifyOutcome(decision, pipelineExit) {
+function classifyOutcome(decision, pipelineExit, sentenceDerivedPaths) {
     // VALIDATED_PENDING_COMMIT (governed pipeline exit 20): the objective was EXECUTED, VALIDATED and
     // recorded PROVEN, and the engineering deliverable lies ENTIRELY within authorized_paths but is not
     // yet committed. This is NOT a failure and NOT a fabricated SUCCESS — it faithfully reports that the
@@ -109,7 +124,7 @@ function classifyOutcome(decision, pipelineExit) {
             reason: `Governed pipeline did not validate (exit ${pipelineExit}); the requested objective is NOT proven.`,
         };
     }
-    if (!contractHasEvidenceBinding(decision.contract)) {
+    if (!contractHasEvidenceBinding(decision.contract, sentenceDerivedPaths)) {
         return {
             verdict: "PARTIAL",
             code: 3,
@@ -385,7 +400,10 @@ function run(raw, opts, io) {
     log(`Route      : odg mission ${decision.mission}  (governed pipeline — all gates enforced)`);
     log("======================================");
     const pipelineExit = route(decision.mission, io);
-    const outcome = classifyOutcome(decision, pipelineExit);
+    // Scope the seam GROUNDED from the raw sentence itself is self-named, not proof: discount it so a
+    // green pipeline over an NL objective with no grant / no verify-evidence stays an honest PARTIAL.
+    const sentenceDerivedPaths = synth.derivePaths(raw);
+    const outcome = classifyOutcome(decision, pipelineExit, sentenceDerivedPaths);
     log("======================================");
     log(`Verdict    : ${outcome.verdict}`);
     log(`Reason     : ${outcome.reason}`);
