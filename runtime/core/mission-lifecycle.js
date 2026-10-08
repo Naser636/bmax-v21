@@ -25,7 +25,35 @@
 
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 const { authorizeMission } = require("./governance-kernel");
+
+// S4 (review N4 remediation) — RELEASED must reconcile with the real HUMAN commit state. An engineering
+// mission that APPLIED an in-scope deliverable is NOT released until that deliverable is COMMITTED (ODG
+// never auto-commits, D1). This queries the ground truth — the working tree, scoped to the mission's
+// authorized_paths — at the MOMENT the lifecycle is computed, so it is correct in BOTH paths: the
+// objective/local pipeline (deliverable applied, uncommitted ⇒ pending) and the autonomy path (committed
+// before archive ⇒ clean). Any error (no git, no repo, no scope) ⇒ [] ⇒ falls back to prior behaviour
+// (RELEASED), so read-only/analysis missions and the sandboxed tests are byte-for-byte unchanged.
+function uncommittedPathsInScope(contractPath) {
+  let paths = [];
+  try {
+    const c = JSON.parse(fs.readFileSync(contractPath, "utf8"));
+    const raw = c.authorized_paths || c.authorizedPaths || [];
+    paths = (Array.isArray(raw) ? raw : [])
+      .map((p) => String(p).replace(/[*].*$/, "").replace(/\/+$/, ""))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+  if (paths.length === 0) return [];
+  try {
+    const out = execFileSync("git", ["status", "--porcelain", "--", ...paths], { encoding: "utf8" }).trim();
+    return out ? out.split("\n").filter(Boolean) : [];
+  } catch {
+    return []; // no git / not a repo ⇒ cannot prove pending ⇒ do not block (back-compat)
+  }
+}
 // C03 canonical state-transition contract (P0-069). Reused — NOT reimplemented — so each lifecycle
 // advance can additionally be expressed as a C03 record and checked by the ONE real validator.
 const {
@@ -92,10 +120,15 @@ function buildEvidence(mission) {
       validated
         ? { ok: true, evidence: "validation gates green (mission-report validated=true)" }
         : { ok: false, evidence: "verification gates not green" },
-    RELEASED: () =>
-      validated
-        ? { ok: true, evidence: "mission proven — release authorized by governance" }
-        : { ok: false, evidence: "release blocked (mission unproven)" },
+    RELEASED: () => {
+      if (!validated) return { ok: false, evidence: "release blocked (mission unproven)" };
+      // S4: a PROVEN mission whose in-scope deliverable is applied but NOT yet committed awaits the
+      // HUMAN commit gate ⇒ cap at VERIFIED, never RELEASED (so the Ledger's markArchived stays a no-op).
+      const pending = uncommittedPathsInScope(contractPath);
+      return pending.length === 0
+        ? { ok: true, evidence: "mission proven — release authorized by governance (in-scope tree clean)" }
+        : { ok: false, evidence: `release PENDING the human commit gate — uncommitted in-scope deliverable (${pending.length} path(s); ODG never auto-commits)` };
+    },
     // ARCHIVED is intentionally absent: it is owned by the Mission Ledger (markArchived).
   };
 }
