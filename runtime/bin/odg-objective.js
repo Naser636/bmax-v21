@@ -230,6 +230,12 @@ function applyAuthorization(decision, grantOrGrants, now) {
     const verify = Array.isArray(decision.contract.verify) ? decision.contract.verify.slice() : [];
     const authorizations = [];
     const blockers = [];
+    // NON-BLOCKING notes for the LOCAL-REVERSIBLE tier (humanGrantRequired:false, e.g. Governed Source
+    // Edit). Such a capability never HARD-blocks the run for want of an out-of-band human grant: it is
+    // governed fail-closed downstream (Patch Executor authorized_paths scope + action-gate admission +
+    // pipeline verification). When no valid grant binds it here it simply stays UNBOUND and the mission
+    // still routes — honest PARTIAL (no evidence) rather than a redundant intermediate authorization stop.
+    const notes = [];
     for (const r of requests) {
         // Match this objective to its OWN grant among the supplied grants (capability-matching first).
         // A grant that matches one objective's capability authorizes ONLY that one; others fail closed,
@@ -257,7 +263,11 @@ function applyAuthorization(decision, grantOrGrants, now) {
                     obj.authorization = { capability: r.capability, mission: decision.mission, issuer: d.evidence.issuer, scope: d.evidence.scope, expiresAt: d.evidence.expiresAt, execute: true, human: true, mode: "GOVERNED_EDIT" };
                     authorizations.push({ ...d.evidence, boundProbe: null, dispatchObjectiveId: obj.id, engineering: true });
                 } else {
-                    blockers.push({ code: "MALFORMED_EDIT_GRANT", capability: r.capability, objective: r.objectiveId, detail: "grant scope must carry authorized_paths and at least one concrete edit (target + content/diff)" });
+                    // A human grant WAS supplied and validated, but its scope is structurally incomplete.
+                    // For the local-reversible tier this is NOT a hard block (the edit simply stays unbound
+                    // and the always-on downstream scope guard writes nothing outside authorized_paths);
+                    // record a transparent note so the user can complete the grant if they intended to.
+                    notes.push({ code: "MALFORMED_EDIT_GRANT", capability: r.capability, objective: r.objectiveId, detail: "grant scope must carry authorized_paths and at least one concrete edit (target + content/diff)" });
                 }
                 continue;
             }
@@ -278,12 +288,18 @@ function applyAuthorization(decision, grantOrGrants, now) {
             }
             verify.push({ capability: r.capability, evidence: chosenProbe });
             authorizations.push({ ...d.evidence, boundProbe: chosenProbe, dispatchObjectiveId: obj ? obj.id : null, capabilitySpec: execSpec || null });
-        } else {
+        } else if (authz.requiresHumanGrant(r.capability)) {
+            // SENSITIVE tier (irreversible / command / network): an absent or invalid human grant is a
+            // HARD block — fail-closed, never routed to execution without explicit human authorization.
             blockers.push({ code: d.code, capability: r.capability, objective: r.objectiveId, detail: d.detail });
+        } else {
+            // LOCAL-REVERSIBLE tier: no valid grant to bind ⇒ stay UNBOUND and route anyway (the mission
+            // is governed fail-closed downstream). Recorded as a non-blocking note, not a blocker.
+            notes.push({ code: d.code, capability: r.capability, objective: r.objectiveId, detail: d.detail });
         }
     }
     if (verify.length) decision.contract.verify = verify;
-    return { requests, authorizations, blockers };
+    return { requests, authorizations, blockers, notes };
 }
 
 // Orchestrate the seam. execute=false (default) ⇒ dry-run JSON print only (behaviour preserved exactly).
@@ -336,6 +352,12 @@ function run(raw, opts, io) {
             mkdirSync(GENERATED_DIR, { recursive: true });
             writeFileSync(evFile, JSON.stringify({ mission: decision.mission, authorizations: authResult.authorizations }, null, 2));
             for (const a of authResult.authorizations) log(`Authorized : ${a.capability} for ${a.mission} (issuer ${a.issuer}, expires ${a.expiresAt}) — evidence recorded`);
+        }
+        if (authResult.notes && authResult.notes.length > 0) {
+            // Local-reversible tier: no hard stop. The objective stays unbound; the governed pipeline's
+            // always-on scope guard + action-gate admission + verification govern it (honest PARTIAL if it
+            // produces no evidence). A human grant is OPTIONAL here (to pre-scope/pin a concrete edit).
+            for (const n of authResult.notes) log(`Note       : ${n.capability}${n.objective ? " [" + n.objective + "]" : ""} proceeds without an intermediate human grant (local, reversible, in-scope — governed downstream): ${n.code}`);
         }
         if (authResult.blockers.length > 0) {
             log("Consequential capability NOT authorized — human authorization required (not synthesized from the sentence):");

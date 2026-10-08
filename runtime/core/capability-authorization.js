@@ -44,20 +44,46 @@ const { evaluateAction, DECISION } = require("./action-gate");
 // and the SAFE (non-destructive, dry-run/analysis) probe when the capability has one. External Research
 // has a genuine safe dry-run probe (zero network); git/bash have none (their proof needs a real/sandbox
 // effect), so `safeProbe` is null and a safe-mode run there honestly cannot reach SUCCESS.
+// `humanGrantRequired` — OPERATIONAL-GOVERNANCE TIER (added for review N°3 friction relief). A
+// consequential capability still passes the FULL deny-by-default admission (state/contract/policy/
+// authority) wherever it runs, but only the SENSITIVE tier requires a SEPARATE, out-of-band EXPLICIT
+// HUMAN grant (`grant.human === true`) transported to the entrypoint before it may proceed:
+//   - irreversible / high-impact (Git Branch Integration — IRREVERSIBLE/HIGH/R3),
+//   - command execution with outward reach (Bash/Linux Command — HIGH),
+//   - network / external effect (External Research Acquisition — COMMUNICATE/HIGH).
+// A LOCAL, reversible (R0–R2), LOW-risk, in-perimeter file WRITE is NOT in that tier: the downstream
+// path already governs it fail-closed and non-redundantly — the Patch Executor's always-on
+// authorized_paths scope guard, the action-gate admission (an R1/LOW WRITE under a present mission
+// authority is ALLOW, no human escalation), and the pipeline's real verification. Demanding a per-edit
+// human grant ON TOP of those at the semantic entrypoint was a REDUNDANT control that blocked ordinary
+// in-scope engineering; it is dropped here (the strong gates remain). This flag does not weaken
+// `authorizeCapability` itself — when a human grant IS supplied for ANY capability it is validated
+// identically; the flag only tells the entrypoint which absent grant is a HARD block vs a soft route.
 const CONSEQUENTIAL_CAPABILITIES = Object.freeze({
-    "Governed Git Branch Integration": Object.freeze({ actionClass: "IRREVERSIBLE", risk: "HIGH", reversibility: "R3", executorPrefix: "GIT_BRANCH_INTEGRATION", probe: "git-branch-integrated", safeProbe: null }),
-    "Governed Bash/Linux Command": Object.freeze({ actionClass: "WRITE", risk: "HIGH", reversibility: "R2", executorPrefix: "BASH_COMMAND", probe: "bash-command-governed", safeProbe: null }),
-    "External Research Acquisition": Object.freeze({ actionClass: "COMMUNICATE", risk: "HIGH", reversibility: "R2", executorPrefix: "EXTERNAL_RESEARCH", probe: "research-acquired", safeProbe: "external-research-dry-run-planned" }),
+    "Governed Git Branch Integration": Object.freeze({ actionClass: "IRREVERSIBLE", risk: "HIGH", reversibility: "R3", executorPrefix: "GIT_BRANCH_INTEGRATION", probe: "git-branch-integrated", safeProbe: null, humanGrantRequired: true }),
+    "Governed Bash/Linux Command": Object.freeze({ actionClass: "WRITE", risk: "HIGH", reversibility: "R2", executorPrefix: "BASH_COMMAND", probe: "bash-command-governed", safeProbe: null, humanGrantRequired: true }),
+    "External Research Acquisition": Object.freeze({ actionClass: "COMMUNICATE", risk: "HIGH", reversibility: "R2", executorPrefix: "EXTERNAL_RESEARCH", probe: "research-acquired", safeProbe: "external-research-dry-run-planned", humanGrantRequired: true }),
     // Governed Source Edit — a bounded, reversible (git-compensable R1) local file WRITE applied by the
     // EXISTING Patch Executor under action-gate. The concrete edit AND the authorized paths come from the
-    // human grant's scope (never the sentence); ODG only applies + validates deterministically. Not a
-    // capability-executor (no executorPrefix/probe): the engineering evidence is the applied change +
-    // green build/tests validated by the local pipeline (authorized_paths is the evidence-class signal).
-    "Governed Source Edit": Object.freeze({ actionClass: "WRITE", risk: "LOW", reversibility: "R1", executorPrefix: null, probe: null, safeProbe: null }),
+    // human grant's scope when one is supplied (never the sentence); ODG only applies + validates
+    // deterministically. Not a capability-executor (no executorPrefix/probe): the engineering evidence is
+    // the applied change + green build/tests validated by the local pipeline (authorized_paths is the
+    // evidence-class signal). humanGrantRequired:false — local + reversible + in-scope, governed
+    // fail-closed downstream, so it never needs a separate intermediate human authorization to PROCEED.
+    "Governed Source Edit": Object.freeze({ actionClass: "WRITE", risk: "LOW", reversibility: "R1", executorPrefix: null, probe: null, safeProbe: null, humanGrantRequired: false }),
 });
 
 function isConsequentialCapability(capability) {
     return Object.prototype.hasOwnProperty.call(CONSEQUENTIAL_CAPABILITIES, capability);
+}
+
+// Does this consequential capability require a SEPARATE explicit human grant to PROCEED (the sensitive
+// tier: irreversible / command / network)? A local reversible in-scope edit does not — it is governed by
+// the always-on downstream scope guard + action-gate admission + verification. Unknown / non-consequential
+// capabilities default to NOT requiring one here (they never route through this human-auth seam at all).
+function requiresHumanGrant(capability) {
+    const reg = CONSEQUENTIAL_CAPABILITIES[capability];
+    return !!(reg && reg.humanGrantRequired);
 }
 
 // Capability → EXISTING executor spec adapter. `field` is the patch key the capability-executor already
@@ -358,6 +384,7 @@ function authorizeCapability(request, grant, ctx) {
 module.exports = {
     authorizeCapability,
     isConsequentialCapability,
+    requiresHumanGrant,
     defaultScopeSatisfied,
     buildExecutorSpec,
     buildSourceEditBinding,
