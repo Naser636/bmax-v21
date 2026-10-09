@@ -231,6 +231,19 @@
 - Scope: documentary only (`ODG_MASTER_ROADMAP.md` §C annotation + this entry). No code/test/fiche/manifest/
   defect-register change. Evidence: OD-1/OD-2 read-only audit (prior turn); `odg verify` RC=0.
 
+### CHG-RWL-B4 — Client-store backup/restore (read-only, integrity-verified) [TECH-CHANGE] — ACCEPTED (2026-10-09)
+- RWL-B4 executed. Root cause: no programmatic backup/restore/integrity mechanism for the client store
+  (`runtime/generated/clients/**`) ⇒ loss/corruption/inconsistent-restore risk. Minimal change (write-set:
+  `runtime/core/client-store-backup.js` + `.test.js`; doc `LAUNCH_READINESS.md`; this entry; roadmap status):
+  `backup` (read-only, never mutates source), `verify` (per-file + manifest sha256 ⇒ tamper detection),
+  `restore` (explicit target, refuses non-empty unless force, re-hashes each file, fail-closed
+  INTEGRITY_MISMATCH). Reuses `client-intake.storeState`; no new primitive. **Retention/deletion NOT
+  implemented** (no contract ⇒ human policy, RWL-D2). Store holds no secrets (verified).
+- Evidence (run this session, RC=0): `client-store-backup.test.js` 12/12 (round-trip byte-identical, source
+  not mutated, tamper/corrupt-manifest/non-empty-target fail-closed, no-secret); regressions client-intake 22,
+  deployment-readiness 9; `odg verify` RC=0. Status: RWL-B4 **PROVEN (local)** — restore proven by executed
+  round-trip test, not by build alone. Next per roadmap §H: RWL-B5 (incident runbook).
+
 ## Open decisions (pending CTO)
 - (none — OD-1 and OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
 

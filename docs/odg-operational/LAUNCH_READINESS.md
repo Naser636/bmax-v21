@@ -64,6 +64,19 @@ ODG_SITE_ROOT=""
 - **Persistent storage:** set `ODG_CLIENT_STORE` to a path on a **persistent disk** (e.g. `/var/lib/odg/clients`),
   owned by the app user with `0700` permissions. Intake records are written there with exclusive create
   (no overwrite). **Backup:** snapshot/rsync that directory regularly; it holds the client requests.
+
+## Backup / restore (RWL-B4 — `runtime/core/client-store-backup.js`)
+Governed, read-only, integrity-verified backup/restore of the client store (`runtime/generated/clients/**`:
+requests, invoices, quotes, payments, seen-messages). The store holds NO secrets by construction.
+- **Backup (read-only, never mutates source):** `backup({cwd})` → a JSON manifest `{version, createdAtMs, base,
+  files:[{path,sha256,bytes,content}], manifestHash}`. Fail-closed `STORE_NOT_READY` if the store is
+  unconfigured/unwritable. Persist the manifest off-host (operator responsibility).
+- **Verify:** `verify(manifest)` recomputes per-file + manifest hashes ⇒ detects tampering/corruption.
+- **Restore (integrity-verified, safe):** `restore({manifest, target, force})` writes into an EXPLICIT target,
+  refuses a non-empty target unless `force`, re-hashes each written file, and fails closed `INTEGRITY_MISMATCH`
+  on any corruption (never restores wrong bytes). Round-trip proven byte-identical (`client-store-backup.test.js` 12/12).
+- **Retention / deletion:** NOT implemented — no existing contract authorizes it; data retention/deletion is a
+  human policy decision (RWL-D2) and must be defined by the owner before real use.
 - **Mono-instance only:** id allocation is collision-safe under a single Node instance (synchronous
   read→exclusive-create, bounded retry) and the exclusive flag defends a same-disk concurrent writer. This is
   **NOT proven for multi-instance / load-balanced** deployments — do not run more than one instance against the
