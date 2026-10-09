@@ -126,6 +126,23 @@
 - Effect: finance-sim no-look-ahead + determinism guarantees hold across walk-forward windows. Finance stays
   PARTIAL (sim). Deferred (separate authz): market-data ingestion, real backtesting, risk-control, execution.
 
+### CHG-FINANCE-P2 — Real public data (read-only) + paper-trading [TECH-CHANGE / FINDING] — ACCEPTED (2026-10-09)
+- CTO-authorized bounded real-data validation (read-only public source, no auth) + local paper trading. New:
+  `runtime/core/finance-data-connector.js` (+test 10/10), `runtime/core/finance-paper.js` (+test 9/9).
+  Injected bounded GET (GET-only, no redirects, bytes/timeout bounded, no auth/secret); fail-closed
+  HTTP_ERROR/MALFORMED/INVALID_ROW/NON_MONOTONIC_TIME/STALE/FETCH_FAILED; provenance (source, instrument,
+  collectedAt, sha256 dataHash, marketTsRange, nature) with **STALE ⇒ decisionsAllowed:false**. Paper module:
+  virtual portfolio, **fictitious orders only** (`fictitious:true`, `executed:false`), fee/slippage as EXPLICIT
+  ASSUMPTIONS (not real costs). Reuses finance-sim + economic-unit; no new primitive/engine.
+- **LIVE one-shot demonstration (this session, read-only):** Coinbase Exchange public candles
+  `GET /products/BTC-USD/candles?granularity=86400` → HTTP 200, 21483 B, **350 daily bars**, sha256
+  `fcf8683b…`, market range epoch 1761350400→1791504000, latest candle age ~0.81 d (fresh, **historical/delayed
+  daily OHLC, NOT realtime**), fed through finance-sim ⇒ ACCEPT, executed:false. Evidence (gitignored scratch):
+  `scratchpad/p2-live-evidence.json`. **No profitability/risk claim; P&L is a SIMULATION figure.**
+- Regressions green: finance-sim P0 15/15, walk-forward P1 10/10, economic-unit PASS; `odg verify` RC=0.
+- Boundaries preserved: no order/broker/portfolio/execution, no secret/auth/paid subscription, no autonomous
+  strategy change, no unbounded/continuous network. Finance = PARTIAL (sim + read-only data + paper); NOT production.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
