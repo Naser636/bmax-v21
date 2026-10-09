@@ -12,7 +12,7 @@
 
 const eu = require("./economic-unit");
 
-const CODE = Object.freeze({ INVALID_INPUT: "INVALID_INPUT", LENGTH_MISMATCH: "LENGTH_MISMATCH" });
+const CODE = Object.freeze({ INVALID_INPUT: "INVALID_INPUT", LENGTH_MISMATCH: "LENGTH_MISMATCH", DECISIONS_BLOCKED: "DECISIONS_BLOCKED" });
 
 function isInt(v) { return typeof v === "number" && Number.isInteger(v); }
 function isBps(v) { return isInt(v) && v >= 0; }
@@ -62,6 +62,22 @@ function paperTrade(bars, positions, opts = {}) {
   });
 }
 
-module.exports = { CODE, paperTrade };
+/*
+ * paperTradeFromSource(source, positions, opts) — ENFORCED decision gate. A finance-data-connector result is
+ * the ONLY accepted entry for producing NEW fictitious orders from real-data-derived positions. If the source
+ * failed (`ok!==true`) or is not fresh (`decisionsAllowed!==true`, e.g. STALE/HTTP_ERROR), NO order and NO
+ * virtual position is created ⇒ DECISIONS_BLOCKED (fail-closed). A historical runSimulation ACCEPT does NOT
+ * re-enable decisions: ACCEPT only means the historical computation is well-formed, NOT that fresh-data
+ * decisions are authorized. This is the seam the stale-lock was missing.
+ */
+function paperTradeFromSource(source, positions, opts = {}) {
+  if (!source || source.ok !== true) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: "source not ok", orders: Object.freeze([]), executed: false });
+  if (source.decisionsAllowed !== true) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: source.code || "not fresh", orders: Object.freeze([]), executed: false });
+  if (!Array.isArray(source.series)) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: "no series", orders: Object.freeze([]), executed: false });
+  const bars = source.series.map((b) => ({ minor: b && b.price && b.price.minor, scale: b && b.price && b.price.scale }));
+  return paperTrade(bars, positions, opts);
+}
+
+module.exports = { CODE, paperTrade, paperTradeFromSource };
 
 if (require.main === module) { process.stdout.write("finance-paper: virtual/fictitious portfolio only (no execution)\n"); }

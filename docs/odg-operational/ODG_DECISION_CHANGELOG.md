@@ -143,6 +143,18 @@
 - Boundaries preserved: no order/broker/portfolio/execution, no secret/auth/paid subscription, no autonomous
   strategy change, no unbounded/continuous network. Finance = PARTIAL (sim + read-only data + paper); NOT production.
 
+### CHG-FINANCE-P2.1 — Enforce stale-lock on paper trading [TECH-CHANGE] — ACCEPTED (2026-10-09)
+- Audit reproduced DEF-013: `decisionsAllowed:false` (STALE/HTTP_ERROR/failed source) was an **unconsumed
+  advisory flag** — `paperTrade`/`runSimulation` ignored it, so new fictitious orders were generated on stale
+  data (historical `runSimulation` returns ACCEPT regardless). Clarified meaning: **ACCEPT = the historical
+  computation is well-formed, NOT an authorization to produce a fresh-data decision.**
+- Minimal fix (write-set: `finance-paper.js` + `finance-paper.test.js`): added ENFORCED seam
+  `paperTradeFromSource(source, positions, opts)` — fail-closed `DECISIONS_BLOCKED` (0 orders, executed:false)
+  when `source.ok!==true` or `decisionsAllowed!==true`; only a fresh+ok source produces orders. ACCEPT does
+  NOT re-enable. Reuses existing `paperTrade`; no new primitive.
+- Evidence: finance-paper 13/13 (incl. #6 fresh-allowed/stale-blocked/http-error-blocked/null-blocked);
+  regressions connector 10/10, finance-sim 15/15, walk-forward 10/10, economic-unit PASS; `odg verify` RC=0.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.

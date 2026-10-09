@@ -29,4 +29,30 @@ ok("4 length mismatch ⇒ LENGTH_MISMATCH", P.paperTrade(BARS, [1, 0], {}).code 
 ok("4 invalid bar ⇒ INVALID_INPUT", P.paperTrade([{ minor: 1.5, scale: 2 }], [1], {}).code === P.CODE.INVALID_INPUT);
 // 5 — no execution/order-send surface exported.
 ok("5 no execute/send/broker export", !Object.keys(P).some(k => /execute|send|broker|submit|route/i.test(k)));
-console.log(`\nFINANCE PAPER-TRADING — ${passed} assertions passed.`);
+
+// 6 — ENFORCED stale-lock (P2.1): decisionsAllowed gate blocks NEW fictitious orders end-to-end.
+{
+  const C = require(path.resolve(__dirname, "finance-data-connector.js"));
+  const F = require(path.resolve(__dirname, "finance-sim.js"));
+  const CANDLES = JSON.stringify([[300, 10, 12, 11, 11, 5], [200, 9, 11, 10, 10, 4], [100, 8, 10, 9, 9, 3]]);
+  const mock = (status = 200, body = CANDLES) => () => Promise.resolve({ status, body });
+  const build = (over) => C.fetchSeries(Object.assign({ url: "u", instrument: "X", fetcher: mock(), staleMaxSeconds: 1000, nowMs: (300 + 500) * 1000, scale: 2 }, over));
+  (async () => {
+    const fresh = await build({});
+    const stale = await build({ nowMs: (300 + 99999) * 1000 });
+    const httpErr = await build({ fetcher: mock(404, "") });
+    const posFresh = F.runSimulation(fresh.series, { window: 2 }).positions;
+    const posStale = F.runSimulation(stale.series, { window: 2 }); // historical calc still ACCEPT
+    // fresh ⇒ orders allowed
+    const okRun = P.paperTradeFromSource(fresh, posFresh, { feeBps: 10, slippageBps: 20, scale: 2 });
+    ok("6 fresh source ⇒ paper allowed (orders produced)", okRun.ok === true && okRun.orders.length >= 1);
+    // stale ⇒ BLOCKED, zero orders, executed:false — even though historical sim verdict is ACCEPT
+    const blocked = P.paperTradeFromSource(stale, posStale.positions, { feeBps: 10, slippageBps: 20, scale: 2 });
+    ok("6 STALE source ⇒ DECISIONS_BLOCKED, 0 orders (ACCEPT does NOT re-enable)", posStale.verdict === "ACCEPT" && blocked.ok === false && blocked.blocked === true && blocked.code === P.CODE.DECISIONS_BLOCKED && blocked.orders.length === 0 && blocked.executed === false);
+    // HTTP_ERROR / failed source ⇒ BLOCKED (no bypass)
+    ok("6 failed source (HTTP_ERROR) ⇒ DECISIONS_BLOCKED, 0 orders", P.paperTradeFromSource(httpErr, [1, 1, 1], {}).code === P.CODE.DECISIONS_BLOCKED && P.paperTradeFromSource(httpErr, [1], {}).orders.length === 0);
+    // null/malformed source ⇒ BLOCKED
+    ok("6 null source ⇒ DECISIONS_BLOCKED", P.paperTradeFromSource(null, [1], {}).code === P.CODE.DECISIONS_BLOCKED);
+    console.log(`\nFINANCE PAPER-TRADING — ${passed} assertions passed.`);
+  })().catch((e) => { console.error("ERR", e && e.stack); process.exit(1); });
+}

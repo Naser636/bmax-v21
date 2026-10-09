@@ -30,6 +30,7 @@
 | DEF-010 | theoretical TOCTOU between realpath validation and read | separate `realpathSync`→`statSync/readFileSync` syscalls | `pilot-delivery-packager.js` | OPEN (theoretical, not reproduced) | optional open-fd read hardening |
 | DEF-011 | multi-instance intake store concurrency unproven | file-store + mono-instance assumption | `client-intake.js` | OPEN (scoped out) | shared lock/DB if load-balanced (design decision) |
 | DEF-012 | deployment reachability of `/site/*` + `/api/intake` not verified | no deploy performed (forbidden) | hosting | NOT_CONFIGURED | VPS deploy + post-deploy curl probe (LAUNCH_READINESS §VPS) |
+| DEF-013 | `decisionsAllowed:false` (STALE/failed source) did NOT block new fictitious orders — unconsumed advisory flag; `paperTrade`/`runSimulation` ignored it ⇒ orders generated on stale data | `runtime/core/finance-paper.js` (no enforced gate) | `finance-paper.test.js` #6 (fresh-allowed / stale-blocked / http-error-blocked / null-blocked) | ENFORCED seam `paperTradeFromSource` (fail-closed DECISIONS_BLOCKED; ACCEPT historical calc does not re-enable) @ this mission | ACCEPTED (local) | enforcement is at the paper boundary; callers using bare `paperTrade` must still pass fresh data (documented) |
 
 ## Hard lessons (apply to every mission — generalized, not file-specific)
 - A function can exist yet be **unreachable** from the real execution path (verify the path, not just the symbol).
