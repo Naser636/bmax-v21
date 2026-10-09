@@ -86,6 +86,44 @@ function requiresHumanGrant(capability) {
     return !!(reg && reg.humanGrantRequired);
 }
 
+// GOVERNED SAFE-MODE DRY-RUN EXEMPTION — realises the documented intent of `safeProbe` (see the
+// CONSEQUENTIAL_CAPABILITIES note above: "the SAFE (non-destructive, dry-run/analysis) probe when the
+// capability has one … git/bash have none … so a safe-mode run there honestly cannot reach SUCCESS").
+// A consequential capability that DECLARES a genuine safe, zero-effect safeProbe (today only External
+// Research's zero-network dry-run) may run THAT safe path WITHOUT a separate human grant — but ONLY when
+// the run is provably plan-only. ALL of:
+//   (1) the capability has a non-null safeProbe (no safeProbe ⇒ never exempt — git/bash/source-edit),
+//   (2) the mission's DECLARED verify evidence for this capability IS exactly that safeProbe (the mission
+//       proves the SAFE path, not the LIVE `probe`),
+//   (3) NO live intent: executeRequested !== true AND no network fetcher of any form.
+// It AUTHORIZES ONLY the safe dry-run; the LIVE `probe`/execute path returns exempt:false and stays gated
+// by authorizeCapability (human grant mandatory). A declared safeProbe ALONE is insufficient — a
+// mismatched probe or ANY live intent fails closed. Pure: no clock, no randomness, no I/O.
+function safeModeDryRunExemption(capability, request) {
+    const reg = CONSEQUENTIAL_CAPABILITIES[capability];
+    if (!reg || !reg.safeProbe) {
+        return { exempt: false, code: "NO_SAFE_PROBE", detail: `${capability} declares no safeProbe — safe-mode never applies; human grant required` };
+    }
+    const req = isPlainObject(request) ? request : {};
+    if (req.verifyEvidence !== reg.safeProbe) {
+        return { exempt: false, code: "NOT_SAFE_PROBE", detail: `declared verify evidence (${req.verifyEvidence == null ? "none" : req.verifyEvidence}) is not the capability safeProbe (${reg.safeProbe}) — not a safe-mode proof` };
+    }
+    if (req.capabilitySpecPresent === true) {
+        // ANY privileged capability spec (authorized/execute/scope/sources/fetcher) may be supplied ONLY by
+        // a validated human grant — never by a bare objective. Safe-mode covers ONLY a parameter-less dry
+        // run; a present spec keeps the capability grant-gated (preserves the direct-objectiveId bypass
+        // defense: a hand-crafted spec claiming authorized:true can NEVER earn the exemption).
+        return { exempt: false, code: "PRIVILEGED_SPEC", detail: "a privileged capabilitySpec is present — only a validated human grant may supply capability parameters; safe-mode applies solely to a bare, parameter-less dry-run proof" };
+    }
+    if (req.executeRequested === true) {
+        return { exempt: false, code: "LIVE_EXECUTE", detail: "execute=true requested ⇒ LIVE path; human grant required" };
+    }
+    if (req.fetcherPresent === true) {
+        return { exempt: false, code: "LIVE_FETCHER", detail: "a network fetcher is present ⇒ LIVE path; human grant required" };
+    }
+    return { exempt: true, safeProbe: reg.safeProbe, detail: `safe dry-run of ${capability} authorized without a human grant (proves ${reg.safeProbe}; zero effect, no network)` };
+}
+
 // Capability → EXISTING executor spec adapter. `field` is the patch key the capability-executor already
 // reads (git_branch_integration / bash_command / research_acquisition); `fromScope` builds that spec
 // STRICTLY from the HUMAN grant's scope (the privileged parameters come from the human, NEVER the
@@ -385,6 +423,7 @@ module.exports = {
     authorizeCapability,
     isConsequentialCapability,
     requiresHumanGrant,
+    safeModeDryRunExemption,
     defaultScopeSatisfied,
     buildExecutorSpec,
     buildSourceEditBinding,

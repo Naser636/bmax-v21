@@ -58,6 +58,7 @@ interface RawMission {
   requires_engineering?: boolean;
   requiresEngineering?: boolean;
   objectives?: { id?: string; goal?: string; patch?: unknown }[];
+  verify?: { capability?: unknown; evidence?: unknown }[];
 }
 
 /**
@@ -113,6 +114,56 @@ export function nlMissionResolvesCapability(
     return false; // registry unavailable ⇒ fail closed to the unchanged local-pipeline route
   }
   return objs.some((o) => executors.resolve({ objectiveId: o.id, goal: o.goal }) != null);
+}
+
+/**
+ * Route signal for a VERIFY-ONLY capability-PROOF mission (namespace-agnostic). A mission that carries
+ * NO concrete edits has nothing for a provider to AUTHOR; when it additionally DECLARES a `verify` block
+ * binding a capability to an evidence probe, AND each such capability resolves — via one of the mission's
+ * own objectives — to an EXISTING local capability-executor of EXACTLY that capability, the mission is
+ * proven by RUNNING that capability on the LOCAL route (RuntimeExecutor → capability-executors, dry-run
+ * default ⇒ zero network/provider), not by provider authoring.
+ *
+ * This is strictly NARROWER than `missionRequiresProvider`: it fires only on the conjunction
+ * (no-edits ∧ declared-capability-proof ∧ locally-resolvable-to-the-declared-capability). An ordinary
+ * engineering mission — which needs the provider to author and declares no resolvable verify probe — is
+ * NOT selected and still falls through to the provider unchanged. A verify probe whose capability only
+ * text-matches a different executor fails closed (capability mismatch). No mission name is hardcoded; the
+ * NL_ route (`nlMissionResolvesCapability`) and normal provider routing are untouched. It reuses the
+ * EXISTING runLocalRoute + capability-executors registry — no second runtime/engine, no new format.
+ */
+export function missionIsLocalCapabilityProof(spec: RawMission | null): boolean {
+  if (!spec) return false;
+  // A mission that already carries concrete edits is the pre-authored-engineering route's job, not this.
+  if (missionIsPreAuthoredEngineering(spec)) return false;
+  const verify = Array.isArray(spec.verify) ? spec.verify : [];
+  const probes = verify.filter(
+    (v): v is { capability: string; evidence: string } =>
+      !!v && typeof v.capability === "string" && v.capability.length > 0 &&
+      typeof v.evidence === "string" && v.evidence.length > 0,
+  );
+  if (probes.length === 0) return false; // not a declared capability-proof mission ⇒ unchanged routing
+  const objs = Array.isArray(spec.objectives) ? spec.objectives : [];
+  if (objs.length === 0) return false;
+  let executors: {
+    resolve: (p: { objectiveId?: string; goal?: string }) => { capability?: string } | null;
+  };
+  try {
+    executors = require_("../../runtime/core/capability-executors.js") as {
+      resolve: (p: { objectiveId?: string; goal?: string }) => { capability?: string } | null;
+    };
+  } catch {
+    return false; // registry unavailable ⇒ fail closed to the unchanged provider route
+  }
+  // Every declared verify-probe capability must be backed by an objective that resolves to a LOCAL
+  // executor of EXACTLY that capability — sufficient proof the mission is capability-backed AND locally
+  // executable, not merely "verify-only". A different-capability (text) match fails closed.
+  return probes.every((p) =>
+    objs.some((o) => {
+      const r = executors.resolve({ objectiveId: o.id, goal: o.goal });
+      return !!r && r.capability === p.capability;
+    }),
+  );
 }
 
 function readMissionSpec(mission: string): RawMission | null {
@@ -347,6 +398,17 @@ function main(): number {
   if (spec && missionIsPreAuthoredEngineering(spec)) {
     console.log("Decision   : pre-authored engineering mission (edits present) → LOCAL PIPELINE (ODG deterministic apply)");
     return runLocalPipelineRoute(mission);
+  }
+
+  // Verify-only capability-proof mission: no edits to author, but its `verify` block binds a capability
+  // to an evidence probe AND that capability resolves to an EXISTING local capability-executor via an
+  // objective. Nothing for a provider to author — run it on the LOCAL route that actually dispatches
+  // capability-executors (dry-run default ⇒ zero network/provider). Checked BEFORE the provider gate and
+  // strictly narrower than it, so a mission with no resolvable capability-proof block still goes to the
+  // provider unchanged. Namespace-agnostic (no mission name hardcoded); the NL_ route below is untouched.
+  if (spec && missionIsLocalCapabilityProof(spec)) {
+    console.log("Decision   : verify-only capability-proof mission → LOCAL RUNTIME (capability execution + evidence)");
+    return runLocalRoute(mission);
   }
 
   if (spec && missionRequiresProvider(toRoutable(spec))) {

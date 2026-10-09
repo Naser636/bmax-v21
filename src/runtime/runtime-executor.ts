@@ -114,6 +114,10 @@ export class RuntimeExecutor {
         ctx: { now: number },
       ) => { decision: string; code?: string; detail?: string; evidence?: unknown };
       requestedScopeOf: (c: string, v: unknown) => unknown;
+      safeModeDryRunExemption: (
+        c: string,
+        req: { verifyEvidence?: string; capabilitySpecPresent?: boolean; executeRequested?: boolean; fetcherPresent?: boolean },
+      ) => { exempt: boolean; code?: string; detail?: string; safeProbe?: string };
     };
     const nowMs = runStartedAtMs ?? Date.now();
     for (const spec of mission.brain.objectiveSpecs) {
@@ -144,19 +148,56 @@ export class RuntimeExecutor {
           { now: nowMs },
         );
         if (decision.decision !== "ALLOW") {
-          this.memory.append(id, "CapabilityBlocked", {
+          // GOVERNED SAFE-MODE DRY-RUN fallback: a capability that DECLARES a safe, zero-effect safeProbe
+          // may run that path WITHOUT a human grant, but ONLY when the mission proves exactly that
+          // safeProbe AND the run is provably plan-only (no execute, no fetcher). The LIVE `probe`/execute
+          // path stays grant-gated (exemption returns exempt:false for it). Capabilities with no safeProbe
+          // (git/bash) are never exempt. The capability-authorization seam owns the decision; this reads
+          // the live-intent off the SAME resolvePatch the executor will consume (fail-closed defaults).
+          const ra =
+            resolvePatch.research_acquisition &&
+            typeof resolvePatch.research_acquisition === "object"
+              ? (resolvePatch.research_acquisition as Record<string, unknown>)
+              : null;
+          const executeRequested =
+            resolvePatch.execute === true || (!!ra && ra.execute === true);
+          const fetcherPresent =
+            typeof resolvePatch.__fetch === "function" ||
+            (!!ra && (typeof ra.fetch === "function" || (typeof ra.fetcher === "string" && !!ra.fetcher)));
+          const verifyEntry = Array.isArray(mission.contract.verify)
+            ? (mission.contract.verify as { capability?: string; evidence?: string }[]).find(
+                (v) => v && v.capability === executor.capability,
+              )
+            : undefined;
+          const safe = authz.safeModeDryRunExemption(executor.capability, {
+            verifyEvidence: verifyEntry?.evidence,
+            capabilitySpecPresent: !!spec.capabilitySpec,
+            executeRequested,
+            fetcherPresent,
+          });
+          if (!safe.exempt) {
+            this.memory.append(id, "CapabilityBlocked", {
+              objectiveId: spec.id,
+              capability: executor.capability,
+              code: decision.code,
+              detail: decision.detail,
+              safeMode: safe.code,
+            });
+            continue; // fail-closed: no valid human grant and no safe-mode exemption ⇒ never run
+          }
+          this.memory.append(id, "CapabilitySafeModeAuthorized", {
             objectiveId: spec.id,
             capability: executor.capability,
-            code: decision.code,
-            detail: decision.detail,
+            safeProbe: safe.safeProbe,
+            detail: safe.detail,
           });
-          continue; // fail-closed: never run a consequential capability without a valid human grant
+        } else {
+          this.memory.append(id, "CapabilityAuthorized", {
+            objectiveId: spec.id,
+            capability: executor.capability,
+            authorization: decision.evidence,
+          });
         }
-        this.memory.append(id, "CapabilityAuthorized", {
-          objectiveId: spec.id,
-          capability: executor.capability,
-          authorization: decision.evidence,
-        });
       }
 
       const result = executor.run();
