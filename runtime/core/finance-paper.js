@@ -11,6 +11,7 @@
  */
 
 const eu = require("./economic-unit");
+const sim = require("./finance-sim");
 
 const CODE = Object.freeze({ INVALID_INPUT: "INVALID_INPUT", LENGTH_MISMATCH: "LENGTH_MISMATCH", DECISIONS_BLOCKED: "DECISIONS_BLOCKED" });
 
@@ -78,6 +79,35 @@ function paperTradeFromSource(source, positions, opts = {}) {
   return paperTrade(bars, positions, opts);
 }
 
-module.exports = { CODE, paperTrade, paperTradeFromSource };
+/*
+ * runGovernedPaper(source, params, opts) — THE single governed paper-trading entry point. Consolidates the
+ * whole parcours: freshness/integrity GATE (source.ok + decisionsAllowed) → finance-sim.runSimulation on the
+ * SOURCE series → internal paper trade → provenance-preserving result. Fail-closed DECISIONS_BLOCKED before
+ * any simulation/order when the source is absent/failed/stale (a historical ACCEPT can never lift the gate).
+ * Pure: returns ONE frozen result or a BLOCKED result — there is no mutable portfolio to leave partially
+ * modified. No broker, no real order, executed:false.
+ */
+function runGovernedPaper(source, params, opts = {}) {
+  if (!source || source.ok !== true) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: "source not ok", orders: Object.freeze([]), executed: false });
+  if (source.decisionsAllowed !== true) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: source.code || "not fresh", orders: Object.freeze([]), executed: false });
+  if (!Array.isArray(source.series)) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: "no series", orders: Object.freeze([]), executed: false });
+  const simRes = sim.runSimulation(source.series, params);
+  if (!simRes.ok) return Object.freeze({ ok: false, blocked: true, code: CODE.DECISIONS_BLOCKED, reason: "sim " + (simRes.code || "rejected"), orders: Object.freeze([]), executed: false });
+  const bars = source.series.map((b) => ({ minor: b.price.minor, scale: b.price.scale }));
+  const paper = paperTrade(bars, simRes.positions, opts);
+  if (!paper.ok) return Object.freeze({ ok: false, blocked: true, code: paper.code, orders: Object.freeze([]), executed: false });
+  return Object.freeze({
+    ok: true, mode: "GOVERNED_PAPER", executed: false,
+    provenance: source.provenance, inputHash: simRes.inputHash, params: simRes.params,
+    positions: simRes.positions, orders: paper.orders,
+    grossPnl: paper.grossPnl, costs: paper.costs, netPnl: paper.netPnl, netFormatted: paper.netFormatted,
+    assumptions: paper.assumptions,
+  });
+}
+
+// EXPORTS: only GATED entries are public (runGovernedPaper = the single governed parcours; paperTradeFromSource
+// = gated adapter). The low-level cost kernel is exposed ONLY under an explicit internal name for unit tests —
+// it is NOT a production entry point and bypasses no gate when reached via the governed paths above.
+module.exports = { CODE, runGovernedPaper, paperTradeFromSource, __internalPaperTrade: paperTrade };
 
 if (require.main === module) { process.stdout.write("finance-paper: virtual/fictitious portfolio only (no execution)\n"); }

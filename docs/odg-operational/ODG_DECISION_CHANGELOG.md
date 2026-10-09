@@ -155,6 +155,20 @@
 - Evidence: finance-paper 13/13 (incl. #6 fresh-allowed/stale-blocked/http-error-blocked/null-blocked);
   regressions connector 10/10, finance-sim 15/15, walk-forward 10/10, economic-unit PASS; `odg verify` RC=0.
 
+### CHG-FINANCE-P2.2 — Single governed paper-trading entry point [TECH-CHANGE] — ACCEPTED (2026-10-09)
+- Census: NO production consumer of `paperTrade`/`paperTradeFromSource` existed (tests only); bare `paperTrade`
+  was exported and could bypass the freshness gate. (`src/core/simulation-runner.ts runSimulation` is an
+  UNRELATED opportunity-sim — name collision, not the finance path.)
+- Consolidation (write-set: `finance-paper.js` + `finance-paper.test.js`): added `runGovernedPaper(source,
+  params, opts)` = the SINGLE governed parcours (gate `source.ok` + `decisionsAllowed` → `finance-sim.runSimulation`
+  → internal paper → provenance+inputHash preserved; executed:false). **Un-exported bare `paperTrade`** — public
+  exports are now only the gated entries (`runGovernedPaper`, `paperTradeFromSource`) + explicit
+  `__internalPaperTrade` for unit tests. A historical ACCEPT cannot lift the gate; blocked results carry no
+  partial portfolio (pure, no mutable state ⇒ atomic). No new primitive/engine; reuses finance-sim + economic-unit.
+- Evidence: finance-paper 20/20 (incl. #7 governed entry fresh/stale/http-error/null/invalid-params, #8
+  no-bypass `paperTrade===undefined`, #9 atomicity); regressions finance-sim 15, walk-forward 10, connector 10,
+  economic-unit PASS; `odg verify` RC=0. No network/broker/order; fictitious only.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
