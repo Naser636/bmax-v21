@@ -181,6 +181,26 @@
   STALE/HTTP_ERROR/null/invalid-params ⇒ BLOCKED, atomicity, provenance/determinism); regressions finance-sim
   15, walk-forward 10, connector 10, economic-unit PASS; `odg verify` RC=0. Finance remains **PARTIAL, NON production**.
 
+### DEC-006 — Finance FROZEN @ P2.3 [CTO-DECISION] — ACCEPTED (2026-10-09)
+- Decision: **freeze Finance at stage P2.3.** Status remains **PARTIAL / NON PRODUCTION.** No further Finance
+  development, no additional market data, no broker, no authenticated/real-time market access, no advanced
+  backtest, no risk-control, and **no real execution** without a SEPARATE CTO authorization.
+- Scope frozen (all SIMULATION-ONLY, executed:false, no network at rest): P0 `finance-sim.js`; P1 walk-forward
+  (test-only); P2 `finance-data-connector.js` (read-only public data, one-shot live demo only) + `finance-paper.js`
+  (governed paper); P2.1 enforced stale-lock (DEF-013); P2.2/P2.3 single governed entry `runGovernedPaper`,
+  gated-only exports (`paperTrade`/`__internalPaperTrade` not exported). No profitability/risk claim.
+- Effect on next mission: **no implementation mission is authorized by default** — roadmap §H now states the
+  next step requires a fresh CTO decision (APEX A/B1/C/D done/closed). Reopen only by explicit CTO authorization.
+
+### FINDING-DIAG-RC1 — `odg diagnose` RC=1 is honest, not a success [FINDING] — recorded (2026-10-09)
+- `./runtime/bin/odg diagnose` ⇒ **RC=1**, incident INC-99d1c870bc1a3607 FROZEN, divergence
+  `mission-context-stale` CRITICAL. Confirmed SAME historical RESIDUE as DEF-005: `mission-plan.json`
+  (NL_IMPLEMENT_E4DDB6BA) vs `patch-execution.json` (ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR), no
+  `current-mission.json` — two unrelated past runs' stale generated artifacts. CRITICAL-on-different-stamps is
+  **intentional and locked** (self-diagnostic.test.js #12). **NOT a source defect; RC=1 is the correct honest
+  signal, not a failure to mask.** Any cleanup = a SEPARATE authorized artifact-hygiene mission (gitignored
+  generated state), never a change to the locked control. No action taken (read-only reconciliation).
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.

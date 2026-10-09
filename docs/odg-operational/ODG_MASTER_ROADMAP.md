@@ -178,9 +178,17 @@ APEX **Phase C** = DONE (design → `ODG_SHARED_CONTRACTS_MAP.md`): reuse of exi
 new primitive; missing interfaces are domain-specific/deferred. APEX **Phase D** = CLOSED (audit, no defect):
 multi-agent role boundaries respected (worker zero write authority, apply only via `patch-proposal-apply` under
 ODG authority; no consensus by design, DEC-005); no multi-agent implementation justified.
-**Finance-SIMULATION P0** = DONE (`runtime/core/finance-sim.js`, SIMULATION-ONLY, 15/15): local-fixture
-ingestion + provenance + no-look-ahead + deterministic baseline + integer P&L (economic-unit), executed:false.
-**Next still-open (per §H):** CTO decision — extend Finance-sim ONLY if authorized (e.g., a no-look-ahead
-walk-forward harness over larger fixtures, still execution-DISABLED), or consolidate. Market-data ingestion,
-real backtesting, risk-control and any execution remain MISSING/deferred behind SEPARATE authorization and the
-human/provider/deploy/legal gates (§E/§I). No profitability claim; no real execution.
+**Finance-SIMULATION** = DONE through P2.3 and **FROZEN @ P2.3 (CTO decision, DEC-006)** — PARTIAL / NON
+PRODUCTION. Shipped: P0 sim (`finance-sim.js` 15/15), P1 walk-forward (test-only 10/10), P2 read-only public
+data connector + governed paper (`finance-data-connector.js`/`finance-paper.js`), P2.1 enforced stale-lock
+(DEF-013), P2.2/P2.3 single governed entry `runGovernedPaper` with gated-only exports. **No further Finance
+work** (no advanced backtest, risk-control, authenticated/real-time market access, or execution) without a
+SEPARATE CTO authorization.
+**Next still-open (per §H):** **NO implementation mission is authorized by default.** APEX A/B1/C/D are done/
+closed and Finance is frozen; the next mission requires a **fresh CTO decision** (choose a new governed
+priority, or authorize artifact-hygiene for the mission-context-stale residue — see below). `mission-context-
+stale` remains **CRITICAL/FROZEN** via `odg diagnose` (RC=1) but is a **historical RESIDUE (DEF-005), NOT a
+source defect**: stale generated artifacts from two past runs; the CRITICAL-on-different-stamps behaviour is
+intentional and locked (self-diagnostic.test #12) — do NOT "fix" it (that removes a control); any cleanup is a
+separate authorized artifact-hygiene mission, not a code change. All capability ACTIVATION and real-world
+actions stay behind the human/provider/deploy/legal gates (§E/§I).
