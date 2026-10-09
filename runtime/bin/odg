@@ -82,6 +82,12 @@ case "$MISSION" in
   verify)
     ./runtime/bin/odg-verify.js
     ;;
+  client)
+    # First-client operational entry point. Delegates to runtime/bin/odg-client.js → client-intake.js
+    # (local, email-independent). Submit/retrieve/track a client request and gate delivery. No network.
+    shift
+    exec node runtime/bin/odg-client.js "$@"
+    ;;
   status)
     ./runtime/bin/odg-state.js >/dev/null
     ./runtime/bin/odg-status.js
