@@ -225,6 +225,35 @@ export class RuntimeAutonomy {
             ? "Pipeline reported failure without diagnostics."
             : "runPipeline returned no outcome.",
         };
+        // DEF-014: a pipeline that RAN and returned a GOVERNED validation refusal (the adapter marks it
+        // reason==="VALIDATION_BLOCKED") is NOT a crash. Treat it with D2/S4 parity to a Release-Manager
+        // NO_RELEASE — ESCALATE + DEFER so the loop CONTINUES to the next realizable mission — instead of
+        // hard-halting the whole plan on one fail-closed mission. (The adapter separately guarantees such
+        // a mission is never auto-escalated to a live provider to "bypass" the block.) A genuine crash
+        // keeps `EXECUTION_FAILED` below, so the two outcomes stay distinct.
+        if (failure.reason === "VALIDATION_BLOCKED") {
+          const blockedRecord: ReleaseRecord = {
+            releaseContractVersion: RELEASE_CONTRACT_VERSION,
+            requestId: mission,
+            decision: "NO_RELEASE",
+            // A genuine blocker (NOT a proven deliverable awaiting commit): missionPipeline=false ⇒
+            // concludeRun classifies the terminal as BLOCKED, never VALIDATED_PENDING_COMMIT.
+            gates: {
+              build: false,
+              typescript: false,
+              gitClean: false,
+              missionPipeline: false,
+              documentationProofPresent: false,
+            },
+            included: [],
+            proofHash: "",
+            source: { commit: "", branch: "" },
+            rollbackRef: null,
+          };
+          escalations.push({ mission, record: blockedRecord });
+          deferred.add(mission);
+          continue;
+        }
         return this.result(
           "EXECUTION_FAILED",
           completed,

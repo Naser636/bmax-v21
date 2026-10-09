@@ -258,8 +258,58 @@
   SLO thresholds remain NOT PROVEN (require a deployed host, RWL-C1/E1). Next per §H: Phase C/D/E/F are
   human/resource-gated ⇒ highest-leverage unlock = CTO provision of host + real client.
 
+### CHG-TRUST-A — Autonomy chain audit + DEF-014 + A–L consolidation [FINDING / DOC] — RECORDED (2026-10-09)
+- Truth Lock re-verified (NOT assumed): HEAD=`f88f2a1`=origin/main, worktree clean. `src/app/autonomy-loop/
+  MARKER.md` residue reverted to HEAD earlier this session under explicit human authz (gitClean restored).
+- **DEF-014 DEMONSTRATED & REPRODUCED** (see register): a governed Validation **BLOCKED** (`pipelineOk=false`)
+  makes the autonomy loop **hard-halt EXECUTION_FAILED** and strand independent downstream missions — unlike a
+  Release-Manager NO_RELEASE which correctly defers (D2/S4). Root cause proven in code; reproduced in scratchpad
+  `repro-blocked-halt.ts` (repo untouched). Also: a fail-closed BLOCKED is escalated to `runViaProvider` (live
+  provider spawn) before halting — an unauthorized-network/live-call hazard. **This corrects an earlier
+  session claim that FIX_AUTONOMY_CONTINUE was fully implemented — it is only PARTIAL (NO_RELEASE path only).**
+- Tests actually run this session (local, no network, all green): autonomy/validation suites (runtime-autonomy,
+  autonomy-escalation-pending-commit, autonomy-local-loop, validation-engine-recorded-noop, persistent-autonomy-
+  controller, corrective-queue-intake, probe-freshness, engineering-terminal-verdict, objective-proof-gate,
+  consequential-executor-gate, nl-authorization) + chain-link (scope-observer, action-gate, patch-executor-
+  governance-guard, mission-lifecycle ×3, mechanical-acceptance, checkpoint-engine, capability-executors) + repro.
+- Rejected synthetic contract `SYNTH_PROVIDER_CHAIN_PROOF.json` — 3 anomalies (false `generatedBy:factory`
+  provenance dodging the gitClean exclusion; self-stamped `status:AUTHORIZED`; done_when unsatisfiable for a
+  gitignored target in ENGINEERING mode since engineering-changed is git-tracked-only). **Not created.**
+- Scope: documentary only (this entry + `ODG_DEFECT_REGISTER.md` DEF-014 + `ODG_REAL_WORLD_LAUNCH_ROADMAP.md`
+  PHASE H A–L). No code/test/fiche/manifest change. 9 primitives intact. External research stays **DEFERRED**.
+
+### PHASE-3 STOPPING POINT (preserve verbatim)
+- **Checkpoint:** `f88f2a1` (re-verified current, clean) — do not assume it stays current on resume.
+- **Reproduced defect:** Validation BLOCKED can lead to EXECUTION_FAILED and abandon independent missions (DEF-014).
+- **Files concerned:** `src/runtime/autonomy-runtime-adapter.ts`, `src/core/runtime-autonomy.ts`.
+- **Correction NOT applied:** existing contract does not correctly cover these `src/**` paths (mis-scoped `runtime/**`).
+- **Next governed action:** prepare a correctly-scoped engineering contract (+ regression test for `pipelineOk=false`)
+  to fix BLOCKED handling WITHOUT auto-escalation to an unauthorized external provider. Do NOT edit those files
+  until governance establishes the authorization and write-set. Do NOT create the rejected synthetic contract
+  until its structure/provenance/acceptance anomalies are resolved.
+
+### CHG-OD-3 — DEF-014 remediation (defer-on-BLOCKED, no provider escalation) [TECH-CHANGE] — VERIFIED, PENDING-COMMIT (2026-10-09)
+- OD-3 executed under CTO authorization. Write-set (exact, nothing else touched): `src/runtime/autonomy-runtime-
+  adapter.ts` (+60/−3 — `runLocalPipeline` classifies a governed Validation BLOCKED vs a crash: FAILED stage ==
+  "Validation Engine" via `pipeline-checkpoint.json` AND fresh `mission-report.json` `validated:false`+status
+  BLOCKED/PARTIAL for this mission ⇒ `reason:"VALIDATION_BLOCKED"`, fail-safe→crash otherwise; `runPipeline`
+  returns such an outcome WITHOUT calling `runViaProvider`), `src/core/runtime-autonomy.ts` (+29 — defer-and-
+  continue on `reason==="VALIDATION_BLOCKED"` with D2/S4 parity; synthesized NO_RELEASE record, all-false gates ⇒
+  honest terminal BLOCKED, never VALIDATED_PENDING_COMMIT; genuine crash still `EXECUTION_FAILED`), new test
+  `src/tests/autonomy-blocked-defer.test.ts`.
+- Evidence (this session, exit 0 unless noted): regression **8/8** (BLOCKED→defer+GOOD released+terminal BLOCKED;
+  NO_RELEASE parity; crash→EXECUTION_FAILED distinct; D1 no provider on governed block; D3 crash still escalates);
+  scratchpad `repro-blocked-halt.ts` **FLIPPED** (Scenario A now `status=BLOCKED, completed=["GOOD_MISSION"]`, was
+  EXECUTION_FAILED/stranded); 8 neighbour autonomy suites green; `npx tsc --noEmit` **RC=0**.
+- Status: **VERIFIED — pending-commit** (ODG never auto-commits, D1). NOT committed/pushed; no network/deploy.
+  `npm run build`/`odg verify` (Next build, does not exercise this path) NOT re-run — proof = tsc + tests + repro.
+  External research stays **DEFERRED**. Detail: `ODG_DEFECT_REGISTER.md` DEF-014 (now VERIFIED — pending-commit).
+
 ## Open decisions (pending CTO)
-- (none — OD-1 and OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
+- **OD-3 (RESOLVED — pending-commit)** — remediation of **DEF-014** applied + VERIFIED (CHG-OD-3 above); the only
+  residual is the **human commit gate** for the 3-file OD-3 write-set. Autonomy's BLOCKED-defer path is now PROVEN
+  locally; it stays PARTIAL-until-committed (uncommitted fix does not land at a tracked HEAD).
+- (OD-1/OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
 
 ## Non-verifiable / limits
 - Decisions from conversations PRIOR to the commit history visible in this repo are **not fully recoverable**;

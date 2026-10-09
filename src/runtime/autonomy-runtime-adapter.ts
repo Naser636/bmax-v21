@@ -511,6 +511,12 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     //     outcome feeds the SAME gatherEvidence() → Release Manager path, then the next mission runs
     //     locally again). A missing/unavailable provider can never block a mission recoverable locally.
     if (recovery.exhausted && missionRequiresProvider(this.toRoutable(spec))) {
+      // DEF-014 — a GOVERNED validation refusal (fail-closed BLOCKED, e.g. an unmet capability/
+      // authorization proof) must NEVER be auto-escalated to a live provider to "bypass" the block.
+      // Return it so the Autonomy loop DEFERS it (D2/S4) and continues to the next realizable mission.
+      if (recovery.outcome.diagnostics?.reason === "VALIDATION_BLOCKED") {
+        return recovery.outcome;
+      }
       // V38 — thread this run's in-memory local-failure diagnostics to the provider as advisory context.
       return this.runViaProvider(mission, spec, recovery.outcome.diagnostics);
     }
@@ -594,16 +600,30 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // Never surface a bare boolean: report the launcher, its exit code and the failing signal.
       // stdout/stderr were streamed live to the console (stdio:"inherit"), so they are not captured
       // here — we honestly omit them rather than invent empty strings.
+      //
+      // DEF-014 — distinguish a GOVERNED validation refusal from a genuine crash. A non-zero exit whose
+      // FAILED stage is the Validation Engine AND whose fresh mission-report.json records a governed
+      // BLOCKED/PARTIAL verdict for THIS mission is NOT a crash: mark it reason "VALIDATION_BLOCKED" so
+      // runPipeline defers it (never spawning a provider) and the Autonomy loop continues (D2/S4).
+      const governedBlock =
+        !r.error && !r.signal && this.isGovernedValidationBlock(mission);
       return {
         pipelineOk: false,
         diagnostics: {
-          stage: "local-pipeline",
-          reason: r.signal ? "KILLED_BY_SIGNAL" : "NON_ZERO_EXIT",
+          stage: governedBlock ? "Validation Engine" : "local-pipeline",
+          reason: governedBlock
+            ? "VALIDATION_BLOCKED"
+            : r.signal
+              ? "KILLED_BY_SIGNAL"
+              : "NON_ZERO_EXIT",
           message: r.error
             ? `Failed to launch ${PIPELINE}: ${r.error.message}`
-            : `${PIPELINE} exited with code ${r.status ?? "null"}${r.signal ? ` (signal ${r.signal})` : ""}. See the streamed pipeline output above.`,
+            : governedBlock
+              ? `Validation Engine returned a governed BLOCKED verdict for "${mission}" (not a crash); deferring per D2/S4 without a provider.`
+              : `${PIPELINE} exited with code ${r.status ?? "null"}${r.signal ? ` (signal ${r.signal})` : ""}. See the streamed pipeline output above.`,
           provider: PIPELINE,
           exitCode: r.status,
+          ...(governedBlock ? { blocker: this.readMissionReportUnmet(mission) } : {}),
           ...(r.error ? { exception: r.error.message } : {}),
         },
       };
@@ -615,6 +635,40 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // whatever odg-verify last wrote (or nothing, on a fresh clone).
     this.refreshVerifyEvidence(mission);
     return { pipelineOk: true };
+  }
+
+  /**
+   * DEF-014 — true iff the last local pipeline failure is a GOVERNED validation refusal, NOT a crash:
+   * the pipeline checkpoint shows the FAILED stage was the Validation Engine AND the fresh
+   * mission-report.json records `validated:false` with status BLOCKED/PARTIAL for THIS mission. Reads
+   * only regenerated runtime/generated artifacts; mutates nothing. Fail-safe to `false` (⇒ treated as a
+   * crash, preserving the existing hard-halt) whenever either artifact is absent or mismatched, so a
+   * genuine crash or a stale report for another mission can never be misread as a governed block.
+   */
+  private isGovernedValidationBlock(mission: string): boolean {
+    const cp = this.readJson<{ stages?: Array<{ name?: string; status?: string }> }>(
+      `${GENERATED}/pipeline-checkpoint.json`,
+    );
+    const failedStage = Array.isArray(cp?.stages)
+      ? cp!.stages.find((s) => s?.status === "FAILED")?.name
+      : undefined;
+    if (failedStage !== "Validation Engine") return false;
+    const report = this.readJson<{ mission?: string; validated?: boolean; status?: string }>(
+      `${GENERATED}/mission-report.json`,
+    );
+    return (
+      !!report &&
+      report.mission === mission &&
+      report.validated === false &&
+      (report.status === "BLOCKED" || report.status === "PARTIAL")
+    );
+  }
+
+  /** The Validation Engine's unmet-evidence summary for the diagnostics `blocker` field (never throws). */
+  private readMissionReportUnmet(mission: string): string {
+    const report = this.readJson<{ unmet?: string[] }>(`${GENERATED}/mission-report.json`);
+    const unmet = Array.isArray(report?.unmet) ? report!.unmet : [];
+    return unmet.length > 0 ? unmet.join("; ") : `Validation returned BLOCKED for ${mission}.`;
   }
 
   // --- provider execute path (Provider Contract §1/§2) --------------------

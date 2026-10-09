@@ -73,6 +73,24 @@ supplies credentials. Config detail → `LAUNCH_READINESS.md`.
 |---|---|---|---|
 | RWL-G1 | Final launch gate: no unresolved critical defect in scope; critical paths e2e-verified; prod config validated; security/restore verified; integrations-actually-used tested with evidence; legal reviewed by owners; observability/alerts/rollback ready; costs/deps documented; residual limits explicitly accepted; **explicit human open authorization** | **NOT PROVEN** (depends on B–F) | **human authorization** — absence of evidence = NOT PROVEN, never READY |
 
+## PHASE H — Verified Autonomy & Trust Program (tracks A–L)
+> Trust/autonomy track, consolidated here (not a 2nd roadmap). **References** existing docs/tests; does NOT
+> duplicate §G-APEX of `ODG_MASTER_ROADMAP.md` nor the commercial phases above. Status ∈ legend. No new primitive.
+| Track | Objective | Status (honest) | Evidence / reference | Next gate |
+|---|---|---|---|---|
+| A | Repo truth & inventory | **PROVEN** | Truth Lock this session (HEAD=`f88f2a1` clean); `ODG_PHASE_A_INVENTORY.md`; master §D state index | — |
+| B | Demonstrated defects, source repairs | **PARTIAL** | `ODG_DEFECT_REGISTER.md` DEF-001..013 guarded; **DEF-014 VERIFIED — pending-commit** (OD-3 fix applied + tested LOCAL, uncommitted; see CHG-OD-3) | commit OD-3 write-set to land DEF-014 at a tracked HEAD |
+| C | File/write/delete safety | **PARTIAL** | PROVEN: `scope-observer`, `action-gate`, `patch-executor-governance-guard`, RWL-B4 backup/restore 12/12; retention/deletion **NOT PROVEN** (RWL-D2) | human retention policy |
+| D | Real provider execution chain | **PARTIAL** | links wired+tested (patch-engine `objective.patch`→patch-executor→validation→lifecycle→ledger); eng. RELEASE needs human commit; **DEF-014** blocks autonomous continue | DEF-014 + commit gate |
+| E | Runtime wake-up & wiring | **PARTIAL** | PROVEN local: `odg-state`/`odg health` READY (169 caps); live **provider spawn hazard** (`runViaProvider`); VPS wake **BLOCKED BY RESOURCE** (RWL-C1) | host (RWL-C1) |
+| F | Autonomy / resume / blocked-mission handling | **PARTIAL** | PROVEN: NO_RELEASE defer (D2/S4), checkpoint/resume, persistent-controller; **BLOCKED-halt = DEF-014 VERIFIED — pending-commit** (defer-on-BLOCKED fixed + tested LOCAL, uncommitted); live end-to-end loop NOT PROVEN | commit DEF-014; then prove live loop |
+| G | Evidence-based learning | **PROVEN** | APEX-B1; `capability-learning`/`patch-memory`/post-release suites; learning never self-grants (master §G.B) | — |
+| H | Observability & audit | **PARTIAL** | `ODG_INCIDENT_RUNBOOK.md` (RWL-B5) PROVEN local; numeric SLO **NOT PROVEN** (needs host); cockpit NOT PROVEN | host; track I |
+| I | ODG terminal cockpit | **NOT PROVEN** | audit pending (reuse existing logs/events; Ink optional; text-mode first; crypto event-chain only if justified) | design audit |
+| J | Global verification & regressions | **PARTIAL** | targeted suites PROVEN this session; **full `npm test` + `odg verify` RC not re-run this turn** | run full gate |
+| K | Preproduction | **BLOCKED BY RESOURCE** | RWL-E1 / DEF-012 (no deploy performed) | host + probe |
+| L | Real pilot & public open | **BLOCKED BY RESOURCE/POLICY** | RWL-F1 / RWL-G1 | human: client + open authz |
+
 ---
 
 ## Dependency order & P0 rationale
