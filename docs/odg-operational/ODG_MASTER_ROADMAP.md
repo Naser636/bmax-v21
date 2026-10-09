@@ -32,14 +32,20 @@
 - Autonomous protocol: `ODG_AUTONOMOUS_WORK_PROTOCOL.json` (repo root), `CLAUDE.md`, `AGENTS.md`
 - **Verification history (living log):** `docs/audit/phase-0/current/PHASE_0_CARNET.md`
 - **Defect register:** `docs/odg-operational/ODG_DEFECT_REGISTER.md` (companion to this file)
+- **Decision & change journal:** `docs/odg-operational/ODG_DECISION_CHANGELOG.md` (CTO decisions DEC-*, changes CHG-*, open decisions OD-*)
 - Commercial run sheets: `FIRST_SUPERVISED_COMMERCIAL_PILOT_RUNSHEET.md`, `LAUNCH_READINESS.md`, `EMAIL_INTAKE_SETUP.md`
 
-## B. Resumption Truth Lock (do this first, every session)
-1. Read `AGENTS.md`, `CLAUDE.md`, `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, this roadmap and the defect register.
+## B. Resumption Truth Lock — MANDATORY startup sequence (do this first, every session)
+`TRUTH LOCK → READ CANONICAL METHOD (FICHE_07) → READ ROADMAP → READ OPEN DECISIONS → CHECK GIT →
+CHECK DEFECT REGISTER → SELECT NEXT AUTHORIZED MISSION.` Concretely:
+1. Read `AGENTS.md`, `CLAUDE.md`, `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, FICHE_07 (method), this roadmap,
+   `ODG_DECISION_CHANGELOG.md` (open decisions OD-*, accepted DEC-*) and `ODG_DEFECT_REGISTER.md`.
 2. `git rev-parse HEAD`, branch, `git status --short`, unpushed commits. Compare to the last checkpoint here.
 3. Read the tail of `PHASE_0_CARNET.md` (last accepted work) and the defect register (open defects).
 4. Distinguish **repo-verifiable evidence** from historical reports — never treat a prior Claude Code report
    as proof without confirming the artifact/test exists at the current HEAD.
+5. Before editing: check applicable decisions (changelog) + historical defects. At closure: record result,
+   evidence, checkpoint and effect on the next mission (reuse carnet/ledger + the changelog for the WHY).
 
 ## C. Permanent engineering method (single chain — do NOT create a second)
 **CANONICAL method = FICHE_07, line 6 (authoritative, verbatim — do not substitute a generic reformulation):**
