@@ -103,6 +103,18 @@
   classification (non-defect / intentional). **No additional multi-agent implementation is justified.**
 - Effect: APEX Phase D closed (audit). Next = CTO decision (Finance-SIMULATION bounded mission, separate authz).
 
+### CHG-FINANCE-SIM-P0 — Bounded Finance-SIMULATION P0 [TECH-CHANGE] — ACCEPTED (2026-10-09)
+- CTO-authorized bounded implementation. New `runtime/core/finance-sim.js` + `.test.js` (15/15 this session).
+  SIMULATION-ONLY: local deterministic fixtures only; **no network, no broker/order/portfolio, no execution**
+  (`executed:false`, no execute/order/broker export). Reuses `economic-unit` (ASSET integer money) + VERDICT
+  vocabulary from `mechanical-acceptance` (NOT evaluateAcceptance — mission-shaped). Invariants proven:
+  invalid/unsourced/temporally-inconsistent data REJECTED/BLOCKED (fail-closed); **no look-ahead** (truncation
+  invariance + explicit LOOK_AHEAD throw); determinism (same input+params ⇒ identical result); traceability
+  (inputHash+params). **No profitability/validity claim.** Evidence: finance-sim 15/15, economic-unit +
+  mechanical-acceptance regressions green; `odg verify` RC=0. Checkpoint recorded at this mission's commit.
+- Effect: Phase A inventory E = MISSING → PARTIAL (sim P0). Deferred (separate authz): market-data ingestion,
+  backtest/walk-forward, risk-control, any real execution.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.

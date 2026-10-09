@@ -178,6 +178,9 @@ APEX **Phase C** = DONE (design → `ODG_SHARED_CONTRACTS_MAP.md`): reuse of exi
 new primitive; missing interfaces are domain-specific/deferred. APEX **Phase D** = CLOSED (audit, no defect):
 multi-agent role boundaries respected (worker zero write authority, apply only via `patch-proposal-apply` under
 ODG authority; no consensus by design, DEC-005); no multi-agent implementation justified.
-**Next still-open (per §H):** CTO decision — a bounded **Finance-SIMULATION** mission (data ingestion + simple
-baseline, execution DISABLED) under SEPARATE authorization, reusing existing economic/evidence contracts. Any
-capability ACTIVATION and all real-world actions remain behind the human/provider/deploy/legal gates (§E/§I).
+**Finance-SIMULATION P0** = DONE (`runtime/core/finance-sim.js`, SIMULATION-ONLY, 15/15): local-fixture
+ingestion + provenance + no-look-ahead + deterministic baseline + integer P&L (economic-unit), executed:false.
+**Next still-open (per §H):** CTO decision — extend Finance-sim ONLY if authorized (e.g., a no-look-ahead
+walk-forward harness over larger fixtures, still execution-DISABLED), or consolidate. Market-data ingestion,
+real backtesting, risk-control and any execution remain MISSING/deferred behind SEPARATE authorization and the
+human/provider/deploy/legal gates (§E/§I). No profitability claim; no real execution.
