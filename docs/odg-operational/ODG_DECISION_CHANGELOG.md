@@ -244,6 +244,20 @@
   deployment-readiness 9; `odg verify` RC=0. Status: RWL-B4 **PROVEN (local)** — restore proven by executed
   round-trip test, not by build alone. Next per roadmap §H: RWL-B5 (incident runbook).
 
+### CHG-RWL-B5 — Incident/observability runbook [TECH-CHANGE / FINDING] — ACCEPTED (2026-10-09)
+- RWL-B5 executed (doc-only). PROVEN signals this session (command → exit code): `odg verify` RC=0
+  (build/tsc/gitClean + contracts 88/88), `odg diagnose` RC=0 (NO_DIVERGENCE), `odg health` RC=0
+  (Runtime/Foundation/Pipeline/Brain READY; 169 caps ready/12 missing; BLOCKERS = roadmap NEEDS_CONTRACT,
+  informational), `odg client launch` overall + per-capability states. Recovery seams present:
+  `build-recovery-engine.js`, `client-store-backup.js` (RWL-B4).
+- Created `ODG_INCIDENT_RUNBOOK.md`: signals→meaning→exit semantics, SEV-1/2/3 + escalation, diagnose→contain→
+  recover→verify, rollback/resume criteria, evidence-to-keep + no-secret, known residue (DEF-005 not an
+  incident), host-dependent numeric thresholds marked **À DÉFINIR** (owner/dependency, not invented), human-
+  authorization actions. No new primitive/metric/infra. Write-set: runbook doc + roadmap status + this entry.
+- Status: RWL-B5 **PROVEN (local, documentary)** — procedures verified against real command behaviour; numeric
+  SLO thresholds remain NOT PROVEN (require a deployed host, RWL-C1/E1). Next per §H: Phase C/D/E/F are
+  human/resource-gated ⇒ highest-leverage unlock = CTO provision of host + real client.
+
 ## Open decisions (pending CTO)
 - (none — OD-1 and OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
 
