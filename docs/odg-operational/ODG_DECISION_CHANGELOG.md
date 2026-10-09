@@ -115,6 +115,17 @@
 - Effect: Phase A inventory E = MISSING → PARTIAL (sim P0). Deferred (separate authz): market-data ingestion,
   backtest/walk-forward, risk-control, any real execution.
 
+### CHG-FINANCE-SIM-P1 — Walk-forward validation (test-only) [FINDING] — ACCEPTED (2026-10-09)
+- CTO-authorized P1. **No defect reproduced** ⇒ **no application-code change**; added TEST-ONLY harness
+  `runtime/core/finance-sim-walkforward.test.js` (10/10) reusing the existing finance-sim API (ingest/decideAt/
+  runSimulation) — NO backtesting engine, NO new primitive, NO network/execution. Proven over multiple local
+  folds: strict decision/future separation (truncation-equal), NO train↔validate leakage (future-bar mutation
+  never changes a past decision), historical invariance when adding future obs, fail-closed on insufficient
+  windows / non-monotonic timestamps / missing source, determinism (folds+inputHash), no source mutation,
+  executed:false. **No profitability/risk claim.** Evidence: walk-forward 10/10, finance-sim P0 15/15; `odg verify` RC=0.
+- Effect: finance-sim no-look-ahead + determinism guarantees hold across walk-forward windows. Finance stays
+  PARTIAL (sim). Deferred (separate authz): market-data ingestion, real backtesting, risk-control, execution.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
