@@ -218,11 +218,21 @@
 - LIMIT: sibling stale artifacts (mission-context/decision/execution-plan.json) left in place — not
   divergence-driving (the detector reads only mission-plan + patch-execution); harmless residue.
 
+### DEC-007 — Close OD-1 (method table) & OD-2 (Phase 0) [CTO-DECISION] — ACCEPTED (2026-10-09)
+- **OD-1 CLOSED — keep the subordinate table, annotated.** FICHE_07:6 stays the canonical authority; the
+  roadmap §C table remains a subordinate mapping (DEC-001 upheld). Per the OD-1/OD-2 audit, the §C
+  OBSERVE/DIAGNOSE row is annotated to name the four canonical steps `MEASURE → LOCALIZE → CLASSIFY → PROVE
+  ROOT CAUSE` (closing the compression gap). Canonical chain/order/authorization gates unchanged; table not
+  removed; no new method invented.
+- **OD-2 CLOSED — Phase 0 stays operational; TRUTH LOCK is already canonical.** Evidence: TRUTH LOCK is in
+  FICHE_07 (chain line 6 + §3) and the protocol (`ODG_AUTONOMOUS_WORK_PROTOCOL.json:29,98`, `CLAUDE.md:12`);
+  "Phase 0" appears in NO frozen fiche as a rule (grep). DEC-002 upheld (operational-only); DEC-004 upheld
+  (frozen fiches not amended). No Master amendment authorized or needed.
+- Scope: documentary only (`ODG_MASTER_ROADMAP.md` §C annotation + this entry). No code/test/fiche/manifest/
+  defect-register change. Evidence: OD-1/OD-2 read-only audit (prior turn); `odg verify` RC=0.
+
 ## Open decisions (pending CTO)
-- **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
-  subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
-- **OD-2** [PROPOSED] Elevate Phase-0 precedence to a canonical fiches rule? Current: operational-only (DEC-002).
-  Requires an authorized Master-amendment decision.
+- (none — OD-1 and OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
 
 ## Non-verifiable / limits
 - Decisions from conversations PRIOR to the commit history visible in this repo are **not fully recoverable**;

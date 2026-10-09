@@ -70,7 +70,7 @@ divergence, FICHE_07 wins.
 | TRUTH LOCK | fix reality | read HEAD/git/docs | HEAD, status | matches expectation | STOP, report divergence | if reality diverges |
 | INSPECT | map real path | read code/contracts/tests | exec-path, write-set | scope bounded | widen inspection | — |
 | REPRODUCE | prove the defect | run a controlled test/cmd | failing output (right reason) | red for the right cause | mark NON-CONFIRMED | — |
-| OBSERVE/DIAGNOSE | root cause | compare expected/observed | fact trace | cause classified (code/integration/config/data/env/limit/false-positive) | gather more facts | — |
+| OBSERVE/DIAGNOSE (= canonical MEASURE → LOCALIZE → CLASSIFY → PROVE ROOT CAUSE) | measure facts, localize, classify, prove root cause | compare expected/observed; measure/localize | fact trace + measured values | cause classified (code/integration/config/data/env/limit/false-positive) AND root cause proven | gather more facts | — |
 | SPECIFY | define change | write spec + invariants | spec, tests-to-add, write-set | smallest change named | — | significant scope expansion |
 | MINIMAL REPAIR | fix minimally | edit only write-set; reuse first | diff ⊂ write-set | no new primitive/engine unless proven needed | revert, re-specify | protected paths |
 | TESTS (targeted→regression→integration) | prove fix + no regression | run tests in order | counts + exit codes | red→green on target; neighbors green | fix or revert | — |
