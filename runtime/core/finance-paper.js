@@ -105,9 +105,11 @@ function runGovernedPaper(source, params, opts = {}) {
   });
 }
 
-// EXPORTS: only GATED entries are public (runGovernedPaper = the single governed parcours; paperTradeFromSource
-// = gated adapter). The low-level cost kernel is exposed ONLY under an explicit internal name for unit tests —
-// it is NOT a production entry point and bypasses no gate when reached via the governed paths above.
-module.exports = { CODE, runGovernedPaper, paperTradeFromSource, __internalPaperTrade: paperTrade };
+// EXPORTS: ONLY the gated entries are public — `runGovernedPaper` (the single governed parcours) and
+// `paperTradeFromSource` (gated adapter). The low-level cost kernel `paperTrade` is a MODULE-PRIVATE helper
+// (not exported): it cannot be reached except through the two gated entries above, so there is no bypass. Its
+// internal LENGTH_MISMATCH/INVALID_INPUT guards remain as defensive checks (unreachable via the governed path,
+// which only ever passes connector-validated, length-matched bars).
+module.exports = { CODE, runGovernedPaper, paperTradeFromSource };
 
 if (require.main === module) { process.stdout.write("finance-paper: virtual/fictitious portfolio only (no execution)\n"); }

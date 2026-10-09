@@ -169,6 +169,18 @@
   no-bypass `paperTrade===undefined`, #9 atomicity); regressions finance-sim 15, walk-forward 10, connector 10,
   economic-unit PASS; `odg verify` RC=0. No network/broker/order; fictitious only.
 
+### CHG-FINANCE-P2.3 — Deprecate `__internalPaperTrade` (governed-only exports) [TECH-CHANGE] — ACCEPTED (2026-10-09)
+- `__internalPaperTrade` was used only by finance-paper.test.js (no src/production). Removed it from exports;
+  the kernel `paperTrade` is now MODULE-PRIVATE. Public exports = gated only: `runGovernedPaper`,
+  `paperTradeFromSource` (+ `CODE`). Tests migrated to the governed API: SMA(window=2) on closes
+  [1000,1100,1050,1200] yields positions [1,1,0,1], so the hand-computed P&L (gross44/costs9/net35) is now
+  asserted via `runGovernedPaper` on a fresh connector source. The kernel's LENGTH_MISMATCH/INVALID_INPUT
+  guards are unreachable via the governed path (connector guarantees valid, length-matched bars) ⇒ kept as
+  defensive internals, documented, not public-API tested.
+- Evidence: finance-paper 15/15 (incl. `paperTrade===undefined` AND `__internalPaperTrade===undefined`, gate
+  STALE/HTTP_ERROR/null/invalid-params ⇒ BLOCKED, atomicity, provenance/determinism); regressions finance-sim
+  15, walk-forward 10, connector 10, economic-unit PASS; `odg verify` RC=0. Finance remains **PARTIAL, NON production**.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
