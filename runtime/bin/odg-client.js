@@ -97,8 +97,14 @@ function main() {
       return out(res, res.ok ? 0 : 3);
     }
 
+    case "launch": {
+      // Centralized launch readiness across the commercial chain (READY/NOT_CONFIGURED/BLOCKED/TEST_MODE).
+      const r = require("../core/launch-readiness").assess({ cwd: flags.cwd });
+      return out(r, r.overall === "BLOCKED" ? 3 : 0);
+    }
+
     default:
-      return out({ ok: false, error: `unknown subcommand "${sub}"`, usage: "odg client <readiness|intake <file>|get <id>|list|transition <id> <STATUS>|draft <id> <kind>|deliver <id> <MISSION>|mailbox|fetch|respond-draft <id>>" }, 2);
+      return out({ ok: false, error: `unknown subcommand "${sub}"`, usage: "odg client <readiness|intake <file>|get <id>|list|transition <id> <STATUS>|draft <id> <kind>|deliver <id> <MISSION>|mailbox|fetch|respond-draft <id>|launch>" }, 2);
   }
 }
 
