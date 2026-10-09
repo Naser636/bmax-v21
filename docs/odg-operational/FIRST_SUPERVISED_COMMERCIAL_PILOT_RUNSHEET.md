@@ -91,3 +91,95 @@ fetcher, and a human grant. Not needed for the production path (dry-run suffices
 **SINGLE NEXT ACTION (human):** supply ONE real qualified client and a written, bounded deliverable scope.
 Everything ODG-side is operationally ready and governed; without this human input the pilot cannot and must
 not start.
+
+---
+
+# SELF-SALES ACTIVATION KIT
+
+_Prepares the commercial acquisition process so a human can act immediately. HYPOTHESES are labelled; no
+customer, market figure, testimonial, conversion rate, revenue or price is invented. The human owns every
+external act (prospect approval, sending outreach, price approval, acceptance, handoff, invoicing, payment)._
+
+## 1. Initial ideal-customer profile (HYPOTHESIS — validate in discovery)
+Solo founders, small dev teams, or small agencies who need a **small, well-specified software or data
+deliverable** and who **value proof** (passing tests + cited provenance + a reproducible build). Comfortable
+with a **human-supervised** engagement. Not: open-ended staff augmentation, production on-call, or anything
+requiring ODG to transact/contact third parties.
+
+## 2. Concrete problem ODG can credibly help with TODAY (evidence-grounded)
+A **bounded build/compile task** delivered with a verifiable evidence package: e.g. a data-processing or
+format-conversion script, a narrow API-integration utility, a test suite for an existing module, or a
+**sourced research compilation** (citations bound to real fetched provenance). Credible because ODG has
+demonstrated: governed engineering missions, verification (`odg verify`), proven-only ledger, and the
+read-only delivery packager.
+
+## 3. Value proposition (no unproven claims)
+"A tightly-scoped software/data deliverable, produced under a governed pipeline and handed over with a
+**verifiable evidence package** — passing tests, provenance, reproducible — reviewed by you before any
+handoff." Explicitly **does NOT** claim autonomous sales, billing, delivery, or hands-off production.
+
+## 4. Recommended supervised pilot offer
+- **Offer:** one fixed-scope deliverable completed in a single governed mission.
+- **Bounded scope:** one authorized write-set; no external side effects by ODG; ≤ a few files.
+- **Deliverable:** the artifact(s) + the packager's evidence package (`accepted:true`).
+- **Acceptance:** `mission-report` SUCCESS/validated, proven ledger entry, `odg verify` RC=0,
+  `packageDelivery` `accepted:true` with provenance, AND written client sign-off.
+- **Evidence package:** output of `node runtime/core/pilot-delivery-packager.js <MISSION>`.
+
+## 5. Qualification checklist (genuine buyer vs weak lead)
+☐ A real decision-maker/budget owner · ☐ a concrete, written problem · ☐ scope bounded to one mission ·
+☐ acceptance criteria definable up front · ☐ data/IP/legal constraints stated · ☐ no requirement for ODG
+to perform external contact/transactions · ☐ willing to work human-supervised. **< 5 ticks ⇒ weak lead.**
+
+## 6. French outreach drafts (DRAFTS ONLY — do NOT send; human approves + sends)
+**(a) Premier contact**
+> Objet : Un livrable logiciel cadré, livré avec preuves vérifiables
+> Bonjour [Prénom], je propose la réalisation d'un livrable logiciel/données **à périmètre fixe**, remis
+> avec un dossier de preuves (tests au vert, provenance des sources, build reproductible) que vous validez
+> avant toute remise. Si vous avez une tâche précise en tête, seriez-vous ouvert·e à un court échange de
+> 15 min pour en cadrer le périmètre ? — [Nom]
+
+**(b) Relance**
+> Objet : Suite à mon message — toujours pertinent ?
+> Bonjour [Prénom], je me permets une relance brève. Si un petit livrable cadré (script, intégration,
+> compilation sourcée) pourrait vous être utile, je peux vous proposer un périmètre et des critères
+> d'acceptation clairs en 15 min. Sinon, dites-le moi et je n'insiste pas. — [Nom]
+
+**(c) Réponse demandant une réunion de découverte**
+> Bonjour [Prénom], merci de votre retour. Pour cadrer précisément, pourrions-nous prévoir 15–20 min ?
+> J'aurais besoin de : le problème concret, le résultat attendu (« terminé = … »), et vos contraintes
+> données/légales. Je reviens ensuite avec un périmètre et des critères d'acceptation écrits. — [Nom]
+
+## 7. Discovery-meeting script + decision rule
+Script (≤15 min): (1) problème concret en une phrase ; (2) définition de « terminé » ; (3) contraintes
+données/IP/légales ; (4) qui valide et paie ; (5) délai souhaité. **Decision rule — ACCEPT** si : périmètre
+bornable à une mission ∧ acceptation définissable ∧ aucune action externe exigée d'ODG ∧ owner humain
+identifié. **REJECT/deférer** si : périmètre ouvert, besoin d'effets externes/transaction par ODG, pas de
+critère d'acceptation, ou cadre réglementé non couvert.
+
+## 8. Commercial tracking template
+| Prospect | Source | Problème | Qualification (n/7) | Prochaine action | Owner humain | Statut |
+|----------|--------|----------|---------------------|------------------|--------------|--------|
+| …        | …      | …        | …                   | …                | …            | NEW / QUALIFYING / PILOT_SCOPED / ACCEPTED / DELIVERED / CLOSED / DROPPED |
+
+## 9. Launch checklist (ODG-executable vs human-authorized)
+**ODG-executable (prep, no external effect):** draft a bounded mission-contract template for a typical
+deliverable · run dry-run discovery support · dry-run the packager on a sample proven mission · assemble the
+evidence-package format.
+**HUMAN-authorized (required):** approve ICP/segment · approve & **send** outreach · approve the **price** ·
+run the discovery meeting · accept scope · accept the deliverable · handoff · invoice · payment · closure.
+
+## 10. Next three commercial actions (prioritized)
+1. **(HUMAN)** Approve the ICP/segment and ONE outreach draft (unblocks everything; no dependency).
+2. **(HUMAN)** Send approved outreach to a real, human-owned prospect list → log in §8 tracker.
+3. **(HUMAN+ODG)** Run discovery on the first responder; if ACCEPT per §7, ODG drafts the bounded mission
+   scope + acceptance criteria for human price approval.
+
+## Pricing inputs (final quote = HUMAN decision; no price invented)
+Effort/complexity estimate · scope size (files/objectives) · verification & evidence overhead · number of
+revision rounds · a market-rate reference the **human** supplies. ODG may produce an effort estimate; the
+**price and quote are a human decision**.
+
+## Optional technical hardening (recorded, NOT implemented here)
+`content_hash` hex-format check · ledger `state` assertion · duplicate-ledger-entry policy · `accepted`
+field renaming (e.g. `eligibleForHumanReview`) · open-fd read for the theoretical TOCTOU.
