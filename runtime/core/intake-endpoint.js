@@ -32,6 +32,11 @@ function handleIntakeRequest(req, opts = {}) {
   let data; try { data = JSON.parse(body); } catch { return resp(400, { ok: false, error: "malformed JSON" }); }
   if (!isObj(data)) return resp(400, { ok: false, error: "JSON object required" });
 
+  // Deployment safety: if the persistent store is not configured/writable, BLOCK cleanly (503) BEFORE any
+  // processing — never a silent temporary store, never a misleading success.
+  const store = intake.storeState(opts.cwd);
+  if (store.state !== "READY") return resp(503, { ok: false, code: "STORE_NOT_CONFIGURED", store: store.state, message: "intake storage not configured" });
+
   // Map untrusted form fields to the governed intake whitelist. consent must be an explicit boolean true.
   const res = intake.intake({
     client: data.client, problem: data.problem, scope: data.scope, acceptance: data.acceptance,

@@ -22,9 +22,11 @@ export const dynamic = "force-dynamic"; // request-time only; never cached/prere
 export async function POST(request: Request): Promise<Response> {
   const body = await request.text();
   const contentType = request.headers.get("content-type") ?? "";
+  // No cwd override: the store base comes from ODG_CLIENT_STORE (persistent path) in production, and is
+  // BLOCKED cleanly (503) when unconfigured — never a silent temp store under an ephemeral process cwd.
   const res = endpoint.handleIntakeRequest(
     { method: "POST", headers: { "content-type": contentType }, body },
-    { cwd: process.cwd() },
+    {},
   );
   return new Response(res.body, { status: res.status, headers: res.headers });
 }

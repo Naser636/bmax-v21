@@ -37,6 +37,7 @@ const CODE = Object.freeze({
   DELIVERY_NOT_ACCEPTED: "DELIVERY_NOT_ACCEPTED",
   NOT_READY_FOR_DELIVERY: "NOT_READY_FOR_DELIVERY",
   MALFORMED_RECORD: "MALFORMED_RECORD",
+  STORE_NOT_CONFIGURED: "STORE_NOT_CONFIGURED",
 });
 
 // The fields a genuine request MUST carry (run-sheet §5). Only these are persisted (whitelist) so a caller
@@ -57,10 +58,35 @@ const ALLOWED = {
 
 function isPlainObject(v) { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isNonEmptyString(v) { return typeof v === "string" && v.trim().length > 0; }
-function dir(cwd) { return path.resolve(cwd || process.cwd(), REQUESTS_SUBDIR); }
-function recPath(cwd, id) { return path.join(dir(cwd), id + ".json"); }
+
+// STORE BASE RESOLUTION (deployment-safe). Precedence:
+//   1. explicit opts.cwd (tests/dev isolation) — cwd-relative, unchanged behaviour;
+//   2. env ODG_CLIENT_STORE — the configured PERSISTENT path (production VPS disk);
+//   3. NODE_ENV=production with NO ODG_CLIENT_STORE ⇒ null ⇒ intake is BLOCKED cleanly (NEVER a silent
+//      ephemeral/temporary store);
+//   4. otherwise (dev) ⇒ cwd-relative default.
+function storeBase(cwd) {
+  if (isNonEmptyString(cwd)) return path.resolve(cwd, "runtime/generated/clients");
+  if (isNonEmptyString(process.env.ODG_CLIENT_STORE)) return path.resolve(process.env.ODG_CLIENT_STORE);
+  if (process.env.NODE_ENV === "production") return null; // must be configured in production
+  return path.resolve(process.cwd(), "runtime/generated/clients");
+}
+function dir(cwd) { const b = storeBase(cwd); return b === null ? null : path.join(b, "requests"); }
+function recPath(cwd, id) { const d = dir(cwd); return d === null ? null : path.join(d, id + ".json"); }
 function readJsonSafe(f) { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch { return null; } }
 function writeJson(f, o) { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(o, null, 2)); }
+
+// storeState(cwd) — real control: configured + writable (write/read/remove probe), not mere env presence.
+function storeState(cwd) {
+  const b = storeBase(cwd);
+  if (b === null) return Object.freeze({ state: "NOT_CONFIGURED", detail: "set ODG_CLIENT_STORE to a persistent writable path (production)" });
+  try {
+    fs.mkdirSync(b, { recursive: true });
+    const probe = path.join(b, ".intake-probe");
+    fs.writeFileSync(probe, "ok"); const back = fs.readFileSync(probe, "utf8"); fs.rmSync(probe, { force: true });
+    return back === "ok" ? Object.freeze({ state: "READY", base: b }) : Object.freeze({ state: "BLOCKED", detail: "probe mismatch" });
+  } catch (e) { return Object.freeze({ state: "BLOCKED", detail: "store not writable: " + String(e && e.code || e.message || e) }); }
+}
 
 function makeId(cwd) {
   const d = dir(cwd);
@@ -86,11 +112,14 @@ function validate(input) {
 function intake(input, opts = {}) {
   const cwd = opts.cwd;
   if (!isPlainObject(input)) return Object.freeze({ ok: false, code: CODE.INCOMPLETE_REQUEST, missing: REQUIRED, status: STATUS.HELD });
+  // Deployment safety: if the store is not configured/writable, BLOCK cleanly (never a silent temp store).
+  const store = storeState(cwd);
+  if (store.state !== "READY") return Object.freeze({ ok: false, code: CODE.STORE_NOT_CONFIGURED, status: "BLOCKED", store: store.state });
   const v = validate(input);
-  const id = makeId(cwd);
+  const d = dir(cwd);
+  fs.mkdirSync(d, { recursive: true });
   // Whitelist persisted fields — a secret/credential passed in is NEVER stored.
-  const record = {
-    requestId: id,
+  const base = {
     status: v.valid ? STATUS.NEW : STATUS.HELD,
     client: input.client, problem: input.problem, scope: input.scope,
     acceptance: input.acceptance, humanOwner: input.humanOwner, consent: input.consent === true,
@@ -98,7 +127,18 @@ function intake(input, opts = {}) {
     createdAt: new Date().toISOString(),
     history: [{ to: v.valid ? STATUS.NEW : STATUS.HELD, by: "odg", reason: v.valid ? "intake" : "incomplete" }],
   };
-  writeJson(recPath(cwd, id), record);
+  // Collision-safe id allocation: exclusive create (flag "wx") never overwrites; on EEXIST re-derive the
+  // next id and retry. On a mono-instance deployment (single-threaded, synchronous read→write with no
+  // interleaving await) this guarantees unique, non-overwriting ids; the exclusive flag also defends a
+  // concurrent writer on the same disk. Bounded retries; exhaustion ⇒ BLOCKED (never overwrite).
+  let id = null, record = null;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    id = makeId(cwd);
+    record = { requestId: id, ...base };
+    try { fs.writeFileSync(recPath(cwd, id), JSON.stringify(record, null, 2), { flag: "wx" }); break; }
+    catch (e) { if (e && e.code === "EEXIST") { id = null; continue; } throw e; } // other errors propagate (no false success)
+  }
+  if (id === null) return Object.freeze({ ok: false, code: CODE.STORE_NOT_CONFIGURED, status: "BLOCKED", detail: "id allocation exhausted" });
   if (!v.valid) return Object.freeze({ ok: false, code: CODE.INCOMPLETE_REQUEST, missing: v.missing, badConsent: v.badConsent, requestId: id, status: STATUS.HELD });
   return Object.freeze({ ok: true, requestId: id, status: STATUS.NEW, record: Object.freeze(record) });
 }
@@ -201,7 +241,7 @@ function readiness(opts = {}) {
   return Object.freeze({ state, intake: "READY", tracking: "READY", delivery: "READY", email: email.state, closure: "NOT_IMPLEMENTED_HUMAN", prerequisites: Object.freeze(prerequisites) });
 }
 
-module.exports = { STATUS, CODE, REQUIRED, intake, get, list, transition, emailReadiness, prepareEmailDraft, sendEmail, attachDelivery, readiness };
+module.exports = { STATUS, CODE, REQUIRED, intake, get, list, transition, emailReadiness, prepareEmailDraft, sendEmail, attachDelivery, readiness, storeState };
 
 if (require.main === module) {
   const r = readiness({});

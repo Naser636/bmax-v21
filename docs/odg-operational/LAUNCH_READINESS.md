@@ -47,9 +47,39 @@ PAYMENT_PROVIDER="…"  PAYMENT_WEBHOOK_SECRET=<secret>  PAYMENT_LIVE_ENABLED=0
 
 # Website intake deployment (optional) — the externally reachable URL of POST /api/intake once the ODG app
 # is deployed. Setting it does NOT prove reachability; `odg client launch` keeps it NOT_CONFIGURED until a
-# real deploy probe. The static site/ form posts to same-origin /api/intake when co-served by the app.
+# real deploy probe.
 INTAKE_ENDPOINT_URL=""
+
+# Persistent intake store (MANDATORY in production) — absolute path on the VPS persistent disk. If unset in
+# production, intake is BLOCKED cleanly (503) — ODG never writes to a silent ephemeral/temporary store.
+ODG_CLIENT_STORE="/var/lib/odg/clients"
+# Optional: override the site root served by GET /site/* (defaults to <repo>/site).
+ODG_SITE_ROOT=""
 ```
+
+## VPS deployment (mono-instance) — same-origin architecture
+- **Same origin:** the Next app serves BOTH `GET /site/*` (the commercial site incl. the contact form, from
+  the single `site/` source via `src/app/site/[...slug]/route.ts`) and `POST /api/intake`. The form posts to
+  same-origin `/api/intake` — no cross-origin gap. (`mailto:` remains a fallback.)
+- **Persistent storage:** set `ODG_CLIENT_STORE` to a path on a **persistent disk** (e.g. `/var/lib/odg/clients`),
+  owned by the app user with `0700` permissions. Intake records are written there with exclusive create
+  (no overwrite). **Backup:** snapshot/rsync that directory regularly; it holds the client requests.
+- **Mono-instance only:** id allocation is collision-safe under a single Node instance (synchronous
+  read→exclusive-create, bounded retry) and the exclusive flag defends a same-disk concurrent writer. This is
+  **NOT proven for multi-instance / load-balanced** deployments — do not run more than one instance against the
+  same store without a shared lock/DB (out of current scope).
+- **Clean failure:** if `ODG_CLIENT_STORE` is unset or unwritable in production, `POST /api/intake` returns
+  **503 STORE_NOT_CONFIGURED** (no false success, no temp store).
+- **Post-deploy probe (run after deploying, not in this repo):**
+  ```bash
+  curl -fsS https://<host>/site/contact.html | grep -q '/api/intake'        # form served same-origin
+  curl -fsS -X POST https://<host>/api/intake -H 'content-type: application/json' \
+       -d '{"client":"probe","problem":"p","scope":"s","acceptance":"a","humanOwner":"you","consent":true}'
+  # expect 201 + {"requestId":"CLIENT-NNN"} AND the file present under $ODG_CLIENT_STORE/requests/
+  ./runtime/bin/odg client launch   # persistence READY, siteIntakeHandler READY
+  ```
+  `odg client launch` reports READY only when the store probe passes; deployment reachability itself is proven
+  by the curl probes above (never asserted by the repo).
 
 ## Website → intake (server route)
 - `site/contact.html` now includes a request form that POSTs JSON to **`/api/intake`** (same-origin), with

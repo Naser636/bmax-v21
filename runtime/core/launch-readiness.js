@@ -12,6 +12,7 @@ const path = require("path");
 const email = require("./email-gateway");
 const invoicing = require("./invoicing");
 const payments = require("./payments");
+const clientIntake = require("./client-intake");
 
 const S = Object.freeze({ READY: "READY", NOT_CONFIGURED: "NOT_CONFIGURED", BLOCKED: "BLOCKED", TEST_MODE: "TEST_MODE" });
 
@@ -38,10 +39,12 @@ function assess(opts = {}) {
 
   const caps = {
     intake: { state: moduleLoads("./client-intake.js") ? S.READY : S.BLOCKED },
-    persistence: { state: persistenceCheck(cwd) },
+    // Persistence now reflects the CONFIGURED store (ODG_CLIENT_STORE in prod): NOT_CONFIGURED when unset in
+    // production, BLOCKED when set-but-unwritable, READY when the write/read/remove probe passes.
+    persistence: (() => { const s = clientIntake.storeState(cwd); return { state: s.state, base: s.base || null, detail: s.detail || null }; })(),
     // The server route handler exists locally (src/app/api/intake/route.ts → intake-endpoint). "Deployed and
     // externally reachable" is a SEPARATE fact we never assert without a real deploy probe.
-    siteIntakeHandler: { state: moduleLoads("./intake-endpoint.js") ? S.READY : S.BLOCKED, note: "POST /api/intake route handler present (local)" },
+    siteIntakeHandler: { state: moduleLoads("./intake-endpoint.js") ? S.READY : S.BLOCKED, note: "same-origin: GET /site/* serves the form, POST /api/intake persists (both in the Next app)" },
     siteIntakeDeployment: (() => {
       const url = env.INTAKE_ENDPOINT_URL;
       // No network probe here ⇒ a configured URL is NOT proof of reachability; never READY without a deploy test.
