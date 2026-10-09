@@ -11,7 +11,9 @@
     "test": "bash -c 'files=(\"$@\"); if [ ${#files[@]} -eq 0 ]; then files=(src/tests/*.test.ts src/runtime/*.test.ts runtime/core/*.test.js); fi; code=0; for f in \"${files[@]}\"; do echo \"== $f ==\"; tsx \"$f\" || code=1; done; exit $code' _"
   },
   "dependencies": {
+    "imapflow": "^2.3.0",
     "next": "16.2.9",
+    "nodemailer": "^10.0.16",
     "openai": "^6.47.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"

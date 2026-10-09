@@ -15,6 +15,7 @@
 
 const fs = require("fs");
 const intake = require("../core/client-intake");
+const email = require("../core/email-gateway");
 
 function parseFlags(argv) {
   const flags = {}, pos = [];
@@ -82,8 +83,22 @@ function main() {
       return out(res, res.ok ? 0 : 3);
     }
 
+    // ---- email (inbound IMAP / outbound SMTP). Secrets via ENV only; never on argv. ----
+    case "mailbox":
+      // Safe readiness summary; prints no secret values.
+      return out({ inbound: email.inboundReadiness({}), outbound: email.outboundReadiness({}) }, 0);
+
+    case "fetch":
+      // Real inbound retrieval via the default IMAP adapter; fail-closed NOT_CONFIGURED without credentials.
+      return email.fetchInbound({ cwd: flags.cwd }).then((r) => out(r, r.ok ? 0 : 3), (e) => out({ ok: false, code: "FETCH_ERROR", detail: String(e && e.message || e) }, 3));
+
+    case "respond-draft": {
+      const res = email.prepareResponseDraft(pos[0], opts);
+      return out(res, res.ok ? 0 : 3);
+    }
+
     default:
-      return out({ ok: false, error: `unknown subcommand "${sub}"`, usage: "odg client <readiness|intake <file>|get <id>|list|transition <id> <STATUS>|draft <id> <kind>|deliver <id> <MISSION>>" }, 2);
+      return out({ ok: false, error: `unknown subcommand "${sub}"`, usage: "odg client <readiness|intake <file>|get <id>|list|transition <id> <STATUS>|draft <id> <kind>|deliver <id> <MISSION>|mailbox|fetch|respond-draft <id>>" }, 2);
   }
 }
 
