@@ -174,7 +174,10 @@ preserved; dependency order explicit; measurable closeout criteria (§E); next-t
 (create⊥validate, unvalidated⇒not-promoted, fail-closed, learning never self-grants permissions) are proven by
 existing suites re-run this session (capability-learning 7, patch-memory 11, post-release-learning ✓, incl.
 test I "hit is edits-only — no authority/permission field").
-**Next still-open mission (per §H):** APEX **Phase C** — shared contracts: show how Finance/Commerce/Multi-agent
-reuse the existing contracts/primitives, defining ONLY audited-missing interfaces (read-only design first). Any
-capability ACTIVATION and all real-world actions remain behind the human/provider/deploy/legal gates (§E/§I);
-Finance (Phase F) stays simulation-only and separately authorized.
+APEX **Phase C** = DONE (design → `ODG_SHARED_CONTRACTS_MAP.md`): reuse of existing contracts demonstrated, no
+new primitive; missing interfaces are domain-specific/deferred. APEX **Phase D** = CLOSED (audit, no defect):
+multi-agent role boundaries respected (worker zero write authority, apply only via `patch-proposal-apply` under
+ODG authority; no consensus by design, DEC-005); no multi-agent implementation justified.
+**Next still-open (per §H):** CTO decision — a bounded **Finance-SIMULATION** mission (data ingestion + simple
+baseline, execution DISABLED) under SEPARATE authorization, reusing existing economic/evidence contracts. Any
+capability ACTIVATION and all real-world actions remain behind the human/provider/deploy/legal gates (§E/§I).

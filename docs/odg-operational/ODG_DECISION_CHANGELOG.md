@@ -88,6 +88,21 @@
 - Effect: Phase C design done; no implementation. Next = CTO decision on Phase D (multi-agent roles only if a
   gap is proven) or authorize a bounded Finance-SIMULATION mission.
 
+### CHG-PHASE-D — Multi-agent role audit closed [FINDING] — ACCEPTED (2026-10-09)
+- Result: **NO multi-agent defect reproduced.** Role boundaries respected on inspected paths: propose
+  (fleet-dispatcher + worker, worker has ZERO write authority — locked by `fleet-authority.test.js` V45) →
+  authorize/execute (NOT in fleet; `patch-proposal-apply.applyProposal` requires ODG-supplied mission+
+  authorizedPaths and is re-enforced by patch-executor = sole authority; called by `autonomy-runtime-adapter.ts`)
+  → prove (`mission-ledger` proven-only) → accept (`mechanical-acceptance`). Collector `authorizeMission`
+  (DEF-006 tautology) is a vacuous WORKFLOW gate (fleet does not execute; VALIDATED = envelope status), not an
+  execution authority. Provenance preserved (requestId correlation). Fleet disabled by default.
+- Evidence (run this session, RC=0): `fleet-authority.test.js` 6/6, `fleet-bridge.test.js` 5/5.
+- Limits (UNPROVEN this session): provider→applyProposal end-to-end not exercised (avoids network);
+  no dedicated `fleet-envelope`/`fleet-stage` test executed; `fleet-bridge.js` daemon partially inspected.
+- Governance: DEC-005 applies (no authority-bearing consensus to be added); DEF-006/DEF-007 keep their prior
+  classification (non-defect / intentional). **No additional multi-agent implementation is justified.**
+- Effect: APEX Phase D closed (audit). Next = CTO decision (Finance-SIMULATION bounded mission, separate authz).
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
