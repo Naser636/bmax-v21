@@ -23,7 +23,7 @@ EXÉCUTION → VÉRIFICATION → LIVRAISON → FACTURE → PAIEMENT (vérifié) 
 
 | Component | Module | Status |
 |---|---|---|
-| Site reception | static HTML + `mailto:` → IMAP intake; `runtime/core/intake-endpoint.js` (form handler, not yet hosted) | code READY; **form backend NOT hosted** |
+| Site reception | `site/contact.html` form → **POST `/api/intake`** (Next route `src/app/api/intake/route.ts` → `intake-endpoint.js`) + `mailto:` fallback → IMAP intake | handler READY (local, tested); **deployment NOT verified** |
 | Intake / tracking | `client-intake.js` (`odg client`) | READY |
 | Email in/out | `email-gateway.js` (imapflow/nodemailer, injected) | NOT_CONFIGURED until creds; send OFF by default |
 | Quote | `quote.js` (versioned, human-gated) | READY |
@@ -44,7 +44,23 @@ INVOICE_CURRENCY="EUR"   INVOICE_TAX_RATE="0.20"      # or "EXEMPT"
 
 # Payments (webhook reconciliation; real initiation disabled unless PAYMENT_LIVE_ENABLED=1)
 PAYMENT_PROVIDER="…"  PAYMENT_WEBHOOK_SECRET=<secret>  PAYMENT_LIVE_ENABLED=0
+
+# Website intake deployment (optional) — the externally reachable URL of POST /api/intake once the ODG app
+# is deployed. Setting it does NOT prove reachability; `odg client launch` keeps it NOT_CONFIGURED until a
+# real deploy probe. The static site/ form posts to same-origin /api/intake when co-served by the app.
+INTAKE_ENDPOINT_URL=""
 ```
+
+## Website → intake (server route)
+- `site/contact.html` now includes a request form that POSTs JSON to **`/api/intake`** (same-origin), with
+  the `mailto:` button kept as a fallback. The form is active only when the site is served by the ODG app.
+- `src/app/api/intake/route.ts` (Next 16 Route Handler, Node runtime, `force-dynamic`) bridges the request to
+  `intake-endpoint.handleIntakeRequest` — server-side validation (method/content-type/size/JSON), governed
+  persistence, and success returned ONLY after durable persistence. Client-provided identity/consent/price/
+  authorization are never trusted.
+- **Deployment is a separate fact:** the handler is implemented and locally tested; it is NOT externally
+  reachable until the ODG app is actually deployed and probed. `odg client launch` reports
+  `siteIntakeHandler: READY` but `siteIntakeDeployment: NOT_CONFIGURED (deploymentVerified:false)`.
 
 ## Startup procedure (controlled launch)
 1. Export the environment (local `.env`, git-ignored).

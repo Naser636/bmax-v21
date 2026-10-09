@@ -39,7 +39,14 @@ function assess(opts = {}) {
   const caps = {
     intake: { state: moduleLoads("./client-intake.js") ? S.READY : S.BLOCKED },
     persistence: { state: persistenceCheck(cwd) },
-    siteBackend: { state: S.NOT_CONFIGURED, note: "static site + mailto; no hosted form backend — intake-endpoint handler ready to mount (see LAUNCH_READINESS.md)" },
+    // The server route handler exists locally (src/app/api/intake/route.ts → intake-endpoint). "Deployed and
+    // externally reachable" is a SEPARATE fact we never assert without a real deploy probe.
+    siteIntakeHandler: { state: moduleLoads("./intake-endpoint.js") ? S.READY : S.BLOCKED, note: "POST /api/intake route handler present (local)" },
+    siteIntakeDeployment: (() => {
+      const url = env.INTAKE_ENDPOINT_URL;
+      // No network probe here ⇒ a configured URL is NOT proof of reachability; never READY without a deploy test.
+      return { state: S.NOT_CONFIGURED, deploymentVerified: false, note: typeof url === "string" && url ? "INTAKE_ENDPOINT_URL set but reachability NOT verified (needs a real deploy probe)" : "no deployed endpoint; static site uses mailto today" };
+    })(),
     emailInbound: { state: inbound.state === "READY" ? S.READY : S.NOT_CONFIGURED },
     emailOutbound: { state: outbound.state === "READY" ? (outbound.sendEnabled ? S.READY : S.TEST_MODE) : S.NOT_CONFIGURED, sendEnabled: outbound.sendEnabled },
     quote: { state: moduleLoads("./quote.js") ? S.READY : S.BLOCKED },

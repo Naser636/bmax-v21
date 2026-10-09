@@ -12,7 +12,7 @@ function tmp() { return fs.mkdtempSync(path.join(os.tmpdir(), "launch-")); }
   ok("1 code capabilities READY", r.codeReady === true);
   ok("1 overall NOT_CONFIGURED (launch config missing)", r.overall === "NOT_CONFIGURED" && r.launchConfigured === false);
   ok("1 email/fiscal/payments NOT_CONFIGURED", r.capabilities.emailInbound.state === "NOT_CONFIGURED" && r.capabilities.fiscalParams.state === "NOT_CONFIGURED" && r.capabilities.payments.state === "NOT_CONFIGURED");
-  ok("1 static site backend flagged NOT_CONFIGURED honestly", r.capabilities.siteBackend.state === "NOT_CONFIGURED");
+  ok("1 site intake handler READY locally but deployment NOT_CONFIGURED (not claimed reachable)", r.capabilities.siteIntakeHandler.state === "READY" && r.capabilities.siteIntakeDeployment.state === "NOT_CONFIGURED" && r.capabilities.siteIntakeDeployment.deploymentVerified === false);
 }
 // 2 — fully test-configured ⇒ overall TEST_MODE (payments in test).
 {

@@ -51,6 +51,37 @@
         <div class="btn-row" style="margin-top:1.5rem">
           <a class="btn btn-primary" href="mailto:contact@odg.example?subject=Demande%20ODG&body=1)%20Quel%20est%20le%20probl%C3%A8me%20%3F%0A%0A2)%20Quel%20r%C3%A9sultat%20attendez-vous%20%3F%0A%0A3)%20Comment%20vous%20r%C3%A9pondre%20%3F%0A%0A(D%C3%A9tails%20techniques%20facultatifs)%0A">Ouvrir un email pré-rempli</a>
         </div>
+
+        <!-- Formulaire de demande — POST vers l'endpoint gouverné /api/intake. ACTIF uniquement lorsque ce
+             site est servi par l'application ODG (même origine) ; sinon utilisez le bouton email ci-dessus.
+             La validation, la persistance et la gouvernance sont faites côté serveur ; rien n'est accepté
+             tant que la demande n'est pas enregistrée. Ne transmettez aucun mot de passe/secret. -->
+        <form id="intake-form" action="/api/intake" method="post" style="margin-top:1.5rem;display:grid;gap:.75rem;max-width:40rem">
+          <label>Votre contact (email) <input name="client" type="text" required maxlength="200"></label>
+          <label>Quel est le problème&nbsp;? <textarea name="problem" required maxlength="4000"></textarea></label>
+          <label>Résultat attendu / périmètre <textarea name="scope" maxlength="4000"></textarea></label>
+          <label>Critère d'acceptation (« terminé = … ») <input name="acceptance" type="text" maxlength="500"></label>
+          <label>Interlocuteur humain (côté vous) <input name="humanOwner" type="text" maxlength="200"></label>
+          <label><input name="consent" type="checkbox" value="true"> J'accepte d'être recontacté·e au sujet de cette demande.</label>
+          <button class="btn btn-primary" type="submit">Envoyer la demande</button>
+          <p id="intake-status" role="status" class="note"></p>
+        </form>
+        <script>
+          (function () {
+            var f = document.getElementById("intake-form"), s = document.getElementById("intake-status");
+            if (!f) return;
+            f.addEventListener("submit", function (e) {
+              e.preventDefault();
+              var fd = new FormData(f);
+              var payload = { client: fd.get("client") || "", problem: fd.get("problem") || "", scope: fd.get("scope") || "", acceptance: fd.get("acceptance") || "", humanOwner: fd.get("humanOwner") || "", consent: fd.get("consent") === "true" };
+              s.textContent = "Envoi…";
+              fetch("/api/intake", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) })
+                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                .then(function (res) { s.textContent = res.j && res.j.requestId ? ("Demande reçue (réf " + res.j.requestId + ", statut " + res.j.status + "). Un humain vous recontactera.") : ("Non enregistrée : " + ((res.j && res.j.error) || "erreur")); })
+                .catch(function () { s.textContent = "Endpoint indisponible (ce site n'est pas servi par l'application ODG). Utilisez le bouton email ci-dessus."; });
+            });
+          })();
+        </script>
         <p class="note" role="note" style="margin-top:1.25rem">
           <strong>Canal provisoire.</strong> Ce bouton ouvre votre logiciel de messagerie avec un modèle
           pré-rempli&nbsp;; ce n'est <strong>pas encore un système de réception vérifié</strong>, et
