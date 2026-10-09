@@ -33,6 +33,7 @@
 - **Verification history (living log):** `docs/audit/phase-0/current/PHASE_0_CARNET.md`
 - **Defect register:** `docs/odg-operational/ODG_DEFECT_REGISTER.md` (companion to this file)
 - **Decision & change journal:** `docs/odg-operational/ODG_DECISION_CHANGELOG.md` (CTO decisions DEC-*, changes CHG-*, open decisions OD-*)
+- **Phase A capability inventory (persistent):** `docs/odg-operational/ODG_PHASE_A_INVENTORY.md` (domain matrix A–H, statuses, evidence, gaps, depth limits)
 - Commercial run sheets: `FIRST_SUPERVISED_COMMERCIAL_PILOT_RUNSHEET.md`, `LAUNCH_READINESS.md`, `EMAIL_INTAKE_SETUP.md`
 
 ## B. Resumption Truth Lock — MANDATORY startup sequence (do this first, every session)
@@ -167,6 +168,12 @@ Compatible with FICHE_01–06 (referenced, unmodified) and FICHE_07 method; no p
 lessons included via the defect register; code/tests/integration/config/production distinguished; accepted work
 preserved; dependency order explicit; measurable closeout criteria (§E); next-task selectable (§H); resumable (§B).
 
-**First still-open mission (per §H at `d77f174`):** APEX **Phase A — Truth-on-existing audit** (read-only
-capability inventory with evidence classification), which gates Phases B–J. No code change; produces an audit
-artifact. All real-world commercial actions remain behind the human/provider/deploy/legal gates in §E/§I.
+**Progress:** APEX **Phase A** = DONE (inventory persisted → `ODG_PHASE_A_INVENTORY.md`). APEX **B1**
+(learning-cycle verification + no-auto-grant) = **VERIFIED, no defect, no code change** — the invariants
+(create⊥validate, unvalidated⇒not-promoted, fail-closed, learning never self-grants permissions) are proven by
+existing suites re-run this session (capability-learning 7, patch-memory 11, post-release-learning ✓, incl.
+test I "hit is edits-only — no authority/permission field").
+**Next still-open mission (per §H):** APEX **Phase C** — shared contracts: show how Finance/Commerce/Multi-agent
+reuse the existing contracts/primitives, defining ONLY audited-missing interfaces (read-only design first). Any
+capability ACTIVATION and all real-world actions remain behind the human/provider/deploy/legal gates (§E/§I);
+Finance (Phase F) stays simulation-only and separately authorized.

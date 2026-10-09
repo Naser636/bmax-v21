@@ -59,6 +59,24 @@
 
 > `d77f174` is explicitly a LOCAL integration repair; DEPLOYMENT_VERIFIED = none (no deploy performed).
 
+## APEX program progress
+
+### CHG-PHASE-A — Phase A inventory persisted [TECH-CHANGE / FINDING] — ACCEPTED (2026-10-09)
+- Persisted the read-only capability audit to `ODG_PHASE_A_INVENTORY.md` (referenced from roadmap §A/§D).
+  Headline findings: E Finance quant = **MISSING**; D multi-agent = PARTIAL (no debate/consensus); C learning
+  = advisory; F commercial = TESTED_LOCALLY/INTEGRATION_VERIFIED (local), production NOT verified.
+
+### CHG-APEX-B1 — Learning-cycle verification [FINDING] — ACCEPTED (2026-10-09)
+- Result: **NO defect reproduced.** Cycle create→validate(upstream, independent)→promote(precedent;
+  unvalidated/mismatched/stale ⇒ zero, fail-closed)→monitor(reuseCount) confirmed. Invariant **"learning never
+  self-grants permissions" holds by construction** (modules `capability-learning.js`/`patch-memory.js`/
+  `post-release-learning.js` contain NO authority/grant/permission token) and is asserted by existing test
+  `post-release-learning.test.js` (I: "hit is edits-only — no authority/permission field"; C/D/E/F fail-closed).
+- Evidence (run this session, RC=0): capability-learning 7, patch-memory 11, patch-memory-reuse-accounting ✓,
+  post-release-learning ✓. **No application code changed** (a guard was not added because no defect was
+  demonstrated — adding one would invent a defect, FICHE_07 MINIMAL CHANGE).
+- Effect: APEX-B1 objective satisfied; next = Phase C (shared contracts, read-only design first).
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
