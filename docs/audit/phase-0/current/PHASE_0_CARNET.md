@@ -4235,3 +4235,72 @@ verdict.test.ts + ce carnet. PRÊT POUR EXAMEN N°3 : épreuve 1 (verdict termin
 P2 grant frais, épreuve 2 récupération (repose sur P1). RESTE NON PROUVÉ / FRONTIÈRES : continuité mixte live
 (modèle multi-grant à décider) ; réutilisation d'apprentissage (clé de signature à redéfinir) — aucune des deux
 n'est un seam minimal ; signalées pour décision CTO, non inventées.
+
+### PREUVE DE CONVERGENCE — External Research DRY-RUN sur la route LOCALE (2026-10-09)
+Mandat CTO : documentation et preuves UNIQUEMENT (aucun code, aucun contrat modifié). Point de départ (Truth
+Lock vérifié) : HEAD `3706bdf`, branche `main`, arbre propre, `git diff --check` RC=0. Claude Code = fournisseur
+technique subordonné ; ODG = autorité de gouvernance/vérification.
+
+CONTEXTE. Le commit déjà accepté **`3706bdf`** `fix(runtime): govern safe capability dry-runs` (5 fichiers,
++470/−9) a livré deux seams gouvernés : (a) `capability-authorization.safeModeDryRunExemption` — une capacité
+conséquente qui DÉCLARE un `safeProbe` à effet nul peut exécuter CE chemin sûr SANS grant humain, mais seulement
+si la preuve de vérif déclarée EST ce safeProbe ET sans aucune intention LIVE (pas d'execute, pas de fetcher, pas
+de capabilitySpec privilégié) — fail-closed sinon ; le chemin LIVE et les capacités sans safeProbe (git/bash)
+restent grant-gated ; (b) `mission-cli.missionIsLocalCapabilityProof` — une mission sans éditions qui déclare une
+probe capability→evidence résolvant vers un capability-executor LOCAL existant est routée vers `runLocalRoute`
+AVANT la porte provider (strictement plus étroit ; routage provider/NL inchangé).
+
+PREUVE REPRODUITE (entrée officielle ODG, sans contournement du moteur) :
+`./runtime/bin/odg mission EXTERNAL_RESEARCH_DRYRUN_PROBE` →
+- Decision = « verify-only capability-proof mission → LOCAL RUNTIME » (le prédicat de routage committé s'est
+  déclenché) ; Route = MissionOrchestrator → RuntimeExecutor (local, src/runtime) ; **provider NON invoqué**.
+- Status = LOCAL_COMPLETE ; **Validated = true** ; **MISSION_RC = 0**.
+- Artefact gouverné `runtime/generated/external-research-acquisition.json` (gitignored — NON copié dans le dépôt,
+  valeurs observées reportées ici) : `mode=DRY_RUN`, `acquired=false`, `authorized=false`, `policyAllows=true`,
+  `sources=[]`, `plannedSources=[]`, `ranked=[]`, `objective=EXTERNAL_RESEARCH_1` ; note explicite « no network
+  access performed ». `mission-report.json` : mission=EXTERNAL_RESEARCH_DRYRUN_PROBE, status=SUCCESS,
+  validated=true.
+- `./runtime/bin/odg verify` : build=true, typescript=true, **gitClean=true**, generatedContracts 88/88 valides →
+  **RC=0**. `git diff --check` RC=0.
+
+RÉSULTAT. La mission RÉELLE converge telle quelle : **AUCUN fichier modifié** n'a été nécessaire (le bloc `verify`
+du contrat ne déclarait déjà QUE le safeProbe `external-research-dry-run-planned` ; l'ancien log PRE-FIX
+« BLOCKED / research not acquired » est obsolète depuis `3706bdf`). La preuve d'acquisition LIVE n'a été NI
+supprimée NI affaiblie — elle reste exigée et fail-closed pour la voie LIVE. **Verdict : VERIFIED.**
+
+STATUT EXTERNAL RESEARCH (observé vs non mesuré) :
+- PROUVÉ (local, ce jour) : plan DRY-RUN gouverné, zéro réseau, routé LOCAL, validé end-to-end par le pipeline
+  officiel ; chokepoint safe-mode fail-closed (12/12) + routage (16/16) régressés.
+- PROUVÉ LIVE antérieurement (NON re-exécuté, non re-certifié ici) : un fetch borné réel via grant humain
+  (carnet e206b84 : GET example.com 200/577o, sha256) — dépend toujours du kill-switch opérateur
+  `externalProvidersEnabled=true`.
+- NON VALIDÉ par cette mission : toute acquisition LIVE autonome (sans grant humain explicite) ; l'extraction/
+  ranking de contenu réel reste une frontière distincte (le ranking observé est `[]` en dry-run, non exercé).
+
+BILAN STRATÉGIQUE (établi à partir des preuves déjà disponibles — AUCUN nouvel audit global) :
+- **P1 — CLÔTURÉ ce jour (VERIFIED)** : convergence de la mission de preuve de capacité External Research sur la
+  route LOCALE. Première loose-end du bilan précédent fermée.
+- **P2 — OUVERT (local, vérifiable ; frontière de solidité, audit APEX @52123ee)** : le résolveur
+  (capability-router) est câblé sur le pipeline JS mais reste HORS de la route migrée `src/runtime` ; et
+  `governance-kernel.authorizeMission` présente une tautologie d'autorisation (hors-route, ouverte). Candidats à
+  une mission minimale ultérieure, à reproduire avant toute correction.
+- **P3 — OUVERT (frontière de conception, PAS un seam minimal)** : réutilisation d'apprentissage. La symétrie de
+  clé record/lookup a été corrigée antérieurement (`18547ba`, normalisation du goal), mais l'apprentissage reste
+  THIN/advisory (toute réutilisation est de toute façon revalidée par le pipeline) ; l'amélioration autonome
+  end-to-end n'est PAS prouvée.
+
+LACUNES ENCORE OUVERTES — explicitement NON validées par cette mission (observé, pas d'affirmation de succès) :
+- **Commerce / revenu opérationnel** : ODG produit du code mais NE peut PAS transiger ; tout engagement est
+  human-gated ; plateformes d'appel d'offres auth-walled (mémoires tender/freelance). Le site commercial V1 est
+  livré mais non déployé (canal/domaine/legal = humain). **NON opérationnel.**
+- **Finance / quant** : capacité FINANCE-QUANT **ABSENTE** du registre (audit APEX). **NON présente, NON validée.**
+- **Apprentissage autonome** : seams post-release-learning + replay câblés (advisory) ; symétrie de clé corrigée ;
+  mais aucun cycle d'auto-amélioration autonome prouvé. **NON validé.**
+- **Orchestration multi-agent** : posture actuelle = propose-only + validation indépendante, SANS débat
+  contradictoire ni consensus autonome (audit APEX). **Multi-agent autonome NON validé.**
+
+LIMITES DE CETTE DOCUMENTATION (honnêteté) : les sections P2/P3 et les 4 lacunes ci-dessus sont REPORTÉES depuis
+des preuves/audits antérieurs, NON ré-auditées ce jour ; elles ne sont donc PAS « évaluées à neuf ». Aucune
+affirmation de validation LIVE, finance-quant, commerce opérationnel, apprentissage autonome complet ou multi-agent
+autonome n'est faite. Write-set documentaire = ce carnet UNIQUEMENT. Aucun push, déploiement, installation, appel
+externe, ni nouvelle mission.
