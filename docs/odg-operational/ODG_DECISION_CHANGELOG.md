@@ -288,7 +288,7 @@
   until governance establishes the authorization and write-set. Do NOT create the rejected synthetic contract
   until its structure/provenance/acceptance anomalies are resolved.
 
-### CHG-OD-3 — DEF-014 remediation (defer-on-BLOCKED, no provider escalation) [TECH-CHANGE] — VERIFIED, PENDING-COMMIT (2026-10-09)
+### CHG-OD-3 — DEF-014 remediation (defer-on-BLOCKED, no provider escalation) [TECH-CHANGE] — VERIFIED; COMMITTED LOCALLY @ `2aa6dab` (2026-10-09)
 - OD-3 executed under CTO authorization. Write-set (exact, nothing else touched): `src/runtime/autonomy-runtime-
   adapter.ts` (+60/−3 — `runLocalPipeline` classifies a governed Validation BLOCKED vs a crash: FAILED stage ==
   "Validation Engine" via `pipeline-checkpoint.json` AND fresh `mission-report.json` `validated:false`+status
@@ -301,14 +301,16 @@
   NO_RELEASE parity; crash→EXECUTION_FAILED distinct; D1 no provider on governed block; D3 crash still escalates);
   scratchpad `repro-blocked-halt.ts` **FLIPPED** (Scenario A now `status=BLOCKED, completed=["GOOD_MISSION"]`, was
   EXECUTION_FAILED/stranded); 8 neighbour autonomy suites green; `npx tsc --noEmit` **RC=0**.
-- Status: **VERIFIED — pending-commit** (ODG never auto-commits, D1). NOT committed/pushed; no network/deploy.
-  `npm run build`/`odg verify` (Next build, does not exercise this path) NOT re-run — proof = tsc + tests + repro.
-  External research stays **DEFERRED**. Detail: `ODG_DEFECT_REGISTER.md` DEF-014 (now VERIFIED — pending-commit).
+- Status: **VERIFIED — committed locally @ `2aa6dab`** (D1 held: ODG did not auto-commit; a human authorized this
+  single local commit, which also carries these docs). **NOT pushed**; no network/deploy. `npm run build`/`odg verify`
+  (Next build, does not exercise this path) NOT re-run — proof = tsc + tests + repro. External research stays
+  **DEFERRED**. Detail: `ODG_DEFECT_REGISTER.md` DEF-014 (now VERIFIED — committed locally @ `2aa6dab`).
 
 ## Open decisions (pending CTO)
-- **OD-3 (RESOLVED — pending-commit)** — remediation of **DEF-014** applied + VERIFIED (CHG-OD-3 above); the only
-  residual is the **human commit gate** for the 3-file OD-3 write-set. Autonomy's BLOCKED-defer path is now PROVEN
-  locally; it stays PARTIAL-until-committed (uncommitted fix does not land at a tracked HEAD).
+- **OD-3 (RESOLVED — committed locally @ `2aa6dab`)** — remediation of **DEF-014** applied + VERIFIED and committed
+  in the 3-file OD-3 write-set (CHG-OD-3 above). The only remaining residual is the **push decision** (human): `main`
+  is ahead of `origin/main` and has NOT been pushed. Autonomy's BLOCKED-defer path is PROVEN locally; the live
+  end-to-end autonomy loop remains **NOT PROVEN**.
 - (OD-1/OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
 
 ## Non-verifiable / limits
