@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Offline-first: the `--font-geist-sans` / `--font-geist-mono` CSS variables are defined as
+// system-font stacks in globals.css. This removes the build-time network dependency that
+// `next/font/google` (Geist / Geist Mono) introduced by fetching fonts.googleapis.com during
+// `next build`. Visual tradeoff: system fonts instead of Geist; variable names and layout preserved.
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,7 +19,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
