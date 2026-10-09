@@ -8,6 +8,20 @@
 > PERMANENTLY SMALL. MORE CAPABLE ≠ MORE AUTHORIZED.**
 >
 > Created @ checkpoint `d77f174` (branch `main`). If HEAD differs on resumption, adapt — never reset/overwrite.
+>
+> **Canonical invariants (non-negotiable, cited):**
+> - **ONE Universal Runtime.** "Maintain a single Runtime architecture" (CTO_DIRECTIVES.md:45); "X10 adds no
+>   tenth primitive and no parallel runtime" (FICHE_05:18); "NO SECOND STATE SOURCE. NO PARALLEL RUNTIME."
+>   (ODG_V5_ROADMAP_WITH_WORK_METHOD.md:738–739). ⇒ No Business/Enterprise/Executive runtime, no second
+>   authority/memory/state/orchestration/governance. The 9 permanent primitives are not extended.
+> - **Order ≠ authorization.** "The roadmap does NOT authorize all campaigns automatically" (V5 roadmap:20,
+>   551). Selecting the next step (§H) is NOT permission to develop or ACTIVATE a capability — the §I human
+>   gates and the canonical contracts still gate activation.
+> - **Semantic/documentation coverage ≠ implementation ≠ production.** "Documentation conformance does not
+>   certify runtime implementation" (FICHE_06:1359); "Confidence ≠ proof; certification scoped to the proven
+>   scope" (FICHE_01:1089). Use the status vocabulary in §C; never READY/DONE on a green build alone.
+> - **Security changes follow intent + contract** (do NOT auto-restore a removed protection nor remove a
+>   still-required one without a separately authorized mission).
 
 ## A. Canonical references (read; do NOT rewrite/shorten/merge)
 - Frozen Master (6 fiches): `docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_01..06.md`
@@ -28,9 +42,20 @@
    as proof without confirming the artifact/test exists at the current HEAD.
 
 ## C. Permanent engineering method (single chain — do NOT create a second)
-Reference: FICHE_07 / `METHODE_DE_TRAVAIL.md`. The chain is:
-`TRUTH LOCK → INSPECT → REPRODUCE → OBSERVE → DIAGNOSE → SPECIFY → MINIMAL REPAIR → TARGETED TESTS →
-REGRESSION TESTS → INDEPENDENT VERIFICATION → INTEGRATION VERIFICATION → EVIDENCE → CHECKPOINT → ACCEPTANCE → PROMOTION.`
+**CANONICAL method = FICHE_07, line 6 (authoritative, verbatim — do not substitute a generic reformulation):**
+`TRUTH LOCK → REPRODUCE → MEASURE → LOCALIZE → CLASSIFY → PROVE ROOT CAUSE → MINIMAL CHANGE → BUILD → TEST →
+REGRESSION → RUNTIME VERIFY → EVIDENCE → COMMIT → CHECKPOINT → ONE NEXT AUTHORIZED ACTION.`
+Terminal evidence state (FICHE_07): when a claim is not proven ⇒ `UNKNOWN` or `BLOCKED — EVIDENCE INSUFFICIENT`.
+Canonical sub-flows (FICHE_07): write = `AUTHORITY → ACTION CONTRACT → TARGET VALIDATION → PRECONDITIONS →
+EXECUTE → OBSERVE → EVIDENCE → VERIFY → ACCEPT/RECOVER`; verification scale = `STRUCTURAL → SEMANTIC →
+BEHAVIORAL → RUNTIME → OBJECTIVE → ADVERSARIAL → ECONOMIC → INDEPENDENT/EXTERNAL`; recovery =
+`DETECT → CONTAIN → LOCALIZE → DIAGNOSE → REPAIR/COMPENSATE → VERIFY → RESUME/ROLLBACK/ESCALATE/STOP`.
+
+The table below is an **operational mapping** of that canonical chain (INSPECT/SPECIFY are preparatory facets
+of REPRODUCE/LOCALIZE/CLASSIFY; INTEGRATION-VERIF ⊂ RUNTIME VERIFY; ACCEPTANCE/PROMOTION ⊂ COMMIT/CHECKPOINT +
+ONE NEXT AUTHORIZED ACTION). It must never drop a canonical step (esp. MEASURE, LOCALIZE, CLASSIFY, PROVE ROOT
+CAUSE, RUNTIME VERIFY) nor the terminal `ONE NEXT AUTHORIZED ACTION` / `UNKNOWN|BLOCKED` stop-states. On any
+divergence, FICHE_07 wins.
 
 | Step | Objective | Allowed actions | Evidence needed | Acceptance | Failure → resume | Human gate |
 |---|---|---|---|---|---|---|

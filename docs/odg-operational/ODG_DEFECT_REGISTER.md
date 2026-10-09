@@ -41,6 +41,9 @@
 - **Missing configuration must BLOCK** the operation cleanly — never silently fall back to a temp/ephemeral store.
 - An **agent/role declaration** is not **proof**; consensus never replaces evidence.
 - **Historical artifacts can be stale** and must not be auto-deleted without verification.
+- **Security changes follow intent + contract.** Evaluate a prior control change by its intent/contract; do
+  NOT auto-restore a deliberately-removed protection nor silently remove a still-required one — such changes
+  require a separately authorized mission (cf. DEF-006/DEF-007; CTO_DIRECTIVES, FICHE_01 authority model).
 
 (Search the repo archives — `PHASE_0_CARNET.md`, `docs/audit/`, commit history — for additional documented
 defects before closing related work; this register is not exhaustive of all historical incidents.)
