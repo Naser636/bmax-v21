@@ -34,6 +34,7 @@
 - **Defect register:** `docs/odg-operational/ODG_DEFECT_REGISTER.md` (companion to this file)
 - **Decision & change journal:** `docs/odg-operational/ODG_DECISION_CHANGELOG.md` (CTO decisions DEC-*, changes CHG-*, open decisions OD-*)
 - **Phase A capability inventory (persistent):** `docs/odg-operational/ODG_PHASE_A_INVENTORY.md` (domain matrix A–H, statuses, evidence, gaps, depth limits)
+- **Phase C shared-contracts map:** `docs/odg-operational/ODG_SHARED_CONTRACTS_MAP.md` (how Finance/Commerce/Multi-agent reuse existing contracts; absent/deferred interfaces; duplication-of-authority risks)
 - Commercial run sheets: `FIRST_SUPERVISED_COMMERCIAL_PILOT_RUNSHEET.md`, `LAUNCH_READINESS.md`, `EMAIL_INTAKE_SETUP.md`
 
 ## B. Resumption Truth Lock — MANDATORY startup sequence (do this first, every session)

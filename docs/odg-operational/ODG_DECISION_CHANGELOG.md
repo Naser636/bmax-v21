@@ -77,6 +77,17 @@
   demonstrated — adding one would invent a defect, FICHE_07 MINIMAL CHANGE).
 - Effect: APEX-B1 objective satisfied; next = Phase C (shared contracts, read-only design first).
 
+### CHG-PHASE-C — Shared-contracts map persisted [FINDING / TECH-CHANGE] — ACCEPTED (2026-10-09)
+- Persisted `ODG_SHARED_CONTRACTS_MAP.md` (referenced from roadmap §A). Finding: Finance/Commerce/Multi-agent
+  can reuse the EXISTING contracts (identity, C03 state, authority/action-gate, acceptance verdict, proven-only
+  ledger, economic units, invoice→settlement, resolution/execution, advisory learning, recovery) with **NO new
+  primitive/authority/engine**. Genuinely ABSENT interfaces are domain-specific and deferred: Finance (data
+  ingestion/provenance, no-look-ahead validator, backtest/walk-forward, risk-control — simulation-only, SEPARATE
+  CTO authorization), Commerce value-attribution (NOT_NEEDED for line-item billing), Multi-agent consensus
+  (NOT_NEEDED/deferred; consensus ≠ proof, DEC-005). Reuse ≠ verified integration (several primitives UNPROVEN this session).
+- Effect: Phase C design done; no implementation. Next = CTO decision on Phase D (multi-agent roles only if a
+  gap is proven) or authorize a bounded Finance-SIMULATION mission.
+
 ## Open decisions (pending CTO)
 - **OD-1** [HYPOTHESIS→PROPOSED] Replace the roadmap §C mapping table with the FICHE_07 chain only, or keep the
   subordinate table? Current: kept as subordinate mapping (DEC-001). Reopen = CTO preference.
