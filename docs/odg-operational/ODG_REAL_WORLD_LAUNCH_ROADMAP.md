@@ -79,7 +79,7 @@ supplies credentials. Config detail → `LAUNCH_READINESS.md`.
 | Track | Objective | Status (honest) | Evidence / reference | Next gate |
 |---|---|---|---|---|
 | A | Repo truth & inventory | **PROVEN** | Truth Lock this session (HEAD=`f88f2a1` clean); `ODG_PHASE_A_INVENTORY.md`; master §D state index | — |
-| B | Demonstrated defects, source repairs | **PARTIAL** | `ODG_DEFECT_REGISTER.md` DEF-001..013 guarded; **DEF-014 VERIFIED** — OD-3 fix `2aa6dab` now **published in `origin/main`** (ancestor of HEAD `581d1f1`; tested LOCAL; see CHG-OD-3/CHG-OD-4) | `npm run build`/`odg verify` not re-run; live end-to-end loop NOT PROVEN |
+| B | Demonstrated defects, source repairs | **PARTIAL** | `ODG_DEFECT_REGISTER.md` DEF-001..013 guarded; **DEF-014 VERIFIED** — OD-3 fix `2aa6dab` now **published in `origin/main`** (ancestor of HEAD `581d1f1`; tested LOCAL; see CHG-OD-3/CHG-OD-4); `npm run build`/`odg verify` re-run and **green** — `odg verify` exit 0 @ `6f815ba` (Track J PROVEN; see CHG-OD-5) | live end-to-end autonomy loop remains **NOT PROVEN** (belongs to Track F) |
 | C | File/write/delete safety | **PARTIAL** | PROVEN: `scope-observer`, `action-gate`, `patch-executor-governance-guard`, RWL-B4 backup/restore 12/12; retention/deletion **NOT PROVEN** (RWL-D2) | human retention policy |
 | D | Real provider execution chain | **PARTIAL** | links wired+tested (patch-engine `objective.patch`→patch-executor→validation→lifecycle→ledger); eng. RELEASE needs human commit; **DEF-014** blocks autonomous continue | DEF-014 + commit gate |
 | E | Runtime wake-up & wiring | **PARTIAL** | PROVEN local: `odg-state`/`odg health` READY (169 caps); live **provider spawn hazard** (`runViaProvider`); VPS wake **BLOCKED BY RESOURCE** (RWL-C1) | host (RWL-C1) |

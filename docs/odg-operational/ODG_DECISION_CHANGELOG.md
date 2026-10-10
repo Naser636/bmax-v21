@@ -368,6 +368,19 @@
   does not prove live-refresh under load. Unrelated limits unchanged: live end-to-end autonomy **NOT PROVEN** (Track
   F); `ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` **DEFERRED**. Evidence artifacts are **not committed**.
 
+### CHG-OD-7 — Track B residual reconciled: build/`odg verify` gate is green (stale "not re-run" removed) [FINDING / DOC] — RECORDED (2026-10-10)
+- Executed under CTO DIRECTIVE "RECONCILE_TRACK_B_RESIDUAL — DOCUMENTATION ONLY". Documentary only; write-set =
+  exactly two docs (`ODG_REAL_WORLD_LAUNCH_ROADMAP.md` row B, this changelog). No source/test/config/permission/
+  generated-artifact change.
+- **Truth Lock (verified):** HEAD=`2503e31`, branch `main`, worktree clean, synchronized with `origin/main`.
+- **Correction:** Track B's gap column stated "`npm run build`/`odg verify` not re-run". That is **obsolete** — Track J
+  re-ran both and recorded them **green**: official `odg verify` **exit 0** @ `6f815ba` (`build:true`, `typescript:true`,
+  `gitClean:true`, generated contracts 88/88) under proven network isolation; see **CHG-OD-5**. The stale clause is
+  removed and replaced with that evidence pointer.
+- **Preserved (no overclaim):** Track B stays **PARTIAL**. Its remaining residual is the **live end-to-end autonomy
+  loop, which remains NOT PROVEN and belongs to Track F** — this reconciliation does NOT claim live autonomy is proven.
+  Unrelated limits unchanged: `ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` **DEFERRED**.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
