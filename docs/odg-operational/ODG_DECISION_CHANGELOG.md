@@ -326,6 +326,28 @@
 - **Preserved limitations:** live end-to-end autonomy loop **NOT PROVEN**; `npm run build`/`odg verify` **NOT re-run**
   (not overstated); **ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR remains DEFERRED**.
 
+### CHG-OD-5 — Track J recorded PROVEN at HEAD `6f815ba` [FINDING / DOC] — RECORDED (2026-10-10)
+- Executed under CTO DIRECTIVE "RECORD TRACK J PROVEN — DOCUMENTATION ONLY". Documentary only; write-set = exactly
+  two docs (`ODG_REAL_WORLD_LAUNCH_ROADMAP.md` row J, this changelog). No source/test/contract/permission/
+  generated-artifact change. No commit beyond the doc commit; no push/network/deploy.
+- **Truth Lock (verified, not assumed):** HEAD=`6f815baf6fd2448882daab532408144cfff830a1`, branch `main`, worktree
+  clean, 1 ahead of `origin/main` (unpushed).
+- **Verified result (current evidence, HEAD `6f815ba`):** official `runtime/bin/odg verify` ran **once** under proven
+  network isolation (`bwrap --unshare-net`; loopback-only, egress `ENETUNREACH`; temporary sandbox HOME with only
+  `/home/ubuntu/.config/git/ignore` bound read-only — no `.ssh`/`.gitconfig`/`.aws`/`.npmrc`/SSH-agent, no writable
+  host state) → **exit 0**. `runtime/generated/runtime-verify.json` (`generatedAt 2026-10-10T10:27:50.355Z`, fresh):
+  `build:true`, `typescript:true`, `gitClean:true`, `generatedContractsValid:true` (88/88).
+- **Regression (current evidence):** full project-runner gate **374/374 PASS** = 371 under network isolation + 3
+  host carve-outs (`bash-command-governor` 52/52 real bubblewrap; git-dependent `scope-observer` + `clean-workspace`),
+  run at HEAD `581d1f1`. `6f815ba` is **docs-only** atop `581d1f1` (code identical, diff-confirmed), so the regression
+  covers `6f815ba`'s code.
+- **Historical (distinguished):** the earlier 2026-10-09 22:52 isolated gate read 371/372 with one suite
+  BLOCKED_BY_ISOLATION; corrected later by `602257a`. That capture is NOT the current proof.
+- **Scope / limits (explicit):** Track J is PROVEN for build + type-check + gitClean + generated-contracts +
+  regression gate at this HEAD. It does NOT prove runtime behaviour beyond those gates. **Live end-to-end autonomy
+  remains NOT PROVEN** (Track F); **`ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` remains DEFERRED**. Evidence artifacts
+  (`runtime-verify.json`, gate/verify logs under `/home/ubuntu/.cache/…` and the scratchpad) are **NOT committed**.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
