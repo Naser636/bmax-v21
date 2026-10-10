@@ -302,15 +302,35 @@
   scratchpad `repro-blocked-halt.ts` **FLIPPED** (Scenario A now `status=BLOCKED, completed=["GOOD_MISSION"]`, was
   EXECUTION_FAILED/stranded); 8 neighbour autonomy suites green; `npx tsc --noEmit` **RC=0**.
 - Status: **VERIFIED — committed locally @ `2aa6dab`** (D1 held: ODG did not auto-commit; a human authorized this
-  single local commit, which also carries these docs). **NOT pushed**; no network/deploy. `npm run build`/`odg verify`
-  (Next build, does not exercise this path) NOT re-run — proof = tsc + tests + repro. External research stays
-  **DEFERRED**. Detail: `ODG_DEFECT_REGISTER.md` DEF-014 (now VERIFIED — committed locally @ `2aa6dab`).
+  single local commit, which also carries these docs). **NOT pushed as of 2026-10-09**; no network/deploy then.
+  (Reconciliation 2026-10-10: `2aa6dab` is now published in `origin/main`/HEAD `581d1f1` — see CHG-OD-4.)
+  `npm run build`/`odg verify` (Next build, does not exercise this path) NOT re-run — proof = tsc + tests + repro.
+  External research stays **DEFERRED**. Detail: `ODG_DEFECT_REGISTER.md` DEF-014.
+
+### CHG-OD-4 — Evidence reconciliation: DEF-014 push status + Track J gate state [FINDING / DOC] — RECORDED (2026-10-10)
+- Executed under CTO DIRECTIVE "ODG EVIDENCE RECONCILIATION". Documentary only; write-set = exactly the three
+  operational docs (`ODG_DEFECT_REGISTER.md`, this changelog, `ODG_REAL_WORLD_LAUNCH_ROADMAP.md`). No source/test/
+  contract/permission/frozen-fiche change. No commit/push/network/deploy.
+- **Truth Lock (verified, not assumed):** HEAD=`581d1f1` = `origin/main` = `origin/HEAD`, worktree clean, 0 ahead.
+  `2aa6dab` IS an ancestor of HEAD and is contained in `origin/main`.
+- **DEF-014 / OD-3 reconciliation (current evidence):** the prior records stated the OD-3 fix `2aa6dab` was
+  "committed locally, NOT pushed, `main` ahead of `origin/main`". That is now obsolete — `2aa6dab` is published in
+  `origin/main` (later commits `151ac7b`…`581d1f1` sit on top; `main` is NOT ahead). Push residual is CLOSED. The
+  original 2026-10-09 decision narrative (CHG-OD-3) is preserved and date-qualified; history is NOT rewritten.
+- **Track J reconciliation (historical vs current):** the **historical** isolated gate (captured 2026-10-09 22:52,
+  `bwrap --unshare-net`, egress `ENETUNREACH`) reported **371/372 PASS** with 1 suite
+  `runtime/core/bash-command-governor.test.js` **BLOCKED_BY_ISOLATION** (needs nested bubblewrap). That suite was
+  **later** corrected by `602257a` (governed-bash fail-closed on sandbox launch failure); its **host** test passed
+  **52/52** (host evidence, this session). The **full 372-suite gate has NOT been rerun at the corrected HEAD
+  `581d1f1`** — Track J is therefore **NOT claimed 372/372** and remains **PARTIAL**.
+- **Preserved limitations:** live end-to-end autonomy loop **NOT PROVEN**; `npm run build`/`odg verify` **NOT re-run**
+  (not overstated); **ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR remains DEFERRED**.
 
 ## Open decisions (pending CTO)
-- **OD-3 (RESOLVED — committed locally @ `2aa6dab`)** — remediation of **DEF-014** applied + VERIFIED and committed
-  in the 3-file OD-3 write-set (CHG-OD-3 above). The only remaining residual is the **push decision** (human): `main`
-  is ahead of `origin/main` and has NOT been pushed. Autonomy's BLOCKED-defer path is PROVEN locally; the live
-  end-to-end autonomy loop remains **NOT PROVEN**.
+- **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
+  3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
+  (ancestor of HEAD `581d1f1`); `main` is NOT ahead of `origin/main`. Autonomy's BLOCKED-defer path is PROVEN
+  locally; the live end-to-end autonomy loop remains **NOT PROVEN**.
 - (OD-1/OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
 
 ## Non-verifiable / limits
