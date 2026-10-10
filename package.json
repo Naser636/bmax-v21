@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "demo": "tsx src/demo.ts",
-    "test": "bash -c 'files=(\"$@\"); if [ ${#files[@]} -eq 0 ]; then files=(src/tests/*.test.ts src/runtime/*.test.ts runtime/core/*.test.js); fi; code=0; for f in \"${files[@]}\"; do echo \"== $f ==\"; tsx \"$f\" || code=1; done; exit $code' _"
+    "test": "bash -c 'files=(\"$@\"); if [ ${#files[@]} -eq 0 ]; then files=(src/tests/*.test.ts src/runtime/*.test.ts runtime/core/*.test.js runtime/bin/odg-cockpit.test.js); fi; code=0; for f in \"${files[@]}\"; do echo \"== $f ==\"; tsx \"$f\" || code=1; done; exit $code' _"
   },
   "dependencies": {
     "imapflow": "^2.3.0",
