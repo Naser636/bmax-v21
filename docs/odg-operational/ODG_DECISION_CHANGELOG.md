@@ -8,7 +8,7 @@
 >
 > Entry kinds are labelled: **[CTO-DECISION]** (issued by the CTO), **[CANONICAL]** (a rule from the fiches),
 > **[TECH-CHANGE]** (a repo change), **[FINDING]** (a technical observation), **[HYPOTHESIS]** (unconfirmed).
-> Status ∈ PROPOSED · ACCEPTED · REJECTED · SUPERSEDED · UNVERIFIED. Dates are only given when verifiable.
+> Status ∈ PROPOSED · ACCEPTED · REJECTED · SUPERSEDED · UNVERIFIED · RECORDED · VERIFIED. Dates are only given when verifiable. (`RECORDED` = a dated finding/documentation entry; `VERIFIED` = a change proven by this session's evidence — both used by CHG-OD-3..8.)
 
 ## CTO decisions (this reconciliation, 2026-10-09)
 
@@ -380,6 +380,29 @@
 - **Preserved (no overclaim):** Track B stays **PARTIAL**. Its remaining residual is the **live end-to-end autonomy
   loop, which remains NOT PROVEN and belongs to Track F** — this reconciliation does NOT claim live autonomy is proven.
   Unrelated limits unchanged: `ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` **DEFERRED**.
+
+### CHG-OD-8 — Deploy-readiness local hardening: HTTP health endpoint + standalone build + deploy doc; Track D reconciled [TECH-CHANGE / DOC] — VERIFIED (2026-10-10)
+- Executed under CTO DIRECTIVE "DEPLOY_READINESS_LOCAL_HARDENING". Write-set = **6 files** (≤6 cap):
+  `src/app/api/health/route.ts` (new), `src/tests/health-endpoint.test.ts` (new; placed under `src/tests`
+  because the project runner globs `src/tests`/`src/runtime`/`runtime/core` — `src/app` is NOT discovered),
+  `next.config.ts`, `docs/odg-operational/DEPLOYMENT.md` (new), this changelog, `ODG_REAL_WORLD_LAUNCH_ROADMAP.md`.
+  No other files; no source/semantics of existing routes changed.
+- **Health endpoint** `GET /api/health`: READ-ONLY readiness keyed on `ODG_CLIENT_STORE` (the real
+  request-serving gate) — 200 `{status:"ready",storage:"READY"}` only when the store resolves to a readable
+  directory; 503 `{...NOT_CONFIGURED|MISSING|BLOCKED|UNKNOWN}` otherwise, fail-closed. No fs writes (does NOT use
+  client-intake's write-probe `storeState`), no spawn, no network, no secret/path/payload exposure, `no-store`.
+  A 200 proves only "this instance can accept intake" — **NOT** live autonomy or production availability.
+- **Standalone build:** `next.config.ts` `output:"standalone"` → `next build` emits `.next/standalone/server.js`.
+- **Evidence (this session):** health test **12/12** (healthy/not-configured/missing/blocked, codes, shape,
+  no-leak, read-only invariant incl. no `.intake-probe`); `tsc --noEmit` exit 0; `next build` exit 0 under
+  `bwrap --unshare-net` (`/api/health` dynamic, `server.js` emitted); full project runner green; `odg verify` green.
+- **Track D reconciled:** removed the stale "DEF-014 blocks autonomous continue / DEF-014 + commit gate" (DEF-014
+  is VERIFIED/published `2aa6dab`). D stays **PARTIAL**; genuine residual re-pointed to the **live provider spawn**
+  (network/credentials/budget) + **human commit gate** → Track F.
+- **Explicitly UNRESOLVED (unchanged):** host SLOs, real persistent-disk/off-host backup, retention/deletion
+  policy (RWL-D2), live-provider autonomy (Track F), fiscal/legal sign-off, and all human/deploy authorizations.
+  No Dockerfile/systemd/nginx artifact shipped (reported as a host gap in DEPLOYMENT.md §9). Deployment readiness
+  is **local-only**; host and production readiness are NOT claimed.
 
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
