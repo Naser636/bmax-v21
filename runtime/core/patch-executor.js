@@ -627,11 +627,23 @@ for (const patch of plan.patches) {
           });
           break;
         }
-        report.executed.push({
+        // RC-3: make the capability-resolution MISS EXPLICIT without fabricating success and without
+        // weakening any gate. The status STAYS "RECORDED" on purpose — validation-engine.noRecordedNoOp
+        // and self-diagnostic's recorded-noop both key on that exact status and MUST keep firing (a
+        // rename would silence both). For a WRITE-SCOPE (engineering) objective we attach an explicit
+        // `reason` so the no-op is diagnosable at the source; a read-only/planning objective (no
+        // authorized paths) is a legitimate RECORDED and stays byte-identical to before.
+        const recorded = {
           action: patch.action,
           objectiveId: patch.objectiveId || patch.action,
-          status: "RECORDED"
-        });
+          status: "RECORDED",
+        };
+        if (authorizedPrefixes.length > 0) {
+          recorded.reason =
+            "no capability executor resolved for this objective and no real edits were produced; " +
+            "a write-scope objective discharged as a no-op is not real work and fails closed at validation";
+        }
+        report.executed.push(recorded);
       }
     }
   } catch (e) {

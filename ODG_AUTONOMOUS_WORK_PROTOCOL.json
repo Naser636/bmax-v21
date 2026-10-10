@@ -165,12 +165,13 @@
       "AUTHORIZED work item RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE: minimal runtime change strictly inside its write_set (runtime/bin/odg-run.js, runtime/core/stage-effect.js, runtime/core/stage-effect.test.js)",
       "AUTHORIZED work item RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT: minimal runtime change strictly inside its write_set (runtime/bin/odg-health.js, runtime/bin/odg-state.js, runtime/core/runtime-model.js, runtime/core/health-render.test.js, runtime/core/runtime-model.test.js)",
       "AUTHORIZED work item RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT: minimal runtime change strictly inside its write_set (runtime/core/self-diagnostic.js, runtime/core/self-diagnostic.test.js)",
+      "AUTHORIZED work item RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT: minimal runtime change strictly inside its write_set (runtime/core/patch-executor.js, runtime/core/patch-executor.test.js)",
       "Update of ODG_AUTONOMOUS_WORK_PROTOCOL.json current_campaign_scope at repository root (this declaration)",
       "Update of CLAUDE.md at repository root (execution interface only)"
     ],
     "forbids": [
       "Any runtime change outside an AUTHORIZED work item's write_set",
-      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME, RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE, RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT or RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT without a separate explicit CTO authorization",
+      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME, RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE, RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT, RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT or RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT without a separate explicit CTO authorization",
       "Any mission P0-071 or later",
       "Any modification of Master / Runtime Constitution / ROADMAP.json / policy",
       "Any new constitution or new roadmap",
