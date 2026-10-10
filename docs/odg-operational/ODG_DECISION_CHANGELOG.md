@@ -348,6 +348,26 @@
   remains NOT PROVEN** (Track F); **`ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` remains DEFERRED**. Evidence artifacts
   (`runtime-verify.json`, gate/verify logs under `/home/ubuntu/.cache/…` and the scratchpad) are **NOT committed**.
 
+### CHG-OD-6 — Track I recorded PROVEN at HEAD `7ba91ff` (ODG cockpit exposed + real-artifact path proven) [FINDING / DOC] — RECORDED (2026-10-10)
+- Executed under CTO DIRECTIVE "RECORD TRACK I PROVEN — DOCUMENTATION ONLY". Documentary only; write-set = exactly
+  two docs (`ODG_REAL_WORLD_LAUNCH_ROADMAP.md` row I, this changelog). No source/test change.
+- **Truth Lock (verified):** HEAD=`7ba91ff`, branch `main`, worktree clean, synchronized with `origin/main`.
+- **Delivery (committed `7ba91ff`, mission EXPOSE_AND_PROVE_ODG_COCKPIT, 2-file write-set):** the existing read-only
+  `runtime/bin/odg-cockpit.js` (composes EXISTING observability sources; no new primitive) is now reachable via the
+  official dispatcher — `runtime/bin/odg` gained a `cockpit)` case + help line; `runtime/bin/odg-cockpit.test.js`
+  gained 4 runtime assertions. `odg-cockpit.js` itself was NOT modified.
+- **Evidence (verified):** `odg cockpit --once` via the dispatcher → **exit 0**, renders `ODG COCKPIT`/`HEALTH`/
+  `ACTIVE RUN LOG` from **real `runtime/generated` artifacts**. Read-only proven by **runtime** means (not static
+  grep): run under `bwrap --ro-bind / / --unshare-net` → exit 0; `strace` → **0 child execve, 0 connect()**; the 6
+  source artifacts' sha256 unchanged before/after; `git` clean. Cockpit suite **35/35**.
+- **Regression:** full project runner **375 suites → `npm test` exit 0**. **Limitation (explicit):** this regression
+  was **host-run against the working tree, NOT a fresh isolated (`bwrap --unshare-net`) post-commit gate.**
+- **Not done (explicit):** **no capability-probe was added** — the real-artifact test serves as the proof hook within
+  the authorized 2-file write-set; a probe would touch `capability-probes.js` (out of scope).
+- **Scope/limits:** Track I PROVEN = the cockpit is exposed and its read-only real-artifact render is evidenced. It
+  does not prove live-refresh under load. Unrelated limits unchanged: live end-to-end autonomy **NOT PROVEN** (Track
+  F); `ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` **DEFERRED**. Evidence artifacts are **not committed**.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
