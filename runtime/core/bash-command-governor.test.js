@@ -121,9 +121,9 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
 // ---- 8. EFFECT DIVERGENCE: a declared read-only command that writes is REJECTED. ---------------
 (function effectDivergence() {
   const lyingRunner = () => ({
-    ran: true, mechanism: "bubblewrap", exitCode: 0, signal: null, timedOut: false, stdout: "", stderr: "",
+    ran: true, launched: true, mechanism: "bubblewrap", exitCode: 0, signal: null, timedOut: false, stdout: "", stderr: "",
     observedEffects: { filesCreated: ["sneaky.txt"], filesModified: [], filesDeleted: [], network: false },
-    isolation: { network: false, envCleared: true, timeoutMs: 5000 },
+    isolation: { network: false, envCleared: true, timeoutMs: 5000, launched: true },
   });
   const ev = engine.govern({ command: "echo hi", execute: true }, { sandboxRunner: lyingRunner });
   ok("undeclared filesystem write → EFFECT_DIVERGENCE + REJECTED", ev.outcome === O.EFFECT_DIVERGENCE && ev.verification_status === "REJECTED");
@@ -190,12 +190,19 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
     const executor = capExec.resolve({ objectiveId: "BASH_COMMAND_1", bash_command: { command: "echo via-registry", execute: true } });
     ok("registry routes BASH_COMMAND_* to the capability", executor && executor.capability === "Governed Bash/Linux Command");
 
-    const result = executor.run();
-    ok("executor writes evidence artifact", typeof result.evidence === "string" && fs.existsSync(result.evidence));
+    // run() returns on a governed execution, but STOPs (throws) on a governed stop — incl. the
+    // fail-closed SANDBOX_LAUNCH_FAILED when real isolation is unavailable. Capture both honestly.
+    let result = null, runErr = null;
+    try { result = executor.run(); } catch (e) { runErr = e; }
     const verdict = capProbes.runProbe("bash-command-governed", {});
     if (BWRAP) {
+      ok("executor writes evidence artifact", result && typeof result.evidence === "string" && fs.existsSync(result.evidence));
       ok("probe PASSES on a real governed execution", verdict.ok === true);
     } else {
+      // No real isolation: the sandbox cannot launch, so the governor fail-closes and the executor
+      // STOPs with SANDBOX_LAUNCH_FAILED — it NEVER fabricates a governed-execution success.
+      ok("no real isolation ⇒ executor STOPs (SANDBOX_LAUNCH_FAILED), never a false EXECUTED",
+        !!runErr && /SANDBOX_LAUNCH_FAILED/.test(String(runErr && runErr.message)));
       ok("probe honestly fails without real isolation (no false pass)", verdict.ok === false);
     }
 
@@ -207,6 +214,38 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
     process.chdir(prev);
     fs.rmSync(cwd, { recursive: true, force: true });
   }
+})();
+
+// ---- 5. ISOLATION FAIL-CLOSED: a failed sandbox LAUNCH must never be recorded as EXECUTED/VERIFIED.
+// Regression for the governed-bash false-pass: `sandboxRun` reports `launched` from the real bwrap
+// --info-fd handshake; `govern` promotes to EXECUTED ONLY when the sandbox actually launched. These
+// cases drive the known-safe execute path through the existing `sandboxRunner` injection seam (no real
+// bwrap needed), so they are deterministic regardless of whether nested bubblewrap is available here.
+(function isolationFailClosed() {
+  const baseEffects = { filesCreated: [], filesModified: [], filesDeleted: [], network: false };
+  const mkRun = (o) => Object.assign({
+    ran: true, mechanism: "bubblewrap", signal: null, timedOut: false, stdout: "", stderr: "",
+    observedEffects: baseEffects,
+    isolation: { network: false, envCleared: true, writableRoot: false, nonPrivileged: true, workDir: "/tmp/work", timeoutMs: 5000 },
+  }, o);
+  const govern = (run) => engine.govern({ command: "echo ok", execute: true }, { sandboxRunner: () => run });
+
+  // Case A — sandbox LAUNCH FAILURE (nested userns denied): no --info-fd handshake, command never ran.
+  const a = govern(mkRun({ launched: false, exitCode: 1, stderr: "bwrap: No permissions to create a new namespace, likely because the kernel does not allow non-privileged user namespaces." }));
+  ok("A: launch failure is NOT EXECUTED", a.outcome !== O.EXECUTED);
+  ok("A: launch failure is NOT VERIFIED", a.verification_status !== "VERIFIED");
+  ok("A: reason identifies sandbox launch failure", /SANDBOX_LAUNCH_FAILED/.test(String(a.reason)));
+  ok("A: no C03 VERIFIED success evidence emitted", !a.state_transition || a.state_transition.verification_status !== "VERIFIED");
+
+  // Case B — genuine successful launch still produces a valid EXECUTED result.
+  const b = govern(mkRun({ launched: true, exitCode: 0, stdout: "ok\n" }));
+  ok("B: successful launch ⇒ EXECUTED", b.outcome === O.EXECUTED);
+  ok("B: successful launch ⇒ VERIFIED", b.verification_status === "VERIFIED");
+
+  // Case C — command that ACTUALLY RAN (launched) but returned non-zero is NOT a launch failure.
+  const c = govern(mkRun({ launched: true, exitCode: 7, stderr: "boom" }));
+  ok("C: ran-nonzero is NOT reclassified as launch failure", !/SANDBOX_LAUNCH_FAILED/.test(String(c.reason || "")));
+  ok("C: ran-nonzero preserved its real exit code in evidence", c.execution && c.execution.exitCode === 7);
 })();
 
 console.log(`\nGOVERNED BASH/LINUX COMMAND — ${passed} assertions passed.`);

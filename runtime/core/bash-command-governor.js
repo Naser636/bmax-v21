@@ -264,6 +264,11 @@ function sandboxRun(argv, opts) {
     if (typeof process.env[k] === "string") { setenv.push("--setenv", k, process.env[k]); }
   }
   const bwrapArgs = [
+    // --info-fd is an OBSERVED launch handshake: bubblewrap writes JSON (incl. "child-pid") to fd 3
+    // ONLY after it has successfully created the namespaces/mounts and is about to exec the child. If
+    // the sandbox fails to launch (e.g. nested userns denied), fd 3 stays empty — regardless of the
+    // process exit code — which is how we prove isolation was actually achieved (not merely intended).
+    "--info-fd", "3",
     "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
     "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/tmp/work",
     "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp",
@@ -271,7 +276,16 @@ function sandboxRun(argv, opts) {
     ...setenv, "--", ...argv,
   ];
   const before = snapshotDir(work);
-  const res = spawn("bwrap", bwrapArgs, { encoding: "utf8", timeout: timeoutMs, maxBuffer: 1024 * 1024 });
+  // stdio: fd0 ignored, fd1/fd2 captured as stdout/stderr, fd3 captured as the --info-fd handshake.
+  const res = spawn("bwrap", bwrapArgs, {
+    encoding: "utf8", timeout: timeoutMs, maxBuffer: 1024 * 1024,
+    stdio: ["ignore", "pipe", "pipe", "pipe"],
+  });
+  // OBSERVED launch proof: a non-empty --info-fd payload carrying a child-pid means bubblewrap built
+  // the sandbox and exec'd the command. No payload ⇒ the sandbox never launched ⇒ nothing executed.
+  const infoRaw = res && Array.isArray(res.output) && typeof res.output[3] === "string" ? res.output[3] : "";
+  let launched = false;
+  try { launched = !!(infoRaw && JSON.parse(infoRaw)["child-pid"]); } catch { launched = false; }
   const after = snapshotDir(work);
   const fsDiff = diffSnapshots(before, after);
   let cleanupError = null;
@@ -279,6 +293,7 @@ function sandboxRun(argv, opts) {
   const timedOut = !!(res.error && res.error.code === "ETIMEDOUT") || res.signal === "SIGTERM";
   return {
     ran: true,
+    launched,
     mechanism: "bubblewrap",
     exitCode: typeof res.status === "number" ? res.status : null,
     signal: res.signal || null,
@@ -286,7 +301,10 @@ function sandboxRun(argv, opts) {
     stdout: String(res.stdout || ""),
     stderr: String(res.stderr || ""),
     observedEffects: { filesCreated: fsDiff.created, filesModified: fsDiff.modified, filesDeleted: fsDiff.deleted, network: false },
-    isolation: { network: false, envCleared: true, writableRoot: false, nonPrivileged: true, workDir: "/tmp/work", timeoutMs },
+    // isolation reflects the OBSERVED launch: the network/env guarantees only hold when the sandbox
+    // actually launched (launched===true). `launched` is carried so consumers can require observed,
+    // not merely declared, isolation.
+    isolation: { network: false, envCleared: true, writableRoot: false, nonPrivileged: true, workDir: "/tmp/work", timeoutMs, launched },
     cleanupError,
   };
 }
@@ -399,6 +417,19 @@ function govern(request, opts) {
     stdout: redact(run.stdout).slice(0, 4000), stderr: redact(run.stderr).slice(0, 4000),
     observedEffects: run.observedEffects, isolation: run.isolation,
   };
+
+  // SECURITY (fail-closed): isolation must be OBSERVED, not merely declared. If the sandbox never
+  // launched (no bubblewrap --info-fd handshake), the command did NOT execute and no isolation was
+  // achieved — it can NEVER be promoted to EXECUTED/VERIFIED. This is distinct from a command that
+  // actually ran and returned a non-zero exit code (launched===true), which proceeds below, and from a
+  // timeout (launched===true, killed). A generic non-zero exit alone is NOT treated as a launch failure.
+  if (run.launched !== true) {
+    return finish(base, {
+      outcome: OUTCOME.HUMAN_APPROVAL_REQUIRED,
+      reason: "SANDBOX_LAUNCH_FAILED: bubblewrap did not create the isolation namespace (no --info-fd handshake); the command was NOT executed and isolation was NOT achieved",
+      decision: gate.decision, verification_status: VERIFICATION_STATUS.RECORDED,
+    });
+  }
 
   // Resource boundary: a command killed by the timeout exceeded its bound — not a clean execution and
   // never promoted to VERIFIED. It is a governed stop (fail-closed), not a divergence.
