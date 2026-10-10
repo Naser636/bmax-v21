@@ -488,6 +488,36 @@
   the end-to-end drill is reproducible from the commands recorded in `DEPLOYMENT.md` §7.1 — so no script was added
   (scope kept minimal, documentary only). A unit test is NOT presented as the end-to-end drill proof.
 
+### CHG-OD-13 — Wired test-report + backup/restore into the official `odg` dispatcher [TECH-CHANGE / DOC] — VERIFIED (2026-10-10)
+- Executed under explicit CTO authorization "ODG_WIRE_TEST_REPORT_AND_BACKUP_RESTORE" — integration only.
+  Write-set = **5 code/test files + this changelog**: `runtime/bin/odg` (dispatcher cases + help),
+  `runtime/bin/odg-test-report.js` (added read-only SHOW mode + helpers; existing classifier logic REUSED,
+  not duplicated), `runtime/bin/odg-test-report.test.js` (extended), **new** `runtime/bin/odg-backup.js`
+  (thin CLI over `client-store-backup.js`), **new** `runtime/bin/odg-backup.test.js`. `client-store-backup.js`
+  and `odg-cockpit.js` were **NOT modified**. No new primitive, no roadmap/constitution/policy change, no deploy.
+- **Truth Lock (verified):** HEAD=`9f186ef`, `main`, clean, synced; baseline reproduced green before edits
+  (test-report 22, client-store-backup suite exit 0).
+- **`odg test-report`** — read-only by default: validates + renders the last `runtime/generated/test-report.json`
+  (provenance, counts, age) and **never runs a suite**; an **absent/invalid report → exit 2**, a **non-green or
+  STALE report → exit 1** (objective staleness = a tested suite's source newer than `generatedAt`) — a
+  stale/absent report is never presented as valid proof. `odg test-report --run [<suite>…]` re-runs the existing
+  classifier on explicit suites (or its default set) and persists the artifact; explicit-list back-compat
+  (`npm run test:report`) preserved. **No cockpit coupling claimed** — the cockpit does NOT consume the report
+  (that downstream wiring was explicitly out of scope and left unimplemented).
+- **`odg backup` / `odg restore`** — governed surface over `client-store-backup.js` (integrity checks reused).
+  backup is read-only on the source. restore is **fail-closed**: `--target` is explicit and REQUIRED (never an
+  implicit store); the real production/preprod store (`/var/lib/odg/clients` or `$ODG_CLIENT_STORE`) is
+  **REFUSED** as a target (`TARGET_FORBIDDEN_PRODUCTION`, exit 2 — policy undefined, stopped not invented); a
+  non-empty target is refused unless `--force` is given explicitly (`TARGET_NOT_EMPTY`); a corrupted manifest
+  fails closed (`INTEGRITY_MISMATCH`) and writes nothing.
+- **Evidence (this session, synthetic stores only — real store never touched):** unit `odg-test-report.test.js`
+  **31/31**, `odg-backup.test.js` **18/18** (both exit 0); live dispatcher: `odg test-report` → exit 1 correctly
+  flagging the 01:24 artifact STALE; `--run` → exit 0 then SHOW → GREEN/age 0/exit 0; `odg backup --out` → exit 0
+  (count+hash); `odg restore` fresh target → byte-identical exit 0; prod-target → exit 2; non-empty no-force →
+  exit 1. `odg cockpit --once` still exit 0 (read-only invariant intact). `git diff --check` clean.
+- **Limits (unchanged):** `test-report.json` remains gitignored evidence; cockpit still shows no test results
+  (downstream coupling not implemented); backup off-host destination still undefined; no deploy/provider/API.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`

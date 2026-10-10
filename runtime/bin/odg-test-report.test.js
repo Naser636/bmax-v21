@@ -67,6 +67,26 @@ ok("report green verdict only when clean", /no genuine failure/.test(green));
 const df = R.defaultFiles();
 ok("defaultFiles non-empty and includes cockpit test", df.length > 50 && df.includes(path.join("runtime", "bin", "odg-cockpit.test.js")));
 
+// --- SHOW mode (read-only artifact view) ----------------------------------------------------------
+// loadReport: absent / invalid-json / invalid-shape all fail closed (never valid proof)
+ok("loadReport ABSENT when file missing", R.loadReport(path.join(tmp, "nope.json")).code === "ABSENT");
+const badJson = mk("bad.json"); fs.writeFileSync(badJson, "{not json");
+ok("loadReport INVALID_JSON on unparseable", R.loadReport(badJson).code === "INVALID_JSON");
+const badShape = mk("shape.json"); fs.writeFileSync(badShape, JSON.stringify({ generatedAt: "x" }));
+ok("loadReport INVALID_SHAPE when summary/results absent", R.loadReport(badShape).code === "INVALID_SHAPE");
+const validRep = { generatedAt: "2026-10-10T00:00:00.000Z", summary: { total: 2, counts: { PASS: 2, FAIL: 0, BLOCKED_BY_ISOLATION: 0, SKIPPED: 0, NOT_RUN: 0 } }, results: [] };
+const vp = mk("valid.json"); fs.writeFileSync(vp, JSON.stringify(validRep));
+ok("loadReport ok on a valid report", R.loadReport(vp).ok === true);
+// renderShow: absent → exit 2; valid+green+not-stale → exit 0; non-green → exit 1
+ok("renderShow exit 2 when absent (never valid proof)", R.renderShow(R.loadReport(path.join(tmp, "nope.json"))).exit === 2);
+ok("renderShow exit 0 when valid+green+fresh", R.renderShow({ ok: true, report: validRep, path: vp }, Date.parse(validRep.generatedAt) + 1000).exit === 0);
+const notGreen = { ...validRep, summary: { total: 2, counts: { PASS: 1, FAIL: 1, BLOCKED_BY_ISOLATION: 0, SKIPPED: 0, NOT_RUN: 0 } } };
+ok("renderShow exit 1 when recorded NOT green", R.renderShow({ ok: true, report: notGreen, path: vp }).exit === 1);
+// stalenessOf: a tested source newer than generatedAt ⇒ stale
+const staleRep = { generatedAt: "2000-01-01T00:00:00.000Z", summary: validRep.summary, results: [{ file: fPass, cls: "PASS" }] };
+ok("stalenessOf flags a source newer than the report", R.stalenessOf(staleRep).stale === true);
+ok("renderShow exit 1 when stale (never valid proof)", R.renderShow({ ok: true, report: staleRep, path: vp }).exit === 1);
+
 try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort cleanup of own tmp */ }
 console.log(`\nALL PASS — odg test-report (${passed} assertions)`);
 process.exit(0);

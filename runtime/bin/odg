@@ -120,6 +120,30 @@ case "$MISSION" in
     echo "SYSTEM READY"
     echo "======================================"
     ;;
+  test-report)
+    # READ-ONLY by default: render + validate the LAST persisted runtime/generated/test-report.json
+    # (format, provenance, freshness) WITHOUT running any suite — an absent/invalid/stale report exits
+    # non-zero and is never presented as valid proof. `odg test-report --run [<suite>...]` re-runs the
+    # EXISTING classifier (runtime/bin/odg-test-report.js) on explicit suites (or its default set) and
+    # persists a fresh artifact. No cockpit coupling is claimed (the cockpit does not consume it yet).
+    shift
+    exec node runtime/bin/odg-test-report.js "$@"
+    ;;
+  backup)
+    # Governed surface over runtime/core/client-store-backup.js: READ-ONLY integrity-verified backup of
+    # the client store ($ODG_CLIENT_STORE). `odg backup [--out <file>]` — writes a manifest to an
+    # explicit path (or prints count+hash). Never mutates the source.
+    shift
+    exec node runtime/bin/odg-backup.js backup "$@"
+    ;;
+  restore)
+    # Governed restore (fail-closed): `odg restore --manifest <file> --target <dir> [--force]`. The
+    # target is EXPLICIT and REQUIRED; the real production/preprod store is REFUSED as a target (policy
+    # undefined ⇒ reported, never invented); a non-empty target is refused unless --force is explicit;
+    # any integrity mismatch fails closed (module-enforced). Test only on synthetic temporary stores.
+    shift
+    exec node runtime/bin/odg-backup.js restore "$@"
+    ;;
   *)
     echo "======================================"
     echo "ODG RUNTIME"
@@ -140,6 +164,9 @@ case "$MISSION" in
     echo "  odg cockpit         (read-only operational cockpit; --once, --interval, --iterations, --tail)"
     echo "  odg freeze"
     echo "  odg system-ready    (verify -> freeze -> status, fail-fast)"
+    echo "  odg test-report     (read-only: validate last test-report.json; --run [<suite>...] to regenerate)"
+    echo "  odg backup [--out <file>]                              (read-only integrity-verified store backup)"
+    echo "  odg restore --manifest <file> --target <dir> [--force] (fail-closed; prod store refused as target)"
     exit 1
     ;;
 esac
