@@ -106,7 +106,7 @@ function persist(cp) {
  * begin(mission, stageNames) — open (or resume) a checkpoint for `mission`.
  *
  * Returns { cp, resumeIndex }:
- *   - Fresh run (no checkpoint, different mission, or a COMPLETE one): resumeIndex = 0 and a new
+ *   - Fresh run (no checkpoint, different mission, or a COMPLETE/FAILED one): resumeIndex = 0 and a new
  *     checkpoint is written with the pre-run HEAD captured as the rollback anchor.
  *   - Interrupted run for the SAME mission with the SAME stage list: resumeIndex points at the first
  *     stage not yet DONE, so the orchestrator skips the proven-DONE prefix.
@@ -118,6 +118,10 @@ function begin(mission, stageNames) {
         existing &&
         existing.mission === mission &&
         existing.status !== "COMPLETE" &&
+        // RC-2: a FAILED checkpoint is NOT resumable. Resuming would trust the DONE prefix of a run
+        // that already failed, skipping stages whose real effect was never (re-)proven. Treat FAILED
+        // like COMPLETE here so begin() falls through to a clean fresh start (resumeIndex 0).
+        existing.status !== "FAILED" &&
         Array.isArray(existing.stages) &&
         existing.stages.length === stageNames.length &&
         existing.stages.every((s, i) => s.name === stageNames[i]);

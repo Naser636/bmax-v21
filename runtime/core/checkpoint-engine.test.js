@@ -9,6 +9,8 @@
  *                         skipped), from the on-disk checkpoint alone.
  *   3. complete-is-fresh— once a mission is COMPLETE, the next run of the SAME mission starts over.
  *   4. different-work   — a different mission, or a changed stage list, is never treated as resumable.
+ *   5. failed-is-fresh  — a FAILED run is NEVER resumed on its DONE prefix: the next run starts over
+ *                         (RC-2 — DONE marks control flow, not a re-proven effect).
  *
  * Runs in a throwaway cwd so it writes its checkpoint there and never touches the real one.
  * Deterministic: no wall-clock in any assertion.
@@ -102,6 +104,28 @@ inTempCwd((cp) => {
     cp.interrupt(s2, "SIGINT");
     const changedStages = STAGES.slice(0, 3);
     ok("changed stage list ⇒ resumeIndex 0", cp.begin("MISSION_A", changedStages).resumeIndex === 0);
+});
+
+// --- Case 5: a FAILED mission is NOT resumed on its DONE prefix (RC-2) ------
+console.log("Case 5 — FAILED mission is not resumed (RC-2: no trust in the DONE prefix)");
+inTempCwd((cp) => {
+    let { cp: state } = cp.begin("MISSION_A", STAGES);
+    state = cp.stageRunning(state, 0);
+    state = cp.stageDone(state, 0);
+    state = cp.stageRunning(state, 1);
+    state = cp.stageDone(state, 1);
+    state = cp.stageRunning(state, 2);          // Validation Engine runs ...
+    state = cp.stageFailed(state, 2, "Validation Engine BLOCKED"); // ... and fails.
+
+    const reloaded = cp.load();
+    ok("stageFailed persisted FAILED status", reloaded.status === "FAILED");
+    ok("two stages are still recorded DONE on disk", reloaded.completed.length === 2);
+
+    // RC-2: the next run of the SAME mission with the SAME stage list must NOT trust that DONE prefix.
+    const { cp: restarted, resumeIndex } = cp.begin("MISSION_A", STAGES);
+    ok("resumeIndex is 0 — FAILED is not resumed on its DONE prefix", resumeIndex === 0);
+    ok("restart re-opens every stage PENDING (clean fresh start)", restarted.stages.every((s) => s.status === "PENDING"));
+    ok("restart status is RUNNING (a fresh checkpoint, not the old FAILED one)", restarted.status === "RUNNING");
 });
 
 console.log(`\nCHECKPOINT ENGINE — ${passed} assertions passed.`);
