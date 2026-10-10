@@ -79,3 +79,18 @@ After deploying (not in this repo): `curl` `GET /site/<page>` and `POST /api/int
 - **(HOST)** Multi-instance / HA is unsupported — mono-instance only (no shared lock/DB).
 - **(HUMAN)** Retention policy, fiscal/legal sign-off, payment & email credentials, and commit/deploy
   authorizations — see `LAUNCH_READINESS.md`.
+
+## 10. Current private preproduction instance (recorded 2026-10-10 — loopback only, NOT production)
+A private preprod instance is provisioned and verified on host **`vps-6d919042`** (co-tenant with
+nginx/docker/fleet-bridge/ollama; existing services left untouched). It is **not** publicly reachable.
+- Service: dedicated `odg-preprod.service` (systemd, `/etc/systemd/system/`), runs as `ubuntu`,
+  `Restart=on-failure`, `NoNewPrivileges`+`PrivateTmp`, `WorkingDirectory=.next/standalone`,
+  `ExecStart=/usr/bin/node server.js`.
+- Bind: **`127.0.0.1:3000` only** (`HOSTNAME=127.0.0.1`) — no public listener.
+- Store: `ODG_CLIENT_STORE=/var/lib/odg/clients`, owner `ubuntu:ubuntu`, mode `0700`, provisioned empty.
+- Verified: `GET /api/health` → **HTTP 200** `{status:"ready",storage:"READY"}`; **5/5** consecutive
+  checks; **0 restarts**; no secret/path leak; store stayed empty (health read-only). Serves the
+  committed standalone bundle (next-server 16.2.9).
+- **NOT proven here:** `/api/intake` end-to-end (createRequire→`runtime/core` tracing) **NOT TESTED**;
+  public reachability / DNS / TLS (RWL-C1/C2) and SLOs **not** proven; **off-host backup BLOCKED pending a
+  defined destination**. This is preproduction, not production.

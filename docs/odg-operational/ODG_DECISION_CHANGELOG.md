@@ -404,6 +404,25 @@
   No Dockerfile/systemd/nginx artifact shipped (reported as a host gap in DEPLOYMENT.md §9). Deployment readiness
   is **local-only**; host and production readiness are NOT claimed.
 
+### CHG-OD-9 — Private preproduction instance recorded + host-blocked roadmap reconciled [TECH-CHANGE / DOC] — RECORDED (2026-10-10)
+- Executed under CTO DIRECTIVE "RECORD_PRIVATE_PREPROD_AND_RECONCILE_HOST_ROADMAP". Documentary only; write-set =
+  exactly 3 docs (`DEPLOYMENT.md`, this changelog, `ODG_REAL_WORLD_LAUNCH_ROADMAP.md`). No service restart, host
+  change, network exposure, or source change. The bootstrap that produced this evidence was a prior mission.
+- **Truth Lock (verified):** HEAD=`135f384`, `main`, clean, synced; `odg-preprod.service` observed `active`,
+  listening `127.0.0.1:3000` (matches the bootstrap report — no new runtime results invented).
+- **Recorded (verified private preproduction):** host **`vps-6d919042`**; dedicated `odg-preprod.service`
+  (runs as `ubuntu`, Restart=on-failure, loopback `127.0.0.1:3000` only); `ODG_CLIENT_STORE=/var/lib/odg/clients`
+  (`ubuntu:ubuntu`, 0700, provisioned empty); `GET /api/health` → **HTTP 200 READY**, **5/5** consecutive,
+  **0 restarts**, no secret/path leak; co-tenant services (nginx/docker/fleet-bridge/ollama) left untouched.
+  Detail in `DEPLOYMENT.md` §10.
+- **Roadmap reconciled (stale "no VPS" claims):** Track K `BLOCKED BY RESOURCE` → **PARTIAL**; Track E VPS-wake
+  clause updated (host now available); RWL-C1 → PARTIAL (host provisioned, loopback preprod live); RWL-C5 →
+  PROVEN (host store); RWL-E1 → PARTIAL (loopback preprod deployed).
+- **Explicitly NOT proven (unchanged):** `/api/intake` end-to-end **NOT TESTED** (standalone createRequire→
+  `runtime/core` tracing); public reachability / DNS / TLS (RWL-C1/C2, DEF-012); numeric host SLOs; **off-host
+  backup BLOCKED pending a defined destination**. This is **preproduction, not production** — production
+  readiness is NOT claimed.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
