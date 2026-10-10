@@ -159,15 +159,16 @@
 
   "current_campaign_scope": {
     "campaign": "STABILIZATION_RC (controlled runtime fixes)",
-    "opened_by": "CTO decision (AUTHORIZE RC-2 & OPEN STABILIZATION SCOPE)",
+    "opened_by": "CTO decision (AUTHORIZE RC-2 & OPEN STABILIZATION SCOPE); extended (AUTHORIZE RC-1 & EXTEND STABILIZATION SCOPE)",
     "authorizes": [
-      "AUTHORIZED work item RC2-PREVENT-FAILED-CHECKPOINT-RESUME ONLY: minimal runtime change strictly inside its write_set (runtime/core/checkpoint-engine.js, runtime/core/checkpoint-engine.test.js)",
+      "AUTHORIZED work item RC2-PREVENT-FAILED-CHECKPOINT-RESUME: minimal runtime change strictly inside its write_set (runtime/core/checkpoint-engine.js, runtime/core/checkpoint-engine.test.js)",
+      "AUTHORIZED work item RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE: minimal runtime change strictly inside its write_set (runtime/bin/odg-run.js, runtime/core/stage-effect.js, runtime/core/stage-effect.test.js)",
       "Update of ODG_AUTONOMOUS_WORK_PROTOCOL.json current_campaign_scope at repository root (this declaration)",
       "Update of CLAUDE.md at repository root (execution interface only)"
     ],
     "forbids": [
       "Any runtime change outside an AUTHORIZED work item's write_set",
-      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME without a separate explicit CTO authorization",
+      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME or RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE without a separate explicit CTO authorization",
       "Any mission P0-071 or later",
       "Any modification of Master / Runtime Constitution / ROADMAP.json / policy",
       "Any new constitution or new roadmap",
