@@ -465,6 +465,29 @@
   drill, retention/legal/fiscal, payments/email, and the live end-to-end provider loop (Track F) all remain
   unresolved with their exact blocker recorded. No authorization gate was enabled to satisfy the checklist.
 
+### CHG-OD-12 — Local rollback/recovery drill DEMONSTRATED end-to-end (code + data) [TECH-FINDING / DOC] — VERIFIED (2026-10-10)
+- Executed under explicit CTO authorization "PROVE_LOCAL_ROLLBACK_RECOVERY_DRILL" — bounded local drill in an
+  isolated temporary environment. Write-set = 2 docs (`DEPLOYMENT.md` §7.1/§0/gate, this changelog). No source/
+  test/config change committed; no deploy; no public exposure; no paid provider call; no destructive Git op
+  (used a detached `git worktree`, never `reset --hard`/force-push); the real store `/var/lib/odg/clients` was
+  never used.
+- **Truth Lock (verified):** HEAD=`590348c`, `main`, clean, synced with `origin/main`. Versions tested:
+  **N-1 = `3ae6053`**, **N = `590348c`** (package files identical across the two ⇒ `node_modules` hardlink-reused).
+- **Isolation:** temp worktree on same filesystem (`cp -al node_modules`), servers bound **`127.0.0.1` only**
+  (ports 3458/3459; preprod `:3000` untouched), synthetic 2-record store.
+- **Evidence (exit codes observed):** N-1 `npm run build` **exit 0** → `node server.js` → `GET /api/health`
+  **HTTP 200** READY → `SIGTERM` clean (port released). Data: `client-store-backup.js` `backup`(2)/`verify`/
+  `restore` → **byte-identical**; corrupted manifest → `verify`+`restore` **INTEGRITY_MISMATCH** fail-closed (no
+  corrupt target written); non-empty target no-force → **TARGET_NOT_EMPTY**; source unmutated. Roll-forward: N
+  `npm run build` **exit 0** → health **200** on the **restored** store → integrity-after **== original** →
+  `SIGTERM` clean. Temp resources cleaned; `main` worktree intact.
+- **PROVEN:** the code+data recovery **mechanism**, end-to-end, locally. **NOT PROVEN / BLOCKED BY HOST:** a
+  rollback drill on the **live** preprod/production host (real `$ODG_CLIENT_STORE`, real supervisor restart,
+  public probe) — this local proof does NOT substitute for it, and is explicitly NOT a production claim.
+- **No new committed script/test:** the data path is already unit-guarded (`client-store-backup.test.js` 12/12);
+  the end-to-end drill is reproducible from the commands recorded in `DEPLOYMENT.md` §7.1 — so no script was added
+  (scope kept minimal, documentary only). A unit test is NOT presented as the end-to-end drill proof.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`

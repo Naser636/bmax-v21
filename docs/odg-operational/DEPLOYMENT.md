@@ -32,7 +32,8 @@ recorded as success. Baseline for this consolidation: HEAD `3ae6053`, `main`, cl
 | Private loopback `GET /api/health` | PROVEN | HTTP 200 READY, 5/5 consecutive, 0 restarts; CHG-OD-9 |
 | Private loopback `/api/intake` integration | PROVEN | POST `application/json` → **201**, one NEW record persisted (store 0→1); decoy `apiKey` NOT persisted; non-JSON → **415** no-write; synthetic record cleaned (→0); CHG-OD-10 |
 | Backup (off-host copy/restore) | BLOCKED BY HOST | integrity-verified helper proven byte-identical (`client-store-backup.test.js`); **off-host destination undefined** → not executed |
-| Rollback drill (code revert + data restore) | NOT PROVEN | procedure documented (§7); end-to-end host drill not executed → BLOCKED BY HOST |
+| Rollback/recovery MECHANISM (code revert + data restore), end-to-end | PROVEN (local) | demonstrated in isolated temp worktree + synthetic store on loopback: N↔N-1 build exit 0 + health 200; backup/restore byte-identical; corruption fail-closed; §7.1, CHG-OD-12 |
+| Rollback drill on the LIVE host (real store + supervisor + public probe) | NOT PROVEN | not executed on `vps-6d919042`/production → BLOCKED BY HOST |
 | Public `/api/intake` reachability | NOT PROVEN | public curl probe over DNS/TLS not run; DEF-012 (BLOCKED BY HOST) |
 | Public `/site/*` reachability | NOT PROVEN | not deployed publicly; DEF-012 (BLOCKED BY HOST) |
 | DNS / TLS / reverse-proxy | BLOCKED BY HOST | not provisioned; no nginx/TLS artifact shipped (§9) |
@@ -75,7 +76,8 @@ recorded as success. Baseline for this consolidation: HEAD `3ae6053`, `main`, cl
    DNS/TLS, defined+measured SLOs, backup executed off-host, rollback drill demonstrated — currently **NOT met**.
 3. Required **HUMAN/LEGAL** decisions (§C) recorded: retention/deletion, fiscal/legal, payments/email, deploy
    authorization — currently **NOT met**.
-4. Rollback/recovery (code + data) **demonstrated**, not merely documented — currently **NOT met**.
+4. Rollback/recovery (code + data) **demonstrated**, not merely documented — the **mechanism is PROVEN locally**
+   (§7.1, CHG-OD-12); the **live-host drill** (real store + supervisor restart + public probe) is still **NOT met**.
 
 **Current verdict: NOT production-ready.** Local readiness is PROVEN; host and production readiness are not.
 Do not claim production-ready until gates 2–4 pass with captured evidence.
@@ -141,6 +143,28 @@ Readiness check (see §6): `curl -fsS http://127.0.0.1:8080/api/health` must ret
   is undone by a new revert commit — see `ODG_INCIDENT_RUNBOOK.md` §5).
 - Data: restore `$ODG_CLIENT_STORE` from a verified backup (§5).
 - No blue/green or versioned release mechanism is shipped — redeploy is build-then-restart.
+
+### 7.1 Recovery drill — DEMONSTRATED LOCALLY (2026-10-10; CHG-OD-12) — end-to-end, not a unit test
+Reproducible code+data recovery proof, run in an **isolated temp git worktree** on **loopback only**, against a
+**synthetic store** (the real `/var/lib/odg/clients` was never touched; no deploy; no force-push/reset). Versions:
+**N-1 = `3ae6053`**, **N = `590348c`**. All exit codes observed:
+- **Code recovery (N → N-1):** temp worktree at `3ae6053`; `npm run build` **exit 0** (standalone `server.js`
+  emitted; routes `/`, `/api/health`, `/api/intake`, `/site/[...slug]`); started `node server.js`
+  `HOSTNAME=127.0.0.1 PORT=3458` → `GET /api/health` **HTTP 200** `{"status":"ready","storage":"READY"}`; bind
+  verified `127.0.0.1:3458` only; stopped with `SIGTERM` (port released).
+- **Data recovery:** `client-store-backup.js` on a 2-record synthetic store — `backup` ok (count 2), `verify`
+  ok, `restore` → **byte-identical** (source sha256 == restored sha256); **corrupted** manifest → `verify` and
+  `restore` both fail closed **`INTEGRITY_MISMATCH`** (no corrupt target written); non-empty target without
+  `force` → **`TARGET_NOT_EMPTY`**; source store unmutated (hashes identical before/after).
+- **Roll-forward (N-1 → N):** same worktree checked out to `590348c`; `npm run build` **exit 0**; started on
+  `127.0.0.1:3459` pointing at the **restored** store → `GET /api/health` **HTTP 200**; restored records
+  **integrity-after == original** (byte-identical); stopped with `SIGTERM` (port released). Temp worktree +
+  synthetic resources cleaned; `main` worktree untouched (`590348c`, clean); preprod `:3000` untouched.
+- **Status:** recovery **MECHANISM = PROVEN LOCALLY**. A rollback drill **on the live preprod/production host**
+  (real `$ODG_CLIENT_STORE`, real supervisor restart, public probe) is **still NOT PROVEN → BLOCKED BY HOST**.
+- **Reproduce:** `git worktree add --detach <tmp> <commit>` (same-fs; hardlink `node_modules` via `cp -al`) →
+  `npm run build` → `ODG_CLIENT_STORE=<synthetic> HOSTNAME=127.0.0.1 PORT=<free> node .next/standalone/server.js`
+  → `curl /api/health`; data path = `runtime/core/client-store-backup.js` (unit-guarded by `*.test.js` 12/12).
 
 ## 8. Post-deploy verification **(HOST)**
 After deploying (not in this repo): `curl` `GET /site/<page>` and `POST /api/intake` (expect `201
