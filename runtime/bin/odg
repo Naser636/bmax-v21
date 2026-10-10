@@ -82,6 +82,15 @@ case "$MISSION" in
   verify)
     ./runtime/bin/odg-verify.js
     ;;
+  cockpit)
+    # READ-ONLY operational cockpit (Track I). Composes the EXISTING observability sources
+    # (runtime-state/status + capability-registry, mission-queue, mission-ledger, newest *.run.log,
+    # self-diagnostic) into one refreshable text view. It ONLY reads files (fs): it never writes,
+    # never spawns a child process, never opens the network, and never triggers a mission — so it is
+    # safe to run at any time. Flags: --once | --interval=<s> | --iterations=<n> | --tail=<lines>.
+    shift
+    exec node runtime/bin/odg-cockpit.js "$@"
+    ;;
   client)
     # First-client operational entry point. Delegates to runtime/bin/odg-client.js → client-intake.js
     # (local, email-independent). Submit/retrieve/track a client request and gate delivery. No network.
@@ -128,6 +137,7 @@ case "$MISSION" in
     echo "  odg diagnose        (autonomous audit: expected-vs-observed → incident + prepared repair plan)"
     echo "  odg status"
     echo "  odg verify"
+    echo "  odg cockpit         (read-only operational cockpit; --once, --interval, --iterations, --tail)"
     echo "  odg freeze"
     echo "  odg system-ready    (verify -> freeze -> status, fail-fast)"
     exit 1

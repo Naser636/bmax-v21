@@ -99,5 +99,37 @@ ok("stop() terminates the unbounded loop", out2 === 1);
 const a = C.parseArgs(["--once", "--tail=20", "--interval=5"]);
 ok("parseArgs: --once ⇒ 1 iteration, tail/interval parsed", a.iterations === 1 && a.tail === 20 && a.interval === 5);
 
+// 8. REAL-ARTIFACT execution path + dispatcher routing + runtime read-only invariant (Track I acceptance).
+//    These exercise the live `require.main` path against the repository's ACTUAL runtime/generated
+//    artifacts (not fixtures) and the official `odg` dispatcher — a runtime proof, not a static grep.
+const { execSync } = require("child_process");
+const crypto = require("crypto");
+const repoRoot = path.resolve(__dirname, "..", "..");
+const gen = path.join(repoRoot, "runtime", "generated");
+const SOURCES = ["runtime-state.json", "runtime-status.json", "capability-registry.json",
+  "runtime-mission-queue.json", "mission-ledger.json", "self-diagnostic-report.json"];
+const hashSources = () => SOURCES.map((f) => {
+  try { return f + ":" + crypto.createHash("sha256").update(fs.readFileSync(path.join(gen, f))).digest("hex"); }
+  catch { return f + ":absent"; }
+}).join("|");
+
+const beforeHash = hashSources();
+
+// 8a — direct real-artifact --once render
+const direct = execSync("node runtime/bin/odg-cockpit.js --once", { cwd: repoRoot, encoding: "utf8" });
+ok("real-artifact --once renders ODG COCKPIT / HEALTH / ACTIVE RUN LOG",
+  /ODG COCKPIT/.test(direct) && /HEALTH /.test(direct) && /ACTIVE RUN LOG/.test(direct));
+
+// 8b — official dispatcher routes `odg cockpit`
+const routed = execSync("bash runtime/bin/odg cockpit --once", { cwd: repoRoot, encoding: "utf8" });
+ok("dispatcher routes `odg cockpit --once` to the cockpit", /ODG COCKPIT/.test(routed) && /ACTIVE RUN LOG/.test(routed));
+
+// 8c — dispatcher help advertises the cockpit (usage branch, exit 1 → tolerate with || true)
+const help = execSync("bash runtime/bin/odg __unknown__ 2>&1 || true", { cwd: repoRoot, encoding: "utf8" });
+ok("dispatcher help advertises `odg cockpit`", /odg cockpit/.test(help));
+
+// 8d — runtime read-only invariant: a live render mutates none of the cockpit's real sources
+ok("live real-artifact render mutated no cockpit source (read-only)", hashSources() === beforeHash);
+
 console.log(`\nALL PASS — odg cockpit (${passed} assertions)`);
 process.exit(0);
