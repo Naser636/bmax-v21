@@ -45,6 +45,7 @@ function main() {
     brain: model.brain,
     lastMission: model.lastMission,
     nextMission: model.nextMission,
+    lastRun: model.lastRun,
     outstanding: model.outstanding,
   });
 

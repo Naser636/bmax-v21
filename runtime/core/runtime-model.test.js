@@ -129,4 +129,31 @@ console.log("Runtime Model — gap-detection contract");
   ok("nextMission is SYSTEM_READY only when truly converged", m.nextMission === "SYSTEM_READY");
 }
 
+// --- Case D: a SUCCESS last-run verdict is surfaced but NEVER conflated with governance ------
+{
+  const root = buildFixture({ MX: { objectives: [{ id: "MX_1", goal: "g" }] } }, [], { roadmap: ["MX"] });
+  fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify({ mission: "MX", status: "SUCCESS", validated: true }));
+  const m = computeRuntimeModel(root);
+  ok("lastRun reflects the SUCCESS verdict", m.lastRun && m.lastRun.mission === "MX" && m.lastRun.status === "SUCCESS" && m.lastRun.validated === true);
+  ok("SUCCESS lastRun does NOT remove the mission from the queue (no conflation)", m.queue.some((q) => q.mission === "MX"));
+  ok("SUCCESS lastRun does NOT add it to capabilities/provenSet", !m.capabilities.includes("MX"));
+  ok("nextMission stays governed by the queue, not by lastRun", m.nextMission === "MX");
+}
+
+// --- Case E: a BLOCKED last-run verdict is preserved verbatim, queue untouched ----------------
+{
+  const root = buildFixture({ MX: { objectives: [{ id: "MX_1", goal: "g" }] } }, [], { roadmap: ["MX"] });
+  fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify({ mission: "MX", status: "BLOCKED", validated: false }));
+  const m = computeRuntimeModel(root);
+  ok("lastRun reflects the BLOCKED verdict verbatim (never promoted)", m.lastRun && m.lastRun.status === "BLOCKED" && m.lastRun.validated === false);
+  ok("BLOCKED lastRun leaves queue + nextMission untouched", m.queue.some((q) => q.mission === "MX") && m.nextMission === "MX");
+}
+
+// --- Case F: no verdict artefact ⇒ lastRun is null (absent adds nothing) -----------------------
+{
+  const root = buildFixture({ MX: { objectives: [{ id: "MX_1", goal: "g" }] } }, [], { roadmap: ["MX"] });
+  const m = computeRuntimeModel(root);
+  ok("lastRun is null when no mission-report.json exists", m.lastRun === null);
+}
+
 console.log(`\n${passed} assertion(s) passed`);

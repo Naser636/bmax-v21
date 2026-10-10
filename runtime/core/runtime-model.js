@@ -72,6 +72,17 @@ function computeRuntimeModel(root = process.cwd()) {
   );
   const lastMission = entries.length > 0 ? entries[entries.length - 1].mission : null;
 
+  // --- last-run validation verdict (RC-5) ----------------------------------------------------
+  // The INDEPENDENT validation verdict (validation-engine writes mission-report.json). This is the
+  // 'last execution' fact — DISTINCT from the durable 'proven/released' fact the ledger carries. It
+  // is read-only and NEVER feeds provenSet / queue / nextMission (governance owns those); it is
+  // surfaced so the Dashboard can annotate state with the real verdict instead of contradicting it.
+  const report = readJson(G("mission-report.json"));
+  const lastRun =
+    report && typeof report.mission === "string"
+      ? { mission: report.mission, status: typeof report.status === "string" ? report.status : null, validated: report.validated === true }
+      : null;
+
   // --- classify every mission contract on disk -----------------------------------------------
   let files = [];
   try {
@@ -244,6 +255,7 @@ function computeRuntimeModel(root = process.cwd()) {
     converged,
     lastMission,
     nextMission,
+    lastRun, // RC-5: last validation verdict (mission-report.json), read-only; never feeds the queue
     // registries
     capabilities,
     missingCapabilities,
