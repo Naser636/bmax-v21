@@ -447,6 +447,24 @@
   numeric host SLOs; off-host backup remains **BLOCKED** pending a defined destination. This is **preproduction,
   not production** — production readiness is NOT claimed.
 
+### CHG-OD-11 — Final deployment checklist consolidated in DEPLOYMENT.md (status-disciplined) [DOC] — RECORDED (2026-10-10)
+- Executed under CTO DIRECTIVE "ODG_FINAL_DEPLOYMENT_CHECKLIST_CONSOLIDATION". Documentary only; write-set =
+  2 docs (`DEPLOYMENT.md`, this changelog). Roadmap left untouched — RWL-E1/Track D/F were already consistent
+  with current evidence (reconciled by CHG-OD-9/10), so no demonstrable inconsistency warranted a change.
+  No source/test/config/runtime/generated change; no provider call; no deploy.
+- **Truth Lock (verified):** HEAD=`3ae6053`, `main`, worktree clean, synced with `origin/main` (0 ahead/0 behind).
+- **Consolidated:** `DEPLOYMENT.md` §0 is now the operational source of truth — a status-disciplined checklist
+  (`PROVEN` / `NOT PROVEN` / `BLOCKED BY HOST` / `BLOCKED BY HUMAN` / `DEFERRED`), each item carrying an evidence
+  reference or the exact missing proof, across **A** local readiness, **B** host/preprod, **C** security/
+  governance, **D** live autonomy (Track F) — plus an explicit **FINAL DEPLOYMENT GATE** (local PROVEN; host +
+  human/legal + demonstrated rollback NOT met ⇒ **NOT production-ready**).
+- **Stale lines reconciled (evidence drift):** §8 and §10 still called `/api/intake` "NOT TESTED"; corrected to
+  the CHG-OD-10 fact — **loopback integration PROVEN** (201 + one persisted record, decoy `apiKey` not persisted,
+  415 no-write, cleaned to 0) while **public** reachability/DNS/TLS stays `NOT PROVEN` (DEF-012 PARTIAL).
+- **Preserved unchanged (no evidence invented):** host SLOs, public intake/site probes, off-host backup, rollback
+  drill, retention/legal/fiscal, payments/email, and the live end-to-end provider loop (Track F) all remain
+  unresolved with their exact blocker recorded. No authorization gate was enabled to satisfy the checklist.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
