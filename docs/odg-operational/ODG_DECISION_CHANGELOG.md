@@ -423,6 +423,30 @@
   backup BLOCKED pending a defined destination**. This is **preproduction, not production** — production
   readiness is NOT claimed.
 
+### CHG-OD-10 — `/api/intake` loopback integration VERIFIED on private preprod; DEF-012 / RWL-E1 reconciled [TECH-FINDING / DOC] — VERIFIED (2026-10-10)
+- Executed under CTO DIRECTIVE "RECORD_INTAKE_INTEGRATION_EVIDENCE". Documentary only; write-set = exactly
+  3 docs (this changelog, `ODG_DEFECT_REGISTER.md` (DEF-012), `ODG_REAL_WORLD_LAUNCH_ROADMAP.md` (RWL-E1)).
+  No source change, no service restart, no new network exposure, no deploy — the integration run that produced
+  this evidence was performed against the already-running private preprod instance (see CHG-OD-9).
+- **Truth Lock (verified):** HEAD=`be329ff`, `main`, synced with `origin/main` at start of this documentary mission.
+- **Recorded (verified — `/api/intake` loopback HTTP integration):** against the private preprod service on
+  **`vps-6d919042`** (`127.0.0.1:3000` loopback-only; `ODG_CLIENT_STORE=/var/lib/odg/clients`), exercising the
+  real route `src/app/api/intake/route.ts` → `runtime/core/intake-endpoint.js` → `client-intake`:
+  1. POST `application/json` with the complete governed whitelist (client/problem/scope/acceptance/humanOwner/
+     consent=true) → **HTTP 201** `{ok:true,…status:NEW}`; **exactly one NEW record persisted** (store 0→1).
+  2. **Whitelist-only mapping proven:** a decoy top-level `apiKey` field in the request body was **NOT persisted**
+     into the stored record (the handler maps only the governed fields + `source:"site-form"`; client-supplied
+     identity/authorization is never trusted).
+  3. Invalid content-type (non-`application/json`) → **HTTP 415** (`content-type must be application/json`),
+     **no write** — the rejection precedes any store touch.
+  4. **Cleanup:** the synthetic test record was removed; the preprod store returned to **0** (no residue left).
+- **DEF-012 reconciled:** `NOT_CONFIGURED` → **PARTIAL** — `/api/intake` loopback integration now VERIFIED; the
+  residual is the **PUBLIC** curl probe over DNS/TLS + `/site/*` public reachability. **RWL-E1** stays PARTIAL.
+- **Explicitly NOT proven (unchanged):** public reachability / DNS / TLS curl probe **NOT TESTED** (DEF-012,
+  RWL-C1/C2); **rollback test** and full business-completion (`odg client launch` end-to-end) **NOT TESTED**;
+  numeric host SLOs; off-host backup remains **BLOCKED** pending a defined destination. This is **preproduction,
+  not production** — production readiness is NOT claimed.
+
 ## Open decisions (pending CTO)
 - **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`

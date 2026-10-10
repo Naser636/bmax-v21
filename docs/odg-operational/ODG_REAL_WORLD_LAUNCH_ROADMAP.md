@@ -61,7 +61,7 @@ supplies credentials. Config detail → `LAUNCH_READINESS.md`.
 ## PHASE E — Preproduction & end-to-end proof (needs a host)
 | ID | Objective | Status | Gate |
 |---|---|---|---|
-| RWL-E1 | Isolated preprod deploy + post-deploy probe (`LAUNCH_READINESS.md` §VPS curl probe + `odg client launch`), error/recovery, independent evidence, rollback test | **PARTIAL** — private loopback preprod deployed on `vps-6d919042` (`/api/health` 200 READY, 5/5, 0 restarts); `/api/intake` end-to-end + public curl probe still **NOT TESTED** (DEF-012) | human: public probe + intake/rollback test |
+| RWL-E1 | Isolated preprod deploy + post-deploy probe (`LAUNCH_READINESS.md` §VPS curl probe + `odg client launch`), error/recovery, independent evidence, rollback test | **PARTIAL** — private loopback preprod deployed on `vps-6d919042` (`/api/health` 200 READY, 5/5, 0 restarts); **`/api/intake` loopback integration VERIFIED** (POST 201 → one NEW record persisted, whitelist-only/decoy apiKey NOT persisted, invalid content-type → 415 no-write, synthetic record cleaned to 0; see CHG-OD-10); **public curl probe still NOT TESTED (DEF-012)**; rollback/business-completion NOT TESTED | human: public probe + rollback test |
 
 ## PHASE F — Supervised commercial pilot
 | ID | Objective | Status | Gate |
