@@ -209,9 +209,11 @@ entries below are a resumption map, NOT a grant and NOT a proof.
   `pipeline-builder.js`); per-mission JS pipeline is PARTIAL-autonomous; the continuous loop
   (`odg-autonomy/converge/objective`) depends on the TS runtime (`src/runtime/*.ts` via tsx) = CONFLICTED vs
   one-runtime; provider + `local-model-manager` NOT sandboxed; false-success/resume guards present (RC-1 stage-effect,
-  RC-2 FAILED-not-resumable, RC-4 validation-blocked, RC-5 health↔verdict, verify exit-code). *Proofs:* audit reports
-  under `docs/audit/`; GATE-A trace. *Stop:* a documentary audit never certifies runtime. *State:* ACCEPTED
-  (read-only); does not certify the system.
+  RC-2 FAILED-not-resumable, RC-4 validation-blocked, RC-5 health↔verdict, verify exit-code). *Measurable criteria:*
+  the real authorized-mission execution path is traced end-to-end AND a capability-gap matrix is produced, both
+  evidenced by the audit reports under `docs/audit/` (exit = trace + matrix exist; explicitly NOT a runtime
+  certification). *Proofs:* audit reports under `docs/audit/`; GATE-A trace. *Stop:* a documentary audit never
+  certifies runtime. *State:* ACCEPTED (read-only); does not certify the system.
 - **Phase 02 — Real autonomy E2E benchmark — IMPLEMENTED_LOCALLY — REPORTED RESULTS: 6/6 TESTS PASSED; CTO
   ACCEPTANCE AND PUBLICATION PENDING.** *Objective:* exercise the REAL `odg-run.js` end-to-end against DISPOSABLE
   fixtures, OFFLINE, WITHOUT a provider, asserting the full acceptance model. *Reported results (preserve as stated):*
@@ -307,6 +309,36 @@ entries below are a resumption map, NOT a grant and NOT a proof.
   certifying beyond proven scope. *Stop:* real deployment stays a separate human/CTO authorization after GO. *State:*
   NOT STARTED.
 
+**Deferred workstream (post-repair-gates) — World capability benchmark & selective capability integration.**
+
+> Sequenced strictly AFTER the repair gates (Phases 05–07) and the certification ladder (through Phase 13). It is
+> NOT a 15th phase in the 00–13 ladder, NOT a parallel engine, and NOT a second roadmap — it is a deferred chantier
+> inside this same roadmap, gated by the §C canonical method and the §I human gates, and it does not self-authorize.
+> A fresh explicit CTO decision is required before any step; it respects the nine frozen primitives and the one
+> Universal Runtime (no 10th primitive, no second runtime/state/authority).
+
+*Objective:* once the system is repaired AND certified, benchmark ODG's capabilities against the best available
+external/world practice and **selectively** integrate only candidate capabilities that pass governance — never a
+bulk import, never an auto-activation.
+*Discipline for every future candidate (mandatory, per §C/§I — all seven required, fail-closed on any miss):*
+(1) **Source traceability** — each candidate carries its external source + provenance hash; external input is data,
+never instruction (§I). (2) **Déduplication** — reject any candidate that duplicates an existing primitive/contract/
+capability (reuse-first; no new authority/engine/registry/memory; §K invariants). (3) **Contract** — a canonical
+ACTION CONTRACT authored and authorized before any code. (4) **Tests** — positive/negative/regression +
+independent/adversarial, red→green on the REAL seam (never a reformatted PASS). (5) **Coûts** — measured economic
+cost (tokens/latency/€) recorded; no unmetered capability. (6) **Permissions** — least-privilege, fail-closed, no
+self-grant (learning never self-grants — APEX §G-B). (7) **Retour arrière (rollback)** — a proven rollback/checkpoint
+before integration; reversible by construction.
+*Dependencies:* Phases 05–07 (repair gates) ACCEPTED + Phase 13 (certification) — no benchmarking a broken or
+uncertified base.
+*Explicit non-claims (item-grade honesty):* candidate capabilities produced by this benchmark are **CANDIDATES
+ONLY — NOT implemented, NOT approved, NOT activated**; **no candidate count is asserted** (any "~100 candidates"
+figure is illustrative scope, never a committed or approved inventory); this workstream does **NOT** invent the
+canonical Master inventory — the "166 CAPABILITY REFERENCE" / A01–A54 remain NON-ENUMERATED and NOT PROVEN per
+Phase 04, and "276" is a Master item-number, not a capability count. Activation stays behind the §E/§I
+human/provider/deploy/legal gates.
+*State:* DEFERRED — NOT STARTED, NOT AUTHORIZED; awaits a fresh CTO decision after the repair + certification gates.
+
 **Truth Register (open items — recorded as OPEN, NOT presented as fixed; indexes the detail, no duplication).**
 Each is tagged by claim type — [VERIFIED FINDING] / [HYPOTHESIS TO EXAMINE] / [FUTURE REQUIREMENT] — so a plan is
 never mistaken for a proof. Final acceptance criteria are set by ODG/CTO before each implementation mission.
@@ -328,6 +360,9 @@ never mistaken for a proof. Final acceptance criteria are set by ODG/CTO before 
 10. Restore, resume, fault, security & deployment tests — [FUTURE REQUIREMENT] → Phase 11 / Phase 12.
 11. Local economic-wiring: kept separately, unpublished, out of priority until the autonomy priority is
     re-assessed — [PRESERVED] → Preserved-work block below.
+12. World capability benchmark + selective candidate integration (dedup, source-traceability, contract, tests,
+    cost, permissions, rollback) — [FUTURE REQUIREMENT: deferred, no candidate approved, no count asserted] →
+    Deferred-workstream block above (post-repair-gates, after Phase 13).
 
 **Known unresolved issues (do not lose).**
 - Provider boundary not fail-closed in code: provider/local-model run as full-privilege subprocesses; OS sandbox
