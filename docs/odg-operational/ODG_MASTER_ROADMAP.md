@@ -214,8 +214,8 @@ entries below are a resumption map, NOT a grant and NOT a proof.
   evidenced by the audit reports under `docs/audit/` (exit = trace + matrix exist; explicitly NOT a runtime
   certification). *Proofs:* audit reports under `docs/audit/`; GATE-A trace. *Stop:* a documentary audit never
   certifies runtime. *State:* ACCEPTED (read-only); does not certify the system.
-- **Phase 02 — Real autonomy E2E benchmark — IMPLEMENTED_LOCALLY — REPORTED RESULTS: 6/6 TESTS PASSED; CTO
-  ACCEPTANCE AND PUBLICATION PENDING.** *Objective:* exercise the REAL `odg-run.js` end-to-end against DISPOSABLE
+- **Phase 02 — Real autonomy E2E benchmark — ACCEPTED (Gate B only; CTO decision 2026-10-11) — 6/6 reproven @ HEAD
+  `4d90989`; NOT published, NOT in CI.** *Objective:* exercise the REAL `odg-run.js` end-to-end against DISPOSABLE
   fixtures, OFFLINE, WITHOUT a provider, asserting the full acceptance model. *Reported results (preserve as stated):*
   the real `odg-run.js` ran all 13 stages of the positive scenario; `validated=true`, SUCCESS, `engineeringPerformed=true`,
   marker, final report and COMPLETE checkpoint observed; an out-of-scope write was refused WITHOUT creating the
@@ -224,12 +224,15 @@ entries below are a resumption map, NOT a grant and NOT a proof.
   fingerprints stayed unchanged per the report. *Actions done (GATE B):* `runtime/__bench__/autonomy-e2e.test.js` +
   `runtime/__bench__/fixtures/*.json`; `node --test` → 6/6. *Dependencies:* 01. *Write-set (implemented):*
   `runtime/__bench__/**` only. *Measurable criteria:* 6/6 assertions green incl. SIGKILL→resume; real-repo invariance.
-  *Artifacts/proofs:* test output + sandbox evidence; CTO acceptance (pending). *Limits (explicit):* (a) real Master
+  *Artifacts/proofs:* reproof evidence `runtime/__bench__/evidence/BENCH_E2E_2026-10-11T103752Z.md`
+  (sha256 `f871cca141f0716894e8a0803a4a758721720d6fc3a6a22985bec456b60860f0`; `node --test` exit 0; tests 6/pass 6/fail 0;
+  Node v22.22.1). *Limits (explicit):* (a) real Master
   convergence NOT covered by this benchmark; (b) OS-level network isolation NOT demonstrated — absence of observed
   calls/artifacts does NOT certify OS isolation; (c) build/TypeScript NOT exercised by this scenario; (d) any further
   validation belongs to a later authorized gate. *Risks:* SIGKILL-timing flakiness (fails loudly, never simulated);
-  reading isolation as a network proof. *Stop:* awaiting CTO acceptance + commit authorization. *State:*
-  IMPLEMENTED_LOCALLY — **NOT accepted, NOT published, NOT in CI, does NOT certify ODG as a whole.**
+  reading isolation as a network proof. *Stop:* CTO acceptance obtained (Gate B, 2026-10-11); publication/CI remain a
+  separate human authorization. *State:* **ACCEPTED (Gate B only)** — evidence referenced above; **NOT published, NOT
+  in CI; the limits (a)–(d) stay OPEN and this does NOT certify ODG autonomy as a whole.**
 - **Phase 03 — End-to-end operational autonomy — PLANNED.** *Objective:* 100% of the authorized lifecycle executed by
   ODG without routine Claude Code (understand→…→checkpoint/resume), per the §K Goal. *Findings:* per-mission pipeline
   PARTIAL; continuous loop lives in the TS runtime (see Phase 05); patch-plan provenance/authorization exists via the
@@ -344,8 +347,8 @@ Each is tagged by claim type — [VERIFIED FINDING] / [HYPOTHESIS TO EXAMINE] / 
 never mistaken for a proof. Final acceptance criteria are set by ODG/CTO before each implementation mission.
 1. Master really consumed by the runtime; verifiable A01–A54 / 166-capability coverage + execution — [VERIFIED
    FINDING: NOT PROVEN, GATE A] → Phase 04 (distinct gate).
-2. AUTONOMY-E2E-BENCHMARK: CTO review, final criteria, possible CI, separate publication — [VERIFIED FINDING:
-   IMPLEMENTED_LOCALLY 6/6, NOT accepted/published] → Phase 02.
+2. AUTONOMY-E2E-BENCHMARK: possible CI + separate publication remain open — [VERIFIED FINDING: Gate B ACCEPTED
+   2026-10-11, 6/6 reproven @ `4d90989`; NOT published, NOT in CI] → Phase 02.
 3. JS/TS/TSX double path → convergence to one Universal Runtime — [VERIFIED FINDING] → Phase 05 + Known-issues.
 4. Provider sandbox, default-deny network, minimal env, fail-closed if isolation missing — [VERIFIED FINDING:
    absent] → Phase 07 + Known-issues.
@@ -382,9 +385,9 @@ PASS without confirming its assertions executed. Each mission records cause → 
 
 **Canonical restart procedure.** (1) Run §B Resumption Truth Lock. (2) Read this §K + the latest audit report. (3)
 Confirm HEAD and the preserved uncommitted paths above still match. (4) Resume at the next AUTHORIZED milestone
-per the Phases ladder + Truth Register: the AUTONOMY-E2E-BENCHMARK (Phase 02) is IMPLEMENTED_LOCALLY (6/6 green,
-`runtime/__bench__/**`) and awaits CTO acceptance + commit/publication authorization; thereafter Phase 03 onward in
-priority order. (5) No implementation without a fresh explicit CTO authorization; Master coverage (Phase 04) keeps
+per the Phases ladder + Truth Register: the AUTONOMY-E2E-BENCHMARK (Phase 02) is **Gate B ACCEPTED** (6/6 reproven
+@ `4d90989`, evidence `runtime/__bench__/evidence/`), with publication/CI still a separate human authorization;
+thereafter Phase 03 onward in priority order. (5) No implementation without a fresh explicit CTO authorization; Master coverage (Phase 04) keeps
 its own distinct gate.
 
 ## Validation
