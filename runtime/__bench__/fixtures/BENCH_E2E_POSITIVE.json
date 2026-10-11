@@ -1,0 +1,19 @@
+{
+  "mission": "BENCH_E2E_POSITIVE",
+  "priority": "NORMAL",
+  "mode": "IMPLEMENT",
+  "requiresEngineering": true,
+  "authorizedPaths": ["bench-workspace/**"],
+  "objectives": [
+    {
+      "id": "BENCH_MARKER",
+      "goal": "Create a single marker file recording deterministic benchmark execution.",
+      "done_when": ["Exactly one file exists under bench-workspace/."],
+      "patch": [
+        { "target": "bench-workspace/marker.txt", "content": "BENCH-OK\n" }
+      ]
+    }
+  ],
+  "definition_of_done": ["Objective completed strictly within the authorized write scope."],
+  "completion": ["Validation successful."]
+}

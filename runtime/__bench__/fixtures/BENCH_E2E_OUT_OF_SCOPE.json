@@ -1,0 +1,19 @@
+{
+  "mission": "BENCH_E2E_OUT_OF_SCOPE",
+  "priority": "NORMAL",
+  "mode": "IMPLEMENT",
+  "requiresEngineering": true,
+  "authorizedPaths": ["bench-workspace/**"],
+  "objectives": [
+    {
+      "id": "BENCH_ESCAPE",
+      "goal": "Attempt to write a file OUTSIDE the authorized write scope (must be rejected).",
+      "done_when": ["(negative) the out-of-scope write is refused by the Patch Executor."],
+      "patch": [
+        { "target": "escape-zone/evil.txt", "content": "SHOULD-NOT-EXIST\n" }
+      ]
+    }
+  ],
+  "definition_of_done": ["Out-of-scope write refused; mission not validated."],
+  "completion": ["Validation blocked."]
+}

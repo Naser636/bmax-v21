@@ -164,6 +164,194 @@ Reuse: `PHASE_0_CARNET.md` (narrative verification log), `runtime/core/mission-l
 checkpoint, files, reproduced defect, change, tests + exit codes, observed results, residual limits, final status,
 next authorized step.
 
+## K. AUTONOMY FIRST — active program (canonical restart point)
+
+> **Sole active development priority.** Until ODG/CTO explicitly reprioritizes, all unrelated feature work is
+> **suspended**. This section is a resumption pointer, not a new architecture or second governance. Authority order
+> and the §A canonical references are unchanged. It **references** (never duplicates) the Runtime Constitution,
+> CTO Directives, `runtime/governance/ROADMAP.json` (execution-of-record) and the audit reports under
+> `docs/audit/`. The nine permanent primitives (IDENTITY, STATE, CONTRACT, POLICY, RESOLVER, EXECUTOR, EVIDENCE,
+> RECOVERY, ALLOCATOR) and the **one** Universal Runtime are FROZEN — no 10th primitive, no second runtime.
+
+**Goal.** 100% of the authorized mission lifecycle executable by ODG without routine Claude Code execution:
+understand → inspect → diagnose → plan → execute authorized work → test → recover (permitted failures) → verify
+evidence → report → checkpoint/resume. A generated plan alone is NOT autonomy.
+
+**Permanent 80/20 contract.** ODG/CTO ≥80% real operational responsibility (planning, diagnosis, implementation,
+testing, recovery, evidence, reporting, acceptance). Claude Code ≤20% — restricted provider/advisor, invoked ONLY
+for a documented BLOCKER → EVIDENCE → ATTEMPTED RECOVERY → SPECIFIC QUESTION; non-authoritative; no self-authorize,
+no scope expansion, no self-approval. Measured by actual control, not declaration.
+
+**No automatic publication.** Missions never auto-commit or auto-push. Staging/commit/push require explicit CTO
+authorization after a VERIFIED review (two-gate: GATE A read-only design → STOP; GATE B authorized implementation
+→ STOP for acceptance). Authorization failures, missing isolation or ambiguous scope must STOP fail-closed.
+
+**Phases (A→Z ladder — 14 phases, 00–13, in priority order).** Each phase is a successive GATE, gated by the §C
+canonical method and the §I human gates; no phase self-authorizes the next and none is "done" without its criteria
+AND proofs. Per-phase fields: *Objective · Known findings (referenced, not re-proven) · Actions · Dependencies ·
+Write-set (DEFINED BY ODG/CTO before implementation, not here) · Measurable criteria · Tests (positive/negative/
+regression) · Artifacts/proofs · Risks · Stop conditions · Real state.* State vocabulary (extends §C): `PLANNED ·
+IN_PROGRESS · IMPLEMENTED_LOCALLY · VERIFIED · ACCEPTED · PUBLISHED · BLOCKED`. Sequencing laws (CTO): the Phase 01
+forensic audit is NOT a system certification; the E2E benchmark (02) precedes the large corrections (05–07); Master
+coverage (04) owns a **distinct gate**; cleanup (09) comes only after mapping (01) and coverage (08); certification
+(13, incl. GO/NO-GO) precedes any real deployment. Final acceptance criteria are set by ODG/CTO per mission; the
+entries below are a resumption map, NOT a grant and NOT a proof.
+
+- **Phase 00 — Governance, initial truth & canonical resumption — FOUNDATIONAL (ongoing).** *Objective:* every
+  session starts from one truth and one resumption discipline. *Findings:* framework already exists — authority order
+  (§A), Resumption Truth Lock (§B), permanent method (§C/FICHE_07), human gates (§I), evidence/checkpoints (§J).
+  *Actions:* follow §B each session; never create a 2nd governance. *Dependencies:* none. *Measurable criteria:*
+  TRUTH LOCK performed and recorded before any write. *Proofs:* HEAD/branch/status + fingerprints per mission report.
+  *Risks:* assuming a clean tree; parallel governance. *Stop:* reality diverges ⇒ STOP and report. *State:* ACCEPTED
+  (foundational/ongoing); NOT a system certification.
+- **Phase 01 — Full forensic diagnostic & mapping — DONE (read-only).** *Objective:* trace the real authorized-mission
+  path and produce the capability-gap matrix. *Findings:* active path = `odg-run.js` (pure JS, 13 stages via
+  `pipeline-builder.js`); per-mission JS pipeline is PARTIAL-autonomous; the continuous loop
+  (`odg-autonomy/converge/objective`) depends on the TS runtime (`src/runtime/*.ts` via tsx) = CONFLICTED vs
+  one-runtime; provider + `local-model-manager` NOT sandboxed; false-success/resume guards present (RC-1 stage-effect,
+  RC-2 FAILED-not-resumable, RC-4 validation-blocked, RC-5 health↔verdict, verify exit-code). *Proofs:* audit reports
+  under `docs/audit/`; GATE-A trace. *Stop:* a documentary audit never certifies runtime. *State:* ACCEPTED
+  (read-only); does not certify the system.
+- **Phase 02 — Real autonomy E2E benchmark — IMPLEMENTED_LOCALLY — REPORTED RESULTS: 6/6 TESTS PASSED; CTO
+  ACCEPTANCE AND PUBLICATION PENDING.** *Objective:* exercise the REAL `odg-run.js` end-to-end against DISPOSABLE
+  fixtures, OFFLINE, WITHOUT a provider, asserting the full acceptance model. *Reported results (preserve as stated):*
+  the real `odg-run.js` ran all 13 stages of the positive scenario; `validated=true`, SUCCESS, `engineeringPerformed=true`,
+  marker, final report and COMPLETE checkpoint observed; an out-of-scope write was refused WITHOUT creating the
+  forbidden file; omitting a mandatory stage produced an explicit failure; resume after SIGKILL was tested and
+  completed the pipeline; the RC-1 gate was exercised with the REAL `stage-effect.js` module; the four economic-path
+  fingerprints stayed unchanged per the report. *Actions done (GATE B):* `runtime/__bench__/autonomy-e2e.test.js` +
+  `runtime/__bench__/fixtures/*.json`; `node --test` → 6/6. *Dependencies:* 01. *Write-set (implemented):*
+  `runtime/__bench__/**` only. *Measurable criteria:* 6/6 assertions green incl. SIGKILL→resume; real-repo invariance.
+  *Artifacts/proofs:* test output + sandbox evidence; CTO acceptance (pending). *Limits (explicit):* (a) real Master
+  convergence NOT covered by this benchmark; (b) OS-level network isolation NOT demonstrated — absence of observed
+  calls/artifacts does NOT certify OS isolation; (c) build/TypeScript NOT exercised by this scenario; (d) any further
+  validation belongs to a later authorized gate. *Risks:* SIGKILL-timing flakiness (fails loudly, never simulated);
+  reading isolation as a network proof. *Stop:* awaiting CTO acceptance + commit authorization. *State:*
+  IMPLEMENTED_LOCALLY — **NOT accepted, NOT published, NOT in CI, does NOT certify ODG as a whole.**
+- **Phase 03 — End-to-end operational autonomy — PLANNED.** *Objective:* 100% of the authorized lifecycle executed by
+  ODG without routine Claude Code (understand→…→checkpoint/resume), per the §K Goal. *Findings:* per-mission pipeline
+  PARTIAL; continuous loop lives in the TS runtime (see Phase 05); patch-plan provenance/authorization exists via the
+  action-gate (`patch-action-contract`/`patch-proposal-apply` under ODG authority) and must stay no-self-approval.
+  *Actions:* ODG/CTO-defined. *Dependencies:* 02. *Measurable criteria:* a real authorized mission reaches ACCEPTED
+  with ODG owning ≥80% of steps (measured by control, not declaration). *Tests:* positive mission to ACCEPTED;
+  negative = self-approval refused. *Proofs:* ledger + carnet trace. *Risks:* plan≠autonomy; self-approval. *Stop:*
+  any §I gate. *State:* NOT STARTED.
+- **Phase 04 — Canonical Master coverage (A01–A54 / 166 capabilities) — PLANNED (DISTINCT GATE).** *Objective:*
+  demonstrate the FROZEN canonical Master (FICHE_01–06) is actually loaded, consumed and converged by the active
+  runtime, with verifiable coverage/execution of A01–A54 and the 166 capabilities. *Findings (GATE A):* **NOT PROVEN**
+  — no runtime module loads `ODG_MASTER_ROADMAP.md`/the FROZEN master; `A01/A54/166` appear only in docs;
+  "convergence" today = draining the on-disk unproven-contract queue to `PLAN_COMPLETE` (`src/runtime/converge-cli.ts`),
+  with no Master-coverage metric. *Actions:* ODG/CTO-defined; a Master-coverage gate separate from PLAN_COMPLETE.
+  *Dependencies:* 02, 05. *Measurable criteria:* a machine-checkable A01–A54 / 166-capability coverage + execution
+  verdict. *Proofs:* coverage report bound to the canonical master. *Risks:* equating an empty queue with Master
+  execution. *Stop:* its own gate; never folded into PLAN_COMPLETE. *State:* NOT STARTED.
+- **Phase 05 — Single runtime & contract coherence — PLANNED.** *Objective:* one Universal Runtime, nine frozen
+  primitives — resolve the JS pipeline vs TS/TSX autonomy-loop duality (port-or-freeze) and keep contracts coherent.
+  *Findings:* double runtime CONFLICTED vs one-runtime (Phase 01). *Actions:* ODG/CTO decision (port TS→JS, or freeze
+  one). *Dependencies:* 02 (benchmark precedes large corrections). *Measurable criteria:* exactly one
+  execution-of-record path; no second state source/parallel runtime (§K invariants). *Proofs:* trace showing a single
+  path. *Risks:* a 10th primitive / second runtime. *Stop:* architecture-freeze violation. *State:* NOT STARTED.
+- **Phase 06 — Self-repair, recovery & learning — PLANNED.** *Objective:* permitted-failure recovery + the APEX-B
+  learning cycle (create ⊥ validate; learning never self-grants permissions). *Findings:* recovery primitives + RC
+  guards exist; APEX-B1 invariants VERIFIED (see §Validation / APEX §G). *Actions:* ODG/CTO-defined. *Dependencies:*
+  02, 05. *Measurable criteria:* a controlled failure is detected→contained→recovered or escalated, evidenced.
+  *Proofs:* recovery trace + learning-promotion audit. *Risks:* self-granting authority via learning. *Stop:* §I
+  gates. *State:* NOT STARTED (reuse APEX §G-B, no second engine).
+- **Phase 07 — Provider & tool security (fail-closed) — PLANNED.** *Objective:* run providers/`local-model-manager`
+  and tool execution inside an OS sandbox, default-deny network, minimal env, fail-closed if isolation is missing.
+  *Findings:* **BROKEN/ABSENT** — providers run as full-privilege subprocesses; sandbox DESIGNED (reuse
+  `bash-command-governor` bubblewrap: fs-minimal binds, env scrub, no-net, fail-closed if bwrap absent) but NOT
+  implemented; `--ro-bind / /` must NOT be reused for a provider (confidentiality); `local-model-manager.js`
+  `shell:true` / allowed-executable+args risk is a **flagged hypothesis to examine**, not reproduced here. *Actions:*
+  ODG/CTO-defined. *Dependencies:* 02. *Measurable criteria:* no provider/tool runs without an enforced sandbox;
+  absent bwrap ⇒ refuse; network default-deny. *Tests:* negative = run refused when isolation absent. *Proofs:*
+  observed confinement + no-net evidence. *Risks:* confidentiality leak; silent unsandboxed fallback. *Stop:* no live
+  provider until proven. *State:* NOT STARTED.
+- **Phase 08 — Test coverage & quality — PLANNED.** *Objective:* per-stage unit coverage + integration tests for
+  interpreter/loader/planner/decision/patch-engine/validation/ledger (integration-only today). *Findings:* sparse
+  unit coverage (known issue). *Actions:* ODG/CTO-defined. *Dependencies:* 02. *Measurable criteria:* each stage has
+  dedicated tests with real assertions executed (never a reformatted PASS). *Proofs:* per-suite counts + exit codes.
+  *Risks:* false-green / unrun suites. *Stop:* §C REGRESSION. *State:* NOT STARTED.
+- **Phase 09 — Compilation, dependencies & controlled cleanup — PLANNED (after 01 mapping + 08 coverage).**
+  *Objective:* reproducible build from a clean checkout, dependency hygiene, and controlled removal of dead/duplicate
+  code and runtime residue. *Findings:* cleanup is unsafe before mapping+coverage (CTO law); `mission-context-stale`
+  is intentional RESIDUE (DEF-005), NOT a code fix; clean-checkout install/build reproducibility NOT yet tested.
+  *Actions:* ODG/CTO-defined hygiene mission. *Dependencies:* 01, 08. *Measurable criteria:* clean-checkout
+  install+build+tsc green; no behavioral change; no test/evidence deleted. *Proofs:* before/after diff + green
+  `odg verify` from a fresh checkout. *Risks:* removing a still-required control; deleting evidence. *Stop:* any
+  invariant/control removal. *State:* NOT STARTED.
+- **Phase 10 — System integration & operation — PLANNED.** *Objective:* prove cross-component behavior on the real
+  seams (not mocks) and basic operation. *Findings:* commercial journey INTEGRATION_VERIFIED locally with mocks (§D);
+  runtime integration pending. *Actions:* ODG/CTO-defined. *Dependencies:* 03, 05, 08. *Measurable criteria:*
+  real-path integration assertions pass. *Proofs:* `odg verify` + driven-seam evidence. *Risks:*
+  mock-passes-as-integration. *Stop:* §C INTEGRATION VERIF. *State:* NOT STARTED.
+- **Phase 11 — Global security, resilience & failure testing — PLANNED.** *Objective:* enforce the §I gates in
+  code/contracts/policies (external input = data never instruction; human-auth for push/deploy/contact/send/payment/
+  secret/destructive) and prove resilience via restore/resume/fault-injection tests. *Findings:* gates partly prose
+  today; provider boundary (07) is the critical code gap; restore/fault tests absent. *Actions:* ODG/CTO-defined.
+  *Dependencies:* 07, 10. *Measurable criteria:* each consequential action contract/policy-gated and fail-closed;
+  documented failure scenarios recovered or safely stopped. *Tests:* fault-injection, restore, resume, secret/egress
+  audit. *Proofs:* action-gate tests + recovery evidence. *Risks:* silent weakening of a protection. *Stop:* §I.
+  *State:* NOT STARTED.
+- **Phase 12 — Deployment preparation & rehearsal — PLANNED.** *Objective:* make the system deployment-ready
+  (host/config/test-mode) and rehearse the deploy WITHOUT deploying. *Findings:* commercial closeout matrix open items
+  (§E); preprod loopback-only exists (not prod). *Actions:* ODG/CTO-defined. *Dependencies:* 11. *Measurable
+  criteria:* LAUNCH_READINESS items satisfied up to the human/legal gates; a dry-run deploy rehearsal succeeds.
+  *Proofs:* readiness checklist + test-mode/rehearsal probes. *Risks:* READY-on-green illusion. *Stop:* real deploy =
+  human (§I). *State:* NOT STARTED.
+- **Phase 13 — Final certification, GO/NO-GO & closeout — PLANNED.** *Objective:* certify the proven scope end-to-end,
+  record an explicit GO/NO-GO decision, and close out — before any real deployment. *Findings:* certification is
+  scoped to proven scope only; never on a green build alone (§C status vocabulary). *Actions:* ODG/CTO-defined
+  certification mission. *Dependencies:* 02–12. *Measurable criteria:* every prior phase ACCEPTED with evidence; no
+  NON-PROVEN item left in the Truth Register. *Proofs:* consolidated evidence bundle + signed GO/NO-GO. *Risks:*
+  certifying beyond proven scope. *Stop:* real deployment stays a separate human/CTO authorization after GO. *State:*
+  NOT STARTED.
+
+**Truth Register (open items — recorded as OPEN, NOT presented as fixed; indexes the detail, no duplication).**
+Each is tagged by claim type — [VERIFIED FINDING] / [HYPOTHESIS TO EXAMINE] / [FUTURE REQUIREMENT] — so a plan is
+never mistaken for a proof. Final acceptance criteria are set by ODG/CTO before each implementation mission.
+1. Master really consumed by the runtime; verifiable A01–A54 / 166-capability coverage + execution — [VERIFIED
+   FINDING: NOT PROVEN, GATE A] → Phase 04 (distinct gate).
+2. AUTONOMY-E2E-BENCHMARK: CTO review, final criteria, possible CI, separate publication — [VERIFIED FINDING:
+   IMPLEMENTED_LOCALLY 6/6, NOT accepted/published] → Phase 02.
+3. JS/TS/TSX double path → convergence to one Universal Runtime — [VERIFIED FINDING] → Phase 05 + Known-issues.
+4. Provider sandbox, default-deny network, minimal env, fail-closed if isolation missing — [VERIFIED FINDING:
+   absent] → Phase 07 + Known-issues.
+5. `local-model-manager.js` `shell:true` risk; allowed executable + args — [HYPOTHESIS TO EXAMINE: flagged, not
+   reproduced this session] → Phase 07.
+6. Patch-plan provenance & authorization; no self-approval — [VERIFIED FINDING (partial control exists via
+   action-gate); hardening to define] → Phase 03.
+7. Missing unit + integration tests — [VERIFIED FINDING: sparse] → Phase 08 / Phase 10 + Known-issues.
+8. `mission-context-stale` / DEF-005 — intentional RESIDUE, NOT a code fix — [VERIFIED FINDING] → Phase 09 + §tail.
+9. Compilation, dependencies, clean-checkout install, build reproducibility — [FUTURE REQUIREMENT: not tested] →
+   Phase 09.
+10. Restore, resume, fault, security & deployment tests — [FUTURE REQUIREMENT] → Phase 11 / Phase 12.
+11. Local economic-wiring: kept separately, unpublished, out of priority until the autonomy priority is
+    re-assessed — [PRESERVED] → Preserved-work block below.
+
+**Known unresolved issues (do not lose).**
+- Provider boundary not fail-closed in code: provider/local-model run as full-privilege subprocesses; OS sandbox
+  DESIGNED (reuse `bash-command-governor` bubblewrap; fs-minimal binds, env scrub, no-net, fail-closed if bwrap
+  absent) but NOT implemented. `--ro-bind / /` must NOT be reused for a provider (confidentiality).
+- Double runtime: JS pipeline + TS autonomy loop — reconcile to one Universal Runtime (port vs freeze) — ODG/CTO decision.
+- Sparse per-stage unit coverage (interpreter/loader/planner/decision/patch-engine/validation/ledger) — integration-only today.
+- `mission-context-stale` = CRITICAL/FROZEN historical RESIDUE (DEF-005), intentional control — not a code fix (§ tail).
+
+**Preserved work (uncommitted, do NOT discard or resume without authorization).** Economic wiring GATE-B VERIFIED but
+unpublished: `runtime/core/capability-executors.js` (M, LIVE-path extraction/classification), `runtime/core/economic-wiring.test.js` (??),
+`ODG_AUTONOMOUS_WORK_PROTOCOL.json` (M, scope). Pure economic modules already RELEASED (@`b6cf29f`).
+
+**Learning & evidence rules.** Absence of evidence = NOT PROVEN, never READY. Distinguish PROVEN / NOT PROVEN /
+BLOCKED and development ≠ test ≠ integration ≠ acceptance. Never report an unrun or differently-formatted test as
+PASS without confirming its assertions executed. Each mission records cause → evidence → design → proof → limits.
+
+**Canonical restart procedure.** (1) Run §B Resumption Truth Lock. (2) Read this §K + the latest audit report. (3)
+Confirm HEAD and the preserved uncommitted paths above still match. (4) Resume at the next AUTHORIZED milestone
+per the Phases ladder + Truth Register: the AUTONOMY-E2E-BENCHMARK (Phase 02) is IMPLEMENTED_LOCALLY (6/6 green,
+`runtime/__bench__/**`) and awaits CTO acceptance + commit/publication authorization; thereafter Phase 03 onward in
+priority order. (5) No implementation without a fresh explicit CTO authorization; Master coverage (Phase 04) keeps
+its own distinct gate.
+
 ## Validation
 Compatible with FICHE_01–06 (referenced, unmodified) and FICHE_07 method; no parallel governance; historical
 lessons included via the defect register; code/tests/integration/config/production distinguished; accepted work
