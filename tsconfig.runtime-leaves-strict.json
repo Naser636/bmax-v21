@@ -1,0 +1,25 @@
+{
+  "//": "Lot η2-T — STRICT TYPE-CHECK GATE for the four migrated leaf stages ONLY. noEmit: it checks types and emits nothing, so it NEVER touches the operational build (tsconfig.runtime-dist.json) or any .js. strict:true with the Node types; scoped to exactly the four leaf sources. This is a verification gate, not a compiler output.",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022",
+    "lib": ["es2022"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "noImplicitAny": true,
+    "types": ["node"]
+  },
+  "include": [
+    "runtime/core/mission-interpreter.ts",
+    "runtime/core/execution-planner.ts",
+    "runtime/core/knowledge-engine.ts",
+    "runtime/core/patch-engine.ts",
+    "runtime/core/pipeline-builder.ts",
+    "runtime/core/stage-effect.ts",
+    "runtime/core/checkpoint-engine.ts",
+    "runtime/core/capability-registry.ts"
+  ]
+}

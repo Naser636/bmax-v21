@@ -1,0 +1,27 @@
+{
+  "//": "Lot 1R build config — compiles ONLY the migrated runtime entry+orchestration TypeScript sources to a DISTINCT output dir (runtime/dist), emitting plain CommonJS that Node runs with NO tsx and NO node_modules. It does NOT touch the main tsconfig.json (noEmit type-check gate) and never overwrites the historical .js sources. rootDir=runtime preserves the bin/core layout under dist so the compiled entry's relative requires to its compiled siblings resolve.",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "declaration": false,
+    "sourceMap": false,
+    "rootDir": "runtime",
+    "outDir": "runtime/dist",
+    "types": ["node"]
+  },
+  "include": [
+    "runtime/bin/odg-run.ts",
+    "runtime/core/pipeline-builder.ts",
+    "runtime/core/stage-effect.ts",
+    "runtime/core/checkpoint-engine.ts",
+    "runtime/core/mission-interpreter.ts",
+    "runtime/core/execution-planner.ts",
+    "runtime/core/knowledge-engine.ts",
+    "runtime/core/patch-engine.ts",
+    "runtime/core/capability-registry.ts"
+  ]
+}
