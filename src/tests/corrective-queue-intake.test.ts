@@ -32,6 +32,11 @@ import { RuntimeAutonomy } from "@/core/runtime-autonomy";
 import { AUTONOMY_CONTRACT_VERSION } from "@/contracts/runtime-autonomy";
 import { AutonomyRuntimeAdapter } from "@/runtime/autonomy-runtime-adapter";
 
+// η3-B107 — JS-ENTRY PIN. This test stubs the JavaScript pipeline entry (runtime/bin/odg-run.js) in a
+// throwaway workspace to exercise the adapter's LOCAL path; pin it explicitly so a future coordinated
+// cutover default (ODG_RUNTIME=ts) cannot reroute it. Intent-preserving; a no-op under today's default.
+process.env.ODG_RUNTIME_ENTRY = "runtime/bin/odg-run.js";
+
 let failures = 0;
 function check(cond: boolean, label: string): void {
   if (cond) {

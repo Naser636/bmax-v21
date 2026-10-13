@@ -38,6 +38,13 @@ import { AUTONOMY_CONTRACT_VERSION } from "@/contracts/runtime-autonomy";
 import { AutonomyRuntimeAdapter } from "@/runtime/autonomy-runtime-adapter";
 import { missionRequiresProvider } from "@/providers";
 
+// η3-B107 — JS-ENTRY PIN. This test deliberately stubs the JavaScript pipeline entry
+// (runtime/bin/odg-run.js) inside its throwaway workspace to exercise the adapter's LOCAL path. Pin
+// the entry explicitly so the test keeps using that JS stub REGARDLESS of a future coordinated
+// cutover default (ODG_RUNTIME=ts). This preserves the test's intent (it is NOT a TS-runtime test);
+// under today's default it is a no-op (the adapter default already resolves to this exact entry).
+process.env.ODG_RUNTIME_ENTRY = "runtime/bin/odg-run.js";
+
 const MISSION = "LOCAL_AUTONOMY_PROOF_V1";
 
 let failures = 0;

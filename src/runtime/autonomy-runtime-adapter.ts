@@ -110,9 +110,20 @@ const PIPELINE = "runtime/bin/odg-run.js";
 // An unset or blank variable keeps the historical default (no silent switch). This chooses ONLY the
 // entry path; mission rules, orchestration, attribution, ledger, checkpoints and governance are
 // untouched (the chosen entry runs the identical 13-stage pipeline either way).
+const COMPILED_PIPELINE = "runtime/dist/bin/odg-run.js";
+// Coordinated A/B cutover switch (η3-B107). The PUBLISHED default is UNCHANGED (JavaScript). An
+// explicit `ODG_RUNTIME_ENTRY` pin always wins (used by the adapter-compiled benches and by the JS-entry
+// pins of the stub tests). Otherwise `ODG_RUNTIME=ts` — the SAME operator switch as front door A
+// (odg-local-pipeline.sh) — routes front door B to the compiled entry too, so a future cutover is a
+// single coordinated default change, not a code edit. Unset/`js` keeps the historical JS entry. The ts
+// path ensures a FRESH compiled dist before launch and NEVER silently falls back (see runLocalPipeline).
+function resolveRuntimeMode(): "ts" | "js" {
+  return (process.env.ODG_RUNTIME || "").trim() === "ts" ? "ts" : "js";
+}
 function resolvePipelineEntry(): string {
   const override = process.env.ODG_RUNTIME_ENTRY;
   if (typeof override === "string" && override.trim().length > 0) return override.trim();
+  if (resolveRuntimeMode() === "ts") return COMPILED_PIPELINE;
   return PIPELINE;
 }
 const MISSIONS_DIR = "runtime/missions";
@@ -606,10 +617,32 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * (LOCAL_FIRST) and use its failure as the single proof that the Runtime cannot progress locally.
    */
   private runLocalPipeline(mission: string): PipelineOutcome {
-    const entry = resolvePipelineEntry(); // historical PIPELINE by default; opt-in compiled entry via ODG_RUNTIME_ENTRY
+    const entry = resolvePipelineEntry(); // historical PIPELINE by default; opt-in compiled entry via ODG_RUNTIME_ENTRY / ODG_RUNTIME=ts
+    const childEnv: NodeJS.ProcessEnv = { ...process.env };
+    // Coordinated full-TS (ODG_RUNTIME=ts): guarantee a FRESH, provenance-validated compiled dist
+    // (η3-B105 helper) BEFORE launch and run the compiled STAGES too (ODG_STAGE_BASE). NO silent
+    // fallback — a failed ensure is a launch failure, never a JS run. An explicit ODG_RUNTIME_ENTRY
+    // pin bypasses this (the entry was chosen deliberately), preserving the stub tests' JS entry.
+    if (resolveRuntimeMode() === "ts" && !(process.env.ODG_RUNTIME_ENTRY || "").trim()) {
+      const ensure = spawnSync("bash", ["runtime/bin/odg-ensure-ts-runtime.sh"], { cwd: this.cwd, stdio: "inherit" });
+      if (ensure.status !== 0) {
+        return {
+          pipelineOk: false,
+          diagnostics: {
+            stage: "ts-runtime-ensure",
+            reason: "TS_RUNTIME_UNAVAILABLE",
+            message: `ODG_RUNTIME=ts but the compiled runtime could not be ensured (exit ${ensure.status ?? "null"}). Refusing to silently fall back to the JS runtime; unset ODG_RUNTIME to use JavaScript.`,
+            provider: COMPILED_PIPELINE,
+            exitCode: ensure.status,
+          },
+        };
+      }
+      if (!(childEnv.ODG_STAGE_BASE || "").trim()) childEnv.ODG_STAGE_BASE = "runtime/dist/core";
+    }
     const r = spawnSync("node", [entry, mission], {
       cwd: this.cwd,
       stdio: "inherit",
+      env: childEnv,
     });
     const pipelineOk = r.status === 0;
     if (!pipelineOk) {
