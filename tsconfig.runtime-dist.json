@@ -30,6 +30,7 @@
     "runtime/core/mission-loader.ts",
     "runtime/core/decision-engine.ts",
     "runtime/core/patch-executor.ts",
-    "runtime/core/final-report.ts"
+    "runtime/core/final-report.ts",
+    "runtime/core/mission-ledger.ts"
   ]
 }
