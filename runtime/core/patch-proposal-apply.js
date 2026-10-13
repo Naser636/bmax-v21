@@ -71,6 +71,10 @@ function applyProposal(opts) {
   const patches = [...byObjective.entries()].map(([oid, edits]) => ({
     action: oid,
     objectiveId: oid,
+    // CTO Phase-03: these edits came from a PROVIDER proposal (proposedEdits). THIS adapter is the ODG
+    // boundary that authoritatively KNOWS the origin — stamp PROVIDER here, never trusting any
+    // provider-self-declared author. A provider patch applied by ODG is still a provider patch.
+    authoredBy: "PROVIDER",
     edits,
   }));
   // The plan carries ODG's authoritative mission + scope (never the provider's self-report).

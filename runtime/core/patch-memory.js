@@ -58,9 +58,19 @@ function record(entry) {
     const sig = entry.signature || signature(entry);
     const db = store.read(NAME, emptyDB());
     const prior = db.entries[sig];
+    // ORIGINAL-AUTHOR PROVENANCE (CTO Phase-03): a patch APPLIED by ODG is not necessarily a patch
+    // CREATED by ODG. The author proven at learn time is retained here and replayed verbatim, so a
+    // precedent originally proposed by a provider never becomes ODG-authored on replay. Preserved, never
+    // upgraded: an explicit proven authoredBy wins; else the prior stored value; else UNKNOWN. Historical
+    // entries learned before this field existed carry no authoredBy and MUST stay UNKNOWN (no assumption).
+    const authoredBy =
+        (typeof entry.authoredBy === "string" && entry.authoredBy) ? entry.authoredBy
+        : (prior && typeof prior.authoredBy === "string" && prior.authoredBy) ? prior.authoredBy
+        : "UNKNOWN";
     db.entries[sig] = {
         signature: sig,
         mission: entry.mission || (prior && prior.mission) || null,
+        authoredBy,
         edits: entry.edits,
         reuseCount: prior ? prior.reuseCount : 0,
         learnedAt: prior ? prior.learnedAt : new Date().toISOString(),
@@ -92,4 +102,13 @@ function list() {
     return Object.values(store.read(NAME, emptyDB()).entries);
 }
 
-module.exports = { signature, record, lookup, hit, list, NAME };
+// Recall the FULL stored record (including retained provenance) WITHOUT mutating. Returns the entry or
+// null. A historical entry learned before provenance existed has no authoredBy ⇒ the caller MUST treat a
+// missing authoredBy as UNKNOWN and NEVER requalify it by assumption.
+function recall(task) {
+    const sig = typeof task === "string" ? task : signature(task);
+    const db = store.read(NAME, emptyDB());
+    return db.entries[sig] || null;
+}
+
+module.exports = { signature, record, lookup, recall, hit, list, NAME };

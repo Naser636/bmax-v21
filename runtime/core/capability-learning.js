@@ -56,6 +56,10 @@ function learn(report) {
                 goal: o.goal,
                 objectiveId: o.objectiveId || o.id,
                 mission: report.mission,
+                // CTO Phase-03: carry the proven origin through to Patch Memory without loss. Absent/invalid
+                // ⇒ not forwarded ⇒ patch-memory's fail-closed UNKNOWN default applies (NEVER requalified to
+                // an ODG origin just because a patch was stored or replayed).
+                ...(typeof o.authoredBy === "string" && o.authoredBy ? { authoredBy: o.authoredBy } : {}),
                 edits,
             });
             learnedPatches.push(rec.signature);

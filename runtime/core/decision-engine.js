@@ -70,14 +70,27 @@ function memoryPatchFor(objective) {
     if (!router || !objective || typeof objective.id !== "string") return null;
     if (objective.patch) return null;
     try {
-        const routed = router.route({ goal: objective.goal, objectiveId: objective.id });
+        const task = { goal: objective.goal, objectiveId: objective.id };
+        const routed = router.route(task);
         if (
             routed &&
             routed.chosen &&
             routed.chosen.tier === "PATCH_MEMORY" &&
             isReusableEdits(routed.chosen.edits)
         ) {
-            return routed.chosen.edits;
+            // CTO Phase-03: a replayed precedent carries its ORIGINAL author (retained in Patch Memory),
+            // NEVER a blanket "ODG_MEMORY" — a patch applied by ODG is not necessarily created by ODG. A
+            // precedent with no retained provenance (historical) stays UNKNOWN; never requalified.
+            let authoredBy = "UNKNOWN";
+            if (patchMemory && typeof patchMemory.recall === "function") {
+                try {
+                    const rec = patchMemory.recall(task);
+                    if (rec && typeof rec.authoredBy === "string" && rec.authoredBy) authoredBy = rec.authoredBy;
+                } catch {
+                    /* fail closed ⇒ UNKNOWN */
+                }
+            }
+            return { edits: routed.chosen.edits, authoredBy };
         }
     } catch {
         /* fail closed: any router/memory error ⇒ no reuse, exact prior behaviour */
@@ -110,6 +123,9 @@ const actions = plan.objectives.map((o) => o.id);
 // its signature. Pure/order-preserving: ids (and therefore `actions`) are unchanged; only an optional
 // `patch` is added on a Memory hit. No hit ⇒ the objective passes through verbatim (prior behaviour).
 const objectives = plan.objectives.map((o) => {
+    // CTO Phase-03 provenance: an objective that ALREADY carries a patch was supplied by the mission
+    // CONTRACT (via the loader); its origin is the contract, not ODG's autonomous reasoning ⇒ CONTRACT.
+    if (o.patch) return { ...o, authoredBy: "CONTRACT" };
     const mem = memoryPatchFor(o);
     if (!mem) return o;
     // C4 — a precedent is genuinely being REUSED (its edits are attached to this objective and will be
@@ -122,7 +138,8 @@ const objectives = plan.objectives.map((o) => {
             /* reuse accounting is advisory — never block the decision on it */
         }
     }
-    return { ...o, patch: mem };
+    // Attach the reused edits AND the precedent's retained original author (UNKNOWN if none was retained).
+    return { ...o, patch: mem.edits, authoredBy: mem.authoredBy };
 });
 
 const result = {

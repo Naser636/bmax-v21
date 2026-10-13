@@ -189,4 +189,93 @@ console.log("Case 10 — declared-proof OBSERVATION via the existing registry (r
   ok("tallies: 1 proofUnbound", r.summary.proofUnbound === 1);
 }
 
+// ---------------------------------------------------------------------------------------------------
+// Phase-03 CTO Gate B — APPLIED real-file WRITE attribution (reuses the existing evidence-integrity
+// probe; authority is never inferred from the write / a path). Isolated fixtures so the Case-8 tallies
+// above are untouched.
+// ---------------------------------------------------------------------------------------------------
+const applyPatch = { patches: [{ objectiveId: "W1", done_when: ["a file exists under scope"] }] };
+
+console.log("Case 11 — APPLIED with a real non-empty target + valid (non-enforced) admission ⇒ EVIDENCED");
+{
+  const exec = { executed: [{
+    objectiveId: "W1", status: "APPLIED",
+    files: [{ target: "bench-workspace/marker.txt", mode: "content" }],
+    admission: [{ target: "bench-workspace/marker.txt", decision: "DENY", enforced: false }], // OBSERVE legacy
+  }] };
+  const probe = (p) => p === "bench-workspace/marker.txt"; // present & non-empty
+  const r = attributeObjectives({ objectives: [{ id: "W1" }] }, applyPatch, exec, probe);
+  ok("APPLIED + real file ⇒ EVIDENCED", r.objectives[0].verdict === VERDICT.EVIDENCED);
+  ok("APPLIED EVIDENCED carries the written target as evidence", r.objectives[0].evidence === "bench-workspace/marker.txt");
+  ok("APPLIED EVIDENCED never claims done_when proof", r.objectives[0].doneWhenEvaluated === false);
+}
+
+console.log("Case 12 — APPLIED with an absent/empty target ⇒ NOT EVIDENCED (status alone never qualifies)");
+{
+  const exec = { executed: [{ objectiveId: "W1", status: "APPLIED", files: [{ target: "bench-workspace/marker.txt", mode: "content" }] }] };
+  const r = attributeObjectives({ objectives: [{ id: "W1" }] }, applyPatch, exec, () => false); // file absent/empty
+  ok("APPLIED + empty/absent file ⇒ RECORDED-NO-EVIDENCE", r.objectives[0].verdict === VERDICT.RECORDED_NO_EVIDENCE);
+  ok("APPLIED + empty/absent file ⇒ NOT EVIDENCED", r.objectives[0].verdict !== VERDICT.EVIDENCED);
+}
+
+console.log("Case 13 — APPLIED with NO declared target ⇒ NOT EVIDENCED (no deliverable to probe)");
+{
+  const exec = { executed: [{ objectiveId: "W1", status: "APPLIED", files: [] }] };
+  const r = attributeObjectives({ objectives: [{ id: "W1" }] }, applyPatch, exec, () => true); // probe would pass, but no target
+  ok("APPLIED + no target ⇒ RECORDED-NO-EVIDENCE", r.objectives[0].verdict === VERDICT.RECORDED_NO_EVIDENCE);
+  ok("APPLIED + no target ⇒ NOT EVIDENCED", r.objectives[0].verdict !== VERDICT.EVIDENCED);
+}
+
+console.log("Case 14 — APPLIED under an ENFORCED non-ALLOW admission ⇒ NEVER counted as autonomous");
+{
+  for (const decision of ["DENY", "ESCALATE"]) {
+    const exec = { executed: [{
+      objectiveId: "W1", status: "APPLIED",
+      files: [{ target: "bench-workspace/marker.txt", mode: "content" }],
+      admission: [{ target: "bench-workspace/marker.txt", decision, enforced: true }],
+    }] };
+    const r = attributeObjectives({ objectives: [{ id: "W1" }] }, applyPatch, exec, () => true); // file present
+    ok(`APPLIED + enforced ${decision} ⇒ RECORDED-NO-EVIDENCE`, r.objectives[0].verdict === VERDICT.RECORDED_NO_EVIDENCE);
+    ok(`APPLIED + enforced ${decision} ⇒ NOT EVIDENCED`, r.objectives[0].verdict !== VERDICT.EVIDENCED);
+  }
+}
+
+console.log("Case 15 — APPLIED with multiple targets: EVIDENCED only if EVERY target is present & non-empty");
+{
+  const multiPatch = { patches: [{ objectiveId: "W1", done_when: ["x"] }] };
+  const files = [{ target: "scope/a.txt", mode: "content" }, { target: "scope/b.txt", mode: "content" }];
+  const exec = { executed: [{ objectiveId: "W1", status: "APPLIED", files }] };
+  const allPresent = attributeObjectives({ objectives: [{ id: "W1" }] }, multiPatch, exec, () => true);
+  ok("APPLIED + all targets present ⇒ EVIDENCED", allPresent.objectives[0].verdict === VERDICT.EVIDENCED);
+  const onePresent = attributeObjectives({ objectives: [{ id: "W1" }] }, multiPatch, exec, (p) => p === "scope/a.txt");
+  ok("APPLIED + one target missing ⇒ NOT EVIDENCED", onePresent.objectives[0].verdict !== VERDICT.EVIDENCED);
+  ok("APPLIED + one target missing ⇒ RECORDED-NO-EVIDENCE", onePresent.objectives[0].verdict === VERDICT.RECORDED_NO_EVIDENCE);
+}
+
+console.log("Case 16 — non-autonomous statuses are NEVER EVIDENCED via the APPLIED path");
+{
+  const probe = () => true; // even if a probe would pass, status must gate
+  for (const status of ["RECORDED", "BLOCKED", "FAILED", "DUPLICATE", "SCAFFOLDED"]) {
+    const exec = { executed: [{ objectiveId: "W1", status, files: [{ target: "scope/x.txt", mode: "content" }] }] };
+    const r = attributeObjectives({ objectives: [{ id: "W1" }] }, applyPatch, exec, probe);
+    ok(`status ${status} ⇒ never EVIDENCED`, r.objectives[0].verdict !== VERDICT.EVIDENCED);
+  }
+  // A BLOCKED governance self-approval refusal (executor shape) is never EVIDENCED either.
+  const gov = { executed: [{ objectiveId: "W1", status: "BLOCKED", decision: "ESCALATE", target: "runtime/governance/injected.json", needs: "protected governance path … cannot self-authorize" }] };
+  const rg = attributeObjectives({ objectives: [{ id: "W1" }] }, applyPatch, gov, () => true);
+  ok("BLOCKED governance self-approval ⇒ never EVIDENCED", rg.objectives[0].verdict !== VERDICT.EVIDENCED);
+}
+
+console.log("Case 17 — REGRESSION: a valid EXECUTED+evidence result is unchanged by the APPLIED path");
+{
+  const r = attributeObjectives(
+    { objectives: [{ id: "E1" }] },
+    { patches: [{ objectiveId: "E1", done_when: ["x"] }] },
+    { executed: [{ objectiveId: "E1", status: "EXECUTED", evidence: "runtime/generated/a.json" }] },
+    (p) => p === "runtime/generated/a.json",
+  );
+  ok("EXECUTED + valid evidence ⇒ still EVIDENCED", r.objectives[0].verdict === VERDICT.EVIDENCED);
+  ok("EXECUTED EVIDENCED keeps its evidence path", r.objectives[0].evidence === "runtime/generated/a.json");
+}
+
 console.log(`\nOBJECTIVE ATTRIBUTION — ${passed} assertions passed.`);

@@ -139,6 +139,33 @@ function attributeObjectives(plan, patch, execution, evidenceProbe, probeRunner,
       return { ...base, verdict: VERDICT.EVIDENCED, status, evidence, reason: "status EXECUTED + evidence present and non-empty" };
     }
 
+    // APPLIED real-file WRITE (Phase-03, CTO Gate B): a consequential WRITE's own deliverable IS its
+    // evidence. It is EVIDENCED ONLY when every declared target probes present & non-empty via the SAME
+    // injected evidence-integrity predicate used above (no new proof mechanism, no path-as-authority) AND
+    // the recorded admission carries no ENFORCED non-ALLOW decision (an enforced DENY/ESCALATE never
+    // reaches APPLIED at the executor, but this is a defensive belt: authority is never inferred from the
+    // write itself). Status-only never qualifies; an absent/empty file or an enforced refusal falls
+    // through to RECORDED-NO-EVIDENCE. Attribution is already unambiguous here (single matched entry).
+    if (status === "APPLIED") {
+      const files = Array.isArray(e.files) ? e.files : [];
+      const targets = files
+        .map((f) => (f && typeof f.target === "string" ? f.target.trim() : ""))
+        .filter((t) => t.length > 0);
+      const admission = Array.isArray(e.admission) ? e.admission : [];
+      const enforcedRefusal = admission.some((a) => a && a.enforced === true && a.decision !== "ALLOW");
+      const allTargetsPresent = targets.length > 0 && targets.every((t) => probe(t));
+      if (allTargetsPresent && !enforcedRefusal) {
+        return { ...base, verdict: VERDICT.EVIDENCED, status, evidence: targets.join("; "),
+          reason: "status APPLIED + every written target present and non-empty + no enforced refusal" };
+      }
+      const why = enforcedRefusal
+        ? "status APPLIED under an enforced non-ALLOW admission — never counted as autonomous"
+        : targets.length === 0
+          ? "status APPLIED but no written target declared — not evidenced"
+          : "status APPLIED but a written target is absent or empty — not evidenced";
+      return { ...base, verdict: VERDICT.RECORDED_NO_EVIDENCE, status, evidence, reason: why };
+    }
+
     // Everything else that matched and did not fail: recorded, but without usable evidence.
     // (read-only RECORDED objective, or an EXECUTED entry whose evidence is absent/empty, or any
     //  other non-FAILED status). Never upgraded to a proof.

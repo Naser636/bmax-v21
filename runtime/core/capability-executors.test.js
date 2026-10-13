@@ -160,4 +160,107 @@ inTempCwd((mod) => {
     ok("ranked item citing an unverified source fails closed (throws)", threw === true);
 });
 
+// ---- ODG Synthetic Deliverable — Phase-03 Gate B (ODG-formulated in-scope write + pre-write confinement) ----
+function writePlan(dir, authorizedPaths, objectives) {
+    fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+    fs.writeFileSync(path.join(dir, "runtime", "generated", "patch-plan.json"),
+        JSON.stringify({ mission: "BENCH_SYNTH", authorizedPaths, objectives: objectives || [{ id: "ODG_WRITE_1" }] }));
+}
+
+// 9. Content is FORMULATED by ODG (deterministic; derived from plan data, not a contract patch).
+inTempCwd((mod) => {
+    const m1 = mod.formulateSyntheticManifest({ mission: "M", objectives: [{ id: "B" }, { id: "A" }] });
+    const m2 = mod.formulateSyntheticManifest({ mission: "M", objectives: [{ id: "A" }, { id: "B" }] });
+    ok("manifest is deterministic (order-independent, sorted ids)", m1 === m2);
+    ok("manifest is ODG-formulated (mission + sorted ids + ODG generator tag)",
+        /^ODG-SYNTHETIC-MANIFEST\nmission=M\nobjectives=A,B\ngenerator=ODG_CAPABILITY\n$/.test(m1));
+});
+
+// 10. Authorized in-scope write + non-empty evidence (real run through the executor in a sandbox cwd).
+inTempCwd((mod, dir) => {
+    writePlan(dir, ["bench-workspace/**"]);
+    const res = mod.resolve({ objectiveId: "ODG_WRITE_1" }).run();
+    const deliverable = path.join(dir, "bench-workspace", "odg-synthetic-manifest.txt");
+    ok("writes exactly the in-scope deliverable", fs.existsSync(deliverable));
+    ok("deliverable carries the ODG-formulated content", /generator=ODG_CAPABILITY/.test(fs.readFileSync(deliverable, "utf8")));
+    ok("the deliverable is NOT a contract-supplied patch content", !/SHOULD|CONTRACT|BENCH-OK/.test(fs.readFileSync(deliverable, "utf8")));
+    ok("evidence path returned and present & non-empty",
+        typeof res.evidence === "string" && fs.existsSync(path.join(dir, res.evidence)) && fs.statSync(path.join(dir, res.evidence)).size > 0);
+});
+
+// 11. Refuse an EMPTY / invalid scope BEFORE any write.
+inTempCwd((mod, dir) => {
+    writePlan(dir, []); // empty scope
+    let threw = false; try { mod.resolve({ objectiveId: "ODG_WRITE_1" }).run(); } catch { threw = true; }
+    ok("empty authorized scope ⇒ refused (throws)", threw === true);
+    ok("empty scope ⇒ no deliverable written", !fs.existsSync(path.join(dir, "bench-workspace", "odg-synthetic-manifest.txt")));
+    assert.throws(() => mod.confineSyntheticTarget([], dir), /no valid authorized scope/);
+});
+
+// 12. Refuse an OUT-OF-SCOPE / absolute scope BEFORE any write.
+inTempCwd((mod, dir) => {
+    assert.throws(() => mod.confineSyntheticTarget(["/etc/**"], dir), /not a relative in-tree path/);
+    ok("absolute scope refused before write", !fs.existsSync("/etc/odg-synthetic-manifest.txt"));
+});
+
+// 13. Reject path TRAVERSAL (scope escaping the tree) BEFORE any write.
+inTempCwd((mod, dir) => {
+    assert.throws(() => mod.confineSyntheticTarget(["../escape/**"], dir), /not a relative in-tree path|outside authorized scope/);
+    ok("traversal scope ../escape refused", !fs.existsSync(path.join(dir, "..", "escape", "odg-synthetic-manifest.txt")));
+});
+
+// 14. Reject a SYMLINK escape from the sandbox (real-path defense) BEFORE any write.
+inTempCwd((mod, dir) => {
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), "capexec-outside-"));
+    try {
+        fs.symlinkSync(outside, path.join(dir, "linkdir")); // an in-cwd name resolving OUTSIDE the sandbox
+        assert.throws(() => mod.confineSyntheticTarget(["linkdir/**"], dir), /symlink\/real-path escape/);
+        ok("symlinked scope dir refused (no escape)", !fs.existsSync(path.join(outside, "odg-synthetic-manifest.txt")));
+    } finally {
+        fs.rmSync(outside, { recursive: true, force: true });
+    }
+});
+
+// 15. The capability NEVER fires for ordinary objective ids (matcher is benchmark-reserved).
+inTempCwd((mod) => {
+    ok("ODG_WRITE_ prefix matches the synthetic capability",
+        mod.resolve({ objectiveId: "ODG_WRITE_1" }).capability === "ODG Synthetic Deliverable");
+    const ordinary = mod.resolve({ objectiveId: "SOME_OBJECTIVE_1" });
+    ok("ordinary objective is NOT routed to the synthetic capability",
+        !ordinary || ordinary.capability !== "ODG Synthetic Deliverable");
+    const cw = mod.resolve({ objectiveId: "CLEAN_WORKSPACE_1" });
+    ok("Clean Workspace objective keeps its own capability (no collision)",
+        cw && cw.capability === "Clean Workspace");
+});
+
+// 16. PROTECTED-GOVERNANCE guard (Q6 closure) — a scope subsuming runtime/governance does NOT authorize
+//     a governance write unless the plan explicitly grants it; the guard is the SAME shared function.
+inTempCwd((mod, dir) => {
+    ok("isProtectedGovernanceTarget is exported (single shared guard)", typeof mod.isProtectedGovernanceTarget === "function");
+    ok("guard detects a governance path", mod.isProtectedGovernanceTarget("runtime/governance/x.json") === true);
+    ok("guard ignores a non-governance path", mod.isProtectedGovernanceTarget("bench-workspace/x.txt") === false);
+    // A governance scope WITHOUT elevated authorization ⇒ refused before any write.
+    assert.throws(() => mod.confineSyntheticTarget(["runtime/governance/**"], dir, false),
+        /protected governance path requiring an explicit ODG-level elevated authorization/);
+    ok("governance scope refused without authorization ⇒ no deliverable",
+        !fs.existsSync(path.join(dir, "runtime", "governance", "odg-synthetic-manifest.txt")));
+    // The same scope WITH explicit elevated authorization is permitted by the guard (parity with edits branch).
+    const okRes = mod.confineSyntheticTarget(["runtime/governance/**"], dir, true);
+    ok("governance scope allowed only with explicit elevated authorization", okRes.relTarget === path.join("runtime", "governance", "odg-synthetic-manifest.txt"));
+    // Default (omitted) authorization is fail-closed (treated as not granted).
+    assert.throws(() => mod.confineSyntheticTarget(["runtime/governance/**"], dir), /protected governance path/);
+    // Non-governance scope stays unaffected by the guard.
+    ok("bench-workspace scope unaffected by governance guard",
+        mod.confineSyntheticTarget(["bench-workspace/**"], dir, false).relTarget === path.join("bench-workspace", "odg-synthetic-manifest.txt"));
+});
+
+// 17. run() end-to-end refuses a governance scope before any write (no file, throws).
+inTempCwd((mod, dir) => {
+    writePlan(dir, ["runtime/governance/**"]); // no allowProtectedGovernance
+    let threw = false; try { mod.resolve({ objectiveId: "ODG_WRITE_1" }).run(); } catch { threw = true; }
+    ok("run() refuses a governance scope (throws)", threw === true);
+    ok("run() governance refusal ⇒ no governance deliverable written",
+        !fs.existsSync(path.join(dir, "runtime", "governance", "odg-synthetic-manifest.txt")));
+});
+
 console.log(`\nCapability Executors: ${passed} assertions passed.`);

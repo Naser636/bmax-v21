@@ -86,6 +86,19 @@ const patches = decision.actions.map((action, index) => {
     if (objective && objective.actionContract && typeof objective.actionContract === "object") {
         patch.actionContract = objective.actionContract;
     }
+    // Transport-only (CTO Phase-03 Option A): carry the objective's Governed Git Branch Integration spec
+    // onto the patch so the self-gating capability executor reads it from its already-available payload.
+    // Mirrors the research/actionContract transports above. Absent ⇒ no key; introduces NO authority and
+    // NO default — the capability self-gates (ff-only, dry-run unless execute===true) and fails closed.
+    if (objective && objective.git_branch_integration && typeof objective.git_branch_integration === "object") {
+        patch.git_branch_integration = objective.git_branch_integration;
+    }
+    // Transport-only (CTO Phase-03): carry the objective's PROVEN authorship origin onto the patch so the
+    // Patch Executor records it on the executed[] evidence. Absent ⇒ no key; the executor then defaults to
+    // a site-appropriate ODG origin for its OWN capability/legacy actions, else UNKNOWN — never assumed ODG.
+    if (objective && typeof objective.authoredBy === "string" && objective.authoredBy) {
+        patch.authoredBy = objective.authoredBy;
+    }
     return patch;
 });
 

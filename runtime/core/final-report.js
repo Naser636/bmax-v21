@@ -13,6 +13,7 @@
 const fs = require("fs");
 const path = require("path");
 const { attributeObjectives } = require("./objective-attribution");
+const { fromExecution, measureAutonomy, describeExecution, eligibilityFromObjectives } = require("./autonomy-measure");
 
 const GENERATED_DIR = "runtime/generated";
 const REPORTS_DIR = path.join(GENERATED_DIR, "reports");
@@ -92,6 +93,59 @@ function attributionSection(plan, patch, execution, evidenceProbe) {
   return lines;
 }
 
+/**
+ * autonomySection(plan, patchPlan, patchExecution, checks, evidenceProbe) -> string[]  (markdown lines)
+ *
+ * NON-AUTHORITATIVE autonomy measurement appended to the final report (Phase-03). It reuses the EXISTING
+ * measurer and NEVER mutates any artifact or verdict (pure — returns lines). The GLOBAL per-mission % is
+ * GATED: emitted ONLY when a PROVEN per-objective eligibility+authorization source exists. No such explicit
+ * source exists in the runtime today — mission-level authorized_paths is NOT per-objective proof and MUST
+ * NOT be used — so the % is reported NON_MEASURABLE and only the DESCRIPTIVE category ventilation is shown.
+ * `coverageOk` is consumed ONLY as the runComplete signal (its demonstrated semantics), never as eligibility.
+ * Pure: a deterministic function of its inputs (the injected probe is only used to observe evidence files).
+ */
+function autonomySection(plan, patchPlan, patchExecution, checks, evidenceProbe) {
+  const lines = ["## Autonomy (measured — non-authoritative)"];
+  if (!patchExecution || !Array.isArray(patchExecution.executed)) {
+    lines.push("- (not available — patch-execution.json not produced this run)");
+    return lines;
+  }
+  const probe = typeof evidenceProbe === "function" ? evidenceProbe : () => false;
+  // Reuse the evidence verdicts already computed by the existing analyzer (no probe execution).
+  const attribution = attributeObjectives(plan || {}, patchPlan, patchExecution, probe, () => ({}), () => false, {});
+  const hasCoverage = !!(checks && "objectiveCoverage" in checks);
+  const coverageOk = !!(checks && checks.objectiveCoverage === true); // runComplete signal ONLY
+
+  // Denominator = EXPLICIT per-objective eligibility+authorization declarations ONLY (never fabricated from
+  // authorizedPaths / requiresEngineering / executor identity / status). If any objective lacks a valid
+  // declaration, the denominator is incomplete ⇒ NON_MEASURABLE (no % is ever shown on an unproven base).
+  const planObjectives = Array.isArray(plan && plan.objectives) ? plan.objectives : [];
+  const { map: eligibilityByObjective, complete, missing } = eligibilityFromObjectives(planObjectives);
+  const measured = complete
+    ? measureAutonomy(fromExecution(patchExecution, attribution, eligibilityByObjective, { runComplete: coverageOk }))
+    : { measurable: false };
+
+  if (!complete) {
+    lines.push(`- Autonomy %: **NON_MEASURABLE** — ${missing.length} objective(s) lack a valid explicit `
+      + `eligibility+authorization declaration (${missing.slice(0, 5).join(", ")}${missing.length > 5 ? ", …" : ""}). `
+      + "A contract DECLARATION is required; mission-level authorized_paths is NOT per-objective proof. Breakdown below is descriptive.");
+  } else if (measured.measurable) {
+    lines.push(`- Autonomy %: **${measured.autonomyPercent}%** (ODG-executed+verified ${measured.numerator}/${measured.denominator}, denominator proven)`);
+  } else {
+    lines.push("- Autonomy %: **NON_MEASURABLE** — declarations complete but the run is not fully classifiable "
+      + "(incomplete coverage, ambiguous join, or unproven author/applicator/verification). Breakdown below is descriptive.");
+  }
+  lines.push("- Run coverage (runComplete signal): "
+    + (hasCoverage ? (coverageOk ? "complete" : "INCOMPLETE — absent objectives are NOT assumed non-executed") : "absent (no coverage signal this run)"));
+  const c = describeExecution(patchExecution, attribution);
+  const k = c.counts;
+  lines.push("- Descriptive breakdown (events observed, NOT a denominator): "
+    + `ODG-executed+verified ${k.odgExecutedVerified} · external ${k.external} · blocked/refused/failed ${k.blockedFailed} · `
+    + `human-mandatory ${k.humanMandatory} · not-executed ${k.notExecuted} · unknown/unverified ${k.unknownOrUnverified}`
+    + (c.inconsistent ? ` · inconsistent-join ${c.inconsistent}` : ""));
+  return lines;
+}
+
 function main() {
   const mission = process.argv[2] || "BUILD_RUNTIME";
 
@@ -107,6 +161,9 @@ function main() {
     try { return typeof p === "string" && p.length > 0 && fs.statSync(p).size > 0; } catch { return false; }
   };
   const attribution = attributionSection(plan, patchPlan, patchExecution, evidenceProbe);
+  // Phase-03 additive, non-authoritative autonomy measurement (gated %: NON_MEASURABLE without explicit
+  // per-objective eligibility; descriptive breakdown always). Reads checks.objectiveCoverage as runComplete.
+  const autonomy = autonomySection(plan, patchPlan, patchExecution, checks, evidenceProbe);
 
   const c03 = summarizeC03(lifecycle);
   const caps = Array.isArray(checks.capabilities) ? checks.capabilities : [];
@@ -133,6 +190,8 @@ function main() {
     "",
     ...attribution,
     "",
+    ...autonomy,
+    "",
     "## Capability proofs",
     capLines,
     "",
@@ -157,7 +216,7 @@ function main() {
   console.log("======================================");
 }
 
-module.exports = { summarizeC03, attributionSection };
+module.exports = { summarizeC03, attributionSection, autonomySection };
 
 // Only auto-run (and exit) when invoked as a script — the pipeline spawns `node final-report.js`, so
 // this is identical to before. `require()` (the test) imports summarizeC03 without side effects.

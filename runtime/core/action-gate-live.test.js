@@ -102,6 +102,33 @@ const EDIT = [{ target: "runtime/work/out.js", content: "module.exports=1;\n" }]
   const r = runExecutor([{ action: "OBJ1", objectiveId: "OBJ1", edits: EDIT }], { enforceActionGate: true });
   check(r.wrote === false, "target inside authorized_paths does NOT grant authority (still DENY under enforcement)");
 }
+// 6 — authority is NOT scope: a fully-authorized contract whose target is OUTSIDE authorized_paths
+// ("runtime/work/**") is refused by the REAL executor's scope confinement — the action gate ALLOWs
+// (authority/contract/policy/state all valid) but the write never happens because the target lies outside
+// the authorized write-set. Proves the two gates are distinct: valid authorization does NOT grant scope.
+{
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pe-live-"));
+  try {
+    fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+    fs.mkdirSync(path.join(dir, "runtime", "work"), { recursive: true });
+    const OUT_OF_SCOPE = [{ target: "runtime/other/evil.js", content: "module.exports=1;\n" }];
+    fs.writeFileSync(
+      path.join(dir, "runtime", "generated", "patch-plan.json"),
+      JSON.stringify({
+        mission: "LIVE", authorizedPaths: ["runtime/work/**"],
+        patches: [{ action: "OBJ1", objectiveId: "OBJ1", actionContract: FULL_CONTRACT, edits: OUT_OF_SCOPE }],
+      }),
+    );
+    spawnSync("node", [PE], { cwd: dir, encoding: "utf8" });
+    const exec = JSON.parse(fs.readFileSync(path.join(dir, "runtime", "generated", "patch-execution.json"), "utf8"));
+    const entry = exec.executed[0];
+    const created = fs.existsSync(path.join(dir, "runtime", "other", "evil.js"));
+    check(created === false, "out-of-scope target is NOT created (zero mutation under valid authority)");
+    check(entry.status === "FAILED" && /target outside authorized_paths/.test(entry.error || ""), "authorized contract + out-of-scope target ⇒ FAILED (scope confinement, authority is not scope)");
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
 
 console.log(failures === 0 ? "ALL PASS — V5 STAGE 2 LIVE ACTION GATE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

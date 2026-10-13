@@ -64,6 +64,11 @@ function buildLearnReport(mission, deps) {
             e.files.every((f) => f && typeof f.target === "string" && f.target))
         .map((e) => ({
             objectiveId: e.objectiveId || e.action,
+            // CTO Phase-03: forward the PROVEN origin the ODG executor recorded on the APPLIED evidence,
+            // ONLY when explicitly present and a non-empty string. NEVER fabricate it from the APPLIED
+            // status or the applicator's identity (applied-by-ODG is NOT authored-by-ODG). Absent/invalid
+            // ⇒ omitted ⇒ patch-memory applies its fail-closed UNKNOWN default.
+            ...(typeof e.authoredBy === "string" && e.authoredBy ? { authoredBy: e.authoredBy } : {}),
             // Preserved verbatim if the execution evidence carries it; signature() tolerates its absence.
             rootCause: e.rootCause,
             // The mission-independent problem identity used as the reuse key. Carried verbatim from the

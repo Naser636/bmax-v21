@@ -115,6 +115,24 @@ const objectives = rawObjectives.map((o, i) => {
     if (typeof o.proof === "string" && o.proof) {
         normalized.proof = o.proof;
     }
+    // Optional per-objective governance DECLARATION (CTO Phase-03): eligibility/authorization for the
+    // autonomy DENOMINATOR only. TRANSPORT-ONLY — never interpreted here and NEVER a runtime permission:
+    // the action-gate and authorized_paths still prove effective authorization before any action. Carried
+    // verbatim ONLY when it is a plain object, so legacy contracts without it are byte-identical and a
+    // malformed block flows to the measurer, which classifies it ambiguous (⇒ NON_MEASURABLE). The loader
+    // never rejects a contract for lacking it.
+    if (o.authorization && typeof o.authorization === "object" && !Array.isArray(o.authorization)) {
+        normalized.authorization = o.authorization;
+    }
+    // Optional per-objective Governed Git Branch Integration spec (CTO Phase-03 Option A). TRANSPORT-ONLY —
+    // carried verbatim toward the self-gating capability executor (git-branch-integration.js), EXACTLY like
+    // the research_acquisition transport. Introduces NO authority/policy and NO default: the capability
+    // self-gates (local, ff-only, dry-run unless execute===true, protected-branch rules) and FAILS CLOSED.
+    // Absent ⇒ no key (every other mission byte-for-byte unaffected). Objective-level (per-patch), so it
+    // survives the Decision Engine's verbatim objective passthrough and is read by the Patch Engine.
+    if (o.git_branch_integration && typeof o.git_branch_integration === "object" && !Array.isArray(o.git_branch_integration)) {
+        normalized.git_branch_integration = o.git_branch_integration;
+    }
     return normalized;
 });
 

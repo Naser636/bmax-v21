@@ -33,12 +33,11 @@ function isAuthorizedTarget(target) {
 // SCOPE, never AUTHORITY: being inside a granted scope does NOT authorize writing a governance artifact.
 // (The EDG Constitution is already protected elsewhere by exact path; this closes the proven asymmetry
 // that runtime/governance/** had no exact-path backstop at the write point.)
-const PROTECTED_GOVERNANCE_PREFIXES = ["runtime/governance"];
-function isProtectedGovernanceTarget(target) {
-  const norm = path.normalize(String(target || ""));
-  if (path.isAbsolute(norm) || norm === ".." || norm.startsWith(".." + path.sep)) return false;
-  return PROTECTED_GOVERNANCE_PREFIXES.some((pre) => norm === pre || norm.startsWith(pre + "/"));
-}
+// SINGLE implementation of the protected-governance guard now lives in capability-executors.js (already
+// required above) so the Patch Executor edits branch AND the ODG Synthetic Deliverable capability reuse
+// ONE definition — no second copy. Behaviour is byte-for-byte identical (same prefixes, same boundary
+// rule); the dedicated governance-guard test proves no regression at the real write point.
+const { isProtectedGovernanceTarget } = capabilityExecutors;
 // Writing a protected-governance path requires an EXPLICIT elevated authorization — the same opt-in idiom
 // as the git protected-branch gate (allow_protected), NEVER derived from authorized_paths. It is read
 // ONLY from the PLAN (the ODG-authored, mission-level decision), NEVER from the patch's own fields: a
@@ -111,6 +110,24 @@ const report = {
   mission: plan.mission,
   executed: []
 };
+
+// CTO Phase-03 — provenance attribution stamped on EVERY executed[] entry (author vs applicator vs
+// authority, kept distinct). `authoredBy` is the PROVEN origin carried on the plan's patch (PROVIDER /
+// CONTRACT / a retained memory precedent author / UNKNOWN); it is NEVER assumed to be ODG. `appliedBy` is
+// ODG_EXECUTOR ONLY when THIS executor actually produced the effect this run. `authorizedBy` is ODG ONLY
+// when an authorized effect actually occurred. `humanMandatory` is set ONLY where a human authority is
+// demonstrably required (not merely because an action was blocked).
+function plannedAuthor(patch) {
+  return (patch && typeof patch.authoredBy === "string" && patch.authoredBy) ? patch.authoredBy : "UNKNOWN";
+}
+function attribution(opts) {
+  return {
+    authoredBy: opts.authoredBy,
+    appliedBy: opts.appliedEffect === true ? "ODG_EXECUTOR" : null,
+    authorizedBy: opts.authorized === true ? "ODG" : null,
+    humanMandatory: opts.humanMandatory === true,
+  };
+}
 
 fs.mkdirSync(GENERATED_DIR, { recursive: true });
 
@@ -262,6 +279,12 @@ for (const patch of plan.patches) {
           decision: resumableRefusal.decision,
           needs: resumableRefusal.refusal.reason,
           target: resumableRefusal.target,
+          ...attribution({
+            authoredBy: plannedAuthor(patch),
+            appliedEffect: false,
+            authorized: false,
+            humanMandatory: resumableRefusal.decision === "ESCALATE",
+          }),
         });
         continue;
       }
@@ -283,6 +306,12 @@ for (const patch of plan.patches) {
           decision: "ESCALATE",
           needs: `writing a protected governance path (${governanceEdit.target}) requires an explicit ODG-level elevated authorization (plan.allowProtectedGovernance); authorized_paths is scope, not authority, and a patch cannot self-authorize it`,
           target: governanceEdit.target,
+          ...attribution({
+            authoredBy: plannedAuthor(patch),
+            appliedEffect: false,
+            authorized: false,
+            humanMandatory: true,
+          }),
         });
         continue;
       }
@@ -313,6 +342,12 @@ for (const patch of plan.patches) {
             status: "DUPLICATE",
             idempotencyKey: idemKey,
             reconciled: verdict.reconciledResult,
+            ...attribution({
+              authoredBy: plannedAuthor(patch),
+              appliedEffect: false, // replay reconciled ⇒ no fresh effect this run
+              authorized: false,
+              humanMandatory: false,
+            }),
           });
           continue; // replay ⇒ zero new mutation
         }
@@ -399,6 +434,9 @@ for (const patch of plan.patches) {
         admission: admissions.map((a) => ({ target: a.target, decision: a.decision, enforced: a.enforced })),
         // Reality state after the observed effect (present only for opted-in patches); authentic version.
         ...(realityRecords.length ? { reality: realityRecords } : {}),
+        // Author = carried on the plan's patch (PROVIDER/CONTRACT/memory-origin/UNKNOWN — NEVER assumed
+        // ODG); applicator = this ODG executor, which just performed the write; authority = ODG scope.
+        ...attribution({ authoredBy: plannedAuthor(patch), appliedEffect: true, authorized: true, humanMandatory: false }),
       });
       // Record the applied idempotencyKey AFTER the observed effect, so a later replay reconciles to it.
       if (idemKey) {
@@ -415,7 +453,7 @@ for (const patch of plan.patches) {
           ["src", "runtime"],
           path.join(GENERATED_DIR, "todo-report.txt")
         );
-        report.executed.push({ action: patch.action, status: "DONE", output: out });
+        report.executed.push({ action: patch.action, status: "DONE", output: out, ...attribution({ authoredBy: "ODG_RULES", appliedEffect: true, authorized: true, humanMandatory: false }) });
         break;
       }
 
@@ -425,7 +463,7 @@ for (const patch of plan.patches) {
           ["src", "runtime"],
           path.join(GENERATED_DIR, "fixme-report.txt")
         );
-        report.executed.push({ action: patch.action, status: "DONE", output: out });
+        report.executed.push({ action: patch.action, status: "DONE", output: out, ...attribution({ authoredBy: "ODG_RULES", appliedEffect: true, authorized: true, humanMandatory: false }) });
         break;
       }
 
@@ -438,7 +476,7 @@ for (const patch of plan.patches) {
           path.join(GENERATED_DIR, "dependency-report.txt"),
           ["*.js", "*.ts"]
         );
-        report.executed.push({ action: patch.action, status: "DONE", output: out });
+        report.executed.push({ action: patch.action, status: "DONE", output: out, ...attribution({ authoredBy: "ODG_RULES", appliedEffect: true, authorized: true, humanMandatory: false }) });
         break;
       }
 
@@ -518,7 +556,7 @@ for (const patch of plan.patches) {
 
         const out = path.join(GENERATED_DIR, "dependency-optimization.json");
         fs.writeFileSync(out, JSON.stringify(optimization, null, 2));
-        report.executed.push({ action: patch.action, status: "DONE", output: out });
+        report.executed.push({ action: patch.action, status: "DONE", output: out, ...attribution({ authoredBy: "ODG_RULES", appliedEffect: true, authorized: true, humanMandatory: false }) });
         break;
       }
 
@@ -585,7 +623,7 @@ for (const patch of plan.patches) {
 
         const out = path.join(GENERATED_DIR, "implemented-capabilities.json");
         fs.writeFileSync(out, JSON.stringify(summary, null, 2));
-        report.executed.push({ action: patch.action, status: "DONE", output: out });
+        report.executed.push({ action: patch.action, status: "DONE", output: out, ...attribution({ authoredBy: "ODG_RULES", appliedEffect: true, authorized: true, humanMandatory: false }) });
         break;
       }
 
@@ -604,6 +642,8 @@ for (const patch of plan.patches) {
             status: "EXECUTED",
             capability: result.capability,
             evidence: result.evidence,
+            // A registered ODG capability executor authored AND ran this (ODG business logic), under ODG scope.
+            ...attribution({ authoredBy: "ODG_CAPABILITY", appliedEffect: true, authorized: true, humanMandatory: false }),
           });
           break;
         }
@@ -624,6 +664,8 @@ for (const patch of plan.patches) {
             needs: (typeof patch.blockedReason === "string" && patch.blockedReason)
               ? patch.blockedReason
               : `no registered capability resolves objective "${patch.objectiveId || patch.action}"`,
+            // A missing capability is a capability gap, NOT a demonstrated human-authority requirement.
+            ...attribution({ authoredBy: plannedAuthor(patch), appliedEffect: false, authorized: false, humanMandatory: false }),
           });
           break;
         }
@@ -638,7 +680,12 @@ for (const patch of plan.patches) {
           objectiveId: patch.objectiveId || patch.action,
           status: "RECORDED",
         };
+        // A read-only/planning RECORDED entry stays byte-identical {action,objectiveId,status} — a locked
+        // control (patch-executor.test.js §2 + downstream selectors). Attribution is therefore added ONLY to
+        // the WRITE-SCOPE RECORDED (alongside `reason`); the read-only no-op carries none and fail-closes to
+        // UNKNOWN at measurement (never counted as autonomous). Documented limit — not a silent omission.
         if (authorizedPrefixes.length > 0) {
+          Object.assign(recorded, attribution({ authoredBy: plannedAuthor(patch), appliedEffect: false, authorized: false, humanMandatory: false }));
           recorded.reason =
             "no capability executor resolved for this objective and no real edits were produced; " +
             "a write-scope objective discharged as a no-op is not real work and fails closed at validation";
@@ -650,7 +697,9 @@ for (const patch of plan.patches) {
     report.executed.push({
       action: patch.action,
       status: "FAILED",
-      error: String(e.stack || e)
+      error: String(e.stack || e),
+      // A failure produced no authorized effect; author carried from the plan (UNKNOWN if none).
+      ...attribution({ authoredBy: plannedAuthor(patch), appliedEffect: false, authorized: false, humanMandatory: false }),
     });
   }
 }
