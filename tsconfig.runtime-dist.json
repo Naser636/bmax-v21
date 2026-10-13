@@ -24,6 +24,7 @@
     "runtime/core/patch-engine.ts",
     "runtime/core/capability-registry.ts",
     "runtime/core/project-context-engine.ts",
-    "runtime/core/fleet-stage.ts"
+    "runtime/core/fleet-stage.ts",
+    "runtime/core/mission-lifecycle.ts"
   ]
 }

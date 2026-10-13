@@ -1,0 +1,316 @@
+#!/usr/bin/env node
+
+/*
+ * Mission Lifecycle Driver — evidence-based governance state advancement. TypeScript canonical (Lot η3-B69).
+ * Faithful port of the historical runtime/core/mission-lifecycle.js; behaviour is byte-identical.
+ *
+ * BEFORE this stage existed, the deterministic pipeline never advanced the governance state
+ * machine: mission-ledger.js recorded `state: "CREATED"` for every mission because
+ * authorizeMission() defaults currentState to "CREATED" and nothing drove the transitions
+ * (runtime/governance/state-machine.json). This driver closes that gap.
+ *
+ * It walks the state machine (the single source of truth) from its initialState and advances one
+ * transition at a time for as long as the target state's EVIDENCE predicate holds. Each predicate is
+ * a pure function of the already-generated pipeline artifacts, so the achieved state is a
+ * deterministic function of the run's evidence — never a hardcoded verdict.
+ *
+ * "Only the Governance Kernel authorizes transitions" (state-machine principle): every advance is
+ * gated by governance-kernel.authorizeMission for the current state, so an unauthorized state can
+ * never be reached even if evidence is present.
+ *
+ * The stage runs AFTER the Validation Engine (it consumes mission-report.json) and BEFORE the
+ * Mission Ledger (which records the achieved state). It caps at RELEASED; the terminal ARCHIVED
+ * transition is owned by the Ledger — recording a mission in the immutable ledger IS its archival —
+ * via markArchived() below.
+ *
+ * The two sibling dependencies (governance-kernel, state-transition) are UNTYPED JavaScript and are
+ * intentionally loaded with require() per the mission contract — they are NOT ported here and remain
+ * .js. The resulting `any` bindings are therefore EXPLICIT and justified (no implicit any; strict gate
+ * clean). The legacy .js is UNTOUCHED and remains the production default (ODG_STAGE_BASE=runtime/core)
+ * and the rollback path; this port is reached only via the opt-in compiled base. The export surface
+ * `module.exports = { computeLifecycle, markArchived, toC03Records, orderedStates, LIFECYCLE_FILE }` is
+ * preserved so existing require() consumers (mission-ledger.js) are unchanged.
+ */
+
+// `import * as fs/path` (not require) keeps this file a MODULE — its top-level consts stay module-scoped —
+// and preserves the historical module's typed Node-builtin loads (fs/path/child_process are typed Node
+// builtins, NOT the two pinned JS dependencies). The two untyped .js deps below stay require().
+import * as fs from "fs";
+import * as path from "path";
+import { execFileSync } from "child_process";
+const { authorizeMission }: any = require("./governance-kernel");
+
+// S4 (review N4 remediation) — RELEASED must reconcile with the real HUMAN commit state. An engineering
+// mission that APPLIED an in-scope deliverable is NOT released until that deliverable is COMMITTED (ODG
+// never auto-commits, D1). This queries the ground truth — the working tree, scoped to the mission's
+// authorized_paths — at the MOMENT the lifecycle is computed, so it is correct in BOTH paths: the
+// objective/local pipeline (deliverable applied, uncommitted ⇒ pending) and the autonomy path (committed
+// before archive ⇒ clean). Any error (no git, no repo, no scope) ⇒ [] ⇒ falls back to prior behaviour
+// (RELEASED), so read-only/analysis missions and the sandboxed tests are byte-for-byte unchanged.
+function uncommittedPathsInScope(contractPath: string): string[] {
+  let paths: string[] = [];
+  try {
+    const c = JSON.parse(fs.readFileSync(contractPath, "utf8"));
+    const raw = c.authorized_paths || c.authorizedPaths || [];
+    paths = (Array.isArray(raw) ? raw : [])
+      .map((p: any) => String(p).replace(/[*].*$/, "").replace(/\/+$/, ""))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+  if (paths.length === 0) return [];
+  try {
+    const out = execFileSync("git", ["status", "--porcelain", "--", ...paths], { encoding: "utf8" }).trim();
+    return out ? out.split("\n").filter(Boolean) : [];
+  } catch {
+    return []; // no git / not a repo ⇒ cannot prove pending ⇒ do not block (back-compat)
+  }
+}
+// C03 canonical state-transition contract (P0-069). Reused — NOT reimplemented — so each lifecycle
+// advance can additionally be expressed as a C03 record and checked by the ONE real validator.
+const {
+  validateStateTransition,
+  computeDifference,
+  VERIFICATION_STATUS,
+}: any = require("./state-transition");
+
+const GENERATED_DIR = "runtime/generated";
+const STATE_MACHINE = "runtime/governance/state-machine.json";
+const LIFECYCLE_FILE = path.join(GENERATED_DIR, "mission-lifecycle.json");
+
+interface Probe {
+  ok: boolean;
+  evidence: string;
+}
+
+function readJsonSafe(file: string): any {
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+/*
+ * Evidence predicates keyed by the state being ENTERED. Each returns { ok, evidence } where
+ * `evidence` names the concrete artifact/fact that justified the transition (or why it did not
+ * hold). Pure functions of on-disk artifacts ⇒ deterministic.
+ */
+function buildEvidence(mission: string): Record<string, () => Probe> {
+  const contractPath = path.join("runtime", "missions", `${mission}.json`);
+  const plan = readJsonSafe(path.join(GENERATED_DIR, "mission-plan.json"));
+  const decision = readJsonSafe(path.join(GENERATED_DIR, "decision.json"));
+  const patch = readJsonSafe(path.join(GENERATED_DIR, "patch-plan.json"));
+  const execution = readJsonSafe(path.join(GENERATED_DIR, "patch-execution.json"));
+  const report = readJsonSafe(path.join(GENERATED_DIR, "mission-report.json"));
+
+  const executed = execution && Array.isArray(execution.executed) ? execution.executed : [];
+  const anyFailed = executed.some((e: any) => e && e.status === "FAILED");
+  const validated = !!(report && report.mission === mission && report.validated === true);
+
+  return {
+    QUALIFIED: () =>
+      fs.existsSync(contractPath)
+        ? { ok: true, evidence: `contract present (${contractPath})` }
+        : { ok: false, evidence: "no mission contract" },
+    ANALYZED: () =>
+      plan && Array.isArray(plan.objectives) && plan.objectives.length > 0
+        ? { ok: true, evidence: `mission-plan.json (${plan.objectives.length} objectives)` }
+        : { ok: false, evidence: "no mission-plan objectives" },
+    PLANNED: () =>
+      decision && patch && Array.isArray(patch.patches)
+        ? { ok: true, evidence: `decision.json + patch-plan.json (${patch.patches.length} patches)` }
+        : { ok: false, evidence: "no decision/patch plan" },
+    PREPARED: () =>
+      patch && patch.status === "READY"
+        ? { ok: true, evidence: "patch-plan.json status=READY" }
+        : { ok: false, evidence: "patch plan not READY" },
+    VALIDATED: () =>
+      validated
+        ? { ok: true, evidence: "mission-report.json validated=true" }
+        : { ok: false, evidence: "mission not validated" },
+    EXECUTED: () =>
+      executed.length > 0 && !anyFailed
+        ? { ok: true, evidence: `patch-execution.json (${executed.length} executed, 0 failed)` }
+        : { ok: false, evidence: anyFailed ? "failed execution entries" : "no execution entries" },
+    VERIFIED: () =>
+      validated
+        ? { ok: true, evidence: "validation gates green (mission-report validated=true)" }
+        : { ok: false, evidence: "verification gates not green" },
+    RELEASED: () => {
+      if (!validated) return { ok: false, evidence: "release blocked (mission unproven)" };
+      // S4: a PROVEN mission whose in-scope deliverable is applied but NOT yet committed awaits the
+      // HUMAN commit gate ⇒ cap at VERIFIED, never RELEASED (so the Ledger's markArchived stays a no-op).
+      const pending = uncommittedPathsInScope(contractPath);
+      return pending.length === 0
+        ? { ok: true, evidence: "mission proven — release authorized by governance (in-scope tree clean)" }
+        : { ok: false, evidence: `release PENDING the human commit gate — uncommitted in-scope deliverable (${pending.length} path(s); ODG never auto-commits)` };
+    },
+    // ARCHIVED is intentionally absent: it is owned by the Mission Ledger (markArchived).
+  };
+}
+
+function loadStateMachine(): any {
+  const sm = readJsonSafe(STATE_MACHINE);
+  if (!sm || !sm.transitions) {
+    throw new Error(`state machine unreadable at ${STATE_MACHINE}`);
+  }
+  return sm;
+}
+
+/**
+ * orderedStates(sm) -> the linear chain [initialState, …, terminalState] in walk order.
+ *
+ * This is the SINGLE existing source of state ordering (the state machine itself); a state's position
+ * in this chain IS its version. No second version source is invented — the ordinal is read back from
+ * the same `sm.transitions` the lifecycle already walks, so versions are coherent and, along any real
+ * advance (from before to), strictly increasing.
+ */
+function orderedStates(sm: any): string[] {
+  const order: string[] = [sm.initialState];
+  let current: string = sm.initialState;
+  // Bounded by the number of declared states ⇒ terminates even on a malformed (cyclic) machine.
+  const guard = Object.keys(sm.transitions).length + 1;
+  for (let i = 0; i < guard; i++) {
+    const next = (sm.transitions[current] || [])[0];
+    if (!next || order.includes(next)) break;
+    order.push(next);
+    current = next;
+  }
+  return order;
+}
+
+/**
+ * toC03Records(transitions, sm) -> one validated C03 record per lifecycle transition, ADDITIVE.
+ *
+ * Each entry mission-lifecycle already produces ({ from, to, ok, evidence }) carries exactly the four
+ * C03 dimensions, so it maps 1:1 WITHOUT inventing data:
+ *   state_before = { state: from }   action = { type: "ADVANCE", from, to }
+ *   observed_effect = { ok, evidence } state_after = { state: to }
+ * Versions come from orderedStates (the chain ordinal); `difference` reuses the C03 helper; the single
+ * evidence string becomes evidence_refs. verification_status is drawn ONLY from the C03 vocabulary and
+ * is honest: a confirmed advance (ok) is VERIFIED (proof-requiring — its evidence_ref is present); a
+ * blocked attempt (ok:false) is UNVERIFIED — never a fabricated proof, never "done"/"SUCCESS". Every
+ * record is run through the ONE real validator; the returned { ok, errors, record } is reported as-is.
+ */
+function toC03Records(transitions: any[], sm: any): any[] {
+  const order = orderedStates(sm);
+  return (transitions || []).map((t: any) => {
+    const state_before = { state: t.from };
+    const state_after = { state: t.to };
+    const record = {
+      state_before,
+      action: { type: "ADVANCE", from: t.from, to: t.to },
+      observed_effect: { ok: t.ok, evidence: t.evidence },
+      state_after,
+      state_version_before: order.indexOf(t.from),
+      state_version_after: order.indexOf(t.to),
+      difference: computeDifference(state_before, state_after),
+      evidence_refs: [t.evidence],
+      verification_status: t.ok ? VERIFICATION_STATUS.VERIFIED : VERIFICATION_STATUS.UNVERIFIED,
+    };
+    const result = validateStateTransition(record);
+    return { ok: result.ok, errors: result.errors, record: result.record };
+  });
+}
+
+/**
+ * Compute the achieved lifecycle state for `mission` by walking the state machine from its
+ * initialState, advancing while each next state's evidence predicate holds AND governance authorizes
+ * the transition. Writes mission-lifecycle.json and returns the lifecycle object.
+ */
+function computeLifecycle(mission: string): any {
+  const sm = loadStateMachine();
+  const evidence = buildEvidence(mission);
+
+  const path_: string[] = [sm.initialState];
+  const transitions: any[] = [];
+  let current: string = sm.initialState;
+
+  // Walk the single linear chain of the state machine, capping before the terminal ARCHIVED.
+  while (true) {
+    const nexts = sm.transitions[current] || [];
+    if (nexts.length === 0) break;
+    const next = nexts[0];
+    if (next === sm.terminalState) break; // ARCHIVED is owned by the Ledger
+
+    // Governance must authorize leaving the current state.
+    const gov = authorizeMission(mission, current);
+    if (!gov.authorized || !gov.nextStates.includes(next)) {
+      transitions.push({ from: current, to: next, ok: false, evidence: "governance did not authorize" });
+      break;
+    }
+
+    const probe = (evidence[next] || (() => ({ ok: false, evidence: "no evidence probe" })))();
+    transitions.push({ from: current, to: next, ok: probe.ok, evidence: probe.evidence });
+    if (!probe.ok) break;
+
+    current = next;
+    path_.push(current);
+  }
+
+  const lifecycle = {
+    mission,
+    initialState: sm.initialState,
+    achieved: current,
+    terminalState: sm.terminalState,
+    archived: false,
+    path: path_,
+    transitions,
+    // ADDITIVE (C03 / P0-071): the same transitions expressed as validated canonical records. Existing
+    // fields above are unchanged; consumers reading them are unaffected.
+    c03Transitions: toC03Records(transitions, sm),
+  };
+
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  fs.writeFileSync(LIFECYCLE_FILE, JSON.stringify(lifecycle, null, 2));
+  return lifecycle;
+}
+
+/**
+ * Terminal archival, owned by the Mission Ledger: once a proven mission is appended to the immutable
+ * ledger, its governance lifecycle reaches ARCHIVED. Only advances RELEASED → ARCHIVED (and only if
+ * governance authorizes it); otherwise leaves the achieved state untouched. Idempotent.
+ */
+function markArchived(mission: string): any {
+  const sm = loadStateMachine();
+  const lifecycle = readJsonSafe(LIFECYCLE_FILE) || computeLifecycle(mission);
+  if (lifecycle.achieved === sm.terminalState) return lifecycle;
+
+  const gov = authorizeMission(mission, lifecycle.achieved);
+  const canArchive =
+    gov.authorized && gov.nextStates.includes(sm.terminalState) && lifecycle.achieved === "RELEASED";
+
+  if (canArchive) {
+    lifecycle.transitions.push({
+      from: lifecycle.achieved,
+      to: sm.terminalState,
+      ok: true,
+      evidence: "recorded in immutable mission ledger",
+    });
+    lifecycle.achieved = sm.terminalState;
+    lifecycle.path.push(sm.terminalState);
+    lifecycle.archived = true;
+    // ADDITIVE (C03 / P0-071): keep the canonical records coherent with the now-archived transitions.
+    lifecycle.c03Transitions = toC03Records(lifecycle.transitions, sm);
+    fs.writeFileSync(LIFECYCLE_FILE, JSON.stringify(lifecycle, null, 2));
+  }
+  return lifecycle;
+}
+
+module.exports = { computeLifecycle, markArchived, toC03Records, orderedStates, LIFECYCLE_FILE };
+
+if (require.main === module) {
+  const mission = process.argv[2] || "BUILD_RUNTIME";
+  const lifecycle = computeLifecycle(mission);
+  console.log("======================================");
+  console.log("MISSION LIFECYCLE (governance-driven)");
+  console.log("======================================");
+  console.log("Mission  :", mission);
+  console.log("Achieved :", lifecycle.achieved);
+  console.log("Path     :", lifecycle.path.join(" → "));
+  const lastBlock = lifecycle.transitions.find((t: any) => !t.ok);
+  if (lastBlock) console.log("Blocked  :", `${lastBlock.from}→${lastBlock.to} (${lastBlock.evidence})`);
+  console.log("Output   :", LIFECYCLE_FILE);
+  console.log("======================================");
+}
