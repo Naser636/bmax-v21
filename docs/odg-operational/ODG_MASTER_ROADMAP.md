@@ -588,6 +588,8 @@ Real phases stay BLOCKED while required resources / policies / access / proofs a
 7. Rollback plan compatible with retirement (instant revert). — *rollback = unset `ODG_STAGE_BASE` → JS default; MECHANISM proven local (CHG-OD-12); off-host backup + LIVE-host rollback drill BLOCKED BY HOST.*
 8. Dedicated CTO decision authorizing a separate, verifiable `.js` deletion. — *NOT GRANTED.*
 
+*Port-fidelity defect (η3-B90 DÉCOUVERTE → η3-B91 CORRECTION):* `patch-executor.ts` (publié B85) utilisait un séparateur ESPACE pour la clé `file + SEP + mod` de `perFileModule` (OPTIMIZE_DEPENDENCIES), là où `patch-executor.js` utilise un NUL (`"\0"`). Sortie identique pour les noms sans espace (non capté par le banc B85), mais divergence LATENTE pour un chemin/module contenant un espace (reproduite observablement : `dependency-optimization.json` → JS `{file:"src/a b.ts",module:"x"}` vs compilé `{file:"src/a",module:"b.ts"}`). **CORRIGÉ en B91** : `.ts` → séparateur `"\0"` (parité avec le `.js`) ; banc `patch-executor-equivalence` étendu d'un cas adversarial (échoue avec l'ancienne logique, passe après). États : `DÉCOUVERT` (B90) → `CORRIGÉ + QUALIFIÉ` (B91) → `PUBLIÉ` (au commit B91). `.js` de production INCHANGÉ (déjà correct).
+
 *Distinction enforced:* `TS publié`/`TS qualifié` ≠ `runtime compilé activé` ≠ `stable après bascule` ≠ `JS supprimable`. No `.js` is deletable now; the production runtime has NOT switched.
 
 **Next CTO decision:** authorize lot 1 (build publication, Gate B) incl. patch-engine.ts inclusion + fresh-clone re-proof; or defer. Status-of-record stays the ledger; this section is a human-readable reconciliation, not a second tracker.

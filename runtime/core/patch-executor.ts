@@ -490,7 +490,7 @@ for (const patch of plan.patches) {
 
         const lines = fs.readFileSync(src, "utf8").split("\n");
         const moduleCount = new Map();       // module -> total import count
-        const perFileModule = new Map();     // "file module" -> count
+        const perFileModule = new Map();     // "file\0module" -> count (NUL separator, parity with the .js)
         let totalImports = 0;
         let internal = 0;
         let external = 0;
@@ -509,7 +509,7 @@ for (const patch of plan.patches) {
           if (isInternal(mod)) internal++;
           else external++;
 
-          const key = file + " " + mod;
+          const key = file + "\0" + mod;
           perFileModule.set(key, (perFileModule.get(key) || 0) + 1);
         }
 
@@ -521,7 +521,7 @@ for (const patch of plan.patches) {
         const duplicateImports = [...perFileModule.entries()]
           .filter(([, count]) => count > 1)
           .map(([key, count]) => {
-            const [file, module] = key.split(" ");
+            const [file, module] = key.split("\0");
             return { file, module, count };
           })
           .sort((a, b) => b.count - a.count);

@@ -63,6 +63,38 @@ try {
     check(j.exec !== null && j.exec === t.exec, "C2 patch-execution.json BYTE-IDENTICAL JS≡compiled (APPLIED attribution-stamped)");
     check(!!j.exec && /"authoredBy"/.test(j.exec) && /"appliedBy":\s*"ODG_EXECUTOR"/.test(j.exec) && /"authorizedBy":\s*"ODG"/.test(j.exec) && /"humanMandatory"/.test(j.exec), "C2 A2 attribution fields {authoredBy,appliedBy,authorizedBy,humanMandatory} present + identical");
   }
+  // Case 3 (η3-B91): OPTIMIZE_DEPENDENCIES separator parity. The perFileModule key is `file + SEP + mod`
+  // and `key.split(SEP)`; the historical .js uses a NUL (`"\0"`) separator. An ADVERSARIAL dependency-report
+  // with a SPACE in the file path reveals a space-separator divergence: NUL keeps {file:"src/a b.ts",module:"x"}
+  // intact, while a space separator mis-parses it to {file:"src/a",module:"b.ts"} AND merges two distinct
+  // (file,mod) pairs that only differ by where the space sits. This case FAILS with the old space logic and
+  // PASSES once the .ts uses "\0" (parity with the .js). The output lands in dependency-optimization.json.
+  {
+    function runOpt(engine: string) {
+      const sb = fs.mkdtempSync(path.join(os.tmpdir(), "odg-pe-opt-")); sandboxes.push(sb);
+      const G = path.join(sb, "runtime", "generated"); fs.mkdirSync(G, { recursive: true });
+      // Two DISTINCT (file,mod) pairs that a space-split would CONFUSE, plus a space-in-path duplicate (count=2):
+      //   "src/a b.ts" importing "x"  (x2 ⇒ duplicate)   vs   "src/a" importing "b.ts x"-style collisions.
+      fs.writeFileSync(path.join(G, "dependency-report.txt"),
+        'src/a b.ts:1:import x from "x"\n' +
+        'src/a b.ts:2:import x from "x"\n' +
+        'src/a:3:import y from "b.ts"\n');
+      writeJson(path.join(G, "patch-plan.json"), { mission: "M_OPT", status: "READY", authorizedPaths: [], patches: [{ objectiveId: "o1", action: "OPTIMIZE_DEPENDENCIES" }] });
+      const r = spawnSync("node", [engine], { cwd: sb, encoding: "utf8", env: baseEnv() });
+      const opt = path.join(G, "dependency-optimization.json");
+      return { status: r.status, opt: fs.existsSync(opt) ? fs.readFileSync(opt, "utf8") : null };
+    }
+    const j = runOpt(JS_ENGINE), t = runOpt(COMPILED);
+    // Normalise ONLY the single enumerated volatile `generatedAt` (new Date().toISOString() in the
+    // optimization object); everything else — notably duplicateImports built from the separator — is
+    // deterministic and compared verbatim.
+    const normOpt = (s: string | null) => s === null ? null : s.replace(/("generatedAt":\s*)"[^"]*"/g, '$1"<VOL>"');
+    check(j.status === 0 && t.status === 0, `C3 OPTIMIZE both exit 0 (js=${j.status} ts=${t.status})`);
+    check(j.opt !== null && normOpt(j.opt) === normOpt(t.opt), "C3 dependency-optimization.json BYTE-IDENTICAL JS≡compiled after normalising generatedAt (NUL separator parity)");
+    // The space-in-path pair must survive intact (NUL semantics), never be mis-split to {src/a,b.ts}.
+    check(!!j.opt && /"file":\s*"src\/a b\.ts"/.test(j.opt) && /"module":\s*"x"/.test(j.opt), "C3 space-in-path (file,mod) preserved as {src/a b.ts, x} — not mis-split");
+    check(!!j.opt && !/"file":\s*"src\/a",\s*\n?\s*"module":\s*"b\.ts"/.test(j.opt.replace(/\s+/g, " ")), "C3 NO space-split mis-parse {src/a, b.ts} present");
+  }
 } finally { for (const sb of sandboxes) { try { fs.rmSync(sb, { recursive: true, force: true }); } catch {} } }
 console.log(failures === 0 ? "ALL PASS — LOT η3-B85 PATCH-EXECUTOR EQUIVALENCE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
