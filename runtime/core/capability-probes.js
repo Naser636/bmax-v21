@@ -24,7 +24,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE } = require("./capability-executors");
+const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SPEC_AUTHOR_EVIDENCE } = require("./capability-executors");
 const { validateStateTransition } = require("./state-transition");
 
 // The Clean Workspace capability (capability-executors.js) writes its CLEAN_WORKSPACE_1 scan here
@@ -147,6 +147,46 @@ const PROBES = {
             }
         }
         return { ok: true, detail: `external research DRY-RUN plan produced this run (objective ${ev.objective}; no network, 0 sources)` };
+    },
+
+    "spec-schema-valid"(ctx) {
+        // Independent correctness proof for the ODG Spec Author capability (η3-B30). A file merely EXISTING
+        // is NOT the proof: this probe re-reads the ACTUAL on-disk deliverable and asserts it is (1) valid
+        // JSON, (2) a valid Mission-Loader contract (isValidContract), (3) well-formed objectives+done_when,
+        // (4) confined relative authorized_paths, (5) source="mission-synthesizer", (6) semantically consistent
+        // with decompose(goal), and (7) the BYTE-IDENTICAL deterministic output of toContract(spec) — which
+        // proves ODG AUTHORED it (not a hand-fed/tampered blob). Any failure ⇒ ok:false (fail-closed).
+        const synth = require("./mission-synthesizer");
+        const ev = readJsonSafe(SPEC_AUTHOR_EVIDENCE);
+        if (!ev) return { ok: false, detail: `no spec-author evidence at ${SPEC_AUTHOR_EVIDENCE} — run the ODG Spec Author capability first` };
+        if (typeof ev.target !== "string" || !ev.target) return { ok: false, detail: "spec evidence missing target path" };
+        const parsed = readJsonSafe(ev.target);
+        if (!parsed) return { ok: false, detail: `spec deliverable at ${ev.target} is absent or not valid JSON` };
+        if (!synth.isValidContract(parsed)) return { ok: false, detail: "deliverable fails isValidContract (Mission-Loader schema)" };
+        if (!Array.isArray(parsed.objectives) || parsed.objectives.length === 0) return { ok: false, detail: "deliverable has no objectives" };
+        for (const o of parsed.objectives) {
+            if (!o || typeof o.id !== "string" || typeof o.goal !== "string" || !Array.isArray(o.done_when) || o.done_when.length === 0) {
+                return { ok: false, detail: `malformed objective (${o && o.id}) — id/goal/done_when required` };
+            }
+        }
+        if (!Array.isArray(parsed.definition_of_done) || parsed.definition_of_done.length === 0) return { ok: false, detail: "deliverable missing definition_of_done" };
+        const paths = Array.isArray(parsed.authorized_paths) ? parsed.authorized_paths : [];
+        for (const p of paths) {
+            if (typeof p !== "string" || path.isAbsolute(p) || p.split(/[\\/]/).includes("..")) return { ok: false, detail: `unconfined authorized_path: ${p}` };
+        }
+        if (parsed.source !== "mission-synthesizer") return { ok: false, detail: `source is not mission-synthesizer (${parsed.source})` };
+        if (typeof ev.goal !== "string") return { ok: false, detail: "evidence missing goal for decompose consistency" };
+        const actions = synth.decompose(ev.goal);
+        const expected = actions.length === 0 ? 1 : actions.length;
+        if (parsed.objectives.length !== expected) {
+            return { ok: false, detail: `objective count ${parsed.objectives.length} != decompose(goal)=${expected} (semantic mismatch)` };
+        }
+        if (!ev.spec || typeof ev.spec !== "object") return { ok: false, detail: "evidence missing spec for determinism re-derivation" };
+        const rederived = synth.toContract(ev.spec);
+        if (JSON.stringify(rederived) !== JSON.stringify(parsed)) {
+            return { ok: false, detail: "deliverable is not the deterministic toContract(spec) output — tampered or non-deterministic" };
+        }
+        return { ok: true, detail: `ODG-authored spec valid: ${parsed.objectives.length} objective(s); schema + decompose-consistency + byte-identical determinism verified` };
     },
 
     "internet-reachable"() {

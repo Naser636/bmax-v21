@@ -26,7 +26,7 @@ const { spawnSync } = require("child_process");
 // Reuse the existing in-scope tracked-file predicate (single implementation) for the "not tracked"
 // cross-check; there is NO pre-existing git-ignored-artifact scanner to reuse, so CLEAN_WORKSPACE_1's
 // candidate scan is implemented here against git directly (not a duplicate of any existing helper).
-const { trackedFilesInScope } = require("./scope-observer");
+const { trackedFilesInScope, changedPathsInScope } = require("./scope-observer");
 // The Governed Git Branch Integration capability (local, fast-forward-only, C03-recorded). This is a
 // capability IMPLEMENTATION the single registry routes to — NOT a second executor/evidence system.
 const gitBranchIntegration = require("./git-branch-integration");
@@ -34,6 +34,12 @@ const gitBranchIntegration = require("./git-branch-integration");
 // observed-effect→C03). Another capability IMPLEMENTATION the single registry routes to — not a second
 // command engine, policy, authority, evidence or sandbox system.
 const bashGovernor = require("./bash-command-governor");
+// Pure economic capability modules (recovered additively; no network, reuse economic-unit). Used ONLY
+// on the LIVE research path to turn ACQUIRED 2xx bytes into OBSERVED economic observations + a
+// deterministic opportunity classification. They add nothing on dry-run and nothing when the grant
+// declares no extraction rules / opportunity candidates.
+const economicExtractor = require("./economic-extractor");
+const opportunityPolicy = require("./opportunity-policy");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
@@ -44,6 +50,13 @@ const CLEAN_WORKSPACE_SCAN_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-
 const CLEAN_WORKSPACE_COVERAGE_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-coverage.json");
 const CLEAN_WORKSPACE_REPORT_EVIDENCE = path.join(GENERATED_DIR, "clean-workspace-report.json");
 const EXTERNAL_RESEARCH_EVIDENCE = path.join(GENERATED_DIR, "external-research-acquisition.json");
+const SYNTHETIC_DELIVERABLE_EVIDENCE = path.join(GENERATED_DIR, "odg-synthetic-deliverable.json");
+const SYNTHETIC_DELIVERABLE_NAME = "odg-synthetic-manifest.txt";
+// ODG Spec Author (η3-B30) — a SEMANTIC structured deliverable: a Mission-Loader-schema specification
+// ODG formulates itself via mission-synthesizer.toContract (NOT a flat manifest, NEVER a copy of a
+// contract-supplied patch). Its correctness is independently verifiable (spec-schema-valid probe).
+const SPEC_AUTHOR_EVIDENCE = path.join(GENERATED_DIR, "odg-spec-author.json");
+const SPEC_AUTHOR_NAME = "odg-spec.json";
 // tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
 // Registry + Orchestrator and runs the selected provider — the socle→provider edge.
 const TSX_CLI = path.join("node_modules", "tsx", "dist", "cli.mjs");
@@ -271,7 +284,160 @@ function governedHttpGet(url, opts) {
     try { return JSON.parse(res.stdout); } catch { return { status: 0, body: "", error: "unparseable fetch result" }; }
 }
 
+// ---- ODG Synthetic Deliverable — PRE-WRITE confinement + ODG content formulation ----------------
+// scope-observer.changedPathsInScope is a git, AFTER-write observation whose startsWith lacks a path
+// boundary, so it is used here ONLY as the scope-membership authority, NOT as the guard. The guard is
+// evaluated BEFORE any write and defends path traversal AND symlink/real-path escape. No existing
+// security control is modified; the capability self-confines because the capability execution branch
+// (patch-executor) has no edits-branch path gate. normalizePrefixes is not exported, so the glob→dir
+// strip is performed inline with the SAME two-step transform (strip "*…" then trailing "/").
+function stripGlobPrefix(p) {
+    return typeof p === "string" ? p.replace(/[*].*$/, "").replace(/\/+$/, "") : "";
+}
+// PROTECTED-GOVERNANCE guard — SINGLE implementation (relocated here from patch-executor.js so BOTH the
+// Patch Executor edits branch AND this capability branch reuse ONE definition; patch-executor.js already
+// requires this module, so it imports the function back — there is no second copy and no new mechanism).
+// A broad write scope (e.g. "runtime/**") structurally subsumes runtime/governance/**; authorized_paths
+// is SCOPE, never AUTHORITY, so being inside a granted scope does NOT authorize a governance write.
+const PROTECTED_GOVERNANCE_PREFIXES = ["runtime/governance"];
+function isProtectedGovernanceTarget(target) {
+    const norm = path.normalize(String(target || ""));
+    if (path.isAbsolute(norm) || norm === ".." || norm.startsWith(".." + path.sep)) return false;
+    return PROTECTED_GOVERNANCE_PREFIXES.some((pre) => norm === pre || norm.startsWith(pre + "/"));
+}
+// Resolve the single in-scope write target and PROVE confinement before any mutation. Throws (refuses)
+// on an empty/invalid scope, a non-relative or traversal scope/target, an out-of-boundary target, or a
+// real-path/symlink escape from the sandbox cwd. Returns { relTarget, absTarget, scope }.
+function confineSyntheticTarget(authorizedPaths, cwd, allowProtectedGovernance, fileName = SYNTHETIC_DELIVERABLE_NAME) {
+    const list = Array.isArray(authorizedPaths) ? authorizedPaths : [];
+    const pre = stripGlobPrefix(list.length ? list[0] : "");
+    if (!pre) throw new Error("ODG Synthetic Deliverable: refused — no valid authorized scope");
+    const normPre = path.normalize(pre);
+    if (path.isAbsolute(normPre) || normPre === ".." || normPre.startsWith(".." + path.sep)) {
+        throw new Error(`ODG Synthetic Deliverable: refused — scope "${list[0]}" is not a relative in-tree path`);
+    }
+    const rel = path.normalize(path.join(normPre, fileName));
+    // Boundary-anchored in-scope check (same rule as patch-executor.isAuthorizedTarget).
+    if (path.isAbsolute(rel) || rel === ".." || rel.startsWith(".." + path.sep)
+        || !(rel === normPre || rel.startsWith(normPre + path.sep))) {
+        throw new Error(`ODG Synthetic Deliverable: refused — target "${rel}" is outside authorized scope "${normPre}"`);
+    }
+    // PROTECTED-GOVERNANCE guard (Q6): a scope subsuming runtime/governance does NOT authorize a
+    // governance write. Reuses the SAME shared guard as the Patch Executor edits branch; the elevated
+    // authorization is read ONLY from the plan (allowProtectedGovernance), NEVER inferred from scope or
+    // from ODG provenance. Fail-closed: absent ⇒ refused BEFORE any directory creation or write.
+    if (isProtectedGovernanceTarget(rel) && allowProtectedGovernance !== true) {
+        throw new Error(`ODG Synthetic Deliverable: refused — target "${rel}" is a protected governance path requiring an explicit ODG-level elevated authorization (plan.allowProtectedGovernance); authorized_paths is scope, not authority`);
+    }
+    // Scope-membership authority: reuse the existing scope-observer predicate (explicit path list ⇒ no git).
+    if (changedPathsInScope(authorizedPaths, [rel]).length === 0) {
+        throw new Error(`ODG Synthetic Deliverable: refused — target "${rel}" not confirmed inside authorized scope`);
+    }
+    // Physical confinement (symlink / real-path defense): the deepest EXISTING ancestor of the target must
+    // realpath INSIDE the sandbox cwd. Catches an existing symlinked scope dir pointing outside the tree.
+    const absCwd = fs.realpathSync(cwd);
+    let anc = path.resolve(cwd, rel);
+    while (!fs.existsSync(anc)) anc = path.dirname(anc);
+    const realAnc = fs.realpathSync(anc);
+    if (realAnc !== absCwd && !realAnc.startsWith(absCwd + path.sep)) {
+        throw new Error(`ODG Synthetic Deliverable: refused — target "${rel}" resolves outside the sandbox (symlink/real-path escape)`);
+    }
+    return { relTarget: rel, absTarget: path.resolve(cwd, rel), scope: normPre };
+}
+// ODG FORMULATES the content itself from authorized mission data (plan mission + sorted objective ids).
+// Deterministic (no clock/random) and NEVER a copy of a contract-supplied patch content.
+function formulateSyntheticManifest(plan) {
+    const mission = plan && typeof plan.mission === "string" ? plan.mission : "UNKNOWN_MISSION";
+    const ids = Array.isArray(plan && plan.objectives)
+        ? plan.objectives.map((o) => (o && typeof o.id === "string" ? o.id : null)).filter(Boolean).slice().sort()
+        : [];
+    return `ODG-SYNTHETIC-MANIFEST\nmission=${mission}\nobjectives=${ids.join(",")}\ngenerator=ODG_CAPABILITY\n`;
+}
+
 const EXECUTORS = [
+    {
+        // ODG Synthetic Deliverable — ODG itself FORMULATES deterministic content and writes ONE file
+        // strictly inside the mission's authorized_paths, after PRE-WRITE confinement (traversal +
+        // symlink defense). STRICTLY matched on the benchmark-reserved objectiveId prefix "ODG_WRITE_"
+        // (disjoint from every other executor). Authorization/scope come from the PLAN (patch-plan.json),
+        // never inferred from ODG provenance; the content is ODG's, the scope is the contract's.
+        capability: "ODG Synthetic Deliverable",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("ODG_WRITE_");
+        },
+        run(patch) {
+            const cwd = process.cwd();
+            let plan = {};
+            try { plan = JSON.parse(fs.readFileSync(path.join(GENERATED_DIR, "patch-plan.json"), "utf8")); } catch { plan = {}; }
+            const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
+            // Refuse BEFORE any write if confinement cannot be established (scope + governance guard).
+            const confined = confineSyntheticTarget(authorizedPaths, cwd, plan.allowProtectedGovernance === true);
+            const content = formulateSyntheticManifest(plan);
+            fs.mkdirSync(path.dirname(confined.absTarget), { recursive: true });
+            fs.writeFileSync(confined.absTarget, content);
+            const crypto = require("crypto");
+            const sha256 = crypto.createHash("sha256").update(content).digest("hex");
+            const out = writeEvidence(SYNTHETIC_DELIVERABLE_EVIDENCE, {
+                capability: "ODG Synthetic Deliverable",
+                objective: patch.objectiveId,
+                target: confined.relTarget,
+                scope: confined.scope,
+                bytes: Buffer.byteLength(content),
+                sha256,
+                authoredBy: "ODG_CAPABILITY",
+                note: "Content formulated by ODG from authorized plan data; written strictly inside authorized_paths after pre-write confinement.",
+            });
+            return { capability: "ODG Synthetic Deliverable", evidence: out, summary: { target: confined.relTarget, bytes: Buffer.byteLength(content) } };
+        },
+    },
+    {
+        // ODG Spec Author (η3-B30) — ODG itself FORMULATES a Mission-Loader-schema specification via the
+        // existing mission-synthesizer.toContract (deterministic, no clock/random) from AUTHORIZED plan data
+        // (this objective's goal + mission id), and writes ONE JSON file strictly inside authorized_paths
+        // after the SAME pre-write confinement as the Synthetic Deliverable. The content is ODG's (toContract),
+        // NEVER a copy of a contract-supplied patch; its correctness is independently re-checked by the
+        // spec-schema-valid probe (schema + decompose consistency + byte-identical determinism). STRICTLY
+        // matched on the reserved objectiveId prefix "ODG_SPEC_" (disjoint from every other executor).
+        // Authorization/scope come ONLY from the PLAN; no new authority is granted to this capability.
+        capability: "ODG Spec Author",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("ODG_SPEC_");
+        },
+        run(patch) {
+            const synth = require("./mission-synthesizer"); // lazy require: avoids any load-time require cycle
+            const cwd = process.cwd();
+            let plan = {};
+            try { plan = JSON.parse(fs.readFileSync(path.join(GENERATED_DIR, "patch-plan.json"), "utf8")); } catch { plan = {}; }
+            const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
+            // Refuse BEFORE any write if confinement cannot be established (reuses the ONE guard; .json target).
+            const confined = confineSyntheticTarget(authorizedPaths, cwd, plan.allowProtectedGovernance === true, SPEC_AUTHOR_NAME);
+            // ODG authors the spec FROM authorized plan data: this objective's goal + the mission id. The
+            // objective's goal is carried ON THE PATCH by patch-engine (patch-plan.json exposes `patches`,
+            // not `objectives`), so read it from the patch this executor was dispatched for. The produced
+            // spec is deliberately read-only (authorizedPaths:[]): scope is the CONTRACT's, content ODG's.
+            const goal = typeof patch.goal === "string" ? patch.goal : "";
+            const spec = { id: `${plan.mission || "SPEC"}__${patch.objectiveId}`, goal, authorizedPaths: [] };
+            const contract = synth.toContract(spec);
+            const content = JSON.stringify(contract, null, 2) + "\n";
+            fs.mkdirSync(path.dirname(confined.absTarget), { recursive: true });
+            fs.writeFileSync(confined.absTarget, content);
+            const crypto = require("crypto");
+            const sha256 = crypto.createHash("sha256").update(content).digest("hex");
+            const out = writeEvidence(SPEC_AUTHOR_EVIDENCE, {
+                capability: "ODG Spec Author",
+                objective: patch.objectiveId,
+                target: confined.relTarget,
+                scope: confined.scope,
+                goal,
+                spec,
+                bytes: Buffer.byteLength(content),
+                sha256,
+                authoredBy: "ODG_CAPABILITY",
+                note: "Spec formulated by ODG via mission-synthesizer.toContract from authorized plan data; written inside authorized_paths after pre-write confinement. Correctness verified independently by the spec-schema-valid probe.",
+            });
+            return { capability: "ODG Spec Author", evidence: out, summary: { target: confined.relTarget, objectives: contract.objectives.length } };
+        },
+    },
     {
         // Governed Git Branch Integration — local, fast-forward-only branch integration recorded as a
         // C03 state transition. STRICTLY matched on the objectiveId prefix (disjoint from every other
@@ -472,20 +638,38 @@ const EXECUTORS = [
             if (!fetcher) throw new Error("External Research Acquisition BLOCKED: no fetcher injected (zero built-in network client by design)");
 
             const crypto = require("crypto");
+            // Declared deterministic extraction rules [{ url, field, rule }] — the operator declares
+            // WHERE a figure lives, never its VALUE. Values are OBSERVED from the acquired bytes only.
+            const extractRules = ra && Array.isArray(ra.extract) ? ra.extract : [];
+            const observations = [];
             const sources = [];
             for (const url of allowlist) {
                 const res = fetcher(url) || {};
                 const status = typeof res.status === "number" ? res.status : 0;
                 const body = typeof res.body === "string" ? res.body : "";
                 const content_hash = crypto.createHash("sha256").update(body).digest("hex");
+                const fetched_at = typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : new Date().toISOString();
                 sources.push({
                     url,
-                    fetched_at: typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : new Date().toISOString(),
+                    fetched_at,
                     http_status: status,
                     content_hash,
                     bytes: Buffer.byteLength(body),
                     evidence_ref: EXTERNAL_RESEARCH_EVIDENCE,
                 });
+                // Extract declared fields for THIS source over the SAME bytes just hashed, binding each
+                // OBSERVED value to content_hash + fetched_at + http_status. Non-2xx ⇒ no extraction; a
+                // rule that does not match ⇒ UNKNOWN (never a fabricated value).
+                for (const er of extractRules.filter((e) => e && e.url === url)) {
+                    let r;
+                    if (status >= 200 && status <= 299) {
+                        try { r = economicExtractor.extract(body, er.rule); }
+                        catch (e) { r = { status: "UNKNOWN", reason: "malformed rule: " + String(e.message || e) }; }
+                    } else {
+                        r = { status: "UNKNOWN", reason: "source not 2xx" };
+                    }
+                    observations.push({ url, field: er.field, status: r.status, raw: r.raw, quantity: r.quantity || null, reason: r.reason || null, content_hash, fetched_at, http_status: status, evidence_ref: EXTERNAL_RESEARCH_EVIDENCE });
+                }
             }
             // Only 2xx fetches count as verified provenance a citation may bind to.
             const verifiedUrls = new Set(sources.filter((s) => s.http_status >= 200 && s.http_status <= 299).map((s) => s.url));
@@ -506,8 +690,17 @@ const EXECUTORS = [
             });
             const ranked = bound.length ? ranking.rank(bound) : [];
 
+            // Classify declared opportunity candidates against the OBSERVED observations + provenance
+            // (OBSERVED/CALCULATED/INFERRED/UNKNOWN -> PROVEN/CANDIDATE/REJECTED). The executor never
+            // invents a figure; each PROVEN opportunity carries its full traceability chain.
+            const opportunityCandidates = ra && Array.isArray(ra.opportunities) ? ra.opportunities : [];
+            const economicDeclared = extractRules.length > 0 || opportunityCandidates.length > 0;
+            const opportunityEval = economicDeclared
+                ? opportunityPolicy.classify(opportunityCandidates, observations, { evidence_ref: EXTERNAL_RESEARCH_EVIDENCE })
+                : null;
+
             const acquired = sources.length > 0 && sources.every((s) => s.http_status >= 200 && s.http_status <= 299);
-            const out = writeEvidence(EXTERNAL_RESEARCH_EVIDENCE, {
+            const evidence = {
                 capability: "External Research Acquisition",
                 objective: patch.objectiveId,
                 mode: "LIVE",
@@ -516,7 +709,15 @@ const EXECUTORS = [
                 policyAllows: true,
                 sources,
                 ranked,
-            });
+            };
+            // Additive ONLY when the grant declared extraction rules / opportunity candidates: a LIVE
+            // grant with neither stays byte-identical to the pre-wiring evidence shape.
+            if (economicDeclared) {
+                evidence.observations = observations;
+                evidence.opportunities = opportunityEval.results;
+                evidence.opportunityCounts = opportunityEval.counts;
+            }
+            const out = writeEvidence(EXTERNAL_RESEARCH_EVIDENCE, evidence);
             if (!acquired) throw new Error("External Research Acquisition BLOCKED: no 2xx source acquired");
             return { capability: "External Research Acquisition", evidence: out, summary: { mode: "LIVE", acquired, sources: sources.length, ranked: ranked.length } };
         },
@@ -604,7 +805,7 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE };
+module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.
