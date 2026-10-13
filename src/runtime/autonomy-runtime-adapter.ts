@@ -100,6 +100,21 @@ const BRAIN = "runtime/brain/MASTER_PLAN.md";
 const ROADMAP_MANIFEST = "runtime/governance/ROADMAP.json";
 const MSTD_GENERATED = "runtime/generated/mission-artifacts/generated";
 const PIPELINE = "runtime/bin/odg-run.js";
+
+// Migration seam (Lot B-α) — the pipeline entry the LOCAL execute path launches. Historical DEFAULT is
+// the legacy JavaScript entry PIPELINE; it is NEVER changed implicitly. An operator may OPT IN to the
+// compiled TypeScript entry (runtime/dist/bin/odg-run.js, produced by `npm run build:runtime`) for a
+// controlled parity run by setting ODG_RUNTIME_ENTRY to its CWD-relative path. The override is used
+// VERBATIM and committed to: if it points at a missing/invalid entry, `node <entry>` fails explicitly
+// (surfaced as a NON_ZERO_EXIT / launch failure) — there is NO silent fallback to the legacy entry.
+// An unset or blank variable keeps the historical default (no silent switch). This chooses ONLY the
+// entry path; mission rules, orchestration, attribution, ledger, checkpoints and governance are
+// untouched (the chosen entry runs the identical 13-stage pipeline either way).
+function resolvePipelineEntry(): string {
+  const override = process.env.ODG_RUNTIME_ENTRY;
+  if (typeof override === "string" && override.trim().length > 0) return override.trim();
+  return PIPELINE;
+}
 const MISSIONS_DIR = "runtime/missions";
 // The corrective-mission queue: repair missions the Runtime proposes for itself, awaiting
 // authorization. A record here is a NOMINATION, never an authorization to run (see readCorrectiveQueue).
@@ -591,7 +606,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * (LOCAL_FIRST) and use its failure as the single proof that the Runtime cannot progress locally.
    */
   private runLocalPipeline(mission: string): PipelineOutcome {
-    const r = spawnSync("node", [PIPELINE, mission], {
+    const entry = resolvePipelineEntry(); // historical PIPELINE by default; opt-in compiled entry via ODG_RUNTIME_ENTRY
+    const r = spawnSync("node", [entry, mission], {
       cwd: this.cwd,
       stdio: "inherit",
     });
@@ -617,11 +633,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
               ? "KILLED_BY_SIGNAL"
               : "NON_ZERO_EXIT",
           message: r.error
-            ? `Failed to launch ${PIPELINE}: ${r.error.message}`
+            ? `Failed to launch ${entry}: ${r.error.message}`
             : governedBlock
               ? `Validation Engine returned a governed BLOCKED verdict for "${mission}" (not a crash); deferring per D2/S4 without a provider.`
-              : `${PIPELINE} exited with code ${r.status ?? "null"}${r.signal ? ` (signal ${r.signal})` : ""}. See the streamed pipeline output above.`,
-          provider: PIPELINE,
+              : `${entry} exited with code ${r.status ?? "null"}${r.signal ? ` (signal ${r.signal})` : ""}. See the streamed pipeline output above.`,
+          provider: entry,
           exitCode: r.status,
           ...(governedBlock ? { blocker: this.readMissionReportUnmet(mission) } : {}),
           ...(r.error ? { exception: r.error.message } : {}),
