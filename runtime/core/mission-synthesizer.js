@@ -209,6 +209,14 @@ function toContract(spec) {
     };
 }
 
+// η3-B45 — recognize an EXPLICIT specification-production intent. Deliberately CONSERVATIVE: requires a
+// production verb governing the FULL word "specification" (NOT the bare token "spec", which also occurs in
+// inspect/specific/respect), so unrelated requests (audit, fix, wire, "invent a provider") are never matched.
+// Deterministic, case-insensitive, word-bounded. This is the ONLY signal that routes to ODG Spec Author.
+function isSpecProductionIntent(text) {
+    return /\b(produce|generate|author|create|write|draft|compose)\b[^.?!]*\bspecification\b/i.test(String(text || ""));
+}
+
 // Naive NL → spec: keep the raw request as the goal, and consult the P4 rules to attach the local
 // capability/fixers it implies (so the router/decision layers can resolve it locally first).
 function fromRequest(text, extra) {
@@ -218,7 +226,23 @@ function fromRequest(text, extra) {
         goal: String(text || ""),
         ...(extra || {}),
     };
+    // η3-B45 — ROUTE an explicit specification-production request to the ODG Spec Author capability by giving
+    // its FIRST objective an ODG_SPEC_-prefixed id (capabilityExecutors.resolve matches on that prefix). Only
+    // when the intent is explicit AND the caller did not already pin an objectiveId; non-spec requests keep
+    // their historical ids unchanged. This changes ONLY the NL entrypoint's routing, not toContract's generic
+    // id assignment nor the ODG Spec Author executor's own internal toContract calls.
+    if (!spec.objectiveId && isSpecProductionIntent(spec.goal)) {
+        spec.objectiveId = "ODG_SPEC_" + slug(spec.goal, "SPEC");
+    }
     const contract = toContract(spec);
+    // η3-B46 — a routed spec contract DECLARES its own independent verification. The Validation Engine's
+    // required-proof gate (plan.verify → probes.evaluate) will run the spec-schema-valid probe against the
+    // REAL produced deliverable, so a missing / invalid / tampered / stale spec blocks acceptance (it cannot
+    // validate on engineering-scope alone). Applied ONLY on the routed spec path (ODG_SPEC_ objectiveId); any
+    // other contract keeps NO verify block, unchanged. Reuses the existing verify-block format verbatim.
+    if (typeof spec.objectiveId === "string" && spec.objectiveId.startsWith("ODG_SPEC_")) {
+        contract.verify = [{ capability: "ODG Spec Author", evidence: "spec-schema-valid" }];
+    }
     contract.resolvedCapability = template ? template.capability : null;
     contract.resolvedFixers = template ? template.fixers : null;
     return contract;
@@ -236,4 +260,4 @@ function isValidContract(c) {
     );
 }
 
-module.exports = { toContract, fromRequest, isValidContract, slug, decompose, derivePaths };
+module.exports = { toContract, fromRequest, isValidContract, slug, decompose, derivePaths, isSpecProductionIntent };
