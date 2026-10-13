@@ -42,7 +42,14 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const ROOT = path.resolve(__dirname, "..", "..");
+// PATH INVARIANT (η3-B42): the project root is process.cwd() in every verified launch context — the
+// pipeline spawns each stage (incl. validation-engine, which require()s this engine) with cwd = repo root,
+// and the CLI entry below is invoked from repo root. This is EQUAL to the historical
+// path.resolve(__dirname, "..", "..") when this module is loaded from runtime/core (the production default),
+// and STILL correct when it is loaded from runtime/dist/core — where __dirname-derivation would resolve to
+// the wrong tree (runtime/dist) and write config/report/provider-auth under runtime/dist/generated. Only the
+// root derivation changes; the recovery logic, policies and attribution are untouched.
+const ROOT = process.cwd();
 const DEFAULT_CONFIG = path.join(ROOT, "runtime", "config", "build-recovery.json");
 const REPORT_PATH = path.join(ROOT, "runtime", "generated", "build-recovery-report.json");
 const PROVIDER_AUTH_PATH = path.join(ROOT, "runtime", "generated", "provider-authorization.json");
