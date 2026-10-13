@@ -58,6 +58,14 @@ case "$MISSION" in
     shift
     ./runtime/bin/odg-generate-contracts.js "$@"
     ;;
+  migrate-ts)
+    # Single-command TypeScript migration campaign (η3-B78): ONE launch, DISTINCT internal validation
+    # gates per lot. Thin forward to the existing launcher (runtime/bin/odg-migrate-ts.js → the tsx
+    # orchestrator); adds no logic, forwards the lot argument and the exit code (0 all gates PASS,
+    # 1 a gate FAILed, 2 BLOCKED — unauthorised lot or Truth Lock refused). Never writes the repo.
+    shift
+    exec node runtime/bin/odg-migrate-ts.js "$@"
+    ;;
   objective|do)
     # Semantic mission entrypoint — HUMAN NATURAL INTENT → ODG INTERPRETATION → GOVERNED MISSION →
     # EXECUTION. Default (DRY-RUN): compile a raw natural-language objective into the governed projection
@@ -158,6 +166,7 @@ case "$MISSION" in
     echo "  odg generate-contracts [--dry-run]"
     echo "  odg autonomy"
     echo "  odg converge        (drive to convergence + report)"
+    echo "  odg migrate-ts [lot] (single-command TS migration campaign; distinct gates per lot)"
     echo "  odg diagnose        (autonomous audit: expected-vs-observed → incident + prepared repair plan)"
     echo "  odg status"
     echo "  odg verify"
