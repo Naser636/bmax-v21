@@ -352,10 +352,10 @@ may be declared without item-by-item inventory and individual proofs.** Citable 
 
 | Control | Source/mechanism | +test / −test | Status | Closure |
 |---|---|---|---|---|
-| Action admission gate | `action-gate.js` (deterministic ALLOW/DENY/ESCALATE, deny-by-default) | authorized allowed / unauthorized denied-escalated | PARTIAL — proven in isolation; LIVE wiring before patch-executor WRITE is a separate increment | gate enforced on the real write path (→ Ph. 11) |
+| Action admission gate | `action-gate.js` (deterministic ALLOW/DENY/ESCALATE, deny-by-default) | authorized allowed / unauthorized denied-escalated | PROVEN (opt-in enforce) — LIVE-wired on the patch-executor WRITE path via `patch-action-contract.admitPatchEdit` (observe-then-enforce, default OFF), proven end-to-end by `action-gate-live.test.js` (see §M-4, η3-B92); only the flip to ENFORCE-by-default remains (CTO doctrine) | flip ENFORCE-by-default after CTO criteria (→ Ph. 11) |
 | Nine frozen primitives / single runtime | §K invariants; register `primitives` (count 9, frozen) | — / reject a 10th primitive or 2nd runtime | PARTIAL — invariant stated; JS/TS double path still open | one execution-of-record path (→ Ph. 05) |
 | Reversibility ladder R0–R4 | FICHE_07 §11; `action-gate.js` | — | PROVEN (vocabulary) | — |
-| Human-authorization gates | §I; contracts/policies | authorized sub-task proceeds / consequential action refused | PARTIAL — partly prose; action-gate is the code gap | gates enforced in code (→ Ph. 11) |
+| Human-authorization gates | §I; contracts/policies; `action-gate.js` ESCALATE | authorized sub-task proceeds / consequential action refused | PROVEN (opt-in) — the WRITE-path code gate exists (ESCALATE ⇒ zero-mutation fail-closed, proven in `action-gate-live.test.js`); residual gap is ENFORCE-by-default (CTO doctrine) | flip ENFORCE-by-default (→ Ph. 11) |
 | Evidence / ledger | §J; `mission-ledger.js`; `odg verify` | proven-only release / red ⇒ non-zero exit | PROVEN (local) | — |
 | Learning never self-grants | APEX-B1; three learning modules (no authority token) + post-release case I | hit is edits-only / no authority field | PROVEN (advisory) | — |
 | Fail-closed client store | `client-intake.js` (503 on unavailable store) | serves when present / 503 fail-closed when absent | TESTED_LOCALLY | — |
@@ -385,8 +385,11 @@ ever grant permissions or alter governance.
 mission's labels (which are NOT pre-existing directive IDs): **D1 = Action Gate enforcement** → inventory legacy
 write paths, define the test + non-regression matrix, provide an explicit controlled temporary compatibility, and
 flip to ENFORCE-by-default ONLY after criteria + authorizations (→ Phase 11, on the `action-gate.js` LIVE-wiring
-increment). **D3 = invariants** → nine frozen primitives, single-runtime uniqueness, state owners, with negative
-tests that reject violations (→ Phase 05). Neither is begun here.
+increment). *Status update (η3-B92, see §M-4): the LIVE wiring, the opt-in enforce switch, the controlled
+observe-then-enforce compatibility, AND the test + non-regression matrix are ALREADY DONE and PROVEN; the ONLY
+remaining D1 step is the flip to ENFORCE-by-default, which is the reserved CTO doctrine decision.* **D3 =
+invariants** → nine frozen primitives, single-runtime uniqueness, state owners, with negative tests that reject
+violations (→ Phase 05). D3 is not begun here.
 
 *4. Preproduction & real-deployment qualification gates (attaches to Phases 12, 13 and §E — reference, do not
 duplicate).* The real-deployment gates already live in: `ODG_REAL_WORLD_LAUNCH_ROADMAP.md` (RWL-E1 preprod e2e,
@@ -593,6 +596,58 @@ Real phases stay BLOCKED while required resources / policies / access / proofs a
 *Distinction enforced:* `TS publié`/`TS qualifié` ≠ `runtime compilé activé` ≠ `stable après bascule` ≠ `JS supprimable`. No `.js` is deletable now; the production runtime has NOT switched.
 
 **Next CTO decision:** authorize lot 1 (build publication, Gate B) incl. patch-engine.ts inclusion + fresh-clone re-proof; or defer. Status-of-record stays the ledger; this section is a human-readable reconciliation, not a second tracker.
+
+**§M-4 — Ph.11 WRITE-path action-gate enforcement: ALREADY IMPLEMENTED + PROVEN; only the ENFORCE-by-default flip remains (η3-B92, 2026-10-13, additive — read-only reconciliation, NO code change, NO runtime switch).**
+Gate A re-diagnosis (reproduce-before-modify) establishes that the patch-executor WRITE path **IS** live-wired to the
+action-gate — contrary to the stale "DESIGNED, NOT IMPLEMENTED / NOT gated" reading (that reading was itself
+NUL-grep-blinded on `patch-executor.js`, the exact trap the file warns about; use `grep -a`). Evidence at this HEAD:
+- **Wiring (both paths, parity):** `runtime/core/patch-action-contract.js` compiles a truthful Action Contract and
+  runs `action-gate.evaluateAction` BEFORE any mutation; `patch-executor.js` (LIVE runtime) **and** `patch-executor.ts`
+  both consume `admitPatchEdit` at identical lines (248-290, 434): hard refusal (DENY / ESCALATE / misused authority)
+  THROWS before any write (FAILED, zero mutation); resumable DENY (authority merely absent) ⇒ per-action BLOCKED, zero
+  mutation, siblings continue; protected-governance guard precedes all writes. Landed historically at `b897c8f`
+  ("wire action gate into the live patch-executor WRITE path (observe-then-enforce)") + `7b74678` (per-action authz / PARTIAL).
+- **Opt-in, default OFF (backward compatible):** ENFORCE only when the patch declares an explicit Action Contract,
+  OR `plan.enforceActionGate === true`, OR env `ODG_ENFORCE_ACTION_GATE=1`. Otherwise OBSERVE: the decision is recorded
+  as truthful audit (`enforced:false`) and the legacy WRITE still executes — never a silent bypass, never a success claim.
+  Behaviour when OFF is byte-identical (equivalence bench green).
+- **Test + non-regression matrix (ALL GREEN, re-run this session on the real repo):** `action-gate-live.test.js` (17/17)
+  proves every mission invariant end-to-end against the REAL `.js` executor — no authority ⇒ DENY/zero-write/FAILED;
+  R4 ⇒ ESCALATE/zero-write; valid contract ⇒ ALLOW/APPLIED; `authorized_paths` never grants authority; out-of-scope
+  target refused even under valid authority; opt-in via plan flag + env; legacy observe backward-compatible. Regressions:
+  `action-gate.test.js` ✓, `patch-executor.test.js` (17), `patch-executor-governance-guard.test.js` (13),
+  `bash-command-governor.test.js` (52) + `capability-executors.test.js` (53) prove the bash/capability WRITE paths
+  self-gate via the same action-gate (**no bypass**). TS-strict `tsconfig.runtime-leaves-strict.json` rc=0;
+  `patch-executor-equivalence` bench ALL PASS (`.js` ≡ compiled `.ts` byte-identical, incl. admission path + B91 NUL parity).
+- **Residual (reserved, NOT done here):** the flip to **ENFORCE-by-default in production** is the CTO doctrine decision
+  (the §M-3 5-state ladder's "runtime compilé activé/stable après bascule" gate + §387 criteria). B92 did NOT flip it,
+  did NOT switch the runtime, and changed NO code. The §353 controls table and §384 D1 paragraph are corrected above to
+  this real status. States: D1 inventory + test-matrix + compatibility = `PROVEN`; ENFORCE-by-default = `BLOCKED (CTO doctrine)`.
+- **Publication (η3-B93):** the §M-4 reconciliation above (authored unpublished in B92) is PUBLISHED together with the
+  B93 test-kit fix below. B92 was NOT a published state until this commit — diagnosis, correction, qualification and
+  publication are distinct states, and §M-4 is only now on the record.
+
+**§M-5 — Test-harness reproducibility: two git-dependent tests made reproducible with real temporary git fixtures (η3-B93, 2026-10-13, additive; test-kit only, NO production source change, NO runtime switch, NO JS deletion).**
+Two tests passed on the real repo but failed in a bare archive (no `.git`) — a HARNESS reproducibility gap, **not** a
+product defect. Root causes reproduced on (1) real repo ✓, (2) clean `git archive` ✗→fixed, (3) isolated dir:
+- `runtime/core/scope-observer.test.js` — its "real git-tracked" cases ran `so.fileCount`/`trackedFilesInScope`
+  (real `git ls-files`) against the OUTER working tree; no `.git` ⇒ `[]` ⇒ assertion failed (line 83).
+- `src/runtime/runtime-executor.clean-workspace.test.ts` — the CLEAN_WORKSPACE_1 producer scans with real
+  `git ls-files --others --ignored --exclude-standard -- runtime`; no `.git` ⇒ `git` exits 128 ⇒ producer fails
+  closed ⇒ scan artifact never written ⇒ assertion failed (line 55).
+**Fix (real git, never mocked):** each test now builds its own ISOLATED throwaway fixture with real `git init`/`git add`
+under the OS temp dir, runs the git-backed logic there (chdir in/out), and removes ONLY its own fixture — the user
+repository is never touched. Both the **git-repo path AND the no-git path** are covered: scope-observer adds a no-git
+case (graceful `[]`, no false positive); clean-workspace adds a no-git block proving the producer fails CLOSED and
+diagnosably (`ok:false`, error names `git ls-files`/"not a git repository", no scan). Authentic `git ls-files` and
+working-tree semantics, security/scope assertions, and run-ownership all preserved; failures stay explicit.
+**Evidence (both reproducible now):** real repo — scope-observer 43/43, clean-workspace 6/6, RC=0; clean archive
+(no `.git`) — scope-observer 43/43, clean-workspace 6/6, RC=0. Non-regression (real repo): TS-strict rc=0,
+`build:runtime` rc=0, 12 equivalence + dist-closure benches ALL PASS, 6 A3 adapter-compiled benches ALL PASS,
+action-gate + action-gate-live + patch-executor + governance-guard ALL PASS (Ph.11 path untouched), full `npm test`
+(see commit evidence). **Tool note (not an ODG defect):** Claude Code auto-update `no_permissions` = npm global
+prefix `/usr/local` is root-owned while the runner is `ubuntu`; safe sudo-free remedy is `claude install` (native
+per-user) or a user-prefix reinstall — NOT applied here (outside the repo; no global env change).
 
 ## Validation
 Compatible with FICHE_01–06 (referenced, unmodified) and FICHE_07 method; no parallel governance; historical
