@@ -70,7 +70,7 @@ function seed(mission: string): string {
   sandboxes.push(sb);
   if (sb.startsWith(REPO)) throw new Error("sandbox must live OUTSIDE the repository");
   for (const d of COPY_DIRS) fs.cpSync(path.join(REPO, "runtime", d), path.join(sb, "runtime", d), { recursive: true });
-  fs.cpSync(path.join(REPO, "runtime", "dist"), path.join(sb, "runtime", "dist"), { recursive: true }); // compiled entry + 3 modules ONLY
+  fs.cpSync(path.join(REPO, "runtime", "dist"), path.join(sb, "runtime", "dist"), { recursive: true }); // the built dist (compiled entry + since η3-B101 the COMPLETE stage closure); cases override as needed
   fs.mkdirSync(path.join(sb, "runtime", "generated"), { recursive: true });
   fs.mkdirSync(path.join(sb, "runtime", "missions"), { recursive: true });
   fs.writeFileSync(path.join(sb, "runtime", "missions", `${mission}.json`), JSON.stringify(cleanContract(mission), null, 2));
@@ -144,10 +144,16 @@ try {
   check(genExists(sbB, "__stage_base.json") && readGen(sbB, "__stage_base.json").base === "dist", "B opt-in dist: SENTINEL proves the first child stage executed from runtime/dist/core");
   check(rB.code !== 0 && /Capability Registry/.test(rB.out) && !/PIPELINE SUCCESS/.test(rB.out), "B opt-in dist: raw copy stops EXPLICITLY at Capability Registry (__dirname-derived path) — migration required; NO silent fallback to runtime/core");
 
-  // ---- C. OPT-IN dist INCOMPLETE (only 3 modules, no stages — the REAL repo state) ⇒ explicit fail
-  const sbC = seed("STAGEBASE_INCOMPLETE"); // dist/core has ONLY the 3 compiled modules (no stages copied)
+  // ---- C. OPT-IN dist INCOMPLETE ⇒ explicit fail, NO silent fallback. Since η3-B101 the build closure
+  // (scripts/build-dist-closure.js) makes `npm run build:runtime` emit a COMPLETE dist/core, so we must
+  // CONSTRUCT incompleteness: delete a required stage dependency (budget-contract, required by
+  // mission-loader) from the sandbox's dist/core. runtime/core STILL contains budget-contract, so this
+  // also proves the stage does NOT fall back dir-relative to runtime/core — it fails explicitly in dist.
+  const sbC = seed("STAGEBASE_INCOMPLETE");
+  fs.rmSync(path.join(sbC, "runtime", "dist", "core", "budget-contract.js"));
   const rC = run(sbC, "STAGEBASE_INCOMPLETE", "runtime/dist/core");
-  check(rC.code !== 0 && !/PIPELINE SUCCESS/.test(rC.out), "C incomplete dist: explicit failure (first stage MODULE_NOT_FOUND), NOT 13/13");
+  check(rC.code !== 0 && !/PIPELINE SUCCESS/.test(rC.out), "C incomplete dist: explicit failure (missing stage dependency MODULE_NOT_FOUND), NOT 13/13");
+  check(/Cannot find module/.test(rC.out) && /budget-contract/.test(rC.out), "C incomplete dist: failure names the missing dependency (explicit, NOT a silent fallback to runtime/core/budget-contract.js)");
   check(pipelinePaths(sbC).every((p) => p.startsWith("runtime/dist/core/")), "C incomplete dist: paths point at dist (NO silent fallback to runtime/core)");
   check(!genExists(sbC, "mission-report.json") || readGen(sbC, "mission-report.json").validated !== true, "C incomplete dist: mission NOT validated");
 
