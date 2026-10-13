@@ -22,6 +22,7 @@
     "runtime/core/execution-planner.ts",
     "runtime/core/knowledge-engine.ts",
     "runtime/core/patch-engine.ts",
-    "runtime/core/capability-registry.ts"
+    "runtime/core/capability-registry.ts",
+    "runtime/core/project-context-engine.ts"
   ]
 }
