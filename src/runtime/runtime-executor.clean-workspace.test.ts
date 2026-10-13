@@ -7,27 +7,29 @@
  * new `clean-workspace-scanned` probe verifies it, and the mission is honestly PROVEN end-to-end — while
  * a non-matching objective triggers NO dispatch and (with the probe required) fails closed.
  *
- * Deterministic + self-cleaning: authors throwaway git-ignored mission files; saves/restores the shared
- * clean-workspace scan artifact; uses a spy ledger recorder so nothing is written to the real ledger.
+ * REPRODUCIBILITY (η3-B93): the CLEAN_WORKSPACE_1 producer scans transient artifacts with REAL
+ * `git ls-files --others --ignored --exclude-standard -- runtime`, so it legitimately requires a git
+ * working tree. Rather than depend on the process being launched from inside a live repo (which failed
+ * in a bare archive — a harness gap, NOT a product defect), each run now executes inside an ISOLATED
+ * throwaway git fixture built with REAL `git init` (git is never mocked). A dedicated no-git fixture
+ * additionally proves the producer fails CLOSED and diagnosably when no git tree is present. Fixtures are
+ * created under the OS temp dir and removed on exit — the user repository is never touched.
+ *
+ * Deterministic + self-cleaning: authors throwaway mission files inside the fixture; uses a spy ledger
+ * recorder so nothing is written to the real ledger.
  */
 
 import assert from "node:assert";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { LocalMissionRunner } from "./local-mission-runner";
 
 let passed = 0;
 function ok(label: string, fn: () => void): void { fn(); passed += 1; console.log(`  ok - ${label}`); }
 
 const scanPath = path.join("runtime", "generated", "clean-workspace-scan.json");
-const coveragePath = path.join("runtime", "generated", "clean-workspace-coverage.json");
-const reportPath = path.join("runtime", "generated", "clean-workspace-report.json");
-const save = (p: string) => { try { return fs.readFileSync(p, "utf8"); } catch { return null; } };
-const restore = (p: string, v: string | null) => { if (v === null) fs.rmSync(p, { force: true }); else fs.writeFileSync(p, v); };
-
-const priorScan = save(scanPath);
-const priorCoverage = save(coveragePath);
-const priorReport = save(reportPath);
 const spy = () => ({ skipped: true });
 
 function writeMission(id: string, objectiveId: string): string {
@@ -41,8 +43,26 @@ function writeMission(id: string, objectiveId: string): string {
   return file;
 }
 
+// An isolated working tree with the cwd-relative dirs the runtime writes into. `withGit` controls whether
+// it is a real git working tree. Only this fixture is ever mutated/removed — never the user repository.
+function makeFixture(withGit: boolean): string {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-cws-"));
+  fs.mkdirSync(path.join(dir, "runtime", "missions"), { recursive: true });
+  fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+  if (withGit) {
+    execFileSync("git", ["init", "-q"], { cwd: dir });
+    execFileSync("git", ["config", "user.email", "odg@test.local"], { cwd: dir });
+    execFileSync("git", ["config", "user.name", "odg-test"], { cwd: dir });
+  }
+  return dir;
+}
+
+const originalCwd = process.cwd();
+const gitFixture = makeFixture(true);
+const noGitFixture = makeFixture(false);
+
 try {
-  fs.mkdirSync(path.join("runtime", "generated"), { recursive: true });
+  process.chdir(gitFixture);
 
   // 1 — Matching objective: CLEAN_WORKSPACE_1 dispatches, produces the scan artifact, mission SUCCEEDS.
   {
@@ -108,9 +128,31 @@ try {
     }
   }
 
+  // 4 — No-git working tree: the CLEAN_WORKSPACE_1 producer's real `git ls-files` fails, so the producer
+  //     fails CLOSED (no scan written, diagnosable error naming git) — proving the git prerequisite is a
+  //     designed fail-closed behaviour, never a silent success and never a product defect.
+  {
+    process.chdir(noGitFixture);
+    const id = "__CWS_NOGIT__";
+    const file = writeMission(id, "CLEAN_WORKSPACE_1");
+    fs.rmSync(scanPath, { force: true });
+    try {
+      const out = new LocalMissionRunner(undefined, undefined, spy).run(id) as { ok?: boolean; error?: string };
+      ok("no git tree ⇒ producer fails CLOSED (ok:false, no scan, error names git ls-files)", () => {
+        assert.strictEqual(out.ok, false, "run should not report ok without a git tree");
+        assert.strictEqual(fs.existsSync(scanPath), false, "scan must not be written when the producer failed");
+        assert.ok(/git ls-files/.test(out.error || "") && /not a git repository/.test(out.error || ""),
+          `error should diagnosably name the git failure, got: ${out.error}`);
+      });
+    } finally {
+      fs.rmSync(file, { force: true });
+      process.chdir(gitFixture);
+    }
+  }
+
   console.log(`\nruntime-executor.clean-workspace: ${passed} assertions passed`);
 } finally {
-  restore(scanPath, priorScan);
-  restore(coveragePath, priorCoverage);
-  restore(reportPath, priorReport);
+  process.chdir(originalCwd);
+  fs.rmSync(gitFixture, { recursive: true, force: true });
+  fs.rmSync(noGitFixture, { recursive: true, force: true });
 }

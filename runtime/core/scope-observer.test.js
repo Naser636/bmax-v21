@@ -15,6 +15,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { execFileSync } = require("child_process");
 const so = require("./scope-observer");
 
 let passed = 0;
@@ -78,17 +79,54 @@ ok("invalid count (negative) ⇒ not ok", so.fileCount("p", -1, fake(["a"])).ok 
 ok("detail speaks only of tracked file count, never content/correctness",
   !/content|correct|valid[^e]|semantic/i.test(so.fileCount("p", 2, fake(["a", "b"])).detail));
 
-// Real git-tracked source cases (determinism + NO false positive from untracked/ignored):
-const trackedSrcApp = so.trackedFilesInScope(["src/app"]).length; // compute expected, avoid brittleness
-ok("real: >=1 tracked file under src/app (tracked source)", so.fileCount("src/app").ok === true && trackedSrcApp >= 1);
-ok("real: exact tracked count under src/app matches trackedFilesInScope",
-  so.fileCount("src/app", trackedSrcApp).ok === true && so.fileCount("src/app", trackedSrcApp + 1).ok === false);
-ok("real: path normalization — 'src/app/**' behaves like 'src/app'",
-  so.fileCount("src/app/**").ok === so.fileCount("src/app").ok);
-// runtime/generated is git-IGNORED (0 tracked) yet has untracked/ignored files on disk ⇒ proves the
-// raw-worktree is excluded: a tracked-source count sees ZERO, so no false positive from ignored files.
-ok("real: git-ignored dir with on-disk files ⇒ no tracked file (no raw-worktree false positive)",
-  so.fileCount("runtime/generated").ok === false && so.fileCount("runtime/generated", 0).ok === true);
+// Real git-tracked source cases via a HERMETIC temporary git fixture — reproducible EVERYWHERE (real
+// repo AND clean archive), with NO dependency on the outer working tree. Uses REAL `git init`/`git add`
+// (git results are never mocked), covers the git-repo path AND the no-git path, and cleans up ONLY its
+// own throwaway fixtures (never the user repository). This replaces the former assertions that depended
+// on the process being launched from inside a live repo (they failed in a bare archive — a test-harness
+// reproducibility gap, not a product defect: `trackedFilesInScope` runs real `git ls-files`).
+console.log("file-count (real git — temp fixture)");
+const soOriginalCwd = process.cwd();
+const gitFix = fs.mkdtempSync(path.join(os.tmpdir(), "odg-scope-git-"));
+const noGitFix = fs.mkdtempSync(path.join(os.tmpdir(), "odg-scope-nogit-"));
+try {
+  // A real git working tree: two tracked files under src/app, plus a git-IGNORED dir carrying on-disk
+  // files (mirrors the real runtime/generated case — ignored ⇒ 0 tracked, so no raw-worktree false positive).
+  const g = (args) => execFileSync("git", args, { cwd: gitFix, encoding: "utf8" });
+  g(["init", "-q"]);
+  g(["config", "user.email", "odg@test.local"]);
+  g(["config", "user.name", "odg-test"]);
+  fs.mkdirSync(path.join(gitFix, "src", "app"), { recursive: true });
+  fs.writeFileSync(path.join(gitFix, "src", "app", "one.ts"), "export const a = 1;\n");
+  fs.writeFileSync(path.join(gitFix, "src", "app", "two.ts"), "export const b = 2;\n");
+  fs.writeFileSync(path.join(gitFix, ".gitignore"), "ignored/\n");
+  fs.mkdirSync(path.join(gitFix, "ignored"), { recursive: true });
+  fs.writeFileSync(path.join(gitFix, "ignored", "junk.txt"), "transient on-disk artifact\n");
+  g(["add", "src/app", ".gitignore"]); // staged ⇒ listed by `git ls-files` (no commit needed)
+
+  process.chdir(gitFix);
+  const trackedSrcApp = so.trackedFilesInScope(["src/app"]).length; // real `git ls-files -- src/app`
+  ok("git fixture: exactly 2 tracked files under src/app", trackedSrcApp === 2);
+  ok("git fixture: >=1 tracked file under src/app ⇒ exists", so.fileCount("src/app").ok === true && trackedSrcApp >= 1);
+  ok("git fixture: exact tracked count matches trackedFilesInScope",
+    so.fileCount("src/app", trackedSrcApp).ok === true && so.fileCount("src/app", trackedSrcApp + 1).ok === false);
+  ok("git fixture: path normalization — 'src/app/**' behaves like 'src/app'",
+    so.fileCount("src/app/**").ok === so.fileCount("src/app").ok && so.fileCount("src/app/**", 2).ok === true);
+  ok("git fixture: git-ignored dir with on-disk files ⇒ 0 tracked (no raw-worktree false positive)",
+    so.fileCount("ignored").ok === false && so.fileCount("ignored", 0).ok === true);
+
+  // No-git path: outside any git working tree `git ls-files` fails and is CAUGHT ⇒ 0 tracked (graceful,
+  // no throw, no false positive). Proves the primitive is environment-honest, never a mocked git result.
+  fs.mkdirSync(path.join(noGitFix, "src", "app"), { recursive: true });
+  fs.writeFileSync(path.join(noGitFix, "src", "app", "untracked.ts"), "export const c = 3;\n");
+  process.chdir(noGitFix);
+  ok("no-git path: `git ls-files` unavailable ⇒ 0 tracked, fileCount not-ok (graceful, no false positive)",
+    so.trackedFilesInScope(["src/app"]).length === 0 && so.fileCount("src/app").ok === false);
+} finally {
+  process.chdir(soOriginalCwd);
+  fs.rmSync(gitFix, { recursive: true, force: true });
+  fs.rmSync(noGitFix, { recursive: true, force: true });
+}
 
 // ---- CONFIG-EQ (A-type, file-backed observation only) ----
 console.log("config-eq (file-backed, strict, no coercion)");
