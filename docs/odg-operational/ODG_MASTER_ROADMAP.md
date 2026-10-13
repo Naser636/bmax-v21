@@ -572,6 +572,24 @@ Real phases stay BLOCKED while required resources / policies / access / proofs a
 7. **Staging** (representative env; preprod loopback `vps-6d919042`, not prod). *Exit:* representative missions measured. *Status:* BLOQUÉ.
 8. **Release authorization + post-deploy verification + monitoring** (separate explicit CTO gate; runbooks §E/§I + `ODG_REAL_WORLD_LAUNCH_ROADMAP.md`/`DEPLOYMENT.md`/`ODG_INCIDENT_RUNBOOK.md`). *Exit:* CTO GO + post-deploy checks. *Status:* BLOQUÉ.
 
+**§M-3 — TypeScript runtime cutover & JavaScript-retirement criteria (η3-B88/B89/B90 evidence; additive; no parallel tracker).**
+
+*State ladder (a milestone is marked done ONLY when its criteria are PROVEN):* `TS publié` → `TS qualifié` → `runtime compilé activé` → `stable après bascule` → `JS supprimable`.
+
+*Current position (η3-B90):* the 9 stages are **TS PUBLIÉ** (project-context-engine/fleet-stage/mission-lifecycle/validation-engine @cb1cec1/94da312/7a8d980/f7224aa + mission-loader/decision-engine/patch-executor/final-report/mission-ledger @ec9986a/f945e55) AND **TS QUALIFIÉ** (η3-B88/B89: build:runtime + strict + 9 equivalence benches + capability-registry + dist-closure + ledger historical + A2/B49/A3 regressions + recovery/invariants GREEN on a clean archive; full product suite **383/383 PASS on the real repo**). The runtime default is STILL JavaScript (`ODG_STAGE_BASE=runtime/core`); the compiled base is OPT-IN (`pipeline-builder.ts`, refuses silent fallback). **`runtime compilé activé` = NOT DONE**, **`stable après bascule` = NOT DONE**, **`JS supprimable` = NOT DONE.**
+
+*Criteria REQUIRED before any future `.js` retirement (none may be assumed; no date — prerequisites + missing proofs only):*
+1. Functional parity + full regression of the 9 stages (equivalence benches byte-identical; historical suites green). — *met for the 9 stages on the real repo; archive-only test-isolation of 2 real-git integration tests noted (green on real repo).*
+2. NO consumer or execution path still depends on the `.js` stage files. — *NOT PROVEN: `pipeline-builder.js` (production default) + fleet-dispatcher/collector + mission-ledger module consumers resolve `.js`; an inventory + cutover of every consumer is required.*
+3. Compiled runtime EXPLICITLY activated (`ODG_STAGE_BASE=runtime/dist`) in a representative env and verified. — *NOT DONE (requires a CTO runtime-switch decision; B89).*
+4. Integrated gates: action-gate WRITE-path LIVE enforcement (Ph.11), authorizations, persistence, recovery, observability, rollback — all PROUVÉ. — *lot 6 BLOQUÉ: action-gate proven in isolation + wired on capability/bash paths, but patch-executor WRITE-path ENFORCE-by-default is a separate Ph.11 doctrine increment needing CTO criteria.*
+5. Reproducible install + artefacts identified by provenance (commit identity, lockfile). — *build reproducible on clean archive + real-network `npm ci` qualified (B84/B86/B87); artefact = the published commit.*
+6. Measured post-cutover stability window with no unexplained regression. — *NOT DONE (depends on #3).*
+7. Rollback plan compatible with retirement (instant revert). — *rollback = unset `ODG_STAGE_BASE` → JS default; MECHANISM proven local (CHG-OD-12); off-host backup + LIVE-host rollback drill BLOCKED BY HOST.*
+8. Dedicated CTO decision authorizing a separate, verifiable `.js` deletion. — *NOT GRANTED.*
+
+*Distinction enforced:* `TS publié`/`TS qualifié` ≠ `runtime compilé activé` ≠ `stable après bascule` ≠ `JS supprimable`. No `.js` is deletable now; the production runtime has NOT switched.
+
 **Next CTO decision:** authorize lot 1 (build publication, Gate B) incl. patch-engine.ts inclusion + fresh-clone re-proof; or defer. Status-of-record stays the ledger; this section is a human-readable reconciliation, not a second tracker.
 
 ## Validation
