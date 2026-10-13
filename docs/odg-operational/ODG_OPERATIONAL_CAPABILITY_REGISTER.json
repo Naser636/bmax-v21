@@ -1,0 +1,117 @@
+{
+  "$schema_note": "Operational capability register — a VERIFIABLE repo projection, NOT a canonical authority and NOT a second roadmap. Companion to docs/odg-operational/ODG_MASTER_ROADMAP.md §K. Authority order unchanged (Master FROZEN → Constitution → CTO Directives → ROADMAP.json).",
+  "provenance": {
+    "asOf": "2026-10-11",
+    "head": "9e7b718ae8af9bc87fab7863258e22c209214963",
+    "branch": "main",
+    "producedBy": "Phase 00B inventory (read-only census)",
+    "basis": "Phase 00 inventory + direct source reads; counts re-derived from live sources at this HEAD",
+    "rules": [
+      "No identifier is fabricated.",
+      "The 169 proven missions are NOT the 166 canonical capabilities — no mapping is asserted.",
+      "A higher status is never assigned without its corresponding proof.",
+      "Generated artifacts, comments, function names and docs are NOT treated as proof of working capability."
+    ]
+  },
+
+  "canonicalCapabilities": {
+    "status": "NOT_ENUMERABLE",
+    "verdict": "NON_PROUVE",
+    "detail": "The FROZEN Master references 'A01–A54 ARCHITECTURAL CONTRACT' (a RANGE label; only tokens A01 and A54 occur, no A02..A53) and '166 CAPABILITY REFERENCE' (a conceptual heading in APPENDIX Z), neither enumerated item-by-item anywhere in the repo (tracked or generated).",
+    "sources": [
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_02.md:156,799,824",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_03.md:318,499",
+      "docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_04.md:1507-1512,1659"
+    ],
+    "consequence": "Count A (canonical) is INDETERMINABLE from repo sources. Gate B (Master Runtime Consumption) remains BLOCKED pending a CTO-authoritative enumeration."
+  },
+
+  "definitionsWarning": "The word 'capability' is overloaded across 4 UNRELATED notions below (canonical / runtime-proven-mission / real-executor / verification-probe). 169 ≈ 166 is COINCIDENTAL, not a coverage proof.",
+
+  "counts": {
+    "A_canonicalDeclared": {"value": null, "status": "NOT_ENUMERABLE", "source": "FROZEN Master fiches"},
+    "B_operationalRegisterMissions": {"value": 8, "source": "runtime/governance/ROADMAP.json .missions[]"},
+    "C_wiredExecutors": {"value": 6, "source": "runtime/core/capability-executors.js EXECUTORS[] :280"},
+    "C_wiredProbes": {"value": 13, "source": "runtime/core/capability-probes.js PROBES (module export)"},
+    "D_identifiableExecutionPath": {"value": 6, "note": "the 6 executors; router PATCH_MEMORY tier only is live; factory dormant"},
+    "E_executorsWithUnitTest": {"value": 4, "of": 6, "missing": ["Clean Workspace", "Provider Activation"]},
+    "F_executorsWithIntegrationOrE2E": {"value": 2, "of": 6, "covered": ["External Research Acquisition", "Provider Activation"], "note": "autonomy-e2e benchmark is deliberately capability-free"},
+    "G_executorsWithEvidenceOnDisk": {"value": 5, "of": 6, "absent": ["External Research Acquisition"], "note": "evidence is gitignored/persistent, NOT re-verified this audit; 3/5 STALE"},
+    "H_blockedOrUnwired": {"factoryGeneratedCapabilities": 0, "unprovenExecutableMissions": 12, "unmatchedObjectiveClass": "UNBOUNDED (GAMMA class — no executor, lexical miss)"},
+    "I_separate": {
+      "missionContractsOnDisk": 180,
+      "pendingMissions": 7,
+      "ledgerEntries": 979,
+      "ledgerDistinctProvenMissionIds": 169,
+      "runtimeModel": {"capabilities": 169, "missing": 12, "queue": 12, "outstanding": 0, "converged": false},
+      "domainsCampaigns": 14,
+      "permanentPrimitives": 9,
+      "realExecutors": 6,
+      "verificationProbes": 13,
+      "capabilityModules": 8
+    }
+  },
+
+  "executors": [
+    {"id": "Governed Git Branch Integration", "category": "EXECUTOR", "source": "runtime/core/capability-executors.js:288", "selection": "objectiveId startsWith GIT_BRANCH_INTEGRATION (:290)", "wired": true, "wiringPath": "src/runtime/runtime-executor.ts:132", "unitTest": "runtime/core/git-branch-integration.test.js (47 asserts)", "integrationE2E": null, "evidence": "runtime/generated/git-branch-integration.json", "evidencePresent": true, "evidenceMtime": "2026-10-07T21:01", "freshness": "STALE", "blockers": ["no E2E driver", "evidence stale"], "status": "UNIT_TESTED"},
+    {"id": "Governed Bash/Linux Command", "category": "EXECUTOR", "source": "runtime/core/capability-executors.js:332", "selection": "objectiveId startsWith BASH_COMMAND (:334)", "wired": true, "wiringPath": "src/runtime/runtime-executor.ts:132", "unitTest": "runtime/core/bash-command-governor.test.js (51 asserts)", "integrationE2E": null, "evidence": "runtime/generated/bash-command.json", "evidencePresent": true, "evidenceMtime": "2026-10-10T00:21", "freshness": "FRESH", "blockers": ["no E2E driver"], "status": "UNIT_TESTED"},
+    {"id": "Clean Workspace", "category": "EXECUTOR", "source": "runtime/core/capability-executors.js:373", "selection": "objectiveId startsWith CLEAN_WORKSPACE_ (:375)", "wired": true, "wiringPath": "src/runtime/runtime-executor.ts:132", "unitTest": null, "unitTestNote": "no dedicated executor unit test; only probe-level (clean-workspace-scanned)", "integrationE2E": null, "evidence": "runtime/generated/clean-workspace-scan.json,-coverage.json,-report.json", "evidencePresent": true, "evidenceMtime": "2026-10-10T11:34", "freshness": "FRESH", "blockers": ["no dedicated unit test", "no E2E driver"], "status": "WIRED"},
+    {"id": "External Research Acquisition", "category": "EXECUTOR", "source": "runtime/core/capability-executors.js:438", "selection": "objectiveId startsWith EXTERNAL_RESEARCH_ (:440)", "wired": true, "wiringPath": "src/runtime/consequential-executor-gate.test.ts (real driver)", "unitTest": "runtime/core/external-research-live.test.js (17) + external-research-transport.test.js (10) + research-ranking.test.js (11)", "integrationE2E": "src/runtime/consequential-executor-gate.test.ts", "evidence": "runtime/generated/external-research-acquisition.json", "evidencePresent": false, "evidenceMtime": null, "freshness": "ABSENT", "blockers": ["no execution evidence artifact on disk", "LIVE path needs injected fetcher = operator/human only (cannot survive JSON transport)"], "status": "INTEGRATION_TESTED"},
+    {"id": "Connectivity Audit", "category": "EXECUTOR", "source": "runtime/core/capability-executors.js:566", "selection": "regex /\\b(connectivity|internet|online)\\b/ on haystack (:569)", "wired": true, "wiringPath": "src/runtime/runtime-executor.ts:132", "unitTest": "runtime/core/capability-executors.test.js (34) + connectivity-classifier.test.js (27)", "integrationE2E": null, "evidence": "runtime/generated/connectivity-audit.json", "evidencePresent": true, "evidenceMtime": "2026-10-07T22:22", "freshness": "STALE", "blockers": ["performs REAL network (DNS/HTTPS) — not offline-safe", "evidence stale"], "status": "UNIT_TESTED"},
+    {"id": "Provider Activation", "category": "EXECUTOR", "source": "runtime/core/capability-executors.js:597", "selection": "regex /provider/ on haystack (:598)", "wired": true, "wiringPath": "spawns src/runtime/provider-activation.ts (:615)", "unitTest": null, "unitTestNote": "no runtime/core unit test; TS layer only", "integrationE2E": "src/tests/provider-activation.test.ts", "evidence": "runtime/generated/provider-activation.json", "evidencePresent": true, "evidenceMtime": "2026-10-07T18:15", "freshness": "STALE", "blockers": ["no JS unit test", "evidence stale", "not OS-sandboxed"], "status": "INTEGRATION_TESTED"}
+  ],
+
+  "probes": {
+    "source": "runtime/core/capability-probes.js (PROBES, 13 entries)",
+    "wiredInto": ["runtime/core/validation-engine.js", "runtime/core/mission-contract-factory.js"],
+    "freshnessEnforced": ["clean-workspace-scanned", "external-research-dry-run-planned"],
+    "ids": ["fleet-request-validated", "build-green", "typescript-green", "clean-workspace-scanned", "external-research-dry-run-planned", "internet-reachable", "research-acquired", "git-branch-integrated", "bash-command-governed", "legacy-runtime-retired", "samurai-output-mode", "single-runtime-entrypoint", "capability-probes-finalized"]
+  },
+
+  "operationalRegisterMissions": {
+    "source": "runtime/governance/ROADMAP.json",
+    "count": 8,
+    "ids": ["M0000", "M0001", "M0002", "CLEAN_RUNTIME_WORKSPACE", "PROVIDER_ENABLED_SMOKE_V1", "UNIFY_RUNTIME_EXECUTION", "DYNAMIC_MISSION_CONTRACT_FACTORY", "AUTONOMOUS_CONTRACT_EVOLUTION"]
+  },
+
+  "missions": {
+    "contractsOnDisk": {"count": 180, "source": "runtime/missions/*.json", "note": "NOT capabilities; distinct from executors"},
+    "pending": {"count": 7, "source": "runtime/missions/pending/*.json"},
+    "ledger": {"entries": 979, "distinctProvenIds": 169, "source": "runtime/generated/mission-ledger.json", "note": "runtime-model equates capabilities := distinct proven mission ids (runtime-model.js:187) — a REPORTING tautology, NOT the canonical 166"}
+  },
+
+  "primitives": {
+    "count": 9,
+    "frozen": true,
+    "ids": ["IDENTITY", "STATE", "CONTRACT", "POLICY", "RESOLVER", "EXECUTOR", "EVIDENCE", "RECOVERY", "ALLOCATOR"],
+    "source": "ODG_MASTER_ROADMAP.md §K + FROZEN Master; 'evidence' literal confirmed in runtime/constitution/runtime-constitution.json"
+  },
+
+  "capabilityModules": [
+    {"id": "capability-executors.js", "role": "the 6 real executors", "protected_local_change": true},
+    {"id": "capability-probes.js", "role": "13 verification probes"},
+    {"id": "capability-router.js", "role": "tiers; only PATCH_MEMORY live (decision-engine.js:76-80)"},
+    {"id": "capability-registry.js", "role": "reporting STAGE (writes capability-registry.json); not an executor; no dedicated test"},
+    {"id": "capability-factory.js", "role": "P10 scaffolder; DORMANT — output dir empty, off live pipeline"},
+    {"id": "capability-authorization.js", "role": "human-grant validator/transport for the 4 consequential executors"},
+    {"id": "capability-learning.js", "role": "post-mission outcome learner → patch-memory"},
+    {"id": "capability-metrics.js", "role": "usage/success aggregation; router best() input"}
+  ],
+
+  "crossCuttingDefects": [
+    {"id": "DEF-LEXICAL", "verdict": "PROUVE", "detail": "capability resolution matches objectiveId prefix / goal regex, never intent", "evidence": "capability-executors.js:370; GAMMA reproduction (Campaign-001)"},
+    {"id": "DEF-GAMMA-FALSE-SUCCESS", "verdict": "PROUVE", "status_open": "BLOCKED (Gate B validation fix stopped)", "detail": "read-only RECORDED no-op reaches validated=true", "evidence": "validation-engine.js:88-89"},
+    {"id": "DEF-CONVERGENCE-NO-COVERAGE", "verdict": "PROUVE", "detail": "converged = queue-empty + no-escalation; no Master-coverage gate", "evidence": "converge-cli.ts:137; runtime-autonomy.ts:481-482"},
+    {"id": "DEF-OUTSTANDING-IGNORED", "verdict": "PROUVE", "detail": "campaign reads model.queue only, ignores model.outstanding", "evidence": "autonomy-runtime-adapter.ts:1502 vs runtime-model.js:204"},
+    {"id": "DEF-SKIPPED-EXCLUDED", "verdict": "PROUVE", "detail": "evidence-pack/orchestration contracts classified SKIPPED, excluded from convergence", "evidence": "runtime-model.js:125-131,166-203"},
+    {"id": "DEF-STALE-EVIDENCE", "verdict": "PROUVE", "detail": "gitignored evidence persists; 3/6 executor artifacts STALE (2026-10-07); freshness enforced by only 2/13 probes"},
+    {"id": "DEF-DOUBLE-RUNTIME", "verdict": "PROUVE", "detail": "live capability dispatch is the TS route (runtime-executor.ts); JS benchmark is capability-free", "evidence": "runtime-executor.ts:132; runtime/__bench__/autonomy-e2e.test.js"},
+    {"id": "DEF-MASTER-REGISTER-CONTRADICTION", "verdict": "PROUVE", "detail": "166 canonical (non-enumerated) vs 8 register vs 169 proven missions vs 6 executors; ledger 979/169-distinct vs convergence-report EXECUTION_FAILED/920"}
+  ],
+
+  "unknowns": [
+    {"item": "Real freshness/validity of the 5 on-disk evidence artifacts", "verdict": "NON_PROUVE", "reason": "not re-executed (read-only)"},
+    {"item": "Count of real GAMMA-class unmatched objectives", "verdict": "NON_PROUVE", "reason": "unbounded without canonical enumeration"},
+    {"item": "Live behaviour of Connectivity/Provider/External-Research", "verdict": "NON_PROUVE", "reason": "network/provider forbidden this phase"}
+  ]
+}

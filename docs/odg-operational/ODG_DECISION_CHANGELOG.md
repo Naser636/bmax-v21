@@ -518,12 +518,55 @@
 - **Limits (unchanged):** `test-report.json` remains gitignored evidence; cockpit still shows no test results
   (downstream coupling not implemented); backup off-host destination still undefined; no deploy/provider/API.
 
-## Open decisions (pending CTO)
-- **OD-3 (CLOSED — reconciled 2026-10-10; see CHG-OD-4)** — remediation of **DEF-014** applied + VERIFIED in the
+## CTO decisions — Phase 00C P0 (2026-10-11)
+
+> Recorded from the CTO Phase-00C mission. Documentary only; no runtime/contract/economic change. Companions:
+> `ODG_OPERATIONAL_CAPABILITY_REGISTER.json` (the verifiable inventory) and `ODG_MASTER_ROADMAP.md` §K.
+
+### DEC-008 — Initial mandatory COVERAGE definition (categories tracked SEPARATELY) [CTO-DECISION] — ACCEPTED (2026-10-11)
+- Decision: until a canonical enumeration is proven, "coverage" is defined over the REAL, repo-verifiable
+  categories, **counted and gated separately, never conflated**:
+  (a) operational-register missions — **8** (`runtime/governance/ROADMAP.json`);
+  (b) real executors — **6** (`runtime/core/capability-executors.js` EXECUTORS);
+  (c) verification probes — **13** (`runtime/core/capability-probes.js` PROBES);
+  (d) mission contracts — **180** on disk (+7 pending) (`runtime/missions/`).
+- The canonical **166 capabilities / A01–A54 contracts remain NON-ENUMERABLE / BLOCKED** (only range endpoints
+  A01, A54 occur; no A02..A53; "166" is a conceptual heading) until an exhaustive authoritative source is proven
+  (Gate B). The **169 proven missions are NOT the 166 canonical capabilities** — no mapping is asserted (coincidence).
+- Verifiable criteria (for a later coverage gate): per category, `coverageComplete` ⇔ every REQUIRED item in that
+  category has a real, sufficiently-fresh evidence artifact; no category count is substituted for another's; the
+  canonical count stays `null`/BLOCKED; convergence must also require `queue∅ AND outstanding∅` (closes the
+  false-positive surface in the register's `crossCuttingDefects`). Source of truth: the register JSON.
+- Affects: future coverage/convergence gate (Roadmap Ph.04). Reopen if an authoritative 166/A01–A54 source is supplied.
+
+### DEC-009 — GAMMA false-success policy: explicit contract signal + mandatory execution proof [CTO-DECISION] — ACCEPTED (2026-10-11)
+- Decision: an objective that **declares required execution** (via an EXPLICIT contract signal) MUST produce real
+  execution proof; a `RECORDED` no-op with no edits, no resolved capability and no evidence for such an objective ⇒
+  **NOT validated** (honest `UNRESOLVED`/`BLOCKED`, with reason). **Legitimate read-only audit/analysis objectives**
+  that do NOT carry the signal keep `SUCCESS` — the A3 invariant (`validation-engine-recorded-noop.test.ts` case 4,
+  sparing M0000/M0001/M0002) is **preserved**.
+- The exact field schema is **NOT invented here** (per CTO §7). Its definition and backward-compatibility are
+  **criteria of the next phase** (see OD-4). This resolves the Gate-B BLOCKED ambiguity by introducing an explicit,
+  non-semantic signal rather than interpreting goal text (semantic routing stays out of scope).
+- Verifiable criteria (for the later `validation-engine.js` change + its dedicated test):
+  1. COVERAGE: ALPHA/BETA (resolved capability + evidence) stay `validated=true`.
+  2. FALSE-SUCCESS: GAMMA-class objective carrying the signal, with no evidence ⇒ `validated=false` + explicit reason.
+  3. LEGITIMATE AUDITS: a read-only objective WITHOUT the signal (M000x-class) stays `SUCCESS`.
+  4. REGRESSION: all 5 cases of the existing A3 lock + the validator suites stay green; no economic file touched.
+- Affects: future Roadmap "G-VALID" gate. Depends on OD-4 (signal schema).
+
+
   3-file OD-3 write-set (CHG-OD-3 above). Push residual is now **CLOSED**: `2aa6dab` is published in `origin/main`
   (ancestor of HEAD `581d1f1`); `main` is NOT ahead of `origin/main`. Autonomy's BLOCKED-defer path is PROVEN
   locally; the live end-to-end autonomy loop remains **NOT PROVEN**.
-- (OD-1/OD-2 closed by DEC-007; OD-* reopen only on explicit CTO request.)
+- **OD-4 (OPEN — next phase, per DEC-009)** — define the EXPLICIT contract signal that marks "required execution"
+  (field name, type, default, backward-compatibility with existing contracts), WITHOUT semantic goal parsing and
+  WITHOUT inventing a new contract language beyond this one declared field. Deliverable of the next phase; blocks
+  the `validation-engine.js` G-VALID change.
+- **OD-5 (OPEN — per DEC-008)** — specify the coverage/convergence gate (per-category `coverageComplete` +
+  `queue∅ AND outstanding∅`) and its freshness rule; implementation gated on OD-4 and on a canonical enumeration
+  (still BLOCKED). Document-only until authorized.
+- (OD-1/OD-2 closed by DEC-007; OD-3 closed; OD-* reopen only on explicit CTO request.)
 
 ## Non-verifiable / limits
 - Decisions from conversations PRIOR to the commit history visible in this repo are **not fully recoverable**;

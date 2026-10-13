@@ -4304,3 +4304,26 @@ des preuves/audits antérieurs, NON ré-auditées ce jour ; elles ne sont donc P
 affirmation de validation LIVE, finance-quant, commerce opérationnel, apprentissage autonome complet ou multi-agent
 autonome n'est faite. Write-set documentaire = ce carnet UNIQUEMENT. Aucun push, déploiement, installation, appel
 externe, ni nouvelle mission.
+
+## P03-QUAL-001 — ACCEPTATION CTO : QUAL_CLEAN_GATEB (Phase 03, Gate B) — 2026-10-12
+
+Décision CTO : **acceptation de la qualification individuelle** de la mission `QUAL_CLEAN_GATEB` pour son
+périmètre précis — mission réelle, lecture seule — vérifiée indépendamment (Gate A audit du 2026-10-12).
+
+Faits consignés (observés, non re-déclarés) :
+- `QUAL_CLEAN_GATEB` exécutée sur le VRAI dépôt, hors ligne (voie JS `runtime/bin/odg-run.js`).
+- Pipeline **13/13 SUCCESS**, `mission-report.validated=true`, `mission-lifecycle.achieved=ARCHIVED` (C03 9/9).
+- **3 objectifs mesurés** (`CLEAN_WORKSPACE_1/2/3`) : `status=EXECUTED`, attribution `authoredBy=ODG_CAPABILITY`
+  / `appliedBy=ODG_EXECUTOR`, preuves non vides (scan 153 050 o, coverage 136 o, report 221 o).
+- **1 800 candidats** gitignored (vérif indépendante `git check-ignore` : 1800/1800 ignorés, 0 non-ignoré),
+  **0 fichier suivi** parmi eux (`git ls-files` ∩ candidats = 0), **0 suppression** (`deleted:0`, `trackedRemoved:[]`).
+- **Ledger 980→981** : entrée `{proven:true, state:ARCHIVED, recordedAt:2026-10-12T09:19:49Z, runId:09:19:46Z}` ;
+  append immuable, aucune entrée détruite. **Acceptation mécanique confirmée.**
+- Recalcul indépendant (`objective-attribution` + `autonomy-measure`) : mesurable, dénominateur 3, numérateur 3,
+  100 % *par-mission*, `accepted=0` ; aucune origine UNKNOWN/CONTRACT créditée.
+- `git status` identique au Truth Lock pendant l'exécution (aucun fichier suivi modifié ; toutes écritures
+  gitignored : `runtime/generated/*` + ledger + contrat temporaire `runtime/missions/QUAL_CLEAN_GATEB.json`).
+
+Portée de l'acceptation : **cette mission UNIQUEMENT.** Limites explicites — voie **JS** seulement ; mesure
+**par-mission** (non un taux global) ; **représentativité générale NON démontrée** ; le **gate humain `ACCEPTED`
+de la Phase 03** n'est **PAS** accordé et la **Phase 03 reste `PLANNED`**. Pas de commit/push/déploiement.
