@@ -196,7 +196,7 @@ function toContract(spec) {
         return makeObjective(objId, goal, doneWhen, hasPatch ? spec.patch : undefined);
     });
 
-    return {
+    const contract = {
         mission: id,
         priority: spec.priority || "NORMAL",
         mode: spec.mode || "SEQUENTIAL",
@@ -207,6 +207,19 @@ function toContract(spec) {
         definition_of_done: doneWhen,
         source: "mission-synthesizer",
     };
+    // η3-B49 — CENTRALIZED self-verification: any contract whose FIRST objective routes to the ODG Spec
+    // Author capability (objectiveId prefix "ODG_SPEC_") declares the independent spec-schema-valid proof
+    // HERE, at the single common generator. So EVERY path through toContract (fromRequest, mission-contract-
+    // factory, direct callers) gets the SAME guarantee — the Validation Engine required-proof gate then runs
+    // the probe against the real deliverable. Reuses the existing verify-block format verbatim; a contract
+    // whose first objective is NOT ODG_SPEC_ gets NO verify block (unchanged, deterministic). Idempotent: a
+    // single `verify` key, so combining paths never double-injects. The ODG Spec Author executor's own
+    // internal toContract call produces a `${baseId}_1` first id (never ODG_SPEC_), so the produced spec
+    // deliverable is never given a verify block.
+    if (objectives[0] && typeof objectives[0].id === "string" && objectives[0].id.startsWith("ODG_SPEC_")) {
+        contract.verify = [{ capability: "ODG Spec Author", evidence: "spec-schema-valid" }];
+    }
+    return contract;
 }
 
 // η3-B45 — recognize an EXPLICIT specification-production intent. Deliberately CONSERVATIVE: requires a
@@ -234,15 +247,10 @@ function fromRequest(text, extra) {
     if (!spec.objectiveId && isSpecProductionIntent(spec.goal)) {
         spec.objectiveId = "ODG_SPEC_" + slug(spec.goal, "SPEC");
     }
+    // η3-B49 — the spec-schema-valid verify block is now injected CENTRALLY by toContract (keyed on the first
+    // objective's ODG_SPEC_ id), so fromRequest no longer injects it per-path. fromRequest still owns ONLY the
+    // NL→ODG_SPEC_ routing above; the self-verification guarantee is inherited from the common generator.
     const contract = toContract(spec);
-    // η3-B46 — a routed spec contract DECLARES its own independent verification. The Validation Engine's
-    // required-proof gate (plan.verify → probes.evaluate) will run the spec-schema-valid probe against the
-    // REAL produced deliverable, so a missing / invalid / tampered / stale spec blocks acceptance (it cannot
-    // validate on engineering-scope alone). Applied ONLY on the routed spec path (ODG_SPEC_ objectiveId); any
-    // other contract keeps NO verify block, unchanged. Reuses the existing verify-block format verbatim.
-    if (typeof spec.objectiveId === "string" && spec.objectiveId.startsWith("ODG_SPEC_")) {
-        contract.verify = [{ capability: "ODG Spec Author", evidence: "spec-schema-valid" }];
-    }
     contract.resolvedCapability = template ? template.capability : null;
     contract.resolvedFixers = template ? template.fixers : null;
     return contract;
