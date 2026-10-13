@@ -186,6 +186,34 @@ no scope expansion, no self-approval. Measured by actual control, not declaratio
 authorization after a VERIFIED review (two-gate: GATE A read-only design → STOP; GATE B authorized implementation
 → STOP for acceptance). Authorization failures, missing isolation or ambiguous scope must STOP fail-closed.
 
+**Measured autonomy ladder (A → B → C — OBJECTIVES, not demonstrated performance).** The §K Goal (100%
+lifecycle) and the 80/20 responsibility contract above are refined by three *measured* qualification levels.
+These are **objectives/targets, never claims of acquired performance**; the only measured autonomy evidence to
+date is the Phase 02 offline benchmark (6/6), which establishes **no percentage**. Autonomy % = *actions ODG
+actually executed* ÷ *work eligible AND authorized in scope*; never inflate the numerator with intentions,
+plans, declarations or Claude Code's manual actions ("a generated plan alone is NOT autonomy"; "measured by
+actual control, not declaration"). Every measurement states its denominator and separates: eligible work, work
+ODG executed, work the operator/external tool did, work blocked/refused/failed, and the quality + proofs of each.
+- **Level A — command mode, ODG NOT qualified (current).** Objective ≈ **50%** of the work really executable
+  inside the command perimeter, under control and with limited permissions. A *qualification objective*, not a
+  demonstrated result. → relates to Phase 03.
+- **Level B — qualification & progression.** Raise autonomy ONLY after the current level's mandatory security /
+  execution / recovery / integrity / proof criteria are satisfied; experiments stay bounded, reproducible,
+  observable and reversible. No progression while any mandatory current-level criterion is unmet. → gated by
+  §C/§I and the per-phase criteria.
+- **Level C — ODG qualified in the real world.** Objective ≥ **90%** of the *eligible AND authorized* work
+  executed end-to-end inside the qualified operational perimeter; strategic aim stays full end-to-end autonomy
+  (understand → plan → authorize-per-policy → execute → verify → recover → report → save evidence → resume).
+  This is **not** a universal permission: explicit human validations, forbidden operations and out-of-scope
+  actions stay protected. The 90% must be measured on a representative mission set with an explicit denominator
+  and independently verifiable results, separating eligible / blocked / human-mandatory work; never announce
+  90% or 100% before the corresponding proofs. → relates to Phases 03, 10, 13.
+Ladder (ascending, none yet demonstrated): **50% (Level A objective) < 80% (permanent responsibility floor) <
+90% (Level C qualified target) < 100% (strategic Goal).** The 80/20 contract is the responsibility/authority
+split; the 50→90% ladder is execution-autonomy — distinct axes, not a contradiction. **Objective transition
+conditions:** A→B→C each advance only when the prior level's mandatory criteria are PROVEN (not declared) and
+the §I human gates pass; no level self-authorizes the next.
+
 **Phases (A→Z ladder — 14 phases, 00–13, in priority order).** Each phase is a successive GATE, gated by the §C
 canonical method and the §I human gates; no phase self-authorizes the next and none is "done" without its criteria
 AND proofs. Per-phase fields: *Objective · Known findings (referenced, not re-proven) · Actions · Dependencies ·
@@ -312,6 +340,72 @@ entries below are a resumption map, NOT a grant and NOT a proof.
   certifying beyond proven scope. *Stop:* real deployment stays a separate human/CTO authorization after GO. *State:*
   NOT STARTED.
 
+**Transversal chantier — control referential, learning consolidation & real-deployment qualification (NOT a new
+phase).** Per the CTO roadmap-V2 mission (2026-10-11, documentary only): integrated here, not as a 15th phase, not
+a parallel engine, not a second roadmap. It does not renumber or restate any phase; it attaches each concern to
+its existing phase and references (never duplicates) the operational docs.
+
+*1. Control & proof referential (attaches to Phases 04, 07, 08, 11).* For every control, record: requirement/risk ·
+existing source/mechanism · positive + negative test · expected proof · status ∈ {PROVEN, PARTIAL, ABSENT, BLOCKED,
+NOT_TESTED} · closure criterion + authorized exceptions. Keep the A01–A54-vs-166 distinction: **no complete coverage
+may be declared without item-by-item inventory and individual proofs.** Citable controls at this HEAD:
+
+| Control | Source/mechanism | +test / −test | Status | Closure |
+|---|---|---|---|---|
+| Action admission gate | `action-gate.js` (deterministic ALLOW/DENY/ESCALATE, deny-by-default) | authorized allowed / unauthorized denied-escalated | PARTIAL — proven in isolation; LIVE wiring before patch-executor WRITE is a separate increment | gate enforced on the real write path (→ Ph. 11) |
+| Nine frozen primitives / single runtime | §K invariants; register `primitives` (count 9, frozen) | — / reject a 10th primitive or 2nd runtime | PARTIAL — invariant stated; JS/TS double path still open | one execution-of-record path (→ Ph. 05) |
+| Reversibility ladder R0–R4 | FICHE_07 §11; `action-gate.js` | — | PROVEN (vocabulary) | — |
+| Human-authorization gates | §I; contracts/policies | authorized sub-task proceeds / consequential action refused | PARTIAL — partly prose; action-gate is the code gap | gates enforced in code (→ Ph. 11) |
+| Evidence / ledger | §J; `mission-ledger.js`; `odg verify` | proven-only release / red ⇒ non-zero exit | PROVEN (local) | — |
+| Learning never self-grants | APEX-B1; three learning modules (no authority token) + post-release case I | hit is edits-only / no authority field | PROVEN (advisory) | — |
+| Fail-closed client store | `client-intake.js` (503 on unavailable store) | serves when present / 503 fail-closed when absent | TESTED_LOCALLY | — |
+
+*CTO-referenced but repo-absent (NOT AUTHENTICATED — do not cite as proof):* an **R1–R8 operational-rules** set, a
+**15 control-families** set, and **D1/D3 as directive IDs** are **not present anywhere in this repo** (only an
+unrelated reversibility R0–R4, closeout risk R1/R2, and test-scenario D1/D3 tokens exist). The **54 candidate titles
+/ A01–A54** and **166 capabilities** are **NON_PROUVE / NOT_ENUMERABLE / BLOCKED** (only range endpoints A01, A54
+occur; register `canonicalCapabilities`; Phase 04). Any R1–R8 / 15-families referential must be supplied by an
+authoritative source before it can be compared, fused with the controls above, or proven — none is fabricated here.
+
+*2. Learning consolidation (attaches to Phase 06 — reuse APEX §G-B, no second engine).* The learning system is an
+ASSET TO PRESERVE, not replace. Existing, IMPLEMENTED + TESTED, uniformly **advisory / never authoritative / never
+self-granting**: `capability-learning.js` (per-objective outcomes → store; 7), `patch-memory.js` (goal-keyed
+verified-patch reuse; 11 + reuse-accounting 7), `post-release-learning.js` (feeds real governed evidence into the
+above; cases A–J), `self-diagnostic.js` (expected-vs-observed incidents; 39 + ranking 15 + cycle 16);
+`decision-rules.js` is a static reuse seam; contract `03_LEARNING_ENGINE`. APEX-B1 verified the cycle
+(create⊥validate, unvalidated ⇒ not-promoted, fail-closed, no self-grant) with NO code change. **Reuse-first; forbid
+a second learning system, any new permanent primitive and any duplicate store.** Gaps to EVALUATE before any
+extension (extension allowed only on a demonstrated gap, against a measured baseline, with degradation detection):
+no retention/pruning/drift-detection on the stores (accumulation only); no rollback/retraction of a recorded
+precedent; dedup is goal-text-normalization only (semantically-equal goals can miss); contract-03 names
+`runtime-memory.json` while the implementation persists to autonomy-store keys (naming gap). No learned item may
+ever grant permissions or alter governance.
+
+*3. D1 / D3 runtime dependencies BEFORE real qualification (NOT started in this documentary mission).* Using the
+mission's labels (which are NOT pre-existing directive IDs): **D1 = Action Gate enforcement** → inventory legacy
+write paths, define the test + non-regression matrix, provide an explicit controlled temporary compatibility, and
+flip to ENFORCE-by-default ONLY after criteria + authorizations (→ Phase 11, on the `action-gate.js` LIVE-wiring
+increment). **D3 = invariants** → nine frozen primitives, single-runtime uniqueness, state owners, with negative
+tests that reject violations (→ Phase 05). Neither is begun here.
+
+*4. Preproduction & real-deployment qualification gates (attaches to Phases 12, 13 and §E — reference, do not
+duplicate).* The real-deployment gates already live in: `ODG_REAL_WORLD_LAUNCH_ROADMAP.md` (RWL-E1 preprod e2e,
+RWL-F1 supervised pilot, RWL-G1 public-open authorization gate), `DEPLOYMENT.md` §0 checklist + FINAL DEPLOYMENT
+GATE + §10 private loopback preprod (`vps-6d919042`, not production), `FIRST_SUPERVISED_COMMERCIAL_PILOT_RUNSHEET.md`
+§4/§7/§9, `ODG_INCIDENT_RUNBOOK.md` §3/§5 (stop/recovery), `LAUNCH_READINESS.md` (config/secrets states). Each gate
+must state its **prerequisites, mandatory proofs, validation owner and stop conditions**, covering: explicit
+operational authority/scope; a test environment separated from the real one; representative missions with
+measurable success; failure/recovery/refusal/non-regression tests; observability, logging and evidence retention;
+protection of data/secrets/resources/irreversible actions; stop + recovery + return-to-stable procedure; measured
+quality/autonomy/reliability thresholds; the external dependencies/access actually available; and a bounded pilot
+before any perimeter extension. **Real phases stay BLOCKED while required resources, policies, access or proofs are
+missing — do not simulate availability.**
+
+*Canonical ordering (mission §8) is a sequencing principle, not a renumbering authorization:* truth → governance →
+operational-path qualification → runtime/contract dependencies → requirement/control coverage → authority/invariant/
+recovery hardening → learning qualification → test campaigns → preprod + bounded pilot → final GO/NO-GO. Each concern
+stays attached to its existing phase; all phase statuses and dependencies are unchanged.
+
 **Deferred workstream (post-repair-gates) — World capability benchmark & selective capability integration.**
 
 > Sequenced strictly AFTER the repair gates (Phases 05–07) and the certification ladder (through Phase 13). It is
@@ -366,6 +460,21 @@ never mistaken for a proof. Final acceptance criteria are set by ODG/CTO before 
 12. World capability benchmark + selective candidate integration (dedup, source-traceability, contract, tests,
     cost, permissions, rollback) — [FUTURE REQUIREMENT: deferred, no candidate approved, no count asserted] →
     Deferred-workstream block above (post-repair-gates, after Phase 13).
+13. Measured autonomy %: Levels A (≈50%) / C (≥90%) are OBJECTIVES, not performance; only the Phase 02 offline
+    benchmark (6/6) is measured and establishes no % — [FUTURE REQUIREMENT: measurement harness + representative
+    mission set with explicit denominator] → §K measured-autonomy ladder + Phases 03/10/13.
+14. R1–R8 operational rules + the 15 control families: CTO-referenced but ABSENT from the repo — [NOT
+    AUTHENTICATED: no such artifact present; only unrelated R0–R4 / risk R1-R2 / test D1-D3 tokens exist] → must be
+    supplied by an authoritative source before comparison/fusion/proof (transversal chantier §1).
+15. Learning retention/drift-detection, precedent-rollback, goal-text-only dedup, and the contract-03
+    output-path naming gap — [VERIFIED FINDING: gaps; preserve-not-replace] → Phase 06 (evaluate before any
+    extension; reuse APEX §G-B, no second engine).
+16. "Protected economic paths" are prose-only: no committed registry and no stored fingerprints, and the count is
+    unreconciled (Phase 02 narrative says "four" vs bench evidence `BENCH_E2E_2026-10-11…` says "5"); the only
+    RELEASED pure modules are `economic-extractor.js` + `opportunity-policy.js` (@`b6cf29f`), the others being
+    economic-adjacent (`finance-sim.js` FROZEN @P2.3; `capability-executors.js` preserved-wiring) — [VERIFIED
+    FINDING: documentation inconsistency] → reconcile in a later authorized doc pass; this mission left all
+    economic paths untouched and unstaged.
 
 **Known unresolved issues (do not lose).**
 - Provider boundary not fail-closed in code: provider/local-model run as full-privilege subprocesses; OS sandbox
@@ -389,6 +498,81 @@ per the Phases ladder + Truth Register: the AUTONOMY-E2E-BENCHMARK (Phase 02) is
 @ `4d90989`, evidence `runtime/__bench__/evidence/`), with publication/CI still a separate human authorization;
 thereafter Phase 03 onward in priority order. (5) No implementation without a fresh explicit CTO authorization; Master coverage (Phase 04) keeps
 its own distinct gate.
+
+## L. CONTINUOUS EXECUTION, ROOT-CAUSE & DEPLOYMENT GOVERNANCE (permanent method — additive; reuses §B/§C/§H/§J + FICHE_07; NOT a parallel roadmap)
+
+> Makes THIS roadmap continuously executable from the last ACCEPTED checkpoint to real deployment and post-deploy
+> maintenance. Adds NO phase, NO primitive (the nine stay frozen), NO second roadmap and NO competing status
+> registry: the ordered execution manifest stays `runtime/governance/ROADMAP.json`; the status-of-record stays the
+> ledger `runtime/generated/mission-ledger.json`; the canonical state view stays `runtime/core/runtime-model.js`
+> (`odg state` / `odg health`); checkpoints stay `runtime/core/checkpoint-engine.js`; evidence stays §J. Authority
+> order unchanged (Master FROZEN → Constitution → CTO Directives → ROADMAP.json). A roadmap's order is NOT an
+> execution authorization.
+
+**L.1 Mandatory per-mission cycle — each step has a verifiable EXIT criterion; an unproven step is NEVER "done".**
+1. CHECKPOINT — read the last ACCEPTED checkpoint (ledger proven-set + last accepted commit). *Exit:* checkpoint SHA + accepted mission ids recorded.
+2. TRUTH LOCK — HEAD · branch · origin/main · divergence · index · tracked-modified · untracked · unpushed. *Exit:* initial state captured; divergence understood or STOP.
+3. DISCOVERY — read only the canonical references a decision needs (§A); consult memos BEFORE new investigation (L.2-E). *Exit:* authority source named per decision.
+4. INVENTORY — enumerate every pre-existing change and its owning lot; never trust a prior count. *Exit:* each modified/untracked path classified to a lot.
+5. ROADMAP RECONCILIATION — table requirement → source → observed → proof → gap → action → deps. *Exit:* no duplicate/contradiction; additivity confirmed.
+6. DEPENDENCY/RISK ANALYSIS — order by dependency + regression risk + irreversibility. *Exit:* smallest coherent write-set chosen; independent-acceptance lots isolated.
+7. ROOT-CAUSE REPRODUCTION — reproduce before fixing when safe; a **fresh-clone/CI** repro is REQUIRED where a local build could mask the defect (cf. `released-config-references-uncommitted-sources`). *Exit:* symptom↔root-cause linked by evidence, else BLOCKED.
+8. CTO AUTHORIZATION WHEN REQUIRED — any protected path / commit / push / deploy / default-routing change / scope expansion STOPS for explicit approval. *Exit:* approval cited, else STOP.
+9. MINIMAL CHANGE — smallest change strictly inside the authorized write-set; fix the root cause, not the symptom; no silent scope expansion. *Exit:* diff ⊆ write-set.
+10. TARGETED VERIFICATION — drive the changed behaviour end-to-end (not only unit/typecheck). *Exit:* observed PASS with evidence.
+11. REGRESSION/RECOVERY VERIFICATION — impacted suites + invariants + permissions + write-confinement + recovery, per risk. *Exit:* no regression; each result PASS/FAIL/BLOCKED/NOT-RUN classified honestly.
+12. EVIDENCE — persist reproducible proofs (§J); NEVER record PASS for a BLOCKED or NOT-RUN test. *Exit:* evidence path recorded.
+13. LEARNING-CHAIN VERIFICATION — report distinctly: consulted · reused · newly-recorded · persistence re-read · reuse-demonstrated. *Exit:* chain state stated.
+14. ACCEPTANCE CLASSIFICATION — one honest status ∈ {VALIDÉ-PAR-PREUVES, IMPLÉMENTÉ-ACCEPTATION-EN-ATTENTE, À FAIRE, BLOQUÉ, NON PROUVÉ}. *Exit:* status assigned.
+15. STATE/CHECKPOINT UPDATE — record the outcome to the EXISTING state (ledger / checkpoint / §D); never a parallel tracker; status-of-record stays the ledger. *Exit:* state reconciled.
+16. NEXT ACTION — one minimal authorized next action + the exact resume command. *Exit:* single next command stated.
+
+**L.2 Permanent continuity requirements.**
+- **A STATE** — start from the last ACCEPTED checkpoint; distinguish HEAD / last-checkpoint / worktree / release; record ALL pre-existing changes; preserve other lots' work (no reset/clean/restore/overwrite).
+- **B TRACEABILITY** — separate fact / inference / hypothesis / unknown; keep decision provenance, test results, evidence refs; link defect↔symptom↔root-cause↔fix↔tests↔acceptance.
+- **C MINIMAL WORK, MAXIMUM EXECUTION** — batch compatible independent checks; never drop a critical check to save time; pick the smallest coherent write-set that removes a risk or satisfies a dependency; isolate lots with independent acceptance/risk.
+- **D QUALITY & SECURITY** — reproduce the defect before correcting (when safe); fix the root cause; verify invariants / regression / permissions / write-limits / recovery per risk; a LOCAL build is NOT proof of fresh-clone reproducibility; never declare PASS for an environment-blocked or un-run test.
+- **E LEARNING** — search existing memos before new investigation; verify what was consulted vs effectively reused; record new knowledge with provenance + proof; re-read to confirm persistence; test effective reuse when relevant; track chain blockers; distinguish recorded vs persistence-verified vs reuse-demonstrated.
+- **F RESUME AFTER INTERRUPTION** — record the accepted checkpoint and each lot's real state (done / partial / blocked / not-run / awaiting-authorization); keep decisions taken vs still-open; end every mission with the exact resume command; NEVER assume work is finished because a conversation or session stopped.
+
+**L.3 Reconcilable progress register — REUSE, do not create a competing tracker.** The required fields (roadmap id/version · HEAD/branch/accepted-checkpoint/worktree · phase/objective/deps · lots + authorized write-sets · status ∈ {PRESENT, ABSENT, PARTIAL, BROKEN, PROVEN, UNKNOWN, CONFLICTED} · tests+proofs · blocked/not-run + reasons · root-defects/risks/regressions · learning-chain state · pending CTO decisions · remaining acceptance criteria · next minimal action + resume command · deployment-readiness without auto-promotion) are satisfied by the EXISTING mechanisms: `runtime-model.js` → `odg state`/`odg health` (canonical state), the ledger (proven status), `checkpoint-engine.js` (resume), §D (current-state index), §J (evidence), §F defect register. No `ODG_PROJECT_STATE.md` is created (none exists; creating one would be a competing tracker). If a single human-readable snapshot is later required, EXTEND §D — never add a parallel file.
+
+**L.4 Deployment gates — dependency- & evidence-ordered; per item status ∈ {PROVEN, PARTIAL, BLOCKED, NOT-EXECUTED, UNKNOWN} with justification; NO auto-promotion; production = a SEPARATE explicit CTO authorization.**
+1. Repo integrity + **fresh-clone build reproducibility** (git-archive / CI — never local-only).
+2. Types / contracts / unit / integration / relevant e2e per scope.
+3. Runtime / capability / contract coherence.
+4. Security / authorizations / write-confinement / secrets handling.
+5. State / persistence / idempotence / recovery / rollback.
+6. Data / migrations / backups / verifiable restore.
+7. Observability / logs / metrics / alerts / stop-criteria.
+8. Real external integrations ONLY with real access + authorization (never simulate availability).
+9. Staging / representative environment when available.
+10. Release criteria + CTO decision + post-deploy verification + monitoring.
+Real phases stay BLOCKED while required resources / policies / access / proofs are missing. The launch/deploy/incident runbooks already exist (`ODG_REAL_WORLD_LAUNCH_ROADMAP.md`, `DEPLOYMENT.md`, `ODG_INCIDENT_RUNBOOK.md`, §E/§I) and are REFERENCED here, not duplicated.
+
+**L.5 Anchoring.** This method operationalises §B (resumption Truth Lock), §C (single engineering method), §H (next-mission selection) and §J (evidence), consistent with FICHE_07 and the §K autonomy ladder (objectives, not demonstrated performance). It does not renumber phases 00–13, does not alter the nine primitives, and creates no parallel roadmap or status registry.
+
+## M. RECONCILED EXECUTION STATE & ORDERED SEQUENCE (η3 campaign — evidence-dated 2026-10-13 @`ec70a96`; additive; reuses §D/§J/§L, ROADMAP.json manifest + ledger status-of-record; creates no parallel roadmap/registry)
+
+**Reconciled reality (status ∈ PROUVÉ/PARTIEL/BLOQUÉ/NON EXÉCUTÉ/INCONNU; production never "ready" without proofs):**
+- *RELEASED @`ec70a96`* (origin/main, ledger-backed): capability-registry.ts, ODG Spec Author (routing+self-verify B45/B46), build-recovery relocation-safe, spec self-verification. **PROUVÉ** (benches, worktree).
+- *B53 published build defect* — **PROUVÉ**: `build:runtime` script absent from origin + 8 TS ports absent + 2 released benches (capability-registry-equivalence, dist-closure) invoke it ⇒ `npm run build:runtime` fails "Missing script" on a fresh clone.
+- *B54 candidate* — **PROUVÉ in isolation** (git-archive origin + 8 ports + script, `npm ci --offline`): build EXIT 0 (9 modules emitted), both released benches ALL PASS, strict gate PASS, config-closure PASS. Fresh-clone re-proof = **NON EXÉCUTÉ** (deferred to Gate B).
+- *8 TS ports* (odg-run, pipeline-builder, stage-effect, checkpoint-engine, mission-interpreter, execution-planner, knowledge-engine, patch-engine) — present+compiling+parity-proven in worktree/candidate, **NON PUBLIÉS** (untracked). patch-engine.ts carries the A2 authoredBy transport (convergent).
+- *JS-only, still default* (`ODG_STAGE_BASE=runtime/core`): mission-loader, decision-engine, patch-executor, validation-engine, fleet-stage, mission-lifecycle, mission-ledger, final-report, project-context-engine + support modules — **À MIGRER** (future). Historical .js deletion FORBIDDEN before parity+rollback.
+- *Clusters* — A2 measure/attribution/learning: **PARTIEL** (unit/offline green; end-to-end UNKNOWN). A3 compiled-adapter loop: **PARTIEL** (1 representative green). B49 spec-verify coverage: **IMPLÉMENTÉ, ACCEPTATION EN ATTENTE**. B docs (+162): coherent, uncommitted. tsx-shim blocker: **superseded by compile-to-JS** (inference; fresh-clone re-proof pending).
+
+**Ordered sequence (one list; each gate has an EXIT criterion; order ≠ execution authorization — each lot needs its own CTO approval; follow §L cycle):**
+1. **Controlled build publication** (closes B53). Write-set: package.json(build:runtime)+8 ports. *Exit:* fresh-clone `npm run build:runtime` EXIT 0 + capability-registry-equivalence + dist-closure + strict-gate + config-closure green; no .js deleted; 9 primitives intact. *Status:* **PUBLIÉ + VÉRIFIÉ @`be3a71d`** (η3-B58, 9 files +935/−0, fast-forward from `ec70a96`). Post-publication proof on a clean offline candidate of origin/main `be3a71d` (`npm ci --offline`): `npm run build:runtime` EXIT 0 (8 dist/core + 1 dist/bin), capability-registry-equivalence ALL PASS, dist-closure-relocation ALL PASS, strict-gate PASS, config-closure PASS — the B53 defect is CLOSED. Historical .js preserved (default `ODG_STAGE_BASE=runtime/core`); `patch-engine.ts` published while `patch-engine.js` A2(+13) stays uncommitted. **Remaining NON EXÉCUTÉ:** re-proof via a real NETWORK `npm ci` (only `--offline`/cache was used). → next = lot 2.
+2. **Progressive TS migration** of the JS-only stages, one parity-proven port at a time (keep .js as default+rollback). *Exit:* per-stage parity bench green + strict gate; no .js deletion. *Status:* **PARTIEL — 8/9 stages publiés.** `project-context-engine` **PUBLIÉ + VÉRIFIÉ @`cb1cec1`** (η3-B62, 4 files +254/−2, fast-forward from `be3a71d`): sélectionné η3-B60 (108L, 0 require frère, hors A2, stage conditionnel = plus faible rayon d'impact), porté η3-B61. Preuve post-publication sur un clone PROPRE HORS LIGNE du nouveau `origin/main` `cb1cec1` (`npm ci --offline`, aucun overlay worktree): `build:runtime` EXIT 0 (9 dist/core + 1 dist/bin), bench de parité `project-context-engine-equivalence` ALL PASS (runtime-context.json byte-identique après normalisation des seuls volatils justifiés generatedAt+project.root), strict gate PASS, config-closure PASS (aucun include orphelin), régressions capability-registry-equivalence + dist-closure-relocation ALL PASS. `.js` historique INCHANGÉ (défaut de production `ODG_STAGE_BASE=runtime/core`, rollback intact); aucun .js supprimé; 9 primitives intactes. `fleet-stage` **PUBLIÉ + VÉRIFIÉ @`94da312`** (η3-B66, 4 files +456/−2, fast-forward from `cb1cec1`): 2e étape §M-2, sélectionnée η3-B64 (163L, env-gated, 4 require frères .js inchangés), portée η3-B65. Preuve post-publication sur une archive PROPRE du nouveau `origin/main` `94da312` (`git archive`, node_modules offline, aucun overlay worktree — les 3 membres de closure dirty patch-memory/capability-learning/post-release-learning matérialisés en versions COMMITTÉES): `build:runtime` EXIT 0 (dist/core/fleet-stage.js émis), bench de parité `fleet-stage-equivalence` ALL PASS (36 assertions, 0 FAIL — matrice de précédence resolveConfig env>contract>file>défaut + run() DISABLED/ENABLED-déterministe/fail-closed/fail-open, enveloppes byte-identiques après normalisation des seuls volatils énumérés), closure transitive = 19 modules exacts (0 manquant), strict gate PASS, config-closure PASS, régressions capability-registry-equivalence + dist-closure-relocation + project-context-engine-equivalence ALL PASS. `.js` historique INCHANGÉ (défaut de production `ODG_STAGE_BASE=runtime/core`, rollback intact); 4 deps JS (fleet-envelope/-dispatcher/-collector/-bridge) + 9 primitives intacts. `mission-lifecycle` **PUBLIÉ + VÉRIFIÉ @`7a8d980`** (η3-B70, 4 files +646/−2, fast-forward from `94da312`): 3e étape §M-2, auditée η3-B68 (read-only), portée η3-B69. Preuve post-publication sur une archive PROPRE du nouveau `origin/main` `7a8d980` (`git archive`, node_modules offline, aucun overlay worktree — deps committées-propres): `build:runtime` EXIT 0 (dist/core/mission-lifecycle.js émis), bench de parité `mission-lifecycle-equivalence` ALL PASS (49 contrôles, 0 FAIL — matrice d'états A1–A8, records C03 via le validateur réel dont I5/I2, S4 commit-gate sur sandboxes git RÉELS non-committé⇒VERIFIED/committé⇒RELEASED/git-absent⇒RELEASED, markArchived idempotent, erreur/exit + bannière CLI ; mission-lifecycle.json **BYTE-IDENTIQUE JS≡compilé SANS normalisation — aucun volatil**), closure transitive = 3 modules exacts (mission-lifecycle+governance-kernel+state-transition, 0 manquant), strict gate PASS, config-closure PASS, régressions capability-registry-equivalence + dist-closure-relocation + project-context-engine-equivalence + fleet-stage-equivalence ALL PASS, 3 suites historiques (20+11+3) vertes vs `.js` INCHANGÉ. `.js` historique INCHANGÉ (défaut de production `ODG_STAGE_BASE=runtime/core`, rollback intact); 2 deps JS (governance-kernel/state-transition) + mission-ledger (seul consommateur module) + 9 primitives intacts. **ANOMALIE gouvernance CONSERVÉE (non corrigée ici — mission C03 dédiée requise):** la branche « governance did not authorize » est structurellement inatteignable pour une state-machine cohérente ; sa parité de gate n'est prouvée que via le chemin d'exception. **CLARIFICATION PUBLIÉE + VÉRIFIÉE @`a741285`** (η3-B72 forensique → B73 implémentation → B74 publication ; 3 fichiers : `mission-lifecycle.js` + `.ts` en parité + banc étendu ; fast-forward from `7a8d980`) : le garde tautologique « governance did not authorize » est remplacé par une ERREUR explicite `state-machine inconsistency` (invariant structurel), SANS changer le comportement des parcours cohérents (sorties byte-identiques) ni le contrat d'autorité — `authorityEnforced:false` inchangé, **aucune autorité/allowlist de transition introduite** (kernel/policies/constitution/state-machine inchangés vs `7a8d980`). Preuve post-publication sur archive PROPRE HORS LIGNE de `a741285` (aucun overlay worktree) : banc d'équivalence 66 contrôles + 3 suites historiques (20+11+3) + régressions (capability-registry/dist-closure/project-context-engine/fleet-stage) ALL PASS, strict gate + build:runtime (dist/core/mission-lifecycle.js émis) + config-closure PASS. **Limite E3 conservée :** l'incohérence est testée via un kernel STUBBÉ artificiel — aucun incident runtime réel reproduit. **NON EXÉCUTÉ :** `npm ci` RÉSEAU réel. L'autorité de transition indépendante (option B) reste une mission gouvernance/constitution distincte, non introduite. `validation-engine` **PUBLIÉ + VÉRIFIÉ @`f7224aa`** (η3-B78 port → B80 correctif dispatcher/Truth-Lock → B81 publication ; 8 fichiers +947/−2, fast-forward from `a741285`) via la **commande unique `odg migrate-ts` (PUBLIÉE et accessible par le dispatcher)** : UNE commande de lancement, PORTES internes distinctes (build→strict→banc d'équivalence→suites historiques→régressions), STOP au 1er non-PASS (le reste NOT RUN, jamais de faux DONE), garde Truth-Lock qui refuse un état Git invalide avant toute écriture. Preuve post-publication sur une archive PROPRE de `f7224aa` (aucun overlay worktree ; A2/A3/B49 NON incorporés — isolation prouvée) : `build:runtime` EXIT 0 (dist/core/validation-engine.js émis), banc `validation-engine-equivalence` 24 contrôles / 0 FAIL (mission-report.json BYTE-IDENTIQUE JS≡compilé, ZÉRO normalisation ; 6 scénarios SUCCESS/BLOCKED×3/PARTIAL/STOP-missing), 2 suites historiques vertes vs `.js` INCHANGÉ, 5 régressions (capability-registry/dist-closure/project-context-engine/fleet-stage/mission-lifecycle), test unitaire CLI 20/20 + routage dispatcher + garde, strict gate + config-closure PASS. `.js` historique INCHANGÉ (défaut de production `ODG_STAGE_BASE=runtime/core`, rollback intact). **Qualification HORS LIGNE ; `npm ci` RÉSEAU réel NON EXÉCUTÉ.** **Reprise multi-lot NON QUALIFIÉE** (le checkpoint `pipeline-checkpoint.json` est partagé mono-mission ⇒ un namespace dédié reste requis). Le blocage A2/A3/B49 a été **levé** : A2 (mesure/attribution) **PUBLIÉ @`5c51828`**, B49 (spec-verify centralisé) **@`deb7627`**, A3 (adaptateur runtime compilé) **@`47e5257`** (η3-B84, 3 commits ff, `npm ci` RÉSEAU réel qualifié). Les quatre stages alors débloqués — `mission-loader`, `decision-engine`, `patch-executor`, `final-report` — sont **PUBLIÉS + VÉRIFIÉS @`ec9986a`** (η3-B85, 1 commit, 10 fichiers +1694/−2, fast-forward from `47e5257`) : ports fidèles + 4 bancs d'équivalence (mission-plan/mission-context, decision.json, patch-execution.json **incl. attribution A2**, final-report.md après normalisation du seul volatil `- Generated:`), preuve post-publication sur archive PROPRE de `ec9986a` — strict gate + build:runtime (4 dist émis) + 4 équivalences + 6 bancs publiés + 4 suites historiques + régressions A2/B49/A3 ALL PASS ; `.js` historiques INCHANGÉS. **Restants (1/9): À MIGRER** — **`mission-ledger`** uniquement, dernière migration (status-of-record immuable = RISQUE ÉLEVÉ), objet d'une campagne dédiée (η3-B86). **Runtime : le JavaScript reste le chemin d'exécution par DÉFAUT (`ODG_STAGE_BASE=runtime/core`) ; AUCUNE bascule runtime n'est autorisée ou impliquée. Publication Git ≠ production-ready** (preuves = compilation + parité + bancs hors ligne ; pas de bascule, pas de déploiement). **Remaining NON EXÉCUTÉ:** re-preuve via un `npm ci` RÉSEAU réel (seul `--offline`/cache a été utilisé). La migration globale reste **PARTIELLE**. → prochain candidat: à sélectionner par risque croissant parmi les restants (mission-loader/decision-engine/patch-executor/final-report = A2-modifiés ⇒ conflit ; mission-ledger = status-of-record ⇒ risque max).
+3. **A2 audit** (autonomy-measure line-by-line: attribution/denominator not loosened) + end-to-end suites. *Exit:* measure rules unchanged, suites green. *Status:* **PUBLIÉ + VÉRIFIÉ @`5c51828`** (η3-B84 ; invariants non assouplis, suites vertes, aucune régression des ports TS).
+4. **A3 validation** (6 adapter-compiled benches). *Exit:* all green. *Status:* **PUBLIÉ + VÉRIFIÉ @`47e5257`** (η3-B84 ; adaptateur entry-seam + 12 bancs verts, routage explicite sans fallback).
+5. **B49 acceptance** (independent). *Exit:* CTO accept + bounded commit. *Status:* **PUBLIÉ + VÉRIFIÉ @`deb7627`** (η3-B84 ; spec-verify centralisé/idempotent, banc 4/4).
+6. **Integrated qualification / security / recovery / rollback** (§L.4 gates 3–7; action-gate LIVE wiring Ph.11, invariants Ph.05). *Exit:* per-gate PROUVÉ with proof. *Status:* BLOQUÉ (deps).
+7. **Staging** (representative env; preprod loopback `vps-6d919042`, not prod). *Exit:* representative missions measured. *Status:* BLOQUÉ.
+8. **Release authorization + post-deploy verification + monitoring** (separate explicit CTO gate; runbooks §E/§I + `ODG_REAL_WORLD_LAUNCH_ROADMAP.md`/`DEPLOYMENT.md`/`ODG_INCIDENT_RUNBOOK.md`). *Exit:* CTO GO + post-deploy checks. *Status:* BLOQUÉ.
+
+**Next CTO decision:** authorize lot 1 (build publication, Gate B) incl. patch-engine.ts inclusion + fresh-clone re-proof; or defer. Status-of-record stays the ledger; this section is a human-readable reconciliation, not a second tracker.
 
 ## Validation
 Compatible with FICHE_01–06 (referenced, unmodified) and FICHE_07 method; no parallel governance; historical
