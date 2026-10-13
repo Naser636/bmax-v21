@@ -133,12 +133,40 @@ if (errors.length) {
 }
 
 copied.sort((a, b) => a.rel.localeCompare(b.rel));
+
+// PROVENANCE + FRESHNESS (η3-B105). Record, for every closure input, the SOURCE file it was built
+// from and that source's content sha, so a validator can detect a STALE dist (source changed after
+// the build) — not just a structurally-broken one. Emitted dist files map to their .ts source; copied
+// JS files carry their source path + sha already. Deterministic (NO timestamps) so a clean rebuild
+// from the same sources yields a byte-identical manifest (reproducibility invariant, B103). git fields
+// are best-effort provenance only (absent in a .git-less archive) and are NEVER used for freshness.
+function srcTsForEmitted(distFile) {
+  const srcDir = distToSrcDir(path.dirname(distFile));
+  const ts = path.join(srcDir, path.basename(distFile).replace(/\.js$/, ".ts"));
+  return fs.existsSync(ts) ? ts : null;
+}
+const inputs = [];
+for (const f of [...emitted, ENTRY]) {
+  const ts = srcTsForEmitted(f);
+  if (ts) inputs.push({ distRel: path.relative(DIST, f), srcRel: path.relative(REPO, ts), srcSha: sha256(ts), kind: "emitted" });
+}
+for (const c of copied) inputs.push({ distRel: c.rel, srcRel: c.srcRel, srcSha: c.sha, kind: "copied" });
+inputs.sort((a, b) => a.distRel.localeCompare(b.distRel));
+let sourceCommit = "unknown";
+let sourceClean = null;
+try {
+  const { execFileSync } = require("child_process");
+  sourceCommit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: REPO, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  sourceClean = execFileSync("git", ["status", "--porcelain"], { cwd: REPO, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim().length === 0;
+} catch (e) { /* no git (e.g. git-archive sandbox): provenance stays "unknown"; freshness unaffected */ }
+
 const manifest = {
   generator: "scripts/build-dist-closure.js",
   emittedCount: emitted.length,
   copiedCount: copied.length,
   totalClosure: emitted.length + copied.length,
   copied,
+  provenance: { schema: 1, sourceCommit, sourceClean, inputCount: inputs.length, inputs },
 };
 fs.writeFileSync(path.join(DIST, "dist-closure-manifest.json"), JSON.stringify(manifest, null, 2));
 console.log(`build-dist-closure: OK — emitted=${emitted.length} copied=${copied.length} total-closure=${manifest.totalClosure}`);

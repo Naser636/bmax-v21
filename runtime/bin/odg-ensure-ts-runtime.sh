@@ -24,23 +24,35 @@ set -euo pipefail
 DIST="runtime/dist"
 MANIFEST="${DIST}/dist-closure-manifest.json"
 
-# Structural validator: entry present, core/ present, manifest parseable + self-consistent, and every
-# file the manifest claims to have copied actually exists. Exit 0 = valid, non-zero = (re)build needed.
+# Validator: STRUCTURAL (entry present, core/ present, manifest parseable + self-consistent, every
+# copied file present) AND — when the manifest carries a provenance block (η3-B105) — FRESHNESS: each
+# recorded closure input's SOURCE file must still hash to the sha captured at build time, else the dist
+# is STALE and must be rebuilt. A manifest WITHOUT provenance (older build) passes freshness by
+# omission (backward-compatible; structural checks still apply). Exit 0 = valid, non-zero = (re)build.
 valid_dist() {
   [ -f "${DIST}/bin/odg-run.js" ] || return 1
   [ -d "${DIST}/core" ] || return 1
   [ -f "${MANIFEST}" ] || return 1
   node -e '
-    const fs = require("fs"), path = require("path");
+    const fs = require("fs"), path = require("path"), crypto = require("crypto");
+    const sha = (f) => crypto.createHash("sha256").update(fs.readFileSync(f)).digest("hex").slice(0, 16);
     try {
       const m = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-      if (typeof m.totalClosure !== "number" || m.totalClosure !== m.emittedCount + m.copiedCount) process.exit(1);
+      if (typeof m.totalClosure !== "number" || m.totalClosure !== m.emittedCount + m.copiedCount) { console.error("[validate] manifest inconsistent"); process.exit(1); }
       for (const c of (m.copied || [])) {
         const rel = typeof c === "string" ? c : (c && (c.rel || c.to || c.path || c.file));
-        if (rel && !fs.existsSync(path.join("runtime", "dist", rel))) process.exit(1);
+        if (rel && !fs.existsSync(path.join("runtime", "dist", rel))) { console.error("[validate] copied file missing: " + rel); process.exit(1); }
+      }
+      const prov = m.provenance;
+      if (prov && Array.isArray(prov.inputs)) {
+        for (const i of prov.inputs) {
+          if (!i.srcRel || !i.srcSha) continue;
+          if (!fs.existsSync(i.srcRel)) { console.error("[validate] STALE: source gone " + i.srcRel); process.exit(1); }
+          if (sha(i.srcRel) !== i.srcSha) { console.error("[validate] STALE: source changed since build: " + i.srcRel); process.exit(1); }
+        }
       }
       process.exit(0);
-    } catch (e) { process.exit(1); }
+    } catch (e) { console.error("[validate] " + e.message); process.exit(1); }
   ' "${MANIFEST}" || return 1
   return 0
 }
