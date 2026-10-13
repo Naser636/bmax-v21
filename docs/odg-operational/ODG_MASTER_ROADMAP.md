@@ -649,6 +649,31 @@ action-gate + action-gate-live + patch-executor + governance-guard ALL PASS (Ph.
 prefix `/usr/local` is root-owned while the runner is `ubuntu`; safe sudo-free remedy is `claude install` (native
 per-user) or a user-prefix reinstall — NOT applied here (outside the repo; no global env change).
 
+**§M-6 — Local backup vault (same-VPS), proven restore; off-host remains a SEPARATE unresolved track (η3-B95, 2026-10-13, additive; NO production source change, NO runtime switch, NO JS deletion).**
+Built the best reasonably-safe SAME-HOST backup layer, reusing the EXISTING governed mechanism (no new backup logic).
+Addresses B94's finding "backup MECHANISM proven local / off-host BLOCKED" by delivering the local vault only.
+- **Location/perms:** `/var/backups/odg-vault` (outside the repo and /tmp), dir `0700` + files `0600`, owner `ubuntu`,
+  created with one targeted `install -d` (no package install, no `/usr/local` change, no global config). Dated generations
+  (`<UTC>/`), multi-generation capable. No backup data, keys, or secrets in Git.
+- **Method & contents:** governed `odg backup` (`runtime/core/client-store-backup.js`, READ-ONLY on source, self-contained
+  integrity-verified manifest) over the client store `runtime/generated/clients/**`, **+** `git bundle --all` (local
+  reconstruct path for accidental repo deletion; GitHub `origin` remains the real off-host repo copy) **+** a non-secret
+  `VAULT_MANIFEST.json`/`SHA256SUMS` (date, provenance HEAD, sizes, hashes, scope, limits).
+- **Evidence (observable, this session @5f324d1):** client-store manifest integrity `verify` ok; **synthetic 2-file
+  isolated round-trip restore HASHES-MATCH** (production never touched); refusals proven — restore into prod store ⇒
+  `TARGET_FORBIDDEN_PRODUCTION`, non-empty target ⇒ `TARGET_NOT_EMPTY`, tampered manifest ⇒ `INTEGRITY_MISMATCH`
+  (fail-closed); `git clone` from `repo.bundle` reconstructs HEAD = 5f324d1 (BUNDLE-RESTORE ok); SHA256SUMS all OK; module
+  suites `client-store-backup.test.js` 12/12 + `odg-backup.test.js` 18/18. Current client store is EMPTY (0 files) so the
+  live manifest is a valid empty backup; the non-trivial proof is the synthetic round-trip.
+- **Encryption at rest:** gpg AES-256 encrypt→decrypt round-trip PROVEN (ephemeral key, nothing persisted/logged). A
+  PERSISTED encrypted vault is **BLOCKED** — no restic/age, no install authz, and no CTO-custodied passphrase / off-host
+  key escrow; since the store holds NO secrets by construction, a cleartext + integrity-hashed vault is acceptable and is
+  NOT a "sensitive cleartext backup". Recovery-key custody is a CTO decision tied to the off-host track.
+- **Covered:** accidental deletion from the repo/store, ordinary mishandling, integrity corruption (detected, fail-closed),
+  local restore drill. **NOT covered (explicit):** off-host destination (separate unresolved track), root / VPS
+  compromise / disk loss / total host loss, live preprod store unless `$ODG_CLIENT_STORE` points at it at backup time. No
+  cron/systemd/rotation installed (would need separate authz). Local permissions do NOT stop root — not claimed.
+
 ## Validation
 Compatible with FICHE_01–06 (referenced, unmodified) and FICHE_07 method; no parallel governance; historical
 lessons included via the defect register; code/tests/integration/config/production distinguished; accepted work
