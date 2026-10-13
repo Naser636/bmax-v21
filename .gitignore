@@ -95,3 +95,9 @@ next-env.d.ts
 # Ad-hoc scratch report output at the repo root (e.g. redirected command dumps).
 # Not part of the Runtime tree; kept on disk if present, never versioned.
 /rapport_complet.txt
+
+# Compiled TypeScript runtime output (Lot 1R/1S migration). `npm run build:runtime` emits the compiled
+# CommonJS entry+orchestration here from the TypeScript SOURCES under runtime/bin|core/*.ts. This is a
+# GENERATED execution artifact (regenerable, never hand-edited), so it is not versioned. Scoped to the
+# dist dir ONLY — the TypeScript sources and the runtime/generated evidence remain fully visible/tracked.
+/runtime/dist/

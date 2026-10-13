@@ -141,7 +141,22 @@ echo "[3/5] INITIALIZE"
 
 echo "[PIPELINE] Launching Runtime..."
 
-node runtime/bin/odg-run.js "$MISSION"
+# Runtime selector (η3-B102). DEFAULT = JavaScript (unchanged; NO cutover). Operators may OPT IN to the
+# qualified compiled TypeScript runtime with ODG_RUNTIME=ts. Rollback = unset ODG_RUNTIME (or =js). The TS
+# path REQUIRES a built distribution (runtime/dist is gitignored; run the `build:runtime` npm script first);
+# if it is absent the launcher FAILS LOUDLY — it NEVER silently falls back to the JS runtime.
+if [ "${ODG_RUNTIME:-js}" = "ts" ]; then
+  if [ ! -f runtime/dist/bin/odg-run.js ] || [ ! -d runtime/dist/core ]; then
+    echo "[PIPELINE] ODG_RUNTIME=ts but the compiled runtime is not built (runtime/dist missing)." >&2
+    echo "[PIPELINE] Build it with the \`build:runtime\` npm script, or unset ODG_RUNTIME to use the JS runtime. NO silent fallback." >&2
+    exit 1
+  fi
+  echo "[PIPELINE] Runtime engine: COMPILED TypeScript (runtime/dist, ODG_STAGE_BASE=${ODG_STAGE_BASE:-runtime/dist/core})"
+  ODG_STAGE_BASE="${ODG_STAGE_BASE:-runtime/dist/core}" node runtime/dist/bin/odg-run.js "$MISSION"
+else
+  echo "[PIPELINE] Runtime engine: JavaScript (default)"
+  node runtime/bin/odg-run.js "$MISSION"
+fi
 
 mkdir -p runtime/generated/mission-artifacts/{generated,passports,reports,certificates,history}
 
