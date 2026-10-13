@@ -217,11 +217,22 @@ function computeLifecycle(mission) {
     const next = nexts[0];
     if (next === sm.terminalState) break; // ARCHIVED is owned by the Ledger
 
-    // Governance must authorize leaving the current state.
+    // Governance CONSISTENCY invariant (η3-B73) — NOT an authority grant. governance-kernel declares
+    // authorityEnforced:false and its `authorized` means only "an outgoing edge exists from currentState";
+    // it enforces no policy/allowlist/contract authority (none exists, by contract). Both the kernel and
+    // this walk read the SAME runtime/governance/state-machine.json, and `next` is taken from
+    // transitions[current]; so a STRUCTURALLY CONSISTENT machine ALWAYS yields gov.authorized === true AND
+    // gov.nextStates.includes(next) here (current was just confirmed to have ≥1 edge). If that does NOT
+    // hold, the kernel's view of the edges leaving `current` diverges from the walk's — a structural
+    // inconsistency (corrupt or concurrently-mutated state machine), never a normal authorization refusal.
+    // Surface it as an explicit, verifiable error instead of recording a misleading transition.
     const gov = authorizeMission(mission, current);
     if (!gov.authorized || !gov.nextStates.includes(next)) {
-      transitions.push({ from: current, to: next, ok: false, evidence: "governance did not authorize" });
-      break;
+      throw new Error(
+        "mission-lifecycle: state-machine inconsistency — governance kernel does not confirm the declared " +
+          "transition " + current + " → " + next +
+          " (authorized=" + gov.authorized + ", nextStates=" + JSON.stringify(gov.nextStates) + ")"
+      );
     }
 
     const probe = (evidence[next] || (() => ({ ok: false, evidence: "no evidence probe" })))();

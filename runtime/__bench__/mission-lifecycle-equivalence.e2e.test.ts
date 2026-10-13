@@ -318,6 +318,55 @@ try {
     check(strip(rJ.out) === strip(rT.out), "D: CLI banner BYTE-IDENTICAL JS≡compiled");
     check(/MISSION LIFECYCLE \(governance-driven\)/.test(rJ.out) && /Achieved : RELEASED/.test(rJ.out), "D: banner shows governance-driven header + Achieved : RELEASED");
   }
+
+  // ---- PART E: governance CONSISTENCY invariant (η3-B73 clarification) ----
+  console.log("  --- Part E: governance consistency invariant (B73) ---");
+  // E1: the kernel returns authorized:false ONLY for an edgeless/unknown state — existing contract,
+  //     authorityEnforced:false (NO allowlist / authority source invented). Proven against the REAL kernel.
+  {
+    const sb = newSandbox("Ek"); copySupport(sb);
+    const drv = path.join(sb, "k.js");
+    fs.writeFileSync(drv, "const g=require(process.argv[2]);const o={};for(const s of ['CREATED','RELEASED','ARCHIVED','BOGUS']){const r=g.authorizeMission('P',s);o[s]=[r.authorized,r.authorityEnforced,r.nextStates.length]}process.stdout.write(JSON.stringify(o));");
+    const kernelPath = path.join(path.dirname(COMPILED_ENGINE), "governance-kernel.js"); // the real historical kernel co-located
+    const r = spawnSync("node", [drv, kernelPath], { cwd: sb, encoding: "utf8", env: baseEnv() });
+    const o = JSON.parse(r.stdout);
+    check(o.CREATED[0] === true && o.RELEASED[0] === true, "E1: kernel authorized:true for states WITH an outgoing edge (CREATED, RELEASED)");
+    check(o.ARCHIVED[0] === false && o.BOGUS[0] === false, "E1: kernel authorized:false ONLY for edgeless/unknown states (ARCHIVED, BOGUS)");
+    check(o.CREATED[1] === false && o.ARCHIVED[1] === false, "E1: authorityEnforced:false preserved on both (no authority source invented)");
+  }
+  // E2: a CONSISTENT walk NEVER records a governance-refusal and NEVER throws the invariant (both engines).
+  {
+    for (const [eng, tag] of [[JS_ENGINE, "js"], [COMPILED_ENGINE, "ts"]] as const) {
+      const sb = newSandbox("Ec"); seedCase(sb, "E2", FULL("E2")); const r = runMain(eng, "E2", sb);
+      const lc = JSON.parse(lifecycleJson(sb));
+      const refusal = lc.transitions.some((t: any) => /governance did not authorize|state-machine inconsistency/.test(t.evidence || ""));
+      check(r.status === 0 && !refusal, `E2 [${tag}]: consistent walk exits 0 and records NO governance-refusal/inconsistency transition`);
+    }
+  }
+  // E3: a CONTROLLED structural inconsistency (kernel STUBBED to violate the nextStates⊇next contract) is
+  //     surfaced as an EXPLICIT, verifiable error — NOT a fake "governance did not authorize" refusal.
+  //     HONEST LIMITATION (per mission honesty clause): this divergence is ARTIFICIAL — no real runtime input
+  //     produces it, because governance-kernel and the walk read the SAME state-machine.json in the SAME tick.
+  //     The stub validates the GUARD's RESPONSE to a violated contract, it does NOT reproduce a real incident.
+  {
+    const STUB = "module.exports={authorizeMission:(m,s)=>({mission:m,currentState:s,authorized:true,authorityEnforced:false,nextStates:['__INCONSISTENT__']})};";
+    function stubbedEngineDir(engineSrc: string): string {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-ml-stub-"));
+      sandboxes.push(dir);
+      fs.cpSync(engineSrc, path.join(dir, "mission-lifecycle.js"));
+      fs.cpSync(path.join(CORE, "state-transition.js"), path.join(dir, "state-transition.js"));
+      fs.writeFileSync(path.join(dir, "governance-kernel.js"), STUB); // artificial: breaks nextStates⊇next
+      return path.join(dir, "mission-lifecycle.js");
+    }
+    for (const [src, tag] of [[JS_ENGINE, "js"], [COMPILED_ENGINE, "ts"]] as const) {
+      const engine = stubbedEngineDir(src);
+      const sb = newSandbox("Ei"); seedCase(sb, "E3", FULL("E3")); const r = runMain(engine, "E3", sb);
+      check(r.status !== 0, `E3 [${tag}]: controlled structural inconsistency ⇒ non-zero exit (got ${r.status})`);
+      check(/state-machine inconsistency/.test(r.out), `E3 [${tag}]: surfaced as EXPLICIT 'state-machine inconsistency' error`);
+      check(!/governance did not authorize/.test(r.out), `E3 [${tag}]: the misleading 'governance did not authorize' wording is GONE`);
+      check(lifecycleJson(sb) === null, `E3 [${tag}]: no mission-lifecycle.json written on the inconsistency error path`);
+    }
+  }
 } finally {
   for (const sb of sandboxes) { try { fs.rmSync(sb, { recursive: true, force: true }); } catch { /* best-effort */ } }
 }
