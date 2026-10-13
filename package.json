@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:runtime": "tsc -p tsconfig.runtime-dist.json",
     "start": "next start",
     "lint": "eslint",
     "demo": "tsx src/demo.ts",
