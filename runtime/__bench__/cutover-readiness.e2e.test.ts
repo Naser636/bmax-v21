@@ -26,18 +26,15 @@ const read = (p) => fs.readFileSync(path.join(REPO, p), "utf8");
 
 console.log("η3-B106 — FINAL CUTOVER READINESS (evidence + coupling map)");
 
-// A. Published front-door-A default is STILL JavaScript (invariant: no cutover yet).
+// A. Published front-door-A default is now TypeScript (FLIPPED η3-B108), with JS rollback preserved.
 const pipe = read("runtime/bin/odg-local-pipeline.sh");
-check(/\$\{ODG_RUNTIME:-js\}/.test(pipe), "A. published front-door-A default is JavaScript (ODG_RUNTIME:-js) — not yet flipped");
-check(pipe.includes("odg-ensure-ts-runtime.sh"), "A. TS branch delegates to the freshness-guarded entry-build helper (B105)");
-check(/\[PIPELINE\] Runtime engine: JavaScript \(default\)/.test(pipe), "A. JS rollback branch present");
+check(/\$\{ODG_RUNTIME:-ts\}/.test(pipe) && !/\$\{ODG_RUNTIME:-js\}/.test(pipe), "A. published front-door-A default is TypeScript (ODG_RUNTIME:-ts) — flipped");
+check(pipe.includes("odg-ensure-ts-runtime.sh"), "A. TS path delegates to the freshness-guarded entry-build helper (B105)");
+check(/\[PIPELINE\] Runtime engine: JavaScript \(default\)/.test(pipe), "A. JS rollback branch present (reached via ODG_RUNTIME=js)");
 
-// B. The flip is a SINGLE localized default-expansion change that preserves both branches.
-const flipped = pipe.replace("${ODG_RUNTIME:-js}", "${ODG_RUNTIME:-ts}");
-check(flipped !== pipe && flipped.split("${ODG_RUNTIME:-ts}").length === 2, "B. flip = one token (js->ts) in the selector default; nothing else changes");
-check(flipped.includes("odg-ensure-ts-runtime.sh") && /Runtime engine: JavaScript \(default\)/.test(flipped), "B. after flip, helper guard + JS rollback branch BOTH remain (ODG_RUNTIME=js rolls back)");
-// the exact default-expansion semantics (bash): unset -> ts, explicit js -> js.
-check("${ODG_RUNTIME:-ts}".replace("${ODG_RUNTIME:-ts}", process.env.ODG_RUNTIME && process.env.ODG_RUNTIME.length ? process.env.ODG_RUNTIME : "ts") === "ts", "B. default-expansion resolves to ts when unset (rollback via ODG_RUNTIME=js)");
+// B. Rollback is a single explicit env value; both branches remain reachable.
+check(/if \[ "\$\{ODG_RUNTIME:-ts\}" = "ts" \]; then/.test(pipe), "B. selector: unset/ts ⇒ TS; the else branch is the JS rollback");
+check(pipe.includes("ODG_RUNTIME=js to return to the JavaScript runtime"), "B. rollback path documented in the launcher (ODG_RUNTIME=js)");
 
 // C. Front-door-B coordinated switch + coupling RESOLVED by B107 JS-entry pins.
 const adapter = read("src/runtime/autonomy-runtime-adapter.ts");

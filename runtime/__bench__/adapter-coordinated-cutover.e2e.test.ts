@@ -52,12 +52,12 @@ function withEnv(env: Record<string, string | undefined>, fn: () => void) {
 
 console.log("η3-B107 — FRONT-DOOR-B COORDINATED CUTOVER SWITCH");
 try {
-  // 1. PUBLISHED DEFAULT (no env) ⇒ JS entry, no stage base.
+  // 1. PUBLISHED DEFAULT (no env) ⇒ COMPILED entry + stage base (TypeScript default, η3-B108).
   withEnv({}, () => {
     const sb = buildWs(0);
     const out: any = new AutonomyRuntimeAdapter(sb).runPipeline("M");
     check(out.pipelineOk === true, "default: pipeline OK");
-    check(mark(sb) === "JS:NONE", "default (no env) ⇒ JS entry, no ODG_STAGE_BASE (published default unchanged)");
+    check(mark(sb) === "TS:runtime/dist/core", "default (no env) ⇒ COMPILED entry + ODG_STAGE_BASE=runtime/dist/core (published default = TypeScript, B108)");
   });
 
   // 2. ODG_RUNTIME=ts + ensure OK ⇒ compiled entry + injected stage base.
@@ -84,11 +84,11 @@ try {
     check(mark(sb) === null, "failing ensure ⇒ NEITHER entry executed (no silent fallback to JS)");
   });
 
-  // 5. REVERSIBLE ROLLBACK: unset ⇒ JS entry again.
-  withEnv({}, () => {
+  // 5. REVERSIBLE ROLLBACK: ODG_RUNTIME=js ⇒ JS entry (return to JavaScript from the TS default).
+  withEnv({ ODG_RUNTIME: "js" }, () => {
     const sb = buildWs(0);
     new AutonomyRuntimeAdapter(sb).runPipeline("M");
-    check(mark(sb) === "JS:NONE", "rollback: unset ODG_RUNTIME ⇒ JS entry again (reversible)");
+    check(mark(sb) === "JS:NONE", "rollback: ODG_RUNTIME=js ⇒ JS entry (reversible to JavaScript)");
   });
 } finally {
   for (const sb of sandboxes) { try { fs.rmSync(sb, { recursive: true, force: true }); } catch {} }

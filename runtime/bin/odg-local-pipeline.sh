@@ -141,14 +141,14 @@ echo "[3/5] INITIALIZE"
 
 echo "[PIPELINE] Launching Runtime..."
 
-# Runtime selector (η3-B102; entry build η3-B104). DEFAULT = JavaScript (unchanged; NO cutover).
-# Operators may OPT IN to the compiled TypeScript runtime with ODG_RUNTIME=ts. Rollback = unset
-# ODG_RUNTIME (or =js). runtime/dist stays generated + git-ignored (never committed, no implicit
-# postinstall); on the opt-in path an EXPLICIT, controlled, reproducible build is performed at the
-# entry if the distribution is absent or structurally invalid (helper: odg-ensure-ts-runtime.sh,
-# which runs a real tsc emit + closure copy — NOT tsx). If that build or its validation fails the
-# launcher STOPS loudly; it NEVER silently falls back to the JS runtime.
-if [ "${ODG_RUNTIME:-js}" = "ts" ]; then
+# Runtime selector (η3-B102; entry build η3-B104; DEFAULT FLIPPED to TypeScript η3-B108). PUBLISHED
+# DEFAULT = compiled TypeScript. ROLLBACK to JavaScript = ODG_RUNTIME=js (explicit). runtime/dist stays
+# generated + git-ignored (never committed, no implicit postinstall); on the TS path an EXPLICIT,
+# controlled, reproducible build is performed at the entry if the distribution is absent or
+# structurally invalid or STALE (helper: odg-ensure-ts-runtime.sh — real tsc emit + closure copy +
+# provenance/freshness, NOT tsx). If that build or its validation fails the launcher STOPS loudly; it
+# NEVER silently falls back to the JS runtime. Set ODG_RUNTIME=js to return to the JavaScript runtime.
+if [ "${ODG_RUNTIME:-ts}" = "ts" ]; then
   if ! bash runtime/bin/odg-ensure-ts-runtime.sh; then
     echo "[PIPELINE] ODG_RUNTIME=ts but the compiled runtime could not be ensured (see [TS-RUNTIME] above)." >&2
     echo "[PIPELINE] Fix the build, or unset ODG_RUNTIME to use the JS runtime. NO silent fallback." >&2

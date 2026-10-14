@@ -117,8 +117,10 @@ const COMPILED_PIPELINE = "runtime/dist/bin/odg-run.js";
 // (odg-local-pipeline.sh) — routes front door B to the compiled entry too, so a future cutover is a
 // single coordinated default change, not a code edit. Unset/`js` keeps the historical JS entry. The ts
 // path ensures a FRESH compiled dist before launch and NEVER silently falls back (see runLocalPipeline).
+// DEFAULT FLIPPED to TypeScript (eta3-B108): an UNSET ODG_RUNTIME now resolves to the compiled runtime
+// (published default). ROLLBACK to JavaScript = ODG_RUNTIME=js (explicit). ODG_RUNTIME_ENTRY still wins.
 function resolveRuntimeMode(): "ts" | "js" {
-  return (process.env.ODG_RUNTIME || "").trim() === "ts" ? "ts" : "js";
+  return (process.env.ODG_RUNTIME ?? "").trim() === "js" ? "js" : "ts";
 }
 function resolvePipelineEntry(): string {
   const override = process.env.ODG_RUNTIME_ENTRY;

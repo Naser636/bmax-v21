@@ -39,6 +39,10 @@ valid_dist() {
     try {
       const m = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
       if (typeof m.totalClosure !== "number" || m.totalClosure !== m.emittedCount + m.copiedCount) { console.error("[validate] manifest inconsistent"); process.exit(1); }
+      // A correct closure COPIES the JS-only runtime deps; an emitted-only (copied=0) dist is a dirty/
+      // divergent build whose JS deps are untracked for freshness (η3-B108) — reject it so the entry
+      // rebuilds cleanly rather than reuse a build whose staleness cannot be detected.
+      if (!(m.copiedCount > 0)) { console.error("[validate] emitted-only dist (copiedCount=0) is not a valid closure"); process.exit(1); }
       for (const c of (m.copied || [])) {
         const rel = typeof c === "string" ? c : (c && (c.rel || c.to || c.path || c.file));
         if (rel && !fs.existsSync(path.join("runtime", "dist", rel))) { console.error("[validate] copied file missing: " + rel); process.exit(1); }
