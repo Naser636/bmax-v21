@@ -161,6 +161,14 @@ else
   node runtime/bin/odg-run.js "$MISSION"
 fi
 
+# W6 observability (η3-B110) — STRICTLY OBSERVATIONAL. Runs AFTER the mission is finalized; reads the
+# canonical mission-report and appends one W6 journal record under runtime/generated/w6/. Fully guarded
+# (`|| true`, stderr muted): a collection failure can NEVER change the mission result or exit code — the
+# collector logs its own failure as an observability incident and still exits 0. Opt-out: ODG_W6_OBSERVE=0.
+if [ "${ODG_W6_OBSERVE:-1}" = "1" ]; then
+  node scripts/w6-collect.js "$MISSION" "A-shell:${ODG_RUNTIME:-ts}" 2>/dev/null || true
+fi
+
 mkdir -p runtime/generated/mission-artifacts/{generated,passports,reports,certificates,history}
 
 echo "[4/5] GENERATE"
