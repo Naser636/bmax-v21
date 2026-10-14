@@ -21,6 +21,7 @@
 const fs = require("fs");
 const path = require("path");
 const { computeRuntimeModel } = require("../core/runtime-model");
+const { buildAutonomyRate } = require("../core/autonomy-rate");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const GEN = path.join(ROOT, "runtime", "generated");
@@ -28,6 +29,16 @@ const GEN = path.join(ROOT, "runtime", "generated");
 function write(name, value) {
   fs.mkdirSync(GEN, { recursive: true });
   fs.writeFileSync(path.join(GEN, name), JSON.stringify(value, null, 2));
+}
+
+// Fail-closed read of an already-produced generated artifact: a missing or malformed file is read as
+// null (never a throw, never invented data) so the autonomy signal degrades honestly to not-measurable.
+function readGen(name) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(GEN, name), "utf8"));
+  } catch {
+    return null;
+  }
 }
 
 function main() {
@@ -72,6 +83,28 @@ function main() {
 
   // Full contract scan (audit): incomplete / broken / orphan contracts, never proposed as runnable.
   write("mission-scan.json", { generatedAt, ...model.scan });
+
+  // Governed autonomy signal (S1): an HONEST per-run ODG/provider/human attribution with an explicit
+  // denominator, derived by REUSING the pure runtime/core/autonomy-measure.js over the already-produced
+  // per-run artifacts. This writer invents nothing: absent/ambiguous inputs ⇒ measurable:false and a
+  // null percentage (never a fabricated number), and provider/human work is never credited to ODG.
+  const peName = "patch-execution.json";
+  const mpName = "mission-plan.json";
+  const oaName = "objective-attribution.json";
+  const patchExecution = readGen(peName);
+  const missionPlan = readGen(mpName);
+  const attribution = readGen(oaName);
+  const autonomyRate = buildAutonomyRate({
+    patchExecution,
+    planObjectives: missionPlan && Array.isArray(missionPlan.objectives) ? missionPlan.objectives : null,
+    attribution,
+    sourceArtifacts: [
+      { path: `runtime/generated/${peName}`, present: patchExecution != null },
+      { path: `runtime/generated/${mpName}`, present: missionPlan != null },
+      { path: `runtime/generated/${oaName}`, present: attribution != null },
+    ],
+  });
+  write("autonomy-rate.json", { generatedAt, ...autonomyRate });
 
   // Human-readable evidence of the contract scan — the "preuve" for every SKIPPED / NEEDS_CONTRACT
   // disposition (a contract that cannot be auto-completed is documented, not silently dropped).
@@ -127,6 +160,9 @@ function main() {
     `Queue        : ${model.queue.length} executable / ${model.scan.incompleteContracts.length} incomplete`,
     `Outstanding  : ${model.outstanding.length} gap(s)  (converged: ${model.converged ? "YES" : "NO"})`,
     `Next Mission : ${model.nextMission}`,
+    `Autonomy     : ${autonomyRate.measure.measurable
+      ? `${autonomyRate.measure.autonomyPercent}% (ODG verified ${autonomyRate.measure.numerator}/${autonomyRate.measure.denominator})`
+      : `not measurable — ${autonomyRate.measure.reason}`}`,
     "======================================",
   ];
   console.log(banner.join("\n"));

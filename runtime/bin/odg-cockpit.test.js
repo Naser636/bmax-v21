@@ -32,6 +32,7 @@ const full = {
   "runtime-mission-queue.json": J({ generatedAt: "2026-10-09T00:00:00Z", queue: [{ mission: "Q1", status: "PENDING" }, { mission: "Q2", status: "PENDING", objective: "o" }] }),
   "mission-ledger.json": J({ count: 3, entries: [{ mission: "A", state: "ARCHIVED", proven: true }, { mission: "B", state: "RELEASED", proven: true }] }),
   "self-diagnostic-report.json": J({ summary: "NO_DIVERGENCE", converged: true, divergences: [], incident: null, mode: "PREPARE_NOT_APPLY" }),
+  "autonomy-rate.json": J({ mission: "DEMO", measure: { measurable: true, autonomyPercent: 50, numerator: 1, denominator: 2, reason: null }, description: { counts: { odgExecutedVerified: 1, external: 1, humanMandatory: 0, blockedFailed: 0, notExecuted: 0, unknownOrUnverified: 0 } }, attribution: { source: "objective-attribution.json" } }),
 };
 const activeLog = { name: "MISSION_X.run.log", lines: [">>> Validation Engine OK", "PIPELINE SUCCESS"], mtime: 1 };
 
@@ -48,6 +49,14 @@ ok("no degraded sources when all valid", m.degraded.length === 0);
 const rendered = C.renderCockpit(m, { stamp: "refresh 1/1" });
 ok("render is a non-empty string with sections", /ODG COCKPIT/.test(rendered) && /HEALTH/.test(rendered) && /ACTIVE RUN LOG/.test(rendered));
 
+// 1b. S2 — autonomy signal + attribution + result buckets + next decision (all read-only)
+ok("autonomy composed measurable", m.autonomy && m.autonomy.measurable === true);
+ok("autonomy % rendered with ODG verified n/d", /AUTONOMY 50% \(ODG verified 1\/2\)/.test(rendered));
+ok("attribution separates ODG-verified from external(provider)", m.autonomy.attribution.odgVerified === 1 && m.autonomy.attribution.external === 1 && /external=1/.test(rendered));
+ok("result buckets PROVEN/NOT-RUN/BLOCKED composed", m.tasks.proven === 2 && m.tasks.notRun === 2 && m.tasks.blocked === 0);
+ok("result buckets rendered", /TASKS\s+PROVEN=2 · NOT-RUN\(queue\)=2 · BLOCKED=0/.test(rendered));
+ok("next decision rendered", /NEXT DECISION\s+NEXT_X/.test(rendered));
+
 // 2. malformed inputs ⇒ flagged degraded, never throws
 const malformed = { ...full, "mission-ledger.json": { ok: false, error: "malformed" } };
 let threw = false;
@@ -63,6 +72,19 @@ ok("missing sources ⇒ UNKNOWN health", empty.health.runtime === "UNKNOWN");
 ok("missing sources ⇒ N/A last + none queue/ledger", empty.progress.last === "N/A" && empty.queue.length === 0 && empty.recentLedger.length === 0);
 const emptyRender = C.renderCockpit(empty, {});
 ok("render of empty model shows (none) and no run log", /QUEUE/.test(emptyRender) && /\(none\)/.test(emptyRender) && /ACTIVE RUN LOG : \(none\)/.test(emptyRender));
+ok("absent autonomy-rate ⇒ shown as not available, not fabricated", empty.autonomy === null && /AUTONOMY \(no autonomy-rate\.json/.test(emptyRender));
+
+// 3b. HONESTY — a non-measurable autonomy signal is rendered as a REASON, never as a number.
+const nonMeasurable = { ...full, "autonomy-rate.json": J({ mission: "DEMO2", measure: { measurable: false, autonomyPercent: null, numerator: null, denominator: null, reason: "no patch-execution artifact (executed[] absent)" }, description: { counts: {} }, attribution: { source: null } }) };
+const nmModel = C.composeModel(ioFrom(nonMeasurable, activeLog), {});
+const nmRender = C.renderCockpit(nmModel, {});
+ok("non-measurable autonomy ⇒ reason, never a number", nmModel.autonomy.measurable === false && /AUTONOMY not measurable — no patch-execution/.test(nmRender) && !/AUTONOMY \d/.test(nmRender));
+ok("non-measurable autonomy surfaces the next blocker", /next blocker: no patch-execution/.test(nmRender));
+
+// 3c. verified-autonomy 0 with no attribution ⇒ honest blocker naming the missing artifact
+const zeroVerified = { ...full, "autonomy-rate.json": J({ mission: "DEMO3", measure: { measurable: true, autonomyPercent: 0, numerator: 0, denominator: 3, reason: null }, description: { counts: { odgExecutedVerified: 0, unknownOrUnverified: 3 } }, attribution: { source: null } }) };
+const zvRender = C.renderCockpit(C.composeModel(ioFrom(zeroVerified, activeLog), {}), {});
+ok("verified-autonomy 0 names the missing attribution artifact", /AUTONOMY 0% \(ODG verified 0\/3\)/.test(zvRender) && /next blocker: verified-autonomy 0 — objective-attribution\.json not persisted/.test(zvRender));
 
 // 4. staleness honesty (clock far past generatedAt)
 const stale = C.composeModel(ioFrom(full, activeLog), { nowMs: Date.parse("2027-01-01T00:00:00Z"), staleMs: 3600000 });

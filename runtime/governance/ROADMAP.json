@@ -1,5 +1,5 @@
 {
-  "roadmapContractVersion": "1.0.0",
+  "roadmapContractVersion": "1.1.0",
   "title": "ODG Runtime Roadmap v1.0",
   "source": "runtime/system/ROADMAP.md",
   "description": "Official, machine-readable roadmap manifest. The single ordered list of missions the Runtime executes autonomously (odg autonomy). Each entry names a real Mission Contract; the Autonomy Cycle selects the first entry not yet proven in the ledger, executes it, and advances. A missing contract is a real blocker that halts the loop for human authoring.",
@@ -50,6 +50,12 @@
       "id": "AUTONOMOUS_CONTRACT_EVOLUTION",
       "title": "Autonomous Contract Evolution",
       "contract": "runtime/missions/AUTONOMOUS_CONTRACT_EVOLUTION.json",
+      "requiresEngineering": true
+    },
+    {
+      "id": "GOVERNED_DASHBOARD_OBSERVABILITY",
+      "title": "Governed Dashboard & Autonomy Observability",
+      "contract": "runtime/missions/GOVERNED_DASHBOARD_OBSERVABILITY.json",
       "requiresEngineering": true
     }
   ]

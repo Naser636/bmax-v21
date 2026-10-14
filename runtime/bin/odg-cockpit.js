@@ -104,6 +104,52 @@ function composeModel(io, { tail = 12, nowMs = null, staleMs = 3600_000 } = {}) 
   const divs = Array.isArray(diag.divergences) ? diag.divergences : [];
   const log = io.activeLog(tail);
 
+  // Autonomy signal (S2) — READ-ONLY surfacing of the governed runtime/generated/autonomy-rate.json
+  // (written by `odg state`, derived via the pure autonomy-measure.js). This is an OPTIONAL source:
+  // its absence is shown as "not available" and is NEVER flagged degraded or fabricated. Honesty rule:
+  // a non-measurable signal is rendered as a REASON, never as a number.
+  const autoRes = io.json("autonomy-rate.json");
+  const auto = autoRes.ok ? autoRes.value : null;
+  let autonomy = null;
+  if (auto && auto.measure && typeof auto.measure === "object") {
+    const mz = auto.measure;
+    const dc = (auto.description && auto.description.counts) || {};
+    const measurable = mz.measurable === true;
+    autonomy = {
+      measurable,
+      label: measurable
+        ? `${mz.autonomyPercent}% (ODG verified ${mz.numerator}/${mz.denominator})`
+        : `not measurable — ${mz.reason || "insufficient evidence"}`,
+      attribution: {
+        odgVerified: dc.odgExecutedVerified || 0,
+        external: dc.external || 0,
+        human: dc.humanMandatory || 0,
+        blocked: dc.blockedFailed || 0,
+        notRun: dc.notExecuted || 0,
+        unverified: dc.unknownOrUnverified || 0,
+      },
+      mission: typeof auto.mission === "string" ? auto.mission : null,
+      source: (auto.attribution && auto.attribution.source) || null,
+    };
+    if (!measurable) autonomy.blocker = mz.reason || "autonomy not measurable";
+    else if (mz.numerator === 0 && mz.denominator > 0 && !autonomy.source)
+      autonomy.blocker = "verified-autonomy 0 — objective-attribution.json not persisted";
+    else autonomy.blocker = null;
+  }
+
+  // Result buckets (PROVEN / PARTIAL / BLOCKED / NOT RUN) from already-read governed sources only.
+  // PROVEN = ledger entries proven===true; NOT RUN = executable queue length; BLOCKED = a live
+  // self-diagnostic incident; PARTIAL (and the current verdict) is carried by lastRun from runtime-state.
+  const lastRun = state && state.lastRun && typeof state.lastRun === "object" ? state.lastRun : null;
+  const tasks = {
+    proven: entries.filter((e) => e && e.proven === true).length,
+    notRun: queue.length,
+    blocked: diag && diag.incident ? 1 : 0,
+    lastRun: lastRun
+      ? `${lastRun.mission || "?"}:${lastRun.status || (lastRun.validated === true ? "VALIDATED" : "?")}`
+      : "N/A",
+  };
+
   // Honest staleness: only when a clock is supplied and the artifact carries generatedAt.
   const freshness = {};
   for (const [k, doc] of [["state", state], ["queue", queueDoc]]) {
@@ -139,6 +185,8 @@ function composeModel(io, { tail = 12, nowMs = null, staleMs = 3600_000 } = {}) 
       mode: diag.mode ?? null,
     },
     activeLog: log,
+    autonomy,
+    tasks,
     degraded,
     freshness,
   };
@@ -158,6 +206,17 @@ function renderCockpit(model, { stamp = "" } = {}) {
   L.push(`NEXT     ${p.next}`);
   const d = model.diagnostic;
   L.push(`DIAG     ${d.summary} · divergences=${d.divergences}${d.incident ? " · incident=" + d.incident : ""}${d.mode ? " · mode=" + d.mode : ""}`);
+  const a = model.autonomy;
+  if (a) {
+    L.push(`AUTONOMY ${a.label}${a.mission ? "  [" + a.mission + "]" : ""}`);
+    L.push(`  attribution ODG-verified=${a.attribution.odgVerified} external=${a.attribution.external} human=${a.attribution.human} blocked=${a.attribution.blocked} not-run=${a.attribution.notRun} unverified=${a.attribution.unverified}`);
+    if (a.blocker) L.push(`  next blocker: ${a.blocker}`);
+  } else {
+    L.push("AUTONOMY (no autonomy-rate.json — run `odg state`)");
+  }
+  const t = model.tasks || { proven: 0, notRun: 0, blocked: 0, lastRun: "N/A" };
+  L.push(`TASKS    PROVEN=${t.proven} · NOT-RUN(queue)=${t.notRun} · BLOCKED=${t.blocked} · last=${t.lastRun}`);
+  L.push(`NEXT DECISION  ${p.next}`);
   L.push("QUEUE (pending)");
   if (model.queue.length === 0) L.push("  (none)");
   else model.queue.forEach((q) => L.push("  - " + q));
