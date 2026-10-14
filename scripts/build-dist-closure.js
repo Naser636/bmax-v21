@@ -126,6 +126,31 @@ while (stack.length) {
   }
 }
 
+// STALE/ORPHAN GUARD (η3-B125, CLOSE_PROVIDER_SANDBOX_BUILD_PROPAGATION). Every dist/core/*.js MUST map
+// to a CURRENT source and match it, or the build is carrying obsolete residue — exactly the defect that
+// let a pre-sandbox local-model-manager.js satisfy the closure while the new provider-sandbox.js dep was
+// never pulled (copied=0). Two source-based checks (deterministic, independent of THIS run's copy set, so
+// the documented idempotent re-run stays green):
+//   (a) ORPHAN   — a dist/core/X.js with NEITHER runtime/core/X.ts NOR runtime/core/X.js source is residue
+//                  of a module that no longer exists ⇒ FAIL.
+//   (b) STALE    — a COPIED module (runtime/core/X.js exists, no X.ts) whose dist content differs from its
+//                  source ⇒ an obsolete copy ⇒ FAIL (the source changed after the build).
+// `build:runtime` now cleans runtime/dist first, so on the normal path both checks trivially pass; they
+// are the defence that no obsolete artifact is ever silently certified if a caller bypassed the clean.
+const srcCoreDir = path.join(REPO, "runtime", "core");
+for (const f of fs.readdirSync(path.join(DIST, "core")).filter((x) => x.endsWith(".js"))) {
+  const rel = "core/" + f;
+  const tsSrc = path.join(srcCoreDir, f.replace(/\.js$/, ".ts"));
+  const jsSrc = path.join(srcCoreDir, f);
+  const hasTs = fs.existsSync(tsSrc);
+  const hasJs = fs.existsSync(jsSrc);
+  if (!hasTs && !hasJs) {
+    errors.push(`STALE/ORPHAN dist artifact ${rel} — no runtime/core/${f} or ${f.replace(/\.js$/, ".ts")} source; it is residue of a removed module. Run a clean build (rm -rf runtime/dist && npm run build:runtime).`);
+  } else if (hasJs && !hasTs && sha256(path.join(DIST, "core", f)) !== sha256(jsSrc)) {
+    errors.push(`STALE COPY ${rel} — dist content differs from source runtime/core/${f} (the source changed after the build). Run a clean build (rm -rf runtime/dist && npm run build:runtime).`);
+  }
+}
+
 if (errors.length) {
   console.error("build-dist-closure: FAILED — closure is not complete:");
   for (const e of errors) console.error("  - " + e);

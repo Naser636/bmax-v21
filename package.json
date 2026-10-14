@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:runtime": "tsc -p tsconfig.runtime-dist.json && node scripts/build-dist-closure.js",
+    "build:runtime": "node -e \"require('fs').rmSync('runtime/dist',{recursive:true,force:true})\" && tsc -p tsconfig.runtime-dist.json && node scripts/build-dist-closure.js",
     "start": "next start",
     "lint": "eslint",
     "demo": "tsx src/demo.ts",
