@@ -400,6 +400,79 @@ const PROBES = {
             ? { ok: true, detail: `probe framework finalized: ${registered} registered probes, wired into Validation Engine + Contract Factory` }
             : { ok: false, detail: offenders.join("; ") };
     },
+
+    "autonomy-observability-surfaced"() {
+        // Governed Dashboard & Autonomy Observability (GOVERNED_DASHBOARD_OBSERVABILITY) DoD proof.
+        // Proves the REAL observability deliverable from artifacts that are actually produced — it
+        // never interprets done_when and never simulates an artifact:
+        //   (S1) runtime/generated/autonomy-rate.json — the governed autonomy signal assembled by the
+        //        pure autonomy-measure.js (buildAutonomyRate, written by `odg state`). The HONESTY
+        //        contract is asserted so the signal and its degradation reason stay coherent: `measure`
+        //        present; `measurable` a boolean; a NON-measurable signal MUST carry a non-empty `reason`
+        //        AND null percentage/numerator/denominator (never a fabricated number); a measurable
+        //        signal MUST carry a finite autonomyPercent in [0,100] consistent with a real
+        //        numerator/denominator. Provenance (`sourceArtifacts`) must be present.
+        //   (S2) runtime/bin/odg-cockpit.js — the read-only cockpit SURFACES that signal. Proven by a
+        //        deterministic static assertion (same convention as samurai-output-mode /
+        //        single-runtime-entrypoint): the cockpit READS autonomy-rate.json AND renders an
+        //        AUTONOMY line. This proves the surfacing WIRING; it is NOT a live-render capture (a
+        //        capture would require spawning a process, which the pure/synchronous probe contract
+        //        forbids). The detail states this explicitly so nothing is over-claimed.
+        // Fail-closed: an absent, malformed, inconsistent, or unwired artifact FAILS (ok:false).
+        const AUTONOMY_RATE = path.join("runtime", "generated", "autonomy-rate.json");
+        const COCKPIT_SRC = path.join("runtime", "bin", "odg-cockpit.js");
+
+        const rate = readJsonSafe(AUTONOMY_RATE);
+        if (!rate) {
+            return { ok: false, detail: `no autonomy signal at ${AUTONOMY_RATE} — run \`odg state\` to produce it` };
+        }
+        if (!Array.isArray(rate.sourceArtifacts) || rate.sourceArtifacts.length === 0) {
+            return { ok: false, detail: "autonomy signal carries no sourceArtifacts provenance" };
+        }
+        const m = rate.measure;
+        if (!m || typeof m !== "object") {
+            return { ok: false, detail: "autonomy-rate.json missing `measure` block" };
+        }
+        if (typeof m.measurable !== "boolean") {
+            return { ok: false, detail: "autonomy signal `measure.measurable` is not a boolean" };
+        }
+        if (m.measurable === false) {
+            if (typeof m.reason !== "string" || !m.reason) {
+                return { ok: false, detail: "non-measurable autonomy signal must carry a degradation reason" };
+            }
+            if (m.autonomyPercent !== null || m.numerator !== null || m.denominator !== null) {
+                return { ok: false, detail: "non-measurable autonomy signal must not carry a fabricated percentage/numerator/denominator" };
+            }
+        } else {
+            const pct = m.autonomyPercent, num = m.numerator, den = m.denominator;
+            if (typeof pct !== "number" || !Number.isFinite(pct) || pct < 0 || pct > 100) {
+                return { ok: false, detail: `measurable autonomy signal has invalid autonomyPercent (${pct})` };
+            }
+            if (typeof num !== "number" || typeof den !== "number" || !Number.isFinite(num) || !Number.isFinite(den) || den <= 0 || num < 0 || num > den) {
+                return { ok: false, detail: `measurable autonomy signal has invalid numerator/denominator (${num}/${den})` };
+            }
+            if (Math.round((num / den) * 100) !== pct) {
+                return { ok: false, detail: `autonomyPercent ${pct} inconsistent with ${num}/${den}` };
+            }
+        }
+
+        let cockpit = null;
+        try { cockpit = fs.readFileSync(COCKPIT_SRC, "utf8"); } catch { cockpit = null; }
+        if (cockpit === null) {
+            return { ok: false, detail: `cockpit source ${COCKPIT_SRC} not found — observability not surfaced` };
+        }
+        if (!cockpit.includes("autonomy-rate.json")) {
+            return { ok: false, detail: "cockpit does not read autonomy-rate.json (signal not surfaced)" };
+        }
+        if (!/AUTONOMY /.test(cockpit)) {
+            return { ok: false, detail: "cockpit does not render an AUTONOMY line (signal not surfaced)" };
+        }
+
+        const signal = m.measurable
+            ? `${m.autonomyPercent}% (${m.numerator}/${m.denominator})`
+            : `not measurable — ${m.reason}`;
+        return { ok: true, detail: `autonomy signal consistent (${signal}); cockpit surfaces autonomy-rate.json via an AUTONOMY render (surfacing wiring, not a live-render capture)` };
+    },
 };
 
 // Run a single named probe. Unknown probe → not ok (a required proof for an unregistered capability

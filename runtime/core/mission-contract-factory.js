@@ -138,6 +138,17 @@ const PROBE_INTENT = [
         match: /\bbash\b|\bshell command\b|\blinux command\b|\brun (a |the )?command\b|\bBASH_COMMAND\b/i,
         probes: [{ capability: "Governed bash/linux command (no raw shell, sandboxed, C03-verified)", evidence: "bash-command-governed" }],
     },
+    {
+        // Governed dashboard & autonomy observability intent requires the autonomy-observability-surfaced
+        // proof: the governed autonomy signal (autonomy-rate.json) is present and internally consistent
+        // (a non-measurable signal carries a reason and NO fabricated number) AND the read-only cockpit
+        // surfaces it. This is DISTINCT from build/typescript: a green build never proves the signal is
+        // produced or surfaced. Declaration only — no new authority. Emitting this on EVERY regeneration
+        // keeps the evidence binding DURABLE for the factory-generated GOVERNED_DASHBOARD_OBSERVABILITY
+        // contract (its *.json is git-ignored and re-materialised on demand).
+        match: /\bobservability\b|\bdashboard\b|\bGOVERNED_DASHBOARD_OBSERVABILITY\b/i,
+        probes: [{ capability: "Governed dashboard & autonomy observability (signal + cockpit surfacing)", evidence: "autonomy-observability-surfaced" }],
+    },
 ];
 
 /*

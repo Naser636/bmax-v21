@@ -57,6 +57,10 @@ const SYNTHETIC_DELIVERABLE_NAME = "odg-synthetic-manifest.txt";
 // contract-supplied patch). Its correctness is independently verifiable (spec-schema-valid probe).
 const SPEC_AUTHOR_EVIDENCE = path.join(GENERATED_DIR, "odg-spec-author.json");
 const SPEC_AUTHOR_NAME = "odg-spec.json";
+// Autonomy Observability (GOVERNED_DASHBOARD_OBSERVABILITY) — dedicated evidence that ODG re-derived and
+// surfaced the governed autonomy signal THIS run. Correctness is verified INDEPENDENTLY by the
+// autonomy-observability-surfaced probe (signal/degradation-reason consistency + cockpit surfacing).
+const AUTONOMY_OBSERVABILITY_EVIDENCE = path.join(GENERATED_DIR, "autonomy-observability.json");
 // tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
 // Registry + Orchestrator and runs the selected provider — the socle→provider edge.
 const TSX_CLI = path.join("node_modules", "tsx", "dist", "cli.mjs");
@@ -436,6 +440,60 @@ const EXECUTORS = [
                 note: "Spec formulated by ODG via mission-synthesizer.toContract from authorized plan data; written inside authorized_paths after pre-write confinement. Correctness verified independently by the spec-schema-valid probe.",
             });
             return { capability: "ODG Spec Author", evidence: out, summary: { target: confined.relTarget, objectives: contract.objectives.length } };
+        },
+    },
+    {
+        // Autonomy Observability (GOVERNED_DASHBOARD_OBSERVABILITY) — ODG re-derives the governed autonomy
+        // signal THIS run by REUSING the pure autonomy-rate builder (runtime/core/autonomy-rate.js →
+        // buildAutonomyRate, the SAME pure function odg-state.js uses; no new measurement logic, no clock,
+        // no network) over the per-run generated artifacts, and writes runtime/generated/autonomy-rate.json
+        // (the dashboard/cockpit signal) plus a dedicated evidence artifact. This gives the mission's
+        // observability objective a REAL executed effect — closing Mission → Capability → Execution →
+        // Evidence — so the Patch Executor records it EXECUTED(+evidence), never a RECORDED no-op. It does
+        // NOT fabricate a result: an absent/ambiguous input yields an honest measurable:false signal, and
+        // the autonomy-observability-surfaced probe INDEPENDENTLY re-reads and asserts the artifact's
+        // consistency + the cockpit surfacing. STRICTLY matched on this mission's objectiveId prefix (the
+        // Contract Factory always generates it), so routing is durable with no id rewrite. Writes only to
+        // the git-ignored runtime/generated/ tree; touches no source and no network.
+        capability: "Autonomy Observability",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("GOVERNED_DASHBOARD_OBSERVABILITY");
+        },
+        run() {
+            const { buildAutonomyRate } = require("./autonomy-rate");
+            const readGen = (name) => {
+                try { return JSON.parse(fs.readFileSync(path.join(GENERATED_DIR, name), "utf8")); } catch { return null; }
+            };
+            const peName = "patch-execution.json", mpName = "mission-plan.json", oaName = "objective-attribution.json";
+            const patchExecution = readGen(peName);
+            const missionPlan = readGen(mpName);
+            const attribution = readGen(oaName);
+            const rate = buildAutonomyRate({
+                patchExecution,
+                planObjectives: missionPlan && Array.isArray(missionPlan.objectives) ? missionPlan.objectives : null,
+                attribution,
+                sourceArtifacts: [
+                    { path: `runtime/generated/${peName}`, present: patchExecution != null },
+                    { path: `runtime/generated/${mpName}`, present: missionPlan != null },
+                    { path: `runtime/generated/${oaName}`, present: attribution != null },
+                ],
+            });
+            const rateOut = path.join(GENERATED_DIR, "autonomy-rate.json");
+            fs.mkdirSync(GENERATED_DIR, { recursive: true });
+            // Written WITHOUT a wall-clock stamp so the mission run stays deterministic; `odg state`
+            // remains free to re-stamp its own generatedAt out-of-band. The body is the pure builder's.
+            fs.writeFileSync(rateOut, JSON.stringify(rate, null, 2));
+            const m = rate && rate.measure ? rate.measure : {};
+            const out = writeEvidence(AUTONOMY_OBSERVABILITY_EVIDENCE, {
+                capability: "Autonomy Observability",
+                signal: "runtime/generated/autonomy-rate.json",
+                measurable: m.measurable === true,
+                reason: typeof m.reason === "string" ? m.reason : null,
+                autonomyPercent: m.autonomyPercent === undefined ? null : m.autonomyPercent,
+                authoredBy: "ODG_CAPABILITY",
+                note: "ODG re-derived the governed autonomy signal via the pure autonomy-rate builder and surfaced it; verified independently by the autonomy-observability-surfaced probe.",
+            });
+            return { capability: "Autonomy Observability", evidence: out, summary: { signal: rateOut, measurable: m.measurable === true } };
         },
     },
     {
