@@ -50,6 +50,7 @@
     "runtime/core/fleet-envelope.ts",
     "runtime/core/economic-unit.ts",
     "runtime/core/intake-endpoint.ts",
-    "runtime/core/post-release-learning.ts"
+    "runtime/core/post-release-learning.ts",
+    "runtime/core/autonomy-rate.ts"
   ]
 }
