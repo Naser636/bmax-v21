@@ -60,6 +60,7 @@
     "runtime/core/client-intake.ts",
     "runtime/core/capability-learning.ts",
     "runtime/core/world-model.ts",
-    "runtime/core/mission-synthesizer.ts"
+    "runtime/core/mission-synthesizer.ts",
+    "runtime/core/git-branch-integration.ts"
   ]
 }
