@@ -166,6 +166,12 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/connectivity-classifier-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // local-fixers lot (CTO standing delegation V12). Leaf (only `fs`); self-contained in dist.
+  "local-fixers": [
+    "runtime/core/local-fixers.ts",
+    "runtime/__bench__/local-fixers-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -185,6 +191,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "connectivity-classifier": [
     "runtime/core/connectivity-classifier.test.js",
+  ],
+  "local-fixers": [
+    "runtime/core/local-fixers.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

@@ -35,6 +35,7 @@
     "runtime/core/local-test-gate.ts",
     "runtime/core/governance-kernel.ts",
     "runtime/core/research-ranking.ts",
-    "runtime/core/connectivity-classifier.ts"
+    "runtime/core/connectivity-classifier.ts",
+    "runtime/core/local-fixers.ts"
   ]
 }
