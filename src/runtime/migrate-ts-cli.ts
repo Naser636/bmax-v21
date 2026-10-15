@@ -209,6 +209,13 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/runtime-model-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // autonomy-measure lot (CTO authorisation V18). Pure deterministic leaf (no I/O); self-contained in
+  // dist. Consumed by dist-built final-report + autonomy-rate ⇒ dist include gives a compiled target.
+  "autonomy-measure": [
+    "runtime/core/autonomy-measure.ts",
+    "runtime/__bench__/autonomy-measure-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -246,6 +253,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "runtime-model": [
     "runtime/core/runtime-model.test.js",
+  ],
+  "autonomy-measure": [
+    "runtime/core/autonomy-measure.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
