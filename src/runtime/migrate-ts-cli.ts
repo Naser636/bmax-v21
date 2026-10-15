@@ -264,6 +264,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/autonomy-rate-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "patch-memory": [
+    "runtime/core/patch-memory.ts",
+    "runtime/__bench__/patch-memory-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -327,6 +332,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "autonomy-rate": [
     "runtime/core/autonomy-rate.test.js",
+  ],
+  "patch-memory": [
+    "runtime/core/patch-memory.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
