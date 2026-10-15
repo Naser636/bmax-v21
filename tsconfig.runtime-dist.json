@@ -64,6 +64,7 @@
     "runtime/core/git-branch-integration.ts",
     "runtime/core/self-diagnostic.ts",
     "runtime/core/fleet-dispatcher.ts",
-    "runtime/core/mission-contract-factory.ts"
+    "runtime/core/mission-contract-factory.ts",
+    "runtime/core/objective-attribution.ts"
   ]
 }
