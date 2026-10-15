@@ -314,6 +314,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/git-branch-integration-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "self-diagnostic": [
+    "runtime/core/self-diagnostic.ts",
+    "runtime/__bench__/self-diagnostic-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -407,6 +412,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "git-branch-integration": [
     "runtime/core/git-branch-integration.test.js",
+  ],
+  "self-diagnostic": [
+    "runtime/core/self-diagnostic.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
