@@ -65,18 +65,10 @@ function resolveInDir(dir, t) {
   }
   return null;
 }
-function stripComments(src) {
-  return src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/[^\n]*/g, "$1");
-}
-function parseRequires(file) {
-  const src = stripComments(fs.readFileSync(file, "utf8"));
-  const literal = [];
-  let m;
-  const re = /require\(\s*("([^"]*)"|'([^']*)')\s*\)/g;
-  while ((m = re.exec(src))) literal.push(m[2] !== undefined ? m[2] : m[3]);
-  const dyn = /require\(\s*[^"')\s]/.test(src);
-  return { literal, dyn };
-}
+// Context-aware require scanning (B141 root-cause fix) lives in a pure, tested helper so a "/*" inside a
+// string literal (e.g. the scope string "runtime/**") can never be read as a block-comment opener and mask
+// a following require(). See scripts/lib/js-require-scan.js + src/tests/build-dist-closure.test.ts.
+const { parseRequires } = require("./lib/js-require-scan");
 function sha256(f) {
   return crypto.createHash("sha256").update(fs.readFileSync(f)).digest("hex").slice(0, 16);
 }
