@@ -88,6 +88,24 @@ console.log("Migration Campaign Planner — tests");
   check(sel.state === "BLOCKED" && sel.lot === null, "select: all-hazard pool ⇒ BLOCKED, no lot (NOT a false PASS)");
 }
 
+// ── Hazard 2: dynamic require() is flagged (build-dist-closure static tracer rejects it) ─────────
+{
+  const root = fixture({
+    "dyn.js": "const abs='./x.js';const m=require(abs);module.exports={m};\n", // dynamic require(identifier)
+    "staticdep.js": "const x=require('./x');module.exports={x};\n", // static require ⇒ NOT a hazard
+    "reqmeta.js": "delete require.cache[require.resolve('./x')];module.exports={};\n", // require.cache/resolve ⇒ NOT a hazard
+  });
+  const inv = inventory(root);
+  const dyn = inv.candidates.find((c) => c.lot === "dyn")!;
+  const sdep = inv.candidates.find((c) => c.lot === "staticdep")!;
+  const meta = inv.candidates.find((c) => c.lot === "reqmeta")!;
+  check(dyn.hazard === true && /dynamic require/.test(dyn.reason), "hazard: dynamic require(identifier) ⇒ BLOCKED with closure-tracer reason");
+  check(sdep.hazard === false && sdep.deps === 1, "no false hazard: static require('./x') is admissible (deps counted)");
+  check(meta.hazard === false, "no false hazard: require.cache/require.resolve are not dynamic require() calls");
+  const pick = selectNextLot(inv).lot;
+  check(pick !== "dyn" && (pick === "reqmeta" || pick === "staticdep"), `select: dynamic-require lot 'dyn' skipped; a safe lot chosen (${pick})`);
+}
+
 // ── State: SKIPPED (only excluded remain) + NONE (campaign complete) ─────────────────────────────
 {
   const skipped = selectNextLot(inventory(fixture({ "budget-ledger.js": "module.exports={};\n" })));
@@ -147,6 +165,11 @@ console.log("Migration Campaign Planner — tests");
   const sel = selectNextLot(inv);
   check(sel.state === "PASS" && typeof sel.lot === "string", `integration: real repo yields a safe next lot (${sel.lot})`);
   check(!inv.ported.includes(sel.lot as string), "integration: recommended lot is not already ported");
+  // capability-factory (dynamic require of generated modules) must now be classified hazard-blocked,
+  // never recommended — the V22 finding that the dist-closure tracer rejects its dynamic require().
+  const capfac = inv.candidates.find((c) => c.lot === "capability-factory");
+  check(!capfac || (capfac.hazard === true && /dynamic require/.test(capfac.reason)), "integration: capability-factory flagged hazard-blocked (dynamic require), not recommended");
+  check(sel.lot !== "capability-factory", "integration: capability-factory is not the recommendation");
 }
 
 try {

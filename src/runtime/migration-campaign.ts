@@ -112,7 +112,13 @@ export function inventory(root: string = process.cwd()): Inventory {
     const src = fs.readFileSync(path.join(coreDir, base + ".js"), "utf8");
     const lines = src.split("\n").length;
     const deps = (src.match(/require\((["'])\.\/[^)]+\1\)/g) || []).length;
-    const hazard = /\b(__dirname|REPO_ROOT)\b/.test(src) && /\bpath\.(resolve|join)\b/.test(src);
+    // Hazard 1 — compilation-location: __dirname/REPO_ROOT in a path resolve breaks when compiled to dist/core.
+    const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(src) && /\bpath\.(resolve|join)\b/.test(src);
+    // Hazard 2 — dynamic require: a require() whose argument is not a string literal (e.g. require(abs)).
+    // build-dist-closure's static tracer rejects it ("unexpected dynamic require()"), so the lot cannot
+    // pass build:runtime via the 4-file recipe (needs a governed loader-seam redesign, not a port).
+    const dynamicRequire = /\brequire\s*\(\s*[^'"\s)]/.test(src);
+    const hazard = pathHazard || dynamicRequire;
     const sideEffect = /^(fs\.)?(writeFileSync|mkdirSync|appendFileSync|execSync|spawnSync)\s*\(/m.test(src);
     candidates.push({
       lot: base,
@@ -120,9 +126,11 @@ export function inventory(root: string = process.cwd()): Inventory {
       deps,
       hazard,
       sideEffect,
-      reason: hazard
+      reason: pathHazard
         ? "BLOCKED: __dirname/REPO_ROOT path resolution breaks when compiled to dist/core (needs cwd-relative redesign)"
-        : "admissible",
+        : dynamicRequire
+          ? "BLOCKED: dynamic require() is rejected by build-dist-closure's static tracer (needs a governed loader-seam redesign)"
+          : "admissible",
     });
   }
 
