@@ -90,7 +90,14 @@ let composition = { compiled: 0, historical: 0 };
 function buildCompiledEngineDir(): void {
   const { closure, missing } = computeClosure(["validation-engine"]);
   check(missing.length === 0, `closure resolves every require target on disk (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 15, `transitive closure is the expected 15-module set (size=${closure.length})`);
+  // Exact-set structural invariant: the validation-engine transitive require-closure is the complete,
+  // resolvable module set (line above proves every target resolves on disk). The count is updated when
+  // validation-engine's dependency graph LEGITIMATELY changes — it grew 15→17 via the per-objective
+  // proof gate + per-action authorization + A1+ fail-closed classification (capability-probes/
+  // capability-executors now pull in mission-synthesizer/decision-rules/economic+research modules, all
+  // verified resolvable). Kept as an exact count (not a weak membership/>0 check) so any unexpected
+  // drift — an added OR removed module — still fails the gate for review.
+  check(closure.length === 17, `transitive closure is the expected 17-module set (size=${closure.length})`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-ve-dist-"));
   sandboxes.push(dir);
   for (const n of closure) { const prov = placeInDistCore(dir, n); composition[prov]++; }
