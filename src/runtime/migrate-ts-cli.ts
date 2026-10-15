@@ -279,6 +279,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/economic-extractor-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "artifact-state": [
+    "runtime/core/artifact-state.ts",
+    "runtime/__bench__/artifact-state-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -351,6 +356,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "economic-extractor": [
     "runtime/core/economic-extractor.test.js",
+  ],
+  "artifact-state": [
+    "runtime/core/artifact-state.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

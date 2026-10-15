@@ -54,6 +54,7 @@
     "runtime/core/autonomy-rate.ts",
     "runtime/core/patch-memory.ts",
     "runtime/core/opportunity-policy.ts",
-    "runtime/core/economic-extractor.ts"
+    "runtime/core/economic-extractor.ts",
+    "runtime/core/artifact-state.ts"
   ]
 }
