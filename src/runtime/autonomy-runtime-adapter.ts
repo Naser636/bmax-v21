@@ -101,8 +101,9 @@ const ROADMAP_MANIFEST = "runtime/governance/ROADMAP.json";
 const MSTD_GENERATED = "runtime/generated/mission-artifacts/generated";
 const PIPELINE = "runtime/bin/odg-run.js";
 
-// Migration seam (Lot B-α) — the pipeline entry the LOCAL execute path launches. Historical DEFAULT is
-// the legacy JavaScript entry PIPELINE; it is NEVER changed implicitly. An operator may OPT IN to the
+// Migration seam (Lot B-α; default flipped η3-B108) — the pipeline entry the LOCAL execute path launches.
+// DEFAULT is the COMPILED TypeScript entry; the legacy JavaScript entry is an EXPLICIT rollback
+// (ODG_RUNTIME=js), never selected implicitly. An operator may pin a specific entry (e.g. the
 // compiled TypeScript entry (runtime/dist/bin/odg-run.js, produced by `npm run build:runtime`) for a
 // controlled parity run by setting ODG_RUNTIME_ENTRY to its CWD-relative path. The override is used
 // VERBATIM and committed to: if it points at a missing/invalid entry, `node <entry>` fails explicitly
@@ -111,11 +112,13 @@ const PIPELINE = "runtime/bin/odg-run.js";
 // entry path; mission rules, orchestration, attribution, ledger, checkpoints and governance are
 // untouched (the chosen entry runs the identical 13-stage pipeline either way).
 const COMPILED_PIPELINE = "runtime/dist/bin/odg-run.js";
-// Coordinated A/B cutover switch (η3-B107). The PUBLISHED default is UNCHANGED (JavaScript). An
+// Coordinated A/B cutover switch (η3-B107). The published default is compiled TypeScript (flipped in
+// η3-B108; see the note below); JavaScript is an explicit rollback (ODG_RUNTIME=js). An
 // explicit `ODG_RUNTIME_ENTRY` pin always wins (used by the adapter-compiled benches and by the JS-entry
 // pins of the stub tests). Otherwise `ODG_RUNTIME=ts` — the SAME operator switch as front door A
 // (odg-local-pipeline.sh) — routes front door B to the compiled entry too, so a future cutover is a
-// single coordinated default change, not a code edit. Unset/`js` keeps the historical JS entry. The ts
+// single coordinated default change, not a code edit. Only an explicit `ODG_RUNTIME=js` selects the
+// historical JS entry (unset resolves to the compiled TS default). The ts
 // path ensures a FRESH compiled dist before launch and NEVER silently falls back (see runLocalPipeline).
 // DEFAULT FLIPPED to TypeScript (eta3-B108): an UNSET ODG_RUNTIME now resolves to the compiled runtime
 // (published default). ROLLBACK to JavaScript = ODG_RUNTIME=js (explicit). ODG_RUNTIME_ENTRY still wins.
