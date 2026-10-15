@@ -224,6 +224,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/capability-metrics-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "specification-loader": [
+    "runtime/core/specification-loader.ts",
+    "runtime/__bench__/specification-loader-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -268,6 +273,8 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "capability-metrics": [
     "runtime/core/capability-metrics.test.js",
   ],
+  // specification-loader has no historical .test.js in the repo; the equivalence bench is its proof.
+  "specification-loader": [],
 };
 const REGRESSION_BENCHES = [
   "runtime/__bench__/capability-registry-equivalence.e2e.test.ts",
