@@ -78,15 +78,49 @@ console.log("C — parent secrets absent from the child by default");
 
 console.log("E — only the binary + explicitly allowlisted model files are bound");
 {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "odg-model-"));
-  const modelFile = path.join(tmp, "weights.bin");
-  fs.writeFileSync(modelFile, "x");
-  const args = ps.buildBwrapArgs({ argv: ["b"], modelFiles: [modelFile], work: "/tmp/work", realWork: "/tmp/w" });
-  ok("allowlisted model file ro-bound", (() => { for (let i = 0; i < args.length - 2; i++) if (args[i] === "--ro-bind" && args[i + 1] === modelFile) return true; return false; })());
+  // The sandbox (correctly) refuses to bind files under a confidential prefix (/home, /var, /etc, …).
+  // The positive bind assertion therefore needs a model fixture in a NON-confidential, writable temp
+  // root. Normally that is /tmp; but a host may redirect TMPDIR into a confidential prefix (e.g. when
+  // /tmp is over quota ⇒ TMPDIR under $HOME). Pick the first non-confidential writable root; if none
+  // exists in this environment, SKIP this positive case honestly (never crash, never silently pass) —
+  // the confidential-REJECTION assertion below always runs and needs no writable temp.
+  const CONFIDENTIAL = ["/etc", "/home", "/root", "/var", "/proc", "/sys", "/dev"];
+  const isConfidential = (d) => CONFIDENTIAL.some((pre) => d === pre || d.startsWith(pre + "/"));
+  const safeTmpRoot = () => {
+    for (const base of [process.env.ODG_SANDBOX_TEST_TMP, "/tmp", os.tmpdir()].filter(Boolean)) {
+      if (isConfidential(path.normalize(base))) continue;
+      let d = null;
+      try {
+        d = fs.mkdtempSync(path.join(base, "odg-model-"));
+        // Prove a real DATA write works here — a host quota can permit a directory inode (mkdtemp)
+        // yet refuse file content writes (EDQUOT). Only then is the root actually usable.
+        const probe = path.join(d, ".probe");
+        fs.writeFileSync(probe, "x");
+        fs.rmSync(probe, { force: true });
+        return d;
+      } catch {
+        if (d) { try { fs.rmSync(d, { recursive: true, force: true }); } catch { /* best-effort */ } }
+        /* not usable — try next candidate */
+      }
+    }
+    return null;
+  };
+
+  const tmp = safeTmpRoot();
+  if (tmp) {
+    const modelFile = path.join(tmp, "weights.bin");
+    fs.writeFileSync(modelFile, "x");
+    const args = ps.buildBwrapArgs({ argv: ["b"], modelFiles: [modelFile], work: "/tmp/work", realWork: "/tmp/w" });
+    ok("allowlisted model file ro-bound", (() => { for (let i = 0; i < args.length - 2; i++) if (args[i] === "--ro-bind" && args[i + 1] === modelFile) return true; return false; })());
+    fs.rmSync(tmp, { recursive: true, force: true });
+  } else {
+    skip("allowlisted model file ro-bound", "no non-confidential writable temp root (TMPDIR under a confidential prefix and /tmp unavailable)");
+  }
+
+  // Confidential-prefix REJECTION is the real security guarantee — always asserted (no writable temp needed).
   let threwEtc = false;
   try { ps.buildBwrapArgs({ argv: ["b"], modelFiles: ["/etc/passwd"], work: "/tmp/work", realWork: "/tmp/w" }); } catch { threwEtc = true; }
   ok("model file under /etc rejected (confidential)", threwEtc === true);
-  fs.rmSync(tmp, { recursive: true, force: true });
 }
 
 console.log("F — fail-closed: no sandbox / invalid profile => refuse, never unsandboxed");

@@ -39,6 +39,9 @@ import {
   type ProviderResult,
   type ProviderUsageObservation,
 } from "./provider-port";
+// WI-1 — single fail-closed authorization gate for LIVE (billed) provider spawns. JS module shared
+// with the Fleet bridge so both the TS adapters and the JS runtime consult one decision.
+import { evaluateProviderLiveCall } from "../../runtime/core/provider-live-call-gate.js";
 
 /** Result of running an external process — the injected boundary (kept tiny & pure-ish). */
 export interface ProviderProcessResult {
@@ -113,6 +116,12 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
   private readonly cacheDir: string;
   private readonly run: ProviderProcessRunner;
   private readonly preferSubscriptionAuth: boolean;
+  /**
+   * True when NO runner was injected, i.e. this adapter uses the real `spawnSync` default runner and a
+   * call to the provider binary would spawn a LIVE (potentially billed) process. An injected runner is
+   * a zero-cost test seam and is never gated (WI-1 CTO ruling: gate the real-spawn boundary only).
+   */
+  private readonly usesDefaultRunner: boolean;
 
   constructor(opts: ClaudeProviderOptions = {}) {
     this.cwd = opts.cwd ?? process.cwd();
@@ -121,6 +130,7 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
     this.timeoutMs = opts.timeoutMs;
     this.cacheDir = opts.cacheDir ?? `${this.cwd}/runtime/generated/provider-cache`;
     this.run = opts.run ?? defaultRunner;
+    this.usesDefaultRunner = opts.run === undefined;
     this.preferSubscriptionAuth = opts.preferSubscriptionAuth ?? process.env.ODG_CLAUDE_PREFER_SUBSCRIPTION === "1";
   }
 
@@ -163,6 +173,27 @@ export class ClaudeProviderAdapter implements EngineeringProviderPort {
       if (cached) {
         diagnostics.push("served from provider cache (no live call)");
         return { ...cached, fromCache: true, providerExecuted: false, diagnostics };
+      }
+    }
+
+    // WI-1 fail-closed gate — a real `claude` spawn is a LIVE (potentially billed) provider call.
+    // Only the DEFAULT runner spawns a real process; an injected runner is a zero-cost test seam and
+    // is intentionally not gated. When the default runner would be used and the operator has NOT
+    // explicitly authorized a live call (ODG_PROVIDER_LIVE=1), refuse BEFORE spawning: no process is
+    // started, and the mission halts with a precise, resumable reason (certified stop, not a crash).
+    if (this.usesDefaultRunner) {
+      const gate = evaluateProviderLiveCall({ env: process.env, provider: this.name });
+      if (!gate.allowed) {
+        return this.finish({
+          classification: "BLOCKED",
+          providerExecuted: false,
+          result: null,
+          sessionId: null,
+          changedFiles: [],
+          unauthorizedChanges: [],
+          proc: { status: null, stdout: "", stderr: "" },
+          diagnostics: [...diagnostics, gate.reason],
+        });
       }
     }
 

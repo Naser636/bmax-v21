@@ -19,6 +19,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const envelope = require("./fleet-envelope");
+const { gateLiveCall } = require("./provider-live-call-gate");
 
 const CONFIG_FILE = "runtime/connectors/fleet-bridge.json";
 
@@ -218,33 +219,44 @@ function invokeAgent(cfg, request) {
 
   const { command, args } = resolveAgentCommand(cfg, request.agent);
   const prompt = buildPrompt(request);
-  const res = spawnSync(command, args, {
-    input: prompt,
-    encoding: "utf8",
-    timeout: cfg.timeoutMs,
-    maxBuffer: 64 * 1024 * 1024
-  });
 
-  if (res.error) {
-    const reason =
-      res.error.code === "ETIMEDOUT"
-        ? "Agent timed out after " + cfg.timeoutMs + "ms"
-        : "Agent spawn error: " + res.error.message;
-    return { ok: false, reason };
-  }
-  if (res.status !== 0) {
-    return {
-      ok: false,
-      reason:
-        "Agent exited " + res.status + ": " + (res.stderr || "").slice(0, 500)
-    };
-  }
+  // WI-1 fail-closed gate: spawning a real Fleet worker is a LIVE (potentially billed) provider call.
+  // Unless explicitly authorized (ODG_PROVIDER_LIVE=1) the gate REFUSES and NO process is spawned —
+  // the refusal flows back as error-as-data, exactly like any other invocation failure. MOCK mode
+  // (handled above) short-circuits before here, so the offline test loop is unaffected.
+  return gateLiveCall(
+    () => {
+      const res = spawnSync(command, args, {
+        input: prompt,
+        encoding: "utf8",
+        timeout: cfg.timeoutMs,
+        maxBuffer: 64 * 1024 * 1024
+      });
 
-  const proposal = extractProposal(res.stdout || "", request);
-  if (!proposal) {
-    return { ok: false, reason: "Could not extract a valid proposal from agent output" };
-  }
-  return { ok: true, proposal };
+      if (res.error) {
+        const reason =
+          res.error.code === "ETIMEDOUT"
+            ? "Agent timed out after " + cfg.timeoutMs + "ms"
+            : "Agent spawn error: " + res.error.message;
+        return { ok: false, reason };
+      }
+      if (res.status !== 0) {
+        return {
+          ok: false,
+          reason:
+            "Agent exited " + res.status + ": " + (res.stderr || "").slice(0, 500)
+        };
+      }
+
+      const proposal = extractProposal(res.stdout || "", request);
+      if (!proposal) {
+        return { ok: false, reason: "Could not extract a valid proposal from agent output" };
+      }
+      return { ok: true, proposal };
+    },
+    (decision) => ({ ok: false, reason: decision.reason }),
+    { env: process.env, provider: request.agent || "fleet-agent" }
+  );
 }
 
 function invokeWithRetries(cfg, request) {

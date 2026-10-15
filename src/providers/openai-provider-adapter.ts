@@ -56,6 +56,8 @@ import {
   type ProviderAvailability,
 } from "./provider-availability";
 import { callOpenAiChat, type OpenAiChatEnvelope, type OpenAiChatInput } from "./openai-sdk-call";
+// WI-1 — single fail-closed authorization gate for LIVE (billed) provider calls (shared JS module).
+import { evaluateProviderLiveCall } from "../../runtime/core/provider-live-call-gate.js";
 
 /** The env var the OpenAI SDK reads for authentication. */
 export const OPENAI_API_KEY_ENV = "OPENAI_API_KEY";
@@ -170,6 +172,12 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
   private readonly timeoutMs: number | undefined;
   private readonly proofPath: string | undefined;
   private readonly call: OpenAiChatCaller;
+  /**
+   * True when NO caller was injected, i.e. this adapter uses the real SDK-sidecar default caller and a
+   * call would make a LIVE (potentially billed) OpenAI request. An injected caller is a zero-cost test
+   * seam and is never gated (WI-1 CTO ruling: gate the real-call boundary only).
+   */
+  private readonly usesDefaultCaller: boolean;
 
   constructor(opts: OpenAIProviderOptions = {}) {
     this.name = opts.providerName ?? "openai-sdk";
@@ -181,6 +189,7 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
     this.timeoutMs = opts.timeoutMs;
     this.proofPath = opts.proofPath;
     this.call = opts.call ?? defaultCaller;
+    this.usesDefaultCaller = opts.call === undefined;
   }
 
   describe(): ProviderDescription {
@@ -237,6 +246,21 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
     const availability = this.checkAvailability(this.availabilityEnv());
     if (!availability.available) {
       return this.unavailableOutcome(request, availability);
+    }
+
+    // WI-1 fail-closed gate — a real SDK-sidecar call to a REMOTE endpoint is a LIVE (potentially
+    // billed) provider call. Only the DEFAULT caller makes a real request; an injected caller is a
+    // zero-cost test seam and is never gated. A LOOPBACK/local OpenAI-compatible endpoint (Ollama /
+    // LM Studio / LocalAI / vLLM) is €0 — not "potentially billed" — so it is exempt, mirroring the
+    // availability model that already lets a local endpoint run without a credential (isLocalBaseURL).
+    // For a remote endpoint with the default caller, refuse BEFORE calling unless the operator has
+    // explicitly authorized a live call (ODG_PROVIDER_LIVE=1): no request is made; the mission halts
+    // with a precise reason (certified stop, not a crash).
+    if (this.usesDefaultCaller && !isLocalBaseURL(this.baseURL)) {
+      const gate = evaluateProviderLiveCall({ env: process.env, provider: this.name });
+      if (!gate.allowed) {
+        return this.gateRefusedOutcome(request, gate.reason);
+      }
     }
 
     // ONE real (or injected) OpenAI Chat Completions call per mission. Guardrail preamble as the
@@ -402,6 +426,31 @@ export class OpenAIProviderAdapter implements EngineeringProviderPort, Availabil
   }
 
   // --- outcome assembly ------------------------------------------------------
+
+  /** Structured, non-throwing outcome when the live-call gate REFUSED. BLOCKED, no call made (WI-1). */
+  private gateRefusedOutcome(request: ProviderRequest, reason: string): ProviderOutcome {
+    return {
+      provider: this.name,
+      classification: "BLOCKED",
+      providerExecuted: false,
+      fromCache: false,
+      result: {
+        mission: request.mission.mission,
+        providerContractVersion: PROVIDER_CONTRACT_VERSION,
+        status: "BLOCKED",
+        objectivesAddressed: [],
+        changedFiles: [],
+        commandsRun: [],
+        blocker: reason,
+        notes: "live provider call refused by the fail-closed gate; no request was made",
+      },
+      sessionId: null,
+      changedFiles: [],
+      unauthorizedChanges: [],
+      raw: { exitCode: null, stdout: "", stderr: "" },
+      diagnostics: [reason],
+    };
+  }
 
   /** Structured, non-throwing outcome for the "cannot run" case. BLOCKED, no call made. */
   private unavailableOutcome(
