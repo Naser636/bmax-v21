@@ -186,6 +186,13 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/idempotency-guard-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // scope-observer lot (CTO standing delegation V13). Leaf (fs + cwd-relative git; NO __dirname). A
+  // validation-engine EVIDENCE dependency ⇒ dist include gives the dist consumer a compiled target.
+  "scope-observer": [
+    "runtime/core/scope-observer.ts",
+    "runtime/__bench__/scope-observer-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -214,6 +221,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "idempotency-guard": [
     "runtime/core/idempotency-guard.test.js",
+  ],
+  "scope-observer": [
+    "runtime/core/scope-observer.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
