@@ -27,6 +27,14 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { builtinModules } from "node:module";
+
+// Node builtins that a compiled dist module may require (build-dist-closure allows these + relative
+// requires). An external (non-builtin, non-relative) package require is rejected by its static tracer.
+const NODE_BUILTINS: ReadonlySet<string> = new Set(builtinModules);
+function isBuiltinRequire(spec: string): boolean {
+  return NODE_BUILTINS.has(spec) || NODE_BUILTINS.has(spec.replace(/^node:/, ""));
+}
 
 /** Frozen exclusion policy (V20 §12). A lot whose base name is here is never recommended. */
 export const EXCLUSIONS: readonly string[] = Object.freeze([
@@ -118,7 +126,13 @@ export function inventory(root: string = process.cwd()): Inventory {
     // build-dist-closure's static tracer rejects it ("unexpected dynamic require()"), so the lot cannot
     // pass build:runtime via the 4-file recipe (needs a governed loader-seam redesign, not a port).
     const dynamicRequire = /\brequire\s*\(\s*[^'"\s)]/.test(src);
-    const hazard = pathHazard || dynamicRequire;
+    // Hazard 3 — external package require: a require("bare") that is neither relative nor a Node builtin
+    // (e.g. require("imapflow")). build-dist-closure rejects it ("unexpected external package require"),
+    // because externals are not co-located in dist/core — so the lot cannot pass build:runtime.
+    const externalRequire = [...src.matchAll(/\brequire\(\s*(["'])([^"']+)\1\s*\)/g)]
+      .map((m) => m[2])
+      .some((spec) => !spec.startsWith(".") && !isBuiltinRequire(spec));
+    const hazard = pathHazard || dynamicRequire || externalRequire;
     const sideEffect = /^(fs\.)?(writeFileSync|mkdirSync|appendFileSync|execSync|spawnSync)\s*\(/m.test(src);
     candidates.push({
       lot: base,
@@ -130,7 +144,9 @@ export function inventory(root: string = process.cwd()): Inventory {
         ? "BLOCKED: __dirname/REPO_ROOT path resolution breaks when compiled to dist/core (needs cwd-relative redesign)"
         : dynamicRequire
           ? "BLOCKED: dynamic require() is rejected by build-dist-closure's static tracer (needs a governed loader-seam redesign)"
-          : "admissible",
+          : externalRequire
+            ? "BLOCKED: external package require() is rejected by build-dist-closure (externals are not co-located in dist/core)"
+            : "admissible",
     });
   }
 

@@ -106,6 +106,23 @@ console.log("Migration Campaign Planner — tests");
   check(pick !== "dyn" && (pick === "reqmeta" || pick === "staticdep"), `select: dynamic-require lot 'dyn' skipped; a safe lot chosen (${pick})`);
 }
 
+// ── Hazard 3: external package require() is flagged (build-dist-closure rejects it) ──────────────
+{
+  const root = fixture({
+    "ext.js": "const c=require('imapflow');module.exports={c};\n", // external package ⇒ BLOCKED
+    "builtinreq.js": "const fs=require('fs');const c=require('node:crypto');module.exports={fs,c};\n", // builtins ⇒ OK
+    "reldep.js": "const x=require('./x');module.exports={x};\n", // relative ⇒ OK
+  });
+  const inv = inventory(root);
+  const ext = inv.candidates.find((c) => c.lot === "ext")!;
+  const bi = inv.candidates.find((c) => c.lot === "builtinreq")!;
+  const rel = inv.candidates.find((c) => c.lot === "reldep")!;
+  check(ext.hazard === true && /external package/.test(ext.reason), "hazard: require('imapflow') ⇒ BLOCKED (external package, closure-tracer reason)");
+  check(bi.hazard === false, "no false hazard: require('fs')/require('node:crypto') are Node builtins");
+  check(rel.hazard === false && rel.deps === 1, "no false hazard: relative require('./x') is admissible");
+  check(selectNextLot(inv).lot !== "ext", "select: external-package lot is never recommended");
+}
+
 // ── State: SKIPPED (only excluded remain) + NONE (campaign complete) ─────────────────────────────
 {
   const skipped = selectNextLot(inventory(fixture({ "budget-ledger.js": "module.exports={};\n" })));
@@ -170,6 +187,10 @@ console.log("Migration Campaign Planner — tests");
   const capfac = inv.candidates.find((c) => c.lot === "capability-factory");
   check(!capfac || (capfac.hazard === true && /dynamic require/.test(capfac.reason)), "integration: capability-factory flagged hazard-blocked (dynamic require), not recommended");
   check(sel.lot !== "capability-factory", "integration: capability-factory is not the recommendation");
+  // email-gateway (require("imapflow")) must be hazard-blocked — the V24 external-package finding.
+  const emailgw = inv.candidates.find((c) => c.lot === "email-gateway");
+  check(!emailgw || (emailgw.hazard === true && /external package/.test(emailgw.reason)), "integration: email-gateway flagged hazard-blocked (external package imapflow)");
+  check(sel.lot !== "email-gateway", "integration: email-gateway is not the recommendation");
 }
 
 try {
