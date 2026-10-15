@@ -304,6 +304,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/world-model-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "mission-synthesizer": [
+    "runtime/core/mission-synthesizer.ts",
+    "runtime/__bench__/mission-synthesizer-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -391,6 +396,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "world-model": [
     "runtime/core/world-model.test.js",
+  ],
+  "mission-synthesizer": [
+    "runtime/core/mission-synthesizer.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
