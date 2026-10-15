@@ -216,6 +216,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/autonomy-measure-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // capability-metrics lot (CTO authorisation V19). First NON-leaf port: requires ./autonomy-store, which
+  // build-dist-closure co-locates (historical .js) in dist so the compiled module resolves it. Module
+  // scope via `export {};`. record() keeps its real timestamp (non-deterministic, compared normalised).
+  "capability-metrics": [
+    "runtime/core/capability-metrics.ts",
+    "runtime/__bench__/capability-metrics-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -256,6 +264,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "autonomy-measure": [
     "runtime/core/autonomy-measure.test.js",
+  ],
+  "capability-metrics": [
+    "runtime/core/capability-metrics.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
