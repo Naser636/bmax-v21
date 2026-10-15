@@ -160,6 +160,12 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/research-ranking-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // connectivity-classifier lot (CTO standing delegation V11). Pure leaf; self-contained in dist.
+  "connectivity-classifier": [
+    "runtime/core/connectivity-classifier.ts",
+    "runtime/__bench__/connectivity-classifier-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -176,6 +182,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "research-ranking": [
     "runtime/core/research-ranking.test.js",
+  ],
+  "connectivity-classifier": [
+    "runtime/core/connectivity-classifier.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
