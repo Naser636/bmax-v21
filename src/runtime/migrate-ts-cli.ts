@@ -172,6 +172,13 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/local-fixers-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // decision-rules lot (CTO standing delegation V12). Pure leaf; self-contained in dist. Recognition
+  // table only — authorization is unchanged (recognition is NOT authorization, as the .js documents).
+  "decision-rules": [
+    "runtime/core/decision-rules.ts",
+    "runtime/__bench__/decision-rules-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -194,6 +201,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "local-fixers": [
     "runtime/core/local-fixers.test.js",
+  ],
+  "decision-rules": [
+    "runtime/core/decision-rules.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
