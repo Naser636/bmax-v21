@@ -201,6 +201,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/state-transition-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // runtime-model lot (CTO authorisation V17). Pure leaf (deterministic, root-relative, no writes);
+  // self-contained in dist. Consumed by the dist-built capability-registry ⇒ dist include gives it a
+  // compiled ./runtime-model target.
+  "runtime-model": [
+    "runtime/core/runtime-model.ts",
+    "runtime/__bench__/runtime-model-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -235,6 +243,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "state-transition": [
     "runtime/core/state-transition.test.js",
+  ],
+  "runtime-model": [
+    "runtime/core/runtime-model.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
