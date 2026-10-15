@@ -154,6 +154,12 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/governance-kernel-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // research-ranking lot (CTO standing delegation V11). Pure leaf (no requires); self-contained in dist.
+  "research-ranking": [
+    "runtime/core/research-ranking.ts",
+    "runtime/__bench__/research-ranking-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -167,6 +173,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "governance-kernel": [
     "runtime/core/governance-kernel.test.js",
+  ],
+  "research-ranking": [
+    "runtime/core/research-ranking.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
