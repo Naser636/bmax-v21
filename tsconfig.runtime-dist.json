@@ -44,6 +44,7 @@
     "runtime/core/runtime-model.ts",
     "runtime/core/autonomy-measure.ts",
     "runtime/core/capability-metrics.ts",
-    "runtime/core/specification-loader.ts"
+    "runtime/core/specification-loader.ts",
+    "runtime/core/autonomy-store.ts"
   ]
 }
