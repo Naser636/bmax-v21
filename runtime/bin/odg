@@ -66,6 +66,15 @@ case "$MISSION" in
     shift
     exec node runtime/bin/odg-migrate-ts.js "$@"
     ;;
+  migrate-plan)
+    # Migration Campaign Planner (V20 Gate B = EXTEND): READ-ONLY inventory + next-lot SELECT +
+    # durable multi-lot CHECKPOINT in a dedicated namespace. EXTENDS `odg migrate-ts` (does not
+    # duplicate it): it RECOMMENDS the next safe lot, which `odg migrate-ts <lot>` then executes
+    # under its own per-lot authorisation gate. Thin forward; adds no logic; forwards argv + exit
+    # code (0 a plan produced, 2 operational failure). Never writes source, runs a migration, or commits.
+    shift
+    exec node runtime/bin/odg-migrate-plan.js "$@"
+    ;;
   objective|do)
     # Semantic mission entrypoint — HUMAN NATURAL INTENT → ODG INTERPRETATION → GOVERNED MISSION →
     # EXECUTION. Default (DRY-RUN): compile a raw natural-language objective into the governed projection
@@ -167,6 +176,7 @@ case "$MISSION" in
     echo "  odg autonomy"
     echo "  odg converge        (drive to convergence + report)"
     echo "  odg migrate-ts [lot] (single-command TS migration campaign; distinct gates per lot)"
+    echo "  odg migrate-plan [--record] (read-only: inventory + recommend next safe TS-migration lot)"
     echo "  odg diagnose        (autonomous audit: expected-vs-observed → incident + prepared repair plan)"
     echo "  odg status"
     echo "  odg verify"
