@@ -24,7 +24,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SPEC_AUTHOR_EVIDENCE } = require("./capability-executors");
+const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SPEC_AUTHOR_EVIDENCE, OBSERVABILITY_VERIFICATION_EVIDENCE } = require("./capability-executors");
 const { validateStateTransition } = require("./state-transition");
 
 // The Clean Workspace capability (capability-executors.js) writes its CLEAN_WORKSPACE_1 scan here
@@ -108,6 +108,41 @@ const PROBES = {
             }
         }
         return { ok: true, detail: `clean workspace scanned this run: ${scan.candidateCount} transient candidate(s), 0 deleted` };
+    },
+
+    "autonomy-observability-verified"(ctx) {
+        // Verified proof that the Governed Observability Verification capability (capability-executors.js,
+        // VERIFY_OBSERVABILITY_ prefix) ran THIS run and re-derived a STRUCTURALLY HONEST autonomy-rate
+        // signal from the run's real per-run artifacts. Absent/malformed evidence, a non-honest signal, an
+        // objective that is not a VERIFY_OBSERVABILITY_ objective, or a STALE artifact from a prior run all
+        // FAIL — a no-op never satisfies it, and no fabricated number is ever accepted.
+        const ev = readJsonSafe(OBSERVABILITY_VERIFICATION_EVIDENCE);
+        if (!ev || typeof ev !== "object") {
+            return { ok: false, detail: `no observability-verification evidence at ${OBSERVABILITY_VERIFICATION_EVIDENCE} — run the Governed Observability Verification capability first` };
+        }
+        if (typeof ev.objective !== "string" || !ev.objective.startsWith("VERIFY_OBSERVABILITY_")) {
+            return { ok: false, detail: `evidence is not a VERIFY_OBSERVABILITY_ objective (objective=${ev.objective})` };
+        }
+        if (ev.honest !== true || typeof ev.measurable !== "boolean") {
+            return { ok: false, detail: "observability evidence missing honest===true / measurable boolean" };
+        }
+        const honestShape = ev.measurable === true
+            ? typeof ev.autonomyPercent === "number"
+            : typeof ev.reason === "string" && ev.reason.length > 0;
+        if (!honestShape) {
+            return { ok: false, detail: `observability signal not structurally honest (measurable=${ev.measurable}, autonomyPercent=${ev.autonomyPercent}, reason=${ev.reason})` };
+        }
+        // Freshness (RUN-OWNERSHIP, parity with clean-workspace-scanned): reject a stale prior-run artifact.
+        const runStartedAtMs = ctx && typeof ctx.runStartedAtMs === "number" && Number.isFinite(ctx.runStartedAtMs)
+            ? ctx.runStartedAtMs : null;
+        if (runStartedAtMs !== null) {
+            let mtimeMs;
+            try { mtimeMs = fs.statSync(OBSERVABILITY_VERIFICATION_EVIDENCE).mtimeMs; } catch { return { ok: false, detail: "observability evidence stat failed" }; }
+            if (mtimeMs < runStartedAtMs) {
+                return { ok: false, detail: `stale observability evidence (mtime ${Math.round(mtimeMs)} < run start ${runStartedAtMs}); not produced this run` };
+            }
+        }
+        return { ok: true, detail: `autonomy observability signal verified this run (measurable=${ev.measurable}${ev.measurable ? `, autonomyPercent=${ev.autonomyPercent}` : `, reason="${ev.reason}"`})` };
     },
 
     "external-research-dry-run-planned"(ctx) {

@@ -140,6 +140,13 @@ const PROBE_INTENT = [
     },
 ];
 
+// B140 — Observability Verification intent. A mission whose deliverable is an OBSERVABLE STATE (the
+// governed dashboard / autonomy-rate signal) does NO file edit on re-run, so a plain objective would be a
+// no-op RECORDED (BLOCKED by anti-false-success). This SPECIFIC intent (dashboard & autonomy observability)
+// binds the objective to the Governed Observability Verification capability so it does REAL evidenced work.
+// Deliberately narrow: it must name the governed-dashboard/autonomy-observability deliverable.
+const OBSERVABILITY_VERIFY_INTENT = /\bgoverned dashboard\b|\bautonomy observability\b|\bdashboard & autonomy\b|\bGOVERNED_DASHBOARD_OBSERVABILITY\b/i;
+
 /*
  * Resolve the capability proofs a mission's intent implies. Pure/deterministic (a function of `entry`
  * only). De-duplicated by evidence name so overlapping rules never declare the same probe twice.
@@ -304,6 +311,15 @@ function buildContract(entry) {
             entry.description ||
             `Auto-generated contract for roadmap mission ${entry.id} (${goal}).`,
     });
+
+    // B140 — bind an observability-verification mission's objective to the Governed Observability
+    // Verification capability (objectiveId prefix VERIFY_OBSERVABILITY_) + its independent per-objective
+    // proof, so the objective does REAL evidenced work instead of a no-op RECORDED. Scoped to this intent
+    // ONLY: every other mission's objective is byte-identical. Grants no new authority, fabricates no proof.
+    if (OBSERVABILITY_VERIFY_INTENT.test(entryText(entry))) {
+        base.objectives[0].id = "VERIFY_OBSERVABILITY_1";
+        base.objectives[0].proof = "autonomy-observability-verified";
+    }
 
     const objectiveId = base.objectives[0].id;
     // Capability proofs the mission's intent implies — declared so the Validation Engine executes
