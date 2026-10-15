@@ -193,6 +193,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/scope-observer-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // state-transition lot (CTO authorisation V15). Pure leaf (C03 STATE validator); self-contained in
+  // dist. Widely consumed (mission-lifecycle/action-gate/capability-probes/... dist-built) ⇒ dist
+  // include gives those compiled consumers a compiled ./state-transition target.
+  "state-transition": [
+    "runtime/core/state-transition.ts",
+    "runtime/__bench__/state-transition-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -224,6 +232,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "scope-observer": [
     "runtime/core/scope-observer.test.js",
+  ],
+  "state-transition": [
+    "runtime/core/state-transition.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

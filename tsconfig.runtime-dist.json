@@ -39,6 +39,7 @@
     "runtime/core/local-fixers.ts",
     "runtime/core/decision-rules.ts",
     "runtime/core/idempotency-guard.ts",
-    "runtime/core/scope-observer.ts"
+    "runtime/core/scope-observer.ts",
+    "runtime/core/state-transition.ts"
   ]
 }
