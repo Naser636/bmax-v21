@@ -52,6 +52,7 @@
     "runtime/core/intake-endpoint.ts",
     "runtime/core/post-release-learning.ts",
     "runtime/core/autonomy-rate.ts",
-    "runtime/core/patch-memory.ts"
+    "runtime/core/patch-memory.ts",
+    "runtime/core/opportunity-policy.ts"
   ]
 }
