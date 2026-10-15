@@ -137,12 +137,24 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "tsconfig.runtime-dist.json",
     "tsconfig.runtime-leaves-strict.json",
   ],
+  // local-test-gate lot (CTO authorisation V9). Leaf module (no internal ./requires); the compiled
+  // .ts is self-contained in dist. The strict-gate's leaves config is unchanged (it is not a dist
+  // pipeline leaf), so the port is type-checked by the tsconfig.runtime-dist compile alone.
+  "local-test-gate": [
+    "runtime/core/local-test-gate.ts",
+    "runtime/__bench__/local-test-gate-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
   "validation-engine": [
     "src/runtime/validation-engine-recorded-noop.test.ts",
     "src/runtime/validation-engine-probe-freshness.test.ts",
+  ],
+  // The lot's existing behavioural suite, replayed against the UNCHANGED historical .js.
+  "local-test-gate": [
+    "runtime/core/local-test-gate.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
