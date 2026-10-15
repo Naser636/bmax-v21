@@ -1,0 +1,40 @@
+{
+  "mission": "PARITY_ECONOMIC",
+  "version": "1.0",
+  "status": "AUTHORIZED",
+  "mode": "READ_ONLY",
+  "priority": "NORMAL",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "budget": {
+    "allocations": [
+      { "bucket": "mission", "unit": "USD", "kind": "ASSET", "amount": 1000, "scale": 2 },
+      { "bucket": "token", "unit": "LLM_TOKENS", "kind": "COST_UNIT", "amount": 50000, "scale": 0 }
+    ]
+  },
+  "objectives": [
+    {
+      "id": "CLEAN_WORKSPACE_1",
+      "goal": "Cross-runtime parity ECONOMIC_TOUCH: enumerate transient git-ignored runtime artifacts (read-only scan) while the Loader resolves the declared economic budget.",
+      "done_when": ["A deterministic scan lists every candidate path under runtime/ that is safe to remove."],
+      "authorization": { "eligible": true, "authorized": true }
+    },
+    {
+      "id": "CLEAN_WORKSPACE_2",
+      "goal": "Confirm each candidate is covered by the gitignore/backup/archive policy so no tracked or required artifact is listed.",
+      "done_when": ["Every candidate is git-ignored or already archived; no tracked or required artifact is listed."],
+      "authorization": { "eligible": true, "authorized": true }
+    },
+    {
+      "id": "CLEAN_WORKSPACE_3",
+      "goal": "Produce read-only evidence of the cleaned workspace state without deleting any tracked or required artifact.",
+      "done_when": ["Evidence generated.", "Report generated."],
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "verify": [
+    { "capability": "Clean Workspace", "evidence": "clean-workspace-scanned" }
+  ],
+  "definition_of_done": ["Evidence generated", "Declared budget resolved by the economic contract (read-only transport)"],
+  "completion": ["Read-only workspace audit complete; economic budget resolved without reservation/spend."]
+}

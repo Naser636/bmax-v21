@@ -1,0 +1,19 @@
+{
+  "mission": "PARITY_WRITE",
+  "version": "1.0",
+  "status": "AUTHORIZED",
+  "mode": "IMPLEMENT",
+  "priority": "NORMAL",
+  "requires_engineering": true,
+  "authorized_paths": ["bench-workspace/**"],
+  "objectives": [
+    {
+      "id": "ODG_WRITE_1",
+      "goal": "Cross-runtime parity ENGINEERING_WRITE: ODG formulates one deterministic deliverable strictly inside the authorized disposable scope.",
+      "done_when": ["Exactly one deliverable exists under bench-workspace/."],
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "definition_of_done": ["One confined deliverable produced within the authorized write scope; nothing written outside it."],
+  "completion": ["Validation successful within the authorized scope."]
+}
