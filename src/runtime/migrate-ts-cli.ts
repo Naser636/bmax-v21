@@ -244,6 +244,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/fleet-envelope-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "economic-unit": [
+    "runtime/core/economic-unit.ts",
+    "runtime/__bench__/economic-unit-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -296,6 +301,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "runtime-context-loader": [],
   // fleet-envelope has no dedicated historical .test.js; the equivalence bench is its proof.
   "fleet-envelope": [],
+  "economic-unit": [
+    "runtime/core/economic-unit.test.js",
+  ],
 };
 const REGRESSION_BENCHES = [
   "runtime/__bench__/capability-registry-equivalence.e2e.test.ts",

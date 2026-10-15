@@ -47,6 +47,7 @@
     "runtime/core/specification-loader.ts",
     "runtime/core/autonomy-store.ts",
     "runtime/core/runtime-context-loader.ts",
-    "runtime/core/fleet-envelope.ts"
+    "runtime/core/fleet-envelope.ts",
+    "runtime/core/economic-unit.ts"
   ]
 }
