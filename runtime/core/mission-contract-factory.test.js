@@ -196,4 +196,26 @@ ok("no grounded path ⇒ safe runtime/** default preserved (backward compatible)
 const explicitScoped = factory.buildContract({ id: "X_EXPLICIT", title: "names src/foo.ts in title", authorized_paths: ["runtime/core/x.js"], requiresEngineering: true });
 ok("explicit authorized_paths honoured verbatim (derivation never widens it)", JSON.stringify(explicitScoped.authorized_paths) === JSON.stringify(["runtime/core/x.js"]));
 
+// P1 (B143) — conservative autonomy-eligibility declaration + end-to-end measurability via the EXISTING
+// measurer (autonomy-measure.eligibilityFromObjectives), which reads ONLY explicit per-objective
+// `authorization` declarations and never infers eligibility.
+const measure = require("./autonomy-measure");
+
+// An ENGINEERING mission's synthesized objectives each carry {eligible:true, authorized:true}.
+const engC = factory.buildContract({ id: "ENG_MISSION", title: "Engineering mission", requiresEngineering: true, authorized_paths: ["runtime/**"] });
+ok("engineering objectives declare authorization {eligible,authorized}", engC.objectives.every((o) => o.authorization && o.authorization.eligible === true && o.authorization.authorized === true));
+// The measurer now finds a COMPLETE eligibility denominator (no 'missing' ⇒ measurable denominator possible).
+const engElig = measure.eligibilityFromObjectives(engC.objectives);
+ok("eligibilityFromObjectives(engineering) is complete (denominator declared, no missing)", engElig.complete === true && engElig.missing.length === 0);
+
+// A READ-ONLY mission's objectives are EXCLUDED with a justified reason (conservative; not counted).
+const roC = factory.buildContract({ id: "RO_MISSION", title: "Read only mission", requiresEngineering: false });
+ok("read-only objectives declare a justified exclusion", roC.objectives.every((o) => o.authorization && o.authorization.excluded === true && typeof o.authorization.reason === "string" && o.authorization.reason.length > 0));
+const roElig = measure.eligibilityFromObjectives(roC.objectives);
+ok("read-only exclusions are a VALID (complete) classification, excluded from the denominator", roElig.complete === true && Object.values(roElig.map).every((m) => m.eligible === false && m.authorized === false));
+
+// CONSERVATIVE: declaring eligibility NEVER by itself makes a unit a verified ODG success — the numerator
+// is evidence-gated downstream. Here we only prove the DENOMINATOR is now declarable (no inflation path).
+ok("declaration completes the denominator only (eligible+authorized), numerator stays evidence-gated", engElig.map[engC.objectives[0].id].eligible === true);
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

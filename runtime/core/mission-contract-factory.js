@@ -321,6 +321,23 @@ function buildContract(entry) {
         base.objectives[0].proof = "autonomy-observability-verified";
     }
 
+    // P1 (B143) — conservative autonomy-eligibility DECLARATION per objective. The measurer
+    // (autonomy-measure.eligibilityFromObjectives) reads ONLY explicit per-objective `authorization`
+    // declarations and NEVER infers eligibility; an absent declaration ⇒ NON_MEASURABLE. As the contract
+    // author, the factory declares conservatively: an ENGINEERING objective in this AUTHORIZED mission is
+    // eligible ODG-executable authorized work ⇒ {eligible:true, authorized:true}; a read-only objective is
+    // EXCLUDED from the autonomy denominator with a justified reason. This can NEVER inflate the autonomy %:
+    // the numerator stays evidence-gated (a unit counts as ODG-verified only via EVIDENCED attribution,
+    // decided downstream), so declaring eligibility only completes the DENOMINATOR honestly. Human-mandatory
+    // work is not a factory engineering objective (ODG never auto-commits; the commit gate is a SEPARATE
+    // lifecycle gate, not an objective work-actor). An explicit declaration is never overridden.
+    for (const obj of base.objectives) {
+        if (!obj || typeof obj !== "object" || obj.authorization) continue;
+        obj.authorization = engineering
+            ? { eligible: true, authorized: true }
+            : { excluded: true, reason: "read-only/analysis objective — not ODG-authored engineering work; excluded from the autonomy denominator" };
+    }
+
     const objectiveId = base.objectives[0].id;
     // Capability proofs the mission's intent implies — declared so the Validation Engine executes
     // them and reports capability proofs (empty ⇒ omitted, so unrelated missions are unchanged).
