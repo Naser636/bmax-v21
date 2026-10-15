@@ -49,17 +49,32 @@ const PROVIDER_POLICY_PATH = path.join(ROOT, "runtime", "config", "provider-poli
 const RUNTIME_POLICIES_PATH = path.join(ROOT, "runtime", "policies", "runtime-policies.json");
 
 // ---- Intent derivation (mirrors src/runtime/mission-intent.ts defaults; deterministic) ----------
+// Signals are matched against a DIACRITIC-FOLDED, lower-cased copy of the objective, so the runtime
+// understands its FRENCH operating language too (the keywords below are stored folded — no accents —
+// and English keywords fold to themselves, so English mode derivation is byte-identical).
 const MODE_SIGNALS = [
-    ["ANALYZE", ["analyze", "analyse", "audit", "investigate", "assess", "review", "find", "explore", "research", "discover"]],
-    ["PLAN", ["plan", "design", "roadmap", "strategize", "propose"]],
-    ["IMPLEMENT", ["implement", "build", "add", "create", "write", "fix", "refactor", "wire", "integrate", "develop"]],
-    ["VALIDATE", ["validate", "verify", "test", "check", "certify"]],
-    ["LEARN", ["learn", "train", "study"]],
+    ["ANALYZE", ["analyze", "analyse", "audit", "investigate", "assess", "review", "find", "explore", "research", "discover",
+        "audite", "auditer", "analyser", "examine", "examiner", "inspecte", "inspecter", "evalue", "evaluer",
+        "investigue", "explorer", "recherche", "rechercher", "etudie", "etudier", "diagnostique", "diagnostiquer", "identifie"]],
+    ["PLAN", ["plan", "design", "roadmap", "strategize", "propose",
+        "planifie", "planifier", "concois", "concevoir", "proposer", "decompose", "decomposer", "decoupe", "decouper", "feuille de route"]],
+    ["IMPLEMENT", ["implement", "build", "add", "create", "write", "fix", "refactor", "wire", "integrate", "develop",
+        "implemente", "implementer", "corrige", "corriger", "repare", "reparer", "ajoute", "ajouter", "cree", "creer",
+        "ecris", "ecrire", "developpe", "developper", "integre", "integrer", "cable", "cabler", "construis", "construire",
+        "modifie", "modifier", "genere", "generer", "realise", "realiser", "execute", "executer", "refactorise"]],
+    ["VALIDATE", ["validate", "verify", "test", "check", "certify",
+        "valide", "valider", "verifie", "verifier", "teste", "tester", "controle", "controler", "certifie", "certifier"]],
+    ["LEARN", ["learn", "train", "study", "apprends", "apprendre", "entraine", "entrainer"]],
 ];
-const HIGH_PRIORITY_SIGNALS = ["urgent", "asap", "immediately", "critical", "now", "best"];
+const HIGH_PRIORITY_SIGNALS = ["urgent", "asap", "immediately", "critical", "now", "best",
+    "immediatement", "critique", "maintenant", "prioritaire", "des que possible"];
+
+function foldDiacritics(s) {
+    return String(s == null ? "" : s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
 function deriveIntent(mission, normalized) {
-    const g = String(normalized || "").toLowerCase();
+    const g = foldDiacritics(normalized).toLowerCase();
     let mode = "UNKNOWN";
     for (const [m, kws] of MODE_SIGNALS) {
         if (kws.some((k) => g.includes(k))) { mode = m; break; }

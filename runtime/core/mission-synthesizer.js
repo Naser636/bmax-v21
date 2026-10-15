@@ -39,7 +39,7 @@ function slug(text, fallback) {
 // the guard for the weakest split (conjunction/comma): a clause is only treated as its own action
 // when it BEGINS with one of these, so "quick and dirty fix" or "the loader, engine and patch"
 // (a single action over a list of objects) are never over-split.
-const ACTION_VERBS = [
+const ENGLISH_ACTION_VERBS = [
     "add", "remove", "delete", "drop", "fix", "repair", "refactor", "implement",
     "create", "build", "wire", "generate", "migrate", "enable", "disable",
     "integrate", "update", "upgrade", "write", "rename", "move", "extract",
@@ -49,17 +49,64 @@ const ACTION_VERBS = [
     "format", "lint", "run", "check", "ensure", "emit", "record", "log",
     "print", "load", "parse", "normalize", "compute", "resolve", "apply",
     "bump", "deprecate", "restore", "rollback", "archive", "publish", "deploy",
+    // Analysis / reporting imperatives: genuine actions that lead a clause ("audit X and report Y").
+    // Their absence silently discarded otherwise-valid English splits (e.g. "report findings").
+    "report", "analyze", "analyse", "review", "assess", "investigate", "explore",
+    "research", "discover", "diagnose", "describe", "summarize", "decompose",
+    "understand", "determine", "measure", "inspect", "evaluate", "plan", "design", "propose",
 ];
+
+// FR — the runtime receives natural-language objectives in FRENCH (the operating language). The
+// decomposition guard only accepts a split when EVERY clause begins with a known action verb, so a
+// French request collapsed to one generic objective for want of a French lexicon. These are stored
+// in DIACRITIC-FOLDED form (no accents) because startsWithActionVerb folds the clause before matching;
+// both the 2nd-person imperative ("corrige") and the infinitive ("corriger") head a clause in practice.
+const FRENCH_ACTION_VERBS = [
+    // analyse / audit
+    "audite", "auditer", "analyse", "analyser", "examine", "examiner", "inspecte", "inspecter",
+    "evalue", "evaluer", "investigue", "investiguer", "explore", "explorer", "recherche", "rechercher",
+    "etudie", "etudier", "diagnostique", "diagnostiquer", "comprends", "comprendre", "identifie", "identifier",
+    // plan / decompose
+    "planifie", "planifier", "concois", "concevoir", "propose", "proposer", "decompose", "decomposer",
+    "decoupe", "decouper",
+    // implement / fix
+    "implemente", "implementer", "corrige", "corriger", "repare", "reparer", "ajoute", "ajouter",
+    "cree", "creer", "ecris", "ecrire", "developpe", "developper", "integre", "integrer", "cable", "cabler",
+    "construis", "construire", "modifie", "modifier", "supprime", "supprimer", "retire", "retirer",
+    "remplace", "remplacer", "renomme", "renommer", "deplace", "deplacer", "migre", "migrer",
+    "active", "activer", "desactive", "desactiver", "genere", "generer", "refactorise", "refactoriser",
+    "realise", "realiser", "installe", "installer", "nettoie", "nettoyer", "optimise", "optimiser",
+    "durcis", "durcir", "renforce", "renforcer",
+    // test / validate
+    "teste", "tester", "valide", "valider", "verifie", "verifier", "controle", "controler",
+    "certifie", "certifier", "assure", "assurer",
+    // report / document
+    "rapporte", "rapporter", "redige", "rediger", "documente", "documenter", "decris", "decrire",
+    "resume", "resumer", "produis", "produire", "presente", "presenter", "liste", "lister",
+    // execute / run / resume
+    "execute", "executer", "lance", "lancer", "applique", "appliquer", "traite", "traiter",
+    "poursuis", "poursuivre", "continue", "continuer", "reprends", "reprendre", "restaure", "restaurer",
+    "configure", "configurer",
+];
+
+const ACTION_VERBS = [...ENGLISH_ACTION_VERBS, ...FRENCH_ACTION_VERBS];
 
 // Strip a leading list marker ("- ", "* ", "• ", "1. ", "2) ", "(3) ") from a line.
 function stripListMarker(line) {
     return String(line).replace(/^\s*(?:[-*•]|\(\d+\)|\d+[.)])\s+/, "");
 }
 
-// Does a clause begin with an imperative action verb?
+// Does a clause begin with an imperative action verb? Diacritic-folded so a French verb ("rédige",
+// "exécute") matches its folded lexicon entry, and the leading LETTER RUN is taken so an enclitic
+// pronoun ("décompose-la") or trailing punctuation never hides the verb. English folds to itself, so
+// this is byte-identical for every pre-existing English clause (a→a, no accents, no hyphen-pronouns).
+function foldDiacritics(s) {
+    return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 function startsWithActionVerb(clause) {
-    const first = String(clause).trim().toLowerCase().split(/\s+/)[0] || "";
-    return ACTION_VERBS.includes(first.replace(/[^a-z]/g, ""));
+    const folded = foldDiacritics(String(clause).trim().toLowerCase());
+    const first = (folded.match(/^[a-z]+/) || [""])[0];
+    return ACTION_VERBS.includes(first);
 }
 
 // Inline enumerated list on ONE line: "1. do X 2. do Y 3. do Z" / "1) X 2) Y" / "(1) X (2) Y".
@@ -76,8 +123,11 @@ function splitEnumerated(line) {
 // ONLY when EVERY resulting clause independently begins with an action verb — otherwise the "split"
 // is discarded and the goal stays a single objective (no over-splitting of a single action).
 function splitConjunctions(line) {
+    // Connectors: EN (and / then) + FR (et / puis / ensuite). Bare-comma and ";" are language-neutral.
+    // The every-clause-starts-with-a-verb guard below still prevents a NOUN list ("le loader et le
+    // moteur") from being over-split, exactly as it does for the English " and ".
     const clauses = line
-        .split(/\s*(?:,\s*and\s+|,\s*then\s+|,\s+|\s+and\s+|\s+then\s+|\s*;\s*)/i)
+        .split(/\s*(?:,\s*and\s+|,\s*then\s+|,\s*et\s+|,\s*puis\s+|,\s*ensuite\s+|,\s+|\s+and\s+|\s+then\s+|\s+et\s+|\s+puis\s+|\s+ensuite\s+|\s*;\s*)/i)
         .map((s) => s.trim())
         .filter(Boolean);
     if (clauses.length < 2) return [];

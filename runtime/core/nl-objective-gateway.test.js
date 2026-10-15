@@ -317,6 +317,35 @@ console.log("== NL Objective Gateway ==");
     sweep.forEach((r, i) => assertNoSideEffects("sweep#" + i, r));
 }
 
+// 25 — WI-1: a FRENCH natural-language objective (the runtime's operating language) compiles through
+// the governed gateway, derives a French intent mode, and DECOMPOSES into distinct objectives instead
+// of one generic objective. Dry-run safety invariants are preserved (no provider/external/write).
+{
+    const fr = "audite l'état du runtime, corrige la décomposition défaillante et rédige un rapport";
+    const r = gw.compile(fr, { currentState: "CREATED" });
+    ok("25 FR: mode derived from French verbs (ANALYZE)", r.intent.mode === "ANALYZE");
+    ok("25 FR: decomposed into 3 distinct objectives (not 1 generic)", r.contract.objectives.length === 3);
+    ok("25 FR: objective goals preserved verbatim with accents",
+        r.contract.objectives[0].goal === "audite l'état du runtime" && r.contract.objectives[2].goal === "rédige un rapport");
+    ok("25 FR: dependency edges track the decomposition", Array.isArray(r.dependencies) && r.dependencies.length >= 3);
+    ok("25 FR: contract still via mission-synthesizer (reuse)", r.contract.source === "mission-synthesizer");
+    ok("25 FR: dry-run enforced", r.mode === "DRY_RUN");
+    assertNoSideEffects("25 FR", r);
+
+    // French intent-mode derivation across families (folded matching; English modes unchanged).
+    ok("25 FR mode IMPLEMENT ('corrige … exécute …')", gw.compile("corrige la régression puis exécute les tests", { currentState: "CREATED" }).intent.mode === "IMPLEMENT");
+    ok("25 FR mode VALIDATE ('valide …')", gw.compile("valide le pipeline et certifie le résultat", { currentState: "CREATED" }).intent.mode === "VALIDATE");
+
+    // Determinism: identical French objective ⇒ byte-identical projection (no clock/randomness).
+    const a = gw.compile(fr, { currentState: "CREATED" });
+    const b = gw.compile(fr, { currentState: "CREATED" });
+    ok("25 FR: deterministic projection", JSON.stringify(a) === JSON.stringify(b));
+
+    // Over-split guard holds in French: a single action over a noun list stays ONE objective.
+    const nounList = gw.compile("corrige le loader et le moteur de décision", { currentState: "CREATED" });
+    ok("25 FR: noun-list not over-split (guard)", nounList.contract.objectives.length === 1);
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);

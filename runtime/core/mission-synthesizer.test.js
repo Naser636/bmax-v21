@@ -119,4 +119,39 @@ console.log("Case 11 — P4: done_when only requires 'Patch applied.' when a pat
     ok("explicit doneWhen honoured verbatim", JSON.stringify(explicit.objectives[0].done_when) === JSON.stringify(["Custom criterion only."]));
 }
 
+console.log("Case 12 — FR: a FRENCH multi-action instruction decomposes into distinct ordered objectives");
+{
+    // Root cause (WI-1): ACTION_VERBS / splitConjunctions were English-only, so a complex FRENCH
+    // request (the runtime's operating language) collapsed to ONE generic objective. These prove the
+    // additive French comprehension without regressing the English behaviour or the over-split guard.
+    const etPuis = syn.decompose("audite l'état du runtime, corrige la décomposition défaillante et rédige un rapport");
+    ok("FR ', … et …' ⇒ 3 objectives", etPuis.length === 3);
+    ok("FR split keeps each clause verbatim (accents preserved)",
+        etPuis[0] === "audite l'état du runtime" && etPuis[2] === "rédige un rapport");
+
+    const puis = syn.decompose("analyse la demande et décompose-la en objectifs distincts puis exécute les travaux");
+    ok("FR ' et … puis …' ⇒ 3 objectives", puis.length === 3);
+    ok("FR enclitic pronoun does not hide the verb ('décompose-la')", puis[1] === "décompose-la en objectifs distincts");
+
+    ok("FR infinitive heads a clause ('corriger … et documenter …')",
+        syn.decompose("corriger la régression et documenter le changement").length === 2);
+
+    // Over-split guard still holds in French: a single action over a NOUN list stays ONE objective
+    // (the 2nd clause does not begin with a verb), exactly as the English idiom guard does.
+    ok("FR noun-list is NOT over-split ('le loader et le moteur')",
+        syn.decompose("corrige le loader et le moteur de décision").length === 1);
+
+    // English regression: the reporting verb 'report' now heads a clause, so a valid English split
+    // that previously collapsed ("audit … and report …") decomposes correctly.
+    ok("EN 'report' now heads a clause ⇒ split",
+        syn.decompose("audit the runtime state and report findings").length === 2);
+    ok("EN idiom still not over-split ('quick and dirty')",
+        syn.decompose("apply a quick and dirty fix").length === 1);
+
+    // Determinism preserved for French too (DETERMINISM_FIRST).
+    const d1 = syn.decompose("corrige X et teste Y");
+    const d2 = syn.decompose("corrige X et teste Y");
+    ok("FR decomposition deterministic", JSON.stringify(d1) === JSON.stringify(d2) && d1.length === 2);
+}
+
 console.log(`\nMISSION SYNTHESIZER — ${passed} assertions passed.`);
