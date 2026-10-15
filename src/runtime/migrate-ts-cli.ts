@@ -249,6 +249,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/economic-unit-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "intake-endpoint": [
+    "runtime/core/intake-endpoint.ts",
+    "runtime/__bench__/intake-endpoint-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -303,6 +308,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "fleet-envelope": [],
   "economic-unit": [
     "runtime/core/economic-unit.test.js",
+  ],
+  "intake-endpoint": [
+    "runtime/core/intake-endpoint.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
