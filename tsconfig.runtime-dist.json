@@ -55,6 +55,7 @@
     "runtime/core/patch-memory.ts",
     "runtime/core/opportunity-policy.ts",
     "runtime/core/economic-extractor.ts",
-    "runtime/core/artifact-state.ts"
+    "runtime/core/artifact-state.ts",
+    "runtime/core/pilot-delivery-packager.ts"
   ]
 }
