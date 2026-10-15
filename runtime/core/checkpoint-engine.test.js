@@ -128,4 +128,48 @@ inTempCwd((cp) => {
     ok("restart status is RUNNING (a fresh checkpoint, not the old FAILED one)", restarted.status === "RUNNING");
 });
 
+// WI-2 — baseline-relative dirty classification (pure; the CTO invariant is proven here).
+console.log("WI-2 — baseline-relative dirty classification");
+inTempCwd((cp) => {
+    const h = (x) => "sha256:" + x; // stand-in content hashes (the classifier compares equality only).
+    // Scenario: the tree carries pre-existing operator work; the mission edits one in-scope file and
+    // also FURTHER modifies a pre-existing file that is OUTSIDE its authorized scope.
+    const baseline = {
+        "runtime/bin/odg-state.js": h("A"),       // pre-existing, untouched by the mission
+        "src/runtime/autonomy-runtime-adapter.ts": h("B"), // pre-existing, will be re-modified below
+    };
+    const current = {
+        "runtime/bin/odg-state.js": h("A"),       // identical ⇒ preserved pre-existing work
+        "src/runtime/autonomy-runtime-adapter.ts": h("B2"), // CONTENT CHANGED by the mission (out of scope)
+        "runtime/core/widget.js": h("N"),         // NEW file, inside the mission's authorized scope
+    };
+    const c = cp.classifyDirty({ current, baseline, authorizedPaths: ["runtime/core/widget.js"] });
+
+    ok("pre-existing UNTOUCHED file is NOT charged to the mission",
+        c.preExisting.includes("runtime/bin/odg-state.js") && !c.missionTouched.includes("runtime/bin/odg-state.js"));
+    ok("CTO invariant: a pre-existing file FURTHER modified out-of-scope is UNEXPECTED (not a licence)",
+        c.unexpected.includes("src/runtime/autonomy-runtime-adapter.ts"));
+    ok("a new in-scope file is the mission deliverable (in scope, not unexpected)",
+        c.inScope.includes("runtime/core/widget.js") && !c.unexpected.includes("runtime/core/widget.js"));
+    ok("verdict OUTSIDE when any mission-touched path is out of scope", cp.verdictOf(c) === "OUTSIDE");
+
+    // Only pre-existing dirt, nothing mission-produced ⇒ CLEAN relative to baseline ⇒ SUCCESS.
+    const cleanRel = cp.classifyDirty({ current: { "a.js": h("A") }, baseline: { "a.js": h("A") }, authorizedPaths: [] });
+    ok("all-pre-existing ⇒ nothing mission-touched", cleanRel.missionTouched.length === 0);
+    ok("verdict CLEAN when the mission produced no dirt", cp.verdictOf(cleanRel) === "CLEAN");
+
+    // In-scope deliverable only ⇒ PENDING_COMMIT (awaits the human commit gate).
+    const pending = cp.classifyDirty({ current: { "runtime/core/x.js": h("N") }, baseline: {}, authorizedPaths: ["runtime/core/"] });
+    ok("verdict PENDING_COMMIT for an in-scope deliverable", cp.verdictOf(pending) === "PENDING_COMMIT");
+
+    // Empty baseline ⇒ byte-identical to the pre-WI-2 behaviour (no subtraction): every dirty path is
+    // mission-touched and classified against scope exactly as before. Guarantees FINALIZE_* is unchanged.
+    const noBase = cp.classifyDirty({ current: { "p.js": h("Z") }, baseline: {}, authorizedPaths: [] });
+    ok("empty baseline + no scope ⇒ OUTSIDE (legacy behaviour preserved)", cp.verdictOf(noBase) === "OUTSIDE");
+
+    // Rename porcelain parsing picks the NEW path; untracked "?? p" and modified " M p" are handled.
+    const parsed = cp.parsePorcelainPaths(" M a.js\n?? b.js\nR  old.js -> new.js");
+    ok("porcelain parse: modified/untracked/rename(new)", JSON.stringify(parsed) === JSON.stringify(["a.js", "b.js", "new.js"]));
+});
+
 console.log(`\nCHECKPOINT ENGINE — ${passed} assertions passed.`);
