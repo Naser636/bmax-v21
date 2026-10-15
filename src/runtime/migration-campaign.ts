@@ -29,6 +29,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { builtinModules } from "node:module";
 
+// REUSE the read-only Change-Impact Graph (§U Phase-1 #1) to detect TRANSITIVE build-dist-closure
+// hazards (a dep's dynamic/external/path hazard anywhere in the closure). This STRENGTHENS the inline
+// direct-source rules below — it never replaces or weakens them. Required (not imported) to stay
+// CommonJS-interop-safe, same pattern as the runtime/core modules.
+const { impactOf } = require("../../runtime/core/change-impact-graph");
+
 // Node builtins that a compiled dist module may require (build-dist-closure allows these + relative
 // requires). An external (non-builtin, non-relative) package require is rejected by its static tracer.
 const NODE_BUILTINS: ReadonlySet<string> = new Set(builtinModules);
@@ -132,7 +138,16 @@ export function inventory(root: string = process.cwd()): Inventory {
     const externalRequire = [...src.matchAll(/\brequire\(\s*(["'])([^"']+)\1\s*\)/g)]
       .map((m) => m[2])
       .some((spec) => !spec.startsWith(".") && !isBuiltinRequire(spec));
-    const hazard = pathHazard || dynamicRequire || externalRequire;
+    // Direct-source hazard (the three inline rules, UNCHANGED — fast, authoritative, carry the reasons).
+    const ownHazard = pathHazard || dynamicRequire || externalRequire;
+    // Hazard 4 (ADDITIVE, transitive) — the SAME three closure-rejection classes anywhere in this module's
+    // transitive dependency closure, computed by the reused Change-Impact Graph. build-dist-closure co-locates
+    // the WHOLE closure into dist and scans it, so a clean module with a hazardous transitive dep (e.g. the
+    // V30 local-autonomy → capability-factory dynamic-require case) would otherwise be mis-recommended as safe.
+    // This STRENGTHENS the gate; it never clears a module the direct rules blocked.
+    const ch = impactOf(root, base).closureHazards;
+    const transitiveHazard = !ownHazard && (ch.dynamicRequire || ch.externalRequire || ch.pathHazard);
+    const hazard = ownHazard || transitiveHazard;
     const sideEffect = /^(fs\.)?(writeFileSync|mkdirSync|appendFileSync|execSync|spawnSync)\s*\(/m.test(src);
     candidates.push({
       lot: base,
@@ -146,7 +161,9 @@ export function inventory(root: string = process.cwd()): Inventory {
           ? "BLOCKED: dynamic require() is rejected by build-dist-closure's static tracer (needs a governed loader-seam redesign)"
           : externalRequire
             ? "BLOCKED: external package require() is rejected by build-dist-closure (externals are not co-located in dist/core)"
-            : "admissible",
+            : transitiveHazard
+              ? `BLOCKED: transitive closure hazard in [${ch.modules.join(", ")}] (${[ch.dynamicRequire && "dynamic-require", ch.externalRequire && "external-require", ch.pathHazard && "path"].filter(Boolean).join("+")}) — build-dist-closure co-locates + rejects the closure`
+              : "admissible",
     });
   }
 

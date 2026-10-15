@@ -106,6 +106,25 @@ console.log("Migration Campaign Planner — tests");
   check(pick !== "dyn" && (pick === "reqmeta" || pick === "staticdep"), `select: dynamic-require lot 'dyn' skipped; a safe lot chosen (${pick})`);
 }
 
+// ── Hazard 4 (V38): TRANSITIVE closure hazard — a clean module whose DEP carries a hazard is BLOCKED ──
+{
+  const root = fixture({
+    // leaf has a dynamic require (build-dist-closure reject); user is itself clean but requires leaf.
+    "haz-leaf.js": "const p='./x';const m=require(p);module.exports={m};\n",
+    "clean-user.js": "const l=require('./haz-leaf');module.exports={l};\n", // clean own-source, hazardous closure
+    "truly-clean.js": "const x=require('./staticok');module.exports={x};\n",
+    "staticok.js": "module.exports={};\n",
+  });
+  const inv = inventory(root);
+  const user = inv.candidates.find((c) => c.lot === "clean-user")!;
+  const leaf = inv.candidates.find((c) => c.lot === "haz-leaf")!;
+  const clean = inv.candidates.find((c) => c.lot === "truly-clean")!;
+  check(leaf.hazard === true, "transitive: the hazardous leaf itself is BLOCKED (direct rule, unchanged)");
+  check(user.hazard === true && /transitive closure hazard/.test(user.reason) && /haz-leaf/.test(user.reason), "transitive: clean-own-source module with a hazardous DEP ⇒ BLOCKED via closure (V30 local-autonomy class)");
+  check(clean.hazard === false, "transitive: a module whose whole closure is clean stays admissible (no false block)");
+  check(selectNextLot(inv).lot !== "clean-user" && selectNextLot(inv).lot !== "haz-leaf", "select: neither the hazardous leaf nor its transitive consumer is recommended");
+}
+
 // ── Hazard 3: external package require() is flagged (build-dist-closure rejects it) ──────────────
 {
   const root = fixture({
