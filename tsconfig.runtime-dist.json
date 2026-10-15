@@ -65,6 +65,7 @@
     "runtime/core/self-diagnostic.ts",
     "runtime/core/fleet-dispatcher.ts",
     "runtime/core/mission-contract-factory.ts",
-    "runtime/core/objective-attribution.ts"
+    "runtime/core/objective-attribution.ts",
+    "runtime/core/capability-probes.ts"
   ]
 }
