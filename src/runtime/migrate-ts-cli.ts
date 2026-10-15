@@ -145,6 +145,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/local-test-gate-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // governance-kernel lot (CTO authorisation V10). Leaf module (only `fs`); compiled .ts is
+  // self-contained in dist. Not a strict-leaves config member, so the port is type-checked by the
+  // tsconfig.runtime-dist compile. Adding it to dist also gives the dist consumers (mission-ledger,
+  // mission-lifecycle) a compiled `./governance-kernel` target.
+  "governance-kernel": [
+    "runtime/core/governance-kernel.ts",
+    "runtime/__bench__/governance-kernel-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -155,6 +164,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   // The lot's existing behavioural suite, replayed against the UNCHANGED historical .js.
   "local-test-gate": [
     "runtime/core/local-test-gate.test.js",
+  ],
+  "governance-kernel": [
+    "runtime/core/governance-kernel.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

@@ -32,6 +32,7 @@
     "runtime/core/patch-executor.ts",
     "runtime/core/final-report.ts",
     "runtime/core/mission-ledger.ts",
-    "runtime/core/local-test-gate.ts"
+    "runtime/core/local-test-gate.ts",
+    "runtime/core/governance-kernel.ts"
   ]
 }
