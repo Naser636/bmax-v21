@@ -62,6 +62,7 @@
     "runtime/core/world-model.ts",
     "runtime/core/mission-synthesizer.ts",
     "runtime/core/git-branch-integration.ts",
-    "runtime/core/self-diagnostic.ts"
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/fleet-dispatcher.ts"
   ]
 }

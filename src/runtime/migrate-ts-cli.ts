@@ -319,6 +319,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/self-diagnostic-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "fleet-dispatcher": [
+    "runtime/core/fleet-dispatcher.ts",
+    "runtime/__bench__/fleet-dispatcher-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -416,6 +421,8 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "self-diagnostic": [
     "runtime/core/self-diagnostic.test.js",
   ],
+  // fleet-dispatcher has no dedicated historical .test.js; the equivalence bench is its proof.
+  "fleet-dispatcher": [],
 };
 const REGRESSION_BENCHES = [
   "runtime/__bench__/capability-registry-equivalence.e2e.test.ts",
