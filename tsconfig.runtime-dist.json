@@ -58,6 +58,7 @@
     "runtime/core/artifact-state.ts",
     "runtime/core/pilot-delivery-packager.ts",
     "runtime/core/client-intake.ts",
-    "runtime/core/capability-learning.ts"
+    "runtime/core/capability-learning.ts",
+    "runtime/core/world-model.ts"
   ]
 }
