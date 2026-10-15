@@ -22,6 +22,7 @@ const fs = require("fs");
 const path = require("path");
 const { computeRuntimeModel } = require("../core/runtime-model");
 const { buildAutonomyRate } = require("../core/autonomy-rate");
+const { attributeObjectives } = require("../core/objective-attribution");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const GEN = path.join(ROOT, "runtime", "generated");
@@ -91,9 +92,30 @@ function main() {
   const peName = "patch-execution.json";
   const mpName = "mission-plan.json";
   const oaName = "objective-attribution.json";
+  const ppName = "patch-plan.json";
   const patchExecution = readGen(peName);
   const missionPlan = readGen(mpName);
-  const attribution = readGen(oaName);
+  const patchPlan = readGen(ppName);
+
+  // PERSIST objective-attribution.json (closes the autonomy chain). The objective-attribution.js
+  // analyzer is a READ-ONLY core that writes nothing; this governed single writer REUSES its pure
+  // attributeObjectives() over the already-produced per-run artifacts and persists the result so the
+  // autonomy signal has a real verified-source. It fabricates nothing: a unit is `verified` only when
+  // the analyzer returns verdict EVIDENCED (evidence present + non-empty); absent patch-plan/execution
+  // ⇒ nothing persisted ⇒ attribution null ⇒ autonomy degrades honestly to numerator 0. The injected
+  // evidenceProbe + probeCtx MIRROR the analyzer's own CLI exactly, so the persisted artifact equals
+  // what `node runtime/core/objective-attribution.js` would print — no new logic, no gate touched.
+  let attribution = null;
+  if (patchPlan && patchExecution) {
+    const evidenceProbe = (p) => {
+      try { return typeof p === "string" && p.length > 0 && fs.statSync(p).size > 0; } catch { return false; }
+    };
+    const verify = readGen("runtime-verify.json");
+    const probeCtx = { missionId: (missionPlan && missionPlan.mission) || (patchPlan && patchPlan.mission), verify };
+    attribution = attributeObjectives(missionPlan, patchPlan, patchExecution, evidenceProbe, undefined, undefined, probeCtx);
+    write(oaName, { generatedAt, ...attribution });
+  }
+
   const autonomyRate = buildAutonomyRate({
     patchExecution,
     planObjectives: missionPlan && Array.isArray(missionPlan.objectives) ? missionPlan.objectives : null,
