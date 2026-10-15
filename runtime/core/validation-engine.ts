@@ -97,7 +97,16 @@ const isEngineering = plan.requiresEngineering === true && authorizedPaths.lengt
 // Only the literal no-op status is caught: EXECUTED(+evidence), APPLIED (real file edits) and DONE
 // (legacy actions that write an output artifact) are unaffected.
 const recordedNoOp = executed.filter((e: any) => e && e.status === "RECORDED");
-const noRecordedNoOp = !isEngineering || recordedNoOp.length === 0;
+// A1+ FAIL-CLOSED generalisation of A3. A RECORDED no-op (symbolic coverage, no evidence) is acceptable
+// ONLY for a mission that EXPLICITLY DECLARES a read-only observation mode (AUDIT / READ_ONLY / ANALYZE —
+// e.g. the canonical audits M0000/M0001/M0002). It is rejected for ENGINEERING missions (original A3) AND
+// now for UNCLASSIFIED/UNKNOWN missions — a mission that neither performs engineering NOR declares itself
+// an audit must not be stamped SUCCESS on a bare no-op. This closes the UI_DEPLOYMENT_FOUNDATION-class false
+// success for hand-written contracts the Mission Contract Factory reuses verbatim (and therefore cannot
+// reclassify). The read-only mode is taken from the Mission Loader's plan.mode (mission-loader.js:154).
+const VALIDATION_OBSERVATION_MODES = ["AUDIT", "READ_ONLY", "ANALYZE"];
+const isDeclaredObservation = VALIDATION_OBSERVATION_MODES.includes(String(plan.mode || "").toUpperCase());
+const noRecordedNoOp = recordedNoOp.length === 0 || (isDeclaredObservation && !isEngineering);
 
 // Scope observation delegated to the shared scope-observer module (single implementation; same
 // context and moment-of-observation rules). No behaviour change — same inputs, same results.

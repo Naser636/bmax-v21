@@ -166,28 +166,91 @@ function resolveVerifyProbes(entry) {
     return out;
 }
 
+// Mission modes that POSITIVELY DECLARE a read-only observation/audit mission. These are the explicit
+// read-only signal the canonical audits (M0000/M0001/M0002, mode:"AUDIT") carry. A mission is only
+// treated as read-only when it DECLARES it this way (or via an explicit engineering:false flag / explicit
+// empty authorized_paths / a declared per-objective proof) — never by mere inference.
+const OBSERVATION_MODES = ["AUDIT", "READ_ONLY", "ANALYZE"];
+
+/** The explicitly-declared authorized-path scope on an entry (null when none was declared). */
+function explicitAuthorizedPaths(entry) {
+    if (Array.isArray(entry.authorized_paths)) return entry.authorized_paths;
+    if (Array.isArray(entry.authorizedPaths)) return entry.authorizedPaths;
+    return null;
+}
+
 /*
- * Resolve whether a mission AUTHORIZES CODE GENERATION (engineering). Precedence, strongest first:
- *   1. an explicit engineering flag (requiresEngineering / requires_engineering) — true OR false wins,
- *      so a mission can always force read-only regardless of its title;
- *   2. explicitly declared authorized_paths (non-empty ⇒ engineering);
- *   3. an explicit engineering mode (ENGINEERING / IMPLEMENT / FIX / REPAIR / REFACTOR);
- *   4. an engineering intent inferred from the mission id/title/goal/description text.
- *
- * (4) is what fixes the "always resolved as read-only/local" blocker for CONTRACT ON DEMAND missions
- * synthesized from an id alone (generateForMission): they carry no explicit flag, so previously they
- * ALWAYS fell through to engineering=false. Their own contract text is the signal that they authorize
- * code generation. Pure/deterministic — a function of `entry` only.
+ * Classify a mission into exactly one of three VERIFIABLE classes, from its DECLARED signals — NEVER the
+ * mission name alone (a name keyword may only CORROBORATE a structural signal, requirement CTO #3/#5):
+ *   - DELIVERY    : a positive engineering/delivery signal — an explicit engineering flag, a non-empty
+ *                   authorized_paths, an engineering mode, an objective patch/edits/files, a named file
+ *                   target in the text/done_when, or (corroborating) an engineering-intent keyword.
+ *   - OBSERVATION : an EXPLICIT read-only declaration — an engineering:false flag, an explicit empty
+ *                   authorized_paths, an observation mode (AUDIT/READ_ONLY/ANALYZE), or a declared
+ *                   per-objective proof — AND no delivery signal. M0000/M0001/M0002 land here (mode:AUDIT).
+ *   - UNKNOWN     : NO positive signal either way (read-only only by inference — e.g. a contract
+ *                   synthesized from an id/title alone, like UI_DEPLOYMENT_FOUNDATION). FAIL-CLOSED: it is
+ *                   mapped to evidence-required (engineering) so a bare RECORDED no-op can never reach
+ *                   SUCCESS. It does NOT silently self-certify as a read-only audit.
+ * Pure/deterministic — a function of `entry` only.
+ */
+function classifyMission(entry) {
+    const text = entryText(entry);
+    const mode = String(entry.mode || "").toUpperCase();
+    const paths = explicitAuthorizedPaths(entry);
+    const objectives = Array.isArray(entry.objectives) ? entry.objectives : [];
+    const doneText = []
+        .concat(Array.isArray(entry.done_when) ? entry.done_when : [])
+        .concat(Array.isArray(entry.definition_of_done) ? entry.definition_of_done : [])
+        .filter((s) => typeof s === "string")
+        .join(" ");
+
+    // Precedence: STRONG-explicit signals (both directions) before WEAK-inferred ones, so an incidental
+    // file mention in prose (e.g. a doc reference) can never override an explicit audit declaration.
+
+    // 1. STRONG DELIVERY — explicit write intent. Wins even over an observation mode: a genuine
+    //    contradiction (e.g. requires_engineering:true on an AUDIT) resolves toward evidence, never
+    //    toward a silent read-only pass.
+    const strongDelivery = [];
+    if (entry.requiresEngineering === true || entry.requires_engineering === true) strongDelivery.push("explicit requires_engineering:true");
+    if (paths && paths.length > 0) strongDelivery.push("explicit non-empty authorized_paths");
+    if (ENGINEERING_INTENT.includes(mode)) strongDelivery.push(`engineering mode:${mode}`);
+    if (objectives.some((o) => o && (o.patch || o.edits || (Array.isArray(o.files) && o.files.length > 0)))) strongDelivery.push("objective declares a patch/edits/files");
+    if (strongDelivery.length > 0) return { missionClass: "DELIVERY", classBasis: strongDelivery };
+
+    // 2. STRONG OBSERVATION — an EXPLICIT read-only declaration. Precedes WEAK/inferred delivery so a
+    //    declared audit (e.g. M0000/M0001/M0002, mode:"AUDIT") is never mis-flagged by an incidental
+    //    path token or keyword in its prose.
+    const observation = [];
+    if (OBSERVATION_MODES.includes(mode)) observation.push(`observation mode:${mode}`);
+    if (entry.requiresEngineering === false || entry.requires_engineering === false) observation.push("explicit requires_engineering:false");
+    if (paths && paths.length === 0) observation.push("explicit empty authorized_paths (deliberate read-only)");
+    if (objectives.some((o) => o && typeof o.proof === "string" && o.proof.length > 0)) observation.push("declared per-objective proof");
+    if (observation.length > 0) return { missionClass: "OBSERVATION", classBasis: observation };
+
+    // 3. WEAK DELIVERY — inferred ONLY when nothing was declared either way: an engineering-intent
+    //    keyword or a named file target in the mission's own text / done_when.
+    const weakDelivery = [];
+    if (ENGINEERING_INTENT_RE.test(text)) weakDelivery.push("engineering-intent keyword (inferred)");
+    if (synth.derivePaths(text).length > 0 || synth.derivePaths(doneText).length > 0) weakDelivery.push("names a concrete file target (inferred)");
+    if (weakDelivery.length > 0) return { missionClass: "DELIVERY", classBasis: weakDelivery };
+
+    // 4. UNKNOWN — no signal either way (read-only only by inference from id/title). Fail closed.
+    return {
+        missionClass: "UNKNOWN",
+        classBasis: ["no explicit engineering or read-only declaration; delivery intent cannot be confirmed from id/title alone — fail-closed to evidence-required so a no-op cannot reach SUCCESS"],
+    };
+}
+
+/*
+ * Resolve whether a mission AUTHORIZES CODE GENERATION (engineering). Delegates to classifyMission:
+ * DELIVERY and UNKNOWN both require evidence (engineering=true); only an EXPLICITLY-declared OBSERVATION
+ * mission is read-only. This closes the mis-classification hole where a mission synthesized from an id
+ * alone (no declared signal, e.g. UI_DEPLOYMENT_FOUNDATION) fell through to read-only and could then be
+ * stamped SUCCESS on a bare no-op. Pure/deterministic — a function of `entry` only.
  */
 function resolveEngineering(entry) {
-    if (entry.requiresEngineering === true || entry.requires_engineering === true) return true;
-    if (entry.requiresEngineering === false || entry.requires_engineering === false) return false;
-    const explicitPaths = Array.isArray(entry.authorized_paths)
-        ? entry.authorized_paths
-        : Array.isArray(entry.authorizedPaths) ? entry.authorizedPaths : null;
-    if (explicitPaths && explicitPaths.length > 0) return true;
-    if (ENGINEERING_INTENT.includes(String(entry.mode || "").toUpperCase())) return true;
-    return ENGINEERING_INTENT_RE.test(entryText(entry));
+    return classifyMission(entry).missionClass !== "OBSERVATION";
 }
 
 /*
@@ -269,7 +332,9 @@ function derivePathScope(entry) {
  * Pure: a deterministic function of `entry` only.
  */
 function buildContract(entry) {
-    const engineering = resolveEngineering(entry);
+    const classification = classifyMission(entry);
+    // DELIVERY and UNKNOWN both require evidence (fail-closed); only a DECLARED OBSERVATION is read-only.
+    const engineering = classification.missionClass !== "OBSERVATION";
 
     // Resolve the mission's authorized-path SCOPE. Precedence:
     //   1. an explicit scope on the entry — honoured verbatim (even an explicit [] = deliberately
@@ -371,6 +436,13 @@ function buildContract(entry) {
             { id: `${objectiveId}__RELEASED`, when: "mission ledger entry proven" },
         ],
         ledger: { mission: entry.id, capability: entry.id, status: "PENDING", proven: false },
+        // Explicit, verifiable mission class (OBSERVATION | DELIVERY | UNKNOWN) + the signals it was
+        // decided from. OBSERVATION ⇒ read-only; DELIVERY/UNKNOWN ⇒ evidence-required (fail-closed), so an
+        // UNKNOWN mission can never pass as a read-only no-op SUCCESS. Decided by classifyMission (never
+        // the mission name alone). Descriptive provenance — the engine's verdict is enforced via the
+        // existing requires_engineering/authorized_paths gates this class drives.
+        missionClass: classification.missionClass,
+        classBasis: classification.classBasis,
         source: "mission-contract-factory",
         generatedBy: "mission-contract-factory",
     };
@@ -480,6 +552,7 @@ module.exports = {
     isContractMissing,
     resolveVerifyProbes,
     derivePathScope,
+    classifyMission,
     buildContract,
     generateMissing,
     generateForMission,

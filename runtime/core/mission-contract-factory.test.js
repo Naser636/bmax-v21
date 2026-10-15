@@ -218,4 +218,75 @@ ok("read-only exclusions are a VALID (complete) classification, excluded from th
 // is evidence-gated downstream. Here we only prove the DENOMINATOR is now declarable (no inflation path).
 ok("declaration completes the denominator only (eligible+authorized), numerator stays evidence-gated", engElig.map[engC.objectives[0].id].eligible === true);
 
+console.log("Case 12 — RECLASSIFY_DELIVERY: fail-closed 3-class classification (OBSERVATION | DELIVERY | UNKNOWN)");
+// UI_DEPLOYMENT_FOUNDATION reproduction: synthesized from the id/title ALONE, no declared signal → UNKNOWN,
+// fail-closed to engineering so a bare no-op can never pass as read-only SUCCESS (the original false success).
+const uiCls = factory.classifyMission({ id: "UI_DEPLOYMENT_FOUNDATION", title: factory.humanizeId("UI_DEPLOYMENT_FOUNDATION") });
+ok("UI-shape (id/title only, no signal) ⇒ UNKNOWN", uiCls.missionClass === "UNKNOWN");
+ok("UNKNOWN basis is name-independent (not classified by name alone)", uiCls.classBasis.join(" ").includes("id/title alone"));
+const uiBuilt = factory.buildContract({ id: "UI_DEPLOYMENT_FOUNDATION", title: factory.humanizeId("UI_DEPLOYMENT_FOUNDATION") });
+ok("UNKNOWN ⇒ fail-closed engineering (NOT read-only)", uiBuilt.requires_engineering === true && uiBuilt.authorized_paths.length > 0);
+ok("explicit missionClass stamped on the contract", uiBuilt.missionClass === "UNKNOWN" && Array.isArray(uiBuilt.classBasis) && uiBuilt.classBasis.length > 0);
+
+// Legitimate OBSERVATION audits (M0000/M0001/M0002 carry mode:"AUDIT") stay read-only — A3 guard preserved.
+const auCls = factory.classifyMission({ id: "SOME_AUDIT", title: "Some audit", mode: "AUDIT" });
+ok("mode:AUDIT ⇒ OBSERVATION", auCls.missionClass === "OBSERVATION");
+const auBuilt = factory.buildContract({ id: "SOME_AUDIT", title: "Some audit", mode: "AUDIT" });
+ok("OBSERVATION ⇒ read-only preserved (requires_engineering false, no paths)", auBuilt.requires_engineering === false && auBuilt.authorized_paths.length === 0);
+
+// An EXPLICIT requires_engineering:false is a DECLARED read-only intent ⇒ OBSERVATION (existing behaviour kept).
+ok("explicit requires_engineering:false ⇒ OBSERVATION (declared read-only honoured)",
+    factory.classifyMission({ id: "RO", title: "ro", requiresEngineering: false }).missionClass === "OBSERVATION");
+
+// DELIVERY signals.
+ok("explicit requires_engineering:true ⇒ DELIVERY",
+    factory.classifyMission({ id: "E", title: "e", requiresEngineering: true }).missionClass === "DELIVERY");
+ok("names a concrete file target ⇒ DELIVERY (structural, not a name keyword)",
+    factory.classifyMission({ id: "T", title: "t", goal: "update src/app/page.tsx" }).missionClass === "DELIVERY");
+
+// CONTRADICTORY inputs must NEVER silently resolve read-only — a delivery signal fails toward evidence.
+ok("contradictory (engineering flag + AUDIT mode) ⇒ DELIVERY (evidence-required, never silent read-only)",
+    factory.classifyMission({ id: "C1", title: "c1", requiresEngineering: true, mode: "AUDIT" }).missionClass === "DELIVERY");
+ok("contradictory (engineering MODE + requires_engineering:false) ⇒ DELIVERY (evidence-required)",
+    factory.classifyMission({ id: "C2", title: "c2", requiresEngineering: false, mode: "ENGINEERING" }).missionClass === "DELIVERY");
+
+console.log("Case 13 — end-to-end: UNKNOWN delivery no-op is BLOCKED; declared OBSERVATION no-op still SUCCEEDS");
+const { spawnSync } = require("child_process");
+const VE = path.join(process.cwd(), "runtime", "core", "validation-engine.js");
+function runVEforContract(contract, execStatus, seedGit) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "a1-e2e-"));
+    const G = (n) => path.join(dir, "runtime", "generated", n);
+    fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+    if (seedGit) {
+        // A committed in-scope file so engineeringOk is NOT the sole block reason — isolates the RECORDED no-op gate.
+        spawnSync("git", ["init", "-q"], { cwd: dir });
+        spawnSync("git", ["config", "user.email", "a@b.c"], { cwd: dir });
+        spawnSync("git", ["config", "user.name", "t"], { cwd: dir });
+        fs.writeFileSync(path.join(dir, "runtime", "keep.js"), "module.exports={};\n");
+        spawnSync("git", ["add", "-A"], { cwd: dir });
+        spawnSync("git", ["commit", "-q", "-m", "seed"], { cwd: dir });
+    }
+    const plan = {
+        mission: contract.mission,
+        mode: contract.mode,
+        requiresEngineering: contract.permissions.engineering,
+        authorizedPaths: contract.authorized_paths,
+        objectives: [{ id: "OBJ1", goal: "the thing" }],
+        definitionOfDone: ["Evidence generated"],
+    };
+    fs.writeFileSync(G("mission-plan.json"), JSON.stringify(plan));
+    fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: contract.mission, patches: [{ id: 1, action: "OBJ1", objectiveId: "OBJ1", status: "PLANNED" }] }));
+    fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: contract.mission, executed: [{ action: "OBJ1", objectiveId: "OBJ1", status: execStatus }] }));
+    fs.writeFileSync(G("runtime-verify.json"), JSON.stringify({ build: true, typescript: true, gitClean: true }));
+    const r = spawnSync("node", [VE], { cwd: dir, encoding: "utf8" });
+    const rep = JSON.parse(fs.readFileSync(G("mission-report.json"), "utf8"));
+    return { status: rep.status, validated: rep.validated, exit: r.status ?? -1 };
+}
+// UI-shape UNKNOWN → engineering → a RECORDED no-op is BLOCKED (was SUCCESS before the fix: baseline showed it read-only).
+const uiE2E = runVEforContract(uiBuilt, "RECORDED", true);
+ok("UNKNOWN delivery no-op ⇒ validation BLOCKED (exit 1)", uiE2E.validated === false && uiE2E.status === "BLOCKED" && uiE2E.exit === 1);
+// Declared OBSERVATION audit → read-only → a RECORDED no-op still SUCCEEDS (A3 inert — M0000-class not over-blocked).
+const auE2E = runVEforContract(auBuilt, "RECORDED", false);
+ok("declared OBSERVATION no-op ⇒ validation SUCCESS (exit 0, A3 inert)", auE2E.validated === true && auE2E.status === "SUCCESS" && auE2E.exit === 0);
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);
