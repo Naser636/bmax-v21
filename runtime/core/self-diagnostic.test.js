@@ -259,4 +259,50 @@ inTempCwd((mod) => {
   ok("validation-blocked is never AUTO (HUMAN_APPROVAL_REQUIRED, nothing auto-repairable)", out.repairPlan.humanApprovalRequired.some((x) => x.category === "validation-blocked") && out.repairPlan.autoRepairable.length === 0);
 });
 
+// 20. RC-4 identity gate — a STALE mission-report.json belonging to a DIFFERENT mission must NOT
+//     fabricate a validation-blocked divergence for the mission actually being diagnosed. This is the
+//     real INC-09c73c50 defect: a leftover BLOCKED verdict from an unrelated run was attributed to the
+//     current mission. patch-execution belongs to the expected mission "M" and is clean, so the only
+//     honest outcome is NO divergence.
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  fs.writeFileSync("runtime/generated/patch-execution.json", JSON.stringify({
+    mission: "M", executed: [{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }],
+  }));
+  fs.writeFileSync("runtime/generated/mission-report.json", JSON.stringify({ mission: "OTHER_MISSION", status: "BLOCKED", validated: false, unmet: ["unrelated"] }));
+  const r = mod.diagnose({ now: "T0" });
+  ok("verdict for a DIFFERENT mission adds NO validation-blocked (no false positive)", !r.divergences.some((d) => d.category === "validation-blocked"));
+  ok("stale cross-mission verdict ⇒ clean observed stays converged / no incident", r.converged === true && r.incident === null);
+});
+
+// 21. RC-4 identity gate — a BLOCKED verdict whose mission MATCHES the expected mission is still
+//     surfaced (the gate is identity-scoped, not a blanket suppressor).
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  fs.writeFileSync("runtime/generated/patch-execution.json", JSON.stringify({
+    mission: "M", executed: [{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }],
+  }));
+  fs.writeFileSync("runtime/generated/mission-report.json", JSON.stringify({ mission: "M", status: "BLOCKED", validated: false, unmet: ["engineering changed nothing"] }));
+  const r = mod.diagnose({ now: "T0" });
+  ok("verdict for the SAME mission still yields validation-blocked", r.divergences.some((d) => d.category === "validation-blocked"));
+  ok("same-mission BLOCKED verdict ⇒ not converged", r.converged === false);
+  ok("validation-blocked names the matching mission (M)", r.divergences.find((d) => d.category === "validation-blocked").firstDifferenceAt === "M");
+});
+
+// 22. RC-4 identity gate — backward compatible: a BLOCKED verdict with NO mission stamp is still
+//     consumed (identity unknown on one side ⇒ gate dormant, prior behaviour preserved).
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  fs.writeFileSync("runtime/generated/patch-execution.json", JSON.stringify({
+    mission: "M", executed: [{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }],
+  }));
+  fs.writeFileSync("runtime/generated/mission-report.json", JSON.stringify({ status: "BLOCKED", validated: false, unmet: ["x"] })); // no mission field
+  const r = mod.diagnose({ now: "T0" });
+  ok("verdict with no mission stamp is still consumed (backward compatible)", r.divergences.some((d) => d.category === "validation-blocked"));
+  ok("mission-less BLOCKED verdict falls back to the expected mission name", r.divergences.find((d) => d.category === "validation-blocked").firstDifferenceAt === "M");
+});
+
 console.log(`\nSelf-Diagnostic — ${passed} assertions passed.`);

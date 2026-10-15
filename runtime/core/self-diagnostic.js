@@ -223,9 +223,19 @@ function detectDivergences(expected, observed, opts = {}) {
   // each other, so diagnose MUST surface a divergence and can never report NO_DIVERGENCE. Read-only:
   // the verdict file is never written here and validation's gate is never weakened. An absent verdict
   // adds nothing (there is no verdict to contradict).
-  if (observed.verdict && (observed.verdict.status === "BLOCKED" || observed.verdict.validated === false)) {
+  //
+  // Mission-identity gate (same convention as the section-0 stale guard): the verdict must belong to the
+  // mission we are diagnosing before its BLOCKED state can contradict this run. A STALE mission-report.json
+  // left on disk by a DIFFERENT, unrelated mission would otherwise fabricate a validation-blocked
+  // divergence for the current mission (the real INC-09c73c50 defect). When both identities are known and
+  // differ, the verdict is about another mission — skip it. When either identity is unknown (verdict with
+  // no mission stamp, or no expected mission), behaviour is unchanged (backward compatible), consistent
+  // with the section-0 guard and the injected-verdict path.
+  const verdictMission = observed.verdict && typeof observed.verdict.mission === "string" ? observed.verdict.mission : null;
+  const verdictForThisMission = !(expected.mission && verdictMission && expected.mission !== verdictMission);
+  if (verdictForThisMission && observed.verdict && (observed.verdict.status === "BLOCKED" || observed.verdict.validated === false)) {
     const unmet = Array.isArray(observed.verdict.unmet) ? observed.verdict.unmet : [];
-    add("validation-blocked", observed.verdict.mission || expected.mission, "validation SUCCESS (validated=true)", (observed.verdict.status || "BLOCKED") + " (validated=" + observed.verdict.validated + ")", unmet, "ERROR");
+    add("validation-blocked", verdictMission || expected.mission, "validation SUCCESS (validated=true)", (observed.verdict.status || "BLOCKED") + " (validated=" + observed.verdict.validated + ")", unmet, "ERROR");
   }
 
   // Deterministic order so the incident id is stable regardless of detection order.
