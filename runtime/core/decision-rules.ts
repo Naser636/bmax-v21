@@ -85,3 +85,10 @@ function match(goal: unknown): { capability: string; fixers: string[] | null } |
 }
 
 module.exports = { match, RULES };
+
+// Module-scope marker (adds NO export): forces TypeScript MODULE scope so this file's internal helpers
+// (norm / escapeRe / hasWord / match / RULES) are MODULE-scoped rather than polluting the global script
+// scope and colliding with same-named helpers in sibling lots compiled into the same tsconfig program
+// (TS2393). The CommonJS API above (module.exports = { match, RULES }) is unchanged, as is the compiled
+// require() surface and the behavioural parity with the .js reference.
+export {};

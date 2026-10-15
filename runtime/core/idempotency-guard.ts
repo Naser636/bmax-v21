@@ -110,3 +110,11 @@ module.exports = { DECISION, IDEMPOTENCY_CONTRACT, emptyJournal, admit, record }
 if (require.main === module) {
   process.stdout.write(JSON.stringify(IDEMPOTENCY_CONTRACT, null, 2) + "\n");
 }
+
+// Module-scope marker (adds NO export): forces TypeScript MODULE scope so this file's internal helpers
+// (isPlainObject / isNonEmptyString / isVersion) are MODULE-scoped rather than polluting the global
+// script scope and colliding with same-named helpers in sibling lots compiled into the same tsconfig
+// program (TS2393, observed in the state-transition lot). The CommonJS API above
+// (module.exports = { DECISION, IDEMPOTENCY_CONTRACT, emptyJournal, admit, record }) is unchanged, as is
+// the compiled require() surface and the behavioural parity with the .js reference.
+export {};
