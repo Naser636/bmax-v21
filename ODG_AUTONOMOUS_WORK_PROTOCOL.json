@@ -167,12 +167,13 @@
       "AUTHORIZED work item RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT: minimal runtime change strictly inside its write_set (runtime/core/self-diagnostic.js, runtime/core/self-diagnostic.test.js)",
       "AUTHORIZED work item RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT: minimal runtime change strictly inside its write_set (runtime/core/patch-executor.js, runtime/core/patch-executor.test.js)",
       "AUTHORIZED work item RECOVER-ECONOMIC-PURE-MODULES: additive recovery of pure modules + their pure unit tests ONLY, strictly inside its write_set (runtime/core/economic-extractor.js, runtime/core/opportunity-policy.js, runtime/core/economic-extractor.test.js, runtime/core/opportunity-policy.test.js) — NO runtime caller/executor wiring, NO network, NO governed-web-fetch import",
+      "AUTHORIZED work item WIRE-ECONOMIC-EXTRACTION-INTO-RESEARCH-SEAM: minimal change strictly inside its write_set (runtime/core/capability-executors.js, runtime/core/economic-wiring.test.js) — additive LIVE-path extraction/classification bound to the existing named governed-http-get seam; dry-run unchanged (zero network); NO gate weakening, NO D5, NO governed-web-fetch import",
       "Update of ODG_AUTONOMOUS_WORK_PROTOCOL.json current_campaign_scope at repository root (this declaration)",
       "Update of CLAUDE.md at repository root (execution interface only)"
     ],
     "forbids": [
       "Any runtime change outside an AUTHORIZED work item's write_set",
-      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME, RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE, RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT, RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT, RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT or RECOVER-ECONOMIC-PURE-MODULES without a separate explicit CTO authorization",
+      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME, RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE, RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT, RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT, RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT, RECOVER-ECONOMIC-PURE-MODULES or WIRE-ECONOMIC-EXTRACTION-INTO-RESEARCH-SEAM without a separate explicit CTO authorization",
       "Any mission P0-071 or later",
       "Any modification of Master / Runtime Constitution / ROADMAP.json / policy",
       "Any new constitution or new roadmap",
