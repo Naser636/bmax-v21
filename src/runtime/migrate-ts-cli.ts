@@ -274,6 +274,11 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/opportunity-policy-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  "economic-extractor": [
+    "runtime/core/economic-extractor.ts",
+    "runtime/__bench__/economic-extractor-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -343,6 +348,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "opportunity-policy": [
     "runtime/core/opportunity-policy.test.js",
+  ],
+  "economic-extractor": [
+    "runtime/core/economic-extractor.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
