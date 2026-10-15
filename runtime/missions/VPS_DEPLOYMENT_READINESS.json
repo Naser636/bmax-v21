@@ -1,0 +1,62 @@
+{
+  "mission": "VPS_DEPLOYMENT_READINESS",
+  "priority": "NORMAL",
+  "mode": "AUDIT",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "description": "VPS-only (vps-6d919042) deployment-readiness workstream for the BMAX dashboard standalone artifact. OBSERVATION/AUDIT mission: it verifies the deployment-readiness gates A-L (see docs/odg-operational/DEPLOYMENT.md, VPS Deployment Readiness Workstream) with objective evidence and one honest state each (PROVEN | PARTIAL | BLOCKED | NOT-EXECUTED | UNKNOWN). It performs NO infrastructure mutation and NO deployment. Target is VPS-only: no cloud migration, no new provider. HUMAN-GATED: not authorized for autonomous execution.",
+  "objectives": [
+    {
+      "id": "VPS_READINESS_1",
+      "goal": "Verify VPS deployment-readiness gates A-L with objective evidence and honest per-gate states (no automatic promotion).",
+      "done_when": [
+        "A Truth Lock + inventory of the exact service/build currently running on :3000 is recorded.",
+        "B persistent data inventoried and release files are explicitly separated from durable runtime data.",
+        "C a versioned release layout with an explicit active-version switch is defined.",
+        "D build-artifact completeness, runtime paths, Next.js standalone/static assets and runtime-generated liveness are verified.",
+        "E service account, least privilege, file permissions, secrets and environment configuration are verified.",
+        "F health checks, startup/restart, logs, disk capacity and post-reboot recovery are verified.",
+        "G backups, backup integrity, off-release location, restore test and rollback rehearsal are proven.",
+        "H reverse proxy, bind address, firewall, ports, DNS and TLS prerequisites are recorded without premature public exposure.",
+        "I a staging/preprod rehearsal using the exact candidate artifact is proven.",
+        "J end-to-end mission transmission/execution/receipt/validation/ledger is proven on the candidate.",
+        "K controlled activation, post-deploy acceptance, monitoring and rollback criteria are defined.",
+        "L old-release retention and a separately gated cleanup (only after acceptance) are defined.",
+        "Every gate carries objective evidence and exactly one honest state; none is auto-promoted."
+      ],
+      "authorization": {
+        "eligible": false,
+        "authorized": false,
+        "reason": "Human-gated: VPS deployment readiness requires an explicit CTO authorization before execution; several gates (G,H,I,K) depend on HOST/HUMAN actions (sudo/systemd/DNS/TLS/backup destination) that cannot be self-authorized."
+      }
+    }
+  ],
+  "definition_of_done": [
+    "All readiness gates A-L carry objective evidence and an honest state.",
+    "No gate is promoted to PROVEN without its required evidence.",
+    "Release preparation, release acceptance and actual deployment remain SEPARATE states."
+  ],
+  "source": "cto-authorized-roadmap-addition-v4",
+  "authorizedPaths": [],
+  "status": "PROPOSED",
+  "completion": [
+    "Human CTO authorization recorded before any execution."
+  ],
+  "permissions": {
+    "engineering": false,
+    "authorizedPaths": [],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "EVIDENCE_NOT_NARRATIVE",
+    "NO_AUTO_PROMOTION"
+  ],
+  "dependencies": [],
+  "stop_conditions": [
+    "Any gate requiring sudo/systemd/DNS/TLS/backup-destination/public-exposure halts for a separate explicit CTO authorization."
+  ],
+  "rollback": "Read-only mission: no state to roll back. Evidence is recorded under runtime/generated and docs/odg-operational/DEPLOYMENT.md.",
+  "owner": "CTO (authority) / Claude Code (bounded forensic+preparation provider)"
+}

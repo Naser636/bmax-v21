@@ -57,6 +57,18 @@
       "title": "Governed Dashboard & Autonomy Observability",
       "contract": "runtime/missions/GOVERNED_DASHBOARD_OBSERVABILITY.json",
       "requiresEngineering": true
+    },
+    {
+      "id": "VPS_DEPLOYMENT_READINESS",
+      "title": "VPS Deployment Readiness (gates A-L, human-gated audit)",
+      "contract": "runtime/missions/VPS_DEPLOYMENT_READINESS.json",
+      "requiresEngineering": false
+    },
+    {
+      "id": "DEPLOY_BMAX_DASHBOARD_PROD_V1",
+      "title": "Deploy BMAX Dashboard to VPS (gated activation, depends on readiness)",
+      "contract": "runtime/missions/DEPLOY_BMAX_DASHBOARD_PROD_V1.json",
+      "requiresEngineering": false
     }
   ]
 }

@@ -107,5 +107,41 @@ function validate(executed: unknown[]): { status?: string; validated?: boolean; 
     "full provider execution ⇒ validation SUCCESS (legitimate behavior preserved)");
 }
 
+// ---- Evidence coupling (CLOSE_PROVIDER_EMPTY_OK_FALSE_SUCCESS_V1) --------------------------------
+// The provider's self-reported objectivesAddressed is "narrative"; for an ENGINEERING mission it is
+// trusted as real coverage only when corroborated by a real deliverable this run (hasRealChange) or an
+// opt-in objective proof. The 3rd arg is OFF by default (2-arg callers above are unchanged).
+const ENG = { isEngineering: true, hasRealChange: false };
+// 7 — REPRODUCE the false-success source: provider CLAIMS all objectives but changed NOTHING and
+//     declared no proof ⇒ evidence coupling downgrades all APPLIED → RECORDED (unevidenced no-op).
+{
+  const ex = attributeProviderExecution(OBJS, ["OBJ1", "OBJ2", "OBJ3"], ENG);
+  check(ex.every((e) => e.status === "RECORDED"),
+    "engineering + all-claimed + ZERO changed files + no proof ⇒ all RECORDED (self-report alone is not evidence)");
+}
+// 8 — end-to-end: that downgraded attribution is BLOCKED by the real validation-engine (not SUCCESS).
+{
+  const out = validate(attributeProviderExecution(OBJS, ["OBJ1", "OBJ2", "OBJ3"], ENG));
+  check(out.status === "BLOCKED" && out.validated === false,
+    "engineering empty-OK claim ⇒ validation BLOCKED (false SUCCESS closed)");
+}
+// 9 — real deliverable this run ⇒ APPLIED preserved (legitimate full execution unaffected).
+{
+  const ex = attributeProviderExecution(OBJS, ["OBJ1", "OBJ2", "OBJ3"], { isEngineering: true, hasRealChange: true });
+  check(ex.every((e) => e.status === "APPLIED"), "engineering + real changed files ⇒ APPLIED preserved");
+}
+// 10 — opt-in proof corroborates a claim even with no file change ⇒ APPLIED preserved (proof gate verifies it).
+{
+  const ex = attributeProviderExecution(OBJS, ["OBJ1", "OBJ2", "OBJ3"], {
+    isEngineering: true, hasRealChange: false, objectiveHasProof: () => true,
+  });
+  check(ex.every((e) => e.status === "APPLIED"), "proof-backed objectives ⇒ APPLIED preserved despite no file change");
+}
+// 11 — non-engineering / audit mission ⇒ evidence coupling does NOT downgrade (historical behavior).
+{
+  const ex = attributeProviderExecution(OBJS, ["OBJ1", "OBJ2", "OBJ3"], { isEngineering: false, hasRealChange: false });
+  check(ex.every((e) => e.status === "APPLIED"), "non-engineering mission ⇒ APPLIED preserved (no downgrade)");
+}
+
 console.log(failures === 0 ? "ALL PASS — PROVIDER-ROUTE OBJECTIVE ATTRIBUTION" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

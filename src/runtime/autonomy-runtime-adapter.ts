@@ -190,13 +190,37 @@ interface VerifyProof {
 export function attributeProviderExecution(
   objectives: Array<{ id: string }>,
   objectivesAddressed: readonly string[],
+  // EVIDENCE COUPLING (false-success closure, CLOSE_PROVIDER_EMPTY_OK_FALSE_SUCCESS_V1). Optional and
+  // OFF by default (2-arg callers are unchanged). When supplied for an ENGINEERING (write-scope)
+  // mission, a self-reported APPLIED is trusted as real coverage ONLY when it is backed by real
+  // evidence — a genuine changed file this run (`hasRealChange`) OR an opt-in objective `proof` the
+  // Validation Engine independently verifies. An objective the provider merely CLAIMS it addressed,
+  // with NO deliverable this run and NO proof, is "evidence, not narrative" violated: it is downgraded
+  // to the honest no-op RECORDED so the existing A3 noRecordedNoOp gate BLOCKS it, instead of letting
+  // the provider's prose plus a coincidental pre-existing tracked file (deliverableInScope) stamp
+  // SUCCESS for work that never happened. Non-engineering/audit missions and proof-backed or
+  // file-backed objectives are unaffected.
+  evidence?: {
+    isEngineering: boolean;
+    hasRealChange: boolean;
+    objectiveHasProof?: (id: string) => boolean;
+  },
 ): Array<{ action: string; objectiveId: string; status: "APPLIED" | "RECORDED" }> {
   const addressed = new Set(objectivesAddressed);
-  return objectives.map((o) => ({
-    action: o.id,
-    objectiveId: o.id,
-    status: addressed.has(o.id) ? "APPLIED" : "RECORDED",
-  }));
+  const hasProof = evidence?.objectiveHasProof ?? (() => false);
+  return objectives.map((o) => {
+    let status: "APPLIED" | "RECORDED" = addressed.has(o.id) ? "APPLIED" : "RECORDED";
+    if (
+      status === "APPLIED" &&
+      evidence &&
+      evidence.isEngineering &&
+      !evidence.hasRealChange &&
+      !hasProof(o.id)
+    ) {
+      status = "RECORDED";
+    }
+    return { action: o.id, objectiveId: o.id, status };
+  });
 }
 
 /**
@@ -924,9 +948,23 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // the Validation Engine's A3 `noRecordedNoOp` gate BLOCKS it. No gate is made stricter, no evidence
     // invented, no done_when interpreted — a genuinely full provider execution (all objectives
     // addressed) still yields all-APPLIED and passes exactly as before.
+    // Evidence coupling: trust the provider's self-reported APPLIED only when backed by a real
+    // deliverable this run (ground-truth changedFiles) or an opt-in objective proof. A write-scope
+    // mission whose provider returned OK but changed nothing and declared no proof must NOT reach
+    // SUCCESS on self-report plus a coincidental pre-existing tracked file (false-success closure).
+    const isEngineeringMission =
+      plan.requiresEngineering === true && Array.isArray(plan.authorizedPaths) && plan.authorizedPaths.length > 0;
+    const hasRealChange = Array.isArray(receipt.changedFiles) && receipt.changedFiles.length > 0;
+    const objectivesWithProof = new Set(
+      plan.objectives.filter((o) => "proof" in o && (o as { proof?: string }).proof).map((o) => o.id),
+    );
     const execution = {
       mission: missionId,
-      executed: attributeProviderExecution(objectives, receipt.objectivesAddressed),
+      executed: attributeProviderExecution(objectives, receipt.objectivesAddressed, {
+        isEngineering: isEngineeringMission,
+        hasRealChange,
+        objectiveHasProof: (id) => objectivesWithProof.has(id),
+      }),
     };
 
     this.writeJson(MISSION_PLAN, plan);

@@ -199,3 +199,29 @@ nginx/docker/fleet-bridge/ollama; existing services left untouched). It is **not
 - **NOT proven here:** **public** reachability / DNS / TLS (RWL-C1/C2, DEF-012) and numeric SLOs **not** proven;
   rollback drill **not** executed; **off-host backup BLOCKED pending a defined destination**. This is
   preproduction, not production.
+
+## VPS Deployment Readiness Workstream (roadmap: VPS_DEPLOYMENT_READINESS → DEPLOY_BMAX_DASHBOARD_PROD_V1)
+
+Target: **VPS-only** `vps-6d919042` (no cloud migration, no new provider). States are honest and never
+auto-promoted: `PROVEN | PARTIAL | BLOCKED | NOT-EXECUTED | UNKNOWN`. Evidence from the V4 forensic pass
+(read-only; no infrastructure mutated).
+
+| Gate | State | Evidence / missing proof |
+|---|---|---|
+| A. Truth Lock + running service/build inventory | PROVEN | `odg-preprod.service` active, MainPID 1988216, `ExecStart=/usr/bin/node server.js`, `WorkingDirectory=.next/standalone`, bind `127.0.0.1:3000`; served page title "BMAX v21 — Runtime Dashboard" + `/api/runtime-state` 200 ⇒ it serves the **70b74c2** build (not the old build). |
+| B. Persistent-data inventory; release vs durable data separation | PARTIAL | `ODG_CLIENT_STORE=/var/lib/odg/clients` (ubuntu:ubuntu, 0700) inventoried; ledger 687KB, runtime-state present. Release/data SEPARATION is defined but not yet a versioned layout. |
+| C. Versioned release layout + explicit active-version switch | NOT-EXECUTED | No versioned release dir / `current` symlink exists; the service runs directly from `.next/standalone`. |
+| D. Build completeness, runtime paths, standalone/static, runtime-generated liveness | PARTIAL | Standalone built + `.next/static` copied + served OK (PROVEN). **Liveness RISK (BLOCKED):** service cwd `.next/standalone` reads the **build-time-frozen** `runtime/generated` copy, not the live `odg state` output (currently identical by coincidence). |
+| E. Service account, least privilege, perms, secrets, env | PROVEN | Runs as `ubuntu:ubuntu`; store 0700; env carries no secret values (`ODG_CLIENT_STORE`, `PORT`, `HOSTNAME`, `NODE_ENV`, `NEXT_TELEMETRY_DISABLED`); `ODG_PROVIDER_LIVE` fail-closed. |
+| F. Health, startup/restart, logs, disk, post-reboot recovery | PARTIAL | `/api/health` 200; `Restart=on-failure`; logs clean; disk 180G free (7%). Post-VPS-**reboot** auto-recovery NOT-EXECUTED (needs `systemctl enable` proof — HOST/sudo). |
+| G. Backups, integrity, off-release location, restore + rollback rehearsal | BLOCKED | Backup/restore helper byte-identical (local); **off-host/off-release destination undefined**; live-host rollback drill NOT-EXECUTED. |
+| H. Reverse proxy, bind, firewall, ports, DNS, TLS prerequisites | BLOCKED | Bind loopback-only PROVEN; no nginx/TLS/DNS artifact shipped or provisioned. No premature public exposure. |
+| I. Staging/preprod rehearsal with the EXACT candidate artifact | PROVEN | 70b74c2 standalone ran on a fresh loopback port + real headless-Chromium smoke 17/17 (data↔artifact, no console/page errors). |
+| J. End-to-end mission transmission/execution/receipt/validation/ledger | PARTIAL | Headless subscription delegation PROVEN (`claude -p` → real result); full governed e2e gated on per-mission provider-live authorization. |
+| K. Controlled activation, post-deploy acceptance, monitoring, rollback criteria | NOT-EXECUTED | Defined in `DEPLOY_BMAX_DASHBOARD_PROD_V1` contract; not executed (human-gated). |
+| L. Old-release retention + separately gated cleanup (post-acceptance only) | NOT-EXECUTED | No versioned releases yet; cleanup is a distinct gate after acceptance. |
+
+**Separation of states (do not conflate):** readiness (`VPS_DEPLOYMENT_READINESS`) ≠ release acceptance ≠ actual
+deployment (`DEPLOY_BMAX_DASHBOARD_PROD_V1`). Both roadmap missions are **human-gated** (`authorization.authorized:false`);
+neither is auto-executed. Production is **NOT ready** until gates C, D(liveness), G, H, K have evidence and a separate
+CTO deployment authorization is recorded.

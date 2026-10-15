@@ -1,0 +1,57 @@
+{
+  "mission": "DEPLOY_BMAX_DASHBOARD_PROD_V1",
+  "priority": "NORMAL",
+  "mode": "OPERATIONAL",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "description": "Gated production activation of the BMAX dashboard standalone artifact on VPS vps-6d919042. SEPARATE from readiness (VPS_DEPLOYMENT_READINESS) and from release acceptance: this mission is the controlled activation itself (versioned release switch, reverse-proxy + TLS, health-gated cutover, post-deploy acceptance, rollback). HUMAN-GATED and depends on VPS_DEPLOYMENT_READINESS being PROVEN. It involves protected/irreversible host actions (sudo/systemd/DNS/TLS/public exposure) and MUST NOT be executed autonomously. No cloud migration; VPS-only.",
+  "objectives": [
+    {
+      "id": "DEPLOY_PROD_1",
+      "goal": "Activate the accepted BMAX dashboard release on VPS behind TLS with a health-gated cutover and a rehearsed rollback.",
+      "done_when": [
+        "The accepted release artifact (a specific commit) is placed under a versioned release layout and the active-version switch points to it.",
+        "The service runs with its working directory resolving the LIVE runtime/generated (not the build-time frozen copy).",
+        "A reverse proxy terminates TLS and GET /api/health returns 200 READY for N consecutive probes before public exposure.",
+        "Post-deploy acceptance passes: /api/runtime-state 200 with real data, real-browser smoke green, no console/page errors.",
+        "A rollback drill to the previous release (code + data restore) is demonstrated on the live host.",
+        "Monitoring and explicit rollback criteria are active."
+      ],
+      "authorization": {
+        "eligible": false,
+        "authorized": false,
+        "reason": "Human-gated: production activation requires an explicit, separate CTO deployment authorization and HOST prerequisites (DNS/TLS/reverse-proxy/service account). Protected and partially irreversible; never self-authorized."
+      }
+    }
+  ],
+  "definition_of_done": [
+    "Public HTTPS URL serves the accepted release with health checks green.",
+    "Post-deploy acceptance and a live-host rollback drill are PROVEN.",
+    "The deployment is recorded with runtime evidence; no 'deployed' claim without it."
+  ],
+  "source": "cto-authorized-roadmap-addition-v4",
+  "authorizedPaths": [],
+  "status": "PROPOSED",
+  "completion": [
+    "Separate explicit CTO deployment authorization recorded, then Release Manager/operator acceptance with post-deploy evidence."
+  ],
+  "permissions": {
+    "engineering": false,
+    "authorizedPaths": [],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_NOT_NARRATIVE",
+    "NO_AUTO_PROMOTION",
+    "ROLLBACK_MUST_ALWAYS_BE_POSSIBLE"
+  ],
+  "dependencies": [
+    "VPS_DEPLOYMENT_READINESS"
+  ],
+  "stop_conditions": [
+    "Absent explicit CTO deployment authorization, or absent any required HOST prerequisite (DNS/TLS/reverse-proxy/backup), HALT without mutating infrastructure."
+  ],
+  "rollback": "Switch the active-version pointer back to the previous accepted release and restore ODG_CLIENT_STORE from a verified off-release backup; rehearsed before activation.",
+  "owner": "CTO (authority) / authorized operator"
+}
