@@ -525,6 +525,47 @@ function audit(opts = {}) {
   return out;
 }
 
+// P2 (B142) — Ledger lifecycle-consistency diagnostic. A ledger entry that asserts proven/validated=true
+// while its governance lifecycle `state` is NON-TERMINAL (not one of VERIFIED/RELEASED/ARCHIVED, the
+// proof-bearing terminal states) is a lifecycle inconsistency — the shape historically produced by an older
+// lifecycle computation that stopped at PLANNED yet still recorded proven=true. This is OBSERVABILITY ONLY:
+// it reads the entries it is HANDED and REPORTS inconsistencies; it NEVER reads or rewrites the append-only
+// ledger file and mutates no governed state. It distinguishes a HISTORICAL/superseded inconsistency (a LATER
+// entry for the same mission reached a terminal proven state) from an ACTIVE one (the inconsistent entry is
+// the mission's latest proven record) via severity WARN vs ERROR. Pure: a function of its input array only.
+const TERMINAL_PROVEN_STATES = Object.freeze(["VERIFIED", "RELEASED", "ARCHIVED"]);
+
+function detectLedgerLifecycleInconsistencies(entries) {
+  const list = Array.isArray(entries) ? entries : [];
+  const out = [];
+  for (let i = 0; i < list.length; i++) {
+    const e = list[i];
+    if (!e || typeof e !== "object" || typeof e.mission !== "string") continue; // I6: skip malformed
+    const claimsProven = e.proven === true || e.validated === true;
+    if (!claimsProven) continue; // I3: only proven/validated entries are candidates
+    const state = typeof e.state === "string" ? e.state : null;
+    if (state !== null && TERMINAL_PROVEN_STATES.includes(state)) continue; // I2: legitimate terminal proof
+    // Superseded iff a LATER entry for the SAME mission reached a terminal proven state.
+    const superseded = list.slice(i + 1).some(
+      (x) => x && typeof x === "object" && x.mission === e.mission
+        && (x.proven === true || x.validated === true)
+        && typeof x.state === "string" && TERMINAL_PROVEN_STATES.includes(x.state),
+    );
+    out.push({
+      category: "lifecycle-proven-inconsistency",
+      mission: e.mission,
+      state,
+      proven: e.proven === true,
+      validated: e.validated === true,
+      recordedAt: typeof e.recordedAt === "string" ? e.recordedAt : null,
+      superseded,
+      severity: superseded ? "WARN" : "ERROR",
+      detail: `proven/validated asserted at non-terminal lifecycle state ${JSON.stringify(state)} (terminal proof states: ${TERMINAL_PROVEN_STATES.join("/")})`,
+    });
+  }
+  return out;
+}
+
 module.exports = {
   buildExpected,
   observe,
@@ -537,6 +578,8 @@ module.exports = {
   planRepair,
   audit,
   stableId,
+  TERMINAL_PROVEN_STATES,
+  detectLedgerLifecycleInconsistencies,
   INCIDENTS_FILE,
   REPORT_FILE,
   DEFAULT_MAX_ATTEMPTS,

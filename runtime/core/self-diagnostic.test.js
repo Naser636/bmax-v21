@@ -305,4 +305,43 @@ inTempCwd((mod) => {
   ok("mission-less BLOCKED verdict falls back to the expected mission name", r.divergences.find((d) => d.category === "validation-blocked").firstDifferenceAt === "M");
 });
 
+// 23. P2 (B142) — Ledger lifecycle-consistency diagnostic. Pure function of its input; read-only; never
+//     rewrites the ledger. Detects proven/validated=true at a NON-TERMINAL lifecycle state.
+inTempCwd((mod) => {
+  const D = mod.detectLedgerLifecycleInconsistencies;
+  ok("detectLedgerLifecycleInconsistencies is exported", typeof D === "function");
+
+  // POSITIVE: PLANNED + proven (single entry) ⇒ 1 ACTIVE incident (severity ERROR).
+  const r1 = D([{ mission: "FOO", state: "PLANNED", proven: true, validated: true, recordedAt: "2026-07-28T00:00:00Z" }]);
+  ok("PLANNED+proven ⇒ 1 inconsistency", r1.length === 1 && r1[0].category === "lifecycle-proven-inconsistency");
+  ok("PLANNED+proven ⇒ ACTIVE (severity ERROR, not superseded)", r1[0].severity === "ERROR" && r1[0].superseded === false && r1[0].mission === "FOO");
+
+  // NEGATIVE: legitimate terminal-state proof is NEVER flagged.
+  ok("VERIFIED+proven ⇒ 0", D([{ mission: "A", state: "VERIFIED", proven: true }]).length === 0);
+  ok("ARCHIVED+proven ⇒ 0", D([{ mission: "A", state: "ARCHIVED", proven: true }]).length === 0);
+  ok("RELEASED+validated ⇒ 0", D([{ mission: "A", state: "RELEASED", validated: true }]).length === 0);
+
+  // NEGATIVE: non-proven entry is never flagged (no false positive).
+  ok("PLANNED without proven/validated ⇒ 0", D([{ mission: "A", state: "PLANNED", proven: false }]).length === 0);
+
+  // SUPERSEDED: a later terminal proven entry for the same mission ⇒ the early one is HISTORICAL (WARN).
+  const r2 = D([
+    { mission: "BAR", state: "PLANNED", proven: true, recordedAt: "t1" },
+    { mission: "BAR", state: "VERIFIED", proven: true, recordedAt: "t2" },
+  ]);
+  ok("superseded PLANNED+proven ⇒ exactly 1 incident (the VERIFIED one not flagged)", r2.length === 1);
+  ok("superseded inconsistency ⇒ severity WARN + superseded=true", r2[0].severity === "WARN" && r2[0].superseded === true);
+
+  // ROBUST: malformed entries are skipped, never throw.
+  ok("malformed entries skipped, no throw", D([null, {}, { state: "PLANNED", proven: true }, "x", 7]).length === 0);
+  ok("non-array input ⇒ [] (no throw)", D(undefined).length === 0 && D(null).length === 0);
+
+  // REAL-SHAPE: the two July single-entry PLANNED+proven missions ⇒ both flagged ACTIVE (ERROR).
+  const r3 = D([
+    { mission: "DYNAMIC_MISSION_CONTRACT_FACTORY", state: "PLANNED", proven: true, validated: true },
+    { mission: "AUTONOMOUS_CONTRACT_EVOLUTION", state: "PLANNED", proven: true, validated: true },
+  ]);
+  ok("both real July PLANNED+proven missions flagged (2 ERROR)", r3.length === 2 && r3.every((x) => x.severity === "ERROR"));
+});
+
 console.log(`\nSelf-Diagnostic — ${passed} assertions passed.`);
