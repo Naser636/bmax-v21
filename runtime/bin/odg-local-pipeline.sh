@@ -20,6 +20,15 @@ DATE=$(date -Iseconds)
 COMMIT=$(git rev-parse --short HEAD)
 BRANCH=$(git branch --show-current)
 
+# WI-3 — baseline-relative governance. The pre-flight [1/5] captures a verifiable BASELINE of the dirty
+# tree here and the post-run gate [5/5] charges the mission with ONLY its delta vs that baseline (via the
+# checkpoint-engine classifier shared with the Validation Engine). Pre-existing operator work is therefore
+# PRESERVED, not a reason to STOP — yet NEVER a licence to modify it: a pre-existing file the mission
+# further changes has a different content-hash ⇒ counted as mission-touched ⇒ fail-closed. The baseline is
+# a git-ignored Runtime artifact under runtime/generated/ (so it never pollutes its own classification).
+# FINALIZE_*/CLOSEOUT_* capture NO baseline (empty baseline ⇒ byte-identical pre-WI-3 strict end-clean).
+BASELINE_FILE="runtime/generated/mission-baseline.json"
+
 # Runtime-owned artifact paths (git-ignored, regenerated every run). Identical set
 # to the legacy engine so the pre-flight and post-run governance checks agree on
 # exactly which paths are Runtime outputs; any change OUTSIDE them is real work.
@@ -102,6 +111,11 @@ fi
 # pre-flight STOP (the Patch Executor must never run on a dirty/red tree).
 case "$MISSION" in
   FINALIZE_*|CLOSEOUT_*)
+    # Finalization missions exist to COMMIT/finalize pending Runtime work, so they do NOT capture a
+    # baseline (empty baseline ⇒ the [5/5] gate keeps its strict end-clean semantics, byte-identical to
+    # the pre-WI-3 behaviour). Blanking BASELINE_FILE also makes [5/5] ignore any stale baseline left on
+    # disk by a prior non-finalize run.
+    BASELINE_FILE=""
     DIRTY_TRACKED=$(git diff --name-only -- "${ARTIFACT_EXCLUDES[@]}")
     if [ -n "$DIRTY_TRACKED" ]; then
       echo "NOTE: tree is dirty on entry; ${MISSION} is a finalization mission and will finalize it."
@@ -111,15 +125,52 @@ case "$MISSION" in
     fi
     ;;
   *)
-    DIRTY_TRACKED=$(git diff --name-only -- "${ARTIFACT_EXCLUDES[@]}")
-    if [ -n "$DIRTY_TRACKED" ]; then
-      echo "STOP: Git repository is dirty"
-      echo
-      echo "Modified tracked files (outside mission artifacts):"
-      echo "$DIRTY_TRACKED"
-      echo
-      exit 1
-    fi
+    # WI-3: capture a verifiable baseline of the CURRENT dirty tree instead of hard-STOPping on
+    # pre-existing work. The Patch Executor is still protected: the build/tsc gate above blocks a RED
+    # tree, and any file the mission actually touches (including a pre-existing one it further modifies)
+    # is attributed to the mission at [5/5] and fails closed if out-of-scope. Governance safety (CTO):
+    # an existing baseline that is CORRUPT or DIVERGENT from the current tree is NEVER auto-overwritten —
+    # the pipeline STOPs and leaves it untouched for human review. Only an absent or byte-identical
+    # (REUSE) baseline lets the run proceed.
+    BF_STATUS=$(BF="$BASELINE_FILE" node -e '
+      const fs = require("fs");
+      const ce = require("./runtime/core/checkpoint-engine");
+      const bf = process.env.BF;
+      if (fs.existsSync(bf)) {
+        let prev = null;
+        try { prev = JSON.parse(fs.readFileSync(bf, "utf8")); } catch {}
+        if (!prev || typeof prev !== "object" || !prev.paths || typeof prev.paths !== "object") {
+          process.stdout.write("CORRUPT"); process.exit(0);
+        }
+        const cur = ce.snapshotDirty();
+        const a = Object.keys(prev.paths).sort(), b = Object.keys(cur).sort();
+        let same = a.length === b.length;
+        for (let i = 0; same && i < a.length; i++) if (a[i] !== b[i] || prev.paths[a[i]] !== cur[a[i]]) same = false;
+        process.stdout.write(same ? "REUSE" : "DIVERGENT"); process.exit(0);
+      }
+      ce.writeBaseline(bf);
+      process.stdout.write("WROTE");
+    ' 2>/dev/null || true)
+    case "$BF_STATUS" in
+      WROTE|REUSE)
+        : # absent ⇒ fresh baseline captured; REUSE ⇒ identical baseline from an interrupted run — proceed.
+        ;;
+      CORRUPT)
+        echo "STOP: mission baseline is corrupt (${BASELINE_FILE})."
+        echo "It was NOT overwritten (governance safety). Remove it after review to re-capture a clean baseline."
+        exit 1
+        ;;
+      DIVERGENT)
+        echo "STOP: an existing mission baseline diverges from the current tree (${BASELINE_FILE})."
+        echo "It was NOT overwritten automatically (governance safety). A prior run likely ended in"
+        echo "PENDING_COMMIT/OUTSIDE; resolve it, then remove the baseline to re-capture."
+        exit 1
+        ;;
+      *)
+        echo "STOP: baseline capture failed (status='${BF_STATUS:-<none>}')."
+        exit 1
+        ;;
+    esac
     ;;
 esac
 
@@ -220,67 +271,85 @@ echo "[5/5] GOVERNANCE"
 # is not such a Runtime artifact still surfaces as an unexpected change below.
 compute_artifact_excludes
 
-UNEXPECTED_CHANGES=$(git status --porcelain -- "${ARTIFACT_EXCLUDES[@]}")
+# WI-3 — baseline-relative verdict. postGateVerdict (checkpoint-engine, the SAME classifier the Validation
+# Engine uses) charges the mission with ONLY its delta vs the [1/5] baseline; an empty baseline
+# (FINALIZE_*/CLOSEOUT_*, or BASELINE_FILE blanked) ⇒ strict end-clean, byte-identical to pre-WI-3. The
+# classification is then composed with the SAME artifact exclusion the gate has always applied — factory-
+# stamped contracts + *.evidence.md are Runtime bookkeeping, never "real work" (identical predicate to the
+# ARTIFACT_EXCLUDES set above / odg-verify.js generatedContractExcludes). verdictOf is the engine's own
+# pure mapping: CLEAN ⇒ proceed; PENDING_COMMIT ⇒ in-scope deliverable awaiting the HUMAN commit gate
+# (exit 20); OUTSIDE ⇒ a mission-produced out-of-scope change ⇒ hard STOP (exit 1). gitClean is NOT
+# weakened: a dirty tree is NEVER reported clean (gitClean ⇔ verdict CLEAN).
+GATE=$(MISSION="$MISSION" BF="$BASELINE_FILE" node -e '
+  const fs = require("fs");
+  const ce = require("./runtime/core/checkpoint-engine");
+  const mission = process.env.MISSION;
+  let authorizedPaths = [];
+  try {
+    const c = JSON.parse(fs.readFileSync("runtime/missions/" + mission + ".json", "utf8"));
+    authorizedPaths = c.authorized_paths || c.authorizedPaths || [];
+  } catch {}
+  const bf = process.env.BF;
+  const useBaseline = Boolean(bf) && fs.existsSync(bf);
+  const res = ce.postGateVerdict({ baselineFile: useBaseline ? bf : undefined, authorizedPaths });
+  const isArtifact = (p) => {
+    if (/^runtime\/missions\/[^\/]+\.evidence\.md$/.test(p)) return true;
+    if (/^runtime\/missions\/[^\/]+\.json$/.test(p)) {
+      try { const c = JSON.parse(fs.readFileSync(p, "utf8")); return Boolean(c) && c.generatedBy === "mission-contract-factory"; }
+      catch { return false; }
+    }
+    return false;
+  };
+  const strip = (a) => (Array.isArray(a) ? a : []).filter((p) => !isArtifact(p));
+  const cls = {
+    preExisting: strip(res.preExisting),
+    missionTouched: strip(res.missionTouched),
+    inScope: strip(res.inScope),
+    unexpected: strip(res.unexpected),
+  };
+  const verdict = ce.verdictOf(cls);
+  const offending = verdict === "OUTSIDE" ? cls.unexpected : verdict === "PENDING_COMMIT" ? cls.inScope : [];
+  process.stdout.write(verdict + "\n" + offending.join("\n"));
+' 2>/dev/null || true)
+VERDICT=$(printf '%s' "$GATE" | head -n 1)
+VERDICT="${VERDICT:-OUTSIDE}"
+OFFENDING=$(printf '%s' "$GATE" | tail -n +2)
 
-# S3 (review N4 remediation) — make the runtime-verify.json ARTIFACT coherent with the POST-APPLICATION
-# tree. The [1/5] pre-flight stamped gitClean BEFORE the Patch Executor ran, so a mission that applied an
-# in-scope deliverable left the artifact claiming gitClean:true while the tree is actually dirty (the N3
-# finding). Re-stamp gitClean here from the SAME artifact-scoped porcelain the governance gate below uses,
-# so any reader of runtime-verify.json sees the REAL post-apply state. Artifact coherence only — the
-# governance decision below still derives from UNEXPECTED_CHANGES directly; control flow is unchanged.
-CHANGES="$UNEXPECTED_CHANGES" node -e '
+# S3 (review N4 remediation) — keep runtime-verify.json coherent with the POST-APPLICATION tree. The [1/5]
+# pre-flight stamped gitClean BEFORE the Patch Executor ran; re-stamp it here from the authoritative
+# verdict so any reader sees the REAL post-apply state: clean IFF the mission produced NOTHING dirty.
+VERDICT="$VERDICT" node -e '
   const fs = require("fs");
   const f = "runtime/generated/runtime-verify.json";
   try {
     const v = JSON.parse(fs.readFileSync(f, "utf8"));
-    v.gitClean = String(process.env.CHANGES || "").trim().length === 0;
+    v.gitClean = process.env.VERDICT === "CLEAN";
     fs.writeFileSync(f, JSON.stringify(v, null, 2));
   } catch { /* best-effort: artifact absent ⇒ nothing to re-stamp */ }
 ' || true
 
-if [ -n "$UNEXPECTED_CHANGES" ]; then
-  # The tree is dirty with changes outside the Runtime's own artifacts. gitClean is NOT weakened: a
-  # dirty tree is NEVER called clean. But we are PAST [4/5], so this mission is VALIDATED + proven
-  # (status=SUCCESS, validated=true). Two honest, distinct terminal states:
-  #   (a) EVERY dirty path lies INSIDE the mission's authorized_paths ⇒ this is the proven engineering
-  #       DELIVERABLE awaiting the HUMAN commit gate ⇒ VALIDATED_PENDING_COMMIT (exit 20). NOT a
-  #       success (no SUCCESS artifact written) and NOT a failure. ODG never auto-commits.
-  #   (b) ANY dirty path lies OUTSIDE authorized_paths ⇒ a genuine unexpected change ⇒ hard STOP
-  #       (exit 1), byte-for-byte the previous behaviour (and the case for a mission with NO scope).
-  SCOPE_VERDICT=$(MISSION="$MISSION" CHANGES="$UNEXPECTED_CHANGES" node -e '
-    const fs = require("fs");
-    const mission = process.env.MISSION;
-    let paths = [];
-    try {
-      const c = JSON.parse(fs.readFileSync("runtime/missions/" + mission + ".json", "utf8"));
-      const p = c.authorized_paths || c.authorizedPaths || [];
-      paths = (Array.isArray(p) ? p : []).map((x) => String(x).replace(/[*].*$/, "").replace(/\/+$/, "")).filter(Boolean);
-    } catch {}
-    // porcelain lines: "XY <path>" (and "XY <old> -> <new>" for renames — take the new path).
-    const files = String(process.env.CHANGES || "").split("\n")
-      .map((l) => l.slice(3).trim())
-      .map((p) => (p.includes(" -> ") ? p.split(" -> ").pop() : p))
-      .filter(Boolean);
-    const inScope = (f) => paths.some((pre) => f === pre || f.startsWith(pre + "/"));
-    const outside = files.filter((f) => !inScope(f));
-    // PENDING_COMMIT only when the mission declares scope AND every dirty path is inside it.
-    process.stdout.write(paths.length > 0 && files.length > 0 && outside.length === 0 ? "PENDING_COMMIT" : "OUTSIDE");
-  ')
-  if [ "$SCOPE_VERDICT" = "PENDING_COMMIT" ]; then
-    echo "VALIDATED_PENDING_COMMIT: mission validated + proven; the engineering deliverable is ENTIRELY within"
-    echo "authorized_paths and awaits the HUMAN commit gate (ODG never auto-commits; tree is NOT clean)."
-    echo "Pending (authorized) changes:"
-    echo "$UNEXPECTED_CHANGES"
-    echo
-    exit 20
-  fi
+if [ "$VERDICT" = "PENDING_COMMIT" ]; then
+  echo "VALIDATED_PENDING_COMMIT: mission validated + proven; the engineering deliverable is ENTIRELY within"
+  echo "authorized_paths and awaits the HUMAN commit gate (ODG never auto-commits; tree is NOT clean)."
+  echo "Pending (authorized) changes:"
+  echo "$OFFENDING"
+  echo
+  exit 20
+fi
+if [ "$VERDICT" = "OUTSIDE" ]; then
   echo "STOP: Repository changed unexpectedly"
   echo
   echo "Changes outside mission artifact directories:"
-  echo "$UNEXPECTED_CHANGES"
+  echo "$OFFENDING"
   echo
   exit 1
 fi
+
+# verdict CLEAN ⇒ the mission produced nothing dirty (all remaining dirt is preserved pre-existing work).
+# Consume THIS run's baseline so the next run captures a fresh one. Only a CLEAN success reaches here, so
+# the file removed is this run's own clean, consumed baseline — NEVER a divergent/corrupt one (those
+# hard-STOP at [1/5] and are deliberately left untouched for human review).
+[ -n "$BASELINE_FILE" ] && rm -f "$BASELINE_FILE"
 
 echo "[6/6] COMPLETE"
 
