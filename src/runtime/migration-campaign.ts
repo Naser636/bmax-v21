@@ -144,6 +144,12 @@ export function inventory(root: string = process.cwd()): Inventory {
     const deps = literal.filter((spec) => spec.startsWith("./")).length;
     // Hazard 1 — compilation-location: __dirname/REPO_ROOT in a path resolve breaks when compiled to dist/core.
     const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(code) && /\bpath\.(resolve|join)\b/.test(code);
+    // Hazard 1b — re-exec location: `__filename` passed to a child-process re-exec (e.g.
+    // spawnSync(process.execPath, [__filename, …])) resolves to the dist/core COPY once compiled, so the
+    // subprocess runs the WRONG file. Same compilation-location class as Hazard 1; conservative detection =
+    // a module that both references __filename AND spawns a child process. Needs an injected/entry-path
+    // redesign (not a semantics-preserving dual port) — so it is build/dist-incompatible as-is.
+    const reExecHazard = /\b__filename\b/.test(code) && /\b(spawnSync|spawn|execFileSync|execFile|fork)\s*\(/.test(code);
     // Hazard 2 — dynamic require: a require() whose argument is not a string literal (e.g. require(abs)).
     // build-dist-closure's static tracer rejects it ("unexpected dynamic require()"), so the lot cannot
     // pass build:runtime via the 4-file recipe (needs a governed loader-seam redesign, not a port).
@@ -153,7 +159,7 @@ export function inventory(root: string = process.cwd()): Inventory {
     // because externals are not co-located in dist/core — so the lot cannot pass build:runtime.
     const externalRequire = literal.some((spec) => !spec.startsWith(".") && !isBuiltinRequire(spec));
     // Direct-source hazard (the three inline rules — now parser-aligned with V49, fast, authoritative).
-    const ownHazard = pathHazard || dynamicRequire || externalRequire;
+    const ownHazard = pathHazard || reExecHazard || dynamicRequire || externalRequire;
     // Hazard 4 (ADDITIVE, transitive) — the SAME three closure-rejection classes anywhere in this module's
     // transitive dependency closure, computed by the reused Change-Impact Graph. build-dist-closure co-locates
     // the WHOLE closure into dist and scans it, so a clean module with a hazardous transitive dep (e.g. the
@@ -171,6 +177,8 @@ export function inventory(root: string = process.cwd()): Inventory {
       sideEffect,
       reason: pathHazard
         ? "BLOCKED: __dirname/REPO_ROOT path resolution breaks when compiled to dist/core (needs cwd-relative redesign)"
+        : reExecHazard
+          ? "BLOCKED: __filename re-exec (spawnSync(process.execPath, [__filename, …])) resolves to the dist/core copy when compiled — the subprocess runs the wrong file (needs an injected/entry-path redesign, not a dual port)"
         : dynamicRequire
           ? "BLOCKED: dynamic require() is rejected by build-dist-closure's static tracer (needs a governed loader-seam redesign)"
           : externalRequire

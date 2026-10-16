@@ -106,6 +106,23 @@ console.log("Migration Campaign Planner — tests");
   check(pick !== "dyn" && (pick === "reqmeta" || pick === "staticdep"), `select: dynamic-require lot 'dyn' skipped; a safe lot chosen (${pick})`);
 }
 
+// ── Hazard 1b (V64): __filename RE-EXEC — spawning a child with __filename breaks in dist/core ──────
+{
+  const root = fixture({
+    "reexec.js": "const cp=require('child_process');const r=cp.spawnSync(process.execPath,[__filename,'--worker'],{encoding:'utf8'});module.exports={r};\n", // __filename + spawn ⇒ re-exec hazard
+    "filenameonly.js": "console.log(__filename);module.exports={};\n", // __filename but NO spawn ⇒ NOT a hazard
+    "spawnonly.js": "const cp=require('child_process');cp.spawnSync('git',['status']);module.exports={};\n", // spawn but NO __filename ⇒ NOT a hazard
+  });
+  const inv = inventory(root);
+  const rx = inv.candidates.find((c) => c.lot === "reexec")!;
+  const fn = inv.candidates.find((c) => c.lot === "filenameonly")!;
+  const sp = inv.candidates.find((c) => c.lot === "spawnonly")!;
+  check(rx.hazard === true && /re-exec/.test(rx.reason), "hazard 1b: __filename + spawn ⇒ BLOCKED (re-exec resolves to the dist/core copy)");
+  check(fn.hazard === false, "no false hazard: __filename WITHOUT a child-process spawn is admissible");
+  check(sp.hazard === false, "no false hazard: a child-process spawn WITHOUT __filename is admissible");
+  check(selectNextLot(inv).lot !== "reexec", "select: the __filename re-exec lot is not recommended");
+}
+
 // ── Hazard 4 (V38): TRANSITIVE closure hazard — a clean module whose DEP carries a hazard is BLOCKED ──
 {
   const root = fixture({
