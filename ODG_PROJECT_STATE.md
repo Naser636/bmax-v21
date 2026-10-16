@@ -7,8 +7,9 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
-- **V53 lot @`474f914`** == `origin/main` (insync), branch `main`, worktree clean, index empty, 5 stashes preserved. (This compass is the following docs commit on top of `474f914`.)
-- Evidence-dated **2026-10-16** (V53). Nine permanent primitives intact; `runtime/governance/ROADMAP.json` unchanged.
+- **Code tip = V53 lot @`474f914`**; **V54 is a docs/governance+certification layer on top (NO code change).** == `origin/main` (insync), branch `main`, worktree clean, index empty, 5 stashes preserved.
+- Evidence-dated **2026-10-16** (V54 campaign). Nine permanent primitives intact; `runtime/governance/ROADMAP.json` unchanged.
+- **V54 FIVE-CAPABILITY CAMPAIGN (registered; see roadmap §U-CHECKPOINT V54):** #5 A01–A54/166 certification EXECUTED (read-only, verdict PARTIAL — `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md`); #2 root-cause authority = forensic finding (`root-cause-engine` does NOT exist → `self-diagnostic.js` is the sole de-facto authority; PROPOSED canonical, pending ODG); #1 `runMigrateTs→runGates` BLOCKED (circular dep → needs new shared `truth-lock.ts` module = write-set expansion + CTO decision); #3 live-wire triage BLOCKED (apply/action-gate perimeter); #4 SEMANTIC_PARITY retrofit DEFERRED (53 benches, 0 adopters; one-at-a-time, churn-risky).
 
 ## Validated deliveries V37–V53 (one line each; full evidence in the roadmap §U-CHECKPOINTs + engineering memory)
 - **V37** CHANGE_IMPACT_GRAPH (`runtime/core/change-impact-graph.ts`) — pure read-only dep/consumer/closure-hazard graph; consumed by migrate-plan.
@@ -29,11 +30,12 @@
 `runtime/core`: **89 .js · 58 dual TS ports · 25 candidates · 6 excluded · 6 hazard-blocked**; `runtime/bin`: 25 JS launchers.
 *Note:* After V53, EVERY remaining safe candidate is in a forbidden perimeter (each needs a DISTINCT per-perimeter ODG authorization, like V53 was for build-recovery-engine). Planner's next pick is `local-model-manager` (PROVIDER). By perimeter: PROVIDER = `local-model-manager`/`provider-sandbox`/`fleet-bridge`; FINANCE/DEC-006 = `payments`/`price-resolution`/`economic-verification`/`quote`/`finance-sim`/`finance-paper`/`live-cost-metering`; AUTHZ/SECURITY = `action-gate`/`capability-authorization`/`patch-action-contract`/`bash-command-governor`; CLOSURE-sensitive = `acceptance-facts`/`mechanical-acceptance`/`fleet-collector` (→price-resolution), `capability-router` (→action-gate+bash-command-governor+provider), `capability-executors` (923L). Plus 6 hazard-blocked (genuine `__dirname`/dynamic-require). Always recompute before selecting a lot.
 
-## Blockers + the four open cross-cutting follow-ups (NONE closed by V46–V48)
-1. Re-express `runMigrateTs` on top of `runGates` (V42) with a byte-identical proof — touches the LIVE gate path; separate authorization.
-2. Decide the canonical root-cause authority per failure-class (self-diagnostic vs root-cause-engine) before live-wiring triage.
-3. Live-wire `failure-triage` into a real recovery loop (currently composition-only, PREPARE_NOT_APPLY).
-4. Retrofit the ~47 equivalence benches onto the SEMANTIC_PARITY contract (large, one-at-a-time).
+## Blockers + the four open cross-cutting follow-ups (V54 campaign dispositions)
+1. **`runMigrateTs → runGates` — BLOCKED (V54).** Circular dep: `validation-orchestrator` already imports the Truth-Lock SoT from `migrate-ts-cli`; the clean fix EXTRACTS a new shared `src/runtime/truth-lock.ts` + rewires both orchestrators + a golden byte-identical parity bench. Write-set expansion on a LIVE gate path ⇒ needs a CTO write-set decision. (They also differ in state vocab: NOT RUN/stop-on-any-non-PASS vs NOT-EXECUTED/SKIPPED-continues.)
+2. **Canonical root-cause authority — RESOLVED as a forensic finding (V54, documentary).** `root-cause-engine` does NOT exist; `self-diagnostic.js` is the sole de-facto authority. PROPOSED canonical = self-diagnostic (pending ODG ratification); the phantom `root-cause-engine` references should be built (distinct mission) or corrected.
+3. **Live-wire `failure-triage` — BLOCKED (V54, perimeter).** Would turn PREPARE_NOT_APPLY into real APPLY via build-recovery-engine.recover under action-gate ⇒ apply/permission/security perimeter; distinct CTO authorization; depends on #2 ratified.
+4. **SEMANTIC_PARITY retrofit — DEFERRED (V54, scope recorded).** 53 `*-equivalence.e2e.test.ts` benches; 0 import `semantic-parity`. One-bench-at-a-time mission (churn-risky; zero behavioural gain per bench). No bench modified.
+5. **A01–A54/166 certification — EXECUTED (V54, read-only, PARTIAL).** `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md`. Enumerable layers green @HEAD; canonical layer NOT_ENUMERABLE; Phase-00B register STALE (drift logged). Recommends a distinct governed register-refresh + authority/evidence audit.
 - **Detector status (V49+V50+V51): ALL THREE defect classes CLOSED.** `change-impact-graph` (V49 comment-strip + .ts-reference;
   V51 REPO_ROOT derivation) AND `migration-campaign.ts` inline rules (V50) are comment-safe + derivation-aware via the same
   canonical `stripComments`+`parseRequiresFromSource`. Proven by the 38-assertion graph test (A/B/C blocks) + migration-campaign
@@ -85,7 +87,8 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V53.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V54.
+- V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
 - Engineering memory (per-mission learnings SSOT): `migration-campaign-planner-v20.md` (+ `MEMORY.md` index).
 - Capabilities are read-only COMPOSITIONS of the nine primitives — never a tenth primitive, never a parallel engine/registry/checkpoint.
