@@ -339,6 +339,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/capability-probes-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // invoicing lot (CTO standing delegation V47). Pure leaf (only fs/path/crypto builtins, deps=0 per the
+  // planner); the compiled .ts is self-contained in dist. Not a strict-leaves config member, so the port is
+  // type-checked by the tsconfig.runtime-dist compile alone.
+  "invoicing": [
+    "runtime/core/invoicing.ts",
+    "runtime/__bench__/invoicing-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -446,6 +454,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "capability-probes": [
     "runtime/core/capability-probes.test.js",
+  ],
+  "invoicing": [
+    "runtime/core/invoicing.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
