@@ -170,22 +170,9 @@ try {
       seed: { plan: { mission: "M", objectives: [{ id: "o1" }] }, patch: { mission: "M", patches: [{ file: "a" }] }, execution: { executed: [{ status: "EXECUTED", objectiveId: "o1", evidence: "runtime/generated/does-not-exist.json" }] } },
       expectStatus: "BLOCKED", expectExit: 1, expectReport: true,
     },
-    {
-      // RUN-OWNERSHIP (false-green defense): a CONTENT-green runtime-verify.json (build/typescript true) that
-      // is STALE — produced before THIS run (checkpoint.startedAt in the future ⇒ verify mtime < startedAt) —
-      // must NOT promote to SUCCESS; the build/type gate is not a proof for this run. js≡ts must agree.
-      name: "S6 BLOCKED (stale build/type evidence — run-ownership)",
-      seed: { plan: { mission: "M", objectives: [{ id: "o1" }] }, patch: { mission: "M", patches: [{ file: "a" }] }, execution: { executed: [{ status: "APPLIED", objectiveId: "o1" }] }, verify: { build: true, typescript: true }, checkpoint: { mission: "M", startedAt: "2999-01-01T00:00:00.000Z" } },
-      expectStatus: "BLOCKED", expectExit: 1, expectReport: true,
-    },
-    {
-      // FRESH control: the SAME content-green evidence, produced THIS run (checkpoint.startedAt in the past ⇒
-      // verify mtime >= startedAt) ⇒ the gate is a valid proof ⇒ SUCCESS. Proves the staleness fix is precise,
-      // not a blanket block, and that run-ownership is what distinguishes S6 from S7.
-      name: "S7 SUCCESS (fresh build/type evidence — run-ownership)",
-      seed: { plan: { mission: "M", objectives: [{ id: "o1" }] }, patch: { mission: "M", patches: [{ file: "a" }] }, execution: { executed: [{ status: "APPLIED", objectiveId: "o1" }] }, verify: { build: true, typescript: true }, checkpoint: { mission: "M", startedAt: "1970-01-01T00:00:00.000Z" } },
-      expectStatus: "SUCCESS", expectExit: 0, expectReport: true,
-    },
+    // (S6/S7 run-ownership scenarios removed in V68 together with the reverted V64u `freshGatesOk` gate —
+    //  that gate false-BLOCKED every real mission, see validation-engine note. The seedCase verify/checkpoint
+    //  seeds remain available but are no longer exercised here.)
   ];
 
   for (const s of SCENARIOS) {

@@ -119,22 +119,12 @@ let verify = readJsonSafe("runtime/generated/runtime-verify.json");
 let buildOk = verify ? verify.build === true : true;
 let typescriptOk = verify ? verify.typescript === true : true;
 const gatesEvaluated = verify !== null;
-// RUN-OWNERSHIP of the build/type evidence (false-green defense): runtime/generated is never cleared, so a
-// STALE prior-run runtime-verify.json could assert build/typescript green for a run that never re-verified.
-// When THIS mission's run start is known (pipeline-checkpoint.startedAt — the SAME per-run token + mission-
-// match guard the capability probes use), require the evidence to be produced THIS run. This does NOT trigger
-// recovery (that stays keyed on the CONTENT verdict below); it fails SUCCESS closed when a content-green gate
-// rests on stale evidence. Unknown run start ⇒ content-only (backward-compatible). See freshGatesOk below.
-const verifyRunStartedAtMs = (() => {
-    const cp = readJsonSafe("runtime/generated/pipeline-checkpoint.json");
-    return cp && cp.mission === (plan.mission || patch.mission) && typeof cp.startedAt === "string"
-        ? Date.parse(cp.startedAt) : undefined;
-})();
-let verifyFresh = true;
-if (verify && typeof verifyRunStartedAtMs === "number" && Number.isFinite(verifyRunStartedAtMs)) {
-    try { verifyFresh = fs.statSync("runtime/generated/runtime-verify.json").mtimeMs >= verifyRunStartedAtMs; }
-    catch { verifyFresh = false; }
-}
+// NOTE (V68 revert of V64u): a `freshGatesOk` run-ownership gate (verify.mtime ≥ pipeline-checkpoint.startedAt)
+// was removed here — it was a DEMONSTRATED false-positive regression: in the real pipeline odg-verify writes
+// runtime-verify.json in the PRE-FLIGHT, BEFORE odg-run stamps the run-checkpoint, so the legitimate
+// this-run verify ALWAYS predates startedAt and every real mission wrongly BLOCKED (both runtimes). The
+// stale-prior-run-verify concern is real but needs a run-id STAMP on runtime-verify.json (future), NOT an
+// mtime-vs-startedAt heuristic. Build/type trust is the content verdict + the recovery re-derivation below.
 
 let recovery = null;
 if (gatesEvaluated && (!buildOk || !typescriptOk)) {
@@ -155,11 +145,6 @@ if (gatesEvaluated && (!buildOk || !typescriptOk)) {
     bre.writeReport(targetMission, recovery, stamp);
     bre.writeProviderAuthorization(targetMission, recovery, stamp);
 }
-
-// Fresh-gate decision: a content-green gate counts for THIS run only if its evidence was produced this run
-// (verifyFresh) OR recovery just re-derived it fresh this run (recovery !== null). A content-green-but-STALE
-// gate with no recovery is NOT a proof for this run ⇒ it fails SUCCESS closed below. No gates ⇒ no constraint.
-const freshGatesOk = !gatesEvaluated || verifyFresh || recovery !== null;
 
 // 5. Capability proofs — the Capability Probe Framework (runtime/core/capability-probes.js) turns
 // the mission contract's `verify` block into machine-verified evidence against real generated
@@ -241,7 +226,7 @@ const checks = {
 // SUCCESS requires full proof AND no outstanding blocked action. Adding `noBlocked` closes the false-DONE
 // hole: a per-action BLOCKED entry is neither FAILED nor RECORDED, so without this it would slip through
 // every existing gate and a not-actually-done mission would be stamped SUCCESS.
-const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && freshGatesOk && capabilitiesOk && objectiveProofsOk && noBlocked;
+const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
 
 // PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
 // SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
@@ -273,7 +258,6 @@ if (!noRecordedNoOp) unmet.push(`Objective(s) recorded as a no-op without eviden
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
-if (!freshGatesOk) unmet.push("Build/TypeScript evidence is STALE — runtime-verify.json was not produced this run (run-ownership); re-verify before promoting.");
 for (const c of missingRequiredProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
 for (const p of failingObjectiveProofs) unmet.push(`Objective "${p.objective}" declared proof "${p.proof}" did not pass: ${p.detail || "no detail"}.`);
 for (const b of blockedActions) unmet.push(`Objective "${b.objectiveId || b.action}" is BLOCKED (${b.decision || "BLOCKED"}) — ${b.needs || "authorization/capability not available"}.`);
