@@ -86,7 +86,15 @@ function loadRecurrence(opts) {
   return analyzeRecurrence(ledger);
 }
 
-module.exports = { analyzeRecurrence, loadRecurrence };
+// recordFor(analysis, incidentId) — the per-incident OBSERVED recurrence record for one id, or null. Lets a
+// consumer (e.g. `odg triage`) report the SAME observed recurrence the summary surfaces, instead of a
+// divergence-count-only hypothesis — keeping the operational surfaces coherent. Pure.
+function recordFor(analysis, incidentId) {
+  if (!analysis || !Array.isArray(analysis.records) || typeof incidentId !== "string" || !incidentId) return null;
+  return analysis.records.find((r) => r && r.id === incidentId) || null;
+}
+
+module.exports = { analyzeRecurrence, loadRecurrence, recordFor };
 
 // Read-only CLI: print the current recurrence signal; mutates nothing.
 if (require.main === module) {

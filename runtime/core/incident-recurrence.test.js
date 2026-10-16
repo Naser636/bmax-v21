@@ -13,7 +13,7 @@
 
 const path = require("path");
 const REPO = process.cwd();
-const { analyzeRecurrence, loadRecurrence } = require(path.join(REPO, "runtime", "core", "incident-recurrence.js"));
+const { analyzeRecurrence, loadRecurrence, recordFor } = require(path.join(REPO, "runtime", "core", "incident-recurrence.js"));
 
 let failures = 0;
 const check = (c, l) => { if (c) console.log(`  PASS ${l}`); else { failures++; console.log(`  FAIL ${l}`); } };
@@ -59,6 +59,11 @@ const okStore = { read: () => recurLedger };
 check(loadRecurrence({ store: okStore }).verdict === "RECURRENCE", "loadRecurrence reads the injected ledger ⇒ RECURRENCE");
 const throwStore = { read: () => { throw new Error("store unavailable"); } };
 check(loadRecurrence({ store: throwStore }).verdict === "NONE", "loadRecurrence store-throws ⇒ NONE (fail-closed, never throws)");
+
+// (6) recordFor — the per-incident OBSERVED record (operational-coherence helper for odg triage)
+const analysis = analyzeRecurrence(frozenLedger);
+check(recordFor(analysis, "F") && recordFor(analysis, "F").oscillating === true && recordFor(analysis, "F").attempts === 5, "recordFor('F') ⇒ the FROZEN record (attempts 5, oscillating) — same observed fact the summary surfaces");
+check(recordFor(analysis, "NOPE") === null && recordFor(null, "F") === null && recordFor(analysis, "") === null, "recordFor: unknown id / null analysis / empty id ⇒ null (fail-closed)");
 
 console.log(failures === 0 ? "ALL PASS — incident-recurrence" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

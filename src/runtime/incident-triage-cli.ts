@@ -17,6 +17,7 @@
 
 const sd: any = require("../../runtime/core/self-diagnostic");
 const { triage }: any = require("./incident-triage");
+const recurrenceMod: any = require("../../runtime/core/incident-recurrence");
 
 function main(): number {
   const report = typeof sd.diagnose === "function" ? sd.diagnose({}) : null;
@@ -49,8 +50,19 @@ function main(): number {
   const a = result.assessment;
   const p = result.proposal;
 
+  // OBSERVED cross-run recurrence for THIS incident (from the shared ledger read-model) — kept DISTINCT
+  // from the assessment's forward-looking recurrenceRisk (a hypothesis from this run's divergence count), so
+  // `odg triage` reports the SAME observed recurrence as `odg diagnose` / `odg learn` (operational coherence).
+  let recObserved = "not analyzed";
+  try {
+    const rec = recurrenceMod.recordFor(recurrenceMod.loadRecurrence({}), incident.id);
+    if (rec) recObserved = `${rec.oscillating ? "FROZEN_LOOP" : rec.recurring ? "RECURRING" : "first-seen"} ×${rec.attempts} (${rec.status})`;
+    else recObserved = "no ledger record";
+  } catch { /* best-effort, read-only */ }
+
   console.log("Incident    :", `${incident.id} ${incident.status}`);
-  console.log("Assessment  :", `${a.verdict} (authority: ${a.authority || "none"}, recurrenceRisk: ${a.recurrenceRisk})`);
+  console.log("Recurrence  :", `OBSERVED ${recObserved}  |  risk (hypothesis): ${a.recurrenceRisk}`);
+  console.log("Assessment  :", `${a.verdict} (authority: ${a.authority || "none"})`);
   console.log("  observed   :", a.observedFacts.join(" | ") || "(none)");
   console.log("  hypotheses :", a.hypotheses.join(" | ") || "(none)");
   console.log("  actions    :", a.actions.map((x: any) => `${x.priority} ${x.action}`).join(" | ") || "(none)");
