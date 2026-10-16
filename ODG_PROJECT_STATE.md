@@ -7,7 +7,7 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
-- **HEAD `5f83a68`** == `origin/main` (insync — this doc update is the following commit), branch `main`, worktree clean, 5 stashes preserved.
+- **HEAD `67146b1`** == `origin/main` (insync), branch `main`, worktree clean, index empty, 5 stashes preserved. (V49 code @`5f83a68`; this compass is the following docs commit.)
 - Evidence-dated **2026-10-16** (V49). Nine permanent primitives intact; `runtime/governance/ROADMAP.json` unchanged.
 
 ## Validated deliveries V37–V49 (one line each; full evidence in the roadmap §U-CHECKPOINTs + engineering memory)
