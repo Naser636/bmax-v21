@@ -35,6 +35,14 @@ import { builtinModules } from "node:module";
 // CommonJS-interop-safe, same pattern as the runtime/core modules.
 const { impactOf } = require("../../runtime/core/change-impact-graph");
 
+// V50 — REUSE the canonical, comment-safe require parser + context-aware comment stripper (B141), the SAME
+// helpers the V49 change-impact-graph detector uses. The inline direct-source rules below are now parsed
+// IDENTICALLY to the closure detector (no duplicate parser, no raw-`.js` comment false positives).
+const { parseRequiresFromSource, stripComments } = require("../../scripts/lib/js-require-scan") as {
+  parseRequiresFromSource: (src: string) => { literal: string[]; dyn: boolean };
+  stripComments: (src: string) => string;
+};
+
 // Node builtins that a compiled dist module may require (build-dist-closure allows these + relative
 // requires). An external (non-builtin, non-relative) package require is rejected by its static tracer.
 const NODE_BUILTINS: ReadonlySet<string> = new Set(builtinModules);
@@ -125,20 +133,26 @@ export function inventory(root: string = process.cwd()): Inventory {
     }
     const src = fs.readFileSync(path.join(coreDir, base + ".js"), "utf8");
     const lines = src.split("\n").length;
-    const deps = (src.match(/require\((["'])\.\/[^)]+\1\)/g) || []).length;
+    // V50 — run the inline direct-source rules over the SAME canonical, comment-safe parse the V49 detector
+    // uses, NOT raw-`.js` regexes. stripComments removes line/block comments while preserving string/template
+    // literals VERBATIM; parseRequiresFromSource returns the literal require specs + a dynamic-require flag from
+    // that comment-stripped source. This drops ONLY comment-only false positives (a module that merely
+    // documents a historical __dirname derivation, or names require("imapflow") in prose) — a hazard token in
+    // EXECUTABLE code or a string literal is still seen, so recall is unchanged (negative tests prove it).
+    const code = stripComments(src);
+    const { literal, dyn } = parseRequiresFromSource(src);
+    const deps = literal.filter((spec) => spec.startsWith("./")).length;
     // Hazard 1 — compilation-location: __dirname/REPO_ROOT in a path resolve breaks when compiled to dist/core.
-    const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(src) && /\bpath\.(resolve|join)\b/.test(src);
+    const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(code) && /\bpath\.(resolve|join)\b/.test(code);
     // Hazard 2 — dynamic require: a require() whose argument is not a string literal (e.g. require(abs)).
     // build-dist-closure's static tracer rejects it ("unexpected dynamic require()"), so the lot cannot
     // pass build:runtime via the 4-file recipe (needs a governed loader-seam redesign, not a port).
-    const dynamicRequire = /\brequire\s*\(\s*[^'"\s)]/.test(src);
+    const dynamicRequire = dyn === true;
     // Hazard 3 — external package require: a require("bare") that is neither relative nor a Node builtin
     // (e.g. require("imapflow")). build-dist-closure rejects it ("unexpected external package require"),
     // because externals are not co-located in dist/core — so the lot cannot pass build:runtime.
-    const externalRequire = [...src.matchAll(/\brequire\(\s*(["'])([^"']+)\1\s*\)/g)]
-      .map((m) => m[2])
-      .some((spec) => !spec.startsWith(".") && !isBuiltinRequire(spec));
-    // Direct-source hazard (the three inline rules, UNCHANGED — fast, authoritative, carry the reasons).
+    const externalRequire = literal.some((spec) => !spec.startsWith(".") && !isBuiltinRequire(spec));
+    // Direct-source hazard (the three inline rules — now parser-aligned with V49, fast, authoritative).
     const ownHazard = pathHazard || dynamicRequire || externalRequire;
     // Hazard 4 (ADDITIVE, transitive) — the SAME three closure-rejection classes anywhere in this module's
     // transitive dependency closure, computed by the reused Change-Impact Graph. build-dist-closure co-locates

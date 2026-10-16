@@ -142,6 +142,41 @@ console.log("Migration Campaign Planner — tests");
   check(selectNextLot(inv).lot !== "ext", "select: external-package lot is never recommended");
 }
 
+// ── V50: inline rules parse COMMENT-SAFE (aligned with the V49 change-impact-graph detector). A hazard
+//    token that appears ONLY in a comment is no longer a false positive; the SAME token in EXECUTABLE code
+//    or a string literal is STILL flagged (recall unchanged), and TRANSITIVE hazards are STILL detected. ──
+{
+  const root = fixture({
+    // (a) __dirname + path.resolve ONLY in a comment ⇒ NOT a path hazard (the build-recovery-engine class).
+    "doc-path.js": "// historical note: used path.resolve(__dirname, '..') before the cwd-relative redesign\nmodule.exports={};\n",
+    // (b) require('imapflow') / require(abs) ONLY in prose ⇒ NOT external/dynamic; the real './x' dep still counts.
+    "doc-req.js": "/* migration guide: do NOT require('imapflow'); never use require(abs) dynamically */\nconst x=require('./x');module.exports={x};\n",
+    // (c)(d)(e) RECALL — the SAME tokens in EXECUTABLE code are STILL flagged (detector NOT weakened).
+    "real-path.js": "const p=require('path');const R=path.resolve(__dirname,'..');module.exports={R};\n",
+    "real-ext.js": "const c=require('imapflow');module.exports={c};\n",
+    "real-dyn.js": "const a='./x';const m=require(a);module.exports={m};\n",
+    // (f) TRANSITIVE recall — clean own-source whose DEP has a real executable dynamic require ⇒ STILL BLOCKED.
+    "t-leaf.js": "const a='./x';const m=require(a);module.exports={m};\n",
+    "t-user.js": "const l=require('./t-leaf');module.exports={l};\n",
+    // (g) TRANSITIVE false-positive guard — a DEP that only MENTIONS a hazard in a comment ⇒ consumer NOT blocked.
+    "c-leaf.js": "// note: this module once used require(dynamicPath)\nmodule.exports={};\n",
+    "c-user.js": "const l=require('./c-leaf');module.exports={l};\n",
+    "x.js": "module.exports={};\n",
+  });
+  const inv = inventory(root);
+  const get = (n: string) => inv.candidates.find((c) => c.lot === n)!;
+  // false positives removed (alignment with V49):
+  check(get("doc-path").hazard === false, "V50 align: __dirname+path.resolve in a COMMENT ⇒ NOT a path hazard (false positive removed)");
+  check(get("doc-req").hazard === false && get("doc-req").deps === 1, "V50 align: require('imapflow')/require(abs) in a COMMENT ⇒ NOT a hazard; real './x' dep still counted (comments don't inflate deps)");
+  // recall preserved — executable hazards STILL detected (the detector is aligned, never weakened):
+  check(get("real-path").hazard === true && /path resolution/.test(get("real-path").reason), "V50 recall: executable __dirname+path.resolve STILL flagged path-hazard");
+  check(get("real-ext").hazard === true && /external package/.test(get("real-ext").reason), "V50 recall: executable require('imapflow') STILL flagged external");
+  check(get("real-dyn").hazard === true && /dynamic require/.test(get("real-dyn").reason), "V50 recall: executable require(identifier) STILL flagged dynamic");
+  // transitive hazards STILL detected; comment-only transitive mention is NOT a false block:
+  check(get("t-user").hazard === true && /transitive closure hazard/.test(get("t-user").reason) && /t-leaf/.test(get("t-user").reason), "V50 transitive recall: consumer of a real executable-hazard dep STILL BLOCKED via closure");
+  check(get("c-user").hazard === false, "V50 transitive align: consumer of a comment-only-mention dep is NOT blocked (false positive removed)");
+}
+
 // ── State: SKIPPED (only excluded remain) + NONE (campaign complete) ─────────────────────────────
 {
   const skipped = selectNextLot(inventory(fixture({ "budget-ledger.js": "module.exports={};\n" })));
