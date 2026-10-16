@@ -422,6 +422,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/quote-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // price-resolution lot (V64 FINANCE/DEC-006, bounded semantics-preserving). Pure/deterministic economic
+  // valuation (declared PriceRule → EXACT BigInt money from observed usage); UNKNOWN-never-0; DERIVED≠OBSERVED;
+  // ships ZERO rates. Reuses the dual-ported ./economic-unit. No clock/I/O/money/network.
+  "price-resolution": [
+    "runtime/core/price-resolution.ts",
+    "runtime/__bench__/price-resolution-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -566,6 +574,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "quote": [
     "runtime/core/quote.test.js",
+  ],
+  "price-resolution": [
+    "runtime/core/price-resolution.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
