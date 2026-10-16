@@ -381,6 +381,22 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/provider-sandbox-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // local-model-manager lot (V63, PROVIDER perimeter — consumer of provider-sandbox). Thin env-driven
+  // abstraction; complete() delegates fail-closed to the dual-ported ./provider-sandbox. NO provider
+  // activated by porting; tests inject the sandbox runner (no real binary/network/secret).
+  "local-model-manager": [
+    "runtime/core/local-model-manager.ts",
+    "runtime/__bench__/local-model-manager-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  // capability-router lot (V63, PROVIDER perimeter — routes Memory→Rules→Local-LLM→External-AI). Pure
+  // deterministic routing; reuses co-located patch-memory/decision-rules/capability-metrics + dual-ported
+  // local-model-manager; localModelAvailable is injectable. No provider activated by porting.
+  "capability-router": [
+    "runtime/core/capability-router.ts",
+    "runtime/__bench__/capability-router-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -510,6 +526,12 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "provider-sandbox": [
     "runtime/core/provider-sandbox.test.js",
+  ],
+  "local-model-manager": [
+    "runtime/core/local-model-manager.test.js",
+  ],
+  "capability-router": [
+    "runtime/core/capability-router.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
