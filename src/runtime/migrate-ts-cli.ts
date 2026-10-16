@@ -364,6 +364,17 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/client-store-backup-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // expert-profile-assembler lot (CTO standing delegation V48). Pure, READ-ONLY, zero internal deps; neutral
+  // perimeter (computes a §302/§303 authority INTERSECTION — subset-only — and reports profile status; grants
+  // nothing, enforces nothing). The ONE reason it was dist-hazard-blocked — REPO_ROOT = path.resolve(
+  // __dirname,"..","..") — is fixed in the port by the repo's proven process.cwd() root convention
+  // (capability-registry.ts / build-recovery-engine.js η3-B42); equal to the __dirname-root in the verified
+  // launch context. Type-checked by the tsconfig.runtime-dist compile.
+  "expert-profile-assembler": [
+    "runtime/core/expert-profile-assembler.ts",
+    "runtime/__bench__/expert-profile-assembler-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -480,6 +491,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "client-store-backup": [
     "runtime/core/client-store-backup.test.js",
+  ],
+  "expert-profile-assembler": [
+    "runtime/core/expert-profile-assembler.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

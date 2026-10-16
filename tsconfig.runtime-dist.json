@@ -69,6 +69,7 @@
     "runtime/core/capability-probes.ts",
     "runtime/core/invoicing.ts",
     "runtime/core/budget-contract.ts",
-    "runtime/core/client-store-backup.ts"
+    "runtime/core/client-store-backup.ts",
+    "runtime/core/expert-profile-assembler.ts"
   ]
 }
