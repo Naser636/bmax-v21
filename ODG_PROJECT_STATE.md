@@ -7,6 +7,7 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
+- **V62 JS→TS lot `provider-sandbox` DONE (@`beb58ea`).** ODG bounded provider-perimeter authz (provider-sandbox ONLY). Dual port via official gate; deps (action-gate/bash-command-governor/state-transition) untouched (.js co-located in dist). Pure argv + FAIL-CLOSED runProvider with INJECTED sandboxRunner — no real provider/activation/network/secrets/bwrap. Isolation invariants byte-identical (never `--ro-bind / /`; --unshare-all/--clearenv/--info-fd; /etc model refused; metachar/unparseable refused). Gate 5/5; historical 38 assertions; `tsc` 0; `npm test` 398. **Dual ports 58→59 · 24 candidates · 6 blocked.** NEXT = `local-model-manager` (PROVIDER) — outside V62 scope, needs broader PROVIDER-perimeter CTO authz.
 - **V61 FIVE-WORKSTREAM CLOSURE RECONCILE (no new code; honest).** Code tip unchanged = **@`ad4744d`**; docs @`57cf675`+. Reused V54–V60 evidence; re-verified no regression (golden parity + failure-triage 20/20 green). **C1 DONE** (V56), **C2 DONE** (V56 mapping), **C3** safe branches proven / live wiring BLOCKED (action-gate perimeter), **C4 DEFERRED** (28/53 benches already effect-guarded; other 25 pure — rewriting = churn w/o benefit), **C5** count-defect fixed (V60); residuals A1 (dispatch authz invariant) + A2 (evidence provenance) CTO-gated; A01–A54/166 retired (DEC-V60), NOT reintroduced. **MIGRATION:** planner @HEAD 58 dual/25 cand/6 blocked; all 19 safe candidates perimeter-gated, NO neutral lot. Per-perimeter CTO dossiers (PROVIDER / FINANCE-DEC006 / AUTHZ-SEC / EVIDENCE-PROVENANCE) in roadmap §U-CHECKPOINT V61. No new code; 9 primitives intact.
 - **V60 ROOT-CAUSE REPAIR + 166-RETIREMENT + MIGRATION RECONCILE.** Code tip = **@`ad4744d`** (PHASE 1 fix).
   - **PHASE 1 DONE (@`ad4744d`):** `runtime-model.js`/`.ts` provenSet now gates on `isMissionIdentifier()` (no leading `-`, no whitespace) → excludes ledger parsing-accidents (`--help`, `--repair-mandate`, goal-sentence) from proven capabilities; projection-only, ledger never mutated; both dual-port files changed identically (parity preserved). runtime-model.test Case G 30 assertions PASS; equivalence bench ALL PASS; `tsc` 0; `npm test` 398; proven caps **177→174**.
@@ -98,7 +99,7 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V61.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V62.
 - Canonical Truth Lock SoT: `src/runtime/truth-lock.ts` (V56). Root-cause authorities: `src/runtime/root-cause-engine.ts` (release-gate class) + `runtime/core/self-diagnostic.js` (runtime-divergence class).
 - V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
