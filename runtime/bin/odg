@@ -96,6 +96,14 @@ case "$MISSION" in
     ./runtime/bin/odg-state.js >/dev/null || true
     ./runtime/bin/odg-diagnose.js; exit $?
     ;;
+  learn)
+    # READ-ONLY §V S5 surface: the workflow CALLS the learning evaluation (learning-chain S2 +
+    # improvement-baseline S4) on REAL repo signals and ACTS on it — exit 1 (gate) on a debt regression
+    # (FROZEN_LOOP / recurring incidents ⇒ prior fixes did not hold) or an over-claim; exit 0 otherwise.
+    # Writes nothing, spawns nothing, no network. Usable as a CI / post-event gate like `odg diagnose`.
+    ./runtime/bin/odg-state.js >/dev/null || true
+    exec node_modules/.bin/tsx src/runtime/learning-review-cli.ts "$@"
+    ;;
   triage)
     # READ-ONLY §V S3 surface: compose Root-Cause Intelligence (A) + Bounded Remediation (B, PROPOSE-ONLY)
     # over the EXISTING self-diagnostic report. Refresh coherent state first (same discipline as diagnose),
