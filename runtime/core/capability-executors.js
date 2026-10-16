@@ -76,6 +76,13 @@ const SPEC_AUTHOR_NAME = "odg-spec.json";
 // Registry + Orchestrator and runs the selected provider — the socle→provider edge.
 const TSX_CLI = path.join("node_modules", "tsx", "dist", "cli.mjs");
 const PROVIDER_ACTIVATION_ENTRY = path.join("src", "runtime", "provider-activation.ts");
+// MIGRATION-READINESS (V65 §7A): the two self-re-exec workers (--http-get, connectivity audit) re-exec THIS
+// file. The production default is `__filename` — an ABSOLUTE, cwd-independent path to the running .js worker
+// (correct and unchanged for the .js runtime, from any cwd). To make the entry CONTROLLABLE — so a compiled/
+// dist caller (or a hermetic parity bench) can re-exec the canonical historical .js instead of its own copy —
+// it is overridable via env `ODG_SELF_WORKER_ENTRY` (module scope) and per-call `opts.selfEntry`
+// (governedHttpGet). This is the smallest contract that masters the entry path without a cwd dependency.
+const SELF_WORKER_ENTRY = (typeof process !== "undefined" && process.env && process.env.ODG_SELF_WORKER_ENTRY) || __filename;
 
 // ---------------------------------------------------------------------------
 // Connectivity Audit — real business logic.
@@ -293,7 +300,8 @@ function httpGetBounded(rawUrl, maxBytes, timeoutMs) {
 function governedHttpGet(url, opts) {
     const maxBytes = Math.min(Math.max(1, (opts && opts.maxBytes) || 262144), 1048576);
     const timeoutMs = Math.min(Math.max(250, (opts && opts.timeoutMs) || 5000), 15000);
-    const res = spawnSync(process.execPath, [__filename, "--http-get", url, String(maxBytes), String(timeoutMs)], {
+    const selfEntry = (opts && typeof opts.selfEntry === "string" && opts.selfEntry) ? opts.selfEntry : SELF_WORKER_ENTRY;
+    const res = spawnSync(process.execPath, [selfEntry, "--http-get", url, String(maxBytes), String(timeoutMs)], {
         encoding: "utf8", timeout: timeoutMs + 3000, env: {}, maxBuffer: maxBytes + 65536,
     });
     if (res.status !== 0 || !res.stdout) {
@@ -824,7 +832,7 @@ const EXECUTORS = [
             try { fs.rmSync(out, { force: true }); } catch { /* ignore */ }
             // Execute the audit as a real, bounded subprocess so the synchronous executor loop stays
             // synchronous while genuine async network probes run to completion.
-            const res = spawnSync(process.execPath, [__filename, out], { encoding: "utf8", timeout: 30000 });
+            const res = spawnSync(process.execPath, [SELF_WORKER_ENTRY, out], { encoding: "utf8", timeout: 30000 });
             const evidenceExists = fs.existsSync(out) && fs.statSync(out).size > 0;
             if (res.status !== 0 || !evidenceExists) {
                 throw new Error(
