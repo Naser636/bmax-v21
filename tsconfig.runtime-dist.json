@@ -76,6 +76,8 @@
     "runtime/core/provider-sandbox.ts",
     "runtime/core/local-model-manager.ts",
     "runtime/core/capability-router.ts",
-    "runtime/core/fleet-bridge.ts"
+    "runtime/core/fleet-bridge.ts",
+    "runtime/core/payments.ts",
+    "runtime/core/quote.ts"
   ]
 }

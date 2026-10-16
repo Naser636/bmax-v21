@@ -406,6 +406,22 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/fleet-bridge-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // payments lot (V64 FINANCE/DEC-006, bounded semantics-preserving). Verification-first reconciliation:
+  // HMAC webhook verify + idempotency + card-data refusal + invoice reconciliation via dual-ported ./invoicing.
+  // NO real money/network/secret-exposure; outbound charges DISABLED; tests use synthetic env + temp cwds.
+  "payments": [
+    "runtime/core/payments.ts",
+    "runtime/__bench__/payments-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  // quote lot (V64 FINANCE/DEC-006, bounded semantics-preserving). Governed quote lifecycle; totals reuse
+  // invoicing.computeTotals; external emission + acceptance remain HUMAN acts (deny-by-default). No real
+  // money/network/secret; caller-supplied figures never invented.
+  "quote": [
+    "runtime/core/quote.ts",
+    "runtime/__bench__/quote-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -544,6 +560,12 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "fleet-bridge": [
     "runtime/core/fleet-bridge.test.js",
+  ],
+  "payments": [
+    "runtime/core/payments.test.js",
+  ],
+  "quote": [
+    "runtime/core/quote.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
