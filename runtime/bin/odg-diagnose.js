@@ -20,6 +20,12 @@ const result = diag.audit({});
 const inc = result.incident;
 const plan = result.repairPlan;
 
+// READ-ONLY recurrence signal over the EXISTING incident ledger (does not change the audit or the ledger).
+// Surfaces whether incidents keep recurring / are frozen in a loop — the §V learning-loop "did the fix hold?"
+// signal that was previously implicit in the per-incident `attempts`.
+let recurrence = { verdict: "NONE", summary: { total: 0, recurring: 0, frozen: 0, topRecurring: [] } };
+try { recurrence = require("../core/incident-recurrence").loadRecurrence({}); } catch { /* best-effort, read-only */ }
+
 console.log("======================================");
 console.log("ODG DIAGNOSE (autonomous audit)");
 console.log("======================================");
@@ -28,6 +34,8 @@ console.log("Expected    :", result.expected.objectives.length, "objective(s),",
 console.log("Observed    :", result.observed.executedOrder.join(", ") || "(none)");
 console.log("Divergences :", result.divergences.length);
 for (const d of result.divergences) console.log(`  - ${d.category} @ ${d.firstDifferenceAt} (${d.severity})`);
+console.log("Recurrence  :", `${recurrence.verdict} (${recurrence.summary.recurring} recurring, ${recurrence.summary.frozen} frozen of ${recurrence.summary.total}; max attempts ${recurrence.summary.maxAttempts || 0})`);
+for (const t of recurrence.summary.topRecurring || []) console.log(`  - ${t.id} ×${t.attempts} (${t.status})`);
 
 if (!inc) {
   console.log("Incident    : none");
