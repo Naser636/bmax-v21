@@ -156,4 +156,29 @@ console.log("Runtime Model — gap-detection contract");
   ok("lastRun is null when no mission-report.json exists", m.lastRun === null);
 }
 
+// --- Case G (V60): projection excludes non-identifier ledger pollution from proven capabilities -------
+// The immutable ledger holds proven entries whose `mission` is a parsing accident (CLI flags, free-text
+// goal sentences). Those must NOT appear as proven capabilities, while genuine ids (incl. verbose NL ids)
+// stay visible. The ledger is NEVER mutated — the filter is purely at projection time (runtime-model).
+{
+  const root = buildFixture(
+    { VALID_CAP: { objectives: ["done"] } },
+    [
+      "VALID_CAP",                 // genuine UPPER_SNAKE id ⇒ KEPT
+      "NL_ANALYZE_DEADBEEF",       // genuine NL id ⇒ KEPT
+      "--help",                    // CLI flag mis-recorded ⇒ EXCLUDED
+      "--repair-mandate",          // CLI flag mis-recorded ⇒ EXCLUDED
+      "Register the new capabilities in the registry", // free-text goal sentence (whitespace) ⇒ EXCLUDED
+    ],
+    { roadmap: [] },
+  );
+  const m = computeRuntimeModel(root);
+  ok("V60: genuine id KEPT (VALID_CAP)", m.capabilities.includes("VALID_CAP"));
+  ok("V60: genuine NL id KEPT (NL_ANALYZE_DEADBEEF)", m.capabilities.includes("NL_ANALYZE_DEADBEEF"));
+  ok("V60: CLI flag --help EXCLUDED", !m.capabilities.includes("--help"));
+  ok("V60: CLI flag --repair-mandate EXCLUDED", !m.capabilities.includes("--repair-mandate"));
+  ok("V60: whitespace goal-sentence EXCLUDED", !m.capabilities.some((c) => /\s/.test(c)));
+  ok("V60: exactly the 2 valid ids remain (no pollution counted)", m.capabilities.length === 2);
+}
+
 console.log(`\n${passed} assertion(s) passed`);

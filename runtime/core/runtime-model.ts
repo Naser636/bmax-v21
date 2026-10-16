@@ -23,6 +23,15 @@ function readJson(file: string): any {
 }
 
 /** First objective of a raw contract, normalised to {id, goal} (handles string and object shapes). */
+// V60 PHASE 1 — a proven ledger entry's `mission` only counts as a proven capability/mission when it is a
+// genuine mission IDENTIFIER, not a parsing accident. The immutable append-only ledger holds entries whose
+// `mission` was mis-captured from a CLI invocation (e.g. "--help", "--repair-mandate") or carries a free-text
+// goal sentence (whitespace). Those are NOT capabilities and inflated the dashboard "Available capabilities".
+// Filter at PROJECTION time (the ledger is NEVER mutated): a mission id has no leading "-" and no whitespace.
+function isMissionIdentifier(m: any): boolean {
+  return typeof m === "string" && m.length > 0 && !/^\s*-/.test(m) && !/\s/.test(m);
+}
+
 function firstObjective(raw: any, mission: string): any {
   const objs = Array.isArray(raw && raw.objectives) ? raw.objectives : [];
   if (objs.length === 0) return null;
@@ -55,7 +64,7 @@ function computeRuntimeModel(root: string = process.cwd()): any {
   const ledger = readJson(G("mission-ledger.json")) || { entries: [] };
   const entries = Array.isArray(ledger.entries) ? ledger.entries : [];
   const provenSet = new Set(
-    entries.filter((e: any) => e && e.proven === true && typeof e.mission === "string").map((e: any) => e.mission),
+    entries.filter((e: any) => e && e.proven === true && isMissionIdentifier(e.mission)).map((e: any) => e.mission),
   );
   const lastMission = entries.length > 0 ? entries[entries.length - 1].mission : null;
 
