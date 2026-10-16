@@ -79,6 +79,9 @@
     "runtime/core/fleet-bridge.ts",
     "runtime/core/payments.ts",
     "runtime/core/quote.ts",
-    "runtime/core/price-resolution.ts"
+    "runtime/core/price-resolution.ts",
+    "runtime/core/economic-verification.ts",
+    "runtime/core/finance-sim.ts",
+    "runtime/core/finance-paper.ts"
   ]
 }

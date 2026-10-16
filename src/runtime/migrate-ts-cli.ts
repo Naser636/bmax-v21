@@ -430,6 +430,29 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/price-resolution-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // economic-verification lot (V64 FINANCE/DEC-006, bounded semantics-preserving). Pure/deterministic
+  // arbitration: verdict (VERIFIED/FAILED/INCOMPLETE/UNKNOWN) over economic FACTS; deny-by-default;
+  // "no false economic success" (UNKNOWN never 0; non-OK valuation with a value ⇒ VIOLATION). Reuses the
+  // dual-ported ./price-resolution. No I/O/money/network.
+  "economic-verification": [
+    "runtime/core/economic-verification.ts",
+    "runtime/__bench__/economic-verification-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  // finance-sim lot (V64 FINANCE/DEC-006). SIMULATION-ONLY: deterministic long/flat baseline + no-look-ahead
+  // + integer-minor P&L via economic-unit; NO network/execution/real-money. Reuses mechanical-acceptance VERDICT.
+  "finance-sim": [
+    "runtime/core/finance-sim.ts",
+    "runtime/__bench__/finance-sim-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  // finance-paper lot (V64 FINANCE/DEC-006). PAPER-ONLY virtual portfolio from finance-sim positions;
+  // fail-closed decisions gate; fictitious orders (executed:false); fees/slippage are labelled ASSUMPTIONS.
+  "finance-paper": [
+    "runtime/core/finance-paper.ts",
+    "runtime/__bench__/finance-paper-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -577,6 +600,15 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "price-resolution": [
     "runtime/core/price-resolution.test.js",
+  ],
+  "economic-verification": [
+    "runtime/core/economic-verification.test.js",
+  ],
+  "finance-sim": [
+    "runtime/core/finance-sim-walkforward.test.js",
+  ],
+  "finance-paper": [
+    "runtime/core/finance-paper.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
