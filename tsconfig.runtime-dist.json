@@ -87,6 +87,7 @@
     "runtime/core/acceptance-facts.ts",
     "runtime/core/patch-action-contract.ts",
     "runtime/core/action-gate.ts",
-    "runtime/core/capability-authorization.ts"
+    "runtime/core/capability-authorization.ts",
+    "runtime/core/bash-command-governor.ts"
   ]
 }

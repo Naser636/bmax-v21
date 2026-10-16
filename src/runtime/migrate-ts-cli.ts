@@ -503,6 +503,18 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/capability-authorization-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // bash-command-governor lot (V64 AUTHZ/§6C, bounded semantics-preserving; the governed-command capability).
+  // argv-only (never a raw shell string), deny-by-default via dual-ported action-gate, dry-run default, secret
+  // boundary, GENUINE isolation (bubblewrap) whose success is OBSERVED (--info-fd handshake) not declared,
+  // predicted-vs-observed EFFECT_DIVERGENCE, UNKNOWN-never-trusted, C03-validated evidence. Deps action-gate +
+  // state-transition (both dual-ported). Its ONLY outward effect — spawnSync / bwrap — is an INJECTABLE seam
+  // (opts.spawn, opts.sandboxRunner), so the equivalence bench proves parity with a fake spawn, NO real
+  // bwrap/command/network/fs-write (the provider-sandbox pattern). Default-OFF; no live wiring changed.
+  "bash-command-governor": [
+    "runtime/core/bash-command-governor.ts",
+    "runtime/__bench__/bash-command-governor-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -677,6 +689,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "capability-authorization": [
     "runtime/core/capability-authorization.test.js",
+  ],
+  "bash-command-governor": [
+    "runtime/core/bash-command-governor.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
