@@ -159,6 +159,11 @@ inTempCwd((mod) => {
   for (let i = 0; i < 3; i += 1) last = mod.raiseIncident(div, { maxAttempts: 3, now: "T" + i });
   ok("incident FROZEN after maxAttempts (loop protection)", last.status === "FROZEN" && last.attempts === 3);
   ok("frozen incident carries an escalation note", /loop protection/i.test(last.note || ""));
+  // Terminal loop protection: further re-raises (e.g. passive diagnostic reads) do NOT inflate `attempts`
+  // past the ceiling — it stays FROZEN at maxAttempts (prevents recurrence maxAttempts signal contamination).
+  let after;
+  for (let i = 0; i < 5; i += 1) after = mod.raiseIncident(div, { maxAttempts: 3, now: "U" + i });
+  ok("FROZEN attempts capped at maxAttempts on re-raise (no unbounded inflation)", after.status === "FROZEN" && after.attempts === 3);
 });
 
 // 12. mission-context-stale: the persisted plan names a DIFFERENT mission than what actually executed.

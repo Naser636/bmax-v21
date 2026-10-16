@@ -388,7 +388,12 @@ function raiseIncident(divergences, opts = {}) {
   const ledger = store.read(INCIDENTS_FILE, { incidents: {} });
   if (!ledger.incidents) ledger.incidents = {};
   const prev = ledger.incidents[id];
-  const attempts = (prev ? prev.attempts : 0) + 1;
+  // Loop protection is TERMINAL: once FROZEN (attempts >= maxAttempts), a re-raise (e.g. a passive
+  // diagnostic read that re-runs diagnose) must NOT inflate the counter — it stays at the freeze ceiling.
+  // Unbounded growth corrupted the recurrence `maxAttempts` signal (contaminated by observation, not by
+  // real repair attempts — apply is already disallowed once FROZEN). Status/verdict are unchanged.
+  const prevAttempts = prev ? prev.attempts : 0;
+  const attempts = prevAttempts >= maxAttempts ? maxAttempts : prevAttempts + 1;
   const status = attempts >= maxAttempts ? "FROZEN" : "OPEN";
   const incident = {
     id,
