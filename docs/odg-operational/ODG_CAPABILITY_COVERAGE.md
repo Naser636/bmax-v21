@@ -27,7 +27,8 @@
 
 ## Migration readiness (re-evaluated on current evidence)
 - **DONE (dual-ported, parity-proven):** bash-command-governor, action-gate, capability-authorization, state-transition, economic chain, + the probes host — the authorization/admission/command surface and the FINANCE/§6B chain.
-- **BLOCKED (precise, unchanged by these improvements):** `capability-executors` (930L) — `__filename` re-exec resolves to `dist/core` + `new Date()` clock non-determinism ⇒ not a semantics-preserving dual port (planner Hazard 1b, V64p); 8 executors reach `.ts` only through it. `fleet-collector` — two hard-coded `spawnSync("node", runtime/llm/*)` with no injectable seam ⇒ parity not hermetically provable. Both need a distinct ODG design decision (injected entry-path/clock; spawn seam), not a bounded fix.
+- **UNBLOCKED + MIGRATED (V65):** `fleet-collector` — the migration-readiness seam (§7B: inject spawn/clock/governance/ledger, real defaults) was implemented, `.js` seamed + `.ts` dual-ported, gate 5/5 (equivalence JS≡TS across every branch). Dual ports 76→77.
+- **BLOCKED (precise, 1 remaining):** `capability-executors` (930L) — `__filename` re-exec resolves to `dist/core` + `new Date()` clock non-determinism ⇒ not a semantics-preserving dual port (planner Hazard 1b, V64p); 8 executors reach `.ts` only through it. §7A authorizes a bounded redesign (inject entry-path + clock); next lot.
 
 ## Limits & next prioritized lots
 - **Limit:** the canonical A01–A54/166 layer stays NON-ENUMERABLE (retired; not certified). Per-capability deep authority/policy re-grade beyond V57/V58 is DEFERRED (no demonstrated defect to justify it).

@@ -534,6 +534,22 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/live-cost-metering-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // fleet-collector lot (V65 — migration UNBLOCKED). The module's only impure points (2 child-process calls,
+  // the clock, the governance gate, the ledger write) are now OPTIONAL injected seams defaulting to the real
+  // impls (production unchanged); the equivalence bench drives collect() hermetically with NO real subprocess/
+  // clock/governance/ledger. Deps fleet-envelope/governance-kernel/mission-ledger co-located into dist.
+  "fleet-collector": [
+    // NOTE: the historical .js IS in the write-set this lot — the migration-readiness seam (V65, §7B,
+    // behaviour-preserving, real defaults) is a legitimate authorized change to it, so the gate must overlay
+    // the SEAMED .js (not HEAD's unseamed one) for both the equivalence and historical steps.
+    "runtime/core/fleet-collector.js",
+    "runtime/core/fleet-collector.ts",
+    // the historical suite is NEW this lot (the module had none) ⇒ it must be overlaid into the candidate
+    // so the gate's `tsx` finds it (committed historical tests come from the HEAD archive; this one does not yet).
+    "runtime/core/fleet-collector.test.js",
+    "runtime/__bench__/fleet-collector-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -717,6 +733,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "live-cost-metering": [
     "runtime/core/live-cost-metering.test.js",
+  ],
+  "fleet-collector": [
+    "runtime/core/fleet-collector.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

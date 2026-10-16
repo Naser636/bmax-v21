@@ -90,6 +90,7 @@
     "runtime/core/capability-authorization.ts",
     "runtime/core/bash-command-governor.ts",
     "runtime/core/evidence-provenance.ts",
-    "runtime/core/live-cost-metering.ts"
+    "runtime/core/live-cost-metering.ts",
+    "runtime/core/fleet-collector.ts"
   ]
 }

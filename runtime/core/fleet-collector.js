@@ -3,6 +3,13 @@
 // agent -> ODG : reads a response envelope, correlates it with its request,
 // validates + analyzes the proposal (reusing existing scripts), gates via
 // governance, and records evidence. Runs with cwd = repository root.
+//
+// MIGRATION-READINESS seam (V65): the two child-process calls, the clock, the
+// governance gate and the ledger write are the module's only impure points.
+// They are exposed as OPTIONAL injected seams on collect(requestId, opts) so a
+// hermetic JS/TS parity bench can drive the whole flow with NO real subprocess,
+// clock, governance read or ledger write. Every seam DEFAULTS to the real
+// implementation ⇒ production behaviour is byte-for-byte unchanged.
 
 const { spawnSync } = require("child_process");
 const envelope = require("./fleet-envelope");
@@ -15,17 +22,24 @@ try {
   recordMission = null;
 }
 
-function fail(request, requestId, reason) {
+function fail(request, requestId, reason, nowIso) {
   if (request) {
     request.status = envelope.STATUS.FAILED;
-    request.failedAt = new Date().toISOString();
+    request.failedAt = nowIso();
     request.reason = reason;
     envelope.writeJson(envelope.requestPath(requestId), request);
   }
   return { requestId, status: envelope.STATUS.FAILED, reason };
 }
 
-function collect(requestId) {
+function collect(requestId, opts) {
+  const o = opts && typeof opts === "object" ? opts : {};
+  // Injected seams — each defaults to the real implementation (production unchanged).
+  const spawn = typeof o.spawn === "function" ? o.spawn : spawnSync;
+  const nowIso = () => (typeof o.nowIso === "string" && o.nowIso) ? o.nowIso : new Date().toISOString();
+  const authorize = typeof o.authorize === "function" ? o.authorize : authorizeMission;
+  const record = ("record" in o) ? o.record : recordMission; // may be null (no ledger writer)
+
   if (!requestId) {
     throw new Error("Missing requestId");
   }
@@ -38,48 +52,48 @@ function collect(requestId) {
     return { requestId, status: envelope.STATUS.FAILED, reason: "No correlated request" };
   }
   if (!response) {
-    return fail(request, requestId, "No response found");
+    return fail(request, requestId, "No response found", nowIso);
   }
   if (response.requestId !== requestId) {
-    return fail(request, requestId, "RequestId mismatch");
+    return fail(request, requestId, "RequestId mismatch", nowIso);
   }
 
   const check = envelope.validateResponse(response);
   if (!check.valid) {
-    return fail(request, requestId, "Invalid response: " + check.missing.join(", "));
+    return fail(request, requestId, "Invalid response: " + check.missing.join(", "), nowIso);
   }
 
   const proposalJson = JSON.stringify(response.proposal);
 
   // Reuse response-parser.js : validates required fields + writes proposal.json.
-  const parsed = spawnSync("node", ["runtime/llm/response-parser.js", proposalJson], {
+  const parsed = spawn("node", ["runtime/llm/response-parser.js", proposalJson], {
     encoding: "utf8"
   });
   if (parsed.status !== 0) {
-    return fail(request, requestId, "response-parser rejected proposal");
+    return fail(request, requestId, "response-parser rejected proposal", nowIso);
   }
 
   // Reuse proposal-analyzer.js : writes proposal-analysis.json.
-  const analyzed = spawnSync("node", ["runtime/llm/proposal-analyzer.js"], {
+  const analyzed = spawn("node", ["runtime/llm/proposal-analyzer.js"], {
     encoding: "utf8"
   });
   if (analyzed.status !== 0) {
-    return fail(request, requestId, "proposal-analyzer failed");
+    return fail(request, requestId, "proposal-analyzer failed", nowIso);
   }
 
   // Governance gate before declaring the exchange validated.
-  const governance = authorizeMission(request.mission);
+  const governance = authorize(request.mission);
   if (!governance.authorized) {
-    return fail(request, requestId, "Governance refused");
+    return fail(request, requestId, "Governance refused", nowIso);
   }
 
   request.status = envelope.STATUS.VALIDATED;
-  request.validatedAt = new Date().toISOString();
+  request.validatedAt = nowIso();
   envelope.writeJson(envelope.requestPath(requestId), request);
 
-  if (recordMission) {
+  if (record) {
     try {
-      recordMission(request.mission);
+      record(request.mission);
     } catch {
       /* non-blocking evidence */
     }
