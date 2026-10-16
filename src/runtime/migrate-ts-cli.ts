@@ -355,6 +355,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/budget-contract-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // client-store-backup lot (CTO standing delegation V47). READ-ONLY backup + integrity-verified restore
+  // (no network, no secrets, no retention/deletion — neutral perimeter). Sole dep client-intake.ts is
+  // already a dist port, co-located (with its own ports) by build-dist-closure. Type-checked by the
+  // tsconfig.runtime-dist compile.
+  "client-store-backup": [
+    "runtime/core/client-store-backup.ts",
+    "runtime/__bench__/client-store-backup-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -468,6 +477,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "budget-contract": [
     "runtime/core/budget-contract.test.js",
+  ],
+  "client-store-backup": [
+    "runtime/core/client-store-backup.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
