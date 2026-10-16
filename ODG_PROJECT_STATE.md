@@ -7,6 +7,7 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
+- **V64 CONTINUOUS MIGRATION (resume, no rework) — FINANCE batch @`ffd6b23`.** Resumed from V63 tip (capabilities A+B + 4 provider lots reused, not recreated). FINANCE/DEC-006 opened (§6B bounded, semantics-preserving; NO real money/network/secret). Lots done: **`payments`** (HMAC verify + idempotency + card-data refusal + invoice reconcile; outbound charges DISABLED) + **`quote`** (HUMAN-authorized deny-by-default DRAFT→APPROVED→SENT→ACCEPTED). Both gate 5/5, byte-identical benches (synthetic env/temp cwds), `tsc` 0, `npm test` 400. **Dual ports 62→64 · 19 candidates · 6 blocked.** NEXT = `patch-action-contract` (AUTHZ §6C, deny-by-default preserved) or more FINANCE (`price-resolution`…). See roadmap §U-CHECKPOINT V64 for the full authorized-candidate list (FINANCE/AUTHZ/EVIDENCE-PROVENANCE/capability-wiring).
 - **V63 CAPABILITIES A+B + PROVIDER MIGRATION.** Code tips: capabilities @`a94a7d3`, provider lots @`f0cf61e`.
   - **Capability A — Root-Cause Intelligence** (`src/runtime/root-cause-intelligence.ts`): seam-injected composition of root-cause-engine (release-gate) + self-diagnostic (runtime-divergence) per V56 mapping; structured assessment (facts/inferences/hypotheses separated), INCONCLUSIVE-never-fabricate, calibrated-only confidence, traceable incidentId+evidenceRefs. Tests ALL PASS incl. real-wiring.
   - **Capability B — Bounded Remediation** (`src/runtime/bounded-remediation.ts`): PROPOSE-ONLY; action-gate sole authority (deny-by-default; confidence never authorizes), patch-executor sole writer (NOT invoked); accepts only DIAGNOSED+substantiated; REFUSES on scope/gate/pre-check/test failure; writes nothing, never applies; recurrence not claimed locally. Tests ALL PASS incl. real action-gate wiring.
@@ -105,7 +106,7 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V63.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V64.
 - Canonical Truth Lock SoT: `src/runtime/truth-lock.ts` (V56). Root-cause authorities: `src/runtime/root-cause-engine.ts` (release-gate class) + `runtime/core/self-diagnostic.js` (runtime-divergence class).
 - V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
