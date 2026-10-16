@@ -9,6 +9,7 @@
 ## Last confirmed checkpoint
 - **Code tip = V53 lot @`474f914`**; **V54 is a docs/governance+certification layer on top (NO code change).** == `origin/main` (insync), branch `main`, worktree clean, index empty, 5 stashes preserved.
 - Evidence-dated **2026-10-16** (V54 campaign). Nine permanent primitives intact; `runtime/governance/ROADMAP.json` unchanged.
+- **V55 PHASE-00B REGISTRY RECONCILIATION (@`40524a0`→docs):** re-enumerated the drifted counts against live sources and added a history-preserving `v55Reconciliation` block to `docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json` (original 2026-10-11 census preserved verbatim). Verified @HEAD: missions 8→**11**, executors 6→**9**, probes 13→**15**, runtime-caps 169→**177** (15 missing), ledger 979→**1097** (append-only/live). COUNTS ONLY — no status re-grade, canonical A01–A54/166 untouched (NOT_ENUMERABLE), ROADMAP.json unchanged. There is NO automated Phase-00B generator (hand census); register is docs-only, inert to runtime.
 - **V54 FIVE-CAPABILITY CAMPAIGN (registered; see roadmap §U-CHECKPOINT V54):** #5 A01–A54/166 certification EXECUTED (read-only, verdict PARTIAL — `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md`); #2 root-cause authority = forensic finding (`root-cause-engine` does NOT exist → `self-diagnostic.js` is the sole de-facto authority; PROPOSED canonical, pending ODG); #1 `runMigrateTs→runGates` BLOCKED (circular dep → needs new shared `truth-lock.ts` module = write-set expansion + CTO decision); #3 live-wire triage BLOCKED (apply/action-gate perimeter); #4 SEMANTIC_PARITY retrofit DEFERRED (53 benches, 0 adopters; one-at-a-time, churn-risky).
 
 ## Validated deliveries V37–V53 (one line each; full evidence in the roadmap §U-CHECKPOINTs + engineering memory)
@@ -35,7 +36,8 @@
 2. **Canonical root-cause authority — RESOLVED as a forensic finding (V54, documentary).** `root-cause-engine` does NOT exist; `self-diagnostic.js` is the sole de-facto authority. PROPOSED canonical = self-diagnostic (pending ODG ratification); the phantom `root-cause-engine` references should be built (distinct mission) or corrected.
 3. **Live-wire `failure-triage` — BLOCKED (V54, perimeter).** Would turn PREPARE_NOT_APPLY into real APPLY via build-recovery-engine.recover under action-gate ⇒ apply/permission/security perimeter; distinct CTO authorization; depends on #2 ratified.
 4. **SEMANTIC_PARITY retrofit — DEFERRED (V54, scope recorded).** 53 `*-equivalence.e2e.test.ts` benches; 0 import `semantic-parity`. One-bench-at-a-time mission (churn-risky; zero behavioural gain per bench). No bench modified.
-5. **A01–A54/166 certification — EXECUTED (V54, read-only, PARTIAL).** `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md`. Enumerable layers green @HEAD; canonical layer NOT_ENUMERABLE; Phase-00B register STALE (drift logged). Recommends a distinct governed register-refresh + authority/evidence audit.
+5. **A01–A54/166 certification — EXECUTED (V54, read-only, PARTIAL).** `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md`. Enumerable layers green @HEAD; canonical layer NOT_ENUMERABLE; Phase-00B register STALE (drift logged). Recommended a distinct governed register-refresh + authority/evidence audit.
+   - **(c) register count-reconciliation DONE in V55** (`v55Reconciliation` block; counts re-verified above). STILL OPEN: (i) the per-executor/per-capability STATUS re-grade = authority/policy + evidence-freshness AUDIT (needs its own mission; the census rule forbids assigning status without proof); (ii) build the phantom `root-cause-engine` or correct its references (V54 #2); (iii) #1 truth-lock extraction + #3 live-triage remain CTO-gated.
 - **Detector status (V49+V50+V51): ALL THREE defect classes CLOSED.** `change-impact-graph` (V49 comment-strip + .ts-reference;
   V51 REPO_ROOT derivation) AND `migration-campaign.ts` inline rules (V50) are comment-safe + derivation-aware via the same
   canonical `stripComments`+`parseRequiresFromSource`. Proven by the 38-assertion graph test (A/B/C blocks) + migration-campaign
@@ -87,7 +89,7 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V54.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V55.
 - V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
 - Engineering memory (per-mission learnings SSOT): `migration-campaign-planner-v20.md` (+ `MEMORY.md` index).

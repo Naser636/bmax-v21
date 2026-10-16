@@ -14,6 +14,24 @@
     ]
   },
 
+  "v55Reconciliation": {
+    "asOf": "2026-10-16",
+    "head": "40524a0e71c1061d0b2ba76ec76c665a794053f3",
+    "branch": "main",
+    "producedBy": "ODG V55 governed registry reconciliation (read-only re-enumeration at HEAD)",
+    "scope": "ENUMERATION COUNTS ONLY. Each figure below was re-verified against its live source at this HEAD; the historical 'provenance' + 'counts' + executor/probe/mission census blocks are PRESERVED UNCHANGED as the 2026-10-11 Phase-00B snapshot. Per-executor / per-capability STATUS grading (contracts, runtime bindings, authority/policy, evidence freshness) is NOT re-performed here — it remains the separate authority/evidence audit recommended in roadmap §U-CHECKPOINT V54. No higher status is assigned without its proof; no missing canonical record is manufactured.",
+    "canonicalNote": "A_canonicalDeclared stays NOT_ENUMERABLE (FROZEN Master fiches). This reconciliation does NOT certify the 166 canonical capabilities or A01–A54.",
+    "verifiedCounts": {
+      "operationalRegisterMissions": { "censusValue": 8, "verifiedValue": 11, "delta": "+3", "source": "runtime/governance/ROADMAP.json .missions[] (READ-ONLY; ROADMAP.json unmodified)" },
+      "wiredExecutors": { "censusValue": 6, "verifiedValue": 9, "delta": "+3", "source": "runtime/core/capability-executors.js EXECUTORS[].length", "labels": ["ODG Synthetic Deliverable", "ODG Spec Author", "Governed Git Branch Integration", "Governed Bash/Linux Command", "Clean Workspace", "Governed Observability Verification", "External Research Acquisition", "Connectivity Audit", "Provider Activation"] },
+      "wiredProbes": { "censusValue": 13, "verifiedValue": 15, "delta": "+2", "source": "runtime/core/capability-probes.js PROBES (module export)" },
+      "runtimeModelCapabilities": { "censusValue": 169, "verifiedValue": 177, "delta": "+8", "missing": 15, "source": "runtime/generated/capability-registry.json (status READY, generatedAt 2026-10-15T20:23:03.801Z)" },
+      "ledgerEntries": { "censusValue": 979, "verifiedValue": 1097, "delta": "+118", "source": "runtime/generated/mission-ledger.json (append-only, live)", "note": "V54 observed 1096; this append-only ledger grew +1 since — a moving count reported as last-verified, never frozen." }
+    },
+    "writeSet": ["docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json (this v55Reconciliation block only)"],
+    "unchanged": ["FROZEN Master reference / 166 / A01-A54 (not certified)", "runtime/governance/ROADMAP.json", "historical provenance + counts + executors/probes/missions census blocks (preserved verbatim)"]
+  },
+
   "canonicalCapabilities": {
     "status": "NOT_ENUMERABLE",
     "verdict": "NON_PROUVE",
