@@ -24,8 +24,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { builtinModules } from "node:module";
 
-// REUSE the canonical, comment-safe require parser (no duplicate parser).
-const { parseRequiresFromSource } = require("../../scripts/lib/js-require-scan");
+// REUSE the canonical, comment-safe require parser AND its context-aware comment stripper (B141) — no
+// duplicate parser/stripper. stripComments removes line/block comments while preserving string/template
+// literals VERBATIM (a comment-opener inside an executable string is never treated as a comment).
+const { parseRequiresFromSource, stripComments } = require("../../scripts/lib/js-require-scan") as {
+  parseRequiresFromSource: (src: string) => { literal: string[]; dyn: boolean };
+  stripComments: (src: string) => string;
+};
 
 const NODE_BUILTINS: ReadonlySet<string> = new Set(builtinModules);
 function isBuiltin(spec: string): boolean {
@@ -34,6 +39,21 @@ function isBuiltin(spec: string): boolean {
 
 function coreDir(root: string): string {
   return path.join(root, "runtime", "core");
+}
+
+/*
+ * The EXECUTABLE-RISK reference source for a module. build-dist-closure co-locates the COMPILED `.ts` port
+ * when one exists (otherwise the historical `.js`); the hazard/dep analysis must reflect the SAME source
+ * that actually lands in dist. So when `runtime/core/<name>.ts` is present, it is the reference; else the
+ * `.js`. (The node set itself is still the `.js` basenames — the `.js` is always retained alongside the
+ * port.) This NEVER lowers sensitivity: the ports in runtime/core carry their internal deps as `require()`
+ * (verified: none use an ES `import` for a relative dep, none use dynamic `import()`), so the comment-safe
+ * require parser keeps full recall on `.ts`, and real external/dynamic/path hazards in a port are still seen.
+ */
+function refSource(root: string, name: string): string {
+  const tsPath = path.join(coreDir(root), name + ".ts");
+  const jsPath = path.join(coreDir(root), name + ".js");
+  return fs.readFileSync(fs.existsSync(tsPath) ? tsPath : jsPath, "utf8");
 }
 
 /** The runtime/core module node names (basenames of non-test `.js`), sorted. */
@@ -47,8 +67,8 @@ function moduleNames(root: string): string[] {
 
 /** Direct internal deps (relative `./x` requires), de-duplicated + sorted. */
 function directDepsOf(root: string, name: string): string[] {
-  const src = fs.readFileSync(path.join(coreDir(root), name + ".js"), "utf8");
-  const { literal } = parseRequiresFromSource(src) as { literal: string[]; dyn: boolean };
+  const src = refSource(root, name);
+  const { literal } = parseRequiresFromSource(src);
   const deps = new Set<string>();
   for (const spec of literal) {
     if (spec.startsWith("./")) deps.add(spec.slice(2));
@@ -59,10 +79,15 @@ function directDepsOf(root: string, name: string): string[] {
 
 /** The three documented build-dist-closure hazards for ONE module's source. */
 function moduleHazards(root: string, name: string): { dynamicRequire: boolean; externalRequire: boolean; pathHazard: boolean } {
-  const src = fs.readFileSync(path.join(coreDir(root), name + ".js"), "utf8");
-  const { literal, dyn } = parseRequiresFromSource(src) as { literal: string[]; dyn: boolean };
+  const src = refSource(root, name);
+  const { literal, dyn } = parseRequiresFromSource(src); // comment-safe: strips comments, preserves strings
   const externalRequire = literal.some((s) => !s.startsWith(".") && !isBuiltin(s));
-  const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(src) && /\bpath\.(resolve|join)\b/.test(src);
+  // pathHazard must ignore COMMENTS (a module that merely mentions __dirname in a comment is not a hazard —
+  // observed false positive: build-recovery-engine is process.cwd()-safe yet documents the historical
+  // __dirname derivation in a comment). Strip comments first; string/template literals are preserved VERBATIM
+  // by stripComments, so a path-hazard token inside an executable string still counts (no recall loss).
+  const code = stripComments(src);
+  const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(code) && /\bpath\.(resolve|join)\b/.test(code);
   return { dynamicRequire: dyn === true, externalRequire, pathHazard };
 }
 
