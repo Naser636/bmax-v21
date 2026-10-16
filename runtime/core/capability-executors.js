@@ -45,6 +45,10 @@ const opportunityPolicy = require("./opportunity-policy");
 // TOP-LEVEL (not a lazy in-function require) so the dist-closure tracer reliably copies it into
 // runtime/dist/core alongside this module.
 const { buildAutonomyRate } = require("./autonomy-rate");
+// Evidence provenance (audit C5-A2): stamps every evidence artifact with an attributable, tamper-evident
+// provenance block (source commit + tree-dirty + sha256 of its own payload). Additive and fail-closed —
+// it never changes an executor's control flow or the evidence path returned to callers.
+const { stampProvenance } = require("./evidence-provenance");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
@@ -210,7 +214,10 @@ function scanTransientRuntimeArtifacts() {
 }
 function writeEvidence(out, obj) {
     fs.mkdirSync(GENERATED_DIR, { recursive: true });
-    fs.writeFileSync(out, JSON.stringify(obj, null, 2));
+    // Additive provenance stamp (C5-A2): bind the artifact to its source revision + a content digest so it
+    // is attributable and tamper-evident, composing with the existing run-ownership mtime checks. Pure +
+    // fail-closed (no repo/git ⇒ sourceAvailable:false); never alters `obj` nor the returned path.
+    fs.writeFileSync(out, JSON.stringify(stampProvenance(obj), null, 2));
     return out;
 }
 
