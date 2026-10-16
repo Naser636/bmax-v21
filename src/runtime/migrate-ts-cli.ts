@@ -472,6 +472,17 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/acceptance-facts-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // patch-action-contract lot (V64 AUTHZ/§6C, bounded semantics-preserving; DENY-BY-DEFAULT preserved+tested).
+  // Compiles a truthful Action Contract for a WRITE edit + runs action-gate.evaluateAction. authority is read
+  // ONLY from explicit fields (NEVER from authorized_paths = SCOPE); a legacy no-authority patch is DENIED
+  // (observe-vs-enforce opt-in makes the compat state visible, never a hidden bypass). Sole dep action-gate.js
+  // is CO-LOCATED UNMODIFIED into dist by build-dist-closure (the security module is NOT touched). Pure (reads
+  // only process.env); no disk/clock/network/money. Consumer patch-executor (already dual-ported).
+  "patch-action-contract": [
+    "runtime/core/patch-action-contract.ts",
+    "runtime/__bench__/patch-action-contract-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -637,6 +648,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
     "runtime/core/economic-commit-gate.test.js",
     "runtime/core/commit-gate-decision.test.js",
     "runtime/core/mission-ledger-failclosed.test.js",
+  ],
+  "patch-action-contract": [
+    "runtime/core/action-gate-live.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

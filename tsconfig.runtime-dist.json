@@ -84,6 +84,7 @@
     "runtime/core/finance-sim.ts",
     "runtime/core/finance-paper.ts",
     "runtime/core/mechanical-acceptance.ts",
-    "runtime/core/acceptance-facts.ts"
+    "runtime/core/acceptance-facts.ts",
+    "runtime/core/patch-action-contract.ts"
   ]
 }
