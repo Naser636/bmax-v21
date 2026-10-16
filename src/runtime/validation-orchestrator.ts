@@ -12,8 +12,9 @@
  * mechanical-acceptance (ACCEPT/REJECT/BLOCKED/UNKNOWN) or odg-verify (exit 0/1) — the caller's seam maps its
  * chosen authority's verdict onto one orchestrator status.
  *
- * REUSE: imports evaluateTruthLock / TruthLock / DEFAULT_TRUTH_LOCK_POLICY from migrate-ts-cli (side-effect-
- * free import — that module self-runs only under its isMain guard). migrate-ts-cli's GateStatus is a subset
+ * REUSE: imports evaluateTruthLock / TruthLock / DEFAULT_TRUTH_LOCK_POLICY from the canonical ./truth-lock
+ * module (V56 CHANTIER 1 — the pure primitives were extracted there to break the former migrate-ts-cli
+ * circular import; migrate-ts-cli now delegates its gate loop to runGates). migrate-ts-cli's GateStatus is a subset
  * (PASS|FAIL|BLOCKED|NOT RUN); the generic contract needs a SUPERSET with SKIPPED and the exact name
  * NOT-EXECUTED, so the orchestrator declares its own status union below. migrate-ts is UNCHANGED.
  *
@@ -21,8 +22,8 @@
  * authority does not report, and claims no effect coverage of its own.
  */
 
-import { evaluateTruthLock, DEFAULT_TRUTH_LOCK_POLICY } from "./migrate-ts-cli";
-import type { TruthLock, GitState, TruthLockPolicy } from "./migrate-ts-cli";
+import { evaluateTruthLock, DEFAULT_TRUTH_LOCK_POLICY } from "./truth-lock";
+import type { TruthLock, GitState, TruthLockPolicy } from "./truth-lock";
 
 // The five DISTINCT generic states. SKIPPED = the authority declared the gate not applicable (never a PASS).
 // NOT-EXECUTED = the gate was declared but never reached (stopped earlier) or its seam was never invoked.

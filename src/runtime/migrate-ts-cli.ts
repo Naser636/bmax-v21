@@ -30,47 +30,15 @@ import { execFileSync, spawnSync } from "node:child_process";
 
 export type GateStatus = "PASS" | "FAIL" | "BLOCKED" | "NOT RUN";
 export interface GateResult { gate: string; status: GateStatus; detail: string }
-export interface TruthLock { ok: boolean; head: string; branch: string; detail: string; violations: string[] }
-
-// Observable git facts the Truth Lock policy decides on. Gathered once by realSeams and RE-gathered just
-// before the sensitive git-archive (a captured HEAD alone is not a revalidation — η3-B79 §5).
-export interface GitState {
-  isRepo: boolean;
-  branch: string;
-  head: string;
-  originMain: string | null; // null when origin/main cannot be resolved (remote unavailable / no ref)
-  staged: number;            // staged (index) entry count
-}
-export interface TruthLockPolicy { expectedBranch: string }
-export const DEFAULT_TRUTH_LOCK_POLICY: TruthLockPolicy = { expectedBranch: "main" };
-
-/**
- * evaluateTruthLock — PURE policy over observable git facts (unit-testable with synthetic states).
- *
- * Refuses (ok=false, no migration) when any campaign invariant fails: not a git repo; unexpected branch;
- * origin/main unresolvable; HEAD diverges from origin/main; or the INDEX carries staged changes (which a
- * run must never risk incorporating). It deliberately does NOT require a fully clean WORKTREE: unstaged
- * local edits (A2/A3/B49, the B78/B79 slice) are ISOLATED — the candidate is `git archive HEAD` (committed)
- * plus an overlay of ONLY the authorised write-set, so unstaged changes are never overwritten, staged, or
- * incorporated (proven η3-B79 §D). Requiring a pristine worktree would block authorised local development;
- * this exception is precise, verifiable and non-destructive.
- */
-export function evaluateTruthLock(s: GitState, policy: TruthLockPolicy = DEFAULT_TRUTH_LOCK_POLICY): TruthLock {
-  const violations: string[] = [];
-  if (!s.isRepo) {
-    violations.push("not a git repository");
-  } else {
-    if (s.branch !== policy.expectedBranch) violations.push(`unexpected branch "${s.branch}" (expected "${policy.expectedBranch}")`);
-    if (s.originMain === null) violations.push("origin/main unavailable — cannot confirm the published reference");
-    else if (s.head !== s.originMain) violations.push(`HEAD ${s.head.slice(0, 8)} diverges from origin/main ${s.originMain.slice(0, 8)}`);
-    if (s.staged > 0) violations.push(`${s.staged} staged change(s) in the index — refuse to risk incorporating/committing them`);
-  }
-  const ok = violations.length === 0;
-  const detail = ok
-    ? "repo on expected branch, HEAD == origin/main, index empty; candidate built from committed HEAD (unstaged local changes isolated by git-archive, never overwritten/incorporated)"
-    : "REFUSED — " + violations.join("; ");
-  return { ok, head: s.head, branch: s.branch, detail, violations };
-}
+// Truth Lock primitives now live in their canonical home ./truth-lock (V56 CHANTIER 1). Moving these PURE
+// symbols out breaks the former circular import (validation-orchestrator depended on this module for them),
+// so runMigrateTs can now delegate its gate loop to runGates. RE-EXPORTED verbatim ⇒ every historical
+// importer of these symbols from "./migrate-ts-cli" is unchanged; there is ONE canonical Truth Lock.
+import { evaluateTruthLock, DEFAULT_TRUTH_LOCK_POLICY } from "./truth-lock";
+import type { TruthLock, GitState, TruthLockPolicy } from "./truth-lock";
+import { runGates } from "./validation-orchestrator";
+export { evaluateTruthLock, DEFAULT_TRUTH_LOCK_POLICY };
+export type { TruthLock, GitState, TruthLockPolicy };
 
 export interface MigrateSeams {
   allowedLots: string[];
@@ -105,17 +73,27 @@ export function runMigrateTs(lot: string, seams: MigrateSeams): MigrateResult {
     seams.log("BLOCKED: Truth Lock refused — repository state is not safe to run. STOP (no write, no overwrite).");
     return { lot, truthLock: tl, gates: [], ok: false, exitCode: 2 };
   }
-  const gates: GateResult[] = [];
-  let stopped = false;
-  for (const name of GATE_SEQUENCE) {
-    if (stopped) {
-      gates.push({ gate: name, status: "NOT RUN", detail: "skipped after an earlier non-PASS gate (no false DONE)" });
-      continue;
-    }
-    const r = seams.gate(name, lot);
-    gates.push({ gate: name, status: r.status, detail: r.detail });
-    seams.log(`  ${r.status.padEnd(8)} ${name} — ${r.detail}`);
-    if (r.status !== "PASS") stopped = true;
+  // Gate sequencing is DELEGATED to the generic orchestrator runGates (V56 CHANTIER 1 unification): one
+  // stop-on-first-non-PASS engine, no duplicated loop. runGates is driven with NO truthLock seam (the Truth
+  // Lock is already enforced above, preserving this path's exact gates:[]-on-refusal shape) and NO log seam
+  // (runMigrateTs keeps its own progress-line format below). Migrate gates only ever return PASS/FAIL/BLOCKED,
+  // so runGates' stop-on-FAIL/BLOCKED coincides with the historical stop-on-non-PASS (golden-proven parity).
+  const spec = { gates: GATE_SEQUENCE.map((name) => ({ name, required: true })) };
+  const report = runGates(spec, {
+    gate: (name: string) => {
+      const r = seams.gate(name, lot);
+      return { status: r.status as "PASS" | "FAIL" | "BLOCKED", detail: r.detail };
+    },
+  });
+  // Map runGates' GateReport[] back to this path's canonical MigrateResult.gates, preserving the historical
+  // "NOT RUN" label + skipped-detail string BYTE-IDENTICALLY (an executed migrate gate is only PASS/FAIL/BLOCKED).
+  const gates: GateResult[] = report.gates.map((g) =>
+    g.executed
+      ? { gate: g.gate, status: g.status as GateStatus, detail: g.detail }
+      : { gate: g.gate, status: "NOT RUN" as GateStatus, detail: "skipped after an earlier non-PASS gate (no false DONE)" },
+  );
+  for (const g of gates) {
+    if (g.status !== "NOT RUN") seams.log(`  ${g.status.padEnd(8)} ${g.gate} — ${g.detail}`);
   }
   const ok = gates.length === GATE_SEQUENCE.length && gates.every((g) => g.status === "PASS");
   return { lot, truthLock: tl, gates, ok, exitCode: ok ? 0 : 1 };
