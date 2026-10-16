@@ -82,7 +82,30 @@ const PROVIDER_ACTIVATION_ENTRY = path.join("src", "runtime", "provider-activati
 // dist caller (or a hermetic parity bench) can re-exec the canonical historical .js instead of its own copy —
 // it is overridable via env `ODG_SELF_WORKER_ENTRY` (module scope) and per-call `opts.selfEntry`
 // (governedHttpGet). This is the smallest contract that masters the entry path without a cwd dependency.
-const SELF_WORKER_ENTRY = (typeof process !== "undefined" && process.env && process.env.ODG_SELF_WORKER_ENTRY) || __filename;
+const SELF_WORKER_ENTRY = (typeof process !== "undefined" && process.env && process.env.ODG_SELF_WORKER_ENTRY) || (() => {
+    // The re-exec spawns `node <entry>`, which can only run the canonical .JS worker. `__filename` is NOT
+    // safe as the default: under tsx the loader resolves this module to the .ts (node can't run .ts), and
+    // once compiled it is the dist copy. Resolve the .js ABSOLUTELY from this module's dir (cwd-independent),
+    // mapping both the dist/core and the .ts cases back to runtime/core/capability-executors.js.
+    const dir = __dirname;
+    if (dir.endsWith(path.join("runtime", "dist", "core"))) return path.join(dir, "..", "..", "core", "capability-executors.js");
+    return path.join(dir, "capability-executors.js");
+})();
+
+// MIGRATION-READINESS seams (V66 §7 A/B/C): the module's only impure dependencies — child-process spawn,
+// the wall clock, and the DNS/HTTP(S) network — are routed through a single mutable `_seams` object so a
+// hermetic JS/TS parity bench can CONTROL them (no real subprocess/clock/network), while PRODUCTION uses the
+// real implementations by default (behaviour byte-for-byte unchanged). `__setExecutorSeams`/`__resetExecutorSeams`
+// are TEST-ONLY (never called by production paths). dnsLookup/httpRequest default to lazy `require` so the
+// cost is unchanged. NO security control, authorization decision, or observable effect is altered.
+const _seams = {
+    spawn: spawnSync,
+    nowIso: () => new Date().toISOString(),
+    dnsLookup: (host, options) => require("dns").promises.lookup(host, options),
+    httpRequest: (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb),
+};
+function __setExecutorSeams(s) { if (s && typeof s === "object") Object.assign(_seams, s); }
+function __resetExecutorSeams() { _seams.spawn = spawnSync; _seams.nowIso = () => new Date().toISOString(); _seams.dnsLookup = (host, options) => require("dns").promises.lookup(host, options); _seams.httpRequest = (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb); }
 
 // ---------------------------------------------------------------------------
 // Connectivity Audit — real business logic.
@@ -113,9 +136,8 @@ function withTimeout(promise, ms) {
 }
 
 async function probeDns(host) {
-    const dns = require("dns").promises;
     try {
-        const addrs = await withTimeout(dns.lookup(host, { all: true }), TIMEOUT_MS);
+        const addrs = await withTimeout(_seams.dnsLookup(host, { all: true }), TIMEOUT_MS);
         return { host, resolved: true, addresses: addrs.map((a) => a.address) };
     } catch (e) {
         return { host, resolved: false, error: e.code || String(e.message || e) };
@@ -126,8 +148,7 @@ function probeHttp(url) {
     return new Promise((resolve) => {
         let u;
         try { u = new URL(url); } catch { return resolve({ url, ok: false, error: "invalid url" }); }
-        const mod = u.protocol === "https:" ? require("https") : require("http");
-        const req = mod.request(u, { method: "HEAD", timeout: TIMEOUT_MS }, (res) => {
+        const req = _seams.httpRequest(u, { method: "HEAD", timeout: TIMEOUT_MS }, (res) => {
             // Any response — even 4xx — proves the endpoint is reachable over the network.
             resolve({ url, ok: true, status: res.statusCode, protocol: u.protocol.replace(":", "") });
             res.resume();
@@ -176,7 +197,7 @@ async function runAudit() {
 
     return {
         capability: "Connectivity Audit",
-        ranAt: new Date().toISOString(),
+        ranAt: _seams.nowIso(),
         summary: {
             dns: `${dnsResults.filter((d) => d.resolved).length}/${dnsResults.length} resolved`,
             http: `${httpResults.filter((h) => h.ok).length}/${httpResults.length} reachable`,
@@ -208,7 +229,7 @@ function haystack(patch) {
 // observe git state and write evidence under runtime/generated/. No pre-existing scanner helper
 // covers the git-ignored candidate set, so it is derived from git here.
 function gitLines(args) {
-    const res = spawnSync("git", args, { encoding: "utf8" });
+    const res = _seams.spawn("git", args, { encoding: "utf8" });
     if (res.status !== 0) {
         throw new Error(`git ${args.join(" ")} failed (status=${res.status}): ${String(res.stderr || "").trim()}`);
     }
@@ -269,8 +290,7 @@ function httpGetBounded(rawUrl, maxBytes, timeoutMs) {
         let u;
         try { u = new URL(rawUrl); } catch { return resolve({ status: 0, body: "", error: "invalid url" }); }
         if (u.protocol !== "https:" && u.protocol !== "http:") return resolve({ status: 0, body: "", error: "unsupported protocol" });
-        const mod = u.protocol === "https:" ? require("https") : require("http");
-        const req = mod.request(u, { method: "GET", timeout: timeoutMs }, (res) => {
+        const req = _seams.httpRequest(u, { method: "GET", timeout: timeoutMs }, (res) => {
             const chunks = [];
             let bytes = 0;
             let truncated = false;
@@ -283,11 +303,11 @@ function httpGetBounded(rawUrl, maxBytes, timeoutMs) {
             res.on("end", () => resolve({
                 status: res.statusCode || 0,
                 body: Buffer.concat(chunks).slice(0, maxBytes).toString("utf8"),
-                fetched_at: new Date().toISOString(),
+                fetched_at: _seams.nowIso(),
                 truncated,
                 bytes: Math.min(bytes, maxBytes),
             }));
-            res.on("error", () => resolve({ status: res.statusCode || 0, body: Buffer.concat(chunks).toString("utf8"), fetched_at: new Date().toISOString(), truncated }));
+            res.on("error", () => resolve({ status: res.statusCode || 0, body: Buffer.concat(chunks).toString("utf8"), fetched_at: _seams.nowIso(), truncated }));
         });
         req.on("timeout", () => { req.destroy(); resolve({ status: 0, body: "", error: "timeout" }); });
         req.on("error", (e) => resolve({ status: 0, body: "", error: e.code || String(e.message || e) }));
@@ -301,7 +321,7 @@ function governedHttpGet(url, opts) {
     const maxBytes = Math.min(Math.max(1, (opts && opts.maxBytes) || 262144), 1048576);
     const timeoutMs = Math.min(Math.max(250, (opts && opts.timeoutMs) || 5000), 15000);
     const selfEntry = (opts && typeof opts.selfEntry === "string" && opts.selfEntry) ? opts.selfEntry : SELF_WORKER_ENTRY;
-    const res = spawnSync(process.execPath, [selfEntry, "--http-get", url, String(maxBytes), String(timeoutMs)], {
+    const res = _seams.spawn(process.execPath, [selfEntry, "--http-get", url, String(maxBytes), String(timeoutMs)], {
         encoding: "utf8", timeout: timeoutMs + 3000, env: {}, maxBuffer: maxBytes + 65536,
     });
     if (res.status !== 0 || !res.stdout) {
@@ -747,7 +767,7 @@ const EXECUTORS = [
                 const status = typeof res.status === "number" ? res.status : 0;
                 const body = typeof res.body === "string" ? res.body : "";
                 const content_hash = crypto.createHash("sha256").update(body).digest("hex");
-                const fetched_at = typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : new Date().toISOString();
+                const fetched_at = typeof res.fetched_at === "string" && res.fetched_at ? res.fetched_at : _seams.nowIso();
                 sources.push({
                     url,
                     fetched_at,
@@ -832,7 +852,7 @@ const EXECUTORS = [
             try { fs.rmSync(out, { force: true }); } catch { /* ignore */ }
             // Execute the audit as a real, bounded subprocess so the synchronous executor loop stays
             // synchronous while genuine async network probes run to completion.
-            const res = spawnSync(process.execPath, [SELF_WORKER_ENTRY, out], { encoding: "utf8", timeout: 30000 });
+            const res = _seams.spawn(process.execPath, [SELF_WORKER_ENTRY, out], { encoding: "utf8", timeout: 30000 });
             const evidenceExists = fs.existsSync(out) && fs.statSync(out).size > 0;
             if (res.status !== 0 || !evidenceExists) {
                 throw new Error(
@@ -871,7 +891,7 @@ const EXECUTORS = [
             fs.mkdirSync(GENERATED_DIR, { recursive: true });
             const missionFile = path.join(GENERATED_DIR, "provider-activation.mission.json");
             fs.writeFileSync(missionFile, JSON.stringify(mission, null, 2));
-            const res = spawnSync(process.execPath, [TSX_CLI, PROVIDER_ACTIVATION_ENTRY, missionFile, out], { encoding: "utf8", timeout: 60000 });
+            const res = _seams.spawn(process.execPath, [TSX_CLI, PROVIDER_ACTIVATION_ENTRY, missionFile, out], { encoding: "utf8", timeout: 60000 });
             const evidenceExists = fs.existsSync(out) && fs.statSync(out).size > 0;
             if (res.status !== 0 || !evidenceExists) {
                 throw new Error(
@@ -904,7 +924,7 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES };
+module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.

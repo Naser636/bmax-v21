@@ -550,6 +550,18 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/fleet-collector-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // capability-executors lot (V66 — the last migration candidate). The .js carries the V66 migration-readiness
+  // seams (_seams: spawn/clock/dns/http, default real — production unchanged) + the V65 controllable self-entry,
+  // so the equivalence bench drives the whole dispatch/executor surface hermetically (NO real subprocess/clock/
+  // network). The .ts is a @ts-nocheck FAITHFUL transliteration (all-`any`; parity is proven by the bench, not
+  // by vacuous type-checking). The seamed .js is in the write-set (legitimate authorized change); the historical
+  // suite capability-executors.test.js (53 assertions) replays against the seamed .js.
+  "capability-executors": [
+    "runtime/core/capability-executors.js",
+    "runtime/core/capability-executors.ts",
+    "runtime/__bench__/capability-executors-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -736,6 +748,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "fleet-collector": [
     "runtime/core/fleet-collector.test.js",
+  ],
+  "capability-executors": [
+    "runtime/core/capability-executors.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
