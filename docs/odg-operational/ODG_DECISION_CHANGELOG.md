@@ -538,6 +538,26 @@
   canonical count stays `null`/BLOCKED; convergence must also require `queue∅ AND outstanding∅` (closes the
   false-positive surface in the register's `crossCuttingDefects`). Source of truth: the register JSON.
 - Affects: future coverage/convergence gate (Roadmap Ph.04). Reopen if an authoritative 166/A01–A54 source is supplied.
+- **SUPERSEDED (2026-10-16) by DEC-V60-166-RETIREMENT:** the "166 capabilities" coverage GATE is now RETIRED (no longer a real objective/counter/certification), not merely "blocked pending a source". DEC-008's SEPARATE per-category coverage definition (a–d) remains valid; only the canonical-166 gate it deferred to is withdrawn.
+
+### DEC-V60-166-RETIREMENT — Retire the obsolete "166 capabilities / Ph.04 canonical coverage" objective [CTO-DECISION] — ACCEPTED (2026-10-16)
+- Decision (CTO, V60): the "166 capabilities" reference (and the Roadmap Phase-04 "canonical Master coverage" gate
+  that depends exclusively on it) is RETIRED — it must NOT be treated as a real objective, a migration counter, or a
+  certification to attain. No number is substituted for 166.
+- Root cause (proven across V54–V59): the canonical set is NON-ENUMERABLE by construction — only the range endpoints
+  `A01`/`A54` occur in the FROZEN Master (no `A02..A53`), and "166" is a conceptual heading (APPENDIX Z). No
+  machine-enumerable manifest and no capability→canonical mapping exist in the repo (tracked or generated), so a
+  coverage/execution certification is unprovable in principle, not merely "not yet done". V59 additionally proved the
+  runtime's "177 capabilities" are a distinct-proven-mission-id projection (a REPORTING tautology), never the canonical 166.
+- Change: Roadmap Phase-04 marked **RETIRED**; its measurable criteria/proofs withdrawn and removed from acceptance
+  criteria and the convergence closure definition. Historical findings (§N-1, Validation matrix, the register's
+  caveats, audit reports V54/V57/V58/V59) are PRESERVED for traceability, now labelled superseded by this retirement.
+- Governed treatment of the FROZEN Master: the fiches (`docs/odg-master-v5/`) are NOT edited (frozen); this journal
+  entry is the versioned, documentary amendment per the authority order; git history is the version trace.
+- Preserved: the nine permanent primitives; independent `A01`/`A54` architectural-contract labels; all contracts not
+  proven to depend exclusively on the retired 166 reference. Nothing fabricated; A01–A54/166 stays NOT_ENUMERABLE.
+- Reopen condition: a DISTINCT future CTO mission that first supplies an authoritative machine-enumerable canonical
+  manifest + mapping. Affects: Roadmap Ph.04 (RETIRED), DEC-008 (superseded gate), capability certification scope.
 
 ### DEC-009 — GAMMA false-success policy: explicit contract signal + mandatory execution proof [CTO-DECISION] — ACCEPTED (2026-10-11)
 - Decision: an objective that **declares required execution** (via an EXPLICIT contract signal) MUST produce real
