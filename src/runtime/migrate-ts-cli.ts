@@ -384,6 +384,16 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/mission-context-builder-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // build-recovery-engine lot (V53, ODG provider-authz/apply contract). LEAF (fs/path/child_process only;
+  // self-contained in dist). Behaviour-preserving port of capability BUILD_GATE_AUTONOMY — the sensitive
+  // gating + APPLY branches, scope confinement, snapshot/restore, false-success exit discipline and the
+  // provider-authorization / report artefacts are proven byte-identical by the equivalence bench WITHOUT
+  // any real provider call or real source mutation (injected seams + temp fixtures + fs-write capture).
+  "build-recovery-engine": [
+    "runtime/core/build-recovery-engine.ts",
+    "runtime/__bench__/build-recovery-engine-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -507,6 +517,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "mission-context-builder": [
     "runtime/core/mission-context-builder.test.js",
     "runtime/core/mission-context-builder.expert.test.js",
+  ],
+  "build-recovery-engine": [
+    "runtime/core/build-recovery-engine.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

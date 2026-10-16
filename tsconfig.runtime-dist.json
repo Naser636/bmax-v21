@@ -71,6 +71,7 @@
     "runtime/core/budget-contract.ts",
     "runtime/core/client-store-backup.ts",
     "runtime/core/expert-profile-assembler.ts",
-    "runtime/core/mission-context-builder.ts"
+    "runtime/core/mission-context-builder.ts",
+    "runtime/core/build-recovery-engine.ts"
   ]
 }
