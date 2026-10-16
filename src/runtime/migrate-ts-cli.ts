@@ -453,6 +453,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/finance-paper-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // mechanical-acceptance lot (V64 FINANCE/DEC-006, bounded semantics-preserving). Pure/deterministic
+  // POST-execution verdict arbiter (ACCEPT/REJECT/BLOCKED/UNKNOWN) on trusted FACTS; deny-by-default; report
+  // claims never raise ACCEPT; commit/push + OPT-IN economic gates. Reuses dual-ported state-transition +
+  // economic-verification. No clock/I/O; wiring into a live gate is a separate opt-in increment (unchanged).
+  "mechanical-acceptance": [
+    "runtime/core/mechanical-acceptance.ts",
+    "runtime/__bench__/mechanical-acceptance-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -609,6 +618,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "finance-paper": [
     "runtime/core/finance-paper.test.js",
+  ],
+  "mechanical-acceptance": [
+    "runtime/core/mechanical-acceptance.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
