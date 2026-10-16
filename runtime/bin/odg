@@ -96,6 +96,14 @@ case "$MISSION" in
     ./runtime/bin/odg-state.js >/dev/null || true
     ./runtime/bin/odg-diagnose.js; exit $?
     ;;
+  triage)
+    # READ-ONLY §V S3 surface: compose Root-Cause Intelligence (A) + Bounded Remediation (B, PROPOSE-ONLY)
+    # over the EXISTING self-diagnostic report. Refresh coherent state first (same discipline as diagnose),
+    # then run incident-triage: A assesses an open incident, B proposes (never applies — no applier wired).
+    # Writes nothing, spawns nothing, no network. Exit 0 = no divergence, 1 = incident DIAGNOSED.
+    ./runtime/bin/odg-state.js >/dev/null || true
+    exec node_modules/.bin/tsx src/runtime/incident-triage-cli.ts "$@"
+    ;;
   verify)
     ./runtime/bin/odg-verify.js
     ;;
