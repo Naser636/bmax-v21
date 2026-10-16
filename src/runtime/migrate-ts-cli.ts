@@ -347,6 +347,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/invoicing-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // budget-contract lot (CTO standing delegation V47). Pure/deterministic (transport-only; no
+  // reserve/spend/meter/enforce — NOT the finance perimeter); sole dep economic-unit.ts is already a dist
+  // port, co-located by build-dist-closure. Type-checked by the tsconfig.runtime-dist compile.
+  "budget-contract": [
+    "runtime/core/budget-contract.ts",
+    "runtime/__bench__/budget-contract-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -457,6 +465,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "invoicing": [
     "runtime/core/invoicing.test.js",
+  ],
+  "budget-contract": [
+    "runtime/core/budget-contract.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

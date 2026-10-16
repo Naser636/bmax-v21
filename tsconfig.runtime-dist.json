@@ -67,6 +67,7 @@
     "runtime/core/mission-contract-factory.ts",
     "runtime/core/objective-attribution.ts",
     "runtime/core/capability-probes.ts",
-    "runtime/core/invoicing.ts"
+    "runtime/core/invoicing.ts",
+    "runtime/core/budget-contract.ts"
   ]
 }
