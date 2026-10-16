@@ -462,6 +462,16 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/mechanical-acceptance-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // acceptance-facts lot (V64 FINANCE/§6B, bounded semantics-preserving). READ-ONLY fact-gatherer +
+  // deny-by-default economic-enforcement gate over cwd-relative runtime/missions + runtime/generated. NO-OP for
+  // legacy (no-contract) missions; controlled missions get ACCEPT/REJECT on trusted facts; OPT-IN economic gate
+  // trusts a report ONLY if it is the mission's own + self-consistent (verdictConsistent) — forged/borrowed ⇒
+  // UNKNOWN blocked. Reuses dual-ported mechanical-acceptance + economic-verification. No clock/network/money.
+  "acceptance-facts": [
+    "runtime/core/acceptance-facts.ts",
+    "runtime/__bench__/acceptance-facts-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -621,6 +631,12 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "mechanical-acceptance": [
     "runtime/core/mechanical-acceptance.test.js",
+  ],
+  "acceptance-facts": [
+    "runtime/core/economic-enforcement-adversarial.test.js",
+    "runtime/core/economic-commit-gate.test.js",
+    "runtime/core/commit-gate-decision.test.js",
+    "runtime/core/mission-ledger-failclosed.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
