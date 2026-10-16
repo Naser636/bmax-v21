@@ -375,6 +375,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/expert-profile-assembler-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // mission-context-builder lot (V52, ODG GATE A lowest-risk candidate). Deterministic composition of the
+  // Mission Loader plan + RuntimeContext + an inert read-only expertInstance; authorizedPaths is a verbatim
+  // passthrough (no enforcement). Both internal deps (expert-profile-assembler, runtime-context-loader) are
+  // already dual-ported + in the dist include, so the compiled .ts's require()s resolve to compiled siblings.
+  "mission-context-builder": [
+    "runtime/core/mission-context-builder.ts",
+    "runtime/__bench__/mission-context-builder-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -494,6 +503,10 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "expert-profile-assembler": [
     "runtime/core/expert-profile-assembler.test.js",
+  ],
+  "mission-context-builder": [
+    "runtime/core/mission-context-builder.test.js",
+    "runtime/core/mission-context-builder.expert.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
