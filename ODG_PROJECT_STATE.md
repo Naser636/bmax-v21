@@ -7,6 +7,12 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
+- **V63 CAPABILITIES A+B + PROVIDER MIGRATION.** Code tips: capabilities @`a94a7d3`, provider lots @`f0cf61e`.
+  - **Capability A — Root-Cause Intelligence** (`src/runtime/root-cause-intelligence.ts`): seam-injected composition of root-cause-engine (release-gate) + self-diagnostic (runtime-divergence) per V56 mapping; structured assessment (facts/inferences/hypotheses separated), INCONCLUSIVE-never-fabricate, calibrated-only confidence, traceable incidentId+evidenceRefs. Tests ALL PASS incl. real-wiring.
+  - **Capability B — Bounded Remediation** (`src/runtime/bounded-remediation.ts`): PROPOSE-ONLY; action-gate sole authority (deny-by-default; confidence never authorizes), patch-executor sole writer (NOT invoked); accepts only DIAGNOSED+substantiated; REFUSES on scope/gate/pre-check/test failure; writes nothing, never applies; recurrence not claimed locally. Tests ALL PASS incl. real action-gate wiring.
+  - Both are COMPOSITIONS (no new engine/authz/writer/primitive). A↔B linked by incidentId+evidenceRefs.
+  - **PROVIDER migration (PHASE 3):** `local-model-manager` + `capability-router` dual-ported (@`f0cf61e`, gates 5/5, injected seams) on top of V62 provider-sandbox. **Dual ports 59→61 · 22 candidates · 6 blocked.** NEXT PROVIDER = `fleet-bridge` (466L, fail-closed via provider-live-call-gate+ODG_PROVIDER_LIVE; MOCK/gate-refusal testable) — deferred within session budget, NOT blocked.
+  - Whole-program `tsc` 0; full `npm test` **400** exit 0. Nine primitives intact; ROADMAP.json unchanged; 166 objective not reintroduced.
 - **V62 JS→TS lot `provider-sandbox` DONE (@`beb58ea`).** ODG bounded provider-perimeter authz (provider-sandbox ONLY). Dual port via official gate; deps (action-gate/bash-command-governor/state-transition) untouched (.js co-located in dist). Pure argv + FAIL-CLOSED runProvider with INJECTED sandboxRunner — no real provider/activation/network/secrets/bwrap. Isolation invariants byte-identical (never `--ro-bind / /`; --unshare-all/--clearenv/--info-fd; /etc model refused; metachar/unparseable refused). Gate 5/5; historical 38 assertions; `tsc` 0; `npm test` 398. **Dual ports 58→59 · 24 candidates · 6 blocked.** NEXT = `local-model-manager` (PROVIDER) — outside V62 scope, needs broader PROVIDER-perimeter CTO authz.
 - **V61 FIVE-WORKSTREAM CLOSURE RECONCILE (no new code; honest).** Code tip unchanged = **@`ad4744d`**; docs @`57cf675`+. Reused V54–V60 evidence; re-verified no regression (golden parity + failure-triage 20/20 green). **C1 DONE** (V56), **C2 DONE** (V56 mapping), **C3** safe branches proven / live wiring BLOCKED (action-gate perimeter), **C4 DEFERRED** (28/53 benches already effect-guarded; other 25 pure — rewriting = churn w/o benefit), **C5** count-defect fixed (V60); residuals A1 (dispatch authz invariant) + A2 (evidence provenance) CTO-gated; A01–A54/166 retired (DEC-V60), NOT reintroduced. **MIGRATION:** planner @HEAD 58 dual/25 cand/6 blocked; all 19 safe candidates perimeter-gated, NO neutral lot. Per-perimeter CTO dossiers (PROVIDER / FINANCE-DEC006 / AUTHZ-SEC / EVIDENCE-PROVENANCE) in roadmap §U-CHECKPOINT V61. No new code; 9 primitives intact.
 - **V60 ROOT-CAUSE REPAIR + 166-RETIREMENT + MIGRATION RECONCILE.** Code tip = **@`ad4744d`** (PHASE 1 fix).
@@ -99,7 +105,7 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V62.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V63.
 - Canonical Truth Lock SoT: `src/runtime/truth-lock.ts` (V56). Root-cause authorities: `src/runtime/root-cause-engine.ts` (release-gate class) + `runtime/core/self-diagnostic.js` (runtime-divergence class).
 - V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
