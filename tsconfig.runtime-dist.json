@@ -89,6 +89,7 @@
     "runtime/core/action-gate.ts",
     "runtime/core/capability-authorization.ts",
     "runtime/core/bash-command-governor.ts",
-    "runtime/core/evidence-provenance.ts"
+    "runtime/core/evidence-provenance.ts",
+    "runtime/core/live-cost-metering.ts"
   ]
 }
