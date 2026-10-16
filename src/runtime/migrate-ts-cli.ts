@@ -372,6 +372,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/build-recovery-engine-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // provider-sandbox lot (V62, ODG bounded provider-perimeter authz). Pure argv construction
+  // (parseCommand/buildBwrapArgs) + a fail-closed runProvider whose sandbox run is INJECTED
+  // (sandboxRunner) — NO real provider, NO network, NO secrets. Reuses the unmodified
+  // ./bash-command-governor (.js, co-located in dist by build-dist-closure); that module is NOT touched.
+  "provider-sandbox": [
+    "runtime/core/provider-sandbox.ts",
+    "runtime/__bench__/provider-sandbox-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -498,6 +507,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "build-recovery-engine": [
     "runtime/core/build-recovery-engine.test.js",
+  ],
+  "provider-sandbox": [
+    "runtime/core/provider-sandbox.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
