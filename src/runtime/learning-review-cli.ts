@@ -42,6 +42,43 @@ const RECORDS = [
     discoverable: { index: "roadmap §V-B-LOG B2 + compass" },
     reused: { refs: ["npm test (guards every future executor in the dispatch registry each run)"] },
   },
+  {
+    id: "learning-chain", claim: "REUSED", // model wired into learning-review; no measured before/after number ⇒ honestly NOT EFFECTIVE
+    captured: { description: "§V S2: the five learning states were asserted in prose, not machine-checkable" },
+    persisted: { file: "runtime/core/learning-chain.js", commit: "4b67a89" },
+    discoverable: { index: "roadmap §V-STAGE-LOG S2 + compass" },
+    reused: { refs: ["learning-review.reviewLearning (grades every record) + this odg learn surface"] },
+  },
+  {
+    id: "improvement-baseline", claim: "REUSED",
+    captured: { description: "§V S4: no grounded before→after measurement feeding the EFFECTIVE state" },
+    persisted: { file: "runtime/core/improvement-baseline.js", commit: "8eb270e" },
+    discoverable: { index: "roadmap §V-STAGE-LOG S4 + compass" },
+    reused: { refs: ["odg learn (captures the live baseline these signals come from)"] },
+  },
+  {
+    id: "learning-review-gate", claim: "REUSED",
+    captured: { description: "§V S5: the evaluation was observable/measurable but not CALLED + acted on" },
+    persisted: { file: "src/runtime/learning-review.ts", commit: "19c0865" },
+    discoverable: { index: "roadmap §V-STAGE-LOG S5 + compass; `odg learn` dispatcher route" },
+    reused: { refs: ["odg learn (this gate runs it every invocation)"] },
+  },
+  {
+    id: "build-gate-run-ownership", claim: "EFFECTIVE",
+    captured: { description: "§V-B B4: validation-engine trusted a STALE runtime-verify.json ⇒ false-green build/type gate" },
+    persisted: { file: "memory/build-gate-run-ownership.md", commit: "c087223" },
+    discoverable: { index: "roadmap §V-B-LOG B4 + compass" },
+    reused: { refs: ["validation-engine (freshGatesOk on every run)"] },
+    effective: { metric: "stale content-green gate verdict", baseline: "SUCCESS (false-green)", after: "BLOCKED (fresh-gated)" },
+  },
+  {
+    id: "triage-recurrence-coherence", claim: "EFFECTIVE",
+    captured: { description: "§V-B B5: odg triage showed recurrenceRisk MEDIUM for an incident diagnose/learn call FROZEN_LOOP" },
+    persisted: { file: "runtime/core/incident-recurrence.js (recordFor)", commit: "3d38c9c" },
+    discoverable: { index: "roadmap §V-B-LOG B5 + compass" },
+    reused: { refs: ["odg triage (surfaces OBSERVED recurrence every run)"] },
+    effective: { metric: "triage recurrence signal", baseline: "MEDIUM (incoherent, divergence-count only)", after: "OBSERVED FROZEN_LOOP (coherent with diagnose/learn)" },
+  },
 ];
 
 function main(): number {
