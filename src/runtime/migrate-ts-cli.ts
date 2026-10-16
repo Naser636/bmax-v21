@@ -397,6 +397,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/capability-router-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // fleet-bridge lot (V63, PROVIDER perimeter — last PROVIDER candidate). The LIVE claude spawn is
+  // fail-closed behind provider-live-call-gate (ODG_PROVIDER_LIVE) + a FLEET_BRIDGE_MOCK short-circuit;
+  // the bench proves parity via MOCK + gate-refusal + pure fns + atomic claim — NO real provider/network/spend.
+  // ./fleet-envelope and ./provider-live-call-gate are NOT modified (co-located in dist).
+  "fleet-bridge": [
+    "runtime/core/fleet-bridge.ts",
+    "runtime/__bench__/fleet-bridge-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -532,6 +541,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "capability-router": [
     "runtime/core/capability-router.test.js",
+  ],
+  "fleet-bridge": [
+    "runtime/core/fleet-bridge.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

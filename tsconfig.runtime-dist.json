@@ -75,6 +75,7 @@
     "runtime/core/build-recovery-engine.ts",
     "runtime/core/provider-sandbox.ts",
     "runtime/core/local-model-manager.ts",
-    "runtime/core/capability-router.ts"
+    "runtime/core/capability-router.ts",
+    "runtime/core/fleet-bridge.ts"
   ]
 }
