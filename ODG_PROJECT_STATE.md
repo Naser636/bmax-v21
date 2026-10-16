@@ -7,6 +7,7 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
+- **V58 DEEP PROBE & CAPABILITY GRADING (read-only, @`142bf75`→docs):** 15 probes graded INDIVIDUALLY via read-only invocation — declared/bound/executable/tested 15/15 (logic: capability-probes.test 47 assertions PASS); **live 8 PASS / 7 MISSING-evidence (correct fail-closed, not defects) / 0 ERROR**; consumer=validation-engine (self-verified by `capability-probes-finalized`). Capability layer: 177/15-missing (static snapshot 2026-10-15; 15 missing = real unbound missions). Verdict PARTIAL; canonical A01–A54/166 NOT_ENUMERABLE. Report: `docs/odg-operational/ODG_V58_PROBE_CAPABILITY_GRADING.md`. No runtime/code/permission change.
 - **V57 C5 DEEP AUDIT (read-only, @`a1bf3a4`→docs):** 9 executors audited deeply; authorization controls proven EFFECTIVE (action-gate/capability-authorization/bash-governor/executors/probes tests all PASS this audit). Findings: (A1 MED-latent) no central authz chokepoint at dispatch — per-capability enforcement (scope≠authority code-enforced; action-gate for Bash; human-grant for External Research; MANUAL_ONLY for Provider); (A2) executor evidence is mtime-only, not commit-traceable (3 absent/2 stale/4 recent). Verdict PARTIAL; canonical A01–A54/166 NOT_ENUMERABLE (no machine manifest). Report: `docs/odg-operational/ODG_V57_C5_DEEP_AUDIT.md`. No runtime/permission/code change.
 - **Code tip = V56 CHANTIER 1 @`fa51c1f`** (truth-lock.ts extraction + runMigrateTs→runGates unification; byte-identical golden-proven). == `origin/main` (insync after the V56 docs commit on top), branch `main`, worktree clean, index empty, 5 stashes preserved.
 - Evidence-dated **2026-10-16** (V56 five-chantier campaign; see roadmap §U-CHECKPOINT V56). Nine permanent primitives intact; `runtime/governance/ROADMAP.json` unchanged.
@@ -91,7 +92,7 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V57.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V58.
 - Canonical Truth Lock SoT: `src/runtime/truth-lock.ts` (V56). Root-cause authorities: `src/runtime/root-cause-engine.ts` (release-gate class) + `runtime/core/self-diagnostic.js` (runtime-divergence class).
 - V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
