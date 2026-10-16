@@ -493,6 +493,16 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/action-gate-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // capability-authorization lot (V64 AUTHZ/§6C, bounded semantics-preserving; fail-closed human-grant
+  // transport). Pure VALIDATOR+TRANSPORT for an EXPLICIT human grant on a consequential capability: explicit
+  // capability-identity + mission-binding + scope/limits + expiry + execute + human-issued-only + revocation,
+  // deny-by-default, ODG never self-authorizes. Core admission DELEGATED verbatim to action-gate (dual-ported).
+  // No clock/randomness/I/O/network/money (`now` injected). Consumers: nl-objective-gateway/objective paths.
+  "capability-authorization": [
+    "runtime/core/capability-authorization.ts",
+    "runtime/__bench__/capability-authorization-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -664,6 +674,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "action-gate": [
     "runtime/core/action-gate.test.js",
+  ],
+  "capability-authorization": [
+    "runtime/core/capability-authorization.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
