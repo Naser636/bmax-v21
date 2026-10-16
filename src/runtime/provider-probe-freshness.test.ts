@@ -95,6 +95,10 @@ function runVE(probe: Probe, scenario: Scenario): { status?: string; validated?:
     const cp = providerRunStartCheckpoint(scenario === "MISMATCH" ? "OTHER_MISSION" : "MISSION_B", startedAt)!;
     fs.writeFileSync(path.join(gen, "pipeline-checkpoint.json"), JSON.stringify(cp));
     const runStartedMs = Date.parse(startedAt);
+    // runtime-verify.json models a build/type gate produced DURING this run (odg-verify writes it AFTER the
+    // run start), so stamp it FRESH (>= run start): this test varies the PROBE artifact's freshness, not the
+    // gate's run-ownership. (Without this, it would be "stale" only because the fixture wrote it at setup.)
+    try { const vf = (runStartedMs + 3_600_000) / 1000; fs.utimesSync(path.join(gen, "runtime-verify.json"), vf, vf); } catch { /* best-effort */ }
 
     const target = probe.evidence === "clean-workspace-scanned"
       ? path.join(gen, "clean-workspace-scan.json") : path.join(gen, "external-research-acquisition.json");

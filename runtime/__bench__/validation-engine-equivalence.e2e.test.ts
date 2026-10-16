@@ -97,7 +97,9 @@ function buildCompiledEngineDir(): void {
   // capability-executors now pull in mission-synthesizer/decision-rules/economic+research modules, all
   // verified resolvable). Kept as an exact count (not a weak membership/>0 check) so any unexpected
   // drift — an added OR removed module — still fails the gate for review.
-  check(closure.length === 17, `transitive closure is the expected 17-module set (size=${closure.length})`);
+  // 17→18 (V64j): capability-executors.writeEvidence now stamps provenance via `evidence-provenance`
+  // (audit C5-A2), a legitimate new transitive member of the closure; count updated to match.
+  check(closure.length === 18, `transitive closure is the expected 18-module set (size=${closure.length})`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-ve-dist-"));
   sandboxes.push(dir);
   for (const n of closure) { const prov = placeInDistCore(dir, n); composition[prov]++; }
@@ -107,12 +109,17 @@ function buildCompiledEngineDir(): void {
 }
 
 // Seed a sandbox's runtime/generated with the three pipeline artifacts for one scenario.
-function seedCase(sb: string, seed: { plan?: any; patch?: any; execution?: any }): void {
+function seedCase(sb: string, seed: { plan?: any; patch?: any; execution?: any; verify?: any; checkpoint?: any }): void {
   const G = path.join(sb, "runtime", "generated");
   fs.mkdirSync(G, { recursive: true });
   if (seed.plan !== undefined) writeJson(path.join(G, "mission-plan.json"), seed.plan);
   if (seed.patch !== undefined) writeJson(path.join(G, "patch-plan.json"), seed.patch);
   if (seed.execution !== undefined) writeJson(path.join(G, "patch-execution.json"), seed.execution);
+  // Optional build/type evidence + per-run checkpoint (for the run-ownership / staleness scenarios). The
+  // files are written NOW, so a checkpoint.startedAt in the FUTURE makes the verify evidence STALE
+  // (mtime < startedAt), and one in the PAST makes it FRESH (mtime >= startedAt) — deterministic.
+  if (seed.verify !== undefined) writeJson(path.join(G, "runtime-verify.json"), seed.verify);
+  if (seed.checkpoint !== undefined) writeJson(path.join(G, "pipeline-checkpoint.json"), seed.checkpoint);
 }
 function newSandbox(tag: string): string {
   const sb = fs.mkdtempSync(path.join(os.tmpdir(), "odg-ve-" + tag + "-"));
@@ -162,6 +169,22 @@ try {
       name: "S5 BLOCKED (evidence artifact absent)",
       seed: { plan: { mission: "M", objectives: [{ id: "o1" }] }, patch: { mission: "M", patches: [{ file: "a" }] }, execution: { executed: [{ status: "EXECUTED", objectiveId: "o1", evidence: "runtime/generated/does-not-exist.json" }] } },
       expectStatus: "BLOCKED", expectExit: 1, expectReport: true,
+    },
+    {
+      // RUN-OWNERSHIP (false-green defense): a CONTENT-green runtime-verify.json (build/typescript true) that
+      // is STALE — produced before THIS run (checkpoint.startedAt in the future ⇒ verify mtime < startedAt) —
+      // must NOT promote to SUCCESS; the build/type gate is not a proof for this run. js≡ts must agree.
+      name: "S6 BLOCKED (stale build/type evidence — run-ownership)",
+      seed: { plan: { mission: "M", objectives: [{ id: "o1" }] }, patch: { mission: "M", patches: [{ file: "a" }] }, execution: { executed: [{ status: "APPLIED", objectiveId: "o1" }] }, verify: { build: true, typescript: true }, checkpoint: { mission: "M", startedAt: "2999-01-01T00:00:00.000Z" } },
+      expectStatus: "BLOCKED", expectExit: 1, expectReport: true,
+    },
+    {
+      // FRESH control: the SAME content-green evidence, produced THIS run (checkpoint.startedAt in the past ⇒
+      // verify mtime >= startedAt) ⇒ the gate is a valid proof ⇒ SUCCESS. Proves the staleness fix is precise,
+      // not a blanket block, and that run-ownership is what distinguishes S6 from S7.
+      name: "S7 SUCCESS (fresh build/type evidence — run-ownership)",
+      seed: { plan: { mission: "M", objectives: [{ id: "o1" }] }, patch: { mission: "M", patches: [{ file: "a" }] }, execution: { executed: [{ status: "APPLIED", objectiveId: "o1" }] }, verify: { build: true, typescript: true }, checkpoint: { mission: "M", startedAt: "1970-01-01T00:00:00.000Z" } },
+      expectStatus: "SUCCESS", expectExit: 0, expectReport: true,
     },
   ];
 
