@@ -515,6 +515,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/bash-command-governor-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // evidence-provenance lot (V64 §V-B capability-excellence, deps=0). Dual-ports the NEW pure provenance
+  // helper (attributable + tamper-evident evidence stamp; SLSA/in-toto/NIST-SSDF binding, adapted). PURE;
+  // the git read is an injectable fail-closed seam. Consumer capability-executors.writeEvidence.
+  "evidence-provenance": [
+    "runtime/core/evidence-provenance.ts",
+    "runtime/__bench__/evidence-provenance-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -692,6 +700,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "bash-command-governor": [
     "runtime/core/bash-command-governor.test.js",
+  ],
+  "evidence-provenance": [
+    "runtime/core/evidence-provenance.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
