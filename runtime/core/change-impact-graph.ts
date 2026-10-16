@@ -87,7 +87,19 @@ function moduleHazards(root: string, name: string): { dynamicRequire: boolean; e
   // __dirname derivation in a comment). Strip comments first; string/template literals are preserved VERBATIM
   // by stripComments, so a path-hazard token inside an executable string still counts (no recall loss).
   const code = stripComments(src);
-  const pathHazard = /\b(__dirname|REPO_ROOT)\b/.test(code) && /\bpath\.(resolve|join)\b/.test(code);
+  const usesPathBuild = /\bpath\.(resolve|join)\b/.test(code);
+  // __dirname is ALWAYS a compilation-location hazard when it feeds a path build: it resolves to the module's
+  // on-disk directory, which SHIFTS from runtime/core to runtime/dist/core after compilation.
+  const dirnameHazard = /\b__dirname\b/.test(code);
+  // REPO_ROOT (V51 — third defect class) is a hazard ONLY when it is NOT provably derived from process.cwd().
+  // A port that assigns `REPO_ROOT = process.cwd()` (the proven repo convention — V48 expert-profile-assembler)
+  // is dist-safe; the former predicate keyed on the bare TOKEN and so mis-flagged it. Clear the REPO_ROOT
+  // contribution ONLY on an explicit `REPO_ROOT = process.cwd()` assignment (an optional TS type annotation
+  // between the name and `=` is tolerated). Any OTHER derivation (e.g. `REPO_ROOT = path.resolve(__dirname,…)`)
+  // leaves __dirname in the code and is still caught by dirnameHazard above — so recall is NEVER lowered.
+  const repoRootSafe = /\bREPO_ROOT\b[^=\n]*=\s*process\.cwd\(\s*\)/.test(code);
+  const repoRootHazard = /\bREPO_ROOT\b/.test(code) && !repoRootSafe;
+  const pathHazard = usesPathBuild && (dirnameHazard || repoRootHazard);
   return { dynamicRequire: dyn === true, externalRequire, pathHazard };
 }
 

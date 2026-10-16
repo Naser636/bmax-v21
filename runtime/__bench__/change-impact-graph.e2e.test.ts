@@ -42,7 +42,7 @@ function coreHash(): string {
 const before = coreHash();
 
 let graph: any, oa: any, capfac: any, email: any, brec: any, astore: any, strans: any, ghost: any, oa2: any;
-let ppa: any, capreg: any, locaut: any, epa: any;
+let ppa: any, capreg: any, locaut: any, epa: any, mcb: any;
 try {
   graph = buildGraph(REPO);
   oa = impactOf(REPO, "objective-attribution");
@@ -58,6 +58,7 @@ try {
   capreg = impactOf(REPO, "capability-registry");
   locaut = impactOf(REPO, "local-autonomy");
   epa = impactOf(REPO, "expert-profile-assembler");
+  mcb = impactOf(REPO, "mission-context-builder");
 } finally {
   (fs as any).writeFileSync = realWrite; (fs as any).appendFileSync = realAppend; (fs as any).mkdirSync = realMkdir; (fs as any).rmSync = realRm;
 }
@@ -177,6 +178,59 @@ try {
     const r = mkRoot({ "legacy.js": "const path = require('path');\nconst R = path.resolve(__dirname, '..');\nmodule.exports = { R };\n" });
     check(pHaz(r, "legacy").pathHazard === true, "B5 no TS port ⇒ historical .js analysis preserved (hazard flagged)");
   }
+  // ────────────────────────────────────────────────────────────────────────────────────────────────────
+  // V51 — pathHazard understands the REPO_ROOT DERIVATION (third defect class). A root assigned from
+  // process.cwd() is dist-safe; one derived from __dirname (or an unknown source) stays a hazard. Recall
+  // is never lowered: __dirname is always caught, and an unproven REPO_ROOT stays conservatively flagged.
+  // ────────────────────────────────────────────────────────────────────────────────────────────────────
+  // C1. REPO_ROOT = process.cwd() + path.resolve(REPO_ROOT,…) ⇒ NO hazard (the V48 proven convention).
+  {
+    const r = mkRoot({ "cwd-root.js": "const path = require('path');\nconst REPO_ROOT = process.cwd();\nconst abs = path.resolve(REPO_ROOT, 'runtime');\nmodule.exports = { abs };\n" });
+    check(pHaz(r, "cwd-root").pathHazard === false, "C1 REPO_ROOT = process.cwd() + path.resolve ⇒ NO path hazard (safe derivation)");
+  }
+  // C2. SAME but with a TS type annotation between the name and `=` (mirrors the real expert-profile-assembler.ts).
+  {
+    const r = mkRoot({
+      "typed-root.js": "module.exports = {};\n", // node set needs the .js basename
+      "typed-root.ts": "const path = require('path');\nconst REPO_ROOT: string = process.cwd();\nconst abs = path.resolve(REPO_ROOT, 'runtime');\nmodule.exports = { abs };\nexport {};\n",
+    });
+    check(pHaz(r, "typed-root").pathHazard === false, "C2 `REPO_ROOT: string = process.cwd()` (typed) ⇒ NO path hazard (annotation tolerated)");
+  }
+  // C3. REPO_ROOT derived from __dirname ⇒ hazard STILL detected (recall: the dangerous derivation).
+  {
+    const r = mkRoot({ "dirname-root.js": "const path = require('path');\nconst REPO_ROOT = path.resolve(__dirname, '..', '..');\nconst abs = path.join(REPO_ROOT, 'runtime');\nmodule.exports = { abs };\n" });
+    check(pHaz(r, "dirname-root").pathHazard === true, "C3 REPO_ROOT = path.resolve(__dirname,…) ⇒ path hazard DETECTED (dangerous derivation)");
+  }
+  // C4. CONSERVATIVE: a bare REPO_ROOT token used in a path build with NO provable process.cwd() assignment
+  //     (e.g. imported from elsewhere) stays FLAGGED — never clear what we cannot prove safe (no recall loss).
+  {
+    const r = mkRoot({ "imported-root.js": "const path = require('path');\nconst { REPO_ROOT } = require('./roots');\nconst abs = path.join(REPO_ROOT, 'x');\nmodule.exports = { abs };\n" });
+    check(pHaz(r, "imported-root").pathHazard === true, "C4 bare REPO_ROOT (no provable process.cwd() assignment) + path build ⇒ STILL flagged (conservative)");
+  }
+  // C5. TRANSITIVE: a clean parent whose child derives REPO_ROOT from __dirname ⇒ hazard DETECTED + attributed.
+  {
+    const r = mkRoot({
+      "p-clean.js": "const c = require('./c-dirname');\nmodule.exports = { c };\n",
+      "c-dirname.js": "const path = require('path');\nconst REPO_ROOT = path.resolve(__dirname, '..');\nconst abs = path.join(REPO_ROOT, 'x');\nmodule.exports = { abs };\n",
+    });
+    const h = pHaz(r, "p-clean");
+    check(h.pathHazard === true && h.modules.includes("c-dirname"), "C5 transitive REPO_ROOT-from-__dirname hazard ⇒ DETECTED, attributed to c-dirname");
+  }
+  // C6. COMMENT/STRING classification: REPO_ROOT only in a COMMENT ⇒ not a hazard; the SAME token in a STRING
+  //     stays conservative (strings preserved verbatim — identical to __dirname string behaviour A4).
+  {
+    const r = mkRoot({
+      "repo-comment.js": "// note: historical builds derived REPO_ROOT from path.resolve(__dirname)\nmodule.exports = {};\n",
+      "repo-string.js": "const s = 'REPO_ROOT via path.join'; module.exports = { s };\n",
+    });
+    check(pHaz(r, "repo-comment").pathHazard === false, "C6 REPO_ROOT + path mention ONLY in a comment ⇒ NO hazard (comments stripped)");
+    check(pHaz(r, "repo-string").pathHazard === true, "C6 REPO_ROOT + path.join inside a STRING ⇒ still flagged (conservative; strings preserved, no recall loss)");
+  }
+  // C7. no-.ts candidate with REPO_ROOT = process.cwd() ⇒ safe behaviour preserved (historical .js analysed directly).
+  {
+    const r = mkRoot({ "nots-cwd.js": "const path = require('path');\nconst REPO_ROOT = process.cwd();\nconst abs = path.resolve(REPO_ROOT, 'a');\nmodule.exports = { abs };\n" });
+    check(pHaz(r, "nots-cwd").pathHazard === false, "C7 no TS port + REPO_ROOT = process.cwd() ⇒ NO hazard (safe .js derivation preserved)");
+  }
 } finally {
   for (const r of roots) { try { fs.rmSync(r, { recursive: true, force: true }); } catch { /* best-effort */ } }
 }
@@ -188,10 +242,15 @@ check(ppa.closureHazards.pathHazard === true, "REGRESSION: patch-proposal-apply 
 check(locaut.closureHazards.dynamicRequire === true, "REGRESSION: local-autonomy transitive DYNAMIC-REQUIRE hazard KEPT");
 check(capfac.closureHazards.dynamicRequire === true, "REGRESSION: capability-factory dynamic-require hazard KEPT");
 check(email.closureHazards.externalRequire === true, "REGRESSION: email-gateway external-require hazard KEPT");
-// Honest limit: expert-profile-assembler still flags — its port exports a var literally named REPO_ROOT (for
-// byte-parity) + path.resolve; the regex keys on that TOKEN, not its (safe process.cwd()) derivation. That is
-// a SEPARATE third defect class, out of V49 scope — recorded as the next contract, NOT silently cleared.
-check(epa.closureHazards.pathHazard === true, "REGRESSION: expert-profile-assembler STILL flags (REPO_ROOT token; third defect class, out of scope — documented, not masked)");
+// V51 FIX (third defect class, now CLOSED): expert-profile-assembler's .ts port assigns `REPO_ROOT =
+// process.cwd()` (dist-safe, V48) and uses path.resolve(REPO_ROOT,…). The former predicate keyed on the bare
+// REPO_ROOT TOKEN and mis-flagged it; the predicate now clears REPO_ROOT only when derived from process.cwd().
+// This was previously asserted ===true to lock the known false positive (stale-test discipline); corrected to
+// ===false now that the source is fixed. Recall is unchanged — proven by the C-block and B4/B5 negatives.
+check(epa.closureHazards.pathHazard === false, "REGRESSION: expert-profile-assembler NO path hazard (V51 — REPO_ROOT derived from process.cwd() is dist-safe; false positive corrected)");
+// V51 end-to-end: mission-context-builder was blocked ONLY transitively via expert-profile-assembler's false
+// positive; with that cleared, its closure is now path-hazard-free (unless a genuine hazard remains elsewhere).
+check(mcb.exists && mcb.closureHazards.pathHazard === false, "REGRESSION: mission-context-builder transitive path hazard CLEARED (V51 — was blocked only via expert-profile-assembler)");
 
 console.log(failures === 0 ? "ALL PASS — LOT change-impact-graph" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
