@@ -7,6 +7,7 @@
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
 ## Last confirmed checkpoint
+- **V61 FIVE-WORKSTREAM CLOSURE RECONCILE (no new code; honest).** Code tip unchanged = **@`ad4744d`**; docs @`57cf675`+. Reused V54–V60 evidence; re-verified no regression (golden parity + failure-triage 20/20 green). **C1 DONE** (V56), **C2 DONE** (V56 mapping), **C3** safe branches proven / live wiring BLOCKED (action-gate perimeter), **C4 DEFERRED** (28/53 benches already effect-guarded; other 25 pure — rewriting = churn w/o benefit), **C5** count-defect fixed (V60); residuals A1 (dispatch authz invariant) + A2 (evidence provenance) CTO-gated; A01–A54/166 retired (DEC-V60), NOT reintroduced. **MIGRATION:** planner @HEAD 58 dual/25 cand/6 blocked; all 19 safe candidates perimeter-gated, NO neutral lot. Per-perimeter CTO dossiers (PROVIDER / FINANCE-DEC006 / AUTHZ-SEC / EVIDENCE-PROVENANCE) in roadmap §U-CHECKPOINT V61. No new code; 9 primitives intact.
 - **V60 ROOT-CAUSE REPAIR + 166-RETIREMENT + MIGRATION RECONCILE.** Code tip = **@`ad4744d`** (PHASE 1 fix).
   - **PHASE 1 DONE (@`ad4744d`):** `runtime-model.js`/`.ts` provenSet now gates on `isMissionIdentifier()` (no leading `-`, no whitespace) → excludes ledger parsing-accidents (`--help`, `--repair-mandate`, goal-sentence) from proven capabilities; projection-only, ledger never mutated; both dual-port files changed identically (parity preserved). runtime-model.test Case G 30 assertions PASS; equivalence bench ALL PASS; `tsc` 0; `npm test` 398; proven caps **177→174**.
   - **PHASE 2 DONE (docs):** Roadmap **Phase-04 RETIRED** + governed **DEC-V60-166-RETIREMENT** changelog entry; "166 capabilities" is no longer an objective/counter/certification. FROZEN Master NOT edited; 9 primitives + A01/A54 labels preserved; A01–A54/166 stays NOT_ENUMERABLE; no number substituted.
@@ -97,7 +98,7 @@ node_modules/.bin/tsc -p tsconfig.json --noEmit && git diff --check         # wh
 Parity-lot recipe = 4 edits/lot (`core/<L>.ts` + equivalence bench + tsconfig-runtime-dist include + LOT_WRITE_SET/LOT_HISTORICAL).
 
 ## References
-- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V60.
+- Strategy/sequencing authority: `docs/odg-operational/ODG_MASTER_ROADMAP.md` — §U (active), §U-CHECKPOINT V34→V61.
 - Canonical Truth Lock SoT: `src/runtime/truth-lock.ts` (V56). Root-cause authorities: `src/runtime/root-cause-engine.ts` (release-gate class) + `runtime/core/self-diagnostic.js` (runtime-divergence class).
 - V54 capability certification: `docs/odg-operational/ODG_V54_CAPABILITY_CERTIFICATION.md` (read-only; PARTIAL; register drift logged).
 - Execution interface: `ODG_AUTONOMOUS_WORK_PROTOCOL.json`, `CLAUDE.md`, `AGENTS.md`.
