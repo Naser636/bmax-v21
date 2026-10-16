@@ -483,6 +483,16 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/patch-action-contract-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // action-gate lot (V64 AUTHZ/§6C, bounded semantics-preserving; the DENY-BY-DEFAULT admission gate itself).
+  // Pure/deterministic evaluateAction(action, ctx): STATE→CONTRACT→POLICY→AUTHORITY ⇒ ALLOW/DENY/ESCALATE,
+  // deny-by-default, least-privilege (cross-mission/expired/revoked authority denied), ESCALATE for
+  // irreversible/high-risk unless explicit human authority. Sole dep state-transition (already dual-ported).
+  // No clock/randomness/I/O/network/money. Consumers patch-action-contract + others use the compiled sibling.
+  "action-gate": [
+    "runtime/core/action-gate.ts",
+    "runtime/__bench__/action-gate-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -651,6 +661,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "patch-action-contract": [
     "runtime/core/action-gate-live.test.js",
+  ],
+  "action-gate": [
+    "runtime/core/action-gate.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
