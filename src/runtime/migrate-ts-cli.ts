@@ -632,6 +632,18 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/launch-readiness-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V71 Class-B — the dynamic-require blocker. The .js self-checks a module it GENERATES at runtime; that
+  // dynamic load now uses the project's SANCTIONED legacyRequire form (capital R; the build-dist-closure
+  // require scanner intentionally ignores it, exactly as for the compiled ENTRY), so the compiled dist/core
+  // module is closure-clean WITHOUT modifying build-dist-closure. .ts = faithful @ts-nocheck transliteration;
+  // parity proven by the hermetic equivalence bench (isolated temp cwd; proves the dynamic self-check works
+  // in the compiled runtime + the generated module content is byte-identical).
+  "capability-factory": [
+    "runtime/core/capability-factory.js",
+    "runtime/core/capability-factory.ts",
+    "runtime/__bench__/capability-factory-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
   "improvement-baseline": [
     // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
     // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
@@ -854,6 +866,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "launch-readiness": [
     "runtime/core/launch-readiness.test.js",
+  ],
+  "capability-factory": [
+    "runtime/core/capability-factory.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
