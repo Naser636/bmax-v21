@@ -54,10 +54,12 @@ function loadAuth(contract) {
   const r = loadAuth({ mission: "FX_EXPL", mode: "AUDIT", requires_engineering: false, authorized_paths: [], objectives: [{ id: "FX_EXPL_1", goal: "x", done_when: [], authorization: explicit }] });
   ok("explicit contract authorization respected (not overwritten to eligible)", r.auth && r.auth.eligible === false && r.auth.excluded === true && /human-gated by contract/.test(r.auth.reason));
 }
-// 5 — ANTI-INFLATION: engineering claimed but NO authorized scope ⇒ UNDECLARED (fail-closed).
+// 5 — engineering claimed but NO authorized scope ⇒ REFUSED by the contract-sufficiency gate (see case 10).
+//     (Supersedes the pre-gate "undeclared" behaviour: such a mission never loads, so it can never be
+//     measured OR execute — the strongest anti-inflation + no out-of-scope-write guarantee.)
 {
   const r = loadAuth({ mission: "FX_ENG_NOSCOPE", mode: "ENGINEERING", requires_engineering: true, authorized_paths: [], objectives: [{ id: "FX_ENG_NOSCOPE_1", goal: "y", done_when: [] }] });
-  ok("engineering WITHOUT authorized_paths ⇒ UNDECLARED (no inflation)", r.auth === undefined);
+  ok("engineering WITHOUT authorized_paths ⇒ REFUSED pre-execution (no plan)", r.exit !== 0 && r.auth === "(no plan)");
 }
 // 6 — a plain SEQUENTIAL/unknown-mode mission with no scope ⇒ UNDECLARED (fail-closed).
 {
@@ -93,6 +95,23 @@ function loadAuth(contract) {
   fs.rmSync(root, { recursive: true, force: true });
   ok("MIXED: obj1 explicit exclusion preserved", objs[0].authorization && objs[0].authorization.eligible === false && objs[0].authorization.excluded === true);
   ok("MIXED: obj2 derived eligible (per-objective, not blanket)", objs[1].authorization && objs[1].authorization.eligible === true && /read-only-audit/.test(objs[1].authorization.basis));
+}
+
+// 10 — CONTRACT-SUFFICIENCY GATE: an ENGINEERING mission with NO explicit write-set is REFUSED pre-execution.
+{
+  const r = loadAuth({ mission: "FX_ENG_NOWS", mode: "ENGINEERING", requires_engineering: true, authorized_paths: [], objectives: [{ id: "FX_ENG_NOWS_1", goal: "edit", done_when: [] }] });
+  ok("engineering + NO write-set ⇒ loader REFUSES (non-zero exit)", r.exit !== 0);
+  ok("engineering + NO write-set ⇒ NO mission-plan written (blocked before modification)", r.auth === "(no plan)");
+}
+// 11 — read-only mission with no write-set is NOT refused (legitimately declares none).
+{
+  const r = loadAuth({ mission: "FX_RO_NOWS", mode: "AUDIT", requires_engineering: false, authorized_paths: [], objectives: [{ id: "FX_RO_NOWS_1", goal: "read", done_when: [] }] });
+  ok("read-only + no write-set ⇒ allowed (exit 0, plan written)", r.exit === 0 && r.auth !== "(no plan)");
+}
+// 12 — engineering mission WITH an explicit write-set is allowed.
+{
+  const r = loadAuth({ mission: "FX_ENG_WS", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], objectives: [{ id: "FX_ENG_WS_1", goal: "edit", done_when: [] }] });
+  ok("engineering + explicit write-set ⇒ allowed (exit 0)", r.exit === 0 && r.auth && r.auth.eligible === true);
 }
 
 console.log(`\nmission-loader CM-5 derivation — ${passed} assertions passed.`);

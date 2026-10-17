@@ -147,6 +147,18 @@ const requiresEngineering =
     spec.requiresEngineering === true ||
     authorizedPaths.length > 0;
 
+// CONTRACT-SUFFICIENCY GATE (CTO governed-mission enforcement): an ENGINEERING mission MUST declare an
+// EXPLICIT write-set (authorized_paths) BEFORE execution — a directive alone is never a sufficient contract.
+// Refused here (pre-execution, zero mutation) so a mission with an absent/ambiguous write-set can never
+// reach the Patch Executor. Read-only missions (requires_engineering !== true) legitimately declare none.
+// The action-gate + authorized_paths remain the RUNTIME scope controls for in-scope writes; this is the
+// UPSTREAM gate. (Scan @ install: 0 of 48 engineering contracts lacked a write-set ⇒ zero blast radius.)
+if (spec.requires_engineering === true && authorizedPaths.length === 0) {
+    console.error(`STOP: engineering mission "${mission}" declares no explicit write-set (authorized_paths).`);
+    console.error("A governed write-set is REQUIRED before any code modification (contract-sufficiency gate). Refused pre-execution.");
+    process.exit(1);
+}
+
 // CM-5: per-objective governance authorization DECLARATION for the autonomy DENOMINATOR, DERIVED from the
 // mission's DECLARED governance ENVELOPE (mode + requires_engineering + authorized_paths) — a verifiable
 // source, NOT a generic stamp and NOT inferred from an objective's mere presence. Only UNAMBIGUOUS classes
