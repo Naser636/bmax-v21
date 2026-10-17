@@ -602,6 +602,16 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/patch-proposal-apply-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V71 Class-A consumer #2. runtime-paths is committed (HEAD), so no overlay needed. The .js carries the
+  // behaviour-preserving ROOT = repoRoot(__dirname) change (dist/core → canonical repo root for the policy
+  // data-file reads); source layout = identity. The 428L .ts is a faithful @ts-nocheck transliteration
+  // (parity proven by the hermetic equivalence bench, not type-checking — V66 precedent).
+  "nl-objective-gateway": [
+    "runtime/core/nl-objective-gateway.js",
+    "runtime/core/nl-objective-gateway.ts",
+    "runtime/__bench__/nl-objective-gateway-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
   "improvement-baseline": [
     // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
     // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
@@ -816,6 +826,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "runtime-paths": [],
   // No prior behavioural suite existed for this adapter; the equivalence bench is its proof.
   "patch-proposal-apply": [],
+  "nl-objective-gateway": [
+    "runtime/core/nl-objective-gateway.test.js",
+  ],
 };
 const REGRESSION_BENCHES = [
   "runtime/__bench__/capability-registry-equivalence.e2e.test.ts",

@@ -43,8 +43,12 @@ const router = require("./capability-router");         // objective → capabili
 const gate = require("./action-gate");                 // deterministic POLICY/AUTHORITY/RISK admission (existing)
 const kernel = require("./governance-kernel");         // state-machine authorization (existing)
 const assembler = require("./expert-profile-assembler"); // durable profile → mission-scoped §303 Expert Instance (existing, read-only)
+const { repoRoot } = require("./runtime-paths");       // dist/core → canonical repo root (V71 __dirname fix)
 
-const ROOT = path.resolve(__dirname, "..", "..");
+// Repo root resolved via runtime-paths so a COMPILED dist/core copy still finds runtime/config &
+// runtime/policies in the SOURCE tree (path.resolve(__dirname,"..","..") would yield runtime/dist). In the
+// source layout this is identical to the historical computation, so production JS behaviour is unchanged.
+const ROOT = repoRoot(__dirname);
 const PROVIDER_POLICY_PATH = path.join(ROOT, "runtime", "config", "provider-policy.json");
 const RUNTIME_POLICIES_PATH = path.join(ROOT, "runtime", "policies", "runtime-policies.json");
 
