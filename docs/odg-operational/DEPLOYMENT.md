@@ -12,6 +12,22 @@ claim production availability.
 · `DEFERRED`. Each item carries an evidence reference OR the exact missing proof. Missing evidence is **never**
 recorded as success. Baseline for this consolidation: HEAD `3ae6053`, `main`, clean, synced with `origin/main`.
 
+> **Live re-verification @ `034fcbe` (2026-10-17, VPS `vps-6d919042`, loopback-only).** The ACTIVE local
+> deployment was re-confirmed healthy this session: `odg-preprod.service` ACTIVE/running (`node server.js`
+> in `.next/standalone`, `ODG_CLIENT_STORE=/var/lib/odg/clients`); `fleet-bridge.service` ACTIVE; the
+> next-server listens on `127.0.0.1:3000` (loopback). `curl http://127.0.0.1:3000/api/health` → **HTTP 200
+> `{"status":"ready","storage":"READY"}`**. Persistent store is **empty (0 files)** ⇒ no client data at risk.
+> End-to-end governed mission `RUNTIME_SELF_AUDIT` ran on the compiled-TS runtime → PIPELINE SUCCESS 13/13 +
+> real ledger/evidence/artifacts; the cockpit shows it as `last=RUNTIME_SELF_AUDIT (ARCHIVED)` (ledger↔cockpit
+> coherent). Failure parcours fail-closed (external objective ⇒ exit 2; underspecified ⇒ AMBIGUOUS; analyze ⇒
+> BLOCKED — no false success). JS rollback `ODG_RUNTIME=js` available (SUCCESS 13/13). `npm test` EXIT 0.
+> **Level: `READY_FOR_LOCAL_INSTALL` (local deployment VERIFIED live, loopback).** Staging/production/off-host
+> remain NOT (host+DNS+TLS+off-host backup — see `HUMAN_INPUTS_REQUIRED.md` A1–A5). **No public exposure,
+> DNS, TLS, firewall or reverse-proxy changed. Legacy copies** (`bmax-v21-{corrompu,dashboard-isolated,
+> stabilization,w6}`, `~/odg`, git worktrees) are NOT consumed by the active services (which run only from
+> `/home/ubuntu/bmax-v21`) but are UNVERIFIED for unique/uncommitted content ⇒ **preserved, none removed**;
+> any set-aside is a separate carefully-scoped reversible audit (several are git worktrees).
+
 ### A. LOCAL READINESS
 | Item | State | Evidence / missing proof |
 |---|---|---|
