@@ -27,6 +27,13 @@ console.log("Runtime            :",status.runtime??"UNKNOWN");
 console.log("Foundation         :",status.foundation??"UNKNOWN");
 console.log("Converged          :",converged?"YES":"NO");
 console.log("Capabilities       :",(caps.capabilities||[]).length);
+// CM-4: report the count's HONEST decomposition so "capabilities" is never read as business capabilities.
+// Fail-safe: a classifier error never breaks the status output.
+try{
+  const {classify}=require("../../scripts/capability-classify.js");
+  const k=classify((caps.capabilities||[]).map(c=>typeof c==="string"?c:(c.id||c.name||c.capability||"")));
+  console.log("  classified       :","business="+k.businessCandidate,"· mission-derived="+k.missionDerived,"· nl-generated="+k.nlGenerated+(k.duplicates.length?" · dup="+k.duplicates.length:"")+(k.coherent?" · coherent":" · INCOHERENT"));
+}catch{/* classifier optional — never break status */}
 console.log("Missing            :",(caps.missingCapabilities||[]).length);
 console.log("Last Mission       :",lastMission);
 console.log("Next Mission       :",next?.mission??state.nextMission??"SYSTEM_READY");
