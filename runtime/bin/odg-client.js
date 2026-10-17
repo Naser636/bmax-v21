@@ -17,6 +17,38 @@ const fs = require("fs");
 const intake = require("../core/client-intake");
 const email = require("../core/email-gateway");
 
+// Edge IMAP client factory (V71 dependency inversion): email-gateway (a runtime/core module that compiles
+// to a self-contained dist) must not require the EXTERNAL "imapflow" package. This bin is the edge caller —
+// it constructs the real imapflow-backed client and INJECTS it into fetchInbound. Missing lib ⇒ fail closed
+// (the factory throws ⇒ fetchInbound returns NO_TRANSPORT). TLS + cert verification always on.
+function defaultImapFactory(cfg) {
+  const { ImapFlow } = require("imapflow");
+  const client = new ImapFlow({ host: cfg.host, port: cfg.port, secure: true, auth: { user: cfg.user, pass: cfg.pass }, tls: { rejectUnauthorized: true }, logger: false });
+  return {
+    async connect() { await client.connect(); },
+    async fetchAllUnseen() {
+      const out = [];
+      const lock = await client.getMailboxLock("INBOX");
+      try {
+        for await (const msg of client.fetch({ seen: false }, { envelope: true, bodyParts: ["text"] })) {
+          const envp = msg.envelope || {};
+          let text = "";
+          try { const part = msg.bodyParts && msg.bodyParts.get("text"); if (part) text = part.toString("utf8"); } catch { text = ""; }
+          out.push({
+            messageId: envp.messageId || null,
+            from: (envp.from && envp.from[0] && envp.from[0].address) || "",
+            subject: envp.subject || "",
+            date: envp.date ? new Date(envp.date).toISOString() : null,
+            text,
+          });
+        }
+      } finally { lock.release(); }
+      return out;
+    },
+    async logout() { await client.logout(); },
+  };
+}
+
 function parseFlags(argv) {
   const flags = {}, pos = [];
   for (let i = 0; i < argv.length; i++) {
@@ -90,7 +122,7 @@ function main() {
 
     case "fetch":
       // Real inbound retrieval via the default IMAP adapter; fail-closed NOT_CONFIGURED without credentials.
-      return email.fetchInbound({ cwd: flags.cwd }).then((r) => out(r, r.ok ? 0 : 3), (e) => out({ ok: false, code: "FETCH_ERROR", detail: String(e && e.message || e) }, 3));
+      return email.fetchInbound({ cwd: flags.cwd, imapFactory: defaultImapFactory }).then((r) => out(r, r.ok ? 0 : 3), (e) => out({ ok: false, code: "FETCH_ERROR", detail: String(e && e.message || e) }, 3));
 
     case "respond-draft": {
       const res = email.prepareResponseDraft(pos[0], opts);

@@ -612,6 +612,17 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/nl-objective-gateway-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V71 Class-C — the external-package blocker. The .js carries a dependency-inversion change (the external
+  // "imapflow" client factory moved to the edge caller runtime/bin/odg-client.js; fetchInbound keeps its
+  // injection seam and fails closed — NO_TRANSPORT — with no factory). So the compiled dist/core module is
+  // self-contained (build-dist-closure clean) WITHOUT widening the external safe-list. .ts = faithful
+  // @ts-nocheck transliteration; parity proven by the hermetic equivalence bench incl. the no-factory path.
+  "email-gateway": [
+    "runtime/core/email-gateway.js",
+    "runtime/core/email-gateway.ts",
+    "runtime/__bench__/email-gateway-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
   "improvement-baseline": [
     // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
     // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
@@ -828,6 +839,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "patch-proposal-apply": [],
   "nl-objective-gateway": [
     "runtime/core/nl-objective-gateway.test.js",
+  ],
+  "email-gateway": [
+    "runtime/core/email-gateway.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

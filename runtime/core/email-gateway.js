@@ -66,37 +66,12 @@ function readSeen(cwd) { try { return JSON.parse(fs.readFileSync(seenPath(cwd), 
 function writeSeen(cwd, obj) { const p = seenPath(cwd); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, JSON.stringify(obj, null, 2)); }
 function msgKey(messageId) { return crypto.createHash("sha256").update(String(messageId)).digest("hex").slice(0, 24); }
 
-// Default IMAP client factory — lazily requires imapflow (missing lib ⇒ fail closed) and bridges its real
-// API to the small {connect, fetchAllUnseen, logout} interface fetchInbound depends on. Tests inject a mock
-// implementing the SAME interface, so the inbound path is exercised offline; the REAL path requires live
-// credentials (structurally validated here, not run in this mission). TLS + cert verification always on.
-function defaultImapFactory(cfg) {
-  const { ImapFlow } = require("imapflow");
-  const client = new ImapFlow({ host: cfg.host, port: cfg.port, secure: true, auth: { user: cfg.user, pass: cfg.pass }, tls: { rejectUnauthorized: true }, logger: false });
-  return {
-    async connect() { await client.connect(); },
-    async fetchAllUnseen() {
-      const out = [];
-      const lock = await client.getMailboxLock("INBOX");
-      try {
-        for await (const msg of client.fetch({ seen: false }, { envelope: true, bodyParts: ["text"] })) {
-          const envp = msg.envelope || {};
-          let text = "";
-          try { const part = msg.bodyParts && msg.bodyParts.get("text"); if (part) text = part.toString("utf8"); } catch { text = ""; }
-          out.push({
-            messageId: envp.messageId || null,
-            from: (envp.from && envp.from[0] && envp.from[0].address) || "",
-            subject: envp.subject || "",
-            date: envp.date ? new Date(envp.date).toISOString() : null,
-            text,
-          });
-        }
-      } finally { lock.release(); }
-      return out;
-    },
-    async logout() { await client.logout(); },
-  };
-}
+// DEPENDENCY INVERSION (V71, closure-clean): the real IMAP client factory lazily required "imapflow", an
+// EXTERNAL npm package. A dist/core module may require only builtins + co-located relative siblings
+// (build-dist-closure rejects any external require so the compiled runtime stays self-contained), so the
+// imapflow construction — a pure edge I/O concern — now lives at the CALLER (runtime/bin/odg-client.js),
+// which injects it as `imapFactory`. fetchInbound keeps its existing injection seam; with NO factory it
+// fails closed (NO_TRANSPORT), exactly as before when the lib was missing. Tests inject a mock factory.
 
 function safeExcerpt(text) {
   const s = typeof text === "string" ? text : "";
@@ -111,7 +86,10 @@ async function fetchInbound(opts = {}) {
   const env = env_(opts), cwd = opts.cwd;
   const cfg = imapConfig(env);
   if (!cfg.ok) return Object.freeze({ ok: false, code: CODE.NOT_CONFIGURED });
-  const factory = typeof opts.imapFactory === "function" ? opts.imapFactory : defaultImapFactory;
+  // The IMAP client factory is INJECTED (edge I/O; see the dependency-inversion note above). No factory ⇒
+  // fail closed (NO_TRANSPORT) — identical to the historical "imapflow missing ⇒ fail closed" behaviour.
+  const factory = typeof opts.imapFactory === "function" ? opts.imapFactory : null;
+  if (!factory) return Object.freeze({ ok: false, code: CODE.NO_TRANSPORT });
 
   let client;
   try { client = factory(cfg); } catch { return Object.freeze({ ok: false, code: CODE.NO_TRANSPORT }); }
@@ -171,7 +149,7 @@ async function sendResponse(opts = {}) {
   return Object.freeze({ ok: true, sent: true, messageId: info && info.messageId ? info.messageId : null, authorizedBy: auth.owner });
 }
 
-module.exports = { STATE, CODE, inboundReadiness, outboundReadiness, fetchInbound, prepareResponseDraft, sendResponse, defaultImapFactory };
+module.exports = { STATE, CODE, inboundReadiness, outboundReadiness, fetchInbound, prepareResponseDraft, sendResponse };
 
 if (require.main === module) {
   // Safe summary only — never prints secrets or message bodies.

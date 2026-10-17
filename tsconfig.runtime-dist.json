@@ -98,6 +98,7 @@
     "runtime/core/improvement-baseline.ts",
     "runtime/core/runtime-paths.ts",
     "runtime/core/patch-proposal-apply.ts",
-    "runtime/core/nl-objective-gateway.ts"
+    "runtime/core/nl-objective-gateway.ts",
+    "runtime/core/email-gateway.ts"
   ]
 }

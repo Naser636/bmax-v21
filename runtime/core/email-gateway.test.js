@@ -115,5 +115,13 @@ const INQUIRY = { messageId: "<abc-1@example.test>", from: "jane@acme.example", 
     ok("9 enabled + grant + injected transport ⇒ ok via MOCK (offline, no network)", sent.ok && sent.sent === true && recorded && recorded.subject === "Re" && sent.authorizedBy === "cto");
   }
 
+  // 10 — V71 dependency inversion: NO injected imapFactory ⇒ fail closed (NO_TRANSPORT), NO implicit network.
+  // email-gateway (a dist/core module) no longer requires the external "imapflow"; the edge caller injects it.
+  {
+    const r = await G.fetchInbound({ env: ENV, cwd: tmp() });
+    ok("10 no imapFactory ⇒ NO_TRANSPORT (fail closed, no implicit network)", r.ok === false && r.code === G.CODE.NO_TRANSPORT);
+    ok("10 defaultImapFactory no longer exported (moved to runtime/bin/odg-client.js)", typeof G.defaultImapFactory === "undefined");
+  }
+
   console.log(`\nEMAIL GATEWAY (offline) — ${passed} assertions passed.`);
 })().catch((e) => { console.error("TEST ERROR:", e && e.stack || e); process.exit(1); });
