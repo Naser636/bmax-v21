@@ -56,6 +56,7 @@ VAT is **not universally mandatory** — confirm applicability for the seller's 
 | D3 | **Ph.11 ENFORCE-by-default** flip | behavior change (deny-by-default write enforcement); doctrine decision | staged-enforce criteria + reversible flip |
 | D4 | **Workspace-local compiled-runtime resolution** for the 7 Option-C adapters | changes a correctness/authorization contract (admitted deferred/unauthorized nominations if done naively) | architecture spec + compatibility tests + preserved corrective-queue assertions |
 | D5 | §M-3 #8 **`.js` deletion** | criteria #2 (no active consumer) + #7 (reversible rollback) + exact manifest + CTO authorization all required | D2 + A3 + manifest |
+| D6 | **Dependency-advisory remediation** (`npm audit`: 6 advisories — `sharp`/image-codecs, `source-map-js`) | the only non-trivial fix forces a BREAKING `next@16.4.2` major (outside range); both advisories are OFF the loopback surface (image optimizer / build-time) | decide: accept off-surface risk, OR authorize a tested rollback-guarded upgrade mission (full suite + health re-verify) — see `ODG_SSDF_TRACEABILITY.md` |
 
 **Ordering:** A3 (off-host access) is the keystone — it unblocks #7 → D2 → #2 → D5, and A1/A2/A4/A5 enable
 staging→production. B/C items are needed only at their stated go-live point. D3/D4 are independent doctrine/
