@@ -132,8 +132,43 @@ function fromReport(mission, repoRoot, opts) {
   };
 }
 
+/*
+ * RESUME + DIVERGENCE (CTO compass-automation): read-only. Reads the last VERIFIED compass-checkpoint and
+ * reports whether it is CONSISTENT with the current git HEAD or STALE (the recorded verified-mission commit
+ * differs from HEAD ⇒ work advanced since the last recorded verified checkpoint, so the compass pointer is
+ * behind the repo). Fail-closed: a missing/corrupt checkpoint or an unavailable HEAD ⇒ UNKNOWN, never a
+ * false CONSISTENT. Pure read — no write, no mutation. Reuses the SAME compass-checkpoint.json the recorder
+ * writes (no second source of truth).
+ */
+function resumeState(repoRoot) {
+  const file = path.join(repoRoot, "runtime", "generated", "compass-checkpoint.json");
+  const head = gitId(repoRoot).commit;
+  let state;
+  try { state = JSON.parse(fs.readFileSync(file, "utf8")); } catch {
+    return { status: "UNKNOWN", reason: "no readable compass-checkpoint", verifiedCheckpoint: null, last: null, head, consistent: false };
+  }
+  const vc = state.verifiedCheckpoint || null;
+  const last = state.lastMission || null;
+  if (!vc || !vc.commit) return { status: "UNKNOWN", reason: "no verified checkpoint recorded", verifiedCheckpoint: vc, last, head, consistent: false };
+  if (!head) return { status: "UNKNOWN", reason: "git HEAD unavailable", verifiedCheckpoint: vc, last, head: null, consistent: false };
+  const consistent = vc.commit === head;
+  return {
+    status: consistent ? "CONSISTENT" : "STALE",
+    reason: consistent
+      ? "verified checkpoint commit === HEAD"
+      : `verified checkpoint ${String(vc.commit).slice(0, 7)} != HEAD ${String(head).slice(0, 7)} (work advanced since the last recorded verified mission)`,
+    verifiedCheckpoint: vc, last, head, consistent,
+  };
+}
+
 if (require.main === module) {
   const args = process.argv.slice(2);
+  if (args[0] === "--resume") {
+    const rs = resumeState(path.resolve(__dirname, ".."));
+    process.stdout.write(`compass-resume: ${rs.status} — ${rs.reason}\n`);
+    if (rs.verifiedCheckpoint) process.stdout.write(`  verified: ${rs.verifiedCheckpoint.mission}@${String(rs.verifiedCheckpoint.commit).slice(0, 7)} | last: ${rs.last ? rs.last.mission + "=" + rs.last.status : "(none)"}\n`);
+    process.exit(rs.status === "CONSISTENT" ? 0 : rs.status === "STALE" ? 3 : 2);
+  }
   let result;
   if (args[0] === "--from-report") {
     const mission = args[1];
@@ -147,4 +182,4 @@ if (require.main === module) {
   const r = update(result);
   process.stdout.write("compass-update: " + r.effective.status + " — " + r.note + "\n");
 }
-module.exports = { update, effectiveStatus, sig, fromReport };
+module.exports = { update, effectiveStatus, sig, fromReport, resumeState };

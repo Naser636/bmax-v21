@@ -6,7 +6,8 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { update, effectiveStatus, fromReport } = require("./compass-update.js");
+const { update, effectiveStatus, fromReport, resumeState } = require("./compass-update.js");
+const cp = require("child_process");
 
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
@@ -134,6 +135,28 @@ function writeReport(root, obj) { fs.mkdirSync(path.join(root, "runtime", "gener
   writeReport(c.repoRoot, { mission: "OTHER", status: "SUCCESS", validated: true }); // stale/cross-mission
   const r = update(fromReport("NEWMISSION", c.repoRoot), c); // guard ⇒ NOT_RUN
   ok("stale report ⇒ NOT_RUN recorded, prior verifiedCheckpoint PRESERVED", r.effective.status === "NOT_RUN" && r.state.verifiedCheckpoint.commit === "goodc");
+}
+
+// 17-20 — RESUME + DIVERGENCE (read-only): CONSISTENT when checkpoint commit===HEAD, STALE when it differs,
+//         UNKNOWN (never false CONSISTENT) when absent/corrupt.
+{
+  const root = tmpd();
+  fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true });
+  cp.execSync("git init -q && git -c user.email=t@t -c user.name=t commit -q --allow-empty -m x", { cwd: root, stdio: "ignore" });
+  const head = cp.execSync("git rev-parse HEAD", { cwd: root }).toString().trim();
+  const cpFile = path.join(root, "runtime", "generated", "compass-checkpoint.json");
+  const file2 = path.join(root, "cp2.json"); void file2;
+  // (a) no checkpoint ⇒ UNKNOWN
+  ok("resume: no checkpoint ⇒ UNKNOWN (no false CONSISTENT)", resumeState(root).status === "UNKNOWN");
+  // (b) verified checkpoint commit === HEAD ⇒ CONSISTENT
+  fs.writeFileSync(cpFile, JSON.stringify({ verifiedCheckpoint: { mission: "M", commit: head }, lastMission: { mission: "M", status: "PASS" } }));
+  ok("resume: checkpoint commit === HEAD ⇒ CONSISTENT", resumeState(root).status === "CONSISTENT" && resumeState(root).consistent === true);
+  // (c) verified checkpoint commit != HEAD ⇒ STALE
+  fs.writeFileSync(cpFile, JSON.stringify({ verifiedCheckpoint: { mission: "M", commit: "0000000000000000000000000000000000000000" }, lastMission: { mission: "M", status: "PASS" } }));
+  ok("resume: checkpoint commit != HEAD ⇒ STALE (divergence detected)", resumeState(root).status === "STALE" && resumeState(root).consistent === false);
+  // (d) checkpoint present but NO verifiedCheckpoint ⇒ UNKNOWN
+  fs.writeFileSync(cpFile, JSON.stringify({ verifiedCheckpoint: null, lastMission: null }));
+  ok("resume: no verifiedCheckpoint ⇒ UNKNOWN (never false CONSISTENT)", resumeState(root).status === "UNKNOWN");
 }
 
 console.log(`\ncompass-update §8 — ${passed} assertions passed.`);
