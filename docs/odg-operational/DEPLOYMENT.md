@@ -103,6 +103,35 @@ Do not claim production-ready until gates 2–4 pass with captured evidence.
 - Email/payments/fiscal provider config — **(HUMAN)** see `LAUNCH_READINESS.md`; not required to serve,
   required to launch commercially.
 
+### 2.1 Runtime selection & rollback (operator-critical — §M-3 cutover)
+- `ODG_RUNTIME` — optional; **default `ts`** (compiled TypeScript runtime: `runtime/dist/bin/odg-run.js` +
+  `ODG_STAGE_BASE=runtime/dist/core`). **Rollback = `ODG_RUNTIME=js`** → the JavaScript runtime
+  (`runtime/bin/odg-run.js` → `runtime/core/*.js`). The front-door `odg-local-pipeline.sh` never silently
+  falls back; set `js` explicitly to roll back. (Verified both directions: SUCCESS 13/13 each.)
+- `ODG_STAGE_BASE` — optional; the compiled builder's stage base (default `runtime/dist/core` under `ts`).
+- `ODG_RUNTIME_ENTRY` — optional; overrides the run entry (default the compiled `dist/bin/odg-run.js` under `ts`).
+- Build prerequisite: `runtime/dist` is gitignored; `npm test` now runs a `pretest` that regenerates it
+  (guarded build) so a clean checkout / CI self-provisions the compiled runtime.
+
+### 2.2 Provider & model config (SECRET names only — never commit values; `.env*` is git-ignored)
+These are OPTIONAL to serve/run locally and are consumed ONLY on the live-provider path, which is gated
+(`ODG_PROVIDER_LIVE`/`OPENAI_LIVE` default OFF; deny-by-default). Provide values out-of-band (host secret
+store), never in commits/logs/reports:
+- `ANTHROPIC_API_KEY` — **SECRET**, optional; Claude provider (live path only).
+- `OPENAI_API_KEY` — **SECRET**, optional; OpenAI provider (live path only). `OPENAI_BASE_URL` / `OPENAI_MODEL`
+  optional non-secret overrides; `OPENAI_LIVE=1` opt-in to the live call (default OFF).
+- `ODG_PROVIDER_LIVE` — optional opt-in to live provider execution (default OFF; gated by
+  `provider-live-call-gate`). `ODG_CLAUDE_USE_API_KEY` / `ODG_CLAUDE_PREFER_SUBSCRIPTION` select the Claude
+  auth mode when live.
+- `ODG_OLLAMA_BASE_URL` / `ODG_OLLAMA_SMALL_MODEL` / `ODG_OLLAMA_LARGE_MODEL` — optional, local-model
+  (Ollama) control plane; off unless configured.
+- `ODG_HUMAN_COMMIT_APPROVED` — optional human-authorization flag for the commit gate (consequential).
+
+**Config template convention:** because `.env*` is git-ignored (no secret values in VCS), the authoritative
+names-only template is THIS section (§2 + §2.1 + §2.2). An operator materialises a local `.env` from these
+names with host-provided values; no key/token/password is invented or shipped here. Health/intake expose no
+secret values or paths (CHG-OD-8/10).
+
 ## 3. Startup
 ```bash
 export ODG_CLIENT_STORE=/var/lib/odg/clients      # (HOST) persistent, 0700
