@@ -45,7 +45,12 @@ if (snapshot.autonomy.measurable === false) {
     autonomy: { present: true, measurable: false, autonomyPercent: 99, reason: "incomplete", counts: null, total: null },
   };
   const hostileHtml = renderToStaticMarkup(React.createElement(Dashboard, { snapshot: hostile }));
-  check(!hostileHtml.includes("99"), "honesty: measurable:false ignores a leaked autonomyPercent (no '99')");
+  // The honest property is that a leaked autonomyPercent is NEVER rendered AS A PERCENTAGE when measurable:false.
+  // (Earlier this asserted !includes("99") against the WHOLE html, which the `...snapshot` spread made brittle:
+  //  real data such as a generatedAt timestamp "…11.994Z" contains "99" and tripped a false failure. The check
+  //  now targets the leaked value's percentage form, which is the actual honesty invariant.)
+  check(!/99\s*%/.test(hostileHtml), "honesty: measurable:false ignores a leaked autonomyPercent (no '99%')");
+  check(!/\d+\s*%/.test(hostileHtml), "honesty: measurable:false renders NO percentage at all, even if one leaks in");
   check(hostileHtml.includes("not yet measurable"), "honesty: hostile case still shows 'not yet measurable'");
 }
 
