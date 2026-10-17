@@ -2,7 +2,9 @@
 "use strict";
 /* Runtime-vs-disk identity detector tests — pure, deterministic, fail-closed (CTO §6). */
 const assert = require("assert");
-const { identityVerdict } = require("./runtime-identity-check.js");
+const cp = require("child_process");
+const path = require("path");
+const { identityVerdict, exitCodeFor } = require("./runtime-identity-check.js");
 
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
@@ -46,6 +48,20 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); pa
 {
   const v = identityVerdict({ onDiskBuildId: "X", standaloneBuildId: "X", runningCwd: "/app/standalone", servedBuildId: "X" });
   ok("served match reported", v.status === "CONSISTENT" && v.reasons.some((r) => /served build matches/.test(r)));
+}
+
+// 9 — exitCodeFor maps statuses to the documented codes (0 CONSISTENT, 3 DRIFT, 2 UNKNOWN).
+{
+  ok("exitCodeFor: CONSISTENT=0, DRIFT=3, UNKNOWN=2", exitCodeFor("CONSISTENT") === 0 && exitCodeFor("DRIFT") === 3 && exitCodeFor("UNKNOWN") === 2);
+}
+// 10 — --json CLI prints ONE valid JSON object {status, reasons} and preserves the status exit code.
+{
+  const res = cp.spawnSync("node", [path.join(__dirname, "runtime-identity-check.js"), "--json"], { encoding: "utf8" });
+  let parsed = null, parseOk = true;
+  try { parsed = JSON.parse(res.stdout.trim()); } catch { parseOk = false; }
+  ok("--json emits valid JSON with status + reasons", parseOk && parsed && typeof parsed.status === "string" && Array.isArray(parsed.reasons));
+  ok("--json exit code matches exitCodeFor(status)", parsed && res.status === exitCodeFor(parsed.status));
+  ok("--json prints a single line (one object)", res.stdout.trim().split("\n").length === 1);
 }
 
 console.log(`\nruntime-identity-check — ${passed} assertions passed.`);

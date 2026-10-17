@@ -79,11 +79,20 @@ function gatherLive(repoRoot) {
   return { onDiskBuildId, standaloneBuildId, runningCwd, servedBuildId };
 }
 
+// Exit code for a verdict status (shared by human + --json output so they never diverge).
+function exitCodeFor(status) { return status === "CONSISTENT" ? 0 : status === "DRIFT" ? 3 : 2; }
+
 if (require.main === module) {
+  const json = process.argv.includes("--json");
   const inputs = gatherLive(path.resolve(__dirname, ".."));
   const v = identityVerdict(inputs);
-  process.stdout.write(`runtime-identity: ${v.status}\n`);
-  for (const r of v.reasons) process.stdout.write(`  - ${r}\n`);
-  process.exit(v.status === "CONSISTENT" ? 0 : v.status === "DRIFT" ? 3 : 2);
+  if (json) {
+    // One machine-readable object (status + reasons) for the deploy-hygiene gate; same exit code as human mode.
+    process.stdout.write(JSON.stringify({ status: v.status, reasons: v.reasons }) + "\n");
+  } else {
+    process.stdout.write(`runtime-identity: ${v.status}\n`);
+    for (const r of v.reasons) process.stdout.write(`  - ${r}\n`);
+  }
+  process.exit(exitCodeFor(v.status));
 }
-module.exports = { identityVerdict, gatherLive };
+module.exports = { identityVerdict, gatherLive, exitCodeFor };
