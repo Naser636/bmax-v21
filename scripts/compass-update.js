@@ -82,25 +82,52 @@ function writeAtomic(file, state) {
   fs.renameSync(tmp, file); // atomic ⇒ an interrupted write never corrupts the last verified checkpoint
 }
 
-// Derive a VERIFIED result from the real mission artifacts (fail-closed: PASS only if the report says
-// validated===true AND status===SUCCESS AND the evidence files exist). Used by the pipeline completion hook.
-function fromReport(mission, repoRoot) {
-  const gen = path.join(repoRoot, "runtime", "generated");
-  let report = {};
-  try { report = JSON.parse(fs.readFileSync(path.join(gen, "mission-report.json"), "utf8")); } catch { report = {}; }
+function gitId(repoRoot) {
+  const run = (a) => { try { return require("child_process").execSync(`git ${a}`, { cwd: repoRoot, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { return null; } };
+  return { commit: run("rev-parse HEAD"), branch: run("rev-parse --abbrev-ref HEAD") };
+}
+
+/*
+ * Derive a VERIFIED result from the real mission artifacts. TWO anti-stale guards make a leftover report
+ * incapable of fabricating a PASS or mis-attributing an outcome (fail-closed), which is ESSENTIAL for a
+ * trap that fires on every terminal path (SUCCESS/STOP/FAIL/interruption):
+ *   1) MISSION-IDENTITY — report.mission MUST equal the mission we are recording; else NOT_RUN. Stops a
+ *      previous DIFFERENT mission's report from being attributed to this one.
+ *   2) FRESHNESS (opts.sinceMs) — the report file mtime MUST be >= the run's start epoch; else NOT_RUN.
+ *      Stops a SAME-mission earlier report (e.g. this mission ran green before, now re-ran and crashed
+ *      before rewriting the report) from being replayed as a fresh PASS.
+ * PASS additionally requires validated===true AND status===SUCCESS (and update() re-checks evidence exists).
+ */
+function fromReport(mission, repoRoot, opts) {
+  opts = opts || {};
+  const reportPath = path.join(repoRoot, "runtime", "generated", "mission-report.json");
+  const notRun = (reason) => ({ mission, ...gitId(repoRoot), status: "NOT_RUN", acceptanceMet: false, evidence: [], reason, nextAction: null, verified: true });
+
+  let report = {}, mtimeMs = 0;
+  try { report = JSON.parse(fs.readFileSync(reportPath, "utf8")); mtimeMs = fs.statSync(reportPath).mtimeMs; } catch { return notRun("no mission-report readable for this mission"); }
+
+  // Guard 1 — identity.
+  const reportMission = typeof report.mission === "string" ? report.mission : null;
+  if (!reportMission || reportMission !== mission) return notRun(reportMission ? `report mission "${reportMission}" ≠ "${mission}" (stale ⇒ not attributed)` : "mission-report has no mission identity");
+  // Guard 2 — freshness (only when a run-start epoch is supplied).
+  if (typeof opts.sinceMs === "number" && mtimeMs < opts.sinceMs) return notRun(`report mtime ${Math.round(mtimeMs)} < run-start ${Math.round(opts.sinceMs)} (not written this run ⇒ stale)`);
+
   const validated = report.validated === true;
   const reportStatus = report.status || "UNKNOWN";
   const pass = validated && reportStatus === "SUCCESS";
-  let commit = null, branch = null;
-  try { commit = require("child_process").execSync("git rev-parse HEAD", { cwd: repoRoot, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { /* detached/no-git */ }
-  try { branch = require("child_process").execSync("git rev-parse --abbrev-ref HEAD", { cwd: repoRoot, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { /* */ }
+  // Faithful status mapping (never flatten a BLOCKED/PARTIAL into a bare FAIL, never a non-SUCCESS into PASS).
+  let status;
+  if (pass) status = "PASS";
+  else if (reportStatus === "BLOCKED") status = "BLOCKED";
+  else if (reportStatus === "PARTIAL") status = "PARTIAL";
+  else if (reportStatus === "UNKNOWN") status = "NOT_RUN";
+  else status = "FAIL";
   const evidence = ["runtime/generated/mission-report.json"];
-  if (fs.existsSync(path.join(gen, "runtime-verify.json"))) evidence.push("runtime/generated/runtime-verify.json");
+  if (fs.existsSync(path.join(repoRoot, "runtime", "generated", "runtime-verify.json"))) evidence.push("runtime/generated/runtime-verify.json");
   return {
-    mission, commit, branch,
-    status: pass ? "PASS" : (reportStatus === "UNKNOWN" ? "NOT_RUN" : "FAIL"),
-    acceptanceMet: pass, evidence,
-    reason: pass ? "mission-report validated+SUCCESS" : `report status=${reportStatus} validated=${validated}`,
+    mission, ...gitId(repoRoot),
+    status, acceptanceMet: pass, evidence,
+    reason: pass ? "mission-report validated+SUCCESS (identity+freshness ok)" : `report status=${reportStatus} validated=${validated}`,
     nextAction: null, verified: true,
   };
 }
@@ -110,8 +137,10 @@ if (require.main === module) {
   let result;
   if (args[0] === "--from-report") {
     const mission = args[1];
-    if (!mission) { process.stderr.write("compass-update --from-report <mission>\n"); process.exit(2); }
-    result = fromReport(mission, path.resolve(__dirname, ".."));
+    if (!mission) { process.stderr.write("compass-update --from-report <mission> [--since <epochMs>]\n"); process.exit(2); }
+    const si = args.indexOf("--since");
+    const sinceMs = si >= 0 && args[si + 1] ? Number(args[si + 1]) : undefined;
+    result = fromReport(mission, path.resolve(__dirname, ".."), { sinceMs });
   } else {
     result = JSON.parse(args[0] || "{}");
   }

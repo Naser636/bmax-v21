@@ -20,6 +20,28 @@ DATE=$(date -Iseconds)
 COMMIT=$(git rev-parse --short HEAD)
 BRANCH=$(git branch --show-current)
 
+# §8 COMPASS auto-fire — canonical mission-completion recorder, invoked on EVERY terminal path via a trap
+# installed as early as MISSION is known (SUCCESS, early/late STOP, FAIL, and handled INT/TERM). It records
+# the mission's VERIFIED outcome into the compass checkpoint. TWO anti-stale guards inside compass-update
+# make it impossible for a leftover report to fabricate a PASS or advance the verified checkpoint after a
+# failure/interruption: (1) mission-identity (report.mission must equal "$MISSION"); (2) freshness (report
+# mtime must be >= _COMPASS_START_MS captured here, BEFORE the staged runtime rewrites the report). Either
+# guard failing ⇒ honest NOT_RUN. Idempotent (replay = no-op). The recorder can NEVER change the mission's
+# own exit code; a recorder failure is SURFACED on stderr (never hidden). Opt-out: ODG_COMPASS_RECORD=0.
+_COMPASS_START_MS=$(( $(date +%s%N) / 1000000 ))   # epoch MILLISECONDS (matches fs.statSync.mtimeMs)
+_COMPASS_DONE=0
+_compass_record() {
+  local rc=$?
+  if [ "$_COMPASS_DONE" = "0" ] && [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
+    _COMPASS_DONE=1
+    node scripts/compass-update.js --from-report "$MISSION" --since "$_COMPASS_START_MS" \
+      || echo "[COMPASS] WARNING: compass recorder failed (rc=${rc}; mission result unaffected)" >&2
+  fi
+  trap - EXIT INT TERM
+  exit "$rc"
+}
+trap _compass_record EXIT INT TERM
+
 # WI-3 — baseline-relative governance. The pre-flight [1/5] captures a verifiable BASELINE of the dirty
 # tree here and the post-run gate [5/5] charges the mission with ONLY its delta vs that baseline (via the
 # checkpoint-engine classifier shared with the Validation Engine). Pre-existing operator work is therefore
@@ -228,25 +250,10 @@ REPORT_STATUS=$(node -e "try{process.stdout.write(String(require('./runtime/gene
 REPORT_VALIDATED=$(node -e "try{process.stdout.write(String(require('./runtime/generated/mission-report.json').validated===true))}catch(e){process.stdout.write('false')}")
 
 if [ "$REPORT_VALIDATED" != "true" ] || [ "$REPORT_STATUS" != "SUCCESS" ]; then
-  # §8 COMPASS auto-fire (failure branch): record the honest non-SUCCESS outcome. fromReport derives
-  # status from the real mission-report (will be FAIL/NOT_RUN here — can NEVER record PASS on this branch).
-  # Guarded: a recorder failure is surfaced on stderr but can NEVER change the mission's own exit code.
-  if [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
-    node scripts/compass-update.js --from-report "$MISSION" || echo "[COMPASS] WARNING: recorder failed on STOP branch (mission result unaffected)" >&2
-  fi
+  # Compass recording happens on the EXIT trap (above), which fires on this STOP too — no inline call needed.
   echo "STOP: mission not proven by the Validation Engine (status=${REPORT_STATUS}, validated=${REPORT_VALIDATED})."
   echo "No SUCCESS artifact will be written."
   exit 1
-fi
-
-# §8 COMPASS auto-fire (verified-SUCCESS branch) — THE single canonical completion event: reached only AFTER
-# the Validation Engine proved validated===true AND status===SUCCESS above. fromReport re-derives the result
-# from the real mission-report (fail-closed: PASS only if the artifact still says validated+SUCCESS and its
-# evidence files exist) and records a verified checkpoint. Idempotent (replay = no-op). A recorder failure is
-# surfaced loudly but does NOT silently convert into "full success" — it never flips the proven mission result,
-# yet it is never hidden. Opt-out: ODG_COMPASS_RECORD=0.
-if [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
-  node scripts/compass-update.js --from-report "$MISSION" || echo "[COMPASS] WARNING: recorder failed on SUCCESS branch (checkpoint NOT advanced; mission still SUCCESS)" >&2
 fi
 
 cat > "runtime/generated/mission-artifacts/passports/${MISSION}.passport.md" <<PASS

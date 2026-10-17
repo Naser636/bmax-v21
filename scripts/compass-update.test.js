@@ -74,37 +74,66 @@ function ctx() { const root = tmpd(); return { repoRoot: root, file: path.join(r
   ok("nextAction stored as inert string (no authority)", typeof r.state.lastMission.nextAction === "string" && !("execute" in r.state.lastMission) && !("authorized" in r.state.lastMission));
 }
 
-// 9 — fromReport (pipeline hook): validated+SUCCESS report ⇒ verified PASS result with real evidence refs.
+function writeReport(root, obj) { fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true }); fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify(obj)); return path.join(root, "runtime", "generated", "mission-report.json"); }
+
+// 9 — fromReport (pipeline hook): matching-mission validated+SUCCESS report ⇒ verified PASS with real evidence.
 {
   const root = tmpd();
-  fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true });
-  fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify({ status: "SUCCESS", validated: true }));
+  writeReport(root, { mission: "M-HOOK", status: "SUCCESS", validated: true });
   const r = fromReport("M-HOOK", root);
-  ok("fromReport: SUCCESS+validated ⇒ PASS", r.status === "PASS" && r.acceptanceMet === true && r.verified === true);
+  ok("fromReport: identity+SUCCESS+validated ⇒ PASS", r.status === "PASS" && r.acceptanceMet === true && r.verified === true);
   ok("fromReport: evidence points at the real report", r.evidence.includes("runtime/generated/mission-report.json"));
 }
 // 10 — fromReport fail-closed: report NOT validated ⇒ FAIL (never PASS), acceptanceMet false.
 {
   const root = tmpd();
-  fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true });
-  fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify({ status: "SUCCESS", validated: false }));
+  writeReport(root, { mission: "M-HOOK", status: "SUCCESS", validated: false });
   const r = fromReport("M-HOOK", root);
   ok("fromReport: SUCCESS but validated=false ⇒ FAIL (fail-closed)", r.status === "FAIL" && r.acceptanceMet === false);
 }
 // 11 — fromReport: absent report ⇒ NOT_RUN (never fabricates a PASS).
 {
-  const root = tmpd();
-  const r = fromReport("M-HOOK", root);
+  const r = fromReport("M-HOOK", tmpd());
   ok("fromReport: no report ⇒ NOT_RUN", r.status === "NOT_RUN" && r.acceptanceMet === false);
 }
 // 12 — end-to-end hook: a FAIL-derived result recorded ⇒ never advances verifiedCheckpoint.
 {
   const c = ctx();
-  fs.mkdirSync(path.join(c.repoRoot, "runtime", "generated"), { recursive: true });
-  fs.writeFileSync(path.join(c.repoRoot, "runtime", "generated", "mission-report.json"), JSON.stringify({ status: "FAILED", validated: false }));
-  const derived = fromReport("M-E2E", c.repoRoot);
-  const r = update(derived, c);
+  writeReport(c.repoRoot, { mission: "M-E2E", status: "FAILED", validated: false });
+  const r = update(fromReport("M-E2E", c.repoRoot), c);
   ok("hook FAIL ⇒ recorded FAIL, verifiedCheckpoint still null", r.effective.status === "FAIL" && r.state.verifiedCheckpoint === null);
+}
+// 13 — GUARD 1 (identity): report belongs to a DIFFERENT mission ⇒ NOT_RUN (never attributed/false-PASS).
+{
+  const root = tmpd();
+  writeReport(root, { mission: "OTHER_MISSION", status: "SUCCESS", validated: true });
+  const r = fromReport("M-WANTED", root);
+  ok("cross-mission stale SUCCESS report ⇒ NOT_RUN (not a false PASS for M-WANTED)", r.status === "NOT_RUN" && r.acceptanceMet === false && /≠/.test(r.reason));
+}
+// 14 — GUARD 2 (freshness): SAME-mission report older than run-start ⇒ NOT_RUN (no replay of a prior PASS).
+{
+  const root = tmpd();
+  const rp = writeReport(root, { mission: "M-SAME", status: "SUCCESS", validated: true });
+  const old = fs.statSync(rp).mtimeMs - 10000; // report written 10s before "run start"
+  const r = fromReport("M-SAME", root, { sinceMs: fs.statSync(rp).mtimeMs + 5000 });
+  ok("same-mission report older than run-start ⇒ NOT_RUN (no stale replay)", r.status === "NOT_RUN" && /stale/.test(r.reason));
+  void old;
+}
+// 15 — GUARD 2 passes when the report is fresh (mtime >= run-start) ⇒ PASS.
+{
+  const root = tmpd();
+  const rp = writeReport(root, { mission: "M-FRESH", status: "SUCCESS", validated: true });
+  const r = fromReport("M-FRESH", root, { sinceMs: fs.statSync(rp).mtimeMs - 1000 }); // run started before the report was written
+  ok("fresh same-mission report (mtime >= run-start) ⇒ PASS", r.status === "PASS" && r.acceptanceMet === true);
+}
+// 16 — end-to-end anti-stale: a NOT_RUN (stale) derivation NEVER advances a previously-verified checkpoint.
+{
+  const c = ctx();
+  fs.writeFileSync(path.join(c.repoRoot, "ev.txt"), "x");
+  update({ mission: "PRIOR", commit: "goodc", status: "PASS", acceptanceMet: true, evidence: ["ev.txt"], verified: true }, c); // establish a verified checkpoint
+  writeReport(c.repoRoot, { mission: "OTHER", status: "SUCCESS", validated: true }); // stale/cross-mission
+  const r = update(fromReport("NEWMISSION", c.repoRoot), c); // guard ⇒ NOT_RUN
+  ok("stale report ⇒ NOT_RUN recorded, prior verifiedCheckpoint PRESERVED", r.effective.status === "NOT_RUN" && r.state.verifiedCheckpoint.commit === "goodc");
 }
 
 console.log(`\ncompass-update §8 — ${passed} assertions passed.`);
