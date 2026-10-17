@@ -147,6 +147,31 @@ const requiresEngineering =
     spec.requiresEngineering === true ||
     authorizedPaths.length > 0;
 
+// CM-5: per-objective governance authorization DECLARATION for the autonomy DENOMINATOR, DERIVED from the
+// mission's DECLARED governance ENVELOPE (mode + requires_engineering + authorized_paths) — a verifiable
+// source, NOT a generic stamp and NOT inferred from an objective's mere presence. Only UNAMBIGUOUS classes
+// are declared eligible+authorized: a read-only AUDIT/ANALYZE mission (authorized to READ, no write scope)
+// or a scoped-engineering mission (an authorized_paths grant IS the authorization). Everything else —
+// OPERATIONAL/reserved/human-gated (e.g. DEPLOY_* with no scope) or ambiguous — is left UNDECLARED, so the
+// measurer stays fail-closed NOT_MEASURABLE and can NEVER be inflated. An explicit per-objective contract
+// declaration (above) is ALWAYS respected and never overwritten. TRANSPORT-ONLY for measurement — this is
+// NOT a runtime permission (the action-gate + authorized_paths still enforce effective authorization).
+const _modeUpper = (typeof spec.mode === "string" ? spec.mode : "").toUpperCase();
+const _readOnlyMeasured = (_modeUpper === "AUDIT" || _modeUpper === "ANALYZE") &&
+    spec.requires_engineering !== true && spec.requiresEngineering !== true && authorizedPaths.length === 0;
+const _scopedEngineering = authorizedPaths.length > 0;
+// Contract governance may FORBID measurement even when paths are present: a governed-DEPRECATED mission is
+// never auto-declared eligible (an authorized_paths grant does NOT override the deprecation).
+const _governanceAllows = spec.governedStatus !== "DEPRECATED";
+const _derivedAuthorization = (_governanceAllows && (_readOnlyMeasured || _scopedEngineering))
+    ? { eligible: true, authorized: true, basis: _readOnlyMeasured ? "governance-envelope:read-only-audit" : "governance-envelope:scoped-engineering" }
+    : null;
+if (_derivedAuthorization) {
+    for (const _obj of objectives as Array<Record<string, unknown>>) {
+        if (!_obj.authorization) _obj.authorization = { ..._derivedAuthorization };
+    }
+}
+
 const plan: any = {
     mission,
     source: CONTRACT_PATH,
