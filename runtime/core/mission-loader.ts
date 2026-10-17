@@ -159,6 +159,24 @@ if (spec.requires_engineering === true && authorizedPaths.length === 0) {
     process.exit(1);
 }
 
+// CONTRACT-SUFFICIENCY GATE — ACCEPTANCE: an ENGINEERING mission MUST declare how success is determined
+// BEFORE execution. Mapped to the real mission-contract schema (the canonical work_item_contract_schema's
+// `acceptance_criteria` is carried here as objective `done_when` / `definition_of_done`): a non-empty
+// done_when on any objective OR a non-empty definition_of_done. An engineering mission with NO acceptance
+// signal is ambiguous (success undeterminable) ⇒ refused pre-execution, zero mutation. Read-only missions
+// are exempt (they assert state, not a change). (Scan @ install: 48/48 engineering contracts carry
+// done_when ⇒ zero blast radius.) NOTE: `evidence_required` as a PRE-execution field is NOT yet in the
+// mission-contract schema (0/48 carry it); evidence is enforced POST-execution by the Validation Engine.
+// Requiring it pre-execution needs a governed contract migration — PROPOSED, not auto-stamped here.
+const _hasAcceptance =
+    objectives.some((o: Record<string, unknown>) => Array.isArray(o.done_when) && (o.done_when as unknown[]).length > 0) ||
+    (Array.isArray(spec.definition_of_done) && spec.definition_of_done.length > 0);
+if (spec.requires_engineering === true && !_hasAcceptance) {
+    console.error(`STOP: engineering mission "${mission}" declares no acceptance criteria (objective done_when / definition_of_done).`);
+    console.error("Success is undeterminable; refused pre-execution (contract-sufficiency gate).");
+    process.exit(1);
+}
+
 // CM-5: per-objective governance authorization DECLARATION for the autonomy DENOMINATOR, DERIVED from the
 // mission's DECLARED governance ENVELOPE (mode + requires_engineering + authorized_paths) — a verifiable
 // source, NOT a generic stamp and NOT inferred from an objective's mere presence. Only UNAMBIGUOUS classes

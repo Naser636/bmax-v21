@@ -45,7 +45,7 @@ function loadAuth(contract) {
 }
 // 3 — scoped engineering (authorized_paths grant) ⇒ declared eligible+authorized.
 {
-  const r = loadAuth({ mission: "FX_SCOPED", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], objectives: [{ id: "FX_SCOPED_1", goal: "edit", done_when: [] }] });
+  const r = loadAuth({ mission: "FX_SCOPED", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], objectives: [{ id: "FX_SCOPED_1", goal: "edit", done_when: ["edited and tested"] }] });
   ok("scoped-engineering ⇒ eligible+authorized (scoped-engineering basis)", r.auth && r.auth.eligible === true && r.auth.authorized === true && /scoped-engineering/.test(r.auth.basis));
 }
 // 4 — explicit contract declaration is RESPECTED, never overwritten by the derivation.
@@ -75,7 +75,7 @@ function loadAuth(contract) {
 // 8 — ANTI-INFLATION (governance forbids): DEPRECATED mission WITH authorized_paths ⇒ UNDECLARED.
 //     Paths present must NOT override contract governance (the deprecation).
 {
-  const r = loadAuth({ mission: "FX_DEP", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], governedStatus: "DEPRECATED", objectives: [{ id: "FX_DEP_1", goal: "x", done_when: [] }] });
+  const r = loadAuth({ mission: "FX_DEP", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], governedStatus: "DEPRECATED", objectives: [{ id: "FX_DEP_1", goal: "x", done_when: ["x done"] }] });
   ok("DEPRECATED + paths ⇒ UNDECLARED (governance forbids; paths do not override)", r.auth === undefined);
 }
 // 9 — MIXED objectives: per-objective, not blanket. Obj1 explicit-excluded stays excluded; obj2 derived eligible.
@@ -110,8 +110,25 @@ function loadAuth(contract) {
 }
 // 12 — engineering mission WITH an explicit write-set is allowed.
 {
-  const r = loadAuth({ mission: "FX_ENG_WS", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], objectives: [{ id: "FX_ENG_WS_1", goal: "edit", done_when: [] }] });
+  const r = loadAuth({ mission: "FX_ENG_WS", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], objectives: [{ id: "FX_ENG_WS_1", goal: "edit", done_when: ["edited"] }] });
   ok("engineering + explicit write-set ⇒ allowed (exit 0)", r.exit === 0 && r.auth && r.auth.eligible === true);
+}
+
+// 13 — CONTRACT-SUFFICIENCY GATE (acceptance): engineering + write-set but NO acceptance criteria ⇒ REFUSED.
+{
+  const r = loadAuth({ mission: "FX_ENG_NOACC", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], objectives: [{ id: "FX_ENG_NOACC_1", goal: "edit", done_when: [] }] });
+  ok("engineering + write-set but NO acceptance ⇒ REFUSED pre-execution (no plan)", r.exit !== 0 && r.auth === "(no plan)");
+}
+// 14 — acceptance via definition_of_done (empty done_when) ⇒ allowed (DoD satisfies the acceptance gate).
+{
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "cm5d-"));
+  for (const d of ["runtime/missions", "runtime/generated", "runtime/governance"]) fs.mkdirSync(path.join(root, d), { recursive: true });
+  fs.writeFileSync(path.join(root, "runtime/governance/ROADMAP.json"), JSON.stringify({ missions: [] }));
+  fs.writeFileSync(path.join(root, "runtime/missions/FX_ENG_DOD.json"), JSON.stringify({ mission: "FX_ENG_DOD", mode: "ENGINEERING", requires_engineering: true, authorized_paths: ["sandbox/**"], definition_of_done: ["module compiles and tests pass"], objectives: [{ id: "FX_ENG_DOD_1", goal: "edit", done_when: [] }] }));
+  const r = cp.spawnSync(process.execPath, [LOADER, "FX_ENG_DOD"], { cwd: root, encoding: "utf8" });
+  const planExists = fs.existsSync(path.join(root, "runtime/generated/mission-plan.json"));
+  fs.rmSync(root, { recursive: true, force: true });
+  ok("acceptance via definition_of_done ⇒ allowed (exit 0, plan written)", r.status === 0 && planExists);
 }
 
 console.log(`\nmission-loader CM-5 derivation — ${passed} assertions passed.`);
