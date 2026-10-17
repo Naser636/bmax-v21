@@ -98,7 +98,7 @@ export class LocalMissionRunner {
           mission: Record<string, unknown>,
         ) => ExpertInstanceRecord;
       };
-      const gateway = require("../../runtime/core/nl-objective-gateway.js") as {
+      const gateway = require("../../runtime/dist/core/nl-objective-gateway.js") as {
         classifyObjective: (goal: string) => { externalEffect?: string };
       };
       const specs = plan.mission.brain.objectiveSpecs;

@@ -97,7 +97,7 @@ export class RuntimeExecutor {
 
     const require_ = createRequire(import.meta.url);
     const capabilityExecutors = require_(
-      "../../runtime/core/capability-executors.js",
+      "../../runtime/dist/core/capability-executors.js",
     ) as {
       resolve: (
         patch: Record<string, unknown>,
@@ -106,7 +106,7 @@ export class RuntimeExecutor {
     // GOVERNED CONSEQUENTIAL-CAPABILITY GATE at the execution chokepoint (defense-in-depth, independent
     // of the NL entrypoint): a consequential capability runs ONLY under a valid human grant carried on
     // the objective (re-validated here against mission/expiry/scope/capability/human), fail-closed.
-    const authz = require_("../../runtime/core/capability-authorization.js") as {
+    const authz = require_("../../runtime/dist/core/capability-authorization.js") as {
       isConsequentialCapability: (c: string) => boolean;
       authorizeCapability: (
         req: { capability: string; mission: string; requestedScope?: unknown },

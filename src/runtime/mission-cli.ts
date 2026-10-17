@@ -107,7 +107,7 @@ export function nlMissionResolvesCapability(
   if (objs.length === 0) return false;
   let executors: { resolve: (p: { objectiveId?: string; goal?: string }) => unknown };
   try {
-    executors = require_("../../runtime/core/capability-executors.js") as {
+    executors = require_("../../runtime/dist/core/capability-executors.js") as {
       resolve: (p: { objectiveId?: string; goal?: string }) => unknown;
     };
   } catch {
@@ -149,7 +149,7 @@ export function missionIsLocalCapabilityProof(spec: RawMission | null): boolean 
     resolve: (p: { objectiveId?: string; goal?: string }) => { capability?: string } | null;
   };
   try {
-    executors = require_("../../runtime/core/capability-executors.js") as {
+    executors = require_("../../runtime/dist/core/capability-executors.js") as {
       resolve: (p: { objectiveId?: string; goal?: string }) => { capability?: string } | null;
     };
   } catch {

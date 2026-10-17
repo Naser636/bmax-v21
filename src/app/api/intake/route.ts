@@ -9,7 +9,7 @@
 import { createRequire } from "node:module";
 
 const require_ = createRequire(import.meta.url);
-const endpoint = require_("../../../../runtime/core/intake-endpoint.js") as {
+const endpoint = require_("../../../../runtime/dist/core/intake-endpoint.js") as {
   handleIntakeRequest: (
     req: { method: string; headers: Record<string, string>; body: string },
     opts: { cwd?: string },

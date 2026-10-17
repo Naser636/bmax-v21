@@ -252,7 +252,7 @@ export function providerRunStartCheckpoint(
 function defaultResolveImpliedProofs(entry: unknown): Array<{ capability: string; evidence: string }> {
   try {
     const require = createRequire(import.meta.url);
-    const { resolveVerifyProbes } = require("../../runtime/core/mission-contract-factory.js") as {
+    const { resolveVerifyProbes } = require("../../runtime/dist/core/mission-contract-factory.js") as {
       resolveVerifyProbes: (e: unknown) => Array<{ capability: string; evidence: string }>;
     };
     const out = resolveVerifyProbes(entry);
@@ -856,7 +856,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       executed: Array<{ status: string; files?: Array<{ target: string }> }>;
     };
     try {
-      const mod = requireCjs("../../runtime/core/patch-proposal-apply.js") as {
+      const mod = requireCjs("../../runtime/dist/core/patch-proposal-apply.js") as {
         applyProposal: (opts: {
           mission: string;
           authorizedPaths: string[];

@@ -107,7 +107,7 @@ export function makeProbeExists(ctx: { missionId?: string; verify?: unknown }): 
   let runProbe: (name: string, c: unknown) => { ok?: boolean };
   try {
     const req = createRequire(import.meta.url);
-    runProbe = (req("../../runtime/core/capability-probes.js") as {
+    runProbe = (req("../../runtime/dist/core/capability-probes.js") as {
       runProbe: (name: string, c: unknown) => { ok?: boolean };
     }).runProbe;
   } catch {

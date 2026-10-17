@@ -37,7 +37,7 @@ export const recordMissionToLedger: LedgerRecorder = (mission, validated, status
     JSON.stringify({ mission, validated, status }, null, 2),
   );
   const require = createRequire(import.meta.url);
-  const { recordMission } = require("../../runtime/core/mission-ledger.js") as {
+  const { recordMission } = require("../../runtime/dist/core/mission-ledger.js") as {
     recordMission: (mission: string) => unknown;
   };
   return recordMission(mission);
