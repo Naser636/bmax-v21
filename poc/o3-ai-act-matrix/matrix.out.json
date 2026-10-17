@@ -1,0 +1,211 @@
+{
+  "kind": "o3-ai-act-iso42001-readiness-matrix/1",
+  "disclaimer": "Readiness assistance only — NOT legal advice, conformity assessment, or certification; ODG is not a certifier. Framework clause text NOT reproduced; verify official sources per engagement.",
+  "frameworks": [
+    {
+      "id": "ISO42001",
+      "name": "ISO/IEC 42001:2023 (AI management system)",
+      "kind": "management-system"
+    },
+    {
+      "id": "EUAIACT",
+      "name": "EU AI Act — Regulation (EU) 2024/1689",
+      "kind": "regulation"
+    }
+  ],
+  "summary": {
+    "PARTIAL": 6,
+    "BLOCKED": 1,
+    "GAP": 1,
+    "NOT_ASSESSED": 2
+  },
+  "rows": [
+    {
+      "id": "R-ACC",
+      "theme": "access control & security",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "technical",
+      "applicability": "protection of the AI system + data",
+      "expectedEvidence": "deny-by-default authorization + fail-closed controls + tests",
+      "repoEvidence": [
+        "runtime/core/action-gate.js",
+        "runtime/core/dispatch-authorization-invariant.test.js",
+        "runtime/core/provider-sandbox.js"
+      ],
+      "status": "PARTIAL",
+      "note": "deny-by-default + dispatch-authorization-invariant (OWASP ASVS fail-secure) + sandbox. Accuracy/robustness per-system = engagement.",
+      "sourceVerification": "verify against ISO 42001 Annex A controls + AI Act accuracy/robustness/cybersecurity article",
+      "nextAction": "complete org/legal/specialist portion; bind per-system evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-CONF",
+      "theme": "conformity assessment / certification",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "external",
+      "applicability": "formal conformity/certification",
+      "expectedEvidence": "assessment by a competent/accredited body",
+      "repoEvidence": [],
+      "status": "BLOCKED",
+      "note": "formal conformity/certification requires a competent/accredited body — NOT ODG.",
+      "sourceVerification": "competent authority / accredited certification body ONLY — not ODG",
+      "nextAction": "engage the competent/accredited body (external)",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-DATA",
+      "theme": "data governance & quality",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "mixed",
+      "applicability": "high-risk AI data obligations (tier TBC)",
+      "expectedEvidence": "data provenance, versioning, quality controls",
+      "repoEvidence": [],
+      "status": "GAP",
+      "note": "no system-specific data-governance evidence in this repo; per-client data provenance/quality controls required.",
+      "sourceVerification": "verify against AI Act data-governance article",
+      "nextAction": "produce the expected evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-GOV",
+      "theme": "AI management-system governance (policy, roles, audit)",
+      "frameworks": [
+        "ISO42001"
+      ],
+      "category": "organizational",
+      "applicability": "AIMS establishment",
+      "expectedEvidence": "policy, defined roles, internal audit, management review",
+      "repoEvidence": [],
+      "status": "NOT_ASSESSED",
+      "note": "AIMS policy/roles/internal-audit are organizational; not derivable from code.",
+      "sourceVerification": "verify against ISO 42001 management clauses",
+      "nextAction": "verify applicability against official text; gather evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-HUMAN",
+      "theme": "human oversight",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "technical+organizational",
+      "applicability": "human-in-the-loop for consequential actions",
+      "expectedEvidence": "enforced human-authorization gate for consequential actions",
+      "repoEvidence": [
+        "runtime/core/action-gate.js",
+        "runtime/core/capability-authorization.js"
+      ],
+      "status": "PARTIAL",
+      "note": "deny-by-default action-gate + fail-closed human-authorization gate for consequential capabilities (proven by action-gate-live.test.js / capability-authorization.test.js). Oversight PROCEDURE = org.",
+      "sourceVerification": "verify against AI Act human-oversight article",
+      "nextAction": "complete org/legal/specialist portion; bind per-system evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-INCID",
+      "theme": "incident detection & corrective action",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "technical+organizational",
+      "applicability": "monitoring + serious-incident handling",
+      "expectedEvidence": "incident detection/recurrence + corrective action records",
+      "repoEvidence": [
+        "runtime/core/self-diagnostic.js",
+        "runtime/core/incident-recurrence.js"
+      ],
+      "status": "PARTIAL",
+      "note": "self-diagnostic (expected-vs-observed→incident) + incident-recurrence (FROZEN_LOOP). Post-market monitoring org process = engagement.",
+      "sourceVerification": "verify against AI Act post-market monitoring / incident-reporting article",
+      "nextAction": "complete org/legal/specialist portion; bind per-system evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-INTEG",
+      "theme": "software/build integrity & provenance",
+      "frameworks": [
+        "ISO42001"
+      ],
+      "category": "technical",
+      "applicability": "integrity of the deployed system",
+      "expectedEvidence": "build provenance (source commit, content hash) + component inventory (SBOM)",
+      "repoEvidence": [
+        "runtime/core/evidence-provenance.js",
+        "runtime/dist/dist-closure-manifest.json"
+      ],
+      "status": "PARTIAL",
+      "note": "build provenance + sha256 closure manifest + lockfile-derived CycloneDX SBOM (O2 PoC). Tool-complete inventory + SLSA builder attestation = SPEC.",
+      "sourceVerification": "verify against ISO 42001 Annex A + SLSA/CRA where applicable",
+      "nextAction": "complete org/legal/specialist portion; bind per-system evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-LOG",
+      "theme": "logging & traceability",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "technical",
+      "applicability": "record-keeping of system operation",
+      "expectedEvidence": "automatic, provenance-stamped, tamper-evident logs/records",
+      "repoEvidence": [
+        "runtime/core/evidence-provenance.js",
+        "runtime/core/mission-ledger.js"
+      ],
+      "status": "PARTIAL",
+      "note": "evidence-provenance stamps {sourceCommit,treeDirty,contentSha256,capturedAtRun}; mission-ledger append-only. Tech record-keeping present; retention/PII policy = org/legal.",
+      "sourceVerification": "verify against AI Act record-keeping article",
+      "nextAction": "complete org/legal/specialist portion; bind per-system evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-RISK",
+      "theme": "AI risk management",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "organizational",
+      "applicability": "if the AI system is in scope (risk tier TBC by legal review)",
+      "expectedEvidence": "documented risk-management process + records",
+      "repoEvidence": [],
+      "status": "NOT_ASSESSED",
+      "note": "org risk-management process not represented in this repo; verify risk tier (legal) + produce records.",
+      "sourceVerification": "verify against ISO 42001 risk clauses + AI Act risk-management article (official text)",
+      "nextAction": "verify applicability against official text; gather evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    },
+    {
+      "id": "R-TRANS",
+      "theme": "transparency & documentation",
+      "frameworks": [
+        "ISO42001",
+        "EUAIACT"
+      ],
+      "category": "documentation",
+      "applicability": "technical documentation of the system",
+      "expectedEvidence": "system/technical documentation set",
+      "repoEvidence": [
+        "docs/odg-operational/DEPLOYMENT.md",
+        "docs/odg-operational/ODG_CAPABILITY_ENGINEERING_AND_OPPORTUNITY_GATE.md"
+      ],
+      "status": "PARTIAL",
+      "note": "operational/technical documentation exists; per-AI-system technical-doc set = engagement.",
+      "sourceVerification": "verify against AI Act technical-documentation annex",
+      "nextAction": "complete org/legal/specialist portion; bind per-system evidence",
+      "acceptance": "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence"
+    }
+  ]
+}

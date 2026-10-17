@@ -28,14 +28,21 @@ inventory, a specialist review, and the competent body. CRA SBOM obligations pha
 current text per engagement). **Status: the EVIDENCE-GENERATION PoC is real + reproducible (VERIFIED artifact);
 the end-to-end CRA-readiness product is PARTIAL (per-client CI integration + review = SPEC/human).**
 
-## O3 — EU AI Act / ISO 42001 readiness — **PoC PLAN (SPECIFICATION_ONLY; deterministic, buildable)**
-**Spec:** a requirements→evidence→gap→action matrix over a non-sensitive fictional AI-system case, with source
-traceability + a gap report. **Reused (C02/C04/C05/C08):** evidence-provenance, validation-engine, action-gate,
-self-diagnostic. **Buildable locally** (no external data) as a deterministic matrix + gap report; negative
-tests = missing info / contradictory requirements. **Not executed this pass** (bounded doc PoC; a separate
-build). **Honesty:** ISO 42001 **alone does not satisfy** the EU AI Act (CSA note); the AI-Act high-risk
-deadline shifted (June-2026 Council delay) — verify current scope per engagement. **ODG prepares evidence /
-pre-audit / gap-detection; ODG is NOT an accredited certification body** and must never present as one.
+## O3 — EU AI Act / ISO 42001 readiness — **EXECUTED (deterministic matrix + tests)**
+**Built (isolated PoC `poc/o3-ai-act-matrix/`):** `requirements.json` (10 THEME-level requirement areas; real
+framework names ISO/IEC 42001:2023 + EU AI Act Reg. (EU) 2024/1689 — **no fabricated clause text**; each row
+carries `sourceVerification` = verify official text per engagement) + `generate.js` (deterministic, offline;
+maps each theme to the REPO's actual technical evidence) + `generate.test.js`.
+**Executed:** `node poc/o3-ai-act-matrix/generate.js` → `matrix.out.json`, **10 requirements →
+{PARTIAL:6, BLOCKED:1, GAP:1, NOT_ASSESSED:2}**, EXIT 0. Test **10/10 PASS, EXIT 0**: deterministic (byte-
+identical reruns), PARTIAL rows cite REAL existing repo files (evidence-provenance/action-gate/validation/
+self-diagnostic/mission-ledger), R-DATA→GAP + R-CONF→BLOCKED (external body) with **no invented evidence**,
+**no VERIFIED claimed** (readiness ≠ compliance), fail-closed on malformed input, disclaimer present.
+**Reused (C02/C04/C05/C08):** evidence-provenance, validation-engine, action-gate, self-diagnostic, mission-ledger.
+**Honesty:** ISO 42001 **alone does not satisfy** the EU AI Act; the AI-Act high-risk deadline shifted
+(June-2026 Council delay) — verify current scope per engagement. **ODG prepares evidence / pre-audit /
+gap-detection; ODG is NOT an accredited certification body.** Status: **PARTIAL (readiness-matrix tool VERIFIED;
+full conformity = human/legal/specialist/competent-body).**
 
 ## O8 — Internal Developer Platform / golden path — **PoC PLAN (C07 SPECIFICATION_ONLY)**
 **Spec:** a reproducible internal path that scaffolds a project/mission + runs its build/tests + emits evidence,
@@ -65,7 +72,4 @@ golden-path productization + live external paths (C03/C09/C10) remain SPEC/BLOCK
 primitive introduced.
 
 ## Verdict
-O2 = **PARTIAL (real SBOM+provenance artifact VERIFIED; CRA-product PARTIAL)** · O3 = **SPECIFICATION_ONLY
-(buildable plan)** · O8 = **SPECIFICATION_ONLY (partial demo feasible)** · buyer qualification = **NOT RUN
-(no fabrication; needs dedicated pass + identity)** · financials = conditional frameworks. Next: a bounded O3
-matrix build + an O8 scaffolding demo, then named-buyer qualification once legal/fiscal identity is provided.
+O2 = **PARTIAL (real SBOM+provenance artifact VERIFIED + reproduced @`22800c3`: 489 comps, sourceCommit tracks current HEAD, fail-closed; CRA-product PARTIAL)** · O3 = **PARTIAL (deterministic readiness-matrix tool EXECUTED+VERIFIED, 10/10 tests; full conformity human/legal/body)** · O8 = **SPECIFICATION_ONLY (substrate `mission-contract-factory` confirmed; golden-path product SPEC)** · buyer qualification = **NOT RUN (no fabrication; needs dedicated pass + ODG legal/fiscal identity)** · financials = conditional frameworks. Next: an O8 scaffolding demo + named-buyer qualification once legal/fiscal identity is provided.
