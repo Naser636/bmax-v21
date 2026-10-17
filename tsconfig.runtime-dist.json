@@ -101,6 +101,7 @@
     "runtime/core/nl-objective-gateway.ts",
     "runtime/core/email-gateway.ts",
     "runtime/core/launch-readiness.ts",
-    "runtime/core/capability-factory.ts"
+    "runtime/core/capability-factory.ts",
+    "runtime/core/local-autonomy.ts"
   ]
 }

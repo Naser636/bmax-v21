@@ -1,0 +1,69 @@
+// @ts-nocheck
+/* TypeScript port (faithful transliteration) — parity with runtime/core/local-autonomy.js.
+ * all-any @ts-nocheck: parity proven by the hermetic equivalence bench, not type-checking (V66 precedent).
+ * No code change vs the .js — it was only transitively blocked by capability-factory, now sanctioned-clean. */
+
+/*
+ * Local-First Autonomy Facade — integration point for the P1–P10 capability stack.
+ *
+ * This is NOT a new runtime and NOT a new architecture: it is a thin facade that composes the
+ * existing capability modules into the permanent flow, so the Runtime can turn a natural-language
+ * request into a mission, decide locally, and learn from the result — reaching external AI only as a
+ * last resort.
+ *
+ *   request ──P5 synthesize──▶ mission contract
+ *           ──P8 route───────▶ Memory(P1) ▸ Rules(P4) ▸ LocalLLM(P9) ▸ ExternalAI(last resort)
+ *           ──P10 factory────▶ manufacture a local capability instead of escalating (optional)
+ *   result  ──P6 learn───────▶ Patch Memory(P1) + Metrics(P7)  (auto-enriched memory)
+ *
+ * The Runtime decides; LLMs are only executors. Pure orchestration — no I/O beyond the modules it
+ * delegates to.
+ */
+
+"use strict";
+
+const synth = require("./mission-synthesizer");     // P5
+const router = require("./capability-router");       // P8 (uses P1, P4, P7, P9)
+const learning = require("./capability-learning");   // P6 (feeds P1, P7)
+const factory = require("./capability-factory");     // P10
+
+// request → mission → local-first decision. `opts.manufactureIfMissing` lets the Runtime build a
+// local capability (P10) rather than escalate to external AI when nothing local resolves the task.
+function handle(request, opts) {
+    opts = opts || {};
+    const contract = synth.fromRequest(request, opts.spec);
+    const objective = contract.objectives[0];
+    // Live reuse key = the mission-independent PROBLEM identity (rootCause + normalized goal), matching
+    // the canonical decision-engine route task ({goal, objectiveId}). Deliberately NO `target`: Patch
+    // Memory now keys inter-mission reuse on the goal, and the record side (capability-learning) stores
+    // no target, so including one here would make the lookup signature asymmetric with the record and a
+    // proven precedent would never be found. The concrete per-file target still rides on the stored edits.
+    const task = {
+        goal: objective.goal,
+        objectiveId: objective.id,
+        rootCause: opts.rootCause,
+    };
+    const decision = router.route(task, opts);
+
+    let manufactured = null;
+    if (decision.usesExternalAI && opts.manufactureIfMissing) {
+        manufactured = factory.create(contract.resolvedCapability || contract.mission, { goal: objective.goal });
+    }
+
+    return {
+        request,
+        contract,
+        task,
+        decision,
+        manufactured,
+        // External AI is only truly used when no local tier resolved AND we did not manufacture one.
+        usesExternalAI: decision.usesExternalAI && !manufactured,
+    };
+}
+
+// Close the loop after a mission executes: learn the outcome (enriches Patch Memory + Metrics).
+function complete(missionReport) {
+    return learning.learn(missionReport);
+}
+
+module.exports = { handle, complete };

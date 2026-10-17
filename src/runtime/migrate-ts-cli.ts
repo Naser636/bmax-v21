@@ -644,6 +644,14 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/capability-factory-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V71 Class-B consumer — local-autonomy was ONLY transitively blocked by capability-factory's dynamic
+  // require (now sanctioned-clean); its own .js is UNCHANGED (pure facade). .ts = faithful @ts-nocheck
+  // transliteration; the equivalence bench drives the full P10 manufacture chain through the compiled TS.
+  "local-autonomy": [
+    "runtime/core/local-autonomy.ts",
+    "runtime/__bench__/local-autonomy-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
   "improvement-baseline": [
     // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
     // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
@@ -869,6 +877,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "capability-factory": [
     "runtime/core/capability-factory.test.js",
+  ],
+  "local-autonomy": [
+    "runtime/core/local-autonomy.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
