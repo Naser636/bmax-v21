@@ -160,6 +160,25 @@ if (prepareOnly) {
   process.exit(0);
 }
 
+// --- Step 5b — WRITE-SET CONFORMANCE (CM-1): ODG independently controls the RECEIVED patch's scope -------
+// A delegated patch is applied by the provider directly in the working tree (NOT through the action-gate),
+// so ODG must INDEPENDENTLY verify the change stayed within the authorized write-set before trusting it.
+// Reuses the shared scope primitive (scope-observer.scopeClean) — no new logic. Any change outside the
+// authorized_paths ⇒ REFUSE here (zero verify/converge/archive); the provider never widens its own scope.
+console.log("--------------------------------------");
+console.log("WRITE-SET CONFORMANCE");
+try {
+  const { scopeClean } = require(path.join(ROOT, "runtime", "core", "scope-observer.js"));
+  const authorized = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
+  const conformance = scopeClean(authorized);
+  if (!conformance.ok) {
+    die(`STOP: delegated patch is OUT OF SCOPE — ${conformance.detail}. The received change touched files outside the authorized write-set; refusing (no verify/converge/archive).`, 2);
+  }
+  console.log("Conformance:", conformance.detail);
+} catch (err) {
+  die(`STOP: write-set conformance check failed to run (${err.message}); refusing fail-closed.`, 2);
+}
+
 // --- Steps 6/7 — receive the patch (whatever is now in the working tree) and verify -------------
 console.log("--------------------------------------");
 console.log("VERIFY");
