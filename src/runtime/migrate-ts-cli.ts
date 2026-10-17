@@ -562,6 +562,30 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/capability-executors-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V70 §V-doctrine PURE leaves (deps=0/1/2, no fs/clock/network/spawn/__dirname) — faithful typed ports,
+  // parity proven by a hermetic equivalence bench (byte-identical JSON) + the module's existing .test.js
+  // replayed against the UNCHANGED historical .js. No seam needed (the modules are already pure read-models).
+  "learning-chain": [
+    "runtime/core/learning-chain.ts",
+    "runtime/__bench__/learning-chain-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  "incident-recurrence": [
+    "runtime/core/incident-recurrence.ts",
+    "runtime/__bench__/incident-recurrence-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  "improvement-baseline": [
+    // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
+    // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
+    // caller; absent injection ⇒ honest null). That makes the compiled dist/core module self-contained +
+    // build-dist-closure-clean. It is a behaviour-preserving authorized change, so the gate overlays this
+    // seamed .js (not HEAD's) for both the equivalence + historical steps.
+    "runtime/core/improvement-baseline.js",
+    "runtime/core/improvement-baseline.ts",
+    "runtime/__bench__/improvement-baseline-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
 };
 // The lot's historical suites (replayed against the unchanged .js) and the sibling regression benches.
 const LOT_HISTORICAL: Record<string, string[]> = {
@@ -751,6 +775,15 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "capability-executors": [
     "runtime/core/capability-executors.test.js",
+  ],
+  "learning-chain": [
+    "runtime/core/learning-chain.test.js",
+  ],
+  "incident-recurrence": [
+    "runtime/core/incident-recurrence.test.js",
+  ],
+  "improvement-baseline": [
+    "runtime/core/improvement-baseline.test.js",
   ],
 };
 const REGRESSION_BENCHES = [

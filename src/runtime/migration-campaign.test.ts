@@ -251,8 +251,20 @@ console.log("Migration Campaign Planner — tests");
   check(inv.excluded.includes("budget-ledger") && inv.excluded.includes("provider-live-call-gate"), "integration: frozen exclusions present in real repo");
   check(EXCLUSIONS.every((e) => !inv.candidates.some((c) => c.lot === e)), "integration: no excluded lot ever appears as a candidate");
   const sel = selectNextLot(inv);
-  check(sel.state === "PASS" && typeof sel.lot === "string", `integration: real repo yields a safe next lot (${sel.lot})`);
-  check(!inv.ported.includes(sel.lot as string), "integration: recommended lot is not already ported");
+  // The planner's contract has TWO valid terminal shapes and NEVER a false PASS:
+  //  • a safe candidate remains        ⇒ state PASS + a real lot name (not already ported);
+  //  • only hazard-blocked lots remain ⇒ state BLOCKED + null lot + a non-empty rationale.
+  // V70 migrated the last three safe leaves (learning-chain, incident-recurrence, improvement-baseline),
+  // so the real repo now legitimately reports BLOCKED — the safe-migration campaign is exhausted and the
+  // only remaining lots are the redesign-gated hazard class. Both shapes are asserted as correct here.
+  const safeRemaining = inv.candidates.filter((c) => !c.hazard).length;
+  if (safeRemaining > 0) {
+    check(sel.state === "PASS" && typeof sel.lot === "string", `integration: real repo yields a safe next lot (${sel.lot})`);
+    check(!inv.ported.includes(sel.lot as string), "integration: recommended lot is not already ported");
+  } else {
+    check(sel.state === "BLOCKED" && sel.lot === null && typeof sel.rationale === "string" && sel.rationale.length > 0,
+      `integration: no safe lot remains ⇒ honest BLOCKED (not a false PASS); rationale="${(sel.rationale || "").slice(0, 48)}…"`);
+  }
   // capability-factory (dynamic require of generated modules) must now be classified hazard-blocked,
   // never recommended — the V22 finding that the dist-closure tracer rejects its dynamic require().
   const capfac = inv.candidates.find((c) => c.lot === "capability-factory");

@@ -71,12 +71,21 @@ function measureDelta(before, after, senseMap) {
 
 // DEFAULT collectors — compose EXISTING signal sources (all injectable/fail-closed). Returns a map of
 // name → () => value. Debt signals (lower-is-better) are listed in DEFAULT_SENSE below.
+//
+// DEPENDENCY INVERSION (V70, closure-clean): the inventory source (migration-campaign) lives in the
+// src/runtime DEV tooling, OUTSIDE this runtime/core module's dist closure. A hardcoded cross-tree
+// `require("../../src/runtime/migration-campaign")` makes the compiled dist/core module non-self-contained
+// (build-dist-closure rejects the out-of-tree require) AND resolves to the WRONG path from dist/core anyway.
+// So the inventory source is now INJECTED by the caller (see src/runtime/learning-review-cli.ts); with no
+// injected `inventory`, the inventory-derived signals are honestly `null` (unmeasured), never fabricated.
+// The recurrence source is a runtime/core SIBLING (co-located in dist) and stays a fail-closed default.
 function defaultCollectors(deps) {
   const d = isPlainObject(deps) ? deps : {};
+  const noInventory = () => null;
   return {
-    dualPorts: () => { const inv = (d.inventory || (() => require("../../src/runtime/migration-campaign").inventory(process.cwd())))(); return inv && Number.isFinite(inv.counts ? inv.counts.coreDual : inv.coreDual) ? (inv.counts ? inv.counts.coreDual : inv.coreDual) : null; },
-    jsRemaining: () => { const inv = (d.inventory || (() => require("../../src/runtime/migration-campaign").inventory(process.cwd())))(); return inv && (inv.counts || inv) ? (inv.counts ? inv.counts.coreJs : inv.coreJs) : null; },
-    hazardBlocked: () => { const inv = (d.inventory || (() => require("../../src/runtime/migration-campaign").inventory(process.cwd())))(); return inv && (inv.counts || inv) ? (inv.counts ? inv.counts.blocked : inv.blocked) : null; },
+    dualPorts: () => { const inv = (d.inventory || noInventory)(); return inv && Number.isFinite(inv.counts ? inv.counts.coreDual : inv.coreDual) ? (inv.counts ? inv.counts.coreDual : inv.coreDual) : null; },
+    jsRemaining: () => { const inv = (d.inventory || noInventory)(); return inv && (inv.counts || inv) ? (inv.counts ? inv.counts.coreJs : inv.coreJs) : null; },
+    hazardBlocked: () => { const inv = (d.inventory || noInventory)(); return inv && (inv.counts || inv) ? (inv.counts ? inv.counts.blocked : inv.blocked) : null; },
     recurringIncidents: () => { const rec = (d.recurrence || (() => require("./incident-recurrence").loadRecurrence({})))(); return rec && rec.summary ? rec.summary.recurring : null; },
     frozenIncidents: () => { const rec = (d.recurrence || (() => require("./incident-recurrence").loadRecurrence({})))(); return rec && rec.summary ? rec.summary.frozen : null; },
   };

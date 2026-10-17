@@ -82,7 +82,12 @@ const RECORDS = [
 ];
 
 function main(): number {
-  const baseline = baselineMod.captureBaseline(baselineMod.defaultCollectors({}));
+  // Dependency inversion (V70): improvement-baseline (runtime/core) no longer reaches cross-tree into the
+  // src/runtime migration tooling. THIS dev CLI owns that wiring and injects the inventory source via a clean
+  // same-tree sibling require, so the runtime/core module stays self-contained + dist-closure-clean while the
+  // observed inventory signals are preserved exactly as before.
+  const inventory = () => require("./migration-campaign").inventory(process.cwd());
+  const baseline = baselineMod.captureBaseline(baselineMod.defaultCollectors({ inventory }));
   const review = reviewLearning({ baseline, records: RECORDS });
 
   console.log("======================================");
