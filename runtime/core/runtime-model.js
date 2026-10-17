@@ -120,10 +120,19 @@ function computeRuntimeModel(root = process.cwd()) {
       continue;
     }
     const count = objectiveCount(raw);
+    // CM-3 governed deprecation: a contract may declare governedStatus:"DEPRECATED" (with a reason +
+    // coveredBy) when its intent is proven covered by an existing mechanism. It is then NON-executable
+    // (excluded from the forward queue/missing) but PRESERVED on disk and reported with a DEPRECATED
+    // disposition — traceable, reversible (remove the field), never deleted. Additive + field-gated: a
+    // contract without the field is byte-identical to before (parity-safe).
+    const deprecated = raw.governedStatus === "DEPRECATED";
     missions.push({
       mission: name,
       objectives: count,
-      executable: count > 0,
+      executable: count > 0 && !deprecated,
+      deprecated,
+      deprecationReason: typeof raw.deprecationReason === "string" ? raw.deprecationReason : null,
+      coveredBy: typeof raw.coveredBy === "string" ? raw.coveredBy : null,
       requiresEngineering: requiresEngineering(raw),
       priority: typeof raw.priority === "string" ? raw.priority : "NORMAL",
       proven: provenSet.has(name),
@@ -176,17 +185,20 @@ function computeRuntimeModel(root = process.cwd()) {
     .filter((m) => !m.executable)
     .map((m) => {
       const skipped = m.kind !== "mission";
-      const reason = skipped
-        ? m.kind === "evidence-pack"
-          ? "file is an evidence pack, not a mission contract"
-          : "file is an orchestration plan, not a leaf mission contract"
-        : "mission contract declares no objectives (Mission Loader guard)";
+      const disposition = m.deprecated ? "DEPRECATED" : skipped ? "SKIPPED" : "NEEDS_CONTRACT";
+      const reason = m.deprecated
+        ? "governed-deprecated: " + (m.deprecationReason || "intent covered by an existing mechanism") + (m.coveredBy ? ` (covered by ${m.coveredBy})` : "")
+        : skipped
+          ? m.kind === "evidence-pack"
+            ? "file is an evidence pack, not a mission contract"
+            : "file is an orchestration plan, not a leaf mission contract"
+          : "mission contract declares no objectives (Mission Loader guard)";
       return {
         mission: m.mission,
-        objectives: 0,
+        objectives: m.deprecated ? m.objectives : 0,
         proven: m.proven,
-        kind: m.kind,
-        disposition: skipped ? "SKIPPED" : "NEEDS_CONTRACT",
+        kind: m.deprecated ? "deprecated" : m.kind,
+        disposition,
         reason,
         repairNominated: pendingFixes.has(`FIX_${m.mission}.json`),
       };

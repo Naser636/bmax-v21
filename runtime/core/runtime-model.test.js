@@ -181,4 +181,24 @@ console.log("Runtime Model — gap-detection contract");
   ok("V60: exactly the 2 valid ids remain (no pollution counted)", m.capabilities.length === 2);
 }
 
+// --- Case: CM-3 governed DEPRECATED — excluded from queue/missing, still reported (not deleted) ---------
+{
+  const root = buildFixture(
+    {
+      LIVE: { objectives: [{ id: "LIVE_1", goal: "real forward work" }] },
+      OLD: { objectives: [{ id: "OLD_1", goal: "covered elsewhere" }], governedStatus: "DEPRECATED", deprecationReason: "intent covered", coveredBy: "existing-mechanism" },
+    },
+    [],
+    {},
+  );
+  const m = computeRuntimeModel(root);
+  ok("CM-3: DEPRECATED mission NOT queued", !m.queue.some((q) => q.mission === "OLD"));
+  ok("CM-3: DEPRECATED mission NOT a missing capability", !m.missingCapabilities.some((c) => c.id === "OLD"));
+  ok("CM-3: DEPRECATED mission NOT an outstanding gap", !m.outstanding.some((o) => o.mission === "OLD"));
+  // Preserved + traceable (NOT deleted/hidden): still present in the classified mission list, flagged deprecated + non-executable.
+  const dep = (m.missions || []).find((x) => x.mission === "OLD");
+  ok("CM-3: DEPRECATED mission preserved in model (deprecated=true, executable=false)", !!dep && dep.deprecated === true && dep.executable === false);
+  ok("CM-3: a non-deprecated executable mission is STILL queued (no collateral exclusion)", m.queue.some((q) => q.mission === "LIVE"));
+}
+
 console.log(`\n${passed} assertion(s) passed`);
