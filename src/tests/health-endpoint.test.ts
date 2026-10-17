@@ -60,7 +60,9 @@ async function call(): Promise<{ status: number; body: Record<string, unknown>; 
   process.env.ODG_CLIENT_STORE = store;
   const r5 = await call();
   const keys = Object.keys(r5.body).sort().join(",");
-  ok("5 response shape = checkedAt,status,storage only", keys === "checkedAt,status,storage");
+  ok("5 response shape = buildId,checkedAt,status,storage only", keys === "buildId,checkedAt,status,storage");
+  // CM-2: buildId is an opaque deployed-build marker (string) or honest null — never an object/secret/path.
+  ok("5-buildId present as string or null", r5.body.buildId === null || typeof r5.body.buildId === "string");
   const blob = JSON.stringify(r5.body);
   ok("5b no store path leaked in body", !blob.includes(store));
   ok("5c no secret-ish token leaked", !/sk-|api[_-]?key|token|secret|credential/i.test(blob));

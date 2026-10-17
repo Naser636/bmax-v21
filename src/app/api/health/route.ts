@@ -19,13 +19,36 @@
  *
  * Next 16 Route Handler — see node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md
  */
-import { statSync, accessSync, constants as fsConstants } from "node:fs";
-import { resolve as resolvePath } from "node:path";
+import { statSync, accessSync, readFileSync, constants as fsConstants } from "node:fs";
+import { resolve as resolvePath, join as joinPath } from "node:path";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic"; // request-time only; reflect current env/fs, never cached
 
 type StorageState = "READY" | "NOT_CONFIGURED" | "MISSING" | "BLOCKED" | "UNKNOWN";
+
+/*
+ * Deployed BUILD_ID exposure (CM-2, deploy-hygiene observability). Returns the build identity THIS running
+ * process was deployed with, so an external check can compare served-vs-on-disk and fail closed on drift
+ * (e.g. a replacing `next build` left the live process on a deleted standalone). Resolution order:
+ *   1) ODG_DEPLOYED_BUILD_ID — an explicit deploy-time env is the RELIABLE marker: it is stamped at restart
+ *      and is immune to later on-disk rebuilds (the correct long-term wiring).
+ *   2) else read the standalone's own .next/BUILD_ID ONCE and memoize it — captured at the first request
+ *      (normally the post-deploy health probe, before any replacing build), fixed for the process lifetime.
+ * Fail-closed to null (an unreadable id never breaks the endpoint and is reported as null, never guessed).
+ * No secret, no path, no payload is exposed — only the opaque build hash.
+ */
+let _buildId: string | null | undefined; // undefined = not yet resolved
+function deployedBuildId(): string | null {
+  if (_buildId !== undefined) return _buildId;
+  const env = process.env.ODG_DEPLOYED_BUILD_ID;
+  if (typeof env === "string" && env.trim() !== "") { _buildId = env.trim(); return _buildId; }
+  for (const p of [joinPath(process.cwd(), ".next", "BUILD_ID"), resolvePath(".next/BUILD_ID")]) {
+    try { const v = readFileSync(p, "utf8").trim(); if (v) { _buildId = v; return _buildId; } } catch { /* try next candidate */ }
+  }
+  _buildId = null;
+  return _buildId;
+}
 
 /** Read-only resolution of persistent-store readiness from ODG_CLIENT_STORE. Never writes. */
 export function assessStorage(): StorageState {
@@ -59,6 +82,7 @@ export async function GET(): Promise<Response> {
   const body = JSON.stringify({
     status: ready ? "ready" : "not_ready",
     storage,
+    buildId: deployedBuildId(), // CM-2: deployed build identity (null if unresolved) — for served-vs-disk drift checks
     checkedAt: new Date().toISOString(),
   });
   return new Response(body, {
