@@ -575,6 +575,33 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/incident-recurrence-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V71 Class-A shared prerequisite — a pure path resolver (coreDir/repoRoot) that maps a compiled dist/core
+  // module BACK to the canonical source tree, fixing the __dirname/REPO_ROOT→dist breakage that blocks
+  // patch-proposal-apply / launch-readiness / nl-objective-gateway. Pure leaf (path builtin only), deps=0,
+  // brand-new (no historical suite — the equivalence bench is its proof, covering source + dist layouts).
+  "runtime-paths": [
+    // Both .js and .ts are NEW this lot ⇒ the historical .js must be overlaid into the candidate so the
+    // equivalence bench finds it (committed historical modules come from the HEAD archive; this one does not yet).
+    "runtime/core/runtime-paths.js",
+    "runtime/core/runtime-paths.ts",
+    "runtime/__bench__/runtime-paths-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
+  // V71 Class-A consumer #1. The .js carries a behaviour-preserving change (executor path via
+  // runtime-paths.coreDir(__dirname) so a dist/core caller maps back to the canonical source executor;
+  // optional test-only _spawn seam, default real). Overlay the changed .js; parity proven hermetically
+  // (injected spawn, temp cwd, NO real subprocess) incl. the dist→source executor-path resolution.
+  "patch-proposal-apply": [
+    // The shared Class-A prerequisite runtime-paths (already gated independently) is overlaid here too so
+    // this lot's candidate is self-contained before both are committed together (the dist closure of the
+    // compiled .ts requires ./runtime-paths).
+    "runtime/core/runtime-paths.js",
+    "runtime/core/runtime-paths.ts",
+    "runtime/core/patch-proposal-apply.js",
+    "runtime/core/patch-proposal-apply.ts",
+    "runtime/__bench__/patch-proposal-apply-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
   "improvement-baseline": [
     // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
     // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
@@ -785,6 +812,10 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   "improvement-baseline": [
     "runtime/core/improvement-baseline.test.js",
   ],
+  // Brand-new pure leaf — no prior behavioural suite; the equivalence bench (source + dist layouts) is its proof.
+  "runtime-paths": [],
+  // No prior behavioural suite existed for this adapter; the equivalence bench is its proof.
+  "patch-proposal-apply": [],
 };
 const REGRESSION_BENCHES = [
   "runtime/__bench__/capability-registry-equivalence.e2e.test.ts",

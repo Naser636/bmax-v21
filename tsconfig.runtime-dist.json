@@ -95,6 +95,8 @@
     "runtime/core/capability-executors.ts",
     "runtime/core/learning-chain.ts",
     "runtime/core/incident-recurrence.ts",
-    "runtime/core/improvement-baseline.ts"
+    "runtime/core/improvement-baseline.ts",
+    "runtime/core/runtime-paths.ts",
+    "runtime/core/patch-proposal-apply.ts"
   ]
 }

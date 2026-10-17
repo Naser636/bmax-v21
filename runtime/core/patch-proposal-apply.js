@@ -21,6 +21,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { coreDir } = require("./runtime-paths");
 
 /**
  * @param {object} opts
@@ -85,8 +86,13 @@ function applyProposal(opts) {
   fs.mkdirSync(genDir, { recursive: true });
   fs.writeFileSync(path.join(genDir, "patch-plan.json"), JSON.stringify(plan, null, 2));
 
-  const executor = path.join(__dirname, "patch-executor.js");
-  const r = spawnSync("node", [executor], { cwd, encoding: "utf8" });
+  // Resolve the CANONICAL patch-executor.js in the SOURCE tree (coreDir maps a compiled dist/core caller
+  // back to runtime/core), so the governed executor is spawned correctly whether this module runs from
+  // runtime/core (production JS — identity, unchanged) or runtime/dist/core (compiled TS). The spawn is an
+  // optional test-only seam (default real spawnSync — production byte-for-byte unchanged).
+  const executor = path.join(coreDir(__dirname), "patch-executor.js");
+  const spawn = opts && typeof opts._spawn === "function" ? opts._spawn : spawnSync;
+  const r = spawn("node", [executor], { cwd, encoding: "utf8" });
 
   let report = null;
   try {
