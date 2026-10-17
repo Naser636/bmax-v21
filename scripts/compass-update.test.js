@@ -6,7 +6,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { update, effectiveStatus } = require("./compass-update.js");
+const { update, effectiveStatus, fromReport } = require("./compass-update.js");
 
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
@@ -72,6 +72,39 @@ function ctx() { const root = tmpd(); return { repoRoot: root, file: path.join(r
   const c = ctx(); fs.writeFileSync(path.join(c.repoRoot, "ev.txt"), "x");
   const r = update({ mission: "M5", commit: "y", status: "PASS", acceptanceMet: true, evidence: ["ev.txt"], verified: true, nextAction: "do X" }, c);
   ok("nextAction stored as inert string (no authority)", typeof r.state.lastMission.nextAction === "string" && !("execute" in r.state.lastMission) && !("authorized" in r.state.lastMission));
+}
+
+// 9 — fromReport (pipeline hook): validated+SUCCESS report ⇒ verified PASS result with real evidence refs.
+{
+  const root = tmpd();
+  fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true });
+  fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify({ status: "SUCCESS", validated: true }));
+  const r = fromReport("M-HOOK", root);
+  ok("fromReport: SUCCESS+validated ⇒ PASS", r.status === "PASS" && r.acceptanceMet === true && r.verified === true);
+  ok("fromReport: evidence points at the real report", r.evidence.includes("runtime/generated/mission-report.json"));
+}
+// 10 — fromReport fail-closed: report NOT validated ⇒ FAIL (never PASS), acceptanceMet false.
+{
+  const root = tmpd();
+  fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true });
+  fs.writeFileSync(path.join(root, "runtime", "generated", "mission-report.json"), JSON.stringify({ status: "SUCCESS", validated: false }));
+  const r = fromReport("M-HOOK", root);
+  ok("fromReport: SUCCESS but validated=false ⇒ FAIL (fail-closed)", r.status === "FAIL" && r.acceptanceMet === false);
+}
+// 11 — fromReport: absent report ⇒ NOT_RUN (never fabricates a PASS).
+{
+  const root = tmpd();
+  const r = fromReport("M-HOOK", root);
+  ok("fromReport: no report ⇒ NOT_RUN", r.status === "NOT_RUN" && r.acceptanceMet === false);
+}
+// 12 — end-to-end hook: a FAIL-derived result recorded ⇒ never advances verifiedCheckpoint.
+{
+  const c = ctx();
+  fs.mkdirSync(path.join(c.repoRoot, "runtime", "generated"), { recursive: true });
+  fs.writeFileSync(path.join(c.repoRoot, "runtime", "generated", "mission-report.json"), JSON.stringify({ status: "FAILED", validated: false }));
+  const derived = fromReport("M-E2E", c.repoRoot);
+  const r = update(derived, c);
+  ok("hook FAIL ⇒ recorded FAIL, verifiedCheckpoint still null", r.effective.status === "FAIL" && r.state.verifiedCheckpoint === null);
 }
 
 console.log(`\ncompass-update §8 — ${passed} assertions passed.`);

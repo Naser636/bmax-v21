@@ -82,9 +82,40 @@ function writeAtomic(file, state) {
   fs.renameSync(tmp, file); // atomic ⇒ an interrupted write never corrupts the last verified checkpoint
 }
 
+// Derive a VERIFIED result from the real mission artifacts (fail-closed: PASS only if the report says
+// validated===true AND status===SUCCESS AND the evidence files exist). Used by the pipeline completion hook.
+function fromReport(mission, repoRoot) {
+  const gen = path.join(repoRoot, "runtime", "generated");
+  let report = {};
+  try { report = JSON.parse(fs.readFileSync(path.join(gen, "mission-report.json"), "utf8")); } catch { report = {}; }
+  const validated = report.validated === true;
+  const reportStatus = report.status || "UNKNOWN";
+  const pass = validated && reportStatus === "SUCCESS";
+  let commit = null, branch = null;
+  try { commit = require("child_process").execSync("git rev-parse HEAD", { cwd: repoRoot, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { /* detached/no-git */ }
+  try { branch = require("child_process").execSync("git rev-parse --abbrev-ref HEAD", { cwd: repoRoot, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { /* */ }
+  const evidence = ["runtime/generated/mission-report.json"];
+  if (fs.existsSync(path.join(gen, "runtime-verify.json"))) evidence.push("runtime/generated/runtime-verify.json");
+  return {
+    mission, commit, branch,
+    status: pass ? "PASS" : (reportStatus === "UNKNOWN" ? "NOT_RUN" : "FAIL"),
+    acceptanceMet: pass, evidence,
+    reason: pass ? "mission-report validated+SUCCESS" : `report status=${reportStatus} validated=${validated}`,
+    nextAction: null, verified: true,
+  };
+}
+
 if (require.main === module) {
-  const result = JSON.parse(process.argv[2] || "{}");
+  const args = process.argv.slice(2);
+  let result;
+  if (args[0] === "--from-report") {
+    const mission = args[1];
+    if (!mission) { process.stderr.write("compass-update --from-report <mission>\n"); process.exit(2); }
+    result = fromReport(mission, path.resolve(__dirname, ".."));
+  } else {
+    result = JSON.parse(args[0] || "{}");
+  }
   const r = update(result);
   process.stdout.write("compass-update: " + r.effective.status + " — " + r.note + "\n");
 }
-module.exports = { update, effectiveStatus, sig };
+module.exports = { update, effectiveStatus, sig, fromReport };

@@ -228,9 +228,25 @@ REPORT_STATUS=$(node -e "try{process.stdout.write(String(require('./runtime/gene
 REPORT_VALIDATED=$(node -e "try{process.stdout.write(String(require('./runtime/generated/mission-report.json').validated===true))}catch(e){process.stdout.write('false')}")
 
 if [ "$REPORT_VALIDATED" != "true" ] || [ "$REPORT_STATUS" != "SUCCESS" ]; then
+  # §8 COMPASS auto-fire (failure branch): record the honest non-SUCCESS outcome. fromReport derives
+  # status from the real mission-report (will be FAIL/NOT_RUN here — can NEVER record PASS on this branch).
+  # Guarded: a recorder failure is surfaced on stderr but can NEVER change the mission's own exit code.
+  if [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
+    node scripts/compass-update.js --from-report "$MISSION" || echo "[COMPASS] WARNING: recorder failed on STOP branch (mission result unaffected)" >&2
+  fi
   echo "STOP: mission not proven by the Validation Engine (status=${REPORT_STATUS}, validated=${REPORT_VALIDATED})."
   echo "No SUCCESS artifact will be written."
   exit 1
+fi
+
+# §8 COMPASS auto-fire (verified-SUCCESS branch) — THE single canonical completion event: reached only AFTER
+# the Validation Engine proved validated===true AND status===SUCCESS above. fromReport re-derives the result
+# from the real mission-report (fail-closed: PASS only if the artifact still says validated+SUCCESS and its
+# evidence files exist) and records a verified checkpoint. Idempotent (replay = no-op). A recorder failure is
+# surfaced loudly but does NOT silently convert into "full success" — it never flips the proven mission result,
+# yet it is never hidden. Opt-out: ODG_COMPASS_RECORD=0.
+if [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
+  node scripts/compass-update.js --from-report "$MISSION" || echo "[COMPASS] WARNING: recorder failed on SUCCESS branch (checkpoint NOT advanced; mission still SUCCESS)" >&2
 fi
 
 cat > "runtime/generated/mission-artifacts/passports/${MISSION}.passport.md" <<PASS
