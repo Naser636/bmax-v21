@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:runtime": "node -e \"require('fs').rmSync('runtime/dist',{recursive:true,force:true})\" && tsc -p tsconfig.runtime-dist.json && node scripts/build-dist-closure.js",
+    "build:runtime": "node scripts/build-runtime-guard.js",
     "parity:runtimes": "tsx scripts/cross-runtime-parity.ts",
     "validate": "npm test && npx tsc --noEmit -p tsconfig.json && npm run parity:runtimes",
     "start": "next start",
