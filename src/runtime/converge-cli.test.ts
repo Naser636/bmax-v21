@@ -109,6 +109,9 @@ console.log("Convergence Orchestrator — composition + exit-code mapping");
   check(report.contracts.ok === true, "contract step recorded");
   check(report.migration === "MIGRATION REPORT — stub", "migration text embedded");
   check(report.generatedAt === "2026-07-27T00:00:00.000Z", "injected timestamp used (deterministic)");
+  // §7-A observability: durationMs is emitted (number ≥0, or null on unparseable time); deterministic 0 here.
+  check(typeof report.durationMs === "number" || report.durationMs === null, "durationMs emitted (number|null)");
+  check(report.durationMs === 0, "durationMs is 0 under a fixed injected clock (deterministic)");
   check(mdEntry![1].includes("# Convergence Report"), "markdown header rendered");
 }
 

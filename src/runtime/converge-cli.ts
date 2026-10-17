@@ -122,6 +122,7 @@ function buildReport(
   contract: ContractStep,
   migrationText: string,
   seams: Required<Pick<ConvergeSeams, "readJson" | "now">>,
+  startedAt: string,
 ): Record<string, unknown> {
   const ledger = seams.readJson("mission-ledger.json");
   const checkpoint = seams.readJson("autonomy-checkpoint.json");
@@ -136,9 +137,17 @@ function buildReport(
   // BLOCKED). We therefore gate the root cause on the honest convergence verdict.
   const converged = result.status === "PLAN_COMPLETE" && result.halt == null;
 
+  // §7-A observability: wall-clock convergence duration (start captured in runConverge, end here).
+  // Fail-safe: unparseable timestamps ⇒ null (never a fabricated number); clamped ≥0.
+  const durationMs = (() => {
+    const a = Date.parse(startedAt), b = Date.parse(seams.now());
+    return Number.isFinite(a) && Number.isFinite(b) ? Math.max(0, b - a) : null;
+  })();
+
   return {
     report: "RUNTIME_CONVERGENCE",
     generatedAt: seams.now(),
+    durationMs,
     autonomyContractVersion: result.autonomyContractVersion,
     converged,
     status: result.status,
@@ -205,6 +214,7 @@ function renderMarkdown(r: Record<string, unknown>): string {
 export function runConverge(seams: ConvergeSeams = {}): number {
   const log = seams.log ?? console.log;
   const now = seams.now ?? (() => new Date().toISOString());
+  const startedAt = now(); // §7-A: capture wall-clock start before the autonomy loop runs
   const readJson = seams.readJson ?? defaultReadJson;
   const writeFile = seams.writeFile ?? defaultWriteFile;
   const generateContracts = seams.generateContracts ?? defaultGenerateContracts;
@@ -244,7 +254,7 @@ export function runConverge(seams: ConvergeSeams = {}): number {
 
   // Step 4 — aggregate the campaign-level convergence report (best-effort; never fails the run).
   try {
-    const report = buildReport(result, contract, migrationText, { readJson, now });
+    const report = buildReport(result, contract, migrationText, { readJson, now }, startedAt);
     writeFile(REPORT_JSON, JSON.stringify(report, null, 2));
     writeFile(REPORT_MD, renderMarkdown(report));
     log("--------------------------------------");
