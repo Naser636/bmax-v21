@@ -1,0 +1,23 @@
+# ODG — NIST SSDF 1.1 PRACTICE → CONTROL TRACEABILITY (§W-4.2)
+
+> **Mapping, NOT a compliance claim.** Reference: NIST SP 800-218 *Secure Software Development Framework (SSDF) v1.1* (final). SSDF 1.2 material is DRAFT and is not used as a conformance basis here. This document maps *relevant* SSDF practices to EXISTING ODG controls, their tests and evidence. A mapping is not certification; status is graded honestly per the §V ladder:
+> `IMPLEMENTED` (code exists) · `TESTED` (automated test exists + passes) · `EVIDENCED` (operational artifact/run proves it) · `NOT-DEMONSTRATED` (planned/partial).
+> Additive, docs-only; creates no parallel registry; status-of-record stays the ledger + `ROADMAP.json`.
+
+| SSDF practice (1.1) | ODG control (owner) | Test / evidence | Status |
+|---|---|---|---|
+| **PO.3** Toolchain integrity & reproducibility | `scripts/build-runtime-guard.js` content-fingerprint; `scripts/build-dist-closure.js` + `dist-closure-manifest.json` (sha256); `pretest` build hook (§M-3 #8 step 2) | clean-env `npm test` regenerates `runtime/dist` (exit 0); closure manifest present; guard verified (source-change⇒rebuild, failed-build⇒no stale fingerprint) | TESTED/EVIDENCED |
+| **PW.1** Design to meet security requirements | the 9 primitives + contracts/policies; `action-gate` deny-by-default admission (POLICY) | `action-gate.test.js`; `dispatch-authorization-invariant.test.js` (OWASP ASVS fail-secure) | TESTED |
+| **PW.4** Reuse well-secured components | `patch-memory` (recall proven repairs, goal-keyed); capability reuse; `.js` rollback retained | `patch-memory` tests; §V learning reuse | TESTED |
+| **PW.7** Review / analyze code for vulns & correctness | `migrate-ts` strict-gate (`tsc` strict) + equivalence benches (byte-identical JS≡TS); whole-program `tsc --noEmit` | 88 dual ports gated; `npm test` exit 0 (5182 lines) | TESTED/EVIDENCED |
+| **PW.8** Test executable code | `local-test-gate`, `validation-engine`, 107 historical `.test.js`, 83 equivalence benches, `npm test` | `npm test` exit 0; per-lot `migrate-ts` 5-gate ALL PASS | TESTED/EVIDENCED |
+| **PW.9** Secure-by-default configuration | `action-gate` deny-by-default; `capability-authorization` fail-closed (human grant required); consequential-capability gate | `action-gate-live.test.js`; `capability-authorization.test.js`; zero-spawn proven | TESTED/EVIDENCED |
+| **PS.1** Protect code from unauthorized change | governance path-write guard (patch-executor BLOCKS `governance/**`); protected `ROADMAP.json`; §12 freeze | `patch-executor-governance-guard.test.js` (13) | TESTED |
+| **PS.2/PS.3** Provenance + protect each release | `evidence-provenance` (`{sourceCommit, treeDirty, contentSha256, capturedAtRun}`, SLSA/in-toto-adapted); `mission-ledger` (append-only); local backup vault (§M-6) | 20 hermetic + 53 executor assertions; vault integrity `sha256sum -c` OK | TESTED/EVIDENCED |
+| **RV.1** Identify vulnerabilities / failures | `self-diagnostic` (expected-vs-observed → incident); `odg diagnose` | `self-diagnostic.test.js` (59) | TESTED/EVIDENCED |
+| **RV.2** Assess, prioritize, remediate | `root-cause-engine` + `bounded-remediation` (propose-only, action-gate-gated); `local-fixers` | `bounded-remediation` tests; triage CLI real run (DIAGNOSED→propose, applied:false) | TESTED/EVIDENCED |
+| **RV.3** Root-cause to prevent recurrence | `incident-recurrence` (NONE/RECURRENCE/FROZEN_LOOP); self-diagnostic attempts-cap→FROZEN (§V-B B7); `ODG_DEFECT_REGISTER.md` anti-recurrence | `incident-recurrence` bench; defect register; controller EXHAUSTED/no-infinite-repeat (§W-4.3) | TESTED/EVIDENCED |
+
+**Gaps / NOT-DEMONSTRATED.** Build-level SLSA attestation for `runtime/dist` beyond the closure manifest (§W-4.4, DEFER). Dependency-vulnerability scanning (PW.4/RV.1 supply-chain) is not wired as an automated gate — **NOT-DEMONSTRATED**; candidate owner = a future CI gate (reserved; no network/external effect without authorization). SSDF organizational practices (PO.1/PO.2 roles/policy) are governance-level and out of this runtime's code scope.
+
+**This document certifies nothing beyond the cited, tested evidence.** It is a traceability aid for the §W autonomy initiative; conformance to SSDF would require an independent assessment.
