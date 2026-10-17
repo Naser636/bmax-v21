@@ -13,10 +13,15 @@ const email = require("./email-gateway");
 const invoicing = require("./invoicing");
 const payments = require("./payments");
 const clientIntake = require("./client-intake");
+const { coreDir } = require("./runtime-paths");
 
 const S = Object.freeze({ READY: "READY", NOT_CONFIGURED: "NOT_CONFIGURED", BLOCKED: "BLOCKED", TEST_MODE: "TEST_MODE" });
 
-function moduleLoads(rel) { try { require.resolve(path.resolve(__dirname, rel)); return true; } catch { return false; } }
+// Probe capability modules in the CANONICAL runtime/core source tree (coreDir maps a compiled dist/core
+// caller back to runtime/core), so readiness reports on the same source capabilities whether this module
+// runs from runtime/core or runtime/dist/core — immune to per-module migration-state drift. In the source
+// layout coreDir is identity, so production JS behaviour is byte-for-byte unchanged.
+function moduleLoads(rel) { try { require.resolve(path.resolve(coreDir(__dirname), rel)); return true; } catch { return false; } }
 
 // Persistence control: can we actually write+read+remove under the client store? (not just "dir exists").
 function persistenceCheck(cwd) {

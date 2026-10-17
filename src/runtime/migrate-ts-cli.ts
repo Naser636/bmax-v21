@@ -623,6 +623,15 @@ const LOT_WRITE_SET: Record<string, string[]> = {
     "runtime/__bench__/email-gateway-equivalence.e2e.test.ts",
     "tsconfig.runtime-dist.json",
   ],
+  // V71 Class-A consumer #3 (was ALSO transitively blocked by email-gateway→imapflow, now resolved). The .js
+  // probes capability modules via coreDir(__dirname) so a compiled dist/core copy reports on the canonical
+  // runtime/core capabilities (source layout = identity). .ts = faithful @ts-nocheck transliteration.
+  "launch-readiness": [
+    "runtime/core/launch-readiness.js",
+    "runtime/core/launch-readiness.ts",
+    "runtime/__bench__/launch-readiness-equivalence.e2e.test.ts",
+    "tsconfig.runtime-dist.json",
+  ],
   "improvement-baseline": [
     // The .js carries the V70 dependency-inversion change (defaultCollectors no longer hardcodes the
     // cross-tree require("../../src/runtime/migration-campaign") — the inventory source is injected by the
@@ -842,6 +851,9 @@ const LOT_HISTORICAL: Record<string, string[]> = {
   ],
   "email-gateway": [
     "runtime/core/email-gateway.test.js",
+  ],
+  "launch-readiness": [
+    "runtime/core/launch-readiness.test.js",
   ],
 };
 const REGRESSION_BENCHES = [
