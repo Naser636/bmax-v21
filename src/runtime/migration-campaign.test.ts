@@ -262,8 +262,15 @@ console.log("Migration Campaign Planner — tests");
     check(sel.state === "PASS" && typeof sel.lot === "string", `integration: real repo yields a safe next lot (${sel.lot})`);
     check(!inv.ported.includes(sel.lot as string), "integration: recommended lot is not already ported");
   } else {
-    check(sel.state === "BLOCKED" && sel.lot === null && typeof sel.rationale === "string" && sel.rationale.length > 0,
-      `integration: no safe lot remains ⇒ honest BLOCKED (not a false PASS); rationale="${(sel.rationale || "").slice(0, 48)}…"`);
+    // No safe candidate remains ⇒ an HONEST no-lot terminal verdict, NEVER a false PASS-with-lot. The exact
+    // terminal state depends on what is left: BLOCKED (hazard-blocked lots remain), SKIPPED (only §12
+    // policy-excluded JS-only modules remain), or NONE (nothing JS-only left). V71 migrated the last six
+    // hazard-blocked lots, so the real repo now reports SKIPPED — the hazard class is exhausted and only
+    // frozen/policy-excluded modules remain. All three are correct; a PASS here would be the false success.
+    check(["BLOCKED", "SKIPPED", "NONE"].includes(sel.state) && sel.lot === null && typeof sel.rationale === "string" && sel.rationale.length > 0,
+      `integration: no safe lot remains ⇒ honest ${sel.state} terminal verdict (not a false PASS); rationale="${(sel.rationale || "").slice(0, 56)}…"`);
+    const anyHazard = inv.candidates.some((c) => c.hazard);
+    check(!anyHazard, "integration: zero hazard-blocked candidates remain (V71 migrated all six — __dirname/external-pkg/dynamic-require classes resolved)");
   }
   // capability-factory (dynamic require of generated modules) must now be classified hazard-blocked,
   // never recommended — the V22 finding that the dist-closure tracer rejects its dynamic require().
