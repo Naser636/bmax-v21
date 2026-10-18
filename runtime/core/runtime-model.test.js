@@ -227,6 +227,9 @@ console.log("Runtime Model — gap-detection contract");
   const rm = (m.missions || []).find((x) => x.mission === "DEPLOY_X");
   ok("RESERVED: preserved in model (reserved=true, executable=false)", !!rm && rm.reserved === true && rm.executable === false);
   ok("RESERVED: selection ADVANCES past the reserved head to the next eligible mission", m.nextMission === "WORK_Y" && m.queue.some((q) => q.mission === "WORK_Y"));
+  // Regression guard: a RESERVED roadmap mission still RESOLVES (it is valid human-gated work, not a
+  // broken/dangling roadmap reference) ⇒ brain must stay READY, not falsely DEGRADE from the skip.
+  ok("RESERVED: a reserved roadmap mission does NOT degrade brain health (resolves as governed state)", m.brain === "READY");
 }
 
 // --- Case: a mission with at least ONE non-excluded objective is NOT reserved (no over-exclusion) -----

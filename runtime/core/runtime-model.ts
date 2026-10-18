@@ -253,11 +253,16 @@ function computeRuntimeModel(root: string = process.cwd()): any {
 
   // --- brain health --------------------------------------------------------------------------
   const masterPlanPresent = fs.existsSync(path.join(root, "runtime", "brain", "MASTER_PLAN.md"));
+  // A roadmap id RESOLVES when it maps to a recognized contract — executable, OR a legitimately
+  // non-executable GOVERNED state: reserved (human-gated) or deprecated (intent covered). Only a
+  // DANGLING reference (no contract) or a BROKEN one (NEEDS_CONTRACT / invalid-id) fails to resolve.
+  // (A reserved roadmap mission is NOT a broken roadmap — it is valid work awaiting a human gate — so
+  // it must not degrade brain health; that would be a false regression from the reserved-skip change.)
   const roadmapResolves =
     roadmapIds.length > 0 &&
     roadmapIds.every((id: string) => {
       const m = missions.find((x) => x.mission === id);
-      return m && m.executable;
+      return m && (m.executable || m.reserved || m.deprecated);
     });
   let brain;
   if (!masterPlanPresent) brain = "UNKNOWN";
