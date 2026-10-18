@@ -1,6 +1,9 @@
-// @ts-nocheck
 /*
  * CROSS-RUNTIME PARITY HARNESS (η3-B133, Lot 1 — CTO authorized).
+ * Type-suppression pragma REMOVED (TS_NOCHECK_CROSS_RUNTIME_PARITY): former TS2451 + crypto.createHash
+ * were a script-vs-module / Web-Crypto-global shadow (→ `export {}` marker); the TS2339/never-cascade was
+ * the incrementally-built `report`/`rec`/`out` objects (→ `: any`); finish() trailing params made optional
+ * (runtime-optional); params carry explicit `: any`. NO harness-behaviour change; parity logic identical.
  *
  * Proves that the two execution substrates produce IDENTICAL artifacts for the same mission:
  *   - JS pipeline        : `node runtime/bin/odg-run.js <mission>`
@@ -35,13 +38,13 @@ const REPO = process.cwd();
 const ARTIFACTS = ["mission-report.json", "mission-ledger.json", "mission-lifecycle.json", "patch-execution.json"];
 const ISO = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?/g;
 
-function sha256(buf) { return crypto.createHash("sha256").update(buf).digest("hex"); }
+function sha256(buf: any) { return crypto.createHash("sha256").update(buf).digest("hex"); }
 
 /* ---- PURE, UNIT-TESTABLE CORE (exported for the bench) ----------------------------------------- */
 
 // Normalize ONLY justified volatile data: ISO-8601 timestamps → "<TS>". Returns the normalized text and
 // the count of substitutions (an ASYMMETRIC count between runtimes is itself treated as a divergence).
-function normalizeArtifact(text) {
+function normalizeArtifact(text: any) {
   if (typeof text !== "string") return { text: "", tsCount: 0 };
   let tsCount = 0;
   const out = text.replace(ISO, () => { tsCount += 1; return "<TS>"; });
@@ -51,7 +54,7 @@ function normalizeArtifact(text) {
 // Compare one artifact across the two runtimes. `js`/`ts` are {present, raw} where raw is the file text
 // (or null when absent). Business bytes must match after timestamp normalization; presence and timestamp
 // counts must match too. No other normalization is applied.
-function compareArtifact(name, js, ts) {
+function compareArtifact(name: any, js: any, ts: any) {
   const result = { name, jsPresent: js.present, tsPresent: ts.present, identical: false, reason: "" };
   if (js.present !== ts.present) { result.reason = `presence mismatch (js=${js.present} ts=${ts.present})`; return result; }
   if (!js.present && !ts.present) { result.identical = true; result.reason = "both absent"; return result; }
@@ -71,10 +74,10 @@ function compareArtifact(name, js, ts) {
 // Rules: any BLOCKED required class ⇒ BLOCKED(2). Any artifact non-identical, exit-code mismatch, or a
 // failed touch-proof ⇒ FAIL(1). Else PASS(0). The three classes READ_ONLY+ENGINEERING_WRITE+ECONOMIC_TOUCH
 // are all REQUIRED; if any is blocked the global verdict is BLOCKED (never a partial PASS).
-function verdict(scenarios) {
+function verdict(scenarios: any) {
   const required = ["READ_ONLY", "ENGINEERING_WRITE", "ECONOMIC_TOUCH"];
-  const covered = new Set(scenarios.filter((s) => !s.blocked).map((s) => s.class));
-  const blockedClasses = required.filter((c) => !covered.has(c));
+  const covered = new Set(scenarios.filter((s: any) => !s.blocked).map((s: any) => s.class));
+  const blockedClasses = required.filter((c: any) => !covered.has(c));
   let hasDivergence = false;
   const notes = [];
   for (const s of scenarios) {
@@ -90,26 +93,26 @@ function verdict(scenarios) {
 
 /* ---- IMPURE DRIVER ----------------------------------------------------------------------------- */
 
-function run(cmd, args, cwd, extraEnv) {
+function run(cmd: any, args: any, cwd: any, extraEnv?: any) {
   const env = { ...process.env, ...(extraEnv || {}) };
   const r = spawnSync(cmd, args, { cwd, encoding: "utf8", env, maxBuffer: 64 * 1024 * 1024 });
   return { status: r.status, stdout: r.stdout || "", stderr: r.stderr || "", signal: r.signal };
 }
-function readIf(p) { return fs.existsSync(p) ? { present: true, raw: fs.readFileSync(p, "utf8") } : { present: false, raw: null }; }
-function resetGenerated(sandbox) {
+function readIf(p: any) { return fs.existsSync(p) ? { present: true, raw: fs.readFileSync(p, "utf8") } : { present: false, raw: null }; }
+function resetGenerated(sandbox: any) {
   fs.rmSync(path.join(sandbox, "runtime", "generated"), { recursive: true, force: true });
   fs.rmSync(path.join(sandbox, "bench-workspace"), { recursive: true, force: true });
 }
-function captureArtifacts(sandbox) {
+function captureArtifacts(sandbox: any) {
   const gen = path.join(sandbox, "runtime", "generated");
-  const out = {};
+  const out: any = {};
   for (const a of ARTIFACTS) out[a] = readIf(path.join(gen, a));
   return out;
 }
 
 function main() {
-  const report = { harness: "cross-runtime-parity", repo: REPO, scenarios: [], normalization: "ISO-8601 timestamps → <TS> ONLY (count asymmetry = divergence)", artifacts: ARTIFACTS };
-  const log = (...m) => console.log(...m);
+  const report: any = { harness: "cross-runtime-parity", repo: REPO, scenarios: [], normalization: "ISO-8601 timestamps → <TS> ONLY (count asymmetry = divergence)", artifacts: ARTIFACTS };
+  const log = (...m: any[]) => console.log(...m);
   log("η3-B133 — CROSS-RUNTIME PARITY HARNESS");
 
   // 0. Preflight.
@@ -161,7 +164,7 @@ function main() {
     ];
 
     for (const sc of scenarios) {
-      const rec = { class: sc.class, mission: sc.mission, source: sc.source };
+      const rec: any = { class: sc.class, mission: sc.mission, source: sc.source };
       const missionFile = path.join(base, "runtime", "missions", `${sc.mission}.json`);
       if (!fs.existsSync(missionFile)) { rec.blocked = `mission contract absent: ${sc.mission}`; report.scenarios.push(rec); continue; }
 
@@ -196,7 +199,7 @@ function main() {
         // when budget-contract.resolveBudget returned ok:true — which itself validates each allocation's
         // kind against the economic-unit vocabulary (budget-contract.js:64,68 ⇒ economic-unit.KIND). So a
         // present, non-empty plan.budget.allocations is positive proof the economic modules were exercised.
-        const budgetOk = (plan) => { try { const b = JSON.parse(plan.raw).budget; return !!b && Array.isArray(b.allocations) && b.allocations.length > 0; } catch { return false; } };
+        const budgetOk = (plan: any) => { try { const b = JSON.parse(plan.raw).budget; return !!b && Array.isArray(b.allocations) && b.allocations.length > 0; } catch { return false; } };
         const jsOk = jsPlan.present && budgetOk(jsPlan); const tsOk = tsPlan.present && budgetOk(tsPlan);
         const same = jsPlan.present && tsPlan.present && normalizeArtifact(jsPlan.raw).text === normalizeArtifact(tsPlan.raw).text;
         rec.touchProof = { ok: jsOk && tsOk && same, detail: (jsOk && tsOk) ? (same ? "budget-contract resolved an economic-unit budget identically in both runtimes (mission-plan.budget.allocations present)" : "mission-plan differs across runtimes") : `economic module not exercised (js budget ok=${jsOk} ts ok=${tsOk})` };
@@ -212,7 +215,7 @@ function main() {
 
     for (const s of report.scenarios) {
       if (s.blocked) { log(`  BLOCKED ${s.class} — ${s.blocked}`); continue; }
-      const allOk = s.exitJs === s.exitTs && s.artifacts.every((a) => a.identical) && (!s.touchProof || s.touchProof.ok);
+      const allOk = s.exitJs === s.exitTs && s.artifacts.every((a: any) => a.identical) && (!s.touchProof || s.touchProof.ok);
       log(`  ${allOk ? "PASS" : "FAIL"} ${s.class} (${s.mission}) exit js=${s.exitJs} ts=${s.exitTs}`);
       for (const a of s.artifacts) log(`      ${a.identical ? "=" : "≠"} ${a.name}: ${a.reason}`);
       if (s.touchProof) log(`      touch: ${s.touchProof.ok ? "OK" : "FAIL"} — ${s.touchProof.detail}`);
@@ -225,7 +228,7 @@ function main() {
   }
 }
 
-function finish(code, msg, report, sandbox, keep) {
+function finish(code: any, msg: any, report: any, sandbox?: any, keep?: any) {
   report.exit = code; report.message = msg;
   const label = code === 0 ? "PASS" : code === 1 ? "FAIL" : "BLOCKED";
   console.log(`CROSS-RUNTIME PARITY: ${label} (exit ${code}) — ${msg}`);
@@ -239,3 +242,7 @@ module.exports = { normalizeArtifact, compareArtifact, verdict, ARTIFACTS };
 if (require.main === module || (process.argv[1] && /cross-runtime-parity\.ts$/.test(process.argv[1]))) {
   main();
 }
+
+// Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope so top-level consts
+// (fs/path/os/crypto/spawnSync/REPO/...) do not collide with sibling script-scope files / Web globals (TS2451).
+export {};
