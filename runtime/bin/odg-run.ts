@@ -1,10 +1,10 @@
-// @ts-nocheck
 /*
  * ODG Runtime pipeline entry point — TypeScript canonical (Lot 1 migration). Faithful port of the
  * original runtime/bin/odg-run.js; behaviour (governance gate, RuntimeContext, SAMURAI summary output,
  * checkpoint/resume, per-stage spawn of `node <stage.js>`, RC-1 effect gate, exit codes) is identical.
  * The 13 stage modules remain JavaScript in this lot (migrated in later lots) and are still spawned
- * with `node`. `// @ts-nocheck` is transitional (static types added in a later pass).
+ * with `node`. Type-suppression pragma REMOVED (TS_NOCHECK_ODG_RUN): former TS2451 were a script-vs-
+ * module scope artifact fixed by the `export {}` marker below; params carry explicit `: any`.
  *
  * Lot 1R execution model: this source is COMPILED by tsconfig.runtime-dist.json to runtime/dist/bin/
  * odg-run.js (plain CommonJS) and run with `node runtime/dist/bin/odg-run.js <mission>` — NO tsx, NO
@@ -28,7 +28,7 @@ const path = require("path");
 // Fall back to the source .js rollback when ODG_RUNTIME=js OR the dist port is absent (bare sandbox),
 // mirroring the `_odg_port` wrapper discipline. Resolution stays CWD-relative (odg-run runs with cwd =
 // project/sandbox root, as the stage spawns assume).
-function legacyRequire(rel) {
+function legacyRequire(rel: any) {
   if (process.env.ODG_RUNTIME !== "js") {
     const distRel = rel.replace(/^runtime\//, "runtime/dist/");
     const distAbs = path.resolve(process.cwd(), distRel);
@@ -39,7 +39,7 @@ function legacyRequire(rel) {
 const { authorizeMission } = legacyRequire("runtime/core/governance-kernel.js");
 
 const VERBOSE = process.env.ODG_VERBOSE === "1" || process.env.ODG_VERBOSE === "true";
-function fmtDuration(ms) {
+function fmtDuration(ms: any) {
   return ms >= 1000 ? (ms / 1000).toFixed(1) + "s" : ms + "ms";
 }
 const { bootstrap } = legacyRequire("runtime/bin/odg-bootstrap.js");
@@ -61,7 +61,7 @@ const governance = authorizeMission(mission);
 let runtimeContext = null;
 try {
   runtimeContext = loadRuntimeContext(mission);
-} catch (e) {
+} catch (e: any) {
   console.error("RuntimeContext : UNAVAILABLE (" + e.message + ")");
 }
 
@@ -100,7 +100,7 @@ if (!VERBOSE) {
 }
 
 // CHECKPOINT / RESUME
-const stageNames = pipeline.map(([name]) => name);
+const stageNames = pipeline.map(([name]: any) => name);
 let { cp, resumeIndex } = checkpoint.begin(mission, stageNames);
 
 for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) {
@@ -179,3 +179,7 @@ if (!VERBOSE) {
   console.log("Full log   :", RUN_LOG);
 }
 console.log("======================================");
+
+// Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope so the pure-script
+// entry top-level consts (spawnSync/fs/path/logSlug/cp) do not collide with sibling script files (TS2451).
+export {};
