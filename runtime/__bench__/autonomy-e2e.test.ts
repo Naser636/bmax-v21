@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -23,7 +25,7 @@
  *   FLEET_BRIDGE_MOCK=1. The deliverable is produced by the mission's OWN in-contract patch (deterministic
  *   content write by patch-executor), not by any provider — asserted as observable evidence below.
  *
- * Run:  node --test runtime/__bench__/autonomy-e2e.test.js
+ * Run:  node --test runtime/__bench__/autonomy-e2e.test.ts
  */
 
 const test = require("node:test");

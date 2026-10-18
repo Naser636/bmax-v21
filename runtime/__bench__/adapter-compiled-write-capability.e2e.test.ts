@@ -5,7 +5,7 @@
  *
  * Extends the READ_ONLY parity proof (runtime/__bench__/adapter-compiled-entry.e2e.test.ts, Lot B-α) to a
  * REPRESENTATIVE engineering mission: the ODG-formulated in-scope WRITE whose legacy-path behaviour is
- * already accepted by runtime/__bench__/autonomy-write-capability.e2e.test.js. It drives the SAME contract
+ * already accepted by runtime/__bench__/autonomy-write-capability.e2e.test.ts. It drives the SAME contract
  * and the SAME offline mechanism as that accepted fixture, and compares the two pipeline ENTRIES:
  *   - LEGACY   : runtime/bin/odg-run.js         (historical JavaScript entry; the production default)
  *   - COMPILED : runtime/dist/bin/odg-run.js    (TypeScript entry compiled by `npm run build:runtime`)
@@ -66,7 +66,7 @@ function sh(cmd: string, args: string[], cwd?: string): string {
   return execFileSync(cmd, args, { cwd: cwd || REPO, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
 }
 
-/** The accepted write-capability contract (runtime/__bench__/autonomy-write-capability.e2e.test.js), verbatim shape. */
+/** The accepted write-capability contract (runtime/__bench__/autonomy-write-capability.e2e.test.ts), verbatim shape. */
 function contract(mission: string, authorizedPaths: string[]) {
   return {
     mission, version: "1.0", status: "AUTHORIZED", mode: "IMPLEMENT",

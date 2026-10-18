@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -25,7 +27,7 @@
  * ISOLATION (reused harness): throwaway os.tmpdir() git repo outside the real repo (asserted), offline
  * (FLEET_BRIDGE_MOCK=1, ODG_FLEET cleared); the capability uses only fs + a pure scope check (no network).
  *
- * Run:  node --test runtime/__bench__/autonomy-spec-author.e2e.test.js
+ * Run:  node --test runtime/__bench__/autonomy-spec-author.e2e.test.ts
  */
 
 const test = require("node:test");

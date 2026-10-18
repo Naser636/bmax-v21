@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 // @ts-nocheck
 /*
  * LOT 1S — TypeScript port of the Lot 1R proof harness (compiled-entry-nodemods-free.e2e.test.js).

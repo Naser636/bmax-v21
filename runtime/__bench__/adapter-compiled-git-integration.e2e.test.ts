@@ -4,7 +4,7 @@
  * =====================================================================================================
  *
  * Extends entry-parity (B-α READ_ONLY, B-β ODG WRITE, B-γ CONTRACT patch) to the LOCAL git-branch-integration
- * dimension whose legacy behaviour is accepted by runtime/__bench__/autonomy-qualification.e2e.test.js (a
+ * dimension whose legacy behaviour is accepted by runtime/__bench__/autonomy-qualification.e2e.test.ts (a
  * PROTECTED fixture, NOT modified). It reuses that fixture's contract + sandbox topology VERBATIM and the SAME
  * offline mechanism, and compares the two pipeline ENTRIES:
  *   - LEGACY   : runtime/bin/odg-run.js         (historical JavaScript entry; production default)
@@ -72,7 +72,7 @@ function npmBuild(): string {
   return execFileSync("npm", ["run", "build:runtime"], { cwd: REPO, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
 }
 
-/** The accepted qualification contract (autonomy-qualification.e2e.test.js), parametrised ONLY by mission id. */
+/** The accepted qualification contract (autonomy-qualification.e2e.test.ts), parametrised ONLY by mission id. */
 function contract(mission: string, execute: boolean) {
   return {
     mission, version: "1.0", status: "AUTHORIZED", mode: "READ_ONLY", priority: "NORMAL",

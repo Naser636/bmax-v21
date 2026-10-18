@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -25,13 +27,13 @@
  *     business deliverable inside an authorized write scope. This benchmark makes NO claim of an in-scope
  *     WRITE, NO global-autonomy-rate claim, and NO Phase-03 closure.
  *   - The NEGATIVE self-approval refusal is NOT duplicated here (that would fork an existing mechanism).
- *     It remains proven separately by runtime/__bench__/autonomy-write-mission.e2e.test.js.
+ *     It remains proven separately by runtime/__bench__/autonomy-write-mission.e2e.test.ts.
  *
  * ISOLATION (reused, identical to the sibling benchmarks): a throwaway os.tmpdir() git repo, outside the
  * real repo (asserted), CWD-relative pipeline, offline (FLEET_BRIDGE_MOCK=1, ODG_FLEET cleared); the
  * "Clean Workspace" capability uses only git + a local fs scan (no network, no provider).
  *
- * Run:  node --test runtime/__bench__/autonomy-capability-mission.e2e.test.js
+ * Run:  node --test runtime/__bench__/autonomy-capability-mission.e2e.test.ts
  */
 
 const test = require("node:test");

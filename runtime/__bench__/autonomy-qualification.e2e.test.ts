@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -28,7 +30,7 @@
  * ISOLATION (reused harness): throwaway os.tmpdir() git repo outside the real repo (asserted); offline
  * (FLEET_BRIDGE_MOCK=1, ODG_FLEET cleared). git-branch-integration is local-only (push refused by the wrapper).
  *
- * Run:  node --test runtime/__bench__/autonomy-qualification.e2e.test.js
+ * Run:  node --test runtime/__bench__/autonomy-qualification.e2e.test.ts
  */
 
 const test = require("node:test");

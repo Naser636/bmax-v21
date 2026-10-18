@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -16,7 +18,7 @@
  * tampered deliverable makes the REQUIRED proof block acceptance; an absent proof is never accepted by default.
  *
  * Isolation: throwaway os.tmpdir() git sandbox outside the repo (asserted), offline (FLEET_BRIDGE_MOCK=1).
- * Run:  node --test runtime/__bench__/spec-verify-coverage.e2e.test.js
+ * Run:  node --test runtime/__bench__/spec-verify-coverage.e2e.test.ts
  */
 
 const test = require("node:test");

@@ -69,7 +69,7 @@ function sh(cmd: string, args: string[], cwd?: string): string {
   return execFileSync(cmd, args, { cwd: cwd || REPO, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
 }
 
-/** The accepted write-mission contracts (autonomy-write-mission.e2e.test.js), parametrised ONLY by mission id. */
+/** The accepted write-mission contracts (autonomy-write-mission.e2e.test.ts), parametrised ONLY by mission id. */
 function positiveContract(mission: string) {
   return {
     mission, priority: "NORMAL", mode: "IMPLEMENT", requiresEngineering: true,

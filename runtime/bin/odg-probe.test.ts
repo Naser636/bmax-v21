@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck — L5 bin test migration: runs under tsx unchanged; suppresses tsc typechecking (NOT strict typing) — migration debt.
 "use strict";
 
 /*

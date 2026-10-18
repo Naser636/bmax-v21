@@ -113,7 +113,7 @@ function defaultFiles() {
     try { names = fs.readdirSync(dir); } catch { names = []; }
     for (const n of names) if (/\.test\.(ts|js)$/.test(n)) out.push(path.join(a, b, n));
   }
-  const cockpit = path.join("runtime", "bin", "odg-cockpit.test.js");
+  const cockpit = path.join("runtime", "bin", "odg-cockpit.test.ts");
   if (safeExists(path.join(ROOT, cockpit))) out.push(cockpit);
   return out.sort();
 }

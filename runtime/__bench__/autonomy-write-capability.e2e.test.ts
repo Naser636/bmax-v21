@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -17,14 +19,14 @@
  *
  * NEGATIVE: an invalid (empty) authorized scope makes the capability REFUSE before any write — the
  * mission does not validate and no deliverable appears. The self-approval governance refusal is NOT
- * duplicated here; it remains proven by runtime/__bench__/autonomy-write-mission.e2e.test.js.
+ * duplicated here; it remains proven by runtime/__bench__/autonomy-write-mission.e2e.test.ts.
  *
  * NOT a global-autonomy-rate claim and NOT a Phase-03 closure.
  *
  * ISOLATION (reused harness): throwaway os.tmpdir() git repo outside the real repo (asserted), offline
  * (FLEET_BRIDGE_MOCK=1, ODG_FLEET cleared); the capability uses only fs + a pure scope check (no network).
  *
- * Run:  node --test runtime/__bench__/autonomy-write-capability.e2e.test.js
+ * Run:  node --test runtime/__bench__/autonomy-write-capability.e2e.test.ts
  */
 
 const test = require("node:test");

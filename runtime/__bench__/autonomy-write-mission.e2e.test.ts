@@ -1,3 +1,5 @@
+// @ts-nocheck — L5 bench test migration: runs under tsx unchanged; suppresses tsc typechecking
+// (NOT strict typing) — recorded migration debt. See ODG_PROJECT_STATE.md.
 "use strict";
 
 /*
@@ -8,7 +10,7 @@
  * engineering (IMPLEMENT) missions and asserts on the real artifacts each run produces. Nothing is
  * stubbed: every assertion reads the production stages' own output on disk.
  *
- * Delta vs runtime/__bench__/autonomy-e2e.test.js (reused harness, same isolation):
+ * Delta vs runtime/__bench__/autonomy-e2e.test.ts (reused harness, same isolation):
  *   - POSITIVE adds (a) a runtime-attributed FINAL LIFECYCLE STATE assertion (engineering caps at
  *     VERIFIED — the human-commit gate correctly withholds RELEASED/ARCHIVED in a throwaway sandbox),
  *     and (b) a PROVENANCE-INVARIANT autonomy assertion: the mission executes (APPLIED), validates and is
@@ -26,7 +28,7 @@
  * repository is structurally out of reach (asserted). Offline: on-path stages have no HTTP client; the
  * only external spawn (Fleet Bridge) is OFF by default and additionally mocked / ODG_FLEET cleared.
  *
- * Run:  node --test runtime/__bench__/autonomy-write-mission.e2e.test.js
+ * Run:  node --test runtime/__bench__/autonomy-write-mission.e2e.test.ts
  */
 
 const test = require("node:test");

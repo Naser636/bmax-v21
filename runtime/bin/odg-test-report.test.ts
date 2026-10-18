@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck — L5 bin test migration: runs under tsx unchanged; suppresses tsc typechecking (NOT strict typing) — migration debt.
 "use strict";
 
 /*
@@ -65,7 +66,7 @@ ok("report green verdict only when clean", /no genuine failure/.test(green));
 
 // --- defaultFiles includes the wired cockpit test + is non-empty ----------------------------------
 const df = R.defaultFiles();
-ok("defaultFiles non-empty and includes cockpit test", df.length > 50 && df.includes(path.join("runtime", "bin", "odg-cockpit.test.js")));
+ok("defaultFiles non-empty and includes cockpit test", df.length > 50 && df.includes(path.join("runtime", "bin", "odg-cockpit.test.ts")));
 
 // --- SHOW mode (read-only artifact view) ----------------------------------------------------------
 // loadReport: absent / invalid-json / invalid-shape all fail closed (never valid proof)
