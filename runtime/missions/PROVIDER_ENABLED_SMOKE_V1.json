@@ -15,7 +15,12 @@
         "Exactly one file exists under src/app/provider-smoke/.",
         "No file outside the authorized write scope is modified.",
         "Build and TypeScript remain green."
-      ]
+      ],
+      "authorization": {
+        "eligible": true,
+        "authorized": true,
+        "reason": "local provider-activation/selection smoke: no external call (providerExecuted=false), no secrets exposed, humanMandatory=false, ODG_EXECUTOR — genuinely autonomy-eligible"
+      }
     }
   ],
   "definition_of_done": [
