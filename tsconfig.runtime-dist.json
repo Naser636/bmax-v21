@@ -128,6 +128,7 @@
     "runtime/bin/odg-verify.ts",
     "runtime/bin/odg-delegate.ts",
     "runtime/bin/odg-objective.ts",
-    "runtime/scripts/run-all-tests.ts"
+    "runtime/scripts/run-all-tests.ts",
+    "runtime/core/log-slug.ts"
   ]
 }
