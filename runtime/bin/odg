@@ -196,7 +196,7 @@ case "$MISSION" in
     # the client store ($ODG_CLIENT_STORE). `odg backup [--out <file>]` — writes a manifest to an
     # explicit path (or prints count+hash). Never mutates the source.
     shift
-    exec node runtime/bin/odg-backup.js backup "$@"
+    exec node "$(_odg_port odg-backup)" backup "$@"
     ;;
   restore)
     # Governed restore (fail-closed): `odg restore --manifest <file> --target <dir> [--force]`. The
@@ -204,7 +204,7 @@ case "$MISSION" in
     # undefined ⇒ reported, never invented); a non-empty target is refused unless --force is explicit;
     # any integrity mismatch fails closed (module-enforced). Test only on synthetic temporary stores.
     shift
-    exec node runtime/bin/odg-backup.js restore "$@"
+    exec node "$(_odg_port odg-backup)" restore "$@"
     ;;
   *)
     echo "======================================"
