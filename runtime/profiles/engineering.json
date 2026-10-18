@@ -19,15 +19,15 @@
     "no modification of Master / Constitution / CTO Directives / ROADMAP / protected branches"
   ],
   "capabilities": [
-    { "name": "capability-dispatch", "role": "capability", "file": "runtime/core/capability-executors.js", "test": "runtime/core/capability-executors.test.js" },
-    { "name": "build-recovery", "role": "capability", "file": "runtime/core/build-recovery-engine.js", "test": "runtime/core/build-recovery-engine.test.js" },
-    { "name": "git-branch-integration", "role": "capability", "file": "runtime/core/git-branch-integration.js", "test": "runtime/core/git-branch-integration.test.js" },
-    { "name": "bash-command-governor", "role": "capability", "file": "runtime/core/bash-command-governor.js", "test": "runtime/core/bash-command-governor.test.js" },
+    { "name": "capability-dispatch", "role": "capability", "file": "runtime/core/capability-executors.js", "test": "runtime/core/capability-executors.test.ts" },
+    { "name": "build-recovery", "role": "capability", "file": "runtime/core/build-recovery-engine.js", "test": "runtime/core/build-recovery-engine.test.ts" },
+    { "name": "git-branch-integration", "role": "capability", "file": "runtime/core/git-branch-integration.js", "test": "runtime/core/git-branch-integration.test.ts" },
+    { "name": "bash-command-governor", "role": "capability", "file": "runtime/core/bash-command-governor.js", "test": "runtime/core/bash-command-governor.test.ts" },
     { "name": "patch-executor", "role": "capability", "file": "runtime/core/patch-executor.js", "test": null }
   ],
   "validators": [
-    { "name": "mechanical-acceptance", "role": "validator", "file": "runtime/core/mechanical-acceptance.js", "test": "runtime/core/mechanical-acceptance.test.js" },
-    { "name": "local-test-gate", "role": "validator", "file": "runtime/core/local-test-gate.js", "test": "runtime/core/local-test-gate.test.js" },
+    { "name": "mechanical-acceptance", "role": "validator", "file": "runtime/core/mechanical-acceptance.js", "test": "runtime/core/mechanical-acceptance.test.ts" },
+    { "name": "local-test-gate", "role": "validator", "file": "runtime/core/local-test-gate.js", "test": "runtime/core/local-test-gate.test.ts" },
     { "name": "validation-engine", "role": "validator", "file": "runtime/core/validation-engine.js", "test": null }
   ],
   "performance_history": [],

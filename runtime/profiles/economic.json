@@ -19,13 +19,13 @@
     "no price value may be invented in-repo (rates are external inputs)"
   ],
   "capabilities": [
-    { "name": "live-cost-metering", "role": "capability", "file": "runtime/core/live-cost-metering.js", "test": "runtime/core/live-cost-metering.test.js" },
-    { "name": "price-resolution", "role": "capability", "file": "runtime/core/price-resolution.js", "test": "runtime/core/price-resolution.test.js", "limitation": "ships a zero-rate catalog; real valuation requires an author-supplied catalog (PRICE_RULE_MISSING otherwise)" },
-    { "name": "economic-unit", "role": "capability", "file": "runtime/core/economic-unit.js", "test": "runtime/core/economic-unit.test.js" },
-    { "name": "cost-accounting", "role": "capability", "file": "runtime/core/cost-accounting.js", "test": "runtime/core/cost-accounting.test.js" }
+    { "name": "live-cost-metering", "role": "capability", "file": "runtime/core/live-cost-metering.js", "test": "runtime/core/live-cost-metering.test.ts" },
+    { "name": "price-resolution", "role": "capability", "file": "runtime/core/price-resolution.js", "test": "runtime/core/price-resolution.test.ts", "limitation": "ships a zero-rate catalog; real valuation requires an author-supplied catalog (PRICE_RULE_MISSING otherwise)" },
+    { "name": "economic-unit", "role": "capability", "file": "runtime/core/economic-unit.js", "test": "runtime/core/economic-unit.test.ts" },
+    { "name": "cost-accounting", "role": "capability", "file": "runtime/core/cost-accounting.js", "test": "runtime/core/cost-accounting.test.ts" }
   ],
   "validators": [
-    { "name": "economic-verification", "role": "validator", "file": "runtime/core/economic-verification.js", "test": "runtime/core/economic-verification.test.js" }
+    { "name": "economic-verification", "role": "validator", "file": "runtime/core/economic-verification.js", "test": "runtime/core/economic-verification.test.ts" }
   ],
   "performance_history": [],
   "failure_knowledge": [

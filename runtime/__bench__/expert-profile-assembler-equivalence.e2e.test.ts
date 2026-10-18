@@ -54,7 +54,7 @@ check(js.REPO_ROOT === ts.REPO_ROOT && ts.REPO_ROOT === process.cwd(), "REPO_ROO
 
 // Real committed fixtures (present in the candidate git-archive): a certified pair, an existing file whose
 // declared test is absent (DEGRADED), and a missing file (BROKEN).
-const CERT = { name: "gov", file: "runtime/core/governance-kernel.js", test: "runtime/core/governance-kernel.test.js" };
+const CERT = { name: "gov", file: "runtime/core/governance-kernel.js", test: "runtime/core/governance-kernel.test.ts" };
 const UNCERT = { name: "loader", file: "runtime/core/mission-loader.js", test: "runtime/core/__definitely_absent__.test.js" };
 const BROKEN = { name: "ghost", file: "runtime/core/__definitely_absent__.js", test: "runtime/core/__also_absent__.test.js" };
 

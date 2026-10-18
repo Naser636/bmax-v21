@@ -21,7 +21,7 @@ function ok(name: string, cond: boolean) { assert.ok(cond, name); console.log(" 
 }
 // Dynamic require is flagged — the dual-port parity tests use require(path.join(...)) (non-literal arg).
 {
-  const r = specifiersOf(process.cwd() + "/runtime/core/scripts-dualport-parity.test.js");
+  const r = specifiersOf(process.cwd() + "/runtime/core/scripts-dualport-parity.test.ts");
   ok("specifiersOf: dyn flag set when a non-literal require(path.join(...)) is present", r.dyn === true);
   const lit = specifiersOf(process.cwd() + "/scripts/affected-tests.ts");
   ok("specifiersOf: dyn flag false when all requires are string literals", lit.dyn === false);
@@ -40,7 +40,7 @@ ok("resolveRel: bare/package specifier → null", resolveRel("runtime/core/x.tes
   process.argv = saved;
   ok("main: recommendation TARGETED for an isolated leaf script", r.recommendation === "TARGETED");
   ok("main: includes the dedicated test", r.affected.includes("scripts/odg-autonomy-benchmark.test.ts"));
-  ok("main: includes the computed-path dual-port parity test (raw-token match)", r.affected.includes("runtime/core/scripts-dualport-parity.test.js"));
+  ok("main: includes the computed-path dual-port parity test (raw-token match)", r.affected.includes("runtime/core/scripts-dualport-parity.test.ts"));
   ok("main: speedup > 1 (targeted set smaller than the universe)", typeof r.speedup === "number" && r.speedup > 1 && r.universeCount > r.affected.length);
 }
 
