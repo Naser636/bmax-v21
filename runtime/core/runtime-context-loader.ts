@@ -21,7 +21,12 @@ function loadRuntimeContext(mission: any = "BUILD_RUNTIME"): any {
 
   if (!fs.existsSync(file)) {
     console.log("[RuntimeContext] Cache missing -> generating...");
-    const r = spawnSync("node", ["runtime/core/project-context-engine.js", mission], { stdio: "inherit" });
+    // L7-FIX-2: spawn the COMPILED dist project-context-engine when present (TS-only default); fall back
+    // to the source .js (bare sandbox / ODG_RUNTIME=js). Mirrors the _odg_port / stage-base discipline.
+    const pceDist = "runtime/dist/core/project-context-engine.js";
+    const pce =
+      process.env.ODG_RUNTIME !== "js" && fs.existsSync(pceDist) ? pceDist : "runtime/core/project-context-engine.js";
+    const r = spawnSync("node", [pce, mission], { stdio: "inherit" });
 
     if (r.status !== 0) {
       throw new Error("Unable to generate RuntimeContext.");

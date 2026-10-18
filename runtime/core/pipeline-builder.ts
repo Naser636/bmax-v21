@@ -28,7 +28,12 @@ const registry = fs.existsSync(REGISTRY_PATH)
 // chosen base is missing a stage file, `node <base>/<stage>.js` fails explicitly (NON_ZERO_EXIT) at spawn
 // time — again no silent fallback. This lot ONLY routes the base; it does NOT migrate or compile any stage
 // (the stages remain JavaScript; a chosen dist base must already contain the stage .js files to be usable).
-const DEFAULT_STAGE_BASE = "runtime/core";
+// L7-FIX-2: default the stage base to the COMPILED dist ports (runtime/dist/core) when present, so the 13
+// mission stages spawn from dist (TS) — not the source runtime/core .js rollbacks. An explicit
+// ODG_STAGE_BASE override still wins (resolveStageBase checks it first); ODG_RUNTIME=js or an absent dist
+// falls back to the historical source base "runtime/core" (byte-identical legacy behaviour preserved).
+const DEFAULT_STAGE_BASE =
+  process.env.ODG_RUNTIME !== "js" && fs.existsSync("runtime/dist/core") ? "runtime/dist/core" : "runtime/core";
 function resolveStageBase() {
   const override = process.env.ODG_STAGE_BASE;
   if (typeof override === "string" && override.trim().length > 0) {
