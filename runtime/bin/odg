@@ -102,7 +102,7 @@ case "$MISSION" in
     # synthesizing one on-demand — the user never needs a mission/file/pipeline name. Delegates to the
     # existing Mission Synthesizer / Capability Router / Action Gate / Governance Kernel / mission-cli.
     shift
-    ./runtime/bin/odg-objective.js "$@"
+    exec node "$(_odg_port odg-objective)" "$@"
     ;;
   diagnose|audit)
     # Autonomous-engineering AUDIT entry point. Pure orchestration of the EXISTING self-diagnostic

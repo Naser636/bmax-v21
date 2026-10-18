@@ -37,7 +37,9 @@ const authz = require(path.join(__dirname, "..", "core", "capability-authorizati
 // implementation. Used only to DISCOUNT self-named scope from the evidence-binding check (see below).
 const synth = require(path.join(__dirname, "..", "core", "mission-synthesizer.js"));
 
-const ROOT = path.resolve(__dirname, "..", "..");
+// DUAL-PORT: anchor data dirs + pipeline spawn cwd to the wrapper cwd (repo root) — NOT __dirname, so the
+// JS rollback and the compiled-TS default (runtime/dist/bin) resolve identically from any port depth.
+const ROOT = process.cwd();
 const MISSIONS_DIR = path.join(ROOT, "runtime", "missions");
 const GENERATED_DIR = path.join(ROOT, "runtime", "generated");
 

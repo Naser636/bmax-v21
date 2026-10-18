@@ -126,6 +126,8 @@
     "runtime/core/capability-factory.ts",
     "runtime/core/local-autonomy.ts",
     "runtime/bin/odg-verify.ts",
-    "runtime/bin/odg-delegate.ts"
+    "runtime/bin/odg-delegate.ts",
+    "runtime/bin/odg-objective.ts",
+    "runtime/scripts/run-all-tests.ts"
   ]
 }
