@@ -26,6 +26,7 @@ const path = require("path");
 const crypto = require("crypto");
 const stateTransition = require("./state-transition");
 const store = require("./autonomy-store");
+const evidenceProvenance = require("./evidence-provenance");
 
 const GENERATED_DIR = "runtime/generated";
 const INCIDENTS_FILE = "self-diagnostic-incidents"; // autonomy-store key (it appends .json), under its DIR
@@ -158,8 +159,24 @@ function detectDivergences(expected, observed, opts = {}) {
     const id = e.objectiveId || e.action;
     if (e.status === "EXECUTED") {
       if (!e.evidence) add("contradictory-result", id, "EXECUTED ⇒ evidence path", "none", [], "ERROR");
-      else if (!fileEvidenceOk(path.join(observed.generatedDir, path.basename(e.evidence))) && !fileEvidenceOk(e.evidence))
-        add("missing-output", id, `non-empty evidence at ${e.evidence}`, "absent/empty", [e.evidence], "ERROR");
+      else {
+        const evInDir = path.join(observed.generatedDir, path.basename(e.evidence));
+        const okInDir = fileEvidenceOk(evInDir);
+        if (!okInDir && !fileEvidenceOk(e.evidence))
+          add("missing-output", id, `non-empty evidence at ${e.evidence}`, "absent/empty", [e.evidence], "ERROR");
+        else {
+          // TAMPER/STALENESS (NIST MEASURE-4 / OWASP T8): a provenance-stamped evidence artifact must still
+          // verify its own content digest. Existence+size cannot detect an artifact mutated (or produced at
+          // a different source revision) after stamping. Fires ONLY when a provenance stamp is present, so a
+          // normal unstamped artifact is never falsely flagged.
+          const resolved = okInDir ? evInDir : e.evidence;
+          const doc = readJsonSafe(resolved);
+          if (doc && typeof doc === "object" && doc.provenance) {
+            const vr = evidenceProvenance.verifyProvenance(doc);
+            if (!vr.ok) add("tampered-evidence", id, "stamped evidence content digest verifies", vr.reason, [e.evidence], "CRITICAL");
+          }
+        }
+      }
     }
     if (e.status === "FAILED") add("failed-action", id, "no failed action", `FAILED: ${String(e.error || "").slice(0, 120)}`, [e.evidence].filter(Boolean), "ERROR");
   }
@@ -200,11 +217,19 @@ function detectDivergences(expected, observed, opts = {}) {
   // 7. required-proof-unsatisfied (contradictory-result): a REQUIRED proof does not verify against the
   //    observed evidence — but only when the mission was expected to COMPLETE (opts.expectComplete).
   //    In a dry-run (expectComplete=false) an unsatisfied proof is the CORRECT state, not a divergence.
-  if (opts.expectComplete && observed.runProbe) {
+  // Only when completion is EXPECTED (a dry-run legitimately has no evidence yet — test case 8). When a
+  // probe is available, use it (semantic check). Otherwise FALL BACK to a plain existence+non-empty check
+  // so a completion-expected diagnosis WITHOUT a probe still catches a declared required proof whose
+  // artifact was never produced — previously this whole block was skipped when runProbe was absent.
+  if (opts.expectComplete) {
     for (const ev of expected.requiredProofs) {
-      let r;
-      try { r = observed.runProbe(ev, opts.probeCtx || {}); } catch (err) { r = { ok: false, detail: String(err && err.message) }; }
-      if (!r || r.ok !== true) add("required-proof-unsatisfied", ev, `${ev} verifies`, (r && r.detail) || "not ok", [], "ERROR");
+      if (observed.runProbe) {
+        let r;
+        try { r = observed.runProbe(ev, opts.probeCtx || {}); } catch (err) { r = { ok: false, detail: String(err && err.message) }; }
+        if (!r || r.ok !== true) add("required-proof-unsatisfied", ev, `${ev} verifies`, (r && r.detail) || "not ok", [], "ERROR");
+      } else if (!fileEvidenceOk(path.join(observed.generatedDir, path.basename(ev))) && !fileEvidenceOk(ev)) {
+        add("required-proof-unsatisfied", ev, `required proof artifact present at ${ev}`, "absent/empty", [ev], "ERROR");
+      }
     }
   }
 

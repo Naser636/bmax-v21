@@ -36,11 +36,20 @@ function normalizePrefixes(authorizedPaths: any): string[] {
     .filter((p: string) => p.length > 0);
 }
 
+// A changed path is IN SCOPE of an authorized prefix only on a PATH BOUNDARY: an exact match (concrete
+// file or dir entry) or a true descendant (pre + "/"). Plain startsWith() let sibling paths escape the
+// write-set (e.g. authorized "runtime/core" wrongly admitted "runtime/coreEVIL/x", and "src/app.js"
+// admitted "src/app.js.bak") — a defect in the primary scope guard used by delegate conformance + the
+// human acceptance gate. Boundary-aware matching closes that escape without widening any legitimate glob.
+function inScopeOf(f: string, pre: string): boolean {
+  return f === pre || f.startsWith(pre + "/");
+}
+
 // Verbatim semantics of the Validation Engine's former private changedPathsInScope() closure.
 function changedPathsInScope(authorizedPaths: any, changedPaths?: any): string[] {
   const changed = Array.isArray(changedPaths) ? changedPaths : gitChangedPaths();
   const prefixes = normalizePrefixes(authorizedPaths);
-  return changed.filter((f: string) => prefixes.some((pre) => f.startsWith(pre)));
+  return changed.filter((f: string) => prefixes.some((pre) => inScopeOf(f, pre)));
 }
 
 // Verbatim semantics of the Validation Engine's former private trackedFilesInScope() closure.

@@ -482,10 +482,16 @@ function govern(request, opts) {
   if (!v.ok) {
     return finish(base, { outcome: OUTCOME.BLOCKED, reason: `C03 self-validation failed: ${v.errors.join("; ")}`, decision: gate.decision, verification_status: VERIFICATION_STATUS.RECORDED });
   }
+  // TRACEABILITY (OWASP agentic T8 / NIST MEASURE-4): source-bind + tamper-stamp the EXECUTED evidence so a
+  // governed shell action's record is non-repudiable and alteration-detectable via verifyProvenance, exactly
+  // like capability evidence. Additive metadata only — the C03 transition stays valid (the validator ignores
+  // the extra provenance key). No runId in this context ⇒ capturedAtRun null; sourceCommit + contentSha256
+  // are the binding. Stamped AFTER C03 self-validation so the digest covers the validated transition.
+  const stampedTransition = require("./evidence-provenance").stampProvenance(transition, {});
   return finish(base, {
     outcome: OUTCOME.EXECUTED, reason: "known-safe read-only command executed in genuine isolation; effects matched the declared read-only set",
     decision: gate.decision, verification_status: VERIFICATION_STATUS.VERIFIED,
-    state_transition: transition, expected: base.analysis.predictedEffects, observed: obs,
+    state_transition: stampedTransition, expected: base.analysis.predictedEffects, observed: obs,
   });
 }
 

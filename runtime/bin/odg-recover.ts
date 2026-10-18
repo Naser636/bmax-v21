@@ -65,31 +65,68 @@ export function probeEnvironment(root: string, io: any = fs): RecoveryProbe {
 // Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope (no global-script collisions).
 export {};
 
-// ── CLI: probe → plan → execute; NEVER a false success ─────────────────────────────────────────────
+// ── EXECUTE SEAM: probe → plan → (rebuild) → spawn; NEVER a false success ────────────────────────────
+// Injectable `spawn`/`probe`/`env` make the action→entry→exit mapping unit-testable with no real build or
+// child process. CRITICAL fail-closed invariant: a recovery action is only ever reported "successful" after
+// the recovery entry was ACTUALLY spawned — a failed rebuild that falls back to FALLBACK_SOURCE_JS must RUN
+// the committed JS, not exit 0 having spawned nothing (the previous CLI did the latter: a silent false pass).
+export type SpawnResult = { status: number | null };
+export type SpawnFn = (cmd: string, args: string[], opts: any) => SpawnResult;
+export type ExecuteDeps = {
+  spawn: SpawnFn;
+  probe?: RecoveryProbe;
+  mission?: string;
+  env?: any;
+  out?: (s: string) => void;
+};
+export type ExecuteResult = { exitCode: number; action: RecoveryAction; spawned: string | null; env: any };
+
+export function executeRecovery(root: string, deps: ExecuteDeps): ExecuteResult {
+  const spawn = deps.spawn;
+  const out = typeof deps.out === "function" ? deps.out : () => {};
+  const baseEnv = deps.env || {};
+  const mission = deps.mission || "RUNTIME_SELF_AUDIT";
+  const probe: RecoveryProbe = deps.probe || probeEnvironment(root);
+  let plan = planRecovery(probe);
+  out(`[odg-recover] action=${plan.action} tsOrigin=${plan.tsOrigin} :: ${plan.reason}`);
+
+  if (plan.action === "FAIL_CLOSED") {
+    out(`[odg-recover] MINIMAL PREREQUISITE: ${plan.prerequisite}`);
+    return { exitCode: 2, action: plan.action, spawned: null, env: baseEnv };
+  }
+
+  if (plan.action === "REBUILD_THEN_USE") {
+    const b = spawn("npm", ["run", "build:runtime"], { cwd: root, stdio: "inherit" });
+    if (b.status !== 0) {
+      // Rebuild failed ⇒ toolchain is effectively unusable; re-plan WITHOUT it and FALL THROUGH to actually
+      // run whatever recovery remains (committed JS) — never exit 0 having spawned nothing.
+      plan = planRecovery({ ...probe, toolchainPresent: false });
+      out(`[odg-recover] rebuild FAILED — re-planned ${plan.action}: ${plan.reason}`);
+      if (plan.action === "FAIL_CLOSED") {
+        out(`[odg-recover] MINIMAL PREREQUISITE: ${plan.prerequisite}`);
+        return { exitCode: 2, action: plan.action, spawned: null, env: baseEnv };
+      }
+      // else plan is now FALLBACK_SOURCE_JS (committed JS present) → continue to the spawn below.
+    }
+  }
+
+  const entry = plan.action === "FALLBACK_SOURCE_JS" ? "runtime/bin/odg-run.js" : "runtime/dist/bin/odg-run.js";
+  const env = plan.action === "FALLBACK_SOURCE_JS" ? { ...baseEnv, ODG_RUNTIME: "js" } : baseEnv;
+  const r = spawn("node", [entry, mission], { cwd: root, stdio: "inherit", env });
+  return { exitCode: r.status == null ? 1 : r.status, action: plan.action, spawned: entry, env };
+}
+
+// ── CLI: thin wrapper over executeRecovery with the real spawnSync + process.env ─────────────────────
 declare const require: any;
 declare const module: any;
 declare const process: any;
 if (typeof require !== "undefined" && typeof module !== "undefined" && require.main === module) {
   const { spawnSync } = require("node:child_process");
-  const root: string = process.cwd();
-  const plan = planRecovery(probeEnvironment(root));
-  process.stdout.write(`[odg-recover] action=${plan.action} tsOrigin=${plan.tsOrigin} :: ${plan.reason}\n`);
-  const mission = process.argv[2] || "RUNTIME_SELF_AUDIT";
-  if (plan.action === "FAIL_CLOSED") {
-    process.stderr.write(`[odg-recover] MINIMAL PREREQUISITE: ${plan.prerequisite}\n`);
-    process.exit(2);
-  }
-  if (plan.action === "REBUILD_THEN_USE") {
-    const b = spawnSync("npm", ["run", "build:runtime"], { cwd: root, stdio: "inherit" });
-    if (b.status !== 0) {
-      process.stderr.write("[odg-recover] rebuild FAILED — re-planning fail-closed (no false success)\n");
-      const re = planRecovery({ ...probeEnvironment(root), toolchainPresent: false });
-      process.stderr.write(`[odg-recover] ${re.action}: ${re.reason}${re.prerequisite ? " :: prerequisite: " + re.prerequisite : ""}\n`);
-      process.exit(re.action === "FALLBACK_SOURCE_JS" ? 0 : 2);
-    }
-  }
-  const entry = plan.action === "FALLBACK_SOURCE_JS" ? "runtime/bin/odg-run.js" : "runtime/dist/bin/odg-run.js";
-  const env = plan.action === "FALLBACK_SOURCE_JS" ? { ...process.env, ODG_RUNTIME: "js" } : process.env;
-  const r = spawnSync("node", [entry, mission], { cwd: root, stdio: "inherit", env });
-  process.exit(r.status == null ? 1 : r.status);
+  const res = executeRecovery(process.cwd(), {
+    spawn: (cmd: string, args: string[], opts: any) => spawnSync(cmd, args, opts),
+    mission: process.argv[2] || "RUNTIME_SELF_AUDIT",
+    env: process.env,
+    out: (s: string) => process.stdout.write(s + "\n"),
+  });
+  process.exit(res.exitCode);
 }

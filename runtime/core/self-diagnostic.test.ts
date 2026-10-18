@@ -351,4 +351,49 @@ inTempCwd((mod) => {
   ok("both real July PLANNED+proven missions flagged (2 ERROR)", r3.length === 2 && r3.every((x) => x.severity === "ERROR"));
 });
 
+// 24. P2 (NIST MEASURE-4 / OWASP T8) — tampered provenance-stamped EXECUTED evidence ⇒ CRITICAL divergence.
+inTempCwd((mod) => {
+  const ep = require("./evidence-provenance");
+  writePlan({ ...PLAN, verify: [], objectives: [{ id: "OBJ_1" }] });
+  const stamped = ep.stampProvenance({ result: "ok", value: 1 }, {});
+  const mutated = { ...stamped, value: 999 }; // content changed AFTER stamping (stamp now stale)
+  fs.writeFileSync("runtime/generated/ev-tampered.json", JSON.stringify(mutated));
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/ev-tampered.json" }]);
+  const r = mod.diagnose({ now: "T0" });
+  ok("tampered stamped evidence ⇒ CRITICAL tampered-evidence divergence",
+     r.divergences.some((d) => d.category === "tampered-evidence" && d.severity === "CRITICAL"));
+});
+// 24b. a CLEANLY stamped evidence artifact raises NO tampered-evidence divergence (no false positive).
+inTempCwd((mod) => {
+  const ep = require("./evidence-provenance");
+  writePlan({ ...PLAN, verify: [], objectives: [{ id: "OBJ_1" }] });
+  const stamped = ep.stampProvenance({ result: "ok", value: 1 }, {});
+  fs.writeFileSync("runtime/generated/ev-clean.json", JSON.stringify(stamped));
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/ev-clean.json" }]);
+  const r = mod.diagnose({ now: "T0" });
+  ok("cleanly-stamped evidence ⇒ no tampered-evidence divergence",
+     !r.divergences.some((d) => d.category === "tampered-evidence"));
+});
+// 25. P3 — required-proof EXISTENCE fallback: expectComplete + NO probe + declared required proof absent.
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }], verify: [{ evidence: "runtime/generated/absent-proof.json", required: true }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }]);
+  const r = mod.diagnose({ now: "T0", expectComplete: true }); // no runProbe supplied
+  ok("expectComplete + no probe + absent required-proof artifact ⇒ required-proof-unsatisfied",
+     r.divergences.some((d) => d.category === "required-proof-unsatisfied" && d.firstDifferenceAt === "runtime/generated/absent-proof.json"));
+});
+// 25b. present required-proof artifact (no probe) ⇒ no required-proof divergence; and a dry-run (not
+//      expectComplete) with the artifact absent is STILL not a divergence (test-8 semantics preserved).
+inTempCwd((mod) => {
+  writePlan({ ...PLAN, objectives: [{ id: "OBJ_1" }], verify: [{ evidence: "runtime/generated/present-proof.json", required: true }] });
+  fs.writeFileSync("runtime/generated/e1.json", "{\"x\":1}");
+  fs.writeFileSync("runtime/generated/present-proof.json", "{\"ok\":true}");
+  writeExec([{ objectiveId: "OBJ_1", status: "EXECUTED", evidence: "runtime/generated/e1.json" }]);
+  ok("expectComplete + no probe + present required-proof ⇒ no required-proof divergence",
+     !mod.diagnose({ now: "T0", expectComplete: true }).divergences.some((d) => d.category === "required-proof-unsatisfied"));
+  ok("dry-run (no expectComplete) + absent required-proof ⇒ still NOT a divergence (semantics preserved)",
+     !mod.diagnose({ now: "T0" }).divergences.some((d) => d.category === "required-proof-unsatisfied"));
+});
+
 console.log(`\nSelf-Diagnostic — ${passed} assertions passed.`);

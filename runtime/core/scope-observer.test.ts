@@ -58,6 +58,19 @@ ok("no changes ⇒ trivially clean (same post-commit behaviour as the gate)",
 ok("empty authorized scope + any change ⇒ NOT clean",
   so.scopeClean([], ["anything.ts"]).ok === false);
 
+// ---- PATH-BOUNDARY escape (OWASP agentic T6/T3): a sibling of an authorized prefix MUST NOT be admitted ----
+ok("sibling DIRECTORY of an authorized prefix is OUT of scope (runtime/coreEVIL ⊄ runtime/core)",
+  so.scopeClean(["runtime/core/**"], ["runtime/coreEVIL/leak.ts"]).ok === false);
+ok("suffix SIBLING of an authorized concrete file is OUT of scope (src/app.js.bak ⊄ src/app.js)",
+  so.scopeClean(["src/app.js"], ["src/app.js.bak"]).ok === false);
+ok("exact concrete-file match is IN scope (boundary fix keeps legitimate case)",
+  so.scopeClean(["src/app.js"], ["src/app.js"]).ok === true);
+ok("true descendant of a dir prefix is IN scope (boundary fix keeps legitimate case)",
+  so.scopeClean(["runtime/core/**"], ["runtime/core/x.ts"]).ok === true);
+ok("changedPathsInScope excludes the sibling escape but keeps the real descendant",
+  JSON.stringify(so.changedPathsInScope(["runtime/core"], ["runtime/coreEVIL/x.ts", "runtime/core/x.ts"]))
+    === JSON.stringify(["runtime/core/x.ts"]));
+
 // ---- extracted primitives keep prior semantics ----
 console.log("extracted primitives");
 ok("changedPathsInScope filters to in-scope prefixes",

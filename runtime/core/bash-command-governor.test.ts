@@ -159,6 +159,17 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
     return st.ok && ev.state_transition.verification_status === "VERIFIED";
   })());
   ok("evidence asserts no raw shell execution", ev.shellExecution === false);
+  // TRACEABILITY (OWASP T8 / NIST MEASURE-4): EXECUTED evidence is provenance-stamped and tamper-evident.
+  const ep = require("./evidence-provenance");
+  ok("EXECUTED transition is provenance-stamped (source-bound)", (() => {
+    const p = ev.state_transition.provenance;
+    return !!p && p.schema === ep.SCHEMA && typeof p.contentSha256 === "string" && p.contentSha256.length === 64;
+  })());
+  ok("stamped EXECUTED evidence verifies clean", ep.verifyProvenance(ev.state_transition).ok === true);
+  ok("tampering the EXECUTED evidence is DETECTED", (() => {
+    const mutated = { ...ev.state_transition, observed_effect: { ...ev.state_transition.observed_effect, exitCode: 999 } };
+    return ep.verifyProvenance(mutated).ok === false;
+  })());
 })();
 
 // ---- 11. TIMEOUT / RESOURCE BOUNDARY (real bwrap): a long command is terminated and BLOCKED. -----
