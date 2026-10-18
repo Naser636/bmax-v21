@@ -20,6 +20,11 @@
  */
 import * as fs from "fs";
 import * as path from "path";
+// Reuse the AUTHORITATIVE frozen-exclusion policy (V20 §12) from the existing migration planner — do NOT
+// duplicate it. A base name here is a reserved §12 module that must NEVER be proposed as a migration
+// candidate (migrating one violates the frozen-module constraint). Lesson locked after a §12 violation.
+import { EXCLUSIONS } from "@/runtime/migration-campaign";
+const FROZEN = new Set<string>(EXCLUSIONS as readonly string[]);
 
 const EXCLUDE_DIR = /(^|\/)(node_modules|\.git|\.next)(\/|$)/;
 const EXCLUDE_PATH = [/runtime\/dist(\/|$)/, /runtime\/generated(\/|$)/, /\.claude\/worktrees(\/|$)/];
@@ -45,6 +50,9 @@ function classify(rel: string): string {
   if (isTest) return "test-js";
   if (tsSibling) return "dual-rollback";
   if (DEAD_PREFIX.some((re) => re.test(rel))) return "js-only-dead";
+  // §12 FROZEN (reserved): a runtime/core module on the authoritative EXCLUSIONS list is deliberately kept
+  // as JS and must NOT be migrated without separate authorization — classified distinctly, never a candidate.
+  if (FROZEN.has(path.basename(rel, ".js"))) return "frozen-excluded-s12";
   if (rel.startsWith("runtime/")) return "js-only-live";
   return "other";
 }
@@ -61,13 +69,20 @@ const total = all.length;
 // "LIVE project JS" that must reach 0 for elimination: everything except already-dead historical files.
 // (dual-rollback counts as live: its removal is part of elimination; dead files are removed, not migrated.)
 const liveJs = total - (counts["js-only-dead"] || 0);
+// Migratable candidates = js-only-live EXCLUDING §12-frozen (reserved) modules. The frozen set is kept as
+// JS by policy and is NOT a migration gap; migrating one requires separate authorization. This is the
+// number a migration lot may actually draw from.
+const migratableRemaining = counts["js-only-live"] || 0;
 
 const report = {
-  schema: "js-inventory/1",
+  schema: "js-inventory/2",
   totalProjectJs: total,
   counts,
   liveProjectJs: liveJs,
+  frozenExcludedS12: counts["frozen-excluded-s12"] || 0,
+  migratableRemaining,
   eliminated: liveJs === 0,
+  note: "frozen-excluded-s12 modules are reserved (V20 §12) — kept as JS by policy; NOT migration candidates (separate authorization required). Candidate lots draw only from js-only-live.",
   lots: {
     "L1-runtime-llm": (buckets["js-only-live"] || []).filter((f) => f.startsWith("runtime/llm/")).length,
     "L2-runtime-core": (buckets["js-only-live"] || []).filter((f) => f.startsWith("runtime/core/")).length,
