@@ -67,5 +67,15 @@ compareScenario("autonomy not measurable", {
   const argv = ["--once", "--interval=5", "--tail=4", "--iterations=3"];
   ok("parseArgs identical", JSON.stringify(js.parseArgs(argv)) === JSON.stringify(ts.parseArgs(argv)));
 }
+// 6 — LIVE end-to-end parity: both ports run as real `node <script> --once` subprocesses from the repo
+//     cwd, reading the SAME live runtime/generated state. This catches path-RESOLUTION bugs that injected
+//     io cannot (e.g. a dist port computing the wrong repo root → all-UNKNOWN). Stdout must be identical.
+{
+  const cp = require("child_process");
+  const runOnce = (script) => cp.spawnSync(process.execPath, [script, "--once"], { cwd: REPO, encoding: "utf8", timeout: 60000 });
+  const rj = runOnce(JS), rt = runOnce(TS);
+  ok("LIVE: both ports exit 0", rj.status === 0 && rt.status === 0);
+  ok("LIVE: dist(TS) stdout IDENTICAL to js rollback (same live state, correct path resolution)", (rj.stdout || "") === (rt.stdout || ""));
+}
 
 console.log(`\nodg-cockpit dual-port parity — ${passed} assertions passed.`);

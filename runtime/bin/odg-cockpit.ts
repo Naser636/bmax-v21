@@ -11,8 +11,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const ROOT = path.resolve(__dirname, "..", "..");
-const GEN = path.join(ROOT, "runtime", "generated");
+const GEN = path.join("runtime", "generated"); // cwd-relative (repo root) — robust from any dist depth; matches odg-status/odg-diagnose
 const LOGS = path.join(GEN, "logs");
 
 function readJson(file: string): any {
