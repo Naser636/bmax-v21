@@ -42,6 +42,7 @@
     "runtime/core/scope-observer.ts",
     "runtime/core/state-transition.ts",
     "runtime/core/runtime-model.ts",
+    "runtime/core/present-state-reconciliation.ts",
     "runtime/core/autonomy-measure.ts",
     "runtime/core/capability-metrics.ts",
     "runtime/core/specification-loader.ts",
