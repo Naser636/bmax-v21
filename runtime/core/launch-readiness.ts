@@ -1,6 +1,7 @@
-// @ts-nocheck
 /* TypeScript port (faithful transliteration) — parity with runtime/core/launch-readiness.js.
- * all-any @ts-nocheck: parity proven by the hermetic equivalence bench, not type-checking (V66 precedent).
+ * all-any (explicit) facade: parity proven by the hermetic equivalence bench. Type-suppression pragma
+ * REMOVED (TS_NOCHECK_LAUNCH_READINESS): former TS2451 redeclarations were a script-vs-module scoping
+ * artifact fixed by the `export {}` marker below; params carry explicit `: any`. No behaviour change.
  * V71 change (shared with the .js): moduleLoads probes coreDir(__dirname) so a compiled dist/core copy
  * reports on the CANONICAL runtime/core capabilities (source layout = identity). */
 "use strict";
@@ -25,10 +26,10 @@ const S = Object.freeze({ READY: "READY", NOT_CONFIGURED: "NOT_CONFIGURED", BLOC
 // caller back to runtime/core), so readiness reports on the same source capabilities whether this module
 // runs from runtime/core or runtime/dist/core — immune to per-module migration-state drift. In the source
 // layout coreDir is identity, so production JS behaviour is byte-for-byte unchanged.
-function moduleLoads(rel) { try { require.resolve(path.resolve(coreDir(__dirname), rel)); return true; } catch { return false; } }
+function moduleLoads(rel: any) { try { require.resolve(path.resolve(coreDir(__dirname), rel)); return true; } catch { return false; } }
 
 // Persistence control: can we actually write+read+remove under the client store? (not just "dir exists").
-function persistenceCheck(cwd) {
+function persistenceCheck(cwd: any) {
   try {
     const d = path.resolve(cwd || process.cwd(), "runtime/generated/clients");
     fs.mkdirSync(d, { recursive: true });
@@ -38,7 +39,7 @@ function persistenceCheck(cwd) {
   } catch { return S.BLOCKED; }
 }
 
-function assess(opts = {}) {
+function assess(opts: any = {}) {
   const env = opts && opts.env ? opts.env : process.env;
   const cwd = opts && opts.cwd;
   const inbound = email.inboundReadiness({ env });
@@ -99,3 +100,7 @@ function assess(opts = {}) {
 module.exports = { S, assess };
 
 if (require.main === module) { process.stdout.write(JSON.stringify(assess({}), null, 2) + "\n"); }
+
+// Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope so top-level consts
+// (fs/path/invoicing/payments) do not collide with sibling script-scope files (TS2451).
+export {};
