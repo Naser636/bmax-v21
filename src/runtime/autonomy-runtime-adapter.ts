@@ -131,6 +131,17 @@ function resolvePipelineEntry(): string {
   if (resolveRuntimeMode() === "ts") return COMPILED_PIPELINE;
   return PIPELINE;
 }
+// L7-FIX-5 — dual-port core resolver. On the TS runtime (default) prefer the COMPILED dist core port
+// (runtime/dist/core/<module>.js) so the autonomy path is TS-only; fall back to the SOURCE core .js
+// only on the explicit JS rollback (ODG_RUNTIME=js) or when the dist port is absent. Returns a
+// CWD-relative path (used verbatim with spawnSync {cwd:baseCwd}, or prefixed with `${baseCwd}/` for
+// requireCjs). Mirrors resolvePipelineEntry. The §12-FROZEN provider-reuse-candidate.js is js-only and
+// is NEVER routed through this resolver (it stays runtime/core by design).
+function resolveCorePort(baseCwd: string, relName: string): string {
+  const dist = `runtime/dist/core/${relName}`;
+  if (resolveRuntimeMode() === "ts" && fs.existsSync(`${baseCwd}/${dist}`)) return dist;
+  return `runtime/core/${relName}`;
+}
 const MISSIONS_DIR = "runtime/missions";
 // The corrective-mission queue: repair missions the Runtime proposes for itself, awaiting
 // authorization. A record here is a NOMINATION, never an authorization to run (see readCorrectiveQueue).
@@ -138,8 +149,8 @@ const PENDING_DIR = `${MISSIONS_DIR}/pending`;
 const VERIFIER = "runtime/bin/odg-verify.js";
 // The SOLE author of the canonical mission verdict (validated/status). The provider path feeds it
 // real, materialized plan/patch/execution evidence and lets it re-verify — it never writes the
-// verdict itself (design: exactly one component writes validated/status).
-const VALIDATION_ENGINE = "runtime/core/validation-engine.js";
+// verdict itself (design: exactly one component writes validated/status). Resolved per-run to the
+// compiled dist port on the TS runtime (L7-FIX-5) via resolveCorePort; source fallback on ODG_RUNTIME=js.
 
 // LOCAL_FIRST recovery bound: how many diagnose → reuse-known-patch → re-validate passes the Runtime
 // attempts locally before it may conclude, by evidence, that it cannot progress without a provider.
@@ -899,7 +910,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // The Validation Engine is the sole author of the verdict. If it is absent (e.g. a sandboxed
     // harness that supplies its own canonical mission-report.json), leave the existing report
     // untouched rather than materializing half of the pipeline's inputs. Mirrors refreshVerifyEvidence.
-    if (!fs.existsSync(this.resolve(VALIDATION_ENGINE))) return;
+    if (!fs.existsSync(this.resolve(resolveCorePort(this.cwd, "validation-engine.js")))) return;
 
     const objectives = this.providerObjectives(mission, spec);
     const missionId = spec?.mission ?? mission;
@@ -983,7 +994,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // Sole author of the verdict — writes runtime/generated/mission-report.json from real evidence.
     // It exits non-zero on a BLOCKED verdict but still writes the (unvalidated) report first, so this
     // is best-effort: a genuinely unproven mission leaves a non-SUCCESS report and never releases.
-    spawnSync("node", [VALIDATION_ENGINE, mission], { cwd: this.cwd, stdio: "inherit" });
+    spawnSync("node", [resolveCorePort(this.cwd, "validation-engine.js"), mission], { cwd: this.cwd, stdio: "inherit" });
   }
 
   private writeJson(relPath: string, value: unknown): void {
@@ -1135,7 +1146,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     }) => { decision: string; outcome: ProviderOutcome | null; errors?: string[] };
   } | null {
     try {
-      return requireCjs(`${this.cwd}/runtime/core/live-cost-metering.js`) as ReturnType<
+      return requireCjs(`${this.cwd}/${resolveCorePort(this.cwd, "live-cost-metering.js")}`) as ReturnType<
         AutonomyRuntimeAdapter["loadMetering"]
       >;
     } catch {
@@ -1148,7 +1159,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     commitGateDecision: (mission: string) => { allowed: boolean; reasons: readonly string[] };
   } | null {
     try {
-      return requireCjs(`${this.cwd}/runtime/core/acceptance-facts.js`) as ReturnType<
+      return requireCjs(`${this.cwd}/${resolveCorePort(this.cwd, "acceptance-facts.js")}`) as ReturnType<
         AutonomyRuntimeAdapter["loadCommitGate"]
       >;
     } catch {
@@ -1170,7 +1181,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     verifyEconomics: (facts: unknown) => { verdict: string; violations: readonly string[] };
   } | null {
     try {
-      return requireCjs(`${this.cwd}/runtime/core/economic-verification.js`) as ReturnType<
+      return requireCjs(`${this.cwd}/${resolveCorePort(this.cwd, "economic-verification.js")}`) as ReturnType<
         AutonomyRuntimeAdapter["loadEconomicVerification"]
       >;
     } catch {
@@ -1483,7 +1494,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   /** Stage 6 — archive via the EXISTING Mission Ledger; no new persistence format (design §2 Stage 6). */
   archive(mission: string, record: ReleaseRecord): void {
     // Reuse the existing Mission Ledger component exactly as the pipeline does.
-    spawnSync("node", ["runtime/core/mission-ledger.js", mission], {
+    spawnSync("node", [resolveCorePort(this.cwd, "mission-ledger.js"), mission], {
       cwd: this.cwd,
       stdio: "inherit",
     });
@@ -1542,7 +1553,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private materialiseRoadmapContracts(): void {
     try {
       const factory = requireCjs(
-        `${this.cwd}/runtime/core/mission-contract-factory.js`,
+        `${this.cwd}/${resolveCorePort(this.cwd, "mission-contract-factory.js")}`,
       ) as {
         generateMissing: (
           root: string,
@@ -1570,7 +1581,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private materialiseOnDemand(mission: string): boolean {
     try {
       const factory = requireCjs(
-        `${this.cwd}/runtime/core/mission-contract-factory.js`,
+        `${this.cwd}/${resolveCorePort(this.cwd, "mission-contract-factory.js")}`,
       ) as {
         isOnDemandEnabled: (root: string) => boolean;
         generateForMission: (
@@ -1593,7 +1604,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private readRuntimeModelQueue(): string[] | null {
     try {
       const { computeRuntimeModel } = requireCjs(
-        `${this.cwd}/runtime/core/runtime-model.js`,
+        `${this.cwd}/${resolveCorePort(this.cwd, "runtime-model.js")}`,
       ) as { computeRuntimeModel: (root: string) => { queue?: Array<{ mission?: unknown }> } };
       const model = computeRuntimeModel(this.cwd);
       const queue = Array.isArray(model?.queue) ? model.queue : [];
