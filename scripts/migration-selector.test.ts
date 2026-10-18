@@ -15,17 +15,19 @@ import { EXCLUSIONS } from "@/runtime/migration-campaign";
 let passed = 0;
 function ok(name: string, cond: boolean) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
 
+const F = (o: Partial<import("./migration-selector").RiskFactors>): any => ({ lines: 50, writes: 0, spawns: 0, usesDirname: false, hasTest: false, externalDeps: 0, ...o });
 // 1 — DECISION (pure score): a read-only + tested file scores LOWER (safer) than a side-effecting one.
 {
-  const safe = scoreCandidate({ lines: 50, writes: 0, spawns: 0, usesDirname: false, hasTest: true });
-  const risky = scoreCandidate({ lines: 50, writes: 3, spawns: 2, usesDirname: true, hasTest: false });
-  ok("DECISION: read-only+tested scores lower (safer) than side-effecting+spawn+__dirname", safe < risky);
+  ok("DECISION: read-only+tested scores lower (safer) than side-effecting+spawn+__dirname", scoreCandidate(F({ hasTest: true })) < scoreCandidate(F({ writes: 3, spawns: 2, usesDirname: true })));
 }
 // 2 — DECISION: __dirname is penalised (the dist path-depth bug class).
 {
-  const noDir = scoreCandidate({ lines: 20, writes: 0, spawns: 0, usesDirname: false, hasTest: false });
-  const withDir = scoreCandidate({ lines: 20, writes: 0, spawns: 0, usesDirname: true, hasTest: false });
-  ok("DECISION: __dirname adds risk", withDir > noDir);
+  ok("DECISION: __dirname adds risk", scoreCandidate(F({ usesDirname: true })) > scoreCandidate(F({})));
+}
+// 2b — DECISION: an external-package dependency is penalised (evidence: odg-client require("imapflow")).
+{
+  ok("DECISION: external dep adds risk (migration hazard)", scoreCandidate(F({ externalDeps: 1 })) > scoreCandidate(F({ externalDeps: 0 })));
+  ok("DECISION: a clean+tested CLI ranks safer than an equal-size one pulling an external package", scoreCandidate(F({ hasTest: true, externalDeps: 0 })) < scoreCandidate(F({ hasTest: true, externalDeps: 1 })));
 }
 
 // Hermetic fixture repo with varied candidates.
@@ -36,6 +38,7 @@ function mkRepo(): string {
   w("runtime/bin/clean-reporter.js", "const fs=require('fs');\nconsole.log('read only');\n"); // safe
   w("runtime/bin/clean-reporter.test.js", "// test\n");                                        // → hasTest (safer)
   w("runtime/bin/side-effecter.js", "const fs=require('fs');\nfs.writeFileSync('x','');\nspawnSync('node',['y']);\n// __dirname\nconst d=__dirname;\n"); // risky
+  w("runtime/bin/ext-dep.js", "const fs=require('fs');\nconst {ImapFlow}=require('imapflow');\nconsole.log('needs external pkg');\n"); // external dep → penalised
   const frozen = (EXCLUSIONS as readonly string[])[0];
   w(`runtime/bin/${frozen}.js`, "console.log('frozen');\n");                                   // §12 → excluded
   w("runtime/bin/already-done.js", "console.log('x');\n");
@@ -52,6 +55,8 @@ function mkRepo(): string {
   ok("RANKING: already-dual-port (.ts sibling) excluded", !bases.includes("already-done"));
   ok("RANKING: candidates are the live js-only files only", bases.includes("clean-reporter") && bases.includes("side-effecter"));
   ok("RANKING: safest (clean+tested) ranked before risky (side-effecting)", bases.indexOf("clean-reporter") < bases.indexOf("side-effecter"));
+  ok("RANKING: a clean CLI ranks before one pulling an external package (imapflow)", bases.indexOf("clean-reporter") < bases.indexOf("ext-dep"));
+  ok("RANKING: external-dep detected in profile (externalDeps>=1)", (ranked.find((c) => c.base === "ext-dep")!).factors.externalDeps >= 1);
   ok("RANKING: recommendNext = the safest candidate", recommendNext(root, ["runtime/bin"])!.base === "clean-reporter");
   fs.rmSync(root, { recursive: true, force: true });
 }
@@ -63,7 +68,7 @@ function mkRepo(): string {
   fs.writeFileSync(path.join(root, "runtime", "bin", first + ".ts"), "export {};\n"); // simulate migration
   const next = recommendNext(root, ["runtime/bin"]);
   ok("RESUME: migrated file no longer recommended (resumes to next)", !next || next.base !== first);
-  ok("RESUME: next recommendation is the remaining live candidate", next!.base === "side-effecter");
+  ok("RESUME: next recommendation is the next-safest remaining live candidate (ext-dep < side-effecter)", next!.base === "ext-dep");
   fs.rmSync(root, { recursive: true, force: true });
 }
 // 5 — empty / fully-migrated ⇒ no recommendation (honest null, never a false pick).

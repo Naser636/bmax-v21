@@ -23,12 +23,22 @@ import { EXCLUSIONS } from "@/runtime/migration-campaign";
 
 const FROZEN = new Set<string>(EXCLUSIONS as readonly string[]);
 
-export type RiskFactors = { lines: number; writes: number; spawns: number; usesDirname: boolean; hasTest: boolean };
+export type RiskFactors = { lines: number; writes: number; spawns: number; usesDirname: boolean; hasTest: boolean; externalDeps: number };
 export type Candidate = { file: string; base: string; score: number; factors: RiskFactors };
+
+// Node builtins + the already-dual-ported runtime families resolve identically from a compiled dist/bin;
+// a require of any OTHER bare specifier is an EXTERNAL npm dependency — a real migration hazard (the
+// migration-campaign planner hazard-blocks these: the dep may resolve/behave differently under the
+// compiled port, and often must be conditionally required). Penalised so the selector ranks a clean
+// sibling-only CLI above one pulling an external package (evidence: odg-client require("imapflow")).
+const NODE_BUILTINS = new Set([
+  "fs", "path", "child_process", "crypto", "os", "util", "events", "stream", "http", "https", "net",
+  "url", "assert", "zlib", "readline", "tty", "process", "module", "buffer", "string_decoder", "timers",
+]);
 
 /** PURE deterministic risk score (lower = safer). Separated from FS so it is unit-testable. */
 export function scoreCandidate(f: RiskFactors): number {
-  return f.spawns * 3 + f.writes * 2 + (f.usesDirname ? 5 : 0) + Math.ceil(f.lines / 50) + (f.hasTest ? -4 : 0);
+  return f.spawns * 3 + f.writes * 2 + (f.usesDirname ? 5 : 0) + f.externalDeps * 4 + Math.ceil(f.lines / 50) + (f.hasTest ? -4 : 0);
 }
 
 /** Read a candidate file's observable risk factors (FS probe; no execution). */
@@ -38,12 +48,21 @@ export function profile(absPath: string): RiskFactors {
   const count = (re: RegExp) => (src.match(re) || []).length;
   const base = path.basename(absPath, ".js");
   const dir = path.dirname(absPath);
+  // Count DISTINCT external (non-relative, non-builtin) require/import specifiers.
+  const specs = new Set<string>();
+  for (const m of src.matchAll(/require\(\s*["']([^"']+)["']\s*\)|from\s+["']([^"']+)["']/g)) {
+    const spec = m[1] || m[2];
+    if (!spec || spec.startsWith(".") || spec.startsWith("/") || spec.startsWith("@/")) continue;
+    const top = spec.startsWith("@") ? spec.split("/").slice(0, 2).join("/") : spec.split("/")[0];
+    if (!NODE_BUILTINS.has(top) && !top.startsWith("node:")) specs.add(top);
+  }
   return {
     lines: src ? src.split(/\r?\n/).length : 0,
     writes: count(/writeFileSync|mkdirSync|renameSync|unlinkSync/g),
     spawns: count(/spawnSync|execSync|\bexecFile|\bfork\(|\bspawn\(/g),
     usesDirname: /__dirname/.test(src),
     hasTest: fs.existsSync(path.join(dir, base + ".test.js")),
+    externalDeps: specs.size,
   };
 }
 

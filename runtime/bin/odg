@@ -59,6 +59,11 @@ case "$MISSION" in
     ./runtime/bin/odg-state.js >/dev/null || true
     exit "$rc"
     ;;
+  probe)
+    # BOUNDED opt-in connectivity probe (DEFAULT dry, zero network) — dual-port (DEFAULT compiled-TS; ODG_RUNTIME=js → rollback).
+    shift
+    exec node "$(_odg_port odg-probe)" "$@"
+    ;;
   reconcile)
     # Present-state reconciliation (CTO §2) — dual-port (DEFAULT compiled-TS; ODG_RUNTIME=js → rollback).
     shift

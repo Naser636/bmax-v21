@@ -16,6 +16,7 @@
   "include": [
     "runtime/bin/odg-run.ts",
     "runtime/bin/odg-cockpit.ts",
+    "runtime/bin/odg-probe.ts",
     "runtime/bin/odg-generate-contracts.ts",
     "runtime/bin/odg-reconcile.ts",
     "runtime/bin/odg-health.ts",
