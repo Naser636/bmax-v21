@@ -122,7 +122,15 @@ case "$MISSION" in
     # never spawns a child process, never opens the network, and never triggers a mission — so it is
     # safe to run at any time. Flags: --once | --interval=<s> | --iterations=<n> | --tail=<lines>.
     shift
-    exec node runtime/bin/odg-cockpit.js "$@"
+    # Dual-port (CTO Track B bin-CLI): DEFAULT the compiled-TS port (runtime/dist/bin/odg-cockpit.js);
+    # ODG_RUNTIME=js selects the JS rollback (runtime/bin/odg-cockpit.js). Fall back to the .js if the
+    # dist is absent (not yet built) — fail-safe, never a missing-file crash. Both ports are proven
+    # observationally identical by odg-cockpit.test.js + odg-cockpit-dualport-parity.test.js.
+    COCKPIT="runtime/bin/odg-cockpit.js"
+    if [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-cockpit.js ]; then
+      COCKPIT="runtime/dist/bin/odg-cockpit.js"
+    fi
+    exec node "$COCKPIT" "$@"
     ;;
   client)
     # First-client operational entry point. Delegates to runtime/bin/odg-client.js → client-intake.js

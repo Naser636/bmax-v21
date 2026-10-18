@@ -15,6 +15,7 @@
   },
   "include": [
     "runtime/bin/odg-run.ts",
+    "runtime/bin/odg-cockpit.ts",
     "runtime/core/pipeline-builder.ts",
     "runtime/core/stage-effect.ts",
     "runtime/core/checkpoint-engine.ts",
