@@ -1,0 +1,763 @@
+{
+  "count": 125,
+  "byStatus": {
+    "NOT_APPLICABLE_ENTRYPOINT": 20,
+    "PASS_EXERCISED": 65,
+    "PASS_BY_BENCH": 28,
+    "PASS_BY_TEST": 2,
+    "TOOL_BUILD": 10
+  },
+  "rows": [
+    {
+      "file": "runtime/__bench__/compiled-entry-nodemods-free.e2e.test.js",
+      "base": "compiled-entry-nodemods-free.e2e.test",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "test/bench entrypoint run by the test runner"
+    },
+    {
+      "file": "runtime/bin/odg-autonomy.js",
+      "base": "odg-autonomy",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-backup.js",
+      "base": "odg-backup",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-bootstrap.js",
+      "base": "odg-bootstrap",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/bin/odg-client.js",
+      "base": "odg-client",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-cockpit.js",
+      "base": "odg-cockpit",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-converge.js",
+      "base": "odg-converge",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-delegate.js",
+      "base": "odg-delegate",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-diagnose.js",
+      "base": "odg-diagnose",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-freeze.js",
+      "base": "odg-freeze",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-generate-contracts.js",
+      "base": "odg-generate-contracts",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-health.js",
+      "base": "odg-health",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-migrate-plan.js",
+      "base": "odg-migrate-plan",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-migrate-ts.js",
+      "base": "odg-migrate-ts",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-objective.js",
+      "base": "odg-objective",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-probe.js",
+      "base": "odg-probe",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-reconcile.js",
+      "base": "odg-reconcile",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-run.js",
+      "base": "odg-run",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/bin/odg-state.js",
+      "base": "odg-state",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-status.js",
+      "base": "odg-status",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-test-report.js",
+      "base": "odg-test-report",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/bin/odg-verify.js",
+      "base": "odg-verify",
+      "status": "NOT_APPLICABLE_ENTRYPOINT",
+      "evidence": "CLI bin run as a process (node odg-X.js), not require()d"
+    },
+    {
+      "file": "runtime/core/acceptance-facts.js",
+      "base": "acceptance-facts",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/action-gate.js",
+      "base": "action-gate",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/artifact-state.js",
+      "base": "artifact-state",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/autonomy-measure.js",
+      "base": "autonomy-measure",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/autonomy-rate.js",
+      "base": "autonomy-rate",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/autonomy-store.js",
+      "base": "autonomy-store",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/bash-command-governor.js",
+      "base": "bash-command-governor",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/budget-contract.js",
+      "base": "budget-contract",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/build-recovery-engine.js",
+      "base": "build-recovery-engine",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/build-recovery-engine-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/capability-authorization.js",
+      "base": "capability-authorization",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/capability-authorization-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/capability-executors.js",
+      "base": "capability-executors",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/capability-factory.js",
+      "base": "capability-factory",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/capability-factory-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/capability-learning.js",
+      "base": "capability-learning",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/capability-metrics.js",
+      "base": "capability-metrics",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/capability-probes.js",
+      "base": "capability-probes",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/capability-registry.js",
+      "base": "capability-registry",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/capability-router.js",
+      "base": "capability-router",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/checkpoint-engine.js",
+      "base": "checkpoint-engine",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/client-intake.js",
+      "base": "client-intake",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/client-intake-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/client-store-backup.js",
+      "base": "client-store-backup",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/client-store-backup-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/connectivity-classifier.js",
+      "base": "connectivity-classifier",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/connectivity-classifier-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/decision-engine.js",
+      "base": "decision-engine",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/decision-rules.js",
+      "base": "decision-rules",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/delegate-isolation.js",
+      "base": "delegate-isolation",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/economic-extractor.js",
+      "base": "economic-extractor",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/economic-unit.js",
+      "base": "economic-unit",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/economic-verification.js",
+      "base": "economic-verification",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/email-gateway.js",
+      "base": "email-gateway",
+      "status": "PASS_EXERCISED",
+      "evidence": "capability equivalence bench run under guard: dist loaded + ALL PASS (this campaign)"
+    },
+    {
+      "file": "runtime/core/evidence-provenance.js",
+      "base": "evidence-provenance",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/execution-planner.js",
+      "base": "execution-planner",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/expert-profile-assembler.js",
+      "base": "expert-profile-assembler",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/final-report.js",
+      "base": "final-report",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/final-report-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/finance-paper.js",
+      "base": "finance-paper",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/finance-paper-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/finance-sim.js",
+      "base": "finance-sim",
+      "status": "PASS_EXERCISED",
+      "evidence": "capability equivalence bench run under guard: dist loaded + ALL PASS (this campaign)"
+    },
+    {
+      "file": "runtime/core/fleet-bridge.js",
+      "base": "fleet-bridge",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/fleet-collector.js",
+      "base": "fleet-collector",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/fleet-dispatcher.js",
+      "base": "fleet-dispatcher",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/fleet-envelope.js",
+      "base": "fleet-envelope",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/fleet-stage.js",
+      "base": "fleet-stage",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/fleet-stage-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/git-branch-integration.js",
+      "base": "git-branch-integration",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/governance-kernel.js",
+      "base": "governance-kernel",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/idempotency-guard.js",
+      "base": "idempotency-guard",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/improvement-baseline.js",
+      "base": "improvement-baseline",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/improvement-baseline-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/incident-recurrence.js",
+      "base": "incident-recurrence",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/incident-recurrence-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/intake-endpoint.js",
+      "base": "intake-endpoint",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/intake-endpoint-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/invoicing.js",
+      "base": "invoicing",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/invoicing-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/knowledge-engine.js",
+      "base": "knowledge-engine",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/launch-readiness.js",
+      "base": "launch-readiness",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/launch-readiness-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/learning-chain.js",
+      "base": "learning-chain",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/learning-chain-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/live-cost-metering.js",
+      "base": "live-cost-metering",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/live-cost-metering-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/local-autonomy.js",
+      "base": "local-autonomy",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/local-autonomy-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/local-fixers.js",
+      "base": "local-fixers",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/local-fixers-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/local-model-manager.js",
+      "base": "local-model-manager",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/local-test-gate.js",
+      "base": "local-test-gate",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/local-test-gate-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/log-slug.js",
+      "base": "log-slug",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mechanical-acceptance.js",
+      "base": "mechanical-acceptance",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-context-builder.js",
+      "base": "mission-context-builder",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-contract-factory.js",
+      "base": "mission-contract-factory",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-interpreter.js",
+      "base": "mission-interpreter",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-ledger.js",
+      "base": "mission-ledger",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-lifecycle.js",
+      "base": "mission-lifecycle",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-loader.js",
+      "base": "mission-loader",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/mission-synthesizer.js",
+      "base": "mission-synthesizer",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/nl-objective-gateway.js",
+      "base": "nl-objective-gateway",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/nl-objective-gateway-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/objective-attribution.js",
+      "base": "objective-attribution",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/opportunity-policy.js",
+      "base": "opportunity-policy",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/patch-action-contract.js",
+      "base": "patch-action-contract",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/patch-engine.js",
+      "base": "patch-engine",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/patch-executor.js",
+      "base": "patch-executor",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/patch-memory.js",
+      "base": "patch-memory",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/patch-proposal-apply.js",
+      "base": "patch-proposal-apply",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/patch-proposal-apply-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/payments.js",
+      "base": "payments",
+      "status": "PASS_EXERCISED",
+      "evidence": "capability equivalence bench run under guard: dist loaded + ALL PASS (this campaign)"
+    },
+    {
+      "file": "runtime/core/pilot-delivery-packager.js",
+      "base": "pilot-delivery-packager",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/pilot-delivery-packager-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/pipeline-builder.js",
+      "base": "pipeline-builder",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/post-release-learning.js",
+      "base": "post-release-learning",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/present-state-reconciliation.js",
+      "base": "present-state-reconciliation",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/price-resolution.js",
+      "base": "price-resolution",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/project-context-engine.js",
+      "base": "project-context-engine",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/project-context-engine-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/provider-sandbox.js",
+      "base": "provider-sandbox",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/quote.js",
+      "base": "quote",
+      "status": "PASS_EXERCISED",
+      "evidence": "capability equivalence bench run under guard: dist loaded + ALL PASS (this campaign)"
+    },
+    {
+      "file": "runtime/core/research-ranking.js",
+      "base": "research-ranking",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/research-ranking-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/runtime-context-loader.js",
+      "base": "runtime-context-loader",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/runtime-model.js",
+      "base": "runtime-model",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/runtime-paths.js",
+      "base": "runtime-paths",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/runtime-paths-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/scope-observer.js",
+      "base": "scope-observer",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/self-diagnostic.js",
+      "base": "self-diagnostic",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/self-diagnostic-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/specification-loader.js",
+      "base": "specification-loader",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/specification-loader-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/core/stage-effect.js",
+      "base": "stage-effect",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/state-transition.js",
+      "base": "state-transition",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/validation-engine.js",
+      "base": "validation-engine",
+      "status": "PASS_EXERCISED",
+      "evidence": "loaded on swept mission/converge/autonomy/delegate path (per-dual-coverage)"
+    },
+    {
+      "file": "runtime/core/world-model.js",
+      "base": "world-model",
+      "status": "PASS_BY_BENCH",
+      "evidence": "standing equivalence bench runtime/__bench__/world-model-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+    },
+    {
+      "file": "runtime/llm/proposal-analyzer.js",
+      "base": "proposal-analyzer",
+      "status": "PASS_BY_TEST",
+      "evidence": "spawn-cli-llm-parity.test.ts 10/10 (dedicated LLM dual-port parity) + loaded by fleet-collector"
+    },
+    {
+      "file": "runtime/llm/response-parser.js",
+      "base": "response-parser",
+      "status": "PASS_BY_TEST",
+      "evidence": "spawn-cli-llm-parity.test.ts 10/10 (dedicated LLM dual-port parity) + loaded by fleet-collector"
+    },
+    {
+      "file": "runtime/scripts/run-all-tests.js",
+      "base": "run-all-tests",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/build-dist-closure.js",
+      "base": "build-dist-closure",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/build-runtime-guard.js",
+      "base": "build-runtime-guard",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/capability-classify.js",
+      "base": "capability-classify",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/compass-update.js",
+      "base": "compass-update",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/lib/js-require-scan.js",
+      "base": "js-require-scan",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/odg-autonomy-benchmark.js",
+      "base": "odg-autonomy-benchmark",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/runtime-identity-check.js",
+      "base": "runtime-identity-check",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/w6-collect.js",
+      "base": "w6-collect",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    },
+    {
+      "file": "scripts/w6-review.js",
+      "base": "w6-review",
+      "status": "TOOL_BUILD",
+      "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
+    }
+  ],
+  "notes": "fleet-stage-equivalence B2 live-spawn sub-test = BLOCKED (environmental: background fleet-bridge process; fleet-stage code UNTOUCHED this session; parity value-checks all PASS) — not a regression, not counted PASS."
+}
