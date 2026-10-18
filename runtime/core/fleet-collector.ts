@@ -65,16 +65,22 @@ function collect(requestId: any, opts?: any): any {
 
   const proposalJson = JSON.stringify(response.proposal);
 
-  // Reuse response-parser.js : validates required fields + writes proposal.json.
-  const parsed = spawn("node", ["runtime/llm/response-parser.js", proposalJson], {
+  // Spawn-CLI dual-port (CTO Track B): DEFAULT the compiled-TS ports under runtime/dist/llm; ODG_RUNTIME=js
+  // selects the JS rollback ports under runtime/llm. Both are proven observationally identical by
+  // spawn-cli-llm-parity.test.js. The injected `spawn` seam in tests matches by substring (response-parser/
+  // proposal-analyzer), so this base switch is parity-safe.
+  const LLM_BASE = process.env.ODG_RUNTIME === "js" ? "runtime/llm" : "runtime/dist/llm";
+
+  // Reuse response-parser : validates required fields + writes proposal.json.
+  const parsed = spawn("node", [`${LLM_BASE}/response-parser.js`, proposalJson], {
     encoding: "utf8"
   });
   if (parsed.status !== 0) {
     return fail(request, requestId, "response-parser rejected proposal", nowIso);
   }
 
-  // Reuse proposal-analyzer.js : writes proposal-analysis.json.
-  const analyzed = spawn("node", ["runtime/llm/proposal-analyzer.js"], {
+  // Reuse proposal-analyzer : writes proposal-analysis.json.
+  const analyzed = spawn("node", [`${LLM_BASE}/proposal-analyzer.js`], {
     encoding: "utf8"
   });
   if (analyzed.status !== 0) {
