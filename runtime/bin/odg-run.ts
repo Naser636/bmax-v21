@@ -78,7 +78,13 @@ console.log("ODG RUNTIME PIPELINE :", mission);
 console.log("======================================");
 
 const LOG_DIR = path.join("runtime", "generated", "logs");
-const RUN_LOG = path.join(LOG_DIR, mission + ".run.log");
+// Slugify the mission identifier for the FILENAME so a free-text mission (spaces, '/', parentheses,
+// punctuation, accents, newlines, very long) can never create a nested path, escape LOG_DIR, or ENOENT
+// the write. Reproduced 2026-10-18: a '/' in the raw mission string made this a non-existent nested dir.
+// The console output above keeps the full human-readable mission text; only the on-disk name is slugged.
+// Compiled sibling under dist/core (same relative-require discipline as checkpoint-engine/stage-effect).
+const { logSlug } = require("../core/log-slug");
+const RUN_LOG = path.join(LOG_DIR, logSlug(mission) + ".run.log");
 if (!VERBOSE) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
   fs.writeFileSync(RUN_LOG, "ODG RUNTIME PIPELINE — " + mission + "\n");
