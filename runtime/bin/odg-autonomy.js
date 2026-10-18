@@ -8,7 +8,7 @@
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const root = path.resolve(__dirname, "..", "..");
+const root = process.cwd(); // repo root (wrapper cwd) — identical to the TS port; established cwd-repo convention
 const tsx = path.join(root, "node_modules", ".bin", "tsx");
 const entry = path.join(root, "src", "runtime", "autonomy-cli.ts");
 

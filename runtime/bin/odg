@@ -39,7 +39,7 @@ case "$MISSION" in
     # Refresh coherent state first so the queue/registry the loop and dashboard read are current,
     # then run the autonomy loop; refresh again afterwards so the Dashboard reflects any advance.
     ./runtime/bin/odg-state.js >/dev/null
-    ./runtime/bin/odg-autonomy.js; rc=$?
+    node "$(_odg_port odg-autonomy)"; rc=$?
     ./runtime/bin/odg-state.js >/dev/null || true
     exit "$rc"
     ;;
@@ -55,7 +55,7 @@ case "$MISSION" in
     # campaign-level convergence report. Reuses the SAME state refresh discipline as `autonomy`
     # (the orchestrator itself front-loads contract generation via odg-generate-contracts.js).
     ./runtime/bin/odg-state.js >/dev/null
-    ./runtime/bin/odg-converge.js; rc=$?
+    node "$(_odg_port odg-converge)"; rc=$?
     ./runtime/bin/odg-state.js >/dev/null || true
     exit "$rc"
     ;;

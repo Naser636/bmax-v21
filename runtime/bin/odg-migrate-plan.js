@@ -11,7 +11,7 @@
  */
 const path = require("path");
 const { spawnSync } = require("child_process");
-const root = path.resolve(__dirname, "..", "..");
+const root = process.cwd(); // repo root (wrapper cwd) — identical to the TS port (launcher-family consistency)
 const tsx = path.join(root, "node_modules", ".bin", "tsx");
 const entry = path.join(root, "src", "runtime", "migration-campaign.ts");
 const r = spawnSync(tsx, [entry, ...process.argv.slice(2)], { cwd: root, stdio: "inherit" });
