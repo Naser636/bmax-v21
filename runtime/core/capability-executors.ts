@@ -1,9 +1,12 @@
-// @ts-nocheck
+// Type-suppression pragma REMOVED (TS_NOCHECK_CAPABILITY_EXECUTORS): the module already carried `export {}`
+// (no scope collision); the 87 errors were all missing annotations (62 TS7006 params, 7 TS18046 catch/await
+// vars, 3 array/let inference, 15 TS2339 on incrementally-built objects err/evidence/plan) → explicit `: any`
+// / `: any[]`, no behaviour change (faithful all-any transliteration; parity proven by the equivalence bench).
 /*
  * TS DUAL PORT of runtime/core/capability-executors.js (V66). FAITHFUL transliteration of the
  * historical .js (the production runtime). All-`any` by nature ⇒ strict type-checking is vacuous;
  * correctness is proven by the hermetic JS/TS equivalence bench (byte-identical across every executor
- * branch under controlled seams) + the historical suite + regressions. @ts-nocheck (repo-precedented)
+ * branch under controlled seams) + the historical suite + regressions. all-any transliteration (repo-precedented)
  * avoids fragile mass-annotation of this 940-line central dispatch. Migration-readiness SEAMS
  * (_seams: spawn/clock/dns/http, default real) make dependencies controllable — no real subprocess/
  * clock/network needed by the bench. Shebang omitted (compiled module, not a direct executable).
@@ -110,10 +113,10 @@ const SELF_WORKER_ENTRY = (typeof process !== "undefined" && process.env && proc
 const _seams = {
     spawn: spawnSync,
     nowIso: () => new Date().toISOString(),
-    dnsLookup: (host, options) => require("dns").promises.lookup(host, options),
-    httpRequest: (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb),
+    dnsLookup: (host: any, options: any) => require("dns").promises.lookup(host, options),
+    httpRequest: (u: any, options: any, cb: any) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb),
 };
-function __setExecutorSeams(s) { if (s && typeof s === "object") Object.assign(_seams, s); }
+function __setExecutorSeams(s: any) { if (s && typeof s === "object") Object.assign(_seams, s); }
 function __resetExecutorSeams() { _seams.spawn = spawnSync; _seams.nowIso = () => new Date().toISOString(); _seams.dnsLookup = (host, options) => require("dns").promises.lookup(host, options); _seams.httpRequest = (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb); }
 
 // ---------------------------------------------------------------------------
@@ -134,42 +137,42 @@ const PROVIDERS = [
 ];
 const EXTRA_ENV = ["HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY"];
 
-function withTimeout(promise, ms) {
+function withTimeout(promise: any, ms: any) {
     return new Promise((resolve, reject) => {
         const t = setTimeout(() => reject(new Error("timeout")), ms);
         promise.then(
-            (v) => { clearTimeout(t); resolve(v); },
-            (e) => { clearTimeout(t); reject(e); }
+            (v: any) => { clearTimeout(t); resolve(v); },
+            (e: any) => { clearTimeout(t); reject(e); }
         );
     });
 }
 
-async function probeDns(host) {
+async function probeDns(host: any) {
     try {
-        const addrs = await withTimeout(_seams.dnsLookup(host, { all: true }), TIMEOUT_MS);
-        return { host, resolved: true, addresses: addrs.map((a) => a.address) };
-    } catch (e) {
+        const addrs: any = await withTimeout(_seams.dnsLookup(host, { all: true }), TIMEOUT_MS);
+        return { host, resolved: true, addresses: addrs.map((a: any) => a.address) };
+    } catch (e: any) {
         return { host, resolved: false, error: e.code || String(e.message || e) };
     }
 }
 
-function probeHttp(url) {
+function probeHttp(url: any) {
     return new Promise((resolve) => {
         let u;
         try { u = new URL(url); } catch { return resolve({ url, ok: false, error: "invalid url" }); }
-        const req = _seams.httpRequest(u, { method: "HEAD", timeout: TIMEOUT_MS }, (res) => {
+        const req = _seams.httpRequest(u, { method: "HEAD", timeout: TIMEOUT_MS }, (res: any) => {
             // Any response — even 4xx — proves the endpoint is reachable over the network.
             resolve({ url, ok: true, status: res.statusCode, protocol: u.protocol.replace(":", "") });
             res.resume();
             res.destroy();
         });
         req.on("timeout", () => { req.destroy(); resolve({ url, ok: false, error: "timeout" }); });
-        req.on("error", (e) => resolve({ url, ok: false, error: e.code || String(e.message || e) }));
+        req.on("error", (e: any) => resolve({ url, ok: false, error: e.code || String(e.message || e) }));
         req.end();
     });
 }
 
-function auditEnvVar(name) {
+function auditEnvVar(name: any) {
     const crypto = require("crypto");
     const val = process.env[name];
     const present = typeof val === "string" && val.length > 0;
@@ -189,7 +192,7 @@ async function runAudit() {
     const providers = [];
     for (const p of PROVIDERS) {
         const dnsRes = await probeDns(p.host);
-        const httpRes = await probeHttp(p.url);
+        const httpRes: any = await probeHttp(p.url);
         const env = p.envVars.map(auditEnvVar);
         providers.push({
             name: p.name,
@@ -202,14 +205,14 @@ async function runAudit() {
     }
 
     const environment = [...new Set([...PROVIDERS.flatMap((p) => p.envVars), ...EXTRA_ENV])].map(auditEnvVar);
-    const internetReachable = httpResults.some((h) => h.ok) || dnsResults.some((d) => d.resolved);
+    const internetReachable = httpResults.some((h: any) => h.ok) || dnsResults.some((d) => d.resolved);
 
     return {
         capability: "Connectivity Audit",
         ranAt: _seams.nowIso(),
         summary: {
             dns: `${dnsResults.filter((d) => d.resolved).length}/${dnsResults.length} resolved`,
-            http: `${httpResults.filter((h) => h.ok).length}/${httpResults.length} reachable`,
+            http: `${httpResults.filter((h: any) => h.ok).length}/${httpResults.length} reachable`,
             internetReachable,
             providers: `${providers.filter((p) => p.reachable).length}/${providers.length} reachable`,
             credentialsConfigured: providers.filter((p) => p.credentialsPresent).map((p) => p.name),
@@ -227,7 +230,7 @@ async function runAudit() {
 // Executor registry.
 // ---------------------------------------------------------------------------
 
-function haystack(patch) {
+function haystack(patch: any) {
     return [patch.action, patch.objectiveId, patch.goal, ...(Array.isArray(patch.done_when) ? patch.done_when : [])]
         .filter((s) => typeof s === "string")
         .join(" ")
@@ -237,7 +240,7 @@ function haystack(patch) {
 // Deterministic, read-only workspace scan helpers (CLEAN_WORKSPACE). NOTHING is deleted: these only
 // observe git state and write evidence under runtime/generated/. No pre-existing scanner helper
 // covers the git-ignored candidate set, so it is derived from git here.
-function gitLines(args) {
+function gitLines(args: any) {
     const res = _seams.spawn("git", args, { encoding: "utf8" });
     if (res.status !== 0) {
         throw new Error(`git ${args.join(" ")} failed (status=${res.status}): ${String(res.stderr || "").trim()}`);
@@ -249,7 +252,7 @@ function gitLines(args) {
 function scanTransientRuntimeArtifacts() {
     return gitLines(["ls-files", "--others", "--ignored", "--exclude-standard", "--", "runtime"]);
 }
-function writeEvidence(out, obj) {
+function writeEvidence(out: any, obj: any) {
     fs.mkdirSync(GENERATED_DIR, { recursive: true });
     // Additive provenance stamp (C5-A2): bind the artifact to its source revision + a content digest so it
     // is attributable and tamper-evident, composing with the existing run-ownership mtime checks. Pure +
@@ -274,7 +277,7 @@ function readProviderPolicy() {
 // a live fetch requires an explicitly injected synchronous fetcher (operator/caller provided, or a
 // test's fake). This guarantees dry-run and the whole JSON pipeline make ZERO network calls — a
 // fetcher cannot survive JSON transport, so a disk-driven mission can only ever dry-run, never fetch.
-function resolveFetcher(ra, patch) {
+function resolveFetcher(ra: any, patch: any) {
     if (ra && typeof ra.fetch === "function") return ra.fetch;
     if (patch && typeof patch.__fetch === "function") return patch.__fetch;
     // GOVERNED, JSON-SAFE live fetcher selection. A grant (never the sentence) may NAME the one built-in
@@ -282,7 +285,7 @@ function resolveFetcher(ra, patch) {
     // ever carried. This is reachable solely AFTER the LIVE gate above (authorized + policy + allowlist),
     // so naming it does not itself authorize anything. Per-request byte/time limits ride on the spec.
     if (ra && ra.fetcher === "governed-http-get") {
-        return (url) => governedHttpGet(url, { maxBytes: ra.maxBytes, timeoutMs: ra.timeoutMs });
+        return (url: any) => governedHttpGet(url, { maxBytes: ra.maxBytes, timeoutMs: ra.timeoutMs });
     }
     return null;
 }
@@ -294,16 +297,16 @@ function resolveFetcher(ra, patch) {
 // with a CLEARED environment, so it can never read a credential (no privilege escalation / leakage). The
 // subprocess keeps the executor's synchronous loop synchronous — the SAME pattern the Connectivity Audit
 // already uses — without adding an async model.
-function httpGetBounded(rawUrl, maxBytes, timeoutMs) {
+function httpGetBounded(rawUrl: any, maxBytes: any, timeoutMs: any) {
     return new Promise((resolve) => {
         let u;
         try { u = new URL(rawUrl); } catch { return resolve({ status: 0, body: "", error: "invalid url" }); }
         if (u.protocol !== "https:" && u.protocol !== "http:") return resolve({ status: 0, body: "", error: "unsupported protocol" });
-        const req = _seams.httpRequest(u, { method: "GET", timeout: timeoutMs }, (res) => {
-            const chunks = [];
+        const req = _seams.httpRequest(u, { method: "GET", timeout: timeoutMs }, (res: any) => {
+            const chunks: any[] = [];
             let bytes = 0;
             let truncated = false;
-            res.on("data", (d) => {
+            res.on("data", (d: any) => {
                 if (truncated) return;
                 bytes += d.length;
                 if (bytes <= maxBytes) chunks.push(d);
@@ -319,14 +322,14 @@ function httpGetBounded(rawUrl, maxBytes, timeoutMs) {
             res.on("error", () => resolve({ status: res.statusCode || 0, body: Buffer.concat(chunks).toString("utf8"), fetched_at: _seams.nowIso(), truncated }));
         });
         req.on("timeout", () => { req.destroy(); resolve({ status: 0, body: "", error: "timeout" }); });
-        req.on("error", (e) => resolve({ status: 0, body: "", error: e.code || String(e.message || e) }));
+        req.on("error", (e: any) => resolve({ status: 0, body: "", error: e.code || String(e.message || e) }));
         req.end();
     });
 }
 
 // Synchronous wrapper usable inside the executor's sync loop: runs httpGetBounded in a child process with
 // a CLEARED env and clamps bounds to hard ceilings (≤1 MB, ≤15 s). Returns the fetch verdict JSON.
-function governedHttpGet(url, opts) {
+function governedHttpGet(url: any, opts: any) {
     const maxBytes = Math.min(Math.max(1, (opts && opts.maxBytes) || 262144), 1048576);
     const timeoutMs = Math.min(Math.max(250, (opts && opts.timeoutMs) || 5000), 15000);
     const selfEntry = (opts && typeof opts.selfEntry === "string" && opts.selfEntry) ? opts.selfEntry : SELF_WORKER_ENTRY;
@@ -346,7 +349,7 @@ function governedHttpGet(url, opts) {
 // security control is modified; the capability self-confines because the capability execution branch
 // (patch-executor) has no edits-branch path gate. normalizePrefixes is not exported, so the glob→dir
 // strip is performed inline with the SAME two-step transform (strip "*…" then trailing "/").
-function stripGlobPrefix(p) {
+function stripGlobPrefix(p: any) {
     return typeof p === "string" ? p.replace(/[*].*$/, "").replace(/\/+$/, "") : "";
 }
 // PROTECTED-GOVERNANCE guard — SINGLE implementation (relocated here from patch-executor.js so BOTH the
@@ -355,7 +358,7 @@ function stripGlobPrefix(p) {
 // A broad write scope (e.g. "runtime/**") structurally subsumes runtime/governance/**; authorized_paths
 // is SCOPE, never AUTHORITY, so being inside a granted scope does NOT authorize a governance write.
 const PROTECTED_GOVERNANCE_PREFIXES = ["runtime/governance"];
-function isProtectedGovernanceTarget(target) {
+function isProtectedGovernanceTarget(target: any) {
     const norm = path.normalize(String(target || ""));
     if (path.isAbsolute(norm) || norm === ".." || norm.startsWith(".." + path.sep)) return false;
     return PROTECTED_GOVERNANCE_PREFIXES.some((pre) => norm === pre || norm.startsWith(pre + "/"));
@@ -363,7 +366,7 @@ function isProtectedGovernanceTarget(target) {
 // Resolve the single in-scope write target and PROVE confinement before any mutation. Throws (refuses)
 // on an empty/invalid scope, a non-relative or traversal scope/target, an out-of-boundary target, or a
 // real-path/symlink escape from the sandbox cwd. Returns { relTarget, absTarget, scope }.
-function confineSyntheticTarget(authorizedPaths, cwd, allowProtectedGovernance, fileName = SYNTHETIC_DELIVERABLE_NAME) {
+function confineSyntheticTarget(authorizedPaths: any, cwd: any, allowProtectedGovernance: any, fileName = SYNTHETIC_DELIVERABLE_NAME) {
     const list = Array.isArray(authorizedPaths) ? authorizedPaths : [];
     const pre = stripGlobPrefix(list.length ? list[0] : "");
     if (!pre) throw new Error("ODG Synthetic Deliverable: refused — no valid authorized scope");
@@ -401,10 +404,10 @@ function confineSyntheticTarget(authorizedPaths, cwd, allowProtectedGovernance, 
 }
 // ODG FORMULATES the content itself from authorized mission data (plan mission + sorted objective ids).
 // Deterministic (no clock/random) and NEVER a copy of a contract-supplied patch content.
-function formulateSyntheticManifest(plan) {
+function formulateSyntheticManifest(plan: any) {
     const mission = plan && typeof plan.mission === "string" ? plan.mission : "UNKNOWN_MISSION";
     const ids = Array.isArray(plan && plan.objectives)
-        ? plan.objectives.map((o) => (o && typeof o.id === "string" ? o.id : null)).filter(Boolean).slice().sort()
+        ? plan.objectives.map((o: any) => (o && typeof o.id === "string" ? o.id : null)).filter(Boolean).slice().sort()
         : [];
     return `ODG-SYNTHETIC-MANIFEST\nmission=${mission}\nobjectives=${ids.join(",")}\ngenerator=ODG_CAPABILITY\n`;
 }
@@ -417,12 +420,12 @@ const EXECUTORS = [
         // (disjoint from every other executor). Authorization/scope come from the PLAN (patch-plan.json),
         // never inferred from ODG provenance; the content is ODG's, the scope is the contract's.
         capability: "ODG Synthetic Deliverable",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("ODG_WRITE_");
         },
-        run(patch) {
+        run(patch: any) {
             const cwd = process.cwd();
-            let plan = {};
+            let plan: any = {};
             try { plan = JSON.parse(fs.readFileSync(path.join(GENERATED_DIR, "patch-plan.json"), "utf8")); } catch { plan = {}; }
             const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
             // Refuse BEFORE any write if confinement cannot be established (scope + governance guard).
@@ -455,13 +458,13 @@ const EXECUTORS = [
         // matched on the reserved objectiveId prefix "ODG_SPEC_" (disjoint from every other executor).
         // Authorization/scope come ONLY from the PLAN; no new authority is granted to this capability.
         capability: "ODG Spec Author",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("ODG_SPEC_");
         },
-        run(patch) {
+        run(patch: any) {
             const synth = require("./mission-synthesizer"); // lazy require: avoids any load-time require cycle
             const cwd = process.cwd();
-            let plan = {};
+            let plan: any = {};
             try { plan = JSON.parse(fs.readFileSync(path.join(GENERATED_DIR, "patch-plan.json"), "utf8")); } catch { plan = {}; }
             const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
             // Refuse BEFORE any write if confinement cannot be established (reuses the ONE guard; .json target).
@@ -501,10 +504,10 @@ const EXECUTORS = [
         // is fail-closed: dry-run is the hard default (ZERO git mutation, no remote), a live BLOCKED /
         // HUMAN_APPROVAL_REQUIRED outcome writes honest evidence then throws so the mission fails closed.
         capability: "Governed Git Branch Integration",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("GIT_BRANCH_INTEGRATION");
         },
-        run(patch) {
+        run(patch: any) {
             const spec = (patch && patch.git_branch_integration && typeof patch.git_branch_integration === "object" && !Array.isArray(patch.git_branch_integration))
                 ? patch.git_branch_integration : {};
             const request = {
@@ -517,7 +520,7 @@ const EXECUTORS = [
             };
             // The engine owns the C03 record but not the artifact path; bind the real evidence path into
             // the record's evidence_refs so a VERIFIED transition carries a real reference (C03 I5).
-            const finalize = (evidence) => {
+            const finalize = (evidence: any) => {
                 if (evidence && evidence.state_transition && typeof evidence.state_transition === "object") {
                     evidence.state_transition.evidence_refs = [GIT_BRANCH_INTEGRATION_EVIDENCE];
                 }
@@ -531,7 +534,7 @@ const EXECUTORS = [
                     evidence: out,
                     summary: { mode: evidence.mode, outcome: evidence.outcome, integrated: evidence.integrated, pushed: evidence.pushed },
                 };
-            } catch (e) {
+            } catch (e: any) {
                 if (e && e.evidence) { try { finalize(e.evidence); } catch { /* ignore */ } }
                 throw e;
             }
@@ -545,10 +548,10 @@ const EXECUTORS = [
         // writes honest evidence then throws so the mission fails closed; EXECUTED / SANDBOX_OBSERVED /
         // ANALYZED return governed evidence. NEVER hands the string to a shell (argv only).
         capability: "Governed Bash/Linux Command",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("BASH_COMMAND");
         },
-        run(patch) {
+        run(patch: any) {
             const spec = (patch && patch.bash_command && typeof patch.bash_command === "object" && !Array.isArray(patch.bash_command))
                 ? patch.bash_command : {};
             const request = {
@@ -568,7 +571,7 @@ const EXECUTORS = [
             const out = writeEvidence(BASH_COMMAND_EVIDENCE, evidence);
             const STOP = [bashGovernor.OUTCOME.BLOCKED, bashGovernor.OUTCOME.HUMAN_APPROVAL_REQUIRED, bashGovernor.OUTCOME.EFFECT_DIVERGENCE];
             if (request.execute && STOP.includes(evidence.outcome)) {
-                const err = new Error(`Governed Bash/Linux Command ${evidence.outcome}: ${evidence.reason}`);
+                const err: any = new Error(`Governed Bash/Linux Command ${evidence.outcome}: ${evidence.reason}`);
                 err.outcome = evidence.outcome;
                 err.evidence = out;
                 throw err;
@@ -586,10 +589,10 @@ const EXECUTORS = [
         // mission's objective is captured. Deletes NOTHING; each step writes a deterministic,
         // non-empty, objective-specific evidence artifact so the chain records EXECUTED (not RECORDED).
         capability: "Clean Workspace",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("CLEAN_WORKSPACE_");
         },
-        run(patch) {
+        run(patch: any) {
             const id = patch.objectiveId;
             if (id === "CLEAN_WORKSPACE_1") {
                 const candidates = scanTransientRuntimeArtifacts();
@@ -621,7 +624,7 @@ const EXECUTORS = [
                 return { capability: "Clean Workspace", evidence: out, summary: { confirmedCovered: candidates.length } };
             }
             if (id === "CLEAN_WORKSPACE_3") {
-                const readJson = (p) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } };
+                const readJson = (p: any) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } };
                 const scan = readJson(CLEAN_WORKSPACE_SCAN_EVIDENCE);
                 const coverage = readJson(CLEAN_WORKSPACE_COVERAGE_EVIDENCE);
                 const candidatesScanned = scan && typeof scan.candidateCount === "number"
@@ -654,11 +657,11 @@ const EXECUTORS = [
         // reserved objectiveId prefix "VERIFY_OBSERVABILITY_" (disjoint from every other executor); no other
         // mission's objective is captured and no new authority is granted.
         capability: "Governed Observability Verification",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("VERIFY_OBSERVABILITY_");
         },
-        run(patch) {
-            const readJson = (p) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } };
+        run(patch: any) {
+            const readJson = (p: any) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } };
             const peName = "patch-execution.json", mpName = "mission-plan.json", oaName = "objective-attribution.json";
             const missionPlan = readJson(path.join(GENERATED_DIR, mpName));
             // Non-trivial gate: REFUSE unless the run actually PLANNED (mission-plan.json exists). The
@@ -689,7 +692,7 @@ const EXECUTORS = [
                         { path: `${GENERATED_DIR}/${oaName}`, present: attribution != null },
                     ],
                 });
-            } catch (e) {
+            } catch (e: any) {
                 throw new Error(`Governed Observability Verification: the autonomy-rate builder threw (S1 observability regression): ${String((e && e.message) || e)}`);
             }
             const m = signal && signal.measure ? signal.measure : null;
@@ -724,16 +727,16 @@ const EXECUTORS = [
         // provider policy allowing external providers, a non-empty source allowlist, AND an injected
         // fetcher. Reachability is NEVER treated as research.
         capability: "External Research Acquisition",
-        matches(patch) {
+        matches(patch: any) {
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("EXTERNAL_RESEARCH_");
         },
-        run(patch) {
+        run(patch: any) {
             const ra = (patch && patch.research_acquisition && typeof patch.research_acquisition === "object" && !Array.isArray(patch.research_acquisition))
                 ? patch.research_acquisition : null;
             const authorized = !!ra && ra.authorized === true;
             const execute = !!ra && ra.execute === true;
             const allowlist = ra && Array.isArray(ra.source_allowlist)
-                ? ra.source_allowlist.filter((u) => typeof u === "string" && u) : [];
+                ? ra.source_allowlist.filter((u: any) => typeof u === "string" && u) : [];
             const policy = readProviderPolicy();
             const policyAllows = !!policy && policy.externalProvidersEnabled === true;
 
@@ -788,11 +791,11 @@ const EXECUTORS = [
                 // Extract declared fields for THIS source over the SAME bytes just hashed, binding each
                 // OBSERVED value to content_hash + fetched_at + http_status. Non-2xx ⇒ no extraction; a
                 // rule that does not match ⇒ UNKNOWN (never a fabricated value).
-                for (const er of extractRules.filter((e) => e && e.url === url)) {
+                for (const er of extractRules.filter((e: any) => e && e.url === url)) {
                     let r;
                     if (status >= 200 && status <= 299) {
                         try { r = economicExtractor.extract(body, er.rule); }
-                        catch (e) { r = { status: "UNKNOWN", reason: "malformed rule: " + String(e.message || e) }; }
+                        catch (e: any) { r = { status: "UNKNOWN", reason: "malformed rule: " + String(e.message || e) }; }
                     } else {
                         r = { status: "UNKNOWN", reason: "source not 2xx" };
                     }
@@ -807,7 +810,7 @@ const EXECUTORS = [
             // the authorization block — the executor never invents research data.
             const items = ra && Array.isArray(ra.items) ? ra.items : [];
             const ranking = require("./research-ranking");
-            const bound = items.map((it) => {
+            const bound = items.map((it: any) => {
                 const cites = Array.isArray(it && it.sources) ? it.sources : [];
                 for (const u of cites) {
                     if (!verifiedUrls.has(u)) {
@@ -828,7 +831,7 @@ const EXECUTORS = [
                 : null;
 
             const acquired = sources.length > 0 && sources.every((s) => s.http_status >= 200 && s.http_status <= 299);
-            const evidence = {
+            const evidence: any = {
                 capability: "External Research Acquisition",
                 objective: patch.objectiveId,
                 mode: "LIVE",
@@ -855,7 +858,7 @@ const EXECUTORS = [
         // Any objective whose intent is the network — connectivity, internet, or exploring what is
         // available "online" — is discharged by the real Connectivity Audit, so its evidence exists
         // for the internet-reachable proof the mission is now REQUIRED to satisfy.
-        matches(patch) { return /\b(connectivity|internet|online)\b/.test(haystack(patch)); },
+        matches(patch: any) { return /\b(connectivity|internet|online)\b/.test(haystack(patch)); },
         run() {
             const out = CONNECTIVITY_EVIDENCE;
             try { fs.rmSync(out, { force: true }); } catch { /* ignore */ }
@@ -883,8 +886,8 @@ const EXECUTORS = [
         // run is an explicit operator action. Executed as a bounded subprocess so the executor loop
         // stays synchronous while the TS seam runs.
         capability: "Provider Activation",
-        matches(patch) { return /provider/.test(haystack(patch)); },
-        run(patch) {
+        matches(patch: any) { return /provider/.test(haystack(patch)); },
+        run(patch: any) {
             const out = PROVIDER_ACTIVATION_EVIDENCE;
             try { fs.rmSync(out, { force: true }); } catch { /* ignore */ }
             const mission = {
@@ -923,7 +926,7 @@ const EXECUTORS = [
     },
 ];
 
-function resolve(patch) {
+function resolve(patch: any) {
     if (!patch || typeof patch !== "object") return null;
     const matched = EXECUTORS.find((e) => e.matches(patch)) || null;
     // Bind the matched patch to run() so an executor that needs the objective context (Clean Workspace
