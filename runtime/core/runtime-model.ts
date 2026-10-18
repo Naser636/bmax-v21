@@ -96,9 +96,23 @@ function computeRuntimeModel(root: string = process.cwd()): any {
   // --- proven set from the immutable ledger (proven === true only) ---------------------------
   const ledger = readJson(G("mission-ledger.json")) || { entries: [] };
   const entries = Array.isArray(ledger.entries) ? ledger.entries : [];
-  const provenSet = new Set(
+  const pipelineProven = new Set(
     entries.filter((e: any) => e && e.proven === true && isMissionIdentifier(e.mission)).map((e: any) => e.mission),
   );
+  // CTO §2 — PRESENT-STATE RECONCILIATION (DISTINCT provenance). A mission whose completed work is proven
+  // against the ACTUAL tree by present-state-reconciliation.js (declared sources exist + declared acceptance
+  // tests pass present-state) is also proven — but by a provenance kept EXPLICITLY DISTINCT from pipeline
+  // execution, so autonomy accounting never confuses an ODG-verified/provider-implemented item with an
+  // ODG-executed one. Read-only, fail-closed (unreadable ⇒ empty). Does NOT touch the ledger proven-gate.
+  let reconciledProven = new Set<string>();
+  try {
+    const { reconciledProvenMissions } = require("./present-state-reconciliation.js");
+    reconciledProven = new Set((reconciledProvenMissions(root) || []).filter((m: string) => isMissionIdentifier(m)));
+  } catch {
+    reconciledProven = new Set<string>();
+  }
+  const provenSet = new Set<string>(pipelineProven as Set<string>);
+  reconciledProven.forEach((m) => provenSet.add(m));
   const lastMission = entries.length > 0 ? entries[entries.length - 1].mission : null;
 
   // --- last-run validation verdict (RC-5) ----------------------------------------------------
@@ -157,6 +171,11 @@ function computeRuntimeModel(root: string = process.cwd()): any {
       requiresEngineering: requiresEngineering(raw),
       priority: typeof raw.priority === "string" ? raw.priority : "NORMAL",
       proven: provenSet.has(name),
+      // Provenance of the proof, kept DISTINCT (CTO §2): "pipeline" (a validated pipeline execution),
+      // "present-state-reconciliation" (completed work verified against the tree — provider-implemented,
+      // ODG-verified), or null (unproven). Autonomy accounting must NOT count a reconciled proof as
+      // ODG-executed. Pipeline wins when both exist.
+      provenBy: pipelineProven.has(name) ? "pipeline" : reconciledProven.has(name) ? "present-state-reconciliation" : null,
       first: firstObjective(raw, name),
       kind:
         typeof raw.evidencePackContractVersion === "string"

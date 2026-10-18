@@ -274,4 +274,41 @@ console.log("Runtime Model — gap-detection contract");
   ok("INVALID-ID: a valid plain mission IS still queued", m.queue.some((q) => q.mission === "REAL_WORK"));
 }
 
+// --- Case: PRESENT-STATE RECONCILIATION proof recognized DISTINCTLY from pipeline (CTO §2) -----------
+// A mission proven by present-state reconciliation leaves the executable queue just like a pipeline-proven
+// one, but carries provenBy="present-state-reconciliation" so autonomy accounting never counts it as
+// ODG-executed. A pipeline-proven mission keeps provenBy="pipeline". A not-proven reconciliation entry
+// does NOT prove its mission.
+{
+  const root = buildFixture(
+    {
+      PIPE_DONE: { objectives: [{ id: "PIPE_DONE_1", goal: "pipeline proven" }] },
+      RECON_DONE: { objectives: [{ id: "RECON_DONE_1", goal: "reconciled proven" }] },
+      RECON_FAIL: { objectives: [{ id: "RECON_FAIL_1", goal: "reconciliation not proven" }] },
+      STILL_OPEN: { objectives: [{ id: "STILL_OPEN_1", goal: "unproven forward work" }] },
+    },
+    ["PIPE_DONE"], // PIPE_DONE is pipeline-proven via the ledger
+    {},
+  );
+  // Write a present-state-reconciliation store: RECON_DONE proven, RECON_FAIL not proven.
+  fs.writeFileSync(
+    path.join(root, "runtime", "generated", "present-state-reconciliation.json"),
+    JSON.stringify({
+      schema: "present-state-reconciliation/1",
+      provenance: "present-state-reconciliation",
+      reconciled: [
+        { mission: "RECON_DONE", provenance: "present-state-reconciliation", proven: true, verdict: "PROVEN" },
+        { mission: "RECON_FAIL", provenance: "present-state-reconciliation", proven: false, verdict: "NOT_PROVEN" },
+      ],
+    }),
+  );
+  const m = computeRuntimeModel(root);
+  const byName = (n) => (m.missions || []).find((x) => x.mission === n);
+  ok("RECON: pipeline-proven mission NOT queued, provenBy=pipeline", !m.queue.some((q) => q.mission === "PIPE_DONE") && byName("PIPE_DONE").provenBy === "pipeline");
+  ok("RECON: reconciled-proven mission NOT queued (leaves the gap list)", !m.queue.some((q) => q.mission === "RECON_DONE"));
+  ok("RECON: reconciled-proven carries DISTINCT provenBy=present-state-reconciliation", byName("RECON_DONE").proven === true && byName("RECON_DONE").provenBy === "present-state-reconciliation");
+  ok("RECON: a NOT-proven reconciliation entry does NOT prove its mission (still queued, provenBy null)", m.queue.some((q) => q.mission === "RECON_FAIL") && byName("RECON_FAIL").provenBy === null);
+  ok("RECON: an unrelated unproven mission is unaffected (still queued)", m.queue.some((q) => q.mission === "STILL_OPEN"));
+}
+
 console.log(`\n${passed} assertion(s) passed`);
