@@ -1,7 +1,8 @@
-// @ts-nocheck
 /* TypeScript port (faithful transliteration) — parity with runtime/core/local-autonomy.js.
- * all-any @ts-nocheck: parity proven by the hermetic equivalence bench, not type-checking (V66 precedent).
- * No code change vs the .js — it was only transitively blocked by capability-factory, now sanctioned-clean. */
+ * all-any (explicit) facade: parity proven by the hermetic equivalence bench. Type-suppression pragma
+ * REMOVED (TS_NOCHECK_LOCAL_AUTONOMY): the former TS2451 redeclarations were a script-vs-module scoping
+ * artifact (CommonJS module.exports, no ESM export) fixed by the `export {}` module-scope marker
+ * below; params carry explicit `: any`. No runtime/behaviour change vs the .js rollback twin. */
 
 /*
  * Local-First Autonomy Facade — integration point for the P1–P10 capability stack.
@@ -29,7 +30,7 @@ const factory = require("./capability-factory");     // P10
 
 // request → mission → local-first decision. `opts.manufactureIfMissing` lets the Runtime build a
 // local capability (P10) rather than escalate to external AI when nothing local resolves the task.
-function handle(request, opts) {
+function handle(request: any, opts: any) {
     opts = opts || {};
     const contract = synth.fromRequest(request, opts.spec);
     const objective = contract.objectives[0];
@@ -62,8 +63,12 @@ function handle(request, opts) {
 }
 
 // Close the loop after a mission executes: learn the outcome (enriches Patch Memory + Metrics).
-function complete(missionReport) {
+function complete(missionReport: any) {
     return learning.learn(missionReport);
 }
 
 module.exports = { handle, complete };
+
+// Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope so the top-level
+// const bindings (synth/router/factory) do not collide with sibling script-scope files (TS2451).
+export {};
