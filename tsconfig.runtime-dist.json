@@ -128,6 +128,7 @@
     "runtime/core/local-autonomy.ts",
     "runtime/bin/odg-verify.ts",
     "runtime/bin/odg-delegate.ts",
+    "runtime/bin/odg-recover.ts",
     "runtime/bin/odg-objective.ts",
     "runtime/scripts/run-all-tests.ts",
     "runtime/core/log-slug.ts"
