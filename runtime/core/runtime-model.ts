@@ -47,6 +47,33 @@ function objectiveCount(raw: any): number {
   return Array.isArray(raw && raw.objectives) ? raw.objectives.length : 0;
 }
 
+// A mission is RESERVED (human-gated) when it declares objectives and EVERY objective is
+// governance-excluded via its explicit `authorization` declaration (eligible===false OR
+// excluded===true) — e.g. a production-deployment contract whose objective is reserved for a
+// separate human CTO authorization. The declaration already lives in the contract (not invented
+// here), so this is a read of the SAME authorization signal CM-5 projects. A reserved mission is
+// NON-executable for autonomous selection (it must not sit at the head of the queue and stall all
+// unrelated work) but is PRESERVED and surfaced with a RESERVED disposition — visible, reversible
+// (the human gate opens by a separate authorized action), never hidden or marked complete.
+// Additive + field-gated: a contract with no excluded objectives is unaffected (parity-safe).
+function reservedMission(raw: any): boolean {
+  const objs = Array.isArray(raw && raw.objectives) ? raw.objectives : [];
+  if (objs.length === 0) return false;
+  return objs.every((o: any) => {
+    const a = o && typeof o === "object" ? o.authorization : null;
+    return !!a && (a.eligible === false || a.excluded === true);
+  });
+}
+
+function reservedReason(raw: any): string {
+  const objs = Array.isArray(raw && raw.objectives) ? raw.objectives : [];
+  for (const o of objs) {
+    const a = o && typeof o === "object" ? o.authorization : null;
+    if (a && typeof a.reason === "string" && a.reason) return a.reason;
+  }
+  return "human-gated: all objectives are governance-excluded (reserved for a separate authorization)";
+}
+
 function requiresEngineering(raw: any): boolean {
   return raw ? raw.requires_engineering === true || raw.requiresEngineering === true : false;
 }
@@ -109,11 +136,14 @@ function computeRuntimeModel(root: string = process.cwd()): any {
     // disposition — traceable, reversible (remove the field), never deleted. Additive + field-gated: a
     // contract without the field is byte-identical to before (parity-safe).
     const deprecated = raw.governedStatus === "DEPRECATED";
+    const reserved = !deprecated && reservedMission(raw);
     missions.push({
       mission: name,
       objectives: count,
-      executable: count > 0 && !deprecated,
+      executable: count > 0 && !deprecated && !reserved,
       deprecated,
+      reserved,
+      reservedReason: reserved ? reservedReason(raw) : null,
       deprecationReason: typeof raw.deprecationReason === "string" ? raw.deprecationReason : null,
       coveredBy: typeof raw.coveredBy === "string" ? raw.coveredBy : null,
       requiresEngineering: requiresEngineering(raw),
@@ -159,19 +189,21 @@ function computeRuntimeModel(root: string = process.cwd()): any {
     .filter((m) => !m.executable)
     .map((m) => {
       const skipped = m.kind !== "mission";
-      const disposition = m.deprecated ? "DEPRECATED" : skipped ? "SKIPPED" : "NEEDS_CONTRACT";
+      const disposition = m.deprecated ? "DEPRECATED" : m.reserved ? "RESERVED" : skipped ? "SKIPPED" : "NEEDS_CONTRACT";
       const reason = m.deprecated
         ? "governed-deprecated: " + (m.deprecationReason || "intent covered by an existing mechanism") + (m.coveredBy ? ` (covered by ${m.coveredBy})` : "")
-        : skipped
-          ? m.kind === "evidence-pack"
-            ? "file is an evidence pack, not a mission contract"
-            : "file is an orchestration plan, not a leaf mission contract"
-          : "mission contract declares no objectives (Mission Loader guard)";
+        : m.reserved
+          ? "reserved (human-gated): " + m.reservedReason
+          : skipped
+            ? m.kind === "evidence-pack"
+              ? "file is an evidence pack, not a mission contract"
+              : "file is an orchestration plan, not a leaf mission contract"
+            : "mission contract declares no objectives (Mission Loader guard)";
       return {
         mission: m.mission,
-        objectives: m.deprecated ? m.objectives : 0,
+        objectives: m.deprecated || m.reserved ? m.objectives : 0,
         proven: m.proven,
-        kind: m.deprecated ? "deprecated" : m.kind,
+        kind: m.deprecated ? "deprecated" : m.reserved ? "reserved" : m.kind,
         disposition,
         reason,
         repairNominated: pendingFixes.has(`FIX_${m.mission}.json`),

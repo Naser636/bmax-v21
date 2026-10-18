@@ -201,4 +201,50 @@ console.log("Runtime Model — gap-detection contract");
   ok("CM-3: a non-deprecated executable mission is STILL queued (no collateral exclusion)", m.queue.some((q) => q.mission === "LIVE"));
 }
 
+// --- Case: RESERVED (human-gated) — fully governance-excluded mission skipped, next eligible selected ---
+// Repairs the blocker-handling defect where a reserved production-deployment mission sat at the head of
+// the queue and stalled all unrelated work. The reserved mission must NOT be queued/missing/outstanding,
+// must be surfaced with a RESERVED disposition (visible, not hidden), and selection must advance to the
+// next genuinely-eligible mission.
+{
+  const root = buildFixture(
+    {
+      DEPLOY_X: {
+        mode: "OPERATIONAL",
+        objectives: [{ id: "DEPLOY_X_1", goal: "activate prod", authorization: { eligible: false, authorized: false, excluded: true, reason: "Human-gated: production activation requires a separate CTO authorization." } }],
+      },
+      WORK_Y: { objectives: [{ id: "WORK_Y_1", goal: "eligible forward work" }] },
+    },
+    [],
+    { roadmap: ["DEPLOY_X", "WORK_Y"] }, // DEPLOY_X is FIRST in roadmap order — would be selected but for the reserved skip
+  );
+  const m = computeRuntimeModel(root);
+  ok("RESERVED: human-gated mission NOT queued", !m.queue.some((q) => q.mission === "DEPLOY_X"));
+  ok("RESERVED: human-gated mission NOT a missing capability", !m.missingCapabilities.some((c) => c.id === "DEPLOY_X"));
+  ok("RESERVED: human-gated mission NOT an outstanding gap", !m.outstanding.some((o) => o.mission === "DEPLOY_X"));
+  const res = ((m.scan && m.scan.incompleteContracts) || []).find((c) => c.mission === "DEPLOY_X");
+  ok("RESERVED: surfaced with a RESERVED disposition (visible, not hidden)", !!res && res.disposition === "RESERVED" && /human-gated/.test(res.reason));
+  const rm = (m.missions || []).find((x) => x.mission === "DEPLOY_X");
+  ok("RESERVED: preserved in model (reserved=true, executable=false)", !!rm && rm.reserved === true && rm.executable === false);
+  ok("RESERVED: selection ADVANCES past the reserved head to the next eligible mission", m.nextMission === "WORK_Y" && m.queue.some((q) => q.mission === "WORK_Y"));
+}
+
+// --- Case: a mission with at least ONE non-excluded objective is NOT reserved (no over-exclusion) -----
+{
+  const root = buildFixture(
+    {
+      MIXED_Z: {
+        objectives: [
+          { id: "MIXED_Z_1", goal: "excluded", authorization: { eligible: false, excluded: true, reason: "reserved" } },
+          { id: "MIXED_Z_2", goal: "eligible" },
+        ],
+      },
+    },
+    [],
+    {},
+  );
+  const m = computeRuntimeModel(root);
+  ok("RESERVED: a mission with a non-excluded objective stays executable (not over-excluded)", m.queue.some((q) => q.mission === "MIXED_Z"));
+}
+
 console.log(`\n${passed} assertion(s) passed`);
