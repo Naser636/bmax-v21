@@ -33,6 +33,14 @@ const BIN = path.join("runtime", "bin");
 const GENERATED = path.join("runtime", "generated");
 const DELEGATION_DIR = path.join(GENERATED, "delegation");
 
+// L7-FIX-6 — prefer the compiled dist core port on the TS runtime (default); source fallback on
+// ODG_RUNTIME=js or when dist is absent. Same pattern as FIX-2/3/4/5.
+function _corePort(rel) {
+  const dist = rel.replace(/^runtime\//, "runtime/dist/");
+  if (process.env.ODG_RUNTIME !== "js" && fs.existsSync(path.join(ROOT, dist))) return dist;
+  return rel;
+}
+
 function die(msg, code = 1) {
   console.error(msg);
   process.exit(code);
@@ -50,7 +58,7 @@ if (!mission) {
 // The Loader reads runtime/missions/<MISSION>.json and nothing else — no repo rescan, no audit — and
 // STOPs on a non-executable artifact ("declares no objectives"), so delegate inherits that gate for
 // free and never delegates a master-plan / evidence-pack.
-const loader = cp.spawnSync(process.execPath, [path.join(BIN, "..", "core", "mission-loader.js"), mission], {
+const loader = cp.spawnSync(process.execPath, [path.join(ROOT, _corePort("runtime/core/mission-loader.js")), mission], {
   cwd: ROOT,
   stdio: "inherit",
 });
@@ -157,7 +165,7 @@ console.log("        :", briefJsonPath);
 // presented as isolated. selectDelegateMode REFUSES (never downgrades) when isolation is requested but
 // cannot be guaranteed (incompatible/network provider, missing command, empty/glob write-set). The flag
 // is OFF by default ⇒ mode "historical" (provider has repo access, NOT isolated) — behaviour unchanged.
-const delegIso = require(path.join(ROOT, "runtime", "core", "delegate-isolation.js"));
+const delegIso = require(path.join(ROOT, _corePort("runtime/core/delegate-isolation.js")));
 const delegMode = delegIso.selectDelegateMode({
   isolationRequested: process.env.ODG_DELEGATE_ISOLATION === "1",
   command: process.env.ODG_ISOLATED_PROVIDER_CMD,
@@ -232,7 +240,7 @@ if (delegMode.isolated) {
 console.log("--------------------------------------");
 console.log("WRITE-SET CONFORMANCE");
 try {
-  const { scopeClean } = require(path.join(ROOT, "runtime", "core", "scope-observer.js"));
+  const { scopeClean } = require(path.join(ROOT, _corePort("runtime/core/scope-observer.js")));
   const authorized = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
   const conformance = scopeClean(authorized);
   if (!conformance.ok) {
@@ -262,7 +270,7 @@ if (converge.status !== 0) {
 // --- Steps 9/10 — proofs + auto-archive via the existing Mission Ledger lifecycle ---------------
 let lifecycle = null;
 try {
-  const { markArchived } = require(path.join(ROOT, "runtime", "core", "mission-lifecycle.js"));
+  const { markArchived } = require(path.join(ROOT, _corePort("runtime/core/mission-lifecycle.js")));
   lifecycle = markArchived(mission);
 } catch (err) {
   console.error("WARN: archival step skipped:", err.message);
