@@ -48,7 +48,7 @@ case "$MISSION" in
     # emits a file-scoped Delegation Brief (Claude Code never sees the whole repo), then reuses the
     # existing verify → converge → Mission Ledger archive pipeline around the received patch.
     shift
-    ./runtime/bin/odg-delegate.js "$@"
+    node "$(_odg_port odg-delegate)" "$@"
     ;;
   converge)
     # Convergence Orchestrator: one command drives the Runtime to convergence and emits a
@@ -132,7 +132,7 @@ case "$MISSION" in
     exec node_modules/.bin/tsx src/runtime/incident-triage-cli.ts "$@"
     ;;
   verify)
-    ./runtime/bin/odg-verify.js
+    node "$(_odg_port odg-verify)"
     ;;
   cockpit)
     # READ-ONLY operational cockpit (Track I). Composes the EXISTING observability sources
