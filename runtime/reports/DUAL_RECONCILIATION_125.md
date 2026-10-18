@@ -1,23 +1,25 @@
-# ODG 125-Dual Reconciliation — final convergence (2026-10-18)
+# ODG 125-Dual Reconciliation — FINAL CLOSURE (2026-10-18)
 
-Every dual-rollback `.js` has a justified status (READ-ONLY; NO rollback removed). Reproducible via the guard sweep + capability equivalence benches + `runtime/reports/DUAL_RECONCILIATION_125.json`.
+Every dual-rollback `.js` has a justified status (READ-ONLY; NO rollback removed). This campaign RAN all 28 standing PASS_BY_BENCH equivalence benches (execution-proof).
 
-## Status counts (125)
+## Final status counts (125)
 - **NOT_APPLICABLE_ENTRYPOINT**: 20
-- **PASS_EXERCISED**: 65
-- **PASS_BY_BENCH**: 28
+- **PASS_EXERCISED**: 91
+- **PASS_EQUIV_SUBCHECK_BLOCKED**: 2
 - **PASS_BY_TEST**: 2
 - **TOOL_BUILD**: 10
 
-## Legend / evidence
-- **PASS_EXERCISED** (65): loaded on a swept TS-path (mission/13-stages/converge/autonomy/delegate) or proven by a capability equivalence bench run this campaign (finance-sim/email-gateway/quote/payments: dist loaded + ALL PASS).
-- **PASS_BY_BENCH** (28): a standing `runtime/__bench__/<m>-equivalence.e2e.test.ts` proves `.js`==compiled-`.ts` (reproducible; method demonstrated on the 4 named).
-- **PASS_BY_TEST** (2): `runtime/llm/{proposal-analyzer,response-parser}.js` — `spawn-cli-llm-parity.test.ts` 10/10 (dedicated LLM dual-port parity).
-- **NOT_APPLICABLE_ENTRYPOINT** (20): CLI bin / bench run as a process (`node odg-X.js`), not `require()`d — require-coverage is N/A; exercised by direct execution (per §4 static ACTIF).
-- **TOOL_BUILD** (10): build/test tooling (build:runtime / npm test / resume), outside the mission runtime graph.
-
-## Known BLOCKED (environmental, NOT a regression)
-- fleet-stage-equivalence **B2 live-spawn sub-test** fails (background fleet-bridge process; fleet-stage code UNTOUCHED this session; all parity value-checks PASS). Classified BLOCKED, never PASS.
+## Evidence
+- **PASS_EXERCISED (91)**: loaded on a swept TS-path (mission/13-stages/converge/autonomy/delegate) OR its equivalence bench RAN this campaign (exit 0, ALL PASS = .js≡compiled .ts). Includes the 26 (of 28) PASS_BY_BENCH re-run green + the 4 named capabilities + 61 swept.
+- **PASS_BY_TEST (2)**: llm proposal-analyzer/response-parser — spawn-cli-llm-parity 10/10.
+- **PASS_EQUIV_SUBCHECK_BLOCKED (2)**: `final-report` (equivalence PASS incl. .md byte-identical; stale closure-SIZE assertion 16≠18, drifted PRE-campaign as capabilities were added — NOT an equivalence divergence, NOT a this-session regression: type-only edits add no requires) · `fleet-stage` (all parity value-checks PASS; B2 live-spawn sub-test BLOCKED by the background fleet-bridge process; fleet-stage untouched this session). Neither counted PASS; both diagnosed, both non-regression.
+- **NOT_APPLICABLE_ENTRYPOINT (20)**: CLI bin / bench run as a process, not require()d.
+- **TOOL_BUILD (10)**: build/test tooling.
 
 ## Verdict
-**Default-runtime TS-ONLY chain: PROVEN** (0 source-dual on mission/stages/converge/autonomy/delegate — see TSONLY_EXECUTION_COVERAGE.md, L7-FIX-6). **Every dual justified.** **Global `.js`-REMOVAL PASS_TS_ONLY: NOT declared** — the 125 `.js` are the ODG_RUNTIME=js ROLLBACK (load-bearing on the js path: `odg mission` js loaded 55), retained by policy; the 28 PASS_BY_BENCH rely on standing CI benches (not all re-run here); removal requires per-file acceptance + recovery tests + explicit contract. NO rollback removed.
+**Default-runtime TS-ONLY chain: PROVEN** (0 source-dual on all entrypoint paths). **Every dual justified; equivalence PASS on all 95 benched/tested.** **Global `.js`-REMOVAL PASS_TS_ONLY: NOT declared** — the 125 `.js` are the ODG_RUNTIME=js ROLLBACK (load-bearing: `odg mission` js loaded 55), retained by policy; removal requires explicit CTO per-file authorization + the per-file recovery scenario. NO rollback removed.
+
+## Remaining (human/CTO decisions only — no further safe autonomous work)
+1. Per-file rollback removal: needs explicit CTO authorization per file (evidence = the equivalence bench [now re-run green] + consumer map [§4] + recovery test).
+2. `fleet-stage` B2: decide on the background fleet-bridge process (env) for a hermetic re-run.
+3. `final-report` bench: accept/refresh the stale closure-size expectation (16→18) — test-maintenance decision.

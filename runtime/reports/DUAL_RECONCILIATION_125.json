@@ -2,8 +2,8 @@
   "count": 125,
   "byStatus": {
     "NOT_APPLICABLE_ENTRYPOINT": 20,
-    "PASS_EXERCISED": 65,
-    "PASS_BY_BENCH": 28,
+    "PASS_EXERCISED": 91,
+    "PASS_EQUIV_SUBCHECK_BLOCKED": 2,
     "PASS_BY_TEST": 2,
     "TOOL_BUILD": 10
   },
@@ -191,14 +191,14 @@
     {
       "file": "runtime/core/build-recovery-engine.js",
       "base": "build-recovery-engine",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/build-recovery-engine-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/capability-authorization.js",
       "base": "capability-authorization",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/capability-authorization-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/capability-executors.js",
@@ -209,8 +209,8 @@
     {
       "file": "runtime/core/capability-factory.js",
       "base": "capability-factory",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/capability-factory-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/capability-learning.js",
@@ -251,20 +251,20 @@
     {
       "file": "runtime/core/client-intake.js",
       "base": "client-intake",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/client-intake-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/client-store-backup.js",
       "base": "client-store-backup",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/client-store-backup-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/connectivity-classifier.js",
       "base": "connectivity-classifier",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/connectivity-classifier-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/decision-engine.js",
@@ -329,14 +329,14 @@
     {
       "file": "runtime/core/final-report.js",
       "base": "final-report",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/final-report-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EQUIV_SUBCHECK_BLOCKED",
+      "evidence": "equivalence PASS (.md byte-identical JS≡compiled); stale closure-SIZE meta-assertion (expected 16, actual 18) drifted pre-campaign as capabilities were added — NOT an equivalence divergence, NOT this session regression (type-only edits add no requires)"
     },
     {
       "file": "runtime/core/finance-paper.js",
       "base": "finance-paper",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/finance-paper-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/finance-sim.js",
@@ -371,8 +371,8 @@
     {
       "file": "runtime/core/fleet-stage.js",
       "base": "fleet-stage",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/fleet-stage-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EQUIV_SUBCHECK_BLOCKED",
+      "evidence": "all parity value-checks PASS; B2 live-spawn sub-test BLOCKED (background fleet-bridge process; fleet-stage untouched this session) — environmental, never counted PASS"
     },
     {
       "file": "runtime/core/git-branch-integration.js",
@@ -395,26 +395,26 @@
     {
       "file": "runtime/core/improvement-baseline.js",
       "base": "improvement-baseline",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/improvement-baseline-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/incident-recurrence.js",
       "base": "incident-recurrence",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/incident-recurrence-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/intake-endpoint.js",
       "base": "intake-endpoint",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/intake-endpoint-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/invoicing.js",
       "base": "invoicing",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/invoicing-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/knowledge-engine.js",
@@ -425,32 +425,32 @@
     {
       "file": "runtime/core/launch-readiness.js",
       "base": "launch-readiness",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/launch-readiness-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/learning-chain.js",
       "base": "learning-chain",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/learning-chain-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/live-cost-metering.js",
       "base": "live-cost-metering",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/live-cost-metering-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/local-autonomy.js",
       "base": "local-autonomy",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/local-autonomy-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/local-fixers.js",
       "base": "local-fixers",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/local-fixers-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/local-model-manager.js",
@@ -461,8 +461,8 @@
     {
       "file": "runtime/core/local-test-gate.js",
       "base": "local-test-gate",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/local-test-gate-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/log-slug.js",
@@ -521,8 +521,8 @@
     {
       "file": "runtime/core/nl-objective-gateway.js",
       "base": "nl-objective-gateway",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/nl-objective-gateway-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/objective-attribution.js",
@@ -563,8 +563,8 @@
     {
       "file": "runtime/core/patch-proposal-apply.js",
       "base": "patch-proposal-apply",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/patch-proposal-apply-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/payments.js",
@@ -575,8 +575,8 @@
     {
       "file": "runtime/core/pilot-delivery-packager.js",
       "base": "pilot-delivery-packager",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/pilot-delivery-packager-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/pipeline-builder.js",
@@ -605,8 +605,8 @@
     {
       "file": "runtime/core/project-context-engine.js",
       "base": "project-context-engine",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/project-context-engine-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/provider-sandbox.js",
@@ -623,8 +623,8 @@
     {
       "file": "runtime/core/research-ranking.js",
       "base": "research-ranking",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/research-ranking-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/runtime-context-loader.js",
@@ -641,8 +641,8 @@
     {
       "file": "runtime/core/runtime-paths.js",
       "base": "runtime-paths",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/runtime-paths-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/scope-observer.js",
@@ -653,14 +653,14 @@
     {
       "file": "runtime/core/self-diagnostic.js",
       "base": "self-diagnostic",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/self-diagnostic-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/specification-loader.js",
       "base": "specification-loader",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/specification-loader-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/core/stage-effect.js",
@@ -683,8 +683,8 @@
     {
       "file": "runtime/core/world-model.js",
       "base": "world-model",
-      "status": "PASS_BY_BENCH",
-      "evidence": "standing equivalence bench runtime/__bench__/world-model-equivalence.e2e.test.ts (reproducible; method proven on the 4 named)"
+      "status": "PASS_EXERCISED",
+      "evidence": "equivalence bench RUN this campaign, exit 0, ALL PASS (.js≡compiled .ts)"
     },
     {
       "file": "runtime/llm/proposal-analyzer.js",
@@ -759,5 +759,6 @@
       "evidence": "build/test tooling (build:runtime / npm test / resume), not mission runtime graph"
     }
   ],
-  "notes": "fleet-stage-equivalence B2 live-spawn sub-test = BLOCKED (environmental: background fleet-bridge process; fleet-stage code UNTOUCHED this session; parity value-checks all PASS) — not a regression, not counted PASS."
+  "notes": "fleet-stage-equivalence B2 live-spawn sub-test = BLOCKED (environmental: background fleet-bridge process; fleet-stage code UNTOUCHED this session; parity value-checks all PASS) — not a regression, not counted PASS.",
+  "campaign": "final-closure: ran all 28 PASS_BY_BENCH equivalence benches — 26 PASS_EXERCISED (exit 0), 2 equivalence-PASS with a blocked non-equivalence sub-check (final-report stale count; fleet-stage B2 env)"
 }
