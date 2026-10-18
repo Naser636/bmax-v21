@@ -30,6 +30,11 @@ const FROZEN = new Set<string>(EXCLUSIONS as readonly string[]);
 const EXCLUDE_DIR = /(^|\/)(node_modules|\.git|\.next)(\/|$)/;
 const EXCLUDE_PATH = [/runtime\/dist(\/|$)/, /runtime\/generated(\/|$)/, /\.claude\/worktrees(\/|$)/];
 const DEAD_PREFIX = [/^runtime\/archive\//, /^runtime\/backup\//, /^poc\//];
+// Recovery/release SNAPSHOTS: disaster-recovery vault (runtime/local-recovery/, beside runtime-core.tar.gz
+// + RECOVERED_FILES.txt) and frozen release snapshots (runtime/releases/<ts>/). These are point-in-time
+// COPIES, not live project source — required by nothing live, and migrating one would corrupt the snapshot.
+// Reserved by nature (like §12-frozen); counted distinctly, NEVER part of the live migratable gap.
+const SNAPSHOT_PREFIX = [/^runtime\/local-recovery\//, /^runtime\/releases\//];
 
 function walk(dir: string, acc: string[]): void {
   let ents: fs.Dirent[];
@@ -51,6 +56,11 @@ function classify(rel: string): string {
   if (isTest) return "test-js";
   if (tsSibling) return "dual-rollback";
   if (DEAD_PREFIX.some((re) => re.test(rel))) return "js-only-dead";
+  // Recovery/release snapshots (reserved by nature) and scaffold templates (emitted as text, not executed
+  // as project source) are NOT live migratable source — classified distinctly with justification so the
+  // migratable gap (js-only-live) is honest and cannot be inflated by non-source artefacts.
+  if (SNAPSHOT_PREFIX.some((re) => re.test(rel))) return "recovery-snapshot-excluded";
+  if (/\.template\.js$/.test(rel)) return "template-scaffold-excluded";
   // §12 FROZEN (reserved): a runtime/core module on the authoritative EXCLUSIONS list is deliberately kept
   // as JS and must NOT be migrated without separate authorization — classified distinctly, never a candidate.
   if (FROZEN.has(path.basename(rel, ".js"))) return "frozen-excluded-s12";
@@ -75,10 +85,28 @@ const liveJs = total - (counts["js-only-dead"] || 0);
 // number a migration lot may actually draw from.
 const migratableRemaining = counts["js-only-live"] || 0;
 
+// Explicit per-category migration STATUS (CTO addendum §5): every remaining JS element carries a status
+// so "migration complete" cannot be asserted while anything migratable remains, and reserved/rollback
+// elements are never silently conflated with the live gap.
+const STATUS: Record<string, string> = {
+  "js-only-live": "A_MIGRER",
+  "dual-rollback": "ROLLBACK_A_RETIRER_APRES_PREUVE",
+  "frozen-excluded-s12": "GELE",
+  "test-js": "A_MIGRER",
+  "scripts": "A_MIGRER",
+  "js-only-dead": "A_RETIRER_APRES_CONFIRMATION_MORT",
+  "poc": "A_RETIRER_APRES_CONFIRMATION_MORT",
+  "recovery-snapshot-excluded": "GELE_PAR_NATURE_SNAPSHOT",
+  "template-scaffold-excluded": "GELE_PAR_NATURE_SCAFFOLD",
+};
+
 const report = {
-  schema: "js-inventory/2",
+  schema: "js-inventory/3",
   totalProjectJs: total,
   counts,
+  status: STATUS,
+  // Exhaustive, deduplicated per-category file lists (addendum §5) — the authoritative work-list.
+  buckets: Object.fromEntries(Object.entries(buckets).map(([k, v]) => [k, [...v].sort()])),
   liveProjectJs: liveJs,
   frozenExcludedS12: counts["frozen-excluded-s12"] || 0,
   migratableRemaining,
@@ -100,5 +128,14 @@ const report = {
   },
 };
 process.stdout.write(JSON.stringify(report, null, 2) + "\n");
+// Persist the exhaustive classified inventory as a durable artefact (addendum §5) — the authoritative,
+// deduplicated work-list with explicit statuses and full per-category file lists. runtime/generated is
+// generated output (gitignored), so this never pollutes the tracked tree.
+try {
+  const fsMod = require("fs"); const pathMod = require("path");
+  const outDir = pathMod.join(process.cwd(), "runtime", "generated");
+  fsMod.mkdirSync(outDir, { recursive: true });
+  fsMod.writeFileSync(pathMod.join(outDir, "js-inventory.json"), JSON.stringify(report, null, 2) + "\n");
+} catch { /* best-effort artefact; the gate below is the source of truth */ }
 // Gate: non-zero while any live project JS remains, so "migration complete" cannot be falsely asserted.
 process.exit(report.eliminated ? 0 : 1);
