@@ -1,6 +1,9 @@
-// @ts-nocheck
 /* TypeScript port (faithful transliteration) — parity with runtime/core/nl-objective-gateway.js.
- * all-any @ts-nocheck: correctness proven by the hermetic equivalence bench, not type-checking (V66 precedent).
+ * all-any (explicit) facade: correctness proven by the hermetic equivalence bench. Type-suppression pragma
+ * REMOVED (TS_NOCHECK_NL_OBJECTIVE): former TS2451 = script-vs-module scope collision → `export {}` marker;
+ * MODE_SIGNALS/EFFECT_FAMILIES/CAPABILITY_PROBE given precise literal types (resolves the `.some`/index +
+ * their callback params); params carry explicit `: any`; `compile` 2nd param made optional (runtime already
+ * opts=opts||{}). NO business-behaviour or transition-condition change; the .js rollback twin is untouched.
  * The only V71 change (shared with the .js) is ROOT = repoRoot(__dirname) so a compiled dist/core copy maps
  * back to the canonical repo root. */
 
@@ -60,7 +63,7 @@ const RUNTIME_POLICIES_PATH = path.join(ROOT, "runtime", "policies", "runtime-po
 // Signals are matched against a DIACRITIC-FOLDED, lower-cased copy of the objective, so the runtime
 // understands its FRENCH operating language too (the keywords below are stored folded — no accents —
 // and English keywords fold to themselves, so English mode derivation is byte-identical).
-const MODE_SIGNALS = [
+const MODE_SIGNALS: Array<[string, string[]]> = [
     ["ANALYZE", ["analyze", "analyse", "audit", "investigate", "assess", "review", "find", "explore", "research", "discover",
         "audite", "auditer", "analyser", "examine", "examiner", "inspecte", "inspecter", "evalue", "evaluer",
         "investigue", "explorer", "recherche", "rechercher", "etudie", "etudier", "diagnostique", "diagnostiquer", "identifie"]],
@@ -77,11 +80,11 @@ const MODE_SIGNALS = [
 const HIGH_PRIORITY_SIGNALS = ["urgent", "asap", "immediately", "critical", "now", "best",
     "immediatement", "critique", "maintenant", "prioritaire", "des que possible"];
 
-function foldDiacritics(s) {
+function foldDiacritics(s: any) {
     return String(s == null ? "" : s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-function deriveIntent(mission, normalized) {
+function deriveIntent(mission: any, normalized: any) {
     const g = foldDiacritics(normalized).toLowerCase();
     let mode = "UNKNOWN";
     for (const [m, kws] of MODE_SIGNALS) {
@@ -92,7 +95,7 @@ function deriveIntent(mission, normalized) {
 }
 
 // ---- Normalization ------------------------------------------------------------------------------
-function normalizeObjective(text) {
+function normalizeObjective(text: any) {
     return String(text == null ? "" : text).replace(/\s+/g, " ").trim().replace(/[.\s]+$/, "").trim();
 }
 
@@ -100,8 +103,8 @@ function normalizeObjective(text) {
 // Requirements come from the governed contract's definition_of_done (no fabrication); constraints are
 // explicit negative/limiting clauses found in the objective text.
 const CONSTRAINT_SIGNALS = [/\bwithout\b[^.,;]*/gi, /\bmust not\b[^.,;]*/gi, /\bno\s+\w+[^.,;]*/gi, /\bonly\b[^.,;]*/gi, /\bnever\b[^.,;]*/gi];
-function extractConstraints(normalized) {
-    const out = [];
+function extractConstraints(normalized: any) {
+    const out: any[] = [];
     for (const re of CONSTRAINT_SIGNALS) {
         const matches = String(normalized).match(re);
         if (matches) for (const m of matches) { const s = m.trim(); if (s && !out.includes(s)) out.push(s); }
@@ -112,7 +115,7 @@ function extractConstraints(normalized) {
 // ---- Risk / External-Effect classifier (THE one new governance stage) ---------------------------
 // Keyword-driven and deterministic. Severity order is fixed; the first matching family wins so a
 // single objective maps to exactly one external-effect family, one action class and one risk level.
-const EFFECT_FAMILIES = [
+const EFFECT_FAMILIES: Array<[string, string[], string, string, string, boolean, boolean]> = [
     // family,          signals,                                                                   actionClass,   risk,       reversibility, requiresExternal, requiresHuman
     ["DESTRUCTIVE", ["delete file", "delete the", "drop table", "drop database", "truncate", "wipe", "destroy", "erase ", "purge ", "rm -rf"], "DELETE", "CRITICAL", "R4", false, true],
     // NOTE: the bare word "transaction" is deliberately NOT a FINANCIAL signal. Like "current" below,
@@ -143,14 +146,14 @@ const EFFECT_FAMILIES = [
 // Research Acquisition) self-gates deny-by-default and REQUIRES a human authorization carried on the
 // objective — a natural-language sentence can never self-authorize it (no-self-authorization), so it is
 // deliberately NOT auto-bound here. Those remain reachable only through an explicitly-authored mission.
-const CAPABILITY_PROBE = {
+const CAPABILITY_PROBE: Record<string, string> = {
     "Connectivity Audit": "internet-reachable",
 };
-function probeForCapability(capability) {
+function probeForCapability(capability: any) {
     return (capability && CAPABILITY_PROBE[capability]) || null;
 }
 
-function classifyObjective(goal) {
+function classifyObjective(goal: any) {
     const g = String(goal || "").toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
         if (signals.some((s) => g.includes(s))) {
@@ -162,7 +165,7 @@ function classifyObjective(goal) {
 }
 
 // ---- Ambiguity (ask for missing BUSINESS information only — never internal ODG commands) ---------
-function detectAmbiguity(normalized) {
+function detectAmbiguity(normalized: any) {
     const words = normalized.split(/\s+/).filter(Boolean);
     if (normalized.length === 0) {
         return { ambiguous: true, reason: "EMPTY_OBJECTIVE", question: "What outcome do you want? Describe the business goal, the target (market / audience / system), and any budget or deadline." };
@@ -174,10 +177,10 @@ function detectAmbiguity(normalized) {
 }
 
 // ---- Read-only policy loads (local file reads only; NOT external/network calls) ------------------
-function readJsonSafe(p) {
+function readJsonSafe(p: any) {
     try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; }
 }
-function resolveExternalProvidersEnabled(opts) {
+function resolveExternalProvidersEnabled(opts: any) {
     if (opts && typeof opts.externalProvidersEnabled === "boolean") return opts.externalProvidersEnabled;
     const policy = readJsonSafe(PROVIDER_POLICY_PATH);
     return !!(policy && policy.externalProvidersEnabled === true);
@@ -191,8 +194,8 @@ function resolveGovernanceStrategy() {
 // This is a PLAN projection, not a second executor: it mirrors the positional LOAD → objectives →
 // VERIFY → REPORT ordering the Mission Orchestrator already derives, so the dry-run shows the shape
 // of the work without running anything.
-function buildWorkgraph(objectives) {
-    const nodes = ["LOAD", ...objectives.map((o) => o.id), "VERIFY", "REPORT"];
+function buildWorkgraph(objectives: any) {
+    const nodes = ["LOAD", ...objectives.map((o: any) => o.id), "VERIFY", "REPORT"];
     const edges = [];
     for (let i = 0; i < nodes.length - 1; i++) edges.push({ from: nodes[i], to: nodes[i + 1] });
     return { nodes, edges };
@@ -214,7 +217,7 @@ function buildWorkgraph(objectives) {
  *                      authority_scope (intersection only — never increases authority). Default [].
  *   externalProvidersEnabled boolean — override the provider-policy flag (else read from disk).
  */
-function compile(rawObjective, opts) {
+function compile(rawObjective: any, opts: any = {}) {
     opts = opts || {};
     const counters = { providerCalls: 0, externalCalls: 0, externalWrites: 0 };
 
@@ -263,7 +266,7 @@ function compile(rawObjective, opts) {
 
     // Stages E–H — per-objective Capability resolution + Risk/External-effect + Policy/Authority/Risk admission.
     const blockers = [];
-    const perObjective = contract.objectives.map((obj) => {
+    const perObjective = contract.objectives.map((obj: any) => {
         // E — Capability resolution (existing router). EXTERNAL last-resort ⇒ no LOCAL capability.
         const routed = router.route({ goal: obj.goal, objectiveId: obj.id }, opts);
         const missingLocalCapability = routed.chosen.source === "EXTERNAL";
@@ -272,7 +275,7 @@ function compile(rawObjective, opts) {
         const classification = classifyObjective(obj.goal);
 
         // G/H — Build the planned action and DELEGATE the admission decision to the existing gate.
-        const action = {
+        const action: any = {
             principal: "odg-nl-gateway",
             verb: intent.mode === "UNKNOWN" ? "PROCESS" : intent.mode,
             target: obj.id,
@@ -333,8 +336,8 @@ function compile(rawObjective, opts) {
     // objective `proof` (Validation Engine evaluateObjectiveProofs). A green pipeline over an unbound
     // objective can no longer read as SUCCESS; a bound objective passes only when its probe genuinely
     // verifies the capability's evidence. Pure: declares the requirement; it NEVER runs the probe here.
-    const verify = [];
-    perObjective.forEach((p, i) => {
+    const verify: any[] = [];
+    perObjective.forEach((p: any, i: any) => {
         const probe = probeForCapability(p.capability.chosen.capability);
         if (probe && contract.objectives[i]) {
             contract.objectives[i].proof = probe;
@@ -347,7 +350,7 @@ function compile(rawObjective, opts) {
     let authority;
     try {
         authority = kernel.authorizeMission(contract.mission, opts.currentState || "CREATED");
-    } catch (e) {
+    } catch (e: any) {
         authority = { mission: contract.mission, authorized: false, error: String(e && e.message || e) };
     }
     if (!authority.authorized) {
@@ -355,7 +358,7 @@ function compile(rawObjective, opts) {
     }
 
     // Aggregate decision (deny-by-default precedence: DENY > ESCALATE > ALLOW).
-    const decisions = perObjective.map((p) => p.admission.decision);
+    const decisions = perObjective.map((p: any) => p.admission.decision);
     const anyDeny = decisions.includes("DENY") || !authority.authorized;
     const anyEscalate = decisions.includes("ESCALATE");
     const admissionAggregate = anyDeny ? "DENY" : anyEscalate ? "ESCALATE" : "ALLOW";
@@ -367,7 +370,7 @@ function compile(rawObjective, opts) {
     // (opts.missionAuthority, default []); it is never self-granted from the profile (§307).
     let expert;
     try {
-        const anyFinancial = perObjective.some((p) => p.classification.externalEffect === "FINANCIAL");
+        const anyFinancial = perObjective.some((p: any) => p.classification.externalEffect === "FINANCIAL");
         const profileFile = anyFinancial ? "runtime/profiles/economic.json" : "runtime/profiles/engineering.json";
         const profile = assembler.loadProfile(profileFile);
         expert = assembler.compileInstance(profile, {
@@ -376,7 +379,7 @@ function compile(rawObjective, opts) {
             authority: Array.isArray(opts.missionAuthority) ? opts.missionAuthority : [],
             expected_output: requirements,
         });
-    } catch (e) {
+    } catch (e: any) {
         expert = { error: String((e && e.message) || e) };
     }
 
@@ -395,7 +398,7 @@ function compile(rawObjective, opts) {
         intent,
         requirements,
         constraints,
-        requestedCapabilities: perObjective.map((p) => p.capability.chosen.capability || p.capability.chosen.tier),
+        requestedCapabilities: perObjective.map((p: any) => p.capability.chosen.capability || p.capability.chosen.tier),
         dependencies,
         workgraph,
         contract,
@@ -434,3 +437,7 @@ if (require.main === module) {
     const clean = result.status === "READY_DRY_RUN";
     process.exit(clean ? 0 : 2);
 }
+
+// Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope so top-level consts
+// (fs/path/synth/gate/repoRoot/ROOT) do not collide with sibling script-scope files (TS2451).
+export {};
