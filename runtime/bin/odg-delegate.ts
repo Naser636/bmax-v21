@@ -183,7 +183,9 @@ try {
 // --- Steps 6/7 — receive the patch (whatever is now in the working tree) and verify -------------
 console.log("--------------------------------------");
 console.log("VERIFY");
-const verify = cp.spawnSync(process.execPath, [path.join(BIN, "odg-verify.js")], { cwd: ROOT, stdio: "inherit" });
+// L7-FIX-4: prefer the compiled dist verifier (TS-only) so its transitive core loads from dist; source fallback.
+const verifyBin = process.env.ODG_RUNTIME !== "js" && fs.existsSync(path.join(ROOT, "runtime", "dist", "bin", "odg-verify.js")) ? path.join("runtime", "dist", "bin", "odg-verify.js") : path.join(BIN, "odg-verify.js");
+const verify = cp.spawnSync(process.execPath, [verifyBin], { cwd: ROOT, stdio: "inherit" });
 if (verify.status !== 0) {
   die(`STOP: verify failed for "${mission}".`, verify.status || 1);
 }
@@ -191,7 +193,8 @@ if (verify.status !== 0) {
 // --- Step 8 — converge (existing Convergence Orchestrator, writes convergence-report + ledger) ---
 console.log("--------------------------------------");
 console.log("CONVERGE");
-const converge = cp.spawnSync(process.execPath, [path.join(BIN, "odg-converge.js")], { cwd: ROOT, stdio: "inherit" });
+const convergeBin = process.env.ODG_RUNTIME !== "js" && fs.existsSync(path.join(ROOT, "runtime", "dist", "bin", "odg-converge.js")) ? path.join("runtime", "dist", "bin", "odg-converge.js") : path.join(BIN, "odg-converge.js");
+const converge = cp.spawnSync(process.execPath, [convergeBin], { cwd: ROOT, stdio: "inherit" });
 if (converge.status !== 0) {
   die(`STOP: converge did not reach convergence for "${mission}".`, converge.status || 1);
 }
