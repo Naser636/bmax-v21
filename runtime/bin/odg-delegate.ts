@@ -153,12 +153,76 @@ console.log("Scope   :", scope.length, "file(s) —", scope.join(", ") || "(none
 console.log("Brief   :", briefMdPath);
 console.log("        :", briefJsonPath);
 
+// --- Delegation provider selection (E5) — explicit isolated-vs-historical decision, no silent fallback -
+// The mode is decided ONCE here and surfaced BEFORE any provider runs, so the historical path is never
+// presented as isolated. selectDelegateMode REFUSES (never downgrades) when isolation is requested but
+// cannot be guaranteed (incompatible/network provider, missing command, empty/glob write-set). The flag
+// is OFF by default ⇒ mode "historical" (provider has repo access, NOT isolated) — behaviour unchanged.
+const delegIso: any = require(path.join(ROOT, "runtime", "core", "delegate-isolation.js"));
+const delegMode = delegIso.selectDelegateMode({
+  isolationRequested: process.env.ODG_DELEGATE_ISOLATION === "1",
+  command: process.env.ODG_ISOLATED_PROVIDER_CMD,
+  declaredOffline: process.env.ODG_ISOLATED_PROVIDER_OFFLINE === "1",
+  writeSet: Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [],
+});
+console.log("--------------------------------------");
+console.log("Delegation mode:", delegMode.isolated ? "ISOLATED (local offline provider — no repo/.git/docker/secrets/network)" : "HISTORICAL (provider has repository access — NOT isolated)");
+console.log("        reason :", delegMode.reason);
+if (delegMode.mode === "refused") {
+  die(`STOP: isolation was requested but cannot be guaranteed — ${delegMode.reason}. Refusing (no silent fallback to the non-isolated path).`, 2);
+}
+if (delegMode.isolated && prepareOnly) {
+  die("STOP: --prepare-only is not applicable in isolated mode (ODG runs the provider itself inside the sandbox).", 2);
+}
+
 if (prepareOnly) {
   console.log("--------------------------------------");
   console.log("--prepare-only: stopping before validations.");
   console.log("Hand the brief to Claude Code, apply its patch, then re-run: odg delegate", mission);
   console.log("======================================");
   process.exit(0);
+}
+
+// --- EXPERIMENTAL isolated provider run (PROVIDER_ISOLATION_E1_E5) — reached ONLY in mode "isolated" --
+// ODG runs the provider ITSELF inside a bwrap sandbox on a working COPY of ONLY the authorized files
+// (no real repo/.git/docker socket/host secrets/outbound network), reads its effect back as a diff,
+// validates every change against the EXACT write-set, and applies ONLY a fully in-scope proposal.
+// FAIL-CLOSED: an unavailable sandbox, an unobserved launch, or an out-of-scope change all STOP here —
+// NO silent fallback to unisolated execution. Downstream CM-1 + verify + converge then run unchanged.
+if (delegMode.isolated) {
+  console.log("--------------------------------------");
+  console.log("ISOLATED PROVIDER (experimental — PROVIDER_ISOLATION)");
+  const isoWriteSet = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
+  // Baseline = the pre-proposal HEAD, persisted on the first (propose) invocation and reused on the
+  // post-acceptance invocation so the committed-diff check is scoped correctly. Gitignored artifact.
+  const baselineFile = path.join(DELEGATION_DIR, `${mission}.isolation-baseline`);
+  let baselineRef: any = null;
+  try { baselineRef = fs.existsSync(baselineFile) ? fs.readFileSync(baselineFile, "utf8").trim() : null; } catch { baselineRef = null; }
+  if (!baselineRef) { try { baselineRef = cp.execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(); } catch { baselineRef = null; } }
+  const isoResult = delegIso.runIsolated({ root: ROOT, writeSet: isoWriteSet, command: process.env.ODG_ISOLATED_PROVIDER_CMD, apply: true });
+  if (isoResult.refused || !isoResult.ok) {
+    die(`STOP: isolated provider run refused — ${isoResult.reason} (fail-closed, no unisolated fallback).`, 2);
+  }
+  console.log("Isolated:", isoResult.reason);
+  console.log("Applied :", (isoResult.applied && isoResult.applied.applied.join(", ")) || "(none)");
+  // HUMAN ACCEPTANCE GATE — resolves the apply↔verify↔converge deadlock WITHOUT bypassing verify.gitClean.
+  // verify + converge run ONLY after the human COMMITS the in-scope deliverable. ODG never auto-commits;
+  // an out-of-scope working change or an UNAUTHORIZED COMMIT of out-of-scope files BLOCKS (always).
+  const gate = delegIso.acceptanceGate({ root: ROOT, writeSet: isoWriteSet, baselineRef });
+  console.log("Acceptance:", gate.state, "—", gate.reason);
+  if (gate.state === "BLOCKED") {
+    die(`STOP: ${gate.reason}. Refusing (no bypass of scope/commit governance).`, 2);
+  }
+  if (gate.state !== "ACCEPTED") {
+    try { fs.mkdirSync(DELEGATION_DIR, { recursive: true }); fs.writeFileSync(baselineFile, String(baselineRef || "")); } catch { /* best-effort */ }
+    console.log("--------------------------------------");
+    console.log("AWAITING HUMAN ACCEPTANCE — review the in-scope deliverable and COMMIT it, then re-run: odg delegate", mission);
+    console.log("ODG never auto-commits; verify + converge run ONLY after acceptance. STOP (not a failure).");
+    console.log("======================================");
+    process.exit(0);
+  }
+  try { if (fs.existsSync(baselineFile)) fs.unlinkSync(baselineFile); } catch { /* best-effort */ }
+  console.log("Acceptance: committed in-scope deliverable confirmed — proceeding to verify + converge.");
 }
 
 // --- Step 5b — WRITE-SET CONFORMANCE (CM-1): ODG independently controls the RECEIVED patch's scope -------
