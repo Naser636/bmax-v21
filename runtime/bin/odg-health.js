@@ -17,8 +17,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const ROOT = path.resolve(__dirname, "..", "..");
-const G = (name) => path.join(ROOT, "runtime", "generated", name);
+const G = (name) => path.join("runtime", "generated", name); // cwd-relative (repo root)
 
 function read(file, fallback) {
   try {
@@ -130,7 +129,7 @@ if (require.main === module) {
   const caps = read(G("capability-registry.json"), { capabilities: [], missingCapabilities: [] });
   const ledger = read(G("mission-ledger.json"), { count: 0, entries: [] });
   const constitution = read(
-    path.join(ROOT, "runtime", "constitution", "runtime-constitution.json"),
+    path.join("runtime", "constitution", "runtime-constitution.json"),
     { principles: [] }
   );
   const queue = read(G("runtime-mission-queue.json"), { queue: [] });

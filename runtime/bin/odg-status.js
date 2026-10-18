@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs=require("fs");
+const path=require("path");
 
 function read(file,fallback={}){
   try{return JSON.parse(fs.readFileSync(file,"utf8"));}
@@ -30,7 +31,7 @@ console.log("Capabilities       :",(caps.capabilities||[]).length);
 // CM-4: report the count's HONEST decomposition so "capabilities" is never read as business capabilities.
 // Fail-safe: a classifier error never breaks the status output.
 try{
-  const {classify}=require("../../scripts/capability-classify.js");
+  const {classify}=require(path.resolve(process.cwd(),"scripts","capability-classify.js"));
   const k=classify((caps.capabilities||[]).map(c=>typeof c==="string"?c:(c.id||c.name||c.capability||"")));
   console.log("  classified       :","business="+k.businessCandidate,"· mission-derived="+k.missionDerived,"· nl-generated="+k.nlGenerated+(k.duplicates.length?" · dup="+k.duplicates.length:"")+(k.coherent?" · coherent":" · INCOHERENT"));
 }catch{/* classifier optional — never break status */}
