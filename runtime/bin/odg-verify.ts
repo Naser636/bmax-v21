@@ -18,8 +18,8 @@ const cp=require("child_process");
 // Excluded by CONTENT stamp only, so a hand-authored contract or any real source change still makes the
 // tree unclean and is judged honestly.
 function generatedContractExcludes(): any {
-  const out = [];
-  let files = [];
+  const out: string[] = [];
+  let files: string[] = [];
   try { files = fs.readdirSync("runtime/missions").filter((f: any) => f.endsWith(".json")).sort(); }
   catch { return out; }
   for (const f of files) {
@@ -71,11 +71,11 @@ return false;
 // contract can never slip an invalid definition into the pipeline. Purely additive evidence: it
 // never weakens the build/typescript/gitClean gates the Release Manager reads.
 function verifyGeneratedContracts(): any {
-  const out={total:0,valid:0,invalid:[]};
-  let synth;
+  const out: any={total:0,valid:0,invalid:[]};
+  let synth: any;
   try{synth=require("../core/mission-synthesizer");}catch {return out;}
   let files=[];
-  try{files=fs.readdirSync("runtime/missions").filter((f)=>f.endsWith(".json")).sort();}catch {return out;}
+  try{files=fs.readdirSync("runtime/missions").filter((f: any)=>f.endsWith(".json")).sort();}catch {return out;}
   for(const f of files){
     let raw;
     try{raw=JSON.parse(fs.readFileSync(`runtime/missions/${f}`,"utf8"));}catch {continue;}

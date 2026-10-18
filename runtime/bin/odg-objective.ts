@@ -326,7 +326,7 @@ function run(raw: string, opts?: any, io?: any): number {
 
     if (!execute) {
         const decision = decide(raw, {});
-        const out = (io && io.print) || ((s) => process.stdout.write(s));
+        const out = (io && io.print) || ((s: any) => process.stdout.write(s));
         // Surface the BOUNDED routing identity alongside the gateway's dry-run projection, so the
         // projection shows the governed mission id that --execute would route (never the raw sentence).
         const projection = decision.mission ? { ...decision.result, resolvedMission: decision.mission } : decision.result;
