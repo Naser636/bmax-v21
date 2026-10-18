@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// @ts-nocheck — L5/L6 bulk test migration: runtime-compat under tsx proven; this suppresses
+// tsc typechecking (NOT strict typing) — recorded migration debt (type later). See ODG_PROJECT_STATE.md.
 "use strict";
 /* §8 compass-update tests — fail-closed, idempotence, interruption-safety, no-self-authorization.
  * Isolated temp state file + temp repoRoot; deterministic clock; no runtime mutation. */

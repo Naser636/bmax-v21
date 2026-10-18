@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// @ts-nocheck — L5/L6 bulk test migration: runtime-compat under tsx proven; this suppresses
+// tsc typechecking (NOT strict typing) — recorded migration debt (type later). See ODG_PROJECT_STATE.md.
 "use strict";
 /*
  * ROUTE / SCRIPT / VERSION CLOSURE GATE (CTO canonical-route mandate §3/§5).

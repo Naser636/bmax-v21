@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// @ts-nocheck — L5/L6 bulk test migration: runtime-compat under tsx proven; this suppresses
+// tsc typechecking (NOT strict typing) — recorded migration debt (type later). See ODG_PROJECT_STATE.md.
 "use strict";
 /* CM-4 capability-count integrity tests — pure classifier, counter-coherence, anti-dup, read-only. */
 const assert = require("assert");
