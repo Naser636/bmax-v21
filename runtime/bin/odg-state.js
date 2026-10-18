@@ -24,7 +24,7 @@ const { computeRuntimeModel } = require("../core/runtime-model");
 const { buildAutonomyRate } = require("../core/autonomy-rate");
 const { attributeObjectives } = require("../core/objective-attribution");
 
-const ROOT = path.resolve(__dirname, "..", "..");
+const ROOT = process.cwd(); // repo root (wrapper cwd) — identical to the TS port
 const GEN = path.join(ROOT, "runtime", "generated");
 
 function write(name, value) {

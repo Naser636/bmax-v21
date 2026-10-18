@@ -29,7 +29,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const ROOT = path.resolve(__dirname, "..", "..");
+const ROOT = process.cwd(); // repo root (wrapper cwd) — identical to the TS port
 const GEN = path.join(ROOT, "runtime", "generated");
 const DECL = /##CLASS:\s*(BLOCKED_BY_ISOLATION|SKIPPED)\b[ \t]*(.*)/;
 

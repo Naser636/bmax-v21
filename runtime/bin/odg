@@ -13,13 +13,13 @@ case "$MISSION" in
     # Refresh the coherent Runtime state (runtime-state / status / queue / registry / scan) BEFORE
     # rendering so the read-only Dashboard always reflects the current repo state — never a stale or
     # empty runtime-state.json (Pipeline/Brain UNKNOWN) or a hard-coded SYSTEM_READY next mission.
-    ./runtime/bin/odg-state.js >/dev/null
+    node "$(_odg_port odg-state)" >/dev/null
     # Dual-port (CTO Track B): DEFAULT compiled-TS (runtime/dist/bin); ODG_RUNTIME=js → rollback; dist-exists fallback.
     H="runtime/bin/odg-health.js"; [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-health.js ] && H="runtime/dist/bin/odg-health.js"
     node "$H"
     ;;
   state)
-    ./runtime/bin/odg-state.js
+    node "$(_odg_port odg-state)"
     ;;
   mission)
     shift
@@ -38,9 +38,9 @@ case "$MISSION" in
     node "$(_odg_port odg-generate-contracts)" >/dev/null
     # Refresh coherent state first so the queue/registry the loop and dashboard read are current,
     # then run the autonomy loop; refresh again afterwards so the Dashboard reflects any advance.
-    ./runtime/bin/odg-state.js >/dev/null
+    node "$(_odg_port odg-state)" >/dev/null
     node "$(_odg_port odg-autonomy)"; rc=$?
-    ./runtime/bin/odg-state.js >/dev/null || true
+    node "$(_odg_port odg-state)" >/dev/null || true
     exit "$rc"
     ;;
   delegate)
@@ -54,9 +54,9 @@ case "$MISSION" in
     # Convergence Orchestrator: one command drives the Runtime to convergence and emits a
     # campaign-level convergence report. Reuses the SAME state refresh discipline as `autonomy`
     # (the orchestrator itself front-loads contract generation via odg-generate-contracts.js).
-    ./runtime/bin/odg-state.js >/dev/null
+    node "$(_odg_port odg-state)" >/dev/null
     node "$(_odg_port odg-converge)"; rc=$?
-    ./runtime/bin/odg-state.js >/dev/null || true
+    node "$(_odg_port odg-state)" >/dev/null || true
     exit "$rc"
     ;;
   probe)
@@ -110,7 +110,7 @@ case "$MISSION" in
     # autonomy), then compare EXPECTED vs OBSERVED, raise an INCIDENT, and PREPARE (not apply) a bounded
     # repair plan routed to the existing repair/rollback engines. Read-only; single bounded pass; no new
     # scheduler. Exit 0 = no divergence, 1 = incident open/frozen (usable as a gate / post-event trigger).
-    ./runtime/bin/odg-state.js >/dev/null || true
+    node "$(_odg_port odg-state)" >/dev/null || true
     # Dual-port (CTO Track B): DEFAULT compiled-TS (runtime/dist/bin); ODG_RUNTIME=js → rollback; dist-exists fallback.
     D="runtime/bin/odg-diagnose.js"; [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-diagnose.js ] && D="runtime/dist/bin/odg-diagnose.js"
     node "$D"; exit $?
@@ -120,7 +120,7 @@ case "$MISSION" in
     # improvement-baseline S4) on REAL repo signals and ACTS on it — exit 1 (gate) on a debt regression
     # (FROZEN_LOOP / recurring incidents ⇒ prior fixes did not hold) or an over-claim; exit 0 otherwise.
     # Writes nothing, spawns nothing, no network. Usable as a CI / post-event gate like `odg diagnose`.
-    ./runtime/bin/odg-state.js >/dev/null || true
+    node "$(_odg_port odg-state)" >/dev/null || true
     exec node_modules/.bin/tsx src/runtime/learning-review-cli.ts "$@"
     ;;
   triage)
@@ -128,7 +128,7 @@ case "$MISSION" in
     # over the EXISTING self-diagnostic report. Refresh coherent state first (same discipline as diagnose),
     # then run incident-triage: A assesses an open incident, B proposes (never applies — no applier wired).
     # Writes nothing, spawns nothing, no network. Exit 0 = no divergence, 1 = incident DIAGNOSED.
-    ./runtime/bin/odg-state.js >/dev/null || true
+    node "$(_odg_port odg-state)" >/dev/null || true
     exec node_modules/.bin/tsx src/runtime/incident-triage-cli.ts "$@"
     ;;
   verify)
@@ -158,7 +158,7 @@ case "$MISSION" in
     exec node "$(_odg_port odg-client)" "$@"
     ;;
   status)
-    ./runtime/bin/odg-state.js >/dev/null
+    node "$(_odg_port odg-state)" >/dev/null
     # Dual-port (CTO Track B): DEFAULT compiled-TS (runtime/dist/bin); ODG_RUNTIME=js → rollback; dist-exists fallback.
     S="runtime/bin/odg-status.js"; [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-status.js ] && S="runtime/dist/bin/odg-status.js"
     node "$S"
@@ -189,7 +189,7 @@ case "$MISSION" in
     # EXISTING classifier (runtime/bin/odg-test-report.js) on explicit suites (or its default set) and
     # persists a fresh artifact. No cockpit coupling is claimed (the cockpit does not consume it yet).
     shift
-    exec node runtime/bin/odg-test-report.js "$@"
+    exec node "$(_odg_port odg-test-report)" "$@"
     ;;
   backup)
     # Governed surface over runtime/core/client-store-backup.js: READ-ONLY integrity-verified backup of
