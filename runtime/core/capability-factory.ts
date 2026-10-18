@@ -1,6 +1,7 @@
-// @ts-nocheck
 /* TypeScript port (faithful transliteration) — parity with runtime/core/capability-factory.js.
- * all-any @ts-nocheck: parity proven by the hermetic equivalence bench, not type-checking (V66 precedent).
+ * all-any (explicit) facade: parity proven by the hermetic equivalence bench. Type-suppression pragma
+ * REMOVED (TS_NOCHECK_CAPABILITY_FACTORY): the former TS2451/TS2393 were a script-vs-module scope artifact
+ * fixed by the `export {}` marker below (each fn/const is declared once in-file); params carry `: any`.
  * The sanctioned legacyRequire form for the runtime-generated capability self-check is preserved verbatim. */
 
 /*
@@ -35,11 +36,11 @@ const legacyRequire = require;
 const CAP_DIR = path.join(store.DIR, "capabilities");
 const CATALOG = "capability-catalog";
 
-function slug(name) {
+function slug(name: any) {
     return String(name).trim().replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "capability";
 }
 
-function moduleSource(name, spec) {
+function moduleSource(name: any, spec: any) {
     const goal = spec && spec.goal ? String(spec.goal) : "";
     return (
         '"use strict";\n' +
@@ -54,7 +55,7 @@ function moduleSource(name, spec) {
     );
 }
 
-function create(name, spec) {
+function create(name: any, spec: any) {
     if (!name || typeof name !== "string") throw new Error("capability-factory.create requires a name");
     const s = slug(name);
     fs.mkdirSync(CAP_DIR, { recursive: true });
@@ -82,7 +83,7 @@ function create(name, spec) {
     return { name, slug: s, file, registered: true, contractOk: true };
 }
 
-function exists(name) {
+function exists(name: any) {
     return !!store.read(CATALOG, { capabilities: {} }).capabilities[slug(name)];
 }
 
@@ -91,3 +92,7 @@ function list() {
 }
 
 module.exports = { create, exists, list, slug, CAP_DIR, CATALOG };
+
+// Module-scope marker (adds NO runtime export): forces TypeScript MODULE scope so top-level consts/
+// functions (fs/path/store/legacyRequire/exists) do not collide with sibling script-scope files (TS2451/TS2393).
+export {};
