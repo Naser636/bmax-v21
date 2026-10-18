@@ -51,10 +51,14 @@ function walk(dir: string, acc: string[]): void {
 function classify(rel: string): string {
   const isTest = /\.test\.js$/.test(rel);
   const tsSibling = fs.existsSync(rel.replace(/\.js$/, ".ts"));
+  // A .js with a .ts sibling is a dual-rollback port REGARDLESS of location (scripts/, tests, bin, core):
+  // it has already been migrated and its .js is the ODG_RUNTIME=js rollback (removed at L7 after TS-only
+  // proof). This MUST precede the scripts/poc/test buckets so a migrated script/test counts as migrated
+  // (moves to dual-rollback) instead of lingering in its as-yet-unmigrated bucket — honest progress tracking.
+  if (tsSibling) return "dual-rollback";
   if (rel.startsWith("scripts/")) return "scripts";
   if (rel.startsWith("poc/")) return "poc";
   if (isTest) return "test-js";
-  if (tsSibling) return "dual-rollback";
   if (DEAD_PREFIX.some((re) => re.test(rel))) return "js-only-dead";
   // Recovery/release snapshots (reserved by nature) and scaffold templates (emitted as text, not executed
   // as project source) are NOT live migratable source — classified distinctly with justification so the
