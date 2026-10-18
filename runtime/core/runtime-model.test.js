@@ -247,4 +247,28 @@ console.log("Runtime Model — gap-detection contract");
   ok("RESERVED: a mission with a non-excluded objective stays executable (not over-excluded)", m.queue.some((q) => q.mission === "MIXED_Z"));
 }
 
+// --- Case: INVALID MISSION ID — CLI-flag / free-text capture artifacts never surface as executable ----
+// argv/NL ingestion can drop files like "--help" or a free-text sentence into runtime/missions/. These
+// are NOT real work and must never be proposed as Next Mission. They are SKIPPED (excluded from queue /
+// missing / outstanding), while valid ids (incl. NL_*) are unaffected.
+{
+  const root = buildFixture(
+    {
+      "--help": { mode: "SEQUENTIAL", objectives: [{ id: "HELP_1", goal: "Help" }] },
+      NL_ANALYZE_ABC123: { objectives: [{ id: "NL_ANALYZE_ABC123_1", goal: "valid NL mission" }] },
+      REAL_WORK: { objectives: [{ id: "REAL_WORK_1", goal: "real forward work" }] },
+    },
+    [],
+    {},
+  );
+  const m = computeRuntimeModel(root);
+  ok("INVALID-ID: '--help' artifact NOT queued", !m.queue.some((q) => q.mission === "--help"));
+  ok("INVALID-ID: '--help' NOT a missing capability", !m.missingCapabilities.some((c) => c.id === "--help"));
+  ok("INVALID-ID: '--help' NOT an outstanding gap", !m.outstanding.some((o) => o.mission === "--help"));
+  const inv = ((m.scan && m.scan.incompleteContracts) || []).find((c) => c.mission === "--help");
+  ok("INVALID-ID: '--help' SKIPPED with a 'not a valid mission identifier' reason", !!inv && inv.disposition === "SKIPPED" && /not a valid mission identifier/.test(inv.reason));
+  ok("INVALID-ID: a valid NL_* mission IS still queued (no collateral exclusion)", m.queue.some((q) => q.mission === "NL_ANALYZE_ABC123"));
+  ok("INVALID-ID: a valid plain mission IS still queued", m.queue.some((q) => q.mission === "REAL_WORK"));
+}
+
 console.log(`\n${passed} assertion(s) passed`);

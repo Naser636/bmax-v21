@@ -59,6 +59,12 @@ function objectiveCount(raw) {
   return Array.isArray(raw && raw.objectives) ? raw.objectives.length : 0;
 }
 
+// A valid mission identifier: a token starting with a letter, then letters/digits/underscores only.
+// Rejects CLI-flag captures ("--help", "--repair-mandate") and free-text sentences ("Register the new
+// capabilities ...") that argv/NL ingestion can drop into runtime/missions/ — those are NOT real work
+// and must never surface as an executable Next Mission. Valid ids including NL_* match unchanged.
+const VALID_MISSION_ID = /^[A-Za-z][A-Za-z0-9_]*$/;
+
 // A mission is RESERVED (human-gated) when it declares objectives and EVERY objective is
 // governance-excluded via its explicit `authorization` declaration (eligible===false OR
 // excluded===true) — e.g. a production-deployment contract whose objective is reserved for a
@@ -154,10 +160,12 @@ function computeRuntimeModel(root = process.cwd()) {
     // contract without the field is byte-identical to before (parity-safe).
     const deprecated = raw.governedStatus === "DEPRECATED";
     const reserved = !deprecated && reservedMission(raw);
+    const invalidId = !VALID_MISSION_ID.test(name);
     missions.push({
       mission: name,
       objectives: count,
-      executable: count > 0 && !deprecated && !reserved,
+      executable: count > 0 && !deprecated && !reserved && !invalidId,
+      invalidId,
       deprecated,
       reserved,
       reservedReason: reserved ? reservedReason(raw) : null,
@@ -175,7 +183,13 @@ function computeRuntimeModel(root = process.cwd()) {
           ? "evidence-pack"
           : Array.isArray(raw.roadmaps) || raw.mode === "AUTONOMOUS_ORCHESTRATION"
             ? "orchestration-plan"
-            : "mission",
+            : // A mission file whose NAME is not a valid mission identifier is an argv/NL capture
+              // artifact ("--help", "--repair-mandate", a free-text sentence), NOT real work — it must
+              // never surface as an executable Next Mission. Classify it as a non-mission so it is
+              // SKIPPED (see incompleteContracts). Additive: valid ids (incl. NL_*) are unaffected.
+              VALID_MISSION_ID.test(name)
+              ? "mission"
+              : "invalid-id",
     });
   }
 
@@ -223,7 +237,9 @@ function computeRuntimeModel(root = process.cwd()) {
           : skipped
             ? m.kind === "evidence-pack"
               ? "file is an evidence pack, not a mission contract"
-              : "file is an orchestration plan, not a leaf mission contract"
+              : m.kind === "invalid-id"
+                ? "not a valid mission identifier (CLI-flag / free-text capture artifact, not real work)"
+                : "file is an orchestration plan, not a leaf mission contract"
             : "mission contract declares no objectives (Mission Loader guard)";
       return {
         mission: m.mission,
