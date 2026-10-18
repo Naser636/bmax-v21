@@ -24,6 +24,7 @@ import * as path from "path";
 // duplicate it. A base name here is a reserved §12 module that must NEVER be proposed as a migration
 // candidate (migrating one violates the frozen-module constraint). Lesson locked after a §12 violation.
 import { EXCLUSIONS } from "@/runtime/migration-campaign";
+import { recommendNext } from "./migration-selector";
 const FROZEN = new Set<string>(EXCLUSIONS as readonly string[]);
 
 const EXCLUDE_DIR = /(^|\/)(node_modules|\.git|\.next)(\/|$)/;
@@ -81,6 +82,10 @@ const report = {
   liveProjectJs: liveJs,
   frozenExcludedS12: counts["frozen-excluded-s12"] || 0,
   migratableRemaining,
+  // Outcome-driven NEXT-mission recommendation (risk-first, reproducible) from the migration-selector —
+  // the safest live js-only candidate to migrate next; null when none remain. Integrated here (not a new
+  // orchestrator): the inventory surfaces the gate AND the next safe decision from the same real state.
+  recommendation: recommendNext(process.cwd()),
   eliminated: liveJs === 0,
   note: "frozen-excluded-s12 modules are reserved (V20 §12) — kept as JS by policy; NOT migration candidates (separate authorization required). Candidate lots draw only from js-only-live.",
   lots: {
