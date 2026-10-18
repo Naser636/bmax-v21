@@ -1276,8 +1276,13 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // Pass the authoritative current mission as argv[2] (odg-verify.js already prefers it) so the
     // stamped runtime-verify.json carries THIS mission — not a stale corrective-mission.json pointer
     // that odg-verify.js falls back to when invoked with no argument (A1).
-    if (!fs.existsSync(this.resolve(VERIFIER))) return;
-    spawnSync("node", mission ? [VERIFIER, mission] : [VERIFIER], { cwd: this.cwd, stdio: "inherit" });
+    // L7-FIX-3: prefer the COMPILED dist verifier (TS-only) so its transitive core loads from dist, not
+    // source mission-synthesizer/decision-rules; source fallback when dist absent or ODG_RUNTIME=js.
+    const VERIFIER_DIST = "runtime/dist/bin/odg-verify.js";
+    const verifier =
+      process.env.ODG_RUNTIME !== "js" && fs.existsSync(this.resolve(VERIFIER_DIST)) ? VERIFIER_DIST : VERIFIER;
+    if (!fs.existsSync(this.resolve(verifier))) return;
+    spawnSync("node", mission ? [verifier, mission] : [verifier], { cwd: this.cwd, stdio: "inherit" });
   }
 
   /** Map an existing mission JSON onto the minimal routing shape (Provider Contract §0/§1). */

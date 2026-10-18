@@ -80,7 +80,12 @@ export interface ConvergeSeams {
 
 /** Default Step 1: reuse the existing Mission Contract Factory driver, unchanged. */
 function defaultGenerateContracts(): ContractStep {
-  const r = spawnSync("node", [path.join("runtime", "bin", "odg-generate-contracts.js")], {
+  // L7-FIX-3: prefer the COMPILED dist port (TS-only) so the contract-factory/mission-synthesizer graph
+  // loads from dist, not source; source fallback when dist absent or ODG_RUNTIME=js.
+  const distGen = path.join("runtime", "dist", "bin", "odg-generate-contracts.js");
+  const gen =
+    process.env.ODG_RUNTIME !== "js" && fs.existsSync(distGen) ? distGen : path.join("runtime", "bin", "odg-generate-contracts.js");
+  const r = spawnSync("node", [gen], {
     stdio: "inherit",
   });
   return {
