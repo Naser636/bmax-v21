@@ -5,8 +5,12 @@
   "mode": "ENGINEERING",
   "priority": "NORMAL",
   "requires_engineering": true,
-  "authorized_paths": ["runtime/**"],
-  "authorizedPaths": ["runtime/**"],
+  "authorized_paths": [
+    "runtime/**"
+  ],
+  "authorizedPaths": [
+    "runtime/**"
+  ],
   "objective": "CLEAN_RUNTIME_WORKSPACE",
   "objectives": [
     {
@@ -14,14 +18,24 @@
       "goal": "Enumerate the transient runtime workspace artifacts (backups, archives, stale generated files) under runtime/ that are untracked and not required for reproducibility.",
       "done_when": [
         "A deterministic scan lists every candidate path under runtime/ that is safe to remove."
-      ]
+      ],
+      "authorization": {
+        "eligible": true,
+        "authorized": true,
+        "reason": "read-only workspace scan/coverage/report; no human, no external, no consequential action — genuinely autonomy-eligible"
+      }
     },
     {
       "id": "CLEAN_WORKSPACE_2",
       "goal": "Confirm each candidate is covered by the governance backup/archive .gitignore policy so removal preserves all evidence.",
       "done_when": [
         "Every candidate is either git-ignored or already archived; no tracked or required artifact is listed."
-      ]
+      ],
+      "authorization": {
+        "eligible": true,
+        "authorized": true,
+        "reason": "read-only workspace scan/coverage/report; no human, no external, no consequential action — genuinely autonomy-eligible"
+      }
     },
     {
       "id": "CLEAN_WORKSPACE_3",
@@ -29,11 +43,19 @@
       "done_when": [
         "Evidence generated.",
         "Report generated."
-      ]
+      ],
+      "authorization": {
+        "eligible": true,
+        "authorized": true,
+        "reason": "read-only workspace scan/coverage/report; no human, no external, no consequential action — genuinely autonomy-eligible"
+      }
     }
   ],
   "verify": [
-    { "capability": "Clean Workspace", "evidence": "clean-workspace-scanned" }
+    {
+      "capability": "Clean Workspace",
+      "evidence": "clean-workspace-scanned"
+    }
   ],
   "definition_of_done": [
     "Mission completed successfully",
