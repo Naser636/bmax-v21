@@ -16,6 +16,9 @@
   "include": [
     "runtime/bin/odg-run.ts",
     "runtime/bin/odg-cockpit.ts",
+    "runtime/bin/odg-migrate-ts.ts",
+    "runtime/bin/odg-migrate-plan.ts",
+    "runtime/bin/odg-freeze.ts",
     "runtime/bin/odg-client.ts",
     "runtime/bin/odg-backup.ts",
     "runtime/bin/odg-probe.ts",

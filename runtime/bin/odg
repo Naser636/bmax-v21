@@ -81,7 +81,7 @@ case "$MISSION" in
     # orchestrator); adds no logic, forwards the lot argument and the exit code (0 all gates PASS,
     # 1 a gate FAILed, 2 BLOCKED — unauthorised lot or Truth Lock refused). Never writes the repo.
     shift
-    exec node runtime/bin/odg-migrate-ts.js "$@"
+    exec node "$(_odg_port odg-migrate-ts)" "$@"
     ;;
   migrate-plan)
     # Migration Campaign Planner (V20 Gate B = EXTEND): READ-ONLY inventory + next-lot SELECT +
@@ -90,7 +90,7 @@ case "$MISSION" in
     # under its own per-lot authorisation gate. Thin forward; adds no logic; forwards argv + exit
     # code (0 a plan produced, 2 operational failure). Never writes source, runs a migration, or commits.
     shift
-    exec node runtime/bin/odg-migrate-plan.js "$@"
+    exec node "$(_odg_port odg-migrate-plan)" "$@"
     ;;
   objective|do)
     # Semantic mission entrypoint — HUMAN NATURAL INTENT → ODG INTERPRETATION → GOVERNED MISSION →
@@ -164,7 +164,7 @@ case "$MISSION" in
     node "$S"
     ;;
   freeze)
-    ./runtime/bin/odg-freeze.js
+    node "$(_odg_port odg-freeze)"
     ;;
   system-ready)
     # SYSTEM READY orchestrator — Mode Économie Maximale.
