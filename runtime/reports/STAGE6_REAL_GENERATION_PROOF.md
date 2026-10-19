@@ -75,3 +75,20 @@ the wired path works AND fails closed; it is NOT a general-reliability claim and
 **Committed deterministic tests:** `implement-via-local-provider.test.ts` (33 assertions) covers the adapter
 with an INJECTED runner (no real model in the suite) + the STUB fail-closed matrix; `present:false` forces
 deterministic unavailability. Real-model runs stay out of the committed suite (env-dependent).
+
+## 7. Reliability campaign + adapter root-cause fix (CLI → loopback HTTP API, 2026-10-19)
+**Root cause fixed:** the adapter invoked the `ollama run` CLI, which emits terminal cursor-rewrite controls
+(`\x1B[nD\x1B[K`) that corrupt captured code at line-wrap boundaries (duplicated tokens ⇒ syntax errors).
+`resolveModelInvocation` now uses the **loopback ollama HTTP API** (`POST http://127.0.0.1:11434/api/generate`,
+`stream:false`) via `curl` (sync); a non-loopback `OLLAMA_HOST` is refused (never external). `cleanCompletion`
+also strips `\r`/keypad escapes. Clean machine interface — no terminal artifacts.
+
+**Reproducible campaign (model qwen2.5-coder:3b `f72c60cabf62`, WIRED path, real inference, tsx verifier that
+EXECUTES the applied TypeScript):** 5 progressive tasks → **3/5 EXECUTED+independently-verified**:
+- T1 simple (add/sub) ✓ · T2 edge-case (safeDiv ÷0→null) ✓ · T5 reproduced-defect-fix (off-by-one sumToN) ✓
+- T3 strict input-validation ✗ — model used lenient `parseInt` (accepts "3.5"); T4 transform ✗ — correct logic
+  but dropped the `export` keyword (not importable).
+Both failures returned **FAILED (verified:false, committed:false) — NO false success** (independent verification
+caught them). These are genuine 3b-model output limits, NOT harness defects. Honest measurement: one small
+model, 5 bounded tasks — NOT a general-reliability claim; SEPARATE from the deterministic 25% benchmark; no SLO.
+Harness is env-dependent (scratchpad, not committed); the committed suite stays deterministic (injected runner).

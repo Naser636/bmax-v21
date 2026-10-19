@@ -435,9 +435,11 @@ function localProviderActivation(io: any): string {
 // Clean a model completion to raw source: strip ``` fences + stray ANSI. Pure.
 function cleanCompletion(s: any): string {
   return String(s == null ? "" : s)
-    .replace(/\x1B\[[0-9;?]*[A-Za-z]/g, "")
-    .replace(/```[a-zA-Z0-9_-]*\n?/g, "")
-    .replace(/```/g, "")
+    .replace(/\x1B\[[0-9;?]*[A-Za-z]/g, "") // ANSI colour/cursor
+    .replace(/\x1B[>=]/g, "")               // ANSI keypad modes (ollama TTY)
+    .replace(/\r/g, "")                      // carriage-return line redraws (defensive)
+    .replace(/```[a-zA-Z0-9_-]*\n?/g, "")   // opening code fence (+lang)
+    .replace(/```/g, "")                     // closing fence
     .trim();
 }
 // Resolve the LOCAL model invocation. Priority: ODG_LOCAL_MODEL_CMD (argv, prompt on stdin — the
@@ -447,10 +449,14 @@ function resolveModelInvocation(prompt: string): any {
   const envCmd = process.env.ODG_LOCAL_MODEL_CMD;
   if (typeof envCmd === "string" && envCmd.trim()) {
     const parts = envCmd.trim().split(/\s+/);
-    return { cmd: parts[0], args: parts.slice(1), input: prompt, model: envCmd.trim() };
+    return { kind: "spawn", cmd: parts[0], args: parts.slice(1), input: prompt, model: envCmd.trim() };
   }
   const model = (typeof process.env.ODG_LOCAL_MODEL === "string" && process.env.ODG_LOCAL_MODEL.trim()) || "qwen2.5-coder:3b";
-  return { cmd: "ollama", args: ["run", model, prompt], input: null, model };
+  // Loopback-only ollama HTTP API (clean JSON tokens). The `ollama run` CLI emits terminal cursor-rewrite
+  // controls (\x1B[nD\x1B[K) that corrupt captured code at wrap boundaries; /api/generate (stream:false) is
+  // the clean machine interface. OLLAMA_HOST honored ONLY if loopback (else fail-closed — never external).
+  const host = (typeof process.env.OLLAMA_HOST === "string" && process.env.OLLAMA_HOST.trim()) || "127.0.0.1:11434";
+  return { kind: "http", host, path: "/api/generate", body: { model, prompt, stream: false }, model };
 }
 // Is a LOCAL model resolvable? ODG_LOCAL_MODEL_CMD set, OR the local ollama CLI answers `list`. Fast,
 // fail-closed (any error ⇒ false). Probed lazily (only when about to generate), never in the fail-closed
@@ -473,9 +479,23 @@ function defaultLocalGenerate(ctx: any, deps: any = {}): any {
   const current = (() => { try { return (ctx.io && ctx.io.readFileSync || fs.readFileSync)(path.join(ctx.workDir, rel), "utf8"); } catch { return ""; } })();
   const prompt = `Output ONLY the complete new content of the file ${rel} — valid source code, no prose, no markdown fences. Task: ${goal}. Current content:\n${current}`;
   const inv = resolveModelInvocation(prompt);
+  const toMs = deps.timeoutMs || 120000;
   const run = typeof deps.modelRunner === "function"
     ? deps.modelRunner
-    : (i: any) => _seams.spawn(i.cmd, i.args, { input: i.input || undefined, encoding: "utf8", timeout: deps.timeoutMs || 120000, maxBuffer: 1 << 20 });
+    : (i: any) => {
+      if (i.kind === "spawn") {
+        const r = _seams.spawn(i.cmd, i.args, { input: i.input || undefined, encoding: "utf8", timeout: toMs, maxBuffer: 1 << 20 });
+        return { status: r.status, stdout: r.stdout };
+      }
+      // LOOPBACK-ONLY HTTP: refuse any non-loopback host (never an external call), then POST via curl (sync).
+      const hostOnly = String(i.host).replace(/^https?:\/\//, "").split(":")[0];
+      if (!(hostOnly === "127.0.0.1" || hostOnly === "localhost" || hostOnly === "::1")) {
+        return { status: 1, stdout: "", error: "non-loopback OLLAMA_HOST refused: " + i.host };
+      }
+      const r = _seams.spawn("curl", ["-s", "--max-time", String(Math.floor(toMs / 1000)), "http://" + i.host + i.path, "-d", JSON.stringify(i.body)], { encoding: "utf8", timeout: toMs, maxBuffer: 1 << 20 });
+      if (r.status !== 0 || !r.stdout) return { status: 1, stdout: "" };
+      try { return { status: 0, stdout: JSON.parse(r.stdout).response || "" }; } catch { return { status: 1, stdout: "" }; }
+    };
   let r: any;
   try { r = run(inv); } catch (e: any) { return { error: "local model invocation failed: " + ((e && e.message) || e) }; }
   if (!r || r.status !== 0 || !r.stdout) return { error: `local model non-zero/empty (status=${r && r.status})` };
