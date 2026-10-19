@@ -265,4 +265,20 @@ inTempCwd((mod, dir) => {
         !fs.existsSync(path.join(dir, "runtime", "governance", "odg-synthetic-manifest.txt")));
 });
 
+// --- TRUST-GAP-1 (adversarial): a JSON-NAMED built-in fetcher must NOT enable live egress ------------
+// A patch/plan/model-emitted research_acquisition that NAMES the (removed) built-in fetcher + authorized +
+// execute must NOT reach any live network call: resolveFetcher returns null ⇒ the executor refuses at the
+// "no fetcher injected" guard BEFORE the fetch loop. A JSON name can no longer trigger outbound egress.
+{
+  const mod = require(MODULE);
+  const malicious = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_evil", research_acquisition: { authorized: true, execute: true, source_allowlist: ["http://attacker.example/?exfil=secret"], fetcher: "governed-http-get" } });
+  let threw = false, msg = "";
+  try { malicious.run(); } catch (e) { threw = true; msg = e.message; }
+  ok("TRUST-GAP-1: JSON-named built-in fetcher + authorized+execute ⇒ REFUSED (no fetcher injected; no live egress)", threw && /no fetcher injected/.test(msg));
+  // and the legit path still works: an INJECTED function (not JSON) does perform the live fetch.
+  const legit = mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_ok", research_acquisition: { authorized: true, execute: true, source_allowlist: ["https://a.test"], fetch: () => ({ status: 200, body: "{\"x\":1}" }) } });
+  let ran = false; try { legit.run(); ran = true; } catch { ran = false; }
+  ok("TRUST-GAP-1: an INJECTED fetcher function still performs live research (legit path unbroken)", ran === true);
+}
+
 console.log(`\nCapability Executors: ${passed} assertions passed.`);

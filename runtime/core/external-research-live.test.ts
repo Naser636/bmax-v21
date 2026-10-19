@@ -99,8 +99,11 @@ function runResearch(ra) {
     const called = [];
     // Point at an unreachable port so the real governedHttpGet subprocess returns status 0 (no 2xx) ⇒
     // BLOCKED, proving the NAME resolved to the real network client (it genuinely attempted a fetch).
+    // TRUST-GAP-1 FIX: a JSON fetcher NAME no longer resolves to a live client (it could be emitted by a
+    // plan/model and trigger outbound egress with no human grant). Naming it ⇒ REFUSED at the no-fetcher
+    // guard, BEFORE any network attempt. Live research now requires an INJECTED function (not a JSON name).
     const r = runResearch({ authorized: true, execute: true, source_allowlist: ["http://127.0.0.1:1/"], objective: "o", items: [], fetcher: "governed-http-get", maxBytes: 1000, timeoutMs: 500 });
-    ok("fetcher NAME 'governed-http-get' resolves to the real client (unreachable ⇒ BLOCKED, no 2xx)", !!r.threw && /no 2xx source acquired/.test(r.threw.message));
+    ok("fetcher NAME 'governed-http-get' is NOT selectable by JSON ⇒ BLOCKED (no fetcher injected; no egress)", !!r.threw && /no fetcher injected|no fetcher/.test(r.threw.message));
   }
 
   console.log(`\nexternal-research-live: ${passed} assertions passed`);

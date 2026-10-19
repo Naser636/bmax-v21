@@ -273,15 +273,14 @@ function readProviderPolicy() {
 // test's fake). This guarantees dry-run and the whole JSON pipeline make ZERO network calls — a
 // fetcher cannot survive JSON transport, so a disk-driven mission can only ever dry-run, never fetch.
 function resolveFetcher(ra, patch) {
+    // LIVE egress requires an INJECTED function (ra.fetch / patch.__fetch) supplied by a trusted in-process
+    // caller AFTER a real authorization. A function CANNOT survive JSON transport, so a disk/plan/model-driven
+    // mission can only ever DRY-RUN, never fetch. TRUST-GAP-1 FIX: the former JSON-nameable built-in
+    // ("governed-http-get") was REMOVED — a patch/plan/model could NAME it and trigger a live outbound GET
+    // (data exfil via the URL) with NO human grant on the self-gating patch-executor path. governedHttpGet
+    // stays exported for a trusted caller to INJECT; it is no longer selectable by a JSON name.
     if (ra && typeof ra.fetch === "function") return ra.fetch;
     if (patch && typeof patch.__fetch === "function") return patch.__fetch;
-    // GOVERNED, JSON-SAFE live fetcher selection. A grant (never the sentence) may NAME the one built-in
-    // bounded read-only fetcher; a name is the ONLY thing that survives JSON transport, so no code is
-    // ever carried. This is reachable solely AFTER the LIVE gate above (authorized + policy + allowlist),
-    // so naming it does not itself authorize anything. Per-request byte/time limits ride on the spec.
-    if (ra && ra.fetcher === "governed-http-get") {
-        return (url) => governedHttpGet(url, { maxBytes: ra.maxBytes, timeoutMs: ra.timeoutMs });
-    }
     return null;
 }
 
