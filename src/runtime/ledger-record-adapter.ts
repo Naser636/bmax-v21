@@ -55,6 +55,24 @@ export type AttemptRecorder = (mission: string, validated: boolean, status: stri
 
 const ATTEMPTS_LOG = path.join(GENERATED_DIR, "mission-attempts.jsonl");
 
+/**
+ * Derive the honest attempt outcome of an odg-run.js pipeline run (Phase 3 — the autonomy-loop route that the
+ * LOCAL mission-cli recordMissionAttempt seam does not see). PURE + testable. A clean pipeline exit is RECORDED
+ * only when the mission-report verdict is genuinely validated SUCCESS; anything else is a non-success attempt
+ * with an honest status (never fabricated). No fabrication: an absent report ⇒ UNVERIFIED (not a false success).
+ */
+export function deriveRunAttempt(
+  pipelineOk: boolean,
+  ctx: { reportValidated?: boolean; reportStatus?: string; signal?: string | null; governedBlock?: boolean },
+): { validated: boolean; status: string } {
+  if (pipelineOk) {
+    const validated = ctx.reportValidated === true && ctx.reportStatus === "SUCCESS";
+    return { validated, status: ctx.reportStatus || (validated ? "SUCCESS" : "UNVERIFIED") };
+  }
+  const status = ctx.signal ? "INTERRUPTED" : ctx.governedBlock ? "VALIDATION_BLOCKED" : "FAILED";
+  return { validated: false, status };
+}
+
 export const recordMissionAttempt: AttemptRecorder = (mission, validated, status, timing) => {
   try {
     const require = createRequire(import.meta.url);

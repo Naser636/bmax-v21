@@ -33,6 +33,7 @@ import type {
   DocumentationProof,
 } from "@/contracts/documentation";
 import { DocumentationEngine } from "@/core/documentation-engine";
+import { recordMissionAttempt, deriveRunAttempt } from "./ledger-record-adapter";
 import { ARTIFACT_CONTRACT_VERSION } from "@/contracts/documentation";
 import {
   PROVIDER_CONTRACT_VERSION,
@@ -679,12 +680,25 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       }
       if (!(childEnv.ODG_STAGE_BASE || "").trim()) childEnv.ODG_STAGE_BASE = "runtime/dist/core";
     }
+    const runStartedAt = new Date().toISOString();
     const r = spawnSync("node", [entry, mission], {
       cwd: this.cwd,
       stdio: "inherit",
       env: childEnv,
     });
     const pipelineOk = r.status === 0;
+    // SLO attempt telemetry (Phase 3): record THIS autonomy-loop run as exactly ONE attempt with real timing —
+    // the odg-run.js pipeline route the LOCAL mission-cli recordMissionAttempt seam does not observe. Outcome is
+    // the honest mission-report verdict (RECORDED only on validated SUCCESS); non-blocking (a telemetry failure
+    // never affects the pipeline result). No fabrication: absent report ⇒ UNVERIFIED.
+    try {
+      const rep = pipelineOk ? this.readJson<{ validated?: boolean; status?: string }>(MISSION_REPORT) : null;
+      const governedBlock = !pipelineOk && !r.error && !r.signal && this.isGovernedValidationBlock(mission);
+      const oc = deriveRunAttempt(pipelineOk, { reportValidated: rep?.validated, reportStatus: rep?.status, signal: r.signal, governedBlock });
+      recordMissionAttempt(mission, oc.validated, oc.status, { startedAt: runStartedAt, endedAt: new Date().toISOString() });
+    } catch {
+      /* non-blocking telemetry */
+    }
     if (!pipelineOk) {
       // Never surface a bare boolean: report the launcher, its exit code and the failing signal.
       // stdout/stderr were streamed live to the console (stdio:"inherit"), so they are not captured
