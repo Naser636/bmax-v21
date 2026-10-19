@@ -6,6 +6,23 @@
 > fast-resume summary; when it disagrees with the roadmap or the Autonomous Work Protocol, THEY win. Refresh
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
+## ⟢ OPERATIONAL ENTRY POINT — READ THIS FIRST (current @ `b622e3f`, 2026-10-19)
+Tags: **[OBSERVED]** seen this session · **[PROVEN]** test/evidence on disk · **[REPORTED]** prior session, not re-verified · **[BLOCKED]** needs a reserved decision · **[UNKNOWN]**.
+The dated per-mission **LOG** below (`## Last confirmed checkpoint`) is the decision history; detailed evidence lives in `runtime/reports/*`. The later sections **"Next missions, in order"** + **"Exact resume command"** are **SUPERSEDED** (TS-migration campaign, PAUSED) — use §8 here instead. The **"Canonical route/script/version contract (FROZEN 2026-10-17)"** section further down is still VALID (deploy/service/route SSOT).
+
+1. **IDENTITY & TRUTH** [OBSERVED 2026-10-19]: repo `/home/ubuntu/bmax-v21` · branch `main` · `HEAD=origin/main=b622e3f` · worktree clean · untracked-preserved: `runtime/reports/AUTONOMY_COVERAGE_MATRIX.md`, `runtime/reports/STAGE6_IMPLEMENTATION_CONTRACT.md` · **5 stashes** (2026-07-20..25, preserved) · node v22.22.1 / npm 9.2.0.
+2. **MANDATE & INVARIANTS**: ODG = sole orchestrator/decider; **Claude Code = subordinate provider** (explicit bounded delegation only — never self-selects / self-authorizes / accepts / commits). **9 primitives** (IDENTITY·STATE·CONTRACT·POLICY·RESOLVER·EXECUTOR·EVIDENCE·RECOVERY·ALLOCATOR) — no 10th. **TS-only PAUSED**. **Red barriers**: billing / external-provider activation, deploy / public-exposure / infra, destructive / force-push, Constitution-reserved. Master / Constitution / `runtime/governance/ROADMAP.json` protected.
+3. **CAPABILITY STATE**: **9/11 autonomy cycle-stages ODG-autonomous** [PROVEN → `runtime/reports/AUTONOMY_COVERAGE_MATRIX.md`]; stage-6 impl was the gap, now advanced (§4). 185 capabilities registered; EXECUTORS registry fully classified consequential/observational [PROVEN `dispatch-authorization-invariant.test.ts`]. [UNKNOWN] canonical A01–A54/166 enumeration (needs a CTO manifest).
+4. **MISSIONS & RESULTS**: Lots A–D [REPORTED green @`31eeaa8`]; `REFRESH_RUNTIME_CONTEXT_ON_STALENESS` [PROVEN @`b9ca466` — self-heal 2026-07-27→live]; `IMPLEMENT_VIA_LOCAL_PROVIDER` Stage-6 governed mechanism [PROVEN STUB @`c244839`, 22 assertions, both ports]; **Stage-6 REAL local-model generation** [PROVEN live @`b622e3f`, `qwen2.5-coder:3b`, add/mul behaviour-verified — ONE task/ONE model, NO general-reliability claim → `runtime/reports/STAGE6_REAL_GENERATION_PROOF.md`]. Deterministic benchmark **25%** is SEPARATE from live.
+5. **REMAINING GAPS**: (a) **Stage-6 PRODUCTION wiring** [BLOCKED-reserved] — `ollama` needs localhost; E1–E6 sandbox is no-net ⇒ ONE governance decision (loopback-only for LOCAL inference vs offline gguf); until decided `ODG_LOCAL_MODEL_CMD` unset ⇒ fail-closed, NO external fallback. (b) **SLO operational** [BLOCKED] — needs provenanced CTO target + sufficient sample (`evaluateSLO` ready; INSUFFICIENT_EVIDENCE at live N=1–3). (c) **log-slug dist-closure RELOCATION-test gap** [REPORTED pre-existing, LOW impact] — the real compiled dist entry + `odg-recover USE_DIST` work; only the relocation/sandbox test-harness closure computation misses the entry-only `log-slug`.
+6. **DECISIONS & AUTHORIZATIONS** (reserved to CTO): **D-Stage6** (sandbox loopback vs gguf); **D-SLO** (target+sample); **D-external-provider** (billable — red); **D-TS-only-resume**; **D6** security `npm audit` (breaking upgrades). Already-authorized (no per-step human ok): bounded governed engineering lots via Claude-as-provider under contract + write-set + scopeClean; local non-billable work; ordinary commit/push on green+clean+fast-forward. Forbidden without a decision: the reserved items + all red barriers.
+7. **LEARNING**: CAPTURED→PERSISTED→DISCOVERABLE→REUSED [PROVEN], **EFFECTIVE [PROVEN causally** `learning-effective-ab.test.ts` — A/B isolates reuse]. Specific reuses are noted in the LOG; no efficacy asserted without that A/B proof.
+8. **NEXT MISSION (ODG-selected)**: the technical frontier is now at **reserved decisions** (§6) — no non-reserved high-value code action remains. On resume: (i) if D-Stage6 is decided → wire production Stage-6 accordingly; (ii) else re-confirm live via the scratchpad `stage6-real-proof.cjs` (needs ollama+qwen2.5-coder:3b ⇒ expect `EXECUTED/verified`), and/or a CTO-authorized docs commit of the 2 preserved design docs. **Resume cmd**: `cd /home/ubuntu/bmax-v21 && git fetch origin && git rev-parse HEAD origin/main && git status --porcelain=v1` (expect equal + clean), then read THIS entry point.
+9. **CONTINUATION HISTORY** (`c244839`→`b622e3f`): advanced Stage-6 from STUB-proven to **REAL-local-model-proven** (new evidence report); **no code change** this step; the compass was restructured into this entry point. Unchanged: capability code, 9/11 coverage, 5 stashes, TS-only PAUSED. The next step follows logically = the reserved Stage-6 production-wiring decision.
+
+### Compass automation — HONEST status [OBSERVED]
+The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-written on mission exit (`compass-update` via the `odg-local-pipeline.sh` trap + `odg-campaign-loop`). **This PROSE file is updated MANUALLY** by the orchestrator each mission — it is NOT auto-generated, and NOT loaded by the runtime at mission-selection (no production reader; grep: only tests reference `ODG_PROJECT_STATE`). So "the compass is kept current" is a manual discipline, not automation. **Smallest integration contract (NOT built — a future mission, no new primitive):** have the mission-start path READ this ENTRY POINT as context and keep the machine checkpoint as the automated record; do NOT auto-overwrite the curated prose.
+
 ## Last confirmed checkpoint
 - **STAGE-6 REAL LOCAL-MODEL GENERATION — PROVEN live through ODG's governed chain (qwen2.5-coder:3b). D1 satisfied on-host. 2026-10-19.**
   - **Truth Lock:** HEAD=`c244839`=origin/main (0/0); branch main; 5 stashes; preserved untracked design docs. ODG READY, 185 caps.
@@ -206,7 +223,7 @@
   negative tests, zero recall loss. End-to-end migrate-plan hazard-blocked 8→7 (V50) →6 (V51). Genuine hazards all KEPT
   (patch-proposal-apply path.join(__dirname), capability-factory dynamic-require, email-gateway external, local-autonomy transitive).
 
-## Next missions, in order, with entry conditions
+## Next missions, in order, with entry conditions  — ⚠️ SUPERSEDED (TS-migration campaign, PAUSED; use the ENTRY POINT §8). Kept as history.
 1. ~~**PLANNER INLINE-RULE ALIGNMENT.**~~ **DONE in V50 (@`ace03e0`)** — migration-campaign inline rules now reuse the canonical
    `stripComments`+`parseRequiresFromSource`; end-to-end false positives cleared (blocked 8→7); negative tests prove executable +
    transitive recall; full `npm test` 397 files exit 0. (The `.ts`-reference half of V49 is a no-op for the inline rules because
@@ -239,7 +256,7 @@
    `fleet-bridge`), AUTHORIZATION/SECURITY (`action-gate`, `capability-authorization`, `patch-action-contract`, `bash-command-governor`),
    EXTERNAL-COMMS (`email-gateway`).
 
-## Exact resume command
+## Exact resume command  — ⚠️ SUPERSEDED (TS-migration/migrate-ts, PAUSED; current resume cmd is in the ENTRY POINT §8). Kept as history.
 ```bash
 cd /home/ubuntu/bmax-v21 && git fetch origin && git status --porcelain=v1   # Truth Lock: expect clean, HEAD==origin/main
 ./runtime/bin/odg migrate-plan                                              # recompute the REAL inventory + next lot
