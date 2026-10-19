@@ -23,6 +23,8 @@ The dated per-mission **LOG** below (`## Last confirmed checkpoint`) is the deci
 ### Compass automation — HONEST status [OBSERVED]
 The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-written on mission exit (`compass-update` via the `odg-local-pipeline.sh` trap + `odg-campaign-loop`). **This PROSE file is updated MANUALLY** by the orchestrator each mission — it is NOT auto-generated, and NOT loaded by the runtime at mission-selection (no production reader; grep: only tests reference `ODG_PROJECT_STATE`). So "the compass is kept current" is a manual discipline, not automation. **Smallest integration contract (NOT built — a future mission, no new primitive):** have the mission-start path READ this ENTRY POINT as context and keep the machine checkpoint as the automated record; do NOT auto-overwrite the curated prose.
 
+> **Governance & closure doctrine (CTO, standing):** `docs/odg-operational/ODG_GOVERNANCE_CLOSURE_DOCTRINE.md` — seven controls per mission, no shortcuts (failure ⇒ preserve-evidence→root-cause→bounded-fix→re-run→deps→independent-verify→documented-closure), only demonstrated states PASS/FAIL/BLOCKED/NOT RUN (no fabrication, no erased failures, no PROVEN from a mere exit-code/endpoint/claim), compass entry+exit mandatory, learning CAPTURED→…→EFFECTIVE only with proof. Subordinate to Master/Constitution/ROADMAP.json/Autonomous-Work-Protocol.
+
 ## Last confirmed checkpoint
 - **PHASE 5 — GDO root-caused (no fabrication), ACE PROVEN 9/9, SLO re-verified. 2026-10-19 (HEAD `08ef825`+doc).**
   - **Truth Lock:** host `vps-6d919042`; HEAD=origin/main=`08ef825`(+this doc); clean; 5 stashes; node v22.22.1.
