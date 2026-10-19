@@ -73,6 +73,37 @@ export function deriveRunAttempt(
   return { validated: false, status };
 }
 
+/** Closure-checkpoint result — DISTINCT from the mission's business result (§7 Lot B). `closed` is whether the
+ *  machine compass checkpoint was actually recorded; `status` is the honest derived mission status. */
+export interface ClosureResult { closed: boolean; status: string; reason: string }
+
+/**
+ * Record the machine compass checkpoint at mission closure, reusing the EXISTING compass-update mechanism
+ * (fromReport's identity+freshness guards ⇒ stale/cross-mission ⇒ NOT_RUN, never a false PASS). SINGLE attempt
+ * (no retry loop). Returns a ClosureResult: `closed:false` when the checkpoint write itself fails — so a caller
+ * must NOT present a success as fully closed when the mandatory checkpoint could not be updated. `compass` is
+ * injectable for tests. Never throws (closure failure is reported, not propagated, and never masks the mission).
+ */
+export function recordClosureCheckpoint(
+  mission: string,
+  repoRoot: string,
+  sinceMs: number,
+  deps?: { compass?: { fromReport: (m: string, r: string, o?: { sinceMs?: number }) => { status?: string }; update: (res: unknown, o?: { repoRoot?: string }) => unknown } },
+): ClosureResult {
+  let compass = deps?.compass;
+  if (!compass) {
+    try { compass = createRequire(import.meta.url)("../../scripts/compass-update.js"); }
+    catch (e) { return { closed: false, status: "CLOSURE_ERROR", reason: `compass-update unavailable: ${(e as Error).message}` }; }
+  }
+  try {
+    const derived = compass!.fromReport(mission, repoRoot, { sinceMs });
+    compass!.update(derived, { repoRoot });
+    return { closed: true, status: (derived && derived.status) || "UNKNOWN", reason: "checkpoint recorded" };
+  } catch (e) {
+    return { closed: false, status: "CLOSURE_ERROR", reason: `checkpoint update failed: ${(e as Error).message}` };
+  }
+}
+
 export const recordMissionAttempt: AttemptRecorder = (mission, validated, status, timing) => {
   try {
     const require = createRequire(import.meta.url);

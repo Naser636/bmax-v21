@@ -10,7 +10,7 @@ import { createRequire } from "node:module";
 import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { RuntimeKernel } from "./runtime-kernel";
 import { createMissionIntent } from "./mission-intent";
-import { LedgerRecorder, recordMissionToLedger, AttemptRecorder, AttemptTiming, recordMissionAttempt } from "./ledger-record-adapter";
+import { LedgerRecorder, recordMissionToLedger, AttemptRecorder, AttemptTiming, recordMissionAttempt, ClosureResult, recordClosureCheckpoint } from "./ledger-record-adapter";
 
 /**
  * A mission-scoped §303 Expert Instance, as produced by the released (read-only) assembler
@@ -42,6 +42,10 @@ export interface LocalMissionResult {
    * affects control flow (`validated` is derived solely from the reporter status above).
    */
   expertInstance?: ExpertInstanceRecord;
+  /** §7 closure — whether the machine compass checkpoint was recorded at closure (distinct from `validated`). */
+  closure?: ClosureResult;
+  /** §7 Lot B — true when the mission succeeded but its mandatory closure checkpoint could NOT be updated. */
+  closureDiscrepancy?: boolean;
   error?: string;
 }
 
@@ -55,6 +59,9 @@ export class LocalMissionRunner {
     private readonly recordAttempt: AttemptRecorder = recordMissionAttempt,
     // Injectable monotonic-enough wall clock (ISO strings) for real start/end timestamps; injectable for tests.
     private readonly clock: () => string = () => new Date().toISOString(),
+    // §7 closure seam — records the machine compass checkpoint; injectable for tests. Symmetric with the
+    // autonomy route (runLocalPipeline), so BOTH mission routes close the compass via the SAME mechanism.
+    private readonly recordClosure: (mission: string, repoRoot: string, sinceMs: number) => ClosureResult = recordClosureCheckpoint,
   ) {}
 
   run(id: string, name: string = id): LocalMissionResult {
@@ -89,16 +96,25 @@ export class LocalMissionRunner {
       // Attempt-level SLO telemetry: record THIS run's honest outcome (success OR failure) with real
       // timing so a real success-rate denominator AND per-category latency can accumulate. Non-blocking.
       recordOnce(validated, status, this.categoryOf(plan));
+      // §7 closure — record the machine compass checkpoint (same mechanism as the autonomy route). Business
+      // result (`validated`) and closure result are DISTINCT: a validated SUCCESS whose mandatory checkpoint
+      // could NOT be recorded is flagged `closureDiscrepancy` (not presented as fully closed) — evidence kept,
+      // single attempt (no retry loop). A failed mission keeps its failure regardless of the checkpoint.
+      const closure = this.recordClosure(id, process.cwd(), Date.parse(startedAt));
+      const closureDiscrepancy = validated === true && closure.closed === false;
       // Read-only §304→§303 surfacing: attach the mission-scoped Expert Instance. Never on the
       // decision path — computed AFTER the verdict, fails closed to undefined, changes nothing.
       const expertInstance = this.compileExpertInstance(plan);
-      return { mission: id, ok: true, plan, execution, validated, expertInstance };
+      return { mission: id, ok: true, plan, execution, validated, expertInstance, closure, closureDiscrepancy };
     } catch (e) {
       // An interruption/finalisation error is itself a terminal outcome: record it as an attempt (ERROR)
       // so hard failures are representable too (never silently dropped). The LEDGER is intentionally NOT
       // called on a throw (proven-only invariant preserved) — only the attempt log sees this failure.
       recordOnce(false, "ERROR");
-      return { mission: id, ok: false, error: (e as Error).message };
+      // Still record the closure checkpoint for the failed run (fromReport ⇒ honest FAIL/NOT_RUN, never PASS).
+      let closure: ClosureResult | undefined;
+      try { closure = this.recordClosure(id, process.cwd(), Date.parse(startedAt)); } catch { /* closure best-effort */ }
+      return { mission: id, ok: false, error: (e as Error).message, closure };
     }
   }
 

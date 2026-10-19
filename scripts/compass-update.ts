@@ -183,5 +183,29 @@ if (require.main === module) {
   const r = update(result);
   process.stdout.write("compass-update: " + r.effective.status + " — " + r.note + "\n");
 }
+/*
+ * PROSE DIVERGENCE (§7 Lot C) — read-only. Compares the HEAD the human prose (ODG_PROJECT_STATE.md) most-recently
+ * CLAIMS against real git HEAD + the machine checkpoint. Fail-closed UNKNOWN. CONSISTENT / BEHIND (ancestor) /
+ * DIVERGENT (not on HEAD history). See the .js port for the full contract.
+ */
+function compassProseDivergence(repoRoot: string, opts?: any): any {
+  opts = opts || {};
+  const fsx = opts.fs || fs;
+  const prosePath = opts.prosePath || path.join(repoRoot, "ODG_PROJECT_STATE.md");
+  let prose = ""; try { prose = fsx.readFileSync(prosePath, "utf8"); } catch { return { status: "UNKNOWN", reason: "no readable ODG_PROJECT_STATE.md", proseHead: null, head: null }; }
+  const m = prose.match(/HEAD[^\n`]*`([0-9a-f]{7,40})`/);
+  const proseHead = m ? m[1] : null;
+  const head = (opts.head !== undefined) ? opts.head : gitId(repoRoot).commit;
+  if (!proseHead) return { status: "UNKNOWN", reason: "no HEAD token in prose", proseHead: null, head };
+  if (!head) return { status: "UNKNOWN", reason: "git HEAD unavailable", proseHead, head: null };
+  if (head.startsWith(proseHead) || proseHead.startsWith(head)) return { status: "CONSISTENT", proseHead, head, reason: "prose HEAD matches real HEAD" };
+  const isAncestor = (opts.isAncestor !== undefined)
+    ? opts.isAncestor
+    : (() => { try { require("child_process").execSync(`git merge-base --is-ancestor ${proseHead} HEAD`, { cwd: repoRoot, stdio: "ignore" }); return true; } catch { return false; } })();
+  return isAncestor
+    ? { status: "BEHIND", proseHead, head, reason: "prose HEAD is an ancestor of real HEAD (authored before later commits)" }
+    : { status: "DIVERGENT", proseHead, head, reason: "prose HEAD is NOT on real HEAD's history (misleading)" };
+}
+
 export {};
-module.exports = { update, effectiveStatus, sig, fromReport, resumeState };
+module.exports = { update, effectiveStatus, sig, fromReport, resumeState, compassProseDivergence };

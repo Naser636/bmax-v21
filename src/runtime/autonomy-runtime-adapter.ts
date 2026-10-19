@@ -33,7 +33,7 @@ import type {
   DocumentationProof,
 } from "@/contracts/documentation";
 import { DocumentationEngine } from "@/core/documentation-engine";
-import { recordMissionAttempt, deriveRunAttempt } from "./ledger-record-adapter";
+import { recordMissionAttempt, deriveRunAttempt, recordClosureCheckpoint } from "./ledger-record-adapter";
 import { ARTIFACT_CONTRACT_VERSION } from "@/contracts/documentation";
 import {
   PROVIDER_CONTRACT_VERSION,
@@ -699,19 +699,15 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     } catch {
       /* non-blocking telemetry */
     }
-    // Doctrine §7 closure — AUTO-record the machine compass checkpoint from the honest mission-report, making the
-    // compass update runtime-enforced at closure (previously the robust compass-update mechanism was never invoked
-    // by the lifecycle). fromReport's identity+freshness guards fail closed to NOT_RUN on a stale/cross-mission
-    // report (never a false PASS); update() writes compass-checkpoint.json atomically. Non-blocking; reinforces the
-    // EXISTING mechanism (no parallel compass). The human prose ODG_PROJECT_STATE.md stays authored, by design.
-    try {
-      const compass = requireCjs("../../scripts/compass-update.js") as {
-        fromReport: (m: string, root: string, o?: { sinceMs?: number }) => unknown;
-        update: (r: unknown, o?: { repoRoot?: string }) => unknown;
-      };
-      compass.update(compass.fromReport(mission, this.cwd, { sinceMs: Date.parse(runStartedAt) }), { repoRoot: this.cwd });
-    } catch {
-      /* non-blocking compass checkpoint */
+    // Doctrine §7 closure — record the machine compass checkpoint via the SHARED helper (same mechanism as the
+    // LocalMissionRunner route ⇒ symmetric coverage). fromReport fails closed to NOT_RUN on a stale/cross-mission
+    // report (never a false PASS). Lot B: business result vs closure result are DISTINCT — a pipeline SUCCESS whose
+    // mandatory checkpoint could NOT be recorded is surfaced as a closure discrepancy (never silently "closed"),
+    // single attempt (no retry loop); the mission's own outcome is never masked by a closure error.
+    const closure = recordClosureCheckpoint(mission, this.cwd, Date.parse(runStartedAt));
+    if (pipelineOk && !closure.closed) {
+      // eslint-disable-next-line no-console
+      console.warn(`[AutonomyRuntimeAdapter] mission "${mission}" ran but the closure checkpoint was NOT recorded: ${closure.reason} — closure INCOMPLETE (evidence preserved).`);
     }
     if (!pipelineOk) {
       // Never surface a bare boolean: report the launcher, its exit code and the failing signal.
