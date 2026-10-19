@@ -111,3 +111,24 @@ bounded) and returned **FAILED (no false success)** because 7b ALSO missed the e
 and stays fail-closed; model output is NON-DETERMINISTIC (7b passed T3 in the comparison, missed it here). Honest:
 5 tasks / 2 models — NOT a general-reliability claim; SEPARATE from the deterministic 25% benchmark; no SLO.
 The model never gains authority (same working-copy + validateScope + independent-verify + never-commit chain).
+
+## 9. Extended measurement + escalation-value verdict (2026-10-19)
+**6 NEW varied tasks** (recursion/palindrome/chunk/deepGet/clamp-range-null/fib-defect-fix) via the escalating
+path (3b→7b), same tsx verifier executing the applied TS: **6/6 EXECUTED+verified, all by 3B solo (attempts=1),
+0 escalations, ~11s/task**. Combined with §8's 5 tasks (3B 4/5): **3B verifies ~10/11 bounded tasks**; the sole
+3B miss was strict input-validation (where 7B helped once, non-deterministically).
+
+**Escalation-value verdict (evidence-based):** LOW marginal value on this distribution — 3B already ~91% verified;
+7B escalation doubles latency and rescues only the rare hard-validation edge (unreliably). This VALIDATES the
+design: escalate ONLY on a verified failure ⇒ the fast 3B path for the common case + 7B as a bounded safety-net.
+No code change warranted. NOT a "7B is better" claim — 7B helps narrowly and non-deterministically. 11 tasks /
+2 models — not a general-reliability claim; benchmark 25% SEPARATE; no SLO.
+
+**Phase-2 runtime hardening — diagnostics (no bounded fix found; none fabricated):**
+- net-ns-loopback: protections present + tested (loopback-destination validation; non-loopback OLLAMA_HOST
+  refused; fixed argv, no shell). Residual = curl subprocess not network-namespaced (defense-in-depth gap, NO
+  proven exploit). Per "fix only a proven weakness" ⇒ documented, not changed.
+- autonomy-spec-author-dist: compiled pipeline needs a node_modules dep absent in the bare offline sandbox =
+  the L7 bare-node closure chantier (PAUSED). Governance-blocked; not reopened.
+- PASS/FAIL/BLOCKED transitions, bounded recovery, resume, idempotence, compass update: already proven; no open
+  cheap defect.
