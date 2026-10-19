@@ -134,4 +134,11 @@ if (require.main === module) {
   );
   const queue = read(G("runtime-mission-queue.json"), { queue: [] });
   console.log(render({ state, status, caps, ledger, constitution, queue }));
+  // §F — READ-ONLY compass coherence observable: surfaces prose(ODG_PROJECT_STATE.md)/HEAD divergence so a stale
+  // prose is visible (CONSISTENT/BEHIND/DIVERGENT/UNKNOWN), never blocking operations, never a fabricated pass.
+  try {
+    const { compassProseDivergence } = require("../../scripts/compass-update.js");
+    const d = compassProseDivergence(process.cwd());
+    console.log(`Compass    : ${d.status}${d.proseHead ? ` (prose ${d.proseHead} vs HEAD ${String(d.head || "?").slice(0, 7)})` : ""} — ${d.reason}`);
+  } catch { /* observable only — never affects health exit */ }
 }
