@@ -29,6 +29,15 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`REVENUE_VALIDATION_PREPARATION` (Phase 3A) — 2026-10-19 (from `47a745e`).** [PASS]
+  - **Truth Lock:** HEAD=origin/main=`47a745e`→(this); `main`; clean; 5 stashes; protected paths untouched. No message sent, no publish, no spend, no real contact.
+  - **Dossier (sourced, private):** `docs/odg-operational/ODG_REVENUE_VALIDATION_PREP.md`.
+  - **20 real companies [FACT, sourced 2026-10-19]** from free-work/getyourjob job boards (dated postings = observable TS/legacy investment). 6 HIGH-fit with **explicit refactoring/debt/modernisation** (R&S TELECOM, BLOOMAYS, INSYCO, Sapiens Group, VISIAN, Ikigaï); rest MED (ESN-skew — honest caveat). No contacts fabricated.
+  - **Competitor pricing [FACT]:** audit 3–15k€, migration 5–25k€, agency TS project 20–80k€ ⇒ solo prices (3,5k/7,5k) at/below low band = accessible wedge.
+  - **Legal corrections [FACT, sourced]:** micro BNC services ceiling **83 600€** (not 77 700€ — `revenue-model` corrected, 5/5 tests) + **TVA franchise 37 500€** (new `exceedsVatFranchise` flag). B2B email = opt-out/legitimate-interest (CNIL) with mandatory opposition line.
+  - **5 individualized messages:** DRAFT/UNSENT, role-addressed, CNIL opposition line — send only after GO + verified pro address.
+  - **CTO decision dossier (1 page):** test cost ≈ 0€ direct (time only), benefit = 1st paid audit, risks (response rate, CAC-time, société/TVA if it scales, CNIL, e-invoicing to confirm), GO actions + GO/NO-GO criteria.
+  - **Phase 3B BLOCKED (CTO GO):** status/entity, real outreach, publishing, invoicing/TVA. €0 residual prep only.
 - **`ODG_100K_REVENUE_ENGINE` — phase 1 (research → decision → model). 2026-10-19 (from `2656c08`).** [PASS — phase 1]
   - **Track:** COMMERCIAL (revenue creation), distinct from the VPS technical track. Dedicated roadmap: `docs/odg-operational/ODG_REVENUE_ENGINE_100K.md`.
   - **Research [FACT, sourced 2026-10-19]:** web search operational (real/dated/multi-source). French freelance TS/Node TJM median ≈510–575€/j, senior 700–900€/j; TS-migration is a budgeted 2026 enterprise need (TS7 trigger) with an explicit specialist wedge. ODG egress stays gated — research run by the bounded provider; decision stays ODG's.

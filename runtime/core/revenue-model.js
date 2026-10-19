@@ -4,13 +4,16 @@
  * no client, no sale. Every output is an ESTIMATION conditional on its inputs; nothing here is "encaissé".
  *
  * French solo-service context (assumptions, to be confirmed — NOT legal advice):
- *   - micro-entreprise BNC (prestations libérales) annual CA ceiling ≈ 77 700 € (2026). Above it ⇒ société
- *     (EURL/SASU) required — a human/legal decision with its own cost; flagged by `exceedsMicroCeiling`.
+ *   - micro-entreprise BNC (prestations de services) annual CA ceiling = 83 600 € (2026, sourced). Above it
+ *     (2 consecutive years) ⇒ société (EURL/SASU) required — a human/legal decision; flagged `exceedsMicroCeiling`.
+ *   - TVA franchise threshold for services = 37 500 € (seuil majoré 41 250 €, 2026): above it TVA (20%) must be
+ *     charged — neutral for B2B clients (they reclaim) but an operational obligation; flagged `exceedsVatFranchise`.
  *   - `chargeRatePct` = social charges (+ optional versement libératoire / IR) as a % of CA — caller supplies
  *     the rate matching the chosen status (micro ≈ 23 %; société differs). No status is assumed as truth.
  */
 
-const MICRO_BNC_CEILING_EUR = 77700; // 2026 micro-entreprise BNC prestations de services ceiling (assumption)
+const MICRO_BNC_CEILING_EUR = 83600;   // 2026 micro-entreprise BNC prestations de services CA ceiling (sourced)
+const VAT_FRANCHISE_SERVICES_EUR = 37500; // 2026 TVA franchise threshold, services (majoré 41 250 €)
 
 function round2(n) { return Math.round(n * 100) / 100; }
 
@@ -38,6 +41,7 @@ function revenueScenario(inp) {
     fixedCostsAnnual: fixed,
     netBeforeIncomeTax,       // ESTIMATION before any remaining income tax, pre-paid-invoice
     exceedsMicroCeiling: caBilled > MICRO_BNC_CEILING_EUR,
+    exceedsVatFranchise: caBilled > VAT_FRANCHISE_SERVICES_EUR,
     note: "ESTIMATION only — conditional on inputs; caBilled is billed, not collected; net excludes residual income tax.",
   };
 }
@@ -70,4 +74,4 @@ function scenariosToTarget(targetCa, variants) {
   });
 }
 
-module.exports = { revenueScenario, daysForTargetCa, scenariosToTarget, MICRO_BNC_CEILING_EUR, round2 };
+module.exports = { revenueScenario, daysForTargetCa, scenariosToTarget, MICRO_BNC_CEILING_EUR, VAT_FRANCHISE_SERVICES_EUR, round2 };

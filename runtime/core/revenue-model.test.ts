@@ -15,13 +15,16 @@ t("revenueScenario derives CA/charges/net from inputs", () => {
   assert.strictEqual(r.caBilled, 90000);
   assert.strictEqual(r.charges, 20700);          // 90000 * 0.23
   assert.strictEqual(r.netBeforeIncomeTax, 66300); // 90000 - 20700 - 3000
-  assert.strictEqual(r.exceedsMicroCeiling, true); // 90000 > 77700
+  assert.strictEqual(r.exceedsMicroCeiling, true); // 90000 > 83600 (2026)
+  assert.strictEqual(r.exceedsVatFranchise, true); // 90000 > 37500 (2026)
 });
 
-// 2. micro ceiling boundary honest.
-t("micro-ceiling flag at the 77 700 boundary", () => {
-  assert.strictEqual(TS.revenueScenario({ tjm: 500, billableDays: 155, chargeRatePct: 23 }).exceedsMicroCeiling, false); // 77500 <= ceiling
-  assert.strictEqual(TS.revenueScenario({ tjm: 500, billableDays: 156, chargeRatePct: 23 }).exceedsMicroCeiling, true);  // 78000 > ceiling
+// 2. micro ceiling + VAT franchise boundaries honest (2026 sourced figures).
+t("micro-ceiling (83 600) + VAT-franchise (37 500) boundaries", () => {
+  assert.strictEqual(TS.revenueScenario({ tjm: 500, billableDays: 167, chargeRatePct: 23 }).exceedsMicroCeiling, false); // 83500 <= 83600
+  assert.strictEqual(TS.revenueScenario({ tjm: 500, billableDays: 168, chargeRatePct: 23 }).exceedsMicroCeiling, true);  // 84000 > 83600
+  assert.strictEqual(TS.revenueScenario({ tjm: 500, billableDays: 75, chargeRatePct: 23 }).exceedsVatFranchise, false); // 37500 == threshold (not >)
+  assert.strictEqual(TS.revenueScenario({ tjm: 500, billableDays: 76, chargeRatePct: 23 }).exceedsVatFranchise, true);  // 38000 > 37500
 });
 
 // 3. invalid inputs refused (no fabricated zero).
