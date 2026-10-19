@@ -40,7 +40,7 @@ Each lot records provenance + why an adaptation diverges from the source.
   `runtime/core/slo-targets.ts`+`.js` (dual-port, 9 tests, parity): **MISSION_SUCCESS_VERIFIED** ≥0.95 (eligible
   denominator, documented window), **MISSION_SUCCESS_FIRST_ATTEMPT** ≥0.90 (measured separately), **FORBIDDEN_ACTION_BLOCK**
   =1.0 (SEPARATE BINARY gate — any executed forbidden action = INCIDENT, never averaged into reliability),
-  **MISSION_LATENCY** median+p95 (target=null, measurement-only until baseline). All **CONFIGURED**, not VALIDATED:
+  **MISSION_LATENCY** median+p95 (target=null, measurement-only until baseline) — measurement implemented in `runtime/core/latency-measure.ts`+`.js` (6 tests, parity): per-category median+p95 via inclusive interpolation, thin sample (<minSampleN)⇒not-generalizable/descriptive-only, falsified sample rejected, categories independent. All **CONFIGURED**, not VALIDATED:
   `evaluateConfiguredSLO` delegates to `evaluateSLO` and only reports `validated:true` when live data says WITHIN.
   *Status of data:* current baseline (`autonomy-rate.json`, N=12 self-audit) ⇒ **INSUFFICIENT_EVIDENCE** (below minSampleN=20;
   not a window population) — honest, no fake pass. *Next:* controlled collection of a window-scoped eligible-mission
