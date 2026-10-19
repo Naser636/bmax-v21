@@ -155,4 +155,32 @@ t("metricsSnapshot counter (retries attached to mission; outcome breakdown; INSU
   assert.deepStrictEqual(TS.metricsSnapshot(attempts, { minSampleN: 20 }), JS.metricsSnapshot(attempts, { minSampleN: 20 })); // parity
 });
 
+// 12. categorizeMission — strict: valid taxonomy category honoured; absent/unknown ⇒ uncategorized (no guessing).
+t("categorizeMission strict (valid ⇒ kept; absent/unknown ⇒ uncategorized)", () => {
+  assert.strictEqual(TS.categorizeMission({ category: "reliability-recovery" }), "reliability-recovery");
+  assert.strictEqual(TS.categorizeMission({ category: "deployment-release" }), "deployment-release");
+  assert.strictEqual(TS.categorizeMission({ category: "not-a-real-category" }), "uncategorized"); // unknown ⇒ default
+  assert.strictEqual(TS.categorizeMission({}), "uncategorized");           // absent ⇒ default
+  assert.strictEqual(TS.categorizeMission(null), "uncategorized");
+  assert.ok(TS.MISSION_CATEGORIES.includes("observability-slo") && TS.MISSION_CATEGORIES.includes("uncategorized"));
+});
+
+// 13. metricsSnapshot byCategory — per-category counts + per-category latency INSUFFICIENT below minN; retries kept.
+t("metricsSnapshot byCategory (per-category latency INSUFFICIENT<minN; uncategorized grouping)", () => {
+  const attempts = [
+    { mission: "R1", category: "reliability-recovery", outcome: "RECORDED", recordedAt: "2026-09-01T10:00:00.000Z", durationMs: 100 },
+    { mission: "R2", category: "reliability-recovery", outcome: "RECORDED", recordedAt: "2026-09-01T10:01:00.000Z", durationMs: 200 },
+    { mission: "U1", outcome: "SKIPPED", reason: "FAILED", recordedAt: "2026-09-01T11:00:00.000Z" }, // no category ⇒ uncategorized
+  ];
+  const m = TS.metricsSnapshot(attempts, { minSampleN: 20 });
+  assert.ok(m.byCategory["reliability-recovery"] && m.byCategory["uncategorized"], "both categories present");
+  assert.strictEqual(m.byCategory["reliability-recovery"].attempts, 2);
+  assert.strictEqual(m.byCategory["reliability-recovery"].distinctMissions, 2);
+  // 2 samples < minSampleN 20 ⇒ latency measurable:false (no misleading p95), but descriptive median exposed.
+  assert.strictEqual(m.byCategory["reliability-recovery"].latency.measurable, false);
+  assert.ok(/below minimum/.test(m.byCategory["reliability-recovery"].latency.reason));
+  assert.strictEqual(m.byCategory["uncategorized"].attempts, 1);
+  assert.deepStrictEqual(TS.metricsSnapshot(attempts, { minSampleN: 20 }), JS.metricsSnapshot(attempts, { minSampleN: 20 })); // parity
+});
+
 console.log(`\nALL PASS — mission-attempt-log (${n} tests)`);

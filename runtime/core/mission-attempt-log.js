@@ -116,13 +116,39 @@ function durationsByCategory(attempts) {
  * Rates stay measurable:false below minSampleN; retries stay attached to their mission (distinctMissions counts
  * missions, not attempts).
  */
+const MISSION_CATEGORIES = [
+  "reliability-recovery", "backup-restore", "deployment-release", "security-governance",
+  "observability-slo", "runtime-capability", "testing-validation", "uncategorized",
+];
+function categorizeMission(contract) {
+  const c = contract && typeof contract === "object" ? contract.category : undefined;
+  return typeof c === "string" && MISSION_CATEGORIES.includes(c) && c !== "uncategorized" ? c : "uncategorized";
+}
+
 function metricsSnapshot(attempts, opts = {}) {
   const list = Array.isArray(attempts) ? attempts.filter((a) => a && a.mission && a.recordedAt) : [];
   const s = summarizeAttempts(list, opts);
   const outcomes = {};
   for (const a of list) { const k = a.outcome === "RECORDED" ? "RECORDED" : `SKIPPED:${a.reason || "UNKNOWN"}`; outcomes[k] = (outcomes[k] || 0) + 1; }
   const withDuration = list.filter((a) => typeof a.durationMs === "number" && Number.isFinite(a.durationMs) && a.durationMs >= 0).length;
+  const minN = typeof opts.minSampleN === "number" ? opts.minSampleN : 20;
+  let summarizeSamples = null; try { ({ summarizeSamples } = require("./latency-measure")); } catch { summarizeSamples = null; }
+  const groups = {};
+  for (const a of list) { const cat = typeof a.category === "string" && a.category ? a.category : "uncategorized"; (groups[cat] = groups[cat] || []).push(a); }
+  const byCategory = {};
+  for (const cat of Object.keys(groups)) {
+    const g = groups[cat]; const gs = summarizeAttempts(g, opts);
+    const durs = g.map((a) => a.durationMs).filter((d) => typeof d === "number" && Number.isFinite(d) && d >= 0);
+    byCategory[cat] = {
+      attempts: g.length,
+      distinctMissions: gs.distinctMissions,
+      verified: { numerator: gs.slis.MISSION_SUCCESS_VERIFIED.numerator, denominator: gs.slis.MISSION_SUCCESS_VERIFIED.denominator, measurable: gs.slis.MISSION_SUCCESS_VERIFIED.measurable },
+      firstAttempt: { numerator: gs.slis.MISSION_SUCCESS_FIRST_ATTEMPT.numerator, denominator: gs.slis.MISSION_SUCCESS_FIRST_ATTEMPT.denominator, measurable: gs.slis.MISSION_SUCCESS_FIRST_ATTEMPT.measurable },
+      latency: summarizeSamples ? summarizeSamples(durs, minN) : { measurable: false, reason: "latency-measure unavailable", n: durs.length },
+    };
+  }
   return {
+    byCategory,
     window: s.window,
     totalAttempts: list.length,
     distinctMissions: s.distinctMissions,
@@ -134,4 +160,4 @@ function metricsSnapshot(attempts, opts = {}) {
   };
 }
 
-module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory, metricsSnapshot };
+module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory, metricsSnapshot, MISSION_CATEGORIES, categorizeMission };

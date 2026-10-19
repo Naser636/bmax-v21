@@ -29,6 +29,14 @@ Instrumentation fires at closure on BOTH routes (LocalMissionRunner + autonomy r
 failures/ERROR too (a telemetry gap never becomes a success). Distinct from the proven-only `mission-ledger` (which
 cannot hold failures — survivorship); this attempt-log is the rate denominator source.
 
+
+## Per-category breakdown (§16)
+Categories derive STRICTLY from the mission contract's `category` (taxonomy: reliability-recovery, backup-restore, deployment-release, security-governance, observability-slo, runtime-capability, testing-validation, uncategorized). The 46 historical attempts carry NO recorded category (the field predates this phase) ⇒ all group under **uncategorized** (provenance-honest; not retrofitted). New missions inherit `category` from their contract.
+
+- **uncategorized:** 46 attempts / 14 distinct · verified 12/14 · latency median 88.5ms / p95 196ms (n=46, measurable).
+
+Per-category latency uses the same minSampleN=20 gate ⇒ a category with <20 samples reports INSUFFICIENT_EVIDENCE, never a misleading p95. Latency is PER-ATTEMPT (a technical-control latency), NOT total mission duration (retries-inclusive total is not yet separately measured — flagged as a gap, not fabricated).
+
 ## Machine snapshot
 ```json
 {

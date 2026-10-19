@@ -134,9 +134,13 @@ export class LocalMissionRunner {
    */
   private categoryOf(plan: unknown): string | undefined {
     try {
-      const p = plan as { mode?: unknown; mission?: { mode?: unknown } };
-      const mode = p && (p.mode ?? (p.mission && p.mission.mode));
-      return typeof mode === "string" ? mode : undefined;
+      // §16: inherit the latency CATEGORY from the mission CONTRACT when it declares one (plan.category /
+      // plan.contract.category / plan.mission.category). Strict: only a non-empty string is used; absent ⇒ undefined
+      // (the attempt is recorded without a category ⇒ groups under `uncategorized` in metrics — provenance-honest,
+      // no mode-guessing). A missing category NEVER blocks closure.
+      const p = plan as { category?: unknown; contract?: { category?: unknown }; mission?: { category?: unknown } };
+      const c = p && (p.category ?? (p.contract && p.contract.category) ?? (p.mission && p.mission.category));
+      return typeof c === "string" && c.trim() !== "" ? c.trim() : undefined;
     } catch {
       return undefined;
     }
