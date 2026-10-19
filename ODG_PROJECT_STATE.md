@@ -6,7 +6,8 @@
 > fast-resume summary; when it disagrees with the roadmap or the Autonomous Work Protocol, THEY win. Refresh
 > it each session from the real repo — treat every number below as "last known", re-verified via the planner.
 
-## ⟢ OPERATIONAL ENTRY POINT — READ THIS FIRST (current @ `b622e3f`, 2026-10-19)
+## ⟢ OPERATIONAL ENTRY POINT — READ THIS FIRST (current @ `ee6e42c`, 2026-10-19)
+> **Latest:** `ODG_END_TO_END_VPS_COMPLETION_CAMPAIGN` closed 4 missions (`7d08099`→`ee6e42c`, all pushed): Phase-17 telemetry + test-isolation, odg-health dist-parity fix, P3 exposure drift-detector, P5 maintenance alerting. See the first **`## Last confirmed checkpoint`** entry for the full record and exact next action. Service loopback-only, NRestarts=0, health 200; 5 stashes intact; no protected path touched.
 Tags: **[OBSERVED]** seen this session · **[PROVEN]** test/evidence on disk · **[REPORTED]** prior session, not re-verified · **[BLOCKED]** needs a reserved decision · **[UNKNOWN]**.
 The dated per-mission **LOG** below (`## Last confirmed checkpoint`) is the decision history; detailed evidence lives in `runtime/reports/*`. The later sections **"Next missions, in order"** + **"Exact resume command"** are **SUPERSEDED** (TS-migration campaign, PAUSED) — use §8 here instead. The **"Canonical route/script/version contract (FROZEN 2026-10-17)"** section further down is still VALID (deploy/service/route SSOT).
 
