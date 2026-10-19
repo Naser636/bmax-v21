@@ -25,7 +25,27 @@ import { resolve as resolvePath, join as joinPath } from "node:path";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic"; // request-time only; reflect current env/fs, never cached
 
-type StorageState = "READY" | "NOT_CONFIGURED" | "MISSING" | "BLOCKED" | "UNKNOWN";
+type StorageState = "READY" | "NOT_CONFIGURED" | "MISSING" | "BLOCKED" | "UNKNOWN" | "FAULT_INJECTED_TEST";
+
+/*
+ * TEST-ONLY health-fault injection — DEFAULT INACTIVE. Returns true iff a release-local `.health-fault` file exists
+ * in the running release's own dir (process.cwd() = <release>/app under systemd) AND its expiry (epoch-ms on the
+ * first line) is still in the future. Deliberately constrained so it is SAFE as a live-recovery test trigger:
+ *   - LOCAL FILE ONLY — never read from a request parameter ⇒ cannot be activated remotely.
+ *   - AUTO-EXPIRES — a stale flag self-heals (healthy again) even if explicit cleanup fails.
+ *   - RELEASE-SCOPED — resolved against cwd, so a rollback to a different release removes the fault.
+ *   - STORE-INDEPENDENT — touches no client store, no business data, no network.
+ * Absent/unreadable/expired/malformed ⇒ false (never a fabricated fault).
+ */
+export function faultInjected(nowMs: number = Date.now()): boolean {
+  try {
+    const raw = readFileSync(joinPath(process.cwd(), ".health-fault"), "utf8").trim();
+    const expiry = parseInt(raw.split(/\s+/)[0], 10);
+    return Number.isFinite(expiry) && nowMs < expiry;
+  } catch {
+    return false;
+  }
+}
 
 /*
  * Deployed BUILD_ID exposure (CM-2, deploy-hygiene observability). Returns the build identity THIS running
@@ -78,6 +98,8 @@ export async function GET(): Promise<Response> {
   } catch {
     storage = "UNKNOWN"; // fail-closed on any unexpected error
   }
+  // DEFAULT-INACTIVE test hook: only an active (non-expired) release-local `.health-fault` flag forces unhealthy.
+  if (faultInjected()) storage = "FAULT_INJECTED_TEST";
   const ready = storage === "READY";
   const body = JSON.stringify({
     status: ready ? "ready" : "not_ready",
