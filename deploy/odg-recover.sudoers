@@ -1,0 +1,4 @@
+# Scoped NOPASSWD: ubuntu may restart/reset-failed ONLY the private odg-preprod unit (for odg-recover auto-recovery).
+# --no-block is the async-queue form used from within the OnFailure handler (avoids a systemd job-conflict deadlock).
+# Install: sudo cp deploy/odg-recover.sudoers /etc/sudoers.d/odg-recover && sudo chmod 440 /etc/sudoers.d/odg-recover && sudo visudo -c
+ubuntu ALL=(root) NOPASSWD: /usr/bin/systemctl restart --no-block odg-preprod.service, /usr/bin/systemctl restart odg-preprod.service, /usr/bin/systemctl reset-failed odg-preprod.service

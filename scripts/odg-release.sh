@@ -176,14 +176,17 @@ cmd_activate() {
 }
 
 cmd_rollback() {
-  local host="$HOST_DEFAULT" port="$PORT_DEFAULT"
-  while [ $# -gt 0 ]; do case "$1" in --port) port="$2"; shift 2;; --host) host="$2"; shift 2;; *) die "unknown rollback arg $1";; esac; done
+  local host="$HOST_DEFAULT" port="$PORT_DEFAULT" serve=1
+  while [ $# -gt 0 ]; do case "$1" in --port) port="$2"; shift 2;; --host) host="$2"; shift 2;; --no-serve) serve=0; shift;; *) die "unknown rollback arg $1";; esac; done
   [ -L "$RELEASE_ROOT/previous" ] || { _incident "none" "rollback" "NO_PREVIOUS" 0 1 "no previous release"; die "no previous release to roll back to"; }
   local prev; prev="$(readlink "$RELEASE_ROOT/previous")"
   [ -d "$prev/app" ] || { _incident "$(basename "$prev")" "rollback" "PREV_MISSING" 0 1 "previous artifact missing"; die "previous release artifact missing: $prev"; }
   # NO BLIND ROLLBACK — the previous release must be a COMPLETE artifact (integrity/identity) before we switch to it.
   local why; if ! why="$(verify_artifact "$prev/app")"; then _incident "$(basename "$prev")" "rollback" "PREV_INVALID" 0 1 "$why"; die "previous release invalid ($why) — refusing blind rollback"; fi
   ln -sfn "$prev" "$RELEASE_ROOT/current.tmp" && mv -T "$RELEASE_ROOT/current.tmp" "$RELEASE_ROOT/current"
+  # --no-serve (systemd-managed): swap the verified `current` only; the service manager owns the process (it will
+  # restart from the now-good `current`). Avoids two processes racing :3000. Incident records the switch.
+  if [ "$serve" = "0" ]; then _incident "$(basename "$prev")" "rollback" "SWITCHED" 0 0 "no-serve (systemd will restart)"; log "ROLLBACK (no-serve) current→$(basename "$prev"); service manager will restart"; return 0; fi
   local old; old="$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2 || true)"
   [ -n "${old:-}" ] && { kill "$old" 2>/dev/null || true; sleep 2; }
   local pid started; started=$(date +%s%3N 2>/dev/null || echo 0); pid="$(_boot "$prev/app" "$host" "$port" "$prev/server.log")"

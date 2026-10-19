@@ -10,6 +10,12 @@
 [Unit]
 Description=ODG Preproduction dashboard (private, loopback-only; release-pipeline artifact)
 After=network.target
+# Phase 11: on a PERSISTENT crash-loop (restart limit exhausted), hand off to the bounded auto-recovery unit
+# (rollback to the last verified-good release). OnFailure fires only after StartLimitBurst/Interval — not on a
+# single transient blip. odg-recover is a oneshot with NO OnFailure of its own ⇒ no recursive recovery.
+OnFailure=odg-recover.service
+StartLimitIntervalSec=30
+StartLimitBurst=4
 
 [Service]
 Type=simple
