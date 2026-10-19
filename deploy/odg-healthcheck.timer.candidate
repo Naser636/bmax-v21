@@ -1,0 +1,9 @@
+# CANDIDATE — fires the health poll every 30s (after a 60s boot grace). Private; no network exposure.
+[Unit]
+Description=ODG preprod health poll timer (alive-but-unhealthy detection)
+[Timer]
+OnBootSec=60
+OnUnitActiveSec=30
+AccuracySec=5s
+[Install]
+WantedBy=timers.target

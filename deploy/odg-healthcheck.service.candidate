@@ -1,0 +1,16 @@
+# CANDIDATE — periodic alive-but-unhealthy detector (run by odg-healthcheck.timer). Reuses odg-recover.sh.
+# Private/loopback. Oneshot; no permanent daemon. Skips during recovery (lock) or when the unit is inactive.
+[Unit]
+Description=ODG preprod health poll (alive-but-unhealthy → bounded recovery)
+After=network.target
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/bmax-v21
+Environment=ODG_REPO=/home/ubuntu/bmax-v21
+Environment=ODG_RELEASE_ROOT=/home/ubuntu/odg-releases
+Environment=ODG_RECOVER_HOST=127.0.0.1
+Environment=ODG_RECOVER_PORT=3000
+Environment=ODG_HEALTH_THRESHOLD=3
+ExecStart=/bin/bash /home/ubuntu/bmax-v21/scripts/odg-healthcheck.sh
