@@ -61,3 +61,8 @@ VAT is **not universally mandatory** — confirm applicability for the seller's 
 **Ordering:** A3 (off-host access) is the keystone — it unblocks #7 → D2 → #2 → D5, and A1/A2/A4/A5 enable
 staging→production. B/C items are needed only at their stated go-live point. D3/D4 are independent doctrine/
 architecture decisions. Supply nothing before it is needed; local technical work continues regardless.
+
+## E. HOST / TOOLCHAIN (environment — NOT an ODG defect; diagnosed read-only 2026-10-19)
+| # | Item | Diagnosis | Human remediation (ODG will NOT execute) |
+|---|---|---|---|
+| E1 | Claude Code auto-update: **"no write permission to npm prefix"** | npm global prefix = `/usr/local` (owner `root:root`, 0755); Claude Code is installed at `/usr/local/lib/node_modules/@anthropic-ai/claude-code` (root-owned); the session runs as non-root `ubuntu` (uid 1000) → the global `node_modules` is not writable → auto-update cannot write. A root-owned global install run as a non-root user — an install/host property, not an ODG runtime defect. No effect on the ODG runtime or the SLO/governance work. | Run `claude doctor` for the documented check. Then EITHER (a) update with elevation out-of-band (e.g. a maintainer runs the documented global update as the install owner), OR (b) migrate to a user-writable install (user-level npm prefix + PATH, or the local installer per Claude Code docs). ODG does **not** run sudo, chown the prefix, reinstall globally, or change persistent npm config without explicit authorization. |
