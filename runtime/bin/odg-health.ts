@@ -107,6 +107,18 @@ if (require.main === module) {
     const d = compassProseDivergence(process.cwd());
     console.log(`Compass    : ${d.status}${d.proseHead ? ` (prose ${d.proseHead} vs HEAD ${String(d.head || "?").slice(0, 7)})` : ""} — ${d.reason}`);
   } catch { /* observable only — never affects health exit */ }
+
+  // §G — READ-ONLY supervision summary: the LAST odg-monitor tick result (exposure + maintenance) + its
+  // freshness BUCKET. Single source = the monitor's own status files (no second source of truth, no live probe
+  // here). Absent/stale ⇒ UNKNOWN, NEVER presented as healthy. Foreign/co-tenant listeners are info only — this
+  // line is never an authorization to act on them. Freshness is a coarse bucket (no timestamp) so JS↔dist stay
+  // byte-identical. Cadence is 10 min ⇒ a status older than 25 min is STALE.
+  try {
+    const rd = (f: string) => { try { return JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "runtime", "generated", f), "utf8")); } catch { return null; } };
+    // cwd-relative require (resolves from runtime/bin AND runtime/dist/bin — same pattern as §F).
+    const { summarizeSupervision } = require(path.resolve(process.cwd(), "runtime", "core", "supervision-summary.js"));
+    console.log(`Supervision: ${summarizeSupervision(rd("exposure-status.json"), rd("maintenance-status.json"), Date.now())}`);
+  } catch { /* observable only — never affects health exit */ }
 }
 
 export {};

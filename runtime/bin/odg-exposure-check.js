@@ -43,6 +43,13 @@ function main() {
   for (const l of r.drift) console.log(`  DRIFT(public) : ${line(l)}  <-- ODG-owned listener on a PUBLIC address`);
   for (const l of r.foreign) console.log(`  foreign(info) : ${line(l)}  (not ODG-owned — co-tenant/system; not touched)`);
 
+  // Steady-state status (every run) — the single source odg-health reads read-only for a freshness summary.
+  try {
+    const STATUS = path.resolve(process.cwd(), "runtime", "generated", "exposure-status.json");
+    fs.mkdirSync(path.dirname(STATUS), { recursive: true });
+    fs.writeFileSync(STATUS, JSON.stringify({ at: nowIso(), verdict: r.verdict, odgLoopback: r.counts.odgLoopback, drift: r.counts.drift, foreign: r.counts.foreign }));
+  } catch { /* status is best-effort */ }
+
   const ALERTS = path.resolve(process.cwd(), "runtime", "generated", "exposure-alerts.jsonl");
   if (r.verdict === "DRIFT") {
     const signature = r.drift.map((l) => l.localAddr).sort().join(",");

@@ -86,6 +86,13 @@ function main() {
   console.log(`Maintenance: ${r.ok ? "OK" : "ATTENTION"}  (CRIT=${r.counts.CRIT} WARN=${r.counts.WARN} INFO=${r.counts.INFO})`);
   for (const a of r.alerts) console.log(`  [${a.severity}] ${a.id}: ${a.reason}`);
 
+  // Steady-state status (every run) — the single source odg-health reads read-only for a freshness summary.
+  try {
+    const STATUS = path.resolve(process.cwd(), "runtime", "generated", "maintenance-status.json");
+    fs.mkdirSync(path.dirname(STATUS), { recursive: true });
+    fs.writeFileSync(STATUS, JSON.stringify({ at: new Date().toISOString(), ok: r.ok, CRIT: r.counts.CRIT, WARN: r.counts.WARN, INFO: r.counts.INFO }));
+  } catch { /* status is best-effort */ }
+
   const FILE = path.resolve(process.cwd(), "runtime", "generated", "maintenance-alerts.jsonl");
   const actionable = r.alerts.filter((a) => a.severity === "CRIT" || a.severity === "WARN");
   const fresh = newAlerts(actionable, priorIds(FILE));
