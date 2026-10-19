@@ -139,4 +139,40 @@ console.log("implement-via-local-provider — defaultLocalGenerate (local adapte
     r.cleanup(); }
 }
 
+// --- BOUNDED model escalation (3B light → 7B superior on verified failure) — deterministic, injected runner ---
+console.log("implement-via-local-provider — bounded escalation routing");
+{
+  const OBJ2 = { objectiveId: "IMPLEMENT_LOCAL_CODE_esc", goal: "set V to 2", authorized_paths: ["src/target.ts"] };
+  // modelRunner branches on the resolved model: LIGHT emits V=1 (fails verify), SUPERIOR emits V=2 (passes).
+  const perModel = (map) => (inv) => ({ status: 0, stdout: map[inv.body ? inv.body.model : inv.model] != null ? map[inv.body ? inv.body.model : inv.model] : "export const V = 0;\n" });
+  const vOk = () => ({ ok: true }); const vIs2 = ({ root }) => ({ ok: fs.readFileSync(path.join(root, "src", "target.ts"), "utf8").includes("V = 2") });
+  for (const [label, mod] of [["JS", JS], ["TS", TS]]) {
+    // light WRONG ⇒ escalate ⇒ superior RIGHT ⇒ EXECUTED at attempt 2 with the superior model.
+    { const r = makeRoot("export const V = 0;\n");
+      const res = mod.implementViaLocalProviderEscalating(OBJ2, { root: r.root, activation: ACT, present: true, models: ["light", "superior"], modelRunner: perModel({ light: "export const V = 1;\n", superior: "export const V = 2;\n" }), verify: vIs2 });
+      ok(`${label} escalation: light fails ⇒ superior succeeds (attempts=2, model=superior)`, res.status === "EXECUTED" && res.escalation.attempts === 2 && res.escalation.model === "superior" && r.read("src/target.ts").includes("V = 2"));
+      r.cleanup(); }
+    // light RIGHT ⇒ NO escalation (attempts=1).
+    { const r = makeRoot("export const V = 0;\n");
+      const res = mod.implementViaLocalProviderEscalating(OBJ2, { root: r.root, activation: ACT, present: true, models: ["light", "superior"], modelRunner: perModel({ light: "export const V = 2;\n", superior: "export const V = 2;\n" }), verify: vIs2 });
+      ok(`${label} escalation: light succeeds ⇒ NO escalation (attempts=1)`, res.status === "EXECUTED" && res.escalation.attempts === 1);
+      r.cleanup(); }
+    // BOTH wrong ⇒ FAILED after bounded 2 attempts (no false success, no loop).
+    { const r = makeRoot("export const V = 0;\n");
+      const res = mod.implementViaLocalProviderEscalating(OBJ2, { root: r.root, activation: ACT, present: true, models: ["light", "superior"], modelRunner: perModel({ light: "export const V = 9;\n", superior: "export const V = 8;\n" }), verify: vIs2 });
+      ok(`${label} escalation: both fail ⇒ FAILED, bounded attempts=2, no false success`, res.status === "FAILED" && res.escalation.attempts === 2 && res.verified !== true);
+      r.cleanup(); }
+    // structural refuse (not activated) ⇒ returns immediately, NO escalation (attempts=1).
+    { const r = makeRoot("export const V = 0;\n");
+      const res = mod.implementViaLocalProviderEscalating(OBJ2, { root: r.root, activation: "DISABLED", present: true, models: ["light", "superior"], modelRunner: perModel({ light: "x", superior: "x" }), verify: vIs2 });
+      ok(`${label} escalation: structural refuse ⇒ immediate, attempts=1 (escalation only on verified failure)`, res.status === "REFUSED" && res.escalation.attempts === 1);
+      r.cleanup(); }
+  }
+  // injected generate disables routing (deterministic single attempt).
+  { const r = makeRoot("export const V = 1;\n");
+    const res = JS.implementViaLocalProviderEscalating(OBJ, { root: r.root, activation: ACT, generate: ({ workDir }) => { fs.writeFileSync(path.join(workDir, "src", "target.ts"), "export const V = 2;\n"); }, verify: () => ({ ok: true }) });
+    ok("escalation: injected generate ⇒ single attempt (injected:true), routing disabled", res.escalation.attempts === 1 && res.escalation.injected === true && res.status === "EXECUTED");
+    r.cleanup(); }
+}
+
 console.log(`\nIMPLEMENT-VIA-LOCAL-PROVIDER — ${passed} assertions passed.`);

@@ -433,18 +433,20 @@ function cleanCompletion(s) {
 // Resolve the LOCAL model invocation. ODG_LOCAL_MODEL_CMD (argv, prompt on stdin) → else local
 // `ollama run <ODG_LOCAL_MODEL|qwen2.5-coder:3b>` on the LOOPBACK daemon. LOCAL/loopback only: NO external
 // network, NO model download, NO cost. Pure.
-function resolveModelInvocation(prompt) {
+function resolveModelInvocation(prompt, modelOverride) {
   const envCmd = process.env.ODG_LOCAL_MODEL_CMD;
-  if (typeof envCmd === "string" && envCmd.trim()) {
+  if (typeof envCmd === "string" && envCmd.trim() && !modelOverride) {
     const parts = envCmd.trim().split(/\s+/);
     return { kind: "spawn", cmd: parts[0], args: parts.slice(1), input: prompt, model: envCmd.trim() };
   }
-  const model = (typeof process.env.ODG_LOCAL_MODEL === "string" && process.env.ODG_LOCAL_MODEL.trim()) || "qwen2.5-coder:3b";
+  const model = (typeof modelOverride === "string" && modelOverride.trim()) || (typeof process.env.ODG_LOCAL_MODEL === "string" && process.env.ODG_LOCAL_MODEL.trim()) || "qwen2.5-coder:3b";
   // Loopback-only ollama HTTP API (clean JSON tokens). The `ollama run` CLI emits terminal cursor-rewrite
   // controls that corrupt captured code; /api/generate (stream:false) is the clean machine interface.
   // OLLAMA_HOST honored ONLY if loopback (else fail-closed — never external).
   const host = (typeof process.env.OLLAMA_HOST === "string" && process.env.OLLAMA_HOST.trim()) || "127.0.0.1:11434";
-  return { kind: "http", host, path: "/api/generate", body: { model, prompt, stream: false }, model };
+  // Unload the model after the task (bounded memory): keep_alive "0" ⇒ ollama frees it once the call returns.
+  const keepAlive = (typeof process.env.ODG_LOCAL_MODEL_KEEPALIVE === "string" && process.env.ODG_LOCAL_MODEL_KEEPALIVE.trim()) || "0";
+  return { kind: "http", host, path: "/api/generate", body: { model, prompt, stream: false, keep_alive: keepAlive }, model };
 }
 // Is a LOCAL model resolvable? Fast, fail-closed. Probed lazily, never in fail-closed paths.
 function localModelPresent(deps) {
@@ -463,7 +465,7 @@ function defaultLocalGenerate(ctx, deps = {}) {
     (Array.isArray(o.objectives) && o.objectives[0] && o.objectives[0].goal) || String(o.objectiveId || "implement the file");
   const current = (() => { try { return (ctx.io && ctx.io.readFileSync || fs.readFileSync)(path.join(ctx.workDir, rel), "utf8"); } catch { return ""; } })();
   const prompt = `Output ONLY the complete new content of the file ${rel} — valid source code, no prose, no markdown fences. Task: ${goal}. Current content:\n${current}`;
-  const inv = resolveModelInvocation(prompt);
+  const inv = resolveModelInvocation(prompt, deps.model);
   const toMs = deps.timeoutMs || 120000;
   const run = typeof deps.modelRunner === "function"
     ? deps.modelRunner
@@ -559,6 +561,41 @@ function implementViaLocalProvider(objective, opts = {}) {
     changedPaths: applied.applied, proposedChanges: changes.length, effectiveChanges: effective.length,
     scope: scope.detail, verification: verdict.detail,
   };
+}
+
+// BOUNDED, EXPLAINABLE model escalation (Stage-6 adaptive routing). LIGHT model first; ONLY on a VERIFIED
+// FAILURE (status "FAILED") escalate ONCE to the SUPERIOR model, restoring authorized files between attempts.
+// Structural refuses return immediately. Max 2 attempts, NO loop, NO external escalation. Injected generate
+// disables routing. Mirrors the .ts twin.
+function implementViaLocalProviderEscalating(objective, opts = {}) {
+  if (typeof opts.generate === "function") {
+    const r = implementViaLocalProvider(objective, opts);
+    return { ...r, escalation: { attempts: 1, injected: true } };
+  }
+  const io = opts.io || fs;
+  const root = typeof opts.root === "string" ? opts.root : process.cwd();
+  const ladder = Array.isArray(opts.models) && opts.models.length
+    ? opts.models
+    : [
+      (typeof process.env.ODG_LOCAL_MODEL === "string" && process.env.ODG_LOCAL_MODEL.trim()) || "qwen2.5-coder:3b",
+      (typeof process.env.ODG_LOCAL_MODEL_SUPERIOR === "string" && process.env.ODG_LOCAL_MODEL_SUPERIOR.trim()) || "qwen2.5-coder:7b",
+    ];
+  const models = [...new Set(ladder.filter((m) => typeof m === "string" && m.trim()))];
+  const writeSet = Array.isArray(objective && objective.authorized_paths) ? objective.authorized_paths
+    : Array.isArray(objective && objective.writeSet) ? objective.writeSet : [];
+  const snapshot = {};
+  for (const rel of writeSet) { try { snapshot[rel] = (io.readFileSync || fs.readFileSync)(path.join(root, rel), "utf8"); } catch { snapshot[rel] = null; } }
+  const restore = () => { for (const rel of Object.keys(snapshot)) { const abs = path.join(root, rel); if (snapshot[rel] === null) { try { (io.rmSync || fs.rmSync)(abs, { force: true }); } catch { /* best-effort */ } } else { try { (io.writeFileSync || fs.writeFileSync)(abs, snapshot[rel]); } catch { /* best-effort */ } } } };
+  let last = null;
+  for (let i = 0; i < models.length; i++) {
+    if (i > 0) restore();
+    const m = models[i];
+    last = implementViaLocalProvider(objective, { ...opts, generate: (ctx) => defaultLocalGenerate(ctx, { ...opts, model: m }) });
+    last = { ...last, escalation: { attempts: i + 1, model: m, ladder: models } };
+    if (last.status === "EXECUTED") return last;
+    if (last.status !== "FAILED") return last;
+  }
+  return last;
 }
 
 const EXECUTORS = [
@@ -1083,7 +1120,7 @@ const EXECUTORS = [
             return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("IMPLEMENT_LOCAL_CODE");
         },
         run(patch) {
-            const result = implementViaLocalProvider(patch, {});
+            const result = implementViaLocalProviderEscalating(patch, {});
             const out = writeEvidence(IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, { objective: patch.objectiveId, ...result });
             if (result.status !== "EXECUTED") {
                 throw new Error(`Implement Via Local Provider did not complete: ${result.code || result.status} — ${result.detail || ""}`);
@@ -1103,7 +1140,7 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.

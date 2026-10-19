@@ -92,3 +92,22 @@ Both failures returned **FAILED (verified:false, committed:false) — NO false s
 caught them). These are genuine 3b-model output limits, NOT harness defects. Honest measurement: one small
 model, 5 bounded tasks — NOT a general-reliability claim; SEPARATE from the deterministic 25% benchmark; no SLO.
 Harness is env-dependent (scratchpad, not committed); the committed suite stays deterministic (injected runner).
+
+## 8. Superior model (qwen2.5-coder:7b) + bounded escalation routing (2026-10-19, CTO-authorized download)
+**Resources:** 22Gi RAM (~12Gi avail), 8 CPU, NO GPU, 177G disk. **Choice:** 32B/14B rejected (RAM margin +
+CPU-only latency / saturation risk) → **7B** (clear upgrade, ~5GB resident, comfortable margin). Installed from
+the official Ollama registry: `qwen2.5-coder:7b` id `dae161e27b0e`, 4.7GB, 7.6B params Q4_K_M. 3B KEPT.
+
+**Comparison (identical 5 tasks, same tsx verifier executing the applied TS, loopback HTTP, keep_alive:0):**
+3B = **4/5** (strict-validation T3 wrong), 56s · 7B = **5/5**, 120s ⇒ 7B measurably superior at ~2× CPU latency.
+
+**Bounded escalation routing** (`implementViaLocalProviderEscalating`, dual-port, 43-assertion test): LIGHT
+default; on a VERIFIED FAILURE escalate ONCE to SUPERIOR, restoring authorized files between attempts; max 2
+attempts, no loop, no external escalation; structural refuses return immediately; injected generate disables
+routing. `keep_alive:0` unloads the model after each task (bounded memory, load-on-demand). Loopback-only.
+
+**Live escalation (3b light → 7b superior on the strict-validation task):** escalated (attempts=2, model=7b,
+bounded) and returned **FAILED (no false success)** because 7b ALSO missed the edge THIS run — the routing works
+and stays fail-closed; model output is NON-DETERMINISTIC (7b passed T3 in the comparison, missed it here). Honest:
+5 tasks / 2 models — NOT a general-reliability claim; SEPARATE from the deterministic 25% benchmark; no SLO.
+The model never gains authority (same working-copy + validateScope + independent-verify + never-commit chain).
