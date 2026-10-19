@@ -57,8 +57,9 @@ for (const [label, mod] of [["JS", JS], ["TS", TS]]) {
     r.cleanup(); }
 
   // 3. provider unavailable (no stub + no local model) ⇒ GENERATOR_UNAVAILABLE, no external fallback.
+  //    `present:false` FORCES no-model deterministically (the host may actually have a local model installed).
   { const r = makeRoot("x\n");
-    const res = mod.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT });
+    const res = mod.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT, present: false });
     ok(`${label} 3 unavailable ⇒ GENERATOR_UNAVAILABLE (no external fallback)`, res.status === "REFUSED" && res.code === "GENERATOR_UNAVAILABLE");
     r.cleanup(); }
 
@@ -102,5 +103,39 @@ console.log("implement-via-local-provider — dispatch registration (resolve)");
 { const ex = JS.resolve({ objectiveId: "IMPLEMENT_LOCAL_CODE_X" });
   ok("resolve() matches the capability by objectiveId", ex && ex.capability === "Implement Via Local Provider");
   ok("activation policy reader reads AUTONOMOUS_SANDBOXED from runtime-mode.json", JS.localProviderActivation() === "AUTONOMOUS_SANDBOXED" && TS.localProviderActivation() === "AUTONOMOUS_SANDBOXED"); }
+
+// --- defaultLocalGenerate (the PRODUCTION local adapter) — deterministic, injected model runner ---------
+console.log("implement-via-local-provider — defaultLocalGenerate (local adapter, injected runner)");
+{
+  const mk = () => { const d = fs.mkdtempSync(path.join(os.tmpdir(), "ivlp-gen-")); fs.mkdirSync(path.join(d, "src"), { recursive: true }); fs.writeFileSync(path.join(d, "src", "math.ts"), "// todo\n"); return d; };
+  const ctx = (wd) => ({ objective: { objectiveId: "IMPLEMENT_LOCAL_CODE_T", goal: "add(a,b)" }, files: ["src/math.ts"], workDir: wd, io: fs });
+  // cleanCompletion strips fences + ANSI
+  ok("cleanCompletion strips ``` fences + ANSI", JS.cleanCompletion("```ts\n\x1B[1mexport const X=1;\x1B[0m\n```") === "export const X=1;" && TS.cleanCompletion("```\na\n```") === "a");
+  // resolveModelInvocation defaults to ollama; honors ODG_LOCAL_MODEL_CMD
+  ok("resolveModelInvocation defaults to ollama run <model>", (() => { const i = JS.resolveModelInvocation("P"); return i.cmd === "ollama" && i.args[0] === "run" && i.args[2] === "P"; })());
+  ok("resolveModelInvocation honors ODG_LOCAL_MODEL_CMD (argv + stdin)", (() => { process.env.ODG_LOCAL_MODEL_CMD = "mycli --flag"; const i = TS.resolveModelInvocation("P"); delete process.env.ODG_LOCAL_MODEL_CMD; return i.cmd === "mycli" && i.args[0] === "--flag" && i.input === "P"; })());
+  // localModelPresent is fail-closed + injectable
+  ok("localModelPresent honors injected present + probe (fail-closed)", JS.localModelPresent({ present: false }) === false && JS.localModelPresent({ probe: () => ({ status: 0 }) }) === true && JS.localModelPresent({ probe: () => { throw new Error("x"); } }) === false);
+  for (const [label, mod] of [["JS", JS], ["TS", TS]]) {
+    // valid completion ⇒ cleaned code written into the working copy
+    { const wd = mk(); const g = mod.defaultLocalGenerate(ctx(wd), { modelRunner: () => ({ status: 0, stdout: "```ts\nexport function add(a,b){return a+b;}\n```" }) });
+      ok(`${label} gen: valid completion ⇒ ok + fences stripped + written`, g.ok === true && fs.readFileSync(path.join(wd, "src", "math.ts"), "utf8") === "export function add(a,b){return a+b;}\n");
+      fs.rmSync(wd, { recursive: true, force: true }); }
+    // model non-zero ⇒ error (no false success); working copy untouched
+    { const wd = mk(); const g = mod.defaultLocalGenerate(ctx(wd), { modelRunner: () => ({ status: 1, stdout: "" }) });
+      ok(`${label} gen: model non-zero ⇒ error`, !!g.error && fs.readFileSync(path.join(wd, "src", "math.ts"), "utf8") === "// todo\n");
+      fs.rmSync(wd, { recursive: true, force: true }); }
+    // empty cleaned output ⇒ error
+    { const wd = mk(); const g = mod.defaultLocalGenerate(ctx(wd), { modelRunner: () => ({ status: 0, stdout: "```\n```" }) });
+      ok(`${label} gen: empty output ⇒ error`, !!g.error);
+      fs.rmSync(wd, { recursive: true, force: true }); }
+  }
+  // END-TO-END with the injected generate: implementViaLocalProvider using defaultLocalGenerate-via-runner.
+  { const r = makeRoot("export const V = 1;\n");
+    const gen = (c) => JS.defaultLocalGenerate(c, { modelRunner: () => ({ status: 0, stdout: "export const V = 2;\n" }) });
+    const res = JS.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT, generate: gen, verify: () => ({ ok: true }) });
+    ok("end-to-end: defaultLocalGenerate(runner) ⇒ EXECUTED, applied in-scope, committed:false", res.status === "EXECUTED" && res.verified === true && res.committed === false && r.read("src/target.ts") === "export const V = 2;\n");
+    r.cleanup(); }
+}
 
 console.log(`\nIMPLEMENT-VIA-LOCAL-PROVIDER — ${passed} assertions passed.`);

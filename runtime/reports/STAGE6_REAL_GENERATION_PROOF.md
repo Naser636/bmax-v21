@@ -56,3 +56,22 @@ fails closed (GENERATOR_UNAVAILABLE) in production — no external/billable fall
 Scratchpad harness `stage6-real-proof.cjs` (not committed): materialize a temp fixture, inject
 `generate = ollama run qwen2.5-coder:3b`, call `implementViaLocalProvider({root, activation:"AUTONOMOUS_SANDBOXED",
 generate, verify})`, assert `status===EXECUTED && verified`. Requires a host with ollama + qwen2.5-coder:3b.
+
+## 6. PRODUCTION-WIRED (D-Stage6 authorized 2026-10-19) — measured, not injected
+`implementViaLocalProvider` now defaults its `generate` to a narrow LOCAL adapter (`defaultLocalGenerate` +
+`resolveModelInvocation` + `localModelPresent` in `capability-executors`): `ODG_LOCAL_MODEL_CMD` argv, else
+`ollama run <ODG_LOCAL_MODEL|qwen2.5-coder:3b>` on the **loopback** daemon — no external network, no download,
+no cost; NEVER an external/billable fallback. The untrusted-output isolation is unchanged (working-copy +
+fail-closed `validateScope` + independent `verify` + VERIFIED cap + never-commit); E1–E6 is NOT globally
+disabled; `local-model-manager` is untouched (its no-net sandbox blocks ollama's localhost — this adapter is
+the CTO-sanctioned narrower local path). The loopback client call is not yet network-namespaced (hardening
+follow-up).
+
+**Measured over the PRODUCTION-WIRED path (real ollama, NO injected generate), 4 bounded disposable-fixture
+tasks:** 3/4 EXECUTED+verified (add/sub, isEven, reverseStr — behaviour independently checked); 1 miss (max2)
+⇒ ODG returned **FAILED (verified:false, committed:false) — NO false success**. This is ONE model / 4 tasks:
+the wired path works AND fails closed; it is NOT a general-reliability claim and defines no SLO.
+
+**Committed deterministic tests:** `implement-via-local-provider.test.ts` (33 assertions) covers the adapter
+with an INJECTED runner (no real model in the suite) + the STUB fail-closed matrix; `present:false` forces
+deterministic unavailability. Real-model runs stay out of the committed suite (env-dependent).

@@ -419,6 +419,57 @@ function localProviderActivation(io) {
   }
 }
 
+// ── LOCAL inference adapter (Stage-6, D-Stage6 CTO-authorized) ───────────────────────────────────────
+// Clean a model completion to raw source: strip ``` fences + stray ANSI. Pure.
+function cleanCompletion(s) {
+  return String(s == null ? "" : s)
+    .replace(/\x1B\[[0-9;?]*[A-Za-z]/g, "")
+    .replace(/```[a-zA-Z0-9_-]*\n?/g, "")
+    .replace(/```/g, "")
+    .trim();
+}
+// Resolve the LOCAL model invocation. ODG_LOCAL_MODEL_CMD (argv, prompt on stdin) → else local
+// `ollama run <ODG_LOCAL_MODEL|qwen2.5-coder:3b>` on the LOOPBACK daemon. LOCAL/loopback only: NO external
+// network, NO model download, NO cost. Pure.
+function resolveModelInvocation(prompt) {
+  const envCmd = process.env.ODG_LOCAL_MODEL_CMD;
+  if (typeof envCmd === "string" && envCmd.trim()) {
+    const parts = envCmd.trim().split(/\s+/);
+    return { cmd: parts[0], args: parts.slice(1), input: prompt, model: envCmd.trim() };
+  }
+  const model = (typeof process.env.ODG_LOCAL_MODEL === "string" && process.env.ODG_LOCAL_MODEL.trim()) || "qwen2.5-coder:3b";
+  return { cmd: "ollama", args: ["run", model, prompt], input: null, model };
+}
+// Is a LOCAL model resolvable? Fast, fail-closed. Probed lazily, never in fail-closed paths.
+function localModelPresent(deps) {
+  if (deps && typeof deps.present === "boolean") return deps.present;
+  if (typeof process.env.ODG_LOCAL_MODEL_CMD === "string" && process.env.ODG_LOCAL_MODEL_CMD.trim()) return true;
+  try { return (deps && deps.probe ? deps.probe() : _seams.spawn("ollama", ["list"], { encoding: "utf8", timeout: 10000 })).status === 0; }
+  catch { return false; }
+}
+// PRODUCTION default generator: prompt the LOCAL model (scoped to the one authorized file) and write its
+// cleaned completion into the provider's working COPY. Injectable modelRunner keeps it deterministically testable.
+function defaultLocalGenerate(ctx, deps = {}) {
+  const rel = Array.isArray(ctx.files) && ctx.files.length ? ctx.files[0] : null;
+  if (!rel) return { error: "no target file in write-set" };
+  const o = ctx.objective || {};
+  const goal = (typeof o.goal === "string" && o.goal) ||
+    (Array.isArray(o.objectives) && o.objectives[0] && o.objectives[0].goal) || String(o.objectiveId || "implement the file");
+  const current = (() => { try { return (ctx.io && ctx.io.readFileSync || fs.readFileSync)(path.join(ctx.workDir, rel), "utf8"); } catch { return ""; } })();
+  const prompt = `Output ONLY the complete new content of the file ${rel} — valid source code, no prose, no markdown fences. Task: ${goal}. Current content:\n${current}`;
+  const inv = resolveModelInvocation(prompt);
+  const run = typeof deps.modelRunner === "function"
+    ? deps.modelRunner
+    : (i) => _seams.spawn(i.cmd, i.args, { input: i.input || undefined, encoding: "utf8", timeout: deps.timeoutMs || 120000, maxBuffer: 1 << 20 });
+  let r;
+  try { r = run(inv); } catch (e) { return { error: "local model invocation failed: " + ((e && e.message) || e) }; }
+  if (!r || r.status !== 0 || !r.stdout) return { error: `local model non-zero/empty (status=${r && r.status})` };
+  const code = cleanCompletion(r.stdout);
+  if (code.length < 2) return { error: "empty model output after cleaning" };
+  (ctx.io && ctx.io.writeFileSync || fs.writeFileSync)(path.join(ctx.workDir, rel), code.endsWith("\n") ? code : code + "\n");
+  return { ok: true, bytes: code.length, model: inv.model };
+}
+
 // IMPLEMENT_VIA_LOCAL_PROVIDER (Stage-6) — ODG-orchestrated autonomous implementation of novel code via a
 // LOCAL provider. ODG owns every authority step; the provider only proposes a diff inside a disposable
 // working copy and has NO power to select the mission, widen scope, self-authorize, or commit. Fully
@@ -435,11 +486,13 @@ function implementViaLocalProvider(objective, opts = {}) {
   // 1. ACTIVATION GATE (fail-closed; LOCAL only; external untouched).
   const activation = typeof opts.activation === "string" ? opts.activation : localProviderActivation(io);
   if (activation !== "AUTONOMOUS_SANDBOXED") return refuse("PROVIDER_NOT_ACTIVATED", `localProviderActivation=${activation}`);
+  // Generator resolution: injected opts.generate (tests/explicit) wins; otherwise the PRODUCTION default is
+  // the LOCAL inference adapter — used ONLY when a local model is resolvable. NEVER an external fallback.
   const generate = typeof opts.generate === "function"
     ? opts.generate
-    : (localModel && localModel.isAvailable && localModel.isAvailable()) ? opts.generate : null;
+    : localModelPresent(opts) ? ((ctx) => defaultLocalGenerate(ctx, opts)) : null;
   if (typeof generate !== "function") {
-    return refuse("GENERATOR_UNAVAILABLE", "no local generator (ODG_LOCAL_MODEL_CMD unset); NOT falling back to an external/billable provider");
+    return refuse("GENERATOR_UNAVAILABLE", "no local generator (ODG_LOCAL_MODEL_CMD unset and no local ollama); NOT falling back to an external/billable provider");
   }
 
   // 2. Resolve the write-set (fail-closed on empty/glob/escape/missing).
@@ -1031,7 +1084,7 @@ function resolve(patch) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.
