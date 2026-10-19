@@ -17,5 +17,5 @@ Environment=ODG_RECOVER_HOST=127.0.0.1
 Environment=ODG_RECOVER_UNIT=odg-preprod.service
 Environment=ODG_RECOVER_MAX=2
 Environment=ODG_RECOVER_WINDOW=300
-Environment=ODG_SYSTEMCTL=sudo systemctl
+Environment="ODG_SYSTEMCTL=sudo systemctl"
 ExecStart=/bin/bash /home/ubuntu/bmax-v21/scripts/odg-recover.sh

@@ -13,4 +13,5 @@ Environment=ODG_RELEASE_ROOT=/home/ubuntu/odg-releases
 Environment=ODG_RECOVER_HOST=127.0.0.1
 Environment=ODG_RECOVER_PORT=3000
 Environment=ODG_HEALTH_THRESHOLD=3
+Environment="ODG_SYSTEMCTL=sudo systemctl"
 ExecStart=/bin/bash /home/ubuntu/bmax-v21/scripts/odg-healthcheck.sh

@@ -41,11 +41,13 @@ if ! bash "$REPO/scripts/odg-release.sh" rollback --no-serve --port "$PORT" --ho
 fi
 
 # --- restart the service from the now-good current, then confirm real health (bounded) ---
-# Best-effort restart (QUEUED, --no-block). A synchronous restart from within the unit's own OnFailure transaction
-# conflicts with that transaction, so this command may return non-zero even though the swap + systemd's own
-# transaction bring the unit back up. Therefore recovery is judged by OBSERVED HEALTH below (the real goal), NOT by
-# this command's exit code — we log a best-effort note and proceed to the authoritative health check.
-"${SYSTEMCTL[@]}" restart --no-block "$UNIT" >&2 2>&1 || echo "[odg-recover] restart --no-block returned non-zero (OnFailure job-conflict expected); health-wait is authoritative" >&2
+# Restart from the now-good `current`. A BLOCKING restart is deterministic when the unit is ACTIVE (the
+# alive-but-unhealthy / healthcheck path — no job-conflict): systemd stops the stale process and starts the swapped
+# `current` before returning, so the stale release never lingers on the port. When invoked from the unit's OWN
+# OnFailure transaction (crash path), a blocking restart conflicts with that transaction and returns non-zero — that
+# is EXPECTED and non-fatal here: recovery is judged by OBSERVED HEALTH below (systemd's own transaction + the swap
+# bring it up), never by this command's exit code.
+"${SYSTEMCTL[@]}" restart "$UNIT" >&2 2>&1 || echo "[odg-recover] restart returned non-zero (OnFailure job-conflict expected on the crash path); health-wait is authoritative" >&2
 code="000"
 for i in 1 2 3 4 5; do
   code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 8 "http://$HOST:$PORT/api/health" 2>/dev/null || echo 000)"

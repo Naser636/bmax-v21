@@ -30,6 +30,7 @@ Environment=HOSTNAME=127.0.0.1
 Environment=NEXT_TELEMETRY_DISABLED=1
 Environment=ODG_CLIENT_STORE=/var/lib/odg/clients
 Environment=ODG_RUNTIME_STATE_DIR=/home/ubuntu/bmax-v21/runtime/generated
+SuccessExitStatus=143 SIGTERM
 Restart=on-failure
 RestartSec=3
 # Hardening (verify against the real access set before applying):
