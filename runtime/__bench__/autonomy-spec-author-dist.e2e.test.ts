@@ -39,7 +39,7 @@ const STAGE_SEEDS = [
   "project-context-engine", "fleet-stage", "decision-engine", "patch-engine", "patch-executor",
   "validation-engine", "mission-lifecycle", "mission-ledger", "final-report",
 ];
-const ORCHESTRATION = ["pipeline-builder", "stage-effect", "checkpoint-engine"];
+const ORCHESTRATION = ["pipeline-builder", "stage-effect", "checkpoint-engine", "log-slug"]; // log-slug: the entry odg-run requires ../core/log-slug (first require) — an entry sibling, not a stage/orchestration dep; was missing from the relocation closure
 
 // Pure REAL runtime modules for the independent recompute (no reimplementation of measure/attribution).
 const { attributeObjectives } = require(path.join(CORE, "objective-attribution.js"));

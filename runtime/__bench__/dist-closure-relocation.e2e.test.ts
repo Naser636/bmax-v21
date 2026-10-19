@@ -52,7 +52,7 @@ const STAGE_SEEDS = [
   "validation-engine", "mission-lifecycle", "mission-ledger", "final-report",
 ];
 // Compiled orchestration modules the ENTRY requires from ../core (dist/core), NOT reached via the stages.
-const ORCHESTRATION = ["pipeline-builder", "stage-effect", "checkpoint-engine"];
+const ORCHESTRATION = ["pipeline-builder", "stage-effect", "checkpoint-engine", "log-slug"]; // log-slug: the entry odg-run requires ../core/log-slug (first require) — an entry sibling, not a stage/orchestration dep; was missing from the relocation closure
 // Support DATA dirs the modules read; core/bin also carry the entry's CWD-relative legacy helpers.
 const COPY_DIRS = ["core", "bin", "constitution", "policies", "governance", "brain"];
 
