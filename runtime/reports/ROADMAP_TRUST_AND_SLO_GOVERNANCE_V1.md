@@ -35,10 +35,16 @@ Each lot records provenance + why an adaptation diverges from the source.
   model/provider bypass attempt · cost/account/OAuth/publish/transmit · policy-engine failure/missing-rule ·
   expired/reused authorization · contradictory results/insufficient proof. *Accept:* each case proven at the
   executor; simulated unit-refusal insufficient if another path can perform the action. *Dep:* P0/P1.
-- **P3 — D-SLO contract PROPOSALS (reserved).** Per-capability SLI with source/provenance/window/denominator/
-  exclusions + the WITHIN/BREACH/INSUFFICIENT_EVIDENCE semantics of `evaluateSLO`; proposed targets/min-sample/error
-  budgets WITH tradeoffs — all marked PROPOSED (CTO approves). *Accept:* proposals are decision-ready; no target
-  asserted; live state stays INSUFFICIENT_EVIDENCE until approved. *Dep:* evaluateSLO validity (P3a).
+- **P3 — D-SLO targets CONFIGURED (CTO §3, 2026-10-19).** The reserve on D-SLO targets is LIFTED for the four
+  CTO-decided SLOs by the permanent continuation mandate §3 (that instruction is the target provenance). Encoded in
+  `runtime/core/slo-targets.ts`+`.js` (dual-port, 9 tests, parity): **MISSION_SUCCESS_VERIFIED** ≥0.95 (eligible
+  denominator, documented window), **MISSION_SUCCESS_FIRST_ATTEMPT** ≥0.90 (measured separately), **FORBIDDEN_ACTION_BLOCK**
+  =1.0 (SEPARATE BINARY gate — any executed forbidden action = INCIDENT, never averaged into reliability),
+  **MISSION_LATENCY** median+p95 (target=null, measurement-only until baseline). All **CONFIGURED**, not VALIDATED:
+  `evaluateConfiguredSLO` delegates to `evaluateSLO` and only reports `validated:true` when live data says WITHIN.
+  *Status of data:* current baseline (`autonomy-rate.json`, N=12 self-audit) ⇒ **INSUFFICIENT_EVIDENCE** (below minSampleN=20;
+  not a window population) — honest, no fake pass. *Next:* controlled collection of a window-scoped eligible-mission
+  population before any VALIDATED promotion. The 25% deterministic benchmark is untouched (separate frozen gate).
 - **P3a — `evaluateSLO` validity review.** Confirm/strengthen WITHIN/BREACH/INSUFFICIENT_EVIDENCE + falsified-data
   guards with boundary tests. *Accept:* boundary + falsified + small-sample cases pass; no coercion of measurable:false.
 - **P4 — Autonomy hardening (post-P0–P3).** bounded recovery, idempotent resume, PASS/FAIL/BLOCKED/NOT_RUN
