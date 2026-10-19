@@ -42,3 +42,30 @@ export const recordMissionToLedger: LedgerRecorder = (mission, validated, status
   };
   return recordMission(mission);
 };
+
+/**
+ * Attempt-level telemetry recorder — the honest SLO denominator source (CTO continuation §1). The proven-only
+ * mission-ledger refuses any non-validated mission, so it structurally cannot represent a failure. This records
+ * EVERY run's real outcome (RECORDED | SKIPPED+reason) to an append-only log, so failures ARE representable.
+ * Non-blocking (never affects the mission path), and it records the HONEST verdict just computed — no fabrication.
+ */
+export type AttemptRecorder = (mission: string, validated: boolean, status: string) => void;
+
+const ATTEMPTS_LOG = path.join(GENERATED_DIR, "mission-attempts.jsonl");
+
+export const recordMissionAttempt: AttemptRecorder = (mission, validated, status) => {
+  try {
+    const require = createRequire(import.meta.url);
+    // Source .js port (always present; parity-tested). It is a pure leaf module, NOT part of the dist runtime
+    // closure, so it is not emitted to runtime/dist/core — require the committed source port directly.
+    const { attemptFromLedgerResult, recordAttempt } = require("../../runtime/core/mission-attempt-log.js") as {
+      attemptFromLedgerResult: (m: string, r: unknown, ts: string) => unknown;
+      recordAttempt: (p: string, rec: unknown) => unknown;
+    };
+    // Map the honest verdict to a recordMission-shaped result so the attempt mirrors the ledger's own vocabulary.
+    const rec = attemptFromLedgerResult(mission, { skipped: !validated, reason: validated ? null : status }, new Date().toISOString());
+    recordAttempt(ATTEMPTS_LOG, rec);
+  } catch {
+    /* non-blocking telemetry — a logging failure must never affect the mission */
+  }
+};

@@ -10,7 +10,7 @@ import { createRequire } from "node:module";
 import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { RuntimeKernel } from "./runtime-kernel";
 import { createMissionIntent } from "./mission-intent";
-import { LedgerRecorder, recordMissionToLedger } from "./ledger-record-adapter";
+import { LedgerRecorder, recordMissionToLedger, AttemptRecorder, recordMissionAttempt } from "./ledger-record-adapter";
 
 /**
  * A mission-scoped §303 Expert Instance, as produced by the released (read-only) assembler
@@ -51,6 +51,8 @@ export class LocalMissionRunner {
     private readonly kernel = new RuntimeKernel(),
     // Seam to the EXISTING ledger writer (recordMission); injectable for tests.
     private readonly recordLedger: LedgerRecorder = recordMissionToLedger,
+    // Seam to the attempt-level SLO telemetry (every outcome, incl. failures); injectable for tests.
+    private readonly recordAttempt: AttemptRecorder = recordMissionAttempt,
   ) {}
 
   run(id: string, name: string = id): LocalMissionResult {
@@ -69,6 +71,9 @@ export class LocalMissionRunner {
         (execution as { report?: { status?: string } })?.report?.status ?? "FAILED";
       const validated = status === "SUCCESS";
       this.recordLedger(id, validated, status);
+      // Attempt-level SLO telemetry: record THIS run's honest outcome (success OR failure) so a real
+      // success-rate denominator can accumulate (the proven-only ledger cannot hold failures). Non-blocking.
+      this.recordAttempt(id, validated, status);
       // Read-only §304→§303 surfacing: attach the mission-scoped Expert Instance. Never on the
       // decision path — computed AFTER the verdict, fails closed to undefined, changes nothing.
       const expertInstance = this.compileExpertInstance(plan);
