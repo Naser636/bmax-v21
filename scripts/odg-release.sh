@@ -55,15 +55,18 @@ cmd_build() {
   log "building release from $short in isolated worktree $wt"
   # Build from a PRECISE checkout (immutable source); clean worktree ⇒ reproducible.
   git -C "$REPO" worktree add -q --detach "$wt" "$sha"
-  local buildId rid app
+  local buildId rid app blog="$wt/.release-build.log"
   (
     cd "$wt"
-    npm ci --no-audit --no-fund >/dev/null 2>&1 || die "npm ci failed"
-    npm run build >/dev/null 2>&1 || die "next build failed"
+    npm ci --no-audit --no-fund >"$blog" 2>&1 || die "npm ci failed (see $blog)"
+    # The Next app requires the COMPILED runtime (runtime/dist, git-ignored) — e.g. api/intake requires
+    # runtime/dist/core/intake-endpoint.js. Build it BEFORE next build, else Turbopack fails module resolution.
+    npm run build:runtime >>"$blog" 2>&1 || die "build:runtime failed (see $blog)"
+    npm run build >>"$blog" 2>&1 || die "next build failed (see $blog)"
     # Static assets are NOT auto-copied into standalone — copy them so the artifact is COMPLETE.
     cp -r public .next/standalone/ 2>/dev/null || true
     mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/
-  )
+  ) || die "build steps failed (see $blog)"
   buildId="$(cat "$wt/.next/BUILD_ID")"
   rid="rel-$(git -C "$REPO" show -s --format=%cd --date=format:%Y%m%dT%H%M%SZ "$sha" | tr -d :)-$short-$buildId"
   app="$RELEASE_ROOT/$rid/app"
