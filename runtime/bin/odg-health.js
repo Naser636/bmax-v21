@@ -137,7 +137,10 @@ if (require.main === module) {
   // §F — READ-ONLY compass coherence observable: surfaces prose(ODG_PROJECT_STATE.md)/HEAD divergence so a stale
   // prose is visible (CONSISTENT/BEHIND/DIVERGENT/UNKNOWN), never blocking operations, never a fabricated pass.
   try {
-    const { compassProseDivergence } = require("../../scripts/compass-update.js");
+    // cwd-relative require so it resolves from BOTH runtime/bin and runtime/dist/bin — the __dirname-relative
+    // "../../scripts" path breaks from the deeper dist dir (→ require throws → compass line silently dropped,
+    // the exact JS↔dist(TS) parity divergence). Same pattern as odg-status.ts's CM-4 classifier require.
+    const { compassProseDivergence } = require(path.resolve(process.cwd(), "scripts", "compass-update.js"));
     const d = compassProseDivergence(process.cwd());
     console.log(`Compass    : ${d.status}${d.proseHead ? ` (prose ${d.proseHead} vs HEAD ${String(d.head || "?").slice(0, 7)})` : ""} — ${d.reason}`);
   } catch { /* observable only — never affects health exit */ }
