@@ -23,7 +23,10 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); pa
 // Normalize non-port-related variation so JS vs TS output is comparable: ISO timestamps AND the per-run
 // isolated temp --cwd store path (each sequence() uses its own mkdtemp dir, which some outputs echo, e.g.
 // launch-readiness persistence.base). These differences are test-harness artifacts, not port behaviour.
-const normTs = (s) => String(s || "").replace(/\d{4}-\d{2}-\d{2}T[\d:.]+Z/g, "<TS>").replace(/\/tmp\/odgclient-par-[A-Za-z0-9]+/g, "<STORE>");
+// The store is mkdtemp(os.tmpdir() + "odgclient-par-"); os.tmpdir() may be /tmp OR a redirected TMPDIR
+// (e.g. a scratchpad like /home/.../.cache/odg-tmp), so match the "odgclient-par-<rand>" segment under ANY
+// parent dir — not just /tmp — else the per-port-distinct store path leaks and breaks parity spuriously.
+const normTs = (s) => String(s || "").replace(/\d{4}-\d{2}-\d{2}T[\d:.]+Z/g, "<TS>").replace(/[^"\s]*odgclient-par-[A-Za-z0-9]+/g, "<STORE>");
 
 // Run `odg client <args>` forcing a given runtime (ts default | js rollback). cwd=REPO so the wrapper
 // resolves; --cwd=<store> isolates storage. Fresh process each call.
