@@ -1,0 +1,39 @@
+# CANDIDATE — NOT INSTALLED. Corrected odg-preprod.service for the Phase-2 immutable release pipeline.
+# Install requires sudo + a change window + rollback (see deploy/README-systemd.md). Do NOT apply ad hoc.
+#
+# Key corrections vs the live /etc/systemd/system/odg-preprod.service (2026-10-19):
+#   - WorkingDirectory + ExecStart point at the release pipeline's atomic `current` artifact (IMMUTABLE,
+#     per-commit), NOT /home/ubuntu/bmax-v21/.next/standalone (a MUTABLE/rebuildable build dir).
+#   - ODG_RUNTIME_STATE_DIR set (absolute, persistent) so the dashboard reads LIVE runtime state at request
+#     time, never the build-time bundled snapshot (the Phase-3 data-at-runtime fix).
+#   - ReadWritePaths scoped to the two persistent data dirs only; everything else read-only (hardening).
+[Unit]
+Description=ODG Preproduction dashboard (private, loopback-only; release-pipeline artifact)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+# Release pipeline atomic pointer — `odg-release.sh activate <rid>` swaps this; then `systemctl restart`.
+WorkingDirectory=/home/ubuntu/odg-releases/current/app
+ExecStart=/usr/bin/node /home/ubuntu/odg-releases/current/app/server.js
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+Environment=NEXT_TELEMETRY_DISABLED=1
+Environment=ODG_CLIENT_STORE=/var/lib/odg/clients
+Environment=ODG_RUNTIME_STATE_DIR=/home/ubuntu/bmax-v21/runtime/generated
+Restart=on-failure
+RestartSec=3
+# Hardening (verify against the real access set before applying):
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/odg/clients /home/ubuntu/bmax-v21/runtime/generated
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target
