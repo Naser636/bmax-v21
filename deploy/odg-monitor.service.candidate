@@ -1,0 +1,26 @@
+# CANDIDATE — private supervision tick (run by odg-monitor.timer). READ-ONLY observation only.
+# Runs the two shipped detectors (exposure-audit + maintenance-alerts) via scripts/odg-monitor.sh and
+# emits to the journal; each CLI keeps its own deduped alert file under runtime/generated/.
+# It NEVER remediates: no restart, no rollback, no config/firewall/bind change, no sudo, NO OnFailure,
+# no business-data write. Unprivileged (User=ubuntu). Distinct from odg-healthcheck (that one detects
+# alive-but-unhealthy and triggers bounded recovery; THIS one only observes/reports slow-moving signals).
+[Unit]
+Description=ODG private supervision tick (exposure + maintenance — observe/report only, no remediation)
+After=network.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/bmax-v21
+Environment=ODG_REPO=/home/ubuntu/bmax-v21
+Environment=ODG_RELEASE_ROOT=/home/ubuntu/odg-releases
+ExecStart=/bin/bash /home/ubuntu/bmax-v21/scripts/odg-monitor.sh
+# Least privilege + bounded: cannot escalate, isolated /tmp, hard time + resource caps. No AF/ProtectSystem
+# restrictions (the read-only probes need ss/netlink + loopback curl + systemctl show, same surface the
+# working odg-healthcheck unit uses).
+NoNewPrivileges=yes
+PrivateTmp=yes
+TimeoutStartSec=45
+MemoryMax=256M
+CPUQuota=50%

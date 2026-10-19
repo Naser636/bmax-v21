@@ -40,3 +40,29 @@ Pre-checks: `odg-release.sh status` shows a valid `current`; `odg-release.sh ver
 ## Reboot test (NOT RUN)
 After install, an authorized reboot drill must confirm the unit restarts the dashboard on boot and binds loopback.
 Until executed in a window, the reboot result is **NOT RUN**.
+
+---
+
+# odg-monitor.service + odg-monitor.timer — INSTALLED + ACTIVE (private supervision, read-only)
+
+**Status (2026-10-19):** INSTALLED, timer `enabled`+`active`, validated live. Candidates:
+`deploy/odg-monitor.service.candidate` / `deploy/odg-monitor.timer.candidate` (source of truth).
+
+Runs `scripts/odg-monitor.sh` every 10 min (`OnUnitActiveSec=600`, 120s boot grace) as **user `ubuntu`** — a
+oneshot that invokes the two shipped read-only detectors (`runtime/bin/odg-exposure-check.js` +
+`runtime/bin/odg-maintenance-check.js`). Output → systemd journal; each CLI keeps its own deduped alert file
+under `runtime/generated/`. **No remediation** (no restart/rollback/config/firewall/bind change, no sudo, NO
+`OnFailure`, no business-data write); bounded (`TimeoutStartSec=45`, `MemoryMax=256M`, `CPUQuota=50%`,
+`NoNewPrivileges=yes`, `PrivateTmp=yes`). Distinct from `odg-healthcheck.timer` (30s, failure→bounded recovery).
+
+Validation: `systemd-analyze verify` clean; one-shot + timer-fired runs both `Result=success`, odg-preprod
+untouched (same MainPID, NRestarts=0), ODG still loopback-only, no spurious alert files.
+
+## Install (done — sudo, private perimeter)
+`sudo cp deploy/odg-monitor.service.candidate /etc/systemd/system/odg-monitor.service`
+`sudo cp deploy/odg-monitor.timer.candidate /etc/systemd/system/odg-monitor.timer`
+`sudo systemctl daemon-reload && sudo systemctl enable --now odg-monitor.timer`
+
+## Reversibility (no data/journal loss)
+`sudo systemctl disable --now odg-monitor.timer` (stops future ticks; journals + alert files kept).
+Full removal: also `sudo rm /etc/systemd/system/odg-monitor.{service,timer} && sudo systemctl daemon-reload`.

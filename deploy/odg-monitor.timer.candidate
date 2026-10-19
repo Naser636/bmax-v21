@@ -1,0 +1,15 @@
+# CANDIDATE — fires the private supervision tick every 10 min (after a 120s boot grace). Private; no
+# network exposure. Cadence rationale: exposure-drift and resource/backup-age signals are SLOW-moving, so a
+# 10-min poll is sufficient and cheap — the fast 30s odg-healthcheck.timer already covers failure/recovery.
+# Reversible: `systemctl disable --now odg-monitor.timer` stops it, leaving journals + alert files intact.
+[Unit]
+Description=ODG private supervision timer (exposure + maintenance, 10-min cadence)
+
+[Timer]
+OnBootSec=120
+OnUnitActiveSec=600
+AccuracySec=30s
+Persistent=false
+
+[Install]
+WantedBy=timers.target
