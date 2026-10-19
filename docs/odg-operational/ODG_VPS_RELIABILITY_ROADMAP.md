@@ -1,0 +1,24 @@
+# ODG Private-VPS Reliability & Autonomy Roadmap (P1–P6)
+
+**Status:** SUBORDINATE operational roadmap — never overrides the canonical `runtime/governance/ROADMAP.json`,
+Master, or the Constitution (those win). Linked from `ODG_PROJECT_STATE.md`. Target: the full ODG/BMAX system
+durable + recoverable on `vps-6d919042`, **private only** (loopback / SSH tunnel; no public exposure, ever).
+Initialised Phase 9A @`e871ba8`. Statuses are honest: NOT RUN / BLOCKED until really proven.
+
+| Prog | Item | Acceptance | Proof method | Status (2026-10-19) |
+|---|---|---|---|---|
+| **P1** Resilience / self-repair | fault detect + evidence diagnosis; bounded timed restart (no infinite loop); repair only if bounded/idempotent/reversible; auto-rollback to a known-good release; fail-closed stop on repeated failure/unknown state | adversarial tests at the executor; attempt caps + timeouts + no-concurrent-run | **NOT RUN** (design). Partial today: systemd `Restart=on-failure RestartSec=3`; release rollback PROVEN (manual). Bounded auto-repair/auto-rollback automation not built. |
+| **P2** Backup / recovery | map indispensable data+config; encrypted off-VPS backup if an authorized destination exists; integrity check + isolated restore; retention + accidental-delete protection + capacity; realistic RTO/RPO + limits | `odg backup`/`restore` + `sha256sum -c` + isolated-temp restore | **LOCAL PASS** (C1/C2 @200017Z: integrity-verified, isolated restore ok, prod-target refused, repo.bundle offline-recovery). **Off-host BLOCKED** (no authorized external destination). Retention: timestamped, never overwrite; perms 0700. |
+| **P3** Private security | guards against public exposure; loopback-binding verify + drift detect; secrets absent from logs/reports/artifacts/git; least-privilege + progressive systemd hardening with tests; release-chain + artifact-identity verify | `ss` bind check; secret-scan; `systemd-analyze security`; buildId==release | **PARTIAL**: loopback verified (127.0.0.1); store holds no secrets by construction; candidate unit hardened (ProtectSystem/ProtectHome/ReadWritePaths/RestrictAddressFamilies); artifact identity PROVEN (buildId==release). Automated drift-alert NOT RUN. |
+| **P4** Release / validation | reproducible build (as demonstrable); immutable release + pre-activation validation + build-identity verify; smoke/health + auto-rollback + post-rollback proof; private automated browser test if tooling present | `odg-release.sh` build/verify/activate/rollback; health 200 | **PASS** (pipeline 12/12 + real build/activate/rollback drills; pre-activation staging health). **Browser test NOT RUN** (no playwright/puppeteer/chromium present — not added). |
+| **P5** Minimal maintenance | health, disk, memory, NRestarts, backup-age, release state; actionable deduped alerts; recurrent-incident + manual-toil metrics; unified source of truth | `odg health` + compass checkpoint + divergence observable | **PARTIAL**: `odg health` + machine checkpoint + `compassProseDivergence` observable; disk/NRestarts inspectable. Automated actionable alerting NOT built. |
+| **P6** Machine-crash recovery | checklist + preconditions + co-tenant check + fallback plan; real reboot only in a safe maintenance window; post-boot validation + recovery test | the C4 checklist below | **NOT RUN** (reboot would kill this session + co-tenant services — human-triggered window required; unit is ENABLED so it starts on boot). |
+
+## C4 — Reboot checklist (NOT RUN this mission — for a human-triggered maintenance window)
+**Pre:** `git status` clean + pushed; fresh backup exists + `sha256sum -c` OK; `systemctl is-enabled odg-preprod`=enabled; note co-tenant services (fleet-bridge, ollama, :8080) and that a reboot restarts ALL of them; confirm no in-flight client intake.
+**Reboot (human):** `sudo reboot` from an SSH session (NOT from an ODG automation — it terminates the session).
+**Post:** `systemctl is-active odg-preprod`=active + `NRestarts`=0; `ss -ltnp | grep :3000` binds `127.0.0.1` only (NEVER 0.0.0.0); `curl 127.0.0.1:3000/api/health`→200 READY buildId==current release; `/api/runtime-state`→200 live; co-tenant services back; `/var/lib/odg` data intact.
+**Fallback:** if the unit fails post-boot → restore the backed-up unit (`/etc/systemd/system/odg-preprod.service.bak-*`) + `daemon-reload` + restart, or `odg-release.sh rollback` then restart. Stop (fail-closed) if data integrity is uncertain.
+
+## C3 — Private browser verification (graphical render NOT RUN — no browser tooling on the VPS)
+From a trusted workstation: `ssh -L 3000:127.0.0.1:3000 ubuntu@vps-6d919042` then open `http://127.0.0.1:3000/` locally. Expect the "BMAX v21 — Runtime Dashboard" page with live health/missions/queue. HTTP + HTML structure are verified here; pixel rendering requires this human step (or an installed browser, which this mission does not add).
