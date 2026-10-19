@@ -34,7 +34,7 @@ let COMPILED = "";
 function buildEngine(): void {
   const { closure, missing } = computeClosure(["final-report"]);
   check(missing.length === 0, `closure resolves (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 18, `closure is the authoritative 18-module set (size=${closure.length})`); // size updated 16→18 (FINAL_REPORT_TEST_FIX): authoritative source+dist closure grew as the capability graph was wired (objective-attribution→capability-probes→capability-executors→…); .js≡.ts equivalence unchanged
+  check(closure.length === 21, `closure is the authoritative 21-module set (size=${closure.length})`); // 16→18 (FINAL_REPORT_TEST_FIX) → 18→21 (IMPLEMENT_LOCAL_CODE): capability-executors now composes delegate-isolation + local-model-manager (+ transitive provider-sandbox) for the Stage-6 governed local-provider capability; reused modules, not new primitives; .js≡.ts equivalence unchanged
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-fr-dist-")); sandboxes.push(dir);
   for (const n of closure) place(dir, n);
   check(fs.readFileSync(path.join(DIST_CORE, "final-report.js"), "utf8") === fs.readFileSync(path.join(dir, "final-report.js"), "utf8"), "co-located final-report.js IS the compiled build output");

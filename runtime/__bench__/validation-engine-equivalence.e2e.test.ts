@@ -99,7 +99,7 @@ function buildCompiledEngineDir(): void {
   // drift — an added OR removed module — still fails the gate for review.
   // 17→18 (V64j): capability-executors.writeEvidence now stamps provenance via `evidence-provenance`
   // (audit C5-A2), a legitimate new transitive member of the closure; count updated to match.
-  check(closure.length === 18, `transitive closure is the expected 18-module set (size=${closure.length})`);
+  check(closure.length === 21, `transitive closure is the expected 21-module set (size=${closure.length})`); // 18→21 (IMPLEMENT_LOCAL_CODE): capability-executors now composes delegate-isolation + local-model-manager (+ transitive provider-sandbox) — reused modules; .js≡.ts equivalence unchanged
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-ve-dist-"));
   sandboxes.push(dir);
   for (const n of closure) { const prov = placeInDistCore(dir, n); composition[prov]++; }

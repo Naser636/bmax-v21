@@ -3,5 +3,6 @@
   "allowProviders":true,
   "providersEnabled":false,
   "providerActivation":"MANUAL_ONLY",
+  "localProviderActivation":"AUTONOMOUS_SANDBOXED",
   "fallback":"LOCAL_RUNTIME"
 }

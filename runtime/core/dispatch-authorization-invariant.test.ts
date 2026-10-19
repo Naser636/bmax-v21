@@ -49,6 +49,7 @@ const CONSEQUENTIAL = new Set([
   "Governed Bash/Linux Command",        // command execution in sandbox
   "External Research Acquisition",      // network acquisition
   "Provider Activation",                // live provider call (gated downstream: provider-live-call-gate)
+  "Implement Via Local Provider",       // applies a LOCAL-provider-authored diff (scope-validated, fail-closed, ODG never commits)
 ]);
 const OBSERVATIONAL = new Set([
   "Clean Workspace",                    // scans transient artifacts; deletes NOTHING (read-only)
@@ -92,6 +93,12 @@ try {
   check(resolve({ objectiveId: "EXTERNAL_RESEARCH_x" }).capability === "External Research Acquisition", "resolve routes EXTERNAL_RESEARCH_ ⇒ External Research Acquisition");
   check(resolve({ objectiveId: "ODG_WRITE_x" }).capability === "ODG Synthetic Deliverable", "resolve routes ODG_WRITE_ ⇒ ODG Synthetic Deliverable");
   check(resolve({ objectiveId: "ODG_SPEC_x" }).capability === "ODG Spec Author", "resolve routes ODG_SPEC_ ⇒ ODG Spec Author");
+  check(resolve({ objectiveId: "IMPLEMENT_LOCAL_CODE_x" }).capability === "Implement Via Local Provider", "resolve routes IMPLEMENT_LOCAL_CODE ⇒ Implement Via Local Provider");
+
+  // IMPLEMENT_LOCAL_CODE with no local generator ⇒ GENERATOR_UNAVAILABLE ⇒ run() throws (fail-closed, no
+  // live effect, and crucially NO external/billable provider fallback). A throw is a refusal before effect.
+  const impl = failClosed("IMPLEMENT_LOCAL_CODE_noauth", (res) => res && res.summary && res.summary.status !== "EXECUTED");
+  check(impl.routed && impl.ok, "IMPLEMENT_LOCAL_CODE with no generator ⇒ fail-closed (GENERATOR_UNAVAILABLE, no external fallback, no effect)");
 
   // BASH_COMMAND unauthorized ⇒ dry-run default, NEVER EXECUTED (no command / no execute flag).
   const bash = failClosed("BASH_COMMAND__noauth", (res) => res && res.summary && res.summary.outcome !== "EXECUTED" && res.summary.outcome !== "SANDBOX_OBSERVED");

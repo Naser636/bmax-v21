@@ -61,6 +61,12 @@ const { buildAutonomyRate } = require("./autonomy-rate");
 // provenance block (source commit + tree-dirty + sha256 of its own payload). Additive and fail-closed —
 // it never changes an executor's control flow or the evidence path returned to callers.
 const { stampProvenance } = require("./evidence-provenance");
+// Stage-6 governed autonomous code implementation: REUSE the proven delegation seam (working-copy →
+// scoped diff → fail-closed validateScope → atomic apply; ODG never auto-commits) + the sandboxed local
+// generator tier. Composed here; NEITHER module is modified. No external/billable provider is ever
+// activated from this path — unavailability fails closed.
+const delegateIso = require("./delegate-isolation");
+const localModel = require("./local-model-manager");
 
 const GENERATED_DIR = "runtime/generated";
 const CONNECTIVITY_EVIDENCE = path.join(GENERATED_DIR, "connectivity-audit.json");
@@ -83,6 +89,7 @@ const SPEC_AUTHOR_EVIDENCE = path.join(GENERATED_DIR, "odg-spec-author.json");
 // turns an otherwise-no-op observability objective into real EVIDENCED work (never a fabricated proof —
 // absent real run inputs or a non-honest signal makes the capability FAIL, not pass).
 const OBSERVABILITY_VERIFICATION_EVIDENCE = path.join(GENERATED_DIR, "observability-verification.json");
+const IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE = path.join(GENERATED_DIR, "implement-via-local-provider.json");
 const SPEC_AUTHOR_NAME = "odg-spec.json";
 // tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
 // Registry + Orchestrator and runs the selected provider — the socle→provider edge.
@@ -410,6 +417,88 @@ function formulateSyntheticManifest(plan: any) {
         ? plan.objectives.map((o: any) => (o && typeof o.id === "string" ? o.id : null)).filter(Boolean).slice().sort()
         : [];
     return `ODG-SYNTHETIC-MANIFEST\nmission=${mission}\nobjectives=${ids.join(",")}\ngenerator=ODG_CAPABILITY\n`;
+}
+
+// LOCAL activation sub-policy reader (Stage-6). LOCAL autonomous generation is permitted ONLY when
+// runtime-mode declares localProviderActivation==="AUTONOMOUS_SANDBOXED". The EXTERNAL provider policy
+// (providerActivation / providersEnabled) is NEVER read or changed here. Fail-closed: any error ⇒ DISABLED.
+function localProviderActivation(io: any): string {
+  try {
+    const cfg = JSON.parse(((io && io.readFileSync) || fs.readFileSync)("runtime/config/runtime-mode.json", "utf8"));
+    return typeof cfg.localProviderActivation === "string" ? cfg.localProviderActivation : "DISABLED";
+  } catch {
+    return "DISABLED";
+  }
+}
+
+// IMPLEMENT_VIA_LOCAL_PROVIDER (Stage-6) — ODG-orchestrated autonomous implementation of novel code via a
+// LOCAL provider. ODG owns every authority step; the provider only proposes a diff inside a disposable
+// working copy and has NO power to select the mission, widen scope, self-authorize, or commit. Fully
+// injectable (opts.io / opts.generate / opts.verify / opts.activation / opts.root) for deterministic
+// testing with a STUB generator (no model download, no network, no cost). Returns a structured result;
+// NEVER a false success — unavailable generator / malformed output / out-of-scope / failed verification
+// all return an explicit non-EXECUTED status, and NO external/billable provider is ever activated.
+function implementViaLocalProvider(objective: any, opts: any = {}): any {
+  const io = opts.io || fs;
+  const root = typeof opts.root === "string" ? opts.root : process.cwd();
+  const refuse = (code: string, detail: any): any =>
+    ({ status: "REFUSED", verified: false, committed: false, code, detail, authoredBy: "LOCAL_PROVIDER", appliedBy: null });
+
+  // 1. ACTIVATION GATE (fail-closed; LOCAL only; external untouched).
+  const activation = typeof opts.activation === "string" ? opts.activation : localProviderActivation(io);
+  if (activation !== "AUTONOMOUS_SANDBOXED") return refuse("PROVIDER_NOT_ACTIVATED", `localProviderActivation=${activation}`);
+  const generate = typeof opts.generate === "function"
+    ? opts.generate
+    : (localModel && localModel.isAvailable && localModel.isAvailable()) ? opts.generate : null;
+  if (typeof generate !== "function") {
+    return refuse("GENERATOR_UNAVAILABLE", "no local generator (ODG_LOCAL_MODEL_CMD unset); NOT falling back to an external/billable provider");
+  }
+
+  // 2. Resolve the write-set (fail-closed on empty/glob/escape/missing).
+  const writeSet = Array.isArray(objective && objective.authorized_paths) ? objective.authorized_paths
+    : Array.isArray(objective && objective.writeSet) ? objective.writeSet : [];
+  const resolved = delegateIso.resolveWriteSet(root, writeSet);
+  if (!resolved.ok) return refuse("INVALID_WRITE_SET", resolved.error);
+
+  // 3. Materialize a disposable working copy of ONLY the authorized files (no repo/.git/network).
+  const work = delegateIso.materializeWorkingCopy(root, resolved.files, io);
+
+  // 4. GENERATE via the LOCAL provider into the work copy (the provider sees only the copy).
+  let gen: any;
+  try { gen = generate({ objective, workDir: work.workDir, files: resolved.files, pristine: work.pristine, io }); }
+  catch (e: any) { return refuse("PROVIDER_ERROR", String((e && e.message) || e)); }
+  if (gen && gen.error) return refuse("MALFORMED_OUTPUT", String(gen.error));
+
+  // 5. Observe the effect as a diff; VALIDATE SCOPE (fail-closed, atomic — out-of-scope ⇒ nothing applied).
+  const changes = delegateIso.diffWorkingCopy(work.pristine, work.workDir, io);
+  if (!changes.length) return refuse("NO_CHANGE", "provider produced no change in the authorized working copy");
+  const scope = delegateIso.validateScope(changes, resolved.files);
+  if (!scope.ok) return refuse("OUT_OF_SCOPE", scope.detail);
+
+  // 6. Idempotence: apply ONLY changes whose real-tree content actually differs (replay ⇒ zero mutation).
+  const effective = changes.filter((c: any) => {
+    try { return ((io.readFileSync || fs.readFileSync)(path.join(root, c.rel), "utf8")) !== c.after; }
+    catch { return true; }
+  });
+
+  // 7. APPLY within the write-set only (applyProposal re-validates — defense in depth).
+  const applied = delegateIso.applyProposal(root, effective, resolved.files, io);
+  if (!applied.ok) return refuse("APPLY_REFUSED", applied.reason);
+
+  // 8. INDEPENDENT VERIFICATION — ODG verifies; the provider's own claim is never trusted.
+  const verify = typeof opts.verify === "function" ? opts.verify : null;
+  const verdict = verify ? verify({ root, files: resolved.files, objective, changes }) : { ok: true, detail: "no verifier injected (mechanism proof)" };
+  if (!verdict || verdict.ok !== true) {
+    return { status: "FAILED", verified: false, committed: false, code: "VERIFICATION_FAILED", detail: (verdict && verdict.detail) || "verification failed", authoredBy: "LOCAL_PROVIDER", appliedBy: "ODG_EXECUTOR" };
+  }
+
+  // 9. Cap at VERIFIED — ODG applied it; the provider NEVER commits (human commit = acceptance, by design).
+  return {
+    status: "EXECUTED", verified: true, committed: false,
+    authoredBy: "LOCAL_PROVIDER", appliedBy: "ODG_EXECUTOR",
+    changedPaths: applied.applied, proposedChanges: changes.length, effectiveChanges: effective.length,
+    scope: scope.detail, verification: verdict.detail,
+  };
 }
 
 const EXECUTORS = [
@@ -924,6 +1013,24 @@ const EXECUTORS = [
             };
         },
     },
+    {
+        // Stage-6: ODG-orchestrated autonomous code implementation via a LOCAL provider. Dispatched ONLY
+        // when a mission objective explicitly names it; in production with no local generator configured it
+        // fails closed (GENERATOR_UNAVAILABLE) and NEVER activates an external/billable provider. The
+        // governance chain (scope-validate/apply/verify/no-commit) is proven by the dedicated STUB test.
+        capability: "Implement Via Local Provider",
+        matches(patch: any) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("IMPLEMENT_LOCAL_CODE");
+        },
+        run(patch: any) {
+            const result = implementViaLocalProvider(patch, {});
+            const out = writeEvidence(IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, { objective: patch.objectiveId, ...result });
+            if (result.status !== "EXECUTED") {
+                throw new Error(`Implement Via Local Provider did not complete: ${result.code || result.status} — ${result.detail || ""}`);
+            }
+            return { capability: "Implement Via Local Provider", evidence: out, summary: { status: result.status, verified: result.verified, committed: result.committed, changed: result.changedPaths } };
+        },
+    },
 ];
 
 function resolve(patch: any) {
@@ -936,7 +1043,7 @@ function resolve(patch: any) {
     return matched ? { ...matched, run: () => matched.run(patch) } : null;
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.
