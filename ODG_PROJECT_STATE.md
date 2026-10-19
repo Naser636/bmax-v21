@@ -29,6 +29,14 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`ODG_100K_REVENUE_ENGINE` — phase 1 (research → decision → model). 2026-10-19 (from `2656c08`).** [PASS — phase 1]
+  - **Track:** COMMERCIAL (revenue creation), distinct from the VPS technical track. Dedicated roadmap: `docs/odg-operational/ODG_REVENUE_ENGINE_100K.md`.
+  - **Research [FACT, sourced 2026-10-19]:** web search operational (real/dated/multi-source). French freelance TS/Node TJM median ≈510–575€/j, senior 700–900€/j; TS-migration is a budgeted 2026 enterprise need (TS7 trigger) with an explicit specialist wedge. ODG egress stays gated — research run by the bounded provider; decision stays ODG's.
+  - **Decision (autonomous):** PRIMARY = productized senior **TS migration + reliability/observability** service (wedge = this repo's parity-proven full runtime migration); FALLBACK = generic senior freelance (cash floor). C (AI-SaaS) rejected, D (≥€500k tenders) deferred.
+  - **Economic model [EST]:** new pure tool `runtime/core/revenue-model.{ts,js}` (5/5 tests + parity). 100k€ **CA** reachable at ~150 j @670€, but **net perso ≈49–62k€ (≠100k)** and 100k€ CA **exceeds the micro ceiling ≈77 700€ ⇒ société required (human/legal)**. Metrics kept distinct (facturé≠encaissé≠marge≠net). No guaranteed date; acquisition is the binding, lower-confidence constraint.
+  - **Executed €0/reversible/private:** research, revenue-model tool+test, roadmap+offer spec, validation-gate ladder (intérêt→…→ENCAISSÉ). No outreach, no publish, no spend.
+  - **BLOCKED (human/CTO):** legal entity (société >77.7k), real outreach + RGPD, publishing, any spend, invoicing/signature. Prepared with costs/risks for GO.
+  - **Next (ODG, €0):** draft private sales materials (offer one-pager + unsent prospection template + example devis on FICTITIOUS data via the commercial-OS quote/invoicing modules) + a repo-evidence portfolio sheet; then present §8 decisions to CTO.
 - **`MONITOR_TICK_VERIFICATION_AND_HEALTH_INTEGRATION` — 2026-10-19 (from `57ff33f`).** [PASS]
   - **Truth Lock:** HEAD=origin/main=`57ff33f`→(this); `main`; clean; 5 stashes; protected paths untouched.
   - **§2 scheduled-tick verification [PASS]:** waited for the real `odg-monitor.timer` trigger (did NOT simulate) — tick fired **22:58:19 Result=success**, both detectors ran (exposure UNKNOWN benign, maintenance OK), odg-preprod **untouched** (MainPID 3970445, NRestarts=0, health 200). Two independent scheduled runs now proven (22:48 activation + 22:58). Recovery `odg-healthcheck.timer` remains distinct/active.
