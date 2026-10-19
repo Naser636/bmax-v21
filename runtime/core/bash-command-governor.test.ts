@@ -261,4 +261,25 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
   ok("C: ran-nonzero preserved its real exit code in evidence", c.execution && c.execution.exitCode === 7);
 })();
 
+// --- TRUST-GAP-3: cross-mission + expiry DENY are NO LONGER INERT on the governor path ----------------
+// govern now threads `now` (always) + `missionId` (when supplied) into the action-gate ctx, so an EXPIRED
+// or CROSS-MISSION authority stamped on the request is denied (previously the checks never fired here).
+(function trustGap3() {
+  const grant = (over: any) => ({ command: "wget http://example.test/x", execute: false,
+    authorization: { contract: { id: "c" }, policy: "p", authority: { id: "a", ...over } } });
+  // A valid (non-expired, no mission) authority on a consequential network command ⇒ authority check PASSES
+  // (no expiry/cross-mission violation) — baseline that the threading did not over-deny.
+  const okGate = engine.govern(grant({ expiresAt: Date.now() + 3600_000 }), { now: Date.now() }).gate;
+  ok("TRUST-GAP-3 baseline: valid (future-expiry) authority ⇒ no expiry/cross-mission violation",
+    !/(expired|cross-mission)/.test((okGate.violations || []).join(" ")));
+  // EXPIRED authority ⇒ the gate now DENIES with an 'expired' violation (was inert without `now`).
+  const expired = engine.govern(grant({ expiresAt: Date.now() - 1000 }), { now: Date.now() }).gate;
+  ok("TRUST-GAP-3: an EXPIRED authority is DENIED (expiry check fires via threaded now)",
+    expired.decision === "DENY" && /expired/.test((expired.violations || []).join(" ")));
+  // CROSS-MISSION authority (stamped for OTHER) vs current mission ⇒ DENIED (was inert without missionId).
+  const cross = engine.govern(grant({ mission: "OTHER_MISSION" }), { now: Date.now(), missionId: "CURRENT_MISSION" }).gate;
+  ok("TRUST-GAP-3: a CROSS-MISSION authority is DENIED (cross-mission check fires via threaded missionId)",
+    cross.decision === "DENY" && /cross-mission/.test((cross.violations || []).join(" ")));
+})();
+
 console.log(`\nGOVERNED BASH/LINUX COMMAND — ${passed} assertions passed.`);

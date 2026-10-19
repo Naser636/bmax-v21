@@ -377,8 +377,16 @@ function govern(request: any, opts: any): any {
   }
 
   // 3) AUTHORITY / POLICY / RISK via the existing action-gate.
+  // TRUST-GAP-3: thread `now` (always) + `missionId` (when the caller supplies the current mission) into the
+  // gate ctx so the action-gate cross-mission + expiry DENY branches are NO LONGER INERT on this path — an
+  // EXPIRED or CROSS-MISSION authority stamped on the request is now denied, not silently ALLOWed. `now`
+  // defaults to the wall clock (no behaviour change for grants without an expiresAt); missionId is read from
+  // opts/req and left null when absent (the check stays inert only when no current mission is known).
   const action = buildAction(analysis, req);
-  const gate = evaluateAction(action, { allowedPolicies: req.allowedPolicies, revokedAuthorities: req.revokedAuthorities });
+  const now = opts && typeof opts.now === "number" ? opts.now : Date.now();
+  const missionId = (opts && typeof opts.missionId === "string" && opts.missionId)
+    || (req && typeof req.missionId === "string" && req.missionId) || null;
+  const gate = evaluateAction(action, { allowedPolicies: req.allowedPolicies, revokedAuthorities: req.revokedAuthorities, now, missionId });
   base.gate = {
     decision: gate.decision, actionClass: gate.actionClass, consequential: gate.consequential,
     violations: gate.violations, escalation: gate.escalation,
