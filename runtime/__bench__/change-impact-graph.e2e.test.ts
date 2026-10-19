@@ -71,16 +71,27 @@ let symmetric = true;
 for (const m of graph.modules) for (const d of graph.deps[m]) if (!graph.consumers[d].includes(m)) symmetric = false;
 check(symmetric, "graph: deps/consumers edges are symmetric (reverse index consistent)");
 
-// 2. objective-attribution — clean closure (V33: no dynamic/external/path hazard), has consumers + tests.
-check(oa.exists && oa.closureHazards.dynamicRequire === false && oa.closureHazards.externalRequire === false && oa.closureHazards.pathHazard === false, "objective-attribution: closure HAZARD-FREE (matches V33 manual audit)");
+// 2. objective-attribution — no dynamic/external-require hazard; it DOES now carry a TRANSITIVE pathHazard.
+// UPDATED (post-V33): its closure reaches capability-executors, which at capability-executors.ts:102 uses
+// `const dir = __dirname` to resolve the self-worker .js entry. That is a DELIBERATE, dist-SAFE pattern
+// (lines 98-104 explicitly remap dist/core → runtime/core), but the analyzer is conservative and flags any
+// executable __dirname+path-build. So the analyzer is CORRECT to report it; the V33 "hazard-free" snapshot
+// is stale (capability-executors grew the __dirname since V33). Asserted to CURRENT reality, with the cause
+// documented — NOT a functional bug, and not silently blessed.
+check(oa.exists && oa.closureHazards.dynamicRequire === false && oa.closureHazards.externalRequire === false, "objective-attribution: no dynamic/external-require hazard");
+check(oa.closureHazards.pathHazard === true && oa.closureHazards.modules.includes("capability-executors"), "objective-attribution: TRANSITIVE pathHazard via capability-executors' intentional dist-aware __dirname (capability-executors.ts:102; conservative analyzer flag, not a functional bug)");
 check(oa.transitiveClosure.includes("objective-attribution") && oa.transitiveClosure.includes("capability-probes"), "objective-attribution: closure includes self + capability-probes dep");
 check(oa.impactedTests.some((t: string) => /objective-attribution/.test(t)), "objective-attribution: impactedTests include its own test(s)");
 
-// 3. capability-factory — dynamic require hazard (V22: require(abs)).
-check(capfac.exists && capfac.closureHazards.dynamicRequire === true && capfac.closureHazards.modules.includes("capability-factory"), "capability-factory: closure DYNAMIC-REQUIRE hazard (matches V22)");
+// 3. capability-factory — the V22 dynamic-require hazard is now GONE (V71 refactor: the former require(abs)
+// was removed; see capability-factory.ts:32 note — the file writes a module source but performs no dynamic
+// require). Analyzer correct; V22 snapshot stale. Detection ability for this class stays guarded by B1 (synthetic).
+check(capfac.exists && capfac.closureHazards.dynamicRequire === false, "capability-factory: V22 dynamic-require hazard REMOVED (V71) — analyzer no longer flags it");
 
-// 4. email-gateway — external-package require hazard (V24: imapflow).
-check(email.exists && email.closureHazards.externalRequire === true && email.closureHazards.modules.includes("email-gateway"), "email-gateway: closure EXTERNAL-REQUIRE hazard (matches V24)");
+// 4. email-gateway — the V24 external-require hazard is now GONE (V71 dependency inversion: `imapflow` is
+// INJECTED by the edge caller, email-gateway.ts:75-79, so the closure is external-require-clean). Analyzer
+// correct; V24 snapshot stale. A synthetic externalRequire detection guard (B1b, below) keeps coverage.
+check(email.exists && email.closureHazards.externalRequire === false, "email-gateway: V24 external-require hazard REMOVED (V71 dependency inversion — imapflow injected)");
 
 // 5. build-recovery-engine — NO path hazard (V49 fix A): it is process.cwd()-safe (η3-B42); its only
 //    __dirname is in a COMMENT documenting the historical derivation. The former assertion here locked that
@@ -147,6 +158,12 @@ try {
   {
     const r = mkRoot({ "dyn-req.js": "const n = process.env.X || 'm';\nconst m = require(n);\nmodule.exports = { m };\n" });
     check(pHaz(r, "dyn-req").dynamicRequire === true, "B1 dynamic require(var) ⇒ DETECTED");
+  }
+  // B1b. real external-package require ⇒ ALWAYS detected (keeps detection coverage after email-gateway's
+  //      real hazard was removed by V71 — the analyzer must still flag a genuine external require).
+  {
+    const r = mkRoot({ "ext-req.js": "const client = require('imapflow');\nmodule.exports = { client };\n" });
+    check(pHaz(r, "ext-req").externalRequire === true, "B1b external-package require(\"imapflow\") ⇒ DETECTED");
   }
   // B2. TRANSITIVE hazard ⇒ ALWAYS detected (parent clean, child executable path hazard).
   {
@@ -239,9 +256,14 @@ try {
 check(brec.closureHazards.pathHazard === false, "REGRESSION: build-recovery-engine FALSE POSITIVE removed (fix A — comment-only)");
 check(capreg.closureHazards.pathHazard === false, "REGRESSION: capability-registry FALSE POSITIVE removed (fix B — .ts port is process.cwd()-safe)");
 check(ppa.closureHazards.pathHazard === true, "REGRESSION: patch-proposal-apply genuine path hazard KEPT (executable path.join(__dirname,...))");
-check(locaut.closureHazards.dynamicRequire === true, "REGRESSION: local-autonomy transitive DYNAMIC-REQUIRE hazard KEPT");
-check(capfac.closureHazards.dynamicRequire === true, "REGRESSION: capability-factory dynamic-require hazard KEPT");
-check(email.closureHazards.externalRequire === true, "REGRESSION: email-gateway external-require hazard KEPT");
+// UPDATED (post-V71): these three require-hazards were legitimately REMOVED by the V71 injection-seam /
+// dependency-inversion migration (capability-factory dynamic require deleted; email-gateway's imapflow
+// injected; local-autonomy's transitive hazard cleared with capability-factory). The analyzer correctly no
+// longer reports them; the "hazard KEPT" regression guards are superseded. Detection of each class is still
+// guarded synthetically (B1 dynamic-require, B1b external-require), so recall is not lowered.
+check(locaut.closureHazards.dynamicRequire === false, "REGRESSION: local-autonomy transitive dynamic-require hazard REMOVED (V71) — analyzer clean");
+check(capfac.closureHazards.dynamicRequire === false, "REGRESSION: capability-factory dynamic-require hazard REMOVED (V71) — analyzer clean");
+check(email.closureHazards.externalRequire === false, "REGRESSION: email-gateway external-require hazard REMOVED (V71 dependency inversion) — analyzer clean");
 // V51 FIX (third defect class, now CLOSED): expert-profile-assembler's .ts port assigns `REPO_ROOT =
 // process.cwd()` (dist-safe, V48) and uses path.resolve(REPO_ROOT,…). The former predicate keyed on the bare
 // REPO_ROOT TOKEN and mis-flagged it; the predicate now clears REPO_ROOT only when derived from process.cwd().

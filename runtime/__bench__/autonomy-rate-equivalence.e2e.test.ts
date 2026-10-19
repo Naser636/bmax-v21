@@ -68,5 +68,19 @@ const m = js.buildAutonomyRate({ patchExecution, planObjectives, attribution });
 check(m.mission === "M1" && m.description !== undefined && /DESCRIPTIVE ventilation/.test(m.note), "measurable result carries mission + description + honesty note");
 check(js.buildAutonomyRate({ mission: "EXPLICIT", patchExecution, planObjectives }).mission === "EXPLICIT", "explicit mission wins over patchExecution.mission");
 
+// evaluateSLO parity (.js ≡ .ts): both export it; identical verdict across WITHIN / BREACH / INSUFFICIENT.
+check(typeof js.evaluateSLO === "function" && typeof ts.evaluateSLO === "function", "both export evaluateSLO");
+const PROV = { source: "governance/SLO.json#x", authoredBy: "CTO", rationale: "test", declaredAt: "2026-10-18" };
+for (const [sli, spec, label] of [
+  [{ measurable: true, numerator: 9, denominator: 10 }, { target: 0.8, direction: "atLeast", minSampleN: 5, provenance: PROV }, "WITHIN"],
+  [{ measurable: true, numerator: 1, denominator: 10 }, { target: 0.8, minSampleN: 5, provenance: PROV }, "BREACH"],
+  [{ measurable: true, numerator: 1, denominator: 1 }, { target: 0.8, minSampleN: 5, provenance: PROV }, "INSUFFICIENT small-sample"],
+  [{ measurable: false, reason: "no eligible units" }, { target: 0.8, minSampleN: 5, provenance: PROV }, "INSUFFICIENT measurable:false"],
+  [{ measurable: true, numerator: 11, denominator: 10 }, { target: 0.8, minSampleN: 5, provenance: PROV }, "INSUFFICIENT falsified"],
+  [{ measurable: true, numerator: 9, denominator: 10 }, { target: 0.8, minSampleN: 5 }, "INSUFFICIENT no-provenance"],
+]) {
+  check(EQ(js.evaluateSLO(sli, spec), ts.evaluateSLO(sli, spec)), `evaluateSLO ${label}: BYTE-IDENTICAL`);
+}
+
 console.log(failures === 0 ? "ALL PASS — LOT autonomy-rate EQUIVALENCE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

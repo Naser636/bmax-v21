@@ -110,4 +110,57 @@ function buildAutonomyRate(inputs) {
   };
 }
 
-module.exports = { buildAutonomyRate };
+/**
+ * evaluateSLO — PURE SLO verdict over ONE SLI (never an aggregate score; never reads the deterministic
+ * 25% benchmark; never coerces measurable:false to a number). Returns WITHIN | BREACH |
+ * INSUFFICIENT_EVIDENCE. The target is a DECLARED spec that MUST carry provenance — no live target source
+ * exists in the repo (constitution/ROADMAP declare none), so an undeclared/unprovenanced target is refused
+ * (INSUFFICIENT_EVIDENCE), never defaulted. This EVALUATES; it performs no measurement (autonomy-measure
+ * remains the sole measurer) and no I/O.
+ *
+ *   sli  = { measurable:boolean, numerator:number, denominator:number, reason?:string }  // the measure view;
+ *          SLI-2 (capability successRate) / SLI-3 (test PASS ratio) are adapted into this shape caller-side.
+ *   spec = { target:number, direction?:"atLeast"|"atMost", minSampleN?:number,
+ *            provenance:{ source:string, authoredBy:string, rationale:string, declaredAt?:string } }
+ */
+function evaluateSLO(sli, spec) {
+  const s = sli && typeof sli === "object" ? sli : {};
+  const sp = spec && typeof spec === "object" ? spec : {};
+  const out = (status, actual, reason) => ({
+    status,
+    actual,
+    target: typeof sp.target === "number" ? sp.target : null,
+    sampleSize: typeof s.denominator === "number" ? s.denominator : null,
+    reason,
+  });
+
+  // 0. The target must be DECLARED with provenance (anti-illusion §8: no unjustified target).
+  if (
+    typeof sp.target !== "number" || !Number.isFinite(sp.target) ||
+    !sp.provenance || typeof sp.provenance !== "object" ||
+    !sp.provenance.source || !sp.provenance.authoredBy || !sp.provenance.rationale
+  ) {
+    return out("INSUFFICIENT_EVIDENCE", null, "undeclared target: spec.target + spec.provenance{source,authoredBy,rationale} are required (no live target source exists)");
+  }
+  const minN = typeof sp.minSampleN === "number" && sp.minSampleN > 0 ? sp.minSampleN : 1;
+
+  // 1. measurable:false ⇒ never coerced to a number (invariant: measurable:false stays false).
+  if (s.measurable !== true) return out("INSUFFICIENT_EVIDENCE", null, s.reason || "sli not measurable");
+
+  // 2. Falsified / impossible-data guard — the sli may be a deserialized artifact, not a fresh compute.
+  const num = s.numerator, den = s.denominator;
+  if (typeof num !== "number" || typeof den !== "number" || den < 0 || num < 0 || num > den) {
+    return out("INSUFFICIENT_EVIDENCE", null, `falsified measure (numerator=${num}, denominator=${den})`);
+  }
+
+  // 3. Small-sample gate (invariant 5: small denominators are NOT generalizable).
+  if (den < minN) return out("INSUFFICIENT_EVIDENCE", null, `sample N=${den} below minimum ${minN}`);
+
+  // 4. WITHIN vs BREACH — recompute `actual` from num/den (a tampered precomputed percent is thus ignored).
+  const actual = num / den;
+  const direction = sp.direction === "atMost" ? "atMost" : "atLeast";
+  const ok = direction === "atMost" ? actual <= sp.target : actual >= sp.target;
+  return out(ok ? "WITHIN" : "BREACH", actual, `actual ${actual} ${direction} target ${sp.target} (N=${den})`);
+}
+
+module.exports = { buildAutonomyRate, evaluateSLO };

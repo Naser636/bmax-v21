@@ -139,6 +139,31 @@ function composeModel(io, { tail = 12, nowMs = null, staleMs = 3600_000 } = {}) 
   // Result buckets (PROVEN / PARTIAL / BLOCKED / NOT RUN) from already-read governed sources only.
   // PROVEN = ledger entries proven===true; NOT RUN = executable queue length; BLOCKED = a live
   // self-diagnostic incident; PARTIAL (and the current verdict) is carried by lastRun from runtime-state.
+  // EFFICIENCY (Lot A) — surface ONLY what has a reliable source; everything else is an honest UNKNOWN.
+  // Reuses already-produced artifacts; absence ⇒ UNKNOWN (NOT a degraded-source flag — these are optional
+  // efficiency inputs). Provider cost is UNKNOWN unless a paid provider actually ran (no artifact ⇒ never a
+  // fabricated figure). Duration is the LAST run only (pipeline-checkpoint is a single slot, no history).
+  const ckRes = io.json("pipeline-checkpoint.json");
+  let lastRunMs = null;
+  if (ckRes.ok && ckRes.value) {
+    const a = Date.parse(ckRes.value.startedAt), b = Date.parse(ckRes.value.completedAt);
+    if (!Number.isNaN(a) && !Number.isNaN(b) && b >= a) lastRunMs = b - a;
+  }
+  const incRes = io.json("autonomy/self-diagnostic-incidents.json");
+  let repeatedWork = null;
+  if (incRes.ok && incRes.value && incRes.value.incidents && typeof incRes.value.incidents === "object") {
+    const list = Object.values(incRes.value.incidents).filter((x) => x && typeof x === "object");
+    repeatedWork = { recurring: list.filter((i) => (i.attempts || 0) > 1).length, frozen: list.filter((i) => i.status === "FROZEN").length };
+  }
+  const efficiency = {
+    lastRunMs, // null ⇒ UNKNOWN
+    humanInterventions: autonomy
+      ? { human: autonomy.attribution.human, external: autonomy.attribution.external, of: auto && auto.measure && typeof auto.measure.denominator === "number" ? auto.measure.denominator : null }
+      : null,
+    repeatedWork, // null ⇒ UNKNOWN
+    providerCost: "UNKNOWN", // no paid provider ran / no metering artifact — never fabricated
+  };
+
   const lastRun = state && state.lastRun && typeof state.lastRun === "object" ? state.lastRun : null;
   const tasks = {
     proven: entries.filter((e) => e && e.proven === true).length,
@@ -185,6 +210,7 @@ function composeModel(io, { tail = 12, nowMs = null, staleMs = 3600_000 } = {}) 
     },
     activeLog: log,
     autonomy,
+    efficiency,
     tasks,
     degraded,
     freshness,
@@ -212,6 +238,13 @@ function renderCockpit(model, { stamp = "" } = {}) {
     if (a.blocker) L.push(`  next blocker: ${a.blocker}`);
   } else {
     L.push("AUTONOMY (no autonomy-rate.json — run `odg state`)");
+  }
+  const ef = model.efficiency;
+  if (ef) {
+    const dur = ef.lastRunMs == null ? "UNKNOWN" : (ef.lastRunMs / 1000).toFixed(2) + "s";
+    const hi = ef.humanInterventions ? `human=${ef.humanInterventions.human}/ext=${ef.humanInterventions.external} of ${ef.humanInterventions.of ?? "?"}` : "UNKNOWN";
+    const rw = ef.repeatedWork ? `recurring=${ef.repeatedWork.recurring}/frozen=${ef.repeatedWork.frozen}` : "UNKNOWN";
+    L.push(`EFFICIENCY last-run=${dur} · interventions ${hi} · repeated-work ${rw} · provider-cost=${ef.providerCost}`);
   }
   const t = model.tasks || { proven: 0, notRun: 0, blocked: 0, lastRun: "N/A" };
   L.push(`TASKS    PROVEN=${t.proven} · NOT-RUN(queue)=${t.notRun} · BLOCKED=${t.blocked} · last=${t.lastRun}`);

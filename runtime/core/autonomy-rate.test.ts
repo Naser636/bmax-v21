@@ -15,7 +15,7 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 
-const { buildAutonomyRate } = require("./autonomy-rate");
+const { buildAutonomyRate, evaluateSLO } = require("./autonomy-rate");
 
 // --- fixtures -------------------------------------------------------------------------------------
 
@@ -156,4 +156,79 @@ test("PROVENANCE: sourceArtifacts are carried through unchanged", () => {
   const rate = buildAutonomyRate({ patchExecution: odgExecution(), planObjectives: declaredObjectives(["O1", "O2"]), sourceArtifacts });
   assert.deepEqual(rate.sourceArtifacts, sourceArtifacts);
   assert.equal(rate.mission, "FIXTURE");
+});
+
+// ──────────────────────────────────────────────────────────────────────────────────────────────────
+// evaluateSLO — WITHIN / BREACH / INSUFFICIENT_EVIDENCE over a single SLI. Pure; no aggregate; never
+// reads the deterministic benchmark; target MUST be a provenanced declared spec.
+const PROV = { source: "governance/SLO.json#autonomy.verified", authoredBy: "CTO", rationale: "declared for test", declaredAt: "2026-10-18" };
+const SPEC = (over = {}) => ({ target: 0.8, direction: "atLeast", minSampleN: 5, provenance: PROV, ...over });
+const M = (over = {}) => ({ measurable: true, numerator: 9, denominator: 10, reason: null, ...over });
+
+test("SLO T1 positive ⇒ WITHIN", () => {
+  const r = evaluateSLO(M({ numerator: 9, denominator: 10 }), SPEC());
+  assert.equal(r.status, "WITHIN"); assert.equal(r.actual, 0.9); assert.equal(r.sampleSize, 10);
+});
+test("SLO T2 negative ⇒ BREACH", () => {
+  assert.equal(evaluateSLO(M({ numerator: 3, denominator: 10 }), SPEC()).status, "BREACH");
+});
+test("SLO T3 boundary actual==target (atLeast) ⇒ WITHIN (inclusive)", () => {
+  assert.equal(evaluateSLO(M({ numerator: 8, denominator: 10 }), SPEC()).status, "WITHIN");
+});
+test("SLO T4 boundary atMost budget actual==target ⇒ WITHIN", () => {
+  assert.equal(evaluateSLO(M({ numerator: 2, denominator: 10 }), SPEC({ target: 0.2, direction: "atMost" })).status, "WITHIN");
+});
+test("SLO T5 measurable:false ⇒ INSUFFICIENT_EVIDENCE (reason passthrough, actual null)", () => {
+  const r = evaluateSLO({ measurable: false, reason: "null denominator — zero eligible units", numerator: null, denominator: null }, SPEC());
+  assert.equal(r.status, "INSUFFICIENT_EVIDENCE"); assert.equal(r.actual, null); assert.match(r.reason, /zero eligible/);
+});
+test("SLO T6 small sample (real autonomy-rate.json N=1 < 5) ⇒ INSUFFICIENT_EVIDENCE", () => {
+  const r = evaluateSLO(M({ numerator: 1, denominator: 1 }), SPEC());
+  assert.equal(r.status, "INSUFFICIENT_EVIDENCE"); assert.match(r.reason, /N=1 below minimum 5/);
+});
+test("SLO T7 measurable:false AND small sample ⇒ INSUFFICIENT_EVIDENCE (measurable gate wins)", () => {
+  const r = evaluateSLO({ measurable: false, reason: "no eligible units", numerator: null, denominator: 0 }, SPEC());
+  assert.equal(r.status, "INSUFFICIENT_EVIDENCE"); assert.match(r.reason, /no eligible units/);
+});
+test("SLO T8 falsified numerator>denominator ⇒ INSUFFICIENT_EVIDENCE (never WITHIN)", () => {
+  const r = evaluateSLO(M({ numerator: 11, denominator: 10 }), SPEC());
+  assert.equal(r.status, "INSUFFICIENT_EVIDENCE"); assert.match(r.reason, /falsified/);
+});
+test("SLO T9 falsified negative count ⇒ INSUFFICIENT_EVIDENCE", () => {
+  assert.equal(evaluateSLO(M({ numerator: -1, denominator: 10 }), SPEC()).status, "INSUFFICIENT_EVIDENCE");
+  assert.equal(evaluateSLO(M({ numerator: 1, denominator: -5 }), SPEC()).status, "INSUFFICIENT_EVIDENCE");
+});
+test("SLO T10 tampered percent ignored — verdict recomputed from num/den", () => {
+  // autonomyPercent lies (99) but numerator/denominator give 0.1 ⇒ BREACH, not WITHIN.
+  const r = evaluateSLO(M({ numerator: 1, denominator: 10, autonomyPercent: 99 }), SPEC());
+  assert.equal(r.status, "BREACH"); assert.equal(r.actual, 0.1);
+});
+test("SLO T11 spec without provenance ⇒ INSUFFICIENT_EVIDENCE (undeclared target refused)", () => {
+  const r = evaluateSLO(M(), { target: 0.8, minSampleN: 5 }); // no provenance
+  assert.equal(r.status, "INSUFFICIENT_EVIDENCE"); assert.match(r.reason, /undeclared target/);
+});
+test("SLO T11b spec without numeric target ⇒ INSUFFICIENT_EVIDENCE", () => {
+  assert.equal(evaluateSLO(M(), { provenance: PROV }).status, "INSUFFICIENT_EVIDENCE");
+});
+test("SLO T12 SLI-2 adapter: unseen capability (uses 0 ⇒ measurable:false) ⇒ INSUFFICIENT_EVIDENCE not BREACH", () => {
+  // guards capability-metrics successRate:0 false-zero for an unseen capability.
+  const sli2 = { measurable: false, numerator: 0, denominator: 0, reason: "capability unseen (uses=0)" };
+  assert.equal(evaluateSLO(sli2, SPEC({ target: 0.7 })).status, "INSUFFICIENT_EVIDENCE");
+});
+test("SLO T13 SLI-3 adapter: a BLOCKED suite breaches an atLeast-1.0 pass SLO", () => {
+  // summarize: PASS 9 of total 10 with 1 BLOCKED ⇒ actual 0.9 < 1.0 ⇒ BREACH (blocked never counts as pass).
+  const sli3 = { measurable: true, numerator: 9, denominator: 10 };
+  assert.equal(evaluateSLO(sli3, SPEC({ target: 1.0, minSampleN: 1 })).status, "BREACH");
+});
+test("SLO T14 purity — frozen input not mutated; identical inputs ⇒ identical output", () => {
+  const sli = Object.freeze(M()); const spec = Object.freeze(SPEC());
+  const a = evaluateSLO(sli, spec); const b = evaluateSLO(sli, spec);
+  assert.deepEqual(a, b);
+});
+test("SLO T15 no aggregate — two SLIs ⇒ two independent verdicts (never summed/averaged)", () => {
+  const a = evaluateSLO(M({ numerator: 9, denominator: 10 }), SPEC());
+  const b = evaluateSLO(M({ numerator: 1, denominator: 10 }), SPEC());
+  assert.equal(a.status, "WITHIN"); assert.equal(b.status, "BREACH");
+  // the function returns per-SLI only — there is no combined field.
+  assert.ok(!("aggregate" in a) && !("aggregate" in b));
 });

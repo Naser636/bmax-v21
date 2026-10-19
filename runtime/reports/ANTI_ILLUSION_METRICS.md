@@ -101,8 +101,21 @@ from the cited artifact; treat each as a reading, not a standing claim.
 | indicator | status | honest note |
 |---|---|---|
 | Execution-path coverage | **PARTIAL** | capability *registration* is measured (§4); which capabilities are exercised on a live path is only partially known (guard sweeps exist for entrypoints, not all). Not a single number. |
-| Cost / duration / toil-avoided | **DATA EXISTS, NOT SURFACED** | `live-cost-metering` (observationOf/deriveValuation) + checkpoint timestamps hold the data; no dashboard indicator yet. Deferred (no fabricated value in the meantime). |
-| SLO target / error budget | **DELIBERATE NON-GOAL (for now)** | SLIs are reported with explicit denominators (§1–§5); **no target is asserted** because a defensible target has no basis yet. Reporting a target we can't justify would itself be an illusion. Recommendation: define targets with provenance before adding a WITHIN/BREACH evaluator (`evaluateObjective` design captured in the SRE audit). |
+| Cost / duration / toil-avoided | **PARTIALLY SURFACED (cockpit EFFICIENCY)** | last-run duration (`pipeline-checkpoint.json`) + human/external share (`autonomy-rate.json`) are now rendered; **provider cost = UNKNOWN** (no paid provider ran — no artifact, no fabricated figure); per-mission duration history + toil-avoided remain NOT_MEASURABLE (not captured). |
+
+## 9. SLO evaluator — DEFINED, evaluator shipped, NOT YET OPERATIONAL (insufficient live data)
+
+A pure `evaluateSLO(sli, spec)` now exists in `runtime/core/autonomy-rate.ts` (dual-port, 15+parity tests) returning **WITHIN | BREACH | INSUFFICIENT_EVIDENCE**. It forms **no aggregate**, never reads the 25% benchmark, recomputes `actual` from numerator/denominator (a tampered percent is ignored), and **refuses an undeclared/unprovenanced target**. INSUFFICIENT_EVIDENCE fires on: `measurable:false`, falsified data (`num>den`, negatives), or `denominator < minSampleN`.
+
+**The SLO target has no live basis today** (constitution/ROADMAP declare none; the live autonomy denominators are N=1–3). So the following SLO specs are **DEFINITIONS awaiting a provenanced CTO declaration + sufficient sample — they are NOT operational.** Running `evaluateSLO` against today's live data returns `INSUFFICIENT_EVIDENCE` (sample too small), which is the honest result.
+
+| SLO | objective / rationale | numerator / denominator | window | source | exclusions · minSample · missing-data | target (direction) | provenance |
+|---|---|---|---|---|---|---|---|
+| **live-autonomy-verified** | share of eligible objectives ODG executed+verified stays high | `ODG_EXECUTED_VERIFIED` / eligible-authorized | rolling, once sample ≥ N | `autonomy-rate.json:measure` | excl. human-gated + no-capability objectives · minSampleN **TBD by CTO** · measurable:false ⇒ INSUFFICIENT_EVIDENCE | **UNSET** (atLeast) — no basis yet | requires CTO `{source,authoredBy,rationale,declaredAt}` |
+| **capability-success** | per-capability success ratio stays healthy | `successes` / `uses` | rolling | `capability-metrics.stats()` | unseen capability (`uses=0`) ⇒ INSUFFICIENT_EVIDENCE (not BREACH) · minSampleN TBD | **UNSET** (atLeast) | requires CTO declaration |
+| **verification-pass** | test suite admits no FAIL / BLOCKED as pass | `PASS` / `total` | per run | `odg-test-report.summarize()` | BLOCKED ≠ pass (breach-if-any) · NOT_RUN ⇒ INSUFFICIENT_EVIDENCE | 1.0 (atLeast) — the one defensible target | repo convention (overallExit already enforces) |
+
+**Honest status:** evaluator + definitions delivered; **no SLO is declared operational** — doing so would assert a target without basis (an illusion). Next: CTO declares targets with provenance + a minimum sample; only then is a WITHIN/BREACH verdict meaningful.
 
 ---
 

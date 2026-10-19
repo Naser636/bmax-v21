@@ -154,5 +154,28 @@ ok("dispatcher help advertises `odg cockpit`", /odg cockpit/.test(help));
 // 8d — runtime read-only invariant: a live render mutates none of the cockpit's real sources
 ok("live real-artifact render mutated no cockpit source (read-only)", hashSources() === beforeHash);
 
+// --- EFFICIENCY (Lot A) — reliable sources rendered, everything else honest UNKNOWN ----------------
+{
+  // (a) with duration + incidents present ⇒ measured; provider cost stays UNKNOWN (never fabricated).
+  const effFull = {
+    ...full,
+    "pipeline-checkpoint.json": J({ startedAt: "2026-10-09T00:00:00.000Z", completedAt: "2026-10-09T00:00:03.500Z" }),
+    "autonomy/self-diagnostic-incidents.json": J({ incidents: { a: { attempts: 2, status: "OPEN" }, b: { attempts: 1, status: "OPEN" }, c: { attempts: 3, status: "FROZEN" } } }),
+  };
+  const me = C.composeModel(ioFrom(effFull, activeLog), { tail: 5 });
+  ok("efficiency: last-run duration measured from checkpoint (3.5s)", me.efficiency.lastRunMs === 3500);
+  ok("efficiency: human/external interventions reused from autonomy (0/1 of 2)", me.efficiency.humanInterventions.human === 0 && me.efficiency.humanInterventions.external === 1 && me.efficiency.humanInterventions.of === 2);
+  ok("efficiency: repeated-work counts (recurring 2, frozen 1)", me.efficiency.repeatedWork.recurring === 2 && me.efficiency.repeatedWork.frozen === 1);
+  ok("efficiency: provider cost is UNKNOWN (no paid provider ran — never fabricated)", me.efficiency.providerCost === "UNKNOWN");
+  const txt = C.renderCockpit(me, { stamp: "s" });
+  ok("efficiency: EFFICIENCY line rendered with duration + UNKNOWN cost", /EFFICIENCY last-run=3\.50s/.test(txt) && /provider-cost=UNKNOWN/.test(txt));
+  // (b) with NEITHER source ⇒ duration + repeated-work show UNKNOWN (no fabrication, not flagged degraded).
+  const mu = C.composeModel(ioFrom(full, activeLog), {});
+  ok("efficiency: absent checkpoint ⇒ lastRunMs null (UNKNOWN)", mu.efficiency.lastRunMs === null);
+  ok("efficiency: absent incident store ⇒ repeatedWork null (UNKNOWN)", mu.efficiency.repeatedWork === null);
+  ok("efficiency: optional inputs absent are NOT marked degraded", !mu.degraded.some((d) => /pipeline-checkpoint|self-diagnostic-incidents/.test(d)));
+  ok("efficiency: render shows UNKNOWN for missing duration/repeated-work", /EFFICIENCY last-run=UNKNOWN/.test(C.renderCockpit(mu, { stamp: "s" })) && /repeated-work UNKNOWN/.test(C.renderCockpit(mu, { stamp: "s" })));
+}
+
 console.log(`\nALL PASS — odg cockpit (${passed} assertions)`);
 process.exit(0);
