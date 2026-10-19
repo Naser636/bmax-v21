@@ -126,5 +126,37 @@ try {
   try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort */ }
 }
 
+// --- TRUST-GAP-3(a): resolve() CHOKEPOINT — deny-by-default for an unregistered/ungoverned capability ------
+// The classification is now a PRODUCTION registry (CAPABILITY_EFFECT), enforced at resolve() BEFORE any
+// effect. A new executor added to EXECUTORS but NOT the registry cannot produce an effect (deny-by-default).
+{
+  const { CAPABILITY_EFFECT, effectRegistryVerdict } = execMod;
+  // Registry is the single SOT: every EXECUTORS capability is registered, and the registry adds no phantom.
+  const regKeys = new Set(Object.keys(CAPABILITY_EFFECT));
+  check([...new Set(EXECUTORS.map((e: any) => e.capability))].every((c: any) => regKeys.has(c)), "every dispatchable capability is in CAPABILITY_EFFECT (registry complete)");
+  check([...regKeys].every((c: any) => EXECUTORS.some((e: any) => e.capability === c)), "CAPABILITY_EFFECT has no phantom capability (no stale registry entry)");
+  // Registry classification agrees with the governed CONSEQUENTIAL/OBSERVATIONAL partition (no drift).
+  check([...CONSEQUENTIAL].every((c) => CAPABILITY_EFFECT[c] && CAPABILITY_EFFECT[c].effect === "consequential"), "registry marks every CONSEQUENTIAL capability consequential");
+  check([...OBSERVATIONAL].every((c) => CAPABILITY_EFFECT[c] && CAPABILITY_EFFECT[c].effect === "observational"), "registry marks every OBSERVATIONAL capability observational");
+  check([...CONSEQUENTIAL].every((c) => typeof CAPABILITY_EFFECT[c].control === "string" && CAPABILITY_EFFECT[c].control.length > 0), "every consequential capability names a control mechanism");
+  // Verdict: unregistered ⇒ deny; registered ⇒ ok.
+  check(effectRegistryVerdict("No Such Capability").ok === false && /UNREGISTERED_CAPABILITY/.test(effectRegistryVerdict("No Such Capability").reason), "effectRegistryVerdict: unknown capability ⇒ deny-by-default");
+  check(effectRegistryVerdict("Governed Bash/Linux Command").ok === true, "effectRegistryVerdict: a registered capability ⇒ ok");
+  // INTEGRATION (adversarial): a dummy consequential executor with NO internal gate + NOT registered ⇒
+  // resolve().run() REFUSES before any effect (proven: the side-effect file is never written).
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), "gap3a-"));
+  const target = path.join(d, "pwned.txt");
+  EXECUTORS.push({ capability: "Dummy Ungoverned Writer", matches: (p: any) => p && p.objectiveId === "DUMMY_UNGOVERNED_1", run: () => { fs.writeFileSync(target, "effect"); return { capability: "Dummy Ungoverned Writer", evidence: target }; } });
+  let threw = false, msg = "";
+  try { resolve({ objectiveId: "DUMMY_UNGOVERNED_1" }).run(); } catch (e: any) { threw = true; msg = e.message; }
+  EXECUTORS.pop();
+  check(threw && /REFUSED|UNREGISTERED_CAPABILITY/.test(msg), "unregistered consequential executor ⇒ resolve().run() REFUSES");
+  check(fs.existsSync(target) === false, "unregistered executor produced NO EFFECT (side-effect file never written)");
+  try { fs.rmSync(d, { recursive: true, force: true }); } catch { /* best-effort */ }
+  // NO double-gating / NO regression: a registered executor still resolves + its run is bound (not pre-refused).
+  const legit = resolve({ objectiveId: "CLEAN_WORKSPACE_1" });
+  check(!!legit && legit.capability === "Clean Workspace" && typeof legit.run === "function" && legit.effect === "observational", "registered executor resolves normally (no double-gating / no pre-refusal)");
+}
+
 console.log(failures === 0 ? "ALL PASS — dispatch-authorization invariant (C5-A1)" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

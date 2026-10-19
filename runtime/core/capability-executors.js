@@ -1129,17 +1129,44 @@ const EXECUTORS = [
     },
 ];
 
+// TRUST-GAP-3(a) — PRODUCTION effect registry (SOT). A capability ABSENT here is UNKNOWN ⇒ deny-by-default
+// at resolve(). Mirrors the .ts twin; does NOT re-run the executor's own control (no double-gating).
+const CAPABILITY_EFFECT = {
+    "Connectivity Audit": { effect: "observational", control: "read-only reachability probe (no mutation/egress)" },
+    "Clean Workspace": { effect: "observational", control: "scan-only; deletes nothing (read-only)" },
+    "Governed Observability Verification": { effect: "observational", control: "re-derives+verifies the autonomy signal (read-only)" },
+    "ODG Synthetic Deliverable": { effect: "consequential", control: "write confined to authorized_paths (confineSyntheticTarget)" },
+    "ODG Spec Author": { effect: "consequential", control: "write confined to authorized_paths" },
+    "Governed Git Branch Integration": { effect: "consequential", control: "ff-only, dry-run default, C03-recorded" },
+    "Governed Bash/Linux Command": { effect: "consequential", control: "action-gate + bubblewrap; now+missionId threaded" },
+    "External Research Acquisition": { effect: "consequential", control: "injected-fetcher-only (no JSON-nameable client); dry-run default" },
+    "Provider Activation": { effect: "consequential", control: "provider-live-call-gate (ODG_PROVIDER_LIVE); dry-run default" },
+    "Implement Via Local Provider": { effect: "consequential", control: "delegate-isolation validateScope + independent verify; never commits" },
+};
+function effectRegistryVerdict(capabilityName) {
+    const entry = CAPABILITY_EFFECT[capabilityName];
+    if (!entry) return { ok: false, reason: `UNREGISTERED_CAPABILITY "${capabilityName}" — deny-by-default (not classified in CAPABILITY_EFFECT; a dispatchable consequential capability must declare its effect + control before it can run)` };
+    if (entry.effect === "consequential" && !entry.control) return { ok: false, reason: `UNGOVERNED_CAPABILITY "${capabilityName}" — consequential with no declared control` };
+    return { ok: true, entry };
+}
 function resolve(patch) {
     if (!patch || typeof patch !== "object") return null;
     const matched = EXECUTORS.find((e) => e.matches(patch)) || null;
-    // Bind the matched patch to run() so an executor that needs the objective context (Clean Workspace
-    // branches on patch.objectiveId) receives it, even though the Patch Executor calls run() with no
-    // argument. The spread preserves `capability`/`matches`; connectivity's run() ignores the extra
-    // arg and provider's run(patch) already tolerates it, so existing executors behave identically.
-    return matched ? { ...matched, run: () => matched.run(patch) } : null;
+    if (!matched) return null;
+    // TRUST-GAP-3(a) CHOKEPOINT: deny-by-default BEFORE any effect runs if the matched capability is not
+    // registered+governed. The executor's own internal control still applies afterwards (no double-gating).
+    const verdict = effectRegistryVerdict(matched.capability);
+    return {
+        ...matched,
+        effect: verdict.ok ? verdict.entry.effect : "UNKNOWN",
+        run: () => {
+            if (!verdict.ok) throw new Error(`Capability dispatch REFUSED: ${verdict.reason}`);
+            return matched.run(patch);
+        },
+    };
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.

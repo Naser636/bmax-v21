@@ -91,7 +91,7 @@ flags are bare booleans); spend (PARTIAL — only the billed-provider env flag);
   ceiling. Proposed fix: route billed spawns through `authorizeCapability` (mission/expiry-bound) or a per-mission
   budget. Adversarial test: two different missions under one flag ⇒ 2nd REFUSED. **Touches the billed path ⇒ CTO
   (D-external-provider) before changing activation semantics.**
-- **TRUST-GAP-3 (b) CLOSED (2026-10-19):** bash governor now threads `now`+`missionId` into the action-gate ctx ⇒ EXPIRED + CROSS-MISSION authorities are DENIED on Path B (3 adversarial tests; expiry via now, cross-mission via missionId, valid not over-denied). **(a) REMAINING:** (a) `resolve()` has no chokepoint forcing a new executor to call a gate (only a
+- **TRUST-GAP-3 (b) CLOSED (2026-10-19):** bash governor now threads `now`+`missionId` into the action-gate ctx ⇒ EXPIRED + CROSS-MISSION authorities are DENIED on Path B (3 adversarial tests; expiry via now, cross-mission via missionId, valid not over-denied). **(a) CLOSED (2026-10-19):** resolve() now enforces a PRODUCTION effect registry (CAPABILITY_EFFECT, SOT) — an UNREGISTERED/ungoverned capability is DENIED before any effect (reproduced: a dummy ungoverned executor wrote a file via resolve(); after: refused, no effect). No double-gating (registered executors resolve normally; internal controls intact). Was:** (a) `resolve()` has no chokepoint forcing a new executor to call a gate (only a
   classification tripwire); (b) bash governor omits `missionId`+`now` (`bash-command-governor.ts:381`) ⇒ the
   cross-mission/expiry DENY branches are inert on Path B. Proposed: thread `plan.mission`+injected `now` into the
   governor ctx (bounded, reuses action-gate) + a deny-by-default registry consulted in `resolve()`. Adversarial
