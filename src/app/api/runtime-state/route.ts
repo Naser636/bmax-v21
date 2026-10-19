@@ -16,18 +16,38 @@
  * Next 16 Route Handler — node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md
  */
 import { readFileSync } from "node:fs";
-import { resolve as resolvePath } from "node:path";
+import { resolve as resolvePath, join as joinPath } from "node:path";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic"; // request-time only; reflect current artifacts, never cached
 
 const GENERATED = "runtime/generated";
+// DISPLAY labels (provenance) — stable, repo-relative; the ACTUAL read base is resolved at request time below.
 const ARTIFACT_PATHS = {
   state: `${GENERATED}/runtime-state.json`,
   autonomy: `${GENERATED}/autonomy-rate.json`,
   queue: `${GENERATED}/runtime-mission-queue.json`,
   capabilities: `${GENERATED}/capability-registry.json`,
 } as const;
+const ARTIFACT_FILES = {
+  state: "runtime-state.json",
+  autonomy: "autonomy-rate.json",
+  queue: "runtime-mission-queue.json",
+  capabilities: "capability-registry.json",
+} as const;
+
+/**
+ * Resolve the PERSISTENT runtime-artifacts directory at REQUEST TIME. Prefer the explicitly-configured absolute
+ * location `ODG_RUNTIME_STATE_DIR` (the durable fix: the standalone server chdir's to its own build dir, which is
+ * mutable/deletable, so reading `process.cwd()/runtime/generated` binds the dashboard to a build-time snapshot).
+ * Fallback to `process.cwd()/runtime/generated` preserves the prior behaviour when the env is unset (backward
+ * compatible; dev/test/CLI). Resolved per call (never cached) so the dashboard reflects the live persistent state.
+ */
+function generatedBase(): string {
+  const env = process.env.ODG_RUNTIME_STATE_DIR;
+  if (typeof env === "string" && env.trim() !== "") return resolvePath(env.trim());
+  return resolvePath(process.cwd(), GENERATED);
+}
 
 export interface RuntimeSnapshotSource {
   path: string;
@@ -89,10 +109,10 @@ function asNum(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
-/** Read + parse a governed artifact (best-effort). Returns null when absent/unreadable/invalid JSON. */
-function readArtifact(relPath: string): unknown {
+/** Read + parse a governed artifact (best-effort) from the persistent base. Returns null when absent/unreadable/invalid JSON. */
+function readArtifact(file: string): unknown {
   try {
-    return JSON.parse(readFileSync(resolvePath(process.cwd(), relPath), "utf8"));
+    return JSON.parse(readFileSync(joinPath(generatedBase(), file), "utf8"));
   } catch {
     return null; // honest unknown — never a fabricated empty object
   }
@@ -104,10 +124,10 @@ function readArtifact(relPath: string): unknown {
  * non-measurable autonomy signal ⇒ autonomyPercent:null with its reason preserved.
  */
 export function readRuntimeSnapshot(): RuntimeSnapshot {
-  const state = readArtifact(ARTIFACT_PATHS.state);
-  const autonomy = readArtifact(ARTIFACT_PATHS.autonomy);
-  const queueDoc = readArtifact(ARTIFACT_PATHS.queue);
-  const caps = readArtifact(ARTIFACT_PATHS.capabilities);
+  const state = readArtifact(ARTIFACT_FILES.state);
+  const autonomy = readArtifact(ARTIFACT_FILES.autonomy);
+  const queueDoc = readArtifact(ARTIFACT_FILES.queue);
+  const caps = readArtifact(ARTIFACT_FILES.capabilities);
 
   const sources: RuntimeSnapshotSource[] = [
     { path: ARTIFACT_PATHS.state, present: state !== null },
