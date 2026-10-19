@@ -133,4 +133,26 @@ t("TS/JS parity (durationsByCategory)", () => {
   assert.deepStrictEqual(TS.durationsByCategory(attempts), JS.durationsByCategory(attempts));
 });
 
+// 11. metricsSnapshot: unified counter — retries do NOT inflate distinct missions; outcomes broken down; rates honest.
+t("metricsSnapshot counter (retries attached to mission; outcome breakdown; INSUFFICIENT<minN)", () => {
+  const attempts = [
+    { mission: "M1", outcome: "SKIPPED", reason: "UNPROVEN", recordedAt: "2026-09-01T10:00:00.000Z", durationMs: 10 },
+    { mission: "M1", outcome: "RECORDED", recordedAt: "2026-09-01T10:05:00.000Z", durationMs: 20 }, // retry of M1
+    { mission: "M2", outcome: "RECORDED", recordedAt: "2026-09-01T11:00:00.000Z", durationMs: 30 },
+    { mission: "M3", outcome: "SKIPPED", reason: "NOT_ACCEPTED", recordedAt: "2026-09-01T12:00:00.000Z" },
+  ];
+  const m = TS.metricsSnapshot(attempts, { minSampleN: 20 });
+  assert.strictEqual(m.totalAttempts, 4, "4 attempts");
+  assert.strictEqual(m.distinctMissions, 3, "3 distinct missions — retry of M1 did NOT inflate the count");
+  assert.strictEqual(m.verified.denominator, 3);
+  assert.strictEqual(m.verified.numerator, 2);        // M1 (eventually) + M2
+  assert.strictEqual(m.verified.measurable, false);   // N=3 < 20 ⇒ INSUFFICIENT, not a fabricated rate
+  assert.strictEqual(m.firstAttempt.numerator, 1);    // only M2 succeeded on its first attempt (M1 first = SKIPPED)
+  assert.strictEqual(m.outcomes.RECORDED, 2);
+  assert.strictEqual(m.outcomes["SKIPPED:UNPROVEN"], 1);
+  assert.strictEqual(m.outcomes["SKIPPED:NOT_ACCEPTED"], 1);
+  assert.strictEqual(m.attemptsWithDuration, 3);      // the NOT_ACCEPTED one has no duration
+  assert.deepStrictEqual(TS.metricsSnapshot(attempts, { minSampleN: 20 }), JS.metricsSnapshot(attempts, { minSampleN: 20 })); // parity
+});
+
 console.log(`\nALL PASS — mission-attempt-log (${n} tests)`);

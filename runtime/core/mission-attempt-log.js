@@ -111,4 +111,27 @@ function durationsByCategory(attempts) {
   return out;
 }
 
-module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory };
+/**
+ * Unified metrics snapshot (§15) — single COUNTER + rate view; REUSES summarizeAttempts (no parallel counter).
+ * Rates stay measurable:false below minSampleN; retries stay attached to their mission (distinctMissions counts
+ * missions, not attempts).
+ */
+function metricsSnapshot(attempts, opts = {}) {
+  const list = Array.isArray(attempts) ? attempts.filter((a) => a && a.mission && a.recordedAt) : [];
+  const s = summarizeAttempts(list, opts);
+  const outcomes = {};
+  for (const a of list) { const k = a.outcome === "RECORDED" ? "RECORDED" : `SKIPPED:${a.reason || "UNKNOWN"}`; outcomes[k] = (outcomes[k] || 0) + 1; }
+  const withDuration = list.filter((a) => typeof a.durationMs === "number" && Number.isFinite(a.durationMs) && a.durationMs >= 0).length;
+  return {
+    window: s.window,
+    totalAttempts: list.length,
+    distinctMissions: s.distinctMissions,
+    failuresRepresentable: s.failuresRepresentable,
+    verified: { numerator: s.slis.MISSION_SUCCESS_VERIFIED.numerator, denominator: s.slis.MISSION_SUCCESS_VERIFIED.denominator, measurable: s.slis.MISSION_SUCCESS_VERIFIED.measurable, reason: s.slis.MISSION_SUCCESS_VERIFIED.reason },
+    firstAttempt: { numerator: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.numerator, denominator: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.denominator, measurable: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.measurable, reason: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.reason },
+    outcomes,
+    attemptsWithDuration: withDuration,
+  };
+}
+
+module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory, metricsSnapshot };
