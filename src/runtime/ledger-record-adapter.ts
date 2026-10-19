@@ -49,21 +49,31 @@ export const recordMissionToLedger: LedgerRecorder = (mission, validated, status
  * EVERY run's real outcome (RECORDED | SKIPPED+reason) to an append-only log, so failures ARE representable.
  * Non-blocking (never affects the mission path), and it records the HONEST verdict just computed — no fabrication.
  */
-export type AttemptRecorder = (mission: string, validated: boolean, status: string) => void;
+/** Real execution timing for one attempt (optional; both ISO strings, from the same run). */
+export interface AttemptTiming { startedAt?: string; endedAt?: string; category?: string }
+export type AttemptRecorder = (mission: string, validated: boolean, status: string, timing?: AttemptTiming) => void;
 
 const ATTEMPTS_LOG = path.join(GENERATED_DIR, "mission-attempts.jsonl");
 
-export const recordMissionAttempt: AttemptRecorder = (mission, validated, status) => {
+export const recordMissionAttempt: AttemptRecorder = (mission, validated, status, timing) => {
   try {
     const require = createRequire(import.meta.url);
     // Source .js port (always present; parity-tested). It is a pure leaf module, NOT part of the dist runtime
     // closure, so it is not emitted to runtime/dist/core — require the committed source port directly.
     const { attemptFromLedgerResult, recordAttempt } = require("../../runtime/core/mission-attempt-log.js") as {
-      attemptFromLedgerResult: (m: string, r: unknown, ts: string) => unknown;
+      attemptFromLedgerResult: (m: string, r: unknown, ts: string, extra?: unknown) => unknown;
       recordAttempt: (p: string, rec: unknown) => unknown;
     };
-    // Map the honest verdict to a recordMission-shaped result so the attempt mirrors the ledger's own vocabulary.
-    const rec = attemptFromLedgerResult(mission, { skipped: !validated, reason: validated ? null : status }, new Date().toISOString());
+    // recordedAt = the completion timestamp (endedAt) when the runner supplied real timing; otherwise a wall-clock
+    // fallback (so callers without timing still produce a valid record). startedAt/endedAt/category pass through;
+    // the attempt module validates the pair (both present, ordered, finite) before emitting durationMs.
+    const t: AttemptTiming = timing || {};
+    const recordedAt = typeof t.endedAt === "string" ? t.endedAt : new Date().toISOString();
+    const extra: Record<string, unknown> = {};
+    if (typeof t.startedAt === "string") extra.startedAt = t.startedAt;
+    if (typeof t.endedAt === "string") extra.endedAt = t.endedAt;
+    if (typeof t.category === "string") extra.category = t.category;
+    const rec = attemptFromLedgerResult(mission, { skipped: !validated, reason: validated ? null : status }, recordedAt, extra);
     recordAttempt(ATTEMPTS_LOG, rec);
   } catch {
     /* non-blocking telemetry — a logging failure must never affect the mission */

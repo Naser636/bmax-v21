@@ -94,4 +94,43 @@ t("TS/JS parity", () => {
   assert.deepStrictEqual(TS.attemptFromLedgerResult("A", { skipped: true, reason: "X", verdict: "Y" }, "t"), JS.attemptFromLedgerResult("A", { skipped: true, reason: "X", verdict: "Y" }, "t"));
 });
 
+// 8. durationMs is emitted ONLY for a valid, ordered, finite timestamp pair; falsified pairs rejected.
+t("durationMs only for a valid ordered pair (reject negative/unparseable/partial)", () => {
+  const ok = TS.attemptFromLedgerResult("M", { skipped: false }, "2026-09-01T10:00:02.500Z",
+    { startedAt: "2026-09-01T10:00:00.000Z", endedAt: "2026-09-01T10:00:02.500Z" });
+  assert.strictEqual(ok.durationMs, 2500);
+  // end BEFORE start ⇒ negative ⇒ rejected (no durationMs), but the timestamps are still recorded verbatim.
+  const neg = TS.attemptFromLedgerResult("M", { skipped: false }, "t",
+    { startedAt: "2026-09-01T10:00:05.000Z", endedAt: "2026-09-01T10:00:00.000Z" });
+  assert.strictEqual(neg.durationMs, undefined);
+  // unparseable ⇒ rejected
+  assert.strictEqual(TS.attemptFromLedgerResult("M", { skipped: false }, "t", { startedAt: "nope", endedAt: "2026-09-01T10:00:00.000Z" }).durationMs, undefined);
+  // only one timestamp ⇒ no duration
+  assert.strictEqual(TS.attemptFromLedgerResult("M", { skipped: false }, "t", { startedAt: "2026-09-01T10:00:00.000Z" }).durationMs, undefined);
+});
+
+// 9. durationsByCategory groups validated durations by category; feeds latency-measure per-category.
+t("durationsByCategory groups real durations; composes with latency-measure", () => {
+  const latency = require("./latency-measure.ts");
+  const attempts = [
+    { mission: "A", outcome: "RECORDED", recordedAt: "t1", category: "AUDIT", durationMs: 100 },
+    { mission: "B", outcome: "RECORDED", recordedAt: "t2", category: "AUDIT", durationMs: 200 },
+    { mission: "C", outcome: "SKIPPED", recordedAt: "t3", category: "AUDIT" }, // no duration ⇒ excluded
+    { mission: "D", outcome: "RECORDED", recordedAt: "t4", durationMs: 50 },    // no category ⇒ uncategorized
+    { mission: "E", outcome: "RECORDED", recordedAt: "t5", category: "AUDIT", durationMs: -5 }, // falsified ⇒ excluded
+  ];
+  const byCat = TS.durationsByCategory(attempts);
+  assert.deepStrictEqual(byCat.AUDIT, [100, 200]);
+  assert.deepStrictEqual(byCat.uncategorized, [50]);
+  const summ = latency.summarizeLatencyByCategory(byCat, 2);
+  assert.strictEqual(summ.AUDIT.measurable, true);
+  assert.strictEqual(summ.AUDIT.medianMs, 150);
+});
+
+// 10. parity for durationsByCategory.
+t("TS/JS parity (durationsByCategory)", () => {
+  const attempts = [{ mission: "A", category: "X", durationMs: 10 }, { mission: "B", durationMs: 20 }];
+  assert.deepStrictEqual(TS.durationsByCategory(attempts), JS.durationsByCategory(attempts));
+});
+
 console.log(`\nALL PASS — mission-attempt-log (${n} tests)`);

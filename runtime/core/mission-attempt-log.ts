@@ -94,5 +94,22 @@ function summarizeAttempts(attempts: any, opts: any = {}): any {
   };
 }
 
-module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts };
+/**
+ * Group REAL per-attempt durations (ms) by category, for the MISSION_LATENCY measurement
+ * (feed the result to latency-measure.summarizeLatencyByCategory). Only attempts that carry a
+ * validated `durationMs` (both timestamps present/ordered/finite) contribute — fabricated nothing.
+ * Attempts without a category group under "uncategorized".
+ */
+function durationsByCategory(attempts: any): any {
+  const list = Array.isArray(attempts) ? attempts : [];
+  const out: any = {};
+  for (const a of list) {
+    if (!a || typeof a.durationMs !== "number" || !Number.isFinite(a.durationMs) || a.durationMs < 0) continue;
+    const cat = typeof a.category === "string" && a.category ? a.category : "uncategorized";
+    (out[cat] = out[cat] || []).push(a.durationMs);
+  }
+  return out;
+}
+
+module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory };
 export {};

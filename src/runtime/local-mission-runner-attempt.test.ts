@@ -46,5 +46,32 @@ console.log("LOCAL route → ATTEMPT-LEVEL SLO TELEMETRY (seam)");
   check(ledgerCalls === 1 && attemptCalls === 1, "both seams fire once; attempt not gated by the ledger's refusal");
 }
 
+// D — real timing: an injected clock yields startedAt < endedAt on the SAME run, passed to the recorder.
+{
+  const seen: Array<{ m: string; v: boolean; s: string; t?: { startedAt?: string; endedAt?: string; category?: string } }> = [];
+  const ledgerSpy = () => ({ skipped: false });
+  const attemptSpy = (m: string, v: boolean, s: string, t?: { startedAt?: string; endedAt?: string; category?: string }) => { seen.push({ m, v, s, t }); };
+  // Deterministic clock: start then end (ordered, distinct).
+  const stamps = ["2026-10-19T12:00:00.000Z", "2026-10-19T12:00:03.000Z"];
+  let i = 0;
+  const clock = () => stamps[Math.min(i++, stamps.length - 1)];
+  const out = new LocalMissionRunner(undefined, undefined, ledgerSpy, attemptSpy, clock).run("M0000");
+  check(out.ok === true, "M0000 run ok with injected clock");
+  check(seen.length === 1 && seen[0].t?.startedAt === stamps[0] && seen[0].t?.endedAt === stamps[1], "attempt carries real ordered start/end from the injected clock");
+}
+
+// E — a THROW during execution still records exactly ONE attempt (ERROR), and the ledger is NOT called.
+{
+  let ledgerCalls = 0;
+  const attempts: Array<{ v: boolean; s: string }> = [];
+  const ledgerSpy = () => { ledgerCalls++; };
+  const attemptSpy = (_m: string, v: boolean, s: string) => { attempts.push({ v, s }); };
+  const throwingKernel = { execute: () => { throw new Error("boom"); } } as unknown as RuntimeKernel;
+  const out = new LocalMissionRunner(undefined, throwingKernel, ledgerSpy, attemptSpy).run("M0000") as { ok?: boolean; error?: string };
+  check(out.ok === false && /boom/.test(out.error ?? ""), "throwing execution ⇒ ok:false, error propagated");
+  check(attempts.length === 1 && attempts[0].v === false && attempts[0].s === "ERROR", "throw recorded as exactly ONE attempt (validated=false, ERROR)");
+  check(ledgerCalls === 0, "ledger NOT called on a throw (proven-only invariant preserved)");
+}
+
 console.log(failures ? `\n${failures} FAILURE(S)` : "\nALL PASS — local-mission-runner attempt-telemetry seam");
 if (failures) process.exit(1);

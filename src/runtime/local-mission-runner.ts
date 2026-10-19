@@ -10,7 +10,7 @@ import { createRequire } from "node:module";
 import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { RuntimeKernel } from "./runtime-kernel";
 import { createMissionIntent } from "./mission-intent";
-import { LedgerRecorder, recordMissionToLedger, AttemptRecorder, recordMissionAttempt } from "./ledger-record-adapter";
+import { LedgerRecorder, recordMissionToLedger, AttemptRecorder, AttemptTiming, recordMissionAttempt } from "./ledger-record-adapter";
 
 /**
  * A mission-scoped §303 Expert Instance, as produced by the released (read-only) assembler
@@ -53,9 +53,24 @@ export class LocalMissionRunner {
     private readonly recordLedger: LedgerRecorder = recordMissionToLedger,
     // Seam to the attempt-level SLO telemetry (every outcome, incl. failures); injectable for tests.
     private readonly recordAttempt: AttemptRecorder = recordMissionAttempt,
+    // Injectable monotonic-enough wall clock (ISO strings) for real start/end timestamps; injectable for tests.
+    private readonly clock: () => string = () => new Date().toISOString(),
   ) {}
 
   run(id: string, name: string = id): LocalMissionResult {
+    // Capture the REAL start timestamp before any work; end is taken at the single recording point.
+    const startedAt = this.clock();
+    let recorded = false;
+    // Record THIS run's attempt EXACTLY ONCE (the `recorded` guard prevents a double-record if a later
+    // step throws after we already recorded). Timestamps are real and from the SAME run; duration is
+    // validated downstream (both present, ordered, finite) before it becomes durationMs.
+    const recordOnce = (validated: boolean, status: string, category?: string): void => {
+      if (recorded) return;
+      recorded = true;
+      const timing: AttemptTiming = { startedAt, endedAt: this.clock() };
+      if (category) timing.category = category;
+      this.recordAttempt(id, validated, status, timing);
+    };
     try {
       const intent = createMissionIntent(id);
       // OBJ-001: the orchestrator is the single entry point for every mission.
@@ -71,14 +86,18 @@ export class LocalMissionRunner {
         (execution as { report?: { status?: string } })?.report?.status ?? "FAILED";
       const validated = status === "SUCCESS";
       this.recordLedger(id, validated, status);
-      // Attempt-level SLO telemetry: record THIS run's honest outcome (success OR failure) so a real
-      // success-rate denominator can accumulate (the proven-only ledger cannot hold failures). Non-blocking.
-      this.recordAttempt(id, validated, status);
+      // Attempt-level SLO telemetry: record THIS run's honest outcome (success OR failure) with real
+      // timing so a real success-rate denominator AND per-category latency can accumulate. Non-blocking.
+      recordOnce(validated, status, this.categoryOf(plan));
       // Read-only §304→§303 surfacing: attach the mission-scoped Expert Instance. Never on the
       // decision path — computed AFTER the verdict, fails closed to undefined, changes nothing.
       const expertInstance = this.compileExpertInstance(plan);
       return { mission: id, ok: true, plan, execution, validated, expertInstance };
     } catch (e) {
+      // An interruption/finalisation error is itself a terminal outcome: record it as an attempt (ERROR)
+      // so hard failures are representable too (never silently dropped). The LEDGER is intentionally NOT
+      // called on a throw (proven-only invariant preserved) — only the attempt log sees this failure.
+      recordOnce(false, "ERROR");
       return { mission: id, ok: false, error: (e as Error).message };
     }
   }
@@ -93,6 +112,20 @@ export class LocalMissionRunner {
    * ledger adapter; no JS MissionContext bridge, no spawn. Any failure falls back to undefined so
    * the execution path is never affected.
    */
+  /**
+   * Best-effort latency CATEGORY for this mission, read from the plan's mode (AUDIT/ENGINEERING/…) if present.
+   * Never on the decision path; fails closed to undefined so a missing category just groups as uncategorized.
+   */
+  private categoryOf(plan: unknown): string | undefined {
+    try {
+      const p = plan as { mode?: unknown; mission?: { mode?: unknown } };
+      const mode = p && (p.mode ?? (p.mission && p.mission.mode));
+      return typeof mode === "string" ? mode : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
   private compileExpertInstance(plan: ExecutionPlan): ExpertInstanceRecord | undefined {
     try {
       const require = createRequire(import.meta.url);
