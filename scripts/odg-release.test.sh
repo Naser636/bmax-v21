@@ -54,5 +54,45 @@ FAKE_CRASH=1 bash "$REL" activate rel-fake-DDD --port "$PORT" >/dev/null 2>&1; r
 ss -ltnp 2>/dev/null | grep ":$PORT " | grep -q "127.0.0.1:$PORT" && chk 0 "C10 bind is loopback 127.0.0.1 (no public exposure)" || chk 1 "C10 loopback bind"
 [ -f "$DATADIR/runtime-state.json" ] && [ -d "$DATADIR/store" ] && chk 0 "C10 no persistent data deleted" || chk 1 "C10 no data deleted"
 
+# ============ Phase 10 — bounded auto-recovery / rollback fault injection ============
+export ODG_RELEASE_HEALTH_ATTEMPTS=4 ODG_RELEASE_HEALTH_INTERVAL=1   # fast + bounded (startup tolerance)
+INC="$TESTROOT/incidents.jsonl"
+# P-healthy: a healthy activate records an OK incident and does NOT roll back.
+mkfake GOOD1 complete
+bash "$REL" activate rel-fake-GOOD1 --port "$PORT" >/dev/null 2>&1
+grep -q '"action":"activate","result":"OK"' "$INC" 2>/dev/null && chk 0 "P1 healthy activate ⇒ incident OK, no spurious rollback" || chk 1 "P1 healthy activate incident OK"
+# P-rollback-success: current=GOOD2, previous=GOOD1 (complete+healthy) ⇒ rollback OK, previous verified + serving.
+mkfake GOOD2 complete
+ln -sfn "$TESTROOT/rel-fake-GOOD1" "$TESTROOT/previous"
+ln -sfn "$TESTROOT/rel-fake-GOOD2" "$TESTROOT/current"
+bash "$REL" rollback --port "$PORT" >/dev/null 2>&1; rc=$?
+[ "$rc" = 0 ] && [ "$(served)" = "GOOD1" ] && chk 0 "P2 rollback to a verified healthy previous ⇒ OK + serving GOOD1" || chk 1 "P2 rollback success"
+# P-invalid-previous: previous artifact incomplete ⇒ NO blind rollback (PREV_INVALID), non-zero, current unchanged.
+mkfake BADPREV incomplete
+cur_before="$(readlink "$TESTROOT/current")"
+ln -sfn "$TESTROOT/rel-fake-BADPREV" "$TESTROOT/previous"
+t0=$(date +%s); bash "$REL" rollback --port "$PORT" >/dev/null 2>&1; rc=$?; t1=$(date +%s)
+{ [ "$rc" -ne 0 ] && grep -q '"result":"PREV_INVALID"' "$INC"; } && chk 0 "P3 invalid previous ⇒ PREV_INVALID, no blind rollback (exit!=0)" || chk 1 "P3 invalid previous refused"
+[ "$(readlink "$TESTROOT/current")" = "$cur_before" ] && chk 0 "P3 current pointer unchanged on refused rollback" || chk 1 "P3 current unchanged"
+# P-rollback-failed: previous is complete but its server CRASHES ⇒ ROLLBACK_FAILED, STOP (no loop), BOUNDED time.
+mkfake CRASHPREV complete
+ln -sfn "$TESTROOT/rel-fake-CRASHPREV" "$TESTROOT/previous"
+t0=$(date +%s); FAKE_CRASH=1 bash "$REL" rollback --port "$PORT" >/dev/null 2>&1; rc=$?; t1=$(date +%s)
+{ [ "$rc" -ne 0 ] && grep -q '"result":"ROLLBACK_FAILED"' "$INC"; } && chk 0 "P4 rollback health fail ⇒ ROLLBACK_FAILED incident + stop (exit!=0)" || chk 1 "P4 rollback-failed"
+[ $((t1 - t0)) -le 15 ] && chk 0 "P4 bounded (completed in $((t1-t0))s ≤ 15 — no infinite loop)" || chk 1 "P4 bounded time"
+# P-concurrency: a held lock ⇒ refuse concurrent recovery (fail-closed), does NOT touch current.
+mkdir -p "$TESTROOT/.recovery.lock"; echo "99999:0" > "$TESTROOT/.recovery.lock/owner"
+bash "$REL" rollback --port "$PORT" >/dev/null 2>&1; rc=$?
+[ "$rc" -ne 0 ] && chk 0 "P5 concurrent recovery refused while lock held (RECOVERY_IN_PROGRESS)" || chk 1 "P5 concurrency guard"
+rmdir "$TESTROOT/.recovery.lock/owner" 2>/dev/null; rm -rf "$TESTROOT/.recovery.lock"
+# P-no-previous: rollback with no previous ⇒ NO_PREVIOUS incident, fail-closed.
+rm -f "$TESTROOT/previous"
+bash "$REL" rollback --port "$PORT" >/dev/null 2>&1; rc=$?
+{ [ "$rc" -ne 0 ] && grep -q '"result":"NO_PREVIOUS"' "$INC"; } && chk 0 "P6 no previous ⇒ NO_PREVIOUS fail-closed (no guess)" || chk 1 "P6 no previous"
+# P-data-safety: persistent data untouched + loopback throughout the recovery scenarios.
+{ [ -f "$DATADIR/runtime-state.json" ] && [ -d "$DATADIR/store" ]; } && chk 0 "P7 persistent data intact across recovery drills" || chk 1 "P7 data intact"
+# P-incident-trace: structured records exist (incident/action/result/durationMs/exitCode).
+grep -q '"durationMs"' "$INC" && grep -q '"exitCode"' "$INC" && chk 0 "P8 incident trace structured (durationMs+exitCode)" || chk 1 "P8 incident trace"
+
 echo ""; [ "$fails" = "0" ] && echo "ALL PASS — odg-release pipeline ($(bash "$REL" list | wc -l) releases)" || echo "$fails FAILURE(S)"
 exit "$fails"

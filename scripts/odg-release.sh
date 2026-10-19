@@ -98,6 +98,43 @@ _health() { # host port -> echoes http code; 000 on no-answer
   curl -s -o /dev/null -w '%{http_code}' --max-time 8 "http://$1:$2/api/health" 2>/dev/null || echo "000"
 }
 
+# --- Bounded auto-recovery primitives (Phase 10) -----------------------------------------------------------
+HEALTH_ATTEMPTS="${ODG_RELEASE_HEALTH_ATTEMPTS:-5}"   # bounded retries (slow-start tolerance, no infinite wait)
+HEALTH_INTERVAL="${ODG_RELEASE_HEALTH_INTERVAL:-2}"   # seconds between attempts
+LOCK_DIR="$RELEASE_ROOT/.recovery.lock"
+INCIDENTS="$RELEASE_ROOT/incidents.jsonl"
+
+# Poll health up to HEALTH_ATTEMPTS × HEALTH_INTERVAL; echoes final code (200 on success). Distinguishes a
+# temporary slow start from a persistent failure without an unbounded wait.
+_health_wait() {
+  local host="$1" port="$2" i code="000"
+  for ((i=1; i<=HEALTH_ATTEMPTS; i++)); do
+    code="$(_health "$host" "$port")"
+    [ "$code" = "200" ] && { echo "200"; return 0; }
+    sleep "$HEALTH_INTERVAL"
+  done
+  echo "$code"; return 1
+}
+
+# Single active recovery per release root (mkdir is atomic). Fail-closed on a held lock ⇒ no concurrent recovery.
+# Acquired once at command dispatch; internal cmd_activate→cmd_rollback runs UNDER the same lock (no re-acquire).
+_acquire_lock() {
+  if mkdir "$LOCK_DIR" 2>/dev/null; then echo "$$:$(date -u +%s)" > "$LOCK_DIR/owner"; trap '_release_lock' EXIT; return 0; fi
+  die "RECOVERY_IN_PROGRESS: $LOCK_DIR held (owner $(cat "$LOCK_DIR/owner" 2>/dev/null)) — refusing concurrent recovery"
+}
+_release_lock() { rm -rf "$LOCK_DIR" 2>/dev/null || true; }
+
+# Append-only, deduped incident trace (never deletes). Fields: from action result durationMs exitCode blocker.
+_incident() {
+  mkdir -p "$RELEASE_ROOT"
+  local rec="{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"from\":\"$1\",\"action\":\"$2\",\"result\":\"$3\",\"durationMs\":${4:-0},\"exitCode\":${5:-0},\"blocker\":\"${6:-}\"}"
+  local last now
+  last="$( { tail -1 "$INCIDENTS" 2>/dev/null || true; } | sed 's/"ts":"[^"]*",//' || true)"   # file may not exist yet
+  now="$(echo "$rec" | sed 's/"ts":"[^"]*",//' || true)"
+  [ "$last" = "$now" ] || echo "$rec" >> "$INCIDENTS"   # dedup identical consecutive (minus timestamp)
+  log "INCIDENT $2/$3 from=$1 (${4:-0}ms exit=${5:-0})${6:+ blocker=$6}"
+}
+
 cmd_verify() {
   local rid="$1"; local app="$RELEASE_ROOT/$rid/app"
   [ -d "$app" ] || die "no such release $rid"
@@ -125,27 +162,39 @@ cmd_activate() {
   # Stop whatever currently listens on the target port (our own prior release), then start the new one.
   local old; old="$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2 || true)"
   [ -n "${old:-}" ] && { kill "$old" 2>/dev/null || true; sleep 2; }
-  local logf="$RELEASE_ROOT/$rid/server.log"; local pid; pid="$(_boot "$RELEASE_ROOT/current/app" "$host" "$port" "$logf")"
-  sleep 4
-  local code; code="$(_health "$host" "$port")"
+  local logf="$RELEASE_ROOT/$rid/server.log"; local pid started; started=$(date +%s%3N 2>/dev/null || echo 0); pid="$(_boot "$RELEASE_ROOT/current/app" "$host" "$port" "$logf")"
+  local code; code="$(_health_wait "$host" "$port" || true)"   # BOUNDED retries; || true so set -e cannot abort before the incident/rollback logic
+  local dur=$(( $(date +%s%3N 2>/dev/null || echo 0) - started ))
   if [ "$code" != "200" ]; then
-    log "activation health FAILED ($code) — rolling back"; kill "$pid" 2>/dev/null || true; cmd_rollback --port "$port" --host "$host"; die "activation failed; rolled back"
+    _incident "$rid" "activate" "HEALTH_FAIL" "$dur" "$code" ""
+    log "activation health FAILED ($code after $HEALTH_ATTEMPTS attempts) — auto-rolling back"; kill "$pid" 2>/dev/null || true
+    cmd_rollback --port "$port" --host "$host"   # rollback verifies previous integrity + is itself fail-closed
+    die "activation failed; rolled back"
   fi
+  _incident "$rid" "activate" "OK" "$dur" "200" ""
   log "ACTIVATED $rid on $host:$port health=200 pid=$pid"
 }
 
 cmd_rollback() {
   local host="$HOST_DEFAULT" port="$PORT_DEFAULT"
   while [ $# -gt 0 ]; do case "$1" in --port) port="$2"; shift 2;; --host) host="$2"; shift 2;; *) die "unknown rollback arg $1";; esac; done
-  [ -L "$RELEASE_ROOT/previous" ] || die "no previous release to roll back to"
+  [ -L "$RELEASE_ROOT/previous" ] || { _incident "none" "rollback" "NO_PREVIOUS" 0 1 "no previous release"; die "no previous release to roll back to"; }
   local prev; prev="$(readlink "$RELEASE_ROOT/previous")"
-  [ -d "$prev/app" ] || die "previous release artifact missing: $prev"
+  [ -d "$prev/app" ] || { _incident "$(basename "$prev")" "rollback" "PREV_MISSING" 0 1 "previous artifact missing"; die "previous release artifact missing: $prev"; }
+  # NO BLIND ROLLBACK — the previous release must be a COMPLETE artifact (integrity/identity) before we switch to it.
+  local why; if ! why="$(verify_artifact "$prev/app")"; then _incident "$(basename "$prev")" "rollback" "PREV_INVALID" 0 1 "$why"; die "previous release invalid ($why) — refusing blind rollback"; fi
   ln -sfn "$prev" "$RELEASE_ROOT/current.tmp" && mv -T "$RELEASE_ROOT/current.tmp" "$RELEASE_ROOT/current"
   local old; old="$(ss -ltnp 2>/dev/null | grep ":$port " | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2 || true)"
   [ -n "${old:-}" ] && { kill "$old" 2>/dev/null || true; sleep 2; }
-  local pid; pid="$(_boot "$prev/app" "$host" "$port" "$prev/server.log")"
-  sleep 4
-  [ "$(_health "$host" "$port")" = "200" ] || die "rollback health not 200"
+  local pid started; started=$(date +%s%3N 2>/dev/null || echo 0); pid="$(_boot "$prev/app" "$host" "$port" "$prev/server.log")"
+  local code; code="$(_health_wait "$host" "$port" || true)"
+  local dur=$(( $(date +%s%3N 2>/dev/null || echo 0) - started ))
+  if [ "$code" != "200" ]; then
+    # Rollback ITSELF failed — STOP automatic attempts (no infinite loop), preserve evidence, declare the incident.
+    _incident "$(basename "$prev")" "rollback" "ROLLBACK_FAILED" "$dur" "$code" "manual intervention required"
+    die "ROLLBACK FAILED (health $code) — automatic recovery STOPPED, incident recorded, no retry loop"
+  fi
+  _incident "$(basename "$prev")" "rollback" "OK" "$dur" "200" ""
   log "ROLLED BACK to $(basename "$prev") on $host:$port health=200 pid=$pid"
 }
 
@@ -163,8 +212,8 @@ cmd_list() { ls -1t "$RELEASE_ROOT" 2>/dev/null | grep '^rel-' || echo "(no rele
 case "${1:-}" in
   build) shift; cmd_build "$@";;
   verify) shift; cmd_verify "$@";;
-  activate) shift; cmd_activate "$@";;
-  rollback) shift; cmd_rollback "$@";;
+  activate) shift; _acquire_lock; cmd_activate "$@";;
+  rollback) shift; _acquire_lock; cmd_rollback "$@";;
   status) shift; cmd_status "$@";;
   list) shift; cmd_list "$@";;
   *) die "usage: odg-release {build|verify|activate|rollback|status|list}";;
