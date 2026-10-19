@@ -29,6 +29,14 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`ODG_HIGH_REVENUE_DISCOVERY_AND_EXECUTION` — honest high-target analysis. 2026-10-19 (from `d9b9c4d`).** [PASS — analysis; A/B declared BLOCKED without leverage]
+  - **Truth Lock:** HEAD=origin/main=`d9b9c4d`→(this); `main`; clean; 5 stashes; protected paths untouched. No spend/contact/publish.
+  - **Targets:** A=100k€/mois (1,2M€/an), B=100k€/10j (~3M€/an), C=100k€ net. Doc: `docs/odg-operational/ODG_HIGH_REVENUE_ANALYSIS.md`.
+  - **Sourced models [FACT 2026]:** SaaS→100k€ MRR ≈ 3 ans médian ; agence→100k$/mois = équipe 4–5, 9–18 mois ; solo senior ≈ 100–130k€/AN.
+  - **Reproducible math (`revenue-model.targetPlan`, 7/7 tests):** A @7500€/10% = 14 contrats/mois, livrables solo = **2** ⇒ capacité dépassée ×7 ; @25000€ encore dépassée ; **B = 0 livrable solo (impossible)**. ⇒ A/B exigent un LEVIER (équipe ou produit) = capital+embauche+temps+GO humain.
+  - **ODG decision (honnête) :** aucune voie ne rend A/B crédibles en solo/0€/court terme — **déclaré explicitement** (pas de plan séduisant). Chemin étagé : FONDATION = service migration productisé (déjà prêt, plafond solo ~8–11k€/mois) → Palier 2 productisation/sous-traitance → Palier 3 agence (9–18 mois) OU SaaS (~3 ans). C = exploitation soutenue, pas court terme. Repli = solo 100–130k€/an.
+  - **Anti-scam appliqué** (cibles = annonces publiques, pas de paiement préalable/gains garantis ; vérif RNE avant tout devis réel). Budget 0 €.
+  - **BLOCKED (CTO) pour A/B :** statut/société+TVA, GO prospection, **capital de départ (sine qua non)**, recrutement/sous-traitance, éventuel invest produit. Sans capital+levier, A/B restent BLOCKED. FONDATION bloquée sur GO prospection/entité.
 - **`REVENUE_VALIDATION_PREPARATION` (Phase 3A) — 2026-10-19 (from `47a745e`).** [PASS]
   - **Truth Lock:** HEAD=origin/main=`47a745e`→(this); `main`; clean; 5 stashes; protected paths untouched. No message sent, no publish, no spend, no real contact.
   - **Dossier (sourced, private):** `docs/odg-operational/ODG_REVENUE_VALIDATION_PREP.md`.

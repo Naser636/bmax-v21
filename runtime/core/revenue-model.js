@@ -74,4 +74,38 @@ function scenariosToTarget(targetCa, variants) {
   });
 }
 
-module.exports = { revenueScenario, daysForTargetCa, scenariosToTarget, MICRO_BNC_CEILING_EUR, VAT_FRANCHISE_SERVICES_EUR, round2 };
+/**
+ * Reproducible plan for a REVENUE TARGET over a period (§5 mandatory math). Given an average contract value, a
+ * HYPOTHETICAL prospect→client conversion rate (no observed data ⇒ clearly a hypothesis), the delivery days per
+ * contract and the real delivery capacity (days available in the period), it derives: contracts needed, qualified
+ * prospects needed, the max contracts actually DELIVERABLE, and whether the target is capacity-feasible. It never
+ * claims the conversion is observed. `capacityExceeded:true` is the honest "this model needs more than one person
+ * can deliver" signal the mandate requires.
+ */
+function targetPlan(inp) {
+  const i = inp && typeof inp === "object" ? inp : {};
+  const target = Number(i.targetRevenue);
+  const avg = Number(i.avgContractValue);
+  const conv = Number(i.conversionRate);              // prospect→client, 0..1 (HYPOTHESIS)
+  const deliveryDays = Number(i.deliveryDaysPerContract);
+  const capacityDays = Number(i.capacityDaysPerPeriod);
+  if (![target, avg, conv, deliveryDays, capacityDays].every((x) => Number.isFinite(x) && x >= 0) || avg <= 0 || conv <= 0 || deliveryDays <= 0) {
+    return { ok: false, reason: "targetRevenue, avgContractValue>0, conversionRate(0..1]>0, deliveryDaysPerContract>0, capacityDaysPerPeriod required" };
+  }
+  const contractsNeeded = Math.ceil(target / avg);
+  const prospectsNeeded = Math.ceil(contractsNeeded / conv);
+  const maxDeliverable = Math.floor(capacityDays / deliveryDays);
+  const capacityExceeded = contractsNeeded > maxDeliverable;
+  return {
+    ok: true,
+    assumptions: { targetRevenue: target, avgContractValue: avg, conversionRate: conv, deliveryDaysPerContract: deliveryDays, capacityDaysPerPeriod: capacityDays },
+    contractsNeeded,
+    prospectsNeeded,            // conversion is a HYPOTHESIS — not observed
+    maxDeliverable,
+    capacityExceeded,           // true ⇒ target needs more delivery than this capacity can produce (e.g. a team)
+    extraCapacityNeededContracts: capacityExceeded ? contractsNeeded - maxDeliverable : 0,
+    note: "conversionRate is a HYPOTHESIS (no observed data). capacityExceeded=true means the target exceeds solo delivery capacity.",
+  };
+}
+
+module.exports = { revenueScenario, daysForTargetCa, scenariosToTarget, targetPlan, MICRO_BNC_CEILING_EUR, VAT_FRANCHISE_SERVICES_EUR, round2 };

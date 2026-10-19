@@ -55,4 +55,26 @@ t("scenariosToTarget + JS/TS parity", () => {
   assert.deepStrictEqual(TS.scenariosToTarget(100000, variants), JS.scenariosToTarget(100000, variants));
 });
 
+// 6. targetPlan — reproducible target math + capacity-exceeded honesty (the 100k€/month reality check).
+t("targetPlan derives contracts/prospects + flags capacity exceeded (100k/month solo)", () => {
+  // 100k€/month, avg contract 7500€, conversion 10% (HYP), 8 delivery days/contract, ~20 capacity days/month (solo).
+  const p = TS.targetPlan({ targetRevenue: 100000, avgContractValue: 7500, conversionRate: 0.10, deliveryDaysPerContract: 8, capacityDaysPerPeriod: 20 });
+  assert.strictEqual(p.ok, true);
+  assert.strictEqual(p.contractsNeeded, 14);     // ceil(100000/7500)
+  assert.strictEqual(p.prospectsNeeded, 140);    // ceil(14/0.10)
+  assert.strictEqual(p.maxDeliverable, 2);       // floor(20/8) — solo can deliver ~2 contracts/month
+  assert.strictEqual(p.capacityExceeded, true);  // 14 >> 2 ⇒ impossible solo (needs a team)
+  assert.strictEqual(p.extraCapacityNeededContracts, 12);
+});
+
+// 7. targetPlan — a feasible solo monthly target is NOT flagged exceeded.
+t("targetPlan — feasible solo target not flagged", () => {
+  const p = TS.targetPlan({ targetRevenue: 15000, avgContractValue: 7500, conversionRate: 0.2, deliveryDaysPerContract: 8, capacityDaysPerPeriod: 20 });
+  assert.strictEqual(p.contractsNeeded, 2);
+  assert.strictEqual(p.maxDeliverable, 2);
+  assert.strictEqual(p.capacityExceeded, false);
+  assert.deepStrictEqual(TS.targetPlan({ targetRevenue: 15000, avgContractValue: 7500, conversionRate: 0.2, deliveryDaysPerContract: 8, capacityDaysPerPeriod: 20 }),
+                         JS.targetPlan({ targetRevenue: 15000, avgContractValue: 7500, conversionRate: 0.2, deliveryDaysPerContract: 8, capacityDaysPerPeriod: 20 }));
+});
+
 console.log(`\nALL PASS — revenue-model (${n} tests)`);
