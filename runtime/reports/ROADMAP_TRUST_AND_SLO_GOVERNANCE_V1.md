@@ -45,6 +45,7 @@ Each lot records provenance + why an adaptation diverges from the source.
   *Status of data:* current baseline (`autonomy-rate.json`, N=12 self-audit) ⇒ **INSUFFICIENT_EVIDENCE** (below minSampleN=20;
   not a window population) — honest, no fake pass. *Next:* controlled collection of a window-scoped eligible-mission
   population before any VALIDATED promotion. The 25% deterministic benchmark is untouched (separate frozen gate).
+- **P3b — Bounded SLO-violation reactions (CTO §5.3, 2026-10-19).** `runtime/core/slo-response.ts`+`.js` (7 tests, parity): `planSloResponse(verdict)` maps a verdict to a BOUNDED, PREPARE-not-APPLY plan — `autoApply` always false. Severity ladder NONE<LOW<ELEVATED<CRITICAL: WITHIN/MEASUREMENT_ONLY⇒CONTINUE; INSUFFICIENT_EVIDENCE⇒COLLECT_MORE (no gating on noise); BREACH⇒LIMIT_CHANGES (diagnose→limit→recover→re-verify); forbidden-action INCIDENT⇒SUSPEND_PATH+preserve-evidence+escalate (CRITICAL, strictly > BREACH, never averaged). Composes with the real slo-targets verdicts; never self-executes a consequential remediation.
 - **P3a — `evaluateSLO` validity review.** Confirm/strengthen WITHIN/BREACH/INSUFFICIENT_EVIDENCE + falsified-data
   guards with boundary tests. *Accept:* boundary + falsified + small-sample cases pass; no coercion of measurable:false.
 - **P4 — Autonomy hardening (post-P0–P3).** bounded recovery, idempotent resume, PASS/FAIL/BLOCKED/NOT_RUN
