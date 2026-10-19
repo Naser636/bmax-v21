@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# odg-release.test — isolated, reproducible tests of the release pipeline (CTO Phase 2, Lot C).
+# Uses a TEMP release root, a TEMP persistent-data dir, a high TEST port, and lightweight FAKE artifacts (a tiny
+# node server exposing /api/health reading ODG_DEPLOYED_BUILD_ID). NEVER touches the live :3000 dashboard, never
+# uses sudo, binds loopback only. Cleans up all processes/dirs on exit.
+set -uo pipefail
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REL="$REPO/scripts/odg-release.sh"
+TESTROOT="$(mktemp -d)"; DATADIR="$(mktemp -d)"; PORT=4071; STAGE=4072
+export ODG_RELEASE_ROOT="$TESTROOT" ODG_RUNTIME_STATE_DIR="$DATADIR" ODG_CLIENT_STORE="$DATADIR/store" ODG_RELEASE_STAGING_PORT="$STAGE"
+mkdir -p "$DATADIR/store"
+echo '{"generatedAt":"2026-01-01T00:00:00.000Z","health":{"status":"READY"},"lastMission":"DATA_SENTINEL"}' > "$DATADIR/runtime-state.json"
+fails=0; chk(){ if [ "$1" = "0" ]; then echo "  PASS $2"; else echo "  FAIL $2"; fails=$((fails+1)); fi; }
+cleanup(){ for p in $(ss -ltnp 2>/dev/null | grep -E ":($PORT|$STAGE) " | grep -oE 'pid=[0-9]+' | cut -d= -f2); do kill "$p" 2>/dev/null; done; rm -rf "$TESTROOT" "$DATADIR"; }
+trap cleanup EXIT
+
+# Build a FAKE release dir (complete unless $2=incomplete). $1=buildId
+mkfake(){ local id="$1"; local mode="${2:-complete}"; local d="$TESTROOT/rel-fake-$id/app";
+  mkdir -p "$d/.next/static" "$d/public" "$d/node_modules"; echo "$id" > "$d/.next/BUILD_ID"
+  cat > "$d/server.js" <<'JS'
+const http=require('http'),bid=process.env.ODG_DEPLOYED_BUILD_ID||'?';const host=process.env.HOSTNAME||'0.0.0.0',port=process.env.PORT||3000;
+if(process.env.FAKE_CRASH==='1'){process.exit(1);}
+http.createServer((q,r)=>{if(q.url==='/api/health'){r.writeHead(200,{'content-type':'application/json'});r.end(JSON.stringify({status:'ready',storage:'READY',buildId:bid}))}else{r.writeHead(200);r.end('ok')}}).listen(port,host);
+JS
+  echo "{\"releaseId\":\"rel-fake-$id\",\"commit\":\"deadbeef0000\",\"buildId\":\"$id\"}" > "$TESTROOT/rel-fake-$id/RELEASE.json"
+  [ "$mode" = "incomplete" ] && rm -rf "$d/.next/static"; return 0; }
+
+echo "ODG-RELEASE PIPELINE — isolated tests (root=$TESTROOT port=$PORT)"
+mkfake AAA complete; mkfake BBB complete
+
+# C1 create + C3 commit/buildId identity: verify boots staging and matches buildId.
+bash "$REL" verify rel-fake-AAA >/dev/null 2>&1; chk $? "C1/C3 complete release verifies (staging health + buildId match)"
+# C2/C4 refuse incomplete (missing static assets).
+mkfake CCC incomplete; bash "$REL" verify rel-fake-CCC >/dev/null 2>&1; [ $? -ne 0 ] && chk 0 "C2/C4 incomplete artifact (no .next/static) REFUSED" || chk 1 "C2/C4 incomplete artifact REFUSED"
+# activate AAA then BBB; C8 rollback restores AAA.
+bash "$REL" activate rel-fake-AAA --port "$PORT" >/dev/null 2>&1; chk $? "activate AAA"
+served(){ curl -s --max-time 6 "http://127.0.0.1:$PORT/api/health" 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{console.log(JSON.parse(s).buildId)}catch{console.log("")}})'; }
+[ "$(served)" = "AAA" ] && chk 0 "AAA serving after activate" || chk 1 "AAA serving after activate"
+bash "$REL" activate rel-fake-BBB --port "$PORT" >/dev/null 2>&1; [ "$(served)" = "BBB" ] && chk 0 "BBB serving after 2nd activate" || chk 1 "BBB serving after 2nd activate"
+# C5/C6 data persistence + no runtime copy: the persistent sentinel is untouched and NOT inside any release.
+grep -q DATA_SENTINEL "$DATADIR/runtime-state.json" && chk 0 "C5 persistent data intact across switches" || chk 1 "C5 persistent data intact"
+[ -z "$(find "$TESTROOT" -name runtime-state.json 2>/dev/null)" ] && chk 0 "C6 no runtime-state copied into any release (data stays external)" || chk 1 "C6 no runtime data in release"
+# C8 rollback to AAA.
+bash "$REL" rollback --port "$PORT" >/dev/null 2>&1; [ "$(served)" = "AAA" ] && chk 0 "C8 rollback restores AAA" || chk 1 "C8 rollback restores AAA"
+# C7/C9 start failure / interruption preserves old: a crashing release must FAIL staging verify BEFORE any switch,
+# so `current` still points to AAA and AAA's dir is intact (deterministic — checks the pointer, not live timing).
+cur_before="$(readlink "$TESTROOT/current")"
+mkfake DDD complete
+FAKE_CRASH=1 bash "$REL" activate rel-fake-DDD --port "$PORT" >/dev/null 2>&1; rc=$?
+[ "$rc" -ne 0 ] && chk 0 "C7/C9 crashing release activation FAILS (non-zero), no false success" || chk 1 "C7/C9 crashing activation fails"
+[ "$(readlink "$TESTROOT/current")" = "$cur_before" ] && chk 0 "C7 current pointer unchanged after failed activation (no mid-switch)" || chk 1 "C7 current pointer unchanged"
+[ -f "$TESTROOT/rel-fake-AAA/app/server.js" ] && chk 0 "C7 previous release dir intact (not deleted)" || chk 1 "C7 previous release dir intact"
+# C10 loopback-only bind (no 0.0.0.0) + no data deletion.
+ss -ltnp 2>/dev/null | grep ":$PORT " | grep -q "127.0.0.1:$PORT" && chk 0 "C10 bind is loopback 127.0.0.1 (no public exposure)" || chk 1 "C10 loopback bind"
+[ -f "$DATADIR/runtime-state.json" ] && [ -d "$DATADIR/store" ] && chk 0 "C10 no persistent data deleted" || chk 1 "C10 no data deleted"
+
+echo ""; [ "$fails" = "0" ] && echo "ALL PASS — odg-release pipeline ($(bash "$REL" list | wc -l) releases)" || echo "$fails FAILURE(S)"
+exit "$fails"
