@@ -42,10 +42,23 @@ export interface VerifyRequirement {
   capability: string;
   evidence: string;
 }
+// §17 mission CATEGORY taxonomy — the SINGLE declarable set, kept in lock-step with
+// runtime/core/mission-attempt-log.MISSION_CATEGORIES (minus the "uncategorized" sentinel, which is a
+// default, never a declared value). A contract's `category` is carried ONLY when it matches this set;
+// anything else (absent/typo/unknown) is dropped ⇒ the attempt groups under "uncategorized" downstream,
+// exactly as the strict categorizeMission() already behaves. No guessing from id/goal/mode.
+export const MISSION_CONTRACT_CATEGORIES = [
+  "reliability-recovery", "backup-restore", "deployment-release", "security-governance",
+  "observability-slo", "runtime-capability", "testing-validation",
+] as const;
+
 export interface MissionContract {
   definitionOfDone: string[];
   completion: string[];
   verify: VerifyRequirement[];
+  // §17 OPTIONAL latency CATEGORY, carried verbatim from the contract ONLY when it matches the taxonomy
+  // above; absent/invalid ⇒ undefined (strict, provenance-honest — downstream treats it as uncategorized).
+  category?: string;
 }
 
 // S4 (Controlled-Execution transport): the mission's CONTROL declaration, carried VERBATIM
@@ -175,6 +188,7 @@ export class MissionLoader {
       definitionOfDone?: unknown;
       completion?: unknown;
       verify?: unknown;
+      category?: unknown;
     } = {};
     try {
       contract = JSON.parse(fs.readFileSync(`${this.missionsDir}/${id}.json`, "utf8"));
@@ -201,7 +215,16 @@ export class MissionLoader {
           .map(v => ({ capability: v.capability, evidence: v.evidence }))
       : [];
 
-    return { definitionOfDone, completion, verify };
+    // §17 strict category: carried ONLY when it is a string in the taxonomy; otherwise omitted (undefined).
+    const rawCat = contract.category;
+    const category =
+      typeof rawCat === "string" && (MISSION_CONTRACT_CATEGORIES as readonly string[]).includes(rawCat)
+        ? rawCat
+        : undefined;
+
+    const result: MissionContract = { definitionOfDone, completion, verify };
+    if (category) result.category = category;
+    return result;
   }
 
   /**

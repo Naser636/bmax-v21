@@ -1,85 +1,60 @@
 # SLO Metrics Snapshot (verified, point-in-time)
 
-**Date:** 2026-10-19 · **HEAD:** `23a5401`+ · **Source:** `runtime/generated/mission-attempts.jsonl` (git-ignored REAL
-telemetry — every LOCAL-route + autonomy-loop mission attempt, recorded at closure incl. failures/ERROR). Produced by
-`mission-attempt-log.metricsSnapshot` (reuses `summarizeAttempts`; NO parallel counter) + `latency-measure`. Values
-are a point-in-time reading and change as real missions run — re-derive, never copy forward as "current".
+**Date:** 2026-10-19 · **HEAD:** `7d08099`+ (uncommitted Phase 17 work) · **Source:** `runtime/generated/mission-attempts.jsonl`
+(git-ignored REAL telemetry — every LOCAL-route + autonomy-loop mission attempt, recorded at closure incl. failures/ERROR).
+Produced by `mission-attempt-log.metricsSnapshot` (reuses `summarizeAttempts`; NO parallel counter) + `latency-measure`.
+Values are a point-in-time reading and change as missions run — re-derive, never copy forward as "current".
 
-## Counter (real)
-- **Total attempts:** 46 · **distinct missions:** 14 (retries stay attached to their mission — not inflated).
-- **Window:** 2026-10-19T15:27:47Z → 2026-10-19T17:10:40Z.
-- **Outcomes:** RECORDED 34 · SKIPPED:FAILED 9 · SKIPPED:ERROR 3 (failures representable ⇒ a real denominator).
+> **HONESTY CAVEAT (registry contamination).** The attempt log is git-ignored and the **test harness appends to it on
+> every `npm test`** (synthetic ids: `M0000`, `ENG2`, `ECO`, `__COVERAGE_INVARIANT__`, `__ER_*__`, …). Its absolute counts
+> are therefore **non-deterministic and dominated by synthetic test missions** — NOT operational missions. Crossing the
+> N=20 threshold here is a **test artifact, not a validated SLO**. The rate SLOs stay **NOT VALIDATED** until ≥20 *real,
+> distinct operational* missions exist. No real-mission rate is claimed.
+>
+> **FIXED GOING FORWARD (§4.3):** the attempt-log path is now env-overridable (`ODG_ATTEMPTS_LOG`, default unchanged) and
+> `npm test` redirects it to a throwaway temp file — a full suite run now leaves the real registry **unchanged (114→114,
+> proven)**. Existing historical entries are PRESERVED (no deletion/reset — unauthorized). All 21 distinct ids currently in
+> the registry are test/benchmark artifacts (`M0000`×27, `ENG2`, `__COVERAGE__`, `TEST_CONSEQUENTIAL_EXEC_GATE`, …): there
+> are **0 real operational missions** recorded ⇒ the real-mission SLO denominator is effectively empty today.
+
+## Counter (point-in-time, test-contaminated)
+- **Before (prior snapshot):** 46 attempts / 14 distinct.
+- **Now:** ~110 attempts / 21 distinct (grew purely from this session's suite runs — synthetic ids). Window
+  2026-10-19T15:27:47Z → 21:59:59Z. Outcomes: RECORDED 69 · SKIPPED:FAILED 34 · SKIPPED:ERROR 7 (failures representable).
 
 ## Rate SLOs (CTO targets; honest verdicts)
-| SLO | Target | Measured | Verdict |
+| SLO | Target | Measured (contaminated) | Verdict |
 |---|---|---|---|
-| MISSION_SUCCESS_VERIFIED | ≥0.95 | 12/14 | **INSUFFICIENT_EVIDENCE** (N=14 < minSampleN 20) |
-| MISSION_SUCCESS_FIRST_ATTEMPT | ≥0.90 | 11/14 | **INSUFFICIENT_EVIDENCE** (N=14 < 20) |
+| MISSION_SUCCESS_VERIFIED | ≥0.95 | 16/21 | **NOT VALIDATED** — denominator is synthetic test ids, not ≥20 real missions |
+| MISSION_SUCCESS_FIRST_ATTEMPT | ≥0.90 | 15/21 | **NOT VALIDATED** — same reason |
 | FORBIDDEN_ACTION_BLOCK | =1.0 (binary) | 0 executed forbidden effects | **PASS** (separate binary gate, never averaged) |
 
-Neither rate is declared validated — the minimum evidence volume (≥20 distinct eligible missions) is not met.
+`metricsSnapshot` now returns `measurable:true` at N=21 ≥ 20; that is **mechanically correct but operationally meaningless
+here** because the sample is test-generated. Do not read it as a validated success rate.
 
-## Speed baseline (MEASURED — targets still reserved to the CTO)
-- **Per-attempt latency** (all 46 carry real start/end durations): **median 88.5 ms · p95 196 ms · max 215 ms** (n=46,
-  measurable ≥ minSampleN). Category = uncategorized (missions not yet tagged by category).
-- Latency TARGETS remain **unset** (D-SLO reserved) — a baseline now exists; the CTO sets thresholds. No threshold invented.
+## §17 — TOTAL mission duration per run (reprises incl.) — NEW, DISTINCT from per-attempt latency
+- `runId` is created once per logical execution and reused by every attempt/retry of that run (both routes:
+  `LocalMissionRunner.run`, autonomy `runPipeline → runLocalPipeline`/`recoverLocally`). `metricsSnapshot.totalByRun`
+  groups attempts by `runId`: **wall** time from the earliest `startedAt` to the latest `endedAt` across the run.
+- **Observed:** ~61 runs now carry a `runId`; **49 historical attempts remain UNATTRIBUTED** (no `runId` — never
+  reconstructed, per the measurement contract pt.4). All observed runs are **single-attempt** (no retry occurred in this
+  data), so each run's total = its one attempt. The **multi-attempt** case (wall-total ≠ sum-of-latencies, reprise gap
+  included) is proven by unit test (`totalDurationByRun`), **not yet by a live retry** — flagged, not fabricated.
 
-## Alignment & closure
-Instrumentation fires at closure on BOTH routes (LocalMissionRunner + autonomy runLocalPipeline) and records
-failures/ERROR too (a telemetry gap never becomes a success). Distinct from the proven-only `mission-ledger` (which
-cannot hold failures — survivorship); this attempt-log is the rate denominator source.
+## §17 — recovery/rollback duration
+- `recoveryDurationFromIncidents(incidents.jsonl)` is wired (pure; caller does the fs read). The repo has no
+  `runtime/generated/incidents.jsonl` (recovery runs are release-local) ⇒ **`measurable:false` — "incidents source absent
+  or empty"** (honest; never fabricated). Proven measurable from a valid fixture by unit test.
 
+## Speed baseline (per-attempt, MEASURED — targets reserved to the CTO)
+- Per-attempt latency (all attempts carry real start/end): **median ≈42.5 ms · p95 ≈197.6 ms · max 237 ms** (n≈110,
+  measurable ≥ minSampleN). Category = **uncategorized** (synthetic ids declare no `category`). This is a technical-control
+  per-attempt latency — **NOT** total mission duration. Latency TARGETS remain unset (reserved); no threshold invented.
 
-## Per-category breakdown (§16)
-Categories derive STRICTLY from the mission contract's `category` (taxonomy: reliability-recovery, backup-restore, deployment-release, security-governance, observability-slo, runtime-capability, testing-validation, uncategorized). The 46 historical attempts carry NO recorded category (the field predates this phase) ⇒ all group under **uncategorized** (provenance-honest; not retrofitted). New missions inherit `category` from their contract.
-
-- **uncategorized:** 46 attempts / 14 distinct · verified 12/14 · latency median 88.5ms / p95 196ms (n=46, measurable).
-
-Per-category latency uses the same minSampleN=20 gate ⇒ a category with <20 samples reports INSUFFICIENT_EVIDENCE, never a misleading p95. Latency is PER-ATTEMPT (a technical-control latency), NOT total mission duration (retries-inclusive total is not yet separately measured — flagged as a gap, not fabricated).
-
-## Machine snapshot
-```json
-{
-  "generatedFrom": "runtime/generated/mission-attempts.jsonl (git-ignored real telemetry)",
-  "window": {
-    "from": null,
-    "to": null
-  },
-  "totalAttempts": 46,
-  "distinctMissions": 14,
-  "failuresRepresentable": true,
-  "verified": {
-    "numerator": 12,
-    "denominator": 14,
-    "measurable": false,
-    "reason": "sample N=14 below minimum 20"
-  },
-  "firstAttempt": {
-    "numerator": 11,
-    "denominator": 14,
-    "measurable": false,
-    "reason": "sample N=14 below minimum 20"
-  },
-  "outcomes": {
-    "RECORDED": 34,
-    "SKIPPED:FAILED": 9,
-    "SKIPPED:ERROR": 3
-  },
-  "attemptsWithDuration": 46,
-  "latency": {
-    "uncategorized": {
-      "measurable": true,
-      "reason": null,
-      "n": 46,
-      "minMs": 0,
-      "medianMs": 88.5,
-      "p95Ms": 196,
-      "maxMs": 215,
-      "uncertainty": {
-        "minSampleN": 20,
-        "generalizable": true
-      }
-    }
-  }
-}
-```
+## Category taxonomy (§16/§17)
+Categories derive STRICTLY from the mission contract's `category` (taxonomy: reliability-recovery, backup-restore,
+deployment-release, security-governance, observability-slo, runtime-capability, testing-validation; default
+uncategorized). §17 added durable `category` tags to the **2 git-tracked** contracts whose content is unambiguous:
+`DEPLOY_BMAX_DASHBOARD_PROD_V1` → deployment-release, `AUTONOMOUS_PATCH_RECOVERY` → reliability-recovery. (Auto-generated
+contracts are git-ignored/regenerated, so durable tagging of those requires a contract-factory change — deferred, not in
+this write-set.) All current *recorded* attempts are synthetic ids with no category ⇒ **uncategorized** (not retrofitted).

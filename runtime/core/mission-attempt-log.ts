@@ -129,6 +129,70 @@ function categorizeMission(contract: any): string {
   return typeof c === "string" && MISSION_CATEGORIES.includes(c) && c !== "uncategorized" ? c : "uncategorized";
 }
 
+/**
+ * TOTAL mission duration per logical EXECUTION (§17), reprises INCLUDED. Groups attempts by `runId`
+ * (created once per logical mission run; every attempt/retry of that run reuses it). Attempts WITHOUT a
+ * runId are UNATTRIBUTED — never reconstructed into a run (historical data stays honest). For each run:
+ *   - totalDurationMs = WALL time from the EARLIEST startedAt to the LATEST endedAt across its attempts
+ *     (reprises incl.) — DISTINCT from per-attempt latency (one attempt's durationMs) and from the SUM of
+ *     per-attempt latencies (which excludes the gaps between attempts).
+ *   - attempts = number of attempts in the run; complete = every attempt carried both timestamps.
+ *   - measurable=false (+reason) when timestamps are missing or end precedes start — never a fabricated value.
+ */
+function totalDurationByRun(attempts: any): any {
+  const list = Array.isArray(attempts) ? attempts : [];
+  const byRun: any = {};
+  let unattributed = 0;
+  for (const a of list) {
+    if (!a || typeof a.runId !== "string" || !a.runId) { unattributed++; continue; }
+    (byRun[a.runId] = byRun[a.runId] || []).push(a);
+  }
+  const runs: any[] = [];
+  for (const runId of Object.keys(byRun)) {
+    const g = byRun[runId];
+    const starts = g.map((a: any) => Date.parse(a.startedAt)).filter((n: any) => Number.isFinite(n));
+    const ends = g.map((a: any) => Date.parse(a.endedAt)).filter((n: any) => Number.isFinite(n));
+    const complete = g.every((a: any) => typeof a.startedAt === "string" && typeof a.endedAt === "string");
+    const haveBoth = starts.length > 0 && ends.length > 0;
+    const first = haveBoth ? Math.min(...starts) : null;
+    const last = haveBoth ? Math.max(...ends) : null;
+    const totalMs = haveBoth && last! >= first! ? last! - first! : null;
+    runs.push({
+      runId,
+      mission: g[0].mission,
+      attempts: g.length,
+      totalDurationMs: totalMs,
+      complete,
+      measurable: totalMs !== null,
+      reason: totalMs !== null ? null : (haveBoth ? "end precedes start" : "missing timestamps"),
+    });
+  }
+  return { runs, runsWithRunId: runs.length, attemptsUnattributed: unattributed };
+}
+
+/**
+ * Recovery/rollback DURATION summary from the recovery incident log (§17 pt.7). PURE — accepts the raw
+ * incidents.jsonl TEXT or an already-parsed array (the caller does the fs read, honestly reporting whether
+ * the file exists). Only incident records carrying a finite non-negative `durationMs` contribute. Absent
+ * source, or no usable duration ⇒ { measurable:false, reason } — NEVER a fabricated value. `minSampleN`
+ * defaults to 1: this is a duration measurement of a rare event, not a success-RATE (which keeps minN=20).
+ */
+function recoveryDurationFromIncidents(incidents: any, minSampleN = 1): any {
+  let records: any[] | null = null;
+  if (Array.isArray(incidents)) records = incidents;
+  else if (typeof incidents === "string" && incidents.trim()) {
+    records = incidents.split("\n").filter(Boolean).map((l: any) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  }
+  if (!records) return { measurable: false, n: 0, reason: "incidents source absent or empty" };
+  const durs = records
+    .filter((r: any) => r && typeof r.durationMs === "number" && Number.isFinite(r.durationMs) && r.durationMs >= 0)
+    .map((r: any) => r.durationMs);
+  if (durs.length === 0) return { measurable: false, n: 0, reason: "no incident carried a usable durationMs" };
+  let summarizeSamples: any = null; try { ({ summarizeSamples } = require("./latency-measure")); } catch { summarizeSamples = null; }
+  if (!summarizeSamples) return { measurable: false, n: durs.length, reason: "latency-measure unavailable" };
+  return summarizeSamples(durs, minSampleN);
+}
+
 function metricsSnapshot(attempts: any, opts: any = {}): any {
   const list = Array.isArray(attempts) ? attempts.filter((a) => a && a.mission && a.recordedAt) : [];
   const s = summarizeAttempts(list, opts);
@@ -164,8 +228,10 @@ function metricsSnapshot(attempts: any, opts: any = {}): any {
     firstAttempt: { numerator: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.numerator, denominator: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.denominator, measurable: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.measurable, reason: s.slis.MISSION_SUCCESS_FIRST_ATTEMPT.reason },
     outcomes,
     attemptsWithDuration: withDuration,
+    // §17 TOTAL mission duration per run (reprises incl.) — DISTINCT from per-attempt latency above.
+    totalByRun: totalDurationByRun(list),
   };
 }
 
-module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory, metricsSnapshot, MISSION_CATEGORIES, categorizeMission };
+module.exports = { attemptFromLedgerResult, recordAttempt, readAttempts, summarizeAttempts, durationsByCategory, metricsSnapshot, totalDurationByRun, recoveryDurationFromIncidents, MISSION_CATEGORIES, categorizeMission };
 export {};

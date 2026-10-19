@@ -1,5 +1,6 @@
 {
   "mission": "DEPLOY_BMAX_DASHBOARD_PROD_V1",
+  "category": "deployment-release",
   "priority": "NORMAL",
   "mode": "OPERATIONAL",
   "requires_engineering": false,

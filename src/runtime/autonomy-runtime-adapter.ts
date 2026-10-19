@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import { spawnSync, execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
+import { randomUUID } from "node:crypto";
 
 // Bridge to the existing CommonJS Runtime components (runtime/core/*.js) from this ESM adapter.
 const requireCjs = createRequire(import.meta.url);
@@ -561,15 +562,21 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   runPipeline(mission: string): PipelineOutcome {
     const spec = this.readMissionJson(mission);
 
+    // §17 — ONE runId for this WHOLE logical execution. The initial local attempt AND every local-recovery
+    // retry below reuse it, so TOTAL run duration (reprises incl.) groups them together; a later runPipeline
+    // for the same mission id gets a fresh runId (distinct execution). The provider path is a different route
+    // (its own attempt telemetry) and is intentionally not folded into this local runId.
+    const runId = randomUUID();
+
     // (1) LOCAL first — the deterministic pipeline (build → tests → patch → validation).
-    const local = this.runLocalPipeline(mission);
+    const local = this.runLocalPipeline(mission, runId);
     if (local.pipelineOk) return local;
 
     // (2) LOCAL RECOVERY — the mandatory step BEFORE any provider. Diagnose the root cause locally,
     //     reuse the known in-scope patch, regenerate the local evidence surface and re-validate
     //     (build/tests). The provider is NOT the first fallback: it is reached ONLY once local
     //     recovery has PROVEN, by evidence, that the Runtime cannot progress locally.
-    const recovery = this.recoverLocally(mission, local);
+    const recovery = this.recoverLocally(mission, local, runId);
     if (recovery.outcome.pipelineOk) return recovery.outcome;
 
     // (3) PROVIDER — last resort only. Reached solely when local recovery is proven exhausted AND the
@@ -612,6 +619,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
   private recoverLocally(
     mission: string,
     initial: PipelineOutcome,
+    // §17 — the SAME runId as the initial local attempt, so every recovery retry belongs to one logical run.
+    runId?: string,
   ): { outcome: PipelineOutcome; exhausted: boolean } {
     const engine = new RootCauseEngine({ cwd: this.cwd, generatedDir: GENERATED });
     const tried = new Set<string>();
@@ -634,7 +643,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // Apply the in-scope patch locally: regenerate the evidence surface, then re-run Validation →
       // Build → Tests via the deterministic pipeline. If it now progresses, recovery succeeded LOCALLY.
       this.refreshVerifyEvidence(mission);
-      last = this.runLocalPipeline(mission);
+      last = this.runLocalPipeline(mission, runId);
       if (last.pipelineOk) return { outcome: last, exhausted: false };
     }
     return { outcome: last, exhausted: true };
@@ -657,7 +666,10 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
    * byte-for-byte what runPipeline did before; it is extracted only so runPipeline can try it FIRST
    * (LOCAL_FIRST) and use its failure as the single proof that the Runtime cannot progress locally.
    */
-  private runLocalPipeline(mission: string): PipelineOutcome {
+  private runLocalPipeline(mission: string, runId?: string): PipelineOutcome {
+    // §17 — reuse the caller's runId (the whole logical execution incl. retries); a direct call without one
+    // still gets a unique id so its single attempt is attributable to exactly one run.
+    const effectiveRunId = typeof runId === "string" && runId ? runId : randomUUID();
     const entry = resolvePipelineEntry(); // historical PIPELINE by default; opt-in compiled entry via ODG_RUNTIME_ENTRY / ODG_RUNTIME=ts
     const childEnv: NodeJS.ProcessEnv = { ...process.env };
     // Coordinated full-TS (ODG_RUNTIME=ts): guarantee a FRESH, provenance-validated compiled dist
@@ -695,7 +707,7 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       const rep = pipelineOk ? this.readJson<{ validated?: boolean; status?: string }>(MISSION_REPORT) : null;
       const governedBlock = !pipelineOk && !r.error && !r.signal && this.isGovernedValidationBlock(mission);
       const oc = deriveRunAttempt(pipelineOk, { reportValidated: rep?.validated, reportStatus: rep?.status, signal: r.signal, governedBlock });
-      recordMissionAttempt(mission, oc.validated, oc.status, { startedAt: runStartedAt, endedAt: new Date().toISOString() });
+      recordMissionAttempt(mission, oc.validated, oc.status, { startedAt: runStartedAt, endedAt: new Date().toISOString(), runId: effectiveRunId });
     } catch {
       /* non-blocking telemetry */
     }

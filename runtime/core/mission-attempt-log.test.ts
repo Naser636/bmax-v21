@@ -183,4 +183,72 @@ t("metricsSnapshot byCategory (per-category latency INSUFFICIENT<minN; uncategor
   assert.deepStrictEqual(TS.metricsSnapshot(attempts, { minSampleN: 20 }), JS.metricsSnapshot(attempts, { minSampleN: 20 })); // parity
 });
 
+// 14. §17 totalDurationByRun — WALL duration per run (reprises incl.) distinct from the SUM of per-attempt
+//     latencies; attempts without runId are UNATTRIBUTED (never reconstructed); two runs of the same mission
+//     id stay distinct; incomplete/missing-timestamp runs are flagged measurable:false (never fabricated).
+t("totalDurationByRun — wall duration incl. retries ≠ sum of per-attempt latencies; unattributed kept honest", () => {
+  // One run of M9 with TWO attempts (a retry): attempt1 10:00:00→10:00:01 (1s), attempt2 10:00:05→10:00:07 (2s).
+  // Per-attempt latency SUM = 3s; WALL total (first start → last end) = 10:00:00 → 10:00:07 = 7s.
+  const attempts = [
+    { mission: "M9", runId: "run-A", outcome: "RECORDED", recordedAt: "2026-09-01T10:00:01.000Z", startedAt: "2026-09-01T10:00:00.000Z", endedAt: "2026-09-01T10:00:01.000Z", durationMs: 1000 },
+    { mission: "M9", runId: "run-A", outcome: "RECORDED", recordedAt: "2026-09-01T10:00:07.000Z", startedAt: "2026-09-01T10:00:05.000Z", endedAt: "2026-09-01T10:00:07.000Z", durationMs: 2000 },
+    // A SECOND, distinct execution of the SAME mission id ⇒ different runId ⇒ separate run.
+    { mission: "M9", runId: "run-B", outcome: "RECORDED", recordedAt: "2026-09-01T12:00:02.000Z", startedAt: "2026-09-01T12:00:00.000Z", endedAt: "2026-09-01T12:00:02.000Z", durationMs: 2000 },
+    // An attempt WITHOUT a runId ⇒ unattributed (historical honesty — never folded into a run).
+    { mission: "M8", outcome: "SKIPPED", reason: "FAILED", recordedAt: "2026-09-01T09:00:00.000Z", startedAt: "2026-09-01T09:00:00.000Z", endedAt: "2026-09-01T09:00:00.500Z", durationMs: 500 },
+  ];
+  const r = TS.totalDurationByRun(attempts);
+  assert.strictEqual(r.runsWithRunId, 2, "two distinct runs (run-A, run-B)");
+  assert.strictEqual(r.attemptsUnattributed, 1, "the runId-less attempt is unattributed");
+  const runA = r.runs.find((x: any) => x.runId === "run-A");
+  assert.strictEqual(runA.attempts, 2, "run-A has two attempts (a retry)");
+  assert.strictEqual(runA.totalDurationMs, 7000, "wall total incl. the inter-attempt gap = 7s");
+  assert.notStrictEqual(runA.totalDurationMs, 3000, "wall total is NOT the sum of per-attempt latencies (3s)");
+  assert.strictEqual(runA.measurable, true);
+  const runB = r.runs.find((x: any) => x.runId === "run-B");
+  assert.strictEqual(runB.attempts, 1, "run-B is a separate execution of the same mission id");
+  assert.strictEqual(runB.totalDurationMs, 2000);
+  assert.deepStrictEqual(TS.totalDurationByRun(attempts), JS.totalDurationByRun(attempts)); // parity
+});
+
+// 15. §17 totalDurationByRun — missing timestamps ⇒ measurable:false + reason (never a fabricated duration),
+//     and metricsSnapshot surfaces totalByRun DISTINCT from the per-attempt counters.
+t("totalDurationByRun — incomplete run flagged; metricsSnapshot carries totalByRun", () => {
+  const attempts = [
+    { mission: "MX", runId: "run-C", outcome: "RECORDED", recordedAt: "2026-09-01T10:00:00.000Z" }, // no start/end
+  ];
+  const r = TS.totalDurationByRun(attempts);
+  const runC = r.runs.find((x: any) => x.runId === "run-C");
+  assert.strictEqual(runC.totalDurationMs, null, "no fabricated duration");
+  assert.strictEqual(runC.measurable, false);
+  assert.strictEqual(runC.complete, false);
+  assert.strictEqual(runC.reason, "missing timestamps");
+  const snap = TS.metricsSnapshot(attempts);
+  assert.ok(snap.totalByRun && Array.isArray(snap.totalByRun.runs), "metricsSnapshot exposes totalByRun");
+  assert.strictEqual(snap.totalByRun.runsWithRunId, 1);
+  assert.deepStrictEqual(TS.metricsSnapshot(attempts), JS.metricsSnapshot(attempts)); // parity
+});
+
+// 16. §17 T4 recoveryDurationFromIncidents — measured from a VALID incidents fixture; absent/empty/no-duration
+//     ⇒ measurable:false with a cause (never fabricated). PURE (text or array in).
+t("recoveryDurationFromIncidents — valid fixture measurable; absent/insufficient ⇒ measurable:false", () => {
+  const fixture = [
+    JSON.stringify({ from: "sick", action: "ROLLBACK", result: "SWITCHED", durationMs: 4200 }),
+    JSON.stringify({ from: "sick", action: "RESTART", result: "RECOVERED", durationMs: 1800 }),
+  ].join("\n");
+  const ok = TS.recoveryDurationFromIncidents(fixture); // minSampleN defaults to 1 (duration, not a rate)
+  assert.strictEqual(ok.measurable, true, "valid incident fixture ⇒ measurable");
+  assert.strictEqual(ok.n, 2);
+  assert.strictEqual(ok.medianMs, 3000); // median of [1800,4200]
+  // Absent source ⇒ measurable:false with cause.
+  const absent = TS.recoveryDurationFromIncidents(undefined);
+  assert.strictEqual(absent.measurable, false);
+  assert.ok(/absent or empty/.test(absent.reason));
+  // Present file but no usable durationMs ⇒ measurable:false with cause.
+  const noDur = TS.recoveryDurationFromIncidents(JSON.stringify({ from: "x", action: "NOOP" }));
+  assert.strictEqual(noDur.measurable, false);
+  assert.ok(/usable durationMs/.test(noDur.reason));
+  assert.deepStrictEqual(TS.recoveryDurationFromIncidents(fixture), JS.recoveryDurationFromIncidents(fixture)); // parity
+});
+
 console.log(`\nALL PASS — mission-attempt-log (${n} tests)`);

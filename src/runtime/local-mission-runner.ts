@@ -7,6 +7,7 @@
  */
 
 import { createRequire } from "node:module";
+import { randomUUID } from "node:crypto";
 import { MissionOrchestrator, ExecutionPlan } from "./mission-orchestrator";
 import { RuntimeKernel } from "./runtime-kernel";
 import { createMissionIntent } from "./mission-intent";
@@ -62,11 +63,17 @@ export class LocalMissionRunner {
     // §7 closure seam — records the machine compass checkpoint; injectable for tests. Symmetric with the
     // autonomy route (runLocalPipeline), so BOTH mission routes close the compass via the SAME mechanism.
     private readonly recordClosure: (mission: string, repoRoot: string, sinceMs: number) => ClosureResult = recordClosureCheckpoint,
+    // §17 run-id seam — ONE unique id per logical mission execution, reused by every attempt/retry of this
+    // run (here, a single attempt per run()); a later run() of the same mission gets a different id. Injectable
+    // for deterministic tests. Lets TOTAL run duration (reprises incl.) be computed without conflating runs.
+    private readonly genRunId: () => string = () => randomUUID(),
   ) {}
 
   run(id: string, name: string = id): LocalMissionResult {
     // Capture the REAL start timestamp before any work; end is taken at the single recording point.
     const startedAt = this.clock();
+    // One runId for THIS logical execution — attached to the attempt so retries of the same run group together.
+    const runId = this.genRunId();
     let recorded = false;
     // Record THIS run's attempt EXACTLY ONCE (the `recorded` guard prevents a double-record if a later
     // step throws after we already recorded). Timestamps are real and from the SAME run; duration is
@@ -74,7 +81,7 @@ export class LocalMissionRunner {
     const recordOnce = (validated: boolean, status: string, category?: string): void => {
       if (recorded) return;
       recorded = true;
-      const timing: AttemptTiming = { startedAt, endedAt: this.clock() };
+      const timing: AttemptTiming = { startedAt, endedAt: this.clock(), runId };
       if (category) timing.category = category;
       this.recordAttempt(id, validated, status, timing);
     };

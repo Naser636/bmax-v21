@@ -49,11 +49,21 @@ export const recordMissionToLedger: LedgerRecorder = (mission, validated, status
  * EVERY run's real outcome (RECORDED | SKIPPED+reason) to an append-only log, so failures ARE representable.
  * Non-blocking (never affects the mission path), and it records the HONEST verdict just computed — no fabrication.
  */
-/** Real execution timing for one attempt (optional; both ISO strings, from the same run). */
-export interface AttemptTiming { startedAt?: string; endedAt?: string; category?: string }
+/** Real execution timing for one attempt (optional; both ISO strings, from the same run). `runId` groups
+ *  every attempt/retry of the SAME logical mission execution (§17), so TOTAL run duration (reprises incl.)
+ *  is derivable without conflating distinct executions of the same mission id. */
+export interface AttemptTiming { startedAt?: string; endedAt?: string; category?: string; runId?: string }
 export type AttemptRecorder = (mission: string, validated: boolean, status: string, timing?: AttemptTiming) => void;
 
-const ATTEMPTS_LOG = path.join(GENERATED_DIR, "mission-attempts.jsonl");
+// The REAL attempt registry. Default path is the production location (unchanged). `ODG_ATTEMPTS_LOG`
+// overrides it at call time — the test harness points this at a throwaway temp file so `npm test` never
+// appends synthetic attempts to the real git-ignored registry (test-isolation; §4.3 anti-contamination).
+// Resolved per call (not a module const) so a per-process env set before launch is always honoured.
+const DEFAULT_ATTEMPTS_LOG = path.join(GENERATED_DIR, "mission-attempts.jsonl");
+function attemptsLogPath(): string {
+  const o = process.env.ODG_ATTEMPTS_LOG;
+  return typeof o === "string" && o.trim() ? o : DEFAULT_ATTEMPTS_LOG;
+}
 
 /**
  * Derive the honest attempt outcome of an odg-run.js pipeline run (Phase 3 — the autonomy-loop route that the
@@ -122,8 +132,9 @@ export const recordMissionAttempt: AttemptRecorder = (mission, validated, status
     if (typeof t.startedAt === "string") extra.startedAt = t.startedAt;
     if (typeof t.endedAt === "string") extra.endedAt = t.endedAt;
     if (typeof t.category === "string") extra.category = t.category;
+    if (typeof t.runId === "string") extra.runId = t.runId;
     const rec = attemptFromLedgerResult(mission, { skipped: !validated, reason: validated ? null : status }, recordedAt, extra);
-    recordAttempt(ATTEMPTS_LOG, rec);
+    recordAttempt(attemptsLogPath(), rec);
   } catch {
     /* non-blocking telemetry — a logging failure must never affect the mission */
   }
