@@ -699,6 +699,20 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     } catch {
       /* non-blocking telemetry */
     }
+    // Doctrine §7 closure — AUTO-record the machine compass checkpoint from the honest mission-report, making the
+    // compass update runtime-enforced at closure (previously the robust compass-update mechanism was never invoked
+    // by the lifecycle). fromReport's identity+freshness guards fail closed to NOT_RUN on a stale/cross-mission
+    // report (never a false PASS); update() writes compass-checkpoint.json atomically. Non-blocking; reinforces the
+    // EXISTING mechanism (no parallel compass). The human prose ODG_PROJECT_STATE.md stays authored, by design.
+    try {
+      const compass = requireCjs("../../scripts/compass-update.js") as {
+        fromReport: (m: string, root: string, o?: { sinceMs?: number }) => unknown;
+        update: (r: unknown, o?: { repoRoot?: string }) => unknown;
+      };
+      compass.update(compass.fromReport(mission, this.cwd, { sinceMs: Date.parse(runStartedAt) }), { repoRoot: this.cwd });
+    } catch {
+      /* non-blocking compass checkpoint */
+    }
     if (!pipelineOk) {
       // Never surface a bare boolean: report the launcher, its exit code and the failing signal.
       // stdout/stderr were streamed live to the console (stdio:"inherit"), so they are not captured
