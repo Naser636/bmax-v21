@@ -33,3 +33,30 @@
 ## Limits & next prioritized lots
 - **Limit:** the canonical A01–A54/166 layer stays NON-ENUMERABLE (retired; not certified). Per-capability deep authority/policy re-grade beyond V57/V58 is DEFERRED (no demonstrated defect to justify it).
 - **Next (only if evidence demonstrates a gap):** (1) a governed `capability-executors` redesign (inject `__filename`/entry-path + clock) to unblock 8 executors' migration — a CTO design mission; (2) a `fleet-collector` spawn-seam redesign. No artificial per-capability edits.
+
+## Operational & commercial capabilities (added post-V66; registered 2026-10-20, evidence-backed)
+Pure, dual-ported (`.ts`+`.js`), test-proven leaf capabilities added during the VPS-reliability + revenue campaigns.
+Each: declared · bound · tested (tests listed) · dual-port parity · no governance/protected path. Not in the legacy
+registry JSON (see reconciliation below) — this index is the truthful surface.
+| Capability | Domain | Evidence (tests, all green) | Consumers | Gap |
+|---|---|---|---|---|
+| `exposure-audit` + `odg-exposure-check` | P3 security — loopback/exposure drift (read-only) | 5/5 + parity | `odg-monitor.timer`, `odg health §G` | none (remediation reserved) |
+| `maintenance-alerts` + `odg-maintenance-check` | P5 ops — health/disk/mem/NRestarts/backup/release alerts | 5/5 + parity | `odg-monitor.timer`, `odg health §G` | none (notification channel human) |
+| `supervision-summary` | observability — odg-health §G read-only summary | 6/6 + parity | `odg health` (both ports) | none |
+| `mission-attempt-log` (§17) | observability/SLO — runId + total run duration + recovery duration | 16/16 + parity | both mission routes | real-mission volume (0 real) |
+| `revenue-model` (+`targetPlan`) | commercial — rentability/scenarios/capacity math | 7/7 + parity | revenue docs, detector | conversion = hypothesis (no data) |
+| `enterprise-lead-grade` | commercial — A/B/C/REJECTED evidence grade + anti-scam | 5/5 + parity | `opportunity-detector` | — |
+| `opportunity-detector` | commercial — normalize→dedupe→grade→rank (reuses the 3 above) | 7/7 + parity | real collection (2026-10-19/20) | egress-gated: autonomous scheduling not wired |
+
+**SRE benchmark (sourced 2026, Google SRE — golden signals latency/traffic/errors/saturation + error budgets):**
+ODG HAS latency (`latency-measure`), errors (mission outcomes + maintenance CRIT), saturation (disk/mem), recovery/
+rollback (P1/P1b LIVE). **GAP [sourced]:** no **error-budget / burn-rate** computation. Value is **gated on real
+mission volume** (0 real operational missions today ⇒ building it now would run on synthetic data) ⇒ **planned lot,
+not executed on fake data**. Sources: sre.google/workbook, n-ix SRE 2026 (consultés 2026-10-20).
+
+## Registry reconciliation (divergence surfaced, Phase 0.4)
+`runtime/generated/capability-registry.json` holds **186 entries, ALL status `"?"`** (roadmap-mission names, a legacy
+non-graded layer) — **divergent** from the real enumerable surface (**24** executors+probes, DEC-V60) and from this
+index. **Honest statement:** the registry JSON is NOT the authoritative capability surface; THIS coverage index +
+the per-module tests are. Reconciling/rebuilding the registry JSON to the real surface is a **planned lot** (low
+risk, read-mostly) — not done here to avoid touching generated state without a bounded contract.

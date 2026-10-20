@@ -29,6 +29,14 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`WORLD_CLASS_CAPABILITY_CAMPAIGN_V1` — capability discovery/reconcile/benchmark + coverage registration. 2026-10-20 (from `8ea65c3`).** [PASS]
+  - **Truth Lock:** HEAD=origin/main=`8ea65c3`→(this); `main`; clean; 5 stashes; protected paths untouched. Docs-only (no code). Reused existing audits (V57–V66), not a re-audit.
+  - **Reconciliation [FACT]:** "166/A01–A54" RETIRED (DEC-V60) ⇒ real enumerable surface = **24** (executors+probes), all assessed/tested, no open per-capability gap. `capability-registry.json` = **186 all status `"?"`** (legacy layer) ⇒ **divergent, NOT authoritative** — surfaced.
+  - **Inventory extended:** registered the **7 post-V66 capabilities** (exposure-audit, maintenance-alerts, supervision-summary, mission-attempt-log §17, revenue-model, enterprise-lead-grade, opportunity-detector) into `ODG_CAPABILITY_COVERAGE.md` with evidence (**re-ran: 35 tests green + dual-port parity**).
+  - **Benchmark [sourced 2026]:** Google SRE golden signals + error-budget. ODG has latency/errors/saturation/recovery; **GAP = error-budget/burn-rate**, gated on real mission volume (0 real ⇒ deferred, not built on synthetic). ISO25010/SSDF/ASVS/SLSA mapped (not certified). World-ranking [UNK], not invented.
+  - **Plan (prioritized):** (1 DONE) register+reconcile ; (2) rebuild registry JSON to real surface (bounded) ; (3) error-budget (needs real missions) ; (4) egress collector GO ; (5) executor migration redesign (CTO).
+  - **Docs:** `docs/odg-operational/ODG_CAPABILITY_EXCELLENCE_CAMPAIGN_V1.md` + extended `ODG_CAPABILITY_COVERAGE.md`.
+  - **Next command:** `REGISTRY_JSON_RECONCILE` (bounded, read-mostly). Blocks: real mission volume, egress GO, executor redesign (CTO).
 - **`AUTOMATED_ENTERPRISE_OPPORTUNITY_DETECTOR_V1` — built + REAL collection executed. 2026-10-20 (from `d6291fa`).** [PASS — operational, real collection verified]
   - **Truth Lock:** HEAD=origin/main=`d6291fa`→(this); `main`; clean; 5 stashes; protected paths untouched. Read-only external; no contact/spend/bid.
   - **Tool:** `runtime/core/opportunity-detector.{ts,js}` (7/7 + parité, tsc dist/strict/leaves 0) — pure normalize→dedupe→grade→rank, **reuses** `enterprise-lead-grade` (grade+anti-scam), `opportunity-policy` (provenance budget via 2xx), `revenue-model.targetPlan` (faisabilité). Honnête : budgets/échéances manquants signalés, échéance passée down-rankée ; dedupe sur `ref` (corrige un collapse réel URL-de-liste trouvé en run live).
