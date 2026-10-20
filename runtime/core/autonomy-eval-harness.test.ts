@@ -72,4 +72,46 @@ t("runGoldenSet summary reproducible + parity", () => {
   assert.deepStrictEqual(TS.runGoldenSet(cases), JS.runGoldenSet(cases)); // JS/TS parity
 });
 
+// 5. V2-I1 — metricsSummary: rates with explicit denominators + reproducibility + JS/TS parity.
+t("metricsSummary: rates with denominators over the golden set", () => {
+  const cases = CASES.map((c) => ({ name: c.name, expected: c.expected, observed: c.observed }));
+  const m = TS.metricsSummary(TS.runGoldenSet(cases));
+  assert.strictEqual(m.total, 8);
+  // verified-success = overall-PASS / total (C1, C8 ⇒ 2/8).
+  assert.strictEqual(m.verifiedSuccess.status, "AVAILABLE");
+  assert.strictEqual(m.verifiedSuccess.passed, 2);
+  assert.strictEqual(m.verifiedSuccess.rate, 2 / 8);
+  // false-success rate has a REAL denominator = cases that claimed success (C1..C7 ⇒ 7), caught = 6.
+  assert.strictEqual(m.falseSuccess.claimed, 7);
+  assert.strictEqual(m.falseSuccess.caught, 6);
+  assert.strictEqual(m.falseSuccess.rate, 6 / 7);
+  // per-dimension denominators reflect APPLICABILITY, not the whole set (no silent-pass inflation):
+  assert.strictEqual(m.perDimension.permissionsStops.applicable, 2);   // only C7, C8 declare mandatoryStop
+  assert.strictEqual(m.perDimension.trajectoryAccuracy.applicable, 6); // C1..C6 declare requiredSteps
+});
+t("metricsSummary: an unexercised dimension is UNAVAILABLE (rate=null), NOT 0 or a pass", () => {
+  // A one-case golden set that exercises NO mandatory-stop and NO block/fail ⇒ those metrics have no data.
+  const only = [{ name: "clean", expected: CASES[0].expected, observed: CASES[0].observed }];
+  const m = TS.metricsSummary(TS.runGoldenSet(only));
+  assert.strictEqual(m.perDimension.permissionsStops.status, "UNAVAILABLE");
+  assert.strictEqual(m.perDimension.permissionsStops.rate, null);       // unavailable ≠ 0 (not a failure)
+  assert.strictEqual(m.perDimension.errorRecovery.status, "UNAVAILABLE");
+  assert.strictEqual(m.perDimension.errorRecovery.rate, null);
+  // a measure that DID run is AVAILABLE with a concrete rate (distinguished from the unavailable ones).
+  assert.strictEqual(m.perDimension.resultCorrect.status, "AVAILABLE");
+  assert.strictEqual(m.perDimension.resultCorrect.rate, 1);
+});
+t("metricsSummary: empty golden set ⇒ all UNAVAILABLE (no fabricated 0%/100%)", () => {
+  const m = TS.metricsSummary(TS.runGoldenSet([]));
+  assert.strictEqual(m.total, 0);
+  assert.strictEqual(m.verifiedSuccess.status, "UNAVAILABLE");
+  assert.strictEqual(m.verifiedSuccess.rate, null);
+  assert.strictEqual(m.falseSuccess.status, "UNAVAILABLE");
+});
+t("metricsSummary: reproducible + JS/TS parity", () => {
+  const cases = CASES.map((c) => ({ name: c.name, expected: c.expected, observed: c.observed }));
+  assert.deepStrictEqual(TS.metricsSummary(TS.runGoldenSet(cases)), TS.metricsSummary(TS.runGoldenSet(cases)));
+  assert.deepStrictEqual(TS.metricsSummary(TS.runGoldenSet(cases)), JS.metricsSummary(JS.runGoldenSet(cases)));
+});
+
 console.log(`\nALL PASS — autonomy-eval-harness (${n} tests)`);

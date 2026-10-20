@@ -72,4 +72,14 @@ Both reproduced against the real `validation-engine.js` first, then locked with 
 
 **Evidence:** learning-effective-ab 11/11 (incl. 3 new Arm-C assertions); patch-memory 11/11; learning-chain/capability-learning/improvement-baseline PASS; learning-chain + capability-learning + post-release-learning equivalence (dual-port parity) ALL PASS. No production change; no new primitive.
 
-**STOP after this checkpoint** — V2-H1 + V2-C1 + V2-J1 + V2-B1 + V2-F1 + V2-G2 done + Phase-A matrix persisted; dashboard VERIFIED, supervision host-blocked (explicit). Next (final V2 lot): V2-I1 eval-suite.
+## V2-I1 — EVALUATION METRICS SUITE — COMPLETED (reuse, evidence)
+**Finding:** the eval layer already existed — `autonomy-eval-harness` (7 non-conflated dimensions incl. falseSuccessDetection/errorRecovery/permissionsStops + golden-set + JS/TS parity), plus autonomy-measure/autonomy-rate/capability-metrics/odg-autonomy-benchmark. The gap vs the mandate: metrics had COUNTS but not RATES with denominators, and no way to distinguish a measure that is UNAVAILABLE (no data) from a 0/null/success — indeed a non-applicable dimension silently defaulted to pass=true, inflating any rate computed over it.
+
+**Smallest fix (reuse, no new eval platform/registry):** tagged each dimension with `applicable` (derived from the pre-defined expectation) and added a pure `metricsSummary(goldenResult)` (both ports) that reports: verified-success rate (PASS/total), false-success rate (caught/claimed — real denominator), and per-dimension rates over APPLICABLE cases only. A metric with 0 applicable cases ⇒ `status:"UNAVAILABLE", rate:null` — NEVER a fabricated 0% (failure) or 100% (success). Covers result-reliability, false-success, security-stops, recovery, evidence; learning-reuse effectiveness is measured separately+causally by V2-G2.
+
+**Evidence:** autonomy-eval-harness 8 tests (4 new I1: denominators over the golden set; UNAVAILABLE≠0/pass for an unexercised dimension; empty-set ⇒ all UNAVAILABLE; reproducible + JS/TS parity); compliance-evidence-pack consumer intact; tsc 0 (3 cfg); build:runtime OK; parity:runtimes PASS; full `npm test` GREEN (472 files, 0 failures). No new primitive.
+
+## ═══ PHASE-A V2 CORRECTIVE LOTS: ALL COMPLETE + VERIFIED ═══
+H1 (observability PID fallback) · C1 (capability contracts SSOT) · J1 (reconciler .ts-via-tsx) · B1 (multilingual FR+AR classification) · F1 (validator negative-sweep: evidenceOk/engineeringOk locks) · G2 (learning-reuse end-to-end incl. no-false-reuse) · I1 (evaluation metrics with denominators + UNAVAILABLE distinction). Every lot: reproduced-then-fixed/locked, dual-port where applicable, full regression green, no new primitive, protected paths untouched, 5 stashes preserved.
+
+**OPEN (campaign):** supervision systemd handoff — 1 consolidated HOST AUTHORIZATION required (recorded in compass ⚑; dashboard + runtime-identity remain VERIFIED). Dashboard availability + identity = DONE; supervision/reboot-restart = host-blocked (explicit).

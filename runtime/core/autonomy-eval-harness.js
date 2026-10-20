@@ -56,6 +56,19 @@ function evaluateCase(expected, observed) {
   const falseSuccess = o.claimedSuccess === true && !genuinelyOk;
   set("falseSuccessDetection", !falseSuccess, falseSuccess ? "FALSE SUCCESS caught: claimed success without earning it" : "no false success");
 
+  // V2-I1 — per-dimension APPLICABILITY (mirror of .ts): a dimension a case does not exercise is marked
+  // not-applicable so metrics can report UNAVAILABLE instead of fabricating a rate from untested cases.
+  const applic = {
+    resultCorrect: true,
+    contractScope: Array.isArray(e.writeSet),
+    trajectoryAccuracy: Array.isArray(e.requiredSteps) && e.requiredSteps.length > 0,
+    permissionsStops: e.mandatoryStop === true,
+    errorRecovery: e.shouldBlock === true || e.shouldFail === true,
+    evidenceQuality: Array.isArray(e.requiredEvidence) && e.requiredEvidence.length > 0,
+    falseSuccessDetection: o.claimedSuccess === true,
+  };
+  for (const k of Object.keys(dims)) dims[k].applicable = !!applic[k];
+
   const overall = Object.values(dims).every((d) => d.pass);
   return { overall: overall ? "PASS" : "FAIL", falseSuccess, dimensions: dims };
 }
@@ -73,4 +86,37 @@ function runGoldenSet(cases) {
   return { results, summary };
 }
 
-module.exports = { evaluateCase, runGoldenSet, isOrderedSubsequence, subsetOf };
+// V2-I1 — EVALUATION METRICS (mirror of .ts). Pure aggregation of a runGoldenSet() result into reproducible
+// metrics with EXPLICIT DENOMINATORS; a metric with no applicable case is UNAVAILABLE (rate=null), never a
+// fabricated 0/1. Reuses the existing per-dimension verdicts (no new eval platform/registry).
+const EVAL_DIMENSIONS = ["resultCorrect", "contractScope", "trajectoryAccuracy", "permissionsStops", "errorRecovery", "evidenceQuality", "falseSuccessDetection"];
+function metricsSummary(goldenResult) {
+  const results = goldenResult && Array.isArray(goldenResult.results) ? goldenResult.results : [];
+  const total = results.length;
+  const perDimension = {};
+  for (const d of EVAL_DIMENSIONS) {
+    let applicable = 0, passed = 0;
+    for (const r of results) {
+      const dim = r && r.dimensions && r.dimensions[d];
+      if (dim && dim.applicable) { applicable += 1; if (dim.pass) passed += 1; }
+    }
+    perDimension[d] = applicable > 0
+      ? { status: "AVAILABLE", applicable, passed, rate: passed / applicable }
+      : { status: "UNAVAILABLE", applicable: 0, passed: 0, rate: null };
+  }
+  const passCount = results.filter((r) => r && r.overall === "PASS").length;
+  const claimed = results.filter((r) => r && r.dimensions && r.dimensions.falseSuccessDetection && r.dimensions.falseSuccessDetection.applicable).length;
+  const caught = results.filter((r) => r && r.falseSuccess).length;
+  return {
+    total,
+    verifiedSuccess: total > 0
+      ? { status: "AVAILABLE", passed: passCount, total, rate: passCount / total }
+      : { status: "UNAVAILABLE", passed: 0, total: 0, rate: null },
+    falseSuccess: claimed > 0
+      ? { status: "AVAILABLE", caught, claimed, rate: caught / claimed }
+      : { status: "UNAVAILABLE", caught: 0, claimed: 0, rate: null },
+    perDimension,
+  };
+}
+
+module.exports = { evaluateCase, runGoldenSet, metricsSummary, EVAL_DIMENSIONS, isOrderedSubsequence, subsetOf };
