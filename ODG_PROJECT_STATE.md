@@ -29,6 +29,14 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`CAPABILITY_REGISTRY_AND_COVERAGE_RECONCILIATION_V1` — bounded doc reconciliation. 2026-10-20 (from `50d2880`).** [PASS]
+  - **Truth Lock:** HEAD=origin/main=`50d2880`→(this); `main`; clean; 5 stashes; protected paths untouched. **Docs-only** (coverage index), no code/registry/behaviour change, no deletion.
+  - **Corrected:** coverage surface **24→25** (10 executors incl. "Implement Via Local Provider" + 15 probes), with a dated correction note (V57–V59 assessed 9; 10th added later, Stage-6 STUB/REAL-proven); executors table now lists 10. Counts independently re-verified true (10/15/186).
+  - **Registry role clarified:** `capability-registry.json` = **MISSION registry** (182/186 = mission ids, 0 executors, 0 probes ⇒ ∅ with capability surface), NOT authoritative for capabilities — documented, **not rebuilt** (separate bounded lot).
+  - **4 orphans traced (kept, not deleted):** 2 completed/archived missions (passports+certs in mission-artifacts), 1 NL-ephemeral, 1 test-residue (`TEST_CONSEQUENTIAL_EXEC_GATE`).
+  - **Relationships documented:** missions(work) ↔ executors(10, action) ↔ probes(15, readiness) ↔ leaf(7, computation). Authoritative surface = **25 + 7 leaf = 32**; registry JSON = disjoint mission layer.
+  - **Learning:** CAPTURED→PERSISTED→DISCOVERABLE (coverage doc + compass). REUSED/EFFECTIVE not claimed (doc lot).
+  - **ARRÊT** — no next lot without explicit CTO acceptance.
 - **`WORLD_CLASS_CAPABILITY_CAMPAIGN_V1` — capability discovery/reconcile/benchmark + coverage registration. 2026-10-20 (from `8ea65c3`).** [PASS]
   - **Truth Lock:** HEAD=origin/main=`8ea65c3`→(this); `main`; clean; 5 stashes; protected paths untouched. Docs-only (no code). Reused existing audits (V57–V66), not a re-audit.
   - **Reconciliation [FACT]:** "166/A01–A54" RETIRED (DEC-V60) ⇒ real enumerable surface = **24** (executors+probes), all assessed/tested, no open per-capability gap. `capability-registry.json` = **186 all status `"?"`** (legacy layer) ⇒ **divergent, NOT authoritative** — surfaced.

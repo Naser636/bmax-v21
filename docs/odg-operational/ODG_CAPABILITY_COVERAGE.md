@@ -2,11 +2,11 @@
 
 **Purpose.** Apply the canonical **§V-B CAPABILITY-EXCELLENCE LOOP** (per-capability dossier: identity · domain · contract/invariants · real consumers · failure modes · domain-appropriate evaluation criteria · authoritative reference · baseline→after · migration-readiness) across the WHOLE existing capability portfolio, **reusing existing evidence** — not re-auditing. This is a coverage INDEX that points to evidence; it does not restate the audits.
 
-**Scope & honesty.** The real, enumerable capability surface is **24**: 9 executors (`capability-executors.js EXECUTORS[]`) + 15 probes (`capability-probes.js PROBES`). The canonical "166 / A01–A54" objective is RETIRED (DEC-V60) and NOT reintroduced. Evidence base: V57 executor deep-audit (`ODG_V57_C5_DEEP_AUDIT.md`), V58 probe grading (`ODG_V58_PROBE_CAPABILITY_GRADING.md`), V59 individual grading (`ODG_V59_CAPABILITY_GRADING.md`), and the improvement log (§V-B-LOG B1–B7 in `ODG_MASTER_ROADMAP.md`). Evaluation-criteria framing follows the roadmap §Q-7 register (ISO/IEC 25010:2023 Reliability/Security; NIST SSDF; OWASP ASVS; SLSA/in-toto) — mapped, never claimed as certification.
+**Scope & honesty.** The real, enumerable capability surface is **25**: **10** executors (`capability-executors.js EXECUTORS[]`) + 15 probes (`capability-probes.js PROBES`). *(Correction 2026-10-20, reconciliation lot: V57–V59 assessed **9** executors; a **10th** — "Implement Via Local Provider" (Stage-6) — was added later and is STUB/REAL-proven. The surface is therefore **25**, not 24. The probes count (15) is unchanged.)* The canonical "166 / A01–A54" objective is RETIRED (DEC-V60) and NOT reintroduced. Evidence base: V57 executor deep-audit (`ODG_V57_C5_DEEP_AUDIT.md`), V58 probe grading (`ODG_V58_PROBE_CAPABILITY_GRADING.md`), V59 individual grading (`ODG_V59_CAPABILITY_GRADING.md`), and the improvement log (§V-B-LOG B1–B7 in `ODG_MASTER_ROADMAP.md`). Evaluation-criteria framing follows the roadmap §Q-7 register (ISO/IEC 25010:2023 Reliability/Security; NIST SSDF; OWASP ASVS; SLSA/in-toto) — mapped, never claimed as certification.
 
-**Coverage summary (evidence-based, no fabrication).** All 24 are ASSESSED (V57/V58/V59): declared · bound · executable · tested, controls EFFECTIVE (exercised by passing tests). Cross-cutting improvements applied to ALL executors (evidence provenance B1, dispatch-authorization invariant B2) and to the build/type gate consumer (B4), recurrence (B3/B7), triage coherence (B5), learn-portfolio (B6). **No further per-capability demonstrated gap is currently open.** Remaining is a reference-level NON-ENUMERABLE canonical layer (retired) and two migration items blocked with precise causes.
+**Coverage summary (evidence-based, no fabrication).** The 24 surface assessed at V57/V58/V59 are declared · bound · executable · tested, controls EFFECTIVE (exercised by passing tests); the 10th executor (Implement Via Local Provider) is covered by the Stage-6 STUB/REAL proofs (see `STAGE6_*` reports) ⇒ **25 total**. Cross-cutting improvements applied to ALL executors (evidence provenance B1, dispatch-authorization invariant B2) and to the build/type gate consumer (B4), recurrence (B3/B7), triage coherence (B5), learn-portfolio (B6). **No further per-capability demonstrated gap is currently open.** Remaining is a reference-level NON-ENUMERABLE canonical layer (retired) and two migration items blocked with precise causes.
 
-## Executors (9) — domain · improvement · demonstrated gap · migration-readiness
+## Executors (10) — domain · improvement · demonstrated gap · migration-readiness
 | Capability | Domain | Assessed | Improvement (B-log) | Open gap | Migration (dual-port) |
 |---|---|---|---|---|---|
 | ODG Synthetic Deliverable | governed file write | V57 (authority-enforced; confineSyntheticTarget scope≠authority) | B1 provenance · B2 dispatch-invariant | none | via capability-executors (BLOCKED: `__filename` re-exec + clock, V64p) |
@@ -18,6 +18,7 @@
 | External Research Acquisition | network acquisition | V57/V58 (dry-run default; provenance) | B1 · B2 | none | same (BLOCKED) |
 | Connectivity Audit | reachability probe | V57 (reachability≠acquisition) | B1 · B2 | none | same (BLOCKED) |
 | Provider Activation | live provider call | V57 (MANUAL_ONLY; provider-live-call-gate) | B2 (structural) | none | same (BLOCKED) |
+| Implement Via Local Provider | Stage-6 local-model code generation | STUB-proven (22 assertions, both ports) + REAL live proof (`qwen2.5-coder:3b`, add/mul behaviour-verified) — ONE task/ONE model, NO general-reliability claim | §Q-7 reliability-mapped | real-reliability SLO (no volume) | via capability-executors (BLOCKED, same hazard) |
 
 ## Probes (15) — all PURE fail-closed `(ctx)=>{ok,detail}`, V58/V59 graded
 - **Evidence/freshness probes** (`clean-workspace-scanned`, `autonomy-observability-verified`, `external-research-dry-run-planned`, `spec-schema-valid`, `research-acquired`, `git-branch-integrated`, `bash-command-governed`): run-ownership mtime + per-source provenance. Assessed V58; no gap.
@@ -54,9 +55,29 @@ rollback (P1/P1b LIVE). **GAP [sourced]:** no **error-budget / burn-rate** compu
 mission volume** (0 real operational missions today ⇒ building it now would run on synthetic data) ⇒ **planned lot,
 not executed on fake data**. Sources: sre.google/workbook, n-ix SRE 2026 (consultés 2026-10-20).
 
-## Registry reconciliation (divergence surfaced, Phase 0.4)
-`runtime/generated/capability-registry.json` holds **186 entries, ALL status `"?"`** (roadmap-mission names, a legacy
-non-graded layer) — **divergent** from the real enumerable surface (**24** executors+probes, DEC-V60) and from this
-index. **Honest statement:** the registry JSON is NOT the authoritative capability surface; THIS coverage index +
-the per-module tests are. Reconciling/rebuilding the registry JSON to the real surface is a **planned lot** (low
-risk, read-mostly) — not done here to avoid touching generated state without a bounded contract.
+## Registry reconciliation (RECONCILIATION_V1, 2026-10-20 — read-only, no rebuild)
+**Measured** (`capability-registry.json`, 2026-10-19 snapshot): **186 "capabilities"** (plain strings) + **24
+missingCapabilities** (objects = undone roadmap missions). Classification of the 186: **182 = `runtime/missions/*.json`
+mission ids**, **0 = executor names, 0 = probe ids**, **4 = orphans**. ⇒ **registry ∩ real capability surface = ∅.**
+**Role clarified:** `capability-registry.json` is effectively a **MISSION registry** (mission ids, incl. archived),
+**NOT** a capability registry. It is **not** the authoritative capability surface — THIS index + per-module tests are.
+
+**Orphans traced (NOT deleted — origin/status established):** all 4 are real PAST missions whose source JSON no
+longer exists but whose artifacts/ledger persist —
+- `AUDIT_RUNTIME_CAPABILITIES_FOR_PRUNING`, `IMPLEMENT_ODG_DOCTOR_COMMAND`: completed/archived (passports +
+  certificates in `runtime/generated/mission-artifacts/`).
+- `NL_ANALYZE_C3F758CF`: NL-gateway ephemeral analysis mission (convergence-report, PHASE_0_CARNET).
+- `TEST_CONSEQUENTIAL_EXEC_GATE`: a TEST mission (`consequential-executor-gate.test.ts`; known stale-test residue).
+Keep (no deletion without a bounded contract establishing safety).
+
+## Relationships (missions ↔ executors ↔ probes ↔ leaf) — the honest layering
+- **Missions** (`runtime/missions/*.json`, ROADMAP.json, registry JSON's 186) = *units of work*; they are PLANNED/
+  EXECUTED/ARCHIVED, and DRIVE capabilities — they are not themselves capabilities.
+- **Executors (10)** = the governed *action* surface a mission can invoke (write/spec/git/bash/scan/observe/research/
+  connectivity/provider/local-gen).
+- **Probes (15)** = pure fail-closed *readiness/evidence* checks consumed by validation/acceptance.
+- **Leaf capabilities (7)** = pure operational/commercial *computation* modules (exposure/maintenance/supervision/
+  §17 telemetry/revenue-model/lead-grade/opportunity-detector), consumed by CLIs/timers/docs — distinct from the
+  executor/probe dispatch surface, not in any machine registry yet.
+**Authoritative capability surface today = 25 (10+15) + 7 leaf = 32**, all declared·bound·tested (coverage above);
+the registry JSON remains a disjoint mission layer. Rebuilding/renaming it is a **separate bounded lot** (not here).
