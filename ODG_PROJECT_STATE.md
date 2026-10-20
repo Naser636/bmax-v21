@@ -29,6 +29,13 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`AUTOMATED_ENTERPRISE_OPPORTUNITY_DETECTOR_V1` — built + REAL collection executed. 2026-10-20 (from `d6291fa`).** [PASS — operational, real collection verified]
+  - **Truth Lock:** HEAD=origin/main=`d6291fa`→(this); `main`; clean; 5 stashes; protected paths untouched. Read-only external; no contact/spend/bid.
+  - **Tool:** `runtime/core/opportunity-detector.{ts,js}` (7/7 + parité, tsc dist/strict/leaves 0) — pure normalize→dedupe→grade→rank, **reuses** `enterprise-lead-grade` (grade+anti-scam), `opportunity-policy` (provenance budget via 2xx), `revenue-model.targetPlan` (faisabilité). Honnête : budgets/échéances manquants signalés, échéance passée down-rankée ; dedupe sur `ref` (corrige un collapse réel URL-de-liste trouvé en run live).
+  - **Collecte RÉELLE (2026-10-19/20, tendolio/francemarches/free-work) :** 10 items réels, 0 doublon abusif, gradés **A3/B5/C2**, classés. Doc `docs/odg-operational/ODG_OPPORTUNITY_DETECTOR_RESULTS.md` + artefact `runtime/generated/opportunity-shortlist.json` (git-ignored).
+  - **Lecture honnête :** grade = qualité de PREUVE ≠ fit/winnabilité. Les tenders A/B sont bien-évidencés mais surtout **LOW fit** (M365/SAP/IAM/SIG) + qualification gated ; les 2 items **HIGH fit** (R&S TELECOM, BLOOMAYS, sous-traitance TS cœur d'offre) sont **gradés C par design** (société non vérifiée RNE ⇒ action = vérifier RNE puis outreach). Provenance = CANDIDATE partout (listing fetché 200, budget non extrait+hashé ⇒ pas PROVEN). Min. Intérieur expiré, correctement down-ranké.
+  - **Limite :** egress ODG gated ⇒ collecte planifiée autonome sur le VPS **non câblée** (collecte faite par le fournisseur ce run) ; nécessiterait un collecteur egress-autorisé (GO futur).
+  - **Next :** RNE-vérifier R&S TELECOM/BLOOMAYS (C→B) puis propositions sous-traitance (envoi human-gated) ; option collecteur planifié (GO CTO).
 - **`HIGH_TICKET_ENTERPRISE_CONTRACT_ENGINE_V1` — high-ticket pivot analysis. 2026-10-20 (from `f80ed2c`).** [PASS — analysis; A/B BLOCKED without leverage+capital]
   - **Truth Lock:** HEAD=origin/main=`f80ed2c`→(this); `main`; clean; 5 stashes; protected paths untouched. No spend/contact/publish.
   - **Models:** A 2×50k€/mois · B 3 clients→100k€/mois · C 100k€/10j. Doc: `docs/odg-operational/ODG_HIGH_TICKET_ENGINE.md`.
