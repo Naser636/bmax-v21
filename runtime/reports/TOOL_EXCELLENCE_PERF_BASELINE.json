@@ -1,0 +1,48 @@
+{
+  "_type": "odg/tool-excellence-perf-baseline/v1",
+  "benchVersion": "1.0",
+  "iters": 500,
+  "warmup": 100,
+  "node": "v22.22.1",
+  "cases": {
+    "objective-authorization.stampObjectives(4)": {
+      "measurable": true,
+      "reason": null,
+      "n": 500,
+      "minMs": 0.016168,
+      "medianMs": 0.017890999999999997,
+      "p95Ms": 0.04176769999999996,
+      "maxMs": 1.937217,
+      "uncertainty": {
+        "minSampleN": 20,
+        "generalizable": true
+      }
+    },
+    "financial-reconciliation.reconcile": {
+      "measurable": true,
+      "reason": null,
+      "n": 500,
+      "minMs": 0.008395,
+      "medianMs": 0.011713,
+      "p95Ms": 0.025148499999999914,
+      "maxMs": 1.140204,
+      "uncertainty": {
+        "minSampleN": 20,
+        "generalizable": true
+      }
+    },
+    "compliance-evidence-pack.buildEvidencePack(unsigned)": {
+      "measurable": true,
+      "reason": null,
+      "n": 500,
+      "minMs": 0.0209,
+      "medianMs": 0.0226915,
+      "p95Ms": 0.04381695,
+      "maxMs": 1.017333,
+      "uncertainty": {
+        "minSampleN": 20,
+        "generalizable": true
+      }
+    }
+  }
+}

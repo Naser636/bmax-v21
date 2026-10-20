@@ -28,7 +28,12 @@ if (fs.existsSync(lockPath)) { try { lockPackages = JSON.parse(fs.readFileSync(l
 let repoName = path.basename(repo);
 try { repoName = JSON.parse(fs.readFileSync(path.join(repo, "package.json"), "utf8")).name || repoName; } catch { /* keep basename */ }
 let sourceCommit = null;
-try { sourceCommit = execFileSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(); } catch { /* not a git repo */ }
+try {
+  // Only attribute a commit when `repo` IS the git toplevel — else rev-parse walks up to a PARENT repo
+  // (e.g. a node_modules/<pkg> subdir) and would misattribute the parent's HEAD. Fail-closed to null.
+  const top = execFileSync("git", ["-C", repo, "rev-parse", "--show-toplevel"], { encoding: "utf8" }).trim();
+  if (path.resolve(top) === repo) sourceCommit = execFileSync("git", ["-C", repo, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+} catch { /* not a git repo */ }
 // The attested artifact: the repo's package.json bytes (a stable, present-state artifact).
 let artifactBytes = ""; const pkgPath = path.join(repo, "package.json");
 if (fs.existsSync(pkgPath)) artifactBytes = fs.readFileSync(pkgPath);
