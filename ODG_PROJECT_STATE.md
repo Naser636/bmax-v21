@@ -29,6 +29,14 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`HIGH_TICKET_ENTERPRISE_CONTRACT_ENGINE_V1` — high-ticket pivot analysis. 2026-10-20 (from `f80ed2c`).** [PASS — analysis; A/B BLOCKED without leverage+capital]
+  - **Truth Lock:** HEAD=origin/main=`f80ed2c`→(this); `main`; clean; 5 stashes; protected paths untouched. No spend/contact/publish.
+  - **Models:** A 2×50k€/mois · B 3 clients→100k€/mois · C 100k€/10j. Doc: `docs/odg-operational/ODG_HIGH_TICKET_ENGINE.md`.
+  - **Sourced [FACT 2026]:** fractional/transformation retainer EU = **4–12k€/mois** (2j/sem 8,6–19,7k€) ⇒ 50k€/mois/client = **2,5–5× le haut de marché** ⇒ non-solo. 403 appels d'offres IT ouverts (130 ≤10j) ; exemples réels CD Yvelines TMA 250k€/an, Min.Intérieur 245k€, Smals 2,4M€, accord-cadre TMA 32,5M€ — budgets publiés, mais **qualification (références/capacité financière) = barrière, solo peu qualifiable, cycle long**.
+  - **Tool (NEW):** `runtime/core/enterprise-lead-grade.{ts,js}` (5/5 + parité) — grade A/B/C/REJECTED, anti-scam override, budget publié≠confirmé, cible≠acheteur. `revenue-model.targetPlan` déjà prouve capacité dépassée.
+  - **ODG top-3 (preuves) :** (1) **sous-traitance senior aux ESN** (retourne le biais ESN phase 3A ; barrière basse, cycle court, récurrent) ; (2) **fractional privé** 10–20k€/mois ; (3) **co-traitance marchés publics** (pas solo). Verdict honnête : **A/B non crédibles en solo** ; ces pistes = chemin le plus rapide au 1ᵉʳ encaissement high-value + financent le levier.
+  - **BLOCKED (CTO) pour A/B :** **capital de roulement (sine qua non sous-traitance)**, société+TVA, GO contact/sous-traitance, contrats co/sous-traitance, certifs marchés publics. Pistes solo = GO prospection/entité.
+  - **Next technique exact :** détecteur d'opportunités automatisé (feeds marchés publics+job boards → `opportunity-policy`+`enterprise-lead-grade` → shortlist gradée), lecture seule, €0, réutilisable.
 - **`ODG_HIGH_REVENUE_DISCOVERY_AND_EXECUTION` — honest high-target analysis. 2026-10-19 (from `d9b9c4d`).** [PASS — analysis; A/B declared BLOCKED without leverage]
   - **Truth Lock:** HEAD=origin/main=`d9b9c4d`→(this); `main`; clean; 5 stashes; protected paths untouched. No spend/contact/publish.
   - **Targets:** A=100k€/mois (1,2M€/an), B=100k€/10j (~3M€/an), C=100k€ net. Doc: `docs/odg-operational/ODG_HIGH_REVENUE_ANALYSIS.md`.
