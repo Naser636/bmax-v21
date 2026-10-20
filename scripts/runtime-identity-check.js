@@ -74,6 +74,18 @@ function identityVerdict({ onDiskBuildId, standaloneBuildId, runningCwd, servedB
 
 function readTrim(p) { try { return fs.readFileSync(p, "utf8").trim(); } catch { return null; } }
 
+// Parse the PID of the process LISTENING on `port` from `ss -ltnp` output. PURE + testable. Fallback used when
+// the systemd MainPID is 0/unavailable (e.g. the serving process is managed by the release pipeline, not the
+// systemd unit, or the unit is failed) — so the checker can still OBSERVE the real serving process (its cwd)
+// instead of degrading to UNKNOWN. Returns the pid string or null.
+function pidFromSs(ssOutput, port) {
+  const re = new RegExp("[.:]" + String(port) + "\\s");
+  for (const line of String(ssOutput || "").split("\n")) {
+    if (re.test(line)) { const m = line.match(/pid=(\d+)/); if (m) return m[1]; }
+  }
+  return null;
+}
+
 function gatherLive(repoRoot) {
   const onDiskBuildId = readTrim(path.join(repoRoot, ".next", "BUILD_ID"));
   const standaloneBuildId = readTrim(path.join(repoRoot, ".next", "standalone", ".next", "BUILD_ID"));
@@ -82,9 +94,17 @@ function gatherLive(repoRoot) {
   const releaseRoot = process.env.ODG_RELEASE_ROOT || "/home/ubuntu/odg-releases";
   const activeReleaseBuildId = readTrim(path.join(releaseRoot, "current", "app", ".next", "BUILD_ID"));
   let runningCwd = null;
+  const servedPort = Number(process.env.ODG_SERVED_PORT) || 3000;
   try {
     const cp = require("child_process");
-    const pid = cp.execSync("systemctl show odg-preprod.service -p MainPID --value", { stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
+    let pid = null;
+    try { pid = cp.execSync("systemctl show odg-preprod.service -p MainPID --value", { stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch { pid = null; }
+    // Fallback: when the systemd MainPID is absent/0 (unit down/failed, or the release pipeline supervises the
+    // process itself), observe the process LISTENING on the served port — so a correctly-serving release is not
+    // mis-reported as UNKNOWN. Read-only (ss + /proc), no service/network change.
+    if (!pid || pid === "0") {
+      try { const ss = cp.execSync("ss -ltnp 2>/dev/null", { stdio: ["ignore", "pipe", "ignore"] }).toString(); pid = pidFromSs(ss, servedPort) || "0"; } catch { /* keep pid */ }
+    }
     if (pid && pid !== "0") { try { runningCwd = fs.readlinkSync(`/proc/${pid}/cwd`); } catch { runningCwd = null; } }
   } catch { runningCwd = null; }
   // servedBuildId: only if /api/health exposes one — read a local marker file if the route writes it; else null.
@@ -114,4 +134,4 @@ if (require.main === module) {
   }
   process.exit(exitCodeFor(v.status));
 }
-module.exports = { identityVerdict, gatherLive, exitCodeFor };
+module.exports = { identityVerdict, gatherLive, exitCodeFor, pidFromSs };

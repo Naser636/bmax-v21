@@ -85,4 +85,18 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); pa
   ok("release mode: repo .next!=standalone is informational (not DRIFT) when served matches active release", v.status === "CONSISTENT" && v.reasons.some((r) => /irrelevant to the served immutable release/.test(r)));
 }
 
+// 14 — pidFromSs: the port-listener PID fallback (used when systemd MainPID is 0/unavailable) parses `ss -ltnp`.
+{
+  const { pidFromSs } = require("./runtime-identity-check.js");
+  const ss = [
+    "State  Recv-Q Send-Q Local Address:Port  Peer Address:Port Process",
+    'LISTEN 0      511    127.0.0.1:3000       0.0.0.0:*    users:(("next-server",pid=27840,fd=21))',
+    'LISTEN 0      128    0.0.0.0:22           0.0.0.0:*    users:(("sshd",pid=900,fd=3))',
+  ].join("\n");
+  ok("pidFromSs: finds the :3000 listener pid", pidFromSs(ss, 3000) === "27840");
+  ok("pidFromSs: does not match a different port", pidFromSs(ss, 22) === "900");
+  ok("pidFromSs: null when port not listening", pidFromSs(ss, 9999) === null);
+  ok("pidFromSs: null on empty input", pidFromSs("", 3000) === null && pidFromSs(null, 3000) === null);
+}
+
 console.log(`\nruntime-identity-check — ${passed} assertions passed.`);
