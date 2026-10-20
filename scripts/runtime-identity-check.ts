@@ -27,30 +27,45 @@ const path = require("path");
  *  - servedBuildId : build id reported by the running service (e.g. via /api/health), or null if not exposed
  * Returns { status: CONSISTENT|DRIFT|UNKNOWN, reasons: string[] }.
  */
-function identityVerdict({ onDiskBuildId, standaloneBuildId, runningCwd, servedBuildId }: any): any {
+function identityVerdict({ onDiskBuildId, standaloneBuildId, runningCwd, servedBuildId, activeReleaseBuildId }: any): any {
   const reasons: string[] = [];
   let drift = false, unknown = false;
+  // RELEASE MODE: the service serves from an IMMUTABLE, isolated release (`current/app`) with its OWN frozen
+  // build id. The repo's `.next/BUILD_ID` is a SEPARATE local build, rebuilt independently by any `npm run build`
+  // in the checkout — so it is EXPECTED to differ and MUST NOT be the served-drift reference (that false
+  // positive previously triggered a wrongful rollback of a correct release). When an active release is present,
+  // the authoritative serving artifact is the ACTIVE RELEASE build id.
+  const releaseMode = activeReleaseBuildId != null;
 
-  // 1. On-disk coherence: the top-level .next build must equal the deployed standalone's build.
+  // 1. Repo on-disk coherence (.next vs its own standalone). In release mode this is repo-local build hygiene
+  //    ONLY (the service does not serve from the repo .next) ⇒ informational, never a served-drift verdict.
   if (onDiskBuildId && standaloneBuildId) {
-    if (onDiskBuildId !== standaloneBuildId) { drift = true; reasons.push(`on-disk drift: .next/BUILD_ID(${onDiskBuildId}) != standalone(${standaloneBuildId})`); }
-  } else {
+    if (onDiskBuildId !== standaloneBuildId) {
+      if (releaseMode) reasons.push(`repo-local note: .next/BUILD_ID(${onDiskBuildId}) != standalone(${standaloneBuildId}) — irrelevant to the served immutable release`);
+      else { drift = true; reasons.push(`on-disk drift: .next/BUILD_ID(${onDiskBuildId}) != standalone(${standaloneBuildId})`); }
+    }
+  } else if (!releaseMode) {
     unknown = true; reasons.push("on-disk BUILD_ID(s) unreadable");
   }
 
-  // 2. Deleted-inode signal: the running process executes from a replaced/removed standalone directory.
+  // 2. Deleted-inode signal: the running process executes from a replaced/removed directory (real drift in BOTH models).
   if (runningCwd == null) {
     unknown = true; reasons.push("running service cwd unobservable (service down or no access)");
   } else if (/\(deleted\)\s*$/.test(runningCwd)) {
     drift = true; reasons.push(`running service executes from a DELETED working dir: ${runningCwd}`);
   }
 
-  // 3. Served-vs-disk build id: only when the service actually exposes its build id.
-  if (servedBuildId != null && onDiskBuildId) {
-    if (servedBuildId !== onDiskBuildId) { drift = true; reasons.push(`served build(${servedBuildId}) != on-disk .next/BUILD_ID(${onDiskBuildId})`); }
-    else reasons.push(`served build matches on-disk (${servedBuildId})`);
-  } else if (servedBuildId == null) {
-    reasons.push("served build id not exposed by the service (reliable served-vs-disk check needs /api/health to expose it)");
+  // 3. Served-vs-AUTHORITATIVE-artifact: release mode ⇒ compare to the ACTIVE RELEASE build id (what the
+  //    service actually serves from); legacy single-checkout mode ⇒ compare to the repo on-disk .next/BUILD_ID.
+  if (servedBuildId != null) {
+    const ref = releaseMode ? activeReleaseBuildId : onDiskBuildId;
+    const refName = releaseMode ? "active release" : "on-disk .next";
+    if (ref) {
+      if (servedBuildId !== ref) { drift = true; reasons.push(`served build(${servedBuildId}) != ${refName}(${ref})`); }
+      else reasons.push(`served build matches ${refName} (${servedBuildId})`);
+    }
+  } else {
+    reasons.push("served build id not exposed by the service (reliable served check needs /api/health to expose it)");
   }
 
   if (drift) return { status: "DRIFT", reasons };
@@ -63,6 +78,9 @@ function readTrim(p: string): string | null { try { return fs.readFileSync(p, "u
 function gatherLive(repoRoot: string): any {
   const onDiskBuildId = readTrim(path.join(repoRoot, ".next", "BUILD_ID"));
   const standaloneBuildId = readTrim(path.join(repoRoot, ".next", "standalone", ".next", "BUILD_ID"));
+  // Active immutable release build id — the AUTHORITATIVE serving artifact when the release pipeline is in use.
+  const releaseRoot = process.env.ODG_RELEASE_ROOT || "/home/ubuntu/odg-releases";
+  const activeReleaseBuildId = readTrim(path.join(releaseRoot, "current", "app", ".next", "BUILD_ID"));
   let runningCwd = null;
   try {
     const cp = require("child_process");
@@ -77,7 +95,7 @@ function gatherLive(repoRoot: string): any {
     const j = JSON.parse(body);
     servedBuildId = j.buildId || j.build || (j.version && j.version.buildId) || null;
   } catch { servedBuildId = null; }
-  return { onDiskBuildId, standaloneBuildId, runningCwd, servedBuildId };
+  return { onDiskBuildId, standaloneBuildId, runningCwd, servedBuildId, activeReleaseBuildId };
 }
 
 // Exit code for a verdict status (shared by human + --json output so they never diverge).

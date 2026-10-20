@@ -66,4 +66,23 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); pa
   ok("--json prints a single line (one object)", res.stdout.trim().split("\n").length === 1);
 }
 
+// 11 — RELEASE MODE (the fix): the service serves from an immutable release; the repo .next is a separate local
+//      build. served == active-release build ⇒ CONSISTENT, even though the repo .next/BUILD_ID differs. This is
+//      the false positive that previously forced a wrongful rollback of a correct release.
+{
+  const v = identityVerdict({ onDiskBuildId: "REPO_LOCAL", standaloneBuildId: "REPO_LOCAL", runningCwd: "/home/u/odg-releases/current/app", servedBuildId: "RELEASE_A", activeReleaseBuildId: "RELEASE_A" });
+  ok("release mode: served==active release ⇒ CONSISTENT despite differing repo .next (false-DRIFT fixed)", v.status === "CONSISTENT" && v.reasons.some((r) => /served build matches active release/.test(r)));
+}
+// 12 — RELEASE MODE: served != active release ⇒ DRIFT (a genuine orphan/stale process serving the wrong release).
+{
+  const v = identityVerdict({ onDiskBuildId: "REPO_LOCAL", standaloneBuildId: "REPO_LOCAL", runningCwd: "/home/u/odg-releases/rel-old/app", servedBuildId: "RELEASE_OLD", activeReleaseBuildId: "RELEASE_NEW" });
+  ok("release mode: served!=active release ⇒ DRIFT (real stale/orphan)", v.status === "DRIFT" && v.reasons.some((r) => /served build\(RELEASE_OLD\) != active release\(RELEASE_NEW\)/.test(r)));
+}
+// 13 — RELEASE MODE: a repo-local .next!=standalone difference is informational, NOT a served-drift verdict
+//      (the service serves the immutable release, not the repo build).
+{
+  const v = identityVerdict({ onDiskBuildId: "REPO_NEW", standaloneBuildId: "REPO_OLD", runningCwd: "/home/u/odg-releases/current/app", servedBuildId: "RELEASE_A", activeReleaseBuildId: "RELEASE_A" });
+  ok("release mode: repo .next!=standalone is informational (not DRIFT) when served matches active release", v.status === "CONSISTENT" && v.reasons.some((r) => /irrelevant to the served immutable release/.test(r)));
+}
+
 console.log(`\nruntime-identity-check — ${passed} assertions passed.`);
