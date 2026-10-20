@@ -8,7 +8,8 @@
  * VOLATILE (enumerated by inspection, final-report.js:177): exactly ONE line `- Generated: <ISO>` from
  * `new Date().toISOString()`. It is normalised to a sentinel in BOTH outputs — nothing else. The rest of the
  * markdown (status, validated, governance state, autonomy section) is deterministic and compared verbatim.
- * Closure = 16 modules; only final-report ported. Run: node_modules/.bin/tsx runtime/__bench__/final-report-equivalence.e2e.test.ts
+ * Closure = 21 modules (authoritative; was 16→18→21 as capability-executors composed delegate-isolation +
+ * local-model-manager + transitive provider-sandbox — reused modules, not new primitives). Run: node_modules/.bin/tsx runtime/__bench__/final-report-equivalence.e2e.test.ts
  */
 import fs from "node:fs";
 import os from "node:os";
