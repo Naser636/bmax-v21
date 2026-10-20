@@ -29,6 +29,13 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`LARGE_ENTERPRISE_COMMERCIAL_RESEARCH_V1` — read-only, private enterprises only. 2026-10-20 (from `bfea9c8`).** [PASS — research; low-fit finding]
+  - **Truth Lock:** HEAD=origin/main=`bfea9c8`→(this); `main`; clean; 5 stashes; protected paths untouched. **No contact/proposal/spend/engagement.** Public sector STRICTLY excluded.
+  - **Sourced [FACT]:** Yelp Flow→TS 1.4M LOC/3.5y (DONE, not a need) ; TS7 GA 2026-07-08 (8–12× ; upgrade trigger) ; FR unicorns hiring platform/SRE **in-house**, stacks Go/Java/Kotlin/Python.
+  - **Graded shortlist (large PRIVATE, verifiable):** ManoMano B (Node assets, MED fit) ; Qonto/Doctolib B (LOW fit, non-JS) ; Back Market/Dataiku C ; Yelp C (done). **Budgets UNKNOWN for all** (private per-project budgets not public ⇒ **zero confirmed**). Doc: `docs/odg-operational/ODG_LARGE_ENTERPRISE_RESEARCH.md`.
+  - **Honest key finding:** ODG's JS→TS-migration offer has **LOW fit** with the largest private enterprises (non-JS/already-migrated, in-house staffing, low solo access) ; natural fit = mid-market (excluded by the size filter) ; **no confirmed budgets**.
+  - **CTO options (none executed):** (a) reposition offer (reliability/observability/TS7 upgrade) ; (b) relax size filter to mid-market (best fit) ; (c) accept low near-term fit. All need CTO authorization.
+  - **ARRÊT** — one phase ; await CTO acceptance before any next phase/contact.
 - **`FINAL_CAPABILITY_VALIDATION_GATE_V1` — top-3 completed + validated; golden-set harness. 2026-10-20 (from `c01f6d9`).** [PASS WITH BLOCKERS]
   - **Truth Lock:** HEAD=origin/main=`c01f6d9`→(this); `main`; clean; 5 stashes; protected paths untouched. No commercial internet research (per gate). No egress/prod/secret change.
   - **Top-3 bilan (preuves indépendantes re-exécutées) :** **#1 Web-provenance [PASS]** (`verifyWebProvenance` 10/10 ; 4 dims séparées ; PROVEN=2xx+contenu+hash-MATCH ; intégrité≠authenticité). **#2 SLSA+SBOM [PASS mécanisme · L2 BLOCKED]** (`supply-chain-attest` 7/7 ; SBOM 489 + ed25519 sign/verify + anti-altération ; **L2 non revendiqué** — pas de build hébergé/clé managée). **#3 Golden-set [PASS, NEW]** (`autonomy-eval-harness` 4/4 : 7 dims séparées, 6 faux-succès attrapés sur 8 cas, négatifs rejetés, reproductible+parité).
