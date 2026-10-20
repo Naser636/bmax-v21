@@ -1131,18 +1131,47 @@ const EXECUTORS = [
 
 // TRUST-GAP-3(a) — PRODUCTION effect registry (SOT). A capability ABSENT here is UNKNOWN ⇒ deny-by-default
 // at resolve(). Mirrors the .ts twin; does NOT re-run the executor's own control (no double-gating).
+// V2-C1 — CAPABILITY CONTRACTS (mirror of the .ts SSOT). The effect registry is EXTENDED (not duplicated) into
+// the machine-readable per-capability contract map: effect=authz-class, control=preconditions+governing control,
+// purpose=intent, evidence=io/outputs artifact, idempotent=safe-to-re-run, failureClass=how it fails.
+// resolve()/effectRegistryVerdict read ONLY {effect,control} (behaviour-preserving); the added fields are
+// consumed by contractConformance() (the conformance test), so contracts can never drift from real executors.
 const CAPABILITY_EFFECT = {
-    "Connectivity Audit": { effect: "observational", control: "read-only reachability probe (no mutation/egress)" },
-    "Clean Workspace": { effect: "observational", control: "scan-only; deletes nothing (read-only)" },
-    "Governed Observability Verification": { effect: "observational", control: "re-derives+verifies the autonomy signal (read-only)" },
-    "ODG Synthetic Deliverable": { effect: "consequential", control: "write confined to authorized_paths (confineSyntheticTarget)" },
-    "ODG Spec Author": { effect: "consequential", control: "write confined to authorized_paths" },
-    "Governed Git Branch Integration": { effect: "consequential", control: "ff-only, dry-run default, C03-recorded" },
-    "Governed Bash/Linux Command": { effect: "consequential", control: "action-gate + bubblewrap; now+missionId threaded" },
-    "External Research Acquisition": { effect: "consequential", control: "injected-fetcher-only (no JSON-nameable client); dry-run default" },
-    "Provider Activation": { effect: "consequential", control: "provider-live-call-gate (ODG_PROVIDER_LIVE); dry-run default" },
-    "Implement Via Local Provider": { effect: "consequential", control: "delegate-isolation validateScope + independent verify; never commits" },
+    "Connectivity Audit": { effect: "observational", control: "read-only reachability probe (no mutation/egress)", purpose: "Probe reachability of authorized hosts, read-only.", idempotent: true, failureClass: "verified-failure (honest failure evidence, non-zero exit)", evidence: "runtime/generated/connectivity-audit.json" },
+    "Clean Workspace": { effect: "observational", control: "scan-only; deletes nothing (read-only)", purpose: "Scan workspace cleanliness; never deletes.", idempotent: true, failureClass: "none (read-only scan)", evidence: "runtime/generated/clean-workspace-report.json" },
+    "Governed Observability Verification": { effect: "observational", control: "re-derives+verifies the autonomy signal (read-only)", purpose: "Re-derive and verify the autonomy observability signal.", idempotent: true, failureClass: "verified-failure if the signal is not measurable", evidence: "runtime/generated/observability-verification.json" },
+    "ODG Synthetic Deliverable": { effect: "consequential", control: "write confined to authorized_paths (confineSyntheticTarget)", purpose: "Write a synthetic deliverable confined to authorized paths.", idempotent: false, failureClass: "refused if target is outside authorized_paths", evidence: "runtime/generated/odg-synthetic-deliverable.json" },
+    "ODG Spec Author": { effect: "consequential", control: "write confined to authorized_paths", purpose: "Author an ODG spec/contract confined to authorized paths.", idempotent: false, failureClass: "refused if out of scope", evidence: "runtime/generated/odg-spec-author.json" },
+    "Governed Git Branch Integration": { effect: "consequential", control: "ff-only, dry-run default, C03-recorded", purpose: "Fast-forward-only git branch integration (dry-run default).", idempotent: false, failureClass: "refused/verified-failure (ff-only; never force)", evidence: "runtime/generated/git-branch-integration.json" },
+    "Governed Bash/Linux Command": { effect: "consequential", control: "action-gate + bubblewrap; now+missionId threaded", purpose: "Run an action-gated, sandboxed shell command.", idempotent: false, failureClass: "refused by action-gate; sandboxed non-zero exit", evidence: "runtime/generated/bash-command.json" },
+    "External Research Acquisition": { effect: "consequential", control: "injected-fetcher-only (no JSON-nameable client); dry-run default", purpose: "Acquire external research via an injected fetcher (dry-run default).", idempotent: false, failureClass: "dry-run no-op; verified-failure on fetch error", evidence: "runtime/generated/external-research-acquisition.json" },
+    "Provider Activation": { effect: "consequential", control: "provider-live-call-gate (ODG_PROVIDER_LIVE); dry-run default", purpose: "Activate a provider through the live-call gate (dry-run default).", idempotent: false, failureClass: "refused unless ODG_PROVIDER_LIVE; verified-failure", evidence: "runtime/generated/provider-activation.json" },
+    "Implement Via Local Provider": { effect: "consequential", control: "delegate-isolation validateScope + independent verify; never commits", purpose: "Delegate an implementation to the local provider under scope-validation + independent verify; never commits.", idempotent: false, failureClass: "verified-failure; scope-violation ⇒ nothing applied", evidence: "runtime/generated/implement-via-local-provider.json" },
 };
+// V2-C1 — PURE contract-conformance checker (mirror of .ts). Returns violations ([] = conformant): no dangling
+// executor / no orphan contract, every contract complete + well-typed, every contract backed by a real
+// matches()+run() executor. Behaviour-preserving (introspection/test only).
+function contractConformance(executors, contracts) {
+    const violations = [];
+    const execList = Array.isArray(executors) ? executors : [];
+    const execNames = execList.map((e) => e && e.capability);
+    const contractNames = Object.keys(contracts || {});
+    for (const e of execList) {
+        const n = e && e.capability;
+        if (!n || !contracts[n]) { violations.push(`DANGLING_EXECUTOR: "${n}" has no contract in CAPABILITY_EFFECT`); continue; }
+        if (typeof e.matches !== "function" || typeof e.run !== "function") violations.push(`NON_EXECUTABLE: "${n}" contract is not backed by a matches()+run() executor`);
+    }
+    for (const n of contractNames) {
+        if (!execNames.includes(n)) violations.push(`ORPHAN_CONTRACT: "${n}" has no executor (dead declaration)`);
+        const c = contracts[n];
+        if (c.effect !== "consequential" && c.effect !== "observational") violations.push(`BAD_EFFECT: "${n}".effect="${c.effect}"`);
+        if (typeof c.idempotent !== "boolean") violations.push(`INCOMPLETE_CONTRACT: "${n}".idempotent must be a boolean`);
+        for (const f of ["control", "purpose", "failureClass", "evidence"]) {
+            if (typeof c[f] !== "string" || !c[f].trim()) violations.push(`INCOMPLETE_CONTRACT: "${n}".${f} missing`);
+        }
+    }
+    return violations;
+}
 function effectRegistryVerdict(capabilityName) {
     const entry = CAPABILITY_EFFECT[capabilityName];
     if (!entry) return { ok: false, reason: `UNREGISTERED_CAPABILITY "${capabilityName}" — deny-by-default (not classified in CAPABILITY_EFFECT; a dispatchable consequential capability must declare its effect + control before it can run)` };
@@ -1166,7 +1195,7 @@ function resolve(patch) {
     };
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, contractConformance, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.

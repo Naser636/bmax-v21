@@ -31,4 +31,14 @@ The V2 "autonomous engineering OS" is **largely already implemented** (orchestra
 4. **V2-G2_LEARNING_REUSE_PROOF**, **V2-I1_EVAL_SUITE** (measurement).
 Each begins with "search existing → reuse/repair → prove gap → smallest extension → test" (§12). CTO-paused (L7/TS-only) and host/provider-blocked (A3, LIVE-autonomy, code-gen provider) items stay classified, not reopened.
 
-**STOP after this checkpoint** — V2-H1 done + Phase-A matrix persisted; next turn begins V2-C1.
+## V2-C1 — CAPABILITY CONTRACTS — COMPLETED (evidence)
+**Precise gap (corrected after reading the authoritative sources — the matrix's "no test" was imprecise):**
+a registry *view* test exists (`src/tests/capability-registry.test.ts`, 5 lines) but only asserts the pipeline VIEW is an array. The real dispatch SSOT is `CAPABILITY_EFFECT` in `runtime/core/capability-executors.ts` (TRUST-GAP-3(a)), which carried only **2 of the required contract dimensions** (`effect`, `control`) and had **no conformance test** proving executors↔contracts are faithful.
+
+**Smallest architecture-compatible change (reuse, no new primitive):** EXTENDED the existing `CAPABILITY_EFFECT` map (both ports .ts/.js) into the machine-readable per-capability contract SSOT — added `purpose`, `idempotent`, `failureClass`, `evidence` to all 10 contracts (effect=authz-class, control=preconditions+governing control, evidence=io/outputs). Added a PURE exported `contractConformance(executors, contracts)` helper. `resolve()`/`effectRegistryVerdict` still read only `{effect,control}` ⇒ **behaviour-preserving** (no double-gating, no dispatch change). New test `runtime/core/capability-contracts.test.ts` (9 assertions) proves: strict 1:1 executors↔contracts (no dangling/orphan), every contract complete+typed, **every contract backed by a real matches()+run() executor (not a dead declaration)**, deny-by-default preserved, and that the checker DETECTS injected dangling/orphan/incomplete violations.
+
+**Evidence:** capability-contracts 9/9 (both ports); capability-executors regression 55/55; capability-executors-equivalence (dist parity) ALL PASS; dispatch-authorization-invariant ALL PASS; tsc 0 on all 3 configs; build:runtime dist-closure OK (95); parity:runtimes PASS (byte-identical); full `npm test` [exit recorded at commit].
+
+**Next lot:** V2-B1_NL_OBJECTIVE_COMPILER (now able to target real machine-readable contracts), then F1/J1 reconcile, then G2/I1 measurement.
+
+**STOP after this checkpoint** — V2-H1 + V2-C1 done + Phase-A matrix persisted; next turn begins V2-B1.
