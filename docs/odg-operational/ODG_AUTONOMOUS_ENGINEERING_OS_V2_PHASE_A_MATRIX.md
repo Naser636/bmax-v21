@@ -55,4 +55,14 @@ a registry *view* test exists (`src/tests/capability-registry.test.ts`, 5 lines)
 
 **Evidence:** gateway 188/0 incl. 19 new V2-B1 assertions (FR/AR valid-consequential across all 5 families, no-over-escalation on local FR + the "ça marche"/market trap, FR+AR constraints, FR financial compile → FINANCIAL + external blocker + dry-run no-side-effects, EN non-regression); **nl-objective-gateway-equivalence (dual-port parity) ALL PASS**; mission-synthesizer/contract-factory/validation-engine equivalence PASS; expert 8/8; tsc 0 (3 cfg); build:runtime OK; parity PASS; full `npm test` exit 0.
 
-**STOP after this checkpoint** — V2-H1 + V2-C1 + V2-J1 + V2-B1 done + Phase-A matrix persisted; dashboard VERIFIED, supervision host-blocked (explicit). Next: V2-F1 validator-negative-sweep → V2-G2 learning-reuse-proof → V2-I1 eval-suite.
+## V2-F1 — VALIDATOR NEGATIVE-SWEEP — COMPLETED (audit + 2 locks, evidence)
+**Method:** read-only coverage map (subagent) across 9 cross-cutting refusal categories + a per-condition audit of the validation-engine `validated` conjunction. **Already covered (confirmed, each a real refusal test driving the production module):** incomplete-contract (contractConformance + INCOMPLETE_PROBE); unknown capability deny-by-default (dispatch-authorization-invariant); authz absent/denied (capability-authorization + action-gate DENY); RECORDED no-op ⇒ BLOCKED and FAILED ⇒ BLOCKED (validation-engine-recorded-noop); stale/wrong-target probe ⇒ BLOCKED (probe-freshness + capability-probes); absent/non-executable acceptance test ⇒ NOT_PROVEN (present-state-reconciliation, incl. the V2-J1 .ts case); provider NO_CHANGE ⇒ REFUSED (implement-via-local-provider); PARTIAL + dependency-violation (action-authorization-partial); coverage-incomplete gate (phase0-certification).
+
+**2 genuine gaps found, reproduced, and LOCKED (test-only — the engine already enforced both; no production change):**
+- `evidenceOk=false`: an EXECUTED entry naming a capability + an evidence artifact that is MISSING/empty on disk ⇒ BLOCKED (distinct from the RECORDED no-op; the existing suite tested only the positive EXECUTED+evidence→SUCCESS).
+- `engineeringOk=false`: an ENGINEERING (write-scope) mission whose executor claims APPLIED but produced NO change AND has NO tracked file inside authorized_paths ⇒ BLOCKED — the last-line no-false-success defense against a false DONE with no real edit (never asserted negatively before; the existing sandbox always seeded an in-scope file).
+
+Both reproduced against the real `validation-engine.js` first, then locked with 7 assertions (negative + not-over-blocking positive) + a new `sandboxEmptyScope` helper in `src/runtime/validation-engine-recorded-noop.test.ts`.
+**Evidence:** that test 15/15; tsc 0; full `npm test` GREEN (472 test files, 0 genuine failures). No new primitive; no production code changed (pure negative-coverage addition).
+
+**STOP after this checkpoint** — V2-H1 + V2-C1 + V2-J1 + V2-B1 + V2-F1 done + Phase-A matrix persisted; dashboard VERIFIED, supervision host-blocked (explicit). Next: V2-G2 learning-reuse-proof → V2-I1 eval-suite.
