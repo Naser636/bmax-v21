@@ -90,6 +90,36 @@ const delta = measureDelta({ signals: A.signals }, { signals: B.signals }, sense
 check(delta.summary.improved >= 1 && delta.summary.regressed === 0, "measured delta improves (downstream resolution avoided), none regressed");
 check(directionOf("downstreamResolutionNeeded", B.signals.downstreamResolutionNeeded - A.signals.downstreamResolutionNeeded, sense) === "improved", "directionOf confirms the downstream-need drop is an IMPROVEMENT");
 
+// Arm C (V2-G2 — INCOMPATIBLE / NO-FALSE-REUSE): the store CONTAINS a precedent, but for a DIFFERENT goal
+// (different signature). The mere PRESENCE of a learned record must NOT trigger reuse of an IRRELEVANT one —
+// the real Decision stage must behave like the CONTROL (miss). This proves relevance is enforced end-to-end
+// ("présence d'un enregistrement ≠ réutilisation"), closing the G2 requirement that learning is not applied
+// when absent, stale, or incompatible. (Staleness is subsumed: a changed problem ⇒ a different signature ⇒
+// a different key ⇒ this same miss path.)
+function sandboxForeign(goal, foreignGoal) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "learn-ab-foreign-"));
+  const gen = path.join(dir, "runtime", "generated");
+  fs.mkdirSync(path.join(gen, "autonomy"), { recursive: true });
+  const entries = { [sig(foreignGoal)]: { signature: sig(foreignGoal), mission: "SEED_FOREIGN", edits: [{ target: "runtime/generated/reused.txt", content: "reused\n" }], reuseCount: 0, learnedAt: "2026-01-01T00:00:00.000Z" } };
+  fs.writeFileSync(path.join(gen, "autonomy", "patch-memory.json"), JSON.stringify({ version: 1, entries }, null, 2));
+  fs.writeFileSync(path.join(gen, "mission-plan.json"), JSON.stringify({
+    mission: "M", mode: "SEQUENTIAL", priority: "NORMAL", authorizedPaths: ["runtime/generated"],
+    objectives: [{ id: "M_1", goal, done_when: ["d"] }],
+  }));
+  return dir;
+}
+const FOREIGN_GOAL = "an entirely unrelated infrastructure migration";
+const dC = sandboxForeign(GOAL, FOREIGN_GOAL);
+const C = outcomeOf(dC, GOAL);
+check(C.exit === 0, "INCOMPATIBLE arm: Decision stage exits 0");
+check(C.signals.localResolution === 0 && (C.reuseCount === null || C.reuseCount === 0),
+  "INCOMPATIBLE (record present, wrong signature) ⇒ NO reuse (presence of a record ≠ reuse; relevance enforced end-to-end)");
+{
+  const dbC = JSON.parse(fs.readFileSync(path.join(dC, "runtime", "generated", "autonomy", "patch-memory.json"), "utf8"));
+  const foreign = dbC.entries[sig(FOREIGN_GOAL)];
+  check(!!foreign && foreign.reuseCount === 0, "INCOMPATIBLE: the foreign precedent is never touched (reuseCount stays 0, not mis-replayed)");
+}
+
 // GRADE via learning-chain: a record whose effective:{baseline=control, after=treatment} reaches EFFECTIVE
 // ONLY because the arms DIFFER (deep-unequal). The chain is deny-by-default and refuses a fabricated effect.
 const record = {
