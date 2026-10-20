@@ -77,4 +77,23 @@ t("targetPlan — feasible solo target not flagged", () => {
                          JS.targetPlan({ targetRevenue: 15000, avgContractValue: 7500, conversionRate: 0.2, deliveryDaysPerContract: 8, capacityDaysPerPeriod: 20 }));
 });
 
+// 8. adversarial hardening (FINANCIAL_CALC_HARDENING_V1 Lot C): empty/null/negative/non-finite refused
+//    (never a fabricated 0); extreme values computed deterministically; conversion>1 not rejected (estimate).
+t("adversarial inputs: invalid refused (no fabricated 0); extreme deterministic", () => {
+  assert.strictEqual(TS.revenueScenario(null).ok, false);
+  assert.strictEqual(TS.revenueScenario({}).ok, false);                                    // empty ⇒ refused, not 0
+  assert.strictEqual(TS.revenueScenario({ tjm: -500, billableDays: 100, chargeRatePct: 23 }).ok, false); // negative
+  assert.strictEqual(TS.revenueScenario({ tjm: Infinity, billableDays: 1, chargeRatePct: 0 }).ok, false); // non-finite
+  assert.strictEqual(TS.revenueScenario({ tjm: NaN, billableDays: 1, chargeRatePct: 0 }).ok, false);
+  const extreme = TS.revenueScenario({ tjm: 1e7, billableDays: 1e4, chargeRatePct: 50 });   // huge but finite
+  assert.strictEqual(extreme.ok, true);
+  assert.strictEqual(extreme.caBilled, 1e11);                                               // deterministic, no overflow error
+  assert.strictEqual(extreme.exceedsMicroCeiling, true);
+  // targetPlan: invalid refused; conversion>1 is an unusual-but-valid estimate (not fabricated), capacity honest
+  assert.strictEqual(TS.targetPlan({ targetRevenue: 1, avgContractValue: 0, conversionRate: 0.2, deliveryDaysPerContract: 1, capacityDaysPerPeriod: 1 }).ok, false); // avg=0
+  const p = TS.targetPlan({ targetRevenue: 10000, avgContractValue: 5000, conversionRate: 2, deliveryDaysPerContract: 1, capacityDaysPerPeriod: 20 });
+  assert.strictEqual(p.ok, true); assert.strictEqual(p.contractsNeeded, 2); assert.strictEqual(p.prospectsNeeded, 1); // ceil(2/2)
+  assert.deepStrictEqual(TS.revenueScenario({ tjm: -1, billableDays: 1, chargeRatePct: 1 }), JS.revenueScenario({ tjm: -1, billableDays: 1, chargeRatePct: 1 })); // parity on refusal
+});
+
 console.log(`\nALL PASS — revenue-model (${n} tests)`);
