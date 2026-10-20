@@ -29,6 +29,15 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`SOFTWARE_SUPPLY_CHAIN_SLSA_L2_SBOM_V1` — SBOM + signed provenance mechanism. 2026-10-20 (from `e45cec9`).** [PASS (mechanism) · SLSA L2 BLOCKED]
+  - **Truth Lock:** HEAD=origin/main=`e45cec9`→(this); `main`; clean; 5 stashes; protected paths untouched. No paid dep, no secret committed, no prod/release change.
+  - **Tooling audit [FACT]:** `npm sbom` absent (npm 9), no cyclonedx/syft/cosign/sigstore ; **node ed25519 sign/verify natif OK**. Reuse sha256 (evidence-provenance).
+  - **Built:** `runtime/core/supply-chain-attest.{ts,js}` (pur) — `buildSbom` (CycloneDX-shaped, déterministe, depuis le lockfile), `buildAttestation` (in-toto statement liant artefact↔SBOM↔source), `signStatement`/`verifyStatement` (ed25519 ; rebind digest artefact + nom sujet + SBOM). Clé PEM injectée, **jamais stockée**.
+  - **Demo réelle reproductible :** SBOM **489 composants** du vrai lockfile ; artefact=package.json ; clé éphémère ; verify genuine **OK**, verify **tampered ⇒ échec (digest mismatch)** ; SBOM+attestation écrits en `runtime/generated/supply-chain/` (**git-ignored**), **aucune clé privée écrite**.
+  - **Tests:** supply-chain-attest **7/7 + parité** (positif + négatifs : artefact altéré, signature invalide, attestation absente, mauvais sujet, SBOM incohérent) ; tsc dist/strict/leaves 0.
+  - **Niveau honnête :** **SLSA L1 provenance + SBOM + mécanisme de signature démontré**. **L2 BLOCKED** : exige plateforme de build hébergée + clés managées/keyless (Sigstore/KMS) indisponibles hors-ligne ; clé locale éphémère ≠ L2. **Non revendiqué L2** sur la seule présence d'une signature.
+  - **Options L2 (à décider CTO) :** (a) Sigstore keyless (réseau/OIDC — egress GO) ; (b) KMS/clé managée (secret/service autorisé) ; (c) rester L1+SBOM signé localement (actuel).
+  - **ARRÊT** — pas de golden-set ni autre lot sans acceptation CTO.
 - **`WEB_PROVENANCE_VERIFICATION_V1` — content-integrity provenance CANDIDATE→PROVEN. 2026-10-20 (from `7499ebb`).** [PASS]
   - **Truth Lock:** HEAD=origin/main=`7499ebb`→(this); `main`; clean; 5 stashes; protected paths untouched. No contact/spend/publish/new-network-flow/egress-change.
   - **Built:** `opportunity-detector.verifyWebProvenance` (+`sha256`, reuses the evidence-provenance primitive) — pure, **4 dimensions SÉPARÉES** (retrieval 2xx / integrity hash-vs-baseline / freshness / businessPresence). **PROVEN = 2xx + content + integrity MATCH** (re-vérifié vs hash enregistré) ; FIRST_CAPTURE ⇒ CANDIDATE ; non-2xx/empty/MISMATCH ⇒ REJECTED. **Intégrité ≠ authenticité** (prouve les octets, pas la véracité ; businessPresence = signal faible). Raw content non persisté (seul le hash = baseline suivante).
