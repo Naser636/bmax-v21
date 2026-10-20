@@ -74,7 +74,9 @@ const HIGH_PRIORITY_SIGNALS = ["urgent", "asap", "immediately", "critical", "now
     "immediatement", "critique", "maintenant", "prioritaire", "des que possible"];
 
 function foldDiacritics(s) {
-    return String(s == null ? "" : s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Strip Latin combining marks AND Arabic combining marks (harakat + superscript alef), so accented FR and
+    // hamza/harakat Arabic variants normalise to a single matchable form. EN folds to itself. (Mirror of .ts.)
+    return String(s == null ? "" : s).normalize("NFD").replace(/[\u0300-\u036f\u064b-\u065f\u0670]/g, "");
 }
 
 function deriveIntent(mission, normalized) {
@@ -95,7 +97,13 @@ function normalizeObjective(text) {
 // ---- Requirements & constraints (deterministic extraction from the compiled contract + goal) -----
 // Requirements come from the governed contract's definition_of_done (no fabrication); constraints are
 // explicit negative/limiting clauses found in the objective text.
-const CONSTRAINT_SIGNALS = [/\bwithout\b[^.,;]*/gi, /\bmust not\b[^.,;]*/gi, /\bno\s+\w+[^.,;]*/gi, /\bonly\b[^.,;]*/gi, /\bnever\b[^.,;]*/gi];
+// V2-B1 — multilingual constraint signals (EN + FR + AR). (\b is ASCII-only, so Arabic patterns anchor on the
+// literal word.) FR keywords are unaccented so no folding is needed here. (Mirror of the .ts port.)
+const CONSTRAINT_SIGNALS = [
+    /\bwithout\b[^.,;]*/gi, /\bmust not\b[^.,;]*/gi, /\bno\s+\w+[^.,;]*/gi, /\bonly\b[^.,;]*/gi, /\bnever\b[^.,;]*/gi,
+    /\bsans\b[^.,;]*/gi, /\bne\s+\w+\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
+    /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g,
+];
 function extractConstraints(normalized) {
     const out = [];
     for (const re of CONSTRAINT_SIGNALS) {
@@ -108,23 +116,36 @@ function extractConstraints(normalized) {
 // ---- Risk / External-Effect classifier (THE one new governance stage) ---------------------------
 // Keyword-driven and deterministic. Severity order is fixed; the first matching family wins so a
 // single objective maps to exactly one external-effect family, one action class and one risk level.
+// V2-B1 — MULTILINGUAL (EN + FR + AR). Matched against a DIACRITIC-FOLDED, lower-cased goal (classifyObjective);
+// FR signals are stored folded (no accents). Closes a governance SAFETY hole: before V2-B1 a FR/AR
+// destructive/financial/deploy objective fell through to NONE/GENERATE/LOW — bypassing requiresHuman,
+// provider-gating, consequential admission and expert-profile selection. FR/AR mirror existing specificity
+// (qualified phrases, not bare verbs) to avoid over-escalating local/analytic requests. (Mirror of the .ts port.)
 const EFFECT_FAMILIES = [
     // family,          signals,                                                                   actionClass,   risk,       reversibility, requiresExternal, requiresHuman
-    ["DESTRUCTIVE", ["delete file", "delete the", "drop table", "drop database", "truncate", "wipe", "destroy", "erase ", "purge ", "rm -rf"], "DELETE", "CRITICAL", "R4", false, true],
+    ["DESTRUCTIVE", ["delete file", "delete the", "drop table", "drop database", "truncate", "wipe", "destroy", "erase ", "purge ", "rm -rf",
+        "supprime le fichier", "supprime le", "supprimer le", "efface le", "efface ", "detruis", "detruire", "vide la table", "vide la base", "ecrase le fichier",
+        "احذف", "امسح", "دمر", "ازل الملف", "أزل الملف"], "DELETE", "CRITICAL", "R4", false, true],
     // NOTE: the bare word "transaction" is deliberately NOT a FINANCIAL signal. Like "current" below,
     // it over-matched non-financial senses ("transactional" source repair, a DB/git "transaction log")
     // and wrongly escalated local/ambiguous objectives to TRANSACT/CRITICAL/R4. Genuine money movement
     // is already carried by the explicit verbs (pay/charge/transfer money/withdraw/deposit/invoice/…),
     // so "transaction" only escalates when qualified as a money transaction (financial/payment/…).
-    ["FINANCIAL", ["pay ", "buy ", "purchase", "sell ", "invoice", "charge ", "transfer money", "payment", "financial transaction", "payment transaction", "money transaction", "bank transaction", "card transaction", "deposit", "withdraw", "spend "], "TRANSACT", "CRITICAL", "R4", true, true],
-    ["DEPLOY", ["deploy", "release to production", "ship to production", "publish to", "go live", "push to prod"], "IRREVERSIBLE", "HIGH", "R3", true, true],
-    ["COMMUNICATE", ["email", "send ", "post to", "publish ", "notify", " message ", "contact ", "tweet", " dm "], "COMMUNICATE", "HIGH", "R2", true, false],
-    // NOTE: the bare word "current" is deliberately NOT a NETWORK signal. It over-matched local
-    // repository reads ("current repository state" / "current repo state") — a V7 reliquat. True
-    // "need live external data" intent is already carried by "live data" / "real-time" plus the
-    // concrete transport signals (online/internet/web/http/url/fetch/download/scrape/crawl), so the
-    // mere presence of "current" never alone classifies a request NETWORK.
-    ["NETWORK", ["online", "internet", " web", "scrape", "crawl", "fetch ", "download", "http", "url", "market", "opportunit", "browse", "search the", "live data", "real-time"], "ANALYZE", "MEDIUM", "R0", true, false],
+    // "charge the/a/my" (billing), NOT bare "charge " — collided with "télécharge"/"recharge" (mirror of .ts).
+    ["FINANCIAL", ["pay ", "buy ", "purchase", "sell ", "invoice", "charge the", "charge a", "charge my", "transfer money", "payment", "financial transaction", "payment transaction", "money transaction", "bank transaction", "card transaction", "deposit", "withdraw", "spend ",
+        "paie", "paye", "payer", "achete", "acheter", "vends", "vendre", "facture", "facturer", "virement", "vire de l argent", "transfere de l argent", "depense", "depenser", "retire de l argent", "paiement",
+        "ادفع", "اشتر", "اشتري", "بع ", "فاتورة", "حول المال", "حوّل المال", "اصرف", "دفعة"], "TRANSACT", "CRITICAL", "R4", true, true],
+    ["DEPLOY", ["deploy", "release to production", "ship to production", "publish to", "go live", "push to prod",
+        "deploie", "deployer", "mets en production", "met en production", "mise en production", "passe en prod", "passe en production", "livre en production", "pousse en prod",
+        "انشر في الانتاج", "انشر في الإنتاج", "نشر الانتاج", "اطلق في الانتاج"], "IRREVERSIBLE", "HIGH", "R3", true, true],
+    ["COMMUNICATE", ["email", "send ", "post to", "publish ", "notify", " message ", "contact ", "tweet", " dm ",
+        "envoie", "envoyer", "courriel", "poste sur", "notifie", "notifier", "contacte", "contacter", "ecris a ",
+        "ارسل", "أرسل", "راسل", "انشر على", "بريد الكتروني", "تواصل مع"], "COMMUNICATE", "HIGH", "R2", true, false],
+    // NOTE: the bare word "current" is deliberately NOT a NETWORK signal (collides with local "current repo
+    // state"); FR "marché"/folded "marche" is likewise EXCLUDED (collides with "ça marche" = "it works").
+    ["NETWORK", ["online", "internet", " web", "scrape", "crawl", "fetch ", "download", "http", "url", "market", "opportunit", "browse", "search the", "live data", "real-time",
+        "en ligne", "sur internet", "telecharge", "telecharger", "aspire le site", "explore le web", "cherche sur", "donnees en direct", "temps reel", "appel d offre", "appels d offres",
+        "عبر الانترنت", "عبر الإنترنت", "الانترنت", "الإنترنت", "نزل الملف", "حمل من", "ابحث في", "ابحث على", "الويب", "السوق"], "ANALYZE", "MEDIUM", "R0", true, false],
 ];
 
 // ---- Capability → registered evidence probe binding --------------------------------------------
@@ -147,7 +168,8 @@ function probeForCapability(capability) {
 }
 
 function classifyObjective(goal) {
-    const g = String(goal || "").toLowerCase();
+    // Fold diacritics so FRENCH signals (stored folded) match accented input; EN folds to itself, AR preserved.
+    const g = foldDiacritics(String(goal || "")).toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
         if (signals.some((s) => g.includes(s))) {
             return { externalEffect: family, actionClass, risk, reversibility, requiresExternal, requiresHuman };

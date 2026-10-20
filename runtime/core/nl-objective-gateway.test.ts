@@ -348,6 +348,45 @@ console.log("== NL Objective Gateway ==");
     ok("25 FR: noun-list not over-split (guard)", nounList.contract.objectives.length === 1);
 }
 
+// ---- 26 — V2-B1: MULTILINGUAL (FR + AR) risk/external-effect classification + constraints ---------
+// Before V2-B1 the classifier (and constraint extractor) were English-only, so a FR/AR destructive /
+// financial / deploy objective fell through to NONE/GENERATE/LOW — a governance SAFETY hole (it bypassed
+// requiresHuman, provider-gating, consequential admission and expert-profile selection). These tests prove
+// the hole is closed in BOTH languages, that LOCAL/analytic requests are NOT over-escalated, and that
+// English behaviour is unchanged.
+{
+    const C = gw.classifyObjective;
+    // VALID consequential — FRENCH (accented input folds to the stored signals).
+    ok("26 FR destructive ⇒ DESTRUCTIVE/CRITICAL/requiresHuman", (() => { const c = C("supprime le fichier config.json"); return c.externalEffect === "DESTRUCTIVE" && c.risk === "CRITICAL" && c.requiresHuman === true; })());
+    ok("26 FR financial ⇒ FINANCIAL/TRANSACT/requiresHuman", (() => { const c = C("paie la facture du fournisseur"); return c.externalEffect === "FINANCIAL" && c.actionClass === "TRANSACT" && c.requiresHuman === true; })());
+    ok("26 FR deploy (accented) ⇒ DEPLOY/HIGH/requiresExternal", (() => { const c = C("déploie en production"); return c.externalEffect === "DEPLOY" && c.risk === "HIGH" && c.requiresExternal === true; })());
+    ok("26 FR communicate ⇒ COMMUNICATE", C("envoie un courriel au client").externalEffect === "COMMUNICATE");
+    ok("26 FR network ⇒ NETWORK/requiresExternal", (() => { const c = C("télécharge les données en ligne"); return c.externalEffect === "NETWORK" && c.requiresExternal === true; })());
+    // VALID consequential — ARABIC (hamza/harakat variants normalise to the stored signals).
+    ok("26 AR destructive ⇒ DESTRUCTIVE", C("احذف الملف config.json").externalEffect === "DESTRUCTIVE");
+    ok("26 AR financial ⇒ FINANCIAL", C("ادفع فاتورة المورد").externalEffect === "FINANCIAL");
+    ok("26 AR deploy (hamza) ⇒ DEPLOY", C("انشر في الإنتاج").externalEffect === "DEPLOY");
+    ok("26 AR send (hamza) ⇒ COMMUNICATE", C("أرسل التقرير").externalEffect === "COMMUNICATE");
+    ok("26 AR online ⇒ NETWORK", C("احصل على البيانات عبر الإنترنت").externalEffect === "NETWORK");
+    // NON-REGRESSION: English classification unchanged.
+    ok("26 EN non-regression: delete ⇒ DESTRUCTIVE", C("delete the file").externalEffect === "DESTRUCTIVE");
+    ok("26 EN non-regression: safe local ⇒ NONE", C("refactor the helper for readability").externalEffect === "NONE");
+    // NO OVER-ESCALATION: a LOCAL/analytic FR objective stays NONE/LOW (no false-HIGH), incl. the "ça marche" trap.
+    ok("26 FR local analysis ⇒ NONE/LOW", (() => { const c = C("analyse le code et corrige le bug localement"); return c.externalEffect === "NONE" && c.risk === "LOW"; })());
+    ok("26 FR 'ça marche' not NETWORK (market collision excluded)", C("vérifie que ça marche").externalEffect === "NONE");
+    // MULTILINGUAL CONSTRAINTS: FR + AR negative/limiting clauses are extracted (were dropped before).
+    ok("26 FR constraints extracted", (() => { const cs = gw.extractConstraints("fais-le sans réseau et ne supprime jamais, uniquement en local"); return cs.some((x) => /sans/.test(x)) && cs.some((x) => /jamais/.test(x)) && cs.some((x) => /uniquement/.test(x)); })());
+    ok("26 AR constraints extracted", (() => { const cs = gw.extractConstraints("نفذ بدون انترنت فقط محليا"); return cs.some((x) => /بدون/.test(x)) && cs.some((x) => /فقط/.test(x)); })());
+    // AUTHZ / REFUSED path end-to-end: a FR financial objective drives the FINANCIAL governance consequences
+    // in compile() — provider-gated external blocker in dry-run + ECONOMIC expert profile (not ENGINEERING).
+    {
+        const r = gw.compile("paie la facture du fournisseur", { currentState: "CREATED", externalProvidersEnabled: false });
+        ok("26 FR financial compile: blocked (external disabled or not-run in dry-run)", Array.isArray(r.blockers) && r.blockers.some((b) => /EXTERNAL_PROVIDER_DISABLED_BY_POLICY|EXTERNAL_EFFECT_NOT_RUN_IN_DRY_RUN/.test(b.code)));
+        ok("26 FR financial compile: objective classified FINANCIAL", r.objectives && r.objectives.some((p) => p.classification.externalEffect === "FINANCIAL"));
+        ok("26 FR financial compile: no side effects (dry-run)", r.providerCalls === 0 && r.externalCalls === 0 && r.externalWrites === 0);
+    }
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);
