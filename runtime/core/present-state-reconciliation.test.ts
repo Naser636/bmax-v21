@@ -135,4 +135,26 @@ function runnerFrom(map) {
   ok("IDEMPOTENT: regression flips the record to NOT proven (not stale PROVEN)", R.reconciledProvenMissions(root).includes("M_R") === false);
 }
 
+// REAL defaultRunTest (not injected): the reconciler must execute BOTH .ts (via tsx) and .js (via node)
+// acceptance tests. Regression lock for the JS-era bug where a .ts test was reported absent/not-run ⇒ every
+// TS-migrated mission falsely NOT_PROVEN. repoRoot = the real project (so node_modules/.bin/tsx resolves).
+{
+  const REPO = process.cwd();
+  const work = tmp();
+  const tsPass = path.join(work, "psr-pass.test.ts");
+  const tsFail = path.join(work, "psr-fail.test.ts");
+  const jsPass = path.join(work, "psr-pass.test.js");
+  fs.writeFileSync(tsPass, 'const n: number = 0; process.exit(n);\n');        // .ts, exits 0
+  fs.writeFileSync(tsFail, 'const n: number = 1; process.exit(n);\n');        // .ts, exits 1
+  fs.writeFileSync(jsPass, 'process.exit(0);\n');                              // .js, exits 0
+  const rTsPass = R.defaultRunTest(tsPass, REPO);
+  const rTsFail = R.defaultRunTest(tsFail, REPO);
+  const rJsPass = R.defaultRunTest(jsPass, REPO);
+  const rBad = R.defaultRunTest(path.join(work, "x.py"), REPO);
+  ok("defaultRunTest runs a .ts test via tsx and captures exit 0 (was: absent/not-run)", rTsPass.exit === 0);
+  ok("defaultRunTest runs a .ts test via tsx and captures a real non-zero exit", rTsFail.exit === 1);
+  ok("defaultRunTest still runs a .js test via node (exit 0)", rJsPass.exit === 0);
+  ok("defaultRunTest rejects an unsupported test type (exit null, no false pass)", rBad.exit === null);
+}
+
 console.log(`\npresent-state-reconciliation — ${passed} assertions passed.`);

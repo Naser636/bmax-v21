@@ -41,4 +41,11 @@ a registry *view* test exists (`src/tests/capability-registry.test.ts`, 5 lines)
 
 **Next lot:** V2-B1_NL_OBJECTIVE_COMPILER (now able to target real machine-readable contracts), then F1/J1 reconcile, then G2/I1 measurement.
 
-**STOP after this checkpoint** — V2-H1 + V2-C1 done + Phase-A matrix persisted; next turn begins V2-B1.
+## V2-J1 — REGISTRY/STATE RECONCILE — COMPLETED (root-cause, evidence)
+**Finding (reuse-not-duplicate):** J1 is served by the EXISTING `present-state-reconciliation` primitive — no new reconciler built. Running it exposed a real defect: `defaultRunTest` (both ports) refused any non-`.js` test (`runtime/core/present-state-reconciliation.ts:45`), a JS-era assumption. After the TS migration the canonical acceptance tests are `.ts`, so EVERY TS-migrated mission was reported `test absent/not-run ⇒ NOT_PROVEN` — a systematic false NEGATIVE that silently blocked all present-state reconciliation (and made queue items like `TS_NOCHECK_CAPABILITY_EXECUTORS` appear PENDING though factually done).
+
+**Smallest fix:** run `.ts` acceptance tests via the project `tsx` (identical to `npm test`), `.js` via node; reject unsupported types (no false pass). Proven-gate unchanged (a test must still EXIT 0 present-state; default-deny preserved). Exported `defaultRunTest` + added a REAL-runner regression test (temp `.ts` exit0/exit1 + `.js` exit0 + unsupported-type), since the prior suite only used an injected runner and never caught this.
+
+**Evidence:** present-state-reconciliation 21/21 (both ports); **E2E:** `TS_NOCHECK_CAPABILITY_EXECUTORS` now reconciles **PROVEN** in both ports (was NOT_PROVEN); runtime-model 54/54; tsc 0 (3 cfg); build:runtime OK; parity PASS; full `npm test` exit 0. The `runtime/generated/*` queue/registry are gitignored host-state *derived* from the ledger+reconciliation — refreshed by re-running the primitive (non-destructive), not hand-edited; ROADMAP.json (protected) untouched.
+
+**STOP after this checkpoint** — V2-H1 + V2-C1 + V2-J1 done + Phase-A matrix persisted; dashboard VERIFIED, supervision host-blocked (explicit). Next turn begins V2-B1 (NL-objective-compiler), then V2-F1, then V2-G2/I1.

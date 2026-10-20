@@ -65,8 +65,22 @@ function readProbe(mission, repoRoot) {
 // Default present-state test runner: a .js test is run with `node <file>`; any non-.js test (e.g. a .ts
 // bench needing a loader) is NOT run here and reported exit:null ⇒ fail-closed (never a silent pass).
 function defaultRunTest(testPath, repoRoot) {
-  if (!testPath.endsWith(".js")) return { exit: null, output: `not run (non-.js test not executable by the reconciler): ${testPath}` };
-  const r = cp.spawnSync(process.execPath, [testPath], { cwd: repoRoot, encoding: "utf8", timeout: 120000 });
+  // Run .ts tests via the project's `tsx` (as `npm test` does); .js via node. The JS-era reconciler refused
+  // every non-.js test, so after the TS migration every migrated mission was falsely absent/not-run ⇒
+  // NOT_PROVEN (systematic false NEGATIVE). This aligns it with the canonical runner. Proven-gate unchanged:
+  // a test must still EXIT 0 present-state. (Mirror of the .ts port.)
+  const isTs = testPath.endsWith(".ts");
+  const isJs = testPath.endsWith(".js");
+  if (!isTs && !isJs) return { exit: null, output: `not run (unsupported test type, expected .ts or .js): ${testPath}` };
+  let cmd, argv;
+  if (isTs) {
+    const tsxBin = path.join(repoRoot, "node_modules", ".bin", "tsx");
+    if (!fs.existsSync(tsxBin)) return { exit: null, output: `not run (tsx not installed; cannot execute .ts test): ${testPath}` };
+    cmd = tsxBin; argv = [testPath];
+  } else {
+    cmd = process.execPath; argv = [testPath];
+  }
+  const r = cp.spawnSync(cmd, argv, { cwd: repoRoot, encoding: "utf8", timeout: 120000 });
   return { exit: r.status === null ? 1 : r.status, output: (r.stdout || "") + (r.stderr || "") };
 }
 
@@ -164,7 +178,7 @@ function reconciledProvenMissions(repoRoot) {
   return list.filter((r) => r && r.proven === true && typeof r.mission === "string").map((r) => r.mission);
 }
 
-module.exports = { reconcile, reconcileAndRecord, reconciledProvenMissions, readProbe, PROVENANCE, RECON_FILE };
+module.exports = { reconcile, reconcileAndRecord, reconciledProvenMissions, readProbe, defaultRunTest, PROVENANCE, RECON_FILE };
 
 if (require.main === module) {
   const missions = process.argv.slice(2).filter((a) => !a.startsWith("--"));
