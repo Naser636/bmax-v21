@@ -73,4 +73,52 @@ t("JS/TS parity", () => {
   assert.deepStrictEqual(JS.computeUnitEconomics(BASE), TS.computeUnitEconomics(BASE));
 });
 
+// 8 — LOT A ENFORCEMENT: a per-step breakdown makes the autonomous-execution policy AUTHORITATIVE — ODG work
+//     is never charged as human; residual-human = genuinely-human only; automatable-left-to-human is flagged.
+t("steps[] ⇒ policy derives time split + flags fictional human time", () => {
+  const r = JS.computeUnitEconomics({
+    priceMinor: 850000,
+    steps: [
+      { label: "generate the CRA evidence pack", minutes: 120, imputedTo: "HUMAN" },  // ODG-automatable, mis-imputed
+      { label: "run independent verification", minutes: 60 },                          // ODG
+      { label: "client signs the engagement letter", minutes: 30, mandatory: "signature" }, // genuinely human
+    ],
+    rates: { odgActiveCostPerHourMinor: 500, humanCostPerHourMinor: 8000 },
+    capacity: { humanHoursPerDay: 4, odgActiveHoursPerDay: 10, odgParallelism: 1, workingDaysPerMonth: 21 },
+  });
+  assert.strictEqual(r.time.odgActiveMin, 180);       // 120 + 60 (ODG), not charged to human
+  assert.strictEqual(r.time.residualHumanMin, 30);    // only the signature
+  assert.ok(r.policyAudit && r.policyAudit.misimputedHumanMinutes === 120);
+  assert.ok(r.warnings.some((w) => /AUTOMATABLE_LEFT_TO_HUMAN/.test(w)));
+});
+
+// 9 — LOT B OMITTED COST: a direct cost with no finite amount is flagged, never silently €0.
+t("omitted direct cost ⇒ OMITTED_COST warning (not silent €0)", () => {
+  const r = JS.computeUnitEconomics({ priceMinor: 850000, directCosts: [{ label: "API", minor: 4000 }, { label: "subcontractor" /* no minor */ }], time: { odgActiveMin: 60, basis: { odgActive: "MEASURED" } }, rates: { odgActiveCostPerHourMinor: 500 } });
+  assert.ok(r.warnings.some((w) => /OMITTED_COST/.test(w) && /subcontractor/.test(w)));
+  assert.strictEqual(r.costs.direct, "40.00 EUR"); // only the finite cost counted
+});
+
+// 10 — LOT B UNPROVEN CAPACITY: ESTIMATED durations ⇒ capacity.basis ESTIMATED + CAPACITY_UNPROVEN; MEASURED ⇒ clean.
+t("capacity basis reflects measurement; unproven durations flagged", () => {
+  const est = JS.computeUnitEconomics({ priceMinor: 850000, time: { odgActiveMin: 60, basis: { odgActive: "ESTIMATED" } }, rates: { odgActiveCostPerHourMinor: 500 }, capacity: { odgActiveHoursPerDay: 8 } });
+  assert.strictEqual(est.capacity.basis, "ESTIMATED");
+  assert.ok(est.warnings.some((w) => /CAPACITY_UNPROVEN/.test(w)));
+  const meas = JS.computeUnitEconomics({ priceMinor: 850000, time: { odgActiveMin: 60, residualHumanMin: 0, basis: { odgActive: "MEASURED" } }, rates: { odgActiveCostPerHourMinor: 500 }, capacity: { odgActiveHoursPerDay: 8 } });
+  assert.strictEqual(meas.capacity.basis, "MEASURED");
+  assert.ok(!meas.warnings.some((w) => /CAPACITY_UNPROVEN/.test(w)));
+});
+
+// 11 — LOT B NO DOUBLE-COUNT: residual-human cost is reported separately and NOT also inside contributionMargin;
+//      marginIncludingHuman subtracts it exactly once; revenue ≠ margin.
+t("no double-count: human cost subtracted exactly once; revenue≠margin", () => {
+  const r = JS.computeUnitEconomics({ priceMinor: 100000, directCosts: [{ label: "x", minor: 1000 }], time: { odgActiveMin: 60, residualHumanMin: 60, basis: { odgActive: "MEASURED", residualHuman: "MEASURED" } }, rates: { odgActiveCostPerHourMinor: 600, humanCostPerHourMinor: 6000 } });
+  assert.strictEqual(r.costs.direct, "10.00 EUR");
+  assert.strictEqual(r.costs.odgActiveMarginal, "6.00 EUR");
+  assert.strictEqual(r.costs.residualHuman, "60.00 EUR");
+  assert.strictEqual(r.contributionMargin, "984.00 EUR");        // 1000 - 10 - 6 (human NOT here)
+  assert.strictEqual(r.marginIncludingHuman, "924.00 EUR");      // - 60 exactly once
+  assert.notStrictEqual(r.price, r.contributionMargin);
+});
+
 console.log(`\nALL PASS — unit-economics (${n} tests)`);

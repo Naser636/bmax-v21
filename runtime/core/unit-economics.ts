@@ -10,6 +10,7 @@
  * delivery capacity is the BINDING constraint (ODG throughput vs scarce residual-human time vs rate limit).
  */
 const EU = require("./economic-unit.js");
+const POLICY = require("./autonomous-execution-policy.js");
 
 const q = (minor: any): any => EU.quantity("EUR", "ASSET", Math.round(Number(minor) || 0), 2);
 const minorOf = (quantity: any): any => (quantity && typeof quantity.minor === "number" ? quantity.minor : 0);
@@ -28,9 +29,18 @@ function computeUnitEconomics(input: any): any {
   const i = input && typeof input === "object" ? input : {};
   const warnings: string[] = [];
   const t = i.time || {};
-  const odgActiveMin = Number(t.odgActiveMin) || 0;
+  // LOT A — when a per-step work breakdown is supplied, the autonomous-execution policy DERIVES the time split
+  // AUTHORITATIVELY: ODG-automatable work is ODG's (never charged as CTO time); residual-human counts ONLY
+  // genuinely-human steps; automatable work imputed to a human is FLAGGED. Enforces the rule in the calculator.
+  let policyAudit: any = null;
+  if (Array.isArray(i.steps) && i.steps.length) {
+    policyAudit = POLICY.auditImputation(i.steps);
+    for (const f of policyAudit.flags) warnings.push(`${f.code}: ${f.label} (${f.minutes}min) — ${f.detail}`);
+    if (policyAudit.externalGatedMinutes > 0) warnings.push(`${policyAudit.externalGatedMinutes}min are EXTERNAL_GATED (dependency) — neither ODG-billable nor CTO-residual.`);
+  }
+  const odgActiveMin = policyAudit ? policyAudit.odgMinutes : (Number(t.odgActiveMin) || 0);
   const odgWaitMin = Number(t.odgWaitMin) || 0;
-  const residualHumanMin = Number(t.residualHumanMin) || 0;
+  const residualHumanMin = policyAudit ? policyAudit.residualHumanMinutes : (Number(t.residualHumanMin) || 0);
   const totalElapsedMin = Number.isFinite(t.totalElapsedMin) ? Number(t.totalElapsedMin) : (odgActiveMin + odgWaitMin + residualHumanMin);
   const basis = t.basis || {};
 
@@ -43,7 +53,10 @@ function computeUnitEconomics(input: any): any {
   // Direct costs (sum of Quantities via economic-unit; no implicit money math).
   const dc = Array.isArray(i.directCosts) ? i.directCosts : [];
   let directTotal = q(0);
-  for (const c of dc) directTotal = EU.add(directTotal, q(c.minor));
+  for (const c of dc) {
+    if (!c || !Number.isFinite(Number(c.minor))) warnings.push(`OMITTED_COST: direct cost "${(c && c.label) || "(unnamed)"}" has no finite amount — not counted (fix or confirm €0).`);
+    else directTotal = EU.add(directTotal, q(c.minor));
+  }
   // Marginal cost of ODG active time + residual human cost (reported SEPARATELY).
   const odgActiveMarginal = q((odgActiveMin / 60) * odgCostPerHour);
   const residualHumanCost = q((residualHumanMin / 60) * humanRate);
@@ -80,16 +93,21 @@ function computeUnitEconomics(input: any): any {
   const bindingConstraint = deliveriesPerDay === null ? "UNKNOWN (insufficient capacity inputs)"
     : Object.keys(perDayBounds).find((k) => perDayBounds[k] === deliveriesPerDay);
   const deliveriesPerMonth = deliveriesPerDay === null ? null : deliveriesPerDay * workDays;
+  const durationsMeasured = basis && basis.odgActive === "MEASURED" && (residualHumanMin === 0 || basis.residualHuman === "MEASURED");
+  const capacityBasis = deliveriesPerDay === null ? "UNKNOWN" : (durationsMeasured ? "MEASURED" : "ESTIMATED");
+  if (deliveriesPerDay !== null && !durationsMeasured) warnings.push("CAPACITY_UNPROVEN: deliveries/day derived from ESTIMATED durations — an estimate, not a demonstrated SLA (measure real missions to confirm).");
 
   return {
     _type: "odg/unit-economics/v1",
+    rule: "autonomous-execution-policy: ODG executes what it can; CTO time imputed ONLY to genuinely-human steps; automatable work left to a human is flagged.",
+    policyAudit,
     time: { odgActiveMin, odgWaitMin, residualHumanMin, totalElapsedMin, basis },
     costs: { direct: EU.format(directTotal), odgActiveMarginal: EU.format(odgActiveMarginal), residualHuman: EU.format(residualHumanCost), odgActiveNotFree: Number.isFinite(odgRate) },
     price: EU.format(price),
     contributionMargin: EU.format(contributionMargin),
     marginIncludingHuman: EU.format(marginIncludingHuman),
     perHour,
-    capacity: { bindingConstraint, deliveriesPerDay, deliveriesPerMonth, perDayBounds, workingDaysPerMonth: workDays },
+    capacity: { bindingConstraint, deliveriesPerDay, deliveriesPerMonth, perDayBounds, workingDaysPerMonth: workDays, basis: capacityBasis },
     warnings,
     disclaimer: "ESTIMATION unless every input carries basis MEASURED. Revenue ≠ profit. ODG active time is NOT free. Residual human time counts ONLY genuinely human steps (approval/signature/reserved decision); it is reported separately because it is the scarce input. Capacity is the binding constraint, not an extrapolation from one run.",
   };
