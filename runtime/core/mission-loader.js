@@ -202,6 +202,26 @@ if (_derivedAuthorization) {
     }
 }
 
+// §1 (ODG_LIVE_AUTONOMY_WEB_TO_MARKET_V1): connect the governance goal-classifier to EXPLICITLY EXCLUDE
+// reserved / human-gated objectives WITH THEIR REASON (§1: "restent exclus avec leur raison"), for objectives
+// the envelope above left UNDECLARED. It stamps ONLY exclusions (requiresExternal / requiresHuman /
+// externalEffect != NONE / empty goal) via objective-authorization.declareAuthorization (reuses
+// nl-objective-gateway) and NEVER declares eligibility from goal text — eligibility stays ENVELOPE-derived
+// (goal text cannot prove read-only intent, so an internal/ambiguous no-scope objective is left UNDECLARED,
+// fail-closed, unchanged). ANTI-INFLATION: adding only exclusions can never raise the eligible denominator; it
+// only makes an otherwise-ambiguous mix MEASURABLE over its genuinely-eligible objectives. Explicit + envelope
+// declarations are never overwritten.
+{
+    const { declareAuthorization } = require("./objective-authorization.js");
+    for (const _obj of objectives) {
+        if (_obj.authorization) continue;
+        const _d = declareAuthorization(_obj);
+        if (_d && _d.excluded === true && typeof _d.reason === "string" && _d.reason) {
+            _obj.authorization = { eligible: false, authorized: false, excluded: true, reason: _d.reason };
+        }
+    }
+}
+
 const plan = {
     mission,
     source: CONTRACT_PATH,

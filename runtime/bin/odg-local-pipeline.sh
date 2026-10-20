@@ -30,12 +30,35 @@ BRANCH=$(git branch --show-current)
 # own exit code; a recorder failure is SURFACED on stderr (never hidden). Opt-out: ODG_COMPASS_RECORD=0.
 _COMPASS_START_MS=$(( $(date +%s%N) / 1000000 ))   # epoch MILLISECONDS (matches fs.statSync.mtimeMs)
 _COMPASS_DONE=0
+_ATTEMPT_DONE=0
 _compass_record() {
   local rc=$?
   if [ "$_COMPASS_DONE" = "0" ] && [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
     _COMPASS_DONE=1
     node scripts/compass-update.js --from-report "$MISSION" --since "$_COMPASS_START_MS" \
       || echo "[COMPASS] WARNING: compass recorder failed (rc=${rc}; mission result unaffected)" >&2
+  fi
+  # §2 (ODG_LIVE_AUTONOMY_WEB_TO_MARKET_V1) — record THIS direct-door run into the EXISTING attempt-log via
+  # runtime/core/front-door-attempt.js (reuses mission-attempt-log). Fires exactly once on EVERY terminal path
+  # (SUCCESS / STOP / FAIL / handled INT|TERM). HONEST outcome: a signal ⇒ INTERRUPTED, an unvalidated/absent
+  # report ⇒ not RECORDED — never a false completion. IDEMPOTENT by (mission, runId=_COMPASS_START_MS): a replay
+  # is refused (no double-count). NON-BLOCKING: a recorder failure NEVER changes the mission's exit code. The
+  # autonomy-loop route is UNAFFECTED (it spawns odg-run.js directly, with its own recorder). Opt-out: ODG_ATTEMPT_RECORD=0.
+  if [ "$_ATTEMPT_DONE" = "0" ] && [ "${ODG_ATTEMPT_RECORD:-1}" = "1" ]; then
+    _ATTEMPT_DONE=1
+    _ATT_END_MS=$(( $(date +%s%N) / 1000000 ))
+    _ATT_SIG=""
+    [ "$rc" = "130" ] && _ATT_SIG="SIGINT"
+    [ "$rc" = "143" ] && _ATT_SIG="SIGTERM"
+    node -e '
+      try {
+        const { recordFrontDoorAttempt } = require("./runtime/core/front-door-attempt.js");
+        const a = process.argv;
+        const r = recordFrontDoorAttempt({ mission: a[1], exitCode: Number(a[2]), signal: a[3] || null, startedAtMs: Number(a[4]), endedAtMs: Number(a[5]), runId: a[4], runLogPath: a[6] });
+        process.stderr.write("[ATTEMPT] " + JSON.stringify(r.written ? { written: true, outcome: r.record && r.record.outcome, finalStatus: r.record && r.record.finalStatus, attemptId: r.record && r.record.attemptId } : r) + "\n");
+      } catch (e) { process.stderr.write("[ATTEMPT] WARNING: front-door attempt record failed: " + e.message + "\n"); }
+    ' "$MISSION" "$rc" "$_ATT_SIG" "$_COMPASS_START_MS" "$_ATT_END_MS" "runtime/generated/logs/${MISSION}.run.log" \
+      || echo "[ATTEMPT] WARNING: recorder invocation failed (rc=${rc}; mission result unaffected)" >&2
   fi
   trap - EXIT INT TERM
   exit "$rc"

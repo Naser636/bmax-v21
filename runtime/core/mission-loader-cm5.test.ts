@@ -40,10 +40,13 @@ function loadAuth(contract) {
   const r = loadAuth({ mission: "FX_AUDIT", mode: "AUDIT", requires_engineering: false, authorized_paths: [], objectives: [{ id: "FX_AUDIT_1", goal: "read", done_when: [] }] });
   ok("AUDIT read-only ⇒ eligible+authorized (read-only-audit basis)", r.auth && r.auth.eligible === true && r.auth.authorized === true && /read-only-audit/.test(r.auth.basis));
 }
-// 2 — ANTI-INFLATION: reserved OPERATIONAL (no scope) ⇒ UNDECLARED (never auto-eligible).
+// 2 — §1: reserved OPERATIONAL/external goal (no scope) ⇒ EXPLICITLY EXCLUDED with its reason (never
+//     eligible). The goal-classifier (declareAuthorization) flags "deploy" as external/human-gated, so the
+//     loader now stamps a JUSTIFIED exclusion (§1 "restent exclus avec leur raison"). ANTI-INFLATION intent
+//     preserved: eligible stays false — it is never counted in the autonomy numerator or denominator.
 {
   const r = loadAuth({ mission: "FX_OP", mode: "OPERATIONAL", requires_engineering: false, authorized_paths: [], objectives: [{ id: "FX_OP_1", goal: "deploy", done_when: [] }] });
-  ok("OPERATIONAL reserved ⇒ authorization UNDECLARED (no inflation)", r.auth === undefined);
+  ok("OPERATIONAL external 'deploy' ⇒ excluded WITH reason (not eligible, no inflation)", r.auth && r.auth.eligible === false && r.auth.excluded === true && typeof r.auth.reason === "string" && r.auth.reason.length > 0);
 }
 // 3 — scoped engineering (authorized_paths grant) ⇒ declared eligible+authorized.
 {
@@ -131,6 +134,19 @@ function loadAuth(contract) {
   const planExists = fs.existsSync(path.join(root, "runtime/generated/mission-plan.json"));
   fs.rmSync(root, { recursive: true, force: true });
   ok("acceptance via definition_of_done ⇒ allowed (exit 0, plan written)", r.status === 0 && planExists);
+}
+
+// 15 — §1: a no-scope mission whose goal needs HUMAN/EXTERNAL authority (e.g. a COMMUNICATE action) ⇒
+//      excluded WITH reason (distinct from the DEPLOY path in case 2), never eligible.
+{
+  const r = loadAuth({ mission: "FX_COMM", mode: "SEQUENTIAL", requires_engineering: false, authorized_paths: [], objectives: [{ id: "FX_COMM_1", goal: "send email to client", done_when: [] }] });
+  ok("external COMMUNICATE goal (no scope) ⇒ excluded WITH reason (not eligible)", r.auth && r.auth.eligible === false && r.auth.excluded === true && /./.test(r.auth.reason || ""));
+}
+// 16 — §1 fail-closed preserved: an INTERNAL/ambiguous no-scope goal is NOT declared eligible from goal text
+//      (eligibility stays envelope-derived). Re-asserts case 6's intent against the new exclusion pass.
+{
+  const r = loadAuth({ mission: "FX_INT", mode: "SEQUENTIAL", requires_engineering: false, authorized_paths: [], objectives: [{ id: "FX_INT_1", goal: "refactor the parser internals", done_when: [] }] });
+  ok("internal no-scope goal ⇒ still UNDECLARED (no goal-text eligibility; fail-closed)", r.auth === undefined);
 }
 
 console.log(`\nmission-loader CM-5 derivation — ${passed} assertions passed.`);
