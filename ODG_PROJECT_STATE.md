@@ -29,6 +29,13 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`WEB_PROVENANCE_VERIFICATION_V1` — content-integrity provenance CANDIDATE→PROVEN. 2026-10-20 (from `7499ebb`).** [PASS]
+  - **Truth Lock:** HEAD=origin/main=`7499ebb`→(this); `main`; clean; 5 stashes; protected paths untouched. No contact/spend/publish/new-network-flow/egress-change.
+  - **Built:** `opportunity-detector.verifyWebProvenance` (+`sha256`, reuses the evidence-provenance primitive) — pure, **4 dimensions SÉPARÉES** (retrieval 2xx / integrity hash-vs-baseline / freshness / businessPresence). **PROVEN = 2xx + content + integrity MATCH** (re-vérifié vs hash enregistré) ; FIRST_CAPTURE ⇒ CANDIDATE ; non-2xx/empty/MISMATCH ⇒ REJECTED. **Intégrité ≠ authenticité** (prouve les octets, pas la véracité ; businessPresence = signal faible). Raw content non persisté (seul le hash = baseline suivante).
+  - **Tests:** opportunity-detector **10/10** (+parité) — positifs + négatifs (non-2xx, vide, hash manquant, contenu modifié=MISMATCH, URL-liste partagée, doublons, incomplet, STALE, ABSENT) ; tsc dist/strict/leaves 0 ; deps (lead-grade/revenue-model) verts ; aucun autre consommateur.
+  - **Reuse réel:** primitive sha256 (evidence-provenance) + `opportunity-policy` (provenance budget 2xx conservée, distincte).
+  - **Apprentissage:** CAPTURED (fonction+tests) → PERSISTED (commit) → DISCOVERABLE (compass) ; REUSED (sha256/policy) ; EFFECTIVE **non revendiqué** (pas d'A/B).
+  - **ARRÊT** — ne pas démarrer SLSA L2+SBOM ni golden-set sans acceptation CTO explicite.
 - **`CAPABILITY_REGISTRY_AND_COVERAGE_RECONCILIATION_V1` — bounded doc reconciliation. 2026-10-20 (from `50d2880`).** [PASS]
   - **Truth Lock:** HEAD=origin/main=`50d2880`→(this); `main`; clean; 5 stashes; protected paths untouched. **Docs-only** (coverage index), no code/registry/behaviour change, no deletion.
   - **Corrected:** coverage surface **24→25** (10 executors incl. "Implement Via Local Provider" + 15 probes), with a dated correction note (V57–V59 assessed 9; 10th added later, Stage-6 STUB/REAL-proven); executors table now lists 10. Counts independently re-verified true (10/15/186).

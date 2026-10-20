@@ -17,8 +17,46 @@ function req(name: string): any { try { return require("./" + name); } catch { r
 const LEAD: any = req("enterprise-lead-grade");
 const POLICY: any = req("opportunity-policy");
 const REV: any = req("revenue-model");
+const crypto = require("crypto");
 
 function str(v: any): string | null { return typeof v === "string" && v.trim() ? v.trim() : null; }
+
+// Reuse the sha256 primitive (same as evidence-provenance). Hash of the raw fetched content bytes.
+function sha256(s: any): string { return crypto.createHash("sha256").update(String(s)).digest("hex"); }
+
+/**
+ * verifyWebProvenance — reproducible, 4-DIMENSION provenance of a fetched web claim (WEB_PROVENANCE_VERIFICATION_V1).
+ * Dimensions kept SEPARATE and NEVER conflated: (a) retrieval 2xx; (b) integrity hash vs recorded baseline
+ * (MATCH/MISMATCH/FIRST_CAPTURE/NO_CONTENT — proves BYTES unchanged, NOT information truth); (c) freshness; (d)
+ * businessPresence (weak locate signal, NOT authenticity). PROVEN only when 2xx + content + integrity===MATCH.
+ * FIRST_CAPTURE ⇒ CANDIDATE; non-2xx/empty/MISMATCH ⇒ REJECTED. Returns the recomputed hash to persist as baseline.
+ */
+function verifyWebProvenance(input: any): any {
+  const i = input && typeof input === "object" ? input : {};
+  const nowMs = Number.isFinite(i.nowMs) ? i.nowMs : NaN;
+  const maxAgeDays = Number.isFinite(i.maxAgeDays) ? i.maxAgeDays : 7;
+  const retrievalOk = typeof i.httpStatus === "number" && i.httpStatus >= 200 && i.httpStatus <= 299;
+  const content = typeof i.content === "string" ? i.content : null;
+  const contentPresent = !!(content && content.trim());
+  const computedHash = contentPresent ? sha256(content) : null;
+  let integrity: string;
+  if (!contentPresent) integrity = "NO_CONTENT";
+  else if (typeof i.expectedHash === "string" && i.expectedHash) integrity = computedHash === i.expectedHash ? "MATCH" : "MISMATCH";
+  else integrity = "FIRST_CAPTURE";
+  const t = i.lastCheckedAt ? Date.parse(i.lastCheckedAt) : NaN;
+  const ageDays = Number.isFinite(t) && Number.isFinite(nowMs) ? Math.floor((nowMs - t) / 86400000) : null;
+  const freshness = ageDays === null ? "UNKNOWN" : (ageDays <= maxAgeDays ? "FRESH" : "STALE");
+  const businessPresence = (i.value !== undefined && i.value !== null && content)
+    ? (content.includes(String(i.value)) ? "PRESENT" : "ABSENT") : "UNKNOWN";
+  let verdict: string;
+  if (!retrievalOk || !contentPresent || integrity === "MISMATCH") verdict = "REJECTED";
+  else if (integrity === "MATCH") verdict = "PROVEN";
+  else verdict = "CANDIDATE";
+  return {
+    verdict, retrievalOk, contentPresent, computedHash, integrity, freshness, ageDays, businessPresence,
+    note: "PROVEN = 2xx + content + integrity re-verified vs recorded hash. Integrity proves BYTES unchanged, NOT information authenticity; businessPresence is a weak locate signal, not truth.",
+  };
+}
 
 function normalizeOpportunity(raw: any, nowMs: number): any {
   const r = raw && typeof raw === "object" ? raw : {};
@@ -47,6 +85,8 @@ function normalizeOpportunity(raw: any, nowMs: number): any {
     budgetEur: Number.isFinite(Number(r.budgetEur)) ? Number(r.budgetEur) : null,
     budgetKind: Number.isFinite(Number(r.budgetEur)) ? (str(r.budgetKind) || "published") : "unknown",
     contentHash: str(r.contentHash),
+    content: typeof r.content === "string" ? r.content : null,
+    expectedHash: str(r.expectedHash),
     lastCheckedAt: str(r.lastCheckedAt),
     scamFlags: Array.isArray(r.scamFlags) ? r.scamFlags.filter(Boolean) : [],
     missing,
@@ -107,6 +147,10 @@ function detect(rawItems: any, opts: any): any {
   const shortlist = list.map((rec: any) => {
     const grade = LEAD ? LEAD.gradeLead(evidenceFrom(rec)).grade : "C";
     const provenance = budgetProvenance(rec);
+    const contentProvenance = verifyWebProvenance({
+      httpStatus: rec.httpStatus, content: rec.content, expectedHash: rec.expectedHash,
+      value: rec.budgetEur, lastCheckedAt: rec.lastCheckedAt, nowMs: nowMs, maxAgeDays: o.maxAgeDays,
+    });
     let feasible: any = null;
     if (REV && rec.budgetEur) {
       const plan = REV.targetPlan({
@@ -122,12 +166,13 @@ function detect(rawItems: any, opts: any): any {
       : rec.sourceType === "job-board" && grade === "C" ? "VERIFY company in official registry (RNE) to upgrade, then subcontracting outreach (CTO GO)"
       : grade === "A" || grade === "B" ? "QUALIFY: verify buyer+eligibility, draft proposal (send human-gated)"
       : "MONITOR (insufficient evidence)";
-    return { ...rec, grade, provenance, feasible, score, nextAction };
+    const { content, expectedHash, ...recPublic } = rec; // eslint-disable-line no-unused-vars
+    return { ...recPublic, grade, provenance, contentProvenance, feasible, score, nextAction };
   }).sort((a: any, b: any) => b.score - a.score);
   const counts = { total: normalized.length, deduped: shortlist.length, duplicatesDropped: dropped,
     byGrade: shortlist.reduce((m: any, r: any) => { m[r.grade] = (m[r.grade] || 0) + 1; return m; }, {}) };
   return { shortlist, counts };
 }
 
-module.exports = { normalizeOpportunity, dedupeOpportunities, evidenceFrom, budgetProvenance, scoreOpportunity, detect };
+module.exports = { normalizeOpportunity, dedupeOpportunities, evidenceFrom, budgetProvenance, verifyWebProvenance, sha256, scoreOpportunity, detect };
 export {};

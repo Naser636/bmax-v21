@@ -17,8 +17,52 @@ function req(name) { try { return require("./" + name); } catch { return null; }
 const LEAD = req("enterprise-lead-grade");
 const POLICY = req("opportunity-policy");
 const REV = req("revenue-model");
+const crypto = require("crypto");
 
 function str(v) { return typeof v === "string" && v.trim() ? v.trim() : null; }
+
+// Reuse the sha256 primitive (same as evidence-provenance). Hash of the raw fetched content bytes.
+function sha256(s) { return crypto.createHash("sha256").update(String(s)).digest("hex"); }
+
+/**
+ * verifyWebProvenance — reproducible, 4-DIMENSION provenance of a fetched web claim (WEB_PROVENANCE_VERIFICATION_V1).
+ * Dimensions are kept SEPARATE and NEVER conflated:
+ *   (a) retrieval   — HTTP 2xx (technical fetch succeeded).
+ *   (b) integrity   — content hash vs a previously-recorded baseline: MATCH (verified, tamper-evident) /
+ *                     MISMATCH (content changed since capture) / FIRST_CAPTURE (baseline recorded, not yet verified) /
+ *                     NO_CONTENT. **Integrity proves the BYTES are unchanged — NOT that the information is true.**
+ *   (c) freshness   — FRESH/STALE/UNKNOWN from lastCheckedAt vs maxAgeDays.
+ *   (d) businessPresence — whether the claimed value's string appears in the content: a WEAK locate signal, NOT authenticity.
+ * Verdict: PROVEN only when retrieval ok + content present + integrity===MATCH (reproducibly re-verified against the
+ * recorded hash). FIRST_CAPTURE ⇒ CANDIDATE (baseline recorded, verification pending a re-check). non-2xx / empty /
+ * MISMATCH ⇒ REJECTED (fail-closed). Returns the recomputed hash so the caller can PERSIST it as the next baseline.
+ */
+function verifyWebProvenance(input) {
+  const i = input && typeof input === "object" ? input : {};
+  const nowMs = Number.isFinite(i.nowMs) ? i.nowMs : NaN;
+  const maxAgeDays = Number.isFinite(i.maxAgeDays) ? i.maxAgeDays : 7;
+  const retrievalOk = typeof i.httpStatus === "number" && i.httpStatus >= 200 && i.httpStatus <= 299;
+  const content = typeof i.content === "string" ? i.content : null;
+  const contentPresent = !!(content && content.trim());
+  const computedHash = contentPresent ? sha256(content) : null;
+  let integrity;
+  if (!contentPresent) integrity = "NO_CONTENT";
+  else if (typeof i.expectedHash === "string" && i.expectedHash) integrity = computedHash === i.expectedHash ? "MATCH" : "MISMATCH";
+  else integrity = "FIRST_CAPTURE";
+  const t = i.lastCheckedAt ? Date.parse(i.lastCheckedAt) : NaN;
+  const ageDays = Number.isFinite(t) && Number.isFinite(nowMs) ? Math.floor((nowMs - t) / 86400000) : null;
+  const freshness = ageDays === null ? "UNKNOWN" : (ageDays <= maxAgeDays ? "FRESH" : "STALE");
+  const businessPresence = (i.value !== undefined && i.value !== null && content)
+    ? (content.includes(String(i.value)) ? "PRESENT" : "ABSENT") : "UNKNOWN";
+  let verdict;
+  if (!retrievalOk || !contentPresent || integrity === "MISMATCH") verdict = "REJECTED";
+  else if (integrity === "MATCH") verdict = "PROVEN";
+  else verdict = "CANDIDATE"; // FIRST_CAPTURE
+  return {
+    verdict, retrievalOk, contentPresent, computedHash, integrity, freshness, ageDays, businessPresence,
+    note: "PROVEN = 2xx + content + integrity re-verified vs recorded hash. Integrity proves BYTES unchanged, NOT information authenticity; businessPresence is a weak locate signal, not truth.",
+  };
+}
 
 /** Map a raw collected item to a canonical opportunity record. nowMs drives deadline freshness (no Date in-module). */
 function normalizeOpportunity(raw, nowMs) {
@@ -48,6 +92,8 @@ function normalizeOpportunity(raw, nowMs) {
     budgetEur: Number.isFinite(Number(r.budgetEur)) ? Number(r.budgetEur) : null,
     budgetKind: Number.isFinite(Number(r.budgetEur)) ? (str(r.budgetKind) || "published") : "unknown",
     contentHash: str(r.contentHash),
+    content: typeof r.content === "string" ? r.content : null,   // raw fetched content (for integrity hash); not persisted in shortlist
+    expectedHash: str(r.expectedHash),                          // previously-recorded baseline hash (enables PROVEN)
     lastCheckedAt: str(r.lastCheckedAt),
     scamFlags: Array.isArray(r.scamFlags) ? r.scamFlags.filter(Boolean) : [],
     missing,
@@ -116,6 +162,11 @@ function detect(rawItems, opts) {
   const shortlist = list.map((rec) => {
     const grade = LEAD ? LEAD.gradeLead(evidenceFrom(rec)).grade : "C";
     const provenance = budgetProvenance(rec);
+    // Content-integrity provenance (reproducible, 4-dimension) — distinct from the budget-field 2xx policy check.
+    const contentProvenance = verifyWebProvenance({
+      httpStatus: rec.httpStatus, content: rec.content, expectedHash: rec.expectedHash,
+      value: rec.budgetEur, lastCheckedAt: rec.lastCheckedAt, nowMs: nowMs, maxAgeDays: o.maxAgeDays,
+    });
     let feasible = null;
     if (REV && rec.budgetEur) {
       const plan = REV.targetPlan({
@@ -131,11 +182,13 @@ function detect(rawItems, opts) {
       : rec.sourceType === "job-board" && grade === "C" ? "VERIFY company in official registry (RNE) to upgrade, then subcontracting outreach (CTO GO)"
       : grade === "A" || grade === "B" ? "QUALIFY: verify buyer+eligibility, draft proposal (send human-gated)"
       : "MONITOR (insufficient evidence)";
-    return { ...rec, grade, provenance, feasible, score, nextAction };
+    // Do NOT persist raw fetched content in the shortlist — keep only the computed hash (baseline for next check).
+    const { content, expectedHash, ...recPublic } = rec; // eslint-disable-line no-unused-vars
+    return { ...recPublic, grade, provenance, contentProvenance, feasible, score, nextAction };
   }).sort((a, b) => b.score - a.score);
   const counts = { total: normalized.length, deduped: shortlist.length, duplicatesDropped: dropped,
     byGrade: shortlist.reduce((m, r) => { m[r.grade] = (m[r.grade] || 0) + 1; return m; }, {}) };
   return { shortlist, counts };
 }
 
-module.exports = { normalizeOpportunity, dedupeOpportunities, evidenceFrom, budgetProvenance, scoreOpportunity, detect };
+module.exports = { normalizeOpportunity, dedupeOpportunities, evidenceFrom, budgetProvenance, verifyWebProvenance, sha256, scoreOpportunity, detect };
