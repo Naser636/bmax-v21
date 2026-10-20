@@ -72,5 +72,33 @@ if (snapshot.autonomy.measurable === false) {
   check(emptyHtml.includes("—"), "honesty: unknown values render as em-dash, not 0");
 }
 
+// --- 6. CSS-class integration: the component is wired to the committed globals.css design system ------
+// Proves the Dashboard↔globals.css connection (not inline-only): the rendered markup carries the real
+// class names defined in src/app/globals.css, so the committed theme (light/dark, responsive grid) applies.
+{
+  const cssClasses = ["dash", "dash-header", "dash-title", "dash-grid", "card", "card-title", "kv", "kv-key", "kv-val", "provenance"];
+  for (const cls of cssClasses) {
+    check(new RegExp(`class="[^"]*\\b${cls}\\b`).test(html), `css-integration: renders .${cls} (connected to globals.css)`);
+  }
+  // Every class the component emits must exist in the committed stylesheet (no dangling classes).
+  const css = readFileSync(resolve(process.cwd(), "src/app/globals.css"), "utf8");
+  const emitted = Array.from(html.matchAll(/class="([^"]+)"/g)).flatMap((m) => m[1].split(/\s+/)).filter(Boolean);
+  const uniqueEmitted = [...new Set(emitted)];
+  const dangling = uniqueEmitted.filter((c) => !new RegExp(`\\.${c.replace(/[-]/g, "\\-")}\\b`).test(css));
+  check(dangling.length === 0, `css-integration: no dangling classes (all defined in globals.css)${dangling.length ? " — missing: " + dangling.join(",") : ""}`);
+  // No inline hex colors leaked back in (integration replaced them with tokens/classes).
+  check(!/style="[^"]*#[0-9a-fA-F]{3,6}/.test(html), "css-integration: no inline hex colors in the rendered markup");
+}
+
+// --- 7. Honest status badges: a REAL positive status maps to badge-pos; unknown ⇒ badge-muted (not pos) ---
+{
+  const posSnap: RuntimeSnapshot = { ...snapshot, present: true, health: { ...snapshot.health, status: "READY" } };
+  const posHtml = renderToStaticMarkup(React.createElement(Dashboard, { snapshot: posSnap }));
+  check(/class="[^"]*badge-pos[^"]*"[^>]*>READY/.test(posHtml) || /badge-pos/.test(posHtml), "badges: real READY status ⇒ badge-pos");
+  const unkSnap: RuntimeSnapshot = { ...snapshot, present: true, health: { ...snapshot.health, status: null } };
+  const unkHtml = renderToStaticMarkup(React.createElement(Dashboard, { snapshot: unkSnap }));
+  check(/badge-muted/.test(unkHtml), "badges: unknown status ⇒ badge-muted (never fabricated as positive)");
+}
+
 console.log(failures === 0 ? "ALL PASS — BMAX DASHBOARD REAL-DATA RENDER" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

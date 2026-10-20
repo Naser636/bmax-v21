@@ -1,10 +1,11 @@
 import type { RuntimeSnapshot } from "@/app/api/runtime-state/route";
 
-// BMAX v21 Runtime Dashboard (WI-2 REPAIR_BMAX_DASHBOARD_REAL_DATA_V1).
-// Renders ONLY the real governed runtime snapshot (runtime/generated/* via readRuntimeSnapshot).
-// Honest by construction: an unavailable value renders as "—" / "unavailable", never as a fabricated
-// zero; a non-measurable autonomy signal shows its reason, never a synthesized percentage. This
-// component is presentational and read-only — it holds no state and performs no I/O.
+// BMAX v21 Runtime Dashboard (WI-2 REPAIR_BMAX_DASHBOARD_REAL_DATA_V1; integration completed in
+// ODG_MASTER_RECOVERY). Renders ONLY the real governed runtime snapshot (runtime/generated/* via
+// readRuntimeSnapshot). Honest by construction: an unavailable value renders as "—" / "unavailable",
+// never a fabricated zero; a non-measurable autonomy signal shows its reason, never a synthesized
+// percentage. Presentational + read-only — no state, no I/O. Styling is driven ENTIRELY by the committed
+// design-system classes in src/app/globals.css (light+dark, responsive grid); no inline hex colors.
 
 interface DashboardProps {
   snapshot: RuntimeSnapshot;
@@ -19,21 +20,32 @@ function val(v: string | boolean | null | undefined): string {
   return v;
 }
 
-const sectionStyle: React.CSSProperties = {
-  margin: "0 0 1.5rem",
-  padding: "1rem 1.25rem",
-  border: "1px solid #d0d7de",
-  borderRadius: 8,
-};
-const hStyle: React.CSSProperties = { margin: "0 0 0.75rem", fontSize: "1.05rem" };
-const rowStyle: React.CSSProperties = { display: "flex", gap: "0.5rem", padding: "0.15rem 0" };
-const keyStyle: React.CSSProperties = { minWidth: 160, color: "#57606a" };
+/** Map a REAL status value to a badge class. Honest: unknown ⇒ muted, never a fabricated "positive". */
+function badgeClass(v: string | boolean | null | undefined): string {
+  if (v === null || v === undefined) return "badge badge-muted";
+  const s = (typeof v === "boolean" ? (v ? "yes" : "no") : v).trim().toLowerCase();
+  if (s === "—" || s === "" || s === UNAVAILABLE) return "badge badge-muted";
+  if (/(^|\b)(ready|yes|true|success|ok|present|healthy|pass(ed)?|converged|active)\b/.test(s)) return "badge badge-pos";
+  if (/(^|\b)(no|false|fail(ed)?|down|blocked|error|stopped|missing|degraded|not ready)\b/.test(s)) return "badge badge-neg";
+  return "badge badge-neutral";
+}
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div style={rowStyle}>
-      <span style={keyStyle}>{label}</span>
-      <span style={{ fontWeight: 600 }}>{value}</span>
+    <div className="kv">
+      <span className="kv-key">{label}</span>
+      <span className={value === "—" ? "kv-val kv-muted" : "kv-val"}>{value}</span>
+    </div>
+  );
+}
+
+function BadgeRow({ label, value }: { label: string; value: string | boolean | null | undefined }) {
+  return (
+    <div className="kv">
+      <span className="kv-key">{label}</span>
+      <span className="kv-val">
+        <span className={badgeClass(value)}>{val(value)}</span>
+      </span>
     </div>
   );
 }
@@ -52,97 +64,99 @@ export default function Dashboard({ snapshot }: DashboardProps) {
   }
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: 860, margin: "0 auto" }}>
-      <header style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ margin: 0 }}>BMAX v21</h1>
-        <p style={{ margin: "0.25rem 0 0", color: "#57606a" }}>
-          Runtime Dashboard — governed by ODG · live runtime artifacts
-        </p>
+    <main className="dash">
+      <header className="dash-header">
+        <div className="dash-header-top">
+          <h1 className="dash-title">BMAX v21</h1>
+          <span className={badgeClass(health.status)}>{val(health.status)}</span>
+        </div>
+        <p className="dash-subtitle">Runtime Dashboard — governed by ODG · live runtime artifacts</p>
         {!snapshot.present && (
-          <p
-            role="alert"
-            style={{ marginTop: "0.75rem", color: "#9a6700", background: "#fff8c5", padding: "0.5rem 0.75rem", borderRadius: 6 }}
-          >
+          <p role="alert" className="dash-alert">
             Runtime state artifact ({snapshot.sources[0]?.path ?? "runtime-state.json"}) is {UNAVAILABLE}. Values shown as “—”
             are genuinely unknown — none are fabricated.
           </p>
         )}
-        <p style={{ margin: "0.5rem 0 0", color: "#8c959f", fontSize: "0.85rem" }}>
-          as of {val(snapshot.generatedAt)}
-        </p>
+        <p className="dash-asof">as of {val(snapshot.generatedAt)}</p>
       </header>
 
-      <section style={sectionStyle}>
-        <h2 style={hStyle}>Runtime Health</h2>
-        <Row label="Status" value={val(health.status)} />
-        <Row label="Runtime" value={val(health.runtime)} />
-        <Row label="Foundation" value={val(health.foundation)} />
-        <Row label="Pipeline" value={val(health.pipeline)} />
-        <Row label="Brain" value={val(health.brain)} />
-        <Row label="Converged" value={val(health.converged)} />
-      </section>
+      <div className="dash-grid">
+        <section className="card">
+          <h2 className="card-title">Runtime Health</h2>
+          <BadgeRow label="Status" value={health.status} />
+          <BadgeRow label="Runtime" value={health.runtime} />
+          <BadgeRow label="Foundation" value={health.foundation} />
+          <BadgeRow label="Pipeline" value={health.pipeline} />
+          <BadgeRow label="Brain" value={health.brain} />
+          <BadgeRow label="Converged" value={health.converged} />
+        </section>
 
-      <section style={sectionStyle}>
-        <h2 style={hStyle}>Missions</h2>
-        <Row label="Last mission" value={val(missions.last)} />
-        <Row label="Next mission" value={val(missions.next)} />
-        <Row
-          label="Last run"
-          value={
-            missions.lastRun
-              ? `${val(missions.lastRun.mission)} — ${val(missions.lastRun.status)} (validated: ${val(missions.lastRun.validated)})`
-              : "—"
-          }
-        />
-        <Row
-          label="Outstanding"
-          value={missions.outstanding.length === 0 ? "none" : missions.outstanding.join(", ")}
-        />
-      </section>
+        <section className="card">
+          <h2 className="card-title">Missions</h2>
+          <Row label="Last mission" value={val(missions.last)} />
+          <Row label="Next mission" value={val(missions.next)} />
+          <Row
+            label="Last run"
+            value={
+              missions.lastRun
+                ? `${val(missions.lastRun.mission)} — ${val(missions.lastRun.status)} (validated: ${val(missions.lastRun.validated)})`
+                : "—"
+            }
+          />
+          <Row label="Outstanding" value={missions.outstanding.length === 0 ? "none" : missions.outstanding.join(", ")} />
+        </section>
 
-      <section style={sectionStyle}>
-        <h2 style={hStyle}>Autonomy</h2>
-        <Row label="Rate" value={autonomyLine} />
-        {autonomy.total !== null && <Row label="Recorded events" value={String(autonomy.total)} />}
-        {autonomy.counts && (
-          <div style={{ marginTop: "0.5rem", color: "#57606a", fontSize: "0.9rem" }}>
-            descriptive counts:{" "}
-            {Object.entries(autonomy.counts)
-              .map(([k, v]) => `${k}=${v}`)
-              .join(", ")}
-          </div>
-        )}
-      </section>
+        <section className="card">
+          <h2 className="card-title">Autonomy</h2>
+          <Row label="Rate" value={autonomyLine} />
+          {autonomy.total !== null && <Row label="Recorded events" value={String(autonomy.total)} />}
+          {autonomy.counts && (
+            <div className="chips">
+              {Object.entries(autonomy.counts).map(([k, v]) => (
+                <span className="chip" key={k}>
+                  <b>{k}</b> {v}
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
 
-      <section style={sectionStyle}>
-        <h2 style={hStyle}>Mission Queue ({snapshot.queueCount})</h2>
-        {queue.length === 0 ? (
-          <p style={{ margin: 0, color: "#57606a" }}>queue {UNAVAILABLE} or empty</p>
-        ) : (
-          <ul style={{ margin: 0, paddingLeft: "1.1rem" }}>
-            {queue.map((q, i) => (
-              <li key={`${q.mission}-${i}`} style={{ padding: "0.1rem 0" }}>
-                <strong>{q.mission}</strong>
-                {q.priority ? ` · ${q.priority}` : ""}
-                {q.status ? ` · ${q.status}` : ""}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <section className="card">
+          <h2 className="card-title">
+            <span>Capabilities</span>
+          </h2>
+          <Row label="Registered" value={capabilities.total === null ? UNAVAILABLE : String(capabilities.total)} />
+          <Row label="Missing" value={capabilities.missing === null ? UNAVAILABLE : String(capabilities.missing)} />
+        </section>
 
-      <section style={sectionStyle}>
-        <h2 style={hStyle}>Capabilities</h2>
-        <Row label="Registered" value={capabilities.total === null ? UNAVAILABLE : String(capabilities.total)} />
-        <Row label="Missing" value={capabilities.missing === null ? UNAVAILABLE : String(capabilities.missing)} />
-      </section>
+        <section className="card card-wide">
+          <h2 className="card-title">
+            <span>Mission Queue</span>
+            <span className="count">{snapshot.queueCount}</span>
+          </h2>
+          {queue.length === 0 ? (
+            <p className="empty">queue {UNAVAILABLE} or empty</p>
+          ) : (
+            <ul className="queue">
+              {queue.map((q, i) => (
+                <li className="queue-item" key={`${q.mission}-${i}`}>
+                  <span className="queue-mission">{q.mission}</span>
+                  {q.priority ? <span className="badge badge-neutral">{q.priority}</span> : null}
+                  {q.status ? <span className={badgeClass(q.status)}>{q.status}</span> : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
 
-      <footer style={{ color: "#8c959f", fontSize: "0.8rem" }}>
-        <strong>Provenance</strong> — governed artifacts backing this view:
-        <ul style={{ margin: "0.4rem 0 0", paddingLeft: "1.1rem" }}>
+      <footer className="provenance">
+        <span className="provenance-title">Provenance</span> — governed artifacts backing this view:
+        <ul>
           {snapshot.sources.map((src) => (
             <li key={src.path}>
-              {src.path}: {src.present ? "present" : UNAVAILABLE}
+              <span>{src.path}</span>
+              <span className={src.present ? "state-present" : "state-absent"}>{src.present ? "present" : UNAVAILABLE}</span>
             </li>
           ))}
         </ul>

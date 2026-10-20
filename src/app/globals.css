@@ -1,12 +1,39 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────────────────
+   BMAX v21 — Runtime Dashboard theme
+   Presentational only. Values rendered by the dashboard come exclusively from
+   the governed runtime snapshot; this file never fabricates data, it only
+   styles honest values (real strings, "—" for unknowns, status badges).
+   Light + dark are both first-class and readable (WCAG-contrasting text).
+   ────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
   /* Offline system-font stacks (replace build-time next/font/google Geist fetch). Keeps the
      --font-geist-* variable names so the Tailwind --font-sans/--font-mono tokens still resolve. */
   --font-geist-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-geist-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Light theme tokens */
+  --app-bg: #f6f8fa;
+  --surface: #ffffff;
+  --surface-2: #f6f8fa;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --muted: #59636e;
+  --accent: #0969da;
+  --accent-bg: #ddf4ff;
+  --pos: #1a7f37;
+  --pos-bg: #dafbe1;
+  --warn-fg: #9a6700;
+  --warn-bg: #fff8c5;
+  --neg: #cf222e;
+  --neg-bg: #ffebe9;
+  --card-shadow: 0 1px 2px rgba(31, 35, 40, 0.06), 0 1px 3px rgba(31, 35, 40, 0.08);
+
+  /* Back-compat names consumed by @theme inline below. */
+  --background: var(--app-bg);
+  --foreground: var(--text);
 }
 
 @theme inline {
@@ -18,13 +45,289 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --app-bg: #0d1117;
+    --surface: #11161d;
+    --surface-2: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #9198a1;
+    --accent: #4493f8;
+    --accent-bg: #0b2942;
+    --pos: #3fb950;
+    --pos-bg: #112b17;
+    --warn-fg: #d29922;
+    --warn-bg: #2b2412;
+    --neg: #f85149;
+    --neg-bg: #3a1413;
+    --card-shadow: 0 1px 2px rgba(1, 4, 9, 0.5);
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans);
+  line-height: 1.5;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.dash {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+
+.dash-header {
+  /* Static (non-floating) header — never overlaps content. */
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+.dash-header-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.dash-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.dash-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.dash-asof {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-family: var(--font-geist-mono);
+}
+
+.dash-alert {
+  margin-top: 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--warn-fg) 35%, transparent);
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  font-size: 0.9rem;
+}
+
+/* ── Card grid ──────────────────────────────────────────────────────────── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  align-items: start;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem 1.25rem;
+  box-shadow: var(--card-shadow);
+  min-width: 0; /* allow long values to wrap instead of overflowing the grid track */
+}
+
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+.card-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0 0 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.card-title .count {
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* ── Key / value rows ───────────────────────────────────────────────────── */
+.kv {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.75rem;
+  padding: 0.3rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.kv:first-of-type {
+  border-top: none;
+}
+
+.kv-key {
+  flex: 0 0 auto;
+  min-width: 140px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.kv-val {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.kv-muted {
+  color: var(--muted);
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.4;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badge-pos {
+  color: var(--pos);
+  background: var(--pos-bg);
+  border-color: color-mix(in srgb, var(--pos) 35%, transparent);
+}
+
+.badge-neg {
+  color: var(--neg);
+  background: var(--neg-bg);
+  border-color: color-mix(in srgb, var(--neg) 35%, transparent);
+}
+
+.badge-neutral {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.badge-muted {
+  color: var(--muted);
+  background: var(--surface-2);
+  border-color: var(--border);
+  font-style: italic;
+}
+
+/* ── Autonomy count chips ───────────────────────────────────────────────── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.chip {
+  display: inline-flex;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-family: var(--font-geist-mono);
+}
+
+.chip b {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ── Mission queue list ─────────────────────────────────────────────────── */
+.queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.queue-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.queue-mission {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── Provenance footer ──────────────────────────────────────────────────── */
+.provenance {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.provenance-title {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.provenance ul {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.provenance li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--font-geist-mono);
+}
+
+.provenance .state-present {
+  color: var(--pos);
+}
+
+.provenance .state-absent {
+  color: var(--muted);
 }
