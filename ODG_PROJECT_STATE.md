@@ -29,6 +29,13 @@ The **machine** checkpoint `runtime/generated/compass-checkpoint.json` IS auto-w
 > **Private-VPS reliability roadmap (P1–P6):** `docs/odg-operational/ODG_VPS_RELIABILITY_ROADMAP.md` — subordinate to canonical ROADMAP.json; initialised Phase 9A. Honest statuses (NOT RUN/BLOCKED until proven).
 
 ## Last confirmed checkpoint
+- **`FINAL_CAPABILITY_VALIDATION_GATE_V1` — top-3 completed + validated; golden-set harness. 2026-10-20 (from `c01f6d9`).** [PASS WITH BLOCKERS]
+  - **Truth Lock:** HEAD=origin/main=`c01f6d9`→(this); `main`; clean; 5 stashes; protected paths untouched. No commercial internet research (per gate). No egress/prod/secret change.
+  - **Top-3 bilan (preuves indépendantes re-exécutées) :** **#1 Web-provenance [PASS]** (`verifyWebProvenance` 10/10 ; 4 dims séparées ; PROVEN=2xx+contenu+hash-MATCH ; intégrité≠authenticité). **#2 SLSA+SBOM [PASS mécanisme · L2 BLOCKED]** (`supply-chain-attest` 7/7 ; SBOM 489 + ed25519 sign/verify + anti-altération ; **L2 non revendiqué** — pas de build hébergé/clé managée). **#3 Golden-set [PASS, NEW]** (`autonomy-eval-harness` 4/4 : 7 dims séparées, 6 faux-succès attrapés sur 8 cas, négatifs rejetés, reproductible+parité).
+  - **Validation finale :** 8 améliorations re-testées (61 tests) + golden-set ⇒ **65+ tests verts** ; tsc dist/strict/leaves 0 ; parité dual-port OK ; 32 capacités + registre-missions disjoint (doc coverage).
+  - **Statuts honnêtes :** implémenté+testé+techniquement-validé = oui pour tout le lot ; **usage réel/efficacité métier = NON** (0 mission opérationnelle, 0 client) ; récupération/sécurité-loopback/automatisation = LIVE.
+  - **Blockers restants :** SLSA **L2** (build hébergé + signature managée/keyless) ; **efficacité métier réelle** (volume) ; error-budget (gated volume) ; egress autonome.
+  - **Verdict global : PASS WITH BLOCKERS.** **ARRÊT ABSOLU** — pas de recherche commerciale Internet ni autre lot sans acceptation CTO. Cadre de recherche commerciale future = **préparé, non exécuté** (entreprises privées uniquement, budgets confirmés≠estimés, exclusion stricte du public, aucun contact).
 - **`SOFTWARE_SUPPLY_CHAIN_SLSA_L2_SBOM_V1` — SBOM + signed provenance mechanism. 2026-10-20 (from `e45cec9`).** [PASS (mechanism) · SLSA L2 BLOCKED]
   - **Truth Lock:** HEAD=origin/main=`e45cec9`→(this); `main`; clean; 5 stashes; protected paths untouched. No paid dep, no secret committed, no prod/release change.
   - **Tooling audit [FACT]:** `npm sbom` absent (npm 9), no cyclonedx/syft/cosign/sigstore ; **node ed25519 sign/verify natif OK**. Reuse sha256 (evidence-provenance).
