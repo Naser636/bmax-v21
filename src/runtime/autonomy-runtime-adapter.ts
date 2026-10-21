@@ -1088,17 +1088,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // ⇒ NO commit (fail-closed), leaving the deliverable VALIDATED_PENDING_COMMIT. Default no-op
     // (byte-identical). Reuses the canonical gate via the same core-port loader — no second policy; degrades to
     // prior behaviour if the gate module is absent (stripped sandbox).
-    if (process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true") {
-      try {
-        const { truthLockGate } = requireCjs(`${this.cwd}/${resolveCorePort(this.cwd, "truth-lock-gate.js")}`) as { truthLockGate: (o: unknown) => { blocked: boolean; verdict: { detail: string } } };
-        const exec = (args: string[]): string | null => { try { return String(execFileSync("git", args, { cwd: this.cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } };
-        const tl = truthLockGate({ mutating: true, enforce: true, exec });
-        if (tl.blocked) {
-          // eslint-disable-next-line no-console
-          console.warn(`[AutonomyRuntimeAdapter] Not committing "${mission}": Truth-Lock repo-safety — ${tl.verdict.detail}.`);
-          return false;
-        }
-      } catch { /* gate module unavailable ⇒ degrade to prior behaviour; the ledger release gate still enforces */ }
+    const tlRefusal = this.truthLockRefusal();
+    if (tlRefusal) {
+      // eslint-disable-next-line no-console
+      console.warn(`[AutonomyRuntimeAdapter] Not committing "${mission}": Truth-Lock repo-safety — ${tlRefusal}.`);
+      return false;
     }
     // Reduce globbed authorized paths (e.g. "src/app/x/**") to committable path prefixes.
     const prefixes = authorized
@@ -1298,6 +1292,55 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     };
   }
 
+  /**
+   * Opt-in canonical Truth-Lock repo-safety precondition. Returns a refusal detail string when the repo is
+   * non-conforming AND ODG_TRUTH_LOCK_ENFORCE is set (strict mode); null otherwise (record-only default ⇒
+   * no-op, byte-identical prior behaviour). Reuses the ONE canonical gate (truthLockGate → evaluateTruthLock)
+   * via the same core-port loader the commit gate uses — no second policy. Degrades to null (prior behaviour)
+   * if the gate module is absent (stripped checkout / sandbox). Shared by the direct-write pre-flight and the
+   * commit integrity precondition so there is a single enforcement idiom.
+   */
+  private truthLockRefusal(): string | null {
+    if (process.env.ODG_TRUTH_LOCK_ENFORCE !== "1" && process.env.ODG_TRUTH_LOCK_ENFORCE !== "true") return null;
+    try {
+      const { truthLockGate } = requireCjs(`${this.cwd}/${resolveCorePort(this.cwd, "truth-lock-gate.js")}`) as { truthLockGate: (o: unknown) => { blocked: boolean; verdict: { detail: string } } };
+      const exec = (args: string[]): string | null => { try { return String(execFileSync("git", args, { cwd: this.cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } };
+      const tl = truthLockGate({ mutating: true, enforce: true, exec });
+      return tl.blocked ? tl.verdict.detail : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** A BLOCKED provider outcome for a direct-write run refused by Truth-Lock BEFORE the provider ran — no
+   * process spawned, nothing written, no partial effect. Mirrors the haltOutcome shape the pipeline already
+   * handles so the refusal is surfaced honestly (and the Validation Engine still yields BLOCKED). */
+  private directWriteBlockedOutcome(request: ProviderRequest, detail: string): ProviderOutcome {
+    const blocker = `Direct-write refused by Truth-Lock repo-safety before any write: ${detail}.`;
+    // eslint-disable-next-line no-console
+    console.warn(`[AutonomyRuntimeAdapter] ${blocker}`);
+    return {
+      provider: "truth-lock",
+      classification: "BLOCKED",
+      providerExecuted: false,
+      fromCache: false,
+      result: {
+        mission: request.mission.mission,
+        providerContractVersion: request.providerContractVersion,
+        status: "BLOCKED",
+        objectivesAddressed: [],
+        changedFiles: [],
+        commandsRun: [],
+        blocker,
+      },
+      sessionId: null,
+      changedFiles: [],
+      unauthorizedChanges: [],
+      raw: { exitCode: null, stdout: "", stderr: "" },
+      diagnostics: [blocker],
+    };
+  }
+
   private executeWithFailover(
     mission: string,
     spec: RawMission | null,
@@ -1313,6 +1356,22 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
       // OpenAI adapter never writes the tree at all). Read-only missions are unaffected.
       proposeOnly: this.useGovernedApply(spec),
     };
+    // R3 Lot A — DIRECT-WRITE repo-safety precondition (opt-in). When the operator retains the legacy
+    // direct-write escape hatch (ODG_PROVIDER_DIRECT_WRITE=1) for a mission WITH a write scope, the provider
+    // writes the working tree ITSELF — the one write path that does NOT flow through the governed (R2-gated)
+    // patch-executor. The condition mirrors useGovernedApply's own inverse (escape-hatch ON + authorized
+    // paths > 0); a read-only mission (no write scope) is NOT a direct write and is never gated here, even
+    // though it also carries proposeOnly=false. Under ODG_TRUTH_LOCK_ENFORCE, require the SAME canonical
+    // repo-safety policy BEFORE the provider runs: a non-conforming repo (wrong branch / HEAD divergence /
+    // staged index / unverifiable) ⇒ REFUSE before any write, returning a BLOCKED outcome (no tree mutation,
+    // no partial effect). Truth-Lock does NOT replace, fabricate, or widen the ODG_PROVIDER_DIRECT_WRITE
+    // authorization — it only refuses a protected effect on an unsafe repo. Default no-op (record-only):
+    // governed/propose-only runs, read-only runs, and clean-repo direct writes are byte-for-byte unchanged.
+    const directWrite = process.env.ODG_PROVIDER_DIRECT_WRITE === "1" && this.authorizedPaths(spec).length > 0;
+    if (directWrite) {
+      const refusal = this.truthLockRefusal();
+      if (refusal) return this.directWriteBlockedOutcome(request, refusal);
+    }
     if (this.provider) {
       return this.provider.execute(request);
     }

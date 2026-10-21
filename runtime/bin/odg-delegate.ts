@@ -235,6 +235,33 @@ if (delegMode.isolated) {
   console.log("Acceptance: committed in-scope deliverable confirmed — proceeding to verify + converge.");
 }
 
+// --- Step 5a — REPO-SAFETY PRE-FLIGHT (R3 Lot B, opt-in, HISTORICAL mode) ------------------------
+// In historical mode the delegated WRITE happens out-of-band in the provider (odg-delegate runs AFTER it and
+// cannot pre-gate THAT write), but odg-delegate IS the point that PROMOTES the change — conformance → verify →
+// converge → archive. Unlike ODG's other mutation chokepoints, that promotion carried NO repo-safety check:
+// a delegated change could be promoted on a non-conforming repo (wrong branch / HEAD divergence / staged
+// index). Under ODG_TRUTH_LOCK_ENFORCE, consult the ONE canonical Truth-Lock repo-safety policy BEFORE
+// scopeClean/verify/converge/archive and REFUSE on a non-conforming or unverifiable state. This does NOT
+// replace scopeClean (it runs next, unchanged) and weakens no historical control. Default no-op (record-only)
+// ⇒ behaviour byte-identical when enforcement is off. Scoped to historical mode: isolated mode has its own
+// isolation + acceptance gate (and delegate-isolation.applyProposal's Day-5 Truth-Lock), and its legitimate
+// post-acceptance local commit intentionally diverges from origin/main.
+if (!delegMode.isolated && (process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true")) {
+  console.log("--------------------------------------");
+  console.log("REPO-SAFETY (Truth-Lock)");
+  try {
+    const { truthLockGate } = require(path.join(ROOT, _corePort("runtime/core/truth-lock-gate.js")));
+    const tlExec = (a: string[]): string | null => { try { return String(cp.execFileSync("git", a, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } };
+    const tl = truthLockGate({ mutating: true, enforce: true, mission, exec: tlExec });
+    if (tl.blocked) {
+      die(`STOP: delegate promotion refused by Truth-Lock repo-safety — ${tl.verdict.detail}. Refusing before any verify/converge/archive (no bypass of repo-safety).`, 2);
+    }
+    console.log("Repo-safety:", tl.verdict.detail);
+  } catch (err: any) {
+    die(`STOP: Truth-Lock repo-safety check failed to run (${err.message}); refusing fail-closed under enforcement.`, 2);
+  }
+}
+
 // --- Step 5b — WRITE-SET CONFORMANCE (CM-1): ODG independently controls the RECEIVED patch's scope -------
 // A delegated patch is applied by the provider directly in the working tree (NOT through the action-gate),
 // so ODG must INDEPENDENTLY verify the change stayed within the authorized write-set before trusting it.
