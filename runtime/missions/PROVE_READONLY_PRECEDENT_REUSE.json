@@ -1,0 +1,143 @@
+{
+  "mission": "PROVE_READONLY_PRECEDENT_REUSE",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "Resolve the structural G9/G10 gap: build the smallest read-only PRECEDENT mechanism (store/retrieve/apply a non-patch decision precedent WITHOUT replaying a file patch or mutating target data), capture one precedent from an accepted evidence-backed mission, and prove the precedent is retrieved, applied, and MATERIALLY affects a second mission's decision (before/after). Measure autonomy via the canonical mechanism; any real pipeline run is ISOLATED (never mutates live canonical ledger/generated state).",
+  "authorized_paths": [
+    "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json",
+    "runtime/core/decision-precedent.ts",
+    "runtime/core/decision-precedent.js",
+    "runtime/core/decision-precedent.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json",
+    "runtime/core/decision-precedent.ts",
+    "runtime/core/decision-precedent.js",
+    "runtime/core/decision-precedent.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO directive 'READ-ONLY LEARNING REUSE AND REAL AUTONOMY PROOF' (session message, 2026-10-21)",
+    "recorded_at": "2026-10-21T21:41:06Z",
+    "note": "Authorization did NOT exist before the CTO directive above; recorded as the sole source. Not backdated or fabricated."
+  },
+  "concern_partition": {
+    "learning_mechanism": ["runtime/core/decision-precedent.ts", "runtime/core/decision-precedent.js", "runtime/core/decision-precedent.test.ts"],
+    "mission_execution": ["ISOLATED CLONE ONLY — a cp-al/worktree sandbox outside the live repo; NO live canonical write"],
+    "audit_measurement_records": ["read-only use of runtime/core/autonomy-rate.* + autonomy-measure.* over records produced in the isolated sandbox"],
+    "canonical_state_updates": ["ODG_PROJECT_STATE.md", "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json"]
+  },
+  "work_item_contract": {
+    "objective": "Build a read-only decision-precedent mechanism and prove, with a measured before/after effect, that a captured precedent is reused to materially change a second mission's decision — no file patch, no target mutation.",
+    "root_cause_hypothesis": "G9/G10 were NOT_MEASURABLE because the only learning substrate (patch-memory) stores file-edit patches on already-proven missions; strictly read-only reuse had no store. A non-patch decision-precedent store closes the gap.",
+    "scope": "New standalone pure module + test; isolated measurement. NO wiring into the live decision-engine stage (that is a separate gated boundary), NO systemd/allowlist/timer/env change, NO live ledger/generated mutation, NO new orchestrator/second scheduler.",
+    "read_set": [
+      "runtime/core/patch-memory.ts",
+      "runtime/core/decision-engine.ts",
+      "runtime/core/improvement-baseline.ts",
+      "runtime/core/learning-chain.ts",
+      "runtime/core/autonomy-rate.ts",
+      "runtime/core/autonomy-measure.ts",
+      "runtime/core/mission-loader.js",
+      "runtime/generated/mission-ledger.json",
+      "runtime/generated/objective-attribution.json"
+    ],
+    "write_set": [
+      "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json",
+      "runtime/core/decision-precedent.ts",
+      "runtime/core/decision-precedent.js",
+      "runtime/core/decision-precedent.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "authorized_symbols": [
+      "decision-precedent.signature",
+      "decision-precedent.recordPrecedent",
+      "decision-precedent.recallPrecedent",
+      "decision-precedent.applyPrecedent",
+      "decision-precedent.reusePrecedent",
+      "decision-precedent.summarizeReuse"
+    ],
+    "allowed_commands": [
+      "git status/diff/log/rev-parse/rev-list (read-only)",
+      "node runtime/core/decision-precedent.test.ts",
+      "npx tsc --noEmit -p tsconfig.runtime-dist.json",
+      "dual-port parity micro-check (ts vs js)",
+      "cp -al / git worktree to build an ISOLATED sandbox for a real pipeline run",
+      "node runtime/dist/bin/odg-run.js <mission> + odg-state — INSIDE the isolated sandbox only",
+      "git add/commit for the exact write-set; git push (no force-push)"
+    ],
+    "invariants": [
+      "Precedent reuse performs NO file patch and NO target-data mutation (decision/classification payload only).",
+      "decision-precedent core is pure (no fs/network/clock); I/O stays in the caller/test.",
+      "Dual-port parity: decision-precedent.ts and .js behave identically.",
+      "EFFECTIVE is graded by learning-chain (refuses flat/fabricated effect); a lookup or nonzero counter alone is NOT accepted as reuse proof.",
+      "No live canonical ledger/generated mutation; any real mission run is isolated.",
+      "No new primitive wired into live stages; decision-engine untouched."
+    ],
+    "acceptance_criteria": [
+      "decision-precedent.test.ts proves 5 DISTINCT states: captured, persisted, retrieved, applied, demonstrated-effect — with traceable links source-evidence -> precedent -> execution -> result.",
+      "Before/after measured by improvement-baseline.measureDelta shows a real direction change (not flat); learning-chain classifies the record EFFECTIVE.",
+      "tsc --noEmit -p tsconfig.runtime-dist.json exits 0; dual-port parity identical.",
+      "G10 reported via the canonical mechanism with exact window/numerator/denominator/IDs, OR NOT_MEASURABLE with the precise missing prerequisite.",
+      "Final diff limited to the authorized write-set; stashes + HEAD preserved; no protected boundary crossed."
+    ],
+    "stop_conditions": [
+      "A correction requires a path outside the write-set (e.g. wiring decision-engine) — stop that step, report.",
+      "The isolated pipeline run would require mutating live canonical state or a privileged host action — do not do it; report.",
+      "Any gate fails and cannot be repaired within the write-set.",
+      "The precedent does NOT materially affect the work — report honestly, do not fabricate an effect."
+    ],
+    "rollback": "git checkout -- <write_set> and delete the new untracked module/test/contract to restore committed state; delete the isolated sandbox dir. No systemd/service/live-state change to undo.",
+    "evidence_required": [
+      "initial + final Truth Lock",
+      "scoped diff of the write-set",
+      "decision-precedent test output (5 states + measured delta)",
+      "tsc + dual-port parity output",
+      "G10 canonical-measure output (window/numerator/denominator/IDs) or precise NOT_MEASURABLE reason",
+      "commit + push ids"
+    ]
+  },
+  "objectives": [
+    {
+      "id": "PROVE_READONLY_PRECEDENT_REUSE_1",
+      "goal": "Build read-only precedent mechanism and prove materially-effective reuse (G9).",
+      "done_when": [
+        "decision-precedent.test.ts passes with 5 distinct learning states + measured effect.",
+        "tsc + dual-port parity pass.",
+        "G9 evidence links source->precedent->execution->result; G10 reported or NOT_MEASURABLE with prerequisite."
+      ],
+      "proof": "readonly-precedent-reuse-proven",
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "definition_of_done": [
+    "decision-precedent mechanism implemented (ts+js parity) and proven by test (5 states, measured effect).",
+    "tsc 0, parity identical; final diff limited to authorized write-set; committed (push no force).",
+    "G9 PROVEN with traceable links; G10 reported via canonical mechanism or NOT_MEASURABLE with exact prerequisite."
+  ],
+  "source": "cto-directive",
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json",
+      "runtime/core/decision-precedent.ts",
+      "runtime/core/decision-precedent.js",
+      "runtime/core/decision-precedent.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "NO_SCOPE_EXPANSION"],
+  "evidence": [
+    "runtime/core/decision-precedent.test.ts",
+    "runtime/generated/objective-attribution.json",
+    "runtime/generated/mission-ledger.json"
+  ],
+  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED established by explicit CTO directive provenance above)"
+}
