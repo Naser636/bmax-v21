@@ -244,9 +244,13 @@ function classify(name: any): any {
 // byte-identical). Git facts read live (real git in cwd). Reuses the canonical gate — no second policy. A
 // refusal writes an honest FAILED record and exits non-zero BEFORE the loop, so NOTHING is written.
 {
-  const __hasEdits = Array.isArray(plan.patches) && plan.patches.some((p: any) => Array.isArray(p.edits) && p.edits.length > 0);
+  // R2: a run MUTATES if it carries `edits` OR any file-writing SYMBOLIC action (the legacy switch cases below
+  // that fs.writeFileSync a report/scaffold). Both are gated uniformly so no file-mutating patch-executor run
+  // bypasses the repo-safety gate under enforcement. (Keep this list in lockstep with the mutating switch cases.)
+  const __MUTATING_SYMBOLIC = ["PROCESS_TODOS", "PROCESS_FIXMES", "ANALYZE_DEPENDENCIES", "OPTIMIZE_DEPENDENCIES", "IMPLEMENT_MISSING_CAPABILITIES"];
+  const __hasMutatingWork = Array.isArray(plan.patches) && plan.patches.some((p: any) => (Array.isArray(p.edits) && p.edits.length > 0) || __MUTATING_SYMBOLIC.includes(p.action));
   const __tlEnforce = process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true";
-  if (__hasEdits && __tlEnforce) {
+  if (__hasMutatingWork && __tlEnforce) {
     const { truthLockGate } = require("./truth-lock-gate");
     const __tl = truthLockGate({ mutating: true, enforce: true, mission: plan.mission });
     if (__tl.blocked) {
