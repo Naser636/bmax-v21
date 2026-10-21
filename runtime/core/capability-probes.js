@@ -24,13 +24,15 @@
 
 const fs = require("fs");
 const path = require("path");
-const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SPEC_AUTHOR_EVIDENCE, OBSERVABILITY_VERIFICATION_EVIDENCE } = require("./capability-executors");
+const { CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SPEC_AUTHOR_EVIDENCE, OBSERVABILITY_VERIFICATION_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE } = require("./capability-executors");
 const { validateStateTransition } = require("./state-transition");
 
 // The Clean Workspace capability (capability-executors.js) writes its CLEAN_WORKSPACE_1 scan here
 // (same relative GENERATED_DIR). Defined locally (the constant is not exported) to avoid an
 // out-of-scope change; it stays in lockstep with the producer's path.
 const CLEAN_WORKSPACE_SCAN_EVIDENCE = path.join("runtime", "generated", "clean-workspace-scan.json");
+// Provider Activation writes provider-activation.json; producer const not exported, defined locally in lockstep.
+const PROVIDER_ACTIVATION_EVIDENCE = path.join("runtime", "generated", "provider-activation.json");
 
 function readJsonSafe(file) {
     try {
@@ -434,6 +436,35 @@ const PROBES = {
         return offenders.length === 0
             ? { ok: true, detail: `probe framework finalized: ${registered} registered probes, wired into Validation Engine + Contract Factory` }
             : { ok: false, detail: offenders.join("; ") };
+    },
+
+    // ── Day-2 autonomy campaign: semantic proofs for the 3 CONSEQUENTIAL executors (mirror of .ts). Fail-closed
+    //    on absent / empty / no-op / unverified evidence — a true no-false-success gate.
+    "synthetic-deliverable-written"() {
+        const ev = readJsonSafe(SYNTHETIC_DELIVERABLE_EVIDENCE);
+        if (!ev) return { ok: false, detail: `no synthetic-deliverable evidence at ${SYNTHETIC_DELIVERABLE_EVIDENCE} — run the ODG Synthetic Deliverable capability first` };
+        if (ev.capability !== "ODG Synthetic Deliverable") return { ok: false, detail: `evidence is not an ODG Synthetic Deliverable (capability=${ev.capability})` };
+        if (typeof ev.target !== "string" || !ev.target) return { ok: false, detail: "evidence missing the written target path" };
+        if (typeof ev.bytes !== "number" || ev.bytes <= 0) return { ok: false, detail: `no content written (bytes=${ev.bytes}) — an empty deliverable does NOT satisfy the proof` };
+        if (typeof ev.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(ev.sha256)) return { ok: false, detail: "evidence missing/invalid sha256 content hash" };
+        if (ev.authoredBy !== "ODG_CAPABILITY") return { ok: false, detail: `authoredBy must be ODG_CAPABILITY (got ${ev.authoredBy})` };
+        return { ok: true, detail: `synthetic deliverable written: ${ev.target} (${ev.bytes} bytes, sha256 ${ev.sha256.slice(0, 8)})` };
+    },
+
+    "provider-activation-orchestrated"() {
+        const ev = readJsonSafe(PROVIDER_ACTIVATION_EVIDENCE);
+        if (!ev) return { ok: false, detail: `no provider-activation evidence at ${PROVIDER_ACTIVATION_EVIDENCE} — run the Provider Activation capability first` };
+        const o = ev.orchestration, x = ev.execution;
+        if (!o || typeof o !== "object" || typeof o.decision !== "string" || !o.decision) return { ok: false, detail: "evidence carries no orchestration.decision (no real activation verdict)" };
+        if (!x || typeof x !== "object" || typeof x.classification !== "string" || !x.classification) return { ok: false, detail: "evidence carries no execution.classification" };
+        return { ok: true, detail: `provider activation orchestrated: decision=${o.decision}, classification=${x.classification}` };
+    },
+
+    "implement-local-verified"() {
+        const ev = readJsonSafe(IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE);
+        if (!ev) return { ok: false, detail: `no implement-via-local-provider evidence at ${IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE} — run the Implement Via Local Provider capability first` };
+        if (ev.status !== "EXECUTED" || ev.verified !== true) return { ok: false, detail: `implementation not independently verified (status=${ev.status}, verified=${ev.verified})` };
+        return { ok: true, detail: `local-provider implementation verified: ${Array.isArray(ev.changedPaths) ? ev.changedPaths.length : 0} path(s) changed, appliedBy=${ev.appliedBy}` };
     },
 };
 

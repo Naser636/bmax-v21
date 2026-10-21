@@ -257,4 +257,44 @@ inTempCwd((mod) => {
     ok("research-acquired: dry-run artifact still NOT ok (LIVE semantics unchanged)", mod.runProbe("research-acquired", {}).ok === false);
 });
 
+// ── Day-2 autonomy campaign: semantic proofs for the 3 CONSEQUENTIAL executors. Prove each ACCEPTS a
+//    legitimate evidence shape and BLOCKS (fail-closed) absent / empty / no-op / unverified evidence.
+const SHA64 = "b".repeat(64);
+// synthetic-deliverable-written
+inTempCwd((mod) => {
+    ok("synthetic-deliverable: FAILS with no evidence", mod.runProbe("synthetic-deliverable-written", {}).ok === false);
+});
+inTempCwd((mod) => {
+    fs.writeFileSync("runtime/generated/odg-synthetic-deliverable.json", JSON.stringify({ capability: "ODG Synthetic Deliverable", objective: "ODG_WRITE_1", target: "runtime/generated/x.txt", scope: "authorized", bytes: 42, sha256: SHA64, authoredBy: "ODG_CAPABILITY" }));
+    ok("synthetic-deliverable: PASSES for a real written deliverable", mod.runProbe("synthetic-deliverable-written", {}).ok === true);
+});
+inTempCwd((mod) => {
+    fs.writeFileSync("runtime/generated/odg-synthetic-deliverable.json", JSON.stringify({ capability: "ODG Synthetic Deliverable", target: "x.txt", bytes: 0, sha256: SHA64, authoredBy: "ODG_CAPABILITY" }));
+    ok("synthetic-deliverable: FAILS on an empty (bytes=0) no-op write", mod.runProbe("synthetic-deliverable-written", {}).ok === false);
+});
+// provider-activation-orchestrated
+inTempCwd((mod) => {
+    ok("provider-activation: FAILS with no evidence", mod.runProbe("provider-activation-orchestrated", {}).ok === false);
+});
+inTempCwd((mod) => {
+    fs.writeFileSync("runtime/generated/provider-activation.json", JSON.stringify({ orchestration: { decision: "REFUSED" }, execution: { classification: "consequential" } }));
+    ok("provider-activation: PASSES for an honest orchestration verdict (even a governed REFUSED)", mod.runProbe("provider-activation-orchestrated", {}).ok === true);
+});
+inTempCwd((mod) => {
+    fs.writeFileSync("runtime/generated/provider-activation.json", JSON.stringify({ orchestration: { decision: "" }, execution: {} }));
+    ok("provider-activation: FAILS on an empty verdict (no decision/classification)", mod.runProbe("provider-activation-orchestrated", {}).ok === false);
+});
+// implement-local-verified
+inTempCwd((mod) => {
+    ok("implement-local: FAILS with no evidence", mod.runProbe("implement-local-verified", {}).ok === false);
+});
+inTempCwd((mod) => {
+    fs.writeFileSync("runtime/generated/implement-via-local-provider.json", JSON.stringify({ objective: "IMPLEMENT_LOCAL_CODE", status: "EXECUTED", verified: true, committed: false, authoredBy: "LOCAL_PROVIDER", appliedBy: "ODG_EXECUTOR", changedPaths: ["src/a.ts"] }));
+    ok("implement-local: PASSES for an independently-verified EXECUTED result", mod.runProbe("implement-local-verified", {}).ok === true);
+});
+inTempCwd((mod) => {
+    fs.writeFileSync("runtime/generated/implement-via-local-provider.json", JSON.stringify({ objective: "IMPLEMENT_LOCAL_CODE", status: "FAILED", verified: false, code: "VERIFICATION_FAILED" }));
+    ok("implement-local: FAILS on an unverified/FAILED result (no false DONE)", mod.runProbe("implement-local-verified", {}).ok === false);
+});
+
 console.log(`\nCapability Probe Framework: ${passed} assertions passed.`);

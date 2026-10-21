@@ -36,5 +36,16 @@
 ### Day-1 repair executed (ready, zero-risk)
 **Gap #2 CLOSED:** added `src/runtime/truth-lock.test.ts` (11 assertions) locking the IDENTITY policy `evaluateTruthLock` — refuse on not-repo/wrong-branch/unresolvable-origin/HEAD-divergence/staged-index; allow only clean-index on expected branch; worktree-isolation design invariant; violations accumulate; custom policy honored. Test-only, no production change. tsc 0; full regression [pending].
 
+## Day 2 — Contracts/executors wiring · evidence proofs · run() tests
+
+### Gap #1 CLOSED — semantic evidence probes for the 3 consequential executors (no-false-success)
+The 3 consequential executors previously had **no semantic probe** — their outcome was checked only for artifact non-emptiness (evidenceOk). Added 3 fail-closed probes to the EXISTING `PROBES` registry (both ports, reusing the framework — no new mechanism), each reading ONLY its executor's evidence:
+- `synthetic-deliverable-written` — requires capability match + non-empty target + **bytes>0** + 64-hex sha256 + authoredBy=ODG_CAPABILITY (an empty no-op write FAILS).
+- `provider-activation-orchestrated` — requires an honest `orchestration.decision` + `execution.classification` (a selection OR a governed REFUSED/dry-run counts; an absent/empty verdict FAILS).
+- `implement-local-verified` — requires `status===EXECUTED && verified===true` (a FAILED/unverified result — VERIFICATION_FAILED, GENERATOR_UNAVAILABLE — FAILS: no false DONE).
+**Proven (mandate §1):** legitimate evidence shapes ACCEPTED, and absent/empty/no-op/unverified evidence BLOCKED — 9 new probe tests (both ports). Minimal fail-closed, reuses `runProbe`/`evaluate`; `PROVIDER_ACTIVATION_EVIDENCE` defined locally (producer const not exported) matching the existing CLEAN_WORKSPACE pattern. Updated the equivalence bench's probe-count assertion 15→18 (legitimate addition; parity-equality assertion preserved — NOT a weakening).
+**Evidence:** capability-probes 56/56 (both ports, +9 new); capability-probes-equivalence (dual-port parity) ALL PASS; tsc 0 (3 cfg); build:runtime OK; parity PASS; full npm test GREEN (473 files, 0 failures).
+**Note:** these probes are now AVAILABLE in the registry (like git-branch/bash/research probes) to be enforced via a mission's contract `verify` block + the validation-engine required-proof gate. Auto-binding via the gateway's `CAPABILITY_PROBE` is NOT added — the gateway binds by the router's capability namespace, which is disjoint from the executor names (per Day-1 cartography), so an auto-bind keyed by executor name would never fire. Enforcement is contract-declared (the established pattern).
+
 ### Day-1 verdict
 State established, continuation verified (with honest limit), research grounded, cartography complete, gaps prioritized, one ready repair landed. **Day 2 next:** gap #1 (consequential evidence probes) + gap #4 (run() dispatch tests), with careful per-executor evidence analysis to avoid regressing legitimate runs.

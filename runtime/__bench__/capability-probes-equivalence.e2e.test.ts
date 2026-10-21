@@ -46,7 +46,7 @@ for (const x of ["PROBES", "runProbe", "evaluate", "evaluateObjectiveProofs", "C
   check(typeof js[x] !== "undefined" && typeof ts[x] !== "undefined", `both export ${x}`);
 }
 check(js.CONNECTIVITY_EVIDENCE === ts.CONNECTIVITY_EVIDENCE, "CONNECTIVITY_EVIDENCE constant identical");
-check(EQ(Object.keys(js.PROBES).sort(), Object.keys(ts.PROBES).sort()) && Object.keys(js.PROBES).length === 15, "PROBES registry: identical 15 probe names");
+check(EQ(Object.keys(js.PROBES).sort(), Object.keys(ts.PROBES).sort()) && Object.keys(js.PROBES).length === 18, "PROBES registry: identical 18 probe names");
 
 // unknown probe.
 check(EQ(js.runProbe("no-such", {}), ts.runProbe("no-such", {})) && js.runProbe("no-such", {}).ok === false, "runProbe(unknown) ⇒ not-ok identical");
