@@ -1,5 +1,5 @@
 {
-  "//": "Lot 1R build config — compiles ONLY the migrated runtime entry+orchestration TypeScript sources to a DISTINCT output dir (runtime/dist), emitting plain CommonJS that Node runs with NO tsx and NO node_modules. It does NOT touch the main tsconfig.json (noEmit type-check gate) and never overwrites the historical .js sources. rootDir=runtime preserves the bin/core layout under dist so the compiled entry's relative requires to its compiled siblings resolve.",
+  "//": "Lot 1R build config \u2014 compiles ONLY the migrated runtime entry+orchestration TypeScript sources to a DISTINCT output dir (runtime/dist), emitting plain CommonJS that Node runs with NO tsx and NO node_modules. It does NOT touch the main tsconfig.json (noEmit type-check gate) and never overwrites the historical .js sources. rootDir=runtime preserves the bin/core layout under dist so the compiled entry's relative requires to its compiled siblings resolve.",
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2022",
@@ -17,6 +17,7 @@
   },
   "include": [
     "runtime/bin/odg-run.ts",
+    "runtime/bin/odg-schedule-tick.ts",
     "runtime/bin/odg-cockpit.ts",
     "runtime/bin/odg-bootstrap.ts",
     "runtime/bin/odg-state.ts",

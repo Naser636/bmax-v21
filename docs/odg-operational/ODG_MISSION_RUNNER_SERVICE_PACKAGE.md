@@ -57,7 +57,25 @@ introduced.**
   checkpoint-engine; rollback = `systemctl disable --now` the timer + delete the unit (record-only restored,
   no repo change). `odg-recover.service` still guards the dashboard independently.
 
+## Runner artifact (BUILT — gap closed)
+- **Source:** `runtime/bin/odg-schedule-tick.ts` (the smallest bounded entry point; composes `truthLockGate` +
+  `schedulerStep` + spawned governed `odg-run` + `mission-attempt-log` + ledger-derived dedup — no new
+  orchestrator). **Allowlist is `ODG_CANARY_ALLOWLIST` (comma-separated, deny-by-default, EMPTY ⇒ safe no-op).**
+- **Build:** added to `tsconfig.runtime-dist.json` include; `npm run build:runtime` emits
+  **`runtime/dist/bin/odg-schedule-tick.js`** (the service `ExecStart` target). Verified present (5.3 KB).
+- **Dispatch path:** spawns `node <corePort runtime/bin/odg-run.js>` (the real 13-stage governed pipeline),
+  inheriting `ODG_TRUTH_LOCK_ENFORCE` so enforcement reaches the child; reads `mission-report.json` for the
+  Validation-Engine verdict. No provider is constructed. Exit 0 = PASS/IDLE (safe); non-zero =
+  STARTUP_REFUSED/STOPPED/BLOCKED/FAIL/NOT_MEASURABLE.
+- **Note:** TS-canonical, compiled to dist (no `.js` rollback sibling — the `ExecStart` uses the dist output;
+  its core deps resolve via the existing `corePort` dist-or-source fallback).
+
 ## Stage 3 — Isolated validation results (performed; no host change)
+- `runtime/__bench__/odg-schedule-tick.e2e.test.ts` — **11/11 PASS** against the REAL built bin: (A)
+  conforming+enforce+allowlisted read-only ⇒ PASS, mission ran through the governed pipeline, enforcement
+  reached the child (truth-lock.json enforce=true), git clean; (B) non-conforming+enforce ⇒ STARTUP_REFUSED
+  (exit 2) before dispatch; (C) empty allowlist ⇒ IDLE (safe default); (D) stop ⇒ STOPPED; (E) non-allowlisted
+  mutating mission ⇒ not dispatched (deny-by-default); (F) dedup ⇒ re-tick IDLE.
 - `runtime/__bench__/mission-runner-service-contract.e2e.test.ts` — **6/6 PASS**: (A) safe startup fail-closed on
   non-conforming+enforce; (B) bounded tick dispatches a read-only mission to the REAL executor with enforcement
   reaching the child + zero effect; (C) IDLE on a proven queue; (D) stop halts + enforcement rollback leaves no
@@ -65,9 +83,10 @@ introduced.**
 - Reuses the already-green `g6-scheduler-dryrun` (12/12), `g7-canary` (10/10), `g4-end-to-end-loop` (19/19).
 
 ## Stage 4 — EXACT host-activation package (for a LATER authorized change only)
-1. **Files to add/change:** add `runtime/bin/odg-schedule-tick.ts` (+ built `dist` sibling) — the thin bin
-   wrapping the validated `runnerTick` contract (read-only allowlist); add `/etc/systemd/system/
-   odg-mission-runner.service` (oneshot) + `odg-mission-runner.timer`. No other file changes.
+1. **Files:** `runtime/bin/odg-schedule-tick.ts` + `runtime/dist/bin/odg-schedule-tick.js` are **already built
+   and in-repo** (gap closed). The ONLY host files to add at activation: `/etc/systemd/system/
+   odg-mission-runner.service` (oneshot) + `odg-mission-runner.timer` (Appendix A) — plus setting
+   `ODG_CANARY_ALLOWLIST` to the reviewed read-only mission ids.
 2. **Service definition / identity:** oneshot, `User=ubuntu`, `WorkingDirectory=<repo>`, hardening flags above,
    `Environment=ODG_TRUTH_LOCK_ENFORCE=1`; timer `OnBootSec`/`OnUnitActiveSec=15m`, `Persistent=false`.
 3. **Permissions + justification:** root is required ONLY to write the two unit files + `daemon-reload` +
@@ -108,6 +127,9 @@ Group=ubuntu
 WorkingDirectory=/home/ubuntu/bmax-v21
 Environment=ODG_TRUTH_LOCK_ENFORCE=1
 Environment=NODE_ENV=production
+# REVIEWED read-only canary allowlist (comma-separated mission ids). EMPTY ⇒ safe no-op (IDLE). Fill ONLY with
+# reviewed read-only mission classes; widening to consequential missions is a separate CTO decision.
+Environment=ODG_CANARY_ALLOWLIST=
 ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
 RuntimeMaxSec=600
 # Hardening (least-privilege)
