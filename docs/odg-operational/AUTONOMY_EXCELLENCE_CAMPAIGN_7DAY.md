@@ -118,5 +118,23 @@ The adapter commit path checked human approval (`ODG_HUMAN_COMMIT_APPROVED`) + �
 **Tested in a throwaway git repo (no production commit):** extended `live-commit-authorization.test.ts` — TL1 approved+enforce+conforming⇒commits (legit preserved); TL2 approved+enforce+non-conforming(wrong branch/no origin)⇒NO commit, refused BEFORE commit, deliverable uncommitted; TL3 **no approval + enforce + conforming ⇒ NO commit** (approval never fabricated by Truth-Lock — the human gate stays primary); TL4 approved+enforce-OFF+bad⇒commits (record-only default). All existing D1 human-gate cases still PASS. tsc 0 (3 cfg); build fresh; parity PASS; full npm test [pending].
 **TRUTH-LOCK COVERAGE COMPLETE across all mapped write/commit paths:** odg-run entry + resolve() + patch-executor edits + delegate-isolation.applyProposal + adapter commit. Enforcement OPT-IN (`ODG_TRUTH_LOCK_ENFORCE`); strict mode NOT active by default (so sandbox/CI are never broken). Existing controls (scope/approval/§7) preserved — Truth-Lock is additive, never a replacement. No universal single chokepoint existed; coverage is the union of these points, each tested.
 
+## Day 6 — Lot A: co-located stage tests · Lot B: Truth-Lock effective-enforcement audit
+
+### Lot A — co-located tests for the two stage scripts (gap #5) — DONE
+- `runtime/core/capability-registry.test.ts` (8): locks the output shape + derivation, the summary counts, and the **PATH INVARIANT** hermetically on the compiled dist port (temp cwd ⇒ writes under the launch cwd, NEVER into runtime/dist/generated — the historical __dirname regression). Caught + locked a **documented port divergence**: the `.js` production-default port derives root from `__dirname`; the `.ts`/dist port from `process.cwd()` — so the dist-relocation fix is active ONLY on the opt-in compiled port.
+- `runtime/core/decision-engine.test.ts` (10): one action per objective (contract order), mission/mode/priority/authorizedPaths passthrough, **determinism** (identical plan ⇒ identical decision.json), `research_acquisition` transport (present ⇒ verbatim / absent ⇒ no key), and **fail-closed STOP** (missing or objective-less plan ⇒ exit≠0, no decision.json). Each fails if the critical behaviour breaks.
+
+### Lot B — Truth-Lock EFFECTIVE-ENFORCEMENT audit (read-only; no config changed)
+| Question | Finding | Status |
+|---|---|---|
+| The 5 control points' real calls | odg-run entry, `capability-executors.resolve()`, `patch-executor` edits pre-flight, `delegate-isolation.applyProposal`, adapter `commitAuthorizedDeliverable` — all call `truthLockGate(...)` | PASS |
+| Same canonical policy? | all 5 → `truthLockGate` → `runtime/core/truth-lock.evaluateTruthLock` (ONE policy, no second control) | PASS |
+| Where is `ODG_TRUTH_LOCK_ENFORCE` set/passed/inherited? | **READ in all 5 points (both ports); SET NOWHERE** — not in source, launch scripts (`odg`, `odg-local-pipeline.sh`), systemd unit/candidate, the LIVE `odg-preprod.service` env (MainPID 170117, read via /proc), or the session | enforcement **ABSENT** |
+| Is strict mode operationally active? | **NO.** Policy is CODED + WIRED on one canonical policy, but runs RECORD-ONLY everywhere observable. "Policy coded" ≠ "config present" ≠ "enforcement active": here coded ✓, config present ✗, active ✗ | PASS (honest) |
+| Mutation paths NOT through the 5 | `adapter provider.execute` direct write (`ODG_PROVIDER_DIRECT_WRITE`, its own gate), legacy patch-executor **symbolic**-patch scaffold writes (no `edits` ⇒ the edits pre-flight does not fire), odg-delegate "historical" mode (post-hoc `scopeClean`) — Truth-Lock NOT applied; each has its own control | residual, documented |
+| Live mission-execution env | there is NO persistent mission-execution service (execution is driven/resumable per session); a future unattended runner's env | **NOT_MEASURABLE** (no such env exists yet) |
+
+**Verdict:** Truth-Lock protection is implemented + uniformly wired, but **NOT operationally enforced** — to activate it a deployment must set `ODG_TRUTH_LOCK_ENFORCE=1` in the mission-execution environment (a config/deployment decision, intentionally NOT taken here; gated). This is the mandate's exact distinction, reported rather than overclaimed.
+
 ### Day-1 verdict
 State established, continuation verified (with honest limit), research grounded, cartography complete, gaps prioritized, one ready repair landed. **Day 2 next:** gap #1 (consequential evidence probes) + gap #4 (run() dispatch tests), with careful per-executor evidence analysis to avoid regressing legitimate runs.
