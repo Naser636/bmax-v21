@@ -136,5 +136,58 @@ The adapter commit path checked human approval (`ODG_HUMAN_COMMIT_APPROVED`) + �
 
 **Verdict:** Truth-Lock protection is implemented + uniformly wired, but **NOT operationally enforced** — to activate it a deployment must set `ODG_TRUTH_LOCK_ENFORCE=1` in the mission-execution environment (a config/deployment decision, intentionally NOT taken here; gated). This is the mandate's exact distinction, reported rather than overclaimed.
 
+## Day 7 — FINAL integration · evidence audit · deployment-readiness verdict
+
+### 7.1 Final integration (evidence)
+tsc **0** (strict + leaves-strict + runtime-dist); build:runtime OK; parity:runtimes **PASS**; 6 dual-port equivalence benches (gateway, executors, probes, validation-engine, final-report, delegate-isolation) **ALL PASS**; **full `npm test` exit 0 — 481 test files, 0 failures**. No harness-level skipped/unrun files (every glob file executed via tsx; exit 0). Scheduler confirmed **inactive** (module unwired — nothing imports it; no process running). Campaign commits integrated: `fdd8f2f`(D1) `43d52b6`(D2) `3857157`+`c76e4b4`(D3) `60befd7`(D3B/C) `f2df358`(D4) `68606df`(reprise) `2c04550`+`2b63ad8`(D5) `d1a9240`(D6).
+
+### 7.2 Truth-Lock mutation-path coverage MATRIX (evidence-based)
+| Path | Effective mutation point | Canonical Truth-Lock? | Mode | Observed config | Refuse-before-effect test | Residual |
+|---|---|---|---|---|---|---|
+| odg-run entry | pipeline stage loop | YES (truthLockGate) | opt-in | ENFORCE unset | real staged-index run exit 1 before any stage (`3857157`) | enforce off ⇒ record-only |
+| capability-executors.resolve() | consequential run() | YES | opt-in, class-aware (consequential only) | unset | truth-lock-chokepoint.test 4/4 (seam) | observational skipped (intended) |
+| patch-executor edits | `fs.writeFileSync` loop | YES (pre-loop) | opt-in | unset | patch-executor-truth-lock 6/6 (real spawn, temp repo) | **symbolic-patch scaffold writes NOT gated** (no `edits`) |
+| delegate-isolation.applyProposal | `fs.writeFileSync` `:169` | YES (pre-write) | opt-in | unset | delegate-isolation-truth-lock 9/9 (io-double + gitExec seam) | — |
+| adapter.commitAuthorizedDeliverable | git add/commit | YES (orthogonal to human approval) | opt-in | unset | live-commit-authorization TL1-4 (temp repo) | — |
+| adapter provider.execute direct write | provider subprocess | NO (gated by `ODG_PROVIDER_DIRECT_WRITE`, default off) | n/a | — | existing provider tests | Truth-Lock not applied |
+| patch-executor symbolic scaffold | legacy `fs.writeFileSync` | NO | n/a | — | — | **gap: no `edits` ⇒ pre-flight skipped** |
+| odg-delegate historical mode | provider writes tree | NO (post-hoc `scopeClean`) | n/a | — | delegate tests | Truth-Lock not applied |
+**All 5 primary paths share ONE canonical policy** (`truthLockGate → evaluateTruthLock`). **STRICT MODE NOT ACTIVE anywhere observed** (`ODG_TRUTH_LOCK_ENFORCE` set nowhere: source/scripts/systemd/live-service-env MainPID 170117/session). 3 secondary paths carry their own distinct controls, not Truth-Lock.
+
+### 7.3 Truth-Lock strict-mode state + CONTROLLED ACTIVATION PLAN (not executed)
+**State:** policy CODED ✓ · config present ✗ · enforcement active ✗ (record-only). **Activation plan (prepared, NOT run — gated):** prerequisites = (a) an identified mission-execution environment, (b) the symbolic-scaffold + provider-direct-write residuals controlled or justified; target env = a preprod/isolated mission runner (NOT the dashboard service); pre-tests = run a known mutating mission on a deliberately non-conforming repo + confirm refusal before effect; rollback = unset the env var (record-only is the safe default, instant revert); expected evidence = truth-lock.json BLOCKED verdict + zero mutation + exit≠0. **Do not set `ODG_TRUTH_LOCK_ENFORCE=1` without explicit CTO authorization of that environment.** No persistent mission-execution service exists today ⇒ the real activation target is **NOT_MEASURABLE** until one is defined.
+
+### 7.4 Residual risk register (prioritized)
+| # | Risk (path → effect) | Evidence | Exposure | Impact | Existing control | Missing | Mitigation | Closure criterion | Auth needed |
+|---|---|---|---|---|---|---|---|---|---|
+| R1 | Truth-Lock strict mode never active ⇒ no runtime repo-safety enforcement | §7.2/7.3 (enforce unset everywhere) | HIGH while opt-in | MED (a non-conforming mutating run proceeds) | record-only verdict + per-path own gates (action-gate/scope/approval) | strict enforcement in a real env | execute §7.3 activation plan in preprod | a mutating mission on a bad repo is refused before effect in the target env | YES (env/config) |
+| R2 | Symbolic-patch scaffold writes bypass the patch-executor edits pre-flight | §7.2 (no `edits` ⇒ skipped) | LOW (scaffold/report writes under runtime/generated) | LOW | action-gate on the patch; scaffolds are gitignored generated | Truth-Lock on the symbolic branch | extend the pre-flight to also fire for mutating symbolic cases | a symbolic mutating run on a bad repo is refused under enforce | no (bounded repo lot) |
+| R3 | adapter provider.execute direct write + odg-delegate historical mode outside Truth-Lock | Day-4 audit | LOW (both off by default / post-hoc checked) | MED | ODG_PROVIDER_DIRECT_WRITE gate; scopeClean | Truth-Lock | gate at those points (bounded lots) OR justify | refuse-before-effect test at each | no |
+| R4 | Multilingual classifier limits (mixed-language under-classification) | Day-3B (fail-safe NONE) | LOW | LOW (fail-safe, never over-permits) | clause-scoped negation guard + FR/AR signals | mixed-language destructive detection | add guarded mixed signals | mixed destructive classified correctly w/o over-escalation | no |
+| R5 | Implement-run()-success-glue NOT_MEASURABLE | Day-2 | n/a | n/a | success logic proven via direct test; fail-closed via dispatch test | run()-glue test needs a real local model | measure in an env with a local model | run()-success path exercised end-to-end | env (local model) |
+| R6 | Unattended scheduler activation (not enabled) | Day-4/7 | n/a (inactive) | HIGH if wrongly activated | design + isolated harness; unwired; no process | real authz/recovery/stop proof under load | §5 activation review | isolated criteria + explicit perimeter approval | YES (CTO) |
+| R7 | Learning REUSE proven causally but not demonstrated on a live campaign task | V2-G2 | LOW | LOW | learning-effective-ab A/B (causal) + no-false-reuse | live end-to-end reuse metric | I1 eval suite over real tasks | measured reuse>0 on a real mission with improvement | no |
+| R8 | Claude Code auto-update fails (root npm prefix) | Day-4 | n/a (tooling) | LOW | — | writable prefix / privileged fix | operator chowns or re-points prefix | self-update succeeds | YES (privileged) |
+
+### 7.5 Autonomy measurement (honest; denominators + provenance, or NOT_MEASURABLE)
+- **Primitives implemented+tested:** 9/9 (cartography `fdd8f2f`); **wired into live pipeline:** 9/9 (IDENTITY wired D3).
+- **Consequential capabilities with a semantic evidence probe:** 10/10 after D2 (`43d52b6`) — was 7/10.
+- **Mapped mutation paths with Truth-Lock (code-wired):** 5/5 primary; **operationally ENFORCED:** 0/5 (strict mode off — R1).
+- **Multilingual classification coverage:** 25/25 matrix (`fd136e1`) + 12 adversarial dimensions (`60befd7`); limit: mixed-language (R4).
+- **No-false-success refusals locked (tests):** evidenceOk, engineeringOk, RECORDED, FAILED, stale-probe, unknown-cap, authz-DENY, provider-NO_CHANGE, present-state-NOT_PROVEN, incomplete-contract, + 5 new probes — all with real refusal tests.
+- **Regressions/defects fixed this campaign:** negation-inversion (safety), reconciler-false-NOT_PROVEN (J1), télécharge→FINANCIAL over-match, capability-registry port divergence (surfaced+locked), stale bench closure count.
+- **Full suite:** 481 files, 0 failures. **Equivalence (dual-port):** 6/6 benches pass.
+- **Learning reuse:** causal A/B PROVEN (G2); **live-campaign reuse: NOT_MEASURABLE** (no live metric harness — R7).
+- **Autonomy-rate / live-autonomy %:** **NOT_MEASURABLE** on a real run (no persistent mission-execution env; prior live-autonomy was thin/NOT_MEASURABLE). No global autonomy % invented.
+- **Human-intervention dependency:** commits require ODG_HUMAN_COMMIT_APPROVED (by design); strict enforcement + scheduler activation require explicit CTO authorization.
+
+### 7.6 Scheduler — status + activation review (NO activation)
+INACTIVE + unwired + no process. Isolated harness `mission-scheduler.test.ts` 23/23 proved: eligibility/refusal, per-mission+per-effect authz (no self-authorization), attempt/budget/duration/consecutive-failure limits, dedup/idempotence/resume, emergency stop (`ODG_SCHEDULER_STOP`), fail-closed classification, audit, no real effect. **Activation review (proposed, not executed):** admissible = pre-authorized/bounded/reversible/idempotent read-or-record-only missions; strictly excluded = destructive/financial/external/production/privileged; env = isolated/preprod only; caps = attempts+duration+budget; mandatory = audit log + emergency stop + rollback; required-before-extension = demonstrated authz+recovery+stop under load. **No activation authorized by this campaign.**
+
+### 7.7 DEPLOYMENT-READINESS VERDICT (three distinct)
+- **Existing runtime (dashboard + release pipeline + supervision): READY_WITH_CONDITIONS.** Served, identity CONSISTENT, supervised (odg-preprod active+enabled), full suite green. Condition: the host-REBOOT drill remains NOT RUN (boot-persistence configured, empirically unproven — prior finding), needs a maintenance window.
+- **Governed mission execution: READY_WITH_CONDITIONS.** The governed chain (NL→contract→authz→execute→evidence→validate→recover) is implemented + tested + no-false-success-locked. Conditions: (R1) enable Truth-Lock strict mode in an identified mission-execution env via §7.3 plan; (R2/R3) control/justify the 3 secondary mutation paths; (R5) Implement-run() glue remains NOT_MEASURABLE without a local model.
+- **Unattended autonomy: NOT_READY.** No scheduler activated (by design); real authz/recovery/stop-under-load unproven; requires explicit CTO perimeter approval + the §5/§7.6 review. Correctly gated — not a deficiency, a boundary.
+
 ### Day-1 verdict
 State established, continuation verified (with honest limit), research grounded, cartography complete, gaps prioritized, one ready repair landed. **Day 2 next:** gap #1 (consequential evidence probes) + gap #4 (run() dispatch tests), with careful per-executor evidence analysis to avoid regressing legitimate runs.
