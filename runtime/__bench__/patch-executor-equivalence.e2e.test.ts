@@ -4,7 +4,9 @@
  * patch-executor is a top-level script: reads runtime/generated/patch-plan.json, applies each patch inside a
  * sandbox cwd, writes runtime/generated/patch-execution.json. No wall-clock ⇒ patch-execution.json compared
  * BYTE-IDENTICAL, zero normalisation — INCLUDING the A2 author-provenance fields (authoredBy/appliedBy/
- * authorizedBy/humanMandatory). Closure = 16 modules; only patch-executor ported. Two cases exercise the
+ * authorizedBy/humanMandatory). Closure = 24 modules (was 16 @ec9986a; grew via the Day-3/R2 truth-lock-gate
+ * direct require + capability-executors/bash-command-governor hub accretion — see the in-body provenance at the
+ * count assertion); only patch-executor ported. Two cases exercise the
  * RECORDED no-op shape (deliberately attribution-free) and the APPLIED attribution-stamped shape.
  * Run: node_modules/.bin/tsx runtime/__bench__/patch-executor-equivalence.e2e.test.ts
  */
@@ -30,7 +32,19 @@ let COMPILED = "";
 function buildEngine(): void {
   const { closure, missing } = computeClosure(["patch-executor"]);
   check(missing.length === 0, `closure resolves (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 16, `closure is the expected 16-module set (size=${closure.length})`);
+  // Exact-set structural invariant (mirrors validation-engine-equivalence): the line above proves every
+  // require target resolves on disk; this exact count (not a weak >0 / membership check) makes ANY drift —
+  // an added OR removed module — fail the gate for conscious review. Updated ONLY when patch-executor's
+  // require-graph LEGITIMATELY changes, with provenance:
+  //   16→24: all 8 additions verified as real require edges over the current graph (each reachable, none
+  //   spurious, missing:none still holds). Source of the growth since ec9986a (η3-B85):
+  //     (a) patch-executor now directly requires `truth-lock-gate` (Day-3/R2 Truth-Lock pre-write gate),
+  //         which pulls `truth-lock` — the ONE canonical repo-safety policy, reused, not a new primitive (+2);
+  //     (b) the already-in-closure `capability-executors` hub (and `bash-command-governor`) accreted real
+  //         requires as the runtime wired autonomy measurement, delegation isolation, local model management
+  //         and provenance stamping: `autonomy-rate`→`autonomy-measure`, `delegate-isolation`→`provider-sandbox`,
+  //         `local-model-manager`, `evidence-provenance` (+6). All placed from dist; equivalence unchanged.
+  check(closure.length === 24, `closure is the expected 24-module set (size=${closure.length})`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-pe-dist-")); sandboxes.push(dir);
   for (const n of closure) place(dir, n);
   check(fs.readFileSync(path.join(DIST_CORE, "patch-executor.js"), "utf8") === fs.readFileSync(path.join(dir, "patch-executor.js"), "utf8"), "co-located patch-executor.js IS the compiled build output");
