@@ -63,7 +63,7 @@ function main(): void {
   if (enforce) {
     const tl = truthLockGate({ mutating: true, enforce: true, exec: gitExec });
     if (tl.blocked) {
-      try { recordAttempt(LOG, { status: "STARTUP_REFUSED", reason: tl.verdict.detail, at: "" }); } catch { /* audit best-effort */ }
+      try { recordAttempt(LOG, { mission: "(startup)", recordedAt: new Date().toISOString(), status: "STARTUP_REFUSED", reason: tl.verdict.detail }); } catch { /* audit best-effort */ }
       console.error("STARTUP_REFUSED: Truth-Lock repo-safety —", tl.verdict.detail);
       process.exit(2);
     }
@@ -75,7 +75,7 @@ function main(): void {
     isProven: (id: string) => proven.has(id),
     authorize: (item: any) => ALLOW.has(item.mission) ? { ok: true, reason: "read-only canary allowlist" } : { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` },
     policy: { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 },
-    recordAttempt: (d: any) => { try { recordAttempt(LOG, { ...d, at: "" }); } catch { /* best-effort */ } },
+    recordAttempt: (d: any) => { try { recordAttempt(LOG, { mission: (d && d.item && d.item.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } },
     dispatch,
   };
   const d = schedulerStep(ctx);

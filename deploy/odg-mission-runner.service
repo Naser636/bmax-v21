@@ -15,7 +15,7 @@ Environment=NODE_ENV=production
 # REVIEWED read-only canary allowlist (comma-separated mission ids). EMPTY => safe no-op (IDLE).
 Environment=ODG_CANARY_ALLOWLIST=
 ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
-RuntimeMaxSec=600
+TimeoutStartSec=600
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=read-only

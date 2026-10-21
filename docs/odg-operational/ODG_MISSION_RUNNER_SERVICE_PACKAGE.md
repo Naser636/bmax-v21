@@ -131,7 +131,7 @@ Environment=NODE_ENV=production
 # reviewed read-only mission classes; widening to consequential missions is a separate CTO decision.
 Environment=ODG_CANARY_ALLOWLIST=
 ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
-RuntimeMaxSec=600
+TimeoutStartSec=600
 # Hardening (least-privilege)
 NoNewPrivileges=true
 ProtectSystem=strict
