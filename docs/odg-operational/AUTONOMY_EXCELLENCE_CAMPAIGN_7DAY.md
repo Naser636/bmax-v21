@@ -262,3 +262,31 @@ Closes the one caveat left open in §7.12: the SECURITY PROPERTY "the real missi
 
 ### Day-1 verdict
 State established, continuation verified (with honest limit), research grounded, cartography complete, gaps prioritized, one ready repair landed. **Day 2 next:** gap #1 (consequential evidence probes) + gap #4 (run() dispatch tests), with careful per-executor evidence analysis to avoid regressing legitimate runs.
+
+---
+
+## 8. ODG AUTONOMOUS ACTIVATION & OPERATIONAL EXCELLENCE — POST-SCISSION CAMPAIGN (CTO master roadmap)
+
+### 8.0 G0 — POST-SCISSION TRUTH-LOCK BASELINE (read-only; this is the campaign's first execution)
+**Truth-lock finding (reality wins):** the declared "completed scission" is **NOT observable as a repo-state change on `main`** — HEAD is exactly `d8cf293` (the prior R1 entry-gate-proof commit), `== origin/main`, worktree clean, 5 stashes preserved and untouched. No scission commit in history; the structural dirs (`baseline/ foundation/ factory/` July 2026, `poc/` Oct 17, `site/` Oct 9) all predate recent work. Branches exist (`mission/fleet-first-exchange`, `odg/eta3-*`, `stabilization/controlled-odg`, `worktree-stabilization+controlled-odg`) but `main` is authoritative and unchanged. **No post-scission state was fabricated.** Currency re-confirmed on this build: `odg-run-entry-truth-lock` 9/9, `truth-lock-gate` 20/20, `truth-lock-chokepoint` 4/4 — all PASS. Scheduler: isolated driver, **unwired** (no bin requires/runs it). `ODG_TRUTH_LOCK_ENFORCE`: persistent nowhere (record-only default).
+
+### 8.1 Gate matrix (evidence-backed; honest status)
+| Gate | Phase | Status | Evidence / gap |
+|---|---|---|---|
+| G0 | Baseline | **PASS** (this turn) | HEAD `d8cf293` clean/in-sync; no scission delta on main; currency re-proven |
+| G1 | A — capability + mutation-path audit | **PARTIAL** | mutation paths mapped (7 Truth-Lock points §7.8/7.10/7.13); full A01–A54 operational inventory (active/inactive/opt-in/simulated/NOT_MEASURABLE per capability) NOT yet compiled |
+| G2 | B — real entry-gate refusal proof | **PASS** | `odg-run-entry-truth-lock.test.ts` 9/9 (source) + dist one-off (§7.13); allowed + refused both proven at the real entry, temp repos |
+| G3 | C — comprehensive enforcement + controlled activation | **MET (process-scoped), persistent pending** | 7 chokepoints gated (R2/R3); activation contract + process-scoped activation executed & reverted (§7.11/7.12); rollback proven; persistent/service activation = separate CTO decision (not done) |
+| G4 | D — end-to-end autonomous mission loop | **INCOMPLETE / NOT_MEASURABLE** | components exist + individually tested; a single connected intake→select→contract→execute→independent-verify→repair→persist→learn loop with 3 scenarios NOT yet built |
+| G5 | E — recovery / resume / idempotency | **PARTIAL** | checkpoint-resume engine + idempotency-guard exist + tested; consolidated G5 interruption/dup-prevention scenario suite not assembled |
+| G6 | F — scheduler non-executing validation | **PARTIAL** | isolated harness 23/23 (pure driver, dry-run semantics); NOT wired to the real executor; dry-run-against-real-integration not done |
+| G7 | G — limited supervised scheduled execution | **NOT STARTED / BLOCKED** | depends on G6 + explicit CTO perimeter authorization |
+| G8 | H — persistence / host-restart readiness | **BLOCKED (host) / NOT_MEASURABLE** | reboot drill deferred (needs maintenance window + authorization) |
+| G9 | I — learning-reuse validation | **PARTIAL** | `learning-effective-ab` causal reuse PROVEN (V2-G2); live-campaign reuse NOT_MEASURABLE |
+| G10 | J — autonomy metrics + 4 readiness verdicts | **PARTIAL** | eval-harness + `metricsSummary` (explicit denominators) exist; 80–85% internal-orchestration ratio NOT_MEASURABLE (no live-run denominator); verdicts A=ready-with-conditions (process-scoped proven), B/C/D=not ready |
+
+### 8.2 Selected next mission (dependency-ordered, highest-priority SAFE)
+**Phase A / G1 — capability + mutation-path inventory** (READ-ONLY, foundational, prerequisite for all safe activation decisions in G3+/G4). Acceptance: an evidence-backed inventory for each consequential capability — real entry point & call path, operational status (active/inactive/opt-in/simulated/NOT_MEASURABLE), read/write scope, policy + Truth-Lock coverage, failure/timeout behaviour, test evidence, and any policy bypass — sufficient to drive activation decisions, with no inference from mere code/registry presence. (G2 already PASS; the §18 named-priority entry-gate test is DONE and current, so it is not redone.)
+
+### 8.3 Explicitly EXCLUDED here (separate authorization required)
+Scheduler unattended activation (G7); persistent `ODG_TRUTH_LOCK_ENFORCE` / service activation; host reboot & persistence drill (G8); any systemd/infra/sudo/permission/credential/billing change; production deploy/public exposure; provider live calls with write authority; force-push/destructive git or data ops.
