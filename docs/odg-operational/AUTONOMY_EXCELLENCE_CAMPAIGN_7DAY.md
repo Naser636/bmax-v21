@@ -341,3 +341,23 @@ Executed under the CTO conditional authorization. No production/runtime code cha
 - **B — Limited scheduled execution: SUPERVISED read-only canary PROVEN; UNATTENDED NOT READY.** A supervised read-only canary runs correctly under enforcement; unattended/persistent/consequential scheduling is BLOCKED (persistent service = systemd/root, not available) and the allowlist is read-only only.
 - **C — Restart-resilient operation: PARTIAL — isolated PROVEN; host NOT_MEASURABLE.** Maintenance package ready; reboot drill gated.
 - **D — Unattended autonomy: NOT READY.** Needs persistent runner (G7-unattended) + host persistence (G8) + consequential-set live metrics (G10). Correctly gated.
+
+### 8.8 MISSION-RUNNER SERVICE — DESIGN + ISOLATED VALIDATION + HOST PACKAGE (NOT installed)
+Resolves the documented operational dependency without any host change. Full design + exact host-activation
+package: `docs/odg-operational/ODG_MISSION_RUNNER_SERVICE_PACKAGE.md`.
+- **Stage-1 verdict:** a persistent service is needed ONLY for UNATTENDED operation; supervised/attended is
+  already satisfied (`odg autonomy` / `odg mission` / the §8.7 supervised canary). The missing piece is a
+  periodic driver process; scheduler + governed executor + enforcement + recovery + dedup + stop all exist and
+  are reused — no second orchestrator.
+- **Design:** a systemd **timer + oneshot** running ONE bounded `runnerTick` (startup Truth-Lock precondition →
+  one `schedulerStep` wired to the real executor → exit) as **non-root `ubuntu`**, hardened, `Environment=
+  ODG_TRUTH_LOCK_ENFORCE=1` scoped to the runner unit ONLY (the §5 persistent-default scope that was previously
+  unavailable), read-only allowlist, fail-closed startup, stop via `systemctl`/`ODG_SCHEDULER_STOP`, rollback =
+  disable+remove units (record-only restored).
+- **Stage-3 isolated validation:** `runtime/__bench__/mission-runner-service-contract.e2e.test.ts` **6/6 PASS**
+  — the service contract is realizable + fail-closed from existing primitives, with NO new production code and
+  NO systemd. (Reuses g6 12/12, g7 10/10, g4 19/19.)
+- **Stage-4:** exact host package prepared (units, the one thin bin to add, permissions+justification=root ONLY
+  for the one-time unit install, pre-checks, activation/verification sequence, stop/rollback, acceptance
+  evidence, residual risk). **Nothing installed or enabled.** Activation needs the package + explicit operational
+  authorization for the one-time root install; widening beyond read-only is a separate decision.

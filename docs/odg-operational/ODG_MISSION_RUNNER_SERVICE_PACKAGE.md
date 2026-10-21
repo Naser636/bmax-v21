@@ -1,0 +1,86 @@
+# ODG MISSION-RUNNER SERVICE — DESIGN & HOST-ACTIVATION PACKAGE (NOT installed)
+
+> **Status: DESIGNED + ISOLATED-VALIDATED ONLY. Not installed, not active.** No host, systemd, permission,
+> credential, or persistent-config change has been made. Any activation requires the reviewed package below
+> plus explicit operational authorization. Truth Lock @ design: `main == origin/main`, clean, 5 stashes.
+
+## Stage 1 — Dependency verdict (evidenced)
+Ownership today: **scheduling** = `mission-scheduler.js` is a pure injected driver, **unwired** (no bin runs it);
+**execution** = `odg mission` → `mission-cli.ts` → (migrated-local | provider-adapter | local-pipeline→`odg-run`),
+invoked **manually**; **enforcement** = Truth-Lock at 6–7 process-scoped chokepoints (read `process.env`);
+**recovery** = in-process `AutonomyRuntimeAdapter.recoverLocally` + release-level `odg-recover.service`.
+
+**Verdict:** a persistent service is required **only for UNATTENDED** operation. **Attended/supervised**
+scheduled execution is already satisfied by existing mechanisms (`odg autonomy` loop, `odg mission`, and the
+proven supervised canary §8.7) — **no new service needed for supervised use**. For unattended use, the missing
+piece is a *periodic driver process*; everything else (scheduler decisions, governed executor, enforcement,
+recovery, dedup, audit, stop) already exists and is reused. **No second orchestrator / scheduler / ledger is
+introduced.**
+
+## Stage 2 — Bounded service design (least-privilege, fail-closed)
+- **Shape:** a **systemd TIMER + oneshot** (NOT a long-running loop) — each tick is ONE bounded `runnerTick`
+  (startup Truth-Lock precondition → one `schedulerStep` wired to the governed executor → exit). Bounded ticks
+  are inherently stoppable and cannot run away. (A long-running `Type=simple` loop is the rejected alternative:
+  larger blast radius, harder to bound.)
+- **Identity:** `User=ubuntu` **non-root** (the repo + node are owned by `ubuntu`; no root needed to RUN — only
+  to install the unit file). No new user required.
+- **Executable / cwd:** `ExecStart=/usr/bin/node <repo>/runtime/dist/bin/odg-schedule-tick.js`;
+  `WorkingDirectory=<repo>` (the one code artifact to ADD at activation — a thin bin composing the already-tested
+  `runnerTick` contract; it introduces no new logic, only wires existing primitives + a read-only allowlist).
+- **Minimal access:** read repo + write only `runtime/generated/**` (gitignored evidence/audit). No network; no
+  secrets; `ProtectSystem=strict` + `ReadWritePaths=<repo>/runtime/generated`; `NoNewPrivileges=true`;
+  `PrivateTmp=true`; `CapabilityBoundingSet=` (empty).
+- **Enforcement propagation:** `Environment=ODG_TRUTH_LOCK_ENFORCE=1` in the unit ⇒ scoped to the runner process
+  and its `odg-run` child (propagation PROVEN in §8.7 / service-contract B). This is the **persistent-default
+  scope** that §5 lacked — it lives on the runner unit ONLY, never global, never on the dashboard service.
+- **Scheduler↔executor integration:** `runnerTick` = canonical `truthLockGate` (startup) + `schedulerStep`
+  (eligibility/authz/dedup/bounds/stop) + `AutonomyRuntimeAdapter.runPipeline` (dispatch). No bypass path.
+- **Allowlist / write-set:** INITIAL allowlist = **read-only mission classes ONLY** (empty write-set).
+  Consequential missions are explicitly OUT until a separate decision widens the allowlist.
+- **Limits:** scheduler policy `maxAttemptsPerMission`, `maxBudget`, `maxDurationMs`, `maxConsecutiveFailures`;
+  timer `OnUnitActiveSec` (e.g. 15m) + `RuntimeMaxSec` per tick; concurrency = 1 (oneshot + timer, no overlap).
+- **Credential/provider isolation:** no provider configured (`ODG_PROVIDER_LIVE` unset ⇒ fail-closed); read-only
+  missions never call a provider; no credentials mounted.
+- **Logging / evidence / health / stop:** audit via `recordAttempt` + `truth-lock.json` + `mission-report.json`
+  under `runtime/generated`; health = last-tick audit; **stop** = `systemctl stop/disable` the timer OR
+  `ODG_SCHEDULER_STOP=1` (honored every tick).
+- **Startup fail-closed:** a tick REFUSES (STARTUP_REFUSED, no scheduling) on a non-conforming repo under
+  enforce, on a missing governance input, or when stopped (service-contract A/D).
+- **Recovery / dedup / rollback:** dedup via the ledger proven-gate (same-(mission,run) no-op); resume via
+  checkpoint-engine; rollback = `systemctl disable --now` the timer + delete the unit (record-only restored,
+  no repo change). `odg-recover.service` still guards the dashboard independently.
+
+## Stage 3 — Isolated validation results (performed; no host change)
+- `runtime/__bench__/mission-runner-service-contract.e2e.test.ts` — **6/6 PASS**: (A) safe startup fail-closed on
+  non-conforming+enforce; (B) bounded tick dispatches a read-only mission to the REAL executor with enforcement
+  reaching the child + zero effect; (C) IDLE on a proven queue; (D) stop halts + enforcement rollback leaves no
+  persistence. Composed ENTIRELY from existing primitives — no new production code, no systemd.
+- Reuses the already-green `g6-scheduler-dryrun` (12/12), `g7-canary` (10/10), `g4-end-to-end-loop` (19/19).
+
+## Stage 4 — EXACT host-activation package (for a LATER authorized change only)
+1. **Files to add/change:** add `runtime/bin/odg-schedule-tick.ts` (+ built `dist` sibling) — the thin bin
+   wrapping the validated `runnerTick` contract (read-only allowlist); add `/etc/systemd/system/
+   odg-mission-runner.service` (oneshot) + `odg-mission-runner.timer`. No other file changes.
+2. **Service definition / identity:** oneshot, `User=ubuntu`, `WorkingDirectory=<repo>`, hardening flags above,
+   `Environment=ODG_TRUTH_LOCK_ENFORCE=1`; timer `OnBootSec`/`OnUnitActiveSec=15m`, `Persistent=false`.
+3. **Permissions + justification:** root is required ONLY to write the two unit files + `daemon-reload` +
+   enable the timer (standard systemd install). The service RUNS as non-root `ubuntu`. No other privilege.
+4. **Pre-activation checks:** `git` in-sync + clean; `odg health` 200; `runtime/dist` built; the 3 isolated
+   benches green; allowlist reviewed (read-only only).
+5. **Activation + verification sequence:** install units → `daemon-reload` → `systemctl start
+   odg-mission-runner.service` ONCE (manual tick) → verify `truth-lock.json enforce=true` + audit + zero
+   consequential effect → only then `systemctl enable --now odg-mission-runner.timer`.
+6. **Conforming vs non-conforming behavior:** conforming ⇒ read-only mission runs, verified, no effect;
+   non-conforming ⇒ STARTUP_REFUSED (no scheduling), exit non-zero, audited.
+7. **Stop / disable / rollback:** `systemctl disable --now odg-mission-runner.timer` + `systemctl stop
+   odg-mission-runner.service` + remove the two unit files + `daemon-reload`. Record-only restored; no repo change.
+8. **Recovery if startup/mission fails:** tick is fail-closed (no partial effect); `odg-recover.service`
+   unaffected; a failed tick leaves an honest audit and exits — the next tick re-evaluates from canonical state.
+9. **Acceptance criteria + evidence:** ≥1 real tick dispatches a read-only mission, verified SUCCESS, enforce=true
+   in the child, zero commit/working-tree change, audit present, stop verified, rollback verified.
+10. **Residual risks / required access:** needs root (one-time) to install/enable the units — the ONLY gated
+    operational access. Widening the allowlist to consequential missions is a SEPARATE decision. Host reboot
+    persistence (G8) remains a separate maintenance-window drill.
+
+**This package is not executed. No unit exists, nothing is enabled.** Activation = this package + explicit
+operational authorization for the one-time root install.
