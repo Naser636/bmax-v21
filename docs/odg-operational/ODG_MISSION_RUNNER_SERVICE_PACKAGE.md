@@ -27,9 +27,16 @@ introduced.**
 - **Executable / cwd:** `ExecStart=/usr/bin/node <repo>/runtime/dist/bin/odg-schedule-tick.js`;
   `WorkingDirectory=<repo>` (the one code artifact to ADD at activation — a thin bin composing the already-tested
   `runnerTick` contract; it introduces no new logic, only wires existing primitives + a read-only allowlist).
-- **Minimal access:** read repo + write only `runtime/generated/**` (gitignored evidence/audit). No network; no
-  secrets; `ProtectSystem=strict` + `ReadWritePaths=<repo>/runtime/generated`; `NoNewPrivileges=true`;
-  `PrivateTmp=true`; `CapabilityBoundingSet=` (empty).
+- **Minimal access (REVIEW-CORRECTED):** `ProtectSystem=strict` + **`ProtectHome=read-only`** +
+  **`ReadWritePaths=<repo>`** (writes confined to the repo tree; the rest of `/home` + the system are read-only;
+  node + node_modules remain readable). `NoNewPrivileges=true`; `PrivateTmp=true`; `CapabilityBoundingSet=`
+  (empty); `IPAddressDeny=any` (no network). **Why `<repo>` not `<repo>/runtime/generated`:** a read-only
+  mission's writes are confined to `runtime/generated` in the sandbox (service-contract B: git clean), but the
+  real-repo verify step may touch build caches (`.next`, `node_modules/.cache`, `dist`) outside
+  `runtime/generated` — confining to `runtime/generated` alone is NOT_MEASURABLE-sufficient without an empirical
+  real-repo write-audit. `ReadWritePaths=<repo>` is the safe least-privilege choice that is provably compatible
+  (the runtime writes within the repo); tightening to `runtime/generated` (+ enumerated cache paths) is a
+  FOLLOW-UP hardening pending that write-audit.
 - **Enforcement propagation:** `Environment=ODG_TRUTH_LOCK_ENFORCE=1` in the unit ⇒ scoped to the runner process
   and its `odg-run` child (propagation PROVEN in §8.7 / service-contract B). This is the **persistent-default
   scope** that §5 lacked — it lives on the runner unit ONLY, never global, never on the dashboard service.
@@ -84,3 +91,48 @@ introduced.**
 
 **This package is not executed. No unit exists, nothing is enabled.** Activation = this package + explicit
 operational authorization for the one-time root install.
+
+## Appendix A — EXACT literal unit files (for the one-time authorized root install; `<repo>`=/home/ubuntu/bmax-v21)
+```ini
+# /etc/systemd/system/odg-mission-runner.service
+[Unit]
+Description=ODG governed mission runner (one bounded tick; read-only allowlist)
+After=network.target
+# Fail-closed: do not start if the repo path is missing.
+ConditionPathExists=/home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/bmax-v21
+Environment=ODG_TRUTH_LOCK_ENFORCE=1
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
+RuntimeMaxSec=600
+# Hardening (least-privilege)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/bmax-v21
+PrivateTmp=true
+CapabilityBoundingSet=
+IPAddressDeny=any
+# NOTE: no [Install] — the SERVICE is driven by the timer below, never enabled on its own.
+```
+```ini
+# /etc/systemd/system/odg-mission-runner.timer
+[Unit]
+Description=ODG mission-runner periodic tick (bounded, read-only canary)
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=15min
+Persistent=false
+Unit=odg-mission-runner.service
+
+[Install]
+WantedBy=timers.target
+```
+These are the DESIGN artifacts; **they are not installed**. The canary runs read-only missions only; widening
+the allowlist (the `odg-schedule-tick.js` CANARY_ALLOWLIST) to consequential missions is a separate decision.
