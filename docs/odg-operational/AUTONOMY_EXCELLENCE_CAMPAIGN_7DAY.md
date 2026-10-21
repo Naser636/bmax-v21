@@ -361,3 +361,31 @@ package: `docs/odg-operational/ODG_MISSION_RUNNER_SERVICE_PACKAGE.md`.
   for the one-time unit install, pre-checks, activation/verification sequence, stop/rollback, acceptance
   evidence, residual risk). **Nothing installed or enabled.** Activation needs the package + explicit operational
   authorization for the one-time root install; widening beyond read-only is a separate decision.
+
+### 8.9 G7 LIVE INSTALL + G8/G9/G10 (CTO master-authorization cycle, @ `e55fb62`)
+Executed under explicit CTO authorization (install + activate). Truth Lock clean throughout; 5 stashes preserved.
+- **G7 — runner INSTALLED; two defects fixed via live evidence; timer-enable BLOCKED at the harness gate.**
+  Installed the two reviewed units to `/etc/systemd/system/` (sudo, authorized) + `daemon-reload`. First tick
+  (empty allowlist) = **IDLE** (exit 0, git clean). **Live evidence surfaced two real defects, both fixed**
+  (`e55fb62`): (1) the audit record lacked `mission`/`recordedAt` so `recordAttempt` silently no-op'd — fixed;
+  audit now writes **under the hardened systemd sandbox** (proves `ProtectHome=read-only` + `ReadWritePaths=<repo>`
+  permit `runtime/generated`); (2) `RuntimeMaxSec` is ignored for `Type=oneshot` → switched to `TimeoutStartSec`.
+  M0001 tick (reviewed read-only: AUDIT/eng=false/authPaths=0) = **IDLE via dedup** (M0001 already proven in the
+  ledger) — a correct safety outcome, **not** a fresh dispatch. **Fresh read-only dispatch is NOT producible live**
+  (all 6 read-only candidates are already proven ⇒ dedup) — it is already PROVEN in `odg-schedule-tick.e2e`
+  (11/11 on the real bin); not manufactured. **The `systemctl enable --now` of the timer was BLOCKED by the
+  execution-environment safety classifier** (persistent unattended activation is held for a human at execution
+  time). End state: **units installed, timer DISABLED/inactive, no unattended execution**; manual supervised ticks
+  proven safe (IDLE, audit written, git clean, no provider). **Remaining single step (user/CTO to run or grant):**
+  `sudo systemctl enable --now odg-mission-runner.timer`.
+- **G8 — reboot-readiness prepared; reboot BLOCKED (no maintenance window).** Timer `Persistent=false` +
+  `OnBootSec=10min`; service `ConditionPathExists` boot-guard; `odg-recover.service` + `odg-healthcheck.timer`
+  present; dashboard active. Pre-reboot checks / post-reboot acceptance / rollback documented (§8.8/Appendix).
+  **Host reboot NOT performed** — requires a documented maintenance window + approval. BLOCKED.
+- **G9 — PASS (causal).** `learning-effective-ab` + `learning-chain` + `patch-memory-reuse-accounting` all green
+  (captured→persisted→retrieved→applied→verified; flat-effect downgraded; reuse-alone ≠ EFFECTIVE). Live-campaign
+  reuse NOT_MEASURABLE (no live consequential campaign).
+- **G10 — NOT_MEASURABLE (live).** The runner produced only IDLE ticks (every read-only candidate already proven ⇒
+  dedup), so there is **no live fresh-completion sample**: numerator 0 / denominator 0 (idle ticks excluded per
+  mandate). The 80–85% internal-orchestration ratio stays **NOT_MEASURABLE**; not fabricated; no allowlist
+  widening to manufacture it.
