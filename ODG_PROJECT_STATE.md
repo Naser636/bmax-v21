@@ -743,9 +743,10 @@ Truth Lock entry: `9fdc27e` == origin/main (0↔0), clean, 5 stashes. Priority O
 ## 🧭 BOUSSOLE CANONIQUE (A–Z campaign, updated 2026-10-22)
 Mandated single pointer (PART I §1). Reconcile with repo + evidence at every mission entry/exit.
 
-- **HEAD / branch / upstream / sync:** `1ecfe8c3b59614ab3e628c219668e8042839e98d` / `main` / `origin/main` / **0↔0** (fetch-confirmed).
+- **Current HEAD / branch / upstream:** `9b627c6` / `main` / `origin/main` (this Phases-A–D evidence commit is the tip; push it ⇒ sync 0↔0). The backup/restore evidence above was captured at the REFERENCE commit `1ecfe8c`; the two differ by exactly this doc commit (backup tooling + boussole), no source change.
+- **REFERENCE commit (backed up + restore-verified):** `1ecfe8c3b59614ab3e628c219668e8042839e98d`, tree `b2a5d543…`.
 - **Worktree / index / untracked / stashes:** clean / 0 staged / 0 untracked / **5 stashes preserved** (exported as patches in the backup bundle).
-- **Last validated checkpoint:** `1ecfe8c` (= the REFERENCE commit).
+- **Last validated checkpoint:** `1ecfe8c` (REFERENCE) · current tip `9b627c6` (Phases A–D record).
 - **Phase (A–Z roadmap):** A→D executed this session. E–Z pending (not started; prerequisites not yet met / later priorities).
 - **Reference version:** `REFERENCE_CANDIDATE` — commit `1ecfe8c`, tree `b2a5d543…`, Node v22.22.1/npm 9.2.0/tsc 5.9.3, lockfile tracked, dist regenerable (closure 98). Manifest: `docs/reference-backup/REFERENCE_MANIFEST.md`.
 - **Backup:** bundle built + SHA-256 (`scratchpad/reference-backup/`, source archive SHA `1b0b74c9…`, 5 stash patches). **Off-VPS USB write = `BLOCKED_BY_DEPENDENCY`** (human/physical — agent has no USB access; procedure in `docs/reference-backup/RESTORE.md`).
