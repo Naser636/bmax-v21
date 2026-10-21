@@ -237,6 +237,26 @@ function classify(name) {
   return /^[A-Za-z]/.test(pascal) ? pascal : "Capability" + pascal;
 }
 
+// IDENTITY PRE-WRITE GATE (opt-in, mirror of .ts). Before mutating ANY file, a run carrying `edits` must pass
+// the canonical Truth-Lock repo-safety policy. Covers DIRECT patch-executor spawns that bypass the odg-run entry
+// gate. Observational / no-`edits` runs skip. Opt-in ODG_TRUTH_LOCK_ENFORCE (default no-op). Reuses the gate.
+{
+  const __hasEdits = Array.isArray(plan.patches) && plan.patches.some((p) => Array.isArray(p.edits) && p.edits.length > 0);
+  const __tlEnforce = process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true";
+  if (__hasEdits && __tlEnforce) {
+    const { truthLockGate } = require("./truth-lock-gate");
+    const __tl = truthLockGate({ mutating: true, enforce: true, mission: plan.mission });
+    if (__tl.blocked) {
+      for (const p of plan.patches) {
+        report.executed.push({ action: p.action, objectiveId: p.objectiveId, status: "FAILED", code: "TRUTH_LOCK_REFUSED", detail: __tl.verdict.detail, ...attribution({ authoredBy: plannedAuthor(p), appliedEffect: false, authorized: false, humanMandatory: true }) });
+      }
+      fs.writeFileSync(path.join(GENERATED_DIR, "patch-execution.json"), JSON.stringify(report, null, 2));
+      console.error("STOP: Truth Lock REFUSED a mutating patch run before any write —", __tl.verdict.detail);
+      process.exit(1);
+    }
+  }
+}
+
 for (const patch of plan.patches) {
   console.log("EXECUTE:", patch.action);
 
