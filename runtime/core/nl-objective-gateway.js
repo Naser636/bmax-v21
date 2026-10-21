@@ -101,8 +101,11 @@ function normalizeObjective(text) {
 // literal word.) FR keywords are unaccented so no folding is needed here. (Mirror of the .ts port.)
 const CONSTRAINT_SIGNALS = [
     /\bwithout\b[^.,;]*/gi, /\bmust not\b[^.,;]*/gi, /\bno\s+\w+[^.,;]*/gi, /\bonly\b[^.,;]*/gi, /\bnever\b[^.,;]*/gi,
+    // EN prohibition verbs: do not · don't · cannot · can't · mustn't (mirror of .ts).
+    /\bdo not\b[^.,;]*/gi, /\bdon['’]t\b[^.,;]*/gi, /\bcannot\b[^.,;]*/gi, /\bcan['’]t\b[^.,;]*/gi, /\bmustn['’]t\b[^.,;]*/gi,
     /\bsans\b[^.,;]*/gi, /\bne\s+\w+\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
-    /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g,
+    // AR: بدون · فقط · ابدا/أبدا · دون · لا تَفعل (negated prohibition) · ممنوع (forbidden) (mirror of .ts).
+    /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g, /لا\s+ت\S+[^.,;]*/g, /ممنوع[^.,;]*/g,
 ];
 function extractConstraints(normalized) {
     const out = [];
@@ -167,11 +170,35 @@ function probeForCapability(capability) {
     return (capability && CAPABILITY_PROBE[capability]) || null;
 }
 
+// NEGATION-INVERSION GUARD (SAFETY, mirror of .ts): a prohibition that names an effect ("do not delete the
+// file", "ne supprime pas", "لا تحذف") must NEVER be classified as that effect. Reject an effect-signal match
+// if immediately preceded by an EN/FR/AR negation; the prohibition is still recorded by extractConstraints.
+// Clause-scoped negation (mirror of .ts): a prohibition anywhere earlier in the same clause suppresses the
+// effect (e.g. "do not pay the invoice" negates both "pay" and the later noun-signal "invoice").
+const CLAUSE_NEGATION = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn['’]t\b|\bcannot\b|\bcan['’]t\b|\bmust not\b|\bmustn['’]t\b|\bnot\b|\bnever\b|\bno\b|\bne\b|\bpas\b|\bsans\b|\bjamais\b|\bsauf\b|\bwithout\b)/;
+const CLAUSE_BOUNDARY = /[,;.:!?()\[\]—–/،؛]|\b(?:and|then|also|but|et|puis|ensuite|mais)\b/g;
+function isNegatedBefore(g, idx) {
+    const pre = g.slice(0, idx);
+    let start = 0, m;
+    CLAUSE_BOUNDARY.lastIndex = 0;
+    while ((m = CLAUSE_BOUNDARY.exec(pre)) !== null) start = m.index + m[0].length;
+    const clause = pre.slice(start);
+    return CLAUSE_NEGATION.test(clause) || /لا\s/.test(clause);
+}
+function signalPresentUnnegated(g, s) {
+    let from = 0;
+    for (;;) {
+        const idx = g.indexOf(s, from);
+        if (idx === -1) return false;
+        if (!isNegatedBefore(g, idx)) return true;
+        from = idx + 1;
+    }
+}
 function classifyObjective(goal) {
     // Fold diacritics so FRENCH signals (stored folded) match accented input; EN folds to itself, AR preserved.
     const g = foldDiacritics(String(goal || "")).toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
-        if (signals.some((s) => g.includes(s))) {
+        if (signals.some((s) => signalPresentUnnegated(g, s))) {
             return { externalEffect: family, actionClass, risk, reversibility, requiresExternal, requiresHuman };
         }
     }

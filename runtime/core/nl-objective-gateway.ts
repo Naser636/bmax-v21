@@ -110,10 +110,15 @@ function normalizeObjective(text: any) {
 // keywords are unaccented so no folding is needed here.
 const CONSTRAINT_SIGNALS = [
     /\bwithout\b[^.,;]*/gi, /\bmust not\b[^.,;]*/gi, /\bno\s+\w+[^.,;]*/gi, /\bonly\b[^.,;]*/gi, /\bnever\b[^.,;]*/gi,
+    // EN prohibition verbs: do not · don't · cannot · can't · mustn't (prohibitions were previously uncaptured,
+    // so "fix the build but do not delete X" recorded no constraint — a governance-visibility gap, not a safety
+    // inversion: the effect classifier already does NOT fire on these forms).
+    /\bdo not\b[^.,;]*/gi, /\bdon['’]t\b[^.,;]*/gi, /\bcannot\b[^.,;]*/gi, /\bcan['’]t\b[^.,;]*/gi, /\bmustn['’]t\b[^.,;]*/gi,
     // FR: sans · ne … pas · ne pas · jamais · uniquement · seulement · pas de
     /\bsans\b[^.,;]*/gi, /\bne\s+\w+\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
-    // AR: بدون (without) · فقط (only) · ابدا/أبدا (never) · دون (without)
-    /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g,
+    // AR: بدون (without) · فقط (only) · ابدا/أبدا (never) · دون (without) · لا تَفعل (negated imperfect
+    // prohibition "do not …") · ممنوع (forbidden). \b is ASCII-only so Arabic anchors on the literal word.
+    /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g, /لا\s+ت\S+[^.,;]*/g, /ممنوع[^.,;]*/g,
 ];
 function extractConstraints(normalized: any) {
     const out: any[] = [];
@@ -195,12 +200,40 @@ function probeForCapability(capability: any) {
     return (capability && CAPABILITY_PROBE[capability]) || null;
 }
 
+// NEGATION-INVERSION GUARD (SAFETY). A prohibition that NAMES an effect ("do not delete the file",
+// "ne supprime pas", "لا تحذف") must NEVER be classified as that effect — else a forbidden destructive /
+// deploy / financial action could be executed (a catastrophic inversion). Before accepting an effect-signal
+// match, we reject it if it is immediately preceded (same short window) by a negation in EN/FR/AR. The
+// prohibition is still recorded by extractConstraints; the EFFECT is suppressed (⇒ NONE), the safe direction.
+// Negation is scoped to the CLAUSE containing the effect signal (not a fixed window) so a prohibition anywhere
+// earlier in the same clause suppresses the effect — e.g. "do not pay the invoice" negates BOTH "pay" and the
+// later noun-signal "invoice". Clause boundaries: Latin/Arabic punctuation + EN/FR conjunctions (and/then/but/
+// et/puis/mais…). Arabic negation particle لا anywhere in the clause also negates.
+const CLAUSE_NEGATION = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn['’]t\b|\bcannot\b|\bcan['’]t\b|\bmust not\b|\bmustn['’]t\b|\bnot\b|\bnever\b|\bno\b|\bne\b|\bpas\b|\bsans\b|\bjamais\b|\bsauf\b|\bwithout\b)/;
+const CLAUSE_BOUNDARY = /[,;.:!?()\[\]—–/،؛]|\b(?:and|then|also|but|et|puis|ensuite|mais)\b/g;
+function isNegatedBefore(g: string, idx: number): boolean {
+    const pre = g.slice(0, idx);
+    let start = 0, m: any;
+    CLAUSE_BOUNDARY.lastIndex = 0;
+    while ((m = CLAUSE_BOUNDARY.exec(pre)) !== null) start = m.index + m[0].length;
+    const clause = pre.slice(start);
+    return CLAUSE_NEGATION.test(clause) || /لا\s/.test(clause);
+}
+function signalPresentUnnegated(g: string, s: string): boolean {
+    let from = 0;
+    for (;;) {
+        const idx = g.indexOf(s, from);
+        if (idx === -1) return false;
+        if (!isNegatedBefore(g, idx)) return true; // a genuine (un-negated) occurrence
+        from = idx + 1;
+    }
+}
 function classifyObjective(goal: any) {
     // Fold diacritics so FRENCH signals (stored folded in EFFECT_FAMILIES) match accented input
     // ("déploie"→"deploie"); English folds to itself (byte-identical) and Arabic is preserved.
     const g = foldDiacritics(String(goal || "")).toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
-        if (signals.some((s) => g.includes(s))) {
+        if (signals.some((s) => signalPresentUnnegated(g, s))) {
             return { externalEffect: family, actionClass, risk, reversibility, requiresExternal, requiresHuman };
         }
     }

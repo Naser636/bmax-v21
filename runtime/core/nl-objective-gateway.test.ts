@@ -387,6 +387,49 @@ console.log("== NL Objective Gateway ==");
     }
 }
 
+// ---- 27 — NEGATION / PROHIBITION SAFETY (EN + FR + AR): no inversion, prohibitions captured --------
+// The highest-risk multilingual failure is a NEGATION INVERSION — "do not delete" / "ne supprime pas" /
+// "لا تحذف الملف" (do NOT delete) being executed as a delete. These lock BOTH: (a) prohibitions classify the
+// effect as NON-destructive (NONE) and fire NO consequential effect end-to-end; (b) the prohibition is CAPTURED
+// as a constraint (governance visibility), while genuine imperatives still classify as their real effect.
+{
+  const C = gw.classifyObjective;
+  const hasConstraint = (goal, re) => gw.extractConstraints(goal).some((x) => re.test(x));
+  // (a) NO INVERSION — a prohibition must NOT be classified as the destructive/deploy effect it forbids.
+  ok("27 AR 'لا تحذف الملف' (do-not-delete) ⇒ effect NOT DESTRUCTIVE (no inversion)", C("لا تحذف الملف").externalEffect !== "DESTRUCTIVE");
+  ok("27 AR 'لا تنشر في الإنتاج' (do-not-deploy) ⇒ effect NOT DEPLOY (no inversion)", C("لا تنشر في الإنتاج").externalEffect !== "DEPLOY");
+  ok("27 FR 'ne supprime pas' ⇒ effect NOT DESTRUCTIVE (no inversion)", C("ne supprime pas le fichier, trouve pourquoi le build echoue").externalEffect !== "DESTRUCTIVE");
+  ok("27 EN 'do not delete' ⇒ effect NOT DESTRUCTIVE (no inversion)", C("fix the build but do not delete any file").externalEffect !== "DESTRUCTIVE");
+  // STRONG inversions (these phrasings CONTAIN the effect signal — "delete the"/"invoice"/"deploy" — so a naive
+  // substring classifier WOULD invert; the clause-scoped negation guard must suppress them). Regression lock for
+  // the defect found by the multilingual coverage probe.
+  ok("27 EN 'do not delete THE file' ⇒ NOT DESTRUCTIVE (contains 'delete the')", C("do not delete the file").externalEffect !== "DESTRUCTIVE");
+  ok("27 EN 'do not pay the invoice' ⇒ NOT FINANCIAL (clause-scoped: noun 'invoice' after negation)", C("do not pay the invoice").externalEffect !== "FINANCIAL");
+  ok("27 EN 'do not deploy to production' ⇒ NOT DEPLOY", C("do not deploy to production").externalEffect !== "DEPLOY");
+  ok("27 EN 'never deploy to production' ⇒ NOT DEPLOY", C("never deploy to production").externalEffect !== "DEPLOY");
+  ok("27 EN clause after 'but': 'fix the build but do not delete the file' ⇒ NOT DESTRUCTIVE", C("fix the build but do not delete the file").externalEffect !== "DESTRUCTIVE");
+  // NON-REGRESSION: a negation AFTER the imperative (different clause) must NOT suppress it.
+  ok("27 non-regression: 'delete the file, no backup needed' ⇒ DESTRUCTIVE (neg is a later clause)", C("delete the file, no backup needed").externalEffect === "DESTRUCTIVE");
+  ok("27 non-regression: 'pay the invoice but do not deploy' ⇒ FINANCIAL (pay clause un-negated)", C("pay the invoice but do not deploy").externalEffect === "FINANCIAL");
+  // (a') END-TO-END — a prohibition fires NO provider/external/write effect (dry-run safe, no destructive run).
+  {
+    const r = gw.compile("لا تحذف الملف، جد سبب فشل البناء", { currentState: "CREATED" });
+    ok("27 AR prohibition compile: zero side effects (no delete executed)", r.providerCalls === 0 && r.externalCalls === 0 && r.externalWrites === 0);
+    ok("27 AR prohibition compile: no DESTRUCTIVE objective classified", (r.objectives || []).every((o) => o.classification.externalEffect !== "DESTRUCTIVE"));
+  }
+  // (b) PROHIBITION CAPTURED as a constraint (EN/FR/AR) — governance visibility of the negative clause.
+  ok("27 EN prohibition captured as constraint", hasConstraint("fix the build but do not delete any file", /do not delete/i));
+  ok("27 EN contraction don't captured", hasConstraint("refactor but don’t touch the config", /don.t touch/i));
+  ok("27 FR prohibition captured as constraint", hasConstraint("ne supprime pas le fichier", /ne supprime pas/));
+  ok("27 AR prohibition captured as constraint", hasConstraint("لا تحذف الملف", /لا\s+تحذف/));
+  ok("27 AR do-not-deploy captured as constraint", hasConstraint("لا تنشر في الإنتاج", /لا\s+تنشر/));
+  // (c) NON-REGRESSION — genuine imperatives still classify as their real (consequential) effect.
+  ok("27 non-regression: AR imperative 'احذف الملف' ⇒ DESTRUCTIVE", C("احذف الملف").externalEffect === "DESTRUCTIVE");
+  ok("27 non-regression: AR imperative 'انشر في الإنتاج' ⇒ DEPLOY", C("انشر في الإنتاج").externalEffect === "DEPLOY");
+  // (d) prepare-not-execute: the "do not launch" clause is recorded even though "deployment" is mentioned.
+  ok("27 'prepare … but do not launch' records the do-not constraint", hasConstraint("prepare the deployment but do not launch it", /do not launch/i));
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);
