@@ -1,0 +1,60 @@
+{
+  "mission": "R1_DEF_GAMMA_FALSE_SUCCESS_CLOSURE",
+  "priority": "HIGH",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "Tier-0 R1: close DEF-GAMMA false-success — a GAMMA-class objective (explicit requiresExecution signal) satisfied only by a RECORDED no-op reached validated=true even in observation mode. Implements DEC-009 + OD-4 (explicit non-semantic signal) in the Validation Engine (both ports) + dedicated lock test.",
+  "authorized_paths": [
+    "runtime/missions/R1_DEF_GAMMA_FALSE_SUCCESS_CLOSURE.json",
+    "runtime/core/validation-engine.ts",
+    "runtime/core/validation-engine.js",
+    "src/runtime/validation-engine-gamma.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/R1_DEF_GAMMA_FALSE_SUCCESS_CLOSURE.json",
+    "runtime/core/validation-engine.ts",
+    "runtime/core/validation-engine.js",
+    "src/runtime/validation-engine-gamma.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MISSION 'ODG — TIER-0 EXECUTION: R1 DEF-GAMMA FALSE-SUCCESS CLOSURE' (session message).",
+    "recorded_at": "2026-10-22T00:00:00Z", "note": "Engineering + commit/push authorized for this bounded write-set per standing governance; no force-push. Not fabricated."
+  },
+  "work_item_contract": {
+    "objective": "A GAMMA-class objective (requiresExecution:true) satisfied only by a RECORDED no-op MUST yield validated=false + explicit reason, even in observation mode; legitimate audits without the signal stay SUCCESS.",
+    "root_cause": "DEC-009 defined the GAMMA policy but deferred the signal schema to OD-4 (OPEN), which BLOCKED the validation-engine change; so the A1+ audit-spare (noRecordedNoOp) still let an observation-mode RECORDED no-op reach validated=true (validation-engine.js:88-89 era).",
+    "write_set": ["runtime/core/validation-engine.ts", "runtime/core/validation-engine.js", "src/runtime/validation-engine-gamma.test.ts", "runtime/missions/R1_DEF_GAMMA_FALSE_SUCCESS_CLOSURE.json", "ODG_PROJECT_STATE.md"],
+    "invariants": [
+      "OD-4 signal is ONE declared boolean `requiresExecution` on an objective — no goal-text parsing, no new contract language.",
+      "Absent/false signal ⇒ unchanged behaviour (M000x audits stay SUCCESS; A3 lock preserved).",
+      "ALPHA/BETA (EXECUTED+evidence, APPLIED edits) unaffected.",
+      "Dual-port parity (validation-engine.ts ≡ .js) preserved.",
+      "No new primitive/orchestrator; no governance bypass; unknown status never becomes success.",
+      "Preserve uncommitted V1/V2 research docs, 5 stashes, independent technical missions."
+    ],
+    "acceptance_criteria": [
+      "Reproduction: pre-fix requiresExecution+RECORDED no-op ⇒ validated=true; post-fix ⇒ validated=false (shown).",
+      "New lock test passes all 4 DEC-009 criteria both behaviours; A3 recorded-noop lock stays green.",
+      "tsc exit 0; validation-engine dual-port equivalence bench PASS; validation consumers green.",
+      "Final diff limited to the write-set (research docs NOT committed); committed + pushed (no force)."
+    ],
+    "stop_conditions": ["A fix needs a path outside the write-set.", "Equivalence/A3/consumer regression that cannot be fixed in scope."],
+    "rollback": "git checkout -- runtime/core/validation-engine.{ts,js} src/runtime/validation-engine-gamma.test.ts ODG_PROJECT_STATE.md; delete the contract + rebuild dist from clean source.",
+    "evidence_required": ["pre/post reproduction", "new test + A3 + equivalence results", "tsc", "commit/push ids"]
+  },
+  "objectives": [
+    { "id": "R1_DEF_GAMMA_FALSE_SUCCESS_CLOSURE_1", "goal": "Close DEF-GAMMA false success via DEC-009/OD-4 signal + gate.",
+      "requiresExecution": true,
+      "done_when": ["requiresExecution+RECORDED no-op ⇒ validated=false (reproduction before/after).", "New lock test + A3 + equivalence green; tsc 0.", "Committed within the authorized write-set."],
+      "proof": "def-gamma-false-success-closed", "authorization": { "eligible": true, "authorized": true } }
+  ],
+  "definition_of_done": ["DEF-GAMMA closed in both ports + dedicated lock test; reproduction before/after shown; regression green; committed+pushed (no force); boussole updated."],
+  "source": "cto-directive",
+  "permissions": { "engineering": true, "authorizedPaths": ["runtime/core/validation-engine.ts", "runtime/core/validation-engine.js", "src/runtime/validation-engine-gamma.test.ts", "ODG_PROJECT_STATE.md"], "network": false },
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION"],
+  "generatedBy": "claude-code (authored under CTO Tier-0 R1 DEF-GAMMA mandate)"
+}

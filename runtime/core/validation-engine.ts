@@ -208,12 +208,26 @@ const dependencyOk = dependencyViolations.length === 0;
 // objective's own proof being unmet is expected (its work has not run) and must not sink the whole mission.
 const failingProvenObjectiveProofs = failingObjectiveProofs.filter((p: any) => !blockedObjectiveIds.has(p.objective));
 
+// DEF-GAMMA closure (CTO DEC-009 + OD-4). An objective MAY carry the EXPLICIT, non-semantic contract
+// signal `requiresExecution: true`, declaring it MUST produce real execution proof. Such a GAMMA-class
+// objective satisfied only by a RECORDED no-op (no edit, no capability, no evidence) is a FALSE SUCCESS
+// EVEN in a declared observation mode — the single case the A1+ audit-spare (noRecordedNoOp) would
+// otherwise permit (DEF-GAMMA: "read-only RECORDED no-op reaches validated=true"). This is ONE declared
+// boolean: no goal-text parsing, no new contract language. Absent/false ⇒ unchanged behaviour, so a
+// legitimate audit WITHOUT the signal (M0000/M0001/M0002-class) stays SUCCESS (DEC-009 criterion 3 / A3
+// case 4 preserved). ALPHA/BETA (EXECUTED+evidence, APPLIED edits) are not RECORDED ⇒ unaffected (criterion 1).
+const gammaObjectiveIds = new Set(planObjectives.filter((o: any) => o && o.requiresExecution === true).map((o: any) => o.id));
+const gammaFalseSuccess = recordedNoOp.filter((e: any) => gammaObjectiveIds.has(e.objectiveId || e.action));
+const noGammaFalseSuccess = gammaFalseSuccess.length === 0;
+
 const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
     evidenceIntegrity: evidenceOk,
     noRecordedNoOp,
     recordedNoOp: recordedNoOp.map((e: any) => e.objectiveId || e.action),
+    noGammaFalseSuccess,
+    gammaFalseSuccess: gammaFalseSuccess.map((e: any) => e.objectiveId || e.action),
     engineeringPerformed: engineeringOk,
     buildGate: buildOk,
     typescriptGate: typescriptOk,
@@ -237,7 +251,7 @@ const checks = {
 // SUCCESS requires full proof AND no outstanding blocked action. Adding `noBlocked` closes the false-DONE
 // hole: a per-action BLOCKED entry is neither FAILED nor RECORDED, so without this it would slip through
 // every existing gate and a not-actually-done mission would be stamped SUCCESS.
-const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
+const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
 
 // PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
 // SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
@@ -250,6 +264,7 @@ const partialEligible =
     provenActions.length > 0 &&
     noFailures &&
     noRecordedNoOp &&
+    noGammaFalseSuccess &&
     coverageOk &&
     evidenceOk &&
     engineeringOk &&
@@ -266,6 +281,7 @@ if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objecti
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f: any) => f.action).join(", ")}.`);
 if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evidence: ${missingEvidence.map((e: any) => e.evidence).join(", ")}.`);
 if (!noRecordedNoOp) unmet.push(`Objective(s) recorded as a no-op without evidence (RECORDED): ${recordedNoOp.map((e: any) => e.objectiveId || e.action).join(", ")}.`);
+if (!noGammaFalseSuccess) unmet.push(`Objective(s) declaring required execution (requiresExecution) produced a RECORDED no-op with no evidence — DEF-GAMMA false success refused: ${gammaFalseSuccess.map((e: any) => e.objectiveId || e.action).join(", ")}.`);
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");

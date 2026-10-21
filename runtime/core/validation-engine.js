@@ -197,12 +197,22 @@ const dependencyOk = dependencyViolations.length === 0;
 // objective's own proof being unmet is expected (its work has not run) and must not sink the whole mission.
 const failingProvenObjectiveProofs = failingObjectiveProofs.filter((p) => !blockedObjectiveIds.has(p.objective));
 
+// DEF-GAMMA closure (CTO DEC-009 + OD-4). Explicit non-semantic signal `requiresExecution: true` on an
+// objective ⇒ a RECORDED no-op (no edit/capability/evidence) for it is a FALSE SUCCESS even in a declared
+// observation mode (the one case noRecordedNoOp would permit). One declared boolean; absent/false ⇒ unchanged
+// (legitimate audits without the signal stay SUCCESS; M000x spared). Parity twin of validation-engine.ts.
+const gammaObjectiveIds = new Set(planObjectives.filter((o) => o && o.requiresExecution === true).map((o) => o.id));
+const gammaFalseSuccess = recordedNoOp.filter((e) => gammaObjectiveIds.has(e.objectiveId || e.action));
+const noGammaFalseSuccess = gammaFalseSuccess.length === 0;
+
 const checks = {
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
     evidenceIntegrity: evidenceOk,
     noRecordedNoOp,
     recordedNoOp: recordedNoOp.map((e) => e.objectiveId || e.action),
+    noGammaFalseSuccess,
+    gammaFalseSuccess: gammaFalseSuccess.map((e) => e.objectiveId || e.action),
     engineeringPerformed: engineeringOk,
     buildGate: buildOk,
     typescriptGate: typescriptOk,
@@ -226,7 +236,7 @@ const checks = {
 // SUCCESS requires full proof AND no outstanding blocked action. Adding `noBlocked` closes the false-DONE
 // hole: a per-action BLOCKED entry is neither FAILED nor RECORDED, so without this it would slip through
 // every existing gate and a not-actually-done mission would be stamped SUCCESS.
-const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
+const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
 
 // PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
 // SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
@@ -239,6 +249,7 @@ const partialEligible =
     provenActions.length > 0 &&
     noFailures &&
     noRecordedNoOp &&
+    noGammaFalseSuccess &&
     coverageOk &&
     evidenceOk &&
     engineeringOk &&
@@ -255,6 +266,7 @@ if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objecti
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f) => f.action).join(", ")}.`);
 if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evidence: ${missingEvidence.map((e) => e.evidence).join(", ")}.`);
 if (!noRecordedNoOp) unmet.push(`Objective(s) recorded as a no-op without evidence (RECORDED): ${recordedNoOp.map((e) => e.objectiveId || e.action).join(", ")}.`);
+if (!noGammaFalseSuccess) unmet.push(`Objective(s) declaring required execution (requiresExecution) produced a RECORDED no-op with no evidence — DEF-GAMMA false success refused: ${gammaFalseSuccess.map((e) => e.objectiveId || e.action).join(", ")}.`);
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
