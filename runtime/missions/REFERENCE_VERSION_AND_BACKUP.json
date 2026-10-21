@@ -1,0 +1,65 @@
+{
+  "mission": "REFERENCE_VERSION_AND_BACKUP",
+  "priority": "HIGH",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "A–Z campaign Phases A–D: establish Truth Lock + reconcile the boussole, define the reproducible reference version (REFERENCE_CANDIDATE), build a fingerprinted off-VPS backup bundle (physical USB write = human-gated), and PROVE restore in an isolated environment (BACKUP_RESTORE_VERIFIED). No deployment; no destructive action.",
+  "authorized_paths": [
+    "runtime/missions/REFERENCE_VERSION_AND_BACKUP.json",
+    "docs/reference-backup/REFERENCE_MANIFEST.md",
+    "docs/reference-backup/RESTORE.md",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/REFERENCE_VERSION_AND_BACKUP.json",
+    "docs/reference-backup/REFERENCE_MANIFEST.md",
+    "docs/reference-backup/RESTORE.md",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MASTER ROADMAP 'ODG/BMAX — De la version de référence au déploiement contrôlé' (A–Z), CTO decision: start with Truth Lock, reference version, USB backup, tested restore.",
+    "recorded_at": "2026-10-22T00:00:00Z",
+    "note": "Bundle + restore test run in scratchpad/isolation (no repo write beyond the manifest/procedure docs + boussole). Physical USB write is human-gated (Porte C) and recorded BLOCKED_BY_DEPENDENCY, not fabricated."
+  },
+  "work_item_contract": {
+    "objective": "Secure a reproducible reference version and prove it can be restored off a verified backup.",
+    "scope": "Read-only inventory + fingerprinting + an isolated backup bundle + an isolated restore test + canonical docs. NO systemd/service/timer change, NO live-state mutation, NO deployment, NO destructive git, NO USB physical write (human).",
+    "invariants": [
+      "Reference identity = an exact commit (1ecfe8c) + tree hash; not merely 'worktree clean'.",
+      "Bundle excludes node_modules/caches/generated/secrets; stashes preserved separately (non-destructive).",
+      "Restore test runs in an isolated dir, never over the work tree or production.",
+      "BACKUP_RESTORE_VERIFIED requires a real independent restore (integrity + content match + rebuild + tests), not merely an archive created.",
+      "No fabricated fingerprint/measure/authorization."
+    ],
+    "acceptance_criteria": [
+      "Truth Lock recorded; HEAD==origin/main; stashes preserved; boussole reconciled.",
+      "REFERENCE_CANDIDATE manifest with commit/tree/toolchain/deps/fingerprints + validation criteria.",
+      "Backup bundle with SHA-256 manifest; off-VPS USB write explicitly BLOCKED (human).",
+      "Isolated restore: SHA-256 OK + content git-blob match + dist rebuild + targeted tests green ⇒ BACKUP_RESTORE_VERIFIED.",
+      "Final diff limited to the write-set; committed + pushed."
+    ],
+    "stop_conditions": [
+      "Any step needs a path outside the write-set, a systemd/host change, or network beyond read-only git fetch/npm — isolate + report.",
+      "Restore integrity or rebuild fails — report; do not claim verified."
+    ],
+    "rollback": "git checkout -- <write_set> + delete untracked docs/contract; delete scratchpad bundle/restore dirs. No live state to undo.",
+    "evidence_required": ["Truth Lock", "reference manifest + fingerprints", "bundle SHA256SUMS", "restore sha256 -c + content match + rebuild + test exit codes", "commit/push ids"]
+  },
+  "objectives": [
+    { "id": "REFERENCE_VERSION_AND_BACKUP_1", "goal": "Reference version + verified isolated restore (Phases A–D).",
+      "done_when": ["Truth Lock + boussole reconciled.", "REFERENCE_CANDIDATE manifest produced.", "Backup bundle + SHA-256; isolated restore verified (integrity+content+rebuild+tests).", "Committed; USB write recorded human-gated."],
+      "proof": "reference-version-backup-restore-verified", "authorization": { "eligible": true, "authorized": true } }
+  ],
+  "definition_of_done": [
+    "Phases A–D complete with evidence; REFERENCE_CANDIDATE + BACKUP_RESTORE_VERIFIED; USB physical write BLOCKED_BY_DEPENDENCY (human).",
+    "Boussole reflects reality; final diff limited to the write-set; committed + pushed (no force)."
+  ],
+  "source": "cto-directive",
+  "permissions": { "engineering": true, "authorizedPaths": ["docs/reference-backup/REFERENCE_MANIFEST.md", "docs/reference-backup/RESTORE.md", "ODG_PROJECT_STATE.md"], "network": false },
+  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "EVIDENCE_REQUIRED", "ROLLBACK_MUST_ALWAYS_BE_POSSIBLE"],
+  "generatedBy": "claude-code (authored under CTO A–Z master roadmap, Phases A–D)"
+}

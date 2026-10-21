@@ -737,3 +737,22 @@ Truth Lock entry: `9fdc27e` == origin/main (0↔0), clean, 5 stashes. Priority O
 **Readiness classification:** runtime engineering autonomy on read-only governed missions = READY (end-to-end proven, isolated); unattended live fleet autonomy = NOT_READY/NOT_MEASURABLE (single datapoint; live promotion + scheduler activation remain host/CTO-gated). Product is NOT 100% complete — G8 and live fleet measurement remain open, both host/human-gated.
 
 **Highest-priority next action (host/CTO-gated, NOT executed):** if a live fleet autonomy rate is required, authorize a bounded governed operation to (a) run ≥N eligible read-only ANALYZE missions and (b) append their results to the live canonical ledger/autonomy-rate — with an explicit write-set — so the canonical measure reflects a real multi-unit window. Otherwise the authorized engineering work for this campaign is complete.
+
+---
+
+## 🧭 BOUSSOLE CANONIQUE (A–Z campaign, updated 2026-10-22)
+Mandated single pointer (PART I §1). Reconcile with repo + evidence at every mission entry/exit.
+
+- **HEAD / branch / upstream / sync:** `1ecfe8c3b59614ab3e628c219668e8042839e98d` / `main` / `origin/main` / **0↔0** (fetch-confirmed).
+- **Worktree / index / untracked / stashes:** clean / 0 staged / 0 untracked / **5 stashes preserved** (exported as patches in the backup bundle).
+- **Last validated checkpoint:** `1ecfe8c` (= the REFERENCE commit).
+- **Phase (A–Z roadmap):** A→D executed this session. E–Z pending (not started; prerequisites not yet met / later priorities).
+- **Reference version:** `REFERENCE_CANDIDATE` — commit `1ecfe8c`, tree `b2a5d543…`, Node v22.22.1/npm 9.2.0/tsc 5.9.3, lockfile tracked, dist regenerable (closure 98). Manifest: `docs/reference-backup/REFERENCE_MANIFEST.md`.
+- **Backup:** bundle built + SHA-256 (`scratchpad/reference-backup/`, source archive SHA `1b0b74c9…`, 5 stash patches). **Off-VPS USB write = `BLOCKED_BY_DEPENDENCY`** (human/physical — agent has no USB access; procedure in `docs/reference-backup/RESTORE.md`).
+- **Restore:** `BACKUP_RESTORE_VERIFIED` (isolated) — SHA-256 7/7 OK, content git-blob-identical to `1ecfe8c`, dist rebuilt, targeted tests 23/23 + 27/27, ≈11 s.
+- **Gates:** G7 `VERIFIED_COMPLETE` · G9 `VERIFIED_COMPLETE` (+ live precedent executor) · G10 mechanism `VERIFIED` (isolated unit) / fleet-wide `NOT_MEASURABLE` · G8 `BLOCKED_BY_DEPENDENCY` (host reboot/recovery, human-gated).
+- **Contracts (this session):** `REFERENCE_VERSION_AND_BACKUP` AUTHORIZED.
+- **Operational/security risks:** `ReadWritePaths=<repo>` residual on the runner unit (no write-audit yet narrows it); live fleet autonomy unproven; USB off-site custody pending; full-server (OS/systemd/db/secrets) backup is human-owned, out of the code-bundle scope.
+- **Deployment readiness:** `NOT_READY` — Porte C (verified USB off-VPS) + Phases E–Z (stabilization → preprod → Go/No-Go) not yet satisfied. No deployment authorized before these.
+- **Current decision:** **NOT_READY for deployment**; reference secured + restore proven in isolation; next gate is the human USB custody (Porte C), then Phases E–F validation.
+- **Next objective + dependency:** operator copies `scratchpad/reference-backup/` to a verified (optionally encrypted) USB key and re-runs `sha256sum -c` from that medium ⇒ closes Porte C; then ODG proceeds to Phase E (runtime stabilization) / F (technical+security validation). G8 remains host-gated.
