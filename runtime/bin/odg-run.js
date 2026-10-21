@@ -65,6 +65,22 @@ if(runtimeContext){
     console.log("Project Dirs   :",runtimeContext.project.directories);
 }
 
+// IDENTITY — Truth-Lock PRE-EXECUTION GATE (mirror of .ts). Runs after governance, BEFORE any stage. A mutating
+// mission on a failing repo-safety verdict is BLOCKED (exit 1); a read-only mission records the verdict only.
+const truthLockGateMod = require("../core/truth-lock-gate");
+const __mutating = truthLockGateMod.missionIsMutating(mission).mutating;
+const __tlEnforce = process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true";
+const __tlGate = truthLockGateMod.truthLockGate({ mission, mutating: __mutating, enforce: __tlEnforce, now: new Date().toISOString() });
+try {
+    fs.mkdirSync(path.join("runtime", "generated"), { recursive: true });
+    fs.writeFileSync(path.join("runtime", "generated", "truth-lock.json"), JSON.stringify(__tlGate, null, 2));
+} catch { /* evidence best-effort; the gate decision below does not depend on the write */ }
+console.log("Truth Lock :", __tlGate.status, `(mutating=${__mutating}, ${__tlEnforce ? "ENFORCE" : "record-only"})`);
+if (__tlGate.blocked) {
+    console.error("STOP: Truth Lock REFUSED a mutating mission before any stage ran —", __tlGate.verdict.detail);
+    process.exit(1);
+}
+
 console.log("======================================");
 console.log("ODG RUNTIME PIPELINE :",mission);
 console.log("======================================");
