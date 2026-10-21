@@ -8,7 +8,7 @@
  * VOLATILE (enumerated by inspection, final-report.js:177): exactly ONE line `- Generated: <ISO>` from
  * `new Date().toISOString()`. It is normalised to a sentinel in BOTH outputs — nothing else. The rest of the
  * markdown (status, validated, governance state, autonomy section) is deterministic and compared verbatim.
- * Closure = 21 modules (authoritative; was 16→18→21 as capability-executors composed delegate-isolation +
+ * Closure = 23 modules (authoritative; was 16→18→21→23 as capability-executors composed delegate-isolation +
  * local-model-manager + transitive provider-sandbox — reused modules, not new primitives). Run: node_modules/.bin/tsx runtime/__bench__/final-report-equivalence.e2e.test.ts
  */
 import fs from "node:fs";
@@ -35,7 +35,7 @@ let COMPILED = "";
 function buildEngine(): void {
   const { closure, missing } = computeClosure(["final-report"]);
   check(missing.length === 0, `closure resolves (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 21, `closure is the authoritative 21-module set (size=${closure.length})`); // 16→18 (FINAL_REPORT_TEST_FIX) → 18→21 (IMPLEMENT_LOCAL_CODE): capability-executors now composes delegate-isolation + local-model-manager (+ transitive provider-sandbox) for the Stage-6 governed local-provider capability; reused modules, not new primitives; .js≡.ts equivalence unchanged
+  check(closure.length === 23, `closure is the authoritative 23-module set (size=${closure.length})`); // …→21 (IMPLEMENT_LOCAL_CODE) → 21→23 (IDENTITY gate): capability-executors.resolve() now references truth-lock-gate → truth-lock (canonical Truth-Lock gate at the consequential-dispatch chokepoint); reused modules, not new primitives; .js≡.ts equivalence unchanged
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-fr-dist-")); sandboxes.push(dir);
   for (const n of closure) place(dir, n);
   check(fs.readFileSync(path.join(DIST_CORE, "final-report.js"), "utf8") === fs.readFileSync(path.join(dir, "final-report.js"), "utf8"), "co-located final-report.js IS the compiled build output");

@@ -149,10 +149,25 @@ function validateScope(changes: any, writeSetFiles: any): any {
 
 // Apply a FULLY-validated proposal to the real repo. Re-validates (defense in depth) and refuses to
 // write anything if ANY change is out of scope (atomic: mixed authorized/forbidden ⇒ nothing applied).
-function applyProposal(root: any, changes: any, writeSetFiles: any, io: any): any {
+function applyProposal(root: any, changes: any, writeSetFiles: any, io: any, opts?: any): any {
   const _io = io || fs;
   const scope = validateScope(changes, writeSetFiles);
   if (!scope.ok) return { ok: false, applied: [], refused: true, reason: `refusing to apply out-of-scope proposal — ${scope.detail}` };
+  // IDENTITY PRE-WRITE GATE (opt-in) — before mutating the REAL tree, the canonical Truth-Lock repo-safety
+  // policy must hold when enforcement is enabled. Covers the delegate-isolation write path (a mutation that
+  // bypasses resolve()). Does NOT replace validateScope/scopeClean (both still run). Opt-in via
+  // ODG_TRUTH_LOCK_ENFORCE (or opts.enforce) ⇒ default no-op/byte-identical; git facts read in `root` via an
+  // injectable seam (opts.gitExec for tests). A refusal returns the existing refusal shape BEFORE any write
+  // (atomic — no residual effect). Reuses the gate — no second policy.
+  const enforce = (opts && opts.enforce === true) || process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true";
+  if (enforce && Array.isArray(changes) && changes.length > 0) {
+    const { truthLockGate } = require("./truth-lock-gate");
+    const exec = (opts && typeof opts.gitExec === "function")
+      ? opts.gitExec
+      : (args: string[]) => { try { return String(require("child_process").execFileSync("git", args, { cwd: path.resolve(root), encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } };
+    const tl = truthLockGate({ mutating: true, enforce: true, exec });
+    if (tl.blocked) return { ok: false, applied: [], refused: true, reason: `refusing: Truth-Lock repo-safety — ${tl.verdict.detail}`, truthLock: tl.verdict };
+  }
   const realRoot = path.resolve(root);
   const applied: string[] = [];
   for (const c of changes) {

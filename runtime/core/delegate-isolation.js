@@ -146,10 +146,22 @@ function validateScope(changes, writeSetFiles) {
 
 // Apply a FULLY-validated proposal to the real repo. Re-validates (defense in depth) and refuses to
 // write anything if ANY change is out of scope (atomic: mixed authorized/forbidden ⇒ nothing applied).
-function applyProposal(root, changes, writeSetFiles, io) {
+function applyProposal(root, changes, writeSetFiles, io, opts) {
   const _io = io || fs;
   const scope = validateScope(changes, writeSetFiles);
   if (!scope.ok) return { ok: false, applied: [], refused: true, reason: `refusing to apply out-of-scope proposal — ${scope.detail}` };
+  // IDENTITY PRE-WRITE GATE (opt-in, mirror of .ts): before mutating the real tree, Truth-Lock must hold when
+  // enforcement is enabled. Does NOT replace validateScope/scopeClean. Default no-op (byte-identical). git facts
+  // read in `root` via an injectable seam (opts.gitExec for tests). Refuses BEFORE any write (atomic).
+  const enforce = (opts && opts.enforce === true) || process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true";
+  if (enforce && Array.isArray(changes) && changes.length > 0) {
+    const { truthLockGate } = require("./truth-lock-gate");
+    const exec = (opts && typeof opts.gitExec === "function")
+      ? opts.gitExec
+      : (args) => { try { return String(require("child_process").execFileSync("git", args, { cwd: path.resolve(root), encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } };
+    const tl = truthLockGate({ mutating: true, enforce: true, exec });
+    if (tl.blocked) return { ok: false, applied: [], refused: true, reason: `refusing: Truth-Lock repo-safety — ${tl.verdict.detail}`, truthLock: tl.verdict };
+  }
   const realRoot = path.resolve(root);
   const applied = [];
   for (const c of changes) {
