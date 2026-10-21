@@ -1,0 +1,90 @@
+{
+  "mission": "G10_READONLY_AUTONOMY_PROBE",
+  "priority": "NORMAL",
+  "mode": "ANALYZE",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "authorizedPaths": [],
+  "description": "Genuinely read-only ANALYZE mission: run the observational Clean-Workspace capability (deterministic scan of transient git-ignored runtime artifacts; writes only runtime-owned evidence, NO deletion, NO target/source mutation) so that the canonical autonomy measure (autonomy-rate.ts/autonomy-measure.ts) has one real eligible+authorized, ODG-executed, EVIDENCED unit to count. Executed ONCE in an ISOLATED git worktree to protect live canonical state. This mission does NOT consult the decision-precedent mechanism (EVIDENCED requires a matching live capability executor; wiring decision-precedent as one is out-of-scope live integration per the CTO directive).",
+  "objectives": [
+    {
+      "id": "CLEAN_WORKSPACE_1",
+      "goal": "Enumerate transient git-ignored runtime artifacts under runtime/ (read-only deterministic scan; no deletion).",
+      "done_when": [
+        "A deterministic scan lists every candidate transient path under runtime/ (read-only; no file is removed or modified)."
+      ],
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "definition_of_done": [
+    "Read-only Clean-Workspace scan executed by ODG capability executor; runtime-owned evidence artifact produced (non-empty).",
+    "Objective attribution verdict EVIDENCED; canonical autonomy measure measurable:true with numerator>=1.",
+    "No write outside runtime/generated/**; no target/source mutation."
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO directive 'G10 ANALYZE MISSION AND CANONICAL MEASUREMENT' (session message, 2026-10-21) + AskUserQuestion answer 'Real G10 now, no precedent link'",
+    "recorded_at": "2026-10-21T21:41:06Z",
+    "note": "Authorization did NOT exist before the CTO directive; recorded as sole source. Not backdated/fabricated."
+  },
+  "work_item_contract": {
+    "objective": "Produce ONE real canonical G10 datapoint from a genuinely read-only ANALYZE mission executed via the governed path, measured by the existing canonical mechanism.",
+    "scope": "Read-only observational mission + canonical measurement, executed in an ISOLATED worktree. NO live canonical ledger/generated mutation. NO decision-precedent live integration. NO systemd/timer/env change; canary exercised process-scoped preserving M0001.",
+    "read_set": [
+      "runtime/core/capability-executors.ts",
+      "runtime/core/objective-attribution.ts",
+      "runtime/core/autonomy-rate.ts",
+      "runtime/core/autonomy-measure.ts",
+      "runtime/core/mission-loader.ts",
+      "runtime/missions/MEASURE_DEMO_CLEAN.json"
+    ],
+    "write_set": [
+      "runtime/missions/G10_READONLY_AUTONOMY_PROBE.json",
+      "ODG_PROJECT_STATE.md",
+      "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json"
+    ],
+    "execution_isolation": "git worktree under the session scratchpad; runtime/dist + this mission file copied in; all generated writes + any ledger append stay in the worktree; live repo generated/ and ledger untouched.",
+    "allowed_commands": [
+      "git worktree add/remove (reversible)",
+      "cp -r runtime/dist and mission json into the worktree",
+      "ODG_CANARY_ALLOWLIST=\"M0001,G10_READONLY_AUTONOMY_PROBE\" ODG_TRUTH_LOCK_ENFORCE=1 node runtime/dist/bin/odg-schedule-tick.js (inside worktree)",
+      "node runtime/dist/bin/odg-run.js G10_READONLY_AUTONOMY_PROBE (inside worktree, if tick path needs fallback)",
+      "node runtime/dist/bin/odg-state.js (inside worktree)",
+      "git add/commit for the exact write-set; git push (no force-push)"
+    ],
+    "invariants": [
+      "No write outside runtime/generated/** during the run (empty authorized_paths structurally forbids target writes).",
+      "No live canonical ledger/generated mutation (execution isolated to the worktree).",
+      "Canary preserves M0001 and adds only this one mission id; no systemd/timer/env change.",
+      "No decision-precedent live integration; decision-engine untouched.",
+      "G10 reported measurable ONLY if the canonical mechanism emits measurable:true with real window/numerator/denominator/IDs + EVIDENCED verification."
+    ],
+    "acceptance_criteria": [
+      "Objective attribution verdict EVIDENCED for CLEAN_WORKSPACE_1 (status EXECUTED + non-empty runtime-owned evidence).",
+      "autonomy-rate.json measure.measurable===true with numerator>=1, explicit denominator and counted mission id.",
+      "Evidence: eligibility (authorization), execution (patch-execution EXECUTED by ODG_EXECUTOR), verification (EVIDENCED).",
+      "Live repo generated/ + mission-ledger unchanged (isolated run); final diff limited to the write-set."
+    ],
+    "stop_conditions": [
+      "The run would write outside runtime/generated/** or require a privileged/host action.",
+      "The isolated run cannot be made safe (e.g. hardlink aliasing) — stop, report.",
+      "The canonical measure does not emit measurable:true — report NOT_MEASURABLE honestly, do not fabricate."
+    ],
+    "rollback": "git worktree remove (deletes the sandbox); git checkout -- <write_set> + delete untracked new files to restore the live tree. No live service/state change to undo.",
+    "evidence_required": [
+      "initial + final Truth Lock",
+      "scoped diff of the write-set",
+      "worktree run logs (odg-run + odg-state exit codes)",
+      "objective-attribution verdict + autonomy-rate.json measure block",
+      "proof live generated/ + ledger unchanged",
+      "commit + push ids"
+    ]
+  },
+  "source": "cto-directive",
+  "permissions": { "engineering": false, "authorizedPaths": [], "network": false },
+  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "NO_SCOPE_EXPANSION"],
+  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED established by explicit CTO directive + AskUserQuestion provenance above)"
+}

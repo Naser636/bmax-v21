@@ -139,5 +139,21 @@
     "runtime/generated/objective-attribution.json",
     "runtime/generated/mission-ledger.json"
   ],
-  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED established by explicit CTO directive provenance above)"
+  "acceptance": {
+    "state": "ACCEPTED",
+    "transition": "VERIFIED -> ACCEPTED",
+    "scope": "G9 standalone decision-precedent mechanism ONLY (read-only reuse proven). Does NOT accept live decision-engine integration.",
+    "accepted_by": "CTO (human)",
+    "acceptance_source": "CTO directive 'G10 ANALYZE MISSION AND CANONICAL MEASUREMENT' (session message, 2026-10-21), section Decision",
+    "accepted_at": "2026-10-21T21:41:06Z",
+    "accepted_commit": "ef011b8",
+    "verified_evidence": {
+      "test": "decision-precedent.test.ts 13/13 (5 distinct states + measured non-flat effect + flat-effect honesty guard)",
+      "typescript": "tsc --noEmit -p tsconfig.runtime-dist.json exit 0",
+      "parity": "dual-port ts/js identical",
+      "provenance": "precedent captured from accepted mission FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA @18768c1"
+    },
+    "note": "VERIFIED -> ACCEPTED requires explicit human acceptance per ODG_AUTONOMOUS_WORK_PROTOCOL.json; recorded here as the CTO acceptance. Mechanism remains NOT wired into the live decision-engine stage (separate gated boundary)."
+  },
+  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED established by explicit CTO directive provenance above; G9 ACCEPTED recorded per CTO acceptance directive)"
 }
