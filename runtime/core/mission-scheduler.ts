@@ -1,10 +1,18 @@
 #!/usr/bin/env node
 /*
  * Mission Scheduler — PURE driver over the EXISTING canonical mechanisms (no second orchestrator, no second
- * queue, no new permanent primitive). It reuses: the runtime mission queue's canonical selection (first
- * PENDING), the mission-ledger proven-gate (dedup/idempotence), and the mission-attempt-log (audit) — all via
- * INJECTED dependencies. It NEVER executes a real effect itself: `dispatch` is injected (a double in tests; in
- * production it would be the governed pipeline, whose wiring + activation are OUT OF SCOPE and gated).
+ * queue, no new permanent primitive). It reuses the first-PENDING selection discipline, the mission-ledger
+ * proven-gate (dedup/idempotence), and the mission-attempt-log (audit) — ALL via INJECTED dependencies. It
+ * NEVER executes a real effect itself: `dispatch` is injected (a double in tests; in production it would be the
+ * governed pipeline, whose wiring + activation are OUT OF SCOPE and gated).
+ *
+ * QUEUE SOURCE — CANONICAL vs CANARY (explicit, not silent): the queue is whatever the caller INJECTS; this
+ * module owns neither a queue nor its source. Two distinct injections exist and MUST NOT be conflated:
+ *   - CANARY (current live use, odg-schedule-tick): a SYNTHETIC, allowlist-derived queue — one PENDING item per
+ *     `ODG_CANARY_ALLOWLIST` id. Deny-by-default, read-only, bounded; an isolated canary interface BY DESIGN.
+ *   - CANONICAL runtime queue: the real pending-mission queue. Injecting it here would WIDEN the set of
+ *     executable missions and is therefore a SECURITY BOUNDARY — a separate, gated CTO decision requiring
+ *     non-regression proof before activation. It is NOT wired into the read-only canary and is not assumed here.
  *
  * SAFETY BY CONSTRUCTION: this module has NO top-level execution (it is a library of pure functions), so
  * requiring it launches nothing and starts no background mission. Unattended autonomous execution of
@@ -29,12 +37,26 @@ function evaluateEligibility(item: any, ctx: any): any {
   return { eligible: true, reason: "eligible" };
 }
 
-// Canonical selection: the FIRST eligible PENDING item in the queue (same order odg-status uses). Resuming
-// after interruption = re-reading the canonical queue state (no in-memory-only state).
+// Selection: the FIRST eligible PENDING item in the INJECTED queue (same first-PENDING order the canonical
+// runtime queue / odg-status use). The queue is whatever the caller injects — see the module header on the
+// canonical-vs-canary distinction. Resuming after interruption = re-reading that injected state (no
+// in-memory-only state).
 function selectNext(ctx: any): any {
   const q = ctx.queue && Array.isArray(ctx.queue.queue) ? ctx.queue.queue : [];
   for (const item of q) { if (evaluateEligibility(item, ctx).eligible) return item; }
   return null;
+}
+
+// IDLE observability: expose WHY nothing was eligible. Instead of a single opaque sentence, surface the
+// per-mission eligibility reason for each injected queue item (ALREADY_PROVEN (dedup), NOT_PRE_AUTHORIZED,
+// MAX_ATTEMPTS, not PENDING …) or an explicit empty-queue marker. The canonical sentence is preserved as a
+// PREFIX so existing substring consumers keep working; the per-mission detail is purely additive.
+function idleReason(ctx: any): string {
+  const base = "no eligible pre-authorized PENDING mission";
+  const q = ctx && ctx.queue && Array.isArray(ctx.queue.queue) ? ctx.queue.queue : [];
+  if (!q.length) return `${base} (empty queue)`;
+  const per = q.map((it: any) => `${it && it.mission}: ${evaluateEligibility(it, ctx).reason}`);
+  return `${base} [${per.join("; ")}]`;
 }
 
 function decision(status: string, item: any, reason: string): any {
@@ -70,7 +92,7 @@ function schedulerStep(ctx: any): any {
   if ((ctx.consecutiveFailures || 0) >= policy.maxConsecutiveFailures) { const d = decision("BLOCKED", null, "consecutive-failure cap"); audit(d); return d; }
   // 3. canonical selection + eligibility
   const next = selectNext(ctx);
-  if (!next) { const d = decision("IDLE", null, "no eligible pre-authorized PENDING mission"); audit(d); return d; }
+  if (!next) { const d = decision("IDLE", null, idleReason(ctx)); audit(d); return d; }
   // 4. per-mission + per-effect authorization — INJECTED; the scheduler NEVER self-authorizes (deny-by-default).
   const authz = typeof ctx.authorize === "function" ? ctx.authorize(next) : { ok: false, reason: "no authorizer injected" };
   if (!authz || authz.ok !== true) { const d = decision("BLOCKED", next, `AUTHORIZATION_DENIED: ${authz && authz.reason}`); audit(d); return d; }

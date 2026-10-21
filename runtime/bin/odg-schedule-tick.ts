@@ -16,6 +16,12 @@
  * the tick is a safe no-op (IDLE). Widening to consequential missions is a SEPARATE CTO decision. The tick
  * never calls a provider (no provider is constructed; read-only missions require none).
  *
+ * QUEUE SOURCE: this tick injects into mission-scheduler a SYNTHETIC, allowlist-derived queue (one PENDING item
+ * per allowlist id) — an ISOLATED canary interface BY DESIGN, NOT the canonical runtime pending-queue. This is
+ * deliberate and must not be conflated with canonical-queue consumption: wiring the canonical queue in here
+ * would widen the executable-mission set and is a gated SECURITY BOUNDARY (separate CTO decision + non-regression
+ * proof). See mission-scheduler's header for the canonical-vs-canary contract.
+ *
  * Exit codes: 0 = PASS or IDLE (safe); non-zero = STARTUP_REFUSED / STOPPED / BLOCKED / FAIL / NOT_MEASURABLE.
  */
 "use strict";
@@ -75,7 +81,7 @@ function main(): void {
     isProven: (id: string) => proven.has(id),
     authorize: (item: any) => ALLOW.has(item.mission) ? { ok: true, reason: "read-only canary allowlist" } : { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` },
     policy: { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 },
-    recordAttempt: (d: any) => { try { recordAttempt(LOG, { mission: (d && d.item && d.item.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } },
+    recordAttempt: (d: any) => { try { recordAttempt(LOG, { mission: (d && d.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } },
     dispatch,
   };
   const d = schedulerStep(ctx);

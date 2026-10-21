@@ -111,4 +111,24 @@ ok("module is a pure library (no top-level run): exports schedulerStep + helpers
   ok("PASS path only called the injected dispatch double (no real effect)", d.status === "PASS" && dispatched.length === 1 && dispatched[0] === "M1");
 }
 
+// 9 — IDLE OBSERVABILITY: the IDLE reason exposes the per-mission eligibility cause (not an opaque sentence),
+// so an audit reader can distinguish empty-queue vs all-proven (dedup) vs all-refused — without changing the
+// contract (status still IDLE, mission still null) and preserving the canonical sentence as a prefix.
+{
+  const BASE = "no eligible pre-authorized PENDING mission";
+  // all allowlisted items already proven ⇒ IDLE naming ALREADY_PROVEN + the mission id (the live M0001 case).
+  const prov = baseCtx({ queue: Q("M1"), preAuthorized: ["M1"], isProven: () => true });
+  const dp = sched.schedulerStep(prov.ctx);
+  ok("all-proven ⇒ IDLE reason exposes ALREADY_PROVEN + mission id", dp.status === "IDLE" && dp.mission === null && dp.reason.startsWith(BASE) && /M1/.test(dp.reason) && /ALREADY_PROVEN/.test(dp.reason));
+  ok("all-proven IDLE is journaled with the enriched reason", prov.audit.length === 1 && /ALREADY_PROVEN/.test(prov.audit[0].reason));
+  // empty queue ⇒ explicit empty marker (distinguishable from a dedup/refusal IDLE).
+  const empty = baseCtx({ queue: { queue: [] }, preAuthorized: [] });
+  const de = sched.schedulerStep(empty.ctx);
+  ok("empty queue ⇒ IDLE reason marks '(empty queue)'", de.status === "IDLE" && de.reason.startsWith(BASE) && /\(empty queue\)/.test(de.reason));
+  // non-pre-authorized ⇒ IDLE reason names NOT_PRE_AUTHORIZED (refusal, distinct from dedup).
+  const rogue = baseCtx({ queue: Q("ROGUE"), preAuthorized: ["M1"] });
+  const dr = sched.schedulerStep(rogue.ctx);
+  ok("refused (not pre-authorized) ⇒ IDLE reason names NOT_PRE_AUTHORIZED", dr.status === "IDLE" && /NOT_PRE_AUTHORIZED/.test(dr.reason));
+}
+
 console.log(`\nmission-scheduler — ${passed} assertions passed. (NO mission executed; scheduler NOT activated.)`);

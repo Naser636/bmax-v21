@@ -1,0 +1,144 @@
+{
+  "mission": "FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "Formalize and validate the pre-existing, uncontracted scheduler/runner observability delta (G7 defects A+B plus a tick audit-field fix) that is already live via the dist→source-twin fallback. Resolve the governance breach by recording an AUTHORIZED contract rather than reverting a correct, contract-preserving improvement.",
+  "authorized_paths": [
+    "runtime/missions/FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA.json",
+    "ODG_PROJECT_STATE.md",
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/core/mission-scheduler.ts",
+    "runtime/core/mission-scheduler.js",
+    "runtime/core/mission-scheduler.test.ts"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA.json",
+    "ODG_PROJECT_STATE.md",
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/core/mission-scheduler.ts",
+    "runtime/core/mission-scheduler.js",
+    "runtime/core/mission-scheduler.test.ts"
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO directive 'SCHEDULER DELTA FORMALIZATION AND ODG AUTONOMY REPAIR' (session message, 2026-10-21)",
+    "recorded_at": "2026-10-21T21:41:06Z",
+    "note": "Authorization did NOT exist before the CTO directive above. This contract records that directive as the sole authorization source. PROPOSED -> AUTHORIZED established by explicit human (CTO) delegation per ODG_AUTONOMOUS_WORK_PROTOCOL.json state_rules."
+  },
+  "work_item_contract": {
+    "objective": "Preserve and formally validate the scheduler/runner IDLE-observability improvements and the tick audit-field correctness fix; resolve the governance breach without unnecessary rollback.",
+    "root_cause_hypothesis": "schedulerStep returned a single opaque IDLE reason, discarding the per-item evaluateEligibility cause; the scheduler header described the canonical runtime queue while the canary tick injects a synthetic allowlist-derived queue; the tick audit writer read d.item.mission (undefined) instead of d.mission.",
+    "scope": "Runner observability only. No behavior change to IDLE status/mission, no dispatch path change, no queue-source change, no new primitive, no second scheduler.",
+    "read_set": [
+      "runtime/core/mission-scheduler.ts",
+      "runtime/core/mission-scheduler.js",
+      "runtime/bin/odg-schedule-tick.ts",
+      "runtime/generated/mission-ledger.json",
+      "runtime/generated/mission-attempt-log.jsonl",
+      "ODG_AUTONOMOUS_WORK_PROTOCOL.json"
+    ],
+    "write_set": [
+      "runtime/missions/FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA.json",
+      "ODG_PROJECT_STATE.md",
+      "runtime/bin/odg-schedule-tick.ts",
+      "runtime/core/mission-scheduler.ts",
+      "runtime/core/mission-scheduler.js",
+      "runtime/core/mission-scheduler.test.ts"
+    ],
+    "authorized_symbols": [
+      "mission-scheduler.idleReason",
+      "mission-scheduler.schedulerStep (IDLE call-site only)",
+      "mission-scheduler module header (canonical-vs-canary doc)",
+      "mission-scheduler.selectNext (comment only)",
+      "odg-schedule-tick recordAttempt (d.mission field)",
+      "odg-schedule-tick module header (QUEUE SOURCE doc)"
+    ],
+    "allowed_commands": [
+      "git status/diff/log/rev-parse/rev-list (read-only)",
+      "node runtime/core/mission-scheduler.test.ts",
+      "npx tsx runtime/__bench__/*.e2e.test.ts (affected set)",
+      "npx tsc --noEmit -p tsconfig.runtime-dist.json",
+      "node scripts/build-runtime-guard.js (guarded, fingerprint-gated; rebuild only if source changed)",
+      "git add/commit for the exact write-set; git push (no force-push)"
+    ],
+    "invariants": [
+      "IDLE decision keeps status=IDLE and mission=null (contract preserved).",
+      "Canonical IDLE sentence preserved as a prefix (no substring consumer breaks).",
+      "Dual-port parity: mission-scheduler.ts and .js byte-identical behavior.",
+      "No change to systemd units/timers/env, allowlist, ledger, audit, Truth Lock, secrets, host config.",
+      "No new primitive, no second scheduler, no ledger duplication.",
+      "ODG_TRUTH_LOCK_ENFORCE remains service-scoped (never global)."
+    ],
+    "acceptance_criteria": [
+      "mission-scheduler.test.ts passes (27 assertions incl. 4 IDLE-observability).",
+      "Affected e2e set passes: odg-schedule-tick, mission-runner-service-contract, g6-scheduler-dryrun, g7-canary.",
+      "tsc --noEmit -p tsconfig.runtime-dist.json exits 0.",
+      "Dual-port parity identical for all-proven and empty-queue cases.",
+      "Live source-resolution path documented: dist tick loads the tracked source twin (dist scheduler absent).",
+      "Final diff contains only the 6 authorized paths; stashes and HEAD preserved."
+    ],
+    "stop_conditions": [
+      "A correction requires a source path outside the write-set.",
+      "A broader architectural change or a new security boundary is implied (e.g. wiring the canonical queue).",
+      "Any test/parity/tsc gate fails and cannot be repaired within the write-set.",
+      "A newly discovered material runtime risk."
+    ],
+    "rollback": "git checkout -- <6 authorized paths> to restore committed state; if dist was rebuilt, node scripts/build-runtime-guard.js restores it from clean source. No systemd/service change needed; the runner stays read-only IDLE throughout.",
+    "evidence_required": [
+      "initial + final Truth Lock",
+      "scoped diff of the 6 files",
+      "test commands + exit codes",
+      "tsc + dual-port parity output",
+      "dist-vs-source resolution proof",
+      "commit + push ids"
+    ]
+  },
+  "objectives": [
+    {
+      "id": "FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA_1",
+      "goal": "Formalize + validate the live scheduler/runner observability delta under an AUTHORIZED contract.",
+      "done_when": [
+        "Focused scheduler/runner tests pass.",
+        "TypeScript (tsconfig.runtime-dist.json) and dual-port parity pass.",
+        "Final diff contains only the authorized write-set and is committed."
+      ],
+      "proof": "scheduler-idle-observability-formalized",
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "definition_of_done": [
+    "Focused scheduler/runner tests pass (27 + affected e2e).",
+    "tsc --noEmit -p tsconfig.runtime-dist.json exits 0 and dual-port parity is identical.",
+    "ODG_PROJECT_STATE.md updated with evidence; final diff limited to the 6 authorized paths; committed (push under standing policy, no force-push)."
+  ],
+  "source": "cto-directive",
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/missions/FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA.json",
+      "ODG_PROJECT_STATE.md",
+      "runtime/bin/odg-schedule-tick.ts",
+      "runtime/core/mission-scheduler.ts",
+      "runtime/core/mission-scheduler.js",
+      "runtime/core/mission-scheduler.test.ts"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST",
+    "NO_SCOPE_EXPANSION"
+  ],
+  "evidence": [
+    "runtime/core/mission-scheduler.test.ts",
+    "runtime/__bench__/odg-schedule-tick.e2e.test.ts",
+    "runtime/__bench__/g7-canary.e2e.test.ts",
+    "runtime/generated/mission-attempt-log.jsonl"
+  ],
+  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED state established by explicit CTO directive provenance above)"
+}
