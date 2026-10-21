@@ -31,6 +31,8 @@ const REPO = process.cwd();
 const CLOSURE = [
   "acceptance-facts.js", "mechanical-acceptance.js", "economic-verification.js",
   "price-resolution.js", "economic-unit.js", "state-transition.js",
+  // Day-5 Lot 3 — the Truth-Lock gate closure (for the opt-in repo-safety precondition).
+  "truth-lock-gate.js", "truth-lock.js",
 ];
 
 function git(dir: string, args: string[]): void { spawnSync("git", args, { cwd: dir, stdio: "ignore" }); }
@@ -39,7 +41,7 @@ function commitCount(dir: string): number {
   return r.status === 0 ? parseInt(r.stdout.trim(), 10) : -1;
 }
 
-function sandbox(control: Record<string, unknown> | null, economicVerdict: string | null | undefined): string {
+function sandbox(control: Record<string, unknown> | null, economicVerdict: string | null | undefined, gitState?: "clean" | "bad"): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "live-commit-"));
   fs.mkdirSync(path.join(dir, "runtime", "core"), { recursive: true });
   fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
@@ -66,6 +68,14 @@ function sandbox(control: Record<string, unknown> | null, economicVerdict: strin
   fs.writeFileSync(path.join(dir, "README.md"), "seed\n");
   git(dir, ["add", "-A"]);
   git(dir, ["-c", "commit.gpgsign=false", "commit", "-q", "-m", "seed"]);
+  // Truth-Lock repo state for Lot-3: cleanState ⇒ branch main + origin/main==HEAD (conforming); otherwise a
+  // non-conforming state (wrong branch + no origin/main). The gate only enforces under ODG_TRUTH_LOCK_ENFORCE.
+  if (gitState === "clean") {
+    git(dir, ["branch", "-m", "main"]);
+    git(dir, ["update-ref", "refs/remotes/origin/main", "HEAD"]);
+  } else if (gitState === "bad") {
+    git(dir, ["checkout", "-q", "-b", "feature/x"]);
+  }
   fs.writeFileSync(path.join(dir, "src", "app", "deliverable.ts"), "export const x = 1;\n"); // in-scope, uncommitted
   return dir;
 }
@@ -74,12 +84,15 @@ function sandbox(control: Record<string, unknown> | null, economicVerdict: strin
 // production the adapter is always `new AutonomyRuntimeAdapter()` ⇒ this.cwd === process.cwd(); the commit
 // gate (acceptance-facts, process.cwd()-relative like every release-path reader) relies on that invariant,
 // so the test chdirs into the sandbox for the call to reproduce production faithfully.
-function commit(dir: string, humanApproved: boolean): boolean {
+function commit(dir: string, humanApproved: boolean, enforceTruthLock?: boolean): boolean {
   const prev = process.cwd();
   const prevEnv = process.env.ODG_HUMAN_COMMIT_APPROVED;
+  const prevTl = process.env.ODG_TRUTH_LOCK_ENFORCE;
   process.chdir(dir);
   if (humanApproved) process.env.ODG_HUMAN_COMMIT_APPROVED = "1";
   else delete process.env.ODG_HUMAN_COMMIT_APPROVED;
+  if (enforceTruthLock) process.env.ODG_TRUTH_LOCK_ENFORCE = "1";
+  else delete process.env.ODG_TRUTH_LOCK_ENFORCE;
   try {
     const adapter = new AutonomyRuntimeAdapter(dir);
     const spec = { mission: "M", authorized_paths: ["src/app"] };
@@ -89,6 +102,8 @@ function commit(dir: string, humanApproved: boolean): boolean {
     process.chdir(prev);
     if (prevEnv === undefined) delete process.env.ODG_HUMAN_COMMIT_APPROVED;
     else process.env.ODG_HUMAN_COMMIT_APPROVED = prevEnv;
+    if (prevTl === undefined) delete process.env.ODG_TRUTH_LOCK_ENFORCE;
+    else process.env.ODG_TRUTH_LOCK_ENFORCE = prevTl;
   }
 }
 
@@ -158,5 +173,45 @@ for (const [label, control, verdict] of [
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
-console.log(failures === 0 ? "ALL PASS — D1 HUMAN COMMIT GATE" : `FAILURES: ${failures}`);
+// === Day-5 Lot 3: Truth-Lock integrity precondition on the commit path (ORTHOGONAL to human approval). ===
+// TL1 — human-approved + legacy + ENFORCE + CONFORMING repo (main, origin/main==HEAD) ⇒ commits (Truth-Lock
+//       passes; the legitimate approved commit is not over-blocked).
+{
+  const dir = sandbox(null, null, "clean");
+  const before = commitCount(dir);
+  const result = commit(dir, true, /* enforceTruthLock */ true);
+  check(result === true && commitCount(dir) === before + 1, "TL1. approved + enforce + conforming state ⇒ commits (one new commit)");
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+// TL2 — human-approved + ENFORCE + NON-CONFORMING repo (wrong branch, no origin/main) ⇒ NO commit (Truth-Lock
+//       refuses BEFORE the commit); the deliverable stays uncommitted. Approval was granted — only integrity blocked.
+{
+  const dir = sandbox(null, null, "bad");
+  const before = commitCount(dir);
+  const result = commit(dir, true, true);
+  const porcelain = spawnSync("git", ["status", "--porcelain", "--", "src/app"], { cwd: dir, encoding: "utf8" }).stdout.trim();
+  check(result === false, "TL2. approved + enforce + non-conforming state ⇒ returns false (Truth-Lock refuses)");
+  check(commitCount(dir) === before, "TL2b. NO new commit (refused BEFORE commit, no partial mutation)");
+  check(porcelain.length > 0, "TL2c. deliverable stays UNCOMMITTED (VALIDATED_PENDING_COMMIT)");
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+// TL3 — NO human approval + ENFORCE + conforming repo ⇒ still NO commit. Truth-Lock NEVER substitutes for or
+//       fabricates the human approval: the distinct ODG_HUMAN_COMMIT_APPROVED gate is still primary.
+{
+  const dir = sandbox(null, null, "clean");
+  const before = commitCount(dir);
+  const result = commit(dir, /* humanApproved */ false, /* enforceTruthLock */ true);
+  check(result === false && commitCount(dir) === before, "TL3. no approval + enforce + conforming ⇒ NO commit (approval not fabricated by Truth-Lock)");
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+// TL4 — human-approved + ENFORCE OFF + NON-CONFORMING repo ⇒ commits (default record-only; strict NOT active).
+{
+  const dir = sandbox(null, null, "bad");
+  const before = commitCount(dir);
+  const result = commit(dir, true, /* enforceTruthLock */ false);
+  check(result === true && commitCount(dir) === before + 1, "TL4. approved + enforce OFF + bad state ⇒ commits (record-only default, byte-identical)");
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+
+console.log(failures === 0 ? "ALL PASS — D1 HUMAN COMMIT GATE + Day-5 Lot3 TRUTH-LOCK" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

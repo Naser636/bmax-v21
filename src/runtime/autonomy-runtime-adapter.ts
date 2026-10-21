@@ -1081,6 +1081,25 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
         return false;
       }
     }
+    // IDENTITY integrity precondition (opt-in) — ORTHOGONAL to the human approval above: it NEVER substitutes
+    // for, simulates, or fabricates ODG_HUMAN_COMMIT_APPROVED (that distinct human gate already passed). When
+    // ODG_TRUTH_LOCK_ENFORCE is set, the repo must also pass the canonical Truth-Lock repo-safety policy BEFORE
+    // a commit; a non-conforming state (wrong branch / HEAD divergence / staged index / unresolvable origin)
+    // ⇒ NO commit (fail-closed), leaving the deliverable VALIDATED_PENDING_COMMIT. Default no-op
+    // (byte-identical). Reuses the canonical gate via the same core-port loader — no second policy; degrades to
+    // prior behaviour if the gate module is absent (stripped sandbox).
+    if (process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true") {
+      try {
+        const { truthLockGate } = requireCjs(`${this.cwd}/${resolveCorePort(this.cwd, "truth-lock-gate.js")}`) as { truthLockGate: (o: unknown) => { blocked: boolean; verdict: { detail: string } } };
+        const exec = (args: string[]): string | null => { try { return String(execFileSync("git", args, { cwd: this.cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } };
+        const tl = truthLockGate({ mutating: true, enforce: true, exec });
+        if (tl.blocked) {
+          // eslint-disable-next-line no-console
+          console.warn(`[AutonomyRuntimeAdapter] Not committing "${mission}": Truth-Lock repo-safety — ${tl.verdict.detail}.`);
+          return false;
+        }
+      } catch { /* gate module unavailable ⇒ degrade to prior behaviour; the ledger release gate still enforces */ }
+    }
     // Reduce globbed authorized paths (e.g. "src/app/x/**") to committable path prefixes.
     const prefixes = authorized
       .map((p) => p.replace(/[*].*$/, "").replace(/\/+$/, ""))
