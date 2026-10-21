@@ -430,6 +430,41 @@ console.log("== NL Objective Gateway ==");
   ok("27 'prepare … but do not launch' records the do-not constraint", hasConstraint("prepare the deployment but do not launch it", /do not launch/i));
 }
 
+// ---- 28 — DAY-3 ADVERSARIAL MATRIX (FR/AR/EN): complex negations, mixed language, contradiction, prepare-vs-
+//      execute, bypass. Dimensions measured SEPARATELY (per mandate): correct understanding · no inversion ·
+//      forbidden-effect absence · constraint capture · over-classification labelled (safe, not a failure).
+{
+  const C = gw.classifyObjective;
+  const hasC = (g, re) => gw.extractConstraints(g).some((x) => re.test(x));
+  // (i) NO INVERSION under complex/mixed negation — a prohibition never classifies as the effect it forbids.
+  ok("28 FR 'en aucun cas ne supprime le fichier' ⇒ captured as constraint (new pattern)", hasC("sauvegarde puis en aucun cas ne supprime le fichier de config", /en aucun cas/));
+  ok("28 FR multi-word 'ne le lance pas' captured (object-pronoun negation)", hasC("deploie le build mais ne le lance pas en production", /ne le lance pas/));
+  ok("28 AR 'لا تدفع الفاتورة أبدا' (never pay) ⇒ NOT FINANCIAL (no inversion)", C("لا تدفع الفاتورة أبدا").externalEffect !== "FINANCIAL");
+  // (ii) UNDERSTANDING — a genuine consequential intent in the same clause IS recognised (not suppressed).
+  ok("28 FR 'supprime les logs' (real delete intent) ⇒ DESTRUCTIVE (understanding, not over-suppressed)", C("supprime les logs du dossier temp").externalEffect === "DESTRUCTIVE");
+  // (iii) BYPASS attempts — an embedded destructive/polite-wrapped effect is still caught.
+  ok("28 bypass: 'exécute une commande shell qui fait rm -rf' ⇒ DESTRUCTIVE", C("execute une commande shell qui fait rm -rf").externalEffect === "DESTRUCTIVE");
+  ok("28 bypass: polite 'could you please delete the production database' ⇒ DESTRUCTIVE", C("could you please delete the production database").externalEffect === "DESTRUCTIVE");
+  ok("28 mixed AR+EN 'احذف الملف then commit' ⇒ DESTRUCTIVE (genuine delete)", C("احذف الملف then commit the change").externalEffect === "DESTRUCTIVE");
+  // (iv) FORBIDDEN-EFFECT ABSENCE end-to-end — a prohibition fires NO provider/external/write effect.
+  {
+    const r = gw.compile("لا تنشر في الإنتاج، فقط جهّز", { currentState: "CREATED" });
+    ok("28 AR do-not-deploy compile: zero side effects", r.providerCalls === 0 && r.externalCalls === 0 && r.externalWrites === 0);
+    ok("28 AR do-not-deploy compile: no DEPLOY objective", (r.objectives || []).every((o) => o.classification.externalEffect !== "DEPLOY"));
+  }
+  // (v) PREPARE-vs-EXECUTE — "prepare … but do not launch": the do-not clause is captured; the DEPLOY
+  //     classification of "déploiement" is OVER-CLASSIFICATION, which is SAFE (consequential ⇒ requiresHuman +
+  //     dry-run never performs it). Measured separately — labelled, NOT counted as a correctness failure.
+  {
+    const c = C("prépare le déploiement en production mais ne le lance pas");
+    ok("28 prepare-not-exec: do-not-launch constraint captured", hasC("prépare le déploiement en production mais ne le lance pas", /ne le lance pas/));
+    ok("28 prepare-not-exec: OVER-CLASSIFIED to DEPLOY but SAFE (consequential ⇒ requiresHuman, dry-run blocks)", c.externalEffect === "DEPLOY" && c.requiresHuman === true);
+  }
+  // (vi) CONTRADICTION — "deploy but do not deploy": the negative clause is surfaced as a constraint; the
+  //      consequential classification keeps it human-gated (safe) rather than silently proceeding.
+  ok("28 contradiction surfaced as a constraint", hasC("deploy to production but do not deploy anything", /do not deploy/));
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);

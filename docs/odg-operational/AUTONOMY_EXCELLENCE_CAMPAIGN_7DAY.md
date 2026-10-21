@@ -70,5 +70,29 @@ Read-only audit (agent) mapped every mutating path. **Finding: there is NO singl
 **Highest-risk point wired now:** the Truth-Lock gate is applied at **`resolve()`** for **CONSEQUENTIAL** effects only (observational never gated), opt-in via `ODG_TRUTH_LOCK_ENFORCE` (default no-op ⇒ byte-identical; git facts via the `_seams.gitExec` seam for tests). This covers the direct capability-dispatch bypass (runtime-executor) + reinforces patch-executor's symbolic dispatch. Proven: `truth-lock-chokepoint.test.ts` (4) — consequential+enforce+bad-state ⇒ refused BEFORE the effect; observational never gated; enforce-off ⇒ no-op; good-state ⇒ proceeds. dispatch-authorization-invariant unchanged.
 **Honestly NOT claimed as total coverage.** Still-ungated mutating paths (risk-ordered residuals, each with its existing controls): patch-executor **edits branch** direct writes (gated by action-gate + isAuthorizedTarget; odg-run-spawned ones ARE covered by the entry gate, but a direct `patch-proposal-apply` spawn is not Truth-Lock-gated), `delegate-isolation` (scope/acceptance gated), adapter git-commit (commit-approval gated). Next lots wire Truth-Lock at the patch-executor edits chokepoint. Evidence: truth-lock-chokepoint 4/4 + gate 20/20 both ports; executors 55/55; dispatch-invariant PASS; tsc 0 (3 cfg); build OK; parity PASS; full npm test GREEN (476 files, 0 failures).
 
+### Day 3 — Priority B: multilingual adversarial verification (FR/AR/EN)
+Reconnaissance over the current classifier found **no negation inversions** (every prohibition safe: "لا تدفع"→NONE, "rm -rf"/"delete the production database"→correctly DESTRUCTIVE) but two FR **constraint-capture** gaps. Fixed (both ports, additive — no classification/inversion change): `ne … pas` now allows object pronouns ("ne le lance pas", "ne les supprime pas"); added "en aucun cas". Added an adversarial matrix (`nl-objective-gateway.test.ts` case 28, 12 assertions) measuring the dimensions SEPARATELY:
+- **correct understanding** (a genuine delete intent in a mixed clause ⇒ DESTRUCTIVE, not over-suppressed);
+- **no inversion** (FR/AR/EN prohibitions never classify as the forbidden effect);
+- **forbidden-effect absence** end-to-end (AR do-not-deploy compile ⇒ 0 provider/external/write, no DEPLOY objective);
+- **constraint capture** (multi-word FR negation, "en aucun cas", contradiction clause);
+- **bypass caught** (embedded `rm -rf`, polite "delete the production database", mixed AR+EN delete);
+- **over-classification labelled SAFE, not a failure** (prepare-"déploiement"→DEPLOY is consequential ⇒ requiresHuman + dry-run never performs it; measured separately per the mandate).
+Evidence: gateway 221/0 (incl. 12 new case-28 adversarial); nl-objective-gateway-equivalence (dual-port) PASS; tsc 0 (3 cfg); build OK; parity PASS; full npm test GREEN (476 files, 0 failures). Honest limit (unchanged): mixed-language `"supprime the config"` under-classifies to NONE (fail-safe), not fixed (bare FR verbs would over-escalate).
+
+### Day 3 — Priority C: scheduler (GOVERNED DESIGN ONLY — no unattended execution enabled)
+Per the mandate, C is design + isolated tests only; **no unattended consequential execution is activated**. Design REUSES the existing continuation mechanisms (verified Day 1): the persistent mission queue + `odg-status` deterministic next-mission selection + mission-ledger proven-gate — the scheduler is an EXTENSION/driver over these, not a second orchestrator or queue.
+Design elements (to implement + isolated-test in the next lot, gated):
+- **Eligibility:** only missions explicitly PRE-AUTHORIZED, bounded, reversible, idempotent, read-only or record-only by default; consequential/privileged/destructive/financial/external/production remain under their existing authorization controls (capability-authorization, action-gate, Truth-Lock enforce, commit-approval) — the scheduler NEVER self-authorizes.
+- **Authorization:** per-mission + per-effect-class; a consequential mission requires its gate to pass each run (reuse, not bypass).
+- **Bounds:** max attempts per mission, token/time budget (reuse budget-contract/live-cost-metering), max wall-clock.
+- **Dedup/idempotence:** reuse mission-ledger proven-gate (a PROVEN mission is never re-run) + patch-memory signature.
+- **Stop conditions + emergency stop:** a kill-switch file/env (`ODG_SCHEDULER_STOP`) + consecutive-failure cap + budget-exhaustion halt.
+- **Audit/traceability:** every decision (selected/skipped/blocked) appended to an audit log (reuse attempt-log).
+- **Resume after interruption:** derive the next action from canonical state (already deterministic) — no in-memory-only state.
+- **Failure behavior:** provider failure / missing proof / inconsistent state ⇒ STOP that mission (BLOCKED), record, do not loop.
+- **Testing:** ISOLATED only (fixture queue, injected clock/seams, no real consequential effect) before any activation.
+**ACCEPTANCE GATE (explicit):** unattended execution of consequential missions is NOT enabled until identity + authorization + evidence + recovery controls are demonstrated AND the automatic-execution perimeter is explicitly approved by the CTO. Status today: **design recorded; nothing activated**.
+
 ### Day-1 verdict
 State established, continuation verified (with honest limit), research grounded, cartography complete, gaps prioritized, one ready repair landed. **Day 2 next:** gap #1 (consequential evidence probes) + gap #4 (run() dispatch tests), with careful per-executor evidence analysis to avoid regressing legitimate runs.

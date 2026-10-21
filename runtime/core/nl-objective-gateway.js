@@ -103,7 +103,8 @@ const CONSTRAINT_SIGNALS = [
     /\bwithout\b[^.,;]*/gi, /\bmust not\b[^.,;]*/gi, /\bno\s+\w+[^.,;]*/gi, /\bonly\b[^.,;]*/gi, /\bnever\b[^.,;]*/gi,
     // EN prohibition verbs: do not · don't · cannot · can't · mustn't (mirror of .ts).
     /\bdo not\b[^.,;]*/gi, /\bdon['’]t\b[^.,;]*/gi, /\bcannot\b[^.,;]*/gi, /\bcan['’]t\b[^.,;]*/gi, /\bmustn['’]t\b[^.,;]*/gi,
-    /\bsans\b[^.,;]*/gi, /\bne\s+\w+\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
+    // "ne … pas" allows up to 3 words between (object pronouns); "en aucun cas" = strong FR prohibition. (Mirror of .ts.)
+    /\bsans\b[^.,;]*/gi, /\bne(\s+\S+){0,3}\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\ben aucun cas\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
     // AR: بدون · فقط · ابدا/أبدا · دون · لا تَفعل (negated prohibition) · ممنوع (forbidden) (mirror of .ts).
     /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g, /لا\s+ت\S+[^.,;]*/g, /ممنوع[^.,;]*/g,
 ];

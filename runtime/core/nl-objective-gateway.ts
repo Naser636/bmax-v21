@@ -115,7 +115,9 @@ const CONSTRAINT_SIGNALS = [
     // inversion: the effect classifier already does NOT fire on these forms).
     /\bdo not\b[^.,;]*/gi, /\bdon['’]t\b[^.,;]*/gi, /\bcannot\b[^.,;]*/gi, /\bcan['’]t\b[^.,;]*/gi, /\bmustn['’]t\b[^.,;]*/gi,
     // FR: sans · ne … pas · ne pas · jamais · uniquement · seulement · pas de
-    /\bsans\b[^.,;]*/gi, /\bne\s+\w+\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
+    // "ne … pas" allows up to 3 words between (object pronouns/adverbs): "ne le lance pas", "ne les supprime pas".
+    // "en aucun cas" = a strong FR prohibition ("under no circumstances").
+    /\bsans\b[^.,;]*/gi, /\bne(\s+\S+){0,3}\s+pas\b[^.,;]*/gi, /\bne pas\b[^.,;]*/gi, /\bjamais\b[^.,;]*/gi, /\ben aucun cas\b[^.,;]*/gi, /\buniquement\b[^.,;]*/gi, /\bseulement\b[^.,;]*/gi, /\bpas de\b[^.,;]*/gi,
     // AR: بدون (without) · فقط (only) · ابدا/أبدا (never) · دون (without) · لا تَفعل (negated imperfect
     // prohibition "do not …") · ممنوع (forbidden). \b is ASCII-only so Arabic anchors on the literal word.
     /بدون[^.,;]*/g, /فقط[^.,;]*/g, /ابدا[^.,;]*/g, /أبدا[^.,;]*/g, /دون[^.,;]*/g, /لا\s+ت\S+[^.,;]*/g, /ممنوع[^.,;]*/g,
