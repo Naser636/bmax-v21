@@ -1,0 +1,26 @@
+# ODG governed mission runner — DESIGN ARTIFACT (NOT installed). Install only under CTO authorization
+# per docs/odg-operational/ODG_MISSION_RUNNER_SERVICE_PACKAGE.md (Appendix A/B).
+[Unit]
+Description=ODG governed mission runner (one bounded tick; read-only allowlist)
+After=network.target
+ConditionPathExists=/home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/bmax-v21
+Environment=ODG_TRUTH_LOCK_ENFORCE=1
+Environment=NODE_ENV=production
+# REVIEWED read-only canary allowlist (comma-separated mission ids). EMPTY => safe no-op (IDLE).
+Environment=ODG_CANARY_ALLOWLIST=
+ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/dist/bin/odg-schedule-tick.js
+RuntimeMaxSec=600
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/bmax-v21
+PrivateTmp=true
+CapabilityBoundingSet=
+IPAddressDeny=any
+# No [Install] — driven by the timer, never enabled on its own.

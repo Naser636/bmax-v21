@@ -1,0 +1,12 @@
+# ODG mission-runner periodic tick — DESIGN ARTIFACT (NOT installed).
+[Unit]
+Description=ODG mission-runner periodic tick (bounded, read-only canary)
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=15min
+Persistent=false
+Unit=odg-mission-runner.service
+
+[Install]
+WantedBy=timers.target

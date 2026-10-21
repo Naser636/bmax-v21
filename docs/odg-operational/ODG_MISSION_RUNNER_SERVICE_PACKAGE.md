@@ -158,3 +158,28 @@ WantedBy=timers.target
 ```
 These are the DESIGN artifacts; **they are not installed**. The canary runs read-only missions only; widening
 the allowlist (the `odg-schedule-tick.js` CANARY_ALLOWLIST) to consequential missions is a separate decision.
+
+## Appendix B — FINAL HOST PREFLIGHT (read-only; NO host change) → verdict
+**Truth Lock:** HEAD==origin/main @ `254ad65`, worktree clean, `254ad65` in canonical history, 5 stashes untouched. **PASS.**
+**Non-root preflight:** dist artifact `runtime/dist/bin/odg-schedule-tick.js` present **PASS**; `odg health` runs **PASS**; `odg-schedule-tick.e2e` 11/11 **PASS** (current — bin unchanged since `254ad65`, not re-run per no-redundant-rerun). Repo still clean after checks **PASS**.
+**Unit review (Appendix A):** ExecStart→the built dist bin **PASS**; `User=ubuntu` + `WorkingDirectory=<repo>` + node `/usr/bin/node` match host **PASS**; `Environment=ODG_TRUTH_LOCK_ENFORCE=1` propagates to the spawned `odg-run` child (proven: e2e A `truth-lock.json enforce=true`) **PASS**; clean stop (`ODG_SCHEDULER_STOP`/`systemctl`), fail-closed error exits, ledger dedup, append-only audit **PASS**; no provider constructed / no consequential effect **PASS**; `ProtectSystem=strict`+`ProtectHome=read-only`+`PrivateTmp=true`+`NoNewPrivileges=true`+`CapabilityBoundingSet=`+`IPAddressDeny=any` compatible with a read-only tick **PASS**; no name/port conflict with existing units (odg-preprod/fleet-bridge/odg-monitor/healthcheck/recover) **PASS**. **No new defect**; the one residual is the deliberately-broad `ReadWritePaths=<repo>` (NOT_MEASURABLE-to-tighten without a real-repo write-audit).
+**Proposed allowlist (minimal; each proven read-only by CONTRACT, not name):** candidates `M0000 M0001 M0002 RUNTIME_SELF_AUDIT MEASURE_DEMO_CLEAN QUAL_CLEAN_GATEB` all = mode∈{AUDIT,READ_ONLY} · requires_engineering=false · authorized_paths=0 · verify∈{none, Clean Workspace(observational)}. **Recommendation:** first install with `ODG_CANARY_ALLOWLIST=` **EMPTY** (the runner ticks as a pure IDLE no-op → proves wiring/enforce/stop with ZERO mission execution); then, after one clean IDLE tick, set `ODG_CANARY_ALLOWLIST=M0001` (single, contract-proven read-only AUDIT) for the first real read-only tick. Do NOT add consequential missions (separate decision).
+**Exact root commands (PROPOSED — NOT executed; for CTO approval):**
+```
+# 1. install units (root, one-time — the ONLY privileged step)
+sudo install -m 0644 ./deploy/odg-mission-runner.service /etc/systemd/system/odg-mission-runner.service
+sudo install -m 0644 ./deploy/odg-mission-runner.timer   /etc/systemd/system/odg-mission-runner.timer
+sudo systemctl daemon-reload
+# 2. first tick = pure IDLE no-op (ODG_CANARY_ALLOWLIST empty in the unit)
+sudo systemctl start odg-mission-runner.service
+systemctl status odg-mission-runner.service --no-pager      # expect: finished, exit 0, "[odg-schedule-tick] IDLE"
+# 3. (after review) set the allowlist to M0001, daemon-reload, start once, verify
+sudo sed -i 's/^Environment=ODG_CANARY_ALLOWLIST=.*/Environment=ODG_CANARY_ALLOWLIST=M0001/' /etc/systemd/system/odg-mission-runner.service
+sudo systemctl daemon-reload && sudo systemctl start odg-mission-runner.service
+node -e 'console.log(require("/home/ubuntu/bmax-v21/runtime/generated/truth-lock.json").enforce)'   # expect true
+git -C /home/ubuntu/bmax-v21 status --porcelain             # expect empty
+# 4. only after a clean verified tick: enable the timer
+sudo systemctl enable --now odg-mission-runner.timer
+```
+**Rollback:** `sudo systemctl disable --now odg-mission-runner.timer; sudo systemctl stop odg-mission-runner.service; sudo rm -f /etc/systemd/system/odg-mission-runner.{service,timer}; sudo systemctl daemon-reload` (record-only restored; `odg-recover.service` unaffected; no repo/data change).
+**VERDICT: READY_FOR_CTO_APPROVAL** — all preflight checks PASS; nothing installed/activated; only the one-time root install is gated.
