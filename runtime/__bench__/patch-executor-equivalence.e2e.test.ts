@@ -44,7 +44,11 @@ function buildEngine(): void {
   //         requires as the runtime wired autonomy measurement, delegation isolation, local model management
   //         and provenance stamping: `autonomy-rate`→`autonomy-measure`, `delegate-isolation`→`provider-sandbox`,
   //         `local-model-manager`, `evidence-provenance` (+6). All placed from dist; equivalence unchanged.
-  check(closure.length === 24, `closure is the expected 24-module set (size=${closure.length})`);
+  //   24→25: `capability-executors` (the hub) now references `decision-precedent` (G9↔G10 integration — the
+  //         read-only "Decision Precedent Consultation" executor). It is a real require edge (static scan sees
+  //         it; lazy inside run()) pulling ONLY `patch-memory`, which is already in-closure ⇒ +1 net
+  //         (decision-precedent). A reused pure module, not a new primitive; missing:none holds; .js≡.ts unchanged.
+  check(closure.length === 25, `closure is the expected 25-module set (size=${closure.length})`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-pe-dist-")); sandboxes.push(dir);
   for (const n of closure) place(dir, n);
   check(fs.readFileSync(path.join(DIST_CORE, "patch-executor.js"), "utf8") === fs.readFileSync(path.join(dir, "patch-executor.js"), "utf8"), "co-located patch-executor.js IS the compiled build output");

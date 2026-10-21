@@ -35,7 +35,7 @@ let COMPILED = "";
 function buildEngine(): void {
   const { closure, missing } = computeClosure(["final-report"]);
   check(missing.length === 0, `closure resolves (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 23, `closure is the authoritative 23-module set (size=${closure.length})`); // …→21 (IMPLEMENT_LOCAL_CODE) → 21→23 (IDENTITY gate): capability-executors.resolve() now references truth-lock-gate → truth-lock (canonical Truth-Lock gate at the consequential-dispatch chokepoint); reused modules, not new primitives; .js≡.ts equivalence unchanged
+  check(closure.length === 24, `closure is the authoritative 24-module set (size=${closure.length})`); // …→21 (IMPLEMENT_LOCAL_CODE) → 21→23 (IDENTITY gate): capability-executors.resolve() now references truth-lock-gate → truth-lock (canonical Truth-Lock gate at the consequential-dispatch chokepoint); reused modules, not new primitives; .js≡.ts equivalence unchanged. 23→24: capability-executors now references decision-precedent (G9↔G10 read-only "Decision Precedent Consultation" executor) which pulls only the already-in-closure patch-memory ⇒ +1 net (decision-precedent); reused pure module, not a new primitive; .js≡.ts unchanged
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-fr-dist-")); sandboxes.push(dir);
   for (const n of closure) place(dir, n);
   check(fs.readFileSync(path.join(DIST_CORE, "final-report.js"), "utf8") === fs.readFileSync(path.join(dir, "final-report.js"), "utf8"), "co-located final-report.js IS the compiled build output");

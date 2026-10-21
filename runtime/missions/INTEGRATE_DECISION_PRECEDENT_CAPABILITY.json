@@ -1,0 +1,71 @@
+{
+  "mission": "INTEGRATE_DECISION_PRECEDENT_CAPABILITY",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "G9↔G10 integration (CTO finalization campaign, Priority One): wire the standalone decision-precedent mechanism into the live pipeline as a READ-ONLY capability executor ('Decision Precedent Consultation', prefix PRECEDENT_CONSULT_) using the EXISTING capability-executor architecture — no new primitive, no second orchestrator. A single read-only mission can now BOTH consult the precedent AND be EVIDENCED (unifying G9 reuse with the G10 canonical measure).",
+  "authorized_paths": [
+    "runtime/missions/INTEGRATE_DECISION_PRECEDENT_CAPABILITY.json",
+    "runtime/core/capability-executors.ts",
+    "runtime/core/capability-executors.js",
+    "runtime/core/decision-precedent-executor.test.ts",
+    "runtime/missions/G9G10_PRECEDENT_REUSE_PROOF.json",
+    "runtime/__bench__/patch-executor-equivalence.e2e.test.ts",
+    "runtime/__bench__/final-report-equivalence.e2e.test.ts",
+    "runtime/__bench__/validation-engine-equivalence.e2e.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/INTEGRATE_DECISION_PRECEDENT_CAPABILITY.json",
+    "runtime/core/capability-executors.ts",
+    "runtime/core/capability-executors.js",
+    "runtime/core/decision-precedent-executor.test.ts",
+    "runtime/missions/G9G10_PRECEDENT_REUSE_PROOF.json",
+    "runtime/__bench__/patch-executor-equivalence.e2e.test.ts",
+    "runtime/__bench__/final-report-equivalence.e2e.test.ts",
+    "runtime/__bench__/validation-engine-equivalence.e2e.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MASTER DIRECTIVE 'ODG/BMAX FINALIZATION CAMPAIGN' (2026-10-22), Priority One (G9/G10 integration) — explicitly authorizes integrating decision-precedent as a read-only capability through the existing architecture.",
+    "recorded_at": "2026-10-22T00:00:00Z",
+    "note": "Write-set expanded (vs the earlier G9/G10 contracts) to include 3 equivalence-bench closure-count recalibrations — an IN-SCOPE, necessary, provenance-traced consequence of the authorized new require edge (capability-executors → decision-precedent). Not backdated/fabricated."
+  },
+  "work_item_contract": {
+    "objective": "Integrate decision-precedent as a governed read-only capability executor; prove a unified mission consults it AND reaches EVIDENCED + measurable autonomy.",
+    "scope": "New observational executor + its 1:1 CAPABILITY_EFFECT contract (both ports), a focused test, a unified proof mission, and the minimal closure-count recalibrations the new require edge forces. NO new primitive/orchestrator; NO systemd/timer/env change; NO live canonical ledger/generated mutation (unified run isolated in a worktree).",
+    "invariants": [
+      "Precedent consultation does NO file patch and NO target-data mutation (decision attached to a COPY; only runtime-owned evidence + reuse accounting written).",
+      "decisionPrecedent required LAZILY inside run() so the static require-closure grows by exactly +1 (decision-precedent; patch-memory already in-closure).",
+      "Dual-port parity (capability-executors.ts ≡ .js) preserved; all *-equivalence benches green.",
+      "No new permanent runtime primitive, no second orchestrator, no duplicate ledger.",
+      "Bench closure counts updated ONLY to the real new value, with traced provenance (never to silence a real divergence)."
+    ],
+    "acceptance_criteria": [
+      "decision-precedent-executor.test.ts PASS both ports incl. negative/stale/absent/corrupt/parity + no-patch invariant + provenance.",
+      "contract conformance clean (new executor 1:1 governed in CAPABILITY_EFFECT).",
+      "All affected *-equivalence benches PASS (dist≡source) after provenance-traced closure recalibration.",
+      "Isolated unified mission G9G10_PRECEDENT_REUSE_PROOF: consultation hit=true + precedentProvenance + attribution EVIDENCED + canonical measure measurable:true numerator>=1.",
+      "tsc exit 0; dist fingerprint matches source; live canonical state untouched."
+    ],
+    "rollback": "git checkout -- <write_set> + delete untracked new files; rebuild dist from clean source. No live service/state change to undo.",
+    "evidence_required": ["focused test output", "equivalence-bench results", "isolated unified-run evidence (consultation + attribution + measure)", "tsc + fingerprint", "commit/push ids"]
+  },
+  "objectives": [
+    { "id": "INTEGRATE_DECISION_PRECEDENT_CAPABILITY_1", "goal": "Wire + prove the read-only decision-precedent capability executor (G9↔G10).",
+      "done_when": ["Focused + equivalence tests pass both ports.", "Unified isolated mission consults precedent AND is EVIDENCED AND measurable.", "Final diff limited to the authorized write-set; committed."],
+      "proof": "decision-precedent-capability-integrated", "authorization": { "eligible": true, "authorized": true } }
+  ],
+  "definition_of_done": [
+    "Read-only Decision Precedent Consultation executor live in both ports + governed 1:1; focused + equivalence + autonomy tests pass; tsc 0; parity identical.",
+    "Unified isolated proof: consult (hit+provenance) + EVIDENCED + measurable:true; live canonical untouched; committed (push no force)."
+  ],
+  "source": "cto-directive",
+  "permissions": { "engineering": true, "authorizedPaths": ["runtime/core/capability-executors.ts", "runtime/core/capability-executors.js", "runtime/core/decision-precedent-executor.test.ts", "runtime/__bench__/patch-executor-equivalence.e2e.test.ts", "runtime/__bench__/final-report-equivalence.e2e.test.ts", "runtime/__bench__/validation-engine-equivalence.e2e.test.ts", "ODG_PROJECT_STATE.md"], "network": false },
+  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "NO_SCOPE_EXPANSION"],
+  "generatedBy": "claude-code (authored under CTO finalization directive Priority One)"
+}

@@ -1,0 +1,37 @@
+{
+  "mission": "G9G10_PRECEDENT_REUSE_PROOF",
+  "priority": "NORMAL",
+  "mode": "ANALYZE",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "authorizedPaths": [],
+  "description": "UNIFIED G9+G10 proof: a genuinely read-only ANALYZE mission whose objective (PRECEDENT_CONSULT_1) is served by the new live 'Decision Precedent Consultation' capability executor. It CONSULTS the persisted decision-precedent store (recall + read-only apply of an accepted precedent; NO file patch, NO target mutation), producing runtime-owned EVIDENCED evidence so the canonical autonomy measure counts it. Executed ONCE in an ISOLATED git worktree to protect live canonical state.",
+  "objectives": [
+    {
+      "id": "PRECEDENT_CONSULT_1",
+      "goal": "Reuse the accepted canary-IDLE classification precedent via a read-only consultation.",
+      "done_when": [
+        "The decision-precedent store is consulted read-only; an applicable precedent is recalled and applied to a copy of the objective; runtime-owned consultation evidence is produced."
+      ],
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "definition_of_done": [
+    "Decision Precedent Consultation executor runs; precedent-consultation.json evidence (non-empty) with hit=true + reuseCount>=1 + precedentProvenance.",
+    "Objective attribution EVIDENCED; canonical autonomy measure measurable:true numerator>=1.",
+    "No write outside runtime/generated/**; no target/source mutation; no decision-engine stage edit."
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MASTER DIRECTIVE 'ODG/BMAX FINALIZATION CAMPAIGN' (2026-10-22), Priority One (G9/G10 integration)",
+    "recorded_at": "2026-10-22T00:00:00Z",
+    "note": "Authorization recorded from the master finalization directive; not backdated/fabricated."
+  },
+  "source": "cto-directive",
+  "permissions": { "engineering": false, "authorizedPaths": [], "network": false },
+  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "NO_SCOPE_EXPANSION"],
+  "generatedBy": "claude-code (authored under the CTO finalization directive Priority One)"
+}

@@ -99,7 +99,7 @@ function buildCompiledEngineDir(): void {
   // drift — an added OR removed module — still fails the gate for review.
   // 17→18 (V64j): capability-executors.writeEvidence now stamps provenance via `evidence-provenance`
   // (audit C5-A2), a legitimate new transitive member of the closure; count updated to match.
-  check(closure.length === 23, `transitive closure is the expected 23-module set (size=${closure.length})`); // 21→23 (IDENTITY gate): capability-executors.resolve() now references truth-lock-gate → truth-lock (the canonical Truth-Lock repo-safety gate at the consequential-dispatch chokepoint) — reused modules, not new primitives; .js≡.ts equivalence unchanged
+  check(closure.length === 24, `transitive closure is the expected 24-module set (size=${closure.length})`); // 21→23 (IDENTITY gate): capability-executors.resolve() now references truth-lock-gate → truth-lock (the canonical Truth-Lock repo-safety gate at the consequential-dispatch chokepoint) — reused modules, not new primitives; .js≡.ts equivalence unchanged. 23→24: capability-executors now references decision-precedent (G9↔G10 read-only "Decision Precedent Consultation" executor) pulling only the already-in-closure patch-memory ⇒ +1 net (decision-precedent); reused pure module, not a new primitive; .js≡.ts unchanged
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-ve-dist-"));
   sandboxes.push(dir);
   for (const n of closure) { const prov = placeInDistCore(dir, n); composition[prov]++; }

@@ -77,6 +77,8 @@ const SPEC_AUTHOR_EVIDENCE = path.join(GENERATED_DIR, "odg-spec-author.json");
 // turns an otherwise-no-op observability objective into real EVIDENCED work (never a fabricated proof —
 // absent real run inputs or a non-honest signal makes the capability FAIL, not pass).
 const OBSERVABILITY_VERIFICATION_EVIDENCE = path.join(GENERATED_DIR, "observability-verification.json");
+const PRECEDENT_CONSULT_EVIDENCE = path.join(GENERATED_DIR, "precedent-consultation.json");
+const DECISION_PRECEDENT_STORE = path.join(GENERATED_DIR, "autonomy", "decision-precedent.json");
 const IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE = path.join(GENERATED_DIR, "implement-via-local-provider.json");
 const SPEC_AUTHOR_NAME = "odg-spec.json";
 // tsx entry (run via `node <cli.mjs>` so no PATH/shebang assumption) that activates the Provider
@@ -830,6 +832,49 @@ const EXECUTORS = [
         },
     },
     {
+        // Decision Precedent Consultation (G9↔G10 integration) — READ-ONLY reuse of a persisted decision
+        // precedent through the EXISTING capability-executor architecture (no new primitive, no 2nd
+        // orchestrator). Matched strictly on the objectiveId prefix. Recalls a precedent from the runtime-owned
+        // store, APPLIES it to a COPY of the objective (attaches a decision; never writes a file patch, never
+        // mutates target/source data), accounts the reuse, writes deterministic non-empty evidence (⇒ EXECUTED).
+        // A MISS is a valid recorded read-only outcome (never throws). Parity twin of the .ts.
+        capability: "Decision Precedent Consultation",
+        matches(patch) {
+            return !!patch && typeof patch.objectiveId === "string" && patch.objectiveId.startsWith("PRECEDENT_CONSULT_");
+        },
+        run(patch) {
+            const decisionPrecedent = require("./decision-precedent"); // lazy: keeps the static closure stable
+            const id = patch.objectiveId;
+            const task = { goal: patch.goal, objectiveId: id };
+            let store;
+            try { store = JSON.parse(fs.readFileSync(DECISION_PRECEDENT_STORE, "utf8")); }
+            catch { store = decisionPrecedent.emptyStore(); }
+            const rec = decisionPrecedent.recallPrecedent(store, task);
+            let applied = null; let reuseCount = 0; const hit = !!rec;
+            if (rec) {
+                applied = decisionPrecedent.applyPrecedent({ id, goal: patch.goal }, rec);
+                reuseCount = decisionPrecedent.reusePrecedent(store, task);
+                try {
+                    fs.mkdirSync(path.dirname(DECISION_PRECEDENT_STORE), { recursive: true });
+                    fs.writeFileSync(DECISION_PRECEDENT_STORE, JSON.stringify(store, null, 2));
+                } catch { /* reuse accounting best-effort; the consultation evidence is authoritative */ }
+            }
+            const out = writeEvidence(PRECEDENT_CONSULT_EVIDENCE, {
+                objective: id,
+                hit,
+                applied: applied ? { decision: applied.decision, resolvedBy: applied.resolvedBy, precedentSignature: applied.precedentSignature } : null,
+                reuseCount,
+                precedentProvenance: rec ? {
+                    sourceMission: rec.sourceMission, sourceEvidence: rec.sourceEvidence,
+                    capturedAt: rec.capturedAt, authoredBy: rec.authoredBy,
+                    applicability: rec.applicability, limitations: rec.limitations,
+                } : null,
+                note: "read-only precedent consultation: recall + apply (decision attached to a COPY); NO file patch, NO target mutation; MISS is a valid recorded outcome (precedentProvenance kept distinct from writeEvidence's own provenance stamp)",
+            });
+            return { capability: "Decision Precedent Consultation", evidence: out, summary: { hit, reuseCount } };
+        },
+    },
+    {
         // Governed Observability Verification (B140) — proves a mission whose deliverable is an OBSERVABLE
         // STATE (the autonomy-rate signal emitted by odg-state.js and surfaced by odg-cockpit.js), which on
         // re-run performs no file edit and would otherwise be a no-op RECORDED (BLOCKED by anti-false-success).
@@ -1141,6 +1186,7 @@ const CAPABILITY_EFFECT = {
     "Connectivity Audit": { effect: "observational", control: "read-only reachability probe (no mutation/egress)", purpose: "Probe reachability of authorized hosts, read-only.", idempotent: true, failureClass: "verified-failure (honest failure evidence, non-zero exit)", evidence: "runtime/generated/connectivity-audit.json" },
     "Clean Workspace": { effect: "observational", control: "scan-only; deletes nothing (read-only)", purpose: "Scan workspace cleanliness; never deletes.", idempotent: true, failureClass: "none (read-only scan)", evidence: "runtime/generated/clean-workspace-report.json" },
     "Governed Observability Verification": { effect: "observational", control: "re-derives+verifies the autonomy signal (read-only)", purpose: "Re-derive and verify the autonomy observability signal.", idempotent: true, failureClass: "verified-failure if the signal is not measurable", evidence: "runtime/generated/observability-verification.json" },
+    "Decision Precedent Consultation": { effect: "observational", control: "read-only recall/apply of a persisted decision precedent; decision attached to a COPY; writes only runtime-owned evidence + reuse accounting; NO file patch / NO target mutation", purpose: "Consult the decision-precedent store and reuse an accepted precedent read-only.", idempotent: false, failureClass: "none (read-only; MISS is a valid recorded outcome)", evidence: "runtime/generated/precedent-consultation.json" },
     "ODG Synthetic Deliverable": { effect: "consequential", control: "write confined to authorized_paths (confineSyntheticTarget)", purpose: "Write a synthetic deliverable confined to authorized paths.", idempotent: false, failureClass: "refused if target is outside authorized_paths", evidence: "runtime/generated/odg-synthetic-deliverable.json" },
     "ODG Spec Author": { effect: "consequential", control: "write confined to authorized_paths", purpose: "Author an ODG spec/contract confined to authorized paths.", idempotent: false, failureClass: "refused if out of scope", evidence: "runtime/generated/odg-spec-author.json" },
     "Governed Git Branch Integration": { effect: "consequential", control: "ff-only, dry-run default, C03-recorded", purpose: "Fast-forward-only git branch integration (dry-run default).", idempotent: false, failureClass: "refused/verified-failure (ff-only; never force)", evidence: "runtime/generated/git-branch-integration.json" },
@@ -1204,7 +1250,7 @@ function resolve(patch) {
     };
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, contractConformance, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, contractConformance, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, PRECEDENT_CONSULT_EVIDENCE, DECISION_PRECEDENT_STORE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.
