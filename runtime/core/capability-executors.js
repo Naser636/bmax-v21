@@ -110,9 +110,10 @@ const _seams = {
     nowIso: () => new Date().toISOString(),
     dnsLookup: (host, options) => require("dns").promises.lookup(host, options),
     httpRequest: (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb),
+    gitExec: undefined, // Truth-Lock git-fact gatherer seam (undefined ⇒ real `git`); tests inject a synthetic state.
 };
 function __setExecutorSeams(s) { if (s && typeof s === "object") Object.assign(_seams, s); }
-function __resetExecutorSeams() { _seams.spawn = spawnSync; _seams.nowIso = () => new Date().toISOString(); _seams.dnsLookup = (host, options) => require("dns").promises.lookup(host, options); _seams.httpRequest = (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb); }
+function __resetExecutorSeams() { _seams.spawn = spawnSync; _seams.nowIso = () => new Date().toISOString(); _seams.dnsLookup = (host, options) => require("dns").promises.lookup(host, options); _seams.httpRequest = (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb); _seams.gitExec = undefined; }
 
 // ---------------------------------------------------------------------------
 // Connectivity Audit — real business logic.
@@ -1190,6 +1191,14 @@ function resolve(patch) {
         effect: verdict.ok ? verdict.entry.effect : "UNKNOWN",
         run: () => {
             if (!verdict.ok) throw new Error(`Capability dispatch REFUSED: ${verdict.reason}`);
+            // IDENTITY chokepoint (opt-in, mirror of .ts): a CONSEQUENTIAL dispatch must pass the canonical
+            // Truth-Lock repo-safety policy when ODG_TRUTH_LOCK_ENFORCE is set. Observational effects never
+            // gated; default (no flag) ⇒ no-op (byte-identical). Reuses the gate — no second control.
+            if (verdict.entry.effect === "consequential" && (process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true")) {
+                const { truthLockGate } = require("./truth-lock-gate");
+                const tl = truthLockGate({ mutating: true, enforce: true, exec: _seams.gitExec, mission: matched.capability });
+                if (tl.blocked) throw new Error(`Capability dispatch REFUSED by Truth-Lock (repo-safety): ${tl.verdict.detail}`);
+            }
             return matched.run(patch);
         },
     };

@@ -122,9 +122,10 @@ const _seams = {
     nowIso: () => new Date().toISOString(),
     dnsLookup: (host: any, options: any) => require("dns").promises.lookup(host, options),
     httpRequest: (u: any, options: any, cb: any) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb),
+    gitExec: undefined, // Truth-Lock git-fact gatherer seam (undefined ⇒ real `git`); tests inject a synthetic state.
 };
 function __setExecutorSeams(s: any) { if (s && typeof s === "object") Object.assign(_seams, s); }
-function __resetExecutorSeams() { _seams.spawn = spawnSync; _seams.nowIso = () => new Date().toISOString(); _seams.dnsLookup = (host, options) => require("dns").promises.lookup(host, options); _seams.httpRequest = (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb); }
+function __resetExecutorSeams() { _seams.spawn = spawnSync; _seams.nowIso = () => new Date().toISOString(); _seams.dnsLookup = (host, options) => require("dns").promises.lookup(host, options); _seams.httpRequest = (u, options, cb) => (u.protocol === "https:" ? require("https") : require("http")).request(u, options, cb); _seams.gitExec = undefined; }
 
 // ---------------------------------------------------------------------------
 // Connectivity Audit — real business logic.
@@ -1232,6 +1233,16 @@ function resolve(patch: any) {
         effect: verdict.ok ? verdict.entry.effect : "UNKNOWN",
         run: () => {
             if (!verdict.ok) throw new Error(`Capability dispatch REFUSED: ${verdict.reason}`);
+            // IDENTITY chokepoint (opt-in). A CONSEQUENTIAL dispatch must pass the canonical Truth-Lock
+            // repo-safety policy when enforcement is enabled (ODG_TRUTH_LOCK_ENFORCE). This covers direct
+            // capability dispatches that bypass the odg-run entry gate (e.g. runtime-executor). OBSERVATIONAL
+            // effects are never gated. Default (no flag) ⇒ no-op (no git call), so tests/parity/sandbox and
+            // read-only dispatches are byte-identical. Reuses the gate — no second control.
+            if (verdict.entry.effect === "consequential" && (process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true")) {
+                const { truthLockGate } = require("./truth-lock-gate");
+                const tl = truthLockGate({ mutating: true, enforce: true, exec: _seams.gitExec, mission: matched.capability });
+                if (tl.blocked) throw new Error(`Capability dispatch REFUSED by Truth-Lock (repo-safety): ${tl.verdict.detail}`);
+            }
             return matched.run(patch);
         },
     };
