@@ -140,5 +140,22 @@
     "runtime/__bench__/g7-canary.e2e.test.ts",
     "runtime/generated/mission-attempt-log.jsonl"
   ],
-  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED state established by explicit CTO directive provenance above)"
+  "acceptance": {
+    "state": "ACCEPTED",
+    "transition": "VERIFIED -> ACCEPTED",
+    "accepted_by": "CTO (human)",
+    "acceptance_source": "CTO directive 'ACCEPT SCHEDULER DELTA AND EXECUTE ONE G9/G10 PROOF MISSION' (session message, 2026-10-21), section A",
+    "accepted_at": "2026-10-21T21:41:06Z",
+    "accepted_commit": "18768c1",
+    "verified_evidence": {
+      "focused_unit": "mission-scheduler.test.ts 27/27",
+      "affected_e2e": "4/4 (odg-schedule-tick, mission-runner-service-contract, g6-scheduler-dryrun, g7-canary)",
+      "typescript": "tsc --noEmit -p tsconfig.runtime-dist.json exit 0",
+      "parity": "dual-port identical (all-proven + empty-queue)",
+      "artifact": "build:runtime SKIP (fingerprint match; dist matches authorized source)",
+      "runtime": "live timer tick 2026-10-21T21:37:54Z emitted enriched IDLE reason; read-only, no dispatch"
+    },
+    "note": "VERIFIED -> ACCEPTED requires explicit human acceptance per ODG_AUTONOMOUS_WORK_PROTOCOL.json state_rules; recorded here as the CTO acceptance. RELEASED (push) was already completed under standing policy at commit 18768c1 and is NOT implied by this acceptance."
+  },
+  "generatedBy": "claude-code (authored in PROPOSED; AUTHORIZED state established by explicit CTO directive provenance above; ACCEPTED recorded per CTO acceptance directive)"
 }
