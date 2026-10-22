@@ -20,16 +20,24 @@ primitive). Tool: `runtime/bin/odg-state-backup.{ts,js}` (TS port is the default
 ## Commands
 
 ```
-# EXPORT (read-only on source; archive → gitignored runtime/generated/operational-backup/)
+# EXPORT (read-only on source) → an IMMUTABLE, timestamped snapshot (never overwrites a prior one)
 node runtime/bin/odg-state-backup.js export [--out <dir>]
-#   → writes manifest.json (content-embedded, integrity-hashed) + summary.json (non-sensitive)
+#   → <out>/snapshots/<createdAtMs>-<hash8>/{manifest.json (content-embedded, integrity-hashed), summary.json}
+#   → <out>/latest.json  (atomic pointer: {snapshot, manifest, manifestHash, createdAtMs})
+#   default <out> = runtime/generated/operational-backup (gitignored). Writes are atomic (tmp+rename).
+#   A snapshot id already present with DIFFERING content ⇒ SNAPSHOT_COLLISION (refused, prior kept).
 
 # VERIFY (recompute per-file sha256 + manifestHash; detects tamper/truncation/invalid)
-node runtime/bin/odg-state-backup.js verify --manifest <dir>/manifest.json
+node runtime/bin/odg-state-backup.js verify --manifest <out>/snapshots/<id>/manifest.json
 
 # RESTORE into an EXPLICIT, isolated, empty target (refuses live source/prod + non-empty w/o --force)
-node runtime/bin/odg-state-backup.js restore --manifest <dir>/manifest.json --target <empty-dir> [--force]
+node runtime/bin/odg-state-backup.js restore --manifest <out>/snapshots/<id>/manifest.json --target <empty-dir> [--force]
 ```
+
+**Durability / history:** each export is a DISTINCT immutable snapshot (`<createdAtMs>-<hash8>`); a new export
+never destroys a prior archive, and writes are atomic (a crash mid-write cannot corrupt a prior good snapshot).
+`latest.json` always points at the newest. Resolve the newest manifest with
+`node -e 'console.log(require("./runtime/generated/operational-backup/latest.json").manifest)'`.
 
 ## Safety (fail-closed)
 

@@ -127,4 +127,48 @@ console.log("ODG STATE BACKUP — durable operational-state backup/verify/restor
   } finally { fs.rmSync(root, { recursive: true, force: true }); }
 }
 
+// 9 — SNAPSHOTS (V2 durability): distinct immutable timestamped snapshots; no overwrite of differing content;
+//     idempotent on identical content; latest pointer; atomic (no .tmp leftover). Uses a temp cwd + temp out.
+{
+  const prev = process.cwd();
+  const root = mkRoot();
+  const out = fs.mkdtempSync(path.join(os.tmpdir(), "statebk-out-"));
+  process.chdir(root);
+  try {
+    delete require.cache[require.resolve(path.join(REPO, "runtime/bin/odg-state-backup.ts"))];
+    const M = require(path.join(REPO, "runtime/bin/odg-state-backup.ts"));
+    // export #1
+    const rc1 = M.doExport({ out, now: 1000 });
+    const snaps1 = fs.readdirSync(path.join(out, "snapshots"));
+    ok("export #1 ⇒ rc 0 + one snapshot dir", rc1 === 0 && snaps1.length === 1);
+    ok("latest.json points at snapshot #1", JSON.parse(fs.readFileSync(path.join(out, "latest.json"), "utf8")).snapshot.includes(snaps1[0]));
+    ok("snapshot #1 manifest verifies", B.verify(JSON.parse(fs.readFileSync(path.join(out, "snapshots", snaps1[0], "manifest.json"), "utf8"))).ok === true);
+    // idempotent: same content + same --now ⇒ same snapshot dir, still one, rc 0
+    const rcIdem = M.doExport({ out, now: 1000 });
+    ok("idempotent: same content+now ⇒ no new dir, rc 0", rcIdem === 0 && fs.readdirSync(path.join(out, "snapshots")).length === 1);
+    // DIFFERENT content ⇒ a DISTINCT snapshot (prior preserved)
+    fs.writeFileSync(path.join(root, "runtime", "missions", "SOME_MISSION.json"), JSON.stringify({ mission: "SOME_MISSION", objectives: [{ id: "O1" }, { id: "O2" }] }));
+    const rc2 = M.doExport({ out, now: 2000 });
+    const snaps2 = fs.readdirSync(path.join(out, "snapshots"));
+    ok("different content ⇒ a DISTINCT 2nd snapshot (history preserved, prior intact)", rc2 === 0 && snaps2.length === 2 && snaps2.includes(snaps1[0]));
+    ok("latest.json now points at the newest (2000) snapshot", /^2000-/.test(JSON.parse(fs.readFileSync(path.join(out, "latest.json"), "utf8")).snapshot.split("/").pop()));
+    // COLLISION: differing content pre-seeded at a target snap id ⇒ refuse (immutable)
+    const collideDir = path.join(out, "snapshots", "3000-deadbeef");
+    fs.mkdirSync(collideDir, { recursive: true });
+    fs.writeFileSync(path.join(collideDir, "manifest.json"), JSON.stringify({ manifestHash: "DIFFERENT", files: [] }));
+    // force the same snapId by... we can't force hash; instead assert the guard logic directly via a differing prior at the computed dir:
+    // compute the would-be id for now=3000 and pre-seed a differing manifest there
+    const wouldBe = M.exportState({ root, nowMs: 3000 }).manifest.manifestHash.slice(0, 8);
+    const realCollide = path.join(out, "snapshots", `3000-${wouldBe}`);
+    fs.mkdirSync(realCollide, { recursive: true });
+    fs.writeFileSync(path.join(realCollide, "manifest.json"), JSON.stringify({ manifestHash: "TAMPERED-DIFFERENT", files: [] }));
+    const rcCollide = M.doExport({ out, now: 3000 });
+    ok("SNAPSHOT_COLLISION: differing prior content at the id ⇒ refused (rc 2), prior NOT overwritten", rcCollide === 2 && JSON.parse(fs.readFileSync(path.join(realCollide, "manifest.json"), "utf8")).manifestHash === "TAMPERED-DIFFERENT");
+    // atomic: no leftover .tmp anywhere under out
+    const leftovers: string[] = [];
+    (function scan(d) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) scan(p); else if (e.name.endsWith(".tmp")) leftovers.push(p); } })(out);
+    ok("atomic: no leftover .tmp files", leftovers.length === 0);
+  } finally { process.chdir(prev); fs.rmSync(root, { recursive: true, force: true }); fs.rmSync(out, { recursive: true, force: true }); }
+}
+
 console.log(`\nODG STATE BACKUP — ${passed} assertions passed.`);

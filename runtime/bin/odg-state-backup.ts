@@ -92,17 +92,39 @@ function summaryOf(manifest: any, include: any, exclusions: any): any {
 
 function emit(o: any): void { process.stdout.write(JSON.stringify(o) + "\n"); }
 
+// Atomic write: tmp in the same dir then rename — never leaves a partially-written file claimed as good.
+function writeAtomic(file: any, data: any): void {
+  const tmp = file + ".tmp";
+  fs.writeFileSync(tmp, data);
+  fs.renameSync(tmp, file);
+}
+
+// Immutable, timestamped snapshot: <out>/snapshots/<createdAtMs>-<hash8>/ . A new export NEVER overwrites a
+// prior snapshot whose content differs (SNAPSHOT_COLLISION); identical content ⇒ idempotent. `latest.json`
+// (atomic) points at the newest. Preserves history; a crash mid-write cannot destroy a prior good snapshot.
 function doExport(flags: any): number {
   const out = flags.out && flags.out !== true ? flags.out : DEFAULT_OUT;
   const res = exportState({ root: process.cwd(), include: DEFAULT_INCLUDE, nowMs: Number(flags.now) || undefined });
   if (!res.ok) { emit(res); return 2; }
   const v = B.verify(res.manifest);
   if (!v.ok) { emit({ ok: false, code: "SELF_VERIFY_FAILED", detail: v }); return 2; }
-  fs.mkdirSync(out, { recursive: true });
-  fs.writeFileSync(path.join(out, "manifest.json"), JSON.stringify(res.manifest));
+  const hash8 = String(res.manifest.manifestHash).slice(0, 8);
+  const snapId = `${res.manifest.createdAtMs}-${hash8}`;
+  const snapDir = path.join(out, "snapshots", snapId);
+  const manPath = path.join(snapDir, "manifest.json");
+  // IMMUTABILITY GUARD: an existing snapshot with DIFFERING content ⇒ refuse (never clobber history).
+  if (fs.existsSync(manPath)) {
+    let prior: any = null; try { prior = JSON.parse(fs.readFileSync(manPath, "utf8")); } catch { /* corrupt prior */ }
+    if (!prior || prior.manifestHash !== res.manifest.manifestHash) { emit({ ok: false, code: "SNAPSHOT_COLLISION", snapshot: snapId, message: "a different snapshot already exists at this id — refusing to overwrite (immutable history)" }); return 2; }
+    // identical content ⇒ idempotent (fall through to refresh latest pointer)
+  }
+  fs.mkdirSync(snapDir, { recursive: true });
+  writeAtomic(manPath, JSON.stringify(res.manifest));
   const summary = summaryOf(res.manifest, DEFAULT_INCLUDE, null);
-  fs.writeFileSync(path.join(out, "summary.json"), JSON.stringify(summary, null, 2));
-  emit({ ok: true, out, count: res.count, manifestHash: res.manifest.manifestHash, summary });
+  writeAtomic(path.join(snapDir, "summary.json"), JSON.stringify(summary, null, 2));
+  const relSnap = path.join("snapshots", snapId);
+  writeAtomic(path.join(out, "latest.json"), JSON.stringify({ snapshot: relSnap, manifest: path.join(relSnap, "manifest.json"), manifestHash: res.manifest.manifestHash, createdAtMs: res.manifest.createdAtMs }, null, 2));
+  emit({ ok: true, out, snapshot: relSnap, manifest: manPath, count: res.count, manifestHash: res.manifest.manifestHash, summary });
   return 0;
 }
 
@@ -154,6 +176,6 @@ function main(argv: any): number {
 }
 
 export {};
-module.exports = { DEFAULT_INCLUDE, DEFAULT_OUT, SECRET_RE, sha256, manifestHashOf, isDangerousRel, listUnder, exportState, summaryOf, forbiddenTarget, parseFlags, doExport, doVerify, doRestore, main };
+module.exports = { DEFAULT_INCLUDE, DEFAULT_OUT, SECRET_RE, sha256, manifestHashOf, isDangerousRel, listUnder, exportState, summaryOf, writeAtomic, forbiddenTarget, parseFlags, doExport, doVerify, doRestore, main };
 
 if (require.main === module) { process.exit(main(process.argv.slice(2))); }
