@@ -518,6 +518,44 @@ function resolveObsoleteIncidents(opts = {}) {
 }
 
 /*
+ * RESOLVE BY RECONCILIATION (CTO V6 §2 common proof-wiring) — the raccord between a mission's committed
+ * acceptance evidence and its self-diagnostic incident. Resolve an OPEN/FROZEN incident ONLY when the GOVERNED
+ * present-state-reconciliation PROVES its mission: all contract-declared sources present AND all declared
+ * acceptance tests exit 0 present-state (reconcile.proven===true). Reuses the existing reconcile engine (no
+ * second engine). FAIL-CLOSED: NOT_RECONCILABLE / INCOMPLETE_PROBE / NOT_PROVEN ⇒ never resolved; a recorded-noop
+ * is never a reconcile proof. ATTRIBUTION: one reconcile per mission; an incident is resolved ONLY by its OWN
+ * mission's proof (parity with the cross-mission guard). Distinct provenance 'present-state-reconciled'; record
+ * preserved. The verdict (validation-engine) and the af3f698 cross-mission guard are untouched.
+ */
+function resolveByReconciliation(opts = {}) {
+  const ledger = store.read(INCIDENTS_FILE, { incidents: {} });
+  if (!ledger || !ledger.incidents) return [];
+  const psr = opts.reconciler || require("./present-state-reconciliation");
+  const repoRoot = opts.repoRoot || process.cwd();
+  const resolvedIds = [];
+  const cache = Object.create(null); // mission → reconcile result (one reconcile per mission)
+  for (const id of Object.keys(ledger.incidents)) {
+    const inc = ledger.incidents[id];
+    if (!inc || (inc.status !== "OPEN" && inc.status !== "FROZEN")) continue;
+    const m = inc.mission;
+    if (!m || typeof m !== "string") continue;
+    if (!(m in cache)) {
+      try { cache[m] = psr.reconcile(m, { repoRoot, now: () => opts.now || null, runTest: opts.runTest }); }
+      catch { cache[m] = { proven: false, verdict: "RECONCILE_ERROR" }; }
+    }
+    const rec = cache[m];
+    if (!rec || rec.proven !== true) continue; // FAIL-CLOSED: only a genuine PROVEN reconcile resolves
+    inc.status = "RESOLVED";
+    inc.resolvedAt = opts.now || null;
+    inc.resolvedReason = `present-state reconciliation PROVEN for mission ${m} (declared sources present + declared acceptance tests pass present-state)`;
+    inc.resolvedProvenance = "present-state-reconciled";
+    resolvedIds.push(id);
+  }
+  if (resolvedIds.length) store.write(INCIDENTS_FILE, ledger);
+  return resolvedIds;
+}
+
+/*
  * DIAGNOSE — the single demonstrable entry: CHECKPOINT/CONTRACT → EXPECTED → OBSERVE → DIVERGENCE →
  * INCIDENT (+ hypotheses + loop protection). Writes a self-diagnostic report. Returns the full result.
  */
@@ -683,6 +721,7 @@ module.exports = {
   rankChecks,
   raiseIncident,
   resolveStaleIncidents,
+  resolveByReconciliation,
   missionContractExists,
   isPlaceholderMissionId,
   resolveObsoleteIncidents,

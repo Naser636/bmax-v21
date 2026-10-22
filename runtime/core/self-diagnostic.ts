@@ -443,6 +443,41 @@ function resolveObsoleteIncidents(opts: any = {}): string[] {
 }
 
 /*
+ * RESOLVE BY RECONCILIATION (CTO V6 §2 common proof-wiring, parity twin). Resolve an OPEN/FROZEN incident ONLY
+ * when present-state-reconciliation PROVES its mission (declared sources present + declared acceptance tests
+ * exit 0). Reuses the reconcile engine. FAIL-CLOSED (only proven===true); never recorded-noop⇒success; one
+ * reconcile per mission (own-mission attribution only); distinct provenance 'present-state-reconciled'; record
+ * preserved. Verdict + af3f698 cross-mission guard untouched.
+ */
+function resolveByReconciliation(opts: any = {}): string[] {
+  const ledger: any = store.read(INCIDENTS_FILE, { incidents: {} });
+  if (!ledger || !ledger.incidents) return [];
+  const psr: any = opts.reconciler || require("./present-state-reconciliation");
+  const repoRoot = opts.repoRoot || process.cwd();
+  const resolvedIds: string[] = [];
+  const cache: any = Object.create(null);
+  for (const id of Object.keys(ledger.incidents)) {
+    const inc = ledger.incidents[id];
+    if (!inc || (inc.status !== "OPEN" && inc.status !== "FROZEN")) continue;
+    const m = inc.mission;
+    if (!m || typeof m !== "string") continue;
+    if (!(m in cache)) {
+      try { cache[m] = psr.reconcile(m, { repoRoot, now: () => opts.now || null, runTest: opts.runTest }); }
+      catch { cache[m] = { proven: false, verdict: "RECONCILE_ERROR" }; }
+    }
+    const rec = cache[m];
+    if (!rec || rec.proven !== true) continue;
+    inc.status = "RESOLVED";
+    inc.resolvedAt = opts.now || null;
+    inc.resolvedReason = `present-state reconciliation PROVEN for mission ${m} (declared sources present + declared acceptance tests pass present-state)`;
+    inc.resolvedProvenance = "present-state-reconciled";
+    resolvedIds.push(id);
+  }
+  if (resolvedIds.length) store.write(INCIDENTS_FILE, ledger);
+  return resolvedIds;
+}
+
+/*
  * DIAGNOSE.
  */
 function diagnose(opts: any = {}): any {
@@ -584,6 +619,7 @@ module.exports = {
   rankChecks,
   raiseIncident,
   resolveStaleIncidents,
+  resolveByReconciliation,
   missionContractExists,
   isPlaceholderMissionId,
   resolveObsoleteIncidents,
