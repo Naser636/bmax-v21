@@ -44,6 +44,25 @@ function licenceRisk(lockPackages: any): any {
   return { licensed, unknownCount: unknown.length, unknown, copyleftCount: copyleft.length, copyleft: [...new Set(copyleft)] };
 }
 
+// Licence risk from a composer.lock (JSON): packages + packages-dev each carry a per-package `license`
+// (SPDX string or array). Same risk shape as licenceRisk. Pure + fail-closed (malformed ⇒ zero risk, no throw).
+function licenceRiskComposer(content: any): any {
+  const COPYLEFT = /GPL|AGPL|LGPL/i;
+  const copyleft: string[] = []; const unknown: string[] = []; let licensed = 0;
+  let j: any; try { j = JSON.parse(content); } catch { return { licensed: 0, unknownCount: 0, unknown: [], copyleftCount: 0, copyleft: [] }; }
+  for (const arr of [j && j.packages, j && j["packages-dev"]]) {
+    if (!Array.isArray(arr)) continue;
+    for (const p of arr) {
+      if (!p || !p.name || !p.version) continue;
+      const lic = p.license;
+      const licStr = Array.isArray(lic) ? lic.join(" ") : (typeof lic === "string" ? lic : "");
+      if (!licStr) unknown.push(p.name);
+      else { licensed++; if (COPYLEFT.test(licStr)) copyleft.push(p.name); }
+    }
+  }
+  return { licensed, unknownCount: unknown.length, unknown, copyleftCount: copyleft.length, copyleft: [...new Set(copyleft)] };
+}
+
 // Pure-ish builder: returns the pack. `opts.privateKey/publicKey` injectable (deterministic tests); else ephemeral.
 function buildEvidencePack(lockPackages: any, opts?: any): any {
   const o = opts || {};
@@ -156,16 +175,26 @@ function buildEvidencePackMulti(sources: any, opts?: any): any {
   const reconciles = sbom.components.length === uniqueParsedPurls.size; // coherent union; no false/dropped component
   const duplicatesRemoved = componentsParsed - sbom.components.length;
   const sbomDigest = sc.sha256(sc.canon(sbom));
-  // Licence risk: analyzable only from an npm package-lock (licence metadata is not in pypi/cargo/go manifests).
-  let risk: any; let licenceNote: string | null = null; const analyzedEcosystems: string[] = [];
-  const npmSrc = sources.find((s: any) => s && s.ecosystem === "npm" && typeof s.content === "string");
-  if (npmSrc) {
-    let pkgs: any = {}; try { pkgs = (JSON.parse(npmSrc.content).packages) || {}; } catch { pkgs = {}; }
-    risk = licenceRisk(pkgs); analyzedEcosystems.push("npm");
-  } else {
-    risk = { licensed: 0, unknownCount: 0, unknown: [], copyleftCount: 0, copyleft: [] };
-    licenceNote = "no npm lockfile detected ⇒ licence risk NOT analyzed (licence metadata is absent from pypi/cargo/go manifests in this pack)";
+  // Licence risk: extracted from the manifests that actually CARRY per-package licence metadata — npm
+  // package-lock (`license`) and composer.lock (`license` SPDX). pypi/cargo/go/pnpm/yarn/gem lockfiles do
+  // not carry a standard licence field here ⇒ honestly reported as not-analyzed (never a false all-clear).
+  const LICENCE_ANALYZABLE = ["npm", "composer"];
+  const emptyRisk = () => ({ licensed: 0, unknownCount: 0, unknown: [] as string[], copyleftCount: 0, copyleft: [] as string[] });
+  const mergeRisk = (a: any, b: any) => { const copyleft = [...new Set([...a.copyleft, ...b.copyleft])]; const unknown = [...new Set([...a.unknown, ...b.unknown])]; return { licensed: a.licensed + b.licensed, unknownCount: unknown.length, unknown, copyleftCount: copyleft.length, copyleft }; };
+  let risk: any = emptyRisk(); let licenceNote: string | null = null; const analyzedEcosystems: string[] = [];
+  // Iterate ALL npm + composer sources (monorepo-safe — the recursive detector can yield several).
+  for (const s of sources.filter((s: any) => s && s.ecosystem === "npm" && typeof s.content === "string")) {
+    let pkgs: any = {}; try { pkgs = (JSON.parse(s.content).packages) || {}; } catch { pkgs = {}; }
+    risk = mergeRisk(risk, licenceRisk(pkgs));
   }
+  if (sources.some((s: any) => s && s.ecosystem === "npm")) analyzedEcosystems.push("npm");
+  for (const s of sources.filter((s: any) => s && s.ecosystem === "composer" && typeof s.content === "string")) {
+    risk = mergeRisk(risk, licenceRiskComposer(s.content));
+  }
+  if (sources.some((s: any) => s && s.ecosystem === "composer")) analyzedEcosystems.push("composer");
+  const unanalyzed = [...new Set(sources.map((s: any) => s && s.ecosystem).filter((e: any) => e && !LICENCE_ANALYZABLE.includes(e)))];
+  if (analyzedEcosystems.length === 0) licenceNote = `no npm lockfile or composer.lock detected ⇒ licence risk NOT analyzed${unanalyzed.length ? ` (present ecosystems carry no licence metadata here: ${unanalyzed.join(", ")})` : ""}`;
+  else if (unanalyzed.length) licenceNote = `licence analyzed for ${analyzedEcosystems.join(", ")}; NOT analyzed for ${unanalyzed.join(", ")} (their lockfiles carry no licence metadata here)`;
   const { publicKey, privateKey } = (o.publicKey && o.privateKey)
     ? { publicKey: o.publicKey, privateKey: o.privateKey }
     : crypto.generateKeyPairSync("ed25519");
@@ -252,7 +281,7 @@ function verifyArtifactIntegrity(bytes: any, integrity: any): any {
 }
 
 export {};
-module.exports = { buildEvidencePack, buildEvidencePackMulti, buildEvidencePackFromDir, detectManifestSources, writePack, licenceRisk, verifyArtifactIntegrity, LIMITS, MANIFESTS };
+module.exports = { buildEvidencePack, buildEvidencePackMulti, buildEvidencePackFromDir, detectManifestSources, writePack, licenceRisk, licenceRiskComposer, verifyArtifactIntegrity, LIMITS, MANIFESTS };
 
 // CLI: node odg-evidence-pack.js <lockfile.json | repoDir> [outDir] [--name <app>]
 //   - a .json npm lockfile  ⇒ existing npm pack (UNCHANGED, backward compatible)

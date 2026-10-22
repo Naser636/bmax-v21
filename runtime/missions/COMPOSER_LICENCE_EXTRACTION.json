@@ -1,0 +1,28 @@
+{
+  "mission": "COMPOSER_LICENCE_EXTRACTION",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "CTO continuation (evidence-backed, ungated): extend odg-evidence-pack licence-risk from npm-lockfile-only to ALSO cover composer.lock, whose packages carry a per-package `license` (SPDX array). Today buildEvidencePackMulti runs licenceRisk only on the npm source, so a composer repo gets 'licence not analyzed' despite the data being present — a documented limit (boussole), not an invented gap. Improve-before-add / reuse the existing risk shape; engine supply-chain-attest UNCHANGED; hermetic (no network).",
+  "authorized_paths": ["runtime/missions/COMPOSER_LICENCE_EXTRACTION.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-composer-licence.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorizedPaths": ["runtime/missions/COMPOSER_LICENCE_EXTRACTION.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-composer-licence.test.ts", "ODG_PROJECT_STATE.md"],
+  "status": "AUTHORIZED",
+  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MASTER MANDATE continuation (§6/§9 — select the next evidence-backed transversal improvement; the npm-only licence limit is documented in the boussole).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "work_item_contract": {
+    "objective": "Add licenceRiskComposer(content) (parse composer.lock packages+packages-dev, each p.license SPDX string|array ⇒ copyleft/unknown/licensed) and merge it into buildEvidencePackMulti's licence risk so analyzedEcosystems includes composer when present; honest note for ecosystems whose manifests carry no licence.",
+    "claim_reproduction_rootcause": "CLAIM: composer licence data is ignored. REPRODUCTION: buildEvidencePackMulti line ~161 only selects the npm source for licenceRisk; a composer-only repo ⇒ analyzedEcosystems=[] + note 'no npm lockfile'. ROOT CAUSE: licence extraction hard-bound to the npm packages-map shape. PLAN: add a composer licence extractor + merge; npm path + existing licenceRisk UNCHANGED.",
+    "scope": "odg-evidence-pack.ts only: one new extractor + a small merge in buildEvidencePackMulti + honest note. Engine UNCHANGED. Existing npm single-lockfile buildEvidencePack path UNCHANGED. No network.",
+    "write_set": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-composer-licence.test.ts", "runtime/missions/COMPOSER_LICENCE_EXTRACTION.json", "ODG_PROJECT_STATE.md"],
+    "invariants": ["Reuse the existing licence-risk shape {licensed,unknownCount,unknown,copyleftCount,copyleft}; no new primitive.", "npm buildEvidencePack + licenceRisk UNCHANGED (non-regression).", "Fail-closed: malformed composer.lock ⇒ contributes nothing, never throws.", "Honest reporting: analyzedEcosystems lists what was actually analyzed; note names present-but-not-analyzable ecosystems; never a false all-clear.", "Engine supply-chain-attest untouched.", "Preserve boussole + docs/market-research + 5 stashes."],
+    "acceptance_criteria": ["Hermetic test: composer.lock with MIT + GPL-3.0 + no-licence ⇒ copyleft surfaced, unknown surfaced, licensed counted; npm+composer repo ⇒ analyzedEcosystems [npm,composer] + merged counts; composer-only repo ⇒ analyzedEcosystems [composer] (no false 'not analyzed'); malformed ⇒ fail-closed; npm-path non-regression (odg-evidence-pack.test.ts + polyglot + recursive ALL PASS); tsc 0; dist rebuilt + shipped bin over a composer repo shows licence analyzed; diff limited to write-set; committed."],
+    "stop_conditions": ["A change would require editing the engine / a path outside the write-set / a new primitive."],
+    "rollback": "git checkout -- runtime/bin/odg-evidence-pack.ts ODG_PROJECT_STATE.md; rm -f src/runtime/evidence-pack-composer-licence.test.ts runtime/missions/COMPOSER_LICENCE_EXTRACTION.json; npm run build:runtime.",
+    "evidence_required": ["hermetic composer-licence test", "npm non-regression", "tsc 0", "dist rebuild + shipped-bin composer licence", "commit id"]
+  },
+  "objectives": [{"id": "COMPOSER_LICENCE_EXTRACTION_1", "goal": "Evidence-pack licence-risk covers composer.lock (copyleft/unknown/licensed) merged with npm; honest analyzedEcosystems/note; engine untouched; proven hermetic + shipped bin.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set."], "proof": "composer-licence-extraction-proven", "authorization": {"eligible": true, "authorized": true}}],
+  "definition_of_done": ["odg-evidence-pack analyzes composer.lock licences (merged with npm, honest coverage note), reusing the existing risk shape; engine unchanged; npm path unchanged; proven hermetic + shipped bin; committed (no force). General-capability improvement, NOT a client reference/certification."],
+  "source": "cto-directive",
+  "permissions": {"engineering": true, "authorizedPaths": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-composer-licence.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED"],
+  "generatedBy": "claude-code (CTO continuation — composer licence extraction)"
+}
