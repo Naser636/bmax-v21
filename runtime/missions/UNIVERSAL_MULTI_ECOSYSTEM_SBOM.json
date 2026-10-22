@@ -1,0 +1,28 @@
+{
+  "mission": "UNIVERSAL_MULTI_ECOSYSTEM_SBOM",
+  "priority": "HIGH",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "Continuous-excellence lot (improve-before-add, §4): generalize ODG's proven SBOM capability from npm-only to MULTI-ECOSYSTEM (npm/pypi/cargo/golang) by adding pure componentsFromManifest + buildSbomMulti to the canonical engine supply-chain-attest (both ports), reusable by BOTH evidence packs. Closes the in-code 'other ecosystems not covered' gap. No new primitive, no second engine, no duplication; existing buildSbom (npm) unchanged.",
+  "authorized_paths": ["runtime/missions/UNIVERSAL_MULTI_ECOSYSTEM_SBOM.json", "runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "src/runtime/sbom-multi-ecosystem.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorizedPaths": ["runtime/missions/UNIVERSAL_MULTI_ECOSYSTEM_SBOM.json", "runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "src/runtime/sbom-multi-ecosystem.test.ts", "ODG_PROJECT_STATE.md"],
+  "status": "AUTHORIZED",
+  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION ODG_UNIVERSAL_IT_EXECUTION_AND_CONTINUOUS_EXCELLENCE §4/§10 (smallest lot improving general capability, reuse-before-add).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "work_item_contract": {
+    "objective": "componentsFromManifest(content, ecosystem) + buildSbomMulti(sources, meta): CycloneDX SBOM across npm/pypi/cargo/golang with correct purls; dedup; pure; fail-closed.",
+    "claim_reproduction_rootcause": "CLAIM: ODG assurance is npm-only (compliance-evidence-pack.ts:18 flags the gap). REPRODUCTION: buildSbom only parses an npm packages map + hardcodes pkg:npm. ROOT CAUSE: single-ecosystem input shape + hardcoded purl. PLAN: add a pure multi-ecosystem parser in the canonical engine (both ports), keep buildSbom unchanged.",
+    "scope": "Two pure functions + exports in supply-chain-attest (both ports) + a hermetic test. Engine buildSbom/attestation/sign unchanged. No fetch/fs. supply-chain-attest is consumed via relative require (source twin) ⇒ no dist/core change needed.",
+    "write_set": ["runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "src/runtime/sbom-multi-ecosystem.test.ts", "runtime/missions/UNIVERSAL_MULTI_ECOSYSTEM_SBOM.json", "ODG_PROJECT_STATE.md"],
+    "invariants": ["Reuse/consolidate (one engine, both packs) — no new primitive/engine/registry/orchestrator.", "buildSbom (npm) unchanged ⇒ existing behaviour + parity preserved.", "Pure + fail-closed (malformed/unknown/null ⇒ [], never throws).", "Dual-port .ts≡.js parity.", "Preserve uncommitted research + 5 stashes."],
+    "acceptance_criteria": ["Hermetic test ALL PASS (pypi/cargo/golang/npm purls, buildSbomMulti merge+dedup+ecosystems metadata, fail-closed, dual-port parity); supply-chain-attest regression 7/7 incl JS/TS parity; tsc 0; live real public Cargo.lock (ripgrep 14.1.1) ⇒ 61 cargo components reproducible; final diff limited to write-set; committed."],
+    "stop_conditions": ["A fix needs buildSbom change / a path outside the write-set / a new primitive."],
+    "rollback": "git checkout -- runtime/core/supply-chain-attest.{ts,js} src/runtime/sbom-multi-ecosystem.test.ts ODG_PROJECT_STATE.md; delete contract.",
+    "evidence_required": ["hermetic test", "regression + parity", "tsc", "live Cargo.lock run (reproducible)", "commit id"]
+  },
+  "objectives": [{"id": "UNIVERSAL_MULTI_ECOSYSTEM_SBOM_1", "goal": "Multi-ecosystem SBOM in the canonical engine, reused by both packs.", "requiresExecution": true, "done_when": ["Hermetic test + regression + parity green; tsc 0; live Cargo.lock ⇒ 61 comps reproducible; committed in write-set."], "proof": "multi-ecosystem-sbom-proven", "authorization": {"eligible": true, "authorized": true}}],
+  "definition_of_done": ["npm/pypi/cargo/golang SBOM shipped in supply-chain-attest (both ports), reusable by both evidence packs; proven hermetic + on real public Cargo.lock; buildSbom unchanged; committed (no force). A general-capability improvement, not a client contract."],
+  "source": "cto-directive",
+  "permissions": {"engineering": true, "authorizedPaths": ["runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "src/runtime/sbom-multi-ecosystem.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION"],
+  "generatedBy": "claude-code (CTO continuous-excellence lot)"
+}

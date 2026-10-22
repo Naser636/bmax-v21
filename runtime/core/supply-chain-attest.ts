@@ -31,6 +31,37 @@ function buildSbom(lockPackages: any, meta?: any): any {
   };
 }
 
+// UNIVERSAL ecosystem coverage (closes the "other ecosystems not covered" gap). Extract CycloneDX components
+// from a dependency manifest of several ecosystems into correct purls — pure, deterministic, no fetch/fs.
+// Supported: npm (package-lock JSON), pypi (requirements.txt `name==version`), cargo (Cargo.lock [[package]]),
+// golang (go.mod/go.sum `module vX`). Unknown ecosystem or malformed content ⇒ [] (honest empty, never throws).
+function componentsFromManifest(content: any, ecosystem: any): any[] {
+  const comps: any[] = [];
+  const eco = String(ecosystem || "").toLowerCase();
+  if (typeof content !== "string" || !content) return comps;
+  const push = (type: string, name: string, version: string) => { if (name && version) comps.push({ type: "library", name, version, purl: `pkg:${type}/${name}@${version}` }); };
+  if (eco === "npm") {
+    try { const j = JSON.parse(content); const pk = j.packages || {}; for (const k of Object.keys(pk)) { const info = pk[k] || {}; const name = k.replace(/^.*node_modules\//, ""); if (name && info.version) push("npm", name, info.version); } } catch { /* malformed ⇒ empty */ }
+  } else if (eco === "pypi" || eco === "python") {
+    for (const raw of content.split(/\r?\n/)) { const line = raw.replace(/#.*/, "").trim(); if (!line || line.startsWith("-")) continue; const m = line.match(/^([A-Za-z0-9][A-Za-z0-9._-]*)\s*==\s*([A-Za-z0-9][A-Za-z0-9._!+-]*)/); if (m) push("pypi", m[1].toLowerCase(), m[2]); }
+  } else if (eco === "cargo" || eco === "rust") {
+    for (const b of content.split(/\[\[package\]\]/).slice(1)) { const n = b.match(/name\s*=\s*"([^"]+)"/); const v = b.match(/version\s*=\s*"([^"]+)"/); if (n && v) push("cargo", n[1], v[1]); }
+  } else if (eco === "golang" || eco === "go") {
+    for (const raw of content.split(/\r?\n/)) { const line = raw.replace(/\/\/.*/, "").trim(); if (!line || line.startsWith("module ") || line.startsWith("go ") || line === "require (" || line === ")") continue; const m = line.match(/^(?:require\s+)?([a-zA-Z0-9][a-zA-Z0-9._~/-]*\.[a-zA-Z0-9._~/-]+)\s+v([0-9][0-9A-Za-z.+-]*)/); if (m) push("golang", m[1], "v" + m[2]); }
+  }
+  comps.sort((a, b) => (a.purl < b.purl ? -1 : a.purl > b.purl ? 1 : 0));
+  return comps;
+}
+
+// Build ONE CycloneDX SBOM across MULTIPLE ecosystems. sources = [{content, ecosystem}, ...]. Dedups by purl.
+function buildSbomMulti(sources: any, meta?: any): any {
+  let comps: any[] = []; const ecosystems: string[] = [];
+  for (const s of (Array.isArray(sources) ? sources : [])) { const c = componentsFromManifest(s && s.content, s && s.ecosystem); if (s && s.ecosystem) ecosystems.push(String(s.ecosystem).toLowerCase()); comps = comps.concat(c); }
+  const seen = new Set(); comps = comps.filter((c) => (seen.has(c.purl) ? false : (seen.add(c.purl), true)));
+  comps.sort((a, b) => (a.purl < b.purl ? -1 : a.purl > b.purl ? 1 : 0));
+  return { bomFormat: "CycloneDX", specVersion: "1.5", version: 1, metadata: { component: { type: "application", name: (meta && meta.name) || "target", version: (meta && meta.version) || "0.0.0" }, ecosystems: [...new Set(ecosystems)] }, components: comps };
+}
+
 function buildAttestation(artifact: any, sbom: any, source?: any): any {
   const a = artifact || {};
   return {
@@ -78,5 +109,5 @@ function verifyStatement(statement: any, envelope: any, publicKeyPem: any, opts?
   return { ok: reasons.length === 0, reason: reasons.length ? reasons.join("; ") : "verified (signature + subject digest + SBOM rebind)", checks: { sigOk, reasons } };
 }
 
-module.exports = { sha256, canon, buildSbom, buildAttestation, signStatement, verifyStatement };
+module.exports = { sha256, canon, buildSbom, componentsFromManifest, buildSbomMulti, buildAttestation, signStatement, verifyStatement };
 export {};
