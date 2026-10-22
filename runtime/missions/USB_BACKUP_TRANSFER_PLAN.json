@@ -1,0 +1,28 @@
+{
+  "mission": "USB_BACKUP_TRANSFER_PLAN",
+  "priority": "NORMAL",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "CTO USB-01: prepare (VPS-side, reversible) a single, complete, self-contained, SHA-256-identified transfer PACKAGE of the latest valid operational-state snapshot, and document the exact human procedure to copy ONE version to a physical USB (on the LOCAL/transfer computer — the VPS cannot access the key), verify it from the key, and restore it in isolation. VPS-side export/package/verify/restore are executed + proven; the physical-key tests are NOT RUN here (human, physical hardware) and reported BLOCKED/NOT RUN. No source/stash/worktree deletion; no external transfer; nothing claimed about the physical key without evidence from the key.",
+  "authorized_paths": ["runtime/missions/USB_BACKUP_TRANSFER_PLAN.json", "docs/operational-backup.md", "ODG_PROJECT_STATE.md"],
+  "authorizedPaths": ["runtime/missions/USB_BACKUP_TRANSFER_PLAN.json", "docs/operational-backup.md", "ODG_PROJECT_STATE.md"],
+  "status": "AUTHORIZED",
+  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION USB-01 — UNIQUE USB BACKUP & END-TO-END RESTORE VALIDATION (Phase B reversible VPS-side prep + Phase C/D human USB procedure).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "work_item_contract": {
+    "objective": "A single SHA-256-identified transfer package of the latest verified snapshot (content-embedded manifest + summary + restore note), VPS-side validated (extract→verify→restore-to-sandbox==source, corrupt-detection), plus a documented exact human USB transfer/verify/restore procedure (single version on key; temp-deletion policy; no format without ID confirmation).",
+    "claim_reproduction_rootcause": "N/A (not a defect fix): durability V2 gives immutable snapshots; USB-01 packages the latest for off-VPS physical transfer. The VPS has no USB access ⇒ physical tests are human-run.",
+    "scope": "VPS-side: reuse odg-state-backup (export/verify/restore) + tar/sha256sum to build the package in the gitignored transfer dir; validate it. Doc: the USB procedure + single-version/temp policy. Git keeps the doc + this contract only; the package/snapshots/transfer dir stay gitignored. No source mutation.",
+    "write_set": ["docs/operational-backup.md", "runtime/missions/USB_BACKUP_TRANSFER_PLAN.json", "ODG_PROJECT_STATE.md"],
+    "invariants": ["Read-only on the operational source (export proven read-only).", "Package is self-contained + integrity-verifiable (SHA256SUMS) + restorable (proven VPS-side).", "ONE backup version on the key (package + SHA256SUMS + INVENTORY + restore note only).", "No source/stash/worktree/snapshot/history deletion; temp transfer files deleted ONLY after key validation, by the human.", "No secret/password/key in git/manifest/inventory/logs; package NOT encrypted (no secrets; scanned) — stated honestly, never faked.", "Physical-key tests NOT claimed PASS without evidence from the key (BLOCKED/NOT RUN).", "No external transfer; no format/delete of the key without explicit human ID confirmation.", "Preserve 5 stashes."],
+    "acceptance_criteria": ["VPS-side: fresh export (read-only, source unchanged) ⇒ verified snapshot; package built + SHA256SUMS + non-sensitive INVENTORY; package self-check OK; extract ⇒ verify ok; byte-flip ⇒ corruption detected; restore-to-sandbox ⇒ 286 files, ledger+sample contract IDENTICAL to source; transfer dir holds exactly one package version. Doc gives exact detection/transfer/verify/restore/eject/re-read commands + single-version + temp-deletion + no-format-without-confirm policy. Physical-key tests = BLOCKED/NOT RUN (human). Committed doc+contract; archive gitignored."],
+    "stop_conditions": ["The VPS would need USB access (it doesn't ⇒ physical tests human-run); a format/delete of a key would be required (needs explicit human ID confirmation)."],
+    "rollback": "git checkout -- docs/operational-backup.md ODG_PROJECT_STATE.md; rm -f runtime/missions/USB_BACKUP_TRANSFER_PLAN.json; (gitignored transfer package is disposable).",
+    "evidence_required": ["fresh export read-only + verified", "package sha256 + inventory", "extract+verify+corrupt-detect+restore==source (VPS-side)", "doc procedure", "physical-key = BLOCKED/NOT RUN", "commit id"]
+  },
+  "objectives": [{"id": "USB_BACKUP_TRANSFER_PLAN_1", "goal": "Single self-contained SHA-256 transfer package of the latest verified snapshot, VPS-side proven restorable; exact human USB transfer/verify/restore procedure documented; physical-key tests honestly BLOCKED/NOT RUN; source/stashes preserved.", "requiresExecution": true, "done_when": ["VPS-side package built+validated; doc committed; physical-key status BLOCKED/NOT RUN."], "proof": "usb-backup-transfer-plan-proven", "authorization": {"eligible": true, "authorized": true}}],
+  "definition_of_done": ["A single verified, restorable transfer package exists (gitignored) + an exact documented human USB procedure (single version, temp-deletion, no-format-without-confirm); VPS-side export/verify/restore proven; physical-key tests BLOCKED/NOT RUN pending the human + key; committed (doc+contract, no force); source/worktree/5 stashes preserved."],
+  "source": "cto-directive",
+  "permissions": {"engineering": true, "authorizedPaths": ["docs/operational-backup.md", "ODG_PROJECT_STATE.md"], "network": false},
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NON_DESTRUCTIVE", "NO_SECRET_EXPOSURE", "NO_UNVERIFIED_CLAIM"],
+  "generatedBy": "claude-code (CTO USB-01 transfer plan)"
+}

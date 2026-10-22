@@ -79,6 +79,63 @@ never destroys a prior archive, and writes are atomic (a crash mid-write cannot 
 }
 ```
 
+## USB transfer — single version on a physical key (USB-01)
+
+The VPS **cannot** access a USB key; the key is plugged into a **local/transfer computer**. ODG prepares a single,
+self-contained, SHA-256-identified transfer **package** on the VPS (gitignored, under
+`runtime/generated/operational-backup/transfer/`): `odg-operational-backup-<snapId>.tar.gz` (content-embedded
+`manifest.json` + `summary.json` + `RESTORE-FROM-USB.txt`), with `SHA256SUMS` + a non-sensitive `INVENTORY.json`.
+The package is **NOT encrypted** — it holds no secrets (export fails-closed on any credential pattern). If
+encryption is later required, use a documented tool (e.g. `age`/`gpg`) and never store the key in git/logs.
+
+**Physical-key steps are HUMAN-run** on the transfer computer (adapt device/mount to the real system):
+
+```sh
+# 0. (transfer computer) DETECT the key + capacity BEFORE anything. Linux:
+lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT,LABEL        # identify the USB device + mount (e.g. /dev/sdb1 → /media/<user>/<LABEL>)
+df -h /media/<user>/<LABEL>                        # confirm free space > ~1 MB (package is ~150 KB)
+#   macOS: diskutil list ; mount point under /Volumes/<LABEL>
+#   NEVER run mkfs/format/rm on the key without explicitly confirming the device id AND its contents first.
+
+# 1. COPY the package directly onto the key (prefer no permanent copy on the transfer computer).
+#    From the transfer computer, pull straight from the VPS to the mounted key:
+USB=/media/<user>/<LABEL>          # or /Volumes/<LABEL>
+scp <vps-user>@<vps-host>:/home/ubuntu/bmax-v21/runtime/generated/operational-backup/transfer/'odg-operational-backup-*.tar.gz' \
+    <vps-user>@<vps-host>:/home/ubuntu/bmax-v21/runtime/generated/operational-backup/transfer/SHA256SUMS \
+    <vps-user>@<vps-host>:/home/ubuntu/bmax-v21/runtime/generated/operational-backup/transfer/INVENTORY.json \
+    "$USB"/
+sync                                # ensure the file is fully flushed/closed before eject
+
+# 2. VERIFY integrity FROM the key (not from a cached copy):
+cd "$USB" && sha256sum -c SHA256SUMS        # expect: ... OK
+cat INVENTORY.json                          # read the non-sensitive inventory (package sha, file count, hash)
+
+# 3. RESTORE in isolation (on a TRUSTED machine with a clone of bmax-v21 + `npm ci`):
+mkdir -p /tmp/odg-usb && tar -xzf "$USB"/odg-operational-backup-*.tar.gz -C /tmp/odg-usb
+node runtime/bin/odg-state-backup.js verify  --manifest /tmp/odg-usb/manifest.json          # expect ok:true
+node runtime/bin/odg-state-backup.js restore --manifest /tmp/odg-usb/manifest.json --target /tmp/odg-restore
+#   compare: `find /tmp/odg-restore -type f | wc -l` == INVENTORY.fileCount (286); spot-check
+#   /tmp/odg-restore/runtime/generated/autonomy/self-diagnostic-incidents.json vs the live ledger.
+#   NEVER restore onto the live source (the tool refuses runtime/missions, runtime/generated/autonomy, the client store).
+
+# 4. Corruption check (optional): flip a byte in a COPY and confirm sha256sum -c / tar / verify REJECTS it.
+
+# 5. EJECT cleanly, then RE-READ after reconnecting to confirm persistence:
+sync && udisksctl unmount -b /dev/sdb1   # (Linux) or: diskutil eject /dev/diskN  (macOS)
+#   reconnect → cd "$USB" && sha256sum -c SHA256SUMS  (expect OK)
+```
+
+**Single version on the key (Phase D):** the key holds exactly ONE backup — the package + `SHA256SUMS` +
+`INVENTORY.json` (+ the embedded `RESTORE-FROM-USB.txt`). Do **not** delete any VPS archive/snapshot/history or
+any transfer file until the USB copy has PASSED the integrity (`sha256sum -c`) and restore (`restore`+compare)
+checks. Only then may the human delete explicitly-identified temporary transfer files (e.g. `/tmp/odg-usb`,
+`/tmp/odg-restore`) — never the VPS operational sources or snapshot history.
+
+**Status:** VPS-side package prep + validation = PASS (extract/verify/corrupt-detect/restore==source proven).
+Physical-key read/integrity/restore = **NOT RUN (BLOCKED)** — requires the human + the physical key on the
+transfer computer; ODG does not claim the key is tested until `sha256sum -c` + restore-compare succeed **from
+the key**.
+
 ## Retention & off-VPS copy
 
 - **Retention:** keep the latest verified export under the gitignored backup dir; a human prunes older exports.
