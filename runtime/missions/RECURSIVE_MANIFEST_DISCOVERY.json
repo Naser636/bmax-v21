@@ -1,0 +1,28 @@
+{
+  "mission": "RECURSIVE_MANIFEST_DISCOVERY",
+  "priority": "HIGH",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "CTO MASTER MANDATE §3 (transversal usability): make odg-evidence-pack manifest detection RECURSIVE/monorepo-aware. Today detectManifestSources only looks at the repository root; real repos nest manifests in subdirectories (frontend/, services/x/, etc.). Walk the tree with bounded depth, skipping dependency/vcs/build dirs (node_modules, .git, vendor, dist, build, target, .next, __pycache__, venv, .venv, coverage, .cache), collect ALL supported manifests deterministically, and compose ONE coherent SBOM. Improve-before-add / reuse; engine supply-chain-attest UNCHANGED; no new primitive.",
+  "authorized_paths": ["runtime/missions/RECURSIVE_MANIFEST_DISCOVERY.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-recursive.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorizedPaths": ["runtime/missions/RECURSIVE_MANIFEST_DISCOVERY.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-recursive.test.ts", "ODG_PROJECT_STATE.md"],
+  "status": "AUTHORIZED",
+  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MASTER MANDATE — ODG CONTINUOUS EXECUTION TO VERIFIED CLOSURE §2/§3 (chaîner les lots internes sûrs; améliorations transversales selon lacunes démontrées).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "work_item_contract": {
+    "objective": "detectManifestSources(dir, opts?) walks subdirectories (bounded depth, skip-set) and returns all supported manifests as sources tagged with their repo-relative path, deterministically ordered; buildEvidencePackFromDir composes them into ONE SBOM. Root-only behaviour + existing tests preserved.",
+    "claim_reproduction_rootcause": "CLAIM: a monorepo's nested manifests are missed. REPRODUCTION: detectManifestSources only stat()s path.join(dir, filename) at the root. ROOT CAUSE: no tree walk. PLAN: add a bounded, skip-list-guarded recursive walk; keep deterministic ecosystem-grouped ordering so a root-only repo yields the identical result as before.",
+    "scope": "detectManifestSources in odg-evidence-pack.ts + one hermetic test. Engine UNCHANGED. Must skip node_modules et al so dependency lockfiles (e.g. a dep's own yarn.lock) are NOT ingested. Deterministic ordering (ecosystem order from MANIFESTS, then relative path).",
+    "write_set": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-recursive.test.ts", "runtime/missions/RECURSIVE_MANIFEST_DISCOVERY.json", "ODG_PROJECT_STATE.md"],
+    "invariants": ["Engine supply-chain-attest UNCHANGED; reuse buildSbomMulti + existing pack flow; no new primitive.", "Root-only detection yields the IDENTICAL result as before (existing evidence-pack-polyglot 27/27 non-regression).", "Skip node_modules/.git/vendor/dist/build/target/.next/__pycache__/venv/.venv/coverage/.cache ⇒ dependency lockfiles never ingested.", "Deterministic order + bounded depth (cycle/runaway safe). Fail-closed (unreadable ⇒ warning + excluded; never throws).", "Preserve boussole + docs/market-research + 5 stashes."],
+    "acceptance_criteria": ["Hermetic test: a monorepo temp tree (root + frontend/ + services/api/ with different ecosystems, plus a node_modules/ decoy lockfile) ⇒ nested manifests detected, decoy in node_modules IGNORED, one coherent deduped SBOM, deterministic order, bounded depth respected; root-only repo identical to pre-change; existing polyglot + formats + engine suites non-regression; tsc 0; dist rebuilt + shipped bin over a monorepo temp tree in one run; diff limited to write-set; committed."],
+    "stop_conditions": ["A change needs the engine / a path outside the write-set / a new primitive.", "Existing polyglot tests cannot be preserved."],
+    "rollback": "git checkout -- runtime/bin/odg-evidence-pack.ts ODG_PROJECT_STATE.md; rm -f src/runtime/evidence-pack-recursive.test.ts runtime/missions/RECURSIVE_MANIFEST_DISCOVERY.json; npm run build:runtime.",
+    "evidence_required": ["hermetic monorepo test (incl node_modules decoy ignored)", "root-only non-regression", "existing suites", "tsc 0", "dist rebuild + shipped-bin monorepo run", "commit id"]
+  },
+  "objectives": [{"id": "RECURSIVE_MANIFEST_DISCOVERY_1", "goal": "odg-evidence-pack auto-detects manifests across a monorepo (bounded, skip-list), composing one coherent SBOM; root-only unchanged; dependency lockfiles ignored; proven incl shipped bin.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set."], "proof": "recursive-manifest-discovery-proven", "authorization": {"eligible": true, "authorized": true}}],
+  "definition_of_done": ["Monorepo-aware manifest discovery shipped in odg-evidence-pack (bounded + skip-list + deterministic), reusing the engine; root-only identical; dependency lockfiles never ingested; committed (no force). General-capability improvement, NOT a client reference/certification."],
+  "source": "cto-directive",
+  "permissions": {"engineering": true, "authorizedPaths": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-recursive.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED"],
+  "generatedBy": "claude-code (CTO MASTER MANDATE §3 recursive manifest discovery)"
+}

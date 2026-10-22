@@ -86,22 +86,48 @@ const MANIFESTS: Array<{ ecosystem: string; file: string }> = [
   { ecosystem: "composer", file: "composer.lock" },
 ];
 
-// Discover supported manifests in a directory. Deterministic; fail-closed. Returns detected sources + warnings.
-// Policy: absent manifest ⇒ not detected (not a warning). Present-but-unreadable ⇒ warning + excluded (never
-// silently dropped). Parse-time emptiness/malformation is flagged later in buildEvidencePackMulti.
+// Directories never walked: dependency trees (whose own lockfiles must NOT be ingested), VCS and build output.
+const SKIP_DIRS = new Set(["node_modules", ".git", "vendor", "dist", "build", "target", ".next", "__pycache__", "venv", ".venv", ".tox", "coverage", ".cache", ".pnpm-store", "bower_components"]);
+const MAX_DEPTH = 8; // bounded: cycle/runaway safe
+
+// Walk `dir` (bounded depth, skip-list) and collect repo-relative paths of every file whose basename is a known
+// manifest. Returns a map basename ⇒ sorted relative paths. Deterministic. Fail-closed (unreadable dir ⇒ skipped).
+function walkManifests(dir: string): { byName: Record<string, string[]>; warnings: string[] } {
+  const wanted = new Set(MANIFESTS.map((m) => m.file));
+  const byName: Record<string, string[]> = {}; const warnings: string[] = [];
+  const visit = (abs: string, rel: string, depth: number): void => {
+    let entries: any[];
+    try { entries = fs.readdirSync(abs, { withFileTypes: true }); }
+    catch (e: any) { warnings.push(`cannot read directory ${rel || "."}: ${(e && e.message) || e}`); return; }
+    for (const ent of entries) {
+      const name = ent.name;
+      const childRel = rel ? `${rel}/${name}` : name;
+      if (ent.isDirectory()) { if (depth < MAX_DEPTH && !SKIP_DIRS.has(name) && !name.startsWith(".git")) visit(path.join(abs, name), childRel, depth + 1); }
+      else if (ent.isFile() && wanted.has(name)) { (byName[name] = byName[name] || []).push(childRel); }
+    }
+  };
+  visit(dir, "", 0);
+  for (const k of Object.keys(byName)) byName[k].sort(); // POSIX-relative lexicographic ⇒ deterministic
+  return { byName, warnings };
+}
+
+// Discover supported manifests in a repository (RECURSIVE, monorepo-aware). Deterministic; fail-closed. Sources
+// are ordered by ecosystem (MANIFESTS order) then relative path — so a ROOT-ONLY repo yields the identical result
+// as the previous root-only implementation. Dependency/VCS/build dirs are skipped ⇒ a dependency's own lockfile is
+// never ingested. Policy: absent ⇒ not detected; present-but-unreadable ⇒ warning + excluded (never silent drop).
 function detectManifestSources(dir: any): any {
   const sources: any[] = []; const detected: any[] = []; const warnings: string[] = [];
   if (!dir || typeof dir !== "string") return { sources, detected, warnings: ["detectManifestSources: invalid directory"] };
+  const { byName, warnings: walkWarn } = walkManifests(dir);
+  warnings.push(...walkWarn);
   for (const m of MANIFESTS) {
-    const p = path.join(dir, m.file);
-    let st: any;
-    try { st = fs.statSync(p); } catch { continue; } // absent ⇒ simply not present
-    if (!st.isFile()) continue;
-    let content: string;
-    try { content = fs.readFileSync(p, "utf8"); }
-    catch (e: any) { warnings.push(`cannot read manifest ${m.file} (${m.ecosystem}): ${(e && e.message) || e}`); continue; }
-    sources.push({ content, ecosystem: m.ecosystem, manifest: m.file });
-    detected.push({ ecosystem: m.ecosystem, manifest: m.file });
+    for (const rel of (byName[m.file] || [])) {
+      let content: string;
+      try { content = fs.readFileSync(path.join(dir, rel), "utf8"); }
+      catch (e: any) { warnings.push(`cannot read manifest ${rel} (${m.ecosystem}): ${(e && e.message) || e}`); continue; }
+      sources.push({ content, ecosystem: m.ecosystem, manifest: rel });
+      detected.push({ ecosystem: m.ecosystem, manifest: rel });
+    }
   }
   return { sources, detected, warnings };
 }
