@@ -1,0 +1,28 @@
+{
+  "mission": "SBOM_LOCKFILE_FORMATS",
+  "priority": "HIGH",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "CTO MASTER MANDATE §3: extend the canonical SBOM engine's manifest coverage to pnpm-lock.yaml, yarn.lock, Gemfile.lock and composer.lock — the smallest useful parsers added to supply-chain-attest.componentsFromManifest (both ports), auto-wired into odg-evidence-pack detection. Improve-before-add / reuse; no second engine, no duplicate registry, no new permanent primitive; existing npm/pypi/cargo/golang branches + buildSbom UNCHANGED; JS/TS parity preserved. pnpm/yarn resolve npm-registry packages ⇒ purl type 'npm' (correct cross-tool dedup); gem ⇒ pkg:gem; composer ⇒ pkg:composer.",
+  "authorized_paths": ["runtime/missions/SBOM_LOCKFILE_FORMATS.json", "runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "runtime/bin/odg-evidence-pack.ts", "src/runtime/sbom-lockfile-formats.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorizedPaths": ["runtime/missions/SBOM_LOCKFILE_FORMATS.json", "runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "runtime/bin/odg-evidence-pack.ts", "src/runtime/sbom-lockfile-formats.test.ts", "ODG_PROJECT_STATE.md"],
+  "status": "AUTHORIZED",
+  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MASTER MANDATE — ODG CONTINUOUS EXECUTION TO VERIFIED CLOSURE §3 (finaliser la couverture SBOM multi-écosystèmes: pnpm/yarn/Gemfile/composer).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "work_item_contract": {
+    "objective": "Add pnpm/yarn/gem/composer branches to componentsFromManifest (both ports) with correct purls (npm registry ⇒ pkg:npm for pnpm+yarn; pkg:gem; pkg:composer), pure + deterministic + fail-closed; add the 4 manifest filenames to odg-evidence-pack detection so a single run covers them.",
+    "claim_reproduction_rootcause": "CLAIM: SBOM coverage omits pnpm/yarn/ruby/php. REPRODUCTION: componentsFromManifest only branches on npm/pypi/cargo/golang; MANIFESTS lists only those 4 files. ROOT CAUSE: missing format branches + missing detection entries. PLAN: add the 4 smallest robust parsers to the ONE engine + 4 detection entries; keep everything else byte-identical.",
+    "scope": "componentsFromManifest branches (both ports) + 4 MANIFESTS entries in the bin + one hermetic+real-sample test. buildSbom/buildSbomMulti/attestation/sign unchanged. No YAML/JSON library beyond JSON.parse (composer). No network.",
+    "write_set": ["runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "runtime/bin/odg-evidence-pack.ts", "src/runtime/sbom-lockfile-formats.test.ts", "runtime/missions/SBOM_LOCKFILE_FORMATS.json", "ODG_PROJECT_STATE.md"],
+    "invariants": ["ONE canonical engine; no new primitive/engine/registry.", "Existing npm/pypi/cargo/golang branches + buildSbom + buildSbomMulti UNCHANGED.", "Dual-port .ts≡.js parity.", "Pure + fail-closed (malformed/unknown/null ⇒ [], never throws).", "pnpm/yarn ⇒ purl type npm (dedup with package-lock); gem ⇒ pkg:gem; composer ⇒ pkg:composer.", "Deterministic (sorted; section-bounded).", "Preserve boussole + docs/market-research + 5 stashes."],
+    "acceptance_criteria": ["Hermetic per-format tests PASS (pnpm/yarn/gem/composer purls + scoped names + fail-closed malformed); REAL-data proof: pnpm parser on a real pnpm-lock.yaml and yarn parser on a real yarn.lock yield plausible component sets with correct spot-check purls (reproducible); dual-port .ts≡.js parity; existing engine + multi + polyglot + evidence-pack suites non-regression; tsc 0; dist rebuilt and the shipped bin covers a pnpm repo in one run; diff limited to write-set; committed."],
+    "stop_conditions": ["A parser needs a third-party YAML lib / editing buildSbom / a path outside the write-set / a new primitive."],
+    "rollback": "git checkout -- runtime/core/supply-chain-attest.{ts,js} runtime/bin/odg-evidence-pack.ts ODG_PROJECT_STATE.md; rm -f src/runtime/sbom-lockfile-formats.test.ts runtime/missions/SBOM_LOCKFILE_FORMATS.json; npm run build:runtime.",
+    "evidence_required": ["hermetic per-format tests", "real-sample pnpm + yarn proof", "dual-port parity", "non-regression suites", "tsc 0", "dist rebuild + shipped-bin pnpm run", "commit id"]
+  },
+  "objectives": [{"id": "SBOM_LOCKFILE_FORMATS_1", "goal": "pnpm/yarn/gem/composer SBOM coverage in the canonical engine + auto-detected by odg-evidence-pack; correct purls; fail-closed; proven hermetic + on real pnpm/yarn lockfiles; parity preserved.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set; shipped bin covers a pnpm repo."], "proof": "sbom-lockfile-formats-proven", "authorization": {"eligible": true, "authorized": true}}],
+  "definition_of_done": ["supply-chain-attest + odg-evidence-pack cover pnpm/yarn/Gemfile/composer with correct purls, reused by both evidence packs; proven hermetic + on real public lockfiles; existing branches unchanged; committed (no force). General-capability improvement, NOT a client reference/certification. Gemfile.lock + composer.lock proven on SYNTHETIC fixtures only (no real local sample) — documented."],
+  "source": "cto-directive",
+  "permissions": {"engineering": true, "authorizedPaths": ["runtime/core/supply-chain-attest.ts", "runtime/core/supply-chain-attest.js", "runtime/bin/odg-evidence-pack.ts", "src/runtime/sbom-lockfile-formats.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED"],
+  "generatedBy": "claude-code (CTO MASTER MANDATE §3 SBOM lockfile formats)"
+}

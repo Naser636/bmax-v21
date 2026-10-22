@@ -77,9 +77,13 @@ function buildEvidencePack(lockPackages: any, opts?: any): any {
 // fixed canonical lockfile names ⇒ reproducible. Reuses sc.buildSbomMulti/componentsFromManifest; NO new engine.
 const MANIFESTS: Array<{ ecosystem: string; file: string }> = [
   { ecosystem: "npm", file: "package-lock.json" },
+  { ecosystem: "pnpm", file: "pnpm-lock.yaml" },
+  { ecosystem: "yarn", file: "yarn.lock" },
   { ecosystem: "pypi", file: "requirements.txt" },
   { ecosystem: "cargo", file: "Cargo.lock" },
   { ecosystem: "golang", file: "go.mod" },
+  { ecosystem: "gem", file: "Gemfile.lock" },
+  { ecosystem: "composer", file: "composer.lock" },
 ];
 
 // Discover supported manifests in a directory. Deterministic; fail-closed. Returns detected sources + warnings.

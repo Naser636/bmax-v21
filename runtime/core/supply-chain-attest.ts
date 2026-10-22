@@ -48,6 +48,47 @@ function componentsFromManifest(content: any, ecosystem: any): any[] {
     for (const b of content.split(/\[\[package\]\]/).slice(1)) { const n = b.match(/name\s*=\s*"([^"]+)"/); const v = b.match(/version\s*=\s*"([^"]+)"/); if (n && v) push("cargo", n[1], v[1]); }
   } else if (eco === "golang" || eco === "go") {
     for (const raw of content.split(/\r?\n/)) { const line = raw.replace(/\/\/.*/, "").trim(); if (!line || line.startsWith("module ") || line.startsWith("go ") || line === "require (" || line === ")") continue; const m = line.match(/^(?:require\s+)?([a-zA-Z0-9][a-zA-Z0-9._~/-]*\.[a-zA-Z0-9._~/-]+)\s+v([0-9][0-9A-Za-z.+-]*)/); if (m) push("golang", m[1], "v" + m[2]); }
+  } else if (eco === "pnpm") {
+    // pnpm-lock.yaml: authoritative component list is the top-level `packages:` section (2-space keys
+    // 'name@version': ...). Scoped names are quoted; peer-dep suffixes appear in (...). pnpm installs npm
+    // packages ⇒ purl type npm. Section-bounded so the following `snapshots:` block is NOT double-counted.
+    let inPkgs = false;
+    for (const raw of content.split(/\r?\n/)) {
+      if (/^packages:\s*$/.test(raw)) { inPkgs = true; continue; }
+      if (!inPkgs) continue;
+      if (/^\S/.test(raw)) break; // next top-level section (e.g. snapshots:) ⇒ end of packages
+      const m = raw.match(/^  '?([^'\s][^']*?)'?:\s*$/); // exactly-2-space key ending in colon
+      if (!m) continue;
+      let key = m[1]; const paren = key.indexOf("("); if (paren >= 0) key = key.slice(0, paren);
+      const at = key.lastIndexOf("@"); if (at <= 0) continue; // need name@version (scope @ is at 0)
+      push("npm", key.slice(0, at), key.slice(at + 1));
+    }
+  } else if (eco === "yarn") {
+    // yarn.lock: classic v1 (`name@range:` header + `  version "x"`) and berry (`"name@npm:range":` +
+    // `  version: x`). Package name = spec before its LAST '@' (handles @scope/name). npm registry ⇒ pkg:npm.
+    let curName: string | null = null;
+    for (const raw of content.split(/\r?\n/)) {
+      if (/^[^\s#]/.test(raw) && raw.trim().endsWith(":")) {
+        let spec = raw.split(",")[0].trim().replace(/:$/, "").replace(/^"(.*)"$/, "$1");
+        const at = spec.lastIndexOf("@"); curName = at > 0 ? spec.slice(0, at) : null;
+      } else if (curName) {
+        const vm = raw.match(/^\s+version:?\s+"?([^"\s]+)"?/);
+        if (vm) { push("npm", curName, vm[1]); curName = null; }
+      }
+    }
+  } else if (eco === "gem" || eco === "ruby" || eco === "bundler") {
+    // Gemfile.lock (Bundler): GEM → `  specs:` → 4-space `name (version)` top-level gems (6-space deps skipped).
+    let inSpecs = false;
+    for (const raw of content.split(/\r?\n/)) {
+      if (/^  specs:\s*$/.test(raw)) { inSpecs = true; continue; }
+      if (!inSpecs) continue;
+      if (/^\S/.test(raw)) { inSpecs = false; continue; } // left the GEM/GIT/PATH block
+      const m = raw.match(/^    ([A-Za-z0-9][A-Za-z0-9._-]*) \(([^)]+)\)\s*$/);
+      if (m) push("gem", m[1], m[2]);
+    }
+  } else if (eco === "composer" || eco === "php") {
+    // composer.lock (JSON): packages + packages-dev arrays of {name:"vendor/pkg", version}. purl pkg:composer.
+    try { const j = JSON.parse(content); for (const arr of [j.packages, j["packages-dev"]]) if (Array.isArray(arr)) for (const p of arr) if (p && p.name && p.version) push("composer", p.name, p.version); } catch { /* malformed ⇒ empty */ }
   }
   comps.sort((a, b) => (a.purl < b.purl ? -1 : a.purl > b.purl ? 1 : 0));
   return comps;
