@@ -17,7 +17,7 @@
   },
   "include": [
     "runtime/bin/odg-run.ts",
-    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/bin/odg-schedule-tick.ts","runtime/bin/odg-evidence-pack.ts",
     "runtime/bin/odg-cockpit.ts",
     "runtime/bin/odg-bootstrap.ts",
     "runtime/bin/odg-state.ts",

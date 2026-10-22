@@ -1,0 +1,38 @@
+{
+  "mission": "R9LITE_EVIDENCE_PACK_PRODUCT",
+  "priority": "HIGH",
+  "mode": "ENGINEERING",
+  "requires_engineering": true,
+  "description": "R9-lite: smallest deliverable productization of the proven R2 evidence engine — a thin, explainable, reproducible, fail-closed CLI/library (odg-evidence-pack) composing the EXISTING supply-chain-attest engine into a client-deliverable pack (SBOM + SLSA-L1 provenance + licence-risk + report with explicit limits). No new primitive, no second orchestrator.",
+  "authorized_paths": ["runtime/missions/R9LITE_EVIDENCE_PACK_PRODUCT.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "tsconfig.runtime-dist.json", "ODG_PROJECT_STATE.md"],
+  "authorizedPaths": ["runtime/missions/R9LITE_EVIDENCE_PACK_PRODUCT.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "tsconfig.runtime-dist.json", "ODG_PROJECT_STATE.md"],
+  "status": "AUTHORIZED",
+  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION ODG_EUR10M_R9LITE_COMMERCIAL_CONVERSION_V1 §2.", "recorded_at": "2026-10-22T00:00:00Z"},
+  "work_item_contract": {
+    "objective": "Turn demonstrated R2 evidence into an invokable, reproducible, deliverable pack product; prove it on synthetic + real public inputs; ship it as a dist bin.",
+    "scope": "Thin bin + library reusing supply-chain-attest; a focused test; add the bin to the dist compile list. NO new primitive/orchestrator; NO engine source change; NO network/secrets; readiness-not-certification.",
+    "write_set": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "tsconfig.runtime-dist.json", "runtime/missions/R9LITE_EVIDENCE_PACK_PRODUCT.json", "ODG_PROJECT_STATE.md"],
+    "invariants": [
+      "Reuses supply-chain-attest (buildSbom/buildAttestation/sign/verify); engine source UNCHANGED.",
+      "Fail-closed: invalid lockfile throws (exit 1); empty ⇒ honest 0-component flagged pack (no false success); SBOM must reconcile.",
+      "Deliverable report states explicit LIMITS + liability EXCLUSIONS (evidence/readiness, NOT certification/compliance/SLSA-L2/security-guarantee).",
+      "No new permanent primitive; bin is a non-closure leaf (its dynamic require does not enter odg-run's closure).",
+      "Preserve uncommitted research docs + 5 stashes; do not commit research in this code commit."
+    ],
+    "acceptance_criteria": [
+      "odg-evidence-pack.test.ts ALL PASS (reconcile, provenance verify, tamper-fail, reproducible, licence-risk, empty-negative, invalid-throws, pack files + report limits).",
+      "CLI runs on a real public lockfile (npm/cli v10.9.0) ⇒ OK, 1318 components, 5-file pack.",
+      "dist bin emitted + runs; tsc 0; supply-chain-attest regression + an equivalence-closure sanity PASS.",
+      "Final diff limited to the write-set; committed (no force)."
+    ],
+    "stop_conditions": ["Any fix needs an engine source change or a path outside the write-set; a closure/equivalence regression."],
+    "rollback": "git checkout -- tsconfig.runtime-dist.json ODG_PROJECT_STATE.md; delete the bin + test + contract; rebuild dist from clean source.",
+    "evidence_required": ["test output", "CLI-on-real-lockfile output", "dist-bin run", "tsc + regression + equivalence", "commit id"]
+  },
+  "objectives": [{"id": "R9LITE_EVIDENCE_PACK_PRODUCT_1", "goal": "Ship the R9-lite evidence-pack product (reuse engine; fail-closed; dist bin).", "requiresExecution": true, "done_when": ["Test ALL PASS; CLI proven on a real public lockfile; dist bin runs; regression+equivalence green; committed in write-set."], "proof": "r9lite-evidence-pack-shipped", "authorization": {"eligible": true, "authorized": true}}],
+  "definition_of_done": ["odg-evidence-pack product shipped as a tested dist bin reusing the proven engine; fail-closed + explicit limits; proven on synthetic + real public inputs; committed (no force). It is a deliverable mechanism, NOT a client reference (R4) and NOT a certification."],
+  "source": "cto-directive",
+  "permissions": {"engineering": true, "authorizedPaths": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "tsconfig.runtime-dist.json", "ODG_PROJECT_STATE.md"], "network": false},
+  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION"],
+  "generatedBy": "claude-code (CTO R9-lite productization mandate)"
+}
