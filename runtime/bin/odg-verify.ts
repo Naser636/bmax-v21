@@ -30,6 +30,24 @@ function generatedContractExcludes(): any {
   return out;
 }
 
+// gitClean exclude pathspecs — the paths that must NOT, by themselves, count as a dirty tree:
+//  - runtime-regenerated per-mission bookkeeping (evidence.md; factory-generated contracts) — existing rationale;
+//  - the operational COMPASS `ODG_PROJECT_STATE.md`: a NON-authoritative navigation checkpoint the Runtime
+//    UPDATES every mission (the same regenerated-bookkeeping rationale) and that the CTO mandate explicitly
+//    PRESERVES uncommitted — so it must never, on its own, block a release;
+//  - `docs/market-research/`: untracked, non-mission material the CTO mandate PRESERVES (never commit/delete).
+// This SCOPES the gate; it does NOT weaken it: any OTHER change — a modified/staged TRACKED source file, or any
+// other untracked file — is still reported by `git status --porcelain --` and still makes gitClean=false (proven
+// by odg-verify-gitclean.test.ts). It therefore cannot let a mission RELEASE with real uncommitted work.
+function gitCleanExcludes(): string[] {
+  return [
+    ":(exclude)runtime/missions/*.evidence.md",
+    ":(exclude)ODG_PROJECT_STATE.md",
+    ":(exclude)docs/market-research/",
+    ...generatedContractExcludes(),
+  ];
+}
+
 // documentationProofPresent — the derived Release gate (src/core/release-manager.ts:367-369).
 // It is NOT a shell check like build/typescript; the Release Manager sets it true when the
 // mission's DocumentationProof carries a non-empty inputsHash, and that proof is built by
@@ -110,10 +128,7 @@ function runVerify(explicitMission?: any): any {
     verify.typescript=false;
   }
 
-  const ARTIFACT_EXCLUDES = [
-    ":(exclude)runtime/missions/*.evidence.md",
-    ...generatedContractExcludes(),
-  ];
+  const ARTIFACT_EXCLUDES = gitCleanExcludes();
   try {
     const porcelain = cp
       .execSync(`git status --porcelain -- ${ARTIFACT_EXCLUDES.map((p) => `'${p}'`).join(" ")}`, {
@@ -152,7 +167,7 @@ function verifyExitCode(verify: any, reportOnly?: any): number {
   return green?0:1;
 }
 
-module.exports = { verifyExitCode, runVerify };
+module.exports = { verifyExitCode, runVerify, gitCleanExcludes };
 
 export {};
 

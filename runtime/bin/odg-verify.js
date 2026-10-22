@@ -29,6 +29,19 @@ function generatedContractExcludes() {
   return out;
 }
 
+// gitClean exclude pathspecs — paths that must NOT, by themselves, count as a dirty tree: runtime-regenerated
+// bookkeeping (evidence.md; factory contracts); the operational COMPASS ODG_PROJECT_STATE.md (updated every
+// mission + CTO-preserved uncommitted); docs/market-research/ (untracked, CTO-preserved non-mission). SCOPING,
+// not weakening: any OTHER modified/staged TRACKED file or other untracked file still makes gitClean=false.
+function gitCleanExcludes() {
+  return [
+    ":(exclude)runtime/missions/*.evidence.md",
+    ":(exclude)ODG_PROJECT_STATE.md",
+    ":(exclude)docs/market-research/",
+    ...generatedContractExcludes(),
+  ];
+}
+
 // documentationProofPresent — the derived Release gate (src/core/release-manager.ts:367-369).
 // It is NOT a shell check like build/typescript; the Release Manager sets it true when the
 // mission's DocumentationProof carries a non-empty inputsHash, and that proof is built by
@@ -109,10 +122,7 @@ function runVerify(explicitMission){
     verify.typescript=false;
   }
 
-  const ARTIFACT_EXCLUDES = [
-    ":(exclude)runtime/missions/*.evidence.md",
-    ...generatedContractExcludes(),
-  ];
+  const ARTIFACT_EXCLUDES = gitCleanExcludes();
   try {
     const porcelain = cp
       .execSync(`git status --porcelain -- ${ARTIFACT_EXCLUDES.map((p) => `'${p}'`).join(" ")}`, {
@@ -151,7 +161,7 @@ function verifyExitCode(verify, reportOnly){
   return green?0:1;
 }
 
-module.exports = { verifyExitCode, runVerify };
+module.exports = { verifyExitCode, runVerify, gitCleanExcludes };
 
 if(require.main===module){
   const args=process.argv.slice(2);
