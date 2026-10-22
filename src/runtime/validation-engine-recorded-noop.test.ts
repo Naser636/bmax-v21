@@ -101,7 +101,10 @@ function sandboxEmptyScope(): string {
 
 function runValidation(dir: string, executed: unknown[]): { status?: string; validated?: boolean; unmet?: string[]; checks?: any; exit: number } {
   const G = (n: string) => path.join(dir, "runtime", "generated", n);
-  fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: "A3_GUARD", executed }));
+  // Stamp the execution with the DIAGNOSED mission (same-mission, this run's intent) — not a hardcoded label.
+  // A hardcoded mismatched label would (correctly) trip the validation-engine cross-mission ownership guard.
+  const planMission = JSON.parse(fs.readFileSync(G("mission-plan.json"), "utf8")).mission;
+  fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: planMission, executed }));
   const r = spawnSync("node", [VE], { cwd: dir, encoding: "utf8" });
   const rep = JSON.parse(fs.readFileSync(G("mission-report.json"), "utf8"));
   return { status: rep.status, validated: rep.validated, unmet: rep.unmet, checks: rep.checks, exit: r.status ?? -1 };

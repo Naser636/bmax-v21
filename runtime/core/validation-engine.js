@@ -43,6 +43,14 @@ if (!plan || !patch || !execution) {
 const objectiveCount = Array.isArray(plan.objectives) ? plan.objectives.length : 0;
 const plannedCount = Array.isArray(patch.patches) ? patch.patches.length : 0;
 const executed = Array.isArray(execution.executed) ? execution.executed : [];
+
+// CROSS-MISSION OWNERSHIP GUARD (parity with self-diagnostic detectDivergences §0). If patch-execution.json
+// belongs to a DIFFERENT mission than mission-plan.json (interrupted run / stale leftover in the shared
+// runtime/generated/), coverage would be satisfied by UNRELATED work ⇒ a FALSE SUCCESS. Fail-closed: both
+// identities known and different ⇒ BLOCKED. Either absent (legacy/unstamped) ⇒ unchanged (backward compatible).
+const planMission = plan.mission || patch.mission || null;
+const execMission = execution && typeof execution.mission === "string" ? execution.mission : null;
+const crossMission = !!(planMission && execMission && planMission !== execMission);
 const failed = executed.filter((e) => e && e.status === "FAILED");
 
 // Per-action authorization boundary (ACTION_AUTHZ_PARTIAL): an action the Patch Executor recorded as
@@ -206,6 +214,7 @@ const gammaFalseSuccess = recordedNoOp.filter((e) => gammaObjectiveIds.has(e.obj
 const noGammaFalseSuccess = gammaFalseSuccess.length === 0;
 
 const checks = {
+    crossMissionOk: !crossMission,
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
     evidenceIntegrity: evidenceOk,
@@ -236,7 +245,7 @@ const checks = {
 // SUCCESS requires full proof AND no outstanding blocked action. Adding `noBlocked` closes the false-DONE
 // hole: a per-action BLOCKED entry is neither FAILED nor RECORDED, so without this it would slip through
 // every existing gate and a not-actually-done mission would be stamped SUCCESS.
-const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
+const validated = !crossMission && coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
 
 // PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
 // SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
@@ -245,6 +254,7 @@ const validated = coverageOk && noFailures && evidenceOk && noRecordedNoOp && no
 // depends on a blocked one. `validated` stays false ⇒ the Ledger never RELEASEs (no false DONE); the blocked
 // actions remain to-do and a re-run (once the authorization/capability is supplied) resumes them.
 const partialEligible =
+    !crossMission &&
     !noBlocked &&
     provenActions.length > 0 &&
     noFailures &&
@@ -262,6 +272,7 @@ const partialEligible =
 const status = validated ? "SUCCESS" : partialEligible ? "PARTIAL" : "BLOCKED";
 
 const unmet = [];
+if (crossMission) unmet.push(`Cross-mission/stale execution artifact: mission-plan belongs to "${planMission}" but patch-execution belongs to "${execMission}" — refuse to verify over mismatched artifacts (fail-closed isolation).`);
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f) => f.action).join(", ")}.`);
 if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evidence: ${missingEvidence.map((e) => e.evidence).join(", ")}.`);
