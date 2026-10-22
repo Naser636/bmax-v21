@@ -93,4 +93,20 @@ inTempCwd((mod, store) => {
   ok("parity: .ts ≡ .js analyzeRecurrence", JSON.stringify(aj) === JSON.stringify(at));
 }
 
+// 6 — PLACEHOLDER id (§A.5): a reserved/placeholder id (__<word>__) whose stub contract EXISTS is OBSOLETE-eligible;
+//     a real-named mission with a contract is NEVER obsoleted (fail-closed intact).
+inTempCwd((mod, store) => {
+  ok("isPlaceholderMissionId: __none__/__probe__ true; real names false", mod.isPlaceholderMissionId("__none__") === true && mod.isPlaceholderMissionId("__probe__") === true && mod.isPlaceholderMissionId("BUILD_RUNTIME") === false && mod.isPlaceholderMissionId("") === false);
+  // placeholder WITH a stub contract present:
+  fs.writeFileSync("runtime/missions/__none__.json", JSON.stringify({ mission: "__none__", objectives: [{ id: "O1" }] }));
+  seed(store, "INC-PH", "__none__", "FROZEN");
+  // real-named WITH a contract present (must stay FROZEN):
+  fs.writeFileSync("runtime/missions/BUILD_RUNTIME.json", JSON.stringify({ mission: "BUILD_RUNTIME", objectives: [{ id: "O1" }] }));
+  seed(store, "INC-REALNAMED", "BUILD_RUNTIME", "FROZEN");
+  const ids = mod.resolveObsoleteIncidents({ now: "T1" });
+  const l = store.read(LEDGER, { incidents: {} }).incidents;
+  ok("placeholder-id (contract present) ⇒ OBSOLETE with placeholder reason", ids.includes("INC-PH") && l["INC-PH"].status === "OBSOLETE" && /placeholder\/reserved/.test(l["INC-PH"].obsoletedReason));
+  ok("real-named present-contract ⇒ NOT obsoleted (fail-closed intact)", !ids.includes("INC-REALNAMED") && l["INC-REALNAMED"].status === "FROZEN");
+});
+
 console.log(`\nINCIDENT OBSOLETE TRANSITION — ${passed} assertions passed.`);

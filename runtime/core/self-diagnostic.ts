@@ -408,6 +408,12 @@ function missionContractExists(m: any, opts: any = {}): boolean {
   try { return fs.statSync(path.join(dir, `${m}.json`)).isFile(); } catch { return false; }
 }
 
+// Reserved/placeholder mission-id convention `__<word>__` (parity twin). No real/ROADMAP mission uses it ⇒ a
+// placeholder's incident is OBSOLETE-eligible even if its stub contract exists. Pure.
+function isPlaceholderMissionId(m: any): boolean {
+  return typeof m === "string" && /^__[A-Za-z0-9_]*__$/.test(m);
+}
+
 /*
  * RESOLVE OBSOLETE INCIDENTS (CTO FROZEN INCIDENTS §A, parity twin) — EVIDENCE-GATED, NON-DESTRUCTIVE. An
  * OPEN/FROZEN incident → OBSOLETE ONLY when its mission has NO executable contract (absent file). OBSOLETE is
@@ -422,10 +428,14 @@ function resolveObsoleteIncidents(opts: any = {}): string[] {
     const inc = ledger.incidents[id];
     if (!inc) continue;
     if (inc.status !== "OPEN" && inc.status !== "FROZEN") continue;
-    if (missionContractExists(inc.mission, opts)) continue;
+    const placeholder = isPlaceholderMissionId(inc.mission);
+    // HARD GUARD (fail-closed): a real-named mission with an existing contract is NEVER obsoleted.
+    if (missionContractExists(inc.mission, opts) && !placeholder) continue;
     inc.status = "OBSOLETE";
     inc.obsoletedAt = opts.now || null;
-    inc.obsoletedReason = `mission contract absent (runtime/missions/${inc.mission}.json) — unrevalidatable via the normal pipeline; history preserved`;
+    inc.obsoletedReason = placeholder
+      ? `placeholder/reserved mission id (${inc.mission}) — not a real executable mission; history preserved`
+      : `mission contract absent (runtime/missions/${inc.mission}.json) — unrevalidatable via the normal pipeline; history preserved`;
     obsoletedIds.push(id);
   }
   if (obsoletedIds.length) store.write(INCIDENTS_FILE, ledger);
@@ -575,6 +585,7 @@ module.exports = {
   raiseIncident,
   resolveStaleIncidents,
   missionContractExists,
+  isPlaceholderMissionId,
   resolveObsoleteIncidents,
   diagnose,
   classifyRepairability,

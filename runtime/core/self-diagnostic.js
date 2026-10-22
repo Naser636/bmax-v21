@@ -479,6 +479,13 @@ function missionContractExists(m, opts = {}) {
   try { return fs.statSync(path.join(dir, `${m}.json`)).isFile(); } catch { return false; }
 }
 
+// Reserved/placeholder mission-id convention: `__<word>__` (e.g. __none__, __probe__, __no_such_mission__).
+// No real or ROADMAP mission uses it (verified). A placeholder's (stub) contract may exist yet it is not a
+// real executable mission ⇒ its incident is OBSOLETE-eligible even when the stub file is present. Pure.
+function isPlaceholderMissionId(m) {
+  return typeof m === "string" && /^__[A-Za-z0-9_]*__$/.test(m);
+}
+
 /*
  * RESOLVE OBSOLETE INCIDENTS (CTO FROZEN INCIDENTS §A) — EVIDENCE-GATED, NON-DESTRUCTIVE. Transition an
  * OPEN/FROZEN incident → OBSOLETE ONLY when the OBJECTIVE fact holds that its mission has NO executable contract
@@ -495,10 +502,15 @@ function resolveObsoleteIncidents(opts = {}) {
     const inc = ledger.incidents[id];
     if (!inc) continue;
     if (inc.status !== "OPEN" && inc.status !== "FROZEN") continue;       // never re-transition RESOLVED/OBSOLETE
-    if (missionContractExists(inc.mission, opts)) continue;               // HARD GUARD: contract exists ⇒ never obsolete
+    const placeholder = isPlaceholderMissionId(inc.mission);
+    // HARD GUARD (fail-closed): a REAL-named mission with an existing contract is NEVER obsoleted. Eligible
+    // ONLY when the contract is ABSENT, OR the id is a reserved/placeholder (__<word>__) that is not a real mission.
+    if (missionContractExists(inc.mission, opts) && !placeholder) continue;
     inc.status = "OBSOLETE";
     inc.obsoletedAt = opts.now || null;
-    inc.obsoletedReason = `mission contract absent (runtime/missions/${inc.mission}.json) — unrevalidatable via the normal pipeline; history preserved`;
+    inc.obsoletedReason = placeholder
+      ? `placeholder/reserved mission id (${inc.mission}) — not a real executable mission; history preserved`
+      : `mission contract absent (runtime/missions/${inc.mission}.json) — unrevalidatable via the normal pipeline; history preserved`;
     obsoletedIds.push(id);
   }
   if (obsoletedIds.length) store.write(INCIDENTS_FILE, ledger);
@@ -672,6 +684,7 @@ module.exports = {
   raiseIncident,
   resolveStaleIncidents,
   missionContractExists,
+  isPlaceholderMissionId,
   resolveObsoleteIncidents,
   diagnose,
   classifyRepairability,
