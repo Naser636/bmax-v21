@@ -6,8 +6,9 @@
  * mission-loader is a top-level executing script: argv[2]=mission; reads the contract runtime/missions/
  * <mission>.json (via the mission-contract-factory on-demand path only when absent — here it is ALWAYS seeded,
  * so no factory/network), writes runtime/generated/mission-plan.json + mission-context.json. No wall-clock ⇒
- * both artifacts are compared BYTE-IDENTICAL with ZERO normalisation. Closure = 9 modules; only mission-loader
- * is ported, the 8 stay .js. .js remains the production default.
+ * both artifacts are compared BYTE-IDENTICAL with ZERO normalisation. The closure is whatever mission-loader
+ * transitively requires (incl. `.js`-extension requires); only mission-loader is ported, the rest stay .js.
+ * .js remains the production default.
  *
  * Run:  node_modules/.bin/tsx runtime/__bench__/mission-loader-equivalence.e2e.test.ts
  */
@@ -25,7 +26,9 @@ let failures = 0;
 function check(c: boolean, l: string): void { if (c) console.log(`  PASS ${l}`); else { failures++; console.log(`  FAIL ${l}`); } }
 function computeClosure(seeds: string[]) { const v = new Set<string>(), c = new Set<string>(), miss: string[] = [], st = [...seeds];
   while (st.length) { const n = st.pop()!; if (v.has(n)) continue; v.add(n); const f = path.join(CORE, n + ".js"); if (!fs.existsSync(f)) { miss.push(n); continue; } c.add(n);
-    const re = /\brequire\(\s*["'`](\.\/[A-Za-z0-9_-]+)["'`]\s*\)/g; let m: RegExpExecArray | null; const s = fs.readFileSync(f, "utf8"); while ((m = re.exec(s)) !== null) st.push(m[1].replace(/^\.\//, "")); }
+    // Capture both require("./x") AND require("./x.js") — the optional .js is dot-terminated and was
+    // previously missed, dropping real siblings (e.g. require("./objective-authorization.js")) from the closure.
+    const re = /\brequire\(\s*["'`](\.\/[A-Za-z0-9_-]+)(?:\.js)?["'`]\s*\)/g; let m: RegExpExecArray | null; const s = fs.readFileSync(f, "utf8"); while ((m = re.exec(s)) !== null) st.push(m[1].replace(/^\.\//, "")); }
   return { closure: [...c].sort(), missing: miss }; }
 function place(dir: string, n: string) { const comp = path.join(DIST_CORE, n + ".js"); const dest = path.join(dir, n + ".js"); if (fs.existsSync(comp)) { fs.cpSync(comp, dest); return "c"; } fs.cpSync(path.join(CORE, n + ".js"), dest); return "h"; }
 function writeJson(p: string, o: any) { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, JSON.stringify(o, null, 2)); }
@@ -35,7 +38,11 @@ let JS_COLOCATED = "";
 function buildEngine(): void {
   const { closure, missing } = computeClosure(["mission-loader"]);
   check(missing.length === 0, `closure resolves (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 9, `closure is the expected 9-module set (size=${closure.length})`);
+  // Completeness assertion (robust; replaces a stale `=== 9` magic number that under-counted because the
+  // closure scanner missed `.js`-extension requires). The closure must at least contain the seed and the
+  // previously-dropped sibling, and stay non-trivial — it will not re-stale as the real closure grows.
+  check(closure.includes("mission-loader") && closure.includes("objective-authorization") && closure.length >= 9,
+    `closure is complete (size=${closure.length}, includes mission-loader + objective-authorization)`);
   // COMPILED dir: compiled mission-loader + historical rest. JS dir: ALL historical. Running BOTH engines
   // from co-located closure dirs keeps the dependency LOCATION symmetric — essential because the untyped
   // sibling mission-context-builder reads some content relative to its own module location, so an
