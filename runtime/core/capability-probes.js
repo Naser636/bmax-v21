@@ -470,10 +470,15 @@ const PROBES = {
 
 // Run a single named probe. Unknown probe → not ok (a required proof for an unregistered capability
 // therefore cannot pass, so SUCCESS is blocked).
+// Unknown probe → not ok. The two not-ok conditions are CATEGORICALLY distinct and must stay
+// distinguishable: an UNREGISTERED probe name means the VERIFIER is absent (truth UNDETERMINED, not
+// disproven); a registered probe returning ok:false means the EVIDENCE is genuinely missing/failing.
+// Both block (fail-closed); `code:"UNKNOWN_PROBE"` lets the Validation Engine report which remediation
+// applies without ever turning a missing proof into a success. Known probes carry no `code`.
 function runProbe(evidence, ctx) {
     const probe = PROBES[evidence];
     if (typeof probe !== "function") {
-        return { ok: false, detail: `unknown evidence probe "${evidence}"` };
+        return { ok: false, code: "UNKNOWN_PROBE", detail: `unknown evidence probe "${evidence}"` };
     }
     return probe(ctx || {});
 }
@@ -490,6 +495,8 @@ function evaluate(verifyChecks, ctx) {
             evidence: v.evidence,
             required: v.required !== false,
             ok: r.ok,
+            // UNKNOWN_PROBE (verifier absent) vs null (a known probe that ran) — see runProbe.
+            code: typeof r.code === "string" ? r.code : null,
             detail: r.detail,
         };
     });
@@ -517,6 +524,9 @@ function evaluateObjectiveProofs(objectives, ctx, runner) {
             objective: typeof o.id === "string" ? o.id : null,
             proof: o.proof,
             ok: r.ok === true,
+            // UNKNOWN_PROBE (declared proof names no registered verifier) vs null (a real probe ran and
+            // the evidence did not satisfy it). Distinct remediations; both still block.
+            code: typeof r.code === "string" ? r.code : null,
             detail: typeof r.detail === "string" ? r.detail : null,
         };
     });

@@ -213,6 +213,16 @@ const gammaObjectiveIds = new Set(planObjectives.filter((o) => o && o.requiresEx
 const gammaFalseSuccess = recordedNoOp.filter((e) => gammaObjectiveIds.has(e.objectiveId || e.action));
 const noGammaFalseSuccess = gammaFalseSuccess.length === 0;
 
+// DISTINCT fail-closed proof conditions (CTO: never conflate a missing proof with an absent verifier).
+// A declared proof whose probe returns code "UNKNOWN_PROBE" names NO registered verifier: the objective
+// is UNVERIFIABLE (undetermined, not disproven). Any other not-ok means a real probe RAN and the
+// EVIDENCE is genuinely missing/failing. BOTH still block SUCCESS (objectiveProofsOk / capabilitiesOk
+// are already false) — this partition changes NO verdict; it only names WHICH remediation applies.
+const unverifiableCapabilityProofs = missingRequiredProofs.filter((c) => c && c.code === "UNKNOWN_PROBE");
+const failedCapabilityProofs = missingRequiredProofs.filter((c) => !c || c.code !== "UNKNOWN_PROBE");
+const unverifiableObjectiveProofs = failingObjectiveProofs.filter((p) => p && p.code === "UNKNOWN_PROBE");
+const failedObjectiveProofs = failingObjectiveProofs.filter((p) => !p || p.code !== "UNKNOWN_PROBE");
+
 const checks = {
     crossMissionOk: !crossMission,
     objectiveCoverage: coverageOk,
@@ -236,6 +246,10 @@ const checks = {
     capabilitiesOk,
     objectiveProofs: objectiveProofEval.results,
     objectiveProofsOk,
+    // Distinct partition of blocking proofs for the report/Release-Manager consumer (no verdict change).
+    objectiveProofsUnverifiable: unverifiableObjectiveProofs.map((p) => ({ objective: p.objective, proof: p.proof })),
+    objectiveProofsFailed: failedObjectiveProofs.map((p) => ({ objective: p.objective, proof: p.proof })),
+    capabilityProofsUnverifiable: unverifiableCapabilityProofs.map((c) => ({ capability: c.capability, evidence: c.evidence })),
     noBlocked,
     blockedActions: blockedActions.map((e) => e.objectiveId || e.action),
     dependencyOk,
@@ -281,8 +295,10 @@ if (!noGammaFalseSuccess) unmet.push(`Objective(s) declaring required execution 
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
-for (const c of missingRequiredProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
-for (const p of failingObjectiveProofs) unmet.push(`Objective "${p.objective}" declared proof "${p.proof}" did not pass: ${p.detail || "no detail"}.`);
+for (const c of failedCapabilityProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
+for (const c of unverifiableCapabilityProofs) unmet.push(`Required capability proof UNVERIFIABLE — "${c.capability}" names an UNREGISTERED evidence probe "${c.evidence}" (no verifier wired): ${c.detail}. Blocked fail-closed — register a real probe; do NOT assume success.`);
+for (const p of failedObjectiveProofs) unmet.push(`Objective "${p.objective}" declared proof "${p.proof}" did not pass (evidence missing or failing): ${p.detail || "no detail"}.`);
+for (const p of unverifiableObjectiveProofs) unmet.push(`Objective "${p.objective}" declares proof "${p.proof}" that is UNVERIFIABLE — no evidence probe named "${p.proof}" is registered (the verifier is absent; this is undetermined, NOT a disproof). Blocked fail-closed — a real probe must be registered before this objective can validate.`);
 for (const b of blockedActions) unmet.push(`Objective "${b.objectiveId || b.action}" is BLOCKED (${b.decision || "BLOCKED"}) — ${b.needs || "authorization/capability not available"}.`);
 if (!dependencyOk) unmet.push(`Proven objective(s) depend on a blocked prerequisite: ${dependencyViolations.join(", ")}.`);
 
