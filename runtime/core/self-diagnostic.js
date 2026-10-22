@@ -471,6 +471,40 @@ function resolveStaleIncidents(mission, currentId, opts = {}) {
   return resolvedIds;
 }
 
+// Objective evidence: does mission `m` have an executable contract on disk? CWD-relative (same convention as
+// the autonomy-store DIR). A null/empty mission ⇒ false. Used ONLY to gate the OBSOLETE transition below.
+function missionContractExists(m, opts = {}) {
+  if (!m || typeof m !== "string") return false;
+  const dir = opts.missionsDir || path.join("runtime", "missions");
+  try { return fs.statSync(path.join(dir, `${m}.json`)).isFile(); } catch { return false; }
+}
+
+/*
+ * RESOLVE OBSOLETE INCIDENTS (CTO FROZEN INCIDENTS §A) — EVIDENCE-GATED, NON-DESTRUCTIVE. Transition an
+ * OPEN/FROZEN incident → OBSOLETE ONLY when the OBJECTIVE fact holds that its mission has NO executable contract
+ * (runtime/missions/<mission>.json absent) — so the normal evidence-gated resolution (which needs a fresh
+ * same-mission diagnose) can never clear it. OBSOLETE is DISTINCT from RESOLVED (it is NOT a success/validation —
+ * it means "mission gone, unrevalidatable"). HARD GUARD: an incident whose contract EXISTS is NEVER obsoleted.
+ * RESOLVED / already-OBSOLETE are never re-transitioned. Record is PRESERVED; obsoletedAt + obsoletedReason added.
+ */
+function resolveObsoleteIncidents(opts = {}) {
+  const ledger = store.read(INCIDENTS_FILE, { incidents: {} });
+  if (!ledger || !ledger.incidents) return [];
+  const obsoletedIds = [];
+  for (const id of Object.keys(ledger.incidents)) {
+    const inc = ledger.incidents[id];
+    if (!inc) continue;
+    if (inc.status !== "OPEN" && inc.status !== "FROZEN") continue;       // never re-transition RESOLVED/OBSOLETE
+    if (missionContractExists(inc.mission, opts)) continue;               // HARD GUARD: contract exists ⇒ never obsolete
+    inc.status = "OBSOLETE";
+    inc.obsoletedAt = opts.now || null;
+    inc.obsoletedReason = `mission contract absent (runtime/missions/${inc.mission}.json) — unrevalidatable via the normal pipeline; history preserved`;
+    obsoletedIds.push(id);
+  }
+  if (obsoletedIds.length) store.write(INCIDENTS_FILE, ledger);
+  return obsoletedIds;
+}
+
 /*
  * DIAGNOSE — the single demonstrable entry: CHECKPOINT/CONTRACT → EXPECTED → OBSERVE → DIVERGENCE →
  * INCIDENT (+ hypotheses + loop protection). Writes a self-diagnostic report. Returns the full result.
@@ -637,6 +671,8 @@ module.exports = {
   rankChecks,
   raiseIncident,
   resolveStaleIncidents,
+  missionContractExists,
+  resolveObsoleteIncidents,
   diagnose,
   classifyRepairability,
   planRepair,

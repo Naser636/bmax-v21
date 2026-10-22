@@ -400,6 +400,38 @@ function resolveStaleIncidents(mission: any, currentId: any, opts: any = {}): st
   return resolvedIds;
 }
 
+// Objective evidence (parity twin): does mission `m` have an executable contract on disk? CWD-relative. Gates
+// ONLY the OBSOLETE transition. null/empty ⇒ false.
+function missionContractExists(m: any, opts: any = {}): boolean {
+  if (!m || typeof m !== "string") return false;
+  const dir = opts.missionsDir || path.join("runtime", "missions");
+  try { return fs.statSync(path.join(dir, `${m}.json`)).isFile(); } catch { return false; }
+}
+
+/*
+ * RESOLVE OBSOLETE INCIDENTS (CTO FROZEN INCIDENTS §A, parity twin) — EVIDENCE-GATED, NON-DESTRUCTIVE. An
+ * OPEN/FROZEN incident → OBSOLETE ONLY when its mission has NO executable contract (absent file). OBSOLETE is
+ * DISTINCT from RESOLVED (not a success — "mission gone, unrevalidatable"). HARD GUARD: contract EXISTS ⇒ never
+ * obsoleted. RESOLVED/already-OBSOLETE never re-transitioned. Record preserved; obsoletedAt+obsoletedReason added.
+ */
+function resolveObsoleteIncidents(opts: any = {}): string[] {
+  const ledger: any = store.read(INCIDENTS_FILE, { incidents: {} });
+  if (!ledger || !ledger.incidents) return [];
+  const obsoletedIds: string[] = [];
+  for (const id of Object.keys(ledger.incidents)) {
+    const inc = ledger.incidents[id];
+    if (!inc) continue;
+    if (inc.status !== "OPEN" && inc.status !== "FROZEN") continue;
+    if (missionContractExists(inc.mission, opts)) continue;
+    inc.status = "OBSOLETE";
+    inc.obsoletedAt = opts.now || null;
+    inc.obsoletedReason = `mission contract absent (runtime/missions/${inc.mission}.json) — unrevalidatable via the normal pipeline; history preserved`;
+    obsoletedIds.push(id);
+  }
+  if (obsoletedIds.length) store.write(INCIDENTS_FILE, ledger);
+  return obsoletedIds;
+}
+
 /*
  * DIAGNOSE.
  */
@@ -542,6 +574,8 @@ module.exports = {
   rankChecks,
   raiseIncident,
   resolveStaleIncidents,
+  missionContractExists,
+  resolveObsoleteIncidents,
   diagnose,
   classifyRepairability,
   planRepair,

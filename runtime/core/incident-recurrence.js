@@ -28,7 +28,10 @@ function analyzeRecurrence(ledger) {
   // they are PRESERVED in the ledger (audit) but EXCLUDED from the active recurrence verdict/counts so the
   // FROZEN_LOOP/RECURRENCE signal reflects reality, not fixed-long-ago history. Surfaced as `resolved`.
   const resolved = all.filter((i) => isPlainObject(i) && i.status === "RESOLVED").length;
-  const incidents = all.filter((i) => isPlainObject(i) && i.status !== "RESOLVED");
+  const obsolete = all.filter((i) => isPlainObject(i) && i.status === "OBSOLETE").length;
+  // RESOLVED (fixed) and OBSOLETE (mission gone) are both evidence-verified inactive ⇒ excluded from the active
+  // recurrence verdict/counts but preserved in the ledger (audit) and surfaced as `resolved`/`obsolete`.
+  const incidents = all.filter((i) => isPlainObject(i) && i.status !== "RESOLVED" && i.status !== "OBSOLETE");
   const records = incidents
     .filter((i) => isPlainObject(i) && typeof i.id === "string")
     .map((i) => {
@@ -70,6 +73,7 @@ function analyzeRecurrence(ledger) {
       recurring: recurring.length,
       frozen: frozen.length,
       resolved,
+      obsolete,
       maxAttempts: records.reduce((m, r) => Math.max(m, r.attempts), 0),
       topRecurring: recurring.slice(0, 3).map((r) => ({ id: r.id, attempts: r.attempts, status: r.status })),
     },

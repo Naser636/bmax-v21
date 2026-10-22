@@ -40,6 +40,7 @@ export interface RecurrenceAnalysis {
     recurring: number;
     frozen: number;
     resolved: number;
+    obsolete: number;
     maxAttempts: number;
     topRecurring: Array<{ id: string; attempts: number; status: string | null }>;
   };
@@ -54,7 +55,10 @@ function analyzeRecurrence(ledger: any): RecurrenceAnalysis {
   // PRESERVED in the ledger (audit) but EXCLUDED from the active recurrence verdict/counts so FROZEN_LOOP/
   // RECURRENCE reflects reality, not fixed-long-ago history. Surfaced as `resolved`.
   const resolved = all.filter((i) => isPlainObject(i) && i.status === "RESOLVED").length;
-  const incidents: any[] = all.filter((i) => isPlainObject(i) && i.status !== "RESOLVED");
+  const obsolete = all.filter((i) => isPlainObject(i) && i.status === "OBSOLETE").length;
+  // RESOLVED (fixed) and OBSOLETE (mission gone) are both evidence-verified inactive ⇒ excluded from the active
+  // recurrence verdict/counts but preserved (audit) and surfaced as `resolved`/`obsolete`.
+  const incidents: any[] = all.filter((i) => isPlainObject(i) && i.status !== "RESOLVED" && i.status !== "OBSOLETE");
   const records: RecurrenceRecord[] = incidents
     .filter((i) => isPlainObject(i) && typeof i.id === "string")
     .map((i) => {
@@ -96,6 +100,7 @@ function analyzeRecurrence(ledger: any): RecurrenceAnalysis {
       recurring: recurring.length,
       frozen: frozen.length,
       resolved,
+      obsolete,
       maxAttempts: records.reduce((m, r) => Math.max(m, r.attempts), 0),
       topRecurring: recurring.slice(0, 3).map((r) => ({ id: r.id, attempts: r.attempts, status: r.status })),
     },
