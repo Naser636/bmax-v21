@@ -65,6 +65,15 @@ if (snapshot.autonomy.measurable === false) {
     queue: [],
     queueCount: 0,
     capabilities: { present: false, total: null, missing: null },
+    release: {
+      present: false,
+      mission: null,
+      gates: { build: null, typescript: null, gitClean: null, documentationProofPresent: null, missionPipeline: null },
+      gatesReady: false,
+      decision: "UNAVAILABLE",
+      reason: "no runtime-verify.json — release gate evidence absent",
+      evidenceComplete: false,
+    },
     sources: [{ path: "runtime/generated/runtime-state.json", present: false }],
   };
   const emptyHtml = renderToStaticMarkup(React.createElement(Dashboard, { snapshot: empty }));

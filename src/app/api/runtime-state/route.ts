@@ -28,12 +28,16 @@ const ARTIFACT_PATHS = {
   autonomy: `${GENERATED}/autonomy-rate.json`,
   queue: `${GENERATED}/runtime-mission-queue.json`,
   capabilities: `${GENERATED}/capability-registry.json`,
+  verify: `${GENERATED}/runtime-verify.json`,
+  report: `${GENERATED}/mission-report.json`,
 } as const;
 const ARTIFACT_FILES = {
   state: "runtime-state.json",
   autonomy: "autonomy-rate.json",
   queue: "runtime-mission-queue.json",
   capabilities: "capability-registry.json",
+  verify: "runtime-verify.json",
+  report: "mission-report.json",
 } as const;
 
 /**
@@ -91,9 +95,44 @@ export interface RuntimeSnapshot {
   }>;
   queueCount: number;
   capabilities: { present: boolean; total: number | null; missing: number | null };
+  /**
+   * Canonical RELEASE visibility. The five release gates come straight from the runtime's own evidence
+   * (runtime-verify.json + the independent validation verdict in mission-report.json) — NEVER inferred from
+   * a green build/test alone. `decision` is produced by the FROZEN Release Manager (src/core/release-manager.ts),
+   * reused, never re-implemented; it is "UNAVAILABLE" (with a reason) when the release-time provenance the
+   * Release Manager requires (source commit, documentation-proof hash, artifacts) is not present in the
+   * snapshot — the honest state, since no standalone release decision is persisted for the dashboard to read.
+   * `gatesReady` is the plain AND of the five gates — a gate-readiness signal, explicitly NOT a release claim.
+   */
+  release: {
+    present: boolean;
+    mission: string | null;
+    gates: {
+      build: boolean | null;
+      typescript: boolean | null;
+      gitClean: boolean | null;
+      documentationProofPresent: boolean | null;
+      missionPipeline: boolean | null;
+    };
+    gatesReady: boolean;
+    decision: "RELEASE" | "NO_RELEASE" | "UNAVAILABLE";
+    reason: string | null;
+    evidenceComplete: boolean;
+  };
   /** Provenance: which governed artifacts were found (honest about what backs the display). */
   sources: RuntimeSnapshotSource[];
 }
+
+/** The honest "no release evidence" view (used on fallback + when runtime-verify.json is absent). */
+const RELEASE_ABSENT: RuntimeSnapshot["release"] = {
+  present: false,
+  mission: null,
+  gates: { build: null, typescript: null, gitClean: null, documentationProofPresent: null, missionPipeline: null },
+  gatesReady: false,
+  decision: "UNAVAILABLE",
+  reason: "no runtime-verify.json — release gate evidence absent",
+  evidenceComplete: false,
+};
 
 // --- defensive narrowers (artifacts are external JSON; never trust shape) -------------------------
 function isObj(v: unknown): v is Record<string, unknown> {
@@ -119,6 +158,62 @@ function readArtifact(file: string): unknown {
 }
 
 /**
+ * Canonical RELEASE visibility, honest-by-construction. Reads the five release gates from the runtime's OWN
+ * evidence — runtime-verify.json (build / typescript / gitClean / documentationProofPresent) and the
+ * INDEPENDENT validation verdict in mission-report.json (missionPipeline = validated && SUCCESS for the SAME
+ * mission) — so the surface can NEVER infer RELEASE from a green build/test alone. The decision itself is
+ * delegated to the FROZEN Release Manager (reused, not re-implemented); with the release-time provenance it
+ * requires (source commit, documentation-proof inputsHash, artifacts) absent from the snapshot, it returns
+ * UNAVAILABLE with the Release Manager's own reason — the honest state. `gatesReady` is the plain AND of the
+ * five gates (gate-readiness, NOT a release claim).
+ */
+function buildReleaseView(): RuntimeSnapshot["release"] {
+  const verify = readArtifact(ARTIFACT_FILES.verify);
+  const report = readArtifact(ARTIFACT_FILES.report);
+  const v = isObj(verify) ? verify : null;
+  const r = isObj(report) ? report : null;
+  if (!v) return { ...RELEASE_ABSENT, mission: r ? asStr(r.mission) : null };
+
+  const mission = asStr(v.mission) ?? (r ? asStr(r.mission) : null);
+  const build = asBool(v.build);
+  const typescript = asBool(v.typescript);
+  const gitClean = asBool(v.gitClean);
+  const documentationProofPresent = asBool(v.documentationProofPresent);
+  // missionPipeline is the INDEPENDENT validation verdict for the SAME mission — never inferred from build/tsc.
+  const missionPipeline =
+    r && asStr(r.mission) === mission ? asBool(r.validated) === true && asStr(r.status) === "SUCCESS" : null;
+  const gates = { build, typescript, gitClean, documentationProofPresent, missionPipeline };
+  // gatesReady = the exact five-gate AND the canonical Release Manager's allGreen() evaluates
+  // (src/core/release-manager.ts:evaluateGates/allGreen). A green build/test ALONE is never enough — all
+  // five must hold, including the INDEPENDENT missionPipeline verdict and gitClean.
+  const gateEntries: Array<[string, boolean | null]> = [
+    ["build", build], ["typescript", typescript], ["gitClean", gitClean],
+    ["documentationProofPresent", documentationProofPresent], ["missionPipeline", missionPipeline],
+  ];
+  const gatesReady = gateEntries.every(([, g]) => g === true);
+  const failing = gateEntries.filter(([, g]) => g === false).map(([k]) => k);
+  const unknown = gateEntries.filter(([, g]) => g === null).map(([k]) => k);
+
+  // The dashboard surfaces the canonical gates + an HONEST decision; it never asserts RELEASE itself (the
+  // authoritative RELEASE is the frozen Release Manager's, made in the autonomy loop with release-time
+  // provenance — commit, documentation-proof hash, artifacts — which is NOT persisted in this snapshot).
+  let decision: "RELEASE" | "NO_RELEASE" | "UNAVAILABLE";
+  let reason: string;
+  if (failing.length > 0) {
+    decision = "NO_RELEASE";
+    reason = `release gate(s) not satisfied: ${failing.join(", ")}`;
+  } else if (unknown.length > 0) {
+    decision = "UNAVAILABLE";
+    reason = `release gate evidence incomplete — unknown: ${unknown.join(", ")}`;
+  } else {
+    decision = "UNAVAILABLE";
+    reason =
+      "all five release gates green; the authoritative RELEASE is decided by the Release Manager at release time with full provenance (commit, documentation-proof hash, artifacts), which is not persisted in this snapshot";
+  }
+  return { present: true, mission, gates, gatesReady, decision, reason, evidenceComplete: false };
+}
+
+/**
  * Build the governed runtime snapshot from the real artifacts. Pure w.r.t. the filesystem it reads;
  * performs NO writes. Honest by construction: unavailable data ⇒ null / present:false, and a
  * non-measurable autonomy signal ⇒ autonomyPercent:null with its reason preserved.
@@ -134,6 +229,8 @@ export function readRuntimeSnapshot(): RuntimeSnapshot {
     { path: ARTIFACT_PATHS.autonomy, present: autonomy !== null },
     { path: ARTIFACT_PATHS.queue, present: queueDoc !== null },
     { path: ARTIFACT_PATHS.capabilities, present: caps !== null },
+    { path: ARTIFACT_PATHS.verify, present: readArtifact(ARTIFACT_FILES.verify) !== null },
+    { path: ARTIFACT_PATHS.report, present: readArtifact(ARTIFACT_FILES.report) !== null },
   ];
 
   const s = isObj(state) ? state : {};
@@ -205,6 +302,7 @@ export function readRuntimeSnapshot(): RuntimeSnapshot {
       total: capabilitiesTotal,
       missing: capabilitiesMissing,
     },
+    release: buildReleaseView(),
     sources,
   };
 }
@@ -225,6 +323,7 @@ export async function GET(): Promise<Response> {
       queue: [],
       queueCount: 0,
       capabilities: { present: false, total: null, missing: null },
+      release: RELEASE_ABSENT,
       sources: Object.values(ARTIFACT_PATHS).map((p) => ({ path: p, present: false })),
     };
   }

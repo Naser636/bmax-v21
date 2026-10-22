@@ -4,23 +4,85 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "Bounded documentation reconcile (CTO V3 §4): update the operational capability register's stale DEF-GAMMA entry to RESOLVED per the verified R1 result, WITHOUT rewriting history or implying the validation system is defect-free.",
-  "authorized_paths": ["runtime/missions/R1B_REGISTER_RECONCILE_DEF_GAMMA.json", "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"],
-  "authorizedPaths": ["runtime/missions/R1B_REGISTER_RECONCILE_DEF_GAMMA.json", "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"],
+  "authorized_paths": [
+    "runtime/missions/R1B_REGISTER_RECONCILE_DEF_GAMMA.json",
+    "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/R1B_REGISTER_RECONCILE_DEF_GAMMA.json",
+    "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MASTER MISSION ODG_10M_YEAR1_ENTERPRISE_STRATEGY_V3 §4 (close R1 bookkeeping gap).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MASTER MISSION ODG_10M_YEAR1_ENTERPRISE_STRATEGY_V3 §4 (close R1 bookkeeping gap).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "Register DEF-GAMMA entry reflects R1 closure accurately: what was corrected, tests passed, scope of proof, remaining opt-in requiresExecution limitation, other defects still open.",
-    "write_set": ["docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json", "runtime/missions/R1B_REGISTER_RECONCILE_DEF_GAMMA.json"],
-    "invariants": ["No history rewrite (pre-fix evidence preserved as superseded_evidence).", "No claim the validation system is defect-free (other crossCuttingDefects stay open).", "JSON stays valid.", "No other register entry changed.", "Preserve uncommitted research docs + 5 stashes."],
-    "acceptance_criteria": ["status_open=RESOLVED with R1 commit + DEC-009/OD-4 + scope caveat + opt-in limitation; JSON valid; register/mission-record/compass agree; committed."],
-    "stop_conditions": ["Edit would require a path outside the write-set or risk misrepresenting scope."],
+    "write_set": [
+      "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json",
+      "runtime/missions/R1B_REGISTER_RECONCILE_DEF_GAMMA.json"
+    ],
+    "invariants": [
+      "No history rewrite (pre-fix evidence preserved as superseded_evidence).",
+      "No claim the validation system is defect-free (other crossCuttingDefects stay open).",
+      "JSON stays valid.",
+      "No other register entry changed.",
+      "Preserve uncommitted research docs + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "status_open=RESOLVED with R1 commit + DEC-009/OD-4 + scope caveat + opt-in limitation; JSON valid; register/mission-record/compass agree; committed."
+    ],
+    "stop_conditions": [
+      "Edit would require a path outside the write-set or risk misrepresenting scope."
+    ],
     "rollback": "git checkout -- docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json; delete this contract.",
-    "evidence_required": ["register JSON valid", "diff", "commit id"]
+    "evidence_required": [
+      "register JSON valid",
+      "diff",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "R1B_REGISTER_RECONCILE_DEF_GAMMA_1", "goal": "Reconcile register DEF-GAMMA entry with verified R1 result.", "done_when": ["status_open RESOLVED w/ scope caveat + opt-in limitation; JSON valid; committed."], "proof": "register-reconciled", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["Register DEF-GAMMA entry RESOLVED with accurate scope; JSON valid; committed (no force)."],
+  "objectives": [
+    {
+      "id": "R1B_REGISTER_RECONCILE_DEF_GAMMA_1",
+      "goal": "Reconcile register DEF-GAMMA entry with verified R1 result.",
+      "done_when": [
+        "status_open RESOLVED w/ scope caveat + opt-in limitation; JSON valid; committed."
+      ],
+      "proof": "register-reconciled",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "Register DEF-GAMMA entry RESOLVED with accurate scope; JSON valid; committed (no force)."
+  ],
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"], "network": false},
-  "policies": ["EVIDENCE_REQUIRED", "DETERMINISM_FIRST", "NO_SCOPE_EXPANSION"],
-  "generatedBy": "claude-code (CTO V3 §4 register reconcile)"
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"
+    ],
+    "network": false
+  },
+  "policies": [
+    "EVIDENCE_REQUIRED",
+    "DETERMINISM_FIRST",
+    "NO_SCOPE_EXPANSION"
+  ],
+  "generatedBy": "claude-code (CTO V3 §4 register reconcile)",
+  "presentStateAcceptance": {
+    "sources": [
+      "docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json"
+    ],
+    "tests": [
+      "src/tests/accept-r1b-register-reconcile.test.ts"
+    ]
+  }
 }

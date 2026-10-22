@@ -51,7 +51,7 @@ function BadgeRow({ label, value }: { label: string; value: string | boolean | n
 }
 
 export default function Dashboard({ snapshot }: DashboardProps) {
-  const { health, missions, autonomy, queue, capabilities } = snapshot;
+  const { health, missions, autonomy, queue, capabilities, release } = snapshot;
 
   // Autonomy is the most honesty-sensitive signal: show the real percentage ONLY when measurable.
   let autonomyLine: string;
@@ -127,6 +127,22 @@ export default function Dashboard({ snapshot }: DashboardProps) {
           </h2>
           <Row label="Registered" value={capabilities.total === null ? UNAVAILABLE : String(capabilities.total)} />
           <Row label="Missing" value={capabilities.missing === null ? UNAVAILABLE : String(capabilities.missing)} />
+        </section>
+
+        <section className="card">
+          <h2 className="card-title">Release</h2>
+          <BadgeRow label="Decision" value={release.decision} />
+          <BadgeRow label="Gate readiness" value={release.present ? release.gatesReady : null} />
+          <Row label="Reason" value={val(release.reason)} />
+          <Row label="For mission" value={val(release.mission)} />
+          <BadgeRow label="build" value={release.gates.build} />
+          <BadgeRow label="typescript" value={release.gates.typescript} />
+          <BadgeRow label="gitClean" value={release.gates.gitClean} />
+          <BadgeRow label="documentationProof" value={release.gates.documentationProofPresent} />
+          <BadgeRow label="missionPipeline" value={release.gates.missionPipeline} />
+          {!release.present && (
+            <p className="empty">release gate evidence {UNAVAILABLE} (no runtime-verify.json)</p>
+          )}
         </section>
 
         <section className="card card-wide">
