@@ -375,6 +375,32 @@ function raiseIncident(divergences: any, opts: any = {}): any {
 }
 
 /*
+ * RESOLVE STALE INCIDENTS — EVIDENCE-GATED, NON-DESTRUCTIVE (parity twin of self-diagnostic.js). A fresh
+ * diagnostic of `mission` whose current incident id != a stored incident's id is positive absence evidence:
+ * transition that stored OPEN/FROZEN incident → RESOLVED, preserving the record + adding resolvedAt/
+ * resolvedReason. Never resolves the still-reproducing incident (id === currentId), never another mission's,
+ * and a recurrence re-opens it. currentId null ⇒ 0 divergences ⇒ all of this mission's incidents cleared.
+ */
+function resolveStaleIncidents(mission: any, currentId: any, opts: any = {}): string[] {
+  if (!mission) return [];
+  const ledger: any = store.read(INCIDENTS_FILE, { incidents: {} });
+  if (!ledger || !ledger.incidents) return [];
+  const resolvedIds: string[] = [];
+  for (const id of Object.keys(ledger.incidents)) {
+    const inc = ledger.incidents[id];
+    if (!inc || inc.mission !== mission) continue;
+    if (inc.status !== "OPEN" && inc.status !== "FROZEN") continue;
+    if (id === currentId) continue;
+    inc.status = "RESOLVED";
+    inc.resolvedAt = opts.now || null;
+    inc.resolvedReason = `divergence signature absent in a fresh diagnostic of mission ${mission}`;
+    resolvedIds.push(id);
+  }
+  if (resolvedIds.length) store.write(INCIDENTS_FILE, ledger);
+  return resolvedIds;
+}
+
+/*
  * DIAGNOSE.
  */
 function diagnose(opts: any = {}): any {
@@ -384,6 +410,7 @@ function diagnose(opts: any = {}): any {
   const observed = observe(generatedDir, opts);
   const divergences = detectDivergences(expected, observed, opts);
   const incident = raiseIncident(divergences, { mission: expected.mission, now: opts.now, maxAttempts: opts.maxAttempts });
+  const resolvedIncidents = resolveStaleIncidents(expected.mission, incident ? incident.id : null, { now: opts.now });
   const report = {
     tool: "self-diagnostic",
     mission: expected.mission,
@@ -391,6 +418,7 @@ function diagnose(opts: any = {}): any {
     observed: { mission: observed.mission, executed: observed.executed, executedOrder: observed.executedOrder },
     divergences,
     incident,
+    resolvedIncidents,
     converged: divergences.length === 0,
     summary: divergences.length === 0 ? "NO_DIVERGENCE" : `${divergences.length} divergence(s) → incident ${incident.id} (${incident.status})`,
   };
@@ -513,6 +541,7 @@ module.exports = {
   hypothesize,
   rankChecks,
   raiseIncident,
+  resolveStaleIncidents,
   diagnose,
   classifyRepairability,
   planRepair,

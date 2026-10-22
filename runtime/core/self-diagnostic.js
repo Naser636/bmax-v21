@@ -443,6 +443,35 @@ function raiseIncident(divergences, opts = {}) {
 }
 
 /*
+ * RESOLVE STALE INCIDENTS — EVIDENCE-GATED, NON-DESTRUCTIVE. When a mission is freshly diagnosed and a prior
+ * incident of THAT mission no longer reproduces (its id — the divergence signature — is NOT the one raised this
+ * run), transition it OPEN/FROZEN → RESOLVED, PRESERVING the full record (id/attempts/createdAt/divergences/
+ * hypotheses) and adding resolvedAt + resolvedReason. This is NOT a status bypass: resolution requires positive
+ * absence evidence for the SAME mission just diagnosed; an incident whose divergence is still observed (id ===
+ * currentId) is never resolved; another mission's incidents are never touched; and a recurrence re-opens it
+ * (raiseIncident builds a fresh record without resolved fields). currentId = the id raised this run, or null
+ * when 0 divergences ⇒ every incident of this mission is evidence-cleared. Returns the resolved ids.
+ */
+function resolveStaleIncidents(mission, currentId, opts = {}) {
+  if (!mission) return [];
+  const ledger = store.read(INCIDENTS_FILE, { incidents: {} });
+  if (!ledger || !ledger.incidents) return [];
+  const resolvedIds = [];
+  for (const id of Object.keys(ledger.incidents)) {
+    const inc = ledger.incidents[id];
+    if (!inc || inc.mission !== mission) continue;           // only the mission we have fresh evidence for
+    if (inc.status !== "OPEN" && inc.status !== "FROZEN") continue;
+    if (id === currentId) continue;                          // still reproducing this run ⇒ keep (no greenwash)
+    inc.status = "RESOLVED";
+    inc.resolvedAt = opts.now || null;
+    inc.resolvedReason = `divergence signature absent in a fresh diagnostic of mission ${mission}`;
+    resolvedIds.push(id);
+  }
+  if (resolvedIds.length) store.write(INCIDENTS_FILE, ledger);
+  return resolvedIds;
+}
+
+/*
  * DIAGNOSE — the single demonstrable entry: CHECKPOINT/CONTRACT → EXPECTED → OBSERVE → DIVERGENCE →
  * INCIDENT (+ hypotheses + loop protection). Writes a self-diagnostic report. Returns the full result.
  */
@@ -453,6 +482,9 @@ function diagnose(opts = {}) {
   const observed = observe(generatedDir, opts);
   const divergences = detectDivergences(expected, observed, opts);
   const incident = raiseIncident(divergences, { mission: expected.mission, now: opts.now, maxAttempts: opts.maxAttempts });
+  // EVIDENCE-GATED resolution: this fresh diagnostic is positive evidence about expected.mission — clear any of
+  // its prior incidents whose divergence no longer reproduces (preserving history). Verdict/routing unchanged.
+  const resolvedIncidents = resolveStaleIncidents(expected.mission, incident ? incident.id : null, { now: opts.now });
   const report = {
     tool: "self-diagnostic",
     mission: expected.mission,
@@ -460,6 +492,7 @@ function diagnose(opts = {}) {
     observed: { mission: observed.mission, executed: observed.executed, executedOrder: observed.executedOrder },
     divergences,
     incident,
+    resolvedIncidents,
     converged: divergences.length === 0,
     summary: divergences.length === 0 ? "NO_DIVERGENCE" : `${divergences.length} divergence(s) → incident ${incident.id} (${incident.status})`,
   };
@@ -603,6 +636,7 @@ module.exports = {
   hypothesize,
   rankChecks,
   raiseIncident,
+  resolveStaleIncidents,
   diagnose,
   classifyRepairability,
   planRepair,

@@ -39,6 +39,7 @@ export interface RecurrenceAnalysis {
     total: number;
     recurring: number;
     frozen: number;
+    resolved: number;
     maxAttempts: number;
     topRecurring: Array<{ id: string; attempts: number; status: string | null }>;
   };
@@ -48,7 +49,12 @@ export interface RecurrenceAnalysis {
 // analyzeRecurrence(ledger) — PURE. Derive per-incident recurrence facts + a summary verdict from the
 // ledger { incidents: { [id]: incident } }. A malformed/empty ledger ⇒ an empty, well-formed result.
 function analyzeRecurrence(ledger: any): RecurrenceAnalysis {
-  const incidents: any[] = ledger && isPlainObject(ledger.incidents) ? Object.values(ledger.incidents) : [];
+  const all: any[] = ledger && isPlainObject(ledger.incidents) ? Object.values(ledger.incidents) : [];
+  // RESOLVED incidents are evidence-verified no-longer-reproducing (self-diagnostic resolution lifecycle):
+  // PRESERVED in the ledger (audit) but EXCLUDED from the active recurrence verdict/counts so FROZEN_LOOP/
+  // RECURRENCE reflects reality, not fixed-long-ago history. Surfaced as `resolved`.
+  const resolved = all.filter((i) => isPlainObject(i) && i.status === "RESOLVED").length;
+  const incidents: any[] = all.filter((i) => isPlainObject(i) && i.status !== "RESOLVED");
   const records: RecurrenceRecord[] = incidents
     .filter((i) => isPlainObject(i) && typeof i.id === "string")
     .map((i) => {
@@ -89,6 +95,7 @@ function analyzeRecurrence(ledger: any): RecurrenceAnalysis {
       total: records.length,
       recurring: recurring.length,
       frozen: frozen.length,
+      resolved,
       maxAttempts: records.reduce((m, r) => Math.max(m, r.attempts), 0),
       topRecurring: recurring.slice(0, 3).map((r) => ({ id: r.id, attempts: r.attempts, status: r.status })),
     },

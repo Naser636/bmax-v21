@@ -23,7 +23,12 @@ const SEVERITY_RANK = { CRITICAL: 0, ERROR: 1 };
 // analyzeRecurrence(ledger) — PURE. Derive per-incident recurrence facts + a summary verdict from the
 // ledger { incidents: { [id]: incident } }. A malformed/empty ledger ⇒ an empty, well-formed result.
 function analyzeRecurrence(ledger) {
-  const incidents = ledger && isPlainObject(ledger.incidents) ? Object.values(ledger.incidents) : [];
+  const all = ledger && isPlainObject(ledger.incidents) ? Object.values(ledger.incidents) : [];
+  // RESOLVED incidents are evidence-verified no-longer-reproducing (self-diagnostic resolution lifecycle):
+  // they are PRESERVED in the ledger (audit) but EXCLUDED from the active recurrence verdict/counts so the
+  // FROZEN_LOOP/RECURRENCE signal reflects reality, not fixed-long-ago history. Surfaced as `resolved`.
+  const resolved = all.filter((i) => isPlainObject(i) && i.status === "RESOLVED").length;
+  const incidents = all.filter((i) => isPlainObject(i) && i.status !== "RESOLVED");
   const records = incidents
     .filter((i) => isPlainObject(i) && typeof i.id === "string")
     .map((i) => {
@@ -64,6 +69,7 @@ function analyzeRecurrence(ledger) {
       total: records.length,
       recurring: recurring.length,
       frozen: frozen.length,
+      resolved,
       maxAttempts: records.reduce((m, r) => Math.max(m, r.attempts), 0),
       topRecurring: recurring.slice(0, 3).map((r) => ({ id: r.id, attempts: r.attempts, status: r.status })),
     },
