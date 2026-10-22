@@ -178,9 +178,20 @@ function attributeObjectives(plan, patch, execution, evidenceProbe, probeRunner,
 
   // Campaign 04 consumption: attach a SEPARATE, read-only declared-proof OBSERVATION per objective.
   // The Path A verdict objects above are spread UNCHANGED — the observation never alters attribution.
+  // Proof binding comes from the mission CONTRACT objective (plan.objectives[].proof) — the SAME source the
+  // Validation Engine reads — resolved by objectiveId, with a legacy fallback to the patch-plan's own proof.
+  // Removes the attribution↔validation disagreement (false NO-PROOF-BINDING). Backward compatible.
+  const planObjectives = plan && Array.isArray(plan.objectives) ? plan.objectives : [];
+  const proofByObjId = new Map();
+  for (const o of planObjectives) {
+    if (o && typeof o.id === "string" && typeof o.proof === "string" && o.proof) proofByObjId.set(o.id, o.proof);
+  }
   const objectivesOut = objectives.map((attr, i) => {
     const p = patches[i];
-    const proof = p && typeof p.proof === "string" && p.proof ? p.proof : null;
+    const fromPlan = attr && typeof attr.objectiveId === "string" ? proofByObjId.get(attr.objectiveId) : undefined;
+    const proof = (typeof fromPlan === "string" && fromPlan)
+      ? fromPlan
+      : (p && typeof p.proof === "string" && p.proof ? p.proof : null);
     return { ...attr, declaredProof: observeProof(proof, known, run, ctx) };
   });
 

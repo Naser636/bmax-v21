@@ -128,9 +128,24 @@ function attributeObjectives(plan: any, patch: any, execution: any, evidenceProb
     return { ...base, verdict: VERDICT.RECORDED_NO_EVIDENCE, status, evidence, reason: why };
   });
 
+  // The proof binding is declared on the mission CONTRACT objective (plan.objectives[].proof) — the SAME
+  // source the Validation Engine reads (validation-engine.*:evaluateObjectiveProofs over plan.objectives).
+  // Resolve it by objectiveId (order-independent), falling back to the patch-plan's own `proof` field for
+  // legacy plans that stamped it there. This removes the documented attribution↔validation disagreement
+  // where attribution read ONLY patches[i].proof and reported a false NO-PROOF-BINDING while the engine
+  // correctly saw the declared proof (e.g. VE_CROSS_MISSION_OWNERSHIP_GUARD). Backward compatible: with no
+  // plan proof, behaviour is identical to before (patch proof, else null).
+  const planObjectives = plan && Array.isArray(plan.objectives) ? plan.objectives : [];
+  const proofByObjId = new Map();
+  for (const o of planObjectives) {
+    if (o && typeof o.id === "string" && typeof o.proof === "string" && o.proof) proofByObjId.set(o.id, o.proof);
+  }
   const objectivesOut = objectives.map((attr: any, i: number) => {
     const p = patches[i];
-    const proof = p && typeof p.proof === "string" && p.proof ? p.proof : null;
+    const fromPlan = attr && typeof attr.objectiveId === "string" ? proofByObjId.get(attr.objectiveId) : undefined;
+    const proof = (typeof fromPlan === "string" && fromPlan)
+      ? fromPlan
+      : (p && typeof p.proof === "string" && p.proof ? p.proof : null);
     return { ...attr, declaredProof: observeProof(proof, known, run, ctx) };
   });
 

@@ -477,6 +477,25 @@ const PROBES: any = {
         if (ev.status !== "EXECUTED" || ev.verified !== true) return { ok: false, detail: `implementation not independently verified (status=${ev.status}, verified=${ev.verified})` };
         return { ok: true, detail: `local-provider implementation verified: ${Array.isArray(ev.changedPaths) ? ev.changedPaths.length : 0} path(s) changed, appliedBy=${ev.appliedBy}` };
     },
+
+    "ve-cross-mission-ownership-guard-proven"() {
+        // Deterministic DoD proof for VE_CROSS_MISSION_OWNERSHIP_GUARD (probe-registry closure). The
+        // validation-engine's fail-closed cross-mission ownership guard must be PRESENT in BOTH runtime
+        // ports AND its acceptance test must exist. Pure fs reads (same pattern as legacy-runtime-retired)
+        // — fails CLOSED if the guard is reverted/removed. NOT an auto-pass: the two defining tokens of the
+        // guard (the `crossMission` computation and the `crossMissionOk` verdict check) must both be found.
+        const ports = ["runtime/core/validation-engine.js", "runtime/core/validation-engine.ts"];
+        for (const f of ports) {
+            let text: any = null;
+            try { text = fs.readFileSync(f, "utf8"); } catch { return { ok: false, detail: `validation-engine port missing: ${f}` }; }
+            if (!/crossMission/.test(text) || !/crossMissionOk/.test(text)) {
+                return { ok: false, detail: `cross-mission ownership guard absent in ${f} (no crossMission / crossMissionOk)` };
+            }
+        }
+        const test = "runtime/core/validation-engine-cross-mission.test.ts";
+        if (!fs.existsSync(test)) return { ok: false, detail: `acceptance test missing: ${test}` };
+        return { ok: true, detail: `cross-mission ownership guard present in ${ports.length} ports; acceptance test present` };
+    },
 };
 
 // Run a single named probe. Unknown probe → not ok (a required proof for an unregistered capability
