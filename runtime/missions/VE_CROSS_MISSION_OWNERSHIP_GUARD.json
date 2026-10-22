@@ -21,6 +21,7 @@
   },
   "objectives": [{"id": "VE_CROSS_MISSION_OWNERSHIP_GUARD_1", "goal": "validation-engine fail-closed guards cross-mission artifact mismatch (parity with self-diagnostic); backward compatible; both ports; proven by reproduce-before/after + parity + non-regression.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set; dist rebuilt."], "proof": "ve-cross-mission-ownership-guard-proven", "authorization": {"eligible": true, "authorized": true}}],
   "definition_of_done": ["validation-engine refuses a verdict over cross-mission artifacts (BLOCKED), parity with self-diagnostic, backward compatible, both ports; proven reproduce-before/after + parity + non-regression; committed (no force). A fail-closed isolation fix, NOT a status change."],
+  "presentStateAcceptance": {"sources": ["runtime/core/validation-engine.ts", "runtime/core/validation-engine.js", "runtime/core/validation-engine-cross-mission.test.ts"], "tests": ["runtime/core/validation-engine-cross-mission.test.ts"]},
   "source": "cto-directive",
   "permissions": {"engineering": true, "authorizedPaths": ["runtime/core/validation-engine.ts", "runtime/core/validation-engine.js", "runtime/core/validation-engine-cross-mission.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
   "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED"],
