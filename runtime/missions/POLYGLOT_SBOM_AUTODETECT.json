@@ -4,25 +4,106 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "CTO POLYGLOT SBOM AUTO-DETECTION V1: integrate the canonical engine's buildSbomMulti into the REAL odg-evidence-pack flow so a single normal run over a repo auto-detects npm/pypi/cargo/golang manifests and emits ONE coherent CycloneDX SBOM. Improve the existing product before adding; reuse supply-chain-attest + existing pack writers; no second engine, no duplicate registry, no new permanent primitive. Preserve the existing npm-lockfile path and JS/TS engine parity. Explicit, tested policy for malformed/ambiguous/unsupported manifests — never silently present a partial SBOM as exhaustive.",
-  "authorized_paths": ["runtime/missions/POLYGLOT_SBOM_AUTODETECT.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-polyglot.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/POLYGLOT_SBOM_AUTODETECT.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-polyglot.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/POLYGLOT_SBOM_AUTODETECT.json",
+    "runtime/bin/odg-evidence-pack.ts",
+    "src/runtime/evidence-pack-polyglot.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/POLYGLOT_SBOM_AUTODETECT.json",
+    "runtime/bin/odg-evidence-pack.ts",
+    "src/runtime/evidence-pack-polyglot.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION 'ODG CTO MISSION — POLYGLOT SBOM AUTO-DETECTION V1' (objectif unique: intégrer buildSbomMulti au parcours de odg-evidence-pack).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MISSION 'ODG CTO MISSION — POLYGLOT SBOM AUTO-DETECTION V1' (objectif unique: intégrer buildSbomMulti au parcours de odg-evidence-pack).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "In odg-evidence-pack: detectManifestSources(dir) (deterministic npm/pypi/cargo/golang manifest discovery) + buildEvidencePackFromDir(dir, opts) that composes sc.buildSbomMulti into the existing pack (SBOM+provenance+licence+report) in ONE run; CLI auto-routes a directory arg to the polyglot path while a .json lockfile arg keeps the exact existing npm behaviour.",
     "claim_reproduction_rootcause": "CLAIM: buildSbomMulti (shipped @8ae9e58) is not reachable from a normal evidence-pack run. REPRODUCTION: odg-evidence-pack CLI only accepts a single npm lockfile JSON and calls sc.buildSbom (npm-only); buildSbomMulti is never invoked by the pack flow. ROOT CAUSE: the pack's input model is a single npm packages map. PLAN: add deterministic multi-manifest detection over a directory + a multi pack builder that reuses the engine + existing writers; route CLI by input type; keep the npm lockfile path byte-for-byte.",
     "scope": "Additive functions + CLI routing in ONE bin (odg-evidence-pack.ts) + one hermetic/integration test. Engine supply-chain-attest UNCHANGED (consumed via its proven .js twin). No new parsers (pnpm/yarn/Gemfile/composer) — out of scope. dist is gitignored/regenerable ⇒ not in the committed write-set (rebuilt + exercised locally to prove the shipped bin).",
-    "write_set": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-polyglot.test.ts", "runtime/missions/POLYGLOT_SBOM_AUTODETECT.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["Reuse the ONE canonical engine (sc.buildSbomMulti/componentsFromManifest) + existing pack writers — no second engine/duplicate registry/new primitive.", "Existing npm-lockfile CLI path UNCHANGED (backward compatible).", "Engine JS/TS parity preserved (engine untouched; test asserts .ts≡.js on the detected sources).", "Deterministic detection (fixed ecosystem order + fixed manifest filenames).", "Fail-closed + no false-exhaustive: malformed/empty/unreadable manifest ⇒ recorded warning, never a silent partial presented as complete.", "Preserve uncommitted boussole + docs/market-research + 5 stashes."],
-    "acceptance_criteria": ["Targeted test per ecosystem (npm/pypi/cargo/golang) PASS; integration test: ONE run of buildEvidencePackFromDir over a ≥2-ecosystem temp repo ⇒ one coherent CycloneDX SBOM with the union of components + ecosystems metadata; npm-lockfile path non-regression (existing odg-evidence-pack.test.ts 11/11); determinism + dedup + malformed + unknown + unreadable cases; .ts≡.js engine parity on detected sources; tsc 0; dist rebuilt and the SHIPPED dist bin run over a polyglot temp repo in one normal execution; diff limited to write-set; committed."],
-    "stop_conditions": ["A change would require editing the engine / a path outside the write-set / a new primitive / a new ecosystem parser.", "The npm lockfile path cannot be preserved byte-for-byte."],
+    "write_set": [
+      "runtime/bin/odg-evidence-pack.ts",
+      "src/runtime/evidence-pack-polyglot.test.ts",
+      "runtime/missions/POLYGLOT_SBOM_AUTODETECT.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "Reuse the ONE canonical engine (sc.buildSbomMulti/componentsFromManifest) + existing pack writers — no second engine/duplicate registry/new primitive.",
+      "Existing npm-lockfile CLI path UNCHANGED (backward compatible).",
+      "Engine JS/TS parity preserved (engine untouched; test asserts .ts≡.js on the detected sources).",
+      "Deterministic detection (fixed ecosystem order + fixed manifest filenames).",
+      "Fail-closed + no false-exhaustive: malformed/empty/unreadable manifest ⇒ recorded warning, never a silent partial presented as complete.",
+      "Preserve uncommitted boussole + docs/market-research + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "Targeted test per ecosystem (npm/pypi/cargo/golang) PASS; integration test: ONE run of buildEvidencePackFromDir over a ≥2-ecosystem temp repo ⇒ one coherent CycloneDX SBOM with the union of components + ecosystems metadata; npm-lockfile path non-regression (existing odg-evidence-pack.test.ts 11/11); determinism + dedup + malformed + unknown + unreadable cases; .ts≡.js engine parity on detected sources; tsc 0; dist rebuilt and the SHIPPED dist bin run over a polyglot temp repo in one normal execution; diff limited to write-set; committed."
+    ],
+    "stop_conditions": [
+      "A change would require editing the engine / a path outside the write-set / a new primitive / a new ecosystem parser.",
+      "The npm lockfile path cannot be preserved byte-for-byte."
+    ],
     "rollback": "git checkout -- runtime/bin/odg-evidence-pack.ts ODG_PROJECT_STATE.md; rm -f src/runtime/evidence-pack-polyglot.test.ts runtime/missions/POLYGLOT_SBOM_AUTODETECT.json; npm run build:runtime.",
-    "evidence_required": ["per-ecosystem targeted tests", "polyglot single-run integration test", "npm path non-regression", "determinism/dedup/malformed/unknown", "engine .ts≡.js parity", "tsc 0", "dist rebuild + shipped-bin polyglot run", "commit id"]
+    "evidence_required": [
+      "per-ecosystem targeted tests",
+      "polyglot single-run integration test",
+      "npm path non-regression",
+      "determinism/dedup/malformed/unknown",
+      "engine .ts≡.js parity",
+      "tsc 0",
+      "dist rebuild + shipped-bin polyglot run",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "POLYGLOT_SBOM_AUTODETECT_1", "goal": "A single normal odg-evidence-pack run over a polyglot repo auto-detects npm/pypi/cargo/golang and emits one coherent CycloneDX SBOM, reusing buildSbomMulti; npm path preserved; fail-closed on malformed; proven end-to-end incl shipped dist bin.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set; dist bin exercised over a polyglot temp repo."], "proof": "polyglot-sbom-autodetect-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["odg-evidence-pack auto-detects multiple ecosystems and produces one coherent SBOM in a single normal run (source + shipped dist bin), reusing the canonical engine; npm path unchanged; malformed/unknown handled explicitly and tested; committed (no force). A general-capability improvement to the deliverable, NOT a client reference or certification."],
+  "objectives": [
+    {
+      "id": "POLYGLOT_SBOM_AUTODETECT_1",
+      "goal": "A single normal odg-evidence-pack run over a polyglot repo auto-detects npm/pypi/cargo/golang and emits one coherent CycloneDX SBOM, reusing buildSbomMulti; npm path preserved; fail-closed on malformed; proven end-to-end incl shipped dist bin.",
+      "requiresExecution": true,
+      "done_when": [
+        "All acceptance_criteria met; committed in write-set; dist bin exercised over a polyglot temp repo."
+      ],
+      "proof": "polyglot-sbom-autodetect-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "odg-evidence-pack auto-detects multiple ecosystems and produces one coherent SBOM in a single normal run (source + shipped dist bin), reusing the canonical engine; npm path unchanged; malformed/unknown handled explicitly and tested; committed (no force). A general-capability improvement to the deliverable, NOT a client reference or certification."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/POLYGLOT_SBOM_AUTODETECT.json",
+      "runtime/bin/odg-evidence-pack.ts"
+    ],
+    "tests": [
+      "src/runtime/evidence-pack-polyglot.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/evidence-pack-polyglot.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/bin/odg-evidence-pack.ts",
+      "src/runtime/evidence-pack-polyglot.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION",
+    "FAIL_CLOSED"
+  ],
   "generatedBy": "claude-code (CTO POLYGLOT SBOM AUTO-DETECTION V1)"
 }

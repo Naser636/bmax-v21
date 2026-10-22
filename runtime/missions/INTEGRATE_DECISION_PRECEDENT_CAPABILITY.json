@@ -53,19 +53,67 @@
       "tsc exit 0; dist fingerprint matches source; live canonical state untouched."
     ],
     "rollback": "git checkout -- <write_set> + delete untracked new files; rebuild dist from clean source. No live service/state change to undo.",
-    "evidence_required": ["focused test output", "equivalence-bench results", "isolated unified-run evidence (consultation + attribution + measure)", "tsc + fingerprint", "commit/push ids"]
+    "evidence_required": [
+      "focused test output",
+      "equivalence-bench results",
+      "isolated unified-run evidence (consultation + attribution + measure)",
+      "tsc + fingerprint",
+      "commit/push ids"
+    ]
   },
   "objectives": [
-    { "id": "INTEGRATE_DECISION_PRECEDENT_CAPABILITY_1", "goal": "Wire + prove the read-only decision-precedent capability executor (G9↔G10).",
-      "done_when": ["Focused + equivalence tests pass both ports.", "Unified isolated mission consults precedent AND is EVIDENCED AND measurable.", "Final diff limited to the authorized write-set; committed."],
-      "proof": "decision-precedent-capability-integrated", "authorization": { "eligible": true, "authorized": true } }
+    {
+      "id": "INTEGRATE_DECISION_PRECEDENT_CAPABILITY_1",
+      "goal": "Wire + prove the read-only decision-precedent capability executor (G9↔G10).",
+      "done_when": [
+        "Focused + equivalence tests pass both ports.",
+        "Unified isolated mission consults precedent AND is EVIDENCED AND measurable.",
+        "Final diff limited to the authorized write-set; committed."
+      ],
+      "proof": "decision-precedent-capability-integrated",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
   ],
   "definition_of_done": [
     "Read-only Decision Precedent Consultation executor live in both ports + governed 1:1; focused + equivalence + autonomy tests pass; tsc 0; parity identical.",
     "Unified isolated proof: consult (hit+provenance) + EVIDENCED + measurable:true; live canonical untouched; committed (push no force)."
   ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/INTEGRATE_DECISION_PRECEDENT_CAPABILITY.json",
+      "runtime/core/capability-executors.ts",
+      "runtime/core/capability-executors.js",
+      "runtime/missions/G9G10_PRECEDENT_REUSE_PROOF.json"
+    ],
+    "tests": [
+      "runtime/core/decision-precedent-executor.test.ts",
+      "runtime/__bench__/patch-executor-equivalence.e2e.test.ts",
+      "runtime/__bench__/final-report-equivalence.e2e.test.ts",
+      "runtime/__bench__/validation-engine-equivalence.e2e.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": { "engineering": true, "authorizedPaths": ["runtime/core/capability-executors.ts", "runtime/core/capability-executors.js", "runtime/core/decision-precedent-executor.test.ts", "runtime/__bench__/patch-executor-equivalence.e2e.test.ts", "runtime/__bench__/final-report-equivalence.e2e.test.ts", "runtime/__bench__/validation-engine-equivalence.e2e.test.ts", "ODG_PROJECT_STATE.md"], "network": false },
-  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "NO_SCOPE_EXPANSION"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/core/capability-executors.ts",
+      "runtime/core/capability-executors.js",
+      "runtime/core/decision-precedent-executor.test.ts",
+      "runtime/__bench__/patch-executor-equivalence.e2e.test.ts",
+      "runtime/__bench__/final-report-equivalence.e2e.test.ts",
+      "runtime/__bench__/validation-engine-equivalence.e2e.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST",
+    "NO_SCOPE_EXPANSION"
+  ],
   "generatedBy": "claude-code (authored under CTO finalization directive Priority One)"
 }

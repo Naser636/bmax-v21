@@ -4,25 +4,92 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "CTO MASTER MANDATE continuation (§ continuation): fix the demonstrated pre-existing failure in runtime/__bench__/mission-loader-equivalence.e2e.test.ts. Its computeClosure regex only matches require('./x') and MISSES require('./x.js') (dot-terminated), so mission-loader's real require('./objective-authorization.js') was absent from the co-located sandbox ⇒ the loader throws ⇒ both ports exit 1. Test-harness only (product loader is healthy). Fix the closure regex to capture the .js extension and replace the stale closure.length===9 magic number with a completeness assertion. No product/runtime change.",
-  "authorized_paths": ["runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json", "runtime/__bench__/mission-loader-equivalence.e2e.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json", "runtime/__bench__/mission-loader-equivalence.e2e.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json",
+    "runtime/__bench__/mission-loader-equivalence.e2e.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json",
+    "runtime/__bench__/mission-loader-equivalence.e2e.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MASTER MANDATE — ODG CONTINUOUS EXECUTION TO VERIFIED CLOSURE (continuation: enchaîner les prochaines missions internes utiles; fix the demonstrated mission-loader-equivalence bench failure).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MASTER MANDATE — ODG CONTINUOUS EXECUTION TO VERIFIED CLOSURE (continuation: enchaîner les prochaines missions internes utiles; fix the demonstrated mission-loader-equivalence bench failure).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "Fix mission-loader-equivalence bench: (1) computeClosure regex captures require('./x.js') (optional .js); (2) replace closure.length===9 with a completeness assertion (missing empty + contains mission-loader + objective-authorization). Bench ⇒ ALL PASS (both ports exit 0, byte-identical plan/context).",
     "claim_reproduction_rootcause": "REPRODUCED: bench fails 3 (both ports exit 1). ROOT CAUSE (read-only diagnosed): the regex (\\.\\/[A-Za-z0-9_-]+) stops at the dot, missing require('./objective-authorization.js') in mission-loader.js ⇒ that sibling (and its .js-required transitive deps) is absent from the 9-module co-located sandbox ⇒ runtime require throws. True closure is 23 modules. Product loader is healthy (full-sibling copy ⇒ exit 0; odg-run health ⇒ 13/13). Pre-existing; unrelated to the HEALTH fix.",
     "scope": "ONE bench file: the computeClosure regex + the closure assertion + the stale header comment. No product/runtime/core change. No other bench touched.",
-    "write_set": ["runtime/__bench__/mission-loader-equivalence.e2e.test.ts", "runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["Product runtime UNCHANGED (fix is test-harness only).", "The bench's parity INTENT preserved: complete resolvable closure co-located symmetrically ⇒ both ports run and produce byte-identical plan/context.", "Assertion is robust (completeness, not a brittle magic number) so it will not re-stale when the closure grows.", "Preserve boussole + docs/market-research + 5 stashes."],
-    "acceptance_criteria": ["Bench ALL PASS (closure resolves + complete; both ports exit 0; mission-plan.json + mission-context.json byte-identical JS≡compiled; meaningful output). No other suite regressed. Diff limited to the one bench file (+ contract + boussole). Committed."],
-    "stop_conditions": ["The fix would need a product/runtime change (⇒ it is a real defect, escalate to a separate contract) rather than a test-harness correction."],
+    "write_set": [
+      "runtime/__bench__/mission-loader-equivalence.e2e.test.ts",
+      "runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "Product runtime UNCHANGED (fix is test-harness only).",
+      "The bench's parity INTENT preserved: complete resolvable closure co-located symmetrically ⇒ both ports run and produce byte-identical plan/context.",
+      "Assertion is robust (completeness, not a brittle magic number) so it will not re-stale when the closure grows.",
+      "Preserve boussole + docs/market-research + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "Bench ALL PASS (closure resolves + complete; both ports exit 0; mission-plan.json + mission-context.json byte-identical JS≡compiled; meaningful output). No other suite regressed. Diff limited to the one bench file (+ contract + boussole). Committed."
+    ],
+    "stop_conditions": [
+      "The fix would need a product/runtime change (⇒ it is a real defect, escalate to a separate contract) rather than a test-harness correction."
+    ],
     "rollback": "git checkout -- runtime/__bench__/mission-loader-equivalence.e2e.test.ts ODG_PROJECT_STATE.md; rm -f runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json.",
-    "evidence_required": ["bench ALL PASS", "no-regression spot-check of a sibling bench", "diff limited to write-set", "commit id"]
+    "evidence_required": [
+      "bench ALL PASS",
+      "no-regression spot-check of a sibling bench",
+      "diff limited to write-set",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "BENCH_CLOSURE_JS_EXT_FIX_1", "goal": "mission-loader-equivalence bench passes by capturing .js-extension requires in its closure; product unchanged.", "requiresExecution": true, "done_when": ["Bench ALL PASS; diff limited to write-set; committed."], "proof": "bench-closure-js-ext-fix-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["mission-loader-equivalence bench passes (complete closure, both ports byte-identical); product runtime untouched; committed (no force). A test-harness correctness fix."],
+  "objectives": [
+    {
+      "id": "BENCH_CLOSURE_JS_EXT_FIX_1",
+      "goal": "mission-loader-equivalence bench passes by capturing .js-extension requires in its closure; product unchanged.",
+      "requiresExecution": true,
+      "done_when": [
+        "Bench ALL PASS; diff limited to write-set; committed."
+      ],
+      "proof": "bench-closure-js-ext-fix-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "mission-loader-equivalence bench passes (complete closure, both ports byte-identical); product runtime untouched; committed (no force). A test-harness correctness fix."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/BENCH_CLOSURE_JS_EXT_FIX.json"
+    ],
+    "tests": [
+      "runtime/__bench__/mission-loader-equivalence.e2e.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/__bench__/mission-loader-equivalence.e2e.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "NO_SCOPE_EXPANSION"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/__bench__/mission-loader-equivalence.e2e.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "NO_SCOPE_EXPANSION"
+  ],
   "generatedBy": "claude-code (CTO continuation — bench closure .js-ext fix)"
 }

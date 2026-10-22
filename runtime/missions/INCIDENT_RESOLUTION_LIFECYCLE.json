@@ -4,25 +4,120 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "CTO CONTINUOUS EXECUTION (priority #1 reliability + #2 truth-of-status): the self-diagnostic incident ledger has NO resolution transition — once an incident is OPEN/FROZEN it stays so forever, so defects fixed long ago (e.g. recorded-noop @ health, fixed @540b98e) keep the recurrence verdict at FROZEN_LOOP even when diagnose reports NO_DIVERGENCE. That is a FALSE status. Add an EVIDENCE-GATED, NON-DESTRUCTIVE resolution: when diagnose re-runs a mission and a prior incident's divergence signature is ABSENT this run, mark that incident RESOLVED (record + timestamps preserved, resolvedReason added); incident-recurrence then excludes RESOLVED from the frozen/recurring counts. NOT greenwashing: resolution requires positive absence evidence for the same mission, is re-raisable (a recurrence re-opens/re-freezes it), and never deletes history.",
-  "authorized_paths": ["runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json", "runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-recurrence.js", "runtime/core/incident-recurrence.ts", "runtime/core/incident-resolution.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json", "runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-recurrence.js", "runtime/core/incident-recurrence.ts", "runtime/core/incident-resolution.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json",
+    "runtime/core/self-diagnostic.js",
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/incident-recurrence.js",
+    "runtime/core/incident-recurrence.ts",
+    "runtime/core/incident-resolution.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json",
+    "runtime/core/self-diagnostic.js",
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/incident-recurrence.js",
+    "runtime/core/incident-recurrence.ts",
+    "runtime/core/incident-resolution.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO ODG CONTINUOUS EXECUTION UNTIL VERIFIED CLOSURE (priority order: runtime reliability + truth of statuses/proofs). Internal bounded modification delegated to ODG.", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO ODG CONTINUOUS EXECUTION UNTIL VERIFIED CLOSURE (priority order: runtime reliability + truth of statuses/proofs). Internal bounded modification delegated to ODG.",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "diagnose() marks a stored incident RESOLVED (status + resolvedAt + resolvedReason, all other fields preserved) when a FRESH diagnostic of its OWN mission no longer produces that incident's divergence signature; raiseIncident re-opens a RESOLVED incident if the divergence recurs; incident-recurrence excludes RESOLVED from frozen/recurring/records so the verdict reflects reality.",
     "claim_reproduction_rootcause": "REPRODUCED: `odg-diagnose.js` after a clean `odg-run.js health` ⇒ Divergences 0 / NO_DIVERGENCE YET Recurrence: FROZEN_LOOP (11 recurring, 9 frozen). ROOT CAUSE: incident id = divergence signature; once fixed, diagnose yields 0 divergences so raiseIncident is never called for it (self-diagnostic.js:410) and loop-protection is TERMINAL (:416) ⇒ no RESOLVED transition exists. PLAN: add evidence-gated resolution in diagnose + RESOLVED exclusion in recurrence.",
     "scope": "self-diagnostic (both ports): a resolution step in diagnose() + raiseIncident clears resolved state on re-raise. incident-recurrence (both ports): skip status===RESOLVED. One new hermetic test. No new primitive; reuses the existing autonomy-store + ledger shape. Repair-routing / verdict authority UNCHANGED.",
-    "write_set": ["runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-recurrence.js", "runtime/core/incident-recurrence.ts", "runtime/core/incident-resolution.test.ts", "runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["NON-DESTRUCTIVE: resolution is a status transition (OPEN/FROZEN→RESOLVED) that PRESERVES id/attempts/createdAt/divergences/hypotheses and adds resolvedAt+resolvedReason. No incident is ever deleted.", "EVIDENCE-GATED: resolve ONLY an incident of the SAME mission just diagnosed whose signature is ABSENT in this run. Never resolve an incident whose divergence is still observed (no greenwashing). Never resolve another mission's incidents.", "RE-RAISABLE: if a resolved divergence recurs, raiseIncident re-opens/re-freezes it (clears resolvedAt) ⇒ truth preserved.", "Dual-port .ts≡.js parity.", "diagnose on a clean/empty store still raises NO incident (existing test #1).", "Verdict authority + repair routing + loop-protection ceiling UNCHANGED.", "Preserve boussole + docs/market-research + 5 stashes."],
-    "acceptance_criteria": ["Hermetic test (isolated temp store): (a) a FROZEN incident for mission M becomes RESOLVED after a fresh clean diagnose(M); (b) an incident whose divergence STILL occurs is NOT resolved; (c) another mission's incident is untouched; (d) a RESOLVED incident re-opens on recurrence; (e) incident-recurrence verdict drops from FROZEN_LOOP to NONE once the only frozen incident is RESOLVED, and RESOLVED is excluded from counts; (f) resolution preserves id/createdAt/divergences. Existing self-diagnostic + cycle + ranking + incident-recurrence suites ALL PASS. tsc 0. dist rebuilt; after a clean `odg-run.js health` then `odg-diagnose.js`, the health recorded-noop incident is RESOLVED and the FROZEN_LOOP count decreases (live, non-destructive). Diff limited to write-set; committed."],
-    "stop_conditions": ["Resolution cannot be made evidence-gated/non-destructive; a change would weaken the verdict authority or loop-protection ceiling; a path outside the write-set is needed."],
+    "write_set": [
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/incident-recurrence.js",
+      "runtime/core/incident-recurrence.ts",
+      "runtime/core/incident-resolution.test.ts",
+      "runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "NON-DESTRUCTIVE: resolution is a status transition (OPEN/FROZEN→RESOLVED) that PRESERVES id/attempts/createdAt/divergences/hypotheses and adds resolvedAt+resolvedReason. No incident is ever deleted.",
+      "EVIDENCE-GATED: resolve ONLY an incident of the SAME mission just diagnosed whose signature is ABSENT in this run. Never resolve an incident whose divergence is still observed (no greenwashing). Never resolve another mission's incidents.",
+      "RE-RAISABLE: if a resolved divergence recurs, raiseIncident re-opens/re-freezes it (clears resolvedAt) ⇒ truth preserved.",
+      "Dual-port .ts≡.js parity.",
+      "diagnose on a clean/empty store still raises NO incident (existing test #1).",
+      "Verdict authority + repair routing + loop-protection ceiling UNCHANGED.",
+      "Preserve boussole + docs/market-research + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "Hermetic test (isolated temp store): (a) a FROZEN incident for mission M becomes RESOLVED after a fresh clean diagnose(M); (b) an incident whose divergence STILL occurs is NOT resolved; (c) another mission's incident is untouched; (d) a RESOLVED incident re-opens on recurrence; (e) incident-recurrence verdict drops from FROZEN_LOOP to NONE once the only frozen incident is RESOLVED, and RESOLVED is excluded from counts; (f) resolution preserves id/createdAt/divergences. Existing self-diagnostic + cycle + ranking + incident-recurrence suites ALL PASS. tsc 0. dist rebuilt; after a clean `odg-run.js health` then `odg-diagnose.js`, the health recorded-noop incident is RESOLVED and the FROZEN_LOOP count decreases (live, non-destructive). Diff limited to write-set; committed."
+    ],
+    "stop_conditions": [
+      "Resolution cannot be made evidence-gated/non-destructive; a change would weaken the verdict authority or loop-protection ceiling; a path outside the write-set is needed."
+    ],
     "rollback": "git checkout -- runtime/core/self-diagnostic.{js,ts} runtime/core/incident-recurrence.{js,ts} ODG_PROJECT_STATE.md; rm -f runtime/core/incident-resolution.test.ts runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json; npm run build:runtime.",
-    "evidence_required": ["hermetic resolution test (incl anti-greenwash negative + re-raise)", "non-regression self-diagnostic/cycle/ranking/incident-recurrence", "dual-port parity", "tsc 0", "live FROZEN_LOOP decrease after clean diagnose", "commit id"]
+    "evidence_required": [
+      "hermetic resolution test (incl anti-greenwash negative + re-raise)",
+      "non-regression self-diagnostic/cycle/ranking/incident-recurrence",
+      "dual-port parity",
+      "tsc 0",
+      "live FROZEN_LOOP decrease after clean diagnose",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "INCIDENT_RESOLUTION_LIFECYCLE_1", "goal": "Evidence-gated, non-destructive incident resolution so the recurrence verdict reflects reality; anti-greenwash safeguards + re-raise; both ports; proven hermetic + live.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set."], "proof": "incident-resolution-lifecycle-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["self-diagnostic resolves incidents on positive absence evidence (non-destructive, re-raisable); incident-recurrence excludes RESOLVED; the FROZEN_LOOP no longer persists for fixed defects; verdict authority + loop protection intact; both ports parity; committed (no force). A truth-of-status reliability improvement, NOT a status bypass."],
+  "objectives": [
+    {
+      "id": "INCIDENT_RESOLUTION_LIFECYCLE_1",
+      "goal": "Evidence-gated, non-destructive incident resolution so the recurrence verdict reflects reality; anti-greenwash safeguards + re-raise; both ports; proven hermetic + live.",
+      "requiresExecution": true,
+      "done_when": [
+        "All acceptance_criteria met; committed in write-set."
+      ],
+      "proof": "incident-resolution-lifecycle-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "self-diagnostic resolves incidents on positive absence evidence (non-destructive, re-raisable); incident-recurrence excludes RESOLVED; the FROZEN_LOOP no longer persists for fixed defects; verdict authority + loop protection intact; both ports parity; committed (no force). A truth-of-status reliability improvement, NOT a status bypass."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/INCIDENT_RESOLUTION_LIFECYCLE.json",
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/incident-recurrence.js",
+      "runtime/core/incident-recurrence.ts"
+    ],
+    "tests": [
+      "runtime/core/incident-resolution.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-recurrence.js", "runtime/core/incident-recurrence.ts", "runtime/core/incident-resolution.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "NON_DESTRUCTIVE", "NO_STATUS_BYPASS"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/incident-recurrence.js",
+      "runtime/core/incident-recurrence.ts",
+      "runtime/core/incident-resolution.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION",
+    "NON_DESTRUCTIVE",
+    "NO_STATUS_BYPASS"
+  ],
   "generatedBy": "claude-code (CTO continuous execution — incident resolution lifecycle)"
 }

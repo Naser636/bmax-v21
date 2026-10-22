@@ -4,14 +4,32 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "R2-PREP (CTO §A): prove the evidence-pack harness end-to-end on a CONTROLLED, SYNTHETIC external-style repository fixture (NO third-party access, NO private data/secrets). De-risks R2; result named CONTROLLED_FIXTURE_VERIFIED — NOT a client validation, does NOT complete R2 (real consented repo still required).",
-  "authorized_paths": ["runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json", "src/runtime/r2-evidence-pack-fixture.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json", "src/runtime/r2-evidence-pack-fixture.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json",
+    "src/runtime/r2-evidence-pack-fixture.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json",
+    "src/runtime/r2-evidence-pack-fixture.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO AUTHORIZATION 'R2-PREP + $10M CHANNEL STRATEGY CONTINUATION' §A (internal controlled/synthetic fixture only; no third-party repo access).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO AUTHORIZATION 'R2-PREP + $10M CHANNEL STRATEGY CONTINUATION' §A (internal controlled/synthetic fixture only; no third-party repo access).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "Demonstrate the evidence engine (SBOM, provenance, reproducibility, parity, licence/dependency risk, minimal tech-debt) generalizes beyond ODG's own repo, on a synthetic external-style fixture, with false-success guards.",
     "scope": "Internal controlled/synthetic fixture only. NO third-party repository access (BLOCKED_BY_DEPENDENCY until explicit owner consent). NO source change to the evidence engine (test-only). NO network/secrets/private data.",
-    "write_set": ["src/runtime/r2-evidence-pack-fixture.test.ts", "runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json", "ODG_PROJECT_STATE.md"],
+    "write_set": [
+      "src/runtime/r2-evidence-pack-fixture.test.ts",
+      "runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json",
+      "ODG_PROJECT_STATE.md"
+    ],
     "invariants": [
       "Fixture is synthetic + public package names only; no private data/secrets; no network.",
       "Result = CONTROLLED_FIXTURE_VERIFIED; explicitly NOT a client validation and NOT R2 completion.",
@@ -19,15 +37,60 @@
       "supply-chain-attest source unchanged (test-only); dual-port parity preserved.",
       "Preserve uncommitted V1/V2/V3 research docs + 5 stashes; do not commit them here."
     ],
-    "acceptance_criteria": ["Harness ALL PASS on the fixture (SBOM/provenance+tamper/reproducibility/parity/licence-risk/debt/empty-negative); existing supply-chain-attest test green; tsc 0; committed within write-set."],
-    "stop_conditions": ["Any step would need third-party repo access, network, secrets, or a source change outside the write-set."],
+    "acceptance_criteria": [
+      "Harness ALL PASS on the fixture (SBOM/provenance+tamper/reproducibility/parity/licence-risk/debt/empty-negative); existing supply-chain-attest test green; tsc 0; committed within write-set."
+    ],
+    "stop_conditions": [
+      "Any step would need third-party repo access, network, secrets, or a source change outside the write-set."
+    ],
     "rollback": "git checkout -- ODG_PROJECT_STATE.md; delete src/runtime/r2-evidence-pack-fixture.test.ts + this contract.",
-    "evidence_required": ["harness PASS output", "supply-chain-attest regression", "tsc", "commit id"]
+    "evidence_required": [
+      "harness PASS output",
+      "supply-chain-attest regression",
+      "tsc",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "R2_PREP_CONTROLLED_FIXTURE_1", "goal": "CONTROLLED_FIXTURE_VERIFIED for the evidence-pack harness.", "requiresExecution": true, "done_when": ["Harness ALL PASS on synthetic external fixture; regression green; tsc 0; committed."], "proof": "controlled-fixture-verified", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["Evidence-pack harness CONTROLLED_FIXTURE_VERIFIED on a synthetic external fixture; false-success guards proven; committed (no force); R2 real external proof remains BLOCKED_BY_DEPENDENCY."],
+  "objectives": [
+    {
+      "id": "R2_PREP_CONTROLLED_FIXTURE_1",
+      "goal": "CONTROLLED_FIXTURE_VERIFIED for the evidence-pack harness.",
+      "requiresExecution": true,
+      "done_when": [
+        "Harness ALL PASS on synthetic external fixture; regression green; tsc 0; committed."
+      ],
+      "proof": "controlled-fixture-verified",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "Evidence-pack harness CONTROLLED_FIXTURE_VERIFIED on a synthetic external fixture; false-success guards proven; committed (no force); R2 real external proof remains BLOCKED_BY_DEPENDENCY."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/R2_PREP_CONTROLLED_FIXTURE.json"
+    ],
+    "tests": [
+      "src/runtime/r2-evidence-pack-fixture.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["src/runtime/r2-evidence-pack-fixture.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["EVIDENCE_REQUIRED", "DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "src/runtime/r2-evidence-pack-fixture.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "EVIDENCE_REQUIRED",
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION"
+  ],
   "generatedBy": "claude-code (CTO R2-PREP controlled-fixture mandate)"
 }

@@ -107,7 +107,10 @@
         "Final diff contains only the authorized write-set and is committed."
       ],
       "proof": "scheduler-idle-observability-formalized",
-      "authorization": { "eligible": true, "authorized": true }
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
     }
   ],
   "definition_of_done": [
@@ -115,6 +118,17 @@
     "tsc --noEmit -p tsconfig.runtime-dist.json exits 0 and dual-port parity is identical.",
     "ODG_PROJECT_STATE.md updated with evidence; final diff limited to the 6 authorized paths; committed (push under standing policy, no force-push)."
   ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/FORMALIZE_SCHEDULER_IDLE_OBSERVABILITY_DELTA.json",
+      "runtime/bin/odg-schedule-tick.ts",
+      "runtime/core/mission-scheduler.ts",
+      "runtime/core/mission-scheduler.js"
+    ],
+    "tests": [
+      "runtime/core/mission-scheduler.test.ts"
+    ]
+  },
   "source": "cto-directive",
   "permissions": {
     "engineering": true,

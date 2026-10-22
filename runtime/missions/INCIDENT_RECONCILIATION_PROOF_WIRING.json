@@ -4,25 +4,111 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "CTO PROOF-WIRING V6 §2/§3: the common 'raccord manquant' between a mission's acceptance evidence and its self-diagnostic incident. A mission can be implemented + committed with its declared acceptance tests PASSING (present-state-reconciliation PROVEN) yet its self-diagnostic incident stays OPEN, because incident resolution only consults a fresh pipeline diagnose (resolveStaleIncidents) and NEVER consults present-state-reconciliation. Add resolveByReconciliation(opts) in self-diagnostic (both ports) that RESOLVES an OPEN/FROZEN incident ONLY when present-state-reconciliation.reconcile(mission) returns proven===true (all contract-declared sources present + all declared acceptance tests exit 0), with provenance 'present-state-reconciled'. Reuses the existing reconcile engine (no second engine). Fail-closed: NOT_RECONCILABLE/INCOMPLETE_PROBE/NOT_PROVEN ⇒ never resolved; never recorded-noop⇒success; preserves the af3f698 cross-mission guard. Never invents a done_when/probe. Also corrects the 7 done missions' STALE probe test paths (.test.js ⇒ real .test.ts) in their gitignored contracts so reconcile runs the real passing acceptance tests.",
-  "authorized_paths": ["runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json", "runtime/core/self-diagnostic.ts", "runtime/core/self-diagnostic.js", "runtime/core/incident-reconciliation.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json", "runtime/core/self-diagnostic.ts", "runtime/core/self-diagnostic.js", "runtime/core/incident-reconciliation.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json",
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/self-diagnostic.js",
+    "runtime/core/incident-reconciliation.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json",
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/self-diagnostic.js",
+    "runtime/core/incident-reconciliation.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO PROOF-WIRING + GOVERNED BUILD + FULL INCIDENT CLOSURE V6 §2 (common mission-proof wiring) + §3 (resolve the 7 verified-complete via contract-authorized evidence).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO PROOF-WIRING + GOVERNED BUILD + FULL INCIDENT CLOSURE V6 §2 (common mission-proof wiring) + §3 (resolve the 7 verified-complete via contract-authorized evidence).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "self-diagnostic.resolveByReconciliation(opts): resolve an OPEN/FROZEN incident iff present-state-reconciliation.reconcile(mission).proven===true; provenance 'present-state-reconciled'; one reconcile per mission (correct attribution); record preserved. Fail-closed + reuse the reconcile engine. Export it.",
     "claim_reproduction_rootcause": "REPRODUCED: 7 missions' acceptance tests pass (identity 19/compass 24/log-slug 18/present-state 21/runtime-model 54/delegate-conformance 6) yet their self-diagnostic mission-context-stale incidents stay OPEN. ROOT CAUSE (§2 raccord): incident resolution (resolveStaleIncidents) consults only a fresh pipeline diagnose; it NEVER consults present-state-reconciliation (the governed mechanism that verifies declared sources present + declared acceptance tests pass). Secondary: the 7 gitignored contracts' probes declare stale .test.js paths (repo migrated to .test.ts) ⇒ reconcile looked for absent tests ⇒ NOT_PROVEN. PLAN: add the reconciliation bridge (durable, committed) + correct the stale probe paths (gitignored).",
     "scope": "self-diagnostic both ports: resolveByReconciliation + export; reuse present-state-reconciliation.reconcile (no second engine). One hermetic test (temp cwd, seeded contract + probe + injected/real test). Correct 7 gitignored probe paths .test.js→.test.ts (the real passing acceptance tests). validation-engine / verdict UNCHANGED; af3f698 untouched.",
-    "write_set": ["runtime/core/self-diagnostic.ts", "runtime/core/self-diagnostic.js", "runtime/core/incident-reconciliation.test.ts", "runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["FAIL-CLOSED: resolve ONLY on reconcile proven===true (sources present + declared acceptance tests exit 0). NOT_RECONCILABLE/INCOMPLETE_PROBE/NOT_PROVEN ⇒ never resolved.", "Never recorded-noop⇒success (reconcile runs REAL tests; recorded-noop is not a reconcile proof).", "Attribution: one reconcile per mission; an incident resolved ONLY by its OWN mission's reconcile (no cross-mission — parity with af3f698 + resolveStaleIncidents).", "Never invent a probe/done_when; only CORRECT a stale declared test path to the real existing test.", "Distinct provenance 'present-state-reconciled' (≠ pipeline RESOLVED); record preserved; RESOLVED/OBSOLETE never re-transitioned.", "validation-engine verdict + af3f698 cross-mission guard UNCHANGED.", "Dual-port .ts≡.js.", "Preserve boussole + docs/market-research + 5 stashes."],
-    "acceptance_criteria": ["Hermetic test: probe+proven⇒RESOLVED(provenance); probe+failing-test⇒NOT resolved; no-probe⇒NOT resolved; RESOLVED/OBSOLETE untouched; one reconcile/mission; dual-port parity. Non-regression self-diagnostic/cycle/ranking/incident-recurrence/incident-resolution/incident-obsolete + validation-engine-cross-mission + present-state-reconciliation ALL PASS. tsc 0. LIVE: correct the 7 stale probe paths ⇒ reconcile PROVEN ⇒ resolveByReconciliation resolves exactly those 7 (provenance present-state-reconciled); M_ML/BUILD_RUNTIME/etc. NOT resolved (no probe / not proven). Diff limited to write-set; committed; dist rebuilt.", "No false closure: a mission whose acceptance test does NOT pass is never resolved."],
-    "stop_conditions": ["A resolution would occur without reconcile proven===true; a probe would be invented (not merely corrected to a real test); verdict/af3f698 would change."],
+    "write_set": [
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/incident-reconciliation.test.ts",
+      "runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "FAIL-CLOSED: resolve ONLY on reconcile proven===true (sources present + declared acceptance tests exit 0). NOT_RECONCILABLE/INCOMPLETE_PROBE/NOT_PROVEN ⇒ never resolved.",
+      "Never recorded-noop⇒success (reconcile runs REAL tests; recorded-noop is not a reconcile proof).",
+      "Attribution: one reconcile per mission; an incident resolved ONLY by its OWN mission's reconcile (no cross-mission — parity with af3f698 + resolveStaleIncidents).",
+      "Never invent a probe/done_when; only CORRECT a stale declared test path to the real existing test.",
+      "Distinct provenance 'present-state-reconciled' (≠ pipeline RESOLVED); record preserved; RESOLVED/OBSOLETE never re-transitioned.",
+      "validation-engine verdict + af3f698 cross-mission guard UNCHANGED.",
+      "Dual-port .ts≡.js.",
+      "Preserve boussole + docs/market-research + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "Hermetic test: probe+proven⇒RESOLVED(provenance); probe+failing-test⇒NOT resolved; no-probe⇒NOT resolved; RESOLVED/OBSOLETE untouched; one reconcile/mission; dual-port parity. Non-regression self-diagnostic/cycle/ranking/incident-recurrence/incident-resolution/incident-obsolete + validation-engine-cross-mission + present-state-reconciliation ALL PASS. tsc 0. LIVE: correct the 7 stale probe paths ⇒ reconcile PROVEN ⇒ resolveByReconciliation resolves exactly those 7 (provenance present-state-reconciled); M_ML/BUILD_RUNTIME/etc. NOT resolved (no probe / not proven). Diff limited to write-set; committed; dist rebuilt.",
+      "No false closure: a mission whose acceptance test does NOT pass is never resolved."
+    ],
+    "stop_conditions": [
+      "A resolution would occur without reconcile proven===true; a probe would be invented (not merely corrected to a real test); verdict/af3f698 would change."
+    ],
     "rollback": "git checkout -- runtime/core/self-diagnostic.{ts,js} ODG_PROJECT_STATE.md; rm -f runtime/core/incident-reconciliation.test.ts runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json; npm run build:runtime. (Gitignored contract probe-path corrections are regenerable.)",
-    "evidence_required": ["hermetic reconciliation-bridge test (positive + negatives + parity)", "non-regression suites", "tsc 0", "live: 7 reconciled-resolved, non-eligible unaffected", "commit id"]
+    "evidence_required": [
+      "hermetic reconciliation-bridge test (positive + negatives + parity)",
+      "non-regression suites",
+      "tsc 0",
+      "live: 7 reconciled-resolved, non-eligible unaffected",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "INCIDENT_RECONCILIATION_PROOF_WIRING_1", "goal": "Common fail-closed proof-wiring: self-diagnostic resolves an incident iff present-state-reconciliation proves the mission; the 7 verified-complete missions resolved via their real passing acceptance tests; non-eligible unaffected; both ports.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set; 7 live-resolved."], "proof": "incident-reconciliation-proof-wiring-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["self-diagnostic resolves an incident ONLY when present-state-reconciliation proves the mission (declared sources + acceptance tests), provenance-distinct, fail-closed, both ports; the 7 verified-complete missions resolved via real passing tests; verdict/af3f698 unchanged; committed (no force). A governed proof-wiring, NOT a false closure."],
+  "objectives": [
+    {
+      "id": "INCIDENT_RECONCILIATION_PROOF_WIRING_1",
+      "goal": "Common fail-closed proof-wiring: self-diagnostic resolves an incident iff present-state-reconciliation proves the mission; the 7 verified-complete missions resolved via their real passing acceptance tests; non-eligible unaffected; both ports.",
+      "requiresExecution": true,
+      "done_when": [
+        "All acceptance_criteria met; committed in write-set; 7 live-resolved."
+      ],
+      "proof": "incident-reconciliation-proof-wiring-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "self-diagnostic resolves an incident ONLY when present-state-reconciliation proves the mission (declared sources + acceptance tests), provenance-distinct, fail-closed, both ports; the 7 verified-complete missions resolved via real passing tests; verdict/af3f698 unchanged; committed (no force). A governed proof-wiring, NOT a false closure."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/INCIDENT_RECONCILIATION_PROOF_WIRING.json",
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/self-diagnostic.js"
+    ],
+    "tests": [
+      "runtime/core/incident-reconciliation.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/core/self-diagnostic.ts", "runtime/core/self-diagnostic.js", "runtime/core/incident-reconciliation.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED", "NO_STATUS_BYPASS"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/incident-reconciliation.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION",
+    "FAIL_CLOSED",
+    "NO_STATUS_BYPASS"
+  ],
   "generatedBy": "claude-code (CTO V6 §2/§3 reconciliation proof-wiring)"
 }

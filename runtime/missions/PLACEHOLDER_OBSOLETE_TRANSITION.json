@@ -4,25 +4,108 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "CTO MISSION CONTRACT VALIDITY §A.3/§A.5: the OBSOLETE transition currently requires the mission contract to be ABSENT, so an abandoned PLACEHOLDER whose (gitignored stub) contract still exists (e.g. __none__) can never be cleared. Minimal correction distinguishing a demonstrated placeholder from a real contract: extend OBSOLETE eligibility to a placeholder mission id (pattern ^__<word>__$) — a reserved/placeholder convention no real mission uses (verified: only __none__ in the ledger, zero in ROADMAP). NON-DESTRUCTIVE (history preserved). HARD GUARD unchanged for real-named missions: a present-contract, non-placeholder mission is NEVER obsoleted (fail-closed intact). Both ports.",
-  "authorized_paths": ["runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json", "runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-obsolete.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json", "runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-obsolete.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json",
+    "runtime/core/self-diagnostic.js",
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/incident-obsolete.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json",
+    "runtime/core/self-diagnostic.js",
+    "runtime/core/self-diagnostic.ts",
+    "runtime/core/incident-obsolete.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION CONTRACT VALIDITY AND EVIDENCE-BASED INCIDENT CLOSURE §A.3 (minimal factory/validity correction) + §A.5 (OBSOLETE for a demonstrated abandoned placeholder).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MISSION CONTRACT VALIDITY AND EVIDENCE-BASED INCIDENT CLOSURE §A.3 (minimal factory/validity correction) + §A.5 (OBSOLETE for a demonstrated abandoned placeholder).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "isPlaceholderMissionId(m) (pattern ^__<word>__$) + extend resolveObsoleteIncidents so an OPEN/FROZEN incident is OBSOLETE when (contract ABSENT) OR (placeholder id). Real-named present-contract missions stay fail-closed FROZEN (never obsoleted). Record obsoletedReason distinguishing 'contract absent' vs 'abandoned placeholder id'.",
     "claim_reproduction_rootcause": "EVIDENCE: __none__ (FROZEN) is a factory placeholder for a degenerate id ('None'); not in ROADMAP; no production references (only itself + stale generated scans); gitignored stub contract. The §A OBSOLETE gate (contract-absent only) can't reach it (contract file exists) ⇒ stuck FROZEN. SAFETY: pattern ^__<word>__$ matches ONLY __none__ in the ledger and ZERO roadmap ids. PLAN: add a placeholder-id OBSOLETE path, strictly gated, non-destructive.",
     "scope": "self-diagnostic (both ports): isPlaceholderMissionId + one OR-clause in resolveObsoleteIncidents + reason text. Extend incident-obsolete.test.ts. incident-recurrence already excludes OBSOLETE (unchanged). No other behavior touched. The broader factory contractValidity classifier (NO_CAPABILITY/ALREADY_SATISFIED) is NOT built here — those classes are not cleanly factory-determinable and are handled by documentation (§A.4/§B); only the PLACEHOLDER distinction is implemented (the minimal demonstrated-needed correction).",
-    "write_set": ["runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-obsolete.test.ts", "runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["EVIDENCE-GATED: placeholder OBSOLETE ONLY for id matching ^__<word>__$ (reserved/placeholder convention; verified no real/roadmap mission uses it).", "FAIL-CLOSED INTACT: a real-named (non-placeholder) mission with an existing contract is NEVER obsoleted; RESOLVED/OBSOLETE never re-transitioned.", "NON-DESTRUCTIVE: status transition only; id/attempts/createdAt/divergences preserved; obsoletedReason records the basis (absent-contract vs placeholder).", "Dual-port .ts≡.js.", "incident-recurrence OBSOLETE exclusion unchanged.", "Preserve boussole + docs/market-research + 5 stashes."],
-    "acceptance_criteria": ["Hermetic test: placeholder-id FROZEN (contract present) ⇒ OBSOLETE; real-named present-contract FROZEN ⇒ UNCHANGED (fail-closed); absent-contract still ⇒ OBSOLETE; RESOLVED/OBSOLETE not re-transitioned; history preserved; dual-port parity. Non-regression self-diagnostic/cycle/ranking/incident-recurrence/incident-resolution/incident-obsolete ALL PASS. tsc 0. Applied LIVE: __none__ ⇒ OBSOLETE (reason=placeholder); BUILD_RUNTIME/REPAIR_ACTION/CM4/NL_IMPLEMENT_8693ADBF/DEPLOY stay FROZEN. Diff limited to write-set; committed."],
-    "stop_conditions": ["The pattern would match any real/roadmap mission; fail-closed for a real-named mission would be weakened; a path outside the write-set is needed."],
+    "write_set": [
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/incident-obsolete.test.ts",
+      "runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "EVIDENCE-GATED: placeholder OBSOLETE ONLY for id matching ^__<word>__$ (reserved/placeholder convention; verified no real/roadmap mission uses it).",
+      "FAIL-CLOSED INTACT: a real-named (non-placeholder) mission with an existing contract is NEVER obsoleted; RESOLVED/OBSOLETE never re-transitioned.",
+      "NON-DESTRUCTIVE: status transition only; id/attempts/createdAt/divergences preserved; obsoletedReason records the basis (absent-contract vs placeholder).",
+      "Dual-port .ts≡.js.",
+      "incident-recurrence OBSOLETE exclusion unchanged.",
+      "Preserve boussole + docs/market-research + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "Hermetic test: placeholder-id FROZEN (contract present) ⇒ OBSOLETE; real-named present-contract FROZEN ⇒ UNCHANGED (fail-closed); absent-contract still ⇒ OBSOLETE; RESOLVED/OBSOLETE not re-transitioned; history preserved; dual-port parity. Non-regression self-diagnostic/cycle/ranking/incident-recurrence/incident-resolution/incident-obsolete ALL PASS. tsc 0. Applied LIVE: __none__ ⇒ OBSOLETE (reason=placeholder); BUILD_RUNTIME/REPAIR_ACTION/CM4/NL_IMPLEMENT_8693ADBF/DEPLOY stay FROZEN. Diff limited to write-set; committed."
+    ],
+    "stop_conditions": [
+      "The pattern would match any real/roadmap mission; fail-closed for a real-named mission would be weakened; a path outside the write-set is needed."
+    ],
     "rollback": "git checkout -- runtime/core/self-diagnostic.{js,ts} runtime/core/incident-obsolete.test.ts ODG_PROJECT_STATE.md; rm -f runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json; npm run build:runtime.",
-    "evidence_required": ["hermetic placeholder test (eligible/fail-closed/absent/forbidden/history/parity)", "non-regression suites", "tsc 0", "live: __none__ OBSOLETE, real-named stay FROZEN", "commit id"]
+    "evidence_required": [
+      "hermetic placeholder test (eligible/fail-closed/absent/forbidden/history/parity)",
+      "non-regression suites",
+      "tsc 0",
+      "live: __none__ OBSOLETE, real-named stay FROZEN",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "PLACEHOLDER_OBSOLETE_TRANSITION_1", "goal": "Demonstrated placeholder-id incidents become OBSOLETE; real-named present-contract missions stay fail-closed FROZEN; non-destructive; both ports; proven hermetic + live on __none__.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set."], "proof": "placeholder-obsolete-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["self-diagnostic marks a demonstrated placeholder-id incident OBSOLETE (distinct reason), real-named present-contract missions never obsoleted (fail-closed), history preserved; both ports; committed (no force). Minimal validity correction, NOT a weakening of fail-closed."],
+  "objectives": [
+    {
+      "id": "PLACEHOLDER_OBSOLETE_TRANSITION_1",
+      "goal": "Demonstrated placeholder-id incidents become OBSOLETE; real-named present-contract missions stay fail-closed FROZEN; non-destructive; both ports; proven hermetic + live on __none__.",
+      "requiresExecution": true,
+      "done_when": [
+        "All acceptance_criteria met; committed in write-set."
+      ],
+      "proof": "placeholder-obsolete-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "self-diagnostic marks a demonstrated placeholder-id incident OBSOLETE (distinct reason), real-named present-contract missions never obsoleted (fail-closed), history preserved; both ports; committed (no force). Minimal validity correction, NOT a weakening of fail-closed."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/PLACEHOLDER_OBSOLETE_TRANSITION.json",
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/self-diagnostic.ts"
+    ],
+    "tests": [
+      "runtime/core/incident-obsolete.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/core/self-diagnostic.js", "runtime/core/self-diagnostic.ts", "runtime/core/incident-obsolete.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "NON_DESTRUCTIVE", "NO_STATUS_BYPASS"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/core/self-diagnostic.js",
+      "runtime/core/self-diagnostic.ts",
+      "runtime/core/incident-obsolete.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION",
+    "NON_DESTRUCTIVE",
+    "NO_STATUS_BYPASS"
+  ],
   "generatedBy": "claude-code (CTO §A.3/§A.5 placeholder OBSOLETE)"
 }

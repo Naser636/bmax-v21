@@ -4,24 +4,98 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "Phase-3 capability proof for the software-supply-chain-assurance opportunity: add release-artifact integrity verification (verify artifact bytes vs a PUBLISHED hash — npm SRI sha512 'dist.integrity' or sha1 'dist.shasum') to odg-evidence-pack, reusing node crypto only. Matches the Sovereign-Tech/Liquid-Reply 'cryptographic verification of release artifacts' criterion. Proven on a REAL public npm release.",
-  "authorized_paths": ["runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json", "runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json",
+    "runtime/bin/odg-evidence-pack.ts",
+    "src/runtime/odg-evidence-pack.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json",
+    "runtime/bin/odg-evidence-pack.ts",
+    "src/runtime/odg-evidence-pack.test.ts",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION ODG_GLOBAL_ENTERPRISE_100K_500K_END_TO_END Phase 3 (execute a concrete deliverable slice).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MISSION ODG_GLOBAL_ENTERPRISE_100K_500K_END_TO_END Phase 3 (execute a concrete deliverable slice).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "verifyArtifactIntegrity(bytes, integrity) verifies a release artifact against its published hash (SRI sha256/384/512 base64, or npm sha1 shasum hex); fail-closed on mismatch/bad-format.",
     "scope": "One pure function + export in odg-evidence-pack + hermetic tests; engine (supply-chain-attest) UNCHANGED; node crypto only; no network in tests. Live real-data proof in scratchpad only.",
-    "write_set": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["Pure + fail-closed (mismatch/unrecognised ⇒ ok:false; no false success).", "No new primitive/orchestrator; reuses node crypto.", "Hermetic tests (no network); live npm proof is scratchpad-only.", "Readiness/evidence only — NOT certification/compliance/SLSA-L2.", "Preserve uncommitted research + 5 stashes."],
-    "acceptance_criteria": ["Hermetic tests PASS (SRI-sha512 match, sha1 match, tamper⇒false, bad-format⇒false); tsc 0; dist bin runs verifyArtifactIntegrity on a REAL public npm artifact (left-pad@1.3.0) vs published integrity ⇒ ok:true; tamper on real data ⇒ mismatch; committed within write-set."],
-    "stop_conditions": ["A fix needs an engine source change or a path outside the write-set."],
+    "write_set": [
+      "runtime/bin/odg-evidence-pack.ts",
+      "src/runtime/odg-evidence-pack.test.ts",
+      "runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "Pure + fail-closed (mismatch/unrecognised ⇒ ok:false; no false success).",
+      "No new primitive/orchestrator; reuses node crypto.",
+      "Hermetic tests (no network); live npm proof is scratchpad-only.",
+      "Readiness/evidence only — NOT certification/compliance/SLSA-L2.",
+      "Preserve uncommitted research + 5 stashes."
+    ],
+    "acceptance_criteria": [
+      "Hermetic tests PASS (SRI-sha512 match, sha1 match, tamper⇒false, bad-format⇒false); tsc 0; dist bin runs verifyArtifactIntegrity on a REAL public npm artifact (left-pad@1.3.0) vs published integrity ⇒ ok:true; tamper on real data ⇒ mismatch; committed within write-set."
+    ],
+    "stop_conditions": [
+      "A fix needs an engine source change or a path outside the write-set."
+    ],
     "rollback": "git checkout -- runtime/bin/odg-evidence-pack.ts src/runtime/odg-evidence-pack.test.ts ODG_PROJECT_STATE.md; delete contract; rebuild dist.",
-    "evidence_required": ["hermetic test output", "tsc", "dist run on real npm artifact + tamper", "commit id"]
+    "evidence_required": [
+      "hermetic test output",
+      "tsc",
+      "dist run on real npm artifact + tamper",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "R9LITE_ARTIFACT_VERIFICATION_1", "goal": "Release-artifact integrity verification vs published hash, proven on real public data.", "requiresExecution": true, "done_when": ["Hermetic tests PASS; dist verifies a real npm artifact vs published integrity; tamper detected; committed."], "proof": "artifact-integrity-verification-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["verifyArtifactIntegrity shipped + tested (hermetic) + proven on a REAL public npm release vs its published integrity + tamper-detected; committed (no force). A capability proof, NOT a client contract/reference."],
+  "objectives": [
+    {
+      "id": "R9LITE_ARTIFACT_VERIFICATION_1",
+      "goal": "Release-artifact integrity verification vs published hash, proven on real public data.",
+      "requiresExecution": true,
+      "done_when": [
+        "Hermetic tests PASS; dist verifies a real npm artifact vs published integrity; tamper detected; committed."
+      ],
+      "proof": "artifact-integrity-verification-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "verifyArtifactIntegrity shipped + tested (hermetic) + proven on a REAL public npm release vs its published integrity + tamper-detected; committed (no force). A capability proof, NOT a client contract/reference."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/R9LITE_ARTIFACT_VERIFICATION.json",
+      "runtime/bin/odg-evidence-pack.ts"
+    ],
+    "tests": [
+      "src/runtime/odg-evidence-pack.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/bin/odg-evidence-pack.ts", "src/runtime/odg-evidence-pack.test.ts", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/bin/odg-evidence-pack.ts",
+      "src/runtime/odg-evidence-pack.test.ts",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION"
+  ],
   "generatedBy": "claude-code (CTO Phase-3 capability-proof)"
 }

@@ -28,10 +28,21 @@
     "note": "Authorization did NOT exist before the CTO directive above; recorded as the sole source. Not backdated or fabricated."
   },
   "concern_partition": {
-    "learning_mechanism": ["runtime/core/decision-precedent.ts", "runtime/core/decision-precedent.js", "runtime/core/decision-precedent.test.ts"],
-    "mission_execution": ["ISOLATED CLONE ONLY — a cp-al/worktree sandbox outside the live repo; NO live canonical write"],
-    "audit_measurement_records": ["read-only use of runtime/core/autonomy-rate.* + autonomy-measure.* over records produced in the isolated sandbox"],
-    "canonical_state_updates": ["ODG_PROJECT_STATE.md", "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json"]
+    "learning_mechanism": [
+      "runtime/core/decision-precedent.ts",
+      "runtime/core/decision-precedent.js",
+      "runtime/core/decision-precedent.test.ts"
+    ],
+    "mission_execution": [
+      "ISOLATED CLONE ONLY — a cp-al/worktree sandbox outside the live repo; NO live canonical write"
+    ],
+    "audit_measurement_records": [
+      "read-only use of runtime/core/autonomy-rate.* + autonomy-measure.* over records produced in the isolated sandbox"
+    ],
+    "canonical_state_updates": [
+      "ODG_PROJECT_STATE.md",
+      "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json"
+    ]
   },
   "work_item_contract": {
     "objective": "Build a read-only decision-precedent mechanism and prove, with a measured before/after effect, that a captured precedent is reused to materially change a second mission's decision — no file patch, no target mutation.",
@@ -113,7 +124,10 @@
         "G9 evidence links source->precedent->execution->result; G10 reported or NOT_MEASURABLE with prerequisite."
       ],
       "proof": "readonly-precedent-reuse-proven",
-      "authorization": { "eligible": true, "authorized": true }
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
     }
   ],
   "definition_of_done": [
@@ -121,6 +135,16 @@
     "tsc 0, parity identical; final diff limited to authorized write-set; committed (push no force).",
     "G9 PROVEN with traceable links; G10 reported via canonical mechanism or NOT_MEASURABLE with exact prerequisite."
   ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/PROVE_READONLY_PRECEDENT_REUSE.json",
+      "runtime/core/decision-precedent.ts",
+      "runtime/core/decision-precedent.js"
+    ],
+    "tests": [
+      "runtime/core/decision-precedent.test.ts"
+    ]
+  },
   "source": "cto-directive",
   "permissions": {
     "engineering": true,
@@ -133,7 +157,12 @@
     ],
     "network": false
   },
-  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "NO_SCOPE_EXPANSION"],
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST",
+    "NO_SCOPE_EXPANSION"
+  ],
   "evidence": [
     "runtime/core/decision-precedent.test.ts",
     "runtime/generated/objective-attribution.json",

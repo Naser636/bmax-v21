@@ -4,25 +4,117 @@
   "mode": "ENGINEERING",
   "requires_engineering": true,
   "description": "CTO BACKUP DURABILITY V2 §A.4/§B: the operational-state export (odg-state-backup) writes a FIXED path and OVERWRITES the previous archive ⇒ no immutable history, and a crash mid-write could destroy the last good archive. Fix (bounded, both ports): write DISTINCT timestamped IMMUTABLE snapshots (<out>/snapshots/<createdAtMs>-<hash8>/), protected against overwrite (refuse a differing-content collision; idempotent on identical content), with ATOMIC writes (tmp+rename) and a `latest.json` pointer updated atomically. Read-only source + fail-closed + secret-scan + symlink-skip (already verified) preserved. No new primitive; reuses client-store-backup verify/restore unchanged.",
-  "authorized_paths": ["runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json", "runtime/bin/odg-state-backup.ts", "runtime/bin/odg-state-backup.js", "runtime/bin/odg-state-backup.test.ts", "docs/operational-backup.md", "ODG_PROJECT_STATE.md"],
-  "authorizedPaths": ["runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json", "runtime/bin/odg-state-backup.ts", "runtime/bin/odg-state-backup.js", "runtime/bin/odg-state-backup.test.ts", "docs/operational-backup.md", "ODG_PROJECT_STATE.md"],
+  "authorized_paths": [
+    "runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json",
+    "runtime/bin/odg-state-backup.ts",
+    "runtime/bin/odg-state-backup.js",
+    "runtime/bin/odg-state-backup.test.ts",
+    "docs/operational-backup.md",
+    "ODG_PROJECT_STATE.md"
+  ],
+  "authorizedPaths": [
+    "runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json",
+    "runtime/bin/odg-state-backup.ts",
+    "runtime/bin/odg-state-backup.js",
+    "runtime/bin/odg-state-backup.test.ts",
+    "docs/operational-backup.md",
+    "ODG_PROJECT_STATE.md"
+  ],
   "status": "AUTHORIZED",
-  "authorization": {"state": "AUTHORIZED", "authorized": true, "authorized_by": "CTO (human)", "authorization_source": "CTO MISSION V2 — BACKUP DURABILITY, GIT TRUTH LOCK & RECOVERY READINESS §A.4/§B (immutable timestamped snapshots, overwrite-protected).", "recorded_at": "2026-10-22T00:00:00Z"},
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "CTO (human)",
+    "authorization_source": "CTO MISSION V2 — BACKUP DURABILITY, GIT TRUTH LOCK & RECOVERY READINESS §A.4/§B (immutable timestamped snapshots, overwrite-protected).",
+    "recorded_at": "2026-10-22T00:00:00Z"
+  },
   "work_item_contract": {
     "objective": "doExport writes an immutable timestamped snapshot (<out>/snapshots/<createdAtMs>-<hash8>/{manifest.json,summary.json}), atomically (tmp+rename); refuses to overwrite an existing snapshot whose content differs (SNAPSHOT_COLLISION); idempotent on identical content; updates <out>/latest.json atomically. verify/restore unchanged (take a manifest path). Deterministic given --now.",
     "claim_reproduction_rootcause": "REPRODUCED: doExport writes DEFAULT_OUT/manifest.json (fixed) ⇒ a second export overwrites the first; no history; non-atomic write ⇒ a crash can leave a corrupt/absent archive. ROOT CAUSE: single fixed output path + non-atomic write. PLAN: distinct immutable timestamped snapshots + atomic tmp+rename + collision guard + latest pointer.",
     "scope": "odg-state-backup both ports: doExport snapshot layout + atomic write + collision guard + latest pointer; a small snapshotDir/atomicWrite helper. verify/restore + exportState (manifest builder) + secret-scan + symlink-skip UNCHANGED. Extend the test. Update the doc.",
-    "write_set": ["runtime/bin/odg-state-backup.ts", "runtime/bin/odg-state-backup.js", "runtime/bin/odg-state-backup.test.ts", "docs/operational-backup.md", "runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json", "ODG_PROJECT_STATE.md"],
-    "invariants": ["IMMUTABLE: an existing snapshot is NEVER overwritten with differing content (SNAPSHOT_COLLISION refusal); identical content ⇒ idempotent ok.", "ATOMIC: manifest/summary/latest written via tmp+rename (no partial-write corruption of a good archive).", "Distinct snapshots per export (timestamp+hash) ⇒ history preserved; a new export never destroys a prior one.", "Read-only source + fail-closed + SECRET_DETECTED + symlink-skip + dangerous-path guards UNCHANGED.", "Reuse client-store-backup verify/restore (no duplicated integrity logic; no new primitive).", "Dual-port .ts≡.js.", "Full archive stays gitignored; git keeps tool/tests/doc/summary only.", "Preserve the 5 stashes, worktree, boussole, research; delete/overwrite no existing data (incl. the prior flat archive — left in place)."],
-    "acceptance_criteria": ["Two exports with DIFFERENT content ⇒ two distinct snapshot dirs (both verifiable, neither overwritten); same content+same --now ⇒ idempotent (same dir, ok); a collision with differing content at the same dir ⇒ SNAPSHOT_COLLISION refusal (prior snapshot intact); latest.json points at the newest; atomic (no leftover .tmp); read-only source; dual-port parity; non-regression of the existing 19 assertions. tsc 0. LIVE: a new snapshot created without clobbering the prior flat archive; verify+restore-to-sandbox from the snapshot == source. Diff limited to write-set; committed."],
-    "stop_conditions": ["A snapshot would overwrite differing prior content; source would be mutated; a path outside the write-set is needed."],
+    "write_set": [
+      "runtime/bin/odg-state-backup.ts",
+      "runtime/bin/odg-state-backup.js",
+      "runtime/bin/odg-state-backup.test.ts",
+      "docs/operational-backup.md",
+      "runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "invariants": [
+      "IMMUTABLE: an existing snapshot is NEVER overwritten with differing content (SNAPSHOT_COLLISION refusal); identical content ⇒ idempotent ok.",
+      "ATOMIC: manifest/summary/latest written via tmp+rename (no partial-write corruption of a good archive).",
+      "Distinct snapshots per export (timestamp+hash) ⇒ history preserved; a new export never destroys a prior one.",
+      "Read-only source + fail-closed + SECRET_DETECTED + symlink-skip + dangerous-path guards UNCHANGED.",
+      "Reuse client-store-backup verify/restore (no duplicated integrity logic; no new primitive).",
+      "Dual-port .ts≡.js.",
+      "Full archive stays gitignored; git keeps tool/tests/doc/summary only.",
+      "Preserve the 5 stashes, worktree, boussole, research; delete/overwrite no existing data (incl. the prior flat archive — left in place)."
+    ],
+    "acceptance_criteria": [
+      "Two exports with DIFFERENT content ⇒ two distinct snapshot dirs (both verifiable, neither overwritten); same content+same --now ⇒ idempotent (same dir, ok); a collision with differing content at the same dir ⇒ SNAPSHOT_COLLISION refusal (prior snapshot intact); latest.json points at the newest; atomic (no leftover .tmp); read-only source; dual-port parity; non-regression of the existing 19 assertions. tsc 0. LIVE: a new snapshot created without clobbering the prior flat archive; verify+restore-to-sandbox from the snapshot == source. Diff limited to write-set; committed."
+    ],
+    "stop_conditions": [
+      "A snapshot would overwrite differing prior content; source would be mutated; a path outside the write-set is needed."
+    ],
     "rollback": "git checkout -- runtime/bin/odg-state-backup.ts runtime/bin/odg-state-backup.js runtime/bin/odg-state-backup.test.ts docs/operational-backup.md ODG_PROJECT_STATE.md; rm -f runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json; npm run build:runtime.",
-    "evidence_required": ["distinct-snapshots + collision-refusal + idempotent + latest-pointer + atomic test", "read-only source", "dual-port parity", "non-regression 19", "tsc 0", "live snapshot export+verify+restore==source", "commit id"]
+    "evidence_required": [
+      "distinct-snapshots + collision-refusal + idempotent + latest-pointer + atomic test",
+      "read-only source",
+      "dual-port parity",
+      "non-regression 19",
+      "tsc 0",
+      "live snapshot export+verify+restore==source",
+      "commit id"
+    ]
   },
-  "objectives": [{"id": "OPERATIONAL_BACKUP_SNAPSHOTS_1", "goal": "Immutable timestamped overwrite-protected atomic snapshots + latest pointer in odg-state-backup; durability preserved; both ports; proven test + live.", "requiresExecution": true, "done_when": ["All acceptance_criteria met; committed in write-set; live snapshot proven."], "proof": "operational-backup-snapshots-proven", "authorization": {"eligible": true, "authorized": true}}],
-  "definition_of_done": ["odg-state-backup writes immutable, timestamped, overwrite-protected, atomic snapshots (+ latest pointer) so a new export never destroys a prior archive; read-only/fail-closed/secret/symlink guards intact; both ports; proven test + live; committed (no force). A durability fix, no new primitive."],
+  "objectives": [
+    {
+      "id": "OPERATIONAL_BACKUP_SNAPSHOTS_1",
+      "goal": "Immutable timestamped overwrite-protected atomic snapshots + latest pointer in odg-state-backup; durability preserved; both ports; proven test + live.",
+      "requiresExecution": true,
+      "done_when": [
+        "All acceptance_criteria met; committed in write-set; live snapshot proven."
+      ],
+      "proof": "operational-backup-snapshots-proven",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "odg-state-backup writes immutable, timestamped, overwrite-protected, atomic snapshots (+ latest pointer) so a new export never destroys a prior archive; read-only/fail-closed/secret/symlink guards intact; both ports; proven test + live; committed (no force). A durability fix, no new primitive."
+  ],
+  "presentStateAcceptance": {
+    "sources": [
+      "runtime/missions/OPERATIONAL_BACKUP_SNAPSHOTS.json",
+      "runtime/bin/odg-state-backup.ts",
+      "runtime/bin/odg-state-backup.js",
+      "docs/operational-backup.md"
+    ],
+    "tests": [
+      "runtime/bin/odg-state-backup.test.ts"
+    ]
+  },
   "source": "cto-directive",
-  "permissions": {"engineering": true, "authorizedPaths": ["runtime/bin/odg-state-backup.ts", "runtime/bin/odg-state-backup.js", "runtime/bin/odg-state-backup.test.ts", "docs/operational-backup.md", "ODG_PROJECT_STATE.md"], "network": false},
-  "policies": ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "REUSE_BEFORE_CREATE", "NO_SCOPE_EXPANSION", "FAIL_CLOSED", "NON_DESTRUCTIVE"],
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "runtime/bin/odg-state-backup.ts",
+      "runtime/bin/odg-state-backup.js",
+      "runtime/bin/odg-state-backup.test.ts",
+      "docs/operational-backup.md",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "EVIDENCE_REQUIRED",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION",
+    "FAIL_CLOSED",
+    "NON_DESTRUCTIVE"
+  ],
   "generatedBy": "claude-code (CTO V2 backup snapshots durability)"
 }
