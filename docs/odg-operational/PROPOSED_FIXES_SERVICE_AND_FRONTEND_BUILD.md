@@ -1,5 +1,12 @@
 # PREPARED (NOT APPLIED) — service + frontend-build fixes for ODG/CTO authorization
 
+> **UPDATE 2026-10-22:** PROPOSAL 2 (frontend build `Cannot find namespace 'React'`) is **RESOLVED at source**
+> in commit `937d33e` — `types/react-global.d.ts` exposes the React type namespace globally (maintained
+> source, types-only, no compiler relaxation, generated `.next/types` NOT patched). Verified: `rm -rf .next
+> && npm run build` ⇒ EXIT 0; `tsc -p tsconfig.json` ⇒ 0; canonical `odg-verify` regenerated
+> `runtime-verify.json` with `build:true, typescript:true, gitClean:true`. **Only PROPOSAL 1 (systemd
+> service env) remains — it requires human sudo and is NOT applied here.** The config review below stands.
+
 Two coherence gaps were found during the FINAL 15 CLOSURE + DASHBOARD RELEASE VISIBILITY mission. Both are
 **pre-existing**, carry blast radius or require a human/infra action, and are therefore **prepared here, not
 applied** (per the mandate: "Prepare the exact proposed change and validation/rollback plan separately. Do not
