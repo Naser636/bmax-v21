@@ -98,8 +98,25 @@ function writePack(pack: any, outDir: string): any {
   return files;
 }
 
+// Verify a release ARTIFACT's bytes against a PUBLISHED integrity hash (e.g. npm `dist.integrity` SRI
+// "sha512-<base64>" or the legacy `dist.shasum` sha1 hex). Pure + fail-closed: an unrecognised format or a
+// mismatch ⇒ ok:false (no false success). Implements the "cryptographic verification of release artifacts"
+// supply-chain criterion against the registry's own published provenance — reusing node crypto only.
+function verifyArtifactIntegrity(bytes: any, integrity: any): any {
+  if (bytes == null || typeof integrity !== "string" || !integrity) return { ok: false, reason: "missing bytes or integrity" };
+  const buf = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+  let algorithm: string; let expected: string; let enc: "base64" | "hex";
+  const dash = integrity.indexOf("-");
+  if (dash > 0 && /^(sha256|sha384|sha512)-/.test(integrity)) { algorithm = integrity.slice(0, dash); expected = integrity.slice(dash + 1); enc = "base64"; }
+  else if (/^[0-9a-f]{40}$/i.test(integrity)) { algorithm = "sha1"; expected = integrity.toLowerCase(); enc = "hex"; } // npm legacy shasum
+  else return { ok: false, reason: "unrecognised integrity format (expected SRI 'algo-base64' or sha1 hex)" };
+  const actual = crypto.createHash(algorithm).update(buf).digest(enc);
+  const ok = enc === "base64" ? actual === expected : actual.toLowerCase() === expected;
+  return { ok, algorithm, expected, actual, reason: ok ? "artifact integrity verified against published hash" : "integrity mismatch (artifact differs from published hash — tampered or wrong artifact)" };
+}
+
 export {};
-module.exports = { buildEvidencePack, writePack, licenceRisk, LIMITS };
+module.exports = { buildEvidencePack, writePack, licenceRisk, verifyArtifactIntegrity, LIMITS };
 
 // CLI: node odg-evidence-pack.js <lockfile.json> [outDir] [--name <app>]
 if (require.main === module) {

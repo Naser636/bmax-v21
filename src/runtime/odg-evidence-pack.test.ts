@@ -62,5 +62,17 @@ try {
   check(/Limits/.test(report) && /NOT a certification|not a certification/.test(report) && /Liability exclusions/.test(report), "report states explicit limits + liability exclusions (readiness-not-certification)");
 } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 
+// 8–11 — verifyArtifactIntegrity (release-artifact verification vs a published hash) — hermetic.
+{
+  const bytes = Buffer.from("odg release artifact test payload");
+  const sriOk = "sha512-" + crypto.createHash("sha512").update(bytes).digest("base64");
+  const sha1Ok = crypto.createHash("sha1").update(bytes).digest("hex");
+  check(ep.verifyArtifactIntegrity(bytes, sriOk).ok === true, "SRI sha512 matches ⇒ ok (release artifact verified)");
+  check(ep.verifyArtifactIntegrity(bytes, sha1Ok).ok === true, "npm sha1 shasum matches ⇒ ok");
+  const tampered = Buffer.from(bytes); tampered[0] ^= 0xff;
+  check(ep.verifyArtifactIntegrity(tampered, sriOk).ok === false, "tampered bytes vs published SRI ⇒ ok:false (no false success)");
+  check(ep.verifyArtifactIntegrity(bytes, "not-a-valid-integrity").ok === false, "unrecognised integrity format ⇒ ok:false (fail-closed)");
+}
+
 console.log(`\nodg-evidence-pack — ${failures === 0 ? "ALL PASS" : failures + " FAILED"} (R9-lite product harness; reuses supply-chain-attest; no new primitive).`);
 process.exit(failures === 0 ? 0 : 1);
