@@ -291,4 +291,52 @@ ok("UNKNOWN delivery no-op ⇒ validation BLOCKED (exit 1)", uiE2E.validated ===
 const auE2E = runVEforContract(auBuilt, "RECORDED", false);
 ok("declared OBSERVATION no-op ⇒ validation SUCCESS (exit 0, A3 inert)", auE2E.validated === true && auE2E.status === "SUCCESS" && auE2E.exit === 0);
 
+console.log("Case 14 — HEALTH read-only probe classification fix (CTO HEALTH_1): read-only probes are OBSERVATION");
+// A liveness/health/diagnostic probe with NO delivery signal must classify OBSERVATION (not UNKNOWN→engineering),
+// so a read-only mission can SUCCEED on its observable result without artificially demanding a patch.
+const healthCls = factory.classifyMission({ id: "health", title: factory.humanizeId("health") });
+ok("health probe (no delivery signal) ⇒ OBSERVATION", healthCls.missionClass === "OBSERVATION");
+const diagCls = factory.classifyMission({ id: "self-diagnostic", title: "Self Diagnostic" });
+ok("self-diagnostic probe ⇒ OBSERVATION", diagCls.missionClass === "OBSERVATION");
+const healthBuilt = factory.buildContract({ id: "health", title: factory.humanizeId("health") });
+ok("health contract ⇒ read-only (requires_engineering false, no authorized_paths)", healthBuilt.requires_engineering === false && healthBuilt.authorized_paths.length === 0);
+ok("health contract ⇒ mode is a recognized observation mode", ["AUDIT", "READ_ONLY", "ANALYZE"].includes(String(healthBuilt.mode).toUpperCase()));
+ok("health contract ⇒ done_when asks for read-only evidence, NOT 'Authorized patch applied'",
+    healthBuilt.definition_of_done.some((d) => /read-only evidence/i.test(d)) && !healthBuilt.definition_of_done.some((d) => /Authorized patch applied/i.test(d)));
+
+// FAIL-CLOSED PRESERVED: a read-only keyword that ALSO carries a delivery signal stays DELIVERY (never weakened).
+ok("health keyword + requires_engineering:true ⇒ DELIVERY (delivery precedence, fail-closed intact)",
+    factory.classifyMission({ id: "health", title: "health", requiresEngineering: true }).missionClass === "DELIVERY");
+ok("health keyword + named file target ⇒ DELIVERY (engineering implied)",
+    factory.classifyMission({ id: "fix-health", title: "fix health", goal: "repair runtime/core/health-probe.ts" }).missionClass === "DELIVERY");
+// UNKNOWN fail-closed still holds for a non-probe mission with no signal (Case 12 invariant re-asserted).
+ok("non-probe, no-signal mission still UNKNOWN (fail-closed unchanged)",
+    factory.classifyMission({ id: "UI_DEPLOYMENT_FOUNDATION", title: factory.humanizeId("UI_DEPLOYMENT_FOUNDATION") }).missionClass === "UNKNOWN");
+
+// END-TO-END through the real Validation Engine: the health OBSERVATION contract's RECORDED no-op SUCCEEDS,
+// while an ENGINEERING no-op (uiBuilt, UNKNOWN→engineering) stays BLOCKED (fail-closed intact).
+const healthE2E = runVEforContract(healthBuilt, "RECORDED", false);
+ok("health OBSERVATION no-op ⇒ validation SUCCESS (exit 0; observable result accepted, no patch demanded)",
+    healthE2E.validated === true && healthE2E.status === "SUCCESS" && healthE2E.exit === 0);
+const engNoOpStillBlocked = runVEforContract(uiBuilt, "RECORDED", true);
+ok("engineering no-op still BLOCKED (fail-closed for real-modification missions intact)",
+    engNoOpStillBlocked.validated === false && engNoOpStillBlocked.status === "BLOCKED" && engNoOpStillBlocked.exit === 1);
+
+// A GAMMA objective (requiresExecution) must STILL block even in a read-only mode (DEF-GAMMA defence intact).
+const gammaPlanDir = (() => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gamma-ro-"));
+    const G = (n) => path.join(dir, "runtime", "generated", n);
+    fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+    fs.writeFileSync(G("mission-plan.json"), JSON.stringify({ mission: "RO_GAMMA", mode: "READ_ONLY", requiresEngineering: false, authorizedPaths: [], objectives: [{ id: "OBJ1", goal: "x", requiresExecution: true }], definitionOfDone: ["x"] }));
+    fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: "RO_GAMMA", patches: [{ id: 1, action: "OBJ1", objectiveId: "OBJ1", status: "PLANNED" }] }));
+    fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: "RO_GAMMA", executed: [{ action: "OBJ1", objectiveId: "OBJ1", status: "RECORDED" }] }));
+    fs.writeFileSync(G("runtime-verify.json"), JSON.stringify({ build: true, typescript: true }));
+    return dir;
+})();
+{
+    const r = spawnSync("node", [path.join(process.cwd(), "runtime", "core", "validation-engine.js")], { cwd: gammaPlanDir, encoding: "utf8" });
+    const rep = JSON.parse(fs.readFileSync(path.join(gammaPlanDir, "runtime", "generated", "mission-report.json"), "utf8"));
+    ok("read-only mode does NOT excuse a requiresExecution no-op (DEF-GAMMA defence intact ⇒ BLOCKED)", rep.validated === false && (r.status ?? -1) === 1);
+}
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

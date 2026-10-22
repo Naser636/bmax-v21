@@ -61,6 +61,11 @@ const ENGINEERING_INTENT = [
 ];
 const ENGINEERING_INTENT_RE = new RegExp(`\\b(${ENGINEERING_INTENT.join("|")})\\b`, "i");
 
+// Read-only PROBE intent: liveness/health/diagnostic missions that observe-and-report and apply NO patch.
+// Used ONLY as a WEAK (inferred) OBSERVATION signal, consulted after every delivery signal has been ruled
+// out — so it can never reclassify a mission that declares or implies engineering (fail-closed preserved).
+const OBSERVATION_INTENT_RE = /\b(health[- ]?check|healthcheck|health|liveness|readiness|heartbeat|status[- ]?check|self[- ]?check|self[- ]?diagnostics?|diagnostics?|diagnose|probe)\b/i;
+
 function entryText(entry: any): string {
   return [entry.id, entry.title, entry.goal, entry.description]
     .filter((s: any) => typeof s === "string")
@@ -144,6 +149,15 @@ function classifyMission(entry: any): any {
   if (synth.derivePaths(text).length > 0 || synth.derivePaths(doneText).length > 0) weakDelivery.push("names a concrete file target (inferred)");
   if (weakDelivery.length > 0) return { missionClass: "DELIVERY", classBasis: weakDelivery };
 
+  // 3b. WEAK OBSERVATION — inferred read-only PROBE (health / liveness / diagnostic) with NO delivery signal.
+  // Reached ONLY after every delivery signal (explicit AND inferred) has been ruled out, so it can never
+  // override a mission that declares or implies engineering. A pure liveness/health/diagnostic probe applies
+  // no patch; classifying it OBSERVATION lets the Validation Engine accept its observable result instead of
+  // demanding "Authorized patch applied". Fail-closed is preserved for genuinely UNKNOWN missions below.
+  const weakObservation = [];
+  if (OBSERVATION_INTENT_RE.test(text)) weakObservation.push("read-only probe keyword (inferred: health/liveness/diagnostic; no delivery signal)");
+  if (weakObservation.length > 0) return { missionClass: "OBSERVATION", classBasis: weakObservation };
+
   // 4. UNKNOWN — no signal either way. Fail closed.
   return {
     missionClass: "UNKNOWN",
@@ -216,7 +230,7 @@ function buildContract(entry: any): any {
     id: entry.id,
     goal,
     priority: entry.priority || "NORMAL",
-    mode: entry.mode || (engineering ? "ENGINEERING" : "SEQUENTIAL"),
+    mode: entry.mode || (engineering ? "ENGINEERING" : "READ_ONLY"),
     authorizedPaths,
     doneWhen,
     description:
