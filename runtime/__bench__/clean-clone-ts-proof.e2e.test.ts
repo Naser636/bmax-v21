@@ -154,8 +154,15 @@ try {
   const jsJson = jsReport.length ? JSON.parse(jsReport.toString("utf8")) : {};
   evidence.jsReport = jsJson;
   check(jsJson.status === "SUCCESS" && jsJson.validated === true, "JS mission-report: status=SUCCESS validated=true");
-  // report has no volatile fields ({mission,status,validated}) ⇒ byte-parity is exact.
-  check(tsReport.length > 0 && tsReport.equals(jsReport), "JS ≡ TS mission-report BYTE-IDENTICAL (parity, zero normalization)");
+  // The Clean Workspace report embeds ONE genuinely-volatile field — the live scan count "scanned this
+  // run: N transient candidate(s)" — which legitimately differs between the two SEQUENTIAL runs in this
+  // shared sandbox (the TS run builds dist + both runs accrue runtime/generated artifacts, so the second
+  // run's read-only scan observes more transient candidates). Normalize ONLY that count, then byte-compare:
+  // this proves JS ≡ compiled-TS parity for ALL non-volatile content. The VERDICT parity (status=SUCCESS +
+  // validated=true on BOTH ports) is asserted separately above. (Corrects the prior premise "no volatile
+  // fields" — Clean Workspace genuinely reports what it scanned.)
+  const normScanCount = (b: Buffer) => b.toString("utf8").replace(/scanned this run: \d+ transient candidate\(s\)/g, "scanned this run: N transient candidate(s)");
+  check(tsReport.length > 0 && normScanCount(tsReport) === normScanCount(jsReport), "JS ≡ TS mission-report byte-identical (only the stateful Clean-Workspace scan count normalized)");
 
   // --- 6. Negatives — no silent fallback (real exit codes, not piped). ---------------------------
   const badBase = run("node", ["runtime/dist/bin/odg-run.js", "QUAL_CLEAN_GATEB"], SANDBOX, { ODG_STAGE_BASE: "runtime/does-not-exist" });
