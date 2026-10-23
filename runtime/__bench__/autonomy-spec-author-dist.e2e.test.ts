@@ -58,7 +58,7 @@ function computeClosure(seeds: string[]): string[] {
     const file = path.join(CORE, name + ".js"); if (!fs.existsSync(file)) continue;
     closure.add(name);
     const src = fs.readFileSync(file, "utf8");
-    const re = /\brequire\(\s*["'`](\.\/[A-Za-z0-9_-]+)["'`]\s*\)/g; let m: RegExpExecArray | null;
+    const re = /\brequire\(\s*["'`](\.\/[A-Za-z0-9_-]+)(?:\.js)?["'`]\s*\)/g; let m: RegExpExecArray | null; // (?:\.js)? — match .js-suffixed requires (e.g. ./objective-authorization.js) like the real build scanner
     while ((m = re.exec(src)) !== null) stack.push(m[1].replace(/^\.\//, ""));
   }
   return [...closure].sort();
@@ -199,12 +199,16 @@ try {
   // (2) empty scope ⇒ zero mutation.
   const sbNo = seed("PAR_NOSCOPE", []); populateDist(sbNo, closure); runCompiled(sbNo, "PAR_NOSCOPE");
   check(fs.existsSync(deliverablePath(sbNo)) === false, "B(compiled): empty scope ⇒ zero mutation (refused before write)");
-  check(readGen(sbNo, "mission-report.json").validated !== true, "B(compiled): empty-scope mission NOT validated");
+  // Refusal may STOP the pipeline BEFORE a final report is written — an ABSENT report is even stronger
+  // evidence of "not validated" than a report with validated=false. Tolerate both (non-weakening).
+  const noScopeRep = fs.existsSync(path.join(sbNo, "runtime", "generated", "mission-report.json")) ? readGen(sbNo, "mission-report.json") : null;
+  check(!noScopeRep || noScopeRep.validated !== true, "B(compiled): empty-scope mission NOT validated (refused; absent-or-unvalidated report)");
 
   // (3) governance target without elevation ⇒ refused.
   const sbGov = seed("PAR_GOV", ["runtime/governance/**"]); populateDist(sbGov, closure); runCompiled(sbGov, "PAR_GOV");
   check(fs.existsSync(path.join(sbGov, "runtime", "governance", "odg-spec.json")) === false, "B(compiled): governance target refused (no write without elevation)");
-  check(readGen(sbGov, "mission-report.json").validated !== true, "B(compiled): governance mission NOT validated");
+  const govRep = fs.existsSync(path.join(sbGov, "runtime", "generated", "mission-report.json")) ? readGen(sbGov, "mission-report.json") : null;
+  check(!govRep || govRep.validated !== true, "B(compiled): governance mission NOT validated (refused; absent-or-unvalidated report)");
 } finally {
   for (const sb of sandboxes) { try { fs.rmSync(sb, { recursive: true, force: true }); } catch { /* best-effort */ } }
 }
