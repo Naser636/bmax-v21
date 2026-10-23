@@ -99,14 +99,17 @@ function populateDistStages(sb: string): void {
     : marker + src;
   fs.writeFileSync(first, withMarker);
 }
-function runEnv(stageBase?: string): NodeJS.ProcessEnv {
+function runEnv(stageBase?: string, odgRuntime?: string): NodeJS.ProcessEnv {
   const env = { ...process.env, FLEET_BRIDGE_MOCK: "1" };
   delete env.ODG_FLEET; delete env.ODG_VERBOSE; delete env.ODG_RUNTIME_ENTRY;
   if (stageBase === undefined) delete env.ODG_STAGE_BASE; else env.ODG_STAGE_BASE = stageBase;
+  // ODG_RUNTIME selects the historical JS fallback: post-L7-FIX-2 the DEFAULT stage base is the compiled
+  // dist/core when present, so to exercise the HISTORICAL "runtime/core" base an operator sets ODG_RUNTIME=js.
+  if (odgRuntime === undefined) delete env.ODG_RUNTIME; else env.ODG_RUNTIME = odgRuntime;
   return env;
 }
-function run(sb: string, mission: string, stageBase?: string): { code: number | null; out: string } {
-  const r = spawnSync("node", [COMPILED_ENTRY, mission], { cwd: sb, encoding: "utf8", env: runEnv(stageBase) });
+function run(sb: string, mission: string, stageBase?: string, odgRuntime?: string): { code: number | null; out: string } {
+  const r = spawnSync("node", [COMPILED_ENTRY, mission], { cwd: sb, encoding: "utf8", env: runEnv(stageBase, odgRuntime) });
   return { code: r.status, out: (r.stdout || "") + (r.stderr || "") };
 }
 const readGen = (sb: string, n: string): any => JSON.parse(fs.readFileSync(path.join(sb, "runtime", "generated", n), "utf8"));
@@ -118,15 +121,19 @@ try {
   execFileSync("npm", ["run", "build:runtime"], { cwd: REPO, stdio: ["ignore", "pipe", "ignore"] });
   check(fs.existsSync(path.join(REPO, "runtime", "dist", "core", "pipeline-builder.js")), "prerequisite: compiled pipeline-builder present");
 
-  // ---- A. DEFAULT (unset) ⇒ runtime/core, 13/13, no marker --------------------------------------
+  // ---- A. HISTORICAL core base (ODG_RUNTIME=js) ⇒ runtime/core, 13/13, no marker -----------------
+  // NOTE (L7-FIX-2): the UNSET default stage base is now the compiled dist/core when present (so TS stages
+  // spawn from dist, not the source .js rollbacks). The HISTORICAL "runtime/core" base is reached by the
+  // documented fallback ODG_RUNTIME=js. This scenario exercises that historical/JS core base (its assertions
+  // verify core); the new dist default is exercised by scenario B's opt-in dist base.
   const sbA = seed("STAGEBASE_DEFAULT");
   check(fs.existsSync(path.join(sbA, "node_modules")) === false, "sandbox has NO node_modules");
-  const rA = run(sbA, "STAGEBASE_DEFAULT"); // ODG_STAGE_BASE unset
-  check(rA.code === 0 && /PIPELINE SUCCESS — 13\/13 stages/.test(rA.out), "A default: 13/13 via compiled entry");
-  check(/Stage base : runtime\/core/.test(rA.out), "A default: observable 'Stage base : runtime/core'");
-  check(pipelinePaths(sbA).every((p) => p.startsWith("runtime/core/")) && pipelinePaths(sbA).length === 13, "A default: all 13 stage paths under runtime/core/");
-  check(genExists(sbA, "__stage_base.json") === false, "A default: no dist provenance marker (stages ran from runtime/core)");
-  check(readGen(sbA, "mission-report.json").validated === true, "A default: mission validated (historical behaviour preserved)");
+  const rA = run(sbA, "STAGEBASE_DEFAULT", undefined, "js"); // ODG_STAGE_BASE unset + ODG_RUNTIME=js ⇒ historical core base
+  check(rA.code === 0 && /PIPELINE SUCCESS — 13\/13 stages/.test(rA.out), "A core(js): 13/13 via compiled entry");
+  check(/Stage base : runtime\/core/.test(rA.out), "A core(js): observable 'Stage base : runtime/core'");
+  check(pipelinePaths(sbA).every((p) => p.startsWith("runtime/core/")) && pipelinePaths(sbA).length === 13, "A core(js): all 13 stage paths under runtime/core/");
+  check(genExists(sbA, "__stage_base.json") === false, "A core(js): no dist provenance marker (stages ran from runtime/core)");
+  check(readGen(sbA, "mission-report.json").validated === true, "A core(js): mission validated (historical behaviour preserved)");
 
   // ---- B. OPT-IN dist ⇒ child stages resolved from runtime/dist/core (sentinel proof) ------------
   // The dist base holds RAW COPIES of the JS stages (sentinels, NOT TS-migrated). The sentinel on the FIRST
