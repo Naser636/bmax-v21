@@ -101,3 +101,6 @@ next-env.d.ts
 # GENERATED execution artifact (regenerable, never hand-edited), so it is not versioned. Scoped to the
 # dist dir ONLY — the TypeScript sources and the runtime/generated evidence remain fully visible/tracked.
 /runtime/dist/
+
+# ODG Spec Author smoke-mission output (reproducible per-run ODG-authored artifact; never a tracked source deliverable)
+runtime/odg-spec.json
