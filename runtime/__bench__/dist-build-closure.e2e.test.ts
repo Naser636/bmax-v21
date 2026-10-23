@@ -64,7 +64,14 @@ check(fs.existsSync(path.join(DIST, "core", "provider-sandbox.js")), "provider-s
 const lmmBuilt = fs.readFileSync(path.join(DIST, "core", "local-model-manager.js"), "utf8");
 check(!/shell:\s*true/.test(lmmBuilt), "built local-model-manager.js has NO shell:true execution");
 check(/require\(\s*["']\.\/provider-sandbox["']\s*\)/.test(lmmBuilt), "built local-model-manager.js requires ./provider-sandbox");
-check(man.copied.some((c) => c.rel.replace(/\\/g, "/") === "core/provider-sandbox.js"), "manifest records provider-sandbox.js as a copied closure member");
+// B125 architecture update: provider-sandbox migrated from a copied .js asset to a COMPILED module — its
+// .ts is now in tsconfig.runtime-dist `include`, so the build EMITS it (counted in emittedCount; the
+// manifest lists only COPIED members, so an emitted module is correctly absent from man.copied). Assert
+// the emitted disposition — NOT copied, .ts source present, .js present in dist — proving the B124
+// hardening reaches dist via the strict TS-emit path (stronger than the former copied-member check).
+const psCopied = man.copied.some((c) => c.rel.replace(/\\/g, "/") === "core/provider-sandbox.js");
+check(!psCopied && fs.existsSync(path.join(REPO, "runtime", "core", "provider-sandbox.ts")) && fs.existsSync(path.join(DIST, "core", "provider-sandbox.js")),
+  "provider-sandbox.js is EMITTED from its .ts (tsconfig include), not copied — B124 hardening reaches dist via strict compile");
 // Load the BUILT module and prove it refuses unsandboxed execution (fail-closed), not just that the
 // source does. Force the sandbox-detection probe to report bubblewrap absent.
 {
