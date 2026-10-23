@@ -1,0 +1,43 @@
+{
+  "mission": "QUAL_CLEAN_GATEB",
+  "version": "1.0",
+  "status": "AUTHORIZED",
+  "mode": "READ_ONLY",
+  "priority": "NORMAL",
+  "requires_engineering": false,
+  "authorized_paths": [],
+  "objectives": [
+    {
+      "id": "CLEAN_WORKSPACE_1",
+      "goal": "Enumerate the transient git-ignored runtime workspace artifacts under runtime/ (read-only scan).",
+      "done_when": [
+        "A deterministic scan lists every candidate path under runtime/ that is safe to remove."
+      ],
+      "authorization": { "eligible": true, "authorized": true }
+    },
+    {
+      "id": "CLEAN_WORKSPACE_2",
+      "goal": "Confirm each candidate is covered by the gitignore/backup/archive policy so no tracked or required artifact is listed.",
+      "done_when": [
+        "Every candidate is git-ignored or already archived; no tracked or required artifact is listed."
+      ],
+      "authorization": { "eligible": true, "authorized": true }
+    },
+    {
+      "id": "CLEAN_WORKSPACE_3",
+      "goal": "Produce read-only evidence of the cleaned workspace state without deleting any tracked or required artifact.",
+      "done_when": [
+        "Evidence generated.",
+        "Report generated."
+      ],
+      "authorization": { "eligible": true, "authorized": true }
+    }
+  ],
+  "verify": [
+    { "capability": "Clean Workspace", "evidence": "clean-workspace-scanned" }
+  ],
+  "definition_of_done": [
+    "Evidence generated",
+    "Report generated"
+  ]
+}

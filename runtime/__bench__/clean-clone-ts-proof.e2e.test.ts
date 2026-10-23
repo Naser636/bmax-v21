@@ -60,6 +60,10 @@ let kept = false;
 try {
   const archive = run("bash", ["-c", "git archive HEAD | tar -x -C " + JSON.stringify(SANDBOX)], REPO);
   check(archive.status === 0, "clean clone materialised from `git archive HEAD`");
+  // A real clean clone is a git working tree (git clone), not a bare tar extract. git-init the extracted
+  // tree so git-dependent missions work (e.g. QUAL_CLEAN_GATEB's Clean Workspace scans git-ignored
+  // artifacts via `git ls-files --others --ignored` — which REQUIRES a git repo). Faithful, not a bypass.
+  run("bash", ["-c", "cd " + JSON.stringify(SANDBOX) + " && git init -q && git -c user.email=cc@local -c user.name=cc add -A && git -c commit.gpgsign=false -c user.email=cc@local -c user.name=cc commit -q -m clean-clone"], REPO);
   check(!fs.existsSync(path.join(SANDBOX, "runtime", "dist")), "clean clone has NO runtime/dist (gitignored — not shipped)");
   check(!fs.existsSync(path.join(SANDBOX, "node_modules")), "clean clone has NO node_modules (no symlink/stale substitution)");
   check(fs.existsSync(path.join(SANDBOX, "package-lock.json")), "clean clone carries package-lock.json (npm ci prerequisite)");
