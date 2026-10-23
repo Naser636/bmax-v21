@@ -254,6 +254,18 @@ export class RootCauseEngine {
         path.join(dir, CORRECTIVE_MISSION_FILE),
         JSON.stringify(report.correctiveMission, null, 2) + "\n",
       );
+    } else {
+      // All Release gates green ⇒ no corrective mission is needed. CLEAR any stale corrective-mission.json a
+      // prior red-gate run left behind, so a downstream runner (and the dashboard release view, which resolves
+      // its mission via this pointer) never acts on an already-RESOLVED corrective mission. Operational
+      // coherence: once the diagnosed gate is green, the corrective pointer must not persist. Best-effort on
+      // the gitignored generated tree; never touches git-tracked state.
+      const stale = path.join(dir, CORRECTIVE_MISSION_FILE);
+      try {
+        if (fs.existsSync(stale)) fs.rmSync(stale);
+      } catch {
+        /* non-fatal: a leftover pointer is corrected on the next green diagnosis */
+      }
     }
   }
 

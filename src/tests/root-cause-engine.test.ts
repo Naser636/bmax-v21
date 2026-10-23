@@ -120,6 +120,15 @@ function writeVerify(dir: string, gates: Record<string, boolean>): void {
     "corrective-mission.json mirrored",
   );
 
+  // Coherence: once the diagnosed gate goes GREEN (no corrective mission), write() CLEARS the stale
+  // corrective-mission.json so a downstream runner / dashboard release view never acts on an
+  // already-RESOLVED corrective. (Fixes the stale RESOLVE_GIT_CLEAN_GATE pointer class.)
+  new RootCauseEngine({ cwd: dir }).write({ ...report, status: "NO_BLOCKER", rootCause: null, minimalPatch: null, correctiveMission: null });
+  console.assert(
+    !fs.existsSync(path.join(dir, "runtime/generated/corrective-mission.json")),
+    "stale corrective-mission.json CLEARED when the gate goes green",
+  );
+
   // Writing under runtime/generated/ must not create tracked churn.
   const trackedAfter = execSync("git diff --name-only", { cwd: dir, encoding: "utf8" }).trim();
   console.assert(!trackedAfter.includes("root-cause-report.json"), "artifact is not a tracked file");
