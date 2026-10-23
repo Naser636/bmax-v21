@@ -339,4 +339,31 @@ const gammaPlanDir = (() => {
     ok("read-only mode does NOT excuse a requiresExecution no-op (DEF-GAMMA defence intact ⇒ BLOCKED)", rep.validated === false && (r.status ?? -1) === 1);
 }
 
+// --- IDENTIFIER GUARD (regression): the factory must NEVER persist a contract for a non-identifier ----
+// Reproduces the real defect — junk files like runtime/missions/--help.json, __probe__.json and a
+// free-text ".json" were written by the factory (source:mission-contract-factory) because invalid ids
+// were accepted. The fail-closed guard refuses generation at the write chokepoint (no file, invalid verdict).
+{
+    const gdir = fs.mkdtempSync(path.join(os.tmpdir(), "mcf-guard-"));
+    fs.mkdirSync(path.join(gdir, "runtime", "missions"), { recursive: true });
+    fs.mkdirSync(path.join(gdir, "runtime", "governance"), { recursive: true });
+    const JUNK = ["--help", "--plan-only", "__probe__", "__none__", "__SMOKE_NONEXISTENT__", "a free text objective sentence", ""];
+    for (const bad of JUNK) {
+        const r = factory.generateForMission(gdir, bad, { write: true });
+        ok(`guard: generateForMission refuses "${bad}" (invalid, not generated)`, r && r.invalid === true && r.generated === false && r.reason === "INVALID_MISSION_IDENTIFIER");
+    }
+    // NOT A SINGLE junk file was written to the missions dir.
+    const written = fs.readdirSync(path.join(gdir, "runtime", "missions"));
+    ok("guard: no junk contract file persisted for any invalid id", written.length === 0);
+    // A VALID identifier STILL generates (guard is additive, not a regression on real work).
+    const good = factory.generateForMission(gdir, "REAL_MISSION_X", { write: true });
+    ok("guard: a valid identifier still generates + writes", good && good.generated === true && good.invalid !== true && fs.existsSync(path.join(gdir, "runtime", "missions", "REAL_MISSION_X.json")));
+    // generateMissing also routes an invalid roadmap entry id to report.invalid (no write).
+    fs.writeFileSync(path.join(gdir, "runtime", "governance", "ROADMAP.json"), JSON.stringify({ missions: [{ id: "__probe__" }, { id: "GOOD_ROADMAP_MISSION" }] }));
+    const rep = factory.generateMissing(gdir, { write: true });
+    ok("guard: generateMissing pushes invalid roadmap id to report.invalid", Array.isArray(rep.invalid) && rep.invalid.includes("__probe__"));
+    ok("guard: generateMissing did NOT write a __probe__ contract", !fs.existsSync(path.join(gdir, "runtime", "missions", "__probe__.json")));
+    fs.rmSync(gdir, { recursive: true, force: true });
+}
+
 console.log(`\nMISSION CONTRACT FACTORY — ${passed} assertions passed.`);

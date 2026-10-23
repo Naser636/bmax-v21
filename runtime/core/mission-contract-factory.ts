@@ -26,6 +26,13 @@ const ROADMAP_REL = path.join("runtime", "governance", "ROADMAP.json");
 const MISSIONS_REL = path.join("runtime", "missions");
 const POLICIES_REL = path.join("runtime", "policies", "runtime-policies.json");
 
+// Canonical mission-identifier shape (MUST match runtime-model.ts VALID_MISSION_ID). A name that is a
+// CLI flag ("--help"), a test sentinel ("__probe__", "__none__") or free text (spaces) is NOT a mission
+// — the Mission Loader / runtime-model SKIP it at read time, but the factory used to still PERSIST a junk
+// contract for it (source:mission-contract-factory), polluting runtime/missions/. This fail-closed guard
+// refuses generation at the WRITE chokepoint so argv/NL/test captures can never materialise a contract.
+const VALID_MISSION_ID = /^[A-Za-z][A-Za-z0-9_]*$/;
+
 const LIFECYCLE_STATES = [
   "CREATED",
   "QUALIFIED",
@@ -296,6 +303,10 @@ function generateMissing(root: any = process.cwd(), options: any = {}): any {
   const report: any = { roadmap: roadmap.map((e: any) => e.id), generated: [], skipped: [], invalid: [] };
 
   for (const entry of roadmap) {
+    if (!(entry && typeof entry.id === "string" && VALID_MISSION_ID.test(entry.id))) {
+      report.invalid.push(entry && entry.id);
+      continue;
+    }
     if (!isContractMissing(root, entry)) {
       report.skipped.push(entry.id);
       continue;
@@ -318,6 +329,11 @@ function generateMissing(root: any = process.cwd(), options: any = {}): any {
 
 function generateForMission(root: any = process.cwd(), missionId?: any, options: any = {}): any {
   const write = options.write !== false;
+  // Fail-closed: refuse to generate/persist a contract for a non-identifier (CLI flag / test sentinel /
+  // free text). Never writes a file; returns an explicit invalid verdict so callers can report it.
+  if (!(typeof missionId === "string" && VALID_MISSION_ID.test(missionId))) {
+    return { mission: missionId, path: null, generated: false, reused: false, invalid: true, reason: "INVALID_MISSION_IDENTIFIER", contract: null };
+  }
   const entryLike = { id: missionId };
   const target = contractPathFor(root, entryLike);
   const rel = path.relative(root, target);
