@@ -47,6 +47,10 @@ try {
   }
   fs.chmodSync(path.join(SANDBOX, "runtime/bin/odg-ensure-ts-runtime.sh"), 0o755);
   fs.symlinkSync(path.join(REPO, "node_modules"), path.join(SANDBOX, "node_modules"));
+  // A faithful clean tree is a git working tree (not a bare tar extract): git-init so git-dependent
+  // missions work — QUAL_CLEAN_GATEB's Clean Workspace scans git-ignored artifacts via
+  // `git ls-files --others --ignored`, which REQUIRES a git repo. node_modules stays ignored (.gitignore).
+  run("bash", ["-c", "cd " + JSON.stringify(SANDBOX) + " && git init -q && git -c user.email=b104@local -c user.name=b104 add -A && git -c commit.gpgsign=false -c user.email=b104@local -c user.name=b104 commit -q -m b104-clean"], REPO);
   const DIST = path.join(SANDBOX, "runtime", "dist");
 
   // Static: the opt-in TS branch delegates to the helper and keeps the build OUT of the scanned script.
@@ -82,9 +86,14 @@ try {
   check(h4.status === 0 && /explicit controlled build OK/.test(h4.stdout) && m4 && m4.totalClosure === m4.emittedCount + m4.copiedCount, "inconsistent manifest ⇒ entry rebuilds to a consistent dist");
 
   // 5. a copied dependency deleted ⇒ detected invalid ⇒ rebuild restores it.
-  fs.rmSync(path.join(DIST, "core", "budget-contract.js"), { force: true });
+  // Pick a genuinely-COPIED member from the manifest (budget-contract migrated to EMITTED — its .ts is now
+  // in tsconfig.runtime-dist include — so it is no longer a copied closure member and deleting it would not
+  // exercise the copied-member-existence guard). Dynamic ⇒ stays correct as emitted/copied dispositions evolve.
+  const m5before = readManifest(SANDBOX);
+  const copiedRel = (m5before.copied || [])[0].rel.replace(/\\/g, "/"); // e.g. "core/budget-ledger.js"
+  fs.rmSync(path.join(SANDBOX, "runtime", "dist", copiedRel), { force: true });
   const h5 = helper(SANDBOX, {});
-  check(h5.status === 0 && fs.existsSync(path.join(DIST, "core", "budget-contract.js")), "missing copied dependency ⇒ entry rebuilds and restores it");
+  check(h5.status === 0 && fs.existsSync(path.join(SANDBOX, "runtime", "dist", copiedRel)), `missing copied dependency (${copiedRel}) ⇒ entry rebuilds and restores it`);
 
   // 6. ODG_TS_REBUILD=1 forces a rebuild even when valid.
   const h6 = helper(SANDBOX, { ODG_TS_REBUILD: "1" });
