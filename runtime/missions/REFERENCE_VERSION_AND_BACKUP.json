@@ -47,19 +47,61 @@
       "Restore integrity or rebuild fails — report; do not claim verified."
     ],
     "rollback": "git checkout -- <write_set> + delete untracked docs/contract; delete scratchpad bundle/restore dirs. No live state to undo.",
-    "evidence_required": ["Truth Lock", "reference manifest + fingerprints", "bundle SHA256SUMS", "restore sha256 -c + content match + rebuild + test exit codes", "commit/push ids"]
+    "evidence_required": [
+      "Truth Lock",
+      "reference manifest + fingerprints",
+      "bundle SHA256SUMS",
+      "restore sha256 -c + content match + rebuild + test exit codes",
+      "commit/push ids"
+    ]
   },
   "objectives": [
-    { "id": "REFERENCE_VERSION_AND_BACKUP_1", "goal": "Reference version + verified isolated restore (Phases A–D).",
-      "done_when": ["Truth Lock + boussole reconciled.", "REFERENCE_CANDIDATE manifest produced.", "Backup bundle + SHA-256; isolated restore verified (integrity+content+rebuild+tests).", "Committed; USB write recorded human-gated."],
-      "proof": "reference-version-backup-restore-verified", "authorization": { "eligible": true, "authorized": true } }
+    {
+      "id": "REFERENCE_VERSION_AND_BACKUP_1",
+      "goal": "Reference version + verified isolated restore (Phases A–D).",
+      "done_when": [
+        "Truth Lock + boussole reconciled.",
+        "REFERENCE_CANDIDATE manifest produced.",
+        "Backup bundle + SHA-256; isolated restore verified (integrity+content+rebuild+tests).",
+        "Committed; USB write recorded human-gated."
+      ],
+      "proof": "reference-version-backup-restore-verified",
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
   ],
   "definition_of_done": [
     "Phases A–D complete with evidence; REFERENCE_CANDIDATE + BACKUP_RESTORE_VERIFIED; USB physical write BLOCKED_BY_DEPENDENCY (human).",
     "Boussole reflects reality; final diff limited to the write-set; committed + pushed (no force)."
   ],
   "source": "cto-directive",
-  "permissions": { "engineering": true, "authorizedPaths": ["docs/reference-backup/REFERENCE_MANIFEST.md", "docs/reference-backup/RESTORE.md", "ODG_PROJECT_STATE.md"], "network": false },
-  "policies": ["DETERMINISM_FIRST", "REUSE_BEFORE_CREATE", "LOCAL_FIRST", "EVIDENCE_REQUIRED", "ROLLBACK_MUST_ALWAYS_BE_POSSIBLE"],
-  "generatedBy": "claude-code (authored under CTO A–Z master roadmap, Phases A–D)"
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "docs/reference-backup/REFERENCE_MANIFEST.md",
+      "docs/reference-backup/RESTORE.md",
+      "ODG_PROJECT_STATE.md"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "LOCAL_FIRST",
+    "EVIDENCE_REQUIRED",
+    "ROLLBACK_MUST_ALWAYS_BE_POSSIBLE"
+  ],
+  "generatedBy": "claude-code (authored under CTO A–Z master roadmap, Phases A–D)",
+  "presentStateAcceptance": {
+    "sources": [
+      "docs/reference-backup/REFERENCE_MANIFEST.md",
+      "docs/reference-backup/RESTORE.md",
+      "src/tests/accept-backup-vps-side.test.ts"
+    ],
+    "tests": [
+      "src/tests/accept-backup-vps-side.test.ts"
+    ]
+  }
 }
