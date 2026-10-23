@@ -78,7 +78,11 @@ function computeClosure(seeds: string[]): { closure: string[]; missing: string[]
     if (!fs.existsSync(file)) { missing.push(name); continue; }
     closure.add(name);
     const src = fs.readFileSync(file, "utf8");
-    const re = /\brequire\(\s*["'`](\.\/[A-Za-z0-9_-]+)["'`]\s*\)/g;
+    // Match require("./x") AND require("./x.js") — a .js-suffixed relative require (e.g. mission-loader's
+    // require("./objective-authorization.js")) is a legitimate minority convention the REAL build-dist-closure
+    // scanner (scripts/lib/js-require-scan) captures; the optional (?:\.js)? keeps this relocation closure in
+    // sync with the real build so a .js-suffixed dependency is not falsely dropped (false MODULE_NOT_FOUND).
+    const re = /\brequire\(\s*["'`](\.\/[A-Za-z0-9_-]+)(?:\.js)?["'`]\s*\)/g;
     let m: RegExpExecArray | null;
     while ((m = re.exec(src)) !== null) {
       stack.push(m[1].replace(/^\.\//, ""));
