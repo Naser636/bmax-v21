@@ -28,7 +28,13 @@ let COMPILED = "";
 function buildEngine(): void {
   const { closure, missing } = computeClosure(["decision-engine"]);
   check(missing.length === 0, `closure resolves (missing: ${missing.join(",") || "none"})`);
-  check(closure.length === 7, `closure is the expected 7-module set (size=${closure.length})`);
+  // Closure grew 7→12 as decision-engine gained local-first routing — VERIFIED legitimate via the real
+  // require-trace decision-engine → capability-router → local-model-manager → provider-sandbox (+ decision-rules,
+  // patch-memory, capability-metrics, autonomy-store, evidence-provenance, action-gate, bash-command-governor,
+  // state-transition), NOT accidental coupling. Assert the EXACT set (stricter than a bare count) so any
+  // unintended add/removal still fails — this is a tightened guard, not a weakened one.
+  const EXPECTED_CLOSURE = ["action-gate", "autonomy-store", "bash-command-governor", "capability-metrics", "capability-router", "decision-engine", "decision-rules", "evidence-provenance", "local-model-manager", "patch-memory", "provider-sandbox", "state-transition"];
+  check(closure.length === EXPECTED_CLOSURE.length && EXPECTED_CLOSURE.every((m, i) => closure[i] === m), `closure is the expected ${EXPECTED_CLOSURE.length}-module set (size=${closure.length}; members=${closure.join(",")})`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-de-dist-")); sandboxes.push(dir);
   for (const n of closure) place(dir, n);
   check(fs.readFileSync(path.join(DIST_CORE, "decision-engine.js"), "utf8") === fs.readFileSync(path.join(dir, "decision-engine.js"), "utf8"), "co-located decision-engine.js IS the compiled build output");
