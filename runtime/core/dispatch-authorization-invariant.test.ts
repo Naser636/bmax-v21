@@ -55,6 +55,7 @@ const OBSERVATIONAL = new Set([
   "Clean Workspace",                    // scans transient artifacts; deletes NOTHING (read-only)
   "Governed Observability Verification",// re-derives + verifies the autonomy signal (read-only)
   "Connectivity Audit",                 // reachability probe (no acquisition / no mutation)
+  "Decision Precedent Consultation",    // READ-ONLY recall/apply of a persisted precedent; decision attached to a COPY; writes only runtime-owned evidence + reuse accounting; NO file patch / NO target mutation (agrees with CAPABILITY_EFFECT effect:"observational")
 ]);
 
 // (1) STRUCTURAL TRIPWIRE — every executor is classified, and the two sets exactly partition the registry.
