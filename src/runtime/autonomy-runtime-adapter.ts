@@ -148,7 +148,6 @@ const MISSIONS_DIR = "runtime/missions";
 // The corrective-mission queue: repair missions the Runtime proposes for itself, awaiting
 // authorization. A record here is a NOMINATION, never an authorization to run (see readCorrectiveQueue).
 const PENDING_DIR = `${MISSIONS_DIR}/pending`;
-const VERIFIER = "runtime/bin/odg-verify.js";
 // The SOLE author of the canonical mission verdict (validated/status). The provider path feeds it
 // real, materialized plan/patch/execution evidence and lets it re-verify — it never writes the
 // verdict itself (design: exactly one component writes validated/status). Resolved per-run to the
@@ -311,6 +310,19 @@ export function resolveProviderPlanVerify(
     }
   }
   return declared;
+}
+
+// L7-FIX-3 (verify spawn) — PURE, exported test seam for the dist-vs-source verifier selection used by
+// refreshVerifyEvidence(). Prefers the COMPILED dist verifier (TS-only transitive load) when the TS runtime
+// is active AND the dist bin exists; falls back to the source verifier on ODG_RUNTIME=js or an absent dist.
+// `exists` is injected so the actual selection is behaviorally verifiable without an import-time spawn.
+export function resolveVerifierBin(
+  exists: (rel: string) => boolean,
+  env: NodeJS.ProcessEnv = process.env,
+): string {
+  const DIST = "runtime/dist/bin/odg-verify.js";
+  const SOURCE = "runtime/bin/odg-verify.js";
+  return env.ODG_RUNTIME !== "js" && exists(DIST) ? DIST : SOURCE;
 }
 
 export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
@@ -1403,9 +1415,8 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // that odg-verify.js falls back to when invoked with no argument (A1).
     // L7-FIX-3: prefer the COMPILED dist verifier (TS-only) so its transitive core loads from dist, not
     // source mission-synthesizer/decision-rules; source fallback when dist absent or ODG_RUNTIME=js.
-    const VERIFIER_DIST = "runtime/dist/bin/odg-verify.js";
-    const verifier =
-      process.env.ODG_RUNTIME !== "js" && fs.existsSync(this.resolve(VERIFIER_DIST)) ? VERIFIER_DIST : VERIFIER;
+    // Selection extracted to the pure, exported resolveVerifierBin() seam (behaviorally verified).
+    const verifier = resolveVerifierBin((rel) => fs.existsSync(this.resolve(rel)));
     if (!fs.existsSync(this.resolve(verifier))) return;
     spawnSync("node", mission ? [verifier, mission] : [verifier], { cwd: this.cwd, stdio: "inherit" });
   }

@@ -78,13 +78,21 @@ export interface ConvergeSeams {
   log?: (...args: unknown[]) => void;
 }
 
+// L7-FIX-3 (converge spawn) — PURE, exported test seam for the dist-vs-source contract-generator selection.
+// Prefers the COMPILED dist port (TS-only transitive load) when the TS runtime is active AND the dist bin
+// exists; source fallback on ODG_RUNTIME=js or an absent dist. `exists` injected for behavioral verification.
+export function resolveGenerateContractsBin(
+  exists: (p: string) => boolean = fs.existsSync,
+  env: NodeJS.ProcessEnv = process.env,
+): string {
+  const DIST = path.join("runtime", "dist", "bin", "odg-generate-contracts.js");
+  const SOURCE = path.join("runtime", "bin", "odg-generate-contracts.js");
+  return env.ODG_RUNTIME !== "js" && exists(DIST) ? DIST : SOURCE;
+}
+
 /** Default Step 1: reuse the existing Mission Contract Factory driver, unchanged. */
 function defaultGenerateContracts(): ContractStep {
-  // L7-FIX-3: prefer the COMPILED dist port (TS-only) so the contract-factory/mission-synthesizer graph
-  // loads from dist, not source; source fallback when dist absent or ODG_RUNTIME=js.
-  const distGen = path.join("runtime", "dist", "bin", "odg-generate-contracts.js");
-  const gen =
-    process.env.ODG_RUNTIME !== "js" && fs.existsSync(distGen) ? distGen : path.join("runtime", "bin", "odg-generate-contracts.js");
+  const gen = resolveGenerateContractsBin();
   const r = spawnSync("node", [gen], {
     stdio: "inherit",
   });
