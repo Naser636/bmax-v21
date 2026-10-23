@@ -53,8 +53,24 @@
     "No irreversible action without human approval.",
     "No modification of Master / roadmap / policy / production / secrets / database without human approval.",
     "A green build is NEVER sufficient proof.",
-    "Never certify beyond the proven scope."
+    "Never certify beyond the proven scope.",
+    "Compass (ODG_PROJECT_STATE.md) is the FIRST and LAST checkpoint of every mission: read at START, update after each meaningful lot, re-read + verify against reality at FINISH.",
+    "No empty-queue assumption: a zero queue requires inspecting the canonical inventory, pending/paused/blocked/unregistered work before concluding completion.",
+    "No false checkpoint: never record complete/proven/released/converged without canonical evidence; a planned action is not a completed one.",
+    "Resume, never restart: preserve the running campaign + validated work; no duplicate autonomy/convergence process."
   ],
+
+  "compass_continuity": {
+    "canonical_compass": "ODG_PROJECT_STATE.md",
+    "mandatory": true,
+    "rationale": "The compass is the first and last checkpoint of every mission, not an optional report written afterward.",
+    "start": "Read the compass BEFORE selecting/executing any mission; reconcile it with the actual HEAD, branch, remote sync, worktree, mission ledger, evidence registry, runtime state, active campaign and remaining queue. The repository + verified evidence WIN if the compass is stale; preserve existing user changes.",
+    "continue": "Resume from the last verified checkpoint; after every meaningful lot, update the compass with the real completed work, commit, test results, evidence, failed checks, decisions, remaining missions, blockers and next eligible action. Never overwrite unrelated local changes.",
+    "finish": "Before declaring a campaign complete OR blocked, re-read the compass and verify it matches the real repository + canonical runtime state; record the final verified HEAD, sync, worktree, completed work, remaining queue, release/convergence status and exact next action.",
+    "no_empty_queue_assumption": "A zero queue is not completion — inspect canonical inventory, pending contracts, unresolved evidence, blocked/paused/unregistered missions, external dependencies and release/convergence gates; distinguish genuinely complete from absent/deprecated/paused/unregistered; never invent missions.",
+    "no_false_checkpoint": "Never write complete/proven/released/converged unless the corresponding canonical evidence verifies it.",
+    "resume_not_restart": "Integrate new directives at the next safe checkpoint; never launch a duplicate autonomy/convergence process; preserve all validated work."
+  },
 
   "work_item_contract_schema": {
     "description": "Every work item MUST carry a WORK_ITEM_CONTRACT. Claude authors it in the PROPOSED state; a human authorizes it (PROPOSED -> AUTHORIZED) before any EXECUTING.",
@@ -95,6 +111,7 @@
   ],
 
   "workflow": [
+    "0. Compass START: read ODG_PROJECT_STATE.md and reconcile it with actual HEAD/branch/sync/worktree/ledger/evidence/queue (repository + verified evidence win if the compass is stale). See compass_continuity.start.",
     "1. Truth Lock: verify HEAD, branch, worktree, origin against this protocol.",
     "2. Select exactly ONE work item.",
     "3. Author its WORK_ITEM_CONTRACT (state = PROPOSED).",
@@ -105,7 +122,9 @@
     "8. Verify: build + test + regression + runtime verification + evidence_required (state -> VERIFIED).",
     "9. Produce a structured report.",
     "10. Human acceptance (state -> ACCEPTED). Commit only with human approval.",
-    "11. Push / release only with separate explicit human approval (never implied)."
+    "11. Push / release only with separate explicit human approval (never implied).",
+    "12. Compass CONTINUE: after this (and every meaningful) lot, update ODG_PROJECT_STATE.md with real completed work, commit, tests, evidence, blockers and next action. See compass_continuity.continue.",
+    "13. Compass FINISH: before declaring the campaign complete or blocked, re-read ODG_PROJECT_STATE.md and verify it matches the real repository + canonical runtime state. See compass_continuity.finish."
   ],
 
   "protected_paths": {
