@@ -159,7 +159,12 @@ const MATRIX = [
 // The ENABLED+VALIDATED path needs the real downstream environment the collector reaches CWD-relative:
 // runtime/llm/* (spawned response-parser + proposal-analyzer) and the governance support dirs read by
 // authorizeMission. These are copied verbatim from the repo (NOT fabricated) only for that case.
-const SUPPORT_DIRS = ["llm", "constitution", "policies", "governance", "brain"];
+// "dist/llm" provisions the COMPILED spawned scripts (response-parser, proposal-analyzer) the collector
+// reaches by DEFAULT post-cutover: fleet-collector resolves LLM_BASE = ODG_RUNTIME==="js" ? "runtime/llm"
+// : "runtime/dist/llm". These are spawned SUBPROCESSES, not in fleet-stage's require() closure, so they
+// must be co-located explicitly; without dist/llm the default collector path spawns a missing script and
+// the real mock proposal is wrongly reported "response-parser rejected". Both ports' llm scripts are shipped.
+const SUPPORT_DIRS = ["llm", "dist/llm", "constitution", "policies", "governance", "brain"];
 function copySupport(sb: string): void {
   for (const d of SUPPORT_DIRS) {
     const src = path.join(REPO, "runtime", d);
