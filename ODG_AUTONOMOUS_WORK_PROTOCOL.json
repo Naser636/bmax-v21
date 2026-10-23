@@ -17,7 +17,12 @@
       "Execution roadmap of record — runtime/governance/ROADMAP.json",
       "V5 roadmap (working reference) — docs/odg-master-v5/source/ODG_V5_ROADMAP_WITH_WORK_METHOD.md",
       "FICHE 07 (operational method reference) — docs/odg-master-v5/source/ODG_FINAL_MASTER_DETAILED_V5_FICHE_07_METHODE_DE_TRAVAIL.md"
-    ]
+    ],
+    "odg_sole_orchestrator": "ODG is the SOLE end-to-end orchestrator and decision authority: it owns discovery, diagnosis, roadmap and mission selection, prioritization, scope, authorization (within human gates), execution through its OWN capabilities, testing, independent verification, root-cause repair, recovery, learning capture, acceptance, capability/autonomy accounting and compass maintenance.",
+    "claude_is_bounded_provider": "Claude Code is ONLY a bounded TECHNICAL PROVIDER. ODG may invoke it ONLY after (a) demonstrating a specific capability gap and (b) defining an explicit minimal delegation: write-set, constraints, expected evidence, acceptance criteria. Claude Code has NO independent authority to orchestrate, choose or expand missions, authorize work, accept results, or claim ODG autonomy. ODG MUST independently verify provider output before acceptance.",
+    "prefer_odg_native": "Prefer ODG-native execution. Record every provider invocation: why it was necessary, its bounded scope, the evidence returned, and ODG's independent ACCEPT or REJECT. Provider-executed work is NEVER counted as ODG-executed autonomy (keep the provider denominator separate).",
+    "evidence_first_standard": "No mission, capability, repair, convergence, release or completion is accepted on a declaration alone. Require actual commands/execution traces, exit codes, reproducible behavioral evidence, relevant test results, and independent verification. Prove components are connected, compiled where applicable, reachable and behaving (incl. failure + recovery paths). Keep PASS / FAIL / BLOCKED / NOT RUN strictly distinct.",
+    "counter_integrity": "Maintain DISTINCT, evidence-backed mission / capability / autonomy counters, each with recorded definition, denominator, provenance and change-log. Never infer system-wide autonomy from one successful run; never conflate registered / implemented / connected / tested / proven / runtime-available capabilities with proven-mission (achievement) counts."
   },
 
   "truth_lock": {
@@ -57,7 +62,12 @@
     "Compass (ODG_PROJECT_STATE.md) is the FIRST and LAST checkpoint of every mission: read at START, update after each meaningful lot, re-read + verify against reality at FINISH.",
     "No empty-queue assumption: a zero queue requires inspecting the canonical inventory, pending/paused/blocked/unregistered work before concluding completion.",
     "No false checkpoint: never record complete/proven/released/converged without canonical evidence; a planned action is not a completed one.",
-    "Resume, never restart: preserve the running campaign + validated work; no duplicate autonomy/convergence process."
+    "Resume, never restart: preserve the running campaign + validated work; no duplicate autonomy/convergence process.",
+    "ODG is the SOLE orchestrator and decision authority; Claude Code is a bounded technical provider invoked only under an explicit minimal delegation (write-set, constraints, expected evidence, acceptance criteria).",
+    "Provider-executed work is never ODG-executed autonomy: record each provider invocation (reason, scope, evidence, ODG's independent ACCEPT/REJECT) with a separate denominator.",
+    "Evidence-first: nothing (mission/capability/repair/convergence/release/completion) is accepted on a declaration — require commands, exit codes, reproducible behavioral evidence, tests, and independent verification; keep PASS/FAIL/BLOCKED/NOT RUN distinct.",
+    "Counter integrity: distinct evidence-backed mission vs capability vs autonomy counters, each with definition/denominator/provenance; never infer system-wide autonomy from one run, nor conflate registered/implemented/connected/tested/proven/runtime-available capabilities with proven-mission counts.",
+    "Non-deterministic failure is not a license to fabricate a fix: when a reported failure does not reproduce under controlled conditions and the suite is green, close it HONESTLY as transient with its evidence — never manufacture a code change for a phantom, and never label an interrupted/uncaptured test PASS."
   ],
 
   "compass_continuity": {
