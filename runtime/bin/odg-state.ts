@@ -42,9 +42,29 @@ function readGen(name: any): any {
   }
 }
 
+// Distinct REAL wired-capability census — a notion SEPARATE from `model.capabilities` (which is the set
+// of proven MISSION identifiers / achievements). Conflating "proven missions" with "capabilities" is the
+// exact `definitionsWarning` hazard recorded in docs/odg-operational/ODG_OPERATIONAL_CAPABILITY_REGISTER.json
+// ("'capability' is overloaded across 4 UNRELATED notions"). This counts the live wired capability
+// executors and verification probes. Fail-closed: a module that cannot be loaded ⇒ null (never fabricated).
+function wiredCapabilityCensus(): { executors: number | null; probes: number | null } {
+  let executors: number | null = null;
+  let probes: number | null = null;
+  try {
+    const e = (require("../core/capability-executors") as { EXECUTORS?: unknown[] }).EXECUTORS;
+    if (Array.isArray(e)) executors = e.length;
+  } catch { /* unavailable ⇒ null */ }
+  try {
+    const p = (require("../core/capability-probes") as { PROBES?: Record<string, unknown> }).PROBES;
+    if (p && typeof p === "object") probes = Object.keys(p).length;
+  } catch { /* unavailable ⇒ null */ }
+  return { executors, probes };
+}
+
 function main(): void {
   const model = computeRuntimeModel(ROOT);
   const generatedAt = new Date().toISOString();
+  const census = wiredCapabilityCensus();
 
   // Headline runtime state (the artefact the Dashboard reads for Pipeline / Brain).
   write("runtime-state.json", {
@@ -75,11 +95,22 @@ function main(): void {
   });
 
   // Coherent GLOBAL capability registry (proven missions vs executable forward work).
+  // `capabilities`/`missingCapabilities` are PROVEN-MISSION identifiers (achievements), NOT distinct
+  // capabilities — kept under their historical keys for back-compat. `provenMissionCount` names that
+  // honestly, and `wiredCapabilities` is the SEPARATE distinct-capability census (real executors +
+  // verification probes). The two must never be conflated (see ODG_OPERATIONAL_CAPABILITY_REGISTER.json).
   write("capability-registry.json", {
     generatedAt,
     status: model.runtime,
     capabilities: model.capabilities,
     missingCapabilities: model.missingCapabilities,
+    provenMissionCount: model.capabilities.length,
+    wiredCapabilities: {
+      executors: census.executors,
+      probes: census.probes,
+      note: "Distinct REAL wired capabilities (capability-executors EXECUTORS[] + capability-probes PROBES). " +
+        "This is NOT the proven-mission count above — a mission moving unproven→proven is an achievement, not a new capability.",
+    },
   });
 
   // Full contract scan (audit): incomplete / broken / orphan contracts, never proposed as runnable.
@@ -178,7 +209,7 @@ function main(): void {
     `Runtime      : ${model.runtime}`,
     `Pipeline     : ${model.pipeline}`,
     `Brain        : ${model.brain}`,
-    `Capabilities : ${model.capabilities.length} proven`,
+    `Proven missions: ${model.capabilities.length}  (distinct wired caps: ${census.executors ?? "?"} executors / ${census.probes ?? "?"} probes)`,
     `Queue        : ${model.queue.length} executable / ${model.scan.incompleteContracts.length} incomplete`,
     `Outstanding  : ${model.outstanding.length} gap(s)  (converged: ${model.converged ? "YES" : "NO"})`,
     `Next Mission : ${model.nextMission}`,

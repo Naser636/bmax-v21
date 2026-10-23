@@ -125,8 +125,13 @@ export default function Dashboard({ snapshot }: DashboardProps) {
           <h2 className="card-title">
             <span>Capabilities</span>
           </h2>
-          <Row label="Registered" value={capabilities.total === null ? UNAVAILABLE : String(capabilities.total)} />
-          <Row label="Missing" value={capabilities.missing === null ? UNAVAILABLE : String(capabilities.missing)} />
+          {/* Honest accounting: "Proven missions" are achievements (missions moved unproven→proven); they
+              are NOT distinct capabilities. The distinct REAL wired capabilities are the executors and
+              verification probes, shown separately so a proven-mission count is never read as a capability count. */}
+          <Row label="Wired executors" value={capabilities.wiredExecutors === null ? UNAVAILABLE : String(capabilities.wiredExecutors)} />
+          <Row label="Verification probes" value={capabilities.wiredProbes === null ? UNAVAILABLE : String(capabilities.wiredProbes)} />
+          <Row label="Proven missions" value={capabilities.provenMissions === null ? UNAVAILABLE : String(capabilities.provenMissions)} />
+          <Row label="Missing (forward work)" value={capabilities.missing === null ? UNAVAILABLE : String(capabilities.missing)} />
         </section>
 
         <section className="card">

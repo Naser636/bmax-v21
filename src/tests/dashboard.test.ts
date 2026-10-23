@@ -27,7 +27,15 @@ check(html.includes("BMAX v21"), "identity: renders BMAX v21");
 check(!html.includes("ODG v1.0"), "identity: the old 'ODG v1.0' mislabel is gone");
 check(typeof realState.lastMission === "string" && html.includes(realState.lastMission), "real data: renders the real lastMission from runtime-state.json");
 check(typeof realState.nextMission === "string" && html.includes(realState.nextMission), "real data: renders the real nextMission");
-check(realQueue.queue.length > 0 && html.includes(realQueue.queue[0].mission), "real data: renders a real queued mission name");
+// Convergence-aware: a non-empty queue must render its first mission name; a legitimately CONVERGED
+// runtime (queue 0) must instead render the honest empty-queue state and a count of 0 — never fabricate a
+// queued mission. (Hard-asserting queue.length > 0 was brittle: it falsely failed on a converged runtime.)
+if (realQueue.queue.length > 0) {
+  check(html.includes(realQueue.queue[0].mission), "real data: renders a real queued mission name");
+} else {
+  check(html.includes("empty") && realState.converged === true,
+    "real data: converged runtime renders the honest empty-queue state (no fabricated mission)");
+}
 
 // --- 2. Old stub sections removed (no permanently-empty-registry zeros) --------------------------
 check(!html.includes("Value Metrics") && !html.includes("Knowledge Base") && !html.includes("Memory Store"), "stub removed: no empty-registry sections");
@@ -64,7 +72,7 @@ if (snapshot.autonomy.measurable === false) {
     autonomy: { present: false, measurable: false, autonomyPercent: null, reason: null, counts: null, total: null },
     queue: [],
     queueCount: 0,
-    capabilities: { present: false, total: null, missing: null },
+    capabilities: { present: false, total: null, missing: null, provenMissions: null, wiredExecutors: null, wiredProbes: null },
     release: {
       present: false,
       mission: null,

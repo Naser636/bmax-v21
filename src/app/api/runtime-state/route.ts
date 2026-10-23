@@ -94,7 +94,14 @@ export interface RuntimeSnapshot {
     requiresEngineering: boolean | null;
   }>;
   queueCount: number;
-  capabilities: { present: boolean; total: number | null; missing: number | null };
+  capabilities: {
+    present: boolean;
+    total: number | null;
+    missing: number | null;
+    provenMissions: number | null;
+    wiredExecutors: number | null;
+    wiredProbes: number | null;
+  };
   /**
    * Canonical RELEASE visibility. The five release gates come straight from the runtime's own evidence
    * (runtime-verify.json + the independent validation verdict in mission-report.json) — NEVER inferred from
@@ -260,8 +267,14 @@ export function readRuntimeSnapshot(): RuntimeSnapshot {
     }));
 
   const capsObj = isObj(caps) ? caps : null;
+  // NOTE: `total`/`missing` are PROVEN-MISSION counts (achievements), kept for back-compat. The distinct
+  // real capability census (wired executors + verification probes) is surfaced SEPARATELY below so the
+  // dashboard never presents a proven-mission count as the number of distinct capabilities.
   const capabilitiesTotal = capsObj && Array.isArray(capsObj.capabilities) ? capsObj.capabilities.length : null;
   const capabilitiesMissing = capsObj && Array.isArray(capsObj.missingCapabilities) ? capsObj.missingCapabilities.length : null;
+  const wired = capsObj && isObj(capsObj.wiredCapabilities) ? capsObj.wiredCapabilities : null;
+  const wiredExecutors = wired && typeof wired.executors === "number" ? wired.executors : null;
+  const wiredProbes = wired && typeof wired.probes === "number" ? wired.probes : null;
 
   return {
     present: state !== null,
@@ -301,6 +314,9 @@ export function readRuntimeSnapshot(): RuntimeSnapshot {
       present: capsObj !== null,
       total: capabilitiesTotal,
       missing: capabilitiesMissing,
+      provenMissions: capabilitiesTotal,
+      wiredExecutors,
+      wiredProbes,
     },
     release: buildReleaseView(),
     sources,
@@ -322,7 +338,7 @@ export async function GET(): Promise<Response> {
       autonomy: { present: false, measurable: false, autonomyPercent: null, reason: null, counts: null, total: null },
       queue: [],
       queueCount: 0,
-      capabilities: { present: false, total: null, missing: null },
+      capabilities: { present: false, total: null, missing: null, provenMissions: null, wiredExecutors: null, wiredProbes: null },
       release: RELEASE_ABSENT,
       sources: Object.values(ARTIFACT_PATHS).map((p) => ({ path: p, present: false })),
     };
