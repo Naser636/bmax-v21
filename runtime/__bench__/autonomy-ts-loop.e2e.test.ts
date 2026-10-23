@@ -39,7 +39,11 @@ const { attributeObjectives } = require(path.join(REPO, "runtime", "core", "obje
 const { eligibilityFromObjectives, fromExecution, measureAutonomy, CATEGORY } =
   require(path.join(REPO, "runtime", "core", "autonomy-measure.js"));
 
-const COPY_DIRS = ["core", "bin", "constitution", "policies", "governance", "brain"];
+// "dist" provisions the PREBUILT runtime distribution the adapter runs from by default (post-cutover
+// ODG_RUNTIME=TS default-flip, B108): without it the adapter finds no dist and odg-ensure-ts-runtime
+// correctly fail-closes (no tsc in the bare sandbox). This test validates the PREBUILT-runtime path the
+// loop actually uses — so it must carry the verified dist artifact (NOT runtime/generated operational state).
+const COPY_DIRS = ["core", "bin", "dist", "constitution", "policies", "governance", "brain"];
 const sandboxes: string[] = [];
 let failures = 0;
 function check(cond: boolean, label: string): void {
