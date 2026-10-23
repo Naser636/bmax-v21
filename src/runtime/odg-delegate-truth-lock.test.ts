@@ -28,7 +28,8 @@ function check(cond: boolean, label: string): void {
 const REPO = process.cwd();
 // Union of the dist require-closures for the modules odg-delegate loads in-process up to and past the gate.
 const MODULES = ["truth-lock-gate", "truth-lock", "delegate-isolation", "scope-observer", "mission-lifecycle",
-  "action-gate", "bash-command-governor", "evidence-provenance", "provider-sandbox", "state-transition", "governance-kernel"];
+  "action-gate", "bash-command-governor", "evidence-provenance", "provider-sandbox", "state-transition", "governance-kernel",
+  "prefer-dist-bin"];
 
 function git(dir: string, args: string[]): void { spawnSync("git", args, { cwd: dir, stdio: "ignore" }); }
 

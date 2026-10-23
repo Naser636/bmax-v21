@@ -27,6 +27,7 @@
 const fs = require("fs");
 const path = require("path");
 const cp = require("child_process");
+const { preferDistBin } = require("../core/prefer-dist-bin.js");
 
 const ROOT = process.cwd();
 const BIN = path.join("runtime", "bin");
@@ -37,8 +38,7 @@ const DELEGATION_DIR = path.join(GENERATED, "delegation");
 // ODG_RUNTIME=js or when dist is absent. Same pattern as FIX-2/3/4/5.
 function _corePort(rel) {
   const dist = rel.replace(/^runtime\//, "runtime/dist/");
-  if (process.env.ODG_RUNTIME !== "js" && fs.existsSync(path.join(ROOT, dist))) return dist;
-  return rel;
+  return preferDistBin(dist, rel, (p) => fs.existsSync(path.join(ROOT, p)));
 }
 
 function die(msg, code = 1) {
@@ -281,7 +281,9 @@ try {
 // --- Steps 6/7 — receive the patch (whatever is now in the working tree) and verify -------------
 console.log("--------------------------------------");
 console.log("VERIFY");
-const verify = cp.spawnSync(process.execPath, [path.join(BIN, "odg-verify.js")], { cwd: ROOT, stdio: "inherit" });
+// L7-FIX-4: prefer the compiled dist verifier (TS-only) so its transitive core loads from dist; source fallback.
+const verifyBin = preferDistBin(path.join("runtime", "dist", "bin", "odg-verify.js"), path.join(BIN, "odg-verify.js"), (p) => fs.existsSync(path.join(ROOT, p)));
+const verify = cp.spawnSync(process.execPath, [verifyBin], { cwd: ROOT, stdio: "inherit" });
 if (verify.status !== 0) {
   die(`STOP: verify failed for "${mission}".`, verify.status || 1);
 }
@@ -289,7 +291,8 @@ if (verify.status !== 0) {
 // --- Step 8 — converge (existing Convergence Orchestrator, writes convergence-report + ledger) ---
 console.log("--------------------------------------");
 console.log("CONVERGE");
-const converge = cp.spawnSync(process.execPath, [path.join(BIN, "odg-converge.js")], { cwd: ROOT, stdio: "inherit" });
+const convergeBin = preferDistBin(path.join("runtime", "dist", "bin", "odg-converge.js"), path.join(BIN, "odg-converge.js"), (p) => fs.existsSync(path.join(ROOT, p)));
+const converge = cp.spawnSync(process.execPath, [convergeBin], { cwd: ROOT, stdio: "inherit" });
 if (converge.status !== 0) {
   die(`STOP: converge did not reach convergence for "${mission}".`, converge.status || 1);
 }

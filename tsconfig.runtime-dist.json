@@ -132,6 +132,7 @@
     "runtime/bin/odg-recover.ts",
     "runtime/bin/odg-objective.ts",
     "runtime/scripts/run-all-tests.ts",
-    "runtime/core/log-slug.ts"
+    "runtime/core/log-slug.ts",
+    "runtime/core/prefer-dist-bin.ts"
   ]
 }
