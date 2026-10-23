@@ -1,0 +1,19 @@
+{
+  "mission": "BENCH_E2E_DEFECT_REPAIR",
+  "priority": "NORMAL",
+  "mode": "IMPLEMENT",
+  "requiresEngineering": true,
+  "authorizedPaths": ["bench-workspace/**"],
+  "objectives": [
+    {
+      "id": "REPAIR_MISSING_DELIVERABLE",
+      "goal": "Produce the required deliverable that is absent in the defective baseline.",
+      "done_when": ["The required deliverable bench-workspace/repaired.txt exists with the proof marker."],
+      "patch": [
+        { "target": "bench-workspace/repaired.txt", "content": "DEFECT-REPAIRED-OK\n" }
+      ]
+    }
+  ],
+  "definition_of_done": ["The missing deliverable is produced strictly within the authorized write scope."],
+  "completion": ["Validation Engine independently confirms the deliverable."]
+}
