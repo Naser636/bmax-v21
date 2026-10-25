@@ -30,6 +30,7 @@
     "runtime/core/patch-executor.ts",
     "runtime/core/final-report.ts",
     "runtime/core/mission-ledger.ts",
-    "runtime/core/budget-ledger.ts"
+    "runtime/core/budget-ledger.ts",
+    "runtime/core/cost-accounting.ts"
   ]
 }
