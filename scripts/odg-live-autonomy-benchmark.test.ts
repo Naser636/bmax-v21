@@ -136,6 +136,28 @@ const stubRate = () => ({ measure: { measurable: true, denominator: 2, numerator
   ok("cross-mission excluded despite a measurer claiming 5/5", r.countedMissions === 0 && r.numerator === 0 && r.executedAutonomyPercent === null);
 })();
 
+// ---- 12b. HERMETIC CAPABILITY FIXTURE (NOT a real pipeline run): proves the executed-autonomy chain
+// registers a GENUINE verified execution — i.e. the numerator is not stuck-at-0 by construction. Uses the
+// REAL buildAutonomyRate (no stub). A properly-evidenced ODG execution (status EXECUTED, authoredBy
+// ODG_CAPABILITY, appliedBy ODG_EXECUTOR, attribution verdict EVIDENCED, eligible+authorized) ⇒ 100%. This
+// is a controlled capability demonstration, explicitly distinct from the §AA.4 real-pipeline runs. --------
+(function hermeticVerifiedExecutionMovesNumerator() {
+  const pair = {
+    mission: "CAP_HERMETIC",
+    plan: { mission: "CAP_HERMETIC", objectives: [{ id: "CAP1", goal: "hermetic verifiable action", authorization: { eligible: true, authorized: true } }] },
+    execution: { mission: "CAP_HERMETIC", executed: [{ objectiveId: "CAP1", status: "EXECUTED", authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR" }] },
+  };
+  const attribution = { objectives: [{ objectiveId: "CAP1", verdict: "EVIDENCED" }] };
+  const r = B.executedBenchmark([pair], { attribution }); // REAL buildAutonomyRate (no stub)
+  ok("hermetic verified execution ⇒ oracle-clean + measurable (countedMissions 1)", r.countedMissions === 1);
+  ok("hermetic verified execution ⇒ numerator 1 / denominator 1", r.numerator === 1 && r.denominator === 1);
+  ok("hermetic verified execution ⇒ executedAutonomyPercent 100 (numerator CAN move; not stuck-at-0)", r.executedAutonomyPercent === 100);
+  ok("hermetic verified execution ⇒ classified ODG_EXECUTED_VERIFIED", r.categories.ODG_EXECUTED_VERIFIED === 1);
+  // Negative control: strip the EVIDENCED attribution ⇒ executed-but-UNVERIFIED, never the numerator.
+  const rNoEvid = B.executedBenchmark([pair], {});
+  ok("same execution without EVIDENCED attribution ⇒ NOT verified (0% numerator)", rNoEvid.numerator === 0 && rNoEvid.categories.ODG_EXECUTED_UNVERIFIED === 1);
+})();
+
 // ---- 13. JS/TS dual-port parity on the executed-autonomy layer. ----------------------------------
 (function executedDualPort() {
   ok("executedOracle parity (ts≡js)", JSON.stringify(B.executedOracle(vPlan, vExec)) === JSON.stringify(BJS.executedOracle(vPlan, vExec)));
