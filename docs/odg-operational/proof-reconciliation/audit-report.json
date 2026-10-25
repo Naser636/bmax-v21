@@ -1,0 +1,150 @@
+{
+ "product": "Reconciliation Assurance (ODG) — DEMONSTRATOR on SYNTHETIC data",
+ "generated": "deterministic",
+ "inputs": {
+  "ledger": {
+   "kind": "csv",
+   "fileLabel": "ledger.csv",
+   "ingestedRows": 15,
+   "deterministic": true
+  },
+  "bank": {
+   "kind": "csv",
+   "fileLabel": "bank.csv",
+   "ingestedRows": 16,
+   "deterministic": true
+  }
+ },
+ "ingestOk": true,
+ "reconciliation": {
+  "matched": 12,
+  "findings": 5,
+  "byType": {
+   "AMOUNT_MISMATCH": 1,
+   "DUPLICATE_IN_BANK": 1,
+   "MISSING_IN_BANK": 1,
+   "DATE_MISMATCH": 1,
+   "MISSING_IN_LEDGER": 1
+  },
+  "needsReview": 2,
+  "certain": 3,
+  "ledgerTotal": 41565.89,
+  "bankTotal": 44135.64
+ },
+ "independentVerification": {
+  "verdict": "PASS",
+  "reasons": [],
+  "recall": 1,
+  "precision": 1,
+  "caught": 5,
+  "planted": 5,
+  "spurious": 0,
+  "confusion": {
+   "TP": 5,
+   "FP": 0,
+   "FN": 0,
+   "precision": 1,
+   "recall": 1,
+   "f1": 1,
+   "falsePositives": [],
+   "falseNegatives": [],
+   "truePositives": [
+    "AMOUNT_MISMATCH:INV-1005",
+    "DUPLICATE_IN_BANK:INV-1008",
+    "MISSING_IN_BANK:INV-1010",
+    "DATE_MISMATCH:INV-1012",
+    "MISSING_IN_LEDGER:TXN-9000"
+   ]
+  }
+ },
+ "successClaim": "ASSERTED — independent verification PASSED",
+ "integrity": "sha256:7ed4e4befe301e6d46f0d1c7e50e98ff4297bc8fc3164f95ccefd1efd7380467",
+ "findings": [
+  {
+   "type": "AMOUNT_MISMATCH",
+   "ref": "INV-1005",
+   "ledgerAmount": 1200,
+   "bankAmount": 1020,
+   "confidence": "NEEDS_REVIEW",
+   "explain": "Reference matches but the amount differs (possible keying error / partial payment).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 6
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 6
+    }
+   }
+  },
+  {
+   "type": "DUPLICATE_IN_BANK",
+   "ref": "INV-1008",
+   "amount": 8450.75,
+   "count": 2,
+   "confidence": "CERTAIN",
+   "explain": "The same reference cleared more than once in the bank (possible double charge).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 9
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 9
+    }
+   }
+  },
+  {
+   "type": "MISSING_IN_BANK",
+   "ref": "INV-1010",
+   "amount": 6700,
+   "confidence": "CERTAIN",
+   "explain": "Booked in the ledger but no matching bank entry cleared (possible unpaid/uncleared).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 11
+    }
+   }
+  },
+  {
+   "type": "DATE_MISMATCH",
+   "ref": "INV-1012",
+   "ledgerDate": "2026-03-18",
+   "bankDate": "2026-03-22",
+   "confidence": "NEEDS_REVIEW",
+   "explain": "Reference+amount match but the date is outside tolerance (timing difference).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 13
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 13
+    }
+   }
+  },
+  {
+   "type": "MISSING_IN_LEDGER",
+   "ref": "TXN-9000",
+   "amount": 999,
+   "confidence": "CERTAIN",
+   "explain": "Cleared in the bank but not booked in the ledger (possible unrecorded transaction).",
+   "provenance": {
+    "bank": {
+     "file": "bank.csv",
+     "line": 17
+    }
+   }
+  }
+ ],
+ "limits": [
+  "SYNTHETIC data only",
+  "structured inputs (CSV/text); unstructured PDF/scan extraction NOT implemented (interface+cost-estimate only)",
+  "no live ERP/bank integration",
+  "human acceptance of flagged items is a separate, required step"
+ ]
+}

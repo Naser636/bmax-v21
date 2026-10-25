@@ -1,0 +1,283 @@
+{
+ "generated": "deterministic",
+ "ledgerRows": 15,
+ "bankRows": 16,
+ "dateToleranceDays": 2,
+ "matchedCount": 12,
+ "findingsCount": 5,
+ "needsReviewCount": 2,
+ "certainFindingsCount": 3,
+ "byType": {
+  "AMOUNT_MISMATCH": 1,
+  "DUPLICATE_IN_BANK": 1,
+  "MISSING_IN_BANK": 1,
+  "DATE_MISMATCH": 1,
+  "MISSING_IN_LEDGER": 1
+ },
+ "matched": [
+  {
+   "ref": "INV-1001",
+   "amount": 2450,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 2
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 2
+    }
+   }
+  },
+  {
+   "ref": "INV-1002",
+   "amount": 780.5,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 3
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 3
+    }
+   }
+  },
+  {
+   "ref": "INV-1003",
+   "amount": 12900,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 4
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 4
+    }
+   }
+  },
+  {
+   "ref": "INV-1004",
+   "amount": 149.99,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 5
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 5
+    }
+   }
+  },
+  {
+   "ref": "INV-1006",
+   "amount": 3300,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 7
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 7
+    }
+   }
+  },
+  {
+   "ref": "INV-1007",
+   "amount": 59,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 8
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 8
+    }
+   }
+  },
+  {
+   "ref": "INV-1008",
+   "amount": 8450.75,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 9
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 9
+    }
+   }
+  },
+  {
+   "ref": "INV-1009",
+   "amount": 420,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 10
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 11
+    }
+   }
+  },
+  {
+   "ref": "INV-1011",
+   "amount": 230.25,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 12
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 12
+    }
+   }
+  },
+  {
+   "ref": "INV-1013",
+   "amount": 95,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 14
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 14
+    }
+   }
+  },
+  {
+   "ref": "INV-1014",
+   "amount": 2750,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 15
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 15
+    }
+   }
+  },
+  {
+   "ref": "INV-1015",
+   "amount": 540.4,
+   "confidence": "CERTAIN",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 16
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 16
+    }
+   }
+  }
+ ],
+ "findings": [
+  {
+   "type": "AMOUNT_MISMATCH",
+   "ref": "INV-1005",
+   "ledgerAmount": 1200,
+   "bankAmount": 1020,
+   "confidence": "NEEDS_REVIEW",
+   "explain": "Reference matches but the amount differs (possible keying error / partial payment).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 6
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 6
+    }
+   }
+  },
+  {
+   "type": "DUPLICATE_IN_BANK",
+   "ref": "INV-1008",
+   "amount": 8450.75,
+   "count": 2,
+   "confidence": "CERTAIN",
+   "explain": "The same reference cleared more than once in the bank (possible double charge).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 9
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 9
+    }
+   }
+  },
+  {
+   "type": "MISSING_IN_BANK",
+   "ref": "INV-1010",
+   "amount": 6700,
+   "confidence": "CERTAIN",
+   "explain": "Booked in the ledger but no matching bank entry cleared (possible unpaid/uncleared).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 11
+    }
+   }
+  },
+  {
+   "type": "DATE_MISMATCH",
+   "ref": "INV-1012",
+   "ledgerDate": "2026-03-18",
+   "bankDate": "2026-03-22",
+   "confidence": "NEEDS_REVIEW",
+   "explain": "Reference+amount match but the date is outside tolerance (timing difference).",
+   "provenance": {
+    "ledger": {
+     "file": "ledger.csv",
+     "line": 13
+    },
+    "bank": {
+     "file": "bank.csv",
+     "line": 13
+    }
+   }
+  },
+  {
+   "type": "MISSING_IN_LEDGER",
+   "ref": "TXN-9000",
+   "amount": 999,
+   "confidence": "CERTAIN",
+   "explain": "Cleared in the bank but not booked in the ledger (possible unrecorded transaction).",
+   "provenance": {
+    "bank": {
+     "file": "bank.csv",
+     "line": 17
+    }
+   }
+  }
+ ],
+ "ledgerTotal": 41565.89,
+ "bankTotal": 44135.64
+}

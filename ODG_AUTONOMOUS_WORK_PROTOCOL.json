@@ -211,5 +211,28 @@
       "Any commit or push to origin without a separate explicit CTO approval",
       "Any cherry-pick, branch merge, reset, rebase or force-push"
     ]
+  },
+  "reality_proof_rule": {
+    "id": "ODG5-REALITY-PROOF",
+    "authority": "CTO amendment 'ODG5 — PERMANENT REALITY, REPOSITORY & PRIVATE VPS PROOF GATE' (2026-10-25)",
+    "statement": "ODG must never declare implementation, verification, deployment, readiness or completion based solely on a plan, report, generated file, mocked test, simulated demonstration, process exit code or previous claim. Every material claim must be supported by evidence from the actual system in which the claim applies.",
+    "verification_states": {
+      "SOURCE_VERIFIED": "implementation exists in the actual repository and its contents have been inspected",
+      "TEST_VERIFIED": "relevant tests actually executed; results, exit codes and logs recorded (not skipped, not mock-bypassed, no failed dependency)",
+      "INTEGRATION_VERIFIED": "works with the real, relevant project components and contracts",
+      "DEPLOYMENT_VERIFIED": "the intended version has actually been deployed to the authorized target environment (version match required)",
+      "RUNTIME_VERIFIED": "the deployed service is running and performing the intended behavior (health + smoke test against the deployed version)",
+      "ACCEPTANCE_VERIFIED": "all required acceptance criteria pass, including independent checks and negative tests",
+      "NOT_VERIFIED_OR_BLOCKED": "evidence is missing, inaccessible, contradictory or insufficient"
+    },
+    "non_interchangeable": "A local TEST pass does not prove DEPLOYMENT; a deploy command does not prove a healthy service; a healthy service does not prove correct business behavior. States are a strict ladder; deployment/runtime rungs apply only to tasks whose acceptance requires deployment.",
+    "final_report_requirement": "Every final report must explicitly separate implemented, tested, independently verified, deployed, runtime-verified and still-unverified work.",
+    "vps_rule": "Deployment/runtime verification requires a real evidence chain (authorized target, artifact-to-commit link, deploy record, version match, health, smoke test, negative path). If deployment is unauthorized, unavailable, unsafe or missing credentials, mark DEPLOYMENT/RUNTIME BLOCKED, continue independent local work, and prepare the exact safe plan. Never fabricate VPS access, records, runtime output, health, IPs, credentials or smoke tests. Never expose secrets.",
+    "enforcement": {
+      "executable_gate": "runtime/core/reality-gate.{ts,js} (gate/assertComplete/classify; deny-by-default; dual-port) — mirror of docs/odg-operational/shared-core/reality-gate.mjs",
+      "regression_tests": "runtime/core/reality-gate.test.ts (rejects report-only, skipped/failed tests, local-as-deploy, deploy-as-runtime, version-mismatch, missing/contradictory evidence, unmet-acceptance completion) + runtime/core/reality-gate-integration.test.ts (spawns the REAL validation-engine and asserts realityProof is emitted + correctly classified)",
+      "runtime_integration": "PROMOTED into the governed path: runtime/core/validation-engine.{ts,js} (both ports, identical) classify the honest verification STATE from the run's facts and emit report.realityProof. Proven INVOKED by reality-gate-integration.test.ts (SUCCESS=>ACCEPTANCE_VERIFIED, BLOCKED=>only SOURCE_VERIFIED). Dist closure resolves it; cross-runtime ports proven byte-identical.",
+      "installed_status": "RULE RECORDED in this canonical SoT + mirrored to CTO_DIRECTIVES.md; executable gate dual-ported in runtime/core; INTEGRATED + proven-invoked in the governed validation-engine (both ports); verification of full parity:runtimes is post-commit (JS leg archives HEAD). dep-planner + eval-metrics also promoted to runtime/core (dual-port, tested)."
+    }
   }
 }
