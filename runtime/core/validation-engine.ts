@@ -329,6 +329,23 @@ const blocked = blockedActions.map((e: any) => ({
     target: e.target || null,
 }));
 
+// ODG5 reality-proof (CTO amendment ODG5-REALITY-PROOF): classify the honest verification STATE from the SAME
+// facts the verdict used — never from the status label. Additive, non-authoritative record on the governed
+// mission-report; deny-by-default via the shared reality-gate. Both ports (.js + compiled .ts) emit it identically.
+const { classify: classifyRealityState }: any = require("./reality-gate");
+const realityProof = classifyRealityState({
+    sourceInspected: true,
+    files: executed.length ? ["executed-actions"] : [],
+    testRun: true,
+    exitCode: validated ? 0 : 1,
+    integrationRun: buildOk && typescriptOk,
+    integrationExitCode: buildOk && typescriptOk ? 0 : 1,
+    requiresDeployment: false,
+    acceptanceCriteria: (Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : []).map((_d: any, i: number) => ({ id: String(i), met: validated })),
+    independentChecksPassed: evidenceOk && noFailures,
+    negativeTestsPassed: noFailures,
+});
+
 const report = {
     mission: patch.mission,
     status,
@@ -341,6 +358,7 @@ const report = {
     definitionOfDone: Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : [],
     unmet,
     totalPatches: plannedCount,
+    realityProof: { rule: "ODG5-REALITY-PROOF", state: realityProof.state },
     summary: {
         objectives: objectiveCount,
         executed: executed.length,

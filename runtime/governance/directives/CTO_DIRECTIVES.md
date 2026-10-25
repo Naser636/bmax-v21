@@ -118,5 +118,31 @@ Every improvement must preserve compatibility.
 Every decision must remain explainable.
 
 ###############################################################################
+# AMENDMENT — ODG5 PERMANENT REALITY PROOF GATE (2026-10-25)
+###############################################################################
+
+ODG must never declare implementation, verification, deployment, readiness or
+completion based solely on a plan, report, generated file, mocked test, simulated
+demonstration, process exit code or previous claim. Every material claim must be
+supported by evidence from the actual system in which the claim applies.
+
+Verification states are NOT interchangeable:
+SOURCE_VERIFIED < TEST_VERIFIED < INTEGRATION_VERIFIED < DEPLOYMENT_VERIFIED <
+RUNTIME_VERIFIED < ACCEPTANCE_VERIFIED; else NOT_VERIFIED / BLOCKED.
+A local test does not prove VPS deployment; a deploy command does not prove a
+healthy service; a healthy service does not prove correct business behavior.
+
+Canonical machine record: ODG_AUTONOMOUS_WORK_PROTOCOL.json -> reality_proof_rule
+(ODG5-REALITY-PROOF). Executable enforcement + regression proof:
+docs/odg-operational/shared-core/reality-gate.{mjs,test.mjs} (rejects report-only,
+skipped/failed tests, local-as-deploy, deploy-as-runtime, version mismatch,
+missing/contradictory evidence, and unmet-acceptance completion). PROMOTED into the
+governed runtime: runtime/core/reality-gate.{ts,js} (dual-port) is called by
+runtime/core/validation-engine.{ts,js}, which emits report.realityProof — proven
+invoked by runtime/core/reality-gate-integration.test.ts. dep-planner + eval-metrics
+likewise promoted to runtime/core. Never fabricate VPS access, deploy records,
+runtime output, health, IPs, credentials or smoke tests. Never expose secrets.
+
+###############################################################################
 # END OF CONTRACT
 ###############################################################################

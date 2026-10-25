@@ -1,0 +1,34 @@
+{
+ "dateToleranceDays": 2,
+ "expectedFindings": [
+  {
+   "type": "AMOUNT_MISMATCH",
+   "ref": "INV-1005",
+   "ledgerAmount": 1200,
+   "bankAmount": 1020
+  },
+  {
+   "type": "MISSING_IN_BANK",
+   "ref": "INV-1010",
+   "amount": 6700
+  },
+  {
+   "type": "MISSING_IN_LEDGER",
+   "ref": "TXN-9000",
+   "amount": 999
+  },
+  {
+   "type": "DUPLICATE_IN_BANK",
+   "ref": "INV-1008",
+   "amount": 8450.75,
+   "count": 2
+  },
+  {
+   "type": "DATE_MISMATCH",
+   "ref": "INV-1012",
+   "ledgerDate": "2026-03-18",
+   "bankDate": "2026-03-22"
+  }
+ ],
+ "expectedMatchedCount": 12
+}

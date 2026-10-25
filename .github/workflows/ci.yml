@@ -1,0 +1,121 @@
+# ODG CI — reproducible verification gate for pull requests.
+#
+# Why this exists: PR #1 had zero checks because the repository contained no
+# GitHub Actions workflow on any branch. This runs the project's own canonical,
+# honest gates on a clean runner.
+#
+# The test step uses `npm run test:report` (runtime/bin/odg-test-report.js), the
+# project's classified gate: it records each suite's REAL exit code and fails the
+# job (exit 1) on any genuine FAIL or BLOCKED suite — a blocked suite can never
+# silently green the gate. The full `npm test` glob is intentionally NOT used here
+# because it includes stateful live-proof suites (e.g. accept-autonomy-live-proof)
+# that require prior ODG runtime state and cannot pass on a clean runner.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'governance/**'
+      - 'odg/**'
+      - 'stabilization/**'
+
+# Cancel superseded runs on the same ref to save runner time.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: build + typecheck + parity + tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Deterministic git identity so suites that create temp git repositories
+      # (branch-integration, mission-lifecycle commit gates) behave reproducibly.
+      - name: Configure git identity
+        run: |
+          git config --global user.email "ci@odg.local"
+          git config --global user.name "ODG CI"
+
+      # The governed-bash suite (runtime/core/bash-command-governor.test.ts) runs its
+      # real execution cases inside bubblewrap isolation. ubuntu-latest ships without
+      # bubblewrap, which drives the suite's no-isolation path and fails it. Install
+      # bubblewrap and permit unprivileged user namespaces so CI exercises the SAME
+      # real-isolation path as developer machines (this adds a capability; it does not
+      # weaken or skip any assertion).
+      - name: Enable sandbox isolation (bubblewrap)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          bwrap --unshare-all --die-with-parent --ro-bind / / --tmpfs /tmp --chdir /tmp -- /bin/true
+          echo "bubblewrap $(bwrap --version) — isolation smoke OK"
+
+      - name: Install dependencies (reproducible)
+        run: npm ci
+
+      - name: Build runtime guard (dist)
+        run: npm run build:runtime
+
+      - name: Typecheck (tsc --noEmit)
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Cross-runtime TS/JS parity
+        run: npm run parity:runtimes
+
+      - name: Classified test gate
+        shell: bash
+        run: |
+          if npm run test:report 2>&1 | tee test-report.out; then
+            echo "test:report passed"
+          else
+            echo "::group::Failing / blocked suites"
+            awk '
+              /^FAIL:/{c=1;next}
+              /^BLOCKED_BY_ISOLATION:/{c=1;next}
+              /^(SKIPPED|NOT_RUN):/{c=0}
+              /^=======/{c=0}
+              c && /^  - /{sub(/^  - /,"");print}
+            ' test-report.out | while IFS= read -r s; do
+              echo "::error title=test:report suite::$s"
+            done
+            echo "::endgroup::"
+            echo "::group::Failure detail"
+            grep -nE 'bubblewrap|AssertionError|bwrap|unshare|EACCES|EPERM|ENOENT' test-report.out \
+              | head -15 | while IFS= read -r l; do echo "::error title=detail::$l"; done
+            echo "::endgroup::"
+            {
+              echo "### test:report failed";
+              grep -E '^TOTAL|^FAIL:|^BLOCKED_BY_ISOLATION:' test-report.out || true;
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      - name: Diagnose sandbox suite (on failure only)
+        if: failure()
+        shell: bash
+        run: |
+          echo "::error title=env::bwrap=$(command -v bwrap || echo MISSING)"
+          if command -v bwrap >/dev/null 2>&1; then
+            bwrap --unshare-all --die-with-parent --ro-bind / / --tmpfs /tmp --chdir /tmp -- /bin/true
+            echo "::error title=env::bwrap --unshare-all smoke exit=$?"
+          fi
+          echo "::error title=env::userns=$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns 2>/dev/null || echo n/a) unprivileged_userns_clone=$(cat /proc/sys/kernel/unprivileged_userns_clone 2>/dev/null || echo n/a)"
+          npx tsx runtime/core/bash-command-governor.test.ts > bcg.out 2>&1 || true
+          tail -n 18 bcg.out | while IFS= read -r l; do echo "::error title=bcg::$l"; done

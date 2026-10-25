@@ -118,6 +118,12 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
   const noBwrap = (cmd, args) => ({ status: 1, stdout: "", stderr: "" }); // `command -v bwrap` fails
   const ev = engine.govern({ command: "echo hi", execute: true }, { spawn: noBwrap });
   ok("no isolation mechanism → HUMAN_APPROVAL_REQUIRED (SANDBOX_UNAVAILABLE)", ev.outcome === O.HUMAN_APPROVAL_REQUIRED && /SANDBOX_UNAVAILABLE/.test(ev.reason));
+  // Fail-closed proof (host-independent, deterministic via the injected no-bwrap spawn): with no genuine
+  // isolation the command is NEVER executed — no execution record is produced and the outcome is never
+  // promoted to EXECUTED/VERIFIED. This locks the security property on EVERY host (incl. a CI runner that
+  // happens to have — or lack — bubblewrap), proving "bubblewrap absent ⇒ no unisolated execution".
+  ok("SANDBOX_UNAVAILABLE ⇒ nothing executed (no execution record, never EXECUTED/VERIFIED)",
+    !ev.execution && ev.outcome !== O.EXECUTED && ev.verification_status !== "VERIFIED");
 })();
 
 // ---- 8. EFFECT DIVERGENCE: a declared read-only command that writes is REJECTED. ---------------
@@ -212,10 +218,16 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
       ok("executor writes evidence artifact", result && typeof result.evidence === "string" && fs.existsSync(result.evidence));
       ok("probe PASSES on a real governed execution", verdict.ok === true);
     } else {
-      // No real isolation: the sandbox cannot launch, so the governor fail-closes and the executor
-      // STOPs with SANDBOX_LAUNCH_FAILED — it NEVER fabricates a governed-execution success.
-      ok("no real isolation ⇒ executor STOPs (SANDBOX_LAUNCH_FAILED), never a false EXECUTED",
-        !!runErr && /SANDBOX_LAUNCH_FAILED/.test(String(runErr && runErr.message)));
+      // No usable real isolation. The BWRAP probe above is false in two distinct, both-fail-closed cases:
+      //   (a) the bwrap BINARY IS ABSENT (e.g. a clean CI runner) ⇒ the governor stops with
+      //       SANDBOX_UNAVAILABLE, detected BEFORE any launch — the command is never executed; or
+      //   (b) bwrap is present but cannot create the namespace ⇒ SANDBOX_LAUNCH_FAILED (no --info-fd
+      //       handshake) — again the command is never executed.
+      // Both are governed STOPs the executor surfaces by throwing, and NEITHER is ever a false EXECUTED.
+      // (Asserting only SANDBOX_LAUNCH_FAILED here was a defect: it conflated "bubblewrap absent" with a
+      // real isolation-launch failure, so the suite failed on any host without bwrap.)
+      ok("no real isolation ⇒ executor STOPs (SANDBOX_UNAVAILABLE | SANDBOX_LAUNCH_FAILED), never a false EXECUTED",
+        !!runErr && /SANDBOX_(UNAVAILABLE|LAUNCH_FAILED)/.test(String(runErr && runErr.message)));
       ok("probe honestly fails without real isolation (no false pass)", verdict.ok === false);
     }
 
