@@ -66,4 +66,25 @@ jobs:
         run: npm run parity:runtimes
 
       - name: Classified test gate
-        run: npm run test:report
+        shell: bash
+        run: |
+          if npm run test:report 2>&1 | tee test-report.out; then
+            echo "test:report passed"
+          else
+            echo "::group::Failing / blocked suites"
+            awk '
+              /^FAIL:/{c=1;next}
+              /^BLOCKED_BY_ISOLATION:/{c=1;next}
+              /^(SKIPPED|NOT_RUN):/{c=0}
+              /^=======/{c=0}
+              c && /^  - /{sub(/^  - /,"");print}
+            ' test-report.out | while IFS= read -r s; do
+              echo "::error title=test:report suite::$s"
+            done
+            echo "::endgroup::"
+            {
+              echo "### test:report failed";
+              grep -E '^TOTAL|^FAIL:|^BLOCKED_BY_ISOLATION:' test-report.out || true;
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
