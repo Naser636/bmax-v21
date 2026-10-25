@@ -33,6 +33,25 @@ const SAFE_MISSION_SET: string[] = Object.freeze([
 
 const isObj = (o: any): boolean => o && typeof o === "object";
 
+// Mirrors runtime/core/validation-engine.js:104 (VALIDATION_OBSERVATION_MODES). A RECORDED no-op is a
+// LEGITIMATE result ONLY for a declared read-only observation mode; for any other mode the validation engine
+// correctly fail-closes BLOCKED (anti-false-success). Kept here as a documented constant for block triage.
+const OBSERVATION_MODES = Object.freeze(["AUDIT", "READ_ONLY", "ANALYZE"]);
+
+// Classify WHY a mission run failed/blocked: EXPECTED (the anti-false-success guard firing correctly on a
+// non-observation mode with an all-RECORDED no-op — governance working as designed, NOT a defect) vs
+// UNEXPECTED (a different/unexplained cause that warrants a real root-cause lot).
+function classifyBlock(plan: any, execution: any): any {
+  const mode = String((isObj(plan) && plan.mode) || "").toUpperCase();
+  const executed = (isObj(execution) && Array.isArray(execution.executed)) ? execution.executed : [];
+  const allRecorded = executed.length > 0 && executed.every((e: any) => e && e.status === "RECORDED");
+  const isObservation = OBSERVATION_MODES.includes(mode);
+  if (!isObservation && allRecorded) {
+    return { expected: true, reason: `noRecordedNoOp: mode=${mode || "UNKNOWN"} is non-observation and all ${executed.length} objective(s) are RECORDED no-ops ⇒ validation-engine correctly BLOCKED (anti-false-success, not a defect)` };
+  }
+  return { expected: false, reason: `unexplained block (mode=${mode || "UNKNOWN"}, recordedOnly=${allRecorded}) — warrants a root-cause lot` };
+}
+
 // Default REAL runner: run one mission's pipeline directly via odg-run.js and capture the generated pair.
 function defaultRunner(mission: string, opts: any): any {
   const o = isObj(opts) ? opts : {};
@@ -72,7 +91,11 @@ function restoreGenerated(snap: any, opts: any): any {
 function tally(runs: any[], benchmarkReport: any): any {
   const rows = Array.isArray(runs) ? runs : [];
   const attempted = rows.length;
-  const runFailedBlocked = rows.filter((r) => r.exit !== 0 || !r.plan || !r.execution).map((r) => r.mission);
+  const failed = rows.filter((r) => r.exit !== 0 || !r.plan || !r.execution);
+  const runFailedBlocked = failed.map((r) => r.mission);
+  const blockTriage = failed.map((r) => ({ mission: r.mission, ...classifyBlock(r.plan, r.execution) }));
+  const expectedBlocked = blockTriage.filter((b) => b.expected).map((b) => b.mission);
+  const unexpectedBlocked = blockTriage.filter((b) => !b.expected).map((b) => b.mission);
   const ex = benchmarkReport || {};
   const excludedByOracle = (ex.excluded || []).map((e: any) => e.mission);
   const notMeasurable = ex.notMeasurable || [];
@@ -81,6 +104,9 @@ function tally(runs: any[], benchmarkReport: any): any {
   return {
     attempted,
     runFailedBlocked,
+    blockTriage,
+    expectedBlocked,
+    unexpectedBlocked,
     measurableMissions: ex.countedMissions || 0,
     notMeasurableMissions: notMeasurable,
     excludedByOracle,
@@ -128,9 +154,11 @@ if (require.main === module) {
   process.stdout.write(`odg-execution-evidence-pilot v${report.pilotVersion} (restoreVerified=${report.restoreVerified})\n`);
   for (const r of report.runs) process.stdout.write(`  ${r.mission}: exit=${r.exit} hasPlan=${r.hasPlan} hasExecution=${r.hasExecution}\n`);
   process.stdout.write(`TALLY: attempted=${t.attempted} runFailedBlocked=${JSON.stringify(t.runFailedBlocked)} measurableMissions=${t.measurableMissions} notMeasurable=${JSON.stringify(t.notMeasurableMissions)} excludedByOracle=${JSON.stringify(t.excludedByOracle)}\n`);
+  process.stdout.write(`BLOCK-TRIAGE: expectedBlocked(governance)=${JSON.stringify(t.expectedBlocked)} unexpectedBlocked(investigate)=${JSON.stringify(t.unexpectedBlocked)}\n`);
+  for (const b of t.blockTriage) process.stdout.write(`  ${b.mission}: expected=${b.expected} — ${b.reason}\n`);
   process.stdout.write(`EXECUTED-AUTONOMY (objectives): verified ${t.objectiveNumeratorVerified}/${t.objectiveDenominator} = ${t.executedAutonomyPercentObjectives}% · categories=${JSON.stringify(t.categories)}\n`);
   process.exit(report.restoreVerified ? 0 : 1); // fail-closed if the snapshot did not restore cleanly
 }
 
-module.exports = { runPilot, tally, defaultRunner, snapshotGenerated, restoreGenerated, SAFE_MISSION_SET, PILOT_VERSION };
+module.exports = { runPilot, tally, classifyBlock, defaultRunner, snapshotGenerated, restoreGenerated, OBSERVATION_MODES, SAFE_MISSION_SET, PILOT_VERSION };
 export {};

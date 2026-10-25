@@ -18,6 +18,7 @@ function fakeRunner(mission: string): any {
   if (mission === "M_OK") return { mission, exit: 0, plan: { mission: "M_OK", objectives: [{ id: "o1" }] }, execution: { mission: "M_OK", executed: [{ objectiveId: "o1", status: "RECORDED" }] } };
   if (mission === "M_FAIL") return { mission, exit: 1, plan: null, execution: null };
   if (mission === "M_CROSS") return { mission, exit: 0, plan: { mission: "M_CROSS", objectives: [{ id: "o1" }] }, execution: { mission: "OTHER", executed: [{ objectiveId: "o1" }] } };
+  if (mission === "M_GOVBLOCK") return { mission, exit: 1, plan: { mission: "M_GOVBLOCK", mode: "IMPLEMENT", objectives: [{ id: "o1" }] }, execution: { mission: "M_GOVBLOCK", executed: [{ objectiveId: "o1", status: "RECORDED" }] } };
   return { mission, exit: 0, plan: null, execution: null };
 }
 const noopSnap = () => ({ tgz: "x", digest: "D" });
@@ -71,6 +72,27 @@ const commonOpts = { runner: fakeRunner, snapshot: noopSnap, restore: okRestore,
   const b = PJS.runPilot(["M_OK", "M_FAIL", "M_CROSS"], commonOpts);
   ok("runPilot report parity (ts≡js)", JSON.stringify(a) === JSON.stringify(b));
   ok("SAFE_MISSION_SET parity (ts≡js)", JSON.stringify(P.SAFE_MISSION_SET) === JSON.stringify(PJS.SAFE_MISSION_SET));
+})();
+
+// ---- 6. classifyBlock: non-observation mode + all-RECORDED ⇒ EXPECTED (correct governance). ----------
+(function classifyBlockCases() {
+  const impl = P.classifyBlock({ mode: "IMPLEMENT" }, { executed: [{ status: "RECORDED" }, { status: "RECORDED" }] });
+  ok("IMPLEMENT + all-RECORDED ⇒ expected (noRecordedNoOp governance)", impl.expected === true && /noRecordedNoOp/.test(impl.reason));
+  const seq = P.classifyBlock({ mode: "SEQUENTIAL" }, { executed: [{ status: "RECORDED" }] });
+  ok("SEQUENTIAL + RECORDED ⇒ expected", seq.expected === true);
+  const audit = P.classifyBlock({ mode: "AUDIT" }, { executed: [{ status: "RECORDED" }] });
+  ok("AUDIT (observation) block ⇒ NOT expected (unexplained — audit should not block on no-op)", audit.expected === false);
+  const mixed = P.classifyBlock({ mode: "IMPLEMENT" }, { executed: [{ status: "DONE" }, { status: "RECORDED" }] });
+  ok("IMPLEMENT with a non-RECORDED item ⇒ NOT the noRecordedNoOp case", mixed.expected === false);
+})();
+
+// ---- 7. Pilot tally splits expected (governance) vs unexpected (investigate) blocks. -----------------
+(function blockTriageSplit() {
+  const r = P.runPilot(["M_OK", "M_GOVBLOCK", "M_FAIL"], commonOpts);
+  const t = r.tally;
+  ok("M_GOVBLOCK classified EXPECTED (governance anti-false-success)", t.expectedBlocked.includes("M_GOVBLOCK"));
+  ok("M_FAIL (no plan/exec) classified UNEXPECTED (investigate)", t.unexpectedBlocked.includes("M_FAIL"));
+  ok("both are still counted as runFailedBlocked", t.runFailedBlocked.includes("M_GOVBLOCK") && t.runFailedBlocked.includes("M_FAIL"));
 })();
 
 console.log(`\nEXECUTION-EVIDENCE PILOT — ${passed} assertions passed.`);
