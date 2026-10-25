@@ -92,5 +92,57 @@ const undeclared = (id: string, goal = "ambiguous") => ({ id, goal });
   ok("MISSION_SET parity (ts≡js)", JSON.stringify(B.MISSION_SET) === JSON.stringify(BJS.MISSION_SET));
 })();
 
+// ================= EXECUTED-AUTONOMY LAYER =================
+const vPlan = { mission: "M", objectives: [{ id: "o1" }, { id: "o2" }] };
+const vExec = { mission: "M", executed: [{ objectiveId: "o1", status: "RECORDED" }, { objectiveId: "o2", status: "RECORDED" }] };
+// Injected stub measurer so oracle-gating is tested WITHOUT coupling to buildAutonomyRate internals.
+const stubRate = () => ({ measure: { measurable: true, denominator: 2, numerator: 1, categories: { ODG_EXECUTED_VERIFIED: 1, ODG_EXECUTED_UNVERIFIED: 0, OPERATOR_OR_EXTERNAL: 0, BLOCKED_REFUSED_FAILED: 0, HUMAN_MANDATORY: 0, NOT_EXECUTED: 1 } } });
+
+// ---- 9. executedOracle flags cross-mission / orphan / duplicate; passes a clean pairing. ----------
+(function executedOracleCases() {
+  ok("clean pairing ⇒ oracle ok", B.executedOracle(vPlan, vExec).ok === true);
+  ok("cross-mission ⇒ CROSS_MISSION conflict", B.executedOracle(vPlan, { mission: "OTHER", executed: [{ objectiveId: "o1" }] }).conflicts.some((c: any) => c.kind === "CROSS_MISSION"));
+  ok("orphan evidence ⇒ ORPHAN_EVIDENCE conflict", B.executedOracle(vPlan, { mission: "M", executed: [{ objectiveId: "ZZZ" }] }).conflicts.some((c: any) => c.kind === "ORPHAN_EVIDENCE"));
+  ok("duplicate evidence ⇒ DUPLICATE_EVIDENCE conflict", B.executedOracle(vPlan, { mission: "M", executed: [{ objectiveId: "o1" }, { objectiveId: "o1" }] }).conflicts.some((c: any) => c.kind === "DUPLICATE_EVIDENCE"));
+  ok("unidentified mission ⇒ MISSION_UNIDENTIFIED conflict", B.executedOracle({ objectives: [{ id: "o1" }] }, { executed: [{ objectiveId: "o1" }] }).conflicts.some((c: any) => c.kind === "MISSION_UNIDENTIFIED"));
+})();
+
+// ---- 10. executedRow: oracle-fail EXCLUDES (measurer never consulted); oracle-ok measures. --------
+(function executedRowGate() {
+  const bad = B.executedRow("M", vPlan, { mission: "OTHER", executed: [{ objectiveId: "o1" }] }, { buildRate: stubRate });
+  ok("oracle-fail ⇒ excluded, not measured", bad.excluded === true && bad.measurable === false && !bad.measure);
+  const good = B.executedRow("M", vPlan, vExec, { buildRate: stubRate });
+  ok("oracle-ok ⇒ measured via (stub) measurer", good.excluded === false && good.measurable === true && good.measure.numerator === 1);
+})();
+
+// ---- 11. executedBenchmark: justified denominator; excluded/notMeasurable published; null when 0. -
+(function executedBenchmarkAgg() {
+  const r = B.executedBenchmark([
+    { mission: "M_OK", plan: vPlan, execution: vExec },
+    { mission: "M_CROSS", plan: vPlan, execution: { mission: "OTHER", executed: [{ objectiveId: "o1" }] } },
+  ], { buildRate: stubRate });
+  ok("only oracle-clean+measurable counted", r.countedMissions === 1 && r.totalPairs === 2);
+  ok("justified denominator/numerator/percent", r.denominator === 2 && r.numerator === 1 && r.executedAutonomyPercent === 50);
+  ok("excluded pair published, not counted", r.excluded.length === 1 && r.excluded[0].mission === "M_CROSS");
+  const empty = B.executedBenchmark([{ mission: "M_CROSS", plan: vPlan, execution: { mission: "OTHER", executed: [{ objectiveId: "o1" }] } }], { buildRate: stubRate });
+  ok("zero justified denominator ⇒ executedAutonomyPercent null (never fabricated)", empty.denominator === 0 && empty.executedAutonomyPercent === null);
+})();
+
+// ---- 12. ANTI-FALSE-POSITIVE: a bad pairing can NEVER inflate executed autonomy even if the measurer
+// would claim a high score — the oracle gate wins (fail-closed). ----------------------------------
+(function antiFalsePositive() {
+  const liar = () => ({ measure: { measurable: true, denominator: 5, numerator: 5, categories: { ODG_EXECUTED_VERIFIED: 5 } } });
+  const r = B.executedBenchmark([{ mission: "M_CROSS", plan: vPlan, execution: { mission: "OTHER", executed: [{ objectiveId: "o1" }] } }], { buildRate: liar });
+  ok("cross-mission excluded despite a measurer claiming 5/5", r.countedMissions === 0 && r.numerator === 0 && r.executedAutonomyPercent === null);
+})();
+
+// ---- 13. JS/TS dual-port parity on the executed-autonomy layer. ----------------------------------
+(function executedDualPort() {
+  ok("executedOracle parity (ts≡js)", JSON.stringify(B.executedOracle(vPlan, vExec)) === JSON.stringify(BJS.executedOracle(vPlan, vExec)));
+  const a = B.executedBenchmark([{ mission: "M", plan: vPlan, execution: vExec }], { buildRate: stubRate });
+  const b = BJS.executedBenchmark([{ mission: "M", plan: vPlan, execution: vExec }], { buildRate: stubRate });
+  ok("executedBenchmark parity (ts≡js)", JSON.stringify(a) === JSON.stringify(b));
+})();
+
 console.log(`\nLIVE AUTONOMY BENCHMARK — ${passed} assertions passed.`);
 export {};
