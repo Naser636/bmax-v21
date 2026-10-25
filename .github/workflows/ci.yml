@@ -53,6 +53,20 @@ jobs:
           git config --global user.email "ci@odg.local"
           git config --global user.name "ODG CI"
 
+      # The governed-bash suite (runtime/core/bash-command-governor.test.ts) runs its
+      # real execution cases inside bubblewrap isolation. ubuntu-latest ships without
+      # bubblewrap, which drives the suite's no-isolation path and fails it. Install
+      # bubblewrap and permit unprivileged user namespaces so CI exercises the SAME
+      # real-isolation path as developer machines (this adds a capability; it does not
+      # weaken or skip any assertion).
+      - name: Enable sandbox isolation (bubblewrap)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          bwrap --unshare-all --die-with-parent --ro-bind / / --tmpfs /tmp --chdir /tmp -- /bin/true
+          echo "bubblewrap $(bwrap --version) — isolation smoke OK"
+
       - name: Install dependencies (reproducible)
         run: npm ci
 
