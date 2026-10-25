@@ -92,3 +92,16 @@ jobs:
             } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
+
+      - name: Diagnose sandbox suite (on failure only)
+        if: failure()
+        shell: bash
+        run: |
+          echo "::error title=env::bwrap=$(command -v bwrap || echo MISSING)"
+          if command -v bwrap >/dev/null 2>&1; then
+            bwrap --unshare-all --die-with-parent --ro-bind / / --tmpfs /tmp --chdir /tmp -- /bin/true
+            echo "::error title=env::bwrap --unshare-all smoke exit=$?"
+          fi
+          echo "::error title=env::userns=$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns 2>/dev/null || echo n/a) unprivileged_userns_clone=$(cat /proc/sys/kernel/unprivileged_userns_clone 2>/dev/null || echo n/a)"
+          npx tsx runtime/core/bash-command-governor.test.ts > bcg.out 2>&1 || true
+          tail -n 18 bcg.out | while IFS= read -r l; do echo "::error title=bcg::$l"; done
