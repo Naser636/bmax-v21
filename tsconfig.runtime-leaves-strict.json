@@ -34,6 +34,7 @@
     "runtime/core/cost-accounting.ts",
     "runtime/core/provider-live-call-gate.ts",
     "runtime/core/provider-reuse-candidate.ts",
-    "runtime/core/ollama-control-plane.ts"
+    "runtime/core/ollama-control-plane.ts",
+    "runtime/core/finance-data-connector.ts"
   ]
 }
