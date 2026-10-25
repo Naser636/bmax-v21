@@ -1,0 +1,20 @@
+# Option A — track film governance/production SOURCE; exclude generated media, vendored binaries and run outputs.
+# Generated media (regenerable; large; not source)
+*.mp4
+*.mov
+*.webp
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp3
+*.wav
+*.aac
+*.m4a
+*.flac
+# Vendored third-party binaries (ffmpeg/ffprobe, node_modules)
+pipeline/vendor/
+**/node_modules/
+# Generated run outputs (ledgers/reports/clips live here; preserved on disk, not committed as media).
+# Governance code commits only the source closure explicitly; run artifacts stay local.
+pipeline/runs/
