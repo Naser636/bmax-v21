@@ -82,6 +82,10 @@ jobs:
               echo "::error title=test:report suite::$s"
             done
             echo "::endgroup::"
+            echo "::group::Failure detail"
+            grep -nE 'bubblewrap|AssertionError|bwrap|unshare|EACCES|EPERM|ENOENT' test-report.out \
+              | head -15 | while IFS= read -r l; do echo "::error title=detail::$l"; done
+            echo "::endgroup::"
             {
               echo "### test:report failed";
               grep -E '^TOTAL|^FAIL:|^BLOCKED_BY_ISOLATION:' test-report.out || true;
