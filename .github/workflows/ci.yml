@@ -1,0 +1,69 @@
+# ODG CI — reproducible verification gate for pull requests.
+#
+# Why this exists: PR #1 had zero checks because the repository contained no
+# GitHub Actions workflow on any branch. This runs the project's own canonical,
+# honest gates on a clean runner.
+#
+# The test step uses `npm run test:report` (runtime/bin/odg-test-report.js), the
+# project's classified gate: it records each suite's REAL exit code and fails the
+# job (exit 1) on any genuine FAIL or BLOCKED suite — a blocked suite can never
+# silently green the gate. The full `npm test` glob is intentionally NOT used here
+# because it includes stateful live-proof suites (e.g. accept-autonomy-live-proof)
+# that require prior ODG runtime state and cannot pass on a clean runner.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'governance/**'
+      - 'odg/**'
+      - 'stabilization/**'
+
+# Cancel superseded runs on the same ref to save runner time.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: build + typecheck + parity + tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Deterministic git identity so suites that create temp git repositories
+      # (branch-integration, mission-lifecycle commit gates) behave reproducibly.
+      - name: Configure git identity
+        run: |
+          git config --global user.email "ci@odg.local"
+          git config --global user.name "ODG CI"
+
+      - name: Install dependencies (reproducible)
+        run: npm ci
+
+      - name: Build runtime guard (dist)
+        run: npm run build:runtime
+
+      - name: Typecheck (tsc --noEmit)
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Cross-runtime TS/JS parity
+        run: npm run parity:runtimes
+
+      - name: Classified test gate
+        run: npm run test:report
