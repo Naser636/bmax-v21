@@ -8,6 +8,13 @@
  * EVIDENCE (no-false-success), RECOVERY (limits/stop) — and returns a verdict + a tamper-evident record. It
  * EXECUTES nothing; ODG's existing EXECUTOR/action-gate/bash-command-governor remain the sole enforcers.
  *
+ * AUTHENTICATION BOUNDARY (V13): the gate does NOT authenticate the agent and does NOT verify a tenant — it has
+ * no crypto context (that is agent-identity's job). Every verdict is `authenticated:false` BY DESIGN. A direct
+ * gate call is therefore an UNAUTHENTICATED, NON-tenant-bound admission; the agent-governance-harness is the SOLE
+ * authenticated, tenant/contract-bound ingestion boundary (V9/V12). We deliberately do NOT add a trusted `tenantId`
+ * field the gate cannot verify (that would be a false second source of truth). Consumers MUST route through the
+ * harness for an authenticated admission; a bare gate verdict must never be treated as one.
+ *
  * Controls are mapped to OWASP Top 10 for Agentic Applications 2026 (pub. 2025-12-09, consulted 2026-10-26):
  *   ASI01 Goal Hijack/Drift→ allowlist (least agency) + STRUCTURAL drift controls: reject agent-supplied governance
  *                            mutations (contract/identity/permissions are never agent-writable), honor revocation,
@@ -48,7 +55,7 @@ const GOVERNANCE_MUTATION_FIELDS = ["objective", "contract", "permissions", "aut
 export interface GateState { calls: number; elapsedMs: number; revoked?: boolean; history?: Array<{ tool?: string; targetPaths?: string[] }> }
 export interface GateVerdict {
   verdict: "ADMIT" | "DENY" | "ESCALATE";
-  reasons: string[]; controlsFailed: string[]; evidenceTrusted: false;
+  reasons: string[]; controlsFailed: string[]; evidenceTrusted: false; authenticated: false;
   record: { authoredBy: string; agentId: string | null; tool: string | null; proposalSha256: string; verdict: string };
 }
 
@@ -140,7 +147,7 @@ function evaluateAgentAction(proposal: AgentActionProposal, contract: AgentContr
 
   // Structural / fail-closed
   if (!c || typeof c !== "object" || !Array.isArray(c.allowedTools) || !Array.isArray(c.authorizedScope) || !c.limits) {
-    return { verdict: "DENY", reasons: ["malformed/absent contract — fail-closed"], controlsFailed: ["STRUCTURAL"], evidenceTrusted: false, record: rec("DENY") };
+    return { verdict: "DENY", reasons: ["malformed/absent contract — fail-closed"], controlsFailed: ["STRUCTURAL"], evidenceTrusted: false, authenticated: false, record: rec("DENY") };
   }
   // ASI03/ASI07 — identity + auth presence + binding
   if (!p.agentId || p.agentId !== c.agentId) { reasons.push("agent identity missing or not the contracted agent"); failed.push("ASI03"); }
@@ -195,16 +202,16 @@ function evaluateAgentAction(proposal: AgentActionProposal, contract: AgentContr
     else if (dv.records.length) reasons.push(`dependencies admitted (${dv.records.map((r: any) => r.integrity === "VERIFIED" ? r.key + "✓" : r.key + "~unverified").join(", ")})`);
   }
 
-  if (failed.length) return { verdict: "DENY", reasons, controlsFailed: Array.from(new Set(failed)), evidenceTrusted: false, record: rec("DENY") };
+  if (failed.length) return { verdict: "DENY", reasons, controlsFailed: Array.from(new Set(failed)), evidenceTrusted: false, authenticated: false, record: rec("DENY") };
 
   // ASI09 — human gate for consequential / require-human tools ⇒ ESCALATE (never auto-admit)
   const requireHuman = Array.isArray(c.requireHumanFor) ? c.requireHumanFor : [];
   if (p.consequential === true || requireHuman.includes(p.tool as string)) {
     reasons.push("consequential / human-required action ⇒ ESCALATE to a human gate (no auto-admit)");
-    return { verdict: "ESCALATE", reasons, controlsFailed: [], evidenceTrusted: false, record: rec("ESCALATE") };
+    return { verdict: "ESCALATE", reasons, controlsFailed: [], evidenceTrusted: false, authenticated: false, record: rec("ESCALATE") };
   }
-  reasons.push("in-contract, in-scope, within budget, authenticated ⇒ ADMIT (execution + success remain subject to ODG's executor + independent verification)");
-  return { verdict: "ADMIT", reasons, controlsFailed: [], evidenceTrusted: false, record: rec("ADMIT") };
+  reasons.push("in-contract, in-scope, within budget ⇒ ADMIT. NOTE: the gate does NOT authenticate the agent and does NOT bind a tenant (authenticated:false) — a gate verdict alone is NOT an authenticated or tenant-bound admission; only the harness ingestion boundary (identity + session/contract/tenant binding) produces that. Execution + success remain subject to ODG's executor + independent verification.");
+  return { verdict: "ADMIT", reasons, controlsFailed: [], evidenceTrusted: false, authenticated: false, record: rec("ADMIT") };
 }
 
 export { evaluateAgentAction, evaluateDependencies, validateParams, pathInScope, sha256 };

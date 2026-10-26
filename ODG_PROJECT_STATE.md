@@ -4254,3 +4254,39 @@ sealing all reused. 9 primitives + capability-router + executors unchanged; fore
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 lot: optional gate-level tenant field (admission tenant-scoped inside the gate too). BLOCKED/EXTERNAL (CTO/
 infra): production multi-tenant, real agent, KMS/HSM, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (x) — V13: gate authentication boundary (admission≠authentication; NO false tenant source) €0
+CTO V13. Truth Lock entry 1c8c051≡origin/main, clean, 5 stashes preserved. No new primitive; gate only. Diff = 2 files.
+
+**Gate A audit (read-only):** gate.evaluateAgentAction is exported + called ONLY by the harness today, but a FUTURE/
+external consumer could call it DIRECTLY, bypassing the harness's V9/V12 auth + tenant/contract binding. The gate does
+NOT authenticate (pure contract/policy evaluator; token-presence ≠ identity) and its verdict did NOT signal that
+admission is unauthenticated ⇒ a direct caller could mistake a gate ADMIT for an authenticated/tenant-bound admission.
+
+**§3 evidence-based decision:** adding a trusted `tenantId` to the gate = the anti-pattern §3 forbids (the gate has no
+crypto context; it would be a FALSE second source of truth). So NOT added. Minimal honest fix instead: the gate verdict
+now self-declares `authenticated: false` (BY DESIGN) on every path, with an ADMIT reason + header stating admission ≠
+authentication and that the HARNESS is the SOLE authenticated, tenant/contract-bound ingestion boundary (V9/V12). A
+direct gate call is therefore explicitly unauthenticated + non-tenant-bound — consumers must route through the harness.
+
+**Implementation (bounded):** GateVerdict + all 4 return sites carry `authenticated: false`; ADMIT reason + header
+document the boundary + the deliberate no-tenant-field decision. Behaviour otherwise unchanged (all existing controls
+intact). Backward-compat: harness unchanged + still green.
+
+**Proof:** gate 47→51 (+4 V13: ADMIT/DENY/ESCALATE all authenticated:false; ADMIT reason states admission≠auth + not
+tenant-bound). harness 42/42 unchanged. full gate 63/63; tsc 0; build 0.
+
+**Status:** PROVEN = the gate never claims authentication (authenticated:false by design); the authenticated, tenant/
+contract-bound path is the harness ONLY (V9/V12). PARTIAL = a direct gate consumer CAN still get an (unauthenticated,
+clearly-marked) admission — we make it self-evident rather than forbid the export (the gate is a legitimate pure
+evaluator). ABSENT/EXTERNAL/BLOCKED (not claimed) = production multi-tenant, real agent, KMS/HSM, certification.
+Evidence-based NON-action recorded: no redundant trusted-tenant field added (§3).
+
+**Learning reuse (proven):** token-presence≠identity (V9) + no-false-source + reproduce/audit-before-change reused;
+decided AGAINST complexity where the harness already suffices (§3). 9 primitives + capability-router + executors
+unchanged; foreign docs/ + 5 stashes preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/third-party-agent-gate.test.ts && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 lot candidate: a harness-only entrypoint wrapper that makes the authenticated path the default export (optional).
+BLOCKED/EXTERNAL (CTO/infra): production multi-tenant, real agent, KMS/HSM, certification, exposure.

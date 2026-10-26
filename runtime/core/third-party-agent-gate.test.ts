@@ -132,4 +132,10 @@ ok("ASI01 combinatorial: per-tool invocation cap exceeded ⇒ DENY", (() => {
 })());
 ok("ASI01 combinatorial: within caps + no forbidden combo ⇒ ADMIT", G.evaluateAgentAction({ ...base, tool: "summarize" }, { ...CONTRACT, maxPerTool: { summarize: 3 }, forbiddenToolCombos: [["read_file", "deploy"]] }, { calls: 1, elapsedMs: 0, history: [{ tool: "summarize" }] }).verdict === "ADMIT");
 
+// ═════════ V13 — gate NEVER authenticates (admission != authentication); no false tenant source ═════════
+ok("V13 ADMIT verdict is authenticated:false (gate does not authenticate)", (() => { const v = G.evaluateAgentAction(base, CONTRACT, S0); return v.verdict === "ADMIT" && v.authenticated === false; })());
+ok("V13 DENY verdict is authenticated:false", G.evaluateAgentAction({ ...base, tool: "nope" }, CONTRACT, S0).authenticated === false);
+ok("V13 ESCALATE verdict is authenticated:false", G.evaluateAgentAction({ ...base, tool: "write_report", targetPaths: ["reports/o.md"] }, CONTRACT, S0).authenticated === false);
+ok("V13 ADMIT reason states admission != authentication + not tenant-bound", (() => { const v = G.evaluateAgentAction(base, CONTRACT, S0); return v.reasons.some(r => /does NOT authenticate/.test(r) && /tenant/.test(r)); })());
+
 console.log(`\nTHIRD-PARTY-AGENT-GATE security suite — ${pass} assertions passed.`);
