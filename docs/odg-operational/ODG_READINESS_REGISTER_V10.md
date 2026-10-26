@@ -32,6 +32,7 @@ No claim of certification, legal conformity, production authN/isolation, or univ
 | Least privilege / scope confinement / secret non-exposure | PROVEN | gate scope checks; identity result carries no key material (V9) |
 | Injection / tool-misuse / privilege-escalation / exfiltration | PROVEN (OWASP-mapped) | gate+harness adversarial suites (V5–V8) |
 | Tenant isolation | PARTIAL (hermetic LOGICAL proto) | agent-identity namespaced registry; cross-tenant nonce rejected (V9) |
+| Authenticated execution boundary (`authorizeExecution`) | PROVEN (TEST) | V14: no exec unless a sealed, provenance-verified, authenticated + contract/tenant-bound admission re-verifies at exec time; bare/unauthenticated ADMIT (authBound:false), tampered, cross-tenant, wrong-contract, missing-context, replayed → refused; execution spy proves zero exec after refusal (harness 55/55). Gate stays a pure evaluator (V13). Direct `deps.executor` call outside the harness = the caller's responsibility; the SANCTIONED path is `authorizeExecution`. Prod authN/isolation = EXTERNAL |
 | **Production multi-tenant** (data store/resource/deploy isolation) | BLOCKED/EXTERNAL | dedicated lot; not claimed |
 | Logging integrity / incident mgmt / resource-abuse resistance | PARTIAL | budget circuit-break (V8); formal incident+log-integrity = future |
 

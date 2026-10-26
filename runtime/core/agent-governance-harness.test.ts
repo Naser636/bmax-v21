@@ -218,4 +218,69 @@ ok("V11 bundle carries the tenant it was sealed under", sA.evidence.tenantId ===
   ok("V12 CONTRACT_MISMATCH bundle: sealed, no key material", mm.evidence && /AUTH_BIND|CONTRACT_MISMATCH/.test(JSON.stringify(mm.evidence)) && !/PRIVATE KEY/.test(JSON.stringify(mm)));
 }
 
+// ═════════ V14 — AUTHENTICATED EXECUTION BOUNDARY (authorizeExecution) ═════════
+// The gap (reproduced): a NO-AUTH policy ADMIT seals a bundle that {verdict:ADMIT, executed:true,
+// verifyEvidenceBundle().ok} would treat as executable — WITHOUT authentication. authorizeExecution() is the
+// sole re-verifiable execution boundary: it re-checks the sealed proof AT EXECUTION TIME and refuses any
+// admission that was not authenticated + contract/tenant-bound. A downstream invoker executes ONLY if authorized.
+{
+  const r = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
+  const pub = k.publicKey.export({ type: "spki", format: "pem" });
+  ID.register(r, { tenantId: "TV14", agentId: "agent-x", publicKeyPem: pub });
+  const C = { agentId: "agent-x", tenantId: "TV14", objective: "exec-boundary", allowedTools: ["read_file"], authorizedScope: ["reports"], limits: { maxCalls: 5, maxDurationMs: 600000 } };
+  const sha = H.contractShaOf(C);
+  ID.openSession(r, { sessionId: "SV", tenantId: "TV14", agentId: "agent-x", contractSha: sha });
+  const mkAuth = () => { const c = ID.issueChallenge(r, { tenantId: "TV14", agentId: "agent-x", sessionId: "SV", contractSha: sha }); return { registry: r, challenge: c, signature: crypto2.sign(null, Buffer.from(ID.canon(c)), k.privateKey).toString("base64") }; };
+  const p = { agentId: "agent-x", authToken: "t", tool: "read_file", params: { path: "reports/a.md" }, targetPaths: ["reports/a.md"] };
+  const spy = () => { const calls = []; return { calls, revision: { commit: "t", treeDirty: false, available: true }, executor: (x) => { calls.push(x.tool); return { ok: true }; }, verifier: () => ({ verified: true, reason: "x" }) }; };
+  // EXTERNAL executor-invoker that HONORS the boundary: it executes ONLY when authorizeExecution authorizes.
+  const downstream = []; const invoke = (ev, expected) => { const az = H.authorizeExecution(ev, expected); if (az.authorized) downstream.push("EXEC"); return az; };
+  const expect = { tenantId: "TV14", contractSha: sha };
+
+  // (1) VALID authenticated harness path ⇒ authBound sealed; authorizeExecution AUTHORIZES; downstream executes.
+  const dv = spy(); dv.auth = mkAuth();
+  const good = H.runStep(p, C, S0, dv);
+  ok("V14 authenticated harness step seals authBound:true + contractSha", good.outcome === "ADMITTED_VERIFIED" && good.authBound === true && good.evidence.authBound === true && good.evidence.contractSha === sha);
+  const azGood = invoke(good.evidence, { ...expect, execId: good.execId, agentId: "agent-x" });
+  ok("V14 valid authenticated admission ⇒ authorizeExecution AUTHORIZES", azGood.authorized === true);
+  ok("V14 downstream executes ONLY after authorization", downstream.length === 1);
+
+  // (2) DIRECT/UNAUTHENTICATED ADMIT ⇒ authBound:false ⇒ REFUSED ⇒ NO downstream execution.
+  const dna = spy(); // NO .auth
+  const noauth = H.runStep(p, C, S0, dna);
+  const before = downstream.length;
+  const azNo = invoke(noauth.evidence, { tenantId: null, contractSha: noauth.evidence.contractSha });
+  ok("V14 bare ADMIT (no auth) ⇒ authBound:false", noauth.gateVerdict === "ADMIT" && noauth.executed === true && noauth.authBound === false);
+  ok("V14 unauthenticated ADMIT ⇒ NOT authorized ⇒ no downstream exec", azNo.authorized === false && /authBound/.test(azNo.reason) && downstream.length === before);
+
+  // (3) TAMPERED sealed proof ⇒ provenance fails ⇒ REFUSED.
+  const tampered = { ...good.evidence }; tampered.objective = "ESCALATED-PRIVILEGE";
+  ok("V14 tampered sealed bundle ⇒ NOT authorized", H.authorizeExecution(tampered, { ...expect, execId: good.execId }).authorized === false);
+
+  // (4) CROSS-TENANT: valid TV14 proof presented for another tenant ⇒ REFUSED.
+  ok("V14 cross-tenant proof (TV14 used as OTHER) ⇒ NOT authorized", H.authorizeExecution(good.evidence, { tenantId: "OTHER", contractSha: sha }).authorized === false);
+
+  // (5) WRONG CONTRACT: valid proof but expected a different contractSha ⇒ REFUSED.
+  ok("V14 contract binding mismatch ⇒ NOT authorized", H.authorizeExecution(good.evidence, { tenantId: "TV14", contractSha: "deadbeef" }).authorized === false);
+
+  // (6) ABSENT/MALFORMED proof ⇒ fail-closed REFUSED.
+  ok("V14 absent/malformed proof ⇒ fail-closed NOT authorized", H.authorizeExecution(null, expect).authorized === false && H.authorizeExecution({}, expect).authorized === false);
+
+  // (7) MISSING expected context (no tenant / no contractSha) ⇒ fail-closed REFUSED (no caller-trusted defaults).
+  ok("V14 missing expected tenant/contract ⇒ fail-closed", H.authorizeExecution(good.evidence, { contractSha: sha }).authorized === false && H.authorizeExecution(good.evidence, { tenantId: "TV14" }).authorized === false);
+
+  // (8) WRONG execId binding ⇒ REFUSED (foreign/replayed evidence).
+  ok("V14 execId binding mismatch ⇒ NOT authorized", H.authorizeExecution(good.evidence, { ...expect, execId: "not-the-execId" }).authorized === false);
+
+  // (9) DENIED-AUTH bundle (replay ⇒ AUTH_DENIED, executed:false, no authBound) ⇒ REFUSED ⇒ no exec.
+  const authR = mkAuth(); const dr1 = spy(); dr1.auth = authR; H.runStep(p, C, S0, dr1);
+  const dr2 = spy(); dr2.auth = authR; const replay = H.runStep(p, C, S0, dr2); // nonce consumed ⇒ AUTH_DENIED
+  const beforeR = downstream.length;
+  const azR = invoke(replay.evidence, expect);
+  ok("V14 replayed/denied auth ⇒ executed:false ⇒ NOT authorized ⇒ no exec", replay.outcome === "AUTH_DENIED" && replay.executed === false && azR.authorized === false && downstream.length === beforeR);
+
+  // (10) NO FALSE SUCCESS: across every refused case, downstream executed EXACTLY once (only the valid path).
+  ok("V14 execution spy: exactly ONE execution across all cases (only the authorized one)", downstream.length === 1);
+}
+
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);

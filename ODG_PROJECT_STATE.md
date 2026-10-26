@@ -4290,3 +4290,44 @@ unchanged; foreign docs/ + 5 stashes preserved.
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/third-party-agent-gate.test.ts && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 lot candidate: a harness-only entrypoint wrapper that makes the authenticated path the default export (optional).
 BLOCKED/EXTERNAL (CTO/infra): production multi-tenant, real agent, KMS/HSM, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (y) — V14: authenticated EXECUTION boundary (authorizeExecution) €0
+CTO V14. Truth Lock entry 3b38b8d≡origin/main, clean, 5 stashes. No new primitive; harness-only. Diff = 2 files + register.
+
+**§2 audit (read-only):** the ONLY path invoking an agent executor is `agent-governance-harness.runStep:121`
+(`deps.executor`); the two `src/runtime/*adapter` executors are the capability-executor, a different seam. runStep
+already enforces auth + contract/tenant binding (V9/V12) BEFORE calling the executor. BUT the sealed evidence bundle
+carried no signal that admission was AUTHENTICATED, and there was no re-verifiable boundary a downstream/external
+executor-invoker could consult at exec time ⇒ the harness was a CONVENTION, not an enforced execution frontier.
+
+**Reproduced gap:** a NO-AUTH policy ADMIT seals `{verdict:ADMIT, executed:true}` with `verifyEvidenceBundle().ok ===
+true` and NO authBound/contractSha ⇒ a naive invoker keying off that would EXECUTE unauthenticated (scratchpad repro).
+
+**Fix (bounded, fail-closed):** (1) the sealed bundle + step result now carry `authBound` (true ONLY when the
+authenticated + contract/tenant-bound pre-gate path fully passed — authedTenant is set solely after verifyAuth.ok +
+both bind checks) and `contractSha`. (2) new exported `authorizeExecution(evidence, expected)` = the SOLE sanctioned,
+re-verifiable execution boundary: re-runs verifyEvidenceBundle (provenance tamper + execId/tenant binding), requires an
+authorizing verdict + executed, requires `authBound===true`, and binds the SEALED contractSha/tenant/agent to the
+caller's EXACT expected context. It does NOT trust a bare bool, a caller tenantId, or an isolated ADMIT. (3) relaxed
+verifyEvidenceBundle order check to accept an AUTH-first chain (authenticated path) and to require GATE whenever executed.
+
+**Proof:** harness 42→55 (+13 V14, incl. an EXTERNAL-invoker + execution SPY): valid authenticated path AUTHORIZES +
+executes exactly once; bare/unauthenticated ADMIT, tampered, cross-tenant, wrong-contract, missing-context, wrong-execId,
+replayed/denied-auth ⇒ all REFUSED and the spy proves ZERO exec after every refusal. gate 51/51 + identity 22/22
+unchanged (dependent). full gate 63/63; tsc 0; build 0.
+
+**Status:** PROVEN (TEST) = no execution via the sanctioned boundary unless a sealed, authenticated, contract/tenant-
+bound admission re-verifies at exec time; no-false-success + no-exec-after-refusal proven by spy. PARTIAL = a caller
+can still invoke `deps.executor` DIRECTLY outside the harness (injection seam) — the sanctioned boundary is
+`authorizeExecution`; we make bypass self-evident, not physically impossible (documented, like V13). EXTERNAL/BLOCKED
+(not claimed) = production authN/isolation, real agent, KMS/HSM, certification.
+
+**Learning reuse (proven):** reused provenance-sealed evidence + independent verifier (V7/V8/V11), authBound derived
+from the V9/V12 auth path, "token/flag ≠ proof" (V9/V13), reproduce-before-fix. Decided AGAINST wiring authorizeExecution
+circularly into runStep's own exec (bundle seals post-exec) — two honest layers instead. 9 primitives + router + executors
+unchanged; 5 stashes + foreign docs preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 candidate: a harness `runStepAndAuthorize` convenience that returns the authorizeExecution verdict alongside
+the step (optional). BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, cert.
