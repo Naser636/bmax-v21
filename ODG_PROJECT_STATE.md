@@ -3586,3 +3586,39 @@ partition, parseWorkers clamp, runSuitesParallel≡runSuites via injected runner
 (auto-clamped to runner cores). Gates: root tsc 0, build:runtime 0 (100-closure), unit 38/38, test:report 59/59
 both modes. No new infra (no Docker/RAMFS/remote cache — none justified by the profile). NEXT candidates: parallelize
 the 20-suite serial floor via per-suite repo isolation; affected-test selector for per-lot gates; CI cross-run cache.
+
+---
+## CHECKPOINT 2026-10-26 (d) — CONTINUATION ODG: both tracks reconciled to live evidence; reboot-drill runbook prepared
+Mandate "WORLD-CLASS + HYPER-SPEED + DASHBOARD/RUNTIME + AUTONOMOUS ENGINEERING OS V2" integrated non-disruptively;
+no active mission interrupted, no 2nd orchestrator, 9 primitives + single ROADMAP preserved. Truth-lock entry
+HEAD `6275c0e` ≡ origin/main; tracked tree clean; 4 foreign docs/ dirs preserved.
+
+**CHANTIER B (V2) — reconciled to evidence; NO closed lot reopened.** The mandate framed V2-C1 as "the next lot";
+evidence invalidates that premise: **V2 Phase-A is COMPLETE+VERIFIED** — H1·C1·J1·B1·F1·G2·I1 all closed with tests
+(ODG_AUTONOMOUS_ENGINEERING_OS_V2_PHASE_A_MATRIX.md §PHASE-A ALL COMPLETE). Re-verified by EVIDENCE (not replay): a
+6-suite acceptance subset — capability-contracts, present-state-reconciliation, learning-effective-ab,
+autonomy-eval-harness, validation-engine-recorded-noop, patch-memory — ran **6/6 PASS** through the new parallel
+gate. Autonomy scorer re-run: odg-autonomy-benchmark v1.0 deterministic 25% (2 verified/8), categories honest
+(excludes unverified/external/blocked/human/not-executed) — the anti-false-success contract holds. No un-blocked V2
+lot remains to chain; CTO-paused (L7/TS-only) + host/provider-blocked (A3, LIVE-autonomy, code-gen provider) stay
+classified, not reopened.
+
+**CHANTIER A (dashboard/runtime/supervision) — LIVE state == documented DONE state.** Non-privileged checks:
+`odg-preprod.service` active+enabled (MainPID 30367 since 2026-10-24); dashboard `/api/health`=200, `/`=200 on
+127.0.0.1:3000; `runtime-identity-check` LIVE = **CONSISTENT** (served build == active release `hbTMmAnqzN1Ei07fXdlPG`).
+No identity/release/health/crash-restart écart to treat (crash-restart already proven in the 10-20 window). **Sole
+residual = host-REBOOT drill (host-blocked).** Boot-persistence VERIFIED by config (`WantedBy=multi-user.target`,
+UnitFileState=enabled, `OnFailure=odg-recover.service`, `Restart=on-failure`/`RestartSec=3`). Delivered the
+**prepared, executable runbook** docs/odg-operational/ODG_HOST_REBOOT_DRILL_RUNBOOK.md (pre-capture, drill,
+post-verify, 5 PASS criteria, rollback, evidence-to-persist) — NOT RUN (needs a maintenance window + sudo/host
+authority = human-gated). Not claimed passed.
+
+**HYPER-SPEED:** gain from optimization #1 (parallel test gate, −48%, merged PR#9) preserved + dog-fooded here
+(6/6 subset via ODG_TEST_WORKERS=6). CI balanced ~64s. #2 candidates logged (CI tsc cross-run cache = small/safe;
+serial-floor reclaim = higher gain, false-green risk ⇒ needs identical-classification proof) — not executed on
+gain/risk now; affected-tests.ts stays unwired (no transitive closure). **Replicate: financial gate CLOSED** — token
+present but NO spend/call/adapter until explicit CTO "token set" (§4).
+
+**Executable-objective frontier reached:** realizable+authorized objectives are DONE (V2 Phase A, Chantier A health)
+or BLOCKED (reboot=host window+sudo; Replicate=human; A3/LIVE/provider=host/provider; L7/TS-only=CTO-paused). Each
+block recorded with owner + required authorization. No global closure claimed while these gates remain open.
