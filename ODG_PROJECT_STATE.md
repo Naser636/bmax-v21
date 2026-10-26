@@ -3622,3 +3622,32 @@ present but NO spend/call/adapter until explicit CTO "token set" (§4).
 **Executable-objective frontier reached:** realizable+authorized objectives are DONE (V2 Phase A, Chantier A health)
 or BLOCKED (reboot=host window+sudo; Replicate=human; A3/LIVE/provider=host/provider; L7/TS-only=CTO-paused). Each
 block recorded with owner + required authorization. No global closure claimed while these gates remain open.
+
+---
+## CHECKPOINT 2026-10-26 (e) — REPLICATE FINANCIAL GATE OPENED (CTO "token set") — FIRST REAL PAID BENCHMARK, 6/6, within limits
+CTO explicitly lifted the Replicate block ("token set") + confirmed a **dashboard hard spend limit is set** (account-side
+guarantee against card overage). Preconditions verified BEFORE any paid call: credential present+valid (account
+naser636, value never printed); egress OK; **guards green — credential-safety 12/12, benchmark-authz 21/21,
+production-runner 41/41**; ReplicateAdapter test 43/43. API-finding: Replicate exposes NO billing/credit/pricing
+endpoint (verified 404s + model metadata has no price field) — balance/billing-mode NOT API-verifiable, so the CTO's
+dashboard limit + a LOCAL €4 hard ledger cap (pre-call worst-case reservation, settle-worst-case on success, RELEASE=€0
+on failure, ≤8/shot, fail-closed) are the layered financial protection.
+
+**REAL PAID RESULT (honest, verifiable) — ODG executed end-to-end:** two lots via the foreign (untracked, preserved)
+`docs/film-factory/pipeline` toolkit. Lot 1 (`benchmark-orchestrator-f10 --real --paid --cto-bounded-authorized`):
+4/6 SUCCEEDED (SC22 video €0.50, SC43 voice €0.10, SC39 video €0.50, SC48 image €0.03 = €1.13), each with a real
+prediction ID + sha256 + measured duration + mechanical-usability; 2 FAILED on a minimax provider-transient (Error
+1033), correctly €0 (reservation released). Lot 2 — ODG wrote a minimal targeted `retry-failed-benchmark.mjs` (reuses
+the proven adapter + the SAME €4 ledger; retries ONLY the 2 failed shots, never re-charging the 4 successes —
+"pas de multiplication artificielle"): **both recovered** (SC40 €0.50 5.64s usable, SC01-video €0.50 5.64s usable).
+**Final: 6/6 benchmark shots = real valid usable media** (`file` verified: ISO-MP4 ×4, ID3 MP3, WebP). **Cumulative
+real spend €2.16, remaining €1.84, €4 ceiling never approached, attempts 9/9, dashboard limit holds, no secret
+leaked.** Numerator not forced, no fabricated artifact (independent `file`/sha/duration verification).
+
+**Honesty notes:** prior €0.03 "canary" (SC01-still.webp) kept as conservative seed (artifact exists; code asserts a
+real non-free charge) — only reduces headroom, cannot overspend. Stale SC40/SC01-video .mp4 predated this ledger
+(now overwritten by the real retry outputs). **UNPROVEN (not claimed):** artistic quality, human 7.5/10, 60-min
+assembled export — single prototype shots only. **Continuation held:** benchmark objective ACHIEVED; spending the
+€1.84 remainder on more shots adds no proportional proof (§4/§5 "results no longer justify the spend"); a model-
+comparison lot (distinct objective) remains available on CTO direction (needs attempt-cap raise + comparison design).
+Mandatory-stop conditions all respected; guards remain green; foreign pipeline + its artifacts preserved untracked.
