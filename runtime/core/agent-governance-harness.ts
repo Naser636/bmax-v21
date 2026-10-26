@@ -15,6 +15,7 @@
 import crypto from "node:crypto";
 const gate: any = require("./third-party-agent-gate");
 const prov: any = require("./evidence-provenance");
+const identity: any = require("./agent-identity");
 
 const sha256 = (s: string) => crypto.createHash("sha256").update(s).digest("hex");
 const ORDER = ["GATE", "EXEC", "VERIFY"]; // the only valid admitted-path transition prefix
@@ -38,7 +39,22 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
   const s = state && typeof state === "object" ? state : { calls: 0, elapsedMs: 0 };
   const stamp = (phase: string, data: any) => trace.push({ phase, sha256: sha256(JSON.stringify({ phase, data })), data });
 
-  const verdict = gate.evaluateAgentAction(proposal, contract, s);          // admission ALWAYS via the gate
+  // V9 — PRE-GATE cryptographic identity + session/contract binding. Identity ≠ permission: auth only AUTHENTICATES;
+  // a failure here means NO gate call and NO execution. requireAuth with no auth ⇒ fail-closed.
+  const authCfg = (deps as any).auth;
+  if (authCfg || (deps as any).requireAuth) {
+    const proposalSha256 = sha256(JSON.stringify({ a: proposal && proposal.agentId, t: proposal && proposal.tool, tp: proposal && proposal.targetPaths }));
+    if (!authCfg) { stamp("AUTH", { ok: false, reason: "authentication required but none presented" }); stamp("OUTCOME", { outcome: "AUTH_DENIED", executed: false });
+      return Object.freeze({ outcome: "AUTH_DENIED", executed: false, gateVerdict: null, execId: null, evidence: prov.stampProvenance({ phase: "AUTH", verdict: "AUTH_DENIED", executed: false, proposalSha256, order: ["AUTH", "OUTCOME"] }, { revision: (deps as any).revision }), trace, state: { ...s, history: [...(Array.isArray(s.history) ? s.history : [])] } });
+    }
+    const ares = identity.verifyAuth(authCfg.registry, { challenge: authCfg.challenge, signature: authCfg.signature, presentedPublicKeyPem: authCfg.presentedPublicKeyPem });
+    stamp("AUTH", { ok: ares.ok, reason: ares.reason });                    // NEVER contains keys/secrets
+    if (!ares.ok) { stamp("OUTCOME", { outcome: "AUTH_DENIED", executed: false });
+      return Object.freeze({ outcome: "AUTH_DENIED", executed: false, gateVerdict: null, execId: null, authReason: ares.reason, evidence: prov.stampProvenance({ phase: "AUTH", verdict: "AUTH_DENIED", executed: false, proposalSha256, order: ["AUTH", "OUTCOME"] }, { revision: (deps as any).revision }), trace, state: { ...s, history: [...(Array.isArray(s.history) ? s.history : [])] } });
+    }
+  }
+
+  const verdict = gate.evaluateAgentAction(proposal, contract, s);          // admission ALWAYS via the gate (post-auth)
   stamp("GATE", { verdict: verdict.verdict, controlsFailed: verdict.controlsFailed, record: verdict.record });
   // deterministic execution id (no clock): binds this step's proposal to its evidence + prevents cross-exec reuse.
   const execId = sha256(`${verdict.record.proposalSha256}:${s.calls}:${(contract && contract.agentId) || ""}`);
