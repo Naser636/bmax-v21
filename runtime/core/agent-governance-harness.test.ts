@@ -409,4 +409,63 @@ ok("V11 bundle carries the tenant it was sealed under", sA.evidence.tenantId ===
   ok("V16 empty sequence ⇒ completed, zero steps", s9.completed === true && s9.ranCount === 0 && s9.stopped === false);
 }
 
+// ═════════ V17 — SEQUENCE-LEVEL GOVERNED EXECUTOR (governedExecution wired into runStep/runSequence) ═════════
+// Each step's raw executor is invoked ONLY through createGovernedExecutor (V15), gated by a context-bound
+// authorization — the encapsulation is now exercised IN the control path, not just tested in isolation.
+{
+  const r = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
+  ID.register(r, { tenantId: "TV17", agentId: "agent-x", publicKeyPem: k.publicKey.export({ type: "spki", format: "pem" }) });
+  const C = { agentId: "agent-x", tenantId: "TV17", objective: "gseq", allowedTools: ["read_file"], authorizedScope: ["reports"], limits: { maxCalls: 9, maxDurationMs: 600000 } };
+  const sha = H.contractShaOf(C);
+  ID.openSession(r, { sessionId: "SA", tenantId: "TV17", agentId: "agent-x", contractSha: sha });
+  const mkAuth = () => { const c = ID.issueChallenge(r, { tenantId: "TV17", agentId: "agent-x", sessionId: "SA", contractSha: sha }); return { registry: r, challenge: c, signature: crypto2.sign(null, Buffer.from(ID.canon(c)), k.privateKey).toString("base64") }; };
+  const C2 = { ...C, objective: "OTHER" }; const sha2 = H.contractShaOf(C2);
+  ID.openSession(r, { sessionId: "SB", tenantId: "TV17", agentId: "agent-x", contractSha: sha2 });
+  const mkAuthB = () => { const c = ID.issueChallenge(r, { tenantId: "TV17", agentId: "agent-x", sessionId: "SB", contractSha: sha2 }); return { registry: r, challenge: c, signature: crypto2.sign(null, Buffer.from(ID.canon(c)), k.privateKey).toString("base64") }; };
+  const p = { agentId: "agent-x", authToken: "t", tool: "read_file", params: { path: "reports/a.md" }, targetPaths: ["reports/a.md"] };
+  const gdeps = (authForStep) => { const raw = []; const d = { raw, revision: { commit: "t", treeDirty: false, available: true }, governedExecution: true, executor: (x) => { raw.push(x && x.tool); return { ok: true }; }, verifier: () => ({ verified: true, reason: "x" }) }; if (authForStep) d.authForStep = authForStep; return d; };
+
+  // (1) governed + authenticated single step ⇒ executes ONCE via the governed boundary (EXEC stamp governed:true).
+  const d1 = gdeps(); d1.auth = mkAuth();
+  const s1 = H.runStep(p, C, S0, d1);
+  ok("V17 governed + authenticated step ⇒ executes via boundary (raw once)", s1.outcome === "ADMITTED_VERIFIED" && s1.authBound === true && d1.raw.length === 1 && s1.trace.some(t => t.phase === "EXEC" && t.data && t.data.governed === true));
+
+  // (2) governed + UNAUTHENTICATED ADMIT ⇒ EXECUTION_DENIED, raw NEVER called.
+  const d2 = gdeps();
+  const s2 = H.runStep(p, C, S0, d2);
+  ok("V17 governed + unauthenticated ADMIT ⇒ EXECUTION_DENIED, raw zero", s2.outcome === "EXECUTION_DENIED" && s2.executed === false && d2.raw.length === 0);
+
+  // (3) governed SEQUENCE, per-step fresh auth ⇒ each step authorized separately, all execute via boundary.
+  const d3 = gdeps((i) => mkAuth());
+  const q3 = H.runSequence([p, p, p], C, S0, d3);
+  ok("V17 governed 3-step sequence ⇒ completed, raw==3 (one governed exec per step)", q3.completed === true && q3.ranCount === 3 && d3.raw.length === 3 && q3.steps.every(x => x.outcome === "ADMITTED_VERIFIED"));
+
+  // (4) governed sequence: step-1 proof REPLAYED for step-2 ⇒ AUTH_DENIED halt, raw stops at 1.
+  const shared = mkAuth(); const d4 = gdeps(() => shared);
+  const q4 = H.runSequence([p, p, p], C, S0, d4);
+  ok("V17 governed seq replayed proof ⇒ AUTH_DENIED halt @1, raw==1", q4.stopped === true && q4.stoppedAt === 1 && q4.stopReason === "AUTH_DENIED" && d4.raw.length === 1);
+
+  // (5) governed sequence: contract changed between steps ⇒ CONTRACT_MISMATCH halt, raw==1.
+  const d5 = gdeps((i) => (i === 1 ? mkAuthB() : mkAuth()));
+  const q5 = H.runSequence([p, p, p], C, S0, d5);
+  ok("V17 governed seq contract change ⇒ CONTRACT_MISMATCH halt @1, raw==1", q5.stopped === true && q5.stoppedAt === 1 && q5.stopReason === "CONTRACT_MISMATCH" && d5.raw.length === 1);
+
+  // (6) governed sequence: INVALID proof (bad signature) at step-2 ⇒ AUTH_DENIED halt, later steps zero exec.
+  const d6 = gdeps((i) => { const a = mkAuth(); if (i === 1) a.signature = "AAAA"; return a; });
+  const q6 = H.runSequence([p, p, p], C, S0, d6);
+  ok("V17 governed seq invalid proof mid-sequence ⇒ halt @1, raw==1 (step-3 never runs)", q6.stopped === true && q6.stoppedAt === 1 && q6.steps[1].outcome === "AUTH_DENIED" && d6.raw.length === 1);
+
+  // (7) the governed handle is internal: step/sequence results expose no raw executor / handle reference.
+  ok("V17 governed result exposes no raw executor/handle reference", !("executor" in s1) && !("handle" in s1) && !("executor" in q3) && !("handle" in q3));
+
+  // (8) resume after a correction with FRESH valid auth ⇒ executes via boundary (no unauthorized exec).
+  const d8 = gdeps((i) => mkAuth());
+  const q8 = H.runSequence([p], C, q6.finalState, d8);
+  ok("V17 governed resume after failure (re-authorized) ⇒ executes via boundary", q8.completed === true && d8.raw.length === 1);
+
+  // (9) NON-REGRESSION: without governedExecution the direct authenticated path still executes.
+  const d9 = { revision: { commit: "t", treeDirty: false, available: true }, executor: () => ({ ok: true }), verifier: () => ({ verified: true, reason: "x" }), auth: mkAuth() };
+  ok("V17 no regression: non-governed authenticated step still executes directly", H.runStep(p, C, S0, d9).outcome === "ADMITTED_VERIFIED");
+}
+
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);
