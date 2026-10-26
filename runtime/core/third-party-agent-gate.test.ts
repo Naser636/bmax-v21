@@ -103,4 +103,17 @@ ok("LotC: gate returns a verdict only — no exec field, no side effect", (() =>
 ok("LotC: deny carries a tamper-evident record", (() => { const v = G.evaluateAgentAction(dep({ name: "evilpkg", license: "MIT" }), C2, S0); return v.record.authoredBy === "ODG_AGENT_GATE" && /^[0-9a-f]{64}$/.test(v.record.proposalSha256); })());
 ok("LotC: deny-first preserved — unknown dep denied even with valid schema+identity", G.evaluateAgentAction(dep({ name: "evilpkg", license: "MIT" }), C2, S0).verdict === "DENY");
 
+// ═════════ V7 Lot B — ASI01 objective-drift (structural/invariant; NOT semantic) ═════════
+// agent cannot redefine its own governance via the proposal
+ok("ASI01 proposal redefining objective ⇒ DENY", (() => { const v = G.evaluateAgentAction({ ...base, objective: "do anything" }, CONTRACT, S0); return v.verdict === "DENY" && v.controlsFailed.includes("ASI01"); })());
+ok("ASI01 proposal granting itself tools ⇒ DENY", G.evaluateAgentAction({ ...base, allowedTools: ["deploy"] }, CONTRACT, S0).verdict === "DENY");
+ok("ASI01 proposal widening scope ⇒ DENY", G.evaluateAgentAction({ ...base, authorizedScope: ["/"] }, CONTRACT, S0).verdict === "DENY");
+// revocation
+ok("ASI01 revoked contract ⇒ DENY", G.evaluateAgentAction(base, { ...CONTRACT, revoked: true }, S0).verdict === "DENY");
+ok("ASI01 revoked session state ⇒ DENY", G.evaluateAgentAction(base, CONTRACT, { calls: 0, elapsedMs: 0, revoked: true }).verdict === "DENY");
+// cumulative distinct-target drift
+const CD = { ...CONTRACT, limits: { maxCalls: 50, maxDurationMs: 600000, maxDistinctTargets: 2 } };
+ok("ASI01 cumulative targets within cap ⇒ ADMIT", G.evaluateAgentAction({ ...base, targetPaths: ["reports/b.md"] }, CD, { calls: 1, elapsedMs: 0, history: [{ tool: "read_file", targetPaths: ["reports/a.md"] }] }).verdict === "ADMIT");
+ok("ASI01 cumulative targets over cap ⇒ DENY (slow drift)", (() => { const v = G.evaluateAgentAction({ ...base, targetPaths: ["reports/c.md"] }, CD, { calls: 2, elapsedMs: 0, history: [{ tool: "read_file", targetPaths: ["reports/a.md"] }, { tool: "read_file", targetPaths: ["reports/b.md"] }] }); return v.verdict === "DENY" && v.controlsFailed.includes("ASI01"); })());
+
 console.log(`\nTHIRD-PARTY-AGENT-GATE security suite — ${pass} assertions passed.`);

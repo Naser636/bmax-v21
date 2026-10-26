@@ -9,7 +9,11 @@
  * EXECUTES nothing; ODG's existing EXECUTOR/action-gate/bash-command-governor remain the sole enforcers.
  *
  * Controls are mapped to OWASP Top 10 for Agentic Applications 2026 (pub. 2025-12-09, consulted 2026-10-26):
- *   ASI01 Goal Hijack      → action must be within the authorized objective's allowed-tool allowlist (least agency)
+ *   ASI01 Goal Hijack/Drift→ allowlist (least agency) + STRUCTURAL drift controls: reject agent-supplied governance
+ *                            mutations (contract/identity/permissions are never agent-writable), honor revocation,
+ *                            and cap cumulative distinct targets (slow-drift). This is INVARIANT-based, NOT semantic
+ *                            intent understanding — a structurally-valid-but-semantically-off action is NOT caught
+ *                            here (consequential ones route to the human gate). No external model, no network.
  *   ASI02 Tool Misuse      → tool allowlist + parameter/shape validation
  *   ASI03 Identity/Privilege→ agentId match + auth presence + targetPaths within authorized scope (no escalation)
  *   ASI04 Supply Chain     → (hook) dependency/license references route to license-policy (caller-supplied)
@@ -31,12 +35,15 @@ export interface AgentActionProposal {
 }
 export interface AgentContract {
   agentId: string; objective: string; allowedTools: string[]; authorizedScope: string[];
-  limits: { maxCalls: number; maxDurationMs: number }; requireHumanFor?: string[];
+  limits: { maxCalls: number; maxDurationMs: number; maxDistinctTargets?: number }; requireHumanFor?: string[];
   paramSchemas?: Record<string, any>;                 // ASI02: per-tool versioned schema (optional)
   allowedDependencies?: string[];                     // ASI04: dependency allowlist (deny-by-default)
   supplyChainTarget?: string;                         // license-policy target (default commercial-closed)
+  revoked?: boolean;                                  // ASI01: contract revoked ⇒ deny everything
 }
-export interface GateState { calls: number; elapsedMs: number }
+// ASI01: agent-supplied top-level fields that would attempt to redefine governance are NEVER authorization.
+const GOVERNANCE_MUTATION_FIELDS = ["objective", "contract", "permissions", "authorizedScope", "allowedTools", "limits", "grant", "elevate", "requireHumanFor", "allowedDependencies"];
+export interface GateState { calls: number; elapsedMs: number; revoked?: boolean; history?: Array<{ tool?: string; targetPaths?: string[] }> }
 export interface GateVerdict {
   verdict: "ADMIT" | "DENY" | "ESCALATE";
   reasons: string[]; controlsFailed: string[]; evidenceTrusted: false;
@@ -146,6 +153,16 @@ function evaluateAgentAction(proposal: AgentActionProposal, contract: AgentContr
   // ASI08/ASI10 — hard budget (circuit-break)
   if (!(s.calls < c.limits.maxCalls)) { reasons.push(`call budget exhausted (${s.calls}/${c.limits.maxCalls}) — circuit-break`); failed.push("ASI10"); }
   if (!(s.elapsedMs < c.limits.maxDurationMs)) { reasons.push(`time budget exhausted (${s.elapsedMs}/${c.limits.maxDurationMs}ms)`); failed.push("ASI08"); }
+  // ASI01 — objective drift (STRUCTURAL/invariant-based; NOT semantic intent understanding — see header)
+  if (c.revoked === true || s.revoked === true) { reasons.push("contract/session revoked — no further action admitted"); failed.push("ASI01"); }
+  const mutated = GOVERNANCE_MUTATION_FIELDS.filter((f) => Object.prototype.hasOwnProperty.call(p, f));
+  if (mutated.length) { reasons.push(`agent proposal attempts to redefine governance (${mutated.join(",")}) — untrusted content is NEVER authorization; the agent cannot change its own contract/identity/permissions`); failed.push("ASI01"); }
+  if (typeof c.limits.maxDistinctTargets === "number") {
+    const seen = new Set<string>();
+    for (const h of (Array.isArray(s.history) ? s.history : [])) for (const tp of (h && Array.isArray(h.targetPaths) ? h.targetPaths : [])) seen.add(tp);
+    for (const tp of paths) seen.add(tp);
+    if (seen.size > c.limits.maxDistinctTargets) { reasons.push(`cumulative distinct targets ${seen.size} > ${c.limits.maxDistinctTargets} — combined effect exits mission scope (slow drift)`); failed.push("ASI01"); }
+  }
   // ASI06 — evidence is recorded, NEVER trusted for the verdict (no-false-success)
   if (p.claimedEvidence != null) reasons.push("agent-claimed evidence recorded but NOT trusted (independent verification required downstream)");
   // ASI02 — per-tool parameter schema (only when the contract declares one for this tool; deny-first on allowlist above)

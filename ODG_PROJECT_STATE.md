@@ -4038,3 +4038,41 @@ deny-by-default doctrine reused again. 9 primitives + capability-router unchange
 
 **Next lot:** ASI01 semantic goal-drift detection within allowed tools (harder, may need a policy signal) OR wire the
 gate behind a real (simulated) agent-runtime harness for end-to-end traces. Resume: `tsx runtime/core/third-party-agent-gate.test.ts`.
+
+---
+## CHECKPOINT 2026-10-26 (r) — V7: agent governance E2E harness + ASI01 objective-drift (€0, hermetic)
+CTO V7. Truth Lock entry 5903f76≡origin/main, clean, 5 stashes preserved. No new primitive/orchestrator; reuses the
+gate + injected executor/verifier; no network, no real agent, no exposure.
+
+**Lot B — ASI01 objective drift (STRUCTURAL/invariant, NOT semantic — honestly scoped):** extended the gate:
+(1) reject any agent proposal that supplies governance-mutation fields (objective/contract/permissions/scope/
+allowedTools/limits/grant/elevate/requireHumanFor/allowedDependencies) — the agent can NEVER rewrite its own
+contract/identity/permissions; (2) honor revocation (contract.revoked or state.revoked ⇒ DENY all); (3) cap
+cumulative distinct targets across history (slow-drift ⇒ DENY). Explicitly NOT semantic intent understanding; a
+structurally-valid-but-off action routes to the human gate. No external model.
+
+**Lot A — hermetic E2E harness** `runtime/core/agent-governance-harness.ts`: a thin sequencer (NO execution
+authority) — admission ALWAYS via the gate; execute only after ADMIT (or ESCALATE→approve) via an INJECTED executor
+(stands in for ODG's real EXECUTOR); the executor's result is UNTRUSTED; success ONLY on INDEPENDENT verification;
+error/timeout ⇒ ERROR_RECOVERED (no false success); history threads across steps for cumulative drift; every
+transition sha-stamped+traceable.
+
+**Lot C — adversarial E2E (11 assertions, SPY executor):** ADMIT→exec→VERIFIED; DENY⇒executor NEVER called;
+ESCALATE+reject⇒no exec; ESCALATE+approve⇒exec+verify; falsified/absent result⇒ADMITTED_UNVERIFIED (no false
+success); executor throw⇒ERROR_RECOVERED; injection/governance-mutation⇒DENIED+no exec; cumulative drift (4 targets
+vs cap 3)⇒4th DENIED, executor called only 3×; every step has GATE+OUTCOME trace (no bypass); ADMIT≠success.
+
+**Lot D — validation:** gate suite 37→44 (+7 ASI01); harness e2e 11/11; both wired into test:report (61→62 PASS);
+root tsc 0; build:runtime 0; diff limited to 4 files (+package.json).
+
+**Proven vs simulated vs partial vs unknown:** PROVEN = the governance CHAIN (admission/exec-gating/independent-
+verification/no-false-success/drift/revocation/recovery) under a SIMULATED agent+executor, hermetic. SIMULATED =
+the agent + executor + human decision (injected). PARTIAL = ASI01 is structural, not semantic. UNKNOWN/EXTERNAL =
+real-agent compatibility, crypto agent authN, multi-tenant, certification. **No claim of full-agent compatibility,
+complete security, certification or regulatory conformity on the basis of a simulated harness.**
+
+**Learning reuse (proven):** no-false-success / deny-by-default / independent-verification doctrine reused end-to-end;
+license-policy + supply-chain-attest (V6) still wired. 9 primitives + capability-router + executors unchanged.
+
+**Next lot:** ASI01 semantic-intent signal would require a policy/model input (out of €0 scope) — defer; OR broaden
+the harness verifier to consume real evidence-provenance artifacts. Resume: `tsx runtime/core/agent-governance-harness.test.ts`.
