@@ -4331,3 +4331,48 @@ unchanged; 5 stashes + foreign docs preserved.
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 candidate: a harness `runStepAndAuthorize` convenience that returns the authorizeExecution verdict alongside
 the step (optional). BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, cert.
+
+---
+## CHECKPOINT 2026-10-26 (z) — V15: executor encapsulation boundary (createGovernedExecutor) €0
+CTO V15. Truth Lock entry cabf5a3≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive;
+harness-only. Diff = 2 files + register.
+
+**§2 audit (read-only):** the ONLY agent-executor call remains runStep:127 (`deps.executor`); the harness is consumed
+only by its own test (capability module, no prod consumer); the two src/runtime adapters are the ODG capability
+executor (different seam, NOT in scope — not expanded). Confirmed bypass = the V14 PARTIAL: no ENCAPSULATED, sanctioned
+execution surface exists, so a consumer holding a raw executor can call it directly with ZERO authorization.
+
+**Reproduced:** rawExecutor() called directly ⇒ executes, no authorization; `typeof createGovernedExecutor ===
+"undefined"` (no governed alternative). (scratchpad v15-repro)
+
+**Fix (bounded, evidence-based):** new exported `createGovernedExecutor(rawExecutor)` ⇒ frozen handle exposing ONLY
+{execute, stats}. The raw executor is captured in the CLOSURE and is NOT a property of the handle ⇒ given only the
+handle there is no path to invoke it without an authorization that `authorizeExecution` (V14) accepts. `execute(
+proposal, {evidence}, expected)` re-verifies and refuses (NO raw call) on any failure. This is a RUNTIME guarantee via
+lexical scope — explicitly NOT claimed as a TS-type or convention guarantee (§3). Gate pure (V13), 9 primitives,
+runStep internal gated path, and all controls unchanged.
+
+**Proof:** harness 55→66 (+11 V15) with a RAW-invocation spy: valid authorization ⇒ raw once; absent/tampered/
+cross-tenant/wrong-contract/missing-context/wrong-execId/unauthenticated-ADMIT ⇒ all refused + raw spy ZERO; handle
+keys === {execute,stats} + frozen + raw unreachable; refusal short-circuits BEFORE raw (throwing raw never reached);
+non-function ctor input throws; runStep internal path unregressed; stats executions===1. gate 51/51 + identity 22/22
+unchanged. full gate 63/63; tsc 0; build 0. Fix re-confirmed in scratchpad (executed:false, raw invoked 0, raw
+unreachable).
+
+**Status:** PROVEN (TEST, module-controlled) = no execution via the governed handle without a verified context-bound
+authorization; raw executor unreachable from the handle. PARTIAL / OUT-OF-CONTROL (documented, not fabricated) = a
+consumer who retains their OWN reference to the raw function can still call it directly — OUTSIDE this module's
+control; the sanctioned pattern hands the consumer ONLY the handle. EXTERNAL/BLOCKED (not claimed) = production authN +
+multi-tenant isolation, real agent, KMS/HSM, certification.
+
+**Separation (§6):** (a) ENFORCED in module-controlled code = runStep gating + createGovernedExecutor encapsulation;
+(b) OUT-OF-CONTROL = a caller's own raw-fn reference / arbitrary direct imports; (c) PROD-VALIDATED isolation/authN =
+NONE (hermetic only); (d) INFRA-BLOCKED = KMS/HSM, real multi-tenant, cert.
+
+**Learning reuse (proven):** reused authorizeExecution (V14) as the boundary predicate, closure-encapsulation pattern,
+reproduce-before-fix, and the no-false-guarantee doctrine (V13/V14 — don't claim a type/convention stops a runtime
+bypass). 9 primitives + router + executors unchanged; 5 stashes + foreign docs preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 candidate: a `runSequence`-level helper returning governed handles per step (optional). BLOCKED/EXTERNAL
+(CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, certification, exposure.
