@@ -4157,3 +4157,32 @@ stashes preserved.
 **Next lot:** verified-key→session store with TTL (needs a clock/identity store) OR a dedicated production
 multi-tenant isolation lot. Resume: `tsx runtime/core/agent-identity.test.ts`. BLOCKED/EXTERNAL (CTO): real agent,
 KMS/HSM, prod multi-tenant, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (u) — V10: identity LIFECYCLE (injected-clock TTL/rotation) + consolidated readiness register
+CTO V10 master closure. Truth Lock entry 5f5fa38≡origin/main, clean, 5 stashes preserved. No new primitive; extends
+agent-identity. Hermetic, €0. One safe lot implemented + a single consolidated register (per §13, not more micro-missions).
+
+**§5 identity lifecycle (TEST scope, honest):** agent-identity gains an INJECTED-clock TTL (openSession issuedAt+ttlMs
+⇒ expiresAt; verifyAuth(now) ⇒ expired/backward-clock/no-time-source all DENY), key ROTATION (old key ⇒ DENY, new ⇒
+ok, keyVersion++), concurrent sessions (closing/expiring one doesn't affect another). **Does NOT claim a production
+clock/TTL — the clock is injected+testable; prod KMS/HSM/real-clock = EXTERNAL.** agent-identity 14→22 (+8). Backward-
+compat: TTL optional ⇒ V9 tests unchanged. gate 63/63; tsc 0; build 0; diff = 2 files + 1 register.
+
+**§13 consolidated readiness register** (docs/odg-operational/ODG_READINESS_REGISTER_V10.md): A-F classified
+PROVEN/SIMULATED/PARTIAL/UNTESTED/EXTERNAL/BLOCKED with evidence. PROVEN (hermetic) = full agent-governance chain
+(identity→binding→admission→supply-chain→exec-gating→independent evidence-bound verify→drift/combinatorial→recovery),
+OWASP-ASI01-10-mapped, gated 63/63; VPS deploy + reboot drill VALIDATED. EXTERNAL/BLOCKED (explicit, not claimed) =
+real external-agent integration, prod KMS/HSM+real-clock TTL, production multi-tenant, independent audit/cert/legal,
+commercial outreach, load/HA/off-host backup.
+
+**§9 opportunities:** C1/C4/V4 preserved; delivery-capability linkage in the register (C1 feasibility-proven/demand
+CTO-gated; C4 strategic partner+capital; premium EU tiers partner-gated).
+
+**Learning reuse (proven):** evidence-provenance + no-false-success + targeted-research method reused across lots;
+method-error detection (sanity runs catching parser/ordering bugs pre-ship) demonstrated repeatedly. 9 primitives +
+capability-router + executors unchanged; foreign docs/ + 5 stashes preserved.
+
+**SINGLE RESUME COMMAND (next safe €0 lot = production multi-tenant isolation design/proto, OR verified-key→session
+store):** `git fetch origin && git checkout main && tsx runtime/core/agent-identity.test.ts && tsx runtime/core/agent-governance-harness.test.ts`
+**BLOCKED/EXTERNAL (CTO/infra):** real agent, KMS/HSM, prod multi-tenant, certification, exposure, commercial action.

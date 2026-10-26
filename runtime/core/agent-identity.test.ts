@@ -78,4 +78,37 @@ ok("presented key != registered ⇒ DENY (no self-rekey)", ID.verifyAuth(reg, { 
 ch = freshCh(); const res = ID.verifyAuth(reg, { challenge: ch, signature: sign(privateKey, ch) });
 ok("verify result contains no private key / PEM material", !/PRIVATE KEY|BEGIN .*KEY/.test(JSON.stringify(res)));
 
+// ═════════ V10 §5 — identity LIFECYCLE: injected-clock TTL, rotation, concurrent sessions ═════════
+{
+  const r = ID.createRegistry(); const kp = keypair();
+  ID.register(r, { tenantId: "T", agentId: "A", publicKeyPem: pem(kp.publicKey) });
+  // session with a TTL: issuedAt=1000, ttl=500 ⇒ expiresAt=1500
+  ID.openSession(r, { sessionId: "S", tenantId: "T", agentId: "A", contractSha: "C1", issuedAt: 1000, ttlMs: 500 });
+  const mk = () => ID.issueChallenge(r, { tenantId: "T", agentId: "A", sessionId: "S", contractSha: "C1" });
+  let c = mk();
+  ok("V10 TTL: within window (now=1200) ⇒ ok", ID.verifyAuth(r, { challenge: c, signature: sign(kp.privateKey, c), now: 1200 }).ok === true);
+  c = mk();
+  ok("V10 TTL: at/after expiry (now=1600) ⇒ DENY (expired)", ID.verifyAuth(r, { challenge: c, signature: sign(kp.privateKey, c), now: 1600 }).ok === false);
+  c = mk();
+  ok("V10 TTL: backward clock (now=800 < issuedAt) ⇒ DENY (inconsistent clock)", ID.verifyAuth(r, { challenge: c, signature: sign(kp.privateKey, c), now: 800 }).ok === false);
+  c = mk();
+  ok("V10 TTL: session has TTL but no time source ⇒ DENY (fail-closed)", ID.verifyAuth(r, { challenge: c, signature: sign(kp.privateKey, c) }).ok === false);
+
+  // ROTATION: after rotate, the OLD key fails, the NEW key verifies
+  const kp2 = keypair();
+  ID.rotateKey(r, { tenantId: "T", agentId: "A", newPublicKeyPem: pem(kp2.publicKey) });
+  c = mk();
+  ok("V10 rotation: OLD key ⇒ DENY after rotation", ID.verifyAuth(r, { challenge: c, signature: sign(kp.privateKey, c), now: 1200 }).ok === false);
+  c = mk();
+  ok("V10 rotation: NEW key ⇒ ok after rotation", ID.verifyAuth(r, { challenge: c, signature: sign(kp2.privateKey, c), now: 1200 }).ok === true);
+
+  // CONCURRENT sessions: two active sessions; expiring/closing one does not affect the other
+  ID.openSession(r, { sessionId: "S2", tenantId: "T", agentId: "A", contractSha: "C1", issuedAt: 1000, ttlMs: 10000 });
+  ID.closeSession(r, "S");
+  const cS2 = ID.issueChallenge(r, { tenantId: "T", agentId: "A", sessionId: "S2", contractSha: "C1" });
+  ok("V10 concurrent: S closed but S2 still authenticates", ID.verifyAuth(r, { challenge: cS2, signature: sign(kp2.privateKey, cS2), now: 2000 }).ok === true);
+  const cSclosed = ID.issueChallenge(r, { tenantId: "T", agentId: "A", sessionId: "S", contractSha: "C1" });
+  ok("V10 concurrent: closed session S ⇒ DENY", ID.verifyAuth(r, { challenge: cSclosed, signature: sign(kp2.privateKey, cSclosed), now: 2000 }).ok === false);
+}
+
 console.log(`\nAGENT-IDENTITY suite — ${pass} assertions passed.`);
