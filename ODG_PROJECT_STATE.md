@@ -4456,3 +4456,42 @@ authBound (V14) + reproduce-before-fix + no-false-guarantee doctrine. 9 primitiv
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 candidate: make governedExecution the DEFAULT for authenticated steps (behaviour-change lot, needs its own
 audit). BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, certification.
+
+---
+## CHECKPOINT 2026-10-26 (ac) — V18: default governed execution for authenticated steps €0
+CTO V18. Truth Lock entry b225ea8≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive;
+in-place condition change. Diff = 2 files + register.
+
+**Gate A audit (read-only):** governedExecution was read only at the opt-in gate; the ONLY non-test caller of runStep
+is runSequence — the harness has NO production/ODG-capability consumer. Path classes: AUTHENTICATED (V9–V17, deps.auth/
+authForStep) vs UNAUTHENTICATED/legacy (V5–V8 + V16 unauth seqs). Gap: an authenticated step WITHOUT the flag still
+called the raw executor DIRECTLY (omission-by-config) — V17 test #9 literally encoded that path. Migration is SAFE:
+for a valid authenticated step the governed path is observably equivalent (ADMITTED_VERIFIED, executed, raw once).
+
+**Reproduced:** authenticated step (authBound=true) without governedExecution ⇒ EXEC stamp governed:false (direct path).
+
+**Gate B fix (minimal):** governed = `authedTenant !== undefined || deps.governedExecution` ⇒ ANY authenticated step
+is governed BY DEFAULT. The UNAUTHENTICATED legacy path is explicitly isolated + stamped `legacyUnauthenticated:true`
+(authBound:false) — it can't masquerade as authenticated and can't open the governed boundary; NO silent fallback to
+direct after a governed refusal/error. ODG internal capability executors untouched (out of scope). Default-OFF opt-in
+flag still honored for the unauth+explicit case (⇒ EXECUTION_DENIED).
+
+**Proof:** harness 84→88 (+4 V18, updated #9): authenticated step/sequence governed with NO flag (EXEC governed:true,
+raw==count); unauthenticated step ⇒ isolated legacy path (legacyUnauthenticated, authBound:false, not governed);
+unauthenticated+flag ⇒ EXECUTION_DENIED raw 0 (no masquerade); governed executor throw ⇒ ERROR_RECOVERED raw once (no
+direct retry). All authenticated V9–V17 tests still green under governed-by-default. gate 51/51 + identity 22/22
+unchanged; full gate 63/63; tsc 0; build 0. Fix re-confirmed in scratchpad (governed:true).
+
+**Status:** PROVEN (TEST) = authenticated ⇒ governed automatically; no direct-executor reach by config omission;
+legacy unauthenticated path isolated+marked, no masquerade, no bypass, no silent fallback. HONEST LIMIT (documented) =
+unauthenticated legacy execution retained by design (hermetic/back-compat); ODG internal executors untouched.
+EXTERNAL/BLOCKED (not claimed) = production authN + multi-tenant isolation, real agent, KMS/HSM, certification.
+
+**Learning reuse (proven):** reused authBound (V14), governed boundary (V15/V17), per-step auth (V16), reproduce-before-
+fix, no-silent-fallback + no-masquerade doctrine. 9 primitives + router + executors unchanged; 5 stashes + foreign docs
+preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 candidate: optionally RETIRE the unauthenticated legacy execution path (behaviour-breaking; needs its own
+audit + migration of V5–V8 tests). BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent,
+KMS/HSM, certification, exposure.

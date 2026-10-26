@@ -463,9 +463,45 @@ ok("V11 bundle carries the tenant it was sealed under", sA.evidence.tenantId ===
   const q8 = H.runSequence([p], C, q6.finalState, d8);
   ok("V17 governed resume after failure (re-authorized) ⇒ executes via boundary", q8.completed === true && d8.raw.length === 1);
 
-  // (9) NON-REGRESSION: without governedExecution the direct authenticated path still executes.
+  // (9) V18 — governed execution is the DEFAULT for an authenticated step EVEN WITHOUT deps.governedExecution.
   const d9 = { revision: { commit: "t", treeDirty: false, available: true }, executor: () => ({ ok: true }), verifier: () => ({ verified: true, reason: "x" }), auth: mkAuth() };
-  ok("V17 no regression: non-governed authenticated step still executes directly", H.runStep(p, C, S0, d9).outcome === "ADMITTED_VERIFIED");
+  const s9 = H.runStep(p, C, S0, d9);
+  ok("V18 authenticated step WITHOUT governedExecution ⇒ still routed through the governed boundary", s9.outcome === "ADMITTED_VERIFIED" && s9.trace.some(t => t.phase === "EXEC" && t.data && t.data.governed === true));
+}
+
+// ═════════ V18 — DEFAULT GOVERNED EXECUTION (authenticated ⇒ governed automatically; legacy path isolated) ═════════
+{
+  const r = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
+  ID.register(r, { tenantId: "TV18", agentId: "agent-x", publicKeyPem: k.publicKey.export({ type: "spki", format: "pem" }) });
+  const C = { agentId: "agent-x", tenantId: "TV18", objective: "def", allowedTools: ["read_file"], authorizedScope: ["reports"], limits: { maxCalls: 9, maxDurationMs: 600000 } };
+  const sha = H.contractShaOf(C);
+  ID.openSession(r, { sessionId: "SA", tenantId: "TV18", agentId: "agent-x", contractSha: sha });
+  const mkAuth = () => { const c = ID.issueChallenge(r, { tenantId: "TV18", agentId: "agent-x", sessionId: "SA", contractSha: sha }); return { registry: r, challenge: c, signature: crypto2.sign(null, Buffer.from(ID.canon(c)), k.privateKey).toString("base64") }; };
+  const p = { agentId: "agent-x", authToken: "t", tool: "read_file", params: { path: "reports/a.md" }, targetPaths: ["reports/a.md"] };
+  const isGoverned = (st) => st.trace.some(t => t.phase === "EXEC" && t.data && t.data.governed === true);
+  const isLegacy = (st) => st.trace.some(t => t.phase === "EXEC" && t.data && t.data.legacyUnauthenticated === true);
+
+  // (1) authenticated SEQUENCE with NO explicit governedExecution ⇒ every step routed through the governed boundary.
+  const raw1 = []; const d1 = { revision: { commit: "t", treeDirty: false, available: true }, executor: (x) => { raw1.push(x && x.tool); return { ok: true }; }, verifier: () => ({ verified: true, reason: "x" }), authForStep: (i) => mkAuth() };
+  const q1 = H.runSequence([p, p, p], C, S0, d1);
+  ok("V18 authenticated sequence (no flag) ⇒ every step governed by default", q1.completed === true && raw1.length === 3 && q1.steps.every(isGoverned) && q1.steps.every(st => st.authBound === true));
+
+  // (2) UNAUTHENTICATED historical step ⇒ LEGACY path, explicitly isolated + marked, authBound:false, NOT governed.
+  const d2 = { revision: { commit: "t", treeDirty: false, available: true }, executor: () => ({ ok: true }), verifier: () => ({ verified: true, reason: "x" }) };
+  const s2 = H.runStep(p, C, S0, d2);
+  ok("V18 unauthenticated step ⇒ isolated legacy path (legacyUnauthenticated, authBound:false, not governed)", s2.outcome === "ADMITTED_VERIFIED" && s2.authBound === false && isLegacy(s2) && !isGoverned(s2));
+
+  // (3) an unauthenticated step CANNOT masquerade as authenticated nor force the governed boundary open: asking for
+  //     governedExecution without auth ⇒ EXECUTION_DENIED (authBound:false), raw never called.
+  let raw3 = 0; const d3 = { revision: { commit: "t", treeDirty: false, available: true }, governedExecution: true, executor: () => { raw3++; return { ok: true }; }, verifier: () => ({ verified: true, reason: "x" }) };
+  const s3 = H.runStep(p, C, S0, d3);
+  ok("V18 unauthenticated + governedExecution ⇒ EXECUTION_DENIED, no raw, cannot masquerade", s3.outcome === "EXECUTION_DENIED" && s3.authBound === false && raw3 === 0);
+
+  // (4) NO SILENT FALLBACK: a governed (authenticated) step whose executor THROWS ⇒ ERROR_RECOVERED, raw called
+  //     EXACTLY once (never retried via the direct path).
+  let thr = 0; const d4 = { revision: { commit: "t", treeDirty: false, available: true }, executor: () => { thr++; throw new Error("boom"); }, verifier: () => ({ verified: true, reason: "x" }), auth: mkAuth() };
+  const s4 = H.runStep(p, C, S0, d4);
+  ok("V18 governed executor throw ⇒ ERROR_RECOVERED, raw once, NO direct-path fallback", s4.outcome === "ERROR_RECOVERED" && s4.executed === true && s4.verified === false && thr === 1);
 }
 
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);
