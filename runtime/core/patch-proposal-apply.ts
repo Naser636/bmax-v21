@@ -15,14 +15,14 @@
  *
  * Strict TS port: public export (applyProposal), every reject code (NO_PROPOSAL/MALFORMED_PROPOSAL/…),
  * the patch grouping, plan shape, spawn + evidence-read flow and result shape are preserved EXACTLY. The
- * V71 change (shared with the .js): the executor path is resolved via runtime-paths.coreDir(__dirname) so a
- * compiled dist/core caller maps back to the canonical source executor; the spawn is an optional test seam.
+ * ZERO-JS change: the executor is resolved to the COMPILED dist patch-executor (a plain-node-runnable .js)
+ * — the source .js rollback is retired — so a dist/core caller runs its sibling and a .ts caller maps
+ * across to the dist sibling; the spawn is an optional test seam.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-const { coreDir } = require("./runtime-paths");
 
 export interface ProposedEdit { objectiveId?: string; target: string; content?: string; diff?: string; }
 export interface ApplyProposalOpts {
@@ -85,7 +85,12 @@ function applyProposal(opts: ApplyProposalOpts): ApplyProposalResult {
   fs.mkdirSync(genDir, { recursive: true });
   fs.writeFileSync(path.join(genDir, "patch-plan.json"), JSON.stringify(plan, null, 2));
 
-  const executor = path.join(coreDir(__dirname), "patch-executor.js");
+  // ZERO-JS: patch-executor must be the COMPILED dist port (a plain-node-runnable .js; the source .js is
+  // retired). This module runs as the dist copy (…/runtime/dist/core) whose sibling IS the executor; when
+  // loaded as the .ts source (…/runtime/core, e.g. under tsx), map ACROSS to the compiled dist sibling.
+  const executor = __dirname.endsWith(path.join("runtime", "dist", "core"))
+    ? path.join(__dirname, "patch-executor.js")
+    : path.join(__dirname, "..", "dist", "core", "patch-executor.js");
   const spawn = opts && typeof opts._spawn === "function" ? opts._spawn : spawnSync;
   const r: any = spawn("node", [executor], { cwd, encoding: "utf8" });
 
