@@ -104,3 +104,4 @@ next-env.d.ts
 
 # ODG Spec Author smoke-mission output (reproducible per-run ODG-authored artifact; never a tracked source deliverable)
 runtime/odg-spec.json
+runtime/live-proof/
