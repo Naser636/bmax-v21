@@ -20,6 +20,21 @@ const identity: any = require("./agent-identity");
 const sha256 = (s: string) => crypto.createHash("sha256").update(s).digest("hex");
 const ORDER = ["GATE", "EXEC", "VERIFY"]; // the only valid admitted-path transition prefix
 
+/**
+ * contractShaOf — canonical hash of a contract's GOVERNANCE-relevant fields (stable field order). The
+ * authenticated session's contractSha MUST equal this, so a session authenticated for contract A cannot be used
+ * to run a different contract B (V12 tenant/contract-scoped admission).
+ */
+function contractShaOf(contract: any): string {
+  const c = contract || {};
+  return sha256(JSON.stringify([
+    c.agentId ?? null, c.tenantId ?? null, c.objective ?? null,
+    Array.isArray(c.allowedTools) ? c.allowedTools : null, Array.isArray(c.authorizedScope) ? c.authorizedScope : null,
+    c.limits ?? null, c.requireHumanFor ?? null, c.allowedDependencies ?? null,
+    c.forbiddenToolCombos ?? null, c.maxPerTool ?? null, c.paramSchemas ?? null, c.revoked ?? null,
+  ]));
+}
+
 export interface HarnessDeps {
   executor: (proposal: any) => any;                                   // SIMULATED executor (hermetic); stands in for ODG's EXECUTOR
   verifier: (proposal: any, execResult: any) => { verified: boolean; reason: string }; // INDEPENDENT (checks evidence, not the agent's claim)
@@ -54,6 +69,14 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
     if (!ares.ok) { stamp("OUTCOME", { outcome: "AUTH_DENIED", executed: false });
       return Object.freeze({ outcome: "AUTH_DENIED", executed: false, gateVerdict: null, execId: null, authReason: ares.reason, evidence: prov.stampProvenance({ phase: "AUTH", verdict: "AUTH_DENIED", executed: false, proposalSha256, order: ["AUTH", "OUTCOME"] }, { revision: (deps as any).revision }), trace, state: { ...s, history: [...(Array.isArray(s.history) ? s.history : [])] } });
     }
+    // V12 — TENANT/CONTRACT-SCOPED ADMISSION (only when authenticated): the authenticated session's contractSha
+    // MUST equal the ACTUAL contract's hash (a session for contract A cannot run contract B), and the contract's
+    // declared tenant MUST equal the authenticated tenant. Deny-first, PRE-gate, NO exec.
+    const bindFail = (reason: string, tag: string) => { stamp("AUTH_BIND", { ok: false, reason }); stamp("OUTCOME", { outcome: tag, executed: false });
+      return Object.freeze({ outcome: tag, executed: false, gateVerdict: null, execId: null, authReason: reason, evidence: prov.stampProvenance({ phase: "AUTH_BIND", verdict: tag, executed: false, tenantId: authedTenant ?? null, proposalSha256, order: ["AUTH", "AUTH_BIND", "OUTCOME"] }, { revision: (deps as any).revision }), trace, state: { ...s, history: [...(Array.isArray(s.history) ? s.history : [])] } }); };
+    const actualContractSha = contractShaOf(contract);
+    if (authCfg.challenge && authCfg.challenge.contractSha !== actualContractSha) return bindFail("authenticated session is bound to a different contract (contractSha mismatch) — admission refused", "CONTRACT_MISMATCH");
+    if (contract && contract.tenantId != null && contract.tenantId !== authedTenant) return bindFail(`contract tenant != authenticated tenant — cross-tenant admission refused`, "TENANT_MISMATCH");
   }
 
   const verdict = gate.evaluateAgentAction(proposal, contract, s);          // admission ALWAYS via the gate (post-auth)
@@ -152,5 +175,5 @@ function verifyEvidenceBundle(bundle: any, opts?: any): { ok: boolean; reasons: 
   return { ok: reasons.length === 0, reasons };
 }
 
-export { runStep, runSequence, verifyEvidenceBundle, sha256 };
-module.exports = { runStep, runSequence, verifyEvidenceBundle, sha256 };
+export { runStep, runSequence, verifyEvidenceBundle, contractShaOf, sha256 };
+module.exports = { runStep, runSequence, verifyEvidenceBundle, contractShaOf, sha256 };

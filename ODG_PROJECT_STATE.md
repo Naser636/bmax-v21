@@ -4219,3 +4219,38 @@ doctrine reused for tenant binding; the reproduce-before-fix method reused (gap 
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts && tsx runtime/core/agent-identity.test.ts`
 Next €0 lot: gate-level tenant field (admission tenant-scoped). BLOCKED/EXTERNAL (CTO/infra): production multi-tenant
 (data store/IAM/keys/deploy), real agent, KMS/HSM, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (w) — V12: tenant/contract-scoped admission (authenticated binding) €0 hermetic
+CTO V12. Truth Lock entry 14a86c0≡origin/main, clean, 5 stashes preserved. No new primitive; harness only. Closes the
+V11 PARTIAL ("gate tenant-agnostic; verdict/auth reusable across tenants/contracts").
+
+**Gate A (read-only + reproduced):** the harness verified auth (identity+tenant+session) but NEVER checked that the
+authenticated session's contractSha matched the ACTUAL contract passed to the gate, nor that the contract's tenant
+matched the authenticated tenant. REPRODUCED: authenticated for contract A (session contractSha) but ran a different
+contract B ⇒ ADMITTED_VERIFIED (gap, proof not assertion).
+
+**Gate B (bounded, harness pre-gate):** added `contractShaOf(contract)` (canonical hash of governance fields); after
+auth success the harness enforces (deny-first, PRE-gate, NO exec): challenge.contractSha === contractShaOf(ACTUAL
+contract) ⇒ else CONTRACT_MISMATCH; contract.tenantId (if declared) === authenticated tenant ⇒ else TENANT_MISMATCH.
+The AUTHENTICATED tenant is authoritative; a proposal/unauthenticated-supplied tenant is never trusted. Signature/
+revocation/schema/supply-chain/budget/human-gate controls all preserved (unchanged gate). Existing auth tests rebound
+to the REAL contract sha ⇒ enforcement is ALWAYS-ON (not opt-in).
+
+**Independent proof:** harness 37→42 (+5 V12): auth(A)+contractA⇒ADMITTED; auth(A)+run contractB⇒CONTRACT_MISMATCH
+no-exec; contract.tenant≠auth tenant⇒TENANT_MISMATCH no-exec; replay of A's auth⇒AUTH_DENIED no-exec; bind-failure
+bundle sealed + no secret. Spy executor proves NO exec after any bind failure. gate 63/63; tsc 0; build 0; diff = 2
+files. Pre-existing suites green (V9/V11 auth tests updated to bind real sha — safe + documented).
+
+**Status:** PROVEN (logical, hermetic) = authenticated identity↔tenant↔contract↔admission binding; verdict/auth NOT
+reusable across tenants or contracts; no implicit privilege gain by tenant/contract change; deny-first no-exec.
+PARTIAL = the gate module itself stays tenant-agnostic by design (binding enforced at the harness ingestion boundary).
+ABSENT/EXTERNAL/BLOCKED (NOT claimed) = production multi-tenant isolation (data store/IAM/keys/deploy), real agent,
+KMS/HSM, certification.
+
+**Learning reuse (proven):** authenticated-source-not-proposal + reproduce-before-fix + no-false-success + evidence
+sealing all reused. 9 primitives + capability-router + executors unchanged; foreign docs/ + 5 stashes preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 lot: optional gate-level tenant field (admission tenant-scoped inside the gate too). BLOCKED/EXTERNAL (CTO/
+infra): production multi-tenant, real agent, KMS/HSM, certification, exposure.
