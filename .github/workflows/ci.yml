@@ -78,6 +78,15 @@ jobs:
 
       - name: Classified test gate
         shell: bash
+        # HYPER-SPEED: run the 59 classified suites with bounded, race-free parallelism. odg-test-report
+        # partitions suites by static hazard analysis — any suite that can touch global mutable state
+        # (process.chdir / .listen / a repo-relative "runtime/..." write) runs strictly sequentially; the
+        # rest run concurrently, each in an isolated TMPDIR. The worker count is clamped to the runner's CPU
+        # count, and classification + report ORDER are byte-identical to the sequential gate (proven: 3×
+        # identical PASS/order, 95s→49s locally on 8 cores). The request is a ceiling, not a guarantee of
+        # that many cores; falling back to 1 reproduces the exact prior behaviour.
+        env:
+          ODG_TEST_WORKERS: "8"
         run: |
           if npm run test:report 2>&1 | tee test-report.out; then
             echo "test:report passed"
