@@ -73,4 +73,47 @@ ok("every step carries a traceable GATE+OUTCOME record (no bypass)", seq.steps.e
 // 10) ADMIT ≠ success: an admitted-but-unverified step is NOT a validated success
 ok("ADMIT is not proof of success (verified flag independent of admission)", falsified.gateVerdict === "ADMIT" && falsified.verified === false);
 
+// ═════════ V8 Lot A — evidence-bound execution ═════════
+const REV = { commit: "testcommit", treeDirty: false, available: true };
+// verifier that independently binds to execId + actual resultDigest
+const boundDeps = (overrideDigest) => ({ revision: REV,
+  executor: (p, execId) => ({ ok: true, execId, producedPaths: p.targetPaths }),
+  verifier: (p, r, execId) => ({ verified: true, reason: "bound", boundExecId: execId, resultDigest: overrideDigest || H.sha256(JSON.stringify(r)) }),
+});
+const okStep = H.runStep(good, CONTRACT, S0, boundDeps());
+ok("LotA: sealed evidence bundle present + provenance-verifiable", H.verifyEvidenceBundle(okStep.evidence).ok === true);
+ok("LotA: bundle binds to its execId", H.verifyEvidenceBundle(okStep.evidence, { expectedExecId: okStep.execId }).ok === true);
+ok("LotA: bound+matching evidence ⇒ VERIFIED", okStep.outcome === "ADMITTED_VERIFIED");
+
+// negative: FOREIGN/REPLAYED execId
+ok("LotA neg: foreign expectedExecId ⇒ bundle rejected", H.verifyEvidenceBundle(okStep.evidence, { expectedExecId: "someoneelse" }).ok === false);
+// negative: verifier asserts a WRONG resultDigest (crypto-valid but wrong result) ⇒ UNVERIFIED
+const wrong = H.runStep(good, CONTRACT, S0, boundDeps("deadbeef"));
+ok("LotA neg: verifier resultDigest != actual ⇒ UNVERIFIED (crypto-valid-but-wrong-result)", wrong.outcome === "ADMITTED_UNVERIFIED" && /wrong-result/.test(wrong.verifyReason));
+// negative: verifier binds to a DIFFERENT execId ⇒ UNVERIFIED
+const foreignBind = H.runStep(good, CONTRACT, S0, { revision: REV, executor: (p) => ({ ok: true }), verifier: () => ({ verified: true, reason: "x", boundExecId: "OTHER", resultDigest: undefined }) });
+ok("LotA neg: verifier boundExecId mismatch ⇒ UNVERIFIED (foreign evidence)", foreignBind.outcome === "ADMITTED_UNVERIFIED");
+// negative: TAMPER the sealed bundle after the fact ⇒ provenance fails
+const tamperedBundle = { ...okStep.evidence, resultDigest: "tampered" };
+ok("LotA neg: result modified after sealing ⇒ provenance digest mismatch", H.verifyEvidenceBundle(tamperedBundle).ok === false);
+// negative: ADMIT without execution (hand-crafted inconsistent bundle)
+ok("LotA neg: ADMIT verdict but no execution ⇒ inconsistent", H.verifyEvidenceBundle(require("./evidence-provenance.js").stampProvenance({ execId: "e", verdict: "ADMIT", executed: false, order: ["GATE", "OUTCOME"] }, { revision: REV })).ok === false);
+// negative: execution without an authorizing verdict
+ok("LotA neg: execution with DENY verdict ⇒ inconsistent", H.verifyEvidenceBundle(require("./evidence-provenance.js").stampProvenance({ execId: "e", verdict: "DENY", executed: true, order: ["GATE", "EXEC", "OUTCOME"] }, { revision: REV })).ok === false);
+// negative: invalid transition order
+ok("LotA neg: invalid order (no GATE first) ⇒ rejected", H.verifyEvidenceBundle(require("./evidence-provenance.js").stampProvenance({ execId: "e", verdict: "ADMIT", executed: true, order: ["EXEC", "GATE"] }, { revision: REV })).ok === false);
+// negative: malformed / absent bundle
+ok("LotA neg: absent bundle ⇒ fail-closed", H.verifyEvidenceBundle(null).ok === false && H.verifyEvidenceBundle({}).ok === false);
+// DENY step still seals a consistent (no-exec) bundle
+ok("LotA: DENY step seals a consistent no-exec bundle", H.verifyEvidenceBundle(denied.evidence).ok === true);
+
+// ═════════ V8 Lot B — combinatorial drift e2e ═════════
+const CMBc = { ...CONTRACT, forbiddenToolCombos: [["read_file", "write_report"]], requireHumanFor: [] };
+const dC = mkDeps();
+const combo = H.runSequence([
+  { ...good, tool: "read_file", targetPaths: ["reports/a.md"] },
+  { ...good, tool: "write_report", targetPaths: ["reports/o.md"] },
+], CMBc, S0, dC);
+ok("LotB e2e: forbidden tool combo across a sequence ⇒ 2nd step DENIED, no exec", combo.steps[1].outcome === "DENIED" && dC.calls.length === 1);
+
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);

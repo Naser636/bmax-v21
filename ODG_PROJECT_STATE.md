@@ -4076,3 +4076,39 @@ license-policy + supply-chain-attest (V6) still wired. 9 primitives + capability
 
 **Next lot:** ASI01 semantic-intent signal would require a policy/model input (out of €0 scope) — defer; OR broaden
 the harness verifier to consume real evidence-provenance artifacts. Resume: `tsx runtime/core/agent-governance-harness.test.ts`.
+
+---
+## CHECKPOINT 2026-10-26 (s) — V8: evidence-bound execution + combinatorial tool governance (€0, hermetic)
+CTO V8. Truth Lock entry 38ef5fe≡origin/main, clean, 5 stashes preserved. No new primitive; reuses gate + harness +
+evidence-provenance. Hermetic, no network/real-agent/exposure. Diff: 4 modified + 1 doc.
+
+**Lot A — evidence-bound execution (harness):** deterministic per-step `execId` (no clock) binds proposal→verdict→
+exec→result→evidence; every step seals a provenance-stamped BUNDLE (evidence-provenance.stampProvenance) over
+{execId,agentId,objective,proposalSha,verdict,executed,resultDigest,verified,order}. The injected verifier's asserted
+boundExecId/resultDigest MUST match the actual execId + sha256(result) else verified→false. New `verifyEvidenceBundle`
+independently re-checks: provenance integrity (tamper), ADMIT↔exec consistency, valid transition order, execId binding.
+Negatives PROVEN: absent/malformed, foreign/replayed execId, result-modified-after-sealing, crypto-valid-but-wrong-
+result, ADMIT-without-exec, exec-without-authorizing-verdict, invalid order.
+
+**Lot B — combinatorial tool-sequence drift (gate):** `forbiddenToolCombos` (tool-SETS whose cumulative co-occurrence
+⇒ DENY: indirect bypass / dangerous chain) + `maxPerTool` (per-tool invocation cap over history: non-idempotent
+accrual) — evaluated over history+current, deterministic, fail-closed. e2e: forbidden combo across a sequence ⇒ 2nd
+step DENIED, executor not called.
+
+**Lot C — real-agent readiness doc** (docs/odg-operational/ODG_REAL_AGENT_INTEGRATION_READINESS_V8.md): honest
+EXISTS/PARTIAL/MISSING/EXTERNAL matrix. PROVEN = governance/evidence/verification/recovery. MISSING = crypto agent
+authN (token-presence ≠ authN), multi-tenant isolation. EXTERNAL = key mgmt/HSM/KMS, certification. No real-agent
+compatibility claimed.
+
+**Lot D — validation:** gate 44→47 (+3 Lot B), harness 11→24 (+13 Lot A/B); both gated (test:report 62/62); root tsc
+0; build:runtime 0. Independent re-verification confirms: DENY⇒no exec; foreign evidence rejected; unauthorized exec
+never a success; dangerous combos denied; transitions traceable; no new path bypasses controls.
+
+**Proven/simulated/partial/untested/external:** PROVEN-by-test = evidence binding + combinatorial drift + chain
+integrity (hermetic, simulated agent/executor). SIMULATED = agent/executor/human/verifier (injected). PARTIAL = ASI01
+structural not semantic; identity binding. UNTESTED/EXTERNAL = real agent, crypto authN, multi-tenant, cert.
+**Learning reuse (proven):** evidence-provenance (stamp/verify) reused for execution binding; no-false-success reused.
+9 primitives + capability-router + executors unchanged; foreign docs/ + 5 stashes preserved.
+
+**Next lot:** verified-key→session→contract binding reusing supply-chain-attest ed25519 verify (needs an identity
+store; real connection = CTO-gated). Resume: `tsx runtime/core/agent-governance-harness.test.ts`.

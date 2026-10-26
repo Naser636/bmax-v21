@@ -116,4 +116,20 @@ const CD = { ...CONTRACT, limits: { maxCalls: 50, maxDurationMs: 600000, maxDist
 ok("ASI01 cumulative targets within cap ⇒ ADMIT", G.evaluateAgentAction({ ...base, targetPaths: ["reports/b.md"] }, CD, { calls: 1, elapsedMs: 0, history: [{ tool: "read_file", targetPaths: ["reports/a.md"] }] }).verdict === "ADMIT");
 ok("ASI01 cumulative targets over cap ⇒ DENY (slow drift)", (() => { const v = G.evaluateAgentAction({ ...base, targetPaths: ["reports/c.md"] }, CD, { calls: 2, elapsedMs: 0, history: [{ tool: "read_file", targetPaths: ["reports/a.md"] }, { tool: "read_file", targetPaths: ["reports/b.md"] }] }); return v.verdict === "DENY" && v.controlsFailed.includes("ASI01"); })());
 
+// ═════════ V8 Lot B — combinatorial tool-sequence drift ═════════
+const CMB = { ...CONTRACT, limits: { maxCalls: 50, maxDurationMs: 600000 }, forbiddenToolCombos: [["read_file", "write_report"]], maxPerTool: { write_report: 1 } };
+// individually-allowed read_file then write_report ⇒ forbidden co-occurrence ⇒ DENY (indirect bypass)
+ok("ASI01 combinatorial: forbidden tool co-occurrence ⇒ DENY", (() => {
+  const v = G.evaluateAgentAction({ ...base, tool: "write_report", targetPaths: ["reports/o.md"], consequential: false }, CMB,
+    { calls: 1, elapsedMs: 0, history: [{ tool: "read_file", targetPaths: ["reports/a.md"] }] });
+  return v.verdict === "DENY" && v.controlsFailed.includes("ASI01");
+})());
+// per-tool cap: 2nd write_report (cap 1) ⇒ DENY (but note write_report also require-human; combinatorial check runs pre-human)
+ok("ASI01 combinatorial: per-tool invocation cap exceeded ⇒ DENY", (() => {
+  const v = G.evaluateAgentAction({ ...base, tool: "summarize" }, { ...CONTRACT, maxPerTool: { summarize: 1 } },
+    { calls: 1, elapsedMs: 0, history: [{ tool: "summarize", targetPaths: [] }] });
+  return v.verdict === "DENY" && v.controlsFailed.includes("ASI01");
+})());
+ok("ASI01 combinatorial: within caps + no forbidden combo ⇒ ADMIT", G.evaluateAgentAction({ ...base, tool: "summarize" }, { ...CONTRACT, maxPerTool: { summarize: 3 }, forbiddenToolCombos: [["read_file", "deploy"]] }, { calls: 1, elapsedMs: 0, history: [{ tool: "summarize" }] }).verdict === "ADMIT");
+
 console.log(`\nTHIRD-PARTY-AGENT-GATE security suite — ${pass} assertions passed.`);
