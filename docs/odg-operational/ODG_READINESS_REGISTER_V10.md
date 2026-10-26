@@ -73,9 +73,15 @@ No claim of certification, legal conformity, production authN/isolation, or univ
 5. **Commercial demand test / outreach / partner** (C1/C4/V4) — CTO authorization; €0 forbids it.
 6. **Load/HA/off-host backup** — target-environment testing.
 
+## E — Regulatory assurance & continuous excellence (2026-10-26)
+| Capability | Status | Evidence |
+|---|---|---|
+| Canonical excellence policy (`excellence-policy.ts`) | PROVEN (TEST) | reviewForExcellence seeks/selects domain references, runs gap analysis, evaluates PRE-FIXED thresholds, renders a fail-closed verdict (MEETS/IMPROVE/INSUFFICIENT_EVIDENCE); REFUSES unbenchmarked superlatives ("world #1"/"best"/"optimal"); never conflates legal-obligation vs voluntary-standard vs recommendation vs practice vs assumption; flags stale references; seals reviews (provenance). Suite 18/18. Consulted AUTOMATICALLY by regulatory-assurance + demonstrated on a 2nd domain (agent-governance). **HONEST LIMIT:** consulted by capabilities today; full wiring into the live mission scheduler = future/host-gated. |
+| REGULATORY_ASSURANCE (`regulatory-assurance.ts`) | PROVEN (TEST, hermetic) | GDPR/ISO27001/ISO42001 modules; configurable company profile ⇒ sector/size/country/data/AI/scope-specific dossier; applicability+justification; hallucination control (obligation w/o registry source REFUSED); evidence honesty (client-declared ≠ verified; independent verifier; missing ⇒ GAP; falsified rejected); multi-tenant separation (foreign-tenant evidence rejected; sealed dossier attributable only to its tenant); requirement→control→evidence→owner→verification traceability; reference version-change detection; reproducible; **NO certification claim** (assertNotCertified refuses it). Suite 25/25 (thresholds fixed pre-test). Full gate 65/65. **EXTERNAL/BLOCKED:** real client evidence, legal sign-off, independent auditor, accredited certification body, live source re-verification (offline-pending-reverify), production multi-tenant isolation. See `REGULATORY_ASSURANCE_V1.md`. |
+
 ## Verdict
 The agent-governance capability (identity → binding → admission → supply-chain → execution-gating → independent
 evidence-bound verification → drift/combinatorial → recovery) is **PROVEN hermetically** with adversarial tests and
-is gated in CI (63/63). It is **NOT** production-authenticated, **NOT** multi-tenant-isolated in production, **NOT**
+is gated in CI (65/65 incl. excellence-policy + regulatory-assurance). It is **NOT** production-authenticated, **NOT** multi-tenant-isolated in production, **NOT**
 certified, and **NOT** validated against a real external agent — each explicitly EXTERNAL/BLOCKED above. No perfection
 or completeness claimed.

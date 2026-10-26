@@ -4533,3 +4533,53 @@ isolation, real agent, KMS/HSM, certification.
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 candidate: expose a typed public API (runStep/runSequence) with the authenticated-only contract documented for a
 future real consumer. BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, cert.
+
+---
+## CHECKPOINT 2026-10-26 (ae) — REGULATORY_ASSURANCE + PERMANENT EXCELLENCE ENGINE €0
+CTO integrated mission (two mandates, one coherent milestone). Truth Lock entry e645ae4≡origin/main, clean, 5 stashes,
+4 untracked docs/ preserved. No new primitive, no concurrent orchestrator. 9 primitives intact.
+
+**PHASE 0 (both chantiers):** chantier 1 = agent-governance stack (V5–V19) COMPLETE + gated (now re-gated 65/65);
+chantier 2 = this integrated capability. Neither restarted/overwritten.
+
+**Excellence engine (canonical, consultable):** NEW runtime/core/excellence-policy.ts — reviewForExcellence(domain,
+registry, currentPractices, thresholds, measured, claims) ⇒ fail-closed verdict (MEETS/IMPROVE/INSUFFICIENT_EVIDENCE).
+Encodes the standing rule (seek best refs → compare → select applicable → adapt → test → keep evidence). REFUSES
+unbenchmarked superlatives; never conflates normative status (legal/voluntary/recommendation/practice/assumption);
+flags stale refs; seals reviews via EVIDENCE provenance. Suite 18/18. Applied AUTOMATICALLY by regulatory-assurance +
+demonstrated on a 2nd domain (agent-governance). HONEST LIMIT: consulted by capabilities now; live-scheduler wiring =
+future/host-gated (not claimed).
+
+**REGULATORY_ASSURANCE:** NEW runtime/core/regulatory-assurance.ts — buildDossier(profile, {registry, now, verifier,
+knownVersions}); modules GDPR/ISO27001/ISO42001. Applicability+justification; hallucination control (obligation w/o
+registry source REFUSED); evidence honesty (client-declared≠verified, independent verifier, missing⇒GAP, falsified
+rejected); multi-tenant separation (foreign-tenant evidence rejected; sealed dossier tenant-attributable only);
+requirement→control→evidence→owner→verification traceability; reference version-change detection; reproducible; NO
+certification claim (assertNotCertified refuses it). Consults excellence-policy automatically.
+
+**Proof:** excellence 18/18 + regulatory 25/25 (thresholds FIXED pre-test: coverage≥0.9, traceability=1.0,
+reproducibility=1.0, falsePos=0, falseNeg=0); both wired into test:report ⇒ full gate 63→65/65; tsc 0; build 0.
+Benchmark/adversarial covered: missing obligation, stale source, falsified/absent/contradictory evidence, wrong
+scope/attribution between clients, version change, attempt to declare certification. Multi-company reuse PROVEN
+(same engine, ACME/BETA distinct profiles, strict evidence+tenant separation).
+
+**Integration:** both capabilities compiled under tsc + gated by their suites in test:report (same proven pattern as
+license-policy/third-party-agent-gate/agent-governance — no declarative manifest exists; the gate IS the integration).
+
+**International sources (PHASE 1/3):** docs/odg-operational/REGULATORY_ASSURANCE_V1.md — GDPR 2016/679, ISO/IEC
+27001:2022, ISO/IEC 42001:2023, NIST CSF 2.0, NIST AI RMF 1.0, OWASP ASI 2026; authority/version/date/source-id/
+normative-status/jurisdiction/usage-rights/next-review. Recorded OFFLINE (€0, no network) ⇒ verificationStatus
+offline-pending-reverify; NO copyrighted normative text reproduced (principles only).
+
+**PHASE 6 limits:** ODG prepares; cannot certify. Human/external (fee, CTO-gated): client evidence+owners+controls,
+lawyer sign-off, independent auditor, accredited certification body, live source re-verification, production
+multi-tenant isolation. No guarantee of absolute conformity or acceptance.
+
+**Learning reuse (proven):** reused EVIDENCE provenance (sealing/tamper), license-policy fail-closed-classifier
+pattern, tenant-isolation + no-false-success doctrine (V11/V19), fixed-thresholds-before-test discipline. Excellence
+policy itself is the mechanised capture of "seek best references + measure improvement" reused across 2 domains.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/regulatory-assurance.test.ts && tsx runtime/core/excellence-policy.test.ts`
+Next €0 candidate: add a 2nd independent verifier class + a sector-specific obligation pack (e.g. DORA/finance) to
+regulatory-assurance. BLOCKED/EXTERNAL (CTO/infra): lawyer/auditor/certification-body, live source re-verification
+(network), production multi-tenant isolation, live-scheduler wiring of the excellence rule.
