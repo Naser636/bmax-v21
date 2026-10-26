@@ -103,13 +103,25 @@ function verifyArtifact(cwd: any, execRecord: any, authorizedPaths: any): any {
   if (artifactState.canonicalId(relReal) === null || !inAuthorized(relReal, authorizedPaths)) {
     return { ok: false, code: CODE.PATH_OUTSIDE_SCOPE, detail: `evidence real path outside authorized scope: ${relReal}` };
   }
+  // DEF-010 TOCTOU HARDENING: the confinement above validated `targetReal` via realpath, but reading it back
+  // with a second statSync/readFileSync BY PATH re-resolves from scratch — a post-validation swap of the
+  // resolved target to a symlink could escape scope between the two syscalls. Instead bind to ONE file
+  // descriptor with O_NOFOLLOW (a last-component symlink swap ⇒ ELOOP ⇒ fail-closed) and fstat + read FROM
+  // THE FD, so the type-checked and the hashed bytes are the exact same inode we validated — no second path
+  // resolution. Residual (honest): an intermediate-directory symlink swap is not covered (that needs
+  // openat2 RESOLVE_NO_SYMLINKS, unavailable via Node `fs`); the realpath check still bounds that vector and
+  // DEF-010's race remains theoretical/not-reproduced — this is defense-in-depth, not a reproduced-bug fix.
   let bytes;
+  let fd: number | null = null;
   try {
-    const st = fs.statSync(targetReal);
+    fd = fs.openSync(targetReal, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
+    const st = fs.fstatSync(fd);
     if (!st.isFile() || st.size === 0) return { ok: false, code: CODE.MISSING_EVIDENCE, detail: `evidence absent/empty/not-a-file: ${relReal}` };
-    bytes = fs.readFileSync(targetReal, "utf8");
+    bytes = fs.readFileSync(fd, "utf8");
   } catch {
     return { ok: false, code: CODE.MISSING_EVIDENCE, detail: `evidence unreadable: ${relReal}` };
+  } finally {
+    if (fd !== null) { try { fs.closeSync(fd); } catch { /* best-effort close */ } }
   }
   let evidence;
   try { evidence = JSON.parse(bytes); } catch { return { ok: false, code: CODE.MALFORMED_JSON, detail: `evidence not JSON: ${canon}` }; }
