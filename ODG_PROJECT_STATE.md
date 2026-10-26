@@ -3651,3 +3651,31 @@ assembled export — single prototype shots only. **Continuation held:** benchma
 €1.84 remainder on more shots adds no proportional proof (§4/§5 "results no longer justify the spend"); a model-
 comparison lot (distinct objective) remains available on CTO direction (needs attempt-cap raise + comparison design).
 Mandatory-stop conditions all respected; guards remain green; foreign pipeline + its artifacts preserved untracked.
+
+---
+## CHECKPOINT 2026-10-26 (f) — MODEL-SELECTION BENCHMARK (controlled, verifiable) → reusable selection rule
+CTO model-selection mandate. Phase 1 (no-spend design) → Phase 2 (verified go) → Phase 3/4 (executed + rule).
+Protocol PRE-REGISTERED (docs/film-factory/pipeline/MODEL_SELECTION_BENCHMARK_PROTOCOL.md): same brief to both
+models, criteria fixed before calls, artistic quality NEVER auto-scored.
+
+**Scope (honest):** VIDEO cross-model comparison on Replicate = BLOCKED on price-verifiability (register's video
+prices are Runway/Luma/Veo — NOT Replicate; Replicate has no pricing API; only minimax/video-01 known, not re-run).
+IMAGE comparison = FEASIBLE: flux-schnell vs flux-dev, both Replicate-public with OFFICIAL register prices + known
+licenses. **Attempt-cap discipline honored:** the 9/9 benchmark ledger was NOT raised/bypassed — a NEW bounded ledger
+(ceiling €0.50, max 8, protocol-justified) was created.
+
+**RESULT (executed, verifiable):** 4/4 SUCCEEDED, all usable (valid WebP, sha256 + real prediction IDs). spent €0.06
+(schnell €0.006 / dev €0.05), remaining €0.44/€0.50; **global session spend €2.22 ≤ €4 + dashboard limit.** Per-axis:
+schnell €0.003 + Apache-2.0 (commercial OK); dev €0.025 (8.3×) + FLUX.1-dev NON-COMMERCIAL. Latency inconclusive
+(n=2). Artistic quality NOT measured (human-deferred; 4 paired images kept).
+
+**REUSABLE SELECTION RULE (confidence per-axis):** default **flux-schnell** for commercial/shippable stills
+(commercial-clean license + 8× cheaper + 2/2 usable on 2 distinct briefs); flux-dev ONLY for non-commercial
+internal drafts where a HUMAN-confirmed fidelity edge justifies it — never shipped commercially (license). HIGH
+confidence on license+cost (deterministic/verified); LOW on reliability (n=2); quality human-deferred. No
+generalisation beyond images/n=2. Rule exercised on 2 distinct briefs (schnell usable on both).
+
+**Held (CTO §Phase 4 "don't consume credit for itself"):** decisive axes verified deterministically; more n refines
+only low-confidence axes ⇒ further spend HELD. Mandatory-stop conditions respected; guards green; foreign pipeline
+preserved untracked (protocol/driver/outputs/ledgers live there; only the compass is tracked). Next useful paid step
+available on CTO direction: encode the rule into ODG's image model-selection path + a distinct-case validation.
