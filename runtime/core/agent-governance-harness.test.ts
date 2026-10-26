@@ -283,4 +283,72 @@ ok("V11 bundle carries the tenant it was sealed under", sA.evidence.tenantId ===
   ok("V14 execution spy: exactly ONE execution across all cases (only the authorized one)", downstream.length === 1);
 }
 
+// ═════════ V15 — EXECUTOR BOUNDARY (createGovernedExecutor) ═════════
+// The raw executor is captured in a closure and is NOT a property of the handle ⇒ given only the handle there is
+// no path to run it without a verified, context-bound authorization (runtime encapsulation, not a type/convention).
+{
+  const r = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
+  ID.register(r, { tenantId: "TV15", agentId: "agent-x", publicKeyPem: k.publicKey.export({ type: "spki", format: "pem" }) });
+  const C = { agentId: "agent-x", tenantId: "TV15", objective: "exec-boundary", allowedTools: ["read_file"], authorizedScope: ["reports"], limits: { maxCalls: 5, maxDurationMs: 600000 } };
+  const sha = H.contractShaOf(C);
+  ID.openSession(r, { sessionId: "SV", tenantId: "TV15", agentId: "agent-x", contractSha: sha });
+  const mkAuth = () => { const c = ID.issueChallenge(r, { tenantId: "TV15", agentId: "agent-x", sessionId: "SV", contractSha: sha }); return { registry: r, challenge: c, signature: crypto2.sign(null, Buffer.from(ID.canon(c)), k.privateKey).toString("base64") }; };
+  const p = { agentId: "agent-x", authToken: "t", tool: "read_file", params: { path: "reports/a.md" }, targetPaths: ["reports/a.md"] };
+  const spy = () => { const calls = []; return { calls, revision: { commit: "t", treeDirty: false, available: true }, executor: (x) => { calls.push(x && x.tool); return { ok: true, producedPaths: x && x.targetPaths }; }, verifier: () => ({ verified: true, reason: "x" }) }; };
+
+  const dv = spy(); dv.auth = mkAuth();
+  const good = H.runStep(p, C, S0, dv);                                   // a VALID authenticated admission bundle
+  const expect = { tenantId: "TV15", contractSha: sha, execId: good.execId, agentId: "agent-x" };
+
+  let rawCalls = 0; const raw = (prop, execId) => { rawCalls++; return { ok: true, execId }; };
+  const gx = H.createGovernedExecutor(raw);
+
+  // (1) ENCAPSULATION: handle exposes ONLY {execute,stats}; the raw executor is not reachable from it; frozen.
+  ok("V15 governed handle exposes only {execute,stats} — raw executor not a property", JSON.stringify(Object.keys(gx).sort()) === JSON.stringify(["execute", "stats"]) && typeof gx.execute === "function" && gx.executor === undefined && gx.raw === undefined && gx.rawExecutor === undefined);
+  ok("V15 governed handle is frozen (cannot inject a bypass method)", Object.isFrozen(gx) && (() => { try { gx.execute = () => ({ hacked: true }); } catch (e) {} const res = gx.execute("x", null, null) || {}; return typeof gx.execute === "function" && !("hacked" in res); })());
+
+  // (2) VALID authorization ⇒ raw invoked exactly once.
+  const okRes = gx.execute(p, { evidence: good.evidence }, expect);
+  ok("V15 valid authorization ⇒ executes, raw called once", okRes.executed === true && okRes.authorized === true && rawCalls === 1 && okRes.result && okRes.result.ok === true);
+
+  // (3) ABSENT/EMPTY proof ⇒ refused, raw NOT called.
+  const before1 = rawCalls;
+  const n1 = gx.execute(p, undefined, expect); const n2 = gx.execute(p, { evidence: null }, expect); const n3 = gx.execute(p, { evidence: {} }, expect);
+  ok("V15 absent/empty proof ⇒ refused, raw NOT called", n1.executed === false && n2.executed === false && n3.executed === false && rawCalls === before1);
+
+  // (4) TAMPERED proof ⇒ refused.
+  const tampered = { ...good.evidence }; tampered.objective = "PRIV-ESC"; const before2 = rawCalls;
+  const ft = gx.execute(p, { evidence: tampered }, expect);
+  ok("V15 tampered proof ⇒ refused, raw NOT called", ft.executed === false && /re-verification/.test(ft.reason) && rawCalls === before2);
+
+  // (5) CROSS-TENANT / WRONG-CONTRACT / MISSING-CONTEXT / WRONG-EXECID ⇒ all refused.
+  const before3 = rawCalls;
+  const xt = gx.execute(p, { evidence: good.evidence }, { tenantId: "OTHER", contractSha: sha });
+  const wc = gx.execute(p, { evidence: good.evidence }, { tenantId: "TV15", contractSha: "deadbeef" });
+  const mc = gx.execute(p, { evidence: good.evidence }, { tenantId: "TV15" });
+  const we = gx.execute(p, { evidence: good.evidence }, { tenantId: "TV15", contractSha: sha, execId: "nope" });
+  ok("V15 cross-tenant/wrong-contract/missing-context/wrong-execId ⇒ all refused, raw NOT called", [xt, wc, mc, we].every(x => x.executed === false) && rawCalls === before3);
+
+  // (6) UNAUTHENTICATED harness ADMIT (authBound:false) as authorization ⇒ refused.
+  const dna = spy(); const noauth = H.runStep(p, C, S0, dna); const before4 = rawCalls;
+  const ua = gx.execute(p, { evidence: noauth.evidence }, { tenantId: null, contractSha: noauth.evidence.contractSha });
+  ok("V15 unauthenticated ADMIT as authorization ⇒ refused, raw NOT called", ua.executed === false && /authBound/.test(ua.reason) && rawCalls === before4);
+
+  // (7) NO EXEC AFTER REFUSAL even when raw would throw: refusal short-circuits BEFORE raw.
+  let throwCalls = 0; const throwingRaw = () => { throwCalls++; throw new Error("boom"); };
+  const gxt = H.createGovernedExecutor(throwingRaw);
+  const safe = gxt.execute(p, { evidence: null }, expect);
+  ok("V15 refusal short-circuits BEFORE raw ⇒ no throw, no call", safe.executed === false && throwCalls === 0);
+
+  // (8) NON-REGRESSION: wrapping does not change runStep's own gated path.
+  const dv2 = spy(); dv2.auth = mkAuth(); const good2 = H.runStep(p, C, S0, dv2);
+  ok("V15 no regression: runStep internal gated execution still works", good2.outcome === "ADMITTED_VERIFIED" && dv2.calls.length === 1);
+
+  // (9) non-function input ⇒ constructor refuses (fail-closed).
+  ok("V15 createGovernedExecutor(non-function) ⇒ throws (fail-closed)", (() => { try { H.createGovernedExecutor({}); return false; } catch (e) { return true; } })());
+
+  // (10) stats: exactly ONE execution via the boundary across all cases; refusals accrued.
+  ok("V15 stats: exactly ONE execution via the boundary", gx.stats().executions === 1 && gx.stats().refusals >= 8);
+}
+
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);

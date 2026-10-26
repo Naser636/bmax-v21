@@ -215,5 +215,36 @@ function authorizeExecution(evidence: any, expected: any): { authorized: boolean
   return { authorized: true, reason: "authenticated, contract- and tenant-bound admission re-verified at execution time" };
 }
 
-export { runStep, runSequence, verifyEvidenceBundle, authorizeExecution, contractShaOf, sha256 };
-module.exports = { runStep, runSequence, verifyEvidenceBundle, authorizeExecution, contractShaOf, sha256 };
+/**
+ * createGovernedExecutor — V15 EXECUTOR BOUNDARY. Wraps a raw executor so the ONLY way to invoke it through the
+ * returned handle is to present an authorization that `authorizeExecution` accepts. The raw executor is captured in
+ * this closure and is NOT a property of the handle — so, GIVEN ONLY THE HANDLE, there is no path to run it without a
+ * verified, context-bound authorization (a runtime guarantee via lexical scope — NOT a TypeScript type, and NOT a
+ * convention). The handle is frozen and exposes exactly { execute, stats }.
+ *
+ * HONEST LIMIT (documented, not hidden): this cannot stop a consumer who still holds their OWN reference to the raw
+ * executor from calling it directly — that is OUTSIDE this module's control. The sanctioned pattern is to hand the
+ * consumer ONLY the governed handle (never the raw function). Inside module-controlled paths, runStep remains the
+ * gated invoker (auth + binding + gate ADMIT before any call); this boundary is the sanctioned surface for
+ * OUT-OF-HARNESS execution driven by a prior authenticated step's sealed evidence.
+ *
+ *   execute(proposal, authorization, expected) — authorization = { evidence } (a sealed harness bundle);
+ *   expected = { tenantId, contractSha, agentId?, execId? }. Refuses (NO raw call) unless authorizeExecution passes.
+ */
+function createGovernedExecutor(rawExecutor: any): { execute: (proposal: any, authorization: any, expected: any) => any; stats: () => { executions: number; refusals: number } } {
+  if (typeof rawExecutor !== "function") throw new TypeError("createGovernedExecutor requires a function executor");
+  let executions = 0; let refusals = 0;                                   // rawExecutor lives ONLY in this scope
+  return Object.freeze({
+    execute(proposal: any, authorization: any, expected: any) {
+      const az = authorizeExecution(authorization && authorization.evidence, expected);
+      if (!az.authorized) { refusals += 1; return Object.freeze({ executed: false, authorized: false, reason: az.reason, result: null }); }
+      executions += 1;
+      const result = rawExecutor(proposal, (expected && expected.execId) || undefined);   // reached ONLY after authorization
+      return Object.freeze({ executed: true, authorized: true, reason: az.reason, result });
+    },
+    stats() { return { executions, refusals }; },
+  });
+}
+
+export { runStep, runSequence, verifyEvidenceBundle, authorizeExecution, createGovernedExecutor, contractShaOf, sha256 };
+module.exports = { runStep, runSequence, verifyEvidenceBundle, authorizeExecution, createGovernedExecutor, contractShaOf, sha256 };
