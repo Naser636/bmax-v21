@@ -15,7 +15,7 @@ const os = require("os");
 const path = require("path");
 const cp = require("child_process");
 
-const LOADER = path.resolve(__dirname, "mission-loader.js");
+const LOADER = path.resolve(__dirname, "..", "dist", "core", "mission-loader.js");
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
 

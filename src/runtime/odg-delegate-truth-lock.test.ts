@@ -60,8 +60,7 @@ function sandbox(state: string): string {
     fs.writeFileSync(path.join(dir, base, "bin", "odg-verify.js"), EXIT0_STUB);
     fs.writeFileSync(path.join(dir, base, "bin", "odg-converge.js"), EXIT0_STUB);
   }
-  // The odg-delegate ports under test.
-  fs.copyFileSync(path.join(REPO, "runtime", "bin", "odg-delegate.js"), path.join(dir, "runtime", "bin", "odg-delegate.js"));
+  // The odg-delegate port under test (ZERO-JS: compiled dist only; the source .js rollback is retired).
   fs.copyFileSync(path.join(REPO, "runtime", "dist", "bin", "odg-delegate.js"), path.join(dir, "runtime", "dist", "bin", "odg-delegate.js"));
   fs.writeFileSync(path.join(dir, "runtime", "missions", "M.json"), JSON.stringify({ mission: "M", mode: "IMPLEMENT", requires_engineering: true, authorized_paths: ["src/app"], objectives: [{ id: "m_1", goal: "deliver", done_when: ["ok"] }] }));
   if (state === "non-repo") return dir;
@@ -116,7 +115,6 @@ function suite(port: PortKey): void {
 }
 
 console.log("R3 Lot B — odg-delegate historical-mode Truth-Lock");
-suite("dist");
-suite("js");
+suite("dist"); // ZERO-JS: the js source port is retired; the compiled dist is the sole runtime
 console.log(failures === 0 ? "\nALL PASS — R3 Lot B odg-delegate Truth-Lock" : `\nFAILURES: ${failures}`);
 if (failures > 0) process.exit(1);

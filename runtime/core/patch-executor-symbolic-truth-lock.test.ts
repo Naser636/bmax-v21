@@ -134,7 +134,7 @@ function suite(label, port) {
 
 console.log("R2 — Symbolic-patch Truth-Lock acceptance");
 
-suite("js-port", JS_PORT);
+// ZERO-JS: the source .js patch-executor port is retired; the compiled dist is the sole runtime port.
 if (fs.existsSync(DIST_PORT)) {
   suite("dist-port", DIST_PORT);
 } else {

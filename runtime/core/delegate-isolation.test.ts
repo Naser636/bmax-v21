@@ -183,7 +183,7 @@ console.log("I — REAL odg-delegate entrypoint: flag OFF ⇒ NOT isolated; requ
 {
   const cp = require("child_process");
   const repoRoot = path.resolve(__dirname, "..", "..");
-  const bin = path.join(repoRoot, "runtime", "bin", "odg-delegate.js"); // JS rollback twin (always present)
+  const bin = path.join(repoRoot, "runtime", "dist", "bin", "odg-delegate.js"); // JS rollback twin (always present)
   const M = "ACTIVATE_EXTERNAL_RESEARCH_CAPABILITY";
   const gen = path.join(repoRoot, "runtime", "generated");
   const artefacts = [path.join(gen, "mission-plan.json"), path.join(gen, "mission-context.json"), path.join(gen, "delegation", M + ".brief.json"), path.join(gen, "delegation", M + ".brief.md")];

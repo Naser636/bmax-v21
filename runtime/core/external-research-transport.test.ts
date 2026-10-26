@@ -21,9 +21,9 @@ const { spawnSync } = require("child_process");
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }
 
-const LOADER = path.resolve(__dirname, "mission-loader.js");
-const DECISION = path.resolve(__dirname, "decision-engine.js");
-const PATCH = path.resolve(__dirname, "patch-engine.js");
+const LOADER = path.resolve(__dirname, "..", "dist", "core", "mission-loader.js");
+const DECISION = path.resolve(__dirname, "..", "dist", "core", "decision-engine.js");
+const PATCH = path.resolve(__dirname, "..", "dist", "core", "patch-engine.js");
 
 function runStage(script, args, dir) {
     const res = spawnSync(process.execPath, [script, ...args], { cwd: dir, encoding: "utf8" });

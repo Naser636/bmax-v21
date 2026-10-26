@@ -76,7 +76,7 @@ function read(rel) { return fs.readFileSync(path.join(ROOT, rel), "utf8"); }
   const pkg = JSON.parse(read("package.json"));
   // build:runtime must point at a real guard script.
   const br = pkg.scripts["build:runtime"] || "";
-  const m = br.match(/scripts\/[\w.-]+\.js/);
+  const m = br.match(/scripts\/[\w.-]+\.(ts|js|cjs|mjs)/);
   ok("build:runtime script target exists", Boolean(m) && exists(m[0]));
   // the runtime-state producer referenced by the dashboard chain exists (odg-state).
   ok("runtime-state producer odg-state.js exists", exists("runtime/bin/odg-state.js"));

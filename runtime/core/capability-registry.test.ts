@@ -31,12 +31,14 @@ function runIn(script, cwd) {
 
 console.log("Capability Registry STAGE — co-located");
 
-// 0 — PORT DIVERGENCE (locked + documented): .js = __dirname-derived root (historical); .ts = process.cwd().
+// 0 — UNIFIED ROOT (ZERO-JS): the historical source .js port (which derived ROOT from __dirname) is retired.
+// The canonical .ts source and its compiled dist port both derive ROOT from process.cwd() (path-invariant,
+// dist-relocation safe) — there is no longer a port divergence to lock.
 {
-  const js = fs.readFileSync(path.join(REPO, "runtime", "core", "capability-registry.js"), "utf8");
+  const dist = fs.readFileSync(path.join(REPO, "runtime", "dist", "core", "capability-registry.js"), "utf8");
   const ts = fs.readFileSync(path.join(REPO, "runtime", "core", "capability-registry.ts"), "utf8");
-  ok(".js port derives ROOT from __dirname (historical production default)", /ROOT\s*=\s*path\.resolve\(__dirname/.test(js));
-  ok(".ts port derives ROOT from process.cwd() (path-invariant fix; dist-relocation safe)", /ROOT[^=]*=\s*process\.cwd\(\)/.test(ts));
+  ok(".ts source derives ROOT from process.cwd() (path-invariant fix; dist-relocation safe)", /ROOT[^=]*=\s*process\.cwd\(\)/.test(ts));
+  ok("compiled dist port also derives ROOT from process.cwd() (no __dirname divergence)", /ROOT[^=]*=\s*process\.cwd\(\)/.test(dist));
 }
 
 if (fs.existsSync(DIST_SCRIPT)) {
