@@ -3756,3 +3756,33 @@ authorization. BLOCKED/N-A by design — not invented, not weakened.
 
 **No Replicate spend; L7/TS-only pause untouched; video comparison still BLOCKED on price-verifiability.** 9 primitives
 + ROADMAP intact; capability-router unchanged; foreign pipeline preserved untracked.
+
+---
+## CHECKPOINT 2026-10-26 (i) — HOST-REBOOT DRILL: independent observer ARMED, executing real reboot
+CTO "MISSION FINALE: REBOOT OBSERVABLE". Resolves the prior observability paradox via an INDEPENDENT boot-time
+observer that survives the ODG session's death. Entry HEAD 22abc09 ≡ origin/main; VPS serving 268be2c release
+r-lFDoxyDMohywdhPDESc (health 200). No Replicate spend; L7/TS-only untouched; TLS stays N/A (loopback by design).
+
+**Independent observation prepared (§1):** `/home/ubuntu/odg-releases/reboot-drill-capture.sh` + enabled systemd
+oneshot `odg-reboot-drill-capture.service` (After=network-online+odg-preprod, WantedBy=multi-user, self-disabling).
+It runs on boot — independent of the reboot trigger — waits for the dashboard, evaluates the runbook's PASS criteria
+vs the pre-reboot baseline, writes TIMESTAMPED evidence to `reboot-drill-evidence.json`, then disables itself.
+**Sanity-tested pre-reboot** (caught+fixed a baseline-parser whitespace bug): correctly reads c1=FAIL (boot_id
+unchanged ⇒ no reboot yet) + c2–c6=PASS. Baseline `reboot-drill-baseline.json` (bootId f919951d…, expected release
+r-lFDoxy…). Pre-snapshot `reboot-drill-pre-snapshot.txt` (uptime since 2026-10-23, MainPID 602422).
+
+**Recovery path (§1.2) identified:** SSH `0.0.0.0:22` for re-access; automated = enabled service +
+OnFailure=odg-recover (auto rollback); if the VPS does NOT return → provider/console (HUMAN, cannot be exercised
+from this host). Backup current: git bundle @268be2c `/var/backups/odg-vault/20261026T162737Z` + origin==268be2c +
+release dirs + rollback symlink previous→hbTMmA.
+
+**Preconditions MET (§2):** independent recovery path + independent post-reboot observation available ⇒ cleared to
+reboot. The ODG session triggering the reboot is NOT the observer.
+
+**ACTION:** `sudo systemctl reboot` executed as the final step of this session. The session is expected to terminate
+with the host. **Drill NOT declared passed by this session** (I cannot observe post-reboot). **NEXT ACTION (next ODG
+session or CTO):** read `/home/ubuntu/odg-releases/reboot-drill-evidence.json` — if `verdict==PASS` (c1 real-reboot +
+c2 auto-active + c3 endpoints 200 + c4 same-release-no-rollback + c5 identity CONSISTENT + c6 enabled), update the
+runbook + V2 matrix §SUPERVISION residual to DRILL VALIDATED and record a closing checkpoint; if FAIL, diagnose per
+the runbook (journalctl -b, odg-recover state) and record the real outcome. Do NOT mark passed on service-active/200
+alone.
