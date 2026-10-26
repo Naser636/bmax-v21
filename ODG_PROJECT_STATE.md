@@ -4376,3 +4376,43 @@ bypass). 9 primitives + router + executors unchanged; 5 stashes + foreign docs p
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 candidate: a `runSequence`-level helper returning governed handles per step (optional). BLOCKED/EXTERNAL
 (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (aa) — V16: sequence execution governance (runSequence halt + per-step auth) €0
+CTO V16. Truth Lock entry c3cecc5≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive/helper;
+in-place runSequence fix. Diff = 2 files + register.
+
+**§2 audit (read-only):** runSequence looped runStep over ALL proposals with a SHARED deps, unconditionally. Findings:
+(a) a blocking step did NOT halt the sequence — a non-terminal DENY still let later steps run/execute; (b) no per-step
+authorization: a shared deps.auth has a single-use nonce ⇒ step-2 AUTH_DENIED (reuse already blocked at the identity
+layer — good) but a VALID multi-step authenticated sequence was impossible; (c) the two existing runSequence tests
+block only on the TERMINAL step ⇒ a halt-on-blocking fix is backward-compatible. Not expanded to ODG capability
+executors (different seam).
+
+**Reproduced:** runSequence([DENY_out-of-scope, ADMIT_in-scope]) ⇒ step-2 EXECUTED despite the prior blocking refusal;
+no `stopped` governance; no authForStep. (scratchpad v16-repro)
+
+**Fix (minimal, in-place):** (1) PER-STEP auth — if `deps.authForStep(i,p)` is provided, each step resolves a FRESH
+auth (its own challenge/nonce) ⇒ step-1's proof can never drive step-2 (replay ⇒ AUTH_DENIED ⇒ halt); without it,
+deps used as-is (backward-compat). (2) HALT on the first step with `verified !== true` ⇒ no later step runs. (3)
+Result now carries {stopped, stoppedAt, stopReason, completed, ranCount}. Honesty: HALT is NOT a transaction — steps
+executed before the failure are NOT rolled back; no rollback claimed. Gate pure (V13), 9 primitives, controls unchanged.
+
+**Proof:** harness 66→75 (+9 V16) with exec spies + exact counts: valid 3-step authenticated seq (all verified);
+replayed step-1 proof ⇒ AUTH_DENIED halt @1 (1 exec); contract change between steps ⇒ CONTRACT_MISMATCH halt @1;
+intermediate DENY ⇒ halt @1, step-3 never runs; executor error ⇒ ERROR_RECOVERED halt @0; no-rollback (step-0 stays
+executed); resume-after-fix ⇒ executes (no unauthorized exec); result retains no raw executor/deps; empty seq ⇒
+completed/0. Two pre-existing runSequence tests still green (terminal-block). gate 51/51 + identity 22/22 unchanged;
+full gate 63/63; tsc 0; build 0. Fix re-confirmed in scratchpad (steps run=1, executor=0, stopped=true).
+
+**Status:** PROVEN (TEST) = per-step bound authorization; halt-on-blocking; no later exec after refusal/error; resume
+re-authorizes. HONEST LIMIT (documented, not fabricated) = HALT ≠ transaction (no rollback of prior-executed steps).
+EXTERNAL/BLOCKED (not claimed) = production authN + multi-tenant isolation, real agent, KMS/HSM, certification.
+
+**Learning reuse (proven):** reused V9/V12 per-step identity binding + single-use nonce (anti-replay), V8 verified-flag
+as the success signal, reproduce-before-fix, no-false-guarantee doctrine (don't claim transactional without rollback).
+9 primitives + router + executors unchanged; 5 stashes + foreign docs preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 candidate: optional per-step governed-executor wiring in runSequence (hand each step a handle). BLOCKED/
+EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, certification, exposure.
