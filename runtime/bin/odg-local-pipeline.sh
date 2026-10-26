@@ -35,7 +35,7 @@ _compass_record() {
   local rc=$?
   if [ "$_COMPASS_DONE" = "0" ] && [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
     _COMPASS_DONE=1
-    node scripts/compass-update.js --from-report "$MISSION" --since "$_COMPASS_START_MS" \
+    node_modules/.bin/tsx scripts/compass-update.ts --from-report "$MISSION" --since "$_COMPASS_START_MS" \
       || echo "[COMPASS] WARNING: compass recorder failed (rc=${rc}; mission result unaffected)" >&2
   fi
   # §2 (ODG_LIVE_AUTONOMY_WEB_TO_MARKET_V1) — record THIS direct-door run into the EXISTING attempt-log via
@@ -136,7 +136,7 @@ mkdir -p runtime/generated
 # odg-verify now exits non-zero on a red/dirty verification (so `odg delegate`/`system-ready` stop
 # honestly), and under `set -e` that would abort this pre-flight before the content gates run — and
 # wrongly break the finalize-mission dirty-tree entry. report-only keeps odg-verify a pure stamper here.
-node runtime/bin/odg-verify.js "$MISSION" --report-only
+node_modules/.bin/tsx runtime/bin/odg-verify.ts "$MISSION" --report-only
 
 BUILD_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').build===true))}catch(e){process.stdout.write('false')}")
 TSC_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').typescript===true))}catch(e){process.stdout.write('false')}")
@@ -237,32 +237,26 @@ echo "[3/5] INITIALIZE"
 
 echo "[PIPELINE] Launching Runtime..."
 
-# Runtime selector (η3-B102; entry build η3-B104; DEFAULT FLIPPED to TypeScript η3-B108). PUBLISHED
-# DEFAULT = compiled TypeScript. ROLLBACK to JavaScript = ODG_RUNTIME=js (explicit). runtime/dist stays
-# generated + git-ignored (never committed, no implicit postinstall); on the TS path an EXPLICIT,
-# controlled, reproducible build is performed at the entry if the distribution is absent or
-# structurally invalid or STALE (helper: odg-ensure-ts-runtime.sh — real tsc emit + closure copy +
-# provenance/freshness, NOT tsx). If that build or its validation fails the launcher STOPS loudly; it
-# NEVER silently falls back to the JS runtime. Set ODG_RUNTIME=js to return to the JavaScript runtime.
-if [ "${ODG_RUNTIME:-ts}" = "ts" ]; then
-  if ! bash runtime/bin/odg-ensure-ts-runtime.sh; then
-    echo "[PIPELINE] ODG_RUNTIME=ts but the compiled runtime could not be ensured (see [TS-RUNTIME] above)." >&2
-    echo "[PIPELINE] Fix the build, or unset ODG_RUNTIME to use the JS runtime. NO silent fallback." >&2
-    exit 1
-  fi
-  echo "[PIPELINE] Runtime engine: COMPILED TypeScript (runtime/dist, ODG_STAGE_BASE=${ODG_STAGE_BASE:-runtime/dist/core})"
-  ODG_STAGE_BASE="${ODG_STAGE_BASE:-runtime/dist/core}" node runtime/dist/bin/odg-run.js "$MISSION"
-else
-  echo "[PIPELINE] Runtime engine: JavaScript (default)"
-  node runtime/bin/odg-run.js "$MISSION"
+# Runtime engine (η3-B102/B104/B108; ZERO-JS cutover L-i). The compiled TypeScript runtime is now the
+# SOLE engine — the historical ODG_RUNTIME=js JavaScript rollback is retired. runtime/dist stays
+# generated + git-ignored (never committed, no implicit postinstall); an EXPLICIT, controlled,
+# reproducible build is performed at the entry if the distribution is absent or structurally invalid or
+# STALE (helper: odg-ensure-ts-runtime.sh — real tsc emit + closure copy + provenance/freshness, NOT
+# tsx). If that build or its validation fails the launcher STOPS loudly; there is NO JS fallback.
+if ! bash runtime/bin/odg-ensure-ts-runtime.sh; then
+  echo "[PIPELINE] the compiled runtime could not be ensured (see [TS-RUNTIME] above)." >&2
+  echo "[PIPELINE] Fix the build (npm run build:runtime). NO JS fallback." >&2
+  exit 1
 fi
+echo "[PIPELINE] Runtime engine: COMPILED TypeScript (runtime/dist, ODG_STAGE_BASE=${ODG_STAGE_BASE:-runtime/dist/core})"
+ODG_STAGE_BASE="${ODG_STAGE_BASE:-runtime/dist/core}" node runtime/dist/bin/odg-run.js "$MISSION"
 
 # W6 observability (η3-B110) — STRICTLY OBSERVATIONAL. Runs AFTER the mission is finalized; reads the
 # canonical mission-report and appends one W6 journal record under runtime/generated/w6/. Fully guarded
 # (`|| true`, stderr muted): a collection failure can NEVER change the mission result or exit code — the
 # collector logs its own failure as an observability incident and still exits 0. Opt-out: ODG_W6_OBSERVE=0.
 if [ "${ODG_W6_OBSERVE:-1}" = "1" ]; then
-  node scripts/w6-collect.js "$MISSION" "A-shell:${ODG_RUNTIME:-ts}" 2>/dev/null || true
+  node_modules/.bin/tsx scripts/w6-collect.ts "$MISSION" "A-shell:${ODG_RUNTIME:-ts}" 2>/dev/null || true
 fi
 
 mkdir -p runtime/generated/mission-artifacts/{generated,passports,reports,certificates,history}

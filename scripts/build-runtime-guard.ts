@@ -50,7 +50,7 @@ function collect(dir: string, out: string[]): void {
 function computeFingerprint(): string {
   const inputs = [
     path.join(REPO, "tsconfig.runtime-dist.json"),
-    path.join(REPO, "scripts", "build-dist-closure.js"),
+    path.join(REPO, "scripts", "build-dist-closure.ts"),
   ];
   collect(path.join(REPO, "runtime", "core"), inputs);
   collect(path.join(REPO, "runtime", "bin"), inputs);
@@ -80,7 +80,8 @@ function fullBuild(fp: string): void {
   fs.rmSync(DIST, { recursive: true, force: true });
   const tsc = path.join(REPO, "node_modules", ".bin", "tsc");
   if (!run(tsc, ["-p", "tsconfig.runtime-dist.json"])) process.exit(1);
-  if (!run(process.execPath, [path.join(REPO, "scripts", "build-dist-closure.js")])) process.exit(1);
+  // ZERO-JS: the closure builder is TypeScript — run it via tsx (the source .js is retired).
+  if (!run(path.join(REPO, "node_modules", ".bin", "tsx"), [path.join(REPO, "scripts", "build-dist-closure.ts")])) process.exit(1);
   // Write the fingerprint ONLY after a fully-successful clean build + closure.
   try { fs.writeFileSync(FP_FILE, fp + "\n"); } catch { /* non-fatal: next run just rebuilds */ }
 }

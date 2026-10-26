@@ -95,7 +95,7 @@ ok("stale flag surfaced in render", /STALE/.test(C.renderCockpit(stale, {})));
 // 5. read-only static invariant — the cockpit CODE performs NO exec/spawn/fetch/write.
 // Scan code only (strip block + line comments) so descriptive prose ("never spawns a child
 // process") cannot trip the check; the invariant is about actual calls, not documentation.
-const rawSrc = fs.readFileSync(path.join(__dirname, "odg-cockpit.js"), "utf8");
+const rawSrc = fs.readFileSync(path.join(__dirname, "..", "dist", "bin", "odg-cockpit.js"), "utf8"); // ZERO-JS: inspect the compiled dist port
 const codeOnly = rawSrc.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
 for (const forbidden of ["child_process", "spawn", "execSync", "exec(", "fetch(", "http://", "https://", "writeFileSync", "appendFileSync", "createWriteStream"]) {
   ok(`code contains no '${forbidden}'`, !codeOnly.includes(forbidden));
@@ -139,7 +139,7 @@ const hashSources = () => SOURCES.map((f) => {
 const beforeHash = hashSources();
 
 // 8a — direct real-artifact --once render
-const direct = execSync("node runtime/bin/odg-cockpit.js --once", { cwd: repoRoot, encoding: "utf8" });
+const direct = execSync("node runtime/dist/bin/odg-cockpit.js --once", { cwd: repoRoot, encoding: "utf8" });
 ok("real-artifact --once renders ODG COCKPIT / HEALTH / ACTIVE RUN LOG",
   /ODG COCKPIT/.test(direct) && /HEALTH /.test(direct) && /ACTIVE RUN LOG/.test(direct));
 

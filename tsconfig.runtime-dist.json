@@ -133,6 +133,14 @@
     "runtime/bin/odg-objective.ts",
     "runtime/scripts/run-all-tests.ts",
     "runtime/core/log-slug.ts",
-    "runtime/core/prefer-dist-bin.ts"
+    "runtime/core/prefer-dist-bin.ts",
+    "runtime/core/budget-ledger.ts",
+    "runtime/core/cost-accounting.ts",
+    "runtime/core/decision-precedent.ts",
+    "runtime/core/objective-authorization.ts",
+    "runtime/core/provider-live-call-gate.ts",
+    "runtime/core/reality-gate.ts",
+    "runtime/core/truth-lock.ts",
+    "runtime/core/truth-lock-gate.ts"
   ]
 }

@@ -59,7 +59,7 @@ function defaultRunner(mission: string, opts: any): any {
   const spawnSync = o.spawnSync || require("child_process").spawnSync;
   const ROOT = o.root || path.resolve(__dirname, "..");
   const read = (f: string) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, f), "utf8")); } catch { return null; } };
-  const r = spawnSync("node", [path.join(ROOT, "runtime/bin/odg-run.js"), mission], { cwd: ROOT, encoding: "utf8", timeout: o.timeoutMs || 240000 });
+  const r = spawnSync("node", [path.join(ROOT, "runtime/dist/bin/odg-run.js"), mission], { cwd: ROOT, encoding: "utf8", timeout: o.timeoutMs || 240000 });
   return { mission, exit: r.status, plan: read("runtime/generated/mission-plan.json"), execution: read("runtime/generated/patch-execution.json") };
 }
 

@@ -104,13 +104,14 @@ const PROVIDER_ACTIVATION_ENTRY = path.join("src", "runtime", "provider-activati
 // it is overridable via env `ODG_SELF_WORKER_ENTRY` (module scope) and per-call `opts.selfEntry`
 // (governedHttpGet). This is the smallest contract that masters the entry path without a cwd dependency.
 const SELF_WORKER_ENTRY = (typeof process !== "undefined" && process.env && process.env.ODG_SELF_WORKER_ENTRY) || (() => {
-    // The re-exec spawns `node <entry>`, which can only run the canonical .JS worker. `__filename` is NOT
-    // safe as the default: under tsx the loader resolves this module to the .ts (node can't run .ts), and
-    // once compiled it is the dist copy. Resolve the .js ABSOLUTELY from this module's dir (cwd-independent),
-    // mapping both the dist/core and the .ts cases back to runtime/core/capability-executors.js.
+    // The re-exec spawns `node <entry>` (plain node, no tsx), which can only run a plain-JS worker. ZERO-JS:
+    // the source runtime/core/capability-executors.js is retired, so the entry MUST be the COMPILED dist
+    // worker (runtime/dist/core/capability-executors.js). Resolve it ABSOLUTELY from this module's dir
+    // (cwd-independent): if we are already the dist copy, use it in place; if we are the .ts source loaded
+    // under tsx (…/runtime/core), map ACROSS to the sibling dist worker.
     const dir = __dirname;
-    if (dir.endsWith(path.join("runtime", "dist", "core"))) return path.join(dir, "..", "..", "core", "capability-executors.js");
-    return path.join(dir, "capability-executors.js");
+    if (dir.endsWith(path.join("runtime", "dist", "core"))) return path.join(dir, "capability-executors.js");
+    return path.join(dir, "..", "dist", "core", "capability-executors.js");
 })();
 
 // MIGRATION-READINESS seams (V66 §7 A/B/C): the module's only impure dependencies — child-process spawn,

@@ -125,7 +125,12 @@ const COMPILED_PIPELINE = "runtime/dist/bin/odg-run.js";
 // DEFAULT FLIPPED to TypeScript (eta3-B108): an UNSET ODG_RUNTIME now resolves to the compiled runtime
 // (published default). ROLLBACK to JavaScript = ODG_RUNTIME=js (explicit). ODG_RUNTIME_ENTRY still wins.
 function resolveRuntimeMode(): "ts" | "js" {
-  return (process.env.ODG_RUNTIME ?? "").trim() === "js" ? "js" : "ts";
+  // ZERO-JS (L-iv): the ODG_RUNTIME=js JavaScript rollback is RETIRED. The runtime is always the compiled
+  // TypeScript (dist). This constant collapses the former dual-port selection at every call site —
+  // resolvePipelineEntry always yields the compiled entry (an explicit ODG_RUNTIME_ENTRY pin still wins),
+  // and resolveCorePort always prefers the compiled dist port (tsx resolves the .js specifier to the .ts
+  // source for the dist-absent dev path). The legacy source-.js constants below are now unreachable.
+  return "ts";
 }
 function resolvePipelineEntry(): string {
   const override = process.env.ODG_RUNTIME_ENTRY;

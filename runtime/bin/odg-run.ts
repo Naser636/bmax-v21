@@ -22,19 +22,14 @@ const path = require("path");
 // Lot 1R: this entry is COMPILED (tsc) to a distinct output dir (runtime/dist) and run with plain
 // `node` — no tsx, no node_modules. The compiled helpers (checkpoint-engine/stage-effect/
 // pipeline-builder) are emitted ALONGSIDE this file under dist/core, so they stay relative requires.
-// governance-kernel, odg-bootstrap, runtime-context-loader are now DUAL-PORT (compiled to dist). L7
-// TS-only: prefer the COMPILED dist port so the mission entry's transitive graph resolves within dist
-// (not the source .js rollbacks) — the L7 proof showed loading the source roots pulled in 51 source .js.
-// Fall back to the source .js rollback when ODG_RUNTIME=js OR the dist port is absent (bare sandbox),
-// mirroring the `_odg_port` wrapper discipline. Resolution stays CWD-relative (odg-run runs with cwd =
-// project/sandbox root, as the stage spawns assume).
+// governance-kernel, odg-bootstrap, runtime-context-loader resolve to their COMPILED dist ports
+// (runtime/dist/core|bin) so the mission entry's transitive graph stays entirely within dist. ZERO-JS
+// (L-iv): the ODG_RUNTIME=js source-.js rollback is RETIRED — this entry only ever runs as the compiled
+// dist, whose siblings are emitted alongside it, so the dist port always exists. Resolution stays
+// CWD-relative (odg-run runs with cwd = project/sandbox root, as the stage spawns assume).
 function legacyRequire(rel: any) {
-  if (process.env.ODG_RUNTIME !== "js") {
-    const distRel = rel.replace(/^runtime\//, "runtime/dist/");
-    const distAbs = path.resolve(process.cwd(), distRel);
-    if (fs.existsSync(distAbs)) return require(distAbs);
-  }
-  return require(path.resolve(process.cwd(), rel));
+  const distRel = rel.replace(/^runtime\//, "runtime/dist/");
+  return require(path.resolve(process.cwd(), distRel));
 }
 const { authorizeMission } = legacyRequire("runtime/core/governance-kernel.js");
 
