@@ -3539,3 +3539,29 @@ SUCCESS 13/13, worktree clean. Prohibitions honoured: no force-push, no harness 
 handled. **Next main-program items are human/host/credential-BLOCKED** (Replicate benchmark = token absent,
 present:false verified; §Q P3-D2 TLS/DNS = host; P7/P9/P10 = legal+host+CTO; P0-USB/OFF = hardware/host) — recorded
 as BLOCKED, not failed.
+
+---
+## CHECKPOINT 2026-10-26 (b) — DEF-010 CLOSED + FRONTIER GATED + REPLICATE TOKEN NOW PRESENT — HEAD e8622d1 ≡ origin/main
+Three PRs merged this cycle (normal `gh pr merge --merge`, GitHub-confirmed, CI `success` each, no bypass):
+PR #5 `f0dab14` (residuals), PR #6 `84bcbe4` (§M-2 reconcile + compass), PR #7 `e8622d1` (DEF-010). Local `main`
+ff-synced; tracked worktree clean (only the 4 foreign untracked docs dirs remain, preserved).
+
+**DEF-010 (delivery-packager realpath→read TOCTOU) MITIGATED (PR #7).** `verifyArtifact` validated the evidence
+target via `realpathSync` then re-read it BY PATH (second `statSync`/`readFileSync` re-resolves from scratch ⇒ a
+post-validation symlink swap of the resolved target could escape scope). Now binds ONE descriptor
+`openSync(O_RDONLY|O_NOFOLLOW)` + `fstat`/`readFileSync` on that fd (last-component symlink swap ⇒ ELOOP ⇒
+fail-closed; type-check + hash read the exact validated inode). Defense-in-depth — race stays theoretical/
+not-reproduced; intermediate-dir vector uncovered (needs openat2 RESOLVE_NO_SYMLINKS, no Node fs API), documented in
+source + register. Test 13e added; 13a–d + 13c (resolved symlink→valid in-scope still accepted) intact — 36/36.
+Register DEF-010 → MITIGATED. Gates: packager 36/36 · root tsc 0 · build:runtime 0 (100-closure) · test:report 59/59.
+
+**Main-program frontier — honestly GATED, nothing else autonomously actionable.** DEF-011 = scoped-out design
+decision (shared lock/DB). §Q items host/legal/CTO-blocked (P3-D2 TLS/DNS, P7/P9/P10, off-host backup §M-6, USB).
+**NEW: the Replicate FILM paid-benchmark token file `~/.config/odg/replicate.env` is NOW PRESENT** (mode 600, 61
+bytes, `REPLICATE_API_TOKEN` var — value never read/printed; was `present:false` at the 2026-10-24 handoff). This is
+the **single human-gated next action**: the ≤€250 external-provider benchmark is a billing / external-side-effect
+critical gate — per the CREDENTIAL HANDOFF checkpoint the CTO must explicitly say **"token set"**, after which ODG
+verifies the Replicate model/licence/current price/billing mode/limits + re-runs the guard tests (benchmark-authz
+21/21, production-runner 41/41, credential-safety 12/12) BEFORE any call. **NOT started autonomously** — no real
+spend, no provider call, no adapter wiring without explicit per-action human go-ahead. Prohibitions honoured: no
+force-push, no harness bypass, no prod deploy, no secret handled/shown.
