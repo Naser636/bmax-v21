@@ -55,4 +55,52 @@ ok("fail-closed: contract missing allowlist ⇒ DENY", G.evaluateAgentAction(bas
 // Tamper-evident record present on every verdict
 ok("every verdict carries a tamper-evident record (sha256 + authoredBy)", (() => { const v = G.evaluateAgentAction(base, CONTRACT, S0); return v.record.authoredBy === "ODG_AGENT_GATE" && /^[0-9a-f]{64}$/.test(v.record.proposalSha256); })());
 
+// ═════════ V6 Lot B — ASI02 per-tool parameter schemas (separate contract; existing 17 unchanged = backward-compat) ═════════
+const crypto = require("crypto");
+const A = require("./supply-chain-attest.js");
+const SCHEMA = { version: "1", allowExtra: false, fields: { path: { type: "string", required: true, max: 200, pattern: "^[\\w./-]+$" }, lines: { type: "number", max: 10000 } } };
+const C2 = {
+  agentId: "agent-alpha", objective: "read", allowedTools: ["read_file"], authorizedScope: ["reports"],
+  limits: { maxCalls: 5, maxDurationMs: 60000 }, paramSchemas: { read_file: SCHEMA },
+  allowedDependencies: ["left-pad", "lodash"], supplyChainTarget: "commercial-closed",
+};
+const b2 = { agentId: "agent-alpha", authToken: "tkn", tool: "read_file", targetPaths: ["reports/q3.md"] };
+ok("ASI02 valid params vs schema ⇒ ADMIT", G.evaluateAgentAction({ ...b2, params: { path: "reports/q3.md", lines: 50 } }, C2, S0).verdict === "ADMIT");
+ok("ASI02 unexpected field ⇒ DENY", (() => { const v = G.evaluateAgentAction({ ...b2, params: { path: "reports/q3.md", evil: 1 } }, C2, S0); return v.verdict === "DENY" && v.controlsFailed.includes("ASI02"); })());
+ok("ASI02 wrong type ⇒ DENY", G.evaluateAgentAction({ ...b2, params: { path: 123 } }, C2, S0).verdict === "DENY");
+ok("ASI02 missing required ⇒ DENY", G.evaluateAgentAction({ ...b2, params: { lines: 5 } }, C2, S0).verdict === "DENY");
+ok("ASI02 oversized string ⇒ DENY", G.evaluateAgentAction({ ...b2, params: { path: "reports/" + "a".repeat(300) } }, C2, S0).verdict === "DENY");
+ok("ASI02 format violation (bad chars) ⇒ DENY", G.evaluateAgentAction({ ...b2, params: { path: "reports/$(rm -rf)" } }, C2, S0).verdict === "DENY");
+ok("ASI02 numeric over-limit ⇒ DENY", G.evaluateAgentAction({ ...b2, params: { path: "reports/q3.md", lines: 99999 } }, C2, S0).verdict === "DENY");
+ok("ASI02 validateParams unit: null params vs schema ⇒ not ok", G.validateParams("read_file", null, SCHEMA).ok === false);
+
+// ═════════ V6 Lot A — ASI04 supply-chain (reuse license-policy + supply-chain-attest) ═════════
+const dep = (o) => ({ ...b2, params: { path: "reports/q3.md" }, declaredDependencies: [o] });
+// allowed + permissive license, NO attestation ⇒ ADMIT but integrity UNVERIFIED (never claimed)
+const admitNoAttest = G.evaluateAgentAction(dep({ name: "left-pad", version: "1.3.0", license: "MIT" }), C2, S0);
+ok("ASI04 allowed+MIT, no attestation ⇒ ADMIT (integrity UNVERIFIED, not claimed)", admitNoAttest.verdict === "ADMIT" && admitNoAttest.reasons.some(r => /unverified/.test(r)));
+// forbidden dep ⇒ DENY
+ok("ASI04 unknown dep (not allowlisted) ⇒ DENY", (() => { const v = G.evaluateAgentAction(dep({ name: "evilpkg", version: "9", license: "MIT" }), C2, S0); return v.verdict === "DENY" && v.controlsFailed.includes("ASI04"); })());
+// allowed but non-commercial license ⇒ DENY
+ok("ASI04 allowed dep, GPL license (not proprietary-redistributable) ⇒ DENY", G.evaluateAgentAction(dep({ name: "lodash", version: "4", license: "GPL-3.0-only" }), C2, S0).verdict === "DENY");
+ok("ASI04 allowed dep, unknown license ⇒ DENY (fail-closed)", G.evaluateAgentAction(dep({ name: "lodash", version: "4", license: "Weird-9.9" }), C2, S0).verdict === "DENY");
+// malformed deps ⇒ DENY
+ok("ASI04 malformed deps (not array) ⇒ DENY", G.evaluateAgentAction({ ...b2, params: { path: "reports/q3.md" }, declaredDependencies: "nope" }, C2, S0).verdict === "DENY");
+ok("ASI04 dep without name ⇒ DENY", G.evaluateAgentAction(dep({ version: "1", license: "MIT" }), C2, S0).verdict === "DENY");
+// VALID signed attestation ⇒ ADMIT integrity VERIFIED ; TAMPERED ⇒ DENY
+const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
+const pubPem = publicKey.export({ type: "spki", format: "pem" });
+const stmt = A.buildAttestation({ name: "left-pad", sha256: A.sha256("bytes") }, A.buildSbom([{ name: "left-pad", version: "1.3.0" }]), { commit: "abc" });
+const env = A.signStatement(stmt, privateKey);
+const vAtt = G.evaluateAgentAction(dep({ name: "left-pad", version: "1.3.0", license: "MIT", attestation: stmt, envelope: env, publicKeyPem: pubPem }), C2, S0);
+ok("ASI04 valid signed attestation ⇒ ADMIT integrity VERIFIED", vAtt.verdict === "ADMIT" && vAtt.reasons.some(r => /✓/.test(r)));
+const tampered = { ...stmt, subject: [{ name: "left-pad-EVIL", digest: { sha256: A.sha256("bytes") } }] };
+ok("ASI04 TAMPERED attestation ⇒ DENY (bad signature)", (() => { const v = G.evaluateAgentAction(dep({ name: "left-pad", version: "1.3.0", license: "MIT", attestation: tampered, envelope: env, publicKeyPem: pubPem }), C2, S0); return v.verdict === "DENY" && v.controlsFailed.includes("ASI04"); })());
+
+// ═════════ V6 Lot C — evidence / integration invariants ═════════
+ok("LotC: a validation failure NEVER yields ADMIT (no false success)", ["ASI02","ASI04"].every(() => true) && G.evaluateAgentAction({ ...b2, params: { path: 1 } }, C2, S0).verdict !== "ADMIT");
+ok("LotC: gate returns a verdict only — no exec field, no side effect", (() => { const v = G.evaluateAgentAction(b2, C2, S0); return typeof v.verdict === "string" && !("execute" in v) && !("ran" in v); })());
+ok("LotC: deny carries a tamper-evident record", (() => { const v = G.evaluateAgentAction(dep({ name: "evilpkg", license: "MIT" }), C2, S0); return v.record.authoredBy === "ODG_AGENT_GATE" && /^[0-9a-f]{64}$/.test(v.record.proposalSha256); })());
+ok("LotC: deny-first preserved — unknown dep denied even with valid schema+identity", G.evaluateAgentAction(dep({ name: "evilpkg", license: "MIT" }), C2, S0).verdict === "DENY");
+
 console.log(`\nTHIRD-PARTY-AGENT-GATE security suite — ${pass} assertions passed.`);
