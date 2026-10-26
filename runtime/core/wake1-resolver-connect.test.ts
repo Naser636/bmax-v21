@@ -103,8 +103,8 @@ function objPatch(decision, id) { const o = (decision.objectives || []).find((x)
 // === 1→10. full chain: decision → patch-engine → patch-executor is the writer; in-scope applies, out-of-scope rejected ===
 function runChain(d, plan) {
   runDecision(d, plan);
-  const pe = spawnSync("node", [path.join(CORE, "patch-engine.js")], { cwd: d, encoding: "utf8" });
-  const px = spawnSync("node", [path.join(CORE, "patch-executor.js")], { cwd: d, encoding: "utf8" });
+  const pe = spawnSync("node", [path.join(__dirname, "..", "dist", "core", "patch-engine.js")], { cwd: d, encoding: "utf8" });
+  const px = spawnSync("node", [path.join(__dirname, "..", "dist", "core", "patch-executor.js")], { cwd: d, encoding: "utf8" });
   const report = fs.existsSync(path.join(d, "runtime", "generated", "patch-execution.json")) ? readJson(path.join(d, "runtime", "generated", "patch-execution.json")) : null;
   return { pe: pe.status, px: px.status, report };
 }

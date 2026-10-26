@@ -79,18 +79,18 @@ function read(rel) { return fs.readFileSync(path.join(ROOT, rel), "utf8"); }
   const m = br.match(/scripts\/[\w.-]+\.(ts|js|cjs|mjs)/);
   ok("build:runtime script target exists", Boolean(m) && exists(m[0]));
   // the runtime-state producer referenced by the dashboard chain exists (odg-state).
-  ok("runtime-state producer odg-state.js exists", exists("runtime/bin/odg-state.js"));
+  ok("runtime-state producer odg-state exists (compiled dist + .ts source)", exists("runtime/dist/bin/odg-state.js") && exists("runtime/bin/odg-state.ts"));
   // canonical runtime front-door + both governed engine entrypoints exist (TS default + JS rollback).
   ok("front-door odg-local-pipeline.sh exists", exists("runtime/bin/odg-local-pipeline.sh"));
   ok("TS runtime entrypoint runtime/dist/bin/odg-run.js exists", exists("runtime/dist/bin/odg-run.js"));
-  ok("JS rollback entrypoint runtime/bin/odg-run.js exists (ROLLBACK_ONLY, governed)", exists("runtime/bin/odg-run.js"));
+  ok("JS rollback entrypoint runtime/bin/odg-run.js is RETIRED (ZERO-JS: compiled dist is the sole runtime)", !exists("runtime/bin/odg-run.js"));
 }
 
 // 6 — the compass auto-fire hook is wired into the single canonical completion point.
 {
   const pipe = read("runtime/bin/odg-local-pipeline.sh");
-  ok("compass auto-fire wired into pipeline completion", /compass-update\.js --from-report/.test(pipe));
-  ok("compass recorder target exists", exists("scripts/compass-update.js"));
+  ok("compass auto-fire wired into pipeline completion", /compass-update\.ts --from-report/.test(pipe));
+  ok("compass recorder target exists", exists("scripts/compass-update.ts"));
 }
 
 console.log(`\nroute/version closure — ${passed} assertions passed, ${skipped} skipped.`);

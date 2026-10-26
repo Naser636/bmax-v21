@@ -37,6 +37,8 @@ function makeWorkspace(): string {
   const generated = path.join(root, "runtime", "generated");
   fs.mkdirSync(path.join(root, "runtime", "missions"), { recursive: true });
   fs.mkdirSync(path.join(root, "runtime", "core"), { recursive: true });
+  fs.mkdirSync(path.join(root, "runtime", "dist", "core"), { recursive: true }); // ZERO-JS: stubs live in the compiled dist tree
+  fs.mkdirSync(path.join(root, "runtime", "dist", "bin"), { recursive: true });
   fs.mkdirSync(generated, { recursive: true });
   fs.writeFileSync(path.join(root, "runtime", "dist", "core", "mission-ledger.js"), "process.exit(0);\n");
   // Local pipeline stub: exits non-zero so LOCAL fails cleanly → recovery exhausts → provider path

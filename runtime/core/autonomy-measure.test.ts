@@ -559,7 +559,7 @@ function runLoader(contract) {
   fs2.mkdirSync(p2.join(dir, "runtime", "missions"), { recursive: true });
   fs2.mkdirSync(p2.join(dir, "runtime", "generated"), { recursive: true });
   fs2.writeFileSync(p2.join(dir, "runtime", "missions", "TEST.json"), JSON.stringify(contract));
-  const r = cp.spawnSync(process.execPath, [p2.join(process.cwd(), "runtime", "core", "mission-loader.js"), "TEST"], { cwd: dir, encoding: "utf8" });
+  const r = cp.spawnSync(process.execPath, [p2.join(process.cwd(), "runtime", "dist", "core", "mission-loader.js"), "TEST"], { cwd: dir, encoding: "utf8" });
   let plan = null;
   try { plan = JSON.parse(fs2.readFileSync(p2.join(dir, "runtime", "generated", "mission-plan.json"), "utf8")); } catch { /* left null */ }
   return { status: r.status, plan };

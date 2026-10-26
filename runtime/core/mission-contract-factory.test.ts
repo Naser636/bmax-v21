@@ -254,7 +254,7 @@ ok("contradictory (engineering MODE + requires_engineering:false) ⇒ DELIVERY (
 
 console.log("Case 13 — end-to-end: UNKNOWN delivery no-op is BLOCKED; declared OBSERVATION no-op still SUCCEEDS");
 const { spawnSync } = require("child_process");
-const VE = path.join(process.cwd(), "runtime", "core", "validation-engine.js");
+const VE = path.join(process.cwd(), "runtime", "dist", "core", "validation-engine.js");
 function runVEforContract(contract, execStatus, seedGit) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "a1-e2e-"));
     const G = (n) => path.join(dir, "runtime", "generated", n);
@@ -334,7 +334,7 @@ const gammaPlanDir = (() => {
     return dir;
 })();
 {
-    const r = spawnSync("node", [path.join(process.cwd(), "runtime", "core", "validation-engine.js")], { cwd: gammaPlanDir, encoding: "utf8" });
+    const r = spawnSync("node", [path.join(process.cwd(), "runtime", "dist", "core", "validation-engine.js")], { cwd: gammaPlanDir, encoding: "utf8" });
     const rep = JSON.parse(fs.readFileSync(path.join(gammaPlanDir, "runtime", "generated", "mission-report.json"), "utf8"));
     ok("read-only mode does NOT excuse a requiresExecution no-op (DEF-GAMMA defence intact ⇒ BLOCKED)", rep.validated === false && (r.status ?? -1) === 1);
 }
