@@ -3838,3 +3838,38 @@ rollback available.
 
 Limits honored: no Replicate spend, no L7/TS-only unpause, no public exposure, foreign files untouched, no secret
 exposed. (This checkpoint is itself a docs-only commit ⇒ the invariant "delta = docs-only, no redeploy needed" holds.)
+
+---
+## CHECKPOINT 2026-10-26 (l) — OPPORTUNITY INTELLIGENCE V1: license-policy capability (real improvement) + €0 discovery experiment
+CTO OPPORTUNITY_INTELLIGENCE master mission, cycle V1. Budget €0 honored (no paid call, no Replicate). Entry
+HEAD=origin/main=fa1dfb3, clean. Full report: docs/odg-operational/ODG_OPPORTUNITY_INTELLIGENCE_V1.md.
+
+**Inventory (§2):** the local opportunity pipeline is REAL+tested (opportunity-detector/-policy, research-ranking,
+unit-economics, economic-extractor, price-resolution — 8/8 subset PASS, L3). Collection/external-research is
+provider/credential-gated (L6). Public GitHub/PyPI/SPDX read works at €0 (live 200s).
+
+**Capability improvement (§8, measured):** NEW `runtime/core/license-policy.ts` — deterministic SPDX-family license
+classifier (permissive/public-domain/weak-/strong-/network-copyleft/non-commercial/unknown) with commercialUseOk +
+proprietaryRedistribution dimensions + target-aware adoptionVerdict; FAIL-CLOSED on unknown. Generalizes ODG's prior
+AD-HOC per-case license handling (hardcoded flux-schnell/dev). Benchmark `license-policy.test.ts` 20/20
+(positive/negative/ambiguous + fail-closed + reproduces the earlier flux finding systematically). Wired into CI
+test:report gate (59→60, all PASS); root tsc 0. L4.
+
+**Real €0 experiment (§13.5):** live SPDX fetch (740 licenses/154 OSI, v3.29.0) + live GitHub search (1483 found,
+12 qualified via license-policy) — read-only, inspection-only (no repo executed). Honest result: the qualifier works
+(MIT/BSD/CC0⇒adopt=true; Other/CC-BY-SA⇒null fail-closed) BUT the naive full-text query had low discovery-relevance
+(generic popular repos, not license-detection tools) ⇒ NO qualified opportunity invented. Top next gap =
+discovery-relevance (query precision / capability-matching).
+
+**Financial demo (§13.6):** unit-economics on a representative "code-audit+fix" engagement, ALL HYPOTHESIS;
+contribution margins €880/€1480/€2480 (prudent/central/favorable); module flags CAPACITY_UNPROVEN. No revenue/
+clients/demand claimed.
+
+**Learning-reuse (§11, proven):** the flux license finding → generalized into license-policy, whose benchmark
+asserts it reproduces that finding ⇒ reuse→improvement proven.
+
+**BLOCKED (§13.9, owner+action):** live external collection (CTO: provider+credential), real commercial-lead data
+(CTO: source+permission), video pricing (external: verifiable Replicate price), any paid experiment (CTO: €-authz),
+real demand validation (CTO: market test). No market/revenue claimed. 9 primitives + capability-router unchanged;
+license-policy is a pure policy helper (like opportunity-policy/price-resolution), not a new primitive. Foreign
+docs/ preserved.
