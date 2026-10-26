@@ -24,10 +24,18 @@ export interface AgentRegistry { kind: "TEST_ONLY"; keys: Map<string, any>; sess
 function createRegistry(): AgentRegistry { return { kind: "TEST_ONLY", keys: new Map(), sessions: new Map(), nonces: new Map() }; }
 
 function register(reg: AgentRegistry, p: any): void {
-  reg.keys.set(nsKey(p.tenantId, p.agentId), { tenantId: p.tenantId || null, agentId: p.agentId, publicKeyPem: p.publicKeyPem, state: "active" });
+  reg.keys.set(nsKey(p.tenantId, p.agentId), { tenantId: p.tenantId || null, agentId: p.agentId, publicKeyPem: p.publicKeyPem, state: "active", keyVersion: 1 });
 }
 function revoke(reg: AgentRegistry, p: any): void { const k = reg.keys.get(nsKey(p.tenantId, p.agentId)); if (k) k.state = "revoked"; }
-function openSession(reg: AgentRegistry, s: any): any { const sess = { sessionId: s.sessionId, tenantId: s.tenantId || null, agentId: s.agentId, contractSha: s.contractSha, active: true }; reg.sessions.set(s.sessionId, sess); return sess; }
+// Key ROTATION (test scope): only the NEW key verifies afterwards; the old key ⇒ DENY. keyVersion increments.
+function rotateKey(reg: AgentRegistry, p: any): boolean { const k = reg.keys.get(nsKey(p.tenantId, p.agentId)); if (!k) return false; k.publicKeyPem = p.newPublicKeyPem; k.keyVersion = (k.keyVersion || 1) + 1; k.state = "active"; return true; }
+// Session with an OPTIONAL injected-clock TTL: pass issuedAt+ttlMs for expiry; omit for a non-expiring (V9) session.
+function openSession(reg: AgentRegistry, s: any): any {
+  const hasTtl = typeof s.issuedAt === "number" && typeof s.ttlMs === "number";
+  const sess = { sessionId: s.sessionId, tenantId: s.tenantId || null, agentId: s.agentId, contractSha: s.contractSha, active: true,
+    issuedAt: hasTtl ? s.issuedAt : null, expiresAt: hasTtl ? s.issuedAt + s.ttlMs : null };
+  reg.sessions.set(s.sessionId, sess); return sess;
+}
 function closeSession(reg: AgentRegistry, sessionId: any): void { const s = reg.sessions.get(sessionId); if (s) s.active = false; }
 
 /** issueChallenge — a single-use, context-bound challenge. Nonce stored per-tenant (isolation). */
@@ -57,6 +65,12 @@ function verifyAuth(reg: AgentRegistry, req: any): any {
   if (!sess || sess.active !== true) return { ok: false, reason: "session absent/expired/revoked" };
   if (sess.agentId !== ch.agentId || (sess.tenantId || null) !== (ch.tenantId || null)) return { ok: false, reason: "session belongs to a different identity/tenant" };
   if (sess.contractSha !== ch.contractSha) return { ok: false, reason: "contract does not match the session" };
+  // injected-clock TTL (only when the session declared one). FAIL-CLOSED on missing/backward/after now.
+  if (sess.expiresAt != null) {
+    if (typeof r.now !== "number") return { ok: false, reason: "session has a TTL but no time source presented (fail-closed)" };
+    if (r.now < sess.issuedAt) return { ok: false, reason: "inconsistent clock (now < session issuedAt) — refused" };
+    if (r.now >= sess.expiresAt) return { ok: false, reason: `session expired (now ${r.now} >= expiresAt ${sess.expiresAt})` };
+  }
   // signature over canon(challenge) with the REGISTERED key only
   let sigOk = false;
   try { sigOk = crypto.verify(null, Buffer.from(canon(ch)), rec.publicKeyPem, Buffer.from(r.signature, "base64")); } catch { sigOk = false; }
@@ -69,5 +83,5 @@ function verifyAuth(reg: AgentRegistry, req: any): any {
   return { ok: true, reason: "identity authenticated + session/contract bound + fresh", identity: { tenantId: ch.tenantId || null, agentId: ch.agentId, sessionId: ch.sessionId } };
 }
 
-export { createRegistry, register, revoke, openSession, closeSession, issueChallenge, verifyAuth, canon };
-module.exports = { createRegistry, register, revoke, openSession, closeSession, issueChallenge, verifyAuth, canon };
+export { createRegistry, register, revoke, rotateKey, openSession, closeSession, issueChallenge, verifyAuth, canon };
+module.exports = { createRegistry, register, revoke, rotateKey, openSession, closeSession, issueChallenge, verifyAuth, canon };
