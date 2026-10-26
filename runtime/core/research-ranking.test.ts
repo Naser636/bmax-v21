@@ -62,7 +62,7 @@ const SCORES_LO = { incomePotential: 3, demandGrowth: 4, startupCostInverse: 5, 
 
 // 5. STATIC: the source contains NO fabricated research data / provenance narrative.
 {
-    const src = fs.readFileSync(path.resolve(__dirname, "research-ranking.js"), "utf8");
+    const src = fs.readFileSync(path.resolve(__dirname, "..", "dist", "core", "research-ranking.js"), "utf8");
     const FORBIDDEN = ["producedBy", "liveResearch", "internetCapabilityProof", "WebSearch", "WebFetch", "http://", "https://", "Prompt Engineering", "affiliate", "dropshipping"];
     const hit = FORBIDDEN.find((t) => src.toLowerCase().includes(t.toLowerCase()));
     ok(`ranking module contains no fabricated data/provenance (checked: ${FORBIDDEN.length} tokens)`, hit === undefined);

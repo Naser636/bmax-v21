@@ -26,7 +26,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 
 const REPO = path.resolve(__dirname, "..", "..");
-const ENGINE = path.join(REPO, "runtime", "core", "decision-engine.js");
+const ENGINE = path.join(REPO, "runtime", "dist", "core", "decision-engine.js");
 const pm = require("./patch-memory");
 const { measureDelta, directionOf } = require("./improvement-baseline");
 const { classifyLearningState } = require("./learning-chain");

@@ -47,7 +47,8 @@ function sandbox(control: Record<string, unknown> | null, economicVerdict: strin
   fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
   fs.mkdirSync(path.join(dir, "runtime", "missions"), { recursive: true });
   fs.mkdirSync(path.join(dir, "src", "app"), { recursive: true });
-  for (const f of CLOSURE) fs.copyFileSync(path.join(REPO, "runtime", "core", f), path.join(dir, "runtime", "core", f));
+  // ZERO-JS: copy the .ts twins; the adapter requireCjs's them under tsx (resolves the .js specifier to the .ts).
+  for (const f of CLOSURE) { const tsf = f.replace(/\.js$/, ".ts"); fs.copyFileSync(path.join(REPO, "runtime", "core", tsf), path.join(dir, "runtime", "core", tsf)); }
   // The commit path requires a validated SUCCESS mission-report (worker claim) to consider committing.
   fs.writeFileSync(path.join(dir, "runtime", "generated", "mission-report.json"), JSON.stringify({ mission: "M", validated: true, status: "SUCCESS" }));
   // Mission contract (carries the opt-in control flags read by commitGateDecision).

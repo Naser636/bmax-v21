@@ -62,7 +62,7 @@ function sandbox(state: "conforming" | "wrong-branch" | "staged-index" | "non-re
   fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
   fs.mkdirSync(path.join(dir, "runtime", "missions"), { recursive: true });
   fs.mkdirSync(path.join(dir, "src", "app"), { recursive: true });
-  for (const f of CORE) fs.copyFileSync(path.join(REPO, "runtime", "core", f), path.join(dir, "runtime", "core", f));
+  for (const f of CORE) { const tsf = f.replace(/\.js$/, ".ts"); fs.copyFileSync(path.join(REPO, "runtime", "core", tsf), path.join(dir, "runtime", "core", tsf)); } // ZERO-JS: .ts twins
   fs.writeFileSync(path.join(dir, "runtime", "missions", "M.json"), JSON.stringify({ mission: "M", mode: "IMPLEMENT", requires_engineering: true, authorized_paths: ["src/app/**"], objectives: [{ id: "m_1", goal: "deliver", done_when: ["ok"] }] }));
   if (state === "non-repo") return dir; // unverifiable: no git at all
   git(dir, ["init", "-q"]); git(dir, ["config", "user.email", "t@t.t"]); git(dir, ["config", "user.name", "t"]);

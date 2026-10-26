@@ -32,10 +32,11 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok - " + name); 
 
 console.log("EXECUTION-OF-RECORD LOCK (B136)");
 
-// 1. DEFAULT = ts, explicit "js" preserved — the implemented resolveRuntimeMode expression.
-//    `(process.env.ODG_RUNTIME ?? "").trim() === "js" ? "js" : "ts"` ⇒ unset/other → ts; "js" → js.
-ok("resolveRuntimeMode defaults to ts (unset/other) and preserves explicit js",
-  /=== *"js" *\? *"js" *: *"ts"/.test(adapterWs));
+// 1. ZERO-JS: the runtime is pinned to compiled TypeScript — resolveRuntimeMode is a constant "ts"
+//    (the ODG_RUNTIME=js JavaScript rollback is retired). The former ternary is gone by design.
+ok("resolveRuntimeMode is pinned to ts (ODG_RUNTIME=js rollback retired)",
+  /function resolveRuntimeMode\(\): *"ts" *\| *"js" *\{[\s\S]*?return *"ts";[\s\S]*?\}/.test(adapterWs) &&
+  !/=== *"js" *\? *"js" *: *"ts"/.test(adapterWs));
 ok("resolveRuntimeMode signature returns the ts|js union",
   /function resolveRuntimeMode\(\): *"ts" *\| *"js"/.test(adapterWs));
 
@@ -53,9 +54,9 @@ ok("ts resolves to the COMPILED pipeline, js to the legacy JS pipeline",
   /const COMPILED_PIPELINE = "runtime\/dist\/bin\/odg-run\.js";/.test(adapterWs) &&
   /const PIPELINE = "runtime\/bin\/odg-run\.js";/.test(adapterWs));
 
-// 4. Front door A (shell) default is ts too (same operator switch).
-ok('front door A (odg-local-pipeline.sh) defaults to ts via "${ODG_RUNTIME:-ts}"',
-  /\$\{ODG_RUNTIME:-ts\}/.test(shell) && /if \[ "\$\{ODG_RUNTIME:-ts\}" = "ts" \]; then/.test(shell));
+// 4. Front door A (shell) is unconditionally compiled-TS (ZERO-JS: the ODG_RUNTIME=js branch is retired).
+ok("front door A (odg-local-pipeline.sh) ensures + runs the compiled TS runtime with no JS branch",
+  /odg-ensure-ts-runtime\.sh/.test(shell) && /runtime\/dist\/bin\/odg-run\.js/.test(shell) && !/if \[ "\$\{ODG_RUNTIME:-ts\}" = "ts" \]; then/.test(shell));
 
 // 5. DOCUMENTARY lock — no comment may claim the default is JavaScript.
 const FORBIDDEN = [

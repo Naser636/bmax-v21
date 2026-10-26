@@ -13,7 +13,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 const REPO = process.cwd();
-const PE = path.join(REPO, "runtime", "core", "patch-executor.js");
+const PE = path.join(REPO, "runtime", "dist", "core", "patch-executor.js"); // ZERO-JS: compiled dist port (source .js retired)
 
 let failures = 0;
 function check(cond: boolean, label: string): void {

@@ -58,7 +58,7 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); pa
 }
 // 10 — --json CLI prints ONE valid JSON object {status, reasons} and preserves the status exit code.
 {
-  const res = cp.spawnSync("node", [path.join(__dirname, "runtime-identity-check.js"), "--json"], { encoding: "utf8" });
+  const res = cp.spawnSync(path.join(__dirname, "..", "node_modules", ".bin", "tsx"), [path.join(__dirname, "runtime-identity-check.ts"), "--json"], { encoding: "utf8" }); // ZERO-JS: scripts run via tsx (.ts), not source .js
   let parsed = null, parseOk = true;
   try { parsed = JSON.parse(res.stdout.trim()); } catch { parseOk = false; }
   ok("--json emits valid JSON with status + reasons", parseOk && parsed && typeof parsed.status === "string" && Array.isArray(parsed.reasons));

@@ -34,8 +34,9 @@ ok("default ⇒ runtime/dist/core (the 13 stages spawn from compiled TS, not sou
 // (2) explicit override used VERBATIM (an existing dir).
 ok("explicit ODG_STAGE_BASE=runtime/core ⇒ used verbatim", resolvedStageBase({ ODG_STAGE_BASE: "runtime/core" }) === "runtime/core");
 
-// (3) ODG_RUNTIME=js forces the historical source base.
-ok("ODG_RUNTIME=js ⇒ runtime/core (source rollback)", resolvedStageBase({ ODG_RUNTIME: "js" }) === "runtime/core");
+// (3) ZERO-JS: the ODG_RUNTIME=js source rollback is retired — it no longer forces the source base;
+//     the default stays the compiled dist (ODG_RUNTIME is ignored by the stage-base resolver).
+ok("ODG_RUNTIME=js ⇒ still runtime/dist/core (source rollback retired)", resolvedStageBase({ ODG_RUNTIME: "js" }) === "runtime/dist/core");
 
 // Fail-closed: a non-existent override THROWS (no silent fallback) — part of the contract.
 let threw = false;

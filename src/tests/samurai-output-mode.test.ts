@@ -22,7 +22,7 @@ function check(cond: boolean, label: string): void {
   else { failures++; console.error(`  FAIL  ${label}`); }
 }
 
-const driver = fs.readFileSync("runtime/bin/odg-run.js", "utf8");
+const driver = fs.readFileSync("runtime/dist/bin/odg-run.js", "utf8"); // ZERO-JS: the compiled dist driver
 
 // 1. Output mode is gated on the ODG_VERBOSE env flag (same convention as ODG_FLEET etc.).
 check(
@@ -36,8 +36,8 @@ check(
   "summary mode captures stage output (spawnSync encoding:utf8) instead of only stdio:inherit",
 );
 check(
-  /runtime\/generated\/logs/.test(driver) && /appendFileSync\(\s*RUN_LOG/.test(driver),
-  "summary mode appends stage transcripts to a run-log under runtime/generated/logs/",
+  (/["']runtime["']\s*,\s*["']generated["']\s*,\s*["']logs["']/.test(driver) || /runtime\/generated\/logs/.test(driver)) && /appendFileSync\(\s*RUN_LOG/.test(driver),
+  "summary mode appends stage transcripts to a run-log under runtime/generated/logs/ (LOG_DIR=path.join(...))",
 );
 
 // 3. Summary mode prints a compact per-stage result line and a full-log pointer.

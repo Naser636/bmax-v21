@@ -19,7 +19,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
-const VERIFIER = path.resolve("runtime/bin/odg-verify.js");
+const VERIFIER = path.resolve("runtime/dist/bin/odg-verify.js"); // ZERO-JS: compiled dist verifier
 const STALE = "STALE_CORRECTIVE";
 
 let failures = 0;

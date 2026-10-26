@@ -23,12 +23,12 @@ function check(cond: boolean, label: string): void {
 }
 
 const mse = fs.readFileSync("runtime/bin/odg-local-pipeline.sh", "utf8");
-const verifier = fs.readFileSync("runtime/bin/odg-verify.js", "utf8");
+const verifier = fs.readFileSync("runtime/dist/bin/odg-verify.js", "utf8"); // ZERO-JS: the compiled dist verifier
 
-// 1. The pre-flight delegates to the canonical verifier.
+// 1. The pre-flight delegates to the canonical verifier (ZERO-JS: via tsx on the .ts source).
 check(
-  /node\s+runtime\/bin\/odg-verify\.js/.test(mse),
-  "mse pre-flight invokes the canonical verifier (node runtime/bin/odg-verify.js)",
+  /tsx\s+runtime\/bin\/odg-verify\.ts/.test(mse),
+  "mse pre-flight invokes the canonical verifier (tsx runtime/bin/odg-verify.ts)",
 );
 
 // 2. The MSE script no longer produces its own verification file / logic.

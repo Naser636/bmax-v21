@@ -22,8 +22,8 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const REPO = process.cwd();
-const VE = path.join(REPO, "runtime", "core", "validation-engine.js");
-const { evaluateObjectiveProofs } = require(path.join(REPO, "runtime", "core", "capability-probes.js")) as {
+const VE = path.join(REPO, "runtime", "dist", "core", "validation-engine.js");
+const { evaluateObjectiveProofs } = require(path.join(REPO, "runtime", "dist", "core", "capability-probes.js")) as {
   evaluateObjectiveProofs: (
     objs: Array<{ id?: string; proof?: unknown }>,
     ctx: unknown,

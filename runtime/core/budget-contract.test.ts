@@ -47,7 +47,7 @@ function loadPlan(spec) {
     fs.mkdirSync(path.join(dir, "runtime", "brain"), { recursive: true });
     fs.writeFileSync(path.join(dir, "runtime", "brain", "MASTER_PLAN.md"), "# plan\n");
     fs.writeFileSync(path.join(dir, "runtime", "missions", "M.json"), JSON.stringify(spec));
-    const r = spawnSync("node", [path.join(REPO, "runtime", "core", "mission-loader.js"), "M"], { cwd: dir, encoding: "utf8" });
+    const r = spawnSync("node", [path.join(REPO, "runtime", "dist", "core", "mission-loader.js"), "M"], { cwd: dir, encoding: "utf8" });
     let plan = null;
     try { plan = JSON.parse(fs.readFileSync(path.join(dir, "runtime", "generated", "mission-plan.json"), "utf8")); } catch { /* */ }
     return { plan, code: r.status };

@@ -19,7 +19,7 @@ let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }
 
 const REPO = path.resolve(__dirname, "..", "..");
-const PATCH_EXECUTOR = path.join(REPO, "runtime", "core", "patch-executor.js");
+const PATCH_EXECUTOR = path.join(REPO, "runtime", "dist", "core", "patch-executor.js");
 const TARGET_REL = path.join("runtime", "generated", "tl-probe.txt");
 
 function git(dir, args) { return spawnSync("git", args, { cwd: dir, encoding: "utf8" }); }

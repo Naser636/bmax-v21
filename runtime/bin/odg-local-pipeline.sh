@@ -245,7 +245,7 @@ echo "[PIPELINE] Launching Runtime..."
 # tsx). If that build or its validation fails the launcher STOPS loudly; there is NO JS fallback.
 if ! bash runtime/bin/odg-ensure-ts-runtime.sh; then
   echo "[PIPELINE] the compiled runtime could not be ensured (see [TS-RUNTIME] above)." >&2
-  echo "[PIPELINE] Fix the build (npm run build:runtime). NO JS fallback." >&2
+  echo "[PIPELINE] Fix the compiled-runtime build (see odg-ensure-ts-runtime). NO JS fallback." >&2
   exit 1
 fi
 echo "[PIPELINE] Runtime engine: COMPILED TypeScript (runtime/dist, ODG_STAGE_BASE=${ODG_STAGE_BASE:-runtime/dist/core})"

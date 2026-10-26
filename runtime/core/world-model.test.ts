@@ -96,7 +96,7 @@ console.log("V5 §387 — WORLD MODEL / EPISTEMIC STATE");
 
 // Boundary proofs (the module is self-contained epistemic state).
 {
-  const src = fs.readFileSync(path.join(__dirname, "world-model.js"), "utf8");
+  const src = fs.readFileSync(path.join(__dirname, "..", "dist", "core", "world-model.js"), "utf8");
   check(!/require\(["']\.\/runtime-model["']\)/.test(src), "world-model does NOT import runtime-model (read model is not a canonical source)");
   check(!/require\(["']\.\/mission-lifecycle["']\)/.test(src), "world-model does NOT import mission-lifecycle (governance state is not the item version)");
   check(/require\(["']\.\/state-transition["']\)/.test(src), "world-model REUSES the C03 state-transition validator (one shared discipline)");

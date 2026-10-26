@@ -20,7 +20,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 const REPO = process.cwd();
-const VE = path.join(REPO, "runtime", "core", "validation-engine.js");
+const VE = path.join(REPO, "runtime", "dist", "core", "validation-engine.js");
 let failures = 0;
 function check(cond: boolean, label: string): void {
   if (cond) console.log(`  PASS ${label}`);

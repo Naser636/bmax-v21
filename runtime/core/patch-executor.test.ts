@@ -26,8 +26,8 @@ const assert = require("assert");
 const { spawnSync } = require("child_process");
 
 const REPO = path.resolve(__dirname, "..", "..");
-const PATCH_EXECUTOR = path.join(REPO, "runtime", "core", "patch-executor.js");
-const VALIDATION = path.join(REPO, "runtime", "core", "validation-engine.js");
+const PATCH_EXECUTOR = path.join(REPO, "runtime", "dist", "core", "patch-executor.js");
+const VALIDATION = path.join(REPO, "runtime", "dist", "core", "validation-engine.js");
 
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }

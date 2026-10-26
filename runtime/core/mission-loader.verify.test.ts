@@ -23,7 +23,7 @@ const { execFileSync } = require("child_process");
 let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }
 
-const LOADER = path.resolve(__dirname, "mission-loader.js");
+const LOADER = path.resolve(__dirname, "..", "dist", "core", "mission-loader.js");
 const MISSION = "TEST_VERIFY_WIRE";
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "loader-verify-test-"));

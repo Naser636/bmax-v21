@@ -63,7 +63,7 @@ ok("ordinary top-level requires are all found", (() => {
 // 12. The REAL capability-executors.js source: its require("./autonomy-rate") is traced (the live case).
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require("fs");
-const realSrc = fs.readFileSync("runtime/core/capability-executors.js", "utf8");
+const realSrc = fs.readFileSync("runtime/dist/core/capability-executors.js", "utf8");
 ok("real capability-executors.js: ./autonomy-rate require is traced", reqs(realSrc).includes("./autonomy-rate"));
 
 console.log(`\nBUILD-DIST-CLOSURE REQUIRE SCAN — ${pass} assertions passed, ${fail} failed.`);

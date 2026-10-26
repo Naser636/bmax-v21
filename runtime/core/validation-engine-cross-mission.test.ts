@@ -15,7 +15,7 @@ let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }
 
 const REPO = process.cwd();
-const JS = path.join(REPO, "runtime", "core", "validation-engine.js");
+const JS = path.join(REPO, "runtime", "dist", "core", "validation-engine.js"); // ZERO-JS: source VE retired; dist is the runtime
 const DIST = path.join(REPO, "runtime", "dist", "core", "validation-engine.js");
 
 // Run a validation-engine binary in a temp cwd seeded with the given artifacts; return the parsed report.

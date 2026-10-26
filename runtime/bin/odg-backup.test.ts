@@ -20,7 +20,7 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 
-const BIN = path.join(__dirname, "odg-backup.js");
+const BIN = path.join(__dirname, "..", "dist", "bin", "odg-backup.js");
 const M = require("./odg-backup.js");
 
 let passed = 0;

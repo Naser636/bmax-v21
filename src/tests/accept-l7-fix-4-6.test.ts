@@ -46,7 +46,7 @@ for (const [d, s, env] of [[VERIFY_D, VERIFY_S, {}], [VERIFY_D, VERIFY_S, { ODG_
 ok("dist delegate's prefer-dist-bin dependency is present in dist/core (TS-only load)", fs.existsSync(path.join(REPO, "runtime/dist/core/prefer-dist-bin.js")));
 // and the real delegate uses it (both ports import ../core/prefer-dist-bin.js).
 ok("both delegate ports import the shared seam (actual code path)",
-   /prefer-dist-bin/.test(fs.readFileSync(path.join(REPO, "runtime/bin/odg-delegate.js"), "utf8")) &&
+   /prefer-dist-bin/.test(fs.readFileSync(path.join(REPO, "runtime/dist/bin/odg-delegate.js"), "utf8")) &&
    /prefer-dist-bin/.test(fs.readFileSync(path.join(REPO, "runtime/dist/bin/odg-delegate.js"), "utf8")));
 
 console.log(`\nACCEPT L7_FIX_4+6 — ${passed} assertions passed.`);
