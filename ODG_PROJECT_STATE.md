@@ -3500,3 +3500,42 @@ Then tell ODG "token set". ODG verifies presence (no value), wires the real adap
 Replicate model/licence/price/billing/limits, re-runs guard tests, THEN runs the ≤€250 / ≤8-attempt fail-closed
 benchmark. Human 7.5/10 = UNPROVEN until a real human reviews real media; 60:00 = UNPROVEN until a real export is
 measured. Prohibitions honoured; no secret handled; HEAD unchanged; no commit/push.
+
+---
+## CHECKPOINT 2026-10-26 — POST-MERGE RESIDUALS CLOSED + §M-2 RECONCILED — HEAD f0dab14 ≡ origin/main
+Truth-lock: HEAD `f0dab14` ≡ origin/main (local `main` ff-synced); clean outside the 4 foreign untracked docs dirs
+(docs/action-film/ ecommerce/ film-factory/ market-research/ — preserved, out of scope). PR #5
+(`excellence/residuals-20261026`) **MERGED** (GitHub-confirmed: state MERGED, mergeCommit `f0dab14`,
+mergedBy Naser636, 2026-10-26T14:11:24Z) — normal `gh pr merge --merge`, no bypass; CI `success` before merge.
+
+**The two documented post-convergence residuals are CLOSED with real work (no forcing, no fabrication):**
+1. **governed-apply-default — production root-cause fix (`fe5e9bc`).** `patch-proposal-apply.ts` resolved its
+   executor via `runtime-paths.coreDir(__dirname)`, which maps a dist dirname BACK to the removed source
+   `runtime/core/patch-executor.js` ⇒ the governed-APPLY (live auto-heal) spawned a gone file ⇒ nothing applied.
+   Fixed to the COMPILED dist sibling (`__dirname` dist→self; `.ts`→map across to `../dist/core`). Examined ALL
+   `resolveCorePort` consumers (adapter): its workspace-relative convention is CORRECT and kept — an absolute-return
+   refactor was tried and REVERTED (broke hermetic workspace isolation: `live-cost-metering-wiring` +
+   `live-commit-authorization` seed `.ts` twins into their temp workspace and the in-process requireCjs callers must
+   load THAT copy). Tests GREEN: `propose-apply-boundary` (compiled-absolute executor + temp cwd + in-scope apply +
+   out-of-scope rejection) + `governed-apply-default` end-to-end.
+2. **accept-autonomy-live-proof — REAL confined executed mission.** `ODG_LIVE_PROOF` (distinct, confined,
+   authorized; gitignored `runtime/live-proof/` scope; no provider/network/spend) ran the real 13-stage pipeline via
+   `ODG_STAGE_BASE=runtime/dist/core node runtime/dist/bin/odg-run.js ODG_LIVE_PROOF` ⇒ **PIPELINE SUCCESS 13/13,
+   VALIDATED**; the ODG Synthetic Deliverable wrote a real evidenced file (sha256 `f3cbf96e…`, 83 bytes, authoredBy
+   ODG_CAPABILITY); `odg state` rebuilt `autonomy-rate.json` ⇒ measurable:true, autonomyPercent 100,
+   **ODG_EXECUTED_VERIFIED:1** ⇒ the acceptance test is 5/5 GREEN. Numerator NOT forced, denominator NOT inflated.
+   (Mechanics learned: a new un-contracted `odg mission <X>` runs a default M0001/AUDIT plan — run the pipeline
+   directly; VE in-scope check is git-based so the scope must be git-visible; `verify.evidence` must be a REGISTERED
+   probe NAME, not a path.)
+
+**CTO step 4 — stale JS-migration roadmap statuses reconciled (docs only; `runtime/governance/ROADMAP.json`
+UNTOUCHED):** §M-3 (JS-retirement ladder) + §Q P5-TS marked SUPERSEDED/DONE in `4285b02`; §M-2 (per-stage ladder
+"keep .js as default+rollback, 1/9 mission-ledger à migrer") marked SUPERSEDED here — verified 0 internal tracked
+`.js/.cjs/.mjs`, `mission-ledger` is `.ts`-only, runtime is compiled-TS only, `ODG_RUNTIME=js` retired. Historical
+per-stage detail retained verbatim.
+
+Gates throughout: CI test:report 59/59, root tsc 0, both residual suites green in isolation, cold-start PIPELINE
+SUCCESS 13/13, worktree clean. Prohibitions honoured: no force-push, no harness bypass, no prod deploy, no secret
+handled. **Next main-program items are human/host/credential-BLOCKED** (Replicate benchmark = token absent,
+present:false verified; §Q P3-D2 TLS/DNS = host; P7/P9/P10 = legal+host+CTO; P0-USB/OFF = hardware/host) — recorded
+as BLOCKED, not failed.
