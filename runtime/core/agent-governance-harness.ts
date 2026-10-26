@@ -146,8 +146,25 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
 function runSequence(proposals: any[], contract: any, initialState: any, deps: HarnessDeps): any {
   let st = initialState || { calls: 0, elapsedMs: 0, history: [] };
   const steps: any[] = [];
-  for (const p of (Array.isArray(proposals) ? proposals : [])) { const r = runStep(p, contract, st, deps); steps.push(r); st = r.state; }
-  return { steps, finalState: st };
+  let stopped = false; let stoppedAt = -1; let stopReason: string | null = null;
+  const list = Array.isArray(proposals) ? proposals : [];
+  for (let i = 0; i < list.length; i++) {
+    const p = list[i];
+    // V16 — PER-STEP authorization/context: if authForStep is provided, resolve a FRESH auth for THIS step (its own
+    // challenge/nonce). Because the gate's identity layer consumes each nonce once, step 1's proof can NEVER drive
+    // step 2 (replay ⇒ AUTH_DENIED ⇒ halt). Without authForStep, deps is used as-is (unauthenticated sequence).
+    const stepDeps = typeof (deps as any).authForStep === "function"
+      ? Object.assign({}, deps, { auth: (deps as any).authForStep(i, p) })
+      : deps;
+    const r = runStep(p, contract, st, stepDeps);
+    steps.push(r);
+    st = r.state;
+    // V16 — HALT on a blocking step: anything that is not an independently-verified execution (deny, auth-deny,
+    // contract/tenant mismatch, escalate-reject, error-recovered, unverified) STOPS the sequence ⇒ NO later step
+    // runs. NOTE: this is a halt, NOT a transaction — steps already executed BEFORE the failure are NOT rolled back.
+    if (r.verified !== true) { stopped = true; stoppedAt = i; stopReason = r.outcome; break; }
+  }
+  return { steps, finalState: st, stopped, stoppedAt, stopReason, completed: !stopped, ranCount: steps.length };
 }
 
 /**
