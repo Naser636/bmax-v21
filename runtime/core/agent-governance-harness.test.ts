@@ -155,4 +155,28 @@ c9 = challenge(); da = authDeps(c9, signCh(c9));
 const authedButDenied = H.runStep({ ...good, targetPaths: ["/etc/passwd"] }, CONTRACT, S0, da);
 ok("V9 identity != permission: authenticated but out-of-scope ⇒ gate DENY, no exec", authedButDenied.outcome === "DENIED" && da.calls.length === 0);
 
+// ═════════ V11 — TENANT ISOLATION (logical, hermetic; NOT production isolation) ═════════
+// Two independent tenants, SAME agentId + proposal: evidence must be tenant-distinct and non-attributable across.
+const tDeps = (tid) => ({ revision: { commit: "t", treeDirty: false, available: true }, tenantId: tid,
+  executor: (p) => ({ ok: true, producedPaths: p.targetPaths }), verifier: () => ({ verified: true, reason: "x" }), calls: [] });
+const sA = H.runStep(good, CONTRACT, S0, tDeps("TA"));
+const sB = H.runStep(good, CONTRACT, S0, tDeps("TB"));
+ok("V11 two tenants, same agent/proposal ⇒ DISTINCT execId", sA.execId !== sB.execId);
+ok("V11 A-bundle attributes to A", H.verifyEvidenceBundle(sA.evidence, { expectedTenantId: "TA" }).ok === true);
+ok("V11 A-bundle CANNOT authorize/attribute to B ⇒ rejected", H.verifyEvidenceBundle(sA.evidence, { expectedTenantId: "TB" }).ok === false);
+ok("V11 missing tenant binding vs expected ⇒ fail-closed", H.verifyEvidenceBundle(H.runStep(good, CONTRACT, S0, mkDeps()).evidence, { expectedTenantId: "TA" }).ok === false);
+ok("V11 bundle carries the tenant it was sealed under", sA.evidence.tenantId === "TA" && sB.evidence.tenantId === "TB");
+
+// AUTH-bound tenant: the AUTHENTICATED identity's tenant is authoritative (not proposal-supplied).
+{ const reg2 = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
+  ID.register(reg2, { tenantId: "T-AUTH", agentId: "agent-x", publicKeyPem: k.publicKey.export({ type: "spki", format: "pem" }) });
+  ID.openSession(reg2, { sessionId: "SX", tenantId: "T-AUTH", agentId: "agent-x", contractSha: "C1" });
+  const cc = ID.issueChallenge(reg2, { tenantId: "T-AUTH", agentId: "agent-x", sessionId: "SX", contractSha: "C1" });
+  const dd = mkDeps(); dd.revision = { commit: "t", treeDirty: false, available: true };
+  dd.auth = { registry: reg2, challenge: cc, signature: crypto2.sign(null, Buffer.from(ID.canon(cc)), k.privateKey).toString("base64") };
+  const authedStep = H.runStep(good, CONTRACT, S0, dd);
+  ok("V11 auth-bound tenant propagates to evidence (authoritative)", authedStep.outcome === "ADMITTED_VERIFIED" && authedStep.evidence.tenantId === "T-AUTH");
+  ok("V11 auth-bound bundle rejects a foreign expected tenant", H.verifyEvidenceBundle(authedStep.evidence, { expectedTenantId: "T-OTHER" }).ok === false);
+}
+
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);
