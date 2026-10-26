@@ -4008,3 +4008,33 @@ capability-router unchanged; foreign docs/ preserved.
 
 **Next lot:** wire ASI04 supply-chain hook (license-policy + supply-chain-attest) + per-tool param schema (ASI02
 depth) — €0, hermetic. BLOCKED/EXTERNAL: real agent integration, public exposure, multi-tenant, certification.
+
+---
+## CHECKPOINT 2026-10-26 (q) — V6: agent-gate HARDENING (ASI04 supply-chain + ASI02 param schemas) €0
+CTO V6. Truth Lock entry dd6bee3≡origin/main, clean, 5 stashes preserved. Hardened the existing third-party-agent-gate
+WITHOUT a new primitive; diff limited to 2 files (gate + test). No real agent, no network, no exposure.
+
+**Lot A — ASI04 supply-chain:** added `evaluateDependencies(deps, contract)` REUSING license-policy.adoptionVerdict
+(license adoption vs target) + supply-chain-attest.verifyStatement (REAL cryptographic integrity). Per declared dep:
+allowlist (deny-by-default for unknown), license verdict (deny non-commercial/unknown), integrity VERIFIED only on a
+cryptographically-valid signed attestation else UNVERIFIED (NEVER claimed — the agent's declaration is not proof),
+provenance recorded. Fail-closed on malformed/missing. Folded into evaluateAgentAction (ASI04).
+**Lot B — ASI02 param schemas:** added `validateParams(tool, params, schema)` — explicit versioned per-tool schema
+(types/required/max/pattern + reject unexpected fields). Folded into evaluateAgentAction when the contract declares a
+schema for the tool. Deny-first preserved (allowlist before schema).
+**Lot C — evidence/integration:** verdicts carry a tamper-evident sha256 record; a validation failure can NEVER yield
+ADMIT (no-false-success); the gate returns a verdict only (no exec field — executors keep execution authority);
+deny-first preserved even with valid schema+identity.
+
+**Evidence:** security suite extended 17→**37 assertions** (ASI02: valid/extra-field/wrong-type/missing-required/
+oversized/format/numeric-limit/null; ASI04: allowed+MIT no-attest⇒ADMIT-unverified, unknown-dep⇒DENY, GPL/unknown
+license⇒DENY, malformed⇒DENY, REAL ed25519 signed attestation⇒ADMIT-VERIFIED, TAMPERED⇒DENY; LotC invariants). Existing
+17 unchanged (backward-compat via a separate contract). Full gate 61/61; root tsc 0; build:runtime 0; diff = 2 files.
+
+**Limits (honest):** integrity is REAL only with a signed attestation+key (verifyStatement); without one it is
+UNVERIFIED and never claimed. Real crypto AGENT authN, multi-tenant, sandbox pentest, certification remain EXTERNAL.
+**Learning reuse (proven):** license-policy (V1) + supply-chain-attest reused in the agent-gate; no-false-success /
+deny-by-default doctrine reused again. 9 primitives + capability-router unchanged; foreign docs/ + 5 stashes preserved.
+
+**Next lot:** ASI01 semantic goal-drift detection within allowed tools (harder, may need a policy signal) OR wire the
+gate behind a real (simulated) agent-runtime harness for end-to-end traces. Resume: `tsx runtime/core/third-party-agent-gate.test.ts`.
