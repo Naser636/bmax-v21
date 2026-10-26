@@ -40,6 +40,8 @@ export interface AgentContract {
   allowedDependencies?: string[];                     // ASI04: dependency allowlist (deny-by-default)
   supplyChainTarget?: string;                         // license-policy target (default commercial-closed)
   revoked?: boolean;                                  // ASI01: contract revoked ⇒ deny everything
+  forbiddenToolCombos?: string[][];                   // ASI01-combinatorial: tool-SETS whose co-occurrence is out of scope
+  maxPerTool?: Record<string, number>;               // ASI01-combinatorial: per-tool invocation cap (non-idempotent accrual)
 }
 // ASI01: agent-supplied top-level fields that would attempt to redefine governance are NEVER authorization.
 const GOVERNANCE_MUTATION_FIELDS = ["objective", "contract", "permissions", "authorizedScope", "allowedTools", "limits", "grant", "elevate", "requireHumanFor", "allowedDependencies"];
@@ -162,6 +164,21 @@ function evaluateAgentAction(proposal: AgentActionProposal, contract: AgentContr
     for (const h of (Array.isArray(s.history) ? s.history : [])) for (const tp of (h && Array.isArray(h.targetPaths) ? h.targetPaths : [])) seen.add(tp);
     for (const tp of paths) seen.add(tp);
     if (seen.size > c.limits.maxDistinctTargets) { reasons.push(`cumulative distinct targets ${seen.size} > ${c.limits.maxDistinctTargets} — combined effect exits mission scope (slow drift)`); failed.push("ASI01"); }
+  }
+  // ASI01 combinatorial — tool-SEQUENCE invariants over history+current (not just path counts)
+  {
+    const hist = Array.isArray(s.history) ? s.history : [];
+    const toolCounts: Record<string, number> = {};
+    const toolSet = new Set<string>();
+    for (const h of hist) { const t = h && h.tool; if (typeof t === "string") { toolCounts[t] = (toolCounts[t] || 0) + 1; toolSet.add(t); } }
+    if (typeof p.tool === "string") { toolCounts[p.tool] = (toolCounts[p.tool] || 0) + 1; toolSet.add(p.tool); }
+    // forbidden co-occurrence: a combo whose tools ALL now appear ⇒ dangerous cumulative effect / indirect bypass
+    for (const combo of (Array.isArray(c.forbiddenToolCombos) ? c.forbiddenToolCombos : [])) {
+      if (Array.isArray(combo) && combo.length && combo.every((t) => toolSet.has(t))) { reasons.push(`forbidden tool combination co-occurred [${combo.join("+")}] — combined effect out of scope / indirect bypass`); failed.push("ASI01"); break; }
+    }
+    // per-tool invocation cap (non-idempotent accrual / permission accumulation)
+    const caps = c.maxPerTool && typeof c.maxPerTool === "object" ? c.maxPerTool : {};
+    for (const [t, cap] of Object.entries(caps)) { if (typeof cap === "number" && (toolCounts[t] || 0) > cap) { reasons.push(`tool "${t}" invoked ${toolCounts[t]}× > cap ${cap} (non-idempotent accrual)`); failed.push("ASI01"); break; } }
   }
   // ASI06 — evidence is recorded, NEVER trusted for the verdict (no-false-success)
   if (p.claimedEvidence != null) reasons.push("agent-claimed evidence recorded but NOT trusted (independent verification required downstream)");

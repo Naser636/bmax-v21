@@ -14,8 +14,10 @@
  */
 import crypto from "node:crypto";
 const gate: any = require("./third-party-agent-gate");
+const prov: any = require("./evidence-provenance");
 
 const sha256 = (s: string) => crypto.createHash("sha256").update(s).digest("hex");
+const ORDER = ["GATE", "EXEC", "VERIFY"]; // the only valid admitted-path transition prefix
 
 export interface HarnessDeps {
   executor: (proposal: any) => any;                                   // SIMULATED executor (hermetic); stands in for ODG's EXECUTOR
@@ -38,6 +40,8 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
 
   const verdict = gate.evaluateAgentAction(proposal, contract, s);          // admission ALWAYS via the gate
   stamp("GATE", { verdict: verdict.verdict, controlsFailed: verdict.controlsFailed, record: verdict.record });
+  // deterministic execution id (no clock): binds this step's proposal to its evidence + prevents cross-exec reuse.
+  const execId = sha256(`${verdict.record.proposalSha256}:${s.calls}:${(contract && contract.agentId) || ""}`);
 
   const advanceState = (executed: boolean) => ({
     calls: s.calls + (executed ? 1 : 0),
@@ -47,7 +51,14 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
   });
   const done = (outcome: string, executed: boolean, extra?: any) => {
     stamp("OUTCOME", { outcome, executed });
-    return Object.freeze({ outcome, executed, gateVerdict: verdict.verdict, trace, state: advanceState(executed), ...(extra || {}) });
+    // Lot A — seal an evidence BUNDLE binding the whole chain to this execId (tamper-evident via provenance).
+    const bundle = prov.stampProvenance({
+      execId, agentId: (proposal && proposal.agentId) || null, objective: (contract && contract.objective) || null,
+      proposalSha256: verdict.record.proposalSha256, verdict: verdict.verdict, executed,
+      resultDigest: (extra && extra.resultDigest) || null, verified: !!(extra && extra.verified),
+      order: trace.map((t: any) => t.phase),
+    }, { revision: (deps as any).revision });
+    return Object.freeze({ outcome, executed, gateVerdict: verdict.verdict, execId, evidence: bundle, trace, state: advanceState(executed), ...(extra || {}) });
   };
 
   // DENY ⇒ NO execution, period.
@@ -63,17 +74,22 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
   // Admitted (ADMIT or ESCALATE→approve): execute the INJECTED executor, recover on error, verify INDEPENDENTLY.
   let execResult: any;
   try {
-    execResult = deps.executor(proposal);
-    stamp("EXEC", { ok: !!(execResult && execResult.ok), note: "executor result is UNTRUSTED until independently verified" });
+    execResult = (deps.executor as any)(proposal, execId);
+    stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), note: "executor result is UNTRUSTED until independently verified" });
   } catch (e: any) {
     stamp("EXEC_ERROR", { error: String(e && e.message ? e.message : e) });
     return done("ERROR_RECOVERED", true, { verified: false }); // recovered; NO false success
   }
-  const v = deps.verifier(proposal, execResult) || { verified: false, reason: "no verifier result" };
-  stamp("VERIFY", { verified: v.verified === true, reason: v.reason });
+  const resultDigest = sha256(JSON.stringify(execResult ?? null));
+  const v = (deps.verifier as any)(proposal, execResult, execId) || { verified: false, reason: "no verifier result" };
+  // Lot A — bind the evidence to THIS execution: if the verifier asserts an execId/resultDigest, they MUST match.
+  let verified = v.verified === true; const bindNotes: string[] = [];
+  if (v.boundExecId !== undefined && v.boundExecId !== execId) { verified = false; bindNotes.push("evidence execId does not bind to this execution (foreign/replayed)"); }
+  if (v.resultDigest !== undefined && v.resultDigest !== resultDigest) { verified = false; bindNotes.push("evidence resultDigest != actual result (crypto-valid-but-wrong-result)"); }
+  stamp("VERIFY", { execId, resultDigest, verified, reason: [v.reason, ...bindNotes].filter(Boolean).join("; ") });
   const approved = verdict.verdict === "ESCALATE";
   const base = approved ? "ESCALATED_APPROVED" : "ADMITTED";
-  return done(`${base}_${v.verified === true ? "VERIFIED" : "UNVERIFIED"}`, true, { verified: v.verified === true, verifyReason: v.reason });
+  return done(`${base}_${verified ? "VERIFIED" : "UNVERIFIED"}`, true, { verified, resultDigest, verifyReason: [v.reason, ...bindNotes].filter(Boolean).join("; ") });
 }
 
 /** runSequence — drive an ordered list of proposals, threading state (history/calls) so cumulative drift accrues. */
@@ -84,5 +100,29 @@ function runSequence(proposals: any[], contract: any, initialState: any, deps: H
   return { steps, finalState: st };
 }
 
-export { runStep, runSequence, sha256 };
-module.exports = { runStep, runSequence, sha256 };
+/**
+ * verifyEvidenceBundle — INDEPENDENT re-verification of a sealed step bundle. Checks: provenance integrity
+ * (tamper), ADMIT↔exec consistency, valid transition order, and (if expectedExecId given) that the bundle binds
+ * to THAT execution (foreign/replayed evidence rejected). Returns {ok, reasons}. FAIL-CLOSED on malformed input.
+ */
+function verifyEvidenceBundle(bundle: any, opts?: any): { ok: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+  if (!bundle || typeof bundle !== "object") return { ok: false, reasons: ["absent/malformed bundle"] };
+  const pv = prov.verifyProvenance(bundle);
+  if (!pv.ok) reasons.push(`provenance: ${pv.reason}`);                       // tamper / modified-after-sealing
+  const expectedExecId = opts && opts.expectedExecId;
+  if (expectedExecId !== undefined && bundle.execId !== expectedExecId) reasons.push("execId does not match the expected execution (foreign/replayed evidence)");
+  // ADMIT↔exec consistency
+  if (bundle.executed === true && !["ADMIT", "ESCALATE"].includes(bundle.verdict)) reasons.push(`execution recorded but verdict was "${bundle.verdict}" (execution without an authorizing verdict)`);
+  if (bundle.verdict === "ADMIT" && bundle.executed !== true) reasons.push("ADMIT verdict but no corresponding execution");
+  if (bundle.verdict === "DENY" && bundle.executed === true) reasons.push("DENY verdict but execution occurred");
+  // transition order: must start GATE; if executed, must include EXEC (or EXEC_ERROR) then OUTCOME
+  const ord = Array.isArray(bundle.order) ? bundle.order : [];
+  if (ord[0] !== "GATE") reasons.push("invalid transition order (does not start at GATE)");
+  if (bundle.executed === true && !(ord.includes("EXEC") || ord.includes("EXEC_ERROR"))) reasons.push("executed but no EXEC transition recorded");
+  if (bundle.verified === true && !ord.includes("VERIFY")) reasons.push("verified:true but no VERIFY transition");
+  return { ok: reasons.length === 0, reasons };
+}
+
+export { runStep, runSequence, verifyEvidenceBundle, sha256 };
+module.exports = { runStep, runSequence, verifyEvidenceBundle, sha256 };
