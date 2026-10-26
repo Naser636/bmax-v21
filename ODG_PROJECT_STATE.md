@@ -3811,3 +3811,30 @@ destructive op; foreign docs/ preserved; no secret exposed.
 **Executable-frontier status:** with the reboot validated, NO non-blocked authorized executable lot remains open.
 Remaining reliquats are all externally-gated: TLS/DNS public exposure (domain+cert+CTO decision), Replicate further
 spend (CTO €0), video model comparison (verifiable Replicate price), L7/TS-only (CTO pause).
+
+---
+## CHECKPOINT 2026-10-26 (k) — MAIN↔VPS RECONCILIATION: served release is FUNCTIONALLY = latest main (delta = docs-only)
+CTO final reconciliation mission. Entry HEAD=origin/main=`fadae6b`, clean. Verified against GIT REFS + the actually-
+active release (not just the compass name).
+
+**Active release (verified):** `rel-20261026T170857Z-268be2c666e9-r-lFDoxyDMohywdhPDESc` (built from `268be2c`),
+served buildId `r-lFDoxyDMohywdhPDESc`, health/root/runtime-state=200, identity CONSISTENT, service active+enabled,
+listener 127.0.0.1:3000 (loopback), rollback-ready (previous→hbTMmA).
+
+**Delta main vs deployed release (268be2c..fadae6b) = 6 commits, ALL documentation.** Files changed: `ODG_PROJECT_STATE.md`
++ 2 docs (runbook, V2 matrix). **Build-input delta = 0** — non-test `src/`=0, `package.json`/`next.config`/`public/`=0,
+`runtime/`=0, `deploy/`=0. The 6 commits are the vps-deploy + reboot-drill checkpoints/runbook/matrix only.
+
+**VERDICT (§4 — prior version explicitly justified):** the served release (268be2c / r-lFDoxy) is **functionally
+identical** to latest main (fadae6b) for the dashboard build AND the runtime/live-data pipeline. A redeploy to
+fadae6b would rebuild a byte-functionally-identical artifact and restart the service for ZERO functional gain ⇒ NOT
+justified (would be churn/risk without benefit; mission §3/§6). **No redeploy performed. No host reboot (§7 — no
+specific reason).** The 6-commit retard is docs-only and is ACCEPTED.
+
+**STANDING RULE:** the VPS tracks main's FUNCTIONAL state. Documentation/compass-only commits do NOT require a
+redeploy; a redeploy is warranted only when a dashboard-build input changes (non-test `src/`, package.json,
+next.config, public/, or the runtime consumed by the served app). Re-verified live: served=healthy, loopback,
+rollback available.
+
+Limits honored: no Replicate spend, no L7/TS-only unpause, no public exposure, foreign files untouched, no secret
+exposed. (This checkpoint is itself a docs-only commit ⇒ the invariant "delta = docs-only, no redeploy needed" holds.)
