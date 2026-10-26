@@ -4112,3 +4112,48 @@ structural not semantic; identity binding. UNTESTED/EXTERNAL = real agent, crypt
 
 **Next lot:** verified-key→session→contract binding reusing supply-chain-attest ed25519 verify (needs an identity
 store; real connection = CTO-gated). Resume: `tsx runtime/core/agent-governance-harness.test.ts`.
+
+---
+## CHECKPOINT 2026-10-26 (t) — V9: cryptographic agent identity + session/contract binding (€0, hermetic, TEST-ONLY)
+CTO V9. Truth Lock entry 745b6f8≡origin/main, clean, 5 stashes preserved. No new primitive; reuses node Ed25519 +
+gate + harness + evidence-provenance. Hermetic, no network/real-agent/exposure.
+
+**§1 design:** supply-chain-attest.verifyStatement is ARTIFACT attestation (subject digest + SBOM) — NOT reused for
+identity (conflation avoided). Built a SEPARATE `runtime/core/agent-identity.ts`.
+
+**§2 cryptographic identity (TEST-ONLY registry):** agentId↔APPROVED Ed25519 public key + state; `verifyAuth`
+checks signature over canon(challenge) with the REGISTERED key (agent-supplied key ⇒ DENY: no self-rekey);
+single-use nonce (anti-replay = freshness, no clock); revoked identity / unknown key / token-presence-only ⇒ DENY.
+Private keys only in the hermetic test; never logged/exported/committed. Production KMS/HSM/TTL = EXTERNAL (documented).
+
+**§3 session↔contract↔authz binding (harness PRE-GATE):** before admission the harness verifies identity + active
+session bound to that identity/tenant + contractSha matches session + freshness/anti-replay; failure ⇒ AUTH_DENIED
+(NO gate call, NO execution). Identity ≠ permission: a valid auth with an out-of-scope action is STILL DENIED at the
+gate (proven). ADMITTED/EXECUTED/VERIFIED/failure distinction preserved.
+
+**§4 adversarial (proven):** agent-identity 14/14 (valid; invalid sig; unknown key; revoked; expired/foreign session;
+contract mismatch; replayed challenge; token-without-signature; unauthorized key change; tenant isolation ×2; no
+secret in result). harness 24→30 (+6 V9): valid-auth⇒ADMITTED_VERIFIED; invalid⇒AUTH_DENIED executor-NEVER-called;
+replay⇒AUTH_DENIED; requireAuth+none⇒AUTH_DENIED fail-closed; no key material in bundle; identity≠permission.
+SPY executor proves no execution after auth/bind failure.
+
+**§5 multi-tenant:** DESIGN + HERMETIC LOGICAL-ISOLATION PROTO ONLY — the registry namespaces keys/sessions/nonces
+per tenantId; a T1 nonce is rejected under T2 while T2 authenticates independently (proven). **Production
+multi-tenant (data-store/resource/history/evidence isolation, per-tenant keys at scale) is NOT activated — declared a
+dedicated future lot, not claimed acquired.**
+
+**§6 validation:** agent-identity 14/14; harness 30/30; gate 47/47 (unchanged); all gated (test:report 62→63);
+root tsc 0; build:runtime 0; diff = 3 modified + 2 new. Independent re-verification: auth failure blocks execution;
+foreign/replayed denied; unauthorized exec impossible; evidence contains no secret.
+
+**Closure (honest):** BUILT = local TEST-ONLY Ed25519 identity + session/contract binding + anti-replay, wired
+pre-gate. PROVEN = auth failure blocks execution; identity↔session↔contract binding; no false success. LIMITS =
+TEST-ONLY registry (no prod key store); multi-tenant is a logical proto only. EXTERNAL = KMS/HSM, TTL/rotation,
+real-agent connection, certification. UNTESTED (prod) = at-scale key mgmt, production multi-tenant.
+**Learning reuse (proven):** evidence-provenance sealing + no-false-success reused; Ed25519 pattern paralleled from
+supply-chain-attest but kept SEPARATE. 9 primitives + capability-router + executors unchanged; foreign docs/ + 5
+stashes preserved.
+
+**Next lot:** verified-key→session store with TTL (needs a clock/identity store) OR a dedicated production
+multi-tenant isolation lot. Resume: `tsx runtime/core/agent-identity.test.ts`. BLOCKED/EXTERNAL (CTO): real agent,
+KMS/HSM, prod multi-tenant, certification, exposure.

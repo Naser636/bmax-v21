@@ -116,4 +116,43 @@ const combo = H.runSequence([
 ], CMBc, S0, dC);
 ok("LotB e2e: forbidden tool combo across a sequence ⇒ 2nd step DENIED, no exec", combo.steps[1].outcome === "DENIED" && dC.calls.length === 1);
 
+// ═════════ V9 — cryptographic auth integrated as a PRE-GATE step ═════════
+const crypto2 = require("crypto");
+const ID = require("./agent-identity.js");
+const reg = ID.createRegistry();
+const kp = crypto2.generateKeyPairSync("ed25519");
+ID.register(reg, { tenantId: "T1", agentId: "agent-x", publicKeyPem: kp.publicKey.export({ type: "spki", format: "pem" }) });
+ID.openSession(reg, { sessionId: "S1", tenantId: "T1", agentId: "agent-x", contractSha: "C1" });
+const challenge = () => ID.issueChallenge(reg, { tenantId: "T1", agentId: "agent-x", sessionId: "S1", contractSha: "C1" });
+const signCh = (ch) => crypto2.sign(null, Buffer.from(ID.canon(ch)), kp.privateKey).toString("base64");
+const authDeps = (c9, sig) => { const da = mkDeps(); da.auth = { registry: reg, challenge: c9, signature: sig }; da.revision = { commit: "t", treeDirty: false, available: true }; return da; };
+
+// valid auth ⇒ proceeds to gate + exec + verify
+let c9 = challenge(); let da = authDeps(c9, signCh(c9));
+const authed = H.runStep(good, CONTRACT, S0, da);
+ok("V9 valid auth ⇒ proceeds past gate to ADMITTED_VERIFIED", authed.outcome === "ADMITTED_VERIFIED" && da.calls.length === 1 && authed.trace.some(t => t.phase === "AUTH" && t.data.ok === true));
+
+// invalid signature ⇒ AUTH_DENIED, executor NEVER called, gate never reached
+c9 = challenge(); da = authDeps(c9, signCh({ ...c9, nonce: "tampered" }));
+const bad = H.runStep(good, CONTRACT, S0, da);
+ok("V9 invalid auth ⇒ AUTH_DENIED, executor NEVER called", bad.outcome === "AUTH_DENIED" && bad.executed === false && da.calls.length === 0 && bad.gateVerdict === null);
+
+// replayed challenge ⇒ 2nd AUTH_DENIED
+c9 = challenge(); const sig9 = signCh(c9);
+const first = H.runStep(good, CONTRACT, S0, authDeps(c9, sig9));
+const replayDeps = authDeps(c9, sig9); const replay = H.runStep(good, CONTRACT, S0, replayDeps);
+ok("V9 replayed challenge ⇒ AUTH_DENIED on 2nd use, no exec", first.outcome === "ADMITTED_VERIFIED" && replay.outcome === "AUTH_DENIED" && replayDeps.calls.length === 0);
+
+// requireAuth but no auth presented ⇒ AUTH_DENIED
+const dReq = mkDeps(); dReq.requireAuth = true;
+const noAuth = H.runStep(good, CONTRACT, S0, dReq);
+ok("V9 requireAuth + none presented ⇒ AUTH_DENIED (fail-closed), no exec", noAuth.outcome === "AUTH_DENIED" && dReq.calls.length === 0);
+
+// AUTH bundle carries no secret
+ok("V9 AUTH_DENIED bundle contains no key material", !/PRIVATE KEY|BEGIN .*KEY/.test(JSON.stringify(bad)));
+// identity != permission: valid auth but out-of-scope action ⇒ still DENY at the gate (no exec)
+c9 = challenge(); da = authDeps(c9, signCh(c9));
+const authedButDenied = H.runStep({ ...good, targetPaths: ["/etc/passwd"] }, CONTRACT, S0, da);
+ok("V9 identity != permission: authenticated but out-of-scope ⇒ gate DENY, no exec", authedButDenied.outcome === "DENIED" && da.calls.length === 0);
+
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);
