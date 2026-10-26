@@ -3937,3 +3937,38 @@ capital + certification (ESTIMATION, not €0). Verdict: highest ceiling + stron
 **Next decisions (CTO):** (1) authorize the C1 §D demand test on one channel (the single step to demand-validate C1);
 (2) decide whether C4 warrants a product+GTM+capital commitment or one design-partner conversation (outreach-gated).
 No market/revenue/demand claimed; 9 primitives + capability-router unchanged; foreign docs/ preserved.
+
+---
+## CHECKPOINT 2026-10-26 (o) — EU PRIVATE-SECTOR OPPORTUNITY PORTFOLIO V4 (tiered, sourced, €0)
+CTO V4. Private EU companies only (public/tenders excluded). Budget €0; no contact/publication/spend. C1/C4
+preserved (not redone). Reused research + license-policy + unit-economics; no code change. Report:
+docs/odg-operational/ODG_EU_OPPORTUNITY_PORTFOLIO_V4.md. Entry HEAD=origin/main=0cfe8d6.
+
+**Sectors (sourced OBSERVATION 2026), strongest-demand-first:**
+- S1 EU regulatory compliance (DORA live Jan-2025/NIS2/EU-AI-Act Aug2-2026): MANDATORY dated demand. Budgets NIS2 y1
+  €25-120K (important); essential programs €150K-2M; banking essential €300K-1.5M (€500k+ credible); advisory line
+  €15-60K; recurring (continuous obligation). STRONGEST evidence class.
+- S2 FinOps/cloud cost: ~$3K/mo → $50-100K/yr; savings-share 20-35% (recurring ≥€10k/mo at scale); ODG capability
+  LOW (no cloud-rightsizing — new build).
+- S3 security audit/pentest/MSSP: audits $80-200K, pentest $50-200K, MSSP $25-100K/mo (€500k+/yr), bundles $6-9K/mo;
+  ODG slice = automated audit (C1 real), full pentest needs human+accreditation.
+- S4 C1 SMB audit / S5 C4 agent-governance (preserved).
+
+**Value labels enforced (§3):** every high-tier figure = published-price or documented-BUDGET OBSERVATION, NOT ODG
+revenue/sale/accessible-demand. Best-per-tier mapped (€5k→C1; €20k→NIS2 important; €50k→enterprise audit; €100k→
+DORA/NIS2 essential; €500k+→banking-DORA/enterprise-MSSP; recurring≥€10k/mo→FinOps savings-share/MSSP retainer).
+
+**Delivery-capability (honest §6):** NONE of the €100k-500k+ programs is end-to-end ODG-deliverable TODAY (need
+accredited consultants/legal/insurance/human experts; FinOps needs a new capability). ODG's deliverable slice =
+automation+evidence+documentation sub-component OR a partner/white-label model. **Best risk-adjusted near-term =
+automated compliance-EVIDENCE for the DORA/NIS2 wave** (mandatory dated demand + ODG's real evidence/audit/SBOM/
+license capabilities + recurring + partner channel lowers accreditation barrier; bridges C1+C4). €500k+ banking-DORA/
+MSSP = STRATEGIC (partner+capital), retained not declared executable.
+
+**Blocks:** all outreach/partnering/listing/spend = CTO-gated (€0); accreditation/insurance/legal = external;
+CAC/win-rate/close-ability = INCONNU; security figures skew US (re-verify EU). No sale/revenue/accessible-demand
+claimed. 9 primitives + capability-router unchanged; foreign docs/ preserved.
+
+**Next decisions (CTO):** (1) authorize exploration of a partner/white-label DORA/NIS2 compliance-evidence
+automation play (highest risk-adjusted bridge); (2) C1 demand test (fastest standalone); (3) €500k+ banking-DORA/MSSP
+= partner+capital decision; (4) FinOps deferred unless cloud-rightsizing capability prioritized.
