@@ -4495,3 +4495,41 @@ preserved.
 Next €0 candidate: optionally RETIRE the unauthenticated legacy execution path (behaviour-breaking; needs its own
 audit + migration of V5–V8 tests). BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent,
 KMS/HSM, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (ad) — V19: remove legacy unauthenticated execution path €0
+CTO V19. Truth Lock entry b7db70a≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive.
+Diff = 2 files + register.
+
+**Audit (read-only):** consumers of the legacyUnauthenticated EXEC path = only the harness test suite (no production/
+ODG-capability caller; the only non-test runStep caller is runSequence). Path classes: pre-V9 (V5–V8) historical +
+V11 caller-asserted-tenant + V14–V16/V18 unauthenticated fixtures (TESTS to migrate); no public/production interface;
+ODG internal capability executors (different seam, OUT OF SCOPE). No legitimate use requires unauthenticated execution.
+
+**Reproduced:** unauthenticated runStep executed via the legacy path (authBound false, legacyUnauthenticated stamp).
+
+**Migration (bounded):** DELETED the legacy branch — runStep now ALWAYS routes execution through createGovernedExecutor
++ authorizeExecution; a step that is not authenticated+contract/tenant-bound (authBound:false) ⇒ EXECUTION_DENIED
+before the raw executor is reached. Fail-closed; no silent fallback. Migrated historical tests: pre-V9 executing sites
+(ADMIT/ESCALATE-approve/falsified/error/cumulative-seq/boundDeps/combo) wrapped with a new authExec() helper (TEST-ONLY
+Ed25519 identity, fresh per-contract challenge); V11 tenant tests ⇒ authenticated tenants; V14/V15 bare-ADMIT fixtures
+⇒ assert EXECUTION_DENIED + downstream refusal; V16 unauth sequences ⇒ per-step auth; V18 legacy-path test ⇒ assert
+refusal. DENY/ESCALATE-reject tests stay unauthenticated (they never execute — gate still evaluates policy).
+
+**Proof:** harness 88→91 (+3 V19, net after migration): no-auth+no-flag ⇒ EXECUTION_DENIED raw 0; legacy marker gone;
+authenticated ⇒ governed + independently verified. All migrated historical tests green (no false success). gate 51/51 +
+identity 22/22 unchanged; full gate 63/63; tsc 0; build 0. Fix re-confirmed (EXECUTION_DENIED, raw 0).
+
+**Status:** PROVEN (TEST) = NO unauthenticated execution anywhere; every execution requires authenticated, contract/
+tenant-bound admission through the governed boundary; no default/omission reactivates a legacy path. HONEST LIMIT
+(documented) = the gate still EVALUATES an unauthenticated proposal as pure policy (produces NO execution); ODG internal
+capability executors untouched (out of scope). EXTERNAL/BLOCKED (not claimed) = production authN + multi-tenant
+isolation, real agent, KMS/HSM, certification.
+
+**Learning reuse (proven):** reused governed boundary (V15/V17), default-governed (V18), per-step/per-contract auth
+(V16), authBound (V14), reproduce-before-fix, migrate-historical-tests-to-explicit-refusal-or-valid-auth doctrine.
+9 primitives + router + executors unchanged; 5 stashes + foreign docs preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 candidate: expose a typed public API (runStep/runSequence) with the authenticated-only contract documented for a
+future real consumer. BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, cert.
