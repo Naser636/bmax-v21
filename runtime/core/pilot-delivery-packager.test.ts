@@ -244,6 +244,17 @@ function hashTree(dir) {
   let threw4 = false, pkg4;
   try { pkg4 = packageDelivery(MISSION, { cwd: dir4 }); } catch { threw4 = true; }
   ok("13d dangling symlink ⇒ MISSING_EVIDENCE, no throw", !threw4 && hasCode(pkg4, CODE.MISSING_EVIDENCE) && pkg4.accepted === false);
+
+  // 13e — DEF-010 TOCTOU HARDENING: the evidence is read through ONE O_NOFOLLOW file descriptor and
+  //        type-checked via fstat ON THAT fd (not a second statSync/readFileSync by path). Proof the read is
+  //        descriptor-bound: an in-scope evidence path that resolves to a DIRECTORY (not a regular file) is
+  //        rejected MISSING_EVIDENCE by the fd fstat, fail-closed and without throwing. (The symlink-swap
+  //        race itself stays theoretical/not-reproduced — O_NOFOLLOW is defense-in-depth; see source note.)
+  const dir5 = buildValid({ evidence: null });
+  fs.mkdirSync(path.join(dir5, EVID_REL), { recursive: true }); // declared in-scope path IS a directory
+  let threw5 = false, pkg5;
+  try { pkg5 = packageDelivery(MISSION, { cwd: dir5 }); } catch { threw5 = true; }
+  ok("13e in-scope target that is a directory ⇒ MISSING_EVIDENCE via fd fstat, no throw", !threw5 && hasCode(pkg5, CODE.MISSING_EVIDENCE) && pkg5.accepted === false && pkg5.deliverable.length === 0);
 }
 
 // BAD request guard (no throw).
