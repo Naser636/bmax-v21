@@ -1,3 +1,4 @@
+// @ts-nocheck
 // DOMAIN-A DEMONSTRATOR — bounded multi-step orchestration reusing the shared-core dep-planner. Shows: dependency
 // sequencing into parallel layers, deterministic execution, idempotent re-run (no duplicate effects), fail-closed
 // safe-stop (a failed item SKIPS its dependents), per-step evidence, and NO-FALSE-SUCCESS (mission is BLOCKED, not
@@ -5,7 +6,7 @@
 //
 // This MIRRORS the real runtime/core pattern (capability-executors + idempotency-guard + mechanical-acceptance +
 // checkpoint-engine) at demonstrator scale, consuming the shared planner. It does NOT replace them.
-import { planLayers, schedule } from './dep-planner.mjs';
+import { planLayers, schedule } from './dep-planner.js';
 
 // Execute work items layer by layer. Items within a layer are independent (could run in parallel). `effects` is a
 // shared ledger enabling idempotency: an item already recorded as done is RECONCILED, not re-run.

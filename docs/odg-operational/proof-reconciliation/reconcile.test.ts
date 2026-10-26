@@ -1,8 +1,9 @@
+// @ts-nocheck
 // Phase E NEGATIVE + robustness tests. €0, no network. Proves fail-closed input handling, idempotency, and —
 // the key differentiator — that the INDEPENDENT verifier CATCHES a planted false success (an agent hiding a
 // discrepancy or inflating matches). A green here means the governance gate actually prevents false success.
-import { reconcile } from './reconcile.mjs';
-import { verify } from './verify-reconciliation.mjs';
+import { reconcile } from './reconcile.js';
+import { verify } from './verify-reconciliation.js';
 import { writeFileSync, mkdtempSync, copyFileSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // CROSS-DOMAIN INTEGRATION / NON-REGRESSION HARNESS (§9) — runs every A/B/C + shared-core suite and demonstrator
 // and asserts each exits 0. This is the contract test that proves a change to the SHARED CORE (dep-planner /
 // eval-metrics) breaks no domain. Reproducible, €0, no network. Run: node integration-test.mjs

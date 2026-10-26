@@ -1,3 +1,4 @@
+// @ts-nocheck
 // SHARED-CORE regression comparator (Domain-B) — an EXECUTED "was-green, now-red" comparator over two run
 // snapshots. Closes the Domain-B inventory gap: recurrence analysis existed, but no comparator that proves a
 // regression by diffing baseline vs current. Pure, deterministic, €0. Complements runtime/core improvement-baseline

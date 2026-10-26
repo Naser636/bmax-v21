@@ -1,3 +1,4 @@
+// @ts-nocheck
 // SHARED-CORE OpenTelemetry export (Domain-A/B) — build vendor-neutral OTLP/JSON trace spans with GenAI semantic
 // conventions, WITHOUT a network dependency or a heavy SDK. Realises the benchmark-register decision: instrument to
 // OpenTelemetry/OpenInference (speakable by Langfuse & Phoenix) rather than to any single vendor SDK. Pure,

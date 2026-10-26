@@ -1,3 +1,4 @@
+// @ts-nocheck
 // RUN-PIPELINE — single reproducible command for the full 10-step product journey, €0, local only.
 //   1 import → 2 validate → 3 normalise+provenance → 4 reconcile → 5 detect gaps → 6 classify certain/review
 //   → 7 explainable result → 8 INDEPENDENT verification → 9 BLOCK unsubstantiated success → 10 reproducible audit.
@@ -7,10 +8,10 @@ import { writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { ingest } from './ingest.mjs';
-import { reconcileRows } from './reconcile.mjs';
-import { verify } from './verify-reconciliation.mjs';
-import { buildAudit } from './audit-report.mjs';
+import { ingest } from './ingest.js';
+import { reconcileRows } from './reconcile.js';
+import { verify } from './verify-reconciliation.js';
+import { buildAudit } from './audit-report.js';
 const here = dirname(fileURLToPath(import.meta.url));
 
 export function runPipeline({ ledgerPath = join(here, 'ledger.csv'), bankPath = join(here, 'bank.csv'), outDir = here, dateToleranceDays = 2 } = {}) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // SHARED-CORE eval-metrics — domain-agnostic confusion matrix + precision/recall/F1 (+ a simple calibration/Brier
 // helper). This closes a gap the Domain-B inventory flagged as genuinely MISSING in runtime/core: an explicit
 // precision/recall/FP/FN confusion-matrix metric (the eval harness today reports success-rates, not a confusion

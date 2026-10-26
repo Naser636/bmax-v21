@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Phase E DELIVERABLE — bank/ledger reconciliation engine (the "agent" work product). Reads ledger.csv + bank.csv,
 // matches entries, classifies every discrepancy (AMOUNT_MISMATCH / MISSING_IN_BANK / MISSING_IN_LEDGER /
 // DUPLICATE_IN_BANK / DATE_MISMATCH), and writes a structured reconciliation report. Pure, deterministic, €0.

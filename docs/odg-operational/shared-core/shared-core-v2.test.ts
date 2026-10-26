@@ -1,10 +1,11 @@
+// @ts-nocheck
 // SHARED-CORE v2 tests — retry/backoff (A), regression comparator (B), lesson->test (B), OTLP export (A/B).
 // Positive + adversarial. Deterministic (injected sleep, no wall-clock). €0. Node >=18.
 import assert from 'node:assert';
-import { withRetry, backoffSchedule } from './retry.mjs';
-import { compareRuns } from './regression-compare.mjs';
-import { generateTestCase, runGeneratedTests } from './lesson-to-test.mjs';
-import { toOTLP, span, genAiAttributes, attr, spansFromSteps } from './otel-export.mjs';
+import { withRetry, backoffSchedule } from './retry.js';
+import { compareRuns } from './regression-compare.js';
+import { generateTestCase, runGeneratedTests } from './lesson-to-test.js';
+import { toOTLP, span, genAiAttributes, attr, spansFromSteps } from './otel-export.js';
 
 let pass = 0, fail = 0; const failures = [];
 const t = (name, fn) => { try { fn(); pass++; } catch (e) { fail++; failures.push(`${name}: ${e.message}`); } };

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Phase E INDEPENDENT VERIFIER — a SEPARATE implementation that checks the reconcile report against the ground-truth
 // answer key (recall: every planted discrepancy caught; precision: no spurious findings) AND independent structural
 // invariants (every bank+ledger row accounted for exactly once; matched refs truly match). This is ODG's
@@ -5,7 +6,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { confusionMatrix } from '../shared-core/eval-metrics.mjs'; // SHARED-CORE (Domain-B metric reused in Domain-C)
+import { confusionMatrix } from '../shared-core/eval-metrics.js'; // SHARED-CORE (Domain-B metric reused in Domain-C)
 const here = dirname(fileURLToPath(import.meta.url));
 const key = (f) => `${f.type}:${f.ref}`;
 

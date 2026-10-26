@@ -1,10 +1,11 @@
+// @ts-nocheck
 // ODG5 EVIDENCE LEDGER — applies the reality-gate to THIS campaign's work items and classifies each by its honest
 // verification state (no claim beyond evidence). Produces ODG5_EVIDENCE_LEDGER.json. Run: node odg5-evidence-ledger.mjs
 // Evidence below reflects ACTUAL runs recorded this session (integration-test.mjs exit 0). €0, deterministic.
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { classify } from './shared-core/reality-gate.mjs';
+import { classify } from './shared-core/reality-gate.js';
 const here = dirname(fileURLToPath(import.meta.url));
 
 // Non-deployment local components: tested + integrated (integration-test.mjs 10/10). Those with explicit acceptance

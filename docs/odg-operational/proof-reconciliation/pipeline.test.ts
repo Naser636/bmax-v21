@@ -1,3 +1,4 @@
+// @ts-nocheck
 // PIPELINE COVERAGE MATRIX (§3) — valid / invalid / missing / contradictory / duplicate / ambiguous /
 // hidden-anomaly / false-positive+negative / falsified+inflated / idempotent / engine-verifier-separation /
 // safe-stop / traceability / extractor-stub-contract. Pure, deterministic, €0, no network. Node >=18.
@@ -7,11 +8,11 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import assert from 'node:assert';
-import { reconcileRows } from './reconcile.mjs';
-import { ingest } from './ingest.mjs';
-import { runPipeline } from './run-pipeline.mjs';
-import { verify } from './verify-reconciliation.mjs';
-import { getExtractor, NotImplementedExtractor, makeSubstituteExtractor, textFixedExtractor } from './extract-adapter.mjs';
+import { reconcileRows } from './reconcile.js';
+import { ingest } from './ingest.js';
+import { runPipeline } from './run-pipeline.js';
+import { verify } from './verify-reconciliation.js';
+import { getExtractor, NotImplementedExtractor, makeSubstituteExtractor, textFixedExtractor } from './extract-adapter.js';
 const here = dirname(fileURLToPath(import.meta.url));
 
 let pass = 0, fail = 0; const failures = [];

@@ -1,8 +1,9 @@
+// @ts-nocheck
 // SHARED-CORE tests — eval-metrics (confusion matrix + calibration) and dep-planner (topological scheduling).
 // Positive + adversarial (cycles, missing deps, zero-denominator). Pure, deterministic, €0. Node >=18.
 import assert from 'node:assert';
-import { confusionMatrix, brierScore, reliabilityBins } from './eval-metrics.mjs';
-import { planLayers, sequentialOrder, schedule } from './dep-planner.mjs';
+import { confusionMatrix, brierScore, reliabilityBins } from './eval-metrics.js';
+import { planLayers, sequentialOrder, schedule } from './dep-planner.js';
 
 let pass = 0, fail = 0; const failures = [];
 const t = (name, fn) => { try { fn(); pass++; } catch (e) { fail++; failures.push(`${name}: ${e.message}`); } };

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // SHARED-CORE lesson->test generation (Domain-B) — turn a captured LESSON (an input that once produced a wrong
 // result + the recorded correct answer) into an INDEPENDENT, deterministic regression test that can ACTUALLY FAIL.
 // Closes the Domain-B inventory gap: lessons were captured (patch-memory) but no mechanism generated prevention

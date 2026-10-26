@@ -1,9 +1,10 @@
+// @ts-nocheck
 // DOMAIN-B DEMONSTRATOR — independent evaluation + no-false-success gate, reusing the shared-core eval-metrics.
 // A "system under test" (SUT) produces predictions; we grade them against a VERSIONED golden set (ground truth)
 // with an INDEPENDENT confusion matrix + calibration (Brier), then GATE: a success claim is BLOCKED unless
 // precision/recall meet the agreed threshold. Shows an adversarial SUT that claims success but is caught.
 // Synthetic, €0, no I/O. Mirrors runtime/core autonomy-eval-harness pattern at demonstrator scale.
-import { confusionMatrix, brierScore } from './eval-metrics.mjs';
+import { confusionMatrix, brierScore } from './eval-metrics.js';
 
 // Versioned golden set: labelled transactions; the positive class = "is an anomaly".
 export const GOLDEN_V1 = {

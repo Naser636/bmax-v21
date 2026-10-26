@@ -1,7 +1,8 @@
+// @ts-nocheck
 // ODG5 REALITY GATE regression tests — prove the gate REJECTS false claims (the amendment's §6 required list).
 // Each test asserts a known false-success path is denied. Pure, deterministic, €0, Node>=18.
 import assert from 'node:assert';
-import { gate, assertComplete, classify, STATES } from './reality-gate.mjs';
+import { gate, assertComplete, classify, STATES } from './reality-gate.js';
 
 let pass = 0, fail = 0; const failures = [];
 const t = (name, fn) => { try { fn(); pass++; } catch (e) { fail++; failures.push(`${name}: ${e.message}`); } };

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // ODG5 REALITY GATE (shared-core, Domain-B governance) — executable enforcement of the PERMANENT REALITY PROOF
 // RULE: no claim of implementation / verification / deployment / readiness / completion may be granted on a plan,
 // report, generated file, mocked test, simulated demo, process exit code or prior claim alone. Each verification

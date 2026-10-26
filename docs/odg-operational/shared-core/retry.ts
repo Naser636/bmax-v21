@@ -1,3 +1,4 @@
+// @ts-nocheck
 // SHARED-CORE retry/backoff (Domain-A) — bounded retries with exponential backoff, hard limits, DETERMINISTIC
 // (injectable clock/sleep; NO Math.random — jitter is seeded & pure), idempotency (a cached key is NOT re-run),
 // and loop/circuit-break prevention (same error repeating → CIRCUIT_OPEN abort). Closes the Domain-A inventory gap

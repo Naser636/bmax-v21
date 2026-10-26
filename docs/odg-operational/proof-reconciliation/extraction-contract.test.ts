@@ -1,12 +1,13 @@
+// @ts-nocheck
 // DOMAIN-C extraction-contract + normalization tests. Verifies the pluggable extractor CONTRACT (provenance,
 // deterministic vs not-implemented) and the amount/date normalisation with ambiguity flagging. Pure, €0, Node>=18.
 import { writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert';
-import { getExtractor, listExtractors, NotImplementedExtractor, makeSubstituteExtractor, csvExtractor, tsvExtractor, textFixedExtractor } from './extract-adapter.mjs';
-import { parseAmount, normalizeDate } from './normalize.mjs';
-import { ingest } from './ingest.mjs';
+import { getExtractor, listExtractors, NotImplementedExtractor, makeSubstituteExtractor, csvExtractor, tsvExtractor, textFixedExtractor } from './extract-adapter.js';
+import { parseAmount, normalizeDate } from './normalize.js';
+import { ingest } from './ingest.js';
 
 let pass = 0, fail = 0; const failures = [];
 const t = (name, fn) => { try { fn(); pass++; } catch (e) { fail++; failures.push(`${name}: ${e.message}`); } };

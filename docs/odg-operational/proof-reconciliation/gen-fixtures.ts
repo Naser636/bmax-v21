@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Phase E fixture generator — synthetic month-end BANK RECONCILIATION dataset with PLANTED discrepancies + an
 // answer key (ground truth). Deterministic (no randomness) => reproducible. €0, no network. Represents a real,
 // costly B2B process: matching an accounting LEDGER against a BANK statement and surfacing every discrepancy.

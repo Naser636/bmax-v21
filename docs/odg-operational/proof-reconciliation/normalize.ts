@@ -1,3 +1,4 @@
+// @ts-nocheck
 // DOMAIN-C normalize — deterministic amount / currency / date normalisation with HONEST AMBIGUITY detection.
 // Reconciliation fails silently when "1,200" means 1200 to one system and 1.200 to another, or when 01/02/2026 is
 // read as Jan-2 vs Feb-1. This module normalises what it can and FLAGS what is genuinely ambiguous for human review

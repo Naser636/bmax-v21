@@ -1,13 +1,14 @@
+// @ts-nocheck
 // CROSS-DOMAIN CONTRACT TEST — composes A + B + C in one flow and asserts the contracts between them hold.
 // A: dep-planner schedules the C pipeline steps + retry wraps a flaky step. B: eval-metrics grades C's verifier,
 // otel-export traces the run. C: reconcileRows + verify produce the result. This is the integration proof that a
 // change in one domain's shared contract would break here. Pure, deterministic, €0, Node>=18.
 import assert from 'node:assert';
-import { planLayers, schedule } from './shared-core/dep-planner.mjs';
-import { withRetry } from './shared-core/retry.mjs';
-import { confusionMatrix } from './shared-core/eval-metrics.mjs';
-import { toOTLP, spansFromSteps } from './shared-core/otel-export.mjs';
-import { reconcileRows } from './proof-reconciliation/reconcile.mjs';
+import { planLayers, schedule } from './shared-core/dep-planner.js';
+import { withRetry } from './shared-core/retry.js';
+import { confusionMatrix } from './shared-core/eval-metrics.js';
+import { toOTLP, spansFromSteps } from './shared-core/otel-export.js';
+import { reconcileRows } from './proof-reconciliation/reconcile.js';
 
 let pass = 0, fail = 0; const failures = [];
 const t = (name, fn) => { try { fn(); pass++; } catch (e) { fail++; failures.push(`${name}: ${e.message}`); } };

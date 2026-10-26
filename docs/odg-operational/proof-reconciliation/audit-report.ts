@@ -1,3 +1,4 @@
+// @ts-nocheck
 // AUDIT REPORT — reproducible, explainable, traceable output (step 7/10) + self-contained HTML for review.
 // €0, local only (NOT published anywhere). The HTML is the professional demonstrator view. No external assets.
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

@@ -1,9 +1,10 @@
+// @ts-nocheck
 // INGEST — step 2/3 of the product journey: validate formats + required fields + consistency, normalise values,
 // and preserve provenance. FAIL-CLOSED: a hard schema error (missing required field, non-numeric amount, unparseable
 // date) returns ok:false with explicit errors — the pipeline MUST NOT proceed to reconciliation on bad input.
 // €0, pure, deterministic. Uses the extraction adapter so any input format can feed the same validated shape.
-import { getExtractor } from './extract-adapter.mjs';
-import { parseAmount, normalizeDate } from './normalize.mjs';
+import { getExtractor } from './extract-adapter.js';
+import { parseAmount, normalizeDate } from './normalize.js';
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const SCHEMA = { required: ['ref', 'date', 'amount'], numeric: ['amount'], dateFields: ['date'] };

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // EXTRACTION ADAPTER — pluggable extractors that turn an input file into normalised row records with provenance.
 // DETERMINISTIC extractors (csv, text-fixed) are fully implemented + free. The pdf/ocr/llm extractors are an
 // HONEST INTERFACE: they throw NOT_IMPLEMENTED with a cost estimate (no purchase, no fake output) and ship a
