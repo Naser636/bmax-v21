@@ -27,7 +27,8 @@
 
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const os = require("os");
+const { spawnSync, spawn } = require("child_process");
 
 const ROOT = process.cwd(); // repo root (wrapper cwd) — robust from any dist depth (was __dirname → wrong under dist/bin)
 const GEN = path.join(ROOT, "runtime", "generated");
@@ -118,6 +119,89 @@ function defaultFiles(): any {
   return out.sort();
 }
 
+/*
+ * OPT-IN PARALLEL SCHEDULING (ODG_TEST_WORKERS>1) — HYPER-SPEED, same proof.
+ *
+ * The classification, the per-suite semantics and the persisted-artifact ORDER are IDENTICAL to the
+ * sequential runSuites — only the scheduling differs. Default (unset / 1) runs the untouched sequential
+ * path, so CI and every existing caller are byte-identical until the knob is explicitly turned up.
+ *
+ * Safety is BY CONSTRUCTION, not by hope:
+ *   - suiteIsHazard() flags any suite whose source can touch GLOBAL mutable state shared across suites —
+ *     it changes the process cwd (process.chdir ⇒ the code under test then writes repo-relative paths),
+ *     binds a port (.listen), or mutates a repo-relative "runtime/..." path by literal. Conservative:
+ *     an unreadable or unrecognised suite stays hazardous (serial).
+ *   - HAZARD suites run strictly one-at-a-time in phase 1 (exactly today's execution), so a cwd-mutating
+ *     or repo-writing suite is NEVER concurrent with anything.
+ *   - Hermetic suites run in phase 2 with bounded concurrency, each in its OWN TMPDIR, so os.tmpdir()
+ *     fixed-name temp files cannot collide; and because hermetic suites never mutate repo-relative state
+ *     they cannot race each other nor produce state a phase-1 suite consumes. Phases never overlap.
+ *   - Worker count is clamped to the CPU count; results are re-sorted to the ORIGINAL input index.
+ * The opt-in path is accepted only after proving its classification equals the sequential gate's.
+ */
+const HAZARD_RE = /process\.chdir\(|\.listen\(|(?:writeFileSync|appendFileSync|mkdirSync|rmSync|rmdirSync|renameSync|writeSync|copyFileSync|createWriteStream|openSync)\(\s*[`'"]runtime\//;
+function suiteIsHazard(absFile: string): boolean {
+  let src = "";
+  try { src = fs.readFileSync(absFile, "utf8"); } catch { return true; } // unreadable ⇒ serial (safe)
+  return HAZARD_RE.test(src);
+}
+
+function parseWorkers(v: any): number {
+  const n = parseInt(v, 10);
+  if (!Number.isFinite(n) || n <= 1) return 1;
+  let cpus = 1; try { cpus = os.cpus().length || 1; } catch { cpus = 1; }
+  return Math.min(n, Math.max(1, cpus)); // never oversubscribe the measured cores
+}
+
+/** Spawn one suite asynchronously in an isolated TMPDIR; resolves to the SAME shape as defaultRunner. */
+function spawnSuiteAsync(file: string): Promise<any> {
+  return new Promise((resolve) => {
+    const tsx = path.join(ROOT, "node_modules", ".bin", "tsx");
+    let tmp = "";
+    try { tmp = fs.mkdtempSync(path.join(os.tmpdir(), "odg-suite-")); } catch { tmp = ""; }
+    const env = Object.assign({}, process.env);
+    if (tmp) { env.TMPDIR = tmp; env.TMP = tmp; env.TEMP = tmp; }
+    const cleanup = () => { if (tmp) { try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort */ } } };
+    let out = "";
+    const MAX = 8 * 1024 * 1024; // mirror defaultRunner maxBuffer
+    const onData = (b: any) => { if (out.length < MAX) out += b.toString(); };
+    let child: any;
+    try { child = spawn(tsx, [file], { cwd: ROOT, env }); }
+    catch { cleanup(); resolve({ exitCode: 1, stdout: "" }); return; }
+    child.stdout.on("data", onData);
+    child.stderr.on("data", onData);
+    child.on("close", (code: any) => { cleanup(); resolve({ exitCode: code == null ? 1 : code, stdout: out }); });
+    child.on("error", () => { cleanup(); resolve({ exitCode: 1, stdout: out }); });
+  });
+}
+
+/**
+ * Parallel classified runner. Returns results in ORIGINAL input order; identical classification to runSuites.
+ * `runner` is an injectable async suite-runner (default: real tsx child via spawnSuiteAsync) — the unit test
+ * injects a deterministic one, exactly as runSuites accepts an injected sync runner.
+ */
+async function runSuitesParallel(files: string[], workers: number, runner?: any): Promise<any[]> {
+  const run = typeof runner === "function" ? runner : spawnSuiteAsync;
+  const indexed = files.map((file, i) => ({ file, i, exists: safeExists(file), hazard: true }));
+  for (const e of indexed) e.hazard = e.exists ? suiteIsHazard(e.file) : true;
+  const results: any[] = new Array(indexed.length);
+  const record = (e: any, r: any) => {
+    const { cls, reason } = classify({ exists: e.exists, exitCode: r.exitCode, stdout: r.stdout });
+    results[e.i] = { file: e.file, exitCode: r.exitCode, cls, reason };
+  };
+  // phase 1 — hazardous suites, strictly sequential (never concurrent with anything).
+  for (const e of indexed.filter((x) => x.hazard)) {
+    const r = e.exists ? await run(e.file) : { exitCode: null, stdout: "" };
+    record(e, r);
+  }
+  // phase 2 — hermetic suites, bounded concurrency, isolated TMPDIR each.
+  const pool = indexed.filter((x) => !x.hazard);
+  let next = 0;
+  const worker = async () => { while (next < pool.length) { const e = pool[next++]; record(e, e.exists ? await run(e.file) : { exitCode: null, stdout: "" }); } };
+  await Promise.all(Array.from({ length: Math.max(1, Math.min(workers, pool.length || 1)) }, () => worker()));
+  return results;
+}
+
 const REPORT_PATH = path.join(GEN, "test-report.json");
 
 /** Load the persisted artifact (read-only). Returns {ok,report,path} or {ok:false,code,path}. */
@@ -172,9 +256,11 @@ function renderShow(load: any, nowMs: any): any {
   return { exit: (!greenRecorded || stale.stale) ? 1 : 0, text: L.join("\n") };
 }
 
-/** Run the classifier on an explicit suite list and persist the artifact. */
-function runAndWrite(files: any): number {
-  const results = runSuites(files.map((f: any) => path.isAbsolute(f) ? f : path.join(ROOT, f)));
+/** Run the classifier on an explicit suite list and persist the artifact. Parallel iff ODG_TEST_WORKERS>1. */
+async function runAndWrite(files: any): Promise<number> {
+  const abs = files.map((f: any) => path.isAbsolute(f) ? f : path.join(ROOT, f));
+  const workers = parseWorkers(process.env.ODG_TEST_WORKERS);
+  const results = workers > 1 ? await runSuitesParallel(abs, workers) : runSuites(abs);
   const summary = summarize(results);
   console.log(renderReport(summary, results));
   try {
@@ -189,17 +275,17 @@ function runAndWrite(files: any): number {
  * dispatcher). `--run [<suite>...]` → classify the given suites (or the default set) and persist.
  * An explicit suite list with no mode flag also runs (back-compat with `npm run test:report`).
  */
-function main(argv: any): number {
+async function main(argv: any): Promise<number> {
   const mode = argv[0];
   if (argv.length === 0 || mode === "--show") { const o = renderShow(loadReport(), Date.now()); console.log(o.text); return o.exit; }
-  if (mode === "--run") { const f = argv.slice(1); return runAndWrite(f.length > 0 ? f : defaultFiles()); }
-  return runAndWrite(argv);
+  if (mode === "--run") { const f = argv.slice(1); return await runAndWrite(f.length > 0 ? f : defaultFiles()); }
+  return await runAndWrite(argv);
 }
 
 if (require.main === module) {
-  process.exit(main(process.argv.slice(2)));
+  main(process.argv.slice(2)).then((code) => process.exit(code));
 }
 
-module.exports = { classify, runSuites, summarize, overallExit, renderReport, defaultFiles, loadReport, stalenessOf, renderShow, runAndWrite, main, CLASSES };
+module.exports = { classify, runSuites, suiteIsHazard, parseWorkers, runSuitesParallel, summarize, overallExit, renderReport, defaultFiles, loadReport, stalenessOf, renderShow, runAndWrite, main, CLASSES };
 
 export {};

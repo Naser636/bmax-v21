@@ -88,6 +88,44 @@ const staleRep = { generatedAt: "2000-01-01T00:00:00.000Z", summary: validRep.su
 ok("stalenessOf flags a source newer than the report", R.stalenessOf(staleRep).stale === true);
 ok("renderShow exit 1 when stale (never valid proof)", R.renderShow({ ok: true, report: staleRep, path: vp }).exit === 1);
 
-try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort cleanup of own tmp */ }
-console.log(`\nALL PASS — odg test-report (${passed} assertions)`);
-process.exit(0);
+// --- OPT-IN PARALLEL PATH (ODG_TEST_WORKERS) — partition + equivalence to the sequential gate ----
+// Real tsx fixtures (not injected): prove runSuitesParallel classifies + ORDERS identically to runSuites.
+const ptmp = fs.mkdtempSync(path.join(os.tmpdir(), "odgtr-par-"));
+const mkTs = (name, body) => { const p = path.join(ptmp, name); fs.writeFileSync(p, body); return p; };
+const fPassR = mkTs("p.test.ts", 'console.log("ok");\n');
+const fFailR = mkTs("f.test.ts", 'throw new Error("boom");\n');
+const fSkipR = mkTs("s.test.ts", 'console.log("##CLASS: SKIPPED no creds");\n');
+// hazard fixture: contains process.chdir(...) so suiteIsHazard must flag it; still passes.
+const fHazR = mkTs("h.test.ts", 'const p = process.cwd(); process.chdir(p); console.log("ok");\n');
+
+ok("suiteIsHazard: process.chdir ⇒ hazard (serial)", R.suiteIsHazard(fHazR) === true);
+ok("suiteIsHazard: pure fixture ⇒ hermetic (parallel)", R.suiteIsHazard(fPassR) === false);
+ok("parseWorkers: unset/1 ⇒ 1 (sequential default)", R.parseWorkers(undefined) === 1 && R.parseWorkers("1") === 1 && R.parseWorkers("0") === 1);
+ok("parseWorkers: clamps to CPU count (never oversubscribe)", R.parseWorkers("9999") <= os.cpus().length && R.parseWorkers("9999") >= 1);
+
+// Injected deterministic runners (sync for runSuites, async for runSuitesParallel) over the SAME outcomes,
+// so the ONLY difference under test is the SCHEDULING. fHazR→phase1(serial), others→phase2(parallel).
+const parOutcomes = {
+  [fPassR]: { exitCode: 0, stdout: "ok" },
+  [fFailR]: { exitCode: 1, stdout: "boom" },
+  [fSkipR]: { exitCode: 0, stdout: "##CLASS: SKIPPED no creds" },
+  [fHazR]:  { exitCode: 0, stdout: "ok" },
+};
+const syncRunner = (f) => parOutcomes[f] || { exitCode: 0, stdout: "" };
+const asyncRunner = (f) => Promise.resolve(syncRunner(f));
+
+R.runSuitesParallel([fPassR, fFailR, fSkipR, fHazR], 4, asyncRunner).then((par) => {
+  const order = [fPassR, fFailR, fSkipR, fHazR];
+  const seq = R.runSuites(order, syncRunner);
+  const key = (rs) => JSON.stringify(rs.map((x) => [x.file, x.cls]));
+  ok("parallel ≡ sequential: identical classification AND original order", key(par) === key(seq));
+  ok("parallel: fixtures classify correctly (PASS/FAIL/SKIPPED/PASS)",
+     par[0].cls === "PASS" && par[1].cls === "FAIL" && par[2].cls === "SKIPPED" && par[3].cls === "PASS");
+  const missing = path.join(ptmp, "nope.test.ts");
+  return R.runSuitesParallel([fPassR, missing], 4, asyncRunner);
+}).then((parM) => {
+  ok("parallel: missing suite ⇒ NOT_RUN (fail-closed, same as sequential)", parM[1].cls === "NOT_RUN");
+  try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort */ }
+  try { fs.rmSync(ptmp, { recursive: true, force: true }); } catch { /* best-effort */ }
+  console.log(`\nALL PASS — odg test-report (${passed} assertions)`);
+}).catch((e) => { console.error(e && e.message ? e.message : e); process.exit(1); });

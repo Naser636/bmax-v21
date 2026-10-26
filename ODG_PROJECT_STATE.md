@@ -3565,3 +3565,24 @@ verifies the Replicate model/licence/current price/billing mode/limits + re-runs
 21/21, production-runner 41/41, credential-safety 12/12) BEFORE any call. **NOT started autonomously** — no real
 spend, no provider call, no adapter wiring without explicit per-action human go-ahead. Prohibitions honoured: no
 force-push, no harness bypass, no prod deploy, no secret handled/shown.
+
+---
+## CHECKPOINT 2026-10-26 (c) — HYPER-SPEED #1: race-free parallel test gate (−48%, proven) — branch excellence/hyperspeed-parallel-tests
+WORLD-CLASS + HYPER-SPEED mandate (+ addendum) integrated non-disruptively at a safe checkpoint; no work lost,
+no concurrent orchestrator, 9 primitives + single ROADMAP preserved. Truth-lock at entry HEAD afdf557 ≡ origin/main.
+
+**Profiled BEFORE optimizing** (scratchpad/profile.sh, 8 vCPU, Node 22, tsc 5.9.3): root tsc cold 10.8s/warm 5.2s;
+build:runtime cold 8.3s/warm 1.8s (fingerprint already optimal); strict-leaves 2.9s; **test:report 95.1s (fully
+sequential — the dominant gate)**; cold-start 0.23s. Full baseline persisted in docs/odg-operational/ODG_PERFORMANCE_BASELINE.md.
+
+**Optimization #1 (highest gain/risk): opt-in race-free parallel `test:report`.** `odg-test-report.ts` gains an
+`ODG_TEST_WORKERS`-gated scheduler (default 1 = byte-identical sequential path). Safe BY CONSTRUCTION: static
+hazard analysis routes any suite that can touch global mutable state (process.chdir / .listen / repo-relative
+`runtime/...` write → 20 suites) to a strictly-sequential phase 1; the 39 hermetic suites run with bounded
+concurrency (clamped to CPU count), each in an ISOLATED TMPDIR; phases never overlap; results re-sorted to
+original index so the artifact is order-identical. **PROVEN (3×): 59/59 PASS, classification+order IDENTICAL to
+sequential; 95.4s→~49s = ~1.95× (−48%), zero drift.** Contract test odg-test-report.test.ts (38 assertions:
+partition, parseWorkers clamp, runSuitesParallel≡runSuites via injected runner). CI wired ODG_TEST_WORKERS=8
+(auto-clamped to runner cores). Gates: root tsc 0, build:runtime 0 (100-closure), unit 38/38, test:report 59/59
+both modes. No new infra (no Docker/RAMFS/remote cache — none justified by the profile). NEXT candidates: parallelize
+the 20-suite serial floor via per-suite repo isolation; affected-test selector for per-lot gates; CI cross-run cache.
