@@ -69,7 +69,7 @@ function collect(requestId: any, opts?: any): any {
   // selects the JS rollback ports under runtime/llm. Both are proven observationally identical by
   // spawn-cli-llm-parity.test.js. The injected `spawn` seam in tests matches by substring (response-parser/
   // proposal-analyzer), so this base switch is parity-safe.
-  const LLM_BASE = process.env.ODG_RUNTIME === "js" ? "runtime/llm" : "runtime/dist/llm";
+  const LLM_BASE = "runtime/dist/llm"; // ZERO-JS: the compiled dist LLM workers (ODG_RUNTIME=js rollback retired)
 
   // Reuse response-parser : validates required fields + writes proposal.json.
   const parsed = spawn("node", [`${LLM_BASE}/response-parser.js`, proposalJson], {
