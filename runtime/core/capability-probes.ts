@@ -481,11 +481,12 @@ const PROBES: any = {
 
     "ve-cross-mission-ownership-guard-proven"() {
         // Deterministic DoD proof for VE_CROSS_MISSION_OWNERSHIP_GUARD (probe-registry closure). The
-        // validation-engine's fail-closed cross-mission ownership guard must be PRESENT in BOTH runtime
-        // ports AND its acceptance test must exist. Pure fs reads (same pattern as legacy-runtime-retired)
-        // — fails CLOSED if the guard is reverted/removed. NOT an auto-pass: the two defining tokens of the
-        // guard (the `crossMission` computation and the `crossMissionOk` verdict check) must both be found.
-        const ports = ["runtime/core/validation-engine.js", "runtime/core/validation-engine.ts"];
+        // validation-engine's fail-closed cross-mission ownership guard must be PRESENT in the CANONICAL
+        // .ts source AND in the COMPILED dist port that actually runs, AND its acceptance test must exist.
+        // (ZERO-JS: the source .js rollback port is retired; the running port is the compiled dist.) Pure fs
+        // reads — fails CLOSED if the guard is reverted/removed. NOT an auto-pass: the two defining tokens of
+        // the guard (the `crossMission` computation and the `crossMissionOk` verdict check) must both be found.
+        const ports = ["runtime/core/validation-engine.ts", "runtime/dist/core/validation-engine.js"];
         for (const f of ports) {
             let text: any = null;
             try { text = fs.readFileSync(f, "utf8"); } catch { return { ok: false, detail: `validation-engine port missing: ${f}` }; }

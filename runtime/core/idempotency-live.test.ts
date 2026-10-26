@@ -17,7 +17,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 
 const REPO = process.cwd();
-const PE = path.join(REPO, "runtime", "core", "patch-executor.js");
+const PE = path.join(REPO, "runtime", "dist", "core", "patch-executor.js");
 
 let failures = 0;
 function check(cond, label) { if (cond) console.log(`  PASS ${label}`); else { failures++; console.log(`  FAIL ${label}`); } }

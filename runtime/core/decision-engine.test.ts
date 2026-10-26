@@ -20,7 +20,7 @@ let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }
 
 const REPO = path.resolve(__dirname, "..", "..");
-const SCRIPT = path.join(REPO, "runtime", "core", "decision-engine.js");
+const SCRIPT = path.join(REPO, "runtime", "dist", "core", "decision-engine.js");
 
 function sandbox(plan) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "deceng-"));

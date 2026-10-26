@@ -117,7 +117,7 @@ function runVE(engine, opts) {
     return { exit: r.status ?? -1, status: rep.status, validated: rep.validated, unmet: rep.unmet || [], checks: rep.checks || {} };
 }
 
-for (const [label, VE] of [["historical .js", VE_JS], ["compiled dist", VE_DIST]]) {
+for (const [label, VE] of [["compiled dist", VE_DIST]]) { // ZERO-JS: source .js VE port retired; the compiled dist is the sole runtime
     // (a) UNKNOWN probe ⇒ BLOCKED, and the reason is reported as UNVERIFIABLE (not generic "did not pass").
     const unknown = runVE(VE, { proof: "__no_probe__" });
     ok(`${label}: objective w/ UNKNOWN proof ⇒ BLOCKED validated=false (unknown probe stays blocked)`,

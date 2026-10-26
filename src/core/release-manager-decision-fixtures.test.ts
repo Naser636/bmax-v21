@@ -59,7 +59,7 @@ ok("incomplete evidence (no doc proof) ⇒ ok:false, never RELEASE",
   (() => { const r = rm.decide(inputs({ documentationProof: undefined })); return r.ok === false && r.error && /INCOMPLETE/.test(r.error.code); })());
 
 // ── Part 2 — representative mission through the WHOLE chain (validation-engine → release). ────────────
-const VE_JS = path.join(REPO, "runtime", "core", "validation-engine.js");
+const VE_JS = path.join(REPO, "runtime", "dist", "core", "validation-engine.js");
 
 // Spawn the real validation-engine in a temp cwd seeded so the ve-cross-mission guard probe can read the
 // (present) guard sources; return the mission report. Faithful: same engine, same probe registry.
@@ -69,9 +69,12 @@ function runVE(proof: string) {
   fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
   fs.mkdirSync(path.join(dir, "runtime", "core"), { recursive: true });
   // seed the guard sources + acceptance test so the structural probe observes them (present ⇒ passes).
-  for (const f of ["validation-engine.js", "validation-engine.ts", "validation-engine-cross-mission.test.ts"]) {
+  for (const f of ["validation-engine.ts", "validation-engine-cross-mission.test.ts"]) { // ZERO-JS: source .js retired; .ts seeds the structural probe
     fs.copyFileSync(path.join(REPO, "runtime", "core", f), path.join(dir, "runtime", "core", f));
   }
+  // ZERO-JS: the ve-cross-mission probe also reads the COMPILED dist port (cwd-relative) — seed it too.
+  fs.mkdirSync(path.join(dir, "runtime", "dist", "core"), { recursive: true });
+  fs.copyFileSync(path.join(REPO, "runtime", "dist", "core", "validation-engine.js"), path.join(dir, "runtime", "dist", "core", "validation-engine.js"));
   fs.writeFileSync(G("mission-plan.json"), JSON.stringify({ mission: "VE_CROSS_MISSION_OWNERSHIP_GUARD", mode: "READ_ONLY", requiresEngineering: false, authorizedPaths: [], objectives: [{ id: "VE_1", proof }], definitionOfDone: ["x"] }));
   fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: "VE_CROSS_MISSION_OWNERSHIP_GUARD", patches: [{ id: 1, action: "VE_1", objectiveId: "VE_1", status: "PLANNED" }] }));
   fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: "VE_CROSS_MISSION_OWNERSHIP_GUARD", executed: [{ objectiveId: "VE_1", action: "VE_1", status: "EXECUTED", evidence: "runtime/generated/e.json" }] }));

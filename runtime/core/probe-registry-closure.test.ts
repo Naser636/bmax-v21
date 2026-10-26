@@ -41,15 +41,18 @@ function inTempTree(fn) {
     const prev = process.cwd();
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "probe-closure-"));
     fs.mkdirSync(path.join(dir, "runtime", "core"), { recursive: true });
+    fs.mkdirSync(path.join(dir, "runtime", "dist", "core"), { recursive: true });
     process.chdir(dir);
     try { fn(dir); } finally { process.chdir(prev); fs.rmSync(dir, { recursive: true, force: true }); }
 }
 function seedPort(dir, name, body) { fs.writeFileSync(path.join(dir, "runtime", "core", name), body); }
+// ZERO-JS: the probe's two ports are now the .ts source (runtime/core) + the compiled dist (runtime/dist/core).
+function seedDist(dir, name, body) { fs.writeFileSync(path.join(dir, "runtime", "dist", "core", name), body); }
 
 // n1 — guard present in both ports + test present ⇒ ok:true even in a bare fixture tree (control).
 inTempTree((dir) => {
     const mod = load(PROBES_JS);
-    seedPort(dir, "validation-engine.js", GUARD);
+    seedDist(dir, "validation-engine.js", GUARD);
     seedPort(dir, "validation-engine.ts", GUARD);
     seedPort(dir, "validation-engine-cross-mission.test.ts", "// test");
     ok("control: guard in both ports + test ⇒ ok:true", mod.runProbe(PROBE, {}).ok === true);
@@ -58,7 +61,7 @@ inTempTree((dir) => {
 // n2 — guard REMOVED from the .ts port ⇒ ok:false (fails closed on a reverted guard).
 inTempTree((dir) => {
     const mod = load(PROBES_JS);
-    seedPort(dir, "validation-engine.js", GUARD);
+    seedDist(dir, "validation-engine.js", GUARD);
     seedPort(dir, "validation-engine.ts", NO_GUARD);
     seedPort(dir, "validation-engine-cross-mission.test.ts", "// test");
     const r = mod.runProbe(PROBE, {});
@@ -68,7 +71,7 @@ inTempTree((dir) => {
 // n3 — acceptance test MISSING ⇒ ok:false.
 inTempTree((dir) => {
     const mod = load(PROBES_JS);
-    seedPort(dir, "validation-engine.js", GUARD);
+    seedDist(dir, "validation-engine.js", GUARD);
     seedPort(dir, "validation-engine.ts", GUARD);
     const r = mod.runProbe(PROBE, {});
     ok("acceptance test missing ⇒ ok:false", r.ok === false && /acceptance test missing/.test(r.detail));
@@ -77,7 +80,7 @@ inTempTree((dir) => {
 // n4 — a port file entirely absent ⇒ ok:false.
 inTempTree((dir) => {
     const mod = load(PROBES_JS);
-    seedPort(dir, "validation-engine.js", GUARD); // .ts absent
+    seedDist(dir, "validation-engine.js", GUARD); // .ts absent
     seedPort(dir, "validation-engine-cross-mission.test.ts", "// test");
     const r = mod.runProbe(PROBE, {});
     ok("a port file absent ⇒ ok:false", r.ok === false && /port missing/.test(r.detail));

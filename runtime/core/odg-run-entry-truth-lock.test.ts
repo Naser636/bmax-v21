@@ -28,7 +28,7 @@ const assert = require("assert");
 const { spawnSync } = require("child_process");
 
 const REPO = path.resolve(__dirname, "..", "..");
-const ENTRY = path.join(REPO, "runtime", "bin", "odg-run.js");
+const ENTRY = path.join(REPO, "runtime", "dist", "bin", "odg-run.js");
 const GOV = [
   ["runtime/constitution", "runtime-constitution.json"],
   ["runtime/policies", "runtime-policies.json"],

@@ -25,11 +25,13 @@ const path = require("path");
 // governance-kernel, odg-bootstrap, runtime-context-loader resolve to their COMPILED dist ports
 // (runtime/dist/core|bin) so the mission entry's transitive graph stays entirely within dist. ZERO-JS
 // (L-iv): the ODG_RUNTIME=js source-.js rollback is RETIRED — this entry only ever runs as the compiled
-// dist, whose siblings are emitted alongside it, so the dist port always exists. Resolution stays
-// CWD-relative (odg-run runs with cwd = project/sandbox root, as the stage spawns assume).
+// dist, whose siblings are emitted ALONGSIDE this entry. Resolution is relative to THIS module's own
+// directory (__dirname = …/runtime/dist/bin), NOT process.cwd(), so the compiled entry is self-contained
+// and relocatable: it finds its dist siblings even when launched from a different cwd (e.g. a hermetic
+// temp sandbox). Equivalent to the former cwd-relative form whenever cwd = repo root (the production case).
 function legacyRequire(rel: any) {
-  const distRel = rel.replace(/^runtime\//, "runtime/dist/");
-  return require(path.resolve(process.cwd(), distRel));
+  const distRel = rel.replace(/^runtime\//, "runtime/dist/").replace(/^runtime\/dist\//, "");
+  return require(path.resolve(__dirname, "..", distRel));
 }
 const { authorizeMission } = legacyRequire("runtime/core/governance-kernel.js");
 

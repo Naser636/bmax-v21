@@ -19,7 +19,7 @@ const REPO = process.cwd();
 console.log("ACCEPT — capability vs mission accounting (honest, non-conflated)");
 
 // Regenerate the canonical state so the registry reflects HEAD (not a stale artifact).
-execFileSync("node", ["runtime/bin/odg-state.js"], { cwd: REPO, stdio: "ignore" });
+execFileSync("node", ["runtime/dist/bin/odg-state.js"], { cwd: REPO, stdio: "ignore" });
 const reg = JSON.parse(fs.readFileSync(path.join(REPO, "runtime/generated/capability-registry.json"), "utf8"));
 
 // The canonical live counts (ground truth from the modules themselves).

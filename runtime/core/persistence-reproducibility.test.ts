@@ -57,7 +57,7 @@ console.log("PERSISTENCE & REPRODUCIBILITY GUARD (V8)");
 {
   ok("self-diagnostic exports resolveByReconciliation + resolveObsoleteIncidents (durable, committed)", typeof sd.resolveByReconciliation === "function" && typeof sd.resolveObsoleteIncidents === "function");
   // validation-engine cross-mission guard is present in the committed source (af3f698).
-  const ve = fs.readFileSync(path.join(REPO, "runtime", "core", "validation-engine.js"), "utf8");
+  const ve = fs.readFileSync(path.join(REPO, "runtime", "dist", "core", "validation-engine.js"), "utf8");
   ok("validation-engine cross-mission ownership guard present (af3f698)", /crossMission/.test(ve) && /crossMissionOk/.test(ve));
   // FAIL-CLOSED: resolveByReconciliation with an injected NOT_PROVEN reconciler resolves nothing (isolated temp cwd).
   const prev = process.cwd();

@@ -78,7 +78,7 @@ check(A.hashContent("x\n") === A.hashContent("x\n") && A.hashContent("x\n") !== 
 
 // Boundary: reality store reuses C03 and is not the epistemic/governance/projection layers.
 {
-  const src = fs.readFileSync(path.join(__dirname, "artifact-state.js"), "utf8");
+  const src = fs.readFileSync(path.join(__dirname, "..", "dist", "core", "artifact-state.js"), "utf8");
   check(/require\(["']\.\/state-transition["']\)/.test(src), "reality store REUSES the C03 validator");
   check(!/require\(["']\.\/world-model["']\)/.test(src) && !/require\(["']\.\/runtime-model["']\)/.test(src) && !/require\(["']\.\/mission-lifecycle["']\)/.test(src), "reality store does NOT import world-model / runtime-model / mission-lifecycle (distinct layer)");
 }
