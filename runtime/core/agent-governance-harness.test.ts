@@ -122,8 +122,8 @@ const ID = require("./agent-identity.js");
 const reg = ID.createRegistry();
 const kp = crypto2.generateKeyPairSync("ed25519");
 ID.register(reg, { tenantId: "T1", agentId: "agent-x", publicKeyPem: kp.publicKey.export({ type: "spki", format: "pem" }) });
-ID.openSession(reg, { sessionId: "S1", tenantId: "T1", agentId: "agent-x", contractSha: "C1" });
-const challenge = () => ID.issueChallenge(reg, { tenantId: "T1", agentId: "agent-x", sessionId: "S1", contractSha: "C1" });
+ID.openSession(reg, { sessionId: "S1", tenantId: "T1", agentId: "agent-x", contractSha: H.contractShaOf(CONTRACT) });
+const challenge = () => ID.issueChallenge(reg, { tenantId: "T1", agentId: "agent-x", sessionId: "S1", contractSha: H.contractShaOf(CONTRACT) });
 const signCh = (ch) => crypto2.sign(null, Buffer.from(ID.canon(ch)), kp.privateKey).toString("base64");
 const authDeps = (c9, sig) => { const da = mkDeps(); da.auth = { registry: reg, challenge: c9, signature: sig }; da.revision = { commit: "t", treeDirty: false, available: true }; return da; };
 
@@ -170,13 +170,52 @@ ok("V11 bundle carries the tenant it was sealed under", sA.evidence.tenantId ===
 // AUTH-bound tenant: the AUTHENTICATED identity's tenant is authoritative (not proposal-supplied).
 { const reg2 = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
   ID.register(reg2, { tenantId: "T-AUTH", agentId: "agent-x", publicKeyPem: k.publicKey.export({ type: "spki", format: "pem" }) });
-  ID.openSession(reg2, { sessionId: "SX", tenantId: "T-AUTH", agentId: "agent-x", contractSha: "C1" });
-  const cc = ID.issueChallenge(reg2, { tenantId: "T-AUTH", agentId: "agent-x", sessionId: "SX", contractSha: "C1" });
+  ID.openSession(reg2, { sessionId: "SX", tenantId: "T-AUTH", agentId: "agent-x", contractSha: H.contractShaOf(CONTRACT) });
+  const cc = ID.issueChallenge(reg2, { tenantId: "T-AUTH", agentId: "agent-x", sessionId: "SX", contractSha: H.contractShaOf(CONTRACT) });
   const dd = mkDeps(); dd.revision = { commit: "t", treeDirty: false, available: true };
   dd.auth = { registry: reg2, challenge: cc, signature: crypto2.sign(null, Buffer.from(ID.canon(cc)), k.privateKey).toString("base64") };
   const authedStep = H.runStep(good, CONTRACT, S0, dd);
   ok("V11 auth-bound tenant propagates to evidence (authoritative)", authedStep.outcome === "ADMITTED_VERIFIED" && authedStep.evidence.tenantId === "T-AUTH");
   ok("V11 auth-bound bundle rejects a foreign expected tenant", H.verifyEvidenceBundle(authedStep.evidence, { expectedTenantId: "T-OTHER" }).ok === false);
+}
+
+// ═════════ V12 — TENANT/CONTRACT-SCOPED ADMISSION (authenticated binding) ═════════
+{
+  const r = ID.createRegistry(); const k = crypto2.generateKeyPairSync("ed25519");
+  const pub = k.publicKey.export({ type: "spki", format: "pem" });
+  ID.register(r, { tenantId: "TA", agentId: "agent-x", publicKeyPem: pub });
+  const contractA = { agentId: "agent-x", tenantId: "TA", objective: "A", allowedTools: ["read_file"], authorizedScope: ["reports"], limits: { maxCalls: 5, maxDurationMs: 600000 } };
+  const contractB = { agentId: "agent-x", tenantId: "TA", objective: "B-DIFFERENT", allowedTools: ["read_file"], authorizedScope: ["reports"], limits: { maxCalls: 5, maxDurationMs: 600000 } };
+  const shaA = H.contractShaOf(contractA);
+  ID.openSession(r, { sessionId: "SA", tenantId: "TA", agentId: "agent-x", contractSha: shaA });
+  const mkAuth = () => { const c = ID.issueChallenge(r, { tenantId: "TA", agentId: "agent-x", sessionId: "SA", contractSha: shaA }); return { registry: r, challenge: c, signature: crypto2.sign(null, Buffer.from(ID.canon(c)), k.privateKey).toString("base64") }; };
+  const p = { agentId: "agent-x", authToken: "t", tool: "read_file", params: { path: "reports/a.md" }, targetPaths: ["reports/a.md"] };
+  const spy = () => { const calls = []; return { calls, revision: { commit: "t", treeDirty: false, available: true }, executor: (x) => { calls.push(x.tool); return { ok: true, producedPaths: x.targetPaths }; }, verifier: () => ({ verified: true, reason: "x" }) }; };
+
+  // A1: tenant A authenticated for contract A, running contract A ⇒ admitted per policy
+  let d = spy(); d.auth = mkAuth();
+  ok("V12 auth(A)+contractA ⇒ ADMITTED_VERIFIED", H.runStep(p, contractA, S0, d).outcome === "ADMITTED_VERIFIED" && d.calls.length === 1);
+
+  // A2: tenant A authenticated for contract A, running contract B ⇒ CONTRACT_MISMATCH, NO exec
+  d = spy(); d.auth = mkAuth();
+  const mm = H.runStep(p, contractB, S0, d);
+  ok("V12 auth(A for contractA)+run contractB ⇒ CONTRACT_MISMATCH, no exec", mm.outcome === "CONTRACT_MISMATCH" && mm.executed === false && d.calls.length === 0 && mm.gateVerdict === null);
+
+  // A3: contract whose tenant != authenticated tenant ⇒ TENANT_MISMATCH, no exec
+  const contractOther = { ...contractA, tenantId: "TB" }; const shaOther = H.contractShaOf(contractOther);
+  ID.openSession(r, { sessionId: "SO", tenantId: "TA", agentId: "agent-x", contractSha: shaOther });
+  const cO = ID.issueChallenge(r, { tenantId: "TA", agentId: "agent-x", sessionId: "SO", contractSha: shaOther });
+  d = spy(); d.auth = { registry: r, challenge: cO, signature: crypto2.sign(null, Buffer.from(ID.canon(cO)), k.privateKey).toString("base64") };
+  const tm = H.runStep(p, contractOther, S0, d);
+  ok("V12 contract.tenant != authenticated tenant ⇒ TENANT_MISMATCH, no exec", tm.outcome === "TENANT_MISMATCH" && d.calls.length === 0);
+
+  // A4: an A verdict/auth cannot be replayed for B (replay the same challenge) ⇒ AUTH_DENIED (nonce consumed)
+  const authR = mkAuth(); d = spy(); d.auth = authR; H.runStep(p, contractA, S0, d);
+  const d2 = spy(); d2.auth = authR; const rep = H.runStep(p, contractA, S0, d2);
+  ok("V12 replay of A's auth ⇒ AUTH_DENIED, no exec", rep.outcome === "AUTH_DENIED" && d2.calls.length === 0);
+
+  // A5: bind-failure bundle carries no secret + is sealed
+  ok("V12 CONTRACT_MISMATCH bundle: sealed, no key material", mm.evidence && /AUTH_BIND|CONTRACT_MISMATCH/.test(JSON.stringify(mm.evidence)) && !/PRIVATE KEY/.test(JSON.stringify(mm)));
 }
 
 console.log(`\nAGENT-GOVERNANCE-HARNESS e2e suite — ${pass} assertions passed.`);
