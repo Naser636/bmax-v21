@@ -3972,3 +3972,39 @@ claimed. 9 primitives + capability-router unchanged; foreign docs/ preserved.
 **Next decisions (CTO):** (1) authorize exploration of a partner/white-label DORA/NIS2 compliance-evidence
 automation play (highest risk-adjusted bridge); (2) C1 demand test (fastest standalone); (3) €500k+ banking-DORA/MSSP
 = partner+capital decision; (4) FinOps deferred unless cloud-rightsizing capability prioritized.
+
+---
+## CHECKPOINT 2026-10-26 (p) — V5: third-party-agent governance GATE (closes #1 gap, OWASP-mapped, €0)
+CTO V5 world-class closure. Truth Lock entry/exit HEAD origin/main (1d4539b→this); clean; 5 stashes preserved; no
+code outside the lot. Report: docs/odg-operational/ODG_AGENT_GOVERNANCE_READINESS_V5.md.
+
+**Gap closed (#1, highest value):** ODG governed only its OWN runtime (V4/C4 MVP blocker = 3rd-party agent
+ingestion). NEW `runtime/core/third-party-agent-gate.ts` — a minimal GOVERNED INGESTION ADAPTER (NOT a new
+primitive/orchestrator; reuses IDENTITY/CONTRACT/POLICY/EVIDENCE/RECOVERY model): `evaluateAgentAction(proposal,
+contract,state)` → ADMIT|DENY|ESCALATE + tamper-evident sha256 record; executes nothing (ODG's executor/action-gate
+enforce); deterministic + FAIL-CLOSED + no network.
+
+**External benchmark (primary, dated):** OWASP Top 10 for Agentic Applications 2026 (pub 2025-12-09) ASI01-10 =
+control checklist; NIST AI RMF/CSF 2.0 (framework-level); EU AI Act (audit-trail/human-oversight/stop). Controls
+mapped 1:1: ASI01 least-agency allowlist, ASI02 param validation, ASI03 identity+scope-confinement, ASI06 evidence
+NEVER trusted (no-false-success), ASI07 auth presence, ASI08/10 call/time budget circuit-break, ASI09 human-ESCALATE.
+
+**Evidence:** 17-assertion adversarial security suite (simulated agent, hermetic) — goal-hijack/tool-misuse/
+privilege-escalation/traversal/data-leak/unauth/budget-exhaustion/evidence-tampering/human-escalation/fail-closed all
+PROVEN; deny-first ordering proven; tamper-evident record on every verdict. Gated in test:report (60→61 PASS); root
+tsc 0; build:runtime 0 (dist closure incl. new module).
+
+**Compliance readiness (honest):** ODG-realizable = ASI01-03/06-10 admission controls + evidence record + human gate
++ fail-closed. EXTERNAL (NOT claimed): crypto agent authN, multi-tenant isolation, SOC2/ISO, EU-AI-Act notified-body
+conformity, legal/insurance, sandbox pentest. Internal prep ≠ external validation; no certification claimed.
+
+**Opportunity impact:** converts C4's "3rd-party-agent ingestion = main build" from ABSENT → PARTIAL-PROVEN — the core
+technical blocker of C4 (strongest moat, EU-AI-Act driven) now has a tested OWASP-mapped foundation. C4 still
+product+GTM+capital+cert gated. C1/C4/V4 portfolio preserved.
+
+**Learning reuse (proven):** the no-false-success / deny-by-default / fail-closed doctrine from ODG's own validation
+reused in a NEW context (external agents); evidence-NEVER-trusted mirrors validation-engine. 9 primitives +
+capability-router unchanged; foreign docs/ preserved.
+
+**Next lot:** wire ASI04 supply-chain hook (license-policy + supply-chain-attest) + per-tool param schema (ASI02
+depth) — €0, hermetic. BLOCKED/EXTERNAL: real agent integration, public exposure, multi-tenant, certification.
