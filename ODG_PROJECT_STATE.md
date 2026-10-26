@@ -3873,3 +3873,36 @@ asserts it reproduces that finding ⇒ reuse→improvement proven.
 real demand validation (CTO: market test). No market/revenue claimed. 9 primitives + capability-router unchanged;
 license-policy is a pure policy helper (like opportunity-policy/price-resolution), not a new primitive. Foreign
 docs/ preserved.
+
+---
+## CHECKPOINT 2026-10-26 (m) — OPPORTUNITY PORTFOLIO V2: value-first comparative portfolio (real sourced data, €0)
+CTO OPPORTUNITY_INTELLIGENCE V2 (value > cost-minimization). Budget €0. Entry HEAD=origin/main=4df96bf, clean.
+Report: docs/odg-operational/ODG_OPPORTUNITY_PORTFOLIO_V2.md. Reused V1 pipeline + license-policy + unit-economics
+(no SPDX/validated-function rework).
+
+**§8 discovery-method correction (measured, no generic code):** V1's low relevance = naive GitHub full-text query.
+Fix = targeted WebSearch/WebFetch market research. Gain: 0 relevant (V1) → 4 real sourced candidates with pricing
+(V2). Cause fixed at method level, not a code layer.
+
+**Real sourced research (OBSERVATION, 2026-10-26):** AI code-review $24-30/dev/mo (CodeRabbit/Greptile/Qodo);
+SCA/license $20-25/dev/mo + free tiers (Snyk/FOSSA/Mend, commoditized); AI agent governance/eval $30-$250/mo to
+$20-100K/yr enterprise (90+ vendors, consolidating); code-audit SERVICE $49-$1,500 entry / $1,300-5,000 senior,
+"strong SMB demand".
+
+**Risk-adjusted ranking (per-dimension, not averaged):** #1 **autonomous automated code-audit SERVICE** — best
+risk-adjusted NOW (documented demand + feasibility-TODAY + cost-structure moat [near-zero marginal cost at a tier
+humans can't profitably serve] + low capital/risk + short time-to-validation). Financial (unit-economics): CM
+€84/€289/€994 at $99/$299/$999, break-even ~6 audits/mo; **binding unknown = CAC + validated demand (INCONNU)**.
+#4 AI-agent-governance = highest ceiling + strongest ODG moat (evidence-gated harness) but gated on product+GTM+
+funding (long-horizon). #2 code-review potential-high/accessibility-low; #3 SCA weakest (commoditized).
+
+**§7 experiments:** C1 FEASIBILITY PROVEN (RÉSULTAT EXPÉRIMENTAL — ODG produced DEF-010 audit finding this program);
+C1 DEMAND NOT validated (defined marketplace-listing test = CTO outreach-gated, INCONNU). No demand/revenue claimed.
+
+**Blocks (§11):** demand validation / any outreach / paid experiments = CTO-gated (€0, no contact authz). All four
+product-markets crowded (incumbents + free tiers) — no uncontested win (honest). Figures = OBSERVATION from secondary
+comparison pages; re-verify on vendor pages before any decision.
+
+**Next decision (CTO):** authorize ONE low-risk C1 demand test (e.g. $99 listing + inquiry measurement) — the single
+experiment that moves C1 from feasibility-proven to demand-validated. No code change this cycle (method correction
+only); 9 primitives + capability-router unchanged; foreign docs/ preserved.
