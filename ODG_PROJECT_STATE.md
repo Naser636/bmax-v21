@@ -3679,3 +3679,37 @@ generalisation beyond images/n=2. Rule exercised on 2 distinct briefs (schnell u
 only low-confidence axes ⇒ further spend HELD. Mandatory-stop conditions respected; guards green; foreign pipeline
 preserved untracked (protocol/driver/outputs/ledgers live there; only the compass is tracked). Next useful paid step
 available on CTO direction: encode the rule into ODG's image model-selection path + a distinct-case validation.
+
+---
+## CHECKPOINT 2026-10-26 (g) — image model-selection RULE encoded + tested (€0); capability-router reconciliation
+CTO continuation/closure directive §2. Replicate additional budget = €0 honored (0 paid calls this lot). Entry
+HEAD c69d0b3 ≡ origin/main; reconciled, no green lot redone.
+
+**Reconciliation (§2.1/§2.7 — did NOT invent a policy in the wrong place):** the runtime `capability-router`
+routes ODG CAPABILITIES across tiers (Memory→Rules→LocalLLM→ExternalAI); it has NO image-model / Replicate /
+license notion, and there is NO media-model selection anywhere in the ODG runtime. Image-model choice is a
+FILM-PIPELINE concern (today scattered/hardcoded across flux call-sites). Forcing the rule into capability-router
+would be an out-of-architecture permanent component (violates §2.3 + the 9-primitive/no-new-component rule). ⇒
+implemented at the CORRECT level as a single deterministic pipeline policy helper; the capability-router is
+deliberately unchanged.
+
+**Implemented (right level, reuse, no new runtime primitive, €0, no paid call):**
+`docs/film-factory/pipeline/select-image-model.mjs` — pure `selectImageModel({kind,usage,allowNonCommercialDraft})`
+encoding the verified rule with provenance; deny-by-default outside scope. `select-image-model.test.mjs` **10/10**:
+(1) commercial image ⇒ flux-schnell; (2) internal non-commercial draft ⇒ flux-dev ONLY with explicit opt-in (else
+safe schnell default); (3) EXHAUSTIVE — flux-dev NEVER selected for any commercial request (license-barred) even
+with the flag; (4) out-of-scope kind/usage/empty ⇒ deny-by-default, NO silent routing to an unvalidated model;
+(5) DISTINCT unseen commercial brief ⇒ flux-schnell deterministically (no paid call) + carries rule provenance.
+Decisive axes = LICENSE + COST (verified); latency/quality NOT decision criteria (n=2 / human-deferred). Scope
+limited to images + these 2 models. Call-sites may adopt `selectImageModel()` incrementally.
+
+**§3 VIDEO comparison:** status UNCHANGED = BLOCKED on Replicate price-verifiability (no verifiable-price Replicate
+challenger; register's video prices are off-Replicate Runway/Luma/Veo; minimax/video-01 known but not re-run).
+Unblock condition: an official, verifiable Replicate price for a compatible video challenger. Data gap, NOT an ODG
+incapacity.
+
+**§4/§6 frontier (reconciled, honest):** executable+authorized non-blocked lots are DONE — HYPER-SPEED #1 (parallel
+gate, merged), V2 Phase-A (H1·C1·J1·B1·F1·G2·I1 verified), Chantier A dashboard/identity (live CONSISTENT; reboot-
+drill runbook delivered), model-selection rule (this lot). Remaining are host/human/provider/legal-BLOCKED: host-
+reboot drill (maintenance window + sudo), public TLS/DNS (§Q P3-D2), Replicate further spend (CTO €0), L7/TS-only
+(CTO-paused). Each recorded with owner + unblock action. No global deployment/quality claimed.
