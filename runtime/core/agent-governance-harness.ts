@@ -96,13 +96,19 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
   const done = (outcome: string, executed: boolean, extra?: any) => {
     stamp("OUTCOME", { outcome, executed });
     // Lot A — seal an evidence BUNDLE binding the whole chain to this execId (tamper-evident via provenance).
+    // V14 — authBound is TRUE only when the authenticated + contract/tenant-bound pre-gate path fully passed
+    // (authedTenant is set solely after verifyAuth.ok AND the contractSha/tenant bind checks; any failure returns
+    // early). A bare policy ADMIT (no deps.auth) leaves authedTenant undefined ⇒ authBound:false. This sealed flag
+    // is what authorizeExecution() requires — a direct/unauthenticated ADMIT can therefore NEVER authorize execution.
+    const authBound = authedTenant !== undefined;
     const bundle = prov.stampProvenance({
       execId, tenantId: tenantId ?? null, agentId: (proposal && proposal.agentId) || null, objective: (contract && contract.objective) || null,
       proposalSha256: verdict.record.proposalSha256, verdict: verdict.verdict, executed,
+      authBound, contractSha: contractShaOf(contract),
       resultDigest: (extra && extra.resultDigest) || null, verified: !!(extra && extra.verified),
       order: trace.map((t: any) => t.phase),
     }, { revision: (deps as any).revision });
-    return Object.freeze({ outcome, executed, gateVerdict: verdict.verdict, execId, tenantId: tenantId ?? null, evidence: bundle, trace, state: advanceState(executed), ...(extra || {}) });
+    return Object.freeze({ outcome, executed, gateVerdict: verdict.verdict, execId, tenantId: tenantId ?? null, authBound, evidence: bundle, trace, state: advanceState(executed), ...(extra || {}) });
   };
 
   // DENY ⇒ NO execution, period.
@@ -169,11 +175,45 @@ function verifyEvidenceBundle(bundle: any, opts?: any): { ok: boolean; reasons: 
   if (bundle.verdict === "DENY" && bundle.executed === true) reasons.push("DENY verdict but execution occurred");
   // transition order: must start GATE; if executed, must include EXEC (or EXEC_ERROR) then OUTCOME
   const ord = Array.isArray(bundle.order) ? bundle.order : [];
-  if (ord[0] !== "GATE") reasons.push("invalid transition order (does not start at GATE)");
+  // A sealed chain may start at AUTH (authenticated pre-gate path) or GATE (unauthenticated policy eval); any other
+  // first phase is malformed. Whenever execution occurred, a GATE admission MUST be present in the chain.
+  if (!(ord[0] === "GATE" || ord[0] === "AUTH")) reasons.push("invalid transition order (must start at AUTH or GATE)");
+  if (bundle.executed === true && !ord.includes("GATE")) reasons.push("executed but no GATE admission recorded");
   if (bundle.executed === true && !(ord.includes("EXEC") || ord.includes("EXEC_ERROR"))) reasons.push("executed but no EXEC transition recorded");
   if (bundle.verified === true && !ord.includes("VERIFY")) reasons.push("verified:true but no VERIFY transition");
   return { ok: reasons.length === 0, reasons };
 }
 
-export { runStep, runSequence, verifyEvidenceBundle, contractShaOf, sha256 };
-module.exports = { runStep, runSequence, verifyEvidenceBundle, contractShaOf, sha256 };
+/**
+ * authorizeExecution — V14 AUTHENTICATED EXECUTION BOUNDARY. The SOLE sanctioned, re-verifiable gate an
+ * executor-invoker MUST pass before running anything on the strength of a sealed admission bundle. It deliberately
+ * does NOT trust a bare `authenticated` flag, a caller-supplied tenantId, or an isolated ADMIT verdict: it
+ * RE-VERIFIES the sealed, provenance-protected evidence AT EXECUTION TIME and binds it to the EXACT expected
+ * context the caller intends to act in. Fail-closed — any doubt ⇒ not authorized ⇒ the caller MUST NOT execute.
+ *
+ *   expected = { tenantId, contractSha, agentId?, execId? }  (tenantId + contractSha are REQUIRED; undefined ⇒ deny)
+ *
+ * This is what closes the "direct/unauthenticated ADMIT ⇒ execution" bypass: a bundle whose admission was not
+ * authenticated + contract/tenant-bound carries authBound:false and is refused here, regardless of its ADMIT verdict.
+ */
+function authorizeExecution(evidence: any, expected: any): { authorized: boolean; reason: string } {
+  const exp = expected && typeof expected === "object" ? expected : {};
+  // 1) sealed-evidence integrity + execId/tenant binding (re-uses the INDEPENDENT verifier; fail-closed on malformed/tampered)
+  const ev = verifyEvidenceBundle(evidence, { expectedTenantId: exp.tenantId, expectedExecId: exp.execId });
+  if (!ev.ok) return { authorized: false, reason: `evidence re-verification failed: ${ev.reasons.join("; ")}` };
+  // 2) an AUTHORIZING verdict actually produced execution authority (ADMIT or human-approved ESCALATE), with execution recorded
+  if (!["ADMIT", "ESCALATE"].includes(evidence.verdict)) return { authorized: false, reason: `verdict "${evidence.verdict}" does not authorize execution` };
+  if (evidence.executed !== true) return { authorized: false, reason: "bundle records no authorized execution" };
+  // 3) CORE V14 PROPERTY — the admission must have been AUTHENTICATED + contract/tenant-bound. A bare policy ADMIT
+  //    (no auth) is authBound:false and is REFUSED, closing the direct-ADMIT→execution bypass. Not a caller bool.
+  if (evidence.authBound !== true) return { authorized: false, reason: "admission was not authenticated + contract/tenant-bound (authBound!=true) — a bare/unauthenticated ADMIT cannot authorize execution" };
+  // 4) bind to the EXACT expected contract/tenant/agent — sealed values MUST equal the caller's declared context
+  if (!("contractSha" in evidence)) return { authorized: false, reason: "bundle carries no contractSha — cannot bind to a contract (fail-closed)" };
+  if (exp.contractSha === undefined || evidence.contractSha !== exp.contractSha) return { authorized: false, reason: "contract binding mismatch (sealed contractSha != expected) — admission was for a different contract" };
+  if (exp.tenantId === undefined || evidence.tenantId !== exp.tenantId) return { authorized: false, reason: "tenant binding mismatch (sealed tenant != expected) — admission belongs to a different tenant" };
+  if (exp.agentId !== undefined && evidence.agentId !== exp.agentId) return { authorized: false, reason: "agent binding mismatch (sealed agent != expected)" };
+  return { authorized: true, reason: "authenticated, contract- and tenant-bound admission re-verified at execution time" };
+}
+
+export { runStep, runSequence, verifyEvidenceBundle, authorizeExecution, contractShaOf, sha256 };
+module.exports = { runStep, runSequence, verifyEvidenceBundle, authorizeExecution, contractShaOf, sha256 };
