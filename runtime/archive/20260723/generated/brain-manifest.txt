@@ -1,2 +1,0 @@
-runtime/brain/KERNEL_ANALYSIS.md
-runtime/brain/README.md
