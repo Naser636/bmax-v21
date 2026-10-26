@@ -1,9 +1,23 @@
-# ODG Host-Reboot Drill — Runbook (PREPARED; NOT YET EXECUTED)
+# ODG Host-Reboot Drill — Runbook (EXECUTED + VALIDATED 2026-10-26)
 
-**Status:** PREPARED + boot-persistence VERIFIED by configuration. The empirical on-reboot restart is **NOT RUN**
-— it requires a maintenance window on a live host and `sudo`/host authority not present to ODG. This runbook is the
-single human-gated action to close the last supervision residual (V2 Phase-A matrix §SUPERVISION). **Do not record
-the drill as passed until the steps below are executed and the evidence collected.**
+**Status:** ✅ **EXECUTED + VALIDATED 2026-10-26** on `vps-6d919042`. A real `sudo systemctl reboot` was triggered at
+`16:46:39Z`; an INDEPENDENT boot-time observer (`odg-reboot-drill-capture.service`, self-disabling) captured
+timestamped evidence (`/home/ubuntu/odg-releases/reboot-drill-evidence.json`, verdict **PASS**), then confirmed by a
+LIVE independent re-verification in the next session. All PASS criteria met — see "EXECUTION RESULT" below. The last
+supervision residual (V2 Phase-A matrix §SUPERVISION) is now CLOSED.
+
+## EXECUTION RESULT (2026-10-26, timestamped, dual-observed)
+- **Real reboot:** boot_id `f919951d…` → `290b91c3…`; uptime reset `2026-10-23 22:15` → `2026-10-26 16:46:47`.
+- **Auto-restart (no manual start):** `odg-preprod.service` active+enabled at boot `16:46:56Z`, `NRestarts=0`;
+  observer captured active at `16:47:01Z` (~14 s post-boot).
+- **Endpoints:** `/api/health`=200, `/`=200, `/api/runtime-state`=200 (payload 3231 B, coherent: health READY,
+  autonomy 100 %, caps total 240/proven 240, queue 3, release.present=true).
+- **Version identity:** served buildId `r-lFDoxyDMohywdhPDESc` == active release `rel-…268be2c…` (SAME as pre-reboot
+  — no unintended `odg-recover` rollback; odg-recover inactive); `runtime-identity: CONSISTENT`.
+- **Listener:** `127.0.0.1:3000` only (loopback preserved). **Boot logs:** 0 critical errors.
+- **Recovery/rollback available:** `previous`→hbTMmA, OnFailure=odg-recover present, backup bundle @268be2c in
+  `/var/backups/odg-vault/20261026T162737Z`. Observer one-shot self-disabled after capture.
+- **Verdict: PASS** (independent observer + live re-verification agree). Original prepared procedure retained below.
 
 ## Why it is deferred (honest)
 `odg-preprod.service` supervises the loopback-only dashboard and auto-recovers on crash (proven: SIGKILL ⇒ ~2–3 s

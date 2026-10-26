@@ -3786,3 +3786,28 @@ c2 auto-active + c3 endpoints 200 + c4 same-release-no-rollback + c5 identity CO
 runbook + V2 matrix §SUPERVISION residual to DRILL VALIDATED and record a closing checkpoint; if FAIL, diagnose per
 the runbook (journalctl -b, odg-recover state) and record the real outcome. Do NOT mark passed on service-active/200
 alone.
+
+---
+## CHECKPOINT 2026-10-26 (j) — HOST-REBOOT DRILL EXECUTED + VALIDATED (PASS); supervision residual CLOSED
+Reprise after the real reboot. Entry HEAD 2d3f0b8 ≡ origin/main, clean. VPS `vps-6d919042` returned; session
+reconnected via SSH.
+
+**REBOOT VALIDATED (dual-observed, timestamped) — verdict PASS.** Real `sudo systemctl reboot` triggered 16:46:39Z.
+(1) INDEPENDENT boot-time observer `odg-reboot-drill-capture.service` (self-disabled after run) wrote
+`/home/ubuntu/odg-releases/reboot-drill-evidence.json` @16:47:01Z: all 6 criteria PASS. (2) LIVE independent
+re-verification (this session, 18:14Z) agrees. Evidence: boot_id f919951d→290b91c3 (real reboot); uptime reset to
+2026-10-26 16:46:47; `odg-preprod.service` active+enabled, auto-started at boot 16:46:56Z, NRestarts 0 (no manual
+start); /api/health+/+/api/runtime-state = 200; served buildId r-lFDoxyDMohywdhPDESc == active release 268be2c (SAME
+as pre-reboot — odg-recover inactive, no unintended rollback); runtime-identity CONSISTENT; listener 127.0.0.1:3000
+only (loopback preserved); 0 boot-log critical errors; runtime-state payload coherent (health READY, autonomy 100%,
+caps total 240/proven 240, queue 3, release.present=true, 3231 B); rollback/recovery available (previous→hbTMmA,
+OnFailure=odg-recover, backup bundle @268be2c). Runbook flipped to EXECUTED+VALIDATED; V2 matrix §SUPERVISION CLOSED.
+
+**This closes the last host-blocked supervision residual.** VPS private deployment of main (268be2c) + boot-
+persistence are now EMPIRICALLY PROVEN (not just configured). Limits honored: no Replicate spend; TLS/DNS still N/A
+(loopback by design); L7/TS-only untouched; video comparison still price-blocked. No force-push / CI bypass /
+destructive op; foreign docs/ preserved; no secret exposed.
+
+**Executable-frontier status:** with the reboot validated, NO non-blocked authorized executable lot remains open.
+Remaining reliquats are all externally-gated: TLS/DNS public exposure (domain+cert+CTO decision), Replicate further
+spend (CTO €0), video model comparison (verifiable Replicate price), L7/TS-only (CTO pause).
