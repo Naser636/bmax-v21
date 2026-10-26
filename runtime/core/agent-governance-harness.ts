@@ -122,15 +122,19 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
   }
 
   // Admitted (ADMIT or ESCALATE→approve): execute the INJECTED executor, recover on error, verify INDEPENDENTLY.
-  // V17 — GOVERNED-EXECUTION mode (opt-in via deps.governedExecution): the raw executor is NOT called directly.
-  // Instead it is wrapped by createGovernedExecutor and invoked ONLY through its authorization-gated handle, so the
-  // V15 encapsulation is exercised IN the control path, not just tested in isolation. The authorization is a sealed
-  // ADMISSION CERTIFICATE for THIS step's exact context (execId/tenant/contract/agent + authBound). The certificate
-  // asserts harness authorization-to-execute (AUTH✓/GATE ADMIT✓); the actual RESULT is still sealed post-exec in the
-  // public evidence bundle (done()). A bare/unauthenticated ADMIT (authBound:false) is REFUSED here (fail-closed).
+  // V17 — GOVERNED-EXECUTION mode: the raw executor is NOT called directly. It is wrapped by createGovernedExecutor
+  // and invoked ONLY through its authorization-gated handle (V15 encapsulation exercised IN the control path). The
+  // authorization is a sealed ADMISSION CERTIFICATE for THIS step's exact context (execId/tenant/contract/agent +
+  // authBound); it asserts harness authorization-to-execute (AUTH✓/GATE ADMIT✓). The actual RESULT is still sealed
+  // post-exec in the public evidence bundle (done()). A bare/unauthenticated ADMIT (authBound:false) is REFUSED.
+  // V18 — governed execution is now the DEFAULT for ANY AUTHENTICATED step (authedTenant resolved ⇒ authBound). The
+  // legacy path below runs ONLY for UNAUTHENTICATED steps (explicitly isolated, stamped legacyUnauthenticated:true);
+  // it can never present as authenticated (authBound:false is sealed) and never reaches the governed boundary by
+  // bypass. There is NO silent fallback to the direct path after a governed refusal/error (fail-closed above).
+  const governed = authedTenant !== undefined || (deps as any).governedExecution;
   let execResult: any;
   try {
-    if ((deps as any).governedExecution) {
+    if (governed) {
       const expected = { tenantId: tenantId ?? null, contractSha: contractShaOf(contract), agentId: (proposal && proposal.agentId) || null, execId };
       const cert = prov.stampProvenance({ execId, tenantId: tenantId ?? null, agentId: expected.agentId, contractSha: expected.contractSha, authBound: authedTenant !== undefined, proposalSha256: verdict.record.proposalSha256, verdict: verdict.verdict, executed: true, order: trace.map((t: any) => t.phase).concat(["EXEC"]) }, { revision: (deps as any).revision });
       const handle = createGovernedExecutor(deps.executor);                 // created per-step; raw captured, never exposed
@@ -139,8 +143,9 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
       execResult = gres.result;
       stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), governed: true, note: "executor invoked ONLY via the governed boundary after context-bound authorization" });
     } else {
+      // LEGACY UNAUTHENTICATED path (isolated): only reachable when the step is NOT authenticated (authBound:false).
       execResult = (deps.executor as any)(proposal, execId);
-      stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), note: "executor result is UNTRUSTED until independently verified" });
+      stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), legacyUnauthenticated: true, note: "UNAUTHENTICATED legacy path — executor result is UNTRUSTED until independently verified; NOT an authenticated execution" });
     }
   } catch (e: any) {
     stamp("EXEC_ERROR", { error: String(e && e.message ? e.message : e) });
