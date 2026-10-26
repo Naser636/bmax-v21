@@ -122,10 +122,26 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
   }
 
   // Admitted (ADMIT or ESCALATE→approve): execute the INJECTED executor, recover on error, verify INDEPENDENTLY.
+  // V17 — GOVERNED-EXECUTION mode (opt-in via deps.governedExecution): the raw executor is NOT called directly.
+  // Instead it is wrapped by createGovernedExecutor and invoked ONLY through its authorization-gated handle, so the
+  // V15 encapsulation is exercised IN the control path, not just tested in isolation. The authorization is a sealed
+  // ADMISSION CERTIFICATE for THIS step's exact context (execId/tenant/contract/agent + authBound). The certificate
+  // asserts harness authorization-to-execute (AUTH✓/GATE ADMIT✓); the actual RESULT is still sealed post-exec in the
+  // public evidence bundle (done()). A bare/unauthenticated ADMIT (authBound:false) is REFUSED here (fail-closed).
   let execResult: any;
   try {
-    execResult = (deps.executor as any)(proposal, execId);
-    stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), note: "executor result is UNTRUSTED until independently verified" });
+    if ((deps as any).governedExecution) {
+      const expected = { tenantId: tenantId ?? null, contractSha: contractShaOf(contract), agentId: (proposal && proposal.agentId) || null, execId };
+      const cert = prov.stampProvenance({ execId, tenantId: tenantId ?? null, agentId: expected.agentId, contractSha: expected.contractSha, authBound: authedTenant !== undefined, proposalSha256: verdict.record.proposalSha256, verdict: verdict.verdict, executed: true, order: trace.map((t: any) => t.phase).concat(["EXEC"]) }, { revision: (deps as any).revision });
+      const handle = createGovernedExecutor(deps.executor);                 // created per-step; raw captured, never exposed
+      const gres = handle.execute(proposal, { evidence: cert }, expected);
+      if (!gres.authorized) { stamp("EXEC_DENIED", { execId, reason: gres.reason }); return done("EXECUTION_DENIED", false); }
+      execResult = gres.result;
+      stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), governed: true, note: "executor invoked ONLY via the governed boundary after context-bound authorization" });
+    } else {
+      execResult = (deps.executor as any)(proposal, execId);
+      stamp("EXEC", { execId, ok: !!(execResult && execResult.ok), note: "executor result is UNTRUSTED until independently verified" });
+    }
   } catch (e: any) {
     stamp("EXEC_ERROR", { error: String(e && e.message ? e.message : e) });
     return done("ERROR_RECOVERED", true, { verified: false }); // recovered; NO false success

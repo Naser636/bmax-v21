@@ -4416,3 +4416,43 @@ as the success signal, reproduce-before-fix, no-false-guarantee doctrine (don't 
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
 Next €0 candidate: optional per-step governed-executor wiring in runSequence (hand each step a handle). BLOCKED/
 EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, certification, exposure.
+
+---
+## CHECKPOINT 2026-10-26 (ab) — V17: sequence-level governed executor (governedExecution wired into control path) €0
+CTO V17. Truth Lock entry ffc6667≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive;
+in-place runStep wiring. Diff = 2 files + register.
+
+**§2 audit (read-only):** createGovernedExecutor (V15) was referenced ONLY in its definition + exports + V15 tests —
+NEVER in runStep/runSequence. The control path invoked `deps.executor` DIRECTLY (post auth+gate), so the V15
+encapsulation was tested in isolation, NOT exercised per step. Confirmed gap.
+
+**Reproduced:** `runStep(..., {governedExecution:true})` on an UNAUTHENTICATED ADMIT ⇒ executed:true, raw called once
+(the flag was ignored; governed gate absent). Under a governed path authBound:false must refuse. (scratchpad v17-repro)
+
+**Fix (minimal, opt-in):** new `deps.governedExecution` mode in runStep: instead of calling the raw executor directly,
+it seals a sealed ADMISSION CERTIFICATE for THIS step's exact context (execId/tenant/contract/agent + authBound,
+verdict), wraps deps.executor in createGovernedExecutor (per-step, raw captured + never exposed), and invokes the raw
+ONLY via handle.execute(proposal, {evidence:cert}, expected). authorizeExecution re-verifies the cert before the raw
+call; a bare/unauthenticated ADMIT (authBound:false) ⇒ EXECUTION_DENIED, raw never called (fail-closed). Default OFF ⇒
+direct path unchanged (backward-compat). runSequence passes it through (per-step auth from V16). Honesty: the cert
+asserts harness authorization-to-execute (NOT a TS type/convention); the actual RESULT is still sealed post-exec in the
+public evidence bundle; HALT ≠ transaction (no rollback).
+
+**Proof:** harness 75→84 (+9 V17) with raw spies + exact counts: governed authenticated step executes once (EXEC stamp
+governed:true); governed + unauth ADMIT ⇒ EXECUTION_DENIED raw 0; governed 3-step seq raw==3; replayed proof / contract
+change / invalid proof mid-seq ⇒ halt @1 raw==1; resume-after-fix executes; no raw executor/handle on the result; non-
+governed path unregressed. gate 51/51 + identity 22/22 unchanged; full gate 63/63; tsc 0; build 0. Fix re-confirmed in
+scratchpad (EXECUTION_DENIED, raw 0).
+
+**Status:** PROVEN (TEST) = in the controlled path, every raw executor call is preceded by a context-bound
+authorization through the governed handle; unauthenticated ADMIT refused; no later exec after a block; exact raw
+counts. HONEST LIMIT (documented) = admission cert ≠ type/convention guarantee; result sealed post-exec; HALT ≠
+transaction. EXTERNAL/BLOCKED (not claimed) = production authN + multi-tenant isolation, real agent, KMS/HSM, cert.
+
+**Learning reuse (proven):** reused createGovernedExecutor (V15) + authorizeExecution (V14) + per-step auth (V16) +
+authBound (V14) + reproduce-before-fix + no-false-guarantee doctrine. 9 primitives + router + executors unchanged;
+5 stashes + foreign docs preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts`
+Next €0 candidate: make governedExecution the DEFAULT for authenticated steps (behaviour-change lot, needs its own
+audit). BLOCKED/EXTERNAL (CTO/infra): production authN + multi-tenant isolation, real agent, KMS/HSM, certification.
