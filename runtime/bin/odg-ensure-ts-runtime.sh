@@ -95,7 +95,7 @@ if [ ! -f "tsconfig.runtime-dist.json" ] || [ ! -f "scripts/build-dist-closure.j
 fi
 
 node_modules/.bin/tsc -p tsconfig.runtime-dist.json
-node scripts/build-dist-closure.js
+node_modules/.bin/tsx scripts/build-dist-closure.ts
 
 if ! valid_dist; then
   echo "[TS-RUNTIME] build completed but ${DIST} is still structurally invalid. NO silent fallback." >&2

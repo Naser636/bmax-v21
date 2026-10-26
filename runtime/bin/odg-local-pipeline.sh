@@ -35,7 +35,7 @@ _compass_record() {
   local rc=$?
   if [ "$_COMPASS_DONE" = "0" ] && [ "${ODG_COMPASS_RECORD:-1}" = "1" ]; then
     _COMPASS_DONE=1
-    node scripts/compass-update.js --from-report "$MISSION" --since "$_COMPASS_START_MS" \
+    node_modules/.bin/tsx scripts/compass-update.ts --from-report "$MISSION" --since "$_COMPASS_START_MS" \
       || echo "[COMPASS] WARNING: compass recorder failed (rc=${rc}; mission result unaffected)" >&2
   fi
   # §2 (ODG_LIVE_AUTONOMY_WEB_TO_MARKET_V1) — record THIS direct-door run into the EXISTING attempt-log via
@@ -136,7 +136,7 @@ mkdir -p runtime/generated
 # odg-verify now exits non-zero on a red/dirty verification (so `odg delegate`/`system-ready` stop
 # honestly), and under `set -e` that would abort this pre-flight before the content gates run — and
 # wrongly break the finalize-mission dirty-tree entry. report-only keeps odg-verify a pure stamper here.
-node runtime/bin/odg-verify.js "$MISSION" --report-only
+node_modules/.bin/tsx runtime/bin/odg-verify.ts "$MISSION" --report-only
 
 BUILD_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').build===true))}catch(e){process.stdout.write('false')}")
 TSC_OK=$(node -e "try{process.stdout.write(String(require('./runtime/generated/runtime-verify.json').typescript===true))}catch(e){process.stdout.write('false')}")
@@ -256,7 +256,7 @@ ODG_STAGE_BASE="${ODG_STAGE_BASE:-runtime/dist/core}" node runtime/dist/bin/odg-
 # (`|| true`, stderr muted): a collection failure can NEVER change the mission result or exit code — the
 # collector logs its own failure as an observability incident and still exits 0. Opt-out: ODG_W6_OBSERVE=0.
 if [ "${ODG_W6_OBSERVE:-1}" = "1" ]; then
-  node scripts/w6-collect.js "$MISSION" "A-shell:${ODG_RUNTIME:-ts}" 2>/dev/null || true
+  node_modules/.bin/tsx scripts/w6-collect.ts "$MISSION" "A-shell:${ODG_RUNTIME:-ts}" 2>/dev/null || true
 fi
 
 mkdir -p runtime/generated/mission-artifacts/{generated,passports,reports,certificates,history}
