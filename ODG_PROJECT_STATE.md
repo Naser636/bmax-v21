@@ -3906,3 +3906,34 @@ comparison pages; re-verify on vendor pages before any decision.
 **Next decision (CTO):** authorize ONE low-risk C1 demand test (e.g. $99 listing + inquiry measurement) — the single
 experiment that moves C1 from feasibility-proven to demand-validated. No code change this cycle (method correction
 only); 9 primitives + capability-router unchanged; foreign docs/ preserved.
+
+---
+## CHECKPOINT 2026-10-26 (n) — C1 audit-pilot PREPARED + C4 governance strategy (€0, nothing published)
+CTO V3. Budget €0; PREPARE-ONLY (§1E): no publication, prospecting, contact-capture, campaign, spend, or client
+engagement. Entry HEAD=origin/main=52e0f2e, clean. Reused V1/V2 pipeline + license-policy + supply-chain-attest +
+unit-economics; no code change.
+
+**C1 (near-term, feasibility-proven):** pilot package docs/odg-operational/ODG_C1_AUDIT_PILOT_PACKAGE.md — price
+re-verified primary (robustdevs Aug 2026: Tier-1 automated $49-$1,300 named providers Afterbuild $49/Data Jackson
+$1,297; Tier-2 $950-5,000; "most startups in $950-5,000 band"). Service spec (scope/exclusions/secure client-code
+handling/human-sign-off/liability-flagged-for-legal); unit-economics CM €84/€489/€994 at $99/$499/$999, break-even
+~6 standard/mo, binding unknown = CAC+conversion (INCONNU). PRE-REGISTERED demand experiment (PASS = ≥3 paid OR ≥10
+qualified WTP inquiries; FAIL = <1 paid AND <3 inquiries; STOP on spend/legal/data-risk). Local UNPUBLISHED demo
+c1-audit-pilot-demo.html (noindex, CTA disabled, draft banner). AWAITING separate CTO authz: any listing/outreach/
+contact/spend/binding-terms/live-client-code.
+
+**C4 (strategic bet):** docs/odg-operational/ODG_C4_AGENT_GOVERNANCE_STRATEGY.md. Real dated driver = EU AI Act
+high-risk (Aug 2 2026 / stand-alone Dec 2 2027): append-only exportable audit trail (Art.19 ≥6mo), decision-logic
+docs, human oversight+intervention, stop/override. Buyer = CISO/compliance/legal (regulated enterprises). Competitors
+commoditized at eval layer (Langfuse free/$29/$199/$2499 primary; 90+ vendors consolidating); underserved =
+audit-grade regulator-exportable no-false-success governance for AUTONOMOUS agents. HONEST split: ODG DEMONSTRATED-
+IN-ODG (evidence-gates, fail-closed admission, tamper-evident provenance, human-override, append-only ledger — map
+1:1 to EU-AI-Act reqs) vs NOT-CLIENT-VALIDATED (external buyer WTP, 3rd-party-agent ingestion [ODG governs its OWN
+runtime today], SOC2/ISO, multi-tenant, auditor acceptance). MVP = governance+evidence adapter wrapping a customer
+agent runtime (new 3rd-party ingestion boundary = main build). Cost/time = multi-month build + enterprise GTM +
+capital + certification (ESTIMATION, not €0). Verdict: highest ceiling + strongest moat but product+GTM+capital-gated
+⇒ tracked strategic bet, not near-term execution.
+
+**Next decisions (CTO):** (1) authorize the C1 §D demand test on one channel (the single step to demand-validate C1);
+(2) decide whether C4 warrants a product+GTM+capital commitment or one design-partner conversation (outreach-gated).
+No market/revenue/demand claimed; 9 primitives + capability-router unchanged; foreign docs/ preserved.
