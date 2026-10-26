@@ -4186,3 +4186,36 @@ capability-router + executors unchanged; foreign docs/ + 5 stashes preserved.
 **SINGLE RESUME COMMAND (next safe €0 lot = production multi-tenant isolation design/proto, OR verified-key→session
 store):** `git fetch origin && git checkout main && tsx runtime/core/agent-identity.test.ts && tsx runtime/core/agent-governance-harness.test.ts`
 **BLOCKED/EXTERNAL (CTO/infra):** real agent, KMS/HSM, prod multi-tenant, certification, exposure, commercial action.
+
+---
+## CHECKPOINT 2026-10-26 (v) — V11: tenant isolation forensic audit + bounded logical fix + proof (€0, hermetic)
+CTO V11. Truth Lock entry a1a0e1f≡origin/main, clean, 5 stashes preserved. No new primitive; extends harness only.
+Audit: docs/odg-operational/ODG_TENANT_ISOLATION_AUDIT_V11.md.
+
+**Gate A (read-only forensic):** identity/sessions/nonces = tenant-namespaced (logical, V9); gate = tenant-AGNOSTIC
+(0 refs); harness execId+evidence bundle = NO tenant (pre-fix). REPRODUCED the gap: same agentId+proposal under two
+notional tenants ⇒ identical execId + A-bundle passed verifyEvidenceBundle({expectedTenantId:"SOMEONE_ELSE"}) ⇒
+cross-tenant evidence not rejectable (proof, not assertion).
+
+**Gate B (bounded fix, harness only):** the AUTHENTICATED tenant (from verifyAuth identity — proposal-supplied tenant
+NEVER trusted) threaded into execId (sha256 proposalSha:calls:agentId:tenantId ⇒ tenant-distinct) + the sealed
+evidence bundle (tenantId field) + verifyEvidenceBundle(expectedTenantId) rejects absent/mismatched tenant
+(fail-closed). No-auth path uses caller-asserted deps.tenantId, labelled non-authoritative.
+
+**Independent verification:** harness 30→37 (+7 V11): 2 tenants⇒distinct execId; A-bundle attributes to A, REJECTED
+for B; missing tenant vs expected⇒fail-closed; bundle carries its sealed tenant; auth-bound tenant authoritative +
+rejects foreign expected. Pre-existing suites unchanged (backward-compat). gate 63/63; tsc 0; build 0; diff = 2 files
++ 1 audit doc.
+
+**Status (honest):** PROVEN (logical, hermetic) = identity/session/nonce namespacing + evidence/execId tenant-binding
++ cross-tenant evidence rejection + fail-closed. PARTIAL = gate itself still tenant-agnostic (tenant enforced at
+identity+evidence layers). ABSENT/EXTERNAL/BLOCKED (NOT claimed) = PRODUCTION tenant isolation (real data store/
+filesystem/resource/IAM/per-tenant keys/deploy) — a tenantId + namespacing is LOGICAL, not production isolation (§3).
+
+**Learning reuse (proven):** no-false-success + evidence-provenance binding + authenticated-source-not-proposal
+doctrine reused for tenant binding; the reproduce-before-fix method reused (gap proven via repro script pre-fix).
+9 primitives + capability-router + executors unchanged; foreign docs/ + 5 stashes preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/agent-governance-harness.test.ts && tsx runtime/core/agent-identity.test.ts`
+Next €0 lot: gate-level tenant field (admission tenant-scoped). BLOCKED/EXTERNAL (CTO/infra): production multi-tenant
+(data store/IAM/keys/deploy), real agent, KMS/HSM, certification, exposure.

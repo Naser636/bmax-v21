@@ -41,6 +41,7 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
 
   // V9 — PRE-GATE cryptographic identity + session/contract binding. Identity ≠ permission: auth only AUTHENTICATES;
   // a failure here means NO gate call and NO execution. requireAuth with no auth ⇒ fail-closed.
+  let authedTenant: any = undefined;   // AUTHORITATIVE tenant comes from the authenticated identity, never the proposal
   const authCfg = (deps as any).auth;
   if (authCfg || (deps as any).requireAuth) {
     const proposalSha256 = sha256(JSON.stringify({ a: proposal && proposal.agentId, t: proposal && proposal.tool, tp: proposal && proposal.targetPaths }));
@@ -49,6 +50,7 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
     }
     const ares = identity.verifyAuth(authCfg.registry, { challenge: authCfg.challenge, signature: authCfg.signature, presentedPublicKeyPem: authCfg.presentedPublicKeyPem });
     stamp("AUTH", { ok: ares.ok, reason: ares.reason });                    // NEVER contains keys/secrets
+    if (ares.ok) authedTenant = ares.identity ? (ares.identity.tenantId ?? null) : null;
     if (!ares.ok) { stamp("OUTCOME", { outcome: "AUTH_DENIED", executed: false });
       return Object.freeze({ outcome: "AUTH_DENIED", executed: false, gateVerdict: null, execId: null, authReason: ares.reason, evidence: prov.stampProvenance({ phase: "AUTH", verdict: "AUTH_DENIED", executed: false, proposalSha256, order: ["AUTH", "OUTCOME"] }, { revision: (deps as any).revision }), trace, state: { ...s, history: [...(Array.isArray(s.history) ? s.history : [])] } });
     }
@@ -56,8 +58,11 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
 
   const verdict = gate.evaluateAgentAction(proposal, contract, s);          // admission ALWAYS via the gate (post-auth)
   stamp("GATE", { verdict: verdict.verdict, controlsFailed: verdict.controlsFailed, record: verdict.record });
-  // deterministic execution id (no clock): binds this step's proposal to its evidence + prevents cross-exec reuse.
-  const execId = sha256(`${verdict.record.proposalSha256}:${s.calls}:${(contract && contract.agentId) || ""}`);
+  // tenant (authoritative = authenticated identity; else caller-asserted deps.tenantId; else null). Proposal-
+  // supplied tenant is NEVER trusted.
+  const tenantId = authedTenant !== undefined ? authedTenant : (((deps as any).tenantId) ?? null);
+  // deterministic execution id (no clock): binds proposal + TENANT to its evidence + prevents cross-exec/cross-tenant reuse.
+  const execId = sha256(`${verdict.record.proposalSha256}:${s.calls}:${(contract && contract.agentId) || ""}:${tenantId ?? ""}`);
 
   const advanceState = (executed: boolean) => ({
     calls: s.calls + (executed ? 1 : 0),
@@ -69,12 +74,12 @@ function runStep(proposal: any, contract: any, state: any, deps: HarnessDeps): a
     stamp("OUTCOME", { outcome, executed });
     // Lot A — seal an evidence BUNDLE binding the whole chain to this execId (tamper-evident via provenance).
     const bundle = prov.stampProvenance({
-      execId, agentId: (proposal && proposal.agentId) || null, objective: (contract && contract.objective) || null,
+      execId, tenantId: tenantId ?? null, agentId: (proposal && proposal.agentId) || null, objective: (contract && contract.objective) || null,
       proposalSha256: verdict.record.proposalSha256, verdict: verdict.verdict, executed,
       resultDigest: (extra && extra.resultDigest) || null, verified: !!(extra && extra.verified),
       order: trace.map((t: any) => t.phase),
     }, { revision: (deps as any).revision });
-    return Object.freeze({ outcome, executed, gateVerdict: verdict.verdict, execId, evidence: bundle, trace, state: advanceState(executed), ...(extra || {}) });
+    return Object.freeze({ outcome, executed, gateVerdict: verdict.verdict, execId, tenantId: tenantId ?? null, evidence: bundle, trace, state: advanceState(executed), ...(extra || {}) });
   };
 
   // DENY ⇒ NO execution, period.
@@ -128,6 +133,13 @@ function verifyEvidenceBundle(bundle: any, opts?: any): { ok: boolean; reasons: 
   if (!pv.ok) reasons.push(`provenance: ${pv.reason}`);                       // tamper / modified-after-sealing
   const expectedExecId = opts && opts.expectedExecId;
   if (expectedExecId !== undefined && bundle.execId !== expectedExecId) reasons.push("execId does not match the expected execution (foreign/replayed evidence)");
+  // TENANT isolation (V11): a bundle may only be attributed to its own tenant. Fail-closed if the caller asserts
+  // a tenant and the bundle's tenant is absent or different ⇒ rejects cross-tenant evidence reuse.
+  const expectedTenantId = opts && opts.expectedTenantId;
+  if (expectedTenantId !== undefined) {
+    if (!("tenantId" in bundle)) reasons.push("bundle carries no tenantId — cannot attribute to a tenant (fail-closed)");
+    else if (bundle.tenantId !== expectedTenantId) reasons.push(`tenant mismatch (bundle tenant ${JSON.stringify(bundle.tenantId)} != expected ${JSON.stringify(expectedTenantId)}) — cross-tenant evidence rejected`);
+  }
   // ADMIT↔exec consistency
   if (bundle.executed === true && !["ADMIT", "ESCALATE"].includes(bundle.verdict)) reasons.push(`execution recorded but verdict was "${bundle.verdict}" (execution without an authorizing verdict)`);
   if (bundle.verdict === "ADMIT" && bundle.executed !== true) reasons.push("ADMIT verdict but no corresponding execution");
