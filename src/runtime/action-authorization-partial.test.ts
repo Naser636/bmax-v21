@@ -20,8 +20,8 @@ import { createRequire } from "node:module";
 
 const require_ = createRequire(import.meta.url);
 const REPO = process.cwd();
-const PE = path.join(REPO, "runtime", "core", "patch-executor.js");
-const VE = path.join(REPO, "runtime", "core", "validation-engine.js");
+const PE = path.join(REPO, "runtime", "dist", "core", "patch-executor.js"); // ZERO-JS: compiled dist port (source .js retired)
+const VE = path.join(REPO, "runtime", "dist", "core", "validation-engine.js");
 const { evaluateAction } = require_(path.join(REPO, "runtime", "core", "action-gate.js")) as {
   evaluateAction: (a: unknown, c?: unknown) => { decision: string; checks: Record<string, { ok: boolean; detail: string }> };
 };

@@ -73,7 +73,8 @@ function sandbox(budget: boolean): string {
   fs.mkdirSync(path.join(dir, "runtime", "core"), { recursive: true });
   fs.mkdirSync(path.join(dir, "runtime", "missions"), { recursive: true });
   fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
-  for (const f of CORE) fs.copyFileSync(path.join(REPO, "runtime", "core", f), path.join(dir, "runtime", "core", f));
+  // ZERO-JS: copy the .ts twins; the adapter requireCjs's them under tsx, which resolves the .js specifier to the .ts.
+  for (const f of CORE) { const tsf = f.replace(/\.js$/, ".ts"); fs.copyFileSync(path.join(REPO, "runtime", "core", tsf), path.join(dir, "runtime", "core", tsf)); }
   spawnSync("git", ["init", "-q"], { cwd: dir });
   const mission: Record<string, unknown> = {
     mission: "M",
