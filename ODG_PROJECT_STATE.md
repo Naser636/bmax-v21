@@ -3713,3 +3713,46 @@ gate, merged), V2 Phase-A (H1·C1·J1·B1·F1·G2·I1 verified), Chantier A dash
 drill runbook delivered), model-selection rule (this lot). Remaining are host/human/provider/legal-BLOCKED: host-
 reboot drill (maintenance window + sudo), public TLS/DNS (§Q P3-D2), Replicate further spend (CTO €0), L7/TS-only
 (CTO-paused). Each recorded with owner + unblock action. No global deployment/quality claimed.
+
+---
+## CHECKPOINT 2026-10-26 (h) — VPS DEPLOY of main (268be2c) DONE+VERIFIED; reboot drill ARMED/held; TLS N/A
+CTO "VALIDATION INTÉGRÉE ET DÉPLOIEMENT VPS" mandate. Target identified unambiguously: the private VPS IS this host
+`vps-6d919042` (dashboard loopback 127.0.0.1:3000). sudo available (passwordless). Entry HEAD 268be2c ≡ origin/main,
+clean. Foreign docs/ + :8080 (unrelated) preserved untouched.
+
+**§B/§C audit (dated 2026-10-26T16Z):** host healthy (mem 10G free, disk 164G/16%, load ~0.3, up since 2026-10-23).
+Deployed release WAS `rel-…-5d5a699-hbTMmA` (2026-10-20) — 6 days behind main. Integration REAL (not just 200):
+runtime-state returned a 2366-byte payload (health/missions/autonomy/queue/capabilities/sources); identity
+CONSISTENT; logs clean. Dashboard app code changed 5d5a699→268be2c in `src/app/api/runtime-state/route.ts` +
+`src/components/Dashboard.tsx` (adds honest RELEASE-visibility: 5 release gates from runtime-verify+mission-report
+via the FROZEN Release Manager, + capability detail) ⇒ redeploy JUSTIFIED (rest of src/ delta = tests + package.json).
+
+**§D CONTROLLED DEPLOY — DONE + VERIFIED.** Built immutable release `rel-20261026T170857Z-268be2c-r-lFDoxyDMohywdhPDESc`
+(odg-release build), staging-verified on :3999 (health 200 + buildId). Activated the **systemd-aware way** (the
+script's cmd_activate self-boots a process that would RACE systemd on :3000 — the documented-correct pattern is
+rollback's `--no-serve`: atomic `current` swap + let systemd restart). So: recorded rollback ref (previous→hbTMmA),
+atomic `ln -sfn` swap current→new, `sudo systemctl restart odg-preprod.service`, health+buildId check with
+AUTO-ROLLBACK on mismatch. (First attempt auto-rolled-back on a buggy buildId parser — not a real failure; re-ran
+with a robust check ⇒ ACTIVATION OK.) **Post-deploy VERIFIED:** served buildId r-lFDoxyDMohywdhPDESc; identity
+CONSISTENT; routes 200; the DEPLOYED FEATURE works — runtime-state now serves `release.present:true`+gates +
+`capabilities{total:240,provenMissions:240,wiredExecutors:11,wiredProbes:19}`; service active+enabled,
+Restart=on-failure, MainPID 602422, 0 restarts, logs clean; rollback-ready (previous→hbTMmA). Loopback-only (no
+public exposure). Persistent data (runtime/generated, client store) untouched.
+
+**§E HOST-REBOOT DRILL — PREPARED/ARMED, HELD (not executed).** Machine identity validated; boot-persistence verified
+(enabled, WantedBy=multi-user.target, OnFailure=odg-recover present, Restart=on-failure/3s); fresh backup taken (git
+bundle @268be2c → /var/backups/odg-vault/20261026T162737Z, verify=complete; origin off-host == 268be2c); runbook
+present. **NOT executed — honest blocker:** rebooting THIS host terminates the agent session ⇒ I cannot OBSERVE the
+post-reboot checks (§E forbids marking done without observed post-checks) AND no interactive recovery operator is
+confirmed present for a failed boot (automated recovery exists: enabled service + OnFailure=odg-recover, but a
+catastrophic boot failure needs provider/console = human). Precondition "accès de récupération + observés" not
+satisfiable unattended. Exact unblock: a confirmed maintenance window with an operator present (or a re-invokable
+post-reboot session) → run `sudo systemctl reboot` then the runbook's post-checks.
+
+**§F TLS/DNS/public exposure:** dashboard binds 127.0.0.1 only ⇒ NOT publicly reachable (correct, private by design).
+No domain, no DNS records, no letsencrypt cert, no reverse proxy fronting :3000. Public exposure NOT configured and
+NOT in scope here. Exact missing-if-ever-wanted: domain + DNS A/AAAA + cert (ACME) + reverse proxy + explicit CTO
+authorization. BLOCKED/N-A by design — not invented, not weakened.
+
+**No Replicate spend; L7/TS-only pause untouched; video comparison still BLOCKED on price-verifiability.** 9 primitives
++ ROADMAP intact; capability-router unchanged; foreign pipeline preserved untracked.
