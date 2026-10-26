@@ -39,10 +39,12 @@ valid_dist() {
     try {
       const m = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
       if (typeof m.totalClosure !== "number" || m.totalClosure !== m.emittedCount + m.copiedCount) { console.error("[validate] manifest inconsistent"); process.exit(1); }
-      // A correct closure COPIES the JS-only runtime deps; an emitted-only (copied=0) dist is a dirty/
-      // divergent build whose JS deps are untracked for freshness (η3-B108) — reject it so the entry
-      // rebuilds cleanly rather than reuse a build whose staleness cannot be detected.
-      if (!(m.copiedCount > 0)) { console.error("[validate] emitted-only dist (copiedCount=0) is not a valid closure"); process.exit(1); }
+      // ZERO-JS (L-i): a pure compiled-TS closure legitimately COPIES nothing (copiedCount=0) — every
+      // runtime module is now emitted from a .ts source. Freshness is no longer inferred from copied JS
+      // siblings; it is tracked per-input by the provenance block below (each emitted/copied input carries
+      // its source sha). The former copiedCount>0 requirement (η3-B108, back when dist copied JS deps)
+      // would now wrongly reject the intended pure-TS dist, so it is removed. A manifest WITHOUT a
+      // provenance block still passes by omission (backward-compatible), exactly as before.
       for (const c of (m.copied || [])) {
         const rel = typeof c === "string" ? c : (c && (c.rel || c.to || c.path || c.file));
         if (rel && !fs.existsSync(path.join("runtime", "dist", rel))) { console.error("[validate] copied file missing: " + rel); process.exit(1); }

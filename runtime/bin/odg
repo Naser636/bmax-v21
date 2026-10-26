@@ -3,10 +3,14 @@ set -euo pipefail
 
 MISSION="${1:-health}"
 
-# Dual-port resolver (CTO Track B): echo the compiled-TS port under runtime/dist/bin by DEFAULT;
-# ODG_RUNTIME=js selects the JS rollback under runtime/bin; fall back to the .js if the dist is absent
-# (never a missing-file crash). Reused at every migrated bin call site so the contract lives in one place.
-_odg_port(){ if [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f "runtime/dist/bin/$1.js" ]; then echo "runtime/dist/bin/$1.js"; else echo "runtime/bin/$1.js"; fi; }
+# TS-ONLY front door (ZERO-JS L-i): the compiled TypeScript runtime (runtime/dist, generated + git-ignored)
+# is the SOLE runtime. _ensure_dist performs the explicit controlled build (tsc emit + closure) on demand
+# if the dist is absent/structurally-invalid/stale; if that build fails the launcher STOPS loudly. There
+# is NO source-.js rollback and NO silent fallback — the historical ODG_RUNTIME=js branch is retired, so
+# _odg_port always resolves to the compiled dist port (the contract lives in one place).
+_ensure_dist(){ bash runtime/bin/odg-ensure-ts-runtime.sh >&2 || { echo "[odg] the compiled TypeScript runtime could not be ensured — fix the build (npm run build:runtime). NO JS fallback." >&2; exit 1; }; }
+_odg_port(){ echo "runtime/dist/bin/$1.js"; }
+_ensure_dist
 
 case "$MISSION" in
   health|dashboard)
@@ -14,9 +18,7 @@ case "$MISSION" in
     # rendering so the read-only Dashboard always reflects the current repo state — never a stale or
     # empty runtime-state.json (Pipeline/Brain UNKNOWN) or a hard-coded SYSTEM_READY next mission.
     node "$(_odg_port odg-state)" >/dev/null
-    # Dual-port (CTO Track B): DEFAULT compiled-TS (runtime/dist/bin); ODG_RUNTIME=js → rollback; dist-exists fallback.
-    H="runtime/bin/odg-health.js"; [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-health.js ] && H="runtime/dist/bin/odg-health.js"
-    node "$H"
+    node "$(_odg_port odg-health)"
     ;;
   state)
     node "$(_odg_port odg-state)"
@@ -111,9 +113,7 @@ case "$MISSION" in
     # repair plan routed to the existing repair/rollback engines. Read-only; single bounded pass; no new
     # scheduler. Exit 0 = no divergence, 1 = incident open/frozen (usable as a gate / post-event trigger).
     node "$(_odg_port odg-state)" >/dev/null || true
-    # Dual-port (CTO Track B): DEFAULT compiled-TS (runtime/dist/bin); ODG_RUNTIME=js → rollback; dist-exists fallback.
-    D="runtime/bin/odg-diagnose.js"; [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-diagnose.js ] && D="runtime/dist/bin/odg-diagnose.js"
-    node "$D"; exit $?
+    node "$(_odg_port odg-diagnose)"; exit $?
     ;;
   learn)
     # READ-ONLY §V S5 surface: the workflow CALLS the learning evaluation (learning-chain S2 +
@@ -141,15 +141,7 @@ case "$MISSION" in
     # never spawns a child process, never opens the network, and never triggers a mission — so it is
     # safe to run at any time. Flags: --once | --interval=<s> | --iterations=<n> | --tail=<lines>.
     shift
-    # Dual-port (CTO Track B bin-CLI): DEFAULT the compiled-TS port (runtime/dist/bin/odg-cockpit.js);
-    # ODG_RUNTIME=js selects the JS rollback (runtime/bin/odg-cockpit.js). Fall back to the .js if the
-    # dist is absent (not yet built) — fail-safe, never a missing-file crash. Both ports are proven
-    # observationally identical by odg-cockpit.test.js + odg-cockpit-dualport-parity.test.js.
-    COCKPIT="runtime/bin/odg-cockpit.js"
-    if [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-cockpit.js ]; then
-      COCKPIT="runtime/dist/bin/odg-cockpit.js"
-    fi
-    exec node "$COCKPIT" "$@"
+    exec node "$(_odg_port odg-cockpit)" "$@"
     ;;
   client)
     # First-client operational entry point. Delegates to runtime/bin/odg-client.js → client-intake.js
@@ -159,9 +151,7 @@ case "$MISSION" in
     ;;
   status)
     node "$(_odg_port odg-state)" >/dev/null
-    # Dual-port (CTO Track B): DEFAULT compiled-TS (runtime/dist/bin); ODG_RUNTIME=js → rollback; dist-exists fallback.
-    S="runtime/bin/odg-status.js"; [ "${ODG_RUNTIME:-ts}" != "js" ] && [ -f runtime/dist/bin/odg-status.js ] && S="runtime/dist/bin/odg-status.js"
-    node "$S"
+    node "$(_odg_port odg-status)"
     ;;
   freeze)
     node "$(_odg_port odg-freeze)"

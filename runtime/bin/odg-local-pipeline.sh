@@ -237,25 +237,19 @@ echo "[3/5] INITIALIZE"
 
 echo "[PIPELINE] Launching Runtime..."
 
-# Runtime selector (η3-B102; entry build η3-B104; DEFAULT FLIPPED to TypeScript η3-B108). PUBLISHED
-# DEFAULT = compiled TypeScript. ROLLBACK to JavaScript = ODG_RUNTIME=js (explicit). runtime/dist stays
-# generated + git-ignored (never committed, no implicit postinstall); on the TS path an EXPLICIT,
-# controlled, reproducible build is performed at the entry if the distribution is absent or
-# structurally invalid or STALE (helper: odg-ensure-ts-runtime.sh — real tsc emit + closure copy +
-# provenance/freshness, NOT tsx). If that build or its validation fails the launcher STOPS loudly; it
-# NEVER silently falls back to the JS runtime. Set ODG_RUNTIME=js to return to the JavaScript runtime.
-if [ "${ODG_RUNTIME:-ts}" = "ts" ]; then
-  if ! bash runtime/bin/odg-ensure-ts-runtime.sh; then
-    echo "[PIPELINE] ODG_RUNTIME=ts but the compiled runtime could not be ensured (see [TS-RUNTIME] above)." >&2
-    echo "[PIPELINE] Fix the build, or unset ODG_RUNTIME to use the JS runtime. NO silent fallback." >&2
-    exit 1
-  fi
-  echo "[PIPELINE] Runtime engine: COMPILED TypeScript (runtime/dist, ODG_STAGE_BASE=${ODG_STAGE_BASE:-runtime/dist/core})"
-  ODG_STAGE_BASE="${ODG_STAGE_BASE:-runtime/dist/core}" node runtime/dist/bin/odg-run.js "$MISSION"
-else
-  echo "[PIPELINE] Runtime engine: JavaScript (default)"
-  node runtime/bin/odg-run.js "$MISSION"
+# Runtime engine (η3-B102/B104/B108; ZERO-JS cutover L-i). The compiled TypeScript runtime is now the
+# SOLE engine — the historical ODG_RUNTIME=js JavaScript rollback is retired. runtime/dist stays
+# generated + git-ignored (never committed, no implicit postinstall); an EXPLICIT, controlled,
+# reproducible build is performed at the entry if the distribution is absent or structurally invalid or
+# STALE (helper: odg-ensure-ts-runtime.sh — real tsc emit + closure copy + provenance/freshness, NOT
+# tsx). If that build or its validation fails the launcher STOPS loudly; there is NO JS fallback.
+if ! bash runtime/bin/odg-ensure-ts-runtime.sh; then
+  echo "[PIPELINE] the compiled runtime could not be ensured (see [TS-RUNTIME] above)." >&2
+  echo "[PIPELINE] Fix the build (npm run build:runtime). NO JS fallback." >&2
+  exit 1
 fi
+echo "[PIPELINE] Runtime engine: COMPILED TypeScript (runtime/dist, ODG_STAGE_BASE=${ODG_STAGE_BASE:-runtime/dist/core})"
+ODG_STAGE_BASE="${ODG_STAGE_BASE:-runtime/dist/core}" node runtime/dist/bin/odg-run.js "$MISSION"
 
 # W6 observability (η3-B110) — STRICTLY OBSERVATIONAL. Runs AFTER the mission is finalized; reads the
 # canonical mission-report and appends one W6 journal record under runtime/generated/w6/. Fully guarded
