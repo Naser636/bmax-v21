@@ -12,7 +12,11 @@
  * legal completion) · GAP (expected evidence absent) · BLOCKED (external body required) · NOT_ASSESSED
  * (cannot verify from available sources — records what would verify it).
  *
- * Run: node poc/o3-ai-act-matrix/generate.js [out.json]
+ * Run: tsx poc/o3-ai-act-matrix/generate.ts [out.json]   (CommonJS idiom; repo has no "type":"module")
+ *
+ * TS migration (ZERO-JS L-POC): byte-faithful port of generate.js; CommonJS require()/module.exports kept
+ * (matches scripts/*.ts idiom under strict). Evidence refs repointed from .js to the .ts twins so the
+ * matrix stays valid after the runtime .js ports are removed (L-iii). No behaviour change.
  */
 const fs = require("fs");
 const path = require("path");
@@ -20,19 +24,19 @@ const path = require("path");
 // Repo evidence map: theme → {evidence refs that ACTUALLY exist in this repo, readiness status}.
 // Only claims evidence that is real; everything else is GAP/NOT_ASSESSED/BLOCKED (fail-closed on absence).
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-function exists(rel) { return fs.existsSync(path.join(REPO_ROOT, rel)); }
+function exists(rel: string): boolean { return fs.existsSync(path.join(REPO_ROOT, rel)); }
 
-function evidenceFor(reqId) {
+function evidenceFor(reqId: string): { refs: string[]; status: string; note: string } {
   switch (reqId) {
-    case "R-LOG": return guard(["runtime/core/evidence-provenance.js", "runtime/core/mission-ledger.js"], "PARTIAL",
+    case "R-LOG": return guard(["runtime/core/evidence-provenance.ts", "runtime/core/mission-ledger.ts"], "PARTIAL",
       "evidence-provenance stamps {sourceCommit,treeDirty,contentSha256,capturedAtRun}; mission-ledger append-only. Tech record-keeping present; retention/PII policy = org/legal.");
-    case "R-HUMAN": return guard(["runtime/core/action-gate.js", "runtime/core/capability-authorization.js"], "PARTIAL",
-      "deny-by-default action-gate + fail-closed human-authorization gate for consequential capabilities (proven by action-gate-live.test.js / capability-authorization.test.js). Oversight PROCEDURE = org.");
-    case "R-ACC": return guard(["runtime/core/action-gate.js", "runtime/core/dispatch-authorization-invariant.test.js", "runtime/core/provider-sandbox.js"], "PARTIAL",
+    case "R-HUMAN": return guard(["runtime/core/action-gate.ts", "runtime/core/capability-authorization.ts"], "PARTIAL",
+      "deny-by-default action-gate + fail-closed human-authorization gate for consequential capabilities (proven by action-gate-live.test.ts / capability-authorization.test.ts). Oversight PROCEDURE = org.");
+    case "R-ACC": return guard(["runtime/core/action-gate.ts", "runtime/core/dispatch-authorization-invariant.test.ts", "runtime/core/provider-sandbox.ts"], "PARTIAL",
       "deny-by-default + dispatch-authorization-invariant (OWASP ASVS fail-secure) + sandbox. Accuracy/robustness per-system = engagement.");
-    case "R-INTEG": return guard(["runtime/core/evidence-provenance.js", "runtime/dist/dist-closure-manifest.json"], "PARTIAL",
+    case "R-INTEG": return guard(["runtime/core/evidence-provenance.ts", "runtime/dist/dist-closure-manifest.json"], "PARTIAL",
       "build provenance + sha256 closure manifest + lockfile-derived CycloneDX SBOM (O2 PoC). Tool-complete inventory + SLSA builder attestation = SPEC.");
-    case "R-INCID": return guard(["runtime/core/self-diagnostic.js", "runtime/core/incident-recurrence.js"], "PARTIAL",
+    case "R-INCID": return guard(["runtime/core/self-diagnostic.ts", "runtime/core/incident-recurrence.ts"], "PARTIAL",
       "self-diagnostic (expected-vs-observed→incident) + incident-recurrence (FROZEN_LOOP). Post-market monitoring org process = engagement.");
     case "R-TRANS": return guard(["docs/odg-operational/DEPLOYMENT.md", "docs/odg-operational/ODG_CAPABILITY_ENGINEERING_AND_OPPORTUNITY_GATE.md"], "PARTIAL",
       "operational/technical documentation exists; per-AI-system technical-doc set = engagement.");
@@ -43,15 +47,15 @@ function evidenceFor(reqId) {
     default: return { refs: [], status: "NOT_ASSESSED", note: "no mapping." };
   }
 }
-function guard(refs, statusIfPresent, note) {
+function guard(refs: string[], statusIfPresent: string, note: string): { refs: string[]; status: string; note: string } {
   const present = refs.filter(exists);
   if (present.length === 0) return { refs: [], status: "GAP", note: "expected repo evidence ABSENT: " + refs.join(", ") };
   return { refs: present, status: statusIfPresent, note: note + (present.length < refs.length ? " [some refs missing: " + refs.filter((r) => !present.includes(r)).join(",") + "]" : "") };
 }
 
-function generate(reqDoc) {
+function generate(reqDoc: any): any {
   if (!reqDoc || !Array.isArray(reqDoc.requirements)) throw new Error("malformed requirements: .requirements[] required");
-  const rows = reqDoc.requirements.map((r) => {
+  const rows = reqDoc.requirements.map((r: any) => {
     const e = evidenceFor(r.id);
     return {
       id: r.id, theme: r.theme, frameworks: r.frameworks, category: r.category,
@@ -65,8 +69,8 @@ function generate(reqDoc) {
         "verify applicability against official text; gather evidence",
       acceptance: "status + repoEvidence + sourceVerification all present and consistent; no fabricated clause/evidence",
     };
-  }).sort((a, b) => (a.id < b.id ? -1 : 1));
-  const summary = rows.reduce((m, r) => (m[r.status] = (m[r.status] || 0) + 1, m), {});
+  }).sort((a: any, b: any) => (a.id < b.id ? -1 : 1));
+  const summary = rows.reduce((m: any, r: any) => (m[r.status] = (m[r.status] || 0) + 1, m), {} as any);
   return { kind: "o3-ai-act-iso42001-readiness-matrix/1", disclaimer: "Readiness assistance only — NOT legal advice, conformity assessment, or certification; ODG is not a certifier. Framework clause text NOT reproduced; verify official sources per engagement.", frameworks: reqDoc.frameworks, summary, rows };
 }
 
@@ -78,3 +82,4 @@ if (require.main === module) {
   process.stdout.write("O3 matrix: " + matrix.rows.length + " requirements · " + JSON.stringify(matrix.summary) + " → " + out + "\n");
 }
 module.exports = { generate };
+export {};

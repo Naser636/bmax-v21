@@ -4,10 +4,10 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-const { generate } = require("./generate.js");
+const { generate } = require(path.resolve(__dirname, "generate.ts"));
 
 let passed = 0;
-function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
+function ok(name: string, cond: any): void { assert.ok(cond, name); console.log("  ok -", name); passed++; }
 
 const reqDoc = JSON.parse(fs.readFileSync(path.join(__dirname, "requirements.json"), "utf8"));
 
@@ -20,22 +20,22 @@ const m = generate(reqDoc);
 // 2 — every requirement produces a row with a valid status (no fabricated PASS).
 const VALID = ["VERIFIED", "PARTIAL", "GAP", "BLOCKED", "NOT_ASSESSED"];
 ok("row per requirement", m.rows.length === reqDoc.requirements.length);
-ok("all statuses valid vocab", m.rows.every((r) => VALID.includes(r.status)));
+ok("all statuses valid vocab", m.rows.every((r: any) => VALID.includes(r.status)));
 
 // 3 — evidence linkage: PARTIAL rows cite REAL repo files that exist.
 const REPO = path.resolve(__dirname, "..", "..");
-const partial = m.rows.filter((r) => r.status === "PARTIAL");
-ok("PARTIAL rows cite existing repo evidence", partial.length > 0 && partial.every((r) => r.repoEvidence.length > 0 && r.repoEvidence.every((f) => fs.existsSync(path.join(REPO, f)))));
+const partial = m.rows.filter((r: any) => r.status === "PARTIAL");
+ok("PARTIAL rows cite existing repo evidence", partial.length > 0 && partial.every((r: any) => r.repoEvidence.length > 0 && r.repoEvidence.every((f: string) => fs.existsSync(path.join(REPO, f)))));
 
 // 4 — missing-evidence handling: R-DATA is GAP, R-CONF is BLOCKED (external body), no repo evidence invented.
-ok("R-DATA → GAP (no invented evidence)", m.rows.find((r) => r.id === "R-DATA").status === "GAP");
-ok("R-CONF → BLOCKED (certification = external body, not ODG)", m.rows.find((r) => r.id === "R-CONF").status === "BLOCKED");
+ok("R-DATA → GAP (no invented evidence)", m.rows.find((r: any) => r.id === "R-DATA").status === "GAP");
+ok("R-CONF → BLOCKED (certification = external body, not ODG)", m.rows.find((r: any) => r.id === "R-CONF").status === "BLOCKED");
 
 // 5 — no row claims VERIFIED (honest: ODG tech = readiness, never full compliance from this matrix).
-ok("no VERIFIED claimed (readiness ≠ compliance)", !m.rows.some((r) => r.status === "VERIFIED"));
+ok("no VERIFIED claimed (readiness ≠ compliance)", !m.rows.some((r: any) => r.status === "VERIFIED"));
 
 // 6 — every row carries sourceVerification (clause text to be verified against official sources).
-ok("every row carries sourceVerification", m.rows.every((r) => typeof r.sourceVerification === "string" && r.sourceVerification.length > 0));
+ok("every row carries sourceVerification", m.rows.every((r: any) => typeof r.sourceVerification === "string" && r.sourceVerification.length > 0));
 
 // 7 — fail-closed on malformed input.
 let threw = false;
@@ -46,3 +46,4 @@ ok("malformed requirements ⇒ throws (fail-closed, no partial matrix)", threw);
 ok("disclaimer present (readiness-only, not certifier)", /NOT.*certif/i.test(m.disclaimer));
 
 console.log(`\nO3 matrix PoC — ${passed} assertions passed.`);
+export {};

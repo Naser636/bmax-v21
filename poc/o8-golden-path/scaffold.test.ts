@@ -7,11 +7,11 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const cp = require("child_process");
-const { scaffold } = require("./scaffold.js");
+const { scaffold } = require(path.resolve(__dirname, "scaffold.ts"));
 
 let passed = 0;
-function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed++; }
-function tmp() { return fs.mkdtempSync(path.join(os.tmpdir(), "o8-")); }
+function ok(name: string, cond: any): void { assert.ok(cond, name); console.log("  ok -", name); passed++; }
+function tmp(): string { return fs.mkdtempSync(path.join(os.tmpdir(), "o8-")); }
 
 const GRANT = { template: "node-service", name: "demo-svc", owner: "ops@example.test", authorization: { grantTemplate: "node-service" } };
 
@@ -19,12 +19,12 @@ const GRANT = { template: "node-service", name: "demo-svc", owner: "ops@example.
 const d1 = tmp();
 const r1 = scaffold(GRANT, d1);
 ok("generates exactly the declared write-set", JSON.stringify(r1.written) === JSON.stringify(["README.md", "index.js", "package.json", "test.js"]));
-ok("all files exist on disk", r1.written.every((f) => fs.existsSync(path.join(d1, f))));
+ok("all files exist on disk", r1.written.every((f: string) => fs.existsSync(path.join(d1, f))));
 
 // 2 — contract carries authorized write-set + deny-by-default gate + provenance manifest with sha256.
-ok("contract authorizedWriteSet scoped to project", r1.contract.authorizedWriteSet.every((p) => p.startsWith("demo-svc/")));
+ok("contract authorizedWriteSet scoped to project", r1.contract.authorizedWriteSet.every((p: string) => p.startsWith("demo-svc/")));
 ok("gate is deny-by-default", /deny-by-default/.test(r1.contract.gates.authorization));
-ok("provenance manifest has sha256 per file", r1.contract.provenance.manifest.length === 4 && r1.contract.provenance.manifest.every((m) => /^[0-9a-f]{64}$/.test(m.sha256)));
+ok("provenance manifest has sha256 per file", r1.contract.provenance.manifest.length === 4 && r1.contract.provenance.manifest.every((m: any) => /^[0-9a-f]{64}$/.test(m.sha256)));
 
 // 3 — the generated project's own test passes (real artifact works).
 {
@@ -52,10 +52,11 @@ for (const [label, inp] of [
   ["invalid name", { template: "node-service", name: "BAD NAME", owner: "o", authorization: { grantTemplate: "node-service" } }],
   ["malformed input", null],
   ["authorization mismatch", { template: "node-service", name: "x", owner: "o", authorization: { grantTemplate: "other" } }],
-]) {
+] as any[]) {
   let threw = false;
   try { scaffold(inp, tmp()); } catch { threw = true; }
   ok(`fail-closed: ${label} ⇒ throws`, threw);
 }
 
 console.log(`\nO8 golden-path PoC — ${passed} assertions passed.`);
+export {};
