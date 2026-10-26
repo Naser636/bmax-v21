@@ -25,7 +25,7 @@ const path = require("path");
 const assert = require("assert");
 const { spawnSync } = require("child_process");
 
-const EXECUTOR = path.resolve(__dirname, "patch-executor.js");
+const EXECUTOR = path.resolve(__dirname, "..", "dist", "core", "patch-executor.js"); // ZERO-JS: run the compiled dist port (source .js retired)
 const ROADMAP_REL = "runtime/governance/ROADMAP.json";
 const ORIGINAL = '{"missions":[{"id":"REAL"}],"authoredBy":"human"}\n';
 

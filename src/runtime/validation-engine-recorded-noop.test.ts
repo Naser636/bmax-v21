@@ -21,7 +21,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 const REPO = process.cwd();
-const VE = path.join(REPO, "runtime", "core", "validation-engine.js");
+const VE = path.join(REPO, "runtime", "dist", "core", "validation-engine.js"); // ZERO-JS: run the compiled dist port (source .js retired)
 
 let failures = 0;
 function check(cond: boolean, label: string): void {

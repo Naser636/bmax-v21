@@ -173,6 +173,6 @@ process.env.CONTRACTONDEMAND_ENABLED = String(realEnabled);
 ok("env var never used (key only in env ⇒ FAIL)", so.configEq(CFG, "CONTRACTONDEMAND_ENABLED", realEnabled).ok === false);
 delete process.env.CONTRACTONDEMAND_ENABLED;
 ok("source performs no process.env access (property/index), only mentions it in a comment",
-  !/process\.env[.[]/.test(fs.readFileSync("runtime/core/scope-observer.js", "utf8")));
+  !/process\.env[.[]/.test(fs.readFileSync("runtime/dist/core/scope-observer.js", "utf8"))); // ZERO-JS: inspect the compiled dist port
 
 console.log(`\nSCOPE OBSERVER — ${passed} assertions passed.`);

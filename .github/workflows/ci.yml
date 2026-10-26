@@ -76,9 +76,6 @@ jobs:
       - name: Typecheck (tsc --noEmit)
         run: npx tsc --noEmit -p tsconfig.json
 
-      - name: Cross-runtime TS/JS parity
-        run: npm run parity:runtimes
-
       - name: Classified test gate
         shell: bash
         run: |

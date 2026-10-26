@@ -360,8 +360,8 @@ const PROBES: any = {
         const liveFiles = [
             "runtime/bin/odg",
             "runtime/bin/odg-local-pipeline.sh",
-            "runtime/bin/odg-run.js",
-            "runtime/bin/odg-verify.js",
+            "runtime/dist/bin/odg-run.js",
+            "runtime/dist/bin/odg-verify.js",
         ];
         const offenders = liveFiles.filter((f: any) => {
             let text = null;
@@ -376,14 +376,15 @@ const PROBES: any = {
     "samurai-output-mode"() {
         // Deterministic DoD proof for the Samurai / summary output mode. Pure fs reads.
         let src = null;
-        try { src = fs.readFileSync("runtime/bin/odg-run.js", "utf8"); } catch { src = null; }
-        if (src === null) return { ok: false, detail: "runtime/bin/odg-run.js not found" };
+        try { src = fs.readFileSync("runtime/dist/bin/odg-run.js", "utf8"); } catch { src = null; }
+        if (src === null) return { ok: false, detail: "runtime/dist/bin/odg-run.js not found (build:runtime first)" };
         const missing = [];
         if (!/process\.env\.ODG_VERBOSE/.test(src)) missing.push("ODG_VERBOSE gate");
-        if (!/runtime\/generated\/logs/.test(src) || !/appendFileSync\(\s*RUN_LOG/.test(src)) missing.push("run-log tee");
+        // run-log tee: LOG_DIR = path.join("runtime","generated","logs") + appendFileSync(RUN_LOG, …).
+        if (!(/["']runtime["']\s*,\s*["']generated["']\s*,\s*["']logs["']/.test(src) || /runtime\/generated\/logs/.test(src)) || !/appendFileSync\(\s*RUN_LOG/.test(src)) missing.push("run-log tee");
         if (!/encoding:\s*["']utf8["']/.test(src)) missing.push("captured stage output");
         return missing.length === 0
-            ? { ok: true, detail: "odg-run.js: default summary + run-log artifact, ODG_VERBOSE-gated live stream" }
+            ? { ok: true, detail: "odg-run (compiled dist): default summary + run-log artifact, ODG_VERBOSE-gated live stream" }
             : { ok: false, detail: `samurai output mode incomplete: missing ${missing.join(", ")}` };
     },
 
@@ -413,21 +414,21 @@ const PROBES: any = {
         // (declares them from intent). Pure fs reads; the framework proving its own finalization.
         const offenders = [];
         let self = null;
-        try { self = fs.readFileSync("runtime/core/capability-probes.js", "utf8"); } catch { self = null; }
-        if (self === null) return { ok: false, detail: "runtime/core/capability-probes.js not found" };
+        try { self = fs.readFileSync("runtime/dist/core/capability-probes.js", "utf8"); } catch { self = null; }
+        if (self === null) return { ok: false, detail: "runtime/dist/core/capability-probes.js not found (build:runtime first)" };
         if (!/const PROBES = \{/.test(self)) offenders.push("no named PROBES registry");
         if (!/function evaluate\(/.test(self)) offenders.push("no evaluate() required-proof gate");
         if (!/module\.exports = \{[^}]*evaluate/.test(self)) offenders.push("evaluate not exported");
 
         let engine = null;
-        try { engine = fs.readFileSync("runtime/core/validation-engine.js", "utf8"); } catch { engine = null; }
+        try { engine = fs.readFileSync("runtime/dist/core/validation-engine.js", "utf8"); } catch { engine = null; }
         if (engine === null) offenders.push("validation-engine.js not found");
         else if (!/require\(["']\.\/capability-probes["']\)/.test(engine) || !/\.evaluate\(/.test(engine)) {
             offenders.push("Validation Engine does not execute the probe framework");
         }
 
         let factory = null;
-        try { factory = fs.readFileSync("runtime/core/mission-contract-factory.js", "utf8"); } catch { factory = null; }
+        try { factory = fs.readFileSync("runtime/dist/core/mission-contract-factory.js", "utf8"); } catch { factory = null; }
         if (factory === null) offenders.push("mission-contract-factory.js not found");
         else if (!/resolveVerifyProbes/.test(factory)) {
             offenders.push("Contract Factory does not declare probes from intent");
