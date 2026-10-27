@@ -281,4 +281,52 @@ inTempCwd((mod, dir) => {
   ok("TRUST-GAP-1: an INJECTED fetcher function still performs live research (legit path unbroken)", ran === true);
 }
 
+// --- AXE: excellence gate at the REAL resolve().run() invocation boundary (consequential only, opt-in) ----------
+inTempCwd((mod) => {
+    const NOW = "2026-10-27";
+    writePolicy(true);
+    const mkExec = (excellence) => { let calls = 0; const fetch = () => { calls += 1; return { status: 200, body: "x" }; };
+        const patch = { objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: { authorized: true, execute: true, source_allowlist: ["https://a.test"], fetch }, ...(excellence ? { excellence } : {}) };
+        return { exec: mod.resolve(patch), calls: () => calls }; };
+    const isExcErr = (e) => /excellence policy/.test(String(e && e.message));
+
+    // (1) authorized consequential invocation + valid context ⇒ NOT refused by excellence, effect runs (fetch called)
+    { const { exec, calls } = mkExec({ now: NOW, registry: [] }); let threwExc = false; try { exec.run(); } catch (e) { if (isExcErr(e)) threwExc = true; else throw e; }
+        ok("AXE exec: authorized consequential invocation ⇒ not refused, effect runs (fetch called)", threwExc === false && calls() >= 1); }
+
+    // (2) PROHIBITED superlative claim ⇒ gate throws BEFORE run ⇒ ZERO effect (fetch NEVER called)
+    { const { exec, calls } = mkExec({ now: NOW, registry: [], claims: ["the world's best, number one research engine"] }); let threw = false; try { exec.run(); } catch (e) { threw = isExcErr(e); }
+        ok("AXE exec: prohibited claim ⇒ refused BEFORE run, ZERO effect (no dispatch)", threw === true && calls() === 0); }
+
+    // (3) reviewer UNAVAILABLE ⇒ advisory, run proceeds (effect occurs)
+    { const { exec, calls } = mkExec({ now: NOW, registry: [], reviewer: () => { throw new Error("down"); } }); let threwExc = false; try { exec.run(); } catch (e) { if (isExcErr(e)) threwExc = true; else throw e; }
+        ok("AXE exec: reviewer unavailable ⇒ advisory, not refused (effect runs)", threwExc === false && calls() >= 1); }
+
+    // (4) STALE reference ⇒ advisory, run proceeds
+    { const SREF = { id: "EXEC-REF", authority: "ODG", domain: "capability-execution", version: "1.0", date: "2026-10-01", source: "ODG", normativeStatus: "industry-practice", usageRights: "own", practicesAdopted: [], limits: [], nextReviewDate: "2020-01-01", verificationStatus: "offline-pending-reverify" };
+        const { exec, calls } = mkExec({ now: NOW, registry: [SREF] }); let threwExc = false; try { exec.run(); } catch (e) { if (isExcErr(e)) threwExc = true; else throw e; }
+        ok("AXE exec: stale reference ⇒ advisory, not refused (effect runs)", threwExc === false && calls() >= 1); }
+
+    // (5) existing AUTHZ control preserved: unauthorized live acquisition still fails-closed by the EXECUTOR's own
+    //     control, NOT the excellence gate (identity/authz/tenant guarantees unchanged).
+    { const patch = { objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: { authorized: false, execute: true, source_allowlist: ["https://a.test"], fetch: () => ({ status: 200, body: "x" }) }, excellence: { now: NOW, registry: [] } };
+        let msg = ""; try { mod.resolve(patch).run(); } catch (e) { msg = String(e.message); }
+        ok("AXE exec: existing authz control still fails-closed (not the excellence gate)", msg !== "" && !/excellence policy/.test(msg)); }
+});
+
+// (6) gate scoped to CONSEQUENTIAL: an OBSERVATIONAL capability + a prohibited claim is NOT refused (historical behaviour preserved)
+inTempCwd((mod) => {
+    const obs = mod.resolve({ objectiveId: "RUN_CONNECTIVITY_AUDIT_1", goal: "Run Connectivity Audit", excellence: { now: "2026-10-27", registry: [], claims: ["the world's best audit"] } });
+    let threwExc = false; try { obs.run(); } catch (e) { if (/excellence policy/.test(String(e && e.message))) threwExc = true; }
+    ok("AXE exec: observational capability NOT gated even with a prohibited claim (scope = consequential)", threwExc === false);
+});
+
+// (7) no-option path unchanged: a consequential resolve WITHOUT patch.excellence is byte-identical (no excellence error)
+inTempCwd((mod) => {
+    writePolicy(true);
+    let calls = 0; const fetch = () => { calls += 1; return { status: 200, body: "x" }; };
+    let threwExc = false; try { mod.resolve({ objectiveId: "EXTERNAL_RESEARCH_1", research_acquisition: { authorized: true, execute: true, source_allowlist: ["https://a.test"], fetch } }).run(); } catch (e) { if (/excellence policy/.test(String(e && e.message))) threwExc = true; else { /* other */ } }
+    ok("AXE exec: no patch.excellence ⇒ legacy path (no excellence gate), effect runs", threwExc === false && calls >= 1);
+});
+
 console.log(`\nCapability Executors: ${passed} assertions passed.`);
