@@ -5255,3 +5255,38 @@ revenue model; reused GTM/SALES_KIT/launch-budget artifacts as the model's groun
 sending a small first outreach batch to enterprise-leaning prospects (+ legal review). €500k stays a modelled target
 with an explicit UNCLOSED evidence gap. HUMAN-REQUIRED (grouped): outreach send + legal review; choose model M2/M3/M4;
 any spend/subcontracting/budget beyond €10k; EXTERNAL production+trust deps for enterprise clients.
+
+---
+## CHECKPOINT 2026-10-27 (ax) — pipeline/cash ledger (fail-closed signed≠invoiced≠cashed) €0
+CTO max-autonomy €500k program (continuation, no restart). Truth Lock entry 9762c10≡origin/main, clean, 5 stashes,
+4 untracked docs/. No new primitive. Diff = pipeline-ledger(.ts/.test) + package.json + compass.
+
+**TRACK 3 (autonomy/product) — EXECUTED (real testable capability):** NEW runtime/core/pipeline-ledger.ts — a
+fail-closed sales-pipeline + cash ledger for §E "suivi du pipeline et des encaissements". Lifecycle LEAD→QUALIFIED→
+PROPOSAL→PILOT_SIGNED→INVOICED→CASHED (+LOST). advance() allows EXACTLY one forward step (no skipping ⇒ no false
+success, no backward, LOST terminal); every (even refused) transition appended to a tamper-evident audit-log chain.
+pipelineTotals() = NESTED honest buckets (signed≥invoiced≥cashed, each € once per realized bucket, LOST excluded) +
+a weighted expected-pipeline (HYPOTHESIS, labelled). Encodes the directive's signed/invoiced/cashed separation in CODE.
+Gated suite (8): legal progression+chain; skip-to-CASHED REFUSED; backward REFUSED; nested totals correct; LOST
+excluded; tamper detected; refused transition journaled. full gate 73→74; tsc 0; build 0. audit-log now bound at a
+5th real path.
+
+TRUTH→GAP→ROOTCAUSE→CHANGE→TEST→EVIDENCE: no code mechanism enforced signed/invoiced/cashed or tracked the pipeline
+(prose only) → ROOT no ledger primitive-consumer → MINIMUM add pipeline-ledger reusing audit-log + fail-closed →
+TEST 8 assertions → EVIDENCE gate 74/74 → NEXT wire it into a demo/report when a real pilot exists.
+
+**TRACK 1 (revenue):** artifacts (GTM/SALES_KIT/REVENUE_500K/launch-budget/revenue-model) stand; this ledger is the
+missing execution substrate to TRACK real signed/invoiced/cashed toward €500k WITHOUT double-count or false success.
+No new outreach sent; no fabricated client/payment. **TRACK 2 (compliance):** unchanged (no new free ISO access/spend).
+
+**Honesty:** nothing invents a client or payment — the ledger only records asserted transitions, fail-closed; weighted
+pipeline explicitly a hypothesis; €500k gap unchanged (0 real entries).
+
+**Learning reuse (proven):** reused audit-log (5th real binding) + the fail-closed/admit + no-double-count discipline
+(revenue-model/launch-budget) in the pipeline ledger.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/pipeline-ledger.test.ts`
+HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send + legal review (pilot/pricing/white-label); choose
+model M2/M3/M4; any spend/subcontracting/budget beyond €10k; EXTERNAL production+trust deps for enterprise clients.
+Next autonomous €0: a report renderer that feeds pipeline-ledger totals into the revenue-model gap vs €500k (once real
+entries exist), or Track-2 control-to-policy artifacts. No real revenue claimed.
