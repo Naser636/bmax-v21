@@ -93,6 +93,50 @@ function humanActionRegister(): any {
   ];
 }
 
+/**
+ * ha1Checklist(): human-readable channel-setup checklist. SEPARATES channel CONFIGURATION (credentials, out-of-band)
+ * from AUTHORIZATION-TO-SEND (a distinct, per-send human decision). Prints NO secret and instructs out-of-band entry.
+ */
+function ha1Checklist(): any {
+  return {
+    configuration: [
+      "store the Gmail app-password in a secret manager / environment OUT-OF-BAND (never typed in chat, never committed, never logged)",
+      "set SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS in the runtime environment (out-of-band)",
+      "verify email-gateway status reports READY (configuration present) — WITHOUT printing any secret",
+    ],
+    authorizationToSend: [
+      "SEPARATE STEP: EMAIL_SEND_ENABLED=1 is an AUTHORIZATION, not configuration — set it ONLY when the CTO authorizes a specific, reviewed send to a lawful recipient",
+      "a READY channel with sendEnabled=false is correct until that authorization",
+    ],
+    note: "configuration (can the channel work?) is DISTINCT from authorization-to-send (may THIS message go out?). ODG never sets credentials or EMAIL_SEND_ENABLED itself; no secret is ever requested or printed.",
+  };
+}
+
+/**
+ * validateLeadIntake(lead): HA-2 intake contract for EXACTLY ONE real lead. FAIL-CLOSED — ACCEPTED only with
+ * necessary business contact + a DOCUMENTED lawful basis + provenance(source+timestamp) + purpose compatibility +
+ * an explicit human confirmation. Lawful basis is NEVER inferred from the mere existence of an email address.
+ */
+function validateLeadIntake(lead: any): any {
+  if (!isObj(lead)) return { ok: false, code: "INVALID_INPUT", detail: "lead intake object required" };
+  const reasons: string[] = [];
+  const hasContact = nonEmptyString(lead.businessEmail) || nonEmptyString(lead.organization);
+  if (!hasContact) reasons.push("no business contact (email or organization)");
+  if (!nonEmptyString(lead.lawfulBasis)) reasons.push("no DOCUMENTED lawful basis (e.g. B2B legitimate interest / consent) — lawful basis is NEVER inferred from an email address");
+  if (!(isObj(lead.provenance) && nonEmptyString(lead.provenance.source) && nonEmptyString(lead.provenance.at))) reasons.push("no provenance {source, at} for the contact data");
+  if (lead.purposeCompatible !== true) reasons.push("purpose compatibility not confirmed");
+  if (lead.humanConfirmed !== true) reasons.push("no explicit human confirmation that contacting this lead is appropriate");
+  // Explicit anti-inference guard: an email with nothing else is REJECTED.
+  const emailOnly = nonEmptyString(lead.businessEmail) && !nonEmptyString(lead.lawfulBasis);
+  return {
+    ok: true,
+    verdict: reasons.length ? "REJECTED" : "ACCEPTED",
+    reasons,
+    emailDoesNotImplyLawfulBasis: emailOnly ? true : false,
+    note: "ACCEPTED = intake is complete + human-confirmed; it is NOT contact authorization to SEND (that is HA-3). No lead/basis is invented.",
+  };
+}
+
 /** buildActivationPack(): assemble the first-customer activation pack (DRAFTS only) for the selected route. */
 function buildActivationPack(): any {
   const route = selectRoute();
@@ -114,8 +158,8 @@ function buildActivationPack(): any {
   };
 }
 
-export { selectRoute, qualifyFirstCustomer, invoiceReadiness, collectionReadiness, humanActionRegister, buildActivationPack };
-module.exports = { selectRoute, qualifyFirstCustomer, invoiceReadiness, collectionReadiness, humanActionRegister, buildActivationPack };
+export { selectRoute, qualifyFirstCustomer, invoiceReadiness, collectionReadiness, humanActionRegister, buildActivationPack, ha1Checklist, validateLeadIntake };
+module.exports = { selectRoute, qualifyFirstCustomer, invoiceReadiness, collectionReadiness, humanActionRegister, buildActivationPack, ha1Checklist, validateLeadIntake };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify({ model: "first-cash-activation/1", selected: selectRoute().selected, rule: "drafts only; invoice fail-closed; cash only on evidenced receipt; all axes eligible" }, null, 2) + "\n");
