@@ -5113,3 +5113,39 @@ remaining blocker is DEMONSTRATED (not inherited): (a) ISO Annex-A clause-level 
 ANS-sponsored consultation (eligibility TBV) ⇒ else minimal purchase — HUMAN decision, only if clause-level
 certification is wanted; (b) 6 production deps EXTERNAL (KMS/HSM, multi-tenant datastore, SIEM/WORM, monitoring, real
 agent, canonical-queue activation) — each needs accounts/secrets/infra/CTO authorization.
+
+---
+## CHECKPOINT 2026-10-27 (at) — zero-to-global business/revenue/certification/trust strategy €0
+CTO strategy mandate. Truth Lock entry b09f31e≡origin/main, clean, 5 stashes, 4 untracked docs/. No new primitive; no
+code change (strategy artifact lot). Diff = 1 doc + compass.
+
+**Deliverable:** docs/odg-operational/GO_TO_MARKET_V1.md — honest, hypothesis-labelled, grounded in the REAL state
+(gate 70/70 = evidence surface; hermetic/internal only; NOT certified/prod/bank-ready). Covers AXE1-10: real product
+state (FACT), segment grid + chosen beachhead (HYPOTHESIS = EU SMEs/scale-ups shipping LLM agents, pulled by the AI-Act
+Annex-III 2027-12-02 clock), productized assessment offer, pricing HYPOTHESES anchored to sourced benchmarks, prudent/
+central/favourable 12-mo model + break-even + CAC ceiling, sales-kit skeleton + prospect METHOD (public sources, drafts
+UNSENT, no auto-contact), evidence-based trust dossier with the internal-test→independent-audit→certification→legal
+ladder kept explicit, certification roadmap (GDPR→ISO27001→ISO42001→AI-Act-role→DORA-conditional), funding research.
+
+**Sourced online 2026-10-27 (FACT, €0, no paywall bypass):** EU AI Act timeline (in-force 2024-08-01; GPAI 2025-08-02;
+enforcement+Art.50 2026-08-02; high-risk Annex-III 2027-12-02; products 2028-08-02). Bpifrance Diag Cybersécurité
+€8,800 HT / 50% subsidised → €4,400 net / 8 days (francenum.gouv.fr, bpifrance.fr) — eligibility TBV. ISO 27001 SME
+first-year $8k–$30k (multiple 2026 industry guides). ISO/IEC 27001:2022 Amd 1:2024 (recorded prior lot).
+
+**Honesty controls applied:** no fabricated client/revenue/testimonial/performance/certification; every number is
+HYPOTHESIS or a cited sourced FACT; demand NOT claimed validated (pre-first-client, 0 on all milestones); grants NOT
+counted as acquired; prices NOT claimed market-validated; ISO/AI-Act certification + production readiness NOT claimed.
+
+**Proof:** doc-only; full gate unchanged (70/70; no code touched). No autonomous €0 CODE lot with new proof-value was
+available (coverage complete); this lot's authorized autonomous work = the strategy artifact + sourced research.
+
+**Single priority (recommendation):** VALIDATE DEMAND BEFORE SPEND — finalize the €0 sales kit + live demo on a
+synthetic profile + a public-source prospect list with UNSENT personalised drafts; human sends a first small batch; a
+first paid PILOT is the only credible validation. Sequence ISO text / certification / production infra / funding AFTER
+demonstrated demand.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/regulatory-assurance.test.ts`
+HUMAN-REQUIRED (grouped): authorize outreach sending + legal review of contract/pricing; verify Bpifrance/France Num
+eligibility; any spend (ISO text, certification audit, tools); the 7 EXTERNAL production deps when a client needs real
+deployment. Autonomous €0 next candidate: build the sales-kit artifact files (product sheet/deck/demo script/Q&A/pilot
+template/discovery questionnaire) as versioned docs.
