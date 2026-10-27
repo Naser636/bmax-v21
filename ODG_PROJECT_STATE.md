@@ -6860,3 +6860,31 @@ synthetic) is the regression.
 **NO_RESULTS** (ODG invents no opportunity). Candidate lawful sources (external gate): OCDS open-procurement APIs, EU TED,
 FR BOAMP — public/zero-cost; adoption needs a connector + terms-compliance (EXTERNAL_PROVIDER). Pipeline validated on
 SYNTHETIC fixtures (TESTS). Six axes active; ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved.
+
+---
+## CHECKPOINT 2026-10-27 (cx) — V36 CONVERGENCE: owner-only end-to-end commercial cycle €0
+CTO "V36 CONTINUOUS EXECUTION / AUTONOMY CONVERGENCE" (post-PR#107, main 41aa6e4). NOTE: no "V35" occurred this session
+— actual latest was V34 @41aa6e4; reconciled honestly. Truth Lock 41aa6e4≡origin/main (0/0), clean, 5 stashes + 4
+untracked docs/ preserved, CI success. No new primitive. Diff = autonomous-commercial-cycle(.ts/.test) + package.json +
+compass.
+
+**autonomous-commercial-cycle.ts (EXECUTED — convergence; composes the unit-tested modules into ONE owner-only flow,
+no new capability):** runCycle(opportunity) autonomously ROUTE (opportunity-axis-router) → QUALIFY (first-cash-activation
+/ enterprise-qualification, fail-closed) → DELIVER (entry-diagnostic-offer.runEntryDiagnostic synthetic, for axis A) →
+INVOICE_PREP (fail-closed gate) → ownerQueue (owner-console, material-only). Proves ODG runs every AUTHORIZED step WITH
+ZERO owner routine tasks and STOPS at the real external/human gate (AWAIT_EXTERNAL_GATE: outreach send / client
+acceptance / signature / receipt). Unsuitable lead ⇒ stop at QUALIFICATION (no delivery, no outreach). A material
+decision (e.g. contract signature) surfaces in ownerQueue; routine never does. actualCashEUR 0; synthetic=TEST. Suite 11.
+
+**Gate:** test:report 125→126; tsc 0; build 0. €0; nothing sent/signed/invoiced/collected; owner routine tasks 0.
+
+**END-TO-END AUTONOMY (honest):** demonstrated on SYNTHETIC data — ODG composes discovery→qualify→deliver→invoice-prep→
+owner-decision owner-free up to the external gate. NOT live-customer-validated. Session V21→V36 = PRs #82–#108(pending),
+test:report 59→126, all ff-only CI-green.
+
+**STOP CONDITION REACHED (honest, per V36):** the internal, authorized, dependency-ready, non-duplicative queue that
+advances genuine autonomy/first-cash is now DRAINED. Every remaining gap is EXTERNAL/HUMAN: (1) authorized live discovery
+connector (OCDS/TED/BOAMP + terms); (2) HA-1 Gmail channel; (3) HA-2 real lawful lead; (4) partner acceptance; (5) real
+enterprise demand; (6) external ISO audit; (7) client acceptance + evidenced RECEIPTS (only these move cash off €0).
+ACTUAL COLLECTED CASH €0; €500k NET unachieved/VOLUME-bound. NEXT (human): wire ONE authorized discovery connector OR
+HA-1+HA-2; then ODG runs the cycle autonomously to the next real gate.
