@@ -6830,3 +6830,33 @@ ACTUAL COLLECTED CASH €0; €500k NET unachieved/VOLUME-bound. Session V21→V
 59→124, ff-only CI-green. EXTERNAL GATES unresolved: HA-1 Gmail channel, HA-2 real lead, partner acceptance, enterprise
 demand, ISO audit, real receipts. NEXT dependency-ready internal: (none of comparable value remains that advances cash
 without external evidence) — tighten a sensitivity study OR extend F dossier clauses; otherwise await HA-1/HA-2.
+
+---
+## CHECKPOINT 2026-10-27 (cw) — V34 AUTONOMOUS DISCOVERY: six-axis router + NO_RESULTS runner + detector defect fix €0
+CTO "V34 AUTONOMOUS OPPORTUNITY DISCOVERY" (post-PR#106, main a414f61). Truth Lock a414f61≡origin/main (0/0), clean, 5
+stashes + 4 untracked docs/ preserved, CI success. No new primitive. Diff = opportunity-axis-router(.ts/.test) +
+opportunity-detector.ts (defect fix) + package.json + compass.
+
+**AUDIT-BEFORE-CREATE:** discovery infra ALREADY exists (opportunity-detector.detect = normalize+provenance+dedup+
+grade+score+nextAction; opportunity-policy OBSERVED/CALCULATED/INFERRED/UNKNOWN; research-ranking; niche-scoring). NOT
+duplicated. Gap = six-axis (A–F) routing (detector predates the model) + a live-source NO_RESULTS runner.
+
+**opportunity-axis-router.ts (EXECUTED, composes detect):** routeToAxis (F=ISO/cert kw; D=partner kw; else value band
+A<1.5k / B<8k / C≤50k / E>50k; no budget⇒A) + nextOdgAction (A–F → the PREPARE step of the right offer module; sends/
+signatures human-gated; F=NOT_CERTIFIED) + rankByFit (evidence+feasibility+time-to-act; value KNOWN +10 but magnitude
+NOT dominant — a feasible graded-A future-deadline opp outranks a €500k passed-deadline/infeasible one; scam⇒−1000) +
+runDiscovery(opts.source): NO authorized connector ⇒ explicit **NO_RESULTS** + externalGate (OCDS/TED/BOAMP candidates);
+synthetic source ⇒ RESULTS labeled TEST (not customers); detect-error ⇒ DETECT_ERROR (fail-safe). Suite 14.
+
+**DEMONSTRATED DEFECT FIXED (opportunity-detector.ts):** detect() called REV.targetPlan but revenue-model exports
+projectRevenue/pathsToTarget/contractsForTarget (NO targetPlan — renamed in a migration) ⇒ THREW on EVERY budgeted
+opportunity, blocking all discovery. Minimal conservative guard: call only if typeof REV.targetPlan==="function", else
+feasible=null (honestly NOT computed, never fabricated). Behavior identical where targetPlan exists; router test (budgeted
+synthetic) is the regression.
+
+**Gate:** test:report 124→125; tsc 0; build 0. €0; nothing sent/submitted.
+
+**V34 DISCOVERY RESULT (honest):** sources actually accessed LIVE = NONE (no authorized runtime connector wired) ⇒
+**NO_RESULTS** (ODG invents no opportunity). Candidate lawful sources (external gate): OCDS open-procurement APIs, EU TED,
+FR BOAMP — public/zero-cost; adoption needs a connector + terms-compliance (EXTERNAL_PROVIDER). Pipeline validated on
+SYNTHETIC fixtures (TESTS). Six axes active; ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved.
