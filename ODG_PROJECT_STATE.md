@@ -6267,3 +6267,24 @@ Honesty: SYNTHETIC findings only; interoperable OUTPUT format proven, not a host
 in-toto/SLSA provenance per dossier → weighted-pipeline-forecast + internal funnel over commercial-pipeline (Phase 10) →
 NIST-RMF control tag + ISO SoA (Phase 11) → OTLP/OpenInference span emitter (Phase 5) → idempotency-ledger + event-
 sourced mission log (Phase 8). Also still open: wire reuse-ledger into decision-engine live path (higher-risk).
+
+---
+## CHECKPOINT 2026-10-27 (ca) — V21 LOT 4: weighted pipeline forecast (forecast≠cash) €0
+CTO "V21" Phase 10 + benchmark ref #20 (post-PR#84, main 78a8730). Truth Lock clean, 5 stashes + 4 untracked docs/
+preserved. Diff = pipeline-forecast(.ts/.test) + package.json + compass.
+
+**pipeline-forecast.ts (EXECUTED — Phase 10 €500k planning, HONEST):** forecast(entries,opts) over commercial-pipeline
+STAGES → expected = Σ(amount×P(stage)). FOUR honesty rules in code: (1) FORECAST≠CASH — realizedCash (CASHED,P=1) is its
+OWN bucket, separate from weightedOpenPipeline (expectation over not-yet-cashed); (2) NO INVENTED NUMBERS — stage
+probabilities are an explicit OVERRIDABLE HYPOTHESIS (DEFAULT_STAGE_PROBABILITY, monotonic; fail-closed outside [0,1];
+probabilitySource=DEFAULT_HYPOTHESIS|CALLER_SUPPLIED); (3) NO DOUBLE-COUNT — one weight per opportunity at its current
+stage (SIGNED=0.90<1 ⇒ signed≠cash, preserves prepared≠sent≠signed≠cashed); (4) GROSS not NET (convert via
+net-cash-model). LOST excluded; unknown stage ignored (never guessed). Pure. Suite **15**.
+
+**Gate:** test:report 101→102; tsc 0; build 0 (tsx assurance/commercial module, not a pipeline-dist module). Honesty:
+weighted figure is a forecast not revenue; only realizedCash is money; €0; nothing sent. Complements the earlier honest
+verdict that €500k NET is VOLUME-bound — this quantifies the EXPECTED gross of an actual pipeline without overclaiming.
+
+**NEXT-LOT candidates (benchmark priority):** CycloneDX+OSV (injected advisory, offline-testable) → in-toto/SLSA
+provenance per dossier → NIST-RMF tag + ISO SoA (Phase 11) → OTLP/OpenInference spans (Phase 5) → idempotency-ledger +
+event-sourced mission log (Phase 8). Then V21 Phase-14 structured report.
