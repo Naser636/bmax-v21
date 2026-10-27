@@ -6578,3 +6578,24 @@ cross-client DATA reuse. Suite 11.
 enterprise-mission-model built (wire into portfolio) · F cert-traceability+dossier (NOT_CERTIFIED). Learning loop CLOSED
 all outcomes (compiled). NEXT LOT: C enterprise qualification checklist (reuse niche-scoring + commercial-pipeline +
 proposal-generator), keep estimated-probability separate from observed conversion.
+
+---
+## CHECKPOINT 2026-10-27 (cm) — V27 AXIS C: enterprise qualification checklist €0
+CTO "V27" axis C (post-PR#96, main 6584aee). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+enterprise-qualification(.ts/.test) + package.json + compass.
+
+**enterprise-qualification.ts (EXECUTED — axis C, composes commercial-pipeline):** qualify(record) over 12 BANT/
+MEDDPICC dimensions (7 required: problem/impact/budget/authority/timeline/deliveryCapacity/acceptanceCriteria) →
+QUALIFIED | INCOMPLETE (missing required, fail-closed, never qualified) | DISQUALIFIED (no budget/no authority/flagged).
+QUALIFIED ⇒ pipelineStage "QUALIFIED" (from CP.STAGES) + nextAction (proposal-generator + enterprise-mission-model
+scope-justified pricing). estimatedProbability = coverage-weighted ASSUMPTION (QUALIFIED only); observedConversion =
+null NO_DATA (never invented). Disqualifier precedes incompleteness. No prospect/budget/response/signature invented.
+Suite 12.
+
+**Gate:** test:report 113→114; tsc 0; build 0. €0; nothing sent; 0 real prospects.
+
+**SIX-AXIS STATUS (all active):** A offer (€900/6h asm) · B offer (€4500/32h asm) · **C qualification checklist this lot**
+· D BLOCKED (no partner) · E enterprise-mission-model (wire into portfolio next) · F cert-traceability/dossier
+(NOT_CERTIFIED). Learning loop CLOSED all outcomes. NEXT LOT: E — integrate enterprise-mission-model into portfolio-
+dashboard consolidation (dashboard currently accepts missions[]; make the dashboard surface E sizing + capacity per the
+consolidated view) OR D partner-profile prep (prep only, contact gated).
