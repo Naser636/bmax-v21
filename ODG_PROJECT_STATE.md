@@ -6395,3 +6395,27 @@ net. Pure. Suite 13.
 qualification checklist · D partner delivery-kit (BLOCKED: no partner accepted) · **E DONE this lot** → next E: wire into
 commercial-portfolio consolidation · F clause→evidence traceability. Also pending: V22 P1b post-release-learning→
 recordReuseOutcome (producer side). NEXT LOT: F (ISO clause→evidence traceability) to keep F advancing.
+
+---
+## CHECKPOINT 2026-10-27 (cf) — V22 P1b PRODUCER side: mission-reuse-recorder closes the loop both ways €0
+CTO "V22 Priority One" second half (post-PR#89, main 8e4f125). Truth Lock clean, 5 stashes + 4 untracked docs/
+preserved. Diff = mission-reuse-recorder(.ts/.test) + package.json + compass.
+
+**mission-reuse-recorder.ts (EXECUTED — producer side, ADDITIVE new module):** reads a mission's decision.json
+(reusedObjectives = objectives with a memory patch AND authoredBy≠CONTRACT) + mission-report.json (validated) and
+records each reused precedent's OUTCOME via reuse-ledger.recordReuseOutcome, mapped HONESTLY: failed mission ⇒
+REUSE_FAILED (auto-learns to STOP reusing — the dangerous half); validated+measured-improvement(deps.improvement) ⇒
+REUSE_VALIDATED; validated+unmeasured ⇒ REUSE_INCONCLUSIVE (NO fabricated effect — passing once ≠ improvement). Fail-
+closed (NO_DECISION/NO_REPORT/INVALID_INPUT). Suite 10.
+
+**END-TO-END PROOF (in-suite):** producer records 2 failed-mission outcomes ⇒ reuse-ledger suppresses the signature ⇒
+capability-router.route() DE-SELECTS the precedent (Memory no longer wins). Loop now closed BOTH ways: CONSUMER
+(V22 P1, PR#87) + PRODUCER (this). HONEST LIMIT: the recorder is a tested CAPABILITY; it is NOT yet auto-invoked by the
+live post-mission pipeline hook (no compiled caller ⇒ not added to dist closure) — that auto-wiring is the next lot.
+
+**Gate:** test:report 106→107; tsc 0; build 0. €0; nothing sent. 9 primitives unchanged; 5 stashes + 4 untracked docs
+preserved.
+
+**SIX-AXIS queue (all represented):** A entry-diagnostic spec · B mid-market package · C enterprise qualif checklist ·
+D partner kit (BLOCKED no partner) · E wire enterprise-mission into commercial-portfolio · F clause→evidence
+traceability. Learning loop: NEXT = auto-invoke mission-reuse-recorder from the live post-mission hook (dist closure).
