@@ -5871,3 +5871,36 @@ sales-cycle research feeds CLIENT_VALUE_MODEL value ladder + pilot-wedge recomme
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-channels.test.ts`
 HUMAN FRONTIERS (grouped): COMMERCIAL — confirm price band (market-mid + pilot wedge); authorise first outreach (pilot/
 A+C) after legal review; authorise partner/subcontract + budget (for €500k cash). CERT separate = CTO_DECISION_PACK.
+
+---
+## CHECKPOINT 2026-10-27 (bn) — V11 multi-track portfolio (A/B/C/D voies) + mission-platform research €0
+CTO "V11 MASTER MULTI-TRACK" (parallel, post-PR#71). Truth Lock 79ed5a8≡origin/main (0/0), clean, 5 stashes + 4
+untracked docs/ preserved. No new primitive/orchestrator. Diff = commercial-portfolio(.ts/.test) + package.json + 2 docs
++ compass.
+
+**A/B/C/D COLLISION DISCLOSED (mandate §1.5, NOT silently replaced):** canonical A/B/C/D already means: niche-scoring
+switchDecision=fallback STRATEGIES (HOLD_A/STAY_A/CONTINUE_A/SWITCH_B/C/D); revenue-channels=GTM scenarios (SOLO/
+RECURRING/PARTNER/SUBCONTRACT); FIELD_DOSSIER=niches A-F. V11 'voies' = mission-size tracks (A small/B intermediate/C
+big+recurring/D partners) — a 4th DISTINCT meaning; documented, old ones untouched.
+
+**commercial-portfolio.ts (EXECUTED):** consolidates several tracks (each a revenue-schedule run) into one monthly
+projection so the program doesn't depend on one offer/client/channel; per-track contribution share + CONCENTRATION risk
+(>60%=HIGH) + delivery-capacity flag + NO_DATA on empty. Suite 7. Illustrative A+B+C mix cashes ~€75k (MEDIUM
+concentration 47%) — scaling to €500k needs volume/price/channels. → COMMERCIAL_TRACKS_ABCD_V1 (voies + fiches +
+substitution/continuity strategy + collision disclosure).
+
+**MISSION_PLATFORMS_RESEARCH_V1 (agent, no account/contact):** Malt = fastest low-gate solo channel (10%→2% fee);
+Comet/Crème vetting-gated; **NO marketplace specifically distributes SBOM/CRA missions** (ride generalist/partners);
+public tenders solo-disadvantaged except **<€40k gré à gré** relationship route (MAPA/EU 2026 thresholds flag-reverify).
+Registration = commercial act = CTO-authorised, not done.
+
+**Gate:** test:report 89→90; tsc 0; build 0. Honesty: €500k TARGET; 0 real opportunities (NO_DATA); concentration
+flagged; 0 partners/platforms engaged; no account/contact/purchase; nothing invented; reuses revenue-schedule/channels/
+scenarios/pipeline — no second architecture.
+
+**Learning reuse (proven):** commercial-portfolio reuses revenue-schedule.projectMonthly; tracks doc reuses channels/
+scenarios/partner/platform findings; collision disclosure reuses the canonical-definition inventory.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/commercial-portfolio.test.ts`
+HUMAN FRONTIERS (grouped): COMMERCIAL — price band; first outreach after legal review; partner/subcontract+budget;
+platform registration (commercial act). CERT separate = CTO_DECISION_PACK.
