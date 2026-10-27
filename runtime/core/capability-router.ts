@@ -24,6 +24,7 @@
 const patchMemory: any = require("./patch-memory");
 const rules: any = require("./decision-rules");
 const metrics: any = require("./capability-metrics");
+const EXC: any = require("./excellence-policy");   // AXE 1: gate the CHOSEN route (shared boundary), opt-in
 
 function localModelAvailable(opts: any): boolean {
   if (opts && typeof opts.localModelAvailable === "boolean") return opts.localModelAvailable;
@@ -64,6 +65,24 @@ function route(task: any, opts?: any): any {
     } else {
       chosen = plan[plan.length - 1]; // only External AI remained
     }
+  }
+
+  // AXE 1 — OPT-IN excellence gate on the CHOSEN route (the selection that influences execution). Only engaged when
+  // opts.excellence is supplied; otherwise EXACT legacy behaviour (public contract preserved). A PROHIBITED unproven-
+  // superlative claim ⇒ the route is NOT admitted (chosen:null, admit:false) so a contract-honouring caller does NOT
+  // dispatch it. Stale/offline references + reviewer-unavailable ⇒ ADVISORY, non-blocking (chosen kept). Reuses the
+  // shared requireExcellence boundary (no duplication, no new primitive).
+  if (opts && opts.excellence) {
+    const ex = opts.excellence;
+    let review: any; let reviewerErrored = false;
+    if (typeof ex.reviewer === "function") { try { review = ex.reviewer(chosen); } catch { reviewerErrored = true; } }
+    if (!review) review = reviewerErrored
+      ? { verdict: "ADVISORY_ERROR", claims: [], staleReferences: [], gaps: [] }
+      : EXC.reviewForExcellence({ domain: ex.domain || "capability-selection", now: ex.now || "", registry: ex.registry || [], currentPractices: [chosen && (chosen.capability || chosen.tier)].filter(Boolean), thresholds: {}, measured: {}, claims: (task.claims) || ex.claims || [] });
+    const gate = EXC.requireExcellence(review, {});
+    const excellence = { verdict: review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason, staleReferences: review.staleReferences || [], reviewerErrored };
+    if (!gate.admit) return { task, plan, chosen: null, usesExternalAI: false, excellence, admit: false };
+    return { task, plan, chosen, usesExternalAI: chosen.source === "EXTERNAL", excellence, admit: true };
   }
 
   return { task, plan, chosen, usesExternalAI: chosen.source === "EXTERNAL" };
