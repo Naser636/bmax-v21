@@ -5716,3 +5716,41 @@ the clause-matrix/op-evidence/readiness outputs into a single deposable dossier 
 HUMAN FRONTIERS (= CTO_DECISION_PACK_V1, unchanged): approve policies; confirm CU; structure+RC Pro; ISO 42001 vs free
 27001 AFNOR interactive; prod deps; legal review; authorize outreach. New: verify Bureau Veritas/BSI COFRAC/UKAS scope
 interactively; confirm MonAideCyber eligibility officially; send devis requests (CTO).
+
+---
+## CHECKPOINT 2026-10-27 (bj) — Commercial engineering: 12-stage funnel + €500k scenarios + offers/research €0
+CTO "COMMERCIAL ENGINEERING ET PLAN PROUVABLE DES 500 000 €" (parallel workstream, post-PR#67 merge, no restart).
+Truth Lock 6873c92≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved. No new primitive/orchestrator.
+Diff = commercial-pipeline(.ts/.test) + revenue-scenarios(.ts/.test) + package.json + 3 docs + compass.
+
+**commercial-pipeline.ts (EXECUTED):** 12-stage evidence-gated funnel DETECTED→VERIFIED→QUALIFIED→INTERESTED→
+PROPOSAL_PREPARED→PROPOSAL_AUTHORIZED→PROPOSAL_SENT→NEGOTIATION→SIGNED→DELIVERY_ACCEPTED→INVOICED→CASHED (+LOST). NO
+auto-advance (each step needs criterionMet); PROPOSAL_SENT + SIGNED HUMAN-gated (deny-by-default). Anti-conflation in
+code: prepared≠sent≠signed≠invoiced≠cashed; funnelTotals counts nothing<SIGNED as revenue + surfaces preparedNotSent;
+audit-chained. Suite 10.
+
+**revenue-scenarios.ts (EXECUTED):** prudent/central/ambitious from EXPLICIT assumptions (conversions NOT tuned);
+computes contracts/prospects/pace/margin + HONEST feasibility vs solo ceiling (120 prospects/4 sign/mo). Suite 9. KEY
+HONEST FINDING: prudent €3k=INFEASIBLE_SOLO (1,450 prospects/mo); central €19k/contract=STRETCH (108/mo,3 sign);
+ambitious €38k+recurring=PLAUSIBLE_HYPOTHESIS (14 contracts,33/mo,70% margin). €500k solo only plausible at HIGH
+value+recurring or with partners/subcontracting. → REVENUE_500K_PLAN_V2.md.
+
+**Research (agent, honest tiers, NO contact):** 8/8 sampled of 23 re-verified (QUALIFIÉ=real+ships-AI, NOT intent);
+**0 verified buying intent, 0 verified prospect**; hiring=weak detected-opportunity; market-size=weakest (analyst
+software-weighted); Digital Omnibus SME-relief = demand RISK. PLACE/APProch official+free SIRET-based, APProch=forecasts
+NOT contracts, solo legally eligible but practically disadvantaged (no 3-yr accounts/refs/certs). Competitor EuroAIGuard
+publishes real €490/990/2290/mo tiers (price anchor). → COMMERCIAL_RESEARCH_V2.md. Offers A-F evaluated vs proven
+capability → COMMERCIAL_OFFERS_EVALUATION_V1 (TEST A audit + C assurance = strongest gated; D recurring after; E partner-
+gated; F tender watch-only).
+
+**Gate:** test:report 85→87; tsc 0; build 0. Honesty: €500k TARGET not forecast; 0 detected→cashed; no intent/client/
+revenue invented; prices HYPOTHESIS (EuroAIGuard real anchor); no outreach/purchase; prepared≠sent≠signed≠cashed in code.
+
+**Learning reuse (proven):** revenue-scenarios reuses revenue-model.contractsForTarget; commercial-pipeline reuses the
+pipeline-ledger fail-closed one-step + audit-log chain discipline and adds the full funnel + human-gated send/sign;
+offers evaluation grounded in the gated-capability evidence (SBOM/provenance/test suites) + research price anchor.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/commercial-pipeline.test.ts && tsx runtime/core/revenue-scenarios.test.ts`
+HUMAN FRONTIERS (grouped, = CTO_DECISION_PACK + commercial): authorize first outreach (A/C offers) + legal review;
+choose price point (ambitious high-value path recommended by the model); decide partner/subcontracting for €500k scale;
+register PLACE/APProch (CTO, €0); confirm "CU"; approve ISO policies; prod deps; any spend.
