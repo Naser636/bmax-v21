@@ -6779,3 +6779,31 @@ configured. ACTUAL COLLECTED CASH = €0 (evidence-based). €500k NET unachieve
 Session V21→V31 = PRs #82–#104(pending), test:report 59→122. All internal readiness + safety gates DONE+verified.
 EXACT NEXT (human): HA-1 (configure Gmail out-of-band; `! export SMTP_* / EMAIL_SEND_ENABLED` NOT here) + HA-2 (supply 1
 lead → `validateLeadIntake`). Then ODG: `tsx runtime/core/first-cash-activation.ts` → HA-3 human send → HA-4/HA-5.
+
+---
+## CHECKPOINT 2026-10-27 (cu) — V32 OWNER-ONLY operating model: inventory + fail-closed decision interface €0
+CTO "V32 OWNER-ONLY" (post-PR#104, main a99da91). Truth Lock a99da91≡origin/main (0/0), clean, 5 stashes + 4 untracked
+docs/ preserved, CI success. No new primitive. Diff = owner-console(.ts/.test) + package.json + compass.
+
+**owner-console.ts (EXECUTED — composes the V21–V31 tested modules; no dup):** 12-step lifecycle OWNER-INTERVENTION
+INVENTORY, each classified (AUTOMATABLE_NOW / AUTOMATABLE_AFTER_INTERNAL / EXTERNAL_PROVIDER_OR_CREDENTIAL /
+OWNER_APPROVAL_OR_SIGNATURE / LEGALLY_NONDELEGABLE / BLOCKED) + anchored to the REAL code path (AUTOMATABLE_NOW only
+where a tested module does it: validateLeadIntake, enterprise-qualification, proposal/mission/pricing, client-intake,
+assurance-pilot-runner+validation-engine+triage, sarif-report delivery, reuse-ledger+mission-reuse-recorder+dashboard).
+**ONLY 3 owner touchpoints remain** (material): step6 contract SIGNATURE (NONDELEGABLE), step10 invoice ISSUANCE approval
+(money), step11 refund approval (money). Routine (discovery/qualif/tests/QA/drafting/follow-up/delivery/reconciliation/
+learning) is NEVER owner-facing. buildDecisionRequest fail-closed (material-only; requires recommendation+why+maxExposure
++risks+ifRejected+ifNoAnswer; default-safe no-answer = no spend/sign/binding). ownerQueue filters routine → ODG/provider.
+Suite 13.
+
+**Gate:** test:report 122→123; tsc 0; build 0. €0; nothing sent/signed; owner never handed routine work.
+
+**OWNER'S REMAINING ROLE (exact, minimal):** (one-time) HA-1 authorize channel + (per-class) comms authorization;
+then ONLY: sign contracts (step6), approve invoice issuance (step10), approve refunds/exceptional spend (step11).
+Everything else = ODG autonomous or authorized provider. outreach SEND still EXTERNAL-gated (Gmail creds + send-auth).
+
+**AUTONOMOUS TODAY vs BLOCKED:** autonomous-capable (tested, synthetic): lead-intake validation, qualification,
+proposal/pricing/sizing, delivery+QA+independent verdict, invoice PREP + reconciliation gate, learning. NEEDS external:
+outreach SEND (channel), real leads/demand, partner acceptance, ISO audit, real receipts. ACTUAL COLLECTED CASH €0.
+Session V21→V32 = PRs #82–#105(pending), test:report 59→123. €500k NET unachieved/VOLUME-bound. NEXT dependency-ready:
+wire ownerQueue into portfolio-dashboard (surface the 3 material owner decisions) OR await HA-1/HA-2.
