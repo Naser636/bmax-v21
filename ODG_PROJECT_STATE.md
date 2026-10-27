@@ -5186,3 +5186,34 @@ actually render (declared≠verified, NOT_CERTIFIED present).
 are DONE; the only remaining step is HUMAN: authorise sending a first small outreach batch (+ legal review of the
 pilot/pricing). HUMAN-REQUIRED (grouped): outreach send + legal review; Bpifrance/France Num eligibility; any spend
 (ISO text/certification/tools); the 7 EXTERNAL production deps on real deployment.
+
+---
+## CHECKPOINT 2026-10-27 (av) — launch cash-budget model (€10k cap / €5k reserve / stop-threshold) €0
+CTO rapid-launch mandate (3 tracks). Truth Lock entry 6e22bfd≡origin/main, clean, 5 stashes, 4 untracked docs/.
+No new primitive. Diff = launch-budget(.ts/.test) + package.json + LAUNCH_BUDGET_V1.md + compass.
+
+**TRACK A (revenue/cash) — EXECUTED (real testable model):** NEW runtime/core/launch-budget.ts — cashBudget() projects
+12-mo cash from CALLER inputs and ENFORCES by computation the €10k cap (fail-closed: over-cap ⇒ admit:false), the €5k
+protected reserve floor (reserveFloorRespected), runwayMonths + a stop-spending signal (stopMonth); breakEvenPilots().
+Gated suite (8): prudent €5k+€5k respected; €7k-alternative shows only €3k reserve (floor BREACHED, consequence
+surfaced, NOT an authorisation); over-cap REFUSED; no-sale ⇒ stop-threshold fires + finite runway; break-even 2 pilots
+@€3k. doc LAUNCH_BUDGET_V1.md: micro-entrepreneur immatriculation = gratuite (FACT, bpifrance-creation/economie.gouv.fr),
+services ceiling €83,600 (2026); bank/accounting/RC-Pro = ESTIMATE/TBV (official per-month tariffs NOT published — NOT
+fabricated); stop/re-orient thresholds; deposit-on-start to cut working-capital risk [LEGAL REVIEW]. €0 committed.
+
+**TRACK B (certification/funding):** unchanged — no new free ISO access, no spend; roadmap + Bpifrance Diag Cyber
+(eligibility TBV) already recorded. **TRACK C (product):** no new safe-independent local gap (coverage complete; demo
+generator + 72/72 gate stand); budget model reuses the honest fail-closed discipline (no new primitive).
+
+**Honesty controls:** every euro = FACT(cited)/ESTIMATE-TBV/HYPOTHESIS; cap+reserve enforced by TEST not prose; nothing
+spent/committed; no revenue/contract/aid counted; micro-vs-SASU = human decision.
+
+**Proof:** launch-budget 8 ⇒ full gate 71→72/72; tsc 0; build 0. Checkpoint suites not needlessly re-run beyond affected+gate.
+
+**Learning reuse (proven):** reused the fail-closed/admit + honest-labelling discipline (from excellence-policy/gates)
+in a FINANCIAL model — the €10k cap behaves like an admission boundary (over-cap ⇒ not admitted), proven by test.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/launch-budget.test.ts`
+**Next-highest-value action:** HUMAN — authorise sending a first small outreach batch (+ legal review of pilot/pricing);
+the €0 kit + real demo + cash model are ready. Grouped human decisions: outreach send; legal review; micro-vs-SASU +
+quotes; any spend within €10k cap; Bpifrance/France Num eligibility; 7 EXTERNAL production deps on real deployment.
