@@ -6693,3 +6693,27 @@ partner channel (prep; no partner accepted) · E enterprise model+dashboard sizi
 Session V21→V29 = PRs #82–#101(pending), test:report 59→120, ff-only CI-green. €500k NET VOLUME-bound/unproven; 0
 collected; €0; nothing sent. NEXT: wire partner-channel + portfolio-finance into portfolio-dashboard (D funnel + monthly
 projected-vs-actual + A–F reconciliation regression) — the V29 §5 dashboard integration.
+
+---
+## CHECKPOINT 2026-10-27 (cr) — V29 §5: partner funnel + consolidated finance in the dashboard €0
+CTO "V29" §5 dashboard integration (post-PR#101, main 166a6dd). Truth Lock clean, 5 stashes + 4 untracked docs/
+preserved. Diff = portfolio-dashboard.ts + portfolio-dashboard-v29.test + package.json + compass.
+
+**portfolio-dashboard.ts EXTENDED (consumes partner-channel + portfolio-finance):** partnerFunnel {total, qualified,
+byState, accepted, active} — counts from RECORDED states; a qualified/prepared partner is NOT accepted (accepted/active
+0 unless recorded; no conflation/invention). finance {consolidated(forecastNetAvailable + levies separate), perAxis,
+reconciliation, actualVsForecast, required} from portfolio-finance.buildModel. REGRESSION GUARD (portfolio-dashboard-
+v29.test, suite 9): six axes represented; forecast≠actual (gap on actual only); A–F reconcile; taxes/social separate
+(not in gross); partner commission ⇒ lower forecast net; unknown⇒NO_DATA (not zero/positive revenue). Existing dashboard
+(12) + enterprise (9) suites GREEN.
+
+**Gate:** test:report 120→121; tsc 0; build 0. €0; nothing sent; forecast≠cash; 0 collected.
+
+**SIX-AXIS — all represented + now consolidated in ONE dashboard view:** A/B/C/D/E/F offers+checklist+partner+sizing+
+dossier; partner funnel + A–F monthly finance (forecast vs actual) + learning aggregate + cert readiness, all honest
+(NO_DATA, forecast≠cash, readiness≠certification, MODELED≠sold, qualified-partner≠accepted). Session V21→V29 = PRs
+#82–#102(pending), test:report 59→121, ff-only CI-green. €500k NET VOLUME-bound/unproven; 0 collected; €0 spent; nothing
+sent; D no partner accepted. All currently-executable six-axis + finance + dashboard + learning-loop work is DONE +
+tested; remaining frontiers are HUMAN-GATED (outbound/Gmail, partner acceptance, enterprise demand, external ISO audit,
+real delivery to validate assumptions). NEXT (if continued): incremental per-requirement F dossier expansion OR await
+real-world evidence to replace assumptions.
