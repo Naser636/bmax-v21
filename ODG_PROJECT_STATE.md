@@ -6222,3 +6222,25 @@ wired yet); €0; nothing published/sent.
 **NEXT LOT candidate (complementary, higher-risk — live path):** wire recordReuseOutcome at decision-engine's
 patch-memory.hit site + feed suppressedSignatures into capability-router.route so bad reuses self-de-select end-to-end.
 Also V21 Phase-2 benchmark doc (20 refs verified 2026-10-27) → next lot.
+
+---
+## CHECKPOINT 2026-10-27 (by) — V21 LOT 2: external benchmark of 20 world-class references (doc) €0
+CTO "V21" Phase 2 (post-PR#82, main d2bb7f1). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+EXTERNAL_BENCHMARK_20_V21.md + compass (doc-only; no code/test change).
+
+**EXTERNAL_BENCHMARK_20_V21.md:** 20 refs (A agents/orchestration OpenAI/Anthropic/LangSmith/Temporal/n8n; B supply-chain
+GitHub/Snyk/Chainguard/Cloudflare/1Password; C governance Vanta/Drata/Securiti/NIST/ISO; D reliability Arize/AWS-WA/
+PostHog; E commercial Stripe/HubSpot) — ALL verified live 2026-10-27 vs official pages. Per ref: problem, capabilities+
+LIMITS, REUSABLE OPEN mechanism (no proprietary code), free/paid, lock-in, one proportionate testable TS adaptation.
+**Adopt-now (open, low lock-in):** SARIF 2.1.0 (assurance-output interchange — strongest commercial lever), CycloneDX+OSV
+(self-contained SBOM vuln scan), OTLP/OpenInference spans, event-sourcing+replay+declarative-retry, SLSA/in-toto
+provenance, NIST-AI-RMF taxonomy + ISO SoA pattern, idempotency+webhook-dedupe, weighted-pipeline-forecast+internal
+funnel, Well-Architected checklist, OWASP middleware, secret-reference JIT. **Benchmark-only (high lock-in SaaS):** Vanta/
+Drata/Securiti/HubSpot-cloud/Arize-hosted/Cloudflare-routed/1Password-resolver/n8n-engine — borrow the data-model/metric,
+not the product. Integration discipline: NO 20-dep adoption; prefer simple internal impl; external money/CRM/send/traffic
+stay human-authorized; every adaptation fail-closed + preserves DOCUMENTED≠EXECUTED / prepared≠sent≠signed≠cashed /
+mechanism≠satisfied / no self-cert. Unverified flagged (vendor % claims, SDK versions, Securiti post-Veeam roadmap).
+
+**Next-lots priority (each bounded+gated, no heavy dep):** SARIF emitter for the assurance dossier (sells the result) →
+CycloneDX+OSV scanner → in-toto provenance per dossier → weighted-forecast+funnel over commercial-pipeline →
+NIST-RMF tag + ISO SoA → OTLP span emitter → idempotency-ledger + event-sourced mission log (complements reuse-ledger).
