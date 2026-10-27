@@ -1294,6 +1294,21 @@ function resolve(patch: any) {
                 const tl = truthLockGate({ mutating: true, enforce: true, exec: _seams.gitExec, mission: matched.capability });
                 if (tl.blocked) throw new Error(`Capability dispatch REFUSED by Truth-Lock (repo-safety): ${tl.verdict.detail}`);
             }
+            // EXCELLENCE chokepoint (opt-in). A CONSEQUENTIAL dispatch that carries a `patch.excellence` context is
+            // evaluated by the shared requireExcellence boundary BEFORE any effect: a PROHIBITED unproven-superlative
+            // claim throws here, so matched.run() (and its effect) is NEVER reached. Stale/offline/reviewer-unavailable
+            // are advisory (admit) per the policy contract — no new admission rule. Default (no patch.excellence) ⇒
+            // no-op ⇒ byte-identical. OBSERVATIONAL effects are never gated. Reuses the shared boundary — no second control.
+            if (verdict.entry.effect === "consequential" && patch && patch.excellence) {
+                const EXC = require("./excellence-policy");
+                const ex = patch.excellence;
+                let review: any; let reviewerErrored = false;
+                if (typeof ex.reviewer === "function") { try { review = ex.reviewer(matched.capability); } catch { reviewerErrored = true; } }
+                if (!review) review = reviewerErrored
+                    ? { verdict: "ADVISORY_ERROR", claims: [], staleReferences: [], gaps: [] }
+                    : EXC.reviewForExcellence({ domain: ex.domain || "capability-execution", now: ex.now || "", registry: ex.registry || [], currentPractices: [matched.capability], thresholds: {}, measured: {}, claims: ex.claims || [] });
+                if (!EXC.requireExcellence(review, {}).admit) throw new Error(`Capability dispatch REFUSED by excellence policy (prohibited/unproven claim) for "${matched.capability}"`);
+            }
             return matched.run(patch);
         },
     };

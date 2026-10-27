@@ -4921,3 +4921,46 @@ Next €0 candidate: per-executor execution gate in capability-executors (carefu
 local safe fix (e.g., wire audit-log into a real mutation path for tamper-evident operational logging). BLOCKED/EXTERNAL
 (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation,
 ISO paid text, any purchase.
+
+---
+## CHECKPOINT 2026-10-27 (ao) — capability-executors invocation-boundary excellence gate €0
+CTO. Truth Lock entry a5cfb7d≡origin/main (PR#46 MERGED), clean, 5 stashes, 4 untracked docs/. No new primitive/
+orchestrator/router. Additive + opt-in. Diff = capability-executors(.ts/.test) + excellence-coverage(.ts/.test) + matrix doc.
+
+**AXE (capability-executors) — PROVEN via REAL boundary:** diagnostic — the SINGLE real invocation boundary is
+resolve(patch).run() (resolve() = EXECUTORS.find(matches) → wrapped run; line ~1275-1299). It ALREADY carries
+deny-by-default governance: effectRegistryVerdict (UNGOVERNED_CAPABILITY refusal) + an opt-in Truth-Lock chokepoint
+for consequential effects. No non-test bypass of resolve (grep clean). Chose that boundary (minimal, no per-function
+over-injection). Integrated the shared requireExcellence BEFORE matched.run, ONLY for consequential effects AND only
+when patch.excellence is present (opt-in). PROHIBITED unproven-superlative claim ⇒ throws BEFORE matched.run ⇒ NO
+effect/dispatch. Stale/offline/reviewer-unavailable ⇒ advisory (admit) per the existing policy contract — no new
+admission rule. Default (no patch.excellence) ⇒ byte-identical. Observational effects NEVER gated. Reuses the shared
+boundary (no second control); auth/tenant/identity controls untouched.
+
+Integration tests THROUGH the real module (capability-executors.test.ts 55→62, 7 AXE assertions, hermetic fetch spy
+on the consequential External Research Acquisition): authorized⇒effect runs (fetch called); prohibited claim⇒refused
+BEFORE run, fetch ZERO (no dispatch); reviewer-down⇒advisory-run; stale⇒advisory-run; existing authz still fails-closed
+(not the excellence gate); observational+prohibited-claim⇒NOT gated (scope=consequential); no-opt⇒legacy byte-identical.
+excellence-coverage: execution (capability-executors.resolve().run) NOT_COVERED→COVERED; only other resolvers
+(decision-engine/execution-planner) remain NOT_COVERED (covered only when dispatched as a scheduled mission — listed).
+No total-coverage claim.
+
+**Coverage now (each REAL-path integration-tested):** mission-execution, capability-self-review, learning
+(capability-learning.reuseLearning + post-release-learning.accumulate), recovery (checkpoint-engine + build-recovery),
+resolution (capability-router.route), execution (capability-executors.resolve().run). Only "other resolvers" remain
+NOT_COVERED (and only because they run as scheduled missions ⇒ already covered at the scheduler boundary indirectly).
+
+**AXE 2:** registry unchanged (sources verified in prior lots). **AXE 3:** no new local fix; 9 gaps unchanged (EXTERNAL).
+No simulated result claimed as production.
+
+**Proof:** capability-executors 55→62 + excellence-coverage 9 ⇒ full gate 69/69; tsc 0; build 0. Checkpoint suites
+replayed first (PR#46 confirmed MERGED). A transient coverage-test assertion (expected ≥2 uncovered) was corrected to
+reflect the genuinely-higher coverage (≥1) — NOT to force green; the FAIL was disclosed + fixed truthfully.
+
+**Learning reuse (proven):** requireExcellence reused at a 6th real decision point (the execution invocation boundary);
+the no-effect-on-refusal guarantee is proven by a fetch spy (zero calls on refusal).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/capability-executors.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next €0 candidate: an AXE-3 local safe fix — wire audit-log into a real operational mutation path for tamper-evident
+logging (gap #4), OR cover "other resolvers" at decision-engine. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant
+isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation, ISO paid text, any purchase.

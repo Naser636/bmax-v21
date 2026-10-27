@@ -21,7 +21,8 @@ claim.**
 | build-recovery-engine (`recover` apply) | recovery-legacy-integrated | 4 | `recover(opts.recovery) → gateRecovery` (real module API, opt-in) | yes | `build-recovery-engine.test.ts` (AXE A, 6) | **COVERED** |
 | capability-router (`route` selection) | resolution | 3 | `route(opts.excellence) → requireExcellence` (real module API, opt-in) | yes | `capability-router.test.ts` (AXE 1, 5) | **COVERED** |
 | post-release-learning (`accumulate` capture) | learning-capture | 3 | `accumulate(deps.excellence) → requireExcellence + audit-log` (real module API, opt-in) | yes | `post-release-learning.test.ts` (AXE 1) | **COVERED** |
-| per-executor execution (capability-executors) / other resolvers | execution-legacy | 4 | not yet routed through the gate | no | — | NOT_COVERED (governed by third-party-agent + authorizeExecution; per-executor excellence-review is a candidate follow-up — risk of over-injection) |
+| capability-executors (`resolve().run` dispatch) | execution | 4 | `resolve().run → requireExcellence` at the real invocation boundary (consequential-only, opt-in via `patch.excellence`) | yes | `capability-executors.test.ts` (AXE exec, 7) | **COVERED** |
+| other resolvers (decision-engine / execution-planner) | resolution-other | 3 | run as missions ⇒ scheduler boundary | no | — | NOT_COVERED (covered only when dispatched as a scheduled mission; candidate follow-up) |
 
 ## Rule semantics (uniform, via `requireExcellence`)
 - **Prohibited claim** (unproven superlative — "world #1"/"best"/"optimal" without a cited benchmark) ⇒ **admit:false**

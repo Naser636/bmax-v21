@@ -14,7 +14,7 @@ ok("covered families include mission-execution + capability-self-review + learni
 
 // (3) still-uncovered components explicitly listed (resolution / per-executor execution / legacy) — no total-coverage claim.
 const unc = C.uncoveredComponents().map(r => r.component);
-ok("still-uncovered components explicitly listed (resolution/execution/legacy)", unc.length >= 2 && C.uncoveredComponents().every(r => r.consults === false && !!r.gap));
+ok("still-uncovered components explicitly listed (each with a gap)", unc.length >= 1 && C.uncoveredComponents().every(r => r.consults === false && !!r.gap));
 
 // (4) summary is internally consistent.
 const s = C.coverageSummary();
