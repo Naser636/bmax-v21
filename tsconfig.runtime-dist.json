@@ -17,7 +17,8 @@
   },
   "include": [
     "runtime/bin/odg-run.ts",
-    "runtime/bin/odg-schedule-tick.ts","runtime/bin/odg-evidence-pack.ts",
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/bin/odg-evidence-pack.ts",
     "runtime/bin/odg-cockpit.ts",
     "runtime/bin/odg-bootstrap.ts",
     "runtime/bin/odg-state.ts",
@@ -100,6 +101,7 @@
     "runtime/core/delegate-isolation.ts",
     "runtime/core/local-model-manager.ts",
     "runtime/core/capability-router.ts",
+    "runtime/core/reuse-ledger.ts",
     "runtime/core/fleet-bridge.ts",
     "runtime/core/payments.ts",
     "runtime/core/quote.ts",
