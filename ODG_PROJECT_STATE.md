@@ -6166,3 +6166,32 @@ doctrine; correct V18's optimistic assumption with measured data (capture→meas
 HUMAN FRONTIERS (impact-ranked): self-serve product build+support (only path to high net factor at scale — dev decision);
 SASU (expert-comptable); subcontractors+working capital (capacity for 5-10 high-value/mo); outreach (Gmail+auth+legal+
 addresses); confirm IS/PFU/social + real human delivery hours. €500k NET year-1 still unproven; human delivery time binding.
+
+---
+## CHECKPOINT 2026-10-27 (bw) — V20 self-serve assurance path (automatable fraction measured; €500k NET volume-bound) €0
+CTO "V20 AUTONOMOUS END-TO-END" (post-PR#80). Truth Lock d013458≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/
+preserved, resume PASS. No new primitive/orchestrator. Diff = self-serve-assurance(.ts/.test) + package.json +
+SELF_SERVE_ASSURANCE_V1 + compass.
+
+**self-serve-assurance.ts (EXECUTED — Phase 2 lever):** runSelfServe validates→runs pilot→TRIAGE AUTO_COMPLETE
+(DELIVERABLE_WITHOUT_HUMAN) vs NEEDS_HUMAN_REVIEW (UNKNOWN license / AI-Act HIGH / failed / >8 findings); batchThroughput
+measures automatable fraction + effective human time/delivery (=reviewFraction×reviewHours; auto≈0). Suite 8. Reuses
+assurance-pilot-runner + metrics. SYNTHETIC; not a hosted product.
+
+**MEASURED net-factor lift (price €3k): full-service 7h → 0.51/325 deliveries; auto60%→0.58/289; auto80%→0.59/282;
+auto95%→0.60/279.** HONEST CONCLUSION: automation lifts net factor 0.51→0.60 + margin→99% but **deliveries barely move
+(325→279)** ⇒ **€500k NET is VOLUME-bound not margin-bound** (needs ~279-325 deliveries/yr ≈ 23-27/mo @€3k ≫ solo 3-4
+and small-team). Margin lever alone does NOT make €500k NET year-1 reachable. Real paths: (a) far fewer far larger
+contracts (64×€15k≈5/mo, enterprise demand) OR (b) true high-volume self-serve SaaS (product+hosting+support+marketing,
+not built — module proves the ENGINE auto-completes clean cases, not a sellable SaaS). → SELF_SERVE_ASSURANCE_V1.
+
+**Gate:** test:report 98→99; tsc 0; build 0. Honesty: €500k NET unproven + volume-bound; automation validated (not a
+product); measured vs hypothesis vs unknown separated; 0 collected; nothing published/sent; €0.
+
+**Learning reuse (proven):** self-serve reuses assurance-pilot-runner (triage over its findings) + assurance-pilot-metrics
+(net factor from reduced human time); the measured volume-bound conclusion corrects any assumption that automation=net-cash.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/self-serve-assurance.test.ts`
+HUMAN FRONTIERS (impact-ranked, unchanged + sharpened): true SaaS product+hosting+support (only path to the volume for
+€500k NET via many low-touch customers — build/opex decision) OR enterprise high-value demand (fewer×larger) + team;
+SASU; subcontractors; outreach (Gmail+auth+legal+addresses); confirm rates. €500k NET year-1 volume-bound, unproven.
