@@ -62,4 +62,25 @@ inTempCwd((router) => {
     ok("plan always ends with External AI", r.plan[r.plan.length - 1].tier === "EXTERNAL_AI");
 });
 
+// --- AXE 1: excellence gate on the real route() selection decision ----------------------------------------------
+inTempCwd((router) => {
+    const NOW = "2026-10-27";
+    // (a) valid selection + gate (no claims) ⇒ admit, chosen kept, excellence attached
+    const a = router.route(TASK, { excellence: { now: NOW, registry: [] } });
+    ok("AXE1 router: gated selection admits + keeps chosen", a.admit === true && !!a.chosen && !!a.excellence);
+    // (b) PROHIBITED superlative claim ⇒ NOT admitted, chosen null (contract-honouring caller does NOT dispatch)
+    const b = router.route({ ...TASK, claims: ["the world's best, number one capability"] }, { excellence: { now: NOW, registry: [] } });
+    ok("AXE1 router: prohibited superlative ⇒ not admitted, chosen null (no dispatch)", b.admit === false && b.chosen === null);
+    // (c) STALE reference ⇒ advisory, admit, chosen kept (offline-safe, non-blocking)
+    const SREF = { id: "SEL-REF", authority: "ODG", domain: "capability-selection", version: "1.0", date: "2026-10-01", source: "ODG selection method", normativeStatus: "industry-practice", usageRights: "own", practicesAdopted: [], limits: [], nextReviewDate: "2020-01-01", verificationStatus: "offline-pending-reverify" };
+    const c = router.route(TASK, { excellence: { now: NOW, registry: [SREF] } });
+    ok("AXE1 router: stale reference ⇒ advisory, admit, chosen kept", c.admit === true && c.excellence.advisory === true && !!c.chosen);
+    // (d) reviewer UNAVAILABLE ⇒ advisory, admit, chosen kept
+    const d = router.route(TASK, { excellence: { now: NOW, registry: [], reviewer: () => { throw new Error("down"); } } });
+    ok("AXE1 router: reviewer unavailable ⇒ advisory, admit, chosen kept", d.admit === true && d.excellence.reviewerErrored === true && !!d.chosen);
+    // (e) NO excellence opts ⇒ EXACT legacy behaviour (no excellence field)
+    const e = router.route(TASK);
+    ok("AXE1 router: no opts ⇒ legacy (no excellence field)", e.excellence === undefined && e.admit === undefined && !!e.chosen);
+});
+
 console.log(`\nCAPABILITY ROUTER — ${passed} assertions passed.`);

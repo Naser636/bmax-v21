@@ -54,8 +54,8 @@ text retrieved (ISO = public catalogue metadata only).
 | NIST-AI-RMF-1.0 | **verified-online** | WebFetch nist.gov | AI RMF **1.0**, released **2023-01-26**, id NIST.AI.100-1 | https://doi.org/10.6028/NIST.AI.100-1 |
 | ISO27001-2022 | **metadata verified-online** (text paywalled, NOT retrieved) | WebSearch iso.org | ed.3, **published 2022-10-25**, 1 amendment, status Published | https://www.iso.org/standard/27001 |
 | ISO42001-2023 | **metadata verified-online** (text paywalled, NOT retrieved) | WebSearch iso.org | first AIMS standard, **published Dec 2023**, Annex A = 38 controls / 9 objectives | https://www.iso.org/standard/42001 |
-| CNIL guidance | offline-pending-reverify | not consulted this pass | — | https://www.cnil.fr/ |
-| OWASP-ASI-2026 | offline-pending-reverify | not consulted this pass | — | — |
+| CNIL guidance | **verified-online** | WebFetch cnil.fr (2026-10-27) | official French DPA (Commission Nationale de l'Informatique et des Libertés) enforcing GDPR; publishes guidelines/recommendations + GDPR toolkit (RoPA, DPIA, BCR) | https://www.cnil.fr/en |
+| OWASP-ASI-2026 | **verified-online** | WebSearch genai.owasp.org (2026-10-27) | "OWASP Top 10 for Agentic Applications", published **2025-12-09** (OWASP GenAI Security Project / Agentic Security Initiative); risks ASI01–ASI10 | https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/ |
 
 Cost of this verification: **€0** (search/fetch only; no paid API, no purchase). CTO note recorded: DORA's **2025-01-17**
 application date strengthens its applicability gate (EU financial entities). ISO normative text remains purchase-only.

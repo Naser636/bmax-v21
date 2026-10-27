@@ -4839,3 +4839,44 @@ decision point (after capability-learning + checkpoint-engine); the no-mutation-
 Next €0 candidate: cover the `resolution` family at capability-router's decision point, OR route post-release-learning
 through excellence-gate. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host
 backups, real agent, canonical-queue activation, ISO paid text, any purchase.
+
+---
+## CHECKPOINT 2026-10-27 (am) — capability-router resolution gate + CNIL/OWASP live-verify €0
+CTO consolidated campaign. Truth Lock entry ffebbd8≡origin/main, clean, 5 stashes, 4 untracked docs/. No new primitive/
+orchestrator/router. Additive + opt-in. Diff = capability-router(.ts/.test) + excellence-coverage + regulatory doc + matrix doc.
+
+**AXE 1 (router resolution) — PROVEN via REAL path:** route()'s `chosen` selection drives execution. Integrated the
+shared requireExcellence boundary at the REAL route() decision, OPT-IN via opts.excellence (no context ⇒ EXACT legacy
+return; public contract preserved). PROHIBITED unproven-superlative claim ⇒ route NOT admitted (chosen:null, admit:false)
+so a contract-honouring caller does NOT dispatch; stale/offline/reviewer-unavailable ⇒ advisory, admit true, chosen kept.
+Integration tests THROUGH the real module (capability-router.test.ts 10→15, 5 AXE-1 assertions, inTempCwd real consumer):
+valid⇒admit+chosen; prohibited⇒not-admitted+chosen null; stale⇒advisory-admit; reviewer-down⇒advisory-admit;
+no-opts⇒legacy. excellence-coverage: resolution (capability-router.route) NOT_COVERED→COVERED; remaining NOT_COVERED
+(listed): post-release-learning, per-executor execution, other resolvers (decision-engine/execution-planner). No
+total-coverage claim.
+
+**Coverage now (each with a REAL-path integration test):** mission-execution (scheduler+tick), capability-self-review
+(regulatory-assurance+agent-governance), learning (capability-learning.reuseLearning), recovery (checkpoint-engine
+resume + build-recovery apply), resolution (capability-router.route). Declared == effective.
+
+**AXE 2 (regulatory live research) — verified-online 2026-10-27 (€0, no paywall bypass):**
+- OWASP-ASI-2026 CONFIRMED: genai.owasp.org "OWASP Top 10 for Agentic Applications", published 2025-12-09 (ASI01–ASI10,
+  OWASP GenAI Security Project / Agentic Security Initiative) — registry version/date already matched ⇒ NO code change.
+- CNIL CONFIRMED: Commission Nationale de l'Informatique et des Libertés, French DPA, publishes guidelines/recommendations
+  + GDPR toolkit. Both flipped offline-pending-reverify→verified-online in REGULATORY_ASSURANCE_V1 live-verification log
+  with URL + consultation date. GDPR/DORA/NIST (prior lot) remain verified-online; ISO = catalogue metadata only (text
+  paywalled, not retrieved). No regulatory CODE change (no real gap demonstrated). Preparation ≠ conformity ≠ cert.
+
+**AXE 3 (prod readiness):** no new local fix this lot; audit-log/provenance reuse carried from prior lots. 9 gaps
+unchanged (EXTERNAL). No simulated result claimed as production.
+
+**Proof:** capability-router 10→15 + excellence-coverage 9 ⇒ full gate 69/69; tsc 0; build 0. Checkpoint suites replayed
+green first.
+
+**Learning reuse (proven):** requireExcellence (shared boundary) reused at a 4th real decision point (router selection,
+after scheduler/capability-learning/checkpoint/build-recovery); live source-verification discipline reused for OWASP+CNIL.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/capability-router.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next €0 candidate: route post-release-learning capture/reuse through excellence-gate, OR gate per-executor execution in
+capability-executors. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups,
+real agent, canonical-queue activation, ISO paid text, any purchase.
