@@ -4655,3 +4655,41 @@ blocking doctrine. 9 primitives + executors unchanged; 5 stashes + foreign docs 
 Next €0 candidate: cover a NOT_COVERED family (learning or recovery) via requireExcellence, or add a learning-reuse
 audit using audit-log. BLOCKED/EXTERNAL (CTO/infra): network source re-verification, KMS/HSM, prod multi-tenant
 isolation, WORM/SIEM + off-host backups, real agent, scheduler activation on the canonical queue.
+
+---
+## CHECKPOINT 2026-10-27 (ah) — learning + recovery excellence coverage + continuous closure €0
+CTO. Truth Lock entry 7b941e0≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive/orchestrator.
+Diff = 1 new core module + 1 suite + excellence-coverage update + package.json + 2 docs.
+
+**AXE 1 (learning + recovery coverage) — PROVEN:** NEW excellence-gate.ts applies the SHARED requireExcellence boundary
+at two decision points, bound to tamper-evident audit-log provenance (no new router/primitive, no rule duplication):
+- gateLearningReuse: a recorded learning may REUSE-influence a decision only if sealed provenance verifies + excellence
+  admits (prohibited superlative blocks; stale/offline advisory, non-blocking) + it is actually APPLIED. decideWithLearning
+  PROVES effective reuse (a recorded+provenanced learning CHANGES a later decision — storage alone ≠ reuse; control case
+  shows no influence without it).
+- gateRecovery: proceeds only if excellence admits AND recovery evidence provenance verifies + not contradictory;
+  tampered/contradictory ⇒ do not proceed; reviewer error advisory.
+Suite excellence-gate 15/15 (absent/stale/invalid-provenance/prohibited-superlative; recovery contradictory/tampered/
+absent-evidence; reviewer-unavailable; multi-call audit chain tamper-detectable). excellence-coverage.ts updated: learning
++ recovery NOT_COVERED→COVERED with gated evidence; STILL NOT_COVERED (honestly listed): resolution, per-executor
+execution, legacy learning/recovery modules. No total-coverage claim.
+
+**AXE 2 (regulatory):** unchanged this cycle (GDPR/ISO27001/ISO42001/DORA conditional intact, 32/32); no network ⇒
+sources remain offline-pending-reverify (not revalidated live). No new sector pack (none with verifiable applicability
+this cycle). Preparation ≠ conformity ≠ certification kept.
+
+**AXE 3 (production readiness):** audit-log (gap #4 local) now REUSED by excellence-gate (provenance binding) — a real
+reuse of the prior safe fix. Other 8 gaps unchanged (EXTERNAL). No simulated result claimed as production.
+
+**Proof:** excellence-gate 15 + excellence-coverage 9 (+ all prior) ⇒ full gate 68→69/69; tsc 0; build 0. Checkpoint
+suites replayed green first; green suites not needlessly re-run beyond the affected set + gate.
+
+**Learning reuse (proven, meta):** this lot IS a demonstration of effective learning reuse — requireExcellence (shared
+boundary) + audit-log (tamper-evident chain) + evidence-provenance, all PRIOR artifacts, are reused as the substrate;
+excellence-gate proves at test-time that a stored learning influences a later decision.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/excellence-gate.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next €0 candidate: route a legacy learning/recovery module (capability-learning or checkpoint-engine) through
+excellence-gate, or cover the resolution family at the router decision point. BLOCKED/EXTERNAL (CTO/infra): network
+source re-verification, KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue
+activation.

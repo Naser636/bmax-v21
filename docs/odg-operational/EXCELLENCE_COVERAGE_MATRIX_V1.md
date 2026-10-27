@@ -12,10 +12,11 @@ claim.**
 | odg-schedule-tick | mission-execution | 5 | injects `reviewExcellence` into the canary ctx (read-only) | yes | wired; covered by the scheduler contract | COVERED_VIA_BOUNDARY |
 | regulatory-assurance | capability-self-review | 4 | `buildDossier → reviewForExcellence` (auto) | yes | `regulatory-assurance.test.ts` | **COVERED** |
 | agent-governance (demo) | capability-self-review | 4 | `reviewForExcellence` on `autonomous-governance` | yes | `excellence-policy.test.ts` | **COVERED** |
+| learning reuse (`excellence-gate.gateLearningReuse`) | learning | 3 | `gateLearningReuse → requireExcellence` + provenance + audit-log (effective-reuse proof) | yes | `excellence-gate.test.ts` (15) | **COVERED** |
+| recovery (`excellence-gate.gateRecovery`) | recovery | 4 | `gateRecovery → requireExcellence` + evidence provenance + audit-log | yes | `excellence-gate.test.ts` (15) | **COVERED** |
 | resolvers / capability-router | resolution | 3 | run as missions ⇒ scheduler boundary | no | — | NOT_COVERED (covered only when dispatched as a scheduled mission) |
 | capability-executors | execution | 4 | governed by third-party-agent + authorizeExecution | no | — | NOT_COVERED (per-executor review = over-injection; candidate: executor-level self-review) |
-| learning registries | learning | 3 | — | no | — | NOT_COVERED (candidate lot) |
-| recovery (checkpoint/build-recovery) | recovery | 4 | — | no | — | NOT_COVERED (candidate lot) |
+| learning/recovery LEGACY modules | learning-recovery-legacy | 3 | not yet routed through the gate | no | — | NOT_COVERED (gate boundary exists + proven; routing legacy modules = follow-up) |
 
 ## Rule semantics (uniform, via `requireExcellence`)
 - **Prohibited claim** (unproven superlative — "world #1"/"best"/"optimal" without a cited benchmark) ⇒ **admit:false**
@@ -25,9 +26,10 @@ claim.**
 - **Absent review / reviewer error** ⇒ advisory, non-blocking (strict blocks). No loop, no false success.
 
 ## Covered families (proven) vs uncovered (honest)
-- **Covered:** `mission-execution`, `capability-self-review`.
-- **NOT covered (listed, not claimed):** resolution, execution (per-executor), learning, recovery — each a candidate
-  future lot. Covering them must use the shared boundary, not duplicate the rule, and avoid over-injection.
+- **Covered:** `mission-execution`, `capability-self-review`, `learning`, `recovery`.
+- **NOT covered (listed, not claimed):** resolution, execution (per-executor), and the learning/recovery LEGACY
+  modules (not yet routed through `excellence-gate`). Each a candidate follow-up; covering them must use the shared
+  boundary, not duplicate the rule, and avoid over-injection.
 
 ## Canonical-governance note
 Future capabilities/missions SHOULD import the single boundary `excellence-policy.requireExcellence` (or go through the

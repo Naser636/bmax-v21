@@ -8,17 +8,17 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
 // (1) matrix is honest: every consults:true row cites executable evidence; every consults:false row states a gap.
 ok("matrix: covered rows cite evidence; uncovered rows state a gap", C.COVERAGE_MATRIX.every(r => (r.consults ? !!r.evidence : r.status === "NOT_COVERED" && !!r.gap)));
 
-// (2) mission-execution + capability-self-review families are COVERED (with gated evidence).
+// (2) covered families now include mission-execution, capability-self-review, learning, recovery (gated evidence).
 const fams = C.coveredFamilies();
-ok("covered families include mission-execution + capability-self-review", fams.includes("mission-execution") && fams.includes("capability-self-review"));
+ok("covered families include mission-execution + capability-self-review + learning + recovery", fams.includes("mission-execution") && fams.includes("capability-self-review") && fams.includes("learning") && fams.includes("recovery"));
 
-// (3) uncovered components are explicitly listed (no total-coverage claim).
+// (3) still-uncovered components explicitly listed (resolution / per-executor execution / legacy) — no total-coverage claim.
 const unc = C.uncoveredComponents().map(r => r.component);
-ok("uncovered components explicitly listed (resolution/execution/learning/recovery)", unc.length >= 3 && C.uncoveredComponents().every(r => r.consults === false));
+ok("still-uncovered components explicitly listed (resolution/execution/legacy)", unc.length >= 2 && C.uncoveredComponents().every(r => r.consults === false && !!r.gap));
 
 // (4) summary is internally consistent.
 const s = C.coverageSummary();
-ok("summary consistent (covered + uncovered = total)", s.covered + s.uncovered === s.total && s.covered >= 2 && s.uncovered >= 1);
+ok("summary consistent (covered + uncovered = total)", s.covered + s.uncovered === s.total && s.covered >= 4 && s.uncovered >= 1);
 
 // (5) SHARED boundary requireExcellence: prohibited superlative ⇒ admit:false.
 const prohibited = { verdict: "IMPROVE", claims: [{ claim: "world number one", justified: false }], staleReferences: [], gaps: [] };
