@@ -5904,3 +5904,36 @@ scenarios/partner/platform findings; collision disclosure reuses the canonical-d
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/commercial-portfolio.test.ts`
 HUMAN FRONTIERS (grouped): COMMERCIAL — price band; first outreach after legal review; partner/subcontract+budget;
 platform registration (commercial act). CERT separate = CTO_DECISION_PACK.
+
+---
+## CHECKPOINT 2026-10-27 (bo) — V12/V12.1 prospection registry + first batch (≤5) + Gmail channel diagnostic €0
+CTO "V12 PREMIERS CLIENTS" + "V12.1 CANAL GMAIL" (parallel, post-PR#72). Truth Lock 79ed5a8→3564023 (verified live, not
+assumed), clean, 5 stashes + 4 untracked docs/ preserved. No new primitive/orchestrator. Diff = prospection-registry
+(.ts/.test) + package.json + 2 docs + compass.
+
+**Gmail channel DIAGNOSTIC (read-only, no secret touched):** email-gateway.ts EXISTS (governed fail-closed) + nodemailer
+installed, but outboundReadiness() = NOT_CONFIGURED/sendEnabled=false; no SMTP creds (~/.config/odg has only github.env+
+replicate.env); account akabinasreddin@gmail.com NOT connected. Gateway needs SMTP_HOST/PORT/USER/PASS (Gmail APP-PASSWORD,
+2FA req'd) + EMAIL_SEND_ENABLED=1 + human authorization + injected transport. → GMAIL_CHANNEL_DIAGNOSTIC_V1 (exact CTO env
+steps; ODG never asks/prints/commits the password; no 2FA bypass; €0). **CHANNEL = BLOCKED.**
+
+**prospection-registry.ts (EXECUTED):** single shared outreach record, honest-by-construction — SENT only with provider
+message-id PROOF + human authorization + compliance.ok; a prepared message can NEVER be recorded as sent; dedup across
+both flows; opt-out blocks future contact + follow-ups; summary proof-gated. Suite 9.
+
+**First batch (≤5) PREPARED, NOT SENT → PROSPECTION_BATCH_1_V1:** 5 REAL prospects from FIELD_CANDIDATES_REAL_V3 with
+real public signals (PlayPlay/iAdvize/lemlist/Sellsy/Yousign), offer A/C matched, role=FUNCTION only (no individual
+named, no email invented); each draft passed prospection-compliance (email B2B legitimate-interest); recorded 5×
+PREPARED_PENDING_AUTH, **0 SENT**. 3 exact blockers: (1) no authorised channel, (2) no verified recipient addresses,
+(3) no human legal review. No automatic relance; opt-out honoured.
+
+**Gate:** test:report 90→91; tsc 0; build 0. Honesty: NOTHING sent (0 SENT, proof-gated); no need/budget/intent/address
+invented; prices indicative non-contractual; no secret requested/stored; 2FA/Google protections respected; €0.
+
+**Learning reuse (proven):** batch reuses prospection-compliance (validate) + FIELD_CANDIDATES_REAL_V3 (real prospects)
++ email-gateway fail-closed contract; registry enforces the prepared≠sent doctrine across both flows (single source of truth).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/prospection-registry.test.ts`
+HUMAN FRONTIERS (grouped): to SEND batch-1 — CTO provides Gmail app-password via ~/.config/odg/gmail.env (env-only) +
+EMAIL_SEND_ENABLED=1 + per-send authorization + legal review of letters; source/verify recipient professional addresses.
+Plus standing: price band; partner/subcontract+budget; CERT = CTO_DECISION_PACK. Nothing sent until all met.
