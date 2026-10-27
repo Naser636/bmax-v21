@@ -226,6 +226,21 @@ function recordMission(mission: string): any {
     console.warn("[MissionLedger] Post-release learning (advisory) failed:", e && e.message);
   }
 
+  // V25 — automatic learning-loop POPULATION (ADVISORY, non-authoritative). After THIS proven mission's
+  // ledger entry is written, record the OUTCOME of any patch-memory precedent the mission REUSED (read from
+  // decision.json) into the reuse-ledger, so later routing (capability-router) can de-select a net-regressing
+  // precedent. Only PROVEN missions reach here, so the automatic outcome is validated+unmeasured ⇒
+  // INCONCLUSIVE — NEVER auto-VALIDATED (no measured before/after delta ⇒ a mission cannot validate its own
+  // precedent) and NEVER auto-FAILED (a failed mission halts before this stage). A non-reusing mission records
+  // nothing. Fully guarded + lazily required: a recorder failure NEVER changes the already-written record, the
+  // entry, the release decision or this return value. Idempotent: the (mission,runId) gate above already
+  // returned on a duplicate run, so the recorder fires once per genuine new append (no replay double-count).
+  try {
+    require("./mission-reuse-recorder").recordMissionReuseOutcomes(mission);
+  } catch (e: any) {
+    console.warn("[MissionLedger] Reuse-outcome recording (advisory) failed:", e && e.message);
+  }
+
   return { skipped: false, entry, count: entries.length };
 }
 
