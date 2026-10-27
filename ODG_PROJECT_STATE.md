@@ -4766,3 +4766,37 @@ Next action: APPLY the session internet authorization — live-revalidate REGULA
 primary; ISO principles-only, no paywall bypass) and update offline-pending-reverify→verified-online with consultation
 dates. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent,
 canonical-queue activation, any paid API/purchase.
+
+---
+## CHECKPOINT 2026-10-27 (ak) — AXE 2 live source re-verification (session internet authorization) €0
+CTO granted SESSION-SCOPED INTERNET AUTHORIZATION (mission-perimeter only, rule 1 = finish in-progress mission first —
+checkpoint-recovery-gate PR#42 landed before any web access). Truth Lock entry 32f58fd≡origin/main, clean, 5 stashes,
+4 untracked docs/. Doc-only change (no code).
+
+**Consulted online 2026-10-27 (€0, search/fetch only, no paid API, no paywall bypass, no copyrighted text retrieved):**
+- GDPR 2016/679 — verified-online (EUR-Lex/Commission): CELEX 32016R0679; in force 2016-05-24; APPLIES 2018-05-25.
+- DORA 2022/2554 — verified-online (ESMA/EIOPA/EUR-Lex): adopted 2022-12-14; in force 2023-01-16; APPLIES 2025-01-17;
+  20+ financial-entity types (strengthens the applicability gate).
+- NIST CSF 2.0 — verified-online (nist.gov direct fetch): published 2024-02-24, id NIST.CSWP.29.
+- NIST AI RMF 1.0 — verified-online (nist.gov direct fetch): released 2023-01-26, id NIST.AI.100-1.
+- ISO/IEC 27001:2022 — METADATA verified-online (iso.org): ed.3, published 2022-10-25, 1 amendment (TEXT paywalled, NOT
+  retrieved).
+- ISO/IEC 42001:2023 — METADATA verified-online (iso.org): first AIMS standard, published Dec 2023, Annex A 38 controls
+  /9 objectives (TEXT paywalled, NOT retrieved).
+- CNIL guidance + OWASP-ASI-2026 — NOT consulted this pass ⇒ remain offline-pending-reverify (honest).
+
+All registry version strings in regulatory-assurance already match the live facts (no code change needed). Live-
+verification log added to REGULATORY_ASSURANCE_V1.md with URLs, authority, consultation date, status, applicability.
+EUR-Lex ELI pages are JS SPAs (empty via fetch) + iso.org returns 403 to bots ⇒ corroborated via official-domain
+WebSearch snippets (recorded as such; direct-fetch verified for NIST).
+
+**Proof:** doc-only; full gate unchanged (69/69 from prior lot); no code touched ⇒ tsc/build unaffected. Distinctions
+kept: facts verified-online vs offline-to-revalidate vs paywalled-metadata-only; preparation ≠ conformity ≠ cert.
+
+**Learning reuse (proven):** applied the excellence-policy source-verification discipline (authority/version/date/
+status/applicability per source) + the honest verified-vs-offline labelling to real online sources.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/regulatory-assurance.test.ts`
+Next €0 candidate: route the next NOT_COVERED family (build-recovery or router recall) through excellence-gate; or add
+freshness/version-drift CHECK fixtures using the now-verified dates. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod
+multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation, ISO paid text, any purchase.

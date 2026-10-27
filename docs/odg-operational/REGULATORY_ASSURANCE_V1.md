@@ -41,6 +41,25 @@ usage-rights/next-review. `verificationStatus = offline-pending-reverify` until 
 | NIST-AI-RMF-1.0 | NIST | ai-risk | 1.0 | 2023-01-26 | NIST AI Risk Management Framework 1.0 | recommendation | US (intl. use) | US-gov public | 2027-01-01 |
 | OWASP-ASI-2026 | OWASP | autonomous-governance | 2026 | 2025-12-09 | OWASP Top 10 for Agentic Applications 2026 | recommendation | international | principles only | 2027-06-01 |
 
+### Live-verification log (session internet authorization, consulted 2026-10-27)
+Per the CTO session-scoped internet authorization (mission-perimeter only). Only facts actually consulted online are
+marked **verified-online**; others stay **offline-pending-reverify**. No paywall bypassed; no copyrighted normative
+text retrieved (ISO = public catalogue metadata only).
+
+| id | verification | consulted (2026-10-27) | verified facts | source URL |
+|---|---|---|---|---|
+| GDPR-2016-679 | **verified-online** | WebSearch (eur-lex.europa.eu, commission.europa.eu) | CELEX 32016R0679; in force 2016-05-24; **applies from 2018-05-25** | https://eur-lex.europa.eu/eli/reg/2016/679/oj |
+| DORA-2022-2554 | **verified-online** | WebSearch (esma.europa.eu, eiopa.europa.eu, eur-lex) | adopted 2022-12-14; in force 2023-01-16; **applies from 2025-01-17**; 20+ financial-entity types | https://eur-lex.europa.eu/eli/reg/2022/2554/oj |
+| NIST-CSF-2.0 | **verified-online** | WebFetch nist.gov | CSF **2.0**, published **2024-02-24**, id NIST.CSWP.29 | https://doi.org/10.6028/NIST.CSWP.29 |
+| NIST-AI-RMF-1.0 | **verified-online** | WebFetch nist.gov | AI RMF **1.0**, released **2023-01-26**, id NIST.AI.100-1 | https://doi.org/10.6028/NIST.AI.100-1 |
+| ISO27001-2022 | **metadata verified-online** (text paywalled, NOT retrieved) | WebSearch iso.org | ed.3, **published 2022-10-25**, 1 amendment, status Published | https://www.iso.org/standard/27001 |
+| ISO42001-2023 | **metadata verified-online** (text paywalled, NOT retrieved) | WebSearch iso.org | first AIMS standard, **published Dec 2023**, Annex A = 38 controls / 9 objectives | https://www.iso.org/standard/42001 |
+| CNIL guidance | offline-pending-reverify | not consulted this pass | — | https://www.cnil.fr/ |
+| OWASP-ASI-2026 | offline-pending-reverify | not consulted this pass | — | — |
+
+Cost of this verification: **€0** (search/fetch only; no paid API, no purchase). CTO note recorded: DORA's **2025-01-17**
+application date strengthens its applicability gate (EU financial entities). ISO normative text remains purchase-only.
+
 **Normative status is never conflated**: legal obligation (GDPR) ≠ voluntary standard (ISO) ≠ recommendation (NIST/
 OWASP) ≠ industry practice ≠ assumption. Best practices are complementary; where methods differ (e.g. ISO's
 control-based ISMS vs NIST's function-based CSF), both principles are offered, not merged as one "optimal" truth.
