@@ -6039,3 +6039,33 @@ reuses portfolio/schedule/channels; audit reuses the honest-site stance + ASSURA
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/pricing-grid.test.ts`
 HUMAN FRONTIERS: publish public starting-from prices + any deploy (CTO; prices HYP); + unchanged (outreach/channel/
 partner/budget; CERT=CTO_DECISION_PACK; selling structure=SASU decision for €500k scale).
+
+---
+## CHECKPOINT 2026-10-27 (bs) — V16 €500k gap-closure solver + concrete website pages (partners/FAQ) €0
+CTO "V16 GAP CLOSURE + WEBSITE CONVERSION" (post-PR#76). Truth Lock 3f3347d≡origin/main (0/0), clean, 5 stashes + 4
+untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = revenue-target-path(.ts/.test) +
+package.json + 2 site HTML pages + 7 site nav edits + 2 docs + compass.
+
+**revenue-target-path.ts (EXECUTED):** closeGapSigned() binary-searches the uniform scale a track mix needs to reach
+SIGNED≥target within the period (reuses commercial-portfolio⇒revenue-schedule), then reports honest consequences:
+cash<signed (lag), delivery-capacity gap⇒subcontractors, infeasible if maxScale short, zero-base not achievable. Suite 8.
+RESULT: base A+B+C (~€91k signed) scales 5.49× → signed €500k, cashed €447,975 (gap €52k), ~335 prospects/mo, peak 7
+signings/mo > solo ceiling 4 ⇒ 1 subcontractor needed ⇒ HYBRID (direct+subcontract), not solo. → REVENUE_500K_TRAJECTORY_V1.
+
+**Website CONCRETE changes in-repo (V16 §3, executed, NOT published):** NEW site/partners.html (Voie D: subcontract/
+white-label/referral, quote-only, no partnership-acquired) + site/faq.html (honest objections: certifiés? Non; no
+guarantee; synthetic samples labelled); nav wired across all 9 pages (Partenaires+FAQ, idempotent insert). Chrome-
+consistent; route.ts untouched (anti-traversal intact); NO public prices added (CTO decision); NO deploy. → WEBSITE_CHANGES_V16.
+
+**Gate:** test:report 94→95; tsc 0; build 0. site/proofs tests unaffected (unrelated prototypes). Honesty: €500k signed
+reachable only via 5.49× hybrid + subcontractor; cash€448k<signed€500k; prices HYPOTHESIS; nothing published/deployed/sent.
+
+**V17 note (received mid-turn):** target redefined to €500k NET CASH collected (stricter; net≪signed). Next lot = net-cash
+build-up layer (NET_CASH_PLAN_500K_V1) on top of this; this V16 trajectory targets SIGNED and explicitly flags the gap.
+
+**Learning reuse (proven):** revenue-target-path reuses commercial-portfolio/revenue-schedule; website pages reuse the
+honest-site chrome + ASSURANCE_PILOT synthetic-proof framing + PARTNER research (Voie D).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-target-path.test.ts`
+HUMAN FRONTIERS: publish public prices + deploy (CTO; prices HYP); SASU for €500k scale; subcontractor contracts +
+working capital (hybrid); + unchanged (outreach after Gmail+auth+legal+addresses; CERT=CTO_DECISION_PACK).
