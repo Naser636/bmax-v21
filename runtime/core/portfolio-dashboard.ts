@@ -23,6 +23,7 @@ const TRACE = require("./certification-traceability.js");
 const RL = require("./reuse-ledger.js");
 const PART = require("./partner-channel.js");     // V29: partner funnel
 const FIN = require("./portfolio-finance.js");     // V29: consolidated A–F monthly net-cash
+const OWNER = require("./owner-console.js");        // V33: owner-only material-decision queue
 
 const NET_TARGET_DEFAULT = 500000;   // €500k NET cash target (binding; never lowered to fit a forecast)
 
@@ -113,6 +114,22 @@ function buildDashboard(input: any = {}): any {
     ? (() => { const fm = FIN.buildModel(input.finance); return fm.status === "NO_DATA" ? { status: "NO_DATA" } : { scenario: fm.scenario, consolidated: fm.consolidated, perAxis: fm.perAxis, reconciliation: fm.reconciliation, actualVsForecast: fm.actualVsForecast, required: fm.required }; })()
     : { status: "NO_DATA" };
 
+  // V33 — OWNER decision queue: surface ONLY material decisions (signature/money/exceptional); routine candidates are
+  // routed to ODG/provider (never to the owner). Explicit empty state when there are zero material decisions. A no-
+  // response NEVER authorizes anything (default-safe, inherited from owner-console).
+  const ownerDecisions = Array.isArray(input.ownerDecisionCandidates)
+    ? (() => {
+        const q = OWNER.ownerQueue(input.ownerDecisionCandidates);
+        return {
+          decisions: q.ownerDecisions,
+          count: q.ownerDecisionCount,
+          routedAwayCount: q.routedAway.length,
+          emptyState: q.ownerDecisionCount === 0 ? "No material owner decisions pending — nothing requires the owner." : null,
+          note: "Owner sees ONLY material decisions (signature/money/exceptional). Routine items routed to ODG/provider. No response authorizes NOTHING (default-safe).",
+        };
+      })()
+    : { status: "NO_DATA" };
+
   // Learning loop aggregate.
   const learning = learningSummary(input.reuseLedgerOpts);
 
@@ -132,7 +149,7 @@ function buildDashboard(input: any = {}): any {
   return {
     ok: true,
     axes, forecast, enterprise, enterpriseSummary, certification, learning,
-    partnerFunnel, finance,
+    partnerFunnel, finance, ownerDecisions,
     cashVsForecast,
     notes: [
       "This is a read-model VIEW: it sells nothing, collects nothing, certifies nothing. Forecast ≠ cash; readiness ≠ certification.",

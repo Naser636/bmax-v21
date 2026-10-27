@@ -6807,3 +6807,26 @@ proposal/pricing/sizing, delivery+QA+independent verdict, invoice PREP + reconci
 outreach SEND (channel), real leads/demand, partner acceptance, ISO audit, real receipts. ACTUAL COLLECTED CASH €0.
 Session V21→V32 = PRs #82–#105(pending), test:report 59→123. €500k NET unachieved/VOLUME-bound. NEXT dependency-ready:
 wire ownerQueue into portfolio-dashboard (surface the 3 material owner decisions) OR await HA-1/HA-2.
+
+---
+## CHECKPOINT 2026-10-27 (cv) — V33 OWNER QUEUE in the dashboard €0
+CTO "V33 OWNER CONSOLE DASHBOARD INTEGRATION" (post-PR#105, main d83bc9d). Truth Lock d83bc9d≡origin/main (0/0), clean,
+5 stashes + 4 untracked docs/ preserved, CI success. No new primitive. Diff = portfolio-dashboard.ts + portfolio-
+dashboard-owner.test + package.json + compass.
+
+**portfolio-dashboard.ts EXTENDED (consumes owner-console.ownerQueue; single source of truth, no dup):** new
+ownerDecisions section {decisions[], count, routedAwayCount, emptyState, note} — surfaces ONLY material decisions
+(signature/money/exceptional) with full metadata (recommendation/why/maxExposure/risks/ifRejected/ifNoAnswer/
+signatureRequired/APPROVE-REJECT); ROUTINE candidates routed away (never to owner); explicit emptyState when 0 material;
+NO_DATA when no candidates. Default-safe: no-response authorizes NOTHING. coexists with six-axis + finance (reconcile) +
+actual-vs-forecast. Suite 9 (new) + existing dashboard(12)+enterprise(9)+v29(9) GREEN.
+
+**Gate:** test:report 123→124; tsc 0; build 0. €0; nothing sent/signed; no auto-approval/auto-signature/new payment
+authority added; channel + send controls unchanged.
+
+**SIX-AXIS / autonomy unchanged (V32 model now visible in dashboard):** owner sees ONLY signature(step6)/invoice-issuance
+(step10)/refund(step11); routine = ODG/provider. Currently 0 material decisions pending (nothing real in flight).
+ACTUAL COLLECTED CASH €0; €500k NET unachieved/VOLUME-bound. Session V21→V33 = PRs #82–#106(pending), test:report
+59→124, ff-only CI-green. EXTERNAL GATES unresolved: HA-1 Gmail channel, HA-2 real lead, partner acceptance, enterprise
+demand, ISO audit, real receipts. NEXT dependency-ready internal: (none of comparable value remains that advances cash
+without external evidence) — tighten a sensitivity study OR extend F dossier clauses; otherwise await HA-1/HA-2.
