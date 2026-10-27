@@ -17,6 +17,14 @@ const CM = require("./iso-27001-clause-matrix.js");
 
 const STATE_RANK: Record<string, number> = { NONE: 0, DRAFTED: 1, APPROVED: 2, EXECUTED: 3 };
 
+// Controls whose satisfaction requires EXECUTED evidence (a drill/audit/incident actually performed with records) —
+// an APPROVED policy alone is NOT sufficient for these (mandate §3). Clause 9 = performance evaluation / internal
+// audit; Clause 10 = improvement / corrective action from real incidents; A.5 = organizational theme that folds in
+// incident management (A.5.24–A.5.28), which must be operated, not merely policy-approved. All other controls accept
+// APPROVED policy (+ the gated code mechanism) as satisfying readiness.
+const EXECUTION_REQUIRED = new Set(["9", "10", "A.5 (Organizational, 37)"]);
+function requiredState(ref: string): string { return EXECUTION_REQUIRED.has(String(ref)) ? "EXECUTED" : "APPROVED"; }
+
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 
 /** normaliseEvidence(e): validate a single operational-evidence record; fail-closed downgrade if approval unsupported. */
@@ -55,8 +63,10 @@ function assessOperational(opts: any): OperationalAssessment {
       return { ref: r.ref, title: r.title, baseStatus: r.status, opState: "N/A", status: r.status, responsible: null, artifact: null, flag: null, note: r.note };
     }
     const n = normaliseEvidence(ev[r.ref]);
+    const needRank = STATE_RANK[requiredState(r.ref)];
     let status: string, opState: string, note: string;
-    if (STATE_RANK[n.state] >= STATE_RANK.APPROVED) { status = "SATISFIED"; opState = n.state; note = `code mechanism + ${n.state} operational evidence (responsible: ${n.responsible}; artifact: ${n.artifact})`; }
+    if (STATE_RANK[n.state] >= needRank) { status = "SATISFIED"; opState = n.state; note = `code mechanism + ${n.state} operational evidence (responsible: ${n.responsible}; artifact: ${n.artifact})`; }
+    else if (n.state === "APPROVED") { status = "MECHANISM_PRESENT"; opState = "APPROVED_PENDING_EXECUTION"; note = "policy approved but this control requires EXECUTED evidence (drill/audit/incident records) ⇒ not satisfied"; }
     else if (n.state === "DRAFTED") { status = "MECHANISM_PRESENT"; opState = "DOCUMENTED_NOT_APPROVED"; note = "template drafted but NOT approved ⇒ not satisfied" + (n.flag ? ` [${n.flag}]` : ""); }
     else { status = "MECHANISM_PRESENT"; opState = "NONE"; note = "code mechanism only; no operational evidence ⇒ not satisfied"; }
     return { ref: r.ref, title: r.title, baseStatus: r.status, opState, status, responsible: n.responsible, artifact: n.artifact, flag: n.flag, note };
@@ -73,6 +83,7 @@ function assessOperational(opts: any): OperationalAssessment {
     "DOCUMENTED ≠ APPROVED ≠ EXECUTED: a drafted template is not an approval; SATISFIED requires APPROVED or EXECUTED operational evidence with a named responsible + a concrete artifact.",
     "No approval, incident, restore-test or security operation is fabricated. Absent real operational evidence, controls stay MECHANISM_PRESENT.",
     "Responsible party for approvals/operation is a HUMAN act (CTO) — ODG prepares templates/registers, it does not self-approve.",
+    "Execution-required controls (clause 9 internal audit, clause 10 improvement/incident) are NOT satisfied by an approved policy alone — they require EXECUTED evidence (a drill/audit/incident actually performed with records).",
   ];
   const L: string[] = [];
   L.push("# ODG — ISO/IEC 27001 operational-evidence assessment");
@@ -89,5 +100,5 @@ function assessOperational(opts: any): OperationalAssessment {
   return { standard: base.standard, certificationStatus: base.certificationStatus, now, rows, summary, notes, markdown: L.join("\n") };
 }
 
-export { assessOperational, normaliseEvidence, STATE_RANK };
-module.exports = { assessOperational, normaliseEvidence, STATE_RANK };
+export { assessOperational, normaliseEvidence, STATE_RANK, EXECUTION_REQUIRED, requiredState };
+module.exports = { assessOperational, normaliseEvidence, STATE_RANK, EXECUTION_REQUIRED, requiredState };

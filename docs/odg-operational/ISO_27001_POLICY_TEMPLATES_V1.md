@@ -45,5 +45,9 @@ APPROVED/EXECUTED artifact that promotes the row to SATISFIED.
 
 ## How these become SATISFIED
 Fill a template → **CTO approves (signature + date + responsible)** → register the artifact → pass
-`{ state: "APPROVED"|"EXECUTED", responsible, artifact }` to `assessOperational`. Only then does the matrix promote the
-control. **Until then every control stays MECHANISM_PRESENT — this is deliberate honesty, not an omission.**
+`{ state: "APPROVED", responsible, artifact }` to `assessOperational`. **Exception (EXECUTION-required controls):** the
+incident/improvement procedure (clause 10), the internal-audit/performance-evaluation (clause 9), the organizational
+theme that folds in incident management (A.5), and any restore-drill are **NOT promoted by approval alone** — they
+require `state: "EXECUTED"` with a real drill/audit/incident **record** (enforced by `EXECUTION_REQUIRED` in
+`iso-operational-evidence.ts`). **Until the required evidence exists every control stays MECHANISM_PRESENT — deliberate
+honesty, not an omission. ODG never fabricates an approval, incident, or restore test.**

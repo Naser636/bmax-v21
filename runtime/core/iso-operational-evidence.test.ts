@@ -38,6 +38,16 @@ ok("APPROVED without responsible+artifact ⇒ downgraded, not satisfied, flagged
 ok("unknown state ⇒ NONE (deny-by-default)", OE.normaliseEvidence({ state: "RUBBISH" }).state === "NONE");
 ok("EXECUTED needs responsible+artifact (else DRAFTED)", OE.normaliseEvidence({ state: "EXECUTED", responsible: "CTO" }).state === "DRAFTED");
 
+// (6b) EXECUTION-REQUIRED controls: an APPROVED policy is NOT enough — clause 10 needs EXECUTED (drill/incident records).
+const ap10 = OE.assessOperational({ gatedSuites, evidence: { "10": { state: "APPROVED", responsible: "CTO", artifact: "incident-policy-v1 (signed)" } }, now: "2026-10-27" });
+ok("clause 10 APPROVED-only ⇒ NOT satisfied (APPROVED_PENDING_EXECUTION)", row(ap10, "10").status === "MECHANISM_PRESENT" && row(ap10, "10").opState === "APPROVED_PENDING_EXECUTION");
+ok("clause 10 EXECUTED ⇒ SATISFIED", row(OE.assessOperational({ gatedSuites, evidence: { "10": { state: "EXECUTED", responsible: "CTO", artifact: "incident-register + post-incident review" } }, now: "2026-10-27" }), "10").status === "SATISFIED");
+// (6c) an APPROVAL-sufficient control (clause 5 leadership/policy) IS satisfied by APPROVED.
+ok("clause 5 APPROVED ⇒ SATISFIED (policy approval sufficient)", row(OE.assessOperational({ gatedSuites, evidence: { "5": { state: "APPROVED", responsible: "CTO", artifact: "isms-policy-v1 (signed)" } }, now: "2026-10-27" }), "5").status === "SATISFIED");
+ok("requiredState: clause 9/10 + A.5-org need EXECUTED, others APPROVED", OE.requiredState("10") === "EXECUTED" && OE.requiredState("9") === "EXECUTED" && OE.requiredState("A.5 (Organizational, 37)") === "EXECUTED" && OE.requiredState("5") === "APPROVED");
+// (6d) A.5 organizational theme (folds in incident mgmt) APPROVED-only ⇒ NOT satisfied (audit finding).
+ok("A.5 APPROVED-only ⇒ NOT satisfied (incident mgmt needs execution)", row(OE.assessOperational({ gatedSuites, evidence: { "A.5 (Organizational, 37)": { state: "APPROVED", responsible: "CTO", artifact: "org-policies-v1" } }, now: "2026-10-27" }), "A.5 (Organizational, 37)").status === "MECHANISM_PRESENT");
+
 // (7) EXTERNAL rows untouched by operational evidence.
 ok("A.8.16 monitoring stays EXTERNAL regardless of evidence", row(OE.assessOperational({ gatedSuites, evidence: { "A.8.16": { state: "EXECUTED", responsible: "x", artifact: "y" } }, now: "2026-10-27" }), "A.8.16").status === "EXTERNAL");
 

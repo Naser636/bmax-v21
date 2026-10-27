@@ -15,8 +15,8 @@ Supersedes V1 after the primary-source verification pass. Status: **VÉRIFIÉ** 
 ## B. Standards & obligations (Track B/D) [Δ primary-source pass]
 | Domain | Status | Note |
 |---|---|---|
-| EU AI Act base 2024/1689 | **VÉRIFIÉ (official-summary)** | CELEX 32024R1689 confirmed |
-| **Reg (EU) 2026/1744 (Digital Omnibus)** | **VÉRIFIÉ [Δ] (official-summary)** | EXISTS, in force 2026-07-27; high-risk Annex III→2027-12-02, Annex I→2028-08-02, Art.50(2) grace→2026-12-02, new CSAM/NCII bans; full clause text unread |
+| EU AI Act base 2024/1689 | **VÉRIFIÉ — dates only, official-summary (full text unread)** | CELEX 32024R1689 confirmed; EUR-Lex full text metadata-only |
+| **Reg (EU) 2026/1744 (Digital Omnibus)** | **VÉRIFIÉ [Δ] — dates only, official-summary + Art.113 authoritative mirror (full clause text unread)** | EXISTS, in force 2026-07-27; high-risk Annex III→2027-12-02, Annex I→2028-08-02, Art.50(2) grace→2026-12-02, new CSAM/NCII bans; EUR-Lex direct = empty shell |
 | GDPR per-channel prospection | **VÉRIFIÉ [Δ] (CNIL full-text)** | email/phone/postal/linkedin checklist + validator |
 | FR fiscal/structure 2026 | **VÉRIFIÉ [Δ] (service-public full-text)** | micro-BNC 83 600 €; TVA 37 500/41 250 €; 25k abandoned; URSSAF rate primary-unverified |
 | ISO 27001 clause text | **PARTIEL→closable €0 [Δ]** | AFNOR "Consultation libre" (ANS) = FREE read-only full text; enables clause-level 27001 lot |

@@ -36,3 +36,4 @@ Summary: SATISFIED 0 · MECHANISM_PRESENT 12 (of which documented-not-approved 0
 > DOCUMENTED ≠ APPROVED ≠ EXECUTED: a drafted template is not an approval; SATISFIED requires APPROVED or EXECUTED operational evidence with a named responsible + a concrete artifact.
 > No approval, incident, restore-test or security operation is fabricated. Absent real operational evidence, controls stay MECHANISM_PRESENT.
 > Responsible party for approvals/operation is a HUMAN act (CTO) — ODG prepares templates/registers, it does not self-approve.
+> Execution-required controls (clause 9 internal audit, clause 10 improvement/incident) are NOT satisfied by an approved policy alone — they require EXECUTED evidence (a drill/audit/incident actually performed with records).
