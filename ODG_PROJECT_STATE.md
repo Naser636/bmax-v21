@@ -6599,3 +6599,24 @@ Suite 12.
 (NOT_CERTIFIED). Learning loop CLOSED all outcomes. NEXT LOT: E — integrate enterprise-mission-model into portfolio-
 dashboard consolidation (dashboard currently accepts missions[]; make the dashboard surface E sizing + capacity per the
 consolidated view) OR D partner-profile prep (prep only, contact gated).
+
+---
+## CHECKPOINT 2026-10-27 (cn) — V28 PRIORITY E: enterprise mission sizing+capacity in the dashboard €0
+CTO "V28" Priority E (post-PR#97, main 1db88c4). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+portfolio-dashboard.ts + portfolio-dashboard-enterprise.test + package.json + compass.
+
+**portfolio-dashboard.ts EXTENDED (not duplicated — consumes the FULL enterprise-mission-model output):** per-mission
+row now surfaces justifiedPrice/proposedPrice/priceJustified/totalHours/soloCapacityHours/capacityExceeded/grossMargin/
+marginPct/flags + stage:"MODELED". New enterpriseSummary {count, modeled, totalJustifiedPrice, totalProposedPrice,
+capacityShortfalls[], priceNotJustified[], flagged[], stageDistinction}. stageDistinction states MODELED≠qualified≠
+signed≠collected AND taxes/social NOT in grossMargin (separate estimates, professional validation, net via
+net-cash-model). PRICE_EXCEEDS_SCOPE + CAPACITY_EXCEEDED surfaced. NO_DATA when no missions. Modeled missions never count
+as collected cash (gap stays full). Suite 9 (new) + existing dashboard suite 12 GREEN.
+
+**Gate:** test:report 114→115; tsc 0; build 0. €0; nothing sent; modeled≠sold.
+
+**SIX-AXIS STATUS (all active):** A offer · B offer · C qualification · D BLOCKED (no partner) · **E sizing now in
+dashboard** · F cert-traceability/dossier. Learning loop CLOSED all outcomes. NEXT LOT (V28 order): F — advance ONE
+prioritized ISO dossier end-to-end (select standard by product/market; requirement→evidence→gap→remediation→owner→
+milestone; reuse certification-traceability + clause-matrix + freshness; NOT_CERTIFIED). Then B recurring offer, C
+proposal templates.
