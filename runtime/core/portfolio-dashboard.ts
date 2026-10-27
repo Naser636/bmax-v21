@@ -21,6 +21,8 @@ const FORECAST = require("./pipeline-forecast.js");
 const ENT = require("./enterprise-mission-model.js");
 const TRACE = require("./certification-traceability.js");
 const RL = require("./reuse-ledger.js");
+const PART = require("./partner-channel.js");     // V29: partner funnel
+const FIN = require("./portfolio-finance.js");     // V29: consolidated A–F monthly net-cash
 
 const NET_TARGET_DEFAULT = 500000;   // €500k NET cash target (binding; never lowered to fit a forecast)
 
@@ -90,6 +92,27 @@ function buildDashboard(input: any = {}): any {
     ? (() => { const t = TRACE.buildTraceability(input.certification); return t.ok ? { certificationStatus: t.certificationStatus, summary: t.summary, byState: t.byState, remediationCount: t.remediation.length } : { status: "INVALID_INPUT", code: t.code }; })()
     : { status: "NO_DATA" };
 
+  // Axis-D partner funnel (V29). Counts by RECORDED state + qualification; NO partner is ACCEPTED unless its record
+  // explicitly says so — a prepared/qualified partner is NOT accepted (honest funnel, no conflation).
+  const partnerFunnel = Array.isArray(input.partners)
+    ? (() => {
+        const byState: Record<string, number> = {}; for (const s of PART.PARTNER_STATES) byState[s] = 0; byState.DISQUALIFIED = 0;
+        let qualified = 0;
+        for (const p of input.partners) {
+          const q = PART.qualifyPartner(p);
+          if (q.ok && q.verdict === "QUALIFIED") qualified++;
+          const st = (isObj(p) && typeof p.state === "string" && PART.PARTNER_STATES.includes(p.state)) ? p.state : (q.ok ? q.state : "CANDIDATE");
+          byState[st] = (byState[st] || 0) + 1;
+        }
+        return { total: input.partners.length, qualified, byState, accepted: byState.ACCEPTED || 0, active: byState.ACTIVE || 0, note: "counts from RECORDED states; a qualified/prepared partner is NOT accepted. No partner/acceptance invented." };
+      })()
+    : { status: "NO_DATA" };
+
+  // Consolidated A–F monthly net-cash model (V29). Forecast kept SEPARATE from actual; A–F reconcile; taxes separate.
+  const finance = isObj(input.finance)
+    ? (() => { const fm = FIN.buildModel(input.finance); return fm.status === "NO_DATA" ? { status: "NO_DATA" } : { scenario: fm.scenario, consolidated: fm.consolidated, perAxis: fm.perAxis, reconciliation: fm.reconciliation, actualVsForecast: fm.actualVsForecast, required: fm.required }; })()
+    : { status: "NO_DATA" };
+
   // Learning loop aggregate.
   const learning = learningSummary(input.reuseLedgerOpts);
 
@@ -109,6 +132,7 @@ function buildDashboard(input: any = {}): any {
   return {
     ok: true,
     axes, forecast, enterprise, enterpriseSummary, certification, learning,
+    partnerFunnel, finance,
     cashVsForecast,
     notes: [
       "This is a read-model VIEW: it sells nothing, collects nothing, certifies nothing. Forecast ≠ cash; readiness ≠ certification.",
