@@ -1,99 +1,73 @@
+#!/usr/bin/env node
 /**
- * revenue-model — PURE rentability/scenario calculator for the ODG_100K_REVENUE_ENGINE campaign (internal
- * tool, §6.C). It DERIVES figures from EXPLICIT assumptions the caller supplies — it fabricates no revenue,
- * no client, no sale. Every output is an ESTIMATION conditional on its inputs; nothing here is "encaissé".
- *
- * French solo-service context (assumptions, to be confirmed — NOT legal advice):
- *   - micro-entreprise BNC (prestations de services) annual CA ceiling = 83 600 € (2026, sourced). Above it
- *     (2 consecutive years) ⇒ société (EURL/SASU) required — a human/legal decision; flagged `exceedsMicroCeiling`.
- *   - TVA franchise threshold for services = 37 500 € (seuil majoré 41 250 €, 2026): above it TVA (20%) must be
- *     charged — neutral for B2B clients (they reclaim) but an operational obligation; flagged `exceedsVatFranchise`.
- *   - `chargeRatePct` = social charges (+ optional versement libératoire / IR) as a % of CA — caller supplies
- *     the rate matching the chosen status (micro ≈ 23 %; société differs). No status is assumed as truth.
+ * revenue-model — a pure, testable 12-month revenue projection for the CTO's €500k strategic TARGET. It computes, from
+ * CALLER inputs (all HYPOTHESIS unless cited), the three DISTINCT figures the directive demands kept separate:
+ * SIGNED, INVOICED and CASHED. It does NOT double-count recurring (recognised once per active month), it respects a
+ * sales-cycle/payment lag (revenue beyond the 12-month window is NOT counted), and it NEVER claims the target is met —
+ * it only states, per scenario, whether the MATHS reach it and by how much the evidence (currently zero clients) falls
+ * short. No clock, no IO, deterministic, fail-closed on invalid inputs.
  */
+"use strict";
 
-const MICRO_BNC_CEILING_EUR = 83600;   // 2026 micro-entreprise BNC prestations de services CA ceiling (sourced)
-const VAT_FRANCHISE_SERVICES_EUR = 37500; // 2026 TVA franchise threshold, services (majoré 41 250 €)
+function nn(v: any, d: number): number { return typeof v === "number" && isFinite(v) && v >= 0 ? v : d; }
+function r0(n: number): number { return Math.round(n); }
 
-function round2(n: number): number { return Math.round(n * 100) / 100; }
+export interface RevenueProjection {
+  signed12: number; invoiced12: number; cashed12: number;
+  oneOffSeries: number[]; recurringSeries: number[]; activeContractsEnd: number; notes: string[];
+}
 
-function revenueScenario(inp: any): any {
-  const i = inp && typeof inp === "object" ? inp : {};
-  const tjm = Number(i.tjm);
-  const days = Number(i.billableDays);
-  const chargeRatePct = Number(i.chargeRatePct);
-  const fixed = Number(i.fixedCostsAnnual) || 0;
-  if (![tjm, days, chargeRatePct].every((x) => Number.isFinite(x) && x >= 0)) {
-    return { ok: false, reason: "tjm, billableDays, chargeRatePct must be finite non-negative numbers" };
+/**
+ * projectRevenue(input): monthly model over 12 months.
+ *   input = { newContractsByMonth:number[], avgContractValue, recurringPerContractMonthly, churnMonthly,
+ *             invoiceDelayMonths, cashDelayMonths }
+ * One-off is recognised at the signing month; a contract contributes recurring from the NEXT month, decayed by churn;
+ * invoiced/cashed shift the signed stream by the given lags and DROP anything falling beyond month 11 (no over-count).
+ */
+function projectRevenue(input: any): RevenueProjection {
+  const i = input || {};
+  const M = 12;
+  const newC: number[] = Array.isArray(i.newContractsByMonth) ? i.newContractsByMonth.map((x: any) => nn(x, 0)) : [];
+  const v = nn(i.avgContractValue, 0);
+  const mrr = nn(i.recurringPerContractMonthly, 0);
+  const churn = Math.min(1, nn(i.churnMonthly, 0));
+  const invDelay = Math.round(nn(i.invoiceDelayMonths, 0));
+  const cashDelay = Math.round(nn(i.cashDelayMonths, 0));
+  const notes: string[] = [];
+  if (v === 0 && mrr === 0) notes.push("no contract value supplied — zero revenue (fail-closed)");
+
+  const oneOff: number[] = new Array(M).fill(0);
+  const recurring: number[] = new Array(M).fill(0);
+  let active = 0;
+  for (let m = 0; m < M; m++) {
+    recurring[m] = active * mrr;                                        // earned from already-active contracts (once)
+    oneOff[m] = (newC[m] || 0) * v;                                     // one-off recognised at signing
+    active = active * (1 - churn) + (newC[m] || 0);                     // churn, then this month's new become active
   }
-  const caBilled = round2(tjm * days);
-  const charges = round2(caBilled * (chargeRatePct / 100));
-  const netBeforeIncomeTax = round2(caBilled - charges - fixed);
-  return {
-    ok: true,
-    assumptions: { tjm, billableDays: days, chargeRatePct, fixedCostsAnnual: fixed },
-    caBilled,
-    charges,
-    fixedCostsAnnual: fixed,
-    netBeforeIncomeTax,
-    exceedsMicroCeiling: caBilled > MICRO_BNC_CEILING_EUR,
-    exceedsVatFranchise: caBilled > VAT_FRANCHISE_SERVICES_EUR,
-    note: "ESTIMATION only — conditional on inputs; caBilled is billed, not collected; net excludes residual income tax.",
-  };
+  const signedStream = oneOff.map((o, m) => o + recurring[m]);
+  const signed12 = r0(signedStream.reduce((a, b) => a + b, 0));
+  let invoiced12 = 0, cashed12 = 0;
+  for (let m = 0; m < M; m++) {
+    if (m + invDelay <= M - 1) invoiced12 += signedStream[m];
+    if (m + cashDelay <= M - 1) cashed12 += signedStream[m];
+  }
+  if (cashDelay > 0) notes.push(`cashed < signed: a ${cashDelay}-month payment lag drops revenue falling beyond month 12`);
+  return { signed12, invoiced12: r0(invoiced12), cashed12: r0(cashed12), oneOffSeries: oneOff.map(r0), recurringSeries: recurring.map(r0), activeContractsEnd: Math.round(active), notes };
 }
 
-function daysForTargetCa(targetCa: any, tjm: any): number | null {
-  const t = Number(targetCa), r = Number(tjm);
-  if (!Number.isFinite(t) || !Number.isFinite(r) || r <= 0) return null;
-  return Math.ceil(t / r);
-}
-
-function scenariosToTarget(targetCa: any, variants: any): any[] {
-  const list = Array.isArray(variants) ? variants : [];
-  return list.map((v: any) => {
-    const s = revenueScenario(v);
-    return {
-      label: v && v.label,
-      ...s,
-      daysToTargetCa: daysForTargetCa(targetCa, v && v.tjm),
-      targetCa: Number(targetCa),
-      meetsTargetCa: s.ok ? s.caBilled >= Number(targetCa) : false,
-    };
+/** Evaluate named scenarios against a target (default €500,000 signed). Honest gap reported (never hidden). */
+function pathsToTarget(scenarios: any[], target = 500000): any[] {
+  return (Array.isArray(scenarios) ? scenarios : []).map((s) => {
+    const p = projectRevenue(s.input);
+    return { name: s.name, signed12: p.signed12, cashed12: p.cashed12, meetsSigned: p.signed12 >= target, meetsCashed: p.cashed12 >= target, gapSigned: Math.max(0, target - p.signed12), confidence: s.confidence || "unknown (no market evidence)" };
   });
 }
 
-/**
- * Reproducible plan for a REVENUE TARGET over a period (§5 mandatory math). Given an average contract value, a
- * HYPOTHETICAL prospect→client conversion rate (no observed data ⇒ clearly a hypothesis), the delivery days per
- * contract and the real delivery capacity (days available in the period), it derives: contracts needed, qualified
- * prospects needed, the max contracts actually DELIVERABLE, and whether the target is capacity-feasible. It never
- * claims the conversion is observed. `capacityExceeded:true` is the honest "needs more than one person" signal.
- */
-function targetPlan(inp: any): any {
-  const i = inp && typeof inp === "object" ? inp : {};
-  const target = Number(i.targetRevenue);
-  const avg = Number(i.avgContractValue);
-  const conv = Number(i.conversionRate);
-  const deliveryDays = Number(i.deliveryDaysPerContract);
-  const capacityDays = Number(i.capacityDaysPerPeriod);
-  if (![target, avg, conv, deliveryDays, capacityDays].every((x) => Number.isFinite(x) && x >= 0) || avg <= 0 || conv <= 0 || deliveryDays <= 0) {
-    return { ok: false, reason: "targetRevenue, avgContractValue>0, conversionRate(0..1]>0, deliveryDaysPerContract>0, capacityDaysPerPeriod required" };
-  }
-  const contractsNeeded = Math.ceil(target / avg);
-  const prospectsNeeded = Math.ceil(contractsNeeded / conv);
-  const maxDeliverable = Math.floor(capacityDays / deliveryDays);
-  const capacityExceeded = contractsNeeded > maxDeliverable;
-  return {
-    ok: true,
-    assumptions: { targetRevenue: target, avgContractValue: avg, conversionRate: conv, deliveryDaysPerContract: deliveryDays, capacityDaysPerPeriod: capacityDays },
-    contractsNeeded,
-    prospectsNeeded,
-    maxDeliverable,
-    capacityExceeded,
-    extraCapacityNeededContracts: capacityExceeded ? contractsNeeded - maxDeliverable : 0,
-    note: "conversionRate is a HYPOTHESIS (no observed data). capacityExceeded=true means the target exceeds solo delivery capacity.",
-  };
+/** Contracts needed to reach a signed target with pure one-off value (ignores recurring). Infinity if value ≤ 0. */
+function contractsForTarget(target: number, avgContractValue: number): number {
+  if (!(avgContractValue > 0)) return Infinity;
+  return Math.ceil(nn(target, 0) / avgContractValue);
 }
 
-module.exports = { revenueScenario, daysForTargetCa, scenariosToTarget, targetPlan, MICRO_BNC_CEILING_EUR, VAT_FRANCHISE_SERVICES_EUR, round2 };
-export {};
+export { projectRevenue, pathsToTarget, contractsForTarget };
+module.exports = { projectRevenue, pathsToTarget, contractsForTarget };

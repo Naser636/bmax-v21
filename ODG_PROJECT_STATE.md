@@ -5217,3 +5217,41 @@ in a FINANCIAL model — the €10k cap behaves like an admission boundary (over
 **Next-highest-value action:** HUMAN — authorise sending a first small outreach batch (+ legal review of pilot/pricing);
 the €0 kit + real demo + cash model are ready. Grouped human decisions: outreach send; legal review; micro-vs-SASU +
 quotes; any spend within €10k cap; Bpifrance/France Num eligibility; 7 EXTERNAL production deps on real deployment.
+
+---
+## CHECKPOINT 2026-10-27 (aw) — €500k strategic-target revenue model (CTO override; continuity preserved) €0
+CTO STRATEGIC OVERRIDE: minimum target €500,000 revenue / first 12 months. Continuity respected — in-flight launch-budget
+lot (PR#54) was allowed to finish + merged (a18a950) BEFORE applying this directive (no restart, no abandoned work).
+Truth Lock entry a18a950≡origin/main, clean, 5 stashes, 4 untracked docs/. No new primitive. Diff = revenue-model(.ts/
+.test) + package.json + REVENUE_500K_PLAN_V1.md + compass.
+
+**Directive integrated (not overwriting):** the €500k figure is a strategic TARGET, not a validated/guaranteed result;
+current evidence = 0 clients / 0 signed / 0 cashed. Old €9k/48k/120k scenarios are now RISK/comparison only (labelled),
+not the destination — NOT silently lowered, NOT claimed achieved.
+
+**TRACK A — EXECUTED (real testable model):** NEW runtime/core/revenue-model.ts — projectRevenue() keeps SIGNED/
+INVOICED/CASHED distinct, does NOT double-count recurring (once per active month), is lag-aware (revenue beyond month 12
+dropped), fail-closed on invalid inputs; pathsToTarget() reports the honest gap per scenario; contractsForTarget(). Gated
+suite (8): 20×€25k ⇒ €500k signed; high-value+recurring not double-counted; payment-lag ⇒ cashed<signed; prudent ⇒ does
+NOT meet €500k (gap surfaced); no-value ⇒ zero (fail-closed). doc REVENUE_500K_PLAN_V1.md: 4 re-designed models (M1
+assessment-only=risk floor ~€48k; M2 high-value B2B ~€520k; M3 flagship+recurring; M4 partner/white-label) — only
+M2/M3/M4 reach €500k mathematically, each HYPOTHESIS with named missing capabilities (enterprise sales motion, delivery
+capacity/subcontracting, buyer-grade trust proofs, signed partners, price validation); early indicators; €10k cap
+discipline (scaling to €500k delivery may need a SEPARATE budget authorisation — not assumed).
+
+**TRACK B/C:** unchanged this cycle (no new free ISO access/spend; no new safe local gap). Scaling trust proofs for
+€40k+ buyers = the EXTERNAL dependencies already listed (independent audit / ISO) — sequenced after demand.
+
+**Honesty controls:** signed≠invoiced≠cashed≠margin≠cash kept distinct; every euro HYPOTHESIS/cited; no fabricated
+client/order/revenue; probability = caller-supplied, method-labelled "unvalidated"; target gap stated, not hidden.
+
+**Proof:** revenue-model 8 ⇒ full gate 72→73/73; tsc 0; build 0. Continuity + no-restart honored.
+
+**Learning reuse (proven):** reused the fail-closed + honest-separation discipline (launch-budget/excellence) in the
+revenue model; reused GTM/SALES_KIT/launch-budget artifacts as the model's grounding.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-model.test.ts`
+**Single priority (recommendation):** test M2 (high-value B2B AI-governance/AI-Act readiness programs) first — authorise
+sending a small first outreach batch to enterprise-leaning prospects (+ legal review). €500k stays a modelled target
+with an explicit UNCLOSED evidence gap. HUMAN-REQUIRED (grouped): outreach send + legal review; choose model M2/M3/M4;
+any spend/subcontracting/budget beyond €10k; EXTERNAL production+trust deps for enterprise clients.
