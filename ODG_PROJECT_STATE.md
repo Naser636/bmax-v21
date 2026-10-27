@@ -6195,3 +6195,30 @@ product); measured vs hypothesis vs unknown separated; 0 collected; nothing publ
 HUMAN FRONTIERS (impact-ranked, unchanged + sharpened): true SaaS product+hosting+support (only path to the volume for
 €500k NET via many low-touch customers — build/opex decision) OR enterprise high-value demand (fewer×larger) + team;
 SASU; subcontractors; outreach (Gmail+auth+legal+addresses); confirm rates. €500k NET year-1 volume-bound, unproven.
+
+---
+## CHECKPOINT 2026-10-27 (bx) — V21 LOT 1: reuse-outcome ledger closes the learning loop (reuse-failed state) €0
+CTO "V21 WORLD-CLASS AUTONOMOUS OS" (post-PR#81). Truth Lock eebf945≡origin/main (0/0), clean, 5 stashes + 4
+untracked docs/ preserved, CI success. No new primitive. Diff = reuse-ledger(.ts/.test) + package.json + compass.
+
+**Phase-1 audit (subagent, read-only):** the reusable-capability + learning stack ALREADY models capture→persist→
+retrieve(provider-reuse-candidate)→select(capability-router)→reuse(patch-memory.reuseCount)→EFFECTIVE(learning-chain,
+proven causally by learning-effective-ab). The loop was OPEN at ONE point: **reuse-OUTCOME write-back** — a reuse that
+made things WORSE produced NO record (no `reuse-failed` state, no per-asset usageHistory, no knownRegressions, no
+de-selection). learning-chain is positive-only (CAPTURED→EFFECTIVE, no FAILED).
+
+**reuse-ledger.ts (EXECUTED — Phase 3 gap-closer, fully ADDITIVE, no live-path edit):** classifyReuseOutcome(delta
+from improvement-baseline.measureDelta) → REUSE_VALIDATED | REUSE_FAILED | REUSE_INCONCLUSIVE, honoring learning-chain's
+no-fabricated-effect rule (no measured change ⇒ INCONCLUSIVE, NEVER validated; tie ⇒ INCONCLUSIVE). recordReuseOutcome
+(sig,{before,after,senseMap,context,adapted,at}) appends usageHistory[] + (on failure) knownRegressions[metrics], keeps
+counters, recomputes `suppressed` = failed≥2 && failed>validated. reuseHealth + suppressedSignatures expose the
+de-selection signal a selector (capability-router/metrics) can consume so a net-regressing asset is not reused again.
+Store INJECTABLE (opts.store, key "reuse-ledger") ⇒ hermetic tests, no runtime/generated pollution. Suite **14**.
+
+**Gate:** test:report 99→100; tsc 0; build emitted 103 copied 0. Honesty: turns the 2 MISSING schema fields (usage
+history, known regressions) + the 1 MISSING loop-state (reuse-failed) into live, tested data; SYNTHETIC (no mission
+wired yet); €0; nothing published/sent.
+
+**NEXT LOT candidate (complementary, higher-risk — live path):** wire recordReuseOutcome at decision-engine's
+patch-memory.hit site + feed suppressedSignatures into capability-router.route so bad reuses self-de-select end-to-end.
+Also V21 Phase-2 benchmark doc (20 refs verified 2026-10-27) → next lot.
