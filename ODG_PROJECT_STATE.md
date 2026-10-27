@@ -6442,3 +6442,35 @@ traceability · learning loop closed both ways (consumer PR#87 + producer PR#90)
 website partners+faq). All six represented; per-axis next-actions + blockers recorded (cd checkpoint).
 NEXT candidates: auto-wire mission-reuse-recorder into live post-mission hook (dist) · A paid entry-diagnostic spec ·
 wire enterprise-mission + traceability into a consolidated portfolio/readiness dashboard.
+
+---
+## CHECKPOINT 2026-10-27 (ch) — V25 PRIORITY 1: learning loop AUTO-POPULATED in the COMPILED pipeline €0
+CTO "V25" (post-PR#91, main cd31bb7). Truth Lock cd31bb7≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/
+preserved, CI success. No new primitive. Diff = mission-ledger.ts + mission-ledger-reuse-hook.test + tsconfig.runtime-
+dist.json + package.json + compass.
+
+**EXECUTED — auto-wire at the EXISTING post-mission hook (no parallel hook, no 2nd orchestrator):** mission-ledger.ts
+recordMission already calls post-release-learning.accumulate(mission) after a proven ledger append; added a guarded
+sibling call require("./mission-reuse-recorder").recordMissionReuseOutcomes(mission). Added mission-reuse-recorder.ts
+to tsconfig.runtime-dist.json ⇒ COMPILED dist/core/mission-reuse-recorder.js present and required by compiled
+mission-ledger.js.
+
+**PROVEN ON THE COMPILED PATH (mission-ledger-reuse-hook.test, suite 9, drives runtime/dist/core/mission-ledger.js —
+NOT source):** a proven mission that reused a precedent ⇒ compiled recordMission appends AND writes reuse-ledger.json
+with the reused signature. **HONEST PROPERTY (in code + test): only PROVEN missions reach this hook ⇒ auto outcome =
+validated+unmeasured ⇒ REUSE_INCONCLUSIVE — NEVER auto-VALIDATED (no measured delta ⇒ no self-validation) and NEVER
+auto-FAILED (a failed mission halts before this stage).** CONTRACT patches not counted; (mission,runId) gate prevents
+replay double-record; recorder error/absent-decision never breaks the mission record; unproven ⇒ hook never runs. Loop
+population is live but INCONCLUSIVE-only automatically; FAILED/VALIDATED remain available to callers with that evidence
+(recorder suite PR#90) — stated honestly, not overclaimed.
+
+**Gate:** test:report 108→109 (incl. existing mission-ledger proven-gate/failclosed/controlled regressions GREEN); tsc 0;
+build 0. €0; nothing sent.
+
+**LEARNING LOOP STATUS (honest):** CONSUMER live (router de-select, PR#87) · PRODUCER capability (PR#90) · AUTO-POPULATION
+live in compiled pipeline, INCONCLUSIVE-only (this). Full auto-suppression would need a failed-mission/ measured-delta
+producer hook (pipeline halts on failure ⇒ future work; recorded, not hidden).
+
+**SIX-AXIS queue unchanged (all represented):** A entry-diagnostic spec · B mid-market package · C enterprise qualif ·
+D partner kit (BLOCKED no partner) · E wire enterprise-mission into portfolio · F dossier continuation. NEXT: consolidated
+portfolio/readiness dashboard (compose portfolio-axes+pipeline-forecast+enterprise-mission-model+certification-traceability).
