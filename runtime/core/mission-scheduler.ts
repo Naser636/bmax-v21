@@ -22,7 +22,20 @@
  */
 "use strict";
 
+const EXC = require("./excellence-policy.js");
+
 const DEFAULT_SCHEDULER_POLICY = { maxAttemptsPerMission: 3, maxBudget: Infinity, maxDurationMs: Infinity, maxConsecutiveFailures: 2 };
+
+/**
+ * buildExcellenceReviewer — canonical factory so the standing excellence rule is applied to EVERY scheduled mission
+ * WITHOUT a per-mission human reminder. `inputForMission(mission)` maps a mission to an excellence-policy input
+ * (domain/registry/currentPractices/thresholds/measured/claims/now). The returned reviewer is injected as
+ * ctx.reviewExcellence; schedulerStep then consults it automatically. Pure; reuses excellence-policy (no new orchestrator).
+ */
+function buildExcellenceReviewer(inputForMission: any): (mission: any) => any {
+  if (typeof inputForMission !== "function") throw new TypeError("buildExcellenceReviewer requires an (mission)=>input function");
+  return (mission: any) => EXC.reviewForExcellence(inputForMission(mission) || {});
+}
 
 // Eligibility of a queue item. preAuthorized = the EXPLICIT allow-list of mission ids the scheduler may drive;
 // anything else is refused (no implicit authority). Proven missions are de-duplicated; attempt bounds enforced.
@@ -98,16 +111,33 @@ function schedulerStep(ctx: any): any {
   if (!authz || authz.ok !== true) { const d = decision("BLOCKED", next, `AUTHORIZATION_DENIED: ${authz && authz.reason}`); audit(d); return d; }
   // 5. dedup / idempotence (proven-gate) re-checked at dispatch time
   if (typeof ctx.isProven === "function" && ctx.isProven(next.mission)) { const d = decision("BLOCKED", next, "already proven (dedup at dispatch)"); audit(d); return d; }
+  // 5.5 EXCELLENCE RULE (canonical, auto-applied when a reviewer is injected). Consults reviewForExcellence for the
+  // mission. FAIL-CLOSED **only** on a PROHIBITED claim (an unproven superlative — "world #1"/"best"/"optimal"
+  // without a benchmark). Stale/offline references, open gaps, and INSUFFICIENT_EVIDENCE are ADVISORY and
+  // NON-blocking: a mission is NEVER blocked merely because reference search is offline, and a reviewer error is
+  // caught (advisory, non-blocking). The review is attached to the decision for audit. Absent reviewer ⇒ no change.
+  let excellence: any = null;
+  if (typeof ctx.reviewExcellence === "function") {
+    try {
+      const rev = ctx.reviewExcellence(next);
+      if (rev && typeof rev === "object") {
+        const prohibited = Array.isArray(rev.claims) ? rev.claims.filter((c: any) => c && c.justified === false) : [];
+        excellence = { verdict: rev.verdict, staleReferences: Array.isArray(rev.staleReferences) ? rev.staleReferences : [], openGaps: Array.isArray(rev.gaps) ? rev.gaps.filter((g: any) => !g.present).length : 0, recommendation: rev.recommendation };
+        if (prohibited.length) { const d = decision("BLOCKED", next, `EXCELLENCE_PROHIBITED_CLAIM: ${prohibited.map((c: any) => c.claim).join("; ")}`); (d as any).excellence = excellence; audit(d); return d; }
+      } else { excellence = { verdict: "INSUFFICIENT_EVIDENCE", advisory: true, note: "reviewer returned no review (non-blocking)" }; }
+    } catch (e: any) { excellence = { verdict: "ADVISORY_ERROR", advisory: true, note: `excellence review errored (non-blocking): ${(e && e.message) || e}` }; }
+  }
   // 6. dispatch via the INJECTED seam (double in tests; real governed pipeline in production — activation gated)
   let result: any;
   try { result = typeof ctx.dispatch === "function" ? ctx.dispatch(next) : null; }
-  catch (e: any) { const d = decision("FAIL", next, `dispatch threw: ${(e && e.message) || e}`); audit(d); return d; }
+  catch (e: any) { const d = decision("FAIL", next, `dispatch threw: ${(e && e.message) || e}`); if (excellence) (d as any).excellence = excellence; audit(d); return d; }
   // 7. classify (fail-closed) + audit
   const c = classifyDispatch(result);
   const d = decision(c.status, next, c.detail);
+  if (excellence) (d as any).excellence = excellence;
   audit(d);
   return d;
 }
 
 export {};
-module.exports = { DEFAULT_SCHEDULER_POLICY, evaluateEligibility, selectNext, classifyDispatch, schedulerStep };
+module.exports = { DEFAULT_SCHEDULER_POLICY, evaluateEligibility, selectNext, classifyDispatch, schedulerStep, buildExcellenceReviewer };

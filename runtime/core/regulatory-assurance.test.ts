@@ -125,4 +125,27 @@ ok("remediation plan prioritized by risk (desc)", (() => { const r = dGap.remedi
 // (16) tenant required (fail-closed).
 ok("missing tenantId ⇒ throws (multi-tenant separation enforced)", (() => { try { RA.buildDossier({ targetFrameworks: ["GDPR"] }, { registry: REG, now: NOW, verifier }); return false; } catch (e) { return true; } })());
 
+// ── AXE B — SECOND INDEPENDENT VERIFIER (role separation, agreement/disagreement, contradiction handling) ─────────
+const gdprOnly = { tenantId: "DUAL", country: "FR", processesEUPersonalData: true, dataCategories: ["personal"], targetFrameworks: ["GDPR"],
+  declaredEvidence: [{ id: "d1", obligationId: "GDPR-ROPA", tenantId: "DUAL", artifact: "VERIFIED:ropa.xlsx", owner: "DPO" }] };
+const v2yes = () => ({ verified: true, reason: "second check passed" });
+const v2no = () => ({ verified: false, reason: "second check: artifact not corroborated" });
+
+// (17) BOTH verifiers agree YES ⇒ SATISFIED_VERIFIED, agreement=agree-satisfied
+const dualOk = RA.buildDossier(gdprOnly, { registry: REG, now: NOW, verifier, verifier2: v2yes }).findings.find(f => f.obligationId === "GDPR-ROPA");
+ok("dual-control: both independent verifiers agree ⇒ SATISFIED_VERIFIED", dualOk.status === "SATISFIED_VERIFIED" && dualOk.verifierAgreement === "agree-satisfied" && dualOk.verification.verified === true && dualOk.verification2.verified === true);
+
+// (18) DISAGREEMENT (v1 yes, v2 no) ⇒ DECLARED_UNVERIFIED (contradiction; NO false success)
+const dualDis = RA.buildDossier(gdprOnly, { registry: REG, now: NOW, verifier, verifier2: v2no }).findings.find(f => f.obligationId === "GDPR-ROPA");
+ok("dual-control: verifiers DISAGREE ⇒ DECLARED_UNVERIFIED (no false success)", dualDis.status === "DECLARED_UNVERIFIED" && dualDis.verifierAgreement === "disagree" && /DISAGREE/.test(dualDis.remediation));
+
+// (19) BOTH reject ⇒ DECLARED_UNVERIFIED, agreement=agree-unsatisfied
+const gdprFalse = { ...gdprOnly, tenantId: "DUAL2", declaredEvidence: [{ id: "d2", obligationId: "GDPR-ROPA", tenantId: "DUAL2", artifact: "FALSE:forged", owner: "x" }] };
+const dualNo = RA.buildDossier(gdprFalse, { registry: REG, now: NOW, verifier, verifier2: v2no }).findings.find(f => f.obligationId === "GDPR-ROPA");
+ok("dual-control: both reject ⇒ DECLARED_UNVERIFIED (agree-unsatisfied)", dualNo.status === "DECLARED_UNVERIFIED" && dualNo.verifierAgreement === "agree-unsatisfied");
+
+// (20) SINGLE verifier (no v2) ⇒ backward-compatible, agreement=single
+const single = RA.buildDossier(gdprOnly, { registry: REG, now: NOW, verifier }).findings.find(f => f.obligationId === "GDPR-ROPA");
+ok("single verifier ⇒ backward-compatible (agreement=single)", single.status === "SATISFIED_VERIFIED" && single.verifierAgreement === "single" && single.verification2 === null);
+
 console.log(`\nREGULATORY-ASSURANCE suite — ${pass} assertions passed. [thresholds fixed pre-test: ${JSON.stringify(TH)}]`);

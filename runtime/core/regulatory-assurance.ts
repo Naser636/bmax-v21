@@ -55,6 +55,8 @@ export interface Finding {
   applicable: boolean; applicabilityNote: string; status: ObStatus; risk: number;
   control: string | null; evidenceId: string | null; evidenceClass: "none" | "client-declared" | "independently-verified";
   owner: string | null; verification: { verified: boolean; reason: string } | null; remediation: string | null;
+  verification2?: { verified: boolean; reason: string } | null;             // optional SECOND independent verifier
+  verifierAgreement?: "single" | "agree-satisfied" | "agree-unsatisfied" | "disagree";
 }
 
 export interface AssuranceDossier {
@@ -92,18 +94,33 @@ const CATALOG: Obligation[] = [
 
 const MODULE_FRAMEWORK: Record<string, string> = { GDPR_READINESS: "GDPR", ISO27001_READINESS: "ISO27001", ISO42001_READINESS: "ISO42001" };
 
-/** Assess one obligation against the tenant-filtered evidence index + an injected independent verifier. */
-function assessObligation(ob: Obligation, profile: CompanyProfile, evidenceByObligation: Map<string, any>, verifier: any, sourceValid: boolean): Finding {
+/**
+ * Assess one obligation against the tenant-filtered evidence index + injected INDEPENDENT verifier(s). With a SECOND
+ * verifier (role separation / dual control), an obligation is SATISFIED_VERIFIED only when BOTH independently agree
+ * "verified"; a DISAGREEMENT (one yes, one no) ⇒ DECLARED_UNVERIFIED (contradiction surfaced, never a false success).
+ */
+function assessObligation(ob: Obligation, profile: CompanyProfile, evidenceByObligation: Map<string, any>, verifier: any, sourceValid: boolean, verifier2?: any): Finding {
   const applicable = sourceValid && !!ob.applies(profile);
-  const base: Finding = { obligationId: ob.id, module: ob.module, title: ob.title, sourceId: ob.sourceId, sourceValid, applicable, applicabilityNote: ob.applicabilityNote, status: "NOT_APPLICABLE", risk: ob.risk, control: null, evidenceId: null, evidenceClass: "none", owner: null, verification: null, remediation: null };
+  const base: Finding = { obligationId: ob.id, module: ob.module, title: ob.title, sourceId: ob.sourceId, sourceValid, applicable, applicabilityNote: ob.applicabilityNote, status: "NOT_APPLICABLE", risk: ob.risk, control: null, evidenceId: null, evidenceClass: "none", owner: null, verification: null, remediation: null, verification2: null, verifierAgreement: "single" };
   if (!applicable) { base.remediation = sourceValid ? null : "obligation REFUSED upstream (no valid source) — not assessed"; return base; }
   const ev = evidenceByObligation.get(ob.id);
   if (!ev) { base.status = "GAP"; base.remediation = `produce a control + evidence for "${ob.title}"`; return base; }
   base.evidenceId = ev.id; base.owner = ev.owner || null; base.control = ev.artifact || null; base.evidenceClass = "client-declared";
-  const vr = typeof verifier === "function" ? (verifier(ob.id, ev) || { verified: false, reason: "no verifier result" }) : { verified: false, reason: "no independent verifier supplied — client-declared evidence is NOT verified" };
-  base.verification = { verified: vr.verified === true, reason: String(vr.reason || "") };
-  if (vr.verified === true) { base.status = "SATISFIED_VERIFIED"; base.evidenceClass = "independently-verified"; }
-  else { base.status = "DECLARED_UNVERIFIED"; base.remediation = `independently verify the declared evidence for "${ob.title}" (${base.verification.reason})`; }
+  const run = (v: any) => typeof v === "function" ? (v(ob.id, ev) || { verified: false, reason: "no verifier result" }) : { verified: false, reason: "no independent verifier supplied — client-declared evidence is NOT verified" };
+  const vr = run(verifier); base.verification = { verified: vr.verified === true, reason: String(vr.reason || "") };
+  const hasV2 = typeof verifier2 === "function";
+  if (!hasV2) {
+    base.verifierAgreement = "single";
+    if (vr.verified === true) { base.status = "SATISFIED_VERIFIED"; base.evidenceClass = "independently-verified"; }
+    else { base.status = "DECLARED_UNVERIFIED"; base.remediation = `independently verify the declared evidence for "${ob.title}" (${base.verification.reason})`; }
+    return base;
+  }
+  // DUAL CONTROL: a separate, independent second verifier must also confirm.
+  const vr2 = run(verifier2); base.verification2 = { verified: vr2.verified === true, reason: String(vr2.reason || "") };
+  const a = vr.verified === true, b = vr2.verified === true;
+  if (a && b) { base.status = "SATISFIED_VERIFIED"; base.evidenceClass = "independently-verified"; base.verifierAgreement = "agree-satisfied"; }
+  else if (!a && !b) { base.status = "DECLARED_UNVERIFIED"; base.verifierAgreement = "agree-unsatisfied"; base.remediation = `both independent verifiers reject the declared evidence for "${ob.title}"`; }
+  else { base.status = "DECLARED_UNVERIFIED"; base.verifierAgreement = "disagree"; base.remediation = `independent verifiers DISAGREE on "${ob.title}" (v1=${a}, v2=${b}) — contradiction; resolve before claiming satisfied (no false success)`; }
   return base;
 }
 
@@ -149,7 +166,7 @@ function buildDossier(profile: CompanyProfile, opts: any): AssuranceDossier {
     modulesRun.add(ob.module);
     const sourceValid = registryIds.has(ob.sourceId);
     if (!sourceValid) { refused.push({ id: ob.id, reason: `cites unknown source "${ob.sourceId}" absent from the reference registry — refused (no unjustified claim)` }); }
-    findings.push(assessObligation(ob, profile, evidenceByObligation, o.verifier, sourceValid));
+    findings.push(assessObligation(ob, profile, evidenceByObligation, o.verifier, sourceValid, o.verifier2));
   }
 
   const applicableFindings = findings.filter(f => f.applicable);
