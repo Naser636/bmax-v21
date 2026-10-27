@@ -6244,3 +6244,26 @@ mechanism≠satisfied / no self-cert. Unverified flagged (vendor % claims, SDK v
 **Next-lots priority (each bounded+gated, no heavy dep):** SARIF emitter for the assurance dossier (sells the result) →
 CycloneDX+OSV scanner → in-toto provenance per dossier → weighted-forecast+funnel over commercial-pipeline →
 NIST-RMF tag + ISO SoA → OTLP span emitter → idempotency-ledger + event-sourced mission log (complements reuse-ledger).
+
+---
+## CHECKPOINT 2026-10-27 (bz) — V21 LOT 3: SARIF 2.1.0 emitter for the assurance dossier €0
+CTO "V21" Phase 6 + benchmark ref #6 (post-PR#83, main 02f5fe0). Truth Lock clean, 5 stashes + 4 untracked docs/
+preserved. Diff = sarif-report(.ts/.test) + package.json + compass.
+
+**sarif-report.ts (EXECUTED — benchmark's #1 adopt-now lever: SARIF 2.1.0 = OASIS open interchange ⇒ ODG assurance
+output consumable by GitHub code-scanning/GitLab/VS Code/any dashboard, lowest lock-in, makes the result sellable):**
+toSarif(pilotResult, opts) pure converter over assurance-pilot-runner findings {id,area,severity,detail,remediation,
+evidence} → SARIF 2.1.0 log. severity→level (HIGH→error, MEDIUM→warning, LOW→note, deny-by-default unknown→warning);
+rules[] deduped by stable ruleId (id prefix before ':' else area); logicalLocations = component-after-':' else project;
+provenance seal + synthetic flag + remediation/evidence propagated into properties; GitHub 25k-results cap honored and
+truncation REPORTED (no silent drop); fail-closed on non-ok/malformed. isValidSarif() minimal structural validator (no
+schema dep). Suite **16**. No fs/clock/net; driver.version is the honest emitter version (caller-supplied).
+
+**Gate:** test:report 100→101; tsc 0; build:runtime pipeline closure 103 (sarif-report is a tsx-run assurance module,
+NOT a mission-pipeline module — correctly absent from the dist closure, same as all commercial/assurance modules).
+Honesty: SYNTHETIC findings only; interoperable OUTPUT format proven, not a hosted scanner; €0; nothing published/sent.
+
+**NEXT-LOT candidates (benchmark priority, each bounded+gated, no heavy dep):** CycloneDX+OSV SBOM vuln scanner →
+in-toto/SLSA provenance per dossier → weighted-pipeline-forecast + internal funnel over commercial-pipeline (Phase 10) →
+NIST-RMF control tag + ISO SoA (Phase 11) → OTLP/OpenInference span emitter (Phase 5) → idempotency-ledger + event-
+sourced mission log (Phase 8). Also still open: wire reuse-ledger into decision-engine live path (higher-risk).
