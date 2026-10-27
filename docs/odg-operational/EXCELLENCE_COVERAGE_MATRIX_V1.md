@@ -18,7 +18,8 @@ claim.**
 | capability-executors | execution | 4 | governed by third-party-agent + authorizeExecution | no | — | NOT_COVERED (per-executor review = over-injection; candidate: executor-level self-review) |
 | capability-learning (`reuseLearning`) | learning-legacy-integrated | 3 | `capability-learning.reuseLearning → excellence-gate` (real module API) | yes | `capability-learning.test.ts` (INTEGRATION, 6) | **COVERED** |
 | checkpoint-engine (`begin` resume) | recovery-legacy-integrated | 4 | `checkpoint-engine.begin(opts.recovery) → gateRecovery` (real module API, opt-in) | yes | `checkpoint-engine.test.ts` (INTEGRATION recovery, 7) | **COVERED** |
-| build-recovery / post-release-learning / router recall | learning-recovery-legacy | 3 | not yet routed through the gate | no | — | NOT_COVERED (capability-learning reuse + checkpoint-engine resume now integrated; these remain follow-ups) |
+| build-recovery-engine (`recover` apply) | recovery-legacy-integrated | 4 | `recover(opts.recovery) → gateRecovery` (real module API, opt-in) | yes | `build-recovery-engine.test.ts` (AXE A, 6) | **COVERED** |
+| post-release-learning / router recall / resolution / per-executor execution | learning-recovery-legacy | 3 | not yet routed through the gate | no | — | NOT_COVERED (capability-learning reuse + checkpoint-engine resume + build-recovery apply now integrated; these remain follow-ups) |
 
 ## Rule semantics (uniform, via `requireExcellence`)
 - **Prohibited claim** (unproven superlative — "world #1"/"best"/"optimal" without a cited benchmark) ⇒ **admit:false**
