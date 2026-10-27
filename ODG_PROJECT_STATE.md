@@ -5970,3 +5970,37 @@ compliance; batch reuses FIELD_CANDIDATES_REAL_V3; Gmail setup reuses the diagno
 HUMAN FRONTIERS to send batch-1 (ALL required, none a substitute): (a) Gmail app-password via ~/.config/odg/gmail.env +
 EMAIL_SEND_ENABLED=1; (b) per-send CTO authorisation + legal review; (c) verified recipient professional addresses.
 Standing: price band; partner/subcontract+budget; CERT=CTO_DECISION_PACK. €500k year-1 = signed/run-rate; cash ~€342k solo.
+
+---
+## CHECKPOINT 2026-10-27 (bq) — V14 reproducible assurance pilot runner (delivery proof) + vivier V4 €0
+CTO "V14 MULTI-TRACK + DELIVERY PROOF" (post-PR#74). Truth Lock 9405586≡origin/main (0/0), clean, 5 stashes + 4 untracked
+docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = assurance-pilot-runner(.ts/.test) + package.json +
+2 docs + compass. Lot chosen = highest value/effort/risk = DELIVERY PROOF (Voie A/C pilot).
+
+**assurance-pilot-runner.ts (EXECUTED — delivery-proof):** reproducible deterministic pilot on SYNTHETIC input →
+findings (outdated deps / license conflicts / test-coverage gap / AI-Act Art.50(1)+(2)), each with severity+remediation+
+evidence; before/after remediation delta (6→2 findings, AI-Act stays = compliance task); acceptance verdict; provenance
+SEAL (reuses evidence-provenance.contentDigest) + tamper-evident run log (reuses audit-log). Deterministic (same input⇒
+same seal). SYNTHETIC banner: NOT a client engagement, no cert/guarantee, no client data, no external system. Suite 9.
+→ ASSURANCE_PILOT_SAMPLE_DOSSIER_V1 (rendered sample + acceptance checklist + recovery/reproducibility).
+
+**Vivier V4 (agent, no contact) → FIELD_CANDIDATES_REAL_V4:** 10 NEW real EU candidates (Crisp/Strapi/Brevo/Factorial/
+n8n/Qdrant/Shelly/Directus/Typeform/Aircall) with strict status (9 NEED-SIGNAL-OBSERVED, 1 IDENTIFIED-only; NONE
+PUBLIC-CONTACT-VERIFIED, NONE BUYING-INTENT); 4 flagged ETI-scale (>SME); CRA rows anticipatory (2026-09-11→2027-12-11),
+Art.50 rows firmer. No address/person/intent invented. Sourcing note (Pappers/Northdata/GitHub-changelogs).
+
+**A/B/C/D next-actions (honest):** A/B deliverable now via the pilot runner (synthetic proof ready; real mission needs
+client-authorised data); C = high-value+recurring (channel for €500k cash); D = 11 partners + platforms (Malt), 0 accepted.
+Certification: continues (CTO_DECISION_PACK; AFNOR COFRAC 4-0001 27001 verified) — no redundant research this lot.
+Gmail/prospection status UNCHANGED (BLOCKED: channel+addresses+auth) — not reopened; registry untouched.
+
+**Gate:** test:report 92→93; tsc 0; build 0. Honesty: synthetic≠client engagement; 0 sent; 0 intent; prices HYPOTHESIS;
+nothing invented; €0.
+
+**Learning reuse (proven):** pilot-runner reuses evidence-provenance.contentDigest + audit-log chain + license/Art.50
+logic; vivier V4 extends V3 method; sample dossier binds the runner's output to the acceptance checklist from
+ASSURANCE_PILOT_KIT. Deterministic seal = reproducible provenance (capture→persist→reuse proven in test).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/assurance-pilot-runner.test.ts`
+HUMAN FRONTIERS unchanged: send batch-1 (Gmail app-password env + EMAIL_SEND_ENABLED=1 + per-send auth + legal review +
+verified addresses); price band; partner/subcontract+budget; CERT=CTO_DECISION_PACK. Real client pilot needs authorised data.
