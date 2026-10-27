@@ -23,6 +23,7 @@
 "use strict";
 
 const EXC = require("./excellence-policy.js");
+const AUDIT = require("./audit-log.js");   // AXE 3 (gap #4): opt-in tamper-evident hash chain over scheduler decisions
 
 const DEFAULT_SCHEDULER_POLICY = { maxAttemptsPerMission: 3, maxBudget: Infinity, maxDurationMs: Infinity, maxConsecutiveFailures: 2 };
 
@@ -95,7 +96,14 @@ function schedulerStep(ctx: any): any {
   ctx = ctx || {};
   const policy = { ...DEFAULT_SCHEDULER_POLICY, ...(ctx.policy || {}) };
   ctx = { ...ctx, policy };
-  const audit = (d: any) => { if (typeof ctx.recordAttempt === "function") { try { ctx.recordAttempt(d); } catch { /* audit best-effort */ } } };
+  const audit = (d: any) => {
+    // AXE 3 (gap #4, LOCAL) — OPT-IN tamper-evident operational log: when ctx.auditChain is supplied, each decision is
+    // appended to a hash chain (audit-log) and the updated chain is attached to the decision. Tamper/reorder/insert/
+    // delete are detectable via AUDIT.verifyChain. Absent ctx.auditChain ⇒ no change (byte-identical). HONEST LIMIT:
+    // tamper-EVIDENT, not tamper-PROOF; production WORM/SIEM + trusted timestamp remain EXTERNAL.
+    if (ctx.auditChain !== undefined) { try { d.auditChain = AUDIT.appendEntry(Array.isArray(ctx.auditChain) ? ctx.auditChain : [], { status: d.status, mission: d.mission, reason: d.reason }); } catch { /* best-effort */ } }
+    if (typeof ctx.recordAttempt === "function") { try { ctx.recordAttempt(d); } catch { /* audit best-effort */ } }
+  };
   // 1. emergency / normal stop
   const stopped = (typeof ctx.stopSignal === "function" && ctx.stopSignal() === true) || process.env.ODG_SCHEDULER_STOP === "1";
   if (stopped) { const d = decision("STOPPED", null, "ODG_SCHEDULER_STOP / emergency stop"); audit(d); return d; }

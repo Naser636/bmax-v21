@@ -26,6 +26,12 @@ Legend — **Local-testable**: can be proven here safely. **EXTERNAL**: needs in
   SATISFIED_VERIFIED requires BOTH to agree; disagreement/contradiction ⇒ DECLARED_UNVERIFIED (no false success).
 - **Axis C**: this register (no production claim; each EXTERNAL item explicitly gated).
 
+- **Axis C (gap #4 extended)**: `audit-log` is now wired, opt-in, into the REAL scheduler decision path
+  (`mission-scheduler.schedulerStep`, `ctx.auditChain`) producing a tamper-evident hash chain of every scheduler
+  decision (verify detects tamper/reorder/insert/delete). Also wired at the capability-execution, learning-capture and
+  recovery decision points. **HONEST LIMIT:** tamper-EVIDENT, not tamper-PROOF; a production WORM/SIEM store, trusted
+  timestamping and off-host replication remain EXTERNAL.
+
 ## What remains EXTERNAL (not done here, by authorization)
 KMS/HSM, production datastore + multi-tenant isolation, WORM/SIEM audit store, off-host backups + DR drills, real
 monitoring/alerting, a real external-agent connection, and scheduler activation on the canonical queue. None is
