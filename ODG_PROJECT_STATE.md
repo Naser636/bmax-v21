@@ -6557,3 +6557,24 @@ B next: repeatable mid-market package def (reuse A engine) · C next: enterprise
 partner accepted; profile/economics prep only) · E enterprise-mission-model built (wire into portfolio next) · F
 cert-traceability+dossier (NOT_CERTIFIED; dossier continuation next). Learning loop CLOSED all outcomes (compiled).
 NEXT LOT: B mid-market package OR C qualification checklist (both dependency-ready, reuse A assets).
+
+---
+## CHECKPOINT 2026-10-27 (cl) — V27 AXIS B: repeatable mid-market audit+remediation offer €0
+CTO "V27" (post-PR#95, main b7736f5). Truth Lock b7736f5≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/
+preserved, CI success. No new primitive. Diff = mid-market-offer(.ts/.test) + package.json + compass.
+
+**mid-market-offer.ts (EXECUTED — axis B, REUSES axis-A engine, no duplication):** OFFER B-MID-AUDIT-REMEDIATE
+(qualification/scope/exclusions[advisory roadmap, no code-impl in client repo, no pentest/legal/cert]/workflow[5-step
+baseline→triage→synthetic-remediation→re-assess→package]/deliverables[before+after SARIF, delta, roadmap]/acceptance/
+support/escalation/recovery/upgrade→C,E). runPackage(project) = synthetic TWO-PASS: runPilot baseline → applyRemediation
+→ re-assess residual; valid SARIF before+after; resolved≥1; residual unknown-lic/AI-HIGH ⇒ RESIDUAL_NEEDS_HUMAN_REVIEW.
+economics() €4500/32h (ASSUMPTION, bigger footprint than A ⇒ lower concurrency). reuseNote: generic method only, NO
+cross-client DATA reuse. Suite 11.
+
+**Gate:** test:report 112→113; tsc 0; build 0. €0; nothing sent; synthetic≠sold; 0 sold.
+
+**SIX-AXIS STATUS (all active):** A offer finalized (€900/6h assumption, 0 sold) · **B offer finalized this lot** (€4500/
+32h assumption, 0 sold) · C next: enterprise qualification checklist · D BLOCKED (no partner; prep only) · E
+enterprise-mission-model built (wire into portfolio) · F cert-traceability+dossier (NOT_CERTIFIED). Learning loop CLOSED
+all outcomes (compiled). NEXT LOT: C enterprise qualification checklist (reuse niche-scoring + commercial-pipeline +
+proposal-generator), keep estimated-probability separate from observed conversion.
