@@ -55,9 +55,34 @@ function buildDashboard(input: any = {}): any {
   // Forecast — realized cash SEPARATE from weighted open pipeline.
   const forecast = input.opportunities !== undefined ? FORECAST.forecast(input.opportunities, input.forecastOpts || {}) : { status: "NO_DATA" };
 
-  // Axis-E enterprise mission sizing (priced scope, not sold).
+  // Axis-E enterprise mission sizing + delivery capacity (V28). Consumes the FULL enterprise-mission-model output:
+  // scope-derived price, delivery hours, capacity (available vs required), margin, and flags (incl. PRICE_EXCEEDS_SCOPE
+  // + CAPACITY_EXCEEDED). A modeled mission is NOT a qualified opportunity, a signed contract, or collected cash.
   const enterprise = Array.isArray(input.missions)
-    ? input.missions.map((m: any) => { const a = ENT.assessMission(m); return a.ok ? { ref: m.ref || null, justifiedPrice: a.justifiedPrice, proposedPrice: a.proposedPrice, priceJustified: a.priceJustified, flags: a.flags } : { ref: m && m.ref || null, error: a.code }; })
+    ? input.missions.map((m: any) => {
+        const a = ENT.assessMission(m);
+        if (!a.ok) return { ref: (m && m.ref) || null, error: a.code };
+        return {
+          ref: m.ref || null,
+          justifiedPrice: a.justifiedPrice, proposedPrice: a.proposedPrice, priceJustified: a.priceJustified,
+          totalHours: a.totalHours, soloCapacityHours: a.soloCapacityHours, capacityExceeded: a.capacityExceeded,
+          grossMargin: a.grossMargin, marginPct: a.marginPct,
+          flags: a.flags,
+          stage: "MODELED",   // modeled ≠ qualified ≠ signed ≠ collected
+        };
+      })
+    : { status: "NO_DATA" };
+  const enterpriseSummary = Array.isArray(enterprise)
+    ? {
+        count: enterprise.length,
+        modeled: enterprise.length,                         // all are MODELED (none qualified/signed/collected)
+        totalJustifiedPrice: r2(enterprise.reduce((s: number, e: any) => s + (e.justifiedPrice || 0), 0)),
+        totalProposedPrice: r2(enterprise.reduce((s: number, e: any) => s + (e.proposedPrice || 0), 0)),
+        capacityShortfalls: enterprise.filter((e: any) => e.capacityExceeded === true).map((e: any) => e.ref),
+        priceNotJustified: enterprise.filter((e: any) => e.priceJustified === false).map((e: any) => e.ref),
+        flagged: enterprise.filter((e: any) => Array.isArray(e.flags) && e.flags.length > 0).map((e: any) => ({ ref: e.ref, flags: e.flags })),
+        stageDistinction: "MODELED missions only — NOT qualified opportunities, NOT signed contracts, NOT collected cash. Taxes/social charges are NOT in grossMargin — they are separate estimates requiring qualified professional validation (net via net-cash-model).",
+      }
     : { status: "NO_DATA" };
 
   // Axis-F certification readiness.
@@ -83,7 +108,7 @@ function buildDashboard(input: any = {}): any {
 
   return {
     ok: true,
-    axes, forecast, enterprise, certification, learning,
+    axes, forecast, enterprise, enterpriseSummary, certification, learning,
     cashVsForecast,
     notes: [
       "This is a read-model VIEW: it sells nothing, collects nothing, certifies nothing. Forecast ≠ cash; readiness ≠ certification.",
