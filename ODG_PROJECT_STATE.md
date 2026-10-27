@@ -4693,3 +4693,39 @@ Next €0 candidate: route a legacy learning/recovery module (capability-learnin
 excellence-gate, or cover the resolution family at the router decision point. BLOCKED/EXTERNAL (CTO/infra): network
 source re-verification, KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue
 activation.
+
+---
+## CHECKPOINT 2026-10-27 (ai) — legacy gate integration (capability-learning reuse) €0
+CTO. Truth Lock entry bf8f303≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive/orchestrator/
+router. Additive to a legacy module. Diff = capability-learning(.ts/.test) + excellence-coverage(.ts/.test) + tsconfig.
+runtime-dist + 2 docs.
+
+**AXE 1 (connect legacy module, complete coverage) — PROVEN via REAL path:** audited capability-learning —
+resolveCapability/learn are the store path; there was NO gated REUSE entrypoint (reproduced: typeof reuseLearning
+undefined). Added ADDITIVE sealLearning + reuseLearning to the REAL module (learn/outcomes/resolveCapability + return
+shapes UNCHANGED): reuseLearning routes a recalled learning through excellence-gate (requireExcellence + sealed
+provenance + audit-log) BEFORE it may influence resolution. Integration tests run THROUGH capability-learning
+(capability-learning.test.ts 7→13, 6 INTEGRATION assertions, inTempCwd real consumer): sealed recalled ⇒ applied +
+influences the resolved capability (EFFECTIVE reuse, not storage); unprovenanced/tampered/prohibited-superlative ⇒ NOT
+applied (fail-closed); stale ⇒ advisory applied (offline-safe); audit chain tamper-detectable. No cycle, no double
+control, no false success. excellence-coverage: capability-learning reuse NOT_COVERED→COVERED; checkpoint/build-recovery/
+post-release/router-recall remain NOT_COVERED (honestly listed). No total-coverage claim.
+
+**Build/dist:** capability-learning is a dist-compiled module ⇒ its new .ts deps (excellence-gate/excellence-policy/
+audit-log) added to tsconfig.runtime-dist.json include so tsc emits them to dist/core (closure FAILED-loud first, then
+OK — reproduced + fixed). dist closure OK (103 modules), self-contained.
+
+**AXE 2 (regulatory):** unchanged (32/32); no network ⇒ sources offline-pending-reverify. **AXE 3 (prod readiness):**
+audit-log + evidence-provenance reused by the integration (real reuse of prior safe fixes); 9 gaps otherwise unchanged
+(EXTERNAL). No simulated result claimed as production.
+
+**Proof:** capability-learning 7→13 + excellence-coverage 9 ⇒ full gate 69/69; tsc 0; build 0 (dist emits the 3 modules).
+Checkpoint suites replayed green first.
+
+**Learning reuse (proven):** reused excellence-gate/requireExcellence/audit-log/evidence-provenance (all prior) at a
+REAL legacy decision point; the integration test proves a stored learning influences a later resolution decision.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/capability-learning.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next €0 candidate: route checkpoint-engine recovery (begin/resumeIndex decision) through excellence-gate.gateRecovery
+via its real path, OR cover the resolution family at capability-router. BLOCKED/EXTERNAL (CTO/infra): network source
+re-verification, KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation.
