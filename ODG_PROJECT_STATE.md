@@ -6749,3 +6749,33 @@ READY (EXTERNAL_EVIDENCE: real demand) · D partner kit READY (EXTERNAL_EVIDENCE
 bound.** Session V21→V30 = PRs #82–#103(pending), test:report 59→122, ff-only CI-green. All internal readiness DONE;
 first cash now depends on HA-1+HA-2 (human). EXACT NEXT COMMAND (human): configure Gmail auth + provide 1 lawful lead;
 then `tsx runtime/core/first-cash-activation.ts` and proceed through HA-3..HA-5.
+
+---
+## CHECKPOINT 2026-10-27 (ct) — V31 HUMAN-GATED EXECUTION: CLI local-only verified + HA-1/HA-2 intake contract €0
+CTO "V31 HUMAN-GATED FIRST-CUSTOMER EXECUTION" (post-PR#103, main 56b886a). Truth Lock 56b886a≡origin/main (0/0), clean,
+5 stashes + 4 untracked docs/ preserved, CI success. No new primitive. Diff = first-cash-activation.ts (+ha1Checklist,
+validateLeadIntake) + first-cash-activation.test + compass.
+
+**CLI LOCAL-ONLY — PROVEN (read + ran):** first-cash-activation.ts requires ONLY entry-diagnostic-offer (pure,
+transitively pure: pilot/self-serve/sarif/metrics — crypto-hash+in-memory, no network/email/fs-write). The only
+"EMAIL_SEND_ENABLED" occurrence is DESCRIPTIVE STRING text, not code. CLI block = process.stdout.write(JSON) ONLY. Ran
+with documented no-arg contract ⇒ emits PREPARED pack summary (route A; recipient <<HUMAN-SUPPLIED>>; invoice gate false
+on empty; collection false without receipt). No network/email/invoice/side-effect possible.
+
+**NEW (V31 §3/§4/§6 concrete, in-scope):** ha1Checklist() SEPARATES channel CONFIGURATION (store app-password OUT-OF-BAND,
+set SMTP_*; verify READY) from AUTHORIZATION-TO-SEND (EMAIL_SEND_ENABLED=1 ONLY per CTO-authorized specific send) — no
+secret printed/requested. validateLeadIntake() HA-2 intake contract FAIL-CLOSED: ACCEPTED only with business contact +
+DOCUMENTED lawfulBasis + provenance{source,at} + purposeCompatible + humanConfirmed; an email ALONE ⇒ REJECTED
+(lawful basis NEVER inferred from an email address); ACCEPTED ≠ send-authorization (that is HA-3). Suite 19 (was 13).
+Gate audit confirmed all first-cash gates fail-closed (qualification, intake/privacy, invoice, collection, idempotency).
+
+**Gate:** test:report 122 (suite expanded 13→19 assertions, count unchanged); tsc 0; build 0. €0; nothing sent.
+
+**HA-2 STATUS: BLOCKED_BY_EXTERNAL_EVIDENCE — no real lead supplied this session.** No message sent. No credentials
+configured. ACTUAL COLLECTED CASH = €0 (evidence-based). €500k NET unachieved/VOLUME-bound.
+
+**A–F (blocker class unchanged):** A pack+intake-contract READY (HA-1 HUMAN_GATE + HA-2 EXTERNAL_EVIDENCE) · B/C/E
+(EXTERNAL_EVIDENCE real demand) · D (EXTERNAL_EVIDENCE partner acceptance) · F (HUMAN_GATE external audit; NOT_CERTIFIED).
+Session V21→V31 = PRs #82–#104(pending), test:report 59→122. All internal readiness + safety gates DONE+verified.
+EXACT NEXT (human): HA-1 (configure Gmail out-of-band; `! export SMTP_* / EMAIL_SEND_ENABLED` NOT here) + HA-2 (supply 1
+lead → `validateLeadIntake`). Then ODG: `tsx runtime/core/first-cash-activation.ts` → HA-3 human send → HA-4/HA-5.
