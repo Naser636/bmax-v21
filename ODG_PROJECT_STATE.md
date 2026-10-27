@@ -6308,3 +6308,29 @@ missing surveillance-cadence dimension without claiming any control satisfied.
 **V21 LOTS THIS SESSION (5): reuse-ledger(PR#82) · benchmark-20(PR#83) · sarif-report(PR#84) · pipeline-forecast(PR#85)
 · control-evidence-freshness(this).** NEXT candidates: CycloneDX+OSV (injected advisory) · NIST-RMF tag · OTLP spans ·
 event-sourced mission log · wire reuse-ledger into decision-engine (higher-risk). Then Phase-14 structured report.
+
+---
+## CHECKPOINT 2026-10-27 (cc) — V22 PRIORITY-ONE: learning loop CLOSED in the live selector €0
+CTO "V22 CONTINUOUS EXECUTION". Truth Lock 1863265≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved,
+CI success. No new primitive. Diff = capability-router.ts + learning-loop-integration.test + tsconfig.runtime-dist.json
++ package.json + compass.
+
+**Audit (read actual code, no guess):** decision-engine.ts is a SCRIPT → calls capability-router.route() for the Memory
+tier; route() = the pure LIVE SELECTOR. reuse-ledger (V21) existed but was NOT consumed by any live path. improvement-
+baseline already in dist closure; reuse-ledger was NOT (⇒ compiled router couldn't see it).
+
+**EXECUTED (smallest compatible integration):** capability-router.route() now DE-SELECTS a precedent whose prior reuse
+NET-REGRESSED (reuse-ledger.suppressedSignatures): computes patch-memory.signature(task); if suppressed ⇒ PATCH_MEMORY
+tier is NOT pushed/chosen (falls through to Rules/LLM/External), with a `reuse:{signature,considered,suppressed,
+selected,reason}` record (select-vs-reject). Suppression source: opts.suppressedSignatures (explicit) OR reuse-ledger
+(store injectable via opts.reuseLedgerOpts). FAIL-CLOSED: any error/empty/absent ledger ⇒ NOT suppressed ⇒ byte-identical
+pre-V22 (existing capability-router suite 15/15 preserved). Added reuse-ledger.ts to tsconfig.runtime-dist.json ⇒ dist
+emitted 103→104 so the COMPILED production router consumes it (verified dist/core/reuse-ledger.js present).
+
+**ACCEPTANCE GATE MET (learning-loop-integration.test, suite 9):** POSITIVE a validated precedent changes a later
+decision (Memory wins) · NEGATIVE after 2 reuse-failed the SAME decision changes (precedent DE-SELECTED, not in plan) ·
+RECOVERY validations>failures ⇒ re-selected · explicit-override de-selects · fail-closed on broken store ·
+no-fabricated-effect (flat⇒INCONCLUSIVE never suppresses/validates). Hermetic (temp CWD + injected shared store).
+
+**Gate:** test:report 103→104; tsc 0; build 104/104. €0; nothing sent. Loop CLOSED on the SELECTION side (router consumes
+reuse-ledger). PRODUCER side (post-release-learning calls recordReuseOutcome after a real mission) = NEXT lot (V22 P1b).

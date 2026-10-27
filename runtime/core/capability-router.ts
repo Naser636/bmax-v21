@@ -26,6 +26,12 @@ const rules: any = require("./decision-rules");
 const metrics: any = require("./capability-metrics");
 const EXC: any = require("./excellence-policy");   // AXE 1: gate the CHOSEN route (shared boundary), opt-in
 
+// V22 — reuse-ledger (the reuse-OUTCOME write-back, runtime/core/reuse-ledger). Consulted to DE-SELECT a
+// precedent whose prior reuse net-regressed (reuse-failed) until it is revalidated. Best-effort/fail-closed:
+// absent module ⇒ no suppression (exact pre-V22 behaviour). Co-located in the dist closure.
+let reuseLedger: any = null;
+try { reuseLedger = require("./reuse-ledger"); } catch { reuseLedger = null; }
+
 function localModelAvailable(opts: any): boolean {
   if (opts && typeof opts.localModelAvailable === "boolean") return opts.localModelAvailable;
   try {
@@ -41,7 +47,34 @@ function route(task: any, opts?: any): any {
 
   // Tier 1 — Memory: a known, previously-APPLIED solution for this exact signature.
   const memEdits = patchMemory.lookup(task);
-  if (memEdits) plan.push({ tier: "PATCH_MEMORY", source: "LOCAL", action: "replay", edits: memEdits });
+
+  // V22 LEARNING LOOP — a precedent whose prior reuse NET-REGRESSED (reuse-failed, recorded in reuse-ledger)
+  // must NOT be auto-replayed until revalidated. De-select it HERE (the selector decision-engine consumes),
+  // recording WHY (select vs reject — mandate invariant). Suppression source: explicit opts.suppressedSignatures
+  // (highest precedence), else the reuse-ledger (reads the autonomy-store; store injectable via opts.reuseLedgerOpts).
+  // Fail-closed: any error / empty / absent ledger ⇒ NOT suppressed ⇒ byte-identical to pre-V22 behaviour.
+  let reuse: any = null;
+  let memUsable = !!memEdits;
+  if (memEdits) {
+    let signature: string | null = null;
+    try { signature = patchMemory.signature(task); } catch { signature = null; }
+    let suppressed = false;
+    try {
+      const supp = (opts && Array.isArray(opts.suppressedSignatures))
+        ? opts.suppressedSignatures
+        : (reuseLedger ? reuseLedger.suppressedSignatures((opts && opts.reuseLedgerOpts) || {}) : []);
+      suppressed = !!signature && Array.isArray(supp) && supp.indexOf(signature) !== -1;
+    } catch { suppressed = false; }
+    memUsable = !suppressed;
+    reuse = {
+      signature, considered: true, suppressed, selected: memUsable,
+      reason: suppressed
+        ? "DE-SELECTED: precedent net-regressed on prior reuse (reuse-failed) — revalidation required before automatic reuse"
+        : "SELECTED: memory precedent eligible (no net-regression on record)",
+    };
+  }
+
+  if (memUsable) plan.push({ tier: "PATCH_MEMORY", source: "LOCAL", action: "replay", edits: memEdits });
 
   // Tier 2 — Rules: a deterministic capability implied by the goal.
   const rule = rules.match(task.goal);
@@ -54,8 +87,8 @@ function route(task: any, opts?: any): any {
   plan.push({ tier: "EXTERNAL_AI", source: "EXTERNAL", capability: "external-ai", lastResort: true });
 
   let chosen;
-  if (memEdits) {
-    chosen = plan[0]; // Memory always wins when it has an answer.
+  if (memUsable) {
+    chosen = plan[0]; // Memory always wins when it has an (eligible, non-suppressed) answer.
   } else {
     const local = plan.filter((s) => s.source === "LOCAL");
     if (local.length) {
@@ -81,11 +114,11 @@ function route(task: any, opts?: any): any {
       : EXC.reviewForExcellence({ domain: ex.domain || "capability-selection", now: ex.now || "", registry: ex.registry || [], currentPractices: [chosen && (chosen.capability || chosen.tier)].filter(Boolean), thresholds: {}, measured: {}, claims: (task.claims) || ex.claims || [] });
     const gate = EXC.requireExcellence(review, {});
     const excellence = { verdict: review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason, staleReferences: review.staleReferences || [], reviewerErrored };
-    if (!gate.admit) return { task, plan, chosen: null, usesExternalAI: false, excellence, admit: false };
-    return { task, plan, chosen, usesExternalAI: chosen.source === "EXTERNAL", excellence, admit: true };
+    if (!gate.admit) return { task, plan, chosen: null, usesExternalAI: false, excellence, admit: false, ...(reuse ? { reuse } : {}) };
+    return { task, plan, chosen, usesExternalAI: chosen.source === "EXTERNAL", excellence, admit: true, ...(reuse ? { reuse } : {}) };
   }
 
-  return { task, plan, chosen, usesExternalAI: chosen.source === "EXTERNAL" };
+  return { task, plan, chosen, usesExternalAI: chosen.source === "EXTERNAL", ...(reuse ? { reuse } : {}) };
 }
 
 module.exports = { route };
