@@ -5363,3 +5363,40 @@ NOT_CERTIFIED; nothing bought.
 HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send + legal review; choose M2/M3/M4 emphasis; ISO text
 access (free AFNOR/ANS consultation eligibility, else minimal purchase) IF clause-level certification wanted; any spend;
 EXTERNAL production deps (KMS/HSM, prod multi-tenant, off-host backup, monitoring) for certification + enterprise clients.
+
+---
+## CHECKPOINT 2026-10-27 (ba) — field execution: niche-scoring + A/B/C/D switch engine + field dossier €0
+CTO FIELD EXECUTION SYSTEM (continuation, no restart). Truth Lock entry 2bad335≡origin/main, clean, 5 stashes,
+4 untracked docs/. No new primitive. Diff = niche-scoring(.ts/.test) + package.json + FIELD_DOSSIER_V1.md + compass.
+
+**§2/§4 — EXECUTED (real testable engine):** NEW runtime/core/niche-scoring.ts — scoreNiche/rankNiches (deterministic,
+reproducible, 9 weighted criteria 1–5, missing⇒0+flagged) + switchDecision() A/B/C/D engine turning OBSERVED signals
+into a strategy under PRE-SET thresholds, fail-closed: HOLD_A on too-small sample (never switch on a single refusal);
+STAY_A on success threshold; CONTINUE_A if signal present; escalate SWITCH_B→C→D below the stop rate after a full
+sample. Gated suite (9): ranking deterministic; score maths; missing flagged; weights change ranking; single-refusal⇒
+HOLD; success⇒STAY; signal⇒CONTINUE; below-stop⇒SWITCH_B; B→C→D escalation. full gate 76→77; tsc 0; build 0.
+
+**§8 field dossier — DELIVERED (usable):** docs/odg-operational/FIELD_DOSSIER_V1.md — multi-niche matrix A–F scored
+(HYPOTHESIS, cited drivers: AI-Act Annex-III 2027-12-02 ⇒ niche B rank 1; Bpifrance Diag Cyber + ANSSI ⇒ A; DORA gates
+finance), reproducible ranking via rankNiches; first-targets METHOD (public sources, provenance fields, NO invented
+company/contact/budget — none named, to be sourced+verified at execution); full field kit for niches B+A (value prop,
+entry+higher-value offers HYPOTHESIS €, 30-sec pitch, first-call script, written message→SALES_KIT, discovery Qs,
+objections, qualify/disqualify, demo+trust, proposal+contract [LEGAL REVIEW], signature→invoice→cash via pipeline-
+ledger); A/B/C/D switch criteria (hypothesis/sample/cost/success/stop); €500k linkage (revenue-model→pipeline-ledger→
+revenue-dashboard[NO_DATA, gap=full €500k]→launch-budget).
+
+TRUTH→GAP→ROOTCAUSE→CHANGE→TEST→EVIDENCE: §4 wanted an A/B/C/D switch mechanism + reproducible scoring; none existed →
+MINIMUM a pure scorer + fail-closed switch engine reusing the honest-threshold discipline → TEST 9 → EVIDENCE 77/77 →
+NEXT populate real sourced prospects on CTO go.
+
+**Honesty:** niche scores = HYPOTHESIS (re-score on real signals); no company/contact/budget invented (none named);
+arithmetic ≠ probability; switch on real signals only, never a single refusal; no outreach sent; €500k gap NO_DATA.
+
+**Learning reuse (proven):** reused the fail-closed/threshold discipline (launch-budget/dashboard) in the switch engine;
+the field dossier reuses SALES_KIT/REVENUE_500K/demo-dossier/iso-readiness/pipeline-ledger artifacts (no duplication).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/niche-scoring.test.ts`
+HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send on REAL sourced prospects + legal review; choose
+A/B/C/D emphasis; ISO text access; any spend; EXTERNAL production+certification deps. The field kit is USABLE now; the
+missing piece is a human GO to contact real sourced prospects. Next autonomous €0: proposal generator from verifiable
+scopes, or ISO-42001 self-readiness (same engine).
