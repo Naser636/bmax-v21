@@ -6069,3 +6069,33 @@ honest-site chrome + ASSURANCE_PILOT synthetic-proof framing + PARTNER research 
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-target-path.test.ts`
 HUMAN FRONTIERS: publish public prices + deploy (CTO; prices HYP); SASU for €500k scale; subcontractor contracts +
 working capital (hybrid); + unchanged (outreach after Gmail+auth+legal+addresses; CERT=CTO_DECISION_PACK).
+
+---
+## CHECKPOINT 2026-10-27 (bt) — V17 €500k NET-CASH model (honest verdict: beyond year-1 modeled envelope) €0
+CTO "V17 €500k NET CASH collected in 12 months" (post-PR#77). Truth Lock b8f7861≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = net-cash-model(.ts/.test) + package.json
++ NET_CASH_PLAN_500K_V1 + compass.
+
+**net-cash-model.ts (EXECUTED):** decomposes gross cash collected → collected (−unpaid) → operating net (−direct costs:
+acquisition/delivery/subcontract/commission) → net-before-tax (−social, SEPARATE) → NET AVAILABLE (−income tax, SEPARATE,
+flagged). requiredGrossForNet() inverts. Suite 9. Rates HYPOTHESIS (micro-BNC defaults; social 25.6% on turnover confirm
+URSSAF; income tax separate estimate). KEY HONEST VERDICT: €500k NET needs **~€1.49M GROSS cash COLLECTED (≈3.0×)** solo;
+**heavy hybrid (30% subcontract+15% commission) ⇒ net NEGATIVE** (channel costs+social exceed gross). vs modeled year-1
+cash ≈€342-448k (V9/V16) ⇒ **€500k NET in 12 months NOT achievable under any modeled scenario — a multi-year trajectory
+or a different (team/higher-margin) structure.** Stated plainly, not disguised. → NET_CASH_PLAN_500K_V1.
+
+**Corrective levers (HYPOTHESIS):** maximise net factor (direct high-margin, avoid stacking commission+subcontract that
+zero net, low delivery cost via assurance-pilot-runner, deposits vs bad-debt); raise gross (high value+recurring+pilot→
+retainer); structure (SASU changes social/tax profile — expert-comptable); timeline (treat €500k NET as ≥18-24mo, honest
+lower year-1 NET milestone). Monthly tracking via existing dashboard (0 collected/NO_DATA today).
+
+**Gate:** test:report 95→96; tsc 0; build 0. Honesty: €500k NET target NOT met and modeled as beyond year-1 envelope;
+levies shown separately; rates HYPOTHESIS not tuned; 0 collected; nothing invented/published/sent; €0.
+
+**Learning reuse (proven):** net-cash-model layers on top of the gross from revenue-schedule/portfolio/target-path;
+exposes that V10 channel economics (reach €500k GROSS) DESTROY net — correcting the earlier gross-only framing honestly.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/net-cash-model.test.ts`
+HUMAN FRONTIERS: structure decision (SASU — changes net factor, expert-comptable); subcontractor finance/working capital;
+confirm URSSAF social rate + tax; + unchanged (publish/deploy; outreach after Gmail+auth+legal+addresses; partner budget).
+Reality: €500k NET year-1 beyond modeled reach ⇒ set an honest year-1 NET milestone + multi-year trajectory.
