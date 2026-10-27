@@ -6641,3 +6641,27 @@ Suite 12.
 **SIX-AXIS STATUS (all active):** A offer · B offer · C qualification · D BLOCKED (no partner) · E sizing-in-dashboard ·
 **F 27001 dossier end-to-end this lot** (NOT_CERTIFIED). Learning loop CLOSED all outcomes. Session V21→V28 = PRs
 #82–#99(pending) ; test:report 59→116. NEXT LOT (V28 order): B recurring mid-market offer, then C proposal templates.
+
+---
+## CHECKPOINT 2026-10-27 (cp) — V28 B+C: recurring mid-market offer + enterprise proposal templates €0
+CTO "V28" Priorities B+C (post-PR#99, main c5674d3). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+recurring-offer(.ts/.test) + enterprise-proposal-template(.ts/.test) + package.json + compass.
+
+**recurring-offer.ts (axis B recurrence — wraps mid-market-offer, no dup):** OFFER B-RECURRING cadence over the B
+package; explicitly NOT an SLA / NOT monitoring / NOT certification (disclaimed). economics() retention-adjusted
+annualized (NOT 12× flat; expectedMonthsBilled = Σ retention^m) — ASSUMPTIONS; GROSS not net. runCycles() synthetic
+multi-cycle re-assessment reusing B.runPackage + residual trend. Suite 10.
+
+**enterprise-proposal-template.ts (axis C — composes qualification + enterprise-mission-model + proposal-generator):**
+buildTemplate() ONLY for a QUALIFIED record (NOT_QUALIFIED/disqualified ⇒ refused); KNOWN FACTS (from record) separated
+from HYPOTHESES/open-questions; price scope-derived (enterprise-mission-model, never a target; no mission ⇒
+OPEN_QUESTION); customer identity = caller REF only (no invented name/budget/acceptance); legal-review items flagged;
+anti-overclaim via proposal-generator.scanClaims; status PREPARED (not sent/signed). Suite 13.
+
+**Gate:** test:report 116→118; tsc 0; build 0. €0; nothing sent; 0 sold; all prices/probabilities ASSUMPTIONS.
+
+**SIX-AXIS — all with concrete artifacts now:** A entry offer · B mid-market + recurring · C qualification + proposal
+template · D BLOCKED (no partner; prep only) · E enterprise-mission-model + dashboard sizing · F 27001 dossier
+(NOT_CERTIFIED). Learning loop CLOSED all outcomes (compiled). Session V21→V28 = PRs #82–#100(pending), test:report
+59→118, all ff-only CI-green. €500k NET VOLUME-bound/unproven; 0 collected; €0 spent; nothing sent.
+NEXT: D partner-profile prep (prep only, contact gated) OR consolidated monthly portfolio cash model across A–F.
