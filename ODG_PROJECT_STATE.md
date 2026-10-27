@@ -4583,3 +4583,40 @@ policy itself is the mechanised capture of "seek best references + measure impro
 Next €0 candidate: add a 2nd independent verifier class + a sector-specific obligation pack (e.g. DORA/finance) to
 regulatory-assurance. BLOCKED/EXTERNAL (CTO/infra): lawyer/auditor/certification-body, live source re-verification
 (network), production multi-tenant isolation, live-scheduler wiring of the excellence rule.
+
+---
+## CHECKPOINT 2026-10-27 (af) — AE-REG-SECURITY: live orchestration + dual verifier + prod-readiness gaps €0
+CTO 3-axis mission. Truth Lock entry 6c37ce7≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new
+primitive/orchestrator. Diff = 2 core modules + 2 suites + package.json + 2 docs.
+
+**AXIS A (excellence rule in the REAL scheduler) — PROVEN:** mission-scheduler.ts schedulerStep now consults an
+injected reviewExcellence (canonical factory buildExcellenceReviewer reuses excellence-policy). FAIL-CLOSED ONLY on a
+prohibited unproven-superlative claim (⇒ BLOCKED, dispatch never called); stale/offline refs + INSUFFICIENT_EVIDENCE +
+reviewer errors are ADVISORY + NON-blocking (a mission is never blocked because reference search is offline); absent
+reviewer ⇒ zero regression; one step ⇒ one dispatch (no loop). Scheduler suite 27→36 and NOW GATED in test:report (it
+was ungated — added as a regression guard). Applied WITHOUT a CTO reminder (schedulerStep always runs it when wired).
+HONEST LIMIT: canonical-queue wiring + unattended activation remain CTO/host-gated.
+
+**AXIS B (international regulatory assurance) — PROVEN (bounded):** audited regulatory-assurance (modules/tests/refs);
+added a SECOND independent verifier (role separation / DUAL CONTROL): SATISFIED_VERIFIED only when BOTH agree;
+disagreement ⇒ DECLARED_UNVERIFIED (contradiction surfaced, no false success); both-reject ⇒ agree-unsatisfied; single
+verifier backward-compatible. Suite 25→29. DORA noted as APPLICABILITY-GATED (financial entities only — not auto-
+applied; full sector pack = future lot). Live source re-verification STILL offline (no network) ⇒ offline-pending-
+reverify retained. Distinctions kept: preparation ≠ legal conformity ≠ independent audit ≠ official certification.
+
+**AXIS C (security + production readiness) — DOCUMENTED + safe-local done:** PRODUCTION_READINESS_GAPS_V1.md inventories
+9 gaps (auth, multi-tenant isolation, KMS, auditability, backups, recovery, observability, agent integration, scheduler
+activation) with risk + hermetic-evidence-today + needed-for-prod + local-testable vs EXTERNAL. Safe local actions:
+Axis A scheduler gate + regression-gating its suite; Axis B dual verifier. No simulated result claimed as production;
+KMS/HSM, prod datastore/isolation, WORM/SIEM, off-host backups/DR, monitoring, real agent, scheduler activation all
+explicitly EXTERNAL/BLOCKED.
+
+**Proof:** scheduler 36 + regulatory 29 + excellence 18 (+ all prior) ⇒ full gate 65→66/66; tsc 0; build 0.
+
+**Learning reuse (proven):** reused excellence-policy (consulted in the live scheduler path + dual-verifier design),
+no-false-success + deny-by-default (scheduler), reproduce-before-change, fixed-thresholds, honest SIMULATION≠production.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/mission-scheduler.test.ts && tsx runtime/core/regulatory-assurance.test.ts`
+Next €0 candidate: wire buildExcellenceReviewer into odg-schedule-tick (canonical tick) behind the existing canary
+boundary + a DORA applicability-gated obligation pack. BLOCKED/EXTERNAL (CTO/infra): network source re-verification,
+KMS/HSM, prod multi-tenant isolation, scheduler activation on the canonical queue, real external agent.

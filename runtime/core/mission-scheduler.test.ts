@@ -131,4 +131,39 @@ ok("module is a pure library (no top-level run): exports schedulerStep + helpers
   ok("refused (not pre-authorized) ⇒ IDLE reason names NOT_PRE_AUTHORIZED", dr.status === "IDLE" && /NOT_PRE_AUTHORIZED/.test(dr.reason));
 }
 
+// ═════════ AXE A — EXCELLENCE RULE applied automatically in the REAL scheduler step ═════════
+{
+  const NOW = "2026-10-27";
+  const REG = [{ id: "SCHED-REF", authority: "ODG", domain: "mission-quality", version: "1.0", date: "2026-10-01", source: "ODG mission-quality method", normativeStatus: "industry-practice", usageRights: "own", practicesAdopted: ["reproduce-before-fix", "measured-acceptance"], limits: [], nextReviewDate: "2027-10-01", verificationStatus: "offline-pending-reverify" }];
+  const inputFor = (m) => ({ domain: "mission-quality", now: NOW, registry: REG, currentPractices: ["reproduce-before-fix", "measured-acceptance"], thresholds: { quality: 1 }, measured: { quality: 1 }, claims: (m && m.claims) || [] });
+  const reviewer = sched.buildExcellenceReviewer(inputFor);
+  const mkCtx = (over) => { const dispatched = []; const audit = []; const ctx = { queue: { queue: [{ mission: "M1", status: "PENDING", ...((over && over.item) || {}) }] }, preAuthorized: ["M1"], isProven: () => false, attemptsByMission: {}, authorize: () => ({ ok: true }), dispatch: (it) => { dispatched.push(it.mission); return { verified: true, proofPresent: true, detail: "ok" }; }, recordAttempt: (d) => audit.push(d), reviewExcellence: reviewer, ...((over && over.ctx) || {}) }; return { ctx, dispatched, audit }; };
+
+  // (1) a real scheduled mission AUTO-consults the rule + proceeds (no CTO reminder)
+  const a = mkCtx(); const da = sched.schedulerStep(a.ctx);
+  ok("Axis A: scheduled mission auto-consults excellence rule + proceeds", da.status === "PASS" && da.excellence && da.excellence.verdict === "MEETS" && a.dispatched.length === 1);
+  // (2) unproven superlative ⇒ BLOCKED, dispatch NEVER called (fail-closed on prohibited claim)
+  const b = mkCtx({ item: { claims: ["ODG is the world number one autonomous engine"] } }); const db = sched.schedulerStep(b.ctx);
+  ok("Axis A: unproven superlative ⇒ BLOCKED, no dispatch", db.status === "BLOCKED" && /EXCELLENCE_PROHIBITED_CLAIM/.test(db.reason) && b.dispatched.length === 0);
+  ok("Axis A: prohibited-claim BLOCK is journaled", b.audit.some(x => /EXCELLENCE_PROHIBITED_CLAIM/.test(x.reason)));
+  // (3) stale reference ⇒ flagged but NON-blocking
+  const staleReviewer = sched.buildExcellenceReviewer(() => ({ domain: "mission-quality", now: NOW, registry: [{ ...REG[0], nextReviewDate: "2020-01-01" }], currentPractices: ["reproduce-before-fix", "measured-acceptance"], thresholds: {}, measured: {}, claims: [] }));
+  const c = mkCtx({ ctx: { reviewExcellence: staleReviewer } }); const dc = sched.schedulerStep(c.ctx);
+  ok("Axis A: stale reference flagged but NON-blocking (mission proceeds)", dc.status === "PASS" && dc.excellence.staleReferences.includes("SCHED-REF") && c.dispatched.length === 1);
+  // (4) offline / no applicable reference ⇒ NON-blocking
+  const offReviewer = sched.buildExcellenceReviewer(() => ({ domain: "unknown-domain", now: NOW, registry: REG, currentPractices: [], thresholds: {}, measured: {}, claims: [] }));
+  const o = mkCtx({ ctx: { reviewExcellence: offReviewer } }); const dOff = sched.schedulerStep(o.ctx);
+  ok("Axis A: offline/no-reference ⇒ INSUFFICIENT_EVIDENCE but NON-blocking", dOff.status === "PASS" && dOff.excellence.verdict === "INSUFFICIENT_EVIDENCE" && o.dispatched.length === 1);
+  // (5) reviewer error ⇒ advisory, non-blocking
+  const e = mkCtx({ ctx: { reviewExcellence: () => { throw new Error("boom"); } } }); const de = sched.schedulerStep(e.ctx);
+  ok("Axis A: reviewer error is advisory, NON-blocking", de.status === "PASS" && de.excellence.verdict === "ADVISORY_ERROR" && e.dispatched.length === 1);
+  // (6) absent reviewer ⇒ no regression
+  const n = mkCtx({ ctx: { reviewExcellence: undefined } }); const dn = sched.schedulerStep(n.ctx);
+  ok("Axis A: absent reviewer ⇒ no regression (no excellence field)", dn.status === "PASS" && dn.excellence === undefined && n.dispatched.length === 1);
+  // (7) no execution loop: exactly one dispatch per step
+  ok("Axis A: one step ⇒ exactly one dispatch (no loop)", a.dispatched.length === 1 && dn.mission === "M1");
+  // (8) factory guard
+  ok("Axis A: buildExcellenceReviewer(non-fn) ⇒ throws", (() => { try { sched.buildExcellenceReviewer(123); return false; } catch (x) { return true; } })());
+}
+
 console.log(`\nmission-scheduler — ${passed} assertions passed. (NO mission executed; scheduler NOT activated.)`);
