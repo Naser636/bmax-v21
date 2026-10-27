@@ -5682,3 +5682,37 @@ HUMAN FRONTIERS (= CTO_DECISION_PACK_V1, unchanged): approve policies; confirm C
 purchase vs free 27001 AFNOR interactive; prod deps; legal review; authorize outreach. Certification: execute internal
 audit + management review + incident handling (with records) to move toward READY_FOR_STAGE1; verify a CB's COFRAC
 27001 scope; obtain devis (CTO).
+
+---
+## CHECKPOINT 2026-10-27 (bi) — Official certification route verified + devis-request pack V7 (docs-only) €0
+CTO "FINAL READINESS + OFFICIAL CERTIFICATION ROUTE V7" (continuation PR#66, no restart). Truth Lock 3462655≡origin/main
+(0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. **DOCS-ONLY lot (no code gap demonstrated — per
+mandate §6 prefer concrete prep over new abstraction; honest that not every lot needs code).** Diff = CERTIFICATION_
+DEVIS_REQUEST_PACK_V1.md + compass.
+
+**Official-register verification (actually hit the sources):**
+- **AFNOR Certification ISO 27001 scope VERIFIED:** COFRAC **n°4‑0001 "Accrédité"** for ISO/IEC 27001:2022 (NF EN ISO/IEC
+  27006‑1:2024), addr 11 rue Francis de Pressensé Saint-Denis; evidence = COFRAC fiche entite_id=41000578 + annex
+  tools.cofrac.fr/annexes/sect4/4-0001.pdf. Upgrades AFNOR from "scope to verify"→VERIFIED.
+- COFRAC easysearch = functional but needs an INTERACTIVE parameterised query + opening the annex ⇒ other CBs (Bureau
+  Veritas/BSI) remain "scope to verify" (not confirmable via fetch). Honest.
+- **MonAideCyber eligibility = sources CONFLICT:** some say TPE/PME<250 incl. artisans/professionnels "no size condition",
+  others cite "≥2 salariés"; the CTO-flagged mono-salarié/auto-entrepreneur restriction was **NOT corroborated** by
+  readable sources; official page JS-shell in-session ⇒ confirm directly. Recorded conflict honestly, no definitive claim.
+
+**Devis-request pack (§4):** CERTIFICATION_DEVIS_REQUEST_PACK_V1.md — proposed ISMS scope + effectif/sites/architecture
+placeholders, existing policies/evidence, open operational gaps (verdict NOT_READY 0/12,0/10), 3-CB comparison (AFNOR
+VERIFIED; others to verify), standardised CB questions, DRAFT devis request UNSENT [CTO/legal review], public-aid
+eligibility honest (diagnostic≠prep≠audit≠certificate). Recommended path = Scenario A (internal €0) unchanged.
+
+**Gate:** test:report 85/85; tsc 0; build unchanged (no source change). Honesty: NOT_READY; 0 SATISFIED; only AFNOR 27001
+scope verified (others pending interactive COFRAC); MonAideCyber eligibility unresolved (conflict); no purchase/contact;
+€500k NO_DATA; "CU" ambiguous.
+
+**Learning reuse (proven):** reused certification-readiness verdict + the ACCESS-honesty doctrine; the devis pack binds
+the clause-matrix/op-evidence/readiness outputs into a single deposable dossier (no duplication, no new module).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/certification-readiness.test.ts`
+HUMAN FRONTIERS (= CTO_DECISION_PACK_V1, unchanged): approve policies; confirm CU; structure+RC Pro; ISO 42001 vs free
+27001 AFNOR interactive; prod deps; legal review; authorize outreach. New: verify Bureau Veritas/BSI COFRAC/UKAS scope
+interactively; confirm MonAideCyber eligibility officially; send devis requests (CTO).
