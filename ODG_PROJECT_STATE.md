@@ -5754,3 +5754,45 @@ offers evaluation grounded in the gated-capability evidence (SBOM/provenance/tes
 HUMAN FRONTIERS (grouped, = CTO_DECISION_PACK + commercial): authorize first outreach (A/C offers) + legal review;
 choose price point (ambitious high-value path recommended by the model); decide partner/subcontracting for €500k scale;
 register PLACE/APProch (CTO, €0); confirm "CU"; approve ISO policies; prod deps; any spend.
+
+---
+## CHECKPOINT 2026-10-27 (bk) — V8 independent scenario audit (recurring-bias FIX) + purchase-signal research + decision dossier €0
+CTO "V8 VALIDATION INDÉPENDANTE DU PLAN 500K" (parallel, post-PR#68, no restart). Truth Lock fb49364≡origin/main (0/0),
+clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. Read-only first; code changed only because the audit found
+a concrete defect. No new primitive/orchestrator. Diff = revenue-scenarios(.ts/.test) + REVENUE_500K_PLAN_V2 + 3 docs + compass.
+
+**Mission 1 — independent scenario audit found + FIXED a real defect:** revenue-scenarios recognised recurring at
+best-case (months-2 ≈10) for EVERY contract regardless of signing month ⇒ OVERSTATED value/contract, UNDERSTATED
+contracts needed (artificially favourable — forbidden). FIX: conservative even-acquisition recognition ≈(months-2)/2 ≈5
+months; expose valuePerContractBestCase + recurringMonthsRecognized; drive plan off the conservative figure. Suite 9→13.
+EFFECT (honest, harsher): central value €19k→€14k, contracts 27→36, **central flipped STRETCH→INFEASIBLE_SOLO**;
+ambitious €38k→€28k, 14→18 contracts, still PLAUSIBLE_HYPOTHESIS. **Only the high-value+recurring (ambitious) scenario
+is solo-plausible; prudent + central INFEASIBLE_SOLO.** → REVENUE_500K_PLAN_V2 updated + V8 audit-fix note.
+
+**Mission 2 — purchase-signal research (agent, no contact) → COMMERCIAL_RESEARCH_V3:** dated TRIGGERS (tech-DD 2-6wk;
+security questionnaire deal-blocker; AI-Act Art.50 2026-08-02/marking 2026-12-02; **EU CRA Reg 2024/2847 reporting
+2026-09-11, full+SBOM 2027-12-11** — strongest, matches ODG's proven SBOM); VERIFIED public prices (code-audit €4-12k,
+pentest SMB $8-20k, ISO-27001 readiness €3-6k, ISO-42001 gap $5-15k, EuroAIGuard €490/990/2290/mo) ⇒ ODG HYP prices
+market-consistent; 5 ranked SEGMENTS + qualification criteria (lead=detected-opportunity only, never intent).
+
+**Mission 3 — capacity → ASSURANCE_PILOT_SCOPE_V1:** honest capability states (SBOM/provenance/audit-log/test/license =
+EXECUTABLE gated; agent-security = mechanism principle-level; prod monitoring/KMS/backup = EXTERNAL; client-system runs =
+need authorisation). A + C pilot scopes with measurable acceptance, exclusions (no cert/guarantee/absolute-security),
+~€0 direct cost, human-effort map. 0 client engagements delivered.
+
+**Mission 4 — COMMERCIAL_DECISION_DOSSIER_V1:** price reco (A €5-8k, C €8-15k+€1-2k/mo, market-justified); most-
+sustainable scenario = ambitious high-value; partners needed below that; **ONE minimal CTO decision = authorise first
+small compliant outreach (A+C) after legal review**; cert decisions SEPARATE (AFNOR = VERIFIED COFRAC 4-0001 27001).
+
+**Gate:** test:report 87/87 (revenue-scenarios 9→13 assertions, same suite); tsc 0 (independent); build 0. Honesty:
+€500k TARGET not forecast; fix made model HARDER not easier; 0 verified prospect/intent; 0 detected→cashed; prices
+HYPOTHESIS (market-consistent); no outreach/purchase; nothing invented.
+
+**Learning reuse (proven):** the audit reused the DOCUMENTED≠favourable discipline (corrected toward conservatism);
+research price anchors feed the decision dossier's price band; pilot scope grounded in the gated-capability evidence +
+CRA trigger matched to the proven multi-ecosystem SBOM.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-scenarios.test.ts`
+HUMAN FRONTIERS (grouped): COMMERCIAL — (1) confirm price band, (2) authorise minimal first outreach (A+C) after legal
+review. CERTIFICATION (separate, = CTO_DECISION_PACK): approve policies; confirm CU; structure+RC Pro; ISO 42001 vs
+free 27001; prod deps. Partners/subcontracting for €500k scale = separate budget.
