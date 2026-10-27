@@ -6099,3 +6099,37 @@ exposes that V10 channel economics (reach €500k GROSS) DESTROY net — correct
 HUMAN FRONTIERS: structure decision (SASU — changes net factor, expert-comptable); subcontractor finance/working capital;
 confirm URSSAF social rate + tax; + unchanged (publish/deploy; outreach after Gmail+auth+legal+addresses; partner budget).
 Reality: €500k NET year-1 beyond modeled reach ⇒ set an honest year-1 NET milestone + multi-year trajectory.
+
+---
+## CHECKPOINT 2026-10-27 (bu) — V18 structural net-cash levers (SASU + productization) €0
+CTO "V18 €500k NET BREAKTHROUGH — change the economics not the target" (post-PR#78). Truth Lock 27f2bbf≡origin/main
+(0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff =
+economic-profiles(.ts/.test) + package.json + NET_CASH_STRUCTURAL_LEVERS_V1 + compass.
+
+**economic-profiles.ts (EXECUTED):** recomputes net factor PER STRUCTURE (NOT the blind micro factor) — micro (social on
+turnover) vs SASU (IS on profit + PFU on distribution); per-profile acquisition/delivery/subcontract/commission/badDebt.
+netForProfile + requiredGrossForNet + compareProfiles(ranked). Suite 8. Rates HYPOTHESIS (SASU IS/PFU simplified —
+expert-comptable). RESULT (net factor / required gross for €500k NET): B micro-mixed-stacked 0.21/€2.41M (worst); D
+partner-25%comm 0.35/€1.44M; A micro-direct 0.38/€1.32M; C SASU-direct 0.48/€1.05M; **E productized-SASU 0.56/€888k
+(best)**.
+
+**STRUCTURAL LEVERS (ranked impact):** (1) PRODUCTIZE (near-zero marginal delivery) biggest — factor 0.38→0.56, gross
+€1.32M→€888k (IF assurance offer productizable w/o disproportionate dev); (2) SASU removes 25.6% social-on-turnover
+(0.38→0.48, expert-comptable); (3) avoid channel stacking (B worst). HONEST VERDICT: best profile still needs ~€888k
+gross collected vs modeled year-1 cash €342-448k ⇒ €500k NET year-1 still HARD/unproven BUT gap narrowed ~40% and NOT
+categorically impossible under a different structure — contingent on productization feasibility + SASU + volume + time.
+→ NET_CASH_STRUCTURAL_LEVERS_V1.
+
+**Highest-impact next INTERNAL action (€0):** prototype the productized assurance path (reuse assurance-pilot-runner,
+synthetic) to test lever #1, then re-run net model with measured delivery cost. Structure/spend/outreach = human/expert.
+
+**Gate:** test:report 96→97; tsc 0; build 0. Honesty: €500k NET still unproven (not declared impossible nor achieved);
+rates HYPOTHESIS not tuned; levies per-structure; 0 collected; nothing invented/published/sent; €0.
+
+**Learning reuse (proven):** economic-profiles builds on net-cash-model's layering, correcting V17's single-factor view
+(structure changes the factor); points lever #1 at the existing assurance-pilot-runner (productization prototype).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/economic-profiles.test.ts`
+HUMAN FRONTIERS (impact-ranked): decide SASU (expert-comptable; biggest structural factor lever after productization);
+confirm IS/PFU/social rates; price band + avoid channel stacking; outreach (Gmail+auth+legal+addresses). Reality: €500k
+NET year-1 needs ~€888k gross collected at best profile ⇒ productize + SASU + volume + ramp; honest year-1 NET milestone.
