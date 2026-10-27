@@ -6004,3 +6004,38 @@ ASSURANCE_PILOT_KIT. Deterministic seal = reproducible provenance (capture→per
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/assurance-pilot-runner.test.ts`
 HUMAN FRONTIERS unchanged: send batch-1 (Gmail app-password env + EMAIL_SEND_ENABLED=1 + per-send auth + legal review +
 verified addresses); price band; partner/subcontract+budget; CERT=CTO_DECISION_PACK. Real client pilot needs authorised data.
+
+---
+## CHECKPOINT 2026-10-27 (br) — V15 website audit + pricing-grid + €500k financial plan €0
+CTO "V15 WEBSITE-FIRST REVENUE" (post-PR#75). Truth Lock 9405586→f5d08c0 (verified live), clean, 5 stashes + 4 untracked
+docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = pricing-grid(.ts/.test) + package.json + 3 docs + compass.
+
+**Website FOUND (not recreated):** static HTML in `site/` (index/services/pricing/method/contact/legal/proofs+proofs/)
+served same-origin via Next.js route src/app/site/[...slug]/route.ts (path-confined); contact form→POST /api/intake.
+Deployed state unverified (loopback VPS; public exposure NOT authorised). Site is ALREADY HONEST: services with problem/
+result/deliverable/limits/next-step; pricing deliberately quote-only; NO fake testimonials/cert/guarantee. → WEBSITE_AUDIT_V1.
+
+**Top-3 conversion improvements (PREPARED, not published):** (1) entry offer with honest "à partir de €X" + 1-click
+diagnostic CTA (Voie A first-sale friction); (2) distinct small/intermediate/large paths + Partners page; (3) FAQ +
+clearly-labelled SYNTHETIC sample reports. + 90-day editorial plan. No deploy/auto-publish (CTO decision; prices HYP).
+
+**pricing-grid.ts (EXECUTED):** fail-closed grid — every price bound to scope+days+minMargin; implied day-rate vs €400
+floor; worst-case margin vs daily cost; public vs quote selection; recurring exempt from day-rate floor. Suite 10.
+HONEST MARGIN SIGNAL: at €0 marginal cost diagnostic+audit-limited publishable; at imputed €350/day cost the thin entry
+margins fall below 55-60% min (flagged) ⇒ entry offers are loss-leaders or need higher price. → PRICING_GRID_V1 (public:
+diagnostic €490, audit-limited €1500; rest quote; prices HYPOTHESIS, publishes nothing).
+
+**FINANCIAL_PLAN_500K_V1 (reuse engines):** consolidated A+B+C mix cashes ~€81.5k year-1 (signed ~€91k; concentration
+MEDIUM 44%) ⇒ gap to €500k CASH = €418k. €500k reachable only via high-value+recurring+channels+SASU (micro ceiling
+€83,600≪500k; TVA franchise €37,500); year-1 CASH ~€342k best solo (V9) ⇒ €500k=signed/run-rate, cash lags into year-2.
+Measurement via existing pipeline (0/NO_DATA today). Structure=human/legal decision.
+
+**Gate:** test:report 93→94; tsc 0; build 0. Honesty: €500k TARGET not met; prices HYPOTHESIS; nothing published/
+deployed/sent; no entity/insurance/spend; nothing invented; €0. Gmail/prospection UNCHANGED (BLOCKED).
+
+**Learning reuse (proven):** pricing-grid feeds WEBSITE_AUDIT public-offer proposal + FINANCIAL_PLAN; financial plan
+reuses portfolio/schedule/channels; audit reuses the honest-site stance + ASSURANCE_PILOT_SAMPLE_DOSSIER as proof-of-method.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/pricing-grid.test.ts`
+HUMAN FRONTIERS: publish public starting-from prices + any deploy (CTO; prices HYP); + unchanged (outreach/channel/
+partner/budget; CERT=CTO_DECISION_PACK; selling structure=SASU decision for €500k scale).
