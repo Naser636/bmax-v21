@@ -5528,3 +5528,44 @@ prospection-compliance reuses the fail-closed MUST/MUST-NOT validator pattern; b
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/ai-act-role-classifier.test.ts && tsx runtime/core/prospection-compliance.test.ts`
 HUMAN FRONTIERS (grouped): authorize outreach (V3) + legal review; confirm CU; ISO 42001 purchase vs schedule free 27001
 clause lot; choose selling structure + RC Pro; prod deps; URSSAF/EUR-Lex confirms (free, auto-runnable); any spend.
+
+---
+## CHECKPOINT 2026-10-27 (be) — ISO 27001 clause matrix + regulatory closure V3 €0
+CTO "ISO 27001 CLAUSE MAPPING + REGULATORY CLOSURE V3" (continuation from PR#62, no restart). Truth Lock e66037b≡
+origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff =
+iso-27001-clause-matrix(.ts/.test) + package.json + 3 docs + compass.
+
+**ISO 27001 clause matrix (EXECUTED, honest):** NEW runtime/core/iso-27001-clause-matrix.ts — maps ODG evidence to the
+PUBLIC ISO/IEC 27001:2022 structure (MS clauses 4–10 + Annex A themes A.5/A.6/A.7/A.8; Amd 1:2024 climate at 4.1/4.2);
+**no normative text reproduced** (AFNOR "Consulter" button present but full text NOT readable in-session — interactive
+portal). KEY honesty rule CODE-ENFORCED per mandate: a gated software test ⇒ MECHANISM_PRESENT, **NOT SATISFIED**;
+SATISFIED requires an explicit operationalEvidence assertion (records/policy). Verified vs REAL gated suites. Result:
+**0 SATISFIED / 12 MECHANISM_PRESENT / 7 EXTERNAL / 0 GAP of 19** → ISO_27001_CLAUSE_MATRIX_V1.md. Suite 13.
+
+**AI Act Art.113 corroborated (stronger source):** artificialintelligenceact.eu/article/113 returned the ACTUAL
+consolidated Article 113 text (authoritative mirror full-text) — confirms amended schedule: general app 2026-08-02;
+new prohibitions (Art 5 ba/bb) 2026-12-02; high-risk Annex III **2027-12-02**; Annex I **2028-08-02**; Arts 102-110
+2026-07-26; "amended/new" markers = Reg(EU)2026/1744. EUR-Lex DIRECT full text = empty dynamic shells (NOT read).
+role-classifier hardcodes NO dates ⇒ no code change; design validated. → REGULATORY_CLOSURE_V3.md.
+
+**Remaining primary confirmations (honest):** URSSAF rate page socket-hang-up ⇒ 25,6% stays primary-unverified; EUR-Lex
+GDPR direct full text not fetchable (CNIL full-text + consolidated mirror stand); Art 50(2) grace 2026-12-02 remains
+official-summary (not in Art 113 text). 
+
+**Ops prep (Track 5):** PRODUCTION_DEPENDENCIES_SPEC_V1.md — per EXTERNAL dep (off-host backup/monitoring/KMS/multi-
+tenant/public-exposure/selling-entity): spec + options + security criteria + indicative cost + validation procedure ⇒
+CTO decision/spend is the only remaining work; nothing activated/purchased/exposed.
+
+**Gate:** test:report 82→83; tsc 0; build 0 (closure). **Honesty:** NOT_CERTIFIED; mechanism≠satisfied (0 satisfied);
+no normative text reproduced; dates official/mirror-sourced (EUR-Lex direct unread); no outreach; €500k NO_DATA;
+perfection NOT claimed. "CU" still BLOQUÉ (CTO).
+
+**Learning reuse (proven):** iso-27001-clause-matrix reuses iso-readiness's evidence-verified-vs-gated-suites pattern +
+adds the mechanism≠satisfied refinement; reuses audit-log/agent-identity/third-party-agent-gate mappings; AI-Act
+closure reuses the register-date-deferral design (role-classifier unchanged).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/iso-27001-clause-matrix.test.ts`
+HUMAN FRONTIERS (grouped, narrowing): authorize outreach (V3) + legal review; confirm CU; perform AFNOR 27001
+interactive consultation (free, to upgrade structure→clause-text) or buy 42001 (CHF 225); assert ISO operational
+evidence; confirm URSSAF rate + EUR-Lex wording (free); choose selling structure + RC Pro; production deps (spec ready);
+any spend/activation.
