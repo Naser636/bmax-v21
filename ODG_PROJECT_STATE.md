@@ -5149,3 +5149,40 @@ HUMAN-REQUIRED (grouped): authorize outreach sending + legal review of contract/
 eligibility; any spend (ISO text, certification audit, tools); the 7 EXTERNAL production deps when a client needs real
 deployment. Autonomous €0 next candidate: build the sales-kit artifact files (product sheet/deck/demo script/Q&A/pilot
 template/discovery questionnaire) as versioned docs.
+
+---
+## CHECKPOINT 2026-10-27 (au) — three-track campaign: real demo generator + €0 sales kit €0
+CTO integrated 3-track. Truth Lock entry 4dd7645≡origin/main, clean, 5 stashes, 4 untracked docs/. No new primitive.
+Diff = demo-dossier(.ts/.test) + package.json + SALES_KIT_V1.md + compass. Prior artifacts verified present.
+
+**TRACK 1 (business/revenue) — EXECUTED (artifact + REAL demo):** NEW runtime/core/demo-dossier.ts renderDemoDossier()
+= reproducible renderer, a thin READ-ONLY consumer of the proven regulatory-assurance.buildDossier → honest Markdown
+dossier (SATISFIED-verified vs DECLARED-unverified vs GAP vs NOT_APPLICABLE-justified, remediation, excellence review,
+NOT_CERTIFIED banner). Gated suite demo-dossier.test.ts (7) on a SYNTHETIC EU-SME-LLM-agent profile: honest statuses,
+reproducible, no cert claim, sealable+tamper-evident. This makes the sales "demonstration" REAL (code+test), not a
+slide. NEW docs/odg-operational/SALES_KIT_V1.md = product sheet + live-demo pointer + pilot template [LEGAL REVIEW
+REQUIRED] + objection Q&A + discovery questionnaire + prospect METHOD (public sources, drafts UNSENT, synthetic
+placeholders) + free client-access channels (eligibility TBV). No fabricated client/revenue/testimonial; prices
+HYPOTHESIS; nothing sent.
+
+**TRACK 2 (certification/funding) — no new free access this cycle:** GDPR→ISO27001(+Amd1:2024)→ISO42001→AI-Act-role→
+DORA-conditional roadmap + Bpifrance Diag Cyber (€4,400 net/50%, eligibility TBV) already recorded (CONTROLS_REFERENTIAL
+/GO_TO_MARKET). ISO clause text still paywalled (free AFNOR/ANS route eligibility TBV). No spend. No new verifiable
+free access surfaced ⇒ no change (demonstrated, not assumed).
+
+**TRACK 3 (product/security/excellence) — real value-add:** the demo generator reuses PROVEN logic (no capability
+sprawl, no new primitive), adds a gated suite, surfaces the honesty controls at the demo surface. No other safe+
+independent local gap found (coverage complete; 7 prod deps EXTERNAL). full gate 70→71; tsc 0; build 0.
+
+**Learning reuse (proven):** reused regulatory-assurance (buildDossier/assertNotCertified/sealDossier) + evidence-
+provenance + the honesty-labelling discipline at a NEW surface (the demo), with a test proving the honest statuses
+actually render (declared≠verified, NOT_CERTIFIED present).
+
+**Milestones status (honest, 0 claimed achieved):** offre+cible étayées ✔(artifact) ; démo+dossier de confiance prêts
+✔(real, reproducible) ; premiers échanges commerciaux ✘ (awaiting CTO send-authorisation) ; pilote payé ✘ ; etc.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/demo-dossier.test.ts`
+**Single priority (unchanged, now fully prepared):** demand validation — the €0 sales kit + a REAL reproducible demo
+are DONE; the only remaining step is HUMAN: authorise sending a first small outreach batch (+ legal review of the
+pilot/pricing). HUMAN-REQUIRED (grouped): outreach send + legal review; Bpifrance/France Num eligibility; any spend
+(ISO text/certification/tools); the 7 EXTERNAL production deps on real deployment.
