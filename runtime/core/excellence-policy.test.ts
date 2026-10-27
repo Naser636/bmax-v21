@@ -98,4 +98,10 @@ ok("requireExcellence: prohibited superlative ⇒ admit false", E.requireExcelle
 ok("requireExcellence: stale/insufficient ⇒ admit true (advisory, offline-safe)", (() => { const r = E.requireExcellence({ verdict: "INSUFFICIENT_EVIDENCE", claims: [], staleReferences: ["X"], gaps: [] }, {}); return r.admit === true && r.advisory === true; })());
 ok("requireExcellence: strict mode blocks advisories", E.requireExcellence({ verdict: "INSUFFICIENT_EVIDENCE", claims: [], staleReferences: ["X"], gaps: [] }, { strict: true }).admit === false);
 
+// (18) accessLevel — honest access provenance (full-text vs metadata-only), fail-closed.
+ok("valid accessLevel preserved (full-text)", E.classifyReference({ ...REG[2], accessLevel: "full-text" }).ref.accessLevel === "full-text");
+ok("absent accessLevel ⇒ not-consulted (fail-closed, never assume full text)", E.classifyReference(REG[0]).ref.accessLevel === "not-consulted");
+ok("unknown accessLevel ⇒ degraded to not-consulted + flagged", (() => { const { ref, issues } = E.classifyReference({ ...REG[0], accessLevel: "pirated-copy" }); return ref.accessLevel === "not-consulted" && issues.some(i => i.field === "accessLevel"); })());
+ok("full-text (NIST) is distinguishable from metadata-only (ISO)", E.classifyReference({ ...REG[0], accessLevel: "full-text" }).ref.accessLevel !== E.classifyReference({ ...REG[0], accessLevel: "metadata-only" }).ref.accessLevel);
+
 console.log(`\nEXCELLENCE-POLICY suite — ${pass} assertions passed.`);

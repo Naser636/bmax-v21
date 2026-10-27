@@ -32,6 +32,9 @@ export type NormativeStatus =
 
 const NORMATIVE_STATUSES: NormativeStatus[] = ["legal-obligation", "voluntary-standard", "recommendation", "industry-practice", "assumption"];
 const VERIFICATION_STATUSES = ["verified", "offline-pending-reverify"];
+// ACCESS LEVEL — the depth of access actually obtained for a reference. FAIL-CLOSED default "not-consulted". A
+// "metadata-only" catalogue page MUST NEVER be recorded as if the full normative text were consulted.
+const ACCESS_LEVELS = ["full-text", "open-document", "sponsored-consultation", "metadata-only", "not-consulted"];
 
 export interface Reference {
   id: string;
@@ -46,6 +49,7 @@ export interface Reference {
   limits: string[];                  // known limits / where it does not apply
   nextReviewDate: string;            // when this entry must be re-verified
   verificationStatus: string;        // "verified" (checked online) | "offline-pending-reverify" (recorded offline)
+  accessLevel?: string;              // full-text | open-document | sponsored-consultation | metadata-only | not-consulted
 }
 
 export interface ReferenceIssue { id: string; field: string; problem: string; }
@@ -79,12 +83,15 @@ function classifyReference(ref: any): { ref: Reference | null; issues: Reference
   if (!NORMATIVE_STATUSES.includes(normativeStatus)) { issues.push({ id, field: "normativeStatus", problem: `unknown status ${JSON.stringify(ref.normativeStatus)} ⇒ degraded to "assumption" (fail-closed)` }); normativeStatus = "assumption"; }
   let verificationStatus = ref.verificationStatus;
   if (!VERIFICATION_STATUSES.includes(verificationStatus)) { issues.push({ id, field: "verificationStatus", problem: `unknown ⇒ offline-pending-reverify` }); verificationStatus = "offline-pending-reverify"; }
+  let accessLevel = ref.accessLevel;
+  if (accessLevel !== undefined && !ACCESS_LEVELS.includes(accessLevel)) { issues.push({ id, field: "accessLevel", problem: `unknown access level ${JSON.stringify(ref.accessLevel)} ⇒ degraded to "not-consulted" (fail-closed)` }); accessLevel = "not-consulted"; }
+  if (accessLevel === undefined) accessLevel = "not-consulted";          // FAIL-CLOSED: absent ⇒ not-consulted (never assume full text)
   const normalized: Reference = {
     id, authority: ref.authority || "?", domain: ref.domain || "?", version: ref.version || "?", date: ref.date || "?",
     source: ref.source || "?", normativeStatus, usageRights: ref.usageRights || "?",
     practicesAdopted: Array.isArray(ref.practicesAdopted) ? ref.practicesAdopted.slice() : [],
     limits: Array.isArray(ref.limits) ? ref.limits.slice() : [],
-    nextReviewDate: ref.nextReviewDate || "?", verificationStatus,
+    nextReviewDate: ref.nextReviewDate || "?", verificationStatus, accessLevel,
   };
   return { ref: normalized, issues };
 }
