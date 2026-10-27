@@ -6288,3 +6288,23 @@ verdict that €500k NET is VOLUME-bound — this quantifies the EXPECTED gross 
 **NEXT-LOT candidates (benchmark priority):** CycloneDX+OSV (injected advisory, offline-testable) → in-toto/SLSA
 provenance per dossier → NIST-RMF tag + ISO SoA (Phase 11) → OTLP/OpenInference spans (Phase 5) → idempotency-ledger +
 event-sourced mission log (Phase 8). Then V21 Phase-14 structured report.
+
+---
+## CHECKPOINT 2026-10-27 (cb) — V21 LOT 5: control-evidence freshness (STALE past TTL ≠ satisfied) €0
+CTO "V21" Phase 11 + benchmark ref #11 (post-PR#85, main 22b1140). Truth Lock clean, 5 stashes + 4 untracked docs/
+preserved. Diff = control-evidence-freshness(.ts/.test) + package.json + compass.
+
+**control-evidence-freshness.ts (EXECUTED — Phase 11 certification continuity, HONEST):** iso-27001-clause-matrix lets
+operationalEvidence[ref]=true but never EXPIRES; ISMS/AIMS is surveilled ~annually. assessFreshness(controls,{now,
+ttlDays=365}) adds the time dimension: within-TTL⇒FRESH, past-TTL⇒STALE(+overdueDays), missing⇒NO_EVIDENCE, unparseable⇒
+INVALID_DATE, future⇒FUTURE_DATED. Deny-by-default: missing/unparseable/future NEVER fresh. isFresh pure helper; clock
+CALLER-supplied (opts.now) ⇒ deterministic, no hidden Date.now(). Honesty rule in code+note: **FRESH≠SATISFIED** (only
+says the assertion is current; satisfaction is still clause-matrix's mechanism≠satisfied call); STALE/NO_EVIDENCE must
+NOT count satisfied until re-attested. Suite **14**.
+
+**Gate:** test:report 102→103; tsc 0; build 0. €0; nothing sent. Extends the certification-readiness stack with the
+missing surveillance-cadence dimension without claiming any control satisfied.
+
+**V21 LOTS THIS SESSION (5): reuse-ledger(PR#82) · benchmark-20(PR#83) · sarif-report(PR#84) · pipeline-forecast(PR#85)
+· control-evidence-freshness(this).** NEXT candidates: CycloneDX+OSV (injected advisory) · NIST-RMF tag · OTLP spans ·
+event-sourced mission log · wire reuse-ledger into decision-engine (higher-risk). Then Phase-14 structured report.
