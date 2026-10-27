@@ -4880,3 +4880,44 @@ after scheduler/capability-learning/checkpoint/build-recovery); live source-veri
 Next €0 candidate: route post-release-learning capture/reuse through excellence-gate, OR gate per-executor execution in
 capability-executors. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups,
 real agent, canonical-queue activation, ISO paid text, any purchase.
+
+---
+## CHECKPOINT 2026-10-27 (an) — post-release-learning capture gate integration €0
+CTO. Truth Lock entry 84858b2≡origin/main (PR#45 MERGED), clean, 5 stashes, 4 untracked docs/. No new primitive/
+orchestrator/router. Additive + opt-in. Diff = post-release-learning(.ts/.test) + excellence-coverage + matrix doc.
+
+**AXE 1 (post-release-learning) — PROVEN via REAL path + reuse-influence:** root cause — accumulate() CAPTURES applied
+edits into the reusable patch-memory pool (via capability-learning.learn); that is the point where a post-release
+learning ENTERS the pool and can influence later decisions (router PATCH_MEMORY hit). Integrated the shared
+requireExcellence boundary + audit-log at the REAL accumulate() capture decision, OPT-IN via deps.excellence (no context
+⇒ EXACT legacy; public contract preserved). PROHIBITED unproven-superlative claim ⇒ capture REFUSED (learned:0,
+reason EXCELLENCE_REFUSED) ⇒ NOT stored ⇒ influences NO later decision. Stale/offline/reviewer-unavailable ⇒ advisory,
+capture proceeds.
+
+Integration tests THROUGH the real module (post-release-learning.test.ts, node:test, new AXE-1 subtest, isolated cwd):
+(1) refused capture ⇒ learned 0 + mem empty + router.route(goal) does NOT hit PATCH_MEMORY (refused learning influences
+NO later decision — PROVEN); (2) admitted capture ⇒ learned 1 + audit intact + router.route(same goal) HITS PATCH_MEMORY
+(accepted learning MODIFIES a later decision — effective reuse PROVEN, not mere storage); (3) stale⇒advisory;
+(4) reviewer-down⇒advisory; (5) no-opts⇒legacy (no excellence field). Distinguished capture/store/recall/reuse.
+excellence-coverage: post-release-learning capture NOT_COVERED→COVERED; remaining NOT_COVERED (listed): per-executor
+execution + other resolvers. No total-coverage claim.
+
+**Coverage now (each REAL-path integration-tested):** mission-execution, capability-self-review, learning
+(capability-learning.reuseLearning + post-release-learning.accumulate), recovery (checkpoint-engine + build-recovery),
+resolution (capability-router.route). Declared == effective.
+
+**AXE 2:** registry unchanged (all primary sources verified-online in prior lots; ISO metadata-only); no reopening
+without cause/échéance. No conformity/cert/prod claim. **AXE 3:** audit-log reused again at the capture decision
+(strengthens learning-provenance locally); 9 gaps unchanged (EXTERNAL). No simulated result claimed as production.
+
+**Proof:** post-release-learning node:test pass 2/fail 0 + excellence-coverage 9 ⇒ full gate 69/69; tsc 0; build 0.
+Checkpoint suites replayed first (PR#45 confirmed MERGED).
+
+**Learning reuse (proven):** requireExcellence reused at a 5th real decision point; the capture→reuse chain is proven
+end-to-end (admitted capture → router PATCH_MEMORY hit; refused capture → no hit).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/post-release-learning.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next €0 candidate: per-executor execution gate in capability-executors (carefully, to avoid over-injection), OR an AXE-3
+local safe fix (e.g., wire audit-log into a real mutation path for tamper-evident operational logging). BLOCKED/EXTERNAL
+(CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation,
+ISO paid text, any purchase.

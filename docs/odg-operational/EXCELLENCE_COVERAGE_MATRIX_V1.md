@@ -20,7 +20,8 @@ claim.**
 | checkpoint-engine (`begin` resume) | recovery-legacy-integrated | 4 | `checkpoint-engine.begin(opts.recovery) → gateRecovery` (real module API, opt-in) | yes | `checkpoint-engine.test.ts` (INTEGRATION recovery, 7) | **COVERED** |
 | build-recovery-engine (`recover` apply) | recovery-legacy-integrated | 4 | `recover(opts.recovery) → gateRecovery` (real module API, opt-in) | yes | `build-recovery-engine.test.ts` (AXE A, 6) | **COVERED** |
 | capability-router (`route` selection) | resolution | 3 | `route(opts.excellence) → requireExcellence` (real module API, opt-in) | yes | `capability-router.test.ts` (AXE 1, 5) | **COVERED** |
-| post-release-learning / per-executor execution / other resolvers | learning-execution-legacy | 3 | not yet routed through the gate | no | — | NOT_COVERED (scheduler + capability-learning + checkpoint-engine + build-recovery + router-selection now integrated; these remain follow-ups) |
+| post-release-learning (`accumulate` capture) | learning-capture | 3 | `accumulate(deps.excellence) → requireExcellence + audit-log` (real module API, opt-in) | yes | `post-release-learning.test.ts` (AXE 1) | **COVERED** |
+| per-executor execution (capability-executors) / other resolvers | execution-legacy | 4 | not yet routed through the gate | no | — | NOT_COVERED (governed by third-party-agent + authorizeExecution; per-executor excellence-review is a candidate follow-up — risk of over-injection) |
 
 ## Rule semantics (uniform, via `requireExcellence`)
 - **Prohibited claim** (unproven superlative — "world #1"/"best"/"optimal" without a cited benchmark) ⇒ **admit:false**

@@ -17,6 +17,8 @@
 
 const fs = require("fs");
 const learning = require("./capability-learning");
+const EXC = require("./excellence-policy");   // AXE 1: gate the CAPTURE decision (shared boundary), opt-in
+const AUDIT = require("./audit-log");
 
 const MISSION_REPORT = "runtime/generated/mission-report.json";
 const PATCH_EXECUTION = "runtime/generated/patch-execution.json";
@@ -78,6 +80,25 @@ function buildLearnReport(mission: any, deps?: any): any {
 function accumulate(mission: any, deps?: any): any {
   const learnReport = buildLearnReport(mission, deps);
   if (!learnReport) return { learned: 0, reason: "NO_ELIGIBLE_EVIDENCE" };
+  // AXE 1 — OPT-IN excellence gate on the CAPTURE decision: what is captured here ENTERS the reusable pool and can
+  // influence later decisions (via capability-learning/router reuse). When deps.excellence is supplied, a PROHIBITED
+  // unproven-superlative claim ⇒ the learning is NOT captured (learned:0) ⇒ it can never influence a later decision.
+  // Stale/offline references + reviewer-unavailable ⇒ advisory, capture proceeds (offline-safe). No deps.excellence ⇒
+  // EXACT legacy behaviour (public contract preserved). Reuses requireExcellence + audit-log (no new primitive).
+  if (deps && deps.excellence) {
+    const ex = deps.excellence;
+    let review: any; let reviewerErrored = false;
+    if (typeof ex.reviewer === "function") { try { review = ex.reviewer(learnReport); } catch { reviewerErrored = true; } }
+    if (!review) review = reviewerErrored
+      ? { verdict: "ADVISORY_ERROR", claims: [], staleReferences: [], gaps: [] }
+      : EXC.reviewForExcellence({ domain: ex.domain || "post-release-learning", now: ex.now || "", registry: ex.registry || [], currentPractices: ["applied-edit-capture"], thresholds: {}, measured: {}, claims: ex.claims || [] });
+    const gate = EXC.requireExcellence(review, {});
+    const chain = AUDIT.appendEntry(Array.isArray(ex.chain) ? ex.chain : [], { at: ex.now || "", kind: "post-release-capture", mission, admit: gate.admit, verdict: review.verdict });
+    const excellence = { verdict: review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason, reviewerErrored, auditVerified: AUDIT.verifyChain(chain).ok };
+    if (!gate.admit) return { learned: 0, reason: "EXCELLENCE_REFUSED", excellence, chain };
+    const res = learning.learn(learnReport);
+    return { learned: res.learnedPatches.length, signatures: res.learnedPatches, excellence, chain };
+  }
   const res = learning.learn(learnReport);
   return { learned: res.learnedPatches.length, signatures: res.learnedPatches };
 }

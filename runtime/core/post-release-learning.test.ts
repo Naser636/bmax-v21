@@ -130,3 +130,35 @@ test("V28 post-release learning seam — acceptance A–J", () => {
         assert.strictEqual(warm.chosen.tier, "PATCH_MEMORY", "J-B: warm signature uses memory (reuse-before-explore)");
     });
 });
+
+test("AXE 1 — post-release CAPTURE excellence gate (real path + reuse-influence proof)", () => {
+    inIsolatedCwd(({ pr, mem, router }) => {
+        const NOW = "2026-10-27";
+        const task = { goal: "replay applied edit", objectiveId: "OBJ_A" }; // no target — mirrors the live decision-engine lookup key
+
+        // (1) REFUSED capture (prohibited superlative) ⇒ NOT stored ⇒ influences NO later decision.
+        const refused = pr.accumulate(MISSION, { ...eligible(), excellence: { now: NOW, registry: [], claims: ["the world's best, number one patch"] } });
+        assert.strictEqual(refused.learned, 0, "refused capture learns nothing");
+        assert.strictEqual(refused.reason, "EXCELLENCE_REFUSED", "refused reason recorded");
+        assert.strictEqual(mem.list().length, 0, "refused capture is NOT stored");
+        assert.notStrictEqual(router.route(task, { localModelAvailable: false }).chosen.tier, "PATCH_MEMORY", "refused learning influences NO later decision");
+
+        // (2) ADMITTED capture ⇒ stored ⇒ MODIFIES a later router decision (effective reuse).
+        const okc = pr.accumulate(MISSION, { ...eligible(), excellence: { now: NOW, registry: [] } });
+        assert.strictEqual(okc.learned, 1, "admitted capture stores one entry");
+        assert.strictEqual(okc.excellence.auditVerified, true, "capture audit chain intact");
+        assert.strictEqual(mem.list().length, 1, "admitted capture stored");
+        assert.strictEqual(router.route(task, { localModelAvailable: false }).chosen.tier, "PATCH_MEMORY", "admitted learning MODIFIES a later decision (reuse hit)");
+
+        // (3) STALE reference ⇒ advisory, capture proceeds (offline-safe; idempotent on the same signature).
+        const stale = pr.accumulate(MISSION, { ...eligible(), excellence: { now: NOW, registry: [{ id: "PRL", authority: "ODG", domain: "post-release-learning", version: "1.0", date: "2026-10-01", source: "ODG", normativeStatus: "industry-practice", usageRights: "own", practicesAdopted: [], limits: [], nextReviewDate: "2020-01-01", verificationStatus: "offline-pending-reverify" }] } });
+        assert.strictEqual(stale.excellence.advisory, true, "stale ⇒ advisory");
+
+        // (4) reviewer UNAVAILABLE ⇒ advisory, capture proceeds.
+        const rev = pr.accumulate(MISSION, { ...eligible(), excellence: { now: NOW, registry: [], reviewer: () => { throw new Error("down"); } } });
+        assert.strictEqual(rev.excellence.reviewerErrored, true, "reviewer error flagged, non-blocking");
+
+        // (5) NO excellence opts ⇒ EXACT legacy behaviour (no excellence field).
+        assert.strictEqual(pr.accumulate(MISSION, eligible()).excellence, undefined, "no opts ⇒ legacy (no excellence field)");
+    });
+});
