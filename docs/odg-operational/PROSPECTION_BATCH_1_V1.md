@@ -40,6 +40,15 @@ Per mandate: drafts held, exact blockers exposed, **nothing recorded as sent** (
 No automatic follow-up sequence. On a positive reply → prepare need-qualification + pilot scope + acceptance criteria +
 price + costs. On a negative reply/opt-out → record + `optOut()` (blocks future contact). Immediate opt-out honoured.
 
+## V13 finalisation — address verification + pre-send gate
+- **Recipient addresses: UNVERIFIED for all 5.** ODG did **not** verify individual professional email addresses from
+  public sources (fabrication/guessing is forbidden). ⇒ all 5 prospects stay **EN ATTENTE (ADDRESS_UNVERIFIED)**.
+  Sourcing a verified professional address (company contact page / legally-public info) is a human/authorised step.
+- **Pre-send gate (`prospection-send-gate.preflight`, live, no send): BLOCKED** for all 5 — blockers: address unverified,
+  channel not ready (`dryRun`: NOT_CONFIGURED/sendEnabled=false), no CTO authorisation. **config ≠ authorisation.**
+- Clean separation (mandate §5): finalised-draft ✓ · compliance ✓ · **address ✗ · channel ✗ · authorisation ✗** ⇒ NOT sent.
+
 ## Next exact action
-CTO: either configure the Gmail channel (`GMAIL_CHANNEL_DIAGNOSTIC_V1` steps) + authorise + legal-review ⇒ ODG sends the
-compliant batch and records each send only with a provider message-id; OR decline ⇒ drafts remain held. €0.
+CTO: (a) configure the Gmail channel (`GMAIL_SECURE_SETUP_V1`) + `EMAIL_SEND_ENABLED=1`, (b) grant per-send authorisation
++ legal review, (c) provide/authorise verified recipient addresses ⇒ then `preflight` → ADMIT ⇒ ODG sends and records
+each send **only** with a provider message-id proof. Until all three: drafts held, **0 sent**. €0.

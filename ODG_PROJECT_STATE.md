@@ -5937,3 +5937,36 @@ invented; prices indicative non-contractual; no secret requested/stored; 2FA/Goo
 HUMAN FRONTIERS (grouped): to SEND batch-1 — CTO provides Gmail app-password via ~/.config/odg/gmail.env (env-only) +
 EMAIL_SEND_ENABLED=1 + per-send authorization + legal review of letters; source/verify recipient professional addresses.
 Plus standing: price band; partner/subcontract+budget; CERT = CTO_DECISION_PACK. Nothing sent until all met.
+
+---
+## CHECKPOINT 2026-10-27 (bp) — V13 fail-closed pre-send gate + Gmail secure setup + batch address-verification €0
+CTO "V13 PROSPECTION READY + GMAIL SECURE SETUP" (post-PR#73). Truth Lock 4153c9e≡origin/main (0/0, verified live),
+clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = prospection-send-gate
+(.ts/.test) + package.json + GMAIL_SECURE_SETUP_V1 + PROSPECTION_BATCH_1 edit + compass.
+
+**prospection-send-gate.ts (EXECUTED):** single FAIL-CLOSED pre-send verdict composing ALL required controls —
+addressVerified + messageFinal + compliance.ok + channelReady (reuses email-gateway.outboundReadiness: SMTP + EMAIL_SEND
+_ENABLED=1) + notOptedOut + human CTO authorization ⇒ ADMIT else BLOCKED with exact blockers. dryRun() reports channel
+config WITHOUT sending; sendEnabled stays false until configured. NEVER sends; no secret read. Explicit: config≠
+authorisation (both required). Suite 10.
+
+**Gmail secure setup (V13 §3) → GMAIL_SECURE_SETUP_V1:** mechanism decision = SMTP Gmail APP-PASSWORD (retained; OAuth/
+googleapis NOT present, defer — no new dependency, €0); 2FA required for app-password; env-only config (~/.config/odg/
+gmail.env, gitignored); ODG never handles/prints/commits the secret; no 2FA bypass. Live dryRun = NOT_CONFIGURED/
+sendEnabled=false; preflight = BLOCKED.
+
+**Batch finalisation (V13 §2):** recipient addresses UNVERIFIED for all 5 (ODG did NOT verify/guess individual pro
+addresses — fabrication forbidden) ⇒ all 5 EN ATTENTE (ADDRESS_UNVERIFIED); preflight live = BLOCKED (address + channel +
+auth); clean separation finalised-draft✓/compliance✓/address✗/channel✗/auth✗ ⇒ 0 SENT. PROSPECTION_BATCH_1 updated.
+
+**Gate:** test:report 91→92; tsc 0; build 0. Honesty: 0 sent (fail-closed gate + proof-gated registry); no address
+invented; no secret requested/stored; config≠authorisation; €0. Multi-track A/B/C/D + certification unchanged (parallel,
+independent) — no redundant rework.
+
+**Learning reuse (proven):** send-gate reuses email-gateway.outboundReadiness + the registry proof-gate + prospection-
+compliance; batch reuses FIELD_CANDIDATES_REAL_V3; Gmail setup reuses the diagnostic. Single source of truth maintained.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/prospection-send-gate.test.ts`
+HUMAN FRONTIERS to send batch-1 (ALL required, none a substitute): (a) Gmail app-password via ~/.config/odg/gmail.env +
+EMAIL_SEND_ENABLED=1; (b) per-send CTO authorisation + legal review; (c) verified recipient professional addresses.
+Standing: price band; partner/subcontract+budget; CERT=CTO_DECISION_PACK. €500k year-1 = signed/run-rate; cash ~€342k solo.
