@@ -6374,3 +6374,24 @@ A/B/C/D meanings (commercial-portfolio voies, niche-scoring, revenue-channels, F
 **Gate:** test:report 104→105; tsc 0; build 0. €0; nothing sent; no axis abandoned; blockers recorded per axis.
 NEXT LOTS (dependency-ready, keep all 6 represented): E €50k SOW+capacity model · F clause→evidence traceability ·
 B mid-market package · V22 P1b post-release-learning→recordReuseOutcome (producer side).
+
+---
+## CHECKPOINT 2026-10-27 (ce) — V24 AXIS E: enterprise €50k mission model (scope-justified, not price-to-target) €0
+CTO "V24" axis E (post-PR#88, main 664696c). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+enterprise-mission-model(.ts/.test) + package.json + compass.
+
+**enterprise-mission-model.ts (EXECUTED — axis E, HONEST):** (1) sowCompleteness fail-closed over 9 REQUIRED_SOW_
+SECTIONS (scope/deliverables/milestones/acceptanceCriteria/exclusions/assumptions/paymentSchedule/supportBoundary/
+changeControl); (2) priceFromScope = Σ(hours×rate)+qa+subcontract ×(1+riskMargin) ⇒ price DERIVED from work; (3)
+assessMission flags PRICE_EXCEEDS_SCOPE (proposed > justified×(1+maxUplift) = price-to-target), UNDERPRICED (<cost base),
+CAPACITY_EXCEEDED (hours>soloCapacity ⇒ subcontract need), SOW_INCOMPLETE, PAYMENT_SCHEDULE_NOT_100, ABOVE_REFERENCE_
+CEILING (>€50k, allowed only if justified, never silent). priceJustified requires complete SOW + cost≤proposed≤band.
+€50k = scope-justified reference ceiling NOT a target. Note: sizes/prices a GIVEN scope, does NOT claim sold; gross not
+net. Pure. Suite 13.
+
+**Gate:** test:report 105→106; tsc 0; build 0. €0; nothing sent; demand NOT assumed.
+
+**SIX-AXIS queue (all represented; this advanced E):** A entry-diagnostic spec · B mid-market package · C enterprise
+qualification checklist · D partner delivery-kit (BLOCKED: no partner accepted) · **E DONE this lot** → next E: wire into
+commercial-portfolio consolidation · F clause→evidence traceability. Also pending: V22 P1b post-release-learning→
+recordReuseOutcome (producer side). NEXT LOT: F (ISO clause→evidence traceability) to keep F advancing.
