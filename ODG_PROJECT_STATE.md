@@ -5796,3 +5796,45 @@ CRA trigger matched to the proven multi-ecosystem SBOM.
 HUMAN FRONTIERS (grouped): COMMERCIAL — (1) confirm price band, (2) authorise minimal first outreach (A+C) after legal
 review. CERTIFICATION (separate, = CTO_DECISION_PACK): approve policies; confirm CU; structure+RC Pro; ISO 42001 vs
 free 27001; prod deps. Partners/subcontracting for €500k scale = separate budget.
+
+---
+## CHECKPOINT 2026-10-27 (bl) — V9 monthly €500k model + pilot kit + partners + price options + automation €0
+CTO "V9 MAXIMUM AUTONOME" (parallel, post-PR#69, no restart). Truth Lock f20e38b≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, resume PASS. Read-only first; code added (Mission A real gap). No new primitive/orchestrator.
+Diff = revenue-schedule(.ts/.test) + package.json + 5 docs + compass.
+
+**Mission A — revenue-schedule.ts (EXECUTED, real gap: model was annual-only):** month-by-month 12-month projection,
+lag-aware (salesLag/deliveryLag/paymentLag/rampLag/churn); revenue landing after month 11 NOT counted (honest within-
+horizon). stressTest(). Suite 10. KEY FINDING (sharpens V8): ambitious scenario cashes only ~€342k within 12 months
+(signed bookings €299k one-off; invoiced €392k) — NOT €500k; under stress (sign +2mo, delivery +1mo, churn +10%) cash
+drops to ~€213k (−38%). ⇒ **€500k CASHED in year-1 is NOT solo-reachable; €500k is a signed/run-rate target, cash ~€342k
+best-case.** Timing/churn = dominant risk. → REVENUE_MONTHLY_MODEL_V1.
+
+**Mission B — ASSURANCE_PILOT_KIT_V1:** reproducible pilot runbook on SYNTHETIC data using gated caps (SBOM/license/
+provenance/audit-log/test/AI-Act mapping all EXECUTABLE); sample report skeleton + testable acceptance checklist; ~€0
+cost. 0 client engagements; green suite ≠ delivered engagement; no client-system run.
+
+**Mission C — PARTNER_DISTRIBUTION_RESEARCH_V1 (agent, NO contact):** 11 real FR/EU partner candidates (cyber firms My
+Trust Partner/KC/ISOTOPIC complement Offer A; DPO/RGPD firms DPO France/DPO101/MAATIX/CONCILIUM need Offer C technical;
+AI integrators A5SYS/JAIKIN/StorIA/IA Agency = white-label channel), all repéré+pertinent, 0 ACCEPTED, no terms public,
+appetite untested. Sourcing ecosystems (Numeum/France Num Activateurs/Campus Cyber). WeeSec excluded (competitor refuses
+partnerships); DigitGrow excluded (Morocco).
+
+**Mission D/E/G:** pipeline status = EMPTY (0 opportunities/0 cash, honest, in monthly-model doc); PRICE_OPTIONS_V1 (3
+options, RECOMMEND Option 2 market-mid A €5-8k/C €8-15k+€1-2k/mo, verified-comparable-grounded; 3 minimal CTO decisions);
+AUTOMATION_INVENTORY_V1 (existing gated modules already minimise human effort; lead→proposal glue + pilot-run driver =
+build only when a real lead/pilot authorised — no infra ahead of demand). Mission F: no redundant research; cert
+decisions remain CTO_DECISION_PACK (AFNOR COFRAC 4-0001 27001 verified).
+
+**Gate:** test:report 87→88; tsc 0 (independent); build 0. Honesty: €500k TARGET; year-1 cash ~€342k best/€213k stressed
+(NOT €500k); 0 real opportunities; prices HYPOTHESIS (verified comparables); 0 partners accepted; no contact/outreach/
+purchase; nothing invented.
+
+**Learning reuse (proven):** revenue-schedule consumes revenue-scenarios assumptions + sharpens the V8 conservatism into
+monthly cash reality; pilot kit grounded in the gated-capability evidence + CRA/SBOM trigger; price options use the
+verified comparables from COMMERCIAL_RESEARCH_V3; automation inventory reuses all commercial modules (no new infra).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-schedule.test.ts`
+HUMAN FRONTIERS (grouped): COMMERCIAL — confirm price band (Option 2); authorise first small outreach (A+C) after legal
+review; later authorise a partner/subcontract model + budget (needed for €500k scale). CERTIFICATION (separate) =
+CTO_DECISION_PACK. €500k year-1 = signed/run-rate target; cash ~€342k best-case.
