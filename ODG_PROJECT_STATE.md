@@ -6620,3 +6620,24 @@ dashboard** · F cert-traceability/dossier. Learning loop CLOSED all outcomes. N
 prioritized ISO dossier end-to-end (select standard by product/market; requirement→evidence→gap→remediation→owner→
 milestone; reuse certification-traceability + clause-matrix + freshness; NOT_CERTIFIED). Then B recurring offer, C
 proposal templates.
+
+---
+## CHECKPOINT 2026-10-27 (co) — V28 PRIORITY F: ISO/IEC 27001 end-to-end readiness dossier €0
+CTO "V28" Priority F (post-PR#98, main 9c7904c). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+iso-dossier(.ts/.test) + package.json + compass.
+
+**iso-dossier.ts (EXECUTED — axis F, composes certification-traceability, NOT a duplicate):** SELECTED ISO/IEC 27001:2022
+(PRIMARY — target market requires it + richest in-repo evidence; 42001 SECONDARY_DEFERRED; not every ISO claimed
+necessary). buildDossier() wraps certification-traceability into an end-to-end dossier: per-requirement {applicability,
+implementationState(shared vocab), evidenceRequired/Available, provenance(responsible/artifact/date/freshness), gap,
+internalVerificationCriteria} + remediation enriched with OWNER+dependency+targetMilestone + auditPrep (operational
+records + management-review material; human acts) + externalDependencies (AFNOR/COFRAC n°4-0001 accredited body [verified
+PR#67], ISO text paywalled, reviewer, fees NO_DATA, authorizationRequired) + summary. certificationStatus NOT_CERTIFIED;
+STALE evidence ⇒ not INTERNALLY_VERIFIED (inherited); draft≠implementation. External audit/text/fees HUMAN-GATED €0.
+Suite 12.
+
+**Gate:** test:report 115→116; tsc 0; build 0. €0; nothing sent/purchased; no certification claimed.
+
+**SIX-AXIS STATUS (all active):** A offer · B offer · C qualification · D BLOCKED (no partner) · E sizing-in-dashboard ·
+**F 27001 dossier end-to-end this lot** (NOT_CERTIFIED). Learning loop CLOSED all outcomes. Session V21→V28 = PRs
+#82–#99(pending) ; test:report 59→116. NEXT LOT (V28 order): B recurring mid-market offer, then C proposal templates.
