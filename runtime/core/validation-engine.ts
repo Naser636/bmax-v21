@@ -372,6 +372,23 @@ fs.writeFileSync(
     JSON.stringify(report, null, 2)
 );
 
+// V26 — FAILED-mission learning feedback (ADVISORY, non-authoritative). This is the EARLIEST authoritative
+// all-outcomes point: a failed mission HALTS here (non-zero exit below) and never reaches the Mission Ledger
+// hook that records successes. A reuse precedent whose OWN objective actually FAILED is a real, ATTRIBUTABLE
+// regression ⇒ record REUSE_FAILED now (passing failedObjectiveIds so an unrelated reused precedent is NEVER
+// blamed; a BLOCKED objective is not a failure). Successful missions are left to the Ledger hook (INCONCLUSIVE)
+// — no double recording. Guarded + lazily required: `validated` and the exit code are already computed above,
+// so a recorder error can NEVER flip failed work to success or corrupt the mission result. Runs once per run.
+if (!validated && failed.length > 0) {
+    try {
+        require("./mission-reuse-recorder").recordMissionReuseOutcomes(patch.mission, {
+            failedObjectiveIds: failed.map((f: any) => f.objectiveId || f.action).filter(Boolean),
+        });
+    } catch (e: any) {
+        console.warn("[ValidationEngine] Reuse-failure recording (advisory) failed:", e && e.message);
+    }
+}
+
 // BUILD_GATE_AUTONOMY delegated run: the gate was red and the Build Recovery Engine ran. Per the
 // capability contract, emit ONLY the focused summary (Root Cause / files / iterations / Build /
 // TypeScript / Validation / Mission promue) — not the general verbose block.

@@ -54,25 +54,41 @@ function recordMissionReuseOutcomes(mission: any, deps: any = {}, opts: any = {}
   const validated = report.validated === true;
   const improvement = isObj(deps.improvement) ? deps.improvement : {};
   const at = typeof deps.at === "string" && deps.at ? deps.at : undefined;
+  // ATTRIBUTED mode (V26): when the caller supplies the set of objective ids whose ACTION actually FAILED,
+  // only THOSE reused objectives are marked REUSE_FAILED — a mission-level failure never blames an unrelated
+  // reused precedent, and a BLOCKED (not FAILED) objective is NOT a reuse failure. Absent ⇒ legacy mission-level
+  // mode (preserved for the success/ledger hook).
+  const failedIds = Array.isArray(deps.failedObjectiveIds) ? new Set(deps.failedObjectiveIds.map((x: any) => String(x))) : null;
   const results: any[] = [];
 
   for (const o of reused) {
     const sig = PM.signature({ goal: o.goal, objectiveId: o.id });
     let before: any, after: any, senseMap: any;
-    if (!validated) {
-      // Mission failed while replaying this precedent ⇒ genuine regression signal.
+    const measured = isObj(improvement[o.id]) && isObj(improvement[o.id].before) && isObj(improvement[o.id].after);
+    if (failedIds) {
+      if (failedIds.has(String(o.id))) {
+        // This precedent's OWN objective FAILED ⇒ attributable regression ⇒ REUSE_FAILED.
+        before = { signals: { objectiveSucceeded: 1 } }; after = { signals: { objectiveSucceeded: 0 } }; senseMap = { objectiveSucceeded: "higher" };
+      } else if (validated && measured) {
+        before = improvement[o.id].before; after = improvement[o.id].after; senseMap = improvement[o.id].senseMap;
+      } else if (validated) {
+        before = { signals: { objectiveSucceeded: 1 } }; after = { signals: { objectiveSucceeded: 1 } };
+      } else {
+        // Not validated but THIS objective did not fail (e.g. blocked / unrelated) ⇒ no attributable signal.
+        results.push({ objectiveId: o.id, signature: sig, outcome: null, ok: true, skipped: "UNATTRIBUTABLE" });
+        continue;
+      }
+    } else if (!validated) {
       before = { signals: { missionValidated: 1 } }; after = { signals: { missionValidated: 0 } }; senseMap = { missionValidated: "higher" };
-    } else if (isObj(improvement[o.id]) && isObj(improvement[o.id].before) && isObj(improvement[o.id].after)) {
-      // Validated AND a real measured before/after was supplied ⇒ let the ledger classify it (may be VALIDATED).
+    } else if (measured) {
       before = improvement[o.id].before; after = improvement[o.id].after; senseMap = improvement[o.id].senseMap;
     } else {
-      // Validated but unmeasured ⇒ flat ⇒ INCONCLUSIVE. No fabricated positive effect.
       before = { signals: { missionValidated: 1 } }; after = { signals: { missionValidated: 1 } };
     }
     const rec = RL.recordReuseOutcome(sig, { before, after, senseMap, context: `mission ${mission}`, adapted: false, at }, opts);
     results.push({ objectiveId: o.id, signature: sig, outcome: rec.ok ? rec.outcome : null, ok: rec.ok });
   }
-  return { ok: true, recorded: results.length, validated, results, note: "Failed mission ⇒ reuse-failed (auto-learns to stop reusing). Passed+measured-improvement ⇒ validated. Passed+unmeasured ⇒ inconclusive (no fabricated effect)." };
+  return { ok: true, recorded: results.filter((r) => !r.skipped).length, validated, attributed: !!failedIds, results, note: "Attributed mode: only objectives whose action FAILED ⇒ reuse-failed (never blames an unrelated precedent; BLOCKED≠FAILED). Passed+measured ⇒ validated; passed+unmeasured ⇒ inconclusive (no fabricated effect)." };
 }
 
 export { reusedObjectives, recordMissionReuseOutcomes };
