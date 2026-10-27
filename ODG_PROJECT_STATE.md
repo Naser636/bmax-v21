@@ -6536,3 +6536,24 @@ blamed.
 **SIX-AXIS next (all represented):** A finalize paid entry-diagnostic offer spec (next lot) · B mid-market package ·
 C enterprise qualif checklist · D partner profile (BLOCKED no partner) · E wire enterprise-mission into portfolio ·
 F dossier continuation.
+
+---
+## CHECKPOINT 2026-10-27 (ck) — V26 PRIORITY B: axis-A entry-diagnostic offer finalized €0
+CTO "V26" Priority B (post-PR#94, main 3c262c8). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+entry-diagnostic-offer(.ts/.test) + package.json + compass.
+
+**entry-diagnostic-offer.ts (EXECUTED — axis A, composes existing modules):** OFFER spec (code A-ENTRY-DIAG: target/
+problem/scope/exclusions[no pentest/legal/cert]/requiredInputs/deliverables[dossier+SARIF+triage]/evidence/acceptance
+criteria/onboarding/dataHandling[no cross-client data reuse]/retention/escalation/upgrade→B/referral→C/E). economics()
+derives margin+net from effort via assurance-pilot-metrics (price/hours/margin/net ALL labeled assumptions:true until
+real delivery+cash). runEntryDiagnostic(syntheticProject) = synthetic END-TO-END acceptance: runPilot→self-serve.triage→
+sarif-report.toSarif→dossier; AUTO_COMPLETE+valid SARIF+actionable ⇒ acceptancePassed; unknown-license/AI-Act-HIGH ⇒
+HOLD_FOR_HUMAN_REVIEW. Honest: synthetic ≠ sold engagement; no outbound/deploy/collect. Suite 11.
+
+**Gate:** test:report 111→112; tsc 0; build 0. €0; nothing sent; price €900/6h = ASSUMPTION (unvalidated).
+
+**SIX-AXIS STATUS (verified):** A **offer FINALIZED** (spec+economics+synthetic acceptance; price assumption; 0 sold) ·
+B next: repeatable mid-market package def (reuse A engine) · C next: enterprise qualification checklist · D BLOCKED (no
+partner accepted; profile/economics prep only) · E enterprise-mission-model built (wire into portfolio next) · F
+cert-traceability+dossier (NOT_CERTIFIED; dossier continuation next). Learning loop CLOSED all outcomes (compiled).
+NEXT LOT: B mid-market package OR C qualification checklist (both dependency-ready, reuse A assets).
