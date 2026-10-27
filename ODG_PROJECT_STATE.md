@@ -6133,3 +6133,36 @@ rates HYPOTHESIS not tuned; levies per-structure; 0 collected; nothing invented/
 HUMAN FRONTIERS (impact-ranked): decide SASU (expert-comptable; biggest structural factor lever after productization);
 confirm IS/PFU/social rates; price band + avoid channel stacking; outreach (Gmail+auth+legal+addresses). Reality: €500k
 NET year-1 needs ~€888k gross collected at best profile ⇒ productize + SASU + volume + ramp; honest year-1 NET milestone.
+
+---
+## CHECKPOINT 2026-10-27 (bv) — V19 measured productization: machine≈€0, human time dominates €0
+CTO "V19 PRODUCTIZED PROTOTYPE + REAL DELIVERY COST — prove unit economics" (post-PR#79). Truth Lock 3e5626b≡origin/main
+(0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff =
+assurance-pilot-metrics(.ts/.test) + scripts/assurance-pilot-bench.ts + package.json + PRODUCTIZED_UNIT_ECONOMICS_V1 + compass.
+
+**MEASURED (scripts/assurance-pilot-bench.ts, process.hrtime, synthetic 40-dep fixtures):** assurance-pilot-runner ≈
+0.27-0.34 ms/dossier (~3000-3700 runs/s) ⇒ analysis machine cost effectively €0. assurance-pilot-runner already
+reproducible/fail-closed/provenance-sealed (V14 suite 9).
+
+**assurance-pilot-metrics.ts (EXECUTED):** deliveryCost (machine≈€0 measured + human-hours×hourlyCost) / unitEconomics /
+netPerDelivery (feeds MEASURED deliveryCostRate into economic-profiles, NOT V18's assumed 0.56; fail-closed short-circuit
+when cost≥price — surfaced+fixed a real bug where pct() clamped >1 rates to 0, hiding losses) / deliveriesForNetTarget.
+Suite 9. HONEST CORRECTION: V18's 0.56 was OPTIMISTIC; MEASURED net factor (human time included, SASU) = 0.44 (€1.5k/7h)
+→ 0.53 (€8-15k/16-30h). €500k NET needs 64 (€15k) to 764 (€1.5k) deliveries ⇒ ~5-10/mo at high value > solo ceiling 3-4
+⇒ team/subcontractors OR true self-serve SaaS (human~0, needs product+support dev — not built). → PRODUCTIZED_UNIT_ECONOMICS_V1.
+
+**KEY FINDING:** the free machine does NOT close the €500k-net gap — HUMAN DELIVERY TIME is the binding constraint;
+"productized service" ≠ "zero delivery cost" until it is self-serve. Categories kept separate: measured (machine/
+throughput) vs hypothesis (human-hrs/hourly/conversions/IS-PFU) vs unknown (real demand, live delivery hours, self-serve feasibility).
+
+**Gate:** test:report 97→98; tsc 0 (fixed bench global-scope collision via export {} module marker — tsc separate from
+tsx gate); build 0. Honesty: €500k NET unproven; machine cost MEASURED, human cost HYPOTHESIS; 0 collected; nothing
+published/sent; €0.
+
+**Learning reuse (proven):** metrics reuse assurance-pilot-runner (measured) + economic-profiles (levies) + the net-cash
+doctrine; correct V18's optimistic assumption with measured data (capture→measure→recompute→persist).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/assurance-pilot-metrics.test.ts`
+HUMAN FRONTIERS (impact-ranked): self-serve product build+support (only path to high net factor at scale — dev decision);
+SASU (expert-comptable); subcontractors+working capital (capacity for 5-10 high-value/mo); outreach (Gmail+auth+legal+
+addresses); confirm IS/PFU/social + real human delivery hours. €500k NET year-1 still unproven; human delivery time binding.
