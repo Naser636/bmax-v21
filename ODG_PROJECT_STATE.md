@@ -6501,3 +6501,38 @@ reuse-ledger/benchmark/SARIF/forecast/freshness (#82–86). test:report 59→110
 margin) · B repeatable mid-market package def · C enterprise qualification checklist · D partner profile+economics
 (BLOCKED: no partner accepted) · E wire enterprise-mission into commercial-portfolio consolidation · F dossier section
 continuation. Learning: failed-mission/measured-delta producer hook (pipeline halts on failure) = future.
+
+---
+## CHECKPOINT 2026-10-27 (cj) — V26 PRIORITY A: FAILED-mission learning feedback at the COMPILED validation-engine €0
+CTO "V26" (post-PR#93, main 7a1c1cb). Truth Lock 7a1c1cb≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/
+preserved, CI success. No new primitive. Diff = validation-engine.ts + mission-reuse-recorder.ts + validation-engine-
+reuse-feedback.test + package.json + compass.
+
+**GAP CLOSED (V25 honest limit → resolved):** failed missions HALT at Validation Engine before the Mission Ledger hook,
+so the ledger only saw successes (INCONCLUSIVE). validation-engine.ts now records the FAILED path at the EARLIEST
+authoritative all-outcomes point — right after it writes mission-report.json, before the non-zero exit. Guard `if
+(!validated && failed.length>0)` ⇒ only genuine failures; `validated`+exit computed ABOVE ⇒ recorder error can NEVER
+flip failed→success (critical). No parallel hook/2nd orchestrator.
+
+**ATTRIBUTION (honest, no false blame):** mission-reuse-recorder extended with deps.failedObjectiveIds — a reused
+precedent is marked REUSE_FAILED ONLY if its OWN objective's action FAILED (BLOCKED≠FAILED; an unrelated reused
+precedent is NEVER blamed for a mission-level fail; non-failed reused objectives in a non-validated mission ⇒ skipped
+UNATTRIBUTABLE). Legacy mode (no failedObjectiveIds) preserved for the ledger success hook ⇒ no double-recording
+(SUCCESS→ledger INCONCLUSIVE; FAILED→VE attributed REUSE_FAILED).
+
+**PROVEN ON THE COMPILED PATH (validation-engine-reuse-feedback.test, suite 7 — SPAWNS runtime/dist/core/validation-
+engine.js):** failed reused objective ⇒ REUSE_FAILED + exit 1; unrelated failure ⇒ reused precedent NOT blamed; 2 failed
+compiled runs ⇒ suppressed ⇒ compiled capability-router DE-SELECTS; compiled artifact carries the wiring; attribution
+unit. Existing recorder(10)+ledger-hook(9) regressions GREEN.
+
+**LEARNING LOOP — NOW CLOSED FOR ALL OUTCOMES (honest):** SUCCESS→ledger INCONCLUSIVE (never auto-VALIDATED=no self-
+validation) · FAILED→VE attributed REUSE_FAILED (⇒ suppression ⇒ router de-select) · VALIDATED requires an explicit
+measured before/after (no in-pipeline measurement ⇒ never auto-validated; available to callers w/ evidence). Consumer
+(PR#87) + producer (PR#90) + success-auto (PR#92) + failed-auto (this). PARTIAL/BLOCKED (no hard failure) ⇒ nothing
+blamed.
+
+**Gate:** test:report 110→111; tsc 0; build 0. €0; nothing sent.
+
+**SIX-AXIS next (all represented):** A finalize paid entry-diagnostic offer spec (next lot) · B mid-market package ·
+C enterprise qualif checklist · D partner profile (BLOCKED no partner) · E wire enterprise-mission into portfolio ·
+F dossier continuation.
