@@ -58,6 +58,8 @@ interface Checkpoint {
   completedAt?: string;
 }
 
+const excellenceGate = require("./excellence-gate");   // AXE 1: gate a RESUME (protected recovery action), opt-in
+
 const GENERATED_DIR = "runtime/generated";
 const CHECKPOINT_PATH = path.join(GENERATED_DIR, "pipeline-checkpoint.json");
 
@@ -127,7 +129,7 @@ function persist(cp: Checkpoint): Checkpoint {
   return cp;
 }
 
-function begin(mission: string, stageNames: string[]): { cp: Checkpoint; resumeIndex: number } {
+function begin(mission: string, stageNames: string[], opts?: any): { cp: Checkpoint; resumeIndex: number; recoveryBlocked?: boolean; recoveryReason?: string; recoveryAudit?: any } {
   const existing = readJsonSafe(CHECKPOINT_PATH) as Checkpoint | null;
 
   const resumable =
@@ -142,6 +144,22 @@ function begin(mission: string, stageNames: string[]): { cp: Checkpoint; resumeI
     existing.stages.every((s: Stage, i: number) => s.name === stageNames[i]);
 
   if (resumable && existing) {
+    // AXE 1 — OPT-IN recovery gate on the RESUME decision (a protected action). Only engaged when the caller supplies
+    // opts.recovery; otherwise begin() keeps EXACT legacy behaviour (backward-compatible). On refusal (tampered/
+    // contradictory recovery evidence or a prohibited claim) the resume is DENIED and the existing checkpoint is
+    // NEITHER resumed NOR overwritten — no unauthorized resume, no silent data loss. Reviewer-unavailable / offline =
+    // advisory (resume proceeds). Reuses excellence-gate (requireExcellence + provenance + audit-log).
+    if (opts && opts.recovery) {
+      const rec = opts.recovery;
+      const g = excellenceGate.gateRecovery({ action: { id: mission, kind: "checkpoint-resume", claims: rec.claims }, evidence: rec.evidence, contradictory: rec.contradictory, registry: rec.registry || [], now: rec.now || "", reviewer: rec.reviewer });
+      if (!g.proceed) {
+        return { cp: existing, resumeIndex: -1, recoveryBlocked: true, recoveryReason: g.evidenceReason && g.evidenceReason !== "no evidence supplied (advisory)" ? g.evidenceReason : g.excellence.reason, recoveryAudit: g.chain };
+      }
+      const ri = existing.stages.findIndex((s: Stage) => s.status !== "DONE");
+      existing.status = "RUNNING";
+      existing.resumedFromIndex = ri < 0 ? existing.stages.length : ri;
+      return { cp: persist(existing), resumeIndex: existing.resumedFromIndex, recoveryBlocked: false, recoveryAudit: g.chain };
+    }
     const resumeIndex = existing.stages.findIndex((s: Stage) => s.status !== "DONE");
     existing.status = "RUNNING";
     existing.resumedFromIndex = resumeIndex < 0 ? existing.stages.length : resumeIndex;
