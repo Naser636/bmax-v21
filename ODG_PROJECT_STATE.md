@@ -5400,3 +5400,46 @@ HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send on REAL sourc
 A/B/C/D emphasis; ISO text access; any spend; EXTERNAL production+certification deps. The field kit is USABLE now; the
 missing piece is a human GO to contact real sourced prospects. Next autonomous €0: proposal generator from verifiable
 scopes, or ISO-42001 self-readiness (same engine).
+
+---
+## CHECKPOINT 2026-10-27 (bb) — Track A real candidates + Track B proposal-generator + Track C ISO 42001 self-assessment €0
+CTO NEXT EXECUTION LOT (3 tracks, continuation, no restart). Truth Lock 2890cc4≡origin/main, clean, 4 untracked
+docs/ dirs preserved. No new primitive. Diff = proposal-generator(.ts/.test) + iso-42001-readiness(.ts/.test) +
+package.json + 4 docs + compass.
+
+**TRACK B — proposal-generator.ts (EXECUTED; audit-first):** audited existing — quote.ts is a governed PRICING/quote
+record (human-gated emission), NOT a proposal-document generator; genuine gap. NEW runtime/core/proposal-generator.ts
+(pure/deterministic): buildProposal(input) fail-closed — client+scope+deliverables+≥1 explicit LIMITATION+price all
+required (a proposal with no stated limits is REFUSED), price via invoicing.computeTotals (no 2nd money path) or
+explicit fixedPrice (never invented); anti-overclaim scanClaims() REFUSES certification-obtained / fully|100% compliant|
+secure / guaranteed compliance|result|outcome|pass / "makes you compliant" / zero-risk / unbenchmarked superlatives
+(honest "certification readiness" + "does not certify" ALLOWED via lookbehind/lookahead); tiers ENTRY/B2B/PARTNERSHIP
+(presentation only, never relax guard); expectedValue()/pipelineEntry() emit PROPOSAL stage (never SIGNED). Suite 14.
+3 SYNTHETIC examples rendered → PROPOSAL_EXAMPLES_V1.md (placeholders, HYPOTHESIS prices, no real client/signature).
+
+**TRACK C — iso-42001-readiness.ts (EXECUTED; audit-first):** audited — ISO42001 existed only as 2 controls inside
+regulatory-assurance; no dedicated ODG self-assessment. NEW runtime/core/iso-42001-readiness.ts = companion to
+iso-readiness (27001): 11 PRINCIPLE-LEVEL AIMS themes (publicly-documented 42001 scope, clause text NOT consulted,
+ACCESS=metadata-only), SATISFIED only if cited evidence suites really gated (verified vs package.json), prod
+AI-behaviour monitoring EXTERNAL, NOT_CERTIFIED. Self-assessment: 10 satisfied/0 partial/0 gap/1 external of 11 →
+ISO_42001_READINESS_ODG_V1.md. Suite 10. Client offer → AI_GOVERNANCE_DIAGNOSTIC_OFFER_V1.md (limits + proofs, no cert).
+
+**TRACK A — real candidates (EXECUTED; live web, €0, read-only, NO outreach):** sourced REAL named companies with
+provenance → FIELD_CANDIDATES_REAL_V1.md, each CLASSIFIED buyer/partner/competitor/signal-only: Mistral AI, LightOn
+(GPAI, partner/ref); Dust/Adaptive ML/Fentech (BUYER-candidate, smaller FR); Runlayer/Trase/Prime Intellect (funded
+agent-governance = COMPETITOR/white-label); Anthropic/Replit/Stripe (hiring = signal-only, not buyers). Competitors
+(pragma-code/tensoria/kopexa/veritise/…) identified ⇒ niche contested ⇒ SWITCH_C/B input. HONEST: hiring/funding ≠
+purchase intent; realistic buyer = EU SMEs (≤750/≤€150M) shipping LLM features facing Art.50 (2026-08-02) + synthetic-
+content marking (2026-12-02), NOT enumerable via US-only WebSearch ⇒ registry sourcing method documented, NO verified
+SME buyer list produced, NO company/contact/budget invented.
+
+**Gate:** test:report 77→79; tsc 0; build 0 (closure 103). **Honesty:** no cert/compliance/result claim anywhere;
+prices HYPOTHESIS; no prospect/contact invented; no outreach sent; €500k gap still NO_DATA (0 signed/cashed).
+
+**Learning reuse (proven):** reused iso-readiness's evidence-verified-vs-real-gated-suites pattern for 42001; reused
+regulatory-assurance's claim-guard discipline + invoicing.computeTotals in proposal-generator; reused niche-scoring
+A/B/C/D framing in the candidates doc.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/proposal-generator.test.ts && tsx runtime/core/iso-42001-readiness.test.ts`
+HUMAN-REQUIRED (grouped, unchanged): authorize first outreach on REAL sourced prospects + legal review; confirm
+prices; choose A/B/C/D emphasis; ISO clause text access; any spend; EXTERNAL prod/cert deps.
