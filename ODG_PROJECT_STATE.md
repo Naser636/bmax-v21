@@ -5328,3 +5328,38 @@ HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send + legal revie
 M2/M3/M4 emphasis; any spend/subcontracting/budget beyond €10k; EXTERNAL production+trust deps for enterprise clients.
 Best next value: HUMAN authorise a first M2 outreach batch ⇒ first real ledger entry ⇒ dashboard begins measuring the
 real gap. Autonomous €0 remaining: a proposal-generator from verifiable scopes (Track-1) if a gap is demonstrated.
+
+---
+## CHECKPOINT 2026-10-27 (az) — ODG ISO/IEC 27001 readiness SELF-assessment (evidence verified vs real gated suites) €0
+CTO certification+revenue+excellence program (continuation, no restart). Truth Lock entry f27ef52≡origin/main, clean,
+5 stashes, 4 untracked docs/. No new primitive. Diff = iso-readiness(.ts/.test) + package.json + ISO_READINESS_ODG_V1.md + compass.
+
+**§8.3 — EXECUTED (real, testable ISO readiness matrix for ODG):** NEW runtime/core/iso-readiness.ts assessIsoReadiness()
+maps ODG's proven controls to 11 PRINCIPLE-LEVEL ISO/IEC 27001:2022 themes (NOT verbatim Annex-A clause text — paywalled,
+NOT consulted) and marks a theme SATISFIED only when its cited evidence suites are ACTUALLY gated in CI (verified vs the
+caller's gated-suite list — real evidence, not a claim). Prod-only themes EXTERNAL. Gated suite iso-readiness.test.ts
+(10) derives the gated list from the REAL package.json and asserts: identity/audit/recovery ⇒ SATISFIED_VERIFIED; KMS ⇒
+EXTERNAL; multi-tenant/backups ⇒ PARTIAL_EXTERNAL; NOT_CERTIFIED + principle-level honesty + Amd 1:2024 noted; a fake
+suite ⇒ GAP (no false satisfaction); reproducible. Rendered the REAL matrix to docs/odg-operational/ISO_READINESS_ODG_V1.md
+= **7 satisfied / 2 partial / 0 gap / 4 external of 11** (externals: KMS/HSM, prod multi-tenant, off-host backup, prod
+monitoring). full gate 75→76; tsc 0; build 0.
+
+TRUTH→GAP→ROOTCAUSE→CHANGE→TEST→EVIDENCE: §8.3 wanted an ODG ISO readiness matrix with VERIFIED evidence+gaps → no such
+self-assessment existed → MINIMUM a principle-level mapper verifying evidence against the real CI gate → TEST 10 →
+EVIDENCE 76/76 + generated matrix → NEXT clause-level needs the ISO text (free AFNOR/ANS route eligibility TBV).
+
+**Certification track A (ODG):** self-assessment done + honest (NOT certified, clause text not read, 4 externals named).
+Track B (client offers): the conformity/readiness assessment offer is already specified (SALES_KIT_V1/REVENUE_500K M2+M3);
+this module is the repeatable delivery engine for it (ODG runs the same assessment for a client profile). No audit engaged,
+no spend. **Revenue M2/M3/M4 + dashboard (NO_DATA, €500k gap) unchanged; no outreach sent; no fabricated client/cert.**
+
+**Honesty:** principle-level ≠ clause-level; SATISFIED requires a really-gated suite; EXTERNAL themes not claimed;
+NOT_CERTIFIED; nothing bought.
+
+**Learning reuse (proven):** reused the gated-suite set as verifiable evidence + the honest status discipline
+(regulatory-assurance/excellence); the matrix is generated FROM the real repo state (self-verifying).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/iso-readiness.test.ts`
+HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send + legal review; choose M2/M3/M4 emphasis; ISO text
+access (free AFNOR/ANS consultation eligibility, else minimal purchase) IF clause-level certification wanted; any spend;
+EXTERNAL production deps (KMS/HSM, prod multi-tenant, off-host backup, monitoring) for certification + enterprise clients.
