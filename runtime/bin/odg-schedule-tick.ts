@@ -45,9 +45,15 @@ const EXCELLENCE_REGISTRY = [{ id: "ODG-MISSION-QUALITY", authority: "ODG", doma
 const reviewExcellence = buildExcellenceReviewer((mission: any) => ({ domain: "autonomous-mission", now: new Date().toISOString().slice(0, 10), registry: EXCELLENCE_REGISTRY, currentPractices: ["reproduce-before-fix", "independent-verification", "no-false-success"], thresholds: {}, measured: {}, claims: (mission && mission.claims) || [] }));
 const { truthLockGate } = require(path.join(ROOT, corePort("runtime/core/truth-lock-gate.js")));
 const { recordAttempt } = require(path.join(ROOT, corePort("runtime/core/mission-attempt-log.js")));
+const AUDIT = require(path.join(ROOT, corePort("runtime/core/audit-log.js")));   // tamper-evident canary decision log
 
 const ALLOW: Set<string> = new Set((process.env.ODG_CANARY_ALLOWLIST || "").split(",").map((s: string) => s.trim()).filter(Boolean));
 const LOG = path.join(ROOT, "runtime", "generated", "mission-attempt-log.jsonl");
+const AUDIT_CHAIN_PATH = path.join(ROOT, "runtime", "generated", "scheduler-audit-chain.json");
+
+// Read/append the persisted tamper-evident canary decision chain (audit artifact only — NOT business state).
+function readAuditChain(): any[] { try { const c = JSON.parse(fs.readFileSync(AUDIT_CHAIN_PATH, "utf8")); return Array.isArray(c) ? c : []; } catch { return []; } }
+function persistAuditChain(chain: any[]): void { try { fs.mkdirSync(path.dirname(AUDIT_CHAIN_PATH), { recursive: true }); fs.writeFileSync(AUDIT_CHAIN_PATH, JSON.stringify(chain, null, 2)); } catch { /* best-effort audit */ } }
 
 function gitExec(args: string[]): string | null {
   try { return String(cp.execFileSync("git", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; }
@@ -80,23 +86,39 @@ function main(): void {
       process.exit(2);
     }
   }
-  const proven = provenSet();
-  const ctx: any = {
-    queue: { queue: [...ALLOW].map((m) => ({ mission: m, status: "PENDING" })) },
-    preAuthorized: [...ALLOW],
-    isProven: (id: string) => proven.has(id),
-    authorize: (item: any) => ALLOW.has(item.mission) ? { ok: true, reason: "read-only canary allowlist" } : { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` },
-    policy: { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 },
-    recordAttempt: (d: any) => { try { recordAttempt(LOG, { mission: (d && d.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } },
-    dispatch,
-    reviewExcellence,                                                    // canonical auto-consultation (advisory, read-only)
-  };
-  const d = schedulerStep(ctx);
+  const d = tickOnce({ chain: readAuditChain() });
+  persistAuditChain(d.auditChain || []);                               // tamper-evident canary decision log (audit artifact)
   console.log(`[odg-schedule-tick] ${d.status} — ${d.reason || ""}${d.item ? " (mission " + d.item.mission + ")" : ""}`);
   // Safe terminal states exit 0 (PASS = a verified read-only mission; IDLE = nothing eligible). Everything else
   // (STOPPED/BLOCKED/FAIL/NOT_MEASURABLE) is a non-zero, non-false-success exit.
   process.exit(d.status === "PASS" || d.status === "IDLE" ? 0 : 1);
 }
 
-main();
+/**
+ * tickOnce — the PURE canary tick decision (the real ctx + schedulerStep), with NO process.exit and NO IO except the
+ * injected recordAttempt. Deps are injectable for hermetic tests (allow/proven/dispatch/reviewExcellence/recordAttempt/
+ * chain). STRICTLY read-only wrt business state: it never mutates a queue or runs an effect itself (dispatch is the
+ * injected seam; the default spawns the governed pipeline, same as production). ctx.auditChain ⇒ the decision carries a
+ * tamper-evident hash chain (AXE 3). The canary admission (preAuthorized/authorize = ODG_CANARY_ALLOWLIST, deny-by-
+ * default) is unchanged.
+ */
+function tickOnce(opts: any = {}): any {
+  const allow: Set<string> = opts.allow instanceof Set ? opts.allow : ALLOW;
+  const proven: any = opts.proven || provenSet();
+  const ctx: any = {
+    queue: { queue: [...allow].map((m) => ({ mission: m, status: "PENDING" })) },
+    preAuthorized: [...allow],
+    isProven: (id: string) => (typeof proven.has === "function" ? proven.has(id) : false),
+    authorize: (item: any) => allow.has(item.mission) ? { ok: true, reason: "read-only canary allowlist" } : { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` },
+    policy: { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 },
+    recordAttempt: opts.recordAttempt || ((d: any) => { try { recordAttempt(LOG, { mission: (d && d.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } }),
+    dispatch: opts.dispatch || dispatch,
+    reviewExcellence: opts.reviewExcellence || reviewExcellence,         // canonical auto-consultation (advisory, read-only)
+    auditChain: Array.isArray(opts.chain) ? opts.chain : [],             // AXE 3 tamper-evident decision chain (opt-in)
+  };
+  return schedulerStep(ctx);
+}
+
+module.exports = { tickOnce, readAuditChain, persistAuditChain, AUDIT_CHAIN_PATH };
+if (require.main === module) main();
 export {};

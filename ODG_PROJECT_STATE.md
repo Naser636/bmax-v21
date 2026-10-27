@@ -4998,3 +4998,44 @@ reuse of a prior safe fix; reused the opt-in-additive integration pattern (contr
 Next autonomous €0 candidate: wire ctx.auditChain into odg-schedule-tick's canary ctx (tamper-evident tick log) behind
 the read-only boundary. HUMAN-REQUIRED (grouped, final report): external accounts/secrets/licences (KMS/HSM, datastore,
 SIEM, monitoring), real-agent connection, canonical-queue + production activation, ISO paid text, any spend.
+
+---
+## CHECKPOINT 2026-10-27 (aq) — canary tick: testable real path + tamper-evident audit chain €0
+CTO launch-readiness continuation. Truth Lock entry bcb13b7≡origin/main (PR#47/#48 MERGED), clean, 5 stashes, 4
+untracked docs/. No new primitive/orchestrator/router. Diff = odg-schedule-tick(.ts + new .test) + package.json.
+
+**LOT A (canary tick audit) — PROVEN via REAL path:** audit — odg-schedule-tick had NO gated test + inline main() with
+process.exit (untestable). Refactored: extracted a PURE `tickOnce(opts)` = the REAL ctx (canary allowlist-derived queue
++ deny-by-default authorize + reviewExcellence + schedulerStep) with deps injectable; main() now calls tickOnce, persists
+the decision's tamper-evident `auditChain` to runtime/generated/scheduler-audit-chain.json (audit artifact, gitignored —
+NOT business state), prints + process.exit; guarded `if (require.main===module) main()` so tests can require it. Wired
+`ctx.auditChain` into the real tick (AXE 3). STRICTLY read-only: injected-dispatch seam (no real odg-run in tests),
+deny-by-default canary admission unchanged, no queue entry executed, no external agent, no production activation.
+
+NEW gated suite runtime/bin/odg-schedule-tick.test.ts (8) drives the REAL tickOnce hermetically: empty allowlist⇒IDLE
++audited+ZERO dispatch; allowed mission⇒PASS via injected dispatch (no real odg-run)+hash-chained; proven⇒IDLE dedup no
+dispatch; EXCELLENCE gate fires (prohibited claim⇒BLOCKED, no dispatch); chain continuity across ticks + tamper
+detected; persist/read round-trip verifiable (temp cwd). bin smoke: empty allowlist⇒IDLE/exit0 (unchanged). full gate
+69→70; tsc 0; build 0. Generated chain file gitignored (clean tree). HONEST LIMIT: tamper-EVIDENT not tamper-PROOF; prod
+WORM/SIEM/timestamp EXTERNAL; the canary remains read-only + NOT the canonical queue (activation CTO/host-gated).
+
+**LOT B (other resolvers audit) — DIAGNOSTIC (no change):** decision-engine + execution-planner inspected. They are
+invoked as part of the governed pipeline / as scheduled missions ⇒ already pass the scheduler excellence boundary +
+capability-executors dispatch gate when dispatched. No DIRECT ungoverned consumer bypass demonstrated that warrants a
+new gate; per the mandate (no over-injection, reuse existing boundaries) NOT gated directly. Remain NOT_COVERED-direct
+(covered indirectly) — honestly listed; no false COVERED claim.
+
+**LOT C (7 external dependency groups) — FACTUAL RE-AUDIT:** verified the real artifacts (not just the prior report):
+each of the 7 groups in PRODUCTION_READINESS_GAPS_V1.md has (1) real local impl/logic where applicable + (2) passing
+hermetic tests + (3) honest EXTERNAL activation gate. gap #4 (audit) local portion now EXTENDED to the canary tick
+(tamper-evident decision chain persisted). The other 6 remain EXTERNAL (accounts/secrets/licences/infra/CTO auth) — no
+new local fix was safe+independent this cycle; no simulation presented as production.
+
+**Learning reuse (proven):** reused audit-log (gap #4 fix) at ANOTHER real path (the canary tick) + the require.main
+guard + inject-for-test pattern; excellence reviewer reused in the live tick ctx. Capture→reuse: the tick's decision
+chain is a persisted, verifiable operational artifact (not just stored — verifyChain proves integrity + is tested).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/bin/odg-schedule-tick.test.ts && tsx runtime/core/mission-scheduler.test.ts`
+HUMAN-REQUIRED (unchanged, grouped): external accounts/secrets/licences (KMS/HSM, datastore+multi-tenant, SIEM/WORM,
+monitoring), real-agent connection, canonical-queue + production activation, ISO paid text, any spend. No autonomous €0
+local lot with real proof-value remains un-attempted (resolvers covered-indirect; prod gaps EXTERNAL).
