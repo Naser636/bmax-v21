@@ -5647,3 +5647,38 @@ pack consolidates all prior-lot frontiers (no re-derivation).
 HUMAN FRONTIERS (= CTO_DECISION_PACK_V1): 1 approve policies 2 confirm CU 3 structure+RC Pro 4 ISO access/cost 5 prod
 deps 6 legal review 7 authorize outreach. Zero-cost workstream: AFNOR interactive 27001 read (human session) to upgrade
 structure→clause; confirm CNIL/ANSSI licences before redistribution.
+
+---
+## CHECKPOINT 2026-10-27 (bh) — Certification pathway + readiness engine + final delivery V6 €0
+CTO "CERTIFICATION PATHWAY + FINAL DELIVERY V6" (additive, post-PR#65, no interruption). Truth Lock df12b97≡origin/main
+(0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff =
+certification-readiness(.ts/.test) + package.json + 3 docs + compass.
+
+**certification-readiness.ts (EXECUTED, honest):** aggregates iso-operational-evidence + an administrative dossier
+checklist into a FAIL-CLOSED go/no-go: verdict NOT_READY unless EVERY non-external control SATISFIED (operated evidence,
+not just mechanism) AND every MANDATORY_DOSSIER item present; EXTERNAL controls surfaced as scope blocker; no fabrication.
+Default = NOT_READY (0/12 non-external SATISFIED, 0/10 dossier, 7 external) → ISO_27001_CERTIFICATION_READINESS_V1.md.
+Suite 9. Reuses OE.assessOperational + requiredState (clause 10/A.5 need EXECUTED even in aggregate).
+
+**Research (2 agents, honest ACCESS, NO contact):** CERTIFICATION_PATHWAY_AND_COSTS_V1.md — accreditation model (COFRAC
+sole FR body, verify SCOPE per CB on tools.cofrac.fr easysearch; EA; IAF CertSearch ARCHIVAL since 2026-01-01→Global
+Accreditation Cooperation); CB table (AFNOR 27001 COFRAC n°4-0001; BSI/LRQA/TÜV-NORD accredited 42001 via UKAS/ANAB/RvA
+2026; others "scope to verify"); **42001 accredited cert NASCENT, COFRAC-accredited 42001 NOT mature in FR 2026**;
+costs devis-required (market est €6-12k micro audit, secondary); scenarios A(internal €0)/B(public aid)/C(private); public
+aids (Diag Cyber €4,400 net; Cyber PME; MonAideCyber free≥2emp; France Num free) — **brand-new SOLO entity likely
+INELIGIBLE for most (≥2 or 10-250 emp / PME vetting)** ⇒ Scenario A recommended. CERTIFICATION_APPLICATION_DOSSIER_V1.md
+(ready vs MISSING per MANDATORY_DOSSIER, nothing fabricated; draft devis request UNSENT).
+
+**Gate:** test:report 84→85; tsc 0 (independent); build 0. Honesty: verdict NOT_READY; 0 SATISFIED; no CB asserted
+accredited-for-standard without scope verification; prices devis/secondary; no purchase; no contact; €500k NO_DATA; "CU"
+ambiguous. No new permanent primitive; ODG sole orchestrator.
+
+**Learning reuse (proven):** certification-readiness reuses the operational-evidence engine + execution-required rule
+(clause 10/A.5 EXECUTED) so the aggregate inherits the DOCUMENTED≠APPROVED≠EXECUTED discipline; dossier maps to
+ISO_27001_POLICY_TEMPLATES; pathway recommendation (Scenario A) grounded in the zero-cost register's free-guide findings.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/certification-readiness.test.ts`
+HUMAN FRONTIERS (= CTO_DECISION_PACK_V1, unchanged): approve policies; confirm CU; structure+RC Pro; ISO 42001
+purchase vs free 27001 AFNOR interactive; prod deps; legal review; authorize outreach. Certification: execute internal
+audit + management review + incident handling (with records) to move toward READY_FOR_STAGE1; verify a CB's COFRAC
+27001 scope; obtain devis (CTO).
