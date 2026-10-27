@@ -5838,3 +5838,36 @@ verified comparables from COMMERCIAL_RESEARCH_V3; automation inventory reuses al
 HUMAN FRONTIERS (grouped): COMMERCIAL — confirm price band (Option 2); authorise first small outreach (A+C) after legal
 review; later authorise a partner/subcontract model + budget (needed for €500k scale). CERTIFICATION (separate) =
 CTO_DECISION_PACK. €500k year-1 = signed/run-rate target; cash ~€342k best-case.
+
+---
+## CHECKPOINT 2026-10-27 (bm) — V10 channel economics + paths to €500k + sales-cycle + client value €0
+CTO "V10 ACCÉLÉRATION COMMERCIALE" (parallel, post-PR#70). Truth Lock 35d90e3≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = revenue-channels(.ts/.test) +
+package.json + 4 docs + compass.
+
+**revenue-channels.ts (EXECUTED):** layers channel economics on revenue-schedule (REUSED) for 4 scenarios A SOLO /
+B SOLO_RECURRING / C PARTNER(commission) / D SUBCONTRACT(cost+capacity); conservative net (channel cost ADDED to direct
+cost); requiredForTargetCash() back-solves prospects for target cash + flags solo-ceiling. Suite 10. FINDINGS: net margin
+SOLO_RECURRING €228k > PARTNER €195k ≈ SUBCONTRACT €195k > SOLO €163k; GROSS cash PARTNER €489k / SUBCONTRACT €651k reach
+€500k where solo can't, at 40%/30% margin; €500k CASH solo needs ~62 prospects/mo (within 120 ceiling IF unvalidated
+assumptions hold). → PATHS_TO_500K_V1.
+
+**Research (agent, no contact) → SALES_CYCLE_RESEARCH_V1:** shortest path to first cash = PAID PILOT (budget-holder-funded,
+references least needed), seeds land-and-expand (pilot→remediation→retainer; budget-holder pilots convert 60-90% per
+arcshift); verified comparables (audit $3-50k, vCISO $3-20k/mo, CRA dates); AI-gov market figures flagged weak. Then audit
+#1, partner #6, SBOM/CRA #3 (soft until 2027), remediation #4, recurring #5.
+
+**Docs:** CLIENT_VALUE_MODEL_V1 (value ladder pilot→project→remediation→recurring→partner; pricing structures + churn/
+dependency risk); CTO_DECISION_KIT_V2 (price=market-mid+pilot wedge; most-robust=solo+recurring €228k margin but €500k
+cash needs channel; 3 minimal commercial decisions; cert separate).
+
+**Gate:** test:report 88→89; tsc 0; build 0. Honesty: €500k=signed/run-rate target, year-1 cash ~€342k solo best/€213k
+stressed, €500k cash needs channel at lower margin; 0 real opportunities; prices HYPOTHESIS (verified comparables);
+0 partners accepted; no contact/outreach/purchase; nothing invented.
+
+**Learning reuse (proven):** revenue-channels reuses revenue-schedule.projectMonthly; findings feed CTO_DECISION_KIT_V2;
+sales-cycle research feeds CLIENT_VALUE_MODEL value ladder + pilot-wedge recommendation.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-channels.test.ts`
+HUMAN FRONTIERS (grouped): COMMERCIAL — confirm price band (market-mid + pilot wedge); authorise first outreach (pilot/
+A+C) after legal review; authorise partner/subcontract + budget (for €500k cash). CERT separate = CTO_DECISION_PACK.
