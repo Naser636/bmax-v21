@@ -49,6 +49,8 @@ import { spawnSync } from "child_process";
 // and STILL correct when it is loaded from runtime/dist/core — where __dirname-derivation would resolve to
 // the wrong tree (runtime/dist) and write config/report/provider-auth under runtime/dist/generated. Only the
 // root derivation changes; the recovery logic, policies and attribution are untouched.
+const excellenceGate = require("./excellence-gate");   // AXE A: gate the fixer-APPLY (protected recovery action), opt-in
+
 const ROOT = process.cwd();
 const DEFAULT_CONFIG = path.join(ROOT, "runtime", "config", "build-recovery.json");
 const REPORT_PATH = path.join(ROOT, "runtime", "generated", "build-recovery-report.json");
@@ -314,6 +316,20 @@ function recover(opts: any = {}): any {
 
     let diagnostics = collectErrors(cfg, cwd);
     const initialErrors = diagnostics.length;
+
+    // AXE A — OPT-IN recovery gate BEFORE any fixer is applied (the protected mutation). On refusal (tampered/
+    // contradictory recovery evidence or a prohibited claim) NO fixer is applied — no file is mutated (fail-closed).
+    // No opts.recovery ⇒ EXACT legacy behaviour (public contract preserved). collectErrors above is read-only.
+    let recoveryAudit: any;
+    if (opts.recovery) {
+        const rec = opts.recovery;
+        const g = excellenceGate.gateRecovery({ action: { id: rec.id || "build-recovery", kind: "build-fix-apply", claims: rec.claims }, evidence: rec.evidence, contradictory: rec.contradictory, registry: rec.registry || [], now: rec.now || "", reviewer: rec.reviewer });
+        recoveryAudit = g.chain;
+        if (!g.proceed) {
+            return { build: false, typescript: false, improved: false, providerAuthorized: true, iterations: 0, rootCauses: [], modifiedFiles: [], initialErrors, finalErrors: initialErrors, recoveryBlocked: true, recoveryReason: g.evidenceReason && g.evidenceReason !== "no evidence supplied (advisory)" ? g.evidenceReason : g.excellence.reason, recoveryAudit };
+        }
+    }
+
     let prevCount = diagnostics.length;
     let iterations = 0;
     let improved = false;
@@ -368,6 +384,7 @@ function recover(opts: any = {}): any {
         modifiedFiles: [...modifiedFiles],
         initialErrors,
         finalErrors: finalDiagnostics.length,
+        ...(recoveryAudit ? { recoveryBlocked: false, recoveryAudit } : {}),
     };
 }
 

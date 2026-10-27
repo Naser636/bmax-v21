@@ -183,4 +183,53 @@ function run(dir, authorizedPaths) {
     fs.rmSync(dir, { recursive: true, force: true });
 })();
 
+// --- AXE A: gateRecovery integration on the REAL recover() apply decision ---------------------------------------
+(function recoveryGateIntegration() {
+    console.log("AXE A — gateRecovery integration on build-recovery apply (real path)");
+    const prov = require("./evidence-provenance");
+    const audit = require("./audit-log");
+    const NOW = "2026-10-27";
+    const REV = { commit: "t", treeDirty: false, available: true };
+    const ev = prov.stampProvenance({ recovery: "build-fix", verified: true }, { revision: REV });
+    const fixable = () => ({ "src/dep.ts": "export const used = 1;\nexport const spare = 2;\n", "src/a.ts": 'import { used, spare } from "./dep";\nexport const v = used;\n' });
+    const runGated = (dir, recovery) => bre.recover({ cwd: dir, authorizedPaths: ["src"], runBuild: false, mission: "M", typecheckCommand: [process.execPath, REPO_TSC, "--noEmit", "--pretty", "false", "-p", path.join(dir, "tsconfig.json")], recovery });
+
+    // (a) valid recovery evidence ⇒ fixers apply (green) + audit intact
+    let dir = makeProject(fixable());
+    let r = runGated(dir, { evidence: ev, registry: [], now: NOW });
+    ok("AXE A: valid recovery ⇒ fixers apply (green) + audit intact", r.recoveryBlocked !== true && r.typescript === true && audit.verifyChain(r.recoveryAudit).ok === true && r.modifiedFiles.includes("src/a.ts"));
+    fs.rmSync(dir, { recursive: true, force: true });
+
+    // (b) CONTRADICTORY evidence ⇒ DENIED, NO fixer applied, source byte-for-byte unchanged (no mutation)
+    dir = makeProject(fixable());
+    const beforeA = fs.readFileSync(path.join(dir, "src/a.ts"), "utf8");
+    r = runGated(dir, { evidence: ev, contradictory: true, registry: [], now: NOW });
+    ok("AXE A: contradictory ⇒ DENIED, no fixer applied, source unchanged", r.recoveryBlocked === true && r.modifiedFiles.length === 0 && fs.readFileSync(path.join(dir, "src/a.ts"), "utf8") === beforeA);
+    fs.rmSync(dir, { recursive: true, force: true });
+
+    // (c) TAMPERED recovery evidence ⇒ DENIED
+    dir = makeProject(fixable());
+    r = runGated(dir, { evidence: { ...ev, recovery: "FORGED" }, registry: [], now: NOW });
+    ok("AXE A: tampered recovery evidence ⇒ DENIED, no mutation", r.recoveryBlocked === true && r.modifiedFiles.length === 0);
+    fs.rmSync(dir, { recursive: true, force: true });
+
+    // (d) prohibited superlative claim ⇒ DENIED
+    dir = makeProject(fixable());
+    r = runGated(dir, { evidence: ev, claims: ["the world's best recovery"], registry: [], now: NOW });
+    ok("AXE A: prohibited superlative recovery claim ⇒ DENIED", r.recoveryBlocked === true);
+    fs.rmSync(dir, { recursive: true, force: true });
+
+    // (e) reviewer unavailable ⇒ advisory, fixers apply
+    dir = makeProject(fixable());
+    r = runGated(dir, { evidence: ev, registry: [], now: NOW, reviewer: () => { throw new Error("down"); } });
+    ok("AXE A: reviewer unavailable ⇒ advisory, fixers apply", r.recoveryBlocked !== true && r.typescript === true);
+    fs.rmSync(dir, { recursive: true, force: true });
+
+    // (f) NO recovery opts ⇒ EXACT legacy behaviour
+    dir = makeProject(fixable());
+    r = run(dir, ["src"]);
+    ok("AXE A: no recovery opts ⇒ legacy (recoveryBlocked undefined, green)", r.recoveryBlocked === undefined && r.typescript === true);
+    fs.rmSync(dir, { recursive: true, force: true });
+})();
+
 console.log(`\nBUILD RECOVERY ENGINE — ${passed} assertions passed.`);

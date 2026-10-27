@@ -4800,3 +4800,42 @@ status/applicability per source) + the honest verified-vs-offline labelling to r
 Next €0 candidate: route the next NOT_COVERED family (build-recovery or router recall) through excellence-gate; or add
 freshness/version-drift CHECK fixtures using the now-verified dates. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod
 multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation, ISO paid text, any purchase.
+
+---
+## CHECKPOINT 2026-10-27 (al) — build-recovery-engine recovery gate integration €0
+CTO consolidated closure campaign. Truth Lock entry b8edeb2≡origin/main, clean, 5 stashes, 4 untracked docs/.
+No new primitive/orchestrator/router. Additive + opt-in. Diff = build-recovery-engine(.ts/.test) + excellence-coverage + doc.
+
+**AXE A (close build-recovery) — PROVEN via REAL path:** recover()'s fixer-apply loop is the protected mutation.
+Integrated excellence-gate.gateRecovery at the REAL recover() decision, OPT-IN via opts.recovery (no recovery context ⇒
+EXACT legacy behaviour; public contract preserved; read-only collectErrors runs first). On refusal (tampered/
+contradictory recovery evidence OR prohibited claim): NO fixer applied — source byte-for-byte UNCHANGED (fail-closed).
+Reviewer-unavailable/offline ⇒ advisory (fixers apply). recoveryAudit threaded into BOTH the denied + success returns.
+Integration tests THROUGH the real module (build-recovery-engine.test.ts 25→31, 6 AXE-A assertions, real temp-project
++ real tsc): valid⇒fixers apply(green)+audit intact; contradictory⇒DENIED+source unchanged (proven on disk);
+tampered⇒DENIED; prohibited-superlative⇒DENIED; reviewer-down⇒advisory-apply; no-opts⇒legacy green. excellence-coverage:
+build-recovery NOT_COVERED→COVERED; post-release-learning/router-recall/resolution/per-executor remain NOT_COVERED
+(listed). No total-coverage claim. build-recovery-engine + excellence-gate already in dist include ⇒ closure OK.
+
+**AXE B (regulatory/global refs):** live-verified sources carried from checkpoint (ak) — GDPR/DORA/NIST verified-online,
+ISO metadata-only, CNIL/OWASP offline-pending-reverify. No code change this lot (32/32 intact). DORA stays
+applicability-gated (EU financial entities). Preparation ≠ conformity ≠ audit ≠ cert.
+
+**AXE C (prod readiness):** audit-log + evidence-provenance reused again (build-recovery provenance binding) — a real
+reuse that also strengthens auditability (gap #4) at a mutation decision point. 9 gaps otherwise unchanged (EXTERNAL).
+No simulated result claimed as production.
+
+**Coverage audit (declared vs effective):** COVERED families all have an executable REAL-path integration test
+(mission-execution, capability-self-review, learning [capability-learning.reuseLearning], recovery [checkpoint-engine
+resume + build-recovery apply]); remaining NOT_COVERED explicitly enumerated — no gap between declared + effective.
+
+**Proof:** build-recovery 25→31 + excellence-coverage 9 ⇒ full gate 69/69; tsc 0; build 0. Checkpoint suites replayed
+green first.
+
+**Learning reuse (proven):** reused gateRecovery/requireExcellence/audit-log/evidence-provenance at a 3rd REAL legacy
+decision point (after capability-learning + checkpoint-engine); the no-mutation-on-refusal proof is verified on disk.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/build-recovery-engine.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next €0 candidate: cover the `resolution` family at capability-router's decision point, OR route post-release-learning
+through excellence-gate. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host
+backups, real agent, canonical-queue activation, ISO paid text, any purchase.
