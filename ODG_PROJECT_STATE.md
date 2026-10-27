@@ -5569,3 +5569,39 @@ HUMAN FRONTIERS (grouped, narrowing): authorize outreach (V3) + legal review; co
 interactive consultation (free, to upgrade structure→clause-text) or buy 42001 (CHF 225); assert ISO operational
 evidence; confirm URSSAF rate + EUR-Lex wording (free); choose selling structure + RC Pro; production deps (spec ready);
 any spend/activation.
+
+---
+## CHECKPOINT 2026-10-27 (bf) — ISO operational-evidence layer + closure V4 €0
+CTO "OPERATIONAL EVIDENCE + ISO CLOSURE V4" (continuation from PR#63, no restart). Truth Lock cfc61bc≡origin/main (0/0),
+clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff = iso-operational-
+evidence(.ts/.test) + package.json + 3 docs + compass.
+
+**ISO operational-evidence layer (EXECUTED, honest):** NEW runtime/core/iso-operational-evidence.ts overlays op-evidence
+STATE onto the 27001 clause matrix, enforcing DOCUMENTED≠APPROVED≠EXECUTED in code: a MECHANISM_PRESENT control → 
+SATISFIED ONLY with APPROVED|EXECUTED evidence + named responsible + concrete artifact; a DRAFTED template stays
+MECHANISM_PRESENT (DOCUMENTED_NOT_APPROVED); an APPROVED/EXECUTED claim WITHOUT responsible+artifact is DOWNGRADED to
+DRAFTED + flagged (no fabricated approval/incident/restore-test); unknown state ⇒ NONE (deny-by-default). DEFAULT (no
+evidence) keeps 0 SATISFIED. Suite 11. Result (no evidence asserted — honest current reality): 0 SATISFIED / 12
+MECHANISM_PRESENT / 7 EXTERNAL / 0 GAP of 19 → ISO_27001_OPERATIONAL_EVIDENCE_REGISTER_V1.md.
+
+**Templates (DRAFT, not approved):** ISO_27001_POLICY_TEMPLATES_V1.md — ISMS/access/logging/backup/change/incident/risk/
+SoA templates from known facts; every approval point = [À APPROUVER: responsable/date] (human/CTO act); incident/restore
+registers explicitly [ne pas fabriquer]. Filling+approving one supplies the artifact that promotes a control.
+
+**Regulatory closure (honest BLOCKED):** EUR-Lex direct (2026/1744 ELI, consolidated) retried = EMPTY/BLOCKED; URSSAF
+retried = ECONNRESET. So AI-Act strongest source stays the Art.113 authoritative mirror (prior lot); URSSAF 25,6%
+stays primary-unverified. No fabrication; recorded as unresolved with precise next action (confirm on urssaf.fr / EUR-Lex).
+
+**Gate:** test:report 83→84; **tsc 0 (fixed TS7006 implicit-any on 4 summary filters — tsc is a SEPARATE gate from tsx
+test:report; caught + fixed before commit)**; build 0. Honesty: NOT_CERTIFIED; 0 SATISFIED (nothing approved/executed);
+no fabricated approval; no outreach; €500k NO_DATA; perfection NOT claimed; "CU" ambiguous (CTO).
+
+**Learning reuse (proven):** iso-operational-evidence reuses iso-27001-clause-matrix (buildClauseMatrix) + extends its
+mechanism≠satisfied rule with the documented≠approved≠executed state machine; reuses the deny-by-default + no-fabrication
+doctrine; templates map 1:1 to the matrix MECHANISM_PRESENT rows (no duplication).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/iso-operational-evidence.test.ts`
+HUMAN FRONTIERS (grouped; all remaining gaps now require a human act, a paid resource, or an interactive/production
+action — no purely-local free closure remains): authorize outreach (V3) + legal review; confirm CU; AFNOR interactive
+27001 consultation (free) or buy 42001 (CHF225); APPROVE ISO policy templates (CTO signature ⇒ promotes controls);
+confirm URSSAF 25,6% + EUR-Lex wording; choose selling structure + RC Pro; production deps (spec ready); any spend/activation.
