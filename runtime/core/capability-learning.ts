@@ -18,6 +18,8 @@
 const store = require("./autonomy-store");
 const patchMemory = require("./patch-memory");
 const rules = require("./decision-rules");
+const excellenceGate = require("./excellence-gate");       // AXE 1: gate REUSE of a recalled learning (shared boundary)
+const prov = require("./evidence-provenance");
 
 const OUTCOMES = "capability-outcomes";
 
@@ -69,7 +71,22 @@ function outcomes(): any {
   return store.read(OUTCOMES, { version: 1, outcomes: [] }).outcomes;
 }
 
-module.exports = { learn, outcomes, OUTCOMES };
+// AXE 1 — seal a learning item so it can later be REUSED through the excellence gate (tamper-evident provenance).
+// Additive: does NOT change learn()/outcomes() behaviour or their stored/return shapes.
+function sealLearning(item: any, opts?: any): any { return prov.stampProvenance(item, { revision: opts && opts.revision }); }
+
+// AXE 1 — the GATED REUSE decision point for a recalled learning. Before a recalled outcome/patch may INFLUENCE a
+// resolution decision it must pass the shared excellence boundary (requireExcellence) + sealed-provenance check, and
+// the decision is bound to the tamper-evident audit-log. A recalled learning with no/invalid provenance, a prohibited
+// unproven-superlative claim, or a blocking excellence verdict is REFUSED (applied:false) — recorded ≠ reusable.
+function reuseLearning(recalled: any, opts?: any): any {
+  const o = opts || {};
+  const learning = recalled ? { id: recalled.id || recalled.goal || recalled.capability || null, practice: recalled.capability || recalled.practice || recalled.goal || null, provenanceSealed: recalled.provenanceSealed, claims: recalled.claims } : null;
+  const g = excellenceGate.gateLearningReuse({ learning, registry: o.registry || [], now: o.now || "", reviewer: o.reviewer, chain: o.chain });
+  return { applied: g.applied, appliedCapability: g.applied && learning ? learning.practice : null, provOk: g.provOk, provReason: g.provReason, excellence: g.excellence, chain: g.chain, auditVerified: g.auditVerified };
+}
+
+module.exports = { learn, outcomes, OUTCOMES, sealLearning, reuseLearning };
 
 // Module-scope marker (adds NO export): forces TypeScript MODULE scope so internal names (resolveCapability)
 // are module-scoped, not global script scope (prevents cross-lot TS2393). The CommonJS API is unchanged.
