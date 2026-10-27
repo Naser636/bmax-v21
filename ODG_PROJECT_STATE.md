@@ -5488,3 +5488,43 @@ reused proposal-generator anti-overclaim as the pipeline admission gate; reused 
 from iso-readiness/regulatory-assurance across all research docs; reused niche-scoring A/B/C/D in candidate ranking.
 
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/proposal-pipeline.test.ts`
+
+---
+## CHECKPOINT 2026-10-27 (bd) — PRIMARY-SOURCE VERIFICATION + FINAL LAUNCH CLOSURE V2 €0
+CTO "PRIMARY-SOURCE VERIFICATION + FINAL LAUNCH CLOSURE V2" (continuation from PR#61, no restart). Truth Lock 6da9d22≡
+origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new primitive/orchestrator. Diff =
+ai-act-role-classifier(.ts/.test) + prospection-compliance(.ts/.test) + package.json + 6 docs + compass.
+
+**CODE (2 modules, EXECUTED):** (1) runtime/core/ai-act-role-classifier.ts — DENY-BY-DEFAULT role classifier (PROVIDER/
+DEPLOYER/GPAI_PROVIDER/IMPORTER/DISTRIBUTOR) from DECLARED activities; no activity ⇒ UNDETERMINED + ZERO obligations
+(operationalizes "ne pas conclure qu'une obligation s'applique sans analyser le rôle réel"); Art.50 triggers by
+activity; **dates NOT hardcoded — deferred to STANDARDS register** (avoids false claim on amended dates). Suite 11.
+(2) runtime/core/prospection-compliance.ts — FAIL-CLOSED per-channel (email/phone/postal/linkedin) CNIL/GDPR validator;
+unknown channel refused; MUST/MUST-NOT enforced; B2B legitimate-interest basis; never authorises sending. Suite 12.
+
+**PRIMARY-SOURCE RESEARCH (4 agents, honest ACCESS):** 
+- **EU AI Act: Reg (EU) 2026/1744 CONFIRMED = Digital Omnibus**, in force 2026-07-27 (EUR-Lex consolidated
+  02024R1689-20260727 + EC portal, official-summary). Verified amendments: high-risk Annex III 2026-08-02→**2027-12-02**,
+  Annex I 2027-08-02→**2028-08-02**, Art.50(2) grace→**2026-12-02**, new CSAM/NCII bans 2026-12-02, AI-literacy content
+  revised. Earlier "Digital Omnibus UNVERIFIED" flag RESOLVED (full clause text still unread). → STANDARDS_REGISTER_V2.
+- **GDPR per-channel (CNIL full-text):** email/phone/postal/linkedin MUST/MUST-NOT → PROSPECTION_COMPLIANCE_CHECKLIST_V1.
+- **FR fiscal (service-public full-text):** micro-BNC ceiling 83 600 €; TVA franchise 37 500/41 250 €; single 25k
+  **ABANDONED** (loi 2025-1044); URSSAF 25,6% primary-unverified; invoice/devis mentions → FR_BUSINESS_STRUCTURE_DECISION_V1.
+- **ISO access:** ISO 27001:2022 FREE read-only full text via **AFNOR "Consultation libre" (ANS-sponsored)** ⇒ 27001
+  clause-level lot now €0; 42001 no free route (CHF 225 purchase decision) → ISO_ACCESS_AND_COMPLIANCE_REGISTER_V1.
+- **Vivier:** +13 real QUALIFIÉ EU SME (Sellsy/Yousign/Partoo/Agicap/Shopware/Storyblok/bexio/Frontify/Oneflow/
+  Teamleader/Mentimeter/Sesame HR/Channable), dated evidence, 5 honestly dropped → FIELD_CANDIDATES_REAL_V3 (23 total).
+
+**LAUNCH_READINESS_MATRIX_V2:** per-domain status + 10 closure criteria (all OUI; §6 letters renforcé, residual
+[LEGAL REVIEW]). "CU" still BLOQUÉ (CTO confirm). Prod deps EXTERNE.
+
+**Gate:** test:report 80→82; tsc 0; build 0 (closure 103). **Honesty:** no cert/compliance/result claim; dates
+labelled official-summary (clause text unread); prices HYPOTHESIS; no outreach sent; €500k NO_DATA; perfection NOT claimed.
+
+**Learning reuse (proven):** role-classifier reuses regulatory-assurance role naming + the deny-by-default discipline;
+prospection-compliance reuses the fail-closed MUST/MUST-NOT validator pattern; both defer dates to the register
+(reusing the ACCESS-labelling doctrine). Register V2 supersedes V1 with verified refs.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/ai-act-role-classifier.test.ts && tsx runtime/core/prospection-compliance.test.ts`
+HUMAN FRONTIERS (grouped): authorize outreach (V3) + legal review; confirm CU; ISO 42001 purchase vs schedule free 27001
+clause lot; choose selling structure + RC Pro; prod deps; URSSAF/EUR-Lex confirms (free, auto-runnable); any spend.
