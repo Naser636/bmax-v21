@@ -5443,3 +5443,48 @@ A/B/C/D framing in the candidates doc.
 **SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/proposal-generator.test.ts && tsx runtime/core/iso-42001-readiness.test.ts`
 HUMAN-REQUIRED (grouped, unchanged): authorize first outreach on REAL sourced prospects + legal review; confirm
 prices; choose A/B/C/D emphasis; ISO clause text access; any spend; EXTERNAL prod/cert deps.
+
+---
+## CHECKPOINT 2026-10-27 (bc) — COMMERCIAL CLOSURE + LAUNCH READINESS V1 (chain + standards + prospects + ops) €0
+CTO "COMMERCIAL CLOSURE + COMPLETE LAUNCH READINESS" (continuation from PR#60, no restart). Truth Lock 977b274≡
+origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume tests PASS. No new primitive, no new
+orchestrator. Diff = proposal-pipeline(.ts/.test) + package.json + 5 docs + compass.
+
+**Track A — chain closure (EXECUTED, PROVEN):** audited proposal-generator/pipeline-ledger/revenue-model/revenue-
+dashboard — real gap: proposal-generator.pipelineEntry emitted a fabricated PROPOSAL-stage shape BYPASSING the ledger's
+fail-closed LEAD→one-step+audit-chain. NEW runtime/core/proposal-pipeline.ts (pure, governed bridge): registerProposal
+takes a VALID buildProposal result → createEntry(LEAD) → advance QUALIFIED → advance PROPOSAL (audit-chained, no skip,
+no fake signature); a REFUSED proposal ⇒ PROPOSAL_NOT_VALID (no entry); dedup; signPilot/invoice/cash = governed
+forwarders (human acts, one legal step); dashboardFor reuses revenue-dashboard. Proven: PROPOSAL≠revenue (signed/
+invoiced/cashed=0, weighted>0); full lifecycle nested buckets no double-count; illegal skip refused; chain verifies.
+Suite 13/13. Closure criterion §10.1 MET.
+
+**Track D — standards register (RESEARCHED, honest ACCESS):** STANDARDS_OBLIGATIONS_REGISTER_V1.md — ISO 27001:2022
++Amd1:2024, ISO 42001:2023 (Annex A ~38 controls/9 obj, secondary-unverified), GDPR B2B legitimate-interest, EU AI Act
+roles+deadlines (timeline full-text: GPAI enf 2026-08-02, Art.50(2) 2026-12-02, high-risk 2027-12-02; "Digital Omnibus"
+reshuffle UNVERIFIED), FR micro/SASU/TVA/facture mentions. "CU" AMBIGUOUS (CC/CSPN? Conditions d'Utilisation? EUCC?) →
+CTO confirm, meaning NOT invented. Every row access-labelled; no clause-text claimed; nothing purchased.
+
+**Track B — real prospects + letters (RESEARCHED + DRAFTED):** FIELD_CANDIDATES_REAL_V2.md — 10 REAL EU SME/ETI that
+ADDED an LLM/generative feature, provenance+date, strict REPÉRÉ/QUALIFIÉ (PlayPlay/iAdvize/Million Marketing/La Growth
+Machine/lemlist QUALIFIÉ; Tidio/Botnation/Pennylane[>750?]/SER/Inbenta REPÉRÉ); intent NEVER assumed; vivier-expansion
+method (job posts, Pappers/Handelsregister, federations). PROSPECTION_LETTERS_DRAFT_V1.md — CNIL/GDPR compliance
+checklist (legitimate interest, Art.14 source disclosure, Art.21(2) opt-out) + email/call/objection/qualif drafts,
+UNSENT, [LEGAL REVIEW REQUIRED]. B2B prospection legal rules sourced (CNIL full-text; EUR-Lex/Bloctel metadata-only).
+
+**Track C — executable diagnostic (DELIVERED):** AI_GOVERNANCE_DIAGNOSTIC_CHECKLIST_V1.md — info-to-request, controls
+(mapped to gated caps), evidence, measurable acceptance, exclusions/deps, restitution/closure, tiers (prices HYPOTHESIS).
+
+**Track E + closure — LAUNCH_READINESS_MATRIX_V1.md:** domain-by-domain VÉRIFIÉ/PARTIEL/BLOQUÉ/EXTERNE + closure action;
+9 primitives VÉRIFIÉ; prod deps (off-host backup/monitoring/KMS/multi-tenant/public-exposure) EXTERNE; 10 closure
+criteria scored (9 OUI, §10.6 PARTIEL pending legal review). Grouped human frontiers: authorize outreach; confirm CU;
+ISO text; primary-source confirms; prod deps; legal/fiscal entity setup; any spend.
+
+**Gate:** test:report 79→80; tsc 0; build 0 (closure 103). **Honesty:** no cert/compliance/result claim; prices
+HYPOTHESIS; no outreach sent; €500k gap NO_DATA; perfection NOT claimed.
+
+**Learning reuse (proven):** reused pipeline-ledger fail-closed one-step + audit-log chain in proposal-pipeline;
+reused proposal-generator anti-overclaim as the pipeline admission gate; reused register access-labelling discipline
+from iso-readiness/regulatory-assurance across all research docs; reused niche-scoring A/B/C/D in candidate ranking.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/proposal-pipeline.test.ts`
