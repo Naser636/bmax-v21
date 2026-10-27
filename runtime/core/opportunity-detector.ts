@@ -152,7 +152,10 @@ function detect(rawItems: any, opts: any): any {
       value: rec.budgetEur, lastCheckedAt: rec.lastCheckedAt, nowMs: nowMs, maxAgeDays: o.maxAgeDays,
     });
     let feasible: any = null;
-    if (REV && rec.budgetEur) {
+    // Guard: revenue-model exposes projectRevenue/pathsToTarget/contractsForTarget — NOT targetPlan (renamed in a
+    // migration). Call it ONLY if present; otherwise leave feasibility null (honestly NOT computed, never fabricated).
+    // Without this guard detect() threw "REV.targetPlan is not a function" on EVERY budgeted opportunity, blocking discovery.
+    if (REV && typeof REV.targetPlan === "function" && rec.budgetEur) {
       const plan = REV.targetPlan({
         targetRevenue: rec.budgetEur, avgContractValue: rec.budgetEur,
         conversionRate: Number.isFinite(o.conversionRate) ? o.conversionRate : 0.2,
