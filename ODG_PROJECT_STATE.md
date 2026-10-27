@@ -6334,3 +6334,43 @@ no-fabricated-effect (flat⇒INCONCLUSIVE never suppresses/validates). Hermetic 
 
 **Gate:** test:report 103→104; tsc 0; build 104/104. €0; nothing sent. Loop CLOSED on the SELECTION side (router consumes
 reuse-ledger). PRODUCER side (post-release-learning calls recordReuseOutcome after a real mission) = NEXT lot (V22 P1b).
+
+---
+## CHECKPOINT 2026-10-27 (cd) — V23+V24 GOVERNANCE CORRECTION: SIX-AXIS portfolio invariant (A–F) €0
+CTO "V23 four-axis" AMENDED by "V24 six-axis" (applied together at this safe checkpoint; V22 P1 landed first @62bfa1c).
+Truth Lock 62bfa1c≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved, CI success. No new primitive.
+Diff = portfolio-axes(.ts/.test) + package.json + compass.
+
+**portfolio-axes.ts (EXECUTED — the structural INVARIANT guard + regression test):** SIX simultaneous permanent
+workstreams; a regression collapsing the program to one strategy now FAILS a test instead of passing silently.
+assessWorkstreams(workstreams) → violations: MISSING_AXIS (axis removed) · DORMANT_AXIS (no nextAction + no blocker) ·
+SINGLE_AXIS_COLLAPSE (≤1 runnable while ≥2 unblocked). A genuinely BLOCKED axis (recorded blocker) is ALLOWED — the
+others continue (blocker in one axis never halts the other five). Fail-closed. Pure. Suite 12. Economics stay in
+commercial-portfolio (unchanged); F readiness≠certification. Reconciled, NOT overwritten: distinct from the other
+A/B/C/D meanings (commercial-portfolio voies, niche-scoring, revenue-channels, FIELD_DOSSIER).
+
+**THE SIX AXES (canonical, V24):**
+- **A ENTRY_OFFERS_EARLY_CASH** — small standardized paid diagnostics/assurance; fast, automated, early collections.
+- **B MID_MARKET_PRODUCTIZED** — audits/remediation/integration/recurring; reuse A assets to raise ACV.
+- **C PREMIUM_ENTERPRISE** — €8k–€15k+ qualified (budget/authority/procurement/terms).
+- **D PARTNERS_DISTRIBUTION** — integrators/resellers; kits, licensing, transparent commissions.
+- **E HIGH_VALUE_MISSIONS_50K** — enterprise missions up to €50k (no artificial ceiling if justified); price justified
+  by scope/value/evidence/capacity, NEVER to hit a target.
+- **F ISO_CERTIFICATION_READINESS** — 27001/42001/9001 where justified; clause→control→evidence; readiness states
+  NOT_STARTED..EXTERNALLY_CERTIFIED; readiness≠certification.
+
+**SIX-AXIS STATUS (verified, HONEST — current):** all six PREPARED-stage, 0 SENT, 0 collected (€0).
+- A: assets exist (assurance-pilot-runner, self-serve-assurance, sarif-report, pricing-grid). NEXT: package the smallest
+  paid entry diagnostic spec. BLOCKER: outbound channel (Gmail creds — human) for any send.
+- B: revenue-channels RECURRING + commercial-pipeline exist. NEXT: define a repeatable mid-market package + acceptance.
+- C: proposal-generator + commercial-pipeline + niche-scoring exist. NEXT: enterprise qualification checklist (BANT-like).
+- D: website partners/FAQ + revenue-channels PARTNER. NEXT: partner delivery-kit + commission economics draft. BLOCKER:
+  no partner has accepted (never assume).
+- E: NEW axis — NEXT: €50k mission SOW template + delivery-capacity/subcontracting model (next lot candidate).
+- F: iso-readiness/iso-42001/iso-27001-clause-matrix/certification-readiness/control-evidence-freshness exist. NEXT:
+  per-standard applicability+value assessment + clause→evidence traceability table. BLOCKER: external audit/standard
+  text purchase = human-gated (€0 default).
+
+**Gate:** test:report 104→105; tsc 0; build 0. €0; nothing sent; no axis abandoned; blockers recorded per axis.
+NEXT LOTS (dependency-ready, keep all 6 represented): E €50k SOW+capacity model · F clause→evidence traceability ·
+B mid-market package · V22 P1b post-release-learning→recordReuseOutcome (producer side).
