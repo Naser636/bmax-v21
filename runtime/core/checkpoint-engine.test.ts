@@ -174,4 +174,48 @@ inTempCwd((cp) => {
     ok("porcelain parse: modified/untracked/rename(new)", JSON.stringify(parsed) === JSON.stringify(["a.js", "b.js", "new.js"]));
 });
 
+// --- AXE 1: gateRecovery integration on the REAL begin() resume path --------------------------------------------
+inTempCwd((cp) => {
+    const NOW = "2026-10-27";
+    const REV = { commit: "t", treeDirty: false, available: true };
+    const prov = require("./evidence-provenance");
+    const audit = require("./audit-log");
+    const S = ["s0", "s1", "s2"];
+    const evidence = prov.stampProvenance({ checkpoint: "ok", verified: true }, { revision: REV });
+    const setup = () => { let { cp: st } = cp.begin("MREC", S); st = cp.stageDone(st, 0); return st; };
+
+    // (a) valid recovery evidence ⇒ resume proceeds (resumeIndex 1) + audit chain intact
+    setup();
+    const g1 = cp.begin("MREC", S, { recovery: { evidence, registry: [], now: NOW } });
+    ok("INTEGRATION recovery: valid evidence ⇒ resume proceeds + audit intact", g1.recoveryBlocked === false && g1.resumeIndex === 1 && audit.verifyChain(g1.recoveryAudit).ok === true);
+
+    // (b) CONTRADICTORY evidence ⇒ DENIED, no resume, checkpoint NOT overwritten (no data loss)
+    setup();
+    const g2 = cp.begin("MREC", S, { recovery: { evidence, contradictory: true, registry: [], now: NOW } });
+    ok("INTEGRATION recovery: contradictory ⇒ DENIED, no resume, no data loss", g2.recoveryBlocked === true && g2.resumeIndex === -1 && g2.cp.stages[0].status === "DONE");
+    // the preserved checkpoint is still resumable on a later VALID attempt (proves no data loss)
+    const g2b = cp.begin("MREC", S, { recovery: { evidence, registry: [], now: NOW } });
+    ok("INTEGRATION recovery: after a denied resume, checkpoint intact + resumable", g2b.recoveryBlocked === false && g2b.resumeIndex === 1);
+
+    // (c) TAMPERED recovery evidence ⇒ DENIED
+    setup();
+    const g3 = cp.begin("MREC", S, { recovery: { evidence: { ...evidence, checkpoint: "FORGED" }, registry: [], now: NOW } });
+    ok("INTEGRATION recovery: tampered evidence ⇒ DENIED (no unauthorized resume)", g3.recoveryBlocked === true && g3.resumeIndex === -1);
+
+    // (d) prohibited superlative recovery claim ⇒ DENIED
+    setup();
+    const g4 = cp.begin("MREC", S, { recovery: { evidence, claims: ["the world's best recovery"], registry: [], now: NOW } });
+    ok("INTEGRATION recovery: prohibited superlative claim ⇒ DENIED", g4.recoveryBlocked === true);
+
+    // (e) reviewer UNAVAILABLE ⇒ advisory, resume proceeds (non-blocking)
+    setup();
+    const g5 = cp.begin("MREC", S, { recovery: { evidence, registry: [], now: NOW, reviewer: () => { throw new Error("down"); } } });
+    ok("INTEGRATION recovery: reviewer unavailable ⇒ advisory, resume proceeds", g5.recoveryBlocked === false && g5.resumeIndex === 1);
+
+    // (f) NO recovery opts ⇒ EXACT legacy behaviour (backward-compatible)
+    setup();
+    const g6 = cp.begin("MREC", S);
+    ok("INTEGRATION recovery: no recovery opts ⇒ legacy resume unchanged", g6.resumeIndex === 1 && g6.recoveryBlocked === undefined);
+});
+
 console.log(`\nCHECKPOINT ENGINE — ${passed} assertions passed.`);

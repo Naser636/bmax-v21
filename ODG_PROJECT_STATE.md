@@ -4729,3 +4729,40 @@ REAL legacy decision point; the integration test proves a stored learning influe
 Next €0 candidate: route checkpoint-engine recovery (begin/resumeIndex decision) through excellence-gate.gateRecovery
 via its real path, OR cover the resolution family at capability-router. BLOCKED/EXTERNAL (CTO/infra): network source
 re-verification, KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation.
+
+---
+## CHECKPOINT 2026-10-27 (aj) — checkpoint-engine recovery gate integration €0
+CTO. Truth Lock entry 915ebd8≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive/orchestrator/
+router. Additive + opt-in on a legacy module. Diff = checkpoint-engine(.ts/.test) + excellence-coverage(.ts) + 2 docs.
+
+**AXE 1 (checkpoint-engine recovery) — PROVEN via REAL path:** audited begin()/resumeIndex — the resume branch is the
+protected recovery action. Reproduced: no gate on resume. Integrated excellence-gate.gateRecovery at the REAL begin()
+resume decision, OPT-IN via opts.recovery (no recovery context ⇒ EXACT legacy behaviour; public contract preserved).
+On refusal (tampered/contradictory recovery evidence OR prohibited claim): resume DENIED (resumeIndex -1) and the
+existing checkpoint is NEITHER resumed NOR overwritten ⇒ no unauthorized resume, NO silent data loss. Reviewer-
+unavailable/offline ⇒ advisory, resume proceeds. Reuses requireExcellence + evidence-provenance + audit-log.
+
+Integration tests THROUGH the real module (checkpoint-engine.test.ts 27→34, 7 INTEGRATION assertions, inTempCwd real
+consumer): valid⇒resume+audit intact; contradictory⇒DENIED+no-data-loss (checkpoint preserved + still resumable on a
+later valid attempt); tampered⇒DENIED; prohibited-superlative⇒DENIED; reviewer-down⇒advisory-proceed; no-opts⇒legacy
+resume unchanged. No cycle/redundant-control/false-success. excellence-coverage: checkpoint-engine resume NOT_COVERED→
+COVERED; build-recovery/post-release/router-recall remain NOT_COVERED (listed). No total-coverage claim. checkpoint-engine
+already in dist include; excellence-gate dep already in dist ⇒ closure OK, no tsconfig change.
+
+**AXE 2 (regulatory):** unchanged (32/32); sources still offline-pending-reverify — BUT the CTO has now granted SESSION-
+SCOPED INTERNET AUTHORIZATION (mission-perimeter only): NEXT lot = live revalidation of GDPR/ISO/NIST/DORA sources
+(EUR-Lex/CNIL/NIST primary) + record URL/authority/date/version/status, then update REGULATORY_ASSURANCE_V1 statuses.
+**AXE 3 (prod readiness):** audit-log/evidence-provenance reused again (recovery provenance binding); 9 gaps otherwise
+unchanged (EXTERNAL). No simulated result claimed as production.
+
+**Proof:** checkpoint-engine 27→34 + excellence-coverage 9 ⇒ full gate 69/69; tsc 0; build 0. Checkpoint suites replayed
+green first.
+
+**Learning reuse (proven):** reused gateRecovery/requireExcellence/audit-log/evidence-provenance (all prior) at a REAL
+recovery decision; integration test proves refusal prevents resume without data loss.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/checkpoint-engine.test.ts && tsx runtime/core/excellence-coverage.test.ts`
+Next action: APPLY the session internet authorization — live-revalidate REGULATORY_ASSURANCE sources (EUR-Lex/CNIL/NIST
+primary; ISO principles-only, no paywall bypass) and update offline-pending-reverify→verified-online with consultation
+dates. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant isolation, WORM/SIEM + off-host backups, real agent,
+canonical-queue activation, any paid API/purchase.
