@@ -166,4 +166,21 @@ ok("module is a pure library (no top-level run): exports schedulerStep + helpers
   ok("Axis A: buildExcellenceReviewer(non-fn) ⇒ throws", (() => { try { sched.buildExcellenceReviewer(123); return false; } catch (x) { return true; } })());
 }
 
+// ═════════ AXE 3 — tamper-evident operational audit chain over scheduler decisions (gap #4, LOCAL) ═════════
+{
+  const AUDIT = require("./audit-log.js");
+  // (1) with ctx.auditChain ⇒ the decision carries a verifiable hash-chained entry.
+  const b1 = baseCtx({ auditChain: [] });
+  const d1 = sched.schedulerStep(b1.ctx);
+  ok("Axis3 audit: decision carries a hash-chained audit entry", Array.isArray(d1.auditChain) && d1.auditChain.length === 1 && AUDIT.verifyChain(d1.auditChain).ok === true);
+  // (2) chain extends across steps (feed the prior chain) + stays intact.
+  const b2 = baseCtx({ auditChain: d1.auditChain, isProven: () => true });   // proven ⇒ IDLE, still audited
+  const d2 = sched.schedulerStep(b2.ctx);
+  ok("Axis3 audit: chain extends across steps + stays intact", Array.isArray(d2.auditChain) && d2.auditChain.length === 2 && AUDIT.verifyChain(d2.auditChain).ok === true);
+  // (3) tamper ⇒ detected.
+  ok("Axis3 audit: tampered operational chain ⇒ detected", (() => { const t = d2.auditChain.map((e) => ({ ...e })); t[0] = { ...t[0], payload: { ...t[0].payload, status: "HACKED" } }; return AUDIT.verifyChain(t).ok === false; })());
+  // (4) absent ctx.auditChain ⇒ no auditChain field (byte-identical legacy behaviour).
+  ok("Axis3 audit: no ctx.auditChain ⇒ no auditChain field (byte-identical)", sched.schedulerStep(baseCtx({}).ctx).auditChain === undefined);
+}
+
 console.log(`\nmission-scheduler — ${passed} assertions passed. (NO mission executed; scheduler NOT activated.)`);

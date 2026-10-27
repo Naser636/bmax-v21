@@ -4964,3 +4964,37 @@ the no-effect-on-refusal guarantee is proven by a fetch spy (zero calls on refus
 Next €0 candidate: an AXE-3 local safe fix — wire audit-log into a real operational mutation path for tamper-evident
 logging (gap #4), OR cover "other resolvers" at decision-engine. BLOCKED/EXTERNAL (CTO/infra): KMS/HSM, prod multi-tenant
 isolation, WORM/SIEM + off-host backups, real agent, canonical-queue activation, ISO paid text, any purchase.
+
+---
+## CHECKPOINT 2026-10-27 (ap) — AXE-3 tamper-evident operational audit chain in the real scheduler €0
+CTO autonomous-launch-completion. Truth Lock entry d18369b≡origin/main, clean, 5 stashes, 4 untracked docs/. No new
+primitive/orchestrator/router. Additive + opt-in. Diff = mission-scheduler(.ts/.test) + gaps doc + compass.
+
+**AXE 3 (gap #4 LOCAL portion) — PROVEN via REAL path:** wired audit-log, OPT-IN via ctx.auditChain, into the REAL
+scheduler decision chokepoint (schedulerStep's audit() helper, run on EVERY decision path). Each decision is appended
+to a hash chain; the updated chain is attached to the decision; tamper/reorder/insert/delete detectable via
+AUDIT.verifyChain. Absent ctx.auditChain ⇒ byte-identical (36 prior assertions unaffected). mission-scheduler 36→40
+(+4: verifiable entry; multi-step chain intact; tamper detected; absent⇒no field). full gate 69/69; tsc 0; build 0
+(audit-log already in dist include ⇒ closure OK). HONEST LIMIT: tamper-EVIDENT ≠ tamper-PROOF; prod WORM/SIEM + trusted
+timestamp + off-host = EXTERNAL. PRODUCTION_READINESS_GAPS_V1 gap #4 row extended.
+
+**Launch-completion assessment (honest):** autonomous EXCELLENCE-coverage campaign is COMPLETE — every internal family
+is gated at its REAL decision point with an integration test (mission-execution, capability-self-review, learning
+[reuse+capture], recovery [checkpoint+build-recovery], resolution [router], execution [capability-executors]); only
+"other resolvers" remain, covered indirectly at the scheduler boundary. audit-log now bound at 4 real decision points
+(scheduler, execution, learning-capture, recovery). Regulatory sources all verified-online (ISO metadata-only). No
+simulated result claimed as production.
+
+**Remaining work is EXTERNAL/human-gated (not autonomously executable), fully prepared where possible:** KMS/HSM
+(gap #1/#3), production datastore + multi-tenant isolation (gap #2), WORM/SIEM + off-host backups + DR drills (gap
+#4/#5/#6 prod portions), monitoring/alerting stack (gap #7), real external-agent connection (gap #8), canonical-queue
+scheduler activation (gap #9). Each has a spec/risk/acceptance line in PRODUCTION_READINESS_GAPS_V1.md; activation
+commands remain disabled-by-default. These need accounts/secrets/licences/infra/CTO authorization — NOT bypassable.
+
+**Learning reuse (proven):** reused audit-log (gap #4 fix from a prior lot) at a NEW real path (scheduler) — a concrete
+reuse of a prior safe fix; reused the opt-in-additive integration pattern (contract preserved) proven across 6 modules.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/mission-scheduler.test.ts && tsx runtime/core/audit-log.test.ts`
+Next autonomous €0 candidate: wire ctx.auditChain into odg-schedule-tick's canary ctx (tamper-evident tick log) behind
+the read-only boundary. HUMAN-REQUIRED (grouped, final report): external accounts/secrets/licences (KMS/HSM, datastore,
+SIEM, monitoring), real-agent connection, canonical-queue + production activation, ISO paid text, any spend.
