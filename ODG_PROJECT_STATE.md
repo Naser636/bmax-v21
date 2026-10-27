@@ -5290,3 +5290,41 @@ HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send + legal revie
 model M2/M3/M4; any spend/subcontracting/budget beyond €10k; EXTERNAL production+trust deps for enterprise clients.
 Next autonomous €0: a report renderer that feeds pipeline-ledger totals into the revenue-model gap vs €500k (once real
 entries exist), or Track-2 control-to-policy artifacts. No real revenue claimed.
+
+---
+## CHECKPOINT 2026-10-27 (ay) — revenue dashboard: pipeline-ledger ↔ revenue-model ↔ €500k gap €0
+CTO M2+M3+M4 execution directive (continuation, no restart). Truth Lock entry fbc17d2≡origin/main, clean, 5 stashes,
+4 untracked docs/. No new primitive. Diff = revenue-dashboard(.ts/.test) + package.json + compass.
+
+**§4 named-absent integration — EXECUTED:** NEW runtime/core/revenue-dashboard.ts dashboard(entries,{target,avgContractValue})
+links the REAL pipeline-ledger totals ↔ revenue-model maths ↔ the €500k target and renders an honest CTO gap report.
+Reuses pipelineTotals + contractsForTarget (NO duplication, no new primitive). Status is fail-honest: NO_DATA (0 real
+entries ⇒ gap = full €500k); BEHIND; SIGNED_TARGET_MET_CASH_PENDING (signed≥target but €0 cashed ⇒ NOT met — cash is
+the only revenue); CASH_TARGET_MET (only when genuinely cashed). Gated suite (7): empty⇒NO_DATA+full gap; real entries
+⇒ signed≥invoiced≥cashed + BEHIND; contracts-still-needed maths; weighted≤signed (hypothesis); signed-not-cashed ⇒ not
+cash-met; cashed≥target ⇒ met; reproducible. full gate 74→75; tsc 0; build 0.
+
+TRUTH→GAP→ROOTCAUSE→CHANGE→TEST→EVIDENCE: §4 called for the pipeline↔model↔target renderer; it was ABSENT (verified) →
+ROOT no glue between the ledger + the model + the goal → MINIMUM a read-only dashboard reusing both → TEST 7 → EVIDENCE
+75/75 → NEXT feed it real entries once a pilot is signed.
+
+**M2/M3/M4 (business) — advance together, honest:** the dashboard is model-agnostic — it measures whichever of M2
+(high-value B2B), M3 (entry+recurring) or M4 (partner/white-label) produces REAL ledger entries, without double-count
+or false success. The three models + the maths live in REVENUE_500K_PLAN_V1 / GO_TO_MARKET / SALES_KIT; none is
+market-validated; no partner/prospect/contract invented; the €500k gap now RENDERS honestly (currently NO_DATA, gap
+= full €500k). No outreach sent.
+
+**Conformité/sécurité (parallel):** unchanged (no new free ISO access/spend; controls referential + source registry
+stand). No norm claimed fully read when only metadata held.
+
+**Honesty:** cashed = only revenue; signed/invoiced/cashed never conflated (enforced by ledger + dashboard); weighted
+pipeline a labelled hypothesis; arithmetic possibility ≠ probability (dashboard reports gap, not a success odds).
+
+**Learning reuse (proven):** reused pipeline-ledger + revenue-model at a new integration surface; the test proves the
+honest statuses actually render (NO_DATA full gap; signed-not-cashed ≠ met).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/revenue-dashboard.test.ts`
+HUMAN-REQUIRED (grouped, unchanged): authorize first outreach send + legal review (pilot/pricing/white-label); choose
+M2/M3/M4 emphasis; any spend/subcontracting/budget beyond €10k; EXTERNAL production+trust deps for enterprise clients.
+Best next value: HUMAN authorise a first M2 outreach batch ⇒ first real ledger entry ⇒ dashboard begins measuring the
+real gap. Autonomous €0 remaining: a proposal-generator from verifiable scopes (Track-1) if a gap is demonstrated.
