@@ -6717,3 +6717,35 @@ sent; D no partner accepted. All currently-executable six-axis + finance + dashb
 tested; remaining frontiers are HUMAN-GATED (outbound/Gmail, partner acceptance, enterprise demand, external ISO audit,
 real delivery to validate assumptions). NEXT (if continued): incremental per-requirement F dossier expansion OR await
 real-world evidence to replace assumptions.
+
+---
+## CHECKPOINT 2026-10-27 (cs) — V30 FIRST-CASH ACTIVATION: route A pack + fail-closed invoice/collection gate €0
+CTO "V30 FIRST-CASH ACTIVATION GATE" (post-PR#102, main b663574). Truth Lock b663574≡origin/main (0/0), clean, 5
+stashes + 4 untracked docs/ preserved, CI success. No new primitive, no new internal campaign. Diff = first-cash-
+activation(.ts/.test) + package.json + compass.
+
+**ROUTE SELECTED = A (entry diagnostic A-ENTRY-DIAG):** shortest EVIDENCE-BASED time-to-first-collection (2-day
+turnaround + ~6h human + high automation + low price barrier ASSUMPTIONS) — chosen on time/feasibility/risk, NOT gross
+value. B/C/D/E/F remain ELIGIBLE (A is first route, not sole strategy).
+
+**first-cash-activation.ts (composes entry-diagnostic-offer; genuinely-missing activation artifacts only):** selectRoute
+· qualifyFirstCustomer (fail-closed REJECT: no manifest / wants-remediation⇒B / unconfirmed price / no GDPR lawful basis)
+· invoiceReadiness FAIL-CLOSED (mayIssueInvoice ONLY if deliveryAccepted + acceptanceEvidence + amount + not-already-
+invoiced; readiness only, ODG never issues) · collectionReadiness (cash COLLECTED only on evidenced receiptRef; else €0)
+· humanActionRegister (HA-1 Gmail/SMTP HUMAN_GATE; HA-2 real lead+lawful basis EXTERNAL_EVIDENCE; HA-3 human SENDS
+outreach; HA-4 approve invoice; HA-5 record receipt) · buildActivationPack (PREPARED; outreach recipient <<HUMAN-SUPPLIED>>
+never invented; drafts only). Suite 13.
+
+**Gate:** test:report 121→122; tsc 0; build 0. €0; nothing sent/invoiced/collected.
+
+**MINIMUM HUMAN ACTION to first cash (exact):** HA-1 authorize+configure Gmail/SMTP (email-gateway send disabled-by-
+default; needs creds + EMAIL_SEND_ENABLED=1; NO secret in chat/logs) AND HA-2 supply ONE real lead with GDPR lawful
+basis + dependency manifest. Then ODG prepares; human reviews+SENDS (HA-3); on acceptance human approves invoice (HA-4);
+cash counts only on evidenced receipt (HA-5).
+
+**A–F STATUS (blocker class):** A SUITABLE-pack READY (blocker HA-1 HUMAN_GATE + HA-2 EXTERNAL_EVIDENCE) · B/C/E offers
+READY (EXTERNAL_EVIDENCE: real demand) · D partner kit READY (EXTERNAL_EVIDENCE: partner acceptance) · F 27001 dossier
+(HUMAN_GATE: external audit; NOT_CERTIFIED). **ACTUAL COLLECTED CASH = €0 (evidence-based); €500k NET unachieved, VOLUME-
+bound.** Session V21→V30 = PRs #82–#103(pending), test:report 59→122, ff-only CI-green. All internal readiness DONE;
+first cash now depends on HA-1+HA-2 (human). EXACT NEXT COMMAND (human): configure Gmail auth + provide 1 lawful lead;
+then `tsx runtime/core/first-cash-activation.ts` and proceed through HA-3..HA-5.
