@@ -5605,3 +5605,45 @@ HUMAN FRONTIERS (grouped; all remaining gaps now require a human act, a paid res
 action — no purely-local free closure remains): authorize outreach (V3) + legal review; confirm CU; AFNOR interactive
 27001 consultation (free) or buy 42001 (CHF225); APPROVE ISO policy templates (CTO signature ⇒ promotes controls);
 confirm URSSAF 25,6% + EUR-Lex wording; choose selling structure + RC Pro; production deps (spec ready); any spend/activation.
+
+---
+## CHECKPOINT 2026-10-27 (bg) — Independent closure audit + CTO decision pack + zero-cost standards register €0
+CTO "INDEPENDENT CLOSURE AUDIT + CTO DECISION PACK V5" + ADDITIVE "ZERO-COST STANDARDS ACCESS" (integrated same lot, no
+interruption). Truth Lock 3657c32≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/ preserved, resume PASS. No new
+primitive/orchestrator. Diff = iso-operational-evidence(.ts/.test edited) + 6 docs + compass.
+
+**Independent adversarial audit (agent) — 1 MATERIAL defect found + FIXED:** iso-operational-evidence.ts promoted a
+control to SATISFIED on APPROVED alone even for EXECUTION-required controls (clause 10 improvement/incident + A.5 org
+theme folding incident-mgmt; clause 9 + A.8.13 only accidentally safe via external). FIX: EXECUTION_REQUIRED={9,10,"A.5
+(Organizational, 37)"} + requiredState(); APPROVED-only on those ⇒ MECHANISM_PRESENT/APPROVED_PENDING_EXECUTION, only
+EXECUTED+responsible+artifact ⇒ SATISFIED. Suite 11→16. Also fixed MED (templates "How" endorsed APPROVED for incident/
+restore → qualified) + LOW (matrix AI-Act labels "VÉRIFIÉ"→"dates only, official-summary, full text unread"). LOW
+proposal-price HYPOTHESIS-per-block ACCEPTED (header+honest-terms sufficient). Corpus else assessed CLEAN (0 SATISFIED
+everywhere; 23 candidates real; ACCESS honest). → CLOSURE_AUDIT_V5.md.
+
+**CTO decision pack:** CTO_DECISION_PACK_V1.md (7 grouped decisions: approve policies / confirm CU / legal structure+RC
+Pro / ISO access+cost / prod deps / legal review / authorize outreach — each with options/risks/evidence/ODG reco, ODG
+does NOT decide for CTO). ISO_POLICY_APPROVAL_PACK_V1.md (per-policy: objective/responsible/version/decisions/controls/
+consequence/post-approval action; execution-type controls flagged NOT satisfied by approval alone).
+
+**ADDITIVE zero-cost standards (agent research):** ZERO_COST_STANDARDS_RESOURCE_REGISTER_V1.md — 14 free official
+resources (CNIL guide full-text opened; ANSSI hygiène/journalisation-PA012/cloud; ENISA; **NIST AI RMF 1.0 + CSF 2.0 +
+800-53 Rev.5 US-gov free**; EU GPAI Code of Practice; **AI Act text free on EUR-Lex**; ISO OBP preview-only; SCF CC-BY-ND;
+CIS CC-BY-NC-ND) with ACCESS+licence flags + a correspondence matrix (source→requirement[OBL/NORM/REC/GP/HYP/NV]→ODG
+control→evidence→status→remediation). HARD RULE: free guide ≠ normative ISO text; crosswalks are approximations NOT
+certified equivalence; ISO MS clauses only in paywalled text. Cost engaged €0.
+
+**Gate:** test:report 84/84 (op-evidence 11→16 assertions, same suite); **tsc 0 (run independently)**; build 0.
+**Honesty:** 0 SATISFIED (0/19); no cert/sale/compliance claimed; prices HYPOTHESIS; no outreach; €500k NO_DATA; no
+purchase; "CU" ambiguous. **AUDIT VERDICT: remaining work bounded by human act / paid resource / interactive-or-
+production action — no purely-local free closure remains EXCEPT the AFNOR interactive 27001 consultation (needs a human
+session).**
+
+**Learning reuse (proven):** the audit's EXECUTION_REQUIRED fix reuses the documented≠approved≠executed state machine;
+zero-cost register's NIST/CNIL/ANSSI crosswalk feeds ISO_27001_POLICY_TEMPLATES + operational-evidence approach; decision
+pack consolidates all prior-lot frontiers (no re-derivation).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/iso-operational-evidence.test.ts`
+HUMAN FRONTIERS (= CTO_DECISION_PACK_V1): 1 approve policies 2 confirm CU 3 structure+RC Pro 4 ISO access/cost 5 prod
+deps 6 legal review 7 authorize outreach. Zero-cost workstream: AFNOR interactive 27001 read (human session) to upgrade
+structure→clause; confirm CNIL/ANSSI licences before redistribution.
