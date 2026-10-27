@@ -5079,3 +5079,37 @@ Next autonomous €0: none with new proof-value remains (all free legal sources 
 complete). HUMAN-REQUIRED (grouped): authorize AFNOR free ISO consultation (or minimal ISO purchase) IF clause-level
 certification is wanted; + the 6 EXTERNAL production dependencies (KMS/HSM, multi-tenant datastore, SIEM/WORM,
 monitoring, real agent, canonical-queue activation); any spend.
+
+---
+## CHECKPOINT 2026-10-27 (as) — zero-cost finalization: live ISO re-verification + launch-evidence audit €0
+CTO. Truth Lock entry 9eb6320≡origin/main (mandate expected 039a061; PR#50 had since landed — NOT presumed), clean,
+5 stashes, 4 untracked docs/. No new primitive. Diff = 2 docs (doc-only; no code gap discovered).
+
+**Re-verified LIVE (not inherited):** ISO/IEC 27001:2022 **Amd 1:2024 "Climate action changes"** (iso.org/standard/
+88435.html, Feb 2024; metadata-only, text NOT read) — NEW applicable amendment recorded in CONTROLS_REFERENTIAL +
+reg-doc + crosswalk (principle-level). ISO/IEC 42001:2023 — no applicable amendment found as of 2026-10-27. AFNOR
+Norm'Info re-checked = read-only info/consultation page, NOT free full-text; ANS-sponsored free consultation of NF EN
+ISO/IEC 27001 eligibility STILL to be verified — earlier wording honestly refined (no over-claim). No paywall bypass,
+nothing reproduced.
+
+**Launch-evidence audit (§3, read-only, VERIFIED not inherited):** each external-group has a REAL gated suite in
+test:report — agent-identity (authN), third-party-agent-gate + agent-governance-harness (tenant isolation, tenant
+assertions present), client-store-backup (backups), checkpoint-engine + build-recovery-engine (recovery), audit-log
+(tamper-evident audit). gate 70/70 confirms they pass. No local gap discovered that is safe+independent+unexecuted ⇒
+NO code change this lot (demonstrated, not assumed).
+
+**Coverage (re-examined):** canary/scheduler/router/learning/recovery/execution all gated at real decision points;
+decision-engine/execution-planner remain NOT_COVERED-direct (covered indirectly via scheduler/dispatch) — unchanged,
+honestly listed (no false COVERED).
+
+**Learning reuse (proven):** reused the accessLevel/metadata-only discipline (prior lot) to record the Amd 1:2024 at
+the correct honest access level; reused the verified-source registry.
+
+**Proof:** doc-only; full gate unchanged (70/70 from prior lot; no code touched ⇒ tsc/build unaffected).
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/excellence-policy.test.ts`
+**END-CRITERION MET for autonomous €0 work:** no authorized proof-value autonomous task remains unexecuted. Every
+remaining blocker is DEMONSTRATED (not inherited): (a) ISO Annex-A clause-level text = paywalled; free route = AFNOR
+ANS-sponsored consultation (eligibility TBV) ⇒ else minimal purchase — HUMAN decision, only if clause-level
+certification is wanted; (b) 6 production deps EXTERNAL (KMS/HSM, multi-tenant datastore, SIEM/WORM, monitoring, real
+agent, canonical-queue activation) — each needs accounts/secrets/infra/CTO authorization.

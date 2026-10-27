@@ -18,12 +18,14 @@ legal obligation / normative standard / recommendation / practice. Mirrors the `
 | DORA-2022-2554 | EU | **open-document** | **yes** | https://eur-lex.europa.eu/eli/reg/2022/2554/oj | ICT risk mgmt, incident reporting, resilience testing, 3rd-party risk (EU financial entities only) |
 | OWASP-ASI-2026 | OWASP | **open-document** | **yes** | https://genai.owasp.org/ (Top 10 for Agentic Applications, 2025-12-09) | ASI01–ASI10 |
 | ISO27001-2022 | ISO/IEC | **metadata-only** (text paywalled, NOT read) | **no** | https://www.iso.org/standard/27001 | ed.3 2022-10-25 — **clause text NOT consulted** |
-| ISO42001-2023 | ISO/IEC | **metadata-only** (text paywalled, NOT read) | **no** | https://www.iso.org/standard/42001 | AIMS, Dec 2023, Annex A 38 controls/9 objectives — **text NOT consulted** |
+| ISO27001-2022/Amd1-2024 | ISO/IEC | **metadata-only** (title/scope only, text NOT read) | **no** | https://www.iso.org/standard/88435.html | **Amd 1:2024 "Climate action changes"** (Feb 2024): adds a requirement to determine whether climate change is a relevant issue + a note on interested parties — **amendment text NOT consulted** (metadata only) |
+| ISO42001-2023 | ISO/IEC | **metadata-only** (text paywalled, NOT read) | **no** | https://www.iso.org/standard/42001 | AIMS, Dec 2023, Annex A 38 controls/9 objectives — **text NOT consulted**; **no applicable amendment found as of 2026-10-27** |
 
-## Legal FREE access to ISO text (verified routes; none used yet)
-- **AFNOR Norm'Info sponsored free consultation** of **NF EN ISO/IEC 27001** — a legal, **read-only** consultation
-  **sponsored by ANS (Agence du Numérique en Santé)**: https://norminfo.afnor.org/consultation/nf-en-isoiec-27001/...
-  **Eligibility + exact terms must be verified before relying on it**; it is read-only (no reproduction/redistribution).
+## Legal FREE access to ISO text (routes re-verified 2026-10-27; none used)
+- **AFNOR Norm'Info** (https://norminfo.afnor.org/consultation/351492) — re-checked: a **read-only information /
+  public-consultation page**, NOT a free full-text download (it links to the AFNOR shop for purchase + a questionnaire).
+  A separate **ANS-sponsored free consultation of NF EN ISO/IEC 27001** (health-sector) is advertised for the NF EN
+  variant; **eligibility + exact terms STILL to be verified** before relying on it. Read-only, no reproduction.
 - University / research / consular (CCI) library access, and on-site consultation, exist in France but
   **require a human account/eligibility** — a prepared request is below. **Not asserted as available until verified.**
 - Full ISO text otherwise = **purchase only** (AFNOR boutique). No pirated copy, no paywall bypass.
@@ -37,6 +39,7 @@ read) and reference the free-consultation route for later confirmation.
 | Governance of AI risk | NIST AI RMF Govern/Map/Measure/Manage (full-text) | unmanaged AI risk | third-party-agent-gate OWASP ASI mapping; excellence-policy | gated suites | AI-Lead | 2027-01 |
 | AI system mgmt | ISO/IEC 42001 AIMS (**metadata-only — text not read**) | missing AIMS | regulatory-assurance ISO42001 module (principle-level) | dossier findings | AI-Lead | AFNOR consult |
 | ISMS | ISO/IEC 27001 risk-based ISMS (**metadata-only — text not read**) | no ISMS | regulatory-assurance ISO27001 module (principle-level) | dossier findings | CISO | AFNOR consult |
+| ISMS climate-action | ISO/IEC 27001:2022 **Amd 1:2024** — determine if climate change is a relevant issue (**metadata-only**) | overlooked climate-relevance in ISMS context | principle-level note in the ISO27001 module scope (clause text not read) | dossier note | CISO | AFNOR consult |
 | Cyber baseline | ANSSI hygiène 42 measures (full-text) | weak baseline | bash-command-governor, action-gate, scope-observer | gated suites | CISO | 2027-02 |
 | GenAI security | ANSSI-PA-102 (full-text) + OWASP ASI (open) | agent misuse/goal-hijack | agent-governance stack (identity→gate→exec→verify) | gated suites 91/… | AI-Lead | 2027-06 |
 | Data protection | GDPR RoPA/lawful-basis/DPIA/breach (open) | unlawful processing | regulatory-assurance GDPR module | dossier findings | DPO | 2027-01 |

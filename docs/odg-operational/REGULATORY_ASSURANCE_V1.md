@@ -60,6 +60,11 @@ text retrieved (ISO = public catalogue metadata only).
 Cost of this verification: **€0** (search/fetch only; no paid API, no purchase). CTO note recorded: DORA's **2025-01-17**
 application date strengthens its applicability gate (EU financial entities). ISO normative text remains purchase-only.
 
+>**Amendment re-verification (2026-10-27, live):** ISO/IEC 27001:2022 has **Amd 1:2024 "Climate action changes"**
+(iso.org/standard/88435.html; metadata only, text NOT read). ISO/IEC 42001:2023 — **no applicable amendment found** as
+of this date. AFNOR Norm'Info re-checked = read-only info/consultation page (NOT free full text); ANS-sponsored free
+consultation of NF EN ISO/IEC 27001 eligibility STILL to be verified. See `CONTROLS_REFERENTIAL_V1.md`.
+
 >**Access-level provenance (2026-10-27):** free full-text consulted for NIST CSF 2.0 + NIST AI RMF 1.0 + **ANSSI-PA-102
 (GenAI security, 2024)** + ANSSI hygiène; open-document for GDPR/CNIL/DORA/OWASP-ASI; **ISO 27001/42001 = metadata-only
 (text NOT read, paywalled)** with a LEGAL free route recorded (AFNOR ANS-sponsored consultation, eligibility TBV). Full
