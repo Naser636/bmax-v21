@@ -167,10 +167,30 @@ function reviewForExcellence(input: any): ExcellenceReview {
   return { domain, now, verdict, referencesSelected: selected, referenceIssues: issues, staleReferences: stale, gaps, thresholds, measured, thresholdResults, recommendation, claims, notes };
 }
 
+/**
+ * requireExcellence — the SHARED ENFORCEMENT boundary reused by the scheduler and by any capability, so the rule is
+ * applied uniformly WITHOUT duplicating its logic. Returns { admit, reason, advisory }. FAIL-CLOSED only on a
+ * PROHIBITED claim (an unjustified superlative); stale references / INSUFFICIENT_EVIDENCE (offline) / open gaps are
+ * ADVISORY and still admit (admit:true) — a safe mission is never blocked merely because reference search is offline —
+ * UNLESS opts.strict is set (then advisories also block). A missing/absent review is advisory (admit unless strict).
+ */
+function requireExcellence(review: any, opts?: any): { admit: boolean; reason: string; advisory: boolean; prohibited?: any[] } {
+  const strict = !!(opts && opts.strict);
+  if (!review || typeof review !== "object") return { admit: !strict, reason: strict ? "strict: no review" : "no review (advisory, non-blocking)", advisory: true };
+  const prohibited = Array.isArray(review.claims) ? review.claims.filter((c: any) => c && c.justified === false) : [];
+  if (prohibited.length) return { admit: false, reason: `prohibited unproven claim(s): ${prohibited.map((c: any) => c.claim).join("; ")}`, advisory: false, prohibited };
+  const adv: string[] = [];
+  if (Array.isArray(review.staleReferences) && review.staleReferences.length) adv.push(`stale refs: ${review.staleReferences.join(",")}`);
+  if (review.verdict === "INSUFFICIENT_EVIDENCE") adv.push("insufficient reference evidence (offline?) — advisory");
+  if (Array.isArray(review.gaps) && review.gaps.some((g: any) => !g.present)) adv.push("open practice gaps");
+  if (strict && adv.length) return { admit: false, reason: `strict mode blocks on advisories: ${adv.join("; ")}`, advisory: true };
+  return { admit: true, reason: adv.length ? `admitted with advisories: ${adv.join("; ")}` : "admitted", advisory: adv.length > 0 };
+}
+
 /** Seal a review as tamper-evident evidence (reuses the EVIDENCE primitive's provenance). */
 function sealReview(review: ExcellenceReview, opts?: any): any {
   return prov.stampProvenance(review, { revision: opts && opts.revision });
 }
 
-export { classifyReference, selectReferences, evaluateClaim, reviewForExcellence, sealReview };
-module.exports = { classifyReference, selectReferences, evaluateClaim, reviewForExcellence, sealReview };
+export { classifyReference, selectReferences, evaluateClaim, reviewForExcellence, requireExcellence, sealReview };
+module.exports = { classifyReference, selectReferences, evaluateClaim, reviewForExcellence, requireExcellence, sealReview };

@@ -120,10 +120,10 @@ function schedulerStep(ctx: any): any {
   if (typeof ctx.reviewExcellence === "function") {
     try {
       const rev = ctx.reviewExcellence(next);
+      const gate = EXC.requireExcellence(rev, {});                        // SHARED enforcement boundary (no duplication)
       if (rev && typeof rev === "object") {
-        const prohibited = Array.isArray(rev.claims) ? rev.claims.filter((c: any) => c && c.justified === false) : [];
-        excellence = { verdict: rev.verdict, staleReferences: Array.isArray(rev.staleReferences) ? rev.staleReferences : [], openGaps: Array.isArray(rev.gaps) ? rev.gaps.filter((g: any) => !g.present).length : 0, recommendation: rev.recommendation };
-        if (prohibited.length) { const d = decision("BLOCKED", next, `EXCELLENCE_PROHIBITED_CLAIM: ${prohibited.map((c: any) => c.claim).join("; ")}`); (d as any).excellence = excellence; audit(d); return d; }
+        excellence = { verdict: rev.verdict, staleReferences: Array.isArray(rev.staleReferences) ? rev.staleReferences : [], openGaps: Array.isArray(rev.gaps) ? rev.gaps.filter((g: any) => !g.present).length : 0, recommendation: rev.recommendation, admit: gate.admit };
+        if (!gate.admit) { const d = decision("BLOCKED", next, `EXCELLENCE_PROHIBITED_CLAIM: ${gate.reason}`); (d as any).excellence = excellence; audit(d); return d; }
       } else { excellence = { verdict: "INSUFFICIENT_EVIDENCE", advisory: true, note: "reviewer returned no review (non-blocking)" }; }
     } catch (e: any) { excellence = { verdict: "ADVISORY_ERROR", advisory: true, note: `excellence review errored (non-blocking): ${(e && e.message) || e}` }; }
   }
