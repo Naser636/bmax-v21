@@ -5039,3 +5039,43 @@ chain is a persisted, verifiable operational artifact (not just stored — verif
 HUMAN-REQUIRED (unchanged, grouped): external accounts/secrets/licences (KMS/HSM, datastore+multi-tenant, SIEM/WORM,
 monitoring), real-agent connection, canonical-queue + production activation, ISO paid text, any spend. No autonomous €0
 local lot with real proof-value remains un-attempted (resolvers covered-indirect; prod gaps EXTERNAL).
+
+---
+## CHECKPOINT 2026-10-27 (ar) — zero-cost legal standards access + controls referential + accessLevel €0
+CTO zero-cost-standards mandate. Truth Lock entry 039a061≡origin/main, clean, 5 stashes, 4 untracked docs/. (ODG_MASTER_
+ROADMAP.md absent — roadmap lives in compass+readiness.) No new primitive. Diff = excellence-policy(.ts/.test) + 2 docs.
+
+**Research (€0, no paywall bypass) — access level recorded HONESTLY:**
+- FREE FULL-TEXT consulted: NIST CSF 2.0 (nvlpubs PDF, US-gov public; 6 Functions Govern/Identify/Protect/Detect/
+  Respond/Recover), NIST AI RMF 1.0, **ANSSI-PA-102 "Sécurité d'un système d'IA générative" (2024)** [NEW source],
+  ANSSI Guide d'hygiène (42 mesures).
+- OPEN-DOCUMENT: GDPR 2016/679, CNIL guidance, DORA 2022/2554, OWASP-ASI-2026.
+- METADATA-ONLY (text NOT read, paywalled): ISO/IEC 27001:2022, ISO/IEC 42001:2023.
+- LEGAL FREE ROUTE FOUND (not yet used): AFNOR Norm'Info **sponsored free consultation** of NF EN ISO/IEC 27001
+  (ANS-sponsored, read-only) — eligibility/terms TO BE VERIFIED before relying; + university/CCI/on-site (human account
+  required). NO pirated copy, NO paywall bypass, nothing reproduced.
+
+**Code improvement (real, gap-driven):** excellence-policy Reference + classifyReference gain an `accessLevel` field
+(full-text|open-document|sponsored-consultation|metadata-only|not-consulted); FAIL-CLOSED — absent OR unknown ⇒
+"not-consulted" (never assume full text), flagged. Prevents conflating a catalogue page with the normative text. Suite
+21→25 (valid preserved; absent⇒not-consulted; unknown⇒degraded+flagged; full-text≠metadata-only). full gate 70/70;
+tsc 0; build 0.
+
+**Artifact:** CONTROLS_REFERENTIAL_V1.md — requirement→risk→control→evidence crosswalk from ONLY consulted sources;
+ISO rows explicitly principle-level "text NOT read"; precise need requiring paid/sponsored ISO text named (clause-level
+conformance); prepared (UNSENT) free-consultation request + official-recipient-TBV. REGULATORY_ASSURANCE_V1 updated with
+the access-level provenance note.
+
+**Cost control:** €0 spent. Residual paid need = ONLY exact ISO Annex-A clause text, and ONLY to certify clause-level
+(vs principle-level) mapping — free AFNOR sponsored consultation is the first option; minimal purchase is a LAST,
+human-only decision. Not assumed necessary.
+
+**Learning reuse (proven):** reused the excellence-policy fail-closed classifier (added accessLevel the same way
+normativeStatus degrades) + the verified-vs-offline honesty discipline, now extended to access depth; the controls
+crosswalk reuses the already-verified source registry.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/excellence-policy.test.ts`
+Next autonomous €0: none with new proof-value remains (all free legal sources exploited; internal excellence coverage
+complete). HUMAN-REQUIRED (grouped): authorize AFNOR free ISO consultation (or minimal ISO purchase) IF clause-level
+certification is wanted; + the 6 EXTERNAL production dependencies (KMS/HSM, multi-tenant datastore, SIEM/WORM,
+monitoring, real agent, canonical-queue activation); any spend.
