@@ -6665,3 +6665,31 @@ template · D BLOCKED (no partner; prep only) · E enterprise-mission-model + da
 (NOT_CERTIFIED). Learning loop CLOSED all outcomes (compiled). Session V21→V28 = PRs #82–#100(pending), test:report
 59→118, all ff-only CI-green. €500k NET VOLUME-bound/unproven; 0 collected; €0 spent; nothing sent.
 NEXT: D partner-profile prep (prep only, contact gated) OR consolidated monthly portfolio cash model across A–F.
+
+---
+## CHECKPOINT 2026-10-27 (cq) — V29: axis-D partner channel + consolidated A–F net-cash model €0
+CTO "V29" (post-PR#100, main 46847c1). Truth Lock 46847c1≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/
+preserved, CI success. No new primitive. Diff = partner-channel(.ts/.test) + portfolio-finance(.ts/.test) + package.json
++ compass.
+
+**partner-channel.ts (axis D — NEW, no dup):** qualifyPartner (9-dim rubric; conflict/compliance ⇒ DISQUALIFIED; missing
+required ⇒ INCOMPLETE/CANDIDATE; else QUALIFIED). advanceState one-forward-step only through CANDIDATE→QUALIFIED→
+CONTACTED→RESPONDED→NEGOTIATING→ACCEPTED→ACTIVE (DISQUALIFIED terminal; NO conflation). commission(): cost on COLLECTED
+cash (default), fail-closed on invalid pct/deal; reduces net. attributeDeals(): dedup by dealId (one deal⇒one partner).
+deliveryKit(): A/B/C/E catalogue + reusable kit (scope/deliverables/acceptance/evidence/handoff/escalation/quality).
+HONEST: no partner/acceptance/access invented; CANDIDATE≠ACCEPTED; kit≠acceptance; external contact human-gated. Suite 13.
+
+**portfolio-finance.ts (COMPOSES commercial-portfolio + net-cash-model, no competing system):** buildModel({axes,
+scenario,netRates,collectedNet}) per-axis monthly cashed + consolidated → netFromGross (taxes/social SEPARATE in levies;
+partner commission via netRates.commissionRate into directCosts). ACTUAL vs FORECAST boundary: actualNetCollected
+(evidenced, default €0) separate from forecastNetAvailable (MODEL, never cash); gapToTargetOnActual on ACTUAL only.
+requiredGrossForNet(€500k). A–F reconcile (sum per-axis = consolidated). scenarios base/downside/upside (scale demand).
+NO_DATA when no axes. €500k binding/never lowered. Suite 11.
+
+**Gate:** test:report 118→120; tsc 0; build 0. €0; nothing sent; forecast≠cash; 0 collected.
+
+**SIX-AXIS — all with concrete tested artifacts:** A entry · B mid-market+recurring · C qualification+proposal · D
+partner channel (prep; no partner accepted) · E enterprise model+dashboard sizing · F 27001 dossier (NOT_CERTIFIED).
+Session V21→V29 = PRs #82–#101(pending), test:report 59→120, ff-only CI-green. €500k NET VOLUME-bound/unproven; 0
+collected; €0; nothing sent. NEXT: wire partner-channel + portfolio-finance into portfolio-dashboard (D funnel + monthly
+projected-vs-actual + A–F reconciliation regression) — the V29 §5 dashboard integration.
