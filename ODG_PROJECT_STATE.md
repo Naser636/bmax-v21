@@ -6474,3 +6474,30 @@ producer hook (pipeline halts on failure ⇒ future work; recorded, not hidden).
 **SIX-AXIS queue unchanged (all represented):** A entry-diagnostic spec · B mid-market package · C enterprise qualif ·
 D partner kit (BLOCKED no partner) · E wire enterprise-mission into portfolio · F dossier continuation. NEXT: consolidated
 portfolio/readiness dashboard (compose portfolio-axes+pipeline-forecast+enterprise-mission-model+certification-traceability).
+
+---
+## CHECKPOINT 2026-10-27 (ci) — V25 PRIORITY 3: consolidated portfolio/readiness dashboard (compose) €0
+CTO "V25" Priority 3 (post-PR#92, main 7288f58). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+portfolio-dashboard(.ts/.test) + package.json + compass.
+
+**portfolio-dashboard.ts (EXECUTED — pure read-model COMPOSITION, duplicates nothing):** buildDashboard(input) composes
+portfolio-axes.assessWorkstreams (six-axis A–F status+violations) + pipeline-forecast.forecast (realized vs weighted) +
+enterprise-mission-model.assessMission (axis-E sizing, not sold) + certification-traceability.buildTraceability (axis-F
+readiness NOT_CERTIFIED+gaps) + reuse-ledger.loadLedger (learning aggregate: assets/validated/failed/inconclusive/
+suppressed). HARD HONESTY: cashVsForecast.actualNetCollected counts ONLY evidenced receipts (default €0) — forecast
+(weightedPipeline/modelledRealizedCash) is a MODEL, never cash; €500k gap measured against actual collected ONLY; a
+section with no input ⇒ NO_DATA (unknown stays unknown); readiness≠certification; €500k never lowered. tsc caught a real
+spread-type bug (reduce accumulator) ⇒ fixed (explicit any). Suite 12. Pure.
+
+**Gate:** test:report 109→110; tsc 0; build 0. €0; nothing sent; nothing sold/collected/certified (it's a VIEW).
+
+**SESSION ARC (V21→V25, all merged ff-only, CI-green): PRs #82–#92 (11 PRs).** Learning loop CLOSED+AUTO-POPULATED
+(consumer #87 · producer #90 · compiled hook #92, INCONCLUSIVE-only honest limit) · SIX-AXIS invariant A–F regression-
+guarded (#88) · axis-E enterprise model (#89) · axis-F cert-traceability (#91) · portfolio dashboard (this) · plus V21
+reuse-ledger/benchmark/SARIF/forecast/freshness (#82–86). test:report 59→110. €500k NET still VOLUME-bound/unproven;
+0 collected; €0 spent; nothing sent.
+
+**NEXT dependency-ready (all six axes represented):** A finalize paid entry-diagnostic offer spec (scope/accept/cost/
+margin) · B repeatable mid-market package def · C enterprise qualification checklist · D partner profile+economics
+(BLOCKED: no partner accepted) · E wire enterprise-mission into commercial-portfolio consolidation · F dossier section
+continuation. Learning: failed-mission/measured-delta producer hook (pipeline halts on failure) = future.
