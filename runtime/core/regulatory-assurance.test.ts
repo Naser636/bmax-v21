@@ -17,6 +17,7 @@ const REG = [
   { id: "ISO27001-2022", authority: "ISO/IEC", domain: "information-security", version: "2022", date: "2022-10-25", source: "ISO/IEC 27001:2022", normativeStatus: "voluntary-standard", usageRights: "principles-only", practicesAdopted: [], limits: ["accredited body certifies"], nextReviewDate: "2027-10-01", verificationStatus: "offline-pending-reverify" },
   { id: "ISO42001-2023", authority: "ISO/IEC", domain: "ai-governance", version: "2023", date: "2023-12-18", source: "ISO/IEC 42001:2023", normativeStatus: "voluntary-standard", usageRights: "principles-only", practicesAdopted: [], limits: ["accredited body certifies"], nextReviewDate: "2027-12-01", verificationStatus: "offline-pending-reverify" },
   { id: "RA-METHOD", authority: "ODG", domain: "regulatory-assurance", version: "1.0", date: "2026-10-26", source: "ODG regulatory-assurance method", normativeStatus: "industry-practice", usageRights: "own", practicesAdopted: ["obligation-mapping", "applicability-justification", "gap-analysis", "traceability-requirement-to-evidence", "evidence-independent-verification", "no-certification-claim"], limits: ["hermetic; not production-validated"], nextReviewDate: "2027-06-01", verificationStatus: "offline-pending-reverify" },
+  { id: "DORA-2022-2554", authority: "EU", domain: "financial-ict-resilience", version: "2022/2554", date: "2022-12-14", source: "Regulation (EU) 2022/2554 (DORA)", normativeStatus: "legal-obligation", usageRights: "public-regulation", practicesAdopted: [], limits: ["EU financial entities only"], nextReviewDate: "2027-01-01", verificationStatus: "offline-pending-reverify" },
 ];
 
 // Independent verifier: only evidence whose artifact starts with "VERIFIED:" is confirmed (simulates a real check);
@@ -147,5 +148,21 @@ ok("dual-control: both reject ⇒ DECLARED_UNVERIFIED (agree-unsatisfied)", dual
 // (20) SINGLE verifier (no v2) ⇒ backward-compatible, agreement=single
 const single = RA.buildDossier(gdprOnly, { registry: REG, now: NOW, verifier }).findings.find(f => f.obligationId === "GDPR-ROPA");
 ok("single verifier ⇒ backward-compatible (agreement=single)", single.status === "SATISFIED_VERIFIED" && single.verifierAgreement === "single" && single.verification2 === null);
+
+// ── AXE 2 — DORA pack with CONDITIONAL applicability (financial entities only) ────────────────────────────────────
+// FINBANK — FR bank, financial entity, targets DORA ⇒ DORA obligations APPLICABLE.
+const FINBANK = { tenantId: "FINBANK", sector: "bank", size: "large", country: "FR", financialEntity: true, targetFrameworks: ["DORA"],
+  declaredEvidence: [{ id: "f1", obligationId: "DORA-ICT-RM", tenantId: "FINBANK", artifact: "VERIFIED:ict-rm.md", owner: "CISO" }] };
+const dFin = RA.buildDossier(FINBANK, { registry: REG, now: NOW, verifier });
+ok("DORA applies to an EU financial entity ⇒ DORA_READINESS module runs, obligations applicable", dFin.modulesRun.includes("DORA_READINESS") && dFin.findings.filter(f => f.module === "DORA_READINESS").some(f => f.applicable) && dFin.findings.find(f => f.obligationId === "DORA-ICT-RM").status === "SATISFIED_VERIFIED");
+
+// NONFIN — a SaaS company that (mistakenly) targets DORA but is NOT a financial entity ⇒ obligations NOT_APPLICABLE + justified.
+const NONFIN = { tenantId: "NONFIN", sector: "saas", size: "sme", country: "FR", financialEntity: false, targetFrameworks: ["DORA"] };
+const dNon = RA.buildDossier(NONFIN, { registry: REG, now: NOW, verifier });
+ok("DORA does NOT apply to a non-financial company ⇒ NOT_APPLICABLE with justification (not applied to all)", dNon.findings.filter(f => f.module === "DORA_READINESS").every(f => f.applicable === false && /financial entities/.test(f.applicabilityNote)) && dNon.summary.applicable === 0);
+
+// Non-EU financial entity ⇒ DORA does not apply (jurisdiction gate).
+const USBANK = { tenantId: "USBANK", sector: "bank", country: "US", financialEntity: true, targetFrameworks: ["DORA"] };
+ok("DORA jurisdiction gate: non-EU financial entity ⇒ NOT_APPLICABLE", RA.buildDossier(USBANK, { registry: REG, now: NOW, verifier }).findings.filter(f => f.module === "DORA_READINESS").every(f => f.applicable === false));
 
 console.log(`\nREGULATORY-ASSURANCE suite — ${pass} assertions passed. [thresholds fixed pre-test: ${JSON.stringify(TH)}]`);

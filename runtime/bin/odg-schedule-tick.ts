@@ -36,7 +36,13 @@ function corePort(rel: string): string {
   if (process.env.ODG_RUNTIME !== "js" && fs.existsSync(path.join(ROOT, dist))) return dist;
   return rel;
 }
-const { schedulerStep } = require(path.join(ROOT, corePort("runtime/core/mission-scheduler.js")));
+const { schedulerStep, buildExcellenceReviewer } = require(path.join(ROOT, corePort("runtime/core/mission-scheduler.js")));
+
+// Excellence rule, consulted automatically for each canary mission (ADVISORY, NON-blocking; fail-closed only on a
+// prohibited unproven-superlative claim per mission-scheduler). Offline registry ⇒ offline-pending-reverify; a
+// mission is never blocked because reference search is offline. Read-only: does NOT change dispatch or the queue.
+const EXCELLENCE_REGISTRY = [{ id: "ODG-MISSION-QUALITY", authority: "ODG", domain: "autonomous-mission", version: "1.0", date: "2026-10-27", source: "ODG mission-quality method", normativeStatus: "industry-practice", usageRights: "own", practicesAdopted: ["reproduce-before-fix", "independent-verification", "no-false-success"], limits: ["hermetic; offline-pending-reverify"], nextReviewDate: "2027-10-01", verificationStatus: "offline-pending-reverify" }];
+const reviewExcellence = buildExcellenceReviewer((mission: any) => ({ domain: "autonomous-mission", now: new Date().toISOString().slice(0, 10), registry: EXCELLENCE_REGISTRY, currentPractices: ["reproduce-before-fix", "independent-verification", "no-false-success"], thresholds: {}, measured: {}, claims: (mission && mission.claims) || [] }));
 const { truthLockGate } = require(path.join(ROOT, corePort("runtime/core/truth-lock-gate.js")));
 const { recordAttempt } = require(path.join(ROOT, corePort("runtime/core/mission-attempt-log.js")));
 
@@ -83,6 +89,7 @@ function main(): void {
     policy: { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 },
     recordAttempt: (d: any) => { try { recordAttempt(LOG, { mission: (d && d.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } },
     dispatch,
+    reviewExcellence,                                                    // canonical auto-consultation (advisory, read-only)
   };
   const d = schedulerStep(ctx);
   console.log(`[odg-schedule-tick] ${d.status} — ${d.reason || ""}${d.item ? " (mission " + d.item.mission + ")" : ""}`);

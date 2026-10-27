@@ -93,4 +93,9 @@ const GOV_REF = { id: "OWASP-ASI-2026", authority: "OWASP", domain: "autonomous-
 const govReview = E.reviewForExcellence({ domain: "autonomous-governance", now: NOW, registry: [GOV_REF], currentPractices: ["deny-by-default-admission", "authenticated-execution", "no-false-success", "tenant-isolation"], thresholds: { assertions: 1 }, measured: { assertions: 91 }, claims: ["enforces authenticated execution"] });
 ok("excellence policy applies to a SECOND ODG component (agent-governance) ⇒ MEETS", govReview.verdict === "MEETS" && govReview.referencesSelected[0].id === "OWASP-ASI-2026" && govReview.gaps.every(g => g.present));
 
+// (17) requireExcellence shared boundary — prohibited claim blocks; advisory admits; strict blocks advisory.
+ok("requireExcellence: prohibited superlative ⇒ admit false", E.requireExcellence({ verdict: "IMPROVE", claims: [{ claim: "best", justified: false }] }, {}).admit === false);
+ok("requireExcellence: stale/insufficient ⇒ admit true (advisory, offline-safe)", (() => { const r = E.requireExcellence({ verdict: "INSUFFICIENT_EVIDENCE", claims: [], staleReferences: ["X"], gaps: [] }, {}); return r.admit === true && r.advisory === true; })());
+ok("requireExcellence: strict mode blocks advisories", E.requireExcellence({ verdict: "INSUFFICIENT_EVIDENCE", claims: [], staleReferences: ["X"], gaps: [] }, { strict: true }).admit === false);
+
 console.log(`\nEXCELLENCE-POLICY suite — ${pass} assertions passed.`);

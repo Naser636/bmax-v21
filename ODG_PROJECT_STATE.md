@@ -4620,3 +4620,38 @@ no-false-success + deny-by-default (scheduler), reproduce-before-change, fixed-t
 Next €0 candidate: wire buildExcellenceReviewer into odg-schedule-tick (canonical tick) behind the existing canary
 boundary + a DORA applicability-gated obligation pack. BLOCKED/EXTERNAL (CTO/infra): network source re-verification,
 KMS/HSM, prod multi-tenant isolation, scheduler activation on the canonical queue, real external agent.
+
+---
+## CHECKPOINT 2026-10-27 (ag) — GLOBAL EXCELLENCE ROLLOUT + 3-axis continuation €0
+CTO. Truth Lock entry 39e5c74≡origin/main, clean, 5 stashes, 4 untracked docs/ preserved. No new primitive/orchestrator.
+Diff = 4 core modules touched/new + 1 bin + 4 suites + 3 docs.
+
+**AXE 1 (generalize excellence) — PROVEN + HONEST GAPS:** added SHARED enforcement boundary excellence-policy.
+requireExcellence (admit/advisory/strict) and REFACTORED mission-scheduler to use it (no duplicated logic). NEW
+excellence-coverage.ts (suite 9) = executable coverage matrix: COVERED families = mission-execution (scheduler + tick)
++ capability-self-review (regulatory-assurance + agent-governance demo); NOT_COVERED (explicitly listed) = resolution,
+per-executor execution, learning, recovery. No total-coverage claim. Doc EXCELLENCE_COVERAGE_MATRIX_V1.md.
+
+**AXE 2 (regulatory) — PROVEN:** DORA_READINESS module (Reg (EU) 2022/2554) with CONDITIONAL applicability — EU
+financial entities ONLY; non-financial or non-EU DORA-targeter ⇒ NOT_APPLICABLE + justification (never applied to all).
+regulatory-assurance 29→32. Wired reviewExcellence into odg-schedule-tick BEHIND the read-only canary boundary (no
+dispatch/queue change; empty allowlist ⇒ IDLE, reviewer never called ⇒ zero default behavior change). Sources remain
+offline-pending-reverify (no network). Preparation ≠ legal conformity ≠ audit ≠ certification kept.
+
+**AXE 3 (production readiness) — DOCUMENTED + safe local fix:** NEW audit-log.ts (suite 9) hash-chained append-only log
+closing the LOCAL portion of gap #4 (auditability): detects tamper/reorder/insert/delete/forged-hash, fail-closed.
+HONEST LIMIT: tamper-EVIDENT not tamper-PROOF; production WORM/SIEM + trusted timestamp + off-host = EXTERNAL. Other 8
+gaps unchanged (EXTERNAL specs in PRODUCTION_READINESS_GAPS_V1.md).
+
+**Proof:** excellence-policy 18→21 + excellence-coverage 9 + audit-log 9 + scheduler 36 + regulatory 29→32 ⇒ full gate
+66→68/68; tsc 0; build 0; odg-schedule-tick smoke IDLE/exit0 (injection safe). No simulated result claimed as production.
+
+**Learning reuse (proven):** requireExcellence is the mechanised SHARED boundary reused by scheduler + coverage +
+(contract for) future capabilities; reused evidence-provenance pattern (audit-log hash-chain mirrors contentSha256
+tamper-evidence), DORA applicability-gating mirrors GDPR/ISO applicability discipline, no-false-success + offline-non-
+blocking doctrine. 9 primitives + executors unchanged; 5 stashes + foreign docs preserved.
+
+**SINGLE RESUME:** `git fetch origin && git checkout main && tsx runtime/core/excellence-coverage.test.ts && tsx runtime/core/audit-log.test.ts && tsx runtime/core/regulatory-assurance.test.ts`
+Next €0 candidate: cover a NOT_COVERED family (learning or recovery) via requireExcellence, or add a learning-reuse
+audit using audit-log. BLOCKED/EXTERNAL (CTO/infra): network source re-verification, KMS/HSM, prod multi-tenant
+isolation, WORM/SIEM + off-host backups, real agent, scheduler activation on the canonical queue.

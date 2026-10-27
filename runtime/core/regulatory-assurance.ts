@@ -77,6 +77,12 @@ export interface AssuranceDossier {
 // ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 const gdprApplies = (p: CompanyProfile) => !!(p.processesEUPersonalData || (p.country && EU_COUNTRIES.has(p.country)) || (p.dataCategories || []).includes("personal"));
 
+// DORA (Regulation (EU) 2022/2554) applies ONLY to EU "financial entities" — NOT to every company. A profile that
+// targets DORA but is not a financial entity ⇒ obligations NOT_APPLICABLE (justified), never silently applied.
+const FINANCIAL_SECTORS = new Set(["bank", "credit-institution", "payment", "payment-institution", "e-money", "investment-firm", "insurance", "insurer", "reinsurance", "crypto-asset-service-provider", "casp", "trading-venue", "central-securities-depository", "asset-management"]);
+const isFinancialEntity = (p: CompanyProfile) => !!((p as any).financialEntity === true || (p.sector && FINANCIAL_SECTORS.has(p.sector)));
+const doraApplies = (p: CompanyProfile) => (p.targetFrameworks || []).includes("DORA") && isFinancialEntity(p) && !!(p.country && EU_COUNTRIES.has(p.country));
+
 const CATALOG: Obligation[] = [
   // GDPR_READINESS — Regulation (EU) 2016/679 (legal obligation; public text)
   { id: "GDPR-ROPA", module: "GDPR_READINESS", title: "Records of processing activities", sourceId: "GDPR-2016-679", risk: 4, applies: gdprApplies, applicabilityNote: "applies when processing EU personal data" },
@@ -90,9 +96,14 @@ const CATALOG: Obligation[] = [
   // ISO42001_READINESS — ISO/IEC 42001:2023 AI management system (voluntary standard; principles only)
   { id: "ISO42001-AIMS", module: "ISO42001_READINESS", title: "AI management system established", sourceId: "ISO42001-2023", risk: 4, applies: (p) => (p.targetFrameworks || []).includes("ISO42001") && (p.aiSystems || []).length > 0, applicabilityNote: "only when the company operates AI systems and targets ISO/IEC 42001" },
   { id: "ISO42001-RISK", module: "ISO42001_READINESS", title: "AI risk + impact assessment", sourceId: "ISO42001-2023", risk: 5, applies: (p) => (p.targetFrameworks || []).includes("ISO42001") && (p.aiSystems || []).length > 0, applicabilityNote: "only when the company operates AI systems and targets ISO/IEC 42001" },
+  // DORA_READINESS — Regulation (EU) 2022/2554 (legal obligation; public text). Financial entities ONLY.
+  { id: "DORA-ICT-RM", module: "DORA_READINESS", title: "ICT risk-management framework", sourceId: "DORA-2022-2554", risk: 5, applies: doraApplies, applicabilityNote: "only for EU financial entities (banks/payment/investment/insurance/CASP…) — NOT general companies" },
+  { id: "DORA-INCIDENT", module: "DORA_READINESS", title: "ICT-related incident reporting", sourceId: "DORA-2022-2554", risk: 4, applies: doraApplies, applicabilityNote: "EU financial entities only" },
+  { id: "DORA-RESILIENCE-TEST", module: "DORA_READINESS", title: "Digital operational resilience testing", sourceId: "DORA-2022-2554", risk: 4, applies: doraApplies, applicabilityNote: "EU financial entities only" },
+  { id: "DORA-TPRISK", module: "DORA_READINESS", title: "ICT third-party risk management", sourceId: "DORA-2022-2554", risk: 5, applies: doraApplies, applicabilityNote: "EU financial entities only" },
 ];
 
-const MODULE_FRAMEWORK: Record<string, string> = { GDPR_READINESS: "GDPR", ISO27001_READINESS: "ISO27001", ISO42001_READINESS: "ISO42001" };
+const MODULE_FRAMEWORK: Record<string, string> = { GDPR_READINESS: "GDPR", ISO27001_READINESS: "ISO27001", ISO42001_READINESS: "ISO42001", DORA_READINESS: "DORA" };
 
 /**
  * Assess one obligation against the tenant-filtered evidence index + injected INDEPENDENT verifier(s). With a SECOND
