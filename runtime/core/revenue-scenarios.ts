@@ -31,9 +31,18 @@ function assessScenario(a: any, target = 500000): any {
   const conv = (a && a.conv) || {};
   const c1 = pct(conv.prospectToInterested), c2 = pct(conv.interestedToProposal), c3 = pct(conv.proposalToSigned);
 
-  // Recurring contributes over the remaining months (lag-aware, conservative: recognised from signing month onward).
-  const recurringAnnualPerContract = recurringMonthly > 0 ? recurringMonthly * Math.max(0, months - 2) : 0; // ~2-month ramp/lag
-  const valuePerContract = acv + recurringAnnualPerContract;
+  // Recurring recognition within the 12-month commercial horizon. rampLag = months before recurring starts.
+  // BEST-CASE (all contracts signed at the START): each accrues recurringMonthly × (months - rampLag).
+  // CONSERVATIVE (contracts acquired EVENLY across the window — the realistic default): a contract signed in month k
+  // accrues (months - k - rampLag + 1) clamped ≥0; averaged over an even cohort ≈ (months - rampLag) / 2. We use the
+  // CONSERVATIVE figure for contractsNeeded/feasibility — crediting every contract the best-case recurring would
+  // OVERSTATE value/contract and UNDERSTATE contracts needed (artificially favourable). Both are exposed for transparency.
+  const rampLag = 2;
+  const bestCaseMonths = Math.max(0, months - rampLag);
+  const recurringMonthsRecognized = Math.max(0, (months - rampLag) / 2);     // even acquisition
+  const recurringPerContract = recurringMonthly > 0 ? recurringMonthly * recurringMonthsRecognized : 0;
+  const valuePerContractBestCase = acv + (recurringMonthly > 0 ? recurringMonthly * bestCaseMonths : 0);
+  const valuePerContract = acv + recurringPerContract;                        // conservative — drives the plan
   const contractsNeeded = valuePerContract > 0 ? RM.contractsForTarget(target, valuePerContract) : Infinity;
 
   const funnel = c1 * c2 * c3;                                    // overall prospect→signed conversion
@@ -49,7 +58,7 @@ function assessScenario(a: any, target = 500000): any {
   else if (monthlyProspects > SOLO_CEILING.monthlyProspects * 0.5 || monthlySignings >= SOLO_CEILING.monthlySignings) { feasibility = "STRETCH"; why = "within ceiling but demanding; requires disciplined pace + partner leverage"; }
   else { feasibility = "PLAUSIBLE_HYPOTHESIS"; why = "within stated solo ceiling IF the assumed conversions hold (unvalidated)"; }
 
-  return { name, target, assumptions: { avgContractValue: acv, recurringMonthly, months, costRatio, conv: { c1, c2, c3 } }, valuePerContract, contractsNeeded, prospectsNeeded, monthlyProspects, monthlySignings, grossMarginPct, feasibility, why, hypothesis: true };
+  return { name, target, assumptions: { avgContractValue: acv, recurringMonthly, months, costRatio, conv: { c1, c2, c3 } }, valuePerContract, valuePerContractBestCase, recurringMonthsRecognized, contractsNeeded, prospectsNeeded, monthlyProspects, monthlySignings, grossMarginPct, feasibility, why, hypothesis: true };
 }
 
 /** buildScenarios(input, target): input = { prudent, central, ambitious } assumption objects. */
@@ -59,7 +68,8 @@ function buildScenarios(input: any, target = 500000): any {
   const notes = [
     "€500k is a TARGET, not a forecast or a result. All figures are HYPOTHESIS until measured against real pipeline data.",
     "Conversions are caller inputs, NOT tuned to make the target reachable; feasibility is judged against a solo-capacity ceiling.",
-    "Signed ≠ invoiced ≠ cashed ≠ margin. Recurring is recognised lag-aware (≈2-month ramp). Validate prices vs observed data.",
+    "Signed ≠ invoiced ≠ cashed ≠ margin. Recurring is recognised CONSERVATIVELY (even acquisition ⇒ ≈(months−2)/2 active months/contract, not the best-case months−2). valuePerContractBestCase is exposed for comparison only.",
+    "contractsNeeded is for SIGNED value reaching the target; cash collected WITHIN the 12-month horizon is lower (sales + delivery + payment lag) — a separate, more conservative figure to validate with real data.",
   ];
   return { target, scenarios, soloCeiling: SOLO_CEILING, notes };
 }

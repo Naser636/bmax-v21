@@ -13,19 +13,30 @@ feature** (not demand, not intent); **0 verified buying intent; 0 signed; 0 cash
 Overall conversion = prospect→interested × interested→proposal × proposal→signed. Value/contract = one-off + recurring
 (lag-aware ≈2-month ramp over 12 months). Computed by `revenue-scenarios.ts`.
 
+Recurring is recognised **conservatively** (even acquisition ⇒ ≈(months−2)/2 ≈ 5 active months/contract, NOT best-case
+10) — see the V8 audit fix note below. value/contract below is the conservative figure that drives the plan.
+
 | scenario | price assumption | conv (p→i,i→p,p→s) | value/contract | contracts | prospects (12 mo) | /month | margin | feasibility |
 |---|---|---|---|---|---|---|---|---|
 | **Prudent** | €3k one-off | 0.08·0.40·0.30 | €3,000 | **167** | **17,396** | 1,450 prospects · 14 sign | 65% | **INFEASIBLE_SOLO** |
-| **Central** | €9k + €1k/mo | 0.12·0.50·0.35 | €19,000 | **27** | **1,286** | 108 prospects · 3 sign | 70% | **STRETCH** |
-| **Ambitious** | €18k + €2k/mo | 0.18·0.50·0.40 | €38,000 | **14** | **389** | 33 prospects · 2 sign | 70% | **PLAUSIBLE_HYPOTHESIS** |
+| **Central** | €9k + €1k/mo | 0.12·0.50·0.35 | €14,000 | **36** | **1,715** | 143 prospects · 3 sign | 70% | **INFEASIBLE_SOLO** |
+| **Ambitious** | €18k + €2k/mo | 0.18·0.50·0.40 | €28,000 | **18** | **501** | 42 prospects · 2 sign | 70% | **PLAUSIBLE_HYPOTHESIS** |
 
 Solo-capacity ceiling (HYPOTHESIS): ~120 prospects/mo, ~4 signings/mo, ~3 concurrent deliveries.
 
-## Honest conclusion (the model's real message)
-€500k **solo in 12 months is only plausible at HIGH contract value + recurring** (ambitious ≈ €38k/contract, ~14
-contracts). **Low-price volume play is INFEASIBLE solo** (prudent needs ~1,450 prospects/month). ⇒ To pursue €500k
-either (a) sell **high-value + recurring** engagements, and/or (b) add **partners/white-label/subcontracting** capacity
-(a separate budget authorisation). **Arithmetic possibility ≠ demonstrated demand** — no scenario is validated.
+## V8 audit fix (made the model MORE conservative, not more favourable)
+The prior model credited every contract the **best-case** recurring (months−2 ≈ 10 months) regardless of signing month —
+overstating value/contract and understating contracts needed. Corrected to **even-acquisition** recognition
+(≈(months−2)/2 ≈ 5 months). Effect: central value/contract €19k→€14k, contracts 27→36, and **central flipped
+STRETCH → INFEASIBLE_SOLO**. (`valuePerContractBestCase` is still exposed for comparison.)
+
+## Honest conclusion (the model's real message — sharpened by the audit)
+€500k **solo in 12 months is plausible ONLY in the high-value + recurring scenario** (ambitious ≈ €28k/contract, ~18
+contracts, ~42 prospects/mo). **Both the prudent (€3k) and the central (€9k+€1k/mo) scenarios are INFEASIBLE_SOLO** under
+realistic even-acquisition recurring. ⇒ To pursue €500k: (a) sell **high-value + recurring** engagements (price is the
+dominant lever), and/or (b) add **partners/white-label/subcontracting** capacity (separate budget authorisation).
+**Arithmetic possibility ≠ demonstrated demand** — no scenario is validated; cash collected within 12 months is lower
+still (sales + delivery + payment lag).
 
 ## Market price anchor (real, sourced)
 A real competitor, **EuroAIGuard**, publishes productised tiers **€490 / €990 / €2,290 per month** (3/15/50 AI systems)

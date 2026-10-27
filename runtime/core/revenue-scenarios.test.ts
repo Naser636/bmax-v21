@@ -30,6 +30,15 @@ ok("every scenario has an explicit feasibility + why", out.scenarios.every(s => 
 ok("gross margin from costRatio (70% at 0.3)", by("central").grossMarginPct === 70 && by("central").valuePerContract > by("central").assumptions.avgContractValue);
 // (7) missing assumptions ⇒ UNDETERMINED (no fabrication).
 ok("zero price/conv ⇒ UNDETERMINED", S.assessScenario({ name: "x", avgContractValue: 0, conv: {} }).feasibility === "UNDETERMINED");
+// (7b) AUDIT FIX: recurring recognised CONSERVATIVELY (even acquisition), NOT best-case — so value/contract is LOWER
+// and contracts needed is HIGHER than the naive best-case. No artificial favourability.
+const cc = by("central");
+ok("conservative recurring < best-case (even acquisition)", cc.valuePerContract < cc.valuePerContractBestCase && cc.recurringMonthsRecognized === (12 - 2) / 2);
+ok("conservative value/contract = acv + recurringMonthly×((months−2)/2)", cc.valuePerContract === 9000 + 1000 * 5);
+ok("conservative model needs MORE contracts than best-case would", RM.contractsForTarget(500000, cc.valuePerContract) > RM.contractsForTarget(500000, cc.valuePerContractBestCase));
+// (7c) no recurring ⇒ best-case == conservative (pure one-off, no bias).
+ok("no recurring ⇒ bestCase == conservative", (() => { const r = S.assessScenario({ name: "oneoff", avgContractValue: 5000, conv: { prospectToInterested: 0.2, interestedToProposal: 0.5, proposalToSigned: 0.4 } }); return r.valuePerContract === r.valuePerContractBestCase && r.valuePerContract === 5000; })());
+
 // (8) target never asserted achieved; notes say TARGET not forecast; reproducible.
 ok("notes: TARGET not forecast; reproducible", out.notes.some(n => /TARGET, not a forecast/.test(n)) && JSON.stringify(S.buildScenarios({ prudent, central, ambitious }, 500000)) === JSON.stringify(out));
 
