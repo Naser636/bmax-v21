@@ -6419,3 +6419,26 @@ preserved.
 **SIX-AXIS queue (all represented):** A entry-diagnostic spec · B mid-market package · C enterprise qualif checklist ·
 D partner kit (BLOCKED no partner) · E wire enterprise-mission into commercial-portfolio · F clause→evidence
 traceability. Learning loop: NEXT = auto-invoke mission-reuse-recorder from the live post-mission hook (dist closure).
+
+---
+## CHECKPOINT 2026-10-27 (cg) — V24 AXIS F: certification clause→evidence traceability (compose, not duplicate) €0
+CTO "V24" axis F (post-PR#90, main 0431ffb). Truth Lock clean, 5 stashes + 4 untracked docs/ preserved. Diff =
+certification-traceability(.ts/.test) + package.json + compass.
+
+**certification-traceability.ts (EXECUTED — axis F, COMPOSITION of existing assessors, NOT a duplicate):** JOINs
+iso-operational-evidence.assessOperational (per-control status/opState/responsible/artifact) + control-evidence-
+freshness.assessFreshness (FRESH/STALE per TTL) + portfolio-axes.READINESS_STATES (shared vocab) into ONE
+requirement→evidence→verificationState→gap view + a remediation register. Genuinely-new value = the JOIN: a SATISFIED
+control whose evidence is STALE ⇒ verificationState STALE (FRESH≠SATISFIED both ways). Mapping: SATISFIED+FRESH⇒
+INTERNALLY_VERIFIED; +STALE⇒STALE; +no-date⇒EVIDENCE_COLLECTED; DOCUMENTED_NOT_APPROVED⇒DRAFTED; APPROVED_PENDING_
+EXECUTION⇒GAP; MECHANISM_PRESENT⇒IMPLEMENTED; EXTERNAL⇒BLOCKED. Every non-verified requirement ⇒ remediation entry
+(missing item). certificationStatus stays NOT_CERTIFIED (readiness≠certification, never inferred). Suite 18.
+
+**Gate:** test:report 107→108; tsc 0; build 0. €0; nothing sent; no cert claimed.
+
+**SIX-AXIS code progress this session:** invariant guard (A–F) · E enterprise-mission-model · F certification-
+traceability · learning loop closed both ways (consumer PR#87 + producer PR#90). A/B/C/D rely on existing modules
+(assurance-pilot/self-serve/sarif/pricing-grid/commercial-pipeline/revenue-channels/proposal-generator/niche-scoring/
+website partners+faq). All six represented; per-axis next-actions + blockers recorded (cd checkpoint).
+NEXT candidates: auto-wire mission-reuse-recorder into live post-mission hook (dist) · A paid entry-diagnostic spec ·
+wire enterprise-mission + traceability into a consolidated portfolio/readiness dashboard.
