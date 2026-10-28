@@ -27,11 +27,23 @@ const TS_BIN = TSC_PATH ? process.execPath : "__odg_tsc_absent__";
 const TS_PROBE = TSC_PATH ? [TSC_PATH, "--version"] : ["--version"];
 const TS_ARGS = (f: string) => TSC_PATH ? [TSC_PATH, "--noEmit", "--skipLibCheck", f] : ["--noEmit", f];
 
-// Supported checkers. A language is only ACTIONABLE here if its binary is actually on PATH (probed, not assumed).
+// Supported checkers. A language is only ACTIONABLE here if its binary (and, for library-backed checkers, its module)
+// is actually present — PROBED per-capability, never assumed. The Shell/SQL/YAML/JSON checkers below use tooling that
+// is ALREADY installed (bash, python3 stdlib sqlite3/json, PyYAML) — i.e. a real capability expansion that needs NO
+// network install. Compiler stacks (Go/Rust/Java/C#) are deliberately ABSENT here: they require an authorized toolchain
+// install and remain honestly UNSUPPORTED until then (never a spuriously-available decoy).
 const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   JavaScript: { bin: "node", probeArgs: ["--version"], args: (f: string) => ["--check", f], ext: ".js" },
   TypeScript: { bin: TS_BIN, probeArgs: TS_PROBE, args: TS_ARGS, ext: ".ts" },
   Python: { bin: "python3", probeArgs: ["--version"], args: (f: string) => ["-m", "py_compile", f], ext: ".py" },
+  // Shell SYNTAX validation via `bash -n` (no execution of the script). NOT a linter — shellcheck is absent.
+  Shell: { bin: "bash", probeArgs: ["--version"], args: (f: string) => ["-n", f], ext: ".sh" },
+  // SQL/schema validation: parse+apply the DDL against an in-memory SQLite db (stdlib; no file/network side effects).
+  SQL: { bin: "python3", probeArgs: ["-c", "import sqlite3"], args: (f: string) => ["-c", "import sys,sqlite3; sqlite3.connect(':memory:').executescript(open(sys.argv[1]).read())", f], ext: ".sql" },
+  // YAML validation via PyYAML safe_load_all (probe fails ⇒ UNSUPPORTED if PyYAML is not installed).
+  YAML: { bin: "python3", probeArgs: ["-c", "import yaml"], args: (f: string) => ["-c", "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1]).read()))", f], ext: ".yaml" },
+  // JSON config validation via stdlib json (always available with python3).
+  JSON: { bin: "python3", probeArgs: ["-c", "import json"], args: (f: string) => ["-c", "import sys,json; json.load(open(sys.argv[1]))", f], ext: ".json" },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }

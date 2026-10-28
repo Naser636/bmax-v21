@@ -55,6 +55,17 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "langfamily-noinstall-checkers",
+      "program": "P2",
+      "title": "No-install real checkers: Shell/SQL/YAML/JSON (realizable decomposition of new-language-families)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "PR(this): code-execution LANG_SPEC +4 real checkers using ALREADY-INSTALLED tooling (bash -n; stdlib sqlite3 in-memory; PyYAML; stdlib json) — each probed per-capability, argv-array (no shell), UNSUPPORTED when absent. Real-subprocess verified PASS/FAIL for all 4 (code-execution suite 17→25). SQL/schema + Config-YAML/validate added to broad-IT corpus (8 cases each, dev+heldout acc 1.0).",
+      "acceptance": "executable check with real subprocess per added no-install stack + independent eval",
+      "nextAction": "done; compiler stacks remain in new-language-families (narrowed)"
+    },
+    {
       "id": "broad-it-corpus-grow",
       "program": "P2",
       "title": "Grow broad-IT corpus toward representativeness",
@@ -63,9 +74,9 @@
         "new-language-families"
       ],
       "priority": 5,
-      "evidence": "PR(this): broad-it-eval v2 — corpus grown to 24 REAL-checker-evaluable cases (4/category/partition, 2 clean+2 broken), dev+heldout accuracy 1.0 each, 0 falsePass/falseFail/blocked, leakage disjoint by id+sha256; representativeness now MEASURED via pre-registered TARGET_TAXONOMY(12)+threshold(0.6): coverage 3/12=0.25 ⇒ broadIT=NO_DATA (quantified, not asserted). Suite 23.",
+      "evidence": "PR(this): broad-it-eval v3 — corpus 24→44 REAL-checker-evaluable cases; +2 NO-INSTALL covered categories (SQL/schema via stdlib sqlite3, Config-YAML/validate via PyYAML), dev+heldout accuracy 1.0, 0 falsePass/falseFail/blocked, leakage disjoint. coverage MEASURED 3/12=0.25 → 5/12=0.4167 (TARGET_TAXONOMY supported-flags updated to reality); still < 0.6 ⇒ broadIT=NO_DATA. Suite 23→28.",
       "acceptance": "representative + independently-labelled DEV/HELDOUT corpus enabling a defensible general rate; until then broad-IT=NO_DATA",
-      "nextAction": "crossing the 0.6 coverage gate requires executable checkers for Go/Rust/Java/C#/SQL/Shell/HTML-CSS/YAML/Dockerfile — i.e. real toolchains; that work is item new-language-families (BLOCKED on authorized toolchain install)."
+      "nextAction": "crossing 0.6 needs ≥3 more covered categories; the remaining uncovered (Go/Rust/Java/C# build + Shell-lint + HTML-CSS + Dockerfile) all require an authorized toolchain/linter INSTALL (shellcheck/tidy/hadolint/compilers) — tracked under new-language-families."
     },
     {
       "id": "dashboard-tls-exposure",
@@ -84,14 +95,16 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability beyond JS/TS/Python",
+      "title": "Engineering capability for COMPILER/LINTER stacks (Go/Rust/Java/C# + shellcheck/tidy/hadolint)",
       "status": "BLOCKED",
-      "deps": [],
+      "deps": [
+        "langfamily-noinstall-checkers"
+      ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "toolchains absent (go/rustc/cargo/javac/java/sqlite3/psql) + no authorized network install; code-execution.LANG_SPEC is the extension point",
-      "acceptance": "an executable check/repair + independent eval per added stack (real toolchain)",
-      "nextAction": "authorize a reproducible local toolchain install OR route to axis-D subcontracting"
+      "blockReason": "NARROWED: the no-install subset (Shell/SQL/YAML/JSON) is DONE (see langfamily-noinstall-checkers). What remains genuinely needs an authorized install — compilers go/rustc/cargo/javac/dotnet and linters shellcheck/tidy/hadolint — all probed ABSENT; no authorized network install.",
+      "acceptance": "an executable check/repair + independent eval per added compiled/linted stack (real toolchain installed)",
+      "nextAction": "authorize a reproducible local toolchain install (e.g. apt/go/rustup in a bounded step) OR route to axis-D subcontracting"
     },
     {
       "id": "structured-roadmap-deps",

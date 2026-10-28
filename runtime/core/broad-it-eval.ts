@@ -48,11 +48,36 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-py-clean-2", partition: "heldout", category: "Python/syntax", language: "Python", kind: "clean", expected: "PASS", content: "d = {'k': 1}\nfor k, v in d.items():\n    print(k, v)\n" },
   { id: "held-py-broken-1", partition: "heldout", category: "Python/syntax", language: "Python", kind: "broken", expected: "FAIL", content: "x = (1\n" },
   { id: "held-py-broken-2", partition: "heldout", category: "Python/syntax", language: "Python", kind: "broken", expected: "FAIL", content: "def f()\n    return 1\n" },
+  // --- SQL/schema (v3): NO-INSTALL checker via stdlib sqlite3 (in-memory). DEV + HELDOUT, 2 clean + 2 broken each. ---
+  { id: "dev-sql-clean-1", partition: "dev", category: "SQL/schema", language: "SQL", kind: "clean", expected: "PASS", content: "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL);\n" },
+  { id: "dev-sql-clean-2", partition: "dev", category: "SQL/schema", language: "SQL", kind: "clean", expected: "PASS", content: "CREATE TABLE t (a INTEGER);\nCREATE INDEX idx_a ON t(a);\n" },
+  { id: "dev-sql-broken-1", partition: "dev", category: "SQL/schema", language: "SQL", kind: "broken", expected: "FAIL", content: "CREATE TABLE t (id INTEGER PRIMARY,, name;\n" },
+  { id: "dev-sql-broken-2", partition: "dev", category: "SQL/schema", language: "SQL", kind: "broken", expected: "FAIL", content: "CREATE TABL t (id INTEGER);\n" },
+  { id: "held-sql-clean-1", partition: "heldout", category: "SQL/schema", language: "SQL", kind: "clean", expected: "PASS", content: "CREATE TABLE orders (id INTEGER PRIMARY KEY, total REAL);\n" },
+  { id: "held-sql-clean-2", partition: "heldout", category: "SQL/schema", language: "SQL", kind: "clean", expected: "PASS", content: "CREATE TABLE a (x TEXT);\nINSERT INTO a (x) VALUES ('v');\n" },
+  { id: "held-sql-broken-1", partition: "heldout", category: "SQL/schema", language: "SQL", kind: "broken", expected: "FAIL", content: "CREATE TABLE a (x TEXT;\n" },
+  { id: "held-sql-broken-2", partition: "heldout", category: "SQL/schema", language: "SQL", kind: "broken", expected: "FAIL", content: "SELECT FROM WHERE;\n" },
+  // --- Config-YAML/validate (v3): NO-INSTALL checker via PyYAML safe_load_all. ---
+  { id: "dev-yaml-clean-1", partition: "dev", category: "Config-YAML/validate", language: "YAML", kind: "clean", expected: "PASS", content: "name: svc\nversion: 1\nports:\n  - 80\n  - 443\n" },
+  { id: "dev-yaml-clean-2", partition: "dev", category: "Config-YAML/validate", language: "YAML", kind: "clean", expected: "PASS", content: "a:\n  b: c\nlist: [1, 2, 3]\n" },
+  { id: "dev-yaml-broken-1", partition: "dev", category: "Config-YAML/validate", language: "YAML", kind: "broken", expected: "FAIL", content: "a: 1\n  b: : :\n- x\n" },
+  { id: "dev-yaml-broken-2", partition: "dev", category: "Config-YAML/validate", language: "YAML", kind: "broken", expected: "FAIL", content: "key: [unclosed\n" },
+  { id: "held-yaml-clean-1", partition: "heldout", category: "Config-YAML/validate", language: "YAML", kind: "clean", expected: "PASS", content: "env: prod\nreplicas: 3\nlabels:\n  app: web\n" },
+  { id: "held-yaml-clean-2", partition: "heldout", category: "Config-YAML/validate", language: "YAML", kind: "clean", expected: "PASS", content: "items:\n  - id: 1\n    ok: true\n  - id: 2\n    ok: false\n" },
+  { id: "held-yaml-broken-1", partition: "heldout", category: "Config-YAML/validate", language: "YAML", kind: "broken", expected: "FAIL", content: "a: 1\nb: [c, d\n" },
+  { id: "held-yaml-broken-2", partition: "heldout", category: "Config-YAML/validate", language: "YAML", kind: "broken", expected: "FAIL", content: "foo: \"unterminated\n" },
+  // --- Shell/syntax (v3): real `bash -n` syntax check (NOT lint — shellcheck absent). Capability eval; NOT a taxonomy slot. ---
+  { id: "dev-sh-clean-1", partition: "dev", category: "Shell/syntax", language: "Shell", kind: "clean", expected: "PASS", content: "#!/usr/bin/env bash\nset -e\necho hello\n" },
+  { id: "dev-sh-broken-1", partition: "dev", category: "Shell/syntax", language: "Shell", kind: "broken", expected: "FAIL", content: "for i in 1 2 3; do echo $i\n" },
+  { id: "held-sh-clean-1", partition: "heldout", category: "Shell/syntax", language: "Shell", kind: "clean", expected: "PASS", content: "x=1\nif [ \"$x\" -eq 1 ]; then echo one; fi\n" },
+  { id: "held-sh-broken-1", partition: "heldout", category: "Shell/syntax", language: "Shell", kind: "broken", expected: "FAIL", content: "case $x in\n  a) echo a\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v2";
-// The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax"];
+const CORPUS_VERSION = "broad-it-eval-v3";
+// The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 adds the
+// NO-INSTALL checkers (SQL via stdlib sqlite3, YAML via PyYAML, Shell via `bash -n`) — a real expansion using tooling
+// already present; compiler stacks (Go/Rust/Java/C#) still require an authorized install and stay UNSUPPORTED.
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
@@ -66,10 +91,10 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
   { category: "Rust/build", supported: false },
   { category: "Java/compile", supported: false },
   { category: "CSharp/compile", supported: false },
-  { category: "SQL/schema", supported: false },
-  { category: "Shell/lint", supported: false },
+  { category: "SQL/schema", supported: true },               // v3: now a REAL checker (stdlib sqlite3, no install)
+  { category: "Shell/lint", supported: false },               // `bash -n` gives SYNTAX only; a linter (shellcheck) is still absent
   { category: "HTML-CSS/validate", supported: false },
-  { category: "Config-YAML/validate", supported: false },
+  { category: "Config-YAML/validate", supported: true },      // v3: now a REAL checker (PyYAML, no install)
   { category: "Dockerfile/lint", supported: false },
 ]);
 // PRE-REGISTERED representativeness gate (fixed before measuring): a corpus counts as representative only when at

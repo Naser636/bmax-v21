@@ -37,4 +37,26 @@ ok("non-string content ⇒ BLOCKED", E.runSyntaxCheck({ language: "Python", cont
 const tc = E.detectToolchain({ runner: (bin) => bin === "python3" ? { exitCode: 0, stdout: "Python" } : { spawnError: "ENOENT" } });
 ok("detectToolchain: python available, others not (via mock probe)", tc.Python === true && tc.JavaScript === false);
 
+// (9) NO-INSTALL checker expansion registered: Shell/SQL/YAML/JSON specs present + argv-array (no shell string).
+for (const lang of ["Shell", "SQL", "YAML", "JSON"]) {
+  ok(`LANG_SPEC has ${lang} (no-install checker) with argv-array args`, E.LANG_SPEC[lang] && Array.isArray(E.LANG_SPEC[lang].args("f")) && typeof E.LANG_SPEC[lang].bin === "string");
+}
+// compiler stacks remain honestly ABSENT from LANG_SPEC (require authorized install ⇒ UNSUPPORTED, never faked).
+for (const lang of ["Go", "Rust", "Java", "CSharp"]) {
+  ok(`${lang} NOT in LANG_SPEC ⇒ UNSUPPORTED (no decoy)`, !E.LANG_SPEC[lang] && E.runSyntaxCheck({ language: lang, content: "x" }).status === "UNSUPPORTED");
+}
+
+// (10) NEW no-install checkers — REAL subprocess, guarded on actual availability (skip honestly if absent in runtime).
+const real = E.detectToolchain();
+const realCases = [
+  ["Shell", "echo hi\nfor i in 1 2; do echo $i; done\n", "PASS"], ["Shell", "if [ -z x ; then echo bad\n", "FAIL"],
+  ["SQL", "CREATE TABLE t (id INTEGER PRIMARY KEY, n TEXT);\n", "PASS"], ["SQL", "CREATE TABLE t (id INTEGER PRIMARY,, n;\n", "FAIL"],
+  ["YAML", "a: 1\nb:\n  - x\n  - y\n", "PASS"], ["YAML", "a: 1\n  b: : :\n- x\n", "FAIL"],
+  ["JSON", "{\"a\":1,\"b\":[1,2]}\n", "PASS"], ["JSON", "{\"a\":1,,}\n", "FAIL"],
+];
+for (const [lang, content, exp] of realCases) {
+  if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }
+  ok(`real ${lang} ${exp} classified correctly`, E.runSyntaxCheck({ language: lang, content }).status === exp);
+}
+
 console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped stderr; not faked; fail-closed)`);
