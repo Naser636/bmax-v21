@@ -7771,3 +7771,23 @@ unachieved. **OWNER DECISION (single, minimal): to run the autonomous canary, ap
 G10_READONLY_AUTONOMY_PROBE` then `node runtime/dist/bin/odg-schedule-tick.js` — ODG will NOT set this itself.** NEXT
 (Lot B, independent): 6th task family (e.g. unused-import removal via local-fixers + ts-project-check noUnusedLocals) OR
 P-01 reproducibility note. Exact command: `git checkout main && git pull && npx tsx runtime/core/canary-decision-pack.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (eh) — V58 §3 / C-16: 6th task family (unused-import removal) €0
+CTO V58 §3. Truth Lock 58c5537≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/task-fix-unused-imports-v58b. No new primitive. Diff = task-fix-unused-imports(.ts/.test) + package.json +
+register + compass.
+
+**task-fix-unused-imports.ts (C-16 — 6th family):** removes a PROVEN-unused named import. detectUnusedImport: symbol
+in an ES `import {…} from …` AND referenced NOWHERE else ⇒ unused; if referenced anywhere outside the import ⇒
+UNSUPPORTED (never removes a used import); not imported ⇒ UNSUPPORTED. Edit via local-fixers.removeUnusedNamedImports;
+via runRepairWorkflow (baseline-FAIL→post-PASS + exact rollback). Oracle = caller's command (e.g. tsc noUnusedLocals).
+Suite 11 (injected runner) + **LIVE real `tsc --noUnusedLocals`: import{a,b} using only a ⇒ FAIL(exit2) → b removed →
+PASS, a preserved ⇒ ACCEPTED.** 6 proven families now: repair-edit, test-gen, missing-export, broken-require, json-config,
+unused-import.
+
+**Gate:** test:report 159→160; tsc 0; build 0. €0; nothing sent. Register C-16 VERIFIED. ACTUAL COLLECTED CASH €0;
+€500k unachieved. **V58: §2 canary-decision-pack PR#143 (READY_FOR_OWNER_AUTHORIZATION, not activated), §3 C-16 6th
+family PR#(next).** §4 P-01: DEMAND_NOT_VALIDATED unchanged; deliverable already reproducible (V54/V55 live-proven),
+no redundant rework. NEXT: 7th family / owner-authorize canary / broaden eval. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/task-fix-unused-imports.test.ts`
