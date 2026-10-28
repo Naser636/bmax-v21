@@ -8391,3 +8391,15 @@ apt (real binary) so RUSTUP_HOME was ignored ⇒ passed locally, masking it. FIX
 only (HOME unchanged lets the proxy resolve ~/.rustup); offline still holds (bare rustc does no network regardless).
 DEFENSE: real-subprocess cases now SKIP on non-definitive status (BLOCKED/UNSUPPORTED = env quirk), only assert PASS/FAIL.
 Gate: test:report 176, tsc 0, build 0; code-execution 36. Awaiting GREEN CI before merge (no red-merge again).
+
+---
+## CHECKPOINT 2026-10-28 (fn) — Engine 10×/kernel mandate: reproducible benchmark + BASELINE €0
+Integrated into the active P1 campaign (no concurrent roadmap). Both mid-turn mandates (10× engine + kernel upgrade)
+demand baseline-first measurement; the underlying engine intelligence already exists (no-repeat V65, evidence-validity
+V66, toolchain-aware V67). So the admissible lot = MEASURE, not reimplement. engine-benchmark.ts = deterministic
+scorecard over the REAL campaign-controller, 9 scenarios mapped to primitives: resume-after-interruption, dedup-no-repeat,
+dependency-regression-invalidation, independent-selection-under-block, stale-evidence-reconcile, strategy-change-readmit,
+no-false-accept, cycle-safe, reconcile-after-mission. **BASELINE 9/9 pass**, deterministic (no clock/random/subprocess).
+Explicitly NO unmeasured 10× claim — it's the yardstick future engine changes compare against. Suite 18. Register
++ACCEPTED engine-benchmark-baseline. Gate: test:report 176→177, tsc 0, build 0. 19 ACCEPTED/1/5, 0 stale.
+PRIOR: hotfix (fm) restored main after PR#174 red-merge. NEXT: compare-after on any future engine change; P1 blockers = 5 external.
