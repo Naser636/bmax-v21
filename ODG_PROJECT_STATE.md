@@ -7695,3 +7695,25 @@ path for ALL missions/JS/Py not yet uniformly proven; only TS+tsconfig now sound
 CASH €0; €500k unachieved. NEXT (V56 Priority B): P-01 zero-cost demand evidence dossier (RESEARCH_EVIDENCE/HYPOTHESIS/
 DEMAND_NOT_VALIDATED states, provenance, thresholds, NO external contact). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/ts-routing-wire.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (ee) — V56 Priority B / C3: honest demand-evidence dossier (DEMAND_NOT_VALIDATED) €0
+CTO V56 §2. Truth Lock 50486bd≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/demand-evidence-v56b. No new primitive. Diff = demand-evidence(.ts/.test) + package.json + register + compass.
+
+**demand-evidence.ts (C3 — honest-by-construction):** 4 explicit states RESEARCH_EVIDENCE/HYPOTHESIS/DEMAND_VALIDATED/
+DEMAND_NOT_VALIDATED. Dossier for P-01's segment (small/mid JS/TS/Python teams running CI). Problem+adoption backed by
+2 REAL public sources with provenance+limits: Stack Overflow Dev Survey 2024 (JS 62%/Python 51% most-used; TS growing —
+survey.stackoverflow.co/2024) + Zhang et al. FSE'19 (6.85M CI builds: 11% broken from compiler errors, 75% of 3,799
+projects, 18–97min median fix — chenbihuan.github.io/paper/fse19-zhang-compiler-error.pdf). assessDemand ⇒ DEMAND_NOT_
+VALIDATED: desk research supports the HYPOTHESIS but CANNOT validate demand; ≥5 VERIFIED willingness-to-pay/transactional
+signals required (0 present); strong FREE DIY competitor (tsc/node --check/py_compile in CI) DISCLOSED; falsifiable
+hypothesis + thresholds pre-registered BEFORE evaluation; next test owner-gated + NOT executed (no external contact, no
+fabricated prospects/responses). Suite 11 proves the gate isn't permanently stuck (≥5 verified ⇒ DEMAND_VALIDATED) yet
+refuses desk-only + unverified signals. P-01 go-to-market parts (onboarding/billing/hosting) remain NOT_IMPLEMENTED.
+
+**Gate:** test:report 157→158; tsc 0; build 0. €0; nothing sent; no contact; no fabrication. Register P-01/C3 dossier =
+DEMAND_NOT_VALIDATED. **V56: Priority A TS-routing-wire PR#140, Priority B demand-evidence PR#(next). §5 npm-warning =
+non-blocking (local tsx, not global prefix).** ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT (Priority C): establish
+whether real mission dispatch is still gated + locate the exact lock (checkpoint/scheduler exist; dispatch wiring
+gated); OR Priority D next task family. Exact command: `git checkout main && git pull && npx tsx runtime/core/demand-evidence.ts`
