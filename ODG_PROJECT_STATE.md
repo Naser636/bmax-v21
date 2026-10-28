@@ -7673,3 +7673,25 @@ Register P-01 extended. ACTUAL COLLECTED CASH €0; €500k unachieved. **V55 so
 project-health PR#(next).** NEXT: C3 zero-cost demand experiment for P-01 (segment+hypothesis+sample deliverable+
 thresholds+accessible evidence, NO external contact) OR wire ts-project-check into routing to drop the TS opt-in.
 Exact command: `git checkout main && git pull && npx tsx runtime/core/code-health-service.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (ed) — V56 Priority A: import-aware TS check WIRED into the real exec path €0
+CTO "V56 ROUTING CLOSURE". Truth Lock 29d16233≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/ts-routing-wire-v56. No new primitive. §5 npm-warning: npm global prefix /usr/local read-only ⇒ Claude Code
+auto-update warning only; test/build use LOCAL tsx devDep ⇒ ODG unaffected (156/156 green); NO sudo/chown/global change.
+
+**Priority A CLOSED — TS-with-imports on the canonical path:** (1) mission-context-builder now carries `tsconfig`
+(passthrough from plan.tsconfig, additive, null default). (2) coding-executor EXECUTE branch: for language===TypeScript
+AND a tsconfig present in the workspace, runs the SOUND project-mode ts-project-check (`tsc --noEmit -p`) instead of
+the per-file syntax check (unsound with imports); maps PASS⇒VERIFIED / FAIL⇒FAILED / BLOCKED⇒BLOCKED; executed only on
+a real PASS/FAIL. (3) attachCodingResolution forwards context.tsconfig (+tsRunner) to the executor; executionResult now
+carries mode+errorCount. (4) VE codingFidelityGate already consumes executionResult (EXECUTE+FAILED/BLOCKED⇒block) ⇒
+the checker result drives the FINAL decision. BLOCKED/timeout/absent/invalid NEVER become PASS (proven). Closure += 
+ts-project-check (114). Suite 10 (injected tsRunner) + **LIVE real tsc on the loader path: clean imported TS project⇒
+VERIFIED/gate-no-block; cross-file type-error⇒FAILED(1)/gate-BLOCK.** A3 ODG_CODING_EXECUTE opt-in RETAINED (§1: full
+path for ALL missions/JS/Py not yet uniformly proven; only TS+tsconfig now sound) — documented, no unsafe removal.
+
+**Gate:** test:report 156→157; tsc 0; build 0 (closure 114). €0; nothing sent. Register C-15 WIRED. ACTUAL COLLECTED
+CASH €0; €500k unachieved. NEXT (V56 Priority B): P-01 zero-cost demand evidence dossier (RESEARCH_EVIDENCE/HYPOTHESIS/
+DEMAND_NOT_VALIDATED states, provenance, thresholds, NO external contact). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/ts-routing-wire.test.ts`
