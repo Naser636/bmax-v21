@@ -79,18 +79,31 @@
       "nextAction": "crossing 0.6 needs ≥3 more covered categories; the remaining uncovered (Go/Rust/Java/C# build + Shell-lint + HTML-CSS + Dockerfile) all require an authorized toolchain/linter INSTALL (shellcheck/tidy/hadolint/compilers) — tracked under new-language-families."
     },
     {
-      "id": "dashboard-tls-exposure",
+      "id": "dashboard-exposure-readiness-gate",
       "program": "P1",
-      "title": "Dashboard TLS/reverse-proxy + owner-confirmed public exposure",
-      "status": "BLOCKED",
+      "title": "Fail-closed exposure-readiness gate + TLS/reverse-proxy templates + rollback runbook (realizable prep)",
+      "status": "ACCEPTED",
       "deps": [
         "dashboard-page-auth"
       ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/dashboard-exposure-readiness.ts — pure deny-by-default gate over 6 required controls (authToken, tlsTermination, reverseProxy, accessControl, rollback, ownerExposureConfirmed), strict boolean, owner-confirm never inferred; suite 14. Artifacts: docs/odg/deploy/{reverse-proxy.Caddyfile,access-control.md,EXPOSURE_RUNBOOK.md}. LIVE probe ⇒ NOT_READY (4/6 controls present; token + owner-confirm absent) — exposure stays CLOSED.",
+      "acceptance": "a fail-closed readiness gate + reversible activation/rollback runbook exist and are tested; nothing exposed",
+      "nextAction": "done; actual exposure is the owner-gated remainder (dashboard-tls-exposure)"
+    },
+    {
+      "id": "dashboard-tls-exposure",
+      "program": "P1",
+      "title": "Owner-confirmed public exposure of the dashboard (activation)",
+      "status": "BLOCKED",
+      "deps": [
+        "dashboard-exposure-readiness-gate"
+      ],
       "priority": 6,
       "evidence": "",
-      "blockReason": "security precondition: needs TLS/reverse-proxy build + gated rebuild/restart + explicit owner-confirmed exposure decision; sudo available but exposure is reserved",
-      "acceptance": "authenticated + TLS + access-controlled service publicly reachable, owner-confirmed, with rollback",
-      "nextAction": "build TLS/reverse-proxy config; request owner exposure confirmation"
+      "blockReason": "NARROWED: the readiness gate + TLS/proxy templates + rollback runbook are DONE (dashboard-exposure-readiness-gate). What remains is genuinely external: the owner's explicit exposure decision (ODG_DASHBOARD_EXPOSURE_CONFIRMED=1), a real hostname + TLS cert, setting ODG_DASHBOARD_TOKEN in secure config, and executing the gated activation. The live readiness probe returns NOT_READY until then.",
+      "acceptance": "readiness gate READY + authenticated + TLS + access-controlled service publicly reachable, owner-confirmed, with verified rollback",
+      "nextAction": "owner authorizes exposure, provides hostname/cert + token via secure config, then execute EXPOSURE_RUNBOOK.md (preflight gate must return READY)"
     },
     {
       "id": "new-language-families",
