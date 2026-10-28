@@ -7259,3 +7259,25 @@ no false claim of correctness). Honest scope: generation FROM explicit examples 
 (bug-fix-from-failing-test, or safe dep/config bump) reusing runRepairWorkflow; then C-07 code-check eval family
 (clean/broken fixtures, PASS/FAIL accuracy of the real exec path). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/repair-workflow.test.ts && npx tsx runtime/core/task-add-tests.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dl) — V47 Lot A / C-10: 3rd coding task family (missing-export repair) €0
+CTO "V47 REPAIR CAPABILITY EXPANSION". Truth Lock e93e790≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved,
+no open PRs. Branch excellence/task-fix-exports-v47a. No new primitive (reuses repair-workflow). Diff =
+task-fix-exports(.ts/.test) + package.json + register + compass.
+
+**task-fix-exports.ts (Lot A — 3rd family: repair a reproducible failing test):** the canonical "symbol DEFINED but
+NOT EXPORTED" CommonJS defect. detectMissingExport(source,symbol) proves the symbol is declared AND absent from
+exports (recognizes function/class/const/let/var + object-literal/property/ES export forms); generateExportFix inserts
+into an existing `module.exports={…}` literal or appends `module.exports.<sym>=<sym>;`. buildFixExportsTask →
+runRepairWorkflow task (change=edits, acceptance=caller's failing test cmd). ODG repairs ONLY a genuine missing export:
+symbol undefined ⇒ **UNSUPPORTED (no invented impl)**; already exported ⇒ UNSUPPORTED; module.exports reassigned to a
+primitive ⇒ BLOCKED. Harness enforces baseline-FAIL→post-PASS + exact rollback. Suite 15 (injected runner, zero
+subprocess). **LIVE `node --test`: missing greet export ⇒ ACCEPTED (export added, test green exit0); undefined symbol
+⇒ UNSUPPORTED; unrelated failure ⇒ ABSTAINED + exact rollback.**
+
+**Gate:** test:report 139→140; tsc 0; build 0 (closure 105). Register C-10 → VERIFIED (3 proven coding task families
+now: repair-edit, test-gen, missing-export-repair — all on one harness). €0; nothing sent; workspaces isolated tmp.
+ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT (V47 Lot B / C-07): code-check eval family — sealed clean/broken
+JS/TS/Python fixtures measuring the REAL code-execution checker's PASS/FAIL + false-PASS/false-FAIL, provenance-
+stamped, denominators honest. Exact command: `git checkout main && git pull && npx tsx runtime/core/task-fix-exports.test.ts`
