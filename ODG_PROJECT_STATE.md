@@ -7924,3 +7924,26 @@ has a real non-test consumer (broad-it-eval.ts).
 unachieved. NEXT (§D): author/update the canonical PRODUCT DEFINITION doc (P-01 Code Health Check) linking each promise→
 capability→evidence→limit→closure-mission; then §E convert gaps to traceable objectives. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/broad-it-eval.ts`
+
+---
+## CHECKPOINT 2026-10-28 (en) — §D/§E: canonical P-01 product definition + gap backlog €0
+CTO continuous P1+P2+product. Truth Lock d0c3e2c≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved, 166 suites.
+Branch excellence/p01-product-definition. Doc-only; no code change; no new primitive.
+
+**§D canonical product definition** `docs/odg/P01_PRODUCT_DEFINITION.md` (14 points): identity/value, problems/users,
+architecture, capabilities BY PROOF LEVEL, partial/unavailable, limits/preconditions/authz, user+client journey,
+deliverables+acceptance, security/privacy/observability/support, onboarding/hosting/billing/delivery, cost/price/margin
+(HYPOTHESIS vs data), demand-validation evidence needed, first priority offer + commercial-readiness criteria, gap
+backlog→closure missions. Every promise linked to a live-verified capability + evidence + limit; NO overclaim
+(prototype-engine≠production product; DEMAND_NOT_VALIDATED; go-to-market NOT_IMPLEMENTED/owner-gated; free DIY disclosed).
+References existing companion docs (ODG_PRODUCT_READINESS, PRODUCTION_READINESS_GAPS_V1, PRODUCTIZED_UNIT_ECONOMICS_V1) —
+no redundant duplicate.
+
+**§E gaps → traceable objectives:** P-GAP-1 onboarding/isolation · P-GAP-2 billing(sandbox) · P-GAP-3 hosting/exposure
+(owner-gated) · P-GAP-4 demand validation (owner-gated ≥5 WTP) · P-GAP-5 broaden checks (BLOCKED toolchains). Internal
+eng gaps dependency-ready; go-to-market gaps owner-gated.
+
+**Gate:** doc-only; last code gate test:report 166/tsc 0/build 0 stands (no code touched). €0; nothing sent; ACTUAL
+COLLECTED CASH €0; €500k unachieved. **THIS CAMPAIGN: Priority A broad-IT scaffold PR#148, Priority B ODG5 audit+eval-
+metrics wire PR#149, §D/E product def PR#(next).** NEXT: P-GAP internal eng lots (e.g. a client-isolation contract test)
+OR grow broad-IT corpus. Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
