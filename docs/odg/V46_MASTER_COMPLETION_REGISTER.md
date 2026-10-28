@@ -41,7 +41,7 @@ Opened: 2026-10-28 (V46). HEAD at open: `46b24bc` ≡ origin/main.
 
 | ID | Item | State | Next action |
 |----|------|-------|-------------|
-| G-01 | Owner-objective fidelity contract (preserve objective; forbid silent narrowing; forbid completion-claim while mandatory deliverables unverified; carry unresolved items across missions) | **NOT_STARTED** | Implement using existing CONTRACT/POLICY primitives + this register; no new primitive |
+| G-01 | Owner-objective fidelity contract (preserve objective; forbid silent narrowing; forbid completion-claim while mandatory deliverables unverified; carry unresolved items across missions) | **VERIFIED** | `objective-fidelity.ts`; suite 12 across the 4 mandated scenarios — ACCEPT genuine completion, REJECT_FALSE_COMPLETION, VERIFIED-without-evidence rejected, blocked⇒carry-forward+unblock, SILENT_NARROWING detected; pure POLICY/EVIDENCE evaluator, no new primitive (V47d) | Wire into mission close/validation path (C-08) |
 | G-02 | Objective-fidelity measure (original mandate vs write-set vs verified deliverables vs unresolved) | NOT_STARTED | After G-01 |
 
 ## PART D — RESEARCH (§7)
