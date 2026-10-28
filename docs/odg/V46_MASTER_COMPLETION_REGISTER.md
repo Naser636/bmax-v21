@@ -57,6 +57,7 @@ Opened: 2026-10-28 (V46). HEAD at open: `46b24bc` ≡ origin/main.
 
 | ID | Item | State | Evidence |
 |----|------|-------|----------|
+| P-01 | **First productized deliverable offer** — Code Health Check (real JS/TS/Python verification → evidence report) | **VERIFIED (deliverable; demand UNMEASURED)** | `code-health-service.ts`; suite 12 + LIVE real toolchain report (2 PASS / 2 FAIL / 1 UNSUPPORTED, 0 false PASS, honest limits, no retention, nothing sent) (V54c). Journey: offer/validate/execute/deliverable/evidence IMPLEMENTED; onboarding/billing/hosting NOT_IMPLEMENTED (owner-gated). Commercial state: NO lead/proposal/contract/invoice/cash | C3 validate demand (zero-cost experiment); billing in test env only; owner-gated external steps |
 | E-01 | Six axes A/B/C/D/E/F active & invariant | VERIFIED (structure) | `portfolio-axes.ts`, dashboards (V23–V33) |
 | E-02 | Qualified opportunity discovery (BOAMP/TED live) | VERIFIED (connector) / LOW-FIT | `bounded-http-client`, `ted-connector`, `tender-feed-connector` (V37–V39) |
 | E-03 | Private-sector programmatic feed | **BLOCKED** (no free lawful API; portals form-only / aggregators paid) | source-registry (V40) |
