@@ -135,9 +135,9 @@
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "VERIFIED 2026-10-28 (read-only loopback probe, docs/odg/deploy/VPS_STATUS.md): the running release (start 2026-10-27 06:26) PREDATES the fail-closed auth PRs #152/#153 (merged 2026-10-28), so GET /api/runtime-state returns 200 without a token in production. Service binds 127.0.0.1 ONLY — NOT publicly exposed (network-layer closed). Activating app-layer auth requires a REDEPLOY + restart + ODG_DASHBOARD_TOKEN config — a deployment (critical gate), not performed autonomously.",
-      "acceptance": "running release serves the fail-closed auth (503 without token) with ODG_DASHBOARD_TOKEN set in secure env; loopback preserved",
-      "nextAction": "owner authorizes a gated redeploy of main + sets ODG_DASHBOARD_TOKEN (EXPOSURE_RUNBOOK.md §1)"
+      "blockReason": "PREREQUISITE PREPARED (not executed). Gate A verified: running release (268be2c, 2026-10-27) PREDATES the fail-closed auth PRs #152/#153; /api/runtime-state returns 200 without a token; service binds 127.0.0.1 ONLY (not exposed); ODG_DASHBOARD_TOKEN is UNPROVIDED and the unit has no EnvironmentFile. Gate B NOT satisfiable autonomously: full acceptance needs 'authorized access succeeds' (a provided token) and the mandate forbids configuring unprovided credentials; wiring an EnvironmentFile + restart are PRIVILEGED (sudo /etc + systemd). Prepared + tested: runtime/core/dashboard-token-provision.ts (suite 14, no-secret, 0600, idempotent) + scripts/provision-dashboard-token.sh (sandbox-verified, fingerprint-only) + docs/odg/deploy/DASHBOARD_AUTH_ACTIVATION.md (exact gated runbook incl. rollback + acceptance checklist).",
+      "acceptance": "running release serves the fail-closed auth (deny without token, allow with valid token), loopback preserved, no secret leaked, rollback verified, independent post-deploy evidence recorded",
+      "nextAction": "OWNER (privileged, 3 steps): (1) sudo scripts/provision-dashboard-token.sh ; (2) sudo systemd drop-in EnvironmentFile + daemon-reload ; (3) scripts/odg-release.sh build/verify/activate (+ restart). Full runbook: docs/odg/deploy/DASHBOARD_AUTH_ACTIVATION.md"
     },
     {
       "id": "dashboard-tls-exposure",
