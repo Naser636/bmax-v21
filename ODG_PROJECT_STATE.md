@@ -7377,3 +7377,31 @@ adapter prepared) PR#126. test:report 137→144.** NEXT dependency-ready lots: C
 invokes resolveCodingMission — core pipeline, careful gating), a 4th task family (wrong-require-path / safe dep bump),
 or Lot F research (specialty demand + reference inventory→experiments). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/generative-repair-adapter.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dq) — V48 Lot A / C-08: coding resolver INVOKED on the real mission-loader path €0
+CTO "V48 CANONICAL DISPATCH INTEGRATION". Truth Lock 21ea8bc≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved.
+Branch excellence/mission-coding-integration-v48a. No new primitive. Diff = mission-coding-integration(.ts/.test) +
+mission-loader.ts (seam wiring) + tsconfig.runtime-dist.json (closure +6) + package.json + register + compass.
+
+**mission-coding-integration.ts (C-08 real-path):** the mission-loader stage (official producer of mission-context.json)
+now invokes attachCodingResolution(mission,{context}) — ADDITIVE + best-effort, guarded try/catch, SAME pattern as the
+existing MissionContext block ⇒ zero regression risk. It derives repo signals via a BOUNDED (cap 500 files, depth 6,
+skips node_modules/.git), READ-ONLY, guarded scan of ONLY context.authorizedPaths + repo-root manifests, runs
+resolveCodingMission, and persists runtime/generated/coding-resolution.json {route, language, plan, fidelityContract,
+executed:false}. Preserves EXECUTE/ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED; a non-engineering mission ⇒ NOT_A_CODING_MISSION;
+NEVER marks execution. Suite 11 (route distinctions, bounded scan, fail-closed, reads context from disk). **LIVE: real
+`tsx runtime/core/mission-loader.ts ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR` ⇒ "CodingRoute: ABSTAIN -> coding-
+resolution.json" persisted, mission-plan.json unchanged (no regression), tree clean.** (ABSTAIN faithful: that mission's
+authorizedPaths name .js files absent in a ZERO-JS repo ⇒ signalsScanned 0 ⇒ ODG abstains, no fabrication.)
+
+**DIST CLOSURE FIX:** compiled mission-loader now depends on the chain ⇒ added mission-coding-integration + coding-
+mission-resolver + code-mission-intake + code-execution + project-signal-detector + objective-fidelity to
+tsconfig.runtime-dist.json (closure 105→111). Caught by build-guard (UNRESOLVED dep) + 4–9 dist-suite fails, fixed, re-
+green.
+
+**Gate:** test:report 144→145; tsc 0; build 0 (closure 111). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. C-08 now resolver-INVOKED-on-real-path; full execution-REROUTING BLOCKED on RuntimeContext lacking a file
+list (documented). NEXT (V48 Lot C/C-06): 4th task family (wrong require/import repair from a reproducible failure)
+reusing runRepairWorkflow + a sealed before/after. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/mission-coding-integration.test.ts`

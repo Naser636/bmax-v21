@@ -147,6 +147,12 @@
     "runtime/core/provider-live-call-gate.ts",
     "runtime/core/reality-gate.ts",
     "runtime/core/truth-lock.ts",
-    "runtime/core/truth-lock-gate.ts"
+    "runtime/core/truth-lock-gate.ts",
+    "runtime/core/mission-coding-integration.ts",
+    "runtime/core/coding-mission-resolver.ts",
+    "runtime/core/code-mission-intake.ts",
+    "runtime/core/code-execution.ts",
+    "runtime/core/project-signal-detector.ts",
+    "runtime/core/objective-fidelity.ts"
   ]
 }
