@@ -7628,3 +7628,31 @@ VERIFIED (deliverable; demand UNMEASURED). ACTUAL COLLECTED CASH €0; €500k u
 PR#136, C/P-01 product offer PR#137.** NEXT: C3 zero-cost demand experiment (segment+hypothesis+sample deliverable+
 success thresholds, NO external contact) OR B2 autonomous mission-chain test. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/code-health-service.ts`
+
+---
+## CHECKPOINT 2026-10-28 (eb) — V55: project-aware TS checker (imports) + B1/B2 verified-existing €0
+CTO "V55 CONTINUOUS EXECUTION". Truth Lock acdaff6≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/ts-project-check-v55. No new primitive. Diff = ts-project-check(.ts/.test) + package.json + register + compass.
+
+**B1/B2 RECONCILED (§3, verify-not-rebuild):** checkpoint-engine (begin/stageRunning/stageDone/stageFailed/interrupt/
+complete/load; RC-2 FAILED-not-resumable; persists pipeline-checkpoint.json) + mission-scheduler (pure schedulerStep,
+injected dispatch — never self-executes). Existing tests already cover the mandated B2 cases: success⇒PASS,
+dependency-block⇒BLOCKED, already-proven dedup/idempotence (no duplication), provider-error⇒BLOCKED, missing/invalid
+proof⇒BLOCKED, verification-failure⇒FAIL, no-signal⇒NOT_MEASURABLE (never silent PASS), attempt/budget/duration caps,
+stopSignal. ⇒ B1/B2 VERIFIED via existing mechanisms; did NOT rebuild. Full live-dispatch wiring stays gated/OOS.
+
+**ts-project-check.ts (Priority 2 — import-aware TS verification, resolves single-file unsoundness):** runs the REAL
+compiler in PROJECT mode `node <typescript/bin/tsc> --noEmit -p <tsconfig>` (cwd=projectDir) so cross-file imports +
+tsconfig + paths + types are honoured. PASS=exit0; FAIL=non-zero+TS diagnostics (+errorCount); BLOCKED=tsc unresolved/
+unavailable/timeout/missing-tsconfig (a tool-absence/timeout/incomplete check NEVER becomes PASS — fail-closed).
+tscAvailable requires a clean exit-0 version probe (decoy-safe). Suite 9 (injected runner). **LIVE real tsc: clean
+project WITH imports⇒PASS; type-error⇒FAIL(1); missing-symbol import⇒FAIL(1); invalid tsconfig⇒FAIL.** Correctly PASSes
+an imported project that single-file check falsely FAILs.
+
+**A3 opt-in retained (§4):** removing the ODG_CODING_EXECUTE opt-in for TS needs the resolver/executor to know the
+project tsconfig (not in current MissionContext) ⇒ documented follow-on; no unsafe removal.
+
+**Gate:** test:report 155→156; tsc 0; build 0. €0; nothing sent. Register C-15 VERIFIED, B1/B2 VERIFIED-existing. ACTUAL
+COLLECTED CASH €0; €500k unachieved. NEXT: wire ts-project-check into routing (carry project tsconfig in MissionContext)
+to drop TS opt-in; OR P-01/C3 zero-cost demand experiment; OR extend code-health-service to consume project checks.
+Exact command: `git checkout main && git pull && npx tsx runtime/core/ts-project-check.ts <projectDir>`
