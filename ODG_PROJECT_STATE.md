@@ -7849,3 +7849,31 @@ demand validation + billing/onboarding/hosting (owner-gated external). €0; col
 ACCEPTED except the 2 human-gated deploy missions; P2 engine/governance substantially delivered, commercial+autonomous-
 dispatch+broad-IT open/gated. NEXT (dependency-ready): audit ODG5 A/B/C lots for further coverage gaps / 7th family /
 owner-authorize canary. Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
+
+---
+## CHECKPOINT 2026-10-28 (ek) — delegated-auth canary: dist tick CLI FIXED + autonomous loop proven (idempotence) €0
+CTO "CONTINUOUS CTO EXECUTION (delegated authority)". Truth Lock 810061e≡origin/main (0/0), clean, 5 stashes + 4 docs/
+preserved, 165 suites. Branch excellence/canary-tick-dist-wire. No new primitive. Diff = tsconfig.runtime-dist.json
+(closure +3) + compass + register. Per §2/§4.6 the delegation authorizes processing the canary in its read-only G10 scope.
+
+**REAL WIRING GAP FOUND+FIXED (§4.4 capability↔gate consistency):** the production dist canary-tick CLI `runtime/dist/
+bin/odg-schedule-tick.js` was UNRUNNABLE — `mission-scheduler`/`mission-attempt-log`/`latency-measure` were NOT in the
+dist closure, so corePort fell back to non-existent source .js (ZERO-JS) ⇒ MODULE_NOT_FOUND. The tickOnce was only ever
+tested hermetically via tsx; the dist binary (the production dispatch path) never loaded. FIX: added the 3 modules to
+tsconfig.runtime-dist.json (closure 114→117); build-guard caught+guided (latency-measure dep). dist tick now runs.
+
+**AUTONOMOUS CANARY — real dist path, delegated read-only authorization (one-shot env, NOT committed, NO allowlist
+expansion, deny-by-default preserved):** `ODG_CANARY_ALLOWLIST=G10_READONLY_AUTONOMY_PROBE node runtime/dist/bin/odg-
+schedule-tick.js` ⇒ **IDLE — ALREADY_PROVEN (dedup): G10** — the scheduler selected G10, authorized via allowlist, hit
+the proven-gate and REFUSED a DUPLICATE dispatch (idempotence / no-duplicate, B2 §4.6). Without the grant ⇒ IDLE
+empty-queue (deny-by-default restored; grant ephemeral). Full dispatch→odg-run(13/13)→VE SUCCESS for a FRESH G10 was
+already proven in V57 (direct executor). Durable ledger NOT mutated (refused to reset proven-state to force re-dispatch
+— unauthorized/irreversible). Tree clean (audit chain gitignored).
+
+**Dispatch decision update:** autonomous tick CLI now RUNNABLE + idempotence/deny-by-default proven on the real dist
+path; executor path VERIFIED (V57). The only unproven slice = a live tick→dispatch→pipeline for an UNPROVEN read-only
+mission (G10 is proven; §4.6 forbids adding other ids) ⇒ carried, not forced.
+
+**Gate:** test:report 165 (all PASS); tsc 0; build 0 (closure 117). €0; nothing sent; allowlist untouched (one-shot env
+only); deny-by-default intact. ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT: broad-IT corpus scaffolding (§4.7, zero-
+cost, dev/eval split) OR audit ODG5 A/B/C lots. Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
