@@ -63,4 +63,41 @@ ok("contract fail-closed without allowedFiles", A.prepareProposalContract({ work
   ok("invokeProvider BLOCKED without provider + unblock action", r.status === "BLOCKED" && /ODG_LOCAL_MODEL_CMD/.test(r.reason) && /authorizes/.test(r.unblock));
 }
 
-console.log(`\nGENERATIVE-REPAIR-ADAPTER suite — ${pass} assertions passed. (proposal→validate→proven harness; ACCEPT/ABSTAIN+rollback; REJECT out-of-scope; provider BLOCKED not faked)`);
+// (6) runGenerativeRepair END-TO-END with an INJECTED generator (deterministic): a correct proposal ⇒ ACCEPTED.
+(async () => {
+  const ws = mkWorkspace(BUGGY);
+  const correctGen = async () => ({ ok: true, model: "fake", text: '```json\n{"edits":[{"path":"src/f.js","content":"module.exports = (a, b) => a + b;\\n"}]}\n```' });
+  const res = await A.runGenerativeRepair({ workspaceDir: ws, instruction: "make f add", allowedFiles: ["src/"], acceptanceCommand: ["node", "--test"], currentFiles: { "src/f.js": BUGGY } }, { generate: correctGen, runner: addRunner });
+  ok("runGenerativeRepair: correct model proposal ⇒ ACCEPTED (confined apply+accept)", res.status === "ACCEPTED" && res.post.status === "PASS");
+  fs.rmSync(ws, { recursive: true, force: true });
+
+  // wrong proposal ⇒ ABSTAINED + rollback (untrusted output cannot force success).
+  const ws2 = mkWorkspace(BUGGY);
+  const wrongGen = async () => ({ ok: true, model: "fake", text: '{"edits":[{"path":"src/f.js","content":"module.exports=(a,b)=>a*b;\\n"}]}' });
+  const res2 = await A.runGenerativeRepair({ workspaceDir: ws2, instruction: "x", allowedFiles: ["src/"], acceptanceCommand: ["node", "--test"], currentFiles: { "src/f.js": BUGGY } }, { generate: wrongGen, runner: addRunner });
+  ok("runGenerativeRepair: wrong proposal ⇒ ABSTAINED + rollback", res2.status === "ABSTAINED" && res2.rolledBack === true && fs.readFileSync(path.join(ws2, "src", "f.js"), "utf8") === BUGGY);
+  fs.rmSync(ws2, { recursive: true, force: true });
+
+  // out-of-write-set proposal ⇒ REJECTED (model cannot expand its write-set).
+  const ws3 = mkWorkspace(BUGGY);
+  const escapeGen = async () => ({ ok: true, model: "fake", text: '{"edits":[{"path":"../../etc/evil","content":"x"}]}' });
+  const res3 = await A.runGenerativeRepair({ workspaceDir: ws3, instruction: "x", allowedFiles: ["src/"], acceptanceCommand: ["node", "--test"], currentFiles: {} }, { generate: escapeGen, runner: addRunner });
+  ok("runGenerativeRepair: out-of-write-set ⇒ REJECTED (no write-set expansion)", res3.status === "REJECTED" && res3.code === "WRITE_SET_VIOLATION");
+  fs.rmSync(ws3, { recursive: true, force: true });
+
+  // generator unavailable ⇒ BLOCKED (not faked).
+  const ws4 = mkWorkspace(BUGGY);
+  const downGen = async () => ({ ok: false, reason: "daemon down" });
+  const res4 = await A.runGenerativeRepair({ workspaceDir: ws4, instruction: "x", allowedFiles: ["src/"], acceptanceCommand: ["node", "--test"], currentFiles: {} }, { generate: downGen });
+  ok("runGenerativeRepair: generator down ⇒ BLOCKED (not faked)", res4.ok === false && res4.status === "BLOCKED");
+  fs.rmSync(ws4, { recursive: true, force: true });
+
+  // malformed model output ⇒ REJECTED.
+  const ws5 = mkWorkspace(BUGGY);
+  const junkGen = async () => ({ ok: true, model: "fake", text: "I cannot help with that." });
+  const res5 = await A.runGenerativeRepair({ workspaceDir: ws5, instruction: "x", allowedFiles: ["src/"], acceptanceCommand: ["node", "--test"], currentFiles: {} }, { generate: junkGen });
+  ok("runGenerativeRepair: malformed output ⇒ REJECTED", res5.ok === false && res5.code === "MALFORMED_PROPOSAL");
+  fs.rmSync(ws5, { recursive: true, force: true });
+
+  console.log(`\nGENERATIVE-REPAIR-ADAPTER suite — ${pass} assertions passed. (proposal→validate→proven harness; ACCEPT/ABSTAIN+rollback; REJECT out-of-scope; provider BLOCKED not faked; runGenerativeRepair confines untrusted model output)`);
+})();
