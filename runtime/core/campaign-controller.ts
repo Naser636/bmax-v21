@@ -74,6 +74,48 @@ function isStalled(lot: any): boolean {
 }
 
 /**
+ * staleAcceptances(register): ACCEPTED items whose evidence BASIS is no longer valid — a declared dependency is not
+ * ACCEPTED (it regressed / was reverted / is missing). Such evidence must NOT be blindly reused ("réutilise uniquement
+ * les preuves toujours valides"). Pure/read-only. Returns [{ id, invalidatedBy: string[] }].
+ */
+function staleAcceptances(register: any): any[] {
+  const items = Array.isArray(register.items) ? register.items : [];
+  const byId = new Map<string, any>(items.map((it: any) => [it.id, it] as [string, any]));
+  const stale: any[] = [];
+  for (const it of items) {
+    if (it.status !== TERMINAL_OK) continue;
+    const deps = Array.isArray(it.deps) ? it.deps : [];
+    const invalidatedBy = deps.filter((d: string) => { const dep = byId.get(d); return !dep || dep.status !== TERMINAL_OK; });
+    if (invalidatedBy.length) stale.push({ id: it.id, invalidatedBy });
+  }
+  return stale;
+}
+
+/**
+ * reconcile(register, { demote }): update the dependency graph AFTER a mission — stamp each ACCEPTED item's evidence
+ * validity (it.staleEvidence). With demote:true, a stale ACCEPTED item is sent back to IN_PROGRESS for re-verification
+ * (its old proof is preserved under priorEvidence, never silently trusted). Mutates + returns { stale, demoted }.
+ */
+function reconcile(register: any, opts: any = {}): any {
+  const stale = staleAcceptances(register);
+  const staleSet = new Set(stale.map((s) => s.id));
+  const demoted: string[] = [];
+  for (const it of (register.items || [])) {
+    if (it.status !== TERMINAL_OK) continue;
+    it.staleEvidence = staleSet.has(it.id);
+    if (it.staleEvidence && opts.demote === true) {
+      const by = (stale.find((s) => s.id === it.id) || {}).invalidatedBy || [];
+      it.status = "IN_PROGRESS";
+      it.priorEvidence = it.evidence;                       // preserved for audit; no longer a valid ACCEPTED proof
+      it.evidence = "";                                     // must be re-earned before ACCEPTED again (fail-closed)
+      it.nextAction = `re-verify: evidence basis invalidated (dep no longer ACCEPTED: ${by.join(", ")})`;
+      demoted.push(it.id);
+    }
+  }
+  return { stale, demoted };
+}
+
+/**
  * selectNextLot(register): the next ADMISSIBLE lot — OPEN (READY/IN_PROGRESS), not BLOCKED, deps all ACCEPTED —
  * chosen by dep-layer order then by numeric `priority` (lower = sooner). Returns { lot } | { lot:null, reason }.
  */
@@ -150,11 +192,12 @@ function summary(register: any): any {
     idle: !next.lot, idleReason: next.lot ? null : next.reason,
     blocked: (register.items || []).filter((it: any) => it.status === "BLOCKED").map((it: any) => ({ id: it.id, blockReason: it.blockReason || null })),
     stalled: (register.items || []).filter((it: any) => OPEN_STATES.includes(it.status) && isStalled(it)).map((it: any) => ({ id: it.id, attempts: it.attempts || 0, lastFailureReason: it.lastFailureReason || null })),
+    staleEvidence: staleAcceptances(register),   // ACCEPTED items whose dependency basis is no longer valid (don't reuse blindly)
   };
 }
 
-export { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, STATES };
-module.exports = { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, STATES };
+export { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, staleAcceptances, reconcile, STATES };
+module.exports = { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, staleAcceptances, reconcile, STATES };
 
 if (require.main === module) {
   const r = loadRegister(process.argv[2] || "docs/odg/closure-register.json");

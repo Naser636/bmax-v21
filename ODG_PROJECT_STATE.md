@@ -8325,3 +8325,22 @@ lastFailureFingerprint ⇒ unaffected; real register 0 stalled).
 **Tests (targeted):** campaign-controller suite 15→22 (+no-repeat flow, stalled-reason, un-stall via strategy/clearFailure,
 fingerprint determinism+sensitivity). Gate: test:report 176, tsc 0, build 0. €0. Blockers unchanged (5 external).
 NEXT: merge PR#170 (Go lot) when owner authorizes; then per-family compiler coverage toward 0.6 gate.
+
+---
+## CHECKPOINT 2026-10-28 (fi) — Engine intelligence: evidence-validity propagation + graph reconcile €0
+Entry via compass. Truth Lock c6d05b3≡origin/main (0/0); Go lot = branch excellence/go-build-capability PR#170 OPEN
+(untouched); 5 stashes + worktrees + foreign dirs preserved.
+
+**Defect demonstrated (code):** campaign-controller trusted an ACCEPTED item forever — when a dependency regressed
+(ACCEPTED→READY/BLOCKED), the dependent stayed ACCEPTED and its evidence was blindly reused; nothing flagged. Violates
+"réutilise uniquement les preuves toujours valides" + "mette à jour le graphe des dépendances après chaque mission".
+
+**Fix (pure selector, no 10th primitive):** staleAcceptances(register) = ACCEPTED items with a dep not ACCEPTED
+(regressed/reverted/missing) + invalidatedBy; reconcile(register,{demote}) updates the graph after a mission — stamps
+it.staleEvidence; with demote, re-opens stale ACCEPTED → IN_PROGRESS, evidence CLEARED (fail-closed), priorEvidence kept
+for audit, nextAction set. summary surfaces staleEvidence[]. Dependency ordering re-does the dep first; once re-ACCEPTED
+the dependent is no longer stale. Backward-compatible: real register 0 stale.
+
+**Tests (targeted):** campaign-controller 22→30 (+flag on regress, summary surface, demote re-open with priorEvidence,
+dep-ordered re-verify, re-admit after dep re-ACCEPTED, flag-only mode, real register 0 stale). Gate: test:report 176,
+tsc 0, build 0. €0. Blockers unchanged (5 external). NEXT: owner-authorize+merge PR#170 (Go); per-family coverage→0.6.
