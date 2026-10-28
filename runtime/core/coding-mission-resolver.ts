@@ -24,6 +24,7 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
 const FAMILY_PLAN: Record<string, any> = Object.freeze({
   check: { module: "code-execution", entry: "runSyntaxCheck", desc: "real syntax/type CHECK (JS/TS/Python)" },
   "repair-exports": { module: "task-fix-exports", entry: "buildFixExportsTask→runRepairWorkflow", desc: "repair a defined-but-not-exported symbol" },
+  "fix-require": { module: "task-fix-require", entry: "buildFixRequireTask→runRepairWorkflow", desc: "repair a broken relative require/import (single unambiguous candidate)" },
   "add-tests": { module: "task-add-tests", entry: "buildAddTestsTask→runRepairWorkflow", desc: "generate a characterization test from provided examples" },
   repair: { module: "repair-workflow", entry: "runRepairWorkflow", desc: "bounded repair from a supplied change (edits/fixers)" },
 });
