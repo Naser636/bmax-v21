@@ -89,6 +89,18 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "shellcheck-lint-capability",
+      "program": "P2",
+      "title": "Shell/lint capability via authorized shellcheck install (Priority C)",
+      "status": "ACCEPTED",
+      "deps": [
+        "langfamily-noinstall-checkers"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): shellcheck 0.11.0 installed via authorized reproducible apt procedure (official Ubuntu universe; standalone linter, no service/config impact — dashboard health 200 after). code-execution LANG_SPEC +ShellLint (real static analysis; exit!=0 on findings; UNSUPPORTED if absent). broad-it-eval v4: +Shell/lint category (8 real cases, dev+heldout accuracy 1.0, leakage disjoint), corpus 44→52; TARGET_TAXONOMY Shell/lint supported=true; coverage MEASURED 0.4167→0.5 (6/12), STILL < 0.6 ⇒ broadIT=NO_DATA. capability-taxonomy.measuredSurface reflects 6 covered / 8 toolchains, broad rate NO_DATA, 0 PROVEN unchanged. Suites: code-execution 28, broad-it-eval 30.",
+      "acceptance": "a real Shell/lint checker (shellcheck) executes + evaluates with held-out leakage guard; coverage rises honestly; broad rate stays NO_DATA"
+    },
+    {
       "id": "langfamily-noinstall-checkers",
       "program": "P2",
       "title": "No-install real checkers: Shell/SQL/YAML/JSON (realizable decomposition of new-language-families)",
@@ -154,16 +166,17 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for COMPILER/LINTER stacks (Go/Rust/Java/C# + shellcheck/tidy/hadolint)",
+      "title": "Engineering capability for COMPILER stacks (Go/Rust/Java/C#) + remaining linters (tidy/hadolint)",
       "status": "BLOCKED",
       "deps": [
-        "langfamily-noinstall-checkers"
+        "langfamily-noinstall-checkers",
+        "shellcheck-lint-capability"
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "NARROWED: the no-install subset (Shell/SQL/YAML/JSON) is DONE (see langfamily-noinstall-checkers). What remains genuinely needs an authorized install — compilers go/rustc/cargo/javac/dotnet and linters shellcheck/tidy/hadolint — all probed ABSENT; no authorized network install.",
-      "acceptance": "an executable check/repair + independent eval per added compiled/linted stack (real toolchain installed)",
-      "nextAction": "authorize a reproducible local toolchain install (e.g. apt/go/rustup in a bounded step) OR route to axis-D subcontracting"
+      "blockReason": "FURTHER NARROWED: no-install subset DONE (Shell/SQL/YAML/JSON) + Shell/lint DONE via authorized shellcheck install (shellcheck-lint-capability). What remains needs their own authorized reproducible installs — compilers go/rustc/cargo/javac/dotnet (each a larger toolchain with its own impact profile) and linters tidy (HTML-CSS) / hadolint (Dockerfile). golang-go is apt-available (candidate 2:1.26~1) but a compiler toolchain on the prod VPS host warrants a deliberate per-family impact decision, not a bulk install.",
+      "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
+      "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },
     {
       "id": "roadmap-deps-proposal-preview",
