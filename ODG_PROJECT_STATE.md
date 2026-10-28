@@ -7352,3 +7352,28 @@ unachieved. NEXT (C-08 final step, separate gated lot): have the live stage-disp
 engineering missions (touches core pipeline — careful regression gating). OR V47 Lot E/C-04: investigate the generative
 provider interface + prepare the internal proposal→edits adapter contract (BLOCKED until ODG_LOCAL_MODEL_CMD authorized).
 Exact command: `git checkout main && git pull && npx tsx runtime/core/coding-mission-resolver.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dp) — V47 Lot E / C-04: generative proposal→edits adapter PREPARED (provider BLOCKED) €0
+CTO V47 Lot E. Truth Lock c9985f8≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/generative-adapter-v47e. No new primitive. Diff = generative-repair-adapter(.ts/.test) + package.json +
+register + compass.
+
+**generative-repair-adapter.ts (C-04 — adapter prepared, provider call BLOCKED):** the bounded proposal→edits path so
+an authorized model's output flows through the PROVEN acceptance-gated/rollback-safe repair harness, WITHOUT activating
+any provider. prepareProposalContract(task) → structured contract {allowedFiles(writeSet), acceptanceCommand, maxEdits,
+format, constraints}. validateProposal → rejects WRITE_SET_VIOLATION/TOO_MANY_EDITS/MALFORMED_EDIT/EMPTY/MALFORMED
+before any apply. applyProposal → runRepairWorkflow (isolated ws, real acceptance, exact rollback). invokeProvider →
+honestly BLOCKED (ODG_LOCAL_MODEL_CMD unset ⇒ model NOT called, output NOT faked; set+unauthorized ⇒ BLOCKED;
+set+authorized ⇒ NOT_IMPLEMENTED, deferred to activation lot). Distinct from patch-proposal-apply (that targets the
+governed LIVE-repo patch-executor; this targets the isolated harness so model edits are test-proven before they could
+reach a real repo). Suite 11 (valid⇒ACCEPTED fix on disk; wrong⇒ABSTAINED+rollback; out-of-scope/oversize/malformed⇒
+REJECTED; provider BLOCKED). ODG_LOCAL_MODEL_CMD remains unset ⇒ synthesis still genuinely BLOCKED.
+
+**Gate:** test:report 143→144; tsc 0; build 0 (closure 105). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **V47 THIS TURN: 5 lots merged — A/C-10 (missing-export repair) PR#122, B/C-07 (code-check eval + TS-checker
+defect FIX) PR#123, D/G-01 (objective-fidelity) PR#124, C/C-08 (coding-mission resolver) PR#125, E/C-04 (generative
+adapter prepared) PR#126. test:report 137→144.** NEXT dependency-ready lots: C-08 final step (live stage-dispatcher
+invokes resolveCodingMission — core pipeline, careful gating), a 4th task family (wrong-require-path / safe dep bump),
+or Lot F research (specialty demand + reference inventory→experiments). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/generative-repair-adapter.test.ts`
