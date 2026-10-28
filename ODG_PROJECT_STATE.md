@@ -7095,3 +7095,25 @@ NO_DATA (no held-out broad-IT corpus run); 50% target UNMET + UNMEASURED.** Suit
 **Gate:** test:report 131→132; tsc 0; build 0. €0; nothing sent. Honest: ODG is NOT broadly proven; broad success rate
 UNKNOWN; its niche (K, software-assurance) is strongest but synthetic/unsold. Session V21→V41 = PRs #82–#115(pending),
 test:report 59→132, all ff-only CI-green. NEXT: failure taxonomy (V42) or run a small held-out eval tranche in K.
+
+---
+## CHECKPOINT 2026-10-28 (df) — V42: failure taxonomy (real session seed; evidence-ranked) €0
+CTO "V42 MAXIMUM VERIFIED SUCCESS" (post-PR#115, main 05ae679). Truth Lock 05ae679≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, CI success. No new primitive. Diff = failure-taxonomy(.ts/.test) + package.json + compass.
+
+**failure-taxonomy.ts (EXECUTED — V42 §5, honest):** 15 failure categories + classify + rankInterventions (severity-
+weighted) + summary. SEEDED with 6 REAL defects observed THIS session (provenance: lot + caughtBy): F1 REV.targetPlan
+stale-API (V34, caught live), F2 capabilityFit 'ssi' substring (V38, caught live), F3 Number(null)=0 (V37, unit-test),
+F4 pass<20 guard (V38, run-test), F5 reduce-spread tsc (V25, tsc), F6 top-level-await tsx (V39, run-test). **All 6 CAUGHT
+pre-merge, 0 shipped.** Dominant cause = INADEQUATE_TESTS (2×) ⇒ intervention: design tests from the failure mode first +
+a LIVE/integration check before merge (not only unit). Suite 10.
+
+**HONEST CAVEATS (in code+test):** (1) this is a SMALL real sample (6, this session), NOT a broad held-out failure study
+(broadFailureStudy=NO_DATA); (2) "0 shipped this session" is a defect-ESCAPE metric, explicitly NOT a VERIFIED_SUCCESS_
+RATE claim; (3) a shipped defect would be counted, not hidden (tested). Measured signal: independent verification
+(tsc + live-run + tests) caught every real defect this session.
+
+**Gate:** test:report 132→133; tsc 0; build 0. €0; nothing sent. Session V21→V42 = PRs #82–#116(pending), test:report
+59→133, all ff-only CI-green. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved; broad VERIFIED_SUCCESS_RATE
+NO_DATA. NEXT: run a small held-out eval tranche in axis K (software-assurance, the strongest category) to replace the
+NO_DATA baseline with a real measured rate — OR continue the ~74-ref research backlog.
