@@ -8305,3 +8305,23 @@ capability-taxonomy.measuredSurface ⇒ 6 covered / 8 toolchains, broad rate NO_
 broad-it-eval suite 28→30. Register +ACCEPTED shellcheck-lint-capability; new-language-families FURTHER NARROWED to
 compilers (Go/Rust/Java/C#) + tidy/hadolint (each own authorized install; golang apt-available but compiler on prod host
 = deliberate per-family decision). 15 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 176, tsc 0, build 0. €0.
+
+---
+## CHECKPOINT 2026-10-28 (fh) — Engine intelligence: NO-REPEAT guard in campaign-controller €0
+Entry via compass. Truth Lock: branched off origin/main bb14bc0 (Go lot = branch excellence/go-build-capability, PR#170
+OPEN not merged; go1.26.8 present — preserved untouched). 5 stashes + worktrees + foreign dirs preserved.
+
+**Defect demonstrated (code):** campaign-controller had NO no-repeat/attempt/fingerprint logic. A READY lot that fails
+is re-selected identically forever — BEFORE: selectNextLot over [A(fails),B] returned ["A","A","A","A"] (B starved,
+infinite repeat; no way to record a failed attempt). Violates mandate priority 1.
+
+**Fix (pure selector, no new primitive):** lotFingerprint(lot)=sha256 of actionable def {id,title,deps,strategy,
+inputsHash}; advance(...,{attemptFailed:true,reason}) stamps lastFailureFingerprint + attempts; selectNextLot SKIPS a
+lot where lastFailureFingerprint===current fingerprint (isStalled) ⇒ not re-selected while unchanged; a new strategy/
+inputsHash (or clearFailure, e.g. new evidence) changes the fingerprint ⇒ re-admitted. summary surfaces stalled[].
+AFTER: ["A","B",null,null]; A strategy-change ⇒ A selectable again. Backward-compatible (existing items have no
+lastFailureFingerprint ⇒ unaffected; real register 0 stalled).
+
+**Tests (targeted):** campaign-controller suite 15→22 (+no-repeat flow, stalled-reason, un-stall via strategy/clearFailure,
+fingerprint determinism+sensitivity). Gate: test:report 176, tsc 0, build 0. €0. Blockers unchanged (5 external).
+NEXT: merge PR#170 (Go lot) when owner authorizes; then per-family compiler coverage toward 0.6 gate.
