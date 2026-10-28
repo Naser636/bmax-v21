@@ -7582,3 +7582,28 @@ SEPARATELY: check-acc 1.0(13) · repair-accept 1.0,fs0(6) · **gen-repair accept
 · broad-IT NO_DATA. **V50 COMPLETE: C-04 Ollama generative repair PR#134 + gen-repair eval PR#135.** ACTUAL COLLECTED
 CASH €0; €500k unachieved. NEXT: grow generative corpus / wire coding-executor as a live pipeline stage / Lot F research.
 Exact command: `git checkout main && git pull && npx tsx runtime/core/generative-repair-eval.ts qwen2.5-coder:3b`
+
+---
+## CHECKPOINT 2026-10-28 (dz) — V54 Lot A3: effective routing END-TO-END on the real loader path (opt-in) €0
+CTO "V54 WORLD-CLASS AUTONOMOUS ENGINEERING". Truth Lock 90ab6d5≡origin/main (0/0), clean, 5 stashes + 4 docs/
+preserved (V51–V53 never ran in-session; state = my V50b report, no fabrication). Branch
+excellence/coding-execute-wire-v54a. No new primitive. Diff = mission-coding-integration.ts (+opt-in execute) +
+mission-fidelity-verdict.ts (gate: EXECUTE+FAILED⇒block) + mission-loader.ts (pass execute from env) +
+tsconfig.runtime-dist.json (closure += coding-executor) + coding-execute-wire.test.ts + package.json + register + compass.
+
+**A3 — real-path execution wiring (C-08 end-to-end):** attachCodingResolution gained OPT-IN execute (opts.execute OR
+env ODG_CODING_EXECUTE=1; DEFAULT OFF ⇒ zero change to existing missions). When ON + route===EXECUTE it runs the bounded
+coding-executor over in-scope files and embeds executionResult {status, filesChecked, results} in coding-resolution.json
+(executed = status===VERIFIED). The VE codingFidelityGate now also BLOCKS route===EXECUTE + executionResult FAILED/
+BLOCKED (an EXECUTE route alone is NOT success); VERIFIED or no-executionResult ⇒ unchanged (no regression). mission-loader
+passes execute from env. Suite 9 (opt-in off=zero-regression, on=real executionResult, gate blocks EXECUTE+FAILED/allows
+VERIFIED, ROUTE_UNSUPPORTED still blocks). **LIVE on the real loader hook with real `node --check`: clean JS⇒VERIFIED/
+executed true; broken JS⇒FAILED/executed false.** Full chain load→context→resolve→EXECUTE→REAL check→result→VE gate proven.
+
+**Honest limit (why opt-in):** isolated single-file `tsc --noEmit` is unsound for TS files WITH imports (false FAIL);
+JS `node --check` + Python `py_compile` are syntax-sound. Enable-by-default awaits an import-aware TS check. Closure 113.
+
+**Gate:** test:report 153→154; tsc 0; build 0. €0; nothing sent. Register C-08 → VERIFIED (opt-in end-to-end). ACTUAL
+COLLECTED CASH €0; €500k unachieved. NEXT (V54 Chantier B/C): B2 autonomous mission-chain test on the real path, OR C1/C2
+select+implement ONE deliverable product offer from proven capabilities (e.g. "syntax/type check + bounded repair as a
+service" using code-execution+repair-workflow). Exact command: `git checkout main && git pull && ODG_CODING_EXECUTE=1 npx tsx runtime/core/coding-execute-wire.test.ts`
