@@ -8293,3 +8293,15 @@ systemctl restart). NO public exposure/DNS/TLS/hostname change. No secret in out
 **Four-level:** implementation DONE (auth on main), integration DONE (EnvironmentFile+release), **live-operation DONE +
 VERIFIED**, external-acceptance N/A (internal service). dashboard-auth-redeploy ⇒ ACCEPTED. Register 14 ACCEPTED/1
 IN_PROGRESS/5 BLOCKED. Gate: test:report 176, tsc 0. €0. VPS_STATUS.md updated.
+
+---
+## CHECKPOINT 2026-10-28 (fg) — Priority C: Shell/lint capability via authorized shellcheck install €0
+Owner-delegated reproducible install. shellcheck 0.11.0 via apt (official Ubuntu universe; standalone linter, no
+service/config impact — dashboard health 200 after install, unaffected). code-execution LANG_SPEC +ShellLint (real
+static analysis; exit!=0 on findings; UNSUPPORTED if absent; code-exec suite 25→28 incl real-subprocess). broad-it-eval
+v4: +Shell/lint category (8 real cases verified vs shellcheck, dev+heldout acc 1.0, leakage disjoint), corpus 44→52;
+TARGET_TAXONOMY Shell/lint supported=true; coverage MEASURED 0.4167→**0.5** (6/12), STILL < 0.6 ⇒ broadIT=NO_DATA (honest).
+capability-taxonomy.measuredSurface ⇒ 6 covered / 8 toolchains, broad rate NO_DATA, 0 PROVEN unchanged (suite 15).
+broad-it-eval suite 28→30. Register +ACCEPTED shellcheck-lint-capability; new-language-families FURTHER NARROWED to
+compilers (Go/Rust/Java/C#) + tidy/hadolint (each own authorized install; golang apt-available but compiler on prod host
+= deliberate per-family decision). 15 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 176, tsc 0, build 0. €0.

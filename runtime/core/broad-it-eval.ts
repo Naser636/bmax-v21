@@ -71,13 +71,22 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "dev-sh-broken-1", partition: "dev", category: "Shell/syntax", language: "Shell", kind: "broken", expected: "FAIL", content: "for i in 1 2 3; do echo $i\n" },
   { id: "held-sh-clean-1", partition: "heldout", category: "Shell/syntax", language: "Shell", kind: "clean", expected: "PASS", content: "x=1\nif [ \"$x\" -eq 1 ]; then echo one; fi\n" },
   { id: "held-sh-broken-1", partition: "heldout", category: "Shell/syntax", language: "Shell", kind: "broken", expected: "FAIL", content: "case $x in\n  a) echo a\n" },
+  // --- Shell/lint (v4): real `shellcheck` static analysis (stronger than bash -n). ---
+  { id: "dev-shlint-clean-1", partition: "dev", category: "Shell/lint", language: "ShellLint", kind: "clean", expected: "PASS", content: "#!/usr/bin/env bash\nset -euo pipefail\nname=\"world\"\necho \"hello ${name}\"\n" },
+  { id: "dev-shlint-clean-2", partition: "dev", category: "Shell/lint", language: "ShellLint", kind: "clean", expected: "PASS", content: "#!/usr/bin/env bash\nset -euo pipefail\nfor f in a b c; do\n  echo \"$f\"\ndone\n" },
+  { id: "dev-shlint-broken-1", partition: "dev", category: "Shell/lint", language: "ShellLint", kind: "broken", expected: "FAIL", content: "#!/usr/bin/env bash\nrm -rf $UNQUOTED/*\n" },
+  { id: "dev-shlint-broken-2", partition: "dev", category: "Shell/lint", language: "ShellLint", kind: "broken", expected: "FAIL", content: "#!/usr/bin/env bash\necho \"files: `ls | wc -l`\"\n" },
+  { id: "held-shlint-clean-1", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "clean", expected: "PASS", content: "#!/usr/bin/env bash\nset -euo pipefail\nif [ -f /etc/hostname ]; then\n  cat /etc/hostname\nfi\n" },
+  { id: "held-shlint-clean-2", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "clean", expected: "PASS", content: "#!/usr/bin/env bash\nset -euo pipefail\ngreet() {\n  printf \"%s\\n\" \"$1\"\n}\ngreet \"hi\"\n" },
+  { id: "held-shlint-broken-1", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "broken", expected: "FAIL", content: "#!/usr/bin/env bash\necho $1\n" },
+  { id: "held-shlint-broken-2", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "broken", expected: "FAIL", content: "#!/usr/bin/env bash\nif [ $x == \"y\" ]; then echo ok; fi\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v3";
-// The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 adds the
-// NO-INSTALL checkers (SQL via stdlib sqlite3, YAML via PyYAML, Shell via `bash -n`) — a real expansion using tooling
-// already present; compiler stacks (Go/Rust/Java/C#) still require an authorized install and stay UNSUPPORTED.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax"];
+const CORPUS_VERSION = "broad-it-eval-v4";
+// The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
+// NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
+// Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
@@ -92,7 +101,7 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
   { category: "Java/compile", supported: false },
   { category: "CSharp/compile", supported: false },
   { category: "SQL/schema", supported: true },               // v3: now a REAL checker (stdlib sqlite3, no install)
-  { category: "Shell/lint", supported: false },               // `bash -n` gives SYNTAX only; a linter (shellcheck) is still absent
+  { category: "Shell/lint", supported: true },                // v4: real shellcheck static analysis (authorized reproducible install)
   { category: "HTML-CSS/validate", supported: false },
   { category: "Config-YAML/validate", supported: true },      // v3: now a REAL checker (PyYAML, no install)
   { category: "Dockerfile/lint", supported: false },

@@ -37,8 +37,8 @@ ok("non-string content ⇒ BLOCKED", E.runSyntaxCheck({ language: "Python", cont
 const tc = E.detectToolchain({ runner: (bin) => bin === "python3" ? { exitCode: 0, stdout: "Python" } : { spawnError: "ENOENT" } });
 ok("detectToolchain: python available, others not (via mock probe)", tc.Python === true && tc.JavaScript === false);
 
-// (9) NO-INSTALL checker expansion registered: Shell/SQL/YAML/JSON specs present + argv-array (no shell string).
-for (const lang of ["Shell", "SQL", "YAML", "JSON"]) {
+// (9) checker expansion registered: Shell/SQL/YAML/JSON + ShellLint specs present + argv-array (no shell string).
+for (const lang of ["Shell", "SQL", "YAML", "JSON", "ShellLint"]) {
   ok(`LANG_SPEC has ${lang} (no-install checker) with argv-array args`, E.LANG_SPEC[lang] && Array.isArray(E.LANG_SPEC[lang].args("f")) && typeof E.LANG_SPEC[lang].bin === "string");
 }
 // compiler stacks remain honestly ABSENT from LANG_SPEC (require authorized install ⇒ UNSUPPORTED, never faked).
@@ -53,6 +53,8 @@ const realCases = [
   ["SQL", "CREATE TABLE t (id INTEGER PRIMARY KEY, n TEXT);\n", "PASS"], ["SQL", "CREATE TABLE t (id INTEGER PRIMARY,, n;\n", "FAIL"],
   ["YAML", "a: 1\nb:\n  - x\n  - y\n", "PASS"], ["YAML", "a: 1\n  b: : :\n- x\n", "FAIL"],
   ["JSON", "{\"a\":1,\"b\":[1,2]}\n", "PASS"], ["JSON", "{\"a\":1,,}\n", "FAIL"],
+  ["ShellLint", "#!/usr/bin/env bash\nset -euo pipefail\nname=\"world\"\necho \"hello ${name}\"\n", "PASS"],
+  ["ShellLint", "#!/usr/bin/env bash\nrm -rf $UNQUOTED/*\n", "FAIL"],
 ];
 for (const [lang, content, exp] of realCases) {
   if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }

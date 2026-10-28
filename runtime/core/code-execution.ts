@@ -36,8 +36,10 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   JavaScript: { bin: "node", probeArgs: ["--version"], args: (f: string) => ["--check", f], ext: ".js" },
   TypeScript: { bin: TS_BIN, probeArgs: TS_PROBE, args: TS_ARGS, ext: ".ts" },
   Python: { bin: "python3", probeArgs: ["--version"], args: (f: string) => ["-m", "py_compile", f], ext: ".py" },
-  // Shell SYNTAX validation via `bash -n` (no execution of the script). NOT a linter — shellcheck is absent.
+  // Shell SYNTAX validation via `bash -n` (no execution of the script).
   Shell: { bin: "bash", probeArgs: ["--version"], args: (f: string) => ["-n", f], ext: ".sh" },
+  // Shell LINT (static analysis) via shellcheck — stronger than bash -n; exit!=0 on any finding. Probe fails ⇒ UNSUPPORTED.
+  ShellLint: { bin: "shellcheck", probeArgs: ["--version"], args: (f: string) => [f], ext: ".sh" },
   // SQL/schema validation: parse+apply the DDL against an in-memory SQLite db (stdlib; no file/network side effects).
   SQL: { bin: "python3", probeArgs: ["-c", "import sqlite3"], args: (f: string) => ["-c", "import sys,sqlite3; sqlite3.connect(':memory:').executescript(open(sys.argv[1]).read())", f], ext: ".sql" },
   // YAML validation via PyYAML safe_load_all (probe fails ⇒ UNSUPPORTED if PyYAML is not installed).
