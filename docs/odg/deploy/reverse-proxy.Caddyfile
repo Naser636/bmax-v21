@@ -1,0 +1,32 @@
+# ODG dashboard reverse-proxy — TEMPLATE (NOT ACTIVATED).
+# Purpose: terminate TLS and front the loopback-only Next.js dashboard (127.0.0.1:3000) so the app process is NEVER
+# bound directly to a public interface. Activation is owner-gated (see EXPOSURE_RUNBOOK.md) and must pass the
+# dashboard-exposure-readiness gate first. Replace dashboard.example.org with the real hostname at activation time.
+#
+# Preconditions enforced elsewhere (do NOT weaken here):
+#   - App auth is fail-closed on the internal-state API + page (ODG_DASHBOARD_TOKEN must be set) — see src/lib/dashboard-auth.ts
+#   - The upstream MUST remain bound to 127.0.0.1 only; this proxy is the single public entry point.
+
+dashboard.example.org {
+	# Automatic HTTPS (Let's Encrypt) — TLS is terminated here; upstream stays plaintext on loopback only.
+	encode gzip
+
+	# Defense-in-depth security headers.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# Optional proxy-level access control (IP allowlist) — see access-control.md. Uncomment + set real CIDRs.
+	# @blocked not remote_ip 203.0.113.0/24 198.51.100.7
+	# respond @blocked "forbidden" 403
+
+	reverse_proxy 127.0.0.1:3000 {
+		header_up X-Forwarded-Proto {scheme}
+		health_uri /api/health
+		health_interval 15s
+	}
+}

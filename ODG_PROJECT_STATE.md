@@ -8115,3 +8115,21 @@ updated. Counts 6 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED (was 5/1/5). Controller r
 
 **Gate:** test:report 169/169, tsc 0, build 0 (closure 117). €0; COLLECTED CASH €0. NEXT: continue decomposing the
 remaining 4 blocked objectives (dashboard-tls prep, roadmap-deps prep, p01-demand design, p01-billing sandbox logic).
+
+---
+## CHECKPOINT 2026-10-28 (ev) — UNBLOCK: dashboard exposure-readiness gate + TLS/proxy templates + runbook €0
+Decomposed dashboard-tls-exposure into realizable prep vs owner-gated activation. Prep DONE; nothing exposed.
+
+**dashboard-exposure-readiness.ts:** pure, deny-by-default gate over 6 required controls (authTokenConfigured,
+tlsTermination, reverseProxyConfigured, accessControlConfigured, rollbackProcedure, ownerExposureConfirmed). Strict
+boolean (no truthy coercion), owner-confirmation NEVER inferred, never exposes/binds anything. probeExposureReadiness
+reads real env+fs. **LIVE probe ⇒ NOT_READY** (4/6 controls now satisfied by artifacts; token + owner-confirm absent)
+— exposure stays CLOSED, honestly. Suite 14. **Artifacts** docs/odg/deploy/: reverse-proxy.Caddyfile (TLS+headers,
+upstream stays 127.0.0.1), access-control.md (deny-by-default allowlist, empty on purpose), EXPOSURE_RUNBOOK.md
+(preflight gate → gated activation → always-available rollback).
+
+**Register:** new ACCEPTED dashboard-exposure-readiness-gate; dashboard-tls-exposure NARROWED to the owner's exposure
+decision + hostname/cert/token + activation (still BLOCKED, deps=[readiness-gate]). 7 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
+
+**Gate:** test:report 169→**170**, tsc 0, build 0. €0; COLLECTED CASH €0. NEXT: roadmap-deps prep, p01-demand design,
+p01-billing sandbox logic.
