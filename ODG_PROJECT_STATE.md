@@ -7812,3 +7812,40 @@ the central trust-boundary capabilities were NOT regression-protected. FIX: adde
 A→Z verdict so far: main is the verified SSOT; ODG5 merged; Reality-Gate now gated. NEXT (A→Z dependency-ready): audit
 remaining ODG5 A/B/C reality-gate lots for further coverage gaps, or 7th task family, or owner-authorize canary.
 Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
+
+---
+## CHECKPOINT 2026-10-28 (ej) — DUAL-ROADMAP (P1+P2) RECONCILIATION — no silent loss €0
+CTO "DUAL-ROADMAP INTEGRATION". Truth Lock 771e4d7≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved, 165 suites.
+Branch excellence/dual-roadmap-reconcile. Doc-only (boussole); no code change. No new primitive.
+
+**§2 P1 SOURCE RETRIEVED (provenance):** canonical authority chain = Frozen Master FICHE_01–06
+(docs/odg-master-v5/source/) → Runtime Constitution (runtime/constitution/) → CTO Directives → **runtime/governance/
+ROADMAP.json** (machine-readable, 12 governed missions). V5 program roadmap = docs/odg-master-v5/source/ODG_V5_ROADMAP_
+WITH_WORK_METHOD.md (1550 l). Resumption index = docs/odg-operational/ODG_MASTER_ROADMAP.md. Doctrine (50K Semantic /
+166 Capability / A01–A54 / 9 primitives) = docs/odg-master-v5/. NOT a summary — the full objective sources are present.
+
+**P1 VIEW — governed runtime roadmap (12 missions, all contracts PRESENT ⇒ no autonomy-loop blocker):**
+M0000/M0001/M0002 (architecture/framework/foundation), CLEAN_RUNTIME_WORKSPACE, PROVIDER_ENABLED_SMOKE_V1,
+UNIFY_RUNTIME_EXECUTION, DYNAMIC_MISSION_CONTRACT_FACTORY, AUTONOMOUS_CONTRACT_EVOLUTION, GOVERNED_DASHBOARD_
+OBSERVABILITY = ACCEPTED/operational per durable evidence (mission-ledger 1337 entries; compass: M0001 SUCCESS+validated,
+dashboard serves HTTP 200 loopback live, CLEAN_RUNTIME_WORKSPACE 13/13). VPS_DEPLOYMENT_READINESS +
+DEPLOY_BMAX_DASHBOARD_PROD_V1 = **BLOCKED_BY_PERMISSION** (public VPS exposure / prod deploy = reserved HUMAN gate;
+local dashboard operational, loopback-only BY GOVERNANCE — not a defect). NO P1 objective dropped.
+
+**P2 VIEW — A→Z + coding engine + commercial (this session V46→A→Z):** 6 repair families (repair-edit/test-gen/
+missing-export/broken-require/json-config/unused-import) + JS/TS/Python check (import-aware TS on real path) + confined
+local-Ollama generative repair; VE objective-fidelity HARD-GATE (+V57 mission-ownership fix); Reality-Gate suites now in
+canonical gate; B1/B2 autonomy VERIFIED-existing; canary decision pack READY_FOR_OWNER_AUTHORIZATION (not activated);
+P-01 product + DEMAND_NOT_VALIDATED dossier. broad-IT VERIFIED_SUCCESS_RATE = NO_DATA. ODG5 (b68cbd0) fully merged.
+
+**COMMON objectives (shared impl, both views):** 9 primitives/constitution, Reality-Gate, governance/deny-by-default,
+autonomy mechanisms, test gate, TypeScript migration. Satisfied where evidence exists; no double-count.
+
+**BLOCKERS (precise, carried — not converted to implicit permission):** VPS public exposure / prod deploy (human gate);
+autonomous canary dispatch (owner one-shot ODG_CANARY_ALLOWLIST grant; decision pack READY); broad-IT corpus (NO_DATA);
+demand validation + billing/onboarding/hosting (owner-gated external). €0; collected cash €0; €500k UNACHIEVED.
+
+**VERDICT:** P1 source retrieved + reconciled with P2; zero silent loss; main @771e4d7 = SSOT. P1 ≈ runtime roadmap
+ACCEPTED except the 2 human-gated deploy missions; P2 engine/governance substantially delivered, commercial+autonomous-
+dispatch+broad-IT open/gated. NEXT (dependency-ready): audit ODG5 A/B/C lots for further coverage gaps / 7th family /
+owner-authorize canary. Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
