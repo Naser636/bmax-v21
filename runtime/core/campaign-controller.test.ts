@@ -108,4 +108,33 @@ const reg = (items) => ({ version: "t", items });
   ok("same item becomes selectable once its dep is ACCEPTED (not BLOCKED)", C.selectNextLot(freed).lot.id === "WAITING");
 }
 
-console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; real register drivable)`);
+// (10) NO-REPEAT guard: a lot whose attempt FAILED is not re-selected while UNCHANGED; an independent lot flows; a
+// new strategy (or cleared failure) makes it selectable again. (Before the fix, selectNextLot looped the same lot.)
+{
+  const r = reg([{ id: "A", status: "READY", deps: [], priority: 1 }, { id: "B", status: "READY", deps: [], priority: 2 }]);
+  // first pick = A (priority); record a failed attempt, unchanged.
+  const first = C.selectNextLot(r).lot.id;
+  C.advance(r, first, { attemptFailed: true, reason: "same failure, no change" });
+  ok("failed+unchanged lot is NOT re-selected; independent lot flows instead", first === "A" && C.selectNextLot(r).lot.id === "B");
+  // fail B too (unchanged) ⇒ both stalled ⇒ idle with a stalled reason (not an infinite re-pick).
+  C.advance(r, "B", { attemptFailed: true, reason: "same failure" });
+  const idle = C.selectNextLot(r);
+  ok("all failed+unchanged ⇒ idle, reason names stalled (no infinite repeat)", idle.lot === null && /stalled/.test(idle.reason) && idle.stalled.length === 2);
+  ok("summary surfaces stalled with attempt counts", C.summary(r).stalled.length === 2 && C.summary(r).stalled.every(s => s.attempts >= 1));
+  // a NEW strategy = a genuinely different attempt ⇒ fingerprint changes ⇒ A selectable again.
+  C.advance(r, "A", { strategy: "different-approach-v2" });
+  ok("new strategy un-stalls the lot (different attempt)", C.selectNextLot(r).lot.id === "A");
+  // explicit clearFailure also re-admits (e.g. new external evidence arrived).
+  C.advance(r, "B", { clearFailure: true });
+  ok("clearFailure re-admits a previously-stalled lot", C.summary(r).stalled.every(s => s.id !== "B"));
+}
+
+// (11) fingerprint stability + sensitivity: deterministic; changes only when the actionable definition changes.
+{
+  const l = { id: "X", title: "t", deps: ["d"], strategy: "s", inputsHash: "h" };
+  const fp1 = C.lotFingerprint(l);
+  ok("fingerprint deterministic + 16-hex", fp1 === C.lotFingerprint({ ...l }) && /^[0-9a-f]{16}$/.test(fp1));
+  ok("fingerprint changes on strategy change, stable on status change", C.lotFingerprint({ ...l, strategy: "s2" }) !== fp1 && C.lotFingerprint({ ...l, status: "READY" }) === fp1);
+}
+
+console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; NO-REPEAT: failed+unchanged lot not re-selected until strategy/evidence changes; real register drivable)`);
