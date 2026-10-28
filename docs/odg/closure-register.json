@@ -89,6 +89,18 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "go-build-capability",
+      "program": "P2",
+      "title": "Go/build compile capability via authorized Go toolchain (hermetic, offline)",
+      "status": "ACCEPTED",
+      "deps": [
+        "shellcheck-lint-capability"
+      ],
+      "priority": 1,
+      "evidence": "PR#170: go1.26.8 installed (authorized); code-execution LANG_SPEC +Go = real `go build` (not parse) — HERMETIC/offline (GOCACHE/GOPATH/GOTMPDIR scoped into per-run temp; GO111MODULE=off, GOPROXY=off, GOTOOLCHAIN=local ⇒ non-stdlib import FAILS CLOSED, no fetch). defaultRunner gained optional per-spec env merge (base {PATH,HOME} unchanged). Live-verified: clean PASS, type-error FAIL (proves build not parse), network-import FAIL (offline). code-execution suite 28→32. HONESTY: Go deliberately NOT added to the broad-IT corpus/taxonomy ⇒ coverage stays 6/12=0.5 < 0.6 ⇒ broad rate NO_DATA; measuredSurface shows Go present yet representative=false.",
+      "acceptance": "a real executable Go build check (type-level, hermetic, offline) with independent eval; broad rate stays NO_DATA (no breadth inflated)"
+    },
+    {
       "id": "shellcheck-lint-capability",
       "program": "P2",
       "title": "Shell/lint capability via authorized shellcheck install (Priority C)",
@@ -166,15 +178,16 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for COMPILER stacks (Go/Rust/Java/C#) + remaining linters (tidy/hadolint)",
+      "title": "Engineering capability for remaining COMPILER stacks (Rust/Java/C#) + linters (tidy/hadolint)",
       "status": "BLOCKED",
       "deps": [
         "langfamily-noinstall-checkers",
-        "shellcheck-lint-capability"
+        "shellcheck-lint-capability",
+        "go-build-capability"
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "FURTHER NARROWED: no-install subset DONE (Shell/SQL/YAML/JSON) + Shell/lint DONE via authorized shellcheck install (shellcheck-lint-capability). What remains needs their own authorized reproducible installs — compilers go/rustc/cargo/javac/dotnet (each a larger toolchain with its own impact profile) and linters tidy (HTML-CSS) / hadolint (Dockerfile). golang-go is apt-available (candidate 2:1.26~1) but a compiler toolchain on the prod VPS host warrants a deliberate per-family impact decision, not a bulk install.",
+      "blockReason": "FURTHER NARROWED: no-install subset DONE (Shell/SQL/YAML/JSON), Shell/lint DONE (shellcheck), Go/build DONE (go-build-capability, PR#170). What remains needs its own authorized reproducible install — compilers rustc/cargo, javac/JDK, dotnet and linters tidy (HTML-CSS) / hadolint (Dockerfile). Each is a deliberate per-family install on the prod VPS host (impact-controlled), not a bulk install.",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },

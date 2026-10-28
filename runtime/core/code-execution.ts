@@ -30,7 +30,9 @@ const TS_ARGS = (f: string) => TSC_PATH ? [TSC_PATH, "--noEmit", "--skipLibCheck
 // Supported checkers. A language is only ACTIONABLE here if its binary (and, for library-backed checkers, its module)
 // is actually present — PROBED per-capability, never assumed. The Shell/SQL/YAML/JSON checkers below use tooling that
 // is ALREADY installed (bash, python3 stdlib sqlite3/json, PyYAML) — i.e. a real capability expansion that needs NO
-// network install. Compiler stacks (Go/Rust/Java/C#) are deliberately ABSENT here: they require an authorized toolchain
+// network install. Go/build below uses the AUTHORIZED, installed Go toolchain (`go build`) run hermetically (cache/tmp
+// scoped into the isolated workspace, modules + proxy OFF ⇒ no network: a non-stdlib import fails closed, never fetches).
+// The remaining compiler stacks (Rust/Java/C#) stay deliberately ABSENT: they require their own authorized toolchain
 // install and remain honestly UNSUPPORTED until then (never a spuriously-available decoy).
 const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   JavaScript: { bin: "node", probeArgs: ["--version"], args: (f: string) => ["--check", f], ext: ".js" },
@@ -46,6 +48,18 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   YAML: { bin: "python3", probeArgs: ["-c", "import yaml"], args: (f: string) => ["-c", "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1]).read()))", f], ext: ".yaml" },
   // JSON config validation via stdlib json (always available with python3).
   JSON: { bin: "python3", probeArgs: ["-c", "import json"], args: (f: string) => ["-c", "import sys,json; json.load(open(sys.argv[1]))", f], ext: ".json" },
+  // Go/build: a REAL compile check via the authorized Go toolchain — stronger than a syntax parse (catches type errors,
+  // undefined refs). Run HERMETICALLY: GOCACHE/GOPATH/GOTMPDIR scoped INTO the isolated workspace (self-cleaning), and
+  // GO111MODULE=off + GOPROXY=off + GOTOOLCHAIN=local so a non-stdlib import fails CLOSED (no network, no download, no
+  // auto-toolchain fetch). Output is discarded (-o os.devNull). Probe fails ⇒ Go honestly UNSUPPORTED (never a decoy).
+  Go: {
+    bin: "go", probeArgs: ["version"], ext: ".go",
+    args: (f: string) => ["build", "-o", os.devNull, f],
+    env: (dir: string) => ({
+      GOCACHE: path.join(dir, ".gocache"), GOPATH: path.join(dir, ".gopath"), GOTMPDIR: dir,
+      GO111MODULE: "off", GOPROXY: "off", GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local",
+    }),
+  },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -55,7 +69,9 @@ function truncate(s: any, n = 800): string { const str = String(s || ""); return
 function defaultRunner(bin: string, args: string[], opts: any): any {
   const res = cp.spawnSync(bin, args, {
     cwd: opts.cwd, timeout: opts.timeoutMs, maxBuffer: opts.maxBytes, encoding: "utf8",
-    env: { PATH: process.env.PATH || "", HOME: process.env.HOME || "" }, stdio: ["ignore", "pipe", "pipe"],
+    // Minimal base env (no inherited secrets); a checker spec may add bounded, hermetic vars (e.g. Go's offline
+    // cache/proxy settings) via opts.env — never PATH/HOME-overriding beyond what the spec explicitly sets.
+    env: { PATH: process.env.PATH || "", HOME: process.env.HOME || "", ...(opts.env && typeof opts.env === "object" ? opts.env : {}) }, stdio: ["ignore", "pipe", "pipe"],
   });
   if (res.error) { if ((res.error as any).code === "ETIMEDOUT") return { timedOut: true }; return { spawnError: (res.error as any).message || "spawn error" }; }
   return { exitCode: res.status, stdout: res.stdout || "", stderr: res.stderr || "" };
@@ -92,7 +108,9 @@ function runSyntaxCheck(input: any = {}): any {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-codeexec-"));
     const file = path.join(dir, (typeof input.filename === "string" && input.filename) ? path.basename(input.filename) : `src${spec.ext}`);
     fs.writeFileSync(file, input.content);
-    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000 });
+    // A spec may declare hermetic env scoped to THIS workspace dir (e.g. Go's offline cache/proxy) — computed per run.
+    const specEnv = typeof spec.env === "function" ? spec.env(dir) : (spec.env && typeof spec.env === "object" ? spec.env : undefined);
+    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, ...(specEnv ? { env: specEnv } : {}) });
     if (!r || r.spawnError) return { status: "BLOCKED", reason: `toolchain spawn error: ${r && r.spawnError}`, language };
     if (r.timedOut) return { status: "BLOCKED", reason: "check timed out", language };
     const exitCode = r.exitCode;
