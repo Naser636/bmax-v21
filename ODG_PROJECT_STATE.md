@@ -8227,3 +8227,13 @@ docs/odg/seo-positioning-plan.md. Suite 15.
 
 **Register:** +ACCEPTED seo-positioning-plan. 12 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 174→**175**, tsc 0,
 build 0. €0. NEXT: Phase 2 wire capability-taxonomy↔measured coverage (final admissible internal lot).
+
+---
+## CHECKPOINT 2026-10-28 (fc) — WORLD-CLASS Phase 2: wire capability-taxonomy to independent measurement €0
+Integration, not duplication (capability-taxonomy already the honest census). capability-taxonomy.measuredSurface now
+CONSUMES broad-it-eval.coverageReport + code-execution.detectToolchain → links the real measured verification surface
+(5 covered categories; held-out accuracy 1.0 on the NARROW own corpus; 7 toolchains present) to taxonomy category E.
+CRITICAL honesty preserved: broad VERIFIED_SUCCESS_RATE stays NO_DATA (coverage 0.4167 < gate); census headline
+unchanged (0 PROVEN, measuredSuccessRate null everywhere). Suite +5 (15). Requirement→implementation→consumer→evidence.
+Register +ACCEPTED capability-taxonomy-measured-wire. 13 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 175/175,
+tsc 0, build 0. €0.
