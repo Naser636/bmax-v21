@@ -16,6 +16,7 @@
 
 const crypto = require("crypto");
 const EXEC = require("./code-execution.js");
+const METRICS = require("./eval-metrics.js");   // ODG5 eval-metrics — wired here as a real consumer (was orphan)
 
 // Diversified corpus across language × kind. partition ∈ {dev, heldout}; held-out cases are NEVER used to tune.
 const CORPUS: ReadonlyArray<any> = Object.freeze([
@@ -83,7 +84,13 @@ function evaluate(opts: any = {}): any {
   const acc = (m: any) => m.evaluated > 0 ? Number(((m.correctPass + m.correctFail) / m.evaluated).toFixed(4)) : null;
   for (const k of Object.keys(perCategory)) perCategory[k].accuracy = acc(perCategory[k]);
   overall.accuracy = acc(overall);
-  return { provenance: provenance(), partition, overall, perCategory, results };
+  // PASS-detector confusion via the ODG5 eval-metrics module (keyed by case id): FP = checker said PASS but should
+  // FAIL (the dangerous miss), FN = said not-PASS but should PASS. precision/recall are null (not fake) when undefined.
+  const evaluatedCases = results.filter((r) => r.actual === "PASS" || r.actual === "FAIL");
+  const predictedPass = evaluatedCases.filter((r) => r.actual === "PASS").map((r) => r.id);
+  const expectedPass = evaluatedCases.filter((r) => r.expected === "PASS").map((r) => r.id);
+  const confusion = METRICS.confusionMatrix(predictedPass, expectedPass);
+  return { provenance: provenance(), partition, overall, perCategory, confusion, results };
 }
 
 /**
@@ -100,7 +107,7 @@ function assessBroadIT(opts: any = {}): any {
     broadIT: "NO_DATA",
     reason: "corpus covers only the narrow SUPPORTED surface (JS/TS/Python syntax/type checks); NOT representative of general IT (absent: Go/Rust/Java/SQL/web + application-build/integration/data/repair-generalisation). A broad-IT rate requires a representative, diverse, independently-labelled corpus that does not yet exist.",
     representative,
-    supportedSurfaceHeldout: { accuracy: held.overall.accuracy, falsePass: held.overall.falsePass, falseFail: held.overall.falseFail, evaluated: held.overall.evaluated, perCategory: held.perCategory },
+    supportedSurfaceHeldout: { accuracy: held.overall.accuracy, falsePass: held.overall.falsePass, falseFail: held.overall.falseFail, evaluated: held.overall.evaluated, perCategory: held.perCategory, confusion: held.confusion },
     leakageProtection: leak,
     note: "Held-out supported-surface accuracy is reported for THIS narrow corpus only. broad-IT VERIFIED_SUCCESS_RATE remains NO_DATA. No extrapolation.",
   };

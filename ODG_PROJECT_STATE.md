@@ -7902,3 +7902,25 @@ Metrics (all SEPARATE, honest): check-acc 1.0(13)·repair-accept 1.0,fs0(6)·gen
 broad-IT-heldout-supported-surface 1.0(6)·**broad-IT general = NO_DATA**. NEXT (Priority B): audit ODG5 A/B/C lots for
 integration/wiring/coverage gaps (reality-gate now gated; dep-planner/eval-metrics/autonomy-eval-harness present+gated).
 Exact command: `git checkout main && git pull && npx tsx runtime/core/broad-it-eval.ts`
+
+---
+## CHECKPOINT 2026-10-28 (em) — Priority B: ODG5 A/B/C audit + eval-metrics wired (was orphan) €0
+CTO "CONTINUOUS EXECUTION P1+P2+PRODUCT". Truth Lock caed754≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved,
+166 suites. Branch excellence/odg5-audit-eval-metrics-wire. No new primitive.
+
+**ODG5 A/B/C WIRING AUDIT (§B, evidence-based):** reality-gate → IMPORTED+INVOKED in validation-engine (classifyRealityState,
+real VE path) ✓ + now gated (V59). autonomy-eval-harness → consumed by compliance-evidence-pack ✓. **eval-metrics = ORPHAN**
+(present+tested+gated, ZERO non-test consumer) ⇒ FIXED: wired into broad-it-eval.evaluate() as the PASS-detector confusion
+(confusionMatrix keyed by case-id ⇒ FP=false-pass/FN=false-fail/precision/recall, null not fake). **dep-planner = ORPHAN**
+(planLayers/sequentialOrder/schedule; no consumer) ⇒ documented, integration target = mission planner/scheduler path;
+deferred (capability present+tested, not a defect; carried in register). No re-doing of proven work.
+
+**eval-metrics wiring (§B fix + §C enrichment):** broad-it-eval now reports per-partition PASS-detector confusion via
+eval-metrics. Suite 12: oracle ⇒ FP0/FN0/precision1/recall1; adversarial always-PASS ⇒ FP>0 (false-pass caught by the
+metric); assessBroadIT carries held-out confusion. broad-IT general still NO_DATA (unchanged, honest). eval-metrics now
+has a real non-test consumer (broad-it-eval.ts).
+
+**Gate:** test:report 166 (broad-it-eval suite 9→12); tsc 0; build 0. €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. NEXT (§D): author/update the canonical PRODUCT DEFINITION doc (P-01 Code Health Check) linking each promise→
+capability→evidence→limit→closure-mission; then §E convert gaps to traceable objectives. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/broad-it-eval.ts`
