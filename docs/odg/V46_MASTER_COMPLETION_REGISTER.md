@@ -43,7 +43,7 @@ Opened: 2026-10-28 (V46). HEAD at open: `46b24bc` ≡ origin/main.
 
 | ID | Item | State | Next action |
 |----|------|-------|-------------|
-| G-01 | Owner-objective fidelity contract (preserve objective; forbid silent narrowing; forbid completion-claim while mandatory deliverables unverified; carry unresolved items across missions) | **VERIFIED** | `objective-fidelity.ts`; suite 12 across the 4 mandated scenarios — ACCEPT genuine completion, REJECT_FALSE_COMPLETION, VERIFIED-without-evidence rejected, blocked⇒carry-forward+unblock, SILENT_NARROWING detected; pure POLICY/EVIDENCE evaluator, no new primitive (V47d) | Wire into mission close/validation path (C-08) |
+| G-01 | Owner-objective fidelity contract (preserve objective; forbid silent narrowing; forbid completion-claim while mandatory deliverables unverified; carry unresolved items across missions) | **VERIFIED + APPLIED at close** | `objective-fidelity.ts` (suite 12, V47d) **+ V48e `mission-fidelity-verdict.ts` APPLIES it on the real close path: `final-report` invokes `fidelityVerdictSection`, persists `fidelity-verdict.json`, surfaces it in the report. Maps canonical mission-plan DoD + mission-report status/unmet/gates → REJECT_FALSE_COMPLETION on unmet DoD or failed gate, ACCEPT genuine. Suite 9 + LIVE `final-report` run emitting the verdict.** Non-authoritative (Validation Engine remains the pipeline gate) | **Remaining:** make it a hard gate in the Validation Engine (separate authorized lot; VE already gates on evidence) |
 | G-02 | Objective-fidelity measure (original mandate vs write-set vs verified deliverables vs unresolved) | NOT_STARTED | After G-01 |
 
 ## PART D — RESEARCH (§7)

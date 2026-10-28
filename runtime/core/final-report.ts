@@ -14,6 +14,7 @@ import * as fs from "fs";
 import * as path from "path";
 const { attributeObjectives }: any = require("./objective-attribution");
 const { fromExecution, measureAutonomy, describeExecution, eligibilityFromObjectives }: any = require("./autonomy-measure");
+const fidelityVerdict: any = require("./mission-fidelity-verdict");
 
 const GENERATED_DIR = "runtime/generated";
 const REPORTS_DIR = path.join(GENERATED_DIR, "reports");
@@ -146,6 +147,27 @@ function autonomySection(plan: any, patchPlan: any, patchExecution: any, checks:
   return lines;
 }
 
+/**
+ * Objective-fidelity cross-check applied at close (register G-01 applied). Returns { lines, verdict }. Best-effort:
+ * never throws into the pipeline — a malformed input yields an informational line and a null verdict.
+ */
+function fidelityVerdictSection(plan: any, report: any): any {
+  try {
+    const v = fidelityVerdict.assessMissionFidelity(plan, report);
+    if (!v || v.ok === false) return { lines: ["## Objective fidelity", "- (not assessable this run)"], verdict: null };
+    const lines = [
+      "## Objective fidelity (applied objective-fidelity cross-check)",
+      `- Decision: ${v.decision} (verdict ${v.verdict}${v.claimedComplete ? ", report claims COMPLETE" : ""})`,
+      ...(v.gateFailures.length ? [`- Failed evidence gates: ${v.gateFailures.join(", ")}`] : []),
+      ...(v.decision === "REJECT_FALSE_COMPLETION"
+        ? [`- FALSE-COMPLETION REJECTED — ${v.unsatisfied.length} required outcome(s) not verified: ${v.unsatisfied.map((u: any) => u.id).join(", ")}`]
+        : []),
+      ...(v.carryForward.length ? [`- Carried forward: ${v.carryForward.map((c: any) => c.id).join(", ")}`] : []),
+    ];
+    return { lines, verdict: v };
+  } catch { return { lines: ["## Objective fidelity", "- (cross-check error — non-blocking)"], verdict: null }; }
+}
+
 function main(): any {
   const mission = process.argv[2] || "BUILD_RUNTIME";
 
@@ -166,6 +188,7 @@ function main(): any {
   const autonomy = autonomySection(plan, patchPlan, patchExecution, checks, evidenceProbe);
 
   const c03 = summarizeC03(lifecycle);
+  const fidelity = fidelityVerdictSection(plan, report);
   const caps = Array.isArray(checks.capabilities) ? checks.capabilities : [];
   const capLines = caps.length
     ? caps.map((c: any) => `- ${c.ok ? "✅" : "❌"} **${c.capability}** — ${c.detail}`).join("\n")
@@ -200,11 +223,14 @@ function main(): any {
       ? plan.definitionOfDone.map((d: any) => `- ${d}`)
       : ["- (none declared)"]),
     "",
+    ...fidelity.lines,
+    "",
   ].join("\n");
 
   fs.mkdirSync(REPORTS_DIR, { recursive: true });
   const out = path.join(REPORTS_DIR, `${mission}.final-report.md`);
   fs.writeFileSync(out, md);
+  if (fidelity.verdict) fidelityVerdict.writeVerdict(process.cwd(), fidelity.verdict);
 
   console.log("======================================");
   console.log("FINAL REPORT");
@@ -216,7 +242,7 @@ function main(): any {
   console.log("======================================");
 }
 
-module.exports = { summarizeC03, attributionSection, autonomySection };
+module.exports = { summarizeC03, attributionSection, autonomySection, fidelityVerdictSection };
 
 // Only auto-run (and exit) when invoked as a script — the pipeline spawns `node final-report.js`, so
 // this is identical to before. `require()` (the test) imports summarizeC03 without side effects.
