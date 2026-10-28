@@ -7974,3 +7974,26 @@ test:report 166; tsc 0; build 0. ACTUAL COLLECTED CASH €0; €500k unachieved.
 **NEXT:** build dashboard auth+TLS as a security-precondition lot (then owner-confirmed public exposure), OR a P-GAP
 internal eng lot (client-isolation contract test), OR grow broad-IT corpus. Exact command:
 `git checkout main && git pull && curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/ && ODG_TEST_WORKERS=8 npm run test:report`
+
+---
+## CHECKPOINT 2026-10-28 (ep) — Closure V2 Phase-1: dashboard internal-state API auth (fail-closed) €0
+CTO "CONTINUOUS CLOSURE V2". Truth Lock 653214c≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/dashboard-auth-v2. No new primitive. Diff = src/lib/dashboard-auth.ts + src/tests/dashboard-auth.test.ts +
+src/app/api/runtime-state/route.ts (gate) + src/tests/runtime-state-route.test.ts (auth cases) + package.json + compass.
+
+**Phase-1 dashboard auth (PARTIAL, honest):** `src/lib/dashboard-auth.ts` — PURE, framework-free, fail-closed
+evaluateDashboardAuth: /api/health public; all internal surfaces deny-by-default; ODG_DASHBOARD_TOKEN unset ⇒ 503
+(internal state WITHHELD); valid Bearer/x-api-key (constant-time) ⇒ allow; anon/invalid ⇒ 401; no token echoed. Applied
+in `/api/runtime-state` GET (gates BEFORE reading the snapshot). Suite 10 (lib) + updated route test (503/401/200 cases)
++ **LIVE route invocation: no-token⇒503, anon⇒401, valid Bearer⇒200+snapshot.** AGENTS.md honored (used documented Route
+Handler pattern, not Next-16 middleware which has no doc). Next docs read.
+
+**HONEST LIMITS (public exposure STILL BLOCKED):** (1) the API internal-state leak is CLOSED, but the dashboard PAGE
+src/app/page.tsx renders readRuntimeSnapshot SERVER-SIDE directly ⇒ the PAGE is NOT yet gated (still leaks if served) —
+Phase-1 remaining. (2) TLS/reverse-proxy not built. (3) the running odg-preprod.service serves the PRE-AUTH build; the
+gate activates only on a future gated rebuild+restart. ⇒ ODG does NOT expose publicly; preconditions unmet.
+
+**Gate:** test:report 166→167 (all PASS); tsc 0 (fixed GET arity + updated existing route test); build 0. €0; no secret
+in code (token from env config only); no public exposure; service not restarted. ACTUAL COLLECTED CASH €0; €500k
+unachieved. NEXT (Phase-1 cont.): gate the dashboard PAGE (server-side auth before rendering internal state), then TLS/
+reverse-proxy, then owner-confirmed exposure. Exact command: `git checkout main && git pull && npx tsx src/tests/dashboard-auth.test.ts`

@@ -37,12 +37,21 @@ const real = (name: string) => JSON.parse(readFileSync(resolve(process.cwd(), `r
     check(snap.autonomy.autonomyPercent === null, "autonomy NOT measurable ⇒ autonomyPercent is null (no fabricated number)");
   }
 
-  // --- 3. GET handler: read-only, 200, no-store --------------------------------------------------
-  const res = await GET();
-  check(res.status === 200, "GET returns 200");
+  // --- 3. GET handler: AUTH-GATED (V2 security), then read-only, 200, no-store -------------------
+  // Anonymous / token-unset ⇒ internal state withheld (fail-closed). Authed ⇒ 200 + real snapshot.
+  const prevTok = process.env.ODG_DASHBOARD_TOKEN;
+  delete process.env.ODG_DASHBOARD_TOKEN;
+  const denied = await GET(new Request("http://x/api/runtime-state"));
+  check(denied.status === 503, "GET without configured token ⇒ 503 (internal state withheld, fail-closed)");
+  process.env.ODG_DASHBOARD_TOKEN = "route-test-token";
+  const anon = await GET(new Request("http://x/api/runtime-state"));
+  check(anon.status === 401, "GET anonymous (token configured) ⇒ 401");
+  const res = await GET(new Request("http://x/api/runtime-state", { headers: { authorization: "Bearer route-test-token" } }));
+  check(res.status === 200, "GET authed returns 200");
   check(res.headers.get("cache-control") === "no-store", "GET sets cache-control: no-store (request-time)");
   const body = JSON.parse(await res.text());
   check(body.present === true && body.queueCount === queue.queue.length, "GET body reflects the real snapshot");
+  if (prevTok === undefined) delete process.env.ODG_DASHBOARD_TOKEN; else process.env.ODG_DASHBOARD_TOKEN = prevTok;
 
   // --- 4. Graceful degrade: missing artifacts ⇒ honest nulls (never fabricated zeros) ------------
   // Run the reader from a cwd that has NO runtime/generated tree. Temp dir lives under the git-ignored
