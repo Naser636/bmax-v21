@@ -331,6 +331,19 @@ try {
         "Context    : runtime/generated/mission-context.json",
         context.runtimeComplete ? "(runtime resolved)" : "(runtime pending)"
     );
+
+    // C-08: on the REAL path, resolve engineering missions against ODG's coding capabilities and persist an
+    // advisory runtime/generated/coding-resolution.json (EXECUTE/ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED). Additive +
+    // best-effort (exactly like the MissionContext block): never blocks the load, never marks a mission executed.
+    try {
+        const { attachCodingResolution }: any = require("./mission-coding-integration");
+        const r = attachCodingResolution(mission, { context });
+        if (r && r.ok && r.resolution) {
+            console.log("CodingRoute:", r.resolution.route, r.resolution.language ? `(${r.resolution.language})` : "", r.resolution.persisted ? "-> runtime/generated/coding-resolution.json" : "");
+        }
+    } catch (e2: any) {
+        console.error(`[mission-loader] coding-resolution not emitted: ${e2 && e2.message}`);
+    }
 } catch (err: any) {
     console.error(`[mission-loader] MissionContext not emitted: ${err.message}`);
 }
