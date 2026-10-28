@@ -8185,3 +8185,12 @@ genuinely external remainder (owner exposure decision / authorized toolchain ins
 owner-run WTP experiment / real paid provider). Nothing falsely closed.
 
 **Gate:** test:report 172→**173**, tsc 0, build 0. €0; COLLECTED CASH €0; €500k unachieved.
+
+---
+## CHECKPOINT 2026-10-28 (ez) — Engine integrity: decomposition selection tests (mandate item 2) €0
+Locked the behavior the whole unblock campaign relied on. campaign-controller.test.ts 11→15:
++ a BLOCKED parent does NOT freeze the register — an independent decomposed prep subtask keeps being selected;
++ after prep accepted ⇒ idle with the parent still correctly reported BLOCKED (not mislabelled);
++ distinguishes truly-BLOCKED from awaiting-deps: a READY item whose dep is BLOCKED is not selected and idleReason
+  NAMES the blocker; the same item becomes selectable once its dep flips to ACCEPTED.
+Gate: test:report 173/173 (count unchanged — same suite, +4 assertions), tsc 0. €0.
