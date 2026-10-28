@@ -8357,3 +8357,15 @@ Real Go build live: clean PASS, type-error FAIL (real build not parse), network-
 GO111MODULE/GOTOOLCHAIN off + workspace-scoped cache). Register reconciled: +ACCEPTED go-build-capability; new-language-
 families narrowed to Rust/Java/C#/tidy/hadolint. HONESTY: Go NOT in broad-IT corpus ⇒ coverage 6/12=0.5 < 0.6 ⇒ broad rate
 NO_DATA preserved. Gate after merge recorded below.
+
+---
+## CHECKPOINT 2026-10-28 (fk) — Engine intelligence: toolchain-aware coverage + honest Go inclusion €0
+Entry via compass (after PR#170 Go merge). Branched off origin/main 10c7138. Defect: coverageReport counted a category
+covered from supported-flag + case-count ALONE, ignoring LIVE toolchain presence ⇒ would OVERSTATE if a checker
+regressed/uninstalled. Fix: coverageReport(corpus, toolchain?) toolchain-aware (category counts only if runnable now;
+no-arg = backward-compatible); assessBroadIT + measuredSurface pass live detectToolchain. Go/build added HONESTLY
+(taxonomy supported=true, language fields added to all 12 entries, 8 real go-build cases dev+heldout acc 1.0, corpus
+52→60) ⇒ coverage 0.5→0.5833 (7/12) STILL < 0.6 ⇒ broadIT NO_DATA. PROVEN honesty: simulating Go+ShellLint absent DROPS
+coverage to 0.4167 (no overstatement). Suites: broad-it-eval 30→35, code-execution 32, capability-taxonomy 15. Register
++ACCEPTED coverage-toolchain-aware. Gate: test:report 176, tsc 0, build 0. €0. Blockers: 5 external (Rust/Java/C#/tidy/
+hadolint per-family install; dashboard-tls public; structured-roadmap protected; p01-demand lawful; p01-billing paid).

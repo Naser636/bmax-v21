@@ -89,6 +89,19 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "coverage-toolchain-aware",
+      "program": "P2",
+      "title": "Toolchain-aware coverage + honest Go/build inclusion (engine intelligence)",
+      "status": "ACCEPTED",
+      "deps": [
+        "go-build-capability",
+        "capability-taxonomy-measured-wire"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): fixed a latent OVERSTATEMENT defect — coverageReport counted a category covered from the supported-flag + case-count ALONE, ignoring live toolchain presence (would overstate if a checker regressed/uninstalled). Now coverageReport(corpus, toolchain?) is toolchain-aware: a category counts only if its checker is runnable NOW; no-arg stays backward-compatible. assessBroadIT + capability-taxonomy.measuredSurface pass the live detectToolchain. Go/build added HONESTLY (taxonomy supported=true + 8 real go-build cases, dev+heldout acc 1.0) ⇒ coverage 0.5→0.5833 (7/12), STILL < 0.6 ⇒ broadIT NO_DATA. Demonstrated: simulating Go+ShellLint absent DROPS coverage to 0.4167 (no longer overstated). Suites: broad-it-eval 30→35, capability-taxonomy 15, code-execution 32.",
+      "acceptance": "coverage reflects LIVE toolchain availability (no overstatement on regression); Go counts only when present; broad rate stays NO_DATA"
+    },
+    {
       "id": "go-build-capability",
       "program": "P2",
       "title": "Go/build compile capability via authorized Go toolchain (hermetic, offline)",

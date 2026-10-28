@@ -80,31 +80,40 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-shlint-clean-2", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "clean", expected: "PASS", content: "#!/usr/bin/env bash\nset -euo pipefail\ngreet() {\n  printf \"%s\\n\" \"$1\"\n}\ngreet \"hi\"\n" },
   { id: "held-shlint-broken-1", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "broken", expected: "FAIL", content: "#!/usr/bin/env bash\necho $1\n" },
   { id: "held-shlint-broken-2", partition: "heldout", category: "Shell/lint", language: "ShellLint", kind: "broken", expected: "FAIL", content: "#!/usr/bin/env bash\nif [ $x == \"y\" ]; then echo ok; fi\n" },
+  // --- Go/build (v5): real hermetic `go build` (type-level, offline). Counts toward coverage ONLY when Go is present. ---
+  { id: "dev-go-clean-1", partition: "dev", category: "Go/build", language: "Go", kind: "clean", expected: "PASS", content: "package main\nimport \"fmt\"\nfunc main(){ fmt.Println(\"hi\") }\n" },
+  { id: "dev-go-clean-2", partition: "dev", category: "Go/build", language: "Go", kind: "clean", expected: "PASS", content: "package main\nfunc add(a, b int) int { return a + b }\nfunc main(){ _ = add(1, 2) }\n" },
+  { id: "dev-go-broken-1", partition: "dev", category: "Go/build", language: "Go", kind: "broken", expected: "FAIL", content: "package main\nfunc main(){ var x int = \"str\"; _ = x }\n" },
+  { id: "dev-go-broken-2", partition: "dev", category: "Go/build", language: "Go", kind: "broken", expected: "FAIL", content: "package main\nfunc main(){ undefinedFn() }\n" },
+  { id: "held-go-clean-1", partition: "heldout", category: "Go/build", language: "Go", kind: "clean", expected: "PASS", content: "package main\nimport \"strings\"\nfunc main(){ _ = strings.ToUpper(\"x\") }\n" },
+  { id: "held-go-clean-2", partition: "heldout", category: "Go/build", language: "Go", kind: "clean", expected: "PASS", content: "package main\ntype P struct{ N int }\nfunc main(){ p := P{N: 1}; _ = p.N }\n" },
+  { id: "held-go-broken-1", partition: "heldout", category: "Go/build", language: "Go", kind: "broken", expected: "FAIL", content: "package main\nimport \"fmt\"\nfunc main(){ fmt.Println(undeclared) }\n" },
+  { id: "held-go-broken-2", partition: "heldout", category: "Go/build", language: "Go", kind: "broken", expected: "FAIL", content: "package main\nfunc main(){ return 5 }\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v4";
+const CORPUS_VERSION = "broad-it-eval-v5";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
 // NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
 // Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint"];
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
 // representativeness verdict is a measurement, not an assertion. `supported` marks the categories ODG's real checker
 // can actually evaluate today; the rest are coverage GAPS (no executable checker ⇒ cases would be UNSUPPORTED).
 const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
-  { category: "JavaScript/syntax", supported: true },
-  { category: "TypeScript/type", supported: true },
-  { category: "Python/syntax", supported: true },
-  { category: "Go/build", supported: false },
-  { category: "Rust/build", supported: false },
-  { category: "Java/compile", supported: false },
-  { category: "CSharp/compile", supported: false },
-  { category: "SQL/schema", supported: true },               // v3: now a REAL checker (stdlib sqlite3, no install)
-  { category: "Shell/lint", supported: true },                // v4: real shellcheck static analysis (authorized reproducible install)
-  { category: "HTML-CSS/validate", supported: false },
-  { category: "Config-YAML/validate", supported: true },      // v3: now a REAL checker (PyYAML, no install)
-  { category: "Dockerfile/lint", supported: false },
+  { category: "JavaScript/syntax", supported: true, language: "JavaScript" },
+  { category: "TypeScript/type", supported: true, language: "TypeScript" },
+  { category: "Python/syntax", supported: true, language: "Python" },
+  { category: "Go/build", supported: true, language: "Go" },   // v5: real hermetic `go build` (authorized Go toolchain, PR#170)
+  { category: "Rust/build", supported: false, language: "Rust" },
+  { category: "Java/compile", supported: false, language: "Java" },
+  { category: "CSharp/compile", supported: false, language: "CSharp" },
+  { category: "SQL/schema", supported: true, language: "SQL" },               // v3: real checker (stdlib sqlite3, no install)
+  { category: "Shell/lint", supported: true, language: "ShellLint" },         // v4: real shellcheck static analysis
+  { category: "HTML-CSS/validate", supported: false, language: "HtmlCss" },
+  { category: "Config-YAML/validate", supported: true, language: "YAML" },    // v3: real checker (PyYAML, no install)
+  { category: "Dockerfile/lint", supported: false, language: "Dockerfile" },
 ]);
 // PRE-REGISTERED representativeness gate (fixed before measuring): a corpus counts as representative only when at
 // least minCoverageRatio of the target taxonomy is covered AND each covered category carries ≥ minCasesPerCovered
@@ -133,8 +142,12 @@ function provenance(): any {
  * broken example (so an UNSUPPORTED/toolchain-absent category can never count as covered — that would be fake breadth).
  * Returns the ratio (covered / |taxonomy|), per-category counts, and the explicit missing list. No extrapolation.
  */
-function coverageReport(corpus: ReadonlyArray<any> = CORPUS): any {
+function coverageReport(corpus: ReadonlyArray<any> = CORPUS, toolchain?: Record<string, boolean>): any {
   const th = REPRESENTATIVE_THRESHOLD;
+  // toolchain-aware: when a live toolchain map is supplied, a category counts as covered ONLY if its checker is
+  // actually runnable now (toolchain[language] === true). This prevents OVERSTATING coverage if a checker regressed
+  // or was uninstalled. When no map is supplied, availability is not asserted (backward-compatible: assume present).
+  const tcAware = toolchain && typeof toolchain === "object";
   const byCat: Record<string, { total: number; clean: number; broken: number }> = {};
   for (const c of corpus) {
     byCat[c.category] = byCat[c.category] || { total: 0, clean: 0, broken: 0 };
@@ -145,8 +158,9 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS): any {
   const perCategory = TARGET_TAXONOMY.map((t) => {
     const counts = byCat[t.category] || { total: 0, clean: 0, broken: 0 };
     const hasBothKinds = counts.clean > 0 && counts.broken > 0;
-    const covered = t.supported === true && counts.total >= th.minCasesPerCovered && (!th.requireBothKinds || hasBothKinds);
-    return { category: t.category, supported: t.supported === true, cases: counts.total, clean: counts.clean, broken: counts.broken, covered };
+    const toolchainPresent = tcAware ? toolchain![t.language] === true : true;
+    const covered = t.supported === true && toolchainPresent && counts.total >= th.minCasesPerCovered && (!th.requireBothKinds || hasBothKinds);
+    return { category: t.category, supported: t.supported === true, language: t.language, toolchainPresent, cases: counts.total, clean: counts.clean, broken: counts.broken, covered };
   });
   const covered = perCategory.filter((c) => c.covered);
   const ratio = Number((covered.length / TARGET_TAXONOMY.length).toFixed(4));
@@ -155,9 +169,10 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS): any {
     coveredCount: covered.length,
     ratio,
     threshold: th,
+    toolchainAware: !!tcAware,
     meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0,
     coveredCategories: covered.map((c) => c.category),
-    missing: perCategory.filter((c) => !c.covered).map((c) => ({ category: c.category, supported: c.supported, cases: c.cases, reason: c.supported ? "insufficient real-evaluable cases (need both kinds ≥ threshold)" : "no executable checker in ODG (toolchain absent) — would be UNSUPPORTED" })),
+    missing: perCategory.filter((c) => !c.covered).map((c) => ({ category: c.category, supported: c.supported, cases: c.cases, reason: !c.supported ? "no executable checker in ODG (toolchain absent) — would be UNSUPPORTED" : (!c.toolchainPresent ? "checker declared but its toolchain is NOT present at eval time — not currently measurable" : "insufficient real-evaluable cases (need both kinds ≥ threshold)") })),
     perCategory,
   };
 }
@@ -208,7 +223,9 @@ function assessBroadIT(opts: any = {}): any {
   const leak = checkLeakage();
   if (!leak.ok) return { broadIT: "INVALID", reason: "DEV/HELDOUT leakage detected", leak };
   const held = evaluate({ partition: "heldout", runner: opts.runner, toolchain: opts.toolchain });
-  const coverage = coverageReport();
+  // toolchain-aware coverage: a category counts only if its checker is actually runnable now (live detect, or injected).
+  const toolchain = opts.toolchain && typeof opts.toolchain === "object" ? opts.toolchain : EXEC.detectToolchain(opts.runner ? { runner: opts.runner } : {});
+  const coverage = coverageReport(CORPUS, toolchain);
   // representativeness is now MEASURED against the pre-registered taxonomy + threshold, not asserted. It can only
   // become true when real coverage crosses the gate AND there is no leakage — never by adding unsupported stubs.
   const representative = coverage.meetsThreshold && leak.ok;
@@ -217,7 +234,7 @@ function assessBroadIT(opts: any = {}): any {
     broadIT,
     reason: representative
       ? `corpus meets the pre-registered representativeness gate (coverage ${coverage.ratio} ≥ ${coverage.threshold.minCoverageRatio})`
-      : `corpus covers only ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); the real checker supports JS/TS/Python only, so ${coverage.missing.length} taxonomy categories (Go/Rust/Java/C#/SQL/Shell/HTML-CSS/YAML/Dockerfile) have NO executable checker. A broad-IT rate requires crossing this gate with a representative, independently-labelled corpus that does not yet exist.`,
+      : `corpus covers only ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); ${coverage.missing.length} categories remain uncovered (${coverage.missing.map((m: any) => m.category).join(", ")}). Coverage is toolchain-aware: a category counts only if real cases exist AND its checker is runnable now. A broad-IT rate requires crossing this gate with a representative, independently-labelled corpus.`,
     representative,
     coverage,
     supportedSurfaceHeldout: { accuracy: held.overall.accuracy, falsePass: held.overall.falsePass, falseFail: held.overall.falseFail, evaluated: held.overall.evaluated, perCategory: held.perCategory, confusion: held.confusion },
