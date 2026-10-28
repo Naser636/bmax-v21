@@ -46,7 +46,7 @@ ok("all-verified large sample ⇒ 1.0 (not hardcoded to fail)", allGood.verified
 // (8) Phase-2 WIRING: measuredSurface consumes broad-it-eval + code-execution (injected runner/toolchain = no real
 // subprocess) and links real measurement to category E WITHOUT upgrading anything to PROVEN or inventing a broad rate.
 {
-  const ALL = { JavaScript: true, TypeScript: true, Python: true, SQL: true, YAML: true, Shell: true, JSON: true, ShellLint: true };
+  const ALL = { JavaScript: true, TypeScript: true, Python: true, SQL: true, YAML: true, Shell: true, JSON: true, ShellLint: true, Go: true };
   const oracleRunner = () => ({ exitCode: 0, stdout: "", stderr: "" }); // clean-only oracle is irrelevant here; toolchain injected
   const m = T.measuredSurface({ toolchain: ALL, runner: oracleRunner });
   ok("measuredSurface links to category E", /^E /.test(m.linkedCategory));

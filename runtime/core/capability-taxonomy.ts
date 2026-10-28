@@ -94,8 +94,8 @@ function summary(): any {
  * broad rate stays NO_DATA whenever the representativeness gate is unmet. runner/toolchain injectable for tests.
  */
 function measuredSurface(opts: any = {}): any {
-  const coverage = BROAD.coverageReport();
   const toolchain = opts.toolchain || EXEC.detectToolchain(opts.runner ? { runner: opts.runner } : {});
+  const coverage = BROAD.coverageReport(undefined, toolchain);   // toolchain-aware: count a category only if runnable now
   const held = BROAD.evaluate({ partition: "heldout", ...(opts.runner ? { runner: opts.runner } : {}), ...(opts.toolchain ? { toolchain: opts.toolchain } : {}) });
   const broadRate = coverage.meetsThreshold ? "MEASURED" : "NO_DATA";
   return {
