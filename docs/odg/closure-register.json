@@ -126,6 +126,20 @@
       "nextAction": "done; actual exposure is the owner-gated remainder (dashboard-tls-exposure)"
     },
     {
+      "id": "dashboard-auth-redeploy",
+      "program": "P1",
+      "title": "Deploy the fail-closed-auth release to the VPS (stale running release)",
+      "status": "BLOCKED",
+      "deps": [
+        "dashboard-api-auth"
+      ],
+      "priority": 7,
+      "evidence": "",
+      "blockReason": "VERIFIED 2026-10-28 (read-only loopback probe, docs/odg/deploy/VPS_STATUS.md): the running release (start 2026-10-27 06:26) PREDATES the fail-closed auth PRs #152/#153 (merged 2026-10-28), so GET /api/runtime-state returns 200 without a token in production. Service binds 127.0.0.1 ONLY — NOT publicly exposed (network-layer closed). Activating app-layer auth requires a REDEPLOY + restart + ODG_DASHBOARD_TOKEN config — a deployment (critical gate), not performed autonomously.",
+      "acceptance": "running release serves the fail-closed auth (503 without token) with ODG_DASHBOARD_TOKEN set in secure env; loopback preserved",
+      "nextAction": "owner authorizes a gated redeploy of main + sets ODG_DASHBOARD_TOKEN (EXPOSURE_RUNBOOK.md §1)"
+    },
+    {
       "id": "dashboard-tls-exposure",
       "program": "P1",
       "title": "Owner-confirmed public exposure of the dashboard (activation)",
