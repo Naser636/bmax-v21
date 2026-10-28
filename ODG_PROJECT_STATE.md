@@ -7203,3 +7203,38 @@ proven); Go/Rust/Java = UNSUPPORTED (no toolchain); arbitrary-code SYNTHESIS/rep
 Session V21→V45 = PRs #82–#119(pending), test:report 59→137, all ff-only CI-green. ACTUAL COLLECTED CASH €0; €500k
 VOLUME-bound/unachieved. NEXT (Lot C): a type/syntax-error eval family (clean/broken fixtures per language) measuring the
 real execution path's PASS/FAIL accuracy — separate from K; broad-IT rate stays NO_DATA.
+
+---
+## CHECKPOINT 2026-10-28 (dj) — V46: first REAL end-to-end bounded CODE-REPAIR loop (beyond checking) €0
+CTO "V46 MASTER COMPLETION ROADMAP". Truth Lock 46b24bc≡origin/main (0/0), clean, 5 stashes + 4 untracked docs/
+preserved, no open PRs. Branch excellence/repair-workflow-v46. No new primitive (EXECUTOR-level harness, COMPOSES
+existing local-fixers + code-execution runner; patch-executor NOT imported — it reads patch-plan.json at import).
+Diff = repair-workflow(.ts/.test) + package.json + docs/odg/V46_MASTER_COMPLETION_REGISTER.md + compass.
+
+**AUDIT (§15.2, honest):** existing patch/exec infra = local-fixers (pure cosmetic transforms, no safety loop),
+patch-executor (governed apply to LIVE repo via patch-plan.json; side-effectful import), patch-proposal-apply
+(provider→executor adapter), provider-sandbox (bubblewrap local-model seam, fail-closed), mission-synthesizer (NL→
+contract, no AI). GAP = no isolated-workspace, acceptance-gated, rollback-safe REPAIR LOOP. Generative provider
+reality: ODG_LOCAL_MODEL_CMD **unset** ⇒ synthesis seam BLOCKED (not faked).
+
+**repair-workflow.ts (V46 — the real executable repair path):** runRepairWorkflow(task) on an ISOLATED workspace:
+snapshot (fs.cpSync) → reproduce baseline acceptance → resolve+validate bounded change within writeSet → apply →
+diff-inspect (stray-path scan) → run PRE-DECLARED acceptance (real toolchain, argv-array, no shell, timeout, cap,
+min env) → **ACCEPT only if baseline FAIL→post PASS with no stray edits, else EXACT ROLLBACK**. Outcomes ACCEPTED/
+ABSTAINED/REJECTED(write-set)/BLOCKED(generative/timeout)/NO_REPAIR_NEEDED/INVALID. Change sources honestly typed:
+edits+fixers = DETERMINISTIC; generative = PROVIDER-DEPENDENT (BLOCKED, unblock=authorize ODG_LOCAL_MODEL_CMD).
+Suite 15 (injected runner, zero subprocess). **LIVE PROOF (real `node --test`): buggy a−b → correct edit ⇒ ACCEPTED
+(baseline FAIL exit1 → post PASS exit0, fix on disk); wrong edit a*b ⇒ ABSTAINED + exact rollback (a−b restored).**
+This is a genuine end-to-end coding workflow (makes real code changes satisfying predeclared acceptance), NOT a
+syntax check and NOT arbitrary synthesis.
+
+**CAPABILITY CLASS (§3):** C-03 end-to-end bounded REPAIR = IMPLEMENTED_AND_VERIFIED (deterministic change sources).
+C-04 general code SYNTHESIS = BLOCKED (no authorized generative provider). Register docs/odg/V46_MASTER_COMPLETION_
+REGISTER.md carries ALL items forward with states (C-05/C-07/C-08/G-01/R-02 = dependency-ready next lots).
+
+**Gate:** test:report 137→138; tsc 0; build 0 (closure 105). €0; nothing sent; test workspaces in isolated tmp.
+Session V21→V46 = PRs #82–#119 merged + this PR, all ff-only CI-green. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/
+unachieved. NEXT (C-05): extend the repair-workflow loop to the next task family — "add a missing test for an existing
+function" or "safe dependency/config update" — reusing runRepairWorkflow with a new deterministic change source and a
+sealed before/after fixture; then C-07 code-check eval family. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/repair-workflow.test.ts`  (resume from register C-05).
