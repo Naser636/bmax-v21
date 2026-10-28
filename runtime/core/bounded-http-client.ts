@@ -88,7 +88,43 @@ function get(url: any, opts: any = {}): Promise<any> {
   });
 }
 
-export { ALLOWLIST, isPrivateHost, validateUrl, validateContentType, enforceSize, get };
-module.exports = { ALLOWLIST, isPrivateHost, validateUrl, validateContentType, enforceSize, get };
+/**
+ * post(url, bodyObj, opts): bounded HTTPS POST (JSON) to an allowlisted host — same guards as get() plus a JSON body.
+ * opts.httpImpl(href, {method, headers, timeout}, cb) defaults to https.request; tests inject a mock. Read-oriented
+ * (search APIs that require POST, e.g. TED); never a mutating external action. Returns the same result shape as get().
+ */
+function post(url: any, bodyObj: any, opts: any = {}): Promise<any> {
+  const allowlist = Array.isArray(opts.allowlist) ? opts.allowlist : ALLOWLIST;
+  const v = validateUrl(url, allowlist);
+  if (!v.ok) return Promise.resolve({ ok: false, code: v.code, host: v.host });
+  let body: string;
+  try { body = JSON.stringify(bodyObj === undefined ? {} : bodyObj); } catch { return Promise.resolve({ ok: false, code: "BAD_REQUEST_BODY" }); }
+  const timeoutMs = Number.isInteger(opts.timeoutMs) && opts.timeoutMs > 0 ? opts.timeoutMs : 8000;
+  const maxBytes = Number.isInteger(opts.maxBytes) && opts.maxBytes > 0 ? opts.maxBytes : 2_000_000;
+  const httpImpl = typeof opts.httpImpl === "function" ? opts.httpImpl : https.request;
+  const headers = Object.assign({ "user-agent": "ODG-discovery/1.0 (+public-reuse)", "accept": "application/json", "content-type": "application/json", "accept-encoding": "identity", "content-length": Buffer.byteLength(body) }, opts.headers || {});
+
+  return new Promise((resolve) => {
+    let done = false; const finish = (r: any) => { if (!done) { done = true; resolve(r); } };
+    try {
+      const req = httpImpl(v.href, { method: "POST", timeout: timeoutMs, headers }, (res: any) => {
+        const status = res.statusCode;
+        if (status >= 300 && status < 400) { finish({ ok: false, code: "REDIRECT_BLOCKED", statusCode: status }); try { res.destroy(); } catch {} return; }
+        const ct = res.headers && res.headers["content-type"];
+        if (status >= 200 && status < 300 && !validateContentType(ct)) { finish({ ok: false, code: "BAD_CONTENT_TYPE", contentType: ct || null, statusCode: status }); try { res.destroy(); } catch {} return; }
+        let received = 0; const chunks: any[] = [];
+        res.on("data", (c: any) => { received += c.length; if (!enforceSize(received, maxBytes)) { finish({ ok: false, code: "RESPONSE_TOO_LARGE", statusCode: status }); try { res.destroy(); } catch {} } else chunks.push(c); });
+        res.on("end", () => finish({ ok: true, statusCode: status, contentType: ct || null, body: Buffer.concat(chunks).toString("utf8") }));
+        res.on("error", (e: any) => finish({ ok: false, code: "RESPONSE_ERROR", detail: e && e.message }));
+      });
+      req.on("timeout", () => { try { req.destroy(); } catch {} finish({ ok: false, code: "TIMEOUT" }); });
+      req.on("error", (e: any) => finish({ ok: false, code: "CONNECT_ERROR", detail: e && e.message }));
+      try { req.write(body); req.end(); } catch (e: any) { finish({ ok: false, code: "WRITE_ERROR", detail: e && e.message }); }
+    } catch (e: any) { finish({ ok: false, code: "CLIENT_ERROR", detail: e && e.message }); }
+  });
+}
+
+export { ALLOWLIST, isPrivateHost, validateUrl, validateContentType, enforceSize, get, post };
+module.exports = { ALLOWLIST, isPrivateHost, validateUrl, validateContentType, enforceSize, get, post };
 
 export {};

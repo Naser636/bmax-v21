@@ -51,6 +51,20 @@ function mockImpl(body, { statusCode = 200, contentType = "application/json" } =
   const tooBig = await H.get("https://boamp-datadila.opendatasoft.com/x", { maxBytes: 3, httpImpl: mockImpl("way too many bytes") });
   ok("over size cap ⇒ RESPONSE_TOO_LARGE", tooBig.ok === false && tooBig.code === "RESPONSE_TOO_LARGE");
 
-  console.log(`\nBOUNDED-HTTP-CLIENT suite — ${pass} assertions passed. (https-only allowlist; SSRF guard; content-type/size/redirect/timeout; injected mock, zero network)`);
-  if (pass < 18) process.exit(1);   // guard: all async assertions must have run (not a silent callback skip)
+  // (5) post() reuses the same guards + sends a JSON body (injected mock, zero network).
+  function mockPost(body, { statusCode = 200, contentType = "application/json" } = {}) {
+    return (href, options, cb) => {
+      assert.ok(options.method === "POST", "post uses METHOD POST");
+      const res = { statusCode, headers: { "content-type": contentType }, _h: {}, on(ev, fn) { this._h[ev] = fn; return this; }, destroy() {} };
+      const req = { on() { return this; }, write() {}, end() { setImmediate(() => { cb(res); if (res._h.data) res._h.data(Buffer.from(body)); if (res._h.end) res._h.end(); }); }, destroy() {} };
+      return req;
+    };
+  }
+  const postOk = await H.post("https://api.ted.europa.eu/v3/notices/search", { query: "x" }, { httpImpl: mockPost('{"notices":[]}') });
+  ok("post success ⇒ ok + body", postOk.ok === true && postOk.body === '{"notices":[]}');
+  const postBlocked = await H.post("https://evil.example.com/x", { q: 1 }, { httpImpl: mockPost("{}") });
+  ok("post rejects non-allowlisted host before any request", postBlocked.ok === false && postBlocked.code === "HOST_NOT_ALLOWLISTED");
+
+  console.log(`\nBOUNDED-HTTP-CLIENT suite — ${pass} assertions passed. (https-only allowlist; SSRF guard; content-type/size/redirect/timeout; GET+POST; injected mock, zero network)`);
+  if (pass < 20) process.exit(1);   // guard: all async assertions must have run (not a silent callback skip)
 })();
