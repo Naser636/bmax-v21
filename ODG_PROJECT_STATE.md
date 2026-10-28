@@ -7052,3 +7052,22 @@ require a HUMAN/paid channel. ⇒ the €500k path is NOT discoverable via free 
 channel (partner membership, paid RFP aggregator, or direct relationship/outreach). NEXT: (a) a France Travail
 demand-signal adapter (free OAuth — weak proxy, needs a free account = human step), OR (b) axis-D partner-application
 prep for the form-only/membership channels. Both are HUMAN-gated at the external step.
+
+---
+## CHECKPOINT 2026-10-28 (dd) — V40: source-value decision model (volume≠value; owner decision surfaced) €0
+CTO "V40 PRIVATE DEMAND INTELLIGENCE" (post-PR#113, main 7573500). Truth Lock 7573500≡origin/main (0/0), clean, 5 stashes
++ 4 untracked docs/ preserved, CI success. No new primitive. Diff = source-registry(.ts/.test) + package.json + compass.
+
+**source-registry.ts (EXECUTED — §3 decision model):** typed registry of 6 researched/queried sources (BOAMP, TED,
+FRANCE_TRAVAIL, IT_SUPPLIER_PORTALS, PARTNER_APIS, PRIVATE_RFP_AGGREGATOR) with VERIFIED access (ANONYMOUS_API/FREE_OAUTH/
+FORM_ONLY/AUTH_MEMBERSHIP/PAID), cost, fit, OBSERVED qualifiedYield (from the independent eval: BOAMP 0, TED 0).
+rankSources scores by access+fit+qualified-yield+freshness−cost (NO volume term — value≠volume). recommend() surfaces a
+MATERIAL owner decision because no FREE source yields a strictly-QUALIFIED opp; NOT hardcoded (a yield>0 source flips it).
+Suite 10.
+
+**Gate:** test:report 130→131; tsc 0; build 0. €0; nothing sent.
+
+**HONEST STRATEGIC OUTPUT:** top free-queryable = BOAMP/TED (free+fresh) but 0 qualified yield ⇒ the qualified channel is
+human/paid-gated (owner decision: paid aggregator / supplier onboarding / partner membership / direct outreach). Absence
+of a free private feed ≠ absence of demand. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved. Session V21→V40 =
+PRs #82–#114(pending), test:report 59→131, all ff-only CI-green.
