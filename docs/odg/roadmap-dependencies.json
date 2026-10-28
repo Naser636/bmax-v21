@@ -1,0 +1,10 @@
+{
+  "//": "NON-PROTECTED companion to runtime/governance/ROADMAP.json. Encodes, as STRUCTURED data, the inter-mission dependencies that the canonical ROADMAP.json + mission contracts state only in PROSE, so dep-planner can machine-check the governed roadmap order. It does NOT modify the protected ROADMAP.json. Source of each edge = the cited mission-contract description.",
+  "version": "roadmap-deps-v1",
+  "dependencies": {
+    "DEPLOY_BMAX_DASHBOARD_PROD_V1": ["VPS_DEPLOYMENT_READINESS"]
+  },
+  "provenance": {
+    "DEPLOY_BMAX_DASHBOARD_PROD_V1<-VPS_DEPLOYMENT_READINESS": "runtime/missions/DEPLOY_BMAX_DASHBOARD_PROD_V1.json description: 'HUMAN-GATED and depends on VPS_DEPLOYMENT_READINESS being PROVEN'"
+  }
+}
