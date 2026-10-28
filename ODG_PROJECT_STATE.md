@@ -7472,3 +7472,26 @@ unachieved. **V48 THIS TURN: Lot A/C-08 PR#127, Lot C/C-06+C-12 PR#128, Lot D/C-
 PR#130; Lot B/C-04 BLOCKED (no authorized provider).** NEXT: Lot F research (specialty demand + reference inventory→
 experiments) OR make G-01 a hard Validation-Engine gate (authorized lot). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/mission-fidelity-verdict.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (du) — V49 Lot B / G-01 HARD GATE in the Validation Engine €0
+CTO "V49 VALIDATION ENGINE HARD GATE". Truth Lock a61ed88≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved.
+Branch excellence/ve-fidelity-hardgate-v49b. No new primitive. Diff = mission-fidelity-verdict.ts (+codingFidelityGate)
++ validation-engine.ts (gate wired into validated+partialEligible+unmet) + validation-engine-fidelity-gate.test.ts +
+package.json + register + compass.
+
+**THE HARD GATE (mandate B — real barrier, not a report line):** the Validation Engine (the canonical accept/refuse
+point, line ~284 `validated` conjunction → status → exitCode) now ANDs `codingFidelityGate(coding-resolution.json)`
+into BOTH `validated` and `partialEligible`. A coding mission routed ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED (the real
+artifact the mission-loader emits, V48a) CANNOT be stamped SUCCESS; present-but-malformed ⇒ fail-closed (block, no
+false success); ABSENT ⇒ no-op (every existing mission → zero regression). codingFidelityGate only ever REFUSES, never
+grants. **INTEGRATION PROOF (real compiled runtime/dist/core/validation-engine.js as subprocess):** a sandbox that
+validates SUCCESS without the artifact FLIPS to validated=false/exit1 when coding-resolution={codingMission:true,
+route:ROUTE_UNSUPPORTED|ABSTAIN|BLOCKED}; EXECUTE/non-coding/absent stay SUCCESS; malformed ⇒ fail-closed. Suite 11.
+Demonstrates the CANONICAL decision changes with a negative verdict — the mandate's explicit requirement.
+
+**Gate:** test:report 148→149; tsc 0; build 0 (closure 112). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. NEXT (V49 Lot C): full execution-rerouting — extend RuntimeContext with a bounded file manifest OR use the
+V48a bounded scan, then have the executor consume coding-resolution (EXECUTE authorized+verified, ROUTE_UNSUPPORTED no
+exec, ABSTAIN no change, BLOCKED keep cause) — prove load→route→exec on the real path. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/validation-engine-fidelity-gate.test.ts`
