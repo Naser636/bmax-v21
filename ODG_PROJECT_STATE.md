@@ -7428,3 +7428,25 @@ unachieved. **V48 THIS TURN so far: Lot A/C-08 (resolver on real loader path) PR
 PR#128.** Lot B/C-04 generative = BLOCKED (ODG_LOCAL_MODEL_CMD unset; adapter prepared V47e; not faked). NEXT: Lot D/C-07
 (extend eval to repair-family acceptance accuracy + false-success/false-abstention metrics) OR Lot E (verify objective-
 fidelity applied at mission close). Exact command: `git checkout main && git pull && npx tsx runtime/core/task-fix-require.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (ds) — V48 Lot D / C-07+C-13: repair-acceptance eval (REAL node --test) €0
+CTO V48 Lot D. Truth Lock 635fbc0≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/repair-eval-v48d. No new primitive. Diff = repair-eval(.ts/.test) + package.json + register + compass.
+
+**repair-eval.ts (C-13 — repair metrics, distinct from check accuracy):** SEALED corpus repair-eval-v1 (sha256, 6
+cases) with INDEPENDENT ground truth (FIXABLE vs NO_SAFE_FIX). evaluate() materializes each broken repo in an isolated
+tmp dir, runs the ACTUAL family builders (task-fix-exports/task-fix-require) through the REAL runRepairWorkflow + real
+`node --test`, classifies correctAccept/correctAbstain/**falseSuccess**/**falseAbstention**. **MEASURED (real tool):
+correctAccept 3, correctAbstain 3, falseSuccess 0, falseAbstention 0, accuracy 1.0.** Key: exp-fix-insufficient (export
+added but a−b≠a+b) ⇒ the real behaviour test fails ⇒ ABSTAINED+rollback ⇒ NO false success; undefined symbol ⇒
+UNSUPPORTED; ambiguous require ⇒ BLOCKED. Suite 8 runs the REAL harness (not mocked). Caveat: 6 JS-only cases, NOT
+check-accuracy / NOT K / NOT broad-IT. §5 re-verified: V47 TS-checker fix still 1.0 (TS 2/2 clean PASS, 2/2 broken FAIL).
+
+**Metrics now tracked SEPARATELY (honest):** check-accuracy 1.0 (13 cases, cce-v1) · repair-accept 1.0 / false-success 0
+/ false-abstention 0 (6 cases, repair-eval-v1) · K-category 7/7 (synthetic) · **broad-IT VERIFIED_SUCCESS_RATE = NO_DATA**.
+
+**Gate:** test:report 146→147; tsc 0; build 0 (closure 111). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **V48 THIS TURN: Lot A/C-08 PR#127, Lot C/C-06+C-12 PR#128, Lot D/C-07+C-13 PR#129; Lot B/C-04 BLOCKED
+(no authorized provider; adapter prepared).** NEXT: Lot E (verify objective-fidelity applied at mission close, not only
+its own tests) OR Lot F research. Exact command: `git checkout main && git pull && npx tsx runtime/core/repair-eval.ts`
