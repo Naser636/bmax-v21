@@ -88,9 +88,14 @@ function codingFidelityGate(codingResolution: any, opts: any = {}): any {
   const existed = opts.fileExisted === true || (codingResolution !== null && codingResolution !== undefined);
   if (!existed) return { block: false, reason: "no coding-resolution artifact (non-coding or pre-integration mission)" };
   if (!isObj(codingResolution)) return { block: true, reason: "coding-resolution.json present but malformed — fail-closed (no false success)" };
-  if (codingResolution.executed === true) return { block: false, reason: "coding-resolution marks executed (handled upstream)" };
   if (codingResolution.codingMission === true && NON_SUCCESS_ROUTES.includes(codingResolution.route)) {
     return { block: true, route: codingResolution.route, reason: `coding mission routed ${codingResolution.route} — not a successful execution (cannot be stamped SUCCESS)` };
+  }
+  // When a REAL check actually ran for an EXECUTE route, a FAILED/BLOCKED result cannot be a success (an EXECUTE
+  // route alone is never proof — the executed check must pass). A VERIFIED result (or no execution) does not block.
+  const er = codingResolution.executionResult;
+  if (codingResolution.route === "EXECUTE" && isObj(er) && (er.status === "FAILED" || er.status === "BLOCKED")) {
+    return { block: true, route: "EXECUTE", reason: `coding EXECUTE check did not pass (executionResult=${er.status}) — cannot be stamped SUCCESS` };
   }
   return { block: false, route: codingResolution.route || null, reason: `coding route ${codingResolution.route || "n/a"} does not block acceptance` };
 }

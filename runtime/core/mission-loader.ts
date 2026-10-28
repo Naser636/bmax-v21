@@ -337,7 +337,8 @@ try {
     // best-effort (exactly like the MissionContext block): never blocks the load, never marks a mission executed.
     try {
         const { attachCodingResolution }: any = require("./mission-coding-integration");
-        const r = attachCodingResolution(mission, { context });
+        // execute is OPT-IN (ODG_CODING_EXECUTE=1) so default loader behaviour is unchanged (zero regression).
+        const r = attachCodingResolution(mission, { context, execute: process.env.ODG_CODING_EXECUTE === "1" });
         if (r && r.ok && r.resolution) {
             console.log("CodingRoute:", r.resolution.route, r.resolution.language ? `(${r.resolution.language})` : "", r.resolution.persisted ? "-> runtime/generated/coding-resolution.json" : "");
         }

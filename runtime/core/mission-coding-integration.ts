@@ -18,6 +18,7 @@
 const fs = require("fs");
 const path = require("path");
 const RESOLVER = require("./coding-mission-resolver.js");
+const EXECUTOR = require("./coding-executor.js");
 
 const MANIFEST_NAMES = ["package.json", "tsconfig.json", "requirements.txt", "pyproject.toml", "go.mod", "Cargo.toml", "pom.xml", "build.gradle"];
 const SCAN_FILE_CAP = 500;   // hard cap: bounded, never a full-repo scan
@@ -117,9 +118,23 @@ function attachCodingResolution(mission: any, opts: any = {}): any {
     fidelityContract: resolved.fidelityContract,
     reason: resolved.reason, nextAction: resolved.nextAction,
     signalsScanned: repoSignals.scannedCount != null ? repoSignals.scannedCount : (Array.isArray(repoSignals.files) ? repoSignals.files.length : 0),
-    executed: false,                       // this hook NEVER marks a mission executed
-    note: "Advisory coding resolution persisted on the canonical loader path. A ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED mission is NOT executed. Full execution-rerouting (executor consuming this) is a separate architecture lot.",
+    executed: false,                       // set true only after a real VERIFIED check (opt-in execute below)
+    executionResult: null as any,
+    note: "Advisory coding resolution persisted on the canonical loader path. A ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED mission is NOT executed. With opt-in execute, an EXECUTE route runs a REAL bounded check whose result the Validation Engine gates on.",
   };
+
+  // OPT-IN real execution (default OFF ⇒ zero change to existing missions). When enabled AND route===EXECUTE, run the
+  // bounded coding-executor over in-scope files and record a REAL check result the VE gate consumes. Best-effort.
+  const doExecute = opts.execute === true || (opts.execute !== false && process.env.ODG_CODING_EXECUTE === "1");
+  if (doExecute && resolved.route === "EXECUTE") {
+    try {
+      const ex = EXECUTOR.executeCodingResolution(resolved, { workspaceDir: root, ...(opts.runner ? { runner: opts.runner } : {}), ...(typeof opts.toolchainAvailable === "boolean" ? { toolchainAvailable: opts.toolchainAvailable } : {}) });
+      resolution.executionResult = { status: ex.status, executed: ex.executed === true, filesChecked: ex.filesChecked || 0, results: Array.isArray(ex.results) ? ex.results.slice(0, 50) : [] };
+      (resolution as any).executed = ex.status === "VERIFIED";
+    } catch (e: any) {
+      resolution.executionResult = { status: "BLOCKED", executed: false, reason: (e && e.message) || "execution error" };
+    }
+  }
 
   if (opts.write !== false) {
     try {
