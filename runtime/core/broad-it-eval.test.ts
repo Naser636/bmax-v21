@@ -42,4 +42,9 @@ ok("leakage protection carried in the verdict", a.leakageProtection.ok === true)
 const p1 = B.provenance(), p2 = B.provenance();
 ok("provenance stable sha256 + partitions + supported categories", p1.sha256 === p2.sha256 && /^[0-9a-f]{64}$/.test(p1.sha256) && p1.partitions.dev > 0 && p1.partitions.heldout > 0 && p1.supportedCategories.length === 3);
 
-console.log(`\nBROAD-IT-EVAL suite — ${pass} assertions passed. (dev/heldout leakage-protected; per-category metrics; falsePass detected; broad-IT NO_DATA honest, not extrapolated)`);
+// (7) eval-metrics WIRED: PASS-detector confusion present; oracle ⇒ FP=0/FN=0/precision=recall=1; always-PASS ⇒ FP>0.
+ok("confusion present via eval-metrics (oracle ⇒ FP0/FN0/precision1/recall1)", held.confusion && held.confusion.FP === 0 && held.confusion.FN === 0 && held.confusion.precision === 1 && held.confusion.recall === 1);
+ok("adversarial always-PASS ⇒ confusion FP > 0 (false passes caught by the metric)", fp.confusion.FP > 0);
+ok("assessBroadIT carries the held-out confusion", a.supportedSurfaceHeldout.confusion && typeof a.supportedSurfaceHeldout.confusion.precision !== "undefined");
+
+console.log(`\nBROAD-IT-EVAL suite — ${pass} assertions passed. (dev/heldout leakage-protected; per-category + eval-metrics confusion; falsePass detected; broad-IT NO_DATA honest, not extrapolated)`);
