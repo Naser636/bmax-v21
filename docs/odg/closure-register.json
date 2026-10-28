@@ -89,6 +89,19 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "rust-build-capability",
+      "program": "P2",
+      "title": "Rust/build capability (authorized rustc) + task-mode-diversity honesty gate",
+      "status": "ACCEPTED",
+      "deps": [
+        "go-build-capability",
+        "coverage-toolchain-aware"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): rustc 1.93.1 installed (authorized apt, reversible; dashboard unaffected 200). code-execution LANG_SPEC +Rust = real hermetic `rustc --edition 2021 --crate-type lib --emit=metadata --out-dir <ws>` (type + BORROW check, metadata-only/no linker, offline CARGO_NET_OFFLINE + workspace-scoped homes ⇒ external crate FAILS CLOSED ~0.08s). Live-verified: clean PASS, type-error FAIL, borrow-error FAIL, net-dep FAIL. code-execution suite 34→36. broad-it-eval v6: +Rust corpus (8 real cases, acc 1.0), coverage 7→8/12=0.6667 which CROSSES the 0.6 breadth gate — so added a TASK-MODE-DIVERSITY gate (minTaskModes=2): the corpus is mono-modal (static-single-file only; no integration/data/application/runtime tasks) ⇒ representative=false ⇒ broadIT STAYS NO_DATA. This closes the 'cross 0.6 with trivial static breadth' loophole. broad-it-eval suite 35→37.",
+      "acceptance": "a real hermetic Rust build check with independent eval; breadth gate crossed but broad rate HONESTLY NO_DATA via the mode-diversity guard (no false MEASURED)"
+    },
+    {
       "id": "coverage-toolchain-aware",
       "program": "P2",
       "title": "Toolchain-aware coverage + honest Go/build inclusion (engine intelligence)",
@@ -191,16 +204,17 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for remaining COMPILER stacks (Rust/Java/C#) + linters (tidy/hadolint)",
+      "title": "Engineering capability for remaining COMPILER stacks (Java/C#) + linters (tidy/hadolint)",
       "status": "BLOCKED",
       "deps": [
         "langfamily-noinstall-checkers",
         "shellcheck-lint-capability",
-        "go-build-capability"
+        "go-build-capability",
+        "rust-build-capability"
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "FURTHER NARROWED: no-install subset DONE (Shell/SQL/YAML/JSON), Shell/lint DONE (shellcheck), Go/build DONE (go-build-capability, PR#170). What remains needs its own authorized reproducible install — compilers rustc/cargo, javac/JDK, dotnet and linters tidy (HTML-CSS) / hadolint (Dockerfile). Each is a deliberate per-family install on the prod VPS host (impact-controlled), not a bulk install.",
+      "blockReason": "FURTHER NARROWED: no-install subset DONE (Shell/SQL/YAML/JSON), Shell/lint DONE (shellcheck), Go/build DONE (PR#170), Rust/build DONE (rust-build-capability). What remains needs its own authorized reproducible install — javac/JDK, dotnet and linters tidy (HTML-CSS) / hadolint (Dockerfile). Each is a deliberate per-family install on the prod VPS host (impact-controlled), not a bulk install. NOTE: adding more static-check categories will NOT produce a broad-IT MEASURED rate — that now additionally requires task-MODE diversity (integration/data/application/runtime), which no current corpus mode provides.",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },
