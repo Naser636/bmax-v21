@@ -7151,3 +7151,26 @@ it) + measured before/after (6/7→7/7) ⇒ REUSE_VALIDATED candidate within thi
 cases). Session V21→V43 = PRs #82–#117(pending), test:report 59→134, all ff-only CI-green. NEXT: broaden the K corpus
 (more defect classes + harder/ambiguous cases) to tighten the measured rate's confidence, OR replicate the loop to
 another taxonomy category.
+
+---
+## CHECKPOINT 2026-10-28 (dh) — V44: project-signal-detector (reusable INSPECT/RESOLVE; honest UNSUPPORTED) €0
+CTO "V44 FULL-SPECTRUM EXPANSION" (post-PR#117, main 6f0b346). Truth Lock 6f0b346≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, CI success. No new primitive. Diff = project-signal-detector(.ts/.test) + package.json +
+compass.
+
+**project-signal-detector.ts (EXECUTED — V44 reusable capability-expansion lot):** detectSignals(repo{files,manifests,
+deps}) → evidence-backed LANGUAGE (ext-count+confidence), FRAMEWORK (Next/React/Vue/Angular/Express/Fastify/Django/Flask/
+Spring), BUILD (node/pip/go/cargo/maven/gradle/bundler), TEST-framework, PACKAGE-manager, DOMAINS (web-frontend/backend-
+api). HONEST capabilityResolution: TS/JS ⇒ IMPLEMENTED_AND_VERIFIED (ODG's PROVEN surface); every other stack (Python/Go/
+Rust/Java/…) ⇒ UNSUPPORTED with reason ("detection only, action not faked"). Foundation of the general loop's INSPECT→
+RESOLVE step; unlocks many families (any domain first needs language/framework/capability resolution). Fail-closed; no
+fabricated language. Suite 11.
+
+**CAPABILITY CLASS (honest, §3):** this is IMPLEMENTED_AND_VERIFIED as a DETECTION/RESOLUTION capability — NOT a claim
+that ODG can build arbitrary web/mobile/Python apps (those remain NOT_IMPLEMENTED/UNSUPPORTED, truthfully surfaced by
+the resolver). Real expansion of the executable surface (a new callable path), honestly bounded.
+
+**Gate:** test:report 134→135; tsc 0; build 0. €0; nothing sent. Broad VERIFIED_SUCCESS_RATE still NO_DATA except the
+K-pilot (7/7). Session V21→V44 = PRs #82–#118(pending), test:report 59→135, all ff-only CI-green. ACTUAL COLLECTED CASH
+€0; €500k VOLUME-bound/unachieved. NEXT: wire detectSignals into opportunity/mission intake (route by detected stack:
+TS/JS actionable vs UNSUPPORTED→subcontract/partner), OR build a repo-indexing/failure-localization capability next.
