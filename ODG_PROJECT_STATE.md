@@ -7607,3 +7607,24 @@ JS `node --check` + Python `py_compile` are syntax-sound. Enable-by-default awai
 COLLECTED CASH €0; €500k unachieved. NEXT (V54 Chantier B/C): B2 autonomous mission-chain test on the real path, OR C1/C2
 select+implement ONE deliverable product offer from proven capabilities (e.g. "syntax/type check + bounded repair as a
 service" using code-execution+repair-workflow). Exact command: `git checkout main && git pull && ODG_CODING_EXECUTE=1 npx tsx runtime/core/coding-execute-wire.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (ea) — V54 Chantier C / P-01: first productized offer (Code Health Check) €0
+CTO V54 §6 C1+C2. Truth Lock 7c6a0ae≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/code-health-service-v54c. No new primitive. Diff = code-health-service(.ts/.test) + package.json + register + compass.
+
+**code-health-service.ts (P-01 — first deliverable product from PROVEN capabilities):** packages the real JS/TS/Python
+syntax/type CHECK (code-execution) into ONE usable offer. OFFER record (C1): client/problem/inputs/deliverable/controls/
+limits/time-cost/risks/successCriteria/priceHypothesis(HYPOTHESIS only)/journey map — NO certification/guarantee claims;
+commercialState = NO lead/proposal/contract/invoice/cash. runHealthCheck(input) (C2 realizable journey): validate inputs
+→ run real checks per file → Code Health Report {per-file PASS/FAIL/UNSUPPORTED/BLOCKED + real tool attribution, counts,
+healthy, limits, no-retention note}. 0 false PASS (broken⇒FAIL); UNSUPPORTED/BLOCKED declared, never counted as PASS.
+Suite 12 (injected runner). **LIVE real toolchain deliverable: ok.js PASS(node)/bad.js FAIL/ok.py PASS(python3)/bad.py
+FAIL/svc.go UNSUPPORTED ⇒ counts {PASS2,FAIL2,UNSUPPORTED1}, healthy false.** Journey: offer/validate/execute/deliverable/
+evidence IMPLEMENTED; onboarding/billing/public-hosting NOT_IMPLEMENTED (owner-gated, honest).
+
+**Gate:** test:report 154→155; tsc 0; build 0. €0; nothing sent; synthetic data only; no public exposure. Register P-01
+VERIFIED (deliverable; demand UNMEASURED). ACTUAL COLLECTED CASH €0; €500k unachieved. **V54 so far: A3 real-path routing
+PR#136, C/P-01 product offer PR#137.** NEXT: C3 zero-cost demand experiment (segment+hypothesis+sample deliverable+
+success thresholds, NO external contact) OR B2 autonomous mission-chain test. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/code-health-service.ts`
