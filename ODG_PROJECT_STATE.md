@@ -8167,3 +8167,21 @@ collecting ≥5 real signals (still BLOCKED). 9 ACCEPTED / 1 IN_PROGRESS / 5 BLO
 
 **Gate:** test:report 171→**172**, tsc 0, build 0. €0; COLLECTED CASH €0; demand DEMAND_NOT_VALIDATED. NEXT: p01-billing
 sandbox logic (last decomposition).
+
+---
+## CHECKPOINT 2026-10-28 (ey) — UNBLOCK: P-01 sandbox billing cycle proof (last decomposition) €0
+Decomposed p01-billing-sandbox. Sandbox cycle DONE end-to-end; SANDBOX-ONLY, no real charge.
+
+**p01-billing-sandbox.ts:** drives the full cycle over EXISTING invoicing+payments primitives (NO new billing logic,
+no new primitive): draft→validate→issue→signed TEST_MODE webhook→PAID (€58.80 incl 20% tax), idempotent replay (paid
+unchanged), card-data REFUSED, tampered-signature REJECTED. HARD guard: LIVE_REFUSED if PAYMENT_LIVE_ENABLED=1 (can
+never initiate a real charge); confined to an isolated temp cwd (no repo writes, no network, no real account). Suite 10.
+
+**Register:** new ACCEPTED p01-billing-sandbox-cycle; p01-billing-sandbox NARROWED to a REAL provider (owner-gated,
+needs paid account + validated demand; still BLOCKED). 10 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
+
+**ALL 5 blocked objectives now decomposed:** each has an ACCEPTED realizable-prep sibling; what remains BLOCKED is the
+genuinely external remainder (owner exposure decision / authorized toolchain install / protected-file amendment /
+owner-run WTP experiment / real paid provider). Nothing falsely closed.
+
+**Gate:** test:report 172→**173**, tsc 0, build 0. €0; COLLECTED CASH €0; €500k unachieved.
