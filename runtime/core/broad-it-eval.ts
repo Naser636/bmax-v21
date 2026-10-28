@@ -98,13 +98,22 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-rust-clean-2", partition: "heldout", category: "Rust/build", language: "Rust", kind: "clean", expected: "PASS", content: "pub enum E { A, B }\npub fn pick(b: bool) -> E { if b { E::A } else { E::B } }\n" },
   { id: "held-rust-broken-1", partition: "heldout", category: "Rust/build", language: "Rust", kind: "broken", expected: "FAIL", content: "pub fn f() { let s = String::from(\"x\"); let _a = s; let _b = s; }\n" },
   { id: "held-rust-broken-2", partition: "heldout", category: "Rust/build", language: "Rust", kind: "broken", expected: "FAIL", content: "use external_crate::thing;\npub fn f() { thing(); }\n" },
+  // --- Java/compile (v7): real hermetic `javac -d <ws>` (type check; external import = no classpath ⇒ FAIL CLOSED). ---
+  { id: "dev-java-clean-1", partition: "dev", category: "Java/compile", language: "Java", kind: "clean", expected: "PASS", content: "class Calc { int add(int a, int b){ return a + b; } }\n" },
+  { id: "dev-java-clean-2", partition: "dev", category: "Java/compile", language: "Java", kind: "clean", expected: "PASS", content: "import java.util.*;\nclass Store { List<String> xs = new ArrayList<>(); void add(String s){ xs.add(s); } }\n" },
+  { id: "dev-java-broken-1", partition: "dev", category: "Java/compile", language: "Java", kind: "broken", expected: "FAIL", content: "class Calc { int f(){ String s = 5; return s; } }\n" },
+  { id: "dev-java-broken-2", partition: "dev", category: "Java/compile", language: "Java", kind: "broken", expected: "FAIL", content: "class Calc { void f(){ missing(); } }\n" },
+  { id: "held-java-clean-1", partition: "heldout", category: "Java/compile", language: "Java", kind: "clean", expected: "PASS", content: "class Greeter { String hi(String n){ return \"hi \" + n; } }\n" },
+  { id: "held-java-clean-2", partition: "heldout", category: "Java/compile", language: "Java", kind: "clean", expected: "PASS", content: "class Box<T> { private T v; Box(T v){ this.v = v; } T get(){ return v; } }\n" },
+  { id: "held-java-broken-1", partition: "heldout", category: "Java/compile", language: "Java", kind: "broken", expected: "FAIL", content: "import com.unavailable.Dep;\nclass Uses { Dep d; }\n" },
+  { id: "held-java-broken-2", partition: "heldout", category: "Java/compile", language: "Java", kind: "broken", expected: "FAIL", content: "class Bad { int f() { return; } }\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v6";
+const CORPUS_VERSION = "broad-it-eval-v7";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
 // NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
 // Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build"];
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build", "Java/compile"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
@@ -116,7 +125,7 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
   { category: "Python/syntax", supported: true, language: "Python" },
   { category: "Go/build", supported: true, language: "Go" },   // v5: real hermetic `go build` (authorized Go toolchain, PR#170)
   { category: "Rust/build", supported: true, language: "Rust" },     // v6: real hermetic `rustc --emit=metadata` (authorized Rust toolchain)
-  { category: "Java/compile", supported: false, language: "Java" },
+  { category: "Java/compile", supported: true, language: "Java" },     // v7: real hermetic `javac -d <ws>` (authorized JDK)
   { category: "CSharp/compile", supported: false, language: "CSharp" },
   { category: "SQL/schema", supported: true, language: "SQL" },               // v3: real checker (stdlib sqlite3, no install)
   { category: "Shell/lint", supported: true, language: "ShellLint" },         // v4: real shellcheck static analysis
