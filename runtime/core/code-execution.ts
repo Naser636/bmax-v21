@@ -60,6 +60,18 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
       GO111MODULE: "off", GOPROXY: "off", GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local",
     }),
   },
+  // Rust/build: a REAL compile check via the authorized rustc toolchain — type-checks (incl. the borrow checker),
+  // catching far more than a parse. HERMETIC: emit metadata only (--emit=metadata, no linker) into the isolated
+  // workspace (--out-dir dir, self-cleaning); TMPDIR + CARGO/RUSTUP homes scoped INTO the workspace and
+  // CARGO_NET_OFFLINE=true. Bare `rustc` performs no network I/O; a non-stdlib `extern crate`/`use` FAILS CLOSED
+  // ("can't find crate", ~0.08s, no fetch). Probe fails ⇒ Rust honestly UNSUPPORTED (never a decoy).
+  Rust: {
+    bin: "rustc", probeArgs: ["--version"], ext: ".rs",
+    args: (f: string) => ["--edition", "2021", "--crate-type", "lib", "--emit=metadata", "--out-dir", path.dirname(f), f],
+    env: (dir: string) => ({
+      TMPDIR: dir, CARGO_HOME: path.join(dir, ".cargo"), RUSTUP_HOME: path.join(dir, ".rustup"), CARGO_NET_OFFLINE: "true",
+    }),
+  },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }

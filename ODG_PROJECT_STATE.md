@@ -8369,3 +8369,15 @@ no-arg = backward-compatible); assessBroadIT + measuredSurface pass live detectT
 coverage to 0.4167 (no overstatement). Suites: broad-it-eval 30→35, code-execution 32, capability-taxonomy 15. Register
 +ACCEPTED coverage-toolchain-aware. Gate: test:report 176, tsc 0, build 0. €0. Blockers: 5 external (Rust/Java/C#/tidy/
 hadolint per-family install; dashboard-tls public; structured-roadmap protected; p01-demand lawful; p01-billing paid).
+
+---
+## CHECKPOINT 2026-10-28 (fl) — Priority 2: Rust/build capability + task-mode-diversity honesty gate €0
+Entry via compass. Truth Lock 8a7f1e7≡origin/main (0/0), 5 stashes + worktrees + foreign dirs preserved. rustc 1.93.1
+installed (authorized apt, reversible; dashboard unaffected 200/401). code-execution +Rust = real hermetic `rustc
+--emit=metadata --out-dir <ws>` (type+BORROW check, no linker, offline, external-crate FAILS CLOSED). Live: clean PASS,
+type/borrow/net-dep FAIL. code-execution suite 34→36. **HONESTY JUNCTURE:** adding Rust to the corpus pushed coverage
+7→8/12=0.6667, CROSSING the 0.6 breadth gate — which would have falsely flipped representative→MEASURED. Added a TASK-
+MODE-DIVERSITY gate (minTaskModes=2): corpus is mono-modal (static-single-file only) ⇒ representative=false ⇒ broadIT
+STAYS NO_DATA. Closes the 'cross 0.6 with trivial static breadth' loophole. broad-it-eval v6 (corpus 60→68, suite 37),
+capability-taxonomy 15. Register +ACCEPTED rust-build-capability; new-language-families narrowed to Java/C#/tidy/hadolint.
+18 ACCEPTED/1 IN_PROGRESS/5 BLOCKED, 0 stale. Gate: test:report 176, tsc 0, build 0. €0. Branched-first (clean).

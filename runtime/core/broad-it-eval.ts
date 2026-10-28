@@ -89,13 +89,22 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-go-clean-2", partition: "heldout", category: "Go/build", language: "Go", kind: "clean", expected: "PASS", content: "package main\ntype P struct{ N int }\nfunc main(){ p := P{N: 1}; _ = p.N }\n" },
   { id: "held-go-broken-1", partition: "heldout", category: "Go/build", language: "Go", kind: "broken", expected: "FAIL", content: "package main\nimport \"fmt\"\nfunc main(){ fmt.Println(undeclared) }\n" },
   { id: "held-go-broken-2", partition: "heldout", category: "Go/build", language: "Go", kind: "broken", expected: "FAIL", content: "package main\nfunc main(){ return 5 }\n" },
+  // --- Rust/build (v6): real hermetic `rustc --emit=metadata` (type + borrow check, offline). Counts only when rustc present. ---
+  { id: "dev-rust-clean-1", partition: "dev", category: "Rust/build", language: "Rust", kind: "clean", expected: "PASS", content: "pub fn add(a: i32, b: i32) -> i32 { a + b }\n" },
+  { id: "dev-rust-clean-2", partition: "dev", category: "Rust/build", language: "Rust", kind: "clean", expected: "PASS", content: "pub struct P { pub n: i32 }\npub fn mk() -> P { P { n: 1 } }\n" },
+  { id: "dev-rust-broken-1", partition: "dev", category: "Rust/build", language: "Rust", kind: "broken", expected: "FAIL", content: "pub fn f() -> i32 { let x: i32 = \"str\"; x }\n" },
+  { id: "dev-rust-broken-2", partition: "dev", category: "Rust/build", language: "Rust", kind: "broken", expected: "FAIL", content: "pub fn f() -> i32 { undefined_fn() }\n" },
+  { id: "held-rust-clean-1", partition: "heldout", category: "Rust/build", language: "Rust", kind: "clean", expected: "PASS", content: "pub fn g(x: &str) -> String { x.to_uppercase() }\n" },
+  { id: "held-rust-clean-2", partition: "heldout", category: "Rust/build", language: "Rust", kind: "clean", expected: "PASS", content: "pub enum E { A, B }\npub fn pick(b: bool) -> E { if b { E::A } else { E::B } }\n" },
+  { id: "held-rust-broken-1", partition: "heldout", category: "Rust/build", language: "Rust", kind: "broken", expected: "FAIL", content: "pub fn f() { let s = String::from(\"x\"); let _a = s; let _b = s; }\n" },
+  { id: "held-rust-broken-2", partition: "heldout", category: "Rust/build", language: "Rust", kind: "broken", expected: "FAIL", content: "use external_crate::thing;\npub fn f() { thing(); }\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v5";
+const CORPUS_VERSION = "broad-it-eval-v6";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
 // NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
 // Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build"];
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
@@ -106,7 +115,7 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
   { category: "TypeScript/type", supported: true, language: "TypeScript" },
   { category: "Python/syntax", supported: true, language: "Python" },
   { category: "Go/build", supported: true, language: "Go" },   // v5: real hermetic `go build` (authorized Go toolchain, PR#170)
-  { category: "Rust/build", supported: false, language: "Rust" },
+  { category: "Rust/build", supported: true, language: "Rust" },     // v6: real hermetic `rustc --emit=metadata` (authorized Rust toolchain)
   { category: "Java/compile", supported: false, language: "Java" },
   { category: "CSharp/compile", supported: false, language: "CSharp" },
   { category: "SQL/schema", supported: true, language: "SQL" },               // v3: real checker (stdlib sqlite3, no install)
@@ -118,7 +127,12 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
 // PRE-REGISTERED representativeness gate (fixed before measuring): a corpus counts as representative only when at
 // least minCoverageRatio of the target taxonomy is covered AND each covered category carries ≥ minCasesPerCovered
 // REAL-evaluable cases (both clean and broken). Until then broad-IT stays NO_DATA.
-const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true });
+// minTaskModes: representativeness ALSO requires diversity of task MODE — not just category breadth. Every current
+// case is a `static-single-file` check (compile/syntax/type on one file). A corpus that is mono-modal is NOT
+// representative of broad IT (which includes integration, data, application-build and runtime-behaviour tasks), no
+// matter how many language categories it spans. This closes the "cross 0.6 with many trivial static categories" loophole.
+const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true, minTaskModes: 2 });
+const BROAD_TASK_MODES = Object.freeze(["static-single-file", "integration", "data", "application-build", "runtime-behaviour"]);
 
 function sha256(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
 
@@ -164,13 +178,18 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS, toolchain?: Record<
   });
   const covered = perCategory.filter((c) => c.covered);
   const ratio = Number((covered.length / TARGET_TAXONOMY.length).toFixed(4));
+  // task-mode diversity: distinct `mode` across the corpus (default static-single-file). Mono-modal ⇒ not representative.
+  const taskModes = Array.from(new Set(corpus.map((c: any) => c.mode || "static-single-file"))).sort();
+  const modeDiverse = taskModes.length >= th.minTaskModes;
   return {
     total: TARGET_TAXONOMY.length,
     coveredCount: covered.length,
     ratio,
     threshold: th,
     toolchainAware: !!tcAware,
-    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0,
+    taskModes,
+    modeDiverse,
+    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0 && modeDiverse,
     coveredCategories: covered.map((c) => c.category),
     missing: perCategory.filter((c) => !c.covered).map((c) => ({ category: c.category, supported: c.supported, cases: c.cases, reason: !c.supported ? "no executable checker in ODG (toolchain absent) — would be UNSUPPORTED" : (!c.toolchainPresent ? "checker declared but its toolchain is NOT present at eval time — not currently measurable" : "insufficient real-evaluable cases (need both kinds ≥ threshold)") })),
     perCategory,
@@ -234,7 +253,9 @@ function assessBroadIT(opts: any = {}): any {
     broadIT,
     reason: representative
       ? `corpus meets the pre-registered representativeness gate (coverage ${coverage.ratio} ≥ ${coverage.threshold.minCoverageRatio})`
-      : `corpus covers only ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); ${coverage.missing.length} categories remain uncovered (${coverage.missing.map((m: any) => m.category).join(", ")}). Coverage is toolchain-aware: a category counts only if real cases exist AND its checker is runnable now. A broad-IT rate requires crossing this gate with a representative, independently-labelled corpus.`,
+      : (coverage.ratio >= coverage.threshold.minCoverageRatio && !coverage.modeDiverse
+          ? `category coverage ${coverage.coveredCount}/${coverage.total} (ratio ${coverage.ratio}) meets the breadth gate, BUT the corpus is mono-modal (task modes: [${coverage.taskModes.join(", ")}]) — only static-single-file checks, no integration/data/application-build/runtime-behaviour tasks. Breadth of language categories is NOT representativeness of broad IT; a broad-IT rate requires ≥${coverage.threshold.minTaskModes} task modes. Verdict stays NO_DATA (no false MEASURED on trivial static breadth).`
+          : `corpus covers ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); ${coverage.missing.length} categories uncovered (${coverage.missing.map((m: any) => m.category).join(", ")}). Toolchain-aware: a category counts only if real cases exist AND its checker is runnable now. A broad-IT rate requires crossing this gate with a representative, independently-labelled, multi-mode corpus.`),
     representative,
     coverage,
     supportedSurfaceHeldout: { accuracy: held.overall.accuracy, falsePass: held.overall.falsePass, falseFail: held.overall.falseFail, evaluated: held.overall.evaluated, perCategory: held.perCategory, confusion: held.confusion },

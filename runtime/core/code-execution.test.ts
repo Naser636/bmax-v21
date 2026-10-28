@@ -46,8 +46,13 @@ for (const lang of ["Shell", "SQL", "YAML", "JSON", "ShellLint"]) {
 ok("Go in LANG_SPEC: argv-array `go build` + hermetic env fn", E.LANG_SPEC.Go && Array.isArray(E.LANG_SPEC.Go.args("f")) && E.LANG_SPEC.Go.bin === "go" && typeof E.LANG_SPEC.Go.env === "function");
 ok("Go hermetic env is offline + workspace-scoped (no network, no inherited cache)", (() => { const e = E.LANG_SPEC.Go.env("/ws"); return e.GOPROXY === "off" && e.GO111MODULE === "off" && e.GOTOOLCHAIN === "local" && String(e.GOCACHE).startsWith("/ws") && String(e.GOPATH).startsWith("/ws"); })());
 ok("Go toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Go", content: "package main\nfunc main(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED" && /not faked/.test(E.runSyntaxCheck({ language: "Go", content: "x", toolchainAvailable: false }).reason));
+// Rust/build IS wired now (authorized rustc install): a REAL `rustc --emit=metadata` type+borrow check — argv-array,
+// with a per-workspace hermetic env fn (offline; metadata-only, no linker; emits into the self-cleaning workspace).
+ok("Rust in LANG_SPEC: argv-array `rustc --emit=metadata` + hermetic env fn", E.LANG_SPEC.Rust && Array.isArray(E.LANG_SPEC.Rust.args("f")) && E.LANG_SPEC.Rust.bin === "rustc" && typeof E.LANG_SPEC.Rust.env === "function" && E.LANG_SPEC.Rust.args("f").includes("--emit=metadata"));
+ok("Rust hermetic env is offline + workspace-scoped", (() => { const e = E.LANG_SPEC.Rust.env("/ws"); return e.CARGO_NET_OFFLINE === "true" && String(e.CARGO_HOME).startsWith("/ws") && String(e.TMPDIR).startsWith("/ws"); })());
+ok("Rust toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Rust", content: "pub fn f(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
 // the REMAINING compiler stacks stay honestly ABSENT from LANG_SPEC (require their own authorized install ⇒ UNSUPPORTED, never faked).
-for (const lang of ["Rust", "Java", "CSharp"]) {
+for (const lang of ["Java", "CSharp"]) {
   ok(`${lang} NOT in LANG_SPEC ⇒ UNSUPPORTED (no decoy)`, !E.LANG_SPEC[lang] && E.runSyntaxCheck({ language: lang, content: "x" }).status === "UNSUPPORTED");
 }
 
@@ -60,10 +65,13 @@ const realCases = [
   ["JSON", "{\"a\":1,\"b\":[1,2]}\n", "PASS"], ["JSON", "{\"a\":1,,}\n", "FAIL"],
   ["ShellLint", "#!/usr/bin/env bash\nset -euo pipefail\nname=\"world\"\necho \"hello ${name}\"\n", "PASS"],
   ["ShellLint", "#!/usr/bin/env bash\nrm -rf $UNQUOTED/*\n", "FAIL"],
-  // Go/build: real compile. The FAIL case is a TYPE error (not a syntax error) — proving this is a genuine build check,
+    // Go/build: real compile. The FAIL case is a TYPE error (not a syntax error) — proving this is a genuine build check,
   // not a mere parse: a formatter/parser would accept it, `go build` rejects it. stdlib-only ⇒ hermetic, no network.
   ["Go", "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"ok\")\n}\n", "PASS"],
   ["Go", "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar x int = \"nope\"\n\tfmt.Println(x)\n}\n", "FAIL"],
+  // Rust/build: real compile. FAIL case is a TYPE error (not syntax) — proving a genuine build check; stdlib-only ⇒ hermetic.
+  ["Rust", "pub fn add(a: i32, b: i32) -> i32 { a + b }\n", "PASS"],
+  ["Rust", "pub fn f() -> i32 { let x: i32 = \"nope\"; x }\n", "FAIL"],
 ];
 for (const [lang, content, exp] of realCases) {
   if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }
