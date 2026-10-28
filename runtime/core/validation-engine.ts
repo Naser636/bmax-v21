@@ -33,6 +33,10 @@
 import * as fs from "fs";
 // Scope + evidence primitives live in ONE shared module (no second concurrent implementation).
 const { changedPathsInScope, trackedFilesInScope, artifactNonEmpty }: any = require("./scope-observer");
+// G-01 HARD GATE: a coding mission routed ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED (the real coding-resolution artifact the
+// mission-loader emits) cannot be stamped SUCCESS. Consulted ONLY as a safety condition that can REFUSE acceptance —
+// it never grants it. Absent ⇒ no effect (non-coding/pre-integration missions unchanged); malformed ⇒ fail-closed.
+const { codingFidelityGate }: any = require("./mission-fidelity-verdict");
 
 function readJsonSafe(file: string): any {
     try {
@@ -277,7 +281,12 @@ const checks = {
 // SUCCESS requires full proof AND no outstanding blocked action. Adding `noBlocked` closes the false-DONE
 // hole: a per-action BLOCKED entry is neither FAILED nor RECORDED, so without this it would slip through
 // every existing gate and a not-actually-done mission would be stamped SUCCESS.
-const validated = !crossMission && coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked;
+// G-01 coding-fidelity hard gate (see import note). `block=true` REFUSES acceptance; it can never create success.
+const codingResolutionPath = "runtime/generated/coding-resolution.json";
+const codingGate = codingFidelityGate(readJsonSafe(codingResolutionPath), { fileExisted: fs.existsSync(codingResolutionPath) });
+const codingFidelityOk = !codingGate.block;
+
+const validated = !crossMission && coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked && codingFidelityOk;
 
 // PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
 // SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
@@ -299,12 +308,14 @@ const partialEligible =
     typescriptOk &&
     capabilitiesOk &&
     failingProvenObjectiveProofs.length === 0 &&
-    dependencyOk;
+    dependencyOk &&
+    codingFidelityOk;
 
 const status = validated ? "SUCCESS" : partialEligible ? "PARTIAL" : "BLOCKED";
 
 const unmet: string[] = [];
 if (crossMission) unmet.push(`Cross-mission/stale execution artifact: mission-plan belongs to "${planMission}" but patch-execution belongs to "${execMission}" — refuse to verify over mismatched artifacts (fail-closed isolation).`);
+if (codingGate.block) unmet.push(`Objective fidelity gate: ${codingGate.reason}.`);
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f: any) => f.action).join(", ")}.`);
 if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evidence: ${missingEvidence.map((e: any) => e.evidence).join(", ")}.`);

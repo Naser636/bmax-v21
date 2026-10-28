@@ -75,6 +75,26 @@ function assessMissionFidelity(plan: any, report: any): any {
   };
 }
 
+// Coding routes that are NOT a successful execution and must never be stamped SUCCESS (mandate B.3).
+const NON_SUCCESS_ROUTES = ["ROUTE_UNSUPPORTED", "ABSTAIN", "BLOCKED"];
+
+/**
+ * codingFidelityGate(codingResolution, opts?): the HARD-GATE condition the Validation Engine ANDs into its final
+ * acceptance. Returns { block, reason, route? }. A coding mission routed ROUTE_UNSUPPORTED/ABSTAIN/BLOCKED cannot be
+ * a success. Absent artifact ⇒ no block (non-coding / pre-integration missions unaffected — zero regression). A
+ * PRESENT-but-malformed artifact ⇒ block (fail-closed: never grant success on an unreadable fidelity signal).
+ */
+function codingFidelityGate(codingResolution: any, opts: any = {}): any {
+  const existed = opts.fileExisted === true || (codingResolution !== null && codingResolution !== undefined);
+  if (!existed) return { block: false, reason: "no coding-resolution artifact (non-coding or pre-integration mission)" };
+  if (!isObj(codingResolution)) return { block: true, reason: "coding-resolution.json present but malformed — fail-closed (no false success)" };
+  if (codingResolution.executed === true) return { block: false, reason: "coding-resolution marks executed (handled upstream)" };
+  if (codingResolution.codingMission === true && NON_SUCCESS_ROUTES.includes(codingResolution.route)) {
+    return { block: true, route: codingResolution.route, reason: `coding mission routed ${codingResolution.route} — not a successful execution (cannot be stamped SUCCESS)` };
+  }
+  return { block: false, route: codingResolution.route || null, reason: `coding route ${codingResolution.route || "n/a"} does not block acceptance` };
+}
+
 /** writeVerdict(cwd, verdict): persist runtime/generated/fidelity-verdict.json (best-effort). */
 function writeVerdict(cwd: string, verdict: any): boolean {
   try {
@@ -85,5 +105,5 @@ function writeVerdict(cwd: string, verdict: any): boolean {
   } catch { return false; }
 }
 
-export { assessMissionFidelity, writeVerdict, MANDATORY_GATES };
-module.exports = { assessMissionFidelity, writeVerdict, MANDATORY_GATES };
+export { assessMissionFidelity, writeVerdict, codingFidelityGate, MANDATORY_GATES, NON_SUCCESS_ROUTES };
+module.exports = { assessMissionFidelity, writeVerdict, codingFidelityGate, MANDATORY_GATES, NON_SUCCESS_ROUTES };
