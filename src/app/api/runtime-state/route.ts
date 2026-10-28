@@ -17,6 +17,7 @@
  */
 import { readFileSync } from "node:fs";
 import { resolve as resolvePath, join as joinPath } from "node:path";
+import { evaluateDashboardAuth } from "../../../lib/dashboard-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic"; // request-time only; reflect current artifacts, never cached
@@ -323,7 +324,13 @@ export function readRuntimeSnapshot(): RuntimeSnapshot {
   };
 }
 
-export async function GET(): Promise<Response> {
+export async function GET(req?: Request): Promise<Response> {
+  // SECURITY: the runtime snapshot is INTERNAL state — gate it fail-closed (deny-by-default) before any read.
+  // Anonymous / missing / invalid credentials ⇒ no internal data leaves. ODG_DASHBOARD_TOKEN unset ⇒ 503 (withheld).
+  const auth = evaluateDashboardAuth({ pathname: "/api/runtime-state", headers: (req && req.headers) || undefined });
+  if (!auth.allow) {
+    return new Response(JSON.stringify({ error: "forbidden", reason: auth.reason }), { status: auth.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+  }
   let snapshot: RuntimeSnapshot;
   try {
     snapshot = readRuntimeSnapshot();
