@@ -8212,3 +8212,18 @@ FABRICATION:** test proves all 19 `reflectedIn` modules EXIST on disk. Doc docs/
 **Register:** +ACCEPTED engineering-practices-register (versioned improvement attached to P2, NOT a new roadmap). 11
 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 173→**174**, tsc 0, build 0. €0. NEXT: Phase 6 SEO/positioning register;
 Phase 2 wire capability-taxonomy↔measured coverage.
+
+---
+## CHECKPOINT 2026-10-28 (fb) — WORLD-CLASS Phase 6: SEO/positioning plan (honest, preparatory) €0
+Genuine gap (no SEO module existed). Reused excellence-policy (anti-superlative) + demand-evidence DOSSIER; no duplication.
+
+**seo-strategy.ts:** grounded on the real product (code-health-check-v1). 5 search-intent HYPOTHESES tied to real pages,
+7-page site architecture incl. an honest "vs free DIY" comparison + editorial article, instrumentation plan (GSC
+impressions/clicks/ctr/conversions + demand-experiment qualified_demand). FAIL-CLOSED honesty: reviewSeoCopy refuses
+guaranteed-ranking + unbacked superlatives (reuses excellence-policy.evaluateClaim) + fabricated social proof (unless a
+verified evidence ref); validateStructuredData refuses Review/Rating/AggregateRating markup without real verified reviews
+(0 now) and non-approved schema types. status PREPARED_NOT_PUBLISHED; demand stays DEMAND_NOT_VALIDATED. Doc
+docs/odg/seo-positioning-plan.md. Suite 15.
+
+**Register:** +ACCEPTED seo-positioning-plan. 12 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 174→**175**, tsc 0,
+build 0. €0. NEXT: Phase 2 wire capability-taxonomy↔measured coverage (final admissible internal lot).

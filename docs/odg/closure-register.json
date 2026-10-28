@@ -3,6 +3,18 @@
   "version": "closure-register-v1",
   "items": [
     {
+      "id": "seo-positioning-plan",
+      "program": "P2",
+      "title": "Product positioning + organic-visibility (SEO) plan (Phase 6, preparatory)",
+      "status": "ACCEPTED",
+      "deps": [
+        "engineering-practices-register"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/seo-strategy.ts — grounded on the real product dossier (demand-evidence); 5 search-intent hypotheses tied to real pages, 7-page site architecture incl. an honest vs-free-DIY comparison, instrumentation plan. FAIL-CLOSED honesty: reviewSeoCopy refuses guaranteed-ranking + unbacked superlatives (reuses excellence-policy) + fabricated social proof; validateStructuredData refuses Review/Rating markup without real verified reviews (0 now). status PREPARED_NOT_PUBLISHED; demand stays DEMAND_NOT_VALIDATED. Doc docs/odg/seo-positioning-plan.md. Suite 15.",
+      "acceptance": "an honest, Google-guidance-aligned SEO/positioning plan exists with anti-overclaim + structured-data gates; nothing published; no guaranteed ranking; no fabricated proof"
+    },
+    {
       "id": "engineering-practices-register",
       "program": "P2",
       "title": "World-class best-practices research register (Phase 1 of CTO excellence mandate)",
