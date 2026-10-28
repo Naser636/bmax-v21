@@ -34,7 +34,7 @@ ok("dev partition evaluable + disjoint result set", dev.partition === "dev" && d
 
 // (5) HONEST broad-IT verdict = NO_DATA, representative=false, not extrapolated.
 const a = B.assessBroadIT({ runner: oracle, toolchain: ALL });
-ok("assessBroadIT ⇒ NO_DATA (not representative)", a.broadIT === "NO_DATA" && a.representative === false && /NOT representative of general IT/.test(a.reason));
+ok("assessBroadIT ⇒ NO_DATA (not representative)", a.broadIT === "NO_DATA" && a.representative === false && /ratio .* < required/.test(a.reason));
 ok("supported-surface held-out accuracy reported SEPARATELY (no extrapolation)", a.supportedSurfaceHeldout.accuracy === 1 && /remains NO_DATA/.test(a.note));
 ok("leakage protection carried in the verdict", a.leakageProtection.ok === true);
 
@@ -46,5 +46,22 @@ ok("provenance stable sha256 + partitions + supported categories", p1.sha256 ===
 ok("confusion present via eval-metrics (oracle ⇒ FP0/FN0/precision1/recall1)", held.confusion && held.confusion.FP === 0 && held.confusion.FN === 0 && held.confusion.precision === 1 && held.confusion.recall === 1);
 ok("adversarial always-PASS ⇒ confusion FP > 0 (false passes caught by the metric)", fp.confusion.FP > 0);
 ok("assessBroadIT carries the held-out confusion", a.supportedSurfaceHeldout.confusion && typeof a.supportedSurfaceHeldout.confusion.precision !== "undefined");
+
+// (8) GROWN corpus: 4 real-evaluable cases per supported category per partition (2 clean + 2 broken), all evaluated.
+const supCats = ["JavaScript/syntax", "TypeScript/type", "Python/syntax"];
+for (const cat of supCats) {
+  for (const part of ["dev", "heldout"]) {
+    const cs = B.CORPUS.filter((c) => c.category === cat && c.partition === part);
+    ok(`corpus grown: ${cat}/${part} has ≥4 cases with both kinds`, cs.length >= 4 && cs.some((c) => c.kind === "clean") && cs.some((c) => c.kind === "broken"));
+  }
+}
+ok("grown corpus still leakage-free (24 cases, disjoint)", B.CORPUS.length === 24 && B.checkLeakage().ok === true);
+
+// (9) COVERAGE MODEL: representativeness is MEASURED against a pre-registered taxonomy + threshold, not asserted.
+const cov = B.coverageReport();
+ok("coverage: supported categories covered, unsupported are explicit gaps (not fake breadth)", cov.coveredCount === 3 && cov.coveredCategories.length === 3 && cov.missing.every((m) => m.supported === false));
+ok("coverage ratio measured below the pre-registered gate ⇒ NOT representative", cov.ratio < cov.threshold.minCoverageRatio && cov.meetsThreshold === false && a.representative === false);
+ok("unsupported taxonomy categories can NEVER count as covered (toolchain absent)", B.TARGET_TAXONOMY.filter((t) => t.supported === false).every((t) => !cov.coveredCategories.includes(t.category)));
+ok("assessBroadIT embeds the coverage measurement + pre-registered threshold", a.coverage && a.coverage.ratio === cov.ratio && a.coverage.threshold.minCoverageRatio === B.REPRESENTATIVE_THRESHOLD.minCoverageRatio);
 
 console.log(`\nBROAD-IT-EVAL suite — ${pass} assertions passed. (dev/heldout leakage-protected; per-category + eval-metrics confusion; falsePass detected; broad-IT NO_DATA honest, not extrapolated)`);

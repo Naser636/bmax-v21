@@ -19,26 +19,63 @@ const EXEC = require("./code-execution.js");
 const METRICS = require("./eval-metrics.js");   // ODG5 eval-metrics — wired here as a real consumer (was orphan)
 
 // Diversified corpus across language × kind. partition ∈ {dev, heldout}; held-out cases are NEVER used to tune.
+// Grown (v2) within the ACTUALLY-supported surface (JS/TS/Python): 4 cases per category per partition (2 clean,
+// 2 broken). Every case is REAL-checker-evaluable (never BLOCKED), and DEV/HELDOUT stay disjoint by id AND content.
 const CORPUS: ReadonlyArray<any> = Object.freeze([
   // --- DEV (visible, for tuning) ---
   { id: "dev-js-clean-1", partition: "dev", category: "JavaScript/syntax", language: "JavaScript", kind: "clean", expected: "PASS", content: "const a = 1;\nmodule.exports = a;\n" },
+  { id: "dev-js-clean-2", partition: "dev", category: "JavaScript/syntax", language: "JavaScript", kind: "clean", expected: "PASS", content: "let total = 0;\nfor (let i = 0; i < 3; i++) { total += i; }\nmodule.exports = total;\n" },
   { id: "dev-js-broken-1", partition: "dev", category: "JavaScript/syntax", language: "JavaScript", kind: "broken", expected: "FAIL", content: "const a = ;\n" },
+  { id: "dev-js-broken-2", partition: "dev", category: "JavaScript/syntax", language: "JavaScript", kind: "broken", expected: "FAIL", content: "const obj = { a: 1,, };\n" },
   { id: "dev-ts-clean-1", partition: "dev", category: "TypeScript/type", language: "TypeScript", kind: "clean", expected: "PASS", content: "const n: number = 1;\nexport {};\n" },
+  { id: "dev-ts-clean-2", partition: "dev", category: "TypeScript/type", language: "TypeScript", kind: "clean", expected: "PASS", content: "interface P { n: number }\nconst p: P = { n: 1 };\nexport { p };\n" },
   { id: "dev-ts-broken-1", partition: "dev", category: "TypeScript/type", language: "TypeScript", kind: "broken", expected: "FAIL", content: "const n: number = 'x';\nexport {};\n" },
+  { id: "dev-ts-broken-2", partition: "dev", category: "TypeScript/type", language: "TypeScript", kind: "broken", expected: "FAIL", content: "function f(x: number): string { return x; }\nexport {};\n" },
   { id: "dev-py-clean-1", partition: "dev", category: "Python/syntax", language: "Python", kind: "clean", expected: "PASS", content: "def f(a, b):\n    return a + b\n" },
+  { id: "dev-py-clean-2", partition: "dev", category: "Python/syntax", language: "Python", kind: "clean", expected: "PASS", content: "nums = [1, 2, 3]\nprint(sum(nums))\n" },
   { id: "dev-py-broken-1", partition: "dev", category: "Python/syntax", language: "Python", kind: "broken", expected: "FAIL", content: "def f(:\n    return 1\n" },
+  { id: "dev-py-broken-2", partition: "dev", category: "Python/syntax", language: "Python", kind: "broken", expected: "FAIL", content: "if True\n    pass\n" },
   // --- HELDOUT (kept apart; evaluation only) ---
   { id: "held-js-clean-1", partition: "heldout", category: "JavaScript/syntax", language: "JavaScript", kind: "clean", expected: "PASS", content: "function g(x){ return x * 2; }\nmodule.exports = { g };\n" },
+  { id: "held-js-clean-2", partition: "heldout", category: "JavaScript/syntax", language: "JavaScript", kind: "clean", expected: "PASS", content: "const arr = [1, 2, 3].map((x) => x + 1);\nmodule.exports = { arr };\n" },
   { id: "held-js-broken-1", partition: "heldout", category: "JavaScript/syntax", language: "JavaScript", kind: "broken", expected: "FAIL", content: "function g( { return 1 }\n" },
+  { id: "held-js-broken-2", partition: "heldout", category: "JavaScript/syntax", language: "JavaScript", kind: "broken", expected: "FAIL", content: "const x = {;\n" },
   { id: "held-ts-clean-1", partition: "heldout", category: "TypeScript/type", language: "TypeScript", kind: "clean", expected: "PASS", content: "function id<T>(v: T): T { return v; }\nexport { id };\n" },
+  { id: "held-ts-clean-2", partition: "heldout", category: "TypeScript/type", language: "TypeScript", kind: "clean", expected: "PASS", content: "type Pair = [number, string];\nconst p: Pair = [1, 'a'];\nexport { p };\n" },
   { id: "held-ts-broken-1", partition: "heldout", category: "TypeScript/type", language: "TypeScript", kind: "broken", expected: "FAIL", content: "const z: = 1;\nexport {};\n" },
+  { id: "held-ts-broken-2", partition: "heldout", category: "TypeScript/type", language: "TypeScript", kind: "broken", expected: "FAIL", content: "let s: string = 42;\nexport {};\n" },
   { id: "held-py-clean-1", partition: "heldout", category: "Python/syntax", language: "Python", kind: "clean", expected: "PASS", content: "import json\nprint(json.dumps({'a': 1}))\n" },
+  { id: "held-py-clean-2", partition: "heldout", category: "Python/syntax", language: "Python", kind: "clean", expected: "PASS", content: "d = {'k': 1}\nfor k, v in d.items():\n    print(k, v)\n" },
   { id: "held-py-broken-1", partition: "heldout", category: "Python/syntax", language: "Python", kind: "broken", expected: "FAIL", content: "x = (1\n" },
+  { id: "held-py-broken-2", partition: "heldout", category: "Python/syntax", language: "Python", kind: "broken", expected: "FAIL", content: "def f()\n    return 1\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v1";
+const CORPUS_VERSION = "broad-it-eval-v2";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this.
 const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax"];
+
+// PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
+// DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
+// representativeness verdict is a measurement, not an assertion. `supported` marks the categories ODG's real checker
+// can actually evaluate today; the rest are coverage GAPS (no executable checker ⇒ cases would be UNSUPPORTED).
+const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
+  { category: "JavaScript/syntax", supported: true },
+  { category: "TypeScript/type", supported: true },
+  { category: "Python/syntax", supported: true },
+  { category: "Go/build", supported: false },
+  { category: "Rust/build", supported: false },
+  { category: "Java/compile", supported: false },
+  { category: "CSharp/compile", supported: false },
+  { category: "SQL/schema", supported: false },
+  { category: "Shell/lint", supported: false },
+  { category: "HTML-CSS/validate", supported: false },
+  { category: "Config-YAML/validate", supported: false },
+  { category: "Dockerfile/lint", supported: false },
+]);
+// PRE-REGISTERED representativeness gate (fixed before measuring): a corpus counts as representative only when at
+// least minCoverageRatio of the target taxonomy is covered AND each covered category carries ≥ minCasesPerCovered
+// REAL-evaluable cases (both clean and broken). Until then broad-IT stays NO_DATA.
+const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true });
 
 function sha256(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
 
@@ -54,6 +91,41 @@ function checkLeakage(corpus: ReadonlyArray<any> = CORPUS): any {
 
 function provenance(): any {
   return { version: CORPUS_VERSION, sha256: sha256(JSON.stringify(CORPUS)), total: CORPUS.length, partitions: { dev: CORPUS.filter((c) => c.partition === "dev").length, heldout: CORPUS.filter((c) => c.partition === "heldout").length }, supportedCategories: SUPPORTED_CATEGORIES };
+}
+
+/**
+ * coverageReport(corpus): measure corpus coverage against the PRE-REGISTERED target taxonomy. A target category is
+ * "covered" only if it is supported by a real checker AND carries ≥ minCasesPerCovered cases with both a clean and a
+ * broken example (so an UNSUPPORTED/toolchain-absent category can never count as covered — that would be fake breadth).
+ * Returns the ratio (covered / |taxonomy|), per-category counts, and the explicit missing list. No extrapolation.
+ */
+function coverageReport(corpus: ReadonlyArray<any> = CORPUS): any {
+  const th = REPRESENTATIVE_THRESHOLD;
+  const byCat: Record<string, { total: number; clean: number; broken: number }> = {};
+  for (const c of corpus) {
+    byCat[c.category] = byCat[c.category] || { total: 0, clean: 0, broken: 0 };
+    byCat[c.category].total++;
+    if (c.kind === "clean") byCat[c.category].clean++;
+    else if (c.kind === "broken") byCat[c.category].broken++;
+  }
+  const perCategory = TARGET_TAXONOMY.map((t) => {
+    const counts = byCat[t.category] || { total: 0, clean: 0, broken: 0 };
+    const hasBothKinds = counts.clean > 0 && counts.broken > 0;
+    const covered = t.supported === true && counts.total >= th.minCasesPerCovered && (!th.requireBothKinds || hasBothKinds);
+    return { category: t.category, supported: t.supported === true, cases: counts.total, clean: counts.clean, broken: counts.broken, covered };
+  });
+  const covered = perCategory.filter((c) => c.covered);
+  const ratio = Number((covered.length / TARGET_TAXONOMY.length).toFixed(4));
+  return {
+    total: TARGET_TAXONOMY.length,
+    coveredCount: covered.length,
+    ratio,
+    threshold: th,
+    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0,
+    coveredCategories: covered.map((c) => c.category),
+    missing: perCategory.filter((c) => !c.covered).map((c) => ({ category: c.category, supported: c.supported, cases: c.cases, reason: c.supported ? "insufficient real-evaluable cases (need both kinds ≥ threshold)" : "no executable checker in ODG (toolchain absent) — would be UNSUPPORTED" })),
+    perCategory,
+  };
 }
 
 function blank(): any { return { evaluated: 0, correctPass: 0, correctFail: 0, falsePass: 0, falseFail: 0, blocked: 0 }; }
@@ -102,19 +174,26 @@ function assessBroadIT(opts: any = {}): any {
   const leak = checkLeakage();
   if (!leak.ok) return { broadIT: "INVALID", reason: "DEV/HELDOUT leakage detected", leak };
   const held = evaluate({ partition: "heldout", runner: opts.runner, toolchain: opts.toolchain });
-  const representative = false; // by construction: only 3 check categories; not representative of broad IT
+  const coverage = coverageReport();
+  // representativeness is now MEASURED against the pre-registered taxonomy + threshold, not asserted. It can only
+  // become true when real coverage crosses the gate AND there is no leakage — never by adding unsupported stubs.
+  const representative = coverage.meetsThreshold && leak.ok;
+  const broadIT = representative ? "MEASURED" : "NO_DATA";
   return {
-    broadIT: "NO_DATA",
-    reason: "corpus covers only the narrow SUPPORTED surface (JS/TS/Python syntax/type checks); NOT representative of general IT (absent: Go/Rust/Java/SQL/web + application-build/integration/data/repair-generalisation). A broad-IT rate requires a representative, diverse, independently-labelled corpus that does not yet exist.",
+    broadIT,
+    reason: representative
+      ? `corpus meets the pre-registered representativeness gate (coverage ${coverage.ratio} ≥ ${coverage.threshold.minCoverageRatio})`
+      : `corpus covers only ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); the real checker supports JS/TS/Python only, so ${coverage.missing.length} taxonomy categories (Go/Rust/Java/C#/SQL/Shell/HTML-CSS/YAML/Dockerfile) have NO executable checker. A broad-IT rate requires crossing this gate with a representative, independently-labelled corpus that does not yet exist.`,
     representative,
+    coverage,
     supportedSurfaceHeldout: { accuracy: held.overall.accuracy, falsePass: held.overall.falsePass, falseFail: held.overall.falseFail, evaluated: held.overall.evaluated, perCategory: held.perCategory, confusion: held.confusion },
     leakageProtection: leak,
-    note: "Held-out supported-surface accuracy is reported for THIS narrow corpus only. broad-IT VERIFIED_SUCCESS_RATE remains NO_DATA. No extrapolation.",
+    note: "Held-out supported-surface accuracy is reported for THIS narrow corpus only. broad-IT VERIFIED_SUCCESS_RATE remains NO_DATA until the coverage gate is crossed. No extrapolation.",
   };
 }
 
-export { CORPUS, CORPUS_VERSION, SUPPORTED_CATEGORIES, checkLeakage, provenance, evaluate, assessBroadIT };
-module.exports = { CORPUS, CORPUS_VERSION, SUPPORTED_CATEGORIES, checkLeakage, provenance, evaluate, assessBroadIT };
+export { CORPUS, CORPUS_VERSION, SUPPORTED_CATEGORIES, TARGET_TAXONOMY, REPRESENTATIVE_THRESHOLD, checkLeakage, provenance, coverageReport, evaluate, assessBroadIT };
+module.exports = { CORPUS, CORPUS_VERSION, SUPPORTED_CATEGORIES, TARGET_TAXONOMY, REPRESENTATIVE_THRESHOLD, checkLeakage, provenance, coverageReport, evaluate, assessBroadIT };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify(assessBroadIT(), null, 2) + "\n");
