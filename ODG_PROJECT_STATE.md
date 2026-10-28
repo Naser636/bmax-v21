@@ -7071,3 +7071,27 @@ Suite 10.
 human/paid-gated (owner decision: paid aggregator / supplier onboarding / partner membership / direct outreach). Absence
 of a free private feed ≠ absence of demand. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved. Session V21→V40 =
 PRs #82–#114(pending), test:report 59→131, all ff-only CI-green.
+
+---
+## CHECKPOINT 2026-10-28 (de) — V41: broad-IT capability taxonomy + VERIFIED_SUCCESS_RATE baseline (honest NO_DATA) €0
+CTO "V41 WORLD-CLASS GENERAL SWE" (post-PR#114, main 587d19f). Truth Lock 587d19f≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, CI success. Two-gate. No new primitive. Diff = capability-taxonomy(.ts/.test) +
+package.json + compass.
+
+**GATE A (audit, read-only):** research tranche = VERIFIED ~26 refs already (V21 20-ref world-class benchmark +
+V38/V39 source research BOAMP/TED/OCDS/supplier-portals/partner-APIs/aggregator/France-Travail); remaining ~74 =
+NOT_YET_RESEARCHED backlog (ranked: SWE agents, verification/mutation/fuzz, supply-chain, SRE, eval-contamination).
+NOT fabricated to 100.
+
+**capability-taxonomy.ts (EXECUTED — Gate B, the honest baseline):** 18 categories A–R, per-category coverage + evidence
++ evidenceScope. HONEST CENSUS: **0 PROVEN as a client service** (nothing client-validated); most PARTIAL (own-repo
+evidence only — this repo's own web app/connectors/JS→TS migration/CI/assurance-pilot/recovery), several NO_DATA
+(mobile/db/accessibility). Strongest = K (software-assurance) but SYNTHETIC only. measuredSuccessRate null everywhere.
+BASELINE_PROTOCOL freezes VERIFIED_SUCCESS_RATE = independently-verified successful eligible / all eligible attempted;
+sealed/held-out separation + no-train-on-held-out + abstention + false-success-excluded. computeVerifiedSuccessRate
+fail-closes to NO_DATA (not 0/100%); excludes false-successes from numerator; flags small samples. **CURRENT BASELINE =
+NO_DATA (no held-out broad-IT corpus run); 50% target UNMET + UNMEASURED.** Suite 10.
+
+**Gate:** test:report 131→132; tsc 0; build 0. €0; nothing sent. Honest: ODG is NOT broadly proven; broad success rate
+UNKNOWN; its niche (K, software-assurance) is strongest but synthetic/unsold. Session V21→V41 = PRs #82–#115(pending),
+test:report 59→132, all ff-only CI-green. NEXT: failure taxonomy (V42) or run a small held-out eval tranche in K.
