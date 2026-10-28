@@ -8247,3 +8247,28 @@ service env. ⇒ app-layer auth NOT active in the running release, BUT internal 
 Honest: network-layer closed, app-layer defense-in-depth stale. Activating needs a gated REDEPLOY+restart+token
 (critical gate — NOT done autonomously). Doc docs/odg/deploy/VPS_STATUS.md; register +BLOCKED dashboard-auth-redeploy
 (deployment-gated). 13 ACCEPTED/1 IN_PROGRESS/6 BLOCKED. €0.
+
+---
+## CHECKPOINT 2026-10-28 (fe) — Dashboard auth closure: GATE A read-only + GATE B prerequisite PREPARED (stopped) €0
+Mission: close stale-release dashboard auth, loopback-only. Truth Lock e8fb44f8≡origin/main (0/0), 5 stashes + foreign
+dirs + worktrees preserved.
+
+**GATE A (read-only, no secret printed):** service active, binds 127.0.0.1 ONLY (not exposed); deployed release 268be2c
+(2026-10-27) has 0 occurrences of the fail-closed marker ⇒ genuinely predates auth PRs#152/#153; main has it.
+scripts/odg-release.sh = safe immutable pipeline (atomic current-swap, rollback-to-previous, loopback, NO sudo); current+
+previous symlinks present (rollback available). **ODG_DASHBOARD_TOKEN UNPROVIDED** (no EnvironmentFile/drop-in/env key);
+unit is a system unit at /etc/systemd/system (drop-in+restart PRIVILEGED).
+
+**GATE B decision = NOT satisfiable autonomously ⇒ prepare prerequisite + STOP** (per mandate "otherwise"): full
+acceptance needs 'authorized access succeeds' (a provided token), mandate forbids configuring unprovided credentials +
+no secret leakage; EnvironmentFile wiring+restart are privileged. Did NOT mint a live secret, redeploy, or restart.
+
+**Prepared + tested prerequisite:** dashboard-token-provision.ts (PURE: mintToken/fingerprint/renderEnvFile/writeEnvFile
+0600/plan; NEVER prints secret; fail-closed weak token; idempotent; suite 14) + scripts/provision-dashboard-token.sh
+(sandbox-verified: CREATE 0600 + fingerprint-only + idempotent KEEP; live host untouched) + docs/odg/deploy/
+DASHBOARD_AUTH_ACTIVATION.md (exact 3-step owner runbook: provision→systemd EnvironmentFile→odg-release build/verify/
+activate; post-deploy deny/allow verification w/o echoing token; rollback; acceptance checklist).
+
+**Distinction:** implementation DONE (auth on main), prerequisite PREPARED; integration/live-operation/external-acceptance
+NOT done (owner-gated 3 privileged steps). Register: dashboard-auth-redeploy stays BLOCKED (prerequisite prepared; precise
+owner nextAction). 13 ACCEPTED/1 IN_PROGRESS/6 BLOCKED. Gate: test:report 175→**176**, tsc 0, build 0. €0.
