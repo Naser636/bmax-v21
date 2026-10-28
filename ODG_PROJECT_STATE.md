@@ -7533,3 +7533,32 @@ repair-edit, test-gen, missing-export, broken-require, json-config.
 **Gate:** test:report 150→151; tsc 0; build 0 (closure 112). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
 unachieved. **V49 COMPLETE: Lot B/G-01 VE hard-gate PR#131, Lot C/C-08 coding-executor PR#132, Lot E/C-06+C-14 5th
 family PR#133; Lot D/C-04 BLOCKED (no provider).** NEXT (V50 priority): detect+activate local Ollama for C-04.
+
+---
+## CHECKPOINT 2026-10-28 (dx) — V50 C-04 UNBLOCKED: real local Ollama generative repair (confined) €0
+CTO "V50 FULL COMPLETION · OLLAMA LOCAL". Truth Lock 7143279≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved.
+Branch excellence/ollama-provider-v50. No new primitive. Diff = ollama-provider(.ts/.test) + generative-repair-adapter.ts
+(+runGenerativeRepair) + generative-repair-adapter.test.ts + package.json + register + compass.
+
+**DISCOVERY (real, probed):** Ollama v0.35.1 INSTALLED (/usr/local/bin/ollama) + daemon UP (loopback 127.0.0.1:11434);
+models PRESENT: qwen2.5-coder:7b (4.7GB), qwen2.5-coder:3b (1.9GB), qwen2.5:0.5b — all local, €0, NO download/network.
+Hardware 22Gi RAM / 163G disk / 8 CPU (CPU-only) ⇒ 3B/7B feasible. Real inference proven (qwen2.5-coder:3b ⇒ {"sum":5}).
+
+**ollama-provider.ts:** loopback-ONLY client (127.0.0.1:11434 hardcoded — no external host/SSRF), bounded timeout+size,
+no secrets, no shell; detectOllama (model pick, fail-closed), generate (non-stream, temp 0), parseEditsProposal (STRICT
+untrusted-output parse: fenced/bare/prose, balanced-object, string-safe), buildRepairPrompt. Suite 15 (injected transport,
+zero network). **generative-repair-adapter.runGenerativeRepair:** generate→strict parse→validateProposal(write-set/size/
+shape)→applyProposal→runRepairWorkflow→accept/EXACT-rollback. Model output is UNTRUSTED (cannot self-authorize, expand
+write-set, or disable tests). Suite 16. **LIVE E2E (REAL qwen2.5-coder:3b + real node --test): baseline `return a-b`
+FAIL → model proposed edit → ACCEPTED → `return a+b` on disk, test PASS. wrong⇒ABSTAIN+rollback, out-of-scope⇒REJECTED,
+down⇒BLOCKED, malformed⇒REJECTED.** First REAL general code-GENERATION repair (not a deterministic template), confined.
+
+**CONFINEMENT (honest):** Ollama is client/server ⇒ cannot run in provider-sandbox's --unshare-all bubblewrap (would cut
+the daemon call). Model runs in the pre-existing local daemon; ODG confines the OUTPUT (untrusted→validate→isolated
+apply→independent test→rollback) + a loopback-only client. Not routed through bubblewrap (would break it); not faked.
+
+**Gate:** test:report 151→152; tsc 0; build 0. €0; nothing sent; no download; no config/credential change. Register C-04 →
+VERIFIED (confined, narrow). Broad generative success rate NOT measured yet ⇒ a sealed generative-repair eval is NEXT.
+V49 (B/C/E) + V50 C-04 all merged. ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT: sealed generative-repair eval corpus
+(measure accept/false-success rate, keep narrow); exact command:
+`git checkout main && git pull && npx tsx runtime/core/ollama-provider.test.ts`

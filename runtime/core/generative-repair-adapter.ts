@@ -21,8 +21,30 @@
 "use strict";
 
 const REPAIR = require("./repair-workflow.js");
+const OLLAMA = require("./ollama-provider.js");
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
+
+/**
+ * runGenerativeRepair(task, opts?): the END-TO-END confined generative-repair path (V50). Builds a bounded contract,
+ * asks the (untrusted) generator for an edits proposal, STRICTLY parses it, then routes it through applyProposal →
+ * runRepairWorkflow (isolated workspace, real acceptance, exact rollback). The model output is never trusted: it is
+ * validated against the write-set/size/shape and only an ACCEPTED (baseline-FAIL→post-PASS) change survives.
+ * task = { workspaceDir, instruction, allowedFiles, acceptanceCommand, currentFiles, maxEdits?, model?, timeoutMs? }.
+ * opts.generate (injectable) defaults to the local Ollama provider; opts.runner overrides the acceptance runner (tests).
+ */
+async function runGenerativeRepair(task: any, opts: any = {}): Promise<any> {
+  const prep = prepareProposalContract(task);
+  if (!prep.ok) return prep;
+  const generate = typeof opts.generate === "function" ? opts.generate : OLLAMA.generate;
+  const prompt = OLLAMA.buildRepairPrompt(prep.contract, task.currentFiles || {});
+  let gen: any; try { gen = await generate({ model: task.model, prompt, timeoutMs: task.timeoutMs }); } catch (e: any) { gen = { ok: false, reason: (e && e.message) || "provider error" }; }
+  if (!gen || !gen.ok) return { ok: false, status: "BLOCKED", reason: `generator unavailable/failed: ${gen && gen.reason}`, unblock: "ensure the local Ollama daemon + a code model are reachable" };
+  const parsed = OLLAMA.parseEditsProposal(gen.text);
+  if (!parsed.ok) return { ok: false, status: "REJECTED", code: "MALFORMED_PROPOSAL", reason: `model output rejected: ${parsed.reason}`, raw: String(gen.text || "").slice(0, 400) };
+  const result = applyProposal(prep.contract, parsed.proposal, { workspaceDir: task.workspaceDir, runner: opts.runner });
+  return { ...result, model: gen.model, proposalEdits: parsed.proposal.edits.map((e: any) => e.path) };
+}
 
 /** prepareProposalContract(task): the structured, bounded contract a provider proposal must satisfy. */
 function prepareProposalContract(task: any): any {
@@ -89,5 +111,5 @@ function invokeProvider(contract: any, opts: any = {}): any {
     unblock: "implement provider-sandbox.runProvider(contract.instruction) → parse edits → applyProposal(contract, {edits})" };
 }
 
-export { prepareProposalContract, validateProposal, applyProposal, invokeProvider };
-module.exports = { prepareProposalContract, validateProposal, applyProposal, invokeProvider };
+export { prepareProposalContract, validateProposal, applyProposal, invokeProvider, runGenerativeRepair };
+module.exports = { prepareProposalContract, validateProposal, applyProposal, invokeProvider, runGenerativeRepair };
