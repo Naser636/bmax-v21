@@ -7516,3 +7516,20 @@ unachieved. **V49 THIS TURN: Lot B/G-01 VE hard-gate PR#131, Lot C/C-08 coding-e
 →executor-consumer(proven E2E); REMAINING = live pipeline-stage wiring + repair-execution (provider-gated). NEXT:
 Lot E (5th repair family / config-fix) OR Lot F (zero-cost commercial research). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/coding-executor.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dw) — V49 Lot E / C-06+C-14: 5th repair family (trailing-comma JSON config) €0
+CTO V49 Lot E (+ Lot D/C-04 re-verified BLOCKED: ODG_LOCAL_MODEL_CMD/ODG_PROVIDER_CMD unset). Truth Lock c67a5fa≡
+origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch excellence/task-fix-json-v49e. No new primitive.
+Diff = task-fix-json(.ts/.test) + coding-mission-resolver.ts (FAMILY_PLAN += fix-json) + package.json + compass.
+
+**task-fix-json.ts (C-14 — 5th family: deterministic config repair):** repairs trailing-comma-only invalid JSON.
+stripTrailingCommas is STRING-AWARE (commas inside string literals never touched). detectJsonDefect: original fails
+JSON.parse AND stripped parses ⇒ TRAILING_COMMA (proven-safe); any other parse failure ⇒ UNSUPPORTED (no guess/
+reformat); valid ⇒ NOT_DEFECT. Via runRepairWorkflow (baseline-FAIL→post-PASS + exact rollback). Suite 15 (incl.
+string-safety: '{"x":"a,}b"}' and '{"x":"v,",}' preserved). Registered in resolver FAMILY_PLAN. 5 proven families now:
+repair-edit, test-gen, missing-export, broken-require, json-config.
+
+**Gate:** test:report 150→151; tsc 0; build 0 (closure 112). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **V49 COMPLETE: Lot B/G-01 VE hard-gate PR#131, Lot C/C-08 coding-executor PR#132, Lot E/C-06+C-14 5th
+family PR#133; Lot D/C-04 BLOCKED (no provider).** NEXT (V50 priority): detect+activate local Ollama for C-04.
