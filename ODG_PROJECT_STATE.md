@@ -7117,3 +7117,37 @@ RATE claim; (3) a shipped defect would be counted, not hidden (tested). Measured
 59→133, all ff-only CI-green. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved; broad VERIFIED_SUCCESS_RATE
 NO_DATA. NEXT: run a small held-out eval tranche in axis K (software-assurance, the strongest category) to replace the
 NO_DATA baseline with a real measured rate — OR continue the ~74-ref research backlog.
+
+---
+## CHECKPOINT 2026-10-28 (dg) — V43: sealed K-eval replaces NO_DATA baseline + validated improvement €0
+CTO "V43 SEALED K-CATEGORY EVAL" (post-PR#116, main 96426f4). Truth Lock 96426f4≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, CI success. No new primitive. Diff = k-eval(.ts/.test) + assurance-pilot-runner.ts
+(bounded detector) + package.json + compass.
+
+**k-eval.ts (EXECUTED — sealed K-category measurement):** frozen corpus (BENCHMARK k-eval/1.0.0) = 7 SYNTHETIC repos with
+documented seeded defects + a ground-truth manifest (case ids, expectedAreas, stable sha256 repoHash via evidence-
+provenance). Independent evaluator = detected-AREA-SET vs ground truth (NOT the pilot's own acceptance flag). Positive
+(K2 outdated / K3 unknown-license / K4 declared-AI / K5 low-coverage / K7 undeclared-AI-dep) + negative controls (K1
+clean / K6 misleading scary-name) + reuses capability-taxonomy.computeVerifiedSuccessRate. Suite 14.
+
+**MEASURED BASELINE (replaces K NO_DATA):** ran the REAL assurance-pilot-runner over the sealed corpus ⇒ baseline
+VERIFIED_SUCCESS_RATE **6/7 = 0.857**; the ONE false-negative = K7 (AI DEPENDENCY present but no declared aiActivities ⇒
+pilot emitted no AI-Act finding = undeclared-AI blind spot).
+
+**BOUNDED IMPROVEMENT (evidence-selected, real pipeline):** added a narrow guarded detector to assurance-pilot-runner —
+an AI/ML dependency (curated hint list: openai/anthropic/langchain/transformers/…) with NO declared aiActivities ⇒
+MEDIUM AIACT-UNDECLARED finding (Art.50 applicability review). Toggle opts.detectUndeclaredAi lets the eval measure the
+true before/after on the SAME frozen cases (denominator unchanged). Re-run ⇒ **after = 7/7 = 1.0**; only K7 changed.
+Narrow hint list ⇒ existing consumers (assurance-pilot-runner/self-serve/sarif/entry-diagnostic/mid-market) all GREEN.
+
+**Gate:** test:report 133→134; tsc 0; build 0. €0; nothing sent; all seeded defects confined to synthetic repos.
+
+**HONEST LIMITS (code+test):** SMALL SYNTHETIC corpus (n=7) — measures seeded-K detection, NOT general IT capability or
+real-client performance; denominator never changed; benchmark versioned; negative controls guard against inflation.
+The broad-IT VERIFIED_SUCCESS_RATE remains NO_DATA (only K-pilot measured). ACTUAL COLLECTED CASH €0; €500k VOLUME-bound.
+
+**LEARNING:** LEARNING_CAPTURED (undeclared-AI blind spot + fix) + LEARNING_REUSED (the K7 regression case re-exercises
+it) + measured before/after (6/7→7/7) ⇒ REUSE_VALIDATED candidate within this bounded loop (independent evaluator, same
+cases). Session V21→V43 = PRs #82–#117(pending), test:report 59→134, all ff-only CI-green. NEXT: broaden the K corpus
+(more defect classes + harder/ambiguous cases) to tighten the measured rate's confidence, OR replicate the loop to
+another taxonomy category.

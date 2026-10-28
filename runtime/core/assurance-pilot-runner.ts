@@ -43,6 +43,15 @@ function runPilot(input: any, opts: any = {}): any {
   const ai = input.aiActivities || {};
   if (ai.generatesSyntheticContent === true) findings.push({ id: "AIACT-50-2", area: "ai-act", severity: sev("HIGH"), detail: "generates synthetic content — Art.50(2) marking applies", remediation: "machine-readable marking of AI-generated content", evidence: "declared aiActivities.generatesSyntheticContent" });
   if (ai.systemInteractsWithHumans === true) findings.push({ id: "AIACT-50-1", area: "ai-act", severity: sev("MEDIUM"), detail: "user-facing AI — Art.50(1) disclosure applies", remediation: "inform users they interact with an AI", evidence: "declared aiActivities.systemInteractsWithHumans" });
+  // V43 improvement (undeclared-AI blind spot, found by the sealed K-eval): an AI/ML DEPENDENCY present with NO declared
+  // aiActivities is a real false-negative — Art.50 applicability must still be reviewed. Narrow curated hint list ⇒ does
+  // NOT fire on non-AI fixtures. Toggle (opts.detectUndeclaredAi=false) lets the eval measure the true before/after.
+  const aiDeclared = ai.generatesSyntheticContent === true || ai.systemInteractsWithHumans === true;
+  if (opts.detectUndeclaredAi !== false && !aiDeclared) {
+    const AI_DEP_HINTS = ["openai", "anthropic", "langchain", "llama", "mistral", "cohere", "huggingface", "transformers", "tensorflow", "pytorch", "onnxruntime", "sentence-transformers"];
+    const aiDep = deps.find((d: any) => AI_DEP_HINTS.some((h) => String((d && d.name) || "").toLowerCase().includes(h)));
+    if (aiDep) findings.push({ id: `AIACT-UNDECLARED:${aiDep.name}`, area: "ai-act", severity: sev("MEDIUM"), detail: `AI/ML dependency ${aiDep.name} present but no AI activity declared — EU AI-Act Art.50 applicability must be reviewed`, remediation: "declare AI activities + assess Art.50 transparency obligations", evidence: `SBOM entry ${aiDep.name}` });
+  }
 
   // SBOM summary (synthetic).
   const licenses: Record<string, number> = {};
