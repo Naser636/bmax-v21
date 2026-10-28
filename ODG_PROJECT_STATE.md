@@ -8092,3 +8092,26 @@ Counts 5 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
 **Gate:** test:report **169/169**, tsc 0, build 0 (closure 117). €0; COLLECTED CASH €0; €500k unachieved. NEXT: no
 self-clearable lot remains — all open work is gated on owner authorization (dashboard exposure, P-01 demand/billing,
 roadmap-schema) or an authorized toolchain install (new-language-families). Resume: `npx tsx runtime/core/campaign-controller.ts`.
+
+---
+## CHECKPOINT 2026-10-28 (eu) — UNBLOCK: no-install real checkers (Shell/SQL/YAML/JSON) €0
+CTO "UNBLOCK AND FINISH". Decomposed the 5 BLOCKED objectives into realizable-now vs truly-gated. First unblock:
+new-language-families was NOT fully blocked — probed the host and found REAL validators already installed.
+
+**code-execution LANG_SPEC +4 checkers (zero install):** Shell (`bash -n`, syntax — NOT lint), SQL/schema (stdlib
+`sqlite3` in-memory, no file/net side effects), Config-YAML/validate (PyYAML present), JSON (stdlib json). Each probed
+PER-CAPABILITY (not assumed), argv-array (no shell string), UNSUPPORTED when absent — never faked. Compiler stacks
+(Go/Rust/Java/C#) + linters (shellcheck/tidy/hadolint) deliberately kept ABSENT ⇒ honest UNSUPPORTED. code-execution
+suite 17→**25** incl. REAL-subprocess PASS/FAIL for all 4.
+
+**broad-it-eval v2→v3:** corpus 24→**44**; +2 genuinely-covered taxonomy categories (SQL/schema, Config-YAML/validate),
+TARGET_TAXONOMY supported-flags updated to REALITY (Shell/lint stays false — bash -n is syntax, not lint). dev+heldout
+accuracy **1.0**, 0 falsePass/falseFail/blocked, leakage disjoint. Coverage MEASURED **0.25→0.4167** (5/12); still < 0.6
+⇒ broadIT=**NO_DATA** (honest, by measurement). Suite 23→**28**. Fixed one mislabeled YAML fixture (was valid, relabeled).
+
+**Register decomposition:** new ACCEPTED `langfamily-noinstall-checkers`; `new-language-families` NARROWED to compiler/
+linter stacks (still BLOCKED on authorized install, deps=[langfamily-noinstall-checkers]); broad-it-corpus-grow evidence
+updated. Counts 6 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED (was 5/1/5). Controller re-validated, 0 ACCEPTED-without-evidence.
+
+**Gate:** test:report 169/169, tsc 0, build 0 (closure 117). €0; COLLECTED CASH €0. NEXT: continue decomposing the
+remaining 4 blocked objectives (dashboard-tls prep, roadmap-deps prep, p01-demand design, p01-billing sandbox logic).
