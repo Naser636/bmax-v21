@@ -93,3 +93,25 @@ ok("gate: codingMission + ABSTAIN ⇒ block", MFV.codingFidelityGate({ codingMis
 ok("gate: EXECUTE ⇒ no block", MFV.codingFidelityGate({ codingMission: true, route: "EXECUTE" }).block === false);
 
 console.log(`\nVALIDATION-ENGINE FIDELITY-GATE suite — ${pass} assertions passed. (real compiled VE: negative coding-resolution FLIPS the canonical decision to BLOCKED; positive/absent unaffected; malformed fail-closed)`);
+
+// V57 MISSION-OWNERSHIP GUARD: a stale coding-resolution for a DIFFERENT mission must not block the current one.
+ok("gate: stale cross-mission resolution ⇒ NOT blocked (ownership guard)", MFV.codingFidelityGate({ mission: "OTHER_MISSION", codingMission: true, route: "ABSTAIN" }, { currentMission: "THIS_MISSION" }).block === false);
+ok("gate: SAME-mission negative route ⇒ still blocks", MFV.codingFidelityGate({ mission: "THIS_MISSION", codingMission: true, route: "ABSTAIN" }, { currentMission: "THIS_MISSION" }).block === true);
+ok("gate: no currentMission supplied ⇒ legacy behaviour (negative route blocks)", MFV.codingFidelityGate({ mission: "X", codingMission: true, route: "BLOCKED" }).block === true);
+
+// INTEGRATION: the real compiled VE must NOT false-block when a stale cross-mission coding-resolution.json is present.
+{
+  const dir = successSandbox();
+  withCodingResolution(dir, { mission: "SOME_OTHER_MISSION", codingMission: true, route: "ABSTAIN" });
+  const out = run(dir);  // the sandbox mission is FID_GATE, not SOME_OTHER_MISSION
+  ok("real VE: stale cross-mission coding-resolution ⇒ still SUCCESS (no false block)", out.validated === true && out.status === "SUCCESS" && out.exit === 0);
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+// INTEGRATION: a SAME-mission negative coding-resolution still blocks (guard didn't weaken enforcement).
+{
+  const dir = successSandbox();
+  withCodingResolution(dir, { mission: "FID_GATE", codingMission: true, route: "ROUTE_UNSUPPORTED" });
+  const out = run(dir);
+  ok("real VE: same-mission negative coding-resolution ⇒ BLOCKED (enforcement intact)", out.validated === false && out.exit === 1);
+  fs.rmSync(dir, { recursive: true, force: true });
+}

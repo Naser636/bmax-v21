@@ -283,7 +283,7 @@ const checks = {
 // every existing gate and a not-actually-done mission would be stamped SUCCESS.
 // G-01 coding-fidelity hard gate (see import note). `block=true` REFUSES acceptance; it can never create success.
 const codingResolutionPath = "runtime/generated/coding-resolution.json";
-const codingGate = codingFidelityGate(readJsonSafe(codingResolutionPath), { fileExisted: fs.existsSync(codingResolutionPath) });
+const codingGate = codingFidelityGate(readJsonSafe(codingResolutionPath), { fileExisted: fs.existsSync(codingResolutionPath), currentMission: planMission });
 const codingFidelityOk = !codingGate.block;
 
 const validated = !crossMission && coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked && codingFidelityOk;

@@ -88,6 +88,12 @@ function codingFidelityGate(codingResolution: any, opts: any = {}): any {
   const existed = opts.fileExisted === true || (codingResolution !== null && codingResolution !== undefined);
   if (!existed) return { block: false, reason: "no coding-resolution artifact (non-coding or pre-integration mission)" };
   if (!isObj(codingResolution)) return { block: true, reason: "coding-resolution.json present but malformed — fail-closed (no false success)" };
+  // MISSION-OWNERSHIP GUARD (parity with the VE crossMission guard): a well-formed coding-resolution whose `mission`
+  // does NOT match the current mission is a STALE cross-mission artifact (e.g. left in runtime/generated/ by a prior
+  // run) — it must NEVER block an unrelated mission. Ignore it (the VE's other evidence gates still apply).
+  if (typeof opts.currentMission === "string" && opts.currentMission && typeof codingResolution.mission === "string" && codingResolution.mission !== opts.currentMission) {
+    return { block: false, route: codingResolution.route || null, reason: `coding-resolution belongs to '${codingResolution.mission}' not the current mission '${opts.currentMission}' (stale cross-mission artifact) — ignored` };
+  }
   if (codingResolution.codingMission === true && NON_SUCCESS_ROUTES.includes(codingResolution.route)) {
     return { block: true, route: codingResolution.route, reason: `coding mission routed ${codingResolution.route} — not a successful execution (cannot be stamped SUCCESS)` };
   }

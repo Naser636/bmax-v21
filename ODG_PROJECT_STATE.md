@@ -7717,3 +7717,34 @@ DEMAND_NOT_VALIDATED. **V56: Priority A TS-routing-wire PR#140, Priority B deman
 non-blocking (local tsx, not global prefix).** ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT (Priority C): establish
 whether real mission dispatch is still gated + locate the exact lock (checkpoint/scheduler exist; dispatch wiring
 gated); OR Priority D next task family. Exact command: `git checkout main && git pull && npx tsx runtime/core/demand-evidence.ts`
+
+---
+## CHECKPOINT 2026-10-28 (ef) — V57: dispatch lock diagnosed + Priority-1 integrity fix (mission-scoped VE gate) €0
+CTO "V57 GOVERNED DISPATCH RESOLUTION". Truth Lock 60102c0≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved.
+Branch excellence/coding-gate-mission-scope-v57. No new primitive. Diff = mission-fidelity-verdict.ts (ownership guard)
++ validation-engine.ts (pass currentMission) + validation-engine-fidelity-gate.test.ts (+5) + register + compass.
+
+**Lot A — DISPATCH LOCK DIAGNOSED (precise):** full chain EXISTS, wired, hermetically tested: odg-schedule-tick.tickOnce
+→ mission-scheduler.schedulerStep (stop→bounds→select→authorize(INJECTED,deny-by-default)→dedup→excellence→dispatch
+(INJECTED seam)→classify→audit) → production dispatch() spawns REAL `node runtime/dist/bin/odg-run.js <mission>`
+(13 stages→VE verdict) → reads mission-report.json. The scheduler is a PURE decision fn (never self-executes). **EXACT
+LOCK = ODG_CANARY_ALLOWLIST (deny-by-default) is EMPTY + no committed pre-authorized mission ⇒ auto-dispatch=IDLE.**
+Per §3 did NOT fabricate an allowlist entry. Smallest unblock = owner adds a bounded read-only mission id to the allowlist.
+
+**Lot B — bounded REAL execution (executor path):** ran real `node odg-run.js G10_READONLY_AUTONOMY_PROBE` (read-only,
+requiresEngineering=false, no network, no spend). **DECISION: autonomous auto-dispatch = DISPATCH_BLOCKED (empty
+allowlist); governed EXECUTOR pipeline = DISPATCH_VERIFIED** (PIPELINE SUCCESS 13/13, real VE verdict, tree clean, non-
+destructive — direct executor run is not canary-gated and bypasses no guard).
+
+**DEF-V57 INTEGRITY FIX (Priority 1, discovered by the real run):** G10 was FALSE-BLOCKED by a STALE cross-mission
+coding-resolution.json (mission ADD_GOVERNED_EXTERNAL_RESEARCH_EXECUTOR, route ABSTAIN) left in generated/ by an earlier
+test. My V49b codingFidelityGate consumed it WITHOUT a mission-ownership check. FIX: codingFidelityGate(res,{currentMission})
+ignores a well-formed resolution whose `mission`≠current (stale cross-mission, parity with VE crossMission guard); same-
+mission negative routes STILL block; malformed still fail-closed. Suite +5 (unit + real compiled VE: stale⇒SUCCESS,
+same-mission-negative⇒BLOCKED) + LIVE re-run G10 ⇒ PIPELINE SUCCESS with the stale artifact still present.
+
+**§5 npm-warning:** re-confirmed non-blocking (local tsx; global /usr/local RO = Claude Code auto-update only).
+**Gate:** test:report 158 (fidelity-gate suite 11→16); tsc 0; build 0. €0; nothing sent. ACTUAL COLLECTED CASH €0;
+€500k unachieved. NEXT (Lot C): next independent task family OR (owner decision) add a bounded read-only mission to
+ODG_CANARY_ALLOWLIST to test the autonomous tick→real-dispatch loop end-to-end. Exact command:
+`git checkout main && git pull && node runtime/dist/bin/odg-run.js G10_READONLY_AUTONOMY_PROBE`
