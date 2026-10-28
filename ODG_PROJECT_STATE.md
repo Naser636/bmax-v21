@@ -8045,3 +8045,28 @@ governance posture). Extending structured deps INTO ROADMAP.json / mission contr
 ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT: Phase-C engineering-capability extension-point design (adapter
 architecture for new tech families, no new primitive) OR grow broad-IT corpus. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/roadmap-dep-check.ts`
+
+---
+## CHECKPOINT 2026-10-28 (es) — Persistent closure engine: campaign-controller + durable register €0
+CTO "PERSISTENT MASTER CLOSURE ENGINE". Truth Lock ca611a2≡origin/main (0/0), clean (tracked), 5 stashes + foreign
+untracked preserved, 168→169 suites. Branch excellence/closure-campaign-controller. No new primitive (pure RESOLVER/
+ALLOCATOR-style selector over STATE, like mission-scheduler; never self-executes effects).
+
+**campaign-controller.ts (the closure engine):** PURE driver over a DURABLE register. selectNextLot = dependency-aware
+(reuses dep-planner.planLayers — 4th real consumer; cycle/missing fail-closed) + priority; skips BLOCKED (dependents
+stay open, independents flow); advance() is FAIL-CLOSED (ACCEPTED requires non-empty evidence — a command succeeding is
+NOT acceptance); loadRegister/saveRegister give durable persist + RESUME after interruption (no re-analysis). summary()
+= counts + next lot + blockers. Suite 11 (dep-gating, priority, BLOCKED-skip, evidence-required, persist+resume, cycle-
+safe, real register drivable). **docs/odg/closure-register.json** = durable machine-readable P1/P2 register seeded from
+real state (5 ACCEPTED w/ evidence, 1 IN_PROGRESS, 5 BLOCKED w/ precise blockReason). **LIVE over the real register:
+next admissible lot = broad-it-corpus-grow; blocked = dashboard-tls-exposure/new-language-families/structured-roadmap-
+deps/p01-demand-validation/p01-billing-sandbox (each owner/authorization/toolchain-gated).**
+
+This replaces the "one lot then wait for continue" mode with a resumable auto-selector: on resume, loadRegister →
+selectNextLot continues from durable state. ODG still performs the work + supplies evidence (no self-executing effects;
+no 10th primitive). dep-planner now has 2 real consumers (roadmap-dep-check + campaign-controller); eval-metrics 1.
+
+**Gate:** test:report 168→169 (all PASS); tsc 0; build 0 (closure 117). €0; protected paths untouched. ACTUAL COLLECTED
+CASH €0; €500k unachieved. NEXT (per the engine): broad-it-corpus-grow — grow the representative DEV/HELDOUT corpus;
+other lots BLOCKED (owner/toolchain/authz). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/campaign-controller.ts docs/odg/closure-register.json`
