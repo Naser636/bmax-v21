@@ -8381,3 +8381,13 @@ MODE-DIVERSITY gate (minTaskModes=2): corpus is mono-modal (static-single-file o
 STAYS NO_DATA. Closes the 'cross 0.6 with trivial static breadth' loophole. broad-it-eval v6 (corpus 60→68, suite 37),
 capability-taxonomy 15. Register +ACCEPTED rust-build-capability; new-language-families narrowed to Java/C#/tidy/hadolint.
 18 ACCEPTED/1 IN_PROGRESS/5 BLOCKED, 0 stale. Gate: test:report 176, tsc 0, build 0. €0. Branched-first (clean).
+
+---
+## CHECKPOINT 2026-10-28 (fm) — HOTFIX: Rust hermetic env broke CI (rustup-proxy); main was red €0
+PR#174 merged despite RED CI ⇒ main@7257948 code-execution.test.ts FAILED in CI (PASS 175/176). ROOT CAUSE: the Rust
+hermetic env clobbered RUSTUP_HOME/CARGO_HOME to empty workspace dirs. On GitHub runners `rustc` is a RUSTUP PROXY →
+empty RUSTUP_HOME hides the default toolchain ⇒ even CLEAN code fails ⇒ real Rust case misclassified. Locally rustc is
+apt (real binary) so RUSTUP_HOME was ignored ⇒ passed locally, masking it. FIX: Rust env = {TMPDIR, CARGO_NET_OFFLINE}
+only (HOME unchanged lets the proxy resolve ~/.rustup); offline still holds (bare rustc does no network regardless).
+DEFENSE: real-subprocess cases now SKIP on non-definitive status (BLOCKED/UNSUPPORTED = env quirk), only assert PASS/FAIL.
+Gate: test:report 176, tsc 0, build 0; code-execution 36. Awaiting GREEN CI before merge (no red-merge again).

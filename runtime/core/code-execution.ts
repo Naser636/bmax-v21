@@ -63,14 +63,14 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   // Rust/build: a REAL compile check via the authorized rustc toolchain — type-checks (incl. the borrow checker),
   // catching far more than a parse. HERMETIC: emit metadata only (--emit=metadata, no linker) into the isolated
   // workspace (--out-dir dir, self-cleaning); TMPDIR + CARGO/RUSTUP homes scoped INTO the workspace and
-  // CARGO_NET_OFFLINE=true. Bare `rustc` performs no network I/O; a non-stdlib `extern crate`/`use` FAILS CLOSED
-  // ("can't find crate", ~0.08s, no fetch). Probe fails ⇒ Rust honestly UNSUPPORTED (never a decoy).
+  // CARGO_NET_OFFLINE=true. Bare `rustc` performs no network I/O regardless; a non-stdlib `extern crate`/`use` FAILS
+  // CLOSED ("can't find crate", ~0.08s, no fetch). NOTE: we deliberately do NOT clobber RUSTUP_HOME/CARGO_HOME — on
+  // hosts where `rustc` is a rustup PROXY (e.g. CI runners), pointing those at an empty workspace dir hides the default
+  // toolchain and breaks even clean code. HOME (unchanged) lets the proxy resolve ~/.rustup. Probe fails ⇒ UNSUPPORTED.
   Rust: {
     bin: "rustc", probeArgs: ["--version"], ext: ".rs",
     args: (f: string) => ["--edition", "2021", "--crate-type", "lib", "--emit=metadata", "--out-dir", path.dirname(f), f],
-    env: (dir: string) => ({
-      TMPDIR: dir, CARGO_HOME: path.join(dir, ".cargo"), RUSTUP_HOME: path.join(dir, ".rustup"), CARGO_NET_OFFLINE: "true",
-    }),
+    env: (dir: string) => ({ TMPDIR: dir, CARGO_NET_OFFLINE: "true" }),
   },
 });
 
