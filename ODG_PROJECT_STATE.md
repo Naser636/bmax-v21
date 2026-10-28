@@ -7562,3 +7562,23 @@ VERIFIED (confined, narrow). Broad generative success rate NOT measured yet ⇒ 
 V49 (B/C/E) + V50 C-04 all merged. ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT: sealed generative-repair eval corpus
 (measure accept/false-success rate, keep narrow); exact command:
 `git checkout main && git pull && npx tsx runtime/core/ollama-provider.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dy) — V50b: sealed generative-repair eval (real model MEASURED 5/5, narrow) €0
+CTO V50 §2/§5. Truth Lock 93234cb≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/generative-repair-eval-v50b. No new primitive. Diff = generative-repair-eval(.ts/.test) + package.json +
+register + compass.
+
+**generative-repair-eval.ts:** SEALED corpus gen-repair-eval-v1 (sha256, 5 tiny JS single-function repair cases, each
+FIXABLE) measuring the LOCAL model THROUGH the confined harness. evaluate() runs runGenerativeRepair per case,
+classifies correctAccept/abstain/rejected/providerDown. **falseSuccess = 0 BY CONSTRUCTION** (acceptance is a real
+`node --test` ⇒ a wrong model edit is always rolled back, never accepted). **LIVE (real qwen2.5-coder:3b): acceptRate
+5/5 = 1.0, falseSuccess 0** (sum/max/iseven/greet/double all repaired + verified). Suite 7 (injected generator, real
+node --test; deterministic): sum-only generator ⇒ 1 correctAccept + 4 abstain (wrong edits rolled back); down ⇒
+providerDown; junk ⇒ rejected. HONEST: 5 JS cases only — model-dependent, NOT broad-IT (broad-IT stays NO_DATA).
+
+**Gate:** test:report 152→153; tsc 0; build 0. €0; nothing sent. Register C-04 measurement added. Metrics now tracked
+SEPARATELY: check-acc 1.0(13) · repair-accept 1.0,fs0(6) · **gen-repair accept 1.0,fs0(5, real model)** · K 7/7(synthetic)
+· broad-IT NO_DATA. **V50 COMPLETE: C-04 Ollama generative repair PR#134 + gen-repair eval PR#135.** ACTUAL COLLECTED
+CASH €0; €500k unachieved. NEXT: grow generative corpus / wire coding-executor as a live pipeline stage / Lot F research.
+Exact command: `git checkout main && git pull && npx tsx runtime/core/generative-repair-eval.ts qwen2.5-coder:3b`
