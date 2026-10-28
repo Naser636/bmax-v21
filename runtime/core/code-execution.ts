@@ -72,6 +72,14 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
     args: (f: string) => ["--edition", "2021", "--crate-type", "lib", "--emit=metadata", "--out-dir", path.dirname(f), f],
     env: (dir: string) => ({ TMPDIR: dir, CARGO_NET_OFFLINE: "true" }),
   },
+  // Java/compile: a REAL `javac` type-check — compiles to .class in the isolated workspace (-d <ws>). No classpath is
+  // provided, so an external import fails CLOSED ("package ... does not exist", no network). We do NOT clobber HOME or
+  // JAVA_HOME (lesson from the rustup-proxy CI breakage): javac resolves its own JDK; env stays minimal. Corpus uses
+  // non-public top-level classes so the filename (src.java) need not match a public class name. Probe fails ⇒ UNSUPPORTED.
+  Java: {
+    bin: "javac", probeArgs: ["-version"], ext: ".java",
+    args: (f: string) => ["-d", path.dirname(f), f],
+  },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }

@@ -99,6 +99,18 @@
       "acceptance": "a reproducible, deterministic engine-behaviour scorecard exists; baseline recorded; future engine changes re-run the SAME scenarios; no unmeasured gain claimed"
     },
     {
+      "id": "java-build-capability",
+      "program": "P2",
+      "title": "Java/compile capability via authorized JDK (hermetic javac)",
+      "status": "ACCEPTED",
+      "deps": [
+        "rust-build-capability"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): default-jdk-headless (javac 25) installed (authorized apt, reversible; dashboard unaffected 200/401). code-execution LANG_SPEC +Java = real `javac -d <ws>` type check into the isolated workspace; NO classpath ⇒ external import FAILS CLOSED ('package does not exist', no network); HOME/JAVA_HOME NOT clobbered (lesson V68 rustup-proxy). Live: clean PASS, type-error FAIL, missing-dep FAIL. code-execution suite 36→39. broad-it-eval v7: +Java corpus (8 real cases acc 1.0), coverage 8→9/12=0.75; STILL mode-gated (mono-modal static) ⇒ broadIT NO_DATA. broad-it-eval suite 37→39.",
+      "acceptance": "a real hermetic javac type check with independent eval; external import fails closed; broad rate stays NO_DATA (mode-gated)"
+    },
+    {
       "id": "rust-build-capability",
       "program": "P2",
       "title": "Rust/build capability (authorized rustc) + task-mode-diversity honesty gate",
@@ -214,17 +226,18 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for remaining COMPILER stacks (Java/C#) + linters (tidy/hadolint)",
+      "title": "Engineering capability for remaining COMPILER stacks (C#) + linters (tidy/hadolint)",
       "status": "BLOCKED",
       "deps": [
         "langfamily-noinstall-checkers",
         "shellcheck-lint-capability",
         "go-build-capability",
-        "rust-build-capability"
+        "rust-build-capability",
+        "java-build-capability"
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "FURTHER NARROWED: no-install subset DONE (Shell/SQL/YAML/JSON), Shell/lint DONE (shellcheck), Go/build DONE (PR#170), Rust/build DONE (rust-build-capability). What remains needs its own authorized reproducible install — javac/JDK, dotnet and linters tidy (HTML-CSS) / hadolint (Dockerfile). Each is a deliberate per-family install on the prod VPS host (impact-controlled), not a bulk install. NOTE: adding more static-check categories will NOT produce a broad-IT MEASURED rate — that now additionally requires task-MODE diversity (integration/data/application/runtime), which no current corpus mode provides.",
+      "blockReason": "FURTHER NARROWED: Shell/SQL/YAML/JSON + Shell/lint + Go/build + Rust/build + Java/compile all DONE. What remains needs its own authorized reproducible install — dotnet (C#) and linters tidy (HTML-CSS) / hadolint (Dockerfile). Each is a deliberate per-family install on the prod VPS host. NOTE: adding more static-check categories will NOT produce a broad-IT MEASURED rate — representativeness now additionally requires task-MODE diversity (a 2nd+ mode beyond static-single-file is tracked under benchmark-task-mode-2).",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },

@@ -8403,3 +8403,13 @@ no-false-accept, cycle-safe, reconcile-after-mission. **BASELINE 9/9 pass**, det
 Explicitly NO unmeasured 10× claim — it's the yardstick future engine changes compare against. Suite 18. Register
 +ACCEPTED engine-benchmark-baseline. Gate: test:report 176→177, tsc 0, build 0. 19 ACCEPTED/1/5, 0 stale.
 PRIOR: hotfix (fm) restored main after PR#174 red-merge. NEXT: compare-after on any future engine change; P1 blockers = 5 external.
+
+---
+## CHECKPOINT 2026-10-28 (fo) — Java/compile capability (authorized JDK, hermetic) €0
+Step 2 of JAVA+multi-mode mandate. Truth Lock c66a9d3≡origin/main (CI green confirmed), baseline 9/9. default-jdk-headless
+(javac 25) installed (authorized apt, reversible; dashboard unaffected). code-execution +Java = real `javac -d <ws>` type
+check; NO classpath ⇒ external import FAILS CLOSED (no network); HOME/JAVA_HOME NOT clobbered (lesson V68). Live: clean
+PASS, type-error FAIL, missing-dep FAIL. code-execution 36→39, broad-it-eval 37→39. broad-it-eval v7: +Java corpus (8
+cases acc 1.0), coverage 8→9/12=0.75; STILL mono-modal ⇒ broadIT NO_DATA. Register +ACCEPTED java-build-capability;
+new-language-families narrowed to C#/tidy/hadolint. 20 ACCEPTED/1/5, 0 stale. Gate: test:report 177, tsc 0, build 0.
+NEXT (Lot 2, same mandate Step 3): 2nd task MODE (runtime-behaviour) + mode-coverage-ratio gate — keeps NO_DATA honestly.

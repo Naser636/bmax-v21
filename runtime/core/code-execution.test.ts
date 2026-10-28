@@ -51,8 +51,11 @@ ok("Go toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ languag
 ok("Rust in LANG_SPEC: argv-array `rustc --emit=metadata` + hermetic env fn", E.LANG_SPEC.Rust && Array.isArray(E.LANG_SPEC.Rust.args("f")) && E.LANG_SPEC.Rust.bin === "rustc" && typeof E.LANG_SPEC.Rust.env === "function" && E.LANG_SPEC.Rust.args("f").includes("--emit=metadata"));
 ok("Rust hermetic env is offline + workspace-scoped (no RUSTUP_HOME clobber)", (() => { const e = E.LANG_SPEC.Rust.env("/ws"); return e.CARGO_NET_OFFLINE === "true" && String(e.TMPDIR).startsWith("/ws") && !("RUSTUP_HOME" in e); })());
 ok("Rust toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Rust", content: "pub fn f(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
+// Java/compile IS wired now (authorized JDK): a REAL `javac -d <ws>` type check — argv-array; no HOME/JAVA_HOME clobber.
+ok("Java in LANG_SPEC: argv-array `javac -d` (no env clobber)", E.LANG_SPEC.Java && E.LANG_SPEC.Java.bin === "javac" && E.LANG_SPEC.Java.args("f").includes("-d") && !("env" in E.LANG_SPEC.Java && typeof E.LANG_SPEC.Java.env === "function" && E.LANG_SPEC.Java.env("/ws").JAVA_HOME));
+ok("Java toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Java", content: "class M{}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
 // the REMAINING compiler stacks stay honestly ABSENT from LANG_SPEC (require their own authorized install ⇒ UNSUPPORTED, never faked).
-for (const lang of ["Java", "CSharp"]) {
+for (const lang of ["CSharp"]) {
   ok(`${lang} NOT in LANG_SPEC ⇒ UNSUPPORTED (no decoy)`, !E.LANG_SPEC[lang] && E.runSyntaxCheck({ language: lang, content: "x" }).status === "UNSUPPORTED");
 }
 
@@ -72,6 +75,9 @@ const realCases = [
   // Rust/build: real compile. FAIL case is a TYPE error (not syntax) — proving a genuine build check; stdlib-only ⇒ hermetic.
   ["Rust", "pub fn add(a: i32, b: i32) -> i32 { a + b }\n", "PASS"],
   ["Rust", "pub fn f() -> i32 { let x: i32 = \"nope\"; x }\n", "FAIL"],
+  // Java/compile: real javac. FAIL = a TYPE error (not syntax); no classpath ⇒ external import also fails closed.
+  ["Java", "class Calc { int add(int a, int b){ return a + b; } }\n", "PASS"],
+  ["Java", "class Calc { int f(){ String s = 5; return s; } }\n", "FAIL"],
 ];
 for (const [lang, content, exp] of realCases) {
   if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }
