@@ -7281,3 +7281,30 @@ now: repair-edit, test-gen, missing-export-repair — all on one harness). €0;
 ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT (V47 Lot B / C-07): code-check eval family — sealed clean/broken
 JS/TS/Python fixtures measuring the REAL code-execution checker's PASS/FAIL + false-PASS/false-FAIL, provenance-
 stamped, denominators honest. Exact command: `git checkout main && git pull && npx tsx runtime/core/task-fix-exports.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dm) — V47 Lot B / C-07: code-check eval family + REAL TS-checker defect FIXED €0
+CTO V47 Lot B. Truth Lock da91db8≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/code-check-eval-v47b. No new primitive. Diff = code-check-eval(.ts/.test) + code-execution.ts (TS-checker
+fix) + package.json + register + compass.
+
+**code-check-eval.ts (C-07):** SEALED corpus cce-v1 (sha256-stamped), 13 cases = clean+broken+malformed JS(5)/TS(4)/
+PY(4), ground truth `expected` independent of the checker. evaluate() runs the REAL code-execution checker and
+classifies correctPass/correctFail/**falsePass**/**falseFail**/blocked with EXACT numerator/denominator; BLOCKED/
+UNSUPPORTED excluded from the accuracy denominator and reported separately; caveat forbids broad-IT/generation claims.
+Suite 9 (oracle + adversarial always-PASS/FAIL runners prove falsePass/falseFail detection; zero subprocess).
+**LIVE real toolchain: overall accuracy 1.0 — correctPass 6, correctFail 7, 0 false-pass, 0 false-fail, 0 blocked
+(JS 5/5, TS 4/4, PY 4/4).** HONEST: 1.0 is on 13 sealed cases only — NOT a broad-IT rate; broad-IT stays NO_DATA.
+
+**DEFECT FOUND+FIXED (the eval's purpose):** V45's TS checker used `npx tsc`, which in a minimal-env isolated
+workspace resolved to a DECOY `tsc` package ("This is not the tsc command…", exit 1 on everything) ⇒ both TS clean
+fixtures were FALSE-FAILs (TS accuracy 0.5). TS was never in V45's live proof, so this went unseen. **Fix:**
+code-execution now resolves the real `typescript/bin/tsc` (require.resolve) and runs it via `node <tsc>`; if
+unresolvable ⇒ honest UNSUPPORTED (points at an absent binary). Also hardened detectToolchain to require a clean
+exit-0 probe (a decoy exiting non-zero is no longer "available"). Before/after: TS accuracy 0.5→1.0, overall
+0.846→1.0 — measured improvement, re-verified by the eval. code-execution.test still 9/9.
+
+**Gate:** test:report 140→141; tsc 0; build 0 (closure 105). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. NEXT (V47 Lot C/C-08 or Lot D/G-01): wire detector/intake/check/repair into the canonical mission
+lifecycle (C-08) OR implement the objective-fidelity anti-drift contract (G-01). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/code-check-eval.ts`
