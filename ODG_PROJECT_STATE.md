@@ -8346,3 +8346,14 @@ the dependent is no longer stale. Backward-compatible: real register 0 stale.
 **Tests (targeted):** campaign-controller 22→30 (+flag on regress, summary surface, demote re-open with priorEvidence,
 dep-ordered re-verify, re-admit after dep re-ACCEPTED, flag-only mode, real register 0 stale). Gate: test:report 176,
 tsc 0, build 0. €0. Blockers unchanged (5 external). NEXT: owner-authorize+merge PR#170 (Go); per-family coverage→0.6.
+
+---
+## CHECKPOINT 2026-10-28 (fj) — Merge PR#170 (Go/build) via normal flow + register reconcile €0
+Entry via compass. Truth Lock c20ef47≡origin/main (0/0), 5 stashes + worktrees + foreign dirs preserved. PR#170 processed
+per normal process: scope clean (code-execution.ts + test + compass; NO protected paths), CI pass, only ODG_PROJECT_STATE.md
+overlapped main — merged origin/main INTO the branch (no force-push); ort auto-merged (Go block prepended, main appended).
+Merged tree verified: code-execution has Go+ShellLint; campaign-controller has no-repeat + evidence-validity (from main).
+Real Go build live: clean PASS, type-error FAIL (real build not parse), network-import FAIL (hermetic/offline GOPROXY/
+GO111MODULE/GOTOOLCHAIN off + workspace-scoped cache). Register reconciled: +ACCEPTED go-build-capability; new-language-
+families narrowed to Rust/Java/C#/tidy/hadolint. HONESTY: Go NOT in broad-IT corpus ⇒ coverage 6/12=0.5 < 0.6 ⇒ broad rate
+NO_DATA preserved. Gate after merge recorded below.
