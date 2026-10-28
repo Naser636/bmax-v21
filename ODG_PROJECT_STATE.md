@@ -7947,3 +7947,30 @@ eng gaps dependency-ready; go-to-market gaps owner-gated.
 COLLECTED CASH €0; €500k unachieved. **THIS CAMPAIGN: Priority A broad-IT scaffold PR#148, Priority B ODG5 audit+eval-
 metrics wire PR#149, §D/E product def PR#(next).** NEXT: P-GAP internal eng lots (e.g. a client-isolation contract test)
 OR grow broad-IT corpus. Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
+
+---
+## CHECKPOINT 2026-10-28 (eo) — §7 VPS deployment readiness VERIFIED (local operational; public exposure security-blocked) €0
+CTO "CLÔTURE INTÉGRALE P1+P2" (owner authorized VPS prep + authorized deploy WHEN security/availability pass). Truth
+Lock 0ce2e9b≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved, 166 suites. Branch excellence/vps-readiness-closure.
+Doc-only; no code/infra change; no sudo used.
+
+**§7 VPS READINESS (read-only probe, no secrets):** local dashboard service `odg-preprod.service` = ACTIVE; `GET /` ⇒
+HTTP 200; `GET /api/health` ⇒ 200 {status:ready, storage:READY, buildId r-lFDoxyDMohywdhPDESc}; reproducible
+`.next/standalone` build present; `build:runtime` green (closure 117); `VPS_DEPLOYMENT_READINESS.json` +
+`DEPLOY_BMAX_DASHBOARD_PROD_V1.json` contracts present. **DEPLOY STATE: operational LOCALLY (loopback), smoke PASS.**
+**PUBLIC EXPOSURE = BLOCKED ON A SECURITY PRECONDITION (not merely privilege):** passwordless sudo IS available, BUT the
+dashboard serves internal runtime/operational state with NO authentication and NO TLS ⇒ the mandate's "deploy WHEN
+security controls pass" is NOT satisfied; exposing it publicly would leak internal state (unsafe, high-consequence,
+hard-to-reverse outward action). ODG DECLINES public exposure under the general mandate; it requires a specific
+owner-confirmed exposure decision + the security controls (auth + TLS + access-control + firewall/reverse-proxy) to be
+built and to pass first. UNBLOCK = (1) add dashboard auth + TLS/reverse-proxy, (2) explicit owner go for THIS exposure.
+No sudo/systemd/DNS/TLS/firewall change performed. No secrets printed. €0.
+
+**CLOSURE-CAMPAIGN THIS SESSION:** Priority-A broad-IT scaffold (leakage-guarded, NO_DATA) PR#148 · Priority-B ODG5
+audit + eval-metrics wired (was orphan) PR#149 · §D/E canonical P-01 product definition + gap backlog PR#150 · §7 VPS
+readiness verified (this checkpoint). dep-planner remains orphan (carried, integration target = planner/scheduler).
+test:report 166; tsc 0; build 0. ACTUAL COLLECTED CASH €0; €500k unachieved.
+
+**NEXT:** build dashboard auth+TLS as a security-precondition lot (then owner-confirmed public exposure), OR a P-GAP
+internal eng lot (client-isolation contract test), OR grow broad-IT corpus. Exact command:
+`git checkout main && git pull && curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/ && ODG_TEST_WORKERS=8 npm run test:report`
