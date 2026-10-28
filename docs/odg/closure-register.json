@@ -3,6 +3,16 @@
   "version": "closure-register-v1",
   "items": [
     {
+      "id": "engineering-practices-register",
+      "program": "P2",
+      "title": "World-class best-practices research register (Phase 1 of CTO excellence mandate)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/engineering-practices-register.ts — 19 quality-gated sources across 9 families (DORA, NIST SSDF 800-218, NIST AI RMF 100-1, OWASP LLM Top10, SLSA, OWASP ASVS, OpenTelemetry, SWE-bench/Verified, Google Search Central, LSP, Google SRE), URLs+dates grounded via live web search 2026-10-28; fail-closed validateEntry rejects weak/unmapped sources; each maps to a P1/P2 requirement + ODG decision (adopt/adapt/test); ANTI-FABRICATION test proves all 19 reflectedIn modules exist on disk. Doc docs/odg/engineering-practices-register.md. Suite 11.",
+      "acceptance": "a quality-gated, provenance-real, P1/P2-mapped best-practices register exists; not a blind copy; not padded with weak sources"
+    },
+    {
       "id": "reality-gate-gated",
       "program": "P2",
       "title": "Reality-Gate suites in canonical gate",
