@@ -7014,3 +7014,41 @@ V21→V39 = PRs #82–#112(pending), test:report 59→129, all ff-only CI-green.
 Both sources: query OK, 0 malformed, all-null budgets ⇒ route-A; precision ~3/50; NO recall claim (no labeled set). TED
 has higher niche-fit potential (IT-services category exists). NEXT: Track B subcontracting (axis D) — the honest signal
 is that SUBCONTRACTING into IT primes may out-fit raw public tenders for ODG's niche.
+
+---
+## CHECKPOINT 2026-10-28 (dc) — V39b: honest 50%-qualified experiment + private-source verdict €0
+CTO "V39 PRIVATE-MARKET + 50% EXPERIMENT" (post-PR#112 TED, main a76a7f1). Truth Lock a76a7f1≡origin/main (0/0), clean,
+5 stashes + 4 untracked docs/ preserved, CI success. No new primitive. Diff = opportunity-eval-set(.ts/.test) +
+package.json + compass.
+
+**WORKSTREAM A (TED): DONE (PR#112, merged).** Real live EU discovery via ODG's own POST client (50 FR notices/total
+2142 → 3 capability-relevant). Better niche fit than BOAMP (IT-services category) but still ADJACENT.
+
+**WORKSTREAM B (private-sector): researched, HONEST BLOCKER (no code — inventing a feed is forbidden).** Verified
+2026-10-28 (source-cited): NO free, anonymous, programmatic private-sector OPPORTUNITY feed exists for FR/EU. Supplier/
+subcontractor portals (Capgemini/Sopra Steria/Atos) = FORM-ONLY; partner APIs (Microsoft Partner Center / AWS Partner
+Central) = AUTH + MEMBERSHIP-gated (only after admission; own referrals, not an open market); private-RFP aggregators
+(Dématis/Marchés Online/France Marchés) = PAID; France Travail Offres v2 = the ONLY free programmatic feed but it is
+RECRUITMENT postings (weak demand-signal proxy, NOT RFPs). ⇒ private-sector route = HUMAN relationship + web-form
+onboarding + optional PAID aggregator. Recorded as EXTERNAL/HUMAN gate; not buildable as a free connector now.
+
+**opportunity-eval-set.ts (EXECUTED — the 50% experiment, measured HONESTLY):** reproducible eval set = 13 REAL records
+(BOAMP+TED live) with INDEPENDENT labels (QUALIFIED/ADJACENT/DISQUALIFIED/INSUFFICIENT) assigned from each record's own
+evidence — NOT from capabilityFit (held-out). evaluate(filter): strict qualifiedPrecision + looser relevantPrecision +
+actionableYield + false-positives + met50 + bottleneck. Only live-retrieved records (removed 1 I had synthesized — no
+invented records). Suite 9 (incl. a not-rigged control set that DOES hit ≥50%).
+
+**50% RESULT (honest, small sample n=13):** qualifiedTotal=**0**, flaggedRelevant 6 (4 ADJACENT + 2 false-positive
+DISQUALIFIED via 'informatique'/'formation'), strict qualifiedPrecision **0%**, relevantPrecision 0.667, **met50=FALSE**,
+**bottleneck = SOURCE_QUALITY** (public tenders carry NO strictly-qualified ODG-niche opportunities — not a filter-
+precision problem; even perfect precision yields 0 QUALIFIED because none exist). NOT inflated: strict QUALIFIED kept,
+ADJACENT excluded, unknowns kept, no denominator change.
+
+**Gate:** test:report 129→130; tsc 0; build 0. €0; nothing sent/bid. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/
+unachieved. Session V21→V39 = PRs #82–#113(pending), test:report 59→130, all ff-only CI-green.
+
+**STRATEGIC SIGNAL (honest):** public tenders (BOAMP/TED) are LOW-FIT for ODG's niche; qualified private opportunities
+require a HUMAN/paid channel. ⇒ the €500k path is NOT discoverable via free public feeds — it needs an owner-authorized
+channel (partner membership, paid RFP aggregator, or direct relationship/outreach). NEXT: (a) a France Travail
+demand-signal adapter (free OAuth — weak proxy, needs a free account = human step), OR (b) axis-D partner-application
+prep for the form-only/membership channels. Both are HUMAN-gated at the external step.
