@@ -41,8 +41,13 @@ ok("detectToolchain: python available, others not (via mock probe)", tc.Python =
 for (const lang of ["Shell", "SQL", "YAML", "JSON", "ShellLint"]) {
   ok(`LANG_SPEC has ${lang} (no-install checker) with argv-array args`, E.LANG_SPEC[lang] && Array.isArray(E.LANG_SPEC[lang].args("f")) && typeof E.LANG_SPEC[lang].bin === "string");
 }
-// compiler stacks remain honestly ABSENT from LANG_SPEC (require authorized install ⇒ UNSUPPORTED, never faked).
-for (const lang of ["Go", "Rust", "Java", "CSharp"]) {
+// Go/build IS wired now (authorized Go toolchain install): a REAL `go build` compile check — argv-array, with a
+// per-workspace hermetic env function (offline, cache/path scoped into the temp dir).
+ok("Go in LANG_SPEC: argv-array `go build` + hermetic env fn", E.LANG_SPEC.Go && Array.isArray(E.LANG_SPEC.Go.args("f")) && E.LANG_SPEC.Go.bin === "go" && typeof E.LANG_SPEC.Go.env === "function");
+ok("Go hermetic env is offline + workspace-scoped (no network, no inherited cache)", (() => { const e = E.LANG_SPEC.Go.env("/ws"); return e.GOPROXY === "off" && e.GO111MODULE === "off" && e.GOTOOLCHAIN === "local" && String(e.GOCACHE).startsWith("/ws") && String(e.GOPATH).startsWith("/ws"); })());
+ok("Go toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Go", content: "package main\nfunc main(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED" && /not faked/.test(E.runSyntaxCheck({ language: "Go", content: "x", toolchainAvailable: false }).reason));
+// the REMAINING compiler stacks stay honestly ABSENT from LANG_SPEC (require their own authorized install ⇒ UNSUPPORTED, never faked).
+for (const lang of ["Rust", "Java", "CSharp"]) {
   ok(`${lang} NOT in LANG_SPEC ⇒ UNSUPPORTED (no decoy)`, !E.LANG_SPEC[lang] && E.runSyntaxCheck({ language: lang, content: "x" }).status === "UNSUPPORTED");
 }
 
@@ -55,6 +60,10 @@ const realCases = [
   ["JSON", "{\"a\":1,\"b\":[1,2]}\n", "PASS"], ["JSON", "{\"a\":1,,}\n", "FAIL"],
   ["ShellLint", "#!/usr/bin/env bash\nset -euo pipefail\nname=\"world\"\necho \"hello ${name}\"\n", "PASS"],
   ["ShellLint", "#!/usr/bin/env bash\nrm -rf $UNQUOTED/*\n", "FAIL"],
+  // Go/build: real compile. The FAIL case is a TYPE error (not a syntax error) — proving this is a genuine build check,
+  // not a mere parse: a formatter/parser would accept it, `go build` rejects it. stdlib-only ⇒ hermetic, no network.
+  ["Go", "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"ok\")\n}\n", "PASS"],
+  ["Go", "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar x int = \"nope\"\n\tfmt.Println(x)\n}\n", "FAIL"],
 ];
 for (const [lang, content, exp] of realCases) {
   if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }
