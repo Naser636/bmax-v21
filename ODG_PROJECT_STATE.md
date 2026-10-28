@@ -7495,3 +7495,24 @@ unachieved. NEXT (V49 Lot C): full execution-rerouting — extend RuntimeContext
 V48a bounded scan, then have the executor consume coding-resolution (EXECUTE authorized+verified, ROUTE_UNSUPPORTED no
 exec, ABSTAIN no change, BLOCKED keep cause) — prove load→route→exec on the real path. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/validation-engine-fidelity-gate.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dv) — V49 Lot C / C-08: coding-executor consumes the resolution (EXECUTE→real check) €0
+CTO V49 Lot C. Truth Lock c39997e≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/coding-executor-v49c. No new primitive. Diff = coding-executor(.ts/.test) + package.json + register + compass.
+
+**coding-executor.ts (C-08 executor-consumer):** executeCodingResolution(resolution,{workspaceDir}) turns the
+resolver's route into a real bounded execution OUTCOME: EXECUTE ⇒ runs the REAL code-execution checker over in-scope
+source files (bounded ≤50, read-only, skips node_modules) ⇒ VERIFIED iff every checked file PASSES, else FAILED
+(EXECUTE≠success until verified); ROUTE_UNSUPPORTED ⇒ no executor launched; ABSTAIN ⇒ no change; BLOCKED ⇒ keeps
+cause+unblock. HONEST SCOPE: EXECUTE's deterministic action w/o an authorized provider is a CHECK (not synthesis/
+repair — C-04 BLOCKED). Suite 9 (injected runner) + **LIVE E2E (real code-execution subprocess): resolve→execute —
+clean JS⇒VERIFIED(2 files), broken JS⇒FAILED, Go⇒ROUTE_UNSUPPORTED(not executed).** Reuses code-execution; no pipeline
+rewrite.
+
+**Gate:** test:report 149→150; tsc 0; build 0 (closure 112). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **V49 THIS TURN: Lot B/G-01 VE hard-gate PR#131, Lot C/C-08 coding-executor PR#132. Lot D/C-04 BLOCKED
+(no authorized provider — re-verified ODG_LOCAL_MODEL_CMD unset).** C-08 chain now: load→context→route(loader)→gate(VE)
+→executor-consumer(proven E2E); REMAINING = live pipeline-stage wiring + repair-execution (provider-gated). NEXT:
+Lot E (5th repair family / config-fix) OR Lot F (zero-cost commercial research). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/coding-executor.test.ts`
