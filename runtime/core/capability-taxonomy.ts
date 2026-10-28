@@ -12,6 +12,9 @@
  */
 "use strict";
 
+const BROAD = require("./broad-it-eval.js");   // Phase-2 wiring: consume the MEASURED verification surface (real)
+const EXEC = require("./code-execution.js");    // and the real toolchain detection — NOT to inflate the broad rate
+
 const COVERAGE = Object.freeze({ PROVEN: "PROVEN", PARTIAL: "PARTIAL", UNPROVEN: "UNPROVEN", NO_DATA: "NO_DATA", UNSUPPORTED: "UNSUPPORTED" });
 
 // coverage reflects CLIENT-SERVICE capability. evidenceScope: own-repo (ODG engineered itself) vs client (delivered).
@@ -84,8 +87,32 @@ function summary(): any {
   };
 }
 
-export { COVERAGE, TAXONOMY, BASELINE_PROTOCOL, computeVerifiedSuccessRate, summary };
-module.exports = { COVERAGE, TAXONOMY, BASELINE_PROTOCOL, computeVerifiedSuccessRate, summary };
+/**
+ * measuredSurface(opts?): Phase-2 wiring — link the census to INDEPENDENT measurement. Reports what broad-it-eval
+ * ACTUALLY measures (its covered categories + held-out accuracy on ODG's narrow own corpus) and the real toolchain,
+ * tied to category E. CRITICAL honesty: this is NARROW own-repo evidence, NOT the broad VERIFIED_SUCCESS_RATE — the
+ * broad rate stays NO_DATA whenever the representativeness gate is unmet. runner/toolchain injectable for tests.
+ */
+function measuredSurface(opts: any = {}): any {
+  const coverage = BROAD.coverageReport();
+  const toolchain = opts.toolchain || EXEC.detectToolchain(opts.runner ? { runner: opts.runner } : {});
+  const held = BROAD.evaluate({ partition: "heldout", ...(opts.runner ? { runner: opts.runner } : {}), ...(opts.toolchain ? { toolchain: opts.toolchain } : {}) });
+  const broadRate = coverage.meetsThreshold ? "MEASURED" : "NO_DATA";
+  return {
+    linkedCategory: "E (Automated testing / QA / verification)",
+    measuredCategories: coverage.coveredCategories,
+    coverageRatio: coverage.ratio,
+    representative: coverage.meetsThreshold === true,
+    heldoutAccuracyNarrowCorpus: held.overall.accuracy,
+    heldoutFalsePass: held.overall.falsePass,
+    toolchainsPresent: Object.keys(toolchain).filter((k) => toolchain[k] === true),
+    broadVerifiedSuccessRate: broadRate,
+    caveat: `held-out accuracy is on ODG's NARROW own corpus (JS/TS/Python/SQL/YAML checks), own-repo evidence only; it is NOT the broad VERIFIED_SUCCESS_RATE, which remains ${broadRate} (coverage ${coverage.ratio} vs representativeness gate). Nothing is upgraded to PROVEN by this measurement.`,
+  };
+}
+
+export { COVERAGE, TAXONOMY, BASELINE_PROTOCOL, computeVerifiedSuccessRate, summary, measuredSurface };
+module.exports = { COVERAGE, TAXONOMY, BASELINE_PROTOCOL, computeVerifiedSuccessRate, summary, measuredSurface };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify({ summary: summary(), baseline: BASELINE_PROTOCOL.currentBaseline }, null, 2) + "\n");

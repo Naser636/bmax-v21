@@ -3,6 +3,18 @@
   "version": "closure-register-v1",
   "items": [
     {
+      "id": "capability-taxonomy-measured-wire",
+      "program": "P2",
+      "title": "Phase 2: wire capability-taxonomy to independent measurement (broad-it-eval + code-execution)",
+      "status": "ACCEPTED",
+      "deps": [
+        "engineering-practices-register"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): capability-taxonomy.measuredSurface consumes broad-it-eval.coverageReport + code-execution.detectToolchain, linking the real measured verification surface (5 covered categories, held-out accuracy 1.0 on the NARROW own corpus, 7 toolchains present) to taxonomy category E. CRITICAL: broad VERIFIED_SUCCESS_RATE stays NO_DATA (coverage 0.4167 < gate); census headline unchanged (0 PROVEN, measuredSuccessRate null). Suite +5 (now 15). Requirement→implementation→consumer→evidence traceability.",
+      "acceptance": "the capability census is wired to independent measurement without inflating any claim; broad rate remains NO_DATA; nothing upgraded to PROVEN"
+    },
+    {
       "id": "seo-positioning-plan",
       "program": "P2",
       "title": "Product positioning + organic-visibility (SEO) plan (Phase 6, preparatory)",

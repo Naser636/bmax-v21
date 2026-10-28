@@ -43,4 +43,17 @@ ok("baseline protocol: metric + sealed separation + no-train-on-held-out + abste
 const allGood = T.computeVerifiedSuccessRate(Array.from({ length: 25 }, () => ({ eligible: true, attempted: true, independentlyVerified: true })));
 ok("all-verified large sample ⇒ 1.0 (not hardcoded to fail)", allGood.verifiedSuccessRate === 1 && allGood.sampleSize === 25 && !/WIDE/.test(allGood.uncertainty));
 
-console.log(`\nCAPABILITY-TAXONOMY suite — ${pass} assertions passed. (A–R taxonomy; 0 PROVEN; NO_DATA baseline; false-success excluded; honest)`);
+// (8) Phase-2 WIRING: measuredSurface consumes broad-it-eval + code-execution (injected runner/toolchain = no real
+// subprocess) and links real measurement to category E WITHOUT upgrading anything to PROVEN or inventing a broad rate.
+{
+  const ALL = { JavaScript: true, TypeScript: true, Python: true, SQL: true, YAML: true, Shell: true, JSON: true };
+  const oracleRunner = () => ({ exitCode: 0, stdout: "", stderr: "" }); // clean-only oracle is irrelevant here; toolchain injected
+  const m = T.measuredSurface({ toolchain: ALL, runner: oracleRunner });
+  ok("measuredSurface links to category E", /^E /.test(m.linkedCategory));
+  ok("reports broad-it-eval covered categories + coverage ratio", Array.isArray(m.measuredCategories) && m.measuredCategories.length >= 3 && typeof m.coverageRatio === "number");
+  ok("broad rate stays NO_DATA while coverage < gate (not representative)", m.representative === false && m.broadVerifiedSuccessRate === "NO_DATA");
+  ok("caveat states narrow own-repo evidence, nothing upgraded to PROVEN", /narrow/i.test(m.caveat) && /not.*broad/i.test(m.caveat) && /PROVEN/.test(m.caveat));
+  ok("wiring does NOT change the honest census (still 0 PROVEN, measuredSuccessRate null)", T.summary().provenAsClientService === 0 && T.summary().anyMeasuredSuccessRate === false);
+}
+
+console.log(`\nCAPABILITY-TAXONOMY suite — ${pass} assertions passed. (A–R taxonomy; 0 PROVEN; NO_DATA baseline; false-success excluded; Phase-2 measuredSurface wiring keeps broad rate NO_DATA; honest)`);
