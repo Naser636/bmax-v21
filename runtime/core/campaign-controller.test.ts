@@ -137,4 +137,35 @@ const reg = (items) => ({ version: "t", items });
   ok("fingerprint changes on strategy change, stable on status change", C.lotFingerprint({ ...l, strategy: "s2" }) !== fp1 && C.lotFingerprint({ ...l, status: "READY" }) === fp1);
 }
 
-console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; NO-REPEAT: failed+unchanged lot not re-selected until strategy/evidence changes; real register drivable)`);
+// (12) EVIDENCE-VALIDITY propagation: an ACCEPTED item whose dependency regresses is flagged stale (its proof is not
+// blindly reused); reconcile({demote}) re-opens it for re-verification (prior proof preserved, evidence cleared
+// fail-closed); dependency ordering re-does the dep first; once the dep is re-ACCEPTED the item is no longer stale.
+{
+  const r = reg([
+    { id: "A", status: "ACCEPTED", deps: [], evidence: "proof A" },
+    { id: "B", status: "ACCEPTED", deps: ["A"], evidence: "proof B (relies on A)" },
+  ]);
+  ok("all deps ACCEPTED ⇒ no stale acceptances", C.staleAcceptances(r).length === 0);
+  C.advance(r, "A", { status: "READY" });                                  // A regresses
+  ok("dep regresses ⇒ dependent flagged stale (invalidatedBy named)", C.staleAcceptances(r).length === 1 && C.staleAcceptances(r)[0].id === "B" && C.staleAcceptances(r)[0].invalidatedBy.includes("A"));
+  ok("summary surfaces staleEvidence", C.summary(r).staleEvidence.some(s => s.id === "B"));
+  const rec = C.reconcile(r, { demote: true });
+  const B = r.items.find(i => i.id === "B");
+  ok("reconcile demotes stale ACCEPTED ⇒ IN_PROGRESS, evidence cleared, priorEvidence kept", rec.demoted.includes("B") && B.status === "IN_PROGRESS" && B.evidence === "" && B.priorEvidence === "proof B (relies on A)" && B.staleEvidence === true);
+  ok("re-verification respects deps: A (not B) selected first", C.selectNextLot(r).lot.id === "A");
+  C.advance(r, "A", { status: "ACCEPTED", evidence: "re-proven A" });
+  ok("dep re-ACCEPTED ⇒ no stale acceptances; B now re-admissible", C.staleAcceptances(r).length === 0 && C.selectNextLot(r).lot.id === "B");
+  // flag-only mode (no demote) leaves status ACCEPTED but marks staleEvidence for the operator.
+  const r2 = reg([{ id: "A", status: "ACCEPTED", deps: [], evidence: "e" }, { id: "B", status: "ACCEPTED", deps: ["A"], evidence: "e" }]);
+  C.advance(r2, "A", { status: "BLOCKED" });
+  C.reconcile(r2);
+  ok("reconcile (no demote) flags staleEvidence without changing status", r2.items.find(i => i.id === "B").staleEvidence === true && r2.items.find(i => i.id === "B").status === "ACCEPTED");
+}
+
+// (13) the REAL closure-register has NO stale acceptances (every ACCEPTED item's deps are ACCEPTED).
+{
+  const real = C.loadRegister(path.join(process.cwd(), "docs", "odg", "closure-register.json"));
+  ok("real register: 0 stale acceptances (evidence bases all valid)", real.ok && C.staleAcceptances(real.register).length === 0);
+}
+
+console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; NO-REPEAT: failed+unchanged not re-selected; EVIDENCE-VALIDITY: stale acceptances flagged + reconciled; real register drivable)`);
