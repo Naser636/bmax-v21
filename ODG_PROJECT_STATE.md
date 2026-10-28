@@ -7329,3 +7329,26 @@ narrowing + fail-closed. Rejects false completion WITHOUT blocking genuine accep
 unachieved. NEXT (V47 Lot C/C-08): wire objective-fidelity + detector/intake/check/repair into the canonical mission
 lifecycle (mission close consults assessCompletion; coding missions route via code-mission-intake). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/objective-fidelity.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (do) — V47 Lot C / C-08: coding-mission RESOLVER (canonical-context integration) €0
+CTO V47 Lot C. Truth Lock f647b2d≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/coding-mission-resolver-v47c. No new primitive (a RESOLVER — one of the nine). Diff =
+coding-mission-resolver(.ts/.test) + package.json + register + compass.
+
+**coding-mission-resolver.ts (C-08, resolver layer):** the FIRST real consumer of the official MissionContext (the
+context-builder notes nothing read it before) and the FIRST caller of code-mission-intake.routeCodeMission — closing
+the "detector/intake/check/repair built but never reached from the canonical path" gap at the resolver layer.
+resolveCodingMission(missionContext, repoSignals, {family,toolchain}) → real routing (EXECUTE/ROUTE_UNSUPPORTED/
+ABSTAIN) → concrete bounded PLAN (proven module per family: check→code-execution, repair-exports→task-fix-exports,
+add-tests→task-add-tests, repair→repair-workflow) with writeSet BOUND to context.authorizedPaths → objective-fidelity
+contract derived from definitionOfDone/objectives. Fail-closed: EXECUTE with NO authorizedPaths ⇒ BLOCKED (refuses an
+unbounded write-set). assessCodingMissionCompletion delegates to objective-fidelity (false completion rejected).
+It RESOLVES + PLANS; execution stays with the proven modules (no orchestrator/registry duplication). Integration
+suite 11 drives the REAL buildMissionContext via its supported injected-loader seam (not an isolated module).
+
+**Gate:** test:report 142→143; tsc 0; build 0 (closure 105). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. NEXT (C-08 final step, separate gated lot): have the live stage-dispatcher invoke resolveCodingMission for
+engineering missions (touches core pipeline — careful regression gating). OR V47 Lot E/C-04: investigate the generative
+provider interface + prepare the internal proposal→edits adapter contract (BLOCKED until ODG_LOCAL_MODEL_CMD authorized).
+Exact command: `git checkout main && git pull && npx tsx runtime/core/coding-mission-resolver.test.ts`
