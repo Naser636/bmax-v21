@@ -41,4 +41,19 @@ ok("synthetic source ⇒ RESULTS, synthetic flag, TEST note", res.status === "RE
 ok("each opportunity routed to an axis + ODG next action + provenance field", res.opportunities.every(o => R.AXES.includes(o.axis) && o.nextOdgAction && ("provenance" in o)));
 ok("byAxis counts sum to opportunity count", Object.values(res.byAxis).reduce((a, b) => a + b, 0) === res.opportunities.length);
 
-console.log(`\nOPPORTUNITY-AXIS-ROUTER suite — ${pass} assertions passed. (six-axis routing; fit>value ranking; NO_RESULTS w/o connector; synthetic=TEST; nothing sent)`);
+// (6) V38 capability-fit: ODG-relevant subjects relevant; irrelevant parked (not dropped).
+ok("capabilityFit: relevant subjects match (EN+FR), irrelevant do not", R.capabilityFit({ subject: "software dependency assurance + SBOM" }).relevant === true && R.capabilityFit({ subject: "cartographie applicative et cybersécurité" }).relevant === true && R.capabilityFit({ subject: "maintenance des systèmes de sécurité incendie" }).relevant === false && R.capabilityFit({ subject: "étude hydraulique sur la Loire" }).relevant === false);
+
+// (7) requireCapabilityFit filter PARKS irrelevant (never drops) and keeps a qualified shortlist.
+const mixedSource = () => ([
+  { id: "T1", buyer: "A", subject: "audit de sécurité logicielle et conformité RGPD", url: "https://example.test/t1", publishedAt: "2026-10-26" },
+  { id: "T2", buyer: "B", subject: "maintenance préventive des systèmes de sécurité incendie", url: "https://example.test/t2", publishedAt: "2026-10-26" },
+  { id: "T3", buyer: "C", subject: "étude hydraulique sur la rivière", url: "https://example.test/t3", publishedAt: "2026-10-26" },
+]);
+const filtered = R.runDiscovery({ source: mixedSource, requireCapabilityFit: true, detectOpts: { nowMs: Date.parse("2026-10-28T00:00:00Z") } });
+ok("capability filter ⇒ only the relevant opp shortlisted; 2 irrelevant PARKED (not dropped)", filtered.opportunities.length === 1 && filtered.parked.length === 2 && filtered.counts.capabilityFiltered === true && filtered.opportunities[0].capabilityFit.relevant === true);
+ok("parked entries carry subject + reason (auditable, not silently dropped)", filtered.parked.every(p => p.subject && /parked/i.test(p.reason)));
+// default (no requireCapabilityFit) keeps prior behaviour (no parking).
+ok("default (filter off) ⇒ no parking (backward compatible)", (R.runDiscovery({ source: mixedSource, detectOpts: { nowMs: Date.parse("2026-10-28T00:00:00Z") } }).parked || []).length === 0);
+
+console.log(`\nOPPORTUNITY-AXIS-ROUTER suite — ${pass} assertions passed. (six-axis routing; fit>value ranking; capability-fit filter; NO_RESULTS w/o connector; synthetic=TEST; nothing sent)`);

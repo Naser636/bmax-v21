@@ -6954,3 +6954,30 @@ completeness/world-leadership. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/
 
 **NEXT dependency-ready (internal, high-value):** capability-fit SUBJECT filter in opportunity-axis-router (keyword→axis
 relevance; drop/park irrelevant notices) so the live BOAMP feed yields a QUALIFIED ODG shortlist; then TED connector lot.
+
+---
+## CHECKPOINT 2026-10-28 (da) — V38b CAPABILITY-FIT FILTER: qualify the live feed (high-precision) €0
+CTO "V38" continuation (post-PR#110, main 8e86e2e). Truth Lock 8e86e2e≡origin/main (0/0), clean, 5 stashes + 4 untracked
+docs/ preserved, CI success. No new primitive. Diff = opportunity-axis-router.ts (+capabilityFit) + its test + compass.
+
+**WHY (exposed by the V38 live run):** raw BOAMP feed = mostly ODG-irrelevant noise; value-band routing alone sent all
+12→A. **capabilityFit added** to opportunity-axis-router: TOKEN-match stems (cyber/logiciel/sbom/rgpd/gdpr/devsecops/
+pentest/informatique/applicatif/intégration/vulnérab/27001/42001…) + SUBSTRING distinctive PHRASES (iso 27001, sécurité
+informatique, système d'information, assurance logicielle, cartographie applicative, test d'intrusion, intelligence
+artificielle, supply chain…). runDiscovery(opts.requireCapabilityFit=true) PARKS irrelevant (never drops — parked[] with
+subject+reason, auditable); default OFF (backward compatible). Suite 18.
+
+**PRECISION BUG FOUND + FIXED (honest):** first live filter used naive substring ⇒ "ssi" matched inside aussi/assistance,
+"données" matched noise ⇒ 50→8 with false positives. Fixed to token/phrase matching ⇒ **50→3 genuinely-relevant, 47
+parked**, false positives gone (re-verified LIVE on real BOAMP).
+
+**LIVE EVIDENCE (ODG client, real):** 50 real BOAMP notices (pub 2026-10-27) → 3 capability-relevant (assurances
+cyber-risques; formation IA; AMO intégration), 47 parked. **HONEST FINDING: BOAMP rarely carries pure software-assurance
+tenders — the FR public-tender channel is LOW-FIT for ODG's niche; the 3 "relevant" are ADJACENT at best (insurance
+procurement / training / consulting), not direct software-assurance buys.** ⇒ real signal: prioritise subcontracting
+(axis D) into IT primes, or a sector-specific source, over broad BOAMP polling.
+
+**Gate:** test:report 128 (router suite 14→18 assertions, count unchanged); tsc 0; build 0. €0; nothing sent;
+read-only public data. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved. Session V21→V38 = PRs #82–#111(pending),
+test:report 59→128, all ff-only CI-green. NEXT: TED connector lot (EU, broader; same bounded-http-client) OR axis-D
+subcontracting prep informed by the low-fit finding.

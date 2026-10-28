@@ -16,7 +16,35 @@ const DET = require("./opportunity-detector.js");
 
 const AXES = Object.freeze(["A", "B", "C", "D", "E", "F"]);
 
+// V38 capability-fit vocabulary — ODG's ACTUAL deliverable surface. The first LIVE run exposed that naive substring
+// matching is low-precision (e.g. "ssi" matches inside "aussi/assistance") — so matching is now TOKEN-based for single
+// stems and SUBSTRING only for distinctive multi-word PHRASES. EN + FR. Precision favoured over recall (park, not drop).
+const CAPABILITY_STEMS: readonly string[] = Object.freeze([
+  "cyber", "cybersécurité", "cybersecurity", "logiciel", "logicielle", "software", "sbom", "rgpd", "gdpr", "devsecops",
+  "pentest", "informatique", "numérique", "applicatif", "application", "intégration", "vulnérab", "27001", "42001",
+]);
+const CAPABILITY_PHRASES: readonly string[] = Object.freeze([
+  "iso 27001", "iso 42001", "sécurité informatique", "sécurité des systèmes", "système d'information", "assurance logicielle",
+  "software assurance", "cartographie applicative", "développement logiciel", "test d'intrusion", "intelligence artificielle",
+  "ai act", "supply chain", "chaîne d'approvisionnement logiciel",
+]);
+const CAPABILITY_KEYWORDS: readonly string[] = Object.freeze([...CAPABILITY_STEMS, ...CAPABILITY_PHRASES]);
+
 function str(v: any): string { return typeof v === "string" ? v : ""; }
+function tokens(s: string): string[] { return s.split(/[^a-z0-9àâäéèêëïîôöùûüç]+/i).filter(Boolean); }
+
+/**
+ * capabilityFit(opp): is the subject within ODG's actual deliverable surface? HIGH-PRECISION: single stems match a
+ * word token (startsWith, so logiciel→logicielle); phrases match as a substring. Explainable (returns the matches).
+ */
+function capabilityFit(opp: any): any {
+  const subj = str(opp && opp.subject).toLowerCase();
+  const toks = tokens(subj);
+  const stemHits = CAPABILITY_STEMS.filter((k) => toks.some((t) => t === k || (k.length >= 5 && t.startsWith(k))));
+  const phraseHits = CAPABILITY_PHRASES.filter((p) => subj.includes(p));
+  const matched = [...new Set([...stemHits, ...phraseHits])];
+  return { relevant: matched.length > 0, fitScore: Math.min(5, matched.length), matchedKeywords: matched, reason: matched.length ? `matches ODG capability: ${matched.slice(0, 4).join(", ")}` : "no ODG capability keyword in subject — parked (not dropped)" };
+}
 
 /** routeToAxis(opp): six-axis routing from subject keywords + value band. No fabricated eligibility. */
 function routeToAxis(opp: any): any {
@@ -74,7 +102,15 @@ function runDiscovery(opts: any = {}): any {
 
   let det: any;
   try { det = DET.detect(raw, opts.detectOpts || {}); } catch (e: any) { return { status: "DETECT_ERROR", detail: e && e.message, externalGate, opportunities: [] }; }
-  const kept = det.shortlist.filter((o: any) => o.grade !== "REJECTED");
+  let kept = det.shortlist.filter((o: any) => o.grade !== "REJECTED");
+  // V38 capability-fit filter (opt-in): PARK (never drop) subjects outside ODG's deliverable surface so a raw
+  // public-tender feed yields a QUALIFIED ODG shortlist instead of noise.
+  const parked: any[] = [];
+  if (opts.requireCapabilityFit === true) {
+    const relevant: any[] = [];
+    for (const o of kept) { const f = capabilityFit(o); if (f.relevant) relevant.push({ ...o, capabilityFit: f }); else parked.push({ id: o.id, subject: o.subject, reason: f.reason }); }
+    kept = relevant;
+  }
   const routed = kept.map((o: any) => { const r = routeToAxis(o); return { ...o, axis: r.axis, axisReason: r.reason, nextOdgAction: nextOdgAction(r.axis) }; });
   const ranked = rankByFit(routed);
   const byAxis: Record<string, number> = {}; for (const a of AXES) byAxis[a] = 0;
@@ -82,14 +118,15 @@ function runDiscovery(opts: any = {}): any {
   return {
     status: ranked.length ? "RESULTS" : "NO_RESULTS",
     synthetic: opts.synthetic === true,
-    counts: det.counts, byAxis,
+    counts: Object.assign({}, det.counts, { parked: parked.length, capabilityFiltered: opts.requireCapabilityFit === true }),
+    byAxis, parked,
     opportunities: ranked,
     note: (opts.synthetic === true ? "SYNTHETIC source ⇒ these are TESTS, not customers. " : "") + "Provenance/timestamp from opportunity-detector; economics are HYPOTHESIS; eligibility not assumed; nothing sent/submitted/committed; ISO routes to readiness (NOT certification).",
   };
 }
 
-export { AXES, routeToAxis, nextOdgAction, rankByFit, runDiscovery };
-module.exports = { AXES, routeToAxis, nextOdgAction, rankByFit, runDiscovery };
+export { AXES, CAPABILITY_KEYWORDS, capabilityFit, routeToAxis, nextOdgAction, rankByFit, runDiscovery };
+module.exports = { AXES, CAPABILITY_KEYWORDS, capabilityFit, routeToAxis, nextOdgAction, rankByFit, runDiscovery };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify(runDiscovery({}), null, 2) + "\n");   // no connector ⇒ NO_RESULTS
