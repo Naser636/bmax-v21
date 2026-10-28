@@ -89,8 +89,34 @@ function runHealthCheck(input: any, opts: any = {}): any {
   };
 }
 
-export { OFFER, runHealthCheck, SUPPORTED };
-module.exports = { OFFER, runHealthCheck, SUPPORTED };
+/**
+ * runProjectHealthCheck({ projectDir, tsconfig?, runner? }): PROJECT-mode TS health check — the real import-aware
+ * `tsc -p` over a whole TypeScript project (the common real-world case), not isolated files. Returns the same
+ * evidence-report shape with a single project-level status. A tool-absence/timeout/missing-tsconfig is BLOCKED,
+ * never a PASS (delegates the fail-closed guarantees to ts-project-check).
+ */
+function runProjectHealthCheck(input: any, opts: any = {}): any {
+  if (!isObj(input) || typeof input.projectDir !== "string") return { ok: false, code: "INVALID_INPUT", reason: "input { projectDir, tsconfig? } required" };
+  const TSP = require("./ts-project-check.js");
+  const r = TSP.checkTsProject({ projectDir: input.projectDir, tsconfig: input.tsconfig, ...(typeof opts.runner === "function" ? { runner: opts.runner } : {}), timeoutMs: input.timeoutMs });
+  const status = r.status; // PASS | FAIL | BLOCKED
+  return {
+    ok: true,
+    report: {
+      offerId: OFFER.id, mode: "typescript-project",
+      projectDir: input.projectDir, tsconfig: input.tsconfig || "tsconfig.json",
+      status, errorCount: r.errorCount != null ? r.errorCount : (status === "PASS" ? 0 : undefined),
+      healthy: status === "PASS",
+      detail: r.detail || r.reason || "",
+      diagnostics: r.diagnostics,
+      limits: OFFER.limits,
+      note: "Project-mode TypeScript health check: real `tsc --noEmit -p <tsconfig>` honouring imports/config. NOT an audit/certification/guarantee. BLOCKED (tool absent/timeout/no-tsconfig) is never a PASS. Nothing retained; nothing sent.",
+    },
+  };
+}
+
+export { OFFER, runHealthCheck, runProjectHealthCheck, SUPPORTED };
+module.exports = { OFFER, runHealthCheck, runProjectHealthCheck, SUPPORTED };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify({ offer: OFFER.id, journey: OFFER.journey }, null, 2) + "\n");

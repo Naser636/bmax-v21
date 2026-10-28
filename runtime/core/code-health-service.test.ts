@@ -43,4 +43,18 @@ ok("malformed file entry ⇒ BLOCKED (not PASS)", S.runHealthCheck({ files: [{ p
 // (6) honest report note: no retention, nothing sent.
 ok("report note: no retention / nothing sent", /No file content is retained/.test(res.report.note) && /nothing is sent/.test(res.report.note));
 
-console.log(`\nCODE-HEALTH-SERVICE suite — ${pass} assertions passed. (productized offer; 0 false PASS; UNSUPPORTED declared; honest limits + €0 commercial state)`);
+// (7) PROJECT-mode TS health check (import-aware) via injected tsc runner.
+function tsProj() { const d = require("fs").mkdtempSync(require("path").join(require("os").tmpdir(), "odg-chs-proj-")); require("fs").writeFileSync(require("path").join(d, "tsconfig.json"), JSON.stringify({ compilerOptions: { noEmit: true } })); return d; }
+const tscPass = (args) => args[0] === "--version" ? { exitCode: 0, stdout: "5.9" } : { exitCode: 0, stdout: "", stderr: "" };
+const tscFail = (args) => args[0] === "--version" ? { exitCode: 0, stdout: "5.9" } : { exitCode: 2, stdout: "", stderr: "main.ts(2,7): error TS2322: bad." };
+const tscDown = () => ({ spawnError: "ENOENT" });
+{
+  const d = tsProj();
+  ok("project-mode: clean ⇒ healthy PASS", S.runProjectHealthCheck({ projectDir: d }, { runner: tscPass }).report.status === "PASS");
+  ok("project-mode: type error ⇒ FAIL + errorCount", (() => { const r = S.runProjectHealthCheck({ projectDir: d }, { runner: tscFail }).report; return r.status === "FAIL" && r.errorCount === 1 && r.healthy === false; })());
+  ok("project-mode: tsc down ⇒ BLOCKED (never PASS)", S.runProjectHealthCheck({ projectDir: d }, { runner: tscDown }).report.status === "BLOCKED");
+  require("fs").rmSync(d, { recursive: true, force: true });
+}
+ok("project-mode fail-closed: no projectDir", S.runProjectHealthCheck({}).code === "INVALID_INPUT");
+
+console.log(`\nCODE-HEALTH-SERVICE suite — ${pass} assertions passed. (productized offer; 0 false PASS; UNSUPPORTED declared; project-mode TS import-aware; honest limits + €0 commercial state)`);

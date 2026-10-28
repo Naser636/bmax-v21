@@ -7656,3 +7656,20 @@ project tsconfig (not in current MissionContext) ⇒ documented follow-on; no un
 COLLECTED CASH €0; €500k unachieved. NEXT: wire ts-project-check into routing (carry project tsconfig in MissionContext)
 to drop TS opt-in; OR P-01/C3 zero-cost demand experiment; OR extend code-health-service to consume project checks.
 Exact command: `git checkout main && git pull && npx tsx runtime/core/ts-project-check.ts <projectDir>`
+
+---
+## CHECKPOINT 2026-10-28 (ec) — V55b: P-01 product gains import-aware TS project health check €0
+CTO V55 §7 auto-chain. Truth Lock dc49980≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/project-health-v55b. No new primitive. Diff = code-health-service(.ts +runProjectHealthCheck / .test) + compass.
+
+**code-health-service.runProjectHealthCheck (integration P-01 × C-15):** project-mode TS health check — delegates to
+ts-project-check (real `tsc --noEmit -p <tsconfig>`, import-aware) and returns the evidence-report shape with a single
+project status (PASS/FAIL/BLOCKED). BLOCKED (tsc absent/timeout/no-tsconfig) is never PASS (fail-closed, delegated).
+The product now covers REAL TS codebases (imports/config), not just self-contained files. Suite 16 (injected runner) +
+**LIVE real tsc on a synthetic imported project: clean⇒PASS/healthy, cross-file type-error⇒FAIL(1 err).**
+
+**Gate:** test:report 156 (extended existing suite); tsc 0; build 0. €0; nothing sent; synthetic data; no exposure.
+Register P-01 extended. ACTUAL COLLECTED CASH €0; €500k unachieved. **V55 so far: TS project checker PR#138, P-01
+project-health PR#(next).** NEXT: C3 zero-cost demand experiment for P-01 (segment+hypothesis+sample deliverable+
+thresholds+accessible evidence, NO external contact) OR wire ts-project-check into routing to drop the TS opt-in.
+Exact command: `git checkout main && git pull && npx tsx runtime/core/code-health-service.test.ts`
