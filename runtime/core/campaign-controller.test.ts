@@ -76,4 +76,36 @@ const reg = (items) => ({ version: "t", items });
   ok("real register: ACCEPTED items carry evidence (closure discipline)", real.register.items.filter(i => i.status === "ACCEPTED").every(i => typeof i.evidence === "string" && i.evidence.length > 0));
 }
 
-console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; real register drivable)`);
+// (8) DECOMPOSITION PATTERN (the one this campaign relied on): a BLOCKED parent does NOT freeze the register — an
+// independent decomposed prep subtask keeps flowing, and the engine distinguishes "truly BLOCKED" from "awaiting deps".
+{
+  // parent BLOCKED, its ACCEPTED prep sibling, and a fresh independent READY prep lot.
+  const r = reg([
+    { id: "PARENT", status: "BLOCKED", deps: ["PARENT_PREP"], priority: 1, blockReason: "owner-gated external remainder" },
+    { id: "PARENT_PREP", status: "ACCEPTED", deps: [], priority: 1, evidence: "prep done" },
+    { id: "OTHER_PREP", status: "READY", deps: [], priority: 2 },
+  ]);
+  ok("blocked parent does NOT freeze the register: independent prep subtask is selected", C.selectNextLot(r).lot.id === "OTHER_PREP");
+  // once OTHER_PREP is accepted, no admissible lot remains and the parent is STILL correctly reported BLOCKED (not idle-by-deps-confusion).
+  C.advance(r, "OTHER_PREP", { status: "ACCEPTED", evidence: "done" });
+  const s = C.summary(r);
+  ok("after prep accepted ⇒ idle; parent reported BLOCKED (not mislabelled)", s.idle === true && s.blocked.some(b => b.id === "PARENT") && !s.nextLot);
+}
+
+// (9) distinguishes truly-BLOCKED from awaiting-deps: a READY item whose dep is BLOCKED is not selectable, but the
+// idleReason names the blocker (so a human can act), whereas a READY item with satisfied deps IS selected.
+{
+  const blockedChain = reg([
+    { id: "GATE", status: "BLOCKED", deps: [], priority: 1, blockReason: "needs authorized install" },
+    { id: "WAITING", status: "READY", deps: ["GATE"], priority: 1 },
+  ]);
+  const n = C.selectNextLot(blockedChain);
+  ok("READY item depending on a BLOCKED gate ⇒ not selected; idleReason names the blocker", n.lot === null && /GATE/.test(n.reason));
+  const freed = reg([
+    { id: "GATE", status: "ACCEPTED", deps: [], priority: 1, evidence: "installed" },
+    { id: "WAITING", status: "READY", deps: ["GATE"], priority: 1 },
+  ]);
+  ok("same item becomes selectable once its dep is ACCEPTED (not BLOCKED)", C.selectNextLot(freed).lot.id === "WAITING");
+}
+
+console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; real register drivable)`);
