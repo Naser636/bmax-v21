@@ -6981,3 +6981,36 @@ procurement / training / consulting), not direct software-assurance buys.** ⇒ 
 read-only public data. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved. Session V21→V38 = PRs #82–#111(pending),
 test:report 59→128, all ff-only CI-green. NEXT: TED connector lot (EU, broader; same bounded-http-client) OR axis-D
 subcontracting prep informed by the low-fit finding.
+
+---
+## CHECKPOINT 2026-10-28 (db) — V39 Track A: TED (EU) connector + live query + bounded POST €0
+CTO "V39 EU TENDER INTELLIGENCE" (post-PR#111, main e9ceb71). Truth Lock e9ceb71≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, CI success. No new primitive. Diff = ted-connector(.ts/.test) + bounded-http-client.ts
+(+post) + bounded-http-client.test + package.json + compass.
+
+**LIVE SCHEMA VERIFIED (ODG POST probe 2026-10-28):** api.ted.europa.eu/v3/notices/search anonymous, JSON {notices[],
+totalNoticeCount, iterationNextToken}; fields publication-number + LANG-KEYED notice-title/buyer-name maps +
+publication-date + deadline-receipt-request + links.html. (Verified against the ACTUAL response, not stale research.)
+
+**bounded-http-client.post (NEW):** same guards as get (https-only allowlist, SSRF, timeout, size, redirect, JSON
+content-type) + JSON body; injectable httpImpl ⇒ tests zero-network. Suite 18→20.
+
+**ted-connector.ts (EXECUTED, reuses bounded-http-client.post):** buildQuery (expert syntax publication-date>=/buyer-
+country) + fields; fetchTed state machine RESULTS/NO_RESULTS/SOURCE_UNAVAILABLE/AUTH_REQUIRED/MALFORMED; pickLang reduces
+lang-keyed maps to fra/eng scalar; canonicalUrl (links.html else derived); mapNotice → opportunity record w/ provenance;
+budgetEur=null (no clean scalar in search fields); dedup; malformed dropped (never fabricated). Suite 13.
+
+**REAL LIVE TED DISCOVERY (via ODG's own POST client):** 50 FR notices (totalNoticeCount 2142, pub ≥2026-10-21) →
+capabilityFit ⇒ **3 qualified, 47 parked**. Top = "Services de technologies de l'information, conseil, développement"
+(genuinely IT-adjacent — BETTER FIT than BOAMP), + matériel informatique, ressources numériques. All route to A
+(no clean budget). Honest: still ADJACENT (IT procurement, not pure software-assurance); TED is a better niche channel
+than BOAMP but still not direct software-assurance buys.
+
+**Gate:** test:report 128→129; tsc 0; build 0. €0; read-only public data; nothing sent/bid/committed. Track B (IT
+subcontracting discovery) NOT yet built — next lot. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved. Session
+V21→V39 = PRs #82–#112(pending), test:report 59→129, all ff-only CI-green.
+
+**COMPARATIVE (honest, small sample):** BOAMP 50→3 relevant (adjacent); TED 50→3 relevant (1 genuinely IT-services).
+Both sources: query OK, 0 malformed, all-null budgets ⇒ route-A; precision ~3/50; NO recall claim (no labeled set). TED
+has higher niche-fit potential (IT-services category exists). NEXT: Track B subcontracting (axis D) — the honest signal
+is that SUBCONTRACTING into IT primes may out-fit raw public tenders for ODG's niche.
