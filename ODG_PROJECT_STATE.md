@@ -8237,3 +8237,13 @@ CRITICAL honesty preserved: broad VERIFIED_SUCCESS_RATE stays NO_DATA (coverage 
 unchanged (0 PROVEN, measuredSuccessRate null everywhere). Suite +5 (15). Requirement→implementation→consumer→evidence.
 Register +ACCEPTED capability-taxonomy-measured-wire. 13 ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 175/175,
 tsc 0, build 0. €0.
+
+---
+## CHECKPOINT 2026-10-28 (fd) — WORLD-CLASS Phase 5: VPS read-only verification + honest stale-release finding €0
+Read-only loopback probe (nothing exposed/redeployed/restarted). VERIFIED: odg-preprod.service active, binds 127.0.0.1
+ONLY (no public bind); /api/health 200; **/api/runtime-state returns 200 WITHOUT token** because the running release
+(start 2026-10-27 06:26) PREDATES the fail-closed auth PRs#152/#153 (merged 2026-10-28). ODG_DASHBOARD_TOKEN unset in
+service env. ⇒ app-layer auth NOT active in the running release, BUT internal state NOT publicly reachable (loopback).
+Honest: network-layer closed, app-layer defense-in-depth stale. Activating needs a gated REDEPLOY+restart+token
+(critical gate — NOT done autonomously). Doc docs/odg/deploy/VPS_STATUS.md; register +BLOCKED dashboard-auth-redeploy
+(deployment-gated). 13 ACCEPTED/1 IN_PROGRESS/6 BLOCKED. €0.
