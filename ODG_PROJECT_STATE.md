@@ -7405,3 +7405,26 @@ unachieved. C-08 now resolver-INVOKED-on-real-path; full execution-REROUTING BLO
 list (documented). NEXT (V48 Lot C/C-06): 4th task family (wrong require/import repair from a reproducible failure)
 reusing runRepairWorkflow + a sealed before/after. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/mission-coding-integration.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dr) — V48 Lot C / C-06+C-12: 4th coding task family (broken-require repair) €0
+CTO V48 Lot C. Truth Lock eb343fb≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/task-fix-require-v48c. No new primitive. Diff = task-fix-require(.ts/.test) + coding-mission-resolver.ts
+(FAMILY_PLAN += fix-require) + package.json + register + compass.
+
+**task-fix-require.ts (C-12 — 4th family: repair a broken relative require/import):** real reproducible
+MODULE_NOT_FOUND. relativeSpecifiers + findCorrectSpecifier (basename match vs provided candidates) + rewriteSpecifier.
+Repairs ONLY when EXACTLY ONE candidate matches: 0 ⇒ UNSUPPORTED (no invention), >1 ⇒ BLOCKED (no guess), already-fine
+⇒ UNSUPPORTED. Via runRepairWorkflow (baseline-FAIL→post-PASS + exact rollback). Suite 12 (injected runner, zero
+subprocess). **LIVE `node --test`: require("./util") [missing] → rewritten to "./lib/util" → ACCEPTED (fix on disk);
+ambiguous ⇒ BLOCKED.** Registered in coding-mission-resolver FAMILY_PLAN (metadata; discoverable from canonical path).
+
+**C-06 toolchain re-probe (honest):** go/rustc/cargo/javac/java/sqlite3/psql ALL ABSENT (+ruby/php V45). Only
+node/python3/tsc ⇒ JS/TS/Python executable; all other stacks UNSUPPORTED/BLOCKED (not faked). Task-family breadth
+(now 4 proven families: repair-edit, test-gen, missing-export, broken-require) advances independently of language breadth.
+
+**Gate:** test:report 145→146; tsc 0; build 0 (closure 111). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **V48 THIS TURN so far: Lot A/C-08 (resolver on real loader path) PR#127, Lot C/C-06+C-12 (4th family)
+PR#128.** Lot B/C-04 generative = BLOCKED (ODG_LOCAL_MODEL_CMD unset; adapter prepared V47e; not faked). NEXT: Lot D/C-07
+(extend eval to repair-family acceptance accuracy + false-success/false-abstention metrics) OR Lot E (verify objective-
+fidelity applied at mission close). Exact command: `git checkout main && git pull && npx tsx runtime/core/task-fix-require.test.ts`
