@@ -107,9 +107,20 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-java-clean-2", partition: "heldout", category: "Java/compile", language: "Java", kind: "clean", expected: "PASS", content: "class Box<T> { private T v; Box(T v){ this.v = v; } T get(){ return v; } }\n" },
   { id: "held-java-broken-1", partition: "heldout", category: "Java/compile", language: "Java", kind: "broken", expected: "FAIL", content: "import com.unavailable.Dep;\nclass Uses { Dep d; }\n" },
   { id: "held-java-broken-2", partition: "heldout", category: "Java/compile", language: "Java", kind: "broken", expected: "FAIL", content: "class Bad { int f() { return; } }\n" },
+  // --- Runtime/behaviour (v8, 2nd TASK MODE): RUN the program + assert OUTPUT. "broken" cases COMPILE/RUN fine but
+  // produce WRONG output (logic errors a compile-check can't catch). Not a taxonomy category (does not change category
+  // coverage); it adds a distinct task MODE. expectedOutput is the fixed ground truth. ---
+  { id: "dev-rt-js-clean-1", partition: "dev", category: "Runtime/behaviour", language: "JavaScript", kind: "clean", mode: "runtime-behaviour", expected: "PASS", expectedOutput: "6", content: "console.log([1,2,3].reduce((a,b)=>a+b,0))\n" },
+  { id: "dev-rt-js-broken-1", partition: "dev", category: "Runtime/behaviour", language: "JavaScript", kind: "broken", mode: "runtime-behaviour", expected: "FAIL", expectedOutput: "6", content: "console.log([1,2,3].reduce((a,b)=>a+b,10))\n" },
+  { id: "dev-rt-py-clean-1", partition: "dev", category: "Runtime/behaviour", language: "Python", kind: "clean", mode: "runtime-behaviour", expected: "PASS", expectedOutput: "5", content: "print(len('hello'))\n" },
+  { id: "dev-rt-py-broken-1", partition: "dev", category: "Runtime/behaviour", language: "Python", kind: "broken", mode: "runtime-behaviour", expected: "FAIL", expectedOutput: "5", content: "print(len('hello') + 1)\n" },
+  { id: "held-rt-js-clean-1", partition: "heldout", category: "Runtime/behaviour", language: "JavaScript", kind: "clean", mode: "runtime-behaviour", expected: "PASS", expectedOutput: "ababab", content: "console.log('ab'.repeat(3))\n" },
+  { id: "held-rt-js-broken-1", partition: "heldout", category: "Runtime/behaviour", language: "JavaScript", kind: "broken", mode: "runtime-behaviour", expected: "FAIL", expectedOutput: "ababab", content: "console.log('ab'.repeat(2))\n" },
+  { id: "held-rt-py-clean-1", partition: "heldout", category: "Runtime/behaviour", language: "Python", kind: "clean", mode: "runtime-behaviour", expected: "PASS", expectedOutput: "[1, 2, 3]", content: "print(sorted([3,1,2]))\n" },
+  { id: "held-rt-py-broken-1", partition: "heldout", category: "Runtime/behaviour", language: "Python", kind: "broken", mode: "runtime-behaviour", expected: "FAIL", expectedOutput: "[1, 2, 3]", content: "print(sorted([3,1,2], reverse=True))\n" },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v7";
+const CORPUS_VERSION = "broad-it-eval-v8";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
 // NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
 // Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
@@ -140,8 +151,12 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
 // case is a `static-single-file` check (compile/syntax/type on one file). A corpus that is mono-modal is NOT
 // representative of broad IT (which includes integration, data, application-build and runtime-behaviour tasks), no
 // matter how many language categories it spans. This closes the "cross 0.6 with many trivial static categories" loophole.
-const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true, minTaskModes: 2 });
-const BROAD_TASK_MODES = Object.freeze(["static-single-file", "integration", "data", "application-build", "runtime-behaviour"]);
+// minModeCoverage: representativeness ALSO requires diversity of task MODE — a fraction of the major broad-IT task
+// modes, not just language-category breadth. The corpus is dominated by `static-single-file` (compile/syntax/type on
+// one file); a 2nd mode `runtime-behaviour` (run + assert OUTPUT) is a genuinely different capability. Until the corpus
+// spans ≥ minModeCoverage of BROAD_TASK_MODES, it is NOT representative of broad IT, no matter how many languages.
+const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true, minModeCoverage: 0.6 });
+const BROAD_TASK_MODES = Object.freeze(["static-single-file", "runtime-behaviour", "integration", "data", "application-build"]);
 
 function sha256(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
 
@@ -189,7 +204,9 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS, toolchain?: Record<
   const ratio = Number((covered.length / TARGET_TAXONOMY.length).toFixed(4));
   // task-mode diversity: distinct `mode` across the corpus (default static-single-file). Mono-modal ⇒ not representative.
   const taskModes = Array.from(new Set(corpus.map((c: any) => c.mode || "static-single-file"))).sort();
-  const modeDiverse = taskModes.length >= th.minTaskModes;
+  const recognisedModes = taskModes.filter((m) => BROAD_TASK_MODES.includes(m));
+  const modeCoverage = Number((recognisedModes.length / BROAD_TASK_MODES.length).toFixed(4));
+  const modeDiverse = modeCoverage >= th.minModeCoverage;
   return {
     total: TARGET_TAXONOMY.length,
     coveredCount: covered.length,
@@ -197,6 +214,7 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS, toolchain?: Record<
     threshold: th,
     toolchainAware: !!tcAware,
     taskModes,
+    modeCoverage,
     modeDiverse,
     meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0 && modeDiverse,
     coveredCategories: covered.map((c) => c.category),
@@ -219,7 +237,12 @@ function evaluate(opts: any = {}): any {
   for (const c of cases) {
     perCategory[c.category] = perCategory[c.category] || blank();
     const available = toolchain[c.language] === true;
-    const res = EXEC.runSyntaxCheck({ language: c.language, content: c.content, toolchainAvailable: available, ...(runner ? { runner } : {}) });
+    // task MODE selects the checker: runtime-behaviour RUNS the program + asserts output (output correctness);
+    // everything else compiles/type-checks a single file. The static `runner` oracle is for the latter only; a
+    // runtime case uses the real interpreter (or an injected behaviourRunner) — its ground truth is the expectedOutput.
+    const res = c.mode === "runtime-behaviour"
+      ? EXEC.runBehaviourCheck({ language: c.language, content: c.content, expectedOutput: c.expectedOutput, toolchainAvailable: available, ...(opts.behaviourRunner ? { runner: opts.behaviourRunner } : {}) })
+      : EXEC.runSyntaxCheck({ language: c.language, content: c.content, toolchainAvailable: available, ...(runner ? { runner } : {}) });
     let outcome: string;
     if (res.status === "UNSUPPORTED" || res.status === "BLOCKED") { outcome = "blocked"; perCategory[c.category].blocked++; overall.blocked++; }
     else {
@@ -263,7 +286,7 @@ function assessBroadIT(opts: any = {}): any {
     reason: representative
       ? `corpus meets the pre-registered representativeness gate (coverage ${coverage.ratio} ≥ ${coverage.threshold.minCoverageRatio})`
       : (coverage.ratio >= coverage.threshold.minCoverageRatio && !coverage.modeDiverse
-          ? `category coverage ${coverage.coveredCount}/${coverage.total} (ratio ${coverage.ratio}) meets the breadth gate, BUT the corpus is mono-modal (task modes: [${coverage.taskModes.join(", ")}]) — only static-single-file checks, no integration/data/application-build/runtime-behaviour tasks. Breadth of language categories is NOT representativeness of broad IT; a broad-IT rate requires ≥${coverage.threshold.minTaskModes} task modes. Verdict stays NO_DATA (no false MEASURED on trivial static breadth).`
+          ? `category coverage ${coverage.coveredCount}/${coverage.total} (ratio ${coverage.ratio}) meets the breadth gate, BUT task-MODE coverage is only ${coverage.modeCoverage} (modes present: [${coverage.taskModes.join(", ")}]) < required ${coverage.threshold.minModeCoverage}. Language-category breadth is NOT representativeness of broad IT — that needs ${BROAD_TASK_MODES.length} major task modes (static-single-file, runtime-behaviour, integration, data, application-build). Verdict stays NO_DATA (no false MEASURED on narrow task-mode coverage).`
           : `corpus covers ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); ${coverage.missing.length} categories uncovered (${coverage.missing.map((m: any) => m.category).join(", ")}). Toolchain-aware: a category counts only if real cases exist AND its checker is runnable now. A broad-IT rate requires crossing this gate with a representative, independently-labelled, multi-mode corpus.`),
     representative,
     coverage,
