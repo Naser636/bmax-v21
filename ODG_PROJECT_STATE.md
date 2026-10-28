@@ -7748,3 +7748,26 @@ same-mission-negative⇒BLOCKED) + LIVE re-run G10 ⇒ PIPELINE SUCCESS with the
 €500k unachieved. NEXT (Lot C): next independent task family OR (owner decision) add a bounded read-only mission to
 ODG_CANARY_ALLOWLIST to test the autonomous tick→real-dispatch loop end-to-end. Exact command:
 `git checkout main && git pull && node runtime/dist/bin/odg-run.js G10_READONLY_AUTONOMY_PROBE`
+
+---
+## CHECKPOINT 2026-10-28 (eg) — V58 §2: canary authorization decision pack PREPARED (not activated) €0
+CTO "V58 CANARY AUTHORIZATION DESIGN". Truth Lock 3715ffd≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved.
+Branch excellence/canary-decision-pack-v58. No new primitive. Diff = canary-decision-pack(.ts/.test) + package.json +
+register + compass.
+
+**canary-decision-pack.ts (§2 — PREPARE, do NOT activate):** inspected the real mechanism — odg-schedule-tick injects a
+SYNTHETIC one-item queue per ODG_CANARY_ALLOWLIST id; authorize = allowlist membership; deny-by-default; isolated canary
+interface. Single-id limited authorization IS supported without privilege escalation, but NO explicit grant exists ⇒
+per §2 I PREPARE the dossier only. assessCanaryCandidate(spec) fail-closed safety gate: read-only (requiresEngineering≠
+true + no authorizedPaths) + valid canonical id (no shell metachars) + no network/spend/destructive. buildDecisionPack
+⇒ structured owner dossier: recommended mission G10_READONLY_AUTONOMY_PROBE (V57-proven 13/13 non-destructive), operations/
+side-effects, no-net/spend/destructive proof, bounds (synthetic-queue/duration/dedup-repeat/RC-2-resume/stop), acceptance,
+revocation (remove id ⇒ deny-by-default IDLE), **minimalChange = one-shot ENV `ODG_CANARY_ALLOWLIST=G10_READONLY_AUTONOMY_
+PROBE` (NOT committed, NOT a code change, NOT activated)**, verdict READY_FOR_OWNER_AUTHORIZATION. Suite 13 + live pack
+output. NEVER sets allowlist/env, never fabricates an id, deny-by-default preserved.
+
+**Gate:** test:report 158→159; tsc 0; build 0. €0; nothing sent; allowlist untouched. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **OWNER DECISION (single, minimal): to run the autonomous canary, apply one-shot `ODG_CANARY_ALLOWLIST=
+G10_READONLY_AUTONOMY_PROBE` then `node runtime/dist/bin/odg-schedule-tick.js` — ODG will NOT set this itself.** NEXT
+(Lot B, independent): 6th task family (e.g. unused-import removal via local-fixers + ts-project-check noUnusedLocals) OR
+P-01 reproducibility note. Exact command: `git checkout main && git pull && npx tsx runtime/core/canary-decision-pack.test.ts`
