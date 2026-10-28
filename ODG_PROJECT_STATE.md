@@ -7238,3 +7238,24 @@ unachieved. NEXT (C-05): extend the repair-workflow loop to the next task family
 function" or "safe dependency/config update" — reusing runRepairWorkflow with a new deterministic change source and a
 sealed before/after fixture; then C-07 code-check eval family. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/repair-workflow.test.ts`  (resume from register C-05).
+
+---
+## CHECKPOINT 2026-10-28 (dk) — V46b C-05: second coding task family (test-gen) — harness GENERALIZES €0
+CTO V46 continuous mandate. Truth Lock 22f623a≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/task-add-tests-v46b. No new primitive (reuses repair-workflow). Diff = task-add-tests(.ts/.test) +
+package.json + register + compass.
+
+**task-add-tests.ts (C-05 — proves repair-workflow harness generalizes to a 2nd family):** buildAddTestsTask(spec)
+deterministically GENERATES a node:test characterization test FROM owner-provided {args,expected} example pairs and
+assembles a runRepairWorkflow task whose PRE-DECLARED acceptance = "the generated test executes and PASSES" (command
+`node --test <testPath>`; writeSet test/). Because the harness accepts only baseline-FAIL→post-PASS: correct impl ⇒
+ACCEPTED (test kept); impl that violates the examples ⇒ generated test FAILS ⇒ ABSTAINED + rollback (no red test kept,
+no false claim of correctness). Honest scope: generation FROM explicit examples (bounded, useful) — NOT test-inference
+/ spec synthesis / arbitrary codegen. Suite 13 (injected runner, zero subprocess). **LIVE `node --test`: mul a*b +
+3 examples ⇒ ACCEPTED (baseline FAIL→PASS, test on disk); wrong impl a+b ⇒ ABSTAINED + generated test removed.**
+
+**Gate:** test:report 138→139; tsc 0; build 0 (closure 105). €0; nothing sent; workspaces isolated tmp. Register C-05
+→ VERIFIED. ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT (C-05 cont. / C-07): add a 3rd family
+(bug-fix-from-failing-test, or safe dep/config bump) reusing runRepairWorkflow; then C-07 code-check eval family
+(clean/broken fixtures, PASS/FAIL accuracy of the real exec path). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/repair-workflow.test.ts && npx tsx runtime/core/task-add-tests.test.ts`
