@@ -8194,3 +8194,21 @@ Locked the behavior the whole unblock campaign relied on. campaign-controller.te
 + distinguishes truly-BLOCKED from awaiting-deps: a READY item whose dep is BLOCKED is not selected and idleReason
   NAMES the blocker; the same item becomes selectable once its dep flips to ACCEPTED.
 Gate: test:report 173/173 (count unchanged — same suite, +4 assertions), tsc 0. €0.
+
+---
+## CHECKPOINT 2026-10-28 (fa) — WORLD-CLASS Phase 1: engineering best-practices research register €0
+CTO excellence mandate. Phase 0 Truth Lock e50f379b≡origin/main (0/0), 5 stashes + foreign dirs + worktrees preserved.
+Anti-repetition: reused capability-taxonomy (already the honest broad-IT matrix), source-registry (opportunity sources,
+distinct), research-ranking. Genuine gaps = best-practices research register + SEO.
+
+**engineering-practices-register.ts:** 19 QUALITY-GATED external sources across 9 families (benchmarks / eval-integrity /
+planning-recovery / code-agents / security-appsec-agent-supplychain / observability / learning / multi-language / SEO).
+Real sources grounded via LIVE WEB SEARCH 2026-10-28: DORA, NIST SSDF SP800-218, NIST AI RMF 100-1 (+GenAI 600-1), OWASP
+LLM Top10 2025, SLSA, OWASP ASVS, OpenTelemetry, SWE-bench/Verified + SWE-Bench-Pro-Verified, SWE-agent ACI (NeurIPS24),
+Google Search Central + structured-data, LSP, Google SRE. Fail-closed validateEntry (rejects weak/unmapped/undated). Each
+maps to a P1/P2 requirement + ODG decision adopt/adapt/test (NOT blind copy; tailored to the 9 primitives). **ANTI-
+FABRICATION:** test proves all 19 `reflectedIn` modules EXIST on disk. Doc docs/odg/engineering-practices-register.md. Suite 11.
+
+**Register:** +ACCEPTED engineering-practices-register (versioned improvement attached to P2, NOT a new roadmap). 11
+ACCEPTED/1 IN_PROGRESS/5 BLOCKED. Gate: test:report 173→**174**, tsc 0, build 0. €0. NEXT: Phase 6 SEO/positioning register;
+Phase 2 wire capability-taxonomy↔measured coverage.
