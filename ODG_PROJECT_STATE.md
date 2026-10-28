@@ -7997,3 +7997,26 @@ gate activates only on a future gated rebuild+restart. ⇒ ODG does NOT expose p
 in code (token from env config only); no public exposure; service not restarted. ACTUAL COLLECTED CASH €0; €500k
 unachieved. NEXT (Phase-1 cont.): gate the dashboard PAGE (server-side auth before rendering internal state), then TLS/
 reverse-proxy, then owner-confirmed exposure. Exact command: `git checkout main && git pull && npx tsx src/tests/dashboard-auth.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (eq) — Closure V2 Phase-1 cont: dashboard PAGE gated (internal-state leak CLOSED) €0
+CTO closure V2. Truth Lock 6a9381f≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved, 167 suites. Branch
+excellence/dashboard-page-gate-v2. No new primitive. Diff = src/app/page.tsx (fail-closed gate via next/headers) + compass.
+
+**Page-gate (completes the internal-state leak closure):** src/app/page.tsx is now an async server component that reads
+`await headers()`, runs the SAME fail-closed evaluateDashboardAuth({pathname:"/"}), and on deny renders an
+"authentication required" view WITHOUT reading/rendering the snapshot. ODG_DASHBOARD_TOKEN unset OR missing/invalid creds
+⇒ no internal state leaves. Used the documented Next-16 `next/headers` async API (doc read). **VERIFIED: `next build`
+exit 0 — `/` compiles as ƒ Dynamic (server-rendered on demand); tsc 0; test:report 167/167.** Both the API
+(/api/runtime-state) AND the page (/) now gate internal state fail-closed ⇒ the dashboard internal-state leak is CLOSED
+in code.
+
+**HONEST LIMITS (public exposure STILL blocked):** (1) TLS/reverse-proxy not built. (2) running odg-preprod.service
+still serves the PRE-AUTH build; activation needs a gated rebuild+restart (NOT done — deploy step). (3) exposure needs an
+owner-confirmed decision. ⇒ ODG does NOT expose publicly. Operator loopback view now requires the token too (correct
+security posture; documented).
+
+**Gate:** test:report 167; tsc 0; `next build` exit 0 (page compiles). €0; no secret in code; service not restarted; no
+public exposure. ACTUAL COLLECTED CASH €0; €500k unachieved. Phase-1 dashboard-security: API+page auth DONE (fail-closed,
+build-verified); REMAINING for exposure = TLS/reverse-proxy + owner-confirmed go + gated rebuild/restart. NEXT (Phase 2):
+wire dep-planner into the planner path. Exact command: `git checkout main && git pull && npm run build && ODG_TEST_WORKERS=8 npm run test:report`
