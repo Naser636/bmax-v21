@@ -7450,3 +7450,25 @@ check-accuracy / NOT K / NOT broad-IT. §5 re-verified: V47 TS-checker fix still
 unachieved. **V48 THIS TURN: Lot A/C-08 PR#127, Lot C/C-06+C-12 PR#128, Lot D/C-07+C-13 PR#129; Lot B/C-04 BLOCKED
 (no authorized provider; adapter prepared).** NEXT: Lot E (verify objective-fidelity applied at mission close, not only
 its own tests) OR Lot F research. Exact command: `git checkout main && git pull && npx tsx runtime/core/repair-eval.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dt) — V48 Lot E / G-01 APPLIED: objective-fidelity cross-check at mission close €0
+CTO V48 Lot E. Truth Lock 4c40cd0≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/mission-fidelity-verdict-v48e. No new primitive. Diff = mission-fidelity-verdict(.ts/.test) + final-report.ts
+(wire + export fidelityVerdictSection) + tsconfig.runtime-dist.json (closure +1) + package.json + register + compass.
+
+**mission-fidelity-verdict.ts (G-01 APPLIED):** assessMissionFidelity(plan,report) maps canonical mission-plan
+definitionOfDone/objectives + mission-report status/unmet/checks(gates) onto an objective-fidelity contract +
+evidence-bearing deliverables, then evaluateCompletionClaim. A report CANNOT read COMPLETE when a required DoD item is
+unmet, a mandatory evidence gate (buildGate/typescriptGate/objectiveCoverage/noFailedActions/evidenceIntegrity/
+noGammaFalseSuccess) failed, or outcomes are unverified ⇒ REJECT_FALSE_COMPLETION; genuine ⇒ ACCEPT; honest in-progress
+⇒ ACKNOWLEDGE_INCOMPLETE. Wired into final-report (best-effort, exit-0; the Validation Engine remains the authoritative
+gate): fidelityVerdictSection exported + called in main(), persists fidelity-verdict.json + a report section. Suite 9
+(4 rejection conditions + genuine accept + final-report wiring). **LIVE: `tsx final-report.ts <M>` ⇒ fidelity-verdict.json
+{decision ACCEPT, verdict COMPLETE} + "## Objective fidelity" section in the report md; tree clean.** Closure 111→112.
+
+**Gate:** test:report 147→148; tsc 0; build 0 (closure 112). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. **V48 THIS TURN: Lot A/C-08 PR#127, Lot C/C-06+C-12 PR#128, Lot D/C-07+C-13 PR#129, Lot E/G-01-applied
+PR#130; Lot B/C-04 BLOCKED (no authorized provider).** NEXT: Lot F research (specialty demand + reference inventory→
+experiments) OR make G-01 a hard Validation-Engine gate (authorized lot). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/mission-fidelity-verdict.test.ts`

@@ -153,6 +153,7 @@
     "runtime/core/code-mission-intake.ts",
     "runtime/core/code-execution.ts",
     "runtime/core/project-signal-detector.ts",
-    "runtime/core/objective-fidelity.ts"
+    "runtime/core/objective-fidelity.ts",
+    "runtime/core/mission-fidelity-verdict.ts"
   ]
 }
