@@ -6888,3 +6888,34 @@ connector (OCDS/TED/BOAMP + terms); (2) HA-1 Gmail channel; (3) HA-2 real lawful
 enterprise demand; (6) external ISO audit; (7) client acceptance + evidenced RECEIPTS (only these move cash off €0).
 ACTUAL COLLECTED CASH €0; €500k NET unachieved/VOLUME-bound. NEXT (human): wire ONE authorized discovery connector OR
 HA-1+HA-2; then ODG runs the cycle autonomously to the next real gate.
+
+---
+## CHECKPOINT 2026-10-28 (cy) — V37 LIVE DISCOVERY CONNECTOR (BOAMP, injectable fetcher) €0
+CTO "V37 LIVE DISCOVERY CONNECTOR" (post-PR#108, main 901e43a). Truth Lock 901e43a≡origin/main (0/0), clean, 5 stashes +
+4 untracked docs/ preserved, CI success. RECONCILED: a414f61(V33)→41aa6e4(V34)→901e43a(V36) is a clean linear chain —
+the V36 turn ran TWO missions (V34 then V36); "start/note/end" were all real commits, no discrepancy. No new primitive.
+Diff = tender-feed-connector(.ts/.test) + package.json + compass.
+
+**SOURCE RESEARCH (subagent WebFetch, verified live 2026-10-27, source-cited):** BOAMP (dila.gouv.fr + boamp-datadila.
+opendatasoft.com) Opendatasoft Explore API v2.1 — PUBLIC, ANONYMOUS (no key/registration), JSON {total_count,results[]},
+automated retrieval EXPLICITLY permitted, Licence Ouverte/Etalab 2.0 (attribution: DILA+URL+file+date). Fields verified:
+nomacheteur/objet/dateparution/datelimitereponse/idweb; url=boamp.fr/avis/detail/<idweb>. **HONEST CORRECTION: BOAMP has
+NO clean scalar amount (value in nested eForms `donnees` blob) ⇒ budgetEur=null, NOT fabricated.** Pagination: ≤100/page,
+offset+limit≤~10k (page by date windows). TED (api.ted.europa.eu POST /v3/notices/search) also verified anonymous — the
+NEXT source (POST expert-query + lang-keyed fields = separate lot). DECP/OCDS = AWARD data (no deadline) ⇒ NOT an
+opportunity feed (recorded blocker).
+
+**tender-feed-connector.ts (EXECUTED — injectable-fetcher pattern from finance-data-connector):** fetchFeed(opts.httpGet)
+honest state machine RESULTS | NO_RESULTS (queried OK, 0 matches) | SOURCE_UNAVAILABLE (throw/timeout/5xx after bounded
+retries) | AUTH_REQUIRED (no fetcher/egress OR 401/403) | MALFORMED (2xx unparseable/wrong-shape). validateAndNormalize
+maps BOAMP→opportunity records with provenance{source,sourceTimestamp,retrievalTimestamp}, dedup, drops malformed
+(counted, never fabricated). Errors NEVER become NO_RESULTS. Suite 12 (mock fetcher = zero network).
+
+**Gate:** test:report 126→127; tsc 0; build 0. €0; nothing sent.
+
+**LIVE RETRIEVAL STATUS (honest):** the ODG runtime has NO authorized HTTP fetcher/egress wired ⇒ live fetchFeed({}) =
+AUTH_REQUIRED. The connector is REAL + tested; a live ODG pull needs an authorized egress/fetcher (EXTERNAL gate). The
+source-docs research used the provider's WebFetch (verification only) — NOT ODG runtime egress; not conflated. Real
+opportunities found via ODG live = NONE (AUTH_REQUIRED, not NO_RESULTS). Six axes active; ACTUAL COLLECTED CASH €0; €500k
+VOLUME-bound/unachieved. NEXT: inject an authorized bounded-https fetcher (human authorizes egress + terms) ⇒ connector
+goes live → opportunity-axis-router → autonomous-commercial-cycle; OR implement the TED connector lot.
