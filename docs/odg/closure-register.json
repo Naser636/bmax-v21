@@ -172,18 +172,30 @@
       "nextAction": "owner authorizes + runs the lawful WTP experiment; feed real signals to demand-experiment.assessExperiment"
     },
     {
+      "id": "p01-billing-sandbox-cycle",
+      "program": "P2",
+      "title": "P-01 sandbox billing cycle proof: invoice→payment→reconcile, idempotent, no prod charge",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/p01-billing-sandbox.ts drives the full cycle over EXISTING invoicing+payments primitives (no new billing logic): draft→validate→issue→signed TEST_MODE webhook→PAID (€58.80 incl 20% tax), idempotent replay (paid unchanged), card-data REFUSED, tampered signature REJECTED. HARD guard: LIVE_REFUSED if PAYMENT_LIVE_ENABLED=1 (never a real charge); confined to an isolated temp cwd (no repo writes, no network, no real account). Suite 10.",
+      "acceptance": "sandbox invoice→payment→reconcile, idempotent, no prod charges — demonstrated end-to-end",
+      "nextAction": "done; any REAL billing needs owner authorization + a real paid provider account (p01-billing-sandbox, still BLOCKED)"
+    },
+    {
       "id": "p01-billing-sandbox",
       "program": "P2",
-      "title": "P-01 billing (sandbox only)",
+      "title": "P-01 billing with a REAL (non-sandbox) provider",
       "status": "BLOCKED",
       "deps": [
+        "p01-billing-sandbox-cycle",
         "p01-demand-validation"
       ],
       "priority": 10,
       "evidence": "",
-      "blockReason": "owner-gated; no paid provider/account; test-env only before any real use",
-      "acceptance": "sandbox invoice→payment→reconcile, idempotent, no prod charges",
-      "nextAction": "owner authorization + sandbox provider credentials via secure config"
+      "blockReason": "NARROWED: the sandbox cycle is DONE and proven (p01-billing-sandbox-cycle). A REAL provider needs owner authorization + a paid provider account/credentials (secure config), and should follow validated demand (p01-demand-validation). No paid account exists; live payments stay disabled.",
+      "acceptance": "a real provider configured (secure), live enabled only under owner authorization, with the same idempotent reconcile guarantees",
+      "nextAction": "owner authorizes + provisions a real provider account/credentials via secure config, after demand is validated"
     }
   ]
 }
