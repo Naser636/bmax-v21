@@ -89,6 +89,16 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "engine-benchmark-baseline",
+      "program": "P2",
+      "title": "Reproducible execution-engine benchmark + baseline scorecard (10×/kernel mandate)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/engine-benchmark.ts — a deterministic scorecard running 9 representative scenarios against the REAL campaign-controller, each mapped to a primitive: resume-after-interruption (STATE/RECOVERY), dedup-no-repeat (RESOLVER), dependency-regression-invalidation (EVIDENCE), independent-selection-under-block (ALLOCATOR), stale-evidence-reconcile (EVIDENCE/RECOVERY), strategy-change-readmit (RECOVERY), no-false-accept (EVIDENCE/POLICY), cycle-safe (RESOLVER), reconcile-after-mission (STATE/RESOLVER). BASELINE = 9/9 pass; deterministic (no clock/random/subprocess). Explicitly makes NO unmeasured improvement claim — it is the measurement the '10×' ambition must be compared against. Suite 18. No tenth primitive.",
+      "acceptance": "a reproducible, deterministic engine-behaviour scorecard exists; baseline recorded; future engine changes re-run the SAME scenarios; no unmeasured gain claimed"
+    },
+    {
       "id": "rust-build-capability",
       "program": "P2",
       "title": "Rust/build capability (authorized rustc) + task-mode-diversity honesty gate",
