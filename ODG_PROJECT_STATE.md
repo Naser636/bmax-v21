@@ -8070,3 +8070,25 @@ no 10th primitive). dep-planner now has 2 real consumers (roadmap-dep-check + ca
 CASH €0; €500k unachieved. NEXT (per the engine): broad-it-corpus-grow — grow the representative DEV/HELDOUT corpus;
 other lots BLOCKED (owner/toolchain/authz). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/campaign-controller.ts docs/odg/closure-register.json`
+
+---
+## CHECKPOINT 2026-10-28 (et) — broad-IT corpus grown + quantified representativeness gate (engine-selected lot) €0
+Lot auto-selected by the V59 campaign-controller (the only admissible one). Truth Lock 6dc3bbaaa≡origin/main, clean,
+5 stashes + foreign untracked preserved. Branch excellence/broad-it-corpus-grow. No new primitive.
+
+**broad-it-eval v1→v2:** (1) corpus grown 12→**24 REAL-checker-evaluable cases** (4 per supported category per
+partition: 2 clean + 2 broken) — dev & heldout accuracy **1.0** each, **0 falsePass/falseFail/blocked**, leakage disjoint
+by id AND sha256. (2) Representativeness is now **MEASURED, not asserted**: replaced the hardcoded `representative=false`
+with a **pre-registered TARGET_TAXONOMY (12 broad-IT categories)** as a fixed denominator + a **pre-registered gate**
+(coverageRatio ≥ 0.6, ≥6 real-evaluable cases/covered category, both kinds). `coverageReport` ⇒ **3/12 = 0.25** (only
+JS/TS/Python have an executable checker); unsupported stacks can NEVER count as covered (no fake breadth). ⇒ broadIT =
+**NO_DATA** by measurement; the 9 missing categories are explicit gaps requiring real toolchains. Suite 11→**23**.
+
+**Durable register (driven through the controller):** broad-it-corpus-grow advanced to IN_PROGRESS with evidence; its
+remaining acceptance now **depends on new-language-families** (BLOCKED — toolchains). Controller summary ⇒ **idle:
+"all 1 open lot(s) await dependencies"** — the honest terminus: every remaining lot is owner/toolchain/authz-gated.
+Counts 5 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
+
+**Gate:** test:report **169/169**, tsc 0, build 0 (closure 117). €0; COLLECTED CASH €0; €500k unachieved. NEXT: no
+self-clearable lot remains — all open work is gated on owner authorization (dashboard exposure, P-01 demand/billing,
+roadmap-schema) or an authorized toolchain install (new-language-families). Resume: `npx tsx runtime/core/campaign-controller.ts`.
