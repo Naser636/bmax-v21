@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+// @ts-nocheck — runs under tsx, ZERO real subprocess (injected runner + toolchain). Validates the broad-IT scaffolding:
+// strict DEV/HELDOUT leakage protection (id + content hash), per-category classification (incl. falsePass/falseFail),
+// and the HONEST broad-IT verdict = NO_DATA (never extrapolated from the narrow supported surface).
+"use strict";
+const assert = require("assert");
+const fs = require("fs");
+const B = require("./broad-it-eval.js");
+let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); pass++; };
+
+const ALL = { JavaScript: true, TypeScript: true, Python: true };
+// Oracle: read the checker's temp file (last argv) and PASS iff content is a known-clean fixture.
+const cleanSet = new Set(B.CORPUS.filter((c) => c.expected === "PASS").map((c) => c.content));
+const oracle = (bin, args, opts) => { const f = args[args.length - 1]; const content = fs.readFileSync(f, "utf8"); return { exitCode: cleanSet.has(content) ? 0 : 1, stdout: "", stderr: "" }; };
+const alwaysPass = () => ({ exitCode: 0, stdout: "", stderr: "" });
+
+// (1) LEAKAGE PROTECTION: dev/heldout disjoint by id AND content hash.
+const leak = B.checkLeakage();
+ok("DEV/HELDOUT disjoint (no id/hash leakage)", leak.ok === true && leak.idOverlap.length === 0 && leak.hashOverlap.length === 0 && leak.devCount > 0 && leak.heldoutCount > 0);
+
+// (2) oracle evaluate on held-out ⇒ accuracy 1, 0 false, per-category present.
+const held = B.evaluate({ partition: "heldout", runner: oracle, toolchain: ALL });
+ok("held-out oracle ⇒ accuracy 1.0, 0 false", held.overall.accuracy === 1 && held.overall.falsePass === 0 && held.overall.falseFail === 0 && held.partition === "heldout");
+ok("per-category metrics present (3 supported categories)", Object.keys(held.perCategory).length === 3);
+
+// (3) adversarial always-PASS runner ⇒ broken held-out cases become falsePass (detected).
+const fp = B.evaluate({ partition: "heldout", runner: alwaysPass, toolchain: ALL });
+const brokenHeld = B.CORPUS.filter((c) => c.partition === "heldout" && c.expected === "FAIL").length;
+ok("always-PASS ⇒ falsePass == #broken held-out (detection works)", fp.overall.falsePass === brokenHeld);
+
+// (4) dev partition is separately evaluable (visible tuning set).
+const dev = B.evaluate({ partition: "dev", runner: oracle, toolchain: ALL });
+ok("dev partition evaluable + disjoint result set", dev.partition === "dev" && dev.results.every((r) => r.id.startsWith("dev-")) && held.results.every((r) => r.id.startsWith("held-")));
+
+// (5) HONEST broad-IT verdict = NO_DATA, representative=false, not extrapolated.
+const a = B.assessBroadIT({ runner: oracle, toolchain: ALL });
+ok("assessBroadIT ⇒ NO_DATA (not representative)", a.broadIT === "NO_DATA" && a.representative === false && /NOT representative of general IT/.test(a.reason));
+ok("supported-surface held-out accuracy reported SEPARATELY (no extrapolation)", a.supportedSurfaceHeldout.accuracy === 1 && /remains NO_DATA/.test(a.note));
+ok("leakage protection carried in the verdict", a.leakageProtection.ok === true);
+
+// (6) provenance: stable sha256 + version + partition sizes + supported categories.
+const p1 = B.provenance(), p2 = B.provenance();
+ok("provenance stable sha256 + partitions + supported categories", p1.sha256 === p2.sha256 && /^[0-9a-f]{64}$/.test(p1.sha256) && p1.partitions.dev > 0 && p1.partitions.heldout > 0 && p1.supportedCategories.length === 3);
+
+console.log(`\nBROAD-IT-EVAL suite — ${pass} assertions passed. (dev/heldout leakage-protected; per-category metrics; falsePass detected; broad-IT NO_DATA honest, not extrapolated)`);

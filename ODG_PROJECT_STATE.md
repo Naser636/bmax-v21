@@ -7877,3 +7877,28 @@ mission (G10 is proven; §4.6 forbids adding other ids) ⇒ carried, not forced.
 **Gate:** test:report 165 (all PASS); tsc 0; build 0 (closure 117). €0; nothing sent; allowlist untouched (one-shot env
 only); deny-by-default intact. ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT: broad-IT corpus scaffolding (§4.7, zero-
 cost, dev/eval split) OR audit ODG5 A/B/C lots. Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
+
+---
+## CHECKPOINT 2026-10-28 (el) — Priority A: broad-IT eval scaffold (dev/heldout, leakage-guarded) + owner test evidence €0
+CTO "CONTINUE FROM VERIFIED CHECKPOINT (P1+P2)". Truth Lock ae56751≡origin/main (0/0), clean, 5 stashes + 4 docs/
+preserved. Branch excellence/broad-it-eval-scaffold. No new primitive.
+
+**OWNER-PROVIDED EVIDENCE (not self-run):** owner reported `test:report 165/165 PASS` on main — recorded as
+OWNER-SUPPLIED proof (scope: the curated test:report suite on main @ae56751; limit: not an end-to-end/operational or
+commercial proof). I did NOT re-run it unchanged; subsequent gate in THIS lot (166) reflects my +1 test addition.
+
+**Priority A — broad-it-eval.ts (C-09 scaffold, §4.A):** diversified corpus split DEV(6)/HELDOUT(6) across
+JavaScript/syntax, TypeScript/type, Python/syntax. LEAKAGE PROTECTION: checkLeakage asserts dev∩heldout = ∅ by id AND
+content-sha256. evaluate() runs the REAL code-execution checker per case, per-category + overall correctPass/correctFail/
+falsePass/falseFail, BLOCKED excluded. assessBroadIT ⇒ **broad-IT = NO_DATA** (corpus NOT representative of general IT —
+absent Go/Rust/Java/SQL/web + app-build/integration/data/repair-generalisation); held-out SUPPORTED-surface accuracy
+reported SEPARATELY (NO extrapolation). Suite 9 (injected oracle + adversarial always-PASS detects falsePass; dev/heldout
+disjoint result sets). **LIVE real toolchain: broadIT NO_DATA; leakage ok (6/6 disjoint); held-out supported-surface acc
+1.0, 0 false across 3 categories.** This is the honest SCAFFOLDING to grow toward a representative corpus; broad-IT rate
+stays NO_DATA until representative + independently-labelled.
+
+**Gate:** test:report 165→166 (all PASS); tsc 0; build 0. €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k unachieved.
+Metrics (all SEPARATE, honest): check-acc 1.0(13)·repair-accept 1.0,fs0(6)·gen-repair 1.0,fs0(5 real)·project-TS verified·
+broad-IT-heldout-supported-surface 1.0(6)·**broad-IT general = NO_DATA**. NEXT (Priority B): audit ODG5 A/B/C lots for
+integration/wiring/coverage gaps (reality-gate now gated; dep-planner/eval-metrics/autonomy-eval-harness present+gated).
+Exact command: `git checkout main && git pull && npx tsx runtime/core/broad-it-eval.ts`
