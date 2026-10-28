@@ -17,10 +17,20 @@ const os = require("os");
 const path = require("path");
 const cp = require("child_process");
 
+// Resolve the REAL TypeScript compiler (node_modules/typescript/bin/tsc). `npx tsc` is NOT used: in a minimal-env
+// isolated workspace it can resolve to an unrelated decoy `tsc` package that exits non-zero on everything (a real
+// false-FAIL defect caught by code-check-eval). When the real compiler is unresolvable we point at a definitely-
+// absent binary so the toolchain probe fails ⇒ TypeScript is honestly UNSUPPORTED (never a spuriously-available decoy).
+let TSC_PATH: string | null = null;
+try { TSC_PATH = require.resolve("typescript/bin/tsc"); } catch { TSC_PATH = null; }
+const TS_BIN = TSC_PATH ? process.execPath : "__odg_tsc_absent__";
+const TS_PROBE = TSC_PATH ? [TSC_PATH, "--version"] : ["--version"];
+const TS_ARGS = (f: string) => TSC_PATH ? [TSC_PATH, "--noEmit", "--skipLibCheck", f] : ["--noEmit", f];
+
 // Supported checkers. A language is only ACTIONABLE here if its binary is actually on PATH (probed, not assumed).
 const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   JavaScript: { bin: "node", probeArgs: ["--version"], args: (f: string) => ["--check", f], ext: ".js" },
-  TypeScript: { bin: "npx", probeArgs: ["tsc", "--version"], args: (f: string) => ["tsc", "--noEmit", "--skipLibCheck", f], ext: ".ts" },
+  TypeScript: { bin: TS_BIN, probeArgs: TS_PROBE, args: TS_ARGS, ext: ".ts" },
   Python: { bin: "python3", probeArgs: ["--version"], args: (f: string) => ["-m", "py_compile", f], ext: ".py" },
 });
 
@@ -42,7 +52,8 @@ function detectToolchain(opts: any = {}): Record<string, boolean> {
   const runner = typeof opts.runner === "function" ? opts.runner : defaultRunner;
   const out: Record<string, boolean> = {};
   for (const [lang, spec] of Object.entries(LANG_SPEC)) {
-    try { const r = runner((spec as any).bin, (spec as any).probeArgs, { timeoutMs: 8000, maxBytes: 1_000_000 }); out[lang] = !!r && !r.spawnError && !r.timedOut; }
+    // Require a CLEAN probe: spawned AND exit 0. A non-zero `--version` (e.g. a decoy binary) ⇒ NOT available (honest).
+    try { const r = runner((spec as any).bin, (spec as any).probeArgs, { timeoutMs: 8000, maxBytes: 1_000_000 }); out[lang] = !!r && !r.spawnError && !r.timedOut && (r.exitCode === 0 || r.exitCode === undefined || r.exitCode === null); }
     catch { out[lang] = false; }
   }
   return out;
