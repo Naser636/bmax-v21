@@ -7308,3 +7308,24 @@ exit-0 probe (a decoy exiting non-zero is no longer "available"). Before/after: 
 unachieved. NEXT (V47 Lot C/C-08 or Lot D/G-01): wire detector/intake/check/repair into the canonical mission
 lifecycle (C-08) OR implement the objective-fidelity anti-drift contract (G-01). Exact command:
 `git checkout main && git pull && npx tsx runtime/core/code-check-eval.ts`
+
+---
+## CHECKPOINT 2026-10-28 (dn) — V47 Lot D / G-01: objective-fidelity anti-drift contract €0
+CTO V47 Lot D (mandate enforcement). Truth Lock 2277b01≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved.
+Branch excellence/objective-fidelity-v47d. No new primitive (pure POLICY/EVIDENCE evaluator). Diff =
+objective-fidelity(.ts/.test) + package.json + register + compass.
+
+**objective-fidelity.ts (G-01):** evidence-driven anti-drift guard the governance layer can call.
+assessCompletion(contract,deliverables) ⇒ COMPLETE only if EVERY mandatory outcome is state=VERIFIED AND carries
+non-empty evidence ("a test count is not acceptance"); else INCOMPLETE + carryForward[{id,state,reason,unblock}].
+evaluateCompletionClaim ⇒ ACCEPT a genuine completion (no false negative), REJECT_FALSE_COMPLETION when COMPLETE is
+claimed with any mandatory outcome unverified, ACKNOWLEDGE_INCOMPLETE for honest in-progress. detectDrift ⇒
+SILENT_NARROWING when a mandatory outcome is dropped without an authorized+evidence-backed scope-change record
+(else AUTHORIZED_SCOPE_CHANGE / FAITHFUL). Fail-closed. Suite 12 across all 4 mandated scenarios (legitimate
+complete, false completion, blocked dependency, deliberately incomplete) + VERIFIED-without-evidence + anti-silent-
+narrowing + fail-closed. Rejects false completion WITHOUT blocking genuine acceptance.
+
+**Gate:** test:report 141→142; tsc 0; build 0 (closure 105). €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k
+unachieved. NEXT (V47 Lot C/C-08): wire objective-fidelity + detector/intake/check/repair into the canonical mission
+lifecycle (mission close consults assessCompletion; coding missions route via code-mission-intake). Exact command:
+`git checkout main && git pull && npx tsx runtime/core/objective-fidelity.test.ts`
