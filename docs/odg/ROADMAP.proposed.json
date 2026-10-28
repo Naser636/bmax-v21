@@ -1,0 +1,115 @@
+{
+  "generatedBy": "runtime/core/roadmap-schema-proposal.ts",
+  "verdict": "VALID",
+  "edgesApplied": 1,
+  "diff": [
+    {
+      "mission": "DEPLOY_BMAX_DASHBOARD_PROD_V1",
+      "addsDependsOn": [
+        "VPS_DEPLOYMENT_READINESS"
+      ]
+    }
+  ],
+  "layers": [
+    [
+      "M0000",
+      "M0001",
+      "M0002",
+      "CLEAN_RUNTIME_WORKSPACE",
+      "PROVIDER_ENABLED_SMOKE_V1",
+      "UNIFY_RUNTIME_EXECUTION",
+      "DYNAMIC_MISSION_CONTRACT_FACTORY",
+      "AUTONOMOUS_CONTRACT_EVOLUTION",
+      "GOVERNED_DASHBOARD_OBSERVABILITY",
+      "VPS_DEPLOYMENT_READINESS"
+    ],
+    [
+      "DEPLOY_BMAX_DASHBOARD_PROD_V1"
+    ]
+  ],
+  "proposed": {
+    "//": "PROPOSED PREVIEW — NOT the governed file. Each mission gains a structured dependsOn[] sourced (with citation) from docs/odg/roadmap-dependencies.json. Applying this to runtime/governance/ROADMAP.json is owner-authorization-gated.",
+    "schemaChange": "add optional `dependsOn: string[]` to each roadmap mission",
+    "missions": [
+      {
+        "id": "M0000",
+        "title": "Architecture Compliance",
+        "contract": "runtime/missions/M0000.json",
+        "requiresEngineering": false,
+        "dependsOn": []
+      },
+      {
+        "id": "M0001",
+        "title": "Mission Framework",
+        "contract": "runtime/missions/M0001.json",
+        "requiresEngineering": false,
+        "dependsOn": []
+      },
+      {
+        "id": "M0002",
+        "title": "Foundation Layer",
+        "contract": "runtime/missions/M0002.json",
+        "requiresEngineering": false,
+        "dependsOn": []
+      },
+      {
+        "id": "CLEAN_RUNTIME_WORKSPACE",
+        "title": "Clean Runtime Workspace",
+        "contract": "runtime/missions/CLEAN_RUNTIME_WORKSPACE.json",
+        "requiresEngineering": true,
+        "dependsOn": []
+      },
+      {
+        "id": "PROVIDER_ENABLED_SMOKE_V1",
+        "title": "Provider-Enabled Smoke",
+        "contract": "runtime/missions/PROVIDER_ENABLED_SMOKE_V1.json",
+        "requiresEngineering": true,
+        "dependsOn": []
+      },
+      {
+        "id": "UNIFY_RUNTIME_EXECUTION",
+        "title": "Unify Runtime Execution",
+        "contract": "runtime/missions/UNIFY_RUNTIME_EXECUTION.json",
+        "requiresEngineering": true,
+        "dependsOn": []
+      },
+      {
+        "id": "DYNAMIC_MISSION_CONTRACT_FACTORY",
+        "title": "Dynamic Mission Contract Factory (Contract On Demand)",
+        "contract": "runtime/missions/DYNAMIC_MISSION_CONTRACT_FACTORY.json",
+        "requiresEngineering": true,
+        "dependsOn": []
+      },
+      {
+        "id": "AUTONOMOUS_CONTRACT_EVOLUTION",
+        "title": "Autonomous Contract Evolution",
+        "contract": "runtime/missions/AUTONOMOUS_CONTRACT_EVOLUTION.json",
+        "requiresEngineering": true,
+        "dependsOn": []
+      },
+      {
+        "id": "GOVERNED_DASHBOARD_OBSERVABILITY",
+        "title": "Governed Dashboard & Autonomy Observability",
+        "contract": "runtime/missions/GOVERNED_DASHBOARD_OBSERVABILITY.json",
+        "requiresEngineering": true,
+        "dependsOn": []
+      },
+      {
+        "id": "VPS_DEPLOYMENT_READINESS",
+        "title": "VPS Deployment Readiness (gates A-L, human-gated audit)",
+        "contract": "runtime/missions/VPS_DEPLOYMENT_READINESS.json",
+        "requiresEngineering": false,
+        "dependsOn": []
+      },
+      {
+        "id": "DEPLOY_BMAX_DASHBOARD_PROD_V1",
+        "title": "Deploy BMAX Dashboard to VPS (gated activation, depends on readiness)",
+        "contract": "runtime/missions/DEPLOY_BMAX_DASHBOARD_PROD_V1.json",
+        "requiresEngineering": false,
+        "dependsOn": [
+          "VPS_DEPLOYMENT_READINESS"
+        ]
+      }
+    ]
+  }
+}

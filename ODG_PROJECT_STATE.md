@@ -8133,3 +8133,20 @@ decision + hostname/cert/token + activation (still BLOCKED, deps=[readiness-gate
 
 **Gate:** test:report 169→**170**, tsc 0, build 0. €0; COLLECTED CASH €0. NEXT: roadmap-deps prep, p01-demand design,
 p01-billing sandbox logic.
+
+---
+## CHECKPOINT 2026-10-28 (ew) — UNBLOCK: roadmap structured-deps proposal preview (non-mutating) €0
+Decomposed structured-roadmap-deps. Realizable part DONE; governed file untouched.
+
+**roadmap-schema-proposal.ts:** reads the live governed ROADMAP.json + the NON-protected companion
+roadmap-dependencies.json and builds a dep-planner-VALIDATED (3rd dep-planner consumer), NON-MUTATING preview that
+adds `dependsOn[]` to each mission. Fail-closed verdicts: INVALID_REFERENCES / UNCITED_EDGE (never proposes an edge
+without a cited provenance ⇒ no fabricated deps) / CYCLE_OR_PLAN_ERROR. Verified the companion already covers ALL (1/1)
+inter-roadmap prose deps (scanned 11 roadmap missions + contracts ⇒ only DEPLOY_BMAX_DASHBOARD_PROD_V1<-VPS_DEPLOYMENT_
+READINESS). Preview written to docs/odg/ROADMAP.proposed.json (VALID, 2 layers, 11 missions). Test PROVES the governed
+ROADMAP.json is NOT mutated (no dependsOn field written there). Suite 8.
+
+**Register:** new ACCEPTED roadmap-deps-proposal-preview; structured-roadmap-deps NARROWED to applying the preview to the
+protected governed file (still BLOCKED on owner authorization). 8 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
+
+**Gate:** test:report 170→**171**, tsc 0, build 0. €0; COLLECTED CASH €0. NEXT: p01-demand design, p01-billing sandbox logic.
