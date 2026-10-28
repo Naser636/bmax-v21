@@ -36,3 +36,26 @@ restart. This is a critical-gate action (deployment/restart) and is **not perfor
 
 **Low.** No public surface exists (loopback-only). A local user on the VPS host could read internal state from the
 stale release; a redeploy closes that. No secrets are exposed over any network.
+
+---
+
+## RESOLVED 2026-10-28 (live activation, owner-authorized)
+
+The fail-closed dashboard auth is now **ACTIVE in production** (loopback-only). Owner authorized ODG to mint the
+loopback token and perform the privileged activation.
+
+| Check | Result |
+|---|---|
+| Serving release | `rel-20261028T210754Z-e84a0cf2720b` (from `main @ e84a0cf`) |
+| Served artifact auth gate | present (3 marker files) |
+| `ODG_DASHBOARD_TOKEN` | provisioned, 0600 `root:root` at `/etc/odg/odg-preprod.env`, read via systemd EnvironmentFile drop-in (fingerprint `sha256:e0adbf03672e`; value never printed/committed) |
+| `GET /api/health` (no token) | 200 |
+| `GET /api/runtime-state` (no token) | **401 deny** |
+| `GET /api/runtime-state` (bad token) | **401 deny** |
+| `GET /api/runtime-state` (valid token) | **200 allow** |
+| `GET /` (no token) | 200 shell, **0 internal-state markers leaked** (withheld, fail-closed) |
+| Bind | `127.0.0.1:3000` only (0 public binds) |
+| Service | active, `NRestarts=0` (clean restart) |
+| Rollback | `previous` → `rel-20261026T170857Z-268be2c666e9`; `scripts/odg-release.sh rollback --no-serve` + `sudo systemctl restart odg-preprod.service` |
+
+No public exposure was enabled. No DNS/TLS/hostname change. The secret never appeared in output, logs, or git.

@@ -129,15 +129,13 @@
       "id": "dashboard-auth-redeploy",
       "program": "P1",
       "title": "Deploy the fail-closed-auth release to the VPS (stale running release)",
-      "status": "BLOCKED",
+      "status": "ACCEPTED",
       "deps": [
         "dashboard-api-auth"
       ],
       "priority": 7,
-      "evidence": "",
-      "blockReason": "PREREQUISITE PREPARED (not executed). Gate A verified: running release (268be2c, 2026-10-27) PREDATES the fail-closed auth PRs #152/#153; /api/runtime-state returns 200 without a token; service binds 127.0.0.1 ONLY (not exposed); ODG_DASHBOARD_TOKEN is UNPROVIDED and the unit has no EnvironmentFile. Gate B NOT satisfiable autonomously: full acceptance needs 'authorized access succeeds' (a provided token) and the mandate forbids configuring unprovided credentials; wiring an EnvironmentFile + restart are PRIVILEGED (sudo /etc + systemd). Prepared + tested: runtime/core/dashboard-token-provision.ts (suite 14, no-secret, 0600, idempotent) + scripts/provision-dashboard-token.sh (sandbox-verified, fingerprint-only) + docs/odg/deploy/DASHBOARD_AUTH_ACTIVATION.md (exact gated runbook incl. rollback + acceptance checklist).",
-      "acceptance": "running release serves the fail-closed auth (deny without token, allow with valid token), loopback preserved, no secret leaked, rollback verified, independent post-deploy evidence recorded",
-      "nextAction": "OWNER (privileged, 3 steps): (1) sudo scripts/provision-dashboard-token.sh ; (2) sudo systemd drop-in EnvironmentFile + daemon-reload ; (3) scripts/odg-release.sh build/verify/activate (+ restart). Full runbook: docs/odg/deploy/DASHBOARD_AUTH_ACTIVATION.md"
+      "evidence": "LIVE-ACTIVATED 2026-10-28 (owner-authorized privileged activation, loopback-only). Serving rel-20261028T210754Z-e84a0cf2720b (from main @ e84a0cf; built+staging-verified health=200 via scripts/odg-release.sh; served artifact contains the auth gate — 3 marker files). Token minted via the tested dashboard-token-provision module, installed 0600 root:root at /etc/odg/odg-preprod.env, read via systemd EnvironmentFile drop-in (fingerprint sha256:e0adbf03672e; value never printed/committed). LIVE verification: /api/health 200; /api/runtime-state 401 without token AND with a bad token (deny); 200 with the valid token (allow); page / returns a 200 shell with 0 internal-state markers leaked (fail-closed withheld); bind 127.0.0.1 only (0 public binds); service active NRestarts=0. Rollback ready: previous -> rel-20261026T170857Z-268be2c666e9. Evidence in docs/odg/deploy/VPS_STATUS.md.",
+      "acceptance": "running release serves the fail-closed auth (deny without token, allow with valid token), loopback preserved, no secret leaked, rollback ready, independent post-deploy evidence recorded"
     },
     {
       "id": "dashboard-tls-exposure",

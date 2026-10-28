@@ -8272,3 +8272,24 @@ activate; post-deploy deny/allow verification w/o echoing token; rollback; accep
 **Distinction:** implementation DONE (auth on main), prerequisite PREPARED; integration/live-operation/external-acceptance
 NOT done (owner-gated 3 privileged steps). Register: dashboard-auth-redeploy stays BLOCKED (prerequisite prepared; precise
 owner nextAction). 13 ACCEPTED/1 IN_PROGRESS/6 BLOCKED. Gate: test:report 175→**176**, tsc 0, build 0. €0.
+
+---
+## CHECKPOINT 2026-10-28 (ff) — Dashboard auth LIVE-ACTIVATED on VPS (owner-authorized, loopback-only) €0
+Priority A CLOSED. Owner authorized ODG to mint the loopback token + perform the privileged activation. Truth Lock
+e84a0cf≡origin/main (0/0), sudo -n OK, 5 stashes + foreign dirs + worktrees preserved.
+
+**Activation (systemd-native path — odg-release activate boots its own nohup, so used build+verify+swap+systemctl):**
+(1) scripts/odg-release.sh build from HEAD ⇒ rel-20261028T210754Z-e84a0cf2720b; (2) verify ⇒ staging health 200, buildId
+match, artifact contains auth gate (3 marker files); (3) mint token via tested dashboard-token-provision module →
+installed 0600 root:root /etc/odg/odg-preprod.env (fingerprint sha256:e0adbf03672e; value NEVER printed/committed);
+(4) systemd drop-in EnvironmentFile + daemon-reload; (5) atomic current swap (previous=old 268be2c for rollback) + sudo
+systemctl restart.
+
+**LIVE verification (independent evidence):** /api/health 200; /api/runtime-state 401 no-token AND 401 bad-token (deny);
+200 valid-token (allow); page / 200 shell with 0 internal-state markers leaked (fail-closed withheld); bind 127.0.0.1
+ONLY (0 public binds); service active NRestarts=0; rollback ready (previous symlink + odg-release rollback --no-serve +
+systemctl restart). NO public exposure/DNS/TLS/hostname change. No secret in output/logs/git.
+
+**Four-level:** implementation DONE (auth on main), integration DONE (EnvironmentFile+release), **live-operation DONE +
+VERIFIED**, external-acceptance N/A (internal service). dashboard-auth-redeploy ⇒ ACCEPTED. Register 14 ACCEPTED/1
+IN_PROGRESS/5 BLOCKED. Gate: test:report 176, tsc 0. €0. VPS_STATUS.md updated.
