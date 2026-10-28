@@ -156,6 +156,10 @@
     "runtime/core/objective-fidelity.ts",
     "runtime/core/mission-fidelity-verdict.ts",
     "runtime/core/coding-executor.ts",
-    "runtime/core/ts-project-check.ts"
+    "runtime/core/ts-project-check.ts",
+    "runtime/core/mission-scheduler.ts",
+    "runtime/core/mission-attempt-log.ts",
+    "runtime/core/latency-measure.ts",
+    "runtime/bin/odg-schedule-tick.ts"
   ]
 }
