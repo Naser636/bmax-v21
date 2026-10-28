@@ -63,6 +63,19 @@ function executeCodingResolution(resolution: any, opts: any = {}): any {
   const workspaceDir = typeof opts.workspaceDir === "string" ? opts.workspaceDir : null;
   if (!workspaceDir || !fs.existsSync(workspaceDir)) return { ok: false, code: "INVALID_INPUT", reason: "EXECUTE needs an existing workspaceDir" };
   const language = resolution.language;
+  // TypeScript WITH a project tsconfig ⇒ use the SOUND project-mode checker (imports/config honoured), not the
+  // per-file syntax check (which is unsound for files with imports). BLOCKED/FAIL are never converted to VERIFIED.
+  if (language === "TypeScript" && typeof opts.tsconfig === "string" && opts.tsconfig && fs.existsSync(path.join(workspaceDir, opts.tsconfig))) {
+    const TSP = require("./ts-project-check.js");
+    const pr = TSP.checkTsProject({ projectDir: workspaceDir, tsconfig: opts.tsconfig, ...(typeof opts.tsRunner === "function" ? { runner: opts.tsRunner } : {}) });
+    const mapped = pr.status === "PASS" ? "VERIFIED" : (pr.status === "FAIL" ? "FAILED" : "BLOCKED");
+    return {
+      ok: true, route, executed: pr.status === "PASS" || pr.status === "FAIL", changed: false,
+      status: mapped, mode: "typescript-project", language, errorCount: pr.errorCount,
+      filesChecked: 1, results: [{ file: opts.tsconfig, status: pr.status }], detail: pr.detail || pr.reason,
+      note: "EXECUTE ran a SOUND project-mode TypeScript check (imports/tsconfig honoured). VERIFIED only on a real PASS; BLOCKED (tool absent/timeout/no-tsconfig) is never VERIFIED.",
+    };
+  }
   const exts = EXT_BY_LANG[language];
   if (!exts) return { ok: true, route, executed: false, status: "UNSUPPORTED", changed: false, reason: `no checker for language '${language}'` };
   const writeSet = (resolution.plan && Array.isArray(resolution.plan.writeSet)) ? resolution.plan.writeSet : [];

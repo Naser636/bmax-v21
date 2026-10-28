@@ -128,8 +128,8 @@ function attachCodingResolution(mission: any, opts: any = {}): any {
   const doExecute = opts.execute === true || (opts.execute !== false && process.env.ODG_CODING_EXECUTE === "1");
   if (doExecute && resolved.route === "EXECUTE") {
     try {
-      const ex = EXECUTOR.executeCodingResolution(resolved, { workspaceDir: root, ...(opts.runner ? { runner: opts.runner } : {}), ...(typeof opts.toolchainAvailable === "boolean" ? { toolchainAvailable: opts.toolchainAvailable } : {}) });
-      resolution.executionResult = { status: ex.status, executed: ex.executed === true, filesChecked: ex.filesChecked || 0, results: Array.isArray(ex.results) ? ex.results.slice(0, 50) : [] };
+      const ex = EXECUTOR.executeCodingResolution(resolved, { workspaceDir: root, ...(opts.runner ? { runner: opts.runner } : {}), ...(typeof opts.toolchainAvailable === "boolean" ? { toolchainAvailable: opts.toolchainAvailable } : {}), ...(context.tsconfig ? { tsconfig: context.tsconfig } : {}), ...(typeof opts.tsRunner === "function" ? { tsRunner: opts.tsRunner } : {}) });
+      resolution.executionResult = { status: ex.status, executed: ex.executed === true, mode: ex.mode || "per-file", filesChecked: ex.filesChecked || 0, errorCount: ex.errorCount, results: Array.isArray(ex.results) ? ex.results.slice(0, 50) : [] };
       (resolution as any).executed = ex.status === "VERIFIED";
     } catch (e: any) {
       resolution.executionResult = { status: "BLOCKED", executed: false, reason: (e && e.message) || "execution error" };

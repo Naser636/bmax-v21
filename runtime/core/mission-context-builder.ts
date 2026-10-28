@@ -148,6 +148,7 @@ function buildMissionContext(mission: string, opts: any = {}): any {
         priority: plan.priority || "NORMAL",
         requiresEngineering: plan.requiresEngineering === true,
         authorizedPaths: Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [],
+        tsconfig: typeof plan.tsconfig === "string" && plan.tsconfig ? plan.tsconfig : null,
         objectives: Array.isArray(plan.objectives) ? plan.objectives : [],
         nextObjective: plan.nextObjective || null,
         definitionOfDone: Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : [],

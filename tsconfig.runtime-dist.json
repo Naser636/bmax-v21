@@ -155,6 +155,7 @@
     "runtime/core/project-signal-detector.ts",
     "runtime/core/objective-fidelity.ts",
     "runtime/core/mission-fidelity-verdict.ts",
-    "runtime/core/coding-executor.ts"
+    "runtime/core/coding-executor.ts",
+    "runtime/core/ts-project-check.ts"
   ]
 }
