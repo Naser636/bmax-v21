@@ -7174,3 +7174,32 @@ the resolver). Real expansion of the executable surface (a new callable path), h
 K-pilot (7/7). Session V21→V44 = PRs #82–#118(pending), test:report 59→135, all ff-only CI-green. ACTUAL COLLECTED CASH
 €0; €500k VOLUME-bound/unachieved. NEXT: wire detectSignals into opportunity/mission intake (route by detected stack:
 TS/JS actionable vs UNSUPPORTED→subcontract/partner), OR build a repo-indexing/failure-localization capability next.
+
+---
+## CHECKPOINT 2026-10-28 (di) — V45: real multi-language toolchain execution + detection→execution intake €0
+CTO "V45 GENERAL CODING EXECUTION EXPANSION" (post-PR#118, main 342d8b4). Truth Lock 342d8b4≡origin/main (0/0), clean,
+5 stashes + 4 untracked docs/ preserved, CI success. No new primitive. Diff = code-execution(.ts/.test) +
+code-mission-intake(.ts/.test) + package.json + compass.
+
+**TOOLCHAIN REALITY (probed, honest):** node v22 + python3 3.14 + tsc 5.9 PRESENT; go/rustc/javac/ruby/php ABSENT.
+⇒ ODG can genuinely run real CHECKS for JavaScript/TypeScript/Python; all other stacks UNSUPPORTED (not faked).
+
+**code-execution.ts (Lot B — REAL executable path, beyond TS/JS to Python):** runSyntaxCheck({language,content}) runs a
+real checker (node --check / tsc --noEmit / python3 -m py_compile) in an ISOLATED mkdtemp workspace via argv-array (no
+shell), timeout + output cap + minimal env (no network/secrets), temp cleaned; classifies PASS/FAIL/UNSUPPORTED(unknown
+lang or absent toolchain)/BLOCKED(timeout/spawn). Injectable runner ⇒ gated tests ZERO subprocess (suite 9). detectToolchain
+probes PATH. **LIVE PROOF (real subprocess): JS clean PASS / JS broken FAIL / PY clean PASS / PY broken FAIL / Go
+UNSUPPORTED.** This is a VERIFICATION capability (syntax/type check), NOT code synthesis/repair (ODG does not fabricate fixes).
+
+**code-mission-intake.ts (Lot A — detection DRIVES routing):** routeCodeMission(repo) = project-signal-detector.detectSignals
+→ resolve vs code-execution's real checker+toolchain support → EXECUTE (JS/TS/Python toolchain present) | ROUTE_UNSUPPORTED
+(detected but no executable checker/toolchain ⇒ axis-D subcontract, not faked) | ABSTAIN (ambiguous/unknown). Tests prove
+different repos ⇒ different routes (JS→EXECUTE, Go→ROUTE_UNSUPPORTED, unknown→ABSTAIN); suite 8. Reuses detector+executor,
+no new registry/orchestrator.
+
+**Gate:** test:report 135→137; tsc 0 (caught+fixed a string|null); build 0. €0; nothing sent; seeded test code confined
+to isolated temp dirs. CAPABILITY now: JS/TS/Python syntax/type CHECK = IMPLEMENTED_AND_VERIFIED (real toolchain + live-
+proven); Go/Rust/Java = UNSUPPORTED (no toolchain); arbitrary-code SYNTHESIS/repair = NOT_IMPLEMENTED (honest).
+Session V21→V45 = PRs #82–#119(pending), test:report 59→137, all ff-only CI-green. ACTUAL COLLECTED CASH €0; €500k
+VOLUME-bound/unachieved. NEXT (Lot C): a type/syntax-error eval family (clean/broken fixtures per language) measuring the
+real execution path's PASS/FAIL accuracy — separate from K; broad-IT rate stays NO_DATA.
