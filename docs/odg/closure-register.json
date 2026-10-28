@@ -147,16 +147,29 @@
       "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields"
     },
     {
+      "id": "p01-demand-experiment-prep",
+      "program": "P2",
+      "title": "P-01 WTP experiment: frozen pre-registered protocol + fail-closed signal validator (no outreach)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/demand-experiment.ts — FROZEN pre-registered protocol (method/instrument/threshold≥5/stopping-rule/lawful-basis, status NOT_EXECUTED) + fail-closed validateSignal (requires validating class, prospectId, verifiable source, timestamp, positive priceEur, lawfulBasis; rejects simulated/fabricated/synthetic) + assessExperiment (junk can't pad the threshold). Reuses demand-evidence.VALIDATING_CLASSES. Live ⇒ DEMAND_NOT_VALIDATED (0 valid signals). Suite 16. No outreach, no fabricated prospects.",
+      "acceptance": "a pre-registered, un-movable protocol + a rigorous fail-closed admission rule for WTP signals exist and are tested",
+      "nextAction": "done; running the lawful experiment to collect ≥5 real signals is the owner-gated remainder (p01-demand-validation)"
+    },
+    {
       "id": "p01-demand-validation",
       "program": "P2",
-      "title": "P-01 willingness-to-pay validation",
+      "title": "P-01 willingness-to-pay validation (run the lawful experiment)",
       "status": "BLOCKED",
-      "deps": [],
+      "deps": [
+        "p01-demand-experiment-prep"
+      ],
       "priority": 9,
       "evidence": "",
-      "blockReason": "owner-gated lawful outreach/landing experiment; ≥5 verified WTP signals required (0 present); demand=DEMAND_NOT_VALIDATED",
-      "acceptance": "≥5 verified willingness-to-pay signals vs pre-registered threshold",
-      "nextAction": "owner authorization for a lawful WTP experiment"
+      "blockReason": "NARROWED: the pre-registered protocol + fail-closed WTP validator are DONE (p01-demand-experiment-prep). What remains is genuinely external: owner-authorized lawful outreach/landing to collect ≥5 REAL verified WTP signals (0 present). No external contact without authorization; nothing fabricated.",
+      "acceptance": "≥5 signals passing validateSignal vs the pre-registered threshold ⇒ assessExperiment=DEMAND_VALIDATED",
+      "nextAction": "owner authorizes + runs the lawful WTP experiment; feed real signals to demand-experiment.assessExperiment"
     },
     {
       "id": "p01-billing-sandbox",

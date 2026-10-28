@@ -8150,3 +8150,20 @@ ROADMAP.json is NOT mutated (no dependsOn field written there). Suite 8.
 protected governed file (still BLOCKED on owner authorization). 8 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
 
 **Gate:** test:report 170→**171**, tsc 0, build 0. €0; COLLECTED CASH €0. NEXT: p01-demand design, p01-billing sandbox logic.
+
+---
+## CHECKPOINT 2026-10-28 (ex) — UNBLOCK: P-01 WTP experiment prep (protocol + fail-closed validator) €0
+Decomposed p01-demand-validation. Realizable design DONE; NO outreach, nothing fabricated; demand stays NOT_VALIDATED.
+
+**demand-experiment.ts:** (1) FROZEN pre-registered PROTOCOL (hypothesis, fixed instrument, threshold≥5, failure<2,
+stopping-rule anti-manufacture, lawful basis GDPR/CNIL, status NOT_EXECUTED) so the bar can't drift post-hoc. (2)
+Fail-closed validateSignal — a WTP signal counts ONLY with a validating class (reuses demand-evidence.VALIDATING_CLASSES),
+prospectId, verifiable source, capturedAt, positive priceEur, lawfulBasis; REJECTS simulated/fabricated flags + synthetic
+placeholders. (3) assessExperiment — junk signals can't pad the threshold; 5 valid⇒VALIDATED, 4⇒NOT; 5-invalid⇒NOT. Live
+(0 signals) ⇒ DEMAND_NOT_VALIDATED. Suite 16.
+
+**Register:** new ACCEPTED p01-demand-experiment-prep; p01-demand-validation NARROWED to owner-run lawful experiment
+collecting ≥5 real signals (still BLOCKED). 9 ACCEPTED / 1 IN_PROGRESS / 5 BLOCKED.
+
+**Gate:** test:report 171→**172**, tsc 0, build 0. €0; COLLECTED CASH €0; demand DEMAND_NOT_VALIDATED. NEXT: p01-billing
+sandbox logic (last decomposition).
