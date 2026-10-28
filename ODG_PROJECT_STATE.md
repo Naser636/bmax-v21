@@ -8020,3 +8020,28 @@ security posture; documented).
 public exposure. ACTUAL COLLECTED CASH €0; €500k unachieved. Phase-1 dashboard-security: API+page auth DONE (fail-closed,
 build-verified); REMAINING for exposure = TLS/reverse-proxy + owner-confirmed go + gated rebuild/restart. NEXT (Phase 2):
 wire dep-planner into the planner path. Exact command: `git checkout main && git pull && npm run build && ODG_TEST_WORKERS=8 npm run test:report`
+
+---
+## CHECKPOINT 2026-10-28 (er) — V3 Phase-B: dep-planner WIRED (roadmap order validation) €0
+CTO "CONTINUATION V3". Truth Lock 3a11745≡origin/main (0/0), clean (tracked), 5 stashes + foreign untracked preserved
+(incl. pre-existing bmax-v21@0.1.0, tsx, 4 docs/ dirs — NOT mine, preserved), 167→168 suites. Branch
+excellence/dep-planner-roadmap-check. No new primitive.
+
+**Phase-B dep-planner WIRED (was orphan) — real, safe, non-protected consumer:** `roadmap-dep-check.ts` validates the
+governed runtime/governance/ROADMAP.json mission ORDER against declared inter-mission dependencies via
+dep-planner.planLayers (topological; fail-closed on cycle/missing/duplicate) + an order check (dep must precede
+dependent). Verdicts OK / ORDER_VIOLATION / CYCLE / DEP_NOT_IN_ROADMAP / INVALID_INPUT. The dependency edges come from
+NON-PROTECTED `docs/odg/roadmap-dependencies.json` (I authored; encodes the PROSE dep from the mission contracts:
+DEPLOY_BMAX_DASHBOARD_PROD_V1 ← VPS_DEPLOYMENT_READINESS) — **ROADMAP.json (protected governance path) NOT modified.**
+Suite 7 + **LIVE real roadmap ⇒ OK (11 missions, dep-planner produced 2 layers: DEPLOY correctly after READINESS).**
+Both ODG5 orphans now wired (eval-metrics→broad-it-eval V(em); dep-planner→roadmap-dep-check V3).
+
+**Honest limit:** meaningful dep-planner use over the roadmap requires structured deps; those live in prose + the
+protected ROADMAP.json, so I encoded them in a non-protected companion rather than editing the governed file (correct
+governance posture). Extending structured deps INTO ROADMAP.json / mission contracts is an authorization-gated change
+(carried).
+
+**Gate:** test:report 167→168 (all PASS); tsc 0; build 0 (closure 117). €0; nothing sent; protected paths untouched.
+ACTUAL COLLECTED CASH €0; €500k unachieved. NEXT: Phase-C engineering-capability extension-point design (adapter
+architecture for new tech families, no new primitive) OR grow broad-IT corpus. Exact command:
+`git checkout main && git pull && npx tsx runtime/core/roadmap-dep-check.ts`
