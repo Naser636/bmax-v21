@@ -7791,3 +7791,24 @@ unused-import.
 family PR#(next).** §4 P-01: DEMAND_NOT_VALIDATED unchanged; deliverable already reproducible (V54/V55 live-proven),
 no redundant rework. NEXT: 7th family / owner-authorize canary / broaden eval. Exact command:
 `git checkout main && git pull && npx tsx runtime/core/task-fix-unused-imports.test.ts`
+
+---
+## CHECKPOINT 2026-10-28 (ei) — A→Z master directive: Phase-0 reconciliation + Reality-Gate test-coverage closed €0
+CTO "MASTER ROADMAP A→Z". Truth Lock 7749374≡origin/main (0/0), clean, 5 stashes + 4 docs/ preserved. Branch
+excellence/reality-gate-coverage-v59. No new primitive. Diff = package.json (test:report +5) + compass.
+
+**PHASE-0 HISTORICAL RECONCILIATION (§3.2, evidence-based):** `3715ffd` (V57) IN main history ✓. `b68cbd0` (ODG5
+reality-gate/dep-planner/eval-metrics promotion) **IN main history ✓ (already merged)**. ODG5 branch
+`governance/odg5-reality-gate-abc-promotion`: **0 commits not in main; main 322 ahead** ⇒ FULLY MERGED + superseded,
+NO stranded work. Modules present in main runtime/core: reality-gate.ts, reality-gate-integration, dep-planner.ts,
+eval-metrics.ts, autonomy-eval-harness.ts. SINGLE SOURCE OF TRUTH = main @7749374. No mental merge across branches.
+
+**GAP FOUND + CLOSED (§7 Reality Gate / C capability-coverage / L tests):** the 5 ODG5/Reality-Gate test suites PASSED
+but were ABSENT from the curated `test:report` gate (run only by the broad `npm test` glob, not the classified gate) ⇒
+the central trust-boundary capabilities were NOT regression-protected. FIX: added reality-gate + reality-gate-integration
++ dep-planner + eval-metrics + autonomy-eval-harness to test:report. Zero code risk (tests already green). 
+
+**Gate:** test:report 160→165 (all PASS); tsc 0. €0; nothing sent. ACTUAL COLLECTED CASH €0; €500k unachieved.
+A→Z verdict so far: main is the verified SSOT; ODG5 merged; Reality-Gate now gated. NEXT (A→Z dependency-ready): audit
+remaining ODG5 A/B/C reality-gate lots for further coverage gaps, or 7th task family, or owner-authorize canary.
+Exact command: `git checkout main && git pull && ODG_TEST_WORKERS=8 npm run test:report`
