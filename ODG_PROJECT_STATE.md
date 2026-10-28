@@ -6919,3 +6919,38 @@ source-docs research used the provider's WebFetch (verification only) — NOT OD
 opportunities found via ODG live = NONE (AUTH_REQUIRED, not NO_RESULTS). Six axes active; ACTUAL COLLECTED CASH €0; €500k
 VOLUME-bound/unachieved. NEXT: inject an authorized bounded-https fetcher (human authorizes egress + terms) ⇒ connector
 goes live → opportunity-axis-router → autonomous-commercial-cycle; OR implement the TED connector lot.
+
+---
+## CHECKPOINT 2026-10-28 (cz) — V38 EGRESS BLOCKER REMOVED: hardened bounded-http-client + REAL live BOAMP discovery €0
+CTO "V38 WORLD-CLASS OPPORTUNITY INTELLIGENCE" (post-PR#109, main 2a3cc48). Truth Lock 2a3cc48≡origin/main (0/0), clean,
+5 stashes + 4 untracked docs/ preserved, CI success. No new primitive. Diff = bounded-http-client(.ts/.test) +
+package.json + compass.
+
+**EGRESS EMPIRICALLY CONFIRMED (not assumed):** bounded probe + ODG-code fetch to the approved public BOAMP endpoint
+(anonymous, Licence Ouverte 2.0, automated retrieval permitted) returned HTTP 200 real data. The ODG runtime HAS
+outbound HTTPS — the V37 AUTH_REQUIRED blocker is REMOVED (it was absence of a wired client, not absence of egress).
+
+**bounded-http-client.ts (EXECUTED — hardened read-only egress):** validateUrl (HTTPS-only + host ALLOWLIST
+[boamp-datadila.opendatasoft.com, api.ted.europa.eu, data.economie.gouv.fr] + reject URL userinfo) · isPrivateHost SSRF
+guard (localhost/RFC1918/169.254/172.16-31/cloud-metadata/IP-literal) · get() timeout + response SIZE cap + 3xx
+REDIRECT_BLOCKED + content-type(JSON) validation + bounded; injectable httpImpl ⇒ gated tests ZERO network. Never
+fabricates a body; explicit failure codes. Suite 18 (pure guards + mock get).
+
+**REAL LIVE DISCOVERY (evidence, via ODG's OWN client — NOT curl, NOT provider WebFetch):** fetched 12 real BOAMP
+notices (total_count 1,721,090), published 2026-10-27, real deadlines 2026-11-17..12-04; normalized via
+tender-feed-connector (0 dropped/0 dup); routed via opportunity-axis-router ⇒ status RESULTS. **HONEST FINDINGS:**
+(1) all 12 routed to axis A (BOAMP has no clean budget ⇒ value-band defaults to A); (2) most are LOW-RELEVANCE to ODG's
+software-assurance offer (hydraulic study, printing/fire-safety maintenance) — only 1 adjacent ("assurances cyber-
+risques"). ⇒ RAW BOAMP feed ≠ qualified ODG pipeline; CAPABILITY-FIT FILTERING by subject (software/cyber/assurance/
+audit keywords) is the real next refinement, NOT more value-band routing. (3) connector provenance isn't preserved
+through detect()'s re-normalization — minor integration note.
+
+**Gate:** test:report 127→128; tsc 0; build 0. €0; nothing sent/committed; read-only public data only (no personal data
+beyond public buyer-org names in procurement notices).
+
+**METRICS (honest, small sample):** 1 source queried (BOAMP), 1 successful query, 12 records retrieved, 0 malformed,
+0 duplicates, pub-to-detection latency ~1 day (published 10-27, detected 10-28), ~1/12 subject-relevant. NO claim of
+completeness/world-leadership. ACTUAL COLLECTED CASH €0; €500k VOLUME-bound/unachieved.
+
+**NEXT dependency-ready (internal, high-value):** capability-fit SUBJECT filter in opportunity-axis-router (keyword→axis
+relevance; drop/park irrelevant notices) so the live BOAMP feed yields a QUALIFIED ODG shortlist; then TED connector lot.
