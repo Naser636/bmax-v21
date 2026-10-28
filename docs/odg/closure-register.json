@@ -120,16 +120,31 @@
       "nextAction": "authorize a reproducible local toolchain install (e.g. apt/go/rustup in a bounded step) OR route to axis-D subcontracting"
     },
     {
+      "id": "roadmap-deps-proposal-preview",
+      "program": "P1",
+      "title": "Authorization-ready structured-deps proposal preview for ROADMAP.json (non-mutating)",
+      "status": "ACCEPTED",
+      "deps": [
+        "dep-planner-wire"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/roadmap-schema-proposal.ts builds a dep-planner-VALIDATED (3rd dep-planner consumer), NON-MUTATING preview adding `dependsOn[]` to each mission from the companion. Fail-closed: INVALID_REFERENCES / UNCITED_EDGE (no fabricated deps) / CYCLE. Verified companion covers ALL (1/1) inter-roadmap prose deps (DEPLOY<-VPS). Preview written to docs/odg/ROADMAP.proposed.json (VALID, 2 layers, 11 missions); governed ROADMAP.json proven untouched. Suite 8.",
+      "acceptance": "a validated, cited, non-mutating proposal preview exists ready for owner authorization",
+      "nextAction": "done; applying it to the governed file is the owner-gated remainder (structured-roadmap-deps)"
+    },
+    {
       "id": "structured-roadmap-deps",
       "program": "P1",
-      "title": "Structured inter-mission deps in ROADMAP.json",
+      "title": "Apply structured inter-mission deps to the GOVERNED ROADMAP.json",
       "status": "BLOCKED",
-      "deps": [],
+      "deps": [
+        "roadmap-deps-proposal-preview"
+      ],
       "priority": 8,
       "evidence": "",
-      "blockReason": "ROADMAP.json is a protected governance path; schema change is authorization-gated (companion docs/odg/roadmap-dependencies.json used instead)",
-      "acceptance": "structured deps in the governed file validated by dep-planner",
-      "nextAction": "owner authorization to amend the governed roadmap schema"
+      "blockReason": "NARROWED: the validated, cited proposal preview is DONE (roadmap-deps-proposal-preview; docs/odg/ROADMAP.proposed.json). What remains is writing to runtime/governance/ROADMAP.json — a PROTECTED governance path — which requires explicit owner authorization. The companion docs/odg/roadmap-dependencies.json keeps the deps machine-checkable meanwhile.",
+      "acceptance": "structured deps present in the governed file + validated by dep-planner, owner-authorized",
+      "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields"
     },
     {
       "id": "p01-demand-validation",
