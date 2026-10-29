@@ -75,6 +75,32 @@ function validateInvoice(inv: any): any {
     const bt112expected = EU.add(bt109, q(cur as string, t.vatMinor));
     const bt112 = q(cur as string, t.taxInclusiveMinor);
     if (EU.compare(bt112expected, bt112) !== 0) add("BR-CO-15", "calculation", "HIGH", `BR-CO-15: BT-112 total w/ VAT (${EU.format(bt112)}) ≠ BT-109 + BT-110 VAT (${EU.format(bt112expected)})`, "correct BT-112 or the VAT total", `expected=${bt112expected.minor} vs BT112=${t.taxInclusiveMinor}`);
+
+    // ---- BG-23 VAT BREAKDOWN (optional; validated only when inv.vatBreakdown is present) ----
+    // EN 16931 BR-CO-17: VAT category tax amount (BT-117) = taxable (BT-116) × rate (BT-119); BR-CO-14: Σ BT-117 = BT-110.
+    // rate is carried as integer basis points where 10000 = 100% (20% ⇒ 2000; 5.5% ⇒ 550), consistent with the codebase.
+    if (Array.isArray(inv.vatBreakdown) && inv.vatBreakdown.length) {
+      let catTaxSum = q(cur as string, 0); let bdOk = true;
+      inv.vatBreakdown.forEach((b: any, i: number) => {
+        const ref = `vatBreakdown[${i}]`;
+        if (!isInt(b && b.taxableMinor) || !isInt(b && b.taxMinor) || !(typeof b.rateBps === "number" && Number.isSafeInteger(b.rateBps) && b.rateBps >= 0)) {
+          add(`amount:${ref}`, "amount-format", "HIGH", "a VAT breakdown entry (BG-23) needs integer taxableMinor (BT-116), integer taxMinor (BT-117) and a non-negative integer rateBps (BT-119)", "supply BG-23 amounts as integer minor units + rate in basis points (20% = 2000)", ref); bdOk = false; return;
+        }
+        // BR-CO-17 (EXACT BigInt, round half-AWAY-from-zero — symmetric for negative BT-116 credit notes, since BigInt
+        // division truncates toward zero): BT-117 == round(BT-116 × rateBps / 10000).
+        const num = BigInt(b.taxableMinor) * BigInt(b.rateBps);
+        const neg = num < BigInt(0);
+        const absRounded = ((neg ? -num : num) + BigInt(5000)) / BigInt(10000);
+        const expected = Number(neg ? -absRounded : absRounded);
+        if (expected !== b.taxMinor) add("BR-CO-17", "calculation", "HIGH", `BR-CO-17: VAT category tax (BT-117=${b.taxMinor}) ≠ taxable (BT-116=${b.taxableMinor}) × ${b.rateBps / 100}% (=${expected})`, "correct the category tax amount or the rate", `${ref}: expected=${expected}`);
+        catTaxSum = EU.add(catTaxSum, q(cur as string, b.taxMinor));
+      });
+      // BR-CO-14: Σ VAT category tax == BT-110 total VAT (only when every entry was well-formed).
+      if (bdOk) {
+        const bt110 = q(cur as string, t.vatMinor);
+        if (EU.compare(catTaxSum, bt110) !== 0) add("BR-CO-14", "calculation", "HIGH", `BR-CO-14: Σ VAT category tax (${EU.format(catTaxSum)}) ≠ BT-110 total VAT (${EU.format(bt110)})`, "correct BT-110 or the category tax amounts", `Σcat=${catTaxSum.minor} vs BT110=${t.vatMinor}`);
+      }
+    }
   }
 
   const high = findings.filter((f) => f.severity === "HIGH").length;
@@ -86,11 +112,12 @@ function validateInvoice(inv: any): any {
       findingCount: findings.length,
       // EN16931-core-valid = no HIGH finding. NOT a legal conformity statement / not a certified-platform validation.
       valid: high === 0,
-      profile: "EN16931-core (mandatory BT subset + BR-CO-10/13/15); exact integer money",
+      profile: "EN16931-core (mandatory BT subset + BR-CO-10/13/15 + optional BG-23 BR-CO-14/17); exact integer money",
       limits: [
         "validates the EN 16931 CORE calculation rules + a mandatory-field subset — NOT the full 900+ rule set",
         "this is interoperability validation, NOT a certified PDP/Plateforme Agréée and NOT tax-law advice",
-        "VAT is checked for arithmetic CONSISTENCY (BR-CO-15), not for correct tax treatment",
+        "VAT is checked for arithmetic CONSISTENCY (BR-CO-15, and BR-CO-14/17 when a BG-23 breakdown is supplied), not for correct tax treatment/category assignment",
+        "BG-23 VAT breakdown is validated only when inv.vatBreakdown is present; its absence is not itself an error at this slice",
         "amounts are EXACT integer minor units; floats are rejected (no silent rounding)",
       ],
       note: "EN 16931-core e-invoice validation with exact integer money. 'valid' = no HIGH rule violation at this slice; not a legal/certified conformity claim. Nothing retained; nothing sent.",
