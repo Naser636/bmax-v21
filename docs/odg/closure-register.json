@@ -595,14 +595,14 @@
     {
       "id": "finance-reconciliation-service",
       "program": "P2",
-      "title": "Financial Auditing #3: ledger reconciliation over REAL invoices+payments test data → discrepancy audit",
-      "status": "READY",
+      "title": "Financial Auditing #3: finance-ledger-service — AR invoice↔payment reconciliation (exact integer money)",
+      "status": "ACCEPTED",
       "deps": [],
       "priority": 2,
-      "contract": "Compose financial-reconciliation (exact integer money, anti-double-count) into an end-to-end service reading invoices + payments files. IN: invoices[], payments[]. OUT: reconciliation report (matched, unmatched, duplicates, inconsistencies) + audit trail. TESTS: reproducible dataset w/ a known duplicate + a short-payment ⇒ exact verdicts; tampered totals detected. NOT an accounting certification. Independent files: runtime/core/finance-reconciliation-service.ts + test.",
       "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
-      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
-      "staleEvidence": false
+      "nextAction": "Add aging buckets + bank-statement import; reconcile a real client ledger as the PROVEN milestone. Domain #3 Financial Auditing remains PARTIAL (no real external-client ledger engagement).",
+      "staleEvidence": false,
+      "evidence": "PR(this): runtime/core/finance-ledger-service.ts reconciles a REAL accounts-receivable ledger — matches many PAYMENTS against many INVOICES by reference → per-invoice PAID/PARTIAL/OVERPAID/UNPAID + discrepancy findings {id,area,severity,detail,remediation,evidence} (SARIF-emittable). Additive to financial-reconciliation.ts (which reconciles the lifecycle STAGES of ONE txn). REUSES economic-unit money primitive (EXACT integer minor units, same-unit enforcement, NO implicit FX). Tests (finance-ledger-service.test.ts, 10): mixed ledger exact status counts + totals (invoiced 17000/collected 13000/outstanding 4000); 2×2500⇒PAID exact (no float drift); OVERPAID⇒MEDIUM; currency mismatch⇒HIGH not auto-converted (stays UNPAID), reconciled=false; duplicate invoice id⇒HIGH + payment id⇒MEDIUM; multi-currency⇒totals NOT summed (MIXED/null); fail-closed on float/negative/missing amounts (INVALID_INPUT); all-unpaid-no-HIGH⇒reconciled=true w/ outstanding reported; valid SARIF 2.1.0. HONESTY: exact integer money only (floats rejected); no implicit FX; UNPAID/PARTIAL reported as outstanding not hidden; NOT an accounting certification/audit opinion. No new primitive (9 intact). Independent audit + CI. Gate: finance-ledger 10/10 exit 0, tsc 0, test:report green, build OK."
     },
     {
       "id": "regulatory-dossier-service",
