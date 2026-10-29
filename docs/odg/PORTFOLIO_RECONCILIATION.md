@@ -57,6 +57,32 @@ redundant. Correct disposition per governance: **PROTOTYPE, preserved**, now mad
 (templated catalog, plugins, benchmarked golden path) remains a SPEC-level greenfield decision for the owner, explicitly
 **not** selected by the later 3-product decision gate (which chose e-invoice / ai-assurance / building-retrofit).
 
+## 5. Historical-domain lens H1 / H2 / H3 (per the 11-domain mandate)
+
+The mandate requires the three historical lineages to keep **explicit roadmap visibility** even where their software is
+shared with D2/D5/D7. Evidence-cited (read-only inventory @ `a11c09f`, cinema excluded):
+
+| Hist. domain | Reconciled status | Current home (shared components) | Historical provenance | Register visibility |
+|---|---|---|---|---|
+| **H1 — Cybersecurity & supply chain** | SHARED_COMPONENT of D2 (+ D7) | `sbom-audit-service` (D2) → composed into `ai-assurance-assessment` (D7, `:21`) + `supply-chain-attest`, `license-policy`, `evidence-provenance` | O2 PoC (`ODG_POC_O2_O3_O8.md`); opportunities O2 (CRA/SBOM/SLSA) + O10 (AI supply-chain) in `ODG_PRIVATE_SECTOR_OPPORTUNITIES.md` | `sbom-audit-service` ACCEPTED; D2/D7 items |
+| **H2 — Legal/compliance & cert-readiness** | SHARED_COMPONENT of D5 (+ D7) | `regulatory-dossier-service` (D5) + `ai-act-role-classifier` → composed into D7 (`:19`); `iso-42001-readiness`, `iso-27001-clause-matrix`, `certification-readiness` | O3 PoC (`poc/o3-ai-act-matrix`); opportunity O3 (AI-Act/ISO-42001, **NOT certification**) | `regulatory-dossier-service` ACCEPTED; D7 slice items |
+| **H3 — CRM / commercial relationship / sales automation** | **TO_CONSOLIDATE** — internal substrate, NOT a product | ~20 tested `runtime/core/*` modules (below) — internal, single-tenant, UI-less, self-referential (ODG's own sales) | **No CRM opportunity was ever scoped**; CRM/ERP explicitly **disclaimed**: `docs/market-research/30_BROADENED_DISCOVERY_AND_DELIVERY_TRUTH.md:19` (2026-10-22) "CRM/ERP (Dynamics/SAP/Salesforce) — NO — will not claim". Closest opportunity = O9 "B2B workflow automation" (connectors BLOCKED) | **Un-orphaned** here as `commercial-ops-substrate-h3` (DEFERRED) |
+
+**H3 honest verdict (no invention).** There is **no sellable CRM product** and none was ever scoped as such — the repo
+*explicitly disclaims* CRM capability (above). Yet a substantial, internally-coherent, **all-tests-passing commercial-ops
+substrate** exists and implements most CRM *mechanics* for ODG's own B2B motion: lead lifecycle/grading (`client-intake`,
+`enterprise-lead-grade`), pipeline/opportunities (`commercial-pipeline` 12-stage, `pipeline-ledger`, `pipeline-forecast`
+— the forecast pattern adapted from HubSpot's pipeline-stage model, no outbound CRM write), outreach registry+compliance
+(`prospection-registry`/`-send-gate`/`-compliance`, CNIL/GDPR B2B), proposal→pipeline (`proposal-generator`/`-pipeline`),
+quote→invoice→payment (`quote`/`invoicing`/`payments`/`email-gateway`), dashboards (`revenue-dashboard`, `owner-console`),
+and orchestration (`autonomous-commercial-cycle`, `first-cash-activation`, `opportunity-detector`/`-axis-router`).
+**Missing for a product:** multi-tenant/customer-facing model + roles/permissions, any UI (none in `src/`), a
+connector/integration layer (`opportunity-axis-router` returns NO_RESULTS without an authorized connector), and a
+generic contact/account book with import/export. **Disposition:** TO_CONSOLIDATE as an internal substrate; productizing
+it into an external CRM is an **owner decision** that must first reconcile the 2026-10-22 "will not claim" disclaimer —
+not undertaken here. Reuse this substrate before building any new CRM mechanic. **Could not determine** whether the
+disclaimer was revisited after 2026-10-22; no reversal was found (flagged, not asserted permanent).
+
 ## 4. Honest unknowns / limits
 - The exact "three the CTO remembers" is not determinable beyond Readings A and B (§1); no third reading is invented.
 - Competitive matrices (≤100 actors/domain) and competitor benchmarks are **not** done here (multi-cycle; refused to
