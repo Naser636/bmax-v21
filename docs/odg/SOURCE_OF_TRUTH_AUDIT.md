@@ -48,3 +48,15 @@ Observed (audit) the allowlist-only fail-open + the unwired classifier → captu
 
 ## Single next action
 Independent-audit + merge the F0 canary read-only guard (this cycle), then the P0 chokepoint is the **CTO governance decisions** for F1 (deploy-header + protocol-scope reconciliation) and F3 (discard vs re-implement the superseded branches) — these are owner-gated and must not be self-applied. No product-roadmap work resumes until the CTO clears the P0 chokepoint or documents it as an accepted external blocker.
+
+---
+## ADDENDUM — VPS operational verification (2026-10-29, on-host read-only)
+
+The working host IS the VPS (`hostname vps-6d919042`); the git/build work this campaign ran directly on it (repo ops only — no systemd/sudo/deploy mutation). First-hand read-only evidence:
+- Repo: `main @ 1717e4e == origin/main`, div 0/0, clean tracked tree; 5 stashes + 7 worktrees + foreign dirs preserved.
+- `odg-mission-runner.service`: **last run Result=success, ExecMainStatus=0 at 2026-10-29T23:05:39Z** (real systemd-scheduled tick ⇒ `IDLE M0001 ALREADY_PROVEN`); `odg-mission-runner.timer` active/waiting+enabled; `odg-preprod.service` active/running+enabled success.
+- Journal timeline: the **21:35:29Z MODULE_NOT_FOUND** (`canary-decision-pack.js`) was a **one-time transient** (incomplete dist); recovered from 21:50Z; the 20:20/21:05/22:20 **STARTUP_REFUSED** entries were **correct Truth-Lock refusals** during PR-branch checkouts (non-destructive).
+- **F1 RESOLVED (repo-side):** stale "NOT installed / DESIGN ARTIFACT / CANDIDATE" headers in `deploy/odg-mission-runner.service`, `deploy/odg-mission-runner.timer`, `deploy/odg-preprod.service.candidate` reconciled to evidence-stamped "repo TEMPLATE; /etc unit INSTALLED+ACTIVE (verified read-only 2026-10-29)". Live `/etc` units NOT modified. Live `/etc` header text + `deploy/README-systemd.md` residue is a cosmetic doc follow-up (needs sudo+systemd for the live units).
+- The P0 mission-runner defect is **RESOLVED IN PRODUCTION** — verified by a real systemd tick, not only local tests.
+
+**Matrix update:** F0 canary guard + build-guard recurrence fix → deployment **actually verified** on the VPS (service success tick). Remaining F1 (governance-scope `ODG_AUTONOMOUS_WORK_PROTOCOL.json`), F3 (superseded branches) stay owner/CTO-gated.

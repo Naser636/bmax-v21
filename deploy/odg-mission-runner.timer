@@ -1,4 +1,5 @@
-# ODG mission-runner periodic tick — DESIGN ARTIFACT (NOT installed).
+# ODG mission-runner periodic tick — repo TEMPLATE. The /etc/systemd/system/odg-mission-runner.timer is INSTALLED +
+# ENABLED + ACTIVE (waiting) on vps-6d919042 (verified read-only 2026-10-29). Earlier "NOT installed" header was stale post-deploy.
 [Unit]
 Description=ODG mission-runner periodic tick (bounded, read-only canary)
 

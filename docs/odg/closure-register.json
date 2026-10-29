@@ -976,12 +976,12 @@
       "id": "p0-deploy-artifact-header-reconcile",
       "program": "P0",
       "title": "P0 F1: reconcile stale deploy artifact headers ('NOT installed') with reality",
-      "status": "BLOCKED",
+      "status": "ACCEPTED",
       "deps": [],
       "priority": 1,
-      "evidence": "docs/odg/SOURCE_OF_TRUTH_AUDIT.md F1: deploy/odg-preprod.service.candidate + deploy/odg-mission-runner.service self-describe 'NOT installed / DESIGN ARTIFACT' while ODG_PROJECT_STATE.md:1854,1856 records them installed+active. Flipping the headers to 'installed' would CLAIM a VPS state that cannot be verified from the repo (VPS off-limits) and the newest repo deploy evidence (VPS_STATUS.md:49 = e84a0cf, 141 commits stale) does not corroborate '10af72f'.",
-      "acceptance": "Headers reconciled to the ACTUAL installed state once that state is independently confirmed (VPS read-only check by the owner), without inventing deployment proof.",
-      "nextAction": "OWNER: provide a read-only VPS systemctl status (or authorize a read-only probe from a reaching context); then reconcile headers to match.",
+      "evidence": "RESOLVED (repo-side) with first-hand VPS evidence, obtained because the working host IS the VPS (hostname vps-6d919042). Read-only verified (systemctl show/cat): odg-mission-runner.timer active/waiting+enabled, odg-mission-runner.service last run Result=success/ExecMainStatus=0 at 2026-10-29T23:05:39Z, odg-preprod.service active/running+enabled Result=success. Reconciled the stale 'NOT installed/DESIGN ARTIFACT/CANDIDATE' headers in deploy/odg-mission-runner.service, deploy/odg-mission-runner.timer, deploy/odg-preprod.service.candidate to evidence-stamped 'repo TEMPLATE; the /etc unit is INSTALLED+ACTIVE (verified read-only 2026-10-29)'. The LIVE /etc units were NOT modified (no systemd change). The live /etc unit headers still carry the old label (cosmetic; editing /etc needs sudo+systemd = out of scope); and deploy/README-systemd.md / docs residue may still reference the old state — a documentation follow-up, not a runtime defect.",
+      "acceptance": "Stale deploy unit-file headers reconciled to the verified installed+active VPS state with read-only evidence; no live systemd unit modified; no fabricated deployment proof.",
+      "nextAction": "Optional doc follow-up: sweep deploy/README-systemd.md + docs for any remaining 'NOT installed' claims; reconcile the live /etc unit header text under CTO/systemd authorization if desired.",
       "staleEvidence": false,
       "blockReason": "VPS off-limits this campaign; deploy state not verifiable from repo (newest evidence e84a0cf, 141 commits stale).",
       "humanActionRequired": "Owner reports which odg-* units are actually installed/active via a READ-ONLY VPS systemctl check; headers are then reconciled to that verified state (no invented proof).",
@@ -1024,6 +1024,21 @@
       "evidence": "PR(this cycle): scripts/build-runtime-guard.ts distIsComplete() now verifies EVERY closure file recorded in dist-closure-manifest.json (provenance.inputs[].distRel) exists on disk; a missing emitted/copied output with unchanged inputs ⇒ NOT complete ⇒ full rebuild (previously SKIP 'fresh' left it missing ⇒ dist bin MODULE_NOT_FOUND — the odg-mission-runner recurrence vector). Fail-closed on malformed/input-less manifest. REPRODUCED the defect (rm runtime/dist/core/canary-decision-pack.js + build:runtime ⇒ SKIP, dist bin crash) then VERIFIED the fix (same steps ⇒ REBUILD, file restored, dist bin IDLE exit 0; a genuinely-complete dist still SKIPs). Parametrized + exported distIsComplete; main() guarded by require.main. Test scripts/build-runtime-guard.test.ts (5): all-present⇒true, deleted-output⇒false, no-inputs⇒false, malformed⇒false, no-core/manifest⇒false. Gate: build-guard 5, tsc 0, build OK, dist bin runs, full test:report 202/202. No new primitive, no mission-allowlist/Truth-Lock change.",
       "acceptance": "A deleted/missing dist closure output forces a rebuild (not a false 'fresh' SKIP), so the deployed odg-schedule-tick dist bin cannot silently miss a module; verified by reproduce-then-fix and a hermetic regression test.",
       "nextAction": "None (closed). The core MODULE_NOT_FOUND was already fixed in PR#231; this closes its recurrence vector.",
+      "staleEvidence": false
+    },
+    {
+      "id": "p0-mission-runner-vps-operational-verified",
+      "program": "P0",
+      "title": "odg-mission-runner P0 verified RESOLVED in production (real systemd tick, not just local)",
+      "status": "ACCEPTED",
+      "deps": [
+        "p0-canary-readonly-codeguard",
+        "p0-build-guard-per-file-completeness"
+      ],
+      "priority": 0,
+      "evidence": "On the VPS (vps-6d919042), repo synced main @ 1717e4e == origin/main (div 0/0), dist complete (runtime/dist/core/canary-decision-pack.js present; build:runtime SKIP-fresh; distIsComplete guard forces rebuild on a deleted output — verified live). Operational control with the REAL service config (ODG_CANARY_ALLOWLIST=M0001, ODG_TRUTH_LOCK_ENFORCE=1, Type=oneshot): manual ExecStart replication ⇒ IDLE 'M0001 ALREADY_PROVEN' exit 0; AND the real systemd-scheduled tick at 2026-10-29T23:05:39Z ⇒ IDLE exit 0, ExecMainStatus=0, Result=success (authoritative, under the unit's full sandbox+env). M0001 mode=AUDIT (read-only, no authorized_paths) ⇒ admitted by the new DEFAULT-DENY canary guard (so the fix does NOT break the real allowlist). Journal timeline: the 21:35:29Z MODULE_NOT_FOUND was a one-time transient (incomplete dist); recovered from 21:50Z onward; the 20:20/21:05/22:20 STARTUP_REFUSED entries were CORRECT Truth-Lock refusals during PR branch checkouts. Validation: scheduler+build-guard+canary-decision-pack+resume tests exit 0, e2e real-artifact exit 0, tsc 0, build OK, full test:report 202/202, Truth-Lock refusal on non-main divergent branch proven. 5 stashes + 7 worktrees + foreign dirs preserved.",
+      "acceptance": "The deployed odg-mission-runner succeeds on a real systemd-scheduled tick under its actual env/allowlist/sandbox (not an empty-allowlist local test), on the canonical build; no allowlist widening, no Truth-Lock disable, no fabricated success.",
+      "nextAction": "None (closed). Timer continues every 15min; next ticks expected IDLE/success while M0001 stays proven.",
       "staleEvidence": false
     }
   ]

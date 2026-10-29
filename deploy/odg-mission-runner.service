@@ -1,5 +1,8 @@
-# ODG governed mission runner — DESIGN ARTIFACT (NOT installed). Install only under CTO authorization
-# per docs/odg-operational/ODG_MISSION_RUNNER_SERVICE_PACKAGE.md (Appendix A/B).
+# ODG governed mission runner — repo TEMPLATE. The corresponding /etc/systemd/system/odg-mission-runner.service is
+# INSTALLED + ENABLED on vps-6d919042 (verified read-only 2026-10-29: timer active/waiting, last run Result=success
+# ExecMainStatus=0 at 2026-10-29T23:05:39Z). Install/update only under CTO authorization per
+# docs/odg-operational/ODG_MISSION_RUNNER_SERVICE_PACKAGE.md (Appendix A/B); the live /etc unit may have drifted from
+# this template (reconcile under governance, not from this file). Earlier "NOT installed" header was stale post-deploy.
 [Unit]
 Description=ODG governed mission runner (one bounded tick; read-only allowlist)
 After=network.target

@@ -1,4 +1,6 @@
-# CANDIDATE — NOT INSTALLED. Corrected odg-preprod.service for the Phase-2 immutable release pipeline.
+# repo TEMPLATE. The /etc/systemd/system/odg-preprod.service is INSTALLED + ENABLED + ACTIVE (running) on
+# vps-6d919042 (verified read-only 2026-10-29: Result=success). Corrected odg-preprod.service for the Phase-2
+# immutable release pipeline; update the live unit only under CTO authorization. Earlier "NOT INSTALLED" header was stale post-deploy.
 # Install requires sudo + a change window + rollback (see deploy/README-systemd.md). Do NOT apply ad hoc.
 #
 # Key corrections vs the live /etc/systemd/system/odg-preprod.service (2026-10-19):
