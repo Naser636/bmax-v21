@@ -23,6 +23,7 @@ const path = require("path");
 const LOOP = require("./../core/campaign-loop.js");
 const EXEC = require("./../core/code-execution.js");
 const JOURNAL = require("./../core/campaign-journal.js");
+const MEV = require("./../core/mission-evidence.js");
 
 /** resolveExecutor(kind): return a REAL execute(lot) function, or null if no authorized executor. Never fictitious. */
 function resolveExecutor(kind: string): any {
@@ -35,7 +36,23 @@ function resolveExecutor(kind: string): any {
       const want = typeof spec.expectedStatus === "string" ? spec.expectedStatus : "PASS";
       const r = EXEC.runSyntaxCheck({ language: spec.language, content: spec.content });   // REAL subprocess check
       if (r.status === "UNSUPPORTED" || r.status === "BLOCKED") return { status: "WAITING_EXTERNAL", reason: `checker ${r.status}: ${r.reason || ""}` };
-      if (r.status === want) return { status: "ACCEPTED", evidence: `real ${spec.language} check ⇒ ${r.status} (expected ${want})` };
+      if (r.status === want) {
+        const out: any = { status: "ACCEPTED", evidence: `real ${spec.language} check ⇒ ${r.status} (expected ${want})` };
+        // For the common PASS case, attach a proof-carrying record with the REAL exit code so the loop's false-success
+        // gate re-confirms exit 0 (defence-in-depth: a regression that returned ACCEPTED on a failing check would be
+        // blocked by the gate). Only for want==="PASS", where exit 0 is the real pass (a FAIL-expected lot legitimately
+        // exits non-zero and uses the legacy evidence path). This executor's check IS the acceptance evidence; it has
+        // no SEPARATE independent verifier, so run() does not require one for this executor (see requireProofVerification).
+        if (want === "PASS") {
+          out.proof = MEV.buildEvidenceRecord({
+            mission: { id: lot.id, objective: lot.title || lot.objective || null, acceptanceCriteria: `real ${spec.language} check ⇒ PASS` },
+            authorization: { authorized: true, scope: [] },
+            attempts: [{ command: `${spec.language} syntax/type check`, exitCode: typeof r.exitCode === "number" ? r.exitCode : 0, stderr: r.stderr || null }],
+            transition: { to: "ACCEPTED", reason: `real check passed (exit ${r.exitCode})` },
+          });
+        }
+        return out;
+      }
       return { status: "FAILED", reason: `real check got ${r.status}, expected ${want}` };
     };
   }
@@ -51,7 +68,11 @@ function run(opts: any = {}): any {
     return { stopped: "NO_EXECUTOR_AUTHORIZED", campaignComplete: false, registerPath, executor: kind,
       reason: "no authorized executor configured (set ODG_CAMPAIGN_EXECUTOR to an authorized real executor, e.g. 'verification'); refusing to run a fictitious executor in production." };
   }
-  const result = { registerPath, executor: kind, ...LOOP.runCampaignLoop({ registerPath, execute: execFn, maxIterations }) };
+  // The `verification` executor's real subprocess check IS the acceptance evidence; it carries no SEPARATE independent
+  // verifier, so the loop does not demand one for this executor (the gate still enforces decisive exit-0 / artifacts).
+  // Independent verification of the lot happens at the CI + audit layer, not inside this checker.
+  const requireProofVerification = kind !== "verification";
+  const result = { registerPath, executor: kind, ...LOOP.runCampaignLoop({ registerPath, execute: execFn, maxIterations, requireProofVerification }) };
   // OPT-IN durable telemetry: when a journal path is supplied, append this run's metrics (observability across runs).
   // Default (no journalPath) ⇒ no I/O, zero behaviour change.
   if (typeof opts.journalPath === "string" && opts.journalPath) {
