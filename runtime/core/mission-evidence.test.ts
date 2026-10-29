@@ -108,4 +108,16 @@ const cleanProof = (over) => E.buildEvidenceRecord({ mission: { id: "m" }, autho
   ok("LOOP policy requireProofVerification:false ⇒ verification waived by ODG, lot ACCEPTED", r2.items[0].status === "ACCEPTED" && o2.campaignComplete === true);
 }
 
+// (16) §4 BYPASS-BY-OMISSION: with requireProof policy, an ACCEPTED verdict WITHOUT a proof is REFUSED (the evidence
+// string path cannot be used to bypass the gate); with a valid proof it accepts; default (no policy) keeps legacy.
+{
+  const mk = () => ({ version: "rp", items: [{ id: "A", status: "READY", deps: [], priority: 1 }] });
+  const r1 = mk(); const o1 = L.runCampaignLoop({ register: r1, execute: () => ({ status: "ACCEPTED", evidence: "string only, no proof" }), requireProof: true, maxIterations: 3 });
+  ok("requireProof + ACCEPTED without proof ⇒ lot NOT ACCEPTED (bypass-by-omission refused)", r1.items[0].status !== "ACCEPTED" && o1.campaignComplete === false);
+  const r2 = mk(); const o2 = L.runCampaignLoop({ register: r2, requireProof: true, execute: () => ({ status: "ACCEPTED", evidence: "x", proof: E.buildEvidenceRecord({ mission: { id: "A" }, attempts: [okAttempt], artifacts: [{ path: "x", sha256: "a" }], verification: { verified: true, by: "ci" }, transition: { to: "ACCEPTED" } }, {}) }) });
+  ok("requireProof + valid proof ⇒ ACCEPTED", r2.items[0].status === "ACCEPTED" && o2.campaignComplete === true);
+  const r3 = mk(); const o3 = L.runCampaignLoop({ register: r3, execute: () => ({ status: "ACCEPTED", evidence: "legacy" }) });
+  ok("default (no requireProof) + no proof ⇒ legacy accept unchanged", r3.items[0].status === "ACCEPTED" && o3.campaignComplete === true);
+}
+
 console.log(`\nMISSION-EVIDENCE suite — ${pass} assertions passed. (exit code not maskable; deny-by-default; artifact/verification gates; contradiction; tamper-evident; loop gate opt-in; backward compatible)`);

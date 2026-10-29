@@ -658,6 +658,21 @@
       "acceptance": "A reproducible experiment demonstrates reuse DEMONSTRABLY improves a fair baseline AND that out-of-domain/stale/tampered learnings are refused AND that equal before/after is not graded effective; reproducible across process termination.",
       "nextAction": "Wire this proof pattern into real mission acceptance (a learning that claims EFFECTIVE must carry a measured before/after or be downgraded). Next admissible: the next business-domain milestone (domains stay PARTIAL).",
       "staleEvidence": false
+    },
+    {
+      "id": "engine-proof-consumption-policy",
+      "program": "P1",
+      "title": "ENGINE EXCELLENCE #4 (§4): proof genuinely CONSUMED — requireProof policy closes accept bypass-by-omission",
+      "status": "ACCEPTED",
+      "deps": [
+        "engine-mission-evidence-gate",
+        "engine-learning-reuse-proof"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): closes the §4 gap 'a proof library is insufficient if another acceptance path can bypass it'. CONFIRMED GAP: campaign-controller.advance accepts ACCEPTED on a non-empty evidence STRING alone, and campaign-loop's mission-evidence gate only engaged when the executor RETURNED a proof ⇒ an executor could bypass the gate by OMITTING the proof (silent downgrade to the string path). FIX: campaign-loop.ts gains opts.requireProof (default false, backward compatible) — when ODG mandates proof, an ACCEPTED verdict WITHOUT a proof record is REFUSED (attemptFailed 'proof required but none provided'); wired into odg-campaign-run via ODG_CAMPAIGN_REQUIRE_PROOF=1 / opts.requireProof. Makes the proof genuinely CONSUMED on the autonomous acceptance path, not merely available. Tests (mission-evidence.test.ts +3 ⇒20): requireProof+ACCEPTED-without-proof⇒NOT ACCEPTED (bypass-by-omission refused); requireProof+valid-proof⇒ACCEPTED; default(no policy)+no-proof⇒legacy accept unchanged. Live: verification campaign w/ ODG_CAMPAIGN_REQUIRE_PROOF=1 ⇒ 3/3 COMPLETE (PASS lots carry proof). Regression: campaign-loop 13/13, odg-campaign-run 6/6, tsc 0. HONEST BOUNDARY: advance() stays a low-level primitive (string-evidence) used by human/CI/governed flows; requireProof governs the AUTONOMOUS loop path (the one that could silently downgrade). 9 primitives intact. Independent audit + CI. Gate: test:report green.",
+      "acceptance": "On the autonomous acceptance path, when ODG sets requireProof, a proofless ACCEPTED cannot be accepted (bypass-by-omission closed); default behaviour unchanged.",
+      "nextAction": "Optionally default requireProof on for proof-emitting executors once all lot specs carry exec/proof. P1 remaining = 2 external BLOCKED (dashboard-tls-exposure, structured-roadmap-deps).",
+      "staleEvidence": false
     }
   ]
 }

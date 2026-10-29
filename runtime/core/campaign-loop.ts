@@ -73,9 +73,17 @@ function runCampaignLoop(opts: any = {}): any {
     if (!isObj(res) || !VERDICT.includes(res.status)) res = { status: "FAILED", reason: "execute returned no valid verdict", retryable: false };
 
     if (res.status === "ACCEPTED") {
+      // POLICY opts.requireProof (default false): when ODG mandates proof for this campaign, an ACCEPTED verdict WITHOUT
+      // a proof record is REFUSED — closing the "bypass by omission" where an executor silently falls back to the
+      // legacy evidence-string accept. This makes the mission-evidence proof genuinely CONSUMED, not merely available.
+      if (opts.requireProof === true && !isObj(res.proof)) {
+        C.advance(register, lot.id, { attemptFailed: true, reason: "proof required by campaign policy but none provided (bypass-by-omission refused)" });
+        rec({ lot: lot.id, event: "FAILED", reason: "proof-required: none provided" });
+        C.reconcile(register, { demote: true }); persist(); iter++; continue;
+      }
       // OPT-IN false-success gate: if the executor returns a `proof` record, acceptance must pass the adversarial
       // mission-evidence gate (decisive exit 0, artifacts present, independent verification) — a non-empty evidence
-      // string alone is not proof. No `proof` ⇒ unchanged behaviour (backward compatible).
+      // string alone is not proof. No `proof` (and not requireProof) ⇒ unchanged behaviour (backward compatible).
       if (isObj(res.proof)) {
         // expect:"ACCEPTED" forces the gate to judge the ACCEPTED criteria regardless of the proof's self-reported
         // transition (closes the spoofed/missing-transition bypass). Verification requirement is a LOOP policy
