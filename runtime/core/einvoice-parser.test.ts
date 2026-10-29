@@ -50,6 +50,13 @@ else {
   // (5) malformed XML ⇒ PARSE_ERROR with explicit HIGH finding (fail-closed, not a fake parse).
   { const r = P.parseAndValidate("<rsm:CrossIndustryInvoice><ram:ID>x</ram:ID>");   // unclosed
     ok("malformed CII XML ⇒ PARSE_ERROR + HIGH xml finding", r.ok === false && r.code === "PARSE_ERROR" && r.findings.some((f) => f.area === "xml" && f.severity === "HIGH")); }
+  // (5b) audit caveat a: a >2-decimal amount is REJECTED (null ⇒ amount-format HIGH), NOT silently rounded.
+  { const r = P.parseAndValidate(ciiGood.replace("180.00", "180.005"));
+    ok(">2dp amount ⇒ rejected (null), surfaced as amount-format HIGH (no silent sub-cent rounding)", r.ok === true && r.model.totals.taxInclusiveMinor === null && r.validation.valid === false && r.validation.findings.some((f) => f.area === "amount-format")); }
+  // (5c) audit caveat b: CII with NO header monetary summation ⇒ totals null (does NOT mis-grab a line amount) ⇒ invalid.
+  { const noHeader = ciiGood.replace(/<ram:SpecifiedTradeSettlementHeaderMonetarySummation>[\s\S]*?<\/ram:SpecifiedTradeSettlementHeaderMonetarySummation>/, "");
+    const r = P.parseAndValidate(noHeader);
+    ok("no header summation ⇒ totals null (no line-level mis-grab) ⇒ invalid", r.ok === true && r.model.totals.lineNetSumMinor === null && r.validation.valid === false); }
 }
 // (6) unsupported format ⇒ UNSUPPORTED_FORMAT (no python needed).
 { const r = P.parseAndValidate("<foo><bar>1</bar></foo>");

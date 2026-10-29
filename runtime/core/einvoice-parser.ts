@@ -22,13 +22,15 @@ const V = require("./einvoice-validator.js");
 
 // python3 stdlib extractor: argv[1]=xml path, argv[2]=format(CII|UBL). Prints JSON model, or {"error":...}. No network.
 const PY_EXTRACT = [
-  "import sys, json",
+  "import sys, json, re",
   "import xml.etree.ElementTree as ET",
-  "from decimal import Decimal, ROUND_HALF_UP, InvalidOperation",
+  "from decimal import Decimal, InvalidOperation",
   "def ln(t): return t.split('}')[-1] if isinstance(t,str) else t",
   "def minor(txt):",
   "  if txt is None: return None",
-  "  try: return int((Decimal(str(txt).strip()).quantize(Decimal('0.01'), ROUND_HALF_UP))*100)",
+  "  t=str(txt).strip()",
+  "  if not re.fullmatch(r'\\d+(\\.\\d{1,2})?', t): return None",   // non-negative, <=2dp only; reject >2dp/sci-notation/separators/signs (flagged, not silently rounded)
+  "  try: return int(Decimal(t)*100)",
   "  except (InvalidOperation, ValueError): return None",
   "def finds(el, name):",
   "  return [e for e in el.iter() if ln(e.tag)==name]",
@@ -53,8 +55,9 @@ const PY_EXTRACT = [
   "      if amt and amt[0].text: lines.append({'netMinor': minor(amt[0].text)})",
   "    m['lines']=lines",
   "    sums=[e for e in root.iter() if ln(e.tag)=='SpecifiedTradeSettlementHeaderMonetarySummation']",
-  "    s=sums[0] if sums else root",
+  "    s=sums[0] if sums else None",   // no header summation ⇒ totals null (do NOT fall back to a line-level amount)
   "    def g(name):",
+  "      if s is None: return None",
   "      for e in s.iter():",
   "        if ln(e.tag)==name and e.text: return minor(e.text)",
   "      return None",
@@ -76,8 +79,9 @@ const PY_EXTRACT = [
   "      if amt and amt[0].text: lines.append({'netMinor': minor(amt[0].text)})",
   "    m['lines']=lines",
   "    lmt=[e for e in root.iter() if ln(e.tag)=='LegalMonetaryTotal']",
-  "    L=lmt[0] if lmt else root",
+  "    L=lmt[0] if lmt else None",   // no LegalMonetaryTotal ⇒ totals null (no line-level fallback)
   "    def gu(name):",
+  "      if L is None: return None",
   "      for e in L.iter():",
   "        if ln(e.tag)==name and e.text: return minor(e.text)",
   "      return None",
@@ -127,7 +131,7 @@ function parseInvoiceXml(xml: any, opts: any = {}): any {
 }
 
 const SUPPORTED_SUBSET = Object.freeze(["BT-1 id", "BT-2 issueDate", "BT-5 currency", "seller.name", "buyer.name", "BT-131 line nets", "BT-106/109/110/112 totals", "BR-CO-10/13/15"]);
-const KNOWN_GAPS = Object.freeze(["party tax ids (SIREN/VAT)", "VAT breakdown lines (BG-23)", "document allowances/charges detail", "Factur-X PDF/A-3 embedded XML extraction", "full EN16931 rule set (900+)", "payment means / references"]);
+const KNOWN_GAPS = Object.freeze(["party tax ids (SIREN/VAT)", "VAT breakdown lines (BG-23)", "document allowances/charges detail", "Factur-X PDF/A-3 embedded XML extraction", "full EN16931 rule set (900+)", "payment means / references", "negative amounts / credit notes (rejected as amount-format, not silently used)", "amounts with >2 decimals or scientific notation (rejected, not rounded)"]);
 
 /** parseAndValidate(xml, opts?): parse CII/UBL → model → EN16931-core validation. Returns the combined report. */
 function parseAndValidate(xml: any, opts: any = {}): any {
