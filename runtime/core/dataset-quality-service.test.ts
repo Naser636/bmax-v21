@@ -69,4 +69,10 @@ const schema = { fields: [{ name: "id", type: "integer", required: true }, { nam
   ok("quoted CSV (embedded comma + newline) ⇒ 2 rows parsed, complete", r.report.rowCount === 2 && r.report.metrics.completeness === 1);
 }
 
+// (10) non-object rows are reported as droppedNonObjectRows, not silently assessed (audit transparency caveat).
+{
+  const r = D.assessDataset({ format: "json", content: JSON.stringify([{ id: 1 }, 2, "x", { id: 3 }]) });
+  ok("non-object rows surfaced via droppedNonObjectRows (2), only object rows assessed", r.report.rowCount === 2 && r.report.droppedNonObjectRows === 2);
+}
+
 console.log(`\nDATASET-QUALITY-SERVICE suite — ${pass} assertions passed. (real computed completeness/validity/uniqueness; empty⇒NO_DATA not 100; fail-closed parse; no-schema⇒uniqueness-only; unknown type⇒no invented constraint; valid SARIF; quoted CSV)`);

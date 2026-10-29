@@ -66,7 +66,9 @@ function assessDataset(input: any, opts: any = {}): any {
   if (!isObj(input)) return { ok: false, code: "INVALID_INPUT", reason: "input object required" };
   const parsed = parseInput(input);
   if (!parsed.ok) return parsed;
+  const rawCount = (parsed.records as any[]).length;
   const records = (parsed.records as any[]).filter((r) => isObj(r));
+  const droppedNonObjectRows = rawCount - records.length;   // surfaced (not silently ignored)
   const schema = isObj(input.schema) ? input.schema : {};
   const fields = Array.isArray(schema.fields) ? schema.fields : [];
   const requiredFields = fields.filter((f: any) => f && f.required).map((f: any) => f.name);
@@ -112,6 +114,7 @@ function assessDataset(input: any, opts: any = {}): any {
     ok: true,
     report: {
       rowCount: total,
+      droppedNonObjectRows,
       assessedDimensions: assessed.length,
       metrics: { completeness, validity, uniqueness, overallScore },
       dedup: { duplicates, uniqueRows: total - duplicates },
@@ -122,6 +125,9 @@ function assessDataset(input: any, opts: any = {}): any {
         "quality is assessed ONLY against the supplied schema; without a schema, only uniqueness is computed",
         "an empty dataset scores NO_DATA (null), never a fabricated 100",
         "a declared type the service does not know carries NO validity constraint (not silently passed/failed)",
+        "a missing REQUIRED cell counts against BOTH completeness (missing) and validity (invalid) — intentional",
+        "whole-record de-dup (when no keyFields given) is sensitive to JSON key order; declare keyFields for order-independent de-dup",
+        "non-object input rows are excluded and reported as droppedNonObjectRows (not silently assessed)",
         "this is a data-quality assessment, NOT a semantic/business-correctness validation of the values",
       ],
       note: "Real computed data-quality metrics (completeness/validity/uniqueness) over the actual records. Fail-closed: empty ⇒ null (not 100); unparseable ⇒ error. No content retained; nothing sent anywhere.",
