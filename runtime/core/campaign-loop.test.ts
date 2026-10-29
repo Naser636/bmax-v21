@@ -90,9 +90,15 @@ const acceptAll = (calls) => (lot) => { calls.push(lot.id); return { status: "AC
   ok("e2e 5-mission chain ⇒ all COMPLETED in exactly 5 iterations (baseline)", r.campaignComplete === true && r.iterations === 5 && calls.length === 5 && JSON.stringify(calls) === JSON.stringify(["m0", "m1", "m2", "m3", "m4"]));
 }
 // (13) the REAL closure-register is loop-drivable (dry-run executor declines ⇒ honest non-COMPLETED stop).
+// IMPORTANT: run against a COPY — runCampaignLoop PERSISTS after each mission, so driving the canonical register
+// file directly would MUTATE it on disk (flip READY lots to BLOCKED), corrupting the SSOT other suites read.
 {
-  const r = L.runCampaignLoop({ registerPath: path.join(process.cwd(), "docs", "odg", "closure-register.json"), execute: () => ({ status: "WAITING_EXTERNAL", reason: "dry-run" }), maxIterations: 50 });
-  ok("real register drivable; honest stop (not falsely COMPLETED while blocked)", (r.stopped === "IDLE_BLOCKED" || r.stopped === "COMPLETED") && typeof r.iterations === "number");
+  const src = path.join(process.cwd(), "docs", "odg", "closure-register.json");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-realreg-")); const copy = path.join(dir, "closure-register.json");
+  fs.copyFileSync(src, copy);
+  const r = L.runCampaignLoop({ registerPath: copy, execute: () => ({ status: "WAITING_EXTERNAL", reason: "dry-run" }), maxIterations: 50 });
+  ok("real register (copy) drivable; honest stop (not falsely COMPLETED while blocked); canonical file untouched", (r.stopped === "IDLE_BLOCKED" || r.stopped === "COMPLETED") && typeof r.iterations === "number");
+  fs.rmSync(dir, { recursive: true, force: true });
 }
 
 console.log(`\nCAMPAIGN-LOOP suite — ${pass} assertions passed. (auto-transitions; resume-from-checkpoint; blocked≠frozen; retry w/o evidence loss; idempotent re-run; explicit IDLE/WAITING; no false COMPLETED/terminal; bounded)`);
