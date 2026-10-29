@@ -67,4 +67,17 @@ const good = () => ({ id: "FR-2026-001", issueDate: "2026-09-15", currency: "EUR
   ok("limits disclose EN16931-core-only + NOT a certified PDP/legal conformity", r.report.limits.length >= 3 && r.report.limits.some((l) => /PDP|Plateforme|certified/i.test(l)) && /not a legal\/certified/i.test(r.report.note));
 }
 
+// (10) precision ceiling (audit caveat a): an amount > 2^53 is rejected (exact-money guarantee honest).
+{
+  const inv = good(); inv.totals.taxInclusiveMinor = 9007199254740993;   // 2^53 + 1 — unsafe integer
+  const r = V.validateInvoice(inv);
+  ok("amount > 2^53 ⇒ rejected (HIGH amount-format; exact-money not silently broken)", r.report.findings.some((f) => f.area === "amount-format" && f.severity === "HIGH"));
+}
+// (11) duplicate key namespaced (audit caveat b): a SIREN value does NOT cross-collide with a name value.
+{
+  const a = { ...good(), seller: { siren: "ACME" } }; const b = { ...good(), seller: { name: "ACME" } };
+  const r = V.validateBatch([a, b]);
+  ok("seller siren 'ACME' vs seller name 'ACME' with same invoice number ⇒ NOT a false duplicate", r.batch.duplicateCount === 0);
+}
+
 console.log(`\nEINVOICE-VALIDATOR suite — ${pass} assertions passed. (EN 16931-core: mandatory BTs + BR-CO-10/13/15; exact integer money, 1-cent mismatch caught; floats rejected; batch duplicate detection; valid SARIF; honest non-certified scope)`);

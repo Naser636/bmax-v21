@@ -23,7 +23,9 @@
 const EU = require("./economic-unit.js");
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
-function isInt(n: any): boolean { return typeof n === "number" && Number.isInteger(n); }
+// SAFE integer only: Number.isSafeInteger rejects values > 2^53 where JS number arithmetic loses precision — so the
+// "exact integer money" guarantee cannot silently break on an out-of-range amount (such an amount is flagged, not trusted).
+function isInt(n: any): boolean { return typeof n === "number" && Number.isSafeInteger(n); }
 function q(cur: string, minor: number): any { return EU.quantity(cur, EU.KIND.COST_UNIT, minor, 2); }
 
 // mandatory EN 16931 business terms we check at this slice (subset of the Confort profile core).
@@ -104,7 +106,10 @@ function validateBatch(invoices: any): any {
   const duplicates: any[] = [];
   for (const inv of invoices) {
     const r = validateInvoice(inv);
-    const key = `${(inv && inv.seller && (inv.seller.siren || inv.seller.name)) || "?"}|${(inv && inv.id) || "?"}`;
+    // namespace the seller key by TYPE so a SIREN value never cross-collides with a name value (independent-audit caveat).
+    const s = inv && inv.seller;
+    const sellerKey = s && s.siren ? `siren:${s.siren}` : s && s.name ? `name:${s.name}` : "seller:?";
+    const key = `${sellerKey}|${(inv && inv.id) || "?"}`;
     if (inv && inv.id && seen.has(key)) duplicates.push({ invoiceId: inv.id, firstSeenAs: seen.get(key), key });
     else if (inv && inv.id) seen.set(key, inv.id);
     results.push(r.ok ? { invoiceId: inv && inv.id, valid: r.report.valid, findingCount: r.report.findingCount } : r);
