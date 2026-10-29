@@ -77,13 +77,13 @@ function reviewProject(input: any, opts: any = {}): any {
     if (!isObj(f) || typeof f.path !== "string" || typeof f.content !== "string") { coverage.blocked++; continue; }
     const language = languageOf(f);
     if (!language || !EXEC.LANG_SPEC[language]) { coverage.unsupported++; continue; }           // declared coverage gap, NOT clean
-    coverage.languages[language] = (coverage.languages[language] || 0) + 1;
 
     // ---- compile/syntax/type analyzer (real) ----
     const r = runCheck(language, f.path, f.content);
     if (r.status === "UNSUPPORTED") { coverage.unsupported++; continue; }
     if (r.status === "BLOCKED") { coverage.blocked++; continue; }                                 // toolchain absent/timeout — never a clean PASS
     coverage.reviewed++;
+    coverage.languages[language] = (coverage.languages[language] || 0) + 1;                       // count only languages actually reviewed
     const tool = (EXEC.LANG_SPEC[language] && EXEC.LANG_SPEC[language].bin) || "checker";
     if (r.status === "FAIL") {
       findings.push({
@@ -108,28 +108,70 @@ function reviewProject(input: any, opts: any = {}): any {
     }
   }
 
+  return finalize(project, findings, { totalUnits: input.files.length, coverage });
+}
+
+/**
+ * finalize(project, findings, ctx): build the review object + summary from findings and coverage. Shared by the
+ * per-file reviewProject and the project-mode reviewTsProjectDir so the summary shape is single-sourced.
+ * ctx = { totalUnits, coverage:{reviewed,unsupported,blocked,languages?} }.
+ */
+function finalize(project: string, findings: any[], ctx: any): any {
+  const coverage = ctx.coverage || { reviewed: 0, unsupported: 0, blocked: 0 };
   const bySeverity = { HIGH: 0, MEDIUM: 0, LOW: 0, INFO: 0 };
   for (const fnd of findings) (bySeverity as any)[fnd.severity] = ((bySeverity as any)[fnd.severity] || 0) + 1;
   const summary = {
-    totalFiles: input.files.length,
+    totalFiles: ctx.totalUnits,
     filesReviewed: coverage.reviewed,
     filesUnsupported: coverage.unsupported,
     filesBlocked: coverage.blocked,
     findingCount: findings.length,
     bySeverity,
-    // "clean" is asserted ONLY over files actually reviewed, and only when at least one was reviewed — never over gaps.
+    // "clean" is asserted ONLY over units actually reviewed, and only when at least one was reviewed — never over gaps.
     clean: coverage.reviewed > 0 && findings.length === 0,
-    coverageBasis: `${coverage.reviewed} file(s) analysed by a real toolchain; ${coverage.unsupported} unsupported + ${coverage.blocked} blocked EXCLUDED from the verdict`,
+    // completeCoverage lets a consumer distinguish "clean AND nothing was skipped" from "clean over a partial set".
+    completeCoverage: coverage.unsupported === 0 && coverage.blocked === 0,
+    coverageBasis: `${coverage.reviewed} unit(s) analysed by a real toolchain; ${coverage.unsupported} unsupported + ${coverage.blocked} blocked EXCLUDED from the verdict`,
   };
-
   return {
     ok: true,
     review: {
       project, findings, summary, coverage,
       limits: LIMITS,
-      note: "Engineering review from REAL reproducible analyzers (compile/type + shellcheck lint). NOT a security audit/certification/correctness guarantee. Coverage gaps (unsupported language / absent toolchain) are declared and excluded from the verdict, never counted as clean. No content retained; nothing sent anywhere.",
+      note: "Engineering review from REAL reproducible analyzers (compile/type + shellcheck lint; import-aware tsc for TS projects). NOT a security audit/certification/correctness guarantee. Coverage gaps (unsupported language / absent toolchain) are declared and excluded from the verdict, never counted as clean; summary.clean is over reviewed units only (see completeCoverage). No content retained; nothing sent anywhere.",
     },
   };
+}
+
+/**
+ * reviewTsProjectDir(input, opts?): PROJECT-mode TypeScript review — one import-aware `tsc --noEmit -p` over a whole
+ * project (the real-world case), via the proven ts-project-check (runProjectHealthCheck). This AVOIDS the single-file
+ * false positives that arise when a .ts file imports a sibling the isolated per-file check cannot resolve.
+ *   input = { projectDir, tsconfig?, project?, timeoutMs? }; opts = { runner? }.
+ * A FAIL ⇒ one HIGH project-level finding (errorCount + diagnostics); BLOCKED (no tsc/tsconfig/timeout) ⇒ coverage
+ * gap, never a clean PASS. Composition only — no new primitive.
+ */
+function reviewTsProjectDir(input: any, opts: any = {}): any {
+  if (!isObj(input) || typeof input.projectDir !== "string") return { ok: false, code: "INVALID_INPUT", reason: "input { projectDir, tsconfig? } required" };
+  const CH = require("./code-health-service.js");
+  const runner = typeof opts.runner === "function" ? opts.runner : undefined;
+  const hr = CH.runProjectHealthCheck({ projectDir: input.projectDir, tsconfig: input.tsconfig, timeoutMs: input.timeoutMs }, runner ? { runner } : {});
+  const project = typeof input.project === "string" && input.project ? input.project : "project";
+  const findings: any[] = [];
+  const coverage = { reviewed: 0, unsupported: 0, blocked: 0, languages: {} as Record<string, number> };
+  const rep = hr && hr.report;
+  const status = rep ? rep.status : "BLOCKED";
+  if (status === "PASS") { coverage.reviewed = 1; coverage.languages.TypeScript = 1; }
+  else if (status === "FAIL") {
+    coverage.reviewed = 1; coverage.languages.TypeScript = 1;
+    findings.push({
+      id: `compile:${rep.tsconfig || "tsconfig.json"}`, area: "compile", severity: "HIGH",
+      detail: `TypeScript project does not compile: ${rep.errorCount != null ? rep.errorCount + " error(s)" : "errors"} — ${clip(rep.detail || "", 300)}`,
+      remediation: "fix the reported type/compile errors so the project builds",
+      evidence: `tsc --noEmit -p ${rep.tsconfig || "tsconfig.json"} reported errors — ${clip(typeof rep.diagnostics === "string" ? rep.diagnostics : JSON.stringify(rep.diagnostics || ""), 400)}`,
+    });
+  } else { coverage.blocked = 1; }                               // BLOCKED: tsc/tsconfig absent or timeout — never a clean PASS
+  return finalize(project, findings, { totalUnits: 1, coverage });
 }
 
 /**
@@ -146,8 +188,8 @@ function reviewToSarif(reviewResult: any, opts: any = {}): any {
   );
 }
 
-export { EXT_LANG, LIMITS, languageOf, reviewProject, reviewToSarif };
-module.exports = { EXT_LANG, LIMITS, languageOf, reviewProject, reviewToSarif };
+export { EXT_LANG, LIMITS, languageOf, finalize, reviewProject, reviewTsProjectDir, reviewToSarif };
+module.exports = { EXT_LANG, LIMITS, languageOf, finalize, reviewProject, reviewTsProjectDir, reviewToSarif };
 
 if (require.main === module) {
   // Read-only self-demo over two in-memory files (one clean, one broken) using the real host toolchain.

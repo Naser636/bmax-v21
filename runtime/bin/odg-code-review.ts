@@ -53,7 +53,35 @@ function run(argv: string[]): any {
 
   const files = collectFiles(dir, max);
   if (files.length === 0) return { ok: false, code: "NO_SOURCES", reason: "no supported source files found under the directory" };
-  const result = REVIEW.reviewProject({ project: path.basename(path.resolve(dir)), files });
+  const project = path.basename(path.resolve(dir));
+
+  // TypeScript PROJECT mode: when the dir has a tsconfig.json AND .ts files, review TS with ONE import-aware
+  // `tsc -p` (reviewTsProjectDir) instead of unreliable single-file checks; review the non-TS files per file; merge.
+  const tsconfigPath = path.join(dir, "tsconfig.json");
+  const hasTsconfig = (() => { try { return fs.statSync(tsconfigPath).isFile(); } catch { return false; } })();
+  const tsFiles = files.filter((f: any) => path.extname(f.path).toLowerCase() === ".ts");
+  let result: any;
+  if (hasTsconfig && tsFiles.length > 0) {
+    const nonTs = files.filter((f: any) => path.extname(f.path).toLowerCase() !== ".ts");
+    const tsR = REVIEW.reviewTsProjectDir({ projectDir: dir, project });
+    const fileR = nonTs.length > 0 ? REVIEW.reviewProject({ project, files: nonTs }) : null;
+    if (!tsR.ok) return tsR;
+    if (fileR && !fileR.ok) return fileR;
+    const cov = { reviewed: 0, unsupported: 0, blocked: 0, languages: {} as Record<string, number> };
+    const findings: any[] = [];
+    let totalUnits = 0;
+    for (const part of [tsR.review, fileR && fileR.review]) {
+      if (!part) continue;
+      findings.push(...part.findings);
+      cov.reviewed += part.coverage.reviewed; cov.unsupported += part.coverage.unsupported; cov.blocked += part.coverage.blocked;
+      for (const [k, v] of Object.entries(part.coverage.languages || {})) cov.languages[k] = (cov.languages[k] || 0) + (v as number);
+      totalUnits += part.summary.totalFiles;
+    }
+    result = REVIEW.finalize(project, findings, { totalUnits, coverage: cov });
+    result.review.mode = "typescript-project+files";
+  } else {
+    result = REVIEW.reviewProject({ project, files });
+  }
   if (!result.ok) return result;
   if (asSarif) { const s = REVIEW.reviewToSarif(result); return { ok: true, mode: "sarif", sarif: s.sarif, resultCount: s.resultCount, truncated: s.truncated }; }
   return { ok: true, mode: "review", review: result.review };

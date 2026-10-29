@@ -90,4 +90,41 @@ const BROKEN_JS = "const y = ;\nmodule.exports = y;\n";   // syntax error — no
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
-console.log(`\nCODE-REVIEW-SERVICE suite — ${pass} assertions passed. (REAL node --check on clean+broken fixtures; 0 false PASS; valid SARIF 2.1.0; coverage gaps never clean; fail-closed on absent toolchain; spawned CLI end-to-end)`);
+// (10) completeCoverage distinguishes "clean over everything" from "clean over a partial set".
+{
+  const full = R.reviewProject({ project: "p", files: [{ path: "ok.js", content: CLEAN_JS }] });
+  const partial = R.reviewProject({ project: "p", files: [{ path: "ok.js", content: CLEAN_JS }, { path: "a.cobol", language: "COBOL", content: "x" }] });
+  ok("completeCoverage: true when nothing skipped, false when a gap exists (both still clean over reviewed)",
+     full.review.summary.completeCoverage === true && full.review.summary.clean === true &&
+     partial.review.summary.completeCoverage === false && partial.review.summary.clean === true);
+}
+// (11) REGRESSION (independent-audit defect #1): a multi-file TS project (main imports a sibling) reviewed in
+// PROJECT mode must NOT produce a false "does not compile" — single-file checking would wrongly flag it.
+{
+  const tc = EXEC.detectToolchain({});
+  if (tc.TypeScript === true) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-tsproj-"));
+    fs.writeFileSync(path.join(dir, "tsconfig.json"), JSON.stringify({ compilerOptions: { noEmit: true, strict: false, skipLibCheck: true, moduleResolution: "node", target: "ES2020", module: "commonjs" }, include: ["*.ts"] }));
+    fs.writeFileSync(path.join(dir, "util.ts"), "export const v: number = 1;\n");
+    fs.writeFileSync(path.join(dir, "main.ts"), "import { v } from \"./util\";\nexport const w = v + 1;\n");
+    const r = R.reviewTsProjectDir({ projectDir: dir, project: "tsproj" });
+    if (r.review.summary.filesBlocked === 1) { ok("TS project check BLOCKED (tsc unavailable) — honest, skipped", true); }
+    else { ok("multi-file TS project (import-aware) ⇒ clean, NO false compile finding (audit regression fixed)", r.review.summary.findingCount === 0 && r.review.summary.clean === true && r.review.summary.filesReviewed === 1); }
+    fs.rmSync(dir, { recursive: true, force: true });
+  } else { ok("TypeScript toolchain absent ⇒ project-mode review skipped honestly", true); }
+}
+// (12) a TS project WITH a real type error ⇒ exactly one HIGH project-level compile finding (import-aware tsc).
+{
+  const tc = EXEC.detectToolchain({});
+  if (tc.TypeScript === true) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-tsbad-"));
+    fs.writeFileSync(path.join(dir, "tsconfig.json"), JSON.stringify({ compilerOptions: { noEmit: true, strict: true, skipLibCheck: true, target: "ES2020", module: "commonjs" }, include: ["*.ts"] }));
+    fs.writeFileSync(path.join(dir, "bad.ts"), "export const n: number = \"not a number\";\n");
+    const r = R.reviewTsProjectDir({ projectDir: dir, project: "tsbad" });
+    if (r.review.summary.filesBlocked === 1) { ok("TS project check BLOCKED (tsc unavailable) — honest, skipped", true); }
+    else { ok("TS project with a type error ⇒ 1 HIGH compile finding (0 false PASS)", r.review.summary.findingCount === 1 && r.review.findings[0].severity === "HIGH" && r.review.findings[0].area === "compile" && r.review.summary.clean === false); }
+    fs.rmSync(dir, { recursive: true, force: true });
+  } else { ok("TypeScript toolchain absent ⇒ TS-fail case skipped honestly", true); }
+}
+
+console.log(`\nCODE-REVIEW-SERVICE suite — ${pass} assertions passed. (REAL node --check on clean+broken fixtures; import-aware TS project mode (no false positive); 0 false PASS; valid SARIF 2.1.0; coverage gaps never clean; completeCoverage; fail-closed; spawned CLI end-to-end)`);
