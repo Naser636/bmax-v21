@@ -72,7 +72,9 @@ function run(opts: any = {}): any {
   // verifier, so the loop does not demand one for this executor (the gate still enforces decisive exit-0 / artifacts).
   // Independent verification of the lot happens at the CI + audit layer, not inside this checker.
   const requireProofVerification = kind !== "verification";
-  const result = { registerPath, executor: kind, ...LOOP.runCampaignLoop({ registerPath, execute: execFn, maxIterations, requireProofVerification }) };
+  // ODG policy: when requireProof is set, a proofless ACCEPTED is refused (proof is mandatory, not bypassable by omission).
+  const requireProof = opts.requireProof === true;
+  const result = { registerPath, executor: kind, ...LOOP.runCampaignLoop({ registerPath, execute: execFn, maxIterations, requireProofVerification, requireProof }) };
   // OPT-IN durable telemetry: when a journal path is supplied, append this run's metrics (observability across runs).
   // Default (no journalPath) ⇒ no I/O, zero behaviour change.
   if (typeof opts.journalPath === "string" && opts.journalPath) {
@@ -91,8 +93,9 @@ if (require.main === module) {
   const maxIterations = process.env.ODG_CAMPAIGN_MAX_ITER ? parseInt(process.env.ODG_CAMPAIGN_MAX_ITER, 10) : undefined;
   const journalPath = process.env.ODG_CAMPAIGN_JOURNAL || undefined;   // opt-in durable telemetry
   const at = journalPath ? new Date().toISOString() : undefined;       // timestamp only when journaling (bin-level clock)
+  const requireProof = process.env.ODG_CAMPAIGN_REQUIRE_PROOF === "1"; // opt-in: proof mandatory for acceptance
   let out: any;
-  try { out = run({ registerPath, executor, maxIterations, journalPath, at }); }
+  try { out = run({ registerPath, executor, maxIterations, journalPath, at, requireProof }); }
   catch (e: any) { process.stderr.write(`odg-campaign-run error: ${(e && e.message) || e}\n`); process.exit(1); }
   const slim = { stopped: out.stopped, campaignComplete: !!out.campaignComplete, iterations: out.iterations, executor: out.executor, reason: out.reason, counts: out.summary && out.summary.counts, transitions: out.transitions };
   process.stdout.write(JSON.stringify(slim, null, 2) + "\n");
