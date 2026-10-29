@@ -80,4 +80,39 @@ const good = () => ({ id: "FR-2026-001", issueDate: "2026-09-15", currency: "EUR
   ok("seller siren 'ACME' vs seller name 'ACME' with same invoice number ⇒ NOT a false duplicate", r.batch.duplicateCount === 0);
 }
 
+// (12) BG-23 VAT breakdown present + consistent ⇒ still valid (20% of 15000 = 3000 = BT-110).
+{
+  const inv = good(); inv.vatBreakdown = [{ categoryCode: "S", rateBps: 2000, taxableMinor: 15000, taxMinor: 3000 }];
+  const r = V.validateInvoice(inv);
+  ok("valid BG-23 breakdown (BR-CO-17 per-category + BR-CO-14 sum) ⇒ valid, 0 findings", r.ok && r.report.valid === true && r.report.findingCount === 0);
+}
+// (13) BR-CO-17: a category tax ≠ taxable × rate ⇒ HIGH.
+{
+  const inv = good(); inv.vatBreakdown = [{ categoryCode: "S", rateBps: 2000, taxableMinor: 15000, taxMinor: 2999 }];
+  const r = V.validateInvoice(inv);
+  ok("BR-CO-17: category tax ≠ taxable×rate ⇒ HIGH finding, invalid", r.report.findings.some((f) => f.id === "BR-CO-17") && r.report.valid === false);
+}
+// (14) BR-CO-14: Σ category tax ≠ BT-110 total VAT ⇒ HIGH (each entry self-consistent, only the sum is wrong).
+{
+  const inv = good(); inv.vatBreakdown = [{ categoryCode: "S", rateBps: 2000, taxableMinor: 12500, taxMinor: 2500 }];   // 2500 ≠ BT-110 3000
+  const r = V.validateInvoice(inv);
+  ok("BR-CO-14: Σ category tax (2500) ≠ BT-110 (3000) ⇒ HIGH, no spurious BR-CO-17", r.report.findings.some((f) => f.id === "BR-CO-14") && !r.report.findings.some((f) => f.id === "BR-CO-17") && r.report.valid === false);
+}
+// (15) fail-closed: a non-integer breakdown amount ⇒ amount-format HIGH (no silent rounding, breakdown not summed).
+{
+  const inv = good(); inv.vatBreakdown = [{ categoryCode: "S", rateBps: 2000, taxableMinor: 15000, taxMinor: 30.0001 }];
+  const r = V.validateInvoice(inv);
+  ok("BG-23 non-integer taxMinor ⇒ amount-format HIGH (fail-closed), invalid", r.report.findings.some((f) => f.area === "amount-format" && /vatBreakdown/.test(f.id)) && r.report.valid === false);
+}
+
+// (16) CREDIT-NOTE (negative BT-116): BR-CO-17 must round symmetrically (half-away-from-zero). True tax of
+// -20000 × 55% = -11000 (exact). Correct value ⇒ NO BR-CO-17; off-by-one (-10999, the toward-zero-truncation bug) ⇒ BR-CO-17.
+{
+  const okNeg = { ...good(), vatBreakdown: [{ categoryCode: "S", rateBps: 5500, taxableMinor: -20000, taxMinor: -11000 }] };
+  const badNeg = { ...good(), vatBreakdown: [{ categoryCode: "S", rateBps: 5500, taxableMinor: -20000, taxMinor: -10999 }] };
+  const r1 = V.validateInvoice(okNeg); const r2 = V.validateInvoice(badNeg);
+  ok("BR-CO-17 negative BT-116 (credit note): exact -11000 ⇒ no BR-CO-17; off-by-one -10999 ⇒ BR-CO-17 (symmetric rounding)",
+     !r1.report.findings.some((f) => f.id === "BR-CO-17") && r2.report.findings.some((f) => f.id === "BR-CO-17"));
+}
+
 console.log(`\nEINVOICE-VALIDATOR suite — ${pass} assertions passed. (EN 16931-core: mandatory BTs + BR-CO-10/13/15; exact integer money, 1-cent mismatch caught; floats rejected; batch duplicate detection; valid SARIF; honest non-certified scope)`);

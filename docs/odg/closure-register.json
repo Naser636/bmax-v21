@@ -903,6 +903,20 @@
       "acceptance": "The CLI exits non-zero exactly on a policy violation (HIGH/not-policyClean) and zero on clean/needsReview, with operational errors reserved to exit 2; usable as a CI gate; engine unchanged; independent audit confirms no fail-open.",
       "nextAction": "Optionally emit SARIF to a file path arg; wire into a sample CI workflow (owner-gated repo).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-einvoice-bg23-vat-breakdown",
+      "program": "P2",
+      "title": "D6 e-invoice: optional BG-23 VAT breakdown validation (EN 16931 BR-CO-14 + BR-CO-17)",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-einvoice-validator-slice1"
+      ],
+      "priority": 2,
+      "evidence": "PR(this cycle): runtime/core/einvoice-validator.ts — adds optional EN 16931 BG-23 VAT-breakdown validation to validateInvoice. BR-CO-17 (per category): BT-117 tax == round(BT-116 taxable × rateBps/10000), computed EXACTLY in BigInt (rateBps = basis points, 10000=100%, 20%=>2000, 5.5%=>550, consistent with the codebase). BR-CO-14: Σ category tax == BT-110 total VAT (exact via economic-unit), computed only when every entry well-formed. OPTIONAL: validated only when inv.vatBreakdown present; absence is not an error (no regression to the valid path, the parser->validate path, or the export round-trip — BG-23 is not emitted/parsed yet, KNOWN_GAP). FAIL-CLOSED: non-integer taxable/tax or missing/negative/non-safe-int rateBps => amount-format HIGH, entry not summed (no silent rounding, no partial trust). Grounded in EN 16931 (standards integration per mandate §6). Tests (einvoice-validator.test.ts, 16; +5): valid breakdown; BR-CO-17 1-cent mismatch=>HIGH; BR-CO-14 sum mismatch=>HIGH with NO spurious BR-CO-17; non-integer=>amount-format HIGH. INDEPENDENT AUDIT: initial REJECT — a real FAIL-OPEN: EN 16931 permits negative BT-116 (credit notes) but the +5000/10000 BigInt division truncates toward zero, mis-rounding every negative-taxable entry by 1 cent (a wrong credit-note breakdown passed valid; a correct one was wrongly rejected). FIXED: round half-AWAY-from-zero symmetrically (round the magnitude, re-apply sign) + added a negative/credit-note regression test (assertion 16); empirically swept neg/pos/tie cases all correct. Re-verified. Gate: validator 16, tsc 0, build OK, full test:report 201/201 @ workers=2. No new primitive (composes economic-unit).",
+      "acceptance": "VAT breakdown is validated exactly (BigInt, symmetric rounding for negative credit-note amounts) for per-category tax and category-sum, only when supplied, fail-closed on malformed amounts, with no regression to invoices lacking a breakdown; independent audit's fail-open (negative-taxable mis-rounding) fixed + regression-tested.",
+      "nextAction": "Carry BG-23 through einvoice-parser (parse CII/UBL ApplicableTradeTax / cac:TaxSubtotal) and einvoice-export (emit the breakdown) so it round-trips; then BR-S/BR-Z category rules.",
+      "staleEvidence": false
     }
   ]
 }
