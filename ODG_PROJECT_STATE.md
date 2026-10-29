@@ -8643,3 +8643,21 @@ P2 = 36 ACCEPTED / 5 BLOCKED (external/owner) / 1 IN_PROGRESS (broad-it-corpus-g
 AUTONOMY (verified, not claimed): software PROVEN; operational GATED (default NO_EXECUTOR_AUTHORIZED; no background process/systemd). No permanent runner claimed.
 REMAINING WORK IS OWNER-GATED: the 7 blockers each carry humanActionRequired+resumeTest; domain field-validation needs owner authorization. No further self-clearable implementation lot remains without padding.
 NEXT ACTION: owner clears a blocker (see each item) OR authorizes a domain field engagement. Resume: `git checkout main && git pull --ff-only && npx tsx runtime/bin/odg-resume.ts docs/odg/closure-register.json`. Field prereqs: `npx tsx runtime/core/field-validation-readiness.ts`.
+
+## CHECKPOINT 2026-10-29 — P2 at the authorization boundary (reliability fix + state audit)
+Truth Lock: main @ 4a278e4 ≡ origin/main (div 0/0); CI success on every merge; 5 stashes + 7 worktrees + 6 untracked foreign dirs PRESERVED (0 tracked). Explicit-path staging. PRs #205–#210 all in canonical history (verified).
+DELIVERED THIS CAMPAIGN (all independently audited ACCEPT, CI-green, merged): #207 no-install TOML/XML/INI families · #208 §4 field-validation-readiness · #210 memory-aware test-worker cap (computeWorkers) FIXING the recurring OOM/FAIL-6 parallel flakiness (root cause: CPU-only cap; now caps by memory too, honest disclosure, gate never weakened — count-only). test:report 192, 9 primitives.
+STATE AUDIT (corrected a stale claim): broad-it-corpus-grow (IN_PROGRESS) — category+mode coverage is ALREADY met (ratio 0.9167 ≥ 0.6, 11/12 covered); broadIT stays NO_DATA SOLELY due to independentlyLabelled=false (self-authored corpus). Its ONLY remaining prerequisite is the external independent eval set (broad-it-independent-eval-set). No further self-clearable corpus work raises acceptance.
+ADMISSIBILITY PROOF (§4): selectNextLot ⇒ NONE admissible. Every open lot is external/owner-gated. No self-clearable implementation lot remains without fabrication.
+P1 = 8 ACCEPTED / 2 BLOCKED (external) — CLOSED to authorization boundary. P2 = 37 ACCEPTED / 5 BLOCKED (external) / 1 IN_PROGRESS (broad-it-corpus-grow, external-labelling-gated). Register 45 ACCEPTED / 7 BLOCKED / 1 IN_PROGRESS, 0 stale.
+OWNER-ACTION QUEUE (ranked by readiness/impact; each has humanActionRequired+resumeTest):
+  1. new-language-families — authorize checksum-verified hadolint install (HADOLINT_INSTALL.md) ⇒ Dockerfile/lint ⇒ broad-IT 12/12 category coverage. READY, low-risk.
+  2. broad-it-independent-eval-set — supply a third-party-labelled DEV/HELDOUT eval set ⇒ flips broad-IT NO_DATA→MEASURED (unblocks broad-it-corpus-grow too). HIGH impact.
+  3. structured-roadmap-deps (P1) — authorize amending protected ROADMAP.json (proposed diff ready).
+  4. dashboard-tls-exposure (P1) — confirm public exposure + hostname + TLS cert (runbook ready).
+  5. campaign-runner-systemd-activation — authorize an executor + systemd install (CAMPAIGN_RUNNER.md).
+  6. p01-demand-validation — authorize a lawful consented WTP experiment.
+  7. p01-billing-sandbox — provision a real sandbox provider account.
+5 business domains PARTIAL; field-validation prerequisites machine-checkable (`npx tsx runtime/core/field-validation-readiness.ts`), each needing an owner-authorized engagement.
+AUTONOMY (verified, not claimed): software PROVEN; operational GATED (default NO_EXECUTOR_AUTHORIZED; no background process/systemd). No permanent runner claimed.
+NEXT ACTION: owner clears queue item #1 or #2 (highest readiness/impact). Resume: `git checkout main && git pull --ff-only && npx tsx runtime/bin/odg-resume.ts docs/odg/closure-register.json`.
