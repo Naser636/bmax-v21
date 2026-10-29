@@ -94,6 +94,14 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
     bin: "tidy", probeArgs: ["--version"], ext: ".html",
     args: (f: string) => ["-q", "-e", "--show-warnings", "no", f],
   },
+  // Dockerfile/lint via hadolint — ADAPTER PREPARED but hadolint is NOT in the apt repos, so the probe fails today ⇒
+  // Dockerfile is honestly UNSUPPORTED (never a decoy). The wiring is ready: once hadolint is installed via the
+  // checksum-verified procedure (docs/odg/deploy/HADOLINT_INSTALL.md), this adapter activates with no further code
+  // change. hadolint reads one local file; no network. exit 0 clean / non-zero on lint findings.
+  Dockerfile: {
+    bin: "hadolint", probeArgs: ["--version"], ext: ".Dockerfile",
+    args: (f: string) => ["--no-color", f],
+  },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }

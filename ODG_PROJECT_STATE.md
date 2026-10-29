@@ -8484,3 +8484,14 @@ NEVER asserts 'bias-free'. capabilitySurface() HONESTLY: ODG's real caps (code-e
 future human-facing capability types requiring the harness. Suite 7. Wired consumer of independent-label-policy (eval
 labels must be independent — can't self-certify fairness). Register +ACCEPTED responsible-quality-fairness-harness.
 27 ACCEPTED/1/6, 0 stale. Gate: test:report 179, tsc 0, build 0, engine 9/9. Nothing fabricated; no bias claim made.
+
+---
+## CHECKPOINT 2026-10-29 (fv) — Hadolint/Dockerfile adapter PREPARED (external binary isolated) €0
+Mandate §2/§4: advance a blocker's preparable technical work to the exact human action. code-execution Dockerfile
+adapter WIRED (bin hadolint, argv-array --no-color, no network) — honestly UNSUPPORTED today (probe fails, not faked),
+activates with zero code change once the binary is present. Real provenance (WebSearch): hadolint≥2.15 ships
+checksums.sha256 (asset hadolint-linux-x86_64) on the official GitHub release. docs/odg/deploy/HADOLINT_INSTALL.md =
+checksum-verified install runbook (pinned version + sha256sum -c must be OK, no blind curl|sh; sudo install to
+/usr/local/bin) + taxonomy-flip plan + resume-test. Register new-language-families: +humanActionRequired (authorize+run
+the integrity-verified install) + resumeTest; stays BLOCKED (capability NOT PROVEN — only prepared; honest). code-exec
+67→68. 27 ACCEPTED/1/6, 0 stale. Gate: test:report 179, tsc 0, build 0. NO fabricated checksum/coverage. Branched FIRST.

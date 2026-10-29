@@ -324,7 +324,7 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for Dockerfile/lint (hadolint) — last uncovered taxonomy category",
+      "title": "Engineering capability for Dockerfile/lint (hadolint) — adapter PREPARED, external binary gated",
       "status": "BLOCKED",
       "deps": [
         "langfamily-noinstall-checkers",
@@ -337,7 +337,10 @@
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "ONLY Dockerfile/lint (hadolint) remains uncovered of the 12 taxonomy categories. hadolint is NOT in the enabled apt repos — it requires an EXTERNAL binary download (GitHub release) + checksum verification, i.e. a 3rd-party source on the prod host ⇒ authorization-gated (not a standard reproducible apt install). ALL apt-available stacks are DONE. NOTE: covering Dockerfile would take category coverage to 12/12 but broadIT STAYS NO_DATA regardless — the real frontier is INDEPENDENT LABELLING (self-authored corpus), not more categories.",
+      "blockReason": "ONLY Dockerfile/lint (hadolint) remains uncovered of 12. PREPARATION DONE (PR this): code-execution Dockerfile adapter WIRED (bin hadolint, argv-array, no-network), honestly UNSUPPORTED today (probe fails, not faked); checksum-verified install runbook docs/odg/deploy/HADOLINT_INSTALL.md (pinned version + sha256sum -c, no blind curl|sh); taxonomy-flip plan + resume-test documented. hadolint is NOT in apt ⇒ external binary from the official GitHub release.",
+      "humanActionRequired": "authorize + run the integrity-verified hadolint install (HADOLINT_INSTALL.md: download pinned hadolint-linux-x86_64 + checksums.sha256, `sha256sum -c` must be OK, sudo install to /usr/local/bin). Downloads a 3rd-party binary + sudo ⇒ owner decision.",
+      "resumeTest": "npx tsx -e 'console.log(require(\"./runtime/core/code-execution.js\").detectToolchain().Dockerfile)' ⇒ true; then runSyntaxCheck Dockerfile clean⇒PASS / lint-dirty⇒FAIL",
+      "acceptance": "hadolint present (checksum-verified) + Dockerfile adapter runs real lint (clean PASS / dirty FAIL) + corpus slice + taxonomy supported=true ⇒ category coverage 12/12. broadIT STILL NO_DATA (independent-labelling gate).",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },
