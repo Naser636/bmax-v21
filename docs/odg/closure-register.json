@@ -848,6 +848,20 @@
       "acceptance": "Normalizes and compares renovation quotes on a versioned canonical model with BigInt-exact verified totals, provenance, and fail-closed missing/inconsistent-data handling (no fabricated prices/energy/eligibility; no misleading cheapest); independent audit's 3 substantive defects fixed + regression-tested; always NOT_CERTIFIED.",
       "nextAction": "D8: parse real devis formats (PDF/CSV) behind an owner-gated parser; add eligibility *rules registry* (declared-rule, never asserted).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-dataset-quality-conformance-d3-upgrade",
+      "program": "P2",
+      "title": "PRODUCT D3 UPGRADE: dataset-quality-service — value-constraint 'conformance' dimension (enum/min-max/pattern)",
+      "status": "ACCEPTED",
+      "deps": [
+        "data-quality-service"
+      ],
+      "priority": 2,
+      "evidence": "PR(this cycle): runtime/core/dataset-quality-service.ts — adds a 4th quality dimension 'conformance' over value constraints a schema field may declare (enum/min/max/pattern). conformance = conforming non-empty cells / constrained non-empty cells, else null. BACKWARD-COMPATIBLE: null when no field declares a constraint ⇒ filtered from the weighted overallScore ⇒ score bit-identical to the prior 3-dim (0.4/0.4/0.2) behaviour (independently verified on fractional scores). FAIL-CLOSED: an invalid regex, or a malformed constraint declaration (enum-not-array / min|max-not-finite / pattern-not-string), is a HIGH 'conformance-schema:<field>' finding and the field is EXCLUDED wholesale from conformance (no partial trust, never silently conforming); NaN bounds rejected via Number.isFinite; empty cells are a completeness (not conformance) concern. SARIF-emittable findings. Tests (dataset-quality-service.test.ts, 16 incl. 6 new): enum/min-max/pattern violations⇒0.5 + 3 findings; no-constraint⇒null + fractional score == 3-dim renormalization; invalid regex⇒HIGH schema error+excluded; empty cell skipped (pattern-would-fail distinguishes); malformed enum⇒HIGH schema error+excluded. INDEPENDENT AUDIT (general-purpose, adversarial): ACCEPT_WITH_CAVEATS — both trust-critical claims (backward-compat + fail-closed invalid-regex) PROVEN; caveats (two weak/vacuous test assertions; malformed-non-regex silently ignored; NaN-bound no-op) ALL FIXED (tests 12/14 strengthened; malformed-declaration surfaced as HIGH schema error; Number.isFinite bounds). Gate: dataset-quality 16, tsc 0, build OK, full test:report 200/200 @ workers=2. No new primitive.",
+      "acceptance": "Adds a value-constraint conformance dimension that is backward-compatible (constraint-free datasets score identically) and fail-closed (invalid/malformed constraint ⇒ HIGH schema error + field excluded, never silently conforming); independent audit's caveats fixed + regression-tested.",
+      "nextAction": "Other D1-D5 bounded upgrades (code-review severity policy; sbom CVE-scan behind owner-gated feed; finance-ledger double-entry assertion).",
+      "staleEvidence": false
     }
   ]
 }
