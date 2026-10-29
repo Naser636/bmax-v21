@@ -50,4 +50,14 @@ try {
   ok("no authorized executor ⇒ NO_EXECUTOR_AUTHORIZED, no fictitious run, register untouched", r5.code === 0 && r5.json && r5.json.stopped === "NO_EXECUTOR_AUTHORIZED" && fs.readFileSync(p3, "utf8") === before);
 } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 
+// (6) the verification executor attaches a proof record with the REAL exit code (defence-in-depth: the loop's
+// false-success gate re-confirms exit 0 on live runs). A passing PASS-lot ⇒ proof with exitCode 0 + transition ACCEPTED.
+{
+  const RUN = require("./odg-campaign-run.js");
+  const ex = RUN.resolveExecutor("verification");
+  const res = ex({ id: "L", exec: { kind: "verification", language: "JavaScript", content: "const a=1; module.exports=a;\n", expectedStatus: "PASS" } });
+  ok("verification executor attaches a proof carrying the real exit code (gate re-confirms exit 0)",
+     res.status === "ACCEPTED" && res.proof && res.proof.transition.to === "ACCEPTED" && res.proof.attempts[0].exitCode === 0);
+}
+
 console.log(`\nODG-CAMPAIGN-RUN entry-point integration — ${pass} assertions passed. (real process, real executor; multi-mission; resume across process terminations; idempotent; fail-closed NO_EXECUTOR)`);
