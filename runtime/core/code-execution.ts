@@ -191,9 +191,11 @@ function runBehaviourCheck(input: any = {}): any {
     if (r.timedOut) return { status: "BLOCKED", reason: "run timed out", language };
     const out = String(r.stdout || "").trim();
     const want = String(input.expectedOutput).trim();
-    return out === want
-      ? { status: "PASS", language, detail: "program output matches expected" }
-      : { status: "FAIL", language, exitCode: r.exitCode, detail: "program output does NOT match expected (logic/runtime error)" };
+    // PASS requires BOTH a clean exit (exitCode 0) AND matching output. A program that CRASHES (non-zero exit) is
+    // NOT behaviourally correct even if its stdout happens to match — that would be a false success. (audit Q3c)
+    return (r.exitCode === 0 && out === want)
+      ? { status: "PASS", language, detail: "program exited 0 and output matches expected" }
+      : { status: "FAIL", language, exitCode: r.exitCode, detail: r.exitCode !== 0 ? `program exited non-zero (${r.exitCode}) — runtime failure` : "program output does NOT match expected (logic error)" };
   } catch (e: any) {
     return { status: "BLOCKED", reason: (e && e.message) || "execution error", language };
   } finally {
@@ -232,9 +234,10 @@ function runIntegrationCheck(input: any = {}): any {
     if (r.timedOut) return { status: "BLOCKED", reason: "run timed out", language };
     const out = String(r.stdout || "").trim();
     const want = String(input.expectedOutput).trim();
-    return out === want
-      ? { status: "PASS", language, detail: "integrated output matches expected" }
-      : { status: "FAIL", language, exitCode: r.exitCode, detail: "integrated output does NOT match expected (component-interaction defect)" };
+    // PASS requires a clean exit (0) AND matching composed output — a crashing composition is not integrated-correct. (audit Q3c)
+    return (r.exitCode === 0 && out === want)
+      ? { status: "PASS", language, detail: "integration exited 0 and output matches expected" }
+      : { status: "FAIL", language, exitCode: r.exitCode, detail: r.exitCode !== 0 ? `integration exited non-zero (${r.exitCode}) — runtime failure` : "integrated output does NOT match expected (component-interaction defect)" };
   } catch (e: any) {
     return { status: "BLOCKED", reason: (e && e.message) || "execution error", language };
   } finally {

@@ -113,6 +113,18 @@
       "acceptance": "a real hermetic mcs type check with independent eval; external using fails closed; broad rate stays NO_DATA (gated)"
     },
     {
+      "id": "runner-exitcode-honesty-fix",
+      "program": "P2",
+      "title": "Audit-driven honesty fix: behaviour/integration runners require exit 0 (no crash-as-PASS)",
+      "status": "ACCEPTED",
+      "deps": [
+        "benchmark-task-mode-3-integration"
+      ],
+      "priority": 1,
+      "evidence": "An INDEPENDENT adversarial-verification agent (Agent C, read-only) audited broad-it-eval + code-execution: confirmed broadIT=MEASURED gate double-locked (self-authored + requireIndependentLabelling ANDed into meetsThreshold) and leakage multi-file-aware (SOUND), but found a REAL false-success (Q3c): runBehaviourCheck/runIntegrationCheck returned PASS on matching stdout even when the program CRASHED (exit!=0). ODG independently reproduced it in code (crash+match⇒PASS). FIX: PASS now requires exitCode===0 AND output match; non-zero exit ⇒ FAIL (runtime failure). Regression tests added (audit Q5): crash+match⇒FAIL, spawn-error/timeout⇒BLOCKED (behaviour+integration), AND checkLeakage proven to FIRE on planted single-file + multi-file + id collisions. code-execution suite 60→67, broad-it-eval 43→46. Corpus classification unaffected (clean cases exit 0). broadIT stays NO_DATA.",
+      "acceptance": "the independent audit's confirmed defect is fixed with a regression test; no false success on a crashing program; leakage detector proven to fire"
+    },
+    {
       "id": "benchmark-task-mode-3-integration",
       "program": "P2",
       "title": "Third task MODE: integration (multi-file component interaction) + independent-labelling gate",
