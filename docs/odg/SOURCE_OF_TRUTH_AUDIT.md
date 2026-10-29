@@ -60,3 +60,11 @@ The working host IS the VPS (`hostname vps-6d919042`); the git/build work this c
 - The P0 mission-runner defect is **RESOLVED IN PRODUCTION** — verified by a real systemd tick, not only local tests.
 
 **Matrix update:** F0 canary guard + build-guard recurrence fix → deployment **actually verified** on the VPS (service success tick). Remaining F1 (governance-scope `ODG_AUTONOMOUS_WORK_PROTOCOL.json`), F3 (superseded branches) stay owner/CTO-gated.
+
+---
+## ADDENDUM 2 — final consolidation (2026-10-29)
+- **F3 RESOLVED:** every unique module of `worktree-stabilization+controlled-odg` is confirmed re-implemented in main's TS (`economic-extractor.ts`, `opportunity-policy.ts`, `bounded-http-client.ts` for governed-web-fetch); `dashboard-isolated@520b6d8` superseded by main's stronger VERIFY_OBSERVABILITY. Both tips archived as recovery tags (`archive/f3-stabilization-worktree`, `archive/f3-dashboard-isolated`), worktrees removed, branch deleted (0 uncommitted lost).
+- **Governance (F1 scope) RESOLVED:** `ODG_AUTONOMOUS_WORK_PROTOCOL.json current_campaign_scope` surgically amended (CTO-authorized, scope-limited) to `NONE_ACTIVE`/`SUPERSEDED`/`authorizes:[]` — the stale RC `.js` write-set is retired; all 17 other top-level keys byte-identical (truth_lock/protected_paths/approval_gates/reality_proof_rule intact); authority narrowed, never widened.
+- **Repo consolidation:** local branches 127→4 (kept main + governance/f11-operating-contract [unique film] + mission/fleet-first-exchange [stash base] + sprint-01 [differs from origin]); worktrees 7→1; 78 empty `la-bench/eg-bench` temp dirs removed (empty-only); `runtime/generated` data (2018 files) + 5 stashes + 6 foreign dirs preserved.
+- **Verified:** build 0, tsc 0, test:report 202/202, mission-runner last real systemd tick success (23:20:41Z), Truth-Lock refusal intact. Register 66 ACCEPTED / 7 BLOCKED / 1 IN_PROGRESS / 2 DEFERRED, 0 stale.
+- **Residue:** cosmetic — live `/etc` unit header text + `deploy/README-systemd.md` wording (needs sudo+systemd for the live units; out of repo scope). PC parity: PC not reachable from this session (VPS host); canonical parity anchor is `origin/main @ 2eaf64d`.
