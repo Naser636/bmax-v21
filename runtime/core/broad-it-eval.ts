@@ -118,13 +118,32 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-rt-js-broken-1", partition: "heldout", category: "Runtime/behaviour", language: "JavaScript", kind: "broken", mode: "runtime-behaviour", expected: "FAIL", expectedOutput: "ababab", content: "console.log('ab'.repeat(2))\n" },
   { id: "held-rt-py-clean-1", partition: "heldout", category: "Runtime/behaviour", language: "Python", kind: "clean", mode: "runtime-behaviour", expected: "PASS", expectedOutput: "[1, 2, 3]", content: "print(sorted([3,1,2]))\n" },
   { id: "held-rt-py-broken-1", partition: "heldout", category: "Runtime/behaviour", language: "Python", kind: "broken", mode: "runtime-behaviour", expected: "FAIL", expectedOutput: "[1, 2, 3]", content: "print(sorted([3,1,2], reverse=True))\n" },
+  // --- CSharp/compile (v9): real hermetic `mcs -target:library` (type check; external using = no reference ⇒ FAIL CLOSED). ---
+  { id: "dev-cs-clean-1", partition: "dev", category: "CSharp/compile", language: "CSharp", kind: "clean", expected: "PASS", content: "public class Calc { public int Add(int a, int b){ return a + b; } }\n" },
+  { id: "dev-cs-clean-2", partition: "dev", category: "CSharp/compile", language: "CSharp", kind: "clean", expected: "PASS", content: "public class Store { private System.Collections.Generic.List<int> xs = new System.Collections.Generic.List<int>(); public void Add(int x){ xs.Add(x); } }\n" },
+  { id: "dev-cs-broken-1", partition: "dev", category: "CSharp/compile", language: "CSharp", kind: "broken", expected: "FAIL", content: "public class C { public int F(){ string s = 5; return s; } }\n" },
+  { id: "dev-cs-broken-2", partition: "dev", category: "CSharp/compile", language: "CSharp", kind: "broken", expected: "FAIL", content: "public class C { public void F(){ Missing(); } }\n" },
+  { id: "held-cs-clean-1", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "clean", expected: "PASS", content: "public class G { public string Hi(string n){ return \"hi \" + n; } }\n" },
+  { id: "held-cs-clean-2", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "clean", expected: "PASS", content: "public class Box<T> { private T v; public Box(T v){ this.v = v; } public T Get(){ return v; } }\n" },
+  { id: "held-cs-broken-1", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "broken", expected: "FAIL", content: "using Newtonsoft.Json;\npublic class C { JsonConvert x; }\n" },
+  { id: "held-cs-broken-2", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "broken", expected: "FAIL", content: "public class Bad { public int F(){ return; } }\n" },
+  // --- Integration/multi-file (v9, 3rd TASK MODE): component interaction. entry imports a helper; a defect in the
+  // intermediate helper surfaces only through the composition. Not a taxonomy slot (adds a MODE, not a category). ---
+  { id: "dev-int-js-clean-1", partition: "dev", category: "Integration/multi-file", language: "JavaScript", kind: "clean", mode: "integration", expected: "PASS", entry: "main.js", expectedOutput: "15", files: [{ name: "helper.js", content: "module.exports.sumTo=(n)=>{let s=0;for(let i=1;i<=n;i++)s+=i;return s;};\n" }, { name: "main.js", content: "const h=require('./helper.js');console.log(h.sumTo(5));\n" }] },
+  { id: "dev-int-js-broken-1", partition: "dev", category: "Integration/multi-file", language: "JavaScript", kind: "broken", mode: "integration", expected: "FAIL", entry: "main.js", expectedOutput: "15", files: [{ name: "helper.js", content: "module.exports.sumTo=(n)=>{let s=0;for(let i=1;i<n;i++)s+=i;return s;};\n" }, { name: "main.js", content: "const h=require('./helper.js');console.log(h.sumTo(5));\n" }] },
+  { id: "dev-int-py-clean-1", partition: "dev", category: "Integration/multi-file", language: "Python", kind: "clean", mode: "integration", expected: "PASS", entry: "main.py", expectedOutput: "42", files: [{ name: "helper.py", content: "def mul(a, b):\n    return a * b\n" }, { name: "main.py", content: "from helper import mul\nprint(mul(6, 7))\n" }] },
+  { id: "dev-int-py-broken-1", partition: "dev", category: "Integration/multi-file", language: "Python", kind: "broken", mode: "integration", expected: "FAIL", entry: "main.py", expectedOutput: "42", files: [{ name: "helper.py", content: "def mul(a, b):\n    return a + b\n" }, { name: "main.py", content: "from helper import mul\nprint(mul(6, 7))\n" }] },
+  { id: "held-int-js-clean-1", partition: "heldout", category: "Integration/multi-file", language: "JavaScript", kind: "clean", mode: "integration", expected: "PASS", entry: "app.js", expectedOutput: "HELLO", files: [{ name: "fmt.js", content: "module.exports.shout=(s)=>s.toUpperCase();\n" }, { name: "app.js", content: "const f=require('./fmt.js');console.log(f.shout('hello'));\n" }] },
+  { id: "held-int-js-broken-1", partition: "heldout", category: "Integration/multi-file", language: "JavaScript", kind: "broken", mode: "integration", expected: "FAIL", entry: "app.js", expectedOutput: "HELLO", files: [{ name: "fmt.js", content: "module.exports.shout=(s)=>s.toLowerCase();\n" }, { name: "app.js", content: "const f=require('./fmt.js');console.log(f.shout('hello'));\n" }] },
+  { id: "held-int-py-clean-1", partition: "heldout", category: "Integration/multi-file", language: "Python", kind: "clean", mode: "integration", expected: "PASS", entry: "run.py", expectedOutput: "6", files: [{ name: "ops.py", content: "def fact(n):\n    r = 1\n    for i in range(2, n + 1):\n        r *= i\n    return r\n" }, { name: "run.py", content: "from ops import fact\nprint(fact(3))\n" }] },
+  { id: "held-int-py-broken-1", partition: "heldout", category: "Integration/multi-file", language: "Python", kind: "broken", mode: "integration", expected: "FAIL", entry: "run.py", expectedOutput: "6", files: [{ name: "ops.py", content: "def fact(n):\n    r = 1\n    for i in range(2, n):\n        r *= i\n    return r\n" }, { name: "run.py", content: "from ops import fact\nprint(fact(3))\n" }] },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v8";
+const CORPUS_VERSION = "broad-it-eval-v9";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
 // NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
 // Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build", "Java/compile"];
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build", "Java/compile", "CSharp/compile"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
@@ -137,7 +156,7 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
   { category: "Go/build", supported: true, language: "Go" },   // v5: real hermetic `go build` (authorized Go toolchain, PR#170)
   { category: "Rust/build", supported: true, language: "Rust" },     // v6: real hermetic `rustc --emit=metadata` (authorized Rust toolchain)
   { category: "Java/compile", supported: true, language: "Java" },     // v7: real hermetic `javac -d <ws>` (authorized JDK)
-  { category: "CSharp/compile", supported: false, language: "CSharp" },
+  { category: "CSharp/compile", supported: true, language: "CSharp" },   // v9: real hermetic `mcs -target:library` (authorized Mono)
   { category: "SQL/schema", supported: true, language: "SQL" },               // v3: real checker (stdlib sqlite3, no install)
   { category: "Shell/lint", supported: true, language: "ShellLint" },         // v4: real shellcheck static analysis
   { category: "HTML-CSS/validate", supported: false, language: "HtmlCss" },
@@ -155,18 +174,28 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
 // modes, not just language-category breadth. The corpus is dominated by `static-single-file` (compile/syntax/type on
 // one file); a 2nd mode `runtime-behaviour` (run + assert OUTPUT) is a genuinely different capability. Until the corpus
 // spans ≥ minModeCoverage of BROAD_TASK_MODES, it is NOT representative of broad IT, no matter how many languages.
-const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true, minModeCoverage: 0.6 });
+const REPRESENTATIVE_THRESHOLD = Object.freeze({ minCoverageRatio: 0.6, minCasesPerCovered: 6, requireBothKinds: true, minModeCoverage: 0.6, requireIndependentLabelling: true });
 const BROAD_TASK_MODES = Object.freeze(["static-single-file", "runtime-behaviour", "integration", "data", "application-build"]);
+// Provenance of the ground-truth labels. ODG authored BOTH the cases and their expected labels ⇒ NOT independent.
+// A credible VERIFIED broad-IT success rate requires labels from a source independent of the author (held-out, third-
+// party, or real historical outcomes). Until then the representativeness gate stays unmet even at full breadth+modes.
+const CORPUS_LABELLING = "self-authored";
 
 function sha256(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
+// A case's hashable payload: single-file cases use `content`; multi-file (integration) cases serialise files+entry+
+// expectedOutput deterministically. This keeps the leakage check well-defined across ALL task modes.
+function caseHashInput(c: any): string {
+  if (typeof c.content === "string") return c.content;
+  return JSON.stringify({ files: c.files || null, entry: c.entry || null, expectedOutput: c.expectedOutput || null });
+}
 
 /** checkLeakage(): DEV and HELDOUT must be disjoint by id AND by content hash. Returns { ok, idOverlap[], hashOverlap[] }. */
 function checkLeakage(corpus: ReadonlyArray<any> = CORPUS): any {
   const dev = corpus.filter((c) => c.partition === "dev");
   const held = corpus.filter((c) => c.partition === "heldout");
-  const devIds = new Set(dev.map((c) => c.id)); const devHashes = new Set(dev.map((c) => sha256(c.content)));
+  const devIds = new Set(dev.map((c) => c.id)); const devHashes = new Set(dev.map((c) => sha256(caseHashInput(c))));
   const idOverlap = held.filter((c) => devIds.has(c.id)).map((c) => c.id);
-  const hashOverlap = held.filter((c) => devHashes.has(sha256(c.content))).map((c) => c.id);
+  const hashOverlap = held.filter((c) => devHashes.has(sha256(caseHashInput(c)))).map((c) => c.id);
   return { ok: idOverlap.length === 0 && hashOverlap.length === 0, idOverlap, hashOverlap, devCount: dev.length, heldoutCount: held.length };
 }
 
@@ -216,7 +245,8 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS, toolchain?: Record<
     taskModes,
     modeCoverage,
     modeDiverse,
-    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0 && modeDiverse,
+    independentlyLabelled: CORPUS_LABELLING !== "self-authored",
+    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0 && modeDiverse && (!th.requireIndependentLabelling || CORPUS_LABELLING !== "self-authored"),
     coveredCategories: covered.map((c) => c.category),
     missing: perCategory.filter((c) => !c.covered).map((c) => ({ category: c.category, supported: c.supported, cases: c.cases, reason: !c.supported ? "no executable checker in ODG (toolchain absent) — would be UNSUPPORTED" : (!c.toolchainPresent ? "checker declared but its toolchain is NOT present at eval time — not currently measurable" : "insufficient real-evaluable cases (need both kinds ≥ threshold)") })),
     perCategory,
@@ -240,9 +270,11 @@ function evaluate(opts: any = {}): any {
     // task MODE selects the checker: runtime-behaviour RUNS the program + asserts output (output correctness);
     // everything else compiles/type-checks a single file. The static `runner` oracle is for the latter only; a
     // runtime case uses the real interpreter (or an injected behaviourRunner) — its ground truth is the expectedOutput.
-    const res = c.mode === "runtime-behaviour"
-      ? EXEC.runBehaviourCheck({ language: c.language, content: c.content, expectedOutput: c.expectedOutput, toolchainAvailable: available, ...(opts.behaviourRunner ? { runner: opts.behaviourRunner } : {}) })
-      : EXEC.runSyntaxCheck({ language: c.language, content: c.content, toolchainAvailable: available, ...(runner ? { runner } : {}) });
+    const res = c.mode === "integration"
+      ? EXEC.runIntegrationCheck({ language: c.language, files: c.files, entry: c.entry, expectedOutput: c.expectedOutput, toolchainAvailable: available, ...(opts.behaviourRunner ? { runner: opts.behaviourRunner } : {}) })
+      : c.mode === "runtime-behaviour"
+        ? EXEC.runBehaviourCheck({ language: c.language, content: c.content, expectedOutput: c.expectedOutput, toolchainAvailable: available, ...(opts.behaviourRunner ? { runner: opts.behaviourRunner } : {}) })
+        : EXEC.runSyntaxCheck({ language: c.language, content: c.content, toolchainAvailable: available, ...(runner ? { runner } : {}) });
     let outcome: string;
     if (res.status === "UNSUPPORTED" || res.status === "BLOCKED") { outcome = "blocked"; perCategory[c.category].blocked++; overall.blocked++; }
     else {
@@ -285,8 +317,10 @@ function assessBroadIT(opts: any = {}): any {
     broadIT,
     reason: representative
       ? `corpus meets the pre-registered representativeness gate (coverage ${coverage.ratio} ≥ ${coverage.threshold.minCoverageRatio})`
-      : (coverage.ratio >= coverage.threshold.minCoverageRatio && !coverage.modeDiverse
-          ? `category coverage ${coverage.coveredCount}/${coverage.total} (ratio ${coverage.ratio}) meets the breadth gate, BUT task-MODE coverage is only ${coverage.modeCoverage} (modes present: [${coverage.taskModes.join(", ")}]) < required ${coverage.threshold.minModeCoverage}. Language-category breadth is NOT representativeness of broad IT — that needs ${BROAD_TASK_MODES.length} major task modes (static-single-file, runtime-behaviour, integration, data, application-build). Verdict stays NO_DATA (no false MEASURED on narrow task-mode coverage).`
+      : (coverage.ratio >= coverage.threshold.minCoverageRatio && coverage.modeDiverse && !coverage.independentlyLabelled
+          ? `category coverage ${coverage.coveredCount}/${coverage.total} (ratio ${coverage.ratio}) AND task-mode coverage ${coverage.modeCoverage} (modes: [${coverage.taskModes.join(", ")}]) BOTH meet the gates, BUT the corpus is SELF-AUTHORED (ODG wrote both the cases and their labels) ⇒ not independently labelled. A credible VERIFIED broad-IT success rate requires labels from an independent source (held-out third-party / real historical outcomes). Verdict stays NO_DATA (no self-graded MEASURED).`
+          : coverage.ratio >= coverage.threshold.minCoverageRatio && !coverage.modeDiverse
+          ? `category coverage ${coverage.coveredCount}/${coverage.total} (ratio ${coverage.ratio}) meets the breadth gate, BUT task-MODE coverage is only ${coverage.modeCoverage} (modes present: [${coverage.taskModes.join(", ")}]) < required ${coverage.threshold.minModeCoverage}. Language-category breadth is NOT representativeness of broad IT — that needs ${BROAD_TASK_MODES.length} major task modes. Verdict stays NO_DATA (no false MEASURED on narrow task-mode coverage).`
           : `corpus covers ${coverage.coveredCount}/${coverage.total} target categories (ratio ${coverage.ratio} < required ${coverage.threshold.minCoverageRatio}); ${coverage.missing.length} categories uncovered (${coverage.missing.map((m: any) => m.category).join(", ")}). Toolchain-aware: a category counts only if real cases exist AND its checker is runnable now. A broad-IT rate requires crossing this gate with a representative, independently-labelled, multi-mode corpus.`),
     representative,
     coverage,

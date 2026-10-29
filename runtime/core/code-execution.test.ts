@@ -54,10 +54,11 @@ ok("Rust toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ langu
 // Java/compile IS wired now (authorized JDK): a REAL `javac -d <ws>` type check — argv-array; no HOME/JAVA_HOME clobber.
 ok("Java in LANG_SPEC: argv-array `javac -d` (no env clobber)", E.LANG_SPEC.Java && E.LANG_SPEC.Java.bin === "javac" && E.LANG_SPEC.Java.args("f").includes("-d") && !("env" in E.LANG_SPEC.Java && typeof E.LANG_SPEC.Java.env === "function" && E.LANG_SPEC.Java.env("/ws").JAVA_HOME));
 ok("Java toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Java", content: "class M{}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
-// the REMAINING compiler stacks stay honestly ABSENT from LANG_SPEC (require their own authorized install ⇒ UNSUPPORTED, never faked).
-for (const lang of ["CSharp"]) {
-  ok(`${lang} NOT in LANG_SPEC ⇒ UNSUPPORTED (no decoy)`, !E.LANG_SPEC[lang] && E.runSyntaxCheck({ language: lang, content: "x" }).status === "UNSUPPORTED");
-}
+// CSharp/compile IS wired now (authorized Mono mcs): real `mcs -target:library` type check — argv-array; no env clobber.
+ok("CSharp in LANG_SPEC: argv-array `mcs -target:library`", E.LANG_SPEC.CSharp && E.LANG_SPEC.CSharp.bin === "mcs" && E.LANG_SPEC.CSharp.args("f").includes("-target:library"));
+ok("CSharp toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "CSharp", content: "public class M{}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
+// a genuinely unknown stack stays UNSUPPORTED (no decoy).
+ok("unknown stack (COBOL) ⇒ UNSUPPORTED (no decoy)", !E.LANG_SPEC.COBOL && E.runSyntaxCheck({ language: "COBOL", content: "x" }).status === "UNSUPPORTED");
 
 // (10) NEW no-install checkers — REAL subprocess, guarded on actual availability (skip honestly if absent in runtime).
 const real = E.detectToolchain();
@@ -78,6 +79,8 @@ const realCases = [
   // Java/compile: real javac. FAIL = a TYPE error (not syntax); no classpath ⇒ external import also fails closed.
   ["Java", "class Calc { int add(int a, int b){ return a + b; } }\n", "PASS"],
   ["Java", "class Calc { int f(){ String s = 5; return s; } }\n", "FAIL"],
+  ["CSharp", "public class Calc { public int Add(int a, int b){ return a + b; } }\n", "PASS"],
+  ["CSharp", "public class C { public int F(){ string s = 5; return s; } }\n", "FAIL"],
 ];
 for (const [lang, content, exp] of realCases) {
   if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }
@@ -106,4 +109,22 @@ for (const [lang, content, expectedOutput, exp] of behaviourCases) {
   ok(`runBehaviourCheck ${lang} ${exp}: output-correctness classified`, st === exp);
 }
 
-console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped stderr; not faked; fail-closed; runBehaviourCheck output-correctness)`);
+// (12) runIntegrationCheck — MULTI-FILE component interaction (a defect in an intermediate helper surfaces only via
+// the composition). Structural fail-closed + real-guarded.
+ok("integration <2 files ⇒ BLOCKED (fail-closed)", E.runIntegrationCheck({ language: "JavaScript", files: [{ name: "a.js", content: "x" }], entry: "a.js", expectedOutput: "y" }).status === "BLOCKED");
+ok("integration entry not among files ⇒ BLOCKED", E.runIntegrationCheck({ language: "JavaScript", files: [{ name: "a.js", content: "x" }, { name: "b.js", content: "y" }], entry: "missing.js", expectedOutput: "z" }).status === "BLOCKED");
+ok("integration interpreter absent ⇒ UNSUPPORTED", E.runIntegrationCheck({ language: "JavaScript", files: [{ name: "a.js", content: "x" }, { name: "b.js", content: "y" }], entry: "a.js", expectedOutput: "z", toolchainAvailable: false }).status === "UNSUPPORTED");
+const realI = E.detectToolchain();
+const intCases = [
+  ["JavaScript", [{ name: "helper.js", content: "module.exports.triple=(x)=>x*3;\n" }, { name: "main.js", content: "const h=require('./helper.js');console.log(h.triple(4));\n" }], "main.js", "12", "PASS"],
+  ["JavaScript", [{ name: "helper.js", content: "module.exports.triple=(x)=>x*2;\n" }, { name: "main.js", content: "const h=require('./helper.js');console.log(h.triple(4));\n" }], "main.js", "12", "FAIL"], // intermediate-component bug
+  ["Python", [{ name: "helper.py", content: "def mul(a,b):\n    return a*b\n" }, { name: "main.py", content: "from helper import mul\nprint(mul(6,7))\n" }], "main.py", "42", "PASS"],
+];
+for (const [lang, files, entry, expectedOutput, exp] of intCases) {
+  if (!realI[lang]) { console.log(`  ~~ skip integration ${lang} (interpreter absent)`); continue; }
+  const st = E.runIntegrationCheck({ language: lang, files, entry, expectedOutput }).status;
+  if (st !== "PASS" && st !== "FAIL") { console.log(`  ~~ skip integration ${lang} (non-definitive ${st})`); continue; }
+  ok(`runIntegrationCheck ${lang} ${exp}: component-interaction classified`, st === exp);
+}
+
+console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped; not faked; fail-closed; behaviour + integration checks)`);
