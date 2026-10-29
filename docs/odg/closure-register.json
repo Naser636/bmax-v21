@@ -541,6 +541,80 @@
       "acceptance": "A real project is reviewed by real analyzers end-to-end (service + CLI), findings are severity-ranked with reproducible evidence and exported as valid SARIF 2.1.0; broken code yields findings (0 false PASS) and coverage gaps are never reported clean.",
       "nextAction": "Extend analyzers (eslint/ruff/semgrep adapters as toolchains allow) and add project-mode TS review via ts-project-check; pursue a real (non-self) client repo review as the PROVEN milestone for domain #1. Other Runtime-Enterprise specialties (#2 Cyber&Compliance, #3 Financial Auditing, #4 Executive Runtime) remain PARTIAL — independent lots.",
       "staleEvidence": false
+    },
+    {
+      "id": "business-coverage-matrix-22",
+      "program": "P2",
+      "title": "Evidence-based 22-domain business coverage matrix (canonical roadmap record)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "Inventory by 3 independent read-only agents (2026-10-29, HEAD d120076). STRICT evidence statuses (a roadmap entry/name/synthetic test is NOT proof): PROVEN=none. PARTIAL: 1 Enterprise-SW-Eng, 2 Cyber&Compliance, 3 Financial-Auditing, 4 Executive-Runtime, 5 Research, 6 Engineering-general(strongest/self-engineering), 9 Finance(SIM-ONLY), 10 Marketing(planner), 11 Cyber(defensive/synthetic), 13 SELF_SALES(funnel,€0), 14 Documents/Data, 15 Legal(readiness≠opinion), 17 Apps/APIs, 18 Bugfix/refactor, 19 Tests/QA(VE-gate real), 20 Data/automation, 21 DevOps(PROVEN-leaning), 22 Supply-chain. ABSENT: 7 BTP, 8 Real-Estate, 12 E-commerce(untracked prose only), 16 Industrial-ops. COMMON GAP: real cores tested with INJECTED/synthetic data; no real-case external end-to-end + €0 cash. Host toolchain: all compilers present except hadolint.",
+      "acceptance": "A single evidence-based status per domain exists; no domain overclaimed PROVEN; gaps are explicit.",
+      "nextAction": "Drive PARTIAL→nearer-PROVEN by delivering real-data end-to-end capability lots (campaign below). ABSENT domains need a representative model before any PROVEN claim.",
+      "staleEvidence": false
+    },
+    {
+      "id": "engine-excellence-resume",
+      "program": "P1",
+      "title": "ENGINE EXCELLENCE — resume after the first verified business lot (do not restart proven engine work)",
+      "status": "DEFERRED",
+      "deps": [
+        "ese-code-review-service"
+      ],
+      "priority": 3,
+      "evidence": "Prior engine work is PROVEN & merged — do NOT redo: inter-mission continuity+persistent campaign (campaign-loop PR#185, odg-campaign-run PR#186), resume+context handoff (odg-resume PR#187), register-complete handoff (PR#188), cycle-time/throughput instrumentation (campaign-metrics PR#190). Resume CRITERIA: after ≥1 business lot ACCEPTED with real evidence, re-measure engine gaps using campaign-metrics on the new cycle, fix ONLY blockers to delivery/verification/resume/security, and keep business lots moving in parallel.",
+      "acceptance": "Engine changes are justified by measured need (campaign-metrics), raise verified throughput without lowering quality, and keep the 9 primitives unchanged (no 10th).",
+      "nextAction": "After business lots 2-5, run campaign-metrics over the cycle; pick at most the highest-evidence engine improvement; do not let engine work replace business delivery.",
+      "staleEvidence": false
+    },
+    {
+      "id": "sbom-audit-service",
+      "program": "P2",
+      "title": "Cyber/Supply-chain #2/#22: real-lockfile SBOM (CycloneDX) + license-policy audit over a REAL project (not injected)",
+      "status": "READY",
+      "deps": [],
+      "priority": 2,
+      "contract": "Compose supply-chain-attest + license-policy over a REAL package-lock.json/package.json read from a project dir. IN: projectDir. OUT: CycloneDX SBOM + license findings (SPDX, fail-closed on unknown) + report. TESTS: real repo lockfile (this repo) → components>0, deterministic; unknown license ⇒ flagged not passed; no lockfile ⇒ BLOCKED not fake. Independent files: runtime/core/sbom-audit-service.ts + bin + test.",
+      "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
+      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
+      "staleEvidence": false
+    },
+    {
+      "id": "data-quality-service",
+      "program": "P2",
+      "title": "Documents/Data #14: dataset normalize/dedup/quality-score over a REAL CSV/JSON dataset",
+      "status": "READY",
+      "deps": [],
+      "priority": 2,
+      "contract": "Compose src/core/data-quality-* + data-normalizer into an end-to-end service. IN: a dataset (CSV/JSON rows). OUT: normalized+deduped rows + quality-score report (nulls, dup keys, type violations). TESTS: real fixture dataset w/ known dups/nulls → exact counts; malformed input ⇒ fail-closed. Independent files: runtime/core/data-quality-service.ts + test.",
+      "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
+      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
+      "staleEvidence": false
+    },
+    {
+      "id": "finance-reconciliation-service",
+      "program": "P2",
+      "title": "Financial Auditing #3: ledger reconciliation over REAL invoices+payments test data → discrepancy audit",
+      "status": "READY",
+      "deps": [],
+      "priority": 2,
+      "contract": "Compose financial-reconciliation (exact integer money, anti-double-count) into an end-to-end service reading invoices + payments files. IN: invoices[], payments[]. OUT: reconciliation report (matched, unmatched, duplicates, inconsistencies) + audit trail. TESTS: reproducible dataset w/ a known duplicate + a short-payment ⇒ exact verdicts; tampered totals detected. NOT an accounting certification. Independent files: runtime/core/finance-reconciliation-service.ts + test.",
+      "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
+      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
+      "staleEvidence": false
+    },
+    {
+      "id": "regulatory-dossier-service",
+      "program": "P2",
+      "title": "Legal/Compliance #15: AI-Act/GDPR readiness dossier over a declared system profile (source-cited, NOT a legal opinion)",
+      "status": "READY",
+      "deps": [],
+      "priority": 2,
+      "contract": "Compose regulatory-assurance + ai-act-role-classifier into an end-to-end dossier generator. IN: a system profile (role, data, purpose). OUT: AI-Act role classification + source-cited readiness obligations + gaps; fail-closed on uncited obligation. TESTS: a high-risk profile ⇒ classified + obligations cited; missing citation ⇒ refused. Explicitly NOT a legal opinion/certification. Independent files: runtime/core/regulatory-dossier-service.ts + test.",
+      "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
+      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
+      "staleEvidence": false
     }
   ]
 }
