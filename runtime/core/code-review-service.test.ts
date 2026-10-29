@@ -127,4 +127,11 @@ const BROKEN_JS = "const y = ;\nmodule.exports = y;\n";   // syntax error — no
   } else { ok("TypeScript toolchain absent ⇒ TS-fail case skipped honestly", true); }
 }
 
+// (12) new no-install families (TOML/XML/INI) route through the review ⇒ a malformed config is a compile finding.
+{
+  const r = R.reviewProject({ project: "cfg", files: [{ path: "bad.toml", content: "a = = 1\n" }, { path: "ok.xml", content: "<r><a>1</a></r>\n" }, { path: "ok.ini", content: "[s]\nk=v\n" }] });
+  ok("TOML/XML/INI routed: malformed .toml ⇒ HIGH compile finding; valid .xml/.ini reviewed clean",
+     r.review.summary.filesReviewed === 3 && r.review.findings.some((f) => f.id === "compile:bad.toml" && f.severity === "HIGH") && r.review.findings.length === 1);
+}
+
 console.log(`\nCODE-REVIEW-SERVICE suite — ${pass} assertions passed. (REAL node --check on clean+broken fixtures; import-aware TS project mode (no false positive); 0 false PASS; valid SARIF 2.1.0; coverage gaps never clean; completeCoverage; fail-closed; spawned CLI end-to-end)`);

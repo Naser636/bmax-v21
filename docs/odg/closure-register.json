@@ -673,6 +673,20 @@
       "acceptance": "On the autonomous acceptance path, when ODG sets requireProof, a proofless ACCEPTED cannot be accepted (bypass-by-omission closed); default behaviour unchanged.",
       "nextAction": "OPERATIONAL NOTE (independent-audit caveat): ODG_CAMPAIGN_REQUIRE_PROOF=1 safely stalls FAIL-expected lots (no proof emitted ⇒ IDLE_BLOCKED, no loop) — enable it only on PASS-proof campaigns until FAIL-expected lots also emit proof. P1 remaining = 2 external BLOCKED (dashboard-tls-exposure, structured-roadmap-deps).",
       "staleEvidence": false
+    },
+    {
+      "id": "new-language-families-noinstall",
+      "program": "P2",
+      "title": "P2: 3 new no-install language families (TOML/XML/INI) via python3 stdlib — autonomous (no owner action)",
+      "status": "ACCEPTED",
+      "deps": [
+        "ese-code-review-service"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): the sibling new-language-families blocker is gated on an owner-authorized hadolint binary install; THESE families need NO install (python3 stdlib already present) so they are AUTONOMOUS. Added to code-execution.ts LANG_SPEC: TOML (tomllib, py3.11+), XML (xml.dom.minidom), INI (configparser.read_file — raises on section-less/malformed) — all bin=python3, argv-array, probe-gated (UNSUPPORTED if python3 absent, never faked). Routed through code-review-service EXT_LANG (.toml/.xml/.ini). Tests: code-execution.test.ts +15 (registered+argv-array, python3-stdlib, toolchain-absent⇒UNSUPPORTED, and REAL-subprocess PASS/FAIL for valid+malformed each ⇒ 83 total) + code-review-service.test.ts +1 (malformed .toml⇒HIGH compile finding, valid .xml/.ini reviewed clean). Real host: all three PASS valid / FAIL malformed via real python3 subprocess. HONEST: these are well-formedness/parse checks (TOML/XML/INI), NOT schema/semantic validation; probe-gated fail-closed. No new primitive (LANG_SPEC extension). Independent audit + CI. Gate: code-execution 83, code-review green, tsc 0, test:report green. Does NOT resolve the hadolint-gated new-language-families blocker (still owner-gated).",
+      "acceptance": "TOML/XML/INI execute real well-formedness checks with 0 false PASS on malformed input, probe-gated UNSUPPORTED when python3 absent, routed through the code-review service; no owner action required.",
+      "nextAction": "Further families needing a binary (hadolint/others) remain owner-gated (see new-language-families).",
+      "staleEvidence": false
     }
   ]
 }

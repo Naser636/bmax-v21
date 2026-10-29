@@ -33,6 +33,7 @@ const EXT_LANG: Readonly<Record<string, string>> = Object.freeze({
   ".js": "JavaScript", ".mjs": "JavaScript", ".cjs": "JavaScript",
   ".ts": "TypeScript", ".py": "Python", ".sh": "Shell", ".bash": "Shell",
   ".sql": "SQL", ".yaml": "YAML", ".yml": "YAML", ".json": "JSON",
+  ".toml": "TOML", ".xml": "XML", ".ini": "INI",
   ".go": "Go", ".rs": "Rust", ".java": "Java", ".cs": "CSharp",
 });
 
