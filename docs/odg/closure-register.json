@@ -733,6 +733,21 @@
       "acceptance": "Given a genuinely independent third-party-labelled eval set, the harness admits it fail-closed and produces a MEASURED broad-IT rate from the real checker; a self-authored/leaky set is refused (NO_DATA).",
       "nextAction": "Owner supplies a real independent third-party-labelled eval-set JSON; run `npx tsx runtime/core/broad-it-eval-ingest.ts <file>`. Until then broad-IT stays NO_DATA (honest).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-einvoice-validator-slice1",
+      "program": "P2",
+      "title": "PRODUCT e-invoice-finance-operations SLICE 1: EN 16931-core validator (exact money, BR-CO-10/13/15, duplicates)",
+      "status": "ACCEPTED",
+      "deps": [
+        "finance-reconciliation-service",
+        "new-language-families-noinstall"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): first real, tested vertical slice of the e-invoice-finance-operations product (highest-reuse of the 3 programs — economic-unit + finance-ledger + the new XML checker). runtime/core/einvoice-validator.ts validates a structured invoice against the EN 16931 CORE calculation business rules with EXACT integer money (economic-unit, no float, no implicit FX): mandatory business-term subset (BT-1/2/5, seller/buyer, ≥1 line); BR-CO-10 (Σ line net == BT-106); BR-CO-13 (BT-109 == BT-106 − allowances + charges); BR-CO-15 (BT-112 == BT-109 + BT-110); + batch duplicate detection (seller SIREN/name + BT-1). Findings SARIF-emittable. GROUNDED in cited, dated research (2026-10-29): France B2B reform 2026-09-01 (receive structured Factur-X/UBL/CII, EN 16931 Confort+, PDP/Chorus Pro) [dddinvoices.com, eu-einvoicing.com, e-invoice.app]; EN 16931 BR-CO-10/13/15 [peppolvalidator.com, invoicenavigator.eu, validatefin.com]. Tests (einvoice-validator.test.ts, 9): valid⇒0 findings; each BR-CO violation⇒HIGH; 1-cent BR-CO-15 mismatch caught (no silent rounding); missing mandatory BTs⇒HIGH; float amount⇒rejected; batch duplicate detected; valid SARIF; honesty limits present. HONEST SCOPE: EN16931-CORE only (not the full 900+ rule set); interoperability validation, NOT a certified PDP/Plateforme Agréée and NOT tax-law advice; VAT = arithmetic consistency only. No new primitive (9 intact). Independent audit + CI. Gate: einvoice 9, tsc 0, test:report green.",
+      "acceptance": "A structured invoice is validated against EN 16931 core calculation rules with exact integer money (0 false-valid on a BR-CO violation or missing mandatory BT), duplicates detected, findings SARIF-emittable; scope honestly bounded (not certified-platform / not tax advice).",
+      "nextAction": "Expand e-invoice product: CII/UBL XML→model parser (reuse XML checker), Factur-X PDF/A-3 embed extraction, more EN 16931 rules (BR-S VAT category rules), Chorus Pro/PDP interoperability adapter (integration owner-gated). Build ai-assurance slice next (largely composes existing regulatory-dossier/ai-act/assurance-pilot). building-retrofit is greenfield (defer).",
+      "staleEvidence": false
     }
   ]
 }
