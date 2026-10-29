@@ -207,7 +207,6 @@
       "title": "Persistent inter-mission continuity loop (fixes 'stops after one mission')",
       "status": "ACCEPTED",
       "deps": [
-        "campaign-controller-decomposition-tests",
         "engine-benchmark-baseline"
       ],
       "priority": 1,
