@@ -820,6 +820,34 @@
       "acceptance": "The assessment executes real technical checks (with exit codes), gates on evidence freshness (stale⇒not PASS), and emits a reproducible integrity-stamped exportable report; ASSURED is fail-closed; always NOT_CERTIFIED.",
       "nextAction": "D7 expand: regression/change-monitoring + incident handling + a CLI export. Continue D1-D5 upgrades + D8 building-retrofit first slice.",
       "staleEvidence": false
+    },
+    {
+      "id": "product-ai-assurance-regression-d7-slice3",
+      "program": "P2",
+      "title": "PRODUCT D7 SLICE 3: ai-assurance-regression — regression/change monitoring between two assurance reports + CLI export",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-ai-assurance-report-d7-slice2"
+      ],
+      "priority": 1,
+      "evidence": "PR(this cycle, branch excellence/d7-regression-d8-renovation-20261029): runtime/core/ai-assurance-regression.ts — compareReports(before,after) over two ai-assurance-report outputs ⇒ verdict REGRESSION|IMPROVED|STABLE|INTEGRITY_FAILED with exitCode 1/0/0/2, regressions[] + changes[]. Detects: overall ASSURED_TECHNICAL→NOT_ASSURED; control PASS-drop/FAIL-or-INSUFFICIENT-rise (aggregate tally); technical PASS→FAIL and PASS→INSUFFICIENT + HIGH-count rise; evidence freshness PASS→FAIL/INSUFFICIENT; same-generatedAt-different-digest anomaly. FAIL-CLOSED: non-report ⇒ INVALID_INPUT exit2; report whose integrity digest is ABSENT or mismatched ⇒ INTEGRITY_FAILED exit2 (never 'no regression'). verifyReportIntegrity recomputes evidence-provenance.contentDigest. CLI export (stable JSON, exit codes 0/1/2). Always NOT_CERTIFIED (technical comparison, not conformity). Tests (ai-assurance-regression.test.ts, 10): REGRESSION via GPL dep; fresh→stale; IMPROVED; STABLE; tampered(stale-digest)⇒INTEGRITY_FAILED; same-ts-diff-digest; non-report⇒INVALID_INPUT; verifyReportIntegrity intact/mutated; DIGEST-STRIPPED⇒INTEGRITY_FAILED (audit D1 regression); technical PASS→INSUFFICIENT (audit D4). INDEPENDENT AUDIT (general-purpose, adversarial): initial REJECT — blocking fail-OPEN on absent digest (forged digest-stripped report reported STABLE exit0). FIXED: integrity requires explicit true on both sides; added the exact regression test; disclosed aggregate-tally granularity (D2) + transition-dependent catch (D4) in limitations[]; softened same-ts heuristic wording (D3). Re-verified. Gate: regression suite 10, tsc 0, build OK, full test:report 200/200 @ workers=2. No new primitive (composes ai-assurance-report + evidence-provenance).",
+      "acceptance": "Compares two assurance reports and flags control/technical/freshness/integrity regressions with meaningful exit codes; fail-closed on non-report, absent digest, or mismatched digest (never 'no regression'); exportable; always NOT_CERTIFIED; independent audit's blocking fail-open fixed + regression-tested.",
+      "nextAction": "D7: incident handling + multi-version trend. Continue D1-D5 upgrades.",
+      "staleEvidence": false
+    },
+    {
+      "id": "product-renovation-quote-normalize-d8-slice1",
+      "program": "P2",
+      "title": "PRODUCT D8 SLICE 1 (building-retrofit): renovation-quote-normalize — canonical model + exact comparison, fail-closed",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-program-decision-gate"
+      ],
+      "priority": 1,
+      "evidence": "PR(this cycle, branch excellence/d7-regression-d8-renovation-20261029): runtime/core/renovation-quote-normalize.ts — D8 first vertical. normalizeQuote(raw) maps energy-renovation quotes onto a VERSIONED canonical model ('renovation-quote/1'): whole-token (not substring) category classification (deny-by-default ⇒ 'other', flagged, never dropped), unit normalization, EXACT BigInt integer-minor line/VAT totals VERIFIED against provided values (LINE_TOTAL_MISMATCH/QUOTE_TOTAL_MISMATCH ⇒ INCONSISTENT, never auto-corrected); status COMPLETE|INCOMPLETE|INCONSISTENT; evidence-provenance integrity digest. compareQuotes(raw[]) compares ONLY comparable quotes, cheapest ONLY when >=2 share the SAME category scope (else SCOPE_MISMATCH / INSUFFICIENT_COMPARABLE_QUOTES); incomplete/inconsistent/empty/only-'other' quotes EXCLUDED from ranking (notComparable[] with reasons). HONEST/fail-closed: no price invented; energy savings/subsidy eligibility(MaPrimeRenov/CEE)/compliance NEVER computed — declared values pass through labelled 'declared, unverified'; always NOT_CERTIFIED. Synthetic fixtures only. Tests (renovation-quote-normalize.test.ts, 17) incl. audit regressions: whole-token classify (D1: 'Isolation'/'panneau solaire'/'espace vert'⇒other); zero-line⇒INCOMPLETE never €0 cheapest (D2); BigInt-exact near 2^53 correct-passes/wrong-flagged (D3); only-'other'⇒not comparable (LOW). INDEPENDENT AUDIT (general-purpose, adversarial): initial REJECT — (D1) substring mis-bucketing, (D2) zero-line €0 cheapest fail-open, (D3) float arithmetic masking a mismatch, + lows. ALL FIXED + regression-tested; result carries certificationStatus. Gate: suite 17, tsc 0, build OK, full test:report 200/200 @ workers=2. No new primitive.",
+      "acceptance": "Normalizes and compares renovation quotes on a versioned canonical model with BigInt-exact verified totals, provenance, and fail-closed missing/inconsistent-data handling (no fabricated prices/energy/eligibility; no misleading cheapest); independent audit's 3 substantive defects fixed + regression-tested; always NOT_CERTIFIED.",
+      "nextAction": "D8: parse real devis formats (PDF/CSV) behind an owner-gated parser; add eligibility *rules registry* (declared-rule, never asserted).",
+      "staleEvidence": false
     }
   ]
 }
