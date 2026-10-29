@@ -583,14 +583,14 @@
     {
       "id": "data-quality-service",
       "program": "P2",
-      "title": "Documents/Data #14: dataset normalize/dedup/quality-score over a REAL CSV/JSON dataset",
-      "status": "READY",
+      "title": "Documents/Data #14: dataset-quality-service — REAL computed quality metrics over CSV/JSON (replaces fake score=100 stub)",
+      "status": "ACCEPTED",
       "deps": [],
       "priority": 2,
-      "contract": "Compose src/core/data-quality-* + data-normalizer into an end-to-end service. IN: a dataset (CSV/JSON rows). OUT: normalized+deduped rows + quality-score report (nulls, dup keys, type violations). TESTS: real fixture dataset w/ known dups/nulls → exact counts; malformed input ⇒ fail-closed. Independent files: runtime/core/data-quality-service.ts + test.",
       "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
-      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
-      "staleEvidence": false
+      "nextAction": "Add more type validators + configurable normalization rules; ingest a large real dataset at scale as the PROVEN milestone. Domain #14 remains PARTIAL (no real external-client dataset engagement).",
+      "staleEvidence": false,
+      "evidence": "PR(this): runtime/core/dataset-quality-service.ts ingests a REAL dataset (CSV via a dependency-free RFC-4180-ish parser, or JSON, or in-memory records), validates against a declared schema, and computes REAL metrics completeness/validity/uniqueness/overall + severity findings {id,area,severity,detail,remediation,evidence} (SARIF-emittable). Supersedes the trivial src/core/data-quality-* stubs that FAKED score=100/valid=total. Tests (dataset-quality-service.test.ts, 10): exact computed metrics on a real CSV (0.833/0.667/0.667/0.733) + identical from JSON (format-agnostic); clean⇒1.0/0 findings; EMPTY⇒overallScore null NO_DATA (never fabricated 100); bad/non-array JSON⇒PARSE_ERROR, missing content⇒INVALID_INPUT (fail-closed); no-schema⇒uniqueness-only (completeness/validity null, not invented); unknown declared type⇒no invented constraint; quoted CSV w/ embedded comma+newline parsed; valid SARIF 2.1.0. HONESTY: assessment vs supplied schema only; empty⇒null; NOT semantic/business-correctness validation. Pure/deterministic, no new primitive (9 intact). Independent audit + CI. Gate: test:report green, tsc 0, build OK."
     },
     {
       "id": "finance-reconciliation-service",
