@@ -84,4 +84,33 @@ const valid = () => ({ id: "INV-1", issueDate: "2026-10-29", currency: "EUR", se
      r.ok === true && r.roundTripEqual === false && r.diff !== null && r.reparsed.seller === "Padded Seller");
 }
 
+// (12) BG-23 VAT breakdown round-trips through CII AND UBL (export→parse→validate), breakdown preserved exactly.
+{
+  const m = { ...valid(), vatBreakdown: [{ categoryCode: "S", rateBps: 2000, taxableMinor: 200000, taxMinor: 40000 }] };   // valid()=20% on 200000⇒40000=BT-110
+  const cii = X.exportAndVerify(m, { format: "CII" });
+  const ubl = X.exportAndVerify(m, { format: "UBL" });
+  ok("BG-23 breakdown round-trips CII+UBL (equal + re-validates, breakdown preserved)",
+     cii.roundTripEqual === true && ubl.roundTripEqual === true &&
+     JSON.stringify(cii.reparsed.vatBreakdown) === JSON.stringify([{ categoryCode: "S", rateBps: 2000, taxableMinor: 200000, taxMinor: 40000 }]));
+}
+// (13) multi-category breakdown (20% + 5.5%) round-trips with exact rates (rateBps 2000 / 550).
+{
+  const m = { id: "INV-M", issueDate: "2026-10-29", currency: "EUR", seller: { name: "S" }, buyer: { name: "B" },
+    lines: [{ id: 1, netMinor: 15000 }], totals: { lineNetSumMinor: 15000, taxExclusiveMinor: 15000, vatMinor: 1550, taxInclusiveMinor: 16550 },
+    vatBreakdown: [{ categoryCode: "S", rateBps: 2000, taxableMinor: 5000, taxMinor: 1000 }, { categoryCode: "AA", rateBps: 550, taxableMinor: 10000, taxMinor: 550 }] };
+  const r = X.exportAndVerify(m, { format: "UBL" });
+  ok("multi-category BG-23 (20%+5.5%) round-trips with exact rateBps 2000/550", r.roundTripEqual === true && r.reparsed.vatBreakdown.length === 2 && r.reparsed.vatBreakdown[1].rateBps === 550);
+}
+// (14) absence: a model without a breakdown still round-trips (vatBreakdown null both sides — backward compatible).
+{
+  const r = X.exportAndVerify(valid(), { format: "CII" });
+  ok("no breakdown ⇒ still round-trips, projection vatBreakdown null (backward compatible)", r.roundTripEqual === true && r.reparsed.vatBreakdown === null);
+}
+// (15) fail-closed: export refuses a breakdown with a negative amount (non-negative export subset) ⇒ INVALID_MODEL.
+{
+  const m = { ...valid(), vatBreakdown: [{ categoryCode: "S", rateBps: 2000, taxableMinor: -20000, taxMinor: -4000 }] };
+  const b = X.buildInvoiceXml(m, { format: "CII" });
+  ok("negative breakdown amount ⇒ INVALID_MODEL (export is the non-negative subset; no XML emitted)", b.ok === false && b.code === "INVALID_MODEL");
+}
+
 console.log(`\nEINVOICE-EXPORT suite — ${pass} assertions passed. (CII+UBL export from validated model; round-trip model→XML→parse→validate; export gated on validity; XML-escaped injection-safe; exact integer-minor money; fail-closed; honest subset)`);
