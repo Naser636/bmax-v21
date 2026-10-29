@@ -43,7 +43,11 @@ const LIMITS = Object.freeze([
   "SBOM completeness depends on the manifest; dependencies absent from the manifest are not represented",
 ]);
 
-/** extractNpmLicenses(lockContent): Map name → license string from a package-lock.json `packages` section. */
+/**
+ * extractNpmLicenses(lockContent): Map `name@version` → license string from a package-lock.json `packages` section.
+ * Keyed by name@version (NOT bare name) so the SAME package at two versions with DIFFERENT licenses cannot be
+ * collapsed last-wins — that would hide a risky (e.g. GPL) license behind a permissive one (independent-audit defect).
+ */
 function extractNpmLicenses(lockContent: string): Record<string, string> {
   const out: Record<string, string> = {};
   try {
@@ -52,10 +56,10 @@ function extractNpmLicenses(lockContent: string): Record<string, string> {
     for (const k of Object.keys(pk)) {
       const info = pk[k] || {};
       const name = k.replace(/^.*node_modules\//, "");
-      if (!name) continue;
+      if (!name || !info.version) continue;
       let lic = info.license;
       if (!lic && Array.isArray(info.licenses)) lic = info.licenses.map((l: any) => (l && l.type) || l).filter(Boolean).join(" OR ");
-      if (typeof lic === "string" && lic) out[name] = lic;
+      if (typeof lic === "string" && lic) out[`${name}@${info.version}`] = lic;   // keyed by name@version (collision-safe)
     }
   } catch { /* malformed ⇒ no licenses */ }
   return out;
@@ -79,7 +83,8 @@ function auditManifests(sources: any, opts: any = {}): any {
   const byFamily: Record<string, number> = {};
   let withLicense = 0, unknownLicense = 0;
   for (const c of sbom.components) {
-    const lic = licenseByName[c.name];
+    // look up by name@version (collision-safe); fall back to bare name only for injected maps that use it.
+    const lic = licenseByName[`${c.name}@${c.version}`] !== undefined ? licenseByName[`${c.name}@${c.version}`] : licenseByName[c.name];
     const verdict = LP.adoptionVerdict(lic || "", { target });
     const fam = verdict.license.family;
     byFamily[fam] = (byFamily[fam] || 0) + 1;
@@ -110,7 +115,10 @@ function auditManifests(sources: any, opts: any = {}): any {
       byFamily,
       findings,
       findingCount: findings.length,
+      // policyClean = NO HIGH violation; needsReview = MEDIUM items exist (unknown/conditional). policyClean alone
+      // is NOT "safe to ship": a caller must also clear needsReview. Both are surfaced so neither is misread.
       policyClean: findings.filter((f: any) => f.severity === "HIGH").length === 0,
+      needsReview: findings.some((f: any) => f.severity === "MEDIUM"),
       cveScan: "NOT_PERFORMED (no offline vulnerability feed; license audit only)",
       limits: LIMITS,
       note: "CycloneDX SBOM + license-policy audit over REAL manifests. UNKNOWN licenses are flagged for manual review (fail-closed), never assumed safe. CVE scanning NOT performed. Informational supply-chain assurance, NOT a legal clearance/certification.",

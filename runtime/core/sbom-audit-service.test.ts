@@ -71,4 +71,22 @@ const npmLock = (pkgs) => JSON.stringify({ name: "fix", lockfileVersion: 3, pack
   ok("license findings ⇒ valid SARIF 2.1.0 (HIGH→error)", s.ok && SARIF.isValidSarif(s.sarif) && s.sarif.runs[0].results[0].level === "error");
 }
 
+// (9) REGRESSION (independent-audit defect): SAME package at two versions with DIFFERENT licenses must NOT hide the
+// risky one — license map keyed by name@version, not bare name. Both orderings must flag the GPL version HIGH.
+{
+  const lockA = npmLock({ "": { name: "x" }, "node_modules/dup": { version: "1.0.0", license: "MIT" }, "node_modules/nested/node_modules/dup": { version: "2.0.0", license: "GPL-3.0-only" } });
+  const lockB = npmLock({ "": { name: "x" }, "node_modules/dup": { version: "2.0.0", license: "GPL-3.0-only" }, "node_modules/nested/node_modules/dup": { version: "1.0.0", license: "MIT" } });
+  const ra = S.auditManifests([{ content: lockA, ecosystem: "npm" }], { target: "commercial-closed" });
+  const rb = S.auditManifests([{ content: lockB, ecosystem: "npm" }], { target: "commercial-closed" });
+  const gplFlagged = (r) => r.audit.findings.some((f) => f.severity === "HIGH" && /dup@2.0.0/.test(f.evidence));
+  const mitClean = (r) => !r.audit.findings.some((f) => /dup@1.0.0/.test(f.evidence) && f.severity === "HIGH");
+  ok("name@version keying: GPL dup@2.0.0 flagged HIGH in BOTH orderings; MIT dup@1.0.0 never falsely HIGH (no hidden risk)",
+     gplFlagged(ra) && gplFlagged(rb) && mitClean(ra) && mitClean(rb) && ra.audit.policyClean === false && rb.audit.policyClean === false);
+}
+// (10) needsReview flag distinguishes 'no HIGH violation' from 'safe to ship' (MEDIUM items still require review).
+{
+  const r = S.auditManifests([{ content: npmLock({ "": {}, "node_modules/m": { version: "1.0.0" } }), ecosystem: "npm" }], { target: "commercial-closed" });
+  ok("unknown-license project ⇒ policyClean=true BUT needsReview=true (not misread as safe)", r.audit.policyClean === true && r.audit.needsReview === true);
+}
+
 console.log(`\nSBOM-AUDIT-SERVICE suite — ${pass} assertions passed. (REAL repo lockfile SBOM; GPL⇒HIGH; UNKNOWN⇒review fail-closed; permissive clean; policy target respected; CVE declared NOT performed; valid SARIF)`);
