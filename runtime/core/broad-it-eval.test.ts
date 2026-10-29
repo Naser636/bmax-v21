@@ -18,6 +18,14 @@ const alwaysPass = () => ({ exitCode: 0, stdout: "", stderr: "" });
 // (1) LEAKAGE PROTECTION: dev/heldout disjoint by id AND content hash.
 const leak = B.checkLeakage();
 ok("DEV/HELDOUT disjoint (no id/hash leakage)", leak.ok === true && leak.idOverlap.length === 0 && leak.hashOverlap.length === 0 && leak.devCount > 0 && leak.heldoutCount > 0);
+// (1b) audit Q5.1: prove checkLeakage FIRES on a PLANTED overlap — single-file content hash AND multi-file (no-content) hash.
+const plantedContent = B.checkLeakage([{ id: "d1", partition: "dev", content: "SAME\n" }, { id: "h1", partition: "heldout", content: "SAME\n" }]);
+ok("planted single-file content collision ⇒ leakage DETECTED", plantedContent.ok === false && plantedContent.hashOverlap.includes("h1"));
+const sharedFiles = [{ name: "m.js", content: "console.log(1)\n" }];
+const plantedMulti = B.checkLeakage([{ id: "d2", partition: "dev", mode: "integration", entry: "m.js", expectedOutput: "1", files: sharedFiles }, { id: "h2", partition: "heldout", mode: "integration", entry: "m.js", expectedOutput: "1", files: sharedFiles }]);
+ok("planted MULTI-FILE (no-content) collision ⇒ leakage DETECTED (serialized-branch works)", plantedMulti.ok === false && plantedMulti.hashOverlap.includes("h2"));
+const plantedId = B.checkLeakage([{ id: "dup", partition: "dev", content: "A\n" }, { id: "dup", partition: "heldout", content: "B\n" }]);
+ok("planted id collision ⇒ leakage DETECTED", plantedId.ok === false && plantedId.idOverlap.includes("dup"));
 
 // (2) oracle evaluate on held-out ⇒ accuracy 1, 0 false, per-category present.
 const held = B.evaluate({ partition: "heldout", runner: oracle, toolchain: ALL });

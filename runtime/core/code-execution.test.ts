@@ -100,6 +100,12 @@ for (const [lang, content, exp] of realCases) {
 ok("unknown run language ⇒ UNSUPPORTED", E.runBehaviourCheck({ language: "COBOL", content: "x", expectedOutput: "y" }).status === "UNSUPPORTED");
 ok("missing expectedOutput ⇒ BLOCKED (fail-closed)", E.runBehaviourCheck({ language: "JavaScript", content: "console.log(1)" }).status === "BLOCKED");
 ok("interpreter absent ⇒ UNSUPPORTED (not faked)", E.runBehaviourCheck({ language: "JavaScript", content: "x", expectedOutput: "y", toolchainAvailable: false }).status === "UNSUPPORTED");
+// audit Q3c regression: a CRASHING program (non-zero exit) whose stdout matches must NOT be a clean PASS.
+ok("behaviour: crash (exit!=0) + matching stdout ⇒ FAIL, not PASS", E.runBehaviourCheck({ language: "JavaScript", content: "x", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ exitCode: 1, stdout: "6" }) }).status === "FAIL");
+ok("behaviour: clean exit 0 + matching stdout ⇒ PASS", E.runBehaviourCheck({ language: "JavaScript", content: "x", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ exitCode: 0, stdout: "6" }) }).status === "PASS");
+// audit Q5.3 regression: spawn error / timeout ⇒ BLOCKED (never PASS/FAIL on a silent failure).
+ok("behaviour: spawn error ⇒ BLOCKED", E.runBehaviourCheck({ language: "JavaScript", content: "x", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ spawnError: "ENOENT" }) }).status === "BLOCKED");
+ok("behaviour: timeout ⇒ BLOCKED", E.runBehaviourCheck({ language: "JavaScript", content: "x", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ timedOut: true }) }).status === "BLOCKED");
 const realRun = E.detectToolchain();
 const behaviourCases = [
   ["JavaScript", "console.log(2+3)", "5", "PASS"],
@@ -119,6 +125,11 @@ for (const [lang, content, expectedOutput, exp] of behaviourCases) {
 ok("integration <2 files ⇒ BLOCKED (fail-closed)", E.runIntegrationCheck({ language: "JavaScript", files: [{ name: "a.js", content: "x" }], entry: "a.js", expectedOutput: "y" }).status === "BLOCKED");
 ok("integration entry not among files ⇒ BLOCKED", E.runIntegrationCheck({ language: "JavaScript", files: [{ name: "a.js", content: "x" }, { name: "b.js", content: "y" }], entry: "missing.js", expectedOutput: "z" }).status === "BLOCKED");
 ok("integration interpreter absent ⇒ UNSUPPORTED", E.runIntegrationCheck({ language: "JavaScript", files: [{ name: "a.js", content: "x" }, { name: "b.js", content: "y" }], entry: "a.js", expectedOutput: "z", toolchainAvailable: false }).status === "UNSUPPORTED");
+const twoFiles = [{ name: "a.js", content: "x" }, { name: "b.js", content: "y" }];
+// audit Q3c + Q5.3 regression for integration: crash+match ⇒ FAIL; spawn error / timeout ⇒ BLOCKED.
+ok("integration: crash (exit!=0) + matching stdout ⇒ FAIL", E.runIntegrationCheck({ language: "JavaScript", files: twoFiles, entry: "a.js", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ exitCode: 1, stdout: "6" }) }).status === "FAIL");
+ok("integration: spawn error ⇒ BLOCKED", E.runIntegrationCheck({ language: "JavaScript", files: twoFiles, entry: "a.js", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ spawnError: "ENOENT" }) }).status === "BLOCKED");
+ok("integration: timeout ⇒ BLOCKED", E.runIntegrationCheck({ language: "JavaScript", files: twoFiles, entry: "a.js", expectedOutput: "6", toolchainAvailable: true, runner: () => ({ timedOut: true }) }).status === "BLOCKED");
 const realI = E.detectToolchain();
 const intCases = [
   ["JavaScript", [{ name: "helper.js", content: "module.exports.triple=(x)=>x*3;\n" }, { name: "main.js", content: "const h=require('./helper.js');console.log(h.triple(4));\n" }], "main.js", "12", "PASS"],

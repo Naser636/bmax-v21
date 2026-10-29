@@ -8448,3 +8448,15 @@ Dockerfile/lint remains — hadolint is EXTERNAL, not in apt repos ⇒ authoriza
 Labelled false ⇒ broadIT STAYS NO_DATA. corpus 108, leakage disjoint. code-exec 56→60, broad-it 43. Register +ACCEPTED
 htmlcss-tidy-capability; new-language-families narrowed to Dockerfile/hadolint only. 24 ACCEPTED/1/5, 0 stale. Gate:
 test:report 177, tsc 0, build 0. **HONEST FRONTIER unchanged: independent labelling, not more categories, gates MEASURED.**
+
+---
+## CHECKPOINT 2026-10-29 (fs) — Independent audit ACCEPTED: runner exit-code honesty fix €0
+Agent C (independent, read-only) audited broad-it-eval + code-execution. SOUND: broadIT=MEASURED double-locked
+(self-authored + requireIndependentLabelling ANDed into meetsThreshold; no caller can flip), leakage multi-file-aware.
+CONFIRMED DEFECT (Q3c): runBehaviourCheck/runIntegrationCheck returned PASS on matching stdout even when the program
+CRASHED (exit!=0). ODG reproduced in code. FIX: PASS requires exitCode===0 AND output match; non-zero exit ⇒ FAIL.
+Regression tests (audit Q5): crash+match⇒FAIL + spawn-error/timeout⇒BLOCKED (behaviour+integration) + checkLeakage PROVEN
+to FIRE on planted single-file/multi-file/id collisions. code-exec 60→67, broad-it 43→46. Corpus unaffected (clean exit 0);
+broadIT STAYS NO_DATA. Register +ACCEPTED runner-exitcode-honesty-fix. 25 ACCEPTED/1/5, 0 stale. Gate: test:report 177,
+tsc 0, build 0, engine 9/9. npm-update notice = cosmetic (tsx/tests/build green) — no action, no sudo. INDEPENDENT-LABELLING
+remains the honest frontier to broad-IT MEASURED (do NOT self-certify labels).
