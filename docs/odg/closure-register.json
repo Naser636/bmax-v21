@@ -1037,6 +1037,18 @@
       "acceptance": "The deployed odg-mission-runner succeeds on a real systemd-scheduled tick under its actual env/allowlist/sandbox (not an empty-allowlist local test), on the canonical build; no allowlist widening, no Truth-Lock disable, no fabricated success.",
       "nextAction": "None (closed). Timer continues every 15min; next ticks expected IDLE/success while M0001 stays proven.",
       "staleEvidence": false
+    },
+    {
+      "id": "campaign-executor-verification-activated",
+      "program": "P2",
+      "title": "Campaign executor authorization: `verification` is REAL + authorized (clears NO_EXECUTOR_AUTHORIZED)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "odg-campaign-run.ts resolveExecutor('verification') is a GENUINE executor: for a lot with an exec spec {kind:verification,language,content,expectedStatus} it runs EXEC.runSyntaxCheck (a REAL subprocess, code-execution.ts) and accepts ONLY on the real expected status; no spec ⇒ WAITING_EXTERNAL (never faked). Authorization source = env ODG_CAMPAIGN_EXECUTOR=verification (canonical per docs/odg/deploy/CAMPAIGN_RUNNER.md); unset/none ⇒ NO_EXECUTOR_AUTHORIZED (fail-closed). DEMONSTRATED (2026-10-29, scratchpad copies + a verified no-op on the real register): (A) real register + verification ⇒ executor RECOGNIZED, stopped IDLE_BLOCKED, register sha256 byte-identical (ZERO mutation; 7 external-BLOCKED lots remain, none carry an exec spec); (B) copy with a READY lot + valid JavaScript spec ⇒ real node --check PASS ⇒ lot ACCEPTED (evidence 'real JavaScript check ⇒ PASS'), stopped COMPLETED; (C) copy with broken JavaScript ⇒ real check FAIL ⇒ lot NOT accepted (stays READY, IDLE_BLOCKED) — no false success; (D) executor none ⇒ NO_EXECUTOR_AUTHORIZED. No fictitious executor, no allowlist change, no Truth-Lock disable, no new primitive. requireProofVerification waived ONLY for 'verification' (its real check IS the evidence; independent verification at CI+audit layer — documented).",
+      "acceptance": "The campaign runner recognizes a real authorized executor (verification), starts, executes ONLY admissible READY/IN_PROGRESS lots carrying a real exec spec (accept on real PASS, refuse on FAIL/none), and stops cleanly (IDLE_BLOCKED/COMPLETED) when no admissible work remains — demonstrated, non-fictitious, register unmutated on the real run.",
+      "nextAction": "Persistent activation (odg-campaign.service/.timer with ODG_CAMPAIGN_EXECUTOR=verification) is OWNER-GATED (sudo/systemd install) — see campaign-runner-systemd-activation. For a manual run: `ODG_CAMPAIGN_EXECUTOR=verification npx tsx runtime/bin/odg-campaign-run.ts docs/odg/closure-register.json`.",
+      "staleEvidence": false
     }
   ]
 }
