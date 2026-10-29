@@ -862,6 +862,21 @@
       "acceptance": "Adds a value-constraint conformance dimension that is backward-compatible (constraint-free datasets score identically) and fail-closed (invalid/malformed constraint ⇒ HIGH schema error + field excluded, never silently conforming); independent audit's caveats fixed + regression-tested.",
       "nextAction": "Other D1-D5 bounded upgrades (code-review severity policy; sbom CVE-scan behind owner-gated feed; finance-ledger double-entry assertion).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-einvoice-export-d6-slice4",
+      "program": "P2",
+      "title": "PRODUCT D6 SLICE 4: einvoice-export — interoperable CII/UBL generation from the validated model + round-trip proof",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-einvoice-parser-slice2",
+        "product-einvoice-validator-slice1"
+      ],
+      "priority": 1,
+      "evidence": "PR(this cycle): runtime/core/einvoice-export.ts — inverse of einvoice-parser. buildInvoiceXml(model,{format:CII|UBL}) emits the supported-subset business terms; exportAndVerify does a reproducible interoperability ROUND-TRIP model→XML→parseInvoiceXml→re-validate, roundTripEqual true ONLY when the re-parsed model equals the source on every mapped field AND re-validates EN16931-core. FAIL-CLOSED: export REFUSED (INVALID_MODEL+findings) unless the model passes validateInvoice AND all amounts are safe non-negative integers (stricter than the validator, which accepts negatives); money rendered EXACTLY from integer minor (no float); all text XML-escaped incl. the UBL currencyID ATTRIBUTE context (no breakout). Honest SUPPORTED_SUBSET/KNOWN_GAPS: NOT full EN16931, NOT Factur-X PDF, NOT a certified Plateforme Agréée. Tests (einvoice-export.test.ts, 11): CII+UBL round-trip equal+revalidate; invalid model (BR-CO-15) refused; injection-safe (<script>&quotes round-trip exactly); exact money 5=>0.05/100=>1.00; fail-closed inputs; parser re-detects emitted format; projection strict; subset disclosed; +2 documented FAIL-SAFE caveats (rival-format marker in a name & whitespace-padded name ⇒ roundTripEqual=false with diff, never a false pass). INDEPENDENT AUDIT (general-purpose, adversarial): ACCEPT_WITH_CAVEATS — all 4 load-bearing claims PROVEN (validity-gated export, exact money+attribute-safe escaping incl UBL currencyID, roundTripEqual never a false-true, honest scope; money exact over 300k random+edges; no false-positive constructible). Caveats (spurious roundTripEqual=false via parser re-sniff/strip) are FAIL-SAFE, rooted in the already-merged parser; disclosed in KNOWN_GAPS + 2 regression tests added. Gate: export 11, tsc 0, build OK, full test:report 201/201 @ workers=2. No new primitive (composes validator+parser).",
+      "acceptance": "Generates interoperable CII/UBL XML from the validated model and proves interoperability by a round-trip that re-parses and re-validates; export is fail-closed on invalid models; money exact; XML injection-safe incl. attribute context; honest subset (not certified); independent audit's claims proven and fail-safe caveats disclosed+tested.",
+      "nextAction": "D6: VAT breakdown lines (BG-23) + party tax ids in export/parse; XSD/Schematron validation of emitted XML (owner-gated tool); Factur-X PDF/A-3 embedding (owner-gated PDF tool).",
+      "staleEvidence": false
     }
   ]
 }
