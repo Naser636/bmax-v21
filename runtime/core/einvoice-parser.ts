@@ -32,6 +32,14 @@ const PY_EXTRACT = [
   "  if not re.fullmatch(r'\\d+(\\.\\d{1,2})?', t): return None",   // non-negative, <=2dp only; reject >2dp/sci-notation/separators/signs (flagged, not silently rounded)
   "  try: return int(Decimal(t)*100)",
   "  except (InvalidOperation, ValueError): return None",
+  "def ratebps(txt):",   // VAT percent (BT-119) -> basis points where 10000=100% (20 -> 2000, 5.5 -> 550); <=2dp only
+  "  if txt is None: return None",
+  "  t=str(txt).strip()",
+  "  if not re.fullmatch(r'\\d+(\\.\\d{1,2})?', t): return None",
+  "  try:",
+  "    v=Decimal(t)*100",
+  "    return int(v) if v==v.to_integral_value() else None",
+  "  except (InvalidOperation, ValueError): return None",
   "def finds(el, name):",
   "  return [e for e in el.iter() if ln(e.tag)==name]",
   "def first_text(el, name):",
@@ -62,6 +70,16 @@ const PY_EXTRACT = [
   "        if ln(e.tag)==name and e.text: return minor(e.text)",
   "      return None",
   "    m['totals']={'lineNetSumMinor':g('LineTotalAmount'),'taxExclusiveMinor':g('TaxBasisTotalAmount'),'vatMinor':g('TaxTotalAmount'),'taxInclusiveMinor':g('GrandTotalAmount')}",
+  "    bd=[]",   // BG-23 VAT breakdown: one entry per ram:ApplicableTradeTax (header-level)
+  "    for tt in [e for e in root.iter() if ln(e.tag)=='ApplicableTradeTax']:",
+  "      cat=first_text(tt,'CategoryCode'); rate=None; basis=None; calc=None",
+  "      for e in tt.iter():",
+  "        nm=ln(e.tag)",
+  "        if nm=='RateApplicablePercent' and e.text and rate is None: rate=ratebps(e.text)",
+  "        elif nm=='BasisAmount' and e.text and basis is None: basis=minor(e.text)",
+  "        elif nm=='CalculatedAmount' and e.text and calc is None: calc=minor(e.text)",
+  "      bd.append({'categoryCode':cat,'rateBps':rate,'taxableMinor':basis,'taxMinor':calc})",
+  "    if bd: m['vatBreakdown']=bd",
   "  elif fmt=='UBL':",
   "    m['id']=first_text(root,'ID')",
   "    m['issueDate']=first_text(root,'IssueDate')",
@@ -91,6 +109,21 @@ const PY_EXTRACT = [
   "      for e in tax[0].iter():",
   "        if ln(e.tag)=='TaxAmount' and e.text: vat=minor(e.text); break",
   "    m['totals']={'lineNetSumMinor':gu('LineExtensionAmount'),'taxExclusiveMinor':gu('TaxExclusiveAmount'),'vatMinor':vat,'taxInclusiveMinor':gu('TaxInclusiveAmount')}",
+  "    bd=[]",   // BG-23 VAT breakdown: one entry per cac:TaxSubtotal
+  "    for st in [e for e in root.iter() if ln(e.tag)=='TaxSubtotal']:",
+  "      taxable=None; taxamt=None",
+  "      for e in st.iter():",
+  "        nm=ln(e.tag)",
+  "        if nm=='TaxableAmount' and e.text and taxable is None: taxable=minor(e.text)",
+  "        elif nm=='TaxAmount' and e.text and taxamt is None: taxamt=minor(e.text)",
+  "      cat=None; rate=None",
+  "      tc=[e for e in st.iter() if ln(e.tag)=='TaxCategory']",
+  "      if tc:",
+  "        cat=first_text(tc[0],'ID')",
+  "        for e in tc[0].iter():",
+  "          if ln(e.tag)=='Percent' and e.text: rate=ratebps(e.text); break",
+  "      bd.append({'categoryCode':cat,'rateBps':rate,'taxableMinor':taxable,'taxMinor':taxamt})",
+  "    if bd: m['vatBreakdown']=bd",
   "  else:",
   "    print(json.dumps({'error':'unsupported format'})); sys.exit(0)",
   "  print(json.dumps(m))",
@@ -126,12 +159,12 @@ function parseInvoiceXml(xml: any, opts: any = {}): any {
     if (!r || r.error || typeof r.stdout !== "string") return { ok: false, code: "BLOCKED", findings: [{ id: "xml:blocked", area: "xml", severity: "HIGH", detail: "python3 unavailable or extraction failed to run", remediation: "ensure python3 is present", evidence: String(r && (r.error || r.stderr) || "no runner output") }] };
     let parsed: any; try { parsed = JSON.parse(r.stdout.trim().split("\n").pop() || "{}"); } catch { parsed = { error: "non-JSON extractor output" }; }
     if (parsed && parsed.error) return { ok: false, code: "PARSE_ERROR", findings: [{ id: "xml:malformed", area: "xml", severity: "HIGH", detail: `XML could not be parsed/extracted: ${parsed.error}`, remediation: "provide well-formed CII/UBL XML", evidence: String(parsed.error) }] };
-    return { ok: true, format: fmt, model: parsed, provenance: { format: fmt, extractor: "python3-stdlib(ElementTree+Decimal)", mapped: ["id", "issueDate", "currency", "seller.name", "buyer.name", "lines[].netMinor", "totals.{lineNetSum,taxExclusive,vat,taxInclusive}"] }, findings: [] };
+    return { ok: true, format: fmt, model: parsed, provenance: { format: fmt, extractor: "python3-stdlib(ElementTree+Decimal)", mapped: ["id", "issueDate", "currency", "seller.name", "buyer.name", "lines[].netMinor", "totals.{lineNetSum,taxExclusive,vat,taxInclusive}", "vatBreakdown[].{categoryCode,rateBps,taxableMinor,taxMinor} (BG-23, when present)"] }, findings: [] };
   } finally { try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* best effort */ } }
 }
 
-const SUPPORTED_SUBSET = Object.freeze(["BT-1 id", "BT-2 issueDate", "BT-5 currency", "seller.name", "buyer.name", "BT-131 line nets", "BT-106/109/110/112 totals", "BR-CO-10/13/15"]);
-const KNOWN_GAPS = Object.freeze(["party tax ids (SIREN/VAT)", "VAT breakdown lines (BG-23)", "document allowances/charges detail", "Factur-X PDF/A-3 embedded XML extraction", "full EN16931 rule set (900+)", "payment means / references", "negative amounts / credit notes (rejected as amount-format, not silently used)", "amounts with >2 decimals or scientific notation (rejected, not rounded)"]);
+const SUPPORTED_SUBSET = Object.freeze(["BT-1 id", "BT-2 issueDate", "BT-5 currency", "seller.name", "buyer.name", "BT-131 line nets", "BT-106/109/110/112 totals", "BR-CO-10/13/15", "BG-23 VAT breakdown (BT-116/117/118/119) when present → BR-CO-14/17"]);
+const KNOWN_GAPS = Object.freeze(["party tax ids (SIREN/VAT)", "document allowances/charges detail", "Factur-X PDF/A-3 embedded XML extraction", "full EN16931 rule set (900+)", "payment means / references", "negative line/total amounts other than within a supplied BG-23 breakdown", "amounts with >2 decimals or scientific notation (rejected, not rounded)", "VAT percentages with >2 decimals (rejected)", "UBL document VAT (BT-110) is read as the FIRST cbc:TaxAmount in cac:TaxTotal (schema-valid order); a schema-INVALID external UBL placing a TaxSubtotal before the document TaxAmount would misread it — such input generally fails BR-CO-15, not a clean pass"]);
 
 /** parseAndValidate(xml, opts?): parse CII/UBL → model → EN16931-core validation. Returns the combined report. */
 function parseAndValidate(xml: any, opts: any = {}): any {

@@ -917,6 +917,22 @@
       "acceptance": "VAT breakdown is validated exactly (BigInt, symmetric rounding for negative credit-note amounts) for per-category tax and category-sum, only when supplied, fail-closed on malformed amounts, with no regression to invoices lacking a breakdown; independent audit's fail-open (negative-taxable mis-rounding) fixed + regression-tested.",
       "nextAction": "Carry BG-23 through einvoice-parser (parse CII/UBL ApplicableTradeTax / cac:TaxSubtotal) and einvoice-export (emit the breakdown) so it round-trips; then BR-S/BR-Z category rules.",
       "staleEvidence": false
+    },
+    {
+      "id": "product-einvoice-bg23-roundtrip",
+      "program": "P2",
+      "title": "D6 e-invoice: BG-23 VAT breakdown propagated through parser + export (round-trip proven)",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-einvoice-bg23-vat-breakdown",
+        "product-einvoice-parser-slice2",
+        "product-einvoice-export-d6-slice4"
+      ],
+      "priority": 1,
+      "evidence": "PR(this cycle): einvoice-parser.ts + einvoice-export.ts — carries the optional BG-23 VAT breakdown through BOTH ends so it round-trips. PARSER: new ratebps() (VAT percent->basis points, 10000=100%, <=2dp, rejects >2dp/neg/non-numeric) + extraction from CII ram:ApplicableTradeTax (CalculatedAmount=BT-117, BasisAmount=BT-116, CategoryCode=BT-118, RateApplicablePercent=BT-119) and UBL cac:TaxSubtotal (TaxableAmount/TaxAmount/TaxCategory{ID,Percent}); vatBreakdown set ONLY when >=1 entry (absence unchanged). EXPORT: emits ApplicableTradeTax (CII) / TaxSubtotal (UBL, document BT-110 TaxAmount emitted FIRST so the parser's doc-VAT read is unaffected); non-negative-subset guard (negative/non-int breakdown => INVALID_MODEL); projection extended to vatBreakdown so round-trip equality covers it. Composes the merged BG-23 validator (BR-CO-14/17). Tests: einvoice-export 11->15 (CII+UBL round-trip, multi-category 20%+5.5% exact rateBps, no-breakdown backward-compat, negative=>INVALID_MODEL); validator 16, parser 10 unchanged. INDEPENDENT AUDIT: ACCEPT (no file modified) — no fail-open constructible (breakdowns round-trip faithfully; info-losing cases fail SAFE with a diff, never a false true); UBL BT-110 doc-VAT correctly distinguished from BT-117 category-VAT (document TaxAmount emitted/read first); rateBps exact (20->2000, 5.5->550, rejects >2dp/neg/sci); malformed BG-23 => null fields => validator amount-format HIGH (refused), no crash; injection-safe incl. UBL currencyID attribute; export 15/15 parser 10/10 no regression. One honest caveat disclosed in KNOWN_GAPS (external schema-invalid UBL element ordering). Gate: tsc 0, build OK, full test:report 201/201 @ workers=2. No new primitive. KNOWN_GAP: negative credit-note export, >2dp rates, XSD/Schematron, Factur-X PDF embedding.",
+      "acceptance": "A BG-23 breakdown survives export->parse->re-validate byte-identically (CII+UBL, incl. multi-category exact rates); absence is byte-identical to before; negative/non-integer breakdown refused on export; independent audit confirms no fail-open and no UBL doc-VAT/category-VAT confusion.",
+      "nextAction": "BR-S/BR-Z category semantics; party tax ids (SIREN/VAT) in parse/export; then XSD/Schematron (owner-gated tool).",
+      "staleEvidence": false
     }
   ]
 }
