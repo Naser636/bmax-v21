@@ -88,4 +88,22 @@ for (const [lang, content, exp] of realCases) {
   ok(`real ${lang} ${exp} classified correctly`, st === exp);
 }
 
-console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped stderr; not faked; fail-closed)`);
+// (11) runBehaviourCheck — RUN + assert OUTPUT (a different capability than compile-check). Structural + real-guarded.
+ok("unknown run language ⇒ UNSUPPORTED", E.runBehaviourCheck({ language: "COBOL", content: "x", expectedOutput: "y" }).status === "UNSUPPORTED");
+ok("missing expectedOutput ⇒ BLOCKED (fail-closed)", E.runBehaviourCheck({ language: "JavaScript", content: "console.log(1)" }).status === "BLOCKED");
+ok("interpreter absent ⇒ UNSUPPORTED (not faked)", E.runBehaviourCheck({ language: "JavaScript", content: "x", expectedOutput: "y", toolchainAvailable: false }).status === "UNSUPPORTED");
+const realRun = E.detectToolchain();
+const behaviourCases = [
+  ["JavaScript", "console.log(2+3)", "5", "PASS"],
+  ["JavaScript", "console.log(2+2)", "5", "FAIL"],   // compiles+runs, WRONG output (logic error a syntax check can't catch)
+  ["Python", "print(sum([1,2,3,4]))", "10", "PASS"],
+  ["Python", "print(sum([1,2,3]))", "10", "FAIL"],
+];
+for (const [lang, content, expectedOutput, exp] of behaviourCases) {
+  if (!realRun[lang]) { console.log(`  ~~ skip behaviour ${lang} (interpreter absent)`); continue; }
+  const st = E.runBehaviourCheck({ language: lang, content, expectedOutput }).status;
+  if (st !== "PASS" && st !== "FAIL") { console.log(`  ~~ skip behaviour ${lang} (non-definitive ${st})`); continue; }
+  ok(`runBehaviourCheck ${lang} ${exp}: output-correctness classified`, st === exp);
+}
+
+console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped stderr; not faked; fail-closed; runBehaviourCheck output-correctness)`);

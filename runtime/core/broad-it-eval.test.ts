@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// @ts-nocheck — runs under tsx, ZERO real subprocess (injected runner + toolchain). Validates the broad-IT scaffolding:
+// @ts-nocheck — runs under tsx. Static cases use an injected runner (zero subprocess); runtime-behaviour cases run the
+// REAL interpreter (deterministic). Validates the broad-IT scaffolding:
 // strict DEV/HELDOUT leakage protection (id + content hash), per-category classification (incl. falsePass/falseFail),
 // and the HONEST broad-IT verdict = NO_DATA (never extrapolated from the narrow supported surface).
 "use strict";
@@ -21,12 +22,12 @@ ok("DEV/HELDOUT disjoint (no id/hash leakage)", leak.ok === true && leak.idOverl
 // (2) oracle evaluate on held-out ⇒ accuracy 1, 0 false, per-category present.
 const held = B.evaluate({ partition: "heldout", runner: oracle, toolchain: ALL });
 ok("held-out oracle ⇒ accuracy 1.0, 0 false", held.overall.accuracy === 1 && held.overall.falsePass === 0 && held.overall.falseFail === 0 && held.partition === "heldout");
-ok("per-category metrics present (10 measured categories)", Object.keys(held.perCategory).length === 10);
+ok("per-category metrics present (11 measured categories incl. Runtime/behaviour)", Object.keys(held.perCategory).length === 11);
 
 // (3) adversarial always-PASS runner ⇒ broken held-out cases become falsePass (detected).
 const fp = B.evaluate({ partition: "heldout", runner: alwaysPass, toolchain: ALL });
-const brokenHeld = B.CORPUS.filter((c) => c.partition === "heldout" && c.expected === "FAIL").length;
-ok("always-PASS ⇒ falsePass == #broken held-out (detection works)", fp.overall.falsePass === brokenHeld);
+const brokenHeldStatic = B.CORPUS.filter((c) => c.partition === "heldout" && c.expected === "FAIL" && c.mode !== "runtime-behaviour").length;
+ok("always-PASS fools only the STATIC checker ⇒ falsePass == #static broken (behaviour check compares OUTPUT, immune to exit-code gaming)", fp.overall.falsePass === brokenHeldStatic);
 
 // (4) dev partition is separately evaluable (visible tuning set).
 const dev = B.evaluate({ partition: "dev", runner: oracle, toolchain: ALL });
@@ -55,13 +56,13 @@ for (const cat of supCats) {
     ok(`corpus grown: ${cat}/${part} has ≥4 cases with both kinds`, cs.length >= 4 && cs.some((c) => c.kind === "clean") && cs.some((c) => c.kind === "broken"));
   }
 }
-ok("grown corpus still leakage-free (76 cases, disjoint)", B.CORPUS.length === 76 && B.checkLeakage().ok === true);
+ok("grown corpus still leakage-free (84 cases, disjoint)", B.CORPUS.length === 84 && B.checkLeakage().ok === true);
 
 // (9) COVERAGE MODEL: representativeness MEASURED against the pre-registered taxonomy; v3 adds 2 REAL no-install
 // categories (SQL/schema, Config-YAML/validate), raising coverage honestly — still below the gate ⇒ NO_DATA.
 const cov = B.coverageReport();
 ok("coverage: 9/12 categories covered (+Go +Rust +Java); missing are all unsupported", cov.coveredCount === 9 && cov.coveredCategories.includes("Java/compile") && cov.coveredCategories.includes("Rust/build") && cov.missing.every((m) => m.supported === false));
-ok("breadth gate MET (ratio>=0.6) but corpus mono-modal ⇒ NOT representative (NO false MEASURED)", cov.ratio >= cov.threshold.minCoverageRatio && cov.modeDiverse === false && cov.taskModes.length === 1 && cov.meetsThreshold === false && a.representative === false && a.broadIT === "NO_DATA");
+ok("breadth gate MET but task-MODE coverage < gate ⇒ NOT representative (NO false MEASURED)", cov.ratio >= cov.threshold.minCoverageRatio && cov.modeCoverage < cov.threshold.minModeCoverage && cov.modeDiverse === false && cov.taskModes.includes("runtime-behaviour") && cov.taskModes.includes("static-single-file") && cov.meetsThreshold === false && a.representative === false && a.broadIT === "NO_DATA");
 ok("unsupported taxonomy categories (compiler stacks + shell-lint + html) can NEVER count as covered", B.TARGET_TAXONOMY.filter((t) => t.supported === false).every((t) => !cov.coveredCategories.includes(t.category)));
 ok("Shell/lint now covered via authorized shellcheck install (real linter)", B.TARGET_TAXONOMY.find((t) => t.category === "Shell/lint").supported === true && cov.coveredCategories.includes("Shell/lint"));
 ok("assessBroadIT embeds the coverage measurement + pre-registered threshold", a.coverage && a.coverage.ratio === cov.ratio && a.coverage.threshold.minCoverageRatio === B.REPRESENTATIVE_THRESHOLD.minCoverageRatio);

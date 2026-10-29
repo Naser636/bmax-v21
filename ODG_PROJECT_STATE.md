@@ -8413,3 +8413,14 @@ PASS, type-error FAIL, missing-dep FAIL. code-execution 36→39, broad-it-eval 3
 cases acc 1.0), coverage 8→9/12=0.75; STILL mono-modal ⇒ broadIT NO_DATA. Register +ACCEPTED java-build-capability;
 new-language-families narrowed to C#/tidy/hadolint. 20 ACCEPTED/1/5, 0 stale. Gate: test:report 177, tsc 0, build 0.
 NEXT (Lot 2, same mandate Step 3): 2nd task MODE (runtime-behaviour) + mode-coverage-ratio gate — keeps NO_DATA honestly.
+
+---
+## CHECKPOINT 2026-10-28 (fp) — Step 3: 2nd benchmark task MODE (runtime-behaviour) + mode-coverage gate €0
+code-execution +runBehaviourCheck = RUN a program (node/python) + assert stdout==expectedOutput ⇒ measures OUTPUT
+CORRECTNESS (catches logic errors a compile-check can't). broad-it-eval v8: +8 runtime-behaviour cases (category
+Runtime/behaviour, NOT a taxonomy slot ⇒ category coverage stays 9/12=0.75; broken cases run fine but wrong output⇒FAIL).
+Gate UPGRADED minTaskModes→minModeCoverage ratio over 5 BROAD_TASK_MODES; modes now {static-single-file,runtime-behaviour}
+=2/5=0.4 < 0.6 ⇒ broadIT STAYS NO_DATA (breadth met, mode-coverage short — honest). Adversarial always-PASS fools only the
+static checker (behaviour check compares OUTPUT, immune to exit-code gaming). Suites: code-execution 39→46, broad-it-eval 39.
+Register +ACCEPTED benchmark-task-mode-2. 21 ACCEPTED/1/5, 0 stale. Gate: test:report 177, tsc 0, build 0.
+NEXT: 3rd mode (integration/data) to progress toward mode-coverage 0.6; or C# per-family install.

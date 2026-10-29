@@ -145,8 +145,50 @@ function runSyntaxCheck(input: any = {}): any {
   }
 }
 
-export { LANG_SPEC, defaultRunner, detectToolchain, runSyntaxCheck };
-module.exports = { LANG_SPEC, defaultRunner, detectToolchain, runSyntaxCheck };
+// RUN_SPEC: interpreters used by runBehaviourCheck to EXECUTE a program and observe its OUTPUT (a different capability
+// than runSyntaxCheck, which only compiles/type-checks). Interpreted langs only (no separate build step).
+const RUN_SPEC: Readonly<Record<string, any>> = Object.freeze({
+  JavaScript: { bin: "node", ext: ".js", args: (f: string) => [f] },
+  Python: { bin: "python3", ext: ".py", args: (f: string) => [f] },
+});
+
+/**
+ * runBehaviourCheck({ language, content, expectedOutput, toolchainAvailable, runner, timeoutMs }): RUN the program in an
+ * isolated temp dir and PASS iff its trimmed stdout EQUALS the trimmed expectedOutput (the ground truth, fixed in the
+ * corpus — independent of the program). This measures OUTPUT CORRECTNESS (catches logic errors a compile-check misses),
+ * not mere compilability. Bounded (timeout + output cap), minimal env, no network, temp cleaned. Fail-closed:
+ * UNSUPPORTED when the interpreter is unknown/absent (never faked); BLOCKED on spawn error/timeout (never a silent PASS).
+ */
+function runBehaviourCheck(input: any = {}): any {
+  const language = String(input.language || "");
+  const spec = RUN_SPEC[language];
+  if (!spec) return { status: "UNSUPPORTED", reason: `language '${language || "(none)"}' has no run spec in ODG`, language };
+  if (typeof input.content !== "string" || typeof input.expectedOutput !== "string") return { status: "BLOCKED", reason: "content + expectedOutput (strings) required" };
+  const runner = typeof input.runner === "function" ? input.runner : defaultRunner;
+  const available = typeof input.toolchainAvailable === "boolean" ? input.toolchainAvailable : (detectToolchain({ runner }))[language] === true;
+  if (!available) return { status: "UNSUPPORTED", reason: `interpreter for '${language}' is not available — detection only, execution not faked`, language };
+  let dir: string | null = null;
+  try {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-behaviour-"));
+    const file = path.join(dir, `prog${spec.ext}`);
+    fs.writeFileSync(file, input.content);
+    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000 });
+    if (!r || r.spawnError) return { status: "BLOCKED", reason: `run spawn error: ${r && r.spawnError}`, language };
+    if (r.timedOut) return { status: "BLOCKED", reason: "run timed out", language };
+    const out = String(r.stdout || "").trim();
+    const want = String(input.expectedOutput).trim();
+    return out === want
+      ? { status: "PASS", language, detail: "program output matches expected" }
+      : { status: "FAIL", language, exitCode: r.exitCode, detail: "program output does NOT match expected (logic/runtime error)" };
+  } catch (e: any) {
+    return { status: "BLOCKED", reason: (e && e.message) || "execution error", language };
+  } finally {
+    if (dir) { try { fs.rmSync(dir, { recursive: true, force: true }); } catch {} }
+  }
+}
+
+export { LANG_SPEC, RUN_SPEC, defaultRunner, detectToolchain, runSyntaxCheck, runBehaviourCheck };
+module.exports = { LANG_SPEC, RUN_SPEC, defaultRunner, detectToolchain, runSyntaxCheck, runBehaviourCheck };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify({ toolchain: detectToolchain(), supported: Object.keys(LANG_SPEC) }, null, 2) + "\n");

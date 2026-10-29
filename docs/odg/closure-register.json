@@ -89,6 +89,18 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "benchmark-task-mode-2",
+      "program": "P2",
+      "title": "Second benchmark task MODE: runtime-behaviour (output correctness) + mode-coverage gate",
+      "status": "ACCEPTED",
+      "deps": [
+        "rust-build-capability"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): code-execution +runBehaviourCheck — RUNS a program (node/python) and PASSES iff stdout == fixed expectedOutput; measures OUTPUT CORRECTNESS (catches logic errors a compile-check misses), bounded/isolated/offline, UNSUPPORTED when interpreter absent, BLOCKED on spawn/timeout. broad-it-eval v8: +8 runtime-behaviour cases (category Runtime/behaviour, NOT a taxonomy slot ⇒ category coverage unchanged at 9/12; 'broken' cases compile+run but produce wrong output ⇒ FAIL). Representativeness gate UPGRADED: minTaskModes→minModeCoverage ratio over 5 BROAD_TASK_MODES. taskModes now {static-single-file, runtime-behaviour}=2/5=0.4 < 0.6 ⇒ broadIT STAYS NO_DATA (honest: breadth met, mode-coverage short). Adversarial always-PASS fools only the static checker — the behaviour check compares output, immune to exit-code gaming. code-execution suite 39→46, broad-it-eval 39.",
+      "acceptance": "a 2nd distinct task mode (runtime output-correctness) exists + is measured; representativeness requires mode-coverage ≥0.6; broadIT stays NO_DATA until met"
+    },
+    {
       "id": "engine-benchmark-baseline",
       "program": "P2",
       "title": "Reproducible execution-engine benchmark + baseline scorecard (10×/kernel mandate)",
