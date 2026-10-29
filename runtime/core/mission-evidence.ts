@@ -7,8 +7,9 @@
  * exited non-zero, an artifact is missing, or no independent verification ran (Mandate C/D). This module makes each
  * accepted/blocked/failed transition carry a structured, tamper-evident record, and gates ACCEPTANCE on real proof.
  *
- * Composition only (EVIDENCE primitive): reuses evidence-provenance.contentDigest for a tamper-evident digest. Pure/
- * deterministic — no fs/network; the timestamp is injected. NO 10th primitive.
+ * Composition only (EVIDENCE primitive): reuses evidence-provenance.contentDigest for an INTEGRITY digest (detects
+ * accidental/naive mutation of a stored record — NOT a cryptographic signature; a holder who recomputes can forge it,
+ * so it is an integrity checksum, not tamper-PROOF). Pure/deterministic — no fs/network; timestamp injected. NO 10th primitive.
  *
  * Honesty contract:
  *   - deny-by-default: an ACCEPTED claim is acceptable ONLY with a decisive passing command (exit 0), every declared
@@ -51,7 +52,7 @@ function buildEvidenceRecord(input: any, opts: any = {}): any {
     limitations: arr(i.limitations),
     transition: { to: TRANSITIONS.includes(transition.to) ? transition.to : null, from: transition.from || null, reason: transition.reason || null },
   };
-  // tamper-evident digest over the proof content (excludes the digest field itself).
+  // integrity digest over the proof content (excludes the digest field itself) — detects naive mutation, not a signature.
   record.digest = prov.contentDigest(record);
   return record;
 }
@@ -66,7 +67,13 @@ function assertAcceptable(record: any, opts: any = {}): any {
   const reasons: string[] = [];
   if (!isObj(record)) return { acceptable: false, reasons: ["no evidence record"] };
   const to = record.transition && record.transition.to;
-  if (to !== "ACCEPTED") return { acceptable: true, reasons: [] };   // the gate only guards acceptance
+  // SECURITY: the decision to GUARD must come from the CALLER's expected outcome (opts.expect), NOT the proof's own
+  // self-reported transition.to — otherwise a failing proof labelled "BLOCKED"/unlabelled would self-disable the gate
+  // (independent-audit bypass). When opts.expect is given we guard iff it is ACCEPTED; else fall back to the record.
+  const guard = opts.expect !== undefined ? opts.expect === "ACCEPTED" : to === "ACCEPTED";
+  if (!guard) return { acceptable: true, reasons: [] };   // the gate only guards an ACCEPTED outcome
+  // if the caller expects ACCEPTED but the proof claims a different transition, that contradiction is itself a reason.
+  if (opts.expect === "ACCEPTED" && to !== "ACCEPTED") reasons.push(`proof transition '${to || "none"}' contradicts the claimed ACCEPTED outcome (spoofed/missing transition)`);
 
   const attempts = arr(record.attempts);
   // (1) must have at least one decisive executed command, and NO attempt may have a non-zero exit (success can't mask a failure).
@@ -78,9 +85,9 @@ function assertAcceptable(record: any, opts: any = {}): any {
     const passing = withExit.filter((a) => a.exitCode === 0);
     if (passing.length === 0) reasons.push("ACCEPTED with no passing (exit 0) command");
   }
-  // (2) every declared artifact must actually be present (declared-missing ⇒ incomplete work).
-  const missingArtifacts = arr(record.artifacts).filter((a) => a.present === false || (a.present == null && !nonEmpty(a.sha256)));
-  if (missingArtifacts.length) reasons.push(`${missingArtifacts.length} declared artifact(s) missing/unverified (incomplete work)`);
+  // (2) every declared artifact must be present AND integrity-checked (a sha256) — presence alone is not proof.
+  const missingArtifacts = arr(record.artifacts).filter((a) => a.present === false || !nonEmpty(a.sha256));
+  if (missingArtifacts.length) reasons.push(`${missingArtifacts.length} declared artifact(s) missing or without an integrity digest (presence alone is not proof)`);
   // (3) independent verification must exist and agree (when required).
   if (requireVerification) {
     if (!record.verification) reasons.push("ACCEPTED without independent verification");

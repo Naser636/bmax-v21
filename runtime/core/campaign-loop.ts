@@ -77,7 +77,10 @@ function runCampaignLoop(opts: any = {}): any {
       // mission-evidence gate (decisive exit 0, artifacts present, independent verification) — a non-empty evidence
       // string alone is not proof. No `proof` ⇒ unchanged behaviour (backward compatible).
       if (isObj(res.proof)) {
-        const gate = MEV.assertAcceptable(res.proof, { requireVerification: res.requireVerification !== false });
+        // expect:"ACCEPTED" forces the gate to judge the ACCEPTED criteria regardless of the proof's self-reported
+        // transition (closes the spoofed/missing-transition bypass). Verification requirement is a LOOP policy
+        // (opts.requireProofVerification, default true) — the executor cannot waive its own gate.
+        const gate = MEV.assertAcceptable(res.proof, { expect: "ACCEPTED", requireVerification: opts.requireProofVerification !== false });
         if (!gate.acceptable) {
           C.advance(register, lot.id, { attemptFailed: true, reason: `evidence gate rejected acceptance: ${gate.reasons.join("; ")}` });
           rec({ lot: lot.id, event: "FAILED", reason: `evidence-gate: ${gate.reasons.join("; ")}` });

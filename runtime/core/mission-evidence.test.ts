@@ -72,4 +72,40 @@ const cleanProof = (over) => E.buildEvidenceRecord({ mission: { id: "m" }, autho
   ok("no proof field ⇒ legacy accept-on-evidence-string unchanged", r.items[0].status === "ACCEPTED" && o.campaignComplete === true);
 }
 
+// (11) REGRESSION (independent-audit REJECT bypass): res.status ACCEPTED + a FAILING proof whose transition.to is
+// spoofed "BLOCKED" must NOT reach terminal ACCEPTED (the gate judges by the loop's expectation, not the proof label).
+{
+  const reg = { version: "ev-bypass", items: [{ id: "A", status: "READY", deps: [], priority: 1 }] };
+  const spoof = { status: "ACCEPTED", evidence: "x", proof: E.buildEvidenceRecord({ mission: { id: "A" }, attempts: [{ command: "b", exitCode: 1 }], transition: { to: "BLOCKED" } }, {}) };
+  const o = L.runCampaignLoop({ register: reg, execute: () => spoof, maxIterations: 3 });
+  ok("spoofed transition.to=BLOCKED + exit1 ⇒ lot NOT ACCEPTED (bypass closed)", reg.items[0].status !== "ACCEPTED" && o.campaignComplete === false);
+}
+// (12) bypass variant: transition.to MISSING + exit1 ⇒ still not ACCEPTED.
+{
+  const reg = { version: "ev-bypass2", items: [{ id: "A", status: "READY", deps: [], priority: 1 }] };
+  const spoof = { status: "ACCEPTED", evidence: "x", proof: E.buildEvidenceRecord({ mission: { id: "A" }, attempts: [{ command: "b", exitCode: 1 }], transition: {} }, {}) };
+  const o = L.runCampaignLoop({ register: reg, execute: () => spoof, maxIterations: 3 });
+  ok("missing transition.to + exit1 ⇒ lot NOT ACCEPTED", reg.items[0].status !== "ACCEPTED" && o.campaignComplete === false);
+}
+// (13) assertAcceptable with expect:ACCEPTED judges criteria regardless of label + surfaces the contradiction.
+{
+  const g = E.assertAcceptable(E.buildEvidenceRecord({ mission: { id: "m" }, attempts: [{ command: "b", exitCode: 1 }], transition: { to: "BLOCKED" } }, {}), { expect: "ACCEPTED" });
+  ok("expect:ACCEPTED on a BLOCKED-labelled exit1 record ⇒ NOT acceptable (contradiction + non-zero)", g.acceptable === false && g.reasons.some((x) => /contradicts/.test(x)) && g.reasons.some((x) => /non-zero/.test(x)));
+}
+// (14) artifact integrity: present:true but NO sha256 ⇒ not acceptable (presence alone is not proof).
+{
+  const g = E.assertAcceptable(E.buildEvidenceRecord({ mission: { id: "m" }, attempts: [okAttempt], artifacts: [{ path: "out", present: true }], verification: { verified: true }, transition: { to: "ACCEPTED" } }, {}));
+  ok("artifact present:true without integrity digest ⇒ NOT acceptable", g.acceptable === false && g.reasons.some((x) => /integrity digest/.test(x)));
+}
+// (15) the executor cannot waive verification — loop policy (requireProofVerification) decides, not the executor result.
+{
+  const proofNoV = () => E.buildEvidenceRecord({ mission: { id: "A" }, attempts: [okAttempt], artifacts: [{ path: "x", sha256: "a" }], transition: { to: "ACCEPTED" } }, {});
+  const r1 = { version: "ev-v1", items: [{ id: "A", status: "READY", deps: [], priority: 1 }] };
+  const o1 = L.runCampaignLoop({ register: r1, execute: () => ({ status: "ACCEPTED", evidence: "x", requireVerification: false, proof: proofNoV() }), maxIterations: 3 });
+  ok("executor res.requireVerification:false does NOT waive the gate ⇒ lot NOT ACCEPTED (no verification)", r1.items[0].status !== "ACCEPTED" && o1.campaignComplete === false);
+  const r2 = { version: "ev-v2", items: [{ id: "A", status: "READY", deps: [], priority: 1 }] };
+  const o2 = L.runCampaignLoop({ register: r2, execute: () => ({ status: "ACCEPTED", evidence: "x", proof: proofNoV() }), requireProofVerification: false });
+  ok("LOOP policy requireProofVerification:false ⇒ verification waived by ODG, lot ACCEPTED", r2.items[0].status === "ACCEPTED" && o2.campaignComplete === true);
+}
+
 console.log(`\nMISSION-EVIDENCE suite — ${pass} assertions passed. (exit code not maskable; deny-by-default; artifact/verification gates; contradiction; tamper-evident; loop gate opt-in; backward compatible)`);
