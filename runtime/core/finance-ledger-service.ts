@@ -52,9 +52,16 @@ function reconcileLedger(input: any): any {
   if (invDup.size) addFinding(`duplicate:invoice`, "integrity", "HIGH", `duplicate invoice id(s): ${[...invDup].join(", ")}`, "deduplicate invoices or correct the ledger", `${invDup.size} duplicate invoice id(s)`);
   if (payDup.size) addFinding(`duplicate:payment`, "integrity", "MEDIUM", `duplicate payment id(s): ${[...payDup].join(", ")}`, "deduplicate payments", `${payDup.size} duplicate payment id(s)`);
 
-  // index invoices by ref AND id for matching.
+  // index invoices by ref AND id for matching — but DETECT ambiguous keys (a key owned by >1 distinct invoice,
+  // e.g. one invoice's ref equal to another's id). An ambiguous key must NOT silently attach a payment to the wrong
+  // invoice: it is excluded from the match index and raised as a HIGH finding (independent-audit DEF-2).
+  const keyOwners: Record<string, Set<string>> = {};
   const invByRef: Record<string, any> = {};
-  for (const inv of input.invoices) { invByRef[String(inv.ref !== undefined ? inv.ref : inv.id)] = inv; if (inv.id !== undefined) invByRef[String(inv.id)] = inv; }
+  const addKey = (k: any, inv: any) => { if (k === undefined || k === null || k === "") return; const ks = String(k); (keyOwners[ks] || (keyOwners[ks] = new Set())).add(String(inv.id)); invByRef[ks] = inv; };
+  for (const inv of input.invoices) { addKey(inv.ref, inv); addKey(inv.id, inv); }
+  const ambiguousKeys = Object.keys(keyOwners).filter((k) => keyOwners[k].size > 1);
+  for (const k of ambiguousKeys) delete invByRef[k];   // never resolve an ambiguous reference
+  if (ambiguousKeys.length) addFinding(`ambiguous-reference`, "matching", "HIGH", `${ambiguousKeys.length} invoice reference key(s) are ambiguous (owned by >1 invoice): ${ambiguousKeys.slice(0, 10).join(", ")}`, "make invoice refs/ids globally unique; payments on these keys are not auto-attached", `ambiguous keys: ${ambiguousKeys.slice(0, 10).join(", ")}`);
 
   // accumulate payments per invoice (exact), detect currency mismatch + unmatched payments.
   const paidByInvoice: Record<string, any> = {};
@@ -83,7 +90,8 @@ function reconcileLedger(input: any): any {
     let status: string;
     let c: number;
     try { c = EU.compare(paid, invoiced); } catch { c = 0; }
-    if (paid.minor === 0) status = "UNPAID";
+    if (invoiced.minor === 0) status = paid.minor === 0 ? "PAID" : "OVERPAID";   // nothing owed ⇒ settled (not UNPAID)
+    else if (paid.minor === 0) status = "UNPAID";
     else if (c < 0) status = "PARTIAL";
     else if (c === 0) status = "PAID";
     else status = "OVERPAID";

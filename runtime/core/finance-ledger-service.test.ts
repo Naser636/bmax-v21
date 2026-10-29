@@ -66,4 +66,21 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   ok("ledger findings ⇒ valid SARIF 2.1.0 (currency HIGH→error)", s.ok && SARIF.isValidSarif(s.sarif) && s.sarif.runs[0].results.some((x) => x.level === "error"));
 }
 
+// (10) REGRESSION (independent-audit DEF-2): one invoice's ref == another invoice's id ⇒ ambiguous key, raised HIGH,
+// payment NOT silently attached to the wrong invoice.
+{
+  const r = F.reconcileLedger({
+    invoices: [{ id: "INV-A", ref: "INV-B", amountMinor: 1000, currency: "EUR" }, { id: "INV-B", amountMinor: 2000, currency: "EUR" }],
+    payments: [{ id: "p", amountMinor: 2000, currency: "EUR", invoiceRef: "INV-B" }],
+  });
+  ok("ambiguous ref (INV-A.ref == INV-B.id) ⇒ HIGH ambiguous-reference finding, reconciled=false, payment not mis-attached",
+     r.report.findings.some((f) => f.id === "ambiguous-reference" && f.severity === "HIGH") && r.report.reconciled === false &&
+     r.report.invoiceStatuses.find((s) => s.id === "INV-A").paidMinor === 0 && r.report.invoiceStatuses.find((s) => s.id === "INV-B").paidMinor === 0);
+}
+// (11) zero-amount invoice with no payment ⇒ PAID (nothing owed), not a misleading UNPAID.
+{
+  const r = F.reconcileLedger({ invoices: [{ id: "Z", amountMinor: 0, currency: "EUR" }], payments: [] });
+  ok("zero-amount invoice ⇒ PAID (settled), outstanding 0", r.report.byStatus.PAID === 1 && r.report.byStatus.UNPAID === 0 && r.report.totals.outstandingMinor === 0);
+}
+
 console.log(`\nFINANCE-LEDGER-SERVICE suite — ${pass} assertions passed. (exact integer money; PAID/PARTIAL/OVERPAID/UNPAID; unmatched/overpaid/currency/duplicate findings; multi-currency not summed; fail-closed; valid SARIF)`);
