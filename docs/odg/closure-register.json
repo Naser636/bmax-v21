@@ -762,6 +762,21 @@
       "acceptance": "A reproducible, evidence-scored 3-candidate comparison exists; the decision (first/parallel/defer) is justified by measured reuse + cited standards; market criteria are UNKNOWN not invented; no unsupported superiority/demand claim.",
       "nextAction": "e-invoice: CII/UBL XML→model parser (reuse XML checker) is the next self-clearable slice. ai-assurance: compose regulatory-dossier+ai-act+sbom into an assurance-assessment slice (independent scope). building-retrofit: deferred (greenfield). Full competitor matrices + field demand validation are owner/research-gated.",
       "staleEvidence": false
+    },
+    {
+      "id": "product-einvoice-parser-slice2",
+      "program": "P2",
+      "title": "PRODUCT e-invoice SLICE 2: CII/UBL XML → validated model parser (python3-stdlib, exact Decimal→minor)",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-einvoice-validator-slice1",
+        "new-language-families-noinstall"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/einvoice-parser.ts parses UN/CEFACT CII (the Factur-X XML) and OASIS UBL Invoice into the neutral model that einvoice-validator consumes, then validates (EN16931-core). Namespace-agnostic (localName matching, prefix-robust). Amounts via python3 Decimal→integer MINOR units (EXACT at 2dp, NO JS float). python3 stdlib only (ElementTree+decimal) — NO install. FAIL-CLOSED: malformed XML⇒PARSE_ERROR finding; unknown root⇒UNSUPPORTED_FORMAT; python3 absent⇒BLOCKED (never a fake parse). Records source provenance (format + mapped localNames). Tests (einvoice-parser.test.ts, 8): CII valid⇒model+valid; UBL valid⇒model+valid; wrong grand total in XML⇒parses but BR-CO-15 HIGH⇒invalid (parse→validate chain surfaces real rule violations); 33.33/83.33⇒exact minor (no drift); malformed⇒PARSE_ERROR HIGH; unsupported root⇒UNSUPPORTED_FORMAT; empty⇒INVALID_INPUT; supportedSubset+knownGaps enumerated. HONEST: SUPPORTED SUBSET only (BT-1/2/5, seller/buyer name, BT-131 line nets, BT-106/109/110/112 totals, BR-CO-10/13/15); KNOWN GAPS enumerated (party tax ids, VAT breakdown BG-23, allowances/charges detail, Factur-X PDF/A-3 embedding, full 900+ EN16931 rules) — NOT full CII/UBL/EN16931/Factur-X conformance. No new primitive. Independent audit + CI. Gate: parser 8, tsc 0, test:report green.",
+      "acceptance": "Real CII and UBL XML parse into the model with exact Decimal→minor amounts and flow into EN16931-core validation; malformed/unsupported/rule-violating XML produce explicit findings; supported subset + known gaps enumerated (no full-conformance claim).",
+      "nextAction": "e-invoice: extract Factur-X PDF/A-3 embedded XML; add party tax-id (SIREN/VAT) + VAT breakdown (BG-23) + allowances/charges mapping + more EN16931 rules; Chorus Pro/PDP interop (owner-gated). Then ai-assurance assessment slice (composes existing).",
+      "staleEvidence": false
     }
   ]
 }
