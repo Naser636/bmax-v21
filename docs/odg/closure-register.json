@@ -161,8 +161,8 @@
       "blockReason": "EXTERNAL: a credible broad-IT VERIFIED_SUCCESS_RATE requires ground-truth labels NOT authored by ODG — e.g. a third-party-labelled set or real upstream outcomes (merged-PR / upstream test-suite verdicts), with a traceable sourceRef and dev/validation separation, admitted by independent-label-admission-policy.admitEvalSet. ODG must NOT fabricate or self-certify labels. Until such a set is supplied+admitted, broadIT=NO_DATA (correct).",
       "acceptance": "an external set passes admitEvalSet (independent provenance + disjoint dev/validation); then broad-IT can report a MEASURED rate on it",
       "nextAction": "owner/third-party supplies an independently-labelled eval set with provenance; ODG runs admitEvalSet then evaluates",
-      "humanActionRequired": "a third party / upstream supplies a real labelled eval set (traceable provenance, dev/validation disjoint, labels NOT authored by ODG); ODG then runs independent-label-policy.admitEvalSet before evaluating.",
-      "resumeTest": "independent-label-policy.admitEvalSet({provenance,devIds,validationIds}) ⇒ admitted:true; then broad-it-eval reports a MEASURED rate on that set (never on the self-authored corpus)."
+      "humanActionRequired": "ONLY remaining step: a third party / upstream supplies a genuinely INDEPENDENT labelled eval-set JSON {provenance:{author≠ODG, independentOfEvaluee:true, sourceRef, devValidationSeparated:true, labellingMethod}, cases:[{id,partition,language,content,label}]}. The ingestion+measurement harness is DONE (broad-it-eval-ingest.ts, class-B preparation complete).",
+      "resumeTest": "npx tsx runtime/core/broad-it-eval-ingest.ts <independent-eval-set.json> ⇒ admitted:true + broadIT:MEASURED with an accuracy/confusion over the validation partition (real checker vs external labels)."
     },
     {
       "id": "runner-exitcode-honesty-fix",
@@ -718,6 +718,20 @@
       "evidence": "PR(this): RECURRING evidenced defect — the test gate flakily FAILs under parallel memory pressure (exit-137 OOM; FAIL-6 at ODG_TEST_WORKERS=4: heavy validation-engine/reality-gate/cockpit/client subprocess suites), all passing in isolation. ROOT CAUSE: odg-test-report.parseWorkers capped workers by CPU cores ONLY, not memory. FIX: pure computeWorkers(requested,cpus,freeMb,perMb) caps by BOTH cores AND available memory (freeMb/perMb; default 900MB/worker, overridable via ODG_TEST_WORKER_MEM_MB); parseWorkers feeds it real os.cpus()/os.freemem(); honest stderr disclosure when it caps (no silent truncation). Tests (odg-test-report.test.ts +5 ⇒43): request<=1⇒serial; ample⇒honor; LOW MEMORY⇒capped below request w/ 'memory-pressure' reason; few-cores⇒CPU cap; never<1. LIVE: ODG_TEST_WORKERS=64 ⇒ capped to 8 (cpuCap=8), gate 192/192 green. No new primitive (harness policy). Independent audit + CI. Gate: harness 43, tsc 0, build OK, test:report 192 (workers=2).",
       "acceptance": "The parallel test gate no longer oversubscribes memory: workers are capped by available memory as well as cores, with honest disclosure; verified by computeWorkers unit cases + a live over-request capped to a safe count with a green gate.",
       "nextAction": "Monitor for residual flakiness; if a transient mid-run dip still causes FAIL, segment heavy suites into a serial phase.",
+      "staleEvidence": false
+    },
+    {
+      "id": "broad-it-eval-ingest-harness",
+      "program": "P2",
+      "title": "broad-it eval-set ingestion+measurement harness (computer-preparable completion of the independent-eval blocker)",
+      "status": "ACCEPTED",
+      "deps": [
+        "new-language-families-noinstall"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): runtime/core/broad-it-eval-ingest.ts — the COMPUTER-PREPARABLE completion (class B) of broad-it-independent-eval-set. measureOnEvalSet(evalSet) admits a supplied set FAIL-CLOSED via independent-label-policy.admitEvalSet (provenance independence + dev/validation disjointness) and, ONLY if admitted, computes a REAL broad-IT rate by running each VALIDATION case through the REAL code-execution checker and comparing to the EXTERNAL label (labels NOT trusted blindly — a wrong label surfaces as falsePass/falseFail). ingestFile(path) loads a JSON eval-set. Tests (broad-it-eval-ingest.test.ts, 6): self-authored⇒NOT admitted⇒NO_DATA; independent admitted⇒MEASURED (real checker, accuracy 1.0 on correct labels); WRONG label⇒confusion error (accuracy<1); dev/val overlap⇒rejected (leakage); admitted-but-unsupported⇒NO_DATA (excluded not guessed); bad input⇒INVALID_INPUT. HONEST: the mechanism is complete; a REAL broad-IT MEASURED rate still requires a genuinely INDEPENDENT third-party-labelled file (the test's independent descriptor is a FIXTURE simulating one to exercise the mechanism — NOT a real measurement). Composes independent-label-policy + code-execution; NO new primitive. Independent audit + CI. Gate: ingest 6, tsc 0, test:report green.",
+      "acceptance": "Given a genuinely independent third-party-labelled eval set, the harness admits it fail-closed and produces a MEASURED broad-IT rate from the real checker; a self-authored/leaky set is refused (NO_DATA).",
+      "nextAction": "Owner supplies a real independent third-party-labelled eval-set JSON; run `npx tsx runtime/core/broad-it-eval-ingest.ts <file>`. Until then broad-IT stays NO_DATA (honest).",
       "staleEvidence": false
     }
   ]
