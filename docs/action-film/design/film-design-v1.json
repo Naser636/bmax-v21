@@ -1,0 +1,129 @@
+{
+ "generated": "2026-10-24",
+ "project": "ACTION-FILM-V1 (separate from La Porte du Soleil; that project preserved intact)",
+ "status": "PROPOSAL — not a produced film; concept not frozen until comparison documented",
+ "threeConcepts": [
+  {
+   "id": "C1",
+   "title": "LE GUÉ DES CORBEAUX",
+   "logline": "A scarred veteran and a green conscript hold a river ford against a cavalry column long enough for a refugee column to cross; it ends in a duel with the enemy champion.",
+   "setting": "stone ford, misty northern river valley, dawn; iron/dark-age ambiguous (original)",
+   "dramaticPotential": "HIGH (clear stakes, ticking clock, mentor/pupil, one iconic duel)",
+   "feasibilityAI": "HIGH (1-2 locations, 2-3 hero faces, controlled duel; crowds kept distant/misty => mitigates the SC22 crowd-artifact failure L4)",
+   "cost": "LOW-MED"
+  },
+  {
+   "id": "C2",
+   "title": "LA MEUTE DE FER",
+   "logline": "Steppe horse-archers raid a fortified caravan; a lone guard turns the hunters into the hunted across open grassland.",
+   "setting": "open steppe, golden grass, big sky",
+   "dramaticPotential": "HIGH (dynamic cavalry, reversal)",
+   "feasibilityAI": "MED-LOW (many horses+riders in motion => high crowd+motion+horse-identity drift risk)",
+   "cost": "MED-HIGH"
+  },
+  {
+   "id": "C3",
+   "title": "DEUX LAMES, UN SERMENT",
+   "logline": "Two sword-brothers on opposite sides of a siege; betrayal forces a final duel on the breach as the city burns.",
+   "setting": "siege breach, burning city, night",
+   "dramaticPotential": "HIGH (intimate + epic, betrayal)",
+   "feasibilityAI": "MED (siege crowds/VFX; core is a lockable 2-person duel; crowds as background/smoke)",
+   "cost": "MED"
+  }
+ ],
+ "comparison": "C1 best balances drama x AI-feasibility x cost: fewest hero faces, one geography (easy continuity), controlled duel motion, crowds distant/misted (avoids L4). C2 is the riskiest for current AI (horse+crowd motion). C3 is strong but siege crowds add risk/cost.",
+ "recommended": {
+  "id": "C1",
+  "title": "LE GUÉ DES CORBEAUX",
+  "audience": "action/historical-drama viewers on YouTube; a 10-min POC toward a feature",
+  "firstSecondsPromise": "a lone armoured silhouette on a stone ford at dawn; hoofbeats swell; he draws one blade as the cavalry crests the far bank — the whole film promised in one shot"
+ },
+ "synopsis": "VEIG (40s, scarred veteran) is ordered to hold the ford of Krabba with a handful of tired men while the valley folk cross behind him. Among them: OTR (18, his dead friend's son, first battle). The enemy sends RANULF, their champion, to force the ford. Veig trades ground for time, teaching Otr to read the water and the line; men fall. When the refugees are nearly across, Ranulf challenges Veig on the ford itself. Veig wins by reading the river, not by strength — then chooses to let the beaten Ranulf live, buying the last families their crossing. Veig stays on the far bank as the ford floods; Otr leads the people on. The oath passes to the boy.",
+ "structure": [
+  {
+   "act": "I (0-2:30) PROMISE",
+   "beats": [
+    "cold-open silhouette+hoofbeats (hook)",
+    "the order: hold the ford",
+    "Otr's fear; Veig's rule \"read the water, not the man\""
+   ]
+  },
+  {
+   "act": "II (2:30-7:30) PRESSURE",
+   "beats": [
+    "first push repelled (geography taught)",
+    "a man lost to a flanking rider (cost)",
+    "Otr's near-death + Veig saves him",
+    "Ranulf arrives; the line breaks; refugees still crossing"
+   ]
+  },
+  {
+   "act": "III (7:30-10:00) PRICE",
+   "beats": [
+    "the duel on the ford (central set-piece)",
+    "Veig wins by the river, spares Ranulf",
+    "the ford floods; Veig stays; Otr leads the people out",
+    "button: Otr draws the blade the way Veig taught — oath passed"
+   ]
+  }
+ ],
+ "characterBible": [
+  {
+   "ref": "VEIG",
+   "canon": "man ~40s, scarred veteran; worn ring-mail over wool; a single notched longsword; grey-streaked beard; economical, watchful",
+   "arc": "duty -> choice (spares the enemy to buy time)",
+   "identityLock": "reference sheet REQUIRED before generation"
+  },
+  {
+   "ref": "OTR",
+   "canon": "youth ~18; too-big mail; a short seax; open fearful face; grows calm",
+   "arc": "fear -> command",
+   "identityLock": "reference sheet REQUIRED"
+  },
+  {
+   "ref": "RANULF",
+   "canon": "enemy champion ~35; heavy scale + horsehair-crest helm; a long war-blade; proud",
+   "arc": "certainty -> respect",
+   "identityLock": "reference sheet REQUIRED"
+  }
+ ],
+ "actionBible": {
+  "palette": "cold steel-grey water + iron, warm dawn gold on the far ridge; blood kept dark/minimal",
+  "light": "low dawn sun through river mist; motivated",
+  "crowdRule": "enemy column stays MID/FAR + in mist (avoid dense foreground faces = L4)",
+  "weaponContinuity": "Veig longsword (one notch), Otr seax, Ranulf long war-blade — locked per reference",
+  "horses": "kept to the FAR bank / silhouettes where possible (limit horse-motion artifacts)"
+ },
+ "movementContracts": [
+  {
+   "beat": "duel-disarm (climax)",
+   "initial": "Veig low guard mid-ford, Ranulf blade high on the near stones",
+   "trajectory": "Ranulf overhead cut; Veig parries high, steps INSIDE on the submerged stone",
+   "contact": "blades bind; Veig rolls his wrist, Ranulf's blade skates off into the water",
+   "consequence": "Ranulf overbalanced on the slick stone, down to one knee",
+   "final": "Veig behind/above, point at Ranulf's throat, both soaked",
+   "raccord": "cut to reverse: the last refugee family reaching the far bank (why he spares him)"
+  },
+  {
+   "beat": "Otr near-death save",
+   "initial": "Otr isolated, a rider bearing down along the shallows",
+   "trajectory": "rider's spear thrust; Veig crosses frame, shoulders Otr clear",
+   "contact": "spear misses; Veig hooks the rider's leg, rider into the water",
+   "consequence": "Otr down but alive; rider unhorsed",
+   "final": "Veig hauls Otr up by the collar; back-to-back",
+   "raccord": "match-cut on the splash to the enemy column still coming"
+  }
+ ],
+ "acceptanceCriteria": {
+  "faces": "identity match vs reference >=4/5 (human)",
+  "weapons": "same weapon per character across shots (notch/length consistent)",
+  "horses": "no morphing/extra legs; kept distant where possible",
+  "camera": "motivated moves only; action legible at edit speed",
+  "movement": "each action beat matches its movement contract (initial->contact->final)",
+  "continuity": "geography of the ford consistent; eyelines hold; blood/costume consistent",
+  "style": "photoreal cinematic, no cartoon (apply style-lock)",
+  "human": ">=7.5/10 human artistic, NOT self-certified"
+ },
+ "note": "Concept NOT frozen; C1 recommended pending CTO confirmation. No real media generated.",
+ "STATUS": "WITHDRAWN — CTO directive: no separate replacement film. Reusable outputs (learning register, reference study, movement-contract tool) are retained and re-applied to F10. The 3 concepts are archived, NOT pursued."
+}

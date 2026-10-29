@@ -1,0 +1,15 @@
+import { readFileSync } from 'node:fs'; import { fileURLToPath } from 'node:url'; import { dirname, join } from 'node:path';
+const here = dirname(fileURLToPath(import.meta.url)); const R=f=>JSON.parse(readFileSync(join(here,f),'utf8'));
+const pp=R('runs/benchmark/pilot-plan.json'), rm=R('runs/benchmark/readiness-matrix.json'), rn=R('runs/benchmark/eval-research-note.json'), ar=R('runs/benchmark/artistic-recommendations.json');
+let pass=0,fail=0,fails=[]; const ok=(n,c)=>{if(c)pass++;else{fail++;fails.push(n);}};
+ok('pilot has >=6 shots, all with prompts', pp.selection.length>=6 && pp.selection.every(s=>s.hasPrompt));
+ok('pilot each shot justified + risk', pp.selection.every(s=>s.why && s.risk));
+ok('pilot has acceptance + eliminatory + stop', pp.acceptanceCriteria.length>=3 && pp.eliminatoryDefects.length>=3 && pp.stopThresholds.length>=3);
+ok('pilot budget from verified prices, not an authorization', /NOT an authorization/.test(pp.budget.note) && pp.budget.pilotWorstBaseEur>0);
+ok('pilot declares noGeneration', pp.noGeneration===true);
+ok('research note: nothing installed/run', /NO benchmark installed/.test(rn.disclaimer) && rn.methods.every(m=>m.status==='NEEDS_ABSENT_DEPS'));
+ok('research separates usable/human/limits', rn.usableNow.length>0 && rn.humanRequired.length>0 && rn.autoScoreLimits);
+ok('readiness matrix 18 present, structural-only honest', rm.allPresent===true && /NO component proves real-media/.test(rm.note));
+ok('recommendations PROPOSED, both readings kept (Olaf)', ar.status.startsWith('PROPOSED') && ar.items.find(i=>i.id==='olaf-sc43-44').readings.length===2);
+console.log(`PILOT-GATE TESTS: ${fail===0?'PASS':'FAIL'} (pass=${pass} fail=${fail})`+(fail?` [${fails.join(', ')}]`:''));
+process.exit(fail===0?0:1);

@@ -1,0 +1,181 @@
+{
+  "generated": "F10 HIGH-risk + benchmark prompt register (PREP; prompts/plans + acceptance criteria, NOT media)",
+  "reference": "37_SCREENPLAY_60MIN_F10.md",
+  "budgetAuthorizedThisMission": 0,
+  "note": "Every reference is TO_CREATE — no reference sheet exists yet; none is claimed to exist. All costs are ESTIMATES, never MEASURED. No media generated. Acceptance thresholds were fixed BEFORE any test.",
+  "preSetThresholds": {
+    "identityMinPer5": 4,
+    "eurPerUsableSecMax": 1.20,
+    "humanQualityMin10": 7.5,
+    "maxAttemptsPerShot": 8,
+    "hardStopLedgerEur": 250,
+    "setBefore": "any generation; unchanged by results"
+  },
+  "referencesToCreate": {
+    "characters": {
+      "ASTRID": "19, Norse navigator; reads the sea like faces; star-chart forearm tattoo; often soaked; steel calm under strain",
+      "OLAF": "60s, ship's captain, grey as ash, failing; wears an arm-ring; dies in Act III",
+      "MERYT": "Egyptian river-guard captain; disciplined; takes a khopesh gash to her RIGHT forearm in sc30 (her blood, stopping her own commander); wound bound in a strip of Norse cloth by sc38",
+      "IPY": "Egyptian child, fearless; mother drowned in the first tide; carries her mother's water-jug",
+      "SETH-NAKHT": "40s garrison commander; khopesh; theatrical authority that collapses to a broken man holding the line",
+      "VIGGE": "young Norse crew; the boy Börk dies saving",
+      "BORK": "Norse cook, heavy build; drowns in sc30A planting himself against a flood so Vigge can climb",
+      "TOVE": "20s Norse crew; grins at death; drags Vigge from the edge by his belt",
+      "HELGI": "20s Norse crew; carries a child's carved wooden horse; already dead by sc30A (referenced, not present)",
+      "NEFER-KA": "elder Egyptian reader; guards the horizon"
+    },
+    "locations": {
+      "NORTH SEA": "storm ocean, black waves the height of hills; the longship SŌLFARI with reefed sail",
+      "MARKET": "Egyptian river-town market square; stalls, awnings, date-baskets, paved steps",
+      "SEAM-ROOT": "the convergence site under two suns; broken pillar, dunes, flooding hollows that turn sand↔sea on a TONE",
+      "THE CAIRN": "a grey-stone cairn built on gold desert sand under a single ordinary sun"
+    },
+    "props": {
+      "SOLFARI": "Norse longship + steering-oar + reefed sail",
+      "KHOPESH": "Seth-Nakht's sickle-sword (the blade that wounds Meryt)",
+      "WOODEN_HORSE": "Helgi's child's carved wooden horse (passed to Tove, then toward Sǫlveig)",
+      "ARM_RING": "Olaf's arm-ring",
+      "NORSE_CLOTH_BANDAGE": "the strip of Norse cloth binding Meryt's forearm wound from sc38 on",
+      "IPY_JUG": "Ipy's mother's water-jug"
+    }
+  },
+  "shots": [
+    {
+      "id": "SC40-SH06", "role": "HIGH", "benchmark": "B1-hero",
+      "scene": "SC40", "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTINUOUS — [MATRIX-NEW: the climax's pressure has a price]",
+      "scriptAnchor": "BÖRK the cook plants his bulk against a flood so VIGGE can scramble up",
+      "narrativeOutcome": "The line holds at a cost: Börk sets himself against a surging flood so Vigge can climb the rock. Beat 1 of 3 — establish the human wall against the water and Börk's doomed footing.",
+      "charactersInFrame": [{"ref":"BORK","status":"TO_CREATE"},{"ref":"VIGGE","status":"TO_CREATE"},{"ref":"SETH-NAKHT","status":"TO_CREATE"},{"ref":"TOVE","status":"TO_CREATE"}],
+      "locationRef": {"ref":"SEAM-ROOT","status":"TO_CREATE"},
+      "propsRef": [{"ref":"KHOPESH","status":"TO_CREATE"}],
+      "fullPrompt": "SEAM-ROOT convergence under two suns, blinding gold glare, sand flickering to sea. PREMIUM VIDEO, handheld/whip, ~5s. Norse crew and Egyptian soldiers together throw their bodies against a chest-high flood surging out of the sand. BÖRK (heavy Norse cook) plants his bulk as a living dam; young VIGGE scrambles up a wet rock behind his shoulder. Water erupts on a low TONE, spray and armour-drag. Geography legible: dry rock camera-left (safety), rising hollow camera-right (death). Cold-steel Norse tones bleeding into Egyptian gold at convergence. Identity must match refs ASTRID/MERYT not in frame; BÖRK, VIGGE, TOVE, SETH-NAKHT per their reference sheets. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["BÖRK + VIGGE identity ≥4/5 vs ref across the shot","water motion physically plausible (no floating/teleport)","geography legible: safe rock vs drowning hollow readable","no character invulnerable; Börk's footing visibly failing","clean 1080p+, no artifacting on spray/faces"],
+      "rejectionCriteria": "identity drift on Börk/Vigge · impossible water motion · unreadable geography · spray artifacts on faces · crowd members morphing",
+      "primaryMethod": "premium text-to-video (motion IS the point: flood + bodies)",
+      "cheaperAlternative": "still hero plate of the human-wall + animated water layer + 1 short video only for Börk's footing-loss; saves ~video cost if yield is poor",
+      "costEurEstimated": 4, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes"
+    },
+    {
+      "id": "SC40-SH07", "role": "HIGH", "benchmark": "B1-hero",
+      "scene": "SC40", "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTINUOUS — [MATRIX-NEW: the climax's pressure has a price]",
+      "scriptAnchor": "loses his own footing, and goes under, gone in a heartbeat, the way Helgi went",
+      "narrativeOutcome": "Beat 2 — Börk loses his footing and goes under in a single heartbeat; the death is sudden, not dwelt on, echoing Helgi's earlier drowning.",
+      "charactersInFrame": [{"ref":"BORK","status":"TO_CREATE"},{"ref":"VIGGE","status":"TO_CREATE"}],
+      "locationRef": {"ref":"SEAM-ROOT","status":"TO_CREATE"},
+      "propsRef": [],
+      "fullPrompt": "SEAM-ROOT, same flood, continuous. PREMIUM VIDEO, handheld/whip, ~5s. BÖRK's planted foot slips on the slick seam-edge; the surge takes him sideways and he goes UNDER fast — gone in a heartbeat, no thrash, the sea closing flat. VIGGE, just clear on the rock above, turns at the wrong instant. No gore. The suddenness is the horror. Gold convergence glare on churned water. Match BÖRK and VIGGE to their reference sheets exactly. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["BÖRK identity ≥4/5 right up to the moment he goes under","the submersion reads as sudden + physical, not a fade/dissolve","VIGGE's reaction timed to the loss","no gratuitous gore","water closes plausibly (no body pop-back, no floating)"],
+      "rejectionCriteria": "slow-motion melodrama · body visibly clipping through water plane · identity swap · gore",
+      "primaryMethod": "premium text-to-video (sudden physical submersion)",
+      "cheaperAlternative": "still of the slip + a 1.5s video only for the submersion + sound design to sell it; cheapest if the full beat yields poorly",
+      "costEurEstimated": 4, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes"
+    },
+    {
+      "id": "SC40-SH08", "role": "HIGH", "benchmark": "B1-hero",
+      "scene": "SC40", "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTINUOUS — [MATRIX-NEW: the climax's pressure has a price]",
+      "scriptAnchor": "VIGGE lunges back for him; TOVE drags the boy from the edge by his belt",
+      "narrativeOutcome": "Beat 3 — Vigge lunges back for Börk; Tove hauls the boy from the edge by his belt; a broken Seth-Nakht, hauling a hostage clear nearby, stops for half a second at a death his theatre set in motion.",
+      "charactersInFrame": [{"ref":"VIGGE","status":"TO_CREATE"},{"ref":"TOVE","status":"TO_CREATE"},{"ref":"SETH-NAKHT","status":"TO_CREATE"}],
+      "locationRef": {"ref":"SEAM-ROOT","status":"TO_CREATE"},
+      "propsRef": [],
+      "fullPrompt": "SEAM-ROOT, continuous. PREMIUM VIDEO, handheld/whip, ~5s. VIGGE lunges toward the flat water where BÖRK vanished; TOVE grabs the boy's belt from behind and hauls him bodily back from the drowning edge, both of them going down on the wet rock. A few feet away SETH-NAKHT, dragging a Norse hostage clear with his own arms, FREEZES for half a second — one glance at the water — a commander registering a death he caused. Then he turns back to the line. Three identities legible in one moving frame. Gold convergence glare, churned water, armour and wet cloth. Match all three to reference sheets. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["VIGGE + TOVE + SETH-NAKHT identity ≥4/5 simultaneously (hardest: 3 faces in motion)","the belt-grab reads as real weight/force","Seth-Nakht's half-second stop is legible as recognition, not confusion","spatial relation (edge / rock / Seth a few feet off) consistent","clean 1080p+, no face warping in the handheld move"],
+      "rejectionCriteria": "any of the 3 identities drifts · belt-drag looks weightless · faces warp under motion blur · positions incoherent shot-to-shot",
+      "primaryMethod": "premium text-to-video (multi-character motion)",
+      "cheaperAlternative": "split into two simpler 2-character plates (Vigge+Tove, then Seth-Nakht insert) and cut between — reduces the 3-identity-in-motion risk and often the cost-per-usable-second",
+      "costEurEstimated": 4, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes"
+    },
+    {
+      "id": "SC22-SH06", "role": "benchmark", "benchmark": "B2-water-crowd",
+      "scene": "SC22", "sceneHead": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S THEATRE — CONTINUOUS",
+      "scriptAnchor": "east row of stalls BECOMES SEA with a crack like ice giving way",
+      "narrativeOutcome": "The second tide: a market row turns to sea on a TONE; Astrid herds the crowd across an invisible seam she alone can read — one pace dry, one pace drowning. Tests water VFX + a crowd + the protagonist's defining skill.",
+      "charactersInFrame": [{"ref":"ASTRID","status":"TO_CREATE"},{"ref":"HELGI","status":"TO_CREATE"},{"ref":"TOVE","status":"TO_CREATE"}],
+      "locationRef": {"ref":"MARKET","status":"TO_CREATE"},
+      "propsRef": [{"ref":"IPY_JUG","status":"TO_CREATE"}],
+      "fullPrompt": "EXT. Egyptian river-town MARKET, day. PREMIUM VIDEO, handheld/whip, ~5s. On a deep TONE the east row of stalls BECOMES SEA with a crack like ice giving way: awnings billow and sink, date-baskets bob under. ASTRID stands at the tide-line she called, arms out, herding the last stragglers across an invisible seam — one pace this side dry paving, one pace that side rising water. The sea climbs to the second row, STOPS exactly at her line, and drains, leaving fish flapping on dry stone and a living crowd. Crowd of ~15 reacting; Astrid's star-chart forearm tattoo visible. Egyptian gold/ochre, bronze-green desync bleed. Match ASTRID to ref. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["ASTRID identity ≥4/5 incl. forearm tattoo","water-line stops at a readable boundary (the 'seam' is legible on screen)","crowd motion plausible, no duplicated/morphing extras","sand↔sea transition physically convincing","clean 1080p+, no artifacts on water edge or faces"],
+      "rejectionCriteria": "water with no readable boundary · crowd clones/morphs · Astrid identity drift · flat/unconvincing sand-to-sea",
+      "primaryMethod": "premium text-to-video (water sim + crowd motion)",
+      "cheaperAlternative": "matte still of the flooded row + animated water layer + Astrid shot separately on a clean plate and composited; likely far cheaper per usable second if crowd video yields poorly",
+      "costEurEstimated": 4, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes"
+    },
+    {
+      "id": "SC43-SH03", "role": "benchmark", "benchmark": "B3-intimate-FR-voice",
+      "scene": "SC43", "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+      "scriptAnchor": "The sea takes what it's owed, girl. Owe it me — not you.",
+      "narrativeOutcome": "Olaf's death: he gives Astrid permission to let him be the one the sea takes, and asks her to say her choice aloud. The cheapest path — a held two-shot carried by performance, FR voice and micro-expression, not spectacle.",
+      "charactersInFrame": [{"ref":"OLAF","status":"TO_CREATE"},{"ref":"ASTRID","status":"TO_CREATE"}],
+      "locationRef": {"ref":"SEAM-ROOT","status":"TO_CREATE"},
+      "propsRef": [{"ref":"ARM_RING","status":"TO_CREATE"},{"ref":"WOODEN_HORSE","status":"TO_CREATE"}],
+      "fullPrompt": "EXT. SEAM-ROOT, convergence hush. STILL_ANIMATABLE close two-shot, subtle breathing/parallax only, ~4–6s held. OLAF (60s, grey, failing, arm-ring) lies with ASTRID bent close; his hand finds hers. The faintest smile — pride — as he tells her to owe the sea him, not her. Minimal motion; everything is in the faces. FR voice-over (dubbed): OLAF warm and spent, ASTRID steady with no tremor (her first unforced choice). Cold-to-gold light. Match OLAF + ASTRID to refs. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["OLAF + ASTRID identity ≥4/5","micro-expression reads (Olaf's pride, Astrid's held grief)","FR voice natural, lip-syncable, consistent with character","arm-ring prop continuity present","no uncanny mouth artifacts on the held faces"],
+      "rejectionCriteria": "waxy/uncanny faces on a held shot · FR VO robotic or mismatched · lip-sync impossible · identity drift",
+      "primaryMethod": "still image + subtle animate (Ken-Burns/parallax) + FR TTS voice + sound",
+      "cheaperAlternative": "already the cheap path; if the still animate looks dead, a 2s micro-video of the hand finding hers is the only video needed",
+      "costEurEstimated": 0.35, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes"
+    },
+    {
+      "id": "SC01-SH01", "role": "benchmark", "benchmark": "B4-establisher-savings",
+      "scene": "SC01", "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+      "scriptAnchor": "Black water the height of hills. The longship SŌLFARI claws up a wave",
+      "narrativeOutcome": "Opening establisher: the storm and the longship in peril. Tests whether a STILL + slow Ken-Burns push equals a premium video establisher (the €54.75 question across 15 such shots).",
+      "charactersInFrame": [{"ref":"ASTRID","status":"TO_CREATE"},{"ref":"OLAF","status":"TO_CREATE"}],
+      "locationRef": {"ref":"NORTH SEA","status":"TO_CREATE"},
+      "propsRef": [{"ref":"SOLFARI","status":"TO_CREATE"}],
+      "fullPrompt": "EXT. NORTH SEA, storm, night. WIDE establisher, slow push-in (camera-only), ~6s. Black waves the height of hills; the longship SŌLFARI claws up a wave, sail reefed to a rag, ASTRID tiny at the steering-oar, OLAF lashed to the mast. Cold Norse steel-grey, rain, spray. Subjects essentially static within the frame — only the camera pushes in. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["ship + sea read as epic scale","if STILL+Ken-Burns: no parallax tearing, water edge convincing","cold-steel palette on-tone","clean 1080p+","figures legible but need not carry CU identity at this scale"],
+      "rejectionCriteria": "flat/cardboard parallax reveal · unconvincing frozen water on a still · palette wrong",
+      "primaryMethod": "STILL_ANIMATABLE (slow Ken-Burns push) — camera-only motion needs no video",
+      "cheaperAlternative": "this IS the cheaper alternative vs premium video (~€3.65 saved/shot); invalidated ONLY if the establisher must show the ship visibly climbing a moving wave in-frame (then it needs video)",
+      "costEurEstimated": 4, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes",
+      "costIfDowngradedEur": 0.35,
+      "downgradeSavingEur": 3.65,
+      "downgradeInvalidatedIf": "the shot must show subject motion (ship climbing a moving wave, sail tearing on camera, water breaking over the rail in-frame) rather than a held tableau"
+    },
+    {
+      "id": "SC39-SH04", "role": "benchmark", "benchmark": "B5a-continuity-wound-inflicted",
+      "scene": "SC39", "sceneHead": "30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINUOUS",
+      "scriptAnchor": "The khopesh's edge lays her own forearm open as she turns it — her blood, not Olaf's",
+      "narrativeOutcome": "Meryt disarms her own commander without striking him; the khopesh lays her RIGHT forearm open as she turns the blade — the wound that must persist to sc38. Tests combat choreography + a specific, continuity-critical injury.",
+      "charactersInFrame": [{"ref":"MERYT","status":"TO_CREATE"},{"ref":"SETH-NAKHT","status":"TO_CREATE"},{"ref":"OLAF","status":"TO_CREATE"}],
+      "locationRef": {"ref":"SEAM-ROOT","status":"TO_CREATE"},
+      "propsRef": [{"ref":"KHOPESH","status":"TO_CREATE"}],
+      "fullPrompt": "EXT. SEAM-ROOT, convergence. PREMIUM VIDEO, handheld/whip, ~5s. MERYT steps inside SETH-NAKHT's reach, one hand clamping his blade-wrist, the heel of the other driving up under the pommel; the KHOPESH edge lays her own RIGHT forearm open as she turns it — her blood — and the blade spins loose into the sand. She does NOT strike him; she holds, her bleeding arm pinning his empty hand, and lets him see her choose. OLAF's litter near the rising water behind them. Gold glare. The forearm wound is placed RIGHT forearm, a single clean gash — continuity-critical (bound in Norse cloth by sc38). Match MERYT + SETH-NAKHT to refs. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["MERYT + SETH-NAKHT identity ≥4/5","disarm choreography physically coherent (wrist clamp → pommel drive → blade loose)","wound on RIGHT forearm, single gash, placement exact for later continuity","no lethal strike (she holds, not stabs)","blood plausible, not gratuitous"],
+      "rejectionCriteria": "wound on wrong arm or inconsistent placement · disarm looks weightless/impossible · identity drift · Meryt appears to kill him · excessive gore",
+      "primaryMethod": "premium text-to-video (close physical choreography)",
+      "cheaperAlternative": "still of the locked hold (wrist clamp, blade dropping) + one short video only for the disarm snap; the HOLD two-shot can be a still",
+      "costEurEstimated": 4, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes",
+      "continuityPair": "SC48-SH02"
+    },
+    {
+      "id": "SC48-SH02", "role": "benchmark", "benchmark": "B5b-continuity-wound-healed",
+      "scene": "SC48", "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+      "scriptAnchor": "her sword-arm bound in a strip of Norse cloth, the wound she took stopping her own commander",
+      "narrativeOutcome": "Aftermath at the cairn: Meryt sets the last stone, her RIGHT (sword) forearm bound in a strip of Norse cloth — the SAME wound from sc30, now dressed. Tests identity + wound continuity across a large time/scene gap.",
+      "charactersInFrame": [{"ref":"MERYT","status":"TO_CREATE"},{"ref":"ASTRID","status":"TO_CREATE"}],
+      "locationRef": {"ref":"THE CAIRN","status":"TO_CREATE"},
+      "propsRef": [{"ref":"NORSE_CLOTH_BANDAGE","status":"TO_CREATE"}],
+      "fullPrompt": "EXT. THE CAIRN, single-sun morning. STILL_ANIMATABLE MED/CU, subtle motion, ~4s. A grey-stone cairn on gold sand. MERYT sets the last stone; her RIGHT forearm is bound in a strip of Norse cloth — the dressed wound she took in sc30. Calm, ordinary single-sun light (the two suns are gone). Beside her, ASTRID. The bandage is on the SAME arm and place as the sc30 gash. Match MERYT + ASTRID to refs. [prompt is a PLAN; not generated]",
+      "acceptanceCriteria": ["MERYT + ASTRID identity ≥4/5 and consistent with earlier scenes","bandage on RIGHT forearm, matching the sc30 wound placement exactly","single-sun ordinary daylight (NOT the two-sun convergence)","palette resolved to calm gold","no artifacts on the bandage/hands"],
+      "rejectionCriteria": "bandage on wrong arm / missing · two suns still present · identity inconsistent with sc30 Meryt · wrong (convergence) lighting",
+      "primaryMethod": "STILL_ANIMATABLE + subtle animate",
+      "cheaperAlternative": "already cheap; no video needed",
+      "costEurEstimated": 0.35, "costStatus": "ESTIMATED", "costUnit": "per usable shot incl. retakes",
+      "continuityPair": "SC39-SH04"
+    }
+  ],
+  "establisherSubstitution": {
+    "claim": "15 wide 'slow push-in' establishers are camera-only motion → a STILL + Ken-Burns/parallax carries them",
+    "shots": ["SC01-SH01","SC03-SH01","SC18-SH01","SC21-SH01","SC22-SH01","SC25-SH01","SC30-SH01","SC31-SH01","SC32-SH01","SC37-SH01","SC38-SH01","SC39-SH01","SC40-SH01","SC45-SH01","SC46-SH01"],
+    "perShotSavingEur": 3.65,
+    "estimatedTotalSavingEur": 54.75,
+    "savingStatus": "ESTIMATED — NOT measured; the benchmark (B4) confirms or refutes it before any scale-up",
+    "invalidatedIf": [
+      "the establisher must show SUBJECT motion in-frame (ship climbing a moving wave, crowd surging, water breaking over a rail), not just a camera push",
+      "parallax on the still reveals flatness that reads as cardboard at the intended screen size",
+      "the scene's first frame must already carry a moving VFX element (active flood/seam) that a still cannot sell"
+    ]
+  }
+}

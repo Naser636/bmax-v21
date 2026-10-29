@@ -1,0 +1,1205 @@
+{
+ "generated": "2026-10-24",
+ "totalScenes": 49,
+ "totalShots": 420,
+ "everySceneCanonLinked": true,
+ "matrix": [
+  {
+   "scene": "SC01",
+   "f10Prefix": "1",
+   "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+   "act": "I",
+   "shots": 13,
+   "shotIds": [
+    "SC01-SH01",
+    "SC01-SH02",
+    "SC01-SH03",
+    "SC01-SH04",
+    "SC01-SH05",
+    "SC01-SH06",
+    "SC01-SH07",
+    "SC01-SH08",
+    "SC01-SH09",
+    "SC01-SH10",
+    "SC01-SH11",
+    "SC01-SH12",
+    "SC01-SH13"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC02",
+   "f10Prefix": "2",
+   "sceneHead": "2. EXT. SŌLFARI DECK — CONTINUOUS",
+   "act": "I",
+   "shots": 8,
+   "shotIds": [
+    "SC02-SH01",
+    "SC02-SH02",
+    "SC02-SH03",
+    "SC02-SH04",
+    "SC02-SH05",
+    "SC02-SH06",
+    "SC02-SH07",
+    "SC02-SH08"
+   ],
+   "characters": [
+    "HELGI",
+    "TOVE"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC03",
+   "f10Prefix": "3",
+   "sceneHead": "3. EXT. NORTH SEA — THE SEAM — CONTINUOUS",
+   "act": "I",
+   "shots": 9,
+   "shotIds": [
+    "SC03-SH01",
+    "SC03-SH02",
+    "SC03-SH03",
+    "SC03-SH04",
+    "SC03-SH05",
+    "SC03-SH06",
+    "SC03-SH07",
+    "SC03-SH08",
+    "SC03-SH09"
+   ],
+   "characters": [
+    "ASTRID",
+    "HELGI",
+    "TOVE"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC04",
+   "f10Prefix": "4",
+   "sceneHead": "4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT",
+   "act": "I",
+   "shots": 7,
+   "shotIds": [
+    "SC04-SH01",
+    "SC04-SH02",
+    "SC04-SH03",
+    "SC04-SH04",
+    "SC04-SH05",
+    "SC04-SH06",
+    "SC04-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC05",
+   "f10Prefix": "5",
+   "sceneHead": "5. EXT. SHORE — THE PATROL — CONTINUOUS",
+   "act": "I",
+   "shots": 8,
+   "shotIds": [
+    "SC05-SH01",
+    "SC05-SH02",
+    "SC05-SH03",
+    "SC05-SH04",
+    "SC05-SH05",
+    "SC05-SH06",
+    "SC05-SH07",
+    "SC05-SH08"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT",
+    "IPY"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC06",
+   "f10Prefix": "6",
+   "sceneHead": "6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS",
+   "act": "I",
+   "shots": 8,
+   "shotIds": [
+    "SC06-SH01",
+    "SC06-SH02",
+    "SC06-SH03",
+    "SC06-SH04",
+    "SC06-SH05",
+    "SC06-SH06",
+    "SC06-SH07",
+    "SC06-SH08"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT",
+    "IPY"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC07",
+   "f10Prefix": "7",
+   "sceneHead": "7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS",
+   "act": "I",
+   "shots": 8,
+   "shotIds": [
+    "SC07-SH01",
+    "SC07-SH02",
+    "SC07-SH03",
+    "SC07-SH04",
+    "SC07-SH05",
+    "SC07-SH06",
+    "SC07-SH07",
+    "SC07-SH08"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC08",
+   "f10Prefix": "7A",
+   "sceneHead": "7A. EXT. RIVER-TOWN — THE SAME EVENING — [MATRIX-N",
+   "act": "I",
+   "shots": 4,
+   "shotIds": [
+    "SC08-SH01",
+    "SC08-SH02",
+    "SC08-SH03",
+    "SC08-SH04"
+   ],
+   "characters": [
+    "ASTRID",
+    "IPY",
+    "WIDOW"
+   ],
+   "dialogueLines": 1,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC09",
+   "f10Prefix": "8",
+   "sceneHead": "8. INT. GARRISON — COUNCIL — DUSK",
+   "act": "I",
+   "shots": 5,
+   "shotIds": [
+    "SC09-SH01",
+    "SC09-SH02",
+    "SC09-SH03",
+    "SC09-SH04",
+    "SC09-SH05"
+   ],
+   "characters": [
+    "SETH-NAKHT",
+    "ELDER"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC10",
+   "f10Prefix": "9",
+   "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+   "act": "I",
+   "shots": 11,
+   "shotIds": [
+    "SC10-SH01",
+    "SC10-SH02",
+    "SC10-SH03",
+    "SC10-SH04",
+    "SC10-SH05",
+    "SC10-SH06",
+    "SC10-SH07",
+    "SC10-SH08",
+    "SC10-SH09",
+    "SC10-SH10",
+    "SC10-SH11"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 5,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC11",
+   "f10Prefix": "9A",
+   "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+   "act": "I",
+   "shots": 11,
+   "shotIds": [
+    "SC11-SH01",
+    "SC11-SH02",
+    "SC11-SH03",
+    "SC11-SH04",
+    "SC11-SH05",
+    "SC11-SH06",
+    "SC11-SH07",
+    "SC11-SH08",
+    "SC11-SH09",
+    "SC11-SH10",
+    "SC11-SH11"
+   ],
+   "characters": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 5,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC12",
+   "f10Prefix": "10",
+   "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+   "act": "I",
+   "shots": 12,
+   "shotIds": [
+    "SC12-SH01",
+    "SC12-SH02",
+    "SC12-SH03",
+    "SC12-SH04",
+    "SC12-SH05",
+    "SC12-SH06",
+    "SC12-SH07",
+    "SC12-SH08",
+    "SC12-SH09",
+    "SC12-SH10",
+    "SC12-SH11",
+    "SC12-SH12"
+   ],
+   "characters": [
+    "MERYT",
+    "NEFER-KA",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 5,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC13",
+   "f10Prefix": "10A",
+   "sceneHead": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+   "act": "I",
+   "shots": 10,
+   "shotIds": [
+    "SC13-SH01",
+    "SC13-SH02",
+    "SC13-SH03",
+    "SC13-SH04",
+    "SC13-SH05",
+    "SC13-SH06",
+    "SC13-SH07",
+    "SC13-SH08",
+    "SC13-SH09",
+    "SC13-SH10"
+   ],
+   "characters": [
+    "HELGI",
+    "TOVE",
+    "VIGGE",
+    "BÖRK"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC14",
+   "f10Prefix": "11",
+   "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+   "act": "I",
+   "shots": 15,
+   "shotIds": [
+    "SC14-SH01",
+    "SC14-SH02",
+    "SC14-SH03",
+    "SC14-SH04",
+    "SC14-SH05",
+    "SC14-SH06",
+    "SC14-SH07",
+    "SC14-SH08",
+    "SC14-SH09",
+    "SC14-SH10",
+    "SC14-SH11",
+    "SC14-SH12",
+    "SC14-SH13",
+    "SC14-SH14",
+    "SC14-SH15"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "HELGI"
+   ],
+   "dialogueLines": 6,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC15",
+   "f10Prefix": "12",
+   "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+   "act": "II",
+   "shots": 12,
+   "shotIds": [
+    "SC15-SH01",
+    "SC15-SH02",
+    "SC15-SH03",
+    "SC15-SH04",
+    "SC15-SH05",
+    "SC15-SH06",
+    "SC15-SH07",
+    "SC15-SH08",
+    "SC15-SH09",
+    "SC15-SH10",
+    "SC15-SH11",
+    "SC15-SH12"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "MERYT",
+    "SETH-NAKHT",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 5,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC16",
+   "f10Prefix": "13",
+   "sceneHead": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+   "act": "II",
+   "shots": 10,
+   "shotIds": [
+    "SC16-SH01",
+    "SC16-SH02",
+    "SC16-SH03",
+    "SC16-SH04",
+    "SC16-SH05",
+    "SC16-SH06",
+    "SC16-SH07",
+    "SC16-SH08",
+    "SC16-SH09",
+    "SC16-SH10"
+   ],
+   "characters": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC17",
+   "f10Prefix": "14",
+   "sceneHead": "14. EXT. DESERT — SHE LEARNS — LATER",
+   "act": "II",
+   "shots": 5,
+   "shotIds": [
+    "SC17-SH01",
+    "SC17-SH02",
+    "SC17-SH03",
+    "SC17-SH04",
+    "SC17-SH05"
+   ],
+   "characters": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC18",
+   "f10Prefix": "14A",
+   "sceneHead": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+   "act": "II",
+   "shots": 11,
+   "shotIds": [
+    "SC18-SH01",
+    "SC18-SH02",
+    "SC18-SH03",
+    "SC18-SH04",
+    "SC18-SH05",
+    "SC18-SH06",
+    "SC18-SH07",
+    "SC18-SH08",
+    "SC18-SH09",
+    "SC18-SH10",
+    "SC18-SH11"
+   ],
+   "characters": [
+    "ASTRID",
+    "HELGI",
+    "TOVE",
+    "MERYT",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC19",
+   "f10Prefix": "15",
+   "sceneHead": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+   "act": "II",
+   "shots": 10,
+   "shotIds": [
+    "SC19-SH01",
+    "SC19-SH02",
+    "SC19-SH03",
+    "SC19-SH04",
+    "SC19-SH05",
+    "SC19-SH06",
+    "SC19-SH07",
+    "SC19-SH08",
+    "SC19-SH09",
+    "SC19-SH10"
+   ],
+   "characters": [
+    "ASTRID",
+    "HELGI",
+    "TOVE",
+    "MERYT"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC20",
+   "f10Prefix": "15A",
+   "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+   "act": "II",
+   "shots": 11,
+   "shotIds": [
+    "SC20-SH01",
+    "SC20-SH02",
+    "SC20-SH03",
+    "SC20-SH04",
+    "SC20-SH05",
+    "SC20-SH06",
+    "SC20-SH07",
+    "SC20-SH08",
+    "SC20-SH09",
+    "SC20-SH10",
+    "SC20-SH11"
+   ],
+   "characters": [
+    "ASTRID",
+    "TOVE"
+   ],
+   "dialogueLines": 5,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC21",
+   "f10Prefix": "16",
+   "sceneHead": "16. EXT. RIVER-TOWN MARKET — DAY",
+   "act": "II",
+   "shots": 9,
+   "shotIds": [
+    "SC21-SH01",
+    "SC21-SH02",
+    "SC21-SH03",
+    "SC21-SH04",
+    "SC21-SH05",
+    "SC21-SH06",
+    "SC21-SH07",
+    "SC21-SH08",
+    "SC21-SH09"
+   ],
+   "characters": [
+    "ASTRID",
+    "IPY"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC22",
+   "f10Prefix": "17",
+   "sceneHead": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T",
+   "act": "II",
+   "shots": 9,
+   "shotIds": [
+    "SC22-SH01",
+    "SC22-SH02",
+    "SC22-SH03",
+    "SC22-SH04",
+    "SC22-SH05",
+    "SC22-SH06",
+    "SC22-SH07",
+    "SC22-SH08",
+    "SC22-SH09"
+   ],
+   "characters": [
+    "ASTRID",
+    "HELGI",
+    "TOVE",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC23",
+   "f10Prefix": "18",
+   "sceneHead": "18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN",
+   "act": "II",
+   "shots": 6,
+   "shotIds": [
+    "SC23-SH01",
+    "SC23-SH02",
+    "SC23-SH03",
+    "SC23-SH04",
+    "SC23-SH05",
+    "SC23-SH06"
+   ],
+   "characters": [
+    "ASTRID",
+    "IPY",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC24",
+   "f10Prefix": "18A",
+   "sceneHead": "18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU",
+   "act": "II",
+   "shots": 7,
+   "shotIds": [
+    "SC24-SH01",
+    "SC24-SH02",
+    "SC24-SH03",
+    "SC24-SH04",
+    "SC24-SH05",
+    "SC24-SH06",
+    "SC24-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC25",
+   "f10Prefix": "18B",
+   "sceneHead": "18B. THE TWO TOWNS — NIGHTS OF THE BLEED — WORDLES",
+   "act": "II",
+   "shots": 7,
+   "shotIds": [
+    "SC25-SH01",
+    "SC25-SH02",
+    "SC25-SH03",
+    "SC25-SH04",
+    "SC25-SH05",
+    "SC25-SH06",
+    "SC25-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "MERYT"
+   ],
+   "dialogueLines": 0,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC26",
+   "f10Prefix": "19",
+   "sceneHead": "19. INT. GARRISON — THE SEIZURE — NIGHT",
+   "act": "II",
+   "shots": 4,
+   "shotIds": [
+    "SC26-SH01",
+    "SC26-SH02",
+    "SC26-SH03",
+    "SC26-SH04"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 1,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC27",
+   "f10Prefix": "20",
+   "sceneHead": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+   "act": "II",
+   "shots": 9,
+   "shotIds": [
+    "SC27-SH01",
+    "SC27-SH02",
+    "SC27-SH03",
+    "SC27-SH04",
+    "SC27-SH05",
+    "SC27-SH06",
+    "SC27-SH07",
+    "SC27-SH08",
+    "SC27-SH09"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC28",
+   "f10Prefix": "21",
+   "sceneHead": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+   "act": "II",
+   "shots": 9,
+   "shotIds": [
+    "SC28-SH01",
+    "SC28-SH02",
+    "SC28-SH03",
+    "SC28-SH04",
+    "SC28-SH05",
+    "SC28-SH06",
+    "SC28-SH07",
+    "SC28-SH08",
+    "SC28-SH09"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC29",
+   "f10Prefix": "21A",
+   "sceneHead": "21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI",
+   "act": "II",
+   "shots": 8,
+   "shotIds": [
+    "SC29-SH01",
+    "SC29-SH02",
+    "SC29-SH03",
+    "SC29-SH04",
+    "SC29-SH05",
+    "SC29-SH06",
+    "SC29-SH07",
+    "SC29-SH08"
+   ],
+   "characters": [
+    "ASTRID",
+    "HELGI"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC30",
+   "f10Prefix": "22",
+   "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+   "act": "II",
+   "shots": 15,
+   "shotIds": [
+    "SC30-SH01",
+    "SC30-SH02",
+    "SC30-SH03",
+    "SC30-SH04",
+    "SC30-SH05",
+    "SC30-SH06",
+    "SC30-SH07",
+    "SC30-SH08",
+    "SC30-SH09",
+    "SC30-SH10",
+    "SC30-SH11",
+    "SC30-SH12",
+    "SC30-SH13",
+    "SC30-SH14",
+    "SC30-SH15"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "TOVE",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 5,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC31",
+   "f10Prefix": "23",
+   "sceneHead": "23. EXT. CANYON — THE ECHO — CONTINUOUS",
+   "act": "II",
+   "shots": 7,
+   "shotIds": [
+    "SC31-SH01",
+    "SC31-SH02",
+    "SC31-SH03",
+    "SC31-SH04",
+    "SC31-SH05",
+    "SC31-SH06",
+    "SC31-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "HELGI",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 1,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC32",
+   "f10Prefix": "24",
+   "sceneHead": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+   "act": "II",
+   "shots": 11,
+   "shotIds": [
+    "SC32-SH01",
+    "SC32-SH02",
+    "SC32-SH03",
+    "SC32-SH04",
+    "SC32-SH05",
+    "SC32-SH06",
+    "SC32-SH07",
+    "SC32-SH08",
+    "SC32-SH09",
+    "SC32-SH10",
+    "SC32-SH11"
+   ],
+   "characters": [
+    "ASTRID",
+    "HELGI",
+    "TOVE"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC33",
+   "f10Prefix": "25",
+   "sceneHead": "25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS",
+   "act": "II",
+   "shots": 5,
+   "shotIds": [
+    "SC33-SH01",
+    "SC33-SH02",
+    "SC33-SH03",
+    "SC33-SH04",
+    "SC33-SH05"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "TOVE"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC34",
+   "f10Prefix": "26",
+   "sceneHead": "26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT",
+   "act": "II",
+   "shots": 7,
+   "shotIds": [
+    "SC34-SH01",
+    "SC34-SH02",
+    "SC34-SH03",
+    "SC34-SH04",
+    "SC34-SH05",
+    "SC34-SH06",
+    "SC34-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC35",
+   "f10Prefix": "26A",
+   "sceneHead": "26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT",
+   "act": "II",
+   "shots": 8,
+   "shotIds": [
+    "SC35-SH01",
+    "SC35-SH02",
+    "SC35-SH03",
+    "SC35-SH04",
+    "SC35-SH05",
+    "SC35-SH06",
+    "SC35-SH07",
+    "SC35-SH08"
+   ],
+   "characters": [
+    "MERYT",
+    "IPY"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC36",
+   "f10Prefix": "27",
+   "sceneHead": "27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU",
+   "act": "II",
+   "shots": 6,
+   "shotIds": [
+    "SC36-SH01",
+    "SC36-SH02",
+    "SC36-SH03",
+    "SC36-SH04",
+    "SC36-SH05",
+    "SC36-SH06"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "MERYT",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC37",
+   "f10Prefix": "28",
+   "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+   "act": "III",
+   "shots": 13,
+   "shotIds": [
+    "SC37-SH01",
+    "SC37-SH02",
+    "SC37-SH03",
+    "SC37-SH04",
+    "SC37-SH05",
+    "SC37-SH06",
+    "SC37-SH07",
+    "SC37-SH08",
+    "SC37-SH09",
+    "SC37-SH10",
+    "SC37-SH11",
+    "SC37-SH12",
+    "SC37-SH13"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "MERYT",
+    "SETH-NAKHT",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC38",
+   "f10Prefix": "29",
+   "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+   "act": "III",
+   "shots": 14,
+   "shotIds": [
+    "SC38-SH01",
+    "SC38-SH02",
+    "SC38-SH03",
+    "SC38-SH04",
+    "SC38-SH05",
+    "SC38-SH06",
+    "SC38-SH07",
+    "SC38-SH08",
+    "SC38-SH09",
+    "SC38-SH10",
+    "SC38-SH11",
+    "SC38-SH12",
+    "SC38-SH13",
+    "SC38-SH14"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "TOVE",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC39",
+   "f10Prefix": "30",
+   "sceneHead": "30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU",
+   "act": "III",
+   "shots": 7,
+   "shotIds": [
+    "SC39-SH01",
+    "SC39-SH02",
+    "SC39-SH03",
+    "SC39-SH04",
+    "SC39-SH05",
+    "SC39-SH06",
+    "SC39-SH07"
+   ],
+   "characters": [
+    "OLAF",
+    "MERYT",
+    "SETH-NAKHT"
+   ],
+   "dialogueLines": 1,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC40",
+   "f10Prefix": "30A",
+   "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI",
+   "act": "III",
+   "shots": 9,
+   "shotIds": [
+    "SC40-SH01",
+    "SC40-SH02",
+    "SC40-SH03",
+    "SC40-SH04",
+    "SC40-SH05",
+    "SC40-SH06",
+    "SC40-SH07",
+    "SC40-SH08",
+    "SC40-SH09"
+   ],
+   "characters": [
+    "TOVE",
+    "SETH-NAKHT",
+    "VIGGE"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC41",
+   "f10Prefix": "31",
+   "sceneHead": "31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS",
+   "act": "III",
+   "shots": 8,
+   "shotIds": [
+    "SC41-SH01",
+    "SC41-SH02",
+    "SC41-SH03",
+    "SC41-SH04",
+    "SC41-SH05",
+    "SC41-SH06",
+    "SC41-SH07",
+    "SC41-SH08"
+   ],
+   "characters": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC42",
+   "f10Prefix": "32",
+   "sceneHead": "32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS",
+   "act": "III",
+   "shots": 6,
+   "shotIds": [
+    "SC42-SH01",
+    "SC42-SH02",
+    "SC42-SH03",
+    "SC42-SH04",
+    "SC42-SH05",
+    "SC42-SH06"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT"
+   ],
+   "dialogueLines": 2,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC43",
+   "f10Prefix": "33",
+   "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+   "act": "III",
+   "shots": 9,
+   "shotIds": [
+    "SC43-SH01",
+    "SC43-SH02",
+    "SC43-SH03",
+    "SC43-SH04",
+    "SC43-SH05",
+    "SC43-SH06",
+    "SC43-SH07",
+    "SC43-SH08",
+    "SC43-SH09"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "TOVE"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC44",
+   "f10Prefix": "34",
+   "sceneHead": "34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS",
+   "act": "III",
+   "shots": 7,
+   "shotIds": [
+    "SC44-SH01",
+    "SC44-SH02",
+    "SC44-SH03",
+    "SC44-SH04",
+    "SC44-SH05",
+    "SC44-SH06",
+    "SC44-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "TOVE"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC45",
+   "f10Prefix": "35",
+   "sceneHead": "35. EXT. SEAM / SHORE — THE CLOSE — CONTINUOUS",
+   "act": "III",
+   "shots": 5,
+   "shotIds": [
+    "SC45-SH01",
+    "SC45-SH02",
+    "SC45-SH03",
+    "SC45-SH04",
+    "SC45-SH05"
+   ],
+   "characters": [
+    "ASTRID",
+    "TOVE",
+    "MERYT"
+   ],
+   "dialogueLines": 0,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC46",
+   "f10Prefix": "36",
+   "sceneHead": "36. INT. THE SEAM — THE MIDDLE — CONTINUOUS",
+   "act": "III",
+   "shots": 7,
+   "shotIds": [
+    "SC46-SH01",
+    "SC46-SH02",
+    "SC46-SH03",
+    "SC46-SH04",
+    "SC46-SH05",
+    "SC46-SH06",
+    "SC46-SH07"
+   ],
+   "characters": [
+    "ASTRID",
+    "OLAF",
+    "HELGI"
+   ],
+   "dialogueLines": 1,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC47",
+   "f10Prefix": "37",
+   "sceneHead": "37. EXT. SHORE — THE SUNS PART — DAWN",
+   "act": "III",
+   "shots": 1,
+   "shotIds": [
+    "SC47-SH01"
+   ],
+   "characters": [
+    "ASTRID"
+   ],
+   "dialogueLines": 0,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC48",
+   "f10Prefix": "38",
+   "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+   "act": "III",
+   "shots": 11,
+   "shotIds": [
+    "SC48-SH01",
+    "SC48-SH02",
+    "SC48-SH03",
+    "SC48-SH04",
+    "SC48-SH05",
+    "SC48-SH06",
+    "SC48-SH07",
+    "SC48-SH08",
+    "SC48-SH09",
+    "SC48-SH10",
+    "SC48-SH11"
+   ],
+   "characters": [
+    "ASTRID",
+    "MERYT",
+    "NEFER-KA"
+   ],
+   "dialogueLines": 4,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  },
+  {
+   "scene": "SC49",
+   "f10Prefix": "38A",
+   "sceneHead": "38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA",
+   "act": "III",
+   "shots": 8,
+   "shotIds": [
+    "SC49-SH01",
+    "SC49-SH02",
+    "SC49-SH03",
+    "SC49-SH04",
+    "SC49-SH05",
+    "SC49-SH06",
+    "SC49-SH07",
+    "SC49-SH08"
+   ],
+   "characters": [
+    "ASTRID",
+    "IPY"
+   ],
+   "dialogueLines": 3,
+   "canonLink": "VERIFIED (sceneHead prefix maps to F10 scene number)"
+  }
+ ]
+}

@@ -1,0 +1,772 @@
+{
+ "generated": "2026-10-24",
+ "ssot": true,
+ "authority": "CANONICAL — single source of truth for character identity. Supersedes identity-registry-f10.json, character-dossier-f10.json (reference sub-tree), and visual-references-status.json (character counts).",
+ "supersedes": [
+  "identity-registry-f10.json",
+  "character-dossier-f10.json",
+  "visual-references-status.json"
+ ],
+ "idRule": "CHAR-### immutable & unique. Never renumber; never reuse; never a new id for the same character in another scene; costume/injury/age are continuity states, not identities.",
+ "stateEnum": [
+  "TEXT_ONLY",
+  "REFERENCE_PENDING",
+  "REFERENCE_APPROVED",
+  "HUMAN_REVIEW_REQUIRED",
+  "BLOCKED"
+ ],
+ "totals": {
+  "characters": 12,
+  "withRealReference": 3,
+  "principal": 7,
+  "recurring": 2,
+  "minor": 3
+ },
+ "reconciliation": {
+  "note": "The superseded registries disagreed with disk truth. This SSOT reconciles against runs/pilot/refs/*.webp (computed sha256).",
+  "resolved": [
+   "identity-registry-f10.json said ASTRID referenceImage=NONE; disk has ASTRID.webp (sha256 recorded) -> REFERENCE_APPROVED.",
+   "visual-references-status.json said realImagesProduced=0; disk has 3 (ASTRID/MERYT/OLAF) -> corrected to 3.",
+   "REFERENCE_APPROVED asserts the reference asset only; production identity-lock stays HUMAN_REQUIRED (humanProductionSignoff=false)."
+  ]
+ },
+ "characters": [
+  {
+   "id": "CHAR-001",
+   "canonicalName": "ASTRID",
+   "nameVariants": [
+    "ASTRID"
+   ],
+   "narrativeImportance": {
+    "tier": "P1",
+    "why": "protagonist; arc follows→chooses; stays at the seam (SC43/49); reads water/light"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "woman ~19; salt-stained Norse wool-and-leather seafarer garb; star-chart tattoo on her forearm; often soaked; navigator",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 42,
+    "shotCount": 208,
+    "scenes": [
+     "SC01",
+     "SC03",
+     "SC04",
+     "SC05",
+     "SC06",
+     "SC07",
+     "SC08",
+     "SC10",
+     "SC11",
+     "SC14",
+     "SC15",
+     "SC16",
+     "SC17",
+     "SC18",
+     "SC19",
+     "SC20",
+     "SC21",
+     "SC22",
+     "SC23",
+     "SC24",
+     "SC25",
+     "SC26",
+     "SC27",
+     "SC28",
+     "SC29",
+     "SC30",
+     "SC31",
+     "SC32",
+     "SC33",
+     "SC34",
+     "SC36",
+     "SC37",
+     "SC38",
+     "SC41",
+     "SC42",
+     "SC43",
+     "SC44",
+     "SC45",
+     "SC46",
+     "SC47",
+     "SC48",
+     "SC49"
+    ],
+    "firstShot": "SC01-SH01",
+    "lastShot": "SC49-SH08"
+   },
+   "continuity": {
+    "costume": "Norse wool-and-leather seafarer garb, salt-stained",
+    "marks": "star-chart tattoo on forearm (CANON — not an anachronism)",
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "crew of OLAF",
+     "meets MERYT at the seam"
+    ]
+   },
+   "reference": {
+    "file": "runs/pilot/refs/ASTRID.webp",
+    "sha256": "18a617f999a5b07311e3435c9466b3a4ff43ad03e7a8f5d4a6afb1eda144b126",
+    "bytes": 55954,
+    "provenance": "generated in pilot via build-reference-sheets.mjs (flux-dev still)",
+    "validationHistory": [
+     {
+      "by": "CIQE+Claude inspection",
+      "result": "photoreal, canon-faithful, visually distinct",
+      "humanSignoff": false
+     }
+    ]
+   },
+   "state": "REFERENCE_APPROVED",
+   "refNeed": "HAVE (real reference image)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-002",
+   "canonicalName": "BÖRK",
+   "nameVariants": [
+    "BÖRK"
+   ],
+   "narrativeImportance": {
+    "tier": "P3",
+    "why": "cook; bulk-as-dam beat (SC13)"
+   },
+   "referenceTier": "MINOR",
+   "description": {
+    "CANON": "heavy-set Norse cook; apron over Norse tunic; bulk used as a living dam",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 1,
+    "shotCount": 2,
+    "scenes": [
+     "SC13"
+    ],
+    "firstShot": "SC13-SH03",
+    "lastShot": "SC13-SH07"
+   },
+   "continuity": {
+    "costume": "apron over Norse tunic",
+    "marks": null,
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "cook; crew"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "TEXT_ONLY",
+   "refNeed": "OPTIONAL (group coherence only; do NOT invent a narrative identity)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-003",
+   "canonicalName": "ELDER",
+   "nameVariants": [
+    "ELDER"
+   ],
+   "narrativeImportance": {
+    "tier": "P3",
+    "why": "town elder; single-scene authority (SC09)"
+   },
+   "referenceTier": "MINOR",
+   "description": {
+    "CANON": "Egyptian elder; town elder's linen; village authority",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 1,
+    "shotCount": 3,
+    "scenes": [
+     "SC09"
+    ],
+    "firstShot": "SC09-SH01",
+    "lastShot": "SC09-SH04"
+   },
+   "continuity": {
+    "costume": "town elder's linen",
+    "marks": null,
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "village authority (SC09)"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "TEXT_ONLY",
+   "refNeed": "OPTIONAL (group coherence only; do NOT invent a narrative identity)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-004",
+   "canonicalName": "HELGI",
+   "nameVariants": [
+    "HELGI"
+   ],
+   "narrativeImportance": {
+    "tier": "P2",
+    "why": "Norse crew; carries the wooden-horse prop that threads to Sǫlveig"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "Norse crewman ~20s; Norse seafarer garb; carries a child's carved wooden horse",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 11,
+    "shotCount": 46,
+    "scenes": [
+     "SC02",
+     "SC03",
+     "SC13",
+     "SC14",
+     "SC18",
+     "SC19",
+     "SC22",
+     "SC29",
+     "SC31",
+     "SC32",
+     "SC46"
+    ],
+    "firstShot": "SC02-SH01",
+    "lastShot": "SC46-SH06"
+   },
+   "continuity": {
+    "costume": "Norse seafarer garb",
+    "marks": null,
+    "props": [
+     "child's carved wooden horse (threads to Sǫlveig)"
+    ],
+    "weapon": null,
+    "relations": [
+     "crew of OLAF"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "REFERENCE_PENDING",
+   "refNeed": "REQUIRED (facial identity + combat/costume complementary views)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-005",
+   "canonicalName": "IPY",
+   "nameVariants": [
+    "IPY"
+   ],
+   "narrativeImportance": {
+    "tier": "P2",
+    "why": "Egyptian child; water-jug motif; present at the ending (SC49)"
+   },
+   "referenceTier": "RECURRING_SECONDARY",
+   "description": {
+    "CANON": "Egyptian child; simple linen shift; carries her late mother's water-jug; fearless",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 7,
+    "shotCount": 28,
+    "scenes": [
+     "SC05",
+     "SC06",
+     "SC08",
+     "SC21",
+     "SC23",
+     "SC35",
+     "SC49"
+    ],
+    "firstShot": "SC05-SH01",
+    "lastShot": "SC49-SH08"
+   },
+   "continuity": {
+    "costume": "simple linen shift",
+    "marks": null,
+    "props": [
+     "late mother's water-jug"
+    ],
+    "weapon": null,
+    "relations": [
+     "Egyptian child; present at ending"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "REFERENCE_PENDING",
+   "refNeed": "RECOMMENDED (portrait + distinctive attributes)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-006",
+   "canonicalName": "MERYT",
+   "nameVariants": [
+    "MERYT"
+   ],
+   "narrativeImportance": {
+    "tier": "P1",
+    "why": "Egyptian river-guard captain; cross-culture counterpart; carries the khopesh-wound continuity"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "Egyptian woman, river-guard captain; linen kilt + leather river-guard harness; RIGHT-forearm khopesh wound bound in Norse cloth",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 18,
+    "shotCount": 72,
+    "scenes": [
+     "SC05",
+     "SC06",
+     "SC07",
+     "SC12",
+     "SC15",
+     "SC18",
+     "SC19",
+     "SC25",
+     "SC27",
+     "SC28",
+     "SC34",
+     "SC35",
+     "SC36",
+     "SC37",
+     "SC39",
+     "SC42",
+     "SC45",
+     "SC48"
+    ],
+    "firstShot": "SC05-SH01",
+    "lastShot": "SC48-SH10"
+   },
+   "continuity": {
+    "costume": "linen kilt + leather river-guard harness",
+    "marks": "RIGHT-forearm khopesh wound bound in Norse cloth",
+    "props": [],
+    "weapon": "khopesh (lost/disarmed at SC38 per movement contract — verify beat)",
+    "relations": [
+     "river-guard counterpart to ASTRID",
+     "wound continuity SC38/SC39→SC48"
+    ]
+   },
+   "reference": {
+    "file": "runs/pilot/refs/MERYT.webp",
+    "sha256": "576a82bb1951cfd4e05331e59c4ba2bd51cce469668cf91c8b556089fcca67ad",
+    "bytes": 44226,
+    "provenance": "generated in pilot via build-reference-sheets.mjs (flux-dev still)",
+    "validationHistory": [
+     {
+      "by": "CIQE+Claude inspection",
+      "result": "photoreal, canon-faithful, visually distinct",
+      "humanSignoff": false
+     }
+    ]
+   },
+   "state": "REFERENCE_APPROVED",
+   "refNeed": "HAVE (real reference image)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-007",
+   "canonicalName": "NEFER-KA",
+   "nameVariants": [
+    "NEFER-KA"
+   ],
+   "narrativeImportance": {
+    "tier": "P2",
+    "why": "elder reader; second guardian-of-the-horizon; 14 scenes incl. ending"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "elder Egyptian reader; pale linen robes; calm; guards the horizon",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 14,
+    "shotCount": 50,
+    "scenes": [
+     "SC10",
+     "SC11",
+     "SC12",
+     "SC15",
+     "SC16",
+     "SC17",
+     "SC18",
+     "SC24",
+     "SC30",
+     "SC31",
+     "SC36",
+     "SC37",
+     "SC41",
+     "SC48"
+    ],
+    "firstShot": "SC10-SH01",
+    "lastShot": "SC48-SH10"
+   },
+   "continuity": {
+    "costume": "pale linen robes",
+    "marks": null,
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "elder reader; guards the horizon"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "REFERENCE_PENDING",
+   "refNeed": "REQUIRED (facial identity + combat/costume complementary views)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-008",
+   "canonicalName": "OLAF",
+   "nameVariants": [
+    "OLAF"
+   ],
+   "narrativeImportance": {
+    "tier": "P1",
+    "why": "captain; mentor whose decline drives Astrid's arc"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "man ~60s, grey, failing; heavy Norse wool cloak; bronze arm-ring; captain's bearing even when weak",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 16,
+    "shotCount": 64,
+    "scenes": [
+     "SC01",
+     "SC04",
+     "SC10",
+     "SC14",
+     "SC15",
+     "SC25",
+     "SC26",
+     "SC30",
+     "SC31",
+     "SC33",
+     "SC36",
+     "SC37",
+     "SC38",
+     "SC39",
+     "SC43",
+     "SC46"
+    ],
+    "firstShot": "SC01-SH01",
+    "lastShot": "SC46-SH06"
+   },
+   "continuity": {
+    "costume": "heavy Norse wool cloak",
+    "marks": "bronze arm-ring",
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "captain over ASTRID/TOVE/HELGI"
+    ]
+   },
+   "reference": {
+    "file": "runs/pilot/refs/OLAF.webp",
+    "sha256": "a32453672a6d8af422f778fb9bb0882ef1ed898c255fab08f45dd55d9aa85097",
+    "bytes": 79268,
+    "provenance": "generated in pilot via build-reference-sheets.mjs (flux-dev still)",
+    "validationHistory": [
+     {
+      "by": "CIQE+Claude inspection",
+      "result": "photoreal, canon-faithful, visually distinct",
+      "humanSignoff": false
+     }
+    ]
+   },
+   "state": "REFERENCE_APPROVED",
+   "refNeed": "HAVE (real reference image)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-009",
+   "canonicalName": "SETH-NAKHT",
+   "nameVariants": [
+    "SETH-NAKHT"
+   ],
+   "narrativeImportance": {
+    "tier": "P1",
+    "why": "antagonist/commander; combat-scene driver"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "man ~40s, commander; ornate Egyptian scale-and-linen armour, commander's helmet; khopesh",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 12,
+    "shotCount": 51,
+    "scenes": [
+     "SC07",
+     "SC09",
+     "SC12",
+     "SC15",
+     "SC22",
+     "SC23",
+     "SC26",
+     "SC34",
+     "SC37",
+     "SC38",
+     "SC39",
+     "SC40"
+    ],
+    "firstShot": "SC07-SH01",
+    "lastShot": "SC40-SH08"
+   },
+   "continuity": {
+    "costume": "ornate Egyptian scale-and-linen armour, commander's helmet",
+    "marks": null,
+    "props": [],
+    "weapon": "khopesh",
+    "relations": [
+     "commands Egyptian guard",
+     "antagonist to Norse crew"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "REFERENCE_PENDING",
+   "refNeed": "REQUIRED (facial identity + combat/costume complementary views)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-010",
+   "canonicalName": "TOVE",
+   "nameVariants": [
+    "TOVE"
+   ],
+   "narrativeImportance": {
+    "tier": "P2",
+    "why": "Norse crew; high screen-presence (68 shots) comic-fatalist foil"
+   },
+   "referenceTier": "PRINCIPAL",
+   "description": {
+    "CANON": "Norse crew ~20s; practical salt-worn seafarer garb; grins at death out of habit",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 15,
+    "shotCount": 68,
+    "scenes": [
+     "SC02",
+     "SC03",
+     "SC13",
+     "SC18",
+     "SC19",
+     "SC20",
+     "SC22",
+     "SC30",
+     "SC32",
+     "SC33",
+     "SC38",
+     "SC40",
+     "SC43",
+     "SC44",
+     "SC45"
+    ],
+    "firstShot": "SC02-SH01",
+    "lastShot": "SC45-SH04"
+   },
+   "continuity": {
+    "costume": "practical salt-worn seafarer garb",
+    "marks": null,
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "crew of OLAF"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "REFERENCE_PENDING",
+   "refNeed": "REQUIRED (facial identity + combat/costume complementary views)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-011",
+   "canonicalName": "VIGGE",
+   "nameVariants": [
+    "VIGGE"
+   ],
+   "narrativeImportance": {
+    "tier": "P3",
+    "why": "youth crewman; limited but present in the SC40 engagement"
+   },
+   "referenceTier": "RECURRING_SECONDARY",
+   "description": {
+    "CANON": "young Norse crewman (a youth)",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 2,
+    "shotCount": 10,
+    "scenes": [
+     "SC13",
+     "SC40"
+    ],
+    "firstShot": "SC13-SH01",
+    "lastShot": "SC40-SH08"
+   },
+   "continuity": {
+    "costume": "Norse crew garb (youth)",
+    "marks": null,
+    "props": [],
+    "weapon": null,
+    "relations": [
+     "crew; present SC40 engagement"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "REFERENCE_PENDING",
+   "refNeed": "RECOMMENDED (portrait + distinctive attributes)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  },
+  {
+   "id": "CHAR-012",
+   "canonicalName": "WIDOW",
+   "nameVariants": [
+    "WIDOW"
+   ],
+   "narrativeImportance": {
+    "tier": "P3",
+    "why": "mourning widow; single-scene emotional note (SC08)"
+   },
+   "referenceTier": "MINOR",
+   "description": {
+    "CANON": "old Egyptian woman; mourning linen; keeps a drowned neighbour's place at a dry fountain",
+    "PROPOSED": "cinematic photoreal rendering per the artistic bible; contained performance (NOT canon)",
+    "UNKNOWN": [
+     "exact facial features",
+     "precise age within band",
+     "costume detail beyond the canon descriptor"
+    ]
+   },
+   "appearances": {
+    "sceneCount": 1,
+    "shotCount": 4,
+    "scenes": [
+     "SC08"
+    ],
+    "firstShot": "SC08-SH01",
+    "lastShot": "SC08-SH04"
+   },
+   "continuity": {
+    "costume": "mourning linen",
+    "marks": null,
+    "props": [
+     "keeps a drowned neighbour's place at a dry fountain"
+    ],
+    "weapon": null,
+    "relations": [
+     "single-scene mourner (SC08)"
+    ]
+   },
+   "reference": {
+    "file": null,
+    "provenance": "prompt prepared in character-portrait-prompts.json; NOT generated",
+    "validationHistory": []
+   },
+   "state": "TEXT_ONLY",
+   "refNeed": "OPTIONAL (group coherence only; do NOT invent a narrative identity)",
+   "humanProductionSignoff": false,
+   "productionIdentityLock": "HUMAN_REQUIRED"
+  }
+ ]
+}

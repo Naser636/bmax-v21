@@ -1,0 +1,92 @@
+{
+ "cap": 2000,
+ "note": "Envelopes are modifiable HYPOTHESES, not obligations. allocatedEstimate=plan(ESTIMATE); committed=0; spent=0. Unused budget stays in budget. No spend is authorized; the €2000 cap is NOT a spend authorization.",
+ "envelopes": [
+  {
+   "id": "benchmark_tool_select",
+   "ceiling": 250,
+   "allocatedEstimate": 250,
+   "note": "benchmark+tool selection; ≤€250 (was €350 under the old €4k cap — revised down)",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  },
+  {
+   "id": "video_generation",
+   "ceiling": 550,
+   "allocatedEstimate": 248,
+   "note": "selected premium-video gens (shot-list est)",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  },
+  {
+   "id": "images_refs_visual",
+   "ceiling": 200,
+   "allocatedEstimate": 68.25,
+   "note": "stills + reference sheets (shot-list est)",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  },
+  {
+   "id": "voice_music_sfx",
+   "ceiling": 250,
+   "allocatedEstimate": 127,
+   "note": "voice lines + music cues + SFX (shot-list est)",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  },
+  {
+   "id": "edit_sound_review",
+   "ceiling": 350,
+   "allocatedEstimate": 0,
+   "note": "targeted human edit+sound review (DaVinci/ffmpeg free; this is review time/service IF used)",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  },
+  {
+   "id": "storage_misc",
+   "ceiling": 100,
+   "allocatedEstimate": 0,
+   "note": "storage + misc",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  },
+  {
+   "id": "conditional_reserve",
+   "ceiling": 300,
+   "allocatedEstimate": 0,
+   "note": "reserve; spend only on demonstrated need",
+   "committedEur": 0,
+   "spentEur": 0,
+   "costStatus": "ESTIMATED",
+   "withinCeiling": true
+  }
+ ],
+ "totals": {
+  "ceilingsSum": 2000,
+  "allocatedEstimateSum": 693.25,
+  "committedEur": 0,
+  "spentEur": 0,
+  "remainingEur": 2000,
+  "ceilingsWithinCap": true,
+  "allocWithinCap": true
+ },
+ "checksToVerify": [
+  "commercial licence per tool",
+  "taxes/VAT",
+  "recurring fees",
+  "expiring credits",
+  "cancellation terms"
+ ]
+}

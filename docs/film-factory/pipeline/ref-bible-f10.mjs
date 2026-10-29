@@ -1,0 +1,40 @@
+// SHARED canonical reference bible for F10 (grounded in F10). Reused by the video AND still prompt generators so
+// identities/costumes/locations never diverge into incompatible variants. Every ref is TO_CREATE (none exists).
+export const CHAR = {
+  ASTRID:      { look: 'woman ~19', costume: 'salt-stained Norse wool-and-leather seafarer garb', mark: 'star-chart tattoo on her forearm; often soaked', status: 'TO_CREATE' },
+  OLAF:        { look: 'man ~60s, grey, failing', costume: 'heavy Norse wool cloak', mark: 'bronze arm-ring; captain\'s bearing even when weak', status: 'TO_CREATE' },
+  MERYT:       { look: 'Egyptian woman, river-guard captain', costume: 'linen kilt + leather river-guard harness', mark: 'RIGHT-forearm khopesh wound from sc30, bound in a strip of Norse cloth from sc38 on', status: 'TO_CREATE' },
+  IPY:         { look: 'Egyptian child', costume: 'simple linen shift', mark: 'carries her late mother\'s water-jug; fearless', status: 'TO_CREATE' },
+  'SETH-NAKHT':{ look: 'man ~40s, commander', costume: 'ornate Egyptian scale-and-linen armour, commander\'s helmet', mark: 'khopesh (lost in sc30); theatre that collapses to a broken man', status: 'TO_CREATE' },
+  VIGGE:       { look: 'young Norse crewman (a youth)', costume: 'roughspun Norse tunic', mark: 'the boy Börk dies saving', status: 'TO_CREATE' },
+  'BÖRK':      { look: 'heavy-set Norse cook', costume: 'apron over Norse tunic', mark: 'bulk used as a living dam; drowns sc30A', status: 'TO_CREATE' },
+  TOVE:        { look: 'Norse crew ~20s', costume: 'practical salt-worn seafarer garb', mark: 'grins at death out of habit', status: 'TO_CREATE' },
+  HELGI:       { look: 'Norse crewman ~20s', costume: 'Norse seafarer garb', mark: 'carries a child\'s carved wooden horse; dies sc24', status: 'TO_CREATE' },
+  'NEFER-KA':  { look: 'elder Egyptian reader', costume: 'pale linen robes', mark: 'calm; guards the horizon', status: 'TO_CREATE' },
+  WIDOW:       { look: 'old Egyptian woman', costume: 'mourning linen', mark: 'keeps a drowned neighbour\'s place at a dry fountain', status: 'TO_CREATE' },
+  ELDER:       { look: 'Egyptian elder', costume: 'town elder\'s linen', mark: 'village authority', status: 'TO_CREATE' },
+};
+export const LOC = {
+  'NORTH SEA':        { decor: 'storm ocean, black waves the height of hills; the longship SŌLFARI with reefed sail', light: 'night storm, cold moon-less dark, spray' },
+  'SŌLFARI DECK':     { decor: 'the longship deck: oars, rigging, bailing crew', light: 'storm night' },
+  'IMPOSSIBLE SHORE': { decor: 'a desert shore under TWO suns where the sea should be', light: 'impossible double-sun glare on sand' },
+  SHORE:              { decor: 'Egyptian desert shore, dunes that shiver into sea on a TONE', light: 'hard desert day, two faint suns' },
+  'RIVER-TOWN':       { decor: 'mud-brick Egyptian river-town bracing for tides', light: 'dusty daylight' },
+  'RIVER-TOWN MARKET':{ decor: 'river-town market square: stalls, awnings, date-baskets, paved steps', light: 'bright river-town day' },
+  MARKET:             { decor: 'market square mid-tide: stalls becoming sea, fish on dry paving', light: 'bright day, bronze-green desync bleed' },
+  GARRISON:           { decor: 'Egyptian garrison interior, stone and torchlight', light: 'torch-lit interior night' },
+  'GARRISON COURTYARD':{ decor: 'garrison courtyard, drilled stone', light: 'overcast day' },
+  DESERT:             { decor: 'open desert between town and seam', light: 'bleaching daylight, two suns' },
+  'DESERT CANYON':    { decor: 'a slot canyon the sea invades on a TONE', light: 'dusk, long shadow, gold rim' },
+  CANYON:             { decor: 'canyon walls, echoing', light: 'dusk' },
+  'CAMP, CANYON MOUTH':{ decor: 'a night camp at the canyon mouth', light: 'firelight night' },
+  'SEAM-ROOT':        { decor: 'the convergence site: broken pillar, dunes, flooding hollows that turn sand↔sea; the wound of light', light: 'blinding gold at convergence' },
+  'SEAM-ROOT APPROACH':{ decor: 'the approach to the seam-root, sand and rising water', light: 'gold convergence building' },
+  'SEAM-ROOT CAMP':   { decor: 'a camp at the seam-root under two suns', light: 'gold dusk, two suns' },
+  'SEAM / SHORE':     { decor: 'the shore at the open seam, the ship driving at the wound of light', light: 'gold glare vs cold sea beyond the seam' },
+  'THE SEAM':         { decor: 'the seam interior: a corridor of stilled suns, standing water, mirror-walls', light: 'frozen light, slow ripples' },
+  'THE CAIRN':        { decor: 'a grey-stone cairn on gold desert sand', light: 'calm ordinary SINGLE-sun morning' },
+  'A BEND IN THE GREAT RIVER':{ decor: 'a sandbar bend of the great river', light: 'warm single-sun day' },
+  UNSPECIFIED:        { decor: 'per scene stage directions (multi-location montage)', light: 'per scene' },
+};
+export const PALETTE = { I: 'cold Norse steel-grey vs Egyptian gold/ochre', II: 'bronze-green desync bleed creeping', III: 'blinding gold at convergence → calm single-sun dawn' };

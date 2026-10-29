@@ -1,0 +1,62 @@
+{
+  "generated": "F10 chronological continuity ledger (PREP; analysis, NOT media)",
+  "reference": "37_SCREENPLAY_60MIN_F10.md",
+  "budgetAuthorizedThisMission": 0,
+  "note": "Each state is justified by an F10 anchor (verbatim). Script-scene labels (not positional ids); 30A=30.5 etc. Contradictions/ambiguities are FLAGGED, F10 is NOT rewritten.",
+  "threads": [
+    { "thread": "Meryt forearm wound", "states": [
+      { "scene": "30", "state": "RIGHT forearm laid open by the khopesh as she disarms Seth-Nakht (her blood, not Olaf's)", "anchor": "lays her own forearm open as she turns it" },
+      { "scene": "38", "state": "same wound bound in a strip of Norse cloth", "anchor": "bound in a strip of Norse cloth" }
+    ], "rule": "wound first appears at 30; bound from 38; must be absent before 30 and present (bound) at 38+" },
+    { "thread": "Olaf life-state", "states": [
+      { "scene": "1", "state": "alive, failing captain, arm-ring", "anchor": "too weak to" },
+      { "scene": "33", "state": "dies (hand tightens with pride, then stills)", "anchor": "hand tightens" }
+    ], "rule": "no dialogue after 33 (death scene)" },
+    { "thread": "Helgi life-state", "states": [
+      { "scene": "2", "state": "alive, carries the carved wooden horse", "anchor": "carved wooden horse" },
+      { "scene": "24", "state": "dies in the third tide", "anchor": "THIRD TIDE" }
+    ], "rule": "no dialogue after 24 (death scene)" },
+    { "thread": "Börk life-state", "states": [
+      { "scene": "30A", "state": "drowns planting himself against a flood so Vigge can climb", "anchor": "goes under, gone in a heartbeat" }
+    ], "rule": "no dialogue after 30A (death scene)" },
+    { "thread": "Wooden horse prop", "states": [
+      { "scene": "2", "state": "Helgi's, wedged in his belt", "anchor": "carved wooden horse" },
+      { "scene": "33", "state": "pressed into Tove's hands by Astrid", "anchor": "pressing Helgi's horse into" },
+      { "scene": "34", "state": "sent to Sǫlveig from Tove's hands", "anchor": "to Sǫlveig, from your" }
+    ], "rule": "handoff order Helgi(2) -> Tove(33) -> Sǫlveig(34)" },
+    { "thread": "Suns / sky", "states": [
+      { "scene": "3", "state": "two suns appear as the seam opens", "anchor": "THE SEAM" },
+      { "scene": "37", "state": "single coin splits; one sun sinks for good; single sun thereafter", "anchor": "One sun sinks for good" }
+    ], "rule": "two suns until 37; single sun from 37; one-way (no two-sun after 37)" },
+    { "thread": "Seam state", "states": [
+      { "scene": "3", "state": "seam opens (wound of light)", "anchor": "THE SEAM" },
+      { "scene": "37", "state": "seam gone (closed, stays closed)", "anchor": "The seam is gone" }
+    ], "rule": "opens 3; closed from 35-37; never reopens" },
+    { "thread": "Seth-Nakht khopesh + authority", "states": [
+      { "scene": "30", "state": "disarmed; blade spins loose into the sand; theatre collapses", "anchor": "blade spins loose into the sand" },
+      { "scene": "38", "state": "helmet in hand at the cairn; broken, not the man on the throne", "anchor": "helmet in hand" }
+    ], "rule": "khopesh lost from 30; no commander-theatre after 30" },
+    { "thread": "Tides (escalation)", "states": [
+      { "scene": "6", "state": "first tide (Ipy rescue)", "anchor": "THE FIRST TIDE" },
+      { "scene": "17", "state": "second tide (market)", "anchor": "THE SECOND TIDE" },
+      { "scene": "24", "state": "third tide (Helgi dies)", "anchor": "THIRD TIDE" }
+    ], "rule": "tides escalate 6 < 17 < 24 < climax(29-30A)" },
+    { "thread": "Astrid identity + emotion", "states": [
+      { "scene": "1", "state": "star-chart forearm tattoo; reads the sea; seeks permission", "anchor": "reading the sea" },
+      { "scene": "37", "state": "weeps once, briefly, then wipes her face (first and only)", "anchor": "lets herself weep" }
+    ], "rule": "dry-eyed until 37; tattoo is a persistent identity marker" },
+    { "thread": "Ipy successor arc", "states": [
+      { "scene": "6", "state": "fearless child Astrid saves from the first tide", "anchor": "You knew where it would go" },
+      { "scene": "38A", "state": "takes the stick — the navigator's gift passes on", "anchor": "hands Ipy the stick" }
+    ], "rule": "present from 6; successor at 38A" }
+  ],
+  "visualTransitions": [
+    { "act": "I", "palette": "cold Norse steel-grey vs Egyptian gold/ochre" },
+    { "act": "II", "palette": "bronze-green desync bleed creeping as desync grows" },
+    { "act": "III", "palette": "blinding gold at convergence -> calm single-sun dawn" }
+  ],
+  "knownAmbiguities": [
+    "Scene 6 established Ipy's mother was taken by the sea (the jug motif) — F10 implies but does not stage the mother's drowning on screen; treat as backstory, not a shot.",
+    "Positions/geography in the siege (pillar high ground, flooding hollows, dry-vs-drowning rock) are described but not numerically blocked — the shot-list must keep them legible shot-to-shot (acceptance criterion, not a script defect)."
+  ]
+}

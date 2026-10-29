@@ -1,0 +1,229 @@
+{
+ "generated": "2026-10-24",
+ "version": "F11_PROPOSED (Canon Revision V1)",
+ "status": "PROPOSED — not accepted, not released",
+ "basedOn": "F10_FROZEN_2026-10-24 (immutable)",
+ "idRule": "F10 ids carried for traceability; CHAR-013 = new protagonist Björn. Re-gendering/role change is a logged canon-revision transformation, NOT a silent identity swap.",
+ "acceptanceConstraints": {
+  "exactlyTwoFemales": true,
+  "singleProtagonist": true,
+  "protagonistIsViking": true
+ },
+ "totals": {
+  "characters": 13,
+  "females": 2,
+  "males": 11
+ },
+ "femaleCast": [
+  "ASTRID (SECONDARY)",
+  "MERYT (SECONDARY)"
+ ],
+ "characters": [
+  {
+   "id": "CHAR-001",
+   "f10Name": "ASTRID",
+   "canonicalName": "ASTRID",
+   "gender": "F",
+   "tier": "SECONDARY",
+   "role": "tide-reader; mentor-of-knowledge; teaches Björn to read",
+   "transformation": "DEMOTED from PROTAGONIST → genuinely secondary (no decisive climax)",
+   "f10Tier": "LEAD/MAJOR",
+   "f10Appearances": {
+    "scenes": 42,
+    "shots": 208
+   },
+   "referenceCarriedFromF10": {
+    "file": "runs/pilot/refs/ASTRID.webp",
+    "sha256": "18a617f999a5b07311e3435c9466b3a4ff43ad03e7a8f5d4a6afb1eda144b126",
+    "note": "F10 reference; validity for F11 look PENDING human review (esp. re-gendered/role-changed)"
+   }
+  },
+  {
+   "id": "CHAR-002",
+   "f10Name": "BÖRK",
+   "canonicalName": "BÖRK",
+   "gender": "M",
+   "tier": "SUPPORTING",
+   "role": "cook; comic + the drowning sacrifice that buys the line",
+   "transformation": "kept (comic + sacrifice)",
+   "f10Tier": "MINOR",
+   "f10Appearances": {
+    "scenes": 1,
+    "shots": 2
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-003",
+   "f10Name": "ELDER",
+   "canonicalName": "ELDER",
+   "gender": "M",
+   "tier": "MINOR",
+   "role": "town elder",
+   "transformation": "kept (male)",
+   "f10Tier": "MINOR",
+   "f10Appearances": {
+    "scenes": 1,
+    "shots": 3
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-004",
+   "f10Name": "HELGI",
+   "canonicalName": "HELGI",
+   "gender": "M",
+   "tier": "SUPPORTING",
+   "role": "heart; carved wooden horse",
+   "transformation": "kept",
+   "f10Tier": "RECURRING",
+   "f10Appearances": {
+    "scenes": 11,
+    "shots": 46
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-005",
+   "f10Name": "IPY",
+   "canonicalName": "IPU",
+   "gender": "M",
+   "tier": "MINOR",
+   "role": "a boy with his late father’s water-jug",
+   "transformation": "RE-GENDERED female→male (IPY→IPU); scene FUNCTION preserved",
+   "f10Tier": "RECURRING",
+   "f10Appearances": {
+    "scenes": 7,
+    "shots": 28
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-006",
+   "f10Name": "MERYT",
+   "canonicalName": "MERYT",
+   "gender": "F",
+   "tier": "SECONDARY",
+   "role": "Egyptian river-guard; emotional origin of the tear (grief)",
+   "transformation": "kept secondary",
+   "f10Tier": "LEAD/MAJOR",
+   "f10Appearances": {
+    "scenes": 18,
+    "shots": 72
+   },
+   "referenceCarriedFromF10": {
+    "file": "runs/pilot/refs/MERYT.webp",
+    "sha256": "576a82bb1951cfd4e05331e59c4ba2bd51cce469668cf91c8b556089fcca67ad",
+    "note": "F10 reference; validity for F11 look PENDING human review (esp. re-gendered/role-changed)"
+   }
+  },
+  {
+   "id": "CHAR-007",
+   "f10Name": "NEFER-KA",
+   "canonicalName": "NEFER-KA",
+   "gender": "M",
+   "tier": "SUPPORTING",
+   "role": "reader-elder; carries mystery exposition",
+   "transformation": "kept (male)",
+   "f10Tier": "RECURRING",
+   "f10Appearances": {
+    "scenes": 14,
+    "shots": 50
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-008",
+   "f10Name": "OLAF",
+   "canonicalName": "OLAF",
+   "gender": "M",
+   "tier": "SUPPORTING",
+   "role": "aging former captain; hands leadership to Björn",
+   "transformation": "kept",
+   "f10Tier": "LEAD/MAJOR",
+   "f10Appearances": {
+    "scenes": 16,
+    "shots": 64
+   },
+   "referenceCarriedFromF10": {
+    "file": "runs/pilot/refs/OLAF.webp",
+    "sha256": "a32453672a6d8af422f778fb9bb0882ef1ed898c255fab08f45dd55d9aa85097",
+    "note": "F10 reference; validity for F11 look PENDING human review (esp. re-gendered/role-changed)"
+   }
+  },
+  {
+   "id": "CHAR-009",
+   "f10Name": "SETH-NAKHT",
+   "canonicalName": "SETH-NAKHT",
+   "gender": "M",
+   "tier": "ANTAGONIST",
+   "role": "Egyptian commander; fear-authority",
+   "transformation": "kept antagonist",
+   "f10Tier": "LEAD/MAJOR",
+   "f10Appearances": {
+    "scenes": 12,
+    "shots": 51
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-010",
+   "f10Name": "TOVE",
+   "canonicalName": "TOVE",
+   "gender": "M",
+   "tier": "SUPPORTING",
+   "role": "gallows-humour comic foil",
+   "transformation": "kept (comic load ↑)",
+   "f10Tier": "RECURRING",
+   "f10Appearances": {
+    "scenes": 15,
+    "shots": 68
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-011",
+   "f10Name": "VIGGE",
+   "canonicalName": "VIGGE",
+   "gender": "M",
+   "tier": "MINOR",
+   "role": "youth saved by Börk",
+   "transformation": "kept",
+   "f10Tier": "MINOR",
+   "f10Appearances": {
+    "scenes": 2,
+    "shots": 10
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-012",
+   "f10Name": "WIDOW",
+   "canonicalName": "WIDOWER",
+   "gender": "M",
+   "tier": "MINOR",
+   "role": "an old man keeping a drowned neighbour’s place",
+   "transformation": "RE-GENDERED female→male (WIDOW→WIDOWER); function preserved",
+   "f10Tier": "MINOR",
+   "f10Appearances": {
+    "scenes": 1,
+    "shots": 4
+   },
+   "referenceCarriedFromF10": null
+  },
+  {
+   "id": "CHAR-013",
+   "canonicalName": "BJÖRN",
+   "gender": "M",
+   "tier": "PROTAGONIST",
+   "role": "massive muscular Viking; two-handed greatsword Himinkljúfr; warrior-who-learns-to-read; makes the decisive sacrifice",
+   "flaws": [
+    "strength cannot solve the mystery (must learn to read/trust)",
+    "deep-water dread",
+    "feared berserker rage"
+   ],
+   "combatSignature": "greatsword as terrain tool (anchor vs flood, flat-sweep, overhand sky-splitter); arc → disciplined strikes timed to Astrid’s reads; final decisive act is NOT a swing",
+   "change": "NEW character — the new central protagonist"
+  }
+ ]
+}

@@ -1,0 +1,3827 @@
+{
+ "generated": "2026-10-24",
+ "scope": "F11 whole-film shot-list (DRAFT, ESTIMATE durations)",
+ "totalShots": 420,
+ "totalSecEst": 1963.5,
+ "note": "Durations are per-shot ESTIMATES (not a rendered-edit measurement). 64% is a TARGET; realized share needs a rendered edit. PREMIUM_VIDEO identity shots route to seedance-2.5 +768px ref (validated).",
+ "distributionEst": [
+  {
+   "category": "ACTION",
+   "shots": 161,
+   "shotPct": 38.3,
+   "screenTimeEstPct": 44.4
+  },
+  {
+   "category": "STORY",
+   "shots": 76,
+   "shotPct": 18.1,
+   "screenTimeEstPct": 16.1
+  },
+  {
+   "category": "TENSION",
+   "shots": 55,
+   "shotPct": 13.1,
+   "screenTimeEstPct": 11.7
+  },
+  {
+   "category": "DRAMA",
+   "shots": 102,
+   "shotPct": 24.3,
+   "screenTimeEstPct": 21.5
+  },
+  {
+   "category": "COMEDY",
+   "shots": 10,
+   "shotPct": 2.4,
+   "screenTimeEstPct": 2.2
+  },
+  {
+   "category": "WORLD",
+   "shots": 16,
+   "shotPct": 3.8,
+   "screenTimeEstPct": 4.1
+  }
+ ],
+ "shots": [
+  {
+   "id": "F11-SC01-SH01",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH02",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH03",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH04",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH05",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH06",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH07",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH08",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH09",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH10",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH11",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH12",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC01-SH13",
+   "scene": "SC01",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH01",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH02",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH03",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH04",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH05",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH06",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH07",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC02-SH08",
+   "scene": "SC02",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "after the crossing, the crew takes stock on a wrong-coloured sea. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH01",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH02",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH03",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH04",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH05",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH06",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH07",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH08",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC03-SH09",
+   "scene": "SC03",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the ship is driven through; for a beat two worlds stack (storm above, desert bel | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH01",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH02",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH03",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH04",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH05",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH06",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC04-SH07",
+   "scene": "SC04",
+   "content": "WORLD",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "crew thrown onto wet sand under two suns; Olaf, failing, names what none underst | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH01",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH02",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH03",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH04",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH05",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH06",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH07",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC05-SH08",
+   "scene": "SC05",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "ENSEMBLE",
+   "promptSeed": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy,  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH01",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH02",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH03",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH04",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH05",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH06",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH07",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC06-SH08",
+   "scene": "SC06",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH01",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH02",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH03",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH04",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH05",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH06",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH07",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC07-SH08",
+   "scene": "SC07",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the commander claims the strangers and the strand; a cold standoff, no battle ye | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC08-SH01",
+   "scene": "SC08",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "WIDOWER",
+   "promptSeed": "the town after a tide; the WIDOWER (old man) keeps a drowned neighbour's place a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC08-SH02",
+   "scene": "SC08",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "WIDOWER",
+   "promptSeed": "the town after a tide; the WIDOWER (old man) keeps a drowned neighbour's place a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC08-SH03",
+   "scene": "SC08",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "WIDOWER",
+   "promptSeed": "the town after a tide; the WIDOWER (old man) keeps a drowned neighbour's place a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC08-SH04",
+   "scene": "SC08",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "WIDOWER",
+   "promptSeed": "the town after a tide; the WIDOWER (old man) keeps a drowned neighbour's place a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC09-SH01",
+   "scene": "SC09",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the garrison council; Seth-Nakht frames the strangers as the omen's cause. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC09-SH02",
+   "scene": "SC09",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the garrison council; Seth-Nakht frames the strangers as the omen's cause. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC09-SH03",
+   "scene": "SC09",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the garrison council; Seth-Nakht frames the strangers as the omen's cause. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC09-SH04",
+   "scene": "SC09",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the garrison council; Seth-Nakht frames the strangers as the omen's cause. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC09-SH05",
+   "scene": "SC09",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the garrison council; Seth-Nakht frames the strangers as the omen's cause. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH01",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH02",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH03",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH04",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH05",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH06",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH07",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH08",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH09",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH10",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC10-SH11",
+   "scene": "SC10",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "NEFER-KA the reader-elder studies the captives; sees something in the Norse. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH01",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH02",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH03",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH04",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH05",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH06",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH07",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH08",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH09",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH10",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC11-SH11",
+   "scene": "SC11",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the wall records the rule of the tear; Nefer-Ka begins to explain. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH01",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH02",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH03",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH04",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH05",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH06",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH07",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH08",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH09",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH10",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH11",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC12-SH12",
+   "scene": "SC12",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH01",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH02",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH03",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH04",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH05",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH06",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH07",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH08",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH09",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC13-SH10",
+   "scene": "SC13",
+   "content": "COMEDY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH01",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH02",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH03",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH04",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH05",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH06",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH07",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH08",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH09",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH10",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH11",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH12",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH13",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH14",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC14-SH15",
+   "scene": "SC14",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enou | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH01",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH02",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH03",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH04",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH05",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH06",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH07",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH08",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH09",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH10",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH11",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC15-SH12",
+   "scene": "SC15",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH01",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH02",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH03",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH04",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH05",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH06",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH07",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH08",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH09",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC16-SH10",
+   "scene": "SC16",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a fein | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC17-SH01",
+   "scene": "SC17",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "BJÖRN gets ONE read right — small, hard-won. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC17-SH02",
+   "scene": "SC17",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "BJÖRN gets ONE read right — small, hard-won. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC17-SH03",
+   "scene": "SC17",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "BJÖRN gets ONE read right — small, hard-won. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC17-SH04",
+   "scene": "SC17",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "BJÖRN gets ONE read right — small, hard-won. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC17-SH05",
+   "scene": "SC17",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "BJÖRN gets ONE read right — small, hard-won. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH01",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH02",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH03",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH04",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH05",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH06",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH07",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH08",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH09",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH10",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC18-SH11",
+   "scene": "SC18",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (haulin | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH01",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH02",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH03",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH04",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH05",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH06",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH07",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH08",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH09",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC19-SH10",
+   "scene": "SC19",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "two crews become one band under Björn. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH01",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH02",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH03",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH04",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH05",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH06",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH07",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH08",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH09",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH10",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC20-SH11",
+   "scene": "SC20",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "TOVE",
+   "promptSeed": "quiet two-hander; Tove needles Björn about trusting the reader-girl. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH01",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH02",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH03",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH04",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH05",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH06",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH07",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH08",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC21-SH09",
+   "scene": "SC21",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "sets the market + geography for the second tide. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH01",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH02",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH03",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH04",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH05",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH06",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH07",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH08",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC22-SH09",
+   "scene": "SC22",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC23-SH01",
+   "scene": "SC23",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC23-SH02",
+   "scene": "SC23",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC23-SH03",
+   "scene": "SC23",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC23-SH04",
+   "scene": "SC23",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC23-SH05",
+   "scene": "SC23",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC23-SH06",
+   "scene": "SC23",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH01",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH02",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH03",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH04",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH05",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH06",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC24-SH07",
+   "scene": "SC24",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "an uncanny leak — a thing from the wrong age appears; the clock tightens. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH01",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH02",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH03",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH04",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH05",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH06",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC25-SH07",
+   "scene": "SC25",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "wordless montage of the leak across two towns; dread + scale. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC26-SH01",
+   "scene": "SC26",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht seizes leverage (hostage/Olaf) to force the march. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC26-SH02",
+   "scene": "SC26",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht seizes leverage (hostage/Olaf) to force the march. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC26-SH03",
+   "scene": "SC26",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht seizes leverage (hostage/Olaf) to force the march. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC26-SH04",
+   "scene": "SC26",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht seizes leverage (hostage/Olaf) to force the march. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH01",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH02",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH03",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH04",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH05",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH06",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH07",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH08",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC27-SH09",
+   "scene": "SC27",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Meryt, wary allies, find common ground (both have lost someone to wate | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH01",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH02",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH03",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH04",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH05",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH06",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH07",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH08",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC28-SH09",
+   "scene": "SC28",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH01",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH02",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH03",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH04",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH05",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH06",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH07",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC29-SH08",
+   "scene": "SC29",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "HELGI",
+   "promptSeed": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the ca | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH01",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH02",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH03",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH04",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH05",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH06",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH07",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH08",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH09",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH10",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH11",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH12",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH13",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH14",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC30-SH15",
+   "scene": "SC30",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined gr | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH01",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH02",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH03",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH04",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH05",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH06",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC31-SH07",
+   "scene": "SC31",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "the canyon echoes the readers; a mystery texture beat. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH01",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH02",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH03",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH04",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH05",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH06",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH07",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH08",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH09",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH10",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC32-SH11",
+   "scene": "SC32",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC33-SH01",
+   "scene": "SC33",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "the cost tallied; Olaf weaker; quiet before the end. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC33-SH02",
+   "scene": "SC33",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "the cost tallied; Olaf weaker; quiet before the end. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC33-SH03",
+   "scene": "SC33",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "the cost tallied; Olaf weaker; quiet before the end. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC33-SH04",
+   "scene": "SC33",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "the cost tallied; Olaf weaker; quiet before the end. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC33-SH05",
+   "scene": "SC33",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "the cost tallied; Olaf weaker; quiet before the end. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH01",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH02",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH03",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH04",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH05",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH06",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC34-SH07",
+   "scene": "SC34",
+   "content": "TENSION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "SETH-NAKHT",
+   "promptSeed": "Seth-Nakht twists Meryt's guilt publicly to keep his leash. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH01",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH02",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH03",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH04",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH05",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH06",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH07",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC35-SH08",
+   "scene": "SC35",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "—",
+   "promptSeed": "tender beat — Meryt and the boy IPU; innocence at stake. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC36-SH01",
+   "scene": "SC36",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the plan set for the convergence; Nefer-Ka states the closing rule plainly. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC36-SH02",
+   "scene": "SC36",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the plan set for the convergence; Nefer-Ka states the closing rule plainly. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC36-SH03",
+   "scene": "SC36",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the plan set for the convergence; Nefer-Ka states the closing rule plainly. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC36-SH04",
+   "scene": "SC36",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the plan set for the convergence; Nefer-Ka states the closing rule plainly. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC36-SH05",
+   "scene": "SC36",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the plan set for the convergence; Nefer-Ka states the closing rule plainly. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC36-SH06",
+   "scene": "SC36",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the plan set for the convergence; Nefer-Ka states the closing rule plainly. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH01",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH02",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH03",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH04",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH05",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH06",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH07",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH08",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH09",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH10",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH11",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH12",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC37-SH13",
+   "scene": "SC37",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the two suns draw close; the clock hits zero; Björn takes command of the field. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH01",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH02",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH03",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH04",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH05",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH06",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH07",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH08",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH09",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH10",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH11",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH12",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH13",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC38-SH14",
+   "scene": "SC38",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN bre | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH01",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH02",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH03",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH04",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH05",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH06",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC39-SH07",
+   "scene": "SC39",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives hi | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH01",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH02",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH03",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH04",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH05",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH06",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH07",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH08",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC40-SH09",
+   "scene": "SC40",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BÖRK",
+   "promptSeed": "to buy the readers their window, the band holds the surging tides; BÖRK braces a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH01",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH02",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH03",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH04",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH05",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH06",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH07",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC41-SH08",
+   "scene": "SC41",
+   "content": "STORY",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the readers confirm: the door needs someone who can read it to walk in. ASTRID a | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC42-SH01",
+   "scene": "SC42",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC42-SH02",
+   "scene": "SC42",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC42-SH03",
+   "scene": "SC42",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC42-SH04",
+   "scene": "SC42",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC42-SH05",
+   "scene": "SC42",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC42-SH06",
+   "scene": "SC42",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the  | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH01",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH02",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH03",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH04",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH05",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH06",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH07",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH08",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC43-SH09",
+   "scene": "SC43",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "OLAF",
+   "promptSeed": "Olaf dies (or departs) having seen Björn become more than a sword; a father's be | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH01",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH02",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH03",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH04",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH05",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH06",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC44-SH07",
+   "scene": "SC44",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "Björn and Tove say it without saying it; the band's farewell to its leader. | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC45-SH01",
+   "scene": "SC45",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN pla | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC45-SH02",
+   "scene": "SC45",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN pla | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC45-SH03",
+   "scene": "SC45",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN pla | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC45-SH04",
+   "scene": "SC45",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN pla | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC45-SH05",
+   "scene": "SC45",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN pla | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH01",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH02",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH03",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH04",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH05",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH06",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC46-SH07",
+   "scene": "SC46",
+   "content": "ACTION",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 4,
+   "decisiveAgent": "BJÖRN",
+   "promptSeed": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his broth | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC47-SH01",
+   "scene": "SC47",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "—",
+   "promptSeed": "the two suns separate; the sky heals; ASTRID witnesses (aftermath event — no dec | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH01",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH02",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH03",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH04",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH05",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH06",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH07",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH08",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH09",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH10",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC48-SH11",
+   "scene": "SC48",
+   "content": "DRAMA",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "NEFER-KA",
+   "promptSeed": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH01",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH02",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH03",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH04",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH05",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "PREMIUM_VIDEO",
+   "durationSec": 6,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH06",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH07",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  },
+  {
+   "id": "F11-SC49-SH08",
+   "scene": "SC49",
+   "content": "WORLD",
+   "mediaCategory": "STILL_ANIMATABLE",
+   "durationSec": 3.5,
+   "decisiveAgent": "IPU",
+   "promptSeed": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (seconda | canon: Björn+Himinkljúfr, steering-oar not wheel, photoreal; identity via seedance-2.5 +768px ref"
+  }
+ ]
+}

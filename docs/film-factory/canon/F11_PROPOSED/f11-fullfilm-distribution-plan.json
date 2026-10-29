@@ -1,0 +1,234 @@
+{
+ "generated": "2026-10-24",
+ "mission": "Complete F11 plan measured vs 6 LOCKED targets + minimum adjustments. Targets fixed; no scene invented; no canon change; €0.",
+ "lockedTarget": {
+  "ACTION": 64,
+  "STORY": 13,
+  "TENSION": 10,
+  "DRAMA": 5,
+  "COMEDY": 5,
+  "WORLD": 3
+ },
+ "runtimeSecAssumed": 3600,
+ "governingMeasure": "estimated SCREEN-TIME (target allocation of ~60-min runtime). Shot-weighted shown as a cross-check. ALL ESTIMATES until a RENDERED edit is measured.",
+ "contentClassification": {
+  "SC01": "ACTION",
+  "SC02": "STORY",
+  "SC03": "ACTION",
+  "SC04": "WORLD",
+  "SC05": "TENSION",
+  "SC06": "ACTION",
+  "SC07": "TENSION",
+  "SC08": "DRAMA",
+  "SC09": "STORY",
+  "SC10": "TENSION",
+  "SC11": "TENSION",
+  "SC12": "STORY",
+  "SC13": "COMEDY",
+  "SC14": "DRAMA",
+  "SC15": "STORY",
+  "SC16": "STORY",
+  "SC17": "STORY",
+  "SC18": "ACTION",
+  "SC19": "STORY",
+  "SC20": "DRAMA",
+  "SC21": "ACTION",
+  "SC22": "ACTION",
+  "SC23": "TENSION",
+  "SC24": "ACTION",
+  "SC25": "ACTION",
+  "SC26": "TENSION",
+  "SC27": "DRAMA",
+  "SC28": "DRAMA",
+  "SC29": "DRAMA",
+  "SC30": "ACTION",
+  "SC31": "ACTION",
+  "SC32": "ACTION",
+  "SC33": "DRAMA",
+  "SC34": "TENSION",
+  "SC35": "DRAMA",
+  "SC36": "STORY",
+  "SC37": "ACTION",
+  "SC38": "ACTION",
+  "SC39": "ACTION",
+  "SC40": "ACTION",
+  "SC41": "STORY",
+  "SC42": "DRAMA",
+  "SC43": "DRAMA",
+  "SC44": "DRAMA",
+  "SC45": "ACTION",
+  "SC46": "ACTION",
+  "SC47": "WORLD",
+  "SC48": "DRAMA",
+  "SC49": "WORLD"
+ },
+ "sceneCountsByCategory": {
+  "ACTION": 17,
+  "STORY": 9,
+  "TENSION": 7,
+  "DRAMA": 12,
+  "COMEDY": 1,
+  "WORLD": 3
+ },
+ "currentEstimate_shotWeighted": [
+  {
+   "category": "ACTION",
+   "scenes": 17,
+   "shots": 161,
+   "currentShotPct": 38.3
+  },
+  {
+   "category": "STORY",
+   "scenes": 9,
+   "shots": 76,
+   "currentShotPct": 18.1
+  },
+  {
+   "category": "TENSION",
+   "scenes": 7,
+   "shots": 55,
+   "currentShotPct": 13.1
+  },
+  {
+   "category": "DRAMA",
+   "scenes": 12,
+   "shots": 102,
+   "currentShotPct": 24.3
+  },
+  {
+   "category": "COMEDY",
+   "scenes": 1,
+   "shots": 10,
+   "currentShotPct": 2.4
+  },
+  {
+   "category": "WORLD",
+   "scenes": 3,
+   "shots": 16,
+   "currentShotPct": 3.8
+  }
+ ],
+ "gapsToTarget_shotWeighted": [
+  {
+   "category": "ACTION",
+   "currentShotPct": 38.3,
+   "targetPct": 64,
+   "gapPts": 25.7
+  },
+  {
+   "category": "STORY",
+   "currentShotPct": 18.1,
+   "targetPct": 13,
+   "gapPts": -5.1
+  },
+  {
+   "category": "TENSION",
+   "currentShotPct": 13.1,
+   "targetPct": 10,
+   "gapPts": -3.1
+  },
+  {
+   "category": "DRAMA",
+   "currentShotPct": 24.3,
+   "targetPct": 5,
+   "gapPts": -19.3
+  },
+  {
+   "category": "COMEDY",
+   "currentShotPct": 2.4,
+   "targetPct": 5,
+   "gapPts": 2.6
+  },
+  {
+   "category": "WORLD",
+   "currentShotPct": 3.8,
+   "targetPct": 3,
+   "gapPts": -0.8
+  }
+ ],
+ "targetScreenTimePlan": [
+  {
+   "category": "ACTION",
+   "targetPct": 64,
+   "targetSec": 2304,
+   "targetMin": 38.4,
+   "scenes": 17,
+   "perSceneSecRequired": 136,
+   "plausibleBand": "40-240s/scene",
+   "feasible": true,
+   "flag": "OK"
+  },
+  {
+   "category": "STORY",
+   "targetPct": 13,
+   "targetSec": 468,
+   "targetMin": 7.8,
+   "scenes": 9,
+   "perSceneSecRequired": 52,
+   "plausibleBand": "40-150s/scene",
+   "feasible": true,
+   "flag": "OK"
+  },
+  {
+   "category": "TENSION",
+   "targetPct": 10,
+   "targetSec": 360,
+   "targetMin": 6,
+   "scenes": 7,
+   "perSceneSecRequired": 51,
+   "plausibleBand": "40-150s/scene",
+   "feasible": true,
+   "flag": "OK"
+  },
+  {
+   "category": "DRAMA",
+   "targetPct": 5,
+   "targetSec": 180,
+   "targetMin": 3,
+   "scenes": 12,
+   "perSceneSecRequired": 15,
+   "plausibleBand": "45-180s/scene",
+   "feasible": false,
+   "flag": "IMPLAUSIBLE: 15s/scene < 45s — too little time for 12 scenes"
+  },
+  {
+   "category": "COMEDY",
+   "targetPct": 5,
+   "targetSec": 180,
+   "targetMin": 3,
+   "scenes": 1,
+   "perSceneSecRequired": 180,
+   "plausibleBand": "30-120s/scene",
+   "feasible": false,
+   "flag": "IMPLAUSIBLE: 180s/scene > 120s"
+  },
+  {
+   "category": "WORLD",
+   "targetPct": 3,
+   "targetSec": 108,
+   "targetMin": 1.8,
+   "scenes": 3,
+   "perSceneSecRequired": 36,
+   "plausibleBand": "20-90s/scene",
+   "feasible": true,
+   "flag": "OK"
+  }
+ ],
+ "minimumAdjustments": [
+  "ACTION (+25.7pts): extend the 17 action scenes to carry 38.4 min (~2.3 min/scene set-pieces) — feasible for an action film; apply movement contracts + intensify-staging (0 plot change).",
+  "DRAMA (−19.3pts): tighten the 12 drama scenes toward a 5% = 3-min budget.",
+  "TENSION (−6.4pts): trim toward 10% = 6 min across 7 scenes.",
+  "COMEDY (+2.6pts): give SC13 (+ light crew beats in action scenes) the 5% = 3-min budget."
+ ],
+ "comedyNote": "The COMEDY \"180s/1-scene\" flag is an ARTIFACT of primary-function classification. F11 delivers comedy as DISTRIBUTED BEATS across 13 scenes (SC02,10,13,16,18,19,20,21,30,33,40,44,49 — per the inventory `comedy` fields), which can plausibly carry the 5% (~3 min) budget. An accurate comedy % needs BEAT/shot-level tagging, not whole-scene classification. So comedy is NOT a structural blocker — it is already spread across the film.",
+ "structuralBlocker": {
+  "severity": "MUST-RESOLVE (human editorial) — DRAMA only",
+  "finding": "DRAMA: 12 whole drama scenes vs a 5% (3-min) budget → ~15s/scene, IMPLAUSIBLE for emotional beats.",
+  "explanation": "The F11 scene SET inherits F10 drama-heavy structure (12 DRAMA scenes). Unlike comedy (beats-within-scenes), drama needs WHOLE scenes to land. A 3-min drama budget across 12 scenes is not plausible → closing to the locked 5% requires a HUMAN editorial decision to MERGE/compress/relegate drama scenes (reduce their footprint) — NOT adding/removing canon events, NOT revising the locked target.",
+  "notABlocker": [
+   "comedy (distributed beats, resolves at beat-level)",
+   "action/story/tension/world (per-scene durations plausible)"
+  ]
+ },
+ "honesty": "64% action is NOT claimed achieved. This is a PLAN measured by estimate; only a RENDERED edit measured on real footage confirms the realized distribution. Full-prose dialogue SC08–49 remains to be authored (opening SC01–07 done)."
+}

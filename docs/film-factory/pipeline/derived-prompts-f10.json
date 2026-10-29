@@ -1,0 +1,2388 @@
+{
+ "generated": "2026-10-24",
+ "provenance": "AUTO-DERIVED (DRAFT) from shot-list-f10.json canonical fields — every prompt is canon-linked; pending human refinement. Not a replacement for authored registers.",
+ "count": 160,
+ "shots": [
+  {
+   "id": "SC01-SH06",
+   "scene": "SC01",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC01",
+    "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+    "refs": [
+     "NORTH SEA",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 1. EXT. NORTH SEA — STORM — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC01-SH07",
+   "scene": "SC01",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC01",
+    "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+    "refs": [
+     "NORTH SEA",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 1. EXT. NORTH SEA — STORM — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC01-SH08",
+   "scene": "SC01",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC01",
+    "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+    "refs": [
+     "NORTH SEA",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 1. EXT. NORTH SEA — STORM — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC01-SH09",
+   "scene": "SC01",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC01",
+    "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+    "refs": [
+     "NORTH SEA",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 1. EXT. NORTH SEA — STORM — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC01-SH13",
+   "scene": "SC01",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC01",
+    "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+    "refs": [
+     "NORTH SEA"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 1. EXT. NORTH SEA — STORM — NIGHT. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC02-SH05",
+   "scene": "SC02",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC02",
+    "sceneHead": "2. EXT. SŌLFARI DECK — CONTINUOUS",
+    "refs": [
+     "SŌLFARI DECK",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "SŌLFARI DECK — 2. EXT. SŌLFARI DECK — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SŌLFARI DECK. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC02-SH06",
+   "scene": "SC02",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC02",
+    "sceneHead": "2. EXT. SŌLFARI DECK — CONTINUOUS",
+    "refs": [
+     "SŌLFARI DECK",
+     "HELGI"
+    ]
+   },
+   "fullPrompt": "SŌLFARI DECK — 2. EXT. SŌLFARI DECK — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: HELGI — dialogue VO. Characters (match canon refs): HELGI. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SŌLFARI DECK. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC02-SH07",
+   "scene": "SC02",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC02",
+    "sceneHead": "2. EXT. SŌLFARI DECK — CONTINUOUS",
+    "refs": [
+     "SŌLFARI DECK",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "SŌLFARI DECK — 2. EXT. SŌLFARI DECK — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SŌLFARI DECK. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC03-SH04",
+   "scene": "SC03",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC03",
+    "sceneHead": "3. EXT. NORTH SEA — THE SEAM — CONTINUOUS",
+    "refs": [
+     "NORTH SEA",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 3. EXT. NORTH SEA — THE SEAM — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC03-SH05",
+   "scene": "SC03",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC03",
+    "sceneHead": "3. EXT. NORTH SEA — THE SEAM — CONTINUOUS",
+    "refs": [
+     "NORTH SEA",
+     "HELGI"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 3. EXT. NORTH SEA — THE SEAM — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: HELGI — dialogue VO. Characters (match canon refs): HELGI. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC03-SH09",
+   "scene": "SC03",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC03",
+    "sceneHead": "3. EXT. NORTH SEA — THE SEAM — CONTINUOUS",
+    "refs": [
+     "NORTH SEA"
+    ]
+   },
+   "fullPrompt": "NORTH SEA — 3. EXT. NORTH SEA — THE SEAM — CONTINUOUS. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: NORTH SEA. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC04-SH05",
+   "scene": "SC04",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC04",
+    "sceneHead": "4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT",
+    "refs": [
+     "IMPOSSIBLE SHORE",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "IMPOSSIBLE SHORE — 4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: IMPOSSIBLE SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC04-SH06",
+   "scene": "SC04",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC04",
+    "sceneHead": "4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT",
+    "refs": [
+     "IMPOSSIBLE SHORE",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "IMPOSSIBLE SHORE — 4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: IMPOSSIBLE SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC04-SH07",
+   "scene": "SC04",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC04",
+    "sceneHead": "4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT",
+    "refs": [
+     "IMPOSSIBLE SHORE",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "IMPOSSIBLE SHORE — 4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: IMPOSSIBLE SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC05-SH05",
+   "scene": "SC05",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC05",
+    "sceneHead": "5. EXT. SHORE — THE PATROL — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SHORE — 5. EXT. SHORE — THE PATROL — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC05-SH06",
+   "scene": "SC05",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC05",
+    "sceneHead": "5. EXT. SHORE — THE PATROL — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "SHORE — 5. EXT. SHORE — THE PATROL — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC05-SH07",
+   "scene": "SC05",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC05",
+    "sceneHead": "5. EXT. SHORE — THE PATROL — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "IPY"
+    ]
+   },
+   "fullPrompt": "SHORE — 5. EXT. SHORE — THE PATROL — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: IPY — dialogue VO. Characters (match canon refs): IPY. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC06-SH05",
+   "scene": "SC06",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC06",
+    "sceneHead": "6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "SHORE — 6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC06-SH06",
+   "scene": "SC06",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC06",
+    "sceneHead": "6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "IPY"
+    ]
+   },
+   "fullPrompt": "SHORE — 6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: IPY — dialogue VO. Characters (match canon refs): IPY. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC06-SH07",
+   "scene": "SC06",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC06",
+    "sceneHead": "6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SHORE — 6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC07-SH05",
+   "scene": "SC07",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC07",
+    "sceneHead": "7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SHORE — 7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC07-SH06",
+   "scene": "SC07",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC07",
+    "sceneHead": "7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "SHORE — 7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC07-SH07",
+   "scene": "SC07",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC07",
+    "sceneHead": "7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS",
+    "refs": [
+     "SHORE",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SHORE — 7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC08-SH03",
+   "scene": "SC08",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC08",
+    "sceneHead": "7A. EXT. RIVER-TOWN — THE SAME EVENING — [MATRIX-N",
+    "refs": [
+     "RIVER-TOWN",
+     "WIDOW"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN — 7A. EXT. RIVER-TOWN — THE SAME EVENING — [MATRIX-N. cinematic STILL frame, AUDIO, n/a camera move. Action: WIDOW — dialogue VO. Characters (match canon refs): WIDOW. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: RIVER-TOWN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC09-SH04",
+   "scene": "SC09",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC09",
+    "sceneHead": "8. INT. GARRISON — COUNCIL — DUSK",
+    "refs": [
+     "GARRISON",
+     "ELDER"
+    ]
+   },
+   "fullPrompt": "GARRISON — 8. INT. GARRISON — COUNCIL — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: ELDER — dialogue VO. Characters (match canon refs): ELDER. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC09-SH05",
+   "scene": "SC09",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC09",
+    "sceneHead": "8. INT. GARRISON — COUNCIL — DUSK",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 8. INT. GARRISON — COUNCIL — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC10-SH07",
+   "scene": "SC10",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC10",
+    "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC10-SH08",
+   "scene": "SC10",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC10",
+    "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC10-SH09",
+   "scene": "SC10",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC10",
+    "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC10-SH10",
+   "scene": "SC10",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC10",
+    "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC10-SH11",
+   "scene": "SC10",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC10",
+    "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC11-SH07",
+   "scene": "SC11",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC11",
+    "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — . cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC11-SH08",
+   "scene": "SC11",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC11",
+    "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — . cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC11-SH09",
+   "scene": "SC11",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC11",
+    "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — . cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC11-SH10",
+   "scene": "SC11",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC11",
+    "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — . cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC11-SH11",
+   "scene": "SC11",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC11",
+    "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — . cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC12-SH07",
+   "scene": "SC12",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC12",
+    "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — . cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC12-SH08",
+   "scene": "SC12",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC12",
+    "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — . cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC12-SH09",
+   "scene": "SC12",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC12",
+    "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — . cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC12-SH10",
+   "scene": "SC12",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC12",
+    "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+    "refs": [
+     "GARRISON",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — . cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC12-SH11",
+   "scene": "SC12",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC12",
+    "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — . cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC13-SH06",
+   "scene": "SC13",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC13",
+    "sceneHead": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+    "refs": [
+     "GARRISON",
+     "VIGGE"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE. cinematic STILL frame, AUDIO, n/a camera move. Action: VIGGE — dialogue VO. Characters (match canon refs): VIGGE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC13-SH07",
+   "scene": "SC13",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC13",
+    "sceneHead": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+    "refs": [
+     "GARRISON",
+     "BÖRK"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE. cinematic STILL frame, AUDIO, n/a camera move. Action: BÖRK — dialogue VO. Characters (match canon refs): BÖRK. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC13-SH08",
+   "scene": "SC13",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC13",
+    "sceneHead": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+    "refs": [
+     "GARRISON",
+     "HELGI"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE. cinematic STILL frame, AUDIO, n/a camera move. Action: HELGI — dialogue VO. Characters (match canon refs): HELGI. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC13-SH09",
+   "scene": "SC13",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC13",
+    "sceneHead": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+    "refs": [
+     "GARRISON",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "GARRISON — 10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH08",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH09",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH10",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH11",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH12",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH13",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC14-SH15",
+   "scene": "SC14",
+   "act": "I",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC14",
+    "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+    "refs": [
+     "GARRISON"
+    ]
+   },
+   "fullPrompt": "GARRISON — 11. INT. GARRISON — OLAF & ASTRID — NIGHT. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: cold Norse steel-grey vs Egyptian gold/ochre. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC15-SH07",
+   "scene": "SC15",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC15",
+    "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC15-SH08",
+   "scene": "SC15",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC15",
+    "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC15-SH09",
+   "scene": "SC15",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC15",
+    "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC15-SH10",
+   "scene": "SC15",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC15",
+    "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+    "refs": [
+     "GARRISON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "GARRISON — 12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC15-SH11",
+   "scene": "SC15",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC15",
+    "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC16-SH06",
+   "scene": "SC16",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC16",
+    "sceneHead": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+    "refs": [
+     "DESERT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "DESERT — 13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC16-SH07",
+   "scene": "SC16",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC16",
+    "sceneHead": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+    "refs": [
+     "DESERT",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "DESERT — 13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC16-SH08",
+   "scene": "SC16",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC16",
+    "sceneHead": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+    "refs": [
+     "DESERT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "DESERT — 13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC16-SH09",
+   "scene": "SC16",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC16",
+    "sceneHead": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+    "refs": [
+     "DESERT",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "DESERT — 13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC17-SH04",
+   "scene": "SC17",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC17",
+    "sceneHead": "14. EXT. DESERT — SHE LEARNS — LATER",
+    "refs": [
+     "DESERT",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "DESERT — 14. EXT. DESERT — SHE LEARNS — LATER. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC17-SH05",
+   "scene": "SC17",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC17",
+    "sceneHead": "14. EXT. DESERT — SHE LEARNS — LATER",
+    "refs": [
+     "DESERT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "DESERT — 14. EXT. DESERT — SHE LEARNS — LATER. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC18-SH05",
+   "scene": "SC18",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC18",
+    "sceneHead": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+    "refs": [
+     "RIVER-TOWN",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN — 14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY . cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC18-SH06",
+   "scene": "SC18",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC18",
+    "sceneHead": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+    "refs": [
+     "RIVER-TOWN",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN — 14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY . cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC18-SH07",
+   "scene": "SC18",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC18",
+    "sceneHead": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+    "refs": [
+     "RIVER-TOWN",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN — 14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY . cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC18-SH11",
+   "scene": "SC18",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC18",
+    "sceneHead": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+    "refs": [
+     "RIVER-TOWN"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN — 14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY . cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC19-SH06",
+   "scene": "SC19",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC19",
+    "sceneHead": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+    "refs": [
+     "GARRISON COURTYARD",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON COURTYARD — 15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON COURTYARD. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC19-SH07",
+   "scene": "SC19",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC19",
+    "sceneHead": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+    "refs": [
+     "GARRISON COURTYARD",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "GARRISON COURTYARD — 15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON COURTYARD. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC19-SH08",
+   "scene": "SC19",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC19",
+    "sceneHead": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+    "refs": [
+     "GARRISON COURTYARD",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON COURTYARD — 15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON COURTYARD. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC19-SH09",
+   "scene": "SC19",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC19",
+    "sceneHead": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+    "refs": [
+     "GARRISON COURTYARD",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON COURTYARD — 15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON COURTYARD. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC20-SH07",
+   "scene": "SC20",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC20",
+    "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+    "refs": [
+     "GARRISON",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "GARRISON — 15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC20-SH08",
+   "scene": "SC20",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC20",
+    "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC20-SH09",
+   "scene": "SC20",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC20",
+    "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+    "refs": [
+     "GARRISON",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "GARRISON — 15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC20-SH10",
+   "scene": "SC20",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC20",
+    "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC20-SH11",
+   "scene": "SC20",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC20",
+    "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+    "refs": [
+     "GARRISON",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "GARRISON — 15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC21-SH04",
+   "scene": "SC21",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC21",
+    "sceneHead": "16. EXT. RIVER-TOWN MARKET — DAY",
+    "refs": [
+     "RIVER-TOWN MARKET",
+     "IPY"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN MARKET — 16. EXT. RIVER-TOWN MARKET — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: IPY — dialogue VO. Characters (match canon refs): IPY. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC21-SH05",
+   "scene": "SC21",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC21",
+    "sceneHead": "16. EXT. RIVER-TOWN MARKET — DAY",
+    "refs": [
+     "RIVER-TOWN MARKET",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN MARKET — 16. EXT. RIVER-TOWN MARKET — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC21-SH09",
+   "scene": "SC21",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC21",
+    "sceneHead": "16. EXT. RIVER-TOWN MARKET — DAY",
+    "refs": [
+     "RIVER-TOWN MARKET"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN MARKET — 16. EXT. RIVER-TOWN MARKET — DAY. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC22-SH04",
+   "scene": "SC22",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC22",
+    "sceneHead": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T",
+    "refs": [
+     "MARKET",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "MARKET — 17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC22-SH05",
+   "scene": "SC22",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC22",
+    "sceneHead": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T",
+    "refs": [
+     "MARKET",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "MARKET — 17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC22-SH09",
+   "scene": "SC22",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC22",
+    "sceneHead": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T",
+    "refs": [
+     "MARKET"
+    ]
+   },
+   "fullPrompt": "MARKET — 17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC23-SH04",
+   "scene": "SC23",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC23",
+    "sceneHead": "18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN",
+    "refs": [
+     "MARKET",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "MARKET — 18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC23-SH05",
+   "scene": "SC23",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC23",
+    "sceneHead": "18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN",
+    "refs": [
+     "MARKET",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "MARKET — 18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: MARKET. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC24-SH05",
+   "scene": "SC24",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC24",
+    "sceneHead": "18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU",
+    "refs": [
+     "RIVER-TOWN EDGE",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN EDGE — 18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN EDGE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC24-SH06",
+   "scene": "SC24",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC24",
+    "sceneHead": "18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU",
+    "refs": [
+     "RIVER-TOWN EDGE",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN EDGE — 18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN EDGE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC24-SH07",
+   "scene": "SC24",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC24",
+    "sceneHead": "18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU",
+    "refs": [
+     "RIVER-TOWN EDGE",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "RIVER-TOWN EDGE — 18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: RIVER-TOWN EDGE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC25-SH07",
+   "scene": "SC25",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC25",
+    "sceneHead": "18B. THE TWO TOWNS — NIGHTS OF THE BLEED — WORDLES",
+    "refs": [
+     "UNSPECIFIED"
+    ]
+   },
+   "fullPrompt": "UNSPECIFIED — 18B. THE TWO TOWNS — NIGHTS OF THE BLEED — WORDLES. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: UNSPECIFIED. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC26-SH03",
+   "scene": "SC26",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC26",
+    "sceneHead": "19. INT. GARRISON — THE SEIZURE — NIGHT",
+    "refs": [
+     "GARRISON",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 19. INT. GARRISON — THE SEIZURE — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC27-SH06",
+   "scene": "SC27",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC27",
+    "sceneHead": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+    "refs": [
+     "GARRISON",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 20. INT. GARRISON — ASTRID & MERYT — LATER. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC27-SH07",
+   "scene": "SC27",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC27",
+    "sceneHead": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 20. INT. GARRISON — ASTRID & MERYT — LATER. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC27-SH08",
+   "scene": "SC27",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC27",
+    "sceneHead": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+    "refs": [
+     "GARRISON",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 20. INT. GARRISON — ASTRID & MERYT — LATER. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC27-SH09",
+   "scene": "SC27",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC27",
+    "sceneHead": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 20. INT. GARRISON — ASTRID & MERYT — LATER. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC28-SH06",
+   "scene": "SC28",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC28",
+    "sceneHead": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+    "refs": [
+     "GARRISON",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 21. INT. GARRISON — MERYT'S BROTHER — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC28-SH07",
+   "scene": "SC28",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC28",
+    "sceneHead": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 21. INT. GARRISON — MERYT'S BROTHER — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC28-SH08",
+   "scene": "SC28",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC28",
+    "sceneHead": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+    "refs": [
+     "GARRISON",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "GARRISON — 21. INT. GARRISON — MERYT'S BROTHER — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC28-SH09",
+   "scene": "SC28",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC28",
+    "sceneHead": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+    "refs": [
+     "GARRISON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "GARRISON — 21. INT. GARRISON — MERYT'S BROTHER — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: GARRISON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC29-SH05",
+   "scene": "SC29",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC29",
+    "sceneHead": "21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI",
+    "refs": [
+     "CAMP, CANYON MOUTH",
+     "HELGI"
+    ]
+   },
+   "fullPrompt": "CAMP, CANYON MOUTH — 21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI. cinematic STILL frame, AUDIO, n/a camera move. Action: HELGI — dialogue VO. Characters (match canon refs): HELGI. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: CAMP, CANYON MOUTH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC29-SH06",
+   "scene": "SC29",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC29",
+    "sceneHead": "21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI",
+    "refs": [
+     "CAMP, CANYON MOUTH",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "CAMP, CANYON MOUTH — 21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: CAMP, CANYON MOUTH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC29-SH07",
+   "scene": "SC29",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC29",
+    "sceneHead": "21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI",
+    "refs": [
+     "CAMP, CANYON MOUTH",
+     "HELGI"
+    ]
+   },
+   "fullPrompt": "CAMP, CANYON MOUTH — 21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI. cinematic STILL frame, AUDIO, n/a camera move. Action: HELGI — dialogue VO. Characters (match canon refs): HELGI. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: CAMP, CANYON MOUTH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC30-SH07",
+   "scene": "SC30",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC30",
+    "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+    "refs": [
+     "DESERT CANYON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "DESERT CANYON — 22. EXT. DESERT CANYON — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC30-SH08",
+   "scene": "SC30",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC30",
+    "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+    "refs": [
+     "DESERT CANYON",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "DESERT CANYON — 22. EXT. DESERT CANYON — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC30-SH09",
+   "scene": "SC30",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC30",
+    "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+    "refs": [
+     "DESERT CANYON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "DESERT CANYON — 22. EXT. DESERT CANYON — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC30-SH10",
+   "scene": "SC30",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC30",
+    "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+    "refs": [
+     "DESERT CANYON",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "DESERT CANYON — 22. EXT. DESERT CANYON — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC30-SH11",
+   "scene": "SC30",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC30",
+    "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+    "refs": [
+     "DESERT CANYON",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "DESERT CANYON — 22. EXT. DESERT CANYON — DUSK. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC30-SH15",
+   "scene": "SC30",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC30",
+    "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+    "refs": [
+     "DESERT CANYON"
+    ]
+   },
+   "fullPrompt": "DESERT CANYON — 22. EXT. DESERT CANYON — DUSK. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: DESERT CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC31-SH03",
+   "scene": "SC31",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC31",
+    "sceneHead": "23. EXT. CANYON — THE ECHO — CONTINUOUS",
+    "refs": [
+     "CANYON",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "CANYON — 23. EXT. CANYON — THE ECHO — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC31-SH07",
+   "scene": "SC31",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC31",
+    "sceneHead": "23. EXT. CANYON — THE ECHO — CONTINUOUS",
+    "refs": [
+     "CANYON"
+    ]
+   },
+   "fullPrompt": "CANYON — 23. EXT. CANYON — THE ECHO — CONTINUOUS. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: CANYON. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC32-SH05",
+   "scene": "SC32",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC32",
+    "sceneHead": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+    "refs": [
+     "SEAM-ROOT APPROACH",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT APPROACH — 24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT APPROACH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC32-SH06",
+   "scene": "SC32",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC32",
+    "sceneHead": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+    "refs": [
+     "SEAM-ROOT APPROACH",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT APPROACH — 24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT APPROACH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC32-SH07",
+   "scene": "SC32",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC32",
+    "sceneHead": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+    "refs": [
+     "SEAM-ROOT APPROACH",
+     "HELGI"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT APPROACH — 24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: HELGI — dialogue VO. Characters (match canon refs): HELGI. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT APPROACH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC32-SH11",
+   "scene": "SC32",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC32",
+    "sceneHead": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+    "refs": [
+     "SEAM-ROOT APPROACH"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT APPROACH — 24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT APPROACH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC33-SH04",
+   "scene": "SC33",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC33",
+    "sceneHead": "25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT APPROACH",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT APPROACH — 25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT APPROACH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC33-SH05",
+   "scene": "SC33",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC33",
+    "sceneHead": "25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT APPROACH",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT APPROACH — 25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT APPROACH. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC34-SH04",
+   "scene": "SC34",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC34",
+    "sceneHead": "26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC34-SH05",
+   "scene": "SC34",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC34",
+    "sceneHead": "26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC34-SH07",
+   "scene": "SC34",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC34",
+    "sceneHead": "26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT",
+    "refs": [
+     "SEAM-ROOT CAMP"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC35-SH05",
+   "scene": "SC35",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC35",
+    "sceneHead": "26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "IPY"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: IPY — dialogue VO. Characters (match canon refs): IPY. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC35-SH06",
+   "scene": "SC35",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC35",
+    "sceneHead": "26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC35-SH07",
+   "scene": "SC35",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC35",
+    "sceneHead": "26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "IPY"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT. cinematic STILL frame, AUDIO, n/a camera move. Action: IPY — dialogue VO. Characters (match canon refs): IPY. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC36-SH04",
+   "scene": "SC36",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC36",
+    "sceneHead": "27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC36-SH05",
+   "scene": "SC36",
+   "act": "II",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC36",
+    "sceneHead": "27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU",
+    "refs": [
+     "SEAM-ROOT CAMP",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT CAMP — 27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: bronze-green bleed creeping as desync grows. Location continuity: SEAM-ROOT CAMP. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC37-SH06",
+   "scene": "SC37",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC37",
+    "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+    "refs": [
+     "SEAM-ROOT",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC37-SH07",
+   "scene": "SC37",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC37",
+    "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC37-SH08",
+   "scene": "SC37",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC37",
+    "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+    "refs": [
+     "SEAM-ROOT",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC37-SH09",
+   "scene": "SC37",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC37",
+    "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+    "refs": [
+     "SEAM-ROOT",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC37-SH13",
+   "scene": "SC37",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC37",
+    "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+    "refs": [
+     "SEAM-ROOT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC38-SH06",
+   "scene": "SC38",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC38",
+    "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC38-SH07",
+   "scene": "SC38",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC38",
+    "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+    "refs": [
+     "SEAM-ROOT",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC38-SH08",
+   "scene": "SC38",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC38",
+    "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC38-SH09",
+   "scene": "SC38",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC38",
+    "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC38-SH14",
+   "scene": "SC38",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC38",
+    "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+    "refs": [
+     "SEAM-ROOT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC39-SH03",
+   "scene": "SC39",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC39",
+    "sceneHead": "30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU",
+    "refs": [
+     "SEAM-ROOT",
+     "SETH-NAKHT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU. cinematic STILL frame, AUDIO, n/a camera move. Action: SETH-NAKHT — dialogue VO. Characters (match canon refs): SETH-NAKHT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC39-SH07",
+   "scene": "SC39",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC39",
+    "sceneHead": "30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU",
+    "refs": [
+     "SEAM-ROOT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC40-SH04",
+   "scene": "SC40",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC40",
+    "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI",
+    "refs": [
+     "SEAM-ROOT",
+     "VIGGE"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI. cinematic STILL frame, AUDIO, n/a camera move. Action: VIGGE — dialogue VO. Characters (match canon refs): VIGGE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC40-SH05",
+   "scene": "SC40",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC40",
+    "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI",
+    "refs": [
+     "SEAM-ROOT",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC40-SH09",
+   "scene": "SC40",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC40",
+    "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI",
+    "refs": [
+     "SEAM-ROOT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC41-SH05",
+   "scene": "SC41",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC41",
+    "sceneHead": "31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC41-SH06",
+   "scene": "SC41",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC41",
+    "sceneHead": "31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "NEFER-KA"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: NEFER-KA — dialogue VO. Characters (match canon refs): NEFER-KA. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC41-SH07",
+   "scene": "SC41",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC41",
+    "sceneHead": "31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC42-SH04",
+   "scene": "SC42",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC42",
+    "sceneHead": "32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC42-SH05",
+   "scene": "SC42",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC42",
+    "sceneHead": "32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC43-SH05",
+   "scene": "SC43",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC43",
+    "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 33. EXT. SEAM-ROOT — OLAF — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC43-SH06",
+   "scene": "SC43",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC43",
+    "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "OLAF"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 33. EXT. SEAM-ROOT — OLAF — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: OLAF — dialogue VO. Characters (match canon refs): OLAF. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC43-SH07",
+   "scene": "SC43",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC43",
+    "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 33. EXT. SEAM-ROOT — OLAF — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC43-SH09",
+   "scene": "SC43",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC43",
+    "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 33. EXT. SEAM-ROOT — OLAF — CONTINUOUS. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC44-SH05",
+   "scene": "SC44",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC44",
+    "sceneHead": "34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC44-SH06",
+   "scene": "SC44",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC44",
+    "sceneHead": "34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "TOVE"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: TOVE — dialogue VO. Characters (match canon refs): TOVE. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC44-SH07",
+   "scene": "SC44",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC44",
+    "sceneHead": "34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS",
+    "refs": [
+     "SEAM-ROOT",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "SEAM-ROOT — 34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM-ROOT. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC45-SH05",
+   "scene": "SC45",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC45",
+    "sceneHead": "35. EXT. SEAM / SHORE — THE CLOSE — CONTINUOUS",
+    "refs": [
+     "SEAM / SHORE"
+    ]
+   },
+   "fullPrompt": "SEAM / SHORE — 35. EXT. SEAM / SHORE — THE CLOSE — CONTINUOUS. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: SEAM / SHORE. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC46-SH03",
+   "scene": "SC46",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC46",
+    "sceneHead": "36. INT. THE SEAM — THE MIDDLE — CONTINUOUS",
+    "refs": [
+     "THE SEAM",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "THE SEAM — 36. INT. THE SEAM — THE MIDDLE — CONTINUOUS. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE SEAM. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC46-SH07",
+   "scene": "SC46",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC46",
+    "sceneHead": "36. INT. THE SEAM — THE MIDDLE — CONTINUOUS",
+    "refs": [
+     "THE SEAM"
+    ]
+   },
+   "fullPrompt": "THE SEAM — 36. INT. THE SEAM — THE MIDDLE — CONTINUOUS. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE SEAM. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC48-SH06",
+   "scene": "SC48",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC48",
+    "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+    "refs": [
+     "THE CAIRN",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "THE CAIRN — 38. EXT. THE CAIRN — SINGLE-SUN MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE CAIRN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC48-SH07",
+   "scene": "SC48",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC48",
+    "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+    "refs": [
+     "THE CAIRN",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "THE CAIRN — 38. EXT. THE CAIRN — SINGLE-SUN MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE CAIRN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC48-SH08",
+   "scene": "SC48",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC48",
+    "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+    "refs": [
+     "THE CAIRN",
+     "MERYT"
+    ]
+   },
+   "fullPrompt": "THE CAIRN — 38. EXT. THE CAIRN — SINGLE-SUN MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: MERYT — dialogue VO. Characters (match canon refs): MERYT. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE CAIRN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC48-SH09",
+   "scene": "SC48",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC48",
+    "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+    "refs": [
+     "THE CAIRN",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "THE CAIRN — 38. EXT. THE CAIRN — SINGLE-SUN MORNING. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE CAIRN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC48-SH11",
+   "scene": "SC48",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC48",
+    "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+    "refs": [
+     "THE CAIRN"
+    ]
+   },
+   "fullPrompt": "THE CAIRN — 38. EXT. THE CAIRN — SINGLE-SUN MORNING. cinematic STILL frame, MUSIC, n/a camera move. Action: scored cue. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: THE CAIRN. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC49-SH05",
+   "scene": "SC49",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC49",
+    "sceneHead": "38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA",
+    "refs": [
+     "A BEND IN THE GREAT RIVER",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "A BEND IN THE GREAT RIVER — 38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: A BEND IN THE GREAT RIVER. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC49-SH06",
+   "scene": "SC49",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC49",
+    "sceneHead": "38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA",
+    "refs": [
+     "A BEND IN THE GREAT RIVER",
+     "IPY"
+    ]
+   },
+   "fullPrompt": "A BEND IN THE GREAT RIVER — 38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA. cinematic STILL frame, AUDIO, n/a camera move. Action: IPY — dialogue VO. Characters (match canon refs): IPY. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: A BEND IN THE GREAT RIVER. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  },
+  {
+   "id": "SC49-SH07",
+   "scene": "SC49",
+   "act": "III",
+   "kind": "image",
+   "canonLink": {
+    "scene": "SC49",
+    "sceneHead": "38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA",
+    "refs": [
+     "A BEND IN THE GREAT RIVER",
+     "ASTRID"
+    ]
+   },
+   "fullPrompt": "A BEND IN THE GREAT RIVER — 38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA. cinematic STILL frame, AUDIO, n/a camera move. Action: ASTRID — dialogue VO. Characters (match canon refs): ASTRID. Era: fantasy (Norse ∩ pharaonic, dramatized). Palette: blinding gold at convergence → calm single-sun dawn. Location continuity: A BEND IN THE GREAT RIVER. Continuity rule: REFUSE generation if committed+spent+costEur > €2000 (BudgetLedger enforces pre-spend). EXCLUDE: modern objects/clothing/architecture, vehicles, text/watermarks/logos, anachronisms, extra or deformed limbs/faces/fingers, duplicated people, warped geometry, period-inconsistent props."
+  }
+ ]
+}

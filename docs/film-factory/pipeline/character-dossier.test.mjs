@@ -1,0 +1,18 @@
+import { readFileSync, existsSync } from 'node:fs'; import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url'; import { dirname, join } from 'node:path';
+const here = dirname(fileURLToPath(import.meta.url)); const R=f=>JSON.parse(readFileSync(join(here,f),'utf8'));
+const d=R('runs/benchmark/character-dossier-f10.json'), pr=R('runs/benchmark/character-portrait-prompts.json'), bp=R('runs/benchmark/visual-batch-plan.json');
+const sha=p=>existsSync(p)?createHash('sha256').update(readFileSync(p)).digest('hex'):null;
+let pass=0,fail=0,fails=[]; const ok=(n,c)=>{if(c)pass++;else{fail++;fails.push(n);}};
+ok('12 character dossiers', d.total===12 && d.characters.length===12);
+ok('each has CANON/PROPOSED/UNKNOWN separated', d.characters.every(c=>c.CANON?.descriptor && c.PROPOSED && Array.isArray(c.UNKNOWN)));
+ok('3 real references (ASTRID/MERYT/OLAF) with sha', ['ASTRID','MERYT','OLAF'].every(n=>d.characters.find(c=>c.ref===n)?.reference.sha256));
+const astrid=d.characters.find(c=>c.ref==='ASTRID');
+ok('ASTRID ref sha matches file on disk', astrid.reference.sha256===sha(join(here,'runs/pilot/refs/ASTRID.webp')));
+ok('9 prepared portrait prompts (not generated)', pr.count===9 && pr.prompts.length===9 && /NOT generated/.test(pr.note));
+ok('prepared prompts carry photoreal style anchor', pr.prompts.every(p=>/photorealistic cinematic/i.test(p.prompt)));
+ok('no CANON field invented (all from descriptors)', d.characters.every(c=>c.CANON.descriptor.length>5));
+ok('batch plan: €134 cap NOT reset; 8-attempt not auto-reset', /NOT an authorization/.test(bp.budgetRequest.note) && /must NOT be reset/.test(bp.budgetRequest.note));
+ok('MERYT wound dependency documented', d.characters.find(c=>c.ref==='MERYT').visualDependencies.some(x=>/wound/.test(x)));
+console.log(`CHARACTER-DOSSIER TESTS: ${fail===0?'PASS':'FAIL'} (pass=${pass} fail=${fail})`+(fail?` [${fails.join(', ')}]`:''));
+process.exit(fail===0?0:1);

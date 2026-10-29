@@ -1,0 +1,45 @@
+{
+ "generated": "2026-10-24",
+ "note": "Björn action contracts for the opening action scenes",
+ "contracts": [
+  {
+   "scene": "SC01",
+   "beat": "storm — Björn hauls the steering-oar; the crest becomes the seam",
+   "initial": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main strength, Himinkljúfr on his back; OLAF lashed, failing; ASTRID shouting reads",
+   "trajectory": "Björn throws his full weight to take the wave bow-first; the crest curls to break",
+   "contact": "where foam should be the water UNRAVELS into a seam of gold light",
+   "consequence": "the ship is driven through; Björn useless against the sea (deep-water dread seeded)",
+   "final": "SŌLFARI slews on; crew thrown",
+   "raccord": "hard cut to the two-worlds stack (SC03)",
+   "weaponCostume": "Himinkljúfr slung (not drawn); crew soaked; Olaf grey",
+   "camera": "locked wide → hard push on the unravelling crest",
+   "durationSec": 6
+  },
+  {
+   "scene": "SC03",
+   "beat": "the crossing — Björn tries to cut the light, fails (flaw)",
+   "initial": "two worlds stack (storm above, desert below)",
+   "trajectory": "Björn draws Himinkljúfr and swings at the seam of light",
+   "contact": "the blade passes through light/water — nothing to cut",
+   "consequence": "the sword is useless here — the thesis of his arc is planted",
+   "final": "the ship is driven onto the impossible shore",
+   "raccord": "cut to the two-sun shore (SC04)",
+   "weaponCostume": "Himinkljúfr DRAWN then sheathed; no damage dealt",
+   "camera": "vertigo tilt between the stacked worlds",
+   "durationSec": 6
+  },
+  {
+   "scene": "SC06",
+   "beat": "first tide — muscle on her mind (Björn hauls IPU clear on Astrid's read)",
+   "initial": "on the strand; a sudden WRONG tide gathers; ASTRID senses it",
+   "trajectory": "ASTRID calls the line; BJÖRN sprints and bodily hauls IPU and a guard off the strand",
+   "contact": "the water takes the strand a beat behind them",
+   "consequence": "lives saved by HER read + HIS strength — first grudging trust",
+   "final": "Björn sets IPU down, soaked, staring at Astrid (he acted without understanding)",
+   "raccord": "cut to Meryt's reaction / Seth-Nakht's arrival (SC07)",
+   "weaponCostume": "Himinkljúfr slung; no kill; no gore",
+   "camera": "tracking sprint, then a tight two-shot Björn↔Astrid",
+   "durationSec": 6
+  }
+ ]
+}

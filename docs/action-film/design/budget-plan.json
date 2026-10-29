@@ -1,0 +1,36 @@
+{
+ "generated": "2026-10-24",
+ "scope": "10-min POC — LE GUÉ DES CORBEAUX (C1)",
+ "shotEstimate": {
+  "videos": 50,
+  "stills": 30,
+  "referenceSheets": 3,
+  "note": "ESTIMATE from a 10-min action POC; refine after the preliminary shot breakdown"
+ },
+ "verifiedPrices": {
+  "videoModel": "kwaivgi/kling-v2.1 $0.05/s (720p) / $0.09/s (1080p) — first-party verified; or minimax/video-01 $0.50/video flat",
+  "stillModel": "flux-dev $0.025/img — verified"
+ },
+ "baseEstimateEur": 23.32,
+ "retryFactor": 2.5,
+ "worstWithRetriesEur": 58.3,
+ "unknownCosts": [
+  "music/score",
+  "SFX",
+  "any provider rate change",
+  "motion re-rolls beyond 2.5x on hard action beats"
+ ],
+ "outOfScope": [
+  "human artistic review time",
+  "professional sound mix if synth rejected"
+ ],
+ "fx": "1 USD <= 1 EUR (worst-case)",
+ "creditAvailableEur": 0,
+ "note": "Estimate only. NO budget authorized by this mission. kling must be feasibility-tested for motion before committing (see system/feasibility-test-plan).",
+ "dependencies": [
+  "character reference sheets FIRST (identity lock)",
+  "kling-vs-minimax motion feasibility test",
+  "style-lock routing+anchor",
+  "movement-contract validator"
+ ]
+}

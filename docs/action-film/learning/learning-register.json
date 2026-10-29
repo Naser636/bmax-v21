@@ -1,0 +1,204 @@
+{
+ "generated": "2026-10-24",
+ "source": "La Porte du Soleil pilot (runs/pilot) + tests + reports",
+ "entries": [
+  {
+   "id": "L1",
+   "observation": "STILL_ANIMATABLE shot (SC15-SH01) routed to a VIDEO model produced a cartoon render",
+   "evidence": "SC15-v1 cartoon vs SC15-v2 flux-dev photoreal; shot-list mediaCategory=STILL_ANIMATABLE",
+   "cause": "CONFIRMED: model/category mis-route",
+   "rule": "Route strictly by canonical mediaCategory (STILL->flux-dev, VIDEO->minimax)",
+   "test": "style-lock.test routeModel + SC15 category",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L2",
+   "observation": "No explicit photoreal anchor → style can drift",
+   "evidence": "anchor added; SC48/SC22/SC15-v2/SC39-v2 all photoreal",
+   "cause": "INFERRED (anchor + correct routing both applied)",
+   "rule": "applyStyle() photoreal anchor on every visual prompt",
+   "test": "style-lock.test anchor+violations",
+   "confidence": "MEDIUM"
+  },
+  {
+   "id": "L3",
+   "observation": "Astrid forearm star mark flagged as anachronism",
+   "evidence": "authored prompt: \"star-chart tattoo on her forearm\"",
+   "cause": "CONFIRMED: it is CANON, not an anachronism (my earlier flag was wrong, retracted)",
+   "rule": "Check canon before flagging anachronism; never auto-edit authored prompts",
+   "test": "prompt-audit descriptive-only scan",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L4",
+   "observation": "Dense crowd / background faces deform (SC22)",
+   "evidence": "SC22 background faces melted (visual inspection)",
+   "cause": "OBSERVED: known generative crowd-artifact",
+   "rule": "Limit dense crowds per shot; keep crowds mid/background soft; flag for human; prefer fewer hero faces",
+   "test": "(human) — no deterministic detector yet",
+   "confidence": "MEDIUM"
+  },
+  {
+   "id": "L5",
+   "observation": "Timeout with unknown billing could free budget",
+   "evidence": "adapter catch-all released reservation on any error",
+   "cause": "CONFIRMED defect, FIXED",
+   "rule": "Post-creation timeout => INDETERMINATE_BILLING, keep reservation, HALT, no auto-retry",
+   "test": "adapter.test timeout-reservation-KEPT; campaign indeterminate halt",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L6",
+   "observation": "Identity not enforced in generation (text-only)",
+   "evidence": "pilot shots text-only; faces not locked",
+   "cause": "CONFIRMED",
+   "rule": "Inject subject_reference (video)/image (still) for an UNAMBIGUOUS single covered character",
+   "test": "identity-propagation.test (runner boundary)",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L7",
+   "observation": "CIQE rejected silent generated video on audio-absence",
+   "evidence": "SC15/SC22 REJECTED_CIQE only on audio_presence",
+   "cause": "CONFIRMED: final-film audio gate misapplied to generation shots",
+   "rule": "Generation shots judged on VISUAL/TECHNICAL only; audio added in post",
+   "test": "pilot visual-only gate",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L8",
+   "observation": "Reserve-before-call + persistent cap + 8-attempt limit held",
+   "evidence": "ledger never exceeded; €1.53/€6.08; resume no double-charge",
+   "cause": "CONFIRMED (positive)",
+   "rule": "Keep ODG-side reserve-before-call + persistent ledger as the spend control",
+   "test": "campaign-runner.test budget/resume",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L9",
+   "observation": "Three concurrent character registries disagreed with disk truth (identity-registry said ASTRID ref=NONE; dossier said 3 real refs; visual-references-status said 0 produced)",
+   "evidence": "runs/pilot/refs has ASTRID/MERYT/OLAF.webp with computed sha256; the three JSONs each stated a different reference status",
+   "cause": "CONFIRMED: concurrent, unsynchronized registries with no single source of truth; reference status was asserted, not recomputed from disk",
+   "rule": "One SSOT (character-registry-f10.json) with immutable CHAR-### ids; reference sha256 always recomputed from disk, never inherited; superseded registries marked non-authoritative",
+   "test": "character-registry.test.mjs (ref sha256 matches disk; deterministic rebuild; frozen id snapshot)",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L10",
+   "observation": "Reputation leaders (Veo 3.1/Kling v3/Seedance 2.5) are newer SKUs than the versions actually callable on our Replicate; only minimax/video-01 offers a true subject_reference for recurring-character identity",
+   "evidence": "Replicate OpenAPI schemas 2026-10-24 vs 2026 roundups/arena; model-comparison-f10.json evidence tiers",
+   "cause": "CONFIRMED: general reputation != verified quality for our exact shots/version",
+   "rule": "Select on VERIFIED capability (subject_reference, camera control, our pilot inspection) + cost-per-ACCEPTED-result; prove reputation claims with a bounded authorized head-to-head before committing a model",
+   "test": "model-comparison-f10.json (per-criterion evidence tier) ; head-to-head proposed, not yet run",
+   "confidence": "MEDIUM (comparison is evidence-tagged; head-to-head unmeasured)"
+  },
+  {
+   "id": "L11",
+   "observation": "The action-rework SC38 movement contract ('Meryt disarms Seth-Nakht / khopesh lost') describes a beat that does NOT exist in the canonical SC38 shot-list ('Astrid takes the field'; chars ASTRID/OLAF/TOVE; Meryt absent)",
+   "evidence": "shot-list-f10.json SC38 video shots vs f10-movement-contracts.json SC38 contract; sc38-acceptance-gate.json CANON_DISCREPANCY_FLAG",
+   "cause": "CONFIRMED: a derived artifact (movement contract) drifted from the canonical shot-list without a flag",
+   "rule": "Cross-check every derived contract/plan against the canonical shot-list; a mismatch is a PROPOSED change (flag, do not silently apply); test the canon by default",
+   "test": "sc38-acceptance-gate.json flags it; shot-continuity-bindings built from shot-list ground truth, not the contract",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L12",
+   "observation": "The 3 SC38 candidates do NOT accept the same identity conditioning (minimax=subject_reference; seedance=image+last_frame; veo-3-fast=image only) and SC38's canonical video shots are multi-character, so subject_reference conditions only one subject",
+   "evidence": "Replicate OpenAPI schemas 2026-10-24; sc38-acceptance-gate.json candidateConditioning + fairnessStatement",
+   "cause": "CONFIRMED: assuming equal reference inputs would make an unfair/invalid comparison",
+   "rule": "Give each model its BEST available identity mechanism and record the asymmetry; never silently substitute a different task to force parity",
+   "test": "sc38-acceptance-gate.json (per-model identityConditioning + caveat)",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L13",
+   "observation": "SC01 opening rendered OFF-CANON (a golden city) instead of a North-Sea storm at night",
+   "evidence": "0 of 13 SC01 shot prompts contain storm/night/wave/no-city; the prompt was generic ('establishing — NORTH SEA … Egyptian gold/ochre'); scene-registry SC01 status=TO_FIX; off-canon media on disk",
+   "cause": "CONFIRMED (reproducible): prompt under-specification — no scene anchors + a stray 'gold/ochre' colour cue steered the model to a cityscape",
+   "rule": "Every PREMIUM_VIDEO/establishing prompt must carry explicit canonical anchors (time-of-day, weather, key objects) AND negative constraints (no city/buildings/modern/text); generic 'establishing — <LOCATION>' prompts are rejected",
+   "test": "sc01-prompt-guard.test.mjs (locks corrected-spec anchors + exclusions; forward guard on SC01 prompts)",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L14",
+   "observation": "A provider's duration DEFAULT can silently inflate cost past a ceiling (google/veo-3-fast default=8s, enum [4,6,8]); $0.15/s × 8 × 2 + minimax = $3.40 would exceed €3.00",
+   "evidence": "live OpenAPI schema 2026-10-24; sc38-pilot-plan-final.json COST_REVISION",
+   "cause": "CONFIRMED: relying on a model's default duration instead of pinning it",
+   "rule": "ALWAYS pin duration explicitly on every paid call; compute worst-case at the PINNED duration with an adverse FX + fee buffer; refuse any call that would breach the hard USD cap",
+   "test": "sc38-pilot-plan-final.json adverseMath ($2.50 → €2.70 < €3.00); ledger reserve-before-call",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L15",
+   "observation": "CORRECTION to L10: 'only minimax/video-01 has reference-image conditioning' was INCOMPLETE. bytedance/seedance-2.5 (and 2.0, 1-lite) on our Replicate expose reference_images[] (multi-reference) — stronger for a recurring cast than minimax's single subject_reference. seedance-2.5 caps at 720p, ~$0.1028/s.",
+   "evidence": "Replicate OpenAPI schemas + price page, read-only 2026-10-24; epic-ai-films-benchmark.json OUR_REPLICATE_RECONCILED",
+   "cause": "CONFIRMED: an earlier census probed only seedance-1-pro, not the 2.x line → incomplete capability map",
+   "rule": "Re-probe the FULL model line (not one SKU) before concluding a capability is unique; reconcile vendor headline specs (e.g. Seedance 2.5 '50 assets/30s/1080p') against OUR provider (720p-only on Replicate)",
+   "test": "laporte-strategy-v1.json modelReconciliation_UPDATED; epic-ai-films-benchmark.json seedance25Capabilities",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L16",
+   "observation": "Benchmark discipline: view counts (Epic AI Films '73.6m as of 2026-10-23', creator-claimed) do NOT imply retention, revenue, or profit; and a vendor/aggregator 'they use Seedance 2.5' claim was NOT stated on the creator's own page",
+   "evidence": "epicaifilms.com/about fetched 2026-10-24 (no model named); search-summary view figures varied (55.6m vs 73.6m) by date/source",
+   "cause": "CONFIRMED (positive discipline): separate VERIFIED_PUBLIC vs CREATOR_CLAIM vs THIRD_PARTY vs NOT_ACCESSED; never infer economics from views; never claim footage was watched",
+   "rule": "Every quantitative benchmark figure carries a source + date + tier; mark video/analytics NOT_ACCESSED when they genuinely are; derive only testable creative/distribution choices",
+   "test": "epic-ai-films-benchmark.json evidenceTiers + honestyGuards",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L17",
+   "observation": "Full-film cost estimate (420 shots): baseline ~$149/€138, optimized ~$79/€73 (−47%), max-reduction ~$42/€39 (−72%). BUT the headline savings mix two kinds.",
+   "evidence": "full-film-cost-model.mjs + full-film-cost-analysis.json (prices VERIFIED 2026-10-24); inventory 64 PV/196 still/141 audio/19 music",
+   "cause": "CONFIRMED method: separate PROVEN-arithmetic savings (routing/reuse/Ken-Burns, computed from verified prices at 1 attempt = 28% B / 57% C) from HYPOTHESIS retry-rate savings (unmeasured acceptance → the rest of the headline)",
+   "rule": "Report cost savings in two tiers: proven-arithmetic (price-based, no acceptance assumption) vs hypothesis (retry/acceptance-dependent). Never present a hypothesis-dependent total as guaranteed; measure acceptance in a bounded validation before authorizing full-film spend",
+   "test": "full-film-production-strategy.json savingsProvenVsHypothesis; cost model is reproducible",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L18",
+   "observation": "Quality-aware router must filter models that MEET the identity/resolution need FIRST, then minimize cost among qualifiers — never pick a cheaper model that fails a need. Conflicts (e.g. multi-identity AND 1080p: no single model) resolve quality-first (keep identity, flag the resolution tradeoff for human sign-off).",
+   "evidence": "quality-router.mjs + quality-router.test (18/18); seedance-2.5=multi-ref@720p vs veo-3-fast=1080p/start-frame tradeoff",
+   "cause": "CONFIRMED design: cost-minimization without a quality precondition would silently downgrade identity/resolution",
+   "rule": "Route = (filter by quality/identity/resolution need) → (cheapest-qualifying); when no model satisfies all needs, keep the higher-value quality dim and FLAG the tradeoff — do not auto-trade quality for price. Instrument acceptance + cost-per-accepted via cost-ledger-schema (never fabricate).",
+   "test": "quality-router.test.mjs 18/18 (hermetic)",
+   "confidence": "HIGH"
+  },
+  {
+   "id": "L19",
+   "observation": "REAL paid fair test (same shot/ref/prompt): seedance-2.5 + a 768px-resized ASTRID ref reproduced the reference FACE + canon costume + star-chart sleeve motif and held identity across frames; minimax/video-01 subject_reference gave a plausible but DIFFERENT, younger face + generic garb. Also: seedance E005 'sensitive' on person refs is fixed by resizing the ref to ≤768px wide (documented, not evasion).",
+   "evidence": "runs/validation-av/C1-seedance2.5-ref768.mp4 + C2-minimax-subjectref768.mp4 + av-fair-compare-decision.json; ODG viewed mid+first+last frames; €3.30/€6 spent, cap respected, pilot ledger untouched",
+   "cause": "CONFIRMED on ONE shot: seedance reference_images (with a correctly-sized ref) is the stronger identity+canon path; the earlier E005 blocks were the reference pixel-width/face-size, not the prompt",
+   "rule": "CHARACTER/IDENTITY shots → seedance-2.5 reference_images with refs RESIZED ≤768px wide + canon locks in the prompt (steering-oar not wheel, canon garb, tattoo); minimax subject_reference = fallback; environmental/wide → seedance text-only. Full-motion identity + audio + multi-char remain HUMAN_REQUIRED",
+   "test": "quality-router.test REFERENCE_PREP assertion; av-fair-compare-decision.json",
+   "confidence": "MEDIUM-HIGH (one shot, multi-frame visual review; not full-motion/audio)"
+  },
+  {
+   "id": "L20",
+   "observation": "TRANCHE-1 (real paid, €15 cap, €3.40 spent): seedance-2.5 reference_images E005-REJECTS our Björn MALE face (reproduced ×6, even weapon-free @768px) — but minimax/video-01 subject_reference ACCEPTS it and held Björn identity consistently across 5 shots. Astrid's face passed seedance; Björn's did not (provider filter variance). So Björn's identity pipeline = minimax (single-subject). Multi-char (Björn+Astrid) in one shot stays unsolved (minimax=single; seedance rejects Björn). Prompt-tightening ('wool tunic not bare chest' + 'single enormous two-handed greatsword') fixed costume/weapon drift (A2b→A2b-v2).",
+   "evidence": "runs/production-t1/ (bjorn refs + A1b/A2b/A2b-v2/A3b/A4b.mp4 + tranche1-bilan.json); ODG viewed mid-frames (identity consistent; A1b+A4b strong; greatsword drifts without strong prompting)",
+   "cause": "CONFIRMED: seedance face-filter is unreliable per-face; minimax is the robust single-subject identity path for Björn",
+   "rule": "Björn identity → minimax/video-01 subject_reference (weapon-free 768px ref); lock canon in the prompt (wool tunic, explicit greatsword, steering-oar); for multi-char identity use a composed first-frame or accept one-conditioned subject; re-roll on canon drift. Full-motion/cinematic acceptance = HUMAN.",
+   "test": "tranche1-bilan.json keyFindings; reproduced E005 ×6",
+   "confidence": "HIGH (pipeline/E005 reproduced); identity-quality MEDIUM (single-frame review, human-pending)"
+  }
+ ],
+ "notToRepeat": [
+  "concurrent unsynchronized registries (keep ONE SSOT)",
+  "inheriting a reference status instead of recomputing sha256 from disk",
+  "confusing model reputation with verified quality for our exact shots",
+  "STILL shots to video models",
+  "no style anchor",
+  "auto-editing authored prompts",
+  "releasing reservation on timeout",
+  "text-only generation for recurring characters",
+  "audio-gate on generation shots"
+ ],
+ "reusableAssets": [
+  "style-lock-f10.mjs (routing+anchor)",
+  "identity-inject.mjs",
+  "persistent-ledger.mjs (cap)",
+  "ciqe.mjs (visual gates)",
+  "artistic-reviewer.mjs (acceptance states)"
+ ]
+}

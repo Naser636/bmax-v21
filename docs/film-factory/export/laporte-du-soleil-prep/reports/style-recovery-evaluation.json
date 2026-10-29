@@ -1,0 +1,48 @@
+{
+ "generated": "2026-10-24",
+ "verdict": "STYLE_RECOVERY_VALIDATED (pilot)",
+ "ledger": {
+  "spentEur": 1.44,
+  "remainingEur": 4.64,
+  "capEur": 6.08,
+  "attempts": 5,
+  "respected": true
+ },
+ "rootCauseConfirmed": "SC15-SH01 is canonically STILL_ANIMATABLE but the pilot-runner mis-routed it to a VIDEO model (minimax/video-01) => cartoon render. DEMONSTRATED (shot-list mediaCategory + flux-dev fix). NOT an inherent minimax inconsistency.",
+ "correction": "(1) route by canonical mediaCategory (STILL_ANIMATABLE->flux-dev, PREMIUM_VIDEO->minimax/video-01) via style-lock routeModel(); (2) append explicit photoreal style anchor (applyStyle); (3) pre-gen style/anachronism detector (styleViolations).",
+ "tattooCorrection": "SC22 star tattoo is CANONICAL (ASTRID has a \"star-chart tattoo\" per the authored prompt) — my earlier anachronism flag was WRONG and is retracted. Minor real defect = background-face AI artifacts only.",
+ "beforeAfter": [
+  {
+   "shot": "SC15-SH01",
+   "v1": {
+    "model": "minimax/video-01 (WRONG)",
+    "style": "3D cartoon animation — REJECT"
+   },
+   "v2": {
+    "model": "black-forest-labs/flux-dev (correct)",
+    "sha256": "820eb5bc1a25…",
+    "style": "PHOTOREAL CINEMATIC — matches bible",
+    "ciqeVisual": "OK"
+   }
+  },
+  {
+   "shot": "SC39-SH04",
+   "v2": {
+    "model": "minimax/video-01",
+    "sha256": "052d199c1205…",
+    "durationSec": 5.64,
+    "style": "PHOTOREAL CINEMATIC; wound-bound forearm visible (SC39 context)",
+    "ciqeVisual": "OK"
+   }
+  }
+ ],
+ "styleConsistencyNow": "4 photoreal shots consistent: SC48 (still), SC22 (video), SC15-v2 (still), SC39-v2 (video). Style-lock VALIDATED on real media.",
+ "remainingHuman": [
+  "artistic >=7.5/10 (HUMAN_REQUIRED, not self-certified)",
+  "character IDENTITY lock (0 real reference images — reference sheets must be generated first)",
+  "SC22 background-face artifacts",
+  "FR voice (SC43) still blocked: translation not validated"
+ ],
+ "nextAction": "Generate character reference sheets (flux-dev, ~€0.03 each, within the €4.64 remaining) to lock identity, then re-run identity-critical shots; adopt style-lock routing+anchor for ALL future generation.",
+ "capRespected": true
+}

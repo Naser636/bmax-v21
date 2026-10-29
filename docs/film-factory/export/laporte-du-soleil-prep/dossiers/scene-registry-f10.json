@@ -1,0 +1,503 @@
+{
+ "generated": "2026-10-24",
+ "totalScenes": 49,
+ "totalShotsPlanned": 420,
+ "summary": {
+  "TO_FIX": 3,
+  "MISSING": 44,
+  "BLOCKED_NO_CREDIT": 2
+ },
+ "canonFaithfulPromptsWired": true,
+ "scenes": [
+  {
+   "scene": "SC01",
+   "sceneHead": "1. EXT. NORTH SEA — STORM — NIGHT",
+   "act": "I",
+   "setting": "NORTH SEA",
+   "shotCount": 13,
+   "status": "TO_FIX",
+   "note": "produced media OFF-CANON (golden city) vs F10 NORTH SEA storm night; regen with faithful prompt (needs credit)",
+   "media": "SC01-video.mp4,SC01-still.webp"
+  },
+  {
+   "scene": "SC02",
+   "sceneHead": "2. EXT. SŌLFARI DECK — CONTINUOUS",
+   "act": "I",
+   "setting": "SŌLFARI DECK",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC03",
+   "sceneHead": "3. EXT. NORTH SEA — THE SEAM — CONTINUOUS",
+   "act": "I",
+   "setting": "NORTH SEA",
+   "shotCount": 9,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC04",
+   "sceneHead": "4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT",
+   "act": "I",
+   "setting": "IMPOSSIBLE SHORE",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC05",
+   "sceneHead": "5. EXT. SHORE — THE PATROL — CONTINUOUS",
+   "act": "I",
+   "setting": "SHORE",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC06",
+   "sceneHead": "6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS",
+   "act": "I",
+   "setting": "SHORE",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC07",
+   "sceneHead": "7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS",
+   "act": "I",
+   "setting": "SHORE",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC08",
+   "sceneHead": "7A. EXT. RIVER-TOWN — THE SAME EVENING — [MATRIX-N",
+   "act": "I",
+   "setting": "RIVER-TOWN",
+   "shotCount": 4,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC09",
+   "sceneHead": "8. INT. GARRISON — COUNCIL — DUSK",
+   "act": "I",
+   "setting": "GARRISON",
+   "shotCount": 5,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC10",
+   "sceneHead": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+   "act": "I",
+   "setting": "GARRISON",
+   "shotCount": 11,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC11",
+   "sceneHead": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+   "act": "I",
+   "setting": "GARRISON",
+   "shotCount": 11,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC12",
+   "sceneHead": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+   "act": "I",
+   "setting": "GARRISON",
+   "shotCount": 12,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC13",
+   "sceneHead": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+   "act": "I",
+   "setting": "GARRISON",
+   "shotCount": 10,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC14",
+   "sceneHead": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+   "act": "I",
+   "setting": "GARRISON",
+   "shotCount": 15,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC15",
+   "sceneHead": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+   "act": "II",
+   "setting": "GARRISON",
+   "shotCount": 12,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC16",
+   "sceneHead": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+   "act": "II",
+   "setting": "DESERT",
+   "shotCount": 10,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC17",
+   "sceneHead": "14. EXT. DESERT — SHE LEARNS — LATER",
+   "act": "II",
+   "setting": "DESERT",
+   "shotCount": 5,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC18",
+   "sceneHead": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+   "act": "II",
+   "setting": "RIVER-TOWN",
+   "shotCount": 11,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC19",
+   "sceneHead": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+   "act": "II",
+   "setting": "GARRISON COURTYARD",
+   "shotCount": 10,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC20",
+   "sceneHead": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+   "act": "II",
+   "setting": "GARRISON",
+   "shotCount": 11,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC21",
+   "sceneHead": "16. EXT. RIVER-TOWN MARKET — DAY",
+   "act": "II",
+   "setting": "RIVER-TOWN MARKET",
+   "shotCount": 9,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC22",
+   "sceneHead": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T",
+   "act": "II",
+   "setting": "MARKET",
+   "shotCount": 9,
+   "status": "TO_FIX",
+   "note": "produced wave/crowd vs F10 MARKET second tide; partial; regen faithful",
+   "media": "SC22.mp4"
+  },
+  {
+   "scene": "SC23",
+   "sceneHead": "18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN",
+   "act": "II",
+   "setting": "MARKET",
+   "shotCount": 6,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC24",
+   "sceneHead": "18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU",
+   "act": "II",
+   "setting": "RIVER-TOWN EDGE",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC25",
+   "sceneHead": "18B. THE TWO TOWNS — NIGHTS OF THE BLEED — WORDLES",
+   "act": "II",
+   "setting": "UNSPECIFIED",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC26",
+   "sceneHead": "19. INT. GARRISON — THE SEIZURE — NIGHT",
+   "act": "II",
+   "setting": "GARRISON",
+   "shotCount": 4,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC27",
+   "sceneHead": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+   "act": "II",
+   "setting": "GARRISON",
+   "shotCount": 9,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC28",
+   "sceneHead": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+   "act": "II",
+   "setting": "GARRISON",
+   "shotCount": 9,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC29",
+   "sceneHead": "21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI",
+   "act": "II",
+   "setting": "CAMP, CANYON MOUTH",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC30",
+   "sceneHead": "22. EXT. DESERT CANYON — DUSK",
+   "act": "II",
+   "setting": "DESERT CANYON",
+   "shotCount": 15,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC31",
+   "sceneHead": "23. EXT. CANYON — THE ECHO — CONTINUOUS",
+   "act": "II",
+   "setting": "CANYON",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC32",
+   "sceneHead": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+   "act": "II",
+   "setting": "SEAM-ROOT APPROACH",
+   "shotCount": 11,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC33",
+   "sceneHead": "25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS",
+   "act": "II",
+   "setting": "SEAM-ROOT APPROACH",
+   "shotCount": 5,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC34",
+   "sceneHead": "26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT",
+   "act": "II",
+   "setting": "SEAM-ROOT CAMP",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC35",
+   "sceneHead": "26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT",
+   "act": "II",
+   "setting": "SEAM-ROOT CAMP",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC36",
+   "sceneHead": "27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU",
+   "act": "II",
+   "setting": "SEAM-ROOT CAMP",
+   "shotCount": 6,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC37",
+   "sceneHead": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 13,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC38",
+   "sceneHead": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 14,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC39",
+   "sceneHead": "30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 7,
+   "status": "BLOCKED_NO_CREDIT",
+   "note": "video not produced",
+   "media": null
+  },
+  {
+   "scene": "SC40",
+   "sceneHead": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 9,
+   "status": "TO_FIX",
+   "note": "produced hero/ramparts vs F10 SEAM-ROOT cost-of-line; regen faithful",
+   "media": "SC40.mp4"
+  },
+  {
+   "scene": "SC41",
+   "sceneHead": "31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC42",
+   "sceneHead": "32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 6,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC43",
+   "sceneHead": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 9,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC44",
+   "sceneHead": "34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS",
+   "act": "III",
+   "setting": "SEAM-ROOT",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC45",
+   "sceneHead": "35. EXT. SEAM / SHORE — THE CLOSE — CONTINUOUS",
+   "act": "III",
+   "setting": "SEAM / SHORE",
+   "shotCount": 5,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC46",
+   "sceneHead": "36. INT. THE SEAM — THE MIDDLE — CONTINUOUS",
+   "act": "III",
+   "setting": "THE SEAM",
+   "shotCount": 7,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC47",
+   "sceneHead": "37. EXT. SHORE — THE SUNS PART — DAWN",
+   "act": "III",
+   "setting": "SHORE",
+   "shotCount": 1,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  },
+  {
+   "scene": "SC48",
+   "sceneHead": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+   "act": "III",
+   "setting": "THE CAIRN",
+   "shotCount": 11,
+   "status": "BLOCKED_NO_CREDIT",
+   "note": "still not produced",
+   "media": null
+  },
+  {
+   "scene": "SC49",
+   "sceneHead": "38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA",
+   "act": "III",
+   "setting": "A BEND IN THE GREAT RIVER",
+   "shotCount": 8,
+   "status": "MISSING",
+   "note": "not produced",
+   "media": null
+  }
+ ]
+}

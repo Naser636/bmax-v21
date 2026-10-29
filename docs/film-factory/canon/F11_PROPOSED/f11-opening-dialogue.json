@@ -1,0 +1,41 @@
+{
+ "generated": "2026-10-24",
+ "version": "F11_PROPOSED opening dialogue (SC01–07) — DRAFT, full prose from the beat inventory",
+ "status": "DRAFT — NOT accepted. F10 frozen & unchanged. Globally-intelligible English; Björn-led; canon-continuous.",
+ "canonContinuity": "Himinkljúfr (greatsword) on Björn's back; Olaf grey/failing (kinsman, hands leadership to Björn); two suns; steering-oar (NOT a wheel); the 'wrong tide'/bleed; Seth-Nakht = fear-authority; Astrid reads the water; IPU a re-gendered boy with a water-jug.",
+ "lines": [
+  {"scene": "SC01", "content": "ACTION", "speaker": "ASTRID", "en": "She's taking us beam-on — if you hold her, she rolls!"},
+  {"scene": "SC01", "content": "ACTION", "speaker": "BJÖRN", "en": "Then I hold."},
+  {"scene": "SC01", "content": "ACTION", "speaker": "OLAF", "en": "Björn — the sea doesn't care how strong your arms are!"},
+  {"scene": "SC01", "content": "ACTION", "speaker": "ASTRID", "en": "That crest is wrong — that's not water — BRACE!"},
+
+  {"scene": "SC02", "content": "COMEDY", "speaker": "TOVE", "en": "Well. We're not dead. I had good money on dead."},
+  {"scene": "SC02", "content": "COMEDY", "speaker": "BJÖRN", "en": "Keep it."},
+  {"scene": "SC02", "content": "COMEDY", "speaker": "TOVE", "en": "Two whole words. He's shaken. — Helgi, write it down."},
+  {"scene": "SC02", "content": "COMEDY", "speaker": "HELGI", "en": "We're all shaken, Tove. Even the sword's gone quiet."},
+
+  {"scene": "SC03", "content": "ACTION", "speaker": "BJÖRN", "en": "Hold on to something — all of you!"},
+  {"scene": "SC03", "content": "ACTION", "speaker": "ASTRID", "en": "You can't cut it, Björn! Nobody can cut the sea!"},
+
+  {"scene": "SC04", "content": "WORLD", "speaker": "OLAF", "en": "That's two suns. I've sailed every sea there is. There is no sea under two suns."},
+  {"scene": "SC04", "content": "WORLD", "speaker": "ASTRID", "en": "Then where did our storm go? Where did the whole night go?"},
+  {"scene": "SC04", "content": "WORLD", "speaker": "BJÖRN", "en": "Your orders, captain."},
+  {"scene": "SC04", "content": "WORLD", "speaker": "OLAF", "en": "...Not mine to give anymore, kinsman. Yours."},
+
+  {"scene": "SC05", "content": "TENSION", "speaker": "MERYT", "en": "Down. On your knees, all of you. You fell out of the wrong sky."},
+  {"scene": "SC05", "content": "TENSION", "speaker": "ASTRID", "en": "We mean you no harm —"},
+  {"scene": "SC05", "content": "TENSION", "speaker": "MERYT", "en": "Everyone says that. The river says otherwise."},
+  {"scene": "SC05", "content": "TENSION", "speaker": "IPU", "en": "...Are they ghosts?"},
+
+  {"scene": "SC06", "content": "ACTION", "speaker": "ASTRID", "en": "The water's coming wrong — LEFT of the black rock — NOW!"},
+  {"scene": "SC06", "content": "ACTION", "speaker": "BJÖRN", "en": "I don't understand it. I'll trust it. MOVE!"},
+  {"scene": "SC06", "content": "ACTION", "speaker": "MERYT", "en": "...How did she know? The tide never comes that way."},
+
+  {"scene": "SC07", "content": "TENSION", "speaker": "SETH-NAKHT", "en": "The sky tore, and you fell out of it. That makes you mine."},
+  {"scene": "SC07", "content": "TENSION", "speaker": "BJÖRN", "en": "We belong to no one."},
+  {"scene": "SC07", "content": "TENSION", "speaker": "SETH-NAKHT", "en": "Everyone here belongs to someone. You'll learn whose — or the water will teach you."}
+ ],
+ "counts": {"lines": 24, "byScene": {"SC01": 4, "SC02": 4, "SC03": 2, "SC04": 4, "SC05": 4, "SC06": 3, "SC07": 3}},
+ "notes": ["SC02 is the designated natural-comedy beat (Tove gallows-humour vs Björn's one-word replies).", "SC04 contains the leadership handoff Olaf→Björn (kinsman).", "No canon event added/removed; these are the spoken realizations of the existing F11 beats."],
+ "translationReadiness": "neutral international English; FR/ES derive from this master later, preserving meaning/tone/timing."
+}

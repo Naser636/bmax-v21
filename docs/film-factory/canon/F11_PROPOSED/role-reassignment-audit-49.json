@@ -1,0 +1,811 @@
+{
+ "generated": "2026-10-24",
+ "basedOn": "F10_FROZEN",
+ "totalScenes": 49,
+ "decisiveReassignedToBjorn": 13,
+ "astridRetainsAnyDecisive": false,
+ "reGenderedScenes": [
+  "SC05",
+  "SC06",
+  "SC08",
+  "SC21",
+  "SC23",
+  "SC35",
+  "SC49"
+ ],
+ "rule": "Astrid retains ZERO decisive-lead scenes in F11; she is intel-support. Any decisive female action is a FAIL of the secondary constraint.",
+ "audit": [
+  {
+   "scene": "SC01",
+   "head": "1. EXT. NORTH SEA — STORM — NIGHT",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "OLAF"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC02",
+   "head": "2. EXT. SŌLFARI DECK — CONTINUOUS",
+   "act": "I",
+   "presentF10": [
+    "HELGI",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "HELGI",
+   "f11DecisiveAgent": "HELGI",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC03",
+   "head": "3. EXT. NORTH SEA — THE SEAM — CONTINUOUS",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "HELGI",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC04",
+   "head": "4. EXT. IMPOSSIBLE SHORE — DAWN OF TWO SUNS — CONT",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "OLAF"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC05",
+   "head": "5. EXT. SHORE — THE PATROL — CONTINUOUS",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "MERYT",
+    "IPY"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [
+    "IPY→IPU(boy)"
+   ],
+   "astridStillLead": false,
+   "note": "minor re-gendering only; function preserved"
+  },
+  {
+   "scene": "SC06",
+   "head": "6. EXT. SHORE — THE FIRST TIDE — CONTINUOUS",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "MERYT",
+    "IPY"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [
+    "IPY→IPU(boy)"
+   ],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC07",
+   "head": "7. EXT. SHORE — SETH-NAKHT ARRIVES — CONTINUOUS",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "MERYT",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC08",
+   "head": "7A. EXT. RIVER-TOWN — THE SAME EVENING — [MATRIX-N",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "IPY",
+    "WIDOW"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [
+    "IPY→IPU(boy)",
+    "WIDOW→WIDOWER(man)"
+   ],
+   "astridStillLead": false,
+   "note": "minor re-gendering only; function preserved"
+  },
+  {
+   "scene": "SC09",
+   "head": "8. INT. GARRISON — COUNCIL — DUSK",
+   "act": "I",
+   "presentF10": [
+    "SETH-NAKHT",
+    "ELDER"
+   ],
+   "f10DecisiveAgent": "SETH-NAKHT",
+   "f11DecisiveAgent": "SETH-NAKHT",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC10",
+   "head": "9. INT. GARRISON — HOLDING YARD / NEFER-KA — DAY",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC11",
+   "head": "9A. INT. GARRISON — THE GUARDIAN'S WALL — NIGHT — ",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC12",
+   "head": "10. INT. GARRISON — SETH-NAKHT, NEFER-KA, MERYT — ",
+   "act": "I",
+   "presentF10": [
+    "MERYT",
+    "NEFER-KA",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "MERYT",
+   "f11DecisiveAgent": "MERYT",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC13",
+   "head": "10A. INT. GARRISON — THE CREW — NIGHT — [MATRIX-NE",
+   "act": "I",
+   "presentF10": [
+    "HELGI",
+    "TOVE",
+    "VIGGE",
+    "BÖRK"
+   ],
+   "f10DecisiveAgent": "HELGI",
+   "f11DecisiveAgent": "HELGI",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC14",
+   "head": "11. INT. GARRISON — OLAF & ASTRID — NIGHT",
+   "act": "I",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "HELGI"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC15",
+   "head": "12. INT. GARRISON — SETH-NAKHT'S TERMS — MORNING",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "MERYT",
+    "SETH-NAKHT",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC16",
+   "head": "13. EXT. DESERT — THE LESSON, AND A FAILURE — DAY",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC17",
+   "head": "14. EXT. DESERT — SHE LEARNS — LATER",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC18",
+   "head": "14A. EXT. RIVER-TOWN — THE JOINT EVACUATION — DAY ",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "HELGI",
+    "TOVE",
+    "MERYT",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC19",
+   "head": "15. EXT. GARRISON COURTYARD — ONE BAND — NIGHT",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "HELGI",
+    "TOVE",
+    "MERYT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC20",
+   "head": "15A. INT. GARRISON — TOVE & ASTRID — LATER — [MATR",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC21",
+   "head": "16. EXT. RIVER-TOWN MARKET — DAY",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "IPY"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [
+    "IPY→IPU(boy)"
+   ],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC22",
+   "head": "17. EXT. MARKET — THE SECOND TIDE & SETH-NAKHT'S T",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "HELGI",
+    "TOVE",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC23",
+   "head": "18. EXT. MARKET — ASTRID OUTMANEUVERS HIM — CONTIN",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "IPY",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [
+    "IPY→IPU(boy)"
+   ],
+   "astridStillLead": false,
+   "note": "minor re-gendering only; function preserved"
+  },
+  {
+   "scene": "SC24",
+   "head": "18A. EXT. RIVER-TOWN EDGE — THE BLEED DEEPENS — DU",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC25",
+   "head": "18B. THE TWO TOWNS — NIGHTS OF THE BLEED — WORDLES",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "MERYT"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC26",
+   "head": "19. INT. GARRISON — THE SEIZURE — NIGHT",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC27",
+   "head": "20. INT. GARRISON — ASTRID & MERYT — LATER",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "MERYT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC28",
+   "head": "21. INT. GARRISON — MERYT'S BROTHER — NIGHT",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "MERYT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC29",
+   "head": "21A. EXT. CAMP, CANYON MOUTH — HELGI & ASTRID — NI",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "HELGI"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC30",
+   "head": "22. EXT. DESERT CANYON — DUSK",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "TOVE",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC31",
+   "head": "23. EXT. CANYON — THE ECHO — CONTINUOUS",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "HELGI",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC32",
+   "head": "24. EXT. SEAM-ROOT APPROACH — THE THIRD TIDE — DAY",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "HELGI",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC33",
+   "head": "25. EXT. SEAM-ROOT APPROACH — AFTER — CONTINUOUS",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC34",
+   "head": "26. EXT. SEAM-ROOT CAMP — THE CONFESSION — NIGHT",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "MERYT",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC35",
+   "head": "26A. EXT. SEAM-ROOT CAMP — IPY & MERYT — NIGHT",
+   "act": "II",
+   "presentF10": [
+    "MERYT",
+    "IPY"
+   ],
+   "f10DecisiveAgent": "MERYT",
+   "f11DecisiveAgent": "MERYT",
+   "decisiveReassigned": false,
+   "reGendering": [
+    "IPY→IPU(boy)"
+   ],
+   "astridStillLead": false,
+   "note": "minor re-gendering only; function preserved"
+  },
+  {
+   "scene": "SC36",
+   "head": "27. EXT. SEAM-ROOT CAMP — THE TRAP CLEAR — CONTINU",
+   "act": "II",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "MERYT",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC37",
+   "head": "28. EXT. SEAM-ROOT — THE SUNS CONVERGING — DAY",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "MERYT",
+    "SETH-NAKHT",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC38",
+   "head": "29. EXT. SEAM-ROOT — ASTRID TAKES THE FIELD — CONT",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "TOVE",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC39",
+   "head": "30. EXT. SEAM-ROOT — SETH-NAKHT'S CHOICE — CONTINU",
+   "act": "III",
+   "presentF10": [
+    "OLAF",
+    "MERYT",
+    "SETH-NAKHT"
+   ],
+   "f10DecisiveAgent": "OLAF",
+   "f11DecisiveAgent": "OLAF",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC40",
+   "head": "30A. EXT. SEAM-ROOT — THE COST OF THE LINE — CONTI",
+   "act": "III",
+   "presentF10": [
+    "TOVE",
+    "SETH-NAKHT",
+    "VIGGE"
+   ],
+   "f10DecisiveAgent": "TOVE",
+   "f11DecisiveAgent": "TOVE",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC41",
+   "head": "31. EXT. SEAM-ROOT — TWO READERS — CONTINUOUS",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC42",
+   "head": "32. EXT. SEAM-ROOT — MERYT'S REFUSAL — CONTINUOUS",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "MERYT"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC43",
+   "head": "33. EXT. SEAM-ROOT — OLAF — CONTINUOUS",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC44",
+   "head": "34. EXT. SEAM-ROOT — TOVE'S GOODBYE — CONTINUOUS",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "TOVE"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC45",
+   "head": "35. EXT. SEAM / SHORE — THE CLOSE — CONTINUOUS",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "TOVE",
+    "MERYT"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC46",
+   "head": "36. INT. THE SEAM — THE MIDDLE — CONTINUOUS",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "OLAF",
+    "HELGI"
+   ],
+   "f10DecisiveAgent": "ASTRID (female lead)",
+   "f11DecisiveAgent": "BJÖRN (physical/decisive) + ASTRID (reader-intel, secondary)",
+   "decisiveReassigned": true,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "Björn carries the decisive action; Astrid provides the read (secondary). MUST verify she is not a relabeled lead."
+  },
+  {
+   "scene": "SC47",
+   "head": "37. EXT. SHORE — THE SUNS PART — DAWN",
+   "act": "III",
+   "presentF10": [
+    "ASTRID"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC48",
+   "head": "38. EXT. THE CAIRN — SINGLE-SUN MORNING",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "MERYT",
+    "NEFER-KA"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [],
+   "astridStillLead": false,
+   "note": "ensemble/support scene; agent unchanged"
+  },
+  {
+   "scene": "SC49",
+   "head": "38A. EXT. A BEND IN THE GREAT RIVER — SOME DAYS LA",
+   "act": "III",
+   "presentF10": [
+    "ASTRID",
+    "IPY"
+   ],
+   "f10DecisiveAgent": "ASTRID",
+   "f11DecisiveAgent": "ASTRID",
+   "decisiveReassigned": false,
+   "reGendering": [
+    "IPY→IPU(boy)"
+   ],
+   "astridStillLead": false,
+   "note": "minor re-gendering only; function preserved"
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+{
+ "generated": "2026-10-24",
+ "pricesVerified": "2026-10-24 first-party",
+ "fx": "1 USD<=1 EUR (worst-case)",
+ "counts": {
+  "PREMIUM_VIDEO": 64,
+  "STILL_ANIMATABLE": 196,
+  "AUDIO_LINE": 141,
+  "MUSIC_CUE": 19
+ },
+ "baseKnownEur": 44.8,
+ "baseBreakdown": {
+  "video": 32,
+  "stills": 4.9,
+  "voice": 7.050000000000001,
+  "refSheets": 0.8500000000000001
+ },
+ "retryMarginFactor": 2.5,
+ "worstCaseKnownEur": 112,
+ "unknownsEur": {
+  "music": 9.5,
+  "storage": 0,
+  "totalEstUnknown": 9.5
+ },
+ "worstCasePlusUnknownsEur": 121.5,
+ "outOfScope": [
+  "human artistic review time",
+  "final licensed music if synth rejected",
+  "any manual post beyond ffmpeg"
+ ],
+ "coverageCheck134": {
+  "€134_covers_known_worst": true,
+  "€134_covers_worst_plus_music": true
+ },
+ "creditAvailableEur": 0,
+ "alreadySpentEur": 1.53,
+ "note": "Known worst-case covers 420 shots + refs + voice with 2.5x retry margin. Music per-unit price UNVERIFIED (treated as unknown, ~€9.5). Storage negligible."
+}

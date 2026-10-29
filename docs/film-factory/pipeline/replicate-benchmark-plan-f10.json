@@ -1,0 +1,54 @@
+{
+ "title": "Prepared 5-prototype Replicate benchmark — model selection + first-party-bounded per-attempt costs",
+ "preparedAt": "2026-10-24",
+ "source": "Prices extracted from first-party embedded JSON on each replicate.com model page (per-unit 'prices' blocks). NOT inference, NOT a competitor, NOT a stale estimate.",
+ "ledger": { "ceilingEur": 250, "maxAttemptsTotal": 8, "fxAssumption": "1 USD ≈ €0.92 (worst-case rounding up)", "enforcement": "ODG-side PersistentLedger: reserve worst-case BEFORE each call; cumulative spent+reservations ≤ €250; global ≤8 attempts" },
+ "prototypes": [
+  { "shot": "SC40", "role": "hero video", "kind": "video(t2v)", "model": "bytedance/seedance-1-pro",
+    "unitPriceFirstParty": "$0.15 / sec (1080p tier)", "outputAssumption": "5 s", "worstCaseUsdPerAttempt": 0.75, "worstCaseEurPerAttempt": 0.69, "status": "CONFIRMED" },
+  { "shot": "SC22", "role": "water/crowd video", "kind": "video(t2v)", "model": "wan-video/wan-2.2-t2v-fast",
+    "unitPriceFirstParty": "$0.10 / output video (higher tier)", "outputAssumption": "1 video", "worstCaseUsdPerAttempt": 0.10, "worstCaseEurPerAttempt": 0.10, "status": "CONFIRMED" },
+  { "shot": "SC43", "role": "French emotional voice", "kind": "voice", "model": "minimax/speech-02-hd",
+    "unitPriceFirstParty": "$0.10 / 1000 input tokens", "outputAssumption": "input hard-capped ≤1000 tokens", "worstCaseUsdPerAttempt": 0.10, "worstCaseEurPerAttempt": 0.10, "status": "CONFIRMED", "note": "French voices + emotion confirmed present on model" },
+  { "shot": "SC01-still", "role": "still (for still-vs-video compare)", "kind": "image", "model": "black-forest-labs/flux-dev",
+    "unitPriceFirstParty": "$0.025 / image", "outputAssumption": "1 image", "worstCaseUsdPerAttempt": 0.025, "worstCaseEurPerAttempt": 0.023, "status": "CONFIRMED" },
+  { "shot": "SC01-video", "role": "video alt (for still-vs-video compare)", "kind": "video(t2v)", "model": "wan-video/wan-2.2-t2v-fast",
+    "unitPriceFirstParty": "$0.10 / output video", "outputAssumption": "1 video", "worstCaseUsdPerAttempt": 0.10, "worstCaseEurPerAttempt": 0.10, "status": "CONFIRMED" },
+  { "shot": "SC39", "role": "wound-inflicted (continuity pair A)", "kind": "image", "model": "black-forest-labs/flux-dev",
+    "unitPriceFirstParty": "$0.025 / image", "outputAssumption": "1 image, shared seed/ref with SC48", "worstCaseUsdPerAttempt": 0.025, "worstCaseEurPerAttempt": 0.023, "status": "CONFIRMED" },
+  { "shot": "SC48", "role": "wound-healed (continuity pair B)", "kind": "image", "model": "black-forest-labs/flux-dev",
+    "unitPriceFirstParty": "$0.025 / image", "outputAssumption": "1 image, shared seed/ref with SC39", "worstCaseUsdPerAttempt": 0.025, "worstCaseEurPerAttempt": 0.023, "status": "CONFIRMED" }
+ ],
+ "attemptBudget": {
+  "baseGenerations": 7,
+  "retryReserve": 1,
+  "totalAttemptsPlanned": 8,
+  "baseWorstCaseUsd": 1.125,
+  "baseWorstCaseEur": 1.07,
+  "absoluteHardWorstCaseUsd": 6.00,
+  "absoluteHardWorstCaseEur": 5.52,
+  "note": "Absolute hard worst case = 8 × most-expensive attempt ($0.75). €5.52 ≪ €250 ceiling (≈45× headroom). The ledger refuses any call that would cross €250 regardless."
+ },
+ "altCheaperModels": { "SC40": "kwaivgi/kling-v2.1 $0.09/s (1080p) → $0.45/5s; or $0.05/s (720p) → $0.25/5s", "image": "flux-schnell $0.003/img (10× cheaper than flux-dev)" },
+ "gatesStatus": {
+  "credential": "VERIFIED (presence-only, mode 600)",
+  "auth": "VERIFIED (account naser636)",
+  "modelsPresent": "VERIFIED (all public, 200)",
+  "costBounding": "VERIFIED (first-party per-unit prices for every attempt; worst-case ≤€5.52 ≪ €250)",
+  "billingMode": "BLOCKED — see below",
+  "adapterAndLedgerTests": "VERIFIED (32/32 + regression gate set green)"
+ },
+ "billingBlocker": {
+  "status": "BLOCKED",
+  "unknown": "Whether account naser636 is on ARREARS billing (fully covered by existing controls; no auto-reload concept) or PREPAID with auto-reload (could trigger a CTO-prohibited credit purchase). The public API exposes no billing field; the billing dashboard is credentialed web.",
+  "freePathChecked": "Replicate free tier is a trial allowance for accounts WITHOUT billing only; not a guaranteed €0 path when billing state is unknown. Any prediction-create on a billing-enabled account starts a billable run, so no safe €0 probe exists.",
+  "ctoRuleApplied": "Do not trigger a paid call whose max cost OR billing risk is unknown. Max cost is now KNOWN; billing RISK (auto-reload/prepaid) remains UNKNOWN → no call issued.",
+  "unblockAnyOneOf": [
+   "(a) CTO confirms account is ARREARS billing → existing controls fully cover it; execute immediately.",
+   "(b) CTO confirms PREPAID with auto-reload OFF and accepts drawing existing credit (bounded, no new purchase).",
+   "(c) CTO confirms NO billing set up → run free-tier-eligible models at guaranteed €0.",
+   "(d) CTO sets a Replicate hard spend limit ≤ a small amount as belt-and-suspenders (optional; ODG ledger already caps)."
+  ],
+  "onUnblock": "Set adapter auth.confirmedBillingArrears=true (or the confirmed-safe equivalent) and run the plan above; the orchestrator downloads each real output, records path + sha256 + measured duration + actual attempt cost + usability decision."
+ }
+}

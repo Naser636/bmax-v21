@@ -1,0 +1,13 @@
+import { readFileSync } from 'node:fs'; import { fileURLToPath } from 'node:url'; import { dirname, join } from 'node:path';
+const here = dirname(fileURLToPath(import.meta.url));
+const dub = JSON.parse(readFileSync(join(here, 'runs/benchmark/dubbing-fr-proposed.json'), 'utf8'));
+const src = JSON.parse(readFileSync(join(here, 'dialogues-f10.json'), 'utf8'));
+let pass=0,fail=0,fails=[]; const ok=(n,c)=>{if(c)pass++;else{fail++;fails.push(n);}};
+ok('141 lines', dub.lines.length===141);
+ok('all translated (PROPOSED)', dub.lines.every(l=>l.fr&&l.status==='PROPOSED'));
+ok('EN source preserved verbatim', dub.lines.every(l=>{const s=src.lines.find(x=>x.order===l.order);return s&&s.text===l.en;}));
+ok('status ladder honest (0 validated, 0 audio)', dub.statusLadder.validated===0&&dub.statusLadder.audioProduced===0);
+ok('proper nouns kept (Astrid/Seth-Nakht)', dub.lines.some(l=>/Astrid|Seth-Nakht/.test(l.fr)));
+ok('terminology flagged (seam)', dub.keyTerminology.some(t=>t.en==='seam'));
+console.log(`DUBBING TESTS: ${fail===0?'PASS':'FAIL'} (pass=${pass} fail=${fail})`+(fail?` [${fails.join(', ')}]`:''));
+process.exit(fail===0?0:1);

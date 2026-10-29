@@ -1,0 +1,12 @@
+import { readFileSync } from 'node:fs'; import { fileURLToPath } from 'node:url'; import { dirname, join } from 'node:path';
+const here = dirname(fileURLToPath(import.meta.url)); const R=f=>JSON.parse(readFileSync(join(here,f),'utf8'));
+const a=R('runs/benchmark/sound-raccord-audit-f10.json'); const sl=R('shot-list-f10.json');
+const scenes=new Set(sl.shots.map(s=>s.scene));
+let pass=0,fail=0,fails=[]; const ok=(n,c)=>{if(c)pass++;else{fail++;fails.push(n);}};
+ok('48 transitions', a.totalTransitions===48);
+ok('consecutive + real scenes', a.transitions.every((t,i,arr)=>scenes.has(t.from)&&scenes.has(t.to)&&(i===0||arr[i-1].to===t.from)));
+ok('MEDIUM carries a proposed correction', a.transitions.filter(t=>t.severity==='MEDIUM').every(t=>t.proposedCorrection));
+ok('mix/sync declared unverifiable (no media)', a.transitions.every(t=>t.unverifiable.includes('sync')));
+ok('honesty: 0 audio produced declared', /0 audio/.test(a.soundInventory.dialoguesStatus));
+console.log(`SOUND-RACCORD TESTS: ${fail===0?'PASS':'FAIL'} (pass=${pass} fail=${fail})`+(fail?` [${fails.join(', ')}]`:''));
+process.exit(fail===0?0:1);

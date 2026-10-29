@@ -1,0 +1,580 @@
+{
+ "generated": "2026-10-25",
+ "mission": "F11 end-to-end production MASTER PLAN (SSOT). Consolidates inventory + scene map + continuity + opening + workflow + quality gate. No paid call; F10 frozen.",
+ "inventoryReconciliation": {
+  "paid_EUR": {
+   "pilot": "1.53 (8 attempts, F10 tests)",
+   "validation-av": "3.30 (10, AV validation)",
+   "production-t1": "5.40 (18, F11 production)",
+   "TOTAL_paid": "10.23"
+  },
+  "totalPaid_EUR": 10.23,
+  "t1Cap": "€15 (ctoBoundedPaidRunAuthorized); spent €5.40; remaining €9.60; 18/20 attempts",
+  "acceptedClips": 7,
+  "rejected": 1,
+  "acceptedSeconds": 39.88,
+  "assembledSeconds": 17.29,
+  "priorLedgers": "pilot €1.53/8 + av €3.30/10 IMMUTABLE (F10/AV tests, not production)",
+  "capRespected": true
+ },
+ "lockedDistribution": {
+  "ACTION": 64,
+  "STORY": 13,
+  "TENSION": 10,
+  "DRAMA": 5,
+  "COMEDY": 5,
+  "WORLD": 3,
+  "note": "FIXED; measured on the rendered edit (definition-of-done), not claimed."
+ },
+ "continuityConstraints": {
+  "ref": "f11-visual-bible.json (characters/environments/invariants) + continuity-rulebook (if present)",
+  "keyInvariants": [
+   "Himinkljúfr greatsword tracked (UNDERSIZED on text — use greatsword-bearing Björn ref)",
+   "Björn identity = minimax subject_reference (seedance E005-rejects his face)",
+   "Astrid star-chart tattoo (canon)",
+   "Olaf arm-ring→Björn SC43",
+   "two-sun sky plate Act III",
+   "steering-oar NOT wheel",
+   "wool tunic (not bare chest)",
+   "audio added in post (shots silent), CC0 verified per-file"
+  ]
+ },
+ "sceneMap": {
+  "totalScenes": 49,
+  "totalPlannedShots": 420,
+  "scenesWithExistingAssets": 4,
+  "scenes": [
+   {
+    "scene": "SC01",
+    "content": "ACTION",
+    "plannedShots": 13,
+    "existingAccepted": [
+     "E1-storm-establisher (ENV)",
+     "A1b-oar (Björn helm)",
+     "A3b-sea (atmosphere)"
+    ],
+    "existingCount": 3,
+    "status": "PARTIAL (clips exist)"
+   },
+   {
+    "scene": "SC02",
+    "content": "STORY",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC03",
+    "content": "ACTION",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC04",
+    "content": "WORLD",
+    "plannedShots": 7,
+    "existingAccepted": [
+     "A4b-march-twosun"
+    ],
+    "existingCount": 1,
+    "status": "PARTIAL (clips exist)"
+   },
+   {
+    "scene": "SC05",
+    "content": "TENSION",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC06",
+    "content": "ACTION",
+    "plannedShots": 8,
+    "existingAccepted": [
+     "R1-rescue (reusable SC18/SC40)"
+    ],
+    "existingCount": 1,
+    "status": "PARTIAL (clips exist)"
+   },
+   {
+    "scene": "SC07",
+    "content": "TENSION",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC08",
+    "content": "DRAMA",
+    "plannedShots": 4,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC09",
+    "content": "STORY",
+    "plannedShots": 5,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC10",
+    "content": "TENSION",
+    "plannedShots": 11,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC11",
+    "content": "TENSION",
+    "plannedShots": 11,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC12",
+    "content": "STORY",
+    "plannedShots": 12,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC13",
+    "content": "COMEDY",
+    "plannedShots": 10,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC14",
+    "content": "DRAMA",
+    "plannedShots": 15,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC15",
+    "content": "STORY",
+    "plannedShots": 12,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC16",
+    "content": "STORY",
+    "plannedShots": 10,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC17",
+    "content": "STORY",
+    "plannedShots": 5,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC18",
+    "content": "ACTION",
+    "plannedShots": 11,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC19",
+    "content": "STORY",
+    "plannedShots": 10,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC20",
+    "content": "DRAMA",
+    "plannedShots": 11,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC21",
+    "content": "ACTION",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC22",
+    "content": "ACTION",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC23",
+    "content": "TENSION",
+    "plannedShots": 6,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC24",
+    "content": "ACTION",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC25",
+    "content": "ACTION",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC26",
+    "content": "TENSION",
+    "plannedShots": 4,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC27",
+    "content": "DRAMA",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC28",
+    "content": "DRAMA",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC29",
+    "content": "DRAMA",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC30",
+    "content": "ACTION",
+    "plannedShots": 15,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC31",
+    "content": "ACTION",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC32",
+    "content": "ACTION",
+    "plannedShots": 11,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC33",
+    "content": "DRAMA",
+    "plannedShots": 5,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC34",
+    "content": "TENSION",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC35",
+    "content": "DRAMA",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC36",
+    "content": "STORY",
+    "plannedShots": 6,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC37",
+    "content": "ACTION",
+    "plannedShots": 13,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC38",
+    "content": "ACTION",
+    "plannedShots": 14,
+    "existingAccepted": [
+     "G1-greatsword-strike",
+     "A2b-v2-greatsword-stance"
+    ],
+    "existingCount": 2,
+    "status": "PARTIAL (clips exist)"
+   },
+   {
+    "scene": "SC39",
+    "content": "ACTION",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC40",
+    "content": "ACTION",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC41",
+    "content": "STORY",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC42",
+    "content": "DRAMA",
+    "plannedShots": 6,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC43",
+    "content": "DRAMA",
+    "plannedShots": 9,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC44",
+    "content": "DRAMA",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC45",
+    "content": "ACTION",
+    "plannedShots": 5,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC46",
+    "content": "ACTION",
+    "plannedShots": 7,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC47",
+    "content": "WORLD",
+    "plannedShots": 1,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC48",
+    "content": "DRAMA",
+    "plannedShots": 11,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   },
+   {
+    "scene": "SC49",
+    "content": "WORLD",
+    "plannedShots": 8,
+    "existingAccepted": [],
+    "existingCount": 0,
+    "status": "PLANNED (0 generated)"
+   }
+  ]
+ },
+ "openingDesign_SC01_07": {
+  "note": "A COHERENT opening needs all beats below — NOT just a montage of available clips. Missing shots are explicit.",
+  "beats": {
+   "SC01": {
+    "beats": [
+     "storm wide establisher ✓(E1)",
+     "Björn at the steering-oar ✓(A1b)",
+     "Astrid reads/shouts ✗",
+     "Olaf lashed to mast ✗",
+     "the crest UNRAVELS into the gold seam ✗",
+     "the seam takes the ship ✗"
+    ],
+    "have": 3,
+    "missing": [
+     "Astrid read",
+     "Olaf at mast",
+     "gold-seam-takes-ship"
+    ]
+   },
+   "SC02": {
+    "beats": [
+     "crew on deck, wrong-coloured sea",
+     "Tove comedy vs Björn deadpan"
+    ],
+    "have": 0,
+    "missing": [
+     "SC02 coverage (comedy beat)"
+    ]
+   },
+   "SC03": {
+    "beats": [
+     "two worlds stack (storm above, desert below)",
+     "Björn tries to cut the light — fails"
+    ],
+    "have": 0,
+    "missing": [
+     "crossing/two-worlds VFX",
+     "Björn-cuts-light"
+    ]
+   },
+   "SC04": {
+    "beats": [
+     "crew on two-sun shore ✓(A4b adaptable)",
+     "Olaf names the impossible",
+     "leadership handoff Olaf→Björn"
+    ],
+    "have": 1,
+    "missing": [
+     "Olaf two-sun reaction",
+     "handoff two-shot"
+    ]
+   },
+   "SC05": {
+    "beats": [
+     "Meryt river-patrol takes the strangers",
+     "IPU watches"
+    ],
+    "have": 0,
+    "missing": [
+     "patrol/capture",
+     "Meryt intro",
+     "IPU"
+    ]
+   },
+   "SC06": {
+    "beats": [
+     "wrong-tide surge",
+     "Astrid calls the read",
+     "Björn hauls a figure clear ✓(R1)"
+    ],
+    "have": 1,
+    "missing": [
+     "tide VFX wide",
+     "Astrid call"
+    ]
+   },
+   "SC07": {
+    "beats": [
+     "Seth-Nakht arrives, claims them",
+     "cold standoff (Björn rage held)"
+    ],
+    "have": 0,
+    "missing": [
+     "Seth-Nakht intro",
+     "standoff two-shot"
+    ]
+   }
+  },
+  "existingClips": 5,
+  "missingShotsCount": 15
+ },
+ "workflowEfficiency_MEASURED": {
+  "costPerGeneratedSecond_EUR": "≈0.11 (minimax €0.60/5.64s) / ≈0.13 (seedance €0.80/6.04s)",
+  "costPerAcceptedSecond_EUR": {
+   "genOnly": 0.11,
+   "allIn": 0.135
+  },
+  "costPerAcceptedClip_EUR": 0.629,
+  "rejectionRate_observed": "1/8 = 12.5% (t1, curated); plan at 15-30% at scale",
+  "achievableWithinRemaining_EUR_9_60": "≈13-16 more minimax clips OR mix; enough for ~1-2 more coherent SEQUENCES (not the whole opening)",
+  "recommendedWorkflow": "W-B reuse-hybrid (seedance text-only env + minimax Björn identity + flux/Ken-Burns coverage + CC0 audio €0 + TTS); maximize reuse/holds"
+ },
+ "fullFilmEstimate_EUR": {
+  "note": "measured clip cost × shot-based model; action-first = video-heavy",
+  "band": {
+   "accept85": 270,
+   "accept70": 327,
+   "accept55": 414
+  },
+  "correction": "prior €53-106 undercounted; €60-70 NOT achievable for 60-min action-first"
+ },
+ "qualityGate": {
+  "ref": "f11-qa-export-spec.json",
+  "gates": [
+   "automatable: integrity, 1080p+ after upscale, fps, duration, CIQE (black/flicker/pop/stream/audio-when-present)",
+   "HUMAN: full-motion identity across the clip, action readability, dialogue intelligibility + lip-sync, audio mix, pacing, ≥7.5/10 cinematic",
+   "final: realized distribution MEASURED on the rendered edit vs 64/13/10/5/5/3"
+  ]
+ },
+ "unresolvedBlockers": [
+  "F11 human acceptance (editorial footprint change, INC-1=B, re-gendering)",
+  "greatsword renders undersized (fix: greatsword-bearing Björn ref)",
+  "multi-character identity in one shot (minimax=single; seedance rejects Björn)",
+  "full-film budget €270-414 >> €15 tranche → needs future authorizations",
+  "human cinematic review of the 7 clips + SC01 assembly"
+ ],
+ "nextAction": "Within the remaining €9.60 (2 attempts): ONE minimax call with the greatsword-bearing Björn ref (bjorn-ref-3) to fix the undersized greatsword — the single highest-value shot (unblocks all Björn hero-action). Worst-case €0.60 < €15. Then upscale the SC01 assembly to 1080p (local €0) and prepare CC0 audio for a first audiovisual SC01. Resume broader generation only under a new tranche authorization sized to the €270-414 full-film reality.",
+ "successDefinition": "measurable progress toward a COHERENT editable film (scene-mapped, continuity-locked, reuse-driven) — not disconnected clips. No fabricated completion; no budget overrun."
+}

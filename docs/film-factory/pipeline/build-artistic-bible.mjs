@@ -1,0 +1,37 @@
+// GATE 1 (local, €0) — proposed Artistic Bible v1. Each rule: id, rule, justification, scope, status (VERIFIED
+// from F10 / PROPOSED cinematographic default / HUMAN_REQUIRED arbitration), canonRefs, test (which audit/test
+// enforces it), failureConsequence. DA decisions deducible from the script are taken (CTO-authorized); nothing
+// narrative/emotional is invented or presented as a verified historical fact. Output: artistic-bible-f10-v1.json + .md
+import { writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+const here = dirname(fileURLToPath(import.meta.url));
+
+const rules = [
+  { id: 'AB-01', rule: 'World/era = original fantasy, Norse ∩ pharaonic (dramatized). Never present a design as verified historical fact.', scope: 'all shots', status: 'VERIFIED', canonRefs: ['shot-list era field'], test: 'prompt-audit: anachronism/ modern-term scan', failureConsequence: 'REJECT (anachronism / false-historical claim)' },
+  { id: 'AB-02', rule: 'Palette: cold Norse steel-grey vs Egyptian gold/ochre; twin-sun convergence = blinding gold → calm single-sun dawn.', scope: 'all shots', status: 'VERIFIED', canonRefs: ['shot-list palette field (3 canonical palettes)'], test: 'transition-audit palette similarity', failureConsequence: 'FLAG abrupt unmotivated palette break' },
+  { id: 'AB-03', rule: 'Light must be motivated by in-scene sources; readable shadows; controlled contrast.', scope: 'all visual shots', status: 'PROPOSED', canonRefs: [], test: 'CIQE exposure/dynamic_range + human', failureConsequence: 'ARTISTIC_REVIEW_REQUIRED' },
+  { id: 'AB-04', rule: 'Performance contained by default; no overacting, grimacing or artificial sentimentality. Nuance stays PROPOSED until evidenced.', scope: 'performance', status: 'HUMAN_REQUIRED', canonRefs: [], test: 'human scoring grid (jeu/émotion)', failureConsequence: 'HUMAN_REVIEW_REQUIRED' },
+  { id: 'AB-05', rule: 'Camera/edit/music/FX serve the story — no gratuitous effects, impossible motion or added spectacle without justification.', scope: 'all', status: 'PROPOSED', canonRefs: ['F10 staging tags note no gratuitous combat/space'], test: 'shot-intent visualIntent review + human', failureConsequence: 'FLAG gratuitous → revise' },
+  { id: 'AB-06', rule: 'Character identity (face/morphology/hair/costume/props/wounds) consistent across shots vs reference sheets.', scope: 'all character shots', status: 'VERIFIED (requirement)', canonRefs: ['continuity-matrix', 'reference-sheet-plan'], test: 'artistic-reviewer identity (multimodal/human)', failureConsequence: 'CANON_FAIL / BLOCK on mismatch' },
+  { id: 'AB-07', rule: 'Composition: clear visual hierarchy; depth of field and camera moves motivated by action or POV.', scope: 'all visual shots', status: 'PROPOSED', canonRefs: [], test: 'human scoring grid (image)', failureConsequence: 'ARTISTIC_REVIEW_REQUIRED' },
+  { id: 'AB-08', rule: 'Materials/architecture/objects/costumes plausible where sources allow; assumptions never stated as verified fact.', scope: 'design', status: 'PROPOSED', canonRefs: [], test: 'human (DA) + prompt-audit', failureConsequence: 'FLAG unverified-as-fact' },
+  { id: 'AB-09', rule: 'Sound: dialogue intelligibility, credible acoustic space, motivated ambiences, intentional silences, clean raccords. Do NOT invent or alter the 141 EN lines.', scope: 'sound', status: 'VERIFIED (constraint)', canonRefs: ['dialogues-f10 (141 EN verbatim)'], test: 'dubbing.test (EN verbatim) + sound-raccord-audit', failureConsequence: 'CANON_FAIL if a line altered/invented' },
+  { id: 'AB-10', rule: 'Continuity: morphology/hair/costume/props/wounds/orientation/emotional-state consistent; every visual break justified or FLAGGED for arbitration.', scope: 'all', status: 'VERIFIED (requirement)', canonRefs: ['continuity-audit', 'transition-audit'], test: 'continuity.test + transition.test', failureConsequence: 'BLOCK on unjustified break' },
+  { id: 'AB-11', rule: 'Twin-sun / double-dawn desync is MONOTONIC (worsens over time).', scope: 'temporal/VFX', status: 'VERIFIED', canonRefs: ['dialogue "another ugly double dawn"'], test: 'continuity-audit double-dawn', failureConsequence: 'FLAG non-monotonic desync' },
+  { id: 'AB-12', rule: 'Wound continuity SC39 (inflicted) → SC48 (bound/healed) must read as the same wound progressing; exact staging HUMAN.', scope: 'SC39, SC48', status: 'VERIFIED (pair) + HUMAN (staging)', canonRefs: ['continuity-audit meryt-wound'], test: 'shot-intent continuityDependencies', failureConsequence: 'CANON_FAIL on wound mismatch' },
+  { id: 'AB-13', rule: 'Olaf SC43–SC44: dies vs departs through the seam is a HUMAN arbitration — do NOT impose. Provide both readings.', scope: 'SC43, SC44', status: 'HUMAN_REQUIRED', canonRefs: ['continuity-audit olaf-death (ambiguity)'], test: 'decision register', failureConsequence: 'BLOCK until arbitrated' },
+  { id: 'AB-14', rule: 'Helgi carries a carved wooden horse for Sǫlveig; it is handed on (SC29→SC32→SC33→SC44). Prop must persist/transfer correctly.', scope: 'SC29,32,33,44', status: 'VERIFIED', canonRefs: ['continuity-audit helgi-horse'], test: 'shot-intent continuityDependencies (knownCanon)', failureConsequence: 'CANON_FAIL on prop discontinuity' },
+  { id: 'AB-15', rule: 'AI-disclosure + commercial-rights-clear outputs required at publish; licensing of music/voice to be confirmed.', scope: 'release', status: 'PROPOSED', canonRefs: ['prior rights notes'], test: 'rightsReleaseCheck (film-pipeline)', failureConsequence: 'BLOCK release if rights unclear' },
+];
+
+const summary = {}; for (const r of rules) { const k = r.status.split(' ')[0]; summary[k] = (summary[k] || 0) + 1; }
+const doc = { generated: '2026-10-24', version: 'v1', title: 'Artistic Bible — La Porte du Soleil (F10)',
+  principles: 'Historical-feel cinematic, immersive, sober, sensory, emotionally powerful; story-truth first; nothing invented or over-claimed; 10/10 is an ambition measured on real media, never self-awarded.',
+  statusSummary: summary, rules,
+  note: 'DA decisions deducible from F10 are taken; emotions/costumes/wounds/actions not in F10 are NOT invented. Human arbitrations stay visible with a PROPOSED recommendation where safe.' };
+writeFileSync(join(here, 'runs/benchmark/artistic-bible-f10-v1.json'), JSON.stringify(doc, null, 1));
+let md = '# Artistic Bible — La Porte du Soleil (F10) — v1\n\n> ' + doc.principles + '\n\n';
+for (const r of rules) md += `### ${r.id} [${r.status}]\n- **Règle:** ${r.rule}\n- **Portée:** ${r.scope}\n- **Test:** ${r.test}\n- **Échec:** ${r.failureConsequence}\n\n`;
+writeFileSync(join(here, 'runs/benchmark/artistic-bible-f10-v1.md'), md);
+console.log(`artistic-bible v1: ${rules.length} rules | status ${JSON.stringify(summary)}`);

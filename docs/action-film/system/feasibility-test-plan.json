@@ -1,0 +1,15 @@
+{
+ "generated": "2026-10-24",
+ "firstTest": "MOTION feasibility: 1 sword-duel beat (the disarm) generated on kwaivgi/kling-v2.1 vs minimax/video-01 — compare motion realism, weapon continuity, limb coherence. Bounded: 2 shots max, worst ~$1, needs explicit budget+attempt authorization. NOT run (0€ mission).",
+ "before": [
+  "generate 3 reference sheets (VEIG/OTR/RANULF) for identity lock",
+  "apply style-lock photoreal anchor + correct routing",
+  "pre-check movement contract validity"
+ ],
+ "acceptanceForTest": [
+  "legible disarm motion",
+  "no limb/weapon morphing",
+  "identity holds if subject_reference used"
+ ],
+ "noPaidCallThisMission": true
+}

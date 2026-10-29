@@ -1,0 +1,63 @@
+{
+ "generated": "2026-10-24",
+ "batch": 1,
+ "verdict": "IDENTITY_LOCK_PARTIAL",
+ "produced": [
+  {
+   "ref": "ASTRID",
+   "file": "runs/pilot/refs/ASTRID.webp",
+   "sha256": "18a617f999a5…",
+   "ciqe": "OK",
+   "canonFidelity": "photoreal, young Norse navigator, fur-collar garb — faithful; star-chart tattoo rendered as a sleeve motif (minor deviation)"
+  },
+  {
+   "ref": "MERYT",
+   "file": "runs/pilot/refs/MERYT.webp",
+   "sha256": "576a82bb1951…",
+   "ciqe": "OK",
+   "canonFidelity": "photoreal river-guard, linen, BOUND forearm wound visible (canon) — faithful"
+  },
+  {
+   "ref": "OLAF",
+   "file": "runs/pilot/refs/OLAF.webp",
+   "sha256": "a32453672a6d…",
+   "ciqe": "OK",
+   "canonFidelity": "photoreal ~60s grey failing captain, heavy Norse wool cloak+fur — faithful (bronze arm-ring not prominent)"
+  }
+ ],
+ "covered": [
+  "ASTRID",
+  "MERYT",
+  "OLAF"
+ ],
+ "notCovered": [
+  "SETH-NAKHT",
+  "TOVE",
+  "NEFER-KA",
+  "HELGI",
+  "IPY",
+  "VIGGE",
+  "BORK",
+  "WIDOW",
+  "ELDER"
+ ],
+ "enforcementMechanism": {
+  "available": true,
+  "video": "minimax/video-01 subject_reference",
+  "still": "flux-dev image (img2img, weaker for identity-only)",
+  "note": "injection helper built+tested (identity-inject.mjs); a reference RAISES consistency but does NOT guarantee the exact face is preserved"
+ },
+ "ledger": {
+  "spentEur": 1.53,
+  "remainingEur": 4.55,
+  "capEur": 6.08,
+  "attempts": "8/8 (cap reached) — no further paid generation on this ledger"
+ },
+ "limitations": [
+  "single portrait per character (no turnaround)",
+  "identity enforcement NOT yet applied in any produced shot (text-only)",
+  "9/12 characters still unreferenced",
+  "human identity-match >=4/5 = HUMAN_REQUIRED"
+ ],
+ "nextAction": "Second identity batch (SETH-NAKHT, TOVE, NEFER-KA...) needs a NEW bounded budget + attempt allowance; then re-generate identity-critical shots WITH subject_reference injection and human-verify identity >=4/5."
+}
