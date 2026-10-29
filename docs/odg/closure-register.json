@@ -113,6 +113,18 @@
       "acceptance": "a real hermetic mcs type check with independent eval; external using fails closed; broad rate stays NO_DATA (gated)"
     },
     {
+      "id": "responsible-quality-fairness-harness",
+      "program": "P2",
+      "title": "Responsible-quality: fairness/bias evaluation harness (fail-closed, never claims bias-free)",
+      "status": "ACCEPTED",
+      "deps": [
+        "independent-label-admission-policy"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/fairness-eval.ts — methodology (8 protected dimensions, 4 disparity metrics) + assessFairness FAIL-CLOSED: returns NO_DATA unless the eval set is independently labelled (reuses independent-label-policy), inputs comparable, and every group ≥ minPerGroup(30); when MEASURED it SURFACES a per-group outcome-rate gap (disparityDetected) but NEVER asserts 'bias-free'. capabilitySurface() HONESTLY classifies ODG's real capabilities (code-execution/broad-it/campaign-controller) as NOT_APPLICABLE — deterministic over source artifacts, no protected-attribute surface — and lists the future capability types that WOULD require the harness. Suite 7. Mandate §4 instrumentation built; nothing fabricated; no bias claim made.",
+      "acceptance": "a fail-closed fairness harness exists + is tested (NO_DATA on self-authored/underpowered/non-comparable; disparity surfaced on an independent set); ODG's bias-applicable surface honestly classified; no 'bias-free' claim"
+    },
+    {
       "id": "independent-label-admission-policy",
       "program": "P2",
       "title": "Prepared independent-label admission gate (no self-certification) for broad-IT MEASURED",

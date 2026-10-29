@@ -8473,3 +8473,14 @@ identical, double-lock preserved). Suite 13; broad-it-eval 46 unchanged. Registe
 -policy + new BLOCKED broad-it-independent-eval-set (external: owner/3rd-party supplies a labelled set passing admitEvalSet
 — ODG never self-certifies). 26 ACCEPTED/1/6 BLOCKED, 0 stale. Gate: test:report 178, tsc 0, build 0, engine 9/9.
 LEARNING REUSED: the self-authored NO_DATA lock (V72 audit) is now enforced by a reusable tested policy, not a string.
+
+---
+## CHECKPOINT 2026-10-29 (fu) — Responsible-quality: fairness/bias evaluation harness €0
+Mandate §4 new dimension. Branched FIRST (lesson applied). fairness-eval.ts: 8 protected dimensions + 4 disparity
+metrics; assessFairness FAIL-CLOSED ⇒ NO_DATA unless eval set independently labelled (reuses independent-label-policy),
+inputs comparable, every group ≥ minPerGroup(30); MEASURED only SURFACES an outcome-rate gap (disparityDetected),
+NEVER asserts 'bias-free'. capabilitySurface() HONESTLY: ODG's real caps (code-execution/broad-it/campaign-controller)
+= NOT_APPLICABLE (deterministic over source artifacts, no protected-attribute surface) — NOT 'proven absent'; lists
+future human-facing capability types requiring the harness. Suite 7. Wired consumer of independent-label-policy (eval
+labels must be independent — can't self-certify fairness). Register +ACCEPTED responsible-quality-fairness-harness.
+27 ACCEPTED/1/6, 0 stale. Gate: test:report 179, tsc 0, build 0, engine 9/9. Nothing fabricated; no bias claim made.
