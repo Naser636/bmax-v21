@@ -933,6 +933,18 @@
       "acceptance": "A BG-23 breakdown survives export->parse->re-validate byte-identically (CII+UBL, incl. multi-category exact rates); absence is byte-identical to before; negative/non-integer breakdown refused on export; independent audit confirms no fail-open and no UBL doc-VAT/category-VAT confusion.",
       "nextAction": "BR-S/BR-Z category semantics; party tax ids (SIREN/VAT) in parse/export; then XSD/Schematron (owner-gated tool).",
       "staleEvidence": false
+    },
+    {
+      "id": "commercial-ops-substrate-h3",
+      "program": "P2",
+      "title": "H3 commercial-ops substrate (CRM mechanics) — internal, TO_CONSOLIDATE; productization = owner decision",
+      "status": "DEFERRED",
+      "deps": [],
+      "priority": 3,
+      "evidence": "Portfolio reconciliation §5 (docs/odg/PORTFOLIO_RECONCILIATION.md), evidence-cited read-only inventory @ a11c09f. H3 (CRM/commercial-relationship/sales-automation) has NO sellable product and was never scoped as one — CRM/ERP is explicitly DISCLAIMED at docs/market-research/30_BROADENED_DISCOVERY_AND_DELIVERY_TRUTH.md:19 (2026-10-22, 'will not claim'). BUT a substantial, all-tests-passing, internal (single-tenant, UI-less, self-referential) commercial-ops substrate implements most CRM mechanics: client-intake(22) + enterprise-lead-grade(5) + commercial-pipeline(10, 12-stage) + pipeline-ledger(8) + pipeline-forecast(15, HubSpot-pattern) + prospection-registry/-send-gate/-compliance(9/10/12) + proposal-generator/-pipeline(14/13) + quote/invoicing/payments/email-gateway(8/18/14/20) + revenue-* + owner-console(13) + autonomous-commercial-cycle(11) + first-cash-activation(19) + opportunity-detector/-axis-router(10/18). NONE were registered as products (verified: no commercial-ops module appears as a register product id). MISSING for a product: multi-tenant/roles/permissions, any UI (none in src/), connector/integration layer (opportunity-axis-router returns NO_RESULTS w/o an authorized connector), generic contact/account book + import/export. STATUS honest: TO_CONSOLIDATE substrate; PROVEN as internal tooling, ABSENT as an external product.",
+      "acceptance": "H3 is reconciled and VISIBLE (not silently folded into or omitted from the D1-D8 register): recognized as an internal commercial-ops substrate to consolidate, with the historical CRM 'will not claim' disclaimer preserved; productization DEFERRED to an explicit owner decision that first reconciles that disclaimer; existing modules reused before any new CRM mechanic is built; nothing deleted.",
+      "nextAction": "OWNER DECISION: (a) keep as internal substrate (default), or (b) authorize productizing an external multi-tenant CRM — which first requires reconciling the 2026-10-22 'will not claim' disclaimer, then a UI + roles/tenant-isolation + connector layer (new implementation line).",
+      "staleEvidence": false
     }
   ]
 }
