@@ -8661,3 +8661,19 @@ OWNER-ACTION QUEUE (ranked by readiness/impact; each has humanActionRequired+res
 5 business domains PARTIAL; field-validation prerequisites machine-checkable (`npx tsx runtime/core/field-validation-readiness.ts`), each needing an owner-authorized engagement.
 AUTONOMY (verified, not claimed): software PROVEN; operational GATED (default NO_EXECUTOR_AUTHORIZED; no background process/systemd). No permanent runner claimed.
 NEXT ACTION: owner clears queue item #1 or #2 (highest readiness/impact). Resume: `git checkout main && git pull --ff-only && npx tsx runtime/bin/odg-resume.ts docs/odg/closure-register.json`.
+
+## CHECKPOINT 2026-10-29 — STANDING-AUTH computer-preparable completion + blocker reclassification
+Truth Lock: main @ 2cbb72d ≡ origin/main (div 0/0); CI success on every merge; 5 stashes + 7 worktrees + 6 untracked foreign dirs PRESERVED (0 tracked). Explicit-path staging. selectNextLot ⇒ NONE admissible.
+DELIVERED under the standing computer-execution authorization (independently audited ACCEPT, CI-green, merged): PR#212 broad-it-eval-ingest.ts — the class-B computer completion of broad-it-independent-eval-set: a fail-closed ingestion+measurement harness (admitEvalSet + REAL checker vs external labels; labels not trusted blindly; self-authored/leaky⇒NO_DATA). Reduces that blocker to its MINIMAL human step (owner supplies a real third-party-labelled file; `npx tsx runtime/core/broad-it-eval-ingest.ts <file>`). Also this campaign: PR#207 no-install TOML/XML/INI families · PR#208 §4 field-validation-readiness · PR#210 memory-aware test-worker cap (OOM-flakiness fix). test:report 193. 9 primitives.
+BLOCKER RECLASSIFICATION (A=self-clearable / B=preparable-done / C=owner-external / D=governance). All computer-preparable work is COMPLETE; every remaining item is C or D:
+  • broad-it-independent-eval-set — C. Harness DONE (PR#212). Owner: supply a genuine independent third-party-labelled eval-set JSON. resumeTest: ingest ⇒ admitted:true + broadIT:MEASURED.
+  • broad-it-corpus-grow (IN_PROGRESS) — C (same external labelling). Coverage already met (0.9167); no self-clearable work left.
+  • new-language-families — C. No-install families (TOML/XML/INI) DELIVERED; hadolint needs authorized checksum-verified install (HADOLINT_INSTALL.md).
+  • campaign-runner-systemd-activation — C. Runner+proof-gate tested, runbook ready. Owner: authorize executor + systemd install (no sudo done).
+  • dashboard-tls-exposure (P1) — C/D. Runbook + exposure-readiness probe ready. Owner: public-exposure decision + hostname + TLS cert.
+  • structured-roadmap-deps (P1) — D. Proposed diff + validation ready. Owner: authorize amending protected ROADMAP.json.
+  • p01-demand-validation — C. Experiment/analysis code ready. Owner: authorize a lawful consented WTP experiment.
+  • p01-billing-sandbox — C. Provider abstraction + mock tests ready. Owner: provision a real sandbox account/credential.
+P1 = 8 ACCEPTED / 2 BLOCKED (external). P2 = 38 ACCEPTED / 5 BLOCKED (external) / 1 IN_PROGRESS. Register 46 ACCEPTED / 7 BLOCKED / 1 IN_PROGRESS, 0 stale.
+5 business domains PARTIAL; field prereqs machine-checkable (field-validation-readiness). AUTONOMY: software PROVEN; operational GATED (NO_EXECUTOR_AUTHORIZED; no background process). No fabricated completion.
+NEXT ACTION (highest readiness/impact): owner supplies a real independent eval set (flips broad-IT NO_DATA→MEASURED, unblocks 2 items) OR authorizes the hadolint install (⇒ 12/12 category coverage). Resume: `git checkout main && git pull --ff-only && npx tsx runtime/bin/odg-resume.ts docs/odg/closure-register.json`.
