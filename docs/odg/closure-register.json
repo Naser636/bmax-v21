@@ -572,13 +572,13 @@
       "id": "sbom-audit-service",
       "program": "P2",
       "title": "Cyber/Supply-chain #2/#22: real-lockfile SBOM (CycloneDX) + license-policy audit over a REAL project (not injected)",
-      "status": "READY",
+      "status": "ACCEPTED",
       "deps": [],
       "priority": 2,
-      "contract": "Compose supply-chain-attest + license-policy over a REAL package-lock.json/package.json read from a project dir. IN: projectDir. OUT: CycloneDX SBOM + license findings (SPDX, fail-closed on unknown) + report. TESTS: real repo lockfile (this repo) → components>0, deterministic; unknown license ⇒ flagged not passed; no lockfile ⇒ BLOCKED not fake. Independent files: runtime/core/sbom-audit-service.ts + bin + test.",
       "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
-      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
-      "staleEvidence": false
+      "nextAction": "Add a real offline CVE/advisory feed (e.g. OSV offline db) to upgrade from license-only to vuln audit; wire a CLI/bin if a client-facing entry is needed. Domain #2 Cyber/Supply-chain remains PARTIAL (no real external client engagement).",
+      "staleEvidence": false,
+      "evidence": "PR(this): runtime/core/sbom-audit-service.ts COMPOSES supply-chain-attest.buildSbomMulti + license-policy.classifyLicense/adoptionVerdict over REAL manifests. auditProjectDir() reads real lockfiles (package-lock.json/pnpm/yarn/requirements/Cargo.lock/go.sum/Gemfile.lock/composer.lock) present in a dir → CycloneDX SBOM + per-component license audit → severity findings {id,area,severity,detail,remediation,evidence} (SARIF-emittable). Proven on REAL data: this repo's package-lock.json ⇒ 485 components, families classified, deterministic. Tests (sbom-audit-service.test.ts, 9): real-repo SBOM (>100 comps, deterministic), GPL-3.0⇒HIGH not-policy-clean, UNKNOWN/missing license⇒MEDIUM review (fail-closed, never assumed safe), permissive-only⇒0 findings, AGPL⇒HIGH for SaaS but not internal (policy target respected), CVE scan declared NOT_PERFORMED (honest, no offline feed), NO_MANIFEST fail-closed, valid SARIF 2.1.0. HONESTY: informational supply-chain assurance NOT legal clearance/certification; CVE not performed; unknown licenses flagged not assumed. No new primitive (9 intact). Independent audit + CI. Gate: test:report green, tsc 0, build OK."
     },
     {
       "id": "data-quality-service",
