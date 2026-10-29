@@ -125,6 +125,12 @@ R.runSuitesParallel([fPassR, fFailR, fSkipR, fHazR], 4, asyncRunner).then((par) 
   return R.runSuitesParallel([fPassR, missing], 4, asyncRunner);
 }).then((parM) => {
   ok("parallel: missing suite ⇒ NOT_RUN (fail-closed, same as sequential)", parM[1].cls === "NOT_RUN");
+  // computeWorkers (pure memory+core-aware cap) — the fix for OOM-class parallel flakiness.
+  ok("computeWorkers: request<=1 ⇒ serial 1", R.computeWorkers(1, 8, 32000, 900).workers === 1 && R.computeWorkers(0, 8, 32000, 900).workers === 1);
+  ok("computeWorkers: ample memory+cores ⇒ honor request", R.computeWorkers(4, 8, 32000, 900).workers === 4 && R.computeWorkers(4, 8, 32000, 900).capped === false);
+  ok("computeWorkers: low memory ⇒ capped below request (no oversubscribe)", (() => { const r = R.computeWorkers(8, 8, 1800, 900); return r.workers === 2 && r.capped === true && /memory-pressure/.test(r.reason); })());
+  ok("computeWorkers: few cores ⇒ CPU cap applies", R.computeWorkers(8, 2, 32000, 900).workers === 2);
+  ok("computeWorkers: never below 1 even under tiny memory", R.computeWorkers(8, 8, 100, 900).workers === 1);
   try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort */ }
   try { fs.rmSync(ptmp, { recursive: true, force: true }); } catch { /* best-effort */ }
   console.log(`\nALL PASS — odg test-report (${passed} assertions)`);

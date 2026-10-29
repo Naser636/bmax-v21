@@ -146,11 +146,33 @@ function suiteIsHazard(absFile: string): boolean {
   return HAZARD_RE.test(src);
 }
 
+// Each parallel suite spawns a tsx process that may itself spawn compiler/checker subprocesses (go/rustc/javac/python).
+// Default per-worker memory budget (MB) — overridable via ODG_TEST_WORKER_MEM_MB for tuning.
+function perWorkerMb(): number { const m = parseInt(process.env.ODG_TEST_WORKER_MEM_MB || "", 10); return Number.isFinite(m) && m > 0 ? m : 900; }
+
+/**
+ * computeWorkers(requested, cpus, freeMb, perMb): PURE worker-count policy. Caps the requested count by BOTH the
+ * measured cores AND available memory (freeMb / perMb) — the memory cap prevents the OOM-class flakiness observed
+ * when heavy subprocess suites (validation-engine/reality-gate/compilers) run too concurrently. Never below 1.
+ * Returns { workers, capped, reason }. A non-positive/non-finite request ⇒ serial (1).
+ */
+function computeWorkers(requested: number, cpus: number, freeMb: number, perMb: number): any {
+  if (!Number.isFinite(requested) || requested <= 1) return { workers: 1, capped: false, reason: "serial (requested <= 1)" };
+  const cpuCap = Math.max(1, Number.isFinite(cpus) ? cpus : 1);
+  const memCap = Number.isFinite(freeMb) && freeMb > 0 && perMb > 0 ? Math.max(1, Math.floor(freeMb / perMb)) : Infinity;
+  const workers = Math.max(1, Math.min(requested, cpuCap, memCap));
+  const capped = workers < requested;
+  return { workers, capped, reason: capped ? `requested ${requested} capped to ${workers} (cpuCap=${cpuCap}, memCap=${memCap === Infinity ? "n/a" : memCap} @ ${perMb}MB/worker) — avoiding memory-pressure flakiness` : "no cap" };
+}
+
 function parseWorkers(v: any): number {
   const n = parseInt(v, 10);
   if (!Number.isFinite(n) || n <= 1) return 1;
   let cpus = 1; try { cpus = os.cpus().length || 1; } catch { cpus = 1; }
-  return Math.min(n, Math.max(1, cpus)); // never oversubscribe the measured cores
+  let freeMb = Infinity; try { freeMb = os.freemem() / (1024 * 1024); } catch { freeMb = Infinity; }
+  const r = computeWorkers(n, cpus, freeMb, perWorkerMb());
+  if (r.capped) { try { process.stderr.write(`[odg-test-report] ${r.reason}\n`); } catch { /* ignore */ } }
+  return r.workers;   // memory-aware + core-aware; never oversubscribe
 }
 
 /** Spawn one suite asynchronously in an isolated TMPDIR; resolves to the SAME shape as defaultRunner. */
@@ -286,6 +308,6 @@ if (require.main === module) {
   main(process.argv.slice(2)).then((code) => process.exit(code));
 }
 
-module.exports = { classify, runSuites, suiteIsHazard, parseWorkers, runSuitesParallel, summarize, overallExit, renderReport, defaultFiles, loadReport, stalenessOf, renderShow, runAndWrite, main, CLASSES };
+module.exports = { classify, runSuites, suiteIsHazard, parseWorkers, computeWorkers, runSuitesParallel, summarize, overallExit, renderReport, defaultFiles, loadReport, stalenessOf, renderShow, runAndWrite, main, CLASSES };
 
 export {};
