@@ -38,8 +38,13 @@ const tc = E.detectToolchain({ runner: (bin) => bin === "python3" ? { exitCode: 
 ok("detectToolchain: python available, others not (via mock probe)", tc.Python === true && tc.JavaScript === false);
 
 // (9) checker expansion registered: Shell/SQL/YAML/JSON + ShellLint specs present + argv-array (no shell string).
-for (const lang of ["Shell", "SQL", "YAML", "JSON", "ShellLint"]) {
+for (const lang of ["Shell", "SQL", "YAML", "JSON", "ShellLint", "TOML", "XML", "INI"]) {
   ok(`LANG_SPEC has ${lang} (no-install checker) with argv-array args`, E.LANG_SPEC[lang] && Array.isArray(E.LANG_SPEC[lang].args("f")) && typeof E.LANG_SPEC[lang].bin === "string");
+}
+// TOML/XML/INI are STDLIB-only (python3 tomllib/xml.dom.minidom/configparser) ⇒ no owner install needed (unlike hadolint).
+for (const lang of ["TOML", "XML", "INI"]) {
+  ok(`${lang} is a python3 stdlib checker (no install)`, E.LANG_SPEC[lang].bin === "python3" && E.LANG_SPEC[lang].probeArgs[1] && /import/.test(E.LANG_SPEC[lang].probeArgs[1]));
+  ok(`${lang} toolchain absent ⇒ UNSUPPORTED (not faked)`, E.runSyntaxCheck({ language: lang, content: "x", toolchainAvailable: false }).status === "UNSUPPORTED");
 }
 // Go/build IS wired now (authorized Go toolchain install): a REAL `go build` compile check — argv-array, with a
 // per-workspace hermetic env function (offline, cache/path scoped into the temp dir).
@@ -73,6 +78,10 @@ const realCases = [
   ["SQL", "CREATE TABLE t (id INTEGER PRIMARY KEY, n TEXT);\n", "PASS"], ["SQL", "CREATE TABLE t (id INTEGER PRIMARY,, n;\n", "FAIL"],
   ["YAML", "a: 1\nb:\n  - x\n  - y\n", "PASS"], ["YAML", "a: 1\n  b: : :\n- x\n", "FAIL"],
   ["JSON", "{\"a\":1,\"b\":[1,2]}\n", "PASS"], ["JSON", "{\"a\":1,,}\n", "FAIL"],
+  // TOML/XML/INI: REAL python3-stdlib parse (no install). FAIL cases are genuinely malformed.
+  ["TOML", "title = \"x\"\n[server]\nport = 8080\n", "PASS"], ["TOML", "a = = 1\n", "FAIL"],
+  ["XML", "<config><item id=\"1\">x</item></config>\n", "PASS"], ["XML", "<config><item>x</config>\n", "FAIL"],
+  ["INI", "[section]\nkey = value\n", "PASS"], ["INI", "key = value with no section header\n", "FAIL"],
   ["ShellLint", "#!/usr/bin/env bash\nset -euo pipefail\nname=\"world\"\necho \"hello ${name}\"\n", "PASS"],
   ["ShellLint", "#!/usr/bin/env bash\nrm -rf $UNQUOTED/*\n", "FAIL"],
     // Go/build: real compile. The FAIL case is a TYPE error (not a syntax error) — proving this is a genuine build check,

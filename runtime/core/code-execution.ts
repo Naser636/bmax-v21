@@ -48,6 +48,12 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   YAML: { bin: "python3", probeArgs: ["-c", "import yaml"], args: (f: string) => ["-c", "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1]).read()))", f], ext: ".yaml" },
   // JSON config validation via stdlib json (always available with python3).
   JSON: { bin: "python3", probeArgs: ["-c", "import json"], args: (f: string) => ["-c", "import sys,json; json.load(open(sys.argv[1]))", f], ext: ".json" },
+  // TOML validation via stdlib tomllib (py3.11+). STDLIB-only ⇒ no install needed where python3 is present.
+  TOML: { bin: "python3", probeArgs: ["-c", "import tomllib"], args: (f: string) => ["-c", "import sys,tomllib; tomllib.load(open(sys.argv[1],'rb'))", f], ext: ".toml" },
+  // XML well-formedness via stdlib xml.dom.minidom (always available with python3).
+  XML: { bin: "python3", probeArgs: ["-c", "import xml.dom.minidom"], args: (f: string) => ["-c", "import sys,xml.dom.minidom; xml.dom.minidom.parse(sys.argv[1])", f], ext: ".xml" },
+  // INI validation via stdlib configparser (read_file RAISES on a malformed/section-less file; always available).
+  INI: { bin: "python3", probeArgs: ["-c", "import configparser"], args: (f: string) => ["-c", "import sys,configparser; configparser.ConfigParser().read_file(open(sys.argv[1]))", f], ext: ".ini" },
   // Go/build: a REAL compile check via the authorized Go toolchain — stronger than a syntax parse (catches type errors,
   // undefined refs). Run HERMETICALLY: GOCACHE/GOPATH/GOTMPDIR scoped INTO the isolated workspace (self-cleaning), and
   // GO111MODULE=off + GOPROXY=off + GOTOOLCHAIN=local so a non-stdlib import fails CLOSED (no network, no download, no
