@@ -8546,3 +8546,15 @@ git checkout main && git pull --ff-only && npx tsx runtime/bin/odg-campaign-run.
 (and: npx tsx runtime/core/engine-benchmark.ts ; npx tsx runtime/core/campaign-controller.ts docs/odg/closure-register.json)
 
 ### Register: 29 ACCEPTED / 1 IN_PROGRESS / 7 BLOCKED, 0 stale. P1 NOT closed (7 external/owner gates). broadIT NO_DATA. €0.
+
+---
+## CHECKPOINT 2026-10-29 (fy) — Context diagnosis + compact resume reader (passation) €0
+Section A diagnosis: Claude Code auto-compaction is a HARNESS/cloud default — NO repo env var controls it (.claude/
+settings.json has no compaction keys). The admissible repo lever = reduce context-growth + a tested passation. Compass
+is 8548 lines / 221 checkpoints ⇒ costly to re-read on resume. FIX: runtime/bin/odg-resume.ts — read-only compact
+handoff (HEAD, register counts, next-lot/idle reason, BLOCKED w/ each human action, last checkpoint title, exact resume
+command); reads big files in its own process, emits ~2.7KB ⇒ fresh session resumes WITHOUT loading the full compass.
+Suite 8 (fail-closed on missing register). Section B verified: campaign-loop + odg-campaign-run on main; odg-campaign.
+timer INACTIVE (gated); odg-mission-runner.timer = canary tick (separate). Section C: NO new self-clearable lot (7 external
+blockers) — not fabricating work. Register +ACCEPTED resume-reader-context-mitigation. 30 ACCEPTED/1/7, 0 stale. Gate:
+test:report 182, tsc 0, build 0, engine 9/9. Compaction ≠ continuity proof: the tested passation (odg-resume + odg-campaign-run) IS.
