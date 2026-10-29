@@ -644,6 +644,20 @@
       "acceptance": "A campaign acceptance can be gated on reproducible, tamper-evident proof; a passing-looking output cannot mask a non-zero exit / missing artifact / absent verification; default (no proof) behaviour unchanged.",
       "nextAction": "Next ENGINE-EXCELLENCE: Priority-5 learning-reuse PROOF (captured≠reused). Independent verification remains a separate CI+audit gate, not the in-executor check.",
       "staleEvidence": false
+    },
+    {
+      "id": "engine-learning-reuse-proof",
+      "program": "P1",
+      "title": "ENGINE EXCELLENCE #3: reproducible learning-reuse PROOF (recorded≠retrieved≠reused≠EFFECTIVE)",
+      "status": "ACCEPTED",
+      "deps": [
+        "engine-mission-evidence-gate"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): runtime/core/learning-reuse-proof.ts — a reproducible controlled experiment distinguishing recorded vs retrieved vs reused vs EFFECTIVE, composed ENTIRELY from existing mechanisms (NO new primitive/vector-db/service): evidence-provenance.stampProvenance/verifyProvenance (seal+tamper), excellence-gate.gateLearningReuse (REAL gated reuse) + decideWithLearning (proves the learning CHANGED a decision), learning-chain.classifyLearningState (honest CAPTURED→PERSISTED→DISCOVERABLE→REUSED→EFFECTIVE grading; EFFECTIVE only with a measured DIFFERING before/after), + a file-backed store for cross-process persistence. Fair A/B over a synthetic resolution cost (both arms resolve the same objective; only difference = learning presence): baseline MISS cost2 vs learned HIT cost1 ⇒ improvement 1. Tests (learning-reuse-proof.test.ts, 8): verdict PROVEN w/ all 8 checks; baseline-miss vs learned-hit+influenced; chain EFFECTIVE; OUT-OF-DOMAIN not applied; STALE not applied; TAMPERED sealed learning REFUSED (real content-digest mismatch); HONEST-NEGATIVE (equal before/after ⇒ NOT EFFECTIVE, no fabricated gain); CROSS-PROCESS reproducibility (a FRESH spawned --resume process reuses the persisted store, verdict PROVEN both runs). Honest: controlled synthetic resolution-cost experiment, NOT a field claim about real-mission speedups; no cross-campaign baseline invented. 9 primitives intact. Independent audit + CI. Gate: learning-reuse-proof 8/8 exit 0, tsc 0, test:report green.",
+      "acceptance": "A reproducible experiment demonstrates reuse DEMONSTRABLY improves a fair baseline AND that out-of-domain/stale/tampered learnings are refused AND that equal before/after is not graded effective; reproducible across process termination.",
+      "nextAction": "Wire this proof pattern into real mission acceptance (a learning that claims EFFECTIVE must carry a measured before/after or be downgraded). Next admissible: the next business-domain milestone (domains stay PARTIAL).",
+      "staleEvidence": false
     }
   ]
 }
