@@ -8460,3 +8460,16 @@ to FIRE on planted single-file/multi-file/id collisions. code-exec 60→67, broa
 broadIT STAYS NO_DATA. Register +ACCEPTED runner-exitcode-honesty-fix. 25 ACCEPTED/1/5, 0 stale. Gate: test:report 177,
 tsc 0, build 0, engine 9/9. npm-update notice = cosmetic (tsx/tests/build green) — no action, no sudo. INDEPENDENT-LABELLING
 remains the honest frontier to broad-IT MEASURED (do NOT self-certify labels).
+
+---
+## CHECKPOINT 2026-10-29 (ft) — Prepared independent-label admission gate (broad-IT frontier) €0
+Phase 3 found all 5 blockers already have ACCEPTED prep; the one admissible frontier lot = the independent-label
+admission gate (mandate §6: study an independent eval source, never self-certify). independent-label-policy.ts:
+deny-by-default assessLabelIndependence (refuses evaluee/ODG-authored labels, requires independentOfEvaluee + traceable
+sourceRef + dev/validation separation + non-self-graded method) + admitEvalSet (independence AND disjoint non-empty
+dev/validation split). WIRED into broad-it-eval as the real consumer: CORPUS_PROVENANCE(author odg)⇒CORPUS_LABELS_
+INDEPENDENT=false ⇒ independentlyLabelled is now POLICY-enforced (not a bare string) ⇒ broadIT STAYS NO_DATA (behaviour
+identical, double-lock preserved). Suite 13; broad-it-eval 46 unchanged. Register +ACCEPTED independent-label-admission
+-policy + new BLOCKED broad-it-independent-eval-set (external: owner/3rd-party supplies a labelled set passing admitEvalSet
+— ODG never self-certifies). 26 ACCEPTED/1/6 BLOCKED, 0 stale. Gate: test:report 178, tsc 0, build 0, engine 9/9.
+LEARNING REUSED: the self-authored NO_DATA lock (V72 audit) is now enforced by a reusable tested policy, not a string.

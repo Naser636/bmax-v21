@@ -113,6 +113,32 @@
       "acceptance": "a real hermetic mcs type check with independent eval; external using fails closed; broad rate stays NO_DATA (gated)"
     },
     {
+      "id": "independent-label-admission-policy",
+      "program": "P2",
+      "title": "Prepared independent-label admission gate (no self-certification) for broad-IT MEASURED",
+      "status": "ACCEPTED",
+      "deps": [
+        "benchmark-task-mode-3-integration"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/independent-label-policy.ts — deny-by-default assessLabelIndependence (refuses labels authored by the evaluee/ODG or in its namespace, requires independentOfEvaluee + traceable sourceRef + dev/validation separation + non-self-graded method) + admitEvalSet (independence AND a non-empty DISJOINT dev/validation split). Wired as the real consumer in broad-it-eval: CORPUS_PROVENANCE (author odg, self-authored) ⇒ CORPUS_LABELS_INDEPENDENT=false ⇒ independentlyLabelled criterion in meetsThreshold is policy-enforced (not a bare string) ⇒ broadIT STAYS NO_DATA. Suite 13; broad-it-eval 46 unchanged behaviour. This is the PREPARED ingestion gate: supplying a descriptor that passes the policy (a real third-party/upstream-labelled set, dev/validation disjoint) is the external unlock — ODG can NEVER certify its own labels to reach MEASURED.",
+      "acceptance": "an enforced, tested admission gate exists that refuses self-certified labels and requires traceable independent provenance + dev/validation separation; broad-IT stays NO_DATA until a passing external set is supplied"
+    },
+    {
+      "id": "broad-it-independent-eval-set",
+      "program": "P2",
+      "title": "Supply a real independently-labelled broad-IT eval set (external dependency)",
+      "status": "BLOCKED",
+      "deps": [
+        "independent-label-admission-policy"
+      ],
+      "priority": 9,
+      "evidence": "",
+      "blockReason": "EXTERNAL: a credible broad-IT VERIFIED_SUCCESS_RATE requires ground-truth labels NOT authored by ODG — e.g. a third-party-labelled set or real upstream outcomes (merged-PR / upstream test-suite verdicts), with a traceable sourceRef and dev/validation separation, admitted by independent-label-admission-policy.admitEvalSet. ODG must NOT fabricate or self-certify labels. Until such a set is supplied+admitted, broadIT=NO_DATA (correct).",
+      "acceptance": "an external set passes admitEvalSet (independent provenance + disjoint dev/validation); then broad-IT can report a MEASURED rate on it",
+      "nextAction": "owner/third-party supplies an independently-labelled eval set with provenance; ODG runs admitEvalSet then evaluates"
+    },
+    {
       "id": "runner-exitcode-honesty-fix",
       "program": "P2",
       "title": "Audit-driven honesty fix: behaviour/integration runners require exit 0 (no crash-as-PASS)",
