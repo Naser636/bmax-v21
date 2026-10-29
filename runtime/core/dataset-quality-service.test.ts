@@ -75,4 +75,49 @@ const schema = { fields: [{ name: "id", type: "integer", required: true }, { nam
   ok("non-object rows surfaced via droppedNonObjectRows (2), only object rows assessed", r.report.rowCount === 2 && r.report.droppedNonObjectRows === 2);
 }
 
-console.log(`\nDATASET-QUALITY-SERVICE suite — ${pass} assertions passed. (real computed completeness/validity/uniqueness; empty⇒NO_DATA not 100; fail-closed parse; no-schema⇒uniqueness-only; unknown type⇒no invented constraint; valid SARIF; quoted CSV)`);
+// (11) CONFORMANCE (Priority-C upgrade): enum / min-max / pattern constraints are assessed as a 4th dimension.
+{
+  const recs = [{ status: "open", score: 5, code: "AB12" }, { status: "banana", score: 99, code: "zzz" }];
+  const r = D.assessDataset({ format: "records", records: recs, schema: { fields: [
+    { name: "status", enum: ["open", "closed"] }, { name: "score", min: 0, max: 10 }, { name: "code", pattern: "^[A-Z]{2}[0-9]{2}$" } ] } });
+  const m = r.report.metrics;
+  // row1 conforms on all 3; row2 violates all 3 ⇒ 3/6 conforming.
+  ok("conformance dimension: enum/min-max/pattern violations counted ⇒ conformance 0.5, 3 conformance findings",
+     m.conformance === 0.5 && r.report.findings.filter((f) => f.area === "conformance").length === 3 && r.report.findings.some((f) => f.id === "conformance:status") && r.report.findings.some((f) => f.id === "conformance:score") && r.report.findings.some((f) => f.id === "conformance:code"));
+}
+// (12) no constraints ⇒ conformance null AND a FRACTIONAL overallScore equals the pre-upgrade 3-dim renormalization
+// (proves the 4th dimension is inert, not just on a trivially-1.0 dataset).
+{
+  const recs = [{ id: 1, name: "a" }, { id: 1, name: "" }, { id: 3, name: "c" }];   // a dup + a missing required ⇒ fractional
+  const schema = { fields: [{ name: "id", type: "integer", required: true }, { name: "name", type: "string", required: true }], keyFields: ["id"] };
+  const m = D.assessDataset({ format: "records", records: recs, schema }).report.metrics;
+  const dims = [[m.completeness, 0.4], [m.validity, 0.4], [m.uniqueness, 0.2]].filter(([v]) => v !== null);
+  const expected = Math.round((dims.reduce((a, [v, w]) => a + v * w, 0) / dims.reduce((a, [, w]) => a + w, 0)) * 1000) / 1000;
+  ok("no constraint ⇒ conformance null AND fractional overallScore == 3-dim renormalization (inert 4th dim)",
+     m.conformance === null && m.overallScore < 1 && m.overallScore === expected);
+}
+// (13) invalid regex pattern ⇒ fail-closed SCHEMA ERROR (HIGH), field EXCLUDED from conformance (not silently passed).
+{
+  const recs = [{ code: "x" }, { code: "y" }];
+  const r = D.assessDataset({ format: "records", records: recs, schema: { fields: [{ name: "code", pattern: "([unclosed" }] } });
+  ok("invalid regex ⇒ conformance-schema HIGH finding + conformance null (excluded, not silently conforming)",
+     r.report.metrics.conformance === null && r.report.findings.some((f) => f.id === "conformance:code") === false && r.report.findings.some((f) => f.id === "conformance-schema:code" && f.severity === "HIGH"));
+}
+// (14) empty cells are a completeness, not a conformance, concern — with a pattern an empty cell WOULD violate if
+// counted, so conformance===1 distinguishes "skipped" from "counted-as-conforming" (counted would give 0.5).
+{
+  const recs = [{ code: "" }, { code: "AB" }];
+  const r = D.assessDataset({ format: "records", records: recs, schema: { fields: [{ name: "code", pattern: "^[A-Z]{2}$" }] } });
+  ok("empty cell skipped by conformance (pattern would fail an empty cell; 1 non-empty 'AB' conforms ⇒ conformance 1, no finding)",
+     r.report.metrics.conformance === 1 && r.report.findings.filter((f) => f.area === "conformance").length === 0);
+}
+// (15) malformed constraint DECLARATION (enum not an array) ⇒ fail-closed HIGH schema error + field excluded (honesty
+// consistency with the invalid-regex case; not silently ignored).
+{
+  const recs = [{ cat: "x" }, { cat: "y" }];
+  const r = D.assessDataset({ format: "records", records: recs, schema: { fields: [{ name: "cat", enum: "open,closed" }] } });
+  ok("malformed enum declaration ⇒ conformance-schema HIGH finding + conformance null (field excluded, fail-closed)",
+     r.report.metrics.conformance === null && r.report.findings.some((f) => f.id === "conformance-schema:cat" && f.severity === "HIGH"));
+}
+
+console.log(`\nDATASET-QUALITY-SERVICE suite — ${pass} assertions passed. (real computed completeness/validity/uniqueness/conformance; empty⇒NO_DATA not 100; fail-closed parse; no-schema⇒uniqueness-only; unknown type⇒no invented constraint; enum/min-max/pattern conformance w/ fail-closed invalid-regex; valid SARIF; quoted CSV)`);

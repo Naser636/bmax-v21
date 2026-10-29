@@ -56,11 +56,36 @@ const TYPE_CHECK: Record<string, (v: any) => boolean> = {
   email: (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v)),
 };
 
+// ---- value constraints (enum / numeric min-max / regex pattern) over a field, beyond its base type ----
+// A field may declare any of: enum:[…], min:number, max:number, pattern:"regex". Constraints apply ONLY to non-empty
+// cells. An invalid regex is a SCHEMA ERROR (surfaced, the field is NOT silently treated as conforming). Fail-closed.
+function hasConstraint(f: any): boolean { return isObj(f) && (Array.isArray(f.enum) || Number.isFinite(f.min) || Number.isFinite(f.max) || typeof f.pattern === "string"); }
+// detect a constraint KEY that is present but malformed (so it can be surfaced as a fail-closed schema error rather than
+// silently ignored). A field with any malformed constraint is excluded from conformance wholesale (no partial trust).
+function malformedConstraints(f: any): string[] {
+  const bad: string[] = [];
+  if ("enum" in f && !Array.isArray(f.enum)) bad.push("enum (not an array)");
+  if ("min" in f && !Number.isFinite(f.min)) bad.push("min (not a finite number)");
+  if ("max" in f && !Number.isFinite(f.max)) bad.push("max (not a finite number)");
+  if ("pattern" in f && typeof f.pattern !== "string") bad.push("pattern (not a string)");
+  return bad;
+}
+function compilePattern(p: any): { ok: boolean; re?: RegExp; reason?: string } { try { return { ok: true, re: new RegExp(p) }; } catch (e: any) { return { ok: false, reason: (e && e.message) || "invalid regex" }; } }
+// returns true iff the cell satisfies every declared constraint for the field (cell assumed non-empty; re pre-compiled).
+function cellConforms(val: any, f: any, re: RegExp | null): boolean {
+  if (Array.isArray(f.enum) && !f.enum.map((x: any) => String(x)).includes(String(val))) return false;
+  if (Number.isFinite(f.min) || Number.isFinite(f.max)) { const n = typeof val === "number" ? val : Number(String(val)); if (!Number.isFinite(n)) return false; if (Number.isFinite(f.min) && n < f.min) return false; if (Number.isFinite(f.max) && n > f.max) return false; }
+  if (re && !re.test(String(val))) return false;
+  return true;
+}
+
 function isEmpty(v: any): boolean { return v === null || v === undefined || (typeof v === "string" && v.trim() === ""); }
 
 /**
  * assessDataset(input, opts?): ingest + assess. input = { format:"csv"|"json"|"records", content?, records?, schema? }.
- * schema = { fields:[{ name, type?, required? }], keyFields?:[string] }. Returns { ok, report } or fail-closed error.
+ * schema = { fields:[{ name, type?, required?, enum?:[…], min?, max?, pattern? }], keyFields?:[string] }.
+ * enum/min/max/pattern are value CONSTRAINTS assessed as a 'conformance' dimension (only over fields that declare one).
+ * Returns { ok, report } or fail-closed error.
  */
 function assessDataset(input: any, opts: any = {}): any {
   if (!isObj(input)) return { ok: false, code: "INVALID_INPUT", reason: "input object required" };
@@ -95,6 +120,39 @@ function assessDataset(input: any, opts: any = {}): any {
   }
   const validity = typedCells > 0 ? round(validCells / typedCells) : null;
 
+  // ---- conformance (value constraints: enum / min-max / pattern; only over constrained fields) ----
+  const constrainedFields = fields.filter((f: any) => hasConstraint(f));
+  const compiledPatterns: Record<string, RegExp | null> = {};
+  const schemaErrors: string[] = [];
+  // fail-closed: a constraint KEY present but malformed (enum not-array, min/max not-finite, pattern not-string) is a
+  // HIGH schema error and excludes the field from conformance — never silently ignored.
+  for (const f of fields) {
+    if (!isObj(f) || typeof f.name !== "string") continue;
+    const mal = malformedConstraints(f);
+    if (!mal.length) continue;
+    schemaErrors.push(f.name);
+    findings.push({ id: `conformance-schema:${f.name}`, area: "conformance", severity: "HIGH", detail: `field '${f.name}' declares malformed constraint(s): ${mal.join("; ")} — not applied (fail-closed)`, remediation: `fix the constraint declaration for '${f.name}'`, evidence: mal.join("; ") });
+  }
+  for (const f of constrainedFields) {
+    compiledPatterns[f.name] = null;
+    if (typeof f.pattern !== "string") continue;
+    const c = compilePattern(f.pattern);
+    if (c.ok) { compiledPatterns[f.name] = c.re || null; continue; }
+    schemaErrors.push(f.name);
+    findings.push({ id: `conformance-schema:${f.name}`, area: "conformance", severity: "HIGH", detail: `field '${f.name}' declares an invalid regex pattern — constraint NOT applied (fail-closed, not silently passed)`, remediation: `fix the regex for '${f.name}'`, evidence: `pattern '${f.pattern}' did not compile` });
+  }
+  // a field whose pattern failed to compile is excluded from conformance measurement (its other constraints too — honest: we cannot partially trust a broken schema field).
+  const measurableConstrained = constrainedFields.filter((f: any) => !schemaErrors.includes(f.name));
+  let conformanceCells = 0, conformingCells = 0;
+  const conformViolByField: Record<string, number> = {};
+  if (measurableConstrained.length) for (const r of records) for (const f of measurableConstrained) {
+    const val = r[f.name];
+    if (isEmpty(val)) continue;   // empty cells are a completeness concern, not a conformance violation
+    conformanceCells++;
+    if (cellConforms(val, f, compiledPatterns[f.name] || null)) conformingCells++; else conformViolByField[f.name] = (conformViolByField[f.name] || 0) + 1;
+  }
+  const conformance = conformanceCells > 0 ? round(conformingCells / conformanceCells) : null;
+
   // ---- uniqueness (by keyFields if given, else whole-record) ----
   const seen = new Set<string>(); let duplicates = 0; const dupExamples: number[] = [];
   records.forEach((r, i) => { const key = keyFields.length ? keyFields.map((k) => String(r[k])).join("") : JSON.stringify(r); if (seen.has(key)) { duplicates++; if (dupExamples.length < 10) dupExamples.push(i); } else seen.add(key); });
@@ -104,9 +162,12 @@ function assessDataset(input: any, opts: any = {}): any {
   for (const [f, n] of Object.entries(missingByField)) findings.push({ id: `completeness:${f}`, area: "completeness", severity: "HIGH", detail: `${n}/${total} rows missing required field '${f}'`, remediation: `populate '${f}' or relax the required constraint`, evidence: `${n} empty cells in required field '${f}'` });
   for (const [f, n] of Object.entries(typeViolByField)) findings.push({ id: `validity:${f}`, area: "validity", severity: "MEDIUM", detail: `${n} value(s) in '${f}' violate the declared type`, remediation: `coerce/clean '${f}' to its declared type or correct the schema`, evidence: `${n} type-violating cells in '${f}'` });
   if (duplicates > 0) findings.push({ id: `uniqueness:${keyFields.join("+") || "row"}`, area: "uniqueness", severity: "MEDIUM", detail: `${duplicates} duplicate row(s) by ${keyFields.length ? "key [" + keyFields.join(",") + "]" : "whole-record"}`, remediation: "de-duplicate or confirm duplicates are legitimate", evidence: `duplicate row indices (first 10): ${dupExamples.join(", ")}` });
+  for (const [f, n] of Object.entries(conformViolByField)) { const fd = constrainedFields.find((x: any) => x.name === f); const parts = [Array.isArray(fd.enum) ? `enum[${fd.enum.slice(0, 8).join(",")}]` : "", typeof fd.min === "number" ? `min ${fd.min}` : "", typeof fd.max === "number" ? `max ${fd.max}` : "", typeof fd.pattern === "string" ? `pattern /${fd.pattern}/` : ""].filter(Boolean).join(", "); findings.push({ id: `conformance:${f}`, area: "conformance", severity: "MEDIUM", detail: `${n} value(s) in '${f}' violate the declared constraint (${parts})`, remediation: `correct the out-of-constraint values in '${f}' or adjust the constraint`, evidence: `${n} non-conforming cells in '${f}'` }); }
 
   // ---- overall score: weighted mean over the dimensions that were assessed (never a fabricated 100) ----
-  const dims: Array<[number | null, number]> = [[completeness, 0.4], [validity, 0.4], [uniqueness, 0.2]];
+  // conformance is added as a 4th dimension; it is null (⇒ filtered out, weights renormalize) unless a field declares a
+  // constraint, so datasets without constraints score EXACTLY as before.
+  const dims: Array<[number | null, number]> = [[completeness, 0.4], [validity, 0.4], [uniqueness, 0.2], [conformance, 0.2]];
   const assessed = dims.filter(([v]) => v !== null);
   const overallScore = total === 0 ? null : (assessed.length ? round(assessed.reduce((a, [v, w]) => a + (v as number) * w, 0) / assessed.reduce((a, [, w]) => a + w, 0)) : null);
 
@@ -116,7 +177,7 @@ function assessDataset(input: any, opts: any = {}): any {
       rowCount: total,
       droppedNonObjectRows,
       assessedDimensions: assessed.length,
-      metrics: { completeness, validity, uniqueness, overallScore },
+      metrics: { completeness, validity, uniqueness, conformance, overallScore },
       dedup: { duplicates, uniqueRows: total - duplicates },
       findingCount: findings.length,
       findings: findings.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === "HIGH" ? -1 : 1)),
@@ -125,6 +186,7 @@ function assessDataset(input: any, opts: any = {}): any {
         "quality is assessed ONLY against the supplied schema; without a schema, only uniqueness is computed",
         "an empty dataset scores NO_DATA (null), never a fabricated 100",
         "a declared type the service does not know carries NO validity constraint (not silently passed/failed)",
+        "value constraints (enum/min/max/pattern) are assessed as a 'conformance' dimension ONLY over fields that declare one; a field with an invalid regex is a fail-closed SCHEMA ERROR (HIGH finding) and is excluded from conformance (not silently passed); empty cells are a completeness, not conformance, concern",
         "a missing REQUIRED cell counts against BOTH completeness (missing) and validity (invalid) — intentional",
         "whole-record de-dup (when no keyFields given) is sensitive to JSON key order; declare keyFields for order-independent de-dup",
         "non-object input rows are excluded and reported as droppedNonObjectRows (not silently assessed)",
