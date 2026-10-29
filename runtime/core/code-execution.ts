@@ -87,6 +87,13 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
     bin: "mcs", probeArgs: ["--version"], ext: ".cs",
     args: (f: string) => ["-target:library", "-out:" + path.join(path.dirname(f), "out.dll"), f],
   },
+  // HTML-CSS validate via HTML Tidy: errors-only mode (warnings suppressed) ⇒ exit 0 iff the markup has no structural
+  // errors, non-zero otherwise. No network; reads one local file. Probe fails ⇒ UNSUPPORTED. Language key matches the
+  // broad-IT taxonomy entry ("HtmlCss") so coverage detection is consistent.
+  HtmlCss: {
+    bin: "tidy", probeArgs: ["--version"], ext: ".html",
+    args: (f: string) => ["-q", "-e", "--show-warnings", "no", f],
+  },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }

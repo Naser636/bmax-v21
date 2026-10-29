@@ -8438,3 +8438,13 @@ corpus 100, dev+heldout acc 1.0, leakage disjoint. broad-it-eval 41. Register +A
 benchmark-task-mode-3-integration; new-language-families narrowed to tidy/hadolint linters. 24 ACCEPTED/1/5, 0 stale.
 Gate: test:report 177, tsc 0, build 0. €0. NEXT: 4th mode (data) toward higher mode-coverage; or independent-labelling
 (third-party/held-out) is the real unlock for a credible broad rate — currently the honest blocker to MEASURED.
+
+---
+## CHECKPOINT 2026-10-29 (fr) — HTML-CSS/validate via HTML Tidy €0
+tidy 5.8.0 from OFFICIAL universe repo (authorized/reversible; dashboard unaffected). code-execution +HtmlCss =
+`tidy -q -e --show-warnings no` (errors-only; exit0 clean / nonzero structural error; no network). Live: clean PASS,
+misnested/unclosed FAIL. broad-it-eval v10 +8 HTML cases (acc 1.0); category coverage 10→**11/12=0.9167** (ONLY
+Dockerfile/lint remains — hadolint is EXTERNAL, not in apt repos ⇒ authorization-gated). mode-coverage 0.6, independently
+Labelled false ⇒ broadIT STAYS NO_DATA. corpus 108, leakage disjoint. code-exec 56→60, broad-it 43. Register +ACCEPTED
+htmlcss-tidy-capability; new-language-families narrowed to Dockerfile/hadolint only. 24 ACCEPTED/1/5, 0 stale. Gate:
+test:report 177, tsc 0, build 0. **HONEST FRONTIER unchanged: independent labelling, not more categories, gates MEASURED.**
