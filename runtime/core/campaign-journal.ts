@@ -99,6 +99,8 @@ function summarizeJournal(entries: any[]): any {
     completedRuns,
     interruptions,
     byStopReason,
+    // NOTE: an UNWEIGHTED mean of per-run means (entries store only each run's meanMissionMs, not raw per-mission ms),
+    // so a 1-mission run and a 100-mission run count equally. Honest limitation — disclosed, not a fabricated figure.
     meanMissionMsAcrossRuns: missionMs.length ? Math.round(missionMs.reduce((a, b) => a + b, 0) / missionMs.length) : null,
     firstAt: ats.length ? ats[0] : null,
     lastAt: ats.length ? ats[ats.length - 1] : null,
