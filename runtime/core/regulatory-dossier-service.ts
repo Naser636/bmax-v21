@@ -61,8 +61,9 @@ function buildRegulatoryDossier(input: any, opts: any = {}): any {
   }
   for (const r of fw.refusedObligations) findings.push({ id: `refused:${r.id}`, area: "source-integrity", severity: "HIGH", detail: `obligation ${r.id} refused: ${r.reason}`, remediation: "add the cited source to the reference registry or correct the citation", evidence: r.reason });
   // AI-Act: Art.50 transparency duties are concrete ⇒ MEDIUM; role obligation families are applicable items ⇒ LOW/INFO.
-  for (const a of role.art50) findings.push({ id: `ai-act:art50`, area: "ai-act", severity: "MEDIUM", detail: `AI-Act transparency obligation: ${a}`, remediation: "implement the transparency disclosure", evidence: "declared activity triggers Art.50" });
-  for (const ob of role.obligations) findings.push({ id: `ai-act:${ob.role}`, area: "ai-act", severity: "LOW", detail: `AI-Act ${ob.role} obligation family: ${ob.family}`, remediation: "assess readiness against this obligation family", evidence: "role classification from declared activities (declared-not-verified)" });
+  const slug = (s: string) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  role.art50.forEach((a: string, i: number) => findings.push({ id: `ai-act:art50:${i}`, area: "ai-act", severity: "MEDIUM", detail: `AI-Act transparency obligation: ${a}`, remediation: "implement the transparency disclosure", evidence: "declared activity triggers Art.50" }));
+  for (const ob of role.obligations) findings.push({ id: `ai-act:${ob.role}:${slug(ob.family)}`, area: "ai-act", severity: "LOW", detail: `AI-Act ${ob.role} obligation family: ${ob.family}`, remediation: "assess readiness against this obligation family", evidence: "role classification from declared activities (declared-not-verified)" });
 
   findings.sort((a, b) => { const o = { HIGH: 0, MEDIUM: 1, LOW: 2 } as any; return (o[a.severity] ?? 3) - (o[b.severity] ?? 3); });
 

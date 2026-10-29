@@ -61,4 +61,11 @@ const baseProfile = { tenantId: "t1", country: "FR", processesEUPersonalData: tr
   ok("dossier findings ⇒ valid SARIF 2.1.0 (HIGH→error)", s.ok && SARIF.isValidSarif(s.sarif) && s.sarif.runs[0].results.some((x) => x.level === "error"));
 }
 
+// (9) finding ids are UNIQUE even with multiple AI-Act obligations/art50 triggers (audit cosmetic fix).
+{
+  const r = R.buildRegulatoryDossier({ profile: { ...baseProfile, targetFrameworks: ["GDPR", "ISO42001"], aiSystems: [{ id: "s1" }] }, activities: { developsOrPlacesAiSystemUnderOwnName: true, systemInteractsWithHumans: true, generatesDeepfakes: true }, now: "2026-10-29" });
+  const ids = r.dossier.findings.map((f) => f.id);
+  ok("all finding ids are unique (multiple art50 + role families disambiguated)", new Set(ids).size === ids.length && r.dossier.aiAct.art50.length >= 2);
+}
+
 console.log(`\nREGULATORY-DOSSIER-SERVICE suite — ${pass} assertions passed. (AI-Act deny-by-default; GDPR GAP source-cited; empty-registry⇒refused; independent verifier⇒SATISFIED_VERIFIED; always NOT_CERTIFIED; cert-claim refused; fail-closed; valid SARIF)`);
