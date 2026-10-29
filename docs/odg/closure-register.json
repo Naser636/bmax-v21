@@ -748,6 +748,20 @@
       "acceptance": "A structured invoice is validated against EN 16931 core calculation rules with exact integer money (0 false-valid on a BR-CO violation or missing mandatory BT), duplicates detected, findings SARIF-emittable; scope honestly bounded (not certified-platform / not tax advice).",
       "nextAction": "Expand e-invoice product: CII/UBL XML→model parser (reuse XML checker), Factur-X PDF/A-3 embed extraction, more EN 16931 rules (BR-S VAT category rules), Chorus Pro/PDP interoperability adapter (integration owner-gated). Build ai-assurance slice next (largely composes existing regulatory-dossier/ai-act/assurance-pilot). building-retrofit is greenfield (defer).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-program-decision-gate",
+      "program": "P2",
+      "title": "3-product decision gate (evidence-scored; market criteria honestly UNKNOWN, not fabricated)",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-einvoice-validator-slice1"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): evidence-backed comparison + decision gate for the 3 candidate products, scored ONLY on criteria with real evidence (repo-reuse measured from the codebase; standards grounded via cited/dated web research). MARKET criteria (TAM/demand/WTP/competitor pricing/competitive intensity) are marked UNKNOWN — NOT fabricated (a full ≤100-company competitor matrix per domain is a multi-cycle research effort not yet done; refusing to invent it). SCORES (0-5, with confidence): (1) e-invoice-finance-operations — reuse HIGH (economic-unit+finance-ledger+XML), feasibility HIGH (EN16931 rules cited+implemented), regulatory-clarity HIGH (France 2026-09-01 mandate, EN16931), standards-grounding DONE; SLICE 1 ALREADY SHIPPED (einvoice-validator, 11 tests). (2) ai-assurance-governance — reuse VERY-HIGH (regulatory-dossier-service + ai-act-role-classifier + assurance-pilot-runner + sbom-audit + certification-readiness largely EXIST), feasibility HIGH (compose existing), regulatory-clarity MEDIUM (EU AI-Act phased dates, ISO42001/NIST voluntary). (3) building-retrofit-intelligence — reuse NONE (GREENFIELD, BTP ABSENT in inventory), feasibility LOW-MEDIUM, highest build cost. DECISION GATE: FIRST = e-invoice (slice shipped; continue CII/UBL parser + more EN16931 rules + Chorus Pro/PDP interop[owner-gated]); PARALLEL-PREPARE = ai-assurance (independent write-scope; composes existing services into an assurance-assessment slice); DEFER = building-retrofit (greenfield, weakest reuse/evidence). Research sources (2026-10-29): France e-invoicing [dddinvoices.com, eu-einvoicing.com, e-invoice.app]; EN16931 BR-CO [peppolvalidator.com, invoicenavigator.eu, validatefin.com]. HONEST: no world-leadership/demand claim; superiority requires benchmarks vs identified competitors (not yet run). No new primitive.",
+      "acceptance": "A reproducible, evidence-scored 3-candidate comparison exists; the decision (first/parallel/defer) is justified by measured reuse + cited standards; market criteria are UNKNOWN not invented; no unsupported superiority/demand claim.",
+      "nextAction": "e-invoice: CII/UBL XML→model parser (reuse XML checker) is the next self-clearable slice. ai-assurance: compose regulatory-dossier+ai-act+sbom into an assurance-assessment slice (independent scope). building-retrofit: deferred (greenfield). Full competitor matrices + field demand validation are owner/research-gated.",
+      "staleEvidence": false
     }
   ]
 }
