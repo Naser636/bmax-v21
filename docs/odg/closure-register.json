@@ -202,6 +202,18 @@
       "staleEvidence": false
     },
     {
+      "id": "resume-reader-context-mitigation",
+      "program": "P2",
+      "title": "Compact resume reader (context-growth mitigation + tested passation)",
+      "status": "ACCEPTED",
+      "deps": [
+        "campaign-run-entrypoint"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/bin/odg-resume.ts — read-only compact handoff (verified HEAD, register counts, next-lot/idle reason, BLOCKED items WITH each human action, most-recent checkpoint title, exact resume command). Reads the big files in its OWN process and emits a ~2.7KB summary so a fresh session resumes WITHOUT re-reading the 8500-line compass (221 checkpoints). DIAGNOSIS: Claude Code auto-compaction is a harness/cloud default (no repo env var controls it; .claude/settings.json has no compaction keys) — the admissible repo lever is context-growth reduction + a tested passation, which this is. Suite 8 (counts, blockers-with-action, resume command, last checkpoint, <6KB, fail-closed on missing register).",
+      "acceptance": "a fresh session gets a compact, correct, resumable handoff from the register without loading the full compass; tested + fail-closed"
+    },
+    {
       "id": "campaign-run-entrypoint",
       "program": "P2",
       "title": "Real campaign entry point (loop ↔ authorized executor) + spawned-process integration proof",
