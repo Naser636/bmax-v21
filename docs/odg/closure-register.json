@@ -806,6 +806,20 @@
       "acceptance": "An AI system is assessed end-to-end by composing real checks; a control is PASS only via an executed check + verified evidence; listed-but-untested controls are INSUFFICIENT_EVIDENCE (never PASS); overall is fail-closed; always NOT_CERTIFIED (technical≠legal).",
       "nextAction": "D7 expand: wire assurance-pilot-runner technical findings + evidence-freshness + regression/change monitoring + incident handling; add a CLI/report export. Continue the 5 existing-domain upgrades; D8 building-retrofit remains research/design (greenfield).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-ai-assurance-report-d7-slice2",
+      "program": "P2",
+      "title": "PRODUCT D7 SLICE 2: ai-assurance-report — executed technical checks + evidence-freshness gate + exportable report",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-ai-assurance-assessment-d7"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/ai-assurance-report.ts — D7 next vertical. Composes ai-assurance-assessment (slice1) + assurance-pilot-runner (REAL technical findings + exit code) + control-evidence-freshness (TTL gate) + evidence-provenance (integrity digest). Adds over slice1: (A) a real technical check runs ⇒ a HIGH finding ⇒ exitCode 1 ⇒ technical FAIL (never PASS); (B) STALE/NO_EVIDENCE/INVALID evidence CANNOT support PASS ⇒ downgrades overall to NOT_ASSURED; (C) records executedChecks[] + checkResults[] with exit codes + evidence-per-result; (D) exportable, integrity-stamped (contentDigest) report with timestamps/findings/limitations/remediation; (E) always NOT_CERTIFIED. ASSURED_TECHNICAL requires base-assured + technical not-FAIL + no stale/missing evidence. Tests (ai-assurance-report.test.ts, 8): GPL dep⇒technical FAIL exit1⇒NOT_ASSURED; permissive⇒PASS exit0; stale evidence⇒freshness FAIL⇒NOT_ASSURED; verified-base+clean-technical+fresh⇒ASSURED_TECHNICAL; executedChecks/checkResults record exit codes; integrity digest recomputes+tamper-detects+exportJson round-trips; always NOT_CERTIFIED; fail-closed input. HONEST: technical assurance ≠ legal certification/conformity; fresh≠satisfied; CVE not performed. No new primitive (composes existing). Independent audit + CI. Gate: report 8, tsc 0, test:report green.",
+      "acceptance": "The assessment executes real technical checks (with exit codes), gates on evidence freshness (stale⇒not PASS), and emits a reproducible integrity-stamped exportable report; ASSURED is fail-closed; always NOT_CERTIFIED.",
+      "nextAction": "D7 expand: regression/change-monitoring + incident handling + a CLI export. Continue D1-D5 upgrades + D8 building-retrofit first slice.",
+      "staleEvidence": false
     }
   ]
 }
