@@ -1018,12 +1018,12 @@
       "id": "p0-build-guard-per-file-completeness",
       "program": "P0",
       "title": "P0 F2b: build-runtime-guard distIsComplete only checks dir+manifest, not per-file",
-      "status": "DEFERRED",
+      "status": "ACCEPTED",
       "deps": [],
       "priority": 2,
-      "evidence": "Re-audit secondary finding (pre-existing, not caused by the canary fix): scripts/build-runtime-guard.ts distIsComplete() checks only runtime/dist/core existence + manifest presence; deleting a single emitted dist file while keeping the fingerprint causes 'SKIP — dist is fresh' and leaves the file missing ⇒ dist bin MODULE_NOT_FOUND. Latent build-cache correctness gap.",
-      "acceptance": "distIsComplete verifies every expected emitted file exists (or the fingerprint keys on the emitted file set), so a missing dist file forces a rebuild rather than a false 'fresh'.",
-      "nextAction": "Bounded follow-up lot: strengthen distIsComplete per-file; add a negative test (delete one dist file ⇒ rebuild).",
+      "evidence": "PR(this cycle): scripts/build-runtime-guard.ts distIsComplete() now verifies EVERY closure file recorded in dist-closure-manifest.json (provenance.inputs[].distRel) exists on disk; a missing emitted/copied output with unchanged inputs ⇒ NOT complete ⇒ full rebuild (previously SKIP 'fresh' left it missing ⇒ dist bin MODULE_NOT_FOUND — the odg-mission-runner recurrence vector). Fail-closed on malformed/input-less manifest. REPRODUCED the defect (rm runtime/dist/core/canary-decision-pack.js + build:runtime ⇒ SKIP, dist bin crash) then VERIFIED the fix (same steps ⇒ REBUILD, file restored, dist bin IDLE exit 0; a genuinely-complete dist still SKIPs). Parametrized + exported distIsComplete; main() guarded by require.main. Test scripts/build-runtime-guard.test.ts (5): all-present⇒true, deleted-output⇒false, no-inputs⇒false, malformed⇒false, no-core/manifest⇒false. Gate: build-guard 5, tsc 0, build OK, dist bin runs, full test:report 202/202. No new primitive, no mission-allowlist/Truth-Lock change.",
+      "acceptance": "A deleted/missing dist closure output forces a rebuild (not a false 'fresh' SKIP), so the deployed odg-schedule-tick dist bin cannot silently miss a module; verified by reproduce-then-fix and a hermetic regression test.",
+      "nextAction": "None (closed). The core MODULE_NOT_FOUND was already fixed in PR#231; this closes its recurrence vector.",
       "staleEvidence": false
     }
   ]

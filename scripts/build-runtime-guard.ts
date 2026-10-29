@@ -67,8 +67,21 @@ function computeFingerprint(): string {
   return h.digest("hex");
 }
 
-function distIsComplete(): boolean {
-  return fs.existsSync(path.join(DIST, "core")) && fs.existsSync(MANIFEST);
+// A SKIP is safe only when dist is actually COMPLETE: dir+manifest exist AND every closure file the manifest records
+// (provenance.inputs[].distRel — the emitted + copied set) is present on disk. The fingerprint hashes INPUTS only, so a
+// deleted/missing OUTPUT with unchanged inputs would otherwise pass as "fresh" and leave the dist bin crashing
+// MODULE_NOT_FOUND at runtime (the odg-mission-runner recurrence vector). Fail-closed: any missing file / malformed or
+// input-less manifest ⇒ NOT complete ⇒ full rebuild.
+function distIsComplete(distDir: string = DIST, manifestPath: string = MANIFEST): boolean {
+  if (!fs.existsSync(path.join(distDir, "core")) || !fs.existsSync(manifestPath)) return false;
+  let man: any;
+  try { man = JSON.parse(fs.readFileSync(manifestPath, "utf8")); } catch { return false; }
+  const inputs = man && man.provenance && Array.isArray(man.provenance.inputs) ? man.provenance.inputs : null;
+  if (!inputs || inputs.length === 0) return false;   // a manifest without its recorded closure ⇒ rebuild
+  for (const it of inputs) {
+    if (!it || typeof it.distRel !== "string" || !fs.existsSync(path.join(distDir, it.distRel))) return false;
+  }
+  return true;
 }
 
 function run(cmd: string, args: string[]): boolean {
@@ -99,6 +112,7 @@ function main(): void {
   fullBuild(fp);
 }
 
-main();
+if (require.main === module) main();
 
-export {};
+export { distIsComplete, computeFingerprint };
+module.exports = { distIsComplete, computeFingerprint };
