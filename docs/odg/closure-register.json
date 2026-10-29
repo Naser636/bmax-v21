@@ -945,6 +945,86 @@
       "acceptance": "H3 is reconciled and VISIBLE (not silently folded into or omitted from the D1-D8 register): recognized as an internal commercial-ops substrate to consolidate, with the historical CRM 'will not claim' disclaimer preserved; productization DEFERRED to an explicit owner decision that first reconciles that disclaimer; existing modules reused before any new CRM mechanic is built; nothing deleted.",
       "nextAction": "OWNER DECISION: (a) keep as internal substrate (default), or (b) authorize productizing an external multi-tenant CRM — which first requires reconciling the 2026-10-22 'will not claim' disclaimer, then a UI + roles/tenant-isolation + connector layer (new implementation line).",
       "staleEvidence": false
+    },
+    {
+      "id": "p0-source-of-truth-audit",
+      "program": "P0",
+      "title": "P0 Gate A: source-of-truth / execution-chain / deployment audit (read-only)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 0,
+      "evidence": "docs/odg/SOURCE_OF_TRUTH_AUDIT.md — read-only audit @ main HEAD 10af72f (= the VPS-diagnostic commit). Verified all 7 CTO observations: #1 VPS=main HEAD; #2/#3 canary synthetic-queue + no-provider = DOCUMENTED INTENTIONAL design (odg-schedule-tick.ts:19-23); #4 odg-campaign-run NO_EXECUTOR_AUTHORIZED = correct fail-closed (real 'verification' executor exists); #5 truth-lock refusal = correct opt-in enforce; #6 stale deploy headers = real source contradiction (F1); #7 unmerged work = superseded (F3). Two read-only audit subagents + own spot-verification. Chain is fail-closed & tested: 3 distinct non-conflated paths, paid-provider gate wired both adapters+fleet-bridge default-REFUSED zero-spawn, no state conflation. Real issues: F0 canary code fail-open (fixed), F1 stale deploy/governance headers (owner), F2 provenance disconnect, F3 superseded branches, F4 minor/documented.",
+      "acceptance": "A complete evidence-cited Gate A report distinguishing proven-fact / intentional-design / confirmed-defect, with a prioritized root-cause list and a source/tests/integrated/deploy-prepared/deploy-verified/VPS-reserved matrix; no deployment state claimed; register is SSOT.",
+      "nextAction": "Owner clears F1/F3 governance decisions; F0 merged this cycle.",
+      "staleEvidence": false
+    },
+    {
+      "id": "p0-canary-readonly-codeguard",
+      "program": "P0",
+      "title": "P0 Gate B: code-enforce the canary read-only guard (close allowlist-only fail-open) + fix dist emission",
+      "status": "ACCEPTED",
+      "deps": [
+        "p0-source-of-truth-audit"
+      ],
+      "priority": 0,
+      "evidence": "PR(this cycle): runtime/bin/odg-schedule-tick.ts — authorize now runs canary-decision-pack.assessCanaryCandidate over the mission's OWN definition (pure canarySpecFromMission + loadMissionSpec); DEFAULT-DENY by explicit read-only mode allowlist {READ_ONLY,READONLY,OBSERVATION,ANALYZE,AUDIT,DIAGNOSTIC,HEALTH} — any other/absent/unknown mode, non-empty authorized_paths, network/spend/destructive, OR a missing/non-string-mode/unreadable definition ⇒ BLOCKED, NEVER dispatched. tsconfig.runtime-dist.json +canary-decision-pack.ts (dist bin was crashing MODULE_NOT_FOUND). No new primitive (wires an existing, previously-unwired classifier). INDEPENDENT AUDIT: initial REJECT (2 real defects — default-admit fail-open: real mutating missions BOOTSTRAP_RUNTIME_ENGINEERING/PATCH_RUNTIME_KERNEL/etc. dispatched; + dist omitted canary-decision-pack). FIXED (default-deny mode allowlist + dist file-list) + RE-AUDIT ACCEPT_WITH_CAVEATS (245/258 real missions BLOCKED, 13 genuinely read-only admitted, the 4 flagged now BLOCKED in source AND dist; positive control G10_READONLY_AUTONOMY_PROBE admitted; ANALYZE+authorized_paths refused). Residual caveat (array-mode String() coercion) CLOSED with a typeof guard + test. Tests odg-schedule-tick.test.ts 8→14 incl. allowlisted-mutating, real-loader regression (real BOOTSTRAP file ⇒ BLOCKED), non-string-mode. Gate: tsc 0, build OK, dist bin runs, e2e real-artifact ALL PASS, full test:report 201/201.",
+      "acceptance": "The canary cannot dispatch a mutating/engineering mission via the allowlist alone: an allowlisted mission is admitted only if its own definition proves read-only (explicit mode + no paths/network/spend/destructive), fail-closed on malformed/missing/non-string-mode; enforced in BOTH source and the dist artifact; independent re-audit confirms no real mutating mission dispatches; residual type-confusion caveat fixed+tested.",
+      "nextAction": "Owner: F1 deploy-header + governance-scope reconciliation; optionally harden build-runtime-guard per-file completeness (p0-build-guard-per-file).",
+      "staleEvidence": false
+    },
+    {
+      "id": "p0-deploy-artifact-header-reconcile",
+      "program": "P0",
+      "title": "P0 F1: reconcile stale deploy artifact headers ('NOT installed') with reality",
+      "status": "BLOCKED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "docs/odg/SOURCE_OF_TRUTH_AUDIT.md F1: deploy/odg-preprod.service.candidate + deploy/odg-mission-runner.service self-describe 'NOT installed / DESIGN ARTIFACT' while ODG_PROJECT_STATE.md:1854,1856 records them installed+active. Flipping the headers to 'installed' would CLAIM a VPS state that cannot be verified from the repo (VPS off-limits) and the newest repo deploy evidence (VPS_STATUS.md:49 = e84a0cf, 141 commits stale) does not corroborate '10af72f'.",
+      "acceptance": "Headers reconciled to the ACTUAL installed state once that state is independently confirmed (VPS read-only check by the owner), without inventing deployment proof.",
+      "nextAction": "OWNER: provide a read-only VPS systemctl status (or authorize a read-only probe from a reaching context); then reconcile headers to match.",
+      "staleEvidence": false,
+      "blockReason": "VPS off-limits this campaign; deploy state not verifiable from repo (newest evidence e84a0cf, 141 commits stale).",
+      "humanActionRequired": "Owner reports which odg-* units are actually installed/active via a READ-ONLY VPS systemctl check; headers are then reconciled to that verified state (no invented proof).",
+      "resumeTest": "grep -nE 'NOT installed|DESIGN ARTIFACT' deploy/odg-*.service* reflects the owner-confirmed reality; SOURCE_OF_TRUTH_AUDIT.md F1 marked RESOLVED."
+    },
+    {
+      "id": "p0-governance-scope-amend",
+      "program": "P0",
+      "title": "P0 F1: ODG_AUTONOMOUS_WORK_PROTOCOL.json current_campaign_scope is stale (authorizes removed .js write-set)",
+      "status": "BLOCKED",
+      "deps": [],
+      "priority": 1,
+      "evidence": "SOURCE_OF_TRUTH_AUDIT.md F1: the protocol's current_campaign_scope (status ACTIVE) still authorizes the RC1-RC5 write-set whose runtime/core/*.js paths were removed in the ZERO-JS migration and whose branch was never merged. The protocol is a PROTECTED governance path — amendment requires the governance mechanism, NOT a unilateral edit by the bounded provider.",
+      "acceptance": "current_campaign_scope amended (DEFERRED/SUPERSEDED/CLOSED) via the governance approval mechanism, reflecting that the RC campaign was superseded by ZERO-JS.",
+      "nextAction": "OWNER/CTO: amend the protocol's current_campaign_scope via governance (provider will not edit a protected path).",
+      "staleEvidence": false,
+      "blockReason": "ODG_AUTONOMOUS_WORK_PROTOCOL.json is a protected governance path; amendment needs the CTO mechanism, not a provider edit.",
+      "humanActionRequired": "CTO amends current_campaign_scope (ACTIVE -> SUPERSEDED) via governance; the RC1-RC5 .js write-set was removed by ZERO-JS and never merged.",
+      "resumeTest": "current_campaign_scope.status in ODG_AUTONOMOUS_WORK_PROTOCOL.json reads non-ACTIVE (SUPERSEDED/CLOSED)."
+    },
+    {
+      "id": "p0-unmerged-branch-disposition",
+      "program": "P0",
+      "title": "P0 F3: dispose of superseded unmerged branches (8+1 commits on removed .js files)",
+      "status": "DEFERRED",
+      "deps": [],
+      "priority": 2,
+      "evidence": "SOURCE_OF_TRUTH_AUDIT.md F3: worktree-stabilization+controlled-odg (8 commits) + dashboard-isolated@520b6d8 (1) edit runtime/core/*.js removed by ZERO-JS; main has TS ports (dashboard one improved). Not mergeable as-is; whether governed-web-fetch.js logic was re-implemented (main grew bounded-http-client.ts) is UNVERIFIED. Inventory only — nothing deleted.",
+      "acceptance": "Owner decides discard vs TS re-implementation; if re-implement, a behavior diff vs current main confirms parity. Branches/worktrees preserved until the decision.",
+      "nextAction": "OWNER: confirm discard, or request a TS re-implementation + behavior diff of the specific fixes.",
+      "staleEvidence": false
+    },
+    {
+      "id": "p0-build-guard-per-file-completeness",
+      "program": "P0",
+      "title": "P0 F2b: build-runtime-guard distIsComplete only checks dir+manifest, not per-file",
+      "status": "DEFERRED",
+      "deps": [],
+      "priority": 2,
+      "evidence": "Re-audit secondary finding (pre-existing, not caused by the canary fix): scripts/build-runtime-guard.ts distIsComplete() checks only runtime/dist/core existence + manifest presence; deleting a single emitted dist file while keeping the fingerprint causes 'SKIP — dist is fresh' and leaves the file missing ⇒ dist bin MODULE_NOT_FOUND. Latent build-cache correctness gap.",
+      "acceptance": "distIsComplete verifies every expected emitted file exists (or the fingerprint keys on the emitted file set), so a missing dist file forces a rebuild rather than a false 'fresh'.",
+      "nextAction": "Bounded follow-up lot: strengthen distIsComplete per-file; add a negative test (delete one dist file ⇒ rebuild).",
+      "staleEvidence": false
     }
   ]
 }

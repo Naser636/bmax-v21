@@ -15,6 +15,13 @@
  * Allowlist is DENY-BY-DEFAULT and READ-ONLY: `ODG_CANARY_ALLOWLIST` (comma-separated mission ids). Empty ⇒
  * the tick is a safe no-op (IDLE). Widening to consequential missions is a SEPARATE CTO decision. The tick
  * never calls a provider (no provider is constructed; read-only missions require none).
+ * READ-ONLY IS NOW CODE-ENFORCED (default-DENY), not allowlist-trust: `authorize` additionally runs
+ * `canary-decision-pack` over the mission's OWN definition and ADMITS only a mission whose declared `mode` is in an
+ * explicit read-only set (READ_ONLY/OBSERVATION/ANALYZE/AUDIT/DIAGNOSTIC/HEALTH) AND which declares no
+ * engineering/authorized_paths/network/spend/destructive. Any other mode (SEQUENTIAL, ENGINEERING, IMPLEMENT,
+ * AUTONOMOUS_x, REPAIR, etc.), an absent/unknown mode, or a missing/unreadable definition ⇒ BLOCKED, never dispatched.
+ * The absence of a mutation flag is NOT read as read-only. The allowlist alone cannot promote the canary into an
+ * engineering executor.
  *
  * QUEUE SOURCE: this tick injects into mission-scheduler a SYNTHETIC, allowlist-derived queue (one PENDING item
  * per allowlist id) — an ISOLATED canary interface BY DESIGN, NOT the canonical runtime pending-queue. This is
@@ -46,6 +53,7 @@ const reviewExcellence = buildExcellenceReviewer((mission: any) => ({ domain: "a
 const { truthLockGate } = require(path.join(ROOT, corePort("runtime/core/truth-lock-gate.js")));
 const { recordAttempt } = require(path.join(ROOT, corePort("runtime/core/mission-attempt-log.js")));
 const AUDIT = require(path.join(ROOT, corePort("runtime/core/audit-log.js")));   // tamper-evident canary decision log
+const CANARY = require(path.join(ROOT, corePort("runtime/core/canary-decision-pack.js")));   // read-only safety classifier (fail-closed)
 
 const ALLOW: Set<string> = new Set((process.env.ODG_CANARY_ALLOWLIST || "").split(",").map((s: string) => s.trim()).filter(Boolean));
 const LOG = path.join(ROOT, "runtime", "generated", "mission-attempt-log.jsonl");
@@ -65,6 +73,44 @@ function provenSet(): Set<string> {
     return new Set(e.filter((x: any) => x && x.proven === true).map((x: any) => x.mission));
   } catch { return new Set(); }
 }
+// Load a mission's definition and project it onto the canary-safety spec (snake- AND camel-case tolerant). Fail-closed:
+// a missing/unreadable mission file ⇒ null ⇒ the safety gate REFUSES (an unknown mission is never canary-safe).
+// DEFAULT-DENY: a mission counts as canary-safe (non-engineering) ONLY if its declared `mode` is in this explicit
+// read-only set. Absent/unknown/any mutating mode (SEQUENTIAL, ENGINEERING, IMPLEMENT, REPAIR, AUTONOMOUS_*, …) ⇒
+// treated as engineering ⇒ refused. (The absence of a mutation FLAG must never be read as proof of read-only — many
+// real mission files predate the requires_engineering/authorized_paths schema yet are mutating, e.g. mode=IMPLEMENT.)
+const CANARY_READONLY_MODES: Set<string> = new Set(["READ_ONLY", "READONLY", "OBSERVATION", "ANALYZE", "AUDIT", "DIAGNOSTIC", "HEALTH"]);
+// PURE projection of a mission object → canary-safety spec (exported for direct unit testing of the classification).
+function canarySpecFromMission(m: any, missionId: string): any {
+  if (m === null || typeof m !== "object") return null;
+  const authorizedPaths = Array.isArray(m.authorized_paths) ? m.authorized_paths : (Array.isArray(m.authorizedPaths) ? m.authorizedPaths : []);
+  const pol = (m && typeof m.policies === "object" && m.policies) || {};
+  // typeof guard: a non-string mode (array/object/number/null) must NOT coerce (e.g. ["READ_ONLY"].toString()==="READ_ONLY")
+  // into an admitted mode — a malformed mode ⇒ "" ⇒ not in the allowlist ⇒ refused (fail-closed).
+  const mode = typeof m.mode === "string" ? m.mode.toUpperCase().trim() : "";
+  const explicitlyReadOnly = CANARY_READONLY_MODES.has(mode) && m.requires_engineering !== true && m.requiresEngineering !== true;
+  return {
+    mission: missionId,
+    requiresEngineering: !explicitlyReadOnly,   // fail-closed: only an EXPLICIT read-only mode (+ no eng flag) admits
+    authorizedPaths,
+    network: m.network === true, requiresNetwork: m.requires_network === true || m.requiresNetwork === true,
+    spend: m.spend === true, budgetEur: typeof m.budgetEur === "number" ? m.budgetEur : (typeof pol.budgetEur === "number" ? pol.budgetEur : 0),
+    destructive: m.destructive === true,
+  };
+}
+function loadMissionSpec(missionId: string): any {
+  try { return canarySpecFromMission(JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "missions", missionId + ".json"), "utf8")), missionId); }
+  catch { return null; }
+}
+// Code-enforced read-only safety for a canary mission (closes the allowlist-only fail-open): an allowlisted mission is
+// still REFUSED unless its own definition proves it read-only/no-network/no-spend/non-destructive (canary-decision-pack).
+function assessCanarySafety(missionId: string, loadSpec?: (id: string) => any): { safe: boolean; reason: string } {
+  const spec = (loadSpec || loadMissionSpec)(missionId);
+  if (!spec) return { safe: false, reason: `CANARY_SPEC_UNAVAILABLE: ${missionId} (no mission definition — refused fail-closed)` };
+  const a = CANARY.assessCanaryCandidate(spec);
+  return a.safe === true ? { safe: true, reason: "read-only canary allowlist (safety-assessed)" } : { safe: false, reason: `CANARY_REFUSES_NON_READONLY: ${(a.blockers || []).join("; ")}` };
+}
+
 // Dispatch via the REAL governed pipeline (dist odg-run), inheriting the enforcement env.
 function dispatch(item: any): any {
   const runBin = corePort("runtime/bin/odg-run.js");
@@ -109,7 +155,14 @@ function tickOnce(opts: any = {}): any {
     queue: { queue: [...allow].map((m) => ({ mission: m, status: "PENDING" })) },
     preAuthorized: [...allow],
     isProven: (id: string) => (typeof proven.has === "function" ? proven.has(id) : false),
-    authorize: (item: any) => allow.has(item.mission) ? { ok: true, reason: "read-only canary allowlist" } : { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` },
+    // Deny-by-default: allowlist membership AND a code-enforced read-only safety assessment (fail-closed). An
+    // allowlisted-but-mutating/network/spend/destructive mission is REFUSED here and never dispatched to odg-run —
+    // the canary cannot become an engineering executor via the allowlist alone. opts.assessSafety injectable for tests.
+    authorize: (item: any) => {
+      if (!allow.has(item.mission)) return { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` };
+      const s = (opts.assessSafety || ((id: string) => assessCanarySafety(id, opts.loadSpec)))(item.mission);
+      return s.safe ? { ok: true, reason: s.reason } : { ok: false, reason: s.reason };
+    },
     policy: { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 },
     recordAttempt: opts.recordAttempt || ((d: any) => { try { recordAttempt(LOG, { mission: (d && d.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } }),
     dispatch: opts.dispatch || dispatch,
@@ -119,6 +172,6 @@ function tickOnce(opts: any = {}): any {
   return schedulerStep(ctx);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, AUDIT_CHAIN_PATH };
+module.exports = { tickOnce, readAuditChain, persistAuditChain, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES };
 if (require.main === module) main();
 export {};
