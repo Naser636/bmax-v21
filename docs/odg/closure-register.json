@@ -630,6 +630,20 @@
       "acceptance": "Each campaign run can durably record its metrics; runs aggregate across invocations; a before/after delta is produced only when both measurement sets exist (else unmeasured). Default behaviour unchanged (opt-in).",
       "nextAction": "Accumulate journal entries over real cycles to produce a genuine before/after; feed summarizeJournal into the owner dashboard. Next ENGINE-EXCELLENCE candidate: learning-reuse demonstrability (Priority 5).",
       "staleEvidence": false
+    },
+    {
+      "id": "engine-mission-evidence-gate",
+      "program": "P1",
+      "title": "ENGINE EXCELLENCE #2: proof-carrying mission evidence + adversarial false-success gate (Mandate C/D)",
+      "status": "ACCEPTED",
+      "deps": [
+        "engine-journal-observability"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): runtime/core/mission-evidence.ts = structured proof-carrying execution record (objective/acceptance, authorization+write-scope, input provenance, executed commands+exit codes, artifacts, independent verification, limitations, transition+reason) made TAMPER-EVIDENT via evidence-provenance.contentDigest (verifyDigest). assertAcceptable = adversarial FALSE-SUCCESS gate (deny-by-default): an ACCEPTED claim is acceptable ONLY with a decisive exit-0 command AND no non-zero exit (a success-looking stdout cannot mask a failing exit code) AND every declared artifact present AND (default) an independent verification that AGREES; contradictions surfaced. Wired OPT-IN into campaign-loop.ts: an executor returning a `proof` record must pass the gate before ACCEPTED is terminal — else converted to FAILED (no false terminal); NO proof ⇒ legacy behaviour unchanged (backward compatible). Composes EVIDENCE/evidence-provenance; NO 10th primitive. Tests (mission-evidence.test.ts, 11, adversarial/counter-evidence per Mandate D): exit!=0-not-maskable, deny-by-default (no command), missing-artifact, verification-required-by-default, contradiction, BLOCKED/FAILED-always-acceptable, tamper-detected, LOOP integration (failing proof⇒lot NOT ACCEPTED/not COMPLETED; passing proof⇒ACCEPTED), legacy no-proof path unchanged. Regression: campaign-loop 13/13 unchanged. 9 primitives intact. Independent audit + CI. Gate: mission-evidence 11/11 exit 0, tsc 0, test:report green.",
+      "acceptance": "A campaign acceptance can be gated on reproducible, tamper-evident proof; a passing-looking output cannot mask a non-zero exit / missing artifact / absent verification; default (no proof) behaviour unchanged.",
+      "nextAction": "Have the `verification` executor (odg-campaign-run) emit a `proof` record so real runs are gated end-to-end; feed records into audit-log hash-chain. Next: Priority-5 learning-reuse PROOF.",
+      "staleEvidence": false
     }
   ]
 }

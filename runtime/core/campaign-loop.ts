@@ -18,6 +18,7 @@
 
 const C = require("./campaign-controller.js");
 const M = require("./campaign-metrics.js");
+const MEV = require("./mission-evidence.js");
 
 // Loop-level stop reasons (distinct from per-lot status).
 const STOP = ["COMPLETED", "IDLE_BLOCKED", "WAITING_EXTERNAL", "MAX_ITERATIONS", "STOP_REQUESTED"];
@@ -72,6 +73,17 @@ function runCampaignLoop(opts: any = {}): any {
     if (!isObj(res) || !VERDICT.includes(res.status)) res = { status: "FAILED", reason: "execute returned no valid verdict", retryable: false };
 
     if (res.status === "ACCEPTED") {
+      // OPT-IN false-success gate: if the executor returns a `proof` record, acceptance must pass the adversarial
+      // mission-evidence gate (decisive exit 0, artifacts present, independent verification) — a non-empty evidence
+      // string alone is not proof. No `proof` ⇒ unchanged behaviour (backward compatible).
+      if (isObj(res.proof)) {
+        const gate = MEV.assertAcceptable(res.proof, { requireVerification: res.requireVerification !== false });
+        if (!gate.acceptable) {
+          C.advance(register, lot.id, { attemptFailed: true, reason: `evidence gate rejected acceptance: ${gate.reasons.join("; ")}` });
+          rec({ lot: lot.id, event: "FAILED", reason: `evidence-gate: ${gate.reasons.join("; ")}` });
+          C.reconcile(register, { demote: true }); persist(); iter++; continue;   // NOT a terminal success
+        }
+      }
       const r = C.advance(register, lot.id, { status: "ACCEPTED", evidence: res.evidence });
       if (!r.ok) {                                    // fail-closed: ACCEPTED claimed without evidence ⇒ NOT a terminal success
         C.advance(register, lot.id, { attemptFailed: true, reason: `ACCEPTED rejected: ${r.code}` });
