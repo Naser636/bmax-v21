@@ -687,6 +687,24 @@
       "acceptance": "TOML/XML/INI execute real well-formedness checks with 0 false PASS on malformed input, probe-gated UNSUPPORTED when python3 absent, routed through the code-review service; no owner action required.",
       "nextAction": "Further families needing a binary (hadolint/others) remain owner-gated (see new-language-families).",
       "staleEvidence": false
+    },
+    {
+      "id": "field-validation-readiness",
+      "program": "P2",
+      "title": "§4 field-validation readiness: exact external case per domain to raise PARTIAL→higher (fail-closed)",
+      "status": "ACCEPTED",
+      "deps": [
+        "ese-code-review-service",
+        "sbom-audit-service",
+        "data-quality-service",
+        "finance-reconciliation-service",
+        "regulatory-dossier-service"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): runtime/core/field-validation-readiness.ts documents, per the 5 business domains, the EXACT external case needed to move PARTIAL→higher proof (required data/environment, consent, success criteria, expected results, risks, owner action) as a MACHINE-CHECKABLE, FAIL-CLOSED contract: every domain is NOT_FIELD_VALIDATED until real owner-confirmed evidence meeting pre-registered success criteria is supplied; the module NEVER contacts anyone, transmits data, or declares a field result on its own (pure/offline). assessFieldValidation grades supplied evidence (realCaseRef+ownerConfirmed+meetsSuccessCriteria all required) — graded, never fabricated. Tests (field-validation-readiness.test.ts, 6): 5 domains PARTIAL+NOT_FIELD_VALIDATED; full requiredEvidence contract+ownerAction each; no/partial evidence⇒NOT_FIELD_VALIDATED; complete evidence⇒FIELD_VALIDATED (graded); unknown domain⇒fail-closed. NO new primitive. Independent audit + CI. Gate: tsc 0, test:report green. This is readiness PREP (owner must authorize each real engagement) — it does NOT change any domain's PARTIAL status.",
+      "acceptance": "Each of the 5 domains has a complete, fail-closed external-validation contract; no domain is declared field-validated without real owner-confirmed evidence meeting its success criteria.",
+      "nextAction": "Owner authorizes a real external engagement per domain (NDA/data/consent); then supply field evidence to assessFieldValidation. Domains stay PARTIAL until then.",
+      "staleEvidence": false
     }
   ]
 }
