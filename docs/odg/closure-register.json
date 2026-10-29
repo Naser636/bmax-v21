@@ -527,6 +527,20 @@
       "acceptance": "A measured per-run baseline exists for the campaign loop (counts, success rate, retries, timing when clocked); metrics the loop cannot observe stay null, never invented.",
       "nextAction": "Reuse summarizeRun output to compare before/after method changes via improvement-baseline.measureDelta; instrument per-phase/test metrics at the mission/gate layer (separate lot) to fill the honest nulls.",
       "staleEvidence": false
+    },
+    {
+      "id": "ese-code-review-service",
+      "program": "P2",
+      "title": "Enterprise SW Engineering capability #1: code-review service (real analyzers → severity findings → SARIF) + real CLI",
+      "status": "ACCEPTED",
+      "deps": [
+        "campaign-metrics-instrumentation"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): FIRST end-to-end business capability delivered (not an interface/doc). runtime/core/code-review-service.ts COMPOSES proven primitives (code-execution multi-language checkers + sarif-report) into an engineering REVIEW: reviewProject() runs REAL reproducible analyzers (compile/type via runSyntaxCheck; shellcheck lint for Shell) over a project and returns severity-ranked findings in the exact {id,area,severity,detail,remediation,evidence} shape sarif-report consumes; reviewToSarif() emits valid SARIF 2.1.0 (GitHub/VS-Code consumable). runtime/bin/odg-code-review.ts = REAL CLI (read-only dir scan, skips node_modules/.git/dist, bounded) printing JSON or --sarif; the productization the capability inventory found MISSING (code-health-service was injected-tested + unwired). Tests (code-review-service.test.ts, 10): REAL subprocess execution — clean JS passes real `node --check` (clean=true), broken JS FAILS (1 HIGH compile finding, reproducible evidence, 0 false PASS), valid SARIF 2.1.0 (HIGH→error) via INDEPENDENT isValidSarif, unsupported language + absent toolchain declared and NEVER counted clean (fail-closed), real shellcheck MEDIUM lint finding, and the REAL CLI run as a SPAWNED PROCESS over a fixture dir (default + --sarif). HONESTY: a syntax/type/lint review is NOT a security audit/certification/correctness proof; coverage gaps excluded from the verdict, never faked. No new primitive (9 intact). Gate: test:report green, tsc 0, build-dist-closure OK. Independent verification: read-only audit agent + CI.",
+      "acceptance": "A real project is reviewed by real analyzers end-to-end (service + CLI), findings are severity-ranked with reproducible evidence and exported as valid SARIF 2.1.0; broken code yields findings (0 false PASS) and coverage gaps are never reported clean.",
+      "nextAction": "Extend analyzers (eslint/ruff/semgrep adapters as toolchains allow) and add project-mode TS review via ts-project-check; pursue a real (non-self) client repo review as the PROVEN milestone for domain #1. Other Runtime-Enterprise specialties (#2 Cyber&Compliance, #3 Financial Auditing, #4 Executive Runtime) remain PARTIAL — independent lots.",
+      "staleEvidence": false
     }
   ]
 }
