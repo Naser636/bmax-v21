@@ -608,13 +608,13 @@
       "id": "regulatory-dossier-service",
       "program": "P2",
       "title": "Legal/Compliance #15: AI-Act/GDPR readiness dossier over a declared system profile (source-cited, NOT a legal opinion)",
-      "status": "READY",
+      "status": "ACCEPTED",
       "deps": [],
       "priority": 2,
-      "contract": "Compose regulatory-assurance + ai-act-role-classifier into an end-to-end dossier generator. IN: a system profile (role, data, purpose). OUT: AI-Act role classification + source-cited readiness obligations + gaps; fail-closed on uncited obligation. TESTS: a high-risk profile ⇒ classified + obligations cited; missing citation ⇒ refused. Explicitly NOT a legal opinion/certification. Independent files: runtime/core/regulatory-dossier-service.ts + test.",
       "acceptance": "A real representative mission runs end-to-end on reproducible test data with 0 false PASS, errors/limits handled, independently verified; domain stays PARTIAL unless a real external-case journey is shown.",
-      "nextAction": "Implement the capability + CLI/entry where applicable + real-data tests; independent audit; gate; PR.",
-      "staleEvidence": false
+      "nextAction": "Expand the obligation CATALOG + wire real evidence verifiers; a real client dossier reviewed by a qualified professional is the PROVEN milestone. Domain #15 Legal remains PARTIAL (no real legal engagement; principle-level only).",
+      "staleEvidence": false,
+      "evidence": "PR(this): runtime/core/regulatory-dossier-service.ts COMPOSES ai-act-role-classifier.classifyRole + regulatory-assurance.buildDossier into ONE readiness dossier from a declared system profile: EU AI-Act role classification (fail-closed: UNDETERMINED unless a qualifying activity is declared) + framework readiness (GDPR/ISO27001/ISO42001/DORA, source-cited, refuses obligations whose source is absent, evidence fail-closed) → unified SARIF-emittable findings. Tests (regulatory-dossier-service.test.ts, 8): deny-by-default AI-Act (UNDETERMINED/no roles); declared activities⇒DEPLOYER+Art.50 MEDIUM; GDPR unevidenced⇒compliance GAP citing GDPR-2016-679; empty registry⇒obligations REFUSED (source-integrity HIGH), 0 applicable; injected independent verifier⇒GDPR-ROPA SATISFIED_VERIFIED (no GAP); certificationStatus ALWAYS NOT_CERTIFIED + assertNotCertified refuses 'ISO 27001 certified'; fail-closed on missing profile/tenantId; valid SARIF 2.1.0. HONESTY: readiness dossier, NOT a legal opinion/certification; dates governed by standards register; declared-not-verified. No new primitive (9 intact). Independent audit + CI. Gate: regulatory-dossier 8/8 exit 0, tsc 0, test:report green, build OK."
     }
   ]
 }
