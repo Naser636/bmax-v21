@@ -982,7 +982,10 @@
       "evidence": "docs/odg/SOURCE_OF_TRUTH_AUDIT.md F1: deploy/odg-preprod.service.candidate + deploy/odg-mission-runner.service self-describe 'NOT installed / DESIGN ARTIFACT' while ODG_PROJECT_STATE.md:1854,1856 records them installed+active. Flipping the headers to 'installed' would CLAIM a VPS state that cannot be verified from the repo (VPS off-limits) and the newest repo deploy evidence (VPS_STATUS.md:49 = e84a0cf, 141 commits stale) does not corroborate '10af72f'.",
       "acceptance": "Headers reconciled to the ACTUAL installed state once that state is independently confirmed (VPS read-only check by the owner), without inventing deployment proof.",
       "nextAction": "OWNER: provide a read-only VPS systemctl status (or authorize a read-only probe from a reaching context); then reconcile headers to match.",
-      "staleEvidence": false
+      "staleEvidence": false,
+      "blockReason": "VPS off-limits this campaign; deploy state not verifiable from repo (newest evidence e84a0cf, 141 commits stale).",
+      "humanActionRequired": "Owner reports which odg-* units are actually installed/active via a READ-ONLY VPS systemctl check; headers are then reconciled to that verified state (no invented proof).",
+      "resumeTest": "grep -nE 'NOT installed|DESIGN ARTIFACT' deploy/odg-*.service* reflects the owner-confirmed reality; SOURCE_OF_TRUTH_AUDIT.md F1 marked RESOLVED."
     },
     {
       "id": "p0-governance-scope-amend",
@@ -994,7 +997,10 @@
       "evidence": "SOURCE_OF_TRUTH_AUDIT.md F1: the protocol's current_campaign_scope (status ACTIVE) still authorizes the RC1-RC5 write-set whose runtime/core/*.js paths were removed in the ZERO-JS migration and whose branch was never merged. The protocol is a PROTECTED governance path — amendment requires the governance mechanism, NOT a unilateral edit by the bounded provider.",
       "acceptance": "current_campaign_scope amended (DEFERRED/SUPERSEDED/CLOSED) via the governance approval mechanism, reflecting that the RC campaign was superseded by ZERO-JS.",
       "nextAction": "OWNER/CTO: amend the protocol's current_campaign_scope via governance (provider will not edit a protected path).",
-      "staleEvidence": false
+      "staleEvidence": false,
+      "blockReason": "ODG_AUTONOMOUS_WORK_PROTOCOL.json is a protected governance path; amendment needs the CTO mechanism, not a provider edit.",
+      "humanActionRequired": "CTO amends current_campaign_scope (ACTIVE -> SUPERSEDED) via governance; the RC1-RC5 .js write-set was removed by ZERO-JS and never merged.",
+      "resumeTest": "current_campaign_scope.status in ODG_AUTONOMOUS_WORK_PROTOCOL.json reads non-ACTIVE (SUPERSEDED/CLOSED)."
     },
     {
       "id": "p0-unmerged-branch-disposition",
