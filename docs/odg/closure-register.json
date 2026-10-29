@@ -777,6 +777,20 @@
       "acceptance": "Real CII and UBL XML parse into the model with exact Decimal→minor amounts and flow into EN16931-core validation; malformed/unsupported/rule-violating XML produce explicit findings; supported subset + known gaps enumerated (no full-conformance claim).",
       "nextAction": "e-invoice: extract Factur-X PDF/A-3 embedded XML; add party tax-id (SIREN/VAT) + VAT breakdown (BG-23) + allowances/charges mapping + more EN16931 rules; Chorus Pro/PDP interop (owner-gated). Then ai-assurance assessment slice (composes existing).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-einvoice-facturx-slice3",
+      "program": "P2",
+      "title": "PRODUCT e-invoice SLICE 3: Factur-X PDF → embedded-XML extraction → parse → validate (Node zlib, no PDF lib)",
+      "status": "ACCEPTED",
+      "deps": [
+        "product-einvoice-parser-slice2"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/factur-x-extract.ts completes the e-invoice e2e: a Factur-X PDF → BOUNDED SAFE embedded-invoice-XML extraction → existing einvoice-parser (CII/UBL) → einvoice-validator (EN16931-core). NO PDF library is installed (pdfdetach/pikepdf/pypdf/qpdf/mutool all ABSENT, verified) and NONE installed; extraction uses ONLY Node built-in zlib (FlateDecode) with a decompression-bomb cap (maxOutputLength). Detects %PDF- header; scans ≤400 streams; inflates (Flate/raw) or uses raw bytes (bounded); recognises CII/UBL by hint; associates the embedded name (factur-x/zugferd-invoice/xrechnung/order-x.xml). FAIL-CLOSED: not-PDF⇒NOT_PDF, no candidate⇒NO_EMBEDDED_INVOICE, >1 distinct⇒AMBIGUOUS_EMBEDDED, oversize⇒TOO_LARGE, malformed embedded XML⇒downstream PARSE_ERROR. SAFE: input bounded, nothing executed (no JS/shell/PDF actions), XXE/billion-laughs in the embedded XML blocked DOWNSTREAM by einvoice-parser's python3 ElementTree (audit-verified). Does NOT reimplement parse/validate logic. Tests (factur-x-extract.test.ts, 9): valid Factur-X⇒extract+valid; wrong embedded total⇒BR-CO-15 invalid; uncompressed embedded⇒valid; not-PDF⇒NOT_PDF; no-embedded⇒NO_EMBEDDED_INVOICE; 2 distinct⇒AMBIGUOUS; malformed⇒PARSE_ERROR; oversize⇒TOO_LARGE; knownGaps enumerated. HONEST SUPPORTED SUBSET: plain/single-FlateDecode embedded CII/UBL in a PDF/A-3 attachment. KNOWN GAPS: encrypted PDFs, /ObjStm or xref-stream-hidden attachments, non-Flate/multi-filter compression, strict PDF/A-3 conformance, PDF signature verification — NOT full Factur-X/PDF-A3/EN16931 conformance. No new primitive. Independent audit + CI. Gate: factur-x 9, tsc 0, test:report green. FIXTURES: minimal synthetic PDF containers exercise the extraction path; real-world PDF/A-3 structural robustness is a documented gap (field test needed).",
+      "acceptance": "A Factur-X PDF with an embedded (Flate or raw) CII/UBL invoice XML is extracted (bounded, untrusted, nothing executed) and validated EN16931-core end-to-end; not-PDF/no-embedded/ambiguous/oversize/malformed fail-closed; supported subset + known gaps enumerated (no full-conformance claim).",
+      "nextAction": "Real-world robustness needs a maintained PDF tool (pdfdetach/pikepdf) — OWNER-GATED install (document the precise dependency); add object-stream/xref-stream handling + PDF signature verification. Then ai-assurance assessment slice (independent scope).",
+      "staleEvidence": false
     }
   ]
 }
