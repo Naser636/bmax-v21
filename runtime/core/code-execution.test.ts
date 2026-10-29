@@ -57,6 +57,9 @@ ok("Java toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ langu
 // CSharp/compile IS wired now (authorized Mono mcs): real `mcs -target:library` type check — argv-array; no env clobber.
 ok("CSharp in LANG_SPEC: argv-array `mcs -target:library`", E.LANG_SPEC.CSharp && E.LANG_SPEC.CSharp.bin === "mcs" && E.LANG_SPEC.CSharp.args("f").includes("-target:library"));
 ok("CSharp toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "CSharp", content: "public class M{}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
+// HTML-CSS validate IS wired now (authorized HTML Tidy): errors-only mode (warnings suppressed).
+ok("HtmlCss in LANG_SPEC: argv-array `tidy -q -e --show-warnings no`", E.LANG_SPEC.HtmlCss && E.LANG_SPEC.HtmlCss.bin === "tidy" && E.LANG_SPEC.HtmlCss.args("f").includes("-e") && E.LANG_SPEC.HtmlCss.args("f").includes("no"));
+ok("HtmlCss toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "HtmlCss", content: "<p>x</p>", toolchainAvailable: false }).status === "UNSUPPORTED");
 // a genuinely unknown stack stays UNSUPPORTED (no decoy).
 ok("unknown stack (COBOL) ⇒ UNSUPPORTED (no decoy)", !E.LANG_SPEC.COBOL && E.runSyntaxCheck({ language: "COBOL", content: "x" }).status === "UNSUPPORTED");
 
@@ -81,6 +84,8 @@ const realCases = [
   ["Java", "class Calc { int f(){ String s = 5; return s; } }\n", "FAIL"],
   ["CSharp", "public class Calc { public int Add(int a, int b){ return a + b; } }\n", "PASS"],
   ["CSharp", "public class C { public int F(){ string s = 5; return s; } }\n", "FAIL"],
+  ["HtmlCss", "<!DOCTYPE html><html lang=\"en\"><head><title>A</title></head><body><p>Hi</p></body></html>", "PASS"],
+  ["HtmlCss", "<!DOCTYPE html><html lang=\"en\"><head><title>C</title></head><body><p><div>bad</body></html>", "FAIL"],
 ];
 for (const [lang, content, exp] of realCases) {
   if (!real[lang]) { console.log(`  ~~ skip real ${lang} (toolchain absent in this runtime)`); continue; }

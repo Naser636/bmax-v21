@@ -89,6 +89,18 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "htmlcss-tidy-capability",
+      "program": "P2",
+      "title": "HTML-CSS/validate capability via authorized HTML Tidy",
+      "status": "ACCEPTED",
+      "deps": [
+        "csharp-build-capability"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): tidy 5.8.0 installed from the official Ubuntu universe repo (authorized, reversible; dashboard unaffected). code-execution LANG_SPEC +HtmlCss = `tidy -q -e --show-warnings no` (errors-only ⇒ exit 0 clean / non-zero on structural errors); no network. Live: clean PASS, misnested/unclosed FAIL. broad-it-eval v10: +8 HTML cases (acc 1.0), category coverage 10→11/12=0.9167 (only Dockerfile/lint remains). code-execution suite 56→60, broad-it-eval 43.",
+      "acceptance": "a real HTML Tidy errors-only validator with independent eval; broad rate stays NO_DATA (independent-labelling gate)"
+    },
+    {
       "id": "csharp-build-capability",
       "program": "P2",
       "title": "C#/compile capability via authorized Mono mcs (hermetic)",
@@ -262,7 +274,7 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for remaining LINTERS (tidy/hadolint) — HTML-CSS + Dockerfile",
+      "title": "Engineering capability for Dockerfile/lint (hadolint) — last uncovered taxonomy category",
       "status": "BLOCKED",
       "deps": [
         "langfamily-noinstall-checkers",
@@ -270,11 +282,12 @@
         "go-build-capability",
         "rust-build-capability",
         "java-build-capability",
-        "csharp-build-capability"
+        "csharp-build-capability",
+        "htmlcss-tidy-capability"
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "FURTHER NARROWED: ALL compiler stacks now DONE (Go/Rust/Java/C#) + Shell/SQL/YAML/JSON + Shell/lint. What remains = linters tidy (HTML-CSS/validate) and hadolint (Dockerfile/lint). tidy is apt-available (universe); hadolint is NOT in the enabled repos (would need an external binary download — authorization-gated). Each a deliberate per-family install. NOTE: more static categories will NOT yield a broad-IT MEASURED rate — representativeness also requires independent labelling (self-authored corpus ⇒ NO_DATA).",
+      "blockReason": "ONLY Dockerfile/lint (hadolint) remains uncovered of the 12 taxonomy categories. hadolint is NOT in the enabled apt repos — it requires an EXTERNAL binary download (GitHub release) + checksum verification, i.e. a 3rd-party source on the prod host ⇒ authorization-gated (not a standard reproducible apt install). ALL apt-available stacks are DONE. NOTE: covering Dockerfile would take category coverage to 12/12 but broadIT STAYS NO_DATA regardless — the real frontier is INDEPENDENT LABELLING (self-authored corpus), not more categories.",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },

@@ -127,6 +127,15 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-cs-clean-2", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "clean", expected: "PASS", content: "public class Box<T> { private T v; public Box(T v){ this.v = v; } public T Get(){ return v; } }\n" },
   { id: "held-cs-broken-1", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "broken", expected: "FAIL", content: "using Newtonsoft.Json;\npublic class C { JsonConvert x; }\n" },
   { id: "held-cs-broken-2", partition: "heldout", category: "CSharp/compile", language: "CSharp", kind: "broken", expected: "FAIL", content: "public class Bad { public int F(){ return; } }\n" },
+  // --- HTML-CSS/validate (v10): real HTML Tidy (errors-only). clean=well-formed; broken=misnested/unclosed. ---
+  { id: "dev-html-clean-1", partition: "dev", category: "HTML-CSS/validate", language: "HtmlCss", kind: "clean", expected: "PASS", content: "<!DOCTYPE html><html lang=\"en\"><head><title>A</title></head><body><p>Hi</p></body></html>" },
+  { id: "dev-html-clean-2", partition: "dev", category: "HTML-CSS/validate", language: "HtmlCss", kind: "clean", expected: "PASS", content: "<!DOCTYPE html><html lang=\"en\"><head><title>B</title></head><body><ul><li>x</li><li>y</li></ul></body></html>" },
+  { id: "dev-html-broken-1", partition: "dev", category: "HTML-CSS/validate", language: "HtmlCss", kind: "broken", expected: "FAIL", content: "<!DOCTYPE html><html lang=\"en\"><head><title>C</title></head><body><p><div>bad</body></html>" },
+  { id: "dev-html-broken-2", partition: "dev", category: "HTML-CSS/validate", language: "HtmlCss", kind: "broken", expected: "FAIL", content: "<!DOCTYPE html><html lang=\"en\"><head><title>D</title></head><body><a href=>broken</body></html>" },
+  { id: "held-html-clean-1", partition: "heldout", category: "HTML-CSS/validate", language: "HtmlCss", kind: "clean", expected: "PASS", content: "<!DOCTYPE html><html lang=\"en\"><head><title>E</title></head><body><h1>T</h1><p>ok</p></body></html>" },
+  { id: "held-html-clean-2", partition: "heldout", category: "HTML-CSS/validate", language: "HtmlCss", kind: "clean", expected: "PASS", content: "<!DOCTYPE html><html lang=\"en\"><head><title>F</title><meta charset=\"utf-8\"></head><body><section><p>s</p></section></body></html>" },
+  { id: "held-html-broken-1", partition: "heldout", category: "HTML-CSS/validate", language: "HtmlCss", kind: "broken", expected: "FAIL", content: "<!DOCTYPE html><html lang=\"en\"><head><title>G</title></head><body><table><tr><td>x</tr></body></html>" },
+  { id: "held-html-broken-2", partition: "heldout", category: "HTML-CSS/validate", language: "HtmlCss", kind: "broken", expected: "FAIL", content: "<html><head></head><body><p>no doctype no title no lang<<</p></body>" },
   // --- Integration/multi-file (v9, 3rd TASK MODE): component interaction. entry imports a helper; a defect in the
   // intermediate helper surfaces only through the composition. Not a taxonomy slot (adds a MODE, not a category). ---
   { id: "dev-int-js-clean-1", partition: "dev", category: "Integration/multi-file", language: "JavaScript", kind: "clean", mode: "integration", expected: "PASS", entry: "main.js", expectedOutput: "15", files: [{ name: "helper.js", content: "module.exports.sumTo=(n)=>{let s=0;for(let i=1;i<=n;i++)s+=i;return s;};\n" }, { name: "main.js", content: "const h=require('./helper.js');console.log(h.sumTo(5));\n" }] },
@@ -139,11 +148,11 @@ const CORPUS: ReadonlyArray<any> = Object.freeze([
   { id: "held-int-py-broken-1", partition: "heldout", category: "Integration/multi-file", language: "Python", kind: "broken", mode: "integration", expected: "FAIL", entry: "run.py", expectedOutput: "6", files: [{ name: "ops.py", content: "def fact(n):\n    r = 1\n    for i in range(2, n):\n        r *= i\n    return r\n" }, { name: "run.py", content: "from ops import fact\nprint(fact(3))\n" }] },
 ]);
 
-const CORPUS_VERSION = "broad-it-eval-v9";
+const CORPUS_VERSION = "broad-it-eval-v10";
 // The SUPPORTED surface this corpus can measure (NOT all of IT). Broad-IT needs far more than this. v3 added the
 // NO-INSTALL checkers (SQL/YAML/Shell-syntax); v4 adds Shell/lint via an AUTHORIZED, reproducible shellcheck install.
 // Compiler stacks (Go/Rust/Java/C#) still require their own authorized install and stay UNSUPPORTED.
-const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build", "Java/compile", "CSharp/compile"];
+const SUPPORTED_CATEGORIES = ["JavaScript/syntax", "TypeScript/type", "Python/syntax", "SQL/schema", "Config-YAML/validate", "Shell/syntax", "Shell/lint", "Go/build", "Rust/build", "Java/compile", "CSharp/compile", "HTML-CSS/validate"];
 
 // PRE-REGISTERED target taxonomy of broad-IT categories a REPRESENTATIVE corpus must cover. This is the fixed
 // DENOMINATOR for the coverage ratio: it is declared up-front (not fitted to what ODG happens to support) so the
@@ -159,7 +168,7 @@ const TARGET_TAXONOMY: ReadonlyArray<any> = Object.freeze([
   { category: "CSharp/compile", supported: true, language: "CSharp" },   // v9: real hermetic `mcs -target:library` (authorized Mono)
   { category: "SQL/schema", supported: true, language: "SQL" },               // v3: real checker (stdlib sqlite3, no install)
   { category: "Shell/lint", supported: true, language: "ShellLint" },         // v4: real shellcheck static analysis
-  { category: "HTML-CSS/validate", supported: false, language: "HtmlCss" },
+  { category: "HTML-CSS/validate", supported: true, language: "HtmlCss" },   // v10: real HTML Tidy (authorized apt, errors-only)
   { category: "Config-YAML/validate", supported: true, language: "YAML" },    // v3: real checker (PyYAML, no install)
   { category: "Dockerfile/lint", supported: false, language: "Dockerfile" },
 ]);
