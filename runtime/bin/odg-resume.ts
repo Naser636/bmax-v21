@@ -35,7 +35,7 @@ function resumeState(opts: any = {}): any {
   const L = C.loadRegister(registerPath);
   if (!L.ok) return { ok: false, reason: L.reason || "register not loadable", head: gitHead(repo) };
   const s = C.summary(L.register);
-  const blocked = (L.register.items || []).filter((it: any) => it.status === "BLOCKED").map((it: any) => ({ id: it.id, humanActionRequired: it.humanActionRequired || null, nextAction: it.nextAction || null }));
+  const blocked = (L.register.items || []).filter((it: any) => it.status === "BLOCKED").map((it: any) => ({ id: it.id, humanActionRequired: it.humanActionRequired || null, nextAction: it.nextAction || null, resumeTest: it.resumeTest || null }));
   const inProgress = (L.register.items || []).filter((it: any) => it.status === "IN_PROGRESS").map((it: any) => it.id);
   const stale = C.staleAcceptances(L.register);
   return {

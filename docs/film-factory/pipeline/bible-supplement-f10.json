@@ -1,0 +1,14 @@
+{
+ "generated": "2026-10-24",
+ "note": "Non-destructive supplement — completes refs referenced in shots but absent from authored bibles. Does not alter narrative canon.",
+ "locationsAdded": [
+  {
+   "ref": "RIVER-TOWN EDGE",
+   "type": "location",
+   "status": "TO_CREATE",
+   "derivedFrom": "referenced in F10 shots; absent from bibleLocations",
+   "continuity": "river-mouth settlement edge; same Norse∩pharaonic era + palette as adjacent scenes"
+  }
+ ],
+ "charactersAdded": []
+}

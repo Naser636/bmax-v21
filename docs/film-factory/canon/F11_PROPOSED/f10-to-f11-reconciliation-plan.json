@@ -1,0 +1,32 @@
+{
+ "generated": "2026-10-24",
+ "status": "PROPOSED — reconciliation roadmap; DONE items are built in this V1, PENDING items are the next bounded phase",
+ "principle": "Every downstream artifact must end up agreeing with the F11 screenplay. F10 stays frozen; F11 artifacts live under F11_PROPOSED/ until accepted.",
+ "countsOldVsNew": {
+  "scenes": {"f10": 49, "f11": 49, "status": "DONE at beat level (f11-scene-inventory.json)", "justification": "event skeleton preserved, so scene count held at 49; decisive agents reassigned (Björn 26, neither female ever decisive); re-gendering applied. Full prose screenplay from this skeleton is PENDING."},
+  "shots": {"f10": 420, "f11": "TBD", "status": "PENDING recut", "justification": "Björn action signature + greatsword continuity will re-slice action scenes; estimate pending the shot pass"},
+  "dialogueLines": {"f10": 141, "f11": "~138 est (beat-level)", "status": "PARTIAL (estimated, not written)", "justification": "sum of per-scene estDialogueBeats ≈ 138; close to F10's 141 because scene count held, but the LINES are a genuine rewrite (new lead voice, re-gendered minors, comedy) — actual count set when dialogue is authored"},
+  "characters": {"f10": 12, "f11": 13, "status": "DONE (registry v2)", "justification": "+Björn (protagonist); 2 re-gendered (IPY→IPU, WIDOW→WIDOWER); females 4→2"}
+ },
+ "f11CountsVerified": {"scenes": 49, "estDialogueBeats": 138, "comedyScenes": 13, "mysteryRungs": 25, "bjornPresent": "41/49", "bjornDecisive": 26, "femaleDecisive": 0},
+ "artifacts": [
+  {"artifact": "character registry (SSOT)", "status": "DONE", "file": "character-registry-f11.json", "note": "13 chars, exactly 2 females, Björn protagonist; F10 ids carried + CHAR-013"},
+  {"artifact": "role-reassignment audit", "status": "DONE", "file": "role-reassignment-audit-49.json", "note": "49 scenes; 13 decisive→Björn; Astrid retains 0 decisive-lead; 7 re-gendered scenes"},
+  {"artifact": "incompatibility register", "status": "DONE", "file": "incompatibility-register.json", "note": "7 items; INC-1 (climax) needs human B-vs-A decision"},
+  {"artifact": "treatment / protagonist bible", "status": "DONE", "file": "canon-revision-v1-treatment.md"},
+  {"artifact": "screenplay (37_SCREENPLAY_60MIN_F10.md)", "status": "PARTIAL", "note": "F11 beat-level screenplay DONE (f11-scene-inventory.json, 49 scenes) + keystone prose samples (f11-screenplay-keystone-scenes.md); full prose draft of all 49 PENDING; F10 frozen copy untouched"},
+  {"artifact": "scene list / scene-registry", "status": "DONE (beat level)", "note": "f11-scene-inventory.json = 49 scenes with reassigned agency + comedy + mystery rungs"},
+  {"artifact": "shot list (420)", "status": "PENDING", "note": "recut around Björn; add greatsword continuity field"},
+  {"artifact": "dialogue master (141)", "status": "PENDING", "note": "rewrite; reassign Astrid lead-lines to Björn/reader-support; add comedy; recount"},
+  {"artifact": "character-scene-shot matrix", "status": "PENDING", "note": "regenerate from F11 registry + new shot list"},
+  {"artifact": "movement contracts (SC01/22/38/40)", "status": "PENDING", "note": "Björn greatsword choreography; SC38 → Björn-decisive (Astrid reads)"},
+  {"artifact": "continuity constraints", "status": "PENDING", "note": "add Himinkljúfr weapon-tracking; update wound/costume for re-gendered minors"},
+  {"artifact": "prompts", "status": "PENDING", "note": "Björn descriptor + anchors; re-gendered minor descriptors; apply SC01 storm/night fix (already specced)"},
+  {"artifact": "cinematic blueprint", "status": "PENDING", "note": "rework thesis to 'muscle + mind'; Björn as physical engine"},
+  {"artifact": "references", "status": "PENDING", "note": "NEW Björn reference (biggest gap; needs bounded auth); re-validate Astrid/Meryt/Olaf for F11 roles"}
+ ],
+ "doneCount": 4,
+ "pendingCount": 10,
+ "nextBoundedPhase": "Author the F11 screenplay (new file) implementing the role audit + INC-1 resolution (after human picks B/A), then regenerate scene/shot/dialogue/matrix/contracts/prompts/blueprint from it and re-run checks. No paid calls in that phase either until references are separately authorized.",
+ "reversibility": "100% reversible: F10_FROZEN_2026-10-24 + SHA256SUMS is the authoritative original; deleting F11_PROPOSED/ restores the prior state exactly. No F10 file modified."
+}

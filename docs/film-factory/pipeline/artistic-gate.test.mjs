@@ -1,0 +1,14 @@
+import { readFileSync } from 'node:fs'; import { fileURLToPath } from 'node:url'; import { dirname, join } from 'node:path';
+const here = dirname(fileURLToPath(import.meta.url)); const R=f=>JSON.parse(readFileSync(join(here,f),'utf8'));
+const bible=R('runs/benchmark/artistic-bible-f10-v1.json'), pa=R('runs/benchmark/prompt-audit-f10.json'), sl=R('shot-list-f10.json');
+let pass=0,fail=0,fails=[]; const ok=(n,c)=>{if(c)pass++;else{fail++;fails.push(n);}};
+ok('bible has >=12 rules each with status+test+failure', bible.rules.length>=12 && bible.rules.every(r=>r.status&&r.test&&r.failureConsequence));
+ok('bible marks Olaf SC43/44 HUMAN_REQUIRED (not imposed)', bible.rules.find(r=>r.id==='AB-13')?.status==='HUMAN_REQUIRED');
+ok('bible does not invent emotion as VERIFIED', bible.rules.filter(r=>/performance|émotion|emotion/i.test(r.rule)).every(r=>r.status!=='VERIFIED'));
+ok('prompt-audit covers 420', pa.totalShots===420);
+ok('AUTHORED(260)+DRAFT(160) distinct', pa.statusCounts.AUTHORED===260 && pa.statusCounts.DRAFT===160);
+ok('0 anachronisms, 0 missing-anchor', pa.anachronisms.length===0 && pa.missingAnchor.length===0);
+ok('vague-term issues are tracked (not hidden)', typeof pa.shotsWithIssues==='number');
+ok('49 scenes / 420 shots intact', new Set(sl.shots.map(s=>s.scene)).size===49 && sl.totalShots===420);
+console.log(`ARTISTIC-GATE TESTS: ${fail===0?'PASS':'FAIL'} (pass=${pass} fail=${fail})`+(fail?` [${fails.join(', ')}]`:''));
+process.exit(fail===0?0:1);

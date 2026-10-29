@@ -160,7 +160,9 @@
       "evidence": "",
       "blockReason": "EXTERNAL: a credible broad-IT VERIFIED_SUCCESS_RATE requires ground-truth labels NOT authored by ODG — e.g. a third-party-labelled set or real upstream outcomes (merged-PR / upstream test-suite verdicts), with a traceable sourceRef and dev/validation separation, admitted by independent-label-admission-policy.admitEvalSet. ODG must NOT fabricate or self-certify labels. Until such a set is supplied+admitted, broadIT=NO_DATA (correct).",
       "acceptance": "an external set passes admitEvalSet (independent provenance + disjoint dev/validation); then broad-IT can report a MEASURED rate on it",
-      "nextAction": "owner/third-party supplies an independently-labelled eval set with provenance; ODG runs admitEvalSet then evaluates"
+      "nextAction": "owner/third-party supplies an independently-labelled eval set with provenance; ODG runs admitEvalSet then evaluates",
+      "humanActionRequired": "a third party / upstream supplies a real labelled eval set (traceable provenance, dev/validation disjoint, labels NOT authored by ODG); ODG then runs independent-label-policy.admitEvalSet before evaluating.",
+      "resumeTest": "independent-label-policy.admitEvalSet({provenance,devIds,validationIds}) ⇒ admitted:true; then broad-it-eval reports a MEASURED rate on that set (never on the self-authored corpus)."
     },
     {
       "id": "runner-exitcode-honesty-fix",
@@ -211,7 +213,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): runtime/bin/odg-resume.ts — read-only compact handoff (verified HEAD, register counts, next-lot/idle reason, BLOCKED items WITH each human action, most-recent checkpoint title, exact resume command). Reads the big files in its OWN process and emits a ~2.7KB summary so a fresh session resumes WITHOUT re-reading the 8500-line compass (221 checkpoints). DIAGNOSIS: Claude Code auto-compaction is a harness/cloud default (no repo env var controls it; .claude/settings.json has no compaction keys) — the admissible repo lever is context-growth reduction + a tested passation, which this is. Suite 8 (counts, blockers-with-action, resume command, last checkpoint, <6KB, fail-closed on missing register).",
-      "acceptance": "a fresh session gets a compact, correct, resumable handoff from the register without loading the full compass; tested + fail-closed"
+      "acceptance": "a fresh session gets a compact, correct, resumable handoff from the register without loading the full compass; tested + fail-closed",
+      "staleEvidence": false
     },
     {
       "id": "campaign-run-entrypoint",
@@ -397,7 +400,9 @@
       "evidence": "",
       "blockReason": "NARROWED: the readiness gate + TLS/proxy templates + rollback runbook are DONE (dashboard-exposure-readiness-gate). What remains is genuinely external: the owner's explicit exposure decision (ODG_DASHBOARD_EXPOSURE_CONFIRMED=1), a real hostname + TLS cert, setting ODG_DASHBOARD_TOKEN in secure config, and executing the gated activation. The live readiness probe returns NOT_READY until then.",
       "acceptance": "readiness gate READY + authenticated + TLS + access-controlled service publicly reachable, owner-confirmed, with verified rollback",
-      "nextAction": "owner authorizes exposure, provides hostname/cert + token via secure config, then execute EXPOSURE_RUNBOOK.md (preflight gate must return READY)"
+      "nextAction": "owner authorizes exposure, provides hostname/cert + token via secure config, then execute EXPOSURE_RUNBOOK.md (preflight gate must return READY)",
+      "humanActionRequired": "owner confirms PUBLIC exposure + provides a real hostname + TLS cert; then execute EXPOSURE_RUNBOOK.md (sets ODG_DASHBOARD_EXPOSURE_CONFIRMED=1, installs reverse-proxy/TLS). Privileged + exposure decision.",
+      "resumeTest": "dashboard-exposure-readiness probe ⇒ verdict READY (all 6 controls incl ownerExposureConfirmed); public endpoint serves over TLS with auth + loopback upstream preserved."
     },
     {
       "id": "new-language-families",
@@ -447,7 +452,9 @@
       "evidence": "",
       "blockReason": "NARROWED: the validated, cited proposal preview is DONE (roadmap-deps-proposal-preview; docs/odg/ROADMAP.proposed.json). What remains is writing to runtime/governance/ROADMAP.json — a PROTECTED governance path — which requires explicit owner authorization. The companion docs/odg/roadmap-dependencies.json keeps the deps machine-checkable meanwhile.",
       "acceptance": "structured deps present in the governed file + validated by dep-planner, owner-authorized",
-      "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields"
+      "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields",
+      "humanActionRequired": "authorize amending the PROTECTED runtime/governance/ROADMAP.json with the previewed dependsOn[] fields (docs/odg/ROADMAP.proposed.json).",
+      "resumeTest": "roadmap-schema-proposal.proposeFromRepo ⇒ VALID AND governed ROADMAP.json carries the dependsOn[] AND roadmap-dep-check ⇒ OK."
     },
     {
       "id": "p01-demand-experiment-prep",
@@ -473,7 +480,9 @@
       "evidence": "",
       "blockReason": "NARROWED: the pre-registered protocol + fail-closed WTP validator are DONE (p01-demand-experiment-prep). What remains is genuinely external: owner-authorized lawful outreach/landing to collect ≥5 REAL verified WTP signals (0 present). No external contact without authorization; nothing fabricated.",
       "acceptance": "≥5 signals passing validateSignal vs the pre-registered threshold ⇒ assessExperiment=DEMAND_VALIDATED",
-      "nextAction": "owner authorizes + runs the lawful WTP experiment; feed real signals to demand-experiment.assessExperiment"
+      "nextAction": "owner authorizes + runs the lawful WTP experiment; feed real signals to demand-experiment.assessExperiment",
+      "humanActionRequired": "authorize + run the lawful, consented WTP outreach/landing experiment (demand-experiment PROTOCOL); collect ≥5 real verified signals. No external contact without authorization.",
+      "resumeTest": "demand-experiment.assessExperiment(realSignals) ⇒ DEMAND_VALIDATED (≥5 signals passing validateSignal vs the pre-registered threshold)."
     },
     {
       "id": "p01-billing-sandbox-cycle",
@@ -500,7 +509,9 @@
       "evidence": "",
       "blockReason": "NARROWED: the sandbox cycle is DONE and proven (p01-billing-sandbox-cycle). A REAL provider needs owner authorization + a paid provider account/credentials (secure config), and should follow validated demand (p01-demand-validation). No paid account exists; live payments stay disabled.",
       "acceptance": "a real provider configured (secure), live enabled only under owner authorization, with the same idempotent reconcile guarantees",
-      "nextAction": "owner authorizes + provisions a real provider account/credentials via secure config, after demand is validated"
+      "nextAction": "owner authorizes + provisions a real provider account/credentials via secure config, after demand is validated",
+      "humanActionRequired": "authorize + provision a REAL sandbox provider account/credentials via secure config (test-env only; no prod charges).",
+      "resumeTest": "p01-billing-sandbox.runSandboxCycle against the real sandbox provider ⇒ PAID + idempotent replay + card-data refused + no prod charge."
     }
   ]
 }

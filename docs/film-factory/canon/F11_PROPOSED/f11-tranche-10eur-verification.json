@@ -1,0 +1,482 @@
+{
+ "generated": "2026-10-25",
+ "document": "ÉTAPE 1 — €10 batch EVIDENCE verification (26 plans)",
+ "authorizationGate": {
+  "productionLedgerT2Recorded": false,
+  "verdict": "NO t2-ledger => NO paid call (governance lock)"
+ },
+ "chronologicalOrderOk": true,
+ "batchCount": 23,
+ "totalMaxEur": 8.1,
+ "withinCap": true,
+ "refsOnDisk": {
+  "BJORN": true,
+  "ASTRID": true,
+  "OLAF": true,
+  "TOVE": false,
+  "MERYT": true,
+  "SETH-NAKHT": false,
+  "IPU": false,
+  "IPY": false,
+  "NEFER-KA": false,
+  "HELGI": false,
+  "VIGGE": false
+ },
+ "charactersInBatchNeedingAref": [],
+ "blockers": [],
+ "multiCharacterShots": [],
+ "rows": [
+  {
+   "order": 1,
+   "scene": "SC01",
+   "shot": "Olaf-lashed-to-mast",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "OLAF"
+   ],
+   "refs": [
+    {
+     "c": "OLAF",
+     "first": true,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 2,
+   "scene": "SC01",
+   "shot": "SC01-SH06",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": true,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 3,
+   "scene": "SC01",
+   "shot": "SC01-SH07",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 4,
+   "scene": "SC01",
+   "shot": "SC01-SH08",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 5,
+   "scene": "SC01",
+   "shot": "SC01-SH09",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 6,
+   "scene": "SC01",
+   "shot": "SC01-SH10",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 7,
+   "scene": "SC01",
+   "shot": "SC01-SH11",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 8,
+   "scene": "SC01",
+   "shot": "SC01-SH12",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 9,
+   "scene": "SC01",
+   "shot": "SC01-SH13",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 10,
+   "scene": "SC03",
+   "shot": "SC03-SH01",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 11,
+   "scene": "SC03",
+   "shot": "SC03-SH02",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 12,
+   "scene": "SC03",
+   "shot": "SC03-SH03",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 13,
+   "scene": "SC03",
+   "shot": "SC03-SH04",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 14,
+   "scene": "SC03",
+   "shot": "SC03-SH05",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 15,
+   "scene": "SC03",
+   "shot": "SC03-SH06",
+   "content": "ACTION",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 16,
+   "scene": "SC03",
+   "shot": "SC03-SH07",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 17,
+   "scene": "SC03",
+   "shot": "SC03-SH08",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 18,
+   "scene": "SC03",
+   "shot": "SC03-SH09",
+   "content": "ACTION",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": [
+    "ACTION-still: review — upgrade to video if real motion needed"
+   ]
+  },
+  {
+   "order": 19,
+   "scene": "SC08",
+   "shot": "SC08-SH01",
+   "content": "DRAMA",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 20,
+   "scene": "SC08",
+   "shot": "SC08-SH02",
+   "content": "DRAMA",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 21,
+   "scene": "SC08",
+   "shot": "SC08-SH03",
+   "content": "DRAMA",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 22,
+   "scene": "SC08",
+   "shot": "SC08-SH04",
+   "content": "DRAMA",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  },
+  {
+   "order": 23,
+   "scene": "SC13",
+   "shot": "SC13-SH01",
+   "content": "COMEDY",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "requiredChars": [
+    "BJORN"
+   ],
+   "refs": [
+    {
+     "c": "BJORN",
+     "first": false,
+     "ref": true
+    }
+   ],
+   "findings": []
+  }
+ ],
+ "verdict": "Batch clean; gated only by the missing t2-ledger.",
+ "recommendation": "Refine the batch: (1) keep SC01 Olaf (clean, ref OK) first; (2) for each new character (e.g. TOVE), schedule a SINGLE-SUBJECT establishing shot first, then derive a 768 ref (local €0) for continuity; (3) reframe multi-character shots as single-subject coverage or defer until a staging workaround is proven; (4) only then bill dependent shots. All still gated by the t2-ledger."
+}

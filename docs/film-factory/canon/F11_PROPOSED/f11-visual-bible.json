@@ -1,0 +1,33 @@
+{
+ "generated": "2026-10-24",
+ "mission": "F11 visual bible (characters + environments) — production reference, canon-anchored. Non-billed; no generation.",
+ "style": "photorealistic cinematic live-action, 35mm, naturalistic motivated lighting; cold Norse steel-grey ∩ Egyptian sun-ochre; the SEAM = gold-light signature; two-sun sky plate locked across Act III. NO cartoon/3D-render, no modern objects.",
+ "identityPipeline": "seedance-2.5 with reference_images RESIZED ≤768px (validated; avoids E005); minimax subject_reference = fallback. Lock canon in the prompt (steering-oar not wheel; canon garb; tattoos).",
+ "characters": [
+  {"id": "CHAR-013", "name": "BJÖRN", "role": "protagonist", "look": "massive, muscular Viking; weathered; greatsword Himinkljúfr across his back; salt-worn wool + leather; deadpan", "refStatus": "NONE — must generate + human-approve (biggest asset gap)"},
+  {"id": "CHAR-001", "name": "ASTRID", "look": "woman ~19; salt-stained Norse wool-and-leather seafarer garb; fur-collar; star-chart tattoo/motif on forearm; often soaked", "refStatus": "APPROVED (runs/pilot/refs/ASTRID.webp)"},
+  {"id": "CHAR-008", "name": "OLAF", "look": "man ~60s, grey, failing; heavy Norse wool cloak; bronze arm-ring", "refStatus": "APPROVED"},
+  {"id": "CHAR-006", "name": "MERYT", "look": "Egyptian river-guard captain; linen kilt + leather harness; right-forearm wound bound in Norse cloth", "refStatus": "APPROVED"},
+  {"id": "CHAR-010", "name": "TOVE", "look": "Norse crew ~20s; practical salt-worn garb; comic foil", "refStatus": "PENDING"},
+  {"id": "CHAR-004", "name": "HELGI", "look": "Norse crewman ~20s; carries a child's carved wooden horse", "refStatus": "PENDING"},
+  {"id": "CHAR-009", "name": "SETH-NAKHT", "look": "commander ~40s; ornate Egyptian scale-and-linen armour + helmet; khopesh", "refStatus": "PENDING"},
+  {"id": "CHAR-007", "name": "NEFER-KA", "look": "elder Egyptian reader; pale linen robes; calm", "refStatus": "PENDING"},
+  {"id": "CHAR-002", "name": "BÖRK", "look": "heavy-set Norse cook; apron over tunic", "refStatus": "PENDING (SC40 sacrifice)"},
+  {"id": "CHAR-011", "name": "VIGGE", "look": "young Norse crewman (a youth)", "refStatus": "optional"},
+  {"id": "re-gendered", "name": "IPU", "look": "Egyptian boy; simple linen; carries his late father's water-jug (re-gendered from IPY — PROPOSED)", "refStatus": "optional (minor)"},
+  {"id": "re-gendered", "name": "WIDOWER", "look": "old Egyptian man; mourning linen (re-gendered from WIDOW — PROPOSED)", "refStatus": "optional (minor)"},
+  {"id": "CHAR-003", "name": "ELDER", "look": "Egyptian town elder; linen", "refStatus": "optional (minor)"}
+ ],
+ "environments": [
+  {"id": "ENV-NORTHSEA", "desc": "North Sea, storm, night; towering black waves; Viking longship SŌLFARI; lightning-lit spray", "scenes": ["SC01", "SC02", "SC03"]},
+  {"id": "ENV-SEAM", "desc": "the seam of GOLD LIGHT where the wave unravels — the film's signature image", "scenes": ["SC01", "SC03", "SC45", "SC46"]},
+  {"id": "ENV-TWOSUN-SHORE", "desc": "impossible shore under two suns; wet ochre sand; dawn", "scenes": ["SC04", "SC05", "SC06", "SC07"], "plate": "SKY-2SUN-01 locked"},
+  {"id": "ENV-RIVERTOWN", "desc": "Egyptian river-town; market, wells, dry fountains; tide-prone", "scenes": ["SC08", "SC18", "SC21", "SC22", "SC23", "SC24"]},
+  {"id": "ENV-GARRISON", "desc": "Egyptian garrison; council hall, holding yard, the Guardian's wall, cells", "scenes": ["SC09", "SC10", "SC11", "SC12", "SC13", "SC14", "SC15", "SC26"]},
+  {"id": "ENV-DESERT-CANYON", "desc": "desert + canyon; outrider skirmish; the echo", "scenes": ["SC16", "SC17", "SC30", "SC31"]},
+  {"id": "ENV-SEAMROOT", "desc": "the seam-root: convulsing ground/sea, broken pillars; the convergence battlefield", "scenes": ["SC32", "SC33", "SC34", "SC35", "SC36", "SC37", "SC38", "SC39", "SC40", "SC41", "SC42", "SC43", "SC44", "SC45"]},
+  {"id": "ENV-CAIRN-RIVER", "desc": "single-sun morning; a cairn with Himinkljúfr set in the stones; later, a bend in the great river", "scenes": ["SC47", "SC48", "SC49"]}
+ ],
+ "continuityInvariants": ["Himinkljúfr tracked every Björn shot (slung/planted/left-at-threshold/in-cairn)", "Astrid star-chart tattoo (canon)", "Olaf bronze arm-ring → Björn (SC43)", "Meryt right-forearm wound bound", "Helgi wooden horse", "two-sun sky plate across Act III", "no ship wheel — steering-oar only"],
+ "status": "BIBLE DRAFTED. References: 3 approved, Björn + others PENDING generation (spending gate)."
+}

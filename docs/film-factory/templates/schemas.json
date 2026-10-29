@@ -1,0 +1,25 @@
+{
+  "note": "Story-INDEPENDENT reusable film-factory component schemas. Each lists reusable structure vs story-dependent fields (values). Filling these with values makes an instance; the SCHEMA is reusable across films. No asset exists until really generated.",
+  "components": {
+    "characterProfile": { "reusable": true, "storyDependentFields": ["name","physicalAnchors","wardrobe","voiceProfile"],
+      "schema": { "id":"str", "name":"str", "role":"str", "physicalAnchors":["str (continuity anchors, e.g. a scar/tattoo)"], "wardrobe":"str", "voiceProfile":"str", "arcNote":"str", "refSheetStatus":"TO_CREATE|LOCKED", "refSheetSha256":"str|null" } },
+    "location": { "reusable": true, "storyDependentFields": ["name","era","keyProps"],
+      "schema": { "id":"str","name":"str","era":"str","lightingRule":"str","keyProps":["str"],"refSheetStatus":"TO_CREATE|LOCKED" } },
+    "visualCharter": { "reusable": true, "storyDependentFields": ["palettes"],
+      "schema": { "palettes": { "perActOrMood":"str" }, "aspect":"str","grainRule":"str","continuityInvariant":"str (a checkable monotonic/limited rule)" } },
+    "promptSpec": { "reusable": true, "storyDependentFields": ["subjectAction","refs"],
+      "schema": { "shotId":"str","model":"str","version":"str","seed":"int|null","shotType":"str","movement":"str","subjectAction":"str","refs":["str"],"prompt":"str","negativePrompt":"str" } },
+    "rightsProvenance": { "reusable": true, "storyDependentFields": ["assetId"],
+      "schema": { "assetId":"str","tool":"str","licence":"ownership|right-to-use|unknown","commercialCleared":"bool","aiDisclosed":"bool","sourceSha256":"str|null","promptRef":"str" } },
+    "generationLog": { "reusable": true, "storyDependentFields": ["shotId"],
+      "schema": { "shotId":"str","attempt":"int","result":"ACCEPTED|REJECTED","defect":"str|null","costEur":"float","costStatus":"ESTIMATED|MEASURED","model":"str","version":"str" } },
+    "budgetForecast": { "reusable": true, "storyDependentFields": ["envelopeCeilings"],
+      "schema": { "capEur":"float","envelopes":[{"id":"str","ceiling":"float","allocatedEstimate":"float","committed":"float","spent":"float"}], "costPerUsableSecondEur":"float|null (MEASURED after pilot)" } },
+    "acceptanceCriteria": { "reusable": true, "storyDependentFields": [],
+      "schema": { "image":["identity>=4/5 vs ref","on-composition","1080p+ exportable"], "video":["identity>=4/5","coherent motion","legible geography","no artifacts"], "voice":["intelligible","voice-consistent","lip-syncable"], "music":["on-tone","rights-cleared"], "sfx":["plausible","synced"], "eliminatory":["unstable identity","incoherent motion","unusable audio","unestablished rights"] } },
+    "postProduction": { "reusable": true, "storyDependentFields": ["editBins"],
+      "schema": { "editBins":["str"], "audioCheck":["dialogue intelligible","mix balanced","no clipping"], "subtitleLangs":["str"], "exportSpec":{ "container":"str","resolution":"str","fps":"int","targetDurationSec":"int","tolSec":"int" } } },
+    "validationGates": { "reusable": true, "storyDependentFields": [],
+      "note": "Implemented + tested in pipeline/film-pipeline.mjs: BudgetLedger, acceptanceGate, dependentsUnlocked, classifyDefect, retryPlan, continuityCheck, rightsReleaseCheck, runtimeEstimate, editPlanCheck, releaseGate, exportDurationGate. Story-independent; import directly." }
+  }
+}

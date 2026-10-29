@@ -1,0 +1,58 @@
+{
+ "generated": "2026-10-24",
+ "observedVia": "WebSearch on 2026-10-24",
+ "honesty": "URLs/titles are real search results. View counts are as STATED by the source, not independently re-fetched/verified. Vendor/benchmark accuracy claims are marketing/third-party, NOT independently verified. Views != quality or guaranteed success.",
+ "references": [
+  {
+   "url": "https://hidari-movie.com/",
+   "title": "HIDARI — stop-motion samurai POC short",
+   "dateNote": "ongoing; feature in dev",
+   "viewsStated": "~4.9-5.3M (per fandomwire/indieshortsmag, STATED not verified)",
+   "type": "POC short -> feature",
+   "observable": "strong craft + viral POC attracted a studio (Dwarf), Keanu Reeves attached",
+   "source": "fandomwire.com, indieshortsmag.com"
+  },
+  {
+   "url": "https://en.wikipedia.org/wiki/Lights_Out_(2016_film)",
+   "title": "Lights Out (Sandberg short -> WB feature)",
+   "dateNote": "short 2013 -> feature 2016",
+   "viewsStated": "short went viral (STATED)",
+   "type": "near-zero-budget short -> $4.9M feature, ~$148M gross",
+   "observable": "a single strong CONCEPT + visual hook optioned into a feature",
+   "source": "search result"
+  },
+  {
+   "url": "https://action-flix.com/2025/03/15/kodama-...",
+   "title": "KODAMA — sword-wielding action short (Brian Tang)",
+   "dateNote": "2025",
+   "viewsStated": "n/a",
+   "type": "ambitious indie action short",
+   "observable": "high-intensity sword choreography as a calling card"
+  },
+  {
+   "url": "https://watchaishortfilms.com/",
+   "title": "Best AI Short Films 2026 (Seedance/Sora/Runway/Kling)",
+   "dateNote": "2026 curation",
+   "viewsStated": "n/a",
+   "type": "AI short-film showcase",
+   "observable": "AI shorts are an established format; model choice matters for motion"
+  },
+  {
+   "url": "https://aicomparison.ai/kling-ai-vs-runway/",
+   "title": "Kling vs Runway (2026)",
+   "dateNote": "2026",
+   "type": "tool comparison",
+   "observable": "Kling reported best for combat/martial-arts MOTION (STATED: 91% motion realism, 89% biomechanical — VENDOR/3rd-PARTY, UNVERIFIED)"
+  }
+ ],
+ "principlesExtracted": [
+  "first 3-10s = a visual PROMISE (the hook)",
+  "ONE clear dramatic reason per fight",
+  "action must be LEGIBLE: clear geography, eyelines, cause->effect",
+  "a strong single CONCEPT + visual style can carry a POC to a feature",
+  "fewer hero faces + controlled motion = more consistent AI output",
+  "title + thumbnail decide the click, not just the film"
+ ],
+ "modelImplication": "For sword/combat MOTION, evaluate kwaivgi/kling-v2.1 (Replicate, first-party priced $0.05-0.09/s) vs minimax/video-01; pick per a bounded motion test. NOT yet tested — flagged as a feasibility experiment.",
+ "doNotCopy": "No protected scripts/characters/sequences reused. General principles only; original work."
+}

@@ -1,0 +1,586 @@
+{
+ "generated": "2026-10-24",
+ "total": 12,
+ "withRealReference": 3,
+ "characters": [
+  {
+   "ref": "ASTRID",
+   "nameVariants": [
+    "ASTRID"
+   ],
+   "CANON": {
+    "descriptor": "woman ~19; salt-stained Norse wool-and-leather seafarer garb; star-chart tattoo on her forearm; often soaked; navigator",
+    "appearsInScenes": [
+     "SC01",
+     "SC03",
+     "SC04",
+     "SC05",
+     "SC06",
+     "SC07",
+     "SC08",
+     "SC10",
+     "SC11",
+     "SC14",
+     "SC15",
+     "SC16",
+     "SC17",
+     "SC18",
+     "SC19",
+     "SC20",
+     "SC21",
+     "SC22",
+     "SC23",
+     "SC24",
+     "SC25",
+     "SC26",
+     "SC27",
+     "SC28",
+     "SC29",
+     "SC30",
+     "SC31",
+     "SC32",
+     "SC33",
+     "SC34",
+     "SC36",
+     "SC37",
+     "SC38",
+     "SC41",
+     "SC42",
+     "SC43",
+     "SC44",
+     "SC45",
+     "SC46",
+     "SC47",
+     "SC48",
+     "SC49"
+    ],
+    "sceneCount": 42
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": "runs/pilot/refs/ASTRID.webp",
+    "sha256": "18a617f999a5b07311e3435c9466b3a4ff43ad03e7a8f5d4a6afb1eda144b126",
+    "validation": "VALIDATED by inspection (photoreal, canon-faithful, distinct)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "OLAF",
+   "nameVariants": [
+    "OLAF"
+   ],
+   "CANON": {
+    "descriptor": "man ~60s, grey, failing; heavy Norse wool cloak; bronze arm-ring; captain's bearing even when weak",
+    "appearsInScenes": [
+     "SC01",
+     "SC04",
+     "SC10",
+     "SC14",
+     "SC15",
+     "SC25",
+     "SC26",
+     "SC30",
+     "SC31",
+     "SC33",
+     "SC36",
+     "SC37",
+     "SC38",
+     "SC39",
+     "SC43",
+     "SC46"
+    ],
+    "sceneCount": 16
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": "runs/pilot/refs/OLAF.webp",
+    "sha256": "a32453672a6d8af422f778fb9bb0882ef1ed898c255fab08f45dd55d9aa85097",
+    "validation": "VALIDATED by inspection (photoreal, canon-faithful, distinct)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "HELGI",
+   "nameVariants": [
+    "HELGI"
+   ],
+   "CANON": {
+    "descriptor": "Norse crewman ~20s; Norse seafarer garb; carries a child's carved wooden horse",
+    "appearsInScenes": [
+     "SC02",
+     "SC03",
+     "SC13",
+     "SC14",
+     "SC18",
+     "SC19",
+     "SC22",
+     "SC29",
+     "SC31",
+     "SC32",
+     "SC46"
+    ],
+    "sceneCount": 11
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": [
+    "wooden horse prop -> Sǫlveig"
+   ]
+  },
+  {
+   "ref": "TOVE",
+   "nameVariants": [
+    "TOVE"
+   ],
+   "CANON": {
+    "descriptor": "Norse crew ~20s; practical salt-worn seafarer garb; grins at death out of habit",
+    "appearsInScenes": [
+     "SC02",
+     "SC03",
+     "SC13",
+     "SC18",
+     "SC19",
+     "SC20",
+     "SC22",
+     "SC30",
+     "SC32",
+     "SC33",
+     "SC38",
+     "SC40",
+     "SC43",
+     "SC44",
+     "SC45"
+    ],
+    "sceneCount": 15
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "MERYT",
+   "nameVariants": [
+    "MERYT"
+   ],
+   "CANON": {
+    "descriptor": "Egyptian woman, river-guard captain; linen kilt + leather river-guard harness; RIGHT-forearm khopesh wound bound in Norse cloth",
+    "appearsInScenes": [
+     "SC05",
+     "SC06",
+     "SC07",
+     "SC12",
+     "SC15",
+     "SC18",
+     "SC19",
+     "SC25",
+     "SC27",
+     "SC28",
+     "SC34",
+     "SC35",
+     "SC36",
+     "SC37",
+     "SC39",
+     "SC42",
+     "SC45",
+     "SC48"
+    ],
+    "sceneCount": 18
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": "runs/pilot/refs/MERYT.webp",
+    "sha256": "576a82bb1951cfd4e05331e59c4ba2bd51cce469668cf91c8b556089fcca67ad",
+    "validation": "VALIDATED by inspection (photoreal, canon-faithful, distinct)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": [
+    "wound continuity with SC39->SC48"
+   ]
+  },
+  {
+   "ref": "IPY",
+   "nameVariants": [
+    "IPY"
+   ],
+   "CANON": {
+    "descriptor": "Egyptian child; simple linen shift; carries her late mother's water-jug; fearless",
+    "appearsInScenes": [
+     "SC05",
+     "SC06",
+     "SC08",
+     "SC21",
+     "SC23",
+     "SC35",
+     "SC49"
+    ],
+    "sceneCount": 7
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "SETH-NAKHT",
+   "nameVariants": [
+    "SETH-NAKHT"
+   ],
+   "CANON": {
+    "descriptor": "man ~40s, commander; ornate Egyptian scale-and-linen armour, commander's helmet; khopesh",
+    "appearsInScenes": [
+     "SC07",
+     "SC09",
+     "SC12",
+     "SC15",
+     "SC22",
+     "SC23",
+     "SC26",
+     "SC34",
+     "SC37",
+     "SC38",
+     "SC39",
+     "SC40"
+    ],
+    "sceneCount": 12
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "VIGGE",
+   "nameVariants": [
+    "VIGGE"
+   ],
+   "CANON": {
+    "descriptor": "young Norse crewman (a youth)",
+    "appearsInScenes": [
+     "SC13",
+     "SC40"
+    ],
+    "sceneCount": 2
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "WIDOW",
+   "nameVariants": [
+    "WIDOW"
+   ],
+   "CANON": {
+    "descriptor": "old Egyptian woman; mourning linen; keeps a drowned neighbour's place at a dry fountain",
+    "appearsInScenes": [
+     "SC08"
+    ],
+    "sceneCount": 1
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "ELDER",
+   "nameVariants": [
+    "ELDER"
+   ],
+   "CANON": {
+    "descriptor": "Egyptian elder; town elder's linen; village authority",
+    "appearsInScenes": [
+     "SC09"
+    ],
+    "sceneCount": 1
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "NEFER-KA",
+   "nameVariants": [
+    "NEFER-KA"
+   ],
+   "CANON": {
+    "descriptor": "elder Egyptian reader; pale linen robes; calm; guards the horizon",
+    "appearsInScenes": [
+     "SC10",
+     "SC11",
+     "SC12",
+     "SC15",
+     "SC16",
+     "SC17",
+     "SC18",
+     "SC24",
+     "SC30",
+     "SC31",
+     "SC36",
+     "SC37",
+     "SC41",
+     "SC48"
+    ],
+    "sceneCount": 14
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  },
+  {
+   "ref": "BÖRK",
+   "nameVariants": [
+    "BÖRK"
+   ],
+   "CANON": {
+    "descriptor": "heavy-set Norse cook; apron over Norse tunic; bulk used as a living dam",
+    "appearsInScenes": [
+     "SC13"
+    ],
+    "sceneCount": 1
+   },
+   "PROPOSED": {
+    "note": "cinematic photoreal rendering per the artistic bible; contained performance",
+    "status": "PROPOSED (not canon)"
+   },
+   "UNKNOWN": [
+    "exact facial features",
+    "precise age within the band",
+    "detailed costume beyond the canon descriptor"
+   ],
+   "reference": {
+    "file": null,
+    "status": "TO_GENERATE (prompt prepared)"
+   },
+   "positiveConstraints": [
+    "photoreal cinematic",
+    "canon garb/materials",
+    "visually distinct from other characters"
+   ],
+   "negativeConstraints": [
+    "no cartoon/animation/3D render",
+    "no modern objects/symbols/tattoos beyond canon",
+    "no deformation"
+   ],
+   "visualDependencies": []
+  }
+ ]
+}

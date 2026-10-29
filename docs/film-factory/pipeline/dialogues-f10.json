@@ -1,0 +1,1047 @@
+{
+ "generated": "2026-10-24",
+ "source": "37_SCREENPLAY_60MIN_F10.md",
+ "note": "Canonical dialogue (English source). FR dubbing is a SEPARATE human/translation step — NOT fabricated. Lines preserved verbatim; scenes/lines not found are flagged, never invented.",
+ "totalLines": 141,
+ "audioLineShots": 141,
+ "scenesWithDialogue": 46,
+ "bySceneCounts": {
+  "SC01": 4,
+  "SC02": 3,
+  "SC03": 2,
+  "SC04": 3,
+  "SC05": 3,
+  "SC06": 3,
+  "SC07": 3,
+  "SC08": 1,
+  "SC09": 2,
+  "SC10": 5,
+  "SC11": 5,
+  "SC12": 5,
+  "SC13": 4,
+  "SC14": 6,
+  "SC15": 5,
+  "SC16": 4,
+  "SC17": 2,
+  "SC18": 3,
+  "SC19": 4,
+  "SC20": 5,
+  "SC21": 2,
+  "SC22": 2,
+  "SC23": 2,
+  "SC24": 3,
+  "SC26": 1,
+  "SC27": 4,
+  "SC28": 4,
+  "SC29": 3,
+  "SC30": 5,
+  "SC31": 1,
+  "SC32": 3,
+  "SC33": 2,
+  "SC34": 2,
+  "SC35": 3,
+  "SC36": 2,
+  "SC37": 4,
+  "SC38": 4,
+  "SC39": 1,
+  "SC40": 2,
+  "SC41": 3,
+  "SC42": 2,
+  "SC43": 3,
+  "SC44": 3,
+  "SC46": 1,
+  "SC48": 4,
+  "SC49": 3
+ },
+ "audioScenesWithoutDialogue": [],
+ "unmatchedScenePrefixes": [],
+ "lines": [
+  {
+   "scene": "SC01",
+   "scenePrefix": "1",
+   "order": 1,
+   "speaker": "ASTRID",
+   "text": "She's pulling beam-on. I hold, she rolls. I fall off, I lose the next shoulder."
+  },
+  {
+   "scene": "SC01",
+   "scenePrefix": "1",
+   "order": 2,
+   "speaker": "OLAF",
+   "text": "And which does the water want?"
+  },
+  {
+   "scene": "SC01",
+   "scenePrefix": "1",
+   "order": 3,
+   "speaker": "ASTRID",
+   "text": "I'm not asking what the water wants. I'm asking you to tell me I'm right."
+  },
+  {
+   "scene": "SC01",
+   "scenePrefix": "1",
+   "order": 4,
+   "speaker": "OLAF",
+   "text": "Ask the sea, Astrid. I've answered you for the last time tonight."
+  },
+  {
+   "scene": "SC02",
+   "scenePrefix": "2",
+   "order": 5,
+   "speaker": "TOVE",
+   "text": "When we drown, I'm telling the gods it was the navigator's nerves. Not the sea."
+  },
+  {
+   "scene": "SC02",
+   "scenePrefix": "2",
+   "order": 6,
+   "speaker": "HELGI",
+   "text": "Tell them what you like. She'll steer us true the second she stops waiting for the old man to blink first. Trouble is she's never once done it."
+  },
+  {
+   "scene": "SC02",
+   "scenePrefix": "2",
+   "order": 7,
+   "speaker": "TOVE",
+   "text": "She will. She has to. I've got a beach to get back to, Helgi. I'm not dying in a story nobody at home will even hear."
+  },
+  {
+   "scene": "SC03",
+   "scenePrefix": "3",
+   "order": 8,
+   "speaker": "ASTRID",
+   "text": "...I can't read that."
+  },
+  {
+   "scene": "SC03",
+   "scenePrefix": "3",
+   "order": 9,
+   "speaker": "HELGI",
+   "text": "THEN STEER LIKE HE'S ALREADY GONE —"
+  },
+  {
+   "scene": "SC04",
+   "scenePrefix": "4",
+   "order": 10,
+   "speaker": "OLAF",
+   "text": "...You didn't ask me."
+  },
+  {
+   "scene": "SC04",
+   "scenePrefix": "4",
+   "order": 11,
+   "speaker": "ASTRID",
+   "text": "There wasn't time."
+  },
+  {
+   "scene": "SC04",
+   "scenePrefix": "4",
+   "order": 12,
+   "speaker": "OLAF",
+   "text": "No. There wasn't. Remember that it felt like that."
+  },
+  {
+   "scene": "SC05",
+   "scenePrefix": "5",
+   "order": 13,
+   "speaker": "ASTRID",
+   "text": "We didn't cross to raid you. Your sea reached up and took us off ours."
+  },
+  {
+   "scene": "SC05",
+   "scenePrefix": "5",
+   "order": 14,
+   "speaker": "MERYT",
+   "text": "Whatever comes out of that sky, you do not touch it. Not this time."
+  },
+  {
+   "scene": "SC05",
+   "scenePrefix": "5",
+   "order": 15,
+   "speaker": "IPY",
+   "text": "You said that last time. Then the sea took the market."
+  },
+  {
+   "scene": "SC06",
+   "scenePrefix": "6",
+   "order": 16,
+   "speaker": "MERYT",
+   "text": "IPY — BACK —"
+  },
+  {
+   "scene": "SC06",
+   "scenePrefix": "6",
+   "order": 17,
+   "speaker": "IPY",
+   "text": "You knew where it would go."
+  },
+  {
+   "scene": "SC06",
+   "scenePrefix": "6",
+   "order": 18,
+   "speaker": "ASTRID",
+   "text": "Yeah. I did."
+  },
+  {
+   "scene": "SC07",
+   "scenePrefix": "7",
+   "order": 19,
+   "speaker": "SETH-NAKHT",
+   "text": "The sky tears, and the same morning strangers fall out of it. The people will want to know which caused which. Chain them."
+  },
+  {
+   "scene": "SC07",
+   "scenePrefix": "7",
+   "order": 20,
+   "speaker": "MERYT",
+   "text": "Commander — they came *through* the tear. The ghost-girl just pulled Ipy out of it."
+  },
+  {
+   "scene": "SC07",
+   "scenePrefix": "7",
+   "order": 21,
+   "speaker": "SETH-NAKHT",
+   "text": "I did not ask what is true. I asked what the town needs to see while it is frightened. And it needs to see that I have the thing that smells the flood before it comes — on a leash. Bring them to the garrison. The sea-ghosts are mine."
+  },
+  {
+   "scene": "SC08",
+   "scenePrefix": "7A",
+   "order": 22,
+   "speaker": "WIDOW",
+   "text": "I kept your place, Nahla. I keep telling them the sea took a corner, not a curse. You. Ghost. They say you smell the water before it comes. Then smell mine — tell me which morning it comes for the rest of us."
+  },
+  {
+   "scene": "SC09",
+   "scenePrefix": "8",
+   "order": 23,
+   "speaker": "ELDER",
+   "text": "Three markets drowned this season, Commander. The people say the gods are angry at something we have not punished."
+  },
+  {
+   "scene": "SC09",
+   "scenePrefix": "8",
+   "order": 24,
+   "speaker": "SETH-NAKHT",
+   "text": "Then we will punish something. Strangers fell from the torn sky this morning. The gods could not have sent a clearer answer. Give them a guilty face to hate, and they will not notice the face that cannot stop the water."
+  },
+  {
+   "scene": "SC10",
+   "scenePrefix": "9",
+   "order": 25,
+   "speaker": "NEFER-KA",
+   "text": "You read water. I have spent my life reading *that.*"
+  },
+  {
+   "scene": "SC10",
+   "scenePrefix": "9",
+   "order": 26,
+   "speaker": "ASTRID",
+   "text": "Then tell me how to make it give my father's ship back."
+  },
+  {
+   "scene": "SC10",
+   "scenePrefix": "9",
+   "order": 27,
+   "speaker": "NEFER-KA",
+   "text": "It is an alignment — the two suns draw close, the wall between their ages thins, things fall through. The debt must be repaid, or both ages bleed together until neither keeps its own rules. It closes only when someone who can read it walks into it and shuts it from within. It does not return that someone."
+  },
+  {
+   "scene": "SC10",
+   "scenePrefix": "9",
+   "order": 28,
+   "speaker": "ASTRID",
+   "text": "And if no one walks in?"
+  },
+  {
+   "scene": "SC10",
+   "scenePrefix": "9",
+   "order": 29,
+   "speaker": "NEFER-KA",
+   "text": "Then the bleed grows until there is no shore left to argue it on. You are already asking the wrong question — *how do I use it* — instead of the right one: *what will it cost whoever does.*"
+  },
+  {
+   "scene": "SC11",
+   "scenePrefix": "9A",
+   "order": 30,
+   "speaker": "NEFER-KA",
+   "text": "Every name here could read the seam. Every name is also the one who shut it, the last time it tore wide. My teacher. I cut that myself, with this thumbnail, the morning after she didn't come back out of the light."
+  },
+  {
+   "scene": "SC11",
+   "scenePrefix": "9A",
+   "order": 31,
+   "speaker": "ASTRID",
+   "text": "Thirty years learning a thing whose only prize for learning it is that it keeps you."
+  },
+  {
+   "scene": "SC11",
+   "scenePrefix": "9A",
+   "order": 32,
+   "speaker": "NEFER-KA",
+   "text": "I did not expect to meet someone who could read it better in a month than I in a life. I find I don't know whether I envy you the gift — or the blank plaster where your name isn't yet."
+  },
+  {
+   "scene": "SC11",
+   "scenePrefix": "9A",
+   "order": 33,
+   "speaker": "ASTRID",
+   "text": "Where's the space for the next one?"
+  },
+  {
+   "scene": "SC11",
+   "scenePrefix": "9A",
+   "order": 34,
+   "speaker": "NEFER-KA",
+   "text": "There is always space for the next one. That is the whole cruelty of the wall."
+  },
+  {
+   "scene": "SC12",
+   "scenePrefix": "10",
+   "order": 35,
+   "speaker": "SETH-NAKHT",
+   "text": "You have guarded that tear your whole life, Nefer-Ka, and it has never torn like this. Why now?"
+  },
+  {
+   "scene": "SC12",
+   "scenePrefix": "10",
+   "order": 36,
+   "speaker": "NEFER-KA",
+   "text": "The alignment makes a seam possible. But this one opened wide, and early, before the suns had met. That is not the alignment. That is a hand."
+  },
+  {
+   "scene": "SC12",
+   "scenePrefix": "10",
+   "order": 37,
+   "speaker": "SETH-NAKHT",
+   "text": "A hand. Whose?"
+  },
+  {
+   "scene": "SC12",
+   "scenePrefix": "10",
+   "order": 38,
+   "speaker": "MERYT",
+   "text": "The priests would know better than a river-captain, Commander."
+  },
+  {
+   "scene": "SC12",
+   "scenePrefix": "10",
+   "order": 39,
+   "speaker": "SETH-NAKHT",
+   "text": "Find me the hand, guardian. A guilty hand is a gift — the people forgive a ruler anything if he gives them someone to blame. The foreigners will do until you find better."
+  },
+  {
+   "scene": "SC13",
+   "scenePrefix": "10A",
+   "order": 40,
+   "speaker": "VIGGE",
+   "text": "My mother said one voyage and I'd come home a man. She didn't say which world I'd do it in."
+  },
+  {
+   "scene": "SC13",
+   "scenePrefix": "10A",
+   "order": 41,
+   "speaker": "BÖRK",
+   "text": "You come home a man from any sea you don't drown in, lad. Even the ones made of sand, it seems."
+  },
+  {
+   "scene": "SC13",
+   "scenePrefix": "10A",
+   "order": 42,
+   "speaker": "HELGI",
+   "text": "We all get home, Vigge. The navigator reads us a door. She has to. I've a girl who still thinks this horse is in my hand and not my belt."
+  },
+  {
+   "scene": "SC13",
+   "scenePrefix": "10A",
+   "order": 43,
+   "speaker": "TOVE",
+   "text": "Then she'd better learn to want the door for herself, and fast. She only ever reads one when her father tells her she's allowed."
+  },
+  {
+   "scene": "SC14",
+   "scenePrefix": "11",
+   "order": 44,
+   "speaker": "OLAF",
+   "text": "When you were small you'd stand at the steerboard and call the weather before I did. Every time. And every time you'd look at me after, to see if you were allowed to be right."
+  },
+  {
+   "scene": "SC14",
+   "scenePrefix": "11",
+   "order": 45,
+   "speaker": "ASTRID",
+   "text": "You were the captain."
+  },
+  {
+   "scene": "SC14",
+   "scenePrefix": "11",
+   "order": 46,
+   "speaker": "OLAF",
+   "text": "I was your father. That's worse. I heard the guardian. \"From within.\" I saw your face find a route and hide it from me."
+  },
+  {
+   "scene": "SC14",
+   "scenePrefix": "11",
+   "order": 47,
+   "speaker": "ASTRID",
+   "text": "If there's a way home in that light, I'll read it."
+  },
+  {
+   "scene": "SC14",
+   "scenePrefix": "11",
+   "order": 48,
+   "speaker": "OLAF",
+   "text": "Read it to get the crew home. Read it to get Helgi back to his girl and Tove to her beach. But if you ever walk into a thing you can't walk out of — let it be a choice you make, not a grave you dig for me. Promise me that much."
+  },
+  {
+   "scene": "SC14",
+   "scenePrefix": "11",
+   "order": 49,
+   "speaker": "ASTRID",
+   "text": "...Sleep, Father."
+  },
+  {
+   "scene": "SC15",
+   "scenePrefix": "12",
+   "order": 50,
+   "speaker": "SETH-NAKHT",
+   "text": "My guardian says the tear widens and will drown my towns. You see where water will go. So you will walk the shore and keep my people dry, and I will not feed your crew to the thing to calm a mob. That is the whole of the kindness I have."
+  },
+  {
+   "scene": "SC15",
+   "scenePrefix": "12",
+   "order": 51,
+   "speaker": "ASTRID",
+   "text": "And my father? My ship?"
+  },
+  {
+   "scene": "SC15",
+   "scenePrefix": "12",
+   "order": 52,
+   "speaker": "SETH-NAKHT",
+   "text": "My guests. Under my roof. A man keeps his guests close when he wants a borrowed animal to come home at night."
+  },
+  {
+   "scene": "SC15",
+   "scenePrefix": "12",
+   "order": 53,
+   "speaker": "NEFER-KA",
+   "text": "He keeps what you love so your gift stays his."
+  },
+  {
+   "scene": "SC15",
+   "scenePrefix": "12",
+   "order": 54,
+   "speaker": "ASTRID",
+   "text": "I worked that out before he finished smiling. Teach me the light. That's the one thing he can't hold."
+  },
+  {
+   "scene": "SC16",
+   "scenePrefix": "13",
+   "order": 55,
+   "speaker": "ASTRID",
+   "text": "I read it east. It went west. At home the sea never lied to me like that."
+  },
+  {
+   "scene": "SC16",
+   "scenePrefix": "13",
+   "order": 56,
+   "speaker": "NEFER-KA",
+   "text": "The sea at home kept one set of rules. This keeps two, badly, and changes which mid-breath. You cannot read it the way you read a thing you trust. You have to read it the way you'd read a man who might betray you — watching for the moment it decides to."
+  },
+  {
+   "scene": "SC16",
+   "scenePrefix": "13",
+   "order": 57,
+   "speaker": "ASTRID",
+   "text": "I've never trusted anything enough to watch it that close. Not without my father's eyes telling me I saw right."
+  },
+  {
+   "scene": "SC16",
+   "scenePrefix": "13",
+   "order": 58,
+   "speaker": "NEFER-KA",
+   "text": "Then learn. His eyes are closing, and the light does not wait for a captain's nod."
+  },
+  {
+   "scene": "SC17",
+   "scenePrefix": "14",
+   "order": 59,
+   "speaker": "NEFER-KA",
+   "text": "That one you didn't look at me after."
+  },
+  {
+   "scene": "SC17",
+   "scenePrefix": "14",
+   "order": 60,
+   "speaker": "ASTRID",
+   "text": "...No. I didn't."
+  },
+  {
+   "scene": "SC18",
+   "scenePrefix": "14A",
+   "order": 61,
+   "speaker": "MERYT",
+   "text": "Two crews. One tide. Nobody lost."
+  },
+  {
+   "scene": "SC18",
+   "scenePrefix": "14A",
+   "order": 62,
+   "speaker": "ASTRID",
+   "text": "Nobody lost. First time I've read the water and not had to count a cost when it drained."
+  },
+  {
+   "scene": "SC18",
+   "scenePrefix": "14A",
+   "order": 63,
+   "speaker": "NEFER-KA",
+   "text": "Hold that feeling close. The seam will come for it next."
+  },
+  {
+   "scene": "SC19",
+   "scenePrefix": "15",
+   "order": 64,
+   "speaker": "MERYT",
+   "text": "Your people sing about drowning a great deal."
+  },
+  {
+   "scene": "SC19",
+   "scenePrefix": "15",
+   "order": 65,
+   "speaker": "TOVE",
+   "text": "We sing about it so it doesn't happen. You sing about rivers so they stay in their banks. Same prayer, different water."
+  },
+  {
+   "scene": "SC19",
+   "scenePrefix": "15",
+   "order": 66,
+   "speaker": "MERYT",
+   "text": "That child lost her mother to the first tide. She laughs anyway. I don't know how she does it and I can't look straight at it."
+  },
+  {
+   "scene": "SC19",
+   "scenePrefix": "15",
+   "order": 67,
+   "speaker": "ASTRID",
+   "text": "She looks at things straight. My father said keep her close. Why can't you look at her, Meryt?"
+  },
+  {
+   "scene": "SC20",
+   "scenePrefix": "15A",
+   "order": 68,
+   "speaker": "TOVE",
+   "text": "Halla asked me once what I'd do if the sea kept you instead of me. I laughed — said the sea's not fool enough to take the one who reads it. I've stopped laughing at that one."
+  },
+  {
+   "scene": "SC20",
+   "scenePrefix": "15A",
+   "order": 69,
+   "speaker": "ASTRID",
+   "text": "You'll see her. I'll read you to that beach myself."
+  },
+  {
+   "scene": "SC20",
+   "scenePrefix": "15A",
+   "order": 70,
+   "speaker": "TOVE",
+   "text": "You've steered us across half the world and back through a hole in the sky, and you still asked a dying man on that deck whether you were allowed to be right. Why do you do that?"
+  },
+  {
+   "scene": "SC20",
+   "scenePrefix": "15A",
+   "order": 71,
+   "speaker": "ASTRID",
+   "text": "Because if he says yes and I'm wrong, it was his call. If I choose, and I'm wrong —"
+  },
+  {
+   "scene": "SC20",
+   "scenePrefix": "15A",
+   "order": 72,
+   "speaker": "TOVE",
+   "text": "— then it's yours to carry. Aye. That's the price of the steering-oar. Nobody told me either when they handed it to me. You just find out you're holding it."
+  },
+  {
+   "scene": "SC21",
+   "scenePrefix": "16",
+   "order": 73,
+   "speaker": "IPY",
+   "text": "My mother sold sweet water there. The first morning the sea walked, it walked here. It took the corner. And her. I keep her place."
+  },
+  {
+   "scene": "SC21",
+   "scenePrefix": "16",
+   "order": 74,
+   "speaker": "ASTRID",
+   "text": "My mother went to the sea too. Before I was old enough to carry a jug. I keep her place by reading the water she's in. You keep yours by standing on it."
+  },
+  {
+   "scene": "SC22",
+   "scenePrefix": "17",
+   "order": 75,
+   "speaker": "ASTRID",
+   "text": "The east row — get them OFF it — NOW!"
+  },
+  {
+   "scene": "SC22",
+   "scenePrefix": "17",
+   "order": 76,
+   "speaker": "SETH-NAKHT",
+   "text": "Your commander's foreign hounds smell the flood before it comes! Fear nothing while I hold their leash!"
+  },
+  {
+   "scene": "SC23",
+   "scenePrefix": "18",
+   "order": 77,
+   "speaker": "ASTRID",
+   "text": "Your commander holds no leash. The water answers the reading, and the reading is hers — — and mine. He stood where it was already safe. Ask him to stand where I say the next one breaks, and watch if he dares."
+  },
+  {
+   "scene": "SC23",
+   "scenePrefix": "18",
+   "order": 78,
+   "speaker": "SETH-NAKHT",
+   "text": "She is more useful and more dangerous than I thought. Tighten the guard on the old man. A dangerous animal comes home faster when it fears for its master."
+  },
+  {
+   "scene": "SC24",
+   "scenePrefix": "18A",
+   "order": 79,
+   "speaker": "NEFER-KA",
+   "text": "It is not only leaking water now. It is leaking TIME. The two ages are forgetting which of their dead are dead. When the wall forgets enough, there is no 'before' left to send your father's ship home to. No shore to go back to at all."
+  },
+  {
+   "scene": "SC24",
+   "scenePrefix": "18A",
+   "order": 80,
+   "speaker": "ASTRID",
+   "text": "How long?"
+  },
+  {
+   "scene": "SC24",
+   "scenePrefix": "18A",
+   "order": 81,
+   "speaker": "NEFER-KA",
+   "text": "Days. Then the convergence chooses for us, whether we are ready or not."
+  },
+  {
+   "scene": "SC26",
+   "scenePrefix": "19",
+   "order": 82,
+   "speaker": "SETH-NAKHT",
+   "text": "My guardian says the tear was forced open by a hand, and closes only when a life is given to it. I have decided the life will be a *guilty* one — the hand that opened it. The people will love the justice. You will read me and my guardian to the tear's root at the convergence. If your reading falters, or your crew grows brave, your father does not see another ugly double dawn."
+  },
+  {
+   "scene": "SC27",
+   "scenePrefix": "20",
+   "order": 83,
+   "speaker": "MERYT",
+   "text": "He means to find the guilty hand and feed it to the seam at the convergence. He thinks a guilty life closes it cleaner."
+  },
+  {
+   "scene": "SC27",
+   "scenePrefix": "20",
+   "order": 84,
+   "speaker": "ASTRID",
+   "text": "Does it? A guilty life?"
+  },
+  {
+   "scene": "SC27",
+   "scenePrefix": "20",
+   "order": 85,
+   "speaker": "MERYT",
+   "text": "It closes when someone who can *read* it shuts it from within. Guilt is Seth- Nakht's idea, not the seam's. But if he needs a guilty hand to throw, and mine is the guilty one — I could spare a great many people by being the hand."
+  },
+  {
+   "scene": "SC27",
+   "scenePrefix": "20",
+   "order": 86,
+   "speaker": "ASTRID",
+   "text": "That's not a plan. That's your grief finally finding a door it's allowed to walk through."
+  },
+  {
+   "scene": "SC28",
+   "scenePrefix": "21",
+   "order": 87,
+   "speaker": "MERYT",
+   "text": "My brother. The river took him in flood — no body, no cairn, nothing to grieve but water. The morning of the turning I lit the dawn-rite as duty asks. And then I lit it a second time. For him. Forbidden. To beg the river back just once. The suns touched twice. The sky tore wide. Every corner the sea has taken since — Ipy's mother — I called it down trying to un- drown one man."
+  },
+  {
+   "scene": "SC28",
+   "scenePrefix": "21",
+   "order": 88,
+   "speaker": "ASTRID",
+   "text": "And now you'd let a commander throw you in to make it even."
+  },
+  {
+   "scene": "SC28",
+   "scenePrefix": "21",
+   "order": 89,
+   "speaker": "MERYT",
+   "text": "Wouldn't you? If the drowning were yours to answer for?"
+  },
+  {
+   "scene": "SC28",
+   "scenePrefix": "21",
+   "order": 90,
+   "speaker": "ASTRID",
+   "text": "I don't know yet. I think I'm about to find out what I'd walk into. But not for his theatre, Meryt. If anyone walks into that light, it won't be to settle your account for a man who wants a crowd."
+  },
+  {
+   "scene": "SC29",
+   "scenePrefix": "21A",
+   "order": 91,
+   "speaker": "HELGI",
+   "text": "Sǫlveig lost the first horse I made her — dropped it off a jetty, cried a whole day. I carved the one in my belt that night and swore I'd set it in her hand myself. Spare. In case this world's as hard on a child's toys as the last one."
+  },
+  {
+   "scene": "SC29",
+   "scenePrefix": "21A",
+   "order": 92,
+   "speaker": "ASTRID",
+   "text": "You'll give her both yourself."
+  },
+  {
+   "scene": "SC29",
+   "scenePrefix": "21A",
+   "order": 93,
+   "speaker": "HELGI",
+   "text": "If I don't — then you don't carry it to her out of guilt, Astrid. You carry it because you chose to. There's a difference, and your whole life you've only done the first kind — the duty, the nod, the thing you were told. Learn the second kind before the day you need it. Don't learn it the way I think you're about to."
+  },
+  {
+   "scene": "SC30",
+   "scenePrefix": "22",
+   "order": 94,
+   "speaker": "NEFER-KA",
+   "text": "Walk only where I walk. Here the world has forgotten which age it stands in."
+  },
+  {
+   "scene": "SC30",
+   "scenePrefix": "22",
+   "order": 95,
+   "speaker": "TOVE",
+   "text": "If I die in this place I die owing a woman an explanation she's waited a year for. You're getting us to her. Say it."
+  },
+  {
+   "scene": "SC30",
+   "scenePrefix": "22",
+   "order": 96,
+   "speaker": "ASTRID",
+   "text": "I'm going to get *you* to her, Tove. Her name first, so I know who I'm aiming you at."
+  },
+  {
+   "scene": "SC30",
+   "scenePrefix": "22",
+   "order": 97,
+   "speaker": "TOVE",
+   "text": "...Halla. Of Hǫrn. She mends nets and she swore she'd never love a sailor and then she did it anyway, the fool. You said \"you.\" Not \"us.\""
+  },
+  {
+   "scene": "SC30",
+   "scenePrefix": "22",
+   "order": 98,
+   "speaker": "ASTRID",
+   "text": "Mind the glass. Left of me."
+  },
+  {
+   "scene": "SC31",
+   "scenePrefix": "23",
+   "order": 99,
+   "speaker": "NEFER-KA",
+   "text": "Even he gets shown what he's closest to losing. Watch him. A man who has just met the worst version of himself is a man who can still turn — or harden for good."
+  },
+  {
+   "scene": "SC32",
+   "scenePrefix": "24",
+   "order": 100,
+   "speaker": "ASTRID",
+   "text": "OFF THE SADDLE — it floods the saddle — GO —"
+  },
+  {
+   "scene": "SC32",
+   "scenePrefix": "24",
+   "order": 101,
+   "speaker": "ASTRID",
+   "text": "HELGI — drop the line — take my hand — REACH —"
+  },
+  {
+   "scene": "SC32",
+   "scenePrefix": "24",
+   "order": 102,
+   "speaker": "HELGI",
+   "text": "Get her home — Sǫlv—"
+  },
+  {
+   "scene": "SC33",
+   "scenePrefix": "25",
+   "order": 103,
+   "speaker": "TOVE",
+   "text": "He threw it to you. Not his own hand. Why —"
+  },
+  {
+   "scene": "SC33",
+   "scenePrefix": "25",
+   "order": 104,
+   "speaker": "ASTRID",
+   "text": "Because he'd already chosen who the horse was for. He stopped trying to save himself and saved the thing that mattered. I spent my whole life not understanding that. I understand it now."
+  },
+  {
+   "scene": "SC34",
+   "scenePrefix": "26",
+   "order": 105,
+   "speaker": "MERYT",
+   "text": "The hand was mine, Commander. My brother drowned; I lit the dawn-rite a second time, for him, forbidden. The suns touched twice. I tore the sky. Not these foreigners — me."
+  },
+  {
+   "scene": "SC34",
+   "scenePrefix": "26",
+   "order": 106,
+   "speaker": "SETH-NAKHT",
+   "text": "My own captain. Even better — the people will see I spare no one, not even my own. Hold her for the tear. At the convergence, the guilty hand goes in. And you will read her safely to the heart, so my justice does not miss."
+  },
+  {
+   "scene": "SC35",
+   "scenePrefix": "26A",
+   "order": 107,
+   "speaker": "IPY",
+   "text": "The first morning the sea walked. That was your second flame. My mother."
+  },
+  {
+   "scene": "SC35",
+   "scenePrefix": "26A",
+   "order": 108,
+   "speaker": "MERYT",
+   "text": "...Yes. Your mother. And every corner it took since. Me."
+  },
+  {
+   "scene": "SC35",
+   "scenePrefix": "26A",
+   "order": 109,
+   "speaker": "IPY",
+   "text": "Seth-Nakht wants to throw you in. I don't. I want you to stand on the shore where she stood, every day, and not look away from it. That lasts longer than drowning."
+  },
+  {
+   "scene": "SC36",
+   "scenePrefix": "27",
+   "order": 110,
+   "speaker": "NEFER-KA",
+   "text": "He has it wrong. The seam does not want guilt. It wants a reader, and it keeps them. If Meryt walks in, she dies for his story and the seam still needs a reader after. There are two people here who can read it to the heart. Her hand is not one of them."
+  },
+  {
+   "scene": "SC36",
+   "scenePrefix": "27",
+   "order": 111,
+   "speaker": "ASTRID",
+   "text": "Then he's about to spend the wrong life — and he'll keep spending them until he spends the right one. Unless someone reads it before he can stage his justice."
+  },
+  {
+   "scene": "SC37",
+   "scenePrefix": "28",
+   "order": 112,
+   "speaker": "SETH-NAKHT",
+   "text": "At the joining of the suns, the guilty hand goes into the tear, and your commander closes the wound his own captain opened! Read her path to the heart. Now."
+  },
+  {
+   "scene": "SC37",
+   "scenePrefix": "28",
+   "order": 113,
+   "speaker": "ASTRID",
+   "text": "If I walk her in, she dies and the seam stays open — she can't read it shut. You'll have spent a life for a story and you'll still be standing here when the next dawn doubles."
+  },
+  {
+   "scene": "SC37",
+   "scenePrefix": "28",
+   "order": 114,
+   "speaker": "SETH-NAKHT",
+   "text": "Then I will spend another. I have a garrison of hands."
+  },
+  {
+   "scene": "SC37",
+   "scenePrefix": "28",
+   "order": 115,
+   "speaker": "NEFER-KA",
+   "text": "You have two readers. Her, and me. Spend us and you have none — and no one to shut the tear the day it opens over your own house."
+  },
+  {
+   "scene": "SC38",
+   "scenePrefix": "29",
+   "order": 116,
+   "speaker": "ASTRID",
+   "text": "There — NOW! *The sand UNDER the charging wedge erupts to sea mid-stride; three men go down thrashing, armour dragging them; one, SERGEANT KHAY, is pulled under to the chest before the water drains and drops him, coughing, onto dry dune — a real casualty of the ground, not a kill by her hand.*"
+  },
+  {
+   "scene": "SC38",
+   "scenePrefix": "29",
+   "order": 117,
+   "speaker": "SETH-NAKHT",
+   "text": "Flank her! The rock's dry side —!"
+  },
+  {
+   "scene": "SC38",
+   "scenePrefix": "29",
+   "order": 118,
+   "speaker": "ASTRID",
+   "text": "The dry side goes next. Step there and you drown. *A beat of terror holds the flankers — and then, by luck or by read, a thin tongue of sea licks the dry side and withdraws. The bluff holds. She's trembling now, soaked, voice cracking — reading at the edge of collapse, each call costing her more than the last.*"
+  },
+  {
+   "scene": "SC38",
+   "scenePrefix": "29",
+   "order": 119,
+   "speaker": "ASTRID",
+   "text": "You never held the leash. I did. And I just showed your own men whose hand the water takes orders from."
+  },
+  {
+   "scene": "SC39",
+   "scenePrefix": "30",
+   "order": 120,
+   "speaker": "SETH-NAKHT",
+   "text": "HOLD THE LINE FOR THE FOREIGNERS. Hold it! ... Not a throne of sand. Not that."
+  },
+  {
+   "scene": "SC40",
+   "scenePrefix": "30A",
+   "order": 121,
+   "speaker": "VIGGE",
+   "text": "BÖRK —"
+  },
+  {
+   "scene": "SC40",
+   "scenePrefix": "30A",
+   "order": 122,
+   "speaker": "TOVE",
+   "text": "He chose it. He chose you. Hold onto that, boy — out here it's all any of us gets to keep."
+  },
+  {
+   "scene": "SC41",
+   "scenePrefix": "31",
+   "order": 123,
+   "speaker": "ASTRID",
+   "text": "The heart's there. Not where it's brightest — where it's quiet."
+  },
+  {
+   "scene": "SC41",
+   "scenePrefix": "31",
+   "order": 124,
+   "speaker": "NEFER-KA",
+   "text": "Thirty years. You found it on your first convergence."
+  },
+  {
+   "scene": "SC41",
+   "scenePrefix": "31",
+   "order": 125,
+   "speaker": "ASTRID",
+   "text": "I never once trusted the water under my own feet. I'm done not trusting it. Your world needs a reader standing on this shore for the next tear — and the one after. That's you. It was always going to have to be you who stays, so it can't be you who goes."
+  },
+  {
+   "scene": "SC42",
+   "scenePrefix": "32",
+   "order": 126,
+   "speaker": "MERYT",
+   "text": "It should be me. I opened it. Let me be the one who —"
+  },
+  {
+   "scene": "SC42",
+   "scenePrefix": "32",
+   "order": 127,
+   "speaker": "ASTRID",
+   "text": "Your grief opened it. Your life won't close it — you can't read it, and I won't spend you on a commander's idea of justice. You don't get to drown your way out of this. You stand on the shore where it happened and you don't look away. That's longer, and it's yours. Guard it with him."
+  },
+  {
+   "scene": "SC43",
+   "scenePrefix": "33",
+   "order": 128,
+   "speaker": "ASTRID",
+   "text": "I can send you all home through the seam before I shut it — the ship, Tove, the grey sea. Or I close it. Not both. The light keeps the reader who shuts it."
+  },
+  {
+   "scene": "SC43",
+   "scenePrefix": "33",
+   "order": 129,
+   "speaker": "OLAF",
+   "text": "The sea takes what it's owed, girl. Owe it me — not you. I spent your whole life being the eyes behind yours. Close it. Live on the far side. And say it out loud, once, so I hear you choose before I go."
+  },
+  {
+   "scene": "SC43",
+   "scenePrefix": "33",
+   "order": 130,
+   "speaker": "ASTRID",
+   "text": "I'm closing the seam. I'm staying. You go home without me. I chose it. No one told me to."
+  },
+  {
+   "scene": "SC44",
+   "scenePrefix": "34",
+   "order": 131,
+   "speaker": "ASTRID",
+   "text": "Take him to the grey sea, Tove. Take the crew home. And this — — to Sǫlveig, from your hands, not mine. And Halla of Hǫrn: tell her you didn't drown. Tell her to her face. Don't make her read it in a story."
+  },
+  {
+   "scene": "SC44",
+   "scenePrefix": "34",
+   "order": 132,
+   "speaker": "TOVE",
+   "text": "I'll tell her you're the reason I got to. You said \"you,\" not \"us,\" in that canyon. I heard it then. Read your way to something good over here, Astrid. Promise me a thing, once, out loud, like you mean it."
+  },
+  {
+   "scene": "SC44",
+   "scenePrefix": "34",
+   "order": 133,
+   "speaker": "ASTRID",
+   "text": "I promise I'll choose it. Whatever it is. Myself."
+  },
+  {
+   "scene": "SC46",
+   "scenePrefix": "36",
+   "order": 134,
+   "speaker": "ASTRID",
+   "text": "I know. I know. But I didn't choose you. I'm choosing this."
+  },
+  {
+   "scene": "SC48",
+   "scenePrefix": "38",
+   "order": 135,
+   "speaker": "MERYT",
+   "text": "What do your people call a navigator with no sea left to cross?"
+  },
+  {
+   "scene": "SC48",
+   "scenePrefix": "38",
+   "order": 136,
+   "speaker": "ASTRID",
+   "text": "We don't have a word for it. But that river runs further than anyone here has followed it. Someone should learn to read it."
+  },
+  {
+   "scene": "SC48",
+   "scenePrefix": "38",
+   "order": 137,
+   "speaker": "MERYT",
+   "text": "Further than anyone's dared."
+  },
+  {
+   "scene": "SC48",
+   "scenePrefix": "38",
+   "order": 138,
+   "speaker": "ASTRID",
+   "text": "Then it had better be me."
+  },
+  {
+   "scene": "SC49",
+   "scenePrefix": "38A",
+   "order": 139,
+   "speaker": "ASTRID",
+   "text": "See where it goes quiet, there, past the bar? That's where it's deepest. The loud water's shallow. It's the quiet you have to learn to read."
+  },
+  {
+   "scene": "SC49",
+   "scenePrefix": "38A",
+   "order": 140,
+   "speaker": "IPY",
+   "text": "...Like the seam. The heart was the quiet part."
+  },
+  {
+   "scene": "SC49",
+   "scenePrefix": "38A",
+   "order": 141,
+   "speaker": "ASTRID",
+   "text": "Like the seam. Your turn. Read me the next bend. Don't look at me after to see if you're right. Just be right."
+  }
+ ]
+}

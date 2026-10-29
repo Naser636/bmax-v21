@@ -1,0 +1,94 @@
+{
+ "generated": "2026-10-24",
+ "mission": "F11 EDITORIAL RESOLUTION for the locked 64% action — PROPOSED, traced, NOT approved. No canon event removed. Non-billed.",
+ "lockedTarget": {
+  "ACTION": 64,
+  "STORY": 13,
+  "TENSION": 10,
+  "DRAMA": 5,
+  "COMEDY": 5,
+  "WORLD": 3
+ },
+ "decision": "ODG editorial (autonomous, within mandate): keep 5 essential DRAMA scenes as the emotional spine (~3 min = 5%); DEMOTE the other 7 drama scenes to short emotional BEATS absorbed into adjacent action/story scenes (their story content is preserved — no event cut); extend the 17 ACTION scenes into set-pieces to carry 38.4 min (64%).",
+ "dramaKeptAsScenes": [
+  "SC28",
+  "SC29",
+  "SC43",
+  "SC44",
+  "SC48"
+ ],
+ "dramaDemotedToBeats": {
+  "SC08": "absorb into SC07 (town after the standoff — one mourning beat)",
+  "SC14": "keep brief; the handoff is a beat within the garrison block (SC13-15)",
+  "SC20": "absorb into SC19 (one quiet Tove↔Björn exchange within the band-forms scene)",
+  "SC27": "merge with SC28 (the Björn↔Meryt bond + confession become one scene)",
+  "SC33": "absorb into SC32 aftermath (Olaf beat tail of the third-tide crossing)",
+  "SC35": "brief insert within SC34/36 (Ipu↔Meryt moment)",
+  "SC42": "compress into SC41 (the refusal is the back half of the two-readers scene)"
+ },
+ "comedyMechanism": "comedy stays DISTRIBUTED beats across 13 scenes (already designed) — ~14s/beat × 13 ≈ 3 min = 5%",
+ "screenTimeAllocationAfterEdit": [
+  {
+   "category": "ACTION",
+   "targetPct": 64,
+   "targetMin": 38.4,
+   "unitsAfterEdit": 17,
+   "secPerUnit": 136,
+   "plausibleBand": "60-240s",
+   "feasible": true
+  },
+  {
+   "category": "STORY",
+   "targetPct": 13,
+   "targetMin": 7.8,
+   "unitsAfterEdit": 9,
+   "secPerUnit": 52,
+   "plausibleBand": "40-150s",
+   "feasible": true
+  },
+  {
+   "category": "TENSION",
+   "targetPct": 10,
+   "targetMin": 6,
+   "unitsAfterEdit": 7,
+   "secPerUnit": 51,
+   "plausibleBand": "40-150s",
+   "feasible": true
+  },
+  {
+   "category": "DRAMA",
+   "targetPct": 5,
+   "targetMin": 3,
+   "unitsAfterEdit": 5,
+   "secPerUnit": 36,
+   "plausibleBand": "30-180s",
+   "feasible": true
+  },
+  {
+   "category": "COMEDY",
+   "targetPct": 5,
+   "targetMin": 3,
+   "unitsAfterEdit": 13,
+   "secPerUnit": 14,
+   "plausibleBand": "8-60s",
+   "feasible": true
+  },
+  {
+   "category": "WORLD",
+   "targetPct": 3,
+   "targetMin": 1.8,
+   "unitsAfterEdit": 3,
+   "secPerUnit": 36,
+   "plausibleBand": "20-90s",
+   "feasible": true
+  }
+ ],
+ "feasibilityAfterEdit": "ALL categories feasible after the editorial change",
+ "significantCanonChange": {
+  "isSignificant": true,
+  "whatChanges": "F11 scene FOOTPRINT: 7 drama scenes become beats-within-scenes (not standalone). This changes pacing/structure, NOT story events, characters, relationships, or the climax.",
+  "status": "PROPOSED — NOT approved. Requires human sign-off as part of F11 acceptance.",
+  "reversible": "yes — the demotions are an editorial directive, not a dialogue/canon deletion; the lines remain in the dialogue file."
+ },
+ "honesty": "64% is NOT claimed achieved. This is a screen-time PLAN/estimate; the realized distribution must be MEASURED on the rendered edit (definition-of-done)."
+}

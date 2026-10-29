@@ -1,0 +1,55 @@
+{
+  "observed": "2026-10-24",
+  "currency": "USD",
+  "fxNote": "EUR figures elsewhere assume 1 USD ≈ €0.92 (ESTIMATE, not a measured rate; re-check at purchase).",
+  "disclaimer": "Public tariffs observed on the date above; NOT quotes, NOT measured spend. 'DERIVED' = arithmetic from official inputs. Re-verify before any purchase. Nothing bought/installed.",
+  "video": [
+    { "tool": "Runway Gen-4 Turbo", "usdPerSec": 0.05, "verified": "OFFICIAL", "source": "docs.dev.runwayml.com/guides/pricing", "caveat": "5 cr/s @ $0.01/cr (API)" },
+    { "tool": "Runway Gen-4.5", "usdPerSec": 0.12, "verified": "OFFICIAL", "source": "docs.dev.runwayml.com/guides/pricing", "caveat": "12 cr/s (API); hero-grade" },
+    { "tool": "Luma Ray 3.2 720p", "usdPerSec": 0.06, "verified": "OFFICIAL", "source": "docs.lumalabs.ai", "caveat": "billed per 5s block; 1080p $0.24/s" },
+    { "tool": "MiniMax Hailuo 2.3 Fast", "usdPerSec": 0.032, "verified": "UNVERIFIED", "source": "magichour (3rd-party)", "caveat": "official page gated; cheapest claimed" },
+    { "tool": "Google Veo 3.1", "usdPerSec": null, "verified": "UNVERIFIED", "source": "ai.google.dev/gemini-api/docs/video", "caveat": "preview models shut down 2026-10-22; live availability UNCERTAIN — do not bake in" }
+  ],
+  "image": [
+    { "tool": "Flux schnell (Replicate)", "usdPerImage": 0.003, "verified": "OFFICIAL", "source": "replicate.com/pricing", "caveat": "cheapest verified; commercial OK" },
+    { "tool": "Flux dev (fal.ai/Replicate)", "usdPerImage": 0.025, "verified": "OFFICIAL", "source": "fal.ai / replicate.com", "caveat": "higher fidelity/identity" },
+    { "tool": "Ideogram V3 Turbo (fal.ai)", "usdPerImage": 0.03, "verified": "OFFICIAL", "source": "fal.ai/models/fal-ai/ideogram/v3", "caveat": "" },
+    { "tool": "Midjourney", "usdPerImage": null, "verified": "UNVERIFIED", "source": "official 403", "caveat": "sub-only; no public per-image API; >$1M-rev orgs need Pro $60+" }
+  ],
+  "voiceFR": [
+    { "tool": "Google Cloud TTS Standard", "usdPer1kChars": 0.004, "verified": "OFFICIAL", "source": "cloud.google.com/text-to-speech/pricing", "caveat": "free to 4M chars/mo; fr-FR; cheapest; commercial OK" },
+    { "tool": "OpenAI tts-1", "usdPer1kChars": 0.015, "verified": "OFFICIAL", "source": "developers.openai.com/api/docs/pricing", "caveat": "no minimum; commercial OK" },
+    { "tool": "Google Neural2", "usdPer1kChars": 0.016, "verified": "OFFICIAL", "source": "cloud.google.com/text-to-speech/pricing", "caveat": "better prosody" },
+    { "tool": "ElevenLabs Creator", "usdPer1kChars": 0.182, "verified": "OFFICIAL", "source": "elevenlabs.io/pricing", "caveat": "$22/mo; best emotional quality; commercial on paid only; API shares credit pool" }
+  ],
+  "music": [
+    { "tool": "Suno Pro", "usdPerTrack": 0.5, "verified": "OFFICIAL", "source": "suno.com/pricing", "caveat": "$10/mo; commercial needs download while subscribed; 20 dl/mo cap — cap is the real cost driver" },
+    { "tool": "Udio Standard", "usdPerTrack": 0.008, "verified": "OFFICIAL", "source": "help.udio.com", "caveat": "$10/mo; 2 cr/song; verify UMG ToS before release" }
+  ],
+  "ossPostProduction": [
+    { "tool": "DaVinci Resolve (free)", "usd": 0, "license": "freeware", "source": "blackmagicdesign.com", "caveat": "exports 4K no watermark; GPU recommended; Studio $295 NOT required" },
+    { "tool": "Kdenlive", "usd": 0, "license": "GPL-3.0+", "source": "kdenlive.org", "caveat": "CPU-fine editor" },
+    { "tool": "Audacity", "usd": 0, "license": "GPL", "source": "audacityteam.org", "caveat": "no GPU; audio cleanup/mix" },
+    { "tool": "FFmpeg", "usd": 0, "license": "LGPL-2.1+", "source": "github.com/FFmpeg", "caveat": "no GPU; duration/export verification; NOT installed here (needs gate-12)" },
+    { "tool": "Krita", "usd": 0, "license": "GPL-3.0", "source": "krita.org", "caveat": "still touch-up/compositing; CPU-fine" },
+    { "tool": "Piper TTS (local)", "usd": 0, "license": "GPL-3.0+", "source": "github.com/OHF-Voice/piper1-gpl", "caveat": "CPU-only OK; lower emotional range than ElevenLabs" }
+  ],
+  "cloudGpu": [
+    { "provider": "RunPod RTX 4090", "usdPerHour": 0.89, "verified": "OFFICIAL", "source": "runpod.io/pricing", "caveat": "Secure; Community $0.34; only needed for LOCAL generation (Arch C)" },
+    { "provider": "Lambda A10", "usdPerHour": 1.29, "verified": "OFFICIAL", "source": "lambda.ai/service/gpu-cloud", "caveat": "" },
+    { "provider": "Vast.ai RTX 4090", "usdPerHour": null, "verified": "UNVERIFIED", "source": "vast.ai/pricing", "caveat": "marketplace; indicative ~$0.35-0.70 on-demand" }
+  ],
+  "commercialUseGates": [
+    "Pika: commercial + watermark-free only on Pro ($28)",
+    "Midjourney: Pro ($60) if org revenue > $1M",
+    "ElevenLabs / Suno / Udio: commercial only on PAID tiers (not Free)",
+    "Coqui XTTS v2 weights: CPML = NON-commercial (library MPL-2.0 is fine)",
+    "GPL/LGPL OSS: obligations attach to redistributing the SOFTWARE, not to content you produce"
+  ],
+  "biggestRisks": [
+    "Google Veo live availability unconfirmed (preview shut down 2026-10-22) — do not bake in",
+    "Credits reset monthly (Runway/Kling/Pika/Luma/Udio); Suno cost is download-cap-driven (~$0.50/track)",
+    "Cloud-GPU prices move weekly; Vast.ai has no fixed quote",
+    "All $/usable-second depend on YIELD, which is UNMEASURED until the benchmark"
+  ]
+}

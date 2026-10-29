@@ -1,0 +1,456 @@
+{
+ "generated": "2026-10-25",
+ "document": "§2 lot-v3 end-to-end plan verification (classifier + prompt-readiness)",
+ "batchSize": 26,
+ "summary": {
+  "classifierReady": 26,
+  "promptAuthored": 1,
+  "productionReady": 1,
+  "classifierReadyButPromptMissing": 25
+ },
+ "finding": "All 26 lot shots pass the identity/VFX CLASSIFIER, but 25 lack a distinct beat-specific AUTHORED prompt (the shotlist uses one generic seed per scene). READY (classifier) != PRODUCTION-READY. No new paid call until prompts are authored + verified.",
+ "gate": "NO paid call: production-ready count = 1 (need authored prompts first).",
+ "preparationPlan": "Author distinct single-subject prompts per beat, in chronological order, for the next coherent scene (e.g. SC17 remaining beats), then re-verify (classifier READY + authored prompt + ref + preflight) before spending.",
+ "rows": [
+  {
+   "order": 1,
+   "scene": "SC01",
+   "shot": "SC01-SH07",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 2,
+   "scene": "SC01",
+   "shot": "SC01-SH08",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 3,
+   "scene": "SC01",
+   "shot": "SC01-SH09",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 4,
+   "scene": "SC01",
+   "shot": "SC01-SH10",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 5,
+   "scene": "SC01",
+   "shot": "SC01-SH11",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 6,
+   "scene": "SC01",
+   "shot": "SC01-SH12",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 7,
+   "scene": "SC01",
+   "shot": "SC01-SH13",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 8,
+   "scene": "SC17",
+   "shot": "SC17-SH01",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": true,
+   "promptReady": true,
+   "productionReady": true,
+   "needs": []
+  },
+  {
+   "order": 9,
+   "scene": "SC17",
+   "shot": "SC17-SH02",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 10,
+   "scene": "SC17",
+   "shot": "SC17-SH03",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 11,
+   "scene": "SC17",
+   "shot": "SC17-SH04",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 12,
+   "scene": "SC17",
+   "shot": "SC17-SH05",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 13,
+   "scene": "SC21",
+   "shot": "SC21-SH01",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 14,
+   "scene": "SC21",
+   "shot": "SC21-SH02",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 15,
+   "scene": "SC21",
+   "shot": "SC21-SH03",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 16,
+   "scene": "SC21",
+   "shot": "SC21-SH04",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 17,
+   "scene": "SC21",
+   "shot": "SC21-SH05",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 18,
+   "scene": "SC21",
+   "shot": "SC21-SH06",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 19,
+   "scene": "SC21",
+   "shot": "SC21-SH07",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 20,
+   "scene": "SC21",
+   "shot": "SC21-SH08",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 21,
+   "scene": "SC21",
+   "shot": "SC21-SH09",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 22,
+   "scene": "SC24",
+   "shot": "SC24-SH01",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 23,
+   "scene": "SC24",
+   "shot": "SC24-SH02",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 24,
+   "scene": "SC24",
+   "shot": "SC24-SH03",
+   "subject": "BJÖRN",
+   "media": "PREMIUM_VIDEO",
+   "maxEur": 0.6,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 25,
+   "scene": "SC24",
+   "shot": "SC24-SH06",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  },
+  {
+   "order": 26,
+   "scene": "SC24",
+   "shot": "SC24-SH07",
+   "subject": "BJÖRN",
+   "media": "STILL_ANIMATABLE",
+   "maxEur": 0.03,
+   "classifierStatus": "READY",
+   "classifierReady": true,
+   "sceneSeedBeatDistinct": false,
+   "promptAuthored": false,
+   "promptReady": false,
+   "productionReady": false,
+   "needs": [
+    "author a distinct, beat-specific single-subject prompt (the shotlist seed is a generic scene placeholder)"
+   ]
+  }
+ ]
+}

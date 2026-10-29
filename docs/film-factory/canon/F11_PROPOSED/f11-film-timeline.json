@@ -1,0 +1,911 @@
+{
+ "generated": "2026-10-25",
+ "ssot": true,
+ "totalScenes": 49,
+ "totalPlannedShots": 420,
+ "scenesWithAssets": 13,
+ "reconciliation": {
+  "generatedClips_t1": 9,
+  "derivatives": [
+   "sc01-opening-assembly.mp4 (concat)",
+   "sc01-opening-assembly-v2.mp4 (concat)",
+   "sc01-opening-assembly-v3.mp4 (concat, 5-shot)"
+  ],
+  "generatedSec": 51.16,
+  "uniqueSourceSec": 51.16,
+  "usableSec": 45.52,
+  "humanAcceptedSec": 0,
+  "assembledTimelineSec": 28.96,
+  "note": "generated=all 9 t1 clips (added SC01-astrid-helm @6.80 spend); unique=no dup sha; usable=8 clean clips (A2b-v1 rejected); humanAccepted=0 (all HUMAN_REVIEW_PENDING — full-motion acceptance pending); assembled=SC01 v3 (5 shots: storm→Astrid-reads→Björn-oar→peril→gold-seam), silent. Derivatives NOT counted as source."
+ },
+ "scenes": [
+  {
+   "scene": "SC01",
+   "act": "I",
+   "narrativePurpose": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main strength w",
+   "content": "ACTION",
+   "prevScene": null,
+   "nextScene": "SC02",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 13,
+   "existingAssets": [
+    {
+     "clip": "E1-sc01-storm-seam",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 6.04
+    },
+    {
+     "clip": "SC01-astrid-helm",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "ASTRID reads the sea; minimax subject_reference; CIQE MAJOR=audio-absence only (PL-6); identity+tattoo+steering-oar canon-correct"
+    },
+    {
+     "clip": "A1b-minimax-bjorn-oar",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64
+    },
+    {
+     "clip": "A3b-tide-brace",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64
+    },
+    {
+     "clip": "S1-sc01-goldseam",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 6.04
+    },
+    {
+     "clip": "SC01-olaf-mast (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "OLAF lashed to mast; T2 €0.60; identity+ropes+bronze-arm-ring(SC43 seed) strong; CIQE MAJOR=audio only; CONTINUITY: lighting reads overcast-day — recommend local night-grade to match SC01 night-storm"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC02",
+   "act": "I",
+   "narrativePurpose": "after the crossing, the crew takes stock on a wrong-coloured sea.",
+   "content": "STORY",
+   "prevScene": "SC01",
+   "nextScene": "SC03",
+   "decisiveAgent": "TOVE",
+   "plannedShots": 8,
+   "existingAssets": [
+    {
+     "clip": "SC02-bjorn-deadpan (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN deadpan vs wrong-coloured sea; single-subject; €0.60; identity strong; CIQE MAJOR=audio only"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC03",
+   "act": "I",
+   "narrativePurpose": "the ship is driven through; for a beat two worlds stack (storm above, desert below).",
+   "content": "ACTION",
+   "prevScene": "SC02",
+   "nextScene": "SC04",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 9,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC04",
+   "act": "I",
+   "narrativePurpose": "crew thrown onto wet sand under two suns; Olaf, failing, names what none understand.",
+   "content": "WORLD",
+   "prevScene": "SC03",
+   "nextScene": "SC05",
+   "decisiveAgent": "OLAF",
+   "plannedShots": 7,
+   "existingAssets": [
+    {
+     "clip": "A4b-march-lead",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64
+    },
+    {
+     "clip": "SC04-olaf-names (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "OLAF names the impossible; single-subject; €0.60"
+    },
+    {
+     "clip": "SC04-bjorn-weight (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN takes the leadership weight; single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC05",
+   "act": "I",
+   "narrativePurpose": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy, water-jug)",
+   "content": "TENSION",
+   "prevScene": "SC04",
+   "nextScene": "SC06",
+   "decisiveAgent": "ENSEMBLE",
+   "plannedShots": 8,
+   "existingAssets": [
+    {
+     "clip": "SC05-meryt-patrol (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "MERYT river-guard, wary authority; single-subject MERYT ref; €0.60; identity strong"
+    },
+    {
+     "clip": "SC05-bjorn-wary (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN captured, coiled; single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC06",
+   "act": "I",
+   "narrativePurpose": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU and a guard",
+   "content": "ACTION",
+   "prevScene": "SC05",
+   "nextScene": "SC07",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 8,
+   "existingAssets": [
+    {
+     "clip": "R1-rescue-crewman",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64
+    },
+    {
+     "clip": "SC06-astrid-call (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "ASTRID calls the tide-read; single-subject; €0.60; identity+star-chart-tattoo consistent"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC07",
+   "act": "I",
+   "narrativePurpose": "the commander claims the strangers and the strand; a cold standoff, no battle yet.",
+   "content": "TENSION",
+   "prevScene": "SC06",
+   "nextScene": "SC08",
+   "decisiveAgent": "SETH-NAKHT",
+   "plannedShots": 8,
+   "existingAssets": [
+    {
+     "clip": "SC07-bjorn-rage-held (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN rage held, cold standoff; single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC08",
+   "act": "I",
+   "narrativePurpose": "the town after a tide; the WIDOWER (old man) keeps a drowned neighbour's place at a dry fo",
+   "content": "DRAMA",
+   "prevScene": "SC07",
+   "nextScene": "SC09",
+   "decisiveAgent": "WIDOWER",
+   "plannedShots": 4,
+   "existingAssets": [
+    {
+     "clip": "SC08-bjorn-witness (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN witnesses grief after a tide; single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC09",
+   "act": "I",
+   "narrativePurpose": "the garrison council; Seth-Nakht frames the strangers as the omen's cause.",
+   "content": "STORY",
+   "prevScene": "SC08",
+   "nextScene": "SC10",
+   "decisiveAgent": "SETH-NAKHT",
+   "plannedShots": 5,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC10",
+   "act": "I",
+   "narrativePurpose": "NEFER-KA the reader-elder studies the captives; sees something in the Norse.",
+   "content": "TENSION",
+   "prevScene": "SC09",
+   "nextScene": "SC11",
+   "decisiveAgent": "NEFER-KA",
+   "plannedShots": 11,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC11",
+   "act": "I",
+   "narrativePurpose": "the wall records the rule of the tear; Nefer-Ka begins to explain.",
+   "content": "TENSION",
+   "prevScene": "SC10",
+   "nextScene": "SC12",
+   "decisiveAgent": "NEFER-KA",
+   "plannedShots": 11,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC12",
+   "act": "I",
+   "narrativePurpose": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty.",
+   "content": "STORY",
+   "prevScene": "SC11",
+   "nextScene": "SC13",
+   "decisiveAgent": "SETH-NAKHT",
+   "plannedShots": 12,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC13",
+   "act": "I",
+   "narrativePurpose": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat.",
+   "content": "COMEDY",
+   "prevScene": "SC12",
+   "nextScene": "SC14",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 10,
+   "existingAssets": [
+    {
+     "clip": "SC13-bjorn-caged (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN caged, brooding/planning; single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC14",
+   "act": "I",
+   "narrativePurpose": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enough here an",
+   "content": "DRAMA",
+   "prevScene": "SC13",
+   "nextScene": "SC15",
+   "decisiveAgent": "OLAF",
+   "plannedShots": 15,
+   "existingAssets": [
+    {
+     "clip": "SC14-olaf-charge (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "OLAF hands command to Björn (fading charge); single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC15",
+   "act": "II",
+   "narrativePurpose": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced to cooper",
+   "content": "STORY",
+   "prevScene": "SC14",
+   "nextScene": "SC16",
+   "decisiveAgent": "SETH-NAKHT",
+   "plannedShots": 12,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC16",
+   "act": "II",
+   "narrativePurpose": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a feint-tide nea",
+   "content": "STORY",
+   "prevScene": "SC15",
+   "nextScene": "SC17",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 10,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC17",
+   "act": "II",
+   "narrativePurpose": "BJÖRN gets ONE read right — small, hard-won.",
+   "content": "STORY",
+   "prevScene": "SC16",
+   "nextScene": "SC18",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 5,
+   "existingAssets": [
+    {
+     "clip": "SC17-bjorn-read (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN studies a rune-carved driftwood — \"one read right\"; minimax subject_reference BJORN-768; T2 €0.60; strong identity, warm Act II ochre; CIQE MAJOR=audio only"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC18",
+   "act": "II",
+   "narrativePurpose": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (hauling beams, b",
+   "content": "ACTION",
+   "prevScene": "SC17",
+   "nextScene": "SC19",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 11,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC19",
+   "act": "II",
+   "narrativePurpose": "two crews become one band under Björn.",
+   "content": "STORY",
+   "prevScene": "SC18",
+   "nextScene": "SC20",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 10,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC20",
+   "act": "II",
+   "narrativePurpose": "quiet two-hander; Tove needles Björn about trusting the reader-girl.",
+   "content": "DRAMA",
+   "prevScene": "SC19",
+   "nextScene": "SC21",
+   "decisiveAgent": "TOVE",
+   "plannedShots": 11,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC21",
+   "act": "II",
+   "narrativePurpose": "sets the market + geography for the second tide.",
+   "content": "ACTION",
+   "prevScene": "SC20",
+   "nextScene": "SC22",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 9,
+   "existingAssets": [
+    {
+     "clip": "SC21-bjorn-market (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN surveys market/geography; single-subject foreground; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC22",
+   "act": "II",
+   "narrativePurpose": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking crowd thro",
+   "content": "ACTION",
+   "prevScene": "SC21",
+   "nextScene": "SC23",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 9,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC23",
+   "act": "II",
+   "narrativePurpose": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win.",
+   "content": "TENSION",
+   "prevScene": "SC22",
+   "nextScene": "SC24",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 6,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC24",
+   "act": "II",
+   "narrativePurpose": "an uncanny leak — a thing from the wrong age appears; the clock tightens.",
+   "content": "ACTION",
+   "prevScene": "SC23",
+   "nextScene": "SC25",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC25",
+   "act": "II",
+   "narrativePurpose": "wordless montage of the leak across two towns; dread + scale.",
+   "content": "ACTION",
+   "prevScene": "SC24",
+   "nextScene": "SC26",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC26",
+   "act": "II",
+   "narrativePurpose": "Seth-Nakht seizes leverage (hostage/Olaf) to force the march.",
+   "content": "TENSION",
+   "prevScene": "SC25",
+   "nextScene": "SC27",
+   "decisiveAgent": "SETH-NAKHT",
+   "plannedShots": 4,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC27",
+   "act": "II",
+   "narrativePurpose": "Björn and Meryt, wary allies, find common ground (both have lost someone to water).",
+   "content": "DRAMA",
+   "prevScene": "SC26",
+   "nextScene": "SC28",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 9,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC28",
+   "act": "II",
+   "narrativePurpose": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned brother; B",
+   "content": "DRAMA",
+   "prevScene": "SC27",
+   "nextScene": "SC29",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 9,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC29",
+   "act": "II",
+   "narrativePurpose": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the carved horse",
+   "content": "DRAMA",
+   "prevScene": "SC28",
+   "nextScene": "SC30",
+   "decisiveAgent": "HELGI",
+   "plannedShots": 8,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC30",
+   "act": "II",
+   "narrativePurpose": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined greatsword w",
+   "content": "ACTION",
+   "prevScene": "SC29",
+   "nextScene": "SC31",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 15,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC31",
+   "act": "II",
+   "narrativePurpose": "the canyon echoes the readers; a mystery texture beat.",
+   "content": "ACTION",
+   "prevScene": "SC30",
+   "nextScene": "SC32",
+   "decisiveAgent": "NEFER-KA",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC32",
+   "act": "II",
+   "narrativePurpose": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads; a near-l",
+   "content": "ACTION",
+   "prevScene": "SC31",
+   "nextScene": "SC33",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 11,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC33",
+   "act": "II",
+   "narrativePurpose": "the cost tallied; Olaf weaker; quiet before the end.",
+   "content": "DRAMA",
+   "prevScene": "SC32",
+   "nextScene": "SC34",
+   "decisiveAgent": "OLAF",
+   "plannedShots": 5,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC34",
+   "act": "II",
+   "narrativePurpose": "Seth-Nakht twists Meryt's guilt publicly to keep his leash.",
+   "content": "TENSION",
+   "prevScene": "SC33",
+   "nextScene": "SC35",
+   "decisiveAgent": "SETH-NAKHT",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC35",
+   "act": "II",
+   "narrativePurpose": "tender beat — Meryt and the boy IPU; innocence at stake.",
+   "content": "DRAMA",
+   "prevScene": "SC34",
+   "nextScene": "SC36",
+   "decisiveAgent": "—",
+   "plannedShots": 8,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC36",
+   "act": "II",
+   "narrativePurpose": "the plan set for the convergence; Nefer-Ka states the closing rule plainly.",
+   "content": "STORY",
+   "prevScene": "SC35",
+   "nextScene": "SC37",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 6,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC37",
+   "act": "III",
+   "narrativePurpose": "the two suns draw close; the clock hits zero; Björn takes command of the field.",
+   "content": "ACTION",
+   "prevScene": "SC36",
+   "nextScene": "SC38",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 13,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC38",
+   "act": "III",
+   "narrativePurpose": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN breaks the ch",
+   "content": "ACTION",
+   "prevScene": "SC37",
+   "nextScene": "SC39",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 14,
+   "existingAssets": [
+    {
+     "clip": "SC38-bjorn-greatsword (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "BJÖRN swings Himinkljúfr to break the charge; PL-3+PL-4 applied (scale + wool-tunic); €0.60; replaces undersized G1/A2b-v2 pending review"
+    },
+    {
+     "clip": "G1-greatsword-action",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "older; greatsword undersized (PL-3)"
+    },
+    {
+     "clip": "A2b-v2-greatsword",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "older; greatsword undersized (PL-3)"
+    }
+   ],
+   "rejectedAssets": [
+    "A2b-greatsword-stance (v1): canon drift — superseded"
+   ],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC39",
+   "act": "III",
+   "narrativePurpose": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives him the chan",
+   "content": "ACTION",
+   "prevScene": "SC38",
+   "nextScene": "SC40",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC40",
+   "act": "III",
+   "narrativePurpose": "to buy the readers their window, the band holds the surging tides; BÖRK braces as a living",
+   "content": "ACTION",
+   "prevScene": "SC39",
+   "nextScene": "SC41",
+   "decisiveAgent": "BÖRK",
+   "plannedShots": 9,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC41",
+   "act": "III",
+   "narrativePurpose": "the readers confirm: the door needs someone who can read it to walk in. ASTRID and NEFER-K",
+   "content": "STORY",
+   "prevScene": "SC40",
+   "nextScene": "SC42",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 8,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC42",
+   "act": "III",
+   "narrativePurpose": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the debt himse",
+   "content": "DRAMA",
+   "prevScene": "SC41",
+   "nextScene": "SC43",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 6,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC43",
+   "act": "III",
+   "narrativePurpose": "Olaf dies (or departs) having seen Björn become more than a sword; a father's benediction.",
+   "content": "DRAMA",
+   "prevScene": "SC42",
+   "nextScene": "SC44",
+   "decisiveAgent": "OLAF",
+   "plannedShots": 9,
+   "existingAssets": [
+    {
+     "clip": "SC43-olaf-benediction (T2)",
+     "status": "HUMAN_REVIEW_PENDING",
+     "sec": 5.64,
+     "note": "OLAF's death/benediction (bronze arm-ring continuity); single-subject; €0.60"
+    }
+   ],
+   "rejectedAssets": [],
+   "status": "PARTIAL (clips generated, human-review-pending)",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC44",
+   "act": "III",
+   "narrativePurpose": "Björn and Tove say it without saying it; the band's farewell to its leader.",
+   "content": "DRAMA",
+   "prevScene": "SC43",
+   "nextScene": "SC45",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC45",
+   "act": "III",
+   "narrativePurpose": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN plants Himink",
+   "content": "ACTION",
+   "prevScene": "SC44",
+   "nextScene": "SC46",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 5,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC46",
+   "act": "III",
+   "narrativePurpose": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his brother; he doe",
+   "content": "ACTION",
+   "prevScene": "SC45",
+   "nextScene": "SC47",
+   "decisiveAgent": "BJÖRN",
+   "plannedShots": 7,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC47",
+   "act": "III",
+   "narrativePurpose": "the two suns separate; the sky heals; ASTRID witnesses (aftermath event — no decisive agen",
+   "content": "WORLD",
+   "prevScene": "SC46",
+   "nextScene": "SC48",
+   "decisiveAgent": "—",
+   "plannedShots": 1,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC48",
+   "act": "III",
+   "narrativePurpose": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve and honou",
+   "content": "DRAMA",
+   "prevScene": "SC47",
+   "nextScene": "SC49",
+   "decisiveAgent": "NEFER-KA",
+   "plannedShots": 11,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  },
+  {
+   "scene": "SC49",
+   "act": "III",
+   "narrativePurpose": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (secondary) hands ",
+   "content": "WORLD",
+   "prevScene": "SC48",
+   "nextScene": null,
+   "decisiveAgent": "IPU",
+   "plannedShots": 8,
+   "existingAssets": [],
+   "rejectedAssets": [],
+   "status": "PLANNED",
+   "acceptanceCriteria": "identity+costume+weapon+env continuity; readable action; full-motion human ≥7.5/10; realized distribution measured on edit",
+   "measuredRenderedSec": null
+  }
+ ]
+}

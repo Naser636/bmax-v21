@@ -14,6 +14,9 @@ const s = R.resumeState({ repo: process.cwd() });
 ok("reads the real register ⇒ ok, with counts", s.ok === true && s.counts && typeof s.counts.ACCEPTED === "number" && s.counts.ACCEPTED >= 20);
 ok("exposes idle/nextLot + idleReason when idle", (s.nextLot !== undefined) && (s.idle === false || typeof s.idleReason === "string"));
 ok("lists BLOCKED items WITH a precise next/human action for each", s.blockedCount >= 1 && Array.isArray(s.blocked) && s.blocked.every((b) => b.id && (b.humanActionRequired || b.nextAction)));
+// persistent-register completeness: EVERY blocker carries BOTH the human action AND a concrete resume test (so the
+// register itself — not conversation memory — is the full session-independent handoff).
+ok("every BLOCKED item carries both humanActionRequired AND resumeTest (register is the complete handoff)", s.blocked.every((b) => typeof b.humanActionRequired === "string" && b.humanActionRequired.length > 10 && typeof b.resumeTest === "string" && b.resumeTest.length > 10));
 ok("carries the exact resume command (odg-campaign-run)", typeof s.resumeCommand === "string" && /odg-campaign-run\.ts/.test(s.resumeCommand));
 ok("surfaces the most-recent checkpoint title (compact, not the whole compass)", typeof s.lastCheckpoint === "string" && /CHECKPOINT/.test(s.lastCheckpoint));
 ok("reports a verified HEAD + stale count (honest state)", typeof s.head === "string" && s.head.length >= 6 && typeof s.staleAcceptances === "number");

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mistigri — accessoires premium pour chats (PROTOTYPE)</title>
+<style>
+  :root{--ink:#1b2430;--mut:#5b6775;--bg:#fbfaf7;--card:#fff;--ac:#2f6f5e;--ac2:#c9803a;--line:#e7e3da}
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  a{color:inherit} .wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+  .banner{background:#2a2320;color:#fff;font-size:13px;text-align:center;padding:7px}
+  header{position:sticky;top:0;background:rgba(251,250,247,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:5}
+  .bar{display:flex;align-items:center;gap:16px;padding:12px 0}
+  .logo{font-weight:800;font-size:22px;letter-spacing:.5px} .logo span{color:var(--ac)}
+  nav{margin-left:auto;display:flex;gap:18px;font-size:14px;color:var(--mut)}
+  .cartbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:14px}
+  .hero{padding:40px 0 24px} .hero h1{font-size:34px;margin:.1em 0} .hero p{color:var(--mut);max-width:60ch}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding:12px 0 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .ph{aspect-ratio:4/3;background:linear-gradient(135deg,#eef3f0,#f6efe6);display:flex;align-items:center;justify-content:center;color:#9aa6a0;font-size:13px}
+  .card .body{padding:12px 13px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .card .nm{font-weight:600;font-size:15px} .card .pr{font-weight:800;color:var(--ac)}
+  .tag{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  button.add{margin-top:auto;border:0;background:var(--ac);color:#fff;border-radius:9px;padding:9px;cursor:pointer;font-weight:600}
+  button.add:hover{background:#255848}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:360px;max-width:92vw;background:#fff;border-left:1px solid var(--line);transform:translateX(100%);transition:.25s;z-index:20;display:flex;flex-direction:column}
+  .drawer.open{transform:none} .drawer h3{padding:16px;margin:0;border-bottom:1px solid var(--line)}
+  .lines{flex:1;overflow:auto;padding:8px 16px} .ln{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .ln .q{display:flex;gap:6px;align-items:center} .ln button{width:26px;height:26px;border:1px solid var(--line);background:#fff;border-radius:7px;cursor:pointer}
+  .sum{padding:16px;border-top:1px solid var(--line);font-size:14px} .sum .row{display:flex;justify-content:space-between;margin:4px 0}
+  .sum .tot{font-weight:800;font-size:17px} .co{width:100%;margin-top:10px;border:0;background:var(--ac2);color:#fff;padding:12px;border-radius:10px;font-weight:700;cursor:pointer}
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.25s;z-index:15}
+  .backdrop.on{opacity:1;pointer-events:auto}
+  footer{border-top:1px solid var(--line);padding:26px 0;color:var(--mut);font-size:13px}
+  footer .cols{display:flex;gap:40px;flex-wrap:wrap} footer h4{color:var(--ink);margin:0 0 8px}
+  .legal{display:none;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:14px 0;font-size:13px;color:var(--mut)}
+  .legal.show{display:block} dialog{border:0;border-radius:14px;max-width:520px;padding:0}
+  dialog .d{padding:20px} dialog input{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;margin:6px 0}
+  .demo{background:#fff6ec;border:1px solid #f0d3ad;color:#8a5a22;border-radius:10px;padding:10px;font-size:13px}
+  @media(prefers-color-scheme:dark){:root{--ink:#e8eaed;--mut:#9aa3ad;--bg:#14181c;--card:#1c2127;--line:#2b323a}
+    .ph{background:linear-gradient(135deg,#222a2e,#2a2622);color:#6b7680}}
+</style>
+</head>
+<body>
+<div class="banner">PROTOTYPE NON TRANSACTIONNEL — démonstration de boutique · aucun paiement réel · aucune commande réelle</div>
+<header><div class="wrap bar">
+  <div class="logo">Misti<span>gri</span></div>
+  <nav><a href="#cat">Boutique</a><a href="#" onclick="showLegal('ml');return false">Mentions légales</a><a href="#" onclick="showLegal('cgv');return false">CGV</a><a href="#" onclick="showLegal('ret');return false">Rétractation</a></nav>
+  <button class="cartbtn" onclick="openCart()">Panier (<span id="cc">0</span>)</button>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Le confort malin pour chats d'intérieur</h1>
+    <p>Enrichissement, repas et couchage pensés pour les chats qui vivent en appartement. Sélection courte,
+       livraison France, retours 14 jours. <strong>Marque fictive — prototype de démonstration.</strong></p>
+  </section>
+  <div id="ml" class="legal"><h4>Mentions légales (modèle)</h4>Éditeur : Mistigri (prototype). SIRET : à compléter.
+    Hébergeur : à compléter. Directeur de publication : à compléter. Contact : contact@exemple.test. Texte type —
+    à faire valider juridiquement avant toute publication réelle.</div>
+  <div id="cgv" class="legal"><h4>Conditions générales de vente (modèle)</h4>Prix en euros TTC (TVA non applicable,
+    art. 293 B du CGI — franchise en base). Frais de livraison : 4,90 € ou offerts dès 49 €. Garanties légales de
+    conformité et des vices cachés. Médiateur de la consommation : à désigner. Modèle à valider.</div>
+  <div id="ret" class="legal"><h4>Droit de rétractation — 14 jours</h4>Conformément au Code de la consommation,
+    vous disposez de 14 jours pour vous rétracter sans motif. Formulaire type fourni. Produits conformes au
+    règlement (UE) 2023/988 (GPSR) ; informations de sécurité et d'identification sur chaque fiche produit.</div>
+  <section id="cat"><div class="grid" id="grid"></div></section>
+</main>
+
+<footer><div class="wrap cols">
+  <div><h4>Mistigri</h4>Accessoires premium pour chats d'intérieur.<br>Prototype — non publié, non transactionnel.</div>
+  <div><h4>Aide</h4>Livraison & retours (14 j)<br>Service client (démo)<br>Suivi de commande (démo)</div>
+  <div><h4>Légal</h4>Mentions légales · CGV · Rétractation · Confidentialité (RGPD) — modèles</div>
+</div></footer>
+
+<div class="backdrop" id="bd" onclick="closeCart()"></div>
+<aside class="drawer" id="drawer" aria-label="Panier">
+  <h3>Votre panier</h3>
+  <div class="lines" id="lines"><p style="color:var(--mut);font-size:14px">Panier vide.</p></div>
+  <div class="sum">
+    <div class="row"><span>Sous-total</span><span id="sub">0,00 €</span></div>
+    <div class="row"><span>Livraison</span><span id="shp">—</span></div>
+    <div class="row tot"><span>Total</span><span id="tot">0,00 €</span></div>
+    <button class="co" onclick="checkout()">Commander</button>
+  </div>
+</aside>
+
+<dialog id="co"><div class="d">
+  <h3 style="margin:0 0 6px">Finaliser (démonstration)</h3>
+  <div class="demo">⚠️ Prototype : le paiement est <strong>désactivé</strong>. Aucune donnée de carte n'est demandée
+    ni collectée. Ce formulaire ne crée pas de commande réelle.</div>
+  <input placeholder="Nom (démo)" aria-label="nom"><input placeholder="Email (démo)" aria-label="email">
+  <input placeholder="Adresse de livraison (démo)" aria-label="adresse">
+  <p style="font-size:13px;color:var(--mut)">Total : <strong id="codt">0,00 €</strong> — paiement non disponible en prototype.</p>
+  <button class="co" style="background:#8a8f98;cursor:not-allowed" disabled>Payer (désactivé — prototype)</button>
+  <button class="cartbtn" style="width:100%;margin-top:8px" onclick="document.getElementById('co').close()">Fermer</button>
+</div></dialog>
+
+<script type="module">
+// Inlined copy of cart-logic.mjs (kept identical; the .mjs is unit-tested separately).
+const SHIPPING={freeThreshold:49.0,flat:4.90};
+const CATALOGUE=[
+ {sku:"MST-001",name:"Arbre à chat modulable 'Nuage'",price:39.90,cat:"enrichissement"},
+ {sku:"MST-002",name:"Tunnel de jeu pliable feutrine",price:19.90,cat:"jeu"},
+ {sku:"MST-003",name:"Gamelle anti-glouton céramique",price:16.90,cat:"repas"},
+ {sku:"MST-004",name:"Fontaine à eau silencieuse 2L",price:29.90,cat:"repas"},
+ {sku:"MST-005",name:"Griffoir carton recyclé (lot de 2)",price:14.90,cat:"enrichissement"},
+ {sku:"MST-006",name:"Couchage ortho déhoussable 'Cosy'",price:34.90,cat:"confort"},
+];
+const euro=x=>x.toFixed(2).replace('.',',')+' €';
+const lineTotal=(it,q)=>Math.round(it.price*q*100)/100;
+function cartTotals(lines){const by=Object.fromEntries(CATALOGUE.map(p=>[p.sku,p]));let s=0,u=0;
+  for(const l of lines){const p=by[l.sku];if(!p||l.qty<=0)continue;s+=lineTotal(p,l.qty);u+=l.qty;}
+  s=Math.round(s*100)/100;const sh=u===0?0:(s>=SHIPPING.freeThreshold?0:SHIPPING.flat);
+  return{units:u,subtotal:s,shipping:sh,total:Math.round((s+sh)*100)/100};}
+let cart={};
+const grid=document.getElementById('grid');
+grid.innerHTML=CATALOGUE.map(p=>`<div class="card"><div class="ph">visuel produit (à produire)</div>
+  <div class="body"><div class="tag">${p.cat}</div><div class="nm">${p.name}</div>
+  <div class="pr">${euro(p.price)}</div><button class="add" data-sku="${p.sku}">Ajouter au panier</button></div></div>`).join('');
+grid.addEventListener('click',e=>{const b=e.target.closest('.add');if(!b)return;cart[b.dataset.sku]=(cart[b.dataset.sku]||0)+1;render();openCart();});
+function lines(){return Object.entries(cart).map(([sku,qty])=>({sku,qty}));}
+function render(){const t=cartTotals(lines());document.getElementById('cc').textContent=t.units;
+  document.getElementById('sub').textContent=euro(t.subtotal);
+  document.getElementById('shp').textContent=t.units===0?'—':(t.shipping===0?'Offerte':euro(t.shipping));
+  document.getElementById('tot').textContent=euro(t.total);document.getElementById('codt').textContent=euro(t.total);
+  const by=Object.fromEntries(CATALOGUE.map(p=>[p.sku,p]));const L=lines();
+  document.getElementById('lines').innerHTML=L.length?L.map(l=>{const p=by[l.sku];return `<div class="ln">
+    <span style="flex:1">${p.name}<br><small style="color:var(--mut)">${euro(p.price)}</small></span>
+    <span class="q"><button data-m="-1" data-s="${l.sku}">−</button>${l.qty}<button data-m="1" data-s="${l.sku}">+</button></span></div>`}).join('')
+    :'<p style="color:var(--mut);font-size:14px">Panier vide.</p>';}
+document.getElementById('lines').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  const s=b.dataset.s;cart[s]=(cart[s]||0)+Number(b.dataset.m);if(cart[s]<=0)delete cart[s];render();});
+window.openCart=()=>{document.getElementById('drawer').classList.add('open');document.getElementById('bd').classList.add('on');};
+window.closeCart=()=>{document.getElementById('drawer').classList.remove('open');document.getElementById('bd').classList.remove('on');};
+window.checkout=()=>{if(!lines().length)return;document.getElementById('co').showModal();};
+window.showLegal=id=>{document.querySelectorAll('.legal').forEach(x=>x.classList.remove('show'));
+  document.getElementById(id).classList.add('show');document.getElementById(id).scrollIntoView({behavior:'smooth'});};
+render();
+</script>
+</body>
+</html>

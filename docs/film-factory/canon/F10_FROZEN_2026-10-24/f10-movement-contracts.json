@@ -1,0 +1,64 @@
+{
+ "generated": "2026-10-24",
+ "note": "Staging of EXISTING canon beats (storm, tide, disarm F8-ACTION, Börk's death). No new events, no plot change.",
+ "contracts": [
+  {
+   "beat": "SC01 storm — the wave that becomes the seam",
+   "scene": "SC01",
+   "initial": "longship SOLFARI beam-on to a hill-high black wave; ASTRID at the steering-oar, OLAF lashed to the mast",
+   "trajectory": "the wave curls to break; ASTRID throws her weight on the oar to take it bow-first",
+   "contact": "crest hits; where foam should be the water UNRAVELS into a seam of gold light",
+   "consequence": "the ship is driven through; for one beat two worlds stack (storm above, desert below)",
+   "final": "SOLFARI slews onto an impossible shore under two suns, crew thrown",
+   "raccord": "hard cut to the wet sand + the double-sun sky (SC04)",
+   "weaponWoundCostume": "no weapons; crew soaked; Olaf grey/failing; no injuries yet",
+   "horses": "none",
+   "camera": "locked-off wide to a hard push-in on the unravelling crest",
+   "durationSec": 6
+  },
+  {
+   "beat": "SC22 market — the second tide",
+   "scene": "SC22",
+   "initial": "market square mid-trade; ASTRID senses the tone deepen; stalls at the water edge",
+   "trajectory": "ASTRID reads the water and SHOUTS the east row off it; crowd surges inland",
+   "contact": "the tide walks up the paving, taking the stalls; a cart overturns",
+   "consequence": "the row is clear a beat before the water hits — a life saved by the read, not by force",
+   "final": "ASTRID braced on dry stone, water lapping her boots, Seth-Nakht watching from safety",
+   "raccord": "cut to Seth-Nakht's reaction (he claims the credit) — SC23",
+   "weaponWoundCostume": "no weapons; Astrid soaked; star-chart tattoo visible (CANON)",
+   "horses": "none",
+   "camera": "handheld whip-pan following her call, then a steadicam retreat with the crowd",
+   "durationSec": 5
+  },
+  {
+   "beat": "SC38 Astrid takes the field / Meryt disarms Seth-Nakht (F8-ACTION)",
+   "scene": "SC38",
+   "canonStatus": "PARTIALLY_CONTRADICTS_CANON — verified 2026-10-24 against 37_SCREENPLAY_60MIN_F10.md scene 29. The CANONICAL decisive action is ASTRID's tide-call (sand erupts under the charging wedge). The 'Meryt disarms Seth-Nakht / khopesh skates free' portion is NOT in canon: in scene 29 MERYT is a BOUND captive whom TOVE frees ('TOVE saws through MERYT's bindings'); Seth-Nakht is never disarmed — his authority 'dies in front of his soldiers because SHE [Astrid] killed it'. The khopesh-loss beat is also uncanonical.",
+   "canonicalCorrection": "See runs/benchmark/sc38-canon-finding.json for the corrected canonical SC38 movement contract (ASTRID tide-call). The disarm here is retained only as an explicitly NON-CANONICAL what-if; it must NOT be produced as canon without CTO approval of a story change.",
+   "initial": "SEAM-ROOT; soldiers charge the shifting ground; MERYT and SETH-NAKHT closest; sand/sea convulsing",
+   "trajectory": "the sand UNDER the charging wedge erupts to sea; Meryt steps inside Seth-Nakht's guard as he turns",
+   "contact": "Meryt hooks/locks his sword-arm; the khopesh skates free into the flooding hollow",
+   "consequence": "Seth-Nakht disarmed + overbalanced; three soldiers go down in the real flood (ground, not her blade)",
+   "final": "Meryt between Seth-Nakht and the seam, his khopesh gone; both soaked; a real casualty of the ground coughs on dry dune",
+   "raccord": "cut to ASTRID reading the next break (she controls the field) — SC39",
+   "weaponWoundCostume": "Meryt right-forearm wound bound in Norse cloth (CANON); khopesh LOST here (continuity: gone from SC30 on); no gore",
+   "horses": "none",
+   "camera": "low tracking with the charge, snap to a tight two-shot on the disarm",
+   "durationSec": 5
+  },
+  {
+   "beat": "SC40 the cost of the line (Börk saves Vigge)",
+   "scene": "SC40",
+   "initial": "Norse crew + Seth-Nakht's soldiers throw themselves at the surging tides to buy the readers a window; BÖRK braces his bulk as a living dam; VIGGE behind him",
+   "trajectory": "a flood-surge drives through; Börk plants against it so Vigge can scramble up",
+   "contact": "the surge takes Börk; Vigge's hand is pulled from his",
+   "consequence": "Börk drowns; Vigge reaches the high stone alive — a death that buys the line",
+   "final": "Vigge on the rock, reaching back into empty water; TOVE hauls him in",
+   "raccord": "cut to the quiet after — Tove's line to Vigge (he chose it) — SC40 dialogue",
+   "weaponWoundCostume": "Börk cook's apron over tunic (CANON); no weapons; drowning not gore",
+   "horses": "none",
+   "camera": "chaotic handheld in the surge, then a still high-angle on the empty water",
+   "durationSec": 5
+  }
+ ]
+}

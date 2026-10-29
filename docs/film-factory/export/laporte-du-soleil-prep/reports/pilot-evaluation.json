@@ -1,0 +1,79 @@
+{
+ "generated": "2026-10-24",
+ "verdict": "PILOT_PARTIAL",
+ "cap": 6.08,
+ "spentEur": 0.95,
+ "remainingEur": 5.13,
+ "attempts": 3,
+ "stoppedEarly": true,
+ "stopReason": "ZERO-WASTE: a film-compromising art-direction defect was confirmed (style inconsistency across shots). Remaining €5.13 NOT spent.",
+ "creditVerified": "YES — confirmed usable by the first (cheapest) real call; account was previously 402-exhausted, now credited",
+ "produced": [
+  {
+   "id": "SC48-SH02",
+   "kind": "image",
+   "model": "black-forest-labs/flux-dev",
+   "file": "runs/pilot/SC48-SH02.webp",
+   "sha256": "see sha list",
+   "bookedEur": 0.03,
+   "ciqeVisual": "OK",
+   "style": "PHOTOREAL CINEMATIC (matches bible)",
+   "human": "strong; cairn/desert/single-sun canon-faithful; identity vs refs = HUMAN_REVIEW_REQUIRED"
+  },
+  {
+   "id": "SC22-SH06",
+   "kind": "video",
+   "model": "minimax/video-01",
+   "durationSec": 5.64,
+   "bookedEur": 0.46,
+   "ciqeVisual": "OK",
+   "style": "PHOTOREAL CINEMATIC",
+   "defects": [
+    "ANACHRONISM: modern star tattoo on forearm",
+    "minor AI background-face artifacts"
+   ],
+   "human": "HUMAN_REVIEW_REQUIRED"
+  },
+  {
+   "id": "SC15-SH01",
+   "kind": "video",
+   "model": "minimax/video-01",
+   "durationSec": 5.64,
+   "bookedEur": 0.46,
+   "ciqeVisual": "OK",
+   "style": "STYLIZED 3D ANIMATION (cartoonish) — DOES NOT MATCH the cinematic bible",
+   "defects": [
+    "STYLE MISMATCH vs SC22/SC48 (animation vs live-action)"
+   ],
+   "human": "REJECT on art-direction (style)"
+  }
+ ],
+ "skipped": [
+  {
+   "id": "SC43-SH03",
+   "reason": "FR translation NOT validated => voice not synthesized (BLOCKED)"
+  },
+  {
+   "id": "SC39-SH04",
+   "reason": "not attempted — stopped after critical finding"
+  },
+  {
+   "id": "SC01-SH01",
+   "reason": "not attempted"
+  },
+  {
+   "id": "SC40-SH06",
+   "reason": "not attempted"
+  }
+ ],
+ "criticalFinding": "minimax/video-01 produced PHOTOREAL for SC22 but 3D-ANIMATION for SC15 (same model) => NO consistent visual style; plus no character identity/period lock. Generating 420 shots now would yield a visually INCOHERENT film.",
+ "acceptanceVsCriteria": {
+  "techCIQE": "visual OK on all 3 (audio-absence is expected for generation, not a defect)",
+  "identity": "HUMAN_REVIEW_REQUIRED (no reference lock)",
+  "anachronism": "FAIL on SC22 (tattoo)",
+  "styleConsistency": "FAIL (SC15 vs SC22)",
+  "humanArtistic": "HUMAN_REVIEW_REQUIRED (>=7.5/10 NOT self-certified)"
+ },
+ "capRespected": true,
+ "recommendation": "BEFORE any further generation: (1) lock ONE explicit visual style anchor in every prompt (e.g. photorealistic cinematic live-action, 35mm) — proven to work for SC22/SC48; (2) generate character reference sheets FIRST and inject them for identity lock; (3) add explicit anti-anachronism to character prompts (no tattoos/modern marks); (4) re-test 2-3 shots for style+identity consistency within a tiny bounded budget before scaling."
+}

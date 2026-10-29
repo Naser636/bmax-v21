@@ -1,0 +1,70 @@
+{
+ "generated": "2026-10-24",
+ "note": "PREPARED prompts — NOT generated. No paid call made.",
+ "count": 9,
+ "prompts": [
+  {
+   "ref": "HELGI",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. HELGI: Norse crewman ~20s; Norse seafarer garb; carries a child's carved wooden horse. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "TOVE",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. TOVE: Norse crew ~20s; practical salt-worn seafarer garb; grins at death out of habit. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "IPY",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. IPY: Egyptian child; simple linen shift; carries her late mother's water-jug; fearless. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "SETH-NAKHT",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. SETH-NAKHT: man ~40s, commander; ornate Egyptian scale-and-linen armour, commander's helmet; khopesh. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "VIGGE",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. VIGGE: young Norse crewman (a youth). World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "WIDOW",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. WIDOW: old Egyptian woman; mourning linen; keeps a drowned neighbour's place at a dry fountain. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "ELDER",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. ELDER: Egyptian elder; town elder's linen; village authority. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "NEFER-KA",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. NEFER-KA: elder Egyptian reader; pale linen robes; calm; guards the horizon. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  },
+  {
+   "ref": "BÖRK",
+   "model": "black-forest-labs/flux-dev",
+   "kind": "STILL_ANIMATABLE",
+   "worstEur": 0.03,
+   "prompt": "Character reference portrait, single person, three-quarter body, plain neutral grey studio background, even soft key light, sharp focus for identity. BÖRK: heavy-set Norse cook; apron over Norse tunic; bulk used as a living dam. World: original fantasy, Norse ∩ pharaonic (dramatized); historically-plausible materials; NO modern objects/symbols/text.\nSTYLE: photorealistic cinematic live-action film, shot on 35mm, naturalistic motivated lighting, realistic human skin/anatomy/proportions, real fabrics and materials, filmic color grade, shallow depth of field where motivated. NOT cartoon, NOT 3D animation, NOT CGI/Pixar/DreamWorks render, NOT anime, NOT illustration, NOT video-game, no toon/cel shading, no stylized exaggeration. No invented modern objects/symbols; keep every detail anchored to the F10 canon."
+  }
+ ]
+}

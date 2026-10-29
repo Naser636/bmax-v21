@@ -1,0 +1,1463 @@
+{
+ "generated": "2026-10-25",
+ "mission": "F11 production-resume dossier (CII+ continuation). €0, read-only. Next-tranche ready.",
+ "truth": {
+  "timelineScenes": 49,
+  "scenesWithAssets": 4,
+  "reconciliation": {
+   "generatedClips_t1": 9,
+   "derivatives": [
+    "sc01-opening-assembly.mp4 (concat)",
+    "sc01-opening-assembly-v2.mp4 (concat)",
+    "sc01-opening-assembly-v3.mp4 (concat, 5-shot)"
+   ],
+   "generatedSec": 51.16,
+   "uniqueSourceSec": 51.16,
+   "usableSec": 45.52,
+   "humanAcceptedSec": 0,
+   "assembledTimelineSec": 28.96,
+   "note": "generated=all 9 t1 clips (added SC01-astrid-helm @6.80 spend); unique=no dup sha; usable=8 clean clips (A2b-v1 rejected); humanAccepted=0 (all HUMAN_REVIEW_PENDING — full-motion acceptance pending); assembled=SC01 v3 (5 shots: storm→Astrid-reads→Björn-oar→peril→gold-seam), silent. Derivatives NOT counted as source."
+  }
+ },
+ "reusableAssets": [
+  {
+   "clip": "E1-sc01-storm-seam",
+   "scene": "SC01",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 6.04,
+   "note": null
+  },
+  {
+   "clip": "SC01-astrid-helm",
+   "scene": "SC01",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": "ASTRID reads the sea; minimax subject_reference; CIQE MAJOR=audio-absence only (PL-6); identity+tattoo+steering-oar canon-correct"
+  },
+  {
+   "clip": "A1b-minimax-bjorn-oar",
+   "scene": "SC01",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": null
+  },
+  {
+   "clip": "A3b-tide-brace",
+   "scene": "SC01",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": null
+  },
+  {
+   "clip": "S1-sc01-goldseam",
+   "scene": "SC01",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 6.04,
+   "note": null
+  },
+  {
+   "clip": "A4b-march-lead",
+   "scene": "SC04",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": null
+  },
+  {
+   "clip": "R1-rescue-crewman",
+   "scene": "SC06",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": null
+  },
+  {
+   "clip": "G1-greatsword-action",
+   "scene": "SC38",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": null
+  },
+  {
+   "clip": "A2b-v2-greatsword",
+   "scene": "SC38",
+   "status": "HUMAN_REVIEW_PENDING",
+   "sec": 5.64,
+   "note": null
+  }
+ ],
+ "rejectedAssets": [
+  {
+   "scene": "SC38",
+   "reason": "A2b-greatsword-stance (v1): canon drift — superseded"
+  }
+ ],
+ "coveredScenes": [
+  {
+   "scene": "SC01",
+   "clips": 5,
+   "coverage": "PARTIAL"
+  },
+  {
+   "scene": "SC04",
+   "clips": 1,
+   "coverage": "PARTIAL"
+  },
+  {
+   "scene": "SC06",
+   "clips": 1,
+   "coverage": "PARTIAL"
+  },
+  {
+   "scene": "SC38",
+   "clips": 2,
+   "coverage": "PARTIAL"
+  }
+ ],
+ "chronology": [
+  {
+   "scene": "SC01",
+   "act": "I",
+   "content": "ACTION",
+   "narrativePurpose": "SŌLFARI beam-on to a hill-high black wave; BJÖRN hauls the steering-oar by main strength w",
+   "plannedShots": 13,
+   "existingClips": 5,
+   "coverage": "PARTIAL",
+   "keyMissingBeats": [
+    "Astrid read",
+    "Olaf at mast",
+    "gold-seam-takes-ship"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC02",
+   "act": "I",
+   "content": "STORY",
+   "narrativePurpose": "after the crossing, the crew takes stock on a wrong-coloured sea.",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "SC02 coverage (comedy beat)"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC03",
+   "act": "I",
+   "content": "ACTION",
+   "narrativePurpose": "the ship is driven through; for a beat two worlds stack (storm above, desert below).",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "crossing/two-worlds VFX",
+    "Björn-cuts-light"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC04",
+   "act": "I",
+   "content": "WORLD",
+   "narrativePurpose": "crew thrown onto wet sand under two suns; Olaf, failing, names what none understand.",
+   "plannedShots": 7,
+   "existingClips": 1,
+   "coverage": "PARTIAL",
+   "keyMissingBeats": [
+    "Olaf two-sun reaction",
+    "handoff two-shot"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC05",
+   "act": "I",
+   "content": "TENSION",
+   "narrativePurpose": "an Egyptian river-patrol (MERYT on the ground) takes the strangers; IPU (a boy, water-jug)",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "patrol/capture",
+    "Meryt intro",
+    "IPU"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC06",
+   "act": "I",
+   "content": "ACTION",
+   "narrativePurpose": "a sudden wrong-tide surges; ASTRID senses it and calls; BJÖRN bodily hauls IPU and a guard",
+   "plannedShots": 8,
+   "existingClips": 1,
+   "coverage": "PARTIAL",
+   "keyMissingBeats": [
+    "tide VFX wide",
+    "Astrid call"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC07",
+   "act": "I",
+   "content": "TENSION",
+   "narrativePurpose": "the commander claims the strangers and the strand; a cold standoff, no battle yet.",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "Seth-Nakht intro",
+    "standoff two-shot"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC08",
+   "act": "I",
+   "content": "DRAMA",
+   "narrativePurpose": "the town after a tide; the WIDOWER (old man) keeps a drowned neighbour's place at a dry fo",
+   "plannedShots": 4,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC09",
+   "act": "I",
+   "content": "STORY",
+   "narrativePurpose": "the garrison council; Seth-Nakht frames the strangers as the omen's cause.",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC10",
+   "act": "I",
+   "content": "TENSION",
+   "narrativePurpose": "NEFER-KA the reader-elder studies the captives; sees something in the Norse.",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC11",
+   "act": "I",
+   "content": "TENSION",
+   "narrativePurpose": "the wall records the rule of the tear; Nefer-Ka begins to explain.",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC12",
+   "act": "I",
+   "content": "STORY",
+   "narrativePurpose": "Seth-Nakht sets his terms; Nefer-Ka warns; Meryt silent, guilty.",
+   "plannedShots": 12,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC13",
+   "act": "I",
+   "content": "COMEDY",
+   "narrativePurpose": "the Norse crew, caged, plan; BÖRK cooks from nothing; morale beat.",
+   "plannedShots": 10,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC14",
+   "act": "I",
+   "content": "DRAMA",
+   "narrativePurpose": "Olaf, fading, formally hands the crew to BJÖRN; tells him strength won't be enough here an",
+   "plannedShots": 15,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC15",
+   "act": "II",
+   "content": "STORY",
+   "narrativePurpose": "the bargain: the Norse help reach the seam-root or the town drowns; Björn forced to cooper",
+   "plannedShots": 12,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC16",
+   "act": "II",
+   "content": "STORY",
+   "narrativePurpose": "ASTRID/NEFER-KA try to teach BJÖRN to read the ground; he fails badly and a feint-tide nea",
+   "plannedShots": 10,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC17",
+   "act": "II",
+   "content": "STORY",
+   "narrativePurpose": "BJÖRN gets ONE read right — small, hard-won.",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC18",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "Norse + Egyptians evacuate ahead of a tide; BJÖRN is the physical engine (hauling beams, b",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC19",
+   "act": "II",
+   "content": "STORY",
+   "narrativePurpose": "two crews become one band under Björn.",
+   "plannedShots": 10,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC20",
+   "act": "II",
+   "content": "DRAMA",
+   "narrativePurpose": "quiet two-hander; Tove needles Björn about trusting the reader-girl.",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC21",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "sets the market + geography for the second tide.",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC22",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "tide walks up the paving; ASTRID reads the safe row, BJÖRN clears the panicking crowd thro",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC23",
+   "act": "II",
+   "content": "TENSION",
+   "narrativePurpose": "Björn publicly refuses Seth-Nakht's framing without a blow — a social win.",
+   "plannedShots": 6,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC24",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "an uncanny leak — a thing from the wrong age appears; the clock tightens.",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC25",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "wordless montage of the leak across two towns; dread + scale.",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC26",
+   "act": "II",
+   "content": "TENSION",
+   "narrativePurpose": "Seth-Nakht seizes leverage (hostage/Olaf) to force the march.",
+   "plannedShots": 4,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC27",
+   "act": "II",
+   "content": "DRAMA",
+   "narrativePurpose": "Björn and Meryt, wary allies, find common ground (both have lost someone to water).",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC28",
+   "act": "II",
+   "content": "DRAMA",
+   "narrativePurpose": "MERYT confesses the cause — the forbidden double dawn-rite grieving her drowned brother; B",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC29",
+   "act": "II",
+   "content": "DRAMA",
+   "narrativePurpose": "HELGI gives Björn the two-kinds-of-choosing speech (duty vs chosen) using the carved horse",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC30",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "canyon approach; a skirmish with Seth-Nakht's outriders — Björn's disciplined greatsword w",
+   "plannedShots": 15,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC31",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "the canyon echoes the readers; a mystery texture beat.",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC32",
+   "act": "II",
+   "content": "ACTION",
+   "narrativePurpose": "biggest tide yet; BJÖRN and the band cross a flooding causeway on ASTRID's reads; a near-l",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC33",
+   "act": "II",
+   "content": "DRAMA",
+   "narrativePurpose": "the cost tallied; Olaf weaker; quiet before the end.",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC34",
+   "act": "II",
+   "content": "TENSION",
+   "narrativePurpose": "Seth-Nakht twists Meryt's guilt publicly to keep his leash.",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC35",
+   "act": "II",
+   "content": "DRAMA",
+   "narrativePurpose": "tender beat — Meryt and the boy IPU; innocence at stake.",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC36",
+   "act": "II",
+   "content": "STORY",
+   "narrativePurpose": "the plan set for the convergence; Nefer-Ka states the closing rule plainly.",
+   "plannedShots": 6,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC37",
+   "act": "III",
+   "content": "ACTION",
+   "narrativePurpose": "the two suns draw close; the clock hits zero; Björn takes command of the field.",
+   "plannedShots": 13,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC38",
+   "act": "III",
+   "content": "ACTION",
+   "narrativePurpose": "Seth-Nakht charges a wedge to seize the seam; ASTRID reads the ground, BJÖRN breaks the ch",
+   "plannedShots": 14,
+   "existingClips": 2,
+   "coverage": "PARTIAL",
+   "keyMissingBeats": [
+    "remaining planned shots uncovered"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC39",
+   "act": "III",
+   "content": "ACTION",
+   "narrativePurpose": "broken, Seth-Nakht chooses — turn on Björn or help shut the door; Björn gives him the chan",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC40",
+   "act": "III",
+   "content": "ACTION",
+   "narrativePurpose": "to buy the readers their window, the band holds the surging tides; BÖRK braces as a living",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC41",
+   "act": "III",
+   "content": "STORY",
+   "narrativePurpose": "the readers confirm: the door needs someone who can read it to walk in. ASTRID and NEFER-K",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC42",
+   "act": "III",
+   "content": "DRAMA",
+   "narrativePurpose": "ASTRID/MERYT would go (guilt, duty); BJÖRN refuses to let either — he takes the debt himse",
+   "plannedShots": 6,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC43",
+   "act": "III",
+   "content": "DRAMA",
+   "narrativePurpose": "Olaf dies (or departs) having seen Björn become more than a sword; a father's benediction.",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC44",
+   "act": "III",
+   "content": "DRAMA",
+   "narrativePurpose": "Björn and Tove say it without saying it; the band's farewell to its leader.",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC45",
+   "act": "III",
+   "content": "ACTION",
+   "narrativePurpose": "the seam opens to be shut; ASTRID reads the exact timing from outside; BJÖRN plants Himink",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC46",
+   "act": "III",
+   "content": "ACTION",
+   "narrativePurpose": "inside the seam BJÖRN reads it shut from within; visions of Olaf/Helgi/his brother; he doe",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC47",
+   "act": "III",
+   "content": "WORLD",
+   "narrativePurpose": "the two suns separate; the sky heals; ASTRID witnesses (aftermath event — no decisive agen",
+   "plannedShots": 1,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC48",
+   "act": "III",
+   "content": "DRAMA",
+   "narrativePurpose": "a cairn raised for BJÖRN, his greatsword set in the stones; the survivors grieve and honou",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  },
+  {
+   "scene": "SC49",
+   "act": "III",
+   "content": "WORLD",
+   "narrativePurpose": "epilogue: the boy IPU (now older) carries Björn's story forward; ASTRID (secondary) hands ",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "coverage": "NONE",
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ],
+   "needsNewGeneration": true
+  }
+ ],
+ "missingShotsChronological": [
+  {
+   "scene": "SC01",
+   "content": "ACTION",
+   "plannedShots": 13,
+   "existingClips": 5,
+   "keyMissingBeats": [
+    "Astrid read",
+    "Olaf at mast",
+    "gold-seam-takes-ship"
+   ]
+  },
+  {
+   "scene": "SC02",
+   "content": "STORY",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "SC02 coverage (comedy beat)"
+   ]
+  },
+  {
+   "scene": "SC03",
+   "content": "ACTION",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "crossing/two-worlds VFX",
+    "Björn-cuts-light"
+   ]
+  },
+  {
+   "scene": "SC04",
+   "content": "WORLD",
+   "plannedShots": 7,
+   "existingClips": 1,
+   "keyMissingBeats": [
+    "Olaf two-sun reaction",
+    "handoff two-shot"
+   ]
+  },
+  {
+   "scene": "SC05",
+   "content": "TENSION",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "patrol/capture",
+    "Meryt intro",
+    "IPU"
+   ]
+  },
+  {
+   "scene": "SC06",
+   "content": "ACTION",
+   "plannedShots": 8,
+   "existingClips": 1,
+   "keyMissingBeats": [
+    "tide VFX wide",
+    "Astrid call"
+   ]
+  },
+  {
+   "scene": "SC07",
+   "content": "TENSION",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "Seth-Nakht intro",
+    "standoff two-shot"
+   ]
+  },
+  {
+   "scene": "SC08",
+   "content": "DRAMA",
+   "plannedShots": 4,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC09",
+   "content": "STORY",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC10",
+   "content": "TENSION",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC11",
+   "content": "TENSION",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC12",
+   "content": "STORY",
+   "plannedShots": 12,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC13",
+   "content": "COMEDY",
+   "plannedShots": 10,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC14",
+   "content": "DRAMA",
+   "plannedShots": 15,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC15",
+   "content": "STORY",
+   "plannedShots": 12,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC16",
+   "content": "STORY",
+   "plannedShots": 10,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC17",
+   "content": "STORY",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC18",
+   "content": "ACTION",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC19",
+   "content": "STORY",
+   "plannedShots": 10,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC20",
+   "content": "DRAMA",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC21",
+   "content": "ACTION",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC22",
+   "content": "ACTION",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC23",
+   "content": "TENSION",
+   "plannedShots": 6,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC24",
+   "content": "ACTION",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC25",
+   "content": "ACTION",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC26",
+   "content": "TENSION",
+   "plannedShots": 4,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC27",
+   "content": "DRAMA",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC28",
+   "content": "DRAMA",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC29",
+   "content": "DRAMA",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC30",
+   "content": "ACTION",
+   "plannedShots": 15,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC31",
+   "content": "ACTION",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC32",
+   "content": "ACTION",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC33",
+   "content": "DRAMA",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC34",
+   "content": "TENSION",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC35",
+   "content": "DRAMA",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC36",
+   "content": "STORY",
+   "plannedShots": 6,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC37",
+   "content": "ACTION",
+   "plannedShots": 13,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC38",
+   "content": "ACTION",
+   "plannedShots": 14,
+   "existingClips": 2,
+   "keyMissingBeats": [
+    "remaining planned shots uncovered"
+   ]
+  },
+  {
+   "scene": "SC39",
+   "content": "ACTION",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC40",
+   "content": "ACTION",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC41",
+   "content": "STORY",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC42",
+   "content": "DRAMA",
+   "plannedShots": 6,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC43",
+   "content": "DRAMA",
+   "plannedShots": 9,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC44",
+   "content": "DRAMA",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC45",
+   "content": "ACTION",
+   "plannedShots": 5,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC46",
+   "content": "ACTION",
+   "plannedShots": 7,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC47",
+   "content": "WORLD",
+   "plannedShots": 1,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC48",
+   "content": "DRAMA",
+   "plannedShots": 11,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  },
+  {
+   "scene": "SC49",
+   "content": "WORLD",
+   "plannedShots": 8,
+   "existingClips": 0,
+   "keyMissingBeats": [
+    "entire scene — no asset"
+   ]
+  }
+ ],
+ "estMissingShots": 411,
+ "audioNeeds": {
+  "sc01": {
+   "ambience": "SYNTHESIZED-TEMP work bed built (temp-ambience-sc01.wav; muxed to sc01-opening-assembly-v3-worktrack.mp4) — procedurally generated via ffmpeg, NO third-party licence, NOT a final asset",
+   "dialogue": "ASTRID/OLAF lines pending — needs TTS (speech-02-hd, paid, ATTEMPT-LOCKED) or licensed voice talent",
+   "music": "none; needs verified CC0 (e.g. public-domain) sourced + per-file licence check"
+  },
+  "general": "All generated video is SILENT (PL-6). Final audio = verified CC0/licensed ambience+music + dialogue (TTS or talent) mixed in post. No licence may be assumed; verify each file before integration.",
+  "localAssetsFound": [
+   "runs/validation-av/V4-speech02hd-dialogue.mp3 (paid-TTS sample; wrong content for SC01 ambience)"
+  ]
+ },
+ "perGenerationMaxCost_EUR": {
+  "video_minimax_video01": 0.6,
+  "still_flux_dev": 0.03,
+  "voice_speech02hd": 0.1,
+  "music_minimax": 0.6,
+  "note": "reserve-worst-before-call; booked at worst-case (provider returns no per-call price)"
+ },
+ "requiredPreflightChecks": [
+  {
+   "id": "PL-1",
+   "severity": "WARN",
+   "when": [
+    "bjorn",
+    "identity",
+    "hero-shot"
+   ],
+   "rule": {
+    "subject": "BJORN",
+    "modelNot": "minimax"
+   }
+  },
+  {
+   "id": "PL-2",
+   "severity": "BLOCK",
+   "when": [
+    "bjorn",
+    "seedance",
+    "reference_images",
+    "face-ref"
+   ],
+   "rule": {
+    "model": "seedance",
+    "usesFaceRef": true,
+    "subject": "BJORN"
+   }
+  },
+  {
+   "id": "PL-3",
+   "severity": "WARN",
+   "when": [
+    "greatsword",
+    "himinkljufr",
+    "weapon",
+    "sc38"
+   ],
+   "rule": {
+    "promptIncludesAny": [
+     "greatsword",
+     "himinklj"
+    ],
+    "promptMissingAll": [
+     "taller than a man",
+     "blade taller",
+     "greatsword-bearing"
+    ]
+   }
+  },
+  {
+   "id": "PL-4",
+   "severity": "WARN",
+   "when": [
+    "bjorn",
+    "costume",
+    "continuity"
+   ],
+   "rule": {
+    "subject": "BJORN",
+    "promptMissingAll": [
+     "wool tunic",
+     "tunic"
+    ]
+   }
+  },
+  {
+   "id": "PL-5",
+   "severity": "RECOVERY",
+   "when": [
+    "timeout",
+    "interrupt",
+    "recovery"
+   ],
+   "rule": {
+    "event": "timeout"
+   }
+  },
+  {
+   "id": "PL-6",
+   "severity": "WARN",
+   "when": [
+    "assembly",
+    "audio",
+    "av-complete"
+   ],
+   "rule": {
+    "event": "av-complete-claim"
+   }
+  },
+  {
+   "id": "PL-7",
+   "severity": "WARN",
+   "when": [
+    "acceptance",
+    "review",
+    "quality-gate"
+   ],
+   "rule": {
+    "event": "acceptance-claim"
+   }
+  },
+  {
+   "id": "PL-8",
+   "severity": "WARN",
+   "when": [
+    "reconcile",
+    "duration",
+    "inventory"
+   ],
+   "rule": {
+    "event": "reconcile-duration"
+   }
+  },
+  {
+   "id": "PL-9",
+   "severity": "BLOCK",
+   "when": [
+    "e005",
+    "peril",
+    "rescue",
+    "violence"
+   ],
+   "rule": {
+    "promptCooccur": [
+     [
+      "child",
+      "children",
+      "kid",
+      "infant",
+      "toddler",
+      "baby"
+     ],
+     [
+      "peril",
+      "drown",
+      "drowning",
+      "overboard",
+      "burning",
+      "trapped",
+      "screaming",
+      "stabbed",
+      "stab",
+      "impaled",
+      "gore",
+      "blade to",
+      "throat"
+     ]
+    ]
+   }
+  }
+ ],
+ "t1Ledger": {
+  "cap": 15,
+  "spent": 6.8,
+  "remaining": 8.2,
+  "attempts": "20/20",
+  "attemptsLeft": 0
+ },
+ "nextTranche": {
+  "blocker": "T1 attempts EXHAUSTED (20/20) — reserve() throws ATTEMPT CAP; €8.2 remaining is NOT spendable without a new authorization.",
+  "estMissingShots": 411,
+  "costScenarios_EUR": [
+   {
+    "name": "OPTIMISTIC",
+    "acceptPct": 0.85,
+    "remainingClips": 216,
+    "total_EUR": 167
+   },
+   {
+    "name": "EXPECTED",
+    "acceptPct": 0.7,
+    "remainingClips": 279,
+    "total_EUR": 258
+   },
+   {
+    "name": "CONSERVATIVE",
+    "acceptPct": 0.55,
+    "remainingClips": 345,
+    "total_EUR": 401
+   }
+  ],
+  "recommendation": "Authorise a NEW tranche sized to the EXPECTED scenario (~€258, 70% accept) with an attempt budget >= estimated clips / accept-rate; keep per-call worst-case ceilings. The €167/€401 band and the €8.20 T1 residue are NOT authorizations.",
+  "firstShotsNextTranche": [
+   "SC01 Olaf-lashed-to-mast (minimax, ~€0.60)",
+   "SC02 crew/comedy beat (minimax + flux)",
+   "...then SC03→SC49 chronologically"
+  ]
+ },
+ "gitOnboarding": {
+  "problem": "docs/film-factory/ is untracked: 606 MB / 738 files / 105 media binaries. A limited governance commit is dependency-broken; a full commit injects out-of-scope media.",
+  "options": [
+   {
+    "id": "A",
+    "name": "ignore media + track source",
+    "how": "add .gitignore rules for *.mp4/*.webp/*.png/*.mp3/*.wav + runs/ output, then commit only .mjs/.json/.md governance+pipeline source",
+    "pros": "smallest history; keeps code reviewable; no LFS dep",
+    "cons": "media not versioned (fine — regenerable/large)",
+    "risk": "LOW",
+    "recommended": true
+   },
+   {
+    "id": "B",
+    "name": "scoped governance subtree",
+    "how": "commit only the operating-method closure + its import deps as a curated set",
+    "pros": "minimal",
+    "cons": "dependency cascade is large and brittle to maintain",
+    "risk": "MED"
+   },
+   {
+    "id": "C",
+    "name": "Git LFS for media",
+    "how": "track media via LFS",
+    "pros": "versions media",
+    "cons": "repo-wide policy change; needs LFS infra/compat proof; 606 MB upload",
+    "risk": "HIGH — reserved repo-policy decision",
+    "recommended": false
+   }
+  ],
+  "decision": "RESERVED for CTO/repo-policy. Option A is the safest and is a reversible, non-destructive config change — but still a policy choice; not imposed here."
+ },
+ "lockedDistribution": {
+  "ACTION": 64,
+  "STORY": 13,
+  "TENSION": 10,
+  "DRAMA": 5,
+  "COMEDY": 5,
+  "WORLD": 3,
+  "note": "FIXED; measured on the rendered edit (definition-of-done), not claimed."
+ },
+ "acceptanceNote": "All existing clips are HUMAN_REVIEW_PENDING; none human-ACCEPTED. The film is NOT finished. Distribution 64/13/10/5/5/3 is MEASURED on the rendered edit, never claimed."
+}

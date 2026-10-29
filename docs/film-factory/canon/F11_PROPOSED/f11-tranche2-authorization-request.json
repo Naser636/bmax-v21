@@ -1,0 +1,127 @@
+{
+ "generated": "2026-10-25",
+ "document": "F11 TRANCHE-2 AUTHORIZATION REQUEST (production resumption)",
+ "status": "REQUEST — NOT an authorization. No paid call runs until a ceiling + attempt max is recorded + verified.",
+ "alreadyPaid_excludedFromAsk_EUR": {
+  "total": 11.63,
+  "t1": 6.8,
+  "pilot": 1.53,
+  "av": 3.3,
+  "note": "historical; NOT part of this forward budget"
+ },
+ "t1State": {
+  "cap": 15,
+  "spent": 6.8,
+  "remaining": 8.2,
+  "attempts": "20/20",
+  "attemptsLeft": 0,
+  "blocker": "attempts EXHAUSTED — reserve() throws ATTEMPT CAP; €8.20 residue NOT spendable"
+ },
+ "scopeOfWork": {
+  "reusableClipsKept": 9,
+  "missingToGenerate": {
+   "video": 179,
+   "still": 232,
+   "total": 411
+  },
+  "classification": "188 PREMIUM_VIDEO + 232 STILL_ANIMATABLE across 420 shots",
+  "rule": "video for ACTION (true motion); stills+Ken-Burns for STORY/WORLD/dialogue — per authoritative shotlist; NEVER a still where real motion is required",
+  "noDoubleCount": "the 9 existing clips offset video shots; already-paid spend excluded"
+ },
+ "costBreakdown_EUR": {
+  "video": {
+   "shots": 179,
+   "unit": 0.6,
+   "base": 107.4
+  },
+  "stills": {
+   "shots": 232,
+   "unit": 0.03,
+   "base": 6.96
+  },
+  "voice": {
+   "lines": 141,
+   "unit": 0.1,
+   "base": 14.1
+  },
+  "music": {
+   "base": 0,
+   "note": "CC0, per-file licence-verified"
+  },
+  "sfx_ambience": {
+   "base": 0,
+   "note": "CC0/synth if licence-clear, else licensed pack (verify) — currently temp synth WORK bed only"
+  },
+  "mix": {
+   "base": 0,
+   "note": "local ffmpeg work-mix €0; professional final mix = human/out-of-scope"
+  },
+  "retryReserve": {
+   "expectedFactor": 1.43,
+   "prudentFactor": 1.82,
+   "note": "applied to generation (video+stills) per accept-rate"
+  },
+  "marginPct": 15
+ },
+ "scenarios": {
+  "EXPECTED": {
+   "total_EUR": 204,
+   "attempts": 588,
+   "acceptAssumed": "70%",
+   "costPerAcceptedMinute_EUR": 3.4
+  },
+  "PRUDENT": {
+   "total_EUR": 256,
+   "attempts": 748,
+   "acceptAssumed": "55%",
+   "costPerAcceptedMinute_EUR": 4.27
+  }
+ },
+ "RECOMMENDED_AUTHORIZATION": {
+  "ceiling_EUR": 256,
+  "attemptMax": 748,
+  "likelyActual_EUR": 204,
+  "rationale": "Authorize the PRUDENT envelope (€256 / 748 attempts) so retries never hit the cap mid-film; likely ACTUAL spend ≈ EXPECTED €204. The ledger reserve-before-call enforces the ceiling; unused budget is never spent.",
+  "howToRecord": "raise the production ledger ceiling + maxAttempts (new tranche id), e.g. a t2-ledger with ceiling=256, maxAttempts=748. ODG then auto-fires the prepared SC01 Olaf shot and proceeds chronologically."
+ },
+ "qualityCriteria_UNCHANGED": [
+  "character identity/appearance consistency",
+  "credible motion + readable action",
+  "costume/weapon/env/raccord continuity",
+  "cinematic image/framing/exposure/pacing",
+  "intelligible dialogue + credible sync",
+  "complete mixed soundtrack",
+  "narrative continuity SC01→SC49",
+  "existing technical + cinematic acceptance thresholds"
+ ],
+ "provenSavings": [
+  {
+   "id": "still-vs-video classification",
+   "deltaExpected_EUR": 217,
+   "detail": "232 missing shots are STILL_ANIMATABLE (€0.03), not video (€0.60) — the intended medium (Ken-Burns), no quality loss"
+  },
+  {
+   "id": "preflight E005 avoidance",
+   "deltaExpected_EUR": "retry-waste avoided (route-level; not double-counted here)",
+   "detail": "PL-2 blocks seedance+Björn (7 reproduced E005 failures) BEFORE any paid call — avoids retry waste on a known-fail route"
+  },
+  {
+   "id": "identity first-try acceptance",
+   "deltaExpected_EUR": null,
+   "detail": "minimax subject_reference with a prepared 768px ref accepted the Astrid shot first-try (no retry)"
+  }
+ ],
+ "residualRisks": [
+  "acceptance rate is the dominant uncertainty (measured only on a small curated sample)",
+  "multi-character identity in one shot is UNSOLVED (minimax single-subject; seedance rejects Björn) — may force staging workarounds",
+  "greatsword renders undersized on text (PL-3) — needs a greatsword-bearing ref",
+  "final professional audio mix may be human/out-of-scope (beyond this video+voice budget)",
+  "HYPOTHETICAL savings (reuse>1, provider arbitrage) NOT yet proven — not banked in this ask"
+ ],
+ "firstActionsOnAuthorization": [
+  "1) AUTO-FIRE prepared SC01 Olaf-lashed-to-mast (minimax €0.60; sc01-olaf-mast-shot.json; preflight READY)",
+  "2) SC02 (STORY) → SC03 → ... → SC49 chronologically; video for ACTION, stills(Ken-Burns) for STORY/WORLD",
+  "3) per shot: operating-contract preflight (timeline + lessons + authz + provider) BEFORE each call; reserve worst-case; on timeout reconcile read-only (PL-5)",
+  "4) assemble each scene; add licence-verified audio; measure 64/13/10/5/5/3 on the rendered edit"
+ ]
+}
