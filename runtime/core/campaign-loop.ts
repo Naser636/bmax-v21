@@ -17,6 +17,7 @@
 "use strict";
 
 const C = require("./campaign-controller.js");
+const M = require("./campaign-metrics.js");
 
 // Loop-level stop reasons (distinct from per-lot status).
 const STOP = ["COMPLETED", "IDLE_BLOCKED", "WAITING_EXTERNAL", "MAX_ITERATIONS", "STOP_REQUESTED"];
@@ -42,7 +43,10 @@ function runCampaignLoop(opts: any = {}): any {
   const maxIter = Number.isFinite(opts.maxIterations) ? opts.maxIterations : 1000;
   const maxAttempts = Number.isFinite(opts.maxAttemptsPerLot) ? opts.maxAttemptsPerLot : 3;
   const persist = () => { if (typeof opts.registerPath === "string") C.saveRegister(opts.registerPath, register); else if (typeof opts.onPersist === "function") opts.onPersist(register); };
+  const now = typeof opts.now === "function" ? opts.now : Date.now;   // injectable clock (deterministic in tests)
+  const startedAt = now();
   const transitions: any[] = [];
+  const rec = (o: any) => { o.t = now(); transitions.push(o); };       // stamp every transition with a monotonic ms time
   const stopNow = () => typeof opts.shouldStop === "function" && opts.shouldStop();
 
   // Recompute the graph first: invalidate ACCEPTED evidence whose dependency has regressed (no stale reuse).
@@ -50,7 +54,7 @@ function runCampaignLoop(opts: any = {}): any {
 
   let iter = 0;
   while (iter < maxIter) {
-    if (stopNow()) { persist(); return finish("STOP_REQUESTED", register, iter, transitions); }
+    if (stopNow()) { persist(); return finish("STOP_REQUESTED", register, iter, transitions, {}, { startedAt, endedAt: now() }); }
     const sel = C.selectNextLot(register);
     if (!sel.lot) {
       const open = openLots(register);
@@ -59,10 +63,10 @@ function runCampaignLoop(opts: any = {}): any {
       // A BLOCKED lot is unfinished (awaiting external action), never a completed campaign.
       const reason = open.length === 0 && blockedLots.length === 0 ? "COMPLETED" : "IDLE_BLOCKED";
       persist();
-      return finish(reason, register, iter, transitions, { open: open.map((o: any) => o.id), stalled: sel.stalled || [], blocked: (register.items || []).filter((it: any) => it.status === "BLOCKED").map((it: any) => it.id), selectReason: sel.reason });
+      return finish(reason, register, iter, transitions, { open: open.map((o: any) => o.id), stalled: sel.stalled || [], blocked: (register.items || []).filter((it: any) => it.status === "BLOCKED").map((it: any) => it.id), selectReason: sel.reason }, { startedAt, endedAt: now() });
     }
     const lot = sel.lot;
-    transitions.push({ lot: lot.id, event: "RUNNING" });
+    rec({ lot: lot.id, event: "RUNNING" });
     let res: any;
     try { res = opts.execute(lot, register); } catch (e: any) { res = { status: "FAILED", reason: (e && e.message) || "execute threw", retryable: false }; }
     if (!isObj(res) || !VERDICT.includes(res.status)) res = { status: "FAILED", reason: "execute returned no valid verdict", retryable: false };
@@ -71,23 +75,23 @@ function runCampaignLoop(opts: any = {}): any {
       const r = C.advance(register, lot.id, { status: "ACCEPTED", evidence: res.evidence });
       if (!r.ok) {                                    // fail-closed: ACCEPTED claimed without evidence ⇒ NOT a terminal success
         C.advance(register, lot.id, { attemptFailed: true, reason: `ACCEPTED rejected: ${r.code}` });
-        transitions.push({ lot: lot.id, event: "FAILED", reason: r.code });
-      } else transitions.push({ lot: lot.id, event: "COMPLETED" });
+        rec({ lot: lot.id, event: "FAILED", reason: r.code });
+      } else rec({ lot: lot.id, event: "COMPLETED" });
     } else if (res.status === "WAITING_EXTERNAL") {
       C.advance(register, lot.id, { status: "BLOCKED", blockReason: res.blockReason || res.reason || "awaiting external action" });
-      transitions.push({ lot: lot.id, event: "WAITING_EXTERNAL", reason: res.reason || null });
+      rec({ lot: lot.id, event: "WAITING_EXTERNAL", reason: res.reason || null });
     } else if (res.status === "RETRY") {
       const attempts = (lot.attempts || 0) + 1;
       if (attempts < maxAttempts && typeof res.strategy === "string" && res.strategy) {
         C.advance(register, lot.id, { attemptFailed: true, reason: res.reason || "retry", strategy: res.strategy });  // changed strategy ⇒ re-admissible
-        transitions.push({ lot: lot.id, event: "RETRY_WAIT", attempts, strategy: res.strategy });
+        rec({ lot: lot.id, event: "RETRY_WAIT", attempts, strategy: res.strategy });
       } else {
         C.advance(register, lot.id, { attemptFailed: true, reason: res.reason || "retry exhausted" });                 // no change / cap ⇒ stalled (no-repeat)
-        transitions.push({ lot: lot.id, event: "FAILED", attempts, reason: "retry-exhausted-or-unchanged" });
+        rec({ lot: lot.id, event: "FAILED", attempts, reason: "retry-exhausted-or-unchanged" });
       }
     } else {                                           // FAILED
       C.advance(register, lot.id, { attemptFailed: true, reason: res.reason || "failed" });                             // unchanged ⇒ stalled (no infinite repeat)
-      transitions.push({ lot: lot.id, event: "FAILED", reason: res.reason || null });
+      rec({ lot: lot.id, event: "FAILED", reason: res.reason || null });
     }
 
     C.reconcile(register, { demote: true });           // recompute graph after the mission
@@ -95,16 +99,24 @@ function runCampaignLoop(opts: any = {}): any {
     iter++;
   }
   persist();
-  return finish("MAX_ITERATIONS", register, iter, transitions);
+  return finish("MAX_ITERATIONS", register, iter, transitions, {}, { startedAt, endedAt: now() });
 }
 
-function finish(reason: string, register: any, iterations: number, transitions: any[], extra: any = {}): any {
+function finish(reason: string, register: any, iterations: number, transitions: any[], extra: any = {}, timing: any = null): any {
+  const summary = C.summary(register);
+  const startedAt = timing && typeof timing.startedAt === "number" ? timing.startedAt : null;
+  const endedAt = timing && typeof timing.endedAt === "number" ? timing.endedAt : null;
+  // §1 operating baseline for THIS run — derived only from observed transitions/timing (honest unmeasured elsewhere).
+  const metrics = M.summarizeRun({ stopped: reason, iterations, transitions, summary, startedAt, endedAt, blocked: extra.blocked });
   return {
     stopped: reason,
     campaignComplete: reason === "COMPLETED",
     iterations,
     transitions,
-    summary: C.summary(register),
+    summary,
+    startedAt,
+    endedAt,
+    metrics,
     ...extra,
     note: reason === "COMPLETED"
       ? "no open lots remain — campaign drained (all ACCEPTED/terminal)."

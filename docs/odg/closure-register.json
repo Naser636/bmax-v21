@@ -512,6 +512,21 @@
       "nextAction": "owner authorizes + provisions a real provider account/credentials via secure config, after demand is validated",
       "humanActionRequired": "authorize + provision a REAL sandbox provider account/credentials via secure config (test-env only; no prod charges).",
       "resumeTest": "p01-billing-sandbox.runSandboxCycle against the real sandbox provider ⇒ PAID + idempotent replay + card-data refused + no prod charge."
+    },
+    {
+      "id": "campaign-metrics-instrumentation",
+      "program": "P2",
+      "title": "§1 operating-baseline instrumentation: campaign-loop timing + honest metrics summarizer",
+      "status": "ACCEPTED",
+      "deps": [
+        "campaign-loop-continuity",
+        "campaign-run-entrypoint"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/campaign-metrics.ts = PURE summarizer (summarizeRun) deriving, from observed loop transitions ONLY, missionsAttempted / acceptedWithEvidence / failed / retries / waitingExternal / successRate / stopReason / blockedCauses, plus (when a clock was injected) per-mission durations + inter-mission gaps + total. campaign-loop.ts instrumented with an INJECTABLE clock (opts.now, default Date.now): every transition stamped with t; finish() returns startedAt/endedAt/metrics. HONESTY: timing is null (timingMeasured:false) when transitions carry no stamp; per-phase (diagnostic/impl/test/review), test-success-rate and regressions are returned under `unobservable` as explicit null with the reason they are not visible at the loop layer — NEVER fabricated. Tests: campaign-metrics.test.ts 12 (untimed counts, timed per-mission/gap math, real-loop integration with injected fake clock, failed⇒successRate<1, nothing-attempted⇒successRate null, fail-soft on empty) + campaign-loop.test.ts 13 unchanged (timing additions are additive, no regression). Gate: test:report green, tsc 0, build-dist-closure OK.",
+      "acceptance": "A measured per-run baseline exists for the campaign loop (counts, success rate, retries, timing when clocked); metrics the loop cannot observe stay null, never invented.",
+      "nextAction": "Reuse summarizeRun output to compare before/after method changes via improvement-baseline.measureDelta; instrument per-phase/test metrics at the mission/gate layer (separate lot) to fill the honest nulls.",
+      "staleEvidence": false
     }
   ]
 }
