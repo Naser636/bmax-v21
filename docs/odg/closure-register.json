@@ -12,7 +12,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): capability-taxonomy.measuredSurface consumes broad-it-eval.coverageReport + code-execution.detectToolchain, linking the real measured verification surface (5 covered categories, held-out accuracy 1.0 on the NARROW own corpus, 7 toolchains present) to taxonomy category E. CRITICAL: broad VERIFIED_SUCCESS_RATE stays NO_DATA (coverage 0.4167 < gate); census headline unchanged (0 PROVEN, measuredSuccessRate null). Suite +5 (now 15). Requirement→implementation→consumer→evidence traceability.",
-      "acceptance": "the capability census is wired to independent measurement without inflating any claim; broad rate remains NO_DATA; nothing upgraded to PROVEN"
+      "acceptance": "the capability census is wired to independent measurement without inflating any claim; broad rate remains NO_DATA; nothing upgraded to PROVEN",
+      "staleEvidence": false
     },
     {
       "id": "seo-positioning-plan",
@@ -24,7 +25,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): runtime/core/seo-strategy.ts — grounded on the real product dossier (demand-evidence); 5 search-intent hypotheses tied to real pages, 7-page site architecture incl. an honest vs-free-DIY comparison, instrumentation plan. FAIL-CLOSED honesty: reviewSeoCopy refuses guaranteed-ranking + unbacked superlatives (reuses excellence-policy) + fabricated social proof; validateStructuredData refuses Review/Rating markup without real verified reviews (0 now). status PREPARED_NOT_PUBLISHED; demand stays DEMAND_NOT_VALIDATED. Doc docs/odg/seo-positioning-plan.md. Suite 15.",
-      "acceptance": "an honest, Google-guidance-aligned SEO/positioning plan exists with anti-overclaim + structured-data gates; nothing published; no guaranteed ranking; no fabricated proof"
+      "acceptance": "an honest, Google-guidance-aligned SEO/positioning plan exists with anti-overclaim + structured-data gates; nothing published; no guaranteed ranking; no fabricated proof",
+      "staleEvidence": false
     },
     {
       "id": "engineering-practices-register",
@@ -34,7 +36,8 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR(this): runtime/core/engineering-practices-register.ts — 19 quality-gated sources across 9 families (DORA, NIST SSDF 800-218, NIST AI RMF 100-1, OWASP LLM Top10, SLSA, OWASP ASVS, OpenTelemetry, SWE-bench/Verified, Google Search Central, LSP, Google SRE), URLs+dates grounded via live web search 2026-10-28; fail-closed validateEntry rejects weak/unmapped sources; each maps to a P1/P2 requirement + ODG decision (adopt/adapt/test); ANTI-FABRICATION test proves all 19 reflectedIn modules exist on disk. Doc docs/odg/engineering-practices-register.md. Suite 11.",
-      "acceptance": "a quality-gated, provenance-real, P1/P2-mapped best-practices register exists; not a blind copy; not padded with weak sources"
+      "acceptance": "a quality-gated, provenance-real, P1/P2-mapped best-practices register exists; not a blind copy; not padded with weak sources",
+      "staleEvidence": false
     },
     {
       "id": "reality-gate-gated",
@@ -44,7 +47,8 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR#145 test:report +5 reality suites",
-      "acceptance": "ODG5 trust-boundary suites run in test:report"
+      "acceptance": "ODG5 trust-boundary suites run in test:report",
+      "staleEvidence": false
     },
     {
       "id": "eval-metrics-wire",
@@ -54,7 +58,8 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR#149 broad-it-eval confusion",
-      "acceptance": "eval-metrics has a real consumer"
+      "acceptance": "eval-metrics has a real consumer",
+      "staleEvidence": false
     },
     {
       "id": "dep-planner-wire",
@@ -64,7 +69,8 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR#154 roadmap-dep-check live OK",
-      "acceptance": "dep-planner has a real consumer, live-verified"
+      "acceptance": "dep-planner has a real consumer, live-verified",
+      "staleEvidence": false
     },
     {
       "id": "dashboard-api-auth",
@@ -74,7 +80,8 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR#152 suite 10 + live 503/401/200",
-      "acceptance": "internal-state API gated fail-closed"
+      "acceptance": "internal-state API gated fail-closed",
+      "staleEvidence": false
     },
     {
       "id": "dashboard-page-auth",
@@ -86,7 +93,8 @@
       ],
       "priority": 2,
       "evidence": "PR#153 next build exit0, / dynamic",
-      "acceptance": "page gated; internal-state leak closed in code"
+      "acceptance": "page gated; internal-state leak closed in code",
+      "staleEvidence": false
     },
     {
       "id": "htmlcss-tidy-capability",
@@ -98,7 +106,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): tidy 5.8.0 installed from the official Ubuntu universe repo (authorized, reversible; dashboard unaffected). code-execution LANG_SPEC +HtmlCss = `tidy -q -e --show-warnings no` (errors-only ⇒ exit 0 clean / non-zero on structural errors); no network. Live: clean PASS, misnested/unclosed FAIL. broad-it-eval v10: +8 HTML cases (acc 1.0), category coverage 10→11/12=0.9167 (only Dockerfile/lint remains). code-execution suite 56→60, broad-it-eval 43.",
-      "acceptance": "a real HTML Tidy errors-only validator with independent eval; broad rate stays NO_DATA (independent-labelling gate)"
+      "acceptance": "a real HTML Tidy errors-only validator with independent eval; broad rate stays NO_DATA (independent-labelling gate)",
+      "staleEvidence": false
     },
     {
       "id": "csharp-build-capability",
@@ -110,7 +119,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): mono-devel (mcs 6.14.1) installed from the official Ubuntu universe repo (authorized, reversible; NO external MS source added; dashboard unaffected). code-execution LANG_SPEC +CSharp = real `mcs -target:library -out:<ws>/out.dll` type check; no referenced assemblies beyond BCL ⇒ external `using` FAILS CLOSED (no network). Live: clean PASS, type-error FAIL, undefined FAIL, missing-dep FAIL. code-execution suite 46→56. broad-it-eval v9: +C# corpus (8 cases acc 1.0), category coverage 9→10/12=0.833. All compiler stacks (Go/Rust/Java/C#) now covered; only tidy/hadolint linters remain.",
-      "acceptance": "a real hermetic mcs type check with independent eval; external using fails closed; broad rate stays NO_DATA (gated)"
+      "acceptance": "a real hermetic mcs type check with independent eval; external using fails closed; broad rate stays NO_DATA (gated)",
+      "staleEvidence": false
     },
     {
       "id": "responsible-quality-fairness-harness",
@@ -122,7 +132,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): runtime/core/fairness-eval.ts — methodology (8 protected dimensions, 4 disparity metrics) + assessFairness FAIL-CLOSED: returns NO_DATA unless the eval set is independently labelled (reuses independent-label-policy), inputs comparable, and every group ≥ minPerGroup(30); when MEASURED it SURFACES a per-group outcome-rate gap (disparityDetected) but NEVER asserts 'bias-free'. capabilitySurface() HONESTLY classifies ODG's real capabilities (code-execution/broad-it/campaign-controller) as NOT_APPLICABLE — deterministic over source artifacts, no protected-attribute surface — and lists the future capability types that WOULD require the harness. Suite 7. Mandate §4 instrumentation built; nothing fabricated; no bias claim made.",
-      "acceptance": "a fail-closed fairness harness exists + is tested (NO_DATA on self-authored/underpowered/non-comparable; disparity surfaced on an independent set); ODG's bias-applicable surface honestly classified; no 'bias-free' claim"
+      "acceptance": "a fail-closed fairness harness exists + is tested (NO_DATA on self-authored/underpowered/non-comparable; disparity surfaced on an independent set); ODG's bias-applicable surface honestly classified; no 'bias-free' claim",
+      "staleEvidence": false
     },
     {
       "id": "independent-label-admission-policy",
@@ -134,7 +145,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): runtime/core/independent-label-policy.ts — deny-by-default assessLabelIndependence (refuses labels authored by the evaluee/ODG or in its namespace, requires independentOfEvaluee + traceable sourceRef + dev/validation separation + non-self-graded method) + admitEvalSet (independence AND a non-empty DISJOINT dev/validation split). Wired as the real consumer in broad-it-eval: CORPUS_PROVENANCE (author odg, self-authored) ⇒ CORPUS_LABELS_INDEPENDENT=false ⇒ independentlyLabelled criterion in meetsThreshold is policy-enforced (not a bare string) ⇒ broadIT STAYS NO_DATA. Suite 13; broad-it-eval 46 unchanged behaviour. This is the PREPARED ingestion gate: supplying a descriptor that passes the policy (a real third-party/upstream-labelled set, dev/validation disjoint) is the external unlock — ODG can NEVER certify its own labels to reach MEASURED.",
-      "acceptance": "an enforced, tested admission gate exists that refuses self-certified labels and requires traceable independent provenance + dev/validation separation; broad-IT stays NO_DATA until a passing external set is supplied"
+      "acceptance": "an enforced, tested admission gate exists that refuses self-certified labels and requires traceable independent provenance + dev/validation separation; broad-IT stays NO_DATA until a passing external set is supplied",
+      "staleEvidence": false
     },
     {
       "id": "broad-it-independent-eval-set",
@@ -160,7 +172,8 @@
       ],
       "priority": 1,
       "evidence": "An INDEPENDENT adversarial-verification agent (Agent C, read-only) audited broad-it-eval + code-execution: confirmed broadIT=MEASURED gate double-locked (self-authored + requireIndependentLabelling ANDed into meetsThreshold) and leakage multi-file-aware (SOUND), but found a REAL false-success (Q3c): runBehaviourCheck/runIntegrationCheck returned PASS on matching stdout even when the program CRASHED (exit!=0). ODG independently reproduced it in code (crash+match⇒PASS). FIX: PASS now requires exitCode===0 AND output match; non-zero exit ⇒ FAIL (runtime failure). Regression tests added (audit Q5): crash+match⇒FAIL, spawn-error/timeout⇒BLOCKED (behaviour+integration), AND checkLeakage proven to FIRE on planted single-file + multi-file + id collisions. code-execution suite 60→67, broad-it-eval 43→46. Corpus classification unaffected (clean cases exit 0). broadIT stays NO_DATA.",
-      "acceptance": "the independent audit's confirmed defect is fixed with a regression test; no false success on a crashing program; leakage detector proven to fire"
+      "acceptance": "the independent audit's confirmed defect is fixed with a regression test; no false success on a crashing program; leakage detector proven to fire",
+      "staleEvidence": false
     },
     {
       "id": "benchmark-task-mode-3-integration",
@@ -172,7 +185,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): code-execution +runIntegrationCheck — writes ≥2 interacting files, runs the entry, PASSES iff stdout==expectedOutput; a defect in an INTERMEDIATE helper (that compiles/runs alone) surfaces only via composition. broad-it-eval v9: +8 integration cases (category Integration/multi-file, NOT a taxonomy slot). Mode coverage now 3/5=0.6 = gate, AND category 0.833 ≥ 0.6 — BOTH ratio gates MET. CRITICAL honesty: added an INDEPENDENT-LABELLING criterion (corpus is self-authored: ODG wrote cases AND labels) ⇒ representative=false ⇒ broadIT STAYS NO_DATA (no self-graded MEASURED). checkLeakage made multi-file-aware. code-execution 56, broad-it-eval 41. corpus 100 cases, dev+heldout acc 1.0, leakage disjoint.",
-      "acceptance": "a 3rd distinct task mode (component interaction) exists + measured; representativeness additionally requires INDEPENDENT labelling; broadIT stays NO_DATA on a self-authored corpus"
+      "acceptance": "a 3rd distinct task mode (component interaction) exists + measured; representativeness additionally requires INDEPENDENT labelling; broadIT stays NO_DATA on a self-authored corpus",
+      "staleEvidence": false
     },
     {
       "id": "benchmark-task-mode-2",
@@ -184,7 +198,21 @@
       ],
       "priority": 1,
       "evidence": "PR(this): code-execution +runBehaviourCheck — RUNS a program (node/python) and PASSES iff stdout == fixed expectedOutput; measures OUTPUT CORRECTNESS (catches logic errors a compile-check misses), bounded/isolated/offline, UNSUPPORTED when interpreter absent, BLOCKED on spawn/timeout. broad-it-eval v8: +8 runtime-behaviour cases (category Runtime/behaviour, NOT a taxonomy slot ⇒ category coverage unchanged at 9/12; 'broken' cases compile+run but produce wrong output ⇒ FAIL). Representativeness gate UPGRADED: minTaskModes→minModeCoverage ratio over 5 BROAD_TASK_MODES. taskModes now {static-single-file, runtime-behaviour}=2/5=0.4 < 0.6 ⇒ broadIT STAYS NO_DATA (honest: breadth met, mode-coverage short). Adversarial always-PASS fools only the static checker — the behaviour check compares output, immune to exit-code gaming. code-execution suite 39→46, broad-it-eval 39.",
-      "acceptance": "a 2nd distinct task mode (runtime output-correctness) exists + is measured; representativeness requires mode-coverage ≥0.6; broadIT stays NO_DATA until met"
+      "acceptance": "a 2nd distinct task mode (runtime output-correctness) exists + is measured; representativeness requires mode-coverage ≥0.6; broadIT stays NO_DATA until met",
+      "staleEvidence": false
+    },
+    {
+      "id": "campaign-loop-continuity",
+      "program": "P2",
+      "title": "Persistent inter-mission continuity loop (fixes 'stops after one mission')",
+      "status": "ACCEPTED",
+      "deps": [
+        "campaign-controller-decomposition-tests",
+        "engine-benchmark-baseline"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): DIAGNOSIS (Phase A) — campaign-controller SELECTS the next lot (pure) but NOTHING drove select→execute→advance→persist→recompute→next across missions; persistent-autonomy-controller loops intra-mission recovery only; odg-schedule-tick is a single deny-by-default canary tick (exits 2 ⇒ odg-mission-runner.service failed). ROOT CAUSE = missing inter-mission driver. FIX — runtime/core/campaign-loop.ts: pure driver over campaign-controller with INJECTED execute (no self-executing effects, no 10th primitive) running the full cycle until a JUSTIFIED stop; persists the register after EACH mission (durable checkpoint ⇒ resume + idempotent re-run); reconciles stale acceptances each cycle; fail-closed (ACCEPTED needs evidence ⇒ no false terminal); no-repeat guard + changed-strategy retry within an attempt cap (no infinite loop); structured stop reasons COMPLETED/IDLE_BLOCKED/WAITING_EXTERNAL/MAX_ITERATIONS/STOP_REQUESTED. COMPLETED only when NO open AND NO blocked lots remain. Suite 13 (auto-transitions, resume-from-checkpoint, blocked≠frozen, retry-without-evidence-loss, idempotent re-run, explicit IDLE/WAITING, no-false-COMPLETED, e2e 5-mission chain in 5 iterations, real register drivable ⇒ honest IDLE_BLOCKED).",
+      "acceptance": "a tested persistent loop drives multiple automatic mission transitions, resumes after interruption from a durable checkpoint, never emits a false terminal state, and stops only for a structured justified reason"
     },
     {
       "id": "engine-benchmark-baseline",
@@ -194,7 +222,8 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR(this): runtime/core/engine-benchmark.ts — a deterministic scorecard running 9 representative scenarios against the REAL campaign-controller, each mapped to a primitive: resume-after-interruption (STATE/RECOVERY), dedup-no-repeat (RESOLVER), dependency-regression-invalidation (EVIDENCE), independent-selection-under-block (ALLOCATOR), stale-evidence-reconcile (EVIDENCE/RECOVERY), strategy-change-readmit (RECOVERY), no-false-accept (EVIDENCE/POLICY), cycle-safe (RESOLVER), reconcile-after-mission (STATE/RESOLVER). BASELINE = 9/9 pass; deterministic (no clock/random/subprocess). Explicitly makes NO unmeasured improvement claim — it is the measurement the '10×' ambition must be compared against. Suite 18. No tenth primitive.",
-      "acceptance": "a reproducible, deterministic engine-behaviour scorecard exists; baseline recorded; future engine changes re-run the SAME scenarios; no unmeasured gain claimed"
+      "acceptance": "a reproducible, deterministic engine-behaviour scorecard exists; baseline recorded; future engine changes re-run the SAME scenarios; no unmeasured gain claimed",
+      "staleEvidence": false
     },
     {
       "id": "java-build-capability",
@@ -206,7 +235,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): default-jdk-headless (javac 25) installed (authorized apt, reversible; dashboard unaffected 200/401). code-execution LANG_SPEC +Java = real `javac -d <ws>` type check into the isolated workspace; NO classpath ⇒ external import FAILS CLOSED ('package does not exist', no network); HOME/JAVA_HOME NOT clobbered (lesson V68 rustup-proxy). Live: clean PASS, type-error FAIL, missing-dep FAIL. code-execution suite 36→39. broad-it-eval v7: +Java corpus (8 real cases acc 1.0), coverage 8→9/12=0.75; STILL mode-gated (mono-modal static) ⇒ broadIT NO_DATA. broad-it-eval suite 37→39.",
-      "acceptance": "a real hermetic javac type check with independent eval; external import fails closed; broad rate stays NO_DATA (mode-gated)"
+      "acceptance": "a real hermetic javac type check with independent eval; external import fails closed; broad rate stays NO_DATA (mode-gated)",
+      "staleEvidence": false
     },
     {
       "id": "rust-build-capability",
@@ -219,7 +249,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): rustc 1.93.1 installed (authorized apt, reversible; dashboard unaffected 200). code-execution LANG_SPEC +Rust = real hermetic `rustc --edition 2021 --crate-type lib --emit=metadata --out-dir <ws>` (type + BORROW check, metadata-only/no linker, offline CARGO_NET_OFFLINE + workspace-scoped homes ⇒ external crate FAILS CLOSED ~0.08s). Live-verified: clean PASS, type-error FAIL, borrow-error FAIL, net-dep FAIL. code-execution suite 34→36. broad-it-eval v6: +Rust corpus (8 real cases, acc 1.0), coverage 7→8/12=0.6667 which CROSSES the 0.6 breadth gate — so added a TASK-MODE-DIVERSITY gate (minTaskModes=2): the corpus is mono-modal (static-single-file only; no integration/data/application/runtime tasks) ⇒ representative=false ⇒ broadIT STAYS NO_DATA. This closes the 'cross 0.6 with trivial static breadth' loophole. broad-it-eval suite 35→37.",
-      "acceptance": "a real hermetic Rust build check with independent eval; breadth gate crossed but broad rate HONESTLY NO_DATA via the mode-diversity guard (no false MEASURED)"
+      "acceptance": "a real hermetic Rust build check with independent eval; breadth gate crossed but broad rate HONESTLY NO_DATA via the mode-diversity guard (no false MEASURED)",
+      "staleEvidence": false
     },
     {
       "id": "coverage-toolchain-aware",
@@ -232,7 +263,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): fixed a latent OVERSTATEMENT defect — coverageReport counted a category covered from the supported-flag + case-count ALONE, ignoring live toolchain presence (would overstate if a checker regressed/uninstalled). Now coverageReport(corpus, toolchain?) is toolchain-aware: a category counts only if its checker is runnable NOW; no-arg stays backward-compatible. assessBroadIT + capability-taxonomy.measuredSurface pass the live detectToolchain. Go/build added HONESTLY (taxonomy supported=true + 8 real go-build cases, dev+heldout acc 1.0) ⇒ coverage 0.5→0.5833 (7/12), STILL < 0.6 ⇒ broadIT NO_DATA. Demonstrated: simulating Go+ShellLint absent DROPS coverage to 0.4167 (no longer overstated). Suites: broad-it-eval 30→35, capability-taxonomy 15, code-execution 32.",
-      "acceptance": "coverage reflects LIVE toolchain availability (no overstatement on regression); Go counts only when present; broad rate stays NO_DATA"
+      "acceptance": "coverage reflects LIVE toolchain availability (no overstatement on regression); Go counts only when present; broad rate stays NO_DATA",
+      "staleEvidence": false
     },
     {
       "id": "go-build-capability",
@@ -244,7 +276,8 @@
       ],
       "priority": 1,
       "evidence": "PR#170: go1.26.8 installed (authorized); code-execution LANG_SPEC +Go = real `go build` (not parse) — HERMETIC/offline (GOCACHE/GOPATH/GOTMPDIR scoped into per-run temp; GO111MODULE=off, GOPROXY=off, GOTOOLCHAIN=local ⇒ non-stdlib import FAILS CLOSED, no fetch). defaultRunner gained optional per-spec env merge (base {PATH,HOME} unchanged). Live-verified: clean PASS, type-error FAIL (proves build not parse), network-import FAIL (offline). code-execution suite 28→32. HONESTY: Go deliberately NOT added to the broad-IT corpus/taxonomy ⇒ coverage stays 6/12=0.5 < 0.6 ⇒ broad rate NO_DATA; measuredSurface shows Go present yet representative=false.",
-      "acceptance": "a real executable Go build check (type-level, hermetic, offline) with independent eval; broad rate stays NO_DATA (no breadth inflated)"
+      "acceptance": "a real executable Go build check (type-level, hermetic, offline) with independent eval; broad rate stays NO_DATA (no breadth inflated)",
+      "staleEvidence": false
     },
     {
       "id": "shellcheck-lint-capability",
@@ -256,7 +289,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): shellcheck 0.11.0 installed via authorized reproducible apt procedure (official Ubuntu universe; standalone linter, no service/config impact — dashboard health 200 after). code-execution LANG_SPEC +ShellLint (real static analysis; exit!=0 on findings; UNSUPPORTED if absent). broad-it-eval v4: +Shell/lint category (8 real cases, dev+heldout accuracy 1.0, leakage disjoint), corpus 44→52; TARGET_TAXONOMY Shell/lint supported=true; coverage MEASURED 0.4167→0.5 (6/12), STILL < 0.6 ⇒ broadIT=NO_DATA. capability-taxonomy.measuredSurface reflects 6 covered / 8 toolchains, broad rate NO_DATA, 0 PROVEN unchanged. Suites: code-execution 28, broad-it-eval 30.",
-      "acceptance": "a real Shell/lint checker (shellcheck) executes + evaluates with held-out leakage guard; coverage rises honestly; broad rate stays NO_DATA"
+      "acceptance": "a real Shell/lint checker (shellcheck) executes + evaluates with held-out leakage guard; coverage rises honestly; broad rate stays NO_DATA",
+      "staleEvidence": false
     },
     {
       "id": "langfamily-noinstall-checkers",
@@ -267,7 +301,8 @@
       "priority": 1,
       "evidence": "PR(this): code-execution LANG_SPEC +4 real checkers using ALREADY-INSTALLED tooling (bash -n; stdlib sqlite3 in-memory; PyYAML; stdlib json) — each probed per-capability, argv-array (no shell), UNSUPPORTED when absent. Real-subprocess verified PASS/FAIL for all 4 (code-execution suite 17→25). SQL/schema + Config-YAML/validate added to broad-IT corpus (8 cases each, dev+heldout acc 1.0).",
       "acceptance": "executable check with real subprocess per added no-install stack + independent eval",
-      "nextAction": "done; compiler stacks remain in new-language-families (narrowed)"
+      "nextAction": "done; compiler stacks remain in new-language-families (narrowed)",
+      "staleEvidence": false
     },
     {
       "id": "broad-it-corpus-grow",
@@ -293,7 +328,8 @@
       "priority": 1,
       "evidence": "PR(this): runtime/core/dashboard-exposure-readiness.ts — pure deny-by-default gate over 6 required controls (authToken, tlsTermination, reverseProxy, accessControl, rollback, ownerExposureConfirmed), strict boolean, owner-confirm never inferred; suite 14. Artifacts: docs/odg/deploy/{reverse-proxy.Caddyfile,access-control.md,EXPOSURE_RUNBOOK.md}. LIVE probe ⇒ NOT_READY (4/6 controls present; token + owner-confirm absent) — exposure stays CLOSED.",
       "acceptance": "a fail-closed readiness gate + reversible activation/rollback runbook exist and are tested; nothing exposed",
-      "nextAction": "done; actual exposure is the owner-gated remainder (dashboard-tls-exposure)"
+      "nextAction": "done; actual exposure is the owner-gated remainder (dashboard-tls-exposure)",
+      "staleEvidence": false
     },
     {
       "id": "dashboard-auth-redeploy",
@@ -305,7 +341,8 @@
       ],
       "priority": 7,
       "evidence": "LIVE-ACTIVATED 2026-10-28 (owner-authorized privileged activation, loopback-only). Serving rel-20261028T210754Z-e84a0cf2720b (from main @ e84a0cf; built+staging-verified health=200 via scripts/odg-release.sh; served artifact contains the auth gate — 3 marker files). Token minted via the tested dashboard-token-provision module, installed 0600 root:root at /etc/odg/odg-preprod.env, read via systemd EnvironmentFile drop-in (fingerprint sha256:e0adbf03672e; value never printed/committed). LIVE verification: /api/health 200; /api/runtime-state 401 without token AND with a bad token (deny); 200 with the valid token (allow); page / returns a 200 shell with 0 internal-state markers leaked (fail-closed withheld); bind 127.0.0.1 only (0 public binds); service active NRestarts=0. Rollback ready: previous -> rel-20261026T170857Z-268be2c666e9. Evidence in docs/odg/deploy/VPS_STATUS.md.",
-      "acceptance": "running release serves the fail-closed auth (deny without token, allow with valid token), loopback preserved, no secret leaked, rollback ready, independent post-deploy evidence recorded"
+      "acceptance": "running release serves the fail-closed auth (deny without token, allow with valid token), loopback preserved, no secret leaked, rollback ready, independent post-deploy evidence recorded",
+      "staleEvidence": false
     },
     {
       "id": "dashboard-tls-exposure",
@@ -340,7 +377,6 @@
       "blockReason": "ONLY Dockerfile/lint (hadolint) remains uncovered of 12. PREPARATION DONE (PR this): code-execution Dockerfile adapter WIRED (bin hadolint, argv-array, no-network), honestly UNSUPPORTED today (probe fails, not faked); checksum-verified install runbook docs/odg/deploy/HADOLINT_INSTALL.md (pinned version + sha256sum -c, no blind curl|sh); taxonomy-flip plan + resume-test documented. hadolint is NOT in apt ⇒ external binary from the official GitHub release.",
       "humanActionRequired": "authorize + run the integrity-verified hadolint install (HADOLINT_INSTALL.md: download pinned hadolint-linux-x86_64 + checksums.sha256, `sha256sum -c` must be OK, sudo install to /usr/local/bin). Downloads a 3rd-party binary + sudo ⇒ owner decision.",
       "resumeTest": "npx tsx -e 'console.log(require(\"./runtime/core/code-execution.js\").detectToolchain().Dockerfile)' ⇒ true; then runSyntaxCheck Dockerfile clean⇒PASS / lint-dirty⇒FAIL",
-      "acceptance": "hadolint present (checksum-verified) + Dockerfile adapter runs real lint (clean PASS / dirty FAIL) + corpus slice + taxonomy supported=true ⇒ category coverage 12/12. broadIT STILL NO_DATA (independent-labelling gate).",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },
@@ -355,7 +391,8 @@
       "priority": 1,
       "evidence": "PR(this): runtime/core/roadmap-schema-proposal.ts builds a dep-planner-VALIDATED (3rd dep-planner consumer), NON-MUTATING preview adding `dependsOn[]` to each mission from the companion. Fail-closed: INVALID_REFERENCES / UNCITED_EDGE (no fabricated deps) / CYCLE. Verified companion covers ALL (1/1) inter-roadmap prose deps (DEPLOY<-VPS). Preview written to docs/odg/ROADMAP.proposed.json (VALID, 2 layers, 11 missions); governed ROADMAP.json proven untouched. Suite 8.",
       "acceptance": "a validated, cited, non-mutating proposal preview exists ready for owner authorization",
-      "nextAction": "done; applying it to the governed file is the owner-gated remainder (structured-roadmap-deps)"
+      "nextAction": "done; applying it to the governed file is the owner-gated remainder (structured-roadmap-deps)",
+      "staleEvidence": false
     },
     {
       "id": "structured-roadmap-deps",
@@ -380,7 +417,8 @@
       "priority": 1,
       "evidence": "PR(this): runtime/core/demand-experiment.ts — FROZEN pre-registered protocol (method/instrument/threshold≥5/stopping-rule/lawful-basis, status NOT_EXECUTED) + fail-closed validateSignal (requires validating class, prospectId, verifiable source, timestamp, positive priceEur, lawfulBasis; rejects simulated/fabricated/synthetic) + assessExperiment (junk can't pad the threshold). Reuses demand-evidence.VALIDATING_CLASSES. Live ⇒ DEMAND_NOT_VALIDATED (0 valid signals). Suite 16. No outreach, no fabricated prospects.",
       "acceptance": "a pre-registered, un-movable protocol + a rigorous fail-closed admission rule for WTP signals exist and are tested",
-      "nextAction": "done; running the lawful experiment to collect ≥5 real signals is the owner-gated remainder (p01-demand-validation)"
+      "nextAction": "done; running the lawful experiment to collect ≥5 real signals is the owner-gated remainder (p01-demand-validation)",
+      "staleEvidence": false
     },
     {
       "id": "p01-demand-validation",
@@ -405,7 +443,8 @@
       "priority": 1,
       "evidence": "PR(this): runtime/core/p01-billing-sandbox.ts drives the full cycle over EXISTING invoicing+payments primitives (no new billing logic): draft→validate→issue→signed TEST_MODE webhook→PAID (€58.80 incl 20% tax), idempotent replay (paid unchanged), card-data REFUSED, tampered signature REJECTED. HARD guard: LIVE_REFUSED if PAYMENT_LIVE_ENABLED=1 (never a real charge); confined to an isolated temp cwd (no repo writes, no network, no real account). Suite 10.",
       "acceptance": "sandbox invoice→payment→reconcile, idempotent, no prod charges — demonstrated end-to-end",
-      "nextAction": "done; any REAL billing needs owner authorization + a real paid provider account (p01-billing-sandbox, still BLOCKED)"
+      "nextAction": "done; any REAL billing needs owner authorization + a real paid provider account (p01-billing-sandbox, still BLOCKED)",
+      "staleEvidence": false
     },
     {
       "id": "p01-billing-sandbox",

@@ -8495,3 +8495,18 @@ checksum-verified install runbook (pinned version + sha256sum -c must be OK, no 
 /usr/local/bin) + taxonomy-flip plan + resume-test. Register new-language-families: +humanActionRequired (authorize+run
 the integrity-verified install) + resumeTest; stays BLOCKED (capability NOT PROVEN — only prepared; honest). code-exec
 67→68. 27 ACCEPTED/1/6, 0 stale. Gate: test:report 179, tsc 0, build 0. NO fabricated checksum/coverage. Branched FIRST.
+
+---
+## CHECKPOINT 2026-10-29 (fw) — Campaign continuity loop: fixes "stops after one mission" €0
+VOLTWATCH mandate. Phase A DIAGNOSIS: campaign-controller SELECTS (pure) but nothing drove select→execute→advance→
+persist→recompute→NEXT across missions; persistent-autonomy-controller = intra-mission recovery only; odg-schedule-tick
+= single deny-by-default canary tick (exits 2 ⇒ odg-mission-runner.service FAILED). ROOT CAUSE = no inter-mission driver.
+FIX — campaign-loop.ts: pure driver over campaign-controller, INJECTED execute (no self-executing effects, no 10th
+primitive), full cycle until justified stop; persist-after-EACH-mission = durable checkpoint ⇒ resume + idempotent
+re-run (ACCEPTED lots skipped); reconcile each cycle; fail-closed (ACCEPTED needs evidence ⇒ no false terminal);
+no-repeat + changed-strategy-retry within attempt cap (bounded, no infinite loop); structured stops COMPLETED/
+IDLE_BLOCKED/WAITING_EXTERNAL/MAX_ITERATIONS/STOP_REQUESTED; COMPLETED only when NO open AND NO blocked. Suite 13
+(auto-transitions, resume-from-checkpoint, blocked≠frozen, retry w/o evidence loss, idempotent re-run, explicit IDLE/
+WAITING, no-false-COMPLETED, e2e 5-chain=5 iters, real register ⇒ honest IDLE_BLOCKED iters 0). systemd NOT touched
+(mission-runner.service failure = separate deny-by-default canary concern; wiring the loop to a runner is a gated step).
+Register +ACCEPTED campaign-loop-continuity. 28 ACCEPTED/1/6, 0 stale. Gate: test:report 180, tsc 0, build 0, engine 9/9.
