@@ -877,6 +877,32 @@
       "acceptance": "Generates interoperable CII/UBL XML from the validated model and proves interoperability by a round-trip that re-parses and re-validates; export is fail-closed on invalid models; money exact; XML injection-safe incl. attribute context; honest subset (not certified); independent audit's claims proven and fail-safe caveats disclosed+tested.",
       "nextAction": "D6: VAT breakdown lines (BG-23) + party tax ids in export/parse; XSD/Schematron validation of emitted XML (owner-gated tool); Factur-X PDF/A-3 embedding (owner-gated PDF tool).",
       "staleEvidence": false
+    },
+    {
+      "id": "golden-path-scaffolder-poc",
+      "program": "P2",
+      "title": "O8 golden-path / IDP scaffolder — PROTOTYPE (reconciled; preserved, not productized)",
+      "status": "DEFERRED",
+      "deps": [],
+      "priority": 3,
+      "evidence": "Portfolio reconciliation (docs/odg/PORTFOLIO_RECONCILIATION.md): O8 from the 2026-10-17 O2/O3/O8 PoC trio (docs/odg-operational/ODG_POC_O2_O3_O8.md). poc/o8-golden-path/scaffold.ts (admit deny-by-default + scaffold emitting files + a golden-path-mission-contract/1 + sha256 provenance, reusing mission-contract-factory). Tests poc/o8-golden-path/scaffold.test.ts 13/13 PASS today (live-verified 2026-10-29). Capability C07 = SPECIFICATION_ONLY. Previously ORPHANED (absent from register + 22-domain coverage matrix, no D1-D8 mapping); reconciled here as a PRESERVED PROTOTYPE — NOT obsolete (tests pass), NOT productized (no CLI/catalog/plugins). Productizing an IDP is an owner greenfield decision explicitly not selected by the later 3-product gate (e-invoice/ai-assurance/building-retrofit).",
+      "acceptance": "Reconciled and preserved as a prototype with provenance; no silent orphan. Productization DEFERRED to an explicit owner decision; nothing deleted.",
+      "nextAction": "Owner decision: productize an IDP/golden-path (templated catalog + plugins + benchmarked golden path) or keep as prototype.",
+      "staleEvidence": false
+    },
+    {
+      "id": "sbom-cli-exitcode-ci-gate",
+      "program": "P2",
+      "title": "D2 sbom-audit CLI — CI-meaningful exit code (auditExitCode) so a license-policy violation fails the build",
+      "status": "ACCEPTED",
+      "deps": [
+        "sbom-audit-service"
+      ],
+      "priority": 2,
+      "evidence": "PR(this cycle): runtime/core/sbom-audit-service.ts — added pure auditExitCode(audit) + wired the require.main CLI to exit by it. Surfaced by PORTFOLIO_RECONCILIATION: O2's surviving product (sbom-audit-service, D2) printed results but ALWAYS exited 0, so it could not gate CI on a policy violation. Now: HIGH finding OR policyClean===false ⇒ exit 1 (build fails); clean or needsReview-only (manual-review hint) ⇒ exit 0; operational error (ok:false) ⇒ exit 2; exitCode also printed in the JSON. Engine logic UNCHANGED (purely additive). Tests (sbom-audit-service.test.ts, 12; +1): GPL/policy-dirty⇒1, permissive-clean⇒0, unknown-license needsReview(no HIGH)⇒0, non-object⇒2. Independent audit (focus: fail-open direction). Gate: sbom 12, tsc 0, build OK, full test:report 201/201 @ workers=2. No new primitive.",
+      "acceptance": "The CLI exits non-zero exactly on a policy violation (HIGH/not-policyClean) and zero on clean/needsReview, with operational errors reserved to exit 2; usable as a CI gate; engine unchanged; independent audit confirms no fail-open.",
+      "nextAction": "Optionally emit SARIF to a file path arg; wire into a sample CI workflow (owner-gated repo).",
+      "staleEvidence": false
     }
   ]
 }

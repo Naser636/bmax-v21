@@ -143,12 +143,29 @@ function auditProjectDir(input: any): any {
   return r;
 }
 
-export { MANIFESTS, LIMITS, extractNpmLicenses, auditManifests, auditProjectDir };
-module.exports = { MANIFESTS, LIMITS, extractNpmLicenses, auditManifests, auditProjectDir };
+/**
+ * auditExitCode(audit): map an audit result to a CI-meaningful process exit code so the CLI can GATE a build.
+ *   1 = a policy violation (any HIGH-severity finding, or policyClean === false) — the build should fail.
+ *   0 = clean, or only MEDIUM/needsReview findings (a manual-review hint must not fail a CI gate).
+ * Pure. (The CLI reserves exit 2 for an operational error such as NO_DIR/NO_MANIFEST/INVALID_INPUT.)
+ */
+function auditExitCode(audit: any): number {
+  if (!isObj(audit)) return 2;
+  const hasFindings = Array.isArray(audit.findings);
+  const hasPolicy = typeof audit.policyClean === "boolean";
+  if (!hasFindings && !hasPolicy) return 2;   // unrecognizable audit shape ⇒ cannot determine ⇒ fail-closed (never a silent 0)
+  const hasHigh = hasFindings && audit.findings.some((f: any) => String(f && f.severity).toUpperCase() === "HIGH");
+  return (audit.policyClean === false || hasHigh) ? 1 : 0;
+}
+
+export { MANIFESTS, LIMITS, extractNpmLicenses, auditManifests, auditProjectDir, auditExitCode };
+module.exports = { MANIFESTS, LIMITS, extractNpmLicenses, auditManifests, auditProjectDir, auditExitCode };
 
 if (require.main === module) {
   const dir = process.argv[2] || process.cwd();
   const r = auditProjectDir({ projectDir: dir, target: process.argv[3] });
-  if (!r.ok) { process.stdout.write(JSON.stringify(r, null, 2) + "\n"); process.exit(2); }
-  process.stdout.write(JSON.stringify({ ok: true, componentCount: r.audit.componentCount, ecosystems: r.audit.ecosystems, byFamily: r.audit.byFamily, findingCount: r.audit.findingCount, policyClean: r.audit.policyClean, cveScan: r.audit.cveScan }, null, 2) + "\n");
+  if (!r.ok) { process.stdout.write(JSON.stringify(r, null, 2) + "\n"); process.exit(2); }   // operational error
+  const exitCode = auditExitCode(r.audit);   // CI gate: HIGH / policy-dirty ⇒ 1, else 0
+  process.stdout.write(JSON.stringify({ ok: true, exitCode, componentCount: r.audit.componentCount, ecosystems: r.audit.ecosystems, byFamily: r.audit.byFamily, findingCount: r.audit.findingCount, policyClean: r.audit.policyClean, cveScan: r.audit.cveScan }, null, 2) + "\n");
+  process.exit(exitCode);
 }

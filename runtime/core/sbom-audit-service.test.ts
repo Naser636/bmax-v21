@@ -89,4 +89,13 @@ const npmLock = (pkgs) => JSON.stringify({ name: "fix", lockfileVersion: 3, pack
   ok("unknown-license project ⇒ policyClean=true BUT needsReview=true (not misread as safe)", r.audit.policyClean === true && r.audit.needsReview === true);
 }
 
+// (11) auditExitCode — CI-gate exit mapping (portfolio-reconciliation D2 lot): HIGH/policy-dirty ⇒ 1, clean/review ⇒ 0.
+{
+  const gpl = S.auditManifests([{ content: npmLock({ "": { name: "x" }, "node_modules/gpllib": { version: "1.0.0", license: "GPL-3.0-only" } }), ecosystem: "npm" }], { target: "commercial-closed" });
+  const clean = S.auditManifests([{ content: npmLock({ "": { name: "x" }, "node_modules/a": { version: "1.0.0", license: "MIT" } }), ecosystem: "npm" }], { target: "commercial-closed" });
+  const review = S.auditManifests([{ content: npmLock({ "": {}, "node_modules/m": { version: "1.0.0" } }), ecosystem: "npm" }], { target: "commercial-closed" });
+  ok("auditExitCode: GPL/policy-dirty ⇒ 1 (CI fails), permissive-clean ⇒ 0, unknown-license needsReview (no HIGH) ⇒ 0 (hint ≠ build-fail), non-object ⇒ 2",
+     S.auditExitCode(gpl.audit) === 1 && S.auditExitCode(clean.audit) === 0 && review.audit.needsReview === true && S.auditExitCode(review.audit) === 0 && S.auditExitCode(null) === 2 && S.auditExitCode({}) === 2);
+}
+
 console.log(`\nSBOM-AUDIT-SERVICE suite — ${pass} assertions passed. (REAL repo lockfile SBOM; GPL⇒HIGH; UNKNOWN⇒review fail-closed; permissive clean; policy target respected; CVE declared NOT performed; valid SARIF)`);
