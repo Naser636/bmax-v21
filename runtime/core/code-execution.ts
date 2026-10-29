@@ -80,6 +80,13 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
     bin: "javac", probeArgs: ["-version"], ext: ".java",
     args: (f: string) => ["-d", path.dirname(f), f],
   },
+  // CSharp/compile: a REAL `mcs` (Mono C#) type check, compiled as a library (no Main needed) into the isolated
+  // workspace. No referenced assemblies beyond the BCL ⇒ an external `using` fails CLOSED ("type or namespace not
+  // found", no network). HOME/toolchain dirs NOT clobbered. Probe fails ⇒ C# honestly UNSUPPORTED (never a decoy).
+  CSharp: {
+    bin: "mcs", probeArgs: ["--version"], ext: ".cs",
+    args: (f: string) => ["-target:library", "-out:" + path.join(path.dirname(f), "out.dll"), f],
+  },
 });
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -187,8 +194,49 @@ function runBehaviourCheck(input: any = {}): any {
   }
 }
 
-export { LANG_SPEC, RUN_SPEC, defaultRunner, detectToolchain, runSyntaxCheck, runBehaviourCheck };
-module.exports = { LANG_SPEC, RUN_SPEC, defaultRunner, detectToolchain, runSyntaxCheck, runBehaviourCheck };
+/**
+ * runIntegrationCheck({ language, files, entry, expectedOutput, toolchainAvailable, runner, timeoutMs }): a MULTI-FILE
+ * integration check — writes several interacting files to an isolated workspace, runs `entry`, and PASSES iff trimmed
+ * stdout equals the trimmed expectedOutput. Exercises COMPONENT INTERACTION (e.g. entry imports a helper): a defect in
+ * an intermediate component (that compiles/runs in isolation) surfaces only through the composition. A different
+ * capability than static-single-file and single-file runtime-behaviour. Fail-closed: UNSUPPORTED when the interpreter
+ * is absent; BLOCKED on bad input / spawn error / timeout (never a silent PASS). Bounded, minimal env, no network.
+ */
+function runIntegrationCheck(input: any = {}): any {
+  const language = String(input.language || "");
+  const spec = RUN_SPEC[language];                       // integration runs via the same interpreters as behaviour
+  if (!spec) return { status: "UNSUPPORTED", reason: `language '${language || "(none)"}' has no run spec in ODG`, language };
+  const files = Array.isArray(input.files) ? input.files : null;
+  if (!files || files.length < 2 || !files.every((f: any) => f && typeof f.name === "string" && typeof f.content === "string")) return { status: "BLOCKED", reason: "integration requires ≥2 files [{name,content}]" };
+  if (typeof input.entry !== "string" || !files.some((f: any) => f.name === input.entry)) return { status: "BLOCKED", reason: "entry must name one of the files" };
+  if (typeof input.expectedOutput !== "string") return { status: "BLOCKED", reason: "expectedOutput (string) required" };
+  const runner = typeof input.runner === "function" ? input.runner : defaultRunner;
+  const available = typeof input.toolchainAvailable === "boolean" ? input.toolchainAvailable : (detectToolchain({ runner }))[language] === true;
+  if (!available) return { status: "UNSUPPORTED", reason: `interpreter for '${language}' is not available — not faked`, language };
+  let dir: string | null = null;
+  try {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-integration-"));
+    for (const f of files) {
+      const p = path.join(dir, path.basename(f.name));    // basename ⇒ no path traversal out of the workspace
+      fs.writeFileSync(p, f.content);
+    }
+    const r = runner(spec.bin, spec.args(path.join(dir, path.basename(input.entry))), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000 });
+    if (!r || r.spawnError) return { status: "BLOCKED", reason: `run spawn error: ${r && r.spawnError}`, language };
+    if (r.timedOut) return { status: "BLOCKED", reason: "run timed out", language };
+    const out = String(r.stdout || "").trim();
+    const want = String(input.expectedOutput).trim();
+    return out === want
+      ? { status: "PASS", language, detail: "integrated output matches expected" }
+      : { status: "FAIL", language, exitCode: r.exitCode, detail: "integrated output does NOT match expected (component-interaction defect)" };
+  } catch (e: any) {
+    return { status: "BLOCKED", reason: (e && e.message) || "execution error", language };
+  } finally {
+    if (dir) { try { fs.rmSync(dir, { recursive: true, force: true }); } catch {} }
+  }
+}
+
+export { LANG_SPEC, RUN_SPEC, defaultRunner, detectToolchain, runSyntaxCheck, runBehaviourCheck, runIntegrationCheck };
+module.exports = { LANG_SPEC, RUN_SPEC, defaultRunner, detectToolchain, runSyntaxCheck, runBehaviourCheck, runIntegrationCheck };
 
 if (require.main === module) {
   process.stdout.write(JSON.stringify({ toolchain: detectToolchain(), supported: Object.keys(LANG_SPEC) }, null, 2) + "\n");

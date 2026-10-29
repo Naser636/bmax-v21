@@ -89,6 +89,30 @@
       "acceptance": "page gated; internal-state leak closed in code"
     },
     {
+      "id": "csharp-build-capability",
+      "program": "P2",
+      "title": "C#/compile capability via authorized Mono mcs (hermetic)",
+      "status": "ACCEPTED",
+      "deps": [
+        "java-build-capability"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): mono-devel (mcs 6.14.1) installed from the official Ubuntu universe repo (authorized, reversible; NO external MS source added; dashboard unaffected). code-execution LANG_SPEC +CSharp = real `mcs -target:library -out:<ws>/out.dll` type check; no referenced assemblies beyond BCL ⇒ external `using` FAILS CLOSED (no network). Live: clean PASS, type-error FAIL, undefined FAIL, missing-dep FAIL. code-execution suite 46→56. broad-it-eval v9: +C# corpus (8 cases acc 1.0), category coverage 9→10/12=0.833. All compiler stacks (Go/Rust/Java/C#) now covered; only tidy/hadolint linters remain.",
+      "acceptance": "a real hermetic mcs type check with independent eval; external using fails closed; broad rate stays NO_DATA (gated)"
+    },
+    {
+      "id": "benchmark-task-mode-3-integration",
+      "program": "P2",
+      "title": "Third task MODE: integration (multi-file component interaction) + independent-labelling gate",
+      "status": "ACCEPTED",
+      "deps": [
+        "benchmark-task-mode-2"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): code-execution +runIntegrationCheck — writes ≥2 interacting files, runs the entry, PASSES iff stdout==expectedOutput; a defect in an INTERMEDIATE helper (that compiles/runs alone) surfaces only via composition. broad-it-eval v9: +8 integration cases (category Integration/multi-file, NOT a taxonomy slot). Mode coverage now 3/5=0.6 = gate, AND category 0.833 ≥ 0.6 — BOTH ratio gates MET. CRITICAL honesty: added an INDEPENDENT-LABELLING criterion (corpus is self-authored: ODG wrote cases AND labels) ⇒ representative=false ⇒ broadIT STAYS NO_DATA (no self-graded MEASURED). checkLeakage made multi-file-aware. code-execution 56, broad-it-eval 41. corpus 100 cases, dev+heldout acc 1.0, leakage disjoint.",
+      "acceptance": "a 3rd distinct task mode (component interaction) exists + measured; representativeness additionally requires INDEPENDENT labelling; broadIT stays NO_DATA on a self-authored corpus"
+    },
+    {
       "id": "benchmark-task-mode-2",
       "program": "P2",
       "title": "Second benchmark task MODE: runtime-behaviour (output correctness) + mode-coverage gate",
@@ -238,18 +262,19 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for remaining COMPILER stacks (C#) + linters (tidy/hadolint)",
+      "title": "Engineering capability for remaining LINTERS (tidy/hadolint) — HTML-CSS + Dockerfile",
       "status": "BLOCKED",
       "deps": [
         "langfamily-noinstall-checkers",
         "shellcheck-lint-capability",
         "go-build-capability",
         "rust-build-capability",
-        "java-build-capability"
+        "java-build-capability",
+        "csharp-build-capability"
       ],
       "priority": 7,
       "evidence": "",
-      "blockReason": "FURTHER NARROWED: Shell/SQL/YAML/JSON + Shell/lint + Go/build + Rust/build + Java/compile all DONE. What remains needs its own authorized reproducible install — dotnet (C#) and linters tidy (HTML-CSS) / hadolint (Dockerfile). Each is a deliberate per-family install on the prod VPS host. NOTE: adding more static-check categories will NOT produce a broad-IT MEASURED rate — representativeness now additionally requires task-MODE diversity (a 2nd+ mode beyond static-single-file is tracked under benchmark-task-mode-2).",
+      "blockReason": "FURTHER NARROWED: ALL compiler stacks now DONE (Go/Rust/Java/C#) + Shell/SQL/YAML/JSON + Shell/lint. What remains = linters tidy (HTML-CSS/validate) and hadolint (Dockerfile/lint). tidy is apt-available (universe); hadolint is NOT in the enabled repos (would need an external binary download — authorization-gated). Each a deliberate per-family install. NOTE: more static categories will NOT yield a broad-IT MEASURED rate — representativeness also requires independent labelling (self-authored corpus ⇒ NO_DATA).",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },

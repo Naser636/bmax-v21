@@ -8424,3 +8424,17 @@ Gate UPGRADED minTaskModes→minModeCoverage ratio over 5 BROAD_TASK_MODES; mode
 static checker (behaviour check compares OUTPUT, immune to exit-code gaming). Suites: code-execution 39→46, broad-it-eval 39.
 Register +ACCEPTED benchmark-task-mode-2. 21 ACCEPTED/1/5, 0 stale. Gate: test:report 177, tsc 0, build 0.
 NEXT: 3rd mode (integration/data) to progress toward mode-coverage 0.6; or C# per-family install.
+
+---
+## CHECKPOINT 2026-10-29 (fq) — C# compile + 3rd task-mode (integration) + independent-labelling gate €0
+Lot A C#: mono-devel (mcs 6.14.1) from OFFICIAL universe repo (no external MS source; authorized/reversible; dashboard
+unaffected). code-execution +CSharp = real `mcs -target:library` (external using fails closed, no network). code-exec
+46→56. Category coverage 9→10/12=0.833 — ALL compiler stacks (Go/Rust/Java/C#) now covered. Lot B 3rd mode: +runIntegration
+Check (≥2 interacting files, run entry, assert output; intermediate-helper defect surfaces only via composition). broad-it
+v9 +8 integration cases (category Integration/multi-file, non-taxonomy). Mode coverage 3/5=0.6=gate AND category 0.833≥0.6
+BOTH met ⇒ would flip MEASURED. **HONESTY GATE ADDED: independent-labelling** — corpus is SELF-AUTHORED (ODG wrote cases+
+labels) ⇒ representative=false ⇒ broadIT STAYS NO_DATA (no self-graded MEASURED). checkLeakage made multi-file-aware.
+corpus 100, dev+heldout acc 1.0, leakage disjoint. broad-it-eval 41. Register +ACCEPTED csharp-build-capability +
+benchmark-task-mode-3-integration; new-language-families narrowed to tidy/hadolint linters. 24 ACCEPTED/1/5, 0 stale.
+Gate: test:report 177, tsc 0, build 0. €0. NEXT: 4th mode (data) toward higher mode-coverage; or independent-labelling
+(third-party/held-out) is the real unlock for a credible broad rate — currently the honest blocker to MEASURED.
