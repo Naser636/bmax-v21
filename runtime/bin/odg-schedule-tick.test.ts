@@ -24,7 +24,7 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
 // (2) canary-allowed mission + injected verified dispatch ⇒ PASS via the READ-ONLY seam (no real odg-run), audited.
 {
   let dispatched = 0;
-  const d = tick.tickOnce({ allow: new Set(["M1"]), proven: new Set(), dispatch: (it) => { dispatched++; return { verified: true, detail: "ok" }; }, recordAttempt: noRecord, chain: [] });
+  const d = tick.tickOnce({ allow: new Set(["M1"]), proven: new Set(), dispatch: (it) => { dispatched++; return { verified: true, detail: "ok" }; }, recordAttempt: noRecord, chain: [], assessSafety: () => ({ safe: true, reason: "test: read-only" }) });
   ok("tick: allowed mission ⇒ PASS via injected dispatch (read-only seam, no real odg-run)", d.status === "PASS" && d.mission === "M1" && dispatched === 1);
   ok("tick: PASS decision is hash-chained + verifiable", d.auditChain.length === 1 && AUDIT.verifyChain(d.auditChain).ok === true);
 }
@@ -33,7 +33,7 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
 //     ⇒ an already-proven allowlisted mission ⇒ IDLE (dedup), NOT dispatched.
 {
   let dispatched = 0;
-  const d = tick.tickOnce({ allow: new Set(["M1"]), proven: new Set(["M1"]), dispatch: () => { dispatched++; return okDispatch(); }, recordAttempt: noRecord, chain: [] });
+  const d = tick.tickOnce({ allow: new Set(["M1"]), proven: new Set(["M1"]), dispatch: () => { dispatched++; return okDispatch(); }, recordAttempt: noRecord, chain: [], assessSafety: () => ({ safe: true, reason: "test: read-only" }) });
   ok("tick: proven allowlisted mission ⇒ IDLE (dedup), no dispatch", d.status === "IDLE" && dispatched === 0);
 }
 
@@ -41,7 +41,7 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
 {
   let dispatched = 0;
   const badReviewer = () => ({ verdict: "IMPROVE", claims: [{ claim: "world number one", justified: false }], staleReferences: [], gaps: [] });
-  const d = tick.tickOnce({ allow: new Set(["M1"]), proven: new Set(), dispatch: () => { dispatched++; return okDispatch(); }, recordAttempt: noRecord, reviewExcellence: badReviewer, chain: [] });
+  const d = tick.tickOnce({ allow: new Set(["M1"]), proven: new Set(), dispatch: () => { dispatched++; return okDispatch(); }, recordAttempt: noRecord, reviewExcellence: badReviewer, chain: [], assessSafety: () => ({ safe: true, reason: "test: read-only" }) });
   ok("tick: excellence gate fires — prohibited claim ⇒ BLOCKED, no dispatch", d.status === "BLOCKED" && /EXCELLENCE_PROHIBITED_CLAIM/.test(d.reason) && dispatched === 0);
 }
 
@@ -64,6 +64,62 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
     const back = tick.readAuditChain();
     ok("tick: audit-chain persist/read round-trip verifiable", JSON.stringify(back) === JSON.stringify(chain) && AUDIT.verifyChain(back).ok === true);
   } finally { process.chdir(prev); try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* ignore */ } }
+}
+
+// (7) CODE-ENFORCED READ-ONLY GATE — allowlisted + read-only mission spec ⇒ PASS, dispatched (positive control).
+{
+  let dispatched = 0;
+  const d = tick.tickOnce({ allow: new Set(["ODG_CANARY_RO"]), proven: new Set(), dispatch: (it) => { dispatched++; return { verified: true, detail: "ok" }; }, recordAttempt: noRecord, chain: [],
+    loadSpec: () => ({ mission: "ODG_CANARY_RO", requiresEngineering: false, authorizedPaths: [] }) });
+  ok("tick: allowlisted + read-only spec ⇒ PASS, dispatched (safety gate admits)", d.status === "PASS" && dispatched === 1);
+}
+// (8) FAIL-OPEN CLOSED (the audit's flagged gap): an allowlisted but MUTATING mission ⇒ BLOCKED, NEVER dispatched.
+{
+  let dispatched = 0;
+  const d = tick.tickOnce({ allow: new Set(["ODG_CANARY_MUT"]), proven: new Set(), dispatch: (it) => { dispatched++; return { verified: true }; }, recordAttempt: noRecord, chain: [],
+    loadSpec: () => ({ mission: "ODG_CANARY_MUT", requiresEngineering: true, authorizedPaths: ["runtime/core/x.ts"] }) });
+  ok("tick: allowlisted-but-MUTATING mission ⇒ BLOCKED + CANARY_REFUSES_NON_READONLY + ZERO dispatch (canary cannot become an engineering executor via the allowlist)",
+     d.status === "BLOCKED" && /CANARY_REFUSES_NON_READONLY/.test(d.reason) && dispatched === 0);
+}
+// (9) FAIL-CLOSED: an allowlisted mission whose definition is missing/unreadable ⇒ BLOCKED, never dispatched.
+{
+  let dispatched = 0;
+  const d = tick.tickOnce({ allow: new Set(["ODG_CANARY_UNKNOWN"]), proven: new Set(), dispatch: () => { dispatched++; return { verified: true }; }, recordAttempt: noRecord, chain: [],
+    loadSpec: () => null });
+  ok("tick: allowlisted mission with NO definition ⇒ BLOCKED (fail-closed, CANARY_SPEC_UNAVAILABLE), ZERO dispatch",
+     d.status === "BLOCKED" && /CANARY_SPEC_UNAVAILABLE/.test(d.reason) && dispatched === 0);
+}
+// (10) network / spend / destructive declarations ⇒ BLOCKED each (read-only gate rejects non-RO effects).
+{
+  const mk = (over) => tick.tickOnce({ allow: new Set(["ODG_CANARY_X"]), proven: new Set(), dispatch: () => ({ verified: true }), recordAttempt: noRecord, chain: [],
+    loadSpec: () => Object.assign({ mission: "ODG_CANARY_X", requiresEngineering: false, authorizedPaths: [] }, over) });
+  const net = mk({ requiresNetwork: true }), spend = mk({ budgetEur: 5 }), destr = mk({ destructive: true });
+  ok("tick: network/spend/destructive mission ⇒ BLOCKED each (no non-read-only effect admitted)",
+     net.status === "BLOCKED" && spend.status === "BLOCKED" && destr.status === "BLOCKED");
+}
+
+// (11) REAL-LOADER regression (the audit's flagged gap): the REAL loadMissionSpec against a REAL mutating mission file
+// that predates the requires_engineering schema (mode=IMPLEMENT, no mutation flags) ⇒ BLOCKED, ZERO dispatch. This
+// exercises the on-disk classifier, not an injected stub — default-DENY, absence of a flag is NOT read-only.
+{
+  const realMut = "BOOTSTRAP_RUNTIME_ENGINEERING";   // real file, mode IMPLEMENT, no requires_engineering/authorized_paths
+  if (fs.existsSync(path.join(process.cwd(), "runtime", "missions", realMut + ".json"))) {
+    let dispatched = 0;
+    const d = tick.tickOnce({ allow: new Set([realMut]), proven: new Set(), dispatch: () => { dispatched++; return { verified: true }; }, recordAttempt: noRecord, chain: [] });   // NO loadSpec/assessSafety injection ⇒ real classifier
+    ok("tick: REAL mutating mission file (mode=IMPLEMENT, no flags) ⇒ BLOCKED + ZERO dispatch via the real on-disk classifier (default-deny)",
+       d.status === "BLOCKED" && dispatched === 0 && /CANARY_REFUSES_NON_READONLY/.test(d.reason));
+  } else {
+    ok("tick: (real-loader regression skipped — fixture mission absent)", true);
+  }
+}
+
+// (12) TYPE-CONFUSION fail-closed (re-audit caveat): the PURE classifier must NOT let a non-string `mode` coerce into an
+// admitted read-only mode. ["READ_ONLY"].toString()==="READ_ONLY" would slip through a naive String(); the typeof guard
+// blocks it. String "READ_ONLY" stays admitted (requiresEngineering false); array/object/number/null ⇒ requiresEngineering true.
+{
+  const sp = (mode) => tick.canarySpecFromMission({ mission: "P", mode, requires_engineering: false, authorized_paths: [] }, "P");
+  ok("canarySpecFromMission: string 'READ_ONLY' ⇒ read-only (requiresEngineering false); array/object/number/null mode ⇒ engineering (true) — no coercion",
+     sp("READ_ONLY").requiresEngineering === false && sp(["READ_ONLY"]).requiresEngineering === true && sp({ x: 1 }).requiresEngineering === true && sp(1).requiresEngineering === true && sp(null).requiresEngineering === true && tick.canarySpecFromMission(null, "P") === null);
 }
 
 console.log(`\nODG-SCHEDULE-TICK — ${pass} assertions passed. (NO real mission executed; scheduler NOT activated.)`);
