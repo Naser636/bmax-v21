@@ -187,30 +187,18 @@
   },
 
   "current_campaign_scope": {
-    "campaign": "STABILIZATION_RC (controlled runtime fixes)",
-    "opened_by": "CTO decision (AUTHORIZE RC-2 & OPEN STABILIZATION SCOPE); extended (AUTHORIZE RC-1 & EXTEND STABILIZATION SCOPE)",
-    "authorizes": [
-      "AUTHORIZED work item RC2-PREVENT-FAILED-CHECKPOINT-RESUME: minimal runtime change strictly inside its write_set (runtime/core/checkpoint-engine.js, runtime/core/checkpoint-engine.test.js)",
-      "AUTHORIZED work item RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE: minimal runtime change strictly inside its write_set (runtime/bin/odg-run.js, runtime/core/stage-effect.js, runtime/core/stage-effect.test.js)",
-      "AUTHORIZED work item RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT: minimal runtime change strictly inside its write_set (runtime/bin/odg-health.js, runtime/bin/odg-state.js, runtime/core/runtime-model.js, runtime/core/health-render.test.js, runtime/core/runtime-model.test.js)",
-      "AUTHORIZED work item RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT: minimal runtime change strictly inside its write_set (runtime/core/self-diagnostic.js, runtime/core/self-diagnostic.test.js)",
-      "AUTHORIZED work item RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT: minimal runtime change strictly inside its write_set (runtime/core/patch-executor.js, runtime/core/patch-executor.test.js)",
-      "AUTHORIZED work item RECOVER-ECONOMIC-PURE-MODULES: additive recovery of pure modules + their pure unit tests ONLY, strictly inside its write_set (runtime/core/economic-extractor.js, runtime/core/opportunity-policy.js, runtime/core/economic-extractor.test.js, runtime/core/opportunity-policy.test.js) — NO runtime caller/executor wiring, NO network, NO governed-web-fetch import",
-      "AUTHORIZED work item WIRE-ECONOMIC-EXTRACTION-INTO-RESEARCH-SEAM: minimal change strictly inside its write_set (runtime/core/capability-executors.js, runtime/core/economic-wiring.test.js) — additive LIVE-path extraction/classification bound to the existing named governed-http-get seam; dry-run unchanged (zero network); NO gate weakening, NO D5, NO governed-web-fetch import",
-      "Update of ODG_AUTONOMOUS_WORK_PROTOCOL.json current_campaign_scope at repository root (this declaration)",
-      "Update of CLAUDE.md at repository root (execution interface only)"
-    ],
+    "campaign": "NONE_ACTIVE",
+    "status": "SUPERSEDED",
+    "superseded_note": "The prior STABILIZATION_RC campaign (RC1-RC5 + RECOVER-ECONOMIC-PURE-MODULES + WIRE-ECONOMIC-EXTRACTION-INTO-RESEARCH-SEAM) is CLOSED/SUPERSEDED. Its write-set referenced runtime/core/*.js and runtime/bin/*.js files REMOVED by the ZERO-JS migration; the equivalent fixes/modules were re-implemented in TypeScript on main (e.g. economic-extractor.ts, opportunity-policy.ts, bounded-http-client.ts, checkpoint-engine.ts, stage-effect.ts, self-diagnostic.ts, patch-executor.ts, runtime-model.ts). The RC branch was never merged and is archived as git tag archive/f3-stabilization-worktree. See docs/odg/SOURCE_OF_TRUTH_AUDIT.md (F3) and docs/odg/PORTFOLIO_RECONCILIATION.md.",
+    "reconciled_at_head": "2eaf64dc1c3ad4c534b9eb736012adcb39e91ca2",
+    "reconciled_on": "2026-10-29",
+    "authorizes": [],
     "forbids": [
-      "Any runtime change outside an AUTHORIZED work item's write_set",
-      "Any work item other than RC2-PREVENT-FAILED-CHECKPOINT-RESUME, RC1-REQUIRE-STAGE-OUTPUT-BEFORE-DONE, RC5-RECONCILE-HEALTH-WITH-VALIDATION-VERDICT, RC4-ALIGN-SELF-DIAGNOSTIC-WITH-VALIDATION-VERDICT, RC3-MAKE-CAPABILITY-RESOLUTION-MISS-EXPLICIT, RECOVER-ECONOMIC-PURE-MODULES or WIRE-ECONOMIC-EXTRACTION-INTO-RESEARCH-SEAM without a separate explicit CTO authorization",
-      "Any mission P0-071 or later",
-      "Any modification of Master / Runtime Constitution / ROADMAP.json / policy",
-      "Any new constitution or new roadmap",
-      "Any deletion",
-      "Any new dependency",
-      "Any commit or push to origin without a separate explicit CTO approval",
-      "Any cherry-pick, branch merge, reset, rebase or force-push"
-    ]
+      "Any autonomous runtime write under a stale or removed write-set — there is NO active campaign write-set; the RC .js targets no longer exist",
+      "Re-opening the STABILIZATION_RC write-set",
+      "Treating this reconciliation as authorization for any execution — it authorizes nothing"
+    ],
+    "note": "No active autonomous-execution campaign scope. New work requires a fresh WORK_ITEM_CONTRACT authorized by ODG/CTO (PROPOSED -> AUTHORIZED) per the workflow/state_rules; this block grants no execution power. Narrowed (authorizes:[]), never widened."
   },
   "reality_proof_rule": {
     "id": "ODG5-REALITY-PROOF",
