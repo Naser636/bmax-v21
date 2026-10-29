@@ -17,6 +17,7 @@
 const crypto = require("crypto");
 const EXEC = require("./code-execution.js");
 const METRICS = require("./eval-metrics.js");   // ODG5 eval-metrics — wired here as a real consumer (was orphan)
+const LABELS = require("./independent-label-policy.js");   // admission gate for independent ground-truth labels
 
 // Diversified corpus across language × kind. partition ∈ {dev, heldout}; held-out cases are NEVER used to tune.
 // Grown (v2) within the ACTUALLY-supported surface (JS/TS/Python): 4 cases per category per partition (2 clean,
@@ -189,6 +190,11 @@ const BROAD_TASK_MODES = Object.freeze(["static-single-file", "runtime-behaviour
 // A credible VERIFIED broad-IT success rate requires labels from a source independent of the author (held-out, third-
 // party, or real historical outcomes). Until then the representativeness gate stays unmet even at full breadth+modes.
 const CORPUS_LABELLING = "self-authored";
+// The current corpus's label provenance: ODG authored both the cases AND the expected labels. The independent-label
+// policy assesses this descriptor; it is NOT independent (self-authored), so broad-IT stays NO_DATA. Replacing this
+// with a descriptor that PASSES LABELS.assessLabelIndependence (a real third-party/upstream set) is the external unlock.
+const CORPUS_PROVENANCE = Object.freeze({ author: "odg", independentOfEvaluee: false, sourceRef: "", devValidationSeparated: true, labellingMethod: "odg-authored" });
+const CORPUS_LABELS_INDEPENDENT = LABELS.assessLabelIndependence(CORPUS_PROVENANCE).independent;   // false today (policy-enforced)
 
 function sha256(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
 // A case's hashable payload: single-file cases use `content`; multi-file (integration) cases serialise files+entry+
@@ -254,8 +260,8 @@ function coverageReport(corpus: ReadonlyArray<any> = CORPUS, toolchain?: Record<
     taskModes,
     modeCoverage,
     modeDiverse,
-    independentlyLabelled: CORPUS_LABELLING !== "self-authored",
-    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0 && modeDiverse && (!th.requireIndependentLabelling || CORPUS_LABELLING !== "self-authored"),
+    independentlyLabelled: CORPUS_LABELS_INDEPENDENT,
+    meetsThreshold: ratio >= th.minCoverageRatio && covered.length > 0 && modeDiverse && (!th.requireIndependentLabelling || CORPUS_LABELS_INDEPENDENT),
     coveredCategories: covered.map((c) => c.category),
     missing: perCategory.filter((c) => !c.covered).map((c) => ({ category: c.category, supported: c.supported, cases: c.cases, reason: !c.supported ? "no executable checker in ODG (toolchain absent) — would be UNSUPPORTED" : (!c.toolchainPresent ? "checker declared but its toolchain is NOT present at eval time — not currently measurable" : "insufficient real-evaluable cases (need both kinds ≥ threshold)") })),
     perCategory,
