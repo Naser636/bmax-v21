@@ -558,7 +558,7 @@
       "id": "engine-excellence-resume",
       "program": "P1",
       "title": "ENGINE EXCELLENCE — resume after the first verified business lot (do not restart proven engine work)",
-      "status": "DEFERRED",
+      "status": "IN_PROGRESS",
       "deps": [
         "ese-code-review-service"
       ],
@@ -615,6 +615,21 @@
       "nextAction": "Expand the obligation CATALOG + wire real evidence verifiers; a real client dossier reviewed by a qualified professional is the PROVEN milestone. Domain #15 Legal remains PARTIAL (no real legal engagement; principle-level only).",
       "staleEvidence": false,
       "evidence": "PR(this): runtime/core/regulatory-dossier-service.ts COMPOSES ai-act-role-classifier.classifyRole + regulatory-assurance.buildDossier into ONE readiness dossier from a declared system profile: EU AI-Act role classification (fail-closed: UNDETERMINED unless a qualifying activity is declared) + framework readiness (GDPR/ISO27001/ISO42001/DORA, source-cited, refuses obligations whose source is absent, evidence fail-closed) → unified SARIF-emittable findings. Tests (regulatory-dossier-service.test.ts, 8): deny-by-default AI-Act (UNDETERMINED/no roles); declared activities⇒DEPLOYER+Art.50 MEDIUM; GDPR unevidenced⇒compliance GAP citing GDPR-2016-679; empty registry⇒obligations REFUSED (source-integrity HIGH), 0 applicable; injected independent verifier⇒GDPR-ROPA SATISFIED_VERIFIED (no GAP); certificationStatus ALWAYS NOT_CERTIFIED + assertNotCertified refuses 'ISO 27001 certified'; fail-closed on missing profile/tenantId; valid SARIF 2.1.0. HONESTY: readiness dossier, NOT a legal opinion/certification; dates governed by standards register; declared-not-verified. No new primitive (9 intact). Independent audit + CI. Gate: regulatory-dossier 8/8 exit 0, tsc 0, test:report green, build OK."
+    },
+    {
+      "id": "engine-journal-observability",
+      "program": "P1",
+      "title": "ENGINE EXCELLENCE #1: durable cross-run telemetry (campaign-journal) — observability + honest before/after",
+      "status": "ACCEPTED",
+      "deps": [
+        "campaign-metrics-instrumentation",
+        "campaign-run-entrypoint"
+      ],
+      "priority": 2,
+      "evidence": "PR(this): ENGINE-EXCELLENCE lot chosen from evidence — the §2 measurement exposed that campaign-metrics computes PER-RUN metrics but nothing persisted them across runs, so throughput/regressions over time were UNMEASURABLE (Priority 6 observability). runtime/core/campaign-journal.ts = durable append-only JSONL telemetry: toJournalEntry (pure, compact), appendRun (thin fs), readJournal (skips+counts malformed), summarizeJournal (cross-run aggregate: runs, totals, aggregateSuccessRate, byStopReason, interruptions, completedRuns, meanMissionMsAcrossRuns), compareRuns (before/after delta ONLY when both sides comparable — else 'unmeasured', never fabricated). Wired OPT-IN into odg-campaign-run.ts (ODG_CAMPAIGN_JOURNAL env / opts.journalPath; default OFF = zero behaviour change; bin-level ISO timestamp). Composes campaign-metrics; NO 10th primitive (EVIDENCE/STATE-style persistence; core takes no clock). Tests (campaign-journal.test.ts, 9): entry fields, append/read round-trip, cross-run aggregate (2 runs⇒0.8), compareRuns improved/regressed/flat + unmeasured-when-null, nothing-attempted⇒null, malformed skipped+counted, REAL launcher end-to-end appends 1 entry, opt-in (no path⇒no file). MEASURED THIS CYCLE (real launcher on isolated test registers, verification executor): multi-mission 3/3 ACCEPTED COMPLETED; idempotent re-run 0 iterations; resume-after-interruption (interrupt@1 persisted m0 ACCEPTED/m1,m2 READY → resume → COMPLETED, no re-exec); per-mission ~1.0-1.2s real node --check. Autonomy-in-SOFTWARE proven; operational autonomy still gated (default NO_EXECUTOR). HONEST: this is the FIRST instrumented cycle ⇒ cross-cycle before/after not yet available (1 baseline) — the journal makes it possible going forward; no fabricated delta. 9 primitives intact. Independent audit + CI. Gate: campaign-journal 9/9 exit 0, tsc 0, test:report green.",
+      "acceptance": "Each campaign run can durably record its metrics; runs aggregate across invocations; a before/after delta is produced only when both measurement sets exist (else unmeasured). Default behaviour unchanged (opt-in).",
+      "nextAction": "Accumulate journal entries over real cycles to produce a genuine before/after; feed summarizeJournal into the owner dashboard. Next ENGINE-EXCELLENCE candidate: learning-reuse demonstrability (Priority 5).",
+      "staleEvidence": false
     }
   ]
 }
