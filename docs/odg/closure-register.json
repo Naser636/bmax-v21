@@ -791,6 +791,21 @@
       "acceptance": "A Factur-X PDF with an embedded (Flate or raw) CII/UBL invoice XML is extracted (bounded, untrusted, nothing executed) and validated EN16931-core end-to-end; not-PDF/no-embedded/ambiguous/oversize/malformed fail-closed; supported subset + known gaps enumerated (no full-conformance claim).",
       "nextAction": "Real-world robustness needs a maintained PDF tool (pdfdetach/pikepdf) — OWNER-GATED install (document the precise dependency); add object-stream/xref-stream handling + PDF signature verification. Then ai-assurance assessment slice (independent scope).",
       "staleEvidence": false
+    },
+    {
+      "id": "product-ai-assurance-assessment-d7",
+      "program": "P2",
+      "title": "PRODUCT D7 ai-assurance-governance SLICE 1: integrated executable assessment (compose ai-act+dossier+sbom)",
+      "status": "ACCEPTED",
+      "deps": [
+        "regulatory-dossier-service",
+        "sbom-audit-service"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/core/ai-assurance-assessment.ts — D7 integrated EXECUTABLE assessment composing existing services via verified interfaces: ai-act-role-classifier.classifyRole (role+obligations, deny-by-default) + regulatory-dossier-service.buildRegulatoryDossier (requirement→control→evidence: SATISFIED_VERIFIED/GAP/DECLARED_UNVERIFIED/NOT_APPLICABLE) + sbom-audit-service.auditProjectDir (real supply-chain, when projectDir given). Control vocabulary PASS/FAIL/INSUFFICIENT_EVIDENCE/NOT_APPLICABLE; FAIL-CLOSED: a control is PASS ONLY when a real check ran AND an independent verifier confirmed evidence (SATISFIED_VERIFIED); a LISTED-but-untested control (every AI-Act obligation family) ⇒ INSUFFICIENT_EVIDENCE, NEVER PASS by listing; overall ASSURED_TECHNICAL requires a real check executed AND zero FAIL/INSUFFICIENT on applicable controls. records executedChecks[] provenance. Tests (ai-assurance-assessment.test.ts, 7): no-evidence⇒NOT_ASSURED (FAIL+INSUFFICIENT, 0 PASS); AI-Act obligations⇒INSUFFICIENT never PASS; verified-evidence+no-AI-activity+no-projectDir⇒ASSURED_TECHNICAL (PASS>0,0 FAIL,0 INSUFFICIENT); verifier-rejects⇒NOT_ASSURED (no false PASS); real projectDir⇒sbom-license-audit executed (this repo, components>0); always NOT_CERTIFIED + limitations; fail-closed input. HONEST: TECHNICAL assurance only — explicitly SEPARATE from legal certification / formal conformity; CVE scan NOT performed; AI-Act obligations need manual/qualified assessment. No new primitive (composes existing). Independent audit + CI. Gate: d7 7, tsc 0, test:report green.",
+      "acceptance": "An AI system is assessed end-to-end by composing real checks; a control is PASS only via an executed check + verified evidence; listed-but-untested controls are INSUFFICIENT_EVIDENCE (never PASS); overall is fail-closed; always NOT_CERTIFIED (technical≠legal).",
+      "nextAction": "D7 expand: wire assurance-pilot-runner technical findings + evidence-freshness + regression/change monitoring + incident handling; add a CLI/report export. Continue the 5 existing-domain upgrades; D8 building-retrofit remains research/design (greenfield).",
+      "staleEvidence": false
     }
   ]
 }
