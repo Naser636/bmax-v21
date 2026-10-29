@@ -50,8 +50,11 @@ function resolve(store: any, goal: string, domain: string, opts: any = {}): any 
   }
   const g = EG.gateLearningReuse({ learning: cand, registry: opts.registry || [], now: opts.now || "", reviewer: opts.reviewer });
   if (!g.applied) return { hit: false, capability: null, cost: MISS_COST, influenced: false, reason: `reuse gate refused: ${g.provOk ? ("excellence " + (g.reviewVerdict || "blocked")) : g.provReason}` };
-  const d = EG.decideWithLearning([cand.capability, "guess"], g);   // proves the learning changed the decision
-  return { hit: true, capability: g.appliedPractice, cost: HIT_COST, influenced: d.influencedByLearning === true, decided: d.chosen, reason: "applied" };
+  // options are built from what the gate ACTUALLY applied (g.appliedPractice), so a HIT is only a HIT when the learning
+  // genuinely CHANGED the decision — hit ⇔ influenced stay consistent (a stored-but-uninfluential learning is a MISS).
+  const d = EG.decideWithLearning([g.appliedPractice, "guess"], g);
+  if (d.influencedByLearning !== true) return { hit: false, capability: null, cost: MISS_COST, influenced: false, reason: "gate applied but the learning did not change the decision (not counted as reuse)" };
+  return { hit: true, capability: g.appliedPractice, cost: HIT_COST, influenced: true, decided: d.chosen, reason: "applied" };
 }
 
 /**

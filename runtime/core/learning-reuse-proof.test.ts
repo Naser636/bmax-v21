@@ -64,4 +64,12 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
+// (9) consistency (audit caveat): a HIT always implies the decision was influenced — never hit:true + influenced:false.
+{
+  const store = { version: 1, learnings: [] };
+  P.persistLearning(store, { id: "L", goal: "g", domain: "d", capability: "cap", claims: [] });
+  const r = P.resolve(store, "g", "d", { now: "2026-10-29" });
+  ok("resolve HIT ⇒ influenced true (hit⇔influenced consistent; no bare-hit reuse)", (r.hit === true && r.influenced === true) || (r.hit === false && r.influenced === false));
+}
+
 console.log(`\nLEARNING-REUSE-PROOF suite — ${pass} assertions passed. (recorded≠retrieved≠reused≠EFFECTIVE; out-of-domain/stale/tampered refused; honest-negative; cross-process reproducible; no new primitive)`);
