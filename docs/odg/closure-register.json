@@ -202,6 +202,35 @@
       "staleEvidence": false
     },
     {
+      "id": "campaign-run-entrypoint",
+      "program": "P2",
+      "title": "Real campaign entry point (loop ↔ authorized executor) + spawned-process integration proof",
+      "status": "ACCEPTED",
+      "deps": [
+        "campaign-loop-continuity"
+      ],
+      "priority": 1,
+      "evidence": "PR(this): runtime/bin/odg-campaign-run.ts connects campaign-loop to a REAL, fail-closed executor over the canonical register. ODG_CAMPAIGN_EXECUTOR unset/none ⇒ NO_EXECUTOR_AUTHORIZED (refuses a fictitious executor); 'verification' ⇒ genuine code-execution check per lot. INTEGRATION test odg-campaign-run.test.ts SPAWNS the real CLI process with the real executor (suite 5): multi-mission auto-execution, resume across process terminations from the register checkpoint, idempotent re-run (0 double-exec), single-launch 3-mission drain, and fail-closed NO_EXECUTOR leaving the register untouched. Over the CANONICAL register it honestly stops NO_EXECUTOR_AUTHORIZED (default) / IDLE_BLOCKED (verification) — no autonomously-executable lot today.",
+      "acceptance": "a real launcher drives multiple consecutive missions + resumes after process termination through the actual entry point (proven by spawned-process integration test); fictitious executors refused",
+      "staleEvidence": false
+    },
+    {
+      "id": "campaign-runner-systemd-activation",
+      "program": "P2",
+      "title": "Activate the campaign runner as a systemd timer on the VPS (operational, gated)",
+      "status": "BLOCKED",
+      "deps": [
+        "campaign-run-entrypoint"
+      ],
+      "priority": 8,
+      "evidence": "",
+      "blockReason": "OPERATIONAL + AUTHORIZED-EXECUTOR gated. Software complete + test-proven (campaign-loop + odg-campaign-run + spawned-process integration). Remaining: (1) configure an AUTHORIZED executor (ODG_CAMPAIGN_EXECUTOR — deny-by-default; autonomous engineering-lot execution needs a governed executor, canary allowlist empty by design); (2) install the prepared systemd unit + enable the timer (sudo /etc + systemctl) — a privileged live change. Prepared runbook+templates+rollback+health: docs/odg/deploy/CAMPAIGN_RUNNER.md.",
+      "humanActionRequired": "authorize + configure an executor, then install odg-campaign.service/.timer and enable (sudo) per CAMPAIGN_RUNNER.md.",
+      "resumeTest": "systemctl status odg-campaign.service ⇒ exit 0 structured stop; register ACCEPTED count rises across firings when admissible work + authorized executor exist",
+      "acceptance": "the live systemd timer runs the campaign runner, advancing missions across firings with a durable checkpoint + verified rollback",
+      "nextAction": "owner authorizes the executor + the systemd install (privileged); the entry point + tests are ready"
+    },
+    {
       "id": "campaign-loop-continuity",
       "program": "P2",
       "title": "Persistent inter-mission continuity loop (fixes 'stops after one mission')",
@@ -211,7 +240,8 @@
       ],
       "priority": 1,
       "evidence": "PR(this): DIAGNOSIS (Phase A) — campaign-controller SELECTS the next lot (pure) but NOTHING drove select→execute→advance→persist→recompute→next across missions; persistent-autonomy-controller loops intra-mission recovery only; odg-schedule-tick is a single deny-by-default canary tick (exits 2 ⇒ odg-mission-runner.service failed). ROOT CAUSE = missing inter-mission driver. FIX — runtime/core/campaign-loop.ts: pure driver over campaign-controller with INJECTED execute (no self-executing effects, no 10th primitive) running the full cycle until a JUSTIFIED stop; persists the register after EACH mission (durable checkpoint ⇒ resume + idempotent re-run); reconciles stale acceptances each cycle; fail-closed (ACCEPTED needs evidence ⇒ no false terminal); no-repeat guard + changed-strategy retry within an attempt cap (no infinite loop); structured stop reasons COMPLETED/IDLE_BLOCKED/WAITING_EXTERNAL/MAX_ITERATIONS/STOP_REQUESTED. COMPLETED only when NO open AND NO blocked lots remain. Suite 13 (auto-transitions, resume-from-checkpoint, blocked≠frozen, retry-without-evidence-loss, idempotent re-run, explicit IDLE/WAITING, no-false-COMPLETED, e2e 5-mission chain in 5 iterations, real register drivable ⇒ honest IDLE_BLOCKED).",
-      "acceptance": "a tested persistent loop drives multiple automatic mission transitions, resumes after interruption from a durable checkpoint, never emits a false terminal state, and stops only for a structured justified reason"
+      "acceptance": "a tested persistent loop drives multiple automatic mission transitions, resumes after interruption from a durable checkpoint, never emits a false terminal state, and stops only for a structured justified reason",
+      "staleEvidence": false
     },
     {
       "id": "engine-benchmark-baseline",

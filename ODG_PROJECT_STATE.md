@@ -8510,3 +8510,39 @@ IDLE_BLOCKED/WAITING_EXTERNAL/MAX_ITERATIONS/STOP_REQUESTED; COMPLETED only when
 WAITING, no-false-COMPLETED, e2e 5-chain=5 iters, real register ⇒ honest IDLE_BLOCKED iters 0). systemd NOT touched
 (mission-runner.service failure = separate deny-by-default canary concern; wiring the loop to a runner is a gated step).
 Register +ACCEPTED campaign-loop-continuity. 28 ACCEPTED/1/6, 0 stale. Gate: test:report 180, tsc 0, build 0, engine 9/9.
+
+---
+## CHECKPOINT 2026-10-29 (fx) — Real campaign entry point + DURABLE HANDOFF (context ~99%) €0
+### Truth Lock (verified)
+HEAD before this lot = d54dc4a ≡ origin/main; branch excellence/campaign-run-entrypoint-20261029 (this lot, +commits,
+pushed via PR below); 5 stashes + 7 worktrees + foreign dirs preserved; 9 primitives intact; no infra/systemd/sudo change.
+
+### This lot (complete, green, landing via PR)
+runtime/bin/odg-campaign-run.ts = REAL entry point connecting campaign-loop ↔ a fail-closed REAL executor over the
+canonical register. ODG_CAMPAIGN_EXECUTOR unset/none ⇒ NO_EXECUTOR_AUTHORIZED (refuses fictitious executor); 'verification'
+⇒ genuine code-execution check per lot. odg-campaign-run.test.ts = SPAWNED-PROCESS integration (suite 5): multi-mission
+auto-run, resume across process terminations, idempotent re-run, single-launch 3-mission drain, fail-closed NO_EXECUTOR.
+Prepared gated systemd runbook+templates+rollback: docs/odg/deploy/CAMPAIGN_RUNNER.md. Gate: test:report 181, tsc 0, build 0.
+
+### Root cause of inter-mission continuity (resolved in software)
+campaign-controller.selectNextLot selects (pure); campaign-loop.ts (V76, suite 13) drives select→execute→advance→persist→
+reconcile→next with injected execute; odg-campaign-run.ts is the real launcher. Register file = durable checkpoint ⇒ resume
++ idempotent. Proven by tests incl. real spawned process.
+
+### odg-campaign-run / executor / systemd — REAL state
+- Entry point: DONE + test-proven (spawned process).
+- Executor: 'verification' is a genuine executor (real checks) for lots with an exec spec; canonical lots have none ⇒
+  over the canonical register it honestly stops NO_EXECUTOR_AUTHORIZED (default) / IDLE_BLOCKED (verification).
+- systemd activation: NOT applied (gated). BLOCKED item campaign-runner-systemd-activation.
+
+### Missing authorizations/prereqs (precise)
+1. An AUTHORIZED executor for autonomous engineering-lot execution (deny-by-default; canary allowlist empty by design).
+2. systemd unit install + timer enable (sudo /etc + systemctl) per CAMPAIGN_RUNNER.md.
+Plus the 6 pre-existing external blockers (hadolint binary, independent eval set, dashboard public exposure, ROADMAP authz,
+WTP experiment, paid provider) — each with prep done + exact human action in the register.
+
+### EXACT RESUME COMMAND (no rework of validated work)
+git checkout main && git pull --ff-only && npx tsx runtime/bin/odg-campaign-run.ts docs/odg/closure-register.json
+(and: npx tsx runtime/core/engine-benchmark.ts ; npx tsx runtime/core/campaign-controller.ts docs/odg/closure-register.json)
+
+### Register: 29 ACCEPTED / 1 IN_PROGRESS / 7 BLOCKED, 0 stale. P1 NOT closed (7 external/owner gates). broadIT NO_DATA. €0.
