@@ -100,6 +100,11 @@ const fHazR = mkTs("h.test.ts", 'const p = process.cwd(); process.chdir(p); cons
 
 ok("suiteIsHazard: process.chdir ⇒ hazard (serial)", R.suiteIsHazard(fHazR) === true);
 ok("suiteIsHazard: pure fixture ⇒ hermetic (parallel)", R.suiteIsHazard(fPassR) === false);
+// ALLOWLIST: a suite whose repo-relative write path is COMPUTED (path.join, not a literal "runtime/...") evades
+// HAZARD_RE, so it is hand-declared hazardous by basename. Prove the allowlist forces serial even when the regex
+// would not match (fixture writes via a computed path ⇒ regex miss ⇒ must still be hazardous via the allowlist).
+const fComputed = mkTs("consequential-executor-gate.test.ts", 'const path=require("path");const f=path.join(process.cwd(),"runtime","x.json");console.log("ok");\n');
+ok("suiteIsHazard: allowlisted basename ⇒ hazard even when HAZARD_RE misses the computed path", R.suiteIsHazard(fComputed) === true);
 ok("parseWorkers: unset/1 ⇒ 1 (sequential default)", R.parseWorkers(undefined) === 1 && R.parseWorkers("1") === 1 && R.parseWorkers("0") === 1);
 ok("parseWorkers: clamps to CPU count (never oversubscribe)", R.parseWorkers("9999") <= os.cpus().length && R.parseWorkers("9999") >= 1);
 

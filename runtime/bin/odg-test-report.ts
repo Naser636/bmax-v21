@@ -140,7 +140,12 @@ function defaultFiles(): any {
  * The opt-in path is accepted only after proving its classification equals the sequential gate's.
  */
 const HAZARD_RE = /process\.chdir\(|\.listen\(|(?:writeFileSync|appendFileSync|mkdirSync|rmSync|rmdirSync|renameSync|writeSync|copyFileSync|createWriteStream|openSync)\(\s*[`'"]runtime\//;
+// Explicit allowlist for suites that touch repo-relative GLOBAL state the HAZARD_RE heuristic cannot see — e.g. a
+// write whose path is COMPUTED (path.join(REPO,"runtime",...)) rather than a literal "runtime/..." string argument.
+// Such a suite must still run serially (phase 1), never in the hermetic parallel pool. Keyed by basename.
+const HAZARD_ALLOWLIST = new Set<string>(["consequential-executor-gate.test.ts"]);
 function suiteIsHazard(absFile: string): boolean {
+  if (HAZARD_ALLOWLIST.has(path.basename(absFile))) return true; // declared-hazardous (computed repo-relative writes)
   let src = "";
   try { src = fs.readFileSync(absFile, "utf8"); } catch { return true; } // unreadable ⇒ serial (safe)
   return HAZARD_RE.test(src);
