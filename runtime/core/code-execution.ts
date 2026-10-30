@@ -43,7 +43,12 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   // Shell LINT (static analysis) via shellcheck — stronger than bash -n; exit!=0 on any finding. Probe fails ⇒ UNSUPPORTED.
   ShellLint: { bin: "shellcheck", probeArgs: ["--version"], args: (f: string) => [f], ext: ".sh" },
   // SQL/schema validation: parse+apply the DDL against an in-memory SQLite db (stdlib; no file/network side effects).
-  SQL: { bin: "python3", probeArgs: ["-c", "import sqlite3"], args: (f: string) => ["-c", "import sys,sqlite3; sqlite3.connect(':memory:').executescript(open(sys.argv[1]).read())", f], ext: ".sql" },
+  // SQL: SYNTAX check ONLY. Runs the script against an IN-MEMORY db with an authorizer that DENIES ATTACH/DETACH (which
+  // also blocks VACUUM INTO, since it authorizes internally as ATTACH) — so a reviewed .sql can NEVER create/write a file
+  // on disk. Closes a real arbitrary-file-write: "ATTACH DATABASE '<path>' AS x; CREATE TABLE x.t..." / "VACUUM INTO
+  // '<path>'" in a .sql fed to the "read-only" code-review checker previously wrote that file. Legit DDL/DML still
+  // validate in memory; bad syntax still fails. (No file/network side effects — now true to the contract.)
+  SQL: { bin: "python3", probeArgs: ["-c", "import sqlite3"], args: (f: string) => ["-c", "import sys,sqlite3; c=sqlite3.connect(':memory:'); c.set_authorizer(lambda a,*x: sqlite3.SQLITE_DENY if a in (sqlite3.SQLITE_ATTACH, sqlite3.SQLITE_DETACH) else sqlite3.SQLITE_OK); c.executescript(open(sys.argv[1]).read())", f], ext: ".sql" },
   // YAML validation via PyYAML safe_load_all (probe fails ⇒ UNSUPPORTED if PyYAML is not installed).
   YAML: { bin: "python3", probeArgs: ["-c", "import yaml"], args: (f: string) => ["-c", "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1]).read()))", f], ext: ".yaml" },
   // JSON config validation via stdlib json (always available with python3).
