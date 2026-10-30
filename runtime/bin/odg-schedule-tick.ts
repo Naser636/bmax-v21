@@ -38,10 +38,12 @@ const path = require("path");
 const cp = require("child_process");
 
 const ROOT: string = process.cwd();
+const { resolveRequiredPort } = require("../core/prefer-dist-bin.js"); // relative: resolves to dist/core under dist, .ts under tsx (matches odg-delegate)
 function corePort(rel: string): string {
   const dist = rel.replace(/^runtime\//, "runtime/dist/");
-  if (process.env.ODG_RUNTIME !== "js" && fs.existsSync(path.join(ROOT, dist))) return dist;
-  return rel;
+  // FAIL-CLOSED: resolve to whichever port actually exists, else throw a clear rebuild message (the ODG_RUNTIME=js
+  // source-.js rollback is retired ⇒ never return a path to a non-existent module).
+  return resolveRequiredPort(dist, rel, (p: string) => fs.existsSync(path.join(ROOT, p)));
 }
 const { schedulerStep, buildExcellenceReviewer } = require(path.join(ROOT, corePort("runtime/core/mission-scheduler.js")));
 
