@@ -69,6 +69,11 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
     env: (dir: string) => ({
       GOCACHE: path.join(dir, ".gocache"), GOPATH: path.join(dir, ".gopath"), GOTMPDIR: dir,
       GO111MODULE: "off", GOPROXY: "off", GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local",
+      // SECURITY (fixes an audited host-file read): with cgo enabled, a reviewed .go can embed a C block with
+      // `#include "/abs/host/file"`, and gcc echoes the referenced file's CONTENT into diagnostics ⇒ into the
+      // code-review `evidence` field. CGO_ENABLED=0 disables cgo entirely: a file that `import "C"` is excluded
+      // ("build constraints exclude all Go files") BEFORE gcc runs, so no host file is read. Pure-Go still compiles.
+      CGO_ENABLED: "0",
     }),
   },
   // Rust/build: a REAL compile check via the authorized rustc toolchain — type-checks (incl. the borrow checker),
@@ -82,6 +87,11 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
     bin: "rustc", probeArgs: ["--version"], ext: ".rs",
     args: (f: string) => ["--edition", "2021", "--crate-type", "lib", "--emit=metadata", "--out-dir", path.dirname(f), f],
     env: (dir: string) => ({ TMPDIR: dir, CARGO_NET_OFFLINE: "true" }),
+    // SECURITY: rustc's file-inclusion macros (include!/include_str!/include_bytes!) can be ALIASED
+    // (`use std::include as x; x!("/abs")`), so no source-text guard is sufficient. Run rustc FILESYSTEM-CONFINED in
+    // bubblewrap (only system dirs + this workspace are visible) so NO inclusion — aliased or not — can resolve a
+    // host path. Fail-closed: if bubblewrap is unavailable, a Rust review is BLOCKED (never an unconfined rustc).
+    confine: true,
   },
   // Java/compile: a REAL `javac` type-check — compiles to .class in the isolated workspace (-d <ws>). No classpath is
   // provided, so an external import fails CLOSED ("package ... does not exist", no network). We do NOT clobber HOME or
@@ -118,8 +128,40 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function truncate(s: any, n = 800): string { const str = String(s || ""); return str.length > n ? str.slice(0, n) + "…[truncated]" : str; }
 
-/** defaultRunner: bounded spawnSync — argv array, timeout, output cap, minimal env, no shell. */
+// Is bubblewrap present? (for opts.confine — a confined checker is fail-closed on its absence.)
+function bwrapPath(): string | null {
+  try { const r = cp.spawnSync("/usr/bin/env", ["sh", "-c", "command -v bwrap"], { encoding: "utf8" }); const p = r && r.status === 0 ? String(r.stdout || "").trim() : ""; return p || null; } catch { return null; }
+}
+
+/** defaultRunner: bounded spawnSync — argv array, timeout, output cap, minimal env, no shell.
+ * When opts.confine is set (compiled checkers whose compiler can read arbitrary host files, e.g. rustc's inclusion
+ * macros), the command is run inside bubblewrap binding ONLY system code dirs + the workspace (opts.cwd, at its real
+ * path) + the toolchain's rustup/cargo homes if present — so NO path outside the workspace is readable. Env-isolated
+ * like the bash governor (cleared bwrap env + --as-pid-1) to prevent a /proc/1/environ leak. Fail-closed: bwrap
+ * absent ⇒ spawnError ⇒ caller BLOCKS (never an unconfined compile of reviewed input). */
 function defaultRunner(bin: string, args: string[], opts: any): any {
+  if (opts && opts.confine) {
+    const bwrap = bwrapPath();
+    if (!bwrap) return { spawnError: "sandbox unavailable (bubblewrap required to run this checker filesystem-confined); refusing an unconfined compile of reviewed input" };
+    const SYS_RO = ["/usr", "/lib", "/lib64", "/bin", "/sbin"].filter((p) => { try { return fs.existsSync(p); } catch { return false; } });
+    const home = process.env.HOME || "/tmp";
+    // Only system code dirs + the workspace are bound. We deliberately do NOT bind ~/.rustup/~/.cargo: a system rustc
+    // (under /usr) needs neither, and a rustup-managed rustc wouldn't be on the restricted PATH (/usr/bin:/bin) to run
+    // anyway ⇒ fail-closed BLOCKED (never an unconfined compile). Binding ~/.cargo would needlessly expose
+    // ~/.cargo/credentials.toml to a crafted include! on a rustup host — avoided.
+    const setenv: string[] = [];
+    const env = opts.env && typeof opts.env === "object" ? opts.env : {};
+    for (const [k, v] of Object.entries(env)) { if (typeof v === "string") setenv.push("--setenv", k, v); }
+    const bw = ["--as-pid-1", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
+      "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", home,
+      ...SYS_RO.flatMap((p) => ["--ro-bind", p, p]),
+      "--dev", "/dev", "--proc", "/proc",
+      "--bind", opts.cwd, opts.cwd, "--chdir", opts.cwd,
+      ...setenv, "--", bin, ...args];
+    const r = cp.spawnSync(bwrap, bw, { timeout: opts.timeoutMs, maxBuffer: opts.maxBytes, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: { PATH: "/usr/bin:/bin" } });
+    if (r.error) { if ((r.error as any).code === "ETIMEDOUT") return { timedOut: true }; return { spawnError: (r.error as any).message || "spawn error" }; }
+    return { exitCode: r.status, stdout: r.stdout || "", stderr: r.stderr || "" };
+  }
   const res = cp.spawnSync(bin, args, {
     cwd: opts.cwd, timeout: opts.timeoutMs, maxBuffer: opts.maxBytes, encoding: "utf8",
     // Minimal base env (no inherited secrets); a checker spec may add bounded, hermetic vars (e.g. Go's offline
@@ -151,6 +193,15 @@ function runSyntaxCheck(input: any = {}): any {
   const spec = LANG_SPEC[language];
   if (!spec) return { status: "UNSUPPORTED", reason: `language '${language || "(none)"}' has no verified checker in ODG`, language };
   if (typeof input.content !== "string") return { status: "BLOCKED", reason: "file content (string) required" };
+  // SECURITY (fixes an audited host-file read): Rust's file-inclusion macros (include!/include_str!/include_bytes!)
+  // and the `#[path = "…"]` module attribute make rustc READ an arbitrary host file and echo its CONTENT into the
+  // compiler diagnostics ⇒ into the code-review `evidence` field — an arbitrary host-file read + exfiltration via a
+  // reviewed .rs (the Rust analogue of the cgo #include and the /// <reference> vectors). rustc has no flag to disable
+  // them, so a reviewed single-file syntax check REFUSES them outright (they cannot resolve in a hermetic offline
+  // single-file check anyway — no build.rs / OUT_DIR). Legit Rust without file inclusion is unaffected.
+  if (language === "Rust" && /\binclude(?:_str|_bytes)?\s*!|#\s*\[\s*path\s*=/.test(input.content)) {
+    return { status: "BLOCKED", language, reason: "refused: Rust file-inclusion (include!/include_str!/include_bytes!/#[path]) can read files outside the sandbox workspace; not permitted in the reviewed-source syntax checker" };
+  }
   const runner = typeof input.runner === "function" ? input.runner : defaultRunner;
   // Toolchain availability: explicit override (tests) OR probe.
   const available = typeof input.toolchainAvailable === "boolean" ? input.toolchainAvailable : (detectToolchain({ runner }))[language] === true;
@@ -163,7 +214,7 @@ function runSyntaxCheck(input: any = {}): any {
     fs.writeFileSync(file, input.content);
     // A spec may declare hermetic env scoped to THIS workspace dir (e.g. Go's offline cache/proxy) — computed per run.
     const specEnv = typeof spec.env === "function" ? spec.env(dir) : (spec.env && typeof spec.env === "object" ? spec.env : undefined);
-    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, ...(specEnv ? { env: specEnv } : {}) });
+    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, confine: !!spec.confine, ...(specEnv ? { env: specEnv } : {}) });
     if (!r || r.spawnError) return { status: "BLOCKED", reason: `toolchain spawn error: ${r && r.spawnError}`, language };
     if (r.timedOut) return { status: "BLOCKED", reason: "check timed out", language };
     const exitCode = r.exitCode;
