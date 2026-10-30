@@ -155,4 +155,26 @@ for (const [lang, files, entry, expectedOutput, exp] of intCases) {
   ok(`runIntegrationCheck ${lang} ${exp}: component-interaction classified`, st === exp);
 }
 
-console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped; not faked; fail-closed; behaviour + integration checks)`);
+// (SECURITY regression) the SQL "syntax check" must have NO filesystem side effect. Previously it ran
+// sqlite3.executescript() verbatim, so "ATTACH DATABASE '<path>'" / "VACUUM INTO '<path>'" in a reviewed .sql
+// CREATED that file on disk (arbitrary write via the "read-only" code-review path). The authorizer now DENIES
+// ATTACH/DETACH. Runs the REAL python3/sqlite3 checker; if the toolchain is absent the result is UNSUPPORTED (also
+// safe). Assertion holds either way: NO file is created AND the attack is never reported PASS. Hermetic (os.tmpdir).
+{
+  const osx = require("os"); const fsx = require("fs"); const pathx = require("path");
+  const probe = pathx.join(osx.tmpdir(), `odg-sqlsec-${process.pid}-${Date.now()}.db`);
+  try { fsx.rmSync(probe, { force: true }); } catch { /* best-effort */ }
+  const atk = E.runSyntaxCheck({ language: "SQL", content: `ATTACH DATABASE '${probe}' AS e; CREATE TABLE e.x(id INTEGER);` });
+  ok("SECURITY: SQL ATTACH creates NO file on disk (read-only contract honoured)", fsx.existsSync(probe) === false);
+  ok("SECURITY: SQL ATTACH is NOT reported PASS (FAIL or UNSUPPORTED, never a clean pass)", atk.status !== "PASS");
+  try { fsx.rmSync(probe, { force: true }); } catch { /* best-effort */ }
+  const vac = pathx.join(osx.tmpdir(), `odg-sqlsec-vac-${process.pid}-${Date.now()}.db`);
+  try { fsx.rmSync(vac, { force: true }); } catch { /* best-effort */ }
+  const atk2 = E.runSyntaxCheck({ language: "SQL", content: `VACUUM INTO '${vac}';` });
+  ok("SECURITY: SQL VACUUM INTO creates NO file + NOT PASS", fsx.existsSync(vac) === false && atk2.status !== "PASS");
+  try { fsx.rmSync(vac, { force: true }); } catch { /* best-effort */ }
+  const legit = E.runSyntaxCheck({ language: "SQL", content: "CREATE TABLE t(id INTEGER PRIMARY KEY, n TEXT);" });
+  ok("SQL legit DDL ⇒ PASS or UNSUPPORTED (authorizer does NOT break valid syntax checking)", legit.status === "PASS" || legit.status === "UNSUPPORTED");
+}
+
+console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped; not faked; fail-closed; SQL no-filesystem-side-effect; behaviour + integration checks)`);
