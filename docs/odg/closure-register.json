@@ -1061,6 +1061,18 @@
       "acceptance": "A real engineering lot reaches ACCEPTED only via authorization + bounded write-set + an injected real executor producing ≥1 in-scope change with real integer exit codes + passing tests + a DISTINCT independent verifier + the false-success proof gate; every other path is a deny-by-default non-ACCEPTED stop; no fictitious transition, no fabricated proof, no self-verification; independent audit's false-ACCEPTED closed + regression-tested.",
       "nextAction": "V1 slice 2 (owner-gated): wire runEngineeringLot to a REAL injected executor over delegate-isolation.applyProposal (isolate→diff→validate→apply) + the campaign-loop, with checkpoint/resume persistence and multi-agent lot distribution — requires ODG authorization of a bounded engineering executor (deny-by-default) before any live modification.",
       "staleEvidence": false
+    },
+    {
+      "id": "seo-technical-audit-capability",
+      "program": "P2",
+      "title": "§8 Technical SEO readiness audit (Core Web Vitals + Search Essentials), fail-closed, no ranking claim",
+      "status": "ACCEPTED",
+      "deps": [],
+      "priority": 2,
+      "evidence": "PR(this cycle): runtime/core/seo-technical-audit.ts — auditPageTechnicalSeo checks a page's REAL technical signals against OFFICIAL standards (verified via WebSearch 2026-10-30, web.dev/developers.google.com): Core Web Vitals LCP good≤2500ms/NI≤4000/poor>4000, INP good≤200/NI≤500/poor>500, CLS good≤0.1/NI≤0.25/poor>0.25 (pass = ALL three good); + Google Search Essentials (HTTPS, indexability incl. robots `none`, unique title, meta description, canonical, hreflang self/x-default + code format, structured-data parseability+@context/@type). SARIF-shape findings + maturity NOT_READY/PARTIAL/TECHNICALLY_READY. Complementary to seo-strategy.ts (editorial/positioning); no duplication. FAIL-CLOSED: missing/invalid CWV ⇒ NO_DATA per metric, NEVER assumed good, cannot cwvPass; noindex/`none`/non-HTTPS/missing-title ⇒ HIGH. HONEST: NOT a ranking/traffic/visibility claim (certificationStatus disclaims a ranking guarantee); publishes nothing; structured-data NOT full schema.org (KNOWN_GAP); cross-page hreflang reciprocity + field-data 75th-percentile not computed (disclosed). Tests (seo-technical-audit.test.ts, 14) incl. exact threshold boundaries + no-false-good + NO_DATA-not-pass + no-ranking-claim. INDEPENDENT AUDIT: initial REJECT — robots `none` (=noindex,nofollow) was missed ⇒ a de-indexed page certified TECHNICALLY_READY (false readiness); + shallow-frozen CWV (mutable thresholds); + value/status inconsistency. FIXED: /\\b(noindex|none)\\b/ + deep-freeze CWV + NO_DATA⇒value:null; +3 regression tests; repro now indexable:false/NOT_READY. Grounded via real cited WebSearch (no fabricated standard). Gate: seo-technical-audit 14, tsc 0, build OK, full test:report 204/204 @ workers=2. No new primitive.",
+      "acceptance": "A page's technical SEO readiness is audited against official CWV thresholds + Search Essentials, fail-closed (missing CWV ⇒ not pass; noindex/none/non-HTTPS/missing-title ⇒ HIGH), with no ranking/traffic claim and nothing published; independent audit's false-readiness (robots `none`) closed + regression-tested.",
+      "nextAction": "Optional: a page-signal EXTRACTOR (parse real HTML/headers → the audit input) behind a bounded local parser; cross-page hreflang reciprocity; wire into the dashboard build as a local CI check. No external publish without launch authorization.",
+      "staleEvidence": false
     }
   ]
 }
