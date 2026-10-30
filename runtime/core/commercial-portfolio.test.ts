@@ -33,4 +33,18 @@ ok("capacity flag + 12 monthly cashed entries", typeof port.capacityFlag === "st
 // (7) A/B/C/D-label-collision disclosure in notes; reproducible.
 ok("notes disclose label distinctness; reproducible", port.notes.some(x => /DISTINCT from/.test(x)) && JSON.stringify(P.projectPortfolio([trackA, trackB, trackC])) === JSON.stringify(port));
 
+// (8) REGRESSION (recon-2): the per-month horizon spans the LONGEST track, not just per[0]. A later longer track
+// whose cash lands beyond the first track's horizon must NOT be dropped from monthlyCashed (sum-of-parts = total)
+// and must NOT understate peakMonthlySignings. Without the fix, months=per[0].rows.length=3 ⇒ sum < consolidated.
+{
+  const conv = { prospectToInterested: 1, interestedToProposal: 1, proposalToSigned: 1 };
+  const shortTrack = { label: "short", months: 3, monthlyProspects: 10, conv, avgContractValue: 1000, salesLag: 0, deliveryLag: 0, paymentLag: 0, recurringMonthly: 0 };
+  const longLate = { label: "long", months: 12, monthlyProspects: 10, conv, avgContractValue: 1000, salesLag: 0, deliveryLag: 6, paymentLag: 0, recurringMonthly: 0 }; // one-off cash lands months 6–11
+  const r = P.projectPortfolio([shortTrack, longLate]);
+  const sumMonthly = r.monthlyCashed.reduce((a, b) => a + b, 0);
+  ok("portfolio horizon spans the LONGEST track (monthlyCashed covers 12 mo; sum(monthlyCashed) === consolidated.cashedWithinHorizon; non-vacuous)",
+    r.monthlyCashed.length === 12 && r.consolidated.cashedWithinHorizon > 0 && Math.abs(sumMonthly - r.consolidated.cashedWithinHorizon) < 0.01);
+  ok("portfolio peakMonthlySignings not understated by the first track's short horizon", r.peakMonthlySignings > 0);
+}
+
 console.log(`\nCOMMERCIAL-PORTFOLIO suite — ${pass} assertions passed. (multi-track; concentration-aware; €500k is a TARGET)`);

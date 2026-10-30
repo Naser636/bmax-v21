@@ -24,7 +24,12 @@ function projectPortfolio(tracks: any): any {
     const proj = SCHED.projectMonthly(t || {});
     return { label: (t && t.label) || "?", totals: proj.totals, rows: proj.rows };
   });
-  const months = per.length ? per[0].rows.length : 12;
+  // Horizon = the LONGEST track's month count, not just the first track's. Using per[0] alone silently dropped a
+  // later/longer track's cash + signings from the per-month views (monthlyCashed, peakMonthlySignings) while they
+  // stayed in `consolidated` (summed from each track's full totals) — breaking sum-of-parts = total AND understating
+  // peakMonthlySignings ⇒ under-stating delivery-capacity need downstream (revenue-target-path). The `p.rows[m] ? …`
+  // guards already tolerate shorter tracks, so widening the window is safe.
+  const months = per.length ? per.reduce((mx: number, p: any) => Math.max(mx, p.rows.length), 0) || 12 : 12;
   const monthlyCashed = Array.from({ length: months }, (_, m) => r2(per.reduce((s: number, p: any) => s + (p.rows[m] ? p.rows[m].cashed : 0), 0)));
   const consolidated = per.reduce((acc: any, p: any) => ({
     signedBooked: r2(acc.signedBooked + p.totals.signedBooked),

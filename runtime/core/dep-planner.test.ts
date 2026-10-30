@@ -17,5 +17,9 @@ throws(() => P.planLayers([{ id: "a", deps: ["ghost"] }]), /UNKNOWN_DEPENDENCY/,
 throws(() => P.planLayers([{ id: "a" }, { id: "a" }]), /DUPLICATE_WORK_ITEM_ID/, "duplicate id fail-closed");
 check(JSON.stringify(P.sequentialOrder([{ id: "deploy", deps: ["build"] }, { id: "build", deps: ["lint"] }, { id: "lint" }])) === JSON.stringify(["lint", "build", "deploy"]), "sequentialOrder dependency-respecting");
 
+// REGRESSION (recon-2): schedule([]) must yield maxParallelism 0, NOT Math.max(...[]) === -Infinity.
+const sEmpty = P.schedule([]);
+check(sEmpty.layerCount === 0 && sEmpty.maxParallelism === 0 && Array.isArray(sEmpty.layers) && sEmpty.layers.length === 0, "schedule([]) ⇒ maxParallelism 0 (not -Infinity)");
+
 console.log(failures ? `FAIL (${failures})` : "OK");
 if (failures) process.exit(1);
