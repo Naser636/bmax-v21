@@ -275,8 +275,13 @@ function runSyntaxCheck(input: any = {}): any {
 
 // RUN_SPEC: interpreters used by runBehaviourCheck to EXECUTE a program and observe its OUTPUT (a different capability
 // than runSyntaxCheck, which only compiles/type-checks). Interpreted langs only (no separate build step).
+// behaviour/integration EXECUTE the supplied program, so they run CONFINED (bubblewrap --unshare-all ⇒ no network,
+// cleared env, workspace bound) — making the "no network" contract TRUE rather than aspirational, and preventing a
+// reviewed program from opening sockets or reading the host FS. node is invoked as process.execPath (portable: the
+// confined runner ro-binds it even when node lives outside /usr, e.g. hostedtoolcache); python3 resolves on the
+// sandbox PATH=/usr/bin:/bin. Fail-closed: without bubblewrap the run is BLOCKED (never an unconfined execution).
 const RUN_SPEC: Readonly<Record<string, any>> = Object.freeze({
-  JavaScript: { bin: "node", ext: ".js", args: (f: string) => [f] },
+  JavaScript: { bin: process.execPath, ext: ".js", args: (f: string) => [f] },
   Python: { bin: "python3", ext: ".py", args: (f: string) => [f] },
 });
 
@@ -300,7 +305,7 @@ function runBehaviourCheck(input: any = {}): any {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-behaviour-"));
     const file = path.join(dir, `prog${spec.ext}`);
     fs.writeFileSync(file, input.content);
-    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000 });
+    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, confine: true, roBinds: [] });
     if (!r || r.spawnError) return { status: "BLOCKED", reason: `run spawn error: ${r && r.spawnError}`, language };
     if (r.timedOut) return { status: "BLOCKED", reason: "run timed out", language };
     const out = String(r.stdout || "").trim();
@@ -343,7 +348,7 @@ function runIntegrationCheck(input: any = {}): any {
       const p = path.join(dir, path.basename(f.name));    // basename ⇒ no path traversal out of the workspace
       fs.writeFileSync(p, f.content);
     }
-    const r = runner(spec.bin, spec.args(path.join(dir, path.basename(input.entry))), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000 });
+    const r = runner(spec.bin, spec.args(path.join(dir, path.basename(input.entry))), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, confine: true, roBinds: [] });
     if (!r || r.spawnError) return { status: "BLOCKED", reason: `run spawn error: ${r && r.spawnError}`, language };
     if (r.timedOut) return { status: "BLOCKED", reason: "run timed out", language };
     const out = String(r.stdout || "").trim();
