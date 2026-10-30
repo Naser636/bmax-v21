@@ -211,7 +211,15 @@ function probeForCapability(capability: any) {
 // earlier in the same clause suppresses the effect — e.g. "do not pay the invoice" negates BOTH "pay" and the
 // later noun-signal "invoice". Clause boundaries: Latin/Arabic punctuation + EN/FR conjunctions (and/then/but/
 // et/puis/mais…). Arabic negation particle لا anywhere in the clause also negates.
-const CLAUSE_NEGATION = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn['’]t\b|\bcannot\b|\bcan['’]t\b|\bmust not\b|\bmustn['’]t\b|\bnot\b|\bnever\b|\bno\b|\bne\b|\bpas\b|\bsans\b|\bjamais\b|\bsauf\b|\bwithout\b)/;
+// STRONG prohibition markers scope the WHOLE clause (deliberate: "do not pay the invoice" must negate the later
+// noun-signal "invoice"). These are genuine prohibitions of the clause's effect.
+const CLAUSE_NEGATION_STRONG = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn['’]t\b|\bcannot\b|\bcan['’]t\b|\bmust not\b|\bmustn['’]t\b|\bwill not\b|\bwon['’]t\b|\bshould not\b|\bshouldn['’]t\b|\bnot\b|\bnever\b|\bne\b|\bpas\b|\bjamais\b)/;
+// WEAK/adverbial negators (no/without/sans/sauf) are frequently NON-prohibiting ("without further delay DELETE…",
+// "we have no backup so WIPE…", "sans hesitation SUPPRIME…"). Clause-wide suppression on these produced a reproduced
+// fail-OPEN: a genuinely destructive/financial/deploy instruction downgraded to NONE/LOW/no-human. They now suppress
+// ONLY when IMMEDIATELY adjacent to the signal (optionally across an article) — a true local prohibition ("no delete",
+// "sans suppression"). A non-adjacent weak negator leaves the effect intact (fail-CLOSED: over-classify, human-gated).
+const WEAK_NEG_ADJACENT = /\b(?:no|without|sans|sauf)\b\s*(?:the\s+|a\s+|an\s+|le\s+|la\s+|les\s+|l['’]\s*|de\s+|des\s+|du\s+)?$/;
 const CLAUSE_BOUNDARY = /[,;.:!?()\[\]—–/،؛]|\b(?:and|then|also|but|et|puis|ensuite|mais)\b/g;
 function isNegatedBefore(g: string, idx: number): boolean {
     const pre = g.slice(0, idx);
@@ -219,7 +227,11 @@ function isNegatedBefore(g: string, idx: number): boolean {
     CLAUSE_BOUNDARY.lastIndex = 0;
     while ((m = CLAUSE_BOUNDARY.exec(pre)) !== null) start = m.index + m[0].length;
     const clause = pre.slice(start);
-    return CLAUSE_NEGATION.test(clause) || /لا\s/.test(clause);
+    // (a) strong prohibition anywhere in the clause ⇒ suppress; Arabic negation particle لا likewise.
+    if (CLAUSE_NEGATION_STRONG.test(clause) || /لا\s/.test(clause)) return true;
+    // (b) weak adverbial negator ONLY when immediately adjacent to the signal ⇒ suppress; otherwise the effect stands.
+    if (WEAK_NEG_ADJACENT.test(clause)) return true;
+    return false;
 }
 function signalPresentUnnegated(g: string, s: string): boolean {
     let from = 0;
