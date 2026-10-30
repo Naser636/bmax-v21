@@ -74,6 +74,7 @@ function normalizeOpportunity(raw: any, nowMs: number): any {
     ref: str(r.ref),
     buyer: str(r.buyer),
     subject: str(r.subject),
+    language: str(r.language) || null,   // PRESERVE language identity through the pipeline (fairness: lets downstream capability-fit flag unassessable non-EN/FR subjects as UNDETERMINED, never a silent negative)
     sourceType: str(r.sourceType) || "unknown",
     source: str(r.source),
     url,

@@ -32,25 +32,45 @@ const CAPABILITY_KEYWORDS: readonly string[] = Object.freeze([...CAPABILITY_STEM
 
 function str(v: any): string { return typeof v === "string" ? v : ""; }
 function tokens(s: string): string[] { return s.split(/[^a-z0-9àâäéèêëïîôöùûüç]+/i).filter(Boolean); }
+// The languages the EN+FR capability vocabulary can actually ASSESS. A subject in any other language that matches no
+// keyword is UNDETERMINED (unassessable), NOT a confident negative — hence covered vs not-covered must be distinguished.
+function langCovered(lang: string): boolean { return lang === "" || /^(en|fr|eng|fra|fre)(-|$)/.test(lang); }
 
 /**
  * capabilityFit(opp): is the subject within ODG's actual deliverable surface? HIGH-PRECISION: single stems match a
  * word token (startsWith, so logiciel→logicielle); phrases match as a substring. Explainable (returns the matches).
+ * FAIRNESS/HONESTY: when a keyword matches, relevant=true regardless of language (a match is a match). When NOTHING
+ * matches AND the subject's language is KNOWN and NOT covered by the EN/FR vocabulary, the result is UNDETERMINED
+ * (coverage:"LANGUAGE_NOT_COVERED") — NEVER silently relevant:false — so a German/Italian/Spanish ODG-relevant tender
+ * is flagged "cannot assess" (needs multilingual vocab/translation), not lumped with a genuine EN/FR non-match.
  */
 function capabilityFit(opp: any): any {
   const subj = str(opp && opp.subject).toLowerCase();
+  const lang = str(opp && opp.language).toLowerCase();
   const toks = tokens(subj);
   const stemHits = CAPABILITY_STEMS.filter((k) => toks.some((t) => t === k || (k.length >= 5 && t.startsWith(k))));
   const phraseHits = CAPABILITY_PHRASES.filter((p) => subj.includes(p));
   const matched = [...new Set([...stemHits, ...phraseHits])];
-  return { relevant: matched.length > 0, fitScore: Math.min(5, matched.length), matchedKeywords: matched, reason: matched.length ? `matches ODG capability: ${matched.slice(0, 4).join(", ")}` : "no ODG capability keyword in subject — parked (not dropped)" };
+  if (matched.length) {
+    return { relevant: true, undetermined: false, coverage: "ASSESSED", fitScore: Math.min(5, matched.length), matchedKeywords: matched, reason: `matches ODG capability: ${matched.slice(0, 4).join(", ")}` };
+  }
+  if (lang && !langCovered(lang)) {
+    // Known, non-EN/FR language with no keyword hit ⇒ we literally cannot assess it ⇒ UNDETERMINED, not a confident "no".
+    return { relevant: false, undetermined: true, coverage: "LANGUAGE_NOT_COVERED", language: lang, fitScore: 0, matchedKeywords: [], reason: `subject language '${lang}' is NOT covered by the EN/FR capability vocabulary — UNDETERMINED (not assessed as non-relevant); needs multilingual vocabulary or translation before a fit decision` };
+  }
+  return { relevant: false, undetermined: false, coverage: "ASSESSED", fitScore: 0, matchedKeywords: [], reason: "no ODG capability keyword in subject — parked (not dropped)" };
 }
 
 /** routeToAxis(opp): six-axis routing from subject keywords + value band. No fabricated eligibility. */
 function routeToAxis(opp: any): any {
   const subj = str(opp && opp.subject).toLowerCase();
-  if (/\b(iso|27001|42001|soc ?2|certification|compliance audit)\b/.test(subj)) return { axis: "F", reason: "standards/certification-readiness subject" };
-  if (/\b(partner|reseller|subcontract|framework agreement|channel|distributor)\b/.test(subj)) return { axis: "D", reason: "partner/distribution subject" };
+  // EN + FR vocabulary (FR added: homologation/accréditation = certification; revendeur/distributeur/distribution/
+  // partenaire/sous-traitance/accord-cadre = partner) so FR tenders route to F/D instead of silently defaulting to A.
+  if (/\b(iso|27001|42001|soc ?2|certification|compliance audit|homologation|accréditation|accreditation)\b/.test(subj)) return { axis: "F", reason: "standards/certification-readiness subject" };
+  // FR partner terms kept SPECIFIC: bare "distribution"/"distributeur"/"accord-cadre" are too generic in FR tender text
+  // ("distribution électrique", "accord-cadre de fourniture de papier" = ordinary supply contracts, NOT reseller/partner),
+  // so only distinctly-partner terms are used (revendeur, partenaire, sous-traitance/-ant, "accord de distribution").
+  if (/\b(partner|reseller|subcontract|framework agreement|channel|distributor|partenaire|revendeur|sous-traitance|sous-traitant|accord de distribution)\b/.test(subj)) return { axis: "D", reason: "partner/distribution subject" };
   const b = (opp && typeof opp.budgetEur === "number") ? opp.budgetEur : null;
   if (b === null) return { axis: "A", reason: "no published budget ⇒ entry diagnostic default (lowest barrier)" };
   if (b < 1500) return { axis: "A", reason: "value < €1.5k ⇒ entry" };
@@ -106,9 +126,15 @@ function runDiscovery(opts: any = {}): any {
   // V38 capability-fit filter (opt-in): PARK (never drop) subjects outside ODG's deliverable surface so a raw
   // public-tender feed yields a QUALIFIED ODG shortlist instead of noise.
   const parked: any[] = [];
+  const undetermined: any[] = [];   // FAIRNESS: subjects we CANNOT assess (language not covered) — distinct from a confident non-match.
   if (opts.requireCapabilityFit === true) {
     const relevant: any[] = [];
-    for (const o of kept) { const f = capabilityFit(o); if (f.relevant) relevant.push({ ...o, capabilityFit: f }); else parked.push({ id: o.id, subject: o.subject, reason: f.reason }); }
+    for (const o of kept) {
+      const f = capabilityFit(o);
+      if (f.relevant) relevant.push({ ...o, capabilityFit: f });
+      else if (f.undetermined) undetermined.push({ id: o.id, subject: o.subject, language: f.language || null, coverage: f.coverage, reason: f.reason });
+      else parked.push({ id: o.id, subject: o.subject, reason: f.reason });
+    }
     kept = relevant;
   }
   const routed = kept.map((o: any) => { const r = routeToAxis(o); return { ...o, axis: r.axis, axisReason: r.reason, nextOdgAction: nextOdgAction(r.axis) }; });
@@ -118,8 +144,8 @@ function runDiscovery(opts: any = {}): any {
   return {
     status: ranked.length ? "RESULTS" : "NO_RESULTS",
     synthetic: opts.synthetic === true,
-    counts: Object.assign({}, det.counts, { parked: parked.length, capabilityFiltered: opts.requireCapabilityFit === true }),
-    byAxis, parked,
+    counts: Object.assign({}, det.counts, { parked: parked.length, undetermined: undetermined.length, capabilityFiltered: opts.requireCapabilityFit === true }),
+    byAxis, parked, undetermined,
     opportunities: ranked,
     note: (opts.synthetic === true ? "SYNTHETIC source ⇒ these are TESTS, not customers. " : "") + "Provenance/timestamp from opportunity-detector; economics are HYPOTHESIS; eligibility not assumed; nothing sent/submitted/committed; ISO routes to readiness (NOT certification).",
   };
