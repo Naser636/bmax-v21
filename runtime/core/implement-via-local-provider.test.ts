@@ -95,6 +95,31 @@ for (const [label, mod] of [["JS", JS], ["TS", TS]]) {
     const res = mod.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT, generate: genInScope, verify: () => ({ ok: true }) });
     ok(`${label} 8 provider never commits (committed:false) and ODG is the applicator`, res.committed === false && res.appliedBy === "ODG_EXECUTOR");
     r.cleanup(); }
+
+  // 9. AUDIT regression (fail-OPEN closed): NO verifier injected (the PRODUCTION call shape, opts without verify) ⇒
+  //    FAIL CLOSED (NO_VERIFIER), NOT a silent EXECUTED/verified. A provider-applied change that nothing verified
+  //    must never be certified. (Previously this auto-passed as "mechanism proof" — the live safety-net bypass.)
+  { const r = makeRoot("export const V = 1;\n");
+    const res = mod.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT, generate: genInScope });   // <-- no verify, no allowUnverified
+    ok(`${label} 9 no verifier ⇒ FAILED (NO_VERIFIER), verified:false, NOT EXECUTED (fail-closed, no silent pass)`,
+       res.status === "FAILED" && res.code === "NO_VERIFIER" && res.verified === false && res.status !== "EXECUTED");
+    r.cleanup(); }
+
+  // 10. the deliberate mechanism-proof path is PRESERVED but ONLY behind an EXPLICIT opt-in flag.
+  { const r = makeRoot("export const V = 1;\n");
+    const res = mod.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT, generate: genInScope, allowUnverified: true });
+    ok(`${label} 10 explicit allowUnverified:true ⇒ mechanism-proof EXECUTED (opt-in, never the default)`,
+       res.status === "EXECUTED" && res.verified === true && /mechanism-proof/.test(res.verification || ""));
+    r.cleanup(); }
+
+  // 11. a THROWING verifier fails CLOSED (VERIFICATION_FAILED), never propagates as an uncaught throw.
+  { const r = makeRoot("export const V = 1;\n");
+    let threw = false, res;
+    try { res = mod.implementViaLocalProvider(OBJ, { root: r.root, activation: ACT, generate: genInScope, verify: () => { throw new Error("verifier boom"); } }); }
+    catch { threw = true; }
+    ok(`${label} 11 throwing verifier ⇒ FAILED (VERIFICATION_FAILED), no uncaught throw, not EXECUTED`,
+       threw === false && res.status === "FAILED" && res.code === "VERIFICATION_FAILED" && res.verified === false && /threw/.test(res.detail || ""));
+    r.cleanup(); }
 }
 
 // Registration/dispatch wiring: resolve() routes an IMPLEMENT_VIA_LOCAL_PROVIDER objective to the capability,

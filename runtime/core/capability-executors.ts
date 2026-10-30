@@ -569,11 +569,28 @@ function implementViaLocalProvider(objective: any, opts: any = {}): any {
   const applied = delegateIso.applyProposal(root, effective, resolved.files, io);
   if (!applied.ok) return refuse("APPLY_REFUSED", applied.reason);
 
-  // 8. INDEPENDENT VERIFICATION — ODG verifies; the provider's own claim is never trusted.
+  // 8. INDEPENDENT VERIFICATION — ODG verifies; the provider's own claim is never trusted. A MISSING verifier is
+  //    NOT success: absent an injected verifier we fail CLOSED (code NO_VERIFIER), mirroring the fail-closed
+  //    convention of agent-governance-harness ("no verifier result") and regulatory-assurance ("no independent
+  //    verifier supplied"). This closes a real fail-OPEN: the production dispatch calls this with opts={} (no
+  //    verify), so the previous `{ ok: true, detail: "no verifier injected (mechanism proof)" }` default meant a
+  //    provider-applied code change was reported EXECUTED/verified with NOTHING verifying it. The deliberate
+  //    mechanism-proof path (benchmarks/stubs that intentionally skip semantic verification) is preserved ONLY
+  //    behind an EXPLICIT opts.allowUnverified===true — it is never the silent default.
   const verify = typeof opts.verify === "function" ? opts.verify : null;
-  const verdict = verify ? verify({ root, files: resolved.files, objective, changes }) : { ok: true, detail: "no verifier injected (mechanism proof)" };
+  let verdict: any;
+  if (verify) {
+    // a THROWING verifier must fail CLOSED (structured VERIFICATION_FAILED), never propagate as an uncaught throw —
+    // a verifier that errored has NOT verified, so the change must not be certified.
+    try { verdict = verify({ root, files: resolved.files, objective, changes }); }
+    catch (e: any) { verdict = { ok: false, detail: `verifier threw (not verified): ${(e && e.message) || e}` }; }
+  } else {
+    verdict = opts.allowUnverified === true
+      ? { ok: true, detail: "no verifier injected — mechanism-proof mode (explicitly allowed via opts.allowUnverified)" }
+      : { ok: false, detail: "no independent verifier supplied — refusing to certify a provider-applied change (fail-closed)" };
+  }
   if (!verdict || verdict.ok !== true) {
-    return { status: "FAILED", verified: false, committed: false, code: "VERIFICATION_FAILED", detail: (verdict && verdict.detail) || "verification failed", authoredBy: "LOCAL_PROVIDER", appliedBy: "ODG_EXECUTOR" };
+    return { status: "FAILED", verified: false, committed: false, code: verify ? "VERIFICATION_FAILED" : "NO_VERIFIER", detail: (verdict && verdict.detail) || "verification failed", authoredBy: "LOCAL_PROVIDER", appliedBy: "ODG_EXECUTOR" };
   }
 
   // 9. Cap at VERIFIED — ODG applied it; the provider NEVER commits (human commit = acceptance, by design).
@@ -619,6 +636,7 @@ function implementViaLocalProviderEscalating(objective: any, opts: any = {}): an
     last = { ...last, escalation: { attempts: i + 1, model: m, ladder: models } };
     if (last.status === "EXECUTED") return last;      // success — stop (bounded)
     if (last.status !== "FAILED") return last;         // structural refuse — escalation won't help, stop
+    if (last.code === "NO_VERIFIER") return last;      // missing verifier is a config failure, not a model-quality miss — don't escalate
     // else: verified failure ⇒ try the next (superior) model, if any
   }
   return last;
