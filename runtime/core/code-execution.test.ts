@@ -209,6 +209,20 @@ for (const [lang, files, entry, expectedOutput, exp] of intCases) {
   } else {
     ok("(aliased-include real test skipped: rustc/bwrap unavailable — spec.confine asserted above)", true);
   }
+  // F3b: the TypeScript single-file checker also runs confined (a `/// <reference path="/abs">` would otherwise read a
+  // host file — the single-file analogue of the F3 project-mode escape).
+  ok("TypeScript spec declares confine:true (tsc runs filesystem-confined)", E.LANG_SPEC.TypeScript.confine === true);
+  if (E.detectToolchain().TypeScript && _bw) {
+    const _fs = require("fs"), _os = require("os"), _path = require("path");
+    const d = _fs.mkdtempSync(_path.join(_os.tmpdir(), "f3b-tsref-")); const secret = _path.join(d, "secret.ts");
+    const MARK = "TSREFLEAK" + "_marker99"; _fs.writeFileSync(secret, `const ${MARK} = 1;\n`);
+    const r = E.runSyntaxCheck({ language: "TypeScript", content: `/// <reference path="${secret}" />\nconst x: number = ${MARK};\n` });
+    ok("confined tsc: out-of-workspace /// <reference> does NOT leak host content, never PASS", r.status !== "PASS" && !JSON.stringify(r).includes(MARK));
+    ok("confined tsc: legit single file still PASSes (not over-blocked)", E.runSyntaxCheck({ language: "TypeScript", content: "export const x: number = 1;\n" }).status === "PASS");
+    _fs.rmSync(d, { recursive: true, force: true });
+  } else {
+    ok("(TS confined-reference real test skipped: tsc/bwrap unavailable — spec.confine asserted above)", true);
+  }
 }
 
 console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped; not faked; fail-closed; SQL no-filesystem-side-effect; Go cgo + Rust file-inclusion host-read closed; behaviour + integration checks)`);

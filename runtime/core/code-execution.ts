@@ -23,6 +23,9 @@ const cp = require("child_process");
 // absent binary so the toolchain probe fails ⇒ TypeScript is honestly UNSUPPORTED (never a spuriously-available decoy).
 let TSC_PATH: string | null = null;
 try { TSC_PATH = require.resolve("typescript/bin/tsc"); } catch { TSC_PATH = null; }
+// The typescript package dir (bin/tsc + lib/*.d.ts). Bound read-only into the TS checker's sandbox so the compiler +
+// its standard libs resolve while the host filesystem does not (TSC_PATH lives under the repo, not /usr).
+const TS_PKG_DIR: string | null = TSC_PATH ? path.resolve(path.dirname(TSC_PATH), "..") : null;
 const TS_BIN = TSC_PATH ? process.execPath : "__odg_tsc_absent__";
 const TS_PROBE = TSC_PATH ? [TSC_PATH, "--version"] : ["--version"];
 const TS_ARGS = (f: string) => TSC_PATH ? [TSC_PATH, "--noEmit", "--skipLibCheck", f] : ["--noEmit", f];
@@ -36,7 +39,10 @@ const TS_ARGS = (f: string) => TSC_PATH ? [TSC_PATH, "--noEmit", "--skipLibCheck
 // install and remain honestly UNSUPPORTED until then (never a spuriously-available decoy).
 const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   JavaScript: { bin: "node", probeArgs: ["--version"], args: (f: string) => ["--check", f], ext: ".js" },
-  TypeScript: { bin: TS_BIN, probeArgs: TS_PROBE, args: TS_ARGS, ext: ".ts" },
+  // SECURITY: a single reviewed .ts with `/// <reference path="/abs">` makes tsc read that host file (the single-file
+  // analogue of the F3 project-mode escape). Run CONFINED (confine:true) — binding the typescript pkg (roBinds) +
+  // workspace + system dirs only — so no out-of-workspace reference resolves. Fail-closed BLOCKED if bwrap absent.
+  TypeScript: { bin: TS_BIN, probeArgs: TS_PROBE, args: TS_ARGS, ext: ".ts", confine: true, roBinds: TS_PKG_DIR ? [TS_PKG_DIR] : [] },
   Python: { bin: "python3", probeArgs: ["--version"], args: (f: string) => ["-m", "py_compile", f], ext: ".py" },
   // Shell SYNTAX validation via `bash -n` (no execution of the script).
   Shell: { bin: "bash", probeArgs: ["--version"], args: (f: string) => ["-n", f], ext: ".sh" },
@@ -152,9 +158,13 @@ function defaultRunner(bin: string, args: string[], opts: any): any {
     const setenv: string[] = [];
     const env = opts.env && typeof opts.env === "object" ? opts.env : {};
     for (const [k, v] of Object.entries(env)) { if (typeof v === "string") setenv.push("--setenv", k, v); }
+    // Extra read-only binds a spec needs for its toolchain (e.g. TypeScript's package dir, which lives under the repo,
+    // not /usr) — validated-existing only; never a confidential tree.
+    const extraRo = (Array.isArray(opts.roBinds) ? opts.roBinds : []).filter((p: any) => typeof p === "string" && (() => { try { return fs.existsSync(p); } catch { return false; } })());
     const bw = ["--as-pid-1", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
       "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", home,
       ...SYS_RO.flatMap((p) => ["--ro-bind", p, p]),
+      ...extraRo.flatMap((p: string) => ["--ro-bind", p, p]),
       "--dev", "/dev", "--proc", "/proc",
       "--bind", opts.cwd, opts.cwd, "--chdir", opts.cwd,
       ...setenv, "--", bin, ...args];
@@ -214,7 +224,7 @@ function runSyntaxCheck(input: any = {}): any {
     fs.writeFileSync(file, input.content);
     // A spec may declare hermetic env scoped to THIS workspace dir (e.g. Go's offline cache/proxy) — computed per run.
     const specEnv = typeof spec.env === "function" ? spec.env(dir) : (spec.env && typeof spec.env === "object" ? spec.env : undefined);
-    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, confine: !!spec.confine, ...(specEnv ? { env: specEnv } : {}) });
+    const r = runner(spec.bin, spec.args(file), { cwd: dir, timeoutMs: Number(input.timeoutMs) || 20000, maxBytes: 2_000_000, confine: !!spec.confine, roBinds: Array.isArray(spec.roBinds) ? spec.roBinds : [], ...(specEnv ? { env: specEnv } : {}) });
     if (!r || r.spawnError) return { status: "BLOCKED", reason: `toolchain spawn error: ${r && r.spawnError}`, language };
     if (r.timedOut) return { status: "BLOCKED", reason: "check timed out", language };
     const exitCode = r.exitCode;
