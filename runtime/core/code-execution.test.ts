@@ -53,7 +53,9 @@ ok("Go hermetic env is offline + workspace-scoped (no network, no inherited cach
 ok("Go toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Go", content: "package main\nfunc main(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED" && /not faked/.test(E.runSyntaxCheck({ language: "Go", content: "x", toolchainAvailable: false }).reason));
 // Rust/build IS wired now (authorized rustc install): a REAL `rustc --emit=metadata` type+borrow check — argv-array,
 // with a per-workspace hermetic env fn (offline; metadata-only, no linker; emits into the self-cleaning workspace).
-ok("Rust in LANG_SPEC: argv-array `rustc --emit=metadata` + hermetic env fn", E.LANG_SPEC.Rust && Array.isArray(E.LANG_SPEC.Rust.args("f")) && E.LANG_SPEC.Rust.bin === "rustc" && typeof E.LANG_SPEC.Rust.env === "function" && E.LANG_SPEC.Rust.args("f").includes("--emit=metadata"));
+// bin is the resolved real toolchain rustc (<sysroot>/bin/rustc) so the confined run reaches std on rustup hosts, or
+// the bare "rustc" fallback when the sysroot is unresolvable — assert it names a rustc binary, not a fixed path.
+ok("Rust in LANG_SPEC: argv-array `rustc --emit=metadata` + hermetic env fn", E.LANG_SPEC.Rust && Array.isArray(E.LANG_SPEC.Rust.args("f")) && /(^|\/)rustc$/.test(String(E.LANG_SPEC.Rust.bin)) && typeof E.LANG_SPEC.Rust.env === "function" && E.LANG_SPEC.Rust.args("f").includes("--emit=metadata"));
 ok("Rust hermetic env is offline + workspace-scoped (no RUSTUP_HOME clobber)", (() => { const e = E.LANG_SPEC.Rust.env("/ws"); return e.CARGO_NET_OFFLINE === "true" && String(e.TMPDIR).startsWith("/ws") && !("RUSTUP_HOME" in e); })());
 ok("Rust toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Rust", content: "pub fn f(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
 // Java/compile IS wired now (authorized JDK): a REAL `javac -d <ws>` type check — argv-array; no HOME/JAVA_HOME clobber.
@@ -177,4 +179,52 @@ for (const [lang, files, entry, expectedOutput, exp] of intCases) {
   ok("SQL legit DDL ⇒ PASS or UNSUPPORTED (authorizer does NOT break valid syntax checking)", legit.status === "PASS" || legit.status === "UNSUPPORTED");
 }
 
-console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped; not faked; fail-closed; SQL no-filesystem-side-effect; behaviour + integration checks)`);
+// (N) SECURITY — Go cgo #include / Rust file-inclusion host-file read (fixes an audited exfiltration into code-review
+// evidence). Deterministic / zero-subprocess: the Rust refusal is a content guard BEFORE any run; the Go closure is a
+// spec-env assertion (the real-compiler no-leak behaviour is proven separately by direct reproduction).
+{
+  const SECRET = "SEKRIT" + "_codeexec_" + "leak";
+  // Rust include!/include_str!/include_bytes!/#[path] are refused outright, regardless of toolchain, with no leak.
+  const rsInc = E.runSyntaxCheck({ language: "Rust", content: `include!("/etc/${SECRET}.rs");\n` });
+  ok("Rust include! ⇒ BLOCKED (file-inclusion refused), content never read/echoed", rsInc.status === "BLOCKED" && !JSON.stringify(rsInc).includes(SECRET));
+  ok("Rust include_str! ⇒ BLOCKED", E.runSyntaxCheck({ language: "Rust", content: 'const X:&str = include_str!("/etc/passwd");' }).status === "BLOCKED");
+  ok("Rust include_bytes! ⇒ BLOCKED", E.runSyntaxCheck({ language: "Rust", content: 'const X:&[u8] = include_bytes!("/etc/passwd");' }).status === "BLOCKED");
+  ok("Rust #[path] module ⇒ BLOCKED", E.runSyntaxCheck({ language: "Rust", content: '#[path = "/etc/passwd"]\nmod m;' }).status === "BLOCKED");
+  // Legit Rust (no inclusion) is NOT over-blocked: with an injected clean runner + toolchainAvailable it still PASSes.
+  ok("legit Rust (no inclusion) ⇒ PASS (guard does not over-block)", E.runSyntaxCheck({ language: "Rust", content: "pub fn a(x:i32)->i32{x+1}", toolchainAvailable: true, runner: okRunner }).status === "PASS");
+  // Go: CGO_ENABLED=0 is set in the spec env ⇒ cgo is disabled ⇒ a `#include` in an `import "C"` block is never
+  // reached by gcc (the file is excluded by build constraints), closing the host-file read without a subprocess here.
+  ok("Go spec env sets CGO_ENABLED=0 (disables cgo #include host-read)", String((E.LANG_SPEC.Go.env("/tmp/x") || {}).CGO_ENABLED) === "0");
+  // Rust runs the compiler FILESYSTEM-CONFINED (the regex guard alone is bypassable by macro aliasing
+  // `use std::include as x; x!("/abs")`, so confinement is the real control).
+  ok("Rust spec declares confine:true (rustc runs filesystem-confined)", E.LANG_SPEC.Rust.confine === true);
+  // Non-vacuous REAL proof of the aliasing-bypass closure (gated on rustc + bubblewrap; never a silent pass-as-confined).
+  const _cp = require("child_process");
+  const _bw = (() => { try { const r = _cp.spawnSync("/usr/bin/env", ["sh", "-c", "command -v bwrap"], { encoding: "utf8" }); return r && r.status === 0 && String(r.stdout || "").trim(); } catch { return false; } })();
+  if (E.detectToolchain().Rust && _bw) {
+    const _fs = require("fs"), _os = require("os"), _path = require("path");
+    const d = _fs.mkdtempSync(_path.join(_os.tmpdir(), "s2-alias-")); const secret = _path.join(d, "secret.txt");
+    const MARK = "ALIASLEAK" + "_" + "marker42"; _fs.writeFileSync(secret, MARK + "\n");
+    const r = E.runSyntaxCheck({ language: "Rust", content: `use std::include as inc;\ninc!("${secret}");\n` });
+    ok("confined rustc: ALIASED include! does NOT leak host content (regex-bypass closed structurally)", r.status !== "PASS" && !JSON.stringify(r).includes(MARK));
+    _fs.rmSync(d, { recursive: true, force: true });
+  } else {
+    ok("(aliased-include real test skipped: rustc/bwrap unavailable — spec.confine asserted above)", true);
+  }
+  // F3b: the TypeScript single-file checker also runs confined (a `/// <reference path="/abs">` would otherwise read a
+  // host file — the single-file analogue of the F3 project-mode escape).
+  ok("TypeScript spec declares confine:true (tsc runs filesystem-confined)", E.LANG_SPEC.TypeScript.confine === true);
+  if (E.detectToolchain().TypeScript && _bw) {
+    const _fs = require("fs"), _os = require("os"), _path = require("path");
+    const d = _fs.mkdtempSync(_path.join(_os.tmpdir(), "f3b-tsref-")); const secret = _path.join(d, "secret.ts");
+    const MARK = "TSREFLEAK" + "_marker99"; _fs.writeFileSync(secret, `const ${MARK} = 1;\n`);
+    const r = E.runSyntaxCheck({ language: "TypeScript", content: `/// <reference path="${secret}" />\nconst x: number = ${MARK};\n` });
+    ok("confined tsc: out-of-workspace /// <reference> does NOT leak host content, never PASS", r.status !== "PASS" && !JSON.stringify(r).includes(MARK));
+    ok("confined tsc: legit single file still PASSes (not over-blocked)", E.runSyntaxCheck({ language: "TypeScript", content: "export const x: number = 1;\n" }).status === "PASS");
+    _fs.rmSync(d, { recursive: true, force: true });
+  } else {
+    ok("(TS confined-reference real test skipped: tsc/bwrap unavailable — spec.confine asserted above)", true);
+  }
+}
+
+console.log(`\nCODE-EXECUTION suite — ${pass} assertions passed. (argv-array; PASS/FAIL/UNSUPPORTED/BLOCKED; path-stripped; not faked; fail-closed; SQL no-filesystem-side-effect; Go cgo + Rust file-inclusion host-read closed; behaviour + integration checks)`);

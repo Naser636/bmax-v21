@@ -263,6 +263,19 @@ function sandboxRun(argv: any, opts: any): any {
   for (const k of envAllow) {
     if (typeof process.env[k] === "string") { setenv.push("--setenv", k, process.env[k]); }
   }
+  // FILESYSTEM CONFINEMENT (fixes an audited CRITICAL host-wide read): the sandbox previously did `--ro-bind / /`,
+  // mounting the ENTIRE host root read-only — so any allowlisted read command (cat/head/tail/stat/…) could read ANY
+  // host file (/etc/passwd, /etc/hostname, a secret-bearing dotfile, …), with the only boundary a narrow, trivially
+  // incomplete SECRET_PATTERNS blocklist. That contradicts this file's own "genuine isolation" claim AND the
+  // provider-sandbox doctrine ("NEVER --ro-bind / /"). Bind an ALLOWLIST instead, matching provider-sandbox:
+  //   - system CODE dirs (/usr,/lib,/lib64,/bin,/sbin), read-only — so command binaries + libs resolve; NOT secrets;
+  //   - the mission's repo (process.cwd()), read-only — the legitimate read scope for a governed command;
+  //   - a fresh --proc (under the --unshare-all PID namespace) + --dev + a tmpfs /tmp + the writable /tmp/work.
+  // The /proc/<pid>/environ host-env leak is closed at the spawn below (cleared bwrap env + --as-pid-1), NOT here.
+  // CONFIDENTIAL trees (/etc, /home beyond the repo, /root, /var) are simply NOT bound ⇒ unreadable inside.
+  const SYS_RO = ["/usr", "/lib", "/lib64", "/bin", "/sbin"].filter((p) => { try { return fs.existsSync(p); } catch { return false; } });
+  let repoRoot: string | null = null;
+  try { const c = process.cwd(); if (c && c !== "/" && fs.existsSync(c)) repoRoot = fs.realpathSync(c); } catch { repoRoot = null; }
   const bwrapArgs = [
     // --info-fd is an OBSERVED launch handshake: bubblewrap writes JSON (incl. "child-pid") to fd 3
     // ONLY after it has successfully created the namespaces/mounts and is about to exec the child. If
@@ -271,15 +284,24 @@ function sandboxRun(argv: any, opts: any): any {
     "--info-fd", "3",
     "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
     "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/tmp/work",
-    "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp",
+    ...SYS_RO.flatMap((p) => ["--ro-bind", p, p]),
+    "--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp",
     "--bind", work, "/tmp/work", "--chdir", "/tmp/work",
+    // repo bound AFTER the tmpfs so a repo path that happens to live under /tmp is not shadowed; skipped if it is "/".
+    ...(repoRoot ? ["--ro-bind", repoRoot, repoRoot] : []),
     ...setenv, "--", ...argv,
   ];
   const before = snapshotDir(work);
   // stdio: fd0 ignored, fd1/fd2 captured as stdout/stderr, fd3 captured as the --info-fd handshake.
-  const res = spawn("bwrap", bwrapArgs, {
+  // ENV ISOLATION (fixes an audited /proc leak): --clearenv/--setenv only scrub the EXEC'D CHILD's env, NOT bwrap's
+  // own process nor its PID-1 monitor (PID 1 in the --unshare-all namespace). With --proc mounting a fresh procfs,
+  // a governed `cat /proc/1/environ` would otherwise read that monitor's environ — which inherits THIS governor
+  // process's full env (API keys, SSH_CLIENT, session id). Spawn bwrap itself with a CLEARED env so its monitor
+  // carries nothing to leak; combined with --as-pid-1 the sandboxed command is PID 1 and there is no monitor at all.
+  const res = spawn("bwrap", ["--as-pid-1", ...bwrapArgs], {
     encoding: "utf8", timeout: timeoutMs, maxBuffer: 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe", "pipe"],
+    env: { PATH: "/usr/bin:/bin" },
   });
   // OBSERVED launch proof: a non-empty --info-fd payload carrying a child-pid means bubblewrap built
   // the sandbox and exec'd the command. No payload ⇒ the sandbox never launched ⇒ nothing executed.

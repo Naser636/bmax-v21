@@ -55,6 +55,11 @@ inTempCwd((mod) => {
         const result = executor.run();
         ok("executor returns the evidence path", result && typeof result.evidence === "string");
         ok("evidence artifact exists on disk", fs.existsSync(result.evidence) && fs.statSync(result.evidence).size > 0);
+        // F1c: a PASS-THROUGH capability (Connectivity Audit forwards a worker's summary) declares NO deliverableTarget —
+        // only the two confine+write executors (ODG Synthetic Deliverable / Spec Author) set it. patch-executor keys the
+        // EXECUTED files:[{target}] (consumed by the VE's engineeringOk) off result.deliverableTarget, NOT the
+        // contaminable result.summary.target, so a future worker-summary `target` can never masquerade as a deliverable.
+        ok("F1c: pass-through capability result has NO deliverableTarget (only file-writers declare one)", result.deliverableTarget === undefined);
 
         const report = JSON.parse(fs.readFileSync(result.evidence, "utf8"));
         ok("report declares the capability", report.capability === "Connectivity Audit");

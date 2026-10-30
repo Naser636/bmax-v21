@@ -208,10 +208,15 @@ function recordMission(mission: string): any {
   entries.push(entry);
 
   fs.mkdirSync("runtime/generated", { recursive: true });
-  fs.writeFileSync(
-    LEDGER_FILE,
-    JSON.stringify({ generatedAt: entry.recordedAt, count: entries.length, entries }, null, 2)
-  );
+  // CRASH-ATOMIC write (S3b): serialize to a temp file in the SAME directory, then rename() over the target. rename(2)
+  // is atomic on POSIX, so a crash/interrupt mid-write can NEVER leave a torn/half-written ledger — which the reader
+  // above would classify as corrupt and then REFUSE to append to, silently stalling all future evidence. (This does
+  // NOT serialize two CONCURRENT read-modify-write appenders — a lost-update — which stays gated by the one-active-
+  // mission discipline and is a documented defense-in-depth follow-on, NOT reachable by any automated path today.)
+  const payload = JSON.stringify({ generatedAt: entry.recordedAt, count: entries.length, entries }, null, 2);
+  const tmp = `${LEDGER_FILE}.tmp-${process.pid}-${entries.length}`;
+  fs.writeFileSync(tmp, payload);
+  try { fs.renameSync(tmp, LEDGER_FILE); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; }
 
   // V28 — governed post-release experience accumulation (ADVISORY, non-authoritative). Runs ONLY after
   // the ledger entry for THIS proven mission has been written above, and ONLY on a genuine new append

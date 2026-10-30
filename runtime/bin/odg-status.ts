@@ -7,6 +7,8 @@
  */
 const fs = require("fs");
 const path = require("path");
+// "../core/prefer-dist-bin.js" resolves from BOTH runtime/bin (tsx) and runtime/dist/bin (compiled) — same as odg-health.
+const { resolveRequiredPort } = require("../core/prefer-dist-bin.js");
 
 function read(file: string, fallback: any = {}): any {
   try { return JSON.parse(fs.readFileSync(file, "utf8")); }
@@ -31,15 +33,17 @@ console.log("Runtime            :", status.runtime ?? "UNKNOWN");
 console.log("Foundation         :", status.foundation ?? "UNKNOWN");
 console.log("Converged          :", converged ? "YES" : "NO");
 console.log("Capabilities       :", (caps.capabilities || []).length);
-// CM-4 honest decomposition. cwd-relative require so it resolves from BOTH runtime/bin and
-// runtime/dist/bin (the __dirname-relative "../../scripts" path breaks from the deeper dist dir).
+// CM-4 honest decomposition. Phase-2A: capability-classify is now compiled into runtime/dist/scripts, so the
+// COMPILED dist status bin loads it from dist (fail-closed resolveRequiredPort: prefers the dist .js, falls back to
+// the .ts source under tsx, else throws a clear rebuild error — never a silent drop).
 try {
-  const { classify } = require(path.resolve(process.cwd(), "scripts", "capability-classify.js"));
+  const classifyPort = resolveRequiredPort("runtime/dist/scripts/capability-classify.js", "scripts/capability-classify.ts", (p: string) => fs.existsSync(path.resolve(process.cwd(), p)));
+  const { classify } = require(path.resolve(process.cwd(), classifyPort));
   const k = classify((caps.capabilities || []).map((c: any) => typeof c === "string" ? c : (c.id || c.name || c.capability || "")));
   console.log("  classified       :", "business=" + k.businessCandidate, "· mission-derived=" + k.missionDerived, "· nl-generated=" + k.nlGenerated + (k.duplicates.length ? " · dup=" + k.duplicates.length : "") + (k.coherent ? " · coherent" : " · INCOHERENT"));
 } catch (e: any) {
-  // FAIL-VISIBLE: don't silently drop the CM-4 decomposition. scripts/capability-classify is not compiled to dist
-  // (repo-root scripts/ is outside the dist rootDir), so the compiled status bin can't load it — say so honestly.
+  // FAIL-VISIBLE: don't silently drop the CM-4 decomposition. If the dist port is somehow missing (dist not built),
+  // say so honestly rather than dropping the line — never a fabricated pass.
   console.log("  classified       : UNAVAILABLE — capability-classify not loadable in this build (" + ((e && (e.code || e.message)) || "error") + ")");
 }
 console.log("Missing            :", (caps.missingCapabilities || []).length);

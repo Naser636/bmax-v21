@@ -294,4 +294,43 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
     cross.decision === "DENY" && /cross-mission/.test((cross.violations || []).join(" ")));
 })();
 
+// ---- FILESYSTEM CONFINEMENT: an allowlisted read command must NOT read arbitrary host files (fixes an audited
+// CRITICAL — the sandbox used to `--ro-bind / /`, making every read command a host-wide read oracle). These run the
+// REAL bwrap sandbox; skip only if bubblewrap is unavailable on the host (never silently pass as confined).
+(function fsConfinement() {
+  const sb = engine.detectSandbox({});
+  if (!sb || !sb.available) { console.log("  ok - (skipped: bubblewrap unavailable — confinement asserts need the real sandbox)"); passed += 1; return; }
+  // /etc/passwd is NOT in SECRET_PATTERNS, so it reaches execution — with the fix its content must be unreadable
+  // inside the sandbox (/etc not bound), proven by a non-zero exit and NO passwd content in stdout.
+  const passwd = engine.govern({ command: "cat /etc/passwd", execute: true }, {});
+  ok("confinement: `cat /etc/passwd` does NOT leak host content (exit!=0, no root:x:0:0)",
+    passwd.outcome === O.EXECUTED && (passwd.execution || {}).exitCode !== 0 && !/root:.*:0:0:/.test(String((passwd.execution || {}).stdout || "")));
+  // /etc/hostname has no secret-keyword to trigger the blocklist — it, too, must be unreadable now.
+  const host = engine.govern({ command: "cat /etc/hostname", execute: true }, {});
+  ok("confinement: `cat /etc/hostname` does NOT leak the host name (no bound /etc)",
+    (host.execution || {}).exitCode !== 0 && String((host.execution || {}).stdout || "").trim() === "");
+  // A read of the mission's OWN repo (absolute path, process.cwd() bound ro) still works — not over-blocked.
+  const repoFile = path.join(process.cwd(), "package.json");
+  const repoRead = engine.govern({ command: "wc -l " + repoFile, execute: true }, {});
+  ok("confinement: an absolute read inside the repo (process.cwd()) still succeeds (not over-blocked)",
+    repoRead.outcome === O.EXECUTED && (repoRead.execution || {}).exitCode === 0);
+  // System code dirs stay readable so command binaries/libs resolve (not confidential). Probe /usr/bin/env — a
+  // coreutils binary guaranteed present under the bound /usr on every host (unlike /usr/bin/node, which is ABSENT on
+  // runners that install node elsewhere, e.g. GitHub Actions /opt/hostedtoolcache — that made this assert a false
+  // confinement failure, not a real one). env is already this suite's portable shell entrypoint.
+  const sys = engine.govern({ command: "stat /usr/bin/env", execute: true }, {});
+  ok("confinement: system code dirs (/usr) remain readable (commands still run)", (sys.execution || {}).exitCode === 0);
+  // /proc ENV ISOLATION (fixes an audited leak): PID 1 in the sandbox namespace must NOT carry the governor process's
+  // host env. `--clearenv` only scrubs the child; bwrap's own process/monitor is cleared by spawning bwrap with a
+  // cleared env + --as-pid-1. A governed `cat /proc/1/environ` must expose ONLY the sandbox env (PATH/HOME/PWD),
+  // never a host secret. NUL-delimited ⇒ normalize to spaces before matching. Non-vacuous: leaks on the pre-fix spawn.
+  const proc1 = engine.govern({ command: "cat /proc/1/environ", execute: true }, {});
+  const proc1out = String((proc1.execution || {}).stdout || "").replace(/\0/g, " ");
+  ok("confinement: /proc/1/environ exposes NO host env (no API key / SSH_CLIENT / session id)",
+    !/ANTHROPIC_API_KEY=sk|SSH_CLIENT=|CLAUDE_CODE_SESSION_ID=|ANTHROPIC_API_KEY=[^*\s]/.test(proc1out));
+  const procSelf = engine.govern({ command: "cat /proc/self/environ", execute: true }, {});
+  ok("confinement: /proc/self/environ carries only the cleared sandbox env",
+    !/ANTHROPIC_API_KEY=sk|SSH_CLIENT=/.test(String((procSelf.execution || {}).stdout || "").replace(/\0/g, " ")));
+})();
+
 console.log(`\nGOVERNED BASH/LINUX COMMAND — ${passed} assertions passed.`);

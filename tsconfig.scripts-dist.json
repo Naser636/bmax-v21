@@ -1,0 +1,22 @@
+{
+  "//": "Phase-2A build config — compiles the two repo-root dashboard-helper scripts that the COMPILED dist dashboards (node runtime/dist/bin/odg-health.js / odg-status.js) load at runtime, into runtime/dist/scripts/ as plain CommonJS. These scripts live at repo-root scripts/ (OUTSIDE tsconfig.runtime-dist.json's rootDir=runtime) so that config cannot emit them; under zero-JS there is no scripts/*.js, so the dist bins' require() previously failed and the §F Compass + CM-4 classified lines were honestly UNAVAILABLE. Emitting them into runtime/dist/scripts keeps dist self-contained (both scripts import ONLY Node builtins — no relative requires for build-dist-closure to chase, and the ORPHAN/STALE guard scans dist/core only). Mirrors the runtime-dist compilerOptions. Wired into scripts/build-runtime-guard.ts (fullBuild tsc pass + fingerprint inputs) so edits auto-invalidate the build cache.",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "declaration": false,
+    "sourceMap": false,
+    "rootDir": "scripts",
+    "outDir": "runtime/dist/scripts",
+    "types": [
+      "node"
+    ]
+  },
+  "files": [
+    "scripts/compass-update.ts",
+    "scripts/capability-classify.ts"
+  ]
+}

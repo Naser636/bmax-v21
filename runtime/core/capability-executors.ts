@@ -374,6 +374,36 @@ function isProtectedGovernanceTarget(target: any) {
     if (path.isAbsolute(norm) || norm === ".." || norm.startsWith(".." + path.sep)) return false;
     return PROTECTED_GOVERNANCE_PREFIXES.some((pre) => norm === pre || norm.startsWith(pre + "/"));
 }
+// Physical confinement (symlink / real-path defense) — SHARED by the capability branch AND the patch-executor edits
+// branch (reused, not duplicated). The deepest EXISTING ancestor of relTarget must realpath INSIDE cwd; otherwise an
+// existing symlinked scope dir (or a symlinked existing file) points outside the tree ⇒ REFUSE before any write.
+//
+// CRITICAL (fixes an audit-found deterministic escape): the ancestor-walk below relies on path.resolve, which
+// collapses ".." LEXICALLY — so a target like "app/foo/../evil.txt" where "foo" is a symlink to /outside has its
+// "foo/.." string-cancelled BEFORE the walk ever inspects "foo", while the kernel (on the raw path used by the
+// actual write) substitutes the symlink FIRST and then applies ".." relative to its real target ⇒ writes OUTSIDE cwd.
+// Defense: REFUSE any absolute path or ".." segment up front. No legitimate in-scope edit target needs one, and
+// without ".." the lexical resolve is faithful — so the ancestor-walk physically realpaths EVERY real component and
+// catches a symlinked mid/leaf component. A DANGLING final-component symlink is still caught at the write by an
+// O_NOFOLLOW open (see patch-executor). relTarget must already be a validated in-scope relative path.
+function assertPhysicalConfinement(relTarget: any, cwd: any = process.cwd()): void {
+    const raw = String(relTarget);
+    if (path.isAbsolute(raw)) {
+        throw new Error(`path confinement: "${relTarget}" is an absolute path — refused (confinement is defined relative to the repo cwd)`);
+    }
+    // Split on BOTH separators so a "\\.." segment is caught on every platform; reject ".." so path.resolve cannot
+    // lexically cancel a symlinked component (the audit-found "symlinked-dir + trailing .." write-escape primitive).
+    if (raw.split(/[\\/]+/).some((seg) => seg === "..")) {
+        throw new Error(`path confinement: "${relTarget}" contains a ".." segment — refused (a symlinked component paired with ".." can lexically escape the real-path check)`);
+    }
+    const absCwd = fs.realpathSync(cwd);
+    let anc = path.resolve(cwd, raw);
+    while (!fs.existsSync(anc)) anc = path.dirname(anc);
+    const realAnc = fs.realpathSync(anc);
+    if (realAnc !== absCwd && !realAnc.startsWith(absCwd + path.sep)) {
+        throw new Error(`path confinement: "${relTarget}" resolves outside the repo via a symlink/real-path escape (deepest existing ancestor "${anc}" ⇒ "${realAnc}")`);
+    }
+}
 // Resolve the single in-scope write target and PROVE confinement before any mutation. Throws (refuses)
 // on an empty/invalid scope, a non-relative or traversal scope/target, an out-of-boundary target, or a
 // real-path/symlink escape from the sandbox cwd. Returns { relTarget, absTarget, scope }.
@@ -402,15 +432,8 @@ function confineSyntheticTarget(authorizedPaths: any, cwd: any, allowProtectedGo
     if (changedPathsInScope(authorizedPaths, [rel]).length === 0) {
         throw new Error(`ODG Synthetic Deliverable: refused — target "${rel}" not confirmed inside authorized scope`);
     }
-    // Physical confinement (symlink / real-path defense): the deepest EXISTING ancestor of the target must
-    // realpath INSIDE the sandbox cwd. Catches an existing symlinked scope dir pointing outside the tree.
-    const absCwd = fs.realpathSync(cwd);
-    let anc = path.resolve(cwd, rel);
-    while (!fs.existsSync(anc)) anc = path.dirname(anc);
-    const realAnc = fs.realpathSync(anc);
-    if (realAnc !== absCwd && !realAnc.startsWith(absCwd + path.sep)) {
-        throw new Error(`ODG Synthetic Deliverable: refused — target "${rel}" resolves outside the sandbox (symlink/real-path escape)`);
-    }
+    // Physical confinement (symlink / real-path defense) — SHARED single implementation (see assertPhysicalConfinement).
+    assertPhysicalConfinement(rel, cwd);
     return { relTarget: rel, absTarget: path.resolve(cwd, rel), scope: normPre };
 }
 // ODG FORMULATES the content itself from authorized mission data (plan mission + sorted objective ids).
@@ -675,7 +698,7 @@ const EXECUTORS = [
                 authoredBy: "ODG_CAPABILITY",
                 note: "Content formulated by ODG from authorized plan data; written strictly inside authorized_paths after pre-write confinement.",
             });
-            return { capability: "ODG Synthetic Deliverable", evidence: out, summary: { target: confined.relTarget, bytes: Buffer.byteLength(content) } };
+            return { capability: "ODG Synthetic Deliverable", evidence: out, deliverableTarget: confined.relTarget, summary: { target: confined.relTarget, bytes: Buffer.byteLength(content) } };
         },
     },
     {
@@ -723,7 +746,7 @@ const EXECUTORS = [
                 authoredBy: "ODG_CAPABILITY",
                 note: "Spec formulated by ODG via mission-synthesizer.toContract from authorized plan data; written inside authorized_paths after pre-write confinement. Correctness verified independently by the spec-schema-valid probe.",
             });
-            return { capability: "ODG Spec Author", evidence: out, summary: { target: confined.relTarget, objectives: contract.objectives.length } };
+            return { capability: "ODG Spec Author", evidence: out, deliverableTarget: confined.relTarget, summary: { target: confined.relTarget, objectives: contract.objectives.length } };
         },
     },
     {
@@ -1332,7 +1355,7 @@ function resolve(patch: any) {
     };
 }
 
-module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, contractConformance, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, PRECEDENT_CONSULT_EVIDENCE, DECISION_PRECEDENT_STORE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
+module.exports = { resolve, runAudit, EXECUTORS, CAPABILITY_EFFECT, effectRegistryVerdict, contractConformance, defaultLocalGenerate, cleanCompletion, resolveModelInvocation, localModelPresent, governedHttpGet, httpGetBounded, CONNECTIVITY_EVIDENCE, EXTERNAL_RESEARCH_EVIDENCE, GIT_BRANCH_INTEGRATION_EVIDENCE, BASH_COMMAND_EVIDENCE, SYNTHETIC_DELIVERABLE_EVIDENCE, SYNTHETIC_DELIVERABLE_NAME, SPEC_AUTHOR_EVIDENCE, SPEC_AUTHOR_NAME, OBSERVABILITY_VERIFICATION_EVIDENCE, PRECEDENT_CONSULT_EVIDENCE, DECISION_PRECEDENT_STORE, IMPLEMENT_VIA_LOCAL_PROVIDER_EVIDENCE, implementViaLocalProvider, implementViaLocalProviderEscalating, localProviderActivation, confineSyntheticTarget, formulateSyntheticManifest, isProtectedGovernanceTarget, assertPhysicalConfinement, PROTECTED_GOVERNANCE_PREFIXES, __setExecutorSeams, __resetExecutorSeams };
 
 // Direct invocation: `--http-get <url> <maxBytes> <timeoutMs>` runs the bounded read-only fetch worker
 // (cleared env) and prints its JSON verdict; otherwise run the Connectivity Audit and write evidence.
