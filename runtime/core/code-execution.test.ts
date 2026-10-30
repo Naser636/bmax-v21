@@ -141,6 +141,24 @@ for (const [lang, content, expectedOutput, exp] of behaviourCases) {
   if (st !== "PASS" && st !== "FAIL") { console.log(`  ~~ skip behaviour ${lang} (non-definitive ${st})`); continue; }
   ok(`runBehaviourCheck ${lang} ${exp}: output-correctness classified`, st === exp);
 }
+// (11b) CONFINEMENT regression: behaviour execution now runs inside bubblewrap (--unshare-all, no network, host FS
+// absent except the workspace). Proof: a program that reads an UNBOUND host path (/etc/hostname) must FAIL to read it
+// (the unconfined pre-fix path would have leaked it). PASSes only BECAUSE the read is blocked — so this asserts real
+// isolation, not a tautology. Gated on real node + bubblewrap; skipped (not failed) where unavailable.
+{
+  const _cpx = require("child_process");
+  const _bw = (() => { try { const r = _cpx.spawnSync("/usr/bin/env", ["sh", "-c", "command -v bwrap"], { encoding: "utf8" }); return r && r.status === 0 && !!String(r.stdout || "").trim(); } catch { return false; } })();
+  if (E.detectToolchain().JavaScript && _bw) {
+    const leak = E.runBehaviourCheck({
+      language: "JavaScript",
+      content: "try{const h=require('fs').readFileSync('/etc/hostname','utf8');console.log('LEAK:'+h.trim())}catch(e){console.log('CONFINED')}",
+      expectedOutput: "CONFINED",
+    });
+    ok("confined behaviour: a program CANNOT read host /etc (filesystem isolation) ⇒ 'CONFINED', never a LEAK", leak.status === "PASS");
+  } else {
+    ok("(confinement behaviour real test skipped: node/bwrap unavailable)", true);
+  }
+}
 
 // (12) runIntegrationCheck — MULTI-FILE component interaction (a defect in an intermediate helper surfaces only via
 // the composition). Structural fail-closed + real-guarded.
