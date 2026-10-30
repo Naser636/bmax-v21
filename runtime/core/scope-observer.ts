@@ -16,17 +16,31 @@ import * as fs from "fs";
 import { execFileSync } from "child_process";
 
 // Raw working-tree changes via git porcelain (status code stripped), same parse as the gate used.
-function gitChangedPaths(): string[] {
+// CHECKED variant: distinguishes "git ran and the tree is clean" ({ok:true, paths:[]}) from "git threw"
+// ({ok:false, paths:[]}) — index lock, corrupt/absent repo, git not on PATH. The un-discriminated
+// gitChangedPaths() below cannot tell the two apart, which is safe for callers that fail-closed on an
+// EMPTY change set (VE: empty ⇒ engineeringOk false) but a FAIL-OPEN for scopeClean, whose "nothing out
+// of scope" verdict is trivially satisfied by an empty set — so scopeClean uses THIS checked observation.
+function gitChangedPathsChecked(): { ok: boolean; paths: string[] } {
   let porcelain = "";
   try {
     porcelain = execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }) as string;
   } catch {
-    return [];
+    return { ok: false, paths: [] };
   }
-  return porcelain
-    .split(/\r?\n/)
-    .map((l) => l.slice(3).trim()) // strip the 2-char status + space
-    .filter(Boolean);
+  return {
+    ok: true,
+    paths: porcelain
+      .split(/\r?\n/)
+      .map((l) => l.slice(3).trim()) // strip the 2-char status + space
+      .filter(Boolean),
+  };
+}
+
+// Back-compat un-discriminated form: [] on a git error OR a clean tree. Preserved verbatim for callers that
+// pass it to changedPathsInScope/trackedFilesInScope and already fail-closed on an empty set (see above).
+function gitChangedPaths(): string[] {
+  return gitChangedPathsChecked().paths;
 }
 
 // Normalize authorized paths (drop glob tails like /** or *) to a prefix set.
@@ -80,8 +94,23 @@ function artifactNonEmpty(p: any, statFn?: any): { ok: boolean; detail: string }
 }
 
 // SCOPE-CLEAN: no working-tree change lies OUTSIDE the authorized scope.
-function scopeClean(authorizedPaths: any, changedPaths?: any): { ok: boolean; detail: string } {
-  const changed = Array.isArray(changedPaths) ? changedPaths : gitChangedPaths();
+// FAIL-CLOSED on an errored observation: when scopeClean observes the tree ITSELF (no explicit changedPaths
+// — the odg-delegate conformance path), a git error must NOT be read as "0 changed ⇒ all in scope". Such a
+// swallowed error would let a delegate patch that wrote OUTSIDE the authorized write-set pass conformance.
+// An UNKNOWN observation is refused (ok:false), not trusted. (Callers that pass explicit changedPaths —
+// delegate-isolation working/committed sets — are unchanged: no git call, no error path.)
+function scopeClean(authorizedPaths: any, changedPaths?: any, observer?: any): { ok: boolean; detail: string } {
+  let changed: string[];
+  if (Array.isArray(changedPaths)) {
+    changed = changedPaths;
+  } else {
+    const observe = typeof observer === "function" ? observer : gitChangedPathsChecked;
+    const obs = observe();
+    if (!obs || obs.ok !== true) {
+      return { ok: false, detail: "cannot observe working tree (git status failed) — scope conformance UNKNOWN, refusing (fail-closed)" };
+    }
+    changed = obs.paths;
+  }
   const inScope = new Set(changedPathsInScope(authorizedPaths, changed));
   const outOfScope = changed.filter((f: string) => !inScope.has(f));
   return outOfScope.length === 0
@@ -167,6 +196,7 @@ function configEq(file: any, key: any, equals?: any): { ok: boolean; detail: str
 
 module.exports = {
   gitChangedPaths,
+  gitChangedPathsChecked,
   changedPathsInScope,
   trackedFilesInScope,
   artifactNonEmpty,

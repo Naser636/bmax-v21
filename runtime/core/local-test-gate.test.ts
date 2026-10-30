@@ -6,6 +6,10 @@
 
 "use strict";
 
+// B-6 (V2 Pole B): drive a fast, REAL timeout — set the env ceiling BEFORE the module is required (the constant
+// is read at load). 600ms is well above the immediate pass/fail fixtures and well below the hanging fixture.
+process.env.ODG_LOCAL_TEST_TIMEOUT_MS = "600";
+
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -34,6 +38,16 @@ console.log("Case 3 — per-file results are reported");
 const r = gate.runTests([pass, fail]);
 ok("2 results returned", r.results.length === 2);
 ok("failing file carries a non-zero code", r.results.find((x) => x.file === fail).code !== 0);
+
+console.log("Case 4 — a HANGING test file is KILLED and reported as a timeout (fail-closed), not hung forever");
+const hang = path.join(dir, "hang.js");
+fs.writeFileSync(hang, "setInterval(() => {}, 1000);\n"); // never exits on its own
+const started = Date.now();
+const gh = gate.runTests(hang);
+const elapsed = Date.now() - started;
+ok("hanging file is NOT ok (fail-closed on timeout)", gh.results[0].ok === false);
+ok("hanging file reported as TIMED OUT, not a silent hang", /TIMED OUT/.test(gh.results[0].error || ""));
+ok("gate returned promptly (killed near the 600ms ceiling, not hung)", elapsed < 10000);
 
 fs.rmSync(dir, { recursive: true, force: true });
 console.log(`\nLOCAL TEST GATE — ${passed} assertions passed.`);

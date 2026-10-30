@@ -70,6 +70,9 @@ ok("malformed ledger ⇒ empty recent, not crash", mm.recentLedger.length === 0)
 // 3. all sources missing ⇒ graceful UNKNOWN/N/A/none
 const empty = C.composeModel(ioFrom({}, { name: null, lines: [], note: "no run logs" }), {});
 ok("missing sources ⇒ UNKNOWN health", empty.health.runtime === "UNKNOWN");
+// B-3 secondary (V2 Pole B): with BOTH status and state absent, NEXT must be UNKNOWN, never a fabricated SYSTEM_READY.
+ok("missing status+state ⇒ next UNKNOWN, NOT a fabricated SYSTEM_READY",
+  /UNKNOWN/.test(empty.progress.next) && empty.progress.next !== "SYSTEM_READY");
 ok("missing sources ⇒ N/A last + none queue/ledger", empty.progress.last === "N/A" && empty.queue.length === 0 && empty.recentLedger.length === 0);
 const emptyRender = C.renderCockpit(empty, {});
 ok("render of empty model shows (none) and no run log", /QUEUE/.test(emptyRender) && /\(none\)/.test(emptyRender) && /ACTIVE RUN LOG : \(none\)/.test(emptyRender));
