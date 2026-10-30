@@ -27,6 +27,12 @@ function render(artifacts: any): string {
   const constitution = artifacts.constitution || { principles: [] };
   const queue = artifacts.queue || { queue: [] };
 
+  // FAIL-VISIBLE (fixes an audited fabricated-health): read() collapses an ABSENT/unreadable capability-registry.json
+  // into the SAME {capabilities:[],missingCapabilities:[]} shape as a genuinely-empty registry, so absence used to
+  // render "Completion 100%" + "BLOCKERS: None — all present" — the opposite of the dashboard's "Absent ⇒ UNKNOWN,
+  // never a fabricated pass" contract (which the Compass/Supervision lines already honour). The caller now signals
+  // whether the registry actually loaded; when it did not, Completion/BLOCKERS/Capabilities are UNKNOWN, never healthy.
+  const capsAvailable = artifacts.capsAvailable === true;
   const capList = Array.isArray(caps.capabilities) ? caps.capabilities : [];
   const missing = Array.isArray(caps.missingCapabilities) ? caps.missingCapabilities : [];
   const entries = Array.isArray(ledger.entries) ? ledger.entries : [];
@@ -61,14 +67,16 @@ function render(artifacts: any): string {
   L.push(`  Brain        : ${state.brain ?? "UNKNOWN"}`);
   L.push("");
   L.push("PROGRESS");
-  L.push(`  Capabilities : ${capList.length} ready / ${missing.length} missing`);
-  L.push(`  Completion   : ${bar(pct)}`);
+  L.push(`  Capabilities : ${capsAvailable ? `${capList.length} ready / ${missing.length} missing` : "UNKNOWN — capability-registry unavailable"}`);
+  L.push(`  Completion   : ${capsAvailable ? bar(pct) : "UNKNOWN — capability-registry unavailable (not a fabricated 100%)"}`);
   L.push(`  Missions     : ${ledger.count ?? entries.length} recorded`);
   L.push(`  Last Mission : ${lastEntry.mission ?? state.lastMission ?? "N/A"} (${lastEntry.state ?? "?"})`);
   if (lastRun) L.push(`  Last Run     : ${lastRun.mission} — ${lastRun.status}${lastRun.validated ? "" : " (validated=false)"}`);
   L.push("");
   L.push("BLOCKERS");
-  if (missing.length === 0) {
+  if (!capsAvailable) {
+    L.push("  UNKNOWN — capability-registry unavailable; blockers cannot be determined (NOT 'none').");
+  } else if (missing.length === 0) {
     L.push("  None — all registered capabilities are present.");
   } else {
     for (const m of missing.slice(0, 8)) L.push(`  - ${m.id ?? m.goal ?? String(m)}`);
@@ -94,11 +102,15 @@ module.exports = { render };
 if (require.main === module) {
   const state = read(G("runtime-state.json"), {});
   const status = read(G("runtime-status.json"), {});
-  const caps = read(G("capability-registry.json"), { capabilities: [], missingCapabilities: [] });
+  // Distinguish an ABSENT/unreadable capability-registry (read returns null) from a genuinely-present one, so render
+  // shows a fail-VISIBLE UNKNOWN for Completion/BLOCKERS rather than fabricating "100% / no blockers" on absence.
+  const capsRaw = read(G("capability-registry.json"), null);
+  const capsAvailable = capsRaw !== null;
+  const caps = capsRaw || { capabilities: [], missingCapabilities: [] };
   const ledger = read(G("mission-ledger.json"), { count: 0, entries: [] });
   const constitution = read(path.join("runtime", "constitution", "runtime-constitution.json"), { principles: [] });
   const queue = read(G("runtime-mission-queue.json"), { queue: [] });
-  console.log(render({ state, status, caps, ledger, constitution, queue }));
+  console.log(render({ state, status, caps, capsAvailable, ledger, constitution, queue }));
   // §F — READ-ONLY compass coherence observable: surfaces prose(ODG_PROJECT_STATE.md)/HEAD divergence so a stale
   // prose is visible (CONSISTENT/BEHIND/DIVERGENT/UNKNOWN), never blocking operations, never a fabricated pass.
   try {

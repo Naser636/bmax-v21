@@ -44,4 +44,34 @@ ok("dist classified is RESTORED (computed, not UNAVAILABLE) — capability-class
 // read-only: spawning the dashboards must not mutate the tracked tree (sanity — they are health/status probes).
 ok("dashboards exited (health/status produced output)", hout.length > 0 && sout.length > 0);
 
-console.log(`\nODG-HEALTH/STATUS dist integration — ${pass} assertions passed. (production dist dashboards; §G Supervision restored; §F Compass + CM-4 classified fail-VISIBLE not silently dropped; read-only)`);
+// FAIL-VISIBLE on ABSENT capability-registry (fixes an audited fabricated-health): run the real compiled dashboard
+// from an EMPTY cwd (no runtime/generated/*). It must NOT claim "Completion 100%" / "BLOCKERS: None — all present"
+// (absence masquerading as a perfect, zero-blocker state) — it must say UNKNOWN. FAILS on the pre-fix code (which
+// rendered 100% / None from the empty fallback). Non-vacuous.
+{
+  const empty = fs.mkdtempSync(path.join(require("node:os").tmpdir(), "odg-health-empty-"));
+  const h = spawnSync("node", [HEALTH], { cwd: empty, encoding: "utf8" });
+  const o = (h.stdout || "") + (h.stderr || "");
+  const compLine = o.split("\n").find((l) => /^\s*Completion\s*:/.test(l)) || "";
+  const blockLine = o.split("\n").findIndex((l) => /^BLOCKERS/.test(l));
+  const blockBody = blockLine >= 0 ? (o.split("\n")[blockLine + 1] || "") : "";
+  // The fabrication was a rendered progress bar "[####…] NN%"; match that, not the bare substring (our UNKNOWN
+  // message itself contains the words "100%").
+  ok("absent capability-registry ⇒ Completion is UNKNOWN, not a fabricated progress bar", /UNKNOWN/.test(compLine) && !/\]\s*\d+%/.test(compLine));
+  ok("absent capability-registry ⇒ BLOCKERS is UNKNOWN, not fabricated 'None — all present'", /UNKNOWN/.test(blockBody) && !/None — all/.test(blockBody));
+  fs.rmSync(empty, { recursive: true, force: true });
+}
+
+// render() unit: no caps + no capsAvailable flag ⇒ fail-visible (the exact render({}) the recon used to fabricate 100%).
+{
+  const { render } = require(HEALTH);
+  const o = render({});
+  const compLine = o.split("\n").find((l) => /^\s*Completion\s*:/.test(l)) || "";
+  ok("render({}) ⇒ Completion UNKNOWN (not a fabricated progress bar)", /UNKNOWN/.test(compLine) && !/\]\s*\d+%/.test(compLine));
+  // A genuinely-present registry still renders real data (not over-blocked into UNKNOWN).
+  const o2 = render({ caps: { capabilities: ["a", "b"], missingCapabilities: [] }, capsAvailable: true });
+  const comp2 = o2.split("\n").find((l) => /^\s*Completion\s*:/.test(l)) || "";
+  ok("render(present registry) ⇒ real progress bar (capsAvailable not over-blocking)", /\]\s*\d+%/.test(comp2) && !/UNKNOWN/.test(comp2));
+}
+
+console.log(`\nODG-HEALTH/STATUS dist integration — ${pass} assertions passed. (production dist dashboards; §G Supervision restored; §F Compass + CM-4 classified fail-VISIBLE not silently dropped; absent capability-registry ⇒ UNKNOWN not fabricated 100%/None; read-only)`);
