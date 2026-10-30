@@ -22,8 +22,13 @@ phase register.** It already self-declares this role and is the only doc authori
   `python -c "len(json.load(...)['missions'])"` = 11) consumed by `src/runtime/autonomy-runtime-adapter.ts`
   (`ROADMAP_MANIFEST`). Authoritative for what the runtime auto-executes. Its prose source is
   `runtime/system/ROADMAP.md` / `runtime/governance/RUNTIME_ROADMAP.md` (see §4).
-- `docs/odg/closure-register.json` — the **campaign/lot register** (112 items, P0/P1/P2) consumed by
-  `runtime/core/campaign-controller.ts`. Authoritative for engineering/product/security lot status.
+- `docs/odg/closure-register.json` — the **campaign/lot register** (117 items as of 2026-10-30, P0/P1/P2) consumed
+  by `runtime/core/campaign-controller.ts`. Authoritative for engineering/product/security lot status.
+- `docs/odg/roadmap-dependencies.json` — the **inter-mission dependency companion** read by
+  `runtime/core/roadmap-dep-check.ts` (`checkCanonicalRoadmap` validates the governed ROADMAP.json order against it).
+  Non-protected (unlike `runtime/governance/ROADMAP.json`); the subject of the open `structured-roadmap-deps` lot —
+  deps are enriched HERE and only the final apply INTO the protected ROADMAP.json is owner-gated. (Distinct from
+  `docs/odg/ROADMAP.proposed.json`, the dep-planner *preview* in §5.)
 
 **Frozen authority (never edited operationally):** Master V5 (`docs/odg-master-v5/source/ODG_FINAL_MASTER_V5_FICHE_01..07`)
 → Runtime Constitution → CTO Directives → `runtime/governance/ROADMAP.json`. Authority order per `ODG_MASTER_ROADMAP.md §A`.
@@ -97,6 +102,10 @@ explicitly *future* program. `§M` holds the reconciled η3 execution sequence.
 3. **`docs/FOUNDATION_STATUS.md` "Next: Sprint 6"** — **Disposition:** historical banner.
 4. **"ODG MASTER ROADMAP D'EXCELLENCE OPÉRATIONNELLE (28 July 2026)"** — **NOT LOCATED** anywhere (working tree + full git history; `grep -ri "excellence opérationnelle\|28 juillet\|28 july 2026"` → 0). Closest real artifact is **§X "MASTER ROADMAP OF OPERATIONAL EXCELLENCE — DOCUMENTARY INTEGRATION"** (`ODG_MASTER_ROADMAP.md` L1164, an English documentary audit section dated 2026-10-17). **Determination:** either never authored as a standalone 28-July French document, or an informal name for §X. Recorded here as **referenced-but-absent**; requires owner confirmation if a distinct document is expected.
 5. **`§S` "default stays JS"** — stale body text vs the zero-JS reality (TS is now default). Reconcile in a future §S edit (body trim under its SUPERSEDED banner).
+
+**CTO_DIRECTIVES standing commitments** (`runtime/governance/directives/CTO_DIRECTIVES.md`, 3rd link in the authority chain): its **Technical Targets 1–6** (T2 RuntimeExecutor = the official execution engine; T3 MissionDispatcher = entry point; T4 RuntimeKernel = core; T5 ExecutionMemory records every mission; T6 EventBus connects engines) and **Priorities 1–8** are standing architectural commitments. Disposition: **satisfied-by-construction and tracked by the machine companions** — the runtime embodies T2–T6 (see `runtime/core/` + the §K autonomy ladder), Priority 4 (JS→TS) = the ZERO-JS convergence rows above, and the ODG5 Reality-Proof amendment maps to the reality-gate / integration-state discipline in §6. No separate roadmap artifact; they are authority on their own requirements and are not re-numbered here (preserved, per §A).
+
+**€500k commercial-objective family** (`REVENUE_500K_PLAN_V1/V2.md`, `FINANCIAL_PLAN_500K_V1.md`, `NET_CASH_PLAN_500K_V1.md`, `PATHS_TO_500K_V1.md`, `GO_TO_MARKET_V1.md`, `ODG_HIGH_TICKET_ENGINE.md`, `ODG_30_DAY_B2B_REVENUE_CAMPAIGN_V1.md`): these are **commercial plans/analyses, not engineering roadmaps** — the reproducible model lives in `runtime/core/revenue-scenarios.ts`/`revenue-schedule.ts` and the executable commercial surface is tracked by the P-01 + commercial register lots. Disposition: **IN SCOPE as commercial-plan references (out of the engineering-roadmap SSOT boundary)**; their execution is owner/external-gated (real outreach, billing, send-gates). Named here so the boundary is explicit — no commitment is lost or silently dropped.
 
 **Derivative / snapshot / report artifacts** (no lost commitment; listed for completeness per the Phase-F audit):
 `docs/odg-operational/ODG_TOOL_EXCELLENCE_AND_ROADMAP_COMPLETION_V1_REPORT.md` → maps to §Y "ODG TOOL EXCELLENCE
