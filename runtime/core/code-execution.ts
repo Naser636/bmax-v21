@@ -44,6 +44,43 @@ const RUST_SYSROOT: string | null = (() => {
 })();
 const RUST_BIN: string = RUST_SYSROOT && fs.existsSync(path.join(RUST_SYSROOT, "bin", "rustc")) ? path.join(RUST_SYSROOT, "bin", "rustc") : "rustc";
 
+// Pure, NO-INSTALL Dockerfile STRUCTURAL lint — a conservative SUBSET of hadolint (structure only, NOT style/best-
+// practice rules): the first instruction (ignoring comments, parser directives, blank lines and leading ARGs, which
+// Docker permits before FROM) must be FROM, and every instruction keyword must be a valid Dockerfile instruction.
+// In-process, deterministic, no subprocess/network ⇒ available with ZERO toolchain install (hadolint, when installed,
+// remains the richer check). Returns { ok, errors }. A genuine capability, honestly scoped as "structural".
+const DOCKERFILE_INSTRUCTIONS = Object.freeze(new Set(["FROM", "RUN", "CMD", "LABEL", "MAINTAINER", "EXPOSE", "ENV", "ADD", "COPY", "ENTRYPOINT", "VOLUME", "USER", "WORKDIR", "ARG", "ONBUILD", "STOPSIGNAL", "HEALTHCHECK", "SHELL"]));
+function dockerfileStructuralLint(content: string): { ok: boolean; errors: string[] } {
+  const errors: string[] = [];
+  const raw = String(content == null ? "" : content).split(/\r?\n/);
+  // Join line continuations: a line ending with a trailing backslash continues onto the next physical line.
+  const lines: Array<{ text: string; n: number }> = [];
+  let buf = "", startN = 0;
+  raw.forEach((ln, i) => {
+    if (buf === "") startN = i + 1;
+    const cont = /\\\s*$/.test(ln);
+    buf += (buf ? " " : "") + ln.replace(/\\\s*$/, "");
+    if (!cont) { lines.push({ text: buf, n: startN }); buf = ""; }
+  });
+  if (buf !== "") lines.push({ text: buf, n: startN });
+  let sawFrom = false, sawInstruction = false;
+  for (const { text, n } of lines) {
+    const t = text.trim();
+    if (t === "" || t.startsWith("#")) continue;                 // blank / comment / parser directive
+    const first = t.split(/\s+/)[0] || "";
+    const kw = first.toUpperCase();
+    if (!DOCKERFILE_INSTRUCTIONS.has(kw)) { errors.push(`line ${n}: unknown Dockerfile instruction '${first}'`); sawInstruction = true; continue; }
+    if (!sawFrom && kw !== "FROM" && kw !== "ARG") {
+      errors.push(`line ${n}: first instruction must be FROM (got '${kw}'); only comments, parser directives and ARG may precede it`);
+    }
+    if (kw === "FROM") sawFrom = true;
+    sawInstruction = true;
+  }
+  if (!sawInstruction) errors.push("empty Dockerfile: no instructions");
+  else if (!sawFrom) errors.push("no FROM instruction: a Dockerfile must declare a base image");
+  return { ok: errors.length === 0, errors };
+}
+
 // Supported checkers. A language is only ACTIONABLE here if its binary (and, for library-backed checkers, its module)
 // is actually present — PROBED per-capability, never assumed. The Shell/SQL/YAML/JSON checkers below use tooling that
 // is ALREADY installed (bash, python3 stdlib sqlite3/json, PyYAML) — i.e. a real capability expansion that needs NO
@@ -145,6 +182,8 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   Dockerfile: {
     bin: "hadolint", probeArgs: ["--version"], ext: ".Dockerfile",
     args: (f: string) => ["--no-color", f],
+    // NO-INSTALL in-process structural subset (always available; hadolint, when installed, is the richer check).
+    structuralCheck: dockerfileStructuralLint,
   },
 });
 
@@ -222,6 +261,8 @@ function detectToolchain(opts: any = {}): Record<string, boolean> {
   const runner = injected ? opts.runner : defaultRunner;
   const out: Record<string, boolean> = {};
   for (const [lang, spec] of Object.entries(LANG_SPEC)) {
+    // An in-process NO-INSTALL checker (e.g. Dockerfile structural lint) needs no toolchain ⇒ always available.
+    if (typeof (spec as any).structuralCheck === "function") { out[lang] = true; continue; }
     // Require a CLEAN probe: spawned AND exit 0. A non-zero `--version` (e.g. a decoy binary) ⇒ NOT available (honest).
     // The real defaultRunner maps exitCode to spawnSync `res.status`, which is NULL when the probe is killed by a
     // signal (OOM/SIGKILL — distinct from a timeout). A signal-killed probe must NOT count as available (fail-toward-
@@ -249,6 +290,14 @@ function runSyntaxCheck(input: any = {}): any {
   // single-file check anyway — no build.rs / OUT_DIR). Legit Rust without file inclusion is unaffected.
   if (language === "Rust" && /\binclude(?:_str|_bytes)?\s*!|#\s*\[\s*path\s*=/.test(input.content)) {
     return { status: "BLOCKED", language, reason: "refused: Rust file-inclusion (include!/include_str!/include_bytes!/#[path]) can read files outside the sandbox workspace; not permitted in the reviewed-source syntax checker" };
+  }
+  // NO-INSTALL in-process checker (e.g. Dockerfile structural lint): run directly — no subprocess, no toolchain,
+  // no sandbox needed (pure parse of the reviewed content). Deterministic PASS/FAIL, never a decoy.
+  if (typeof spec.structuralCheck === "function") {
+    const res = spec.structuralCheck(input.content);
+    return res && res.ok
+      ? { status: "PASS", language, detail: `${language} structural lint passed (NO-INSTALL structural subset)` }
+      : { status: "FAIL", language, detail: `${language} structural lint: ${(res && res.errors || []).join("; ")}`, errors: (res && res.errors) || [] };
   }
   const runner = typeof input.runner === "function" ? input.runner : defaultRunner;
   // Toolchain availability: explicit override (tests) OR probe.

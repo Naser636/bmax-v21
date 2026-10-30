@@ -75,9 +75,15 @@ ok("CSharp toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ lan
 // HTML-CSS validate IS wired now (authorized HTML Tidy): errors-only mode (warnings suppressed).
 ok("HtmlCss in LANG_SPEC: argv-array `tidy -q -e --show-warnings no`", E.LANG_SPEC.HtmlCss && E.LANG_SPEC.HtmlCss.bin === "tidy" && E.LANG_SPEC.HtmlCss.args("f").includes("-e") && E.LANG_SPEC.HtmlCss.args("f").includes("no"));
 ok("HtmlCss toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "HtmlCss", content: "<p>x</p>", toolchainAvailable: false }).status === "UNSUPPORTED");
-// Dockerfile/lint adapter is PREPARED (hadolint) but the binary is external/not-in-apt ⇒ probe fails ⇒ UNSUPPORTED
-// today (fail-closed, never faked). The wiring is ready for a checksum-verified install (HADOLINT_INSTALL.md).
-ok("Dockerfile adapter wired (hadolint, argv-array) but UNSUPPORTED until binary present (not faked)", E.LANG_SPEC.Dockerfile && E.LANG_SPEC.Dockerfile.bin === "hadolint" && Array.isArray(E.LANG_SPEC.Dockerfile.args("f")) && (E.detectToolchain().Dockerfile === true || E.runSyntaxCheck({ language: "Dockerfile", content: "FROM alpine\n" }).status === "UNSUPPORTED"));
+// Dockerfile now has a NO-INSTALL in-process STRUCTURAL lint (a conservative subset of hadolint). The hadolint adapter
+// stays wired as the richer check when the binary is installed (HADOLINT_INSTALL.md); the structural subset is always
+// available (no install) ⇒ Dockerfile is no longer UNSUPPORTED. Structural, honestly scoped — not full hadolint rules.
+ok("Dockerfile: hadolint adapter still wired (richer-when-present) + NO-INSTALL structuralCheck added", E.LANG_SPEC.Dockerfile && E.LANG_SPEC.Dockerfile.bin === "hadolint" && Array.isArray(E.LANG_SPEC.Dockerfile.args("f")) && typeof E.LANG_SPEC.Dockerfile.structuralCheck === "function");
+ok("Dockerfile: available with NO install (in-process structural checker)", E.detectToolchain().Dockerfile === true);
+ok("Dockerfile structural: a valid Dockerfile ⇒ PASS", E.runSyntaxCheck({ language: "Dockerfile", content: "# base\nARG V=3.19\nFROM alpine:${V}\nRUN apk add --no-cache curl \\\n && true\nCOPY . /app\nWORKDIR /app\nCMD [\"/app/run\"]\n" }).status === "PASS");
+ok("Dockerfile structural: first instruction not FROM ⇒ FAIL (not a decoy PASS)", E.runSyntaxCheck({ language: "Dockerfile", content: "RUN echo hi\nFROM alpine\n" }).status === "FAIL");
+ok("Dockerfile structural: unknown instruction ⇒ FAIL", E.runSyntaxCheck({ language: "Dockerfile", content: "FROM alpine\nFOOBAR x\n" }).status === "FAIL");
+ok("Dockerfile structural: no FROM ⇒ FAIL", E.runSyntaxCheck({ language: "Dockerfile", content: "RUN echo hi\n" }).status === "FAIL");
 // a genuinely unknown stack stays UNSUPPORTED (no decoy).
 ok("unknown stack (COBOL) ⇒ UNSUPPORTED (no decoy)", !E.LANG_SPEC.COBOL && E.runSyntaxCheck({ language: "COBOL", content: "x" }).status === "UNSUPPORTED");
 
