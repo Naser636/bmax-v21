@@ -45,6 +45,20 @@ ok("client not-ok (CONNECT_ERROR) ⇒ SOURCE_UNAVAILABLE", (await T.fetchTed({ h
 ok("401 ⇒ AUTH_REQUIRED", (await T.fetchTed({ httpPost: async () => ({ ok: false, statusCode: 401 }), now: NOW })).status === "AUTH_REQUIRED");
 ok("httpPost throws ⇒ SOURCE_UNAVAILABLE (no crash)", (await T.fetchTed({ httpPost: async () => { throw new Error("boom"); }, now: NOW })).status === "SOURCE_UNAVAILABLE");
 
-console.log(`\nTED-CONNECTOR suite — ${pass} assertions passed. (lang-keyed parse; state machine; dedup; malformed-drop; provenance; no fabrication)`);
-if (pass < 13) process.exit(1);
+// (9) LANGUAGE IDENTITY PRESERVED (fairness/i18n): mapNotice records WHICH language the subject came from, and a
+// non-preferred-language-only notice is KEPT (not dropped) with its language recorded — so downstream capability-fit
+// can flag it UNDETERMINED rather than silently assessing a German/Italian subject with EN/FR vocabulary.
+ok("pickLangTagged returns {value,lang}: preferred wins; non-preferred recorded; plain string ⇒ lang null",
+   T.pickLangTagged({ hun: ["x"], fra: ["Objet FR"] }).lang === "fra" &&
+   T.pickLangTagged({ deu: ["Deutscher Titel"] }).lang === "deu" && T.pickLangTagged({ deu: ["Deutscher Titel"] }).value === "Deutscher Titel" &&
+   T.pickLangTagged("plain").lang === null);
+{
+  const fr = T.mapNotice({ "publication-number": "P1", "notice-title": { fra: ["Titre FR"], eng: ["EN title"] } }, NOW);
+  const de = T.mapNotice({ "publication-number": "P2", "notice-title": { deu: ["Deutscher Titel"] } }, NOW);
+  ok("mapNotice preserves subject language: FR+EN ⇒ language 'fra' (preferred); DE-only ⇒ language 'deu' + KEPT (not dropped)",
+     fr.language === "fra" && fr.subject === "Titre FR" && de.language === "deu" && de.subject === "Deutscher Titel" && de !== null);
+}
+
+console.log(`\nTED-CONNECTOR suite — ${pass} assertions passed. (lang-keyed parse; LANGUAGE IDENTITY preserved; state machine; dedup; malformed-drop; provenance; no fabrication)`);
+if (pass < 15) process.exit(1);
 })();

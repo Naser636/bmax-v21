@@ -21,16 +21,24 @@ const PREFERRED_LANGS = Object.freeze(["fra", "eng", "fr", "en"]);
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function str(v: any): string { return typeof v === "string" ? v.trim() : ""; }
 
-/** pickLang(v): TED fields are {lang:[values]} maps (or a plain string/array). Return the preferred-language scalar. */
-function pickLang(v: any): string {
-  if (typeof v === "string") return v.trim();
-  if (Array.isArray(v)) return v.length ? str(v[0]) : "";
+/**
+ * pickLangTagged(v): TED fields are {lang:[values]} maps (or a plain string/array). Return BOTH the preferred-language
+ * scalar AND the language it came from, so language IDENTITY is PRESERVED (not silently discarded). `lang` is the
+ * ISO code of the chosen value, or null for a plain string/array (language unknown). When the only available language
+ * is outside PREFERRED_LANGS, the value is still returned (never dropped) and `lang` records which non-preferred
+ * language it is — the honest signal that downstream capability-fit cannot assess it with its EN/FR vocabulary.
+ */
+function pickLangTagged(v: any): { value: string; lang: string | null } {
+  if (typeof v === "string") return { value: v.trim(), lang: null };
+  if (Array.isArray(v)) return { value: v.length ? str(v[0]) : "", lang: null };
   if (isObj(v)) {
-    for (const l of PREFERRED_LANGS) { if (v[l] !== undefined) { const x = v[l]; return Array.isArray(x) ? str(x[0]) : str(x); } }
-    const keys = Object.keys(v); if (keys.length) { const x = v[keys[0]]; return Array.isArray(x) ? str(x[0]) : str(x); }
+    for (const l of PREFERRED_LANGS) { if (v[l] !== undefined) { const x = v[l]; return { value: Array.isArray(x) ? str(x[0]) : str(x), lang: l }; } }
+    const keys = Object.keys(v); if (keys.length) { const x = v[keys[0]]; return { value: Array.isArray(x) ? str(x[0]) : str(x), lang: keys[0] }; }
   }
-  return "";
+  return { value: "", lang: null };
 }
+/** pickLang(v): the preferred-language scalar (back-compat wrapper over pickLangTagged). */
+function pickLang(v: any): string { return pickLangTagged(v).value; }
 
 /** canonicalUrl(notice): prefer links.html (lang-keyed) else derive from publication-number. */
 function canonicalUrl(n: any): string {
@@ -43,14 +51,16 @@ function canonicalUrl(n: any): string {
 /** mapNotice(n, retrievalTimestamp): TED notice → opportunity record (no fabrication). */
 function mapNotice(n: any, retrievalTimestamp: string | null): any {
   const ref = str(n && n["publication-number"]);
-  const subject = pickLang(n && n["notice-title"]);
+  const title = pickLangTagged(n && n["notice-title"]);
+  const subject = title.value;
+  const language = title.lang;   // PRESERVE language identity of the subject (null if plain string / unknown)
   const deadlineRaw = n && n["deadline-receipt-request"];
   const deadline = Array.isArray(deadlineRaw) ? str(deadlineRaw[0]) : str(deadlineRaw);
   const publishedAt = Array.isArray(n && n["publication-date"]) ? str(n["publication-date"][0]) : str(n && n["publication-date"]);
   const url = canonicalUrl(n);
   if (!ref || !subject) return null;   // malformed ⇒ drop (never fabricate)
   return {
-    id: ref, ref, buyer: pickLang(n && n["buyer-name"]), subject, url,
+    id: ref, ref, buyer: pickLang(n && n["buyer-name"]), subject, language, url,
     publishedAt, deadline, budgetEur: null, source: "TED", sourceType: "public-tender",
     provenance: { source: "TED", sourceTimestamp: publishedAt || null, retrievalTimestamp },
   };
@@ -102,7 +112,7 @@ async function fetchTed(opts: any = {}): Promise<any> {
   };
 }
 
-export { STATE, ENDPOINT, DEFAULT_FIELDS, pickLang, canonicalUrl, mapNotice, buildQuery, fetchTed };
-module.exports = { STATE, ENDPOINT, DEFAULT_FIELDS, pickLang, canonicalUrl, mapNotice, buildQuery, fetchTed };
+export { STATE, ENDPOINT, DEFAULT_FIELDS, pickLang, pickLangTagged, canonicalUrl, mapNotice, buildQuery, fetchTed };
+module.exports = { STATE, ENDPOINT, DEFAULT_FIELDS, pickLang, pickLangTagged, canonicalUrl, mapNotice, buildQuery, fetchTed };
 
 export {};

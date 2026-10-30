@@ -56,4 +56,42 @@ ok("parked entries carry subject + reason (auditable, not silently dropped)", fi
 // default (no requireCapabilityFit) keeps prior behaviour (no parking).
 ok("default (filter off) ⇒ no parking (backward compatible)", (R.runDiscovery({ source: mixedSource, detectOpts: { nowMs: Date.parse("2026-10-28T00:00:00Z") } }).parked || []).length === 0);
 
-console.log(`\nOPPORTUNITY-AXIS-ROUTER suite — ${pass} assertions passed. (six-axis routing; fit>value ranking; capability-fit filter; NO_RESULTS w/o connector; synthetic=TEST; nothing sent)`);
+// --- FAIRNESS / I18N: language coverage must be UNDETERMINED (never a silent relevant:false) for non-EN/FR subjects ---
+{
+  // (a) a keyword match ⇒ relevant regardless of language (a match is a match, incl. a loanword in a non-covered lang).
+  ok("capabilityFit: EN/FR keyword match ⇒ relevant (any language)",
+     R.capabilityFit({ subject: "cybersecurity penetration testing", language: "eng" }).relevant === true &&
+     R.capabilityFit({ subject: "test d'intrusion applicatif", language: "fra" }).relevant === true &&
+     R.capabilityFit({ subject: "Cybersecurity audit für Behörden", language: "deu" }).relevant === true);
+  // (b) UNCOVERED language + no keyword ⇒ UNDETERMINED (not a confident negative) — the fairness fix.
+  const de = R.capabilityFit({ subject: "Sicherheitsüberprüfung und Penetrationstest", language: "deu" });
+  ok("capabilityFit: non-EN/FR subject, no keyword ⇒ relevant:false BUT undetermined:true + LANGUAGE_NOT_COVERED (never silently relevant:false)",
+     de.relevant === false && de.undetermined === true && de.coverage === "LANGUAGE_NOT_COVERED" && /UNDETERMINED/.test(de.reason));
+  // (c) COVERED language (EN/FR) + no keyword ⇒ genuine assessed negative (undetermined:false) — NOT conflated with (b).
+  const cater = R.capabilityFit({ subject: "catering services for the school canteen", language: "eng" });
+  ok("capabilityFit: EN subject, no keyword ⇒ genuine negative (undetermined:false, coverage ASSESSED)",
+     cater.relevant === false && cater.undetermined === false && cater.coverage === "ASSESSED");
+  // (d) unknown language (no tag) ⇒ best-effort assessed (back-compat; not undetermined without a known language).
+  ok("capabilityFit: no language tag ⇒ ASSESSED (back-compat)", R.capabilityFit({ subject: "pont routier" }).undetermined === false);
+  // (e) runDiscovery routes an unassessable non-EN/FR subject to a DISTINCT undetermined bucket (not parked, not opportunities).
+  const res = R.runDiscovery({ source: () => [
+    { id: "de", subject: "Penetrationstest für Behörden", language: "deu", buyer: "b", url: "https://e/de", grade: "A" },
+    { id: "cater", subject: "catering services", language: "eng", buyer: "b", url: "https://e/c" },
+    { id: "ok", subject: "software SBOM assurance", language: "eng", buyer: "b", url: "https://e/o", grade: "A" },
+  ], requireCapabilityFit: true, detectOpts: { nowMs: Date.parse("2026-10-28T00:00:00Z") } });
+  ok("runDiscovery: non-EN/FR unassessable ⇒ undetermined bucket (distinct from parked/opportunities)",
+     res.counts.undetermined === 1 && (res.undetermined || []).some((u) => u.id === "de" && u.coverage === "LANGUAGE_NOT_COVERED") &&
+     !(res.parked || []).some((p) => p.id === "de") && !(res.opportunities || []).some((o) => o.id === "de"));
+}
+// --- routeToAxis EN+FR parity (FR tenders route to F/D, not the silent A default) ---
+ok("routeToAxis FR: homologation/accréditation ⇒ F; revendeur/accord-de-distribution/sous-traitance ⇒ D (EN parity)",
+   R.routeToAxis({ subject: "homologation de sécurité du système" }).axis === "F" &&
+   R.routeToAxis({ subject: "accréditation COFRAC" }).axis === "F" &&
+   R.routeToAxis({ subject: "accord de distribution et revendeur agréé" }).axis === "D" &&
+   R.routeToAxis({ subject: "contrat de sous-traitance" }).axis === "D");
+// PRECISION (no over-reach): bare generic FR terms must NOT force axis D — these are ordinary supply contracts.
+ok("routeToAxis FR precision: 'distribution électrique' + 'accord-cadre de fourniture de papier' do NOT route to D",
+   R.routeToAxis({ subject: "travaux de distribution électrique basse tension" }).axis !== "D" &&
+   R.routeToAxis({ subject: "accord-cadre de fourniture de papier" }).axis !== "D");
+
+console.log(`\nOPPORTUNITY-AXIS-ROUTER suite — ${pass} assertions passed. (six-axis routing; fit>value ranking; capability-fit filter; i18n UNDETERMINED coverage; EN+FR axis parity; NO_RESULTS w/o connector; synthetic=TEST; nothing sent)`);
