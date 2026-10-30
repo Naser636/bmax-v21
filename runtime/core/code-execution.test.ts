@@ -53,7 +53,9 @@ ok("Go hermetic env is offline + workspace-scoped (no network, no inherited cach
 ok("Go toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Go", content: "package main\nfunc main(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED" && /not faked/.test(E.runSyntaxCheck({ language: "Go", content: "x", toolchainAvailable: false }).reason));
 // Rust/build IS wired now (authorized rustc install): a REAL `rustc --emit=metadata` type+borrow check — argv-array,
 // with a per-workspace hermetic env fn (offline; metadata-only, no linker; emits into the self-cleaning workspace).
-ok("Rust in LANG_SPEC: argv-array `rustc --emit=metadata` + hermetic env fn", E.LANG_SPEC.Rust && Array.isArray(E.LANG_SPEC.Rust.args("f")) && E.LANG_SPEC.Rust.bin === "rustc" && typeof E.LANG_SPEC.Rust.env === "function" && E.LANG_SPEC.Rust.args("f").includes("--emit=metadata"));
+// bin is the resolved real toolchain rustc (<sysroot>/bin/rustc) so the confined run reaches std on rustup hosts, or
+// the bare "rustc" fallback when the sysroot is unresolvable — assert it names a rustc binary, not a fixed path.
+ok("Rust in LANG_SPEC: argv-array `rustc --emit=metadata` + hermetic env fn", E.LANG_SPEC.Rust && Array.isArray(E.LANG_SPEC.Rust.args("f")) && /(^|\/)rustc$/.test(String(E.LANG_SPEC.Rust.bin)) && typeof E.LANG_SPEC.Rust.env === "function" && E.LANG_SPEC.Rust.args("f").includes("--emit=metadata"));
 ok("Rust hermetic env is offline + workspace-scoped (no RUSTUP_HOME clobber)", (() => { const e = E.LANG_SPEC.Rust.env("/ws"); return e.CARGO_NET_OFFLINE === "true" && String(e.TMPDIR).startsWith("/ws") && !("RUSTUP_HOME" in e); })());
 ok("Rust toolchain absent ⇒ UNSUPPORTED (not faked)", E.runSyntaxCheck({ language: "Rust", content: "pub fn f(){}\n", toolchainAvailable: false }).status === "UNSUPPORTED");
 // Java/compile IS wired now (authorized JDK): a REAL `javac -d <ws>` type check — argv-array; no HOME/JAVA_HOME clobber.

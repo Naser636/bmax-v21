@@ -29,6 +29,20 @@ const TS_PKG_DIR: string | null = TSC_PATH ? path.resolve(path.dirname(TSC_PATH)
 const TS_BIN = TSC_PATH ? process.execPath : "__odg_tsc_absent__";
 const TS_PROBE = TSC_PATH ? [TSC_PATH, "--version"] : ["--version"];
 const TS_ARGS = (f: string) => TSC_PATH ? [TSC_PATH, "--noEmit", "--skipLibCheck", f] : ["--noEmit", f];
+// Rust runs CONFINED (confine:true). A bare `rustc` relies on PATH=/usr/bin:/bin inside the sandbox AND on its sysroot
+// (std rlibs + codegen libs) being present. On an apt rustc the sysroot is /usr (already bound) — fine. On a rustup
+// host (e.g. GitHub Actions: rustc 1.99.x) the on-PATH `rustc` is a PROXY that resolves the real toolchain via
+// ~/.rustup, and the sysroot lives UNDER ~/.rustup/toolchains/<ver> — NOT bound ⇒ confined rustc can't find `std` and
+// even LEGIT Rust fails to compile (a false FAIL, reproduced on CI). Resolve the sysroot once and (a) invoke the REAL
+// toolchain binary <sysroot>/bin/rustc directly (no proxy ⇒ no RUSTUP_HOME dependence) and (b) bind the sysroot dir
+// read-only so std + the codegen backend resolve. The sysroot is toolchain code, not host secrets — binding it does
+// NOT weaken the include!/aliased-include host-read confinement (those target other paths like /etc or /tmp). Probe
+// failure ⇒ RUST_SYSROOT null ⇒ fall back to bare "rustc" (and BLOCKED/UNSUPPORTED if unresolvable), never unconfined.
+const RUST_SYSROOT: string | null = (() => {
+  try { const r = cp.spawnSync("rustc", ["--print", "sysroot"], { encoding: "utf8", timeout: 8000 }); return r && r.status === 0 ? String(r.stdout || "").trim() || null : null; }
+  catch { return null; }
+})();
+const RUST_BIN: string = RUST_SYSROOT && fs.existsSync(path.join(RUST_SYSROOT, "bin", "rustc")) ? path.join(RUST_SYSROOT, "bin", "rustc") : "rustc";
 
 // Supported checkers. A language is only ACTIONABLE here if its binary (and, for library-backed checkers, its module)
 // is actually present — PROBED per-capability, never assumed. The Shell/SQL/YAML/JSON checkers below use tooling that
@@ -90,9 +104,12 @@ const LANG_SPEC: Readonly<Record<string, any>> = Object.freeze({
   // hosts where `rustc` is a rustup PROXY (e.g. CI runners), pointing those at an empty workspace dir hides the default
   // toolchain and breaks even clean code. HOME (unchanged) lets the proxy resolve ~/.rustup. Probe fails ⇒ UNSUPPORTED.
   Rust: {
-    bin: "rustc", probeArgs: ["--version"], ext: ".rs",
+    bin: RUST_BIN, probeArgs: ["--version"], ext: ".rs",
     args: (f: string) => ["--edition", "2021", "--crate-type", "lib", "--emit=metadata", "--out-dir", path.dirname(f), f],
     env: (dir: string) => ({ TMPDIR: dir, CARGO_NET_OFFLINE: "true" }),
+    // Bind the resolved rust sysroot read-only so the confined real-toolchain rustc finds std + its codegen backend
+    // on rustup hosts (apt sysroot=/usr is already covered by SYS_RO; the dedup in runConfined makes this a no-op there).
+    roBinds: RUST_SYSROOT ? [RUST_SYSROOT] : [],
     // SECURITY: rustc's file-inclusion macros (include!/include_str!/include_bytes!) can be ALIASED
     // (`use std::include as x; x!("/abs")`), so no source-text guard is sufficient. Run rustc FILESYSTEM-CONFINED in
     // bubblewrap (only system dirs + this workspace are visible) so NO inclusion — aliased or not — can resolve a
@@ -158,21 +175,30 @@ function defaultRunner(bin: string, args: string[], opts: any): any {
     const setenv: string[] = [];
     const env = opts.env && typeof opts.env === "object" ? opts.env : {};
     for (const [k, v] of Object.entries(env)) { if (typeof v === "string") setenv.push("--setenv", k, v); }
-    // Extra read-only binds a spec needs for its toolchain (e.g. TypeScript's package dir, which lives under the repo,
-    // not /usr) — validated-existing only; never a confidential tree.
-    const extraRo = (Array.isArray(opts.roBinds) ? opts.roBinds : []).filter((p: any) => typeof p === "string" && (() => { try { return fs.existsSync(p); } catch { return false; } })());
-    // The confined runner execs `bin` by absolute path (for the TS checker bin === process.execPath). That binary may
-    // live OUTSIDE SYS_RO (GitHub Actions /opt/hostedtoolcache, nvm, volta) ⇒ the sandboxed exec is "No such file or
-    // directory" and a legit check wrongly reports a spawnError. Bind it read-only when not already under a sys dir.
-    const execRo = (typeof bin === "string" && path.isAbsolute(bin)
-      && !SYS_RO.some((d) => bin === d || bin.startsWith(d + "/"))
-      && (() => { try { return fs.existsSync(bin); } catch { return false; } })())
-      ? ["--ro-bind", bin, bin] : [];
+    // Read-only bind set = base system dirs + spec toolchain dirs (opts.roBinds, e.g. the TypeScript package dir or the
+    // rust sysroot) + the exec binary `bin` when it is an absolute path. The last matters because the confined runner
+    // execs `bin` directly: for the TS checker bin === process.execPath and for Rust bin === <sysroot>/bin/rustc, either
+    // of which may live OUTSIDE the system dirs (GitHub Actions hostedtoolcache / rustup) ⇒ without binding it the
+    // sandboxed exec is "No such file or directory". DEDUP + ancestor-coverage: skip any candidate already covered by an
+    // earlier bind (exact dup OR a bound ancestor dir) so bwrap never sees an overlapping ro-bind target (it rejects
+    // those) — e.g. an apt rust sysroot of /usr, or <sysroot>/bin/rustc nested under an already-bound sysroot. None of
+    // these are confidential trees (system code / toolchain), so this does not weaken the host-file-read confinement.
+    const extraRo = (Array.isArray(opts.roBinds) ? opts.roBinds : []).filter((p: any) => typeof p === "string" && p);
+    const candidates: string[] = [
+      ...SYS_RO,
+      ...extraRo,
+      ...(typeof bin === "string" && path.isAbsolute(bin) ? [bin] : []),
+    ].filter((p) => { try { return !!p && fs.existsSync(p); } catch { return false; } });
+    const bound: string[] = [];
+    const roBindArgs: string[] = [];
+    for (const p of candidates) {
+      if (bound.some((b) => p === b || p.startsWith((b.endsWith("/") ? b : b + "/")))) continue; // covered
+      bound.push(p);
+      roBindArgs.push("--ro-bind", p, p);
+    }
     const bw = ["--as-pid-1", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
       "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", home,
-      ...SYS_RO.flatMap((p) => ["--ro-bind", p, p]),
-      ...extraRo.flatMap((p: string) => ["--ro-bind", p, p]),
-      ...execRo,
+      ...roBindArgs,
       "--dev", "/dev", "--proc", "/proc",
       "--bind", opts.cwd, opts.cwd, "--chdir", opts.cwd,
       ...setenv, "--", bin, ...args];
