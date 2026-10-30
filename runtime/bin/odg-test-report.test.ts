@@ -112,6 +112,13 @@ for (const base of ["runtime-executor.external-research.test.ts", "runtime-execu
   const fx = mkTs(base, 'const path=require("path");const f=path.join("runtime","generated","external-research-acquisition.json");console.log("ok");\n');
   ok(`suiteIsHazard: '${base}' allowlisted ⇒ serial (prevents the shared-artifact race)`, R.suiteIsHazard(fx) === true);
 }
+// REGRESSION (second recon): three more suites write REAL shared runtime/generated artifacts (runtime-verify.json /
+// mission-report.json / the mission ledger / lifecycle / pipeline-checkpoint) via computed paths HAZARD_RE can't see,
+// and MUST serialize. Same allowlist-by-basename mechanism.
+for (const base of ["objective-evidence.test.ts", "local-mission-runner-ledger.test.ts", "controlled-mission-live.test.ts"]) {
+  const fx = mkTs(base, 'const path=require("path");const f=path.join("runtime","generated","runtime-verify.json");console.log("ok");\n');
+  ok(`suiteIsHazard: '${base}' allowlisted ⇒ serial (prevents the shared-artifact race)`, R.suiteIsHazard(fx) === true);
+}
 const fNotListed = mkTs("some-unlisted-computed.test.ts", 'const path=require("path");const f=path.join("runtime","generated","x.json");console.log("ok");\n');
 ok("suiteIsHazard: a NON-allowlisted computed-path fixture stays hermetic (allowlist is specific, not blanket)", R.suiteIsHazard(fNotListed) === false);
 ok("parseWorkers: unset/1 ⇒ 1 (sequential default)", R.parseWorkers(undefined) === 1 && R.parseWorkers("1") === 1 && R.parseWorkers("0") === 1);

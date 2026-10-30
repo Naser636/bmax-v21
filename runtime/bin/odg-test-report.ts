@@ -154,6 +154,19 @@ const HAZARD_ALLOWLIST = new Set<string>([
   "runtime-executor.external-research.test.ts",
   "runtime-executor.safe-probe-authorization.test.ts",
   "external-research-live.test.ts",
+  // Same class again (found by a later frontier recon): these write/delete/restore REAL shared runtime/generated
+  // artifacts via a COMPUTED path HAZARD_RE can't see — objective-evidence → runtime-verify.json; local-mission-
+  // runner-ledger → mission-report.json + the real mission ledger; controlled-mission-live snapshots/restores FIVE
+  // (mission-report, mission-ledger, mission-lifecycle, runtime-verify, pipeline-checkpoint) and appends to the real
+  // ledger twice. In a parallel pool they race each other and any other suite reaching the same artifacts (the
+  // mission-ledger read-modify-write is itself unlocked ⇒ lost-update, a bounded ephemeral-evidence loss gated today
+  // only by the one-active-mission governance discipline, NOT a code-level lock — see the register follow-on). NOT in
+  // CI's curated test:report set, and `npm test` is a SEQUENTIAL bash loop; the real exposure is a DEFAULT-GLOB
+  // `odg-test-report --run` (no explicit files) with ODG_TEST_WORKERS>1, where defaultFiles() scans src/runtime/*.test.ts
+  // and these 3 would land in the parallel pool. Declared hazardous so they ALWAYS serialize (phase-1), never parallel.
+  "objective-evidence.test.ts",
+  "local-mission-runner-ledger.test.ts",
+  "controlled-mission-live.test.ts",
 ]);
 function suiteIsHazard(absFile: string): boolean {
   if (HAZARD_ALLOWLIST.has(path.basename(absFile))) return true; // declared-hazardous (computed repo-relative writes)
