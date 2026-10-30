@@ -56,6 +56,13 @@ function defaultRunner(args: string[], opts: any): any {
   const bw: string[] = ["--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
     "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/tmp"];
   for (const p of SYSTEM_RO) { if (fs.existsSync(p)) bw.push("--ro-bind", p, p); }
+  // The compiler is invoked below as `process.execPath <tsc>`. process.execPath may live OUTSIDE SYSTEM_RO
+  // (GitHub Actions /opt/hostedtoolcache, nvm, volta, a self-built node) — then the sandboxed `node` is
+  // "No such file or directory" (execvp) and a LEGIT project wrongly reports BLOCKED/FAIL. Bind the node binary
+  // itself read-only when it is not already under a bound system dir. (Masked locally where node is /usr/bin/node.)
+  if (!SYSTEM_RO.some((d) => process.execPath === d || process.execPath.startsWith(d + "/"))) {
+    bw.push("--ro-bind", process.execPath, process.execPath);
+  }
   bw.push("--ro-bind", TS_PKG_DIR, TS_PKG_DIR);
   let innerArgs = args;
   if (opts && typeof opts.cwd === "string" && opts.cwd) {

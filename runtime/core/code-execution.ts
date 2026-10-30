@@ -161,10 +161,18 @@ function defaultRunner(bin: string, args: string[], opts: any): any {
     // Extra read-only binds a spec needs for its toolchain (e.g. TypeScript's package dir, which lives under the repo,
     // not /usr) — validated-existing only; never a confidential tree.
     const extraRo = (Array.isArray(opts.roBinds) ? opts.roBinds : []).filter((p: any) => typeof p === "string" && (() => { try { return fs.existsSync(p); } catch { return false; } })());
+    // The confined runner execs `bin` by absolute path (for the TS checker bin === process.execPath). That binary may
+    // live OUTSIDE SYS_RO (GitHub Actions /opt/hostedtoolcache, nvm, volta) ⇒ the sandboxed exec is "No such file or
+    // directory" and a legit check wrongly reports a spawnError. Bind it read-only when not already under a sys dir.
+    const execRo = (typeof bin === "string" && path.isAbsolute(bin)
+      && !SYS_RO.some((d) => bin === d || bin.startsWith(d + "/"))
+      && (() => { try { return fs.existsSync(bin); } catch { return false; } })())
+      ? ["--ro-bind", bin, bin] : [];
     const bw = ["--as-pid-1", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
       "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", home,
       ...SYS_RO.flatMap((p) => ["--ro-bind", p, p]),
       ...extraRo.flatMap((p: string) => ["--ro-bind", p, p]),
+      ...execRo,
       "--dev", "/dev", "--proc", "/proc",
       "--bind", opts.cwd, opts.cwd, "--chdir", opts.cwd,
       ...setenv, "--", bin, ...args];

@@ -314,8 +314,11 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
   const repoRead = engine.govern({ command: "wc -l " + repoFile, execute: true }, {});
   ok("confinement: an absolute read inside the repo (process.cwd()) still succeeds (not over-blocked)",
     repoRead.outcome === O.EXECUTED && (repoRead.execution || {}).exitCode === 0);
-  // System code dirs stay readable so command binaries/libs resolve (not confidential).
-  const sys = engine.govern({ command: "stat /usr/bin/node", execute: true }, {});
+  // System code dirs stay readable so command binaries/libs resolve (not confidential). Probe /usr/bin/env — a
+  // coreutils binary guaranteed present under the bound /usr on every host (unlike /usr/bin/node, which is ABSENT on
+  // runners that install node elsewhere, e.g. GitHub Actions /opt/hostedtoolcache — that made this assert a false
+  // confinement failure, not a real one). env is already this suite's portable shell entrypoint.
+  const sys = engine.govern({ command: "stat /usr/bin/env", execute: true }, {});
   ok("confinement: system code dirs (/usr) remain readable (commands still run)", (sys.execution || {}).exitCode === 0);
   // /proc ENV ISOLATION (fixes an audited leak): PID 1 in the sandbox namespace must NOT carry the governor process's
   // host env. `--clearenv` only scrubs the child; bwrap's own process/monitor is cleared by spawning bwrap with a
