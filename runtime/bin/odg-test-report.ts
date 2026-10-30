@@ -143,7 +143,18 @@ const HAZARD_RE = /process\.chdir\(|\.listen\(|(?:writeFileSync|appendFileSync|m
 // Explicit allowlist for suites that touch repo-relative GLOBAL state the HAZARD_RE heuristic cannot see — e.g. a
 // write whose path is COMPUTED (path.join(REPO,"runtime",...)) rather than a literal "runtime/..." string argument.
 // Such a suite must still run serially (phase 1), never in the hermetic parallel pool. Keyed by basename.
-const HAZARD_ALLOWLIST = new Set<string>(["consequential-executor-gate.test.ts"]);
+const HAZARD_ALLOWLIST = new Set<string>([
+  "consequential-executor-gate.test.ts",
+  // These three write/delete/restore the SAME real file runtime/generated/external-research-acquisition.json via a
+  // COMPUTED path (path.join("runtime","generated",...)) that HAZARD_RE (literal "runtime/" only) cannot see. In the
+  // phase-2 parallel pool they race each other (REPRODUCED: concurrent runs crash — incl. a safety-authorization test
+  // misfiring on a sibling's artifact). Declared hazardous ⇒ serial phase-1, like consequential-executor-gate.
+  // (external-research-live is incidentally serialized today by a .listen() in HAZARD_RE, but allowlisted here so the
+  // serialization is INTENTIONAL and survives a refactor that drops the server.)
+  "runtime-executor.external-research.test.ts",
+  "runtime-executor.safe-probe-authorization.test.ts",
+  "external-research-live.test.ts",
+]);
 function suiteIsHazard(absFile: string): boolean {
   if (HAZARD_ALLOWLIST.has(path.basename(absFile))) return true; // declared-hazardous (computed repo-relative writes)
   let src = "";

@@ -105,6 +105,15 @@ ok("suiteIsHazard: pure fixture ⇒ hermetic (parallel)", R.suiteIsHazard(fPassR
 // would not match (fixture writes via a computed path ⇒ regex miss ⇒ must still be hazardous via the allowlist).
 const fComputed = mkTs("consequential-executor-gate.test.ts", 'const path=require("path");const f=path.join(process.cwd(),"runtime","x.json");console.log("ok");\n');
 ok("suiteIsHazard: allowlisted basename ⇒ hazard even when HAZARD_RE misses the computed path", R.suiteIsHazard(fComputed) === true);
+// REGRESSION: the external-research trio all write the SAME computed runtime/generated/external-research-acquisition.json
+// and MUST be serial (allowlisted) or they race in the parallel pool. Fixtures carry a computed path HAZARD_RE can't see;
+// only the allowlist (by basename) can force hazard=true. A non-allowlisted computed-path fixture must stay hermetic.
+for (const base of ["runtime-executor.external-research.test.ts", "runtime-executor.safe-probe-authorization.test.ts", "external-research-live.test.ts"]) {
+  const fx = mkTs(base, 'const path=require("path");const f=path.join("runtime","generated","external-research-acquisition.json");console.log("ok");\n');
+  ok(`suiteIsHazard: '${base}' allowlisted ⇒ serial (prevents the shared-artifact race)`, R.suiteIsHazard(fx) === true);
+}
+const fNotListed = mkTs("some-unlisted-computed.test.ts", 'const path=require("path");const f=path.join("runtime","generated","x.json");console.log("ok");\n');
+ok("suiteIsHazard: a NON-allowlisted computed-path fixture stays hermetic (allowlist is specific, not blanket)", R.suiteIsHazard(fNotListed) === false);
 ok("parseWorkers: unset/1 ⇒ 1 (sequential default)", R.parseWorkers(undefined) === 1 && R.parseWorkers("1") === 1 && R.parseWorkers("0") === 1);
 ok("parseWorkers: clamps to CPU count (never oversubscribe)", R.parseWorkers("9999") <= os.cpus().length && R.parseWorkers("9999") >= 1);
 
