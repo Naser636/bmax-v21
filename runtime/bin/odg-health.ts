@@ -26,6 +26,14 @@ function render(artifacts: any): string {
   const ledger = artifacts.ledger || { count: 0, entries: [] };
   const constitution = artifacts.constitution || { principles: [] };
   const queue = artifacts.queue || { queue: [] };
+  // F2b: same fail-VISIBLE discipline as capsAvailable, for the other sources whose absence render used to collapse
+  // into an optimistic default (NEXT ACTION "SYSTEM_READY", Missions "0 recorded", a hardcoded WORKING RULES list
+  // presented as if loaded). The caller signals which sources actually loaded; absence ⇒ UNKNOWN / labelled default,
+  // never a benign-looking fabrication. Default false so a bare render({...}) without flags is fail-visible.
+  const stateAvailable = artifacts.stateAvailable === true;
+  const statusAvailable = artifacts.statusAvailable === true;
+  const ledgerAvailable = artifacts.ledgerAvailable === true;
+  const constitutionAvailable = artifacts.constitutionAvailable === true;
 
   // FAIL-VISIBLE (fixes an audited fabricated-health): read() collapses an ABSENT/unreadable capability-registry.json
   // into the SAME {capabilities:[],missingCapabilities:[]} shape as a genuinely-empty registry, so absence used to
@@ -43,7 +51,11 @@ function render(artifacts: any): string {
   const lastRun = state.lastRun && typeof state.lastRun === "object" ? state.lastRun : null;
 
   const nextPending = (queue.queue || []).find((m: any) => m && m.status === "PENDING");
-  const nextMissionName = nextPending ? nextPending.mission : (status.nextMission || state.status || "SYSTEM_READY");
+  // A concrete next mission from a loaded source (a pending queue item, or status/state) is real; falling through to
+  // the idle "SYSTEM_READY" default is only honest when status OR state actually loaded — otherwise the system's next
+  // action is genuinely UNKNOWN (absent sources must not read as a healthy idle system).
+  const nextFromSources = nextPending ? nextPending.mission : (status.nextMission || state.status || null);
+  const nextMissionName = nextFromSources || ((statusAvailable || stateAvailable) ? "SYSTEM_READY" : "UNKNOWN — runtime status/state unavailable");
   const nextAction = nextPending
     ? `${nextPending.mission}${nextPending.objective ? " / " + nextPending.objective : ""}`
     : nextMissionName;
@@ -69,7 +81,7 @@ function render(artifacts: any): string {
   L.push("PROGRESS");
   L.push(`  Capabilities : ${capsAvailable ? `${capList.length} ready / ${missing.length} missing` : "UNKNOWN — capability-registry unavailable"}`);
   L.push(`  Completion   : ${capsAvailable ? bar(pct) : "UNKNOWN — capability-registry unavailable (not a fabricated 100%)"}`);
-  L.push(`  Missions     : ${ledger.count ?? entries.length} recorded`);
+  L.push(`  Missions     : ${ledgerAvailable ? `${ledger.count ?? entries.length} recorded` : "UNKNOWN — mission-ledger unavailable"}`);
   L.push(`  Last Mission : ${lastEntry.mission ?? state.lastMission ?? "N/A"} (${lastEntry.state ?? "?"})`);
   if (lastRun) L.push(`  Last Run     : ${lastRun.mission} — ${lastRun.status}${lastRun.validated ? "" : " (validated=false)"}`);
   L.push("");
@@ -86,8 +98,18 @@ function render(artifacts: any): string {
   L.push("NEXT ACTION");
   L.push(`  ${nextActionLine}`);
   L.push("");
-  L.push("WORKING RULES");
-  const rules = (constitution.principles || []).length
+  // WORKING RULES: show the LOADED constitution when available; otherwise label the hardcoded set honestly as a
+  // fallback (never present defaults as if they were the loaded runtime-constitution.json).
+  const constitutionLoaded = constitutionAvailable && (constitution.principles || []).length > 0;
+  // Distinguish loaded-with-principles from loaded-but-empty from genuinely-unavailable — the label must not claim
+  // "unavailable" when the file was actually read (just empty).
+  const rulesHeader = constitutionLoaded
+    ? "WORKING RULES"
+    : constitutionAvailable
+      ? "WORKING RULES (defaults — runtime-constitution.json has no principles)"
+      : "WORKING RULES (defaults — runtime-constitution.json unavailable)";
+  L.push(rulesHeader);
+  const rules = constitutionLoaded
     ? constitution.principles
     : ["DETERMINISM_FIRST", "EVIDENCE_REQUIRED", "ARTIFACTS_ARE_IMMUTABLE"];
   for (const r of rules) L.push(`  - ${r}`);
@@ -100,17 +122,23 @@ function render(artifacts: any): string {
 module.exports = { render };
 
 if (require.main === module) {
-  const state = read(G("runtime-state.json"), {});
-  const status = read(G("runtime-status.json"), {});
-  // Distinguish an ABSENT/unreadable capability-registry (read returns null) from a genuinely-present one, so render
-  // shows a fail-VISIBLE UNKNOWN for Completion/BLOCKERS rather than fabricating "100% / no blockers" on absence.
+  // Read each source with a null fallback so render can distinguish an ABSENT/unreadable source (fail-VISIBLE UNKNOWN)
+  // from a genuinely-present one — never fabricating a healthy default (100% / SYSTEM_READY / 0 recorded / loaded rules)
+  // on absence. *Available = the source actually loaded.
+  const stateRaw = read(G("runtime-state.json"), null);
+  const statusRaw = read(G("runtime-status.json"), null);
   const capsRaw = read(G("capability-registry.json"), null);
-  const capsAvailable = capsRaw !== null;
-  const caps = capsRaw || { capabilities: [], missingCapabilities: [] };
-  const ledger = read(G("mission-ledger.json"), { count: 0, entries: [] });
-  const constitution = read(path.join("runtime", "constitution", "runtime-constitution.json"), { principles: [] });
+  const ledgerRaw = read(G("mission-ledger.json"), null);
+  const constitutionRaw = read(path.join("runtime", "constitution", "runtime-constitution.json"), null);
   const queue = read(G("runtime-mission-queue.json"), { queue: [] });
-  console.log(render({ state, status, caps, capsAvailable, ledger, constitution, queue }));
+  console.log(render({
+    state: stateRaw || {}, stateAvailable: stateRaw !== null,
+    status: statusRaw || {}, statusAvailable: statusRaw !== null,
+    caps: capsRaw || { capabilities: [], missingCapabilities: [] }, capsAvailable: capsRaw !== null,
+    ledger: ledgerRaw || { count: 0, entries: [] }, ledgerAvailable: ledgerRaw !== null,
+    constitution: constitutionRaw || { principles: [] }, constitutionAvailable: constitutionRaw !== null,
+    queue,
+  }));
   // §F — READ-ONLY compass coherence observable: surfaces prose(ODG_PROJECT_STATE.md)/HEAD divergence so a stale
   // prose is visible (CONSISTENT/BEHIND/DIVERGENT/UNKNOWN), never blocking operations, never a fabricated pass.
   try {

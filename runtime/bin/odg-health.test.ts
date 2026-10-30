@@ -59,6 +59,14 @@ ok("dashboards exited (health/status produced output)", hout.length > 0 && sout.
   // message itself contains the words "100%").
   ok("absent capability-registry ⇒ Completion is UNKNOWN, not a fabricated progress bar", /UNKNOWN/.test(compLine) && !/\]\s*\d+%/.test(compLine));
   ok("absent capability-registry ⇒ BLOCKERS is UNKNOWN, not fabricated 'None — all present'", /UNKNOWN/.test(blockBody) && !/None — all/.test(blockBody));
+  // F2b: the other absent-source fabrications must also be fail-visible, never a benign default.
+  const missionsLine = o.split("\n").find((l) => /^\s*Missions\s*:/.test(l)) || "";
+  ok("absent mission-ledger ⇒ Missions is UNKNOWN, not a fabricated '0 recorded'", /UNKNOWN/.test(missionsLine) && !/\d+\s*recorded/.test(missionsLine));
+  const naIdx = o.split("\n").findIndex((l) => /^NEXT ACTION/.test(l));
+  const naBody = naIdx >= 0 ? (o.split("\n")[naIdx + 1] || "") : "";
+  ok("absent status+state ⇒ NEXT ACTION is UNKNOWN, not a fabricated 'SYSTEM_READY'", /UNKNOWN/.test(naBody) && !/SYSTEM_READY/.test(naBody));
+  const wrLine = o.split("\n").find((l) => /^WORKING RULES/.test(l)) || "";
+  ok("absent constitution ⇒ WORKING RULES labelled as defaults (not presented as the loaded constitution)", /defaults.*unavailable/.test(wrLine));
   fs.rmSync(empty, { recursive: true, force: true });
 }
 
@@ -72,6 +80,13 @@ ok("dashboards exited (health/status produced output)", hout.length > 0 && sout.
   const o2 = render({ caps: { capabilities: ["a", "b"], missingCapabilities: [] }, capsAvailable: true });
   const comp2 = o2.split("\n").find((l) => /^\s*Completion\s*:/.test(l)) || "";
   ok("render(present registry) ⇒ real progress bar (capsAvailable not over-blocking)", /\]\s*\d+%/.test(comp2) && !/UNKNOWN/.test(comp2));
+}
+
+// F2b present-case (no over-block): from the real repo root (sources present) the Missions line is a real count and
+// NEXT ACTION is not UNKNOWN — the availability flags must not force a loaded source into UNKNOWN.
+{
+  const missionsReal = hout.split("\n").find((l) => /^\s*Missions\s*:/.test(l)) || "";
+  ok("present mission-ledger ⇒ Missions shows a real recorded count (not over-blocked to UNKNOWN)", /\d+\s*recorded/.test(missionsReal) && !/UNKNOWN/.test(missionsReal));
 }
 
 console.log(`\nODG-HEALTH/STATUS dist integration — ${pass} assertions passed. (production dist dashboards; §G Supervision restored; §F Compass + CM-4 classified fail-VISIBLE not silently dropped; absent capability-registry ⇒ UNKNOWN not fabricated 100%/None; read-only)`);
