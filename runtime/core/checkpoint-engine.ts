@@ -125,7 +125,11 @@ function persist(cp: Checkpoint): Checkpoint {
   cp.context = contextSummary();
   cp.patch = patchSummary();
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
-  fs.writeFileSync(CHECKPOINT_PATH, JSON.stringify(cp, null, 2));
+  // CRASH-ATOMIC (temp + rename, like the mission-ledger): a torn pipeline-checkpoint would be read as null and
+  // silently discard resume progress; rename(2) prevents a half-written checkpoint.
+  const tmp = `${CHECKPOINT_PATH}.tmp-${process.pid}`;
+  fs.writeFileSync(tmp, JSON.stringify(cp, null, 2));
+  try { fs.renameSync(tmp, CHECKPOINT_PATH); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; }
   return cp;
 }
 
