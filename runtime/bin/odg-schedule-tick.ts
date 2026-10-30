@@ -63,7 +63,7 @@ const AUDIT_CHAIN_PATH = path.join(ROOT, "runtime", "generated", "scheduler-audi
 
 // Read/append the persisted tamper-evident canary decision chain (audit artifact only — NOT business state).
 function readAuditChain(): any[] { try { const c = JSON.parse(fs.readFileSync(AUDIT_CHAIN_PATH, "utf8")); return Array.isArray(c) ? c : []; } catch { return []; } }
-function persistAuditChain(chain: any[]): void { try { fs.mkdirSync(path.dirname(AUDIT_CHAIN_PATH), { recursive: true }); fs.writeFileSync(AUDIT_CHAIN_PATH, JSON.stringify(chain, null, 2)); } catch { /* best-effort audit */ } }
+function persistAuditChain(chain: any[]): void { try { fs.mkdirSync(path.dirname(AUDIT_CHAIN_PATH), { recursive: true }); const tmp = `${AUDIT_CHAIN_PATH}.tmp-${process.pid}`; fs.writeFileSync(tmp, JSON.stringify(chain, null, 2)); try { fs.renameSync(tmp, AUDIT_CHAIN_PATH); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; } } catch { /* best-effort audit (crash-atomic temp+rename so a torn write can't silently truncate the tamper-evident chain) */ } }
 
 function gitExec(args: string[]): string | null {
   try { return String(cp.execFileSync("git", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; }

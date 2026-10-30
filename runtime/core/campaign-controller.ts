@@ -31,9 +31,19 @@ function loadRegister(path: string): any {
   return { ok: true, register: r };
 }
 
-/** saveRegister(path, register): persist (durable resume point). */
+/** saveRegister(path, register): persist (durable resume point). CRASH-ATOMIC. */
 function saveRegister(path: string, register: any): boolean {
-  try { fs.writeFileSync(path, JSON.stringify(register, null, 2)); return true; } catch { return false; }
+  // CRASH-ATOMIC write (mirror mission-ledger S3b): serialize to a temp file in the SAME directory, then rename()
+  // over the target. rename(2) is atomic on POSIX, so a crash/SIGKILL/OOM/power-loss mid-write can NEVER leave a
+  // torn/truncated register. This is THE durable campaign resume point — campaign-loop persists it after EVERY
+  // mission and loadRegister is the resume entry; a plain writeFileSync could leave it half-written ⇒ loadRegister
+  // reads it as corrupt (NO_REGISTER) ⇒ the campaign cannot resume. Same hardening the mission-ledger already has.
+  try {
+    const tmp = `${path}.tmp-${process.pid}`;
+    fs.writeFileSync(tmp, JSON.stringify(register, null, 2));
+    try { fs.renameSync(tmp, path); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; }
+    return true;
+  } catch { return false; }
 }
 
 /** itemsById(register) + a dep-planner layering over OPEN+ACCEPTED items (ACCEPTED are "done" layer-0 anchors). */

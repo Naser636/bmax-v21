@@ -58,6 +58,10 @@ const reg = (items) => ({ version: "t", items });
   // resume: fresh load picks up B as next (no re-analysis)
   const l2 = C.loadRegister(p);
   ok("resume after persist: A ACCEPTED on disk, next lot = B", l2.ok && l2.register.items.find(x => x.id === "A").status === "ACCEPTED" && C.selectNextLot(l2.register).lot.id === "B");
+  // (5b) CRASH-ATOMIC saveRegister: the write goes via a temp file + rename, so after a successful save the target is
+  // valid JSON AND no stray .tmp-* artifact is left in the dir (rename consumed it). Guards the durable resume point.
+  const leftovers = fs.readdirSync(dir).filter((f) => f.includes(".tmp-"));
+  ok("saveRegister is crash-atomic (temp+rename): no .tmp leftover, target round-trips", leftovers.length === 0 && C.loadRegister(p).ok === true);
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
