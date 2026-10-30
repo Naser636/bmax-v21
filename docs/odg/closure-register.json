@@ -1885,6 +1885,16 @@
         "mergeCommit": "b24513d",
         "verified": true
       }
+    },
+    {
+      "id": "v2-poleC-false-success-fairness-under-detection",
+      "program": "P2",
+      "priority": 2,
+      "deps": [],
+      "title": "V2 Pole C: close two UNDER-DETECTION gaps in responsible-quality instrumentation (false-success detector blind to gate-bypass; bias detector ignored refusal/quality parity)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "MASTER CTO CAMPAIGN V2 Pole C (intelligence/capabilities) recon — 2 CONFIRMED under-detection defects (dangerous direction for safety instruments), independently verified. C-1 autonomy-eval-harness.ts evaluateCase(): genuinelyOk (the dedicated false-success signal) OMITTED the mandatory-gate dims permissionsStops + trajectoryAccuracy ⇒ an agent that BYPASSED a required stop gate (permissionsStops=fail) or skipped/reordered required steps while claimedSuccess=true was NOT flagged a false success. FIX: fold both dims into genuinelyOk (non-applicable dims default pass:true ⇒ no false positive on genuine no-gate success). C-2 fairness-eval.ts assessFairness(): DISPARITY_METRICS declares refusal_rate_parity+quality_parity and byGroup already tallied refused/quality[], but only outcome(favourable)-rate gap fed disparityDetected ⇒ a large protected-group REFUSAL-rate disparity or quality gap with EQUAL favourable rates returned no-disparity (under-detection). FIX: compute refusalGap+qualityGap from already-collected data, fold into disparityDetected at the same threshold; qualityGap null (not spurious) unless every group carries quality data; new fields perGroupRefusalRate/perGroupMeanQuality/maxRefusalRateGap/maxQualityGap + surfaced note. Regression: autonomy-eval-harness.test +1 (gate-bypass + trajectory-reorder ⇒ falseSuccess CAUGHT), fairness-eval.test +1 (equal favourable but refusal-rate gap ⇒ SURFACED). Suites: autonomy-eval-harness 9 PASS, fairness-eval 8 PASS; consumers compliance-evidence-pack 5 + excellence-coverage 9 PASS; tsc clean BOTH tsconfigs; build:runtime OK."
     }
   ]
 }

@@ -76,14 +76,40 @@ function assessFairness(input: any = {}): any {
   for (const g of groups) rates[g] = Number((byGroup[g].favourable / byGroup[g].n).toFixed(4));
   const vals = Object.values(rates);
   const gap = Number((Math.max(...vals) - Math.min(...vals)).toFixed(4));
+  // DISPARITY_METRICS declares refusal_rate_parity + quality_parity and byGroup already tallies `refused`/`quality`,
+  // but previously ONLY outcome_rate_parity was evaluated ⇒ a large protected-group REFUSAL disparity (or a quality
+  // gap) returned "no disparity" — under-detection, the dangerous direction for a bias detector. Compute both from the
+  // already-collected data and fold them into disparityDetected (same maxOutcomeRateGap threshold). (recon V2 Pole C C-2.)
+  const refusalRates: Record<string, number> = {};
+  for (const g of groups) refusalRates[g] = Number((byGroup[g].refused / byGroup[g].n).toFixed(4));
+  const refVals = Object.values(refusalRates);
+  const refusalGap = Number((Math.max(...refVals) - Math.min(...refVals)).toFixed(4));
+  // quality parity: compare each group's mean qualityScore; only when EVERY group carries quality data (else null).
+  const qualityGroups = groups.filter((g) => byGroup[g].quality.length > 0);
+  const meanQuality: Record<string, number> = {};
+  for (const g of qualityGroups) meanQuality[g] = Number((byGroup[g].quality.reduce((a, b) => a + b, 0) / byGroup[g].quality.length).toFixed(4));
+  const qVals = Object.values(meanQuality);
+  const qualityGap = qualityGroups.length === groups.length && qVals.length >= 2 ? Number((Math.max(...qVals) - Math.min(...qVals)).toFixed(4)) : null;
+  const outcomeDisparity = gap > th.maxOutcomeRateGap;
+  const refusalDisparity = refusalGap > th.maxOutcomeRateGap;
+  const qualityDisparity = qualityGap !== null && qualityGap > th.maxOutcomeRateGap;
+  const disparityDetected = outcomeDisparity || refusalDisparity || qualityDisparity;
+  const surfaced: string[] = [];
+  if (outcomeDisparity) surfaced.push(`outcome-rate gap ${gap}`);
+  if (refusalDisparity) surfaced.push(`refusal-rate gap ${refusalGap}`);
+  if (qualityDisparity) surfaced.push(`quality gap ${qualityGap}`);
   return {
     status: "MEASURED",
     dimension: input.dimension || null,
     perGroupFavourableRate: rates,
+    perGroupRefusalRate: refusalRates,
+    perGroupMeanQuality: qualityGap === null ? null : meanQuality,
     maxOutcomeRateGap: gap,
-    disparityDetected: gap > th.maxOutcomeRateGap,
+    maxRefusalRateGap: refusalGap,
+    maxQualityGap: qualityGap,
+    disparityDetected,
     threshold: th.maxOutcomeRateGap,
-    note: gap > th.maxOutcomeRateGap ? "DISPARITY SURFACED — a reproducible outcome-rate gap exceeds the threshold; investigate + mitigate (and re-check no new disparity is introduced)." : "no outcome-rate gap above threshold on THIS set — NOT a guarantee of fairness in general.",
+    note: disparityDetected ? `DISPARITY SURFACED (${surfaced.join("; ")}) — a reproducible gap exceeds the threshold; investigate + mitigate (and re-check no new disparity is introduced).` : "no outcome-rate, refusal-rate or quality gap above threshold on THIS set — NOT a guarantee of fairness in general.",
   };
 }
 
