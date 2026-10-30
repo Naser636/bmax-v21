@@ -27,6 +27,16 @@ ok("equal rates ⇒ MEASURED, no disparity, no fairness guarantee", equal.status
 const biased = F.assessFairness({ results: mk("a", 36, 4).concat(mk("b", 12, 28)), comparable: true, independentProvenance: indep, dimension: "gender" });
 ok("large outcome-rate gap ⇒ disparity SURFACED", biased.status === "MEASURED" && biased.disparityDetected === true && biased.maxOutcomeRateGap > 0.1);
 
+// (5b) C-2 REGRESSION (recon V2 Pole C): EQUAL favourable rate but a large REFUSAL-rate disparity must be SURFACED
+// (previously missed — only outcome_rate_parity was computed despite refusal_rate_parity being declared + tallied).
+const refusalBias = F.assessFairness({ results: [].concat(
+    Array.from({ length: 15 }, () => ({ group: "a", outcome: "FAVOURABLE" })),
+    Array.from({ length: 15 }, () => ({ group: "a", outcome: "REFUSED" })),
+    Array.from({ length: 15 }, () => ({ group: "b", outcome: "FAVOURABLE" })),
+    Array.from({ length: 15 }, () => ({ group: "b", outcome: "UNFAVOURABLE" }))),
+  comparable: true, independentProvenance: indep, dimension: "disability" });
+ok("equal favourable rate but REFUSAL-rate disparity ⇒ SURFACED (was missed)", refusalBias.status === "MEASURED" && refusalBias.maxOutcomeRateGap === 0 && refusalBias.maxRefusalRateGap > 0.1 && refusalBias.disparityDetected === true && /refusal-rate gap/.test(refusalBias.note));
+
 // (6) capability surface: ODG's code capabilities are NOT_APPLICABLE (no bias claim either way).
 const s = F.capabilitySurface();
 ok("code capabilities ⇒ NOT_APPLICABLE (no protected-attribute surface), not 'bias-free'", s.assessed.every((c) => c.biasStatus === "NOT_APPLICABLE" && c.protectedAttributeSurface === false) && /NOT 'proven absent'/.test(s.note) && s.futureRequiresHarness.length > 0);
