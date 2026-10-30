@@ -1073,6 +1073,20 @@
       "acceptance": "A page's technical SEO readiness is audited against official CWV thresholds + Search Essentials, fail-closed (missing CWV ⇒ not pass; noindex/none/non-HTTPS/missing-title ⇒ HIGH), with no ranking/traffic claim and nothing published; independent audit's false-readiness (robots `none`) closed + regression-tested.",
       "nextAction": "Optional: a page-signal EXTRACTOR (parse real HTML/headers → the audit input) behind a bounded local parser; cross-page hreflang reciprocity; wire into the dashboard build as a local CI check. No external publish without launch authorization.",
       "staleEvidence": false
+    },
+    {
+      "id": "seo-page-signal-extractor",
+      "program": "P2",
+      "title": "SEO page-signal extractor (HTML/headers → seo-technical-audit input), pure parse, NO network",
+      "status": "ACCEPTED",
+      "deps": [
+        "seo-technical-audit-capability"
+      ],
+      "priority": 2,
+      "evidence": "PR(this cycle): runtime/core/seo-page-signal-extractor.ts — extractPageSignals parses CALLER-SUPPLIED html+headers into the exact shape seo-technical-audit consumes (title/meta-description/robots+X-Robots-Tag/canonical+Link-header/hreflang/JSON-LD/lang/link-counts) + detects inconsistencies (canonical html↔header, robots meta↔header, duplicate title/canonical); extractAndAudit round-trips extract→audit. PURE PARSE, NO network/fetch/DNS/crawl (structurally test-asserted); fail-closed (absent signal⇒null, never fabricated); nothing published. Tests (seo-page-signal-extractor.test.ts, 14). INDEPENDENT AUDIT: initial REJECT — (1) CRITICAL false-readiness: comments/<script> bodies not stripped ⇒ a commented-out or JS-string 'index,follow' before the real 'noindex' shadowed it ⇒ noindex page extracted as indexable; (2) ReDoS O(n^2) on unterminated tags; (3) link misclassification (protocol-relative counted internal; startsWith origin-prefix collision e.g. e.com.attacker.com). FIXED: strip comments then <script>/<style> bodies before signal parse (JSON-LD read from comment-stripped text so its ld+json script survives); bounded [^>]{0,4000} quantifiers + 5MB cap (2MB unterminated parses <2s; >5MB⇒TOO_LARGE); exact hostOf() compare + protocol-relative treated absolute; +4 regression tests (comment-shadow, script-shadow, ReDoS-bound, link-classification). Grounded SEO stays honest — extractor fabricates nothing; audit draws conclusions. Gate: extractor 14, tsc 0, build OK, full test:report 205/205. No new primitive.",
+      "acceptance": "Extracts real technical SEO signals from provided html/headers with NO network, fail-closed (absent⇒null), inconsistency detection, and a working extract→audit round-trip; a commented-out/script-string look-alike can NEVER shadow a real directive (noindex never lost); bounded against ReDoS; exact-host link classification; independent audit's 3 defects closed + regression-tested.",
+      "nextAction": "Optional: cross-page hreflang reciprocity + sitemap/robots.txt parsing (local, no fetch). Any real page capture is owner-authorized out-of-band (no implicit crawling).",
+      "staleEvidence": false
     }
   ]
 }
