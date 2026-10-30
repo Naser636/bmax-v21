@@ -10,12 +10,16 @@ const path = require("path");
 const G = require("./build-runtime-guard.js");
 let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); pass++; };
 
-function mkDist(inputs) {
+// Phase-2A: the scripts-dist outputs are NOT in the closure manifest but ARE required by distIsComplete, so a COMPLETE
+// fixture must include them (the production build always emits them). Pass {noScripts:true} to simulate their absence.
+const SCRIPTS_OUT = ["scripts/compass-update.js", "scripts/capability-classify.js"];
+function mkDist(inputs, opts = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "distguard-"));
   fs.mkdirSync(path.join(dir, "core"), { recursive: true });
   const man = { generator: "test", emittedCount: inputs.length, copiedCount: 0, totalClosure: inputs.length, copied: [], provenance: { schema: 1, inputCount: inputs.length, inputs: inputs.map((r) => ({ distRel: r, srcRel: "x", srcSha: "y", kind: "emitted" })) } };
   fs.writeFileSync(path.join(dir, "dist-closure-manifest.json"), JSON.stringify(man));
   for (const r of inputs) { fs.mkdirSync(path.dirname(path.join(dir, r)), { recursive: true }); fs.writeFileSync(path.join(dir, r), "// " + r); }
+  if (!opts.noScripts) { for (const r of SCRIPTS_OUT) { fs.mkdirSync(path.dirname(path.join(dir, r)), { recursive: true }); fs.writeFileSync(path.join(dir, r), "// " + r); } }
   return dir;
 }
 const MAN = (d) => path.join(d, "dist-closure-manifest.json");
@@ -48,6 +52,20 @@ const MAN = (d) => path.join(d, "dist-closure-manifest.json");
 {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), "distguard-empty-"));
   try { ok("no dist/core + no manifest ⇒ false", G.distIsComplete(d, MAN(d)) === false); }
+  finally { fs.rmSync(d, { recursive: true, force: true }); }
+}
+// (6) Phase-2A: all manifest closure files present but a scripts-dist OUTPUT missing (not manifest-recorded, inputs
+// unchanged) ⇒ INCOMPLETE. Without the explicit check this would false-'fresh' and SKIP, leaving the dist dashboards
+// silently UNAVAILABLE — the same stale-reuse class as (2), extended to the scripts-dist category this lot adds.
+{
+  const d = mkDist(["bin/odg-schedule-tick.js", "core/audit-log.js"]);
+  try { fs.rmSync(path.join(d, "scripts/compass-update.js")); ok("a missing scripts-dist output ⇒ distIsComplete false (forces rebuild, no false 'fresh')", G.distIsComplete(d, MAN(d)) === false); }
+  finally { fs.rmSync(d, { recursive: true, force: true }); }
+}
+// (7) a dist WITH all manifest closure files AND the scripts-dist outputs ⇒ complete (the production shape).
+{
+  const d = mkDist(["bin/odg-schedule-tick.js", "core/audit-log.js"]);
+  try { ok("manifest closure + scripts-dist outputs all present ⇒ distIsComplete true", G.distIsComplete(d, MAN(d)) === true); }
   finally { fs.rmSync(d, { recursive: true, force: true }); }
 }
 

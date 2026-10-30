@@ -33,6 +33,10 @@ const REPO = path.resolve(__dirname, "..");
 const DIST = path.join(REPO, "runtime", "dist");
 const FP_FILE = path.join(DIST, ".build-fingerprint");
 const MANIFEST = path.join(DIST, "dist-closure-manifest.json");
+// Phase-2A: dist outputs the closure manifest does NOT record (build-dist-closure scans dist/core only). These compiled
+// dashboard-helper scripts (from the scripts-dist tsc pass) must exist for the COMPILED dist dashboards to load §F
+// Compass / CM-4 classified; distIsComplete requires them so a SKIP never reuses a dist missing them.
+const SCRIPTS_DIST_OUTPUTS = [path.join("scripts", "compass-update.js"), path.join("scripts", "capability-classify.js")];
 
 function sha256(buf: any): string { return crypto.createHash("sha256").update(buf).digest("hex"); }
 
@@ -51,6 +55,12 @@ function computeFingerprint(): string {
   const inputs = [
     path.join(REPO, "tsconfig.runtime-dist.json"),
     path.join(REPO, "scripts", "build-dist-closure.ts"),
+    // Phase-2A: the dedicated scripts-dist config + the two repo-root dashboard-helper scripts it compiles into
+    // runtime/dist/scripts. These determine dist output too, so editing either MUST invalidate the build cache
+    // (else a stale dist/scripts would be silently reused — the exact fail-closed contract above).
+    path.join(REPO, "tsconfig.scripts-dist.json"),
+    path.join(REPO, "scripts", "compass-update.ts"),
+    path.join(REPO, "scripts", "capability-classify.ts"),
   ];
   collect(path.join(REPO, "runtime", "core"), inputs);
   collect(path.join(REPO, "runtime", "bin"), inputs);
@@ -81,6 +91,12 @@ function distIsComplete(distDir: string = DIST, manifestPath: string = MANIFEST)
   for (const it of inputs) {
     if (!it || typeof it.distRel !== "string" || !fs.existsSync(path.join(distDir, it.distRel))) return false;
   }
+  // Phase-2A: the manifest records dist/core closure only, so the loop above cannot see the scripts-dist outputs.
+  // Require them explicitly — else a deleted dist/scripts/*.js with unchanged inputs would pass as "fresh" and the
+  // dist dashboards would silently fall to UNAVAILABLE (the exact stale-reuse class this guard prevents for dist/core).
+  for (const rel of SCRIPTS_DIST_OUTPUTS) {
+    if (!fs.existsSync(path.join(distDir, rel))) return false;
+  }
   return true;
 }
 
@@ -93,6 +109,11 @@ function fullBuild(fp: string): void {
   fs.rmSync(DIST, { recursive: true, force: true });
   const tsc = path.join(REPO, "node_modules", ".bin", "tsc");
   if (!run(tsc, ["-p", "tsconfig.runtime-dist.json"])) process.exit(1);
+  // Phase-2A: compile the repo-root dashboard-helper scripts (scripts/compass-update.ts, capability-classify.ts)
+  // into runtime/dist/scripts so the COMPILED dist dashboards (node runtime/dist/bin/odg-health|status.js) can load
+  // them under zero-JS. They import ONLY Node builtins ⇒ nothing for build-dist-closure to chase, and the
+  // ORPHAN/STALE guard scans dist/core only, so these dist/scripts artifacts are left untouched by the closure pass.
+  if (!run(tsc, ["-p", "tsconfig.scripts-dist.json"])) process.exit(1);
   // ZERO-JS: the closure builder is TypeScript — run it via tsx (the source .js is retired).
   if (!run(path.join(REPO, "node_modules", ".bin", "tsx"), [path.join(REPO, "scripts", "build-dist-closure.ts")])) process.exit(1);
   // Write the fingerprint ONLY after a fully-successful clean build + closure.

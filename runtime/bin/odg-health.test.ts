@@ -29,11 +29,17 @@ const supLine = hout.split("\n").find((l) => /^Supervision\s*:/.test(l)) || "";
 ok("dist odg-health prints a Supervision line (§G observable never silently dropped)", /^Supervision\s*:/m.test(hout));
 ok("dist Supervision is RESTORED (computed, not UNAVAILABLE) — supervision-summary loads from dist", supLine !== "" && !/UNAVAILABLE/.test(supLine));
 
-// §F Compass: present (never silently dropped) — may be a real status OR an honest UNAVAILABLE, but NEVER absent.
-ok("dist odg-health prints a Compass line (present — real or honest UNAVAILABLE, never silently absent)", /^Compass\s*:/m.test(hout));
+// §F Compass: RESTORED (Phase-2A) — compass-update is now compiled into runtime/dist/scripts and dist-resolved, so the
+// line is present AND actually computed (not UNAVAILABLE). FAILS on the pre-Phase-2A code (it printed UNAVAILABLE). Non-vacuous.
+const compassLine = hout.split("\n").find((l) => /^Compass\s*:/.test(l)) || "";
+ok("dist odg-health prints a Compass line (§F observable never silently dropped)", /^Compass\s*:/m.test(hout));
+ok("dist Compass is RESTORED (computed, not UNAVAILABLE) — compass-update loads from dist", compassLine !== "" && !/UNAVAILABLE/.test(compassLine));
 
-// CM-4 classified: present on odg-status (real or honest UNAVAILABLE, never silently absent).
-ok("dist odg-status prints a classified line (present — real or honest UNAVAILABLE, never silently absent)", /classified\s*:/m.test(sout));
+// CM-4 classified: RESTORED (Phase-2A) — capability-classify compiled into runtime/dist/scripts and dist-resolved, so the
+// line is present AND actually computed (not UNAVAILABLE). FAILS on the pre-Phase-2A code (UNAVAILABLE). Non-vacuous.
+const classifiedLine = sout.split("\n").find((l) => /classified\s*:/.test(l)) || "";
+ok("dist odg-status prints a classified line (never silently dropped)", /classified\s*:/m.test(sout));
+ok("dist classified is RESTORED (computed, not UNAVAILABLE) — capability-classify loads from dist", classifiedLine !== "" && !/UNAVAILABLE/.test(classifiedLine));
 
 // read-only: spawning the dashboards must not mutate the tracked tree (sanity — they are health/status probes).
 ok("dashboards exited (health/status produced output)", hout.length > 0 && sout.length > 0);

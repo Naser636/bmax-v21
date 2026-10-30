@@ -102,17 +102,18 @@ if (require.main === module) {
   // §F — READ-ONLY compass coherence observable: surfaces prose(ODG_PROJECT_STATE.md)/HEAD divergence so a stale
   // prose is visible (CONSISTENT/BEHIND/DIVERGENT/UNKNOWN), never blocking operations, never a fabricated pass.
   try {
-    // cwd-relative require so it resolves from BOTH runtime/bin and runtime/dist/bin — the __dirname-relative
-    // "../../scripts" path breaks from the deeper dist dir (→ require throws → compass line silently dropped,
-    // the exact JS↔dist(TS) parity divergence). Same pattern as odg-status.ts's CM-4 classifier require.
-    const { compassProseDivergence } = require(path.resolve(process.cwd(), "scripts", "compass-update.js"));
+    // Phase-2A: compass-update is now compiled into runtime/dist/scripts, so the COMPILED dist dashboard loads it from
+    // dist (fail-closed resolveRequiredPort: prefers the dist .js, falls back to the .ts source under tsx, else throws
+    // a clear rebuild error — never a silent drop). Restores the §F observable's real content in the production path.
+    const compassPort = resolveRequiredPort("runtime/dist/scripts/compass-update.js", "scripts/compass-update.ts", (p: string) => fs.existsSync(path.resolve(process.cwd(), p)));
+    const { compassProseDivergence } = require(path.resolve(process.cwd(), compassPort));
     const d = compassProseDivergence(process.cwd());
     console.log(`Compass    : ${d.status}${d.proseHead ? ` (prose ${d.proseHead} vs HEAD ${String(d.head || "?").slice(0, 7)})` : ""} — ${d.reason}`);
   } catch (e: any) {
     // FAIL-VISIBLE: the §F observable must never SILENTLY vanish (that reads as "N/A" when it is really unavailable).
-    // scripts/compass-update is not compiled into runtime/dist (repo-root scripts/ is outside the dist rootDir), so the
-    // compiled dashboard cannot load it; surface that honestly as UNAVAILABLE rather than dropping the line entirely.
-    console.log(`Compass    : UNAVAILABLE — compass-update not loadable in this build (${(e && (e.code || e.message)) || "error"}); run under tsx or compile scripts/ to dist`);
+    // If the dist port is somehow missing (dist not built), surface it honestly as UNAVAILABLE rather than dropping
+    // the line entirely — never a fabricated pass.
+    console.log(`Compass    : UNAVAILABLE — compass-update not loadable in this build (${(e && (e.code || e.message)) || "error"}); run \`npm run build:runtime\` or under tsx`);
   }
 
   // §G — READ-ONLY supervision summary: the LAST odg-monitor tick result (exposure + maintenance) + its
