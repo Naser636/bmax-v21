@@ -698,7 +698,7 @@ const EXECUTORS = [
                 authoredBy: "ODG_CAPABILITY",
                 note: "Content formulated by ODG from authorized plan data; written strictly inside authorized_paths after pre-write confinement.",
             });
-            return { capability: "ODG Synthetic Deliverable", evidence: out, summary: { target: confined.relTarget, bytes: Buffer.byteLength(content) } };
+            return { capability: "ODG Synthetic Deliverable", evidence: out, deliverableTarget: confined.relTarget, summary: { target: confined.relTarget, bytes: Buffer.byteLength(content) } };
         },
     },
     {
@@ -746,7 +746,7 @@ const EXECUTORS = [
                 authoredBy: "ODG_CAPABILITY",
                 note: "Spec formulated by ODG via mission-synthesizer.toContract from authorized plan data; written inside authorized_paths after pre-write confinement. Correctness verified independently by the spec-schema-valid probe.",
             });
-            return { capability: "ODG Spec Author", evidence: out, summary: { target: confined.relTarget, objectives: contract.objectives.length } };
+            return { capability: "ODG Spec Author", evidence: out, deliverableTarget: confined.relTarget, summary: { target: confined.relTarget, objectives: contract.objectives.length } };
         },
     },
     {
