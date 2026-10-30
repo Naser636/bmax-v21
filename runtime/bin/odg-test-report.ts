@@ -77,9 +77,16 @@ function summarize(results: any): any {
   return { total: results.length, counts, byClass };
 }
 
-/** Overall exit code: 0 ONLY if no genuine FAIL and no BLOCKED_BY_ISOLATION (blocked is never PASS). */
+/**
+ * Overall exit code: 0 ONLY if no genuine FAIL, nothing BLOCKED_BY_ISOLATION, AND nothing NOT_RUN.
+ * NOT_RUN is FAIL-CLOSED: a listed suite whose file does not exist (renamed/moved/deleted/mistyped, or the
+ * tool invoked from a cwd≠repo-root so EVERY curated path resolves missing) NEVER ran — treating that as green
+ * would silently drop a required suite from the gate. The read-only --show path (renderShow) calls overallExit
+ * on the LOADED summary, so a persisted report recording NOT_RUN>0 is likewise not presented as green proof.
+ * (SKIPPED stays non-failing — it is an explicit, exit-0 opt-out a suite declared about itself, not a no-show.)
+ */
 function overallExit(summary: any): number {
-  return summary.counts.FAIL === 0 && summary.counts.BLOCKED_BY_ISOLATION === 0 ? 0 : 1;
+  return summary.counts.FAIL === 0 && summary.counts.BLOCKED_BY_ISOLATION === 0 && summary.counts.NOT_RUN === 0 ? 0 : 1;
 }
 
 function renderReport(summary: any, results: any): string {
@@ -99,8 +106,8 @@ function renderReport(summary: any, results: any): string {
   }
   L.push(rule);
   L.push(overallExit(summary) === 0
-    ? "VERDICT: all suites PASS/SKIPPED — no genuine failure, nothing blocked."
-    : "VERDICT: not green — genuine FAIL and/or BLOCKED_BY_ISOLATION present (disclosed above). Blocked ≠ pass.");
+    ? "VERDICT: all suites PASS/SKIPPED — no genuine failure, nothing blocked, nothing un-run."
+    : "VERDICT: not green — genuine FAIL and/or BLOCKED_BY_ISOLATION and/or NOT_RUN present (disclosed above). Blocked ≠ pass; a listed suite that never ran ≠ pass.");
   L.push(rule);
   return L.join("\n");
 }

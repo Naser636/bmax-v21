@@ -55,6 +55,15 @@ ok("overallExit non-zero when only BLOCKED present (blocked ≠ pass)",
   R.overallExit(R.summarize(R.runSuites([fBlocked], injected))) === 1);
 ok("overallExit 0 when only PASS + SKIPPED",
   R.overallExit(R.summarize(R.runSuites([fPass, fSkip], injected))) === 0);
+// B-2 REGRESSION (V2 Pole B): a listed suite that NEVER RAN (file missing — renamed/moved/deleted/mistyped, or
+// the whole curated list missing because cwd≠repo-root) must FAIL-CLOSE the gate, not silently green it.
+ok("overallExit non-zero when a NOT_RUN present (no FAIL) — a listed suite that never ran ≠ pass",
+  R.overallExit(R.summarize(R.runSuites([fPass, fSkip, fMissing], injected))) === 1);
+ok("overallExit non-zero when EVERY suite is NOT_RUN (e.g. invoked from wrong cwd ⇒ all paths missing)",
+  R.overallExit(R.summarize(R.runSuites([path.join(tmp, "x.test.js"), path.join(tmp, "y.test.js")], injected))) === 1);
+const notRunRep = R.renderReport(R.summarize(R.runSuites([fPass, fMissing], injected)), R.runSuites([fPass, fMissing], injected));
+ok("report with a NOT_RUN is NOT green and does not claim 'all suites PASS'",
+  /not green/.test(notRunRep) && !/all suites PASS/.test(notRunRep));
 
 // --- report discloses, never hides ----------------------------------------------------------------
 const rep = R.renderReport(sum, results);

@@ -113,14 +113,22 @@ function assessCanarySafety(missionId: string, loadSpec?: (id: string) => any): 
   return a.safe === true ? { safe: true, reason: "read-only canary allowlist (safety-assessed)" } : { safe: false, reason: `CANARY_REFUSES_NON_READONLY: ${(a.blockers || []).join("; ")}` };
 }
 
+// B-5 (V2 Pole B): spawnSync is synchronous + uninterruptible, so ctx.policy.maxDurationMs cannot kill a hung
+// odg-run child — off-systemd (manual / non-unit tick) the dispatch would block the tick forever (production is
+// bounded by the unit's TimeoutStartSec=600). Bound it here to the SAME budget as ctx.policy.maxDurationMs, with
+// an explicit SIGKILL and a maxBuffer so a chatty or hung child cannot hang or OOM the tick. A timeout leaves
+// r.status=null ⇒ verified=false (fail-closed), and is reported honestly.
+const DISPATCH_TIMEOUT_MS = 600000; // keep in sync with the tickOnce ctx.policy.maxDurationMs (=600000) + deploy unit TimeoutStartSec=600
 // Dispatch via the REAL governed pipeline (dist odg-run), inheriting the enforcement env.
 function dispatch(item: any): any {
   const runBin = corePort("runtime/bin/odg-run.js");
-  const r = cp.spawnSync("node", [runBin, item.mission], { cwd: ROOT, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"] });
+  const r = cp.spawnSync("node", [runBin, item.mission], { cwd: ROOT, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+  const timedOut = !!(r.error && (r.error as any).code === "ETIMEDOUT") || r.signal === "SIGKILL";
   let report: any = null;
   try { report = JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "generated", "mission-report.json"), "utf8")); } catch { /* none */ }
-  const verified = !!(report && report.mission === item.mission && report.validated === true && report.status === "SUCCESS" && r.status === 0);
-  return { verified, detail: report ? `status ${report.status}` : `odg-run exit ${r.status}` };
+  const verified = !timedOut && !!(report && report.mission === item.mission && report.validated === true && report.status === "SUCCESS" && r.status === 0);
+  const detail = timedOut ? `odg-run TIMED OUT after ${DISPATCH_TIMEOUT_MS}ms (killed) — not verified` : (report ? `status ${report.status}` : `odg-run exit ${r.status}`);
+  return { verified, detail };
 }
 
 function main(): void {

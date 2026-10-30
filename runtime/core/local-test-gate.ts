@@ -34,13 +34,22 @@ export interface LocalTestGate {
   detail: string;
 }
 
+// B-6 (V2 Pole B): bound each test spawn. A hanging/infinite-loop test file would otherwise hang the evidence
+// gate indefinitely; a very verbose one could breach the default 1 MiB maxBuffer (status:null — already treated
+// as fail, safe). timeout (SIGKILL) + a larger maxBuffer close both: a timed-out test leaves status=null ⇒ ok
+// false (fail-closed), reported as a timeout rather than hanging forever.
+// per-file ceiling — ample for a unit suite, bounded against a hang. Env-overridable (also lets the regression
+// drive a fast, real timeout against a deliberately-hanging fixture instead of waiting the full default).
+const LOCAL_TEST_TIMEOUT_MS = (() => { const n = Number(process.env.ODG_LOCAL_TEST_TIMEOUT_MS); return Number.isFinite(n) && n > 0 ? n : 120000; })();
 // Run each test file in its own `node` process. ok === every file exited 0.
 export function runTests(files: string | string[]): LocalTestRun {
   const list: string[] = Array.isArray(files) ? files : [files];
   const results: LocalTestResult[] = list.map((f) => {
-    const r = spawnSync(process.execPath, [f], { encoding: "utf8" });
-    const lastErr = (r.stderr || "").trim().split("\n").pop();
-    return { file: f, code: r.status, ok: r.status === 0, error: r.status === 0 ? null : (lastErr ?? "") };
+    const r = spawnSync(process.execPath, [f], { encoding: "utf8", timeout: LOCAL_TEST_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+    const timedOut = !!(r.error && (r.error as any).code === "ETIMEDOUT") || r.signal === "SIGKILL";
+    const lastErr = timedOut ? `TIMED OUT after ${LOCAL_TEST_TIMEOUT_MS}ms (killed)` : (r.stderr || "").trim().split("\n").pop();
+    const ok = !timedOut && r.status === 0;
+    return { file: f, code: r.status, ok, error: ok ? null : (lastErr ?? "") };
   });
   const failed = results.filter((r) => !r.ok);
   return { ok: failed.length === 0, total: results.length, failed: failed.length, results };

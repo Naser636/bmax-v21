@@ -71,6 +71,26 @@ ok("changedPathsInScope excludes the sibling escape but keeps the real descendan
   JSON.stringify(so.changedPathsInScope(["runtime/core"], ["runtime/coreEVIL/x.ts", "runtime/core/x.ts"]))
     === JSON.stringify(["runtime/core/x.ts"]));
 
+// ---- B-1 REGRESSION (V2 Pole B): a git-observation ERROR must FAIL-CLOSED, not read as "0 changed ⇒ clean" ----
+// When scopeClean observes the tree ITSELF (no explicit changedPaths — the odg-delegate conformance path), a
+// swallowed git error previously returned {ok:true,"0 changed, all in scope"} — letting a delegate patch that
+// wrote OUTSIDE the write-set pass conformance. An errored/UNKNOWN observation must be REFUSED.
+console.log("scope-clean fail-closed on errored observation");
+ok("errored self-observation ⇒ NOT clean (fail-closed, not trivially-clean)",
+  so.scopeClean(scope, undefined, () => ({ ok: false, paths: [] })).ok === false);
+ok("errored self-observation detail names it UNKNOWN/refused, never '0 changed'",
+  /UNKNOWN|git status failed/.test(so.scopeClean(scope, undefined, () => ({ ok: false, paths: [] })).detail)
+    && !/0 changed/.test(so.scopeClean(scope, undefined, () => ({ ok: false, paths: [] })).detail));
+ok("a clean tree genuinely observed (ok:true, no paths) is still clean",
+  so.scopeClean(scope, undefined, () => ({ ok: true, paths: [] })).ok === true);
+ok("a genuine in-scope self-observation stays clean; an out-of-scope one is caught",
+  so.scopeClean(scope, undefined, () => ({ ok: true, paths: ["runtime/core/x.ts"] })).ok === true
+    && so.scopeClean(scope, undefined, () => ({ ok: true, paths: ["src/other/leak.ts"] })).ok === false);
+ok("gitChangedPathsChecked exposes a discriminated {ok,paths} observation",
+  typeof so.gitChangedPathsChecked === "function"
+    && typeof so.gitChangedPathsChecked().ok === "boolean"
+    && Array.isArray(so.gitChangedPathsChecked().paths));
+
 // ---- extracted primitives keep prior semantics ----
 console.log("extracted primitives");
 ok("changedPathsInScope filters to in-scope prefixes",

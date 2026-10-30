@@ -77,6 +77,11 @@ function composeModel(io: any, { tail = 12, nowMs = null as any, staleMs = 3600_
   const entries = Array.isArray(ledger.entries) ? ledger.entries : [];
   const queue = Array.isArray(queueDoc.queue) ? queueDoc.queue : [];
   const divs = Array.isArray(diag.divergences) ? diag.divergences : [];
+  // B-3 secondary (V2 Pole B): absence is already recorded in `degraded` — derive per-source availability from it
+  // so the NEXT field does not fabricate SYSTEM_READY when BOTH status and state are absent (the same fabricated-
+  // green the Foundation dashboard / odg-health fixes removed). The degraded banner alone did not fix the value.
+  const stateAvailable = !degraded.some((d) => d.startsWith("runtime-state.json:"));
+  const statusAvailable = !degraded.some((d) => d.startsWith("runtime-status.json:"));
   const log = io.activeLog(tail);
 
   const autoRes = io.json("autonomy-rate.json");
@@ -164,7 +169,7 @@ function composeModel(io: any, { tail = 12, nowMs = null as any, staleMs = 3600_
       missing: missing.length,
       missions: typeof ledger.count === "number" ? ledger.count : entries.length,
       last: entries.at(-1) ? `${entries.at(-1).mission} (${entries.at(-1).state ?? "?"})` : "N/A",
-      next: status.nextMission ?? state.nextMission ?? state.status ?? "SYSTEM_READY",
+      next: status.nextMission ?? state.nextMission ?? state.status ?? ((statusAvailable || stateAvailable) ? "SYSTEM_READY" : "UNKNOWN — runtime status/state unavailable"),
     },
     queue: queue.filter((m: any) => m && (m.status === "PENDING" || m.status === undefined)).slice(0, 6)
       .map((m: any) => `${m.mission}${m.objective ? " / " + m.objective : ""}`),
