@@ -40,11 +40,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      # CI-reliability (2026-10-30): the `cache: npm` restore in this step intermittently HUNG, consuming the whole
+      # 20-min job budget and failing as CANCELLED (observed repeatedly across the POST-V107 campaign; every job
+      # eventually passed on re-run, confirming the stall is in the cache restore, not the build/tests). Dropping the
+      # npm cache makes setup deterministic — node 22 is pre-provisioned in the runner's hostedtoolcache (near-instant)
+      # and `npm ci` below installs fresh (~30-60s, well within budget). A 5-min step timeout fails FAST on any residual
+      # setup hang (from any source) so a stall is a quick re-run, never a 20-min CANCELLED.
       - name: Setup Node.js
+        timeout-minutes: 5
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
 
       # Deterministic git identity so suites that create temp git repositories
       # (branch-integration, mission-lifecycle commit gates) behave reproducibly.
