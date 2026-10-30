@@ -147,9 +147,13 @@ function validateBatch(invoices: any): any {
       count: invoices.length,
       validCount: results.filter((x) => x.valid === true).length,
       invalidCount: results.filter((x) => x.valid === false).length,
+      // Malformed inputs (validateInvoice ok:false, e.g. INVALID_INPUT) carry no `valid` field, so they belong to
+      // NEITHER validCount nor invalidCount. Count them explicitly so validCount+invalidCount+errorCount === count
+      // (previously they were silently dropped from the tally a caller gates on).
+      errorCount: results.filter((x) => x.ok === false).length,
       duplicates, duplicateCount: duplicates.length,
       results,
-      note: "Batch EN16931-core validation + duplicate detection (seller SIREN/name + BT-1 invoice number). Duplicates surfaced, never netted away.",
+      note: "Batch EN16931-core validation + duplicate detection (seller SIREN/name + BT-1 invoice number). Duplicates surfaced, never netted away. Buckets valid+invalid+error sum to count (malformed inputs counted, never dropped).",
     },
   };
 }

@@ -81,9 +81,12 @@ function defaultRunner(args: string[], opts: any): any {
 
 /** tscAvailable(runner?): is a real project compiler usable? (resolved path + a clean --version probe). */
 function tscAvailable(opts: any = {}): boolean {
-  const runner = typeof opts.runner === "function" ? opts.runner : defaultRunner;
-  if (typeof opts.runner !== "function" && !TSC_PATH) return false;
-  try { const r = runner(["--version"], { timeoutMs: 8000, maxBytes: 1_000_000 }); return !!r && !r.spawnError && !r.timedOut && (r.exitCode === 0 || r.exitCode === undefined || r.exitCode === null); }
+  const injected = typeof opts.runner === "function";
+  const runner = injected ? opts.runner : defaultRunner;
+  if (!injected && !TSC_PATH) return false;
+  // Strict exit 0 for the real runner (res.status is null on signal-kill ⇒ NOT available); tolerate undefined/null
+  // only for an injected test runner. (Fail-toward-available guard — a signal-killed probe must not read as usable.)
+  try { const r = runner(["--version"], { timeoutMs: 8000, maxBytes: 1_000_000 }); return !!r && !r.spawnError && !r.timedOut && (r.exitCode === 0 || (injected && (r.exitCode === undefined || r.exitCode === null))); }
   catch { return false; }
 }
 

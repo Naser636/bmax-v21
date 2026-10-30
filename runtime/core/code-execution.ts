@@ -218,11 +218,15 @@ function defaultRunner(bin: string, args: string[], opts: any): any {
 
 /** detectToolchain(opts?): which supported languages have an available binary. probe injectable (tests). */
 function detectToolchain(opts: any = {}): Record<string, boolean> {
-  const runner = typeof opts.runner === "function" ? opts.runner : defaultRunner;
+  const injected = typeof opts.runner === "function";
+  const runner = injected ? opts.runner : defaultRunner;
   const out: Record<string, boolean> = {};
   for (const [lang, spec] of Object.entries(LANG_SPEC)) {
     // Require a CLEAN probe: spawned AND exit 0. A non-zero `--version` (e.g. a decoy binary) ⇒ NOT available (honest).
-    try { const r = runner((spec as any).bin, (spec as any).probeArgs, { timeoutMs: 8000, maxBytes: 1_000_000 }); out[lang] = !!r && !r.spawnError && !r.timedOut && (r.exitCode === 0 || r.exitCode === undefined || r.exitCode === null); }
+    // The real defaultRunner maps exitCode to spawnSync `res.status`, which is NULL when the probe is killed by a
+    // signal (OOM/SIGKILL — distinct from a timeout). A signal-killed probe must NOT count as available (fail-toward-
+    // available). Tolerate undefined/null ONLY for an INJECTED test runner (which may legitimately omit exitCode).
+    try { const r = runner((spec as any).bin, (spec as any).probeArgs, { timeoutMs: 8000, maxBytes: 1_000_000 }); out[lang] = !!r && !r.spawnError && !r.timedOut && (r.exitCode === 0 || (injected && (r.exitCode === undefined || r.exitCode === null))); }
     catch { out[lang] = false; }
   }
   return out;

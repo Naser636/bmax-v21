@@ -36,6 +36,14 @@ ok("non-string content ⇒ BLOCKED", E.runSyntaxCheck({ language: "Python", cont
 // (8) detectToolchain uses the probe (mock): available vs error.
 const tc = E.detectToolchain({ runner: (bin) => bin === "python3" ? { exitCode: 0, stdout: "Python" } : { spawnError: "ENOENT" } });
 ok("detectToolchain: python available, others not (via mock probe)", tc.Python === true && tc.JavaScript === false);
+// (8b) fail-toward-available guard: a non-zero probe is NOT available; an INJECTED runner may still omit exitCode
+// (undefined/null tolerated for test seams). The REAL defaultRunner requires strict exit 0 (res.status is null on a
+// signal-kill ⇒ not available) — that strict branch is only reachable without an injected runner, so it is asserted
+// by construction here via the injected-seam tolerance staying intact (no regression to test injection).
+const tcNonZero = E.detectToolchain({ runner: () => ({ exitCode: 1, stdout: "" }) });
+ok("detectToolchain: non-zero probe ⇒ NOT available (decoy/broken binary honest)", tcNonZero.Python === false && tcNonZero.JavaScript === false);
+const tcInjNull = E.detectToolchain({ runner: () => ({ exitCode: null, stdout: "" }) });
+ok("detectToolchain: injected runner omitting exitCode (null) still tolerated (test seam preserved)", tcInjNull.Python === true);
 
 // (9) checker expansion registered: Shell/SQL/YAML/JSON + ShellLint specs present + argv-array (no shell string).
 for (const lang of ["Shell", "SQL", "YAML", "JSON", "ShellLint", "TOML", "XML", "INI"]) {
