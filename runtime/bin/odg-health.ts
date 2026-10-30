@@ -9,6 +9,8 @@
 
 const fs = require("fs");
 const path = require("path");
+// relative: resolves to runtime/dist/core under the compiled dist bin, to the .ts under tsx (same pattern as odg-delegate).
+const { resolveRequiredPort } = require("../core/prefer-dist-bin.js");
 
 const G = (name: string) => path.join("runtime", "generated", name); // cwd-relative (repo root)
 
@@ -106,7 +108,12 @@ if (require.main === module) {
     const { compassProseDivergence } = require(path.resolve(process.cwd(), "scripts", "compass-update.js"));
     const d = compassProseDivergence(process.cwd());
     console.log(`Compass    : ${d.status}${d.proseHead ? ` (prose ${d.proseHead} vs HEAD ${String(d.head || "?").slice(0, 7)})` : ""} — ${d.reason}`);
-  } catch { /* observable only — never affects health exit */ }
+  } catch (e: any) {
+    // FAIL-VISIBLE: the §F observable must never SILENTLY vanish (that reads as "N/A" when it is really unavailable).
+    // scripts/compass-update is not compiled into runtime/dist (repo-root scripts/ is outside the dist rootDir), so the
+    // compiled dashboard cannot load it; surface that honestly as UNAVAILABLE rather than dropping the line entirely.
+    console.log(`Compass    : UNAVAILABLE — compass-update not loadable in this build (${(e && (e.code || e.message)) || "error"}); run under tsx or compile scripts/ to dist`);
+  }
 
   // §G — READ-ONLY supervision summary: the LAST odg-monitor tick result (exposure + maintenance) + its
   // freshness BUCKET. Single source = the monitor's own status files (no second source of truth, no live probe
@@ -115,10 +122,15 @@ if (require.main === module) {
   // byte-identical. Cadence is 10 min ⇒ a status older than 25 min is STALE.
   try {
     const rd = (f: string) => { try { return JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "runtime", "generated", f), "utf8")); } catch { return null; } };
-    // cwd-relative require (resolves from runtime/bin AND runtime/dist/bin — same pattern as §F).
-    const { summarizeSupervision } = require(path.resolve(process.cwd(), "runtime", "core", "supervision-summary.js"));
+    // supervision-summary IS compiled to dist (added to tsconfig.runtime-dist include) — resolve the dist port under the
+    // compiled bin, the .ts under tsx. This RESTORES the §G line in the production (dist) dashboard (it was silently dropped
+    // because the source-path require resolved to a non-existent runtime/core/*.js under zero-JS).
+    const supPort = resolveRequiredPort("runtime/dist/core/supervision-summary.js", "runtime/core/supervision-summary.js", (p: string) => fs.existsSync(path.resolve(process.cwd(), p)));
+    const { summarizeSupervision } = require(path.resolve(process.cwd(), supPort));
     console.log(`Supervision: ${summarizeSupervision(rd("exposure-status.json"), rd("maintenance-status.json"), Date.now())}`);
-  } catch { /* observable only — never affects health exit */ }
+  } catch (e: any) {
+    console.log(`Supervision: UNAVAILABLE — supervision-summary not loadable (${(e && (e.code || e.message)) || "error"})`);
+  }
 }
 
 export {};

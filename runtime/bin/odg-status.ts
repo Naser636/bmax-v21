@@ -37,7 +37,11 @@ try {
   const { classify } = require(path.resolve(process.cwd(), "scripts", "capability-classify.js"));
   const k = classify((caps.capabilities || []).map((c: any) => typeof c === "string" ? c : (c.id || c.name || c.capability || "")));
   console.log("  classified       :", "business=" + k.businessCandidate, "· mission-derived=" + k.missionDerived, "· nl-generated=" + k.nlGenerated + (k.duplicates.length ? " · dup=" + k.duplicates.length : "") + (k.coherent ? " · coherent" : " · INCOHERENT"));
-} catch { /* classifier optional — never break status */ }
+} catch (e: any) {
+  // FAIL-VISIBLE: don't silently drop the CM-4 decomposition. scripts/capability-classify is not compiled to dist
+  // (repo-root scripts/ is outside the dist rootDir), so the compiled status bin can't load it — say so honestly.
+  console.log("  classified       : UNAVAILABLE — capability-classify not loadable in this build (" + ((e && (e.code || e.message)) || "error") + ")");
+}
 console.log("Missing            :", (caps.missingCapabilities || []).length);
 console.log("Last Mission       :", lastMission);
 console.log("Next Mission       :", next?.mission ?? state.nextMission ?? "SYSTEM_READY");
