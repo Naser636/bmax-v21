@@ -82,7 +82,10 @@ function render(artifacts: any): string {
   L.push(`  Capabilities : ${capsAvailable ? `${capList.length} ready / ${missing.length} missing` : "UNKNOWN — capability-registry unavailable"}`);
   L.push(`  Completion   : ${capsAvailable ? bar(pct) : "UNKNOWN — capability-registry unavailable (not a fabricated 100%)"}`);
   L.push(`  Missions     : ${ledgerAvailable ? `${ledger.count ?? entries.length} recorded` : "UNKNOWN — mission-ledger unavailable"}`);
-  L.push(`  Last Mission : ${lastEntry.mission ?? state.lastMission ?? "N/A"} (${lastEntry.state ?? "?"})`);
+  // F2c: when BOTH the ledger and the state source are absent, "N/A (?)" is ambiguous (reads as "no missions yet"
+  // when the truth is "cannot tell"). Show UNKNOWN then; otherwise the real last entry (or an honest N/A for a genuinely
+  // empty-but-loaded ledger).
+  L.push(`  Last Mission : ${(!ledgerAvailable && !stateAvailable) ? "UNKNOWN — mission-ledger/state unavailable" : `${lastEntry.mission ?? state.lastMission ?? "N/A"} (${lastEntry.state ?? "?"})`}`);
   if (lastRun) L.push(`  Last Run     : ${lastRun.mission} — ${lastRun.status}${lastRun.validated ? "" : " (validated=false)"}`);
   L.push("");
   L.push("BLOCKERS");

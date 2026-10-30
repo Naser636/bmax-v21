@@ -67,6 +67,9 @@ ok("dashboards exited (health/status produced output)", hout.length > 0 && sout.
   ok("absent status+state ⇒ NEXT ACTION is UNKNOWN, not a fabricated 'SYSTEM_READY'", /UNKNOWN/.test(naBody) && !/SYSTEM_READY/.test(naBody));
   const wrLine = o.split("\n").find((l) => /^WORKING RULES/.test(l)) || "";
   ok("absent constitution ⇒ WORKING RULES labelled as defaults (not presented as the loaded constitution)", /defaults.*unavailable/.test(wrLine));
+  // F2c: Last Mission is UNKNOWN (not the ambiguous "N/A (?)") when both ledger and state are absent.
+  const lmLine = o.split("\n").find((l) => /^\s*Last Mission\s*:/.test(l)) || "";
+  ok("absent ledger+state ⇒ Last Mission is UNKNOWN, not ambiguous 'N/A (?)'", /UNKNOWN/.test(lmLine) && !/N\/A/.test(lmLine));
   fs.rmSync(empty, { recursive: true, force: true });
 }
 
