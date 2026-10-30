@@ -162,6 +162,7 @@
     "runtime/core/mission-scheduler.ts",
     "runtime/core/mission-attempt-log.ts",
     "runtime/core/latency-measure.ts",
-    "runtime/bin/odg-schedule-tick.ts"
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/bin/odg-integration-preflight.ts"
   ]
 }
