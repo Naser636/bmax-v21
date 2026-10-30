@@ -18,16 +18,55 @@ const cp = require("child_process");
 
 let TSC_PATH: string | null = null;
 try { TSC_PATH = require.resolve("typescript/bin/tsc"); } catch { TSC_PATH = null; }
+// The TypeScript package dir (holds bin/tsc + lib/lib.*.d.ts). Bound read-only into the sandbox so the real
+// compiler + its standard libs resolve, and NOTHING else of the host filesystem does.
+const TS_PKG_DIR: string | null = TSC_PATH ? path.resolve(path.dirname(TSC_PATH), "..") : null;
+// Inside the sandbox the reviewed project is always bound at this fixed path (never its host path) — so a
+// malicious `/// <reference path="/host/secret">` cannot resolve, and diagnostics never echo a host path.
+const SANDBOX_PROJECT = "/project";
+const SYSTEM_RO = ["/usr", "/lib", "/lib64", "/bin", "/sbin"];
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function truncate(s: any, n = 4000): string { const str = String(s == null ? "" : s); return str.length > n ? str.slice(0, n) + "…[truncated]" : str; }
 
-/** defaultRunner: bounded spawnSync of `node <tsc> …` — argv array, cwd, timeout, output cap, minimal env, no shell. */
+/** bwrap present? The confined compiler run is FAIL-CLOSED on its absence (never runs tsc unconfined). */
+function bwrapPath(): string | null {
+  try {
+    const r = cp.spawnSync("/usr/bin/env", ["sh", "-c", "command -v bwrap"], { encoding: "utf8" });
+    const p = r && r.status === 0 ? String(r.stdout || "").trim() : "";
+    return p || null;
+  } catch { return null; }
+}
+
+/**
+ * defaultRunner: run the REAL `node <tsc> …` but CONFINED in bubblewrap so a reviewed project (untrusted input)
+ * cannot read any file outside itself. SECURITY (fixes an audited sandbox-escape): plain `tsc` follows
+ * `/// <reference path="…">`, `import`, tsconfig `extends/references`, etc. to ANY host path the process can read,
+ * and echoes the referenced file's CONTENT verbatim into diagnostics (→ the review's `evidence`) — arbitrary host
+ * file read + exfiltration. We bind ONLY: system CODE dirs (ro), the typescript package (ro), and the project at a
+ * fixed /project path (ro); everything else is absent, so an out-of-project reference fails to resolve (TS6053) with
+ * NO content leak. FAIL-CLOSED: if bubblewrap is unavailable we refuse (spawnError) rather than run tsc unconfined.
+ * opts.cwd = the host project dir (bound → /project). No cwd (e.g. the --version probe) ⇒ no project bind.
+ */
 function defaultRunner(args: string[], opts: any): any {
-  if (!TSC_PATH) return { spawnError: "typescript compiler not resolvable (typescript/bin/tsc absent)" };
-  const res = cp.spawnSync(process.execPath, [TSC_PATH, ...args], {
-    cwd: opts.cwd, timeout: opts.timeoutMs, maxBuffer: opts.maxBytes, encoding: "utf8",
-    env: { PATH: process.env.PATH || "", HOME: process.env.HOME || "" }, stdio: ["ignore", "pipe", "pipe"],
+  if (!TSC_PATH || !TS_PKG_DIR) return { spawnError: "typescript compiler not resolvable (typescript/bin/tsc absent)" };
+  const bwrap = bwrapPath();
+  if (!bwrap) return { spawnError: "sandbox unavailable (bubblewrap required to run the code-review compiler confined); refusing to run tsc unconfined" };
+
+  const bw: string[] = ["--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
+    "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/tmp"];
+  for (const p of SYSTEM_RO) { if (fs.existsSync(p)) bw.push("--ro-bind", p, p); }
+  bw.push("--ro-bind", TS_PKG_DIR, TS_PKG_DIR);
+  let innerArgs = args;
+  if (opts && typeof opts.cwd === "string" && opts.cwd) {
+    bw.push("--ro-bind", opts.cwd, SANDBOX_PROJECT);
+  }
+  bw.push("--proc", "/proc", "--dev", "/dev", "--tmpfs", "/tmp");
+  bw.push("--chdir", opts && opts.cwd ? SANDBOX_PROJECT : "/tmp");
+  bw.push("--", process.execPath, TSC_PATH, ...innerArgs);
+
+  const res = cp.spawnSync(bwrap, bw, {
+    timeout: opts.timeoutMs, maxBuffer: opts.maxBytes, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
   });
   if (res.error) { if ((res.error as any).code === "ETIMEDOUT") return { timedOut: true }; return { spawnError: (res.error as any).message || "spawn error" }; }
   return { exitCode: res.status, stdout: res.stdout || "", stderr: res.stderr || "" };
@@ -57,8 +96,15 @@ function checkTsProject(input: any = {}): any {
   const tsconfig = typeof input.tsconfig === "string" && input.tsconfig ? input.tsconfig : "tsconfig.json";
   const tsconfigAbs = path.isAbsolute(tsconfig) ? tsconfig : path.join(projectDir, tsconfig);
   if (!fs.existsSync(tsconfigAbs)) return { status: "BLOCKED", reason: `tsconfig not found at ${tsconfig} — cannot prove project validity`, tsconfig };
+  // The compiler runs CONFINED with the project bound at a fixed /project path, so the tsconfig must be addressed
+  // RELATIVE to the project dir and must live INSIDE it. A tsconfig outside the project cannot be confined ⇒ BLOCKED
+  // (never a PASS, never an unconfined run). path.relative yielding a ".." or absolute prefix means "outside".
+  const tsconfigRel = path.relative(projectDir, tsconfigAbs);
+  if (tsconfigRel.startsWith("..") || path.isAbsolute(tsconfigRel)) {
+    return { status: "BLOCKED", reason: `tsconfig must live inside projectDir to be checked confined (got ${tsconfig})`, tsconfig };
+  }
 
-  const r = runner(["--noEmit", "-p", tsconfig], { cwd: projectDir, timeoutMs: Number(input.timeoutMs) || 120000, maxBytes: 8_000_000 });
+  const r = runner(["--noEmit", "-p", tsconfigRel], { cwd: projectDir, timeoutMs: Number(input.timeoutMs) || 120000, maxBytes: 8_000_000 });
   if (!r || r.spawnError) return { status: "BLOCKED", reason: `compiler spawn error: ${r && r.spawnError}` };
   if (r.timedOut) return { status: "BLOCKED", reason: "type check timed out (incomplete ⇒ not PASS)" };
   const out = truncate(String(r.stdout || "") + String(r.stderr || ""));
