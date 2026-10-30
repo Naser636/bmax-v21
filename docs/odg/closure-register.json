@@ -1282,7 +1282,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle): runtime/core/capability-executors.ts + runtime/core/patch-executor.ts + new gated runtime/core/patch-executor-symlink-confinement.test.ts (19) + package.json. THREAT: a patch edit whose target passes the LEXICAL authorized_paths check (isAuthorizedTarget via path.normalize) could still write OUTSIDE the executor cwd, reported status:APPLIED (silent, success-looking). Phase-2C of the POST-V107 mandate. CYCLE (BROKEN→fix→HOLDS, two independent adversarial audits): (1) First added assertPhysicalConfinement (deepest-existing-ancestor realpath must stay inside realpath(cwd)) + an O_NOFOLLOW write (final-component symlink incl. DANGLING ⇒ ELOOP), shared between the patch-executor edits branch AND confineSyntheticTarget (one definition). (2) INDEPENDENT ADVERSARIAL AUDIT #1 ⇒ VERDICT BROKEN: deterministic escape — target 'runtime/app/foo/../evil.txt' with runtime/app/foo a symlink to /outside. BOTH guards resolve the path LEXICALLY (normalize / path.resolve) so 'foo/..' string-cancels BEFORE either inspects the symlink foo, while the kernel (on the RAW path used by mkdir/write) substitutes the symlink FIRST then applies '..' to its real target ⇒ wrote PWNED one dir outside cwd, status APPLIED; diff-mode variant ALSO read-leaked + overwrote the outside file. (3) FIX: assertPhysicalConfinement now REFUSES any absolute relTarget and any '..' path segment (split on both / and \\) up front — no legit in-scope target carries '..', and without '..' path.resolve is faithful so the ancestor-walk physically realpaths EVERY real component (a symlinked mid/leaf component is caught by realpath, a dangling leaf by O_NOFOLLOW). Reproduced the exact exploit CLOSED (content FAILED, diff FAILED, outside file byte-identical, no read-leak) + legit write still APPLIED. (4) INDEPENDENT ADVERSARIAL RE-AUDIT #2 (strictly READ-ONLY, no dist rebuild — collision lesson) ⇒ VERDICT HOLDS: 15 attacks (original exploit, diff-mode, mid-path symlink w/o '..', triple-nested symlink chain, '..'-smuggling via '...'/'. .'/fullwidth/'foo\\..'/trailing-space, absolute/empty/'.'/trailing-slash, cwd-reached-via-symlink, dangling-leaf) ALL FAILED, no outside write/read, legit deep writes NOT over-blocked; confirmed dist==source. Audit #2 DEMONSTRATED one further real outside-write: a HARD LINK to an outside file pre-placed at an in-scope path (shares the inode; O_NOFOLLOW can't see it — not a symlink; path is in-scope) ⇒ O_TRUNC overwrote the outside content, APPLIED. (5) CLOSED that too (not merely documented — it was a demonstrated escape): writeFileConfined now opens WITHOUT O_TRUNC, fstats the fd, REFUSES nlink>1 BEFORE ftruncate (a legit edit target is a single-link regular file), so the outside inode is never damaged. Reproduced audit case 11 CLOSED (outside secret preserved, FAILED) + legit single-link overwrite + legit new deep write still APPLIED. Permanent regression: patch-executor-symlink-confinement.test.ts (19 assertions: symlinked-scope-dir, dangling-leaf, existing-leaf-symlink, lexical-traversal, symlink+'..' content & diff, bare-dotdot, hardlink-into-scope, legit-in-scope, legit-overwrite) added to the test:report gate. NEVER weakened existing authorization/path-safety (isAuthorizedTarget + governance-guard + synthetic-confinement all unchanged-pass: patch-executor 17, governance-guard 13, capability-executors 62). Gate: tsc 0, build 0, full regression 230/230, 0 stale. DOCUMENTED RESIDUALS (honest, with precondition): (i) TOCTOU on a not-yet-created INTERMEDIATE directory component between the check and mkdir/open — a check-then-act structural limit requiring a CONCURRENT attacker with filesystem write access (a strictly stronger adversary already able to mutate the working tree); only the final component is O_NOFOLLOW-hardened. (ii) attacker-initiated post-write hardlink (links OUR in-scope file out) is exfiltration requiring the attacker's own outside write access, out of this inbound-confinement scope.",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "54e6f8d",
+        "perLotPR": 256,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "dashboard-scripts-dist-restoration",
@@ -1294,7 +1309,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/dashboard-scripts-dist-20261030 based on verified lot-C 54e6f8d per integration-order): new tsconfig.scripts-dist.json + scripts/build-runtime-guard.ts + scripts/build-runtime-guard.test.ts + runtime/bin/odg-health.ts + runtime/bin/odg-status.ts + runtime/bin/odg-health.test.ts. Phase-2A of the POST-V107 mandate; completes the documented lot-E (dashboard-observability-dist-closure) follow-on. ROOT CAUSE (confirmed): the `odg` CLI runs COMPILED dist dashboards (node runtime/dist/bin/odg-health.js / odg-status.js, no tsx fallback); §F Compass (scripts/compass-update.ts::compassProseDivergence) and CM-4 classified (scripts/capability-classify.ts::classify) live at repo-root scripts/ which is OUTSIDE tsconfig.runtime-dist.json's rootDir=runtime, so under zero-JS there was no scripts/*.js to require ⇒ lot E made them honestly UNAVAILABLE (fail-visible). FIX: a dedicated tsconfig.scripts-dist.json (rootDir=scripts, outDir=runtime/dist/scripts, files=[the two scripts]) compiles them into runtime/dist/scripts (both import ONLY Node builtins ⇒ nothing for build-dist-closure to chase; its ORPHAN/STALE guard scans dist/core only, so dist/scripts is untouched; no collision with the pre-existing dist/scripts/run-all-tests.js from runtime/scripts/). Wired into scripts/build-runtime-guard.ts fullBuild (a 2nd tsc pass after the main one, before closure) AND computeFingerprint (added the new tsconfig + both scripts so an edit invalidates the build cache — no stale reuse). Both dist bins repointed from require(cwd/scripts/X.js) to the fail-closed resolveRequiredPort('runtime/dist/scripts/X.js','scripts/X.ts') (prefers dist .js, falls back to .ts under tsx, else throws a clear rebuild error). PROVEN: node runtime/dist/bin/odg-health.js ⇒ 'Compass    : BEHIND (prose … vs HEAD …) — …' (real, not UNAVAILABLE); node runtime/dist/bin/odg-status.js ⇒ 'classified : business=84 · mission-derived=141 · nl-generated=15 · coherent' (real); §G Supervision unchanged (no regression). Upgraded gated runtime/bin/odg-health.test.ts (6→8): +2 non-vacuous 'RESTORED (computed, not UNAVAILABLE)' assertions (fail on pre-fix, proven by hiding the dist ports ⇒ honest UNAVAILABLE + assertions fail). ZERO-JS preserved (no .js emitted into source scripts/; outDir is dist only). INDEPENDENT READ-ONLY AUDIT (no dist mutation, concurrent-safe with the regression) ⇒ ACCEPT-WITH-CONCERNS: points 1-4,6-8 PASS (real content; builtins-only dist artifacts; non-vacuous test; fingerprint hashes all 3 new inputs; zero-JS; fail-closed UNAVAILABLE never silent/ fabricated/crash; no weakening of auth/path-safety/Supervision) — and DEMONSTRATED one real defect (point 5): distIsComplete() validated only manifest-recorded dist/core outputs, so a deleted dist/scripts/*.js with unchanged inputs would false-'fresh' SKIP (dashboards silently UNAVAILABLE) — the same stale-reuse class the guard's own test enforces for dist/core. CLOSED (not merely documented — demonstrated gap): distIsComplete now also requires the two scripts-dist outputs (SCRIPTS_DIST_OUTPUTS existence check) + build-runtime-guard.test.ts extended (5→7: missing-scripts-output ⇒ false; full+scripts ⇒ true). PROVEN end-to-end: after deleting dist/scripts/compass-update.js with inputs unchanged, build:runtime REBUILDS (no false SKIP) and restores the line; a 2nd build correctly SKIPs (dist complete). Gate: tsc 0, build 0, guard 7, odg-health 8, full regression 230/230, 0 stale. Integration: based on verified lot C (54e6f8d) so the two package.json... (no package.json change needed here — odg-health.test.ts already gated by lot E) and both land in dependency order; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "c3c0f77",
+        "perLotPR": 257,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "gate-external-research-suites",
@@ -1306,7 +1336,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/gate-external-research-suites-20261030 stacked on verified Phase-2A c3c0f77, dependency order C→2A→2B): package.json test:report += src/runtime/runtime-executor.external-research.test.ts + src/runtime/runtime-executor.safe-probe-authorization.test.ts + runtime/core/external-research-live.test.ts (the ONLY changed file — additive to CI). Phase-2B of the POST-V107 mandate. INVESTIGATION (the actual prerequisites): all 3 suites are HERMETIC — zero external network — so there is NO external-evidence dependency to fail-closed on; they were simply never added to the curated test:report gate (only in defaultFiles/npm test). The external-research.test is DRY_RUN default (zero network, spy ledger); safe-probe.test is plan-only (no fetcher/execute/live intent); external-research-live.test exercises the real bounded fetcher (httpGetBounded) against an IN-PROCESS 127.0.0.1 http.createServer+listen(0) with an INJECTED fetcher — the real LIVE network path is the SEPARATE owner-gated `odg objective --execute` proof, not a unit test. They are already in HAZARD_ALLOWLIST (added by parallel-isolation-external-research-race) ⇒ serial phase-1, so gating cannot re-introduce the shared-artifact race (all 3 write the SAME computed path runtime/generated/external-research-acquisition.json). VERIFIED (provider): all 3 pass offline/deterministic (5/12/14) and self-restore (git clean after); suiteIsHazard=true for all 3; full regression 233/233 (230→233), 0 stale. INDEPENDENT READ-ONLY AUDIT ⇒ ACCEPT (all 6 points PASS): (1) HERMETIC proven — no real egress in ANY branch (loopback-only; injected fetcher; a fetcher-NAME string resolves to undefined ⇒ throws 'no fetcher injected' BEFORE any socket; file:// rejected by the protocol allowlist with zero I/O); (2) DETERMINISTIC — ran each 3× sequentially, identical PASS counts; (3) SELF-RESTORING — git status runtime/generated clean before/after all 9 runs; also independently confirmed NO OTHER repo suite writes the real shared artifact (all others use mkdtemp-sandboxed cwds); (4) SERIALIZED — all 3 hazard=true, allowlist locked by the gated odg-test-report.test.ts (48); (5) NON-VACUOUS — each assertion has a distinct falsifying counterpart (human-grant requirement; safe-probe exemption clauses NO_SAFE_PROBE/LIVE_EXECUTE/LIVE_FETCHER/PRIVILEGED_SPEC/NOT_SAFE_PROBE; bounded-fetch GET-only/no-auth/byte+time caps/protocol allowlist/provenance gates); (6) NO WEAKENING — package.json the SOLE changed file (git diff --stat), no product code, live path still owner-gated, fail-closed posture intact. Residuals (non-blocking, documented): external-research-live.test is pre-existing @ts-nocheck migration debt (not introduced here); the HAZARD_ALLOWLIST is a manual basename list — removal-locked by odg-test-report.test.ts but would not auto-catch a FUTURE new suite that starts writing the same computed path (documented heuristic limitation, not a defect of this lot). Gate: tsc 0, build 0, full regression 233/233, 0 stale. Register 89 ACCEPTED. Integration: stacked C→2A→2B; all three await the SAME gh-auth gate; NOT merged (protected main never force-merged).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "f04b248",
+        "perLotPR": 258,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "confine-code-review-tsc-sandbox-escape",
@@ -1318,7 +1363,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/confine-code-review-tsc-20261030 stacked on verified 2B f04b248): runtime/core/ts-project-check.ts + new gated runtime/core/ts-project-check-confinement.test.ts (7) + package.json. THREAT (found by a fresh multi-agent security recon, PROVEN): the odg-code-review pipeline (odg-code-review.ts → code-review-service.reviewTsProjectDir → code-health-service → ts-project-check.checkTsProject) ran `tsc --noEmit -p` on a REVIEWED (untrusted) project with cwd=projectDir but NO filesystem confinement. A submitted .ts with `/// <reference path=\"/abs/host/secret.ts\" />` made the real compiler READ that host file and echo its literal CONTENT into diagnostics → the review's `evidence` field (arbitrary host-file read + exfiltration), directly contradicting the tool's own 'No content retained; nothing sent anywhere' claim. REPRODUCED end-to-end via the real CLI: an out-of-project secret appeared verbatim in the evidence. FIX: checkTsProject's defaultRunner now runs `node <tsc>` CONFINED in bubblewrap — binds ONLY system code dirs (/usr,/lib,/lib64,/bin,/sbin ro), the typescript package dir (ro), and the project at a FIXED /project path (ro); --unshare-all --clearenv --die-with-parent --new-session; --noEmit forced (overrides a hostile tsconfig emit); tsconfig must live inside projectDir (else BLOCKED). FAIL-CLOSED: bwrap absent ⇒ spawnError ⇒ tscAvailable false ⇒ BLOCKED (never an unconfined tsc run, never a PASS). An out-of-project reference now fails to resolve (TS6053/TS2307) with NO content leak; legit clean project still PASS, real type error still FAIL with in-project diagnostics (no over-block). INDEPENDENT ADVERSARIAL AUDIT ⇒ ACCEPT: 14 vectors all BLOCKED, zero content leak (original /// reference, static+dynamic import, export-from, relative ../ traversal, /// reference types + typeRoots, IN-PROJECT symlink tunnelling out, tsconfig extends/files/baseUrl+paths/typeRoots+types-pkg, write-outside via outFile [doubly blocked: forced --noEmit + no writable bind], network [--unshare-all ⇒ curl/getent fail]); env-bypass grep clean (only the test-only input.runner seam, unreachable from reviewed content); legit projects NOT over-blocked; fail-closed mapping verified by inspection; test non-vacuous (secret-not-leaked fails on pre-fix) + hermetic. Existing suites unaffected: ts-project-check 9, code-health-service 16, code-review-service 14, ts-routing-wire 10. Gate: tsc 0, build 0, full regression 234/234, 0 stale. Register 90 ACCEPTED. RESIDUALS (documented, non-blocking follow-ons): (F3b) runtime/core/code-execution.ts single-file runSyntaxCheck TS path is NOT confined by this lot — oracle-only today (tsc diagnostics go to stdout which that path does not capture; only stderr, empty) ⇒ no content leak currently, but fragile (a future stdout capture would reopen it); scoped as a separate lot to avoid touching the generic multi-language runner here. (2) input.runner is a legitimate test-only bwrap bypass, not reachable from reviewed project content. Integration: stacked C→2A→2B→F3; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "1bc61fa",
+        "perLotPR": 259,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "validation-engine-engineering-proof-false-success",
@@ -1328,7 +1388,22 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/confine-code-review-tsc-20261030 stacked on F3/2B): runtime/core/validation-engine.ts + runtime/core/patch-executor.ts + new gated runtime/core/validation-engine-engineering-proof.test.ts (14) + package.json. THREAT (found by a fresh false-success frontier recon, PROVEN): the 'Engineering performed' gate engineeringOk = !isEngineering || scopedChanges>0 || deliverableInScope>0, where deliverableInScope was trackedFilesInScope(authorizedPaths) = `git ls-files` under the scope — matching ANY pre-existing committed file authored by ANY prior mission. For the common broad scope (e.g. ['runtime/**','src/**']) that set is never empty ⇒ engineeringOk UNCONDITIONALLY true for every broad-scope write mission regardless of whether THIS run produced anything ⇒ mission-lifecycle buildEvidence drives validated:true → VALIDATED/VERIFIED/RELEASED on a pure no-op (ledger records a false released mission). REPRODUCED independently: broad-scope mission, APPLIED action with no in-scope write, clean tree ⇒ validated:true SUCCESS (pre-fix). FIX: deliverableInScope now = the mission's OWN committed deliverable — the in-scope files THIS run actually wrote — harvested from executed actions APPLIED/DUPLICATE/EXECUTED via e.files[].target (APPLIED/EXECUTED) or e.reconciled.files[].target (DUPLICATE), intersected with changedPathsInScope(scope,…) AND trackedFilesInScope(scope) (must be in-scope AND committed). A fresh first run is unaffected (scopedChanges). POINT-5 CLOSURE (from the 1st audit's ACCEPT-WITH-CONCERNS): the two capability executors that WRITE an in-scope file (ODG Synthetic Deliverable / Spec Author) emit status EXECUTED with NO files[], so their already-committed deliverable could not re-validate on a clean tree (a narrow fail-SAFE over-block, previously masked by the very bug). Closed faithfully exactly as the auditor recommended: patch-executor adds files:[{target: result.summary.target, mode:'capability'}] to the EXECUTED action (result.summary.target = confined.relTarget — the path confineSyntheticTarget/assertPhysicalConfinement actually wrote inside authorized_paths, not a self-reported string), and the VE harvests EXECUTED targets too. PROVEN (12→14 gated assertions, all black-box over the real dist VE in throwaway git repos with a realistic /runtime/generated/ .gitignore): false-success CLOSED (APPLIED files:[] / hand-crafted top-level target / broad-scope no-op ⇒ engineeringPerformed false, not validated); legit PRESERVED (APPLIED own committed files, DUPLICATE reconciled.files, fresh scopedChanges, EXECUTED capability own committed deliverable ⇒ true); EXECUTED-without-deliverable ⇒ false (no hole re-opened). TWO INDEPENDENT ADVERSARIAL AUDITS: #1 ACCEPT-WITH-CONCERNS (core fix sound, non-vacuous proven by reverting a dist copy, hermetic, flagged the EXECUTED re-validation gap); #2 (after point-5 closure) ACCEPT all 7 points (EXECUTED recognition faithful; mission-owned-only verified — outside-scope AND untracked targets rejected; rejection holds; no APPLIED/DUPLICATE regression; broad-scope stays closed; summary.target provenance confirmed in source+dist). No existing flow weakened (validation-engine-cross-mission 7, fidelity-gate, gamma, recorded-noop, probe-freshness, engineering-executor 15, mission-lifecycle 24, scope-observer 48 all pass). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 91 ACCEPTED. RESIDUALS (documented, non-exploitable): (1) a forged patch-execution.json naming a pre-existing committed in-scope file in files[] would pass — OUT of trust boundary (the real patch-executor only emits files it actually wrote this run; VE trusts its own pipeline's machine artifact). (2) Connectivity-Audit/Provider-Activation forward an external worker's summary verbatim; a FUTURE worker schema adding a `target` would need it to also be in-scope AND committed to matter (doubly guarded by the scope+tracked intersection) — no worker emits it today; defensive allowlist is a noted follow-on. Integration: stacked C→2A→2B→F3→F1; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "efd46a0",
+        "perLotPR": 259,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "odg-health-failvisible-capability-registry",
@@ -1340,7 +1415,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/odg-health-failvisible-registry-20261030 stacked on F1 efd46a0): runtime/bin/odg-health.ts + runtime/bin/odg-health.test.ts (already gated by lot E — no package.json change) + a register dangling-dep repair (see below). THREAT (found by a fresh observability frontier recon, PROVEN): odg-health render() printed 'Completion [####################] 100%' and 'BLOCKERS: None — all registered capabilities are present.' when runtime/generated/capability-registry.json was ABSENT/unreadable — because read(file, fallback) collapses absence into the SAME {capabilities:[],missingCapabilities:[]} shape as a genuinely-empty registry (total=0 ⇒ pct=100; missing=0 ⇒ 'None'). Absence presented as a perfect, zero-blocker state — the exact opposite of the dashboard's own 'Absent ⇒ UNKNOWN, never a fabricated pass' contract that its §F Compass / §G Supervision lines honour and odg-cockpit implements via degraded-tracking. REPRODUCED: render({}) and `node runtime/dist/bin/odg-health.js` from an empty cwd ⇒ 100%/None. FIX: the require.main caller reads the registry with fallback null (capsRaw), sets capsAvailable = capsRaw !== null, passes it to render; render shows Capabilities/Completion/BLOCKERS as 'UNKNOWN — capability-registry unavailable' (never a fabricated 100% / 'None') when capsAvailable !== true, else the real data. Distinguishes ABSENCE (→UNKNOWN) from a genuinely-PRESENT-but-empty registry (→honest real data), and from MALFORMED (parse error ⇒ null ⇒ UNKNOWN). PROVEN: absent/empty-cwd/malformed ⇒ UNKNOWN; present (real repo 240/3 ⇒ 99%; injected present ⇒ real bar) ⇒ real data, NOT over-blocked; §G Supervision/§F Compass/CM-4 classified unchanged. +4 non-vacuous assertions in the gated odg-health.test.ts (8→12): empty-cwd Completion+BLOCKERS UNKNOWN (not a rendered progress bar / 'None — all'), render({}) UNKNOWN, render(present) real bar. INDEPENDENT READ-ONLY AUDIT ⇒ ACCEPT: absent/malformed ⇒ UNKNOWN; present ⇒ real; present-but-empty correctly honest (flag distinguishes); no regression to other lines; non-vacuous proven by a reverted pre-fix dist copy reproducing 100%/None and the new asserts rejecting it; hermetic. Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 92 ACCEPTED. PROCESS REPAIR (found by this lot's regression): the F1 register entry (validation-engine-engineering-proof-false-success) had been committed with a DANGLING dep id 'p0-069-canonical-state' (no such item) ⇒ campaign-controller.staleAcceptances correctly flagged it STALE ⇒ campaign-controller.test.ts FAILED (234/235). It slipped through because the F1 regression ran BEFORE its register entry was added. ROOT-CAUSED (not dismissed as a race — reproduced standalone), FIXED here: F1 deps corrected to [] (F1 is a standalone fix with no registered prerequisite); re-verified 0 dangling deps + campaign-controller 30/30 (real register 0 stale acceptances). LESSON: register entry deps MUST reference existing ids, and campaign-controller.test.ts (real-register dep/stale check) must be run AFTER the register edit — the per-lot regression should follow the register update, not precede it. RESIDUALS (documented, pre-existing, out of scope — F2b follow-on, same fail-visible pattern via a *Available flag): render()'s NEXT ACTION defaults to 'SYSTEM_READY' and Missions to '0 recorded' when runtime-status/state/ledger are absent (absence masquerading as a benign default); WORKING RULES substitutes a hardcoded constitution list silently. Integration: stacked C→2A→2B→F3→F1→F2; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "ebe55e1",
+        "perLotPR": 260,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "odg-health-failvisible-sources",
@@ -1352,7 +1442,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/odg-health-failvisible-sources-20261030 stacked on F2 ebe55e1): runtime/bin/odg-health.ts + runtime/bin/odg-health.test.ts (already gated — no package.json change). Completes the F2 audit's point-7 follow-on (same fabricated-health class as F2, other render() fields). THREAT (flagged by the F2 independent audit, PROVEN): render() collapsed three more absent sources into optimistic defaults — NEXT ACTION printed 'SYSTEM_READY' when runtime-status.json + runtime-state.json were both absent; Missions printed '0 recorded' when mission-ledger.json was absent; WORKING RULES substituted a hardcoded 3-rule list presented as the loaded runtime-constitution.json. Each reads as a benign/healthy state indistinguishable from reality. FIX: extend the F2 *Available-flag pattern — the caller reads state/status/ledger/constitution with fallback null and sets stateAvailable/statusAvailable/ledgerAvailable/constitutionAvailable; render shows NEXT ACTION 'UNKNOWN — runtime status/state unavailable' (the 'SYSTEM_READY' idle default only when a status/state source actually loaded; a concrete next from a loaded source or a pending queue item is still real), Missions 'UNKNOWN — mission-ledger unavailable', and a WORKING RULES header labelled '(defaults — … unavailable)' / '(defaults — … has no principles)' instead of presenting defaults as loaded. Distinguishes ABSENT / MALFORMED (→UNKNOWN) from genuinely-loaded (→real) from loaded-but-empty (→honest 'has no principles' label — the latter precision added after the audit's concern 2). PROVEN: empty-cwd ⇒ all three UNKNOWN/labelled; real repo ⇒ Missions '1374 recorded', NEXT ACTION real mission, WORKING RULES loaded principles (no over-block); partial (status-only / state-only) ⇒ real; malformed ⇒ UNKNOWN. +4 non-vacuous gated assertions (odg-health.test 12→16) + a present-case no-over-block assertion. INDEPENDENT READ-ONLY AUDIT ⇒ ACCEPT-WITH-CONCERNS (6/6 verification points PASS — absent/present/partial/malformed/no-regression/non-vacuous proven by a reverted pre-F2b dist copy): concern 2 (loaded-but-empty mislabelled 'unavailable') CLOSED here (precise 'has no principles' label); concern 1 (Last Mission 'N/A (?)' not gated — softer, ambiguous-not-healthy) DOCUMENTED as a follow-on (F2c). No regression: §F Compass / §G Supervision / CM-4 classified and the F2 capability-registry line all unchanged (git diff shows only the NEXT ACTION/Missions/WORKING RULES/caller lines). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 93 ACCEPTED. RESIDUAL (documented): F2c — gate 'Last Mission' by ledger/state availability (same pattern). Integration: stacked C→2A→2B→F3→F1→F2→F2b; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "81fd2dc",
+        "perLotPR": 261,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "bash-governor-sandbox-host-read",
@@ -1364,7 +1469,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/bash-governor-sandbox-confinement-20261030 stacked on F2b 81fd2dc): runtime/core/bash-command-governor.ts + runtime/core/bash-command-governor.test.ts (already gated — no package.json change). THREAT (found by a fresh security recon, PROVEN, CRITICAL): sandboxRun built its bwrap argv with `--ro-bind / /` — the ENTIRE host root read-only — so every SAFE_READONLY command (cat/head/tail/stat/wc/file/readlink/realpath/nl) executed by the production 'Governed Bash/Linux Command' capability (objectiveId BASH_COMMAND*, execute:true) read ANY host file with NO authorization gate (action-gate ALLOWs READ/LOW observational). Reproduced: `cat /etc/passwd` → root:x:0:0:…; `cat /etc/hostname` → the host name (no secret-keyword to even trigger the SECRET_PATTERNS blocklist); `cat ~/.bashrc` → a live ANTHROPIC_API_KEY (masked only incidentally by a name-based redactor). The only boundary was SECRET_PATTERNS, a trivially-incomplete literal-substring blocklist — contradicting both this file's own 'genuine isolation' claim and the provider-sandbox doctrine ('NEVER --ro-bind / /'). FIX: replace the whole-root bind with an ALLOWLIST (provider-sandbox posture): system CODE dirs (/usr,/lib,/lib64,/bin,/sbin ro, existing-only) + the mission's repo realpath(process.cwd()) ro + a fresh --proc under --unshare-all's PID ns + --dev + tmpfs /tmp + writable /tmp/work; confidential trees (/etc, /home beyond repo, /root, /var) simply unbound ⇒ unreadable. TWO INDEPENDENT ADVERSARIAL AUDITS (BROKEN→fix→REJECT→fix→ACCEPT): audit #1 confirmed the file-read closed for every path vector but DEMONSTRATED a NEW leak — `cat /proc/1/environ` returned bwrap's own PID-1 monitor environ, which inherited the governor process's uncleared env (real API key + SSH_CLIENT + session id), because spawnSync('bwrap',…) passed no env override (--clearenv only scrubs the CHILD). CLOSED (audit-recommended, applied): spawn bwrap with a cleared env:{PATH} AND prepend --as-pid-1 (the sandboxed command becomes PID 1; no monitor). Re-audit #2 ⇒ ACCEPT: /proc/1/environ now exposes only PATH/HOME/PWD (proven STRUCTURAL, not redaction-luck, by reproducing the pre-fix leak via raw bwrap — the real secrets appeared without the fix, gone with it ⇒ the new assertions are non-vacuous); /proc/1/{cmdline,cwd,status,root}, /proc/mounts expose only sandbox/structure (no secret, no host root); original host reads still closed (/etc/passwd,/etc/hostname,scratchpad-secret,~/.bashrc,/root,/var all no-content); --as-pid-1 did NOT break the --info-fd launched handshake (echo hi EXECUTED exit0; md5sum unknown⇒SANDBOX_OBSERVED); NO over-block (absolute repo read + echo + stat /usr/bin/node all exit0); secret-boundary pre-exec block unchanged (/etc/shadow, ~/.ssh/id_rsa ⇒ HUMAN_APPROVAL_REQUIRED); fail-closed on bwrap-absent ⇒ SANDBOX_UNAVAILABLE, never an unconfined spawn; symlink-in-repo/.. traversal cannot leak content (no /etc node exists in the namespace). +6 non-vacuous gated assertions in bash-command-governor.test.ts (59→65: /etc/passwd+/etc/hostname no-leak, repo-read OK, /usr OK, /proc/1/environ + /proc/self/environ no host env). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 94 ACCEPTED. RESIDUALS (documented, non-blocking): /proc/mounts discloses the repo's own absolute host path (structure, not a secret); the repo tree is readable inside the sandbox by design (the legitimate mission read scope); buildRedactor remains a name-based log scrubber (not relied on for confinement now that it is structural); a governed command can no longer read arbitrary SYSTEM config outside /usr,/lib,… (e.g. /etc/os-release) — if a specific mission needs one, that is a narrow allowlist follow-on, not a reopening of host-wide read. Integration: stacked C→2A→2B→F3→F1→F2→F2b→S1; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "95be922",
+        "perLotPR": 262,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "code-exec-go-rust-host-file-read",
@@ -1376,7 +1496,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/code-exec-go-rust-fileread-20261030 stacked on S1 95be922): runtime/core/code-execution.ts + runtime/core/code-execution.test.ts (already gated — no package.json change). THREAT (found by a fresh security recon, PROVEN, HIGH — the Go/Rust analogue of F3's /// <reference>): runSyntaxCheck ran `go build`/`rustc` on a REVIEWED (untrusted) source in a mkdtemp, but two compiler features read files OUTSIDE it and echoed their CONTENT into diagnostics ⇒ into the code-review `evidence`: Go cgo `/* #include \"/abs/host/file\" */ import \"C\"` (gcc echoes the included file) and Rust `include!/include_str!/include_bytes!`/`#[path]` (rustc echoes the included file). Reproduced end-to-end (planted secret appeared verbatim). FIX (Go): add CGO_ENABLED=0 to the Go spec env ⇒ cgo disabled ⇒ an `import \"C\"` file is excluded by build constraints before gcc runs. FIX (Rust): a literal-form regex guard (BLOCKED for include!/include_str!/include_bytes!/#[path]) AS DEFENSE-IN-DEPTH, PLUS — because the first audit proved the regex is bypassable by macro ALIASING (`use std::include as x; x!(\"/abs\")`, which rustc genuinely executes) — the rustc subprocess now runs FILESYSTEM-CONFINED in bubblewrap (confine:true on the Rust spec ⇒ defaultRunner binds ONLY system code dirs /usr,/lib,/lib64,/bin,/sbin + the workspace at its real path; cleared bwrap env + --as-pid-1; fail-closed BLOCKED if bwrap absent) so NO inclusion — aliased or not — can resolve a host path. TWO INDEPENDENT ADVERSARIAL AUDITS (BROKEN→regex-fix→REJECT→confinement→ACCEPT): audit #1 confirmed Go closed + literal Rust refused but DEMONSTRATED the alias bypass leaking a real file ⇒ REJECT; audit #2 (after confinement) ⇒ ACCEPT: the exact alias bypass + core::include + aliased include_str!/include_bytes! + mod/re-export + macro_rules wrappers ALL FAIL with 'couldn't read … No such file' (file not in the mount namespace), zero content leak; /etc/passwd via alias unreadable; env!/option_env! never surface a value; proc-macro/build.rs never run (bare rustc, not cargo) ⇒ external crate fails closed; Go cgo re-confirmed closed; legit Go + legit Rust NOT over-blocked (PASS); fail-closed on bwrap-absent verified by code; non-vacuous (an unconfined alias-include of a bound /usr file echoes raw bytes — the mechanism that would leak the test marker without confinement). Residual-2 from audit #2 (the fix conditionally bound ~/.rustup/~/.cargo, which could expose ~/.cargo/credentials.toml on a rustup host) CLOSED post-audit by dropping those binds (no-op on this system-rustc host; rustup-only hosts ⇒ fail-closed BLOCKED since the proxy isn't on the restricted PATH) — re-verified identical behavior (aliased FAIL/no-leak, legit PASS, 95/95). +8 non-vacuous gated assertions (code-execution.test 87→95: Rust include!/_str/_bytes/#[path] BLOCKED + legit-not-overblocked + Go CGO_ENABLED=0 spec + confine:true spec + REAL confined-rustc aliased-include no-leak [gated on rustc+bwrap]). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 95 ACCEPTED. RESIDUALS (documented, non-blocking): confined rustc can still read PUBLIC system files under /usr (e.g. /usr/bin/go ELF bytes) — non-sensitive, a 'trusted-system-files-disclosable' boundary, flag if /usr/local ever stages secrets; the F3 TS single-file path (code-execution TS spec) remains oracle-only (F3b follow-on — could adopt the same confine:true). Integration: stacked C→2A→2B→F3→F1→F2→F2b→S1→S2; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "fe8bfe9",
+        "perLotPR": 263,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "parallel-isolation-3-more-suites",
@@ -1388,7 +1523,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/parallel-isolation-3-suites-20261030 stacked on S2 fe8bfe9): runtime/bin/odg-test-report.ts HAZARD_ALLOWLIST += 3 basenames + 3 non-vacuous assertions in the gated odg-test-report.test.ts (48→51). THREAT (found by a fresh recovery/multi-agent recon, same class as parallel-isolation-external-research-race / PR#255): src/runtime/objective-evidence.test.ts (writes runtime/generated/runtime-verify.json), local-mission-runner-ledger.test.ts (writes mission-report.json via a computed path), controlled-mission-live.test.ts (snapshots/restores 5 real runtime/generated artifacts + appends to the real mission-ledger.json twice) all write REAL shared artifacts via COMPUTED path.join paths that HAZARD_RE (literal 'runtime/' only) cannot see ⇒ suiteIsHazard=false ⇒ they'd land in the phase-2 parallel pool and race. FIX: add the 3 basenames to HAZARD_ALLOWLIST ⇒ serial phase-1 (same mechanism as the external-research trio). PROVEN: suiteIsHazard=true for all 3; a non-allowlisted computed-path fixture stays false (allowlist specific, not blanket); the REAL scheduler over the 3 under ODG_TEST_WORKERS=2 ⇒ TOTAL 3 PASS 3 (serialized, no race), runtime/generated clean before AND after (self-restoring). INDEPENDENT AUDIT ⇒ ACCEPT-WITH-CONCERNS: fix correct/specific/necessary (confirmed all 3 use computed paths HAZARD_RE would miss — the allowlist is necessary for each, not redundant) + non-vacuous test; the two concerns were NARRATIVE overstatements (not code defects), CORRECTED here: (a) the exposure is NOT a 'parallel npm test glob' (npm test is a sequential bash loop) but a DEFAULT-GLOB `odg-test-report --run` with ODG_TEST_WORKERS>1 (defaultFiles scans src/runtime/*.test.ts) — comment fixed; CI runs the curated `npm run test:report` which does NOT include these 3, so this was NEVER live in CI (a latent hazard only on that default-glob parallel path). (b) ACCURATE SEVERITY of the companion mission-ledger.ts unlocked read-modify-write lost-update: no CURRENT automated code path concurrently dispatches two missions (campaign-controller/mission-scheduler select one at a time; CLAUDE.md mandates one active work item), so it is gated by the one-active-mission GOVERNANCE DISCIPLINE, NOT a code-level lock — fleet-dispatcher.dispatch()/fleet-collector.collect() are independent unlocked CLI entrypoints that COULD be invoked concurrently for different missions by an operator. Impact is bounded (the ledger is a git-ignored, already-non-durable ephemeral evidence file per its own P0-CURRENT-045 note; worst case one lost entry — not a security/safety issue). DOCUMENTED as a follow-on (S3b: add an atomic/locked write to mission-ledger.recordMission for defense-in-depth) rather than fixed here, since it's not reachable by any automated path today and touches a hot core module. Gate: tsc 0, build 0, odg-test-report 51, full regression 235/235, 0 stale. Register 96 ACCEPTED. Integration: stacked C→2A→2B→F3→F1→F2→F2b→S1→S2→S3; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "aba5142",
+        "perLotPR": 264,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "code-exec-ts-single-file-confine",
@@ -1400,7 +1550,22 @@
       ],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/parallel-isolation-3-suites-20261030 stacked on S3 aba5142): runtime/core/code-execution.ts + code-execution.test.ts. Completes the documented F3b follow-on (flagged by the F3 audit as the single-file analogue of the project-mode /// <reference> host-read; oracle-only TODAY because runSyntaxCheck surfaces only stderr and tsc writes diagnostics to stdout — but fragile, and closed here structurally). FIX (reuses the S2-audited confined runner): the TypeScript LANG_SPEC now has confine:true + roBinds:[TS_PKG_DIR] (node_modules/typescript — tsc + lib.d.ts live under the repo, not /usr); defaultRunner's opts.confine branch additionally binds opts.roBinds read-only (existing-only). So a reviewed .ts's `/// <reference path=\"/abs\">` (or types/lib/import) cannot resolve a host path — tsc reports TS6053 not-found, no content. Fail-closed BLOCKED if bwrap absent. PROVEN: /// reference/types/lib + import \"/abs\" + import(\"/abs\") all FAIL no-leak; legit single-file TS PASS; real type error still FAIL; a control reference INTO node_modules/typescript/lib resolves (bind works, boundary exact); references to <repo>/package.json, a SIBLING node_modules pkg, <repo>/runtime/core/*, <repo>/CLAUDE.md all FAIL (roBinds does NOT over-expose node_modules/repo). INDEPENDENT ADVERSARIAL AUDIT ⇒ ACCEPT: no leak, no over-exposure (roBinds scoped to exactly the typescript pkg), no over-block, fail-closed verified, end-to-end wiring confirmed (code-review-service/code-health-service call runSyntaxCheck with no confine override ⇒ intrinsic + unbypassable; evidence built from stderr/detail never stdout ⇒ doubly robust), non-vacuous (host secret genuinely outside SYS_RO/roBinds/workspace). +3 gated assertions (code-execution.test 95→98). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 97 ACCEPTED. RESIDUAL (documented, non-defect, pre-existing): TS FAIL detail is uninformative for TS (stderr-only, tsc diagnostics on stdout) — a usefulness gap, not a leak; TS_PKG_DIR + /usr readable = public non-sensitive. CODE-CHECKER HOST-READ CLASS NOW FULLY CLOSED: F3 (project-mode tsc) + S1 (bash-governor) + S2 (Go cgo / Rust include!) + F3b (TS single-file). Integration: stacked …→S3→F3b; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "2a1e53c",
+        "perLotPR": 264,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "odg-health-lastmission-failvisible",
@@ -1412,7 +1577,22 @@
       ],
       "priority": 2,
       "evidence": "PR(this cycle, branch excellence/odg-health-lastmission-failvisible-20261030 stacked on the S3/F3b branch tip 2a1e53c): runtime/bin/odg-health.ts + odg-health.test.ts (already gated). Completes the documented F2c follow-on (the last odg-health honesty gap the F2b audit flagged). Lower severity (priority 2) than F2/F2b: 'N/A (?)' is ambiguous, not a confidently-healthy fabrication. FIX (reuses the F2/F2b-audited *Available flags): the Last Mission line shows 'UNKNOWN — mission-ledger/state unavailable' when BOTH ledgerAvailable and stateAvailable are false, else the real last entry (or an honest 'N/A (?)' for a genuinely loaded-but-empty ledger). PROVEN: empty cwd ⇒ UNKNOWN; real repo ⇒ real entry; partial (ledger-only / state-only) ⇒ real (not UNKNOWN); loaded-but-empty ⇒ honest N/A (semantics are absence-not-emptiness). INDEPENDENT AUDIT ⇒ ACCEPT (all 5 points PASS, 6 render() sub-cases verified, non-vacuous, only the Last Mission line changed, no regression to F2/F2b/Compass/Supervision/classified). +1 non-vacuous gated assertion (odg-health.test 16→17). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 98 ACCEPTED. Integration: stacked on S3/F3b; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "28032ad",
+        "perLotPR": 265,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "validation-deliverable-target-explicit",
@@ -1424,7 +1604,22 @@
       ],
       "priority": 2,
       "evidence": "PR(this cycle, branch excellence/validation-deliverable-target-allowlist-20261030 stacked on F2c 28032ad): runtime/core/capability-executors.ts + runtime/core/patch-executor.ts + capability-executors.test.ts. Closes the F1 audit's residual-2 (non-exploitable fragility): patch-executor's EXECUTED push copied result.summary.target into files:[{target}] (consumed by the VE's engineeringOk deliverable check) for ANY capability — but Connectivity Audit / Provider Activation forward an external worker's summary verbatim, so a FUTURE worker schema adding a `target` could masquerade as a committed deliverable (doubly-guarded by the VE's scope+tracked intersection, and no worker emits it today — hence a hardening, not a live defect). FIX: the two executors that actually confine+write an in-scope file (ODG Synthetic Deliverable, ODG Spec Author) now return an EXPLICIT deliverableTarget: confined.relTarget (the path written post physical-confinement, an in-code value no pass-through can inject); patch-executor keys files:[{target}] off result.deliverableTarget, NOT result.summary.target. INDEPENDENT AUDIT ⇒ ACCEPT (all 5 points): deliverableTarget present on exactly the 2 file-writers (static grep + LIVE Connectivity-Audit/External-Research runs ⇒ undefined); a summary.target-only result is inert (produces no files[]); the positive F1 path intact (real dist Synthetic Deliverable mission ⇒ EXECUTED carries files:[{target:relTarget}] from deliverableTarget); non-vacuous (assertion checks a LIVE pass-through result has none); no weakening (summary.target kept for back-compat; VE engineeringOk scope+tracked intersection byte-identical — a deliverableTarget still must be in-scope AND committed to count). +1 non-vacuous gated assertion (capability-executors.test 62→63). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 99 ACCEPTED. RESIDUAL (future-auditor note, non-blocking): summary.target now has no readers (harmless redundancy); deliverableTarget being confinement-derived is a design convention, not a type/lint gate — a future executor must not copy the pattern with a worker-supplied value. Integration: stacked …→F2c→F1c; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "a68cd01",
+        "perLotPR": 266,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "mission-ledger-crash-atomic-write",
@@ -1436,7 +1631,22 @@
       ],
       "priority": 2,
       "evidence": "PR(this cycle, branch excellence/validation-deliverable-target-allowlist-20261030, committed on top of F1c a68cd01): runtime/core/mission-ledger.ts. Follow-on to S3's documented structural note. THREAT addressed: recordMission did `fs.writeFileSync(LEDGER_FILE, …)` directly to the target ⇒ a crash/interrupt MID-WRITE could leave a torn/half-written ledger, which the reader then classifies as corrupt and REFUSES to append to (silently stalling all future evidence). FIX: write the payload to a temp file in the same dir, then renameSync() over the target (rename(2) is atomic on POSIX) — a crash between the two syscalls leaves the OLD ledger intact; on rename failure the temp is removed and the error rethrown (no orphan, no swallow). HONEST SCOPE (explicit in the code comment, NOT overclaimed): this does NOT serialize two CONCURRENT read-modify-write appenders (the lost-update the S3 recon reproduced) — that remains gated by the one-active-mission governance discipline (no automated path dispatches two missions concurrently; fleet-dispatcher/collector are unlocked operator CLIs) with bounded impact (git-ignored ephemeral evidence, 1 lost entry), and a file-lock is a deferred defense-in-depth. INDEPENDENT AUDIT ⇒ ACCEPT (all 5 points): atomicity EMPIRICALLY PROVEN (monkey-patched rename-throw ⇒ old ledger byte-identical, not torn); no .tmp residue on success; failure rethrows + cleans up; all 5 ledger suites pass (proven-gate/failclosed/controlled/reuse-hook/economic); corrupt-skip + idempotent-duplicate-skip unchanged; honest scope CONFIRMED (lost-update reproduced, still documented, not silently fixed/ignored); no temp-name collision (synchronous single-process; distinct PIDs; stale-orphan harmlessly overwritten). Gate: tsc 0, build 0, full regression 235/235, 0 stale. Register 100 ACCEPTED. The documented SAFE non-owner-gated follow-on queue is now EMPTY. Integration: stacked …→F1c→S3b; NOT merged (gh-auth gate).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "d4ae7e0",
+        "perLotPR": 266,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
     },
     {
       "id": "git-integration-preflight-state-model",
@@ -1446,7 +1656,58 @@
       "deps": [],
       "priority": 1,
       "evidence": "PR(this cycle, branch excellence/git-integration-preflight-20261030 stacked on the 14-lot tip d4ae7e0): new runtime/bin/odg-integration-preflight.ts + odg-integration-preflight.test.ts + tsconfig.runtime-dist.json (dist include) + package.json (gated). DELIVERABLE for the CTO's root-cause Git/GitHub repair mandate §4. ROOT CAUSE diagnosed with EVIDENCE (forensic, no secrets): git push/fetch authenticate via the SSH key (ssh -T git@github.com ⇒ 'successfully authenticated' — all 14 POST-V107 commits pushed), while PR/merge go through `gh` which needs a SEPARATE GitHub API token that is ABSENT (gh auth status ⇒ not logged in; no ~/.config/gh/hosts.yml; no GH_TOKEN/GITHUB_TOKEN) — and stdin is NOT a tty in this agent process, so interactive `gh auth login` menus/device-flow cannot be driven here (explains the earlier 'wrong place' confusion). The two auth channels are independent; the campaign conflated 'push succeeded' with 'merged'. There is NO computer-side path to authenticate gh without an owner-supplied credential — a genuine credential gate, not a fixable code defect. TOOL (the durable prevention): pure classifyBranch/authState/planMergeOrder + a thin read-only CLI over `git rev-parse` + `git merge-base --is-ancestor origin/<b> origin/main` + `gh auth status`. Reports the HONEST per-branch state (LOCAL/PUSHED/MERGED/DIVERGED/ABSENT) using ONLY git (no gh to OBSERVE); NEVER reports MERGED unless the tip is a proven ancestor of origin/main (FAIL-CLOSED — cannot verify ⇒ not merged, no crash); gh-auth detected non-interactively with the EXACT owner command (fine-grained PAT via GH_TOKEN — Contents+Pull-requests RW — the official headless path per cli.github.com/docs.github.com, WebSearch-verified+cited 2026-10-30; or `gh auth login` in the owner tty); plans a linear-stack merge order. REAL run on the live 11 lot branches ⇒ origin/main a8d1c4f, gh NOT AUTHED (+owner cmd), 0 merged / 11 pushed-awaiting-merge, 'NOTHING is RELEASED until merged'. INDEPENDENT ADVERSARIAL AUDIT ⇒ ACCEPT-WITH-CONCERNS: core purpose PROVEN (no input makes a merely-pushed branch read MERGED; fail-closed strict-boolean; non-vacuous — a mutant that treats pushed-as-merged dies on the test; no network mutation; secret value never printed). THREE honesty/robustness concerns in the tool's own area, ALL CLOSED post-audit + locked by +3 assertions: (1) GH_TOKEN-only was mislabeled 'stored-credential' ⇒ split gh-status from GH_TOKEN + token-precedence label ('GH_TOKEN-env', verified real-run); (2) planMergeOrder infinite-recursion on a cyclic parentTip ⇒ on-stack cycle guard (no RangeError); (3) classifyBranch pure-API now self-enforces 'no remote tip ⇒ never MERGED'. +gated runtime/bin/odg-integration-preflight.test.ts (20, hermetic — injected git runner, no network). Gate: tsc 0, build 0, full regression 236/236, 0 stale. Register 101 ACCEPTED (verified+pushed; itself awaiting the same gh-merge gate). Integration: stacked on the 14-lot tip; NOT merged (the very gate it reports on).",
-      "acceptedAt": "2026-10-30"
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "dba268a",
+        "perLotPR": 267,
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS (identical tree to main); main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "PUSHED→MERGED→VERIFIED reconciled 2026-10-30 after gh auth (Naser636). Earlier state was ACCEPTED-locally but NOT merged (the exact push≠merge hazard this campaign guards). Integrated via consolidated PR #268 (merge commit 0fdb8bf into main) which also carried the CI-portability fix lot; the per-lot PR was auto-marked MERGED by GitHub once its commit became reachable from main. CI GREEN: branch 00c68ef SUCCESS (tree-identical to main 0fdb8bf) + main push-CI run 41117336407. Register 'status' (ACCEPTED) unchanged; this 'integration' block is the orthogonal PUSHED/PR_OPEN/MERGED/VERIFIED/ACCEPTED reconciliation."
+      }
+    },
+    {
+      "id": "ci-portability-confined-checkers-execpath-rustc-sysroot",
+      "program": "P1",
+      "title": "CI portability of the confined code-checkers: bind node execPath + rust sysroot in the bwrap sandbox; serialize the resource-heavy code-execution suite — closes a local-green/CI-red gap that would also break confined review on rustup/hostedtoolcache production hosts",
+      "status": "ACCEPTED",
+      "deps": [
+        "bash-governor-sandbox-host-read",
+        "code-exec-go-rust-host-file-read",
+        "code-exec-ts-single-file-confine",
+        "confine-code-review-tsc-sandbox-escape",
+        "git-integration-preflight-state-model"
+      ],
+      "priority": 1,
+      "evidence": "Found when the 15-lot POST-V107 stack first hit REAL CI after gh auth (it had only ever run locally, where node=/usr/bin/node and rustc sysroot=/usr/lib/rust-* sit under the bound /usr). THREE deterministic CI-only defects, each root-caused + fixed + proven: (1) ts-project-check.ts + code-execution.ts exec process.execPath INSIDE bwrap but bound only /usr,/lib,/lib64,/bin,/sbin ⇒ on GitHub runners node lives in /opt/hostedtoolcache (outside) ⇒ 'execvp: No such file or directory' ⇒ false BLOCKED/FAIL — FIX: ro-bind process.execPath (2d1486d); (2) code-execution runs real go+rustc+tsc compiles (~65s) with a 20s per-compile bound ⇒ under the parallel pool on a 2-core runner a cold confined compile times out ⇒ false FAIL — FIX: HAZARD_ALLOWLIST serialize code-execution (e5dd838); (3) confined rustc on a rustup host (runner rustc 1.99.1) has its sysroot under ~/.rustup (unbound) ⇒ even legit Rust can't find std ⇒ false FAIL — FIX: resolve `rustc --print sysroot`, exec the real <sysroot>/bin/rustc, ro-bind the sysroot with deduped ancestor-aware binds (00c68ef); + an if:failure CI diagnostic (424c82e). Mechanically proven: bwrap exec of an out-of-/usr node fails w/ only sys dirs bound, succeeds w/ the binary bound; all 3 suites pass under a node copied outside /usr. Gate: build:runtime + tsc --noEmit clean; test:report 236/236 local; CI GREEN on 00c68ef (#268) + main 0fdb8bf. NOT a weakening — only toolchain code (node binary, rust sysroot) is additionally exposed; the include!/reference host-read confinement is unchanged. Hardens production too (confined review now works on rustup/hostedtoolcache hosts, not just apt).",
+      "acceptedAt": "2026-10-30",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "lotCommit": "00c68ef",
+        "fixCommits": [
+          "2d1486d",
+          "e5dd838",
+          "424c82e",
+          "00c68ef"
+        ],
+        "consolidatedPR": 268,
+        "mergeCommit": "0fdb8bf",
+        "mainTip": "0fdb8bf",
+        "ciGreen": "branch 00c68ef SUCCESS; main run 41117336407",
+        "reconciledAt": "2026-10-30",
+        "note": "New deliverable created during the integration campaign to make the 15-lot stack CI-green; merged within consolidated PR #268."
+      }
     }
   ]
 }
