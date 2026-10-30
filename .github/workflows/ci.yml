@@ -125,3 +125,9 @@ jobs:
           echo "::error title=env::userns=$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns 2>/dev/null || echo n/a) unprivileged_userns_clone=$(cat /proc/sys/kernel/unprivileged_userns_clone 2>/dev/null || echo n/a)"
           npx tsx runtime/core/bash-command-governor.test.ts > bcg.out 2>&1 || true
           tail -n 18 bcg.out | while IFS= read -r l; do echo "::error title=bcg::$l"; done
+          # Toolchain versions + the first failing assertion of code-execution (its real compiler/lint classifications
+          # are version-sensitive across hosts). Re-run standalone so the throwing ok(...) line is visible (the parallel
+          # gate only prints the suite NAME). Non-fatal.
+          echo "::error title=tc::node=$(node --version 2>&1) go=$(go version 2>&1 | head -1) rustc=$(rustc --version 2>&1) javac=$(javac -version 2>&1) shellcheck=$(shellcheck --version 2>&1 | grep -i version | head -1) mcs=$(mcs --version 2>&1 | head -1) tidy=$(tidy --version 2>&1 | head -1)"
+          npx tsx runtime/core/code-execution.test.ts > ce.out 2>&1 || true
+          tail -n 30 ce.out | while IFS= read -r l; do echo "::error title=code-exec::$l"; done
