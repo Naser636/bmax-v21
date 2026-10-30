@@ -1705,6 +1705,135 @@
         "reconciledAt": "2026-10-30",
         "note": "New deliverable created during the integration campaign to make the 15-lot stack CI-green; merged within consolidated PR #268."
       }
+    },
+    {
+      "id": "governor-pathform-classification-bypass",
+      "program": "P1",
+      "priority": 1,
+      "deps": [
+        "bash-governor-sandbox-host-read"
+      ],
+      "title": "Close the bash-command-governor path-form classification bypass: classify DANGEROUS/SHELL_ESCALATOR by basename so /bin/rm, ./rm, /usr/bin/sudo cannot evade the deny-by-default gate",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Frontier-recon (independent) found a deterministic deny-by-default bypass: analyze() keyed DANGEROUS/SHELL_ESCALATORS on the RAW first token, so `rm -rf`⇒KNOWN_DANGEROUS⇒DENY but `/bin/rm -rf`⇒UNKNOWN/ANALYZE⇒ALLOW (would sandbox-execute a DELETE). REPRODUCED before fixing (govern() DENY vs ALLOW). FIX: classify by path.basename (over-classification=safe; SAFE_READONLY left exact=conservative) + fixed predictedEffects.network to index cmdName. Regression +10 asserts (governor suite 65→75): /bin/rm, ./rm, /usr/bin/shred ⇒ KNOWN_DANGEROUS⇒DENY⇒BLOCKED zero executions; /usr/bin/sudo⇒SHELL_ESCALATOR DENY. tsc clean; action-gate green. Sandbox already contained host impact ⇒ classification/risk bypass, not a host escape.",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "pr": 270,
+        "headCommit": "3ce41cd",
+        "mergeCommit": "82d5e01",
+        "mainTip": "46d1b74",
+        "ciGreen": "PR #270 CI SUCCESS",
+        "reconciledAt": "2026-10-30",
+        "note": "PR #270 merged to main."
+      }
+    },
+    {
+      "id": "toolchain-probe-strict-exitcode",
+      "program": "P2",
+      "priority": 2,
+      "deps": [
+        "code-exec-ts-single-file-confine"
+      ],
+      "title": "Toolchain-probe fail-toward-available guard: detectToolchain + tscAvailable require strict exit 0 for the real runner (signal-kill ⇒ not available); undefined/null tolerated only for injected test runners",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Frontier-recon #3 (LOW). detectToolchain (code-execution.ts) + tscAvailable (ts-project-check.ts) accepted exitCode 0|undefined|null as available; the real defaultRunner exitCode=res.status is NULL on signal-kill (OOM/SIGKILL) ⇒ a signal-killed --version probe read as usable. FIX: strict ===0 for the real runner; tolerate undefined/null only when a runner is injected. Tests +2 (code-execution 98→100): non-zero probe⇒not available; injected-null seam preserved. tsc clean.",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "pr": 271,
+        "headCommit": "75687d4",
+        "mergeCommit": "1cc4210",
+        "mainTip": "46d1b74",
+        "ciGreen": "PR #271 CI SUCCESS",
+        "reconciledAt": "2026-10-30",
+        "note": "PR #271 merged to main (with einvoice-batch-errorcount)."
+      }
+    },
+    {
+      "id": "einvoice-batch-errorcount",
+      "program": "P2",
+      "priority": 2,
+      "deps": [
+        "product-einvoice-validator-slice1"
+      ],
+      "title": "einvoice validateBatch count honesty: malformed (INVALID_INPUT) invoices counted in a new errorCount so validCount+invalidCount+errorCount===count (never silently dropped from the tally)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Frontier-recon #4 (LOW). A malformed input (validateInvoice ok:false) was pushed to results without a `valid` field ⇒ excluded from BOTH validCount and invalidCount ⇒ validCount+invalidCount<count (silent drop). FIX: add errorCount (results where ok===false) so the three buckets sum to count. Test +1 (einvoice 16→17): batch [null,{},good] ⇒ error=1,invalid=1,valid=1, sum===count.",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "pr": 271,
+        "headCommit": "75687d4",
+        "mergeCommit": "1cc4210",
+        "mainTip": "46d1b74",
+        "ciGreen": "PR #271 CI SUCCESS",
+        "reconciledAt": "2026-10-30",
+        "note": "PR #271 merged to main (with toolchain-probe-strict-exitcode)."
+      }
+    },
+    {
+      "id": "behaviour-integration-exec-confinement",
+      "program": "P1",
+      "priority": 1,
+      "deps": [
+        "code-exec-go-rust-host-file-read",
+        "ci-portability-confined-checkers-execpath-rustc-sysroot"
+      ],
+      "title": "Confine behaviour + integration code execution (runBehaviourCheck/runIntegrationCheck) in bubblewrap --unshare-all — make the 'no network' contract true, prevent a reviewed program from reaching the host network/FS",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Frontier-recon #2 (latent LOW-MED). runBehaviourCheck/runIntegrationCheck EXECUTE the supplied program via the NON-confined runner (bare spawnSync, no bwrap/no net) while claiming 'no network'. Only reachable today with the trusted in-code CORPUS (ingest path uses runSyntaxCheck only), but the guarantee was false + the capability is exported. FIX: route both through the confine:true bwrap runner (--unshare-all, cleared env, host FS absent); node via process.execPath (portable, proven under a node copied outside /usr); python3 on sandbox PATH; fail-closed BLOCKED without bwrap. Regression (11b): a confined program CANNOT read host /etc ⇒ 'CONFINED', never a leak (asserts real isolation). code-execution 99; broad-it-eval 46/ingest 6/code-check-eval 9 green; tsc clean.",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "pr": 272,
+        "headCommit": "b5b16d6",
+        "mergeCommit": "e56c00d",
+        "mainTip": "46d1b74",
+        "ciGreen": "PR #272 CI SUCCESS",
+        "reconciledAt": "2026-10-30",
+        "note": "PR #272 merged to main."
+      }
+    },
+    {
+      "id": "roadmap-consolidation-crosswalk",
+      "program": "P1",
+      "priority": 1,
+      "deps": [],
+      "title": "Master-roadmap consolidation (CTO mandate A–G): canonical ODG_ROADMAP_CROSSWALK.md designating ODG_MASTER_ROADMAP.md §Q as the single operational SSOT, tracing every legacy ladder, + §U/§Q compass drift fix + stale-doc banners + WEAK-1 register cleanup",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Four-agent read-only audit (Phases A–C): inventory of all roadmaps incl. git history; P0/P1/P2 register audit (0 false-success, 3 WEAK); mission-contract audit (3 roadmap tracks + register, MASTER_PLAN_V1 dangling); prose/F-namespace audit. Phase D: ODG_ROADMAP_CROSSWALK.md crosswalks every ladder to §Q preserving IDs; disambiguates 3 F-namespaces + 3 P-numberings; records 4 orphan commitments + the absent '28 July Excellence Opérationnelle' doc. Phase E invariants stated. Phase F: INDEPENDENT audit ACCEPT-WITH-FIXES — 1 blocking error (ROADMAP.json 11 missions not 12) + exhaustiveness gaps, ALL resolved. Fixed §U/§Q compass drift (both directions); banner-closed 3 stale docs (preserved); WEAK-1 register cleanup. No governance authority edited; register consumers green.",
+      "integration": {
+        "state": "MERGED",
+        "pushed": true,
+        "prOpen": false,
+        "merged": true,
+        "verified": true,
+        "pr": 273,
+        "headCommit": "4fc1bfd",
+        "mergeCommit": "46d1b74",
+        "mainTip": "46d1b74",
+        "ciGreen": "PR #273 CI SUCCESS",
+        "reconciledAt": "2026-10-30",
+        "note": "PR #273 merged to main."
+      }
     }
   ]
 }
