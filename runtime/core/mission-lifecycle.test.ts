@@ -16,6 +16,8 @@ const {
   computeLifecycle,
   toC03Records,
   orderedStates,
+  markArchived,
+  LIFECYCLE_FILE,
 } = require("./mission-lifecycle");
 const {
   validateStateTransition,
@@ -130,6 +132,30 @@ console.log("additive integration + existing-consumer compatibility");
   ok(lifecycle.c03Transitions.length === lifecycle.transitions.length &&
      lifecycle.c03Transitions.every((r) => r.ok === true),
     "one valid C03 record per real transition");
+}
+
+console.log("cross-mission stale-read safety (markArchived) — regression");
+{
+  // LIFECYCLE_FILE is a single GLOBAL (gitignored) artifact. Prior behaviour trusted whatever was on disk,
+  // so markArchived(B) could return/promote a stale record left by a DIFFERENT mission A. Backup/restore the
+  // real gitignored file so this stays hermetic (and race-tolerant with the other write in this same suite).
+  const fs = require("fs"); const path = require("path");
+  const F = LIFECYCLE_FILE;
+  const had = fs.existsSync(F); const bak = had ? fs.readFileSync(F, "utf8") : null;
+  try {
+    fs.mkdirSync(path.dirname(F), { recursive: true });
+    // (a) a DIFFERENT mission cached at RELEASED must NOT be returned or promoted for THIS mission's call.
+    fs.writeFileSync(F, JSON.stringify({ mission: "STALE_OTHER_MISSION", achieved: "RELEASED", archived: false, transitions: [], path: ["RELEASED"] }));
+    const r = markArchived("FRESH_MISSION_XYZ");
+    ok(r.mission === "FRESH_MISSION_XYZ", "markArchived recomputes for THIS mission, not the stale cached DIFFERENT one");
+    ok(!(r.mission === "STALE_OTHER_MISSION" && r.archived === true), "stale DIFFERENT-mission record is NOT wrongly promoted to ARCHIVED");
+    const onDisk = JSON.parse(fs.readFileSync(F, "utf8"));
+    ok(onDisk.mission === "FRESH_MISSION_XYZ", "generated file rewritten for THIS mission (stale record cleared, not left to poison next read)");
+    // (b) backward-compat: when the cache IS this mission's and at RELEASED, archival still proceeds (mission-ledger path).
+    fs.writeFileSync(F, JSON.stringify({ mission: "SAME_MISSION_REL", achieved: "RELEASED", archived: false, transitions: [{ from: "VERIFIED", to: "RELEASED", ok: true, evidence: "e" }], path: ["RELEASED"] }));
+    const same = markArchived("SAME_MISSION_REL");
+    ok(same.mission === "SAME_MISSION_REL" && same.archived === true, "same-mission cache at RELEASED still archives (compute-then-archive path unchanged)");
+  } finally { if (had) fs.writeFileSync(F, bak); else { try { fs.rmSync(F); } catch { /* best-effort */ } } }
 }
 
 console.log(`\nMISSION LIFECYCLE × C03 — ${passed} assertions passed.`);

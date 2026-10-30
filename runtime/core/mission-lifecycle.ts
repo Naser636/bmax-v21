@@ -285,7 +285,13 @@ function computeLifecycle(mission: string): any {
  */
 function markArchived(mission: string): any {
   const sm = loadStateMachine();
-  const lifecycle = readJsonSafe(LIFECYCLE_FILE) || computeLifecycle(mission);
+  // SAFETY (cross-mission stale read): LIFECYCLE_FILE is a single GLOBAL, non-mission-namespaced artifact. Trusting
+  // it blindly lets a stale record left by a DIFFERENT mission in the same checkout be returned — and even mutated to
+  // ARCHIVED — for THIS mission (a false terminal-state success + wrongful terminal promotion of an unrelated mission;
+  // reproduced via odg-delegate's direct markArchived call, which does not compute fresh first). Reuse the cache ONLY
+  // when it is THIS mission's; otherwise recompute fresh for `mission` (which also rewrites the file for this mission).
+  const cached = readJsonSafe(LIFECYCLE_FILE);
+  const lifecycle = cached && cached.mission === mission ? cached : computeLifecycle(mission);
   if (lifecycle.achieved === sm.terminalState) return lifecycle;
 
   const gov = authorizeMission(mission, lifecycle.achieved);
