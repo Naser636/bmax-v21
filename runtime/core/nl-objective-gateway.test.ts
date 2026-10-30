@@ -511,6 +511,23 @@ console.log("== NL Objective Gateway ==");
   ok("30 'ne le lance pas en production' prohibition still classified non-DEPLOY-executed (ne preserved)", C("ne le lance pas").externalEffect !== "DEPLOY" || C("ne le lance pas").requiresHuman === true);
 }
 
+// ---- 31 — AVAILABILITY: the negation scan was O(n^2) on a pathological adjacently-negated input. It is bounded by a
+//      local negation look-back window (NEG_LOOKBACK) — NOT by truncating the input — so it is linear/fast AND never
+//      silently drops a signal (no truncation fail-open). Realistic inputs are behaviourally identical.
+{
+  const C = gw.classifyObjective;
+  const pathological = "no online ".repeat(15000); // ~150KB, previously ~11s
+  const t0 = Date.now(); const r = C(pathological); const ms = Date.now() - t0;
+  ok("31 150KB adjacently-negated input parses fast (<1s, DoS-bounded) + returns a valid verdict", ms < 1000 && typeof r.externalEffect === "string");
+  // behavior-identical for realistic inputs:
+  ok("31 realistic objective classification UNCHANGED", C("delete the production database").externalEffect === "DESTRUCTIVE" && C("refactor the helper for readability").externalEffect === "NONE" && C("deploie en production").externalEffect === "DEPLOY");
+  // NO TRUNCATION FAIL-OPEN: a genuine destructive signal FAR past any byte cap (20KB of inert filler) is STILL caught
+  // (the fix bounds the negation look-back, not the signal search) ⇒ DESTRUCTIVE, never silently dropped to NONE.
+  ok("31 signal at char ~20000 (past any cap) still ⇒ DESTRUCTIVE (no truncation under-classification)", (() => { const c = C("x ".repeat(10000) + "delete the production database"); return c.externalEffect === "DESTRUCTIVE" && c.requiresHuman === true; })());
+  // and that far signal, when genuinely negated locally, is still suppressed (window applies at the signal, not the start):
+  ok("31 far signal with ADJACENT strong negation still suppressed (window is local to the signal)", C("x ".repeat(10000) + "do not delete the production database").externalEffect !== "DESTRUCTIVE");
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);

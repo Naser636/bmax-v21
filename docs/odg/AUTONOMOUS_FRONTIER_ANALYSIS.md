@@ -41,11 +41,10 @@ All in `runtime/core/nl-objective-gateway.ts`, surfaced by the independent audit
   Residual `ne` collision (standalone "NE" region abbreviation) is far rarer and left as a minor note.
 - **F3 — Arabic `لا` negation reaches across the unrecognised Arabic connector `لكن`** (`لا تحذف لكن delete …`).
   Needs an Arabic clause-boundary model. Low frequency.
-- **F4 — O(n²) in `signalPresentUnnegated`/`isNegatedBefore`** when every signal occurrence is adjacently
-  negated (pathological ~200KB input ⇒ ~19s). The gateway is an INTERNAL NL parser (not a public endpoint),
-  so blast radius is low; the clean fix (precompute clause-boundary offsets + binary-search per signal, O(n log n))
-  is a behavior-preserving refactor of a just-audited safety function — deferred to avoid risking the safety
-  logic for a low-likelihood availability issue. A length-cap fail-closed guard is a possible minimal mitigation.
+- **F4 — O(n²) in `signalPresentUnnegated`/`isNegatedBefore`** — **FIXED this cycle** via a local negation
+  look-back window (NEG_LOOKBACK=600; isNegatedBefore scans back ≤600 chars, signal search stays full-length ⇒
+  linear, no truncation, over-classify on an out-of-window negator = safe). 200KB ⇒ ~140ms. An initial input-cap
+  attempt was REJECTED by audit (truncation fail-open) and replaced. Independent audit ACCEPT; suite 239.
 
 ## 3. External blockers (unchanged — 7 BLOCKED register lots, each with a resumeTest)
 broad-it-independent-eval-set (third-party labelled eval data) · campaign-runner-systemd-activation (sudo/systemd) ·
@@ -69,12 +68,15 @@ hadolint + the independent eval set.
 - Further §8 SEO modules — the workstream (7 modules) is comprehensive; more would be diminishing returns.
 
 ## 6. Next genuinely useful work (in priority order)
-1. **F4 availability hardening** — the remaining clearly-SAFE deterministic self-clearable fix (length-cap
-   fail-closed guard OR the O(n log n) boundary-offset refactor, with a before/after classification-equivalence
-   battery + perf test + independent audit). Low value (internal parser, pathological input only) but real.
-2. Then the frontier is owner-gated: the negation-scope policy (F1/F6) and the external blockers (§3) are
-   the substantive remaining roadmap advancement, and they require human/owner action by design.
-   (F2 FR-`pas` collision — DONE this cycle.)
+1. The frontier is now OWNER-GATED. All clearly-SAFE deterministic self-clearable fixes in the governance/execution
+   core identified by two recon passes are DONE this cycle (weak-negator fail-open, local-provider fail-open,
+   CI-gate hardening, FR-`pas` collision, O(n²) DoS bound). The substantive remaining roadmap advancement is:
+   (a) the **negation-scope policy decision** (F1/F6 — over-escalate prohibitions vs. under-classify run-ons, or
+       authorize a semantic classifier) — governance-policy, §4 reserves it to the owner;
+   (b) clearing any of the **7 external blockers** (§3), each with a documented resumeTest;
+   (c) engineering-executor slice-2 authorization.
+   F3 (Arabic `لكن` connector) is the only remaining deterministic micro-gap — low frequency, low value; a
+   candidate only if the owner wants Arabic clause-boundary parity.
 
 ## 7. Honest status
 The continuous loop ran end-to-end with verified quality and real failure recovery; it is NOT closed by this

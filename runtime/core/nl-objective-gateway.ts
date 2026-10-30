@@ -226,8 +226,14 @@ const CLAUSE_NEGATION_STRONG = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn[
 // "sans suppression"). A non-adjacent weak negator leaves the effect intact (fail-CLOSED: over-classify, human-gated).
 const WEAK_NEG_ADJACENT = /\b(?:no|without|sans|sauf)\b\s*(?:the\s+|a\s+|an\s+|le\s+|la\s+|les\s+|l['’]\s*|de\s+|des\s+|du\s+)?$/;
 const CLAUSE_BOUNDARY = /[,;.:!?()\[\]—–/،؛]|\b(?:and|then|also|but|et|puis|ensuite|mais)\b/g;
+// Bound the negation look-back to a local window. A clause is short, so this is behaviourally identical for every
+// realistic input while making the call O(1) (⇒ the whole negation scan is LINEAR, not O(n^2) — closing the DoS
+// WITHOUT truncating the signal search, so no signal is ever silently dropped). If a pathologically long clause
+// pushes its negator past the window, the effect is simply NOT suppressed ⇒ over-classify, human-gated — the SAFE
+// direction, never a new under-classification fail-open.
+const NEG_LOOKBACK = 600;
 function isNegatedBefore(g: string, idx: number): boolean {
-    const pre = g.slice(0, idx);
+    const pre = g.slice(idx > NEG_LOOKBACK ? idx - NEG_LOOKBACK : 0, idx);
     let start = 0, m: any;
     CLAUSE_BOUNDARY.lastIndex = 0;
     while ((m = CLAUSE_BOUNDARY.exec(pre)) !== null) start = m.index + m[0].length;
@@ -249,7 +255,8 @@ function signalPresentUnnegated(g: string, s: string): boolean {
 }
 function classifyObjective(goal: any) {
     // Fold diacritics so FRENCH signals (stored folded in EFFECT_FAMILIES) match accented input
-    // ("déploie"→"deploie"); English folds to itself (byte-identical) and Arabic is preserved.
+    // ("déploie"→"deploie"); English folds to itself (byte-identical) and Arabic is preserved. NB: no input truncation
+    // — the O(n^2) DoS is bounded instead by NEG_LOOKBACK in isNegatedBefore, which never drops a signal (see note there).
     const g = foldDiacritics(String(goal || "")).toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
         if (signals.some((s) => signalPresentUnnegated(g, s))) {
