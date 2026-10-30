@@ -28,7 +28,7 @@
 const fs = require("fs");
 const path = require("path");
 const cp = require("child_process");
-const { preferDistBin } = require("../core/prefer-dist-bin.js");
+const { resolveRequiredPort } = require("../core/prefer-dist-bin.js");
 
 const ROOT = process.cwd();
 const BIN = path.join("runtime", "bin");
@@ -41,7 +41,7 @@ const DELEGATION_DIR = path.join(GENERATED, "delegation");
 // FIX-2/3/4/5. Resolves the execution-proven 13 source-dual loads on the delegate path.
 function _corePort(rel: string): string {
   const dist = rel.replace(/^runtime\//, "runtime/dist/");
-  return preferDistBin(dist, rel, (p: string) => fs.existsSync(path.join(ROOT, p)));
+  return resolveRequiredPort(dist, rel, (p: string) => fs.existsSync(path.join(ROOT, p)));
 }
 
 function die(msg: string, code = 1): never {
@@ -285,7 +285,7 @@ try {
 console.log("--------------------------------------");
 console.log("VERIFY");
 // L7-FIX-4: prefer the compiled dist verifier (TS-only) so its transitive core loads from dist; source fallback.
-const verifyBin = preferDistBin(path.join("runtime", "dist", "bin", "odg-verify.js"), path.join(BIN, "odg-verify.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
+const verifyBin = resolveRequiredPort(path.join("runtime", "dist", "bin", "odg-verify.js"), path.join(BIN, "odg-verify.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
 const verify = cp.spawnSync(process.execPath, [verifyBin], { cwd: ROOT, stdio: "inherit" });
 if (verify.status !== 0) {
   die(`STOP: verify failed for "${mission}".`, verify.status || 1);
@@ -294,7 +294,7 @@ if (verify.status !== 0) {
 // --- Step 8 — converge (existing Convergence Orchestrator, writes convergence-report + ledger) ---
 console.log("--------------------------------------");
 console.log("CONVERGE");
-const convergeBin = preferDistBin(path.join("runtime", "dist", "bin", "odg-converge.js"), path.join(BIN, "odg-converge.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
+const convergeBin = resolveRequiredPort(path.join("runtime", "dist", "bin", "odg-converge.js"), path.join(BIN, "odg-converge.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
 const converge = cp.spawnSync(process.execPath, [convergeBin], { cwd: ROOT, stdio: "inherit" });
 if (converge.status !== 0) {
   die(`STOP: converge did not reach convergence for "${mission}".`, converge.status || 1);
