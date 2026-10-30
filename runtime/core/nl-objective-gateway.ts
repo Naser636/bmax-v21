@@ -213,7 +213,12 @@ function probeForCapability(capability: any) {
 // et/puis/mais…). Arabic negation particle لا anywhere in the clause also negates.
 // STRONG prohibition markers scope the WHOLE clause (deliberate: "do not pay the invoice" must negate the later
 // noun-signal "invoice"). These are genuine prohibitions of the clause's effect.
-const CLAUSE_NEGATION_STRONG = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn['’]t\b|\bcannot\b|\bcan['’]t\b|\bmust not\b|\bmustn['’]t\b|\bwill not\b|\bwon['’]t\b|\bshould not\b|\bshouldn['’]t\b|\bnot\b|\bnever\b|\bne\b|\bpas\b|\bjamais\b)/;
+// NOTE on FR tokens: `ne` is kept (it reliably marks FR negation and catches the standard "ne … pas" since `ne`
+// appears in the clause), but bare `pas` is DROPPED — alone it collides with the English word "PAS"/"pas de deux"
+// and wrongly SUPPRESSED a real destructive instruction ("the PAS system should DELETE …" ⇒ NONE, a fail-OPEN).
+// Dropping it loses only dropped-"ne" colloquial negation ("supprime pas"), which then over-classifies (safe,
+// human-gated) and is still captured by extractConstraints — never a new fail-open.
+const CLAUSE_NEGATION_STRONG = /(\bdo not\b|\bdon['’]t\b|\bdoes not\b|\bdoesn['’]t\b|\bcannot\b|\bcan['’]t\b|\bmust not\b|\bmustn['’]t\b|\bwill not\b|\bwon['’]t\b|\bshould not\b|\bshouldn['’]t\b|\bnot\b|\bnever\b|\bne\b|\bjamais\b)/;
 // WEAK/adverbial negators (no/without/sans/sauf) are frequently NON-prohibiting ("without further delay DELETE…",
 // "we have no backup so WIPE…", "sans hesitation SUPPRIME…"). Clause-wide suppression on these produced a reproduced
 // fail-OPEN: a genuinely destructive/financial/deploy instruction downgraded to NONE/LOW/no-human. They now suppress

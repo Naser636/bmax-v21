@@ -496,6 +496,21 @@ console.log("== NL Objective Gateway ==");
   // negation-scope model that keeps a strong negator bound to its verb across asides, not a flat boundary list).
 }
 
+// ---- 30 — FR-TOKEN COLLISION FAIL-OPEN (reproduced): bare `pas` is a French negation token that collides with the
+//      English word "PAS" / "pas de deux". Clause-wide suppression on bare `pas` DOWNGRADED a genuine destructive
+//      instruction ("the PAS system should delete the temp cache files" ⇒ NONE — a fail-OPEN). `pas` is now dropped;
+//      real FR "ne … pas" prohibitions are still suppressed via the `ne` marker (kept).
+{
+  const C = gw.classifyObjective;
+  const isDestr = (g) => { const c = C(g); return c.externalEffect === "DESTRUCTIVE" && c.requiresHuman === true; };
+  // (a) fail-OPEN closed: bare `pas` in English text no longer suppresses the real DELETE.
+  ok("30 'the PAS system should delete the temp cache files' ⇒ DESTRUCTIVE (no FR-pas collision)", isDestr("the PAS system should delete the temp cache files"));
+  ok("30 'after the pas de deux routine delete the old recording' ⇒ DESTRUCTIVE", isDestr("after the pas de deux routine delete the old recording"));
+  // (b) NO regression: genuine FR "ne … pas" prohibitions still suppress via `ne`.
+  ok("30 'ne supprime pas le fichier' ⇒ NOT DESTRUCTIVE (ne marker preserved)", C("ne supprime pas le fichier, trouve pourquoi le build echoue").externalEffect !== "DESTRUCTIVE");
+  ok("30 'ne le lance pas en production' prohibition still classified non-DEPLOY-executed (ne preserved)", C("ne le lance pas").externalEffect !== "DEPLOY" || C("ne le lance pas").requiresHuman === true);
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);
