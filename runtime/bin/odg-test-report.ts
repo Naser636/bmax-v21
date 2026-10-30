@@ -167,6 +167,15 @@ const HAZARD_ALLOWLIST = new Set<string>([
   "objective-evidence.test.ts",
   "local-mission-runner-ledger.test.ts",
   "controlled-mission-live.test.ts",
+  // DIFFERENT rationale (not shared-state): a RESOURCE-HEAVY real-compiler suite. It runs real `go build` + `rustc`
+  // + confined `tsc` compiles end-to-end (~65s wall, 0 skips when the toolchains are present, e.g. on CI). Each
+  // confined compile is bounded at 20s (runSyntaxCheck timeoutMs). In the phase-2 parallel pool on a constrained
+  // runner (GitHub Actions = 2–4 cores, workers clamped to that), the concurrent suites starve its compiles of CPU
+  // and a cold confined `tsc`/`rustc` breaches 20s ⇒ timedOut ⇒ BLOCKED ⇒ the "legit single file still PASSes"
+  // assertion (which REQUIRES a definitive PASS) flips to a false FAIL. REPRODUCED: green standalone/serial, red only
+  // under parallel contention. Serialize it (phase-1) so each compile gets the whole runner — the compiles are the
+  // real security control (cgo/include host-read closure), so they must run, not be skipped.
+  "code-execution.test.ts",
 ]);
 function suiteIsHazard(absFile: string): boolean {
   if (HAZARD_ALLOWLIST.has(path.basename(absFile))) return true; // declared-hazardous (computed repo-relative writes)
