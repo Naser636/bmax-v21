@@ -18,8 +18,10 @@
 phase register.** It already self-declares this role and is the only doc authorized to declare phase status.
 
 **Machine companions (referenced by §Q, never duplicated):**
-- `runtime/governance/ROADMAP.json` — the **autonomy-cycle execution manifest** (12 missions) consumed by
-  `src/runtime/autonomy-runtime-adapter.ts` (`ROADMAP_MANIFEST`). Authoritative for what the runtime auto-executes.
+- `runtime/governance/ROADMAP.json` — the **autonomy-cycle execution manifest** (**11 missions**, verified
+  `python -c "len(json.load(...)['missions'])"` = 11) consumed by `src/runtime/autonomy-runtime-adapter.ts`
+  (`ROADMAP_MANIFEST`). Authoritative for what the runtime auto-executes. Its prose source is
+  `runtime/system/ROADMAP.md` / `runtime/governance/RUNTIME_ROADMAP.md` (see §4).
 - `docs/odg/closure-register.json` — the **campaign/lot register** (112 items, P0/P1/P2) consumed by
   `runtime/core/campaign-controller.ts`. Authoritative for engineering/product/security lot status.
 
@@ -71,7 +73,8 @@ explicitly *future* program. `§M` holds the reconciled η3 execution sequence.
 | `ODG_MASTER_ROADMAP.md` §G APEX SOVEREIGN | A–J sub-phases | FUTURE (not executed; ambition preserved). | line 123 |
 | `ODG_MASTER_ROADMAP.md` §M-2 / §M-3 | TS-migration / cutover ladders | **SUPERSEDED** by ZERO-JS convergence (0 tracked internal `.js`; verify `git ls-files 'runtime/core/*.js'` = 0). Genuinely done. | L562/L570 |
 | `ODG_MASTER_ROADMAP.md` Phase 04 / DEC-V60-166 | A01–A54 / "166 caps" | **RETIRED** (set non-enumerable by construction; only endpoints A01/A54 exist). | L272 |
-| `runtime/governance/ROADMAP.json` | M0000-M0002, UNIFY_RUNTIME_EXECUTION, …, DEPLOY_BMAX_DASHBOARD_PROD_V1 | **CANONICAL machine execution manifest** (12 missions; 11 EXECUTED, DEPLOY_BMAX owner-gated). | audit B2 |
+| `runtime/governance/ROADMAP.json` | M0000-M0002, UNIFY_RUNTIME_EXECUTION, …, DEPLOY_BMAX_DASHBOARD_PROD_V1 | **CANONICAL machine execution manifest** (**11 missions**; 10 executed/proven, DEPLOY_BMAX_DASHBOARD_PROD_V1 owner-gated — consistent with the master's own §X.6 CM-3 "11 canonical missions, 10/11 complete"). | audit B2 (count corrected by Phase-F audit: 11, not 12) |
+| `runtime/system/ROADMAP.md` + `runtime/governance/RUNTIME_ROADMAP.md` | prose behind ROADMAP.json | **STALE-STATUS source docs** — mirror the 11 missions but carry obsolete `READY`/`SYSTEM_READY`/`COMPLETE` assertions the master's §N-1 flags as violating §C status discipline. Disposition: treat ROADMAP.json as the authoritative status; these prose mirrors must NOT be cited for status (owner may banner/retire them — not auto-executed, so inert). | Phase-F audit OMISSION |
 | `docs/odg/closure-register.json` | 112 P0/P1/P2 lot ids | **CANONICAL machine lot register** (102 ACCEPTED, 0 false-success found; 7 BLOCKED/2 DEFERRED/1 IN_PROGRESS all owner/external-gated). | audit B1 |
 | `runtime/missions/ROADMAP_PHASE_1..5_*.json` (FOUNDATION/RUNTIME_KERNEL/ENGINEERING/FLEET_AND_PROVIDERS/ENTERPRISE) | Phase 1–5 missions | **SUPERSEDED legacy** — self-build missions executed once (2026-07), orphaned (no parent program), not wired into the autonomy adapter. Preserved as history. | audit B2 |
 | `runtime/missions/MASTER_PLAN_V1.json` | ROADMAP_01..06 | **DANGLING orchestrator** — only ROADMAP_01 (RUNTIME_STABILIZATION_V1) exists; 5 sub-roadmaps never authored; no objectives; never in ledger. Disposition: RETIRE or re-author (owner decision; not auto-executed, so inert/harmless). | audit B2; `runtime/reports/CORRECTIVE_QUEUE_ROOT_CAUSE.md` |
@@ -87,13 +90,19 @@ explicitly *future* program. `§M` holds the reconciled η3 execution sequence.
 
 ---
 
-## 5. ORPHAN / FORGOTTEN COMMITMENTS — dispositions (none left untraced)
+## 5. ORPHAN / FORGOTTEN COMMITMENTS — dispositions (no ACTIVE commitment left untraced)
 
 1. **FND-F program** (`docs/FEUILLE_DE_ROUTE.md`) — no register id / no mission. **Disposition:** banner-close (see §4); every F item mapped to its §K/§Q equivalent above. No original requirement lost.
 2. **`docs/ROADMAP.md` Sprint 6–12+** — **Disposition:** stale banner; superseded by ODG runtime governance.
 3. **`docs/FOUNDATION_STATUS.md` "Next: Sprint 6"** — **Disposition:** historical banner.
 4. **"ODG MASTER ROADMAP D'EXCELLENCE OPÉRATIONNELLE (28 July 2026)"** — **NOT LOCATED** anywhere (working tree + full git history; `grep -ri "excellence opérationnelle\|28 juillet\|28 july 2026"` → 0). Closest real artifact is **§X "MASTER ROADMAP OF OPERATIONAL EXCELLENCE — DOCUMENTARY INTEGRATION"** (`ODG_MASTER_ROADMAP.md` L1164, an English documentary audit section dated 2026-10-17). **Determination:** either never authored as a standalone 28-July French document, or an informal name for §X. Recorded here as **referenced-but-absent**; requires owner confirmation if a distinct document is expected.
 5. **`§S` "default stays JS"** — stale body text vs the zero-JS reality (TS is now default). Reconcile in a future §S edit (body trim under its SUPERSEDED banner).
+
+**Derivative / snapshot / report artifacts** (no lost commitment; listed for completeness per the Phase-F audit):
+`docs/odg-operational/ODG_TOOL_EXCELLENCE_AND_ROADMAP_COMPLETION_V1_REPORT.md` → maps to §Y "ODG TOOL EXCELLENCE
+FIRST"; `docs/odg/ROADMAP.proposed.json` → the non-governed dep-planner preview (owner-gated apply into the protected
+ROADMAP.json); `baseline/foundation-v2/ROADMAP.md` → frozen dup of `docs/ROADMAP.md` (parallel to `baseline/sprint12/`);
+`docs/audit/phase-0/PHASE_0_ROADMAP_CONVERGENCE_SUMMARY.md` → a Phase-0 audit summary. All derivative/historical.
 
 **Deleted/history-only artifacts** (recoverable from git, not on main; preserved as history, no action): `R0001_RUNTIME_ROADMAP_EXECUTOR_REPORT.md`, `ODG_FOUNDATION_REPORT.txt` (deleted `4db663b`); `runtime/mission-standard/generated/*`, `runtime/archive/*`, `runtime/local-recovery/*` roadmap sets (migrated/vault-removed).
 
