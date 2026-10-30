@@ -124,11 +124,34 @@ const noRecordedNoOp = recordedNoOp.length === 0 || (isDeclaredObservation && !i
 // Scope observation delegated to the shared scope-observer module (single implementation; same
 // context and moment-of-observation rules). No behaviour change — same inputs, same results.
 const scopedChanges = isEngineering ? changedPathsInScope(authorizedPaths) : [];
-// Idempotent engineering proof: a write-scope mission is satisfied by a FRESH in-scope change
-// (this run) OR by an already-committed deliverable inside the authorized scope (a prior run's
-// result). Without the latter, a completed+committed engineering mission can never re-validate —
-// producing a new diff would dirty the tree and fail gitClean, an unresolvable contradiction.
-const deliverableInScope = isEngineering ? trackedFilesInScope(authorizedPaths) : [];
+// Idempotent engineering proof: a write-scope mission is satisfied by a FRESH in-scope change (this run,
+// scopedChanges) OR — for the legitimate RE-validation of an already-committed deliverable (a fresh diff
+// would dirty the tree and fail gitClean) — by THIS mission's OWN committed deliverable.
+//
+// FIX (audited false-success): the former fallback was trackedFilesInScope(authorizedPaths) — `git ls-files`
+// under the scope — which matched ANY pre-existing committed file authored by ANY prior mission. For the common
+// broad scope (e.g. ['runtime/**','src/**']) that set is never empty, so engineeringOk was UNCONDITIONALLY true
+// for every broad-scope write mission regardless of whether this run produced anything — driving validated:true →
+// RELEASED on a pure no-op. Tie the fallback to the mission's OWN output instead: the in-scope files THIS run
+// actually wrote — APPLIED actions carry files:[{target,…}]; a DUPLICATE idempotent replay carries the recorded
+// result in reconciled.files — intersected with the tracked (committed) set. A mission that wrote no in-scope
+// deliverable this run (and committed nothing) now correctly FAILS engineeringOk; a genuine re-validation whose
+// own files are committed still passes. (A fresh first run is unaffected — scopedChanges covers it.)
+const ownWrittenTargets: string[] = [];
+for (const e of executed) {
+  // APPLIED (file edits) + EXECUTED (a capability executor that wrote an in-scope file, e.g. ODG Synthetic
+  // Deliverable / Spec Author — both now record files:[{target}]) + DUPLICATE (idempotent replay, reconciled.files)
+  // all carry the mission's OWN deliverable targets. Other statuses (BLOCKED/FAILED/RECORDED/DONE-without-files)
+  // contribute nothing — a mission with no own in-scope deliverable this run does not satisfy engineeringOk.
+  if (!e || (e.status !== "APPLIED" && e.status !== "DUPLICATE" && e.status !== "EXECUTED")) continue;
+  const files = Array.isArray(e.files) ? e.files
+    : (e.reconciled && Array.isArray(e.reconciled.files) ? e.reconciled.files : []);
+  for (const f of files) { if (f && typeof f.target === "string") ownWrittenTargets.push(f.target); }
+}
+const trackedScopedSet = new Set(isEngineering ? trackedFilesInScope(authorizedPaths) : []);
+const deliverableInScope = isEngineering
+  ? changedPathsInScope(authorizedPaths, ownWrittenTargets).filter((t: string) => trackedScopedSet.has(t))
+  : [];
 const engineeringOk = !isEngineering || scopedChanges.length > 0 || deliverableInScope.length > 0;
 
 // 4. Build / type gates (if evidence present).

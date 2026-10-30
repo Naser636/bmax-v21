@@ -699,6 +699,11 @@ for (const patch of plan.patches) {
             status: "EXECUTED",
             capability: result.capability,
             evidence: result.evidence,
+            // Record the in-scope file this capability actually wrote (if any), in the SAME {files:[{target}]} shape
+            // as APPLIED edits, so the Validation Engine can recognize the mission's OWN committed deliverable on an
+            // idempotent RE-validation (clean tree). Faithful: result.summary.target is the confined path the executor
+            // wrote INSIDE authorized_paths (post pre-write confinement) — not a self-reported arbitrary path.
+            ...(result.summary && typeof result.summary.target === "string" ? { files: [{ target: result.summary.target, mode: "capability" }] } : {}),
             // A registered ODG capability executor authored AND ran this (ODG business logic), under ODG scope.
             ...attribution({ authoredBy: "ODG_CAPABILITY", appliedEffect: true, authorized: true, humanMandatory: false }),
           });
