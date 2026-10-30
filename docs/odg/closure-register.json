@@ -1087,6 +1087,18 @@
       "acceptance": "Extracts real technical SEO signals from provided html/headers with NO network, fail-closed (absent⇒null), inconsistency detection, and a working extract→audit round-trip; a commented-out/script-string look-alike can NEVER shadow a real directive (noindex never lost); bounded against ReDoS; exact-host link classification; independent audit's 3 defects closed + regression-tested.",
       "nextAction": "Optional: cross-page hreflang reciprocity + sitemap/robots.txt parsing (local, no fetch). Any real page capture is owner-authorized out-of-band (no implicit crawling).",
       "staleEvidence": false
+    },
+    {
+      "id": "seo-crawl-directives",
+      "program": "P2",
+      "title": "SEO crawl-directives parser (robots.txt + sitemap.xml), pure parse, NO network, Google-spec precedence",
+      "status": "ACCEPTED",
+      "deps": [
+        "seo-technical-audit-capability"
+      ],
+      "priority": 2,
+      "evidence": "PR(this cycle): runtime/core/seo-crawl-directives.ts — parses CALLER-SUPPLIED robots.txt + sitemap.xml/sitemapindex bytes. PURE PARSE, NO network/fetch/crawl/DNS (structurally test-asserted); fail-closed (bad input⇒structured error, absent⇒null); nothing published; NO ranking claim. robots.txt grounded on the OFFICIAL Google spec (WebSearch-verified+cited 2026-10-30): most-specific (longest) user-agent group wins; specific and global `*` groups NEVER combined; rule precedence = longest rule path wins, Allow wins ties; `*`/`$` wildcards; empty Disallow⇒allow-all; Sitemap directives global. isPathAllowed = robots CRAWL decision, explicitly distinct from meta-robots INDEX. sitemap grounded on sitemaps.org 0.9: urlset(loc/lastmod/changefreq/priority)+sitemapindex(loc/lastmod) structural validation (loc absolute http(s); priority in [0,1]; changefreq enum; lastmod W3C-datetime) as SARIF findings — never fabricates validity; nested sitemaps LISTED not fetched. Tests (seo-crawl-directives.test.ts, 18). INDEPENDENT AUDIT (general-purpose/sonnet, ran counterexamples): initial REJECT — 2 HIGH: (F1 false-readiness) group selection used specificAgentMatch>=0 (any matching UA token) not ===bestSpecific (only the single most-specific) ⇒ a less-specific sibling token (Bot vs Botxyz) merged its Allow ⇒ a DISALLOWED page reported crawl-ALLOWED; FIXED (filter ===bestSpecific; proven Botxyz⇒allowed:false). (F2 DoS) sitemap block extraction used an unbounded lazy regex = QUADRATIC on many-opens/no-close (17.2s@500KB, ~75min@8MB ceiling); FIXED with a LINEAR indexOf scanner (boundary-checked; halts when no close remains; proven 17.2s→22ms). Auditor independently VERIFIED correct: regex escaping, precedence, default-allow honesty, no-network, no-throw. Gate: tsc 0, build 0, targeted 18/18, full regression 206/206.",
+      "acceptedAt": "2026-10-30"
     }
   ]
 }
