@@ -37,7 +37,33 @@ function isAuthorizedTarget(target: any): boolean {
 // required above) so the Patch Executor edits branch AND the ODG Synthetic Deliverable capability reuse
 // ONE definition — no second copy. Behaviour is byte-for-byte identical (same prefixes, same boundary
 // rule); the dedicated governance-guard test proves no regression at the real write point.
-const { isProtectedGovernanceTarget } = capabilityExecutors;
+const { isProtectedGovernanceTarget, assertPhysicalConfinement } = capabilityExecutors;
+// SYMLINK- AND HARDLINK-CONFINED write. Three real-path defenses at the actual mutation point, so a target that
+// passed the lexical isAuthorizedTarget + assertPhysicalConfinement checks STILL cannot write outside the repo:
+//   1. O_NOFOLLOW on the FINAL component ⇒ a final-component symlink (incl. a DANGLING one the realpath-ancestor walk
+//      cannot see) raises ELOOP ⇒ fail-closed, never a write THROUGH the link to an out-of-scope path.
+//   2. NO O_TRUNC at open: we open, then fstat BEFORE truncating, so a pre-existing target is never damaged until it
+//      is proven safe to write. (O_TRUNC in the open() itself would clobber the inode before any check could run.)
+//   3. nlink>1 refusal: a HARD LINK shares one inode with a file that may live outside the repo (O_NOFOLLOW cannot
+//      see this — a hard link is not a symlink, and the path itself is in-scope). An audit DEMONSTRATED an outside
+//      file being overwritten through a hardlink pre-placed inside authorized scope; refusing nlink>1 closes it. A
+//      legitimate edit target is a single-link regular file (git/source trees do not hardlink edit targets).
+// Combined with assertPhysicalConfinement (symlinked EXISTING ancestor dirs/files + ".." lexical-cancel refusal) this
+// closes the write-path symlink/real-path/hardlink escapes that isAuthorizedTarget's normalize+prefix check alone did
+// not defend. RESIDUAL (documented): a concurrent attacker with filesystem write access could win a TOCTOU race on a
+// not-yet-created INTERMEDIATE directory component between the check and mkdir/open — out of this threat model (it
+// needs an adversary already able to mutate the working tree); only the final component is hardened here.
+function writeFileConfined(target: string, data: string): void {
+  const fd = fs.openSync(target, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_NOFOLLOW, 0o644);
+  try {
+    const st = fs.fstatSync(fd);
+    if (st.nlink > 1) {
+      throw new Error(`path confinement: "${target}" is a hard link (nlink=${st.nlink}) — refused (a hard link can share an inode with a file outside the repo)`);
+    }
+    fs.ftruncateSync(fd, 0);
+    fs.writeSync(fd, data, 0);
+  } finally { fs.closeSync(fd); }
+}
 // Writing a protected-governance path requires an EXPLICIT elevated authorization — the same opt-in idiom
 // as the git protected-branch gate (allow_protected), NEVER derived from authorized_paths. It is read
 // ONLY from the PLAN (the ODG-authored, mission-level decision), NEVER from the patch's own fields: a
@@ -410,9 +436,13 @@ for (const patch of plan.patches) {
         if (!isAuthorizedTarget(edit.target)) {
           throw new Error(`target outside authorized_paths: ${edit.target}`);
         }
+        // SYMLINK/REAL-PATH CONFINEMENT (defense-in-depth, shared with the capability branch): refuse a target whose
+        // existing ancestor dir/file symlinks outside the repo BEFORE creating dirs or writing. The final-component
+        // symlink (incl. dangling) is additionally caught by the O_NOFOLLOW write below.
+        assertPhysicalConfinement(edit.target, process.cwd());
         if (typeof edit.content === "string") {
           fs.mkdirSync(path.dirname(edit.target), { recursive: true });
-          fs.writeFileSync(edit.target, edit.content);
+          writeFileConfined(edit.target, edit.content);
           applied.push({ target: edit.target, mode: "content", writtenContent: edit.content });
         } else if (typeof edit.diff === "string") {
           const original = fs.existsSync(edit.target)
@@ -420,7 +450,7 @@ for (const patch of plan.patches) {
             : "";
           const next = applyUnifiedDiff(original, edit.diff);
           fs.mkdirSync(path.dirname(edit.target), { recursive: true });
-          fs.writeFileSync(edit.target, next);
+          writeFileConfined(edit.target, next);
           applied.push({ target: edit.target, mode: "diff", writtenContent: next });
         } else {
           throw new Error(`edit for ${edit.target} has neither content nor diff`);
