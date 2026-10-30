@@ -357,7 +357,7 @@
         "new-language-families"
       ],
       "priority": 5,
-      "evidence": "PR(this): broad-it-eval v3 — corpus 24→44 REAL-checker-evaluable cases; +2 NO-INSTALL covered categories (SQL/schema via stdlib sqlite3, Config-YAML/validate via PyYAML), dev+heldout accuracy 1.0, 0 falsePass/falseFail/blocked, leakage disjoint. coverage MEASURED 3/12=0.25 → 5/12=0.4167 (TARGET_TAXONOMY supported-flags updated to reality); still < 0.6 ⇒ broadIT=NO_DATA. Suite 23→28.",
+      "evidence": "PR(this): broad-it-eval v3 — corpus 24→44 REAL-checker-evaluable cases; +2 NO-INSTALL covered categories (SQL/schema via stdlib sqlite3, Config-YAML/validate via PyYAML), dev+heldout accuracy 1.0, 0 falsePass/falseFail/blocked, leakage disjoint. coverage MEASURED 3/12=0.25 → 5/12=0.4167 (TARGET_TAXONOMY supported-flags updated to reality); still < 0.6 ⇒ broadIT=NO_DATA. Suite 23→28. [2026-10-30 re-verified from REAL data + tests: coverageReport = PROVEN 11/12 = 0.9167 (11 categories each 8 cases, 4 clean/4 broken ≥ the 6 minimum; only Dockerfile/lint uncovered, supported:false); mode-diverse (3 modes); broad-it-eval suite 46/46. broadIT stays NO_DATA SOLELY because labels are self-authored (independentlyLabelled=false) ⇒ meetsThreshold=false. Adding more self-authored cases does NOT change the verdict, and covering Dockerfile via the #277 structural subset would OVERSTATE (structural≠full-lint) ⇒ NOT done (no fabricated coverage). The SOLE unlock is the OWNER-GATED broad-it-independent-eval-set. Stays IN_PROGRESS honestly.]",
       "acceptance": "representative + independently-labelled DEV/HELDOUT corpus enabling a defensible general rate; until then broad-IT=NO_DATA",
       "nextAction": "CORRECTED (state audit): category-coverage is ALREADY met (ratio 0.9167 ≥ 0.6, mode-coverage 0.6, 11/12 covered — only Dockerfile/lint uncovered, hadolint-gated). broadIT stays NO_DATA SOLELY because independentlyLabelled=false (self-authored corpus). The sole remaining prerequisite is the external independent eval set (see broad-it-independent-eval-set). No further self-clearable corpus work raises acceptance; adding no-install categories (TOML/XML/INI) would broaden representativeness but not change the NO_DATA verdict."
     },
@@ -449,7 +449,7 @@
         "roadmap-deps-proposal-preview"
       ],
       "priority": 8,
-      "evidence": "",
+      "evidence": " [2026-10-30 companion-enrichment no-op confirmed: the 11 ROADMAP.json mission contracts declare NO explicit inter-deps (no dependsOn/dependencies/prose mission-refs) beyond the ONE already encoded in roadmap-dependencies.json (DEPLOY_BMAX←VPS_DEPLOYMENT_READINESS). No further honest edges to add — adding any would FABRICATE roadmap structure. Only the apply INTO the protected ROADMAP.json remains, which is owner-gated. Stays BLOCKED on the owner action; companion is complete for stated deps.]",
       "blockReason": "NARROWED: the validated, cited proposal preview is DONE (roadmap-deps-proposal-preview; docs/odg/ROADMAP.proposed.json). What remains is writing to runtime/governance/ROADMAP.json — a PROTECTED governance path — which requires explicit owner authorization. The companion docs/odg/roadmap-dependencies.json keeps the deps machine-checkable meanwhile.",
       "acceptance": "structured deps present in the governed file + validated by dep-planner, owner-authorized",
       "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields",
@@ -1867,6 +1867,24 @@
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-30",
       "evidence": "recon-2 CONFIRMED LOW: schedule([]) ⇒ maxParallelism=-Infinity (Math.max of empty). REPRODUCED in-memory. FIX: layers.length?Math.max:0. Regression +1. PR #279."
+    },
+    {
+      "id": "crash-atomic-durable-writes",
+      "program": "P1",
+      "priority": 1,
+      "deps": [
+        "mission-ledger-crash-atomic-write"
+      ],
+      "title": "Crash-atomic (temp+rename) writes for the 3 remaining durable JSON writers: saveRegister (campaign resume point), checkpoint-engine, scheduler-audit-chain",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "recon-3: core runtime hardened except 3 durable JSON writers still using plain writeFileSync (mission-ledger already S3b-hardened). [MEDIUM] campaign-controller.saveRegister persists closure-register.json after EVERY mission + loadRegister is the resume entry ⇒ a crash mid-write left it torn ⇒ NO_REGISTER ⇒ campaign cannot resume. [LOW] checkpoint-engine persist (pipeline-checkpoint.json), odg-schedule-tick persistAuditChain (scheduler-audit-chain.json). FIX: all three now serialize to ${path}.tmp-${pid} then renameSync (atomic POSIX), rm tmp on failure. Regression (campaign-controller +1: no .tmp leftover + round-trips). Suites campaign-controller 31, checkpoint-engine 34, odg-schedule-tick 14; tsc clean BOTH tsconfigs; build OK. MERGED PR #280 (b24513d).",
+      "integration": {
+        "state": "MERGED",
+        "pr": 280,
+        "mergeCommit": "b24513d",
+        "verified": true
+      }
     }
   ]
 }
