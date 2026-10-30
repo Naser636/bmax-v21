@@ -1834,6 +1834,30 @@
         "reconciledAt": "2026-10-30",
         "note": "PR #273 merged to main."
       }
+    },
+    {
+      "id": "commercial-portfolio-horizon-longest-track",
+      "program": "P2",
+      "priority": 2,
+      "deps": [
+        "commercial-ops-substrate-h3"
+      ],
+      "title": "commercial-portfolio: per-month horizon spans the LONGEST track, not just per[0] — restores sum-of-parts=total + stops under-stating delivery-capacity need",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Fresh business-module recon (recon-2) CONFIRMED MEDIUM: projectPortfolio used months=per[0].rows.length, so a later track with a LONGER horizon had its cash+signings in the extra months dropped from monthlyCashed/peakMonthlySignings while staying in `consolidated` (summed from each track's full totals). Breach: sum(monthlyCashed) != consolidated.cashedWithinHorizon (honesty-invariant) AND peakMonthlySignings understated ⇒ revenue-target-path.closeGapSigned under-states subcontractorsNeeded/capacityFlag (dangerous direction). REPRODUCED (short 3-mo + long 12-mo deliveryLag=6 track). FIX: months = max over tracks of rows.length (the p.rows[m]? guards already tolerate short tracks). Regression +2 (commercial-portfolio 7→9): 12-mo coverage, sum===consolidated non-vacuous, peak>0. revenue-target-path 8 + revenue-schedule 10 green; tsc clean."
+    },
+    {
+      "id": "dep-planner-empty-schedule-maxparallelism",
+      "program": "P2",
+      "priority": 3,
+      "deps": [
+        "dep-planner-wire"
+      ],
+      "title": "dep-planner.schedule([]) returns maxParallelism 0, not Math.max(...[]) === -Infinity",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "recon-2 CONFIRMED LOW: schedule([]) ⇒ maxParallelism = Math.max(...[]) = -Infinity (a nonsensical metric a numeric consumer could propagate; JSON masks it as null). REPRODUCED in-memory (=== -Infinity). FIX: layers.length ? Math.max(...) : 0. Regression +1 (dep-planner: schedule([]) ⇒ maxParallelism 0). tsc clean."
     }
   ]
 }

@@ -46,7 +46,7 @@ export function schedule(items: WorkItem[]): Schedule {
   const byId = new Map(items.map((it) => [it.id, it]));
   return {
     layerCount: layers.length,
-    maxParallelism: Math.max(...layers.map((l) => l.length)),
+    maxParallelism: layers.length ? Math.max(...layers.map((l) => l.length)) : 0,
     layers: layers.map((ids, i): LayerInfo => ({
       layer: i,
       items: ids,
