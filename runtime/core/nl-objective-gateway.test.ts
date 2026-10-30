@@ -465,6 +465,37 @@ console.log("== NL Objective Gateway ==");
   ok("28 contradiction surfaced as a constraint", hasC("deploy to production but do not deploy anything", /do not deploy/));
 }
 
+// ---- 29 — NEGATION-SCOPE FAIL-OPEN (reproduced): a WEAK adverbial negator (no/without/sans/sauf) that does NOT
+//      scope the effect verb must NOT downgrade a genuinely destructive/financial instruction. Previously clause-wide
+//      weak-negation suppressed these ⇒ a real DELETE classified NONE/LOW/no-human (a fail-OPEN). Strong prohibitions
+//      ("do not"/"never"/"ne…pas"/"لا") and ADJACENT weak prohibitions ("no delete"/"sans suppression") still suppress.
+{
+  const C = gw.classifyObjective;
+  const isDestr = (g) => { const c = C(g); return c.externalEffect === "DESTRUCTIVE" && c.requiresHuman === true; };
+  // (a) fail-OPEN closed: a non-adjacent weak negator leaves the destructive effect intact (human-gated).
+  ok("29 'without further delay delete the production database' ⇒ DESTRUCTIVE (weak negator not scoping verb)", isDestr("without further delay delete the production database"));
+  ok("29 'having no choice here delete the production database' ⇒ DESTRUCTIVE", isDestr("having no choice here delete the production database"));
+  ok("29 'we have no backup so just wipe the database' ⇒ DESTRUCTIVE", isDestr("we have no backup so just wipe the database"));
+  ok("29 FR 'sans hesitation supprime le fichier' ⇒ DESTRUCTIVE (sans adverbial, not scoping)", isDestr("sans hesitation supprime le fichier"));
+  // (b) STRONG prohibitions still suppress (no regression of the inversion guard).
+  ok("29 'do not delete the file' ⇒ NOT DESTRUCTIVE (strong prohibition preserved)", C("do not delete the file").externalEffect !== "DESTRUCTIVE");
+  ok("29 'never delete the database' ⇒ NOT DESTRUCTIVE", C("never delete the database").externalEffect !== "DESTRUCTIVE");
+  ok("29 'do not pay the invoice' ⇒ NOT FINANCIAL (clause-scoped strong)", C("do not pay the invoice").externalEffect !== "FINANCIAL");
+  // (c) ADJACENT weak prohibition still suppresses (a true local prohibition) — NON-VACUOUS: the baseline carries a
+  //     real DESTRUCTIVE signal ("wipe … database"), and only the ADJACENT "no" suppresses it (would fail if the
+  //     WEAK_NEG_ADJACENT branch were removed).
+  ok("29 baseline 'wipe the staging database now' ⇒ DESTRUCTIVE (real signal present)", isDestr("wipe the staging database now"));
+  ok("29 'no wipe of the staging database' ⇒ NOT DESTRUCTIVE (adjacent weak negator suppresses the real signal)", C("no wipe of the staging database").externalEffect !== "DESTRUCTIVE");
+  // (d) baseline un-negated destructive stays DESTRUCTIVE.
+  ok("29 baseline 'delete the production database' ⇒ DESTRUCTIVE", isDestr("delete the production database"));
+  // NOTE (residual, NOT fixed here — see compass): strong-negator SCOPE across an interjection (a connector such as
+  // so/because/please, OR a comma-delimited aside) can still strip a prohibition from the signal's clause and invert
+  // ("could you not please delete the file" / "do not, under any circumstances, delete X" ⇒ wrongly DESTRUCTIVE). An
+  // earlier attempt to fix this by adding so/because/please as clause boundaries was REJECTED by independent audit —
+  // it shortened the clause past the strong negator and CREATED new inversions. Deferred to a dedicated lot (needs a
+  // negation-scope model that keeps a strong negator bound to its verb across asides, not a flat boundary list).
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);
