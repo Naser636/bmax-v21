@@ -1836,28 +1836,37 @@
       }
     },
     {
-      "id": "commercial-portfolio-horizon-longest-track",
+      "id": "dockerfile-noinstall-structural-lint",
       "program": "P2",
       "priority": 2,
       "deps": [
-        "commercial-ops-substrate-h3"
+        "langfamily-noinstall-checkers",
+        "new-language-families-noinstall"
       ],
+      "title": "Dockerfile NO-INSTALL structural lint: a pure-TS in-process subset of hadolint (FROM-first, valid-instruction, unknown-directive) — moves Dockerfile off supported:false WITHOUT any binary install",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-30",
+      "evidence": "Frontier re-exam (Q7#2): new-language-families was BLOCKED on the external hadolint binary (not in apt). Rather than wait, added a genuine NO-INSTALL structural checker in code-execution.ts (dockerfileStructuralLint): parses the reviewed Dockerfile in-process (line-continuation aware), FAILS on first-instruction-not-FROM (ARG/comments/parser-directives allowed before FROM per Docker), unknown instruction, or missing FROM; PASS on a valid structure. Wired via spec.structuralCheck ⇒ runSyntaxCheck dispatches in-process (no subprocess/toolchain/sandbox); detectToolchain().Dockerfile=true (always available). hadolint stays the richer-when-present adapter. Honestly scoped as STRUCTURAL (not full hadolint style/best-practice rules). Tests +6 (code-execution 100→106): valid⇒PASS, RUN-before-FROM⇒FAIL, unknown-instruction⇒FAIL, no-FROM⇒FAIL, structuralCheck wired, available-with-no-install. broad-it-eval 46/code-check-eval 9/capability-taxonomy 15 unchanged (Dockerfile stays supported:false in TARGET_TAXONOMY with no corpus cases ⇒ no coverage inflation). tsc clean; build OK. NOTE: the hadolint-specific richer lint remains owner-gated on the binary install ⇒ new-language-families stays BLOCKED for that part; THIS delivers the NO-INSTALL subset only (honest partial)."
+    },
+    {
+      "id": "commercial-portfolio-horizon-longest-track",
+      "program": "P2",
+      "priority": 2,
+      "deps": [],
       "title": "commercial-portfolio: per-month horizon spans the LONGEST track, not just per[0] — restores sum-of-parts=total + stops under-stating delivery-capacity need",
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-30",
-      "evidence": "Fresh business-module recon (recon-2) CONFIRMED MEDIUM: projectPortfolio used months=per[0].rows.length, so a later track with a LONGER horizon had its cash+signings in the extra months dropped from monthlyCashed/peakMonthlySignings while staying in `consolidated` (summed from each track's full totals). Breach: sum(monthlyCashed) != consolidated.cashedWithinHorizon (honesty-invariant) AND peakMonthlySignings understated ⇒ revenue-target-path.closeGapSigned under-states subcontractorsNeeded/capacityFlag (dangerous direction). REPRODUCED (short 3-mo + long 12-mo deliveryLag=6 track). FIX: months = max over tracks of rows.length (the p.rows[m]? guards already tolerate short tracks). Regression +2 (commercial-portfolio 7→9): 12-mo coverage, sum===consolidated non-vacuous, peak>0. revenue-target-path 8 + revenue-schedule 10 green; tsc clean."
+      "evidence": "recon-2 CONFIRMED MEDIUM: projectPortfolio used months=per[0].rows.length ⇒ a later longer track's cash+signings in extra months dropped from monthlyCashed/peakMonthlySignings while kept in consolidated ⇒ sum!=total AND peakMonthlySignings understated ⇒ revenue-target-path under-states capacity need (dangerous). REPRODUCED. FIX: months=max over tracks of rows.length. Regression +2 (commercial-portfolio 7→9). PR #279."
     },
     {
       "id": "dep-planner-empty-schedule-maxparallelism",
       "program": "P2",
       "priority": 3,
-      "deps": [
-        "dep-planner-wire"
-      ],
+      "deps": [],
       "title": "dep-planner.schedule([]) returns maxParallelism 0, not Math.max(...[]) === -Infinity",
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-30",
-      "evidence": "recon-2 CONFIRMED LOW: schedule([]) ⇒ maxParallelism = Math.max(...[]) = -Infinity (a nonsensical metric a numeric consumer could propagate; JSON masks it as null). REPRODUCED in-memory (=== -Infinity). FIX: layers.length ? Math.max(...) : 0. Regression +1 (dep-planner: schedule([]) ⇒ maxParallelism 0). tsc clean."
+      "evidence": "recon-2 CONFIRMED LOW: schedule([]) ⇒ maxParallelism=-Infinity (Math.max of empty). REPRODUCED in-memory. FIX: layers.length?Math.max:0. Regression +1. PR #279."
     }
   ]
 }
