@@ -1,5 +1,13 @@
 # FEUILLE DE ROUTE OFFICIELLE ODG
 
+> **⟣ HISTORICAL / SUPERSEDED (banner added 2026-10-30).** This is the Sprint-12-era foundation roadmap
+> (namespace **FND-F**: F0–F12 + GATES + VALIDATION). It was abandoned mid-F2 and never formally closed here,
+> but its intent is substantively satisfied and absorbed into `docs/odg-operational/ODG_MASTER_ROADMAP.md`
+> (§K/§Q). Preserved unedited as historical authority on its original requirements. **Do NOT cite as current
+> status.** Canonical operational source + full F-item crosswalk: `docs/odg-operational/ODG_ROADMAP_CROSSWALK.md`.
+> (NB: FND-F10/F11 here = "Baseline"/"Health Check" — distinct from the film-factory FILM-F10/F11 and the
+> POST-V107 security SEC-F1c/F2x lots.)
+
 Objectif :
 Clôturer définitivement les fondations avant toute connexion au monde réel.
 
