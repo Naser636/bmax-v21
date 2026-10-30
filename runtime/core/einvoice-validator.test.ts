@@ -54,6 +54,14 @@ const good = () => ({ id: "FR-2026-001", issueDate: "2026-09-15", currency: "EUR
   const r = V.validateBatch([good(), good(), { ...good(), id: "FR-2026-002" }]);
   ok("batch: duplicate invoice (same seller+number) detected; distinct one not flagged", r.batch.duplicateCount === 1 && r.batch.duplicates[0].invoiceId === "FR-2026-001" && r.batch.count === 3 && r.batch.validCount === 3);
 }
+// (7b) malformed inputs are COUNTED (errorCount), never silently dropped — valid+invalid+error === count.
+// (null ⇒ validateInvoice ok:false INVALID_INPUT ⇒ errorCount; {} ⇒ ok:true valid:false ⇒ invalidCount; good ⇒ valid.)
+{
+  const r = V.validateBatch([null, {}, good()]);
+  const b = r.batch;
+  ok("batch: malformed input counted in errorCount; valid+invalid+error === count (none dropped)",
+    b.errorCount === 1 && b.validCount === 1 && b.invalidCount === 1 && (b.validCount + b.invalidCount + b.errorCount) === b.count && b.count === 3);
+}
 // (8) findings emit valid SARIF 2.1.0 (interoperable with CI/code-scanning, like the other ODG products).
 {
   const inv = good(); inv.totals.taxInclusiveMinor = 99999;
