@@ -113,6 +113,22 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
   ok("non-idempotent dangerous command BLOCKED with ZERO executions (no retry)", ev.outcome === O.BLOCKED && ran === 0);
 })();
 
+// ---- 6b. PATH-FORM BYPASS (regression): a path-qualified dangerous command must classify + deny EXACTLY like the
+// bare name — writing `/bin/rm`/`/usr/bin/shred`/`./rm` must not evade the deny-by-default DELETE classification. ----
+(function pathFormDangerousClassification() {
+  for (const cmd of ["/bin/rm -rf /data", "/usr/bin/shred x", "./rm -rf /data"]) {
+    const a = engine.analyze(engine.parse(cmd), {});
+    ok(`path-form '${cmd.split(" ")[0]}' classified KNOWN_DANGEROUS (basename-normalized, not UNKNOWN)`, a.classification === "KNOWN_DANGEROUS");
+    const dry = engine.govern({ command: cmd }, {});
+    ok(`path-form '${cmd.split(" ")[0]}' → gate DENY (bypass closed)`, dry.gate.decision === "DENY");
+    let ran = 0;
+    const live = engine.govern({ command: cmd, execute: true }, { sandboxRunner: () => { ran++; return { launched: true, exitCode: 0 }; } });
+    ok(`path-form '${cmd.split(" ")[0]}' BLOCKED with ZERO executions (no sandbox run)`, live.outcome === O.BLOCKED && ran === 0);
+  }
+  // Path-form escalator (nested shell / sudo) must also deny by basename.
+  ok("path-form '/usr/bin/sudo' → SHELL_ESCALATOR DENY", engine.govern({ command: "/usr/bin/sudo whoami" }, {}).gate.decision === "DENY");
+})();
+
 // ---- 7. SANDBOX_UNAVAILABLE → HUMAN_APPROVAL_REQUIRED (honest; never a false SANDBOXED claim). --
 (function sandboxUnavailable() {
   const noBwrap = (cmd, args) => ({ status: 1, stdout: "", stderr: "" }); // `command -v bwrap` fails

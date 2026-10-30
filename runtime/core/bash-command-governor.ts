@@ -160,12 +160,19 @@ function analyze(parsed: any, opts: any): any {
   const secretArgs = (parsed.args || []).filter((a: any) => SECRET_PATTERNS.some((p) => p.test(a)));
   const touchesSecret = secretArgs.length > 0;
 
+  // Classify DANGEROUS / SHELL_ESCALATOR commands by BASENAME, not the raw first token. A path-qualified form
+  // (`/bin/rm`, `/usr/bin/sudo`, `./rm`) must receive the SAME deny-by-default class as the bare name — otherwise a
+  // destructive/escalating command evades the gate merely by being written with a path (reproduced: `rm -rf` ⇒ DENY
+  // but `/bin/rm -rf` ⇒ ALLOW). Normalizing can only ADD a dangerous/escalator classification (over-classification =
+  // safe direction). SAFE_READONLY is deliberately NOT basename-normalized below: a path-form safe command stays
+  // UNKNOWN (sandbox-OBSERVED, not trusted-readonly) — the conservative choice (never newly TRUST an off-path binary).
+  const cmdName = typeof command === "string" && command.includes("/") ? command.slice(command.lastIndexOf("/") + 1) : command;
   let classification, actionClass, risk, reversibility;
-  if (Object.prototype.hasOwnProperty.call(DANGEROUS, command)) {
-    const d = DANGEROUS[command];
+  if (Object.prototype.hasOwnProperty.call(DANGEROUS, cmdName)) {
+    const d = DANGEROUS[cmdName];
     classification = "KNOWN_DANGEROUS";
     actionClass = d.actionClass; risk = d.risk; reversibility = d.reversibility;
-  } else if (SHELL_ESCALATORS.includes(command)) {
+  } else if (SHELL_ESCALATORS.includes(cmdName)) {
     // Nested shells / identity changes / network-reachers: recognised, never auto-trusted.
     classification = "SHELL_ESCALATOR";
     actionClass = "COMMUNICATE"; risk = "HIGH"; reversibility = "R3";
@@ -185,7 +192,7 @@ function analyze(parsed: any, opts: any): any {
   const predictedEffects = {
     filesWritten: [],
     filesDeleted: [],
-    network: classification === "KNOWN_DANGEROUS" && DANGEROUS[command].actionClass === "COMMUNICATE" ? true : classification === "SHELL_ESCALATOR" ? true : false,
+    network: classification === "KNOWN_DANGEROUS" && DANGEROUS[cmdName].actionClass === "COMMUNICATE" ? true : classification === "SHELL_ESCALATOR" ? true : false,
     processes: 1,
     secrets: touchesSecret,
     reads: parsed.args ? parsed.args.filter((a: any) => a.startsWith("/") || a.startsWith("./")) : [],
