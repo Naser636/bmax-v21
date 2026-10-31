@@ -316,12 +316,22 @@ function resolveFetcher(ra: any, patch: any) {
 function _isPrivateFetchHost(host: any): boolean {
     const h = String(host || "").toLowerCase();
     if (!h) return true;
-    if (h === "localhost" || h.endsWith(".local") || h.endsWith(".internal")) return true;
-    if (h === "169.254.169.254" || h === "metadata.google.internal") return true;   // cloud metadata
-    if (/^127\./.test(h) || /^10\./.test(h) || /^192\.168\./.test(h) || /^169\.254\./.test(h)) return true;
-    if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;                            // 172.16/12 private range
-    if (/^\[?::1\]?$/.test(h) || /^\[?f[cd]/.test(h)) return true;                     // IPv6 loopback / ULA
-    return false;
+    // NAME-based private hosts (apply to hostnames): loopback alias, mDNS/.local, internal TLDs, GCP metadata name.
+    if (h === "localhost" || h.endsWith(".local") || h.endsWith(".internal") || h === "metadata.google.internal") return true;
+    // NUMERIC-RANGE rules apply ONLY to IP LITERALS — so a PUBLIC domain that merely starts like a private range
+    // (e.g. "10.example.com", "fcbarcelona.com", "fd-cdn.net") is NOT over-blocked. Node's URL normalizes decimal/
+    // hex/octal IP encodings to dotted-quad, so those still arrive here as a literal and are caught.
+    if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(h)) {                               // IPv4 literal
+        if (/^127\./.test(h) || /^10\./.test(h) || /^192\.168\./.test(h) || /^169\.254\./.test(h) || /^0\./.test(h)) return true;
+        if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;                          // 172.16.0.0/12
+        return false;                                                                   // any other IPv4 literal = public
+    }
+    const b = h.replace(/^\[|\]$/g, "");                                                // strip IPv6 brackets
+    if (b.includes(":")) {                                                              // IPv6 literal
+        if (b === "::1" || /^f[cd]/.test(b) || /^fe80:/.test(b)) return true;           // loopback / ULA fc00::/7 / link-local
+        return false;
+    }
+    return false;                                                                       // ordinary public hostname
 }
 
 function httpGetBounded(rawUrl: any, maxBytes: any, timeoutMs: any, opts?: any) {

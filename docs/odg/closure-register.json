@@ -2310,8 +2310,26 @@
       "priority": 3,
       "deps": [],
       "title": "Recon follow-ups: autonomy-runtime-adapter isEngineeringMission AND->OR (consistency) + pdf-extract MAX_STREAMS cap -> honest PARTIAL",
+      "status": "ACCEPTED",
+      "evidence": "Two verifier-flagged non-blocking follow-ups. (1) src/runtime/autonomy-runtime-adapter.ts isEngineeringMission AND->OR (write-set-derived), consistent with validation-engine.ts:102 + stage-build-ts-evidence.ts: a write-set mission omitting the flag no longer skips the engineering-performed check; only tightens; the 3 adapter consumer suites stay green. (2) pdf-extract.ts: a MAX_STREAMS cap hit now sets capped=true => fullyExtracted:false + PARTIAL (was recorded only in errors[], could report fullyExtracted:true despite dropping streams); extractStats.capped exposed; pdf-extract.test.ts 13/13 incl. a >4096-stream cap => PARTIAL case. tsc clean BOTH; full gate via CI. Independent verify + CI. ACCEPTED: merged PR#317 @e1149f6 (verifier PASS: OR only-tightens + consumers green; cap flips fullyExtracted with streamsFailed=0).",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 317,
+        "mergeCommit": "e1149f6",
+        "verified": true
+      }
+    },
+    {
+      "id": "ssrf-ip-literal-narrow",
+      "program": "P0",
+      "priority": 3,
+      "deps": [
+        "ssrf-isprivatehost-httpbounded"
+      ],
+      "title": "SSRF guard IP-literal-only: numeric-range rules apply only to IP literals (no public-domain over-block); + 0.0.0.0/8 + fe80 link-local; DNS-rebind residual noted",
       "status": "IN_PROGRESS",
-      "evidence": "Two verifier-flagged non-blocking follow-ups. (1) src/runtime/autonomy-runtime-adapter.ts isEngineeringMission AND->OR (write-set-derived), consistent with validation-engine.ts:102 + stage-build-ts-evidence.ts: a write-set mission omitting the flag no longer skips the engineering-performed check; only tightens; the 3 adapter consumer suites stay green. (2) pdf-extract.ts: a MAX_STREAMS cap hit now sets capped=true => fullyExtracted:false + PARTIAL (was recorded only in errors[], could report fullyExtracted:true despite dropping streams); extractStats.capped exposed; pdf-extract.test.ts 13/13 incl. a >4096-stream cap => PARTIAL case. tsc clean BOTH; full gate via CI. Independent verify + CI."
+      "evidence": "Verifier follow-up on #316 (fail-safe over-block): _isPrivateFetchHost applied the IPv4/IPv6 range regexes to ALL hosts, so public domains lexically shaped like private ranges over-blocked on the governed external-research path (10.example.com via /^10./, fcbarcelona.com / fd-cdn.net via /^f[cd]/). FIX: the numeric-range rules now run ONLY when the host is an IP LITERAL (dotted-quad /^\\d{1,3}(\\.\\d{1,3}){3}$/ or bracket-stripped IPv6 containing ':'); hostnames only match localhost/.local/.internal/metadata.google.internal by NAME. Node's URL normalizes decimal/hex/octal IP encodings to dotted-quad so those are still caught. Added 0.0.0.0/8 + IPv6 fe80 link-local to the literal set. EVIDENCE: http-get-bounded.test.ts 24/24 — public lookalikes (10.example.com, fcbarcelona.com, fd-cdn.net, 169-fake.example.com) NOT over-blocked; IP literals (10.0.0.5, 0.0.0.0, [fc00::1], [fe80::1], [::1]) still blocked; external-research-live 14/14 (loopback unaffected); tsc clean BOTH. KNOWN RESIDUAL (documented, future hardening): the guard matches the URL hostname, NOT a resolved IP — a public name whose DNS A-record points to a private/metadata IP (DNS rebinding) is not blocked (resolved-IP checking not implemented; out of scope). OWASP A10, CWE-918. Independent verify + CI."
     }
   ]
 }
