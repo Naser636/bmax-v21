@@ -1969,6 +1969,16 @@
       "status": "ACCEPTED",
       "evidence": "R1 (verifier residual from slice 2) CLOSED. DECISION (evidence+invariants): SUPPRESS + SURFACE — resolveMissionActor now, BEFORE recognized-actor resolution, returns actor:null when ANY executed entry carries a present authoredBy NOT in KNOWN_AUTHORS (ODG_AUTHORS∪PROVIDER_AUTHORS∪HUMAN_AUTHORS — excludes the UNKNOWN sentinel and any unmapped string like MYSTERY), and surfaces unresolvedCount. Rationale: overriding invariant no-artificially-high-autonomy / ambiguous⇒no-attribution; genuine ODG-native work is authored ODG_CAPABILITY/ODG_RULES (known) ⇒ unaffected; a DEMOTED known-author sibling (ODG_CAPABILITY not applied) is NOT ambiguity ⇒ a real multi-entry ODG mission still stamps ODG (no over-suppression). INDEPENDENTLY VERIFIED (separate agent = CONFIRMED_FIX_CORRECT, merge-ready): strictly fail-closed (only adds omission paths, never converts an omitted case to a stamp), R1c stays ODG, no regression. Adversarial tests added (R1a MYSTERY⇒omit, R1b UNKNOWN⇒omit, R1c demoted-sibling⇒ODG, resolver surfaces unresolvedCount). Suites: mission-ledger-actor-provenance 19, aggregate 28, 5 mission-ledger regression + autonomy-measure + objective-attribution PASS; tsc clean BOTH tsconfigs; build OK (dist actor-provenance.js re-emitted); real ledger actor NON-MEASURABLE unchanged. write_set: actor-provenance.ts + mission-ledger-actor-provenance.test.ts + register + compass. 9 primitives FROZEN.",
       "acceptedAt": "2026-10-31"
+    },
+    {
+      "id": "p0e-backup-restore-path-traversal",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-E#1 (HIGH, security): close path-traversal write-set escape in client-store-backup restore()",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "evidence": "P0-E security audit finding #1 (HIGH), independently found by a read-only audit agent. client-store-backup.ts restore() wrote each manifest.files[].path under target via path.join with NO '..'/absolute guard; verify() checked only content↔sha256 + the self-referential manifestHash (both recomputable by a manifest crafter — no signature) ⇒ a tampered backup with path '../../x' ⇒ arbitrary file write OUTSIDE the authorized target (write-set escape). The sibling odg-state-backup.ts had isDangerousRel but odg-backup + the shared library chokepoint did not. FIX (fail-closed at the shared chokepoint so every caller inherits it): new isDangerousBackupPath (abs OR '..'-segment OR empty, mirrors the sibling) + new CODE.PATH_ESCAPE; verify() rejects any dangerous file path (so the integrity gate restore depends on is complete) AND restore() re-checks the RESOLVED path stays within path.resolve(target) before every write (defense-in-depth). Regression (client-store-backup.test +8): a crafted manifest with VALID content-hash + VALID manifestHash and a traversal path (../../evil, /etc/evil, a/../../../evil, ..\\..\\evil) ⇒ PATH_ESCAPE at BOTH verify + restore, nothing written to the escape target; a benign relative path with the same construction still verifies (proves the hash method is correct, not trivially green). tsc clean BOTH tsconfigs; build:runtime OK. Independently verified (separate agent). 9 primitives FROZEN; measure/security-only; no VPS/secrets/paid."
     }
   ]
 }
