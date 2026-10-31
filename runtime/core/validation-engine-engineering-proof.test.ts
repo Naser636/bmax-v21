@@ -51,8 +51,12 @@ function run(executed, opts = {}) {
   fs.writeFileSync(G("mission-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: [scope], requiresEngineering: true, objectives: [{ id: "o1", goal: "g" }] }));
   fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: [scope], patches: [{ action: "a", objectiveId: "o1" }] }));
   fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: "M1", executed }));
-  // C#3: optionally stamp runtime-verify.json to exercise the stale-cross-mission build/TS evidence guard.
+  // C#3 part 2: the Build/TS Evidence pipeline stage now ALWAYS produces a this-mission runtime-verify.json before
+  // the Validation Engine, so an engineering mission legitimately always carries one. The direct-VE harness mirrors
+  // that reality by DEFAULT-stamping a green this-mission verify; opts.verify overrides (stale/other-mission cases),
+  // opts.noVerify omits it (to exercise the absent-verify BLOCK).
   if (opts.verify) fs.writeFileSync(G("runtime-verify.json"), JSON.stringify(opts.verify));
+  else if (!opts.noVerify) fs.writeFileSync(G("runtime-verify.json"), JSON.stringify({ build: true, typescript: true, mission: "M1" }));
   spawnSync("node", [VE], { cwd: dir, encoding: "utf8" });
   let report = null;
   try { report = JSON.parse(fs.readFileSync(G("mission-report.json"), "utf8")); } catch { /* none */ }
@@ -132,8 +136,18 @@ const applied = [{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ 
   ok("9 verifyEvidenceOk=false surfaced + unmet names STALE", !!(rStale && rStale.checks && rStale.checks.verifyEvidenceOk === false) && (rStale.unmet || []).some((u) => /STALE/.test(u)));
   const rOwn = run(applied, { verify: { build: true, typescript: true, mission: "M1" } });
   ok("9 this-mission runtime-verify (mission M1) ⇒ validated (no over-block)", !!(rOwn && rOwn.validated) && rOwn.checks.verifyEvidenceOk === true);
-  const rNone = run(applied); // absent verify ⇒ part-2 deferred ⇒ unaffected (still validates)
-  ok("9 absent runtime-verify ⇒ still validated (absent-verify closure deferred to p0c3-absent-verify-require)", !!(rNone && rNone.validated) && rNone.checks.verifyEvidenceOk === true);
+  // C#3 part 2: an engineering mission with NO this-run verify ⇒ BLOCK (the former fail-open is closed; the
+  // Build/TS Evidence stage is responsible for producing it in the real pipeline).
+  const rNone = run(applied, { noVerify: true });
+  ok("9 part2: absent runtime-verify on an engineering mission ⇒ NOT validated (fail-open closed)", !!(rNone && rNone.validated === false) && rNone.checks.verifyEvidenceOk === false && (rNone.unmet || []).some((u) => /NO this-run build\/TypeScript evidence/.test(u)));
+  // NOTE: a PRESENT-but-red build verdict is governed by the EXISTING Build-Recovery path (validation-engine.ts:187),
+  // not by this absent-verify change — so it is intentionally NOT asserted here (out of C#3 part-2 scope).
+}
+// 10 — legitimate committed-deliverable re-validation (the case the naive absent-verify BLOCK would have broken):
+//      WITH the default this-mission green verify the run proceeds (proof part 2 does not reject legit re-validation).
+{
+  const r = run([{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ target: "runtime/app/x.ts", mode: "content" }] }]);
+  ok("10 committed-deliverable re-validation + this-mission green verify ⇒ validated (part-2 does NOT reject legit re-validation)", !!(r && r.validated) && r.checks.verifyEvidenceOk === true);
 }
 
 console.log(`\nValidation Engine engineering-proof — ${passed} assertions passed.`);

@@ -218,7 +218,13 @@ if (gatesEvaluated && (!buildOk || !typescriptOk)) {
 // smoke. Closing it safely needs a post-patch verify stage (forensic Option D) + adapter analysis — separate contract.
 const verifyMission: any = verify && typeof verify.mission === "string" ? verify.mission : null;
 const verifyStaleCrossMission = !!(verifyMission && planMission && verifyMission !== planMission);
-const verifyEvidenceOk = !isEngineering || !verifyStaleCrossMission;
+// C#3 part 2 (absent-verify closure, Gate-B authorized): an ENGINEERING mission must carry PRESENT, THIS-mission
+// build/TS evidence — the Build/TS Evidence pipeline stage (post-patch, before this stage) now always produces a
+// mission-stamped runtime-verify.json, so a legitimate engineering run always has it; an ABSENT verify (and no
+// in-memory recovery) means no proof ⇒ refuse the former fail-open default. Still V68-SAFE: presence +
+// mission-IDENTITY only, NO timing/mtime comparison. gatesEvaluated = verify present; recovery !== null = fresh
+// in-memory build/TS re-derivation (also valid this-run evidence). Scoped to isEngineering (read-only/AUDIT untouched).
+const verifyEvidenceOk = !isEngineering || ((gatesEvaluated || recovery !== null) && !verifyStaleCrossMission);
 
 // 5. Capability proofs — the Capability Probe Framework (runtime/core/capability-probes.js) turns
 // the mission contract's `verify` block into machine-verified evidence against real generated
@@ -373,7 +379,9 @@ if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evide
 if (!noRecordedNoOp) unmet.push(`Objective(s) recorded as a no-op without evidence (RECORDED): ${recordedNoOp.map((e: any) => e.objectiveId || e.action).join(", ")}.`);
 if (!noGammaFalseSuccess) unmet.push(`Objective(s) declaring required execution (requiresExecution) produced a RECORDED no-op with no evidence — DEF-GAMMA false success refused: ${gammaFalseSuccess.map((e: any) => e.objectiveId || e.action).join(", ")}.`);
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
-if (!verifyEvidenceOk) unmet.push(`Build/TypeScript evidence is STALE: runtime-verify.json is stamped for mission "${verifyMission}", not "${planMission}" — refuse to trust another mission's build/tsc verdict (fail-closed).`);
+if (!verifyEvidenceOk) unmet.push(verifyStaleCrossMission
+  ? `Build/TypeScript evidence is STALE: runtime-verify.json is stamped for mission "${verifyMission}", not "${planMission}" — refuse to trust another mission's build/tsc verdict (fail-closed).`
+  : `Engineering mission has NO this-run build/TypeScript evidence (runtime-verify.json absent and no recovery) — the Build/TS Evidence stage must produce it; refuse to default the build/tsc gates to pass (fail-closed, C#3 part 2).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
 for (const c of failedCapabilityProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);

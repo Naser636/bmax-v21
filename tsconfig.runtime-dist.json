@@ -51,6 +51,7 @@
     "runtime/core/mission-loader.ts",
     "runtime/core/decision-engine.ts",
     "runtime/core/patch-executor.ts",
+    "runtime/core/stage-build-ts-evidence.ts",
     "runtime/core/final-report.ts",
     "runtime/core/mission-ledger.ts",
     "runtime/core/local-test-gate.ts",
