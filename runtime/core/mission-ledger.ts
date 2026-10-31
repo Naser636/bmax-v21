@@ -24,6 +24,7 @@ const { computeLifecycle, markArchived }: any = require("./mission-lifecycle");
 // Required as a namespace (not destructured) so the opt-in catches below can also call the safe,
 // non-throwing controlDeclared/economicEnforced probes, and so the evaluator seam is injectable in tests.
 const acceptanceFacts: any = require("./acceptance-facts");
+const actorProvenance: any = require("./actor-provenance"); // P0-AUTONOMY-MEASURE slice 2 (measure-only, read-only)
 
 const LEDGER_FILE = "runtime/generated/mission-ledger.json";
 
@@ -180,6 +181,25 @@ function recordMission(mission: string): any {
   if (context && context.project) {
     entry.projectFiles = context.project.files;
     entry.projectDirectories = context.project.directories;
+  }
+
+  // P0-AUTONOMY-MEASURE slice 2 (MEASURE-ONLY, authorized Gate B): stamp an HONEST execution-actor provenance.
+  // Reads the mission-scoped patch-execution.json (the SAME `=== mission` discipline the proven/plan/checkpoint
+  // reads above use) and resolves a SINGLE recognized executor via actor-provenance. `actor`/`executedBy` are
+  // appended ONLY when a unique recognized actor resolves with CONCORDANT author+executor evidence; absent /
+  // mission-mismatched / unmappable / contradictory evidence ⇒ BOTH fields OMITTED, so the entry stays
+  // byte-shape-identical to the ~1388 legacy entries (never retrofitted, never defaulted to ODG). `proven`/
+  // `validated` are NEVER read as actor signals. Best-effort observability: a failure here never blocks a
+  // legitimate record and never fabricates an attribution.
+  try {
+    const patchExecution = readJsonSafe("runtime/generated/patch-execution.json");
+    const prov = actorProvenance.resolveMissionActor(patchExecution, mission);
+    if (prov && typeof prov.actor === "string" && prov.actor) {
+      entry.actor = prov.actor;
+      entry.executedBy = prov.executedBy;
+    }
+  } catch (e: any) {
+    console.warn("[MissionLedger] actor-provenance unavailable (omitting actor, not fabricating):", e && e.message);
   }
 
   // Immutability: read existing entries, never rewrite past ones.

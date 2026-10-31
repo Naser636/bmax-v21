@@ -19,6 +19,10 @@
  */
 "use strict";
 
+// Slice-2: recognized EXECUTOR vocabulary — single source in actor-provenance (no drift). RECOGNIZED is the set
+// of actors that may enter the actor-share denominator; UNKNOWN / absent are never counted. Pure import.
+const { EXECUTOR, RECOGNIZED }: any = require("./actor-provenance.js");
+
 // Lifecycle state values observed in the real ledger (documentary; the aggregate tolerates unknown states too).
 const LIFECYCLE_STATES = Object.freeze(["CREATED", "PLANNED", "PREPARED", "VERIFIED", "ARCHIVED"]);
 // States that mean a mission reached a terminal verified/archived outcome (vs still in an earlier lifecycle stage).
@@ -65,6 +69,51 @@ function tallyBy(entries: any[], key: (e: any) => string): Record<string, number
 const rate4 = (num: number, den: number): number => (den > 0 ? Number((num / den).toFixed(4)) : 0);
 
 /**
+ * actorSplit(distinct) — slice-2 §S-2 actor share over DISTINCT missions. The denominator is the number of
+ * missions carrying a RECOGNIZED execution actor (NOT distinctMissions, NOT ledgerEntries). Missions with no
+ * actor field (all historical + every omitted-provenance entry) and with an unrecognized actor value are
+ * EXCLUDED and surfaced separately — never inferred, never credited. FAIL-CLOSED: zero recognized actors ⇒
+ * measurable:false (never measurable:true with a 0 denominator). proven/validated are never read here.
+ */
+function actorSplit(distinct: any[]): any {
+  const withActor = distinct.filter((e) => typeof e.actor === "string" && e.actor.length > 0);
+  const recognized = withActor.filter((e) => RECOGNIZED.has(e.actor));
+  const unrecognized = withActor.length - recognized.length;
+  const without = distinct.length - withActor.length;
+  const den = recognized.length;
+  if (den === 0) {
+    return Object.freeze({
+      measurable: false,
+      reason: "no mission carries a RECOGNIZED execution actor — §S-2 actor share NON-MEASURABLE. Slice-2 stamps provenance only on NEW entries with concordant author+executor evidence; the default odg-delegate HISTORICAL path and all legacy entries carry none, and are never inferred.",
+      denominator: 0,
+      entriesWithActor: withActor.length,
+      entriesWithoutActor: without,
+      entriesWithUnrecognizedActor: unrecognized,
+      byActor: null,
+      odgShare: null, providerShare: null, humanShare: null, automatedShare: null,
+    });
+  }
+  const counts: Record<string, number> = {};
+  for (const a of RECOGNIZED) counts[a as string] = 0;
+  for (const e of recognized) counts[e.actor] += 1;
+  const bucket = (a: string) => ({ count: counts[a], denominator: den, rate: rate4(counts[a], den) });
+  return Object.freeze({
+    measurable: true,
+    denominator: den, // = missions carrying a recognized actor (NOT distinctMissions)
+    entriesWithActor: withActor.length,
+    entriesWithoutActor: without,
+    entriesWithUnrecognizedActor: unrecognized,
+    note: "actor share measured ONLY over missions carrying a recognized execution actor (denominator); missions without an actor (incl. all historical) or with an unrecognized value are EXCLUDED, never inferred; proven/validated are never read as actor signals.",
+    byActor: {
+      ODG: bucket(EXECUTOR.ODG),
+      TECHNICAL_PROVIDER: bucket(EXECUTOR.TECHNICAL_PROVIDER),
+      HUMAN: bucket(EXECUTOR.HUMAN),
+      AUTOMATED_SYSTEM: bucket(EXECUTOR.AUTOMATED_SYSTEM),
+    },
+  });
+}
+
+/**
  * aggregateProgramAutonomy(ledger) — PURE program-level §S-2 aggregate. Returns the raw ledger-entry count, the
  * distinct-mission count (deduped by id), by-state + validated/authorized/proven tallies over DISTINCT missions
  * (each with the explicit denominator), a terminal-vs-in-lifecycle split, and a FAIL-CLOSED actor block. Never
@@ -81,7 +130,7 @@ function aggregateProgramAutonomy(ledger: any): any {
       entriesWithoutMissionId: 0,
       byState: {},
       outcome: null,
-      actorAutonomy: ACTOR_NOT_MEASURABLE,
+      actorAutonomy: actorSplit([]),
     });
   }
   const distinct = latestPerMission(entries);
@@ -98,7 +147,7 @@ function aggregateProgramAutonomy(ledger: any): any {
       entriesWithoutMissionId: entries.filter((e) => typeof e.mission !== "string").length,
       byState: {},
       outcome: null,
-      actorAutonomy: ACTOR_NOT_MEASURABLE,
+      actorAutonomy: actorSplit([]),
     });
   }
   const byState = tallyBy(distinct, (e) => (typeof e.state === "string" ? e.state : "UNKNOWN"));
@@ -122,7 +171,7 @@ function aggregateProgramAutonomy(ledger: any): any {
       authorized: { count: authorized, denominator: dm, rate: rate4(authorized, dm) },
       proven: { count: proven, denominator: dm, rate: rate4(proven, dm), note: "ledger-entry gate, NOT an actor/verified-autonomy signal" },
     },
-    actorAutonomy: ACTOR_NOT_MEASURABLE,
+    actorAutonomy: actorSplit(distinct),
   });
 }
 
