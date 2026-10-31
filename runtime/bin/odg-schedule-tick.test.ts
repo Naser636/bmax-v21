@@ -60,6 +60,21 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
   ok("SEC#3 auditIntegrityGate: truncated chain ⇒ fail-closed", tick.auditIntegrityGate([d2.auditChain[1]]).ok === false);
 }
 
+// (5c) C#5 — Truth-Lock DEFAULT-ON at the unattended launcher with explicit opt-out.
+{
+  const save = process.env.ODG_TRUTH_LOCK_ENFORCE;
+  try {
+    delete process.env.ODG_TRUTH_LOCK_ENFORCE;
+    ok("C#5 launcherEnforce: UNSET ⇒ enforce (default-on, not record-only)", tick.launcherEnforce() === true);
+    process.env.ODG_TRUTH_LOCK_ENFORCE = "0";
+    ok("C#5 launcherEnforce: =0 ⇒ opt-out (RECORDED, for throwaway/CI fixtures)", tick.launcherEnforce() === false);
+    process.env.ODG_TRUTH_LOCK_ENFORCE = "false";
+    ok("C#5 launcherEnforce: =false ⇒ opt-out", tick.launcherEnforce() === false);
+    process.env.ODG_TRUTH_LOCK_ENFORCE = "1";
+    ok("C#5 launcherEnforce: =1 ⇒ enforce", tick.launcherEnforce() === true);
+  } finally { if (save === undefined) delete process.env.ODG_TRUTH_LOCK_ENFORCE; else process.env.ODG_TRUTH_LOCK_ENFORCE = save; }
+}
+
 // (6) persist/read round-trip of the audit artifact in an isolated temp cwd (no repo writes).
 {
   const prev = process.cwd(); const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tick-test-"));

@@ -142,8 +142,24 @@ function dispatch(item: any): any {
   return { verified, detail };
 }
 
+// C#5 — Truth-Lock default enforcement at the UNATTENDED launcher. odg-schedule-tick is a scheduled/unattended
+// entry (systemd timer or any non-interactive loop); a repo-safety gate that silently defaults OFF there means a
+// mutating mission on a divergent/unsafe repo state is only RECORDED, not BLOCKED, unless an env var was remembered.
+// FIX (forensic design A): at THIS launcher, enforcement is DEFAULT-ON with an explicit opt-out — unset ⇒ enforce,
+// ODG_TRUTH_LOCK_ENFORCE=0 ⇒ opt-out (for throwaway/CI fixtures). We do NOT touch the pure gate's default or the
+// core callers (odg-run/patch-executor/delegate-isolation keep opt-in env==="1", so local-dev + direct-spawn tests
+// stay record-only). To make the dispatched odg-run child enforce too, we PROPAGATE by stamping process.env (the
+// child is spawned with env: process.env), so enforcement flows transitively without changing the child's own
+// opt-in default. This generalizes what deploy/odg-mission-runner.service already sets (ODG_TRUTH_LOCK_ENFORCE=1)
+// to every unattended invocation of this launcher, systemd or not.
+function launcherEnforce(): boolean {
+  const v = process.env.ODG_TRUTH_LOCK_ENFORCE;
+  return v !== "0" && v !== "false"; // DEFAULT-ON: unset/anything-but-0/false ⇒ enforce; explicit 0/false ⇒ opt-out
+}
+
 function main(): void {
-  const enforce = process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || process.env.ODG_TRUTH_LOCK_ENFORCE === "true";
+  const enforce = launcherEnforce();
+  if (enforce) process.env.ODG_TRUTH_LOCK_ENFORCE = "1"; // propagate to the dispatched odg-run child (env: process.env)
   // (A) STARTUP repo-safety precondition — fail-closed under enforcement, BEFORE any scheduling.
   if (enforce) {
     const tl = truthLockGate({ mutating: true, enforce: true, exec: gitExec });
@@ -203,6 +219,6 @@ function tickOnce(opts: any = {}): any {
   return schedulerStep(ctx);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES };
+module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES };
 if (require.main === module) main();
 export {};
