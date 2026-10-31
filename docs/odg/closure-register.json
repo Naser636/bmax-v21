@@ -2190,6 +2190,15 @@
         "mergeCommit": "f40e3b5",
         "verified": true
       }
+    },
+    {
+      "id": "http-bounded-resolve-once",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "httpGetBounded resolve-once: byte-cap + socket-close can no longer leave the fetch Promise unresolved (closes the residual intermittent external-research-live CI hang + a latent production fetch hang)",
+      "status": "IN_PROGRESS",
+      "evidence": "ROOT CAUSE of the residual intermittent gate hang that the #306 teardown fix did NOT fully close (proven: #309 — a doc-only PR off main which INCLUDES #306 — still hit SUITE_TIMEOUT on external-research-live): in runtime/core/capability-executors.ts httpGetBounded, the byte-cap path did `truncated=true; req.destroy()` then relied on a LATER event (res end/error, req error/timeout) to resolve — but a bare req.destroy() emits none of those reliably ⇒ the Promise can hang forever (client-side sibling of the #306 server-socket teardown hang; timing-dependent ⇒ local pass / CI flake). FIX: resolve-once — settle() de-dupes every resolution; the byte-cap resolves IMMEDIATELY (no wait-for-event); added res aborted + a req close LAST-RESORT so the Promise ALWAYS settles even if every other event is missed. This also closes a latent PRODUCTION hang (a byte-capped external-research fetch could hang). EVIDENCE: new hermetic runtime/core/http-get-bounded.test.ts 6/6 (normal; byte-cap on a server that NEVER ends + only dribbles ⇒ must resolve-at-cap, each case under a hard deadline so a regression FAILs not hangs; no-response timeout; connection-refused; bad-proto/invalid-url) run 3× all ~2s; external-research-live 14/14 run 5× all ~2s; wired into test:report gate; tsc clean BOTH; full gate green. Independent verify + CI (re-run to confirm the flake is gone). 9 primitives FROZEN."
     }
   ]
 }
