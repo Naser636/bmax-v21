@@ -28,7 +28,20 @@ const HIT_COST = 1;    // a hit resolves directly
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function loadStore(storePath: string, sink: any): any { try { const s = JSON.parse(sink.readFileSync(storePath, "utf8")); return isObj(s) && Array.isArray(s.learnings) ? s : { version: 1, learnings: [] }; } catch { return { version: 1, learnings: [] }; } }
-function saveStore(storePath: string, store: any, sink: any): void { sink.writeFileSync(storePath, JSON.stringify(store)); }
+function saveStore(storePath: string, store: any, sink: any): void {
+  const data = JSON.stringify(store);
+  // Crash-atomic (mirrors autonomy-store / mission-ledger): write a temp sibling then rename over the target so an
+  // interrupted write can never leave a torn file — loadStore collapses an unparseable store to an EMPTY learnings
+  // list, so a partial write would otherwise SILENTLY discard every persisted learning. Falls back to a direct write
+  // when the injected sink has no renameSync (an in-memory test double), keeping the seam contract intact.
+  if (typeof sink.renameSync === "function") {
+    const tmp = `${storePath}.tmp-${process.pid}`;
+    sink.writeFileSync(tmp, data);
+    sink.renameSync(tmp, storePath);
+  } else {
+    sink.writeFileSync(storePath, data);
+  }
+}
 
 /** persistLearning(store, spec): seal provenance + append. spec = { id, goal, domain, capability, claims?, stale? }. */
 function persistLearning(store: any, spec: any): any {

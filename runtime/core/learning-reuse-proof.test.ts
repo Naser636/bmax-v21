@@ -72,4 +72,30 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   ok("resolve HIT ⇒ influenced true (hit⇔influenced consistent; no bare-hit reuse)", (r.hit === true && r.influenced === true) || (r.hit === false && r.influenced === false));
 }
 
-console.log(`\nLEARNING-REUSE-PROOF suite — ${pass} assertions passed. (recorded≠retrieved≠reused≠EFFECTIVE; out-of-domain/stale/tampered refused; honest-negative; cross-process reproducible; no new primitive)`);
+// (10) CRASH-ATOMIC store write: a torn write must NOT silently empty the learnings store (loadStore collapses an
+//      unparseable store to {learnings:[]}). saveStore writes a temp sibling then renames over the target.
+{
+  // in-memory fs double with renameSync (exercises the atomic path without touching the real disk).
+  function memFs() {
+    const files = {};
+    return {
+      files,
+      readFileSync: (p) => { if (!(p in files)) { const e = new Error("ENOENT"); e.code = "ENOENT"; throw e; } return files[p]; },
+      writeFileSync: (p, d) => { files[p] = String(d); },
+      renameSync: (a, b) => { if (!(a in files)) { const e = new Error("ENOENT"); e.code = "ENOENT"; throw e; } files[b] = files[a]; delete files[a]; },
+    };
+  }
+  // (a) happy path: persisted store is valid JSON carrying the learning, and NO torn temp file is left behind.
+  const okFs = memFs();
+  P.runExperiment({ now: "2026-10-29", storePath: "/store.json", fs: okFs });
+  ok("atomic save: store persisted as valid JSON with the learning", (() => { const s = JSON.parse(okFs.files["/store.json"]); return Array.isArray(s.learnings) && s.learnings.some((l) => l.id === "L-csv"); })());
+  ok("atomic save: no torn temp (.tmp-*) file left behind (rename moved it)", !Object.keys(okFs.files).some((k) => /\.tmp-/.test(k)));
+  // (b) crash DURING rename ⇒ the PRE-EXISTING store is preserved intact, never emptied/torn.
+  const crashFs = memFs();
+  crashFs.files["/store.json"] = JSON.stringify({ version: 1, learnings: [{ id: "PRIOR", goal: "g", domain: "d", practice: "p" }] });
+  crashFs.renameSync = () => { throw new Error("simulated crash during rename"); };
+  try { P.runExperiment({ now: "2026-10-29", storePath: "/store.json", fs: crashFs }); } catch { /* save crashed, as simulated */ }
+  ok("crash during rename ⇒ prior store PRESERVED (not silently emptied)", (() => { const s = JSON.parse(crashFs.files["/store.json"]); return Array.isArray(s.learnings) && s.learnings.some((l) => l.id === "PRIOR"); })());
+}
+
+console.log(`\nLEARNING-REUSE-PROOF suite — ${pass} assertions passed. (recorded≠retrieved≠reused≠EFFECTIVE; out-of-domain/stale/tampered refused; honest-negative; crash-atomic store write; cross-process reproducible; no new primitive)`);

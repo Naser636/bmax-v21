@@ -27,9 +27,16 @@ function jsonPointer(obj: any, pointer: any): any {
   return cur;
 }
 
+// Largest decimal scale we will honour. Crypto wei is 18 decimals; 100 is far beyond any real currency/asset. This
+// bounds the `"0".repeat(scale)` padding allocation below: `scale` originates from a (trusted) extraction rule, but
+// a pathological/typo value (e.g. 1e9) would otherwise allocate a multi-hundred-MB string (CPU/mem DoS) before any
+// safe-integer check could reject it. An out-of-range scale is REFUSED (null ⇒ UNKNOWN upstream), never coerced.
+const MAX_SCALE = 100;
+
 // Exact decimal string -> { minor, scale } at the declared scale; null if not a clean decimal or if it
 // needs more precision than `scale` (so we never fabricate or drop precision).
 function decimalToMinor(raw: any, scale: any): any {
+  if (!Number.isInteger(scale) || scale < 0 || scale > MAX_SCALE) return null; // absurd/invalid scale ⇒ refuse (no OOM)
   const s = String(raw).trim();
   if (!/^-?\d+(\.\d+)?$/.test(s)) return null;
   const neg = s[0] === "-";
