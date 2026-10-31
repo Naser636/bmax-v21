@@ -83,6 +83,11 @@ jobs:
         run: npx tsc --noEmit -p tsconfig.json
 
       - name: Classified test gate
+        # CI-reliability: bound this step well above the ~3.5-min happy path and below the 20-min job timeout, so a
+        # residual hang from ANY source fails the step fast instead of running out the whole job as CANCELLED. The
+        # primary guard is the per-suite SIGKILL timeout inside odg-test-report (a hung suite is killed + classified
+        # FAIL); this step timeout is the belt-and-suspenders outer bound. Invariant: suite-timeout(240s) < step(12m) < job(20m).
+        timeout-minutes: 12
         shell: bash
         # HYPER-SPEED: run the 59 classified suites with bounded, race-free parallelism. odg-test-report
         # partitions suites by static hazard analysis — any suite that can touch global mutable state

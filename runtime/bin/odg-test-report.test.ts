@@ -9,6 +9,10 @@
  * injected runner + temp fixture files — no network, no real suites, no child process.
  * Run: node runtime/bin/odg-test-report.test.js
  */
+// CI-reliability: set a SHORT per-suite timeout BEFORE the module loads (SUITE_TIMEOUT_MS is captured at load from
+// ODG_TEST_SUITE_TIMEOUT_MS) so the hang-fixture regression below is bounded (~1.5s) instead of the 4-min default.
+// Every other case here uses INJECTED runners (never spawns), so the short timeout is inert for them.
+process.env.ODG_TEST_SUITE_TIMEOUT_MS = "1500";
 const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
@@ -153,7 +157,7 @@ R.runSuitesParallel([fPassR, fFailR, fSkipR, fHazR], 4, asyncRunner).then((par) 
      par[0].cls === "PASS" && par[1].cls === "FAIL" && par[2].cls === "SKIPPED" && par[3].cls === "PASS");
   const missing = path.join(ptmp, "nope.test.ts");
   return R.runSuitesParallel([fPassR, missing], 4, asyncRunner);
-}).then((parM) => {
+}).then(async (parM) => {
   ok("parallel: missing suite ⇒ NOT_RUN (fail-closed, same as sequential)", parM[1].cls === "NOT_RUN");
   // computeWorkers (pure memory+core-aware cap) — the fix for OOM-class parallel flakiness.
   ok("computeWorkers: request<=1 ⇒ serial 1", R.computeWorkers(1, 8, 32000, 900).workers === 1 && R.computeWorkers(0, 8, 32000, 900).workers === 1);
@@ -161,6 +165,27 @@ R.runSuitesParallel([fPassR, fFailR, fSkipR, fHazR], 4, asyncRunner).then((par) 
   ok("computeWorkers: low memory ⇒ capped below request (no oversubscribe)", (() => { const r = R.computeWorkers(8, 8, 1800, 900); return r.workers === 2 && r.capped === true && /memory-pressure/.test(r.reason); })());
   ok("computeWorkers: few cores ⇒ CPU cap applies", R.computeWorkers(8, 2, 32000, 900).workers === 2);
   ok("computeWorkers: never below 1 even under tiny memory", R.computeWorkers(8, 8, 100, 900).workers === 1);
+  // --- CI-RELIABILITY: per-suite SIGKILL timeout over the REAL runners (no injection) --------------
+  // A suite that NEVER exits must be SIGKILLed after ODG_TEST_SUITE_TIMEOUT_MS and classified FAIL (naming the
+  // timeout), so one hung suite can never stall the whole classified gate until the 20-min job kill. Driven here
+  // with the short 1500ms timeout set at the top. Proves BOTH runners (serial defaultRunner via runSuites, parallel
+  // spawnSuiteAsync via runSuitesParallel) and that a normal fixture through the SAME real path is unaffected.
+  const fHang = mkTs("hang.test.ts", 'console.log("started");setInterval(() => {}, 1000);\n'); // never exits
+  const tStart = Date.now();
+  // Serial runner (defaultRunner): spawnSync timeout+SIGKILL.
+  const seqHang = R.runSuites([fHang]);
+  ok("hang fixture (serial defaultRunner) ⇒ FAIL (SIGKILLed, never silently passes)", seqHang[0].cls === "FAIL");
+  ok("hang fixture (serial) classified reason names it a timeout (SUITE_TIMEOUT), not a bare exit 1", /SUITE_TIMEOUT/.test(seqHang[0].reason || ""));
+  // Parallel runner (spawnSuiteAsync): setTimeout→child.kill("SIGKILL")→'close' resolves (no unresolved Promise).
+  const parHang = await R.runSuitesParallel([fHang], 1);
+  ok("hang fixture (parallel spawnSuiteAsync) ⇒ FAIL (timer kills the child; Promise resolves, pool never stalls)", parHang[0].cls === "FAIL");
+  ok("hang fixture (parallel) classified reason names it a timeout (SUITE_TIMEOUT)", /SUITE_TIMEOUT/.test(parHang[0].reason || ""));
+  ok("hang detected within a bounded window (~timeout, NOT an infinite/20-min stall)", (Date.now() - tStart) < 30000);
+  // HAPPY PATH unchanged through the SAME real runners: a normal fixture still PASSes, no timeout reason.
+  const seqPass = R.runSuites([fPassR]);
+  ok("normal fixture through real serial runner still PASSes (timeout is inert on fast suites)", seqPass[0].cls === "PASS" && !/SUITE_TIMEOUT/.test(seqPass[0].reason || ""));
+  const parPass = await R.runSuitesParallel([fPassR], 1);
+  ok("normal fixture through real parallel runner still PASSes (no false timeout)", parPass[0].cls === "PASS" && !/SUITE_TIMEOUT/.test(parPass[0].reason || ""));
   try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best-effort */ }
   try { fs.rmSync(ptmp, { recursive: true, force: true }); } catch { /* best-effort */ }
   console.log(`\nALL PASS — odg test-report (${passed} assertions)`);
