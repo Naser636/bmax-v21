@@ -2458,11 +2458,15 @@
         "p0e-audit-chain-verify-on-read"
       ],
       "title": "audit-log keyed-HMAC + tip-anchor MECHANISM (the ODG-preparable technical half of p0e-audit-log-keyed-integrity; key provisioning remains owner-gated)",
-      "status": "IN_PROGRESS",
-      "evidence": "OWNER-GATE RESOLUTION: implemented the keyed-integrity MECHANISM that closes the two forged-chain vectors, leaving ONLY the irreducible owner secret decision. audit-log.ts: entryHash(seq,prevHash,payload,key?) uses HMAC-SHA256 when a non-empty key is supplied else plain sha256 (BYTE-IDENTICAL keyless path: the NUL-separated preimage is preserved EXACTLY, written as the \\0 escape - a first draft used spaces and was REJECTED by independent validation for silently changing every sealed hash / false-BLOCKing NUL-sealed chains; corrected + a non-self-referential historical-hash PIN test added); appendEntry(chain,payload,{key}); new chainTip(chain)={length,tipHash} out-of-band anchor; verifyChain(chain,{key,expectedTip}) rejects a full-rewrite forgery (attacker lacks the key) and detects tail truncation/extension via the tip anchor; returns honest keyed/tipAnchored flags. Module stays PURE: key is a PARAMETER, never reads env, never holds a secret. Tests +10 (19): keyless forgery PASSES keyless verify (weakness) but keyed verify REJECTS it; wrong key rejected; truncation invisible to verify alone but DETECTED by the anchor; extension detected; keyless path byte-identical. build:runtime + tsc(both) green; consumers (commercial-pipeline/post-release-learning/excellence-gate) unaffected; full gate 243/243. Independent validation + CI pending. OWNER ACTION REMAINING (parent p0e-audit-log-keyed-integrity stays BLOCKED): provision ODG_AUTHORITY-managed HMAC key + authorize wiring it into audit-log callers (process.env.ODG_AUDIT_HMAC_KEY) + out-of-band tip-anchor storage.",
+      "status": "ACCEPTED",
+      "evidence": "OWNER-GATE RESOLUTION: implemented the keyed-integrity MECHANISM that closes the two forged-chain vectors, leaving ONLY the irreducible owner secret decision. audit-log.ts: entryHash(seq,prevHash,payload,key?) uses HMAC-SHA256 when a non-empty key is supplied else plain sha256 (BYTE-IDENTICAL keyless path: the NUL-separated preimage is preserved EXACTLY, written as the \\0 escape - a first draft used spaces and was REJECTED by independent validation for silently changing every sealed hash / false-BLOCKing NUL-sealed chains; corrected + a non-self-referential historical-hash PIN test added); appendEntry(chain,payload,{key}); new chainTip(chain)={length,tipHash} out-of-band anchor; verifyChain(chain,{key,expectedTip}) rejects a full-rewrite forgery (attacker lacks the key) and detects tail truncation/extension via the tip anchor; returns honest keyed/tipAnchored flags. Module stays PURE: key is a PARAMETER, never reads env, never holds a secret. Tests +11 (20): keyless forgery PASSES keyless verify (weakness) but keyed verify REJECTS it; wrong key rejected; truncation invisible to verify alone but DETECTED by the anchor; extension detected; keyless path byte-identical. build:runtime + tsc(both) green; consumers (commercial-pipeline/post-release-learning/excellence-gate) unaffected; full gate 243/243. Independent validation + CI pending. OWNER ACTION REMAINING (parent p0e-audit-log-keyed-integrity stays BLOCKED): provision ODG_AUTHORITY-managed HMAC key + authorize wiring it into audit-log callers (process.env.ODG_AUDIT_HMAC_KEY) + out-of-band tip-anchor storage.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 326,
+        "mergeCommit": "cd90e10",
+        "verified": true
+      },
+      "acceptedAt": "2026-10-31"
     }
   ]
 }
