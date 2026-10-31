@@ -344,7 +344,18 @@ function raiseIncident(divergences: any, opts: any = {}): any {
   if (!Array.isArray(divergences) || divergences.length === 0) return null;
   const maxAttempts = Number.isInteger(opts.maxAttempts) ? opts.maxAttempts : DEFAULT_MAX_ATTEMPTS;
   const id = stableId(divergences.map((d: any) => ({ c: d.category, f: d.firstDifferenceAt })));
-  const ledger = store.read(INCIDENTS_FILE, { incidents: {} });
+  // CORRUPTION GUARD (loop-protection safety): the incident ledger is the authoritative store for FROZEN
+  // (attempts>=maxAttempts) state that halts oscillating auto-repair. If the on-disk ledger is present but torn
+  // (a crash mid-write), plain read() would collapse it to an EMPTY ledger and the write below would OVERWRITE —
+  // silently discarding every OPEN/FROZEN incident + its attempts counter (a safety control reset with no signal).
+  // Mirror mission-ledger: do NOT overwrite a corrupt store; warn loudly and refuse (fail-closed) so the torn file
+  // is preserved for recovery and the reset cannot happen silently.
+  const strict = store.readStrict(INCIDENTS_FILE);
+  if (strict.corrupt) {
+    try { process.stderr.write(`[ODG][self-diagnostic] WARNING: incident ledger ${INCIDENTS_FILE} is CORRUPT (torn/invalid JSON) — REFUSING to overwrite it (would discard FROZEN loop-protection state). Not recording this incident; recover/restore the ledger. id=${id}\n`); } catch { /* best-effort */ }
+    return { id, status: "LEDGER_CORRUPT", recorded: false };
+  }
+  const ledger = strict.present && strict.value ? strict.value : { incidents: {} };
   if (!ledger.incidents) ledger.incidents = {};
   const prev = ledger.incidents[id];
   // Loop protection is TERMINAL: once FROZEN (attempts >= maxAttempts), a re-raise (e.g. a passive

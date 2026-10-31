@@ -97,11 +97,20 @@ function collect(requestId: any, opts?: any): any {
   request.validatedAt = nowIso();
   envelope.writeJson(envelope.requestPath(requestId), request);
 
+  // Surface whether the evidence-ledger write actually happened: recordMission is default-deny (it may skip with
+  // {skipped:true,reason:...} for an unproven/not-accepted mission) and could throw. Previously both were silently
+  // swallowed and the collector still returned VALIDATED, implying a ledger entry that may not exist. Capture the
+  // outcome into evidenceRecorded so a caller is not misled; a skip/throw is warned, never fatal (non-blocking).
+  let evidenceRecorded: any = { attempted: false };
   if (record) {
     try {
-      record(request.mission);
-    } catch {
-      /* non-blocking evidence */
+      const rec = record(request.mission);
+      const skipped = !!(rec && typeof rec === "object" && rec.skipped);
+      evidenceRecorded = { attempted: true, recorded: !skipped, reason: skipped ? (rec.reason || "skipped") : null };
+      if (skipped) { try { process.stderr.write(`[ODG][fleet-collector] evidence NOT recorded for ${request.mission}: ${rec.reason || "skipped"} (exchange still VALIDATED by governance)\n`); } catch { /* best-effort */ } }
+    } catch (e: any) {
+      evidenceRecorded = { attempted: true, recorded: false, reason: `record threw: ${(e && e.message) || e}` };
+      try { process.stderr.write(`[ODG][fleet-collector] evidence record threw for ${request.mission}: ${(e && e.message) || e}\n`); } catch { /* best-effort */ }
     }
   }
 
@@ -109,6 +118,7 @@ function collect(requestId: any, opts?: any): any {
     requestId,
     status: envelope.STATUS.VALIDATED,
     mission: request.mission,
+    evidenceRecorded,
     actions: response.proposal.actions.length
   };
 }
