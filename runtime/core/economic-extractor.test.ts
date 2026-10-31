@@ -68,4 +68,18 @@ console.log("Economic Extractor (D4)");
   ok("malformed rules all fail closed (throw)", threw === 5);
 }
 
+// Scale is bounded: a pathological rule.scale cannot drive an unbounded "0".repeat(scale) allocation (DoS).
+{
+  const t0 = Date.now();
+  const dm = decimalToMinor("1.5", 1e9);               // absurd scale ⇒ refuse, NOT a 1GB string allocation
+  const ms = Date.now() - t0;
+  ok("huge scale ⇒ decimalToMinor returns null promptly (<1s, no OOM)", dm === null && ms < 1000);
+  ok("negative / non-integer scale ⇒ null (invalid, refused)", decimalToMinor("1.5", -1) === null && decimalToMinor("1.5", 2.5) === null);
+  ok("scale past the cap (101) refused by the scale guard (before any allocation)", decimalToMinor("0", 101) === null && decimalToMinor("0", 1e9) === null);
+  ok("normal scale unaffected (2 ⇒ exact minor)", (() => { const d = decimalToMinor("64250.37", 2); return d && d.minor === 6425037 && d.scale === 2; })());
+  // end-to-end: an extraction rule carrying an absurd scale ⇒ UNKNOWN (refused), never a crash.
+  const r = extract(JSON.stringify({ data: { amount: "12.34" } }), { type: "json", pointer: "/data/amount", unit: "USD", scale: 1e9 });
+  ok("extract with absurd rule.scale ⇒ UNKNOWN (fail-closed, no OOM)", r.status === "UNKNOWN");
+}
+
 console.log(`\nEconomic Extractor — ${passed} assertions passed.`);
