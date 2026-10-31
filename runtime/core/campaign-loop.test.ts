@@ -101,4 +101,64 @@ const acceptAll = (calls) => (lot) => { calls.push(lot.id); return { status: "AC
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
-console.log(`\nCAMPAIGN-LOOP suite — ${pass} assertions passed. (auto-transitions; resume-from-checkpoint; blocked≠frozen; retry w/o evidence loss; idempotent re-run; explicit IDLE/WAITING; no false COMPLETED/terminal; bounded)`);
+// ===== §5 lifecycle + §7 autonomous-controller behaviors (additive) =====================================
+// (14) CI-completion → next action: a lot parks on CI (WAITING_FOR_CI{ciRunId}) ⇒ BLOCKED waitKind CI; resolveCiWaiters
+//      with ciStatus=success re-admits it (READY) ⇒ a follow-up loop ACCEPTS it. The CI-event→continuation mechanism.
+{
+  const r0 = reg([{ id: "ciLot", status: "READY", deps: [], priority: 1 }]);
+  const r1 = L.runCampaignLoop({ register: r0, execute: () => ({ status: "WAITING_FOR_CI", ciRunId: "run-42", reason: "awaiting CI" }) });
+  const parked = r0.items[0];
+  ok("WAITING_FOR_CI ⇒ BLOCKED + waitKind CI + ciRunId parked; lifecycleState WAITING_FOR_CI; not complete",
+     parked.status === "BLOCKED" && parked.waitKind === "CI" && parked.ciRunId === "run-42" && r1.lifecycleState === "WAITING_FOR_CI" && r1.campaignComplete === false);
+  const res = L.resolveCiWaiters(r0, (id) => (id === "run-42" ? "success" : "pending"));
+  ok("resolveCiWaiters(success) ⇒ lot re-admitted READY (CI wait cleared)", res.resolved.join() === "ciLot" && parked.status === "READY" && !parked.waitKind && !parked.ciRunId);
+  const calls = []; const r2 = L.runCampaignLoop({ register: r0, execute: acceptAll(calls) });
+  ok("after CI success the re-run ACCEPTS the lot ⇒ COMPLETED (CI-completion drove the next action)", calls.join() === "ciLot" && r2.campaignComplete === true);
+}
+// (15) failed CI ⇒ bounded recovery (NOT auto-retried, NOT auto-accepted).
+{
+  const r0 = reg([{ id: "ciFail", status: "READY", deps: [], priority: 1 }]);
+  L.runCampaignLoop({ register: r0, execute: () => ({ status: "WAITING_FOR_CI", ciRunId: "run-9", reason: "awaiting CI" }) });
+  const res = L.resolveCiWaiters(r0, () => "failure");
+  ok("resolveCiWaiters(failure) ⇒ bounded recovery: stays BLOCKED, waitKind RECOVERING, never ACCEPTED/auto-retried",
+     res.failed.join() === "ciFail" && r0.items[0].status === "BLOCKED" && r0.items[0].waitKind === "RECOVERING" && r0.items[0].status !== "ACCEPTED");
+}
+// (16) crashed child / executor throw ⇒ FAILED verdict (not a hang, not a false accept).
+{
+  const r0 = reg([{ id: "boom", status: "READY", deps: [], priority: 1 }]);
+  const r = L.runCampaignLoop({ register: r0, execute: () => { throw new Error("child crashed"); }, maxIterations: 5 });
+  ok("executor throw ⇒ lot FAILED/stalled, never ACCEPTED, bounded (crash detected, not hung)",
+     r0.items[0].status !== "ACCEPTED" && r.campaignComplete === false && r.iterations <= 2);
+}
+// (17) provider-wait distinguished from completed; external-authorization never bypassed to ACCEPTED.
+{
+  const r0 = reg([{ id: "prov", status: "READY", deps: [], priority: 1 }]);
+  const rp = L.runCampaignLoop({ register: r0, execute: () => ({ status: "WAITING_FOR_PROVIDER", reason: "provider session ended" }) });
+  ok("WAITING_FOR_PROVIDER ⇒ lifecycleState WAITING_FOR_PROVIDER (NOT COMPLETED), lot BLOCKED not ACCEPTED",
+     rp.lifecycleState === "WAITING_FOR_PROVIDER" && rp.campaignComplete === false && r0.items[0].status === "BLOCKED");
+  const r1 = reg([{ id: "auth", status: "READY", deps: [], priority: 1 }]);
+  L.runCampaignLoop({ register: r1, execute: () => ({ status: "WAITING_FOR_EXTERNAL_AUTHORIZATION", reason: "owner secret" }) });
+  ok("WAITING_FOR_EXTERNAL_AUTHORIZATION lot is never advanced to ACCEPTED by the loop", r1.items[0].status === "BLOCKED" && r1.items[0].status !== "ACCEPTED");
+}
+// (18) SESSION_INTERRUPTED: a lot left IN_PROGRESS ⇒ detectInterrupted true; a clean completed register ⇒ false.
+{
+  ok("detectInterrupted true when a lot is IN_PROGRESS (prior run interrupted mid-mission)",
+     L.detectInterrupted(reg([{ id: "wip", status: "IN_PROGRESS", deps: [] }])).interrupted === true);
+  ok("detectInterrupted false on a clean/ACCEPTED register", L.detectInterrupted(reg([{ id: "d", status: "ACCEPTED", evidence: "e", deps: [] }])).interrupted === false);
+}
+// (19) NO_SAFE_WORK_AVAILABLE + reconSuggested: only externally-blocked work remains ⇒ signal recon (loop never runs it).
+{
+  const r = L.runCampaignLoop({ register: reg([{ id: "b1", status: "BLOCKED", deps: [], blockReason: "owner", waitKind: "EXTERNAL_AUTHORIZATION" }]), execute: () => ({ status: "ACCEPTED", evidence: "x" }) });
+  ok("only blocked work ⇒ lifecycleState WAITING_FOR_EXTERNAL_AUTHORIZATION + not complete (single waitKind classified)",
+     r.lifecycleState === "WAITING_FOR_EXTERNAL_AUTHORIZATION" && r.campaignComplete === false);
+  const r2 = L.runCampaignLoop({ register: reg([{ id: "b1", status: "BLOCKED", deps: [] }, { id: "b2", status: "BLOCKED", deps: [] }]), execute: () => ({ status: "ACCEPTED", evidence: "x" }) });
+  ok("mixed/plain blocked-only ⇒ NO_SAFE_WORK_AVAILABLE + reconSuggested true (signal, loop runs no recon itself)",
+     r2.lifecycleState === "NO_SAFE_WORK_AVAILABLE" && r2.reconSuggested === true);
+}
+// (20) COMPLETED ⇒ lifecycleState COMPLETED + reconSuggested false (never a recon signal on a drained campaign).
+{
+  const r = L.runCampaignLoop({ register: reg([{ id: "only", status: "READY", deps: [], priority: 1 }]), execute: () => ({ status: "ACCEPTED", evidence: "done" }) });
+  ok("drained campaign ⇒ lifecycleState COMPLETED, reconSuggested false", r.lifecycleState === "COMPLETED" && r.reconSuggested === false && r.campaignComplete === true);
+}
+
+console.log(`\nCAMPAIGN-LOOP suite — ${pass} assertions passed. (auto-transitions; resume-from-checkpoint; blocked≠frozen; retry w/o evidence loss; idempotent re-run; explicit IDLE/WAITING; no false COMPLETED/terminal; bounded; §5 lifecycleState; CI park+resolve; crash-detected; provider≠completed; session-interrupted; NO_SAFE_WORK+reconSuggested; external-authz never bypassed)`);
