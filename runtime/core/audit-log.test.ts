@@ -30,4 +30,45 @@ ok("malformed chain ⇒ fail-closed", A.verifyChain(null).ok === false && A.veri
 // (9) empty chain is trivially intact
 ok("empty chain ⇒ intact", A.verifyChain([]).ok === true && A.verifyChain([]).length === 0);
 
-console.log(`\nAUDIT-LOG suite — ${pass} assertions passed.`);
+// ───── KEYED-HMAC + TIP-ANCHOR mechanism (P0-E SEC#3 follow-on; owner provisions the key, mechanism proven here) ─────
+const KEY = "test-ephemeral-audit-key-DO-NOT-USE-IN-PROD";
+// build a keyed chain with the same payloads
+let kch = [];
+kch = A.appendEntry(kch, { at: "t0", event: "mission.start" }, { key: KEY });
+kch = A.appendEntry(kch, { at: "t1", event: "gate.admit" }, { key: KEY });
+kch = A.appendEntry(kch, { at: "t2", event: "exec.verified" }, { key: KEY });
+
+// (10) keyed chain verifies with the key; result reports keyed:true
+{ const v = A.verifyChain(kch, { key: KEY }); ok("keyed chain verifies with the key (keyed:true)", v.ok === true && v.keyed === true && v.length === 3); }
+// (11) keyed entry hash DIFFERS from the keyless hash (HMAC actually applied, not sha256)
+ok("keyed hash != keyless hash (HMAC applied)", kch[0].hash !== A.entryHash(0, A.GENESIS, kch[0].payload));
+// (12) FULL-REWRITE forgery: an attacker without the key rebuilds a self-consistent KEYLESS chain over forged payloads.
+//      Keyless verify PASSES it (the core weakness) — KEYED verify REJECTS it (the fix).
+{
+  let forged = [];
+  forged = A.appendEntry(forged, { at: "t0", event: "mission.start" });            // no key (attacker can't repro HMAC)
+  forged = A.appendEntry(forged, { at: "t1", event: "gate.DENY-hidden" });          // forged payload
+  forged = A.appendEntry(forged, { at: "t2", event: "exec.FAILED-hidden" });        // forged payload
+  ok("keyless verify PASSES a full-rewrite forgery (demonstrates the weakness)", A.verifyChain(forged).ok === true);
+  const vk = A.verifyChain(forged, { key: KEY });
+  ok("KEYED verify REJECTS the full-rewrite forgery (attacker lacks the key)", vk.ok === false && vk.keyed === true);
+}
+// (13) WRONG key ⇒ rejected
+ok("verifying a keyed chain with the WRONG key ⇒ rejected", A.verifyChain(kch, { key: "wrong-key" }).ok === false);
+// (14) TAIL TRUNCATION: dropping the last entry still yields a valid prefix chain (keyless verify passes) —
+//      the out-of-band tip ANCHOR detects it.
+{
+  const anchor = A.chainTip(kch);                 // stored out-of-band at length 3
+  const truncated = kch.slice(0, 2);
+  ok("verify alone PASSES a truncated chain (prefix stays valid)", A.verifyChain(truncated, { key: KEY }).ok === true);
+  const vt = A.verifyChain(truncated, { key: KEY, expectedTip: anchor });
+  ok("tip anchor DETECTS tail truncation (tipAnchored:true, ok:false)", vt.ok === false && vt.tipAnchored === true && /tip/.test(vt.reason));
+}
+// (15) EXTENSION past the anchor is likewise detected
+{ const anchor = A.chainTip(kch.slice(0, 2)); const vx = A.verifyChain(kch, { key: KEY, expectedTip: anchor }); ok("tip anchor detects extension past the anchored tip", vx.ok === false && vx.tipAnchored === true); }
+// (16) keyed + anchored happy path ⇒ ok with both flags true
+ok("keyed + correct tip anchor ⇒ ok, keyed+tipAnchored true", (() => { const v = A.verifyChain(kch, { key: KEY, expectedTip: A.chainTip(kch) }); return v.ok === true && v.keyed === true && v.tipAnchored === true; })());
+// (17) BACKWARD-COMPAT: the historical keyless API is byte-identical (same hashes, keyed:false)
+ok("keyless path unchanged (byte-identical hash, keyed:false)", ch[0].hash === A.entryHash(0, A.GENESIS, ch[0].payload) && A.verifyChain(ch).keyed === false && A.verifyChain(ch).tipAnchored === false);
+
+console.log(`\nAUDIT-LOG suite — ${pass} assertions passed. (hash-chain tamper-evidence + keyed-HMAC full-rewrite resistance + tip-anchor truncation detection; key is owner-provisioned, mechanism proven)`);
