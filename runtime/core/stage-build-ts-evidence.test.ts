@@ -26,13 +26,17 @@ function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); pa
 
 console.log("Build/TS Evidence stage — scope (engineering vs read-only)");
 
-// --- isEngineeringMission: EXACT mirror of validation-engine.ts:101-102 — boundary cases ----------
-ok("predicate: requiresEngineering true + authorizedPaths non-empty ⇒ engineering", S.isEngineeringMission({ requiresEngineering: true, authorizedPaths: ["runtime/app"] }) === true);
-ok("predicate: requiresEngineering false ⇒ NOT engineering (read-only)", S.isEngineeringMission({ requiresEngineering: false, authorizedPaths: ["runtime/app"] }) === false);
-ok("predicate: requiresEngineering true but authorizedPaths EMPTY ⇒ NOT engineering", S.isEngineeringMission({ requiresEngineering: true, authorizedPaths: [] }) === false);
-ok("predicate: requiresEngineering missing ⇒ NOT engineering", S.isEngineeringMission({ authorizedPaths: ["x"] }) === false);
-ok("predicate: requiresEngineering truthy-but-not-===true (1) ⇒ NOT engineering (strict ===true, matches VE)", S.isEngineeringMission({ requiresEngineering: 1, authorizedPaths: ["x"] }) === false);
-ok("predicate: authorizedPaths not an array ⇒ NOT engineering", S.isEngineeringMission({ requiresEngineering: true, authorizedPaths: "runtime/app" }) === false);
+// --- isEngineeringMission: EXACT mirror of validation-engine.ts:102 — WRITE-SET-DERIVED (OR) boundary cases -----
+// isEngineering = requiresEngineering===true || authorizedPaths.length>0. Engineering if it declares the flag OR holds
+// a write-set; genuinely read-only = NEITHER. The OR closes the flag-trusting fail-open (a write-set mission that omits
+// the flag is still engineering ⇒ demands build/TS/scope evidence).
+ok("predicate: flag true + paths non-empty ⇒ engineering", S.isEngineeringMission({ requiresEngineering: true, authorizedPaths: ["runtime/app"] }) === true);
+ok("predicate: flag FALSE but a write-set present ⇒ ENGINEERING (write-set-derived; closes the fail-open)", S.isEngineeringMission({ requiresEngineering: false, authorizedPaths: ["runtime/app"] }) === true);
+ok("predicate: flag true + paths EMPTY ⇒ ENGINEERING (declared intent demands build evidence)", S.isEngineeringMission({ requiresEngineering: true, authorizedPaths: [] }) === true);
+ok("predicate: flag MISSING but a write-set present ⇒ ENGINEERING (the recon fail-open, now closed)", S.isEngineeringMission({ authorizedPaths: ["x"] }) === true);
+ok("predicate: flag truthy-not-===true (1) + NO write-set ⇒ NOT engineering (strict ===true on the flag arm)", S.isEngineeringMission({ requiresEngineering: 1, authorizedPaths: [] }) === false);
+ok("predicate: authorizedPaths not an array + flag false ⇒ NOT engineering (non-array write-set ignored)", S.isEngineeringMission({ requiresEngineering: false, authorizedPaths: "runtime/app" }) === false);
+ok("predicate: GENUINE read-only (flag false + NO write-set) ⇒ NOT engineering", S.isEngineeringMission({ requiresEngineering: false, authorizedPaths: [] }) === false);
 ok("predicate: null / undefined plan ⇒ NOT engineering (no throw)", S.isEngineeringMission(null) === false && S.isEngineeringMission(undefined) === false);
 
 // --- runBuildTsEvidence behaviour in a throwaway cwd with injected spies --------------------------
@@ -58,7 +62,7 @@ function inTempCwd(plan, opts, fn) {
 //    skip marker + mission stamp and NO build/typescript keys (their ABSENCE proves the build branch wasn't taken).
 {
   const spy = { build: 0, tsc: 0 };
-  const res = inTempCwd({ mission: "RO1", requiresEngineering: false, authorizedPaths: ["runtime/app"] }, {}, () =>
+  const res = inTempCwd({ mission: "RO1", requiresEngineering: false, authorizedPaths: [] }, {}, () =>
     S.runBuildTsEvidence({ buildFn: () => { spy.build++; return true; }, tscFn: () => { spy.tsc++; return true; } }));
   ok("read-only: build spy NEVER called (no `npm run build`)", spy.build === 0);
   ok("read-only: tsc spy NEVER called (no `tsc`)", spy.tsc === 0);
@@ -72,7 +76,7 @@ function inTempCwd(plan, opts, fn) {
 {
   const spy = { build: 0 };
   let artifactExisted = false;
-  const res = inTempCwd({ mission: "RO2", requiresEngineering: false, authorizedPaths: ["runtime/app"] }, {}, () => {
+  const res = inTempCwd({ mission: "RO2", requiresEngineering: false, authorizedPaths: [] }, {}, () => {
     const r = S.runBuildTsEvidence({ buildFn: () => { spy.build++; return false; /* red */ }, tscFn: () => false });
     artifactExisted = fs.existsSync(path.join("runtime", "generated", "runtime-verify.json"));
     return r;
@@ -102,12 +106,22 @@ function inTempCwd(plan, opts, fn) {
   ok("engineering red build: build:false recorded (honest), typescript:true, artifact still produced", res.build === false && res.typescript === true && !res.skipped);
 }
 
-// 5. BOUNDARY: requiresEngineering true but authorizedPaths EMPTY ⇒ treated non-engineering ⇒ SKIP (spies not called).
+// 5. BOUNDARY (write-set-derived): requiresEngineering true + empty authorizedPaths ⇒ ENGINEERING (declared intent ⇒
+//    build evidence demanded). Under the OR predicate this is NO LONGER a skip — the flag alone triggers the gate.
 {
   const spy = { build: 0 };
   const res = inTempCwd({ mission: "B1", requiresEngineering: true, authorizedPaths: [] }, {}, () =>
     S.runBuildTsEvidence({ buildFn: () => { spy.build++; return true; }, tscFn: () => true }));
-  ok("boundary: requiresEngineering true + empty authorizedPaths ⇒ skipped (predicate matches VE)", res.skipped === true && spy.build === 0);
+  ok("boundary: requiresEngineering true + empty authorizedPaths ⇒ ENGINEERING (build runs; OR predicate)", res.skipped !== true && spy.build === 1 && res.build === true);
+}
+// 5b. ADVERSARIAL fail-open (the recon finding this lot closes): a plan with a WRITE-SET but the flag OMITTED must be
+//     treated ENGINEERING ⇒ build/tsc run (previously AND classified it non-engineering ⇒ skipped ⇒ a mutating mission
+//     could pass with no build/TS evidence).
+{
+  const spy = { build: 0, tsc: 0 };
+  const res = inTempCwd({ mission: "ADV", authorizedPaths: ["src"] }, {}, () =>
+    S.runBuildTsEvidence({ buildFn: () => { spy.build++; return true; }, tscFn: () => { spy.tsc++; return true; } }));
+  ok("adversarial: write-set + flag OMITTED ⇒ ENGINEERING (build+tsc run, NOT skipped) — fail-open closed", res.skipped !== true && spy.build === 1 && spy.tsc === 1);
 }
 
 // 6. MISSION IDENTITY: argv[2] overrides the plan's mission (odg-run passes the mission as argv[2]).
