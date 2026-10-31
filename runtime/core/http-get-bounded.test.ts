@@ -116,6 +116,17 @@ function closeServer(srv) {
     // a PUBLIC host is allowed even with the guard on (not over-blocked) — attempted, no SSRF refusal.
     const pub = await withDeadline(ce.httpGetBounded("https://example.com/", 100, 500, { rejectPrivateHosts: true }), 6000, "ssrf-public");
     ok("SSRF guard ON ⇒ a public host is NOT refused by the guard (not over-blocked)", !/SSRF guard/.test(pub.error || ""));
+    // IP-LITERAL-ONLY: public DOMAINS that merely START like a private range must NOT be over-blocked (the numeric
+    // range rules apply only to IP literals). 10.example.com / fcbarcelona.com / fd-cdn.net are public ⇒ attempted.
+    for (const host of ["10.example.com", "fcbarcelona.com", "fd-cdn.net", "169-fake.example.com"]) {
+      const r = await withDeadline(ce.httpGetBounded(`https://${host}/`, 100, 500, { rejectPrivateHosts: true }), 6000, "ssrf-lookalike-" + host);
+      ok(`SSRF guard ON ⇒ public lookalike ${host} NOT over-blocked (IP-literal-only)`, !/SSRF guard/.test(r.error || ""));
+    }
+    // but the corresponding IP LITERALS are still blocked.
+    for (const host of ["10.0.0.5", "0.0.0.0", "[fc00::1]", "[fe80::1]", "[::1]"]) {
+      const r = await withDeadline(ce.httpGetBounded(`http://${host}/`, 100, 500, { rejectPrivateHosts: true }), 4000, "ssrf-ipliteral-" + host);
+      ok(`SSRF guard ON ⇒ IP literal ${host} still blocked`, r.status === 0 && /SSRF guard/.test(r.error || ""));
+    }
   }
 
   console.log(`\nhttpGetBounded resolve-once — ${passed} assertions passed`);
