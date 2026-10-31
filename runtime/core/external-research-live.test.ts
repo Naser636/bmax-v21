@@ -59,7 +59,18 @@ function runResearch(ra) {
 
   const badProto = await ce.httpGetBounded("file:///etc/passwd", 1000, 1000);
   ok("non-http(s) protocol refused (no local file retrieval)", badProto.status === 0 && /unsupported protocol/.test(badProto.error || ""));
-  await new Promise((r) => srv.close(r));
+  // CI-reliability: the byte-cap/time-limit fetches above do req.destroy() mid-request, which can leave a
+  // half-closed server-side socket that srv.close(cb) waits for — so the plain `await srv.close(r)` could never
+  // resolve, leaving the process alive forever (the intermittent CI "Classified test gate" stall; reproduced
+  // deterministically with a lingering socket). Tear down so teardown CANNOT hang: destroy any remaining
+  // connections, then close, with an unref'd fail-safe timer that resolves even if close never fires.
+  await new Promise((r) => {
+    let done = false;
+    const fin = () => { if (!done) { done = true; r(undefined); } };
+    try { (srv as any).closeAllConnections && (srv as any).closeAllConnections(); } catch { /* older node: best-effort */ }
+    srv.close(fin);
+    setTimeout(fin, 2000).unref();
+  });
 
   // --- Executor LIVE path (injected fetcher = existing seam). ---
   // 1. No fetcher ⇒ NO network, fail-closed (a disk-only grant without a selected fetcher never fetches).
