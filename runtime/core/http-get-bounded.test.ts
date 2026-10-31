@@ -100,5 +100,23 @@ function closeServer(srv) {
     ok("invalid url ⇒ status 0 invalid url", inv.status === 0 && /invalid url/.test(inv.error || ""));
   }
 
+  // 6. SSRF GUARD (opt-in): with {rejectPrivateHosts:true} a private/link-local/loopback/cloud-metadata host is
+  //    refused BEFORE any connection (status 0, SSRF error). WITHOUT the flag the same host is permitted (default
+  //    permissive — so legitimate loopback callers like ollama/odg-probe/this suite are unaffected). The governed
+  //    external-research client (governedHttpGet worker) always sets the flag.
+  {
+    for (const host of ["169.254.169.254", "metadata.google.internal", "10.0.0.5", "127.0.0.1", "192.168.1.1", "[::1]", "localhost"]) {
+      const r = await withDeadline(ce.httpGetBounded(`http://${host}/`, 1000, 1000, { rejectPrivateHosts: true }), 4000, "ssrf-" + host);
+      ok(`SSRF guard ON ⇒ ${host} blocked before connect (status 0, SSRF error)`, r.status === 0 && /SSRF guard/.test(r.error || ""));
+    }
+    // default (no flag): a metadata host is NOT pre-blocked — it is attempted (and fails to connect here), proving the
+    // guard is opt-in and does not break loopback consumers.
+    const permit = await withDeadline(ce.httpGetBounded("http://169.254.169.254/", 100, 500), 6000, "ssrf-default");
+    ok("SSRF guard OFF (default) ⇒ host NOT pre-blocked (opt-in; loopback consumers unaffected)", !/SSRF guard/.test(permit.error || ""));
+    // a PUBLIC host is allowed even with the guard on (not over-blocked) — attempted, no SSRF refusal.
+    const pub = await withDeadline(ce.httpGetBounded("https://example.com/", 100, 500, { rejectPrivateHosts: true }), 6000, "ssrf-public");
+    ok("SSRF guard ON ⇒ a public host is NOT refused by the guard (not over-blocked)", !/SSRF guard/.test(pub.error || ""));
+  }
+
   console.log(`\nhttpGetBounded resolve-once — ${passed} assertions passed`);
 })().catch((e) => { console.error(e && e.message ? e.message : e); process.exit(1); });

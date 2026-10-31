@@ -2278,8 +2278,31 @@
       "priority": 1,
       "deps": [],
       "title": "Governed-bash: redact injected envAllowlist secret VALUES by injection (not name-regex) + /proc/environ reads escalate as secret access",
-      "status": "IN_PROGRESS",
-      "evidence": "REPRODUCIBLE_RISK/HIGH security (recon, reproduced vs prod dist). bash-command-governor.ts injected caller-supplied envAllowlist host process.env VALUES into the sandbox, and (a) buildRedactor only scrubbed values of vars whose NAME matched a secret regex (missed DATABASE_URL/STRIPE_SK/PAT) while (b) `cat /proc/self/environ` was classified a benign READ (SECRET_PATTERNS lacked environ) ⇒ injected secrets echoed unredacted into bash-command.json. Gated today (bash_command not transported plan→patch) = latent landmine. FIX (structural): buildRedactor(injectedKeys) now ALSO scrubs the VALUES of every injected envAllowlist key unconditionally (by injection, not name) — govern passes req.envAllowlist; + SECRET_PATTERNS adds /(^|/)proc/(self|\\d+)/environ$ ⇒ touchesSecret ⇒ HUMAN_APPROVAL_REQUIRED (escalate, never EXECUTED). EVIDENCE: bash-command-governor.test.ts 77/77 incl. new: /proc/1/environ + /proc/self/environ reads REFUSED (escalate, not executed; was EXECUTED pre-fix); injected non-secret-named value (DATABASE_URL-shape) scrubbed by VALUE + a non-vacuous control proving it's the injection path not the name-regex. Pre-existing confinement asserts (etc/passwd, repo-read, /usr) unchanged. tsc clean BOTH; full gate green. OWASP A01/A09, CWE-200/532. Independent verify + CI pending."
+      "status": "ACCEPTED",
+      "evidence": "REPRODUCIBLE_RISK/HIGH security (recon, reproduced vs prod dist). bash-command-governor.ts injected caller-supplied envAllowlist host process.env VALUES into the sandbox, and (a) buildRedactor only scrubbed values of vars whose NAME matched a secret regex (missed DATABASE_URL/STRIPE_SK/PAT) while (b) `cat /proc/self/environ` was classified a benign READ (SECRET_PATTERNS lacked environ) ⇒ injected secrets echoed unredacted into bash-command.json. Gated today (bash_command not transported plan→patch) = latent landmine. FIX (structural): buildRedactor(injectedKeys) now ALSO scrubs the VALUES of every injected envAllowlist key unconditionally (by injection, not name) — govern passes req.envAllowlist; + SECRET_PATTERNS adds /(^|/)proc/(self|\\d+)/environ$ ⇒ touchesSecret ⇒ HUMAN_APPROVAL_REQUIRED (escalate, never EXECUTED). EVIDENCE: bash-command-governor.test.ts 77/77 incl. new: /proc/1/environ + /proc/self/environ reads REFUSED (escalate, not executed; was EXECUTED pre-fix); injected non-secret-named value (DATABASE_URL-shape) scrubbed by VALUE + a non-vacuous control proving it's the injection path not the name-regex. Pre-existing confinement asserts (etc/passwd, repo-read, /usr) unchanged. tsc clean BOTH; full gate green. OWASP A01/A09, CWE-200/532. Independent verify + CI pending.",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 315,
+        "mergeCommit": "62b7e06",
+        "verified": true
+      }
+    },
+    {
+      "id": "ssrf-isprivatehost-httpbounded",
+      "program": "P0",
+      "priority": 2,
+      "deps": [],
+      "title": "SSRF guard: opt-in rejectPrivateHosts in httpGetBounded; the governed external-research client refuses private/link-local/loopback/cloud-metadata hosts",
+      "status": "ACCEPTED",
+      "evidence": "DESIGN_IMPROVEMENT/MED security (recon F3, latent — no live injector today). capability-executors.ts httpGetBounded accepted any http/https URL (only protocol checked), so a mission-influenced source_allowlist URL fetched via the built-in client could hit 169.254.169.254 / internal hosts (SSRF). A BLANKET isPrivateHost would break legitimate LOOPBACK consumers (ollama 127.0.0.1:11434, odg-probe, the external-research-live in-process test server). FIX (opt-in, structural): httpGetBounded(url,maxBytes,timeoutMs,{rejectPrivateHosts:true}) refuses private/link-local/loopback/ULA/cloud-metadata BEFORE connect; the GOVERNED external-research client (governedHttpGet's --http-get worker) sets the flag, so mission-influenced URLs are SSRF-safe, while direct loopback callers (no flag) are unaffected. isPrivateHost policy inlined (same as bounded-http-client.ts; avoids a require cycle into this core module). EVIDENCE: http-get-bounded.test.ts 15/15 incl. 7 private/metadata hosts blocked with the flag (169.254.169.254, metadata.google.internal, 10./192.168./127./[::1]/localhost), default permissive (opt-in; loopback unaffected), public host not over-blocked. tsc clean BOTH; full gate green. NOTE: finance-data-connector.defaultFetcher (recon F2) has the same ungated https.get but is DORMANT (no runtime consumer, SIM-only) — documented here as a known dormant gap; route it through bounded-http-client / add the guard if/when a consumer is wired (not touched now to avoid changing dead code). OWASP A10, CWE-918. Independent verify + CI pending.",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 316,
+        "mergeCommit": "2ab7108",
+        "verified": true
+      }
     },
     {
       "id": "recon-followups-adapter-pdfstreams",
