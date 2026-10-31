@@ -2053,7 +2053,10 @@
       "acceptedAt": "2026-10-31",
       "evidence": "P0-E security forensic. odg-schedule-tick persisted scheduler-audit-chain.json then on the next tick LOADED (readAuditChain) + EXTENDED it WITHOUT calling verifyChain — the computed tamper-evidence was never consulted at the trust boundary (a partial in-place edit/reorder/truncate would be silently extended). FIX: pure auditIntegrityGate(chain) (empty/absent⇒ok fresh-start; present-but-broken⇒ok:false via AUDIT.verifyChain, no re-impl) + a fail-closed STARTUP gate (B) in main() after the truth-lock precondition, BEFORE tickOnce/persist: broken loaded chain ⇒ record AUDIT_CHAIN_TAMPERED + STARTUP_REFUSED + exit 2, WITHOUT persisting (tampered evidence preserved, not overwritten — proven E2E: file md5 identical before/after). Makes the EXISTING tamper-evidence load-bearing. +4 regression (intact/tampered/truncated/empty-null); suite 14→18; tsc clean BOTH tsconfigs; build OK; dist gate emitted. INDEPENDENTLY VERIFIED (separate agent = CONFIRMED_FIX_CORRECT; fresh-start not blocked, intact continuity not blocked, scope exact). HONESTY: does NOT close full-rewrite or tail-truncation forgery (prefix hash-chain, no key/tip-anchor) ⇒ owner-gated keyed integrity (see p0e-audit-log-keyed-integrity). 9 primitives FROZEN.",
       "integration": {
-        "state": "PENDING_MERGE"
+        "state": "MERGED",
+        "pr": 298,
+        "mergeCommit": "611ab5a",
+        "verified": true
       }
     },
     {
@@ -2069,6 +2072,30 @@
       "humanActionRequired": "Owner to decide the audit-log integrity KEY strategy (HMAC-SHA256 with a runtime secret, or asymmetric signed-tail per SLSA L2, plus a stored trusted tip/length anchor for tail-truncation). Requires owner-gated secret generation+storage+rotation. Detail in scratchpad P0-CONTRACTS + SEC#3 forensic.",
       "resumeTest": "With a provisioned key: full-rewrite OR tail-truncation of scheduler-audit-chain.json ⇒ keyed-verify ok:false; intact ⇒ ok:true; verify-on-read gate refuses the forgery.",
       "evidence": "Forensic: audit-log.ts + evidence-provenance.ts are keyless sha256 ⇒ a full-rewrite attacker recomputes a self-consistent chain (verifyChain ok:true); verifyChain is a prefix chain with no tip anchor ⇒ tail-truncation also verifies ok:true. Closing either requires a secret the attacker cannot reproduce ⇒ owner-gated. NO secret operation performed."
+    },
+    {
+      "id": "p0c3-stale-verify-cross-mission-guard",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-C#3 (part 1): validation-engine refuses STALE cross-mission build/TS evidence (runtime-verify.json stamped for a different mission)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "PENDING_MERGE"
+      },
+      "evidence": "P0-C exec-chain forensic #3. The build/TS gate trusted a PRESENT runtime-verify.json even when stamped for a DIFFERENT mission (stale prior-run leftover in shared runtime/generated/ so one mission green build/tsc verdict validated another). FIX (V68-SAFE: presence + mission-IDENTITY only, NO timing heuristic; the reverted V68 freshGates mtime-vs-startedAt false-BLOCKED every mission because odg-verify writes verify in PRE-FLIGHT before the checkpoint stamp): verifyStaleCrossMission = verify.mission present AND != plan.mission; verifyEvidenceOk = !isEngineering || !verifyStaleCrossMission; folded into validated + checks.verifyEvidenceOk + unmet. ABSENT verify.mission stays legacy/unchanged (mirror crossMission discipline). Regression +4 (engineering-proof: stale OTHER verify=BLOCK; this-mission M1=validated; absent=validated/unaffected). Full VE regression PASS; tsc clean BOTH tsconfigs; build OK. Independently verified by a separate agent. 9 primitives FROZEN. PART 2 (absent-verify fail-open) DEFERRED to p0c3-absent-verify-require."
+    },
+    {
+      "id": "p0c3-absent-verify-require",
+      "program": "P0",
+      "priority": 1,
+      "deps": [
+        "p0c3-stale-verify-cross-mission-guard"
+      ],
+      "title": "P0-C#3 (part 2): close the ABSENT-runtime-verify build/TS fail-open on engineering missions (needs post-patch verify stage + adapter-recovery smoke)",
+      "status": "READY",
+      "evidence": "The absent-verify fail-open (engineering mission with NO runtime-verify.json defaults buildOk/typescriptOk to TRUE) is LIVE on the odg-autonomy direct-odg-run first attempt. A naive require-present BLOCK false-BLOCKS a LEGIT committed-deliverable re-validation (validation-engine-engineering-proof case 3 runs with no verify by design) and changes the autonomy first-run flow (relies on the adapter refreshVerifyEvidence recovery loop). Safe closure needs forensic Option D (a post-patch verify-producing stage in the odg-run pipeline before Validation Engine) + a full-pipeline V68 smoke under BOTH ODG_RUNTIME=ts and =js. Also closes the pre-patch-staleness residual (odg-verify computes build/tsc in PRE-FLIGHT before Patch Executor). Contract + Gate B required before implementation."
     }
   ]
 }

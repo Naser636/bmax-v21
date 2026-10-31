@@ -203,6 +203,23 @@ if (gatesEvaluated && (!buildOk || !typescriptOk)) {
     bre.writeProviderAuthorization(targetMission, recovery, stamp);
 }
 
+// C#3 (part 1 — STALE cross-mission build/TS evidence). A PRESENT runtime-verify.json stamped for a DIFFERENT
+// mission (a stale prior-run leftover in the shared runtime/generated/) must NOT lend its build/tsc verdict to
+// THIS mission. verifyEvidenceOk fails closed only on a present-AND-different mission id.
+// V68-SAFE BY CONSTRUCTION: PRESENCE + mission-IDENTITY only — NO mtime/generatedAt/timing comparison (the reverted
+// V68 `freshGates` mtime≥startedAt heuristic false-BLOCKED every mission because odg-verify writes verify in the
+// PRE-FLIGHT before the checkpoint stamp; identity has no ordering trap — a legit this-run verify is stamped
+// verify.mission === the running mission). An ABSENT verify.mission ⇒ legacy/unchanged (mirror the crossMission
+// execMission discipline: only PRESENT-and-DIFFERENT blocks). Scoped to isEngineering.
+// NOTE (part 2 DEFERRED — p0c3-absent-verify-require): the ABSENT-verify fail-open (engineering mission with NO
+// runtime-verify.json defaults build/tsc to TRUE) is NOT closed here — requiring presence false-BLOCKS a LEGIT
+// engineering re-validation of an already-committed deliverable (validation-engine-engineering-proof case 3 runs
+// with no verify by design), and changing the odg-autonomy first-run flow needs the adapter-recovery full-pipeline
+// smoke. Closing it safely needs a post-patch verify stage (forensic Option D) + adapter analysis — separate contract.
+const verifyMission: any = verify && typeof verify.mission === "string" ? verify.mission : null;
+const verifyStaleCrossMission = !!(verifyMission && planMission && verifyMission !== planMission);
+const verifyEvidenceOk = !isEngineering || !verifyStaleCrossMission;
+
 // 5. Capability proofs — the Capability Probe Framework (runtime/core/capability-probes.js) turns
 // the mission contract's `verify` block into machine-verified evidence against real generated
 // artifacts. Each proof is REQUIRED by default (opt out with `required: false`); SUCCESS is blocked
@@ -280,6 +297,7 @@ const failedObjectiveProofs = failingObjectiveProofs.filter((p: any) => !p || p.
 
 const checks = {
     crossMissionOk: !crossMission,
+    verifyEvidenceOk,
     objectiveCoverage: coverageOk,
     noFailedActions: noFailures,
     evidenceIntegrity: evidenceOk,
@@ -319,7 +337,7 @@ const codingResolutionPath = "runtime/generated/coding-resolution.json";
 const codingGate = codingFidelityGate(readJsonSafe(codingResolutionPath), { fileExisted: fs.existsSync(codingResolutionPath), currentMission: planMission });
 const codingFidelityOk = !codingGate.block;
 
-const validated = !crossMission && coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && capabilitiesOk && objectiveProofsOk && noBlocked && codingFidelityOk;
+const validated = !crossMission && coverageOk && noFailures && evidenceOk && noRecordedNoOp && noGammaFalseSuccess && engineeringOk && buildOk && typescriptOk && verifyEvidenceOk && capabilitiesOk && objectiveProofsOk && noBlocked && codingFidelityOk;
 
 // PARTIAL — honest, resumable partial progress. Offered ONLY when the sole gap between the mission and
 // SUCCESS is one-or-more blocked actions: real evidenced progress was made, there are NO true failures and
@@ -355,6 +373,7 @@ if (!evidenceOk) unmet.push(`Capability claimed EXECUTED without producing evide
 if (!noRecordedNoOp) unmet.push(`Objective(s) recorded as a no-op without evidence (RECORDED): ${recordedNoOp.map((e: any) => e.objectiveId || e.action).join(", ")}.`);
 if (!noGammaFalseSuccess) unmet.push(`Objective(s) declaring required execution (requiresExecution) produced a RECORDED no-op with no evidence — DEF-GAMMA false success refused: ${gammaFalseSuccess.map((e: any) => e.objectiveId || e.action).join(", ")}.`);
 if (!engineeringOk) unmet.push(`Write-scope mission changed nothing inside authorized_paths (${authorizedPaths.join(", ")}).`);
+if (!verifyEvidenceOk) unmet.push(`Build/TypeScript evidence is STALE: runtime-verify.json is stamped for mission "${verifyMission}", not "${planMission}" — refuse to trust another mission's build/tsc verdict (fail-closed).`);
 if (!buildOk) unmet.push("Build gate is red (runtime-verify.json build=false).");
 if (!typescriptOk) unmet.push("TypeScript gate is red (runtime-verify.json typescript=false).");
 for (const c of failedCapabilityProofs) unmet.push(`Required capability proof missing — "${c.capability}" not proven: ${c.detail}.`);
