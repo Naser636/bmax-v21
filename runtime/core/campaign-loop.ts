@@ -20,10 +20,17 @@ const C = require("./campaign-controller.js");
 const M = require("./campaign-metrics.js");
 const MEV = require("./mission-evidence.js");
 
-// Loop-level stop reasons (distinct from per-lot status).
+// Loop-level stop reasons (distinct from per-lot status). UNCHANGED (back-compat): the §5 directive vocabulary is
+// exposed ADDITIVELY as result.lifecycleState (see lifecycleStateOf), NOT by changing these.
 const STOP = ["COMPLETED", "IDLE_BLOCKED", "WAITING_EXTERNAL", "MAX_ITERATIONS", "STOP_REQUESTED"];
-// execute(lot) verdict statuses the driver understands.
-const VERDICT = ["ACCEPTED", "FAILED", "WAITING_EXTERNAL", "RETRY"];
+// §5 lifecycle classification (additive) — a diagnosis over (stopReason, register), surfaced as result.lifecycleState
+// so a supervisor can distinguish WHY the loop parked (CI vs provider vs dependency vs external-authorization vs
+// recovering vs session-interrupted vs genuinely-no-safe-work). Not a new orchestrator; pure classification.
+const LIFECYCLE = ["COMPLETED", "WAITING_FOR_CI", "WAITING_FOR_PROVIDER", "WAITING_FOR_DEPENDENCY", "WAITING_FOR_EXTERNAL_AUTHORIZATION", "RECOVERING", "BLOCKED", "NO_SAFE_WORK_AVAILABLE", "SESSION_INTERRUPTED", "IN_PROGRESS"];
+// execute(lot) verdict statuses the driver understands. The WAITING_FOR_* refine WAITING_EXTERNAL with a waitKind
+// (identical BLOCKED effect, distinct diagnosis + CI parkability); WAITING_EXTERNAL remains the generic/back-compat alias.
+const VERDICT = ["ACCEPTED", "FAILED", "WAITING_EXTERNAL", "WAITING_FOR_CI", "WAITING_FOR_PROVIDER", "WAITING_FOR_DEPENDENCY", "WAITING_FOR_EXTERNAL_AUTHORIZATION", "RETRY"];
+const WAIT_KIND: any = { WAITING_EXTERNAL: "EXTERNAL", WAITING_FOR_CI: "CI", WAITING_FOR_PROVIDER: "PROVIDER", WAITING_FOR_DEPENDENCY: "DEPENDENCY", WAITING_FOR_EXTERNAL_AUTHORIZATION: "EXTERNAL_AUTHORIZATION" };
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function openLots(reg: any): any[] { return (reg.items || []).filter((it: any) => it.status === "READY" || it.status === "IN_PROGRESS"); }
@@ -100,9 +107,15 @@ function runCampaignLoop(opts: any = {}): any {
         C.advance(register, lot.id, { attemptFailed: true, reason: `ACCEPTED rejected: ${r.code}` });
         rec({ lot: lot.id, event: "FAILED", reason: r.code });
       } else rec({ lot: lot.id, event: "COMPLETED" });
-    } else if (res.status === "WAITING_EXTERNAL") {
-      C.advance(register, lot.id, { status: "BLOCKED", blockReason: res.blockReason || res.reason || "awaiting external action" });
-      rec({ lot: lot.id, event: "WAITING_EXTERNAL", reason: res.reason || null });
+    } else if (WAIT_KIND[res.status]) {
+      // Any WAITING_* verdict ⇒ BLOCK this lot (awaiting an external condition) and CONTINUE to the next admissible lot
+      // (a blocked lot never freezes independent work). The waitKind refines the generic WAITING_EXTERNAL so a
+      // supervisor can distinguish CI / PROVIDER / DEPENDENCY / EXTERNAL_AUTHORIZATION; a CI wait also parks the run id
+      // so resolveCiWaiters() can later re-admit it on CI completion (the CI-completion→next-action mechanism).
+      const waitKind = WAIT_KIND[res.status];
+      const a = C.advance(register, lot.id, { status: "BLOCKED", blockReason: res.blockReason || res.reason || `awaiting ${String(waitKind).toLowerCase()}` });
+      if (a.ok && a.item) { a.item.waitKind = waitKind; if (waitKind === "CI" && res.ciRunId) a.item.ciRunId = res.ciRunId; else delete a.item.ciRunId; }
+      rec({ lot: lot.id, event: res.status, waitKind, ciRunId: (waitKind === "CI" && res.ciRunId) || null, reason: res.reason || null });
     } else if (res.status === "RETRY") {
       const attempts = (lot.attempts || 0) + 1;
       if (attempts < maxAttempts && typeof res.strategy === "string" && res.strategy) {
@@ -125,15 +138,76 @@ function runCampaignLoop(opts: any = {}): any {
   return finish("MAX_ITERATIONS", register, iter, transitions, {}, { startedAt, endedAt: now() });
 }
 
+/** A prior run was interrupted mid-mission iff a lot is left IN_PROGRESS (the loop only ever leaves lots
+ *  ACCEPTED/BLOCKED/READY on a clean stop). Pure; used to classify SESSION_INTERRUPTED and to resume idempotently. */
+function detectInterrupted(register: any): any {
+  const ids = (register.items || []).filter((it: any) => it.status === "IN_PROGRESS").map((it: any) => it.id);
+  return { interrupted: ids.length > 0, ids };
+}
+
+/** §5 lifecycle classification over (stopReason, register) — additive diagnosis, never changes STOP. */
+function lifecycleStateOf(reason: string, register: any): string {
+  if (reason === "COMPLETED") return "COMPLETED";
+  if (reason === "STOP_REQUESTED") return detectInterrupted(register).interrupted ? "SESSION_INTERRUPTED" : "IN_PROGRESS";
+  const items = register.items || [];
+  const open = items.filter((it: any) => it.status === "READY" || it.status === "IN_PROGRESS");
+  const blocked = items.filter((it: any) => it.status === "BLOCKED");
+  if (open.length === 0 && blocked.length > 0) {
+    // All remaining work is externally blocked ⇒ classify by the dominant distinct waitKind, else generic.
+    const kinds = Array.from(new Set(blocked.map((b: any) => b.waitKind).filter(Boolean)));
+    if (kinds.length === 1) {
+      const k = kinds[0];
+      if (k === "CI") return "WAITING_FOR_CI";
+      if (k === "PROVIDER") return "WAITING_FOR_PROVIDER";
+      if (k === "DEPENDENCY") return "WAITING_FOR_DEPENDENCY";
+      if (k === "EXTERNAL_AUTHORIZATION") return "WAITING_FOR_EXTERNAL_AUTHORIZATION";
+      if (k === "RECOVERING") return "RECOVERING";
+    }
+    return "NO_SAFE_WORK_AVAILABLE";
+  }
+  if (reason === "MAX_ITERATIONS") return "IN_PROGRESS";
+  // open lots remain but none admissible now (deps unsatisfied / stalled) — more work exists, just not this instant.
+  return "WAITING_FOR_DEPENDENCY";
+}
+
+/**
+ * resolveCiWaiters(register, ciStatus): the CI-completion→next-action mechanism. PURE + INJECTED (no real CI call here).
+ * For each BLOCKED lot parked on CI (waitKind "CI" + ciRunId), ask ciStatus(ciRunId) ⇒ "success"|"failure"|"pending":
+ *  - success ⇒ re-admit (status READY, clear CI wait + failure) so the loop re-selects it.
+ *  - failure ⇒ bounded recovery: keep BLOCKED, mark waitKind "RECOVERING" + a diagnosis blockReason (NOT auto-retried,
+ *    NOT auto-accepted — a human/ODG diagnosis must change the strategy before re-admission).
+ *  - pending ⇒ unchanged.
+ * Never advances a lot to ACCEPTED. Returns { resolved[], failed[], pending[] }.
+ */
+function resolveCiWaiters(register: any, ciStatus: any): any {
+  const out = { resolved: [] as string[], failed: [] as string[], pending: [] as string[] };
+  if (typeof ciStatus !== "function") return out;
+  for (const it of (register.items || [])) {
+    if (it.status !== "BLOCKED" || it.waitKind !== "CI" || !it.ciRunId) continue;
+    let verdict: any; try { verdict = ciStatus(it.ciRunId); } catch { verdict = "pending"; }
+    if (verdict === "success") { it.status = "READY"; delete it.waitKind; delete it.ciRunId; delete it.blockReason; delete it.lastFailureFingerprint; delete it.lastFailureReason; out.resolved.push(it.id); }
+    else if (verdict === "failure") { it.waitKind = "RECOVERING"; it.blockReason = `CI run ${it.ciRunId} FAILED — diagnosis/recovery required (not auto-retried)`; out.failed.push(it.id); }
+    else out.pending.push(it.id);
+  }
+  return out;
+}
+
 function finish(reason: string, register: any, iterations: number, transitions: any[], extra: any = {}, timing: any = null): any {
   const summary = C.summary(register);
   const startedAt = timing && typeof timing.startedAt === "number" ? timing.startedAt : null;
   const endedAt = timing && typeof timing.endedAt === "number" ? timing.endedAt : null;
   // §1 operating baseline for THIS run — derived only from observed transitions/timing (honest unmeasured elsewhere).
   const metrics = M.summarizeRun({ stopped: reason, iterations, transitions, summary, startedAt, endedAt, blocked: extra.blocked });
+  const lifecycleState = lifecycleStateOf(reason, register);
+  // reconSuggested: the loop found NO admissible work yet the campaign is NOT complete and nothing is actively
+  // CI/provider-waiting that will self-resolve — i.e. the READY list is empty but the frontier may not be. This is a
+  // SIGNAL to the supervisor/ODG to run read-only frontier reconnaissance; the loop never runs recon itself.
+  const reconSuggested = reason !== "COMPLETED" && lifecycleState === "NO_SAFE_WORK_AVAILABLE";
   return {
     stopped: reason,
     campaignComplete: reason === "COMPLETED",
+    lifecycleState,
+    reconSuggested,
     iterations,
     transitions,
     summary,
@@ -149,8 +223,8 @@ function finish(reason: string, register: any, iterations: number, transitions: 
   };
 }
 
-export { STOP, VERDICT, runCampaignLoop };
-module.exports = { STOP, VERDICT, runCampaignLoop };
+export { STOP, VERDICT, LIFECYCLE, runCampaignLoop, detectInterrupted, resolveCiWaiters, lifecycleStateOf };
+module.exports = { STOP, VERDICT, LIFECYCLE, runCampaignLoop, detectInterrupted, resolveCiWaiters, lifecycleStateOf };
 
 if (require.main === module) {
   // dry-run over the real register with a NO-OP executor that declines everything ⇒ shows the honest stop reason.

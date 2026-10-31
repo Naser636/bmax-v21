@@ -7,7 +7,7 @@
  *   selectNext  → migration-selector.recommendNext (risk-first next-mission choice over the real inventory)
  *   runMission  → runtime/bin/odg-local-pipeline.sh <mission> (the existing per-mission governed pipeline
  *                 with its checkpoint trap + gates) OR odg-run; a NON-zero exit is a real stop signal
- *   recordCheck → scripts/compass-update.js --from-report (the canonical anti-stale checkpoint recorder)
+ *   recordCheck → tsx scripts/compass-update.ts --from-report (the canonical anti-stale checkpoint recorder)
  *
  * The CORE (campaignLoop) is PURE and dependency-injected so continuity is HERMETICALLY testable (no real
  * mission, no spawn): finish → checkpoint → select next → continue; stop ONLY on (a) no admissible mission,
@@ -93,7 +93,11 @@ if (typeof require !== "undefined" && typeof module !== "undefined" && require.m
       return { ok: status === 0, blocked: status !== 0, detail: `odg-local-pipeline exit ${status}` };
     },
     recordCheckpoint: (m) => {
-      spawnSync("node", ["scripts/compass-update.js", "--from-report", m], { cwd: repoRoot, stdio: "inherit" });
+      // BUGFIX: the recorder source is scripts/compass-update.ts (tsx) — there is no scripts/compass-update.js, so the
+      // old `node scripts/compass-update.js` silently failed to record the checkpoint after every mission. Run it via
+      // tsx on the real .ts (same as odg-local-pipeline.sh's trap), with an absolute bin path so cwd changes can't break it.
+      const tsx = require("node:path").join(repoRoot, "node_modules", ".bin", "tsx");
+      spawnSync(tsx, ["scripts/compass-update.ts", "--from-report", m], { cwd: repoRoot, stdio: "inherit" });
     },
     maxIterations: Number(process.env.ODG_CAMPAIGN_MAX_ITER || 50),
     maxConsecutiveFailures: Number(process.env.ODG_CAMPAIGN_MAX_FAIL || 2),
