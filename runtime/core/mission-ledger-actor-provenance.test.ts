@@ -100,6 +100,23 @@ console.log("MISSION LEDGER — SLICE 2 ACTOR PROVENANCE (measure-only, fail-clo
   const r = recordIn(d, "M_NOPROOF");
   check(r.skipped === true && r.reason === "UNPROVEN" && ledgerCount(d) === 0, "F-reg actor artifact never substitutes for proof (UNPROVEN refuse)"); }
 
+// R1 (P0-A hardening) — a concordant-ODG entry PLUS a present-but-UNMAPPED author entry ⇒ actor OMITTED (ambiguous),
+// never silently stamped ODG. Preserved: a demoted sibling whose author IS known (ODG_CAPABILITY, not applied) is NOT
+// ambiguity, so a genuine multi-entry ODG mission still stamps ODG.
+{ const d = sandbox(); writeReport(d, "M_R1A", true); writePatchExecution(d, "M_R1A", [{ authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR" }, { authoredBy: "MYSTERY", appliedBy: "ODG_EXECUTOR" }]);
+  const e = (recordIn(d, "M_R1A"), lastEntry(d));
+  check(e && !("actor" in e), "R1a ODG + UNMAPPED author ⇒ actor OMITTED (not silently ODG)"); }
+{ const d = sandbox(); writeReport(d, "M_R1B", true); writePatchExecution(d, "M_R1B", [{ authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR" }, { authoredBy: "UNKNOWN", appliedBy: "ODG_EXECUTOR" }]);
+  const e = (recordIn(d, "M_R1B"), lastEntry(d));
+  check(e && !("actor" in e), "R1b ODG + UNKNOWN-sentinel author ⇒ actor OMITTED (conservative)"); }
+{ const d = sandbox(); writeReport(d, "M_R1C", true); writePatchExecution(d, "M_R1C", [{ authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR" }, { authoredBy: "ODG_CAPABILITY", appliedBy: null }]);
+  const e = (recordIn(d, "M_R1C"), lastEntry(d));
+  check(e && e.actor === "ODG", "R1c ODG applied + ODG-authored-not-applied sibling (known author) ⇒ still ODG (not over-suppressed)"); }
+// R1 resolver-level: unresolvedCount surfaced; suppression reason explicit.
+{ const AP = require("./actor-provenance.ts");
+  const r = AP.resolveMissionActor({ mission: "M", executed: [{ authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR" }, { authoredBy: "MYSTERY" }] }, "M");
+  check(r.actor === null && r.unresolvedCount === 1 && /unresolved\/unknown author/.test(r.reason), "R1 resolver surfaces unresolvedCount + ambiguity reason, actor null"); }
+
 // E2 — role separation: provider-executed but (would be) ODG-verified/accepted ⇒ actor stays provider, not ODG.
 { const d = sandbox(); writeReport(d, "M_ROLE", true); writePatchExecution(d, "M_ROLE", [{ authoredBy: "PROVIDER", appliedBy: "ODG_EXECUTOR", authorizedBy: "ODG" }]);
   const e = (recordIn(d, "M_ROLE"), lastEntry(d));
