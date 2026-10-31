@@ -51,6 +51,8 @@ function run(executed, opts = {}) {
   fs.writeFileSync(G("mission-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: [scope], requiresEngineering: true, objectives: [{ id: "o1", goal: "g" }] }));
   fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: [scope], patches: [{ action: "a", objectiveId: "o1" }] }));
   fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: "M1", executed }));
+  // C#3: optionally stamp runtime-verify.json to exercise the stale-cross-mission build/TS evidence guard.
+  if (opts.verify) fs.writeFileSync(G("runtime-verify.json"), JSON.stringify(opts.verify));
   spawnSync("node", [VE], { cwd: dir, encoding: "utf8" });
   let report = null;
   try { report = JSON.parse(fs.readFileSync(G("mission-report.json"), "utf8")); } catch { /* none */ }
@@ -118,6 +120,20 @@ console.log("Validation Engine — engineering-proof gate");
 {
   const r = run([{ objectiveId: "o1", action: "a", status: "EXECUTED", capability: "Some Capability", evidence: "runtime/generated/x.json", files: [] }]);
   ok("8 EXECUTED with no own in-scope deliverable ⇒ engineeringPerformed false (no hole re-opened)", !engPerformed(r));
+}
+
+// 9. C#3 — STALE cross-mission build/TS evidence: a PRESENT runtime-verify.json stamped for a DIFFERENT mission
+//    must NOT lend its verdict to this mission ⇒ BLOCK (verifyEvidenceOk false), even with a genuine committed
+//    deliverable. The same setup with THIS mission's verify (or no verify) still validates (no over-block).
+const applied = [{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ target: "runtime/app/x.ts", mode: "content" }] }];
+{
+  const rStale = run(applied, { verify: { build: true, typescript: true, mission: "OTHER_MISSION" } });
+  ok("9 stale cross-mission runtime-verify (mission OTHER) ⇒ NOT validated (C#3 fail-closed)", !!(rStale && rStale.validated === false));
+  ok("9 verifyEvidenceOk=false surfaced + unmet names STALE", !!(rStale && rStale.checks && rStale.checks.verifyEvidenceOk === false) && (rStale.unmet || []).some((u) => /STALE/.test(u)));
+  const rOwn = run(applied, { verify: { build: true, typescript: true, mission: "M1" } });
+  ok("9 this-mission runtime-verify (mission M1) ⇒ validated (no over-block)", !!(rOwn && rOwn.validated) && rOwn.checks.verifyEvidenceOk === true);
+  const rNone = run(applied); // absent verify ⇒ part-2 deferred ⇒ unaffected (still validates)
+  ok("9 absent runtime-verify ⇒ still validated (absent-verify closure deferred to p0c3-absent-verify-require)", !!(rNone && rNone.validated) && rNone.checks.verifyEvidenceOk === true);
 }
 
 console.log(`\nValidation Engine engineering-proof — ${passed} assertions passed.`);
