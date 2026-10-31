@@ -125,4 +125,26 @@ t("extracted PDF feeds opportunity-detector content-provenance (REJECTED→impro
   assert.notStrictEqual(after.contentProvenance.verdict, "REJECTED");
 });
 
+// 12 — DECOMPRESSION BOMB (untrusted input): a FlateDecode stream that inflates FAR past the per-stream cap must be
+//      REFUSED (counted failed), never allocated — extractPdf completes bounded, no OOM. Build a PDF with one good
+//      text stream + one bomb stream (deflate of 64MB ⇒ a few KB on disk, >12MB MAX_INFLATE on inflate).
+t("decompression bomb stream ⇒ refused (streamsFailed), bounded (no OOM), honest PARTIAL — not TEXT_EXTRACTED-full", () => {
+  const good = zlib.deflateSync(Buffer.from(TEXT("RealContent"), "latin1"));
+  const bomb = zlib.deflateSync(Buffer.alloc(64 * 1024 * 1024, 0x20)); // 64MB of spaces ⇒ tiny deflated, inflates ≫ 12MB cap
+  let p = "%PDF-1.7\n1 0 obj\n<< /Type /Pages /Count 1 >>\nendobj\n";
+  let b = Buffer.from(p, "latin1");
+  b = Buffer.concat([b, Buffer.from(`2 0 obj\n<< /Length ${good.length} /Filter /FlateDecode >>\nstream\n`, "latin1"), good, Buffer.from("\nendstream\nendobj\n", "latin1")]);
+  b = Buffer.concat([b, Buffer.from(`3 0 obj\n<< /Length ${bomb.length} /Filter /FlateDecode >>\nstream\n`, "latin1"), bomb, Buffer.from("\nendstream\nendobj\n%%EOF", "latin1")]);
+  const t0 = Date.now();
+  const r = JS.extractPdf(b);                       // MUST return (cap throws ⇒ stream failed), not OOM/hang
+  const elapsed = Date.now() - t0;
+  assert.ok(elapsed < 20000, "bomb extraction must be bounded (was " + elapsed + "ms)");
+  assert.ok(r.extractStats.streamsFailed >= 1, "bomb stream must be counted failed, not inflated");
+  assert.ok(r.text.includes("RealContent"), "the legitimate stream is still extracted");
+  assert.strictEqual(r.fullyExtracted, false);       // a refused stream ⇒ honest PARTIAL, never full success
+  // TS parity: same bounded refusal.
+  const rt = TS.extractPdf(b);
+  assert.strictEqual(rt.extractStats.streamsFailed >= 1, true);
+});
+
 console.log(`\nALL PASS — pdf-extract (${n} tests)`);
