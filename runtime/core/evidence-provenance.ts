@@ -31,9 +31,13 @@ const { spawnSync }: any = require("child_process");
 
 const SCHEMA = "evidence-provenance/1";
 
-// sha256 of the payload's JSON, EXCLUDING any existing `provenance` field so the digest is self-consistent
-// (a stamp never hashes itself) and re-stamping is idempotent on the content.
-function contentDigest(obj: any): any {
+// sha256 (or HMAC-SHA256 when a non-empty `key` is given) of the payload's JSON, EXCLUDING any existing
+// `provenance` field so the digest is self-consistent (a stamp never hashes itself) and re-stamping is idempotent
+// on the content. KEYED (P0-E SEC#3 follow-on, mirrors audit-log): with a key, an attacker who cannot reproduce it
+// cannot recompute a matching digest after a full rewrite (keyless sha256 could). The keyless path is BYTE-IDENTICAL
+// to the historical behaviour (no key ⇒ exactly the prior sha256), so every existing caller + stamp is unchanged.
+// The key is a PARAMETER — this module stays pure, never reads env, never holds a secret.
+function contentDigest(obj: any, key?: any): any {
   let subject;
   if (obj && typeof obj === "object" && !Array.isArray(obj)) {
     const { provenance, ...rest } = obj; // eslint-disable-line no-unused-vars
@@ -41,7 +45,10 @@ function contentDigest(obj: any): any {
   } else {
     subject = { value: obj };
   }
-  return crypto.createHash("sha256").update(JSON.stringify(subject)).digest("hex");
+  const material = JSON.stringify(subject);
+  return (typeof key === "string" && key.length > 0)
+    ? crypto.createHmac("sha256", key).update(material).digest("hex")
+    : crypto.createHash("sha256").update(material).digest("hex");
 }
 
 let _cachedRevision: any = null; // per-process cache, set ONLY on a successful (available) resolution.
@@ -76,13 +83,16 @@ function resolveSourceRevision(opts: any): any {
 function stampProvenance(obj: any, opts: any): any {
   const options = opts || {};
   const revision = options.revision || resolveSourceRevision(options);
+  const keyed = typeof options.key === "string" && options.key.length > 0;
   const provenance = {
     schema: SCHEMA,
-    contentSha256: contentDigest(obj),
+    contentSha256: contentDigest(obj, options.key),
     sourceCommit: revision.commit != null ? revision.commit : null,
     treeDirty: revision.treeDirty != null ? revision.treeDirty : null,
     sourceAvailable: revision.available === true,
     capturedAtRun: typeof options.runId === "string" && options.runId ? options.runId : null,
+    // `keyed` is added ONLY when a key was used, so a keyless stamp is BYTE-IDENTICAL to the historical shape.
+    ...(keyed ? { keyed: true } : {}),
   };
   if (obj && typeof obj === "object" && !Array.isArray(obj)) return { ...obj, provenance };
   return { value: obj, provenance };
@@ -90,14 +100,21 @@ function stampProvenance(obj: any, opts: any): any {
 
 // Verify a stamped artifact's content digest matches its payload (tamper detection). Returns
 // { ok, reason }. A missing/malformed provenance stamp is reported, not thrown.
-function verifyProvenance(stamped: any): any {
-  if (!stamped || typeof stamped !== "object" || Array.isArray(stamped)) return { ok: false, reason: "not a stamped object" };
+// verifyProvenance(stamped, opts?) — recompute the content digest and compare. opts.key (optional) recomputes with
+// HMAC (REQUIRED to verify a keyed stamp; a keyed artifact verified without the key fails, as intended). Returns
+// { ok, reason, keyed } — `keyed` reports whether a key was used for THIS verification.
+function verifyProvenance(stamped: any, opts?: any): any {
+  const key = opts && typeof opts === "object" ? opts.key : undefined;
+  const keyed = typeof key === "string" && key.length > 0;
+  if (!stamped || typeof stamped !== "object" || Array.isArray(stamped)) return { ok: false, reason: "not a stamped object", keyed };
   const p = stamped.provenance;
-  if (!p || typeof p !== "object") return { ok: false, reason: "no provenance stamp" };
-  if (p.schema !== SCHEMA) return { ok: false, reason: `unknown provenance schema (${p.schema})` };
-  const recomputed = contentDigest(stamped);
-  if (recomputed !== p.contentSha256) return { ok: false, reason: `content digest mismatch (recomputed ${recomputed} != stamped ${p.contentSha256}) — artifact altered since stamping` };
-  return { ok: true, reason: `content digest verified (sha256 ${recomputed}); source ${p.sourceAvailable ? p.sourceCommit + (p.treeDirty ? " [dirty]" : "") : "UNATTRIBUTED"}` };
+  if (!p || typeof p !== "object") return { ok: false, reason: "no provenance stamp", keyed };
+  if (p.schema !== SCHEMA) return { ok: false, reason: `unknown provenance schema (${p.schema})`, keyed };
+  // A stamp marked keyed but verified WITHOUT a key cannot be validated (fail-closed, not a false pass).
+  if (p.keyed === true && !keyed) return { ok: false, reason: "keyed provenance stamp requires the verification key", keyed };
+  const recomputed = contentDigest(stamped, key);
+  if (recomputed !== p.contentSha256) return { ok: false, reason: `content digest mismatch (recomputed ${recomputed} != stamped ${p.contentSha256}) — artifact altered since stamping${keyed ? " or wrong key" : ""}`, keyed };
+  return { ok: true, reason: `content digest verified (${keyed ? "hmac-sha256" : "sha256"} ${recomputed}); source ${p.sourceAvailable ? p.sourceCommit + (p.treeDirty ? " [dirty]" : "") : "UNATTRIBUTED"}`, keyed };
 }
 
 module.exports = { SCHEMA, contentDigest, resolveSourceRevision, stampProvenance, verifyProvenance };

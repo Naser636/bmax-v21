@@ -74,5 +74,27 @@ const tampered = JSON.parse(JSON.stringify(stamped)); tampered.a = 999; // mutat
 check(verifyProvenance(tampered).ok === false, "verifyProvenance ⇒ DETECTS content mutation (digest mismatch)");
 check(verifyProvenance({ a: 1 }).ok === false && verifyProvenance(null).ok === false, "verifyProvenance ⇒ fail-closed on missing stamp / non-object");
 
+// (5) KEYED-HMAC (P0-E SEC#3 follow-on; owner provisions the key, mechanism proven). Mirrors audit-log.
+const crypto = require("crypto");
+const KEY = "test-ephemeral-provenance-key-DO-NOT-USE-IN-PROD";
+// keyed digest differs from keyless for the same payload
+check(contentDigest(payload, KEY) !== contentDigest(payload), "keyed contentDigest != keyless (HMAC applied)");
+// keyed stamp verifies with the key; stamp carries keyed:true
+const kStamp = stampProvenance(payload, { revision: { commit: "c", treeDirty: false, available: true }, key: KEY });
+check(kStamp.provenance.keyed === true, "keyed stamp records keyed:true");
+check(verifyProvenance(kStamp, { key: KEY }).ok === true && verifyProvenance(kStamp, { key: KEY }).keyed === true, "keyed stamp verifies with the key");
+// a keyed stamp verified WITHOUT the key is rejected (fail-closed, not a false pass)
+check(verifyProvenance(kStamp).ok === false && /requires the verification key/.test(verifyProvenance(kStamp).reason), "keyed stamp verified WITHOUT the key ⇒ rejected (fail-closed)");
+// WRONG key ⇒ rejected
+check(verifyProvenance(kStamp, { key: "wrong-key" }).ok === false, "keyed stamp with the WRONG key ⇒ rejected");
+// FULL-REWRITE forgery: attacker mutates content and re-stamps KEYLESS (recomputing a self-consistent keyless digest).
+// Keyless verify PASSES it (the weakness); KEYED verify REJECTS it (the fix).
+const forged = stampProvenance({ ...payload, verdict: "FORGED-VERIFIED" }, { revision: { commit: "c", treeDirty: false, available: true } });
+check(verifyProvenance(forged).ok === true, "keyless verify PASSES a re-stamped forgery (demonstrates the weakness)");
+check(verifyProvenance(forged, { key: KEY }).ok === false, "KEYED verify REJECTS the keyless forgery (attacker lacks the key)");
+// BACKWARD-COMPAT: keyless stamp is byte-identical (no `keyed` field) and digest matches an INDEPENDENT sha256.
+check(!("keyed" in stamped.provenance), "keyless stamp has NO keyed field (byte-identical historical shape)");
+check(contentDigest({ a: 1 }) === crypto.createHash("sha256").update(JSON.stringify({ a: 1 })).digest("hex"), "keyless contentDigest == independent sha256(JSON) (format pinned, non-self-referential)");
+
 console.log(failures === 0 ? "ALL PASS — evidence-provenance" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
