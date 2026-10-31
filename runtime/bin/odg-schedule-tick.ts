@@ -63,6 +63,17 @@ const AUDIT_CHAIN_PATH = path.join(ROOT, "runtime", "generated", "scheduler-audi
 
 // Read/append the persisted tamper-evident canary decision chain (audit artifact only — NOT business state).
 function readAuditChain(): any[] { try { const c = JSON.parse(fs.readFileSync(AUDIT_CHAIN_PATH, "utf8")); return Array.isArray(c) ? c : []; } catch { return []; } }
+// SEC#3 (P0-E): verify-on-read. The persisted tamper-evident chain was loaded and EXTENDED/trusted WITHOUT ever
+// re-verifying it — so computed tamper-evidence was never consulted at the trust boundary (a partial in-place
+// edit / reorder / truncate of the persisted chain would go unnoticed and get silently extended). PURE gate:
+// an ABSENT/empty chain is fine (fresh start); a PRESENT-but-broken chain is an integrity incident ⇒ refuse
+// (fail-closed), never silently trusted or overwritten. (Full-rewrite forgery still needs a keyed HMAC/signature
+// — owner-gated secret decision, out of scope here; this makes the EXISTING tamper-evidence load-bearing.)
+function auditIntegrityGate(chain: any[]): { ok: boolean; reason: string; brokenAt: number } {
+  if (!Array.isArray(chain) || chain.length === 0) return { ok: true, reason: "empty/absent chain (fresh start)", brokenAt: -1 };
+  const v = AUDIT.verifyChain(chain);
+  return { ok: v.ok === true, reason: v.reason, brokenAt: v.brokenAt };
+}
 function persistAuditChain(chain: any[]): void { try { fs.mkdirSync(path.dirname(AUDIT_CHAIN_PATH), { recursive: true }); const tmp = `${AUDIT_CHAIN_PATH}.tmp-${process.pid}`; fs.writeFileSync(tmp, JSON.stringify(chain, null, 2)); try { fs.renameSync(tmp, AUDIT_CHAIN_PATH); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; } } catch { /* best-effort audit (crash-atomic temp+rename so a torn write can't silently truncate the tamper-evident chain) */ } }
 
 function gitExec(args: string[]): string | null {
@@ -142,7 +153,17 @@ function main(): void {
       process.exit(2);
     }
   }
-  const d = tickOnce({ chain: readAuditChain() });
+  // (B) STARTUP audit-chain integrity precondition (SEC#3) — fail-closed BEFORE trusting/extending the persisted
+  // tamper-evident chain. A broken persisted chain is an integrity incident: refuse the tick, preserve the
+  // evidence (never overwrite), exit 2. An absent/empty chain is a normal fresh start.
+  const loadedChain = readAuditChain();
+  const integ = auditIntegrityGate(loadedChain);
+  if (!integ.ok) {
+    try { recordAttempt(LOG, { mission: "(startup)", recordedAt: new Date().toISOString(), status: "AUDIT_CHAIN_TAMPERED", reason: `${integ.reason} @${integ.brokenAt}` }); } catch { /* audit best-effort */ }
+    console.error(`STARTUP_REFUSED: audit-chain integrity — ${integ.reason} (brokenAt ${integ.brokenAt}); refusing to extend an untrusted tamper-evident chain (evidence preserved, not overwritten).`);
+    process.exit(2);
+  }
+  const d = tickOnce({ chain: loadedChain });
   persistAuditChain(d.auditChain || []);                               // tamper-evident canary decision log (audit artifact)
   console.log(`[odg-schedule-tick] ${d.status} — ${d.reason || ""}${d.item ? " (mission " + d.item.mission + ")" : ""}`);
   // Safe terminal states exit 0 (PASS = a verified read-only mission; IDLE = nothing eligible). Everything else
@@ -182,6 +203,6 @@ function tickOnce(opts: any = {}): any {
   return schedulerStep(ctx);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES };
+module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES };
 if (require.main === module) main();
 export {};
