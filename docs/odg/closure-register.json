@@ -1917,6 +1917,16 @@
         "mergeCommit": "fbf7434",
         "verified": true
       }
+    },
+    {
+      "id": "p0-autonomy-program-aggregate",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-AUTONOMY-MEASURE (slice 1): program-level §S-2 autonomy aggregate over the mission-ledger (read-only, honest; actor-share NON-MEASURABLE named)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "evidence": "P0 technical-truth lot. DIAGNOSIS (read-only, reproduced): the existing autonomy-rate/autonomy-measure instruments report only the LAST single run (autonomy-rate.json = 100% 1/1 for G10_READONLY_AUTONOMY_PROBE); there was NO program-level §S-2 aggregate. mission-ledger.json has 1388 entries, ALL proven=true/authorized=true (validated 1342), states ARCHIVED/CREATED/PLANNED/PREPARED/VERIFIED, and NO per-entry actor/provenance field. ROOT CAUSE of §S-2 'NON-MEASURABLE': (a) per-last-run only; (b) actor (ODG/provider/human) not recorded per entry. FIX (slice 1, pure read-only, no execution-path mutation): new runtime/core/autonomy-program-aggregate.ts aggregateProgramAutonomy(ledger) — dedups lifecycle re-records by mission id (reports BOTH ledgerEntries AND distinctMissions; real ledger 1388→186), by-state distribution over distinct missions, validated/authorized/proven counts WITH the distinct-mission denominator, terminal-vs-in-lifecycle split; FAIL-CLOSED (empty/invalid ⇒ measurable:false); and declares actorAutonomy NON-MEASURABLE (frozen) with the exact gap (no per-entry provenance) + the single next step (slice 2: stamp actor/executedBy on the ledger write path — execution-path, separately gated). HONESTY: proven=true is labelled an OUTCOME gate, NOT an actor signal ⇒ NO fabricated 100% ODG autonomy. Regression autonomy-program-aggregate.test.ts 19 assertions (incl. a verifier-recommended fail-closed hardening: all-entries-without-mission-id ⇒ measurable:false, never a 0-denominator measurable:true) (fail-closed ×6, dedup+denominators, no-fabrication, no-mission-id handling, determinism, bare-array, SOFT real-ledger sanity that skips when the gitignored artifact is absent). tsc clean BOTH tsconfigs; build:runtime OK; added to test:report curated gate. INDEPENDENTLY VERIFIED by a separate agent (no self-acceptance): CONFIRMED_HONEST_AND_CORRECT — adversarial probes confirmed the actor-share is structurally impossible to fabricate in slice 1, dedup/denominators correct, pure+off-execution-path; the one non-blocking residual it raised (all-no-id ⇒ 0-denominator) was then hardened to fail-closed. 9 primitives FROZEN (composes EVIDENCE+STATE); no protected path touched."
     }
   ]
 }
