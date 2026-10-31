@@ -149,4 +149,32 @@ ok("V13 DENY verdict is authenticated:false", G.evaluateAgentAction({ ...base, t
 ok("V13 ESCALATE verdict is authenticated:false", G.evaluateAgentAction({ ...base, tool: "write_report", targetPaths: ["reports/o.md"] }, CONTRACT, S0).authenticated === false);
 ok("V13 ADMIT reason states admission != authentication + not tenant-bound", (() => { const v = G.evaluateAgentAction(base, CONTRACT, S0); return v.reasons.some(r => /does NOT authenticate/.test(r) && /tenant/.test(r)); })());
 
+// ═════════ ReDoS input-bound: a format pattern is never run on an UNBOUNDED string ═════════
+// A field that already failed `max` is NOT pattern-tested (no-continue fix); a field with a pattern but no `max`
+// is bounded by REGEX_INPUT_CAP (4096) — a >cap value is rejected fail-closed, never fed to the regex. Proven with
+// a catastrophic-backtracking pattern on a string long enough to hang if it were tested.
+{
+  const CATASTROPHIC = "^(a+)+$"; // classic ReDoS: explodes on a long non-matching ("a"*n + "!") input
+  // (a) over-max value with a catastrophic pattern ⇒ rejected for length, pattern SKIPPED ⇒ returns promptly.
+  const overMaxSchema = { version: "1", fields: { tok: { type: "string", max: 10, pattern: CATASTROPHIC } } };
+  const evil = "a".repeat(44) + "!"; // 45 chars > max 10; would hang ^(a+)+$ for ages if tested
+  let t0 = Date.now();
+  const rOver = G.validateParams("t", { tok: evil }, overMaxSchema);
+  const msOver = Date.now() - t0;
+  ok("ReDoS: over-max value ⇒ pattern NOT run (no-continue) — returns <1s", msOver < 1000);
+  ok("ReDoS: over-max value ⇒ rejected for length (fail-closed, errors non-empty)", rOver.ok === false && rOver.errors.some((e) => /exceeds max length/.test(e)));
+  // (b) pattern but NO max, value past REGEX_INPUT_CAP (4096) ⇒ rejected 'too long to format-check', pattern SKIPPED.
+  const noMaxSchema = { version: "1", fields: { tok: { type: "string", pattern: CATASTROPHIC } } };
+  const huge = "a".repeat(5000) + "!"; // > 4096 cap
+  t0 = Date.now();
+  const rHuge = G.validateParams("t", { tok: huge }, noMaxSchema);
+  const msHuge = Date.now() - t0;
+  ok("ReDoS: pattern-without-max value past cap ⇒ pattern NOT run — returns <1s", msHuge < 1000);
+  ok("ReDoS: pattern-without-max value past cap ⇒ rejected fail-closed (never silently admitted)", rHuge.ok === false && rHuge.errors.some((e) => /too long to format-check/.test(e)));
+  // (c) NO REGRESSION: an in-range value still format-checks normally (match ⇒ ok, mismatch ⇒ error).
+  const normalSchema = { version: "1", fields: { tok: { type: "string", max: 200, pattern: "^[\\w./-]+$" } } };
+  ok("in-range value matching pattern ⇒ ok (format-check still runs within bounds)", G.validateParams("t", { tok: "reports/out.md" }, normalSchema).ok === true);
+  ok("in-range value failing pattern ⇒ format error (bounded check still enforced)", (() => { const r = G.validateParams("t", { tok: "has space" }, normalSchema); return r.ok === false && r.errors.some((e) => /fails format/.test(e)); })());
+}
+
 console.log(`\nTHIRD-PARTY-AGENT-GATE security suite — ${pass} assertions passed.`);

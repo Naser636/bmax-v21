@@ -120,4 +120,22 @@ const schema = { fields: [{ name: "id", type: "integer", required: true }, { nam
      r.report.metrics.conformance === null && r.report.findings.some((f) => f.id === "conformance-schema:cat" && f.severity === "HIGH"));
 }
 
-console.log(`\nDATASET-QUALITY-SERVICE suite — ${pass} assertions passed. (real computed completeness/validity/uniqueness/conformance; empty⇒NO_DATA not 100; fail-closed parse; no-schema⇒uniqueness-only; unknown type⇒no invented constraint; enum/min-max/pattern conformance w/ fail-closed invalid-regex; valid SARIF; quoted CSV)`);
+// (12) ReDoS input-bound: a schema `pattern` is never run on an UNBOUNDED cell. A cell past REGEX_CELL_CAP (4096)
+//      is treated as NON-conforming (fail-closed), not fed to the regex — proven with a catastrophic pattern + a
+//      huge cell that would hang if tested. (Within-cap cells still format-check exactly as before.)
+{
+  const CATASTROPHIC = "^(a+)+$";
+  const huge = "a".repeat(5000) + "!"; // > 4096 cap; would hang ^(a+)+$ if tested
+  const t0 = Date.now();
+  const r = D.assessDataset({ format: "records", records: [{ code: huge }, { code: "a" }], schema: { fields: [{ name: "code", pattern: CATASTROPHIC }] } });
+  const ms = Date.now() - t0;
+  ok("ReDoS: over-cap cell ⇒ pattern NOT run (returns <1s)", ms < 1000);
+  ok("ReDoS: over-cap cell ⇒ counted NON-conforming (fail-closed), not a crash", r.ok === true && typeof r.report.metrics.conformance === "number" && r.report.metrics.conformance < 1);
+  // NO REGRESSION: an in-range cell still conforms/violates by the pattern exactly as before.
+  const ok1 = D.assessDataset({ format: "records", records: [{ code: "abc" }, { code: "abc" }], schema: { fields: [{ name: "code", pattern: "^[a-z]+$" }] } });
+  ok("in-range cells still format-check (all match ⇒ conformance 1)", ok1.report.metrics.conformance === 1);
+  const ok2 = D.assessDataset({ format: "records", records: [{ code: "abc" }, { code: "A1!" }], schema: { fields: [{ name: "code", pattern: "^[a-z]+$" }] } });
+  ok("in-range mismatch still flagged (conformance < 1)", ok2.report.metrics.conformance !== null && ok2.report.metrics.conformance < 1);
+}
+
+console.log(`\nDATASET-QUALITY-SERVICE suite — ${pass} assertions passed. (real computed completeness/validity/uniqueness/conformance; empty⇒NO_DATA not 100; fail-closed parse; no-schema⇒uniqueness-only; unknown type⇒no invented constraint; enum/min-max/pattern conformance w/ fail-closed invalid-regex + input-bound ReDoS guard; valid SARIF; quoted CSV)`);

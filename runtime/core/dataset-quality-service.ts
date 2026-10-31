@@ -71,11 +71,16 @@ function malformedConstraints(f: any): string[] {
   return bad;
 }
 function compilePattern(p: any): { ok: boolean; re?: RegExp; reason?: string } { try { return { ok: true, re: new RegExp(p) }; } catch (e: any) { return { ok: false, reason: (e && e.message) || "invalid regex" }; } }
+// A schema `pattern` is a (caller-supplied) RegExp run against EVERY cell. An unbounded cell value risks catastrophic
+// backtracking (ReDoS) over N rows. A cell too long to safely format-check is treated as NON-conforming (fail-closed)
+// rather than fed to the regex — a field carrying a `pattern` is a formatted/bounded field, so a >cap cell is itself a
+// quality defect. This bounds the regex input without changing conformance for any in-range cell.
+const REGEX_CELL_CAP = 4096;
 // returns true iff the cell satisfies every declared constraint for the field (cell assumed non-empty; re pre-compiled).
 function cellConforms(val: any, f: any, re: RegExp | null): boolean {
   if (Array.isArray(f.enum) && !f.enum.map((x: any) => String(x)).includes(String(val))) return false;
   if (Number.isFinite(f.min) || Number.isFinite(f.max)) { const n = typeof val === "number" ? val : Number(String(val)); if (!Number.isFinite(n)) return false; if (Number.isFinite(f.min) && n < f.min) return false; if (Number.isFinite(f.max) && n > f.max) return false; }
-  if (re && !re.test(String(val))) return false;
+  if (re) { const s = String(val); if (s.length > REGEX_CELL_CAP || !re.test(s)) return false; }
   return true;
 }
 

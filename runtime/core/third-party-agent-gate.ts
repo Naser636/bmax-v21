@@ -74,6 +74,13 @@ export interface ParamSchema {
   allowExtra: boolean;                               // false ⇒ unexpected fields are REJECTED
   fields: Record<string, { type: "string" | "number" | "boolean" | "object"; required?: boolean; max?: number; pattern?: string }>;
 }
+// A format `pattern` from a contract is a (semi-trusted, human-authored) RegExp recompiled per field. Running it
+// against an unbounded external string risks catastrophic backtracking (ReDoS). The regex is only ever evaluated on
+// a length-bounded string: a field that already failed its declared `max` is NOT pattern-tested (it is already
+// rejected), and a field whose schema declares a `pattern` but no `max` is bounded by REGEX_INPUT_CAP — a value past
+// the cap is rejected fail-closed (never silently admitted) rather than fed to the regex.
+const REGEX_INPUT_CAP = 4096;
+
 /**
  * validateParams — type/required/extra-field/format/size validation against an explicit versioned schema.
  * Returns {ok, errors}. FAIL-CLOSED: no schema for a declared-schema'd tool ⇒ caller treats as deny (ASI02).
@@ -89,8 +96,15 @@ function validateParams(tool: string, params: any, schema?: ParamSchema): { ok: 
     const t = Array.isArray(v) ? "object" : typeof v;
     if (t !== spec.type) { errors.push(`field "${k}" expected ${spec.type}, got ${t}`); continue; }
     if (spec.type === "string") {
-      if (typeof spec.max === "number" && (v as string).length > spec.max) errors.push(`field "${k}" exceeds max length ${spec.max}`);
-      if (spec.pattern && !new RegExp(spec.pattern).test(v as string)) errors.push(`field "${k}" fails format ${spec.pattern}`);
+      const s = v as string;
+      if (typeof spec.max === "number" && s.length > spec.max) {
+        errors.push(`field "${k}" exceeds max length ${spec.max}`);
+        // already rejected for length ⇒ do NOT run the pattern on the oversized string (ReDoS guard, no-continue fix).
+      } else if (spec.pattern) {
+        const cap = typeof spec.max === "number" ? spec.max : REGEX_INPUT_CAP;
+        if (s.length > cap) errors.push(`field "${k}" too long to format-check (max ${cap})`); // fail-closed; regex never runs on >cap input
+        else if (!new RegExp(spec.pattern).test(s)) errors.push(`field "${k}" fails format ${spec.pattern}`);
+      }
     }
     if (spec.type === "number" && typeof spec.max === "number" && (v as number) > spec.max) errors.push(`field "${k}" exceeds max ${spec.max}`);
   }
