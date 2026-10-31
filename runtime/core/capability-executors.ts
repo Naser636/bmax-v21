@@ -308,11 +308,28 @@ function resolveFetcher(ra: any, patch: any) {
 // with a CLEARED environment, so it can never read a credential (no privilege escalation / leakage). The
 // subprocess keeps the executor's synchronous loop synchronous — the SAME pattern the Connectivity Audit
 // already uses — without adding an async model.
-function httpGetBounded(rawUrl: any, maxBytes: any, timeoutMs: any) {
+// SSRF guard — private/link-local/loopback/cloud-metadata host detection (same policy as bounded-http-client.ts
+// isPrivateHost; inlined here to avoid a require cycle into this core module). Used ONLY when a caller opts in via
+// httpGetBounded(..., {rejectPrivateHosts:true}) — the GOVERNED external-research client (governedHttpGet's worker)
+// sets it, so a mission-influenced source URL can never reach 169.254.169.254 / internal hosts. Direct loopback
+// callers (odg-probe, ollama, the bounded-fetch unit test) do NOT opt in, so legitimate 127.0.0.1 use is unaffected.
+function _isPrivateFetchHost(host: any): boolean {
+    const h = String(host || "").toLowerCase();
+    if (!h) return true;
+    if (h === "localhost" || h.endsWith(".local") || h.endsWith(".internal")) return true;
+    if (h === "169.254.169.254" || h === "metadata.google.internal") return true;   // cloud metadata
+    if (/^127\./.test(h) || /^10\./.test(h) || /^192\.168\./.test(h) || /^169\.254\./.test(h)) return true;
+    if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;                            // 172.16/12 private range
+    if (/^\[?::1\]?$/.test(h) || /^\[?f[cd]/.test(h)) return true;                     // IPv6 loopback / ULA
+    return false;
+}
+
+function httpGetBounded(rawUrl: any, maxBytes: any, timeoutMs: any, opts?: any) {
     return new Promise((resolve) => {
         let u;
         try { u = new URL(rawUrl); } catch { return resolve({ status: 0, body: "", error: "invalid url" }); }
         if (u.protocol !== "https:" && u.protocol !== "http:") return resolve({ status: 0, body: "", error: "unsupported protocol" });
+        if (opts && opts.rejectPrivateHosts === true && _isPrivateFetchHost(u.hostname)) return resolve({ status: 0, body: "", error: "private/link-local/metadata host blocked (SSRF guard)" });
         // RESOLVE-ONCE (CI-reliability / latent production hang): the byte-cap path below destroys the request to stop
         // reading past the limit, but a bare req.destroy() does NOT reliably emit res 'end'/'error' or req
         // 'error'/'timeout' — so relying on a LATER event to resolve can leave this Promise forever unresolved (the
@@ -1371,7 +1388,9 @@ if (require.main === module) {
         const url = process.argv[3];
         const maxBytes = parseInt(process.argv[4], 10) || 262144;
         const timeoutMs = parseInt(process.argv[5], 10) || 5000;
-        httpGetBounded(url, maxBytes, timeoutMs)
+        // GOVERNED external-research client ⇒ SSRF-guarded: a mission-influenced source URL can never reach a
+        // private/link-local/loopback/cloud-metadata host. (Direct loopback callers do not take this path.)
+        httpGetBounded(url, maxBytes, timeoutMs, { rejectPrivateHosts: true })
             .then((r) => { process.stdout.write(JSON.stringify(r)); process.exit(0); })
             .catch((e) => { process.stdout.write(JSON.stringify({ status: 0, body: "", error: String((e && e.message) || e) })); process.exit(0); });
     } else {
