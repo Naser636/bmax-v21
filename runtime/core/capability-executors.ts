@@ -313,27 +313,34 @@ function httpGetBounded(rawUrl: any, maxBytes: any, timeoutMs: any) {
         let u;
         try { u = new URL(rawUrl); } catch { return resolve({ status: 0, body: "", error: "invalid url" }); }
         if (u.protocol !== "https:" && u.protocol !== "http:") return resolve({ status: 0, body: "", error: "unsupported protocol" });
-        const req = _seams.httpRequest(u, { method: "GET", timeout: timeoutMs }, (res: any) => {
+        // RESOLVE-ONCE (CI-reliability / latent production hang): the byte-cap path below destroys the request to stop
+        // reading past the limit, but a bare req.destroy() does NOT reliably emit res 'end'/'error' or req
+        // 'error'/'timeout' — so relying on a LATER event to resolve can leave this Promise forever unresolved (the
+        // intermittent external-research-live hang; client-side sibling of the server-socket teardown hang). We instead
+        // resolve IMMEDIATELY at the byte cap, de-duplicate every resolution through settle(), and add a req 'close'
+        // last-resort so the Promise ALWAYS settles even if every other event is missed. 'close' fires exactly once
+        // when the socket is gone; by then a normal path has already settled (settle() is then a no-op).
+        let settled = false;
+        let req: any;
+        const settle = (v: any) => { if (settled) return; settled = true; try { if (req) req.destroy(); } catch { /* best-effort */ } resolve(v); };
+        req = _seams.httpRequest(u, { method: "GET", timeout: timeoutMs }, (res: any) => {
             const chunks: any[] = [];
             let bytes = 0;
             let truncated = false;
+            const body = () => Buffer.concat(chunks).slice(0, maxBytes).toString("utf8");
             res.on("data", (d: any) => {
-                if (truncated) return;
+                if (truncated || settled) return;
                 bytes += d.length;
                 if (bytes <= maxBytes) chunks.push(d);
-                else { truncated = true; req.destroy(); } // hard byte cap: stop reading past the limit
+                else { truncated = true; settle({ status: res.statusCode || 0, body: body(), fetched_at: _seams.nowIso(), truncated: true, bytes: Math.min(bytes, maxBytes) }); } // hard byte cap: resolve now, do not wait for a post-destroy event
             });
-            res.on("end", () => resolve({
-                status: res.statusCode || 0,
-                body: Buffer.concat(chunks).slice(0, maxBytes).toString("utf8"),
-                fetched_at: _seams.nowIso(),
-                truncated,
-                bytes: Math.min(bytes, maxBytes),
-            }));
-            res.on("error", () => resolve({ status: res.statusCode || 0, body: Buffer.concat(chunks).toString("utf8"), fetched_at: _seams.nowIso(), truncated }));
+            res.on("end", () => settle({ status: res.statusCode || 0, body: body(), fetched_at: _seams.nowIso(), truncated, bytes: Math.min(bytes, maxBytes) }));
+            res.on("error", () => settle({ status: res.statusCode || 0, body: Buffer.concat(chunks).toString("utf8"), fetched_at: _seams.nowIso(), truncated }));
+            res.on("aborted", () => settle({ status: res.statusCode || 0, body: body(), fetched_at: _seams.nowIso(), truncated, bytes: Math.min(bytes, maxBytes) }));
         });
-        req.on("timeout", () => { req.destroy(); resolve({ status: 0, body: "", error: "timeout" }); });
-        req.on("error", (e: any) => resolve({ status: 0, body: "", error: e.code || String(e.message || e) }));
+        req.on("timeout", () => settle({ status: 0, body: "", error: "timeout" }));
+        req.on("error", (e: any) => settle({ status: 0, body: "", error: e.code || String(e.message || e) }));
+        req.on("close", () => settle({ status: 0, body: "", error: "closed" })); // last-resort: socket gone with no other signal ⇒ never hang
         req.end();
     });
 }
