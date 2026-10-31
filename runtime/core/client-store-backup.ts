@@ -28,7 +28,17 @@ const MANIFEST_VERSION = 1;
 const CODE = Object.freeze({
   STORE_NOT_READY: "STORE_NOT_READY", INVALID_MANIFEST: "INVALID_MANIFEST", TARGET_NOT_EMPTY: "TARGET_NOT_EMPTY",
   INTEGRITY_MISMATCH: "INTEGRITY_MISMATCH", WRITE_FAILED: "WRITE_FAILED", READ_FAILED: "READ_FAILED",
+  // SEC: a manifest entry whose path is absolute or escapes the restore target (path-traversal write-set escape).
+  PATH_ESCAPE: "PATH_ESCAPE",
 });
+
+// SEC (P0-E#1): a manifest file path is DANGEROUS if it is absent/empty, absolute, or contains a ".." segment —
+// restoring it would write OUTSIDE the authorized target (write-set escape from a crafted/tampered backup). Mirrors
+// odg-state-backup.isDangerousRel. verify() rejects it (so the integrity gate is complete) AND restore() re-checks
+// the RESOLVED path stays within target (belt-and-suspenders), so every caller of the shared chokepoint inherits it.
+function isDangerousBackupPath(rel: any): boolean {
+  return typeof rel !== "string" || rel.length === 0 || path.isAbsolute(rel) || rel.split(/[\\/]/).includes("..");
+}
 
 function sha256(s: crypto.BinaryLike): string { return crypto.createHash("sha256").update(s).digest("hex"); }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -82,6 +92,7 @@ function verify(manifest: any): any {
   if (!isObj(manifest) || !Array.isArray(manifest.files)) return Object.freeze({ ok: false, code: CODE.INVALID_MANIFEST });
   for (const f of manifest.files) {
     if (!isObj(f) || typeof f.path !== "string" || typeof f.content !== "string" || typeof f.sha256 !== "string") return Object.freeze({ ok: false, code: CODE.INVALID_MANIFEST });
+    if (isDangerousBackupPath(f.path)) return Object.freeze({ ok: false, code: CODE.PATH_ESCAPE, at: f.path });
     if (sha256(f.content) !== f.sha256) return Object.freeze({ ok: false, code: CODE.INTEGRITY_MISMATCH, at: f.path });
   }
   const recomputed = manifestHashOf(manifest.files);
@@ -102,8 +113,13 @@ function restore(opts: any = {}): any {
   try { existing = listFiles(target); } catch { /* absent ⇒ empty */ }
   if (existing.length > 0 && opts.force !== true) return Object.freeze({ ok: false, code: CODE.TARGET_NOT_EMPTY, existing: existing.length });
   const restored: string[] = [];
+  const targetRoot = path.resolve(target);
   for (const f of manifest.files) {
-    const abs = path.join(target, f.path);
+    // SEC chokepoint re-check (defense-in-depth): refuse any path that is dangerous OR whose RESOLVED location
+    // escapes the target root — even if verify() were bypassed by a future caller. Fail-closed, no write.
+    if (isDangerousBackupPath(f.path)) return Object.freeze({ ok: false, code: CODE.PATH_ESCAPE, at: f.path });
+    const abs = path.resolve(target, f.path);
+    if (abs !== targetRoot && !abs.startsWith(targetRoot + path.sep)) return Object.freeze({ ok: false, code: CODE.PATH_ESCAPE, at: f.path });
     try {
       fs.mkdirSync(path.dirname(abs), { recursive: true });
       fs.writeFileSync(abs, f.content);

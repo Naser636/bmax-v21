@@ -68,4 +68,23 @@ function seed() { const cwd = tmp(); intake.intake(REQ, { cwd }); intake.intake(
   const m = B.backup({ cwd, nowMs: 1 }).manifest;
   ok("7 no secret in backup content", !JSON.stringify(m).includes("sk-SECRET-XYZ"));
 }
+// 8 — SEC (P0-E#1): a crafted manifest with a path-traversal entry (content hash + manifestHash BOTH valid)
+// must be REFUSED (PATH_ESCAPE) by verify AND restore, and MUST NOT write outside the target.
+{
+  const sha = (s) => crypto.createHash("sha256").update(s).digest("hex");
+  const mkManifest = (p) => { const files = [{ path: p, content: "PWNED", sha256: sha("PWNED") }];
+    const manifestHash = sha(JSON.stringify(files.map((f) => [f.path, f.sha256]))); // matches module manifestHashOf
+    return { version: B.MANIFEST_VERSION, files, manifestHash }; };
+  // sanity: a BENIGN relative path with the same construction still verifies (proves the hashes are right)
+  ok("8 benign manifest construction verifies (hash method correct)", B.verify(mkManifest("ok/file.txt")).ok === true);
+  for (const evil of ["../../evil.txt", "/etc/evil", "a/../../../evil", "..\\..\\evil"]) {
+    const m = mkManifest(evil);
+    ok(`8 verify refuses traversal "${evil}" ⇒ PATH_ESCAPE`, B.verify(m).ok === false && B.verify(m).code === B.CODE.PATH_ESCAPE);
+    const target = path.join(tmp(), "restored");
+    const sentinel = path.join(path.dirname(path.dirname(target)), "evil.txt"); // where ../../evil.txt would land
+    try { fs.rmSync(sentinel, { force: true }); } catch { /* */ }
+    const r = B.restore({ manifest: m, target });
+    ok(`8 restore refuses traversal "${evil}" ⇒ PATH_ESCAPE, nothing written`, r.ok === false && r.code === B.CODE.PATH_ESCAPE && !fs.existsSync(sentinel));
+  }
+}
 console.log(`\nCLIENT STORE BACKUP (RWL-B4) — ${passed} assertions passed.`);
