@@ -2353,6 +2353,18 @@
         "verified": true
       },
       "acceptedAt": "2026-10-31"
+    },
+    {
+      "id": "patch-executor-hunk-bounds",
+      "program": "P0",
+      "priority": 2,
+      "deps": [],
+      "title": "patch-executor applyUnifiedDiff: bound hunk-start to EOF (DoS: oversized hunk header -> OOM/stall in prefix-copy loop)",
+      "status": "IN_PROGRESS",
+      "evidence": "Recon-confirmed HIGH: applyUnifiedDiff derives hunkStart from the (tool/attacker-controllable) declared old-start line, then runs `while (orig < hunkStart) result.push(origLines[orig++])`. A header like `@@ -999999999,1 @@` against a short file pushes ~1e9 `undefined` entries => memory blowup / multi-second stall (DoS) before the per-line context check can fail. The existing `hunkStart < orig` check guards only the LOWER bound. Fix: one strictly-greater guard `if (hunkStart > origLines.length) throw ...` (a start past EOF cannot apply; `hunkStart === origLines.length` stays legal for an append-at-EOF hunk). The throw is caught by the executor's patch-level catch and recorded FAILED (blocks validation; nothing half-written). Tests: patch-executor.test.ts +5 (now 25): oversized hunk handled <10s, exit 0, recorded FAILED with 'past end of file', no APPLIED entry, target file unmutated; PLUS an append-at-EOF regression (hunkStart === line count) that must still APPLY. build:runtime + tsc(both) green; sibling suites patch-executor-governance-guard 13/13 + symlink-confinement 19/19 green; full gate 243/243.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
