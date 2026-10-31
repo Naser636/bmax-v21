@@ -2,8 +2,8 @@
 
 Produced per the CTO V107 mandate §4; **re-verified under MASTER CTO CAMPAIGN V2 (2026-10-30)**. Companion to
 `AUTONOMOUS_FRONTIER_ANALYSIS.md` and `CAMPAIGN_V2_ACCEPTANCE_BILAN_2026-10-30.md`. Truth Lock at V2 re-verification:
-`main` after Pole C (#282 `b41d5f5`) + Pole B (#283 `fbf7434`) merged; register **113 ACCEPTED / 7 BLOCKED /
-1 IN_PROGRESS / 2 DEFERRED = 123, 0 stale**. The per-item dependencies, owner actions, resume tests and acceptance
+`main @ 9f1faf6` — Pole C (#282 `b41d5f5`) + Pole B (#283 `fbf7434`) + Pole A (#284 `9f1faf6`) merged, 0 open PRs;
+register **113 ACCEPTED / 7 BLOCKED / 1 IN_PROGRESS / 2 DEFERRED = 123, 0 stale**. The per-item dependencies, owner actions, resume tests and acceptance
 criteria below were each re-checked against the current register and remain accurate; the 10 owner-gated items are
 unchanged (none became self-clearable). The V2 engineering/intelligence defects were all computer-side and are now
 ACCEPTED+MERGED — they are NOT owner-gated and are recorded in the V2 bilan, not here.
