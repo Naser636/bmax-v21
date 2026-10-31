@@ -2019,7 +2019,29 @@
       "title": "P0-E#2 (MED, security): require a CONTRACT-issued trusted publisher key for VERIFIED attestation (no self-signed trust)",
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-31",
-      "evidence": "P0-E audit finding #2 (MED). third-party-agent-gate.evaluateDependencies recorded integrity:VERIFIED whenever attest.verifyStatement(attestation, envelope, dep.publicKeyPem) passed — but the public key was AGENT-SUPPLIED, so an agent could mint its own keypair, self-sign its own attestation, present its own key, and be labelled 'attestation cryptographically verified' (OWASP Agentic ASI04 / SLSA — self-consistent ≠ authentic). FIX (confined to third-party-agent-gate.ts; verifyStatement UNCHANGED so self-verify callers odg-evidence-pack/compliance-evidence-pack are unaffected): VERIFIED now requires the signing key be in a HUMAN-ISSUED contract.trustedPublisherKeys trust anchor (normalized whitespace-insensitive). Bad signature ⇒ INVALID ⇒ DENY (unchanged); signature valid BUT key untrusted ⇒ UNVERIFIED (ADMIT on allowlist+license only, integrity NOT claimed); valid AND trusted ⇒ VERIFIED. Default-deny trust: no trustedPublisherKeys ⇒ nothing VERIFIED. trustedPublisherKeys added to GOVERNANCE_MUTATION_FIELDS so an agent proposal can't smuggle its own key as a trust anchor (⇒ ASI01 DENY). Regression (+3): valid+trusted⇒VERIFIED✓; valid+untrusted⇒ADMIT UNVERIFIED (the fix); agent-supplied trustedPublisherKeys⇒DENY; existing tampered⇒DENY preserved. Suite 50→53; compliance-evidence-pack + agent-governance-harness PASS; tsc clean BOTH tsconfigs; build OK. Independently verified (separate agent). 9 primitives FROZEN. NOTE: this does not flip any admission (an UNVERIFIED allowlisted+licensed dep still ADMITs) — it stops the FALSE 'cryptographically verified' label, the actual defect."
+      "evidence": "P0-E audit finding #2 (MED). third-party-agent-gate.evaluateDependencies recorded integrity:VERIFIED whenever attest.verifyStatement(attestation, envelope, dep.publicKeyPem) passed — but the public key was AGENT-SUPPLIED, so an agent could mint its own keypair, self-sign its own attestation, present its own key, and be labelled 'attestation cryptographically verified' (OWASP Agentic ASI04 / SLSA — self-consistent ≠ authentic). FIX (confined to third-party-agent-gate.ts; verifyStatement UNCHANGED so self-verify callers odg-evidence-pack/compliance-evidence-pack are unaffected): VERIFIED now requires the signing key be in a HUMAN-ISSUED contract.trustedPublisherKeys trust anchor (normalized whitespace-insensitive). Bad signature ⇒ INVALID ⇒ DENY (unchanged); signature valid BUT key untrusted ⇒ UNVERIFIED (ADMIT on allowlist+license only, integrity NOT claimed); valid AND trusted ⇒ VERIFIED. Default-deny trust: no trustedPublisherKeys ⇒ nothing VERIFIED. trustedPublisherKeys added to GOVERNANCE_MUTATION_FIELDS so an agent proposal can't smuggle its own key as a trust anchor (⇒ ASI01 DENY). Regression (+3): valid+trusted⇒VERIFIED✓; valid+untrusted⇒ADMIT UNVERIFIED (the fix); agent-supplied trustedPublisherKeys⇒DENY; existing tampered⇒DENY preserved. Suite 50→53; compliance-evidence-pack + agent-governance-harness PASS; tsc clean BOTH tsconfigs; build OK. Independently verified (separate agent). 9 primitives FROZEN. NOTE: this does not flip any admission (an UNVERIFIED allowlisted+licensed dep still ADMITs) — it stops the FALSE 'cryptographically verified' label, the actual defect.",
+      "integration": {
+        "state": "MERGED",
+        "pr": 295,
+        "mergeCommit": "0fa55b2",
+        "verified": true
+      }
+    },
+    {
+      "id": "p0c-crossmission-unstamped-guard",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-C#6 (fail-closed): validation-engine cross-mission guard refuses a populated-but-unstamped execution artifact",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 296,
+        "mergeCommit": "ca01d2d",
+        "verified": true
+      },
+      "evidence": "P0-C exec-chain audit #6. validation-engine crossMission guard set true only when BOTH plan.mission and execution.mission present + different ⇒ a PRESENT patch-execution.json with executed[] entries but NO mission stamp could satisfy an ENGINEERING mission coverage with unownable work (legit Patch Executor always stamps report.mission ⇒ only malformed/leftover artifacts reach this). FIX: execUnstamped = isEngineering && planMission && !execMission && executed.length>0 ⇒ crossMission (refuse, fail-closed); scoped so AUDIT/empty untouched; strictly fail-closed (adds only a refusal disjunct). +case 8 regression (unstamped⇒BLOCKED, crossMissionOk=false). ODG DECISION 2: implemented in an ISOLATED worktree off the integrated baseline, EXACT 2-file write-set (validation-engine.ts + validation-engine-recorded-noop.test.ts, NO register in the code PR). INDEPENDENTLY VERIFIED (separate agent = CONFIRMED_FIX_CORRECT; strictly fail-closed, no over-block, cross-mission suite 7/7). tsc clean BOTH tsconfigs; focused + VE regression PASS. CI green; merged PR#296 ca01d2d after merge-condition re-verification. 9 primitives FROZEN."
     }
   ]
 }
