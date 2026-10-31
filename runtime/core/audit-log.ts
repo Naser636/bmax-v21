@@ -27,9 +27,13 @@ function canon(o: any): string { return JSON.stringify(o, o && typeof o === "obj
 export interface AuditEntry { seq: number; prevHash: string; payload: any; hash: string; }
 
 // Keyed link hash: HMAC-SHA256(key, material) when a non-empty key is given, else plain sha256(material) —
-// BYTE-IDENTICAL to the historical keyless behaviour, so every existing (keyless) caller is unchanged.
+// BYTE-IDENTICAL to the historical keyless behaviour, so every existing (keyless) caller and every persisted chain
+// is unchanged. The separator is a NUL (\0), matching the original sealing format EXACTLY — written here as the `\0`
+// escape (plain-text source, git-diffable) rather than a raw 0x00 byte, but producing the identical runtime preimage.
+// A previous draft used spaces, which silently changed every sealed hash and would false-BLOCK NUL-sealed chains
+// (e.g. scheduler-audit-chain.json) under the verify-on-read gate — regression caught in independent validation.
 function entryHash(seq: number, prevHash: string, payload: any, key?: string): string {
-  const material = `${seq} ${prevHash} ${canon(payload)}`;
+  const material = `${seq}\0${prevHash}\0${canon(payload)}`;
   return (typeof key === "string" && key.length > 0)
     ? crypto.createHmac("sha256", key).update(material).digest("hex")
     : sha256(material);

@@ -70,5 +70,14 @@ ok("verifying a keyed chain with the WRONG key ⇒ rejected", A.verifyChain(kch,
 ok("keyed + correct tip anchor ⇒ ok, keyed+tipAnchored true", (() => { const v = A.verifyChain(kch, { key: KEY, expectedTip: A.chainTip(kch) }); return v.ok === true && v.keyed === true && v.tipAnchored === true; })());
 // (17) BACKWARD-COMPAT: the historical keyless API is byte-identical (same hashes, keyed:false)
 ok("keyless path unchanged (byte-identical hash, keyed:false)", ch[0].hash === A.entryHash(0, A.GENESIS, ch[0].payload) && A.verifyChain(ch).keyed === false && A.verifyChain(ch).tipAnchored === false);
+// (18) HISTORICAL-FORMAT PIN (NOT self-referential): the keyless preimage MUST stay NUL-separated, matching the
+//      format every already-sealed chain was written with. Pinned to the exact historical hex AND recomputed
+//      independently from the NUL material — a separator change (e.g. NUL→space) would break BOTH and is caught here.
+{
+  const crypto = require("crypto");
+  const HISTORICAL = "8f1e6964e1ea194c3aaff09d6d6b278f9d40cefc24c25584dce239450de4327d"; // sha256("0\0GENESIS\042"), pre-keyed-HMAC
+  const NUL = String.fromCharCode(0); const independent = crypto.createHash("sha256").update("0"+NUL+"GENESIS"+NUL+"42").digest("hex");
+  ok("keyless entryHash(0,GENESIS,42) == historical NUL-sealed hash (format pinned, non-self-referential)", A.entryHash(0, A.GENESIS, 42) === HISTORICAL && HISTORICAL === independent);
+}
 
-console.log(`\nAUDIT-LOG suite — ${pass} assertions passed. (hash-chain tamper-evidence + keyed-HMAC full-rewrite resistance + tip-anchor truncation detection; key is owner-provisioned, mechanism proven)`);
+console.log(`\nAUDIT-LOG suite — ${pass} assertions passed. (hash-chain tamper-evidence + keyed-HMAC full-rewrite resistance + tip-anchor truncation detection; keyless NUL format pinned to history; key is owner-provisioned, mechanism proven)`);
