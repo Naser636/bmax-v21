@@ -2135,8 +2135,12 @@
       "priority": 2,
       "deps": [],
       "title": "odg-resume 6KB handoff budget is exceeded past ~9-10 BLOCKED items (per-blocker fields not truncated/budgeted)",
-      "status": "READY",
-      "evidence": "odg-resume.resumeState serializes every BLOCKED item full humanActionRequired+resumeTest; the <6KB compact-handoff assertion (odg-resume.test) now fails once ~10 BLOCKED items carry detailed fields (observed 6585B at 10 blockers). SAFE FIX (pure, bounded): budget/truncate per-blocker fields (e.g. cap each to N chars with a pointer to the register, or cap the serialized blocked[] to a byte budget keeping ids+short action) so the handoff stays compact + fail-closed as blockers grow. write_set: runtime/bin/odg-resume.ts (+ its test). Independent verify. No behavior change beyond handoff compaction; the register remains the full SSOT. Current mitigation: BLOCKED-item handoff fields are kept concise by hand."
+      "status": "ACCEPTED",
+      "evidence": "CTO Gate B. odg-resume.resumeState serialized every BLOCKED items full humanActionRequired+resumeTest, exceeding the <6KB compact-handoff budget past ~10 blockers (observed 6585B at 10). FIX (deterministic 3-tier per-blocker field budgeting): Tier1 full fields if compact JSON<6000; Tier2 else pick the LARGEST per-field char budget from a frozen descending step list that fits, truncating with an EXPLICIT …[+Nc →register] marker + handoffTruncated + fieldBudgetChars; Tier3 (pathological N) a compact id-LIST (blocked=[{id}] for ALL) + blockedFieldsOmitted + register pointer. id NEVER truncated; NO blocker ever dropped. Independently verified (separate agent = CONFIRMED_FIX_CORRECT): N-sweep 9/2/12/30/40/60/120 all <6000 compact, all ids kept+unique (no silent loss), mandatory fields >10 + detectable truncation (T1/T2), determinism, backward-compat (real 9-blocker register untruncated 5823B + all 9 pre-existing assertions), fail-closed on missing register. +13 regression (suite 9->22); tsc clean BOTH tsconfigs; build OK. Non-blocking notes recorded in-code: budget measured on compact payload (CLI pretty-prints ~6.3KB, deterministic whitespace, consistent with the pre-existing test convention); Tier3 holds to ~330 blockers (no credible register exceeds it). write_set runtime/bin/odg-resume.ts + .test.ts. 9 primitives FROZEN.",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "PENDING_MERGE"
+      }
     }
   ]
 }
