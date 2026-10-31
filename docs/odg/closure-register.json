@@ -2344,11 +2344,15 @@
       "priority": 2,
       "deps": [],
       "title": "autonomy-store crash-atomic write + corruption-distinguishing readStrict (safety: a torn incident ledger no longer silently discards FROZEN loop-protection)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "SAFETY defect reproduced by recon: autonomy-store.read() collapses an ABSENT store and a CORRUPT (torn-write) store to the same fallback; self-diagnostic.raiseIncident then WROTE a fresh ledger over the torn one, silently discarding FROZEN loop-protection incidents (the mechanism that stops an infinite auto-repair loop). Fix: (a) autonomy-store.write() is now crash-atomic (temp file + renameSync in the same dir) mirroring mission-ledger; (b) new readStrict(name) returns {present,corrupt,value} distinguishing absent vs torn (read() byte-identical for back-compat); (c) self-diagnostic.raiseIncident uses readStrict and, on corrupt, warns to stderr and returns {status:'LEDGER_CORRUPT',recorded:false} REFUSING to overwrite (torn file preserved for recovery); (d) incident-recurrence.loadRecurrence returns verdict UNKNOWN + summary.ledgerUnreadable on corrupt (was NONE = a could-not-verify rendered healthy); (e) fleet-collector surfaces evidenceRecorded{attempted,recorded,reason} instead of silently swallowing a skipped/throwing ledger write. New runtime/core/autonomy-store.test.ts (11 assertions, process.chdir hazard ⇒ serial) wired into the test:report gate: readStrict absent/valid/corrupt, atomic write (no .tmp leftover), read() back-compat, and the integration path (seed FROZEN ⇒ tear ledger ⇒ raiseIncident LEDGER_CORRUPT + file NOT clobbered ⇒ recurrence UNKNOWN; valid-empty ⇒ NONE). build:runtime + tsc(tsconfig.json AND tsconfig.runtime-dist.json) green; consumer suites self-diagnostic 64/64 + incident-recurrence green; full gate 243/243.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 319,
+        "mergeCommit": "1aa6e40",
+        "verified": true
+      },
+      "acceptedAt": "2026-10-31"
     }
   ]
 }
