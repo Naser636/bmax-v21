@@ -162,7 +162,7 @@ for (const [lang, content, expectedOutput, exp] of behaviourCases) {
     });
     ok("confined behaviour: a program CANNOT read host /etc (filesystem isolation) ⇒ 'CONFINED', never a LEAK", leak.status === "PASS");
   } else {
-    ok("(confinement behaviour real test skipped: node/bwrap unavailable)", true);
+    console.log("##CLASS: BLOCKED_BY_ISOLATION node/bwrap unavailable — confinement-behaviour control NOT exercised ⇒ BLOCKED (never a silent PASS)");
   }
 }
 
@@ -241,7 +241,7 @@ for (const [lang, files, entry, expectedOutput, exp] of intCases) {
     ok("confined rustc: ALIASED include! does NOT leak host content (regex-bypass closed structurally)", r.status !== "PASS" && !JSON.stringify(r).includes(MARK));
     _fs.rmSync(d, { recursive: true, force: true });
   } else {
-    ok("(aliased-include real test skipped: rustc/bwrap unavailable — spec.confine asserted above)", true);
+    console.log("##CLASS: BLOCKED_BY_ISOLATION rustc/bwrap unavailable — aliased-include confinement control NOT exercised ⇒ BLOCKED");
   }
   // F3b: the TypeScript single-file checker also runs confined (a `/// <reference path="/abs">` would otherwise read a
   // host file — the single-file analogue of the F3 project-mode escape).
@@ -255,7 +255,7 @@ for (const [lang, files, entry, expectedOutput, exp] of intCases) {
     ok("confined tsc: legit single file still PASSes (not over-blocked)", E.runSyntaxCheck({ language: "TypeScript", content: "export const x: number = 1;\n" }).status === "PASS");
     _fs.rmSync(d, { recursive: true, force: true });
   } else {
-    ok("(TS confined-reference real test skipped: tsc/bwrap unavailable — spec.confine asserted above)", true);
+    console.log("##CLASS: BLOCKED_BY_ISOLATION tsc/bwrap unavailable — TS confined-reference control NOT exercised ⇒ BLOCKED");
   }
 }
 
