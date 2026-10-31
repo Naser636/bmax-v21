@@ -1,7 +1,7 @@
 # MASTER CTO CAMPAIGN V2 — Final Acceptance Bilan (2026-10-30)
 
-**Truth Lock at authoring:** `main` after Pole C (#282 `b41d5f5`) + Pole B (#283 `fbf7434`) merged; this
-Pole-A reconciliation lot in-flight on `excellence/v2-poleA-reconciliation-20261030`. Register **123 items**,
+**Truth Lock:** `main @ 9f1faf6` — Pole C (#282 `b41d5f5`) + Pole B (#283 `fbf7434`) + Pole A (#284 `9f1faf6`)
+ALL MERGED, 0 open PRs (this bilan's Pole-A lot is itself now merged). Register **123 items**,
 dup-free (123 unique ids). Companion machine SSOT: `docs/odg/closure-register.json`. Companion owner-action pack:
 `docs/odg/OWNER_GATED_DEPENDENCY_DOSSIER.md`. Supersedes nothing — extends `CAMPAIGN_CLOSURE_BILAN_2026-10-30.md`.
 
