@@ -2010,6 +2010,16 @@
       "title": "P0-C#1 follow-on (design): decide whether to add genuine deny-by-default per-mission authorization AT the odg-run native-executor entry",
       "status": "READY",
       "evidence": "C#1 closed the misleading 'AUTHORIZED' claim; the deeper design question — should a bare `odg-run <mission>` require an explicit per-mission authority grant at entry (option a), or is downstream enforcement (truth-lock mutating-gate + action-gate consequential + ledger proven-gate; canary path allowlist + canary-decision-pack) the intended model (status quo)? — is an owner/architecture decision. Adding a blanket entry allowlist-deny could break legitimate operator/dev odg-run usage, so it is NOT silently implemented. Gate-A design + owner call required before any execution-entry authz change. Reuses capability-authorization / action-gate; no new primitive."
+    },
+    {
+      "id": "p0e-attestation-key-trust-anchor",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-E#2 (MED, security): require a CONTRACT-issued trusted publisher key for VERIFIED attestation (no self-signed trust)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "evidence": "P0-E audit finding #2 (MED). third-party-agent-gate.evaluateDependencies recorded integrity:VERIFIED whenever attest.verifyStatement(attestation, envelope, dep.publicKeyPem) passed — but the public key was AGENT-SUPPLIED, so an agent could mint its own keypair, self-sign its own attestation, present its own key, and be labelled 'attestation cryptographically verified' (OWASP Agentic ASI04 / SLSA — self-consistent ≠ authentic). FIX (confined to third-party-agent-gate.ts; verifyStatement UNCHANGED so self-verify callers odg-evidence-pack/compliance-evidence-pack are unaffected): VERIFIED now requires the signing key be in a HUMAN-ISSUED contract.trustedPublisherKeys trust anchor (normalized whitespace-insensitive). Bad signature ⇒ INVALID ⇒ DENY (unchanged); signature valid BUT key untrusted ⇒ UNVERIFIED (ADMIT on allowlist+license only, integrity NOT claimed); valid AND trusted ⇒ VERIFIED. Default-deny trust: no trustedPublisherKeys ⇒ nothing VERIFIED. trustedPublisherKeys added to GOVERNANCE_MUTATION_FIELDS so an agent proposal can't smuggle its own key as a trust anchor (⇒ ASI01 DENY). Regression (+3): valid+trusted⇒VERIFIED✓; valid+untrusted⇒ADMIT UNVERIFIED (the fix); agent-supplied trustedPublisherKeys⇒DENY; existing tampered⇒DENY preserved. Suite 50→53; compliance-evidence-pack + agent-governance-harness PASS; tsc clean BOTH tsconfigs; build OK. Independently verified (separate agent). 9 primitives FROZEN. NOTE: this does not flip any admission (an UNVERIFIED allowlisted+licensed dep still ADMITs) — it stops the FALSE 'cryptographically verified' label, the actual defect."
     }
   ]
 }

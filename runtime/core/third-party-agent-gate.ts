@@ -46,12 +46,13 @@ export interface AgentContract {
   paramSchemas?: Record<string, any>;                 // ASI02: per-tool versioned schema (optional)
   allowedDependencies?: string[];                     // ASI04: dependency allowlist (deny-by-default)
   supplyChainTarget?: string;                         // license-policy target (default commercial-closed)
+  trustedPublisherKeys?: string[];                    // ASI04: human-issued TRUST ANCHOR — publisher public keys whose signed attestations may be VERIFIED. A dep's own key is NEVER its trust anchor.
   revoked?: boolean;                                  // ASI01: contract revoked ⇒ deny everything
   forbiddenToolCombos?: string[][];                   // ASI01-combinatorial: tool-SETS whose co-occurrence is out of scope
   maxPerTool?: Record<string, number>;               // ASI01-combinatorial: per-tool invocation cap (non-idempotent accrual)
 }
 // ASI01: agent-supplied top-level fields that would attempt to redefine governance are NEVER authorization.
-const GOVERNANCE_MUTATION_FIELDS = ["objective", "contract", "permissions", "authorizedScope", "allowedTools", "limits", "grant", "elevate", "requireHumanFor", "allowedDependencies"];
+const GOVERNANCE_MUTATION_FIELDS = ["objective", "contract", "permissions", "authorizedScope", "allowedTools", "limits", "grant", "elevate", "requireHumanFor", "allowedDependencies", "trustedPublisherKeys"];
 export interface GateState { calls: number; elapsedMs: number; revoked?: boolean; history?: Array<{ tool?: string; targetPaths?: string[] }> }
 export interface GateVerdict {
   verdict: "ADMIT" | "DENY" | "ESCALATE";
@@ -111,6 +112,10 @@ function evaluateDependencies(deps: any, contract: AgentContract, opts?: any): {
   const reasons: string[] = []; const failed: string[] = []; const records: any[] = [];
   const target = (opts && opts.supplyChainTarget) || "commercial-closed";
   const allow = Array.isArray((contract as any).allowedDependencies) ? (contract as any).allowedDependencies : [];
+  // Human-issued trust anchor (normalized, whitespace-insensitive). Only keys listed HERE can yield VERIFIED.
+  const normKey = (k: any): string => (typeof k === "string" ? k.replace(/\s+/g, "") : "");
+  const trustedList = Array.isArray((contract as any).trustedPublisherKeys) ? (contract as any).trustedPublisherKeys : [];
+  const trusted = new Set<string>(trustedList.map(normKey).filter((k: string) => k.length > 0));
   const list = Array.isArray(deps) ? deps : null;
   if (list === null) { return { ok: false, reasons: ["declaredDependencies malformed (not an array)"], failed: ["ASI04"], records: [] }; }
   for (const d of list) {
@@ -120,14 +125,23 @@ function evaluateDependencies(deps: any, contract: AgentContract, opts?: any): {
     if (!allow.includes(dep.name)) { reasons.push(`dependency "${dep.name}" not in allowedDependencies (deny-by-default)`); failed.push("ASI04"); records.push({ key, decision: "DENY", why: "unknown/not-allowlisted" }); continue; }
     const lic = licensePolicy.adoptionVerdict(dep.license, { target });
     if (lic.adoptable !== true) { reasons.push(`dependency "${key}" license verdict adoptable=${lic.adoptable} (${lic.reason})`); failed.push("ASI04"); records.push({ key, decision: "DENY", why: "license", licenseFamily: lic.license.family }); continue; }
-    // INTEGRITY: only a cryptographically-verified signed attestation counts; otherwise UNVERIFIED (not claimed).
+    // INTEGRITY: a signed attestation is VERIFIED only when it verifies against a TRUSTED PUBLISHER key issued on the
+    // CONTRACT (human trust anchor), NOT against the agent's OWN supplied key. SEC fix (ASI04/SLSA): verifying a
+    // signature against a key the signer itself provided proves only "self-consistent", never "authentic" — an agent
+    // can mint its own keypair, sign its own attestation, and present its own key. So: bad signature ⇒ INVALID ⇒ DENY;
+    // signature valid BUT key not in contract.trustedPublisherKeys ⇒ UNVERIFIED (self-signed, no trust anchor) ⇒ ADMIT
+    // only on allowlist+license, integrity NOT claimed; signature valid AND key trusted ⇒ VERIFIED. Absent attestation
+    // ⇒ UNVERIFIED. Default-deny trust: with no trustedPublisherKeys on the contract, NOTHING is VERIFIED.
     let integrity = "UNVERIFIED";
     if (dep.attestation && dep.envelope && dep.publicKeyPem) {
-      try { integrity = attest.verifyStatement(dep.attestation, dep.envelope, dep.publicKeyPem, {}).ok === true ? "VERIFIED" : "INVALID"; }
-      catch { integrity = "INVALID"; }
+      let sigOk = false;
+      try { sigOk = attest.verifyStatement(dep.attestation, dep.envelope, dep.publicKeyPem, {}).ok === true; }
+      catch { sigOk = false; }
+      if (!sigOk) integrity = "INVALID";
+      else integrity = trusted.has(normKey(dep.publicKeyPem)) ? "VERIFIED" : "UNVERIFIED";
     }
     if (integrity === "INVALID") { reasons.push(`dependency "${key}" attestation INVALID (tampered/bad signature)`); failed.push("ASI04"); records.push({ key, decision: "DENY", why: "attestation-invalid" }); continue; }
-    records.push({ key, decision: "ADMIT", license: lic.license.spdxId, integrity, note: integrity === "UNVERIFIED" ? "no signed attestation — integrity NOT verified (agent declaration is not proof)" : "attestation cryptographically verified" });
+    records.push({ key, decision: "ADMIT", license: lic.license.spdxId, integrity, note: integrity === "VERIFIED" ? "attestation cryptographically verified against a CONTRACT-trusted publisher key" : "integrity NOT verified — self-signed or no trust anchor (a signature against an agent-supplied key is NOT proof of authenticity)" });
   }
   return { ok: failed.length === 0, reasons, failed: Array.from(new Set(failed)), records };
 }
