@@ -2440,11 +2440,15 @@
       "priority": 3,
       "deps": [],
       "title": "Defensive hardening: bound economic-extractor decimalToMinor scale (alloc DoS) + crash-atomic learning-reuse-proof store write",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "Recon wave 3 (frontier otherwise exhausted) surfaced two LOW/real defense-in-depth items; both match doctrine shipped this session. (1) economic-extractor.decimalToMinor did '0'.repeat(scale) where scale comes from an extraction rule; a pathological/typo scale (e.g. 1e9) allocates a multi-hundred-MB string before the safe-integer check (CPU/mem DoS). Fix: refuse scale outside [0,100] (null => UNKNOWN upstream), bounding the padding alloc; crypto wei=18 so 100 is far beyond any real currency/asset; no behaviour change for realistic scales. (2) learning-reuse-proof.saveStore wrote non-atomically; loadStore collapses an unparseable store to {learnings:[]}, so a torn write SILENTLY empties the learnings store. Fix: crash-atomic tmp+rename via the injectable sink (fallback direct-write when the sink has no renameSync), mirroring autonomy-store/mission-ledger. Tests: economic-extractor.test.ts +5 (16) huge/negative/over-cap scale refused <1s + extract UNKNOWN, normal scale unaffected; learning-reuse-proof.test.ts +3 (12) atomic save leaves no torn temp + crash-during-rename preserves the prior store (in-memory fs double). build:runtime + tsc(both) green; full gate 243/243.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 325,
+        "mergeCommit": "42e0ab3",
+        "verified": true
+      },
+      "acceptedAt": "2026-10-31"
     }
   ]
 }
