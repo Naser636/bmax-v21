@@ -35,6 +35,24 @@ function runResearch(ra) {
   return { threw, result, evidence };
 }
 
+// CI-reliability watchdog (diagnostic + deterministic): this suite has intermittently NOT EXITED in CI (SUITE_TIMEOUT
+// at 240s) despite the server-socket teardown (#306) and the httpGetBounded resolve-once (#310) fixes — a process that
+// runs all assertions but never exits means a LEAKED HANDLE (or an unforeseen never-resolving await). Rather than keep
+// guessing the exact handle, we (1) arm a ref'd watchdog that fires WELL BEFORE the 240s gate kill, dumps the active
+// handles/requests so CI logs name the culprit, and exits; and (2) force a clean exit once teardown completes so a
+// post-completion leaked handle can never hang CI. The suite's verdict is fully determined by the assertions above —
+// forcing exit AFTER they run masks nothing. Opt-out for interactive debugging: ODG_TEST_NO_WATCHDOG=1.
+let _suiteDone = false;
+const _watchdog = (process.env.ODG_TEST_NO_WATCHDOG === "1") ? null : setTimeout(() => {
+  if (_suiteDone) return;
+  try {
+    const handles = (process as any)._getActiveHandles ? (process as any)._getActiveHandles() : [];
+    const reqs = (process as any)._getActiveRequests ? (process as any)._getActiveRequests() : [];
+    console.error(`##SUITE_WATCHDOG external-research-live did not exit within 60s — active handles: [${handles.map((h: any) => (h && h.constructor && h.constructor.name) || typeof h).join(", ")}] active requests: [${reqs.map((r: any) => (r && r.constructor && r.constructor.name) || typeof r).join(", ")}]`);
+  } catch { /* best-effort diagnostic */ }
+  process.exit(typeof process.exitCode === "number" ? process.exitCode : 1);
+}, 60000);
+
 (async () => {
   console.log("LIVE GOVERNED EXTERNAL RESEARCH — bounded fetch + provenance gates");
 
@@ -54,8 +72,21 @@ function runResearch(ra) {
   const capped = await ce.httpGetBounded(url, 100, 4000);
   ok("byte limit enforced: body truncated at maxBytes", capped.truncated === true && capped.body.length <= 100 && capped.bytes <= 100);
 
-  const toEarly = await ce.httpGetBounded(url, 1_000_000, 1); // 1ms ⇒ time limit trips
-  ok("time limit enforced: a sub-deadline fetch fails closed (status 0)", toEarly.status === 0);
+  // TIME-LIMIT enforcement — DETERMINISTIC (no race): a dedicated server that delays its response FAR beyond the
+  // fetch deadline, so the deadline ALWAYS trips before any response ⇒ status 0. The prior `1ms vs an instant
+  // loopback server` was racy — a fast CI runner completes the response in <1ms ⇒ flaky status 200 (the real cause
+  // of the external-research-live CI exit-1 once the hang was fixed). The slow server's timer is cleared on socket
+  // close so it never keeps the loop alive, and it is torn down with the same can't-hang teardown.
+  const slowTimers = new Set();
+  const slow = http.createServer((req, res) => {
+    const t = setTimeout(() => { try { res.writeHead(200, { "content-type": "text/plain" }); res.end("late"); } catch { /* socket already gone */ } }, 3000);
+    slowTimers.add(t);
+    res.on("close", () => { clearTimeout(t); slowTimers.delete(t); });
+  });
+  await new Promise((r) => slow.listen(0, r));
+  const toEarly = await ce.httpGetBounded(`http://127.0.0.1:${slow.address().port}/`, 1_000_000, 100); // 100ms deadline vs 3000ms response ⇒ deterministically trips
+  ok("time limit enforced: a fetch whose deadline precedes the response fails closed (status 0)", toEarly.status === 0);
+  await new Promise((r) => { let d = false; const fin = () => { if (!d) { d = true; r(undefined); } }; for (const t of slowTimers) clearTimeout(t); try { (slow as any).closeAllConnections && (slow as any).closeAllConnections(); } catch { /* older node */ } slow.close(fin); setTimeout(fin, 2000).unref(); });
 
   const badProto = await ce.httpGetBounded("file:///etc/passwd", 1000, 1000);
   ok("non-http(s) protocol refused (no local file retrieval)", badProto.status === 0 && /unsupported protocol/.test(badProto.error || ""));
@@ -121,4 +152,9 @@ function runResearch(ra) {
 })().catch((e) => { console.error(e); process.exitCode = 1; }).finally(() => {
   if (prior === null) { try { fs.rmSync(EVI, { force: true }); } catch { /* ignore */ } }
   else fs.writeFileSync(EVI, prior);
+  _suiteDone = true;
+  if (_watchdog) clearTimeout(_watchdog);
+  // Deterministic exit: all assertions have run; do not let a leaked handle hang the classified gate. Use setImmediate
+  // so stdout (the "assertions passed" line) flushes first. A non-watchdog exit preserves the real verdict code.
+  setImmediate(() => process.exit(typeof process.exitCode === "number" ? process.exitCode : 0));
 });
