@@ -92,10 +92,21 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
 const pubPem = publicKey.export({ type: "spki", format: "pem" });
 const stmt = A.buildAttestation({ name: "left-pad", sha256: A.sha256("bytes") }, A.buildSbom([{ name: "left-pad", version: "1.3.0" }]), { commit: "abc" });
 const env = A.signStatement(stmt, privateKey);
-const vAtt = G.evaluateAgentAction(dep({ name: "left-pad", version: "1.3.0", license: "MIT", attestation: stmt, envelope: env, publicKeyPem: pubPem }), C2, S0);
-ok("ASI04 valid signed attestation ⇒ ADMIT integrity VERIFIED", vAtt.verdict === "ADMIT" && vAtt.reasons.some(r => /✓/.test(r)));
+// SEC (P0-E#2): VERIFIED requires the key be a CONTRACT-issued trust anchor (trustedPublisherKeys), NOT the
+// agent's own supplied key. Contract C2T trusts pubPem ⇒ VERIFIED; plain C2 (no trust anchor) ⇒ UNVERIFIED.
+const C2T = { ...C2, trustedPublisherKeys: [pubPem] };
+const depAtt = dep({ name: "left-pad", version: "1.3.0", license: "MIT", attestation: stmt, envelope: env, publicKeyPem: pubPem });
+const vAtt = G.evaluateAgentAction(depAtt, C2T, S0);
+ok("ASI04 valid signed attestation + CONTRACT-trusted key ⇒ ADMIT integrity VERIFIED", vAtt.verdict === "ADMIT" && vAtt.reasons.some(r => /✓/.test(r)));
+// THE FIX: a valid signature against an UNTRUSTED (agent-supplied) key is NOT authentic ⇒ ADMIT but UNVERIFIED.
+const vSelf = G.evaluateAgentAction(depAtt, C2, S0); // C2 has NO trustedPublisherKeys
+ok("ASI04 valid signature but key NOT in contract trust anchor ⇒ ADMIT but UNVERIFIED (no false VERIFIED)",
+  vSelf.verdict === "ADMIT" && !vSelf.reasons.some(r => /✓/.test(r)) && vSelf.reasons.some(r => /unverified/.test(r)));
+// an agent cannot smuggle its own key as a trust anchor: trustedPublisherKeys in the PROPOSAL is a governance-mutation ⇒ DENY.
+const vSmuggle = G.evaluateAgentAction({ ...depAtt, trustedPublisherKeys: [pubPem] }, C2, S0);
+ok("ASI04 agent-supplied trustedPublisherKeys (governance mutation) ⇒ DENY", vSmuggle.verdict === "DENY" && vSmuggle.controlsFailed.includes("ASI01"));
 const tampered = { ...stmt, subject: [{ name: "left-pad-EVIL", digest: { sha256: A.sha256("bytes") } }] };
-ok("ASI04 TAMPERED attestation ⇒ DENY (bad signature)", (() => { const v = G.evaluateAgentAction(dep({ name: "left-pad", version: "1.3.0", license: "MIT", attestation: tampered, envelope: env, publicKeyPem: pubPem }), C2, S0); return v.verdict === "DENY" && v.controlsFailed.includes("ASI04"); })());
+ok("ASI04 TAMPERED attestation ⇒ DENY (bad signature)", (() => { const v = G.evaluateAgentAction(dep({ name: "left-pad", version: "1.3.0", license: "MIT", attestation: tampered, envelope: env, publicKeyPem: pubPem }), C2T, S0); return v.verdict === "DENY" && v.controlsFailed.includes("ASI04"); })());
 
 // ═════════ V6 Lot C — evidence / integration invariants ═════════
 ok("LotC: a validation failure NEVER yields ADMIT (no false success)", ["ASI02","ASI04"].every(() => true) && G.evaluateAgentAction({ ...b2, params: { path: 1 } }, C2, S0).verdict !== "ADMIT");
