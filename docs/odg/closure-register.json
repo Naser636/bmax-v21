@@ -1989,6 +1989,27 @@
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-31",
       "evidence": "P0-C exec-chain audit finding #4 (MED), read-only-audit-found. campaign-controller.staleAcceptances inspected only an item's DIRECT deps and reconcile ran one pass ⇒ in a chain A→B→C with C regressed, one reconcile demoted B but left A ACCEPTED on a transitively-invalid basis for ≥1 loop iteration (A still satisfied depsSatisfied; summary/odg-resume under-reported staleness — contradicts 'reuse only still-valid evidence'). FIX (pure): staleAcceptances now computes staleness to a FIXPOINT — an ACCEPTED item is stale if any dep is missing/not-ACCEPTED OR is ITSELF stale; loop until no change (staleSet grows monotonically ⇒ terminates even on dep cycles); invalidatedBy names the stale/absent dep. reconcile then demotes the WHOLE dependent cone in one pass. Regression (+5): chain A→B→C leaf-regress ⇒ BOTH A+B stale in one call + both demoted + transitive invalidatedBy surfaced + deep-chain re-accept determinism. Suite 31→36; consumers campaign-loop/campaign-metrics/odg-resume PASS; real register still 0 stale; tsc clean BOTH tsconfigs; build OK. Independently verified (separate agent). 9 primitives FROZEN."
+    },
+    {
+      "id": "p0c-honest-governance-banner",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-C#1 (HIGH→truth defect): odg-run no longer presents the lifecycle-transition fact as an authority grant (\"AUTHORIZED\")",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "evidence": "P0-C exec-chain audit finding #1 (HIGH). governance-kernel.authorizeMission() is itself HONEST — it returns transitionPossible (does CREATED have an outgoing edge? always true for a non-empty state machine), authorityEnforced:false, and authorized:=transitionPossible (a back-compat alias), consulting NO mission identity/contract/policy. The DEFECT was in the CONSUMER: odg-run.ts printed 'Governance : AUTHORIZED' and had a structurally-unreachable 'if(!authorized) STOP', falsely implying a per-mission authorization gate exists at the native-executor entry when none does. FIX (output-honesty, ZERO logic change — transitionPossible is exactly the value authorized aliased): the lifecycle check now reads governance.transitionPossible with an honest STOP message ('no lifecycle transition available from state CREATED'); the banner states 'lifecycle-transition OK (authorityEnforced=false; per-mission authority NOT gated here — enforced downstream by truth-lock / action-gate / ledger proven-gate)'. Closes the MISLEADING-CLAIM truth defect (a lifecycle fact is never again read as authority). tsc clean BOTH tsconfigs; build OK; dist banner confirmed honest. Independently verified (separate agent: no behavior change, no other misleading AUTHORIZED consumer). DESIGN NOTE (NOT silently changed): whether to ADD a genuine deny-by-default per-mission authorization AT the odg-run entry (vs the current downstream-enforcement model) is an owner/design decision recorded as p0c-entry-authorization-design (READY); the canary/campaign paths already enforce real authority (allowlist + canary-decision-pack). 9 primitives FROZEN."
+    },
+    {
+      "id": "p0c-entry-authorization-design",
+      "program": "P0",
+      "priority": 1,
+      "deps": [
+        "p0c-honest-governance-banner"
+      ],
+      "title": "P0-C#1 follow-on (design): decide whether to add genuine deny-by-default per-mission authorization AT the odg-run native-executor entry",
+      "status": "READY",
+      "evidence": "C#1 closed the misleading 'AUTHORIZED' claim; the deeper design question — should a bare `odg-run <mission>` require an explicit per-mission authority grant at entry (option a), or is downstream enforcement (truth-lock mutating-gate + action-gate consequential + ledger proven-gate; canary path allowlist + canary-decision-pack) the intended model (status quo)? — is an owner/architecture decision. Adding a blanket entry allowlist-deny could break legitimate operator/dev odg-run usage, so it is NOT silently implemented. Gate-A design + owner call required before any execution-entry authz change. Reuses capability-authorization / action-gate; no new primitive."
     }
   ]
 }
