@@ -91,12 +91,28 @@ function isStalled(lot: any): boolean {
 function staleAcceptances(register: any): any[] {
   const items = Array.isArray(register.items) ? register.items : [];
   const byId = new Map<string, any>(items.map((it: any) => [it.id, it] as [string, any]));
+  // C#4 (P0-C): staleness is TRANSITIVELY closed, computed to a FIXPOINT — an ACCEPTED item is stale if any dep is
+  // missing / not-ACCEPTED OR is ITSELF stale. The former single pass only caught DIRECT deps, so in a chain
+  // A→B→C with C regressed, one reconcile demoted B but left A ACCEPTED on a transitively-invalid basis for ≥1
+  // iteration. Propagating to a fixpoint invalidates the whole dependent cone atomically (fail-closed: reused
+  // evidence must be valid all the way down). Deterministic; terminates (staleSet grows monotonically, bounded).
+  const staleSet = new Set<string>();
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const it of items) {
+      if (it.status !== TERMINAL_OK || staleSet.has(it.id)) continue;
+      const deps = Array.isArray(it.deps) ? it.deps : [];
+      const bad = deps.some((d: string) => { const dep = byId.get(d); return !dep || dep.status !== TERMINAL_OK || staleSet.has(d); });
+      if (bad) { staleSet.add(it.id); changed = true; }
+    }
+  }
   const stale: any[] = [];
   for (const it of items) {
-    if (it.status !== TERMINAL_OK) continue;
+    if (!staleSet.has(it.id)) continue;
     const deps = Array.isArray(it.deps) ? it.deps : [];
-    const invalidatedBy = deps.filter((d: string) => { const dep = byId.get(d); return !dep || dep.status !== TERMINAL_OK; });
-    if (invalidatedBy.length) stale.push({ id: it.id, invalidatedBy });
+    const invalidatedBy = deps.filter((d: string) => { const dep = byId.get(d); return !dep || dep.status !== TERMINAL_OK || staleSet.has(d); });
+    stale.push({ id: it.id, invalidatedBy });
   }
   return stale;
 }

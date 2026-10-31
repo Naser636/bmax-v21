@@ -166,6 +166,27 @@ const reg = (items) => ({ version: "t", items });
   ok("reconcile (no demote) flags staleEvidence without changing status", r2.items.find(i => i.id === "B").staleEvidence === true && r2.items.find(i => i.id === "B").status === "ACCEPTED");
 }
 
+// (12b) C#4 (P0-C) — TRANSITIVE staleness to a fixpoint: chain A→B→C, C regresses ⇒ BOTH B and A are flagged stale
+// in ONE pass (the former single-pass only caught the direct dependent B, leaving A ACCEPTED on an invalid basis).
+{
+  const r = reg([
+    { id: "C", status: "ACCEPTED", deps: [], evidence: "proof C" },
+    { id: "B", status: "ACCEPTED", deps: ["C"], evidence: "proof B (relies on C)" },
+    { id: "A", status: "ACCEPTED", deps: ["B"], evidence: "proof A (relies on B)" },
+  ]);
+  ok("12b chain all ACCEPTED ⇒ 0 stale", C.staleAcceptances(r).length === 0);
+  C.advance(r, "C", { status: "READY" }); // leaf C regresses
+  const stale = C.staleAcceptances(r);
+  const ids = stale.map((s) => s.id).sort();
+  ok("12b leaf regress ⇒ BOTH direct (B) AND transitive (A) stale in ONE pass", ids.length === 2 && ids[0] === "A" && ids[1] === "B");
+  ok("12b A's invalidatedBy names its stale dep B (transitive cause surfaced)", (stale.find((s) => s.id === "A").invalidatedBy || []).includes("B"));
+  const rec = C.reconcile(r, { demote: true });
+  ok("12b reconcile demotes BOTH A and B in one pass (whole cone invalidated)", rec.demoted.includes("A") && rec.demoted.includes("B") && r.items.find((i) => i.id === "A").status === "IN_PROGRESS" && r.items.find((i) => i.id === "B").status === "IN_PROGRESS");
+  // deep-chain determinism: re-accepting the leaf clears the whole cone.
+  C.advance(r, "C", { status: "ACCEPTED", evidence: "re-C" });
+  ok("12b leaf re-ACCEPTED but mid-cone still IN_PROGRESS ⇒ A still has a non-ACCEPTED dep (B) ⇒ not re-admissible yet", C.staleAcceptances(r).length === 0 && C.selectNextLot(r).lot.id === "B");
+}
+
 // (13) the REAL closure-register has NO stale acceptances (every ACCEPTED item's deps are ACCEPTED).
 {
   const real = C.loadRegister(path.join(process.cwd(), "docs", "odg", "closure-register.json"));
