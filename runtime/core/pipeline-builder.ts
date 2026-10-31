@@ -69,6 +69,9 @@ pipeline.push(
   ["Decision Engine", stage("decision-engine")],
   ["Patch Engine", stage("patch-engine")],
   ["Patch Executor", stage("patch-executor")],
+  // P0-C#3 part 2: fresh THIS-MISSION build/TS evidence AFTER the patch is applied, BEFORE validation — so the
+  // engineering build/TS gate judges real post-patch evidence instead of an absent/stale runtime-verify.json.
+  ["Build/TS Evidence", stage("stage-build-ts-evidence")],
   ["Validation Engine", stage("validation-engine")],
   // Governance lifecycle advances AFTER validation (consumes mission-report.json) and BEFORE the
   // Ledger, so the Ledger records the real achieved state instead of a hardcoded "CREATED".

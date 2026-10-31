@@ -31,6 +31,7 @@ const STAGE_OUTPUTS: Record<string, string> = {
   "Decision Engine": "decision.json",
   "Patch Engine": "patch-plan.json",
   "Patch Executor": "patch-execution.json",
+  "Build/TS Evidence": "runtime-verify.json",
   "Validation Engine": "mission-report.json",
   "Mission Lifecycle": "mission-lifecycle.json",
   "Mission Ledger": "mission-ledger.json",
