@@ -146,8 +146,21 @@ function detectFormat(xml: string): string | null {
  * parseInvoiceXml(xml, opts?): parse CII/UBL XML → { ok, format, model, provenance, findings }. Fail-closed.
  * opts.runner(bin,args,{timeout}) injectable (tests); default real python3 spawnSync (no shell, bounded).
  */
+// XXE / billion-laughs defense-in-depth. A legitimate CII/UBL e-invoice NEVER carries a DTD; a DOCTYPE/ENTITY
+// declaration in an externally-received invoice is only ever an entity-expansion (billion-laughs) amplification or
+// an external-entity probe. factur-x-extract claims this is "handled downstream by ElementTree" — but that depends
+// entirely on the host libexpat version (expat <2.4.0 does NOT mitigate billion-laughs by default), and was untested.
+// We make the guarantee EXPLICIT and version-independent: reject any DOCTYPE/ENTITY declaration BEFORE writing the
+// XML to disk or spawning the python child. (Whitespace is tolerated between `<!` and the keyword to defeat a
+// lenient-parser bypass.) ElementTree does not resolve EXTERNAL entities, so this specifically closes the
+// internal-entity amplification/DoS vector and makes the no-DTD contract testable without running python.
+function hasDoctypeOrEntityDecl(xml: string): boolean {
+  return /<!\s*DOCTYPE/i.test(xml) || /<!\s*ENTITY/i.test(xml);
+}
+
 function parseInvoiceXml(xml: any, opts: any = {}): any {
   if (typeof xml !== "string" || !xml.trim()) return { ok: false, code: "INVALID_INPUT", reason: "xml string required" };
+  if (hasDoctypeOrEntityDecl(xml)) return { ok: false, code: "DTD_REJECTED", findings: [{ id: "xml:dtd-rejected", area: "xml", severity: "HIGH", detail: "XML declares a DOCTYPE/ENTITY (DTD). E-invoice XML must not carry a DTD; it is rejected fail-closed to prevent entity-expansion (billion-laughs) amplification, rather than relying on the host XML parser's version-dependent mitigation.", remediation: "supply CII/UBL XML with no DOCTYPE or ENTITY declarations", evidence: "DOCTYPE/ENTITY markup declaration present" }] };
   const fmt = detectFormat(xml);
   if (!fmt) return { ok: false, code: "UNSUPPORTED_FORMAT", findings: [{ id: "format:unsupported", area: "format", severity: "HIGH", detail: "not a recognised CII (CrossIndustryInvoice) or UBL Invoice document", remediation: "supply Factur-X/CII or UBL XML", evidence: "root element not recognised" }] };
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-einv-"));

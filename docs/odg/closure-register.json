@@ -2401,6 +2401,18 @@
         "verified": true
       },
       "acceptedAt": "2026-10-31"
+    },
+    {
+      "id": "einvoice-dtd-reject",
+      "program": "P0",
+      "priority": 3,
+      "deps": [],
+      "title": "einvoice-parser: reject DOCTYPE/ENTITY (DTD) pre-spawn — explicit, version-independent billion-laughs/XXE guard",
+      "status": "IN_PROGRESS",
+      "evidence": "Recon LOW-MED dos/defense-in-depth. parseInvoiceXml spawns python3 ElementTree on externally-received invoice XML; factur-x-extract CLAIMED billion-laughs is handled downstream by ElementTree, but that depends on host libexpat version (<2.4.0 does NOT mitigate by default) and was UNTESTED. Fix: new hasDoctypeOrEntityDecl(xml) rejects any <!DOCTYPE/<!ENTITY (whitespace-tolerant) with code DTD_REJECTED + HIGH finding BEFORE writing the XML to disk or spawning python — making the no-DTD contract explicit, version-independent and testable without python. ElementTree does not resolve EXTERNAL entities, so this closes the internal-entity amplification/DoS vector. A legitimate CII/UBL invoice never carries a DTD (no false-positive). Tests: einvoice-parser.test.ts +5 (now 15): DOCTYPE+ENTITY bomb ⇒ DTD_REJECTED + injected runner NEVER called (proves pre-spawn); bare <!ENTITY ⇒ rejected; whitespace <! DOCTYPE still caught; clean CII NOT falsely rejected (reaches injected extractor ⇒ ok:true). build:runtime + tsc(both) green; consumers einvoice-validator 17/17 + factur-x-extract 9/9 + einvoice-export 15/15 green; full gate 243/243.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
