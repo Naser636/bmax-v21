@@ -52,6 +52,12 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
   ok("tick: audit chain extends across ticks + stays intact", d2.auditChain.length === 2 && AUDIT.verifyChain(d2.auditChain).ok === true);
   const t = d2.auditChain.map((e) => ({ ...e })); t[0] = { ...t[0], payload: { ...t[0].payload, status: "HACKED" } };
   ok("tick: tampered persisted chain ⇒ detected", AUDIT.verifyChain(t).ok === false);
+  // SEC#3 (P0-E): the verify-on-read GATE must now ACT on that detection (not just be able to detect it).
+  ok("SEC#3 auditIntegrityGate: intact chain ⇒ ok", tick.auditIntegrityGate(d2.auditChain).ok === true);
+  ok("SEC#3 auditIntegrityGate: TAMPERED chain ⇒ fail-closed (ok:false, brokenAt named)", (() => { const g = tick.auditIntegrityGate(t); return g.ok === false && g.brokenAt === 0 && typeof g.reason === "string"; })());
+  ok("SEC#3 auditIntegrityGate: empty/absent chain ⇒ ok (fresh start, not blocked)", tick.auditIntegrityGate([]).ok === true && tick.auditIntegrityGate(null).ok === true);
+  // truncation/reorder of a persisted chain is likewise refused on read.
+  ok("SEC#3 auditIntegrityGate: truncated chain ⇒ fail-closed", tick.auditIntegrityGate([d2.auditChain[1]]).ok === false);
 }
 
 // (6) persist/read round-trip of the audit artifact in an isolated temp cwd (no repo writes).

@@ -2042,6 +2042,33 @@
         "verified": true
       },
       "evidence": "P0-C exec-chain audit #6. validation-engine crossMission guard set true only when BOTH plan.mission and execution.mission present + different ⇒ a PRESENT patch-execution.json with executed[] entries but NO mission stamp could satisfy an ENGINEERING mission coverage with unownable work (legit Patch Executor always stamps report.mission ⇒ only malformed/leftover artifacts reach this). FIX: execUnstamped = isEngineering && planMission && !execMission && executed.length>0 ⇒ crossMission (refuse, fail-closed); scoped so AUDIT/empty untouched; strictly fail-closed (adds only a refusal disjunct). +case 8 regression (unstamped⇒BLOCKED, crossMissionOk=false). ODG DECISION 2: implemented in an ISOLATED worktree off the integrated baseline, EXACT 2-file write-set (validation-engine.ts + validation-engine-recorded-noop.test.ts, NO register in the code PR). INDEPENDENTLY VERIFIED (separate agent = CONFIRMED_FIX_CORRECT; strictly fail-closed, no over-block, cross-mission suite 7/7). tsc clean BOTH tsconfigs; focused + VE regression PASS. CI green; merged PR#296 ca01d2d after merge-condition re-verification. 9 primitives FROZEN."
+    },
+    {
+      "id": "p0e-audit-chain-verify-on-read",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-E SEC#3: verify-on-read gate for the persisted tamper-evident scheduler audit chain (fail-closed)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "evidence": "P0-E security forensic. odg-schedule-tick persisted scheduler-audit-chain.json then on the next tick LOADED (readAuditChain) + EXTENDED it WITHOUT calling verifyChain — the computed tamper-evidence was never consulted at the trust boundary (a partial in-place edit/reorder/truncate would be silently extended). FIX: pure auditIntegrityGate(chain) (empty/absent⇒ok fresh-start; present-but-broken⇒ok:false via AUDIT.verifyChain, no re-impl) + a fail-closed STARTUP gate (B) in main() after the truth-lock precondition, BEFORE tickOnce/persist: broken loaded chain ⇒ record AUDIT_CHAIN_TAMPERED + STARTUP_REFUSED + exit 2, WITHOUT persisting (tampered evidence preserved, not overwritten — proven E2E: file md5 identical before/after). Makes the EXISTING tamper-evidence load-bearing. +4 regression (intact/tampered/truncated/empty-null); suite 14→18; tsc clean BOTH tsconfigs; build OK; dist gate emitted. INDEPENDENTLY VERIFIED (separate agent = CONFIRMED_FIX_CORRECT; fresh-start not blocked, intact continuity not blocked, scope exact). HONESTY: does NOT close full-rewrite or tail-truncation forgery (prefix hash-chain, no key/tip-anchor) ⇒ owner-gated keyed integrity (see p0e-audit-log-keyed-integrity). 9 primitives FROZEN.",
+      "integration": {
+        "state": "PENDING_MERGE"
+      }
+    },
+    {
+      "id": "p0e-audit-log-keyed-integrity",
+      "program": "P0",
+      "priority": 1,
+      "deps": [
+        "p0e-audit-chain-verify-on-read"
+      ],
+      "title": "P0-E SEC#3 follow-on (OWNER-GATED): keyed HMAC / signed-tail + tip-anchor to close full-rewrite & tail-truncation forgery of the audit chain",
+      "status": "BLOCKED",
+      "blockedBy": "owner secret-management decision (secret creation/rotation/storage is owner-gated per mandate)",
+      "humanActionRequired": "Owner to decide the audit-log integrity KEY strategy (HMAC-SHA256 with a runtime secret, or asymmetric signed-tail per SLSA L2, plus a stored trusted tip/length anchor for tail-truncation). Requires owner-gated secret generation+storage+rotation. Detail in scratchpad P0-CONTRACTS + SEC#3 forensic.",
+      "resumeTest": "With a provisioned key: full-rewrite OR tail-truncation of scheduler-audit-chain.json ⇒ keyed-verify ok:false; intact ⇒ ok:true; verify-on-read gate refuses the forgery.",
+      "evidence": "Forensic: audit-log.ts + evidence-provenance.ts are keyless sha256 ⇒ a full-rewrite attacker recomputes a self-consistent chain (verifyChain ok:true); verifyChain is a prefix chain with no tip anchor ⇒ tail-truncation also verifies ok:true. Closing either requires a secret the attacker cannot reproduce ⇒ owner-gated. NO secret operation performed."
     }
   ]
 }
