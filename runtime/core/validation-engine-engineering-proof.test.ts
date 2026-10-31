@@ -162,17 +162,24 @@ const applied = [{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ 
 //      gate, and (c) NOT trigger build-recovery (buildOk true ⇒ :187 skipped). This is the EXACT artifact the stage
 //      emits (see stage-build-ts-evidence.ts non-engineering branch).
 const RO_STAGE_VERIFY = { build: true, typescript: true, buildExecuted: false, skipped: true, skipReason: "non-engineering (read-only/AUDIT) mission — build/TS not run; gate N/A (satisfied by non-applicability)", mission: "M1", producedBy: "stage-build-ts-evidence" };
+// GENUINE read-only under the WRITE-SET-DERIVED (OR) predicate = flag false AND NO write-set (authorizedPaths empty).
 {
-  const r = run([{ objectiveId: "o1", action: "a", status: "RECORDED" }], { requiresEngineering: false, mode: "AUDIT", verify: RO_STAGE_VERIFY });
-  ok("11 read-only mission + stage read-only verify ⇒ validated (not blocked)", !!(r && r.validated));
-  ok("11 read-only mission ⇒ engineering gate NOT applied (engineering:false in report)", !!(r && r.checks && r.checks.engineering === false));
-  ok("11 read-only mission ⇒ build/TS gates green (gate N/A, no recovery)", !!(r && r.checks && r.checks.buildGate === true && r.checks.typescriptGate === true));
+  const r = run([{ objectiveId: "o1", action: "a", status: "RECORDED" }], { requiresEngineering: false, authorizedPaths: [], mode: "AUDIT", verify: RO_STAGE_VERIFY });
+  ok("11 genuine read-only (flag false + NO write-set) ⇒ validated (not blocked)", !!(r && r.validated));
+  ok("11 genuine read-only ⇒ engineering gate NOT applied (engineering:false in report)", !!(r && r.checks && r.checks.engineering === false));
+  ok("11 genuine read-only ⇒ build/TS gates green (gate N/A, no recovery)", !!(r && r.checks && r.checks.buildGate === true && r.checks.typescriptGate === true));
 }
-// 12 — BOUNDARY: the stage's OTHER skip trigger — requiresEngineering true but authorizedPaths EMPTY ⇒ non-engineering.
-//      Same read-only stage verify ⇒ still validated, engineering gate not applied.
+// 12 — WRITE-SET-DERIVED tightening: a plan with a WRITE-SET but requiresEngineering OMITTED is now ENGINEERING (OR),
+//      so with NO this-run verify it must BLOCK (the recon fail-open the AND predicate left open — a mutating mission
+//      could be stamped SUCCESS with no build/TS/scope proof). Proven against the REAL dist VE.
 {
-  const r = run([{ objectiveId: "o1", action: "a", status: "RECORDED" }], { authorizedPaths: [], mode: "READ_ONLY", verify: RO_STAGE_VERIFY });
-  ok("12 empty-authorizedPaths (non-engineering boundary) + read-only stage verify ⇒ validated", !!(r && r.validated) && r.checks.engineering === false);
+  const r = run([{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ target: "runtime/app/x.ts", mode: "content" }] }], { requiresEngineering: false, noVerify: true });
+  ok("12 write-set + flag OMITTED + no verify ⇒ isEngineering(OR) ⇒ BLOCKED (fail-open closed)", !!(r && r.validated === false) && r.checks.engineering === true && r.checks.verifyEvidenceOk === false);
+}
+// 12b — same write-set+flag-omitted plan WITH a this-mission green verify ⇒ validates (engineering gate satisfied, not over-blocked).
+{
+  const r = run([{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ target: "runtime/app/x.ts", mode: "content" }] }], { requiresEngineering: false, verify: { build: true, typescript: true, mission: "M1" } });
+  ok("12b write-set + flag omitted + this-mission green verify ⇒ validated (engineering, not over-blocked)", !!(r && r.validated) && r.checks.engineering === true && r.checks.verifyEvidenceOk === true);
 }
 
 console.log(`\nValidation Engine engineering-proof — ${passed} assertions passed.`);

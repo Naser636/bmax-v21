@@ -15,7 +15,7 @@
  * evidence.js <mission>` by odg-run; reads the mission from argv or mission-plan.json. Compiled-dist, require-based.
  *
  * SCOPE (p0c3-stage-scope-readonly): build + tsc run ONLY for ENGINEERING missions — the exact predicate the
- * Validation Engine uses (plan.requiresEngineering === true && authorizedPaths.length > 0; see isEngineeringMission).
+ * Validation Engine uses (plan.requiresEngineering === true || authorizedPaths.length > 0 — write-set-derived; see isEngineeringMission).
  * For NON-engineering / read-only / AUDIT missions the VE never consults build/typescript, so this stage SKIPS the
  * expensive build/tsc (restoring read-only missions' pre-C#3 zero-build, deterministic, untouched behaviour — a red
  * tree no longer perturbs them) while STILL writing the mission-stamped RC-1 artifact (with an honest skip marker,
@@ -48,7 +48,7 @@ function resolveMission(plan?: any): string | null {
  * Engineering-mission predicate — a BYTE-FOR-BYTE mirror of the Validation Engine's own gate
  * (runtime/core/validation-engine.ts:101-102):
  *   const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
- *   const isEngineering   = plan.requiresEngineering === true && authorizedPaths.length > 0;
+ *   const isEngineering   = plan.requiresEngineering === true || authorizedPaths.length > 0;  // WRITE-SET-DERIVED (OR)
  * These two definitions MUST stay identical: the VE short-circuits both engineeringOk and
  * verifyEvidenceOk to TRUE when !isEngineering, so for a non-engineering mission the VE never
  * consults build/typescript. If this stage skipped under a DIFFERENT (looser) predicate than the
@@ -59,7 +59,10 @@ function resolveMission(plan?: any): string | null {
  */
 function isEngineeringMission(plan: any): boolean {
   const authorizedPaths = Array.isArray(plan && plan.authorizedPaths) ? plan.authorizedPaths : [];
-  return !!(plan && plan.requiresEngineering === true) && authorizedPaths.length > 0;
+  // WRITE-SET-DERIVED (OR) — byte-identical to validation-engine.ts:102. A mission is engineering if it declares the
+  // flag OR holds a write-set. Pinned identical to the VE so stage-skips ⟺ VE-non-engineering (no window where the
+  // stage skips build evidence that the VE then demands). Changed from AND to OR to close the flag-trusting fail-open.
+  return !!(plan && plan.requiresEngineering === true) || authorizedPaths.length > 0;
 }
 
 // Real build/tsc executors — mirror odg-verify's commands exactly; NO gitClean here (applied-but-uncommitted is

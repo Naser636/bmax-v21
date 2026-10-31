@@ -99,7 +99,13 @@ const evidenceOk = missingEvidence.length === 0;
 
 // 3. Engineering performed (write-scope missions only).
 const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
-const isEngineering = plan.requiresEngineering === true && authorizedPaths.length > 0;
+// WRITE-SET-DERIVED (not flag-trusting): a mission is engineering if it declares engineering intent OR holds a
+// write-set. The former `requiresEngineering === true && authorizedPaths.length > 0` (AND) trusted the self-reported
+// flag — a plan carrying authorizedPaths but omitting the flag was classified non-engineering and SKIPPED the
+// engineering/build/TS/verify gates (a mutating mission stampable SUCCESS with a red tree). OR only TIGHTENS (adds
+// gates to more missions, never removes); it is a no-op on loader-produced plans (mission-loader already forces the
+// flag when authorizedPaths is non-empty) and aligns the authoritative gate with self-diagnostic.ts + acceptance-facts.ts.
+const isEngineering = plan.requiresEngineering === true || authorizedPaths.length > 0;
 
 // C#6 fail-closed tightening (needs isEngineering): an ENGINEERING mission whose coverage/evidence is satisfied
 // by a PRESENT execution artifact that has executed entries but NO mission stamp cannot prove the work is its
