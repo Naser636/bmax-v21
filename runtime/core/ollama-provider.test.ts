@@ -43,5 +43,36 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   const prompt = O.buildRepairPrompt({ instruction: "fix add", allowedFiles: ["src/add.js"] }, { "src/add.js": "module.exports=(a,b)=>a-b;" });
   ok("prompt carries instruction, allowed files, strict JSON directive", /fix add/.test(prompt) && /src\/add\.js/.test(prompt) && /"edits"/.test(prompt));
 
-  console.log(`\nOLLAMA-PROVIDER suite — ${pass} assertions passed. (loopback-only client; detect/generate fail-closed; strict untrusted-proposal parse; zero network in test)`);
+  // (6) loopbackGet RESPONSE-SIZE CAP (DoS): a daemon streaming an unbounded body must be bounded (parity with
+  //     loopbackPost). Uses an injected request FUNCTION (host/port stay hardcoded ⇒ loopback-only posture unchanged);
+  //     zero real network. The fake req/res mimic http.request's contract (cb(res); res emits 'data'/'end').
+  const { EventEmitter } = require("events");
+  function fakeRequest(chunks) {
+    return (_options, cb) => {
+      const res = new EventEmitter();
+      const req = new EventEmitter();
+      req.setTimeout = () => {};
+      req.destroy = () => { req._destroyed = true; };
+      req.write = () => {};
+      req.end = () => {
+        process.nextTick(() => {
+          cb(res);
+          for (const ch of chunks) { if (req._destroyed) break; res.emit("data", Buffer.from(ch)); }
+          if (!req._destroyed) res.emit("end");
+        });
+      };
+      return req;
+    };
+  }
+  // Over-cap: a single 1MB chunk against a 1000-byte cap ⇒ fail-closed (NOT buffered to completion).
+  const over = await O.loopbackGet("/api/tags", { maxBytes: 1000, request: fakeRequest(["x".repeat(1_000_000)]) });
+  ok("loopbackGet over size cap ⇒ ok:false 'response exceeded size cap' (DoS-bounded, parity with loopbackPost)", over.ok === false && over.reason === "response exceeded size cap");
+  // Under-cap: a small valid JSON body still parses ⇒ ok:true (no regression; cap does not break normal discovery).
+  const under = await O.loopbackGet("/api/tags", { maxBytes: 1000, request: fakeRequest(['{"models":[', '{"name":"qwen2.5-coder:3b"}', "]}"]) });
+  ok("loopbackGet under cap ⇒ ok:true + parsed json (normal /api/tags discovery unaffected)", under.ok === true && Array.isArray(under.json.models) && under.json.models[0].name === "qwen2.5-coder:3b");
+  // Default cap is 2MB (matches loopbackPost) when maxBytes not supplied; a ~1.5MB body is accepted.
+  const dflt = await O.loopbackGet("/api/tags", { request: fakeRequest(['{"models":[]', " ".repeat(1_500_000), "}"]) });
+  ok("loopbackGet default cap is generous (2MB) ⇒ a 1.5MB valid body still ok", dflt.ok === true && Array.isArray(dflt.json.models));
+
+  console.log(`\nOLLAMA-PROVIDER suite — ${pass} assertions passed. (loopback-only client; detect/generate fail-closed; strict untrusted-proposal parse; GET/POST response-size cap; zero network in test)`);
 })();

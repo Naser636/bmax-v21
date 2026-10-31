@@ -2385,6 +2385,20 @@
         "verified": true
       },
       "acceptedAt": "2026-10-31"
+    },
+    {
+      "id": "ollama-loopbackget-cap",
+      "program": "P0",
+      "priority": 3,
+      "deps": [
+        "ollama-control-plane"
+      ],
+      "title": "ollama-provider loopbackGet response-size cap (parity with loopbackPost; bound unbounded local-daemon body)",
+      "status": "IN_PROGRESS",
+      "evidence": "Recon-confirmed LOW-MED dos. loopbackGet (used by detectOllama for /api/tags discovery) accumulated data += c with NO byte cap, while loopbackPost enforces a 2MB cap and the file header explicitly promises 'a bounded timeout + response-size cap'. A daemon — or any process that grabbed loopback :11434 — streaming an unbounded body would be buffered entirely in memory (OOM/DoS); the 5s timeout does not bound bytes received within the window. Fix: mirror loopbackPost exactly — track bytes += c.length, on bytes>maxBytes call req.destroy()+finish({ok:false,reason:'response exceeded size cap'}); maxBytes opt defaults 2_000_000. Host/port stay HARDCODED (loopback-only, no SSRF surface); added a test-only injectable request-FUNCTION seam (not host/port), consistent with the existing get/post transport seams, and exported loopbackGet. Tests: ollama-provider.test.ts +3 (now 18): over-cap ⇒ ok:false 'response exceeded size cap'; under-cap ⇒ ok:true parsed; default 2MB generous. build:runtime + tsc(both) green; consumers ollama-control-plane-contract 10/10 + coding-executor 9/9 green; full gate 243/243.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }

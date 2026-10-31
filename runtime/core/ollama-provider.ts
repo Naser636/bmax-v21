@@ -41,13 +41,22 @@ function loopbackPost(pathName: string, payload: any, opts: any = {}): Promise<a
   });
 }
 
-/** loopbackGet(pathName): bounded GET (used for /api/tags discovery). */
+/** loopbackGet(pathName, {timeoutMs, maxBytes}): bounded GET (used for /api/tags discovery). The response-size cap
+ *  matches loopbackPost (the file header promises "a bounded timeout + response-size cap"): a daemon — or any other
+ *  process that grabbed loopback :11434 — streaming an unbounded body would otherwise be buffered entirely in memory
+ *  (OOM/DoS); the 5s timeout does NOT bound bytes received within the window. Fail-closed on overflow. */
 function loopbackGet(pathName: string, opts: any = {}): Promise<any> {
   const timeoutMs = Number(opts.timeoutMs) > 0 ? Number(opts.timeoutMs) : 5000;
+  const maxBytes = Number(opts.maxBytes) > 0 ? Number(opts.maxBytes) : 2_000_000;
+  // Test-only seam: inject the request FUNCTION (not host/port — those stay hardcoded, so the loopback-only
+  // SSRF posture is unchanged). Defaults to http.request in production, exactly like the get/post transport seams.
+  const request = typeof opts.request === "function" ? opts.request : http.request;
   return new Promise((resolve) => {
     let done = false; const finish = (r: any) => { if (!done) { done = true; resolve(r); } };
-    const req = http.request({ host: OLLAMA_HOST, port: OLLAMA_PORT, path: pathName, method: "GET" }, (res: any) => {
-      let data = ""; res.on("data", (c: any) => { data += c; }); res.on("end", () => { try { resolve({ ok: true, json: JSON.parse(data) }); } catch { resolve({ ok: false, reason: "non-JSON" }); } });
+    const req = request({ host: OLLAMA_HOST, port: OLLAMA_PORT, path: pathName, method: "GET" }, (res: any) => {
+      let data = ""; let bytes = 0;
+      res.on("data", (c: any) => { bytes += c.length; if (bytes > maxBytes) { req.destroy(); finish({ ok: false, reason: "response exceeded size cap" }); return; } data += c; });
+      res.on("end", () => { try { finish({ ok: true, json: JSON.parse(data) }); } catch { finish({ ok: false, reason: "non-JSON" }); } });
     });
     req.on("error", (e: any) => finish({ ok: false, reason: e && e.message }));
     req.setTimeout(timeoutMs, () => { req.destroy(); finish({ ok: false, reason: "timeout" }); });
@@ -123,5 +132,5 @@ function buildRepairPrompt(contract: any, currentFiles: any): string {
   ].join("\n\n");
 }
 
-export { detectOllama, generate, parseEditsProposal, buildRepairPrompt, balancedObject, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
-module.exports = { detectOllama, generate, parseEditsProposal, buildRepairPrompt, balancedObject, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
+export { detectOllama, generate, loopbackGet, parseEditsProposal, buildRepairPrompt, balancedObject, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
+module.exports = { detectOllama, generate, loopbackGet, parseEditsProposal, buildRepairPrompt, balancedObject, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
