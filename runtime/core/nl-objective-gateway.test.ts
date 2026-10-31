@@ -528,6 +528,34 @@ console.log("== NL Objective Gateway ==");
   ok("31 far signal with ADJACENT strong negation still suppressed (window is local to the signal)", C("x ".repeat(10000) + "do not delete the production database").externalEffect !== "DESTRUCTIVE");
 }
 
+// ---- 32 — UNCOVERED LOCALE (SAFETY + FAIRNESS): the effect classifier reads only Latin (EN/FR) + Arabic.
+//      A command written PREDOMINANTLY in any other script matches no family and previously fell through to
+//      NONE/LOW — a fail-open (and a fairness gap). The gateway now abstains fail-closed on such objectives.
+{
+  const C = gw.classifyObjective;
+  // (a) dominant-uncovered scripts ⇒ NONE but localeCovered:false + requiresHuman:true (could-not-classify, NOT safe).
+  const zh = C("删除生产数据库的所有数据");          // Chinese: "delete all data in the production database"
+  ok("32 CJK objective ⇒ localeCovered false + requiresHuman true (not a false LOW)", zh.localeCovered === false && zh.requiresHuman === true && zh.externalEffect === "NONE");
+  const ru = C("удалить рабочую базу данных");          // Russian/Cyrillic: "delete the working database"
+  ok("32 Cyrillic objective ⇒ localeCovered false + requiresHuman true", ru.localeCovered === false && ru.requiresHuman === true);
+  // (b) COVERED locales are NOT flagged — no over-abstention on EN / FR / AR, and a matched family is covered.
+  ok("32 English benign ⇒ localeCovered true, requiresHuman false", (() => { const c = C("analyze the sales pipeline"); return c.localeCovered === true && c.requiresHuman === false; })());
+  ok("32 Arabic benign (covered script) ⇒ localeCovered true, NONE (not falsely flagged uncovered)", (() => { const c = C("اعرض قائمة الملفات"); return c.localeCovered === true && c.externalEffect === "NONE"; })());
+  ok("32 Arabic DESTRUCTIVE still classified (coverage never downgrades a matched family)", (() => { const c = C("احذف الملف"); return c.externalEffect === "DESTRUCTIVE" && c.localeCovered === true; })());
+  ok("32 mixed Latin-dominant with a foreign proper noun stays covered (uncovered not majority)", C("review the 日本 market report").localeCovered === true);
+  // (c) compile() abstains fail-closed on a multi-word uncovered-locale objective (spaceless CJK would trip the
+  //     ambiguity gate first, so use a multi-word Cyrillic phrase to reach classification).
+  const comp = gw.compile("удалить рабочую базу данных проекта сейчас");
+  ok("32 compile uncovered locale ⇒ UNCOVERED_LOCALE blocker", comp.blockers.some((b) => b.code === "UNCOVERED_LOCALE"));
+  ok("32 compile uncovered locale ⇒ status BLOCKED + recovery ABSTAIN (fail-closed)", comp.status === "BLOCKED" && comp.recovery === "ABSTAIN");
+  assertNoSideEffects("32 uncovered locale", comp);
+  // (d) a covered-locale objective never receives the UNCOVERED_LOCALE blocker (no regression / no over-block).
+  const en = gw.compile("analyze the sales pipeline");
+  ok("32 covered-locale compile ⇒ NO UNCOVERED_LOCALE blocker", !en.blockers.some((b) => b.code === "UNCOVERED_LOCALE"));
+  const ar = gw.compile("اعرض قائمة ملفات المشروع الحالية");
+  ok("32 covered Arabic compile ⇒ NO UNCOVERED_LOCALE blocker", !ar.blockers.some((b) => b.code === "UNCOVERED_LOCALE"));
+}
+
 console.log("");
 console.log(`Gateway tests: ${passed} passed, ${failed} failed`);
 assert.strictEqual(failed, 0, `${failed} gateway assertion(s) failed`);

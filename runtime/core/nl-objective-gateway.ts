@@ -253,6 +253,34 @@ function signalPresentUnnegated(g: string, s: string): boolean {
         from = idx + 1;
     }
 }
+// LOCALE COVERAGE (SAFETY + FAIRNESS). The effect classifier's keyword families cover LATIN script (EN +
+// diacritic-folded FR) and ARABIC. An objective written PREDOMINANTLY in any OTHER script (CJK, Cyrillic,
+// Devanagari, Hangul, Hebrew, Greek, Thai, …) is effectively UNREADABLE to the classifier: a destructive /
+// financial / deploy command in that language matches no family and falls through to NONE/LOW — the SAME
+// governance fail-open V2-B1 closed for FR/AR, still open for every uncovered locale (and a fairness gap for
+// those users). We DETECT the dominant-uncovered-script case and abstain fail-closed (require human) rather
+// than emit a falsely-confident low-risk classification. Over-classification toward human review is the safe
+// direction; silently rating an unreadable command LOW is the dangerous one.
+// LIMITATION (documented, NOT silently closed): a LATIN-script language we lack keywords for (e.g. Spanish
+// "borra el archivo") is indistinguishable from English by script alone and remains a keyword gap; closing it
+// would require a probabilistic language detector (non-deterministic), which is out of scope for this guard.
+const LATIN_LETTER = /\p{Script=Latin}/u;
+const ARABIC_LETTER = /\p{Script=Arabic}/u;
+const ANY_LETTER = /\p{L}/u;
+function localeCovered(goal: any): boolean {
+    const s = String(goal == null ? "" : goal);
+    let covered = 0;
+    let uncovered = 0;
+    for (const ch of s) {                                    // iterate code points (handles surrogate pairs)
+        if (!ANY_LETTER.test(ch)) continue;                  // skip digits / punctuation / whitespace / symbols / emoji
+        if (LATIN_LETTER.test(ch) || ARABIC_LETTER.test(ch)) covered++;
+        else uncovered++;
+    }
+    // Covered unless an uncovered script is the STRICT majority of the alphabetic content — so an English/FR
+    // sentence quoting a short foreign proper noun is not tripped, but a predominantly-foreign command is.
+    return uncovered <= covered;
+}
+
 function classifyObjective(goal: any) {
     // Fold diacritics so FRENCH signals (stored folded in EFFECT_FAMILIES) match accented input
     // ("déploie"→"deploie"); English folds to itself (byte-identical) and Arabic is preserved. NB: no input truncation
@@ -260,11 +288,20 @@ function classifyObjective(goal: any) {
     const g = foldDiacritics(String(goal || "")).toLowerCase();
     for (const [family, signals, actionClass, risk, reversibility, requiresExternal, requiresHuman] of EFFECT_FAMILIES) {
         if (signals.some((s) => signalPresentUnnegated(g, s))) {
-            return { externalEffect: family, actionClass, risk, reversibility, requiresExternal, requiresHuman };
+            // A matched family IS a successful classification — the dangerous keyword was found regardless of
+            // the surrounding script — so coverage is not in question here.
+            return { externalEffect: family, actionClass, risk, reversibility, requiresExternal, requiresHuman, localeCovered: true };
         }
     }
-    // No outward-effect signal ⇒ a safe, local, observational/generative objective.
-    return { externalEffect: "NONE", actionClass: "GENERATE", risk: "LOW", reversibility: "R0", requiresExternal: false, requiresHuman: false };
+    // No outward-effect signal was found. Distinguish two cases:
+    //  (a) the objective is in a COVERED locale ⇒ a genuinely safe, local, observational/generative objective;
+    //  (b) the objective is PREDOMINANTLY in an UNCOVERED script ⇒ we cannot read it, so "no signal" is a
+    //      could-not-classify, NOT a proof of safety. Abstain fail-closed: require human (the compile step adds
+    //      an UNCOVERED_LOCALE blocker so the dry-run reports BLOCKED/ABSTAIN rather than a false LOW).
+    if (!localeCovered(goal)) {
+        return { externalEffect: "NONE", actionClass: "GENERATE", risk: "LOW", reversibility: "R0", requiresExternal: false, requiresHuman: true, localeCovered: false };
+    }
+    return { externalEffect: "NONE", actionClass: "GENERATE", risk: "LOW", reversibility: "R0", requiresExternal: false, requiresHuman: false, localeCovered: true };
 }
 
 // ---- Ambiguity (ask for missing BUSINESS information only — never internal ODG commands) ---------
@@ -410,6 +447,12 @@ function compile(rawObjective: any, opts: any = {}) {
         });
 
         // Per-objective blockers (fail-closed, deterministic).
+        // UNCOVERED LOCALE — the effect classifier could not read this objective's language (predominantly a
+        // non-Latin/non-Arabic script), so its NONE/LOW classification is a could-not-verify, not a safety proof.
+        // Abstain: block and require human review rather than admit a possibly-dangerous foreign-language command.
+        if (classification.localeCovered === false) {
+            blockers.push({ code: "UNCOVERED_LOCALE", objective: obj.id, detail: `Objective "${obj.goal}" is predominantly written in a script the effect classifier does not cover (only Latin/EN-FR and Arabic are classified). The gateway abstains fail-closed and requires human review rather than emit a possibly-wrong low-risk classification.` });
+        }
         if (missingLocalCapability && !classification.requiresExternal) {
             blockers.push({ code: "MISSING_CAPABILITY", objective: obj.id, detail: `No local capability resolves "${obj.goal}" and no external effect was requested.` });
         }
