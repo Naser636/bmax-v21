@@ -199,5 +199,24 @@ console.log("A3 — VALIDATION REFUSES RECORDED NO-OP COVERAGE");
   check(out.validated === true && out.status === "SUCCESS" && out.exit === 0, "ENGINEERING mission with a committed in-scope deliverable ⇒ SUCCESS (not over-blocked)");
 }
 
+// 8 — C#6 (P0-C): an ENGINEERING mission whose patch-execution.json is POPULATED but carries NO mission stamp
+//     cannot prove the work is its own ⇒ cross-mission fail-closed ⇒ BLOCKED. Uses the same legit-SUCCESS setup
+//     as 7b (committed in-scope deliverable), differing ONLY in that the artifact omits `mission` — isolating the
+//     unstamped-ownership guard. The legit stamped variant (7b) is the SUCCESS control proving no over-block.
+{
+  const dir = sandboxEmptyScope();
+  fs.mkdirSync(path.join(dir, "src", "feature"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "src", "feature", "impl.ts"), "export const x = 1;\n");
+  sh(dir, "git", ["add", "-A"]); sh(dir, "git", ["commit", "-q", "-m", "feature"]);
+  const G = (n: string) => path.join(dir, "runtime", "generated", n);
+  // write the execution artifact WITHOUT a mission field (malformed/leftover) but with real executed entries
+  fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ executed: [{ action: "OBJ1", objectiveId: "OBJ1", status: "APPLIED", files: [{ target: "src/feature/impl.ts", mode: "content" }] }] }));
+  const r = spawnSync("node", [VE], { cwd: dir, encoding: "utf8" });
+  const rep = JSON.parse(fs.readFileSync(G("mission-report.json"), "utf8"));
+  check(rep.validated === false && rep.status === "BLOCKED" && (r.status ?? -1) === 1, "8 ENGINEERING + populated-but-UNSTAMPED execution artifact ⇒ BLOCKED (C#6 fail-closed)");
+  check(rep.checks?.crossMissionOk === false, "8 crossMissionOk=false (right reason: unownable artifact)");
+  check((rep.unmet || []).some((u: string) => /UNSTAMPED|unownable|Cross-mission/i.test(u)), "8 unmet names the unstamped/cross-mission refusal");
+}
+
 console.log(failures === 0 ? "ALL PASS — A3 RECORDED NO-OP GUARD" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

@@ -66,7 +66,8 @@ const executed = Array.isArray(execution.executed) ? execution.executed : [];
 // both identities known and different ⇒ BLOCKED. Either identity absent (legacy/unstamped) ⇒ unchanged.
 const planMission: any = plan.mission || patch.mission || null;
 const execMission: any = execution && typeof execution.mission === "string" ? execution.mission : null;
-const crossMission = !!(planMission && execMission && planMission !== execMission);
+// crossMission (base): both identities known and different ⇒ refuse (fail-closed isolation). The C#6 tightening
+// for a PRESENT-but-unstamped artifact on an engineering mission is folded in below, once isEngineering is known.
 const failed = executed.filter((e: any) => e && e.status === "FAILED");
 
 // Per-action authorization boundary (ACTION_AUTHZ_PARTIAL): an action the Patch Executor recorded as
@@ -99,6 +100,15 @@ const evidenceOk = missingEvidence.length === 0;
 // 3. Engineering performed (write-scope missions only).
 const authorizedPaths = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
 const isEngineering = plan.requiresEngineering === true && authorizedPaths.length > 0;
+
+// C#6 fail-closed tightening (needs isEngineering): an ENGINEERING mission whose coverage/evidence is satisfied
+// by a PRESENT execution artifact that has executed entries but NO mission stamp cannot prove the work is its
+// OWN. The legitimate Patch Executor ALWAYS stamps report.mission, so a populated-yet-unstamped artifact is a
+// malformed/leftover one ⇒ treat as cross-mission (refuse), not "unchanged". Scoped to isEngineering + non-empty
+// executed[] so read-only/AUDIT missions and genuinely-empty artifacts keep their historical behaviour.
+const execUnstamped = !!(isEngineering && planMission && !execMission &&
+  execution && Array.isArray(execution.executed) && execution.executed.length > 0);
+const crossMission = !!(planMission && execMission && planMission !== execMission) || execUnstamped;
 
 // 2c. No RECORDED no-op coverage for ENGINEERING missions (A3). The Patch Executor marks an objective
 // `RECORDED` when it maps to NEITHER a real `edits` patch NOR a capability executor — a symbolic no-op
@@ -337,7 +347,7 @@ const partialEligible =
 const status = validated ? "SUCCESS" : partialEligible ? "PARTIAL" : "BLOCKED";
 
 const unmet: string[] = [];
-if (crossMission) unmet.push(`Cross-mission/stale execution artifact: mission-plan belongs to "${planMission}" but patch-execution belongs to "${execMission}" — refuse to verify over mismatched artifacts (fail-closed isolation).`);
+if (crossMission) unmet.push(`Cross-mission/stale execution artifact: mission-plan belongs to "${planMission}" but patch-execution belongs to "${execMission || "(UNSTAMPED — populated artifact with no mission identity)"}" — refuse to verify over mismatched/unownable artifacts (fail-closed isolation).`);
 if (codingGate.block) unmet.push(`Objective fidelity gate: ${codingGate.reason}.`);
 if (!coverageOk) unmet.push(`Objective coverage incomplete (objectives=${objectiveCount}, planned=${plannedCount}, executed=${executed.length}).`);
 if (!noFailures) unmet.push(`${failed.length} action(s) FAILED: ${failed.map((f: any) => f.action).join(", ")}.`);
