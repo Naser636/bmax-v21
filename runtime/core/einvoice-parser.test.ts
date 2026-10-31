@@ -67,4 +67,24 @@ else {
 { const r = P.parseAndValidate("<foo/>");
   ok("supportedSubset + knownGaps enumerated (honest; not full conformance)", Array.isArray(r.supportedSubset) && r.supportedSubset.length >= 5 && Array.isArray(r.knownGaps) && r.knownGaps.some((g) => /Factur-X|900|full EN16931/i.test(g))); }
 
-console.log(`\nEINVOICE-PARSER suite — ${pass} assertions passed. (CII+UBL→model, exact Decimal→minor; rule violations from XML surfaced; malformed/unsupported fail-closed; provenance + supported-subset/gaps enumerated)`);
+// (9) XXE / billion-laughs: a DOCTYPE/ENTITY declaration is rejected fail-closed BEFORE the python child is spawned
+//     (version-independent of host libexpat). Proven with an injected runner that MUST NOT be called on a DTD doc.
+{
+  const DOCTYPE_BOMB = `<?xml version="1.0"?>\n<!DOCTYPE rsm:CrossIndustryInvoice [\n <!ENTITY lol "lol">\n <!ENTITY lol2 "&lol;&lol;&lol;&lol;">\n]>\n` + CII.replace("GRANDHOLDER", "180.00");
+  let runnerCalled = false;
+  const neverRun = () => { runnerCalled = true; return { stdout: "{}", status: 0 }; };
+  const r = P.parseInvoiceXml(DOCTYPE_BOMB, { runner: neverRun });
+  ok("DOCTYPE+ENTITY (billion-laughs) ⇒ ok:false code DTD_REJECTED + HIGH finding", r.ok === false && r.code === "DTD_REJECTED" && r.findings.some((f) => f.severity === "HIGH" && f.area === "xml"));
+  ok("DTD rejected BEFORE spawning python (runner never invoked ⇒ version-independent guarantee)", runnerCalled === false);
+  // a bare ENTITY declaration (no DOCTYPE keyword match) is also caught.
+  ok("bare <!ENTITY declaration ⇒ DTD_REJECTED", P.parseInvoiceXml(`<!ENTITY x "y">` + CII, { runner: neverRun }).code === "DTD_REJECTED");
+  // whitespace-tolerant: `<! DOCTYPE` (lenient-parser bypass attempt) still caught.
+  ok("whitespace between <! and DOCTYPE still caught (no lenient-parser bypass)", P.parseInvoiceXml(`<!  DOCTYPE foo>` + CII, { runner: neverRun }).code === "DTD_REJECTED");
+  // NO false-positive: a clean CII with NO DTD passes the guard and reaches the (injected) extractor ⇒ ok:true.
+  let cleanRan = false;
+  const cleanRunner = () => { cleanRan = true; return { stdout: JSON.stringify({ id: "FR-CII-001", currency: "EUR" }), status: 0 }; };
+  const clean = P.parseInvoiceXml(ciiGood, { runner: cleanRunner });
+  ok("clean CII (no DTD) is NOT falsely rejected — reaches the extractor ⇒ ok:true", cleanRan === true && clean.ok === true && clean.format === "CII");
+}
+
+console.log(`\nEINVOICE-PARSER suite — ${pass} assertions passed. (CII+UBL→model, exact Decimal→minor; rule violations from XML surfaced; malformed/unsupported fail-closed; DTD/ENTITY rejected pre-spawn; provenance + supported-subset/gaps enumerated)`);
