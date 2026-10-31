@@ -147,4 +147,26 @@ t("decompression bomb stream ⇒ refused (streamsFailed), bounded (no OOM), hone
   assert.strictEqual(rt.extractStats.streamsFailed >= 1, true);
 });
 
+// 13 — MAX_STREAMS cap ⇒ honest PARTIAL (not a silent full success): a PDF with > the stream cap leaves streams
+//      UNPROCESSED, so fullyExtracted must be false + extractStats.capped true, even though every processed stream
+//      inflated cleanly. (Closes the follow-up: the cap was recorded in errors[] but did not flip fullyExtracted.)
+t("stream-count cap ⇒ PARTIAL + extractStats.capped (unprocessed streams never silently 'fully extracted')", () => {
+  const COUNT = 4100; // > MAX_STREAMS (4096)
+  const parts = [Buffer.from("%PDF-1.7\n1 0 obj\n<< /Type /Pages /Count 1 >>\nendobj\n", "latin1")];
+  const flate = zlib.deflateSync(Buffer.from(TEXT("x"), "latin1"));
+  const head = Buffer.from(`2 0 obj\n<< /Length ${flate.length} /Filter /FlateDecode >>\nstream\n`, "latin1");
+  const tailB = Buffer.from("\nendstream\nendobj\n", "latin1");
+  for (let i = 0; i < COUNT; i++) parts.push(head, flate, tailB);
+  parts.push(Buffer.from("%%EOF", "latin1"));
+  const pdf = Buffer.concat(parts);
+  const t0 = Date.now();
+  const r = JS.extractPdf(pdf);
+  assert.ok(Date.now() - t0 < 20000, "cap extraction bounded");
+  assert.strictEqual(r.extractStats.capped, true);
+  assert.ok(r.extractStats.streamsTotal <= 4096, "processing stopped at the cap");
+  assert.strictEqual(r.fullyExtracted, false);          // unprocessed streams ⇒ NOT full
+  assert.ok(r.status === "PARTIAL" || r.status === "NO_TEXT_LAYER", "honest non-full status");
+  assert.ok((r.errors || []).some((e) => /stream cap/.test(e)), "cap disclosed in errors");
+});
+
 console.log(`\nALL PASS — pdf-extract (${n} tests)`);

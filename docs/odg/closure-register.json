@@ -2294,8 +2294,24 @@
       "priority": 2,
       "deps": [],
       "title": "SSRF guard: opt-in rejectPrivateHosts in httpGetBounded; the governed external-research client refuses private/link-local/loopback/cloud-metadata hosts",
+      "status": "ACCEPTED",
+      "evidence": "DESIGN_IMPROVEMENT/MED security (recon F3, latent — no live injector today). capability-executors.ts httpGetBounded accepted any http/https URL (only protocol checked), so a mission-influenced source_allowlist URL fetched via the built-in client could hit 169.254.169.254 / internal hosts (SSRF). A BLANKET isPrivateHost would break legitimate LOOPBACK consumers (ollama 127.0.0.1:11434, odg-probe, the external-research-live in-process test server). FIX (opt-in, structural): httpGetBounded(url,maxBytes,timeoutMs,{rejectPrivateHosts:true}) refuses private/link-local/loopback/ULA/cloud-metadata BEFORE connect; the GOVERNED external-research client (governedHttpGet's --http-get worker) sets the flag, so mission-influenced URLs are SSRF-safe, while direct loopback callers (no flag) are unaffected. isPrivateHost policy inlined (same as bounded-http-client.ts; avoids a require cycle into this core module). EVIDENCE: http-get-bounded.test.ts 15/15 incl. 7 private/metadata hosts blocked with the flag (169.254.169.254, metadata.google.internal, 10./192.168./127./[::1]/localhost), default permissive (opt-in; loopback unaffected), public host not over-blocked. tsc clean BOTH; full gate green. NOTE: finance-data-connector.defaultFetcher (recon F2) has the same ungated https.get but is DORMANT (no runtime consumer, SIM-only) — documented here as a known dormant gap; route it through bounded-http-client / add the guard if/when a consumer is wired (not touched now to avoid changing dead code). OWASP A10, CWE-918. Independent verify + CI pending.",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 316,
+        "mergeCommit": "2ab7108",
+        "verified": true
+      }
+    },
+    {
+      "id": "recon-followups-adapter-pdfstreams",
+      "program": "P0",
+      "priority": 3,
+      "deps": [],
+      "title": "Recon follow-ups: autonomy-runtime-adapter isEngineeringMission AND->OR (consistency) + pdf-extract MAX_STREAMS cap -> honest PARTIAL",
       "status": "IN_PROGRESS",
-      "evidence": "DESIGN_IMPROVEMENT/MED security (recon F3, latent — no live injector today). capability-executors.ts httpGetBounded accepted any http/https URL (only protocol checked), so a mission-influenced source_allowlist URL fetched via the built-in client could hit 169.254.169.254 / internal hosts (SSRF). A BLANKET isPrivateHost would break legitimate LOOPBACK consumers (ollama 127.0.0.1:11434, odg-probe, the external-research-live in-process test server). FIX (opt-in, structural): httpGetBounded(url,maxBytes,timeoutMs,{rejectPrivateHosts:true}) refuses private/link-local/loopback/ULA/cloud-metadata BEFORE connect; the GOVERNED external-research client (governedHttpGet's --http-get worker) sets the flag, so mission-influenced URLs are SSRF-safe, while direct loopback callers (no flag) are unaffected. isPrivateHost policy inlined (same as bounded-http-client.ts; avoids a require cycle into this core module). EVIDENCE: http-get-bounded.test.ts 15/15 incl. 7 private/metadata hosts blocked with the flag (169.254.169.254, metadata.google.internal, 10./192.168./127./[::1]/localhost), default permissive (opt-in; loopback unaffected), public host not over-blocked. tsc clean BOTH; full gate green. NOTE: finance-data-connector.defaultFetcher (recon F2) has the same ungated https.get but is DORMANT (no runtime consumer, SIM-only) — documented here as a known dormant gap; route it through bounded-http-client / add the guard if/when a consumer is wired (not touched now to avoid changing dead code). OWASP A10, CWE-918. Independent verify + CI pending."
+      "evidence": "Two verifier-flagged non-blocking follow-ups. (1) src/runtime/autonomy-runtime-adapter.ts isEngineeringMission AND->OR (write-set-derived), consistent with validation-engine.ts:102 + stage-build-ts-evidence.ts: a write-set mission omitting the flag no longer skips the engineering-performed check; only tightens; the 3 adapter consumer suites stay green. (2) pdf-extract.ts: a MAX_STREAMS cap hit now sets capped=true => fullyExtracted:false + PARTIAL (was recorded only in errors[], could report fullyExtracted:true despite dropping streams); extractStats.capped exposed; pdf-extract.test.ts 13/13 incl. a >4096-stream cap => PARTIAL case. tsc clean BOTH; full gate via CI. Independent verify + CI."
     }
   ]
 }
