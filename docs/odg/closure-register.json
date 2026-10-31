@@ -2109,7 +2109,10 @@
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-31",
       "integration": {
-        "state": "PENDING_MERGE"
+        "state": "MERGED",
+        "pr": 300,
+        "mergeCommit": "612942c",
+        "verified": true
       },
       "evidence": "P0-C forensic #5 (design A). odg-schedule-tick is a scheduled/unattended entry; its truth-lock repo-safety gate defaulted OFF unless ODG_TRUTH_LOCK_ENFORCE was set, so a mutating mission on a divergent/unsafe repo was only RECORDED outside the systemd unit (which already sets =1). FIX (launcher-scoped, forensic design A): launcherEnforce() = env !== 0/false (DEFAULT-ON; unset⇒enforce, =0/=false⇒opt-out for throwaway/CI fixtures), and main() stamps process.env.ODG_TRUTH_LOCK_ENFORCE=1 when enforcing so the dispatched odg-run child (env:process.env) enforces transitively. DID NOT touch the pure gate default, odg-run, patch-executor, delegate-isolation, or capability-executors (they keep opt-in env===1 so local-dev + direct-spawn tests stay record-only). Reversible (env=0 opt-out). Regression: +4 unit (launcherEnforce unset/0/false/1) suite 18->22; +2 real-process e2e (G non-conforming+UNSET⇒STARTUP_REFUSED proving default-on; H non-conforming+=0⇒not-blocked opt-out) and A-F unchanged; truth-lock-gate + truth-lock-chokepoint PASS; tsc clean BOTH tsconfigs; build OK. Independently verified by a separate agent. 9 primitives FROZEN. OPEN (recorded): odg-campaign-run.ts has no truth-lock hook — covered via odg-campaign-loop->odg-run; adding a direct hook is a possible follow-on."
     }
