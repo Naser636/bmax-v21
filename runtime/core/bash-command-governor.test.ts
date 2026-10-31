@@ -336,17 +336,29 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
   // confinement failure, not a real one). env is already this suite's portable shell entrypoint.
   const sys = engine.govern({ command: "stat /usr/bin/env", execute: true }, {});
   ok("confinement: system code dirs (/usr) remain readable (commands still run)", (sys.execution || {}).exitCode === 0);
-  // /proc ENV ISOLATION (fixes an audited leak): PID 1 in the sandbox namespace must NOT carry the governor process's
-  // host env. `--clearenv` only scrubs the child; bwrap's own process/monitor is cleared by spawning bwrap with a
-  // cleared env + --as-pid-1. A governed `cat /proc/1/environ` must expose ONLY the sandbox env (PATH/HOME/PWD),
-  // never a host secret. NUL-delimited ⇒ normalize to spaces before matching. Non-vacuous: leaks on the pre-fix spawn.
+  // /proc ENV ISOLATION — STRENGTHENED: reading a process-environ pseudo-file is now classified as SECRET access
+  // (SECRET_PATTERNS) ⇒ it ESCALATES (HUMAN_APPROVAL_REQUIRED) and is NEVER executed — a read of /proc/1/environ or
+  // /proc/self/environ cannot reach the sandbox at all (defense-in-depth above the sandbox's --clearenv/--as-pid-1,
+  // which remains the second layer). This closes the envAllowlist-exfiltration path (`cat /proc/self/environ` echoing
+  // injected secrets). Non-vacuous: the pre-fix governor classified these as benign READ ⇒ EXECUTED.
   const proc1 = engine.govern({ command: "cat /proc/1/environ", execute: true }, {});
-  const proc1out = String((proc1.execution || {}).stdout || "").replace(/\0/g, " ");
-  ok("confinement: /proc/1/environ exposes NO host env (no API key / SSH_CLIENT / session id)",
-    !/ANTHROPIC_API_KEY=sk|SSH_CLIENT=|CLAUDE_CODE_SESSION_ID=|ANTHROPIC_API_KEY=[^*\s]/.test(proc1out));
-  const procSelf = engine.govern({ command: "cat /proc/self/environ", execute: true }, {});
-  ok("confinement: /proc/self/environ carries only the cleared sandbox env",
-    !/ANTHROPIC_API_KEY=sk|SSH_CLIENT=/.test(String((procSelf.execution || {}).stdout || "").replace(/\0/g, " ")));
+  ok("confinement: /proc/1/environ read is REFUSED as secret access (escalates, never executed)",
+    proc1.outcome === O.HUMAN_APPROVAL_REQUIRED && proc1.analysis && proc1.analysis.touchesSecret === true && !proc1.execution);
+  const procSelf = engine.govern({ command: "cat /proc/self/environ", execute: true, envAllowlist: ["PATH"] }, {});
+  ok("confinement: /proc/self/environ read is REFUSED as secret access (no injected-env exfiltration)",
+    procSelf.outcome === O.HUMAN_APPROVAL_REQUIRED && !procSelf.execution);
+  // VALUE-BASED-BY-INJECTION redaction: a secret injected via envAllowlist is scrubbed from evidence by its VALUE even
+  // when its NAME does not match the secret-name regex (DATABASE_URL etc.) — the name-regex selection alone missed it.
+  const SAVED = process.env.ODG_TEST_INJECTED_DBURL;
+  process.env.ODG_TEST_INJECTED_DBURL = "postgres://admin:SUPERSECRETpw@db.internal:5432/app";
+  const redactInjected = engine.buildRedactor(["ODG_TEST_INJECTED_DBURL"]);
+  const redactNameOnly = engine.buildRedactor([]); // only name-regex host vars
+  const sample = "leak: postgres://admin:SUPERSECRETpw@db.internal:5432/app end";
+  ok("redaction: an injected envAllowlist value is scrubbed by VALUE despite a non-secret NAME (exfil closed)",
+    !redactInjected(sample).includes("SUPERSECRETpw") && redactInjected(sample).includes("***REDACTED***"));
+  ok("redaction: without injection the same non-secret-named value is NOT auto-redacted (proves the fix is the injection path, not name-regex)",
+    redactNameOnly(sample).includes("SUPERSECRETpw"));
+  if (SAVED === undefined) delete process.env.ODG_TEST_INJECTED_DBURL; else process.env.ODG_TEST_INJECTED_DBURL = SAVED;
 })();
 
 console.log(`\nGOVERNED BASH/LINUX COMMAND — ${passed} assertions passed.`);
