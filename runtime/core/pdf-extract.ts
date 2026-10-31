@@ -82,7 +82,7 @@ function extractPdf(input: any, opts: any): any {
   const countM = latin.match(/\/Type\s*\/Pages\b[^>]*?\/Count\s+(\d+)/);
   const pageCount = countM ? Number(countM[1]) : (latin.match(/\/Type\s*\/Page[^s]/g) || []).length || null;
 
-  let streamsTotal = 0, streamsInflated = 0, streamsFailed = 0, streamsWithText = 0;
+  let streamsTotal = 0, streamsInflated = 0, streamsFailed = 0, streamsWithText = 0, capped = false;
   const blocks: string[] = [];
   let idx = 0;
   while (true) {
@@ -90,7 +90,7 @@ function extractPdf(input: any, opts: any): any {
     if (sIdx === -1) break;
     // Bomb-count guard: stop processing further streams past the cap (a file packed with many streams cannot
     // force unbounded work). Remaining streams are recorded as failed/unprocessed (honest PARTIAL, never silent).
-    if (streamsTotal >= MAX_STREAMS) { errors.push(`stream cap ${MAX_STREAMS} reached — remaining streams not processed`); break; }
+    if (streamsTotal >= MAX_STREAMS) { capped = true; errors.push(`stream cap ${MAX_STREAMS} reached — remaining streams not processed`); break; }
     streamsTotal++;
     let dataStart = sIdx + 6;
     if (latin[dataStart] === "\r") dataStart++;
@@ -111,14 +111,16 @@ function extractPdf(input: any, opts: any): any {
   }
 
   const fullText = blocks.join("\n\n").trim();
-  const extractStats = { streamsTotal, streamsInflated, streamsFailed, streamsWithText, pageCount };
+  const extractStats = { streamsTotal, streamsInflated, streamsFailed, streamsWithText, pageCount, capped };
   if (streamsTotal === 0) return { ...base, status: "CORRUPT", pageCount, errors: ["no stream objects found"], extractStats };
   if (!fullText) {
     return { ...base, status: "NO_TEXT_LAYER", pageCount, extractStats,
       ocr: { attempted: false, available: false, reason: "no text operators found (likely scanned); OCR tool (tesseract) ABSENT ⇒ OCR NEEDED but UNAVAILABLE" },
       warnings: ["no extractable text layer — do NOT treat as 'no information'; needs OCR"] };
   }
-  const fully = streamsFailed === 0;
+  // A hit on the MAX_STREAMS cap means streams were left UNPROCESSED ⇒ extraction is NOT full (honest PARTIAL),
+  // even if every processed stream inflated cleanly. (streamsFailed counts inflate failures; capped is the count cap.)
+  const fully = streamsFailed === 0 && !capped;
   if (!fully) warnings.push(`${streamsFailed} stream(s) could not be inflated (image/object/raw streams, or partial) — extraction is PARTIAL, not full`);
   return {
     ...base,

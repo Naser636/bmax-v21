@@ -1016,8 +1016,11 @@ export class AutonomyRuntimeAdapter implements AutonomyRuntimePorts {
     // deliverable this run (ground-truth changedFiles) or an opt-in objective proof. A write-scope
     // mission whose provider returned OK but changed nothing and declared no proof must NOT reach
     // SUCCESS on self-report plus a coincidental pre-existing tracked file (false-success closure).
+    // WRITE-SET-DERIVED (OR) — consistent with validation-engine.ts:102 and stage-build-ts-evidence.ts: a mission is
+    // engineering if it declares the flag OR holds a write-set. The former AND trusted the self-reported flag (a
+    // write-set mission that omitted it would skip the engineering-performed check). OR only tightens.
     const isEngineeringMission =
-      plan.requiresEngineering === true && Array.isArray(plan.authorizedPaths) && plan.authorizedPaths.length > 0;
+      plan.requiresEngineering === true || (Array.isArray(plan.authorizedPaths) && plan.authorizedPaths.length > 0);
     const hasRealChange = Array.isArray(receipt.changedFiles) && receipt.changedFiles.length > 0;
     const objectivesWithProof = new Set(
       plan.objectives.filter((o) => "proof" in o && (o as { proof?: string }).proof).map((o) => o.id),
