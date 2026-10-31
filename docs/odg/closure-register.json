@@ -1979,6 +1979,16 @@
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-31",
       "evidence": "P0-E security audit finding #1 (HIGH), independently found by a read-only audit agent. client-store-backup.ts restore() wrote each manifest.files[].path under target via path.join with NO '..'/absolute guard; verify() checked only content↔sha256 + the self-referential manifestHash (both recomputable by a manifest crafter — no signature) ⇒ a tampered backup with path '../../x' ⇒ arbitrary file write OUTSIDE the authorized target (write-set escape). The sibling odg-state-backup.ts had isDangerousRel but odg-backup + the shared library chokepoint did not. FIX (fail-closed at the shared chokepoint so every caller inherits it): new isDangerousBackupPath (abs OR '..'-segment OR empty, mirrors the sibling) + new CODE.PATH_ESCAPE; verify() rejects any dangerous file path (so the integrity gate restore depends on is complete) AND restore() re-checks the RESOLVED path stays within path.resolve(target) before every write (defense-in-depth). Regression (client-store-backup.test +8): a crafted manifest with VALID content-hash + VALID manifestHash and a traversal path (../../evil, /etc/evil, a/../../../evil, ..\\..\\evil) ⇒ PATH_ESCAPE at BOTH verify + restore, nothing written to the escape target; a benign relative path with the same construction still verifies (proves the hash method is correct, not trivially green). tsc clean BOTH tsconfigs; build:runtime OK. Independently verified (separate agent). 9 primitives FROZEN; measure/security-only; no VPS/secrets/paid."
+    },
+    {
+      "id": "p0c-transitive-stale-reconcile",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-C#4 (MED): transitively-closed stale-evidence reconciliation (fixpoint, not single-pass)",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "evidence": "P0-C exec-chain audit finding #4 (MED), read-only-audit-found. campaign-controller.staleAcceptances inspected only an item's DIRECT deps and reconcile ran one pass ⇒ in a chain A→B→C with C regressed, one reconcile demoted B but left A ACCEPTED on a transitively-invalid basis for ≥1 loop iteration (A still satisfied depsSatisfied; summary/odg-resume under-reported staleness — contradicts 'reuse only still-valid evidence'). FIX (pure): staleAcceptances now computes staleness to a FIXPOINT — an ACCEPTED item is stale if any dep is missing/not-ACCEPTED OR is ITSELF stale; loop until no change (staleSet grows monotonically ⇒ terminates even on dep cycles); invalidatedBy names the stale/absent dep. reconcile then demotes the WHOLE dependent cone in one pass. Regression (+5): chain A→B→C leaf-regress ⇒ BOTH A+B stale in one call + both demoted + transitive invalidatedBy surfaced + deep-chain re-accept determinism. Suite 31→36; consumers campaign-loop/campaign-metrics/odg-resume PASS; real register still 0 stale; tsc clean BOTH tsconfigs; build OK. Independently verified (separate agent). 9 primitives FROZEN."
     }
   ]
 }
