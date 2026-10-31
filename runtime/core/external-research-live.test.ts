@@ -35,6 +35,24 @@ function runResearch(ra) {
   return { threw, result, evidence };
 }
 
+// CI-reliability watchdog (diagnostic + deterministic): this suite has intermittently NOT EXITED in CI (SUITE_TIMEOUT
+// at 240s) despite the server-socket teardown (#306) and the httpGetBounded resolve-once (#310) fixes — a process that
+// runs all assertions but never exits means a LEAKED HANDLE (or an unforeseen never-resolving await). Rather than keep
+// guessing the exact handle, we (1) arm a ref'd watchdog that fires WELL BEFORE the 240s gate kill, dumps the active
+// handles/requests so CI logs name the culprit, and exits; and (2) force a clean exit once teardown completes so a
+// post-completion leaked handle can never hang CI. The suite's verdict is fully determined by the assertions above —
+// forcing exit AFTER they run masks nothing. Opt-out for interactive debugging: ODG_TEST_NO_WATCHDOG=1.
+let _suiteDone = false;
+const _watchdog = (process.env.ODG_TEST_NO_WATCHDOG === "1") ? null : setTimeout(() => {
+  if (_suiteDone) return;
+  try {
+    const handles = (process as any)._getActiveHandles ? (process as any)._getActiveHandles() : [];
+    const reqs = (process as any)._getActiveRequests ? (process as any)._getActiveRequests() : [];
+    console.error(`##SUITE_WATCHDOG external-research-live did not exit within 60s — active handles: [${handles.map((h: any) => (h && h.constructor && h.constructor.name) || typeof h).join(", ")}] active requests: [${reqs.map((r: any) => (r && r.constructor && r.constructor.name) || typeof r).join(", ")}]`);
+  } catch { /* best-effort diagnostic */ }
+  process.exit(typeof process.exitCode === "number" ? process.exitCode : 1);
+}, 60000);
+
 (async () => {
   console.log("LIVE GOVERNED EXTERNAL RESEARCH — bounded fetch + provenance gates");
 
@@ -121,4 +139,9 @@ function runResearch(ra) {
 })().catch((e) => { console.error(e); process.exitCode = 1; }).finally(() => {
   if (prior === null) { try { fs.rmSync(EVI, { force: true }); } catch { /* ignore */ } }
   else fs.writeFileSync(EVI, prior);
+  _suiteDone = true;
+  if (_watchdog) clearTimeout(_watchdog);
+  // Deterministic exit: all assertions have run; do not let a leaked handle hang the classified gate. Use setImmediate
+  // so stdout (the "assertions passed" line) flushes first. A non-watchdog exit preserves the real verdict code.
+  setImmediate(() => process.exit(typeof process.exitCode === "number" ? process.exitCode : 0));
 });
