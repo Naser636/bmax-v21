@@ -72,8 +72,21 @@ const _watchdog = (process.env.ODG_TEST_NO_WATCHDOG === "1") ? null : setTimeout
   const capped = await ce.httpGetBounded(url, 100, 4000);
   ok("byte limit enforced: body truncated at maxBytes", capped.truncated === true && capped.body.length <= 100 && capped.bytes <= 100);
 
-  const toEarly = await ce.httpGetBounded(url, 1_000_000, 1); // 1ms ⇒ time limit trips
-  ok("time limit enforced: a sub-deadline fetch fails closed (status 0)", toEarly.status === 0);
+  // TIME-LIMIT enforcement — DETERMINISTIC (no race): a dedicated server that delays its response FAR beyond the
+  // fetch deadline, so the deadline ALWAYS trips before any response ⇒ status 0. The prior `1ms vs an instant
+  // loopback server` was racy — a fast CI runner completes the response in <1ms ⇒ flaky status 200 (the real cause
+  // of the external-research-live CI exit-1 once the hang was fixed). The slow server's timer is cleared on socket
+  // close so it never keeps the loop alive, and it is torn down with the same can't-hang teardown.
+  const slowTimers = new Set();
+  const slow = http.createServer((req, res) => {
+    const t = setTimeout(() => { try { res.writeHead(200, { "content-type": "text/plain" }); res.end("late"); } catch { /* socket already gone */ } }, 3000);
+    slowTimers.add(t);
+    res.on("close", () => { clearTimeout(t); slowTimers.delete(t); });
+  });
+  await new Promise((r) => slow.listen(0, r));
+  const toEarly = await ce.httpGetBounded(`http://127.0.0.1:${slow.address().port}/`, 1_000_000, 100); // 100ms deadline vs 3000ms response ⇒ deterministically trips
+  ok("time limit enforced: a fetch whose deadline precedes the response fails closed (status 0)", toEarly.status === 0);
+  await new Promise((r) => { let d = false; const fin = () => { if (!d) { d = true; r(undefined); } }; for (const t of slowTimers) clearTimeout(t); try { (slow as any).closeAllConnections && (slow as any).closeAllConnections(); } catch { /* older node */ } slow.close(fin); setTimeout(fin, 2000).unref(); });
 
   const badProto = await ce.httpGetBounded("file:///etc/passwd", 1000, 1000);
   ok("non-http(s) protocol refused (no local file retrieval)", badProto.status === 0 && /unsupported protocol/.test(badProto.error || ""));
