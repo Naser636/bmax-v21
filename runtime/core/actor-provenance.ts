@@ -61,22 +61,35 @@ function resolveEntryActor(e: any): string | null {
  * across the executed[] entries (concordant). Fail-closed to { actor:null } on: absent report, mission mismatch
  * (strict ===), no executed[], no resolvable entry, or CONFLICTING resolved actors (ambiguous).
  */
-function resolveMissionActor(patchExecution: any, mission: any): { actor: string | null; executedBy: string | null; reason: string } {
-  if (!patchExecution || typeof patchExecution !== "object") return { actor: null, executedBy: null, reason: "no patch-execution evidence" };
-  if (patchExecution.mission !== mission) return { actor: null, executedBy: null, reason: `patch-execution mission "${patchExecution.mission}" !== "${mission}" (cross-mission, refused)` };
+// Recognized author vocabulary — the union of every author string we can map to an actor. An entry whose
+// authoredBy is present but NOT in this set (an unmapped string like "MYSTERY", OR the explicit "UNKNOWN"
+// sentinel) is an UNKNOWN actor contributing to the mission ⇒ the mission's executor is ambiguous.
+const KNOWN_AUTHORS = Object.freeze(new Set<string>([...ODG_AUTHORS, ...PROVIDER_AUTHORS, ...HUMAN_AUTHORS]));
+
+function resolveMissionActor(patchExecution: any, mission: any): { actor: string | null; executedBy: string | null; reason: string; unresolvedCount: number } {
+  if (!patchExecution || typeof patchExecution !== "object") return { actor: null, executedBy: null, reason: "no patch-execution evidence", unresolvedCount: 0 };
+  if (patchExecution.mission !== mission) return { actor: null, executedBy: null, reason: `patch-execution mission "${patchExecution.mission}" !== "${mission}" (cross-mission, refused)`, unresolvedCount: 0 };
   const executed: any[] = Array.isArray(patchExecution.executed) ? patchExecution.executed : [];
-  if (executed.length === 0) return { actor: null, executedBy: null, reason: "no executed[] entries" };
+  if (executed.length === 0) return { actor: null, executedBy: null, reason: "no executed[] entries", unresolvedCount: 0 };
+  // R1 hardening (P0-A): an executed entry with a PRESENT author we cannot map to a known actor (unmapped string
+  // OR the "UNKNOWN" sentinel) makes the mission executor AMBIGUOUS. Per "no artificially high autonomy / ambiguous
+  // ⇒ no attribution", SUPPRESS the stamp (never let a concordant-ODG entry be reported ODG while a sibling action's
+  // author is unknown) AND surface the count. Genuine ODG-native work is authored ODG_CAPABILITY/ODG_RULES (known) ⇒
+  // unaffected; a demoted known-author entry (e.g. ODG_CAPABILITY not applied) is NOT ambiguity (its author IS known).
+  let unresolvedCount = 0;
+  for (const e of executed) { const a = e && typeof e.authoredBy === "string" ? e.authoredBy : ""; if (a.length > 0 && !KNOWN_AUTHORS.has(a)) unresolvedCount += 1; }
+  if (unresolvedCount > 0) return { actor: null, executedBy: null, reason: `${unresolvedCount} executed entr${unresolvedCount === 1 ? "y" : "ies"} with an unresolved/unknown author — ambiguous, no attribution`, unresolvedCount };
   const resolved: string[] = [];
   for (const e of executed) { const a = resolveEntryActor(e); if (a !== null) resolved.push(a); }
-  if (resolved.length === 0) return { actor: null, executedBy: null, reason: "no executed[] entry resolves to a recognized actor" };
+  if (resolved.length === 0) return { actor: null, executedBy: null, reason: "no executed[] entry resolves to a recognized actor", unresolvedCount: 0 };
   const distinct = Array.from(new Set(resolved));
-  if (distinct.length > 1) return { actor: null, executedBy: null, reason: `contradictory executor signals [${distinct.join(", ")}] — ambiguous, no attribution` };
+  if (distinct.length > 1) return { actor: null, executedBy: null, reason: `contradictory executor signals [${distinct.join(", ")}] — ambiguous, no attribution`, unresolvedCount: 0 };
   const actor = distinct[0];
   // Compact audit trail of the raw signals that produced the stamp (only when a stamp is produced).
   const executedBy = executed
     .map((e: any) => `authoredBy=${(e && e.authoredBy) || "?"};appliedBy=${(e && e.appliedBy) || "none"}${e && e.humanMandatory === true ? ";humanMandatory" : ""}`)
     .join(" | ");
-  return { actor, executedBy, reason: "unique recognized actor" };
+  return { actor, executedBy, reason: "unique recognized actor", unresolvedCount: 0 };
 }
 
 module.exports = { resolveEntryActor, resolveMissionActor, EXECUTOR, RECOGNIZED };
