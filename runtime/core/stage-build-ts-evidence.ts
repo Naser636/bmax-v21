@@ -15,7 +15,7 @@
  * evidence.js <mission>` by odg-run; reads the mission from argv or mission-plan.json. Compiled-dist, require-based.
  *
  * SCOPE (p0c3-stage-scope-readonly): build + tsc run ONLY for ENGINEERING missions — the exact predicate the
- * Validation Engine uses (plan.requiresEngineering === true && authorizedPaths.length > 0; see isEngineeringMission).
+ * Validation Engine uses (plan.requiresEngineering === true || authorizedPaths.length > 0 — write-set-derived; see isEngineeringMission).
  * For NON-engineering / read-only / AUDIT missions the VE never consults build/typescript, so this stage SKIPS the
  * expensive build/tsc (restoring read-only missions' pre-C#3 zero-build, deterministic, untouched behaviour — a red
  * tree no longer perturbs them) while STILL writing the mission-stamped RC-1 artifact (with an honest skip marker,
