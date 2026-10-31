@@ -105,6 +105,9 @@ const DANGEROUS = Object.freeze({
 const SECRET_PATTERNS = Object.freeze([
   /(^|\/)\.ssh(\/|$)/, /id_rsa|id_ed25519|id_ecdsa/, /(^|\/)\.aws(\/|$)/, /credentials?$/i,
   /(^|\/)\.env$/, /\/etc\/shadow/, /\.pem$|\.key$/, /(^|\/)\.netrc$/, /token|secret|password/i,
+  // Process-environment pseudo-files expose the injected sandbox env (and any host env of a readable process) —
+  // reading them is a secret-store access, not a benign file READ, so it must escalate (HUMAN_APPROVAL), never ALLOW.
+  /(^|\/)proc\/(self|\d+)\/environ$/,
 ]);
 
 // ---- 1. PARSE: raw shell text -> bounded parsed representation. --------------------------------
@@ -339,13 +342,18 @@ function sandboxRun(argv: any, opts: any): any {
 }
 
 // ---- Secret redaction: scrub any host-secret VALUE from strings written to evidence/logs. --------
-function buildRedactor(): any {
+// VALUE-BASED, by INJECTION not by name (closes a secret-exfiltration gap): the redactor removes (a) the values of
+// any host env var whose NAME looks secret-ish AND (b) — unconditionally — the values of EVERY var the caller chose
+// to inject into the sandbox via envAllowlist, regardless of its name. (b) is the structural fix: a command like
+// `cat /proc/self/environ` echoes the injected env, and a name-regex alone misses DATABASE_URL / STRIPE_SK / a PAT.
+// The caller injected those exact values, so any occurrence in stdout/stderr/evidence is a leak and is scrubbed.
+function buildRedactor(injectedKeys: any = []): any {
   const values: any[] = [];
+  const add = (v: any) => { if (typeof v === "string" && v.length >= 6) values.push(v); };
   for (const [k, v] of Object.entries(process.env)) {
-    if (typeof v === "string" && v.length >= 6 && /KEY|TOKEN|SECRET|PASSWORD|PASS|CREDENTIAL|AUTH|PRIVATE/i.test(k)) {
-      values.push(v);
-    }
+    if (typeof v === "string" && v.length >= 6 && /KEY|TOKEN|SECRET|PASSWORD|PASS|CREDENTIAL|AUTH|PRIVATE/i.test(k)) values.push(v);
   }
+  for (const k of (Array.isArray(injectedKeys) ? injectedKeys : [])) add(process.env[k]);  // every injected value, by injection not name
   return (s: any) => {
     let out = typeof s === "string" ? s : "";
     for (const v of values) { if (v) out = out.split(v).join("***REDACTED***"); }
@@ -357,7 +365,8 @@ function buildRedactor(): any {
 function govern(request: any, opts: any): any {
   const req = request && typeof request === "object" ? request : {};
   const options = opts || {};
-  const redact = buildRedactor();
+  // Pass the injected env keys so their VALUES are scrubbed from evidence regardless of var name (secret-exfil guard).
+  const redact = buildRedactor(Array.isArray(req.envAllowlist) ? req.envAllowlist : []);
   const base: any = {
     capability: "Governed Bash/Linux Command",
     objective: req.objectiveId || null,
@@ -537,8 +546,8 @@ function finish(base: any, extra: any): any {
 }
 
 module.exports = {
-  govern, parse, analyze, resolveIdentity, buildAction, detectSandbox, sandboxRun,
-  OUTCOME, SAFE_READONLY, DANGEROUS, DYNAMIC_CONSTRUCTS,
+  govern, parse, analyze, resolveIdentity, buildAction, detectSandbox, sandboxRun, buildRedactor,
+  OUTCOME, SAFE_READONLY, DANGEROUS, DYNAMIC_CONSTRUCTS, SECRET_PATTERNS,
 };
 
 // Read-only CLI: print the capability contract descriptor; mutates nothing, contacts no network.

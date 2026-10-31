@@ -2246,8 +2246,15 @@
       "priority": 1,
       "deps": [],
       "title": "pdf-extract decompression-bomb guard: cap per-stream zlib inflate (maxOutputLength) + stream count on the untrusted-PDF path",
-      "status": "IN_PROGRESS",
-      "evidence": "CONFIRMED_DEFECT (recon, reproduced). runtime/core/pdf-extract.ts inflated FlateDecode content streams via zlib.inflateSync/inflateRawSync with NO maxOutputLength ⇒ a tiny attacker-controlled stream (input is explicitly UNTRUSTED per the module header) can inflate to GBs ⇒ OOM/stall, per-stream + repeated in the while loop. FIX (mirrors the proven sibling factur-x-extract.ts): MAX_INFLATE=12MB cap on BOTH inflate calls (throw ⇒ existing streamsFailed/skip path ⇒ honest PARTIAL, never OOM) + MAX_STREAMS=4096 bomb-count cap (remaining streams recorded, not silently dropped). No behaviour change for legitimate PDFs (real text streams ≪ cap). Also WIRED the pre-existing-but-ungated runtime/core/pdf-extract.test.ts into the test:report gate (it had a test that never ran in CI — coverage gap). EVIDENCE: pdf-extract.test.ts 12/12 incl. new adversarial bomb case (64MB-inflate stream ⇒ refused/streamsFailed, extractPdf completes bounded <20s no OOM, legitimate stream still extracted, honest PARTIAL, JS/TS parity); tsc clean BOTH; full gate green. OWASP/NIST resource-exhaustion (CWE-409). Independent verify + CI pending."
+      "status": "ACCEPTED",
+      "evidence": "CONFIRMED_DEFECT (recon, reproduced). runtime/core/pdf-extract.ts inflated FlateDecode content streams via zlib.inflateSync/inflateRawSync with NO maxOutputLength ⇒ a tiny attacker-controlled stream (input is explicitly UNTRUSTED per the module header) can inflate to GBs ⇒ OOM/stall, per-stream + repeated in the while loop. FIX (mirrors the proven sibling factur-x-extract.ts): MAX_INFLATE=12MB cap on BOTH inflate calls (throw ⇒ existing streamsFailed/skip path ⇒ honest PARTIAL, never OOM) + MAX_STREAMS=4096 bomb-count cap (remaining streams recorded, not silently dropped). No behaviour change for legitimate PDFs (real text streams ≪ cap). Also WIRED the pre-existing-but-ungated runtime/core/pdf-extract.test.ts into the test:report gate (it had a test that never ran in CI — coverage gap). EVIDENCE: pdf-extract.test.ts 12/12 incl. new adversarial bomb case (64MB-inflate stream ⇒ refused/streamsFailed, extractPdf completes bounded <20s no OOM, legitimate stream still extracted, honest PARTIAL, JS/TS parity); tsc clean BOTH; full gate green. OWASP/NIST resource-exhaustion (CWE-409). Independent verify + CI pending. ACCEPTED: merged PR#313 (2 green CI + verifier PASS; with/without-guard reproduction non-vacuous).",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 313,
+        "mergeCommit": "6fc6f96",
+        "verified": true
+      }
     },
     {
       "id": "confinement-suites-blocked-declare",
@@ -2255,8 +2262,24 @@
       "priority": 1,
       "deps": [],
       "title": "Confinement/security suites DECLARE ##CLASS: BLOCKED_BY_ISOLATION on toolchain-absent skip, instead of a silent PASS",
+      "status": "ACCEPTED",
+      "evidence": "CONFIRMED_DEFECT (recon). Toolchain-gated security-confinement suites printed a tautological ok(...,true) and returned when a tool was absent => exit 0, no ##CLASS => odg-test-report classified the whole suite PASS (should be BLOCKED_BY_ISOLATION). On a runner missing bwrap/rustc/tsc/shellcheck the CRITICAL confinement control is never exercised yet CI goes GREEN, defeating the gate's blocked-not-pass contract. FIX: each toolchain-absent skip branch now emits console.log(##CLASS: BLOCKED_BY_ISOLATION <reason>) (exit 0) so the classifier records BLOCKED (disclosed, non-green). Files: bash-command-governor.test.ts (fsConfinement, CRITICAL host-read regr), code-execution.test.ts (node/bwrap + rustc/bwrap + tsc/bwrap confined checks x3), code-review-service.test.ts (shellcheck + tsc project/TS-fail x3), odg-schedule-tick.test.ts (default-deny fixture-absent regr). NO behaviour change on current host/CI (all toolchains present => skip branch NOT taken => suites run fully + PASS: bash 75, code-exec 106, code-review 14, schedule-tick 22). PROOF the fix flips honestly: classify({exit0, ##CLASS BLOCKED marker}) => BLOCKED_BY_ISOLATION (mechanism pre-proven in odg-test-report.test.ts). Independent verify + CI pending. NIST SSDF assurance-honesty; over-classification=safe. ACCEPTED: merged PR#314 (CI green + verifier PASS counterfactual: base silent-PASS vs fixed BLOCKED under toolchain-absent PATH).",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 314,
+        "mergeCommit": "29acf7c",
+        "verified": true
+      }
+    },
+    {
+      "id": "governed-bash-secret-redaction",
+      "program": "P0",
+      "priority": 1,
+      "deps": [],
+      "title": "Governed-bash: redact injected envAllowlist secret VALUES by injection (not name-regex) + /proc/environ reads escalate as secret access",
       "status": "IN_PROGRESS",
-      "evidence": "CONFIRMED_DEFECT (recon). Toolchain-gated security-confinement suites printed a tautological ok(...,true) and returned when a tool was absent => exit 0, no ##CLASS => odg-test-report classified the whole suite PASS (should be BLOCKED_BY_ISOLATION). On a runner missing bwrap/rustc/tsc/shellcheck the CRITICAL confinement control is never exercised yet CI goes GREEN, defeating the gate's blocked-not-pass contract. FIX: each toolchain-absent skip branch now emits console.log(##CLASS: BLOCKED_BY_ISOLATION <reason>) (exit 0) so the classifier records BLOCKED (disclosed, non-green). Files: bash-command-governor.test.ts (fsConfinement, CRITICAL host-read regr), code-execution.test.ts (node/bwrap + rustc/bwrap + tsc/bwrap confined checks x3), code-review-service.test.ts (shellcheck + tsc project/TS-fail x3), odg-schedule-tick.test.ts (default-deny fixture-absent regr). NO behaviour change on current host/CI (all toolchains present => skip branch NOT taken => suites run fully + PASS: bash 75, code-exec 106, code-review 14, schedule-tick 22). PROOF the fix flips honestly: classify({exit0, ##CLASS BLOCKED marker}) => BLOCKED_BY_ISOLATION (mechanism pre-proven in odg-test-report.test.ts). Independent verify + CI pending. NIST SSDF assurance-honesty; over-classification=safe."
+      "evidence": "REPRODUCIBLE_RISK/HIGH security (recon, reproduced vs prod dist). bash-command-governor.ts injected caller-supplied envAllowlist host process.env VALUES into the sandbox, and (a) buildRedactor only scrubbed values of vars whose NAME matched a secret regex (missed DATABASE_URL/STRIPE_SK/PAT) while (b) `cat /proc/self/environ` was classified a benign READ (SECRET_PATTERNS lacked environ) ⇒ injected secrets echoed unredacted into bash-command.json. Gated today (bash_command not transported plan→patch) = latent landmine. FIX (structural): buildRedactor(injectedKeys) now ALSO scrubs the VALUES of every injected envAllowlist key unconditionally (by injection, not name) — govern passes req.envAllowlist; + SECRET_PATTERNS adds /(^|/)proc/(self|\\d+)/environ$ ⇒ touchesSecret ⇒ HUMAN_APPROVAL_REQUIRED (escalate, never EXECUTED). EVIDENCE: bash-command-governor.test.ts 77/77 incl. new: /proc/1/environ + /proc/self/environ reads REFUSED (escalate, not executed; was EXECUTED pre-fix); injected non-secret-named value (DATABASE_URL-shape) scrubbed by VALUE + a non-vacuous control proving it's the injection path not the name-regex. Pre-existing confinement asserts (etc/passwd, repo-read, /usr) unchanged. tsc clean BOTH; full gate green. OWASP A01/A09, CWE-200/532. Independent verify + CI pending."
     }
   ]
 }
