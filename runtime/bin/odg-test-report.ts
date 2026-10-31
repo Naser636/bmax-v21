@@ -34,6 +34,14 @@ const ROOT = process.cwd(); // repo root (wrapper cwd) — robust from any dist 
 const GEN = path.join(ROOT, "runtime", "generated");
 const DECL = /##CLASS:\s*(BLOCKED_BY_ISOLATION|SKIPPED)\b[ \t]*(.*)/;
 
+// CI-reliability: PER-SUITE timeout. Neither runner bounded a child's run time, so a suite whose child never exits
+// (a .listen() server left open, a hung socket/compiler) stalled the ENTIRE classified gate until the job's 20-min
+// timeout ⇒ the observed CI freeze. A timed-out suite is now SIGKILLed and classified FAIL (fail-closed, NEVER an
+// infinite stall) — mirrors the SIGKILL-timeout pattern shipped in local-test-gate + odg-schedule-tick. Env-
+// overridable; default 240000ms = ~4× the slowest legitimate suite (code-execution ~65s) so it never false-FAILs a
+// genuine suite. Invariant: suite-timeout < CI step-timeout < job-timeout.
+const SUITE_TIMEOUT_MS = (() => { const n = parseInt(process.env.ODG_TEST_SUITE_TIMEOUT_MS || "", 10); return Number.isFinite(n) && n > 0 ? n : 240000; })();
+
 /** Pure classification from a suite's observed outcome. */
 function classify({ exists, exitCode, stdout }: any): any {
   if (!exists) return { cls: "NOT_RUN", reason: "suite file not found" };
@@ -42,6 +50,13 @@ function classify({ exists, exitCode, stdout }: any): any {
   if (exitCode === 0) {
     if (m && m[1] === "SKIPPED") return { cls: "SKIPPED", reason: (m[2] || "").trim() };
     return { cls: "PASS", reason: "" };
+  }
+  // CI-reliability: a suite SIGKILLed by the per-suite timeout exits non-zero (FAIL, fail-closed). Surface the
+  // ##SUITE_TIMEOUT marker (emitted by both runners) as the reason so the report NAMES it a timeout rather than a
+  // bare "exit 1" — the marker is otherwise only in stdout, which the result object drops.
+  if (typeof stdout === "string") {
+    const t = stdout.match(/##SUITE_TIMEOUT:[^\n]*/);
+    if (t) return { cls: "FAIL", reason: t[0].replace(/^##/, "") };
   }
   return { cls: "FAIL", reason: `exit ${exitCode}` };
 }
@@ -63,8 +78,17 @@ function safeExists(f: any): boolean {
 
 function defaultRunner(file: any): any {
   const tsx = path.join(ROOT, "node_modules", ".bin", "tsx");
-  const r = spawnSync(tsx, [file], { cwd: ROOT, encoding: "utf8", maxBuffer: 8 * 1024 * 1024 });
-  return { exitCode: r.status == null ? 1 : r.status, stdout: (r.stdout || "") + (r.stderr || "") };
+  // `detached: true` makes the tsx launcher a new process-GROUP leader (pgid === pid). tsx spawns a grandchild
+  // `node` in that group; spawnSync's own timeout only SIGKILLs the direct child (the launcher), leaking the
+  // grandchild as a runaway `setInterval`-style process. After the call returns we SIGKILL the whole group
+  // (negative pid) so no orphan survives. spawnSync still returns promptly at the timeout even with the grandchild.
+  const r = spawnSync(tsx, [file], { cwd: ROOT, encoding: "utf8", maxBuffer: 8 * 1024 * 1024, timeout: SUITE_TIMEOUT_MS, killSignal: "SIGKILL", detached: process.platform !== "win32" });
+  const timedOut = !!(r.error && (r.error as any).code === "ETIMEDOUT") || r.signal === "SIGKILL";
+  if (timedOut && r.pid && process.platform !== "win32") { try { process.kill(-r.pid, "SIGKILL"); } catch { /* already reaped */ } }
+  // A timeout leaves r.status null ⇒ exitCode 1 ⇒ classify FAIL (fail-closed). Prepend a visible marker so the
+  // report names the hung suite as a timeout rather than a bare "exit 1".
+  const note = timedOut ? `##SUITE_TIMEOUT: killed after ${SUITE_TIMEOUT_MS}ms (no exit)\n` : "";
+  return { exitCode: r.status == null ? 1 : r.status, stdout: note + (r.stdout || "") + (r.stderr || "") };
 }
 
 const CLASSES = ["PASS", "SKIPPED", "BLOCKED_BY_ISOLATION", "FAIL", "NOT_RUN"];
@@ -233,12 +257,23 @@ function spawnSuiteAsync(file: string): Promise<any> {
     const MAX = 8 * 1024 * 1024; // mirror defaultRunner maxBuffer
     const onData = (b: any) => { if (out.length < MAX) out += b.toString(); };
     let child: any;
-    try { child = spawn(tsx, [file], { cwd: ROOT, env }); }
+    // `detached: true` ⇒ tsx is a process-GROUP leader (pgid === pid). tsx spawns a grandchild `node`; killing only
+    // the direct child (child.kill) leaves that grandchild holding the stdout pipe OPEN, so "close" never fires and
+    // THIS Promise never resolves — the exact gate-stall this timeout exists to prevent. We SIGKILL the whole GROUP
+    // (negative pid) so the grandchild dies too, the pipe closes, "close" fires, and the pool advances.
+    try { child = spawn(tsx, [file], { cwd: ROOT, env, detached: process.platform !== "win32" }); }
     catch { cleanup(); resolve({ exitCode: 1, stdout: "" }); return; }
+    // PER-SUITE timeout (CI-reliability): a child that never exits would leave this Promise unresolved ⇒ the pool's
+    // Promise.all never resolves ⇒ the whole gate stalls until the job's 20-min kill. SIGKILL the hung child's whole
+    // process group so its "close" fires (code null ⇒ exitCode 1 ⇒ FAIL), naming it a timeout. Timer cleared on normal close/error.
+    let timedOut = false;
+    const killGroup = () => { try { if (child.pid && process.platform !== "win32") process.kill(-child.pid, "SIGKILL"); else child.kill("SIGKILL"); } catch { try { child.kill("SIGKILL"); } catch { /* best-effort */ } } };
+    const timer = setTimeout(() => { timedOut = true; killGroup(); }, SUITE_TIMEOUT_MS);
+    const finish = (exitCode: number) => { clearTimeout(timer); cleanup(); resolve({ exitCode, stdout: (timedOut ? `##SUITE_TIMEOUT: killed after ${SUITE_TIMEOUT_MS}ms (no exit)\n` : "") + out }); };
     child.stdout.on("data", onData);
     child.stderr.on("data", onData);
-    child.on("close", (code: any) => { cleanup(); resolve({ exitCode: code == null ? 1 : code, stdout: out }); });
-    child.on("error", () => { cleanup(); resolve({ exitCode: 1, stdout: out }); });
+    child.on("close", (code: any) => finish((timedOut || code == null) ? 1 : code));
+    child.on("error", () => finish(1));
   });
 }
 
