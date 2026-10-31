@@ -102,6 +102,12 @@ function applyUnifiedDiff(original: any, diffText: any): string {
     const hunkStart = oldStart - 1; // convert to 0-based
 
     if (hunkStart < orig) throw new Error(`overlapping or out-of-order hunk at line ${oldStart}`);
+    // UPPER BOUND: hunkStart is taken from the (attacker/tool-controllable) declared old-line number. The prefix
+    // copy below runs `orig -> hunkStart`; an oversized header (e.g. `@@ -999999999,1 @@`) against a short file would
+    // push ~hunkStart `undefined` entries, blowing up memory / stalling the executor (DoS). A start past EOF cannot
+    // apply anyway: origLines has indices 0..length-1. `hunkStart === origLines.length` IS legal (an append-at-EOF
+    // hunk whose body is pure additions), so bound strictly-greater. This throw is caught and recorded FAILED.
+    if (hunkStart > origLines.length) throw new Error(`hunk start line ${oldStart} is past end of file (${origLines.length} lines)`);
     while (orig < hunkStart) result.push(origLines[orig++]); // copy unchanged prefix
 
     let oldSeen = 0;

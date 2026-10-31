@@ -109,4 +109,47 @@ console.log("Patch Executor — RC-3 fallback (capability-resolution miss made e
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
+// 6. HUNK-START UPPER BOUND (DoS): a diff whose hunk header declares an old-start line far past EOF must be
+//    REFUSED promptly (recorded FAILED), NOT drive the prefix-copy loop to push ~hunkStart `undefined` entries
+//    (memory blowup / stall). Exercises the compiled dist executor, so it depends on build:runtime.
+{
+  const target = "runtime/core/hunk_oob_fixture.txt";
+  const seeded = "alpha\nbeta\ngamma\n";
+  // Hunk claims to start ~1e9 lines in; against a 3-line file the old prefix-copy loop would push ~1e9 undefineds.
+  const diff = "--- a/" + target + "\n+++ b/" + target + "\n@@ -999999999,1 +999999999,1 @@\n-alpha\n+ALPHA\n";
+  const dir = tmpWith({ "patch-plan.json": { mission: "HUNK_OOB", authorizedPaths: ["runtime/core"], patches: [{ action: "APPLY_EDIT", objectiveId: "OOB_1", edits: [{ target, diff }] }] } });
+  // Seed the real fixture inside the executor's cwd (tmpWith only populates runtime/generated).
+  fs.mkdirSync(path.join(dir, "runtime", "core"), { recursive: true });
+  fs.writeFileSync(path.join(dir, target), seeded);
+  const t0 = Date.now();
+  const r = runExecutor(dir);
+  const elapsedMs = Date.now() - t0;
+  ok("oversized hunk start is handled PROMPTLY (no OOM/stall: < 10s)", elapsedMs < 10000);
+  ok("executor still exits 0 (the bad hunk is a recorded failure, not a crash)", r.status === 0);
+  const executed = readExec(dir).executed;
+  const failed = executed.find((e) => e.status === "FAILED" && typeof e.error === "string" && /past end of file/.test(e.error));
+  ok("the out-of-bounds hunk is recorded FAILED with a 'past end of file' reason", !!failed);
+  ok("no success is fabricated for the bad hunk (no APPLIED entry)", !executed.some((e) => e.status === "APPLIED"));
+  ok("the target file is NOT mutated by the refused hunk (no half-applied write)", fs.readFileSync(path.join(dir, target), "utf8") === seeded);
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+
+// 7. UPPER BOUND is strictly-greater: an append-at-EOF hunk whose start EQUALS the line count still applies
+//    (regression guard — the bound must not reject legitimate EOF appends).
+{
+  const target = "runtime/core/hunk_eof_fixture.txt";
+  const seeded = "one\ntwo\n";           // split -> ["one","two",""] => origLines.length === 3
+  // Append after the trailing empty line: context the final (empty) line, then add a line. oldStart = 3 (== length).
+  const diff = "--- a/" + target + "\n+++ b/" + target + "\n@@ -3,1 +3,2 @@\n \n+three\n";
+  const dir = tmpWith({ "patch-plan.json": { mission: "HUNK_EOF", authorizedPaths: ["runtime/core"], patches: [{ action: "APPLY_EDIT", objectiveId: "EOF_1", edits: [{ target, diff }] }] } });
+  fs.mkdirSync(path.join(dir, "runtime", "core"), { recursive: true });
+  fs.writeFileSync(path.join(dir, target), seeded);
+  const r = runExecutor(dir);
+  ok("append-at-EOF (hunkStart === line count) still exits 0", r.status === 0);
+  const executed = readExec(dir).executed;
+  ok("append-at-EOF hunk is APPLIED (legitimate hunk not rejected by the bound)", executed.some((e) => e.status === "APPLIED"));
+  ok("append-at-EOF actually wrote the new trailing line", /three/.test(fs.readFileSync(path.join(dir, target), "utf8")));
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+
 console.log(`\nPatch Executor — ${passed} assertions passed.`);
