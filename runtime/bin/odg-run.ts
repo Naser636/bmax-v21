@@ -62,12 +62,19 @@ try {
   console.error("RuntimeContext : UNAVAILABLE (" + e.message + ")");
 }
 
-if (!governance.authorized) {
-  console.error("STOP: Mission refused by Governance Kernel");
+// GOVERNANCE — HONEST PRESENTATION (C#1): authorizeMission() returns a LIFECYCLE-TRANSITION fact
+// (transitionPossible: does the current state have an outgoing edge?), NOT an authority grant — it consults
+// no mission identity/contract/policy and self-discloses authorityEnforced:false. Presenting it as
+// "AUTHORIZED" (with a structurally-unreachable STOP) falsely implied an authorization gate here. Per-mission
+// AUTHORITY is enforced DOWNSTREAM — the truth-lock pre-exec gate (mutating missions), the per-action
+// action-gate (consequential actions) and the mission-ledger proven-only gate — never at this entry. The STOP
+// below is a genuine LIFECYCLE check (a terminal state with no transition), honestly labelled as such.
+if (!governance.transitionPossible) {
+  console.error("STOP: no lifecycle transition available from state " + governance.currentState + " (governance state machine)");
   process.exit(1);
 }
 
-console.log("Governance : AUTHORIZED");
+console.log("Governance : lifecycle-transition OK (authorityEnforced=" + governance.authorityEnforced + "; per-mission authority is NOT gated here — enforced downstream by truth-lock / action-gate / ledger proven-gate)");
 console.log("Next State :", governance.nextStates.join(", "));
 
 if (runtimeContext) {
