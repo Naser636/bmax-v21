@@ -2115,6 +2115,28 @@
         "verified": true
       },
       "evidence": "P0-C forensic #5 (design A). odg-schedule-tick is a scheduled/unattended entry; its truth-lock repo-safety gate defaulted OFF unless ODG_TRUTH_LOCK_ENFORCE was set, so a mutating mission on a divergent/unsafe repo was only RECORDED outside the systemd unit (which already sets =1). FIX (launcher-scoped, forensic design A): launcherEnforce() = env !== 0/false (DEFAULT-ON; unset⇒enforce, =0/=false⇒opt-out for throwaway/CI fixtures), and main() stamps process.env.ODG_TRUTH_LOCK_ENFORCE=1 when enforcing so the dispatched odg-run child (env:process.env) enforces transitively. DID NOT touch the pure gate default, odg-run, patch-executor, delegate-isolation, or capability-executors (they keep opt-in env===1 so local-dev + direct-spawn tests stay record-only). Reversible (env=0 opt-out). Regression: +4 unit (launcherEnforce unset/0/false/1) suite 18->22; +2 real-process e2e (G non-conforming+UNSET⇒STARTUP_REFUSED proving default-on; H non-conforming+=0⇒not-blocked opt-out) and A-F unchanged; truth-lock-gate + truth-lock-chokepoint PASS; tsc clean BOTH tsconfigs; build OK. Independently verified by a separate agent. 9 primitives FROZEN. OPEN (recorded): odg-campaign-run.ts has no truth-lock hook — covered via odg-campaign-loop->odg-run; adding a direct hook is a possible follow-on."
+    },
+    {
+      "id": "p0-autonomy-measure-slice3-delegate-provenance",
+      "program": "P0",
+      "priority": 1,
+      "deps": [
+        "p0-autonomy-measure-slice2",
+        "p0-autonomy-measure-slice2-r1-hardening"
+      ],
+      "title": "P0-AUTONOMY-MEASURE slice 3: honest provenance for HISTORICAL odg-delegate missions (needs an execution-chain contract + empirical delegate smoke — NOT the simple conformance-point stamp)",
+      "status": "DEFERRED",
+      "evidence": "slice-3 Gate-A deep diagnosis (2026-10-31, read-only): odg-delegate writes NO patch-execution.json today (confirmed). The forensic's 'safe reversible stamp at the conformance point' assumption FAILS deeper inspection: (1) the delegate path reaches recordMission only via odg-converge -> converge-cli -> AutonomyRuntimeAdapter.archive (adapter:1625 spawns node mission-ledger.js <mission>), which runs the autonomy convergence pipeline — that pipeline runs its OWN patch-executor and would OVERWRITE a conformance-point patch-execution.json before recordMission reads it; for a HISTORICAL delegation (provider edited out-of-band) converge produces an empty/RECORDED execution => slice-2 correctly resolves UNKNOWN. (2) patch-execution.json is also read by mission-lifecycle.buildEvidence (ts:104) whose EXECUTED probe (executed.length>0 && !anyFailed) would flip — a behavior change in the markArchived archival chain. CONCLUSION: achieving the measurement goal requires threading authoredBy=PROVIDER through the convergence/patch-executor chain when the mission is delegated HISTORICAL (execution-path, consequential) + an empirical isolated delegate smoke to verify — materially larger than a delegate-step write. Honest status: the simple version would be INEFFECTIVE (clobbered) and COLLIDING; NOT shipped. Current behavior (delegated HISTORICAL => UNKNOWN actor) is already HONEST (no false ODG credit), so no defect is open — this is a measurement ENHANCEMENT pending the correct contract.",
+      "nextAction": "Gate-A refined contract + isolated delegate-flow smoke before any implementation (see evidence); thread authoredBy=PROVIDER through the convergence/patch-executor chain for HISTORICAL delegations, NOT a delegate-step write."
+    },
+    {
+      "id": "odg-resume-handoff-budget-scaling",
+      "program": "P0",
+      "priority": 2,
+      "deps": [],
+      "title": "odg-resume 6KB handoff budget is exceeded past ~9-10 BLOCKED items (per-blocker fields not truncated/budgeted)",
+      "status": "READY",
+      "evidence": "odg-resume.resumeState serializes every BLOCKED item full humanActionRequired+resumeTest; the <6KB compact-handoff assertion (odg-resume.test) now fails once ~10 BLOCKED items carry detailed fields (observed 6585B at 10 blockers). SAFE FIX (pure, bounded): budget/truncate per-blocker fields (e.g. cap each to N chars with a pointer to the register, or cap the serialized blocked[] to a byte budget keeping ids+short action) so the handoff stays compact + fail-closed as blockers grow. write_set: runtime/bin/odg-resume.ts (+ its test). Independent verify. No behavior change beyond handoff compaction; the register remains the full SSOT. Current mitigation: BLOCKED-item handoff fields are kept concise by hand."
     }
   ]
 }
