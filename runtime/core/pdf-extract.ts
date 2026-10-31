@@ -11,6 +11,15 @@
 const zlib = require("zlib");
 const crypto = require("crypto");
 
+// DECOMPRESSION-BOMB GUARD (input is UNTRUSTED per the header): a FlateDecode content stream is attacker-controlled;
+// a tiny stream can inflate to gigabytes. Cap each inflate's output with zlib's maxOutputLength (throws
+// ERR_BUFFER_TOO_LARGE past the cap ⇒ treated as a failed/unreadable stream, the existing streamsFailed path). Also
+// cap the number of streams processed so a file packed with many bombs cannot exhaust time/memory. These mirror the
+// proven guard in the sibling factur-x-extract.ts (MAX_INFLATE). No behaviour change for legitimate PDFs (real text
+// streams are far under the cap); only a malicious/oversized stream is refused.
+const MAX_INFLATE = 12 * 1024 * 1024;   // per-stream inflate output cap (bytes)
+const MAX_STREAMS = 4096;               // max streams processed per document (bomb-count guard)
+
 const sha256 = (b: any): string => crypto.createHash("sha256").update(b).digest("hex");
 
 function decodeLiteral(s: any): string {
@@ -79,6 +88,9 @@ function extractPdf(input: any, opts: any): any {
   while (true) {
     const sIdx = latin.indexOf("stream", idx);
     if (sIdx === -1) break;
+    // Bomb-count guard: stop processing further streams past the cap (a file packed with many streams cannot
+    // force unbounded work). Remaining streams are recorded as failed/unprocessed (honest PARTIAL, never silent).
+    if (streamsTotal >= MAX_STREAMS) { errors.push(`stream cap ${MAX_STREAMS} reached — remaining streams not processed`); break; }
     streamsTotal++;
     let dataStart = sIdx + 6;
     if (latin[dataStart] === "\r") dataStart++;
@@ -88,7 +100,9 @@ function extractPdf(input: any, opts: any): any {
     idx = eIdx + 9;
     const raw = buf.slice(dataStart, eIdx);
     let dec: any = null;
-    try { dec = zlib.inflateSync(raw); } catch { try { dec = zlib.inflateRawSync(raw); } catch { dec = null; } }
+    // Bomb-bounded inflate: cap output at MAX_INFLATE; a stream that would exceed it throws ⇒ dec stays null ⇒ the
+    // existing streamsFailed/skip path (honest PARTIAL), never an OOM.
+    try { dec = zlib.inflateSync(raw, { maxOutputLength: MAX_INFLATE }); } catch { try { dec = zlib.inflateRawSync(raw, { maxOutputLength: MAX_INFLATE }); } catch { dec = null; } }
     if (!dec) { streamsFailed++; continue; }
     streamsInflated++;
     const { text, sawTextOp } = textFromContent(dec.toString("latin1"));
