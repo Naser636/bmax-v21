@@ -38,7 +38,12 @@ const allProven = { entries: [
 const rp = A.aggregateProgramAutonomy(allProven);
 ok("all proven=true ⇒ outcome.proven.rate 1.0 BUT labelled not-an-actor-signal", rp.outcome.proven.rate === 1 && /not an actor/i.test(rp.outcome.proven.note));
 ok("all proven=true ⇒ actorAutonomy.measurable STILL false (no fabricated 100% ODG)", rp.actorAutonomy.measurable === false && rp.actorAutonomy.odgShare === null);
-ok("actor block names the exact gap + the single next step", /no per-entry actor\/provenance/i.test(rp.actorAutonomy.reason) && /slice 2/i.test(rp.actorAutonomy.nextStep) && /executedBy|actor/.test(rp.actorAutonomy.nextStep));
+// (slice-2 evolution of the former interim-wording assertion) a no-actor ledger ⇒ actor split NON-MEASURABLE:
+// 0 denominator, every mission excluded (entriesWithoutActor === distinctMissions), no fabricated share.
+ok("no-actor ledger ⇒ actor split NON-MEASURABLE (den 0, all excluded, no fabricated share)",
+  rp.actorAutonomy.measurable === false && rp.actorAutonomy.denominator === 0 &&
+  rp.actorAutonomy.entriesWithoutActor === rp.distinctMissions && rp.actorAutonomy.byActor === null &&
+  rp.actorAutonomy.odgShare === null && /recognized execution actor/i.test(rp.actorAutonomy.reason));
 
 // (4) entries without a mission id are counted separately, never silently merged into a distinct mission.
 const noId = { entries: [
@@ -60,6 +65,32 @@ ok("deterministic / reproducible", JSON.stringify(A.aggregateProgramAutonomy(lif
 
 // (6) accepts a bare array ledger (not only {entries})
 ok("bare array ledger accepted", A.aggregateProgramAutonomy(lifecycle.entries).distinctMissions === 2);
+
+// ---- SLICE 2: actor split (positive, anti-fabrication, denominator identity) ----
+const mkA = (mission, actor) => ({ mission, state: "ARCHIVED", recordedAt: "2026-10-05T00:00:00Z", proven: true, validated: true, authorized: true, ...(actor ? { actor } : {}) });
+// A1 — recognized actors counted in the right bucket with denominator = recognized-actor missions.
+const a1 = A.aggregateProgramAutonomy({ entries: [mkA("M1", "ODG"), mkA("M2", "ODG"), mkA("M3", "TECHNICAL_PROVIDER")] }).actorAutonomy;
+ok("A1 actor split measurable; denominator = recognized-actor missions (3)", a1.measurable === true && a1.denominator === 3);
+ok("A1 ODG bucket 2/3, provider 1/3, human 0", a1.byActor.ODG.count === 2 && a1.byActor.ODG.rate === 0.6667 && a1.byActor.TECHNICAL_PROVIDER.count === 1 && a1.byActor.HUMAN.count === 0);
+// A2 — human actor in its own bucket.
+const a2 = A.aggregateProgramAutonomy({ entries: [mkA("M1", "ODG"), mkA("M2", "TECHNICAL_PROVIDER"), mkA("M3", "HUMAN")] }).actorAutonomy;
+ok("A2 human counted in its own bucket; denominator 3", a2.byActor.HUMAN.count === 1 && a2.denominator === 3);
+// A3 — a mission with NO actor is excluded from the actor denominator but still counted for outcome.
+const r3 = A.aggregateProgramAutonomy({ entries: [mkA("M1", "ODG"), mkA("M2", "ODG"), mkA("M3", null)] });
+ok("A3 no-actor mission excluded from actor denominator (stays 2), surfaced as entriesWithoutActor", r3.actorAutonomy.denominator === 2 && r3.actorAutonomy.entriesWithoutActor === 1 && r3.outcome.denominator === 3);
+// B1 — all proven, NO actor ⇒ actor split NON-MEASURABLE (already covered by rp above; re-assert the dangerous direction).
+const b1 = A.aggregateProgramAutonomy({ entries: [mkA("X", null), mkA("Y", null)] }).actorAutonomy;
+ok("B1 all proven + no actor ⇒ NON-MEASURABLE (never ODG from proven)", b1.measurable === false && b1.odgShare === null && b1.denominator === 0);
+// B2/B3 — an UNRECOGNIZED actor value is never credited; if it's the only actor-bearing mission ⇒ NON-MEASURABLE.
+const b2 = A.aggregateProgramAutonomy({ entries: [mkA("G", "ROBOT")] }).actorAutonomy;
+ok("B2 unrecognized actor ⇒ entriesWithUnrecognizedActor, NON-MEASURABLE (0 recognized)", b2.measurable === false && b2.entriesWithUnrecognizedActor === 1 && b2.denominator === 0);
+const b3 = A.aggregateProgramAutonomy({ entries: [mkA("H", "ODG"), mkA("G", "ROBOT")] }).actorAutonomy;
+ok("B3 garbage never inflates denominator/share", b3.denominator === 1 && b3.byActor.ODG.count === 1 && b3.entriesWithUnrecognizedActor === 1);
+// Denominator identity (checklist #11): buckets sum to denominator; without + unrecognized + denominator === distinctMissions.
+const ri = A.aggregateProgramAutonomy({ entries: [mkA("M1", "ODG"), mkA("M2", "TECHNICAL_PROVIDER"), mkA("M3", "ROBOT"), mkA("M4", null)] });
+const aa = ri.actorAutonomy;
+ok("denominator identity: ODG+provider+human+automated === denominator", aa.byActor.ODG.count + aa.byActor.TECHNICAL_PROVIDER.count + aa.byActor.HUMAN.count + aa.byActor.AUTOMATED_SYSTEM.count === aa.denominator);
+ok("partition identity: without + unrecognized + denominator === distinctMissions", aa.entriesWithoutActor + aa.entriesWithUnrecognizedActor + aa.denominator === ri.distinctMissions);
 
 // (7) SOFT real-ledger sanity (never fails the suite if the gitignored artifact is absent, e.g. on CI).
 try {

@@ -68,6 +68,7 @@
     "runtime/llm/proposal-analyzer.ts",
     "runtime/llm/response-parser.ts",
     "runtime/core/autonomy-measure.ts",
+    "runtime/core/actor-provenance.ts",
     "runtime/core/capability-metrics.ts",
     "runtime/core/specification-loader.ts",
     "runtime/core/autonomy-store.ts",
