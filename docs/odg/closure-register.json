@@ -2280,6 +2280,15 @@
       "title": "Governed-bash: redact injected envAllowlist secret VALUES by injection (not name-regex) + /proc/environ reads escalate as secret access",
       "status": "IN_PROGRESS",
       "evidence": "REPRODUCIBLE_RISK/HIGH security (recon, reproduced vs prod dist). bash-command-governor.ts injected caller-supplied envAllowlist host process.env VALUES into the sandbox, and (a) buildRedactor only scrubbed values of vars whose NAME matched a secret regex (missed DATABASE_URL/STRIPE_SK/PAT) while (b) `cat /proc/self/environ` was classified a benign READ (SECRET_PATTERNS lacked environ) ⇒ injected secrets echoed unredacted into bash-command.json. Gated today (bash_command not transported plan→patch) = latent landmine. FIX (structural): buildRedactor(injectedKeys) now ALSO scrubs the VALUES of every injected envAllowlist key unconditionally (by injection, not name) — govern passes req.envAllowlist; + SECRET_PATTERNS adds /(^|/)proc/(self|\\d+)/environ$ ⇒ touchesSecret ⇒ HUMAN_APPROVAL_REQUIRED (escalate, never EXECUTED). EVIDENCE: bash-command-governor.test.ts 77/77 incl. new: /proc/1/environ + /proc/self/environ reads REFUSED (escalate, not executed; was EXECUTED pre-fix); injected non-secret-named value (DATABASE_URL-shape) scrubbed by VALUE + a non-vacuous control proving it's the injection path not the name-regex. Pre-existing confinement asserts (etc/passwd, repo-read, /usr) unchanged. tsc clean BOTH; full gate green. OWASP A01/A09, CWE-200/532. Independent verify + CI pending."
+    },
+    {
+      "id": "recon-followups-adapter-pdfstreams",
+      "program": "P0",
+      "priority": 3,
+      "deps": [],
+      "title": "Recon follow-ups: autonomy-runtime-adapter isEngineeringMission AND->OR (consistency) + pdf-extract MAX_STREAMS cap -> honest PARTIAL",
+      "status": "IN_PROGRESS",
+      "evidence": "Two verifier-flagged non-blocking follow-ups. (1) src/runtime/autonomy-runtime-adapter.ts isEngineeringMission AND->OR (write-set-derived), consistent with validation-engine.ts:102 + stage-build-ts-evidence.ts: a write-set mission omitting the flag no longer skips the engineering-performed check; only tightens; the 3 adapter consumer suites stay green. (2) pdf-extract.ts: a MAX_STREAMS cap hit now sets capped=true => fullyExtracted:false + PARTIAL (was recorded only in errors[], could report fullyExtracted:true despite dropping streams); extractStats.capped exposed; pdf-extract.test.ts 13/13 incl. a >4096-stream cap => PARTIAL case. tsc clean BOTH; full gate via CI. Independent verify + CI."
     }
   ]
 }
