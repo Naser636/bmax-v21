@@ -2378,11 +2378,15 @@
         "negation-inversion-safety"
       ],
       "title": "nl-objective-gateway: abstain fail-closed on an uncovered-locale objective (close the non-EN/FR/AR under-classification fail-open + fairness gap)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "Recon-confirmed MEDIUM (safety under-classification + fairness). The deterministic Risk/External-Effect classifier covers keyword families only for LATIN script (EN + diacritic-folded FR) and ARABIC. An objective written PREDOMINANTLY in any other script (CJK, Cyrillic, Devanagari, Hangul, Hebrew, Greek, Thai, ...) matches no family and fell through to NONE/GENERATE/LOW with requiresHuman=false — the SAME governance fail-open V2-B1 closed for FR/AR, still open for every uncovered locale (and a fairness gap for those users). Fix: new deterministic localeCovered(goal) counts alphabetic code points by Unicode script (\\p{Script=Latin}/\\p{Script=Arabic} vs any other \\p{L}) and returns false only when an uncovered script is the STRICT majority of the letters. classifyObjective now returns localeCovered on every verdict: a matched family ⇒ true (the dangerous keyword was found regardless of script); NONE + covered ⇒ the existing safe LOW verdict (localeCovered true, unchanged); NONE + uncovered ⇒ requiresHuman:true + localeCovered:false (could-not-classify, not a safety proof). compile() adds an UNCOVERED_LOCALE blocker when localeCovered===false ⇒ status BLOCKED / recovery ABSTAIN (fail-closed, dry-run, zero side effects). Over-classification toward human review is the safe direction. DOCUMENTED LIMITATION (not silently closed): a Latin-script language we lack keywords for (e.g. Spanish 'borra el archivo') is indistinguishable from English by script alone and remains a keyword gap; closing it needs a probabilistic language detector (non-deterministic), out of scope. Tests: nl-objective-gateway.test.ts block 32 (+13 => 252 assertions): CJK/Cyrillic ⇒ localeCovered false + requiresHuman true + NONE; EN/FR/AR benign NOT flagged; Arabic DESTRUCTIVE still classified (coverage never downgrades a matched family); mixed Latin-dominant stays covered; compile uncovered ⇒ UNCOVERED_LOCALE blocker + BLOCKED/ABSTAIN + no side effects; covered EN/AR compile ⇒ no blocker. build:runtime + tsc(both) green; full gate 243/243.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 321,
+        "mergeCommit": "7365f1d",
+        "verified": true
+      },
+      "acceptedAt": "2026-10-31"
     }
   ]
 }
