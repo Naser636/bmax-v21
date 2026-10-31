@@ -2082,7 +2082,10 @@
       "status": "ACCEPTED",
       "acceptedAt": "2026-10-31",
       "integration": {
-        "state": "PENDING_MERGE"
+        "state": "MERGED",
+        "pr": 299,
+        "mergeCommit": "72e894c",
+        "verified": true
       },
       "evidence": "P0-C exec-chain forensic #3. The build/TS gate trusted a PRESENT runtime-verify.json even when stamped for a DIFFERENT mission (stale prior-run leftover in shared runtime/generated/ so one mission green build/tsc verdict validated another). FIX (V68-SAFE: presence + mission-IDENTITY only, NO timing heuristic; the reverted V68 freshGates mtime-vs-startedAt false-BLOCKED every mission because odg-verify writes verify in PRE-FLIGHT before the checkpoint stamp): verifyStaleCrossMission = verify.mission present AND != plan.mission; verifyEvidenceOk = !isEngineering || !verifyStaleCrossMission; folded into validated + checks.verifyEvidenceOk + unmet. ABSENT verify.mission stays legacy/unchanged (mirror crossMission discipline). Regression +4 (engineering-proof: stale OTHER verify=BLOCK; this-mission M1=validated; absent=validated/unaffected). Full VE regression PASS; tsc clean BOTH tsconfigs; build OK. Independently verified by a separate agent. 9 primitives FROZEN. PART 2 (absent-verify fail-open) DEFERRED to p0c3-absent-verify-require."
     },
@@ -2096,6 +2099,19 @@
       "title": "P0-C#3 (part 2): close the ABSENT-runtime-verify build/TS fail-open on engineering missions (needs post-patch verify stage + adapter-recovery smoke)",
       "status": "READY",
       "evidence": "The absent-verify fail-open (engineering mission with NO runtime-verify.json defaults buildOk/typescriptOk to TRUE) is LIVE on the odg-autonomy direct-odg-run first attempt. A naive require-present BLOCK false-BLOCKS a LEGIT committed-deliverable re-validation (validation-engine-engineering-proof case 3 runs with no verify by design) and changes the autonomy first-run flow (relies on the adapter refreshVerifyEvidence recovery loop). Safe closure needs forensic Option D (a post-patch verify-producing stage in the odg-run pipeline before Validation Engine) + a full-pipeline V68 smoke under BOTH ODG_RUNTIME=ts and =js. Also closes the pre-patch-staleness residual (odg-verify computes build/tsc in PRE-FLIGHT before Patch Executor). Contract + Gate B required before implementation."
+    },
+    {
+      "id": "p0c5-truthlock-launcher-default-enforce",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "P0-C#5: Truth-Lock default-ON at the unattended odg-schedule-tick launcher (explicit opt-out), propagated to the dispatched child",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "PENDING_MERGE"
+      },
+      "evidence": "P0-C forensic #5 (design A). odg-schedule-tick is a scheduled/unattended entry; its truth-lock repo-safety gate defaulted OFF unless ODG_TRUTH_LOCK_ENFORCE was set, so a mutating mission on a divergent/unsafe repo was only RECORDED outside the systemd unit (which already sets =1). FIX (launcher-scoped, forensic design A): launcherEnforce() = env !== 0/false (DEFAULT-ON; unset⇒enforce, =0/=false⇒opt-out for throwaway/CI fixtures), and main() stamps process.env.ODG_TRUTH_LOCK_ENFORCE=1 when enforcing so the dispatched odg-run child (env:process.env) enforces transitively. DID NOT touch the pure gate default, odg-run, patch-executor, delegate-isolation, or capability-executors (they keep opt-in env===1 so local-dev + direct-spawn tests stay record-only). Reversible (env=0 opt-out). Regression: +4 unit (launcherEnforce unset/0/false/1) suite 18->22; +2 real-process e2e (G non-conforming+UNSET⇒STARTUP_REFUSED proving default-on; H non-conforming+=0⇒not-blocked opt-out) and A-F unchanged; truth-lock-gate + truth-lock-chokepoint PASS; tsc clean BOTH tsconfigs; build OK. Independently verified by a separate agent. 9 primitives FROZEN. OPEN (recorded): odg-campaign-run.ts has no truth-lock hook — covered via odg-campaign-loop->odg-run; adding a direct hook is a possible follow-on."
     }
   ]
 }

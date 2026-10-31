@@ -51,10 +51,12 @@ function sandbox(contracts, state: "conforming" | "wrong-branch" = "conforming")
 }
 const clean = (sb) => git(sb, ["status", "--porcelain"]) === "";
 const BIN = "runtime/dist/bin/odg-schedule-tick.js";
-function tick(sb, { allow = "", enforce = false, stop = false } = {}) {
+function tick(sb, { allow = "", enforce = false, stop = false, enforceEnv = undefined } = {}) {
   const env: any = { ...process.env };
   env.ODG_CANARY_ALLOWLIST = allow;
-  if (enforce) env.ODG_TRUTH_LOCK_ENFORCE = "1"; else delete env.ODG_TRUTH_LOCK_ENFORCE;
+  // enforceEnv (C#5): set the var to a literal value ("0"/"false"/unset) to exercise the launcher default-on + opt-out.
+  if (enforceEnv !== undefined) { if (enforceEnv === null) delete env.ODG_TRUTH_LOCK_ENFORCE; else env.ODG_TRUTH_LOCK_ENFORCE = enforceEnv; }
+  else if (enforce) env.ODG_TRUTH_LOCK_ENFORCE = "1"; else delete env.ODG_TRUTH_LOCK_ENFORCE;
   if (stop) env.ODG_SCHEDULER_STOP = "1"; else delete env.ODG_SCHEDULER_STOP;
   const r = spawnSync("node", [path.join(sb, BIN), ], { cwd: sb, encoding: "utf8", env });
   const out = (r.stdout || "") + (r.stderr || "");
@@ -107,6 +109,21 @@ console.log("prerequisite: dist bin present:", fs.existsSync(path.join(REPO, BIN
   const r2 = tick(sb, { allow: "TICK_RO", enforce: true });
   check(r1.exit === 0 && /PASS/.test(r1.out), "F: first tick ⇒ PASS");
   check(r2.exit === 0 && /IDLE/.test(r2.out), "F: second tick (mission now proven in the ledger) ⇒ IDLE (deduped, no re-dispatch)");
+}
+
+// G — C#5: UNATTENDED launcher DEFAULT-ON. Non-conforming repo + env UNSET (no explicit flag) ⇒ STARTUP_REFUSED
+//     (before C#5 this was only RECORDED/proceeded). Proves repo-safety no longer depends on remembering the env.
+{
+  const sb = sandbox([roContract("TICK_RO")], "wrong-branch");
+  const r = tick(sb, { allow: "TICK_RO", enforceEnv: null }); // env UNSET
+  check(r.exit === 2 && /STARTUP_REFUSED/.test(r.out) && !r.dispatched, "G: non-conforming + UNSET env ⇒ STARTUP_REFUSED (C#5 default-on, not record-only)");
+}
+// H — C#5 opt-out: non-conforming repo + explicit ODG_TRUTH_LOCK_ENFORCE=0 ⇒ NOT blocked (RECORDED), for
+//     throwaway/CI fixtures. Proves the escape hatch is honored.
+{
+  const sb = sandbox([roContract("TICK_RO")], "wrong-branch");
+  const r = tick(sb, { allow: "TICK_RO", enforceEnv: "0" });
+  check(r.exit !== 2 && !/STARTUP_REFUSED/.test(r.out), "H: non-conforming + explicit =0 opt-out ⇒ NOT blocked (record-only escape hatch honored)");
 }
 
 for (const sb of sandboxes) { try { fs.rmSync(sb, { recursive: true, force: true }); } catch {} }
