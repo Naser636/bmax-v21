@@ -1933,6 +1933,16 @@
         "mergeCommit": "bfcd097",
         "verified": true
       }
+    },
+    {
+      "id": "historical-roadmap-excellence-28jul-recover",
+      "program": "P0",
+      "priority": 0,
+      "deps": [],
+      "title": "Recover the ORIGINAL 'ODG MASTER ROADMAP D'EXCELLENCE OPÉRATIONNELLE' (28 July 2026) — historical source, not yet located",
+      "status": "BLOCKED",
+      "blockedBy": "original artifact NOT LOCATED in working tree or full git history (owner/external: the authentic 28-July-2026 document must be supplied or its location confirmed)",
+      "evidence": "Phase-0 historical recovery (continuity lot, main @ 1ed65c5). The original is confirmed ABSENT (ODG_ROADMAP_CROSSWALK.md §5.4 L105; grep over working tree + full git history → only references-to-absence). CTO supplied a WORK RECONSTRUCTION V1 (docs/odg-operational/ODG_MASTER_ROADMAP_EXCELLENCE_OPERATIONNELLE_RECONSTRUCTION_V1.md) — explicitly labelled NOT the retrieved original. Reconciliation of the reconstruction onto the canonical SSOT (P1/P2, D1-D8, H1-H3, axes A/B/C) drafted in EXCELLENCE_ROADMAP_RECONCILIATION_V1.md: introduces NO new requirement not already canonical; no competing strategic roadmap created. CONTRADICTION recorded (not resolved by overwrite): the '28 July 2026' date maps in-repo to the MACHINE roadmap runtime/governance/ROADMAP.json commit 072a114 (ODG_OPERATIONAL_MANIFEST.json:34), not to a found French excellence doc — possible conflation. BLOCKED on owner supplying/locating the authentic original; if found it supersedes the reconstruction (reality wins, no observation overwritten without proof). No code, no protected-path edit, no VPS."
     }
   ]
 }
