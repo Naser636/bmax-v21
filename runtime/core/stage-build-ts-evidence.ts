@@ -96,6 +96,13 @@ function runBuildTsEvidence(opts?: { buildFn?: () => boolean; tscFn?: () => bool
     const build = buildFn();
     const typescript = tscFn();
     verify = { ...prior, generatedAt: new Date().toISOString(), build, typescript, mission, producedBy: "stage-build-ts-evidence" };
+    // runtime/generated/runtime-verify.json persists across missions in the shared workspace. If a PRIOR
+    // read-only run left skip markers, they must NOT leak into THIS engineering artifact (they would read as a
+    // self-contradiction, e.g. build:false alongside skipped:true). A real engineering build DID run here, so
+    // drop any inherited non-engineering markers.
+    delete (verify as any).skipped;
+    delete (verify as any).buildExecuted;
+    delete (verify as any).skipReason;
   }
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
   fs.writeFileSync(VERIFY_PATH, JSON.stringify(verify, null, 2));

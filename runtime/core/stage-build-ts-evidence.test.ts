@@ -124,4 +124,15 @@ function inTempCwd(plan, opts, fn) {
   ok("preserve: prior gitClean/documentationProofPresent carried forward alongside fresh build/TS", res.gitClean === true && res.documentationProofPresent === true && res.build === true);
 }
 
+// 8. NO STALE-MARKER LEAK: a PRIOR read-only run left skipped/buildExecuted/skipReason in the shared
+//    runtime-verify.json; a subsequent ENGINEERING run must NOT carry those markers forward (they would
+//    contradict a real build verdict). The engineering artifact must be free of skip markers.
+{
+  const priorReadOnly = { build: true, typescript: true, buildExecuted: false, skipped: true, skipReason: "non-engineering ...", mission: "RO_PRIOR", producedBy: "stage-build-ts-evidence" };
+  const res = inTempCwd({ mission: "ENG_AFTER_RO", requiresEngineering: true, authorizedPaths: ["runtime/app"] }, { priorVerify: priorReadOnly }, () =>
+    S.runBuildTsEvidence({ buildFn: () => false, tscFn: () => true })); // red build on purpose
+  ok("no-leak: engineering run after a read-only run drops skipped/buildExecuted/skipReason (no self-contradiction)", !("skipped" in res) && !("buildExecuted" in res) && !("skipReason" in res));
+  ok("no-leak: engineering run records the REAL (red) build verdict, not the inherited skip", res.build === false && res.typescript === true && res.mission === "ENG_AFTER_RO");
+}
+
 console.log(`\nBuild/TS Evidence stage scope — ${passed} assertions passed.`);
