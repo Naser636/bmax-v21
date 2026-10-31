@@ -70,7 +70,7 @@ const BROKEN_JS = "const y = ;\nmodule.exports = y;\n";   // syntax error — no
     const lint = r.review.findings.find((x) => x.area === "lint");
     ok("shell file ⇒ real shellcheck MEDIUM lint finding (toolchain present)", !!lint && lint.severity === "MEDIUM" && /shellcheck/.test(lint.evidence));
   } else {
-    ok("shellcheck absent ⇒ lint analyzer skipped honestly (no fabricated finding)", true);
+    console.log("##CLASS: BLOCKED_BY_ISOLATION shellcheck absent — lint-analyzer control NOT exercised ⇒ BLOCKED (never a silent PASS)");
   }
 }
 // (9) INTEGRATION: the REAL CLI runs as a spawned process over a fixture directory (end-to-end productization).
@@ -111,7 +111,7 @@ const BROKEN_JS = "const y = ;\nmodule.exports = y;\n";   // syntax error — no
     if (r.review.summary.filesBlocked === 1) { ok("TS project check BLOCKED (tsc unavailable) — honest, skipped", true); }
     else { ok("multi-file TS project (import-aware) ⇒ clean, NO false compile finding (audit regression fixed)", r.review.summary.findingCount === 0 && r.review.summary.clean === true && r.review.summary.filesReviewed === 1); }
     fs.rmSync(dir, { recursive: true, force: true });
-  } else { ok("TypeScript toolchain absent ⇒ project-mode review skipped honestly", true); }
+  } else { console.log("##CLASS: BLOCKED_BY_ISOLATION tsc absent — project-mode review control NOT exercised ⇒ BLOCKED"); }
 }
 // (12) a TS project WITH a real type error ⇒ exactly one HIGH project-level compile finding (import-aware tsc).
 {
@@ -124,7 +124,7 @@ const BROKEN_JS = "const y = ;\nmodule.exports = y;\n";   // syntax error — no
     if (r.review.summary.filesBlocked === 1) { ok("TS project check BLOCKED (tsc unavailable) — honest, skipped", true); }
     else { ok("TS project with a type error ⇒ 1 HIGH compile finding (0 false PASS)", r.review.summary.findingCount === 1 && r.review.findings[0].severity === "HIGH" && r.review.findings[0].area === "compile" && r.review.summary.clean === false); }
     fs.rmSync(dir, { recursive: true, force: true });
-  } else { ok("TypeScript toolchain absent ⇒ TS-fail case skipped honestly", true); }
+  } else { console.log("##CLASS: BLOCKED_BY_ISOLATION tsc absent — TS-fail-case control NOT exercised ⇒ BLOCKED"); }
 }
 
 // (12) new no-install families (TOML/XML/INI) route through the review ⇒ a malformed config is a compile finding.

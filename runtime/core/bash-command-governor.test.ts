@@ -315,7 +315,7 @@ console.log(BWRAP ? "  (real bubblewrap available — execution cases run live)"
 // REAL bwrap sandbox; skip only if bubblewrap is unavailable on the host (never silently pass as confined).
 (function fsConfinement() {
   const sb = engine.detectSandbox({});
-  if (!sb || !sb.available) { console.log("  ok - (skipped: bubblewrap unavailable — confinement asserts need the real sandbox)"); passed += 1; return; }
+  if (!sb || !sb.available) { console.log("##CLASS: BLOCKED_BY_ISOLATION bubblewrap unavailable — fs-confinement asserts need the real sandbox; control NOT exercised ⇒ BLOCKED, never a silent PASS"); return; }
   // /etc/passwd is NOT in SECRET_PATTERNS, so it reaches execution — with the fix its content must be unreadable
   // inside the sandbox (/etc not bound), proven by a non-zero exit and NO passwd content in stdout.
   const passwd = engine.govern({ command: "cat /etc/passwd", execute: true }, {});

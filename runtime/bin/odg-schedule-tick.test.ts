@@ -130,7 +130,7 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
     ok("tick: REAL mutating mission file (mode=IMPLEMENT, no flags) ⇒ BLOCKED + ZERO dispatch via the real on-disk classifier (default-deny)",
        d.status === "BLOCKED" && dispatched === 0 && /CANARY_REFUSES_NON_READONLY/.test(d.reason));
   } else {
-    ok("tick: (real-loader regression skipped — fixture mission absent)", true);
+    console.log("##CLASS: BLOCKED_BY_ISOLATION real-loader default-deny regression fixture absent — safety control NOT exercised ⇒ BLOCKED");
   }
 }
 
