@@ -30,13 +30,32 @@ function read(name: any, fallback?: any): any {
   }
 }
 
+// readStrict(name): distinguish ABSENT from CORRUPT so a caller can REFUSE to overwrite a present-but-unparseable
+// store (a torn write from a crash) instead of silently clobbering its contents. Plain read() collapses both to the
+// fallback, which — combined with a subsequent write — silently discards the prior data (e.g. FROZEN loop-protection
+// incidents). Returns { present, corrupt, value }: present=file exists; corrupt=exists but JSON.parse threw;
+// value=parsed object (or null when absent/corrupt). Never throws.
+function readStrict(name: any): any {
+  let raw: any;
+  try { raw = fs.readFileSync(file(name), "utf8"); }
+  catch { return { present: false, corrupt: false, value: null }; }           // absent (or unreadable)
+  try { return { present: true, corrupt: false, value: JSON.parse(raw) }; }
+  catch { return { present: true, corrupt: true, value: null }; }             // present but torn/invalid JSON
+}
+
+// write(name, obj): CRASH-ATOMIC — write a temp file in the SAME dir then renameSync over the target (rename is
+// atomic on the same filesystem), so an interrupted write can never leave a torn target behind. Mirrors the proven
+// mission-ledger atomic-write. API unchanged (returns obj).
 function write(name: any, obj: any): any {
   fs.mkdirSync(DIR, { recursive: true });
-  fs.writeFileSync(file(name), JSON.stringify(obj, null, 2));
+  const target = file(name);
+  const tmp = `${target}.tmp-${process.pid}`;
+  fs.writeFileSync(tmp, JSON.stringify(obj, null, 2));
+  fs.renameSync(tmp, target);
   return obj;
 }
 
-module.exports = { DIR, file, read, write };
+module.exports = { DIR, file, read, readStrict, write };
 
 // Module-scope marker (adds NO export): forces TypeScript MODULE scope so internal names are
 // module-scoped, not global script scope (prevents cross-lot TS2393). The CommonJS API is unchanged.

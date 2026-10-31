@@ -34,7 +34,7 @@ export interface RecurrenceRecord {
 }
 
 export interface RecurrenceAnalysis {
-  verdict: "NONE" | "FROZEN_LOOP" | "RECURRENCE" | "NO_RECURRENCE";
+  verdict: "NONE" | "FROZEN_LOOP" | "RECURRENCE" | "NO_RECURRENCE" | "UNKNOWN";
   summary: {
     total: number;
     recurring: number;
@@ -116,7 +116,19 @@ function loadRecurrence(opts?: any): RecurrenceAnalysis {
   let ledger: any = { incidents: {} };
   try {
     const store = o.store || require("./autonomy-store");
-    ledger = store.read(INCIDENTS_FILE, { incidents: {} }) || { incidents: {} };
+    // Distinguish a CORRUPT ledger (torn write) from an absent/empty one: analyzing a corrupt store as an empty
+    // ledger would report verdict NONE — "cannot read the incident ledger" shown as "no recurring incidents"
+    // (a could-not-verify rendered healthy). readStrict lets us surface a distinct UNKNOWN instead.
+    if (typeof store.readStrict === "function") {
+      const s = store.readStrict(INCIDENTS_FILE);
+      if (s.corrupt) {
+        const empty = analyzeRecurrence({ incidents: {} });
+        return { ...empty, verdict: "UNKNOWN", summary: { ...empty.summary, ledgerUnreadable: true } } as RecurrenceAnalysis;
+      }
+      ledger = (s.present && s.value) ? s.value : { incidents: {} };
+    } else {
+      ledger = store.read(INCIDENTS_FILE, { incidents: {} }) || { incidents: {} };
+    }
   } catch {
     ledger = { incidents: {} };
   }

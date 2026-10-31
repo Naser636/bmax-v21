@@ -2328,8 +2328,27 @@
         "ssrf-isprivatehost-httpbounded"
       ],
       "title": "SSRF guard IP-literal-only: numeric-range rules apply only to IP literals (no public-domain over-block); + 0.0.0.0/8 + fe80 link-local; DNS-rebind residual noted",
+      "status": "ACCEPTED",
+      "evidence": "Verifier follow-up on #316 (fail-safe over-block): _isPrivateFetchHost applied the IPv4/IPv6 range regexes to ALL hosts, so public domains lexically shaped like private ranges over-blocked on the governed external-research path (10.example.com via /^10./, fcbarcelona.com / fd-cdn.net via /^f[cd]/). FIX: the numeric-range rules now run ONLY when the host is an IP LITERAL (dotted-quad /^\\d{1,3}(\\.\\d{1,3}){3}$/ or bracket-stripped IPv6 containing ':'); hostnames only match localhost/.local/.internal/metadata.google.internal by NAME. Node's URL normalizes decimal/hex/octal IP encodings to dotted-quad so those are still caught. Added 0.0.0.0/8 + IPv6 fe80 link-local to the literal set. EVIDENCE: http-get-bounded.test.ts 24/24 — public lookalikes (10.example.com, fcbarcelona.com, fd-cdn.net, 169-fake.example.com) NOT over-blocked; IP literals (10.0.0.5, 0.0.0.0, [fc00::1], [fe80::1], [::1]) still blocked; external-research-live 14/14 (loopback unaffected); tsc clean BOTH. KNOWN RESIDUAL (documented, future hardening): the guard matches the URL hostname, NOT a resolved IP — a public name whose DNS A-record points to a private/metadata IP (DNS rebinding) is not blocked (resolved-IP checking not implemented; out of scope). OWASP A10, CWE-918. Independent verify + CI.",
+      "acceptedAt": "2026-10-31",
+      "integration": {
+        "state": "MERGED",
+        "pr": 318,
+        "mergeCommit": "e84a297",
+        "verified": true
+      }
+    },
+    {
+      "id": "autonomy-store-atomic-corruption",
+      "program": "P0",
+      "priority": 2,
+      "deps": [],
+      "title": "autonomy-store crash-atomic write + corruption-distinguishing readStrict (safety: a torn incident ledger no longer silently discards FROZEN loop-protection)",
       "status": "IN_PROGRESS",
-      "evidence": "Verifier follow-up on #316 (fail-safe over-block): _isPrivateFetchHost applied the IPv4/IPv6 range regexes to ALL hosts, so public domains lexically shaped like private ranges over-blocked on the governed external-research path (10.example.com via /^10./, fcbarcelona.com / fd-cdn.net via /^f[cd]/). FIX: the numeric-range rules now run ONLY when the host is an IP LITERAL (dotted-quad /^\\d{1,3}(\\.\\d{1,3}){3}$/ or bracket-stripped IPv6 containing ':'); hostnames only match localhost/.local/.internal/metadata.google.internal by NAME. Node's URL normalizes decimal/hex/octal IP encodings to dotted-quad so those are still caught. Added 0.0.0.0/8 + IPv6 fe80 link-local to the literal set. EVIDENCE: http-get-bounded.test.ts 24/24 — public lookalikes (10.example.com, fcbarcelona.com, fd-cdn.net, 169-fake.example.com) NOT over-blocked; IP literals (10.0.0.5, 0.0.0.0, [fc00::1], [fe80::1], [::1]) still blocked; external-research-live 14/14 (loopback unaffected); tsc clean BOTH. KNOWN RESIDUAL (documented, future hardening): the guard matches the URL hostname, NOT a resolved IP — a public name whose DNS A-record points to a private/metadata IP (DNS rebinding) is not blocked (resolved-IP checking not implemented; out of scope). OWASP A10, CWE-918. Independent verify + CI."
+      "evidence": "SAFETY defect reproduced by recon: autonomy-store.read() collapses an ABSENT store and a CORRUPT (torn-write) store to the same fallback; self-diagnostic.raiseIncident then WROTE a fresh ledger over the torn one, silently discarding FROZEN loop-protection incidents (the mechanism that stops an infinite auto-repair loop). Fix: (a) autonomy-store.write() is now crash-atomic (temp file + renameSync in the same dir) mirroring mission-ledger; (b) new readStrict(name) returns {present,corrupt,value} distinguishing absent vs torn (read() byte-identical for back-compat); (c) self-diagnostic.raiseIncident uses readStrict and, on corrupt, warns to stderr and returns {status:'LEDGER_CORRUPT',recorded:false} REFUSING to overwrite (torn file preserved for recovery); (d) incident-recurrence.loadRecurrence returns verdict UNKNOWN + summary.ledgerUnreadable on corrupt (was NONE = a could-not-verify rendered healthy); (e) fleet-collector surfaces evidenceRecorded{attempted,recorded,reason} instead of silently swallowing a skipped/throwing ledger write. New runtime/core/autonomy-store.test.ts (11 assertions, process.chdir hazard ⇒ serial) wired into the test:report gate: readStrict absent/valid/corrupt, atomic write (no .tmp leftover), read() back-compat, and the integration path (seed FROZEN ⇒ tear ledger ⇒ raiseIncident LEDGER_CORRUPT + file NOT clobbered ⇒ recurrence UNKNOWN; valid-empty ⇒ NONE). build:runtime + tsc(tsconfig.json AND tsconfig.runtime-dist.json) green; consumer suites self-diagnostic 64/64 + incident-recurrence green; full gate 243/243.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
