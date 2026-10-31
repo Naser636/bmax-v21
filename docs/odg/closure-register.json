@@ -2072,7 +2072,7 @@
       "blockedBy": "owner secret-management decision (secret creation/rotation/storage is owner-gated per mandate)",
       "humanActionRequired": "Owner to decide the audit-log integrity KEY strategy (HMAC-SHA256 with a runtime secret, or asymmetric signed-tail per SLSA L2, plus a stored trusted tip/length anchor for tail-truncation). Requires owner-gated secret generation+storage+rotation. Detail in scratchpad P0-CONTRACTS + SEC#3 forensic.",
       "resumeTest": "With a provisioned key: full-rewrite OR tail-truncation of scheduler-audit-chain.json ⇒ keyed-verify ok:false; intact ⇒ ok:true; verify-on-read gate refuses the forgery.",
-      "evidence": "Forensic: audit-log.ts + evidence-provenance.ts are keyless sha256 ⇒ a full-rewrite attacker recomputes a self-consistent chain (verifyChain ok:true); verifyChain is a prefix chain with no tip anchor ⇒ tail-truncation also verifies ok:true. Closing either requires a secret the attacker cannot reproduce ⇒ owner-gated. NO secret operation performed."
+      "evidence": "Forensic: audit-log.ts + evidence-provenance.ts are keyless sha256 ⇒ a full-rewrite attacker recomputes a self-consistent chain (verifyChain ok:true); verifyChain is a prefix chain with no tip anchor ⇒ tail-truncation also verifies ok:true. Closing either requires a secret the attacker cannot reproduce ⇒ owner-gated. NO secret operation performed. [MECHANISM IMPLEMENTED: keyed-HMAC + tip-anchor shipped via p0e-audit-log-keyed-mechanism (audit-log.ts, backward-compatible, 19 assertions). This item REMAINS BLOCKED strictly on the OWNER action: provision the HMAC key (secret) + authorize wiring it into the callers + out-of-band tip-anchor storage. No secret created by ODG.]"
     },
     {
       "id": "p0c3-stale-verify-cross-mission-guard",
@@ -2449,6 +2449,20 @@
         "verified": true
       },
       "acceptedAt": "2026-10-31"
+    },
+    {
+      "id": "p0e-audit-log-keyed-mechanism",
+      "program": "P0",
+      "priority": 2,
+      "deps": [
+        "p0e-audit-chain-verify-on-read"
+      ],
+      "title": "audit-log keyed-HMAC + tip-anchor MECHANISM (the ODG-preparable technical half of p0e-audit-log-keyed-integrity; key provisioning remains owner-gated)",
+      "status": "IN_PROGRESS",
+      "evidence": "OWNER-GATE RESOLUTION: implemented the keyed-integrity MECHANISM that closes the two forged-chain vectors, leaving ONLY the irreducible owner secret decision. audit-log.ts: entryHash(seq,prevHash,payload,key?) uses HMAC-SHA256 when a non-empty key is supplied else plain sha256 (BYTE-IDENTICAL keyless path: the NUL-separated preimage is preserved EXACTLY, written as the \\0 escape - a first draft used spaces and was REJECTED by independent validation for silently changing every sealed hash / false-BLOCKing NUL-sealed chains; corrected + a non-self-referential historical-hash PIN test added); appendEntry(chain,payload,{key}); new chainTip(chain)={length,tipHash} out-of-band anchor; verifyChain(chain,{key,expectedTip}) rejects a full-rewrite forgery (attacker lacks the key) and detects tail truncation/extension via the tip anchor; returns honest keyed/tipAnchored flags. Module stays PURE: key is a PARAMETER, never reads env, never holds a secret. Tests +10 (19): keyless forgery PASSES keyless verify (weakness) but keyed verify REJECTS it; wrong key rejected; truncation invisible to verify alone but DETECTED by the anchor; extension detected; keyless path byte-identical. build:runtime + tsc(both) green; consumers (commercial-pipeline/post-release-learning/excellence-gate) unaffected; full gate 243/243. Independent validation + CI pending. OWNER ACTION REMAINING (parent p0e-audit-log-keyed-integrity stays BLOCKED): provision ODG_AUTHORITY-managed HMAC key + authorize wiring it into audit-log callers (process.env.ODG_AUDIT_HMAC_KEY) + out-of-band tip-anchor storage.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
