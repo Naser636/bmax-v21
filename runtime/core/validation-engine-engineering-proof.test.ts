@@ -48,8 +48,14 @@ function run(executed, opts = {}) {
   git(["init", "-q"]); git(["add", "-A"]); git(["commit", "-qm", "init"]);
   if (opts.dirty) fs.writeFileSync(path.join(dir, "runtime", "app", "x.ts"), "export const x: number = 2; // changed this run\n");
   const G = (n) => path.join(dir, "runtime", "generated", n);
-  fs.writeFileSync(G("mission-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: [scope], requiresEngineering: true, objectives: [{ id: "o1", goal: "g" }] }));
-  fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: [scope], patches: [{ action: "a", objectiveId: "o1" }] }));
+  // p0c3-stage-scope-readonly integration: opts.requiresEngineering/opts.authorizedPaths let a case drive the
+  // VE as a NON-engineering (read-only/AUDIT) mission (requiresEngineering:false OR empty authorizedPaths), which
+  // is exactly the class the Build/TS Evidence stage SKIPS. Defaults reproduce the engineering mission unchanged.
+  const requiresEngineering = opts.requiresEngineering === undefined ? true : opts.requiresEngineering;
+  const planAuthorizedPaths = opts.authorizedPaths === undefined ? [scope] : opts.authorizedPaths;
+  const planExtra = opts.mode ? { mode: opts.mode } : {};
+  fs.writeFileSync(G("mission-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: planAuthorizedPaths, requiresEngineering, objectives: [{ id: "o1", goal: "g" }], ...planExtra }));
+  fs.writeFileSync(G("patch-plan.json"), JSON.stringify({ mission: "M1", authorizedPaths: planAuthorizedPaths, patches: [{ action: "a", objectiveId: "o1" }] }));
   fs.writeFileSync(G("patch-execution.json"), JSON.stringify({ mission: "M1", executed }));
   // C#3 part 2: the Build/TS Evidence pipeline stage now ALWAYS produces a this-mission runtime-verify.json before
   // the Validation Engine, so an engineering mission legitimately always carries one. The direct-VE harness mirrors
@@ -148,6 +154,25 @@ const applied = [{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ 
 {
   const r = run([{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ target: "runtime/app/x.ts", mode: "content" }] }]);
   ok("10 committed-deliverable re-validation + this-mission green verify ⇒ validated (part-2 does NOT reject legit re-validation)", !!(r && r.validated) && r.checks.verifyEvidenceOk === true);
+}
+
+// 11 — p0c3-stage-scope-readonly INTEGRATION: the Build/TS Evidence stage SKIPS build/tsc for a non-engineering
+//      (read-only/AUDIT) mission and writes the mission-stamped RC-1 verify with build:true/typescript:true (gate
+//      N/A) + skipped:true/buildExecuted:false. The VE must (a) validate the mission, (b) NOT apply the engineering
+//      gate, and (c) NOT trigger build-recovery (buildOk true ⇒ :187 skipped). This is the EXACT artifact the stage
+//      emits (see stage-build-ts-evidence.ts non-engineering branch).
+const RO_STAGE_VERIFY = { build: true, typescript: true, buildExecuted: false, skipped: true, skipReason: "non-engineering (read-only/AUDIT) mission — build/TS not run; gate N/A (satisfied by non-applicability)", mission: "M1", producedBy: "stage-build-ts-evidence" };
+{
+  const r = run([{ objectiveId: "o1", action: "a", status: "RECORDED" }], { requiresEngineering: false, mode: "AUDIT", verify: RO_STAGE_VERIFY });
+  ok("11 read-only mission + stage read-only verify ⇒ validated (not blocked)", !!(r && r.validated));
+  ok("11 read-only mission ⇒ engineering gate NOT applied (engineering:false in report)", !!(r && r.checks && r.checks.engineering === false));
+  ok("11 read-only mission ⇒ build/TS gates green (gate N/A, no recovery)", !!(r && r.checks && r.checks.buildGate === true && r.checks.typescriptGate === true));
+}
+// 12 — BOUNDARY: the stage's OTHER skip trigger — requiresEngineering true but authorizedPaths EMPTY ⇒ non-engineering.
+//      Same read-only stage verify ⇒ still validated, engineering gate not applied.
+{
+  const r = run([{ objectiveId: "o1", action: "a", status: "RECORDED" }], { authorizedPaths: [], mode: "READ_ONLY", verify: RO_STAGE_VERIFY });
+  ok("12 empty-authorizedPaths (non-engineering boundary) + read-only stage verify ⇒ validated", !!(r && r.validated) && r.checks.engineering === false);
 }
 
 console.log(`\nValidation Engine engineering-proof — ${passed} assertions passed.`);
