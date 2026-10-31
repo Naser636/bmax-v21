@@ -62,13 +62,19 @@ function classify({ exists, exitCode, stdout }: any): any {
 }
 
 /** Run each suite through an injected runner (default: tsx child process). Never throws per-suite. */
+// OBSERVABILITY (CI-reliability): retain a bounded tail of a suite's captured stdout/stderr so renderReport can
+// surface WHY a suite FAILed/BLOCKED — the classified gate previously printed only the suite NAME, which hid
+// assertion errors and the ##SUITE_WATCHDOG active-handle dump (you could not tell a hang from an assertion fail).
+const TAIL_BYTES = 1600;
+function tailOf(stdout: any): string { const s = typeof stdout === "string" ? stdout : ""; return s.length > TAIL_BYTES ? s.slice(s.length - TAIL_BYTES) : s; }
+
 function runSuites(files: any, runner?: any): any {
   const run = typeof runner === "function" ? runner : defaultRunner;
   return files.map((file: any) => {
     const exists = safeExists(file);
     const r = exists ? run(file) : { exitCode: null, stdout: "" };
     const { cls, reason } = classify({ exists, exitCode: r.exitCode, stdout: r.stdout });
-    return { file, exitCode: r.exitCode, cls, reason };
+    return { file, exitCode: r.exitCode, cls, reason, tail: (cls === "FAIL" || cls === "BLOCKED_BY_ISOLATION") ? tailOf(r.stdout) : "" };
   });
 }
 
@@ -126,6 +132,11 @@ function renderReport(summary: any, results: any): string {
     L.push(`${cls}:`);
     for (const r of results.filter((x: any) => x.cls === cls)) {
       L.push(`  - ${r.file}${r.reason ? "  (" + r.reason + ")" : ""}`);
+      // Surface a bounded tail of the failing suite's own output so the gate names the actual cause (assertion
+      // error / ##SUITE_WATCHDOG active-handle dump / stack), not just the suite file. FAIL + BLOCKED only.
+      if ((cls === "FAIL" || cls === "BLOCKED_BY_ISOLATION") && typeof r.tail === "string" && r.tail.trim()) {
+        for (const ln of r.tail.replace(/\s+$/, "").split("\n").slice(-20)) L.push(`      | ${ln}`);
+      }
     }
   }
   L.push(rule);
@@ -289,7 +300,7 @@ async function runSuitesParallel(files: string[], workers: number, runner?: any)
   const results: any[] = new Array(indexed.length);
   const record = (e: any, r: any) => {
     const { cls, reason } = classify({ exists: e.exists, exitCode: r.exitCode, stdout: r.stdout });
-    results[e.i] = { file: e.file, exitCode: r.exitCode, cls, reason };
+    results[e.i] = { file: e.file, exitCode: r.exitCode, cls, reason, tail: (cls === "FAIL" || cls === "BLOCKED_BY_ISOLATION") ? tailOf(r.stdout) : "" };
   };
   // phase 1 — hazardous suites, strictly sequential (never concurrent with anything).
   for (const e of indexed.filter((x) => x.hazard)) {
