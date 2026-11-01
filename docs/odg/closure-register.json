@@ -2521,6 +2521,20 @@
       "integration": {
         "state": "PENDING"
       }
+    },
+    {
+      "id": "actor-provenance-adversarial-tests",
+      "program": "P0",
+      "priority": 3,
+      "deps": [
+        "p0-autonomy-measure-slice2"
+      ],
+      "title": "actor-provenance dedicated adversarial unit test (close the attribution-module coverage gap; module proven fail-closed, NO source defect)",
+      "status": "IN_PROGRESS",
+      "evidence": "CTO Mission 2. actor-provenance (the only attribution/executor resolver) previously had NO dedicated unit test (covered only via mission-ledger-actor-provenance integration). Added runtime/core/actor-provenance.test.ts (22 assertions) with negative tests for forged actor identity (ODG author WITHOUT ODG_EXECUTOR applied-sentinel ⇒ demoted null; proven/validated never an actor signal), missing identity (no authoredBy / empty executed / absent patch-execution = delegation provenance loss ⇒ null), mismatched context (cross-mission strict !== ⇒ null), unauthorized substitution (unmapped/UNKNOWN author beside concordant-ODG ⇒ ambiguous null + unresolvedCount; contradictory ODG+PROVIDER ⇒ null), malformed evidence (non-object / executed-not-array / null entries ⇒ fail-closed null) — PLUS positive tests (concordant ODG/ODG_RULES ⇒ ODG; PROVIDER/LOCAL_PROVIDER ⇒ TECHNICAL_PROVIDER; humanMandatory/OPERATOR/CONTRACT ⇒ HUMAN) so legitimate attribution is not wrongly rejected. ALL PASS against the UNCHANGED module ⇒ coverage gap closed, no demonstrated defect (per CTO 'fix only demonstrated defects'). Wired into test:report; tsc(both) green; full gate 245/245. Test-only (no source change).",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
