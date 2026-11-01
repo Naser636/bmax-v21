@@ -1,0 +1,59 @@
+# ODG MASTER UNIFIED REGISTER (V1, 2026-11-01)
+
+**Authority:** CTO Master Unified Mandate. **Role:** ONE canonical execution register that *references and absorbs* the remaining work of P1/P2 + the eleven-domain program + ODG autonomy, **without overwriting** any existing roadmap (those remain historical sources). It does not replace the machine SSOT `docs/odg/closure-register.json` (167 items) — it maps that evidence onto the approved domains. No fabrication; FACT / EXTERNAL / INFERENCE / PROPOSAL / BLOCKED / VERIFIED labels apply.
+
+## 0. Governance + Truth Lock (Wave 0)
+- 9 permanent primitives FROZEN: IDENTITY, STATE, CONTRACT, POLICY, RESOLVER, EXECUTOR, EVIDENCE, RECOVERY, ALLOCATOR — no 10th.
+- **Truth Lock (live):** `origin/main = main = 4b049ce`, ahead/behind 0/0, **0 open PRs**, **5 stashes** + **6 foreign untracked** preserved, `main` branch-protected (require PR + CI, enforce_admins, no force-push/delete). Register `docs/odg/closure-register.json` = **167 items (152 ACCEPTED / 10 BLOCKED / 1 IN_PROGRESS / 4 DEFERRED), 0 stale acceptances.**
+- Provenance preserved: historical roadmaps (`ODG_MASTER_ROADMAP.md`, Master V5 FICHE 01–07, `ELEVEN_PROFESSIONS_{PROGRAM,DECISION_DOSSIER}_V1.md`) remain as-is. The rejected draft `ELEVEN_PROFESSIONS_MASTER_MAP_V1.md` (ODG scratch, never committed, superseded by the CTO-approved D01–D11) was removed to avoid a competing master (§11.12).
+
+## 1. Eleven CTO-APPROVED domains (§3) ↔ recovered P1/P2 evidence ↔ honest readiness
+Readiness ladder: **R0** concept · **R1** researched/specified · **R2** implemented internally · **R3** independently verified · **R4** validated on an authorized realistic external case · **R5** client-operationally-ready (all human/legal controls). All domains are **synthetic/internal, €0 clients** (`business-coverage-matrix-22`: PROVEN=none) — none is R4+.
+
+| Domain | Recovered evidence (FACT: module+test, register id) | Readiness | Key gap to next level |
+|---|---|---|---|
+| **D01 SW Eng / Dev / Legacy Modernization** | `ese-code-review-service.ts`→SARIF + 17-track `code-execution.ts` LANG_SPEC (`ese-code-review-service` ACC) | **R2** (modernization sub-scope R1) | real external project case (R3/R4); legacy-modernization capability unbuilt |
+| **D02 AI Engineering & Agentic Systems** | `agent-governance-harness.ts`, `third-party-agent-gate.ts`, `agent-identity.ts`, `ollama-provider.ts`, `coding-executor.ts`, `generative-repair-adapter.ts` (ACC) | **R2** | packaged agent-build service; external case |
+| **D03 Cybersecurity / AppSec / Supply-chain** | `sbom-audit-service.ts` (O2: real CycloneDX, VERIFIED artifact) + sandbox confinement `code-execution.ts:204-293` + `bash-command-governor.ts` + dashboard-auth (ACC) | **R2** (O2 artifact R3) | CVE scanning (excluded), independent pen-test, SLSA signing (owner key) |
+| **D04 Data Engineering / Data Quality / AI-ready** | `dataset-quality-service.ts` (+conformance upgrade) (ACC) | **R2** | AI-ready pipeline + external dataset (`broad-it-independent-eval-set` BLOCKED) |
+| **D05 Quality Eng / Automated Testing / Independent Eval** | `broad-it-eval.ts`, `independent-label-policy.ts`, VE gates, `fairness-eval.ts`, benchmark-task-mode 2/3 (ACC) | **R2** (honest NO_DATA headline) | independently-labelled corpus (BLOCKED), external eval case |
+| **D06 Cloud / DevOps / Platform / IDP** | `campaign-{loop,controller}.ts`, `campaign-run-entrypoint`, runners (ACC); **O8 IDP = `golden-path-scaffolder-poc` SPECIFICATION_ONLY / DEFERRED** | **R1** (IDP), R2 (orchestration) | IDP templated catalog build (greenfield); systemd on VPS (BLOCKED, owner) |
+| **D07 SRE / Observability / Reliability / Performance** | `campaign-journal.ts`, `odg-health` (×3), crash-atomic writes, `campaign-metrics.ts`; `latency-measure.ts`/`slo-*` (prior TRUST+SLO campaign, non-P1/P2) | **R2** (true perf-eng R1) | latency/throughput/load/profiling capability; SLO productization |
+| **D08 AI Assurance / Responsible-AI / Governance / Risk** | `ai-assurance-{assessment,report,regression}.ts`, `fairness-eval.ts`, `ai-act-role-classifier.ts` (O3) (ACC) | **R2** | always NOT_CERTIFIED; external AI-system case; accredited body (human) |
+| **D09 Digital Regulatory Eng / Compliance Automation** | `regulatory-dossier-service.ts`, `regulatory-assurance.ts` (GDPR/ISO27001/ISO42001/DORA), `ai-act-role-classifier.ts` (O3), e-invoicing EN16931 stack `einvoice-*`/`factur-x-extract` (ACC) | **R2** | legal opinion (reserved human), certification (accredited body) |
+| **D10 FinOps / Cloud Economics / Cost Optimization** | `finance-ledger-service.ts`, `economic-unit.ts` (exact minor units), `cost-accounting`, `budget-ledger`, `net-cash-model` (ACC); `p01-billing-sandbox` (BLOCKED) | **R2** (SIM-only); **FinOps/cloud-cost sub-scope R0/R1** | cloud-cost/FinOps capability NOT built; real billing provider (owner) |
+| **D11 Enterprise Integration / Workflow Automation / Vertical** | Offer A workflow-automation (internal demonstrator), e-invoicing vertical (D6/D9), `renovation-quote-normalize.ts` (retrofit), `commercial-ops-substrate-h3` (DEFERRED) | **R1–R2** | real connectors/integrations unbuilt; vertical productization (owner decisions) |
+
+**Boundary rules applied (§3):** languages = technologies inside D01 (17 tracks, not professions); architecture = cross-cutting (no standalone domain); DB within D01/D04; performance within D07; SEO/productization = shared go-to-market capability (`seo-*` ×7, `seo-positioning-plan`), not a domain; e-invoicing/finance verticals in D11/D10 with D09 controls; **O2→D03/D09, O3→D08/D09, O8→D06 (spec-only, not implemented)** — O2/O3/O8 market research reused, NOT repeated (`ODG_POC_O2_O3_O8.md`, `PORTFOLIO_RECONCILIATION.md`).
+
+## 2. P1/P2 provenance & remaining-work crosswalk
+- **Machine SSOT unchanged:** `docs/odg/closure-register.json` (every P1/P2 id + status + integration + evidence preserved). This register references it; it is not re-keyed.
+- **Remaining non-ACCEPTED (15):** 10 BLOCKED / 4 DEFERRED / 1 IN_PROGRESS — all owner-gated / external / out-of-scope, each with `humanActionRequired`+`resumeTest`. Consolidated in `OWNER_GATE_EXECUTION_PLAN.md`. None is an implementation failure.
+- **Domain SSOT already in code:** `runtime/core/engineering-practices-register.ts` (9 practice families) is the existing machine crosswalk; it maps into D01–D08 above.
+
+## 3. ODG autonomy capability-gap register (Wave 1) — reference
+`ODG_CAPABILITY_INVENTORY.md` (evidence-backed, §A–H) is the canonical autonomy inventory. DEMONSTRATED: understand/decide/execute/delegate-to-independent-agents/validate. GAPS (root-caused): no durable self-wake post-session-termination (external wake owner-gated); keyed evidence authenticity (owner HMAC secret); no demonstrated external-web research run yet; no private-VPS mutation; structured-roadmap-deps not live-enforced. Build-able-safely vs owner-gated are separated there. Wave 1 = close the build-able ones as bounded missions when dependency-ready.
+
+## 4. Market intelligence (Wave 2) — STRUCTURE ONLY, PENDING evidence (no fabrication)
+Eleven comparable market dossiers (EU/France-first + international benchmarks), each: demand/trends, buyer problems+triggers, segments, competitors/SaaS/substitutes, public pricing models, procurement barriers, applicable EU/intl standards, gaps, realistic first offers. **Rules:** multiple independent primary sources; separate market-size from addressable demand; no invented TAM/SAM/SOM or forecasts; state assumptions+confidence; a demand signal ≠ willingness-to-buy. Reuse O2/O3/O8 dossiers as-is. **Status: PENDING** — runs as isolated read-only WebSearch/WebFetch agent lots (§8), one dossier per lot, independently verified.
+
+## 5. Nine-expert synthesis (Wave 3) — model + STRUCTURE, no champions selected yet
+Per domain: research **9 complementary world-class EXPERTS** (practitioners / researchers / standards-contributors / product-innovators — complementary, not 9 near-identical), each with verifiable achievements + primary sources (URL/date/confidence). **Synthesize their strongest compatible methods into ONE original ODG professional operating model per domain** (principles retained + why; methods combined + how; incompatible approaches + rationale; residual weaknesses; ODG improvements; validation experiments + acceptance). **NOT "nine specialties"; NOT nine agents; NOT provider-routing Champion/Challenger** (that is Master V5 method-routing, unrelated). If 9 evidenced experts can't be found, report the shortfall — never fill with weak/fabricated profiles. Reuse path: a domain = a new `runtime/profiles/*.json` consumed by `expert-profile-assembler.ts` (Expert Profile §302 / Expert Instance §303) — no new primitive. **Status: PENDING** (Wave 3; after Wave 2).
+
+## 6. Execution waves (§9) + acceptance gates
+W0 Truth Lock + unified register **(this doc — DONE for the register; ongoing SSOT)** · W1 autonomy audit + top self-improvements **(inventory DONE; builds pending)** · W2 11 market dossiers **(PENDING, web lots)** · W3 11 expert-synthesis models **(PENDING)** · W4 build missing domain capabilities **(PENDING, dependency-ready builds)** · W5 11 client-readiness dossiers (R0–R5) **(PENDING)** · W6 independent eval/security/quality/readiness **(PENDING)** · W7 integration/docs/learning/closure. Each wave: objective+scope, source evidence, artifacts, focused+independent tests, blockers, acceptance, register update, next packages. Every integration via the governed PR + 2-green-CI + independent-validation flow on protected `main`.
+
+## 7. Master deliverables index (§11) — status
+1 Unified master register — **THIS doc (V1)**. 2 Compass — `ODG_PROJECT_STATE.md`. 3 P1/P2 provenance/closure — `closure-register.json` + §2 here. 4 Autonomy gap register — `ODG_CAPABILITY_INVENTORY.md`. 5 Eleven market dossiers — **PENDING (W2)**. 6 99 expert profiles — **PENDING (W3)**. 7 Eleven synthesis models — **PENDING (W3)**. 8 Eleven capability/architecture dossiers — partial (this §1) + **PENDING**. 9 Eleven client-readiness dossiers — **PENDING (W5)**; current levels in §1. 10 Benchmark/independent-eval reports — per-lot (W6). 11 Security/legal/human-gate register — `OWNER_GATE_EXECUTION_PLAN.md` + §8 below. 12 Closure report — **PENDING (W7)**.
+
+## 8. Security / legal / human gates (§10) — never falsely automated
+Reserved (human/accredited/owner): legal opinions; accredited certification/conformity; external client work; production deploy + privileged infra (systemd/sudo/TLS public exposure); personal/confidential client data; paid-provider/account changes; any public certification/compliance/world-leading claim without reproducible evidence. ODG prepares all technical evidence/drafts/checklists up to the gate; requests only the precise missing item.
+
+## 9. Precise human/CTO decisions & external blockers (current)
+1. Confirm D01–D11 names/boundaries as recorded here (or adjust with reasoning) — this register treats §3 as APPROVED planning basis.
+2. Confirm the 9-expert-synthesis champion model (not specialties) — recorded here per the mandate.
+3. Authorize Wave-2/3 web research via read-only WebSearch/WebFetch agent lots (local-dev scope).
+4. Owner-gated items (unchanged): `ODG_AUDIT_HMAC_KEY`; private-VPS systemd; `hadolint`; independent eval dataset; VPS smoke; real billing provider (D10); any external client case (R4). See `OWNER_GATE_EXECUTION_PLAN.md`.
+
+## 10. Honest completion posture (§12)
+NOT complete. Wave 0 register established; autonomy inventory done; 4 autonomy-hardening missions + 2 keyed-integrity mechanisms + build-recovery confinement already ACCEPTED (PRs #318–#337). Waves 2–7 (market, experts, domain builds, client dossiers, independent eval) are PENDING and largely research-driven (web) + dependency-ready builds. No false success; readiness assigned honestly; no domain is client-ready (R4+) today.
