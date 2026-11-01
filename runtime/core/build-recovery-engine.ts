@@ -129,18 +129,23 @@ function runBuild(cfg: any, cwd: string): boolean {
 // Scope + classification
 // ---------------------------------------------------------------------------
 
-// Normalize authorized paths (drop glob tails like /** or *) to a prefix match — identical to the
-// Validation Engine's own scope check, so "in scope" means the same thing to both engines.
+// Normalize authorized paths (drop glob tails like /** or *) to a prefix set — same normalization as the
+// Validation Engine's scope check (scope-observer.normalizePrefixes), so "in scope" means the same to both.
 function scopePrefixes(authorizedPaths: any): string[] {
     return (authorizedPaths || [])
         .map((p: string) => p.replace(/[*].*$/, "").replace(/\/+$/, ""))
         .filter((p: string) => p.length > 0);
 }
 
+// A file is in scope only on a PATH BOUNDARY: an exact match or a true descendant (pre + "/"). This mirrors
+// scope-observer.inScopeOf EXACTLY. A former loose `|| norm.startsWith(pre)` clause let a SIBLING directory
+// escape the write-set — authorized "runtime/core" wrongly admitted "runtime/core-legacy/x.ts" — so an
+// auto-fixer could write OUTSIDE the mission's authorized paths. Boundary-aware matching closes that escape
+// without narrowing any legitimate in-scope path or glob.
 function inScope(file: string, prefixes: string[]): boolean {
     if (prefixes.length === 0) return false;
     const norm = file.replace(/\\/g, "/");
-    return prefixes.some((pre) => norm === pre || norm.startsWith(pre + "/") || norm.startsWith(pre));
+    return prefixes.some((pre) => norm === pre || norm.startsWith(pre + "/"));
 }
 
 function rootCauseFor(code: string, fixers: any[]): string {

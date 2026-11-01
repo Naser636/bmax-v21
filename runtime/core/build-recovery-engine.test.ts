@@ -232,4 +232,18 @@ function run(dir, authorizedPaths) {
     fs.rmSync(dir, { recursive: true, force: true });
 })();
 
+// Scope boundary (write-confinement): inScope must match only on a PATH BOUNDARY — a SIBLING directory that
+// merely shares a name prefix must NOT be admitted (the former loose startsWith let a fixer write outside the
+// authorized write-set). Mirrors scope-observer.inScopeOf.
+{
+    const inScope = bre._internal.inScope;
+    ok("inScope: true descendant admitted (runtime/core/x.ts in runtime/core)", inScope("runtime/core/x.ts", ["runtime/core"]) === true);
+    ok("inScope: exact match admitted", inScope("runtime/core", ["runtime/core"]) === true);
+    ok("inScope: nested descendant admitted", inScope("runtime/core/deep/y.ts", ["runtime/core"]) === true);
+    ok("inScope: SIBLING dir rejected (runtime/core-legacy/x.ts NOT in runtime/core) — write-set escape closed", inScope("runtime/core-legacy/x.ts", ["runtime/core"]) === false);
+    ok("inScope: name-prefixed sibling rejected (runtime/coreEVIL/x)", inScope("runtime/coreEVIL/x", ["runtime/core"]) === false);
+    ok("inScope: suffix sibling rejected (src/app.ts.bak NOT in src/app.ts)", inScope("src/app.ts.bak", ["src/app.ts"]) === false);
+    ok("inScope: empty prefixes ⇒ false (fail-closed)", inScope("anything", []) === false);
+}
+
 console.log(`\nBUILD RECOVERY ENGINE — ${passed} assertions passed.`);

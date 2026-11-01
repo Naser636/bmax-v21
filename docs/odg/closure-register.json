@@ -2485,6 +2485,18 @@
         "verified": true
       },
       "acceptedAt": "2026-11-01"
+    },
+    {
+      "id": "build-recovery-scope-boundary",
+      "program": "P0",
+      "priority": 2,
+      "deps": [],
+      "title": "build-recovery-engine inScope: boundary-aware write-confinement (close sibling-dir startsWith escape)",
+      "status": "IN_PROGRESS",
+      "evidence": "LOT-4 reliability review (independent, read-only) found the ONLY surviving loose prefix check in core: build-recovery-engine.inScope used `norm === pre || norm.startsWith(pre+'/') || norm.startsWith(pre)` — the final loose clause let a SIBLING directory escape the authorized write-set (authorized 'runtime/core' wrongly admitted 'runtime/core-legacy/x.ts', 'runtime/coreEVIL/x', 'src/app.ts.bak'), so applyFixers could write a fix OUTSIDE the mission's authorized paths (fail-open write-confinement escape; the in-code comment claiming parity with the VE scope check was stale). Every sibling guard (scope-observer.inScopeOf, checkpoint-engine, patch-executor, mechanical-acceptance, self-diagnostic, capability-executors) already uses boundary-aware pre+'/'. Fix: drop the loose clause ⇒ `norm === pre || norm.startsWith(pre+'/')`, mirroring scope-observer.inScopeOf EXACTLY; comment corrected. Tests: build-recovery-engine.test.ts +7 (38) via _internal.inScope — true descendant/exact/nested admitted; sibling dir, name-prefixed sibling, suffix sibling REJECTED; empty prefixes fail-closed. build:runtime + tsc(both) green; full gate 243/243. Independent validation + CI pending.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
