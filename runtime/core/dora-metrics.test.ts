@@ -63,6 +63,9 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
 {
   ok("empty run ⇒ ok, 0 observed, no throw", D.fourKeys({}).ok === true && D.fourKeys({}).observedCount === 0);
   ok("garbage transitions ⇒ fail-soft (no throw)", (() => { try { const r = D.fourKeys({ transitions: [null, 7, { event: "RUNNING" }] }); return r.ok === true; } catch { return false; } })());
+  // null / non-object run ⇒ literal fail-soft (validator-flagged: default param guarded only undefined).
+  ok("null run ⇒ ok, 0 observed, no throw (literal fail-soft)", (() => { try { const r = D.fourKeys(null); return r.ok === true && r.observedCount === 0; } catch { return false; } })());
+  ok("non-object run ('x') ⇒ ok, no throw", (() => { try { return D.fourKeys("x").ok === true; } catch { return false; } })());
 }
 
 console.log(`\ndora-metrics: ${pass} assertions passed`);
