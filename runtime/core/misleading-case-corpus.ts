@@ -27,8 +27,11 @@ const PROV: any = require("./evidence-provenance.js");
 
 const SCHEMA = "odg.misleading-case-corpus.v1";
 
+// Deep-freeze so the sealed corpus (incl. nested repo/expectedAreas) cannot be mutated to shift a repoHash.
+function deepFreeze<T>(o: T): T { if (o && typeof o === "object" && !Object.isFrozen(o)) { Object.freeze(o); for (const k of Object.keys(o as any)) deepFreeze((o as any)[k]); } return o; }
+
 // Sealed synthetic adversarial corpus (k-eval repo shape). kind ∈ {misleading, negative-control}.
-const CORPUS: readonly any[] = Object.freeze([
+const CORPUS: readonly any[] = deepFreeze([
   { id: "M1-scary-name-clean", kind: "negative-control", repo: { project: "m1", dependencies: [{ name: "backdoor-utils", version: "2.0.0", license: "MIT", outdated: false }], tests: { total: 20, passing: 20 }, aiActivities: {} }, expectedAreas: [], note: "scary NAME but MIT+current — an evaluator must NOT flag on the name" },
   { id: "M2-malware-named-clean", kind: "negative-control", repo: { project: "m2", dependencies: [{ name: "malware-scanner", version: "3.0.0", license: "Apache-2.0", outdated: false }], tests: { total: 15, passing: 15 }, aiActivities: {} }, expectedAreas: [], note: "security-sounding name, clean — name is not evidence" },
   { id: "M3-hidden-unknown-license", kind: "misleading", repo: { project: "m3", dependencies: [{ name: "left-pad", version: "2.0.0", license: "MIT", outdated: false }, { name: "ok-dep", version: "1.0.0", license: "MIT", outdated: false }, { name: "mystery", version: "1.0.0", license: "UNKNOWN", outdated: false }], tests: { total: 10, passing: 10 }, aiActivities: {} }, expectedAreas: ["license"], note: "two benign deps THEN an UNKNOWN-license dep — an evaluator that only checks the head is fooled (false negative)" },

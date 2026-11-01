@@ -64,4 +64,14 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   ok("manifest: synthetic, per-case repoHash present, ratio echoed", man.synthetic === true && man.cases.length === M.CORPUS.length && man.cases.every((c) => typeof c.repoHash === "string" && c.repoHash.length === 64) && man.ratio.adversarialRatio === 1);
 }
 
+// (7) seal integrity (validator-flagged): the corpus is DEEP-frozen — a nested repo field cannot be mutated
+// (so a caller cannot shift a repoHash). Under "use strict", writing a frozen nested prop throws.
+{
+  ok("nested repo field is frozen (deep-freeze seal)", Object.isFrozen(M.CORPUS[0].repo) && Object.isFrozen(M.CORPUS[0].repo.tests));
+  ok("mutating a nested frozen field throws (seal holds)", (() => { try { M.CORPUS[0].repo.tests.total = 999; return false; } catch { return true; } })());
+  const h1 = M.corpusManifest().cases[0].repoHash;
+  const h2 = M.corpusManifest().cases[0].repoHash;
+  ok("repoHash stable across calls (unmutated seal)", h1 === h2 && /^[0-9a-f]{64}$/.test(h1));
+}
+
 console.log(`\nmisleading-case-corpus: ${pass} assertions passed`);
