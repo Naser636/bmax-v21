@@ -22,11 +22,23 @@ const MODEL = "campaign-metrics/1";
 const EV_RUNNING = "RUNNING";
 const EV_COMPLETED = "COMPLETED";        // ACCEPTED + evidence accepted by advance() (fail-closed) ⇒ accepted-with-evidence
 const EV_FAILED = "FAILED";
-const EV_WAITING = "WAITING_EXTERNAL";
+const EV_WAITING = "WAITING_EXTERNAL";   // generic/back-compat alias
 const EV_RETRY = "RETRY_WAIT";
 
-// A terminal (non-RUNNING) event closes a mission attempt.
-function isTerminalEvent(ev: string): boolean { return ev === EV_COMPLETED || ev === EV_FAILED || ev === EV_WAITING || ev === EV_RETRY; }
+// campaign-loop emits REFINED waits (WAITING_FOR_CI/PROVIDER/DEPENDENCY/EXTERNAL_AUTHORIZATION) alongside the generic
+// WAITING_EXTERNAL. ALL of them are a "waiting-external" terminal with the SAME BLOCKED effect; the suffix is the
+// precise diagnosis. A `WAITING`-prefixed event is thus a waiting terminal; its kind is the suffix (EXTERNAL for the
+// generic alias). Previously only WAITING_EXTERNAL was recognized ⇒ the refined waits fell through every bucket AND
+// were not terminal (timing left the mission open). Fixed here so counts reconcile and timing closes on any wait.
+function isWaitingEvent(ev: string): boolean { return typeof ev === "string" && ev.indexOf("WAITING") === 0; }
+function waitKindOf(ev: string): string {
+  if (ev === EV_WAITING) return "EXTERNAL";
+  const m = /^WAITING_FOR_(.+)$/.exec(ev);
+  return m ? m[1] : "OTHER"; // CI | PROVIDER | DEPENDENCY | EXTERNAL_AUTHORIZATION | OTHER
+}
+
+// A terminal (non-RUNNING) event closes a mission attempt: COMPLETED, FAILED, any WAITING_*, or RETRY_WAIT.
+function isTerminalEvent(ev: string): boolean { return ev === EV_COMPLETED || ev === EV_FAILED || isWaitingEvent(ev) || ev === EV_RETRY; }
 
 function mean(xs: number[]): number | null { return xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null; }
 function maxOf(xs: number[]): number | null { return xs.length ? Math.max(...xs) : null; }
@@ -38,14 +50,19 @@ function maxOf(xs: number[]): number | null { return xs.length ? Math.max(...xs)
  */
 function summarizeRun(run: any = {}): any {
   const transitions: any[] = Array.isArray(run.transitions) ? run.transitions : [];
-  const counts = { running: 0, accepted: 0, failed: 0, waitingExternal: 0, retries: 0 };
+  const counts = { running: 0, accepted: 0, failed: 0, waitingExternal: 0, retries: 0, unknown: 0 };
+  // Precise per-kind waiting breakdown (each wait state keeps a distinct meaning; blocked/deferred live in the
+  // register snapshot, NOT here — waiting ≠ blocked ≠ deferred ≠ failed). `unknown` surfaces any UNRECOGNIZED
+  // event rather than silently dropping it (so metrics cannot hide an un-bucketed transition).
+  const waitingByKind: Record<string, number> = {};
   for (const tr of transitions) {
     if (!tr || typeof tr.event !== "string") continue;
     if (tr.event === EV_RUNNING) counts.running++;
     else if (tr.event === EV_COMPLETED) counts.accepted++;
     else if (tr.event === EV_FAILED) counts.failed++;
-    else if (tr.event === EV_WAITING) counts.waitingExternal++;
+    else if (isWaitingEvent(tr.event)) { counts.waitingExternal++; const k = waitKindOf(tr.event); waitingByKind[k] = (waitingByKind[k] || 0) + 1; }
     else if (tr.event === EV_RETRY) counts.retries++;
+    else counts.unknown++; // unrecognized terminal/event — counted, never silently misclassified as progress
   }
   const missionsAttempted = counts.running;
   // accepted-with-evidence == COMPLETED: the loop only emits COMPLETED after advance() accepts the evidence (fail-closed).
@@ -95,7 +112,9 @@ function summarizeRun(run: any = {}): any {
     acceptedWithEvidence,
     failed: counts.failed,
     retries: counts.retries,
-    waitingExternal: counts.waitingExternal,
+    waitingExternal: counts.waitingExternal,   // TOTAL of all WAITING_* terminals (generic + refined)
+    waitingByKind,                             // precise breakdown: { CI, PROVIDER, DEPENDENCY, EXTERNAL_AUTHORIZATION, EXTERNAL, OTHER }
+    unknownEvents: counts.unknown,             // unrecognized events — surfaced, never counted as progress
     successRate,                       // accepted-with-evidence / attempted (null if nothing attempted)
     registerCounts: regCounts,         // ACCEPTED/BLOCKED/… snapshot at stop (if provided)
     blockedCauses,                     // lot ids blocked at stop (IDLE/WAITING causes)

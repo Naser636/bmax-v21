@@ -61,4 +61,31 @@ const reg = (items) => ({ version: "metrics-test", items });
   ok("empty run ⇒ zeros/nulls, no throw", m.missionsAttempted === 0 && m.successRate === null && m.timing.timingMeasured === false && m.stopReason === null);
 }
 
-console.log(`\nCAMPAIGN-METRICS suite — ${pass} assertions passed. (counts + success rate + retries + injected-clock timing; phase/test metrics honestly null; fail-soft)`);
+// (WAITING_FOR buckets) — the refined campaign-loop waits must be bucketed, kept distinct, close timing, and
+// reconcile with attempts; an unknown event must be surfaced, not counted as progress.
+{
+  const run = { stopped: "WAITING_EXTERNAL", iterations: 6, startedAt: 0, endedAt: 1000, transitions: [
+    { lot: "A", event: "RUNNING", t: 0 },   { lot: "A", event: "COMPLETED", t: 10 },
+    { lot: "B", event: "RUNNING", t: 20 },  { lot: "B", event: "WAITING_FOR_CI", t: 30 },
+    { lot: "C", event: "RUNNING", t: 40 },  { lot: "C", event: "WAITING_FOR_PROVIDER", t: 50 },
+    { lot: "D", event: "RUNNING", t: 60 },  { lot: "D", event: "WAITING_FOR_DEPENDENCY", t: 70 },
+    { lot: "E", event: "RUNNING", t: 80 },  { lot: "E", event: "WAITING_FOR_EXTERNAL_AUTHORIZATION", t: 90 },
+    { lot: "F", event: "RUNNING", t: 100 }, { lot: "F", event: "WAITING_EXTERNAL", t: 110 },
+    { lot: "G", event: "RUNNING", t: 120 }, { lot: "G", event: "FAILED", t: 130 } ] };
+  const m = M.summarizeRun(run);
+  ok("waiting: ALL 5 WAITING_* terminals bucketed into waitingExternal (was 1, generic-only)", m.waitingExternal === 5);
+  ok("waiting: per-kind breakdown precise + distinct", m.waitingByKind.CI === 1 && m.waitingByKind.PROVIDER === 1 && m.waitingByKind.DEPENDENCY === 1 && m.waitingByKind.EXTERNAL_AUTHORIZATION === 1 && m.waitingByKind.EXTERNAL === 1);
+  ok("waiting: not counted as progress (accepted=1, successRate=1/7)", m.acceptedWithEvidence === 1 && m.failed === 1 && m.successRate === Number((1 / 7).toFixed(3)));
+  ok("reconcile: attempts == accepted + failed + waitingExternal + retries + unknown", m.missionsAttempted === (m.acceptedWithEvidence + m.failed + m.waitingExternal + m.retries + m.unknownEvents));
+  ok("waiting: timing CLOSES on each WAITING_* (7 per-mission durations, none dropped)", m.timing.timingMeasured === true && m.timing.perMissionMs.length === 7);
+  ok("isTerminalEvent true for every refined wait", M.isTerminalEvent("WAITING_FOR_CI") && M.isTerminalEvent("WAITING_FOR_PROVIDER") && M.isTerminalEvent("WAITING_FOR_DEPENDENCY") && M.isTerminalEvent("WAITING_FOR_EXTERNAL_AUTHORIZATION") && M.isTerminalEvent("WAITING_EXTERNAL"));
+}
+// (unknown event) — an unrecognized event is surfaced via unknownEvents, never silently dropped or counted accepted.
+{
+  const run = { transitions: [ { lot: "X", event: "RUNNING" }, { lot: "X", event: "MYSTERY_STATE" } ] };
+  const m = M.summarizeRun(run);
+  ok("unknown event ⇒ unknownEvents=1, not accepted/failed/waiting", m.unknownEvents === 1 && m.acceptedWithEvidence === 0 && m.failed === 0 && m.waitingExternal === 0);
+  ok("unknown event is NOT terminal (timing cannot claim a close it didn't observe)", M.isTerminalEvent("MYSTERY_STATE") === false);
+}
+
+console.log(`\nCAMPAIGN-METRICS suite — ${pass} assertions passed. (counts + success rate + retries + WAITING_FOR per-kind buckets + unknown-event surfacing + injected-clock timing; phase/test metrics honestly null; fail-soft)`);
