@@ -30,9 +30,16 @@ export interface LicenseVerdict {
 // SPDX families (representative; extend as needed — unknown ids fall through to deny-by-default).
 const PERMISSIVE = new Set(["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Zlib", "Python-2.0", "PostgreSQL", "Apache-1.1", "BSD-3-Clause-Clear"]);
 const PUBLIC_DOMAIN = new Set(["CC0-1.0", "Unlicense", "0BSD"]);
-const WEAK_COPYLEFT = new Set(["LGPL-2.1-only", "LGPL-2.1-or-later", "LGPL-3.0-only", "LGPL-3.0-or-later", "MPL-2.0", "EPL-2.0", "CDDL-1.0", "MPL-1.1"]);
-const STRONG_COPYLEFT = new Set(["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "GPL-3.0-or-later"]);
-const NETWORK_COPYLEFT = new Set(["AGPL-3.0-only", "AGPL-3.0-or-later"]);
+// Copyleft sets include the DEPRECATED BARE SPDX forms (GPL-3.0, LGPL-3.0, AGPL-3.0, …) alongside the current
+// -only/-or-later ids. Manifests still emit the bare forms widely; classifying them as UNKNOWN would
+// UNDER-classify copyleft (the dangerous direction — a CI gate keyed on severity would not block them). The
+// safe, fail-closed mapping is bare-copyleft → its copyleft family. (Independent-validation finding, V3.)
+const WEAK_COPYLEFT = new Set(["LGPL-2.0-only", "LGPL-2.0-or-later", "LGPL-2.0", "LGPL-2.1-only", "LGPL-2.1-or-later", "LGPL-2.1", "LGPL-3.0-only", "LGPL-3.0-or-later", "LGPL-3.0", "MPL-2.0", "EPL-2.0", "CDDL-1.0", "MPL-1.1"]);
+const STRONG_COPYLEFT = new Set(["GPL-1.0-only", "GPL-1.0-or-later", "GPL-1.0", "GPL-2.0-only", "GPL-2.0-or-later", "GPL-2.0", "GPL-3.0-only", "GPL-3.0-or-later", "GPL-3.0"]);
+const NETWORK_COPYLEFT = new Set(["AGPL-1.0-only", "AGPL-1.0-or-later", "AGPL-1.0", "AGPL-3.0-only", "AGPL-3.0-or-later", "AGPL-3.0"]);
+// Source-available / restrictive licenses that are NOT OSI-approved (distinct osiApproved:false). SSPL triggers
+// broad service-source-disclosure; treat as network-copyleft-severity for adoption, fail-closed.
+const SOURCE_AVAILABLE_NONOSI = new Set(["SSPL-1.0"]);
 const NON_COMMERCIAL = new Set(["CC-BY-NC-4.0", "CC-BY-NC-SA-4.0", "CC-BY-NC-ND-4.0", "CC-BY-NC-3.0", "Aladdin", "CC-BY-NC-2.0"]);
 // Vendor "open-weight but non-commercial" and all-rights-reserved markers that are NOT SPDX ids.
 const PROPRIETARY_NC_HINT = /non.?commercial|no[-_ ]?commercial|research.?only|FLUX\.1-dev|all rights reserved|proprietary|evaluation only/i;
@@ -56,6 +63,7 @@ function classifyLicense(input: any): LicenseVerdict {
   if (WEAK_COPYLEFT.has(id)) return v({ spdxId: id, known: true, osiApproved: true, family: "weak-copyleft", commercialUseOk: true, proprietaryRedistribution: "conditional", note: "weak copyleft — commercial OK; proprietary redistribution OK only if the component stays separate/dynamically linked and its own modifications are shared" });
   if (STRONG_COPYLEFT.has(id)) return v({ spdxId: id, known: true, osiApproved: true, family: "strong-copyleft", commercialUseOk: true, proprietaryRedistribution: false, note: "strong copyleft (GPL) — commercial use OK, but a derivative/linked work must also be GPL ⇒ NOT shippable inside a closed product" });
   if (NETWORK_COPYLEFT.has(id)) return v({ spdxId: id, known: true, osiApproved: true, family: "network-copyleft", commercialUseOk: true, proprietaryRedistribution: false, note: "network copyleft (AGPL) — network/SaaS use triggers source-disclosure ⇒ NOT usable in a closed SaaS without releasing source" });
+  if (SOURCE_AVAILABLE_NONOSI.has(id)) return v({ spdxId: id, known: true, osiApproved: false, family: "network-copyleft", commercialUseOk: true, proprietaryRedistribution: false, note: "source-available restrictive (e.g. SSPL) — NOT OSI-approved; offering the functionality as a service triggers broad source-disclosure ⇒ NOT usable in a closed/SaaS product without compliance" });
   if (NON_COMMERCIAL.has(id) || PROPRIETARY_NC_HINT.test(id)) return v({ spdxId: NON_COMMERCIAL.has(id) ? id : null, known: NON_COMMERCIAL.has(id), osiApproved: false, family: "non-commercial", commercialUseOk: false, proprietaryRedistribution: false, note: "non-commercial / research-only — NOT usable for a commercial deliverable" });
   // Looks like an SPDX id we don't have classified, vs. free text: either way, FAIL-CLOSED.
   const looksSpdx = /^[A-Za-z0-9.+-]+$/.test(id) && id.length <= 64;
