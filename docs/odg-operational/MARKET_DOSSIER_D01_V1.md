@@ -1,0 +1,52 @@
+# Market Dossier — D01: Software Engineering, Development & Legacy Modernization (V1)
+
+**Wave 2, CTO Master Unified Mandate.** EU/France-first + international benchmarks. Date accessed **2026-11-01** (web + repo read-only). **Evidence-grade, confidence-labelled — not verified fact.** MARKET SIZE (sourced/secondary) separated from ADDRESSABLE DEMAND (INFERENCE); no TAM/SAM/SOM invented; **no ODG price asserted as a quote**; no buyer contacted. Dossier 5 of 11. (Internal matrix: "D1 Software Engineering — RELEASED, 33/34 ACCEPTED".)
+
+## 0. ODG reality grounding (verified in-repo)
+D1 RELEASED 33/34 (only `new-language-families` BLOCKED on absent `hadolint`). Multi-language executable checkers (`code-execution.ts`): REAL toolchains — `node --check`, `tsc --noEmit`, `python3 -m py_compile`, `bash -n`, in-memory `sqlite3`, YAML/JSON/TOML/XML/INI via Python stdlib, confined `go build`/`rustc`; absent toolchain ⇒ `UNSUPPORTED`/`BLOCKED`, never faked. Governance: `validation-engine.ts` (codingFidelityGate, reality-gate, cross-mission verdict isolation), `patch-executor` (write-confinement/truth-lock), `build-recovery-engine.ts`, `engineering-practices-register.ts`. Legacy-modernization = demonstrated as **JS→TS migration** (zero-JS convergence, dual-tsconfig gates, confinement) — NOT COBOL/mainframe (no COBOL/PL-I/JCL checker). **Honest gaps:** no UI/GUI; internal-only; no public SaaS/billing/TLS; no COBOL/mainframe toolchain; no human delivery team. ODG = a governed autonomous engineering runtime, not a staffed ESN.
+
+## 1. Demand & trends
+- **Software-dev-services (global):** $497.16bn(2025)→$555.98bn(2026)→$860.89bn(2030) ~11.6% CAGR (The Business Research Company). [FACT secondary; MED]
+- **Global IT services ~$1.3–1.9tn (2025)** (imarc $1,307bn / Fortune $1.43tn / Research Nester $1.9tn) — the ~45% spread IS the finding. [FACT estimates exist; MED existence / LOW any single value]
+- **France (Numeum, Dec-2025):** digital market €72.2bn 2025 (+2%); **ESN €34.3bn (−1.8%)**; software publishers €29.1bn (+8.2%); 2026 +4.3%. (Primary PDF binary-unreadable; figures via press relay.) [FACT primary-body via relay; MED–HIGH]. Signal: services contracting while publishers grow ⇒ value migrating from bodyshop to software-leveraged delivery [INFERENCE MED].
+- **Mainframe modernization:** MarketsandMarkets $13.34bn by 2030; SNS $16.95bn by 2035 (from ~$8.23bn 2025). [FACT secondary, wide divergence; LOW–MED]. "~220bn COBOL lines / avg programmer ~55 / ~10% retiring/yr" — frequently-repeated, primary not re-verified. [HYPOTHESIS; LOW–MED]
+- **AI-assisted-dev (DORA 2024, 39,000+):** AI adoption raises individual productivity but a +25% AI-adoption increment associated with ~−1.5% throughput, ~−7.2% delivery stability; **39.2% little/no trust in AI-generated code.** [FACT primary relayed; HIGH]. SWE-bench Verified top agents ~70–80% (2025) — [VENDOR/BENCHMARK claim, contamination risk; LOW–MED]. Synthesis [INFERENCE MED]: productivity up, **stability/trust down** — the ground a governed, independently-verified, evidence-producing runtime addresses.
+
+## 2. Buyer problems / triggers
+Dev time lost to tech debt (~33%, Stripe/JetBrains relayed) [MED]; tech debt 20–40% of tech-estate value, +10–20%/project (McKinsey relayed) [MED]; CISQ ~$1.52tn US poor-quality cost [MED]; COBOL/mainframe skills cliff & TCO [INFERENCE MED]; CRA compliance deadline [FACT HIGH]; low AI-code trust blocks adoption (DORA 39.2%) [FACT HIGH]. Primary triggers [INFERENCE MED]: compliance deadline (CRA 2027, EAA 2025); skills cliff; cost review; a failed AI-codegen pilot where output couldn't be trusted/verified.
+
+## 3. Segments / personas (INFERENCE)
+S1 mid-market/scale-ups w/ JS/Python tech debt (VP Eng/CTO; buys outcomes). S2 regulated enterprises (finance/insurance/public) facing CRA/accessibility + legacy (Head of Eng/CISO/Compliance; wants *provable* security/quality). S3 ESN/SI themselves (Capgemini/Sopra) seeking delivery margin/stability — a *channel/partner*, not end-buyer. S4 FR public sector (DSI/MOA; auditable evidence-backed modernization). Shared latent need: trustworthy, independently-verified engineering output with an audit trail — not raw codegen.
+
+## 4. Competitors / substitutes + ODG match-vs-gaps
+**FR ESN/SSII (primary incumbents):** Capgemini FY2025 €22,465m (+1.7%; France −4.1%) [PRIMARY vendor HIGH]; Sopra Steria FY2025 €5,648m (−2.2%) [PRIMARY HIGH]; Atos France >−10% 2025 (distressed) [SECONDARY MED]; FR IT-services market −1.8% 2025 (PAC, aligns Numeum) [MED–HIGH]. **Modernization specialists/offshore** compete on scale+mainframe toolchains ODG lacks. **AI coding tools [vendor-claim]:** GitHub Copilot Business $19/Enterprise $39 per user/mo [PRIMARY vendor docs HIGH]; Cursor Teams ~$40/Premium ~$120 [SECONDARY MED]; Devin ~$80/mo+~$40 seat [LOW–MED]. **ODG match:** STRONG on real multi-language verification + independent-verification/audit-evidence (addresses DORA trust gap) + JS→TS modernization + governed autonomous repair. **ODG gaps:** NONE on per-seat IDE copilot UX, NONE on enterprise delivery scale; no COBOL/mainframe, no UI/plugin, no public SaaS/billing, no people. Positioning [INFERENCE MED]: occupies the **"verified-outcome" seam** (governed modernization/repair with independent proof) that neither per-seat copilots nor headcount ESNs structurally provide.
+
+## 5. Pricing (sourced; no ODG quote)
+FR freelance TJM [SECONDARY panels, MED]: developer median ~€500–525/day (junior €300–480, confirmed €480–650, senior €600–800, expert/lead €750–1,000+); cloud architect median ~€750. Models: ESN TJM/régie; fixed-price/forfait; AI-tool per-seat+usage. ODG has no billing in scope; a reference for an outcome/evidence price sits against forfait + senior-TJM anchors — but no ODG price asserted as a quote.
+
+## 6. Procurement / trust / outsourcing / security
+Low AI-output trust is the gating buyer concern (DORA 39.2%) ⇒ procurement demands demonstrable verification + audit trails [FACT→INFERENCE HIGH/MED]. Security/supply-chain expectations map to NIST SSDF SP 800-218, SLSA v1.0, OWASP GenAI, SBOM — partly reflected in ODG (engineering-practices-register, supply-chain-attest, evidence-provenance) [FACT standards exist HIGH]. FR public procurement favours auditable/traceable delivery [INFERENCE LOW–MED, needs-more].
+
+## 7. EU/FR + international regulatory
+No dev-specific mandatory certification, but two material deadline triggers: **CRA** (in force 2024-12-10; reporting since 2026-09-11; main obligations incl. SBOM/security-by-design from 2027-12-11) [FACT HIGH]; **European Accessibility Act** (in force 2025-06-28; conformance via EN 301 549 v4.1.1 ref WCAG 2.2 AA; FR applies RGAA + EN 301 549) [FACT HIGH]. International: NIST SSDF/AI RMF + ISO/IEC referential, not mandatory [FACT HIGH].
+
+## 8. Market gaps & differentiation (INFERENCE MED)
+(1) The AI-code "trust gap" is unfilled — copilots generate but don't independently prove correctness/security with an audit trail (ODG reality-gate + evidence-provenance target exactly this). (2) ESN model under margin pressure (services −1.8% vs publishers +8.2%) favours software-leveraged governed delivery. (3) Compliance-driven modernization (CRA/EAA) needs *evidence*, not just code (ODG produces evidence by construction). Gap ODG cannot fill: COBOL/mainframe core modernization, human account-managed enterprise delivery, per-seat IDE UX.
+
+## 9. Credible first offers (capability-grounded, not priced)
+O1 **Governed JS→TS legacy modernization with evidence pack** (proven zero-JS/TS-migration + build+tsc+test+provenance; S1/S2; limit: JS/TS only). O2 **"Verified-repair" tech-debt remediation** (autonomous diagnose→repair→independently-verify on a bounded module + reality-gated evidence report; S1/S2). O3 **CRA/SBOM + secure-SDLC evidence assist** (SBOM + supply-chain-attest + provenance toward CRA readiness — mechanism, not certification). Binding caveat: all internal-only today; no public SaaS/billing/TLS; any external delivery owner-gated.
+
+## 10. Risks / barriers
+No productized surface (no UI/SaaS/billing) ⇒ cannot transact without owner-gated build-out [FACT HIGH]; buyers expect accountability/indemnity a runtime can't provide [INFERENCE MED]; incumbent moats (ESN relationships; copilot mindshare) [MED–HIGH]; AI-codegen commoditization + price compression squeezes generation-only plays [MED]; scope-limited toolchain (no COBOL/mainframe) excludes the highest-value legacy segment [FACT HIGH]; market-sizing diverges ~45% [FACT HIGH].
+
+## 11. Source table (abridged; full URLs in research transcript)
+The Business Research Company (dev-services size) · imarc/Fortune/Research Nester/Statista (IT services) · MarketsandMarkets/SNS (mainframe-modernization) · Keyhole (COBOL stats) · Numeum press relay (FR digital/ESN) · FreelanceRepublik/tjmetre/Silkhom (FR TJM) · GitHub docs (Copilot, PRIMARY) · coworker.ai/amux (Cursor/Devin) · byteiota/tianpan (tech-debt relays) · DORA 2024 (PRIMARY relayed) · swebench/vals.ai (benchmark claim) · Capgemini/Sopra Steria (PRIMARY FY2025) · PAC/SITSI (FR IT-services) · CRA/EAA/EN 301 549 (regulation) · NIST SSDF/SLSA/OWASP GenAI (PRIMARY standards) · ODG repo (PRIMARY internal). Each date-accessed 2026-11-01 + confidence.
+
+## A. FACT vs INFERENCE
+FACT: market magnitudes exist in cited ranges (methodologies diverge); FR Numeum figures; FR TJM ranges; Copilot pricing (official); Cursor/Devin reported; DORA 2024 AI findings; tech-debt surveys; Capgemini/Sopra FY2025; CRA & EAA dates/obligations; NIST/SLSA/OWASP; ODG's actual D01 capabilities/gaps. INFERENCE: segmentation/personas; value-migration read; "verified-outcome seam" positioning; offer concepts; procurement-opening; DORA-trust-gap as ODG's addressable space. HYPOTHESIS: COBOL demographic stat; precise mainframe-modernization magnitude.
+
+## B. Confidence summary
+HIGH: vendor/regulation primary facts (Copilot, CRA/EAA, Capgemini/Sopra, DORA, ODG internal). MED: Numeum (relay), market-research magnitudes, TJM, tech-debt surveys, positioning inferences. LOW: mainframe-modernization size, COBOL demographic, SWE-bench as field-outcome, FR public-procurement opening.
+
+## C. UNVERIFIED — needs more
+Numeum primary PDF unreadable (re-confirm from official source); COBOL "220bn lines" primary unverified; FR public-sector procurement specifics (UGAP vehicles) not sourced; no WTP data (TJM/forfait = cost refs, not WTP); AI-tool enterprise pricing beyond published tiers opaque.
