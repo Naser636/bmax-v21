@@ -2535,6 +2535,18 @@
       "integration": {
         "state": "PENDING"
       }
+    },
+    {
+      "id": "campaign-metrics-waiting-buckets",
+      "program": "P1",
+      "priority": 3,
+      "deps": [],
+      "title": "campaign-metrics: bucket the refined WAITING_FOR_* verdicts (observability accuracy + reconciliation)",
+      "status": "IN_PROGRESS",
+      "evidence": "CTO Mission 3. campaign-loop emits refined waits (WAITING_FOR_CI/PROVIDER/DEPENDENCY/EXTERNAL_AUTHORIZATION) but campaign-metrics recognized ONLY the generic WAITING_EXTERNAL ⇒ the 4 refined waits fell through every count bucket AND were not terminal (timing left the mission open, dropping its duration + computing a stale inter-mission gap). Fix: isWaitingEvent (WAITING-prefix) ⇒ a waiting-external terminal with a precise waitKindOf suffix; counts bucket all WAITING_* into waitingExternal (total) + a per-kind waitingByKind {CI,PROVIDER,DEPENDENCY,EXTERNAL_AUTHORIZATION,EXTERNAL,OTHER}; isTerminalEvent true for any WAITING_* (timing now closes); an UNRECOGNIZED event increments unknownEvents (surfaced, never silently dropped or counted as progress). Waiting ≠ accepted so successRate cannot claim un-occurred progress; blocked/deferred remain in the register snapshot (distinct). Tests: campaign-metrics.test.ts +8 — 5 refined waits bucketed+kinded, reconcile (attempts==accepted+failed+waiting+retries+unknown), timing closes on every wait (7 durations), unknown surfaced+non-terminal, isTerminalEvent per wait. tsc(both) green; full gate 245/245. Independent validation + 2 CI pending.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
