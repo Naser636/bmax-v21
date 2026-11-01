@@ -2102,7 +2102,10 @@
       "evidence": "The absent-verify fail-open (engineering mission with NO runtime-verify.json defaults buildOk/typescriptOk to TRUE) is LIVE on the odg-autonomy direct-odg-run first attempt. A naive require-present BLOCK false-BLOCKS a LEGIT committed-deliverable re-validation (validation-engine-engineering-proof case 3 runs with no verify by design) and changes the autonomy first-run flow (relies on the adapter refreshVerifyEvidence recovery loop). Safe closure needs forensic Option D (a post-patch verify-producing stage in the odg-run pipeline before Validation Engine) + a full-pipeline V68 smoke under BOTH ODG_RUNTIME=ts and =js. Also closes the pre-patch-staleness residual (odg-verify computes build/tsc in PRE-FLIGHT before Patch Executor). Contract + Gate B required before implementation. [GATE A 2026-10-31: full design + WORK_ITEM_CONTRACT + V68 smoke matrix + no-reject proof recorded in P0C3_ABSENT_VERIFY_GATEA_DESIGN_V1.md. Pipeline insertion point = between Patch Executor(pipeline-builder:71) and Validation Engine(72); stage runs build/tsc ONLY (NOT gitClean — deliverable applied-but-uncommitted is legitimately dirty at that point; commit/gitClean stays at S4). Proof: a legit re-validation deliverable compiles => green this-mission verify => verifyEvidenceOk true => not blocked; only a non-building deliverable newly blocks (desired). Consequential (pipeline stage) => Gate B + independent verify required; NOT implemented.] [GATE B 2026-10-31 IMPLEMENTED (pending independent V68 smoke): NEW runtime/core/stage-build-ts-evidence.ts — post-patch Build/TS Evidence stage, reads this mission (argv||mission-plan), runs npm run build + npx tsc --noEmit (build/TS ONLY, NO gitClean; preserves prior verify fields), writes mission-stamped runtime/generated/runtime-verify.json, exits 0 (produces evidence; VE judges + recovery handles red). Registered in pipeline-builder BETWEEN Patch Executor(8) and Validation Engine(10) [compiled order confirmed 8/9/10] + stage-effect STAGE_OUTPUTS[Build/TS Evidence]=runtime-verify.json (RC-1 enforces the write) + tsconfig.runtime-dist include. validation-engine verifyEvidenceOk extended: !isEngineering || ((gatesEvaluated||recovery!==null) && !verifyStaleCrossMission) — absent engineering verify ⇒ BLOCK (fail-open closed); V68-SAFE (presence+identity, NO timing). engineering-proof fixtures updated to default-stamp a this-mission verify (mirrors the new pipeline reality) + case 9/10: absent⇒BLOCK, this-mission⇒validated, legit committed-deliverable re-validation⇒validated (part-2 does NOT reject it). Direct stage real-process test: mission-stamped + build/TS booleans + prior gitClean/docProof PRESERVED. Full VE regression (7 suites) + stage-effect + pipeline-builder PASS; tsc clean BOTH tsconfigs; build OK (121 closure). INDEPENDENTLY VERIFIED (separate agent = CONFIRMED_FIX_CORRECT, merge-ready): V68-safe by construction + real-pipeline observation; gitClean not substituted (prior fields preserved); absent-eng⇒BLOCK, this-mission/legit-re-validation⇒proceed, read-only short-circuits true; RC-1 + pipeline order 8/9/10 correct; scope clean; tsc BOTH + build + next build OK. V68 SMOKE real evidence: (a) direct node odg-run.js IMPLEMENT_PROVIDER_FACTORY ⇒ Build/TS Evidence stage RAN (38.6s) wrote mission-stamped runtime-verify.json build=true/typescript=true, PIPELINE SUCCESS 14/14, validated=true verifyEvidenceOk=true; (c) engineering absent⇒BLOCK + present⇒proceed vs the real compiled dist VE. Case (b) shell front door odg-local-pipeline.sh could NOT run in a bare worktree (pre-existing ZERO-JS limitation: its inline node -e requires .js that only exist as .ts/dist — UNRELATED to this change; the front door wraps the same odg-run that (a) proved green) ⇒ evidence SUFFICES to accept per the verifier; recommend a post-merge VPS front-door both-front-doors check (belt-and-suspenders, p0c3-frontdoor-vps-smoke).",
       "acceptedAt": "2026-10-31",
       "integration": {
-        "state": "PENDING_MERGE"
+        "state": "MERGED",
+        "pr": 305,
+        "mergeCommit": "c2151e4",
+        "verified": true
       }
     },
     {
@@ -2144,7 +2147,10 @@
       "evidence": "CTO Gate B. odg-resume.resumeState serialized every BLOCKED items full humanActionRequired+resumeTest, exceeding the <6KB compact-handoff budget past ~10 blockers (observed 6585B at 10). FIX (deterministic 3-tier per-blocker field budgeting): Tier1 full fields if compact JSON<6000; Tier2 else pick the LARGEST per-field char budget from a frozen descending step list that fits, truncating with an EXPLICIT …[+Nc →register] marker + handoffTruncated + fieldBudgetChars; Tier3 (pathological N) a compact id-LIST (blocked=[{id}] for ALL) + blockedFieldsOmitted + register pointer. id NEVER truncated; NO blocker ever dropped. Independently verified (separate agent = CONFIRMED_FIX_CORRECT): N-sweep 9/2/12/30/40/60/120 all <6000 compact, all ids kept+unique (no silent loss), mandatory fields >10 + detectable truncation (T1/T2), determinism, backward-compat (real 9-blocker register untruncated 5823B + all 9 pre-existing assertions), fail-closed on missing register. +13 regression (suite 9->22); tsc clean BOTH tsconfigs; build OK. Non-blocking notes recorded in-code: budget measured on compact payload (CLI pretty-prints ~6.3KB, deterministic whitespace, consistent with the pre-existing test convention); Tier3 holds to ~330 blockers (no credible register exceeds it). write_set runtime/bin/odg-resume.ts + .test.ts. 9 primitives FROZEN.",
       "acceptedAt": "2026-10-31",
       "integration": {
-        "state": "PENDING_MERGE"
+        "state": "MERGED",
+        "pr": 303,
+        "mergeCommit": "b77680b",
+        "verified": true
       }
     },
     {
@@ -2492,11 +2498,15 @@
       "priority": 2,
       "deps": [],
       "title": "build-recovery-engine inScope: boundary-aware write-confinement (close sibling-dir startsWith escape)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "LOT-4 reliability review (independent, read-only) found the ONLY surviving loose prefix check in core: build-recovery-engine.inScope used `norm === pre || norm.startsWith(pre+'/') || norm.startsWith(pre)` — the final loose clause let a SIBLING directory escape the authorized write-set (authorized 'runtime/core' wrongly admitted 'runtime/core-legacy/x.ts', 'runtime/coreEVIL/x', 'src/app.ts.bak'), so applyFixers could write a fix OUTSIDE the mission's authorized paths (fail-open write-confinement escape; the in-code comment claiming parity with the VE scope check was stale). Every sibling guard (scope-observer.inScopeOf, checkpoint-engine, patch-executor, mechanical-acceptance, self-diagnostic, capability-executors) already uses boundary-aware pre+'/'. Fix: drop the loose clause ⇒ `norm === pre || norm.startsWith(pre+'/')`, mirroring scope-observer.inScopeOf EXACTLY; comment corrected. Tests: build-recovery-engine.test.ts +7 (38) via _internal.inScope — true descendant/exact/nested admitted; sibling dir, name-prefixed sibling, suffix sibling REJECTED; empty prefixes fail-closed. build:runtime + tsc(both) green; full gate 243/243. Independent validation + CI pending.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 330,
+        "mergeCommit": "d055d7d",
+        "verified": true
+      },
+      "acceptedAt": "2026-11-01"
     }
   ]
 }
