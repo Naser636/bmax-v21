@@ -65,8 +65,8 @@ P10 must pick 9 from the D08+D09 combined pool (18 historical) + engineering add
 | third-party-agent-gate, agent-governance-harness | P2 | OWASP Agentic governance |
 | dataset-quality-service, independent-label-policy, fairness-eval | P4, P6, P10 | data-quality + eval-integrity |
 | reality-gate, mechanical-acceptance, k-eval, broad-it-eval | P6 | evaluation-integrity |
-| slo-targets/collector/response, incident-recurrence, checkpoint-engine, odg-health | P7 | reliability-evidence/SLO governance |
-| unit-economics, economic-extractor, economic-unit, resource-allocation-engine (ALLOCATOR) | P9 | observed-usage cost integrity |
+| slo-targets/collector/response, incident-recurrence, checkpoint-engine, code-health-service | P7 | reliability-evidence/SLO governance |
+| unit-economics, economic-extractor, economic-unit, budget-ledger/budget-contract (ALLOCATOR), cost-accounting | P9 | observed-usage cost integrity |
 | einvoice-*, commercial-pipeline, proposal-pipeline, mission-*/campaign-controller | P8 | e-invoice conformance + governed workflow |
 | compliance-evidence-pack, regulatory-assurance, iso-*, ai-act-role-classifier, excellence-policy | P10 | cross-regime evidence, source-cite-or-refuse |
 | audit-log, evidence-provenance, truth-lock | cross-cutting (all) | tamper-evidence (EVIDENCE primitive) |

@@ -2657,6 +2657,22 @@
       "status": "ACCEPTED",
       "deps": [],
       "evidence": "runtime/core/evidence-pack-export.ts (+.test.ts), PR#355 @3a50807. Exports compliance-evidence-pack into a documented machine-readable OSCAL assessment-results-LIKE shape; HONEST oscalNative:false (NOT a validated OSCAL doc); emits NO satisfied/compliant status (statuses subset {OBSERVED,GAP,NOT_ASSESSED,INFO,REMEDIATION}); gaps→GAP, NOT_ASSESSED→NOT_ASSESSED never upgraded; double-guard (illegalStatuses + isInteropExport STATUSES check); fail-closed INVALID_PACK; ADDITIVE. NO new primitive. Local suite 14/14; full regression 253/253. INDEPENDENT validator ACCEPT (double-guard caught a planted SATISFIED even with illegalStatuses neutralized; no pass ever emittable; tree byte-identical)."
+    },
+    {
+      "id": "v2-p0p1-eleven-to-ten-crosswalk",
+      "program": "V2",
+      "title": "V2 Phase 0+1: eleven-to-ten crosswalk + preservation inventory",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "docs/odg-operational/ODG_ELEVEN_TO_TEN_CROSSWALK_V1.md, PR#360 @fda9c2b (MERGED). Consolidates historical D01-D11 into ten permanent professions P1-P10 (D08+D09->P10) with full preservation inventory, 11->10 map, expert/capability/opportunity->profession mappings, cross-cutting dependency graph, orphan + conservation reports. No artifact lost; 9 primitives unchanged; 5 stashes + 6 foreign untracked preserved."
+    },
+    {
+      "id": "v2-p2-p12-ten-professions-consolidation",
+      "program": "V2",
+      "title": "V2 Phases 2-12: ten-professions consolidation (market/experts/models/demonstrators/GTM/benchmarks/closure)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "docs/odg-operational/ODG_TEN_MARKET_STUDIES_V1.md (10 private-sector studies + 100-pt ranking), ODG_90_EXPERTS_RESEARCH_V1.md (90 experts conserved from 99), ODG_TEN_EXCELLENCE_MODELS_V1.md, ODG_TEN_DEMONSTRATORS_V1.md (reuse G-01..G-08; 9/10 composable-today R2-R3, P5 R1), ODG_PRIVATE_SECTOR_GO_TO_MARKET_V1.md (Gate-D O1-O10 integration + commercial archetypes), ODG_TEN_BENCHMARKS_V1.md (R0-R5; none R4+), ODG_TEN_PROFESSIONS_MASTER_V1.md, ODG_TEN_PROFESSIONS_CLOSURE_V1.md. Independently audited (separate-context agent): no fabrication; all rubric arithmetic + 99->90 conservation + module citations held; 4 honest defects fixed pre-merge. Final verdict PARTIAL_WITH_EXPLICIT_BLOCKERS. Additive docs-only; no new capability/client/revenue/certification claimed; owner-gated blockers OG-01..OG-08 preserved not flipped."
     }
   ]
 }
