@@ -2516,11 +2516,15 @@
         "p0e-audit-log-keyed-mechanism"
       ],
       "title": "mission-ledger keyless tamper-evidence (hash-chain seal + verify-on-read; keyed authenticity owner-gated out of scope)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "CTO Mission 1 (first priority). The source-of-record ledger was crash-atomic + immutable + corrupt-skip but had NO integrity seal and NO verify-on-read (readers trusted raw proven:true). Added a deterministic KEYLESS forward hash-chain reusing the proven audit-log.entryHash primitive (sha256, NUL-separated): entry.seal = entryHash(index, prevSeal, entry-minus-seal); prevSeal chains through legacy entries via their computed seal so later sealed entries bind to prior content; top-level tipSeal + count anchor the tail. verifyLedger(payload) VERIFY-ON-READ returns {ok,verified,legacyUnsealed,total,tamperEvident,tip,brokenAt,reason}; recordMission REFUSES to append to a BROKEN sealed chain (fail-closed, preserves the file) while an all-legacy ledger verifies ok (verified:0) so the first append begins sealing. Append-only: legacy entries NEVER rewritten; new entries get an additive `seal` (readers unaffected). SECURITY SEMANTICS (explicit): keyless integrity DETECTS accidental corruption + modify/metadata/reorder/delete/truncate/partial-write/malformed-seal, and legacy tamper once a sealed successor exists; it is NOT keyed AUTHENTICITY — a full ledger rewrite that recomputes every seal+tipSeal is self-consistent and undetectable keyless (demonstrated in test 10); defeating that needs a keyed HMAC seal = OWNER-GATED, deliberately OUT of this mission. Tests: NEW mission-ledger-integrity.test.ts 16 adversarial cases (all CTO-required: modified payload/metadata, deleted, reordered, broken link, truncated[count+tip], partial-write, malformed, legacy-unsealed, valid-historical, legacy-tamper-after-seal, full-rewrite-limit, fail-closed) wired into test:report; 8 existing ledger suites GREEN (proven-gate/failclosed/controlled/actor-provenance/reuse-hook/economic/idempotent/label); build:runtime + tsc(both) green; full gate 244/244. Independent validation + 2 CI pending. Crash-atomic tmp+rename persistence unchanged.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 332,
+        "mergeCommit": "0701a2d",
+        "verified": true
+      },
+      "acceptedAt": "2026-11-01"
     },
     {
       "id": "actor-provenance-adversarial-tests",
@@ -2530,11 +2534,15 @@
         "p0-autonomy-measure-slice2"
       ],
       "title": "actor-provenance dedicated adversarial unit test (close the attribution-module coverage gap; module proven fail-closed, NO source defect)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "CTO Mission 2. actor-provenance (the only attribution/executor resolver) previously had NO dedicated unit test (covered only via mission-ledger-actor-provenance integration). Added runtime/core/actor-provenance.test.ts (22 assertions) with negative tests for forged actor identity (ODG author WITHOUT ODG_EXECUTOR applied-sentinel ⇒ demoted null; proven/validated never an actor signal), missing identity (no authoredBy / empty executed / absent patch-execution = delegation provenance loss ⇒ null), mismatched context (cross-mission strict !== ⇒ null), unauthorized substitution (unmapped/UNKNOWN author beside concordant-ODG ⇒ ambiguous null + unresolvedCount; contradictory ODG+PROVIDER ⇒ null), malformed evidence (non-object / executed-not-array / null entries ⇒ fail-closed null) — PLUS positive tests (concordant ODG/ODG_RULES ⇒ ODG; PROVIDER/LOCAL_PROVIDER ⇒ TECHNICAL_PROVIDER; humanMandatory/OPERATOR/CONTRACT ⇒ HUMAN) so legitimate attribution is not wrongly rejected. ALL PASS against the UNCHANGED module ⇒ coverage gap closed, no demonstrated defect (per CTO 'fix only demonstrated defects'). Wired into test:report; tsc(both) green; full gate 245/245. Test-only (no source change).",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 333,
+        "mergeCommit": "60869de",
+        "verified": true
+      },
+      "acceptedAt": "2026-11-01"
     },
     {
       "id": "campaign-metrics-waiting-buckets",
@@ -2542,11 +2550,15 @@
       "priority": 3,
       "deps": [],
       "title": "campaign-metrics: bucket the refined WAITING_FOR_* verdicts (observability accuracy + reconciliation)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "CTO Mission 3. campaign-loop emits refined waits (WAITING_FOR_CI/PROVIDER/DEPENDENCY/EXTERNAL_AUTHORIZATION) but campaign-metrics recognized ONLY the generic WAITING_EXTERNAL ⇒ the 4 refined waits fell through every count bucket AND were not terminal (timing left the mission open, dropping its duration + computing a stale inter-mission gap). Fix: isWaitingEvent (WAITING-prefix) ⇒ a waiting-external terminal with a precise waitKindOf suffix; counts bucket all WAITING_* into waitingExternal (total) + a per-kind waitingByKind {CI,PROVIDER,DEPENDENCY,EXTERNAL_AUTHORIZATION,EXTERNAL,OTHER}; isTerminalEvent true for any WAITING_* (timing now closes); an UNRECOGNIZED event increments unknownEvents (surfaced, never silently dropped or counted as progress). Waiting ≠ accepted so successRate cannot claim un-occurred progress; blocked/deferred remain in the register snapshot (distinct). Tests: campaign-metrics.test.ts +8 — 5 refined waits bucketed+kinded, reconcile (attempts==accepted+failed+waiting+retries+unknown), timing closes on every wait (7 durations), unknown surfaced+non-terminal, isTerminalEvent per wait. tsc(both) green; full gate 245/245. Independent validation + 2 CI pending.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 334,
+        "mergeCommit": "fa925b0",
+        "verified": true
+      },
+      "acceptedAt": "2026-11-01"
     },
     {
       "id": "validation-engine-reality-honesty",
@@ -2556,8 +2568,24 @@
         "p0c3-absent-verify-require"
       ],
       "title": "validation-engine reality honesty: correct the stale absent-verify comment + tag the derived realityProof synthetic",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "CTO Mission 4. Two honesty gaps. (1) The comment at ~220 claimed the ABSENT-verify fail-open was 'part 2 DEFERRED - NOT closed here', but the very next line (verifyEvidenceOk, C#3 part 2, p0c3-absent-verify-require ACCEPTED #305) DOES close it (absent engineering verify + no recovery => BLOCKED). Corrected to describe the ACTUAL enforcement (doc now matches code on a safety property). (2) The ODG5 realityProof was fed hardcoded sourceInspected:true/testRun:true and acceptanceCriteria.met=validated - DERIVED from the verdict, NOT independent observations, yet the report could read INTEGRATION_VERIFIED/ACCEPTANCE_VERIFIED like real reality-gate evidence. Fix: the emitted realityProof is tagged synthetic:true + basis='DERIVED from this engine's verdict facts; NOT independent source-inspection/test-run/acceptance observation', so the derived state CANNOT be mistaken for an independently-observed reality result; the governed verdict remains `validated`+gates (the projection stays additive/non-authoritative). Tests: validation-engine-engineering-proof.test.ts +3 (27) assert realityProof.synthetic===true + basis names DERIVED/NOT-independent + verdict still `validated`; the absent-verify BLOCK the corrected comment describes is already test-pinned (cases 9 part2 + 12). build:runtime + tsc(both) green; full gate 245/245. Independent validation + 2 CI pending.",
+      "integration": {
+        "state": "MERGED",
+        "pr": 335,
+        "mergeCommit": "725c1ce",
+        "verified": true
+      },
+      "acceptedAt": "2026-11-01"
+    },
+    {
+      "id": "eleven-profession-program-definition",
+      "program": "P2",
+      "priority": 3,
+      "deps": [],
+      "title": "ADDITIVE CTO program: eleven professions x nine specialties x competitive intelligence — DEFINITION BLOCKED (no canonical 11-profession/99-specialty source; CTO must establish)",
+      "status": "BLOCKED",
+      "evidence": "CTO ADDITIVE world-class product-excellence directive. §2 recovery (read-only sweep of master roadmap + reconstruction §13-14 + docs/odg + crosswalk + register): NO canonical definition of eleven professions / nine specialties / 99 targets exists. The only established 11-structure is the governance 11-DOMAIN map D1-D8 + H1-H3 (governance/domain labels), which the directive FORBIDS assuming equivalent to the eleven professional businesses without explicit source — none establishes it. Per §2/§4, ODG records the provenance gap and does NOT invent professions/specialties. BLOCKED on CTO decision (docs/odg-operational/ELEVEN_PROFESSIONS_PROGRAM_V1.md §3): establish the eleven professions (or canonically establish 11-DOMAIN equivalence) + confirm 9-specialties-per-profession + confirm local-dev/private-VPS scope. Methodology + deliverable schemas (competitive-intelligence register, master map, 99-catalog, implementation roadmap, benchmark register) PREPARED as structure-only (no fabricated content). ADDITIVE: did NOT disrupt the 4-mission campaign (all ACCEPTED). Scheduled-not-started; begins in dependency-aware batches once defined.",
       "integration": {
         "state": "PENDING"
       }
