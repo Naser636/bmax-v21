@@ -2507,6 +2507,20 @@
         "verified": true
       },
       "acceptedAt": "2026-11-01"
+    },
+    {
+      "id": "mission-ledger-tamper-evidence",
+      "program": "P0",
+      "priority": 2,
+      "deps": [
+        "p0e-audit-log-keyed-mechanism"
+      ],
+      "title": "mission-ledger keyless tamper-evidence (hash-chain seal + verify-on-read; keyed authenticity owner-gated out of scope)",
+      "status": "IN_PROGRESS",
+      "evidence": "CTO Mission 1 (first priority). The source-of-record ledger was crash-atomic + immutable + corrupt-skip but had NO integrity seal and NO verify-on-read (readers trusted raw proven:true). Added a deterministic KEYLESS forward hash-chain reusing the proven audit-log.entryHash primitive (sha256, NUL-separated): entry.seal = entryHash(index, prevSeal, entry-minus-seal); prevSeal chains through legacy entries via their computed seal so later sealed entries bind to prior content; top-level tipSeal + count anchor the tail. verifyLedger(payload) VERIFY-ON-READ returns {ok,verified,legacyUnsealed,total,tamperEvident,tip,brokenAt,reason}; recordMission REFUSES to append to a BROKEN sealed chain (fail-closed, preserves the file) while an all-legacy ledger verifies ok (verified:0) so the first append begins sealing. Append-only: legacy entries NEVER rewritten; new entries get an additive `seal` (readers unaffected). SECURITY SEMANTICS (explicit): keyless integrity DETECTS accidental corruption + modify/metadata/reorder/delete/truncate/partial-write/malformed-seal, and legacy tamper once a sealed successor exists; it is NOT keyed AUTHENTICITY — a full ledger rewrite that recomputes every seal+tipSeal is self-consistent and undetectable keyless (demonstrated in test 10); defeating that needs a keyed HMAC seal = OWNER-GATED, deliberately OUT of this mission. Tests: NEW mission-ledger-integrity.test.ts 16 adversarial cases (all CTO-required: modified payload/metadata, deleted, reordered, broken link, truncated[count+tip], partial-write, malformed, legacy-unsealed, valid-historical, legacy-tamper-after-seal, full-rewrite-limit, fail-closed) wired into test:report; 8 existing ledger suites GREEN (proven-gate/failclosed/controlled/actor-provenance/reuse-hook/economic/idempotent/label); build:runtime + tsc(both) green; full gate 244/244. Independent validation + 2 CI pending. Crash-atomic tmp+rename persistence unchanged.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }

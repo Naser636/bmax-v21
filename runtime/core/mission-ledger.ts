@@ -25,6 +25,7 @@ const { computeLifecycle, markArchived }: any = require("./mission-lifecycle");
 // non-throwing controlDeclared/economicEnforced probes, and so the evaluator seam is injectable in tests.
 const acceptanceFacts: any = require("./acceptance-facts");
 const actorProvenance: any = require("./actor-provenance"); // P0-AUTONOMY-MEASURE slice 2 (measure-only, read-only)
+const audit: any = require("./audit-log"); // reuse the proven KEYLESS hash primitive (entryHash/GENESIS) for the ledger seal chain
 
 const LEDGER_FILE = "runtime/generated/mission-ledger.json";
 
@@ -34,6 +35,54 @@ function readJsonSafe(file: string): any {
   } catch {
     return null;
   }
+}
+
+/*
+ * KEYLESS TAMPER-EVIDENCE (mission-ledger-tamper-evidence). The ledger is the system's source of record; every reader
+ * trusts `proven:true` entries. This adds a deterministic, keyless, forward-only hash CHAIN over entries so accidental
+ * corruption or after-the-fact modification is DETECTED on read, WITHOUT a secret, WITHOUT rewriting history.
+ *
+ *   entry.seal = entryHash(index, prevSeal, entry-minus-seal)   [sha256, NUL-separated — the proven audit-log primitive]
+ *   prevSeal(0) = GENESIS; prevSeal(i) = the running chain value through entries 0..i-1 (a stored seal when present,
+ *   else the seal COMPUTED on the fly over a legacy entry's current content — so a later sealed entry binds to the
+ *   exact content of every prior entry, legacy included).
+ *
+ * DETECTS (keyless, no secret): a modified payload/metadata, a deleted/reordered entry, a broken link, a truncated
+ * file (count + tipSeal anchor), a malformed seal, and (via the corrupt-read guard + crash-atomic write) a torn
+ * partial write. LEGACY entries (no `seal`) are reported legacyUnsealed — honestly NOT tamper-evident, never trusted
+ * as sealed, never rewritten. LIMITATION (stated, not hidden): keyless integrity is NOT keyed AUTHENTICITY — an
+ * attacker who rewrites the ENTIRE ledger AND recomputes every seal + tipSeal produces a self-consistent chain that
+ * keyless verification cannot distinguish from genuine; defeating that needs a keyed HMAC seal, which is OWNER-GATED
+ * and deliberately OUT of this mission (see p0e-audit-log-keyed-integrity).
+ */
+function canonEntry(entry: any): any { if (!entry || typeof entry !== "object") return entry; const { seal, ...rest } = entry; return rest; } // eslint-disable-line no-unused-vars
+function sealFor(index: number, prevSeal: string, entry: any): string { return audit.entryHash(index, prevSeal, canonEntry(entry)); }
+
+// verifyLedger(payload) — VERIFY-ON-READ. Walk the chain; detect any tamper. Returns
+// { ok, verified, legacyUnsealed, total, tamperEvident, tip, brokenAt, reason }. FAIL-CLOSED on malformation.
+function verifyLedger(payload: any): any {
+  const entries = payload && Array.isArray(payload.entries) ? payload.entries : null;
+  if (!entries) return { ok: false, verified: 0, legacyUnsealed: 0, total: 0, tamperEvident: false, tip: audit.GENESIS, brokenAt: 0, reason: "no entries array" };
+  if (Number.isInteger(payload.count) && payload.count !== entries.length) {
+    return { ok: false, verified: 0, legacyUnsealed: 0, total: entries.length, tamperEvident: false, tip: audit.GENESIS, brokenAt: entries.length, reason: `count ${payload.count} != entries.length ${entries.length} (truncation/insertion)` };
+  }
+  let prevSeal = audit.GENESIS; let verified = 0; let legacy = 0;
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    if (!e || typeof e !== "object") return { ok: false, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: i, reason: `malformed entry at ${i}` };
+    const expected = sealFor(i, prevSeal, e);
+    if (typeof e.seal === "string") {
+      if (e.seal !== expected) return { ok: false, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: i, reason: `seal mismatch at entry ${i} (payload/metadata tampered, reordered or deleted)` };
+      verified++; prevSeal = e.seal;
+    } else {
+      legacy++; prevSeal = expected; // chain THROUGH the legacy entry using its current content (binds later sealed entries to it)
+    }
+  }
+  // Tip anchor: a stored tipSeal pins the full length + tail content ⇒ trailing truncation/extension of sealed entries is caught.
+  if (typeof payload.tipSeal === "string" && payload.tipSeal !== prevSeal) {
+    return { ok: false, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: entries.length, reason: "tip seal mismatch (tail truncation/extension)" };
+  }
+  return { ok: true, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: -1, reason: verified > 0 ? "sealed chain intact" : "legacy unsealed (no seals yet — NOT tamper-evident)" };
 }
 
 function recordMission(mission: string): any {
@@ -204,14 +253,24 @@ function recordMission(mission: string): any {
 
   // Immutability: read existing entries, never rewrite past ones.
   let entries: any[] = [];
+  let priorTip: string = audit.GENESIS;
   if (fs.existsSync(LEDGER_FILE)) {
     const existing = readJsonSafe(LEDGER_FILE);
     if (existing === null) {
-      // Corrupted / unreadable ledger: do NOT overwrite past evidence.
+      // Corrupted / unreadable (e.g. torn partial write): do NOT overwrite past evidence.
       console.warn("[MissionLedger] Existing ledger unreadable - skipping append to preserve evidence.");
-      return { skipped: true, entry };
+      return { skipped: true, reason: "LEDGER_UNREADABLE", entry };
+    }
+    // VERIFY-ON-READ (keyless tamper-evidence): refuse to extend a TAMPERED sealed chain — fail-closed, preserving
+    // the file for recovery (never silently trust unverifiable data, never rewrite history). An all-legacy
+    // (unsealed) ledger verifies ok with verified:0, so the first append simply begins sealing.
+    const v = verifyLedger(existing);
+    if (!v.ok) {
+      console.warn(`[MissionLedger] Ledger integrity BROKEN (${v.reason}) at entry ${v.brokenAt} - REFUSING to append (preserving evidence; recover/restore the ledger).`);
+      return { skipped: true, reason: "LEDGER_INTEGRITY_BROKEN", brokenAt: v.brokenAt, detail: v.reason, entry };
     }
     entries = Array.isArray(existing.entries) ? existing.entries : [];
+    priorTip = v.tip;
   }
 
   // Idempotence by (mission, run): if this exact (mission, runId) is already recorded in THIS run, the
@@ -225,6 +284,8 @@ function recordMission(mission: string): any {
     return { skipped: true, reason: "DUPLICATE_RUN", entry, count: entries.length };
   }
 
+  // KEYLESS SEAL: chain the NEW entry to the prior tip (append-only — past entries are never rewritten).
+  entry.seal = sealFor(entries.length, priorTip, entry);
   entries.push(entry);
 
   fs.mkdirSync("runtime/generated", { recursive: true });
@@ -233,7 +294,7 @@ function recordMission(mission: string): any {
   // above would classify as corrupt and then REFUSE to append to, silently stalling all future evidence. (This does
   // NOT serialize two CONCURRENT read-modify-write appenders — a lost-update — which stays gated by the one-active-
   // mission discipline and is a documented defense-in-depth follow-on, NOT reachable by any automated path today.)
-  const payload = JSON.stringify({ generatedAt: entry.recordedAt, count: entries.length, entries }, null, 2);
+  const payload = JSON.stringify({ generatedAt: entry.recordedAt, count: entries.length, tipSeal: entry.seal, entries }, null, 2);
   const tmp = `${LEDGER_FILE}.tmp-${process.pid}-${entries.length}`;
   fs.writeFileSync(tmp, payload);
   try { fs.renameSync(tmp, LEDGER_FILE); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; }
@@ -269,7 +330,7 @@ function recordMission(mission: string): any {
   return { skipped: false, entry, count: entries.length };
 }
 
-module.exports = { recordMission };
+module.exports = { recordMission, verifyLedger, sealFor };
 
 if (require.main === module) {
   const mission = process.argv[2] || "BUILD_RUNTIME";
