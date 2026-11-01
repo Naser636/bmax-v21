@@ -2547,6 +2547,20 @@
       "integration": {
         "state": "PENDING"
       }
+    },
+    {
+      "id": "validation-engine-reality-honesty",
+      "program": "P1",
+      "priority": 3,
+      "deps": [
+        "p0c3-absent-verify-require"
+      ],
+      "title": "validation-engine reality honesty: correct the stale absent-verify comment + tag the derived realityProof synthetic",
+      "status": "IN_PROGRESS",
+      "evidence": "CTO Mission 4. Two honesty gaps. (1) The comment at ~220 claimed the ABSENT-verify fail-open was 'part 2 DEFERRED - NOT closed here', but the very next line (verifyEvidenceOk, C#3 part 2, p0c3-absent-verify-require ACCEPTED #305) DOES close it (absent engineering verify + no recovery => BLOCKED). Corrected to describe the ACTUAL enforcement (doc now matches code on a safety property). (2) The ODG5 realityProof was fed hardcoded sourceInspected:true/testRun:true and acceptanceCriteria.met=validated - DERIVED from the verdict, NOT independent observations, yet the report could read INTEGRATION_VERIFIED/ACCEPTANCE_VERIFIED like real reality-gate evidence. Fix: the emitted realityProof is tagged synthetic:true + basis='DERIVED from this engine's verdict facts; NOT independent source-inspection/test-run/acceptance observation', so the derived state CANNOT be mistaken for an independently-observed reality result; the governed verdict remains `validated`+gates (the projection stays additive/non-authoritative). Tests: validation-engine-engineering-proof.test.ts +3 (27) assert realityProof.synthetic===true + basis names DERIVED/NOT-independent + verdict still `validated`; the absent-verify BLOCK the corrected comment describes is already test-pinned (cases 9 part2 + 12). build:runtime + tsc(both) green; full gate 245/245. Independent validation + 2 CI pending.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }

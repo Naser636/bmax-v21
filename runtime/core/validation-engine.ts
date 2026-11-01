@@ -217,11 +217,12 @@ if (gatesEvaluated && (!buildOk || !typescriptOk)) {
 // PRE-FLIGHT before the checkpoint stamp; identity has no ordering trap — a legit this-run verify is stamped
 // verify.mission === the running mission). An ABSENT verify.mission ⇒ legacy/unchanged (mirror the crossMission
 // execMission discipline: only PRESENT-and-DIFFERENT blocks). Scoped to isEngineering.
-// NOTE (part 2 DEFERRED — p0c3-absent-verify-require): the ABSENT-verify fail-open (engineering mission with NO
-// runtime-verify.json defaults build/tsc to TRUE) is NOT closed here — requiring presence false-BLOCKS a LEGIT
-// engineering re-validation of an already-committed deliverable (validation-engine-engineering-proof case 3 runs
-// with no verify by design), and changing the odg-autonomy first-run flow needs the adapter-recovery full-pipeline
-// smoke. Closing it safely needs a post-patch verify stage (forensic Option D) + adapter analysis — separate contract.
+// NOTE (part 2 CLOSED — p0c3-absent-verify-require, ACCEPTED/merged PR#305): the ABSENT-verify fail-open is NO
+// LONGER open. The Build/TS Evidence pipeline stage (post-patch, before this stage) always writes a mission-stamped
+// runtime-verify.json for a legit engineering run, so `verifyEvidenceOk` below REQUIRES present this-mission build/TS
+// evidence (gatesEvaluated) OR a fresh in-memory recovery — an engineering mission with neither is BLOCKED, not
+// defaulted to TRUE. Still V68-SAFE: presence + mission-IDENTITY only, NO timing/mtime comparison. (This comment
+// previously described the DEFERRED state; it is corrected to the actual enforcement now below.)
 const verifyMission: any = verify && typeof verify.mission === "string" ? verify.mission : null;
 const verifyStaleCrossMission = !!(verifyMission && planMission && verifyMission !== planMission);
 // C#3 part 2 (absent-verify closure, Gate-B authorized): an ENGINEERING mission must carry PRESENT, THIS-mission
@@ -406,22 +407,32 @@ const blocked = blockedActions.map((e: any) => ({
     target: e.target || null,
 }));
 
-// ODG5 reality-proof (CTO amendment ODG5-REALITY-PROOF): classify the honest verification STATE from the SAME
-// facts the verdict used — never from the status label. Additive, non-authoritative record on the governed
-// mission-report; deny-by-default via the shared reality-gate. Both ports (.js + compiled .ts) emit it identically.
+// ODG5 reality-proof (CTO amendment ODG5-REALITY-PROOF): a DERIVED projection of the verification state from the
+// SAME facts the verdict used — never from the status label. HONESTY (reality-honesty mission): the inputs below are
+// DERIVED from this engine's own verdict (buildOk/typescriptOk/evidenceOk/noFailures/validated), NOT independent
+// observations — sourceInspected/testRun/acceptanceCriteria.met are projections of `validated`, not separately-measured
+// facts. So the emitted record is tagged `synthetic:true` and MUST NOT be read as independently-observed reality
+// evidence: a real reality-gate verification (independent source inspection / test run / acceptance check) is a
+// SEPARATE, stronger signal. The record stays additive + non-authoritative on the mission-report; the governed
+// verdict is `validated` + the gates above, never this projection.
 const { classify: classifyRealityState }: any = require("./reality-gate");
-const realityProof = classifyRealityState({
-    sourceInspected: true,
-    files: executed.length ? ["executed-actions"] : [],
-    testRun: true,
-    exitCode: validated ? 0 : 1,
-    integrationRun: buildOk && typescriptOk,
-    integrationExitCode: buildOk && typescriptOk ? 0 : 1,
-    requiresDeployment: false,
-    acceptanceCriteria: (Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : []).map((_d: any, i: number) => ({ id: String(i), met: validated })),
-    independentChecksPassed: evidenceOk && noFailures,
-    negativeTestsPassed: noFailures,
-});
+const realityProof = {
+    ...classifyRealityState({
+        sourceInspected: true,
+        files: executed.length ? ["executed-actions"] : [],
+        testRun: true,
+        exitCode: validated ? 0 : 1,
+        integrationRun: buildOk && typescriptOk,
+        integrationExitCode: buildOk && typescriptOk ? 0 : 1,
+        requiresDeployment: false,
+        acceptanceCriteria: (Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : []).map((_d: any, i: number) => ({ id: String(i), met: validated })),
+        independentChecksPassed: evidenceOk && noFailures,
+        negativeTestsPassed: noFailures,
+    }),
+    // SYNTHETIC: derived from the verdict, not independently observed. Never mistake this state for a real reality-gate result.
+    synthetic: true,
+    basis: "DERIVED from this engine's verdict facts (build/typescript/evidence/noFailures/validated); NOT independent source-inspection/test-run/acceptance observation",
+};
 
 const report = {
     mission: patch.mission,
@@ -435,7 +446,7 @@ const report = {
     definitionOfDone: Array.isArray(plan.definitionOfDone) ? plan.definitionOfDone : [],
     unmet,
     totalPatches: plannedCount,
-    realityProof: { rule: "ODG5-REALITY-PROOF", state: realityProof.state },
+    realityProof: { rule: "ODG5-REALITY-PROOF", state: realityProof.state, synthetic: true, basis: realityProof.basis },
     summary: {
         objectives: objectiveCount,
         executed: executed.length,

@@ -182,4 +182,14 @@ const RO_STAGE_VERIFY = { build: true, typescript: true, buildExecuted: false, s
   ok("12b write-set + flag omitted + this-mission green verify ⇒ validated (engineering, not over-blocked)", !!(r && r.validated) && r.checks.engineering === true && r.checks.verifyEvidenceOk === true);
 }
 
+// 13 — REALITY HONESTY: the additive realityProof is DERIVED from the verdict (not independently observed), so it is
+//      explicitly tagged synthetic:true and MUST NOT be mistaken for a real reality-gate observation. (Mission 4.)
+{
+  const r = run([{ objectiveId: "o1", action: "a", status: "APPLIED", files: [{ target: "runtime/app/x.ts", mode: "content" }] }], { requiresEngineering: true, verify: { build: true, typescript: true, mission: "M1" } });
+  ok("13 realityProof present + tagged synthetic:true (cannot be read as independent reality evidence)", !!(r && r.realityProof) && r.realityProof.synthetic === true);
+  ok("13 realityProof.basis honestly states it is DERIVED from the verdict (not independent observation)", !!(r && r.realityProof && typeof r.realityProof.basis === "string") && /DERIVED/.test(r.realityProof.basis) && /NOT independent/i.test(r.realityProof.basis));
+  // the governed verdict remains `validated` + the gates — never the synthetic projection.
+  ok("13 governed verdict is `validated` (the synthetic realityProof is additive, non-authoritative)", !!(r && typeof r.validated === "boolean"));
+}
+
 console.log(`\nValidation Engine engineering-proof — ${passed} assertions passed.`);
