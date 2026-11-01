@@ -43,6 +43,14 @@ const full = { buildRef: "run-1@abc", sbom: { ok: true, sbom: { components: [{ n
      r.ok && r.bundle.dimensions.health.available === false && r.bundle.attested === false && r.bundle.reasons.some((x) => /UNKNOWN/.test(x)));
 }
 
+// (4b) HONESTY (validator-flagged): a present-but-EMPTY components:[] array assembles (passes completeness)
+// but ⇒ hasComponents:false ⇒ attested:false with reason — pins the zero-components path (NOT a silent pass).
+{
+  const r = B.makeBundle({ ...full, sbom: { ok: true, sbom: { components: [] } } });
+  ok("empty components[] ⇒ ok (assembled) but attested:false + 'zero components' reason (never a silent pass)",
+     r.ok === true && r.bundle.dimensions.sbom.hasComponents === false && r.bundle.attested === false && r.bundle.reasons.some((x) => /zero components/.test(x)));
+}
+
 // (5) raw CycloneDX ({components}) input also accepted (not only the sbom-audit-service wrapper).
 {
   const r = B.makeBundle({ ...full, sbom: { components: [{ name: "z", version: "9" }] } });
