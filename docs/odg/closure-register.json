@@ -2584,13 +2584,23 @@
       "priority": 3,
       "deps": [],
       "title": "ADDITIVE CTO program: eleven professions x nine specialties x competitive intelligence — DEFINITION BLOCKED (no canonical 11-profession/99-specialty source; CTO must establish)",
-      "status": "BLOCKED",
-      "evidence": "CTO ADDITIVE world-class product-excellence directive. §2 recovery (read-only sweep of master roadmap + reconstruction §13-14 + docs/odg + crosswalk + register): NO canonical definition of eleven professions / nine specialties / 99 targets exists. The only established 11-structure is the governance 11-DOMAIN map D1-D8 + H1-H3 (governance/domain labels), which the directive FORBIDS assuming equivalent to the eleven professional businesses without explicit source — none establishes it. Per §2/§4, ODG records the provenance gap and does NOT invent professions/specialties. BLOCKED on CTO decision (docs/odg-operational/ELEVEN_PROFESSIONS_PROGRAM_V1.md §3): establish the eleven professions (or canonically establish 11-DOMAIN equivalence) + confirm 9-specialties-per-profession + confirm local-dev/private-VPS scope. Methodology + deliverable schemas (competitive-intelligence register, master map, 99-catalog, implementation roadmap, benchmark register) PREPARED as structure-only (no fabricated content). ADDITIVE: did NOT disrupt the 4-mission campaign (all ACCEPTED). Scheduled-not-started; begins in dependency-aware batches once defined. [2026-11-01: §5 recovery CONFIRMED no canonical eleven-profession list; one concise decision dossier produced = docs/odg-operational/ELEVEN_PROFESSIONS_DECISION_DOSSIER_V1.md (recovery+provenance+PROPOSAL options A/B labelled-not-adopted+evidence-required). Corrected model 11x9=99, one champion/specialty. ODG_CAPABILITY_INVENTORY.md added (evidence-backed §2).]",
+      "status": "IN_PROGRESS",
+      "evidence": "CTO ADDITIVE world-class product-excellence directive. §2 recovery (read-only sweep of master roadmap + reconstruction §13-14 + docs/odg + crosswalk + register): NO canonical definition of eleven professions / nine specialties / 99 targets exists. The only established 11-structure is the governance 11-DOMAIN map D1-D8 + H1-H3 (governance/domain labels), which the directive FORBIDS assuming equivalent to the eleven professional businesses without explicit source — none establishes it. Per §2/§4, ODG records the provenance gap and does NOT invent professions/specialties. BLOCKED on CTO decision (docs/odg-operational/ELEVEN_PROFESSIONS_PROGRAM_V1.md §3): establish the eleven professions (or canonically establish 11-DOMAIN equivalence) + confirm 9-specialties-per-profession + confirm local-dev/private-VPS scope. Methodology + deliverable schemas (competitive-intelligence register, master map, 99-catalog, implementation roadmap, benchmark register) PREPARED as structure-only (no fabricated content). ADDITIVE: did NOT disrupt the 4-mission campaign (all ACCEPTED). Scheduled-not-started; begins in dependency-aware batches once defined. [2026-11-01: §5 recovery CONFIRMED no canonical eleven-profession list; one concise decision dossier produced = docs/odg-operational/ELEVEN_PROFESSIONS_DECISION_DOSSIER_V1.md (recovery+provenance+PROPOSAL options A/B labelled-not-adopted+evidence-required). Corrected model 11x9=99, one champion/specialty. ODG_CAPABILITY_INVENTORY.md added (evidence-backed §2).] [2026-11-01 UNBLOCKED: CTO Master Unified Mandate §3 APPROVED the eleven-domain portfolio D01-D11 (+ boundary rules + 9-experts-synthesized champion model). Wave 0 unified master register established = docs/odg-operational/ODG_MASTER_UNIFIED_REGISTER_V1.md (absorbs P1/P2 remaining work w/ provenance; maps recovered evidence onto D01-D11 w/ honest R0-R5 readiness; O2->D03/D09, O3->D08/D09, O8->D06 spec-only). Waves 2-7 (market dossiers, 99 experts, domain builds, client dossiers, independent eval) PENDING, research-driven. No fabrication.]",
       "integration": {
         "state": "PENDING"
-      },
-      "humanActionRequired": "CTO must ESTABLISH the eleven professions (canonical names/definitions/scope), OR canonically establish that they equal the 11-DOMAIN map (D1-D8+H1-H3); confirm 9 specialties per profession are supported (per §4); confirm local-dev/private-VPS scope. ODG will not fabricate professions/specialties. See docs/odg-operational/ELEVEN_PROFESSIONS_PROGRAM_V1.md §3.",
-      "resumeTest": "npx tsx runtime/bin/odg-resume.ts docs/odg/closure-register.json ; once CTO establishes the professions, populate ELEVEN_PROFESSIONS_MASTER_MAP + GLOBAL_COMPETITIVE_INTELLIGENCE_REGISTER before any product build (no fabrication)."
+      }
+    },
+    {
+      "id": "master-unified-campaign",
+      "program": "P2",
+      "priority": 1,
+      "deps": [],
+      "title": "ODG Master Unified Campaign — P1/P2 + eleven-domain (D01-D11) + autonomy; Wave 0 register established",
+      "status": "IN_PROGRESS",
+      "evidence": "CTO Master Unified Mandate. Wave 0 DONE: Truth Lock + canonical ODG_MASTER_UNIFIED_REGISTER_V1.md (references+absorbs P1/P2 w/ provenance; does NOT overwrite closure-register.json or historical roadmaps; maps recovered P1/P2 evidence onto CTO-APPROVED D01-D11 w/ honest readiness R0-R5; reuses O2/O3/O8; autonomy gap register = ODG_CAPABILITY_INVENTORY.md). Waves W1 (autonomy builds) + W2 (11 market dossiers) + W3 (99 experts + synthesis models) + W4 (domain capability builds) + W5 (client-readiness dossiers) + W6 (independent eval) + W7 (closure) PENDING, dependency-aware, research via isolated read-only web agent lots. 9 primitives frozen; no fabrication; governed PR+2CI+independent-validation per lot.",
+      "integration": {
+        "state": "PENDING"
+      }
     }
   ]
 }
