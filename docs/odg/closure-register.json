@@ -2673,6 +2673,38 @@
       "status": "ACCEPTED",
       "deps": [],
       "evidence": "docs/odg-operational/ODG_TEN_MARKET_STUDIES_V1.md (10 private-sector studies + 100-pt ranking), ODG_90_EXPERTS_RESEARCH_V1.md (90 experts conserved from 99), ODG_TEN_EXCELLENCE_MODELS_V1.md, ODG_TEN_DEMONSTRATORS_V1.md (reuse G-01..G-08; 9/10 composable-today R2-R3, P5 R1), ODG_PRIVATE_SECTOR_GO_TO_MARKET_V1.md (Gate-D O1-O10 integration + commercial archetypes), ODG_TEN_BENCHMARKS_V1.md (R0-R5; none R4+), ODG_TEN_PROFESSIONS_MASTER_V1.md, ODG_TEN_PROFESSIONS_CLOSURE_V1.md. Independently audited (separate-context agent): no fabrication; all rubric arithmetic + 99->90 conservation + module citations held; 4 honest defects fixed pre-merge. Final verdict PARTIAL_WITH_EXPLICIT_BLOCKERS. Additive docs-only; no new capability/client/revenue/certification claimed; owner-gated blockers OG-01..OG-08 preserved not flipped."
+    },
+    {
+      "id": "v3-ten-metier-demonstrators",
+      "program": "V3",
+      "title": "V3: ten-métier integrated demonstrators (P1-P10) — each composes merged modules into one honest verdict",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "10 demonstrators in runtime/core, each a full governed lot with independent adversarial validation (mutation testing): cra-evidence (P3 #362), einvoice-workflow (P8 #364), modernization-safety-net/acceptance-evidence/governed-agent-action/regulatory-evidence (P1/P6/P2/P10 #365), dataset-quality-gate/reliability-dora/prove-the-number/golden-path-evidence (P4/P7/P9/P5 this PR). Full regression grew 253->263 PASS. All verdicts fail-closed + honesty-invariant (never conformity/certification/execution-authority/fabricated-number); P5 honest R1 (no IDP). No new primitive; pure compute (seal reads git HEAD for provenance unless revision injected). 9 primitives frozen; no R4+; EUR0 clients; no Top-1 claim. Levels: P1/P2/P3/P6 R3; P4/P7/P8/P9/P10 R2-R3; P5 R1."
+    },
+    {
+      "id": "v3-license-policy-copyleft-fix",
+      "program": "V3",
+      "title": "V3: license-policy classifies bare/deprecated SPDX copyleft (fixed under-classification)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "runtime/core/license-policy.ts PR#363 — bare GPL/LGPL/AGPL + SSPL-1.0 no longer under-classify to UNKNOWN (surfaced by the P3 demonstrator's independent validation). Backward-compatible; independent validation ACCEPT (3/3 mutations). Security: a CI gate keyed on severity now blocks bare-AGPL-3.0."
+    },
+    {
+      "id": "v3-followup-assert-not-certified-harden",
+      "program": "V3",
+      "title": "FOLLOW-UP: harden regulatory-assurance.assertNotCertified (narrow regex misses achieved-certification/compliant/conforms)",
+      "status": "DEFERRED",
+      "deps": [],
+      "evidence": "Independent-validation finding (P10 demonstrator). assertNotCertified's regex is order-sensitive/narrow so soft cert/conformity statements pass as notCertified:true. Inherited by the P10 demonstrator (faithful delegation). A future governed lot widens the pattern + adds tests. Not blocking: the demonstrator still refuses the common forms and labels NOT_CERTIFIED."
+    },
+    {
+      "id": "v3-followup-canon-circular-ref",
+      "program": "V3",
+      "title": "FOLLOW-UP: characterization-baseline.canon circular-reference RangeError",
+      "status": "DEFERRED",
+      "deps": [],
+      "evidence": "Independent-validation finding (P1 demonstrator). A circular-reference sample input causes unbounded recursion in the delegated canon/canonStr (crashes, never fabricates a pass). Outside the normal junk set; a future governed lot bounds the canonicaliser."
     }
   ]
 }
