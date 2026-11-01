@@ -2476,11 +2476,15 @@
         "p0e-audit-log-keyed-mechanism"
       ],
       "title": "evidence-provenance keyed-HMAC content digest (mirror audit-log #326; closes the parallel keyless full-rewrite weakness)",
-      "status": "IN_PROGRESS",
+      "status": "ACCEPTED",
       "evidence": "SEC#3 forensic named evidence-provenance.ts alongside audit-log: keyless sha256 contentDigest ⇒ an attacker who mutates a stamped artifact recomputes a matching digest (verifyProvenance ok:true). Mirrors the shipped audit-log mechanism (#326): contentDigest(obj,key?) ⇒ HMAC-SHA256 when a non-empty key is supplied else plain sha256 (BYTE-IDENTICAL keyless path - no caller/stamp changes); stampProvenance(obj,{key}) records keyed:true ONLY when keyed (keyless stamp byte-identical historical shape); verifyProvenance(stamped,{key}) recomputes with the key, fail-closed when a keyed stamp is verified without the key, honest keyed flag. Module stays PURE (key is a parameter; no env read, no secret). Tests +9: keyed digest != keyless; keyed stamp verifies with key; verified WITHOUT key ⇒ rejected; wrong key ⇒ rejected; keyless re-stamp forgery PASSES keyless verify but KEYED verify REJECTS it; keyless stamp has no keyed field; keyless digest == independent sha256(JSON) PIN (non-self-referential). build:runtime + tsc(both) green; 10+ consumers unaffected (keyless byte-identical); full gate 243/243. Independent validation + CI pending. OWNER ACTION (same as audit-log): provision the HMAC key + authorize wiring into the provenance callers.",
       "integration": {
-        "state": "PENDING"
-      }
+        "state": "MERGED",
+        "pr": 328,
+        "mergeCommit": "33b4e7b",
+        "verified": true
+      },
+      "acceptedAt": "2026-11-01"
     }
   ]
 }
