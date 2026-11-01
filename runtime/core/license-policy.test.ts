@@ -41,6 +41,24 @@ ok("adopt LGPL for commercial-closed ⇒ null (conditional, needs review)", adop
 ok("adopt unknown ⇒ null (fail-closed, do not adopt)", adoptionVerdict("Foobar-9.9").adoptable === null);
 ok("adopt non-commercial for commercial ⇒ false", adoptionVerdict("CC-BY-NC-4.0", { target: "commercial-closed" }).adoptable === false);
 
+// --- REGRESSION (V3 independent-validation finding): BARE/DEPRECATED SPDX copyleft forms must NOT
+//     under-classify to UNKNOWN. bare GPL/LGPL/AGPL ⇒ their copyleft family (fail-closed, the safe direction). ---
+for (const id of ["GPL-2.0", "GPL-3.0"]) {
+  const c = classifyLicense(id);
+  ok(`bare ${id} ⇒ strong-copyleft (not UNKNOWN)`, c.family === "strong-copyleft" && c.known === true && c.proprietaryRedistribution === false);
+  ok(`adopt bare ${id} for commercial-closed ⇒ false (blocks CI gate)`, adoptionVerdict(id, { target: "commercial-closed" }).adoptable === false);
+}
+const agplBare = classifyLicense("AGPL-3.0");
+ok("bare AGPL-3.0 ⇒ network-copyleft (not UNKNOWN)", agplBare.family === "network-copyleft" && agplBare.known === true);
+ok("adopt bare AGPL-3.0 for commercial-saas ⇒ false", adoptionVerdict("AGPL-3.0", { target: "commercial-saas" }).adoptable === false);
+const lgplBare = classifyLicense("LGPL-3.0");
+ok("bare LGPL-3.0 ⇒ weak-copyleft conditional (not UNKNOWN)", lgplBare.family === "weak-copyleft" && lgplBare.proprietaryRedistribution === "conditional");
+// SSPL-1.0 — source-available restrictive, NOT OSI-approved; must not under-classify to UNKNOWN.
+const sspl = classifyLicense("SSPL-1.0");
+ok("SSPL-1.0 ⇒ source-available restrictive: osiApproved false, not proprietary-redistributable", sspl.known === true && sspl.osiApproved === false && sspl.proprietaryRedistribution === false);
+ok("adopt SSPL-1.0 for commercial-closed ⇒ false", adoptionVerdict("SSPL-1.0", { target: "commercial-closed" }).adoptable === false);
+ok("adopt SSPL-1.0 for commercial-saas ⇒ false (service disclosure)", adoptionVerdict("SSPL-1.0", { target: "commercial-saas" }).adoptable === false);
+
 // --- REGRESSION: reproduces ODG's earlier ad-hoc flux finding, now systematic ---
 ok("flux-schnell Apache-2.0 ⇒ commercial-shippable (matches prior manual rule)", adoptionVerdict("Apache-2.0", { target: "commercial-closed" }).adoptable === true);
 ok("flux-dev FLUX.1-dev (non-commercial) ⇒ NOT commercial-shippable (matches prior manual rule)", classifyLicense("FLUX.1-dev").commercialUseOk === false && adoptionVerdict("FLUX.1-dev", { target: "commercial-closed" }).adoptable === false);
