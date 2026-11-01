@@ -2588,7 +2588,9 @@
       "evidence": "CTO ADDITIVE world-class product-excellence directive. §2 recovery (read-only sweep of master roadmap + reconstruction §13-14 + docs/odg + crosswalk + register): NO canonical definition of eleven professions / nine specialties / 99 targets exists. The only established 11-structure is the governance 11-DOMAIN map D1-D8 + H1-H3 (governance/domain labels), which the directive FORBIDS assuming equivalent to the eleven professional businesses without explicit source — none establishes it. Per §2/§4, ODG records the provenance gap and does NOT invent professions/specialties. BLOCKED on CTO decision (docs/odg-operational/ELEVEN_PROFESSIONS_PROGRAM_V1.md §3): establish the eleven professions (or canonically establish 11-DOMAIN equivalence) + confirm 9-specialties-per-profession + confirm local-dev/private-VPS scope. Methodology + deliverable schemas (competitive-intelligence register, master map, 99-catalog, implementation roadmap, benchmark register) PREPARED as structure-only (no fabricated content). ADDITIVE: did NOT disrupt the 4-mission campaign (all ACCEPTED). Scheduled-not-started; begins in dependency-aware batches once defined.",
       "integration": {
         "state": "PENDING"
-      }
+      },
+      "humanActionRequired": "CTO must ESTABLISH the eleven professions (canonical names/definitions/scope), OR canonically establish that they equal the 11-DOMAIN map (D1-D8+H1-H3); confirm 9 specialties per profession are supported (per §4); confirm local-dev/private-VPS scope. ODG will not fabricate professions/specialties. See docs/odg-operational/ELEVEN_PROFESSIONS_PROGRAM_V1.md §3.",
+      "resumeTest": "npx tsx runtime/bin/odg-resume.ts docs/odg/closure-register.json ; once CTO establishes the professions, populate ELEVEN_PROFESSIONS_MASTER_MAP + GLOBAL_COMPETITIVE_INTELLIGENCE_REGISTER before any product build (no fabrication)."
     }
   ]
 }
