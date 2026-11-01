@@ -98,6 +98,10 @@ function compareToBaseline(baseline: any, newSamples: any, opts?: any): any {
   const v = EP.verifyProvenance(baseline, { key });
   if (!v.ok) return { ok: false, verdict: "BASELINE_TAMPERED", reason: v.reason, basis: BASIS };
   if (!baseline || baseline.schema !== SCHEMA || !Array.isArray(baseline.entries)) return { ok: false, verdict: "BASELINE_TAMPERED", reason: "not a characterization baseline", basis: BASIS };
+  // Fail-closed: a zero-entry baseline (not producible by captureBaseline, which returns NO_BASELINE on empty,
+  // but hand-craftable + validly sealed) cannot prove behavior-preservation — it would vacuously "PRESERVE"
+  // against any input. Refuse it explicitly rather than return a hollow BEHAVIOR_PRESERVED.
+  if (baseline.entries.length === 0) return { ok: false, verdict: "NO_BASELINE", reason: "baseline has no entries — nothing to compare (a zero-entry baseline cannot prove behavior-preservation)", basis: BASIS };
 
   const n = normalizeSamples(newSamples);
   if (!n.ok) return { ok: false, verdict: "NO_COMPARISON", code: n.code, reason: n.reason, basis: BASIS };

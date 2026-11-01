@@ -105,4 +105,13 @@ let baseline;
   ok("new extra input ⇒ still BEHAVIOR_PRESERVED, extras=1 reported", r.verdict === "BEHAVIOR_PRESERVED" && r.counts.extras === 1);
 }
 
+// (10) FAIL-CLOSED (hardening, independent-validator-flagged): a hand-crafted, validly-sealed ZERO-ENTRY
+// baseline must NOT vacuously PRESERVE — compareToBaseline refuses it with NO_BASELINE.
+{
+  const EP = require("./evidence-provenance.js");
+  const empty = EP.stampProvenance({ schema: C.SCHEMA, target: "x", basis: C.BASIS, count: 0, entries: [] }, { revision: REV });
+  const r = C.compareToBaseline(empty, [{ input: 1, observedOutput: 1 }]);
+  ok("zero-entry sealed baseline ⇒ NO_BASELINE (never a vacuous BEHAVIOR_PRESERVED)", r.ok === false && r.verdict === "NO_BASELINE");
+}
+
 console.log(`\ncharacterization-baseline: ${pass} assertions passed`);
