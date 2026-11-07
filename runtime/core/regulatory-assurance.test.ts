@@ -102,6 +102,16 @@ ok("stale reference flagged by the consulted excellence policy", dStale.excellen
 ok("declaring 'ISO 27001 certified' ⇒ refused", RA.assertNotCertified("ACME is now ISO 27001 certified").ok === false);
 ok("declaring 'fully compliant guaranteed' ⇒ refused", RA.assertNotCertified("fully compliant, compliance guaranteed").ok === false);
 ok("factual non-certification statement ⇒ allowed", RA.assertNotCertified("ACME prepared a DPIA and an SoA").ok === true);
+// WI-REG-03: harden assertNotCertified against under-detection (guard was failing OPEN on these).
+ok("'achieved … certification' (verb→noun) ⇒ refused", RA.assertNotCertified("We have achieved ISO 27001 certification").ok === false);
+ok("self-'is now accredited' ⇒ refused", RA.assertNotCertified("ODG is now accredited by COFRAC").ok === false);
+ok("'obtained the certificate' ⇒ refused", RA.assertNotCertified("We obtained the certificate last week").ok === false);
+ok("'holds … certification' ⇒ refused", RA.assertNotCertified("Our product holds ISO 42001 certification").ok === false);
+ok("passive 'certification was achieved' ⇒ refused", RA.assertNotCertified("The certification was achieved in 2026").ok === false);
+// No over-refusal of legitimate factual / disclaimer statements (no FALSE POSITIVE).
+ok("disclaimer 'an accredited body is required to certify' ⇒ allowed", RA.assertNotCertified("ODG prepares evidence; an accredited body is required to certify").ok === true);
+ok("'does not issue certification' disclaimer ⇒ allowed", RA.assertNotCertified("ODG prepares a dossier and does not issue certification").ok === true);
+ok("naming a standard without a claim ⇒ allowed", RA.assertNotCertified("The dossier maps ISO 27001 controls to evidence").ok === true);
 
 // (11) MULTI-COMPANY REUSE: same engine, distinct profiles, STRICT separation (sealed dossier attributable only to its tenant).
 const sA = RA.sealDossier(dA, { revision: { commit: "t", treeDirty: false, available: true } });
