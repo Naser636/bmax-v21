@@ -2758,6 +2758,22 @@
         "runtime/core/improvement-baseline.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-causal-06-causal-graph",
+      "title": "WI-CAUSAL-06: causal-graph reasoning lens over the World Model (§19 causal graph + counterfactual)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-wm-01-world-model-graph"
+      ],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: new additive PURE read module runtime/core/causal-graph.ts over world-model entities+relations — causal edges (CAUSAL_TYPES; SIMULATION excluded unless opt, §28), transitive effectsOf/causesOf/impactOf (cycle-safe, sorted), hasCycle (DFS 3-colour), counterfactualRemove (forward-collapse). No mutation / no new primitive / no world-model or gate change. causal-graph.test.ts 14/14; tsc strict clean (typescript:true); build:runtime OK; odg verify build/typescript/contracts 92/92 green. Partially closes GM-CI-3 (causal graph) reusing GM-CI-2 (WI-WM-01).",
+      "evidence": [
+        "runtime/core/causal-graph.ts",
+        "runtime/core/causal-graph.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
