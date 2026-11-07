@@ -2748,9 +2748,9 @@
       "title": "WI-ALLOC-02: bring ALLOCATOR into the core gate path — ARCHITECTURE DECISION (ODG seam selection) BLOCKED, non-blocking",
       "program": "V3",
       "priority": 2,
-      "status": "BLOCKED",
+      "status": "ACCEPTED",
       "deps": [],
-      "acceptance": "Gate A (read-only) done. STATE: ResourceAllocationEngine V1 lives in src/runtime/vnext/resource-allocation-engine.ts (depends on vnext ./resource types), consumed only by vnext/index.ts + its test; the core gate path (action-gate, campaign-loop) has ZERO allocation touchpoint; runtime/core is build-closure SELF-CONTAINED and must NOT import src/vnext (explicit guard comment in improvement-baseline.ts). SEAMS: (A) PORT engine+resource types into runtime/core and have vnext re-export (one impl, flips dep to vnext->core; relocates a primitive's home); (B) LEAVE in vnext as an additive-layer primitive, document that the core gate does not consume it (minimal, zero core change); (C) WIRE allocation into action-gate admission (modifies the core POLICY/security gate -> HUMAN decision, out of delegation). RECOMMENDATION: (B) now (no duplication, no core/gate change, reversible) or a scoped (A) if ODG wants the primitive canonically in core; NOT (C). BLOCKER: ODG must SELECT the seam (architecture decision touching primitive organization) before a write-set is bounded. Non-blocking: independent lots proceed.",
+      "acceptance": "ODG architecture decision 2026-11-07: SEAM B retained (provisional). ALLOCATOR V1 REMAINS in src/runtime/vnext/resource-allocation-engine.ts as an additive-layer primitive; NO vnext import into runtime/core; NO wiring into the admission gate; NO POLICY/security-boundary change. Core-integration is NOT realized/claimed. Options A (port→core) and C (gate admission, human-gated) are DOCUMENTED-NOT-RETAINED in the ADR. No code produced (capability already exists; §139 no useless reconstruction). Revisitable if ODG later needs the allocator canonically in core.",
       "evidence": [
         "src/runtime/vnext/resource-allocation-engine.ts",
         "runtime/core/action-gate.ts",
@@ -2772,6 +2772,20 @@
       "evidence": [
         "runtime/core/causal-graph.ts",
         "runtime/core/causal-graph.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-meta-07-meta-intelligence",
+      "title": "WI-META-07: meta-intelligence integrity detectors (metric-gaming / evaluator-capture / benchmark-contamination)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: new additive PURE read-only module runtime/core/meta-intelligence.ts classifies 3 integrity phenomena with explainable signals + confidence + evidence and the NO_DATA/NONE/SUSPECTED/DETECTED discipline (a suspicion is never a certain accusation; DETECTED needs hard evidence). Does NOT duplicate broad-it-eval/autonomy-eval-harness/independent-label-policy/third-party-agent-gate (consumes their kind of signals). Mutates no policy/eval/result. meta-intelligence.test.ts 19/19 (positive/negative/edge/NO_DATA/discipline/aggregate/determinism); tsc strict clean; build:runtime OK; odg verify build/typescript/contracts 92/92. Advances GM-CI-7 (Meta-Intelligence) from PARTIAL.",
+      "evidence": [
+        "runtime/core/meta-intelligence.ts",
+        "runtime/core/meta-intelligence.test.ts"
       ],
       "staleEvidence": false
     }
