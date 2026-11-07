@@ -37,11 +37,18 @@ const SCHEMA = "odg.characterization-baseline.v1";
 const BASIS = "BEHAVIORAL_NOT_CORRECTNESS";
 
 // Stable canonical JSON: object keys sorted recursively so input-matching is key-order-independent.
-function canon(v: any): any {
+function canon(v: any, seen?: any): any {
   if (v === null || typeof v !== "object") return v;
-  if (Array.isArray(v)) return v.map(canon);
-  const out: any = {};
-  for (const k of Object.keys(v).sort()) out[k] = canon(v[k]);
+  // Path-based cycle detection: a back-edge to an ANCESTOR on the current path is a true cycle ⇒ throw
+  // (fail-closed, no stack overflow). A shared NON-cyclic reference across siblings is fine (added on
+  // entry, removed on exit), matching JSON semantics — a DAG is never false-flagged as circular.
+  const s = seen || new WeakSet();
+  if (s.has(v)) throw new RangeError("CIRCULAR_REFERENCE: value contains a cycle and cannot be canonicalized");
+  s.add(v);
+  let out: any;
+  if (Array.isArray(v)) out = v.map((x: any) => canon(x, s));
+  else { out = {}; for (const k of Object.keys(v).sort()) out[k] = canon(v[k], s); }
+  s.delete(v);
   return out;
 }
 function canonStr(v: any): string { return JSON.stringify(canon(v)); }
@@ -58,8 +65,14 @@ function normalizeSamples(samples: any): { ok: boolean; entries?: any[]; code?: 
   for (let i = 0; i < samples.length; i++) {
     const s = samples[i];
     if (!isObj(s) || !("input" in s) || !("observedOutput" in s)) return { ok: false, code: "INVALID_SAMPLE", reason: `sample[${i}] must be an object with input and observedOutput` };
-    const d = inputDigest(s.input);
-    const out = canonStr(s.observedOutput);
+    let d: string; let out: string;
+    try {
+      d = inputDigest(s.input);
+      out = canonStr(s.observedOutput);
+    } catch (e: any) {
+      // A circular (or otherwise non-canonicalizable) input/output cannot be baselined ⇒ fail-closed.
+      return { ok: false, code: "CIRCULAR_INPUT", reason: `sample[${i}] input/observedOutput is not canonicalizable (circular reference)` };
+    }
     if (d in byDigest) {
       if (byDigest[d] !== out) return { ok: false, code: "NONDETERMINISTIC_SOURCE", reason: `the same input is observed with differing outputs (sample[${i}]) — a non-deterministic source cannot be characterized honestly` };
       continue; // identical duplicate ⇒ dedup
