@@ -2694,9 +2694,13 @@
       "id": "v3-followup-assert-not-certified-harden",
       "program": "V3",
       "title": "FOLLOW-UP: harden regulatory-assurance.assertNotCertified (narrow regex misses achieved-certification/compliant/conforms)",
-      "status": "DEFERRED",
+      "status": "ACCEPTED",
       "deps": [],
-      "evidence": "Independent-validation finding (P10 demonstrator). assertNotCertified's regex is order-sensitive/narrow so soft cert/conformity statements pass as notCertified:true. Inherited by the P10 demonstrator (faithful delegation). A future governed lot widens the pattern + adds tests. Not blocking: the demonstrator still refuses the common forms and labels NOT_CERTIFIED."
+      "evidence": [
+        "runtime/core/regulatory-assurance.ts",
+        "runtime/core/regulatory-assurance.test.ts"
+      ],
+      "acceptance": "WI-REG-03 ODG-accepted 2026-11-07: assertNotCertified hardened to a multi-pattern detector (verb↔noun, passive, self-accreditation); 5 reproduced fail-open false-negatives now refused; 3 allow-controls preserved (prepared DPIA/SoA, accredited-body-required disclaimer, standard-naming); regulatory-assurance.test.ts 40/40; build:runtime tsc clean; odg verify build/typescript/contracts green."
     },
     {
       "id": "v3-followup-canon-circular-ref",
@@ -2705,6 +2709,21 @@
       "status": "DEFERRED",
       "deps": [],
       "evidence": "Independent-validation finding (P1 demonstrator). A circular-reference sample input causes unbounded recursion in the delegated canon/canonStr (crashes, never fabricates a pass). Outside the normal junk set; a future governed lot bounds the canonicaliser."
+    },
+    {
+      "id": "wi-wm-01-world-model-graph",
+      "title": "WI-WM-01: world-model graph extension — SIMULATION status (§28 isolation) + typed entities + directed relations (referential integrity, fail-closed); CAS+C03 reused, no new primitive",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: world-model.test.ts 55/55 (23 historical + 32 new); state-transition + artifact-state regressions PASS; dist parity smoke PASS; build:runtime OK (121 files, tsc clean); odg verify build:true/typescript:true/contracts 92/92 (only gitClean:false = pre-existing untracked clutter, out of scope); write-set = runtime/core/world-model.ts + .test.ts + gitignored dist twin ONLY; 8 historical statuses + item API preserved; SIMULATION never promoted to a FACTUAL status without evidence_refs; relations fail-closed on missing endpoint; no runtime-model/mission-lifecycle import.",
+      "evidence": [
+        "runtime/core/world-model.ts",
+        "runtime/core/world-model.test.ts",
+        "runtime/dist/core/world-model.js"
+      ],
+      "staleEvidence": false
     }
   ]
 }
