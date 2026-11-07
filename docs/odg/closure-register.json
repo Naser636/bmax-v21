@@ -2706,9 +2706,13 @@
       "id": "v3-followup-canon-circular-ref",
       "program": "V3",
       "title": "FOLLOW-UP: characterization-baseline.canon circular-reference RangeError",
-      "status": "DEFERRED",
+      "status": "ACCEPTED",
       "deps": [],
-      "evidence": "Independent-validation finding (P1 demonstrator). A circular-reference sample input causes unbounded recursion in the delegated canon/canonStr (crashes, never fabricates a pass). Outside the normal junk set; a future governed lot bounds the canonicaliser."
+      "evidence": [
+        "runtime/core/characterization-baseline.ts",
+        "runtime/core/characterization-baseline.test.ts"
+      ],
+      "acceptance": "WI-CANON-04 ODG-accepted 2026-11-07: characterization-baseline.canon now does PATH-BASED cycle detection (true back-edge ⇒ RangeError), and normalizeSamples catches it ⇒ fail-closed CIRCULAR_INPUT across captureBaseline/compareToBaseline (no stack overflow); shared non-cyclic DAG refs still accepted; characterization-baseline.test.ts 18/18 + modernization-safety-net-demonstrator regression PASS; build:runtime tsc clean; odg verify build/typescript/contracts green."
     },
     {
       "id": "wi-wm-01-world-model-graph",
