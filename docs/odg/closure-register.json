@@ -2728,6 +2728,36 @@
         "runtime/dist/core/world-model.js"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-testsel-05-affected-test-selector",
+      "title": "WI-TESTSEL-05: reliable affected-test selector — EXISTS and is verified (reused, not reconstructed)",
+      "program": "V3",
+      "priority": 3,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: scripts/affected-tests.ts (reverse-dependency selector via static import/export/dynamic-import parsing; exports specifiersOf/resolveRel/main) already present with scripts/affected-tests.test.ts PASSING 11/11. Capability satisfied by reuse; no new code (anti-duplication §139). Corrects an earlier audit claim that no selector existed. OPTIONAL future nicety: a package.json convenience script (cosmetic, not required).",
+      "evidence": [
+        "scripts/affected-tests.ts",
+        "scripts/affected-tests.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-alloc-02-allocator-core-seam",
+      "title": "WI-ALLOC-02: bring ALLOCATOR into the core gate path — ARCHITECTURE DECISION (ODG seam selection) BLOCKED, non-blocking",
+      "program": "V3",
+      "priority": 2,
+      "status": "BLOCKED",
+      "deps": [],
+      "acceptance": "Gate A (read-only) done. STATE: ResourceAllocationEngine V1 lives in src/runtime/vnext/resource-allocation-engine.ts (depends on vnext ./resource types), consumed only by vnext/index.ts + its test; the core gate path (action-gate, campaign-loop) has ZERO allocation touchpoint; runtime/core is build-closure SELF-CONTAINED and must NOT import src/vnext (explicit guard comment in improvement-baseline.ts). SEAMS: (A) PORT engine+resource types into runtime/core and have vnext re-export (one impl, flips dep to vnext->core; relocates a primitive's home); (B) LEAVE in vnext as an additive-layer primitive, document that the core gate does not consume it (minimal, zero core change); (C) WIRE allocation into action-gate admission (modifies the core POLICY/security gate -> HUMAN decision, out of delegation). RECOMMENDATION: (B) now (no duplication, no core/gate change, reversible) or a scoped (A) if ODG wants the primitive canonically in core; NOT (C). BLOCKER: ODG must SELECT the seam (architecture decision touching primitive organization) before a write-set is bounded. Non-blocking: independent lots proceed.",
+      "evidence": [
+        "src/runtime/vnext/resource-allocation-engine.ts",
+        "runtime/core/action-gate.ts",
+        "runtime/core/campaign-loop.ts",
+        "runtime/core/improvement-baseline.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
