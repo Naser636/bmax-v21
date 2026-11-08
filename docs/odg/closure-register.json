@@ -3186,6 +3186,19 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-radar.ts implements the resumption-mandate §4.1 Frontier Radar FOUNDATION (confirmed ABSENT by independent audit before build): Source Registry + SIGNAL->NORMALIZE->SANITIZE->DEDUP->QUALIFY->DECIDE->TECHNOLOGY-CANDIDATE->COMPARE-WITH-ODG(frontier gap)->MISSION-PROPOSAL. Enforced separations: SIGNAL != FACT (epistemicStatus UNVERIFIED, never auto-promoted); external content UNTRUSTED (prompt-injection => QUARANTINE); the Radar governs nothing and grants NO permission (proposals are PROPOSED, link to canonical mission path). Fail-closed decisions (unknown/zero-reliability source => REJECT; contradiction => ESCALATE). REUSE not duplication: collection reuses bounded-http-client allowlist+SSRF via an INJECTED fetcher (absent => AUTH_REQUIRED; NO new network client; fixtures prove processing, not live Internet); epistemic vocabulary reuses world-model. Pure/deterministic. 23/23 assertions; odg-test-report classifies PASS 1/1; added to CI test:report gate; build OK; typescript OK; odg verify build:true typescript:true. NOT yet wired to an entrypoint (foundation lot) => not in dist closure; wiring is a follow-up lot.",
       "evidence": "runtime/core/frontier-radar.ts; runtime/core/frontier-radar.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-02-frontier-radar-store",
+      "title": "WI-FR-02 (Frontier): Radar persistence + canonical mission integration (reuse-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-radar-store.ts makes the WI-FR-01 Radar DURABLE and connects it to the canonical mission path with NO new store/queue/scheduler/authorizer. REUSE: autonomy-store (crash-atomic tmp+rename; readStrict distinguishes ABSENT vs CORRUPT => refuses to clobber a torn store, fail-closed); idempotency-guard (admit/record, keyed by id => dedup + resume with no double-apply); campaign-controller (register lot + selectNextLot); frontier-radar (WI-FR-01). CANONICAL INTEGRATION: a Radar proposal maps ONLY to a DEFERRED lot (authorizationRequired) which selectNextLot NEVER picks; only an EXTERNAL advance(..,{status:READY}) (ODG/owner authorization the Radar cannot perform) admits it => proposition != autorisation, Radar cannot self-authorize or promote. SEPARATIONS kept: SIGNAL != FACT (a candidate persisted as PROVEN/OBSERVED is REJECTED; stays UNVERIFIED), external content UNTRUSTED, Radar != governance. Persistence injectable (default autonomy-store; tests use in-memory => zero disk I/O). 25/25 assertions (unit+integration+resume+security+non-regression); reproducible end-to-end demo (collect->qualify->propose->integrate->selectNextLot before/after auth->resume) green; odg-test-report PASS 2/2 with WI-FR-01; added to CI test:report gate; campaign-controller 36/36; build+typescript OK. Not yet wired into a running entrypoint (foundation+integration lot).",
+      "evidence": "runtime/core/frontier-radar-store.ts; runtime/core/frontier-radar-store.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
