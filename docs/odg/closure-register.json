@@ -3658,6 +3658,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/v124-scorecard.ts aggregates the REAL state across gates-ledger (A-G) + campaign-closure-ledger (C1-C4) + dossier-ledger (A-F) + failures-register (F01-F40) plus caller-supplied verified facts (primitives present, professions proven, register ACCEPTED) into ONE honest scorecard (§90), applies FAIL-CLOSED readiness thresholds (§91), and emits a transparent forecast (§92). INFLATES NOTHING: overall=READY only when EVERY hard gate is met (primitives>=9, professions>=15 proven, all gates PASS, all campaigns CLOSED, no failure TO_AUDIT); a fact not supplied is UNKNOWN and treated as NOT met; a campaign counts toward closure only when CLOSED (not sub-lot ACCEPTED). With full facts today it honestly reports IN_PROGRESS (campaigns 0 CLOSED, gates not all PASS) — never READY. Composes real ledgers, duplicates none; owner-gated blockers (FR-07/VPS/E5) named. 8 assertions; odg-test-report PASS; CI gated; strict tsc clean. §90-§92 PRESENT (honest scorecard).",
       "evidence": "runtime/core/v124-scorecard.ts; runtime/core/v124-scorecard.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-study-steps-77-79-ledger",
+      "title": "V12.4 §77-§79: seven CTO study steps ledger (honest, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/study-steps-ledger.ts enumerates the seven study steps in contiguous official order 1..7 (§77); records the §78 operational correction (historical preservation is TRANSVERSAL — carried by EVERY step, documented in matrix row XVII, recoverable) and the §79 nature (STUDY steps distinct from the four execution campaigns). The seven step INTITULES are NOT in the preserved V12.4 (index-only) => each marked NOT_RECOVERABLE, NOT fabricated. A step is PROVEN only when independently demonstrated (§103) — checkStep rejects a PROVEN claim without an explicit demonstration flag (documentation is not proof); verifyLedger fails closed on a broken order / a step missing transversal preservation / an unsound PROVEN. Tests: positive + 2 negative + adversarial + non-regression (12 assertions). odg-test-report PASS; CI gated; strict tsc clean. §77-§79 LEDGERED (all 7 steps honestly DOCUMENTED_NOT_VERIFIED; no doc-only PROVEN).",
+      "evidence": "runtime/core/study-steps-ledger.ts; runtime/core/study-steps-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
