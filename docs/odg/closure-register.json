@@ -3175,6 +3175,526 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/learning-loop.ts closes A5 — RESULT->EVIDENCE->EVALUATION->MEMORY->LESSON->IMPROVEMENT->REUSE (reuses memory-taxonomy); only evidenced REAL results count (SIMULATED excluded from facts); improvement demonstrated ONLY by a measured before/after delta; regressions surfaced; only consolidated+provenanced prior lessons reusable. 10/10; tsc clean; build OK; odg verify green.",
       "evidence": "runtime/core/learning-loop.ts; runtime/core/learning-loop.test.ts",
       "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-01-frontier-radar",
+      "title": "WI-FR-01 (Frontier Radar foundation): source registry + qualification pipeline + mission proposal",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-radar.ts implements the resumption-mandate §4.1 Frontier Radar FOUNDATION (confirmed ABSENT by independent audit before build): Source Registry + SIGNAL->NORMALIZE->SANITIZE->DEDUP->QUALIFY->DECIDE->TECHNOLOGY-CANDIDATE->COMPARE-WITH-ODG(frontier gap)->MISSION-PROPOSAL. Enforced separations: SIGNAL != FACT (epistemicStatus UNVERIFIED, never auto-promoted); external content UNTRUSTED (prompt-injection => QUARANTINE); the Radar governs nothing and grants NO permission (proposals are PROPOSED, link to canonical mission path). Fail-closed decisions (unknown/zero-reliability source => REJECT; contradiction => ESCALATE). REUSE not duplication: collection reuses bounded-http-client allowlist+SSRF via an INJECTED fetcher (absent => AUTH_REQUIRED; NO new network client; fixtures prove processing, not live Internet); epistemic vocabulary reuses world-model. Pure/deterministic. 23/23 assertions; odg-test-report classifies PASS 1/1; added to CI test:report gate; build OK; typescript OK; odg verify build:true typescript:true. NOT yet wired to an entrypoint (foundation lot) => not in dist closure; wiring is a follow-up lot.",
+      "evidence": "runtime/core/frontier-radar.ts; runtime/core/frontier-radar.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-02-frontier-radar-store",
+      "title": "WI-FR-02 (Frontier): Radar persistence + canonical mission integration (reuse-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-radar-store.ts makes the WI-FR-01 Radar DURABLE and connects it to the canonical mission path with NO new store/queue/scheduler/authorizer. REUSE: autonomy-store (crash-atomic tmp+rename; readStrict distinguishes ABSENT vs CORRUPT => refuses to clobber a torn store, fail-closed); idempotency-guard (admit/record, keyed by id => dedup + resume with no double-apply); campaign-controller (register lot + selectNextLot); frontier-radar (WI-FR-01). CANONICAL INTEGRATION: a Radar proposal maps ONLY to a DEFERRED lot (authorizationRequired) which selectNextLot NEVER picks; only an EXTERNAL advance(..,{status:READY}) (ODG/owner authorization the Radar cannot perform) admits it => proposition != autorisation, Radar cannot self-authorize or promote. SEPARATIONS kept: SIGNAL != FACT (a candidate persisted as PROVEN/OBSERVED is REJECTED; stays UNVERIFIED), external content UNTRUSTED, Radar != governance. Persistence injectable (default autonomy-store; tests use in-memory => zero disk I/O). 25/25 assertions (unit+integration+resume+security+non-regression); reproducible end-to-end demo (collect->qualify->propose->integrate->selectNextLot before/after auth->resume) green; odg-test-report PASS 2/2 with WI-FR-01; added to CI test:report gate; campaign-controller 36/36; build+typescript OK. Not yet wired into a running entrypoint (foundation+integration lot).",
+      "evidence": "runtime/core/frontier-radar-store.ts; runtime/core/frontier-radar-store.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-03-frontier-lab",
+      "title": "WI-FR-03 (Frontier): isolated experimentation engine (Frontier Lab)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-lab.ts — isolated, reproducible, independently-verified experimentation engine (confirmed ABSENT before build). 8 capabilities: experiment registry (unique id, proposalRef to Radar, status + immutable history), hypothesis engine (explicit hypothesis/problem/expected-outcome/refutation-conditions/preregistered success-criteria; unfalsifiable ⇒ REJECTED), baseline engine (immutable, reuses improvement-baseline.captureBaseline), executor (isolated via INJECTED runner, explicit budget maxMs/maxCalls/maxCostEur, over-budget ⇒ ABORTED, no production effect), measurement (reuses improvement-baseline.measureDelta, reproducible), INDEPENDENT verification (SEPARATE from executor, recomputes preregistered criteria + reuses meta-intelligence integrity detectors, never consumes executor verdict; PASS/FAIL/INCONCLUSIVE), evidence bundle (hypothesis/baseline/config/raw/measures/verification/decision/provenance, synthetic:false), decision PROMISING/REJECTED/INCONCLUSIVE/READY_FOR_REVIEW. GUARDRAILS: no POLICY bypass, Lab creates NO authorization, no production access, synthetic/unverified never presented as real/proof, fail-closed on uncertainty (⇒ INCONCLUSIVE), strict executor≠verifier separation, NO experiment can authorize its own promotion (grantsNoPromotion; READY_FOR_REVIEW needs external governance). REUSE not duplication: improvement-baseline, meta-intelligence, idempotency-guard, autonomy-store (crash-atomic, readStrict fail-closed). Persistence = immutable idempotent snapshots + resume. 23 assertions covering the 10 mandated reference experiments + FR-01/FR-02 interactions; reproducible E2E demo (PASS/FAIL/TAMPER/BUDGET) green; odg-test-report PASS 3/3; CI test:report gated; campaign-controller 36/36; strict tsc clean; build+typescript OK. Not wired into a running entrypoint (engine lot).",
+      "evidence": "runtime/core/frontier-lab.ts; runtime/core/frontier-lab.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-04-evolution-loop",
+      "title": "WI-FR-04 (Frontier): Evolution-Loop engine (internal self-improvement automaton)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store",
+        "wi-fr-03-frontier-lab"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/evolution-loop.ts — pure state-machine automaton OBSERVE->DIAGNOSE->GAP->HYPOTHESIS->CANDIDATE->SANDBOX->REPLAY->ADVERSARIAL->INDEPENDENT_EVALUATION->BASELINE_COMPARE->SHADOW->CANARY->PROMOTION_REVIEW->MEASURED with failure path DEGRADED->STOP->ROLLBACK->REJECT_OR_REPAIR->REVALIDATE (confirmed ABSENT before build). STRICT role separation Builder!=Tester!=Verifier!=Challenger!=ODG-decider (builder+runner injected; the independent verifier is the Frontier Lab, never consumes the tester verdict; challenger = meta-intelligence integrity). NO self-promotion: PROMOTION_REVIEW only PREPARES an external canary-decision-pack dossier (deny-by-default); MEASURED reached ONLY via applyExternalPromotion with an EXTERNAL authorizer + approved===true (self-authored/unapproved => REJECTED). Protected baseline/G0/POLICY/evaluators NEVER modified; baseline drift DETECTED by revalidate. Degradation (regression vs protected baseline / non-reproducible replay / integrity DETECTED / verify FAIL) => STOP->ROLLBACK (testable); insufficient evidence / no measured gain => INCONCLUSIVE (fail-closed). REUSE not duplication: frontier-lab (sandbox/replay/independent verification), improvement-baseline (baseline compare), meta-intelligence (challenger via lab), canary-decision-pack (canary + external promotion dossier), idempotency-guard + autonomy-store (immutable snapshots + resume). 20 assertions covering the 11 mandated reference experiments + role separation + FR-03 interaction; reproducible E2E demo (GOOD->PROMOTION_REVIEW->external MEASURED / regression->ROLLBACK / tamper->ROLLBACK / self-promo REFUSED) green; odg-test-report PASS 4/4; CI test:report gated; campaign-controller 36/36; strict tsc clean; build+typescript OK. Not wired into a running entrypoint (engine lot; runtime wiring = WI-FR-06).",
+      "evidence": "runtime/core/evolution-loop.ts; runtime/core/evolution-loop.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-05-frontier-sandbox",
+      "title": "WI-FR-05 (Frontier): real OS sandbox + bounded runner (reuse-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-03-frontier-lab"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-sandbox.ts — the REAL execution boundary for Frontier experiments. OS isolation PROVEN in this environment (bubblewrap 0.11.1, unprivileged user namespace; raw unshare --map-root-user is denied here, bwrap maps the current uid and works). REUSE not duplication: bash-command-governor.detectSandbox + sandboxRun (proven bwrap engine: --unshare-all/--die-with-parent/--clearenv/--as-pid-1, allowlist binds NEVER --ro-bind / /, tmpfs work dir, non-privileged userns, and the --info-fd LAUNCH HANDSHAKE that PROVES isolation was established). This adapter adds prlimit rlimits (cpu/as/nproc/fsize/nofile from the mission budget) and exposes the EXACT Frontier Lab runner interface (async ({config,budget})->{afterSignals,raw,cost,productionTouched}) so it drops in as the real Tester role. FAIL-CLOSED & HONEST: bwrap unavailable OR not launched => NO execution, isolationLevel NONE_FAILCLOSED, the Lab runner THROWS => Lab ABORTS; an INJECTED runner is labelled INJECTED and NEVER isolationProven (a fixture cannot masquerade as real isolation). 15 assertions incl. REAL adversarial proofs under live bwrap: confined echo (isolation proven via --info-fd), enforced controls (no-network/cleared-env/non-privileged/allowlist), host secret NOT readable inside sandbox, NO filesystem escape into the real repo, real runner drives a Frontier Lab experiment end-to-end. odg-test-report PASS 5/5 (real bwrap runs under the gate, as code-execution/bash-command-governor already do); CI test:report gated; campaign-controller 36/36; strict tsc clean; build+typescript OK. Not yet wired into a running entrypoint (adapter lot; runtime wiring = WI-FR-06).",
+      "evidence": "runtime/core/frontier-sandbox.ts; runtime/core/frontier-sandbox.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-06-frontier-pipeline",
+      "title": "WI-FR-06 (Frontier): canonical runtime integration (Radar->ODG->POLICY->Lab->Evolution->Evidence->Decision)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store",
+        "wi-fr-03-frontier-lab",
+        "wi-fr-04-evolution-loop",
+        "wi-fr-05-frontier-sandbox"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-pipeline.ts + runtime/bin/odg-frontier.ts wire the five Frontier lots into the REAL canonical chain RADAR->ODG(integrate)->POLICY/AUTHORITY->campaign-controller selection->LAB+EVOLUTION(real WI-FR-05 bwrap sandbox)->EVIDENCE->DECISION, with NO second queue/scheduler/store/authorizer/orchestration. REUSE: frontier-radar, frontier-radar-store (DEFERRED lot), action-gate.evaluateAction (POLICY; identity principal/verb/target + ANALYZE observational; a consequential WRITE without authority is DENIED), objective-authorization (ODG-autonomy classification), campaign-controller.advance/selectNextLot (the ONLY scheduler), evolution-loop->frontier-lab->frontier-sandbox (Tester), mission-evidence.buildEvidenceRecord + evidence-provenance (canonical EVIDENCE). ODG admission requires POLICY ALLOW AND an EXTERNAL authorization (authorizedBy a non-Radar actor, approved) => the Radar can NEVER self-authorize; a non-admitted proposal stays a DEFERRED lot (traceable, not executed); promotion is NOT performed by the pipeline (external/governed). odg-frontier is the REAL entrypoint: tested by SPAWNING the actual process (like odg-campaign-run), driving the whole chain through the binary (not internal calls) with the real bubblewrap sandbox. 15 chain assertions (valid/invalid signal, POLICY deny, no-authorization, self-authorization refused, admissible, canonical selection, runner failure, contradiction/regression, integrity DETECTED, inconclusive/no-fake-evidence, idempotence, no-parallel-architecture, stages, no-self-promotion) + 8 spawned-entrypoint assertions (authorized full traversal + no-auth refusal). odg-test-report PASS; CI test:report gated (both suites); campaign-controller 36/36; strict tsc clean (incl. the bin); build+typescript OK. Preserves the contracts/interfaces needed for WI-FR-07 (real network/weekly) and WI-FR-08 (compounding) without pretending they are built.",
+      "evidence": "runtime/core/frontier-pipeline.ts; runtime/bin/odg-frontier.ts; runtime/core/frontier-pipeline.test.ts; runtime/bin/odg-frontier.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-07-radar-live-collection",
+      "title": "WI-FR-07 (Frontier): autonomous world Radar — real periodic collection (wiring+extension)",
+      "program": "V4",
+      "priority": 2,
+      "status": "DEFERRED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store",
+        "wi-fr-06-frontier-pipeline"
+      ],
+      "acceptance": "PREPARED (awaiting CTO execution mandate + explicit network/limits). Local wiring is immediately executable; LIVE network egress is OWNER-GATED (live systemd unit is IPAddressDeny=any).",
+      "evidence": "docs/odg/FRONTIER_V124_PREPARATION.md §5 — REUSE: bounded-http-client(allowlist/SSRF), ted/tender connectors(injected fetcher), frontier-radar.collect, evidence-provenance, research-ranking, systemd timer. GAPS: invoke collect() live, cross-run seen-fingerprints + per-source health/cursor (autonomy-store keys), cross-check corroboration, weekly cadence. NO new scheduler/queue/store/client.",
+      "nextAction": "LOCAL lot: invoke frontier-radar.collect() with an injected fetcher; persist cross-run dedup + source health; prove with fixtures. Live egress unit = separate owner-gated decision.",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-08-compounding-loop",
+      "title": "WI-FR-08 (Frontier): Compounding Loop / global learning (compose upper-half)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-03-frontier-lab",
+        "wi-fr-04-evolution-loop"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/compounding-loop.ts closes the compounding UPPER half (compose-only, no new primitive): VERIFIED_RESULT->REUSABLE_ASSET(validity domain)->TRANSFER_TEST(held-out, 3-level leakage control)->VALIDATED_CAPABILITY->REUSE->MEASURED_COMPOUNDING. Research-backed gates (dossier §17-18): NET-VALUE (Memory Tax/CURATOR: benefit-costs>=0), HELD-OUT TRANSFER (same-domain OR shared-evidence => leakage => fail; generalization gap reported), REWARD-HACKING (metric-gaming / leakage / self-certification builder==validator / integrity DETECTED => not validated), REWARD-GATED CONSOLIDATION (measured improvement + no regression + reversible rollback; NO model-weight training), COMPUTE-BUDGET STOP, fail-closed INCONCLUSIVE on uncertainty. REUSE: improvement-baseline (measureDelta), reuse-ledger (classifyReuseOutcome), memory-taxonomy (consolidation), meta-intelligence (integrity), idempotency-guard+autonomy-store (idempotent resumable). 34 assertions (positive/negative/contradictory/adversarial per mandate 5.6 + E2E); odg-test-report PASS; CI test:report gated; strict tsc clean; build+typescript OK. ODG accepted on proof of measured held-out transfer, not module presence.",
+      "evidence": "runtime/core/compounding-loop.ts; runtime/core/compounding-loop.test.ts; package.json (test:report gate)",
+      "nextAction": "wired for reuse by evolution-loop/learning consumers (follow-up)",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-07-collection-local",
+      "title": "WI-FR-07 (local wiring): frontier collection tick — collect+dedup+source-health+cadence (reuse-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-collection.ts closes the LOCAL gaps of the autonomous Radar WITHOUT real network and WITHOUT a new scheduler/queue/store/client: invokes frontier-radar.collect() via an INJECTED fetcher (fail-closed AUTH_REQUIRED when none); adds the two durable partitions the Radar lacked — a CROSS-RUN seen-fingerprint set (raw-signal dedup across ticks) and a per-source HEALTH/CURSOR record (lastCollected/errors/cursor) — via autonomy-store; exposes a PURE weekly-cadence predicate (real cadence = the EXISTING systemd timer, not an in-process scheduler); feeds qualified candidates/proposals to frontier-radar-store (canonical DEFERRED-lot integration). LIVE egress stays BLOCKED/owner-gated (live unit IPAddressDeny=any); fixtures prove PROCESSING, never the Internet. SIGNAL != FACT; Radar never self-authorizes (preserved from FR-01/02). 11 assertions (fail-closed no-fetcher, injected collect+qualify+persist, cross-run dedup, source health, BLOCKED_SOURCE on SSRF, cadence predicate, durable seen set); odg-test-report PASS; CI test:report gated; strict tsc clean; build+typescript OK. ODG accepted on proof of processing+dedup+persistence, not module presence.",
+      "evidence": "runtime/core/frontier-collection.ts; runtime/core/frontier-collection.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "p5-deployment-readiness",
+      "title": "P5 (Cloud/DevOps): deployment-readiness evaluator (local coherence gap; no deployment)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/deployment-readiness.ts — PURE deny-by-default readiness evaluator over supplied evidence; 11 controls (config, reproducibility, dependencies, artifacts, tests, security, observability, rollback, integrity, traceability, envPrereqs) => READY/NOT_READY + exact blockers. Performs NO deployment, spawns nothing, no network. Integrity reuses evidence-provenance.verifyProvenance (tampered stamp => FAIL). Closes the P5 coherence gap flagged in the research dossier (module was test-only). A readiness verdict is NOT an authorization to deploy (deployment owner-gated). 18 assertions (full=>READY, empty=>11 blockers, each single missing control, provenance-stamp integrity + tamper); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/deployment-readiness.ts; runtime/core/deployment-readiness-eval.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-preservation-and-traceability",
+      "title": "V12.4 preserved in-repo + section traceability matrix (Target-to-Reality, Dossier E)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: the owner supplied the V12.4 text (previously NOT_RECOVERABLE in-repo); preserved as docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md (canonical index of the 31 parts / 122 sections + provenance header; status = PROPOSED referential pending validation, a requirement is not proof). Built docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md confronting every part/section (§1-§122) with repo reality (PRESENT_AND_PROVEN / DOCUMENTED_NOT_VERIFIED / PARTIALLY_BUILT / ABSENT / UNKNOWN / TO_AUDIT / CONTRADICTION) with evidence paths. Surfaced (not silently resolved) key reconciliations: 166-capabilities CONTRADICTION vs DEC-V60-166-RETIREMENT; A02-A53 NOT_RECOVERED (2/54); schema-B eleven-profession mapping NOT_ESTABLISHED; G0 Root-of-Trust tamper-tests TO_AUDIT; most historical assets UNKNOWN. This unblocks the long-standing V12.4 documentary blocker and provides the Dossier-E/Target-vs-Reality substrate. Documentation lot (no code); read-only web was not used.",
+      "evidence": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md; docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md",
+      "staleEvidence": false
+    },
+    {
+      "id": "adr-166-capabilities-reconciliation",
+      "title": "ODG-ADR: reconcile V12.4 §115 recover-166 vs DEC-V60-166-RETIREMENT (owner decision)",
+      "program": "V4",
+      "priority": 2,
+      "status": "BLOCKED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "BLOCKED on an external (owner/CTO) decision: V12.4 §80/§115 asks to RECOVER the 166 capabilities; the repo records DEC-V60-166-RETIREMENT (ACCEPTED 2026-10-16) retiring them as non-enumerable. These conflict. Per V12.4 §2 truth hierarchy + repo evidence, do NOT reconstruct the 166 without a distinct CTO decision overriding DEC-V60. Awaiting owner arbitration.",
+      "evidence": "docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md §0.1; docs/odg-operational/ODG_DECISION_CHANGELOG.md (DEC-V60-166-RETIREMENT)",
+      "staleEvidence": false,
+      "humanActionRequired": "CTO/owner arbitration required: issue a distinct decision either (a) OVERRIDING DEC-V60-166-RETIREMENT to mandate reconstructing the 166 capabilities, or (b) CONFIRMING DEC-V60 stands so V12.4 §115 recover-166 is formally superseded. ODG will not reconstruct the 166 without this explicit decision.",
+      "resumeTest": "After the owner decision is recorded in docs/odg-operational/ODG_DECISION_CHANGELOG.md: grep the new decision id; if (a) open a capabilities-reconstruction campaign and keep BLOCKED until built; if (b) mark this item ACCEPTED citing the confirming decision. Verify register integrity via runtime/core/campaign-controller.test.ts."
+    },
+    {
+      "id": "g0-root-of-trust-tamper-tests",
+      "title": "V12.4 §10-§11: G0 Root-of-Trust tamper admission + 11-vector tamper tests (compose-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/root-of-trust.ts turns V12.4 §11 from TO_AUDIT to PRESENT_AND_PROVEN. Creates NO new authorizer: enumerates the G0 protected perimeter (constitution/policies/governance/ROADMAP.json/CTO-directives/evaluators/baselines/protocol/settings) + composes the EXISTING guards — action-gate (single POLICY authorizer), evidence-provenance (tamper detection), and the protected-governance rule (scope != authority, enforced at the write point by patch-executor/capability-executors) — into one fail-closed admission. A protected G0 change is BLOCKED unless an EXTERNAL elevated authorization (by a non-actor authority, approved) AND a full POLICY admission are both present; self-authorization refused; evidence falsification detected; recovery refused from an unverified state. Every attempt is DETECTABLE + TRACEABLE (audit record). 24 assertions covering the 11 §11.2 tamper vectors (DIRECT/INDIRECT/BY_AGENT/BY_PROVIDER/BY_TOOL/BY_DEPENDENCY/BY_CONFIG/BY_CONTRACT/BY_EVALUATOR/BY_EVIDENCE_FALSIFICATION/BY_UNVERIFIED_RESTORATION) + admitted case + self-auth refusal + invariants. G0 is NOT a tenth primitive. odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/root-of-trust.ts; runtime/core/root-of-trust.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "p8-api-contract",
+      "title": "P8 (API/Integration): standalone API-contract module (local coherence gap)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/api-contract.ts closes the P8 gap (contract validation previously inline-only in parcours-secure-api-governance). PURE standalone module: contracts, typed schemas (string/number/boolean/object/array), input/output validation, versioning + backward-COMPATIBILITY (new required input / removed required output / type change / version downgrade => BREAKING; new declared error => non-breaking), IDEMPOTENCY (idempotent op requires idempotencyKey; replay => safe DUPLICATE), an error taxonomy, and AUTH-scope validation of the contract REQUIREMENT. REUSES parcours.validateApiExchange for the base presence/version check (same canonical convention) — NO second contract engine, NO second authorizer (authorization admission stays with action-gate; this validates the contract requirement only). 26 assertions (positive/negative/type/auth/declared-errors/idempotency/breaking-compat/adversarial-extra-fields/determinism/no-2nd-authorizer); parcours non-regression PASS; odg-test-report PASS; CI test:report gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/api-contract.ts; runtime/core/api-contract.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-execution-launch-readiness",
+      "title": "V12.4 execution launch-readiness dispositif (preparation phase; no execution)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: docs/odg/V12.4_EXECUTION_LAUNCH_READINESS.md prepares the full-execution dispositif WITHOUT executing it (per CTO stop): verified real state + native mechanisms; 122-section execution rollup (references the living matrix, not duplicated); global dependency graph (independent/sequential/owner-gated); batch & parallelization plan; continuation/resume protocol (reuse checkpoint-engine/idempotency-guard/odg-resume/campaign-controller NO-REPEAT); build/test/validation chain VERIFIED (build:runtime, odg verify, strict tsc, odg-test-report=283 suites, campaign-controller); Docker diagnostic (docker v29.1.3 present, host container edg-core observed READ-ONLY + preserved, 8 CPU/22Gi/161G); native orchestration verified (no 2nd brain/queue/scheduler/authorizer; G0 proven); campaigns+15-prof map (refs matrix + FRONTIER_V124_PREPARATION); Radar+self-improvement map (FR-01..08, live egress owner-gated); blockers & owner-decision register; Git/preservation protocol; gap report; launch procedure. NO second roadmap/compass created. Documentation-only (no code, no network, no execution of F01-F40/Gates/15-prof). Register 233 items.",
+      "evidence": "docs/odg/V12.4_EXECUTION_LAUNCH_READINESS.md",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-f01-f40-failures-register",
+      "title": "V12.4 §105: F01-F40 failures register (verifiable ledger mapping existing protections)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "g0-root-of-trust-tamper-tests"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/failures-register.ts enumerates the 40 canonical failure modes F01-F40, each bound to its protection + the REAL repo module(s) + an HONEST status (PROTECTED only where a module is present and proven; else PARTIAL/TO_AUDIT — no inflated status). Creates no protection; it MAPS existing guards (root-of-trust/action-gate/evidence-provenance/checkpoint-engine/meta-intelligence/...), duplicates none. verifyRegister is checkable against the present-module set. 10 assertions (40 distinct complete, honest status mix, key cited modules physically present, F02 PROTECTED via root-of-trust, unknown-module flagging); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/failures-register.ts; runtime/core/failures-register.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-gates-a-g-ledger",
+      "title": "V12.4 §97-§103: Gates A-G ledger (verifiable ledger mapping existing mechanisms)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/gates-ledger.ts enumerates the 7 validation gates A-G, each with criteria + the REAL mechanism + an independent verifier + an honest status. No gate claims PASS prematurely (DEMONSTRATED-or-not-PASS discipline; all PARTIAL until globally proven). Maps existing gates (action-gate/reality-gate/excellence-gate/root-of-trust/traceability matrix); duplicates none. verifyLedger checkable against present mechanisms. 9 assertions (7 distinct A-G ordered, each has criteria+mechanism+verifier, honest status, no premature PASS, key mechanisms present, unknown-mechanism flagging); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/gates-ledger.ts; runtime/core/gates-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-self-improvement-e2e",
+      "title": "V12.4 §34-§37/§8-§10: self-improvement E2E completeness gate + positive/negative/adversarial validation",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-04-evolution-loop",
+        "wi-fr-08-compounding-loop",
+        "wi-fr-05-frontier-sandbox"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/self-improvement.ts composes the EXISTING chain (frontier-radar OBSERVE -> evolution-loop DIAGNOSE..SHADOW..CANARY..PROMOTION_REVIEW [via frontier-lab + frontier-sandbox + meta-intelligence] -> compounding-loop COMPOUND -> MEASURE) with NO new engine. Adds a COMPLETENESS GATE (fail-closed: any missing stage module => not complete; a module existing != system complete) and a single E2E driver. Validated the 3 mandated scenarios: POSITIVE (valid improvement => PROMOTION_REVIEW + held-out transfer VALIDATED_CAPABILITY, NOT self-promoted - promotion external); NEGATIVE (regression/refutation => ROLLED_BACK, not compounded); ADVERSARIAL (integrity DETECTED => ROLLED_BACK; self-authorized promotion REFUSED). Promotion stays external/governed; no self-promotion/self-certification; no baseline/evaluator/G0 modification. This is the §9 end-to-end validation + §10 first measured reversible self-improvement cycle (honest: reaches PROMOTION_REVIEW, promotion external). 9 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/self-improvement.ts; runtime/core/self-improvement.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-emergency-stop",
+      "title": "V12.4 §65: emergency stop (halt/revoke/preserve/restore/verify)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/emergency-stop.ts — ODG can halt a MISSION/AGENT/ACTION_CLASS/ALL, revoke authorities, preserve state, restore from a VERIFIED checkpoint only, and verify restoration. The stop is issued by an EXTERNAL controller INDEPENDENT of the stopped agent (self-stop refused; the mechanism does not depend on what it stops). Composes action-gate (revoked-authority denial post-stop) + root-of-trust discipline (verified-restoration-only); no second authorizer. 10 assertions (4 scopes, self-stop refused, invalid scope refused, post-stop not ALLOWED, verified/unverified restoration); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §65 TO_AUDIT->PRESENT_AND_PROVEN.",
+      "evidence": "runtime/core/emergency-stop.ts; runtime/core/emergency-stop.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-evaluator-independence",
+      "title": "V12.4 §36/§49: evaluator-independence audit (Builder!=Tester!=Verifier!=Challenger)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/evaluator-independence.ts audits whether evaluators are genuinely independent: self-certification (verifier==builder) => COMPROMISED; a shared CRITICAL dimension (model/data/evaluator/evidence access) between builder and verifier => COMPROMISED; shared non-critical => WEAK; none => INDEPENDENT; fail-closed INSUFFICIENT_DATA on missing roles. Independence is DEMONSTRATED, not assumed from using multiple agents (§49). Reuses meta-intelligence (evaluator-capture lens); takes no decision, creates no authorizer. 8 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §36/§49 evaluator-independence AUDIT TO_AUDIT->PRESENT_AND_PROVEN.",
+      "evidence": "runtime/core/evaluator-independence.ts; runtime/core/evaluator-independence.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p6-eval-reference",
+      "title": "V12.4 §43 P6: Quality/AI-Evaluation reference project (E2 executed + E3 adversarial)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p6-eval-reference.ts is a runnable P6 independent-evaluation reference over a CLEARLY-LABELLED SYNTHETIC corpus (never real/client data, never E5). Strict train/test hold-out; confusion-matrix metrics (precision/recall/f1/accuracy) on the HELD-OUT set; adversarial metric-gaming check (train-memorizing model collapses on held-out => FLAGGED; high train score != capability). Reuses meta-intelligence (gaming lens); no second evaluator engine. Demonstrates E2 (reference project executed) + E3 (adversarial); E4 independent-audit separate; E5 external reality OWNER-GATED NOT_RUN (no inflated level). 7 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. First profession E2 lot (Lot C).",
+      "evidence": "runtime/core/profession-p6-eval-reference.ts; runtime/core/profession-p6-eval-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-a3-plus-autonomy",
+      "title": "V12.4 §38-§42: A3+ persistent autonomy (demonstrated driver + metrics)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/autonomy-persistence.ts DEMONSTRATES A3+ persistent autonomy (not assumed from the presence of checkpoint-engine/idempotency-guard/odg-resume). Composes campaign-controller (selectNextLot+advance; dep-order, BLOCKED-skip, NO-REPEAT, fail-closed ACCEPTED) with NO second scheduler. Proven behaviors (9 assertions): autonomous dep-ordered selection; BLOCKED isolated while independent lots proceed; NO-REPEAT (completed register => 0 further missions); CONTROLLED INTERRUPTION leaves a recoverable register and resumeAutonomy continues at the right point WITHOUT re-running an ACCEPTED lot; an INCOMPLETE lot is NEVER marked ACCEPTED (fail-closed); executor throw caught, loop continues; honest native-vs-delegated metrics (native counted only when the executor reports native, never for delegated work). Executor injected/external. odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §38-§42 A3+ TO_AUDIT->PRESENT_AND_PROVEN (at the driver level; unattended live operation stays bounded/owner-gated).",
+      "evidence": "runtime/core/autonomy-persistence.ts; runtime/core/autonomy-persistence.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-benchmark-factory",
+      "title": "V12.4 §58: benchmark factory (build/audit/run, integrity-first)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p6-eval-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/benchmark-factory.ts builds evaluation suites (public/private/held-out/synthetic/adversarial), AUDITS each for §58 hazards (leakage/bias/shortcut/incomplete-tests), and runs a candidate on the HELD-OUT split with a contamination probe (train-vs-held-out collapse flagged). Only leakage-free held-out results are capability evidence; a high public/train score is not evidence alone; synthetic suites labelled (never E5). REUSES P6.evaluate + meta-intelligence (gaming lens); no second evaluator engine. 8 assertions (build split, clean audit, leakage HIGH, bias, incomplete HIGH, competent run, memorizer contamination flagged, honesty); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §58 benchmark-factory ABSENT->PRESENT_AND_PROVEN.",
+      "evidence": "runtime/core/benchmark-factory.ts; runtime/core/benchmark-factory.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p3-security-reference",
+      "title": "V12.4 §43 P3: Cybersecurity/DevSecOps reference project (E2 scan + E3 adversarial)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p3-security-reference.ts is a runnable security scan over a CLEARLY-LABELLED SYNTHETIC project: dependency licenses (copyleft GPL/AGPL/SSPL + UNKNOWN denied), secret scan, prompt/command injection detection, unpinned-deps, SBOM presence. Composes license-policy.classifyLicense + bash-command-governor.SECRET_PATTERNS + frontier-radar.sanitizeExternal; no second security engine. E2 (reference scan) + E3 (adversarial planted GPL dep/secret/injection all detected). E5 real pentest OWNER-GATED NOT_RUN (no inflated level). 6 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/profession-p3-security-reference.ts; runtime/core/profession-p3-security-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p7-sre-reference",
+      "title": "V12.4 §43 P7: SRE/Distributed/Performance reference (E2 + E3 chaos)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p7-sre-reference.ts — latency percentiles p50/p95/p99, SLO compliance (latency+availability+error-budget-burn), chaos RTO/RPO recovery drill over SYNTHETIC telemetry. E2 (reference) + E3 (chaos degradation flagged). E5 real prod telemetry owner-gated NOT_RUN. 11 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/profession-p7-sre-reference.ts; runtime/core/profession-p7-sre-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p4-data-reference",
+      "title": "V12.4 §43 P4: Data Engineering reference (E2 + E3 adversarial)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "p8-api-contract"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p4-data-reference.ts — data quality (nulls/type/range/duplicates), lineage (fail-closed), schema backward-compatibility (REUSES api-contract.checkCompatibility), idempotent replay over a SYNTHETIC dataset. E2 + E3 (bad data / breaking schema flagged). E5 real warehouse/ETL owner-gated NOT_RUN. 9 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/profession-p4-data-reference.ts; runtime/core/profession-p4-data-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-scientific-research",
+      "title": "V12.4 §26: scientific research runtime (signal->hypothesis->experiment->knowledge)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-03-frontier-lab",
+        "wi-fr-08-compounding-loop"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/scientific-research.ts composes the existing chain (frontier-radar signal/sanitize/qualify -> frontier-lab hypothesis/experiment/independent-verify -> compounding-loop knowledge) with NO new engine, DEMONSTRATED end-to-end: external content UNTRUSTED (injection => QUARANTINE, no experiment); a hypothesis runs only on a qualified signal; knowledge is VALIDATED only on a REPRODUCIBLE + independently-verified PASS; NEGATIVE results are KEPT (not discarded); provenance preserved. Scenarios: positive (=>validated knowledge), injection (=>quarantine), negative (failing => not integrated, kept), unqualified (zero-reliability => no experiment). 6 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §26 scientific-research runtime ABSENT->PRESENT_AND_PROVEN (E2E).",
+      "evidence": "runtime/core/scientific-research.ts; runtime/core/scientific-research.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p2-ai-reference",
+      "title": "V12.4 §43 P2 (AI/ML/Agentic): E2 reference + E3 prompt-injection",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-benchmark-factory",
+        "wi-fr-01-frontier-radar"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p2-ai-reference.ts composes benchmark-factory (held-out, leakage-free quality) + frontier-radar.sanitizeExternal (prompt-injection detection) with NO second evaluator. DEMONSTRATED over a CLEARLY-SYNTHETIC task set: competent+injection-refusing agent => strong held-out F1, audit-clean, safe, adversarialResisted; an agent that OBEYS a flagged injection => NOT safe (E3 failure surfaced, obeyed>0); a train-memorizing model => contamination flagged via benchmark-factory held-out probe. SYNTHETIC only; live-model/real-data benchmark (E5) owner-gated NOT_RUN. 6 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P2 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p2-ai-reference.ts; runtime/core/profession-p2-ai-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p9-finops-reference",
+      "title": "V12.4 §43 P9 (FinOps/Cloud-Economics): E2 reference + E3 budget/conflation",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p9-finops-reference.ts keeps OBSERVED/ESTIMATED/SIMULATED cost kinds STRICTLY separate (V12.4 F11 doctrine: never conflate measured vs modelled vs simulated). DEMONSTRATED over SYNTHETIC FOCUS-style billing: an unknown/invalid kind is folded into SIMULATED (never OBSERVED) and surfaced as conflation risk; cost-per-mission is computed from OBSERVED spend only; budget-stop is fail-closed on OBSERVED spend (over budget => stop + degraded; within => clean). SYNTHETIC only; real cloud billing (E5) owner-gated NOT_RUN. 7 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P9 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p9-finops-reference.ts; runtime/core/profession-p9-finops-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p12-streaming-reference",
+      "title": "V12.4 §43 P12 (Real-Time Streaming/Event-Driven): E2 reference + E3 out-of-order/dup/replay",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p12-streaming-reference.ts processes a CLEARLY-SYNTHETIC event stream with ordering by sequence, idempotent DEDUPLICATION by event id, replay consistency from a checkpoint, and bounded backpressure. DEMONSTRATED: an out-of-order, duplicated stream is reordered and the duplicate dropped (idempotent); replay from any checkpoint yields the same processed set; E2 run not degraded. SYNTHETIC only; real broker (Kafka/Pulsar, E5) owner-gated NOT_RUN. 7 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P12 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p12-streaming-reference.ts; runtime/core/profession-p12-streaming-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p1-fullstack-reference",
+      "title": "V12.4 §43 P1 (Software/Full-Stack): E2 reference + E3 regression",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p1-fullstack-reference.ts REUSES characterization-baseline (captureBaseline+compareToBaseline, sealed, fail-closed), NO second baseline engine. DEMONSTRATED over SYNTHETIC code-under-refactor: a behaviour-preserving refactor => BEHAVIOR_PRESERVED; a behaviour-changing one => BEHAVIOR_CHANGED (regression caught); a coverage gap => INCOMPLETE (NOT a pass). SYNTHETIC only; real external legacy case (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P1 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p1-fullstack-reference.ts; runtime/core/profession-p1-fullstack-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p10-regulatory-reference",
+      "title": "V12.4 §43 P10 (EU Regulatory/Assurance): E2 reference + E3 overclaim",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p10-regulatory-reference.ts REUSES ai-act-role-classifier.classifyRole (deny-by-default, declared-not-verified) + regulatory-assurance.assertNotCertified (anti-overclaim), NO second classifier. DEMONSTRATED: declared activity => role/obligation families; no activity => UNDETERMINED (deny-by-default); an ISO-27001-certified overclaim => REFUSED; a legitimate prep statement NOT over-refused; output is NOT_CERTIFIED evidence-prep only. SYNTHETIC only; real accredited audit (E5) owner-gated NOT_RUN. 5 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P10 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p10-regulatory-reference.ts; runtime/core/profession-p10-regulatory-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p11-document-reference",
+      "title": "V12.4 §43 P11 (IDP/Document-Processing): E2 reference + E3 malformed",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p11-document-reference.ts REUSES einvoice-validator.validateInvoice (EN 16931 mandatory + exact integer-money BR-CO rules), NO second validator. DEMONSTRATED: a well-formed EN 16931 invoice => accepted (0 HIGH); a missing mandatory BT-1 => rejected (HIGH); a broken BR-CO-10 calculation => rejected (HIGH); accepted only when the validator itself reports valid (fail-closed). SYNTHETIC only; real scanned-doc OCR corpus (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P11 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p11-document-reference.ts; runtime/core/profession-p11-document-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p13-aiinfra-reference",
+      "title": "V12.4 §43 P13 (AI Infra/GPU): E2 reference + E3 capacity/simulated-honesty",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p13-aiinfra-reference.ts REUSES inference-engine (defineProvider+infer+benchmark), NO second engine. DEMONSTRATED: a cpu-reference provider yields deterministic metrics (simulatedLatency=false); a gpu-simulated provider latency/cost are HONESTLY flagged SIMULATED (never measured hardware) - the P13 honesty gate; a capacity boundary fails closed (CAPACITY_EXCEEDED). SYNTHETIC only; real GPU serving/benchmark (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P13 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p13-aiinfra-reference.ts; runtime/core/profession-p13-aiinfra-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p14-devex-reference",
+      "title": "V12.4 §43 P14 (IDP/DevEx golden-path): E2 reference + E3 incomplete scaffold",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p14-devex-reference.ts REUSES golden-path-evidence-bundle (makeBundle+verifyBundle, basis EVIDENCE_PREP_NOT_CONFORMITY), NO second bundler. DEMONSTRATED: a complete scaffold (buildRef+sbom components+confinement+health) => attested; missing health / zero components / unconfined => NOT attested (fail-closed, gap surfaced, never upgraded); evidence-prep is NOT conformity/certification. SYNTHETIC only; a real project graduating to CI (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P14 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p14-devex-reference.ts; runtime/core/profession-p14-devex-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p15-workflow-reference",
+      "title": "V12.4 §43 P15 (Automation/Workflow): E2 reference + E3 missing-approval/flaky/error",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p15-workflow-reference.ts REUSES workflow-engine (defineProcess+runProcess, approval-gated, retry-bounded, dep-layered), NO second orchestrator. DEMONSTRATED: an approved process => COMPLETED; an unapproved consequential step => PENDING_APPROVAL (HALTED, release NOT executed - fail-closed); a flaky step recovers within the retry budget; an erroring step with no budget => FAILED. SYNTHETIC only; real enterprise process with live execution (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P15 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p15-workflow-reference.ts; runtime/core/profession-p15-workflow-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-campaigns-c1-c4-closure-ledger",
+      "title": "V12.4 §83-§87: four campaigns C1-C4 closure ledger (honest, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/campaign-closure-ledger.ts enumerates C1-C4 (§83-§86) with KNOWN objective (verbatim marked NOT_RECOVERABLE where the preserved V12.4 is index-only — NOT fabricated), real mechanism/evidence, independent verifier, honest status, and a FAIL-CLOSED closed flag. A campaign is closed ONLY when its objective is DEMONSTRATED end-to-end (status CLOSED) — a sub-lot ACCEPTED count is NOT closure; currently 0 closed (C2/C3 DEMONSTRATED_SLICE, C4 PARTIAL now that profession E2/E3 proofs are present, C1 TO_AUDIT). §87 closure gates defer to the A-G gates-ledger (no second gate set). verifyLedger fails closed on an incomplete campaign OR an unsound closure. 10 assertions; odg-test-report PASS; CI gated; strict tsc clean. §83-§87 PRESENT (honest closure ledger; global closure NOT asserted).",
+      "evidence": "runtime/core/campaign-closure-ledger.ts; runtime/core/campaign-closure-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-dossiers-a-f-ledger",
+      "title": "V12.4 §71-§76: six CTO dossiers A-F ledger (honest, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/dossier-ledger.ts enumerates dossiers A-F (§71-§76) with KNOWN purpose (verbatim marked NOT_RECOVERABLE where index-only — NOT fabricated), the real seeding artifact where one exists, independent verifier, honest status. A (research) seeded by the research-readiness doc + frontier-prep (PARTIAL); E (reality) realized as the Target-to-Reality matrix (PARTIAL); B/C/D/F verbatim NOT_RECOVERABLE => TO_AUDIT with NO fabricated seed. verifyLedger fails closed on an incomplete dossier OR an unsound presence claim (PRESENT without a cited artifact, or TO_AUDIT claiming one). 9 assertions; odg-test-report PASS; CI gated; strict tsc clean. §71-§76 PRESENT (honest dossier ledger).",
+      "evidence": "runtime/core/dossier-ledger.ts; runtime/core/dossier-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-execution-scorecard",
+      "title": "V12.4 §90-§92: execution scorecard (aggregate ledgers, fail-closed readiness)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/v124-scorecard.ts aggregates the REAL state across gates-ledger (A-G) + campaign-closure-ledger (C1-C4) + dossier-ledger (A-F) + failures-register (F01-F40) plus caller-supplied verified facts (primitives present, professions proven, register ACCEPTED) into ONE honest scorecard (§90), applies FAIL-CLOSED readiness thresholds (§91), and emits a transparent forecast (§92). INFLATES NOTHING: overall=READY only when EVERY hard gate is met (primitives>=9, professions>=15 proven, all gates PASS, all campaigns CLOSED, no failure TO_AUDIT); a fact not supplied is UNKNOWN and treated as NOT met; a campaign counts toward closure only when CLOSED (not sub-lot ACCEPTED). With full facts today it honestly reports IN_PROGRESS (campaigns 0 CLOSED, gates not all PASS) — never READY. Composes real ledgers, duplicates none; owner-gated blockers (FR-07/VPS/E5) named. 8 assertions; odg-test-report PASS; CI gated; strict tsc clean. §90-§92 PRESENT (honest scorecard).",
+      "evidence": "runtime/core/v124-scorecard.ts; runtime/core/v124-scorecard.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-study-steps-77-79-ledger",
+      "title": "V12.4 §77-§79: seven CTO study steps ledger (honest, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/study-steps-ledger.ts enumerates the seven study steps in contiguous official order 1..7 (§77); records the §78 operational correction (historical preservation is TRANSVERSAL — carried by EVERY step, documented in matrix row XVII, recoverable) and the §79 nature (STUDY steps distinct from the four execution campaigns). The seven step INTITULES are NOT in the preserved V12.4 (index-only) => each marked NOT_RECOVERABLE, NOT fabricated. A step is PROVEN only when independently demonstrated (§103) — checkStep rejects a PROVEN claim without an explicit demonstration flag (documentation is not proof); verifyLedger fails closed on a broken order / a step missing transversal preservation / an unsound PROVEN. Tests: positive + 2 negative + adversarial + non-regression (12 assertions). odg-test-report PASS; CI gated; strict tsc clean. §77-§79 LEDGERED (all 7 steps honestly DOCUMENTED_NOT_VERIFIED; no doc-only PROVEN).",
+      "evidence": "runtime/core/study-steps-ledger.ts; runtime/core/study-steps-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-preservation-invariant",
+      "title": "V12.4 §78/§80-82/§104: transversal preservation invariant verifier (read-only, behavioural)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/preservation-invariant.ts behaviourally verifies (READ-ONLY git) the §78 transversal-preservation correction against the LIVE repo — untracked working set (recursive -uall) not deleted, stashes not dropped, working branch unchanged, HEAD resolvable. REUSES truth-lock-gate.gatherGitState (injectable exec seam, no second git reader); runs only read-only git. FAIL-CLOSED: any reduction below baseline (untracked>=404, stashes>=5, branch=excellence/v3-wave3-demonstrators-20261101) is a VIOLATION; adding is fine (only destruction violates). HONEST: preservation != recovery — recoversHistoricalAssets:false, §80 historical assets stay UNKNOWN/TO_AUDIT (no fabricated recovery); edg-core observed read-only. Tests: positive + 2 negative (dropped stash / deleted untracked) + 2 adversarial (branch switch / no-repo) + LIVE non-regression against the real repo (untracked 406>=404, stashes 5) (11 assertions). odg-test-report PASS; CI gated; strict tsc clean. §78/§80-82/§104 preservation invariant PRESENT_AND_PROVEN (behavioural, read-only).",
+      "evidence": "runtime/core/preservation-invariant.ts; runtime/core/preservation-invariant.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-gate-e-demonstration",
+      "title": "V12.4 §101: Gate E (technical truth) behavioural slice demonstration",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-invariant"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/gate-e-demonstration.ts demonstrates the Gate-E (technical truth, §101) SLICE from REAL already-green evidence — composes the live odg verify snapshot (build+typescript+generated-contracts-valid) with the LIVE preservation invariant — fail-closed DEMONSTRATED_SLICE. E2E-proven against the real odg verify (build+typescript+contracts all true) + live preservation => DEMONSTRATED_SLICE. HONEST scope: a slice is explicitly NOT a global Gate-E PASS (the whole V12.4 technical truth); gateDemonstrationStatus reports only Gate E demonstrable now, gates A/B/C/D/F/G NOT claimed demonstrated (several behind owner-gated FR-07/VPS/E5); flips no gates-ledger status, fabricates no PASS. Tests positive + 2 negative (ts false / preservation violated) + adversarial (empty snapshot) + honesty (9 assertions). odg-test-report PASS; CI gated; strict tsc clean. §101 Gate-E SLICE DEMONSTRATED (global PASS NOT asserted).",
+      "evidence": "runtime/core/gate-e-demonstration.ts; runtime/core/gate-e-demonstration.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
