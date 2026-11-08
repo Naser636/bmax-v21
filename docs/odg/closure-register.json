@@ -2963,6 +2963,56 @@
         "runtime/core/compliance-scenario.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-p2-20-reference-agents",
+      "title": "WI-P2-20 (P2): 5 reference agents via Agent Factory, ODG-piloted campaign (real campaign-loop)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-agent-14-agent-factory"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/reference-agents.ts builds 5 contract-bound permission-confined agents via the real Agent Factory and DRIVES ODG's REAL campaign-loop over a dependency-chained synthetic register (select->execute->accept->checkpoint->next; 5 missions ACCEPTED in ONE run); adversarial modes (permissions/write-set/budget/provider-error/timeout/missing-evidence/builder-verifier disagreement) halt fail-closed; provider SIMULATED (no live model claimed; agents configured+tested, NOT claimed to have run a real consequential mission). 13/13; tsc clean; build OK; odg verify green. ODG pilots (Claude Code only supplies the execute delegate).",
+      "evidence": [
+        "runtime/core/reference-agents.ts",
+        "runtime/core/reference-agents.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-21-doc-quality",
+      "title": "WI-INT-21: integration P11->P4->P6 (document->data-quality->quality)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p11-16-document-pipeline",
+        "wi-p6-18-quality-harness"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-doc-quality.ts composes by contract document-pipeline(P11)->dataset-quality-service(P4)->quality-harness(P6) with provenance end-to-end; fail-closed on invalid/incomplete/duplicate/unsupported docs. 8/8; tsc clean; build OK; odg verify green. Cross-metier, no coupling.",
+      "evidence": [
+        "runtime/core/integration-doc-quality.ts",
+        "runtime/core/integration-doc-quality.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-22-agent-governance",
+      "title": "WI-INT-22: integration P2->P10->P6 (agents->governance->quality)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p2-20-reference-agents",
+        "wi-p10-19-compliance-scenario"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-agent-governance.ts composes by contract reference-agents(P2, simulated)->compliance-scenario(P10)->quality-harness(P6); regulatory verdict ALWAYS NOT_CERTIFIED; fail-closed on gap/overclaim/prohibited/contamination. 9/9; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/integration-agent-governance.ts",
+        "runtime/core/integration-agent-governance.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
