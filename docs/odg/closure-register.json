@@ -3993,6 +3993,21 @@
       "acceptance": "ODG-accepted 2026-11-08: SÉRIE 19 §7 — ODG discovers its own improvements and turns them into VERIFIABLE missions. World research (2026 self-improving agents AIDE2/Godel-Agent/AI-Scientist-v2): discovery is easy, VERIFIED-under-governance is the hard part; the frontier convention keeps the HUMAN in problem-selection+authorization while the agent PROPOSES+iterates. runtime/core/self-mission-proposer.ts REUSES global-improvement-engine.analyzeGaps + the canonical PROPOSED mission shape (no 2nd mission system): a COMPUTER_SIDE gap (COVERAGE) => a PROPOSED mission (grantsNoPermission, selfAuthorized:false, linksToCanonicalMissionPath) carrying a VERIFIABLE acceptance criterion (closes the verification gap); an OWNER_GATED gap (SCORECARD/gates/campaigns) => routed to OWNER_DECISION (not self-executable); fail-closed: no gap => no proposal; the proposer NEVER self-authorizes/promotes. LIVE: every proposal PROPOSED, selfAuthorizedAny=false. 9 assertions; odg-test-report PASS; project tsc clean. Completes the autonomy chain: diagnose->analyze->PROPOSE verifiable mission->canonical gate authorizes. SÉRIE 20 §3 AUDIT HARDENING: a deep audit found 2 real gaps — (1) duplicate gaps produced duplicate proposals, (2) an injected gap detail was embedded verbatim into the mission objective. Both FIXED: proposals deduped by (kind|detail); each gap detail is treated as UNTRUSTED data via frontier-radar.sanitizeExternal => an injected instruction is QUARANTINED, never emitted as a mission objective. Robustness confirmed (malformed input => fail-closed, no crash). 13 assertions total.",
       "evidence": "runtime/core/self-mission-proposer.ts; runtime/core/self-mission-proposer.test.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie20-self-improvement-chain",
+      "title": "SÉRIE 20: integrated self-improvement chain entry point (DIAGNOSE→…→RETAIN/ROLLBACK)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie14-global-improvement-engine",
+        "serie19-self-mission-proposer",
+        "v124-self-improvement-e2e"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/self-improvement-chain.ts is ONE integrated entry point that runs the DISCOVERY->PROPOSAL half by COMPOSING the 3 existing modules (no parallel engine): DIAGNOSE (global-improvement-engine.observe = codebase-diagnostic+scorecard) -> ANALYZE (analyzeGaps honest NO_FINDING/NOT_MEASURED/HEALTHY/DEGRADED/UNKNOWN) -> PROPOSE (self-mission-proposer PROPOSED verifiable missions, owner-gated=>OWNER_DECISION). The chain STOPS at the CANONICAL_AUTHORIZATION boundary and NEVER self-authorizes (selfAuthorized always false); the execution half SANDBOX->BUILD->ADVERSARIAL_EVAL->RETAIN/ROLLBACK runs via self-improvement.runSelfImprovement AFTER the canonical gate (referenced, not duplicated). 8-stage chain; chain-wide injection resistance (injected gap detail => quarantined, never a proposal); fail-closed on malformed facts; no actionable gap => nextStage NONE (NO_FINDING is not a mission). 9 assertions; odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/self-improvement-chain.ts; runtime/core/self-improvement-chain.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
