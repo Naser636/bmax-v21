@@ -3669,6 +3669,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/study-steps-ledger.ts enumerates the seven study steps in contiguous official order 1..7 (§77); records the §78 operational correction (historical preservation is TRANSVERSAL — carried by EVERY step, documented in matrix row XVII, recoverable) and the §79 nature (STUDY steps distinct from the four execution campaigns). The seven step INTITULES are NOT in the preserved V12.4 (index-only) => each marked NOT_RECOVERABLE, NOT fabricated. A step is PROVEN only when independently demonstrated (§103) — checkStep rejects a PROVEN claim without an explicit demonstration flag (documentation is not proof); verifyLedger fails closed on a broken order / a step missing transversal preservation / an unsound PROVEN. Tests: positive + 2 negative + adversarial + non-regression (12 assertions). odg-test-report PASS; CI gated; strict tsc clean. §77-§79 LEDGERED (all 7 steps honestly DOCUMENTED_NOT_VERIFIED; no doc-only PROVEN).",
       "evidence": "runtime/core/study-steps-ledger.ts; runtime/core/study-steps-ledger.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-preservation-invariant",
+      "title": "V12.4 §78/§80-82/§104: transversal preservation invariant verifier (read-only, behavioural)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/preservation-invariant.ts behaviourally verifies (READ-ONLY git) the §78 transversal-preservation correction against the LIVE repo — untracked working set (recursive -uall) not deleted, stashes not dropped, working branch unchanged, HEAD resolvable. REUSES truth-lock-gate.gatherGitState (injectable exec seam, no second git reader); runs only read-only git. FAIL-CLOSED: any reduction below baseline (untracked>=404, stashes>=5, branch=excellence/v3-wave3-demonstrators-20261101) is a VIOLATION; adding is fine (only destruction violates). HONEST: preservation != recovery — recoversHistoricalAssets:false, §80 historical assets stay UNKNOWN/TO_AUDIT (no fabricated recovery); edg-core observed read-only. Tests: positive + 2 negative (dropped stash / deleted untracked) + 2 adversarial (branch switch / no-repo) + LIVE non-regression against the real repo (untracked 406>=404, stashes 5) (11 assertions). odg-test-report PASS; CI gated; strict tsc clean. §78/§80-82/§104 preservation invariant PRESENT_AND_PROVEN (behavioural, read-only).",
+      "evidence": "runtime/core/preservation-invariant.ts; runtime/core/preservation-invariant.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
