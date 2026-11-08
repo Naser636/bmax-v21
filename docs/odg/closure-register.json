@@ -2816,6 +2816,37 @@
         "runtime/core/cognitive-loop.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-disc-10-discovery-engine",
+      "title": "WI-DISC-10 (GM-CI-8): capability discovery engine (gaps/deps/duplicates/reuse)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: new additive PURE read-only runtime/core/discovery-engine.ts discovers capability gaps (maturity-weighted), unmet dependencies (absent id=CONFIRMED / unverified=HYPOTHESIS), duplicates (duplicateOf=CONFIRMED / same-provides=HYPOTHESIS) and reuse-opportunities, each explainable (signals+confidence+priority+evidence+recommendation); hypotheses unless a hard structural fact. Supersedes the src/core BOAMP stub's capability-discovery role (stub preserved, different concern). discovery-engine.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Advances GM-CI-8 from PARTIAL/stub.",
+      "evidence": [
+        "runtime/core/discovery-engine.ts",
+        "runtime/core/discovery-engine.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-scn-11-engineering-chain-scenario",
+      "title": "WI-SCN-11 (§5): demonstrable engineering-chain scenario (synthetic defect, governed outcomes, D4 simulated)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-disc-10-discovery-engine",
+        "wi-loop-09-cognitive-loop"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: new additive PURE reproducible harness runtime/core/engineering-chain-scenario.ts drives the §5 chain over a synthetic defect, REALLY composing discovery-engine + cognitive-loop (integration/validation, not a re-labelled demonstrator). Locks all governed outcomes: ACCEPTED (independent+evidence), REFUSED (non-ODG authority=ESCALATE / missing or non-independent evidence=capture), GATED (D4 consequential=owner boundary SIMULATED not executed), FAILED (provider error), ABSTAINED (timeout, no false success), NONE (no defect). Gated/interrupted run leaves a RESUMABLE cognitive-loop cycle with no lost decisions (§16). Executes nothing real. engineering-chain-scenario.test.ts 14/14; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Turns the §3 dry-run demo into a demonstrable governed chain (§5).",
+      "evidence": [
+        "runtime/core/engineering-chain-scenario.ts",
+        "runtime/core/engineering-chain-scenario.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
