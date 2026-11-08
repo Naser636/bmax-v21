@@ -3416,6 +3416,28 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/self-improvement.ts composes the EXISTING chain (frontier-radar OBSERVE -> evolution-loop DIAGNOSE..SHADOW..CANARY..PROMOTION_REVIEW [via frontier-lab + frontier-sandbox + meta-intelligence] -> compounding-loop COMPOUND -> MEASURE) with NO new engine. Adds a COMPLETENESS GATE (fail-closed: any missing stage module => not complete; a module existing != system complete) and a single E2E driver. Validated the 3 mandated scenarios: POSITIVE (valid improvement => PROMOTION_REVIEW + held-out transfer VALIDATED_CAPABILITY, NOT self-promoted - promotion external); NEGATIVE (regression/refutation => ROLLED_BACK, not compounded); ADVERSARIAL (integrity DETECTED => ROLLED_BACK; self-authorized promotion REFUSED). Promotion stays external/governed; no self-promotion/self-certification; no baseline/evaluator/G0 modification. This is the §9 end-to-end validation + §10 first measured reversible self-improvement cycle (honest: reaches PROMOTION_REVIEW, promotion external). 9 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
       "evidence": "runtime/core/self-improvement.ts; runtime/core/self-improvement.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-emergency-stop",
+      "title": "V12.4 §65: emergency stop (halt/revoke/preserve/restore/verify)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/emergency-stop.ts — ODG can halt a MISSION/AGENT/ACTION_CLASS/ALL, revoke authorities, preserve state, restore from a VERIFIED checkpoint only, and verify restoration. The stop is issued by an EXTERNAL controller INDEPENDENT of the stopped agent (self-stop refused; the mechanism does not depend on what it stops). Composes action-gate (revoked-authority denial post-stop) + root-of-trust discipline (verified-restoration-only); no second authorizer. 10 assertions (4 scopes, self-stop refused, invalid scope refused, post-stop not ALLOWED, verified/unverified restoration); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §65 TO_AUDIT->PRESENT_AND_PROVEN.",
+      "evidence": "runtime/core/emergency-stop.ts; runtime/core/emergency-stop.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-evaluator-independence",
+      "title": "V12.4 §36/§49: evaluator-independence audit (Builder!=Tester!=Verifier!=Challenger)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/evaluator-independence.ts audits whether evaluators are genuinely independent: self-certification (verifier==builder) => COMPROMISED; a shared CRITICAL dimension (model/data/evaluator/evidence access) between builder and verifier => COMPROMISED; shared non-critical => WEAK; none => INDEPENDENT; fail-closed INSUFFICIENT_DATA on missing roles. Independence is DEMONSTRATED, not assumed from using multiple agents (§49). Reuses meta-intelligence (evaluator-capture lens); takes no decision, creates no authorizer. 8 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §36/§49 evaluator-independence AUDIT TO_AUDIT->PRESENT_AND_PROVEN.",
+      "evidence": "runtime/core/evaluator-independence.ts; runtime/core/evaluator-independence.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
