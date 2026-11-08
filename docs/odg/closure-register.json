@@ -3795,6 +3795,32 @@
       "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P2. World ref: tau-bench scores agents with pass^k across k independent rollouts (single-pass overstates reliability; NIST AI Agent Standards Feb-2026; BFCL). ODG P2 had held-out accuracy but no reliability-under-repetition. runtime/core/p2-passk-reliability.ts adds pass^k: a task is reliable ONLY if ALL k rollouts pass (fail-closed); k = min rollout count (never credit unrun rollouts); reliabilityDrop = pass^1 - pass^k exposes flakiness a single-pass score hides; names flaky tasks; reliability judged on pass^k not pass^1. Complements benchmark-factory held-out eval, no new engine. 8 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (live tau-bench E5 owner-gated NOT_RUN). Study entry appended.",
       "evidence": "runtime/core/p2-passk-reliability.ts; runtime/core/p2-passk-reliability.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie13-p7-burn-rate-alert",
+      "title": "SÉRIE 13 P7: multi-window multi-burn-rate SLO alerting (Google SRE Workbook Ch.5)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p7-sre-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P7. World ref (primary): Google SRE Workbook Ch.5 multi-window multi-burn-rate alerting (14.4x/6x/3x/1x for 1h/6h/1d/3d) — a page needs a long AND short window to cut false alarms. ODG P7 computed a single-window burn. runtime/core/p7-burn-rate-alert.ts: burnRate=errorRate/(1-SLO) (rounded; zero budget=>Infinity); evaluateAlert fires PAGE only when BOTH windows exceed the burn threshold (fail-closed multi-window); classify maps sustained burn to PAGE/TICKET/OK tiers. Complements P7 SRE reference, no new engine. 10 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real telemetry E5 owner-gated).",
+      "evidence": "runtime/core/p7-burn-rate-alert.ts; runtime/core/p7-burn-rate-alert.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie13-p9-unit-economics",
+      "title": "SÉRIE 13 P9: AI unit economics (cost per successful outcome, OBSERVED-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p9-finops-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P9. World ref: AI-FinOps decision metric is cost per SUCCESSFUL outcome (unit economics), not total cost — failed/retried attempts burn budget without value (FOCUS spec). ODG P9 separated cost kinds but had no cost-per-success. runtime/core/p9-unit-economics.ts computes cost-per-success on OBSERVED cost ONLY (never SIMULATED); fail-closed: zero successes => costPerSuccess null (undefined, never 0), viable=false; wasteRatio surfaces failed-attempt spend; withinUnitBudget fails closed on no success; successes capped at attempts. Complements P9 reference, no new engine. 9 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real billing E5 owner-gated).",
+      "evidence": "runtime/core/p9-unit-economics.ts; runtime/core/p9-unit-economics.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
     }
   ]
 }
