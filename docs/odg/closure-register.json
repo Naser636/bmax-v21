@@ -3730,6 +3730,30 @@
       "acceptance": "ODG-accepted 2026-11-08: prepared a deployment package WITHOUT root (per owner authorization + the real sudo-denied limit): deploy/odg-stage-and-verify.sh (builds runtime+app, runs verify+health, NON-disruptive — no live-service restart; PROVEN runnable exit 0, all subsystems READY), deploy/odg-rollback.sh (git-based, no force/reset/stash-drop), deploy/odg.service.template (systemd TEMPLATE with placeholders — owner installs with the single root action), deploy/README.md (isolates the ONE root step; documents live services preserved). runtime/core/deploy-package-check.ts validates the package fail-closed: all artifacts present, scripts strict-mode + NON-destructive (no force-push/reset --hard/stash drop/live-restart), systemd is a template, deployedAnything:false (preparation only — nothing deployed, root refusal NOT worked around). Tests positive+negative(missing)+adversarial(force-push/reset) (7 assertions). odg-test-report PASS; strict tsc clean. Phase-8 deployment PREPARED; the single human root action is documented.",
       "evidence": "deploy/odg-stage-and-verify.sh; deploy/odg-rollback.sh; deploy/odg.service.template; deploy/README.md; runtime/core/deploy-package-check.ts; runtime/core/deploy-package-check.test.ts",
       "staleEvidence": false
+    },
+    {
+      "id": "serie12-codebase-diagnostic",
+      "title": "SÉRIE 12: codebase self-diagnostic (evidence-based target discovery)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/codebase-diagnostic.ts lets ODG scan its OWN source to DISCOVER improvement targets from EVIDENCE. Classifies each core module honestly: DIRECT (same-named unit test) / INDIRECT (referenced by some test) / UNCOVERED (zero test references). HONESTY GATE (encoded invariant + tested): a module referenced by >=1 test is NEVER reported UNCOVERED — same-named-test absence != untested (the lesson learned when a naive grep falsely flagged 14 well-tested modules). Observer/proposer only: grants no permission, promotes nothing, creates no 2nd engine; feeds the existing self-improvement loop. LIVE scan: 352 modules, DIRECT=337 INDIRECT=13 UNCOVERED=2. Tests: classification + honesty-gate + live-scan (11 assertions). odg-test-report PASS; strict tsc clean (project config); odg verify green.",
+      "evidence": "runtime/core/codebase-diagnostic.ts; runtime/core/codebase-diagnostic.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie12-change-impact-graph-fix",
+      "title": "SÉRIE 12: fix change-impact-graph stale .js scan (+ direct coverage for 3 UNCOVERED modules)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie12-codebase-diagnostic"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: the codebase-diagnostic surfaced 5 genuinely-UNCOVERED modules. Investigation found a REAL latent regression: change-impact-graph.moduleNames scanned for .js basenames, but post zero-JS convergence runtime/core is TS-only => buildGraph returned an EMPTY graph on the real codebase (impactOf always exists:false), silently degrading its consumers dep-planner + migration-campaign. FIX: moduleNames now scans the UNION of non-test .ts and .js basenames (deduped); refSource still prefers the .ts port. Added DIRECT unit tests for the 3 testable UNCOVERED modules (change-impact-graph buildGraph/impactOf, fleet-stage resolveConfig, patch-proposal-apply guard paths NO_PROPOSAL/MALFORMED/missing-mission-throws). MEASURED improvement: DIRECT 334->337, UNCOVERED 5->2 (the 2 remaining = execution-planner + knowledge-engine, CLI report-scripts run-on-import, honestly classified NOT forced). Regression: dep-planner.test.ts PASS; odg verify build+typescript+contracts green. A real self-improvement cycle: DIAGNOSE->found bug->FIX->VERIFY->MEASURE.",
+      "evidence": "runtime/core/change-impact-graph.ts; runtime/core/change-impact-graph.test.ts; runtime/core/fleet-stage.test.ts; runtime/core/patch-proposal-apply.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
