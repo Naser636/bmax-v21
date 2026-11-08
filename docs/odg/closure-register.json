@@ -2903,6 +2903,34 @@
         "runtime/core/event-stream-engine.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-p11-16-document-pipeline",
+      "title": "WI-P11-16 (P11): document-processing pipeline foundation (synthetic text docs)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P11 was ABSENT; new additive PURE runtime/core/document-pipeline.ts is its foundation — ingest->validate->extract(kv/csv/text)->structure(required)->provenance(sourceDocId+contentSha+fields)->dedup(by contentSha)->invert-index->AND-search; fail-closed per stage; invalid/incomplete/unsupported rejected with codes. Honest scope: synthetic text docs, NO advanced OCR / external connectors claimed. document-pipeline.test.ts 18/18; tsc strict clean; build:runtime OK; odg verify green. P11 ABSENT->tested foundation.",
+      "evidence": [
+        "runtime/core/document-pipeline.ts",
+        "runtime/core/document-pipeline.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p13-17-inference-engine",
+      "title": "WI-P13-17 (P13): hardware-independent inference engine foundation (CPU adapter, no GPU claim)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P13 was ABSENT (hardware gap); new additive PURE runtime/core/inference-engine.ts is a hardware-independent foundation — common inference contract + provider abstraction + REAL CPU reference adapter + request validation + capacity/error fail-closed + DETERMINISTIC (simulated) latency/cost model + reproducible benchmark + provider comparison. Honest status: cpu-reference OPERATIONAL, gpu-simulated SIMULATED, gpu-real UNAVAILABLE (physical GPU never claimed). inference-engine.test.ts 12/12; tsc strict clean; build:runtime OK; odg verify green. P13 ABSENT->CPU-operational foundation (GPU prepared, not claimed).",
+      "evidence": [
+        "runtime/core/inference-engine.ts",
+        "runtime/core/inference-engine.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
