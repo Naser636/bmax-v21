@@ -20,3 +20,11 @@ The per-suite startup × 367 (~727 s serial; parallelized across workers) is **>
 4. Worker balancing, incremental computation, flaky-test intelligence, deterministic replay.
 
 **Quality guardrail (§4, non-negotiable):** a test not executed in a targeted validation is NEVER PASS; mandatory controls + Truth Lock + full campaigns remain at their certification points; uncertainty WIDENS validation, never reduces it.
+
+## E-COLDSTART (measured + adversarial, 2026-11-08)
+
+- **tsx cold-start ≈ 1.85 s/suite** vs **node ≈ 0.18 s** — tsx startup is **≈95 % of each suite's time** (test bodies run in ~0.05 s). Per-suite times are uniform (~1.8–1.9 s), confirming cost ≈ cold-start, not test logic.
+- **Reconciliation:** 369 × 1.85 s ≈ **683 s serial**; the **~187 s gate** = parallelism across **8 cores** (nproc=8). The earlier ~727 s figure used the 1.98 s lightest suite; the real average is ~1.85 s.
+- **Worker scaling (20-suite subset):** W=4 → 8.67 s, W=10 → 6.77 s; beyond cores (8) extra workers don't help. **Recommendation: workers ≤ cores (≈ cores−1).**
+- **ADVERSARIAL REJECTION — esbuild-bundle+node (REJECTED_UNSAFE):** bundling a suite and running it on node is ~11× faster (0.17 s) BUT (a) a failing `assert.ok(false)` exited **0** — it **swallowed the failure**, and (b) it broke the dual CJS/ESM export interop (`selectValidation is not a function`). **A speed win that masks a failure is forbidden (§4) — NOT adopted.**
+- **Conclusion:** the safe, demonstrated win is **test-impact selection** (validation-selector, ~97 % dev-loop) + **worker cap at cores**. The per-suite tsx cost is real but no correctness-preserving replacement has yet been proven; `coldstart-model.ts` gates any future runner strategy on correctness, not speed.
