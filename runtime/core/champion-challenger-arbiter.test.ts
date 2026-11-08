@@ -80,6 +80,25 @@ const sense = { latencyMs: "lower" };
 
 // fail-closed: no champion ⇒ KEEP_CHAMPION.
 check(A.arbitrate({ challengers: [] }).decision === "KEEP_CHAMPION", "no champion ⇒ KEEP_CHAMPION (fail-closed)");
+// SÉRIE 22 significance gate: a directional lift that is NOT statistically significant is disqualified when eval evidence is supplied.
+{
+  const r = A.arbitrate({ champion: champ, senseMap: sense, challengers: [
+    { id: "noisy", baseline: { signals: { successRate: 0.85, latencyMs: 180 } }, actors: indep,
+      significanceEvidence: { before: { successes: 9, n: 10 }, after: { successes: 10, n: 10 } } }, // 9/10→10/10 = noise
+  ] });
+  check(r.decision === "KEEP_CHAMPION" && r.disqualified.some((d: any) => d.id === "noisy" && /not statistically significant/.test(d.disqualifiers.join(""))), "directional lift that is sampling noise ⇒ disqualified (STREAM 2026)");
+}
+// significance gate: a directional lift that IS statistically significant qualifies.
+{
+  const r = A.arbitrate({ champion: champ, senseMap: sense, challengers: [
+    { id: "real", baseline: { signals: { successRate: 0.85, latencyMs: 180 } }, actors: indep,
+      significanceEvidence: { before: { successes: 10, n: 20 }, after: { successes: 18, n: 20 } } }, // significant
+  ] });
+  check(r.decision === "PROMOTE_CHALLENGER" && r.winner === "real", "statistically significant lift ⇒ PROMOTE_CHALLENGER");
+}
+// backward-compatible: no significanceEvidence ⇒ directional lift still stands.
+check(A.arbitrate({ champion: champ, senseMap: sense, challengers: [{ id: "a", baseline: { signals: { successRate: 0.85, latencyMs: 180 } }, actors: indep }] }).decision === "PROMOTE_CHALLENGER", "no eval evidence ⇒ directional lift stands (backward-compatible)");
+
 check(A.CHAMPION_CHALLENGER_CONTRACT.invariants.some((i: any) => /promotion stays EXTERNAL/.test(i)), "contract: promotion stays external");
 
 console.log(failures === 0 ? "ALL PASS — SÉRIE 22 CHAMPION-CHALLENGER ARBITER" : `FAILURES: ${failures}`);
