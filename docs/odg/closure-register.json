@@ -3930,6 +3930,19 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/metier-benchmark-suite.ts is a cross-cutting comparison that measures each of the 10 métier improvements (P1/P2/P3/P4/P6/P7/P8/P9/P12/P15) by DETECTION EFFECTIVENESS — does the guard CATCH a PLANTED adversarial problem — NOT merely passing its own tests (directly encodes the §4 doctrine). Every probe runs twice to verify reproducibility (identical verdict). Composes the 10 improvement modules (no new engine). Result: detectionRate 1.0 (all 10 catch their planted case, 0 miss), all 10 reproducible. A miss would be a surfaced regression signal. 15 assertions; odg-test-report PASS; project tsc clean.",
       "evidence": "runtime/core/metier-benchmark-suite.ts; runtime/core/metier-benchmark-suite.test.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie16-metier-benchmark-multidim",
+      "title": "SÉRIE 16 Step-2: multidimensional benchmark (detection + specificity + robustness)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie15-metier-benchmark-suite"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/metier-benchmark-multidim.ts strengthens the transversal benchmark by scoring each of the 10 métier improvements on THREE dimensions so a block-everything guard is NOT credited (§2): DETECTION (catches a planted adversarial case / no false negative), SPECIFICITY (accepts a benign case / no false positive), ROBUSTNESS (malformed/hostile input handled fail-closed without crash). EFFECTIVE = DETECTION and SPECIFICITY. Every scenario run twice for reproducibility; false positives/negatives/crashes surfaced per métier (no artificial global score). Result: detectionRate 1.0 (0 FN), specificityRate 1.0 (0 FP — NOT block-everything), robustnessRate 1.0 (0 crashes), effectiveRate 1.0, all reproducible. Composes the 10 modules, no new engine. 17 assertions; odg-test-report PASS; project tsc clean. Directly answers the doctrine detection-of-a-planted-case != superiority.",
+      "evidence": "runtime/core/metier-benchmark-multidim.ts; runtime/core/metier-benchmark-multidim.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
