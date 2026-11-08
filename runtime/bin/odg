@@ -134,6 +134,13 @@ case "$MISSION" in
   verify)
     node "$(_odg_port odg-verify)"
     ;;
+  verify-targeted)
+    # Engineering-Intelligence targeted validation: runs ONLY the test suites impacted by the current change-set
+    # (transitive consumer graph). §1 forces a FULL run for a certification point (--certify), a governance/critical
+    # change, an undeterminable impact or a closure hazard. A suite NOT executed is NOT_RUN and NEVER PASS; a targeted
+    # run NEVER certifies. Composes change-impact-graph + validation-selector + the real odg-test-report.
+    exec node_modules/.bin/tsx runtime/bin/odg-targeted-verify.ts "$@"
+    ;;
   cockpit)
     # READ-ONLY operational cockpit (Track I). Composes the EXISTING observability sources
     # (runtime-state/status + capability-registry, mission-queue, mission-ledger, newest *.run.log,
@@ -215,6 +222,7 @@ case "$MISSION" in
     echo "  odg diagnose        (autonomous audit: expected-vs-observed → incident + prepared repair plan)"
     echo "  odg status"
     echo "  odg verify"
+    echo "  odg verify-targeted [--certify]  (run only change-impacted suites; FULL at certification; unrun=NOT_RUN)"
     echo "  odg cockpit         (read-only operational cockpit; --once, --interval, --iterations, --tail)"
     echo "  odg freeze"
     echo "  odg system-ready    (verify -> freeze -> status, fail-fast)"
