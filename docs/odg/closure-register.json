@@ -3821,6 +3821,71 @@
       "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P9. World ref: AI-FinOps decision metric is cost per SUCCESSFUL outcome (unit economics), not total cost — failed/retried attempts burn budget without value (FOCUS spec). ODG P9 separated cost kinds but had no cost-per-success. runtime/core/p9-unit-economics.ts computes cost-per-success on OBSERVED cost ONLY (never SIMULATED); fail-closed: zero successes => costPerSuccess null (undefined, never 0), viable=false; wasteRatio surfaces failed-attempt spend; withinUnitBudget fails closed on no success; successes capped at attempts. Complements P9 reference, no new engine. 9 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real billing E5 owner-gated).",
       "evidence": "runtime/core/p9-unit-economics.ts; runtime/core/p9-unit-economics.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie14-p3-dependency-trust-gate",
+      "title": "SÉRIE 14 P3: AI-suggested dependency trust gate (~1/5 safe finding)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p3-security-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P3. World ref: ~1/5 AI-suggested dependency versions are safe (2026, CSA; Cloudsmith agentic-governance). runtime/core/p3-dependency-trust-gate.ts vets a SUGGESTED dependency BEFORE install, fail-closed, REUSING license-policy.classifyLicense (no second license engine): ADMIT only when version is EXACT-pinned (ranges/tags/latest rejected) + license safe-to-bundle (proprietaryRedistribution===true — GPL/AGPL/unknown rejected) + integrity hash present + not a typosquat (edit-distance 1 from a known popular name). 10 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (live registry E5).",
+      "evidence": "runtime/core/p3-dependency-trust-gate.ts; runtime/core/p3-dependency-trust-gate.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p4-distribution-drift",
+      "title": "SÉRIE 14 P4: distribution drift (Population Stability Index)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p4-data-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P4. World ref: data/feature drift is the dominant silent pipeline failure; PSI is the ML-monitoring/credit-risk standard detector (<0.1 none, 0.1-0.25 moderate, >0.25 significant). runtime/core/p4-distribution-drift.ts adds PSI over binned distributions, fail-closed: an unseen category contributes to drift (never hidden), empty reference => SIGNIFICANT, gate FAILs on SIGNIFICANT. Complements P4 quality/lineage, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real dataset E5).",
+      "evidence": "runtime/core/p4-distribution-drift.ts; runtime/core/p4-distribution-drift.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p8-semver-enforcement",
+      "title": "SÉRIE 14 P8: SemVer enforcement over breaking-change detection",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "p8-api-contract"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P8. World ref: SemVer 2.0.0 — a breaking change MUST bump MAJOR; shipping a breaking API change without a major bump silently breaks consumers. runtime/core/p8-semver-enforcement.ts REUSES api-contract.checkCompatibility (no second diff engine) + schema addition-detection: requiredBump (breaking=>major, addition=>minor, else patch) vs actualBump; actual < required OR no-bump/downgrade for a real change => SEMVER_VIOLATION (fail-closed). 8 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
+      "evidence": "runtime/core/p8-semver-enforcement.ts; runtime/core/p8-semver-enforcement.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p12-watermark",
+      "title": "SÉRIE 14 P12: event-time watermarks + late-event policy (Flink/Beam)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p12-streaming-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P12. World ref: Flink/Beam/Dataflow event-time watermarks bound out-of-orderness; an event below watermark-allowedLateness is late and must be dropped/side-outputted, never folded into a closed window. runtime/core/p12-watermark.ts (processEvents) classifies ON_TIME/LATE/DROPPED against a watermark = maxEventTime - allowedLateness, fail-closed (too-late => DROPPED). Complements P12 seq-ordering/dedup, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real broker E5).",
+      "evidence": "runtime/core/p12-watermark.ts; runtime/core/p12-watermark.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p15-saga-compensation",
+      "title": "SÉRIE 14 P15: saga compensation (distributed-transaction rollback)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p15-workflow-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P15. World ref: the Saga pattern (Garcia-Molina & Salem 1987; microservices) — on failure at step N, committed steps N-1..1 are UNDONE by compensating actions in REVERSE so the system is never partially applied. runtime/core/p15-saga-compensation.ts (runSaga) runs forward until failure then compensates committed steps in reverse: COMMITTED | COMPENSATED | COMPENSATION_FAILED (fail-closed, a failed compensation is SURFACED not swallowed; a throwing forward = failure). Complements workflow-engine, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
+      "evidence": "runtime/core/p15-saga-compensation.ts; runtime/core/p15-saga-compensation.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
