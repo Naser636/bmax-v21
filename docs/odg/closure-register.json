@@ -3559,6 +3559,72 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p12-streaming-reference.ts processes a CLEARLY-SYNTHETIC event stream with ordering by sequence, idempotent DEDUPLICATION by event id, replay consistency from a checkpoint, and bounded backpressure. DEMONSTRATED: an out-of-order, duplicated stream is reordered and the duplicate dropped (idempotent); replay from any checkpoint yields the same processed set; E2 run not degraded. SYNTHETIC only; real broker (Kafka/Pulsar, E5) owner-gated NOT_RUN. 7 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P12 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
       "evidence": "runtime/core/profession-p12-streaming-reference.ts; runtime/core/profession-p12-streaming-reference.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-p1-fullstack-reference",
+      "title": "V12.4 §43 P1 (Software/Full-Stack): E2 reference + E3 regression",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p1-fullstack-reference.ts REUSES characterization-baseline (captureBaseline+compareToBaseline, sealed, fail-closed), NO second baseline engine. DEMONSTRATED over SYNTHETIC code-under-refactor: a behaviour-preserving refactor => BEHAVIOR_PRESERVED; a behaviour-changing one => BEHAVIOR_CHANGED (regression caught); a coverage gap => INCOMPLETE (NOT a pass). SYNTHETIC only; real external legacy case (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P1 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p1-fullstack-reference.ts; runtime/core/profession-p1-fullstack-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p10-regulatory-reference",
+      "title": "V12.4 §43 P10 (EU Regulatory/Assurance): E2 reference + E3 overclaim",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p10-regulatory-reference.ts REUSES ai-act-role-classifier.classifyRole (deny-by-default, declared-not-verified) + regulatory-assurance.assertNotCertified (anti-overclaim), NO second classifier. DEMONSTRATED: declared activity => role/obligation families; no activity => UNDETERMINED (deny-by-default); an ISO-27001-certified overclaim => REFUSED; a legitimate prep statement NOT over-refused; output is NOT_CERTIFIED evidence-prep only. SYNTHETIC only; real accredited audit (E5) owner-gated NOT_RUN. 5 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P10 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p10-regulatory-reference.ts; runtime/core/profession-p10-regulatory-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p11-document-reference",
+      "title": "V12.4 §43 P11 (IDP/Document-Processing): E2 reference + E3 malformed",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p11-document-reference.ts REUSES einvoice-validator.validateInvoice (EN 16931 mandatory + exact integer-money BR-CO rules), NO second validator. DEMONSTRATED: a well-formed EN 16931 invoice => accepted (0 HIGH); a missing mandatory BT-1 => rejected (HIGH); a broken BR-CO-10 calculation => rejected (HIGH); accepted only when the validator itself reports valid (fail-closed). SYNTHETIC only; real scanned-doc OCR corpus (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P11 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p11-document-reference.ts; runtime/core/profession-p11-document-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p13-aiinfra-reference",
+      "title": "V12.4 §43 P13 (AI Infra/GPU): E2 reference + E3 capacity/simulated-honesty",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p13-aiinfra-reference.ts REUSES inference-engine (defineProvider+infer+benchmark), NO second engine. DEMONSTRATED: a cpu-reference provider yields deterministic metrics (simulatedLatency=false); a gpu-simulated provider latency/cost are HONESTLY flagged SIMULATED (never measured hardware) - the P13 honesty gate; a capacity boundary fails closed (CAPACITY_EXCEEDED). SYNTHETIC only; real GPU serving/benchmark (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P13 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p13-aiinfra-reference.ts; runtime/core/profession-p13-aiinfra-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p14-devex-reference",
+      "title": "V12.4 §43 P14 (IDP/DevEx golden-path): E2 reference + E3 incomplete scaffold",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p14-devex-reference.ts REUSES golden-path-evidence-bundle (makeBundle+verifyBundle, basis EVIDENCE_PREP_NOT_CONFORMITY), NO second bundler. DEMONSTRATED: a complete scaffold (buildRef+sbom components+confinement+health) => attested; missing health / zero components / unconfined => NOT attested (fail-closed, gap surfaced, never upgraded); evidence-prep is NOT conformity/certification. SYNTHETIC only; a real project graduating to CI (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P14 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p14-devex-reference.ts; runtime/core/profession-p14-devex-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p15-workflow-reference",
+      "title": "V12.4 §43 P15 (Automation/Workflow): E2 reference + E3 missing-approval/flaky/error",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: profession-p15-workflow-reference.ts REUSES workflow-engine (defineProcess+runProcess, approval-gated, retry-bounded, dep-layered), NO second orchestrator. DEMONSTRATED: an approved process => COMPLETED; an unapproved consequential step => PENDING_APPROVAL (HALTED, release NOT executed - fail-closed); a flaky step recovers within the retry budget; an erroring step with no budget => FAILED. SYNTHETIC only; real enterprise process with live execution (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P15 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p15-workflow-reference.ts; runtime/core/profession-p15-workflow-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
