@@ -3314,6 +3314,30 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/deployment-readiness.ts — PURE deny-by-default readiness evaluator over supplied evidence; 11 controls (config, reproducibility, dependencies, artifacts, tests, security, observability, rollback, integrity, traceability, envPrereqs) => READY/NOT_READY + exact blockers. Performs NO deployment, spawns nothing, no network. Integrity reuses evidence-provenance.verifyProvenance (tampered stamp => FAIL). Closes the P5 coherence gap flagged in the research dossier (module was test-only). A readiness verdict is NOT an authorization to deploy (deployment owner-gated). 18 assertions (full=>READY, empty=>11 blockers, each single missing control, provenance-stamp integrity + tamper); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
       "evidence": "runtime/core/deployment-readiness.ts; runtime/core/deployment-readiness-eval.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-preservation-and-traceability",
+      "title": "V12.4 preserved in-repo + section traceability matrix (Target-to-Reality, Dossier E)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: the owner supplied the V12.4 text (previously NOT_RECOVERABLE in-repo); preserved as docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md (canonical index of the 31 parts / 122 sections + provenance header; status = PROPOSED referential pending validation, a requirement is not proof). Built docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md confronting every part/section (§1-§122) with repo reality (PRESENT_AND_PROVEN / DOCUMENTED_NOT_VERIFIED / PARTIALLY_BUILT / ABSENT / UNKNOWN / TO_AUDIT / CONTRADICTION) with evidence paths. Surfaced (not silently resolved) key reconciliations: 166-capabilities CONTRADICTION vs DEC-V60-166-RETIREMENT; A02-A53 NOT_RECOVERED (2/54); schema-B eleven-profession mapping NOT_ESTABLISHED; G0 Root-of-Trust tamper-tests TO_AUDIT; most historical assets UNKNOWN. This unblocks the long-standing V12.4 documentary blocker and provides the Dossier-E/Target-vs-Reality substrate. Documentation lot (no code); read-only web was not used.",
+      "evidence": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md; docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md",
+      "staleEvidence": false
+    },
+    {
+      "id": "adr-166-capabilities-reconciliation",
+      "title": "ODG-ADR: reconcile V12.4 §115 recover-166 vs DEC-V60-166-RETIREMENT (owner decision)",
+      "program": "V4",
+      "priority": 2,
+      "status": "BLOCKED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "BLOCKED on an external (owner/CTO) decision: V12.4 §80/§115 asks to RECOVER the 166 capabilities; the repo records DEC-V60-166-RETIREMENT (ACCEPTED 2026-10-16) retiring them as non-enumerable. These conflict. Per V12.4 §2 truth hierarchy + repo evidence, do NOT reconstruct the 166 without a distinct CTO decision overriding DEC-V60. Awaiting owner arbitration.",
+      "evidence": "docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md §0.1; docs/odg-operational/ODG_DECISION_CHANGELOG.md (DEC-V60-166-RETIREMENT)",
+      "staleEvidence": false
     }
   ]
 }

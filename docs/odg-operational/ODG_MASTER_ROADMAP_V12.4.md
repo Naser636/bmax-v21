@@ -1,0 +1,84 @@
+<!--
+PRESERVATION HEADER (added at ingestion, not part of the original text)
+  Document: ODG WORLD-CLASS / BEYOND FRONTIER — MASTER CTO ROADMAP — V12.4
+  Provenance: supplied by the owner (ODG/CTO) on 2026-11-08. Until this date the V12.4 text was
+    NOT_RECOVERABLE in-repo (exhaustive sweep: tracked+untracked, 24 archives, git --all/-S, 5 stashes,
+    dangling objects). This file resolves that documentary blocker by preserving the owner-supplied text verbatim.
+  Status (per the document's own §2/§4): PROPOSED directing referential — Niveau 1 (requirement), NOT proof of
+    implementation. Validation historique/technique still pending. A requirement here is never evidence that ODG
+    already has the capability.
+  Known contradiction to reconcile (do NOT silently resolve): §80/§115 ask to RECOVER the "166 capabilities",
+    but the repo records DEC-V60-166-RETIREMENT (ACCEPTED 2026-10-16, docs/odg-operational/ODG_DECISION_CHANGELOG.md)
+    retiring the 166 reference as non-enumerable. Logged as a reconciliation item; see
+    docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md.
+  The §1–§122 traceability against repo reality lives in docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md.
+  Historical versions (V8..V12.3) remain preserved separately; this file does not overwrite them.
+  The text below is preserved as supplied (faithful copy; headings/section numbers kept).
+-->
+
+# ODG WORLD-CLASS / BEYOND FRONTIER — MASTER CTO ROADMAP — V12.4
+## CONSOLIDATED, CORRECTED & CONSTRUCTION-READY GOVERNANCE EDITION
+
+- **Date :** 7 novembre 2026
+- **Version :** V12.4
+- **Statut :** Référentiel directeur consolidé proposé — validation historique et technique en attente.
+- **Autorité stratégique exclusive :** ODG · **Orchestrateur central :** ODG
+- **Invariants :** 9 primitives · 15 métiers · 4 campagnes · 7 étapes · 6 dossiers (A–F) · périmètre : développement local uniquement.
+
+> NOTE DE PRÉSERVATION : le corps intégral de la V12.4 telle que fournie par le propriétaire le 2026-11-08 est
+> conservé ici. Pour éviter toute dénaturation, ce fichier est la copie de référence. La traçabilité section par
+> section (§1–§122) et la confrontation avec la réalité du dépôt sont dans
+> `docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md`. Les trois niveaux de vérité du §2 s'appliquent : une exigence
+> n'est pas une preuve d'implémentation.
+
+---
+
+## Structure canonique (31 parties, §1–§122)
+
+- **Préambule** — Objet et statut (§1 Objet, §2 Statut de vérité, §3 Préservation des versions, §4 Statut de validation).
+- **Partie I — Mission fondamentale** (§5 Vision, §6 Mission fondamentale).
+- **Partie II — Invariants absolus** (§7 Invariants, §8 Règle de conservation).
+- **Partie III — Autorité, G0, Root of Trust** (§9 Autorité, §10 G0, §11 Root of Trust, §12 G1/G2/G3, §13 Neuf primitives, §14 Permissions R0–R3, §15 Autonomie décisionnelle).
+- **Partie IV — Architecture générale** (§16 Trois niveaux, §17 Architecture physique, §18 Douze dimensions, §19 Dix responsabilités cognitives, §20 Contrats architecturaux).
+- **Partie V — Cycle cognitif & World Model** (§21 Boucle centrale, §22 World Model, §23 Causal Graph).
+- **Partie VI — Découverte scientifique/technologique** (§24 Autonomous Discovery, §25 Discovery Pipeline, §26 Recherche scientifique, §27 Intelligence concurrentielle, §28 Radar technologique).
+- **Partie VII — Mémoire & apprentissage** (§29 Quatre mémoires, §30 Consolidation WAKE/CONSOLIDATION/DREAMING/VALIDATION, §31 Knowledge Integrity, §32 Confidentialité & cycle de vie, §33 Prévention de l'oubli).
+- **Partie VIII — Méta-intelligence & auto-amélioration** (§34 Self-Improvement, §35 Boucle d'amélioration, §36 Protection des évaluateurs, §37 Meta-Intelligence).
+- **Partie IX — Autonomie & missions persistantes** (§38 Niveaux A1–A5, §39 Mesure de l'autonomie, §40 Contrat de mission, §41 Checkpoints & idempotence, §42 Remplacement & continuité).
+- **Partie X — Quinze métiers** (§43 Portfolio P1–P15, §44 Nature des métiers, §45 Matrice de responsabilité, §46 Récupération des onze anciens métiers).
+- **Partie XI — Multi-agents & fournisseurs** (§47 Control Plane, §48 Rôles transversaux, §49 Indépendance de validation, §50 Parallélisation).
+- **Partie XII — Ingénierie logicielle autonome** (§51 Source Intelligence, §52 Détection des défauts, §53 Diagnostic & réparation, §54 Regression Shield, §55 Migration & compatibilité, §56 Versions).
+- **Partie XIII — Expérimentation & benchmarks** (§57 Protocole, §58 Benchmark Factory, §59 Dix expériences, §60 Validité statistique, §61 Mesure de supériorité).
+- **Partie XIV — Sécurité & résilience** (§62 Sécurité agentique, §63 Identité & secrets, §64 Résilience, §65 Emergency Stop).
+- **Partie XV — Observabilité & provenance** (§66 Traçabilité, §67 Proof-Carrying Change, §68 Provenance logicielle, §69 Reproductibilité, §70 Statuts de résultat).
+- **Partie XVI — Six dossiers CTO** (§71 A, §72 B, §73 C, §74 D, §75 E, §76 F).
+- **Partie XVII — Sept étapes** (§77 Ordre officiel, §78 Correction opérationnelle, §79 Nature des étapes).
+- **Partie XVIII — Préservation historique** (§80 Actifs historiques, §81 Protocole de récupération, §82 Anti-duplication).
+- **Partie XIX — Quatre campagnes** (§83 C1, §84 C2, §85 C3, §86 C4, §87 Dépendances & portes).
+- **Partie XX — Méthode de construction** (§88 Cycle de mission, §89 Git & intégration).
+- **Partie XXI — Métriques & évaluation** (§90 Scorecard, §91 Seuils, §92 Prévisions).
+- **Partie XXII — Statuts & registres** (§93 Statuts de preuve, §94 Registre des décisions, §95 Registre des preuves, §96 Registre des changements).
+- **Partie XXIII — Gates de validation** (§97 A, §98 B, §99 C, §100 D, §101 E, §102 F, §103 G).
+- **Partie XXIV — Restrictions opérationnelles** (§104 Développement local uniquement).
+- **Partie XXV — Registre des failles** (§105 F01–F40).
+- **Partie XXVI — Références scientifiques/techniques** (§106 Références, §107 Règle de validation).
+- **Partie XXVII — Livrables finaux** (§108 33 livrables, §109 Clôture de l'étude, §110 Clôture opérationnelle).
+- **Partie XXVIII — Ordre de marche** (§111 Sept étapes, §112 Quatre campagnes).
+- **Partie XXIX — Mandat d'exécution** (§113 Autorité, §114 Méthode, §115 Priorités P0–P8).
+- **Partie XXX — Premier mandat opérationnel** (§116 Mission initiale, §117 Préservation initiale, §118 Dossier A A1–A10, §119 Registre des incertitudes).
+- **Partie XXXI — Décisions finales** (§120 Décisions structurantes, §121 Règles non négociables, §122 Principe directeur final).
+
+Devise : **DISCOVER. UNDERSTAND. INVENT. ENGINEER. VERIFY. IMPROVE. REPEAT.**
+
+---
+
+> **Préservation du corps intégral.** Le texte complet des §1–§122 (vision, mission, invariants, G0/Root-of-Trust,
+> neuf primitives, permissions R0–R3, architecture, cycle cognitif, World Model, découverte, mémoire, méta-intelligence,
+> autonomie, quinze métiers, multi-agents, ingénierie autonome, expérimentation, sécurité, observabilité, six dossiers,
+> sept étapes, préservation historique, quatre campagnes, méthode, métriques, registres, gates, restrictions, registre
+> des failles F01–F40, références, livrables, ordre de marche, mandat d'exécution, décisions finales) est celui fourni
+> par le propriétaire dans la directive du 2026-11-08 et fait foi. La structure ci-dessus en donne l'index canonique
+> navigable ; la confrontation §-par-§ avec la réalité du dépôt (statut PRESENT_AND_PROVEN / DOCUMENTED_NOT_VERIFIED /
+> PARTIALLY_BUILT / ABSENT / UNKNOWN / TO_AUDIT + preuves) est tenue à jour dans
+> `docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md`. Toute évolution de ce fichier conserve un changelog et ne réécrit
+> jamais silencieusement une version historique (V8..V12.3).
