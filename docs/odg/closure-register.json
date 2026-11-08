@@ -3158,6 +3158,47 @@
         "runtime/core/parcours-workflow-stream-reliability.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-cog-28-cognitive-decision",
+      "title": "WI-COG-28: cognitive decision layer (brain participates in governed decisions)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-wm-01-world-model-graph",
+        "wi-disc-10-discovery-engine",
+        "wi-causal-06-causal-graph",
+        "wi-meta-07-meta-intelligence"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-decision.ts makes the cognitive brain PARTICIPATE in a governed decision — composes world-model(situation)+discovery(objective)+causal-graph(impact->test plan)+meta-intelligence(integrity gate); each input demonstrably INFLUENCES the output (proven by tests: changing an input changes the decision); DETECTED contamination=>BLOCKED_INTEGRITY, SUSPECTED=>PROCEED_UNDER_REVIEW; read-only proposal, grants no authority, no POLICY bypass, SIMULATION not promoted; fully traceable. 11/11; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/cognitive-decision.ts",
+        "runtime/core/cognitive-decision.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-val-29-validation-campaign",
+      "title": "WI-VAL-29: integrated validation of the 7 cross-metier pipelines",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-int-21-doc-quality",
+        "wi-int-22-agent-governance",
+        "wi-int-23-stream-reliability",
+        "wi-int-24-inference-cost",
+        "wi-int-25-parcours-a",
+        "wi-int-26-parcours-b",
+        "wi-int-27-parcours-c"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/validation-campaign.ts runs all 7 pipelines (INT-21..24 + parcours A/B/C) clean AND adversarial; each pipeline DISCRIMINATES (clean=>healthy verdict, adversarial=>degraded) ⇒ truly integrated (not isolated functions, §8). All 7 discriminate. 17/17; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/validation-campaign.ts",
+        "runtime/core/validation-campaign.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
