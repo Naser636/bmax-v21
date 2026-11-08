@@ -3401,6 +3401,21 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/gates-ledger.ts enumerates the 7 validation gates A-G, each with criteria + the REAL mechanism + an independent verifier + an honest status. No gate claims PASS prematurely (DEMONSTRATED-or-not-PASS discipline; all PARTIAL until globally proven). Maps existing gates (action-gate/reality-gate/excellence-gate/root-of-trust/traceability matrix); duplicates none. verifyLedger checkable against present mechanisms. 9 assertions (7 distinct A-G ordered, each has criteria+mechanism+verifier, honest status, no premature PASS, key mechanisms present, unknown-mechanism flagging); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
       "evidence": "runtime/core/gates-ledger.ts; runtime/core/gates-ledger.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-self-improvement-e2e",
+      "title": "V12.4 §34-§37/§8-§10: self-improvement E2E completeness gate + positive/negative/adversarial validation",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-04-evolution-loop",
+        "wi-fr-08-compounding-loop",
+        "wi-fr-05-frontier-sandbox"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/self-improvement.ts composes the EXISTING chain (frontier-radar OBSERVE -> evolution-loop DIAGNOSE..SHADOW..CANARY..PROMOTION_REVIEW [via frontier-lab + frontier-sandbox + meta-intelligence] -> compounding-loop COMPOUND -> MEASURE) with NO new engine. Adds a COMPLETENESS GATE (fail-closed: any missing stage module => not complete; a module existing != system complete) and a single E2E driver. Validated the 3 mandated scenarios: POSITIVE (valid improvement => PROMOTION_REVIEW + held-out transfer VALIDATED_CAPABILITY, NOT self-promoted - promotion external); NEGATIVE (regression/refutation => ROLLED_BACK, not compounded); ADVERSARIAL (integrity DETECTED => ROLLED_BACK; self-authorized promotion REFUSED). Promotion stays external/governed; no self-promotion/self-certification; no baseline/evaluator/G0 modification. This is the §9 end-to-end validation + §10 first measured reversible self-improvement cycle (honest: reaches PROMOTION_REVIEW, promotion external). 9 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/self-improvement.ts; runtime/core/self-improvement.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
