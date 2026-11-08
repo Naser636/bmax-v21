@@ -713,6 +713,22 @@
         "E-MEASURE"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/flaky-replay-gate.ts — flakyGate (mixed outcomes => FLAKY_QUARANTINE, NEVER PASS by repetition/masking; all-pass=>STABLE_PASS; all-fail=>STABLE_FAIL; too-few=>INSUFFICIENT) + deterministicReplay (same seed must give identical output, divergence=>NON_DETERMINISTIC); reuses p2-passk-reliability + p2-flaky-root-cause. 9/9. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-SCHEDULER",
+      "title": "Engineering Intelligence: resource-aware scheduler + critical path",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "engineering-scheduler.ts",
+        "gate-instrumentation.ts"
+      ],
+      "dependsOn": [
+        "E-MEASURE"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/engineering-scheduler.ts — LPT scheduling (minimize makespan) + critical-path (longest task = makespan lower bound) + worker cap at cores; unknown-duration task scheduled conservatively not dropped. 7/7. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
