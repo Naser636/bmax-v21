@@ -3375,6 +3375,32 @@
       "acceptance": "ODG-accepted 2026-11-08: docs/odg/V12.4_EXECUTION_LAUNCH_READINESS.md prepares the full-execution dispositif WITHOUT executing it (per CTO stop): verified real state + native mechanisms; 122-section execution rollup (references the living matrix, not duplicated); global dependency graph (independent/sequential/owner-gated); batch & parallelization plan; continuation/resume protocol (reuse checkpoint-engine/idempotency-guard/odg-resume/campaign-controller NO-REPEAT); build/test/validation chain VERIFIED (build:runtime, odg verify, strict tsc, odg-test-report=283 suites, campaign-controller); Docker diagnostic (docker v29.1.3 present, host container edg-core observed READ-ONLY + preserved, 8 CPU/22Gi/161G); native orchestration verified (no 2nd brain/queue/scheduler/authorizer; G0 proven); campaigns+15-prof map (refs matrix + FRONTIER_V124_PREPARATION); Radar+self-improvement map (FR-01..08, live egress owner-gated); blockers & owner-decision register; Git/preservation protocol; gap report; launch procedure. NO second roadmap/compass created. Documentation-only (no code, no network, no execution of F01-F40/Gates/15-prof). Register 233 items.",
       "evidence": "docs/odg/V12.4_EXECUTION_LAUNCH_READINESS.md",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-f01-f40-failures-register",
+      "title": "V12.4 §105: F01-F40 failures register (verifiable ledger mapping existing protections)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "g0-root-of-trust-tamper-tests"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/failures-register.ts enumerates the 40 canonical failure modes F01-F40, each bound to its protection + the REAL repo module(s) + an HONEST status (PROTECTED only where a module is present and proven; else PARTIAL/TO_AUDIT — no inflated status). Creates no protection; it MAPS existing guards (root-of-trust/action-gate/evidence-provenance/checkpoint-engine/meta-intelligence/...), duplicates none. verifyRegister is checkable against the present-module set. 10 assertions (40 distinct complete, honest status mix, key cited modules physically present, F02 PROTECTED via root-of-trust, unknown-module flagging); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/failures-register.ts; runtime/core/failures-register.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-gates-a-g-ledger",
+      "title": "V12.4 §97-§103: Gates A-G ledger (verifiable ledger mapping existing mechanisms)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/gates-ledger.ts enumerates the 7 validation gates A-G, each with criteria + the REAL mechanism + an independent verifier + an honest status. No gate claims PASS prematurely (DEMONSTRATED-or-not-PASS discipline; all PARTIAL until globally proven). Maps existing gates (action-gate/reality-gate/excellence-gate/root-of-trust/traceability matrix); duplicates none. verifyLedger checkable against present mechanisms. 9 assertions (7 distinct A-G ordered, each has criteria+mechanism+verifier, honest status, no premature PASS, key mechanisms present, unknown-mechanism flagging); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/gates-ledger.ts; runtime/core/gates-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
