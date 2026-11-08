@@ -114,4 +114,21 @@ let baseline;
   ok("zero-entry sealed baseline ⇒ NO_BASELINE (never a vacuous BEHAVIOR_PRESERVED)", r.ok === false && r.verdict === "NO_BASELINE");
 }
 
+// (11) WI-CANON-04: a circular-reference input is FAIL-CLOSED (no RangeError/stack overflow); a shared
+// NON-cyclic reference (DAG) is NOT mistaken for a cycle.
+{
+  const EP0 = require("./evidence-provenance.js");
+  const cyc = {}; cyc.self = cyc;
+  const cap = C.captureBaseline({ target: "t", samples: [{ input: cyc, observedOutput: 1 }], revision: REV });
+  ok("circular input ⇒ fail-closed CIRCULAR_INPUT (no crash)", cap.ok === false && cap.code === "CIRCULAR_INPUT");
+  const sealed = EP0.stampProvenance({ schema: C.SCHEMA, target: "t", basis: C.BASIS, count: 1, entries: [{ inputDigest: "d", output: "1" }] }, { revision: REV });
+  const z = {}; z.z = z;
+  const cmp = C.compareToBaseline(sealed, [{ input: z, observedOutput: 1 }]);
+  ok("circular newSamples ⇒ NO_COMPARISON + CIRCULAR_INPUT (no crash)", cmp.ok === false && cmp.verdict === "NO_COMPARISON" && cmp.code === "CIRCULAR_INPUT");
+  const shared = { a: 1 };
+  const okCap = C.captureBaseline({ target: "t", samples: [{ input: { x: shared, y: shared }, observedOutput: 2 }], revision: REV });
+  ok("shared NON-cyclic reference ⇒ accepted (DAG not flagged as a cycle)", okCap.ok === true);
+  ok("canon throws RangeError on a direct cycle (unit)", (() => { const q = {}; q.q = q; try { C.canon(q); return false; } catch (e) { return e instanceof RangeError; } })());
+}
+
 console.log(`\ncharacterization-baseline: ${pass} assertions passed`);

@@ -221,8 +221,29 @@ function buildDossier(profile: CompanyProfile, opts: any): AssuranceDossier {
 
 /** Refuse any attempt to declare a certification obtained without an external decision. */
 function assertNotCertified(statement: string): { ok: boolean; reason: string } {
-  const claimsCert = /\b(certified|certification\s+(obtained|achieved|granted)|iso\s*27001\s+certified|compliant\s+guaranteed|fully\s+compliant)\b/i.test(String(statement || ""));
-  return claimsCert ? { ok: false, reason: "refused: certification/absolute-compliance is decided by an external accredited body, not by ODG" } : { ok: true, reason: "no unjustified certification claim" };
+  const s = String(statement || "");
+  // Refuse a CLAIM of certification/accreditation/absolute-compliance in ANY ordering (verb↔noun,
+  // active or passive) — not only the few phrasings the original narrow regex matched (which let
+  // "achieved … certification", self-"accredited", "obtained the certificate", "holds certification",
+  // and passive "certification was achieved" pass = fail-OPEN). Under-detection is dangerous (an
+  // overclaim slips through); over-detection only over-refuses, so we bias toward catching. We still
+  // must NOT refuse a legitimate factual statement that merely names a standard or prep work.
+  const CERT_CLAIM_PATTERNS = [
+    /\bcertified\b/i,
+    /\biso\s*\d+\s*certified\b/i,
+    /\bfully\s+compliant\b/i,
+    /\bcompliant\s+guaranteed\b/i,
+    /\bcompliance\s+guaranteed\b/i,
+    /\bguaranteed\s+(?:to\s+be\s+)?compliant\b/i,
+    // achievement verb → certification/certificate (optionally via "the/an/our/ISO NNNNN")
+    /\b(?:obtain(?:ed|s)?|achiev(?:ed|es)?|grant(?:ed|s)?|award(?:ed|s)?|receiv(?:ed|es)?|secur(?:ed|es)?|issu(?:ed|es)?|h(?:old|olds|eld|olding))\s+(?:(?:the|an?|our|its|their)\s+)*(?:iso\s*\d+\s*)?(?:certification|certificate)\b/i,
+    // certification/certificate → achievement verb (active or passive)
+    /\b(?:certification|certificate)\s+(?:(?:was|is|has\s+been|have\s+been|been|were)\s+)?(?:obtained|achieved|granted|awarded|received|secured|issued)\b/i,
+    // self-accreditation claim ("is now accredited"); NOT "an accredited body"
+    /\b(?:are|is|was|were|been|become|became|now)\s+accredited\b/i,
+  ];
+  const claimsCert = CERT_CLAIM_PATTERNS.some((re) => re.test(s));
+  return claimsCert ? { ok: false, reason: "refused: certification/accreditation/absolute-compliance is decided by an external accredited body, not by ODG" } : { ok: true, reason: "no unjustified certification claim" };
 }
 
 /** Seal a dossier as tamper-evident evidence; a sealed dossier is attributable ONLY to its tenant. */

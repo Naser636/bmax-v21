@@ -2673,6 +2673,508 @@
       "status": "ACCEPTED",
       "deps": [],
       "evidence": "docs/odg-operational/ODG_TEN_MARKET_STUDIES_V1.md (10 private-sector studies + 100-pt ranking), ODG_90_EXPERTS_RESEARCH_V1.md (90 experts conserved from 99), ODG_TEN_EXCELLENCE_MODELS_V1.md, ODG_TEN_DEMONSTRATORS_V1.md (reuse G-01..G-08; 9/10 composable-today R2-R3, P5 R1), ODG_PRIVATE_SECTOR_GO_TO_MARKET_V1.md (Gate-D O1-O10 integration + commercial archetypes), ODG_TEN_BENCHMARKS_V1.md (R0-R5; none R4+), ODG_TEN_PROFESSIONS_MASTER_V1.md, ODG_TEN_PROFESSIONS_CLOSURE_V1.md. Independently audited (separate-context agent): no fabrication; all rubric arithmetic + 99->90 conservation + module citations held; 4 honest defects fixed pre-merge. Final verdict PARTIAL_WITH_EXPLICIT_BLOCKERS. Additive docs-only; no new capability/client/revenue/certification claimed; owner-gated blockers OG-01..OG-08 preserved not flipped."
+    },
+    {
+      "id": "v3-ten-metier-demonstrators",
+      "program": "V3",
+      "title": "V3: ten-métier integrated demonstrators (P1-P10) — each composes merged modules into one honest verdict",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "10 demonstrators in runtime/core, each a full governed lot with independent adversarial validation (mutation testing): cra-evidence (P3 #362), einvoice-workflow (P8 #364), modernization-safety-net/acceptance-evidence/governed-agent-action/regulatory-evidence (P1/P6/P2/P10 #365), dataset-quality-gate/reliability-dora/prove-the-number/golden-path-evidence (P4/P7/P9/P5 this PR). Full regression grew 253->263 PASS. All verdicts fail-closed + honesty-invariant (never conformity/certification/execution-authority/fabricated-number); P5 honest R1 (no IDP). No new primitive; pure compute (seal reads git HEAD for provenance unless revision injected). 9 primitives frozen; no R4+; EUR0 clients; no Top-1 claim. Levels: P1/P2/P3/P6 R3; P4/P7/P8/P9/P10 R2-R3; P5 R1."
+    },
+    {
+      "id": "v3-license-policy-copyleft-fix",
+      "program": "V3",
+      "title": "V3: license-policy classifies bare/deprecated SPDX copyleft (fixed under-classification)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "runtime/core/license-policy.ts PR#363 — bare GPL/LGPL/AGPL + SSPL-1.0 no longer under-classify to UNKNOWN (surfaced by the P3 demonstrator's independent validation). Backward-compatible; independent validation ACCEPT (3/3 mutations). Security: a CI gate keyed on severity now blocks bare-AGPL-3.0."
+    },
+    {
+      "id": "v3-followup-assert-not-certified-harden",
+      "program": "V3",
+      "title": "FOLLOW-UP: harden regulatory-assurance.assertNotCertified (narrow regex misses achieved-certification/compliant/conforms)",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "runtime/core/regulatory-assurance.ts; runtime/core/regulatory-assurance.test.ts",
+      "acceptance": "WI-REG-03 ODG-accepted 2026-11-07: assertNotCertified hardened to a multi-pattern detector (verb↔noun, passive, self-accreditation); 5 reproduced fail-open false-negatives now refused; 3 allow-controls preserved (prepared DPIA/SoA, accredited-body-required disclaimer, standard-naming); regulatory-assurance.test.ts 40/40; build:runtime tsc clean; odg verify build/typescript/contracts green."
+    },
+    {
+      "id": "v3-followup-canon-circular-ref",
+      "program": "V3",
+      "title": "FOLLOW-UP: characterization-baseline.canon circular-reference RangeError",
+      "status": "ACCEPTED",
+      "deps": [],
+      "evidence": "runtime/core/characterization-baseline.ts; runtime/core/characterization-baseline.test.ts",
+      "acceptance": "WI-CANON-04 ODG-accepted 2026-11-07: characterization-baseline.canon now does PATH-BASED cycle detection (true back-edge ⇒ RangeError), and normalizeSamples catches it ⇒ fail-closed CIRCULAR_INPUT across captureBaseline/compareToBaseline (no stack overflow); shared non-cyclic DAG refs still accepted; characterization-baseline.test.ts 18/18 + modernization-safety-net-demonstrator regression PASS; build:runtime tsc clean; odg verify build/typescript/contracts green."
+    },
+    {
+      "id": "wi-wm-01-world-model-graph",
+      "title": "WI-WM-01: world-model graph extension — SIMULATION status (§28 isolation) + typed entities + directed relations (referential integrity, fail-closed); CAS+C03 reused, no new primitive",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: world-model.test.ts 55/55 (23 historical + 32 new); state-transition + artifact-state regressions PASS; dist parity smoke PASS; build:runtime OK (121 files, tsc clean); odg verify build:true/typescript:true/contracts 92/92 (only gitClean:false = pre-existing untracked clutter, out of scope); write-set = runtime/core/world-model.ts + .test.ts + gitignored dist twin ONLY; 8 historical statuses + item API preserved; SIMULATION never promoted to a FACTUAL status without evidence_refs; relations fail-closed on missing endpoint; no runtime-model/mission-lifecycle import.",
+      "evidence": "runtime/core/world-model.ts; runtime/core/world-model.test.ts; runtime/dist/core/world-model.js",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-testsel-05-affected-test-selector",
+      "title": "WI-TESTSEL-05: reliable affected-test selector — EXISTS and is verified (reused, not reconstructed)",
+      "program": "V3",
+      "priority": 3,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: scripts/affected-tests.ts (reverse-dependency selector via static import/export/dynamic-import parsing; exports specifiersOf/resolveRel/main) already present with scripts/affected-tests.test.ts PASSING 11/11. Capability satisfied by reuse; no new code (anti-duplication §139). Corrects an earlier audit claim that no selector existed. OPTIONAL future nicety: a package.json convenience script (cosmetic, not required).",
+      "evidence": "scripts/affected-tests.ts; scripts/affected-tests.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-alloc-02-allocator-core-seam",
+      "title": "WI-ALLOC-02: bring ALLOCATOR into the core gate path — ARCHITECTURE DECISION (ODG seam selection) BLOCKED, non-blocking",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG architecture decision 2026-11-07: SEAM B retained (provisional). ALLOCATOR V1 REMAINS in src/runtime/vnext/resource-allocation-engine.ts as an additive-layer primitive; NO vnext import into runtime/core; NO wiring into the admission gate; NO POLICY/security-boundary change. Core-integration is NOT realized/claimed. Options A (port→core) and C (gate admission, human-gated) are DOCUMENTED-NOT-RETAINED in the ADR. No code produced (capability already exists; §139 no useless reconstruction). Revisitable if ODG later needs the allocator canonically in core.",
+      "evidence": "src/runtime/vnext/resource-allocation-engine.ts; runtime/core/action-gate.ts; runtime/core/campaign-loop.ts; runtime/core/improvement-baseline.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-causal-06-causal-graph",
+      "title": "WI-CAUSAL-06: causal-graph reasoning lens over the World Model (§19 causal graph + counterfactual)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-wm-01-world-model-graph"
+      ],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: new additive PURE read module runtime/core/causal-graph.ts over world-model entities+relations — causal edges (CAUSAL_TYPES; SIMULATION excluded unless opt, §28), transitive effectsOf/causesOf/impactOf (cycle-safe, sorted), hasCycle (DFS 3-colour), counterfactualRemove (forward-collapse). No mutation / no new primitive / no world-model or gate change. causal-graph.test.ts 14/14; tsc strict clean (typescript:true); build:runtime OK; odg verify build/typescript/contracts 92/92 green. Partially closes GM-CI-3 (causal graph) reusing GM-CI-2 (WI-WM-01).",
+      "evidence": "runtime/core/causal-graph.ts; runtime/core/causal-graph.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-meta-07-meta-intelligence",
+      "title": "WI-META-07: meta-intelligence integrity detectors (metric-gaming / evaluator-capture / benchmark-contamination)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-07 on independent evidence: new additive PURE read-only module runtime/core/meta-intelligence.ts classifies 3 integrity phenomena with explainable signals + confidence + evidence and the NO_DATA/NONE/SUSPECTED/DETECTED discipline (a suspicion is never a certain accusation; DETECTED needs hard evidence). Does NOT duplicate broad-it-eval/autonomy-eval-harness/independent-label-policy/third-party-agent-gate (consumes their kind of signals). Mutates no policy/eval/result. meta-intelligence.test.ts 19/19 (positive/negative/edge/NO_DATA/discipline/aggregate/determinism); tsc strict clean; build:runtime OK; odg verify build/typescript/contracts 92/92. Advances GM-CI-7 (Meta-Intelligence) from PARTIAL.",
+      "evidence": "runtime/core/meta-intelligence.ts; runtime/core/meta-intelligence.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-mem-08-memory-taxonomy",
+      "title": "WI-MEM-08: memory taxonomy lens (14 §26 families + provenance/temporality/consolidation)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08 on independent evidence: new additive PURE read-only module runtime/core/memory-taxonomy.ts — classifies supplied memory records into the 14 §26 families with §30 quality flags (NO_PROVENANCE/STALE/UNVERIFIED/INVALIDATED/UNKNOWN_FAMILY), §28 consolidation (CONSOLIDATED requires explicit+provenance+not-stale), explicit temporality (validUntil vs asOf), index + retrieve (deterministic id-sort). Creates NO store, duplicates none of the real stores (patch-memory/execution-memory/memory-engine/reuse-ledger/learning-chain). memory-taxonomy.test.ts 21/21; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts 92/92. Advances GM-CI-4 (memory families) from PARTIAL.",
+      "evidence": "runtime/core/memory-taxonomy.ts; runtime/core/memory-taxonomy.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-loop-09-cognitive-loop",
+      "title": "WI-LOOP-09: cognitive-loop cycle manager (§16 12-stage loop, append-only, resumable)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08 on independent evidence: new additive PURE state-machine runtime/core/cognitive-loop.ts implements the §16 cycle (PERCEIVE..IMPROVE) with enforced stage order (fail-closed out-of-order), compare-and-set version, APPEND-ONLY context (a resumed cycle never loses validated decisions/evidence), IMPROVE->PERCEIVE iteration wrap, snapshot + isResumable. Records intent only; EXECUTES nothing (real effects remain with the gated Executor — not a second executor). cognitive-loop.test.ts 22/22; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts 92/92. Advances GM-CI-1 (cognitive loop) from ABSENT.",
+      "evidence": "runtime/core/cognitive-loop.ts; runtime/core/cognitive-loop.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-disc-10-discovery-engine",
+      "title": "WI-DISC-10 (GM-CI-8): capability discovery engine (gaps/deps/duplicates/reuse)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: new additive PURE read-only runtime/core/discovery-engine.ts discovers capability gaps (maturity-weighted), unmet dependencies (absent id=CONFIRMED / unverified=HYPOTHESIS), duplicates (duplicateOf=CONFIRMED / same-provides=HYPOTHESIS) and reuse-opportunities, each explainable (signals+confidence+priority+evidence+recommendation); hypotheses unless a hard structural fact. Supersedes the src/core BOAMP stub's capability-discovery role (stub preserved, different concern). discovery-engine.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Advances GM-CI-8 from PARTIAL/stub.",
+      "evidence": "runtime/core/discovery-engine.ts; runtime/core/discovery-engine.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-scn-11-engineering-chain-scenario",
+      "title": "WI-SCN-11 (§5): demonstrable engineering-chain scenario (synthetic defect, governed outcomes, D4 simulated)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-disc-10-discovery-engine",
+        "wi-loop-09-cognitive-loop"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: new additive PURE reproducible harness runtime/core/engineering-chain-scenario.ts drives the §5 chain over a synthetic defect, REALLY composing discovery-engine + cognitive-loop (integration/validation, not a re-labelled demonstrator). Locks all governed outcomes: ACCEPTED (independent+evidence), REFUSED (non-ODG authority=ESCALATE / missing or non-independent evidence=capture), GATED (D4 consequential=owner boundary SIMULATED not executed), FAILED (provider error), ABSTAINED (timeout, no false success), NONE (no defect). Gated/interrupted run leaves a RESUMABLE cognitive-loop cycle with no lost decisions (§16). Executes nothing real. engineering-chain-scenario.test.ts 14/14; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Turns the §3 dry-run demo into a demonstrable governed chain (§5).",
+      "evidence": "runtime/core/engineering-chain-scenario.ts; runtime/core/engineering-chain-scenario.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-wsconf-12-writeset-scheduler",
+      "title": "WI-WSCONF-12 (§79): write-set-safe parallel scheduler (fixes dep-planner concurrent-write hazard)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: Gate A found a REAL gap — dep-planner.planLayers parallelises by dependencies only, so no-dep + overlapping-write-set items share a parallel layer (violates §79 no-uncoordinated-concurrent-writes). New additive PURE runtime/core/writeset-scheduler.ts composes dep-planner + scope-observer path semantics and refines layers so each sub-layer is BOTH dependency-safe AND write-set-disjoint (conflict = path equality or ancestor-prefix); fail-closed via dep-planner (cycle/unknown-dep/dup). Reuses, does not duplicate (§139). writeset-scheduler.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Reinforces Campaign-3 multi-agent safe parallelisation (§3D/§7).",
+      "evidence": "runtime/core/writeset-scheduler.ts; runtime/core/writeset-scheduler.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-auto-13-autonomy-matrix",
+      "title": "WI-AUTO-13 (§4): A1-A5 autonomy evidence matrix (honest, anti-overclaim)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: new additive PURE runtime/core/autonomy-matrix.ts maps demonstrated capabilities (evidence + kind REAL|SIMULATED|DECLARED) to the highest JUSTIFIED autonomy level — GRANTED requires all a level's caps with REAL evidence; SIMULATED ⇒ SIMULATED_ONLY (not granted for A3+, §4); DECLARED/no-evidence ⇒ nothing (§57); monotonic. Assigns no level by fiat. autonomy-matrix.test.ts 12/12; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. HONEST reading of ODG now: A2 on REAL evidence (planning/independent-verify/evidence exist+tested); A3+ NOT granted (persistence real in code but end-to-end only on SIMULATED scenarios; consequential execution D4-gated).",
+      "evidence": "runtime/core/autonomy-matrix.ts; runtime/core/autonomy-matrix.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-agent-14-agent-factory",
+      "title": "WI-AGENT-14 (§54): Agent Factory unified seam (define/validate/classify/supervise, permission-confined)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: Agent Factory was ABSENT/scattered; new additive PURE runtime/core/agent-factory.ts unifies it — defineAgent (contract-bound AgentSpec + sha256 contractSha), validateAgent (permission confinement: writeSet ⊆ contract.authorizedPaths, tools ⊆ allowedTools, budget ≤ contract.budget ⇒ else REJECTED; an agent without a contract gets NO permissions; §9/§54), maturityOf evidence-based (OPERATIONAL only with test evidence; declared≠configured≠testable≠operational), supervise stop on revoke/budget (§71). Composes (not duplicates) third-party-agent-gate/agent-identity/fleet-dispatcher. agent-factory.test.ts 19/19; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Reinforces Campaign-3 (Agent Factory) from PARTIAL.",
+      "evidence": "runtime/core/agent-factory.ts; runtime/core/agent-factory.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p12-15-event-stream-engine",
+      "title": "WI-P12-15 (P12): event-stream engine foundation (order/idempotency/replay/offsets)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P12 (Real-Time Data Streaming) was ABSENT; new additive PURE runtime/core/event-stream-engine.ts is its foundation — in-memory deterministic event log (honestly NOT a distributed broker): append-only total order (monotonic seq), per-key order, IDEMPOTENT publish (repeated idempotencyKey deduped, no re-append), replay from offset, type/key filters, monotonic consumer cursor. Synthetic deterministic load 500->450 appended/50 deduped. event-stream-engine.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. P12 moves ABSENT -> tested foundation (not yet operational metier).",
+      "evidence": "runtime/core/event-stream-engine.ts; runtime/core/event-stream-engine.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p11-16-document-pipeline",
+      "title": "WI-P11-16 (P11): document-processing pipeline foundation (synthetic text docs)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P11 was ABSENT; new additive PURE runtime/core/document-pipeline.ts is its foundation — ingest->validate->extract(kv/csv/text)->structure(required)->provenance(sourceDocId+contentSha+fields)->dedup(by contentSha)->invert-index->AND-search; fail-closed per stage; invalid/incomplete/unsupported rejected with codes. Honest scope: synthetic text docs, NO advanced OCR / external connectors claimed. document-pipeline.test.ts 18/18; tsc strict clean; build:runtime OK; odg verify green. P11 ABSENT->tested foundation.",
+      "evidence": "runtime/core/document-pipeline.ts; runtime/core/document-pipeline.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p13-17-inference-engine",
+      "title": "WI-P13-17 (P13): hardware-independent inference engine foundation (CPU adapter, no GPU claim)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P13 was ABSENT (hardware gap); new additive PURE runtime/core/inference-engine.ts is a hardware-independent foundation — common inference contract + provider abstraction + REAL CPU reference adapter + request validation + capacity/error fail-closed + DETERMINISTIC (simulated) latency/cost model + reproducible benchmark + provider comparison. Honest status: cpu-reference OPERATIONAL, gpu-simulated SIMULATED, gpu-real UNAVAILABLE (physical GPU never claimed). inference-engine.test.ts 12/12; tsc strict clean; build:runtime OK; odg verify green. P13 ABSENT->CPU-operational foundation (GPU prepared, not claimed).",
+      "evidence": "runtime/core/inference-engine.ts; runtime/core/inference-engine.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p6-18-quality-harness",
+      "title": "WI-P6-18 (P6): integrated quality harness (regression/coverage/eval/contamination)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-meta-07-meta-intelligence"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: P6 industrialisation — new additive PURE runtime/core/quality-harness.ts composes regression-vs-baseline, affected-test coverage (fail-closed), eval metrics (precision/recall/f1), and benchmark-contamination (REUSES meta-intelligence); fail-closed verdict FAIL>REVIEW>PASS; runs no tests (classifies supplied results). quality-harness.test.ts 11/11; tsc strict clean; build:runtime OK; odg verify green.",
+      "evidence": "runtime/core/quality-harness.ts; runtime/core/quality-harness.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p10-19-compliance-scenario",
+      "title": "WI-P10-19 (P10): end-to-end synthetic compliance scenario (NOT_CERTIFIED, anti-overclaim)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-meta-07-meta-intelligence"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: P10 industrialisation — new additive PURE runtime/core/compliance-scenario.ts drives identify->classify-risk->obligations->evidence->gaps->anti-overclaim->traceability->report; deny-by-default; required obligation w/o evidence=GAP; REUSES hardened regulatory-assurance.assertNotCertified (certification/accreditation claims refused) + meta-intelligence (verifier independence); verdict ALWAYS NOT_CERTIFIED (software assistance, not certification). compliance-scenario.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify green.",
+      "evidence": "runtime/core/compliance-scenario.ts; runtime/core/compliance-scenario.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p2-20-reference-agents",
+      "title": "WI-P2-20 (P2): 5 reference agents via Agent Factory, ODG-piloted campaign (real campaign-loop)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-agent-14-agent-factory"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/reference-agents.ts builds 5 contract-bound permission-confined agents via the real Agent Factory and DRIVES ODG's REAL campaign-loop over a dependency-chained synthetic register (select->execute->accept->checkpoint->next; 5 missions ACCEPTED in ONE run); adversarial modes (permissions/write-set/budget/provider-error/timeout/missing-evidence/builder-verifier disagreement) halt fail-closed; provider SIMULATED (no live model claimed; agents configured+tested, NOT claimed to have run a real consequential mission). 13/13; tsc clean; build OK; odg verify green. ODG pilots (Claude Code only supplies the execute delegate).",
+      "evidence": "runtime/core/reference-agents.ts; runtime/core/reference-agents.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-21-doc-quality",
+      "title": "WI-INT-21: integration P11->P4->P6 (document->data-quality->quality)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p11-16-document-pipeline",
+        "wi-p6-18-quality-harness"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-doc-quality.ts composes by contract document-pipeline(P11)->dataset-quality-service(P4)->quality-harness(P6) with provenance end-to-end; fail-closed on invalid/incomplete/duplicate/unsupported docs. 8/8; tsc clean; build OK; odg verify green. Cross-metier, no coupling.",
+      "evidence": "runtime/core/integration-doc-quality.ts; runtime/core/integration-doc-quality.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-22-agent-governance",
+      "title": "WI-INT-22: integration P2->P10->P6 (agents->governance->quality)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p2-20-reference-agents",
+        "wi-p10-19-compliance-scenario"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-agent-governance.ts composes by contract reference-agents(P2, simulated)->compliance-scenario(P10)->quality-harness(P6); regulatory verdict ALWAYS NOT_CERTIFIED; fail-closed on gap/overclaim/prohibited/contamination. 9/9; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/integration-agent-governance.ts; runtime/core/integration-agent-governance.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p9-25-cost-engine",
+      "title": "WI-P9-25 (P9): FinOps cost engine (model/attribution/budgets/alerts/anomaly/compare)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P9 beyond a calculator — runtime/core/cost-engine.ts: cost model + attribution (per mission/metier/resource/unit) + budgets + alerts + anomaly (mean+k*std) + scenario comparison (cost then cost/perf); every figure kind OBSERVED|ESTIMATED|SIMULATED, synthetic cost never presented as real spend. 11/11; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/cost-engine.ts; runtime/core/cost-engine.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-23-stream-reliability",
+      "title": "WI-INT-23: integration P12->P4->P7 (event stream->data quality->reliability)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p12-15-event-stream-engine",
+        "wi-p9-25-cost-engine"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-stream-reliability.ts composes event-stream-engine(P12)->dataset-quality-service(P4)->reliability(P7: duplicate/loss/ordering + SLO); tests interruption/replay/dups/disorder/loss; honest in-memory engine (not a distributed broker); fail-closed DEGRADED. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/integration-stream-reliability.ts; runtime/core/integration-stream-reliability.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-24-inference-cost",
+      "title": "WI-INT-24: integration P13->P9->P6 (inference->cost->quality)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p13-17-inference-engine",
+        "wi-p9-25-cost-engine",
+        "wi-p6-18-quality-harness"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-inference-cost.ts composes inference-engine(P13)->cost-engine(P9)->quality-harness(P6); CPU real / gpu-sim labelled; cost/perf ranking + budget alerts + latency anomaly; costs ESTIMATED/SIMULATED never real spend; no physical GPU/paid provider invented; fail-closed on failures. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/integration-inference-cost.ts; runtime/core/integration-inference-cost.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p5-26-build-pipeline",
+      "title": "WI-P5-26 (P5): reproducible build pipeline (provenance/drift/recovery)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P5 beyond demonstrator — runtime/core/build-pipeline.ts: reproducible artifact (artifactSha = pure function of content-addressed inputs), provenance (sources/deps/config shas), config validation, drift detection, rollback recovery; NO real build/deploy/VPS (honest). 11/11; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/build-pipeline.ts; runtime/core/build-pipeline.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p14-27-developer-platform",
+      "title": "WI-P14-27 (P14): local executable developer platform (golden paths)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p5-26-build-pipeline"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: P14 beyond precursor — runtime/core/developer-platform.ts: capability catalog + golden-path templates + deterministic project generation (files+contract+config+provenance via P5) + validation (golden path requires tests); fail-closed on unknown template/missing params/invalid config; EXECUTABLE (concrete project spec, not docs). 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/developer-platform.ts; runtime/core/developer-platform.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p15-28-workflow-engine",
+      "title": "WI-P15-28 (P15): governed workflow engine (orchestration/approvals/retries/resume)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P15 beyond precursor — runtime/core/workflow-engine.ts: governed process engine with dependency-ordered execution (reuses dep-planner, fail-closed cycle/unknown-dep), idempotent steps (resume from checkpoint), approval gates (PENDING_APPROVAL), retries/timeout/error handling, append-only history+evidence; executes nothing external. 10/10; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/workflow-engine.ts; runtime/core/workflow-engine.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-25-parcours-a",
+      "title": "WI-INT-25 (Parcours A): P5->P14->P1 (build/platform/product)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p5-26-build-pipeline",
+        "wi-p14-27-developer-platform"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-build-platform-product.ts composes developer-platform(P14)->build-pipeline(P5)->P1 product readiness; reproducible build + drift + provenance + product-readiness; fail-closed. 6/6; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/parcours-build-platform-product.ts; runtime/core/parcours-build-platform-product.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-26-parcours-b",
+      "title": "WI-INT-26 (Parcours B): P14->P15->P2 (platform/workflow/agents)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p14-27-developer-platform",
+        "wi-p15-28-workflow-engine",
+        "wi-p2-20-reference-agents"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-platform-workflow-agents.ts composes developer-platform(P14)->workflow-engine(P15)->reference-agents(P2); governed analyze->build->verify->qa workflow (approval gate) delegated to 5 agents (real factory, SIMULATED provider, builder!=verifier); evidence+checkpoint; fail-closed. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/parcours-platform-workflow-agents.ts; runtime/core/parcours-platform-workflow-agents.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-27-parcours-c",
+      "title": "WI-INT-27 (Parcours C): P15->P12->P7 (workflow/stream/reliability)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p15-28-workflow-engine",
+        "wi-int-23-stream-reliability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-workflow-stream-reliability.ts composes workflow-engine(P15)-> event-stream-engine(P12)->reliability(P7); workflow emits events, stream dedups/replays, reliability measures loss/duplicate/ordering + SLO; workflow failure/breach ⇒ DEGRADED. 5/5; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/parcours-workflow-stream-reliability.ts; runtime/core/parcours-workflow-stream-reliability.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-cog-28-cognitive-decision",
+      "title": "WI-COG-28: cognitive decision layer (brain participates in governed decisions)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-wm-01-world-model-graph",
+        "wi-disc-10-discovery-engine",
+        "wi-causal-06-causal-graph",
+        "wi-meta-07-meta-intelligence"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-decision.ts makes the cognitive brain PARTICIPATE in a governed decision — composes world-model(situation)+discovery(objective)+causal-graph(impact->test plan)+meta-intelligence(integrity gate); each input demonstrably INFLUENCES the output (proven by tests: changing an input changes the decision); DETECTED contamination=>BLOCKED_INTEGRITY, SUSPECTED=>PROCEED_UNDER_REVIEW; read-only proposal, grants no authority, no POLICY bypass, SIMULATION not promoted; fully traceable. 11/11; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/cognitive-decision.ts; runtime/core/cognitive-decision.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-val-29-validation-campaign",
+      "title": "WI-VAL-29: integrated validation of the 7 cross-metier pipelines",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-int-21-doc-quality",
+        "wi-int-22-agent-governance",
+        "wi-int-23-stream-reliability",
+        "wi-int-24-inference-cost",
+        "wi-int-25-parcours-a",
+        "wi-int-26-parcours-b",
+        "wi-int-27-parcours-c"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/validation-campaign.ts runs all 7 pipelines (INT-21..24 + parcours A/B/C) clean AND adversarial; each pipeline DISCRIMINATES (clean=>healthy verdict, adversarial=>degraded) ⇒ truly integrated (not isolated functions, §8). All 7 discriminate. 17/17; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/validation-campaign.ts; runtime/core/validation-campaign.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-cog-30-cognitive-objective-selection",
+      "title": "WI-COG-30 (§2): cognitive-decision wired into ODG objective selection under POLICY",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-cog-28-cognitive-decision"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-objective-selection.ts integrates cognitive-decision into ODG objective selection UNDER POLICY — Discovery proposes, Cognitive analyses, ODG decides. 8 governance assertions proven: inventory change=>proposal change; POLICY allowedKinds/denyList change=>authorised selection change; CONFIRMED unmet dependency (or unsatisfied requireDep vs register)=>DEFERRED_DEPENDENCY; contamination=>REFUSED_INTEGRITY; suspicion=>SELECTED_PENDING_REVIEW; accepted=>traceable mission (executed:false); refused/deferred=>no execution. Cognitive grants no authority, no POLICY bypass; reuses cognitive-decision (no second decision engine). 13/13; tsc clean; build OK; odg verify green; 7-pipeline validation PASS (no regression).",
+      "evidence": "runtime/core/cognitive-objective-selection.ts; runtime/core/cognitive-objective-selection.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-a1-31-cognitive-campaign-driver",
+      "title": "WI-A1-31 (A1): cognitive-decision drives ODG real campaign-loop under POLICY",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-cog-30-cognitive-objective-selection"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-campaign-driver.ts closes A1 — cognitive-objective-selection (under POLICY) DRIVES the real campaign-loop; authorised objective⇒canonical mission executed+accepted+checkpointed by ODG; REFUSED_POLICY/REFUSED_INTEGRITY/DEFERRED/NONE⇒no mission, executed:false; inventory/POLICY change changes piloting; failing provider⇒loop refuses; cognition grants no authority. 9/9; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/cognitive-campaign-driver.ts; runtime/core/cognitive-campaign-driver.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-a4-32-primitive-validation",
+      "title": "WI-A4-32 (A4): formal nine-primitive validation matrix (no tenth)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/primitive-validation.ts produces the formal 9-primitive matrix — all 8 runtime/core canonical modules (agent-identity/state-transition/mission-contract-factory/action-gate/capability-router/patch-executor/evidence-provenance/checkpoint-engine) load + VERIFIED (STATE+EVIDENCE by key invariant); ALLOCATOR INTEGRATED_ADDITIVE (vnext, Seam B); exactly nine, no tenth, nine distinct responsibilities (no merge). 9/9; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/primitive-validation.ts; runtime/core/primitive-validation.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-a2-33-cognitive-workflow-selection",
+      "title": "WI-A2-33 (A2): cognitive-decision selects authorised workflows for P15",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-cog-30-cognitive-objective-selection",
+        "wi-p15-28-workflow-engine"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-workflow-selection.ts closes A2 — cognitive-objective-selection (under POLICY) selects which workflow P15 runs; P15 owns execution/approval/recovery (no second engine); refused/deferred/contaminated=>no workflow; suspect=>approval-gated. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/cognitive-workflow-selection.ts; runtime/core/cognitive-workflow-selection.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-34-secure-api-governance",
+      "title": "WI-INT-34: P3+P8 integrated parcours (security/API->P15->P6)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p15-28-workflow-engine",
+        "wi-p6-18-quality-harness"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-secure-api-governance.ts integrates P3 (license/security gate, reuses license-policy) + P8 (API-contract validation) into a governed P15 workflow judged by P6; copyleft/denied license or API incompatibility BLOCKS (fail-closed); P3 and P8 now each consumed in one validated inter-metier parcours; synthetic scope (no external scanner claimed). 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/parcours-secure-api-governance.ts; runtime/core/parcours-secure-api-governance.test.ts",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-a5-35-learning-loop",
+      "title": "WI-A5-35 (A5): closed learning loop (measured improvement)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-mem-08-memory-taxonomy"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/learning-loop.ts closes A5 — RESULT->EVIDENCE->EVALUATION->MEMORY->LESSON->IMPROVEMENT->REUSE (reuses memory-taxonomy); only evidenced REAL results count (SIMULATED excluded from facts); improvement demonstrated ONLY by a measured before/after delta; regressions surfaced; only consolidated+provenanced prior lessons reusable. 10/10; tsc clean; build OK; odg verify green.",
+      "evidence": "runtime/core/learning-loop.ts; runtime/core/learning-loop.test.ts",
+      "staleEvidence": false
     }
   ]
 }
