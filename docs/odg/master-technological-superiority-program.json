@@ -746,6 +746,24 @@
         "E-MEASURE"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/optimization-experiment.ts — PROMOTE an optimization only if speed reduction >= target AND detection preserved AND correctness preserved AND (if evidence) statistically significant; any quality/detection loss => REJECT regardless of speed; insufficient/non-significant => INCONCLUSIVE; selfAuthorized:false (promotion external). 9/9. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-TARGETED-VERIFY",
+      "title": "Engineering Intelligence wave-2: odg verify --targeted integration",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "targeted-verify.ts",
+        "odg-targeted-verify.ts",
+        "validation-selector.ts",
+        "change-impact-graph.ts"
+      ],
+      "dependsOn": [
+        "E-VALIDATION-SELECTOR"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/targeted-verify.ts (planner, 7/7) + runtime/bin/odg-targeted-verify.ts (CLI) wired into odg bash as verify-targeted. Computes change-set (git), maps changed runtime/core modules to impacted suites via TRANSITIVE consumer graph, runs only impacted suites via odg-test-report; certification/governance/HIGH-risk/undeterminable/closure-hazard => FULL; unrun NOT_RUN never PASS; targeted never certifies. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
