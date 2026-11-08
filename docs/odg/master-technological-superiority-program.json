@@ -696,6 +696,23 @@
         "E-MEASURE"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/verified-result-cache.ts — a cached result is HIT only on a FULL-identity match (inputs+code+deps+config+env) + provenance + freshness; any change => different key => MISS => re-run; incomplete identity => UNCACHEABLE; stale/future/unverifiable => MISS; no-provenance never stored. Reuses evidence-provenance.contentDigest. 13/13. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-FLAKY",
+      "title": "Engineering Intelligence: flaky gate + deterministic replay",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "flaky-replay-gate.ts",
+        "p2-passk-reliability.ts",
+        "p2-flaky-root-cause.ts"
+      ],
+      "dependsOn": [
+        "E-MEASURE"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/flaky-replay-gate.ts — flakyGate (mixed outcomes => FLAKY_QUARANTINE, NEVER PASS by repetition/masking; all-pass=>STABLE_PASS; all-fail=>STABLE_FAIL; too-few=>INSUFFICIENT) + deterministicReplay (same seed must give identical output, divergence=>NON_DETERMINISTIC); reuses p2-passk-reliability + p2-flaky-root-cause. 9/9. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
