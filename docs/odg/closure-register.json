@@ -3215,6 +3215,36 @@
         "runtime/core/cognitive-objective-selection.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-a1-31-cognitive-campaign-driver",
+      "title": "WI-A1-31 (A1): cognitive-decision drives ODG real campaign-loop under POLICY",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-cog-30-cognitive-objective-selection"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-campaign-driver.ts closes A1 — cognitive-objective-selection (under POLICY) DRIVES the real campaign-loop; authorised objective⇒canonical mission executed+accepted+checkpointed by ODG; REFUSED_POLICY/REFUSED_INTEGRITY/DEFERRED/NONE⇒no mission, executed:false; inventory/POLICY change changes piloting; failing provider⇒loop refuses; cognition grants no authority. 9/9; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/cognitive-campaign-driver.ts",
+        "runtime/core/cognitive-campaign-driver.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-a4-32-primitive-validation",
+      "title": "WI-A4-32 (A4): formal nine-primitive validation matrix (no tenth)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/primitive-validation.ts produces the formal 9-primitive matrix — all 8 runtime/core canonical modules (agent-identity/state-transition/mission-contract-factory/action-gate/capability-router/patch-executor/evidence-provenance/checkpoint-engine) load + VERIFIED (STATE+EVIDENCE by key invariant); ALLOCATOR INTEGRATED_ADDITIVE (vnext, Seam B); exactly nine, no tenth, nine distinct responsibilities (no merge). 9/9; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/primitive-validation.ts",
+        "runtime/core/primitive-validation.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
