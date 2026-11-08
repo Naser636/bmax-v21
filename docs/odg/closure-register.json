@@ -3484,6 +3484,45 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p3-security-reference.ts is a runnable security scan over a CLEARLY-LABELLED SYNTHETIC project: dependency licenses (copyleft GPL/AGPL/SSPL + UNKNOWN denied), secret scan, prompt/command injection detection, unpinned-deps, SBOM presence. Composes license-policy.classifyLicense + bash-command-governor.SECRET_PATTERNS + frontier-radar.sanitizeExternal; no second security engine. E2 (reference scan) + E3 (adversarial planted GPL dep/secret/injection all detected). E5 real pentest OWNER-GATED NOT_RUN (no inflated level). 6 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
       "evidence": "runtime/core/profession-p3-security-reference.ts; runtime/core/profession-p3-security-reference.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-p7-sre-reference",
+      "title": "V12.4 §43 P7: SRE/Distributed/Performance reference (E2 + E3 chaos)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p7-sre-reference.ts — latency percentiles p50/p95/p99, SLO compliance (latency+availability+error-budget-burn), chaos RTO/RPO recovery drill over SYNTHETIC telemetry. E2 (reference) + E3 (chaos degradation flagged). E5 real prod telemetry owner-gated NOT_RUN. 11 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/profession-p7-sre-reference.ts; runtime/core/profession-p7-sre-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p4-data-reference",
+      "title": "V12.4 §43 P4: Data Engineering reference (E2 + E3 adversarial)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "p8-api-contract"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p4-data-reference.ts — data quality (nulls/type/range/duplicates), lineage (fail-closed), schema backward-compatibility (REUSES api-contract.checkCompatibility), idempotent replay over a SYNTHETIC dataset. E2 + E3 (bad data / breaking schema flagged). E5 real warehouse/ETL owner-gated NOT_RUN. 9 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/profession-p4-data-reference.ts; runtime/core/profession-p4-data-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-scientific-research",
+      "title": "V12.4 §26: scientific research runtime (signal->hypothesis->experiment->knowledge)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-03-frontier-lab",
+        "wi-fr-08-compounding-loop"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/scientific-research.ts composes the existing chain (frontier-radar signal/sanitize/qualify -> frontier-lab hypothesis/experiment/independent-verify -> compounding-loop knowledge) with NO new engine, DEMONSTRATED end-to-end: external content UNTRUSTED (injection => QUARANTINE, no experiment); a hypothesis runs only on a qualified signal; knowledge is VALIDATED only on a REPRODUCIBLE + independently-verified PASS; NEGATIVE results are KEPT (not discarded); provenance preserved. Scenarios: positive (=>validated knowledge), injection (=>quarantine), negative (failing => not integrated, kept), unqualified (zero-reliability => no experiment). 6 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §26 scientific-research runtime ABSENT->PRESENT_AND_PROVEN (E2E).",
+      "evidence": "runtime/core/scientific-research.ts; runtime/core/scientific-research.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
