@@ -3280,14 +3280,14 @@
       "title": "WI-FR-08 (Frontier): Compounding Loop / global learning (compose upper-half)",
       "program": "V4",
       "priority": 2,
-      "status": "DEFERRED",
+      "status": "ACCEPTED",
       "deps": [
         "wi-fr-03-frontier-lab",
         "wi-fr-04-evolution-loop"
       ],
-      "acceptance": "PREPARED (awaiting CTO execution mandate). Fully local-buildable by composing existing modules; no new primitive.",
-      "evidence": "docs/odg/FRONTIER_V124_PREPARATION.md §6 — lower half EXISTS (mission-evidence+provenance, memory-taxonomy, reuse-ledger<->capability-router, learning-loop, mission-reuse-recorder, improvement-baseline, idempotency-guard). GAPS to compose: reusable-asset registry w/ validity domain, positive leakage-free TRANSFER_TEST, VALIDATED_CAPABILITY gate, cross-mission MEASURED_COMPOUNDING aggregate. learning-reuse-proof already has the domain/hold-out concept (proof-only).",
-      "nextAction": "LOCAL lot: promote learning-reuse-proof domain concept to a production asset registry; add transfer-test (no data leakage) + validated-capability gate + compounding aggregate.",
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/compounding-loop.ts closes the compounding UPPER half (compose-only, no new primitive): VERIFIED_RESULT->REUSABLE_ASSET(validity domain)->TRANSFER_TEST(held-out, 3-level leakage control)->VALIDATED_CAPABILITY->REUSE->MEASURED_COMPOUNDING. Research-backed gates (dossier §17-18): NET-VALUE (Memory Tax/CURATOR: benefit-costs>=0), HELD-OUT TRANSFER (same-domain OR shared-evidence => leakage => fail; generalization gap reported), REWARD-HACKING (metric-gaming / leakage / self-certification builder==validator / integrity DETECTED => not validated), REWARD-GATED CONSOLIDATION (measured improvement + no regression + reversible rollback; NO model-weight training), COMPUTE-BUDGET STOP, fail-closed INCONCLUSIVE on uncertainty. REUSE: improvement-baseline (measureDelta), reuse-ledger (classifyReuseOutcome), memory-taxonomy (consolidation), meta-intelligence (integrity), idempotency-guard+autonomy-store (idempotent resumable). 34 assertions (positive/negative/contradictory/adversarial per mandate 5.6 + E2E); odg-test-report PASS; CI test:report gated; strict tsc clean; build+typescript OK. ODG accepted on proof of measured held-out transfer, not module presence.",
+      "evidence": "runtime/core/compounding-loop.ts; runtime/core/compounding-loop.test.ts; package.json (test:report gate)",
+      "nextAction": "wired for reuse by evolution-loop/learning consumers (follow-up)",
       "staleEvidence": false
     }
   ]
