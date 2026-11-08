@@ -538,14 +538,16 @@
       "program": "D",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-8",
-      "status": "PROPOSED",
+      "status": "COMPLETED",
       "reuseExisting": [
-        "compounding-loop.ts",
-        "reuse-ledger.ts"
+        "compounding-pattern-library.ts",
+        "memory-taxonomy.ts",
+        "compounding-loop.ts"
       ],
       "dependsOn": [
         "M-CH5-01"
-      ]
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/compounding-pattern-library.ts — §8.2 pattern library (PROCEDURE only if VALIDATED + provenance + conditions + limits; OBSERVED=>WORKING; missing conditions/limits=>INCOMPLETE) + §8.3 classifyMemory (5 families; an observation is not automatically a fact; an unvalidated result is not an official procedure); reuses memory-taxonomy.qualityOf; 9/9. COMPLETED, not yet VALIDATED."
     },
     {
       "id": "M-C-01",
