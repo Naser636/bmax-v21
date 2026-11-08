@@ -453,7 +453,7 @@
       "blockReason": "NARROWED: the validated, cited proposal preview is DONE (roadmap-deps-proposal-preview; docs/odg/ROADMAP.proposed.json). What remains is writing to runtime/governance/ROADMAP.json — a PROTECTED governance path — which requires explicit owner authorization. The companion docs/odg/roadmap-dependencies.json keeps the deps machine-checkable meanwhile.",
       "acceptance": "structured deps present in the governed file + validated by dep-planner, owner-authorized",
       "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields",
-      "humanActionRequired": "authorize amending the PROTECTED runtime/governance/ROADMAP.json with the previewed dependsOn[] fields (docs/odg/ROADMAP.proposed.json).",
+      "humanActionRequired": "PREVIEW now VALIDATED ready-to-apply (serie18-roadmap-deps-preview-validation: refs resolve + acyclic, read-only). ONLY remaining step: owner authorizes writing the previewed dependsOn[] into the PROTECTED runtime/governance/ROADMAP.json (ask-gated protected path).",
       "resumeTest": "roadmap-schema-proposal.proposeFromRepo ⇒ VALID AND governed ROADMAP.json carries the dependsOn[] AND roadmap-dep-check ⇒ OK."
     },
     {
@@ -3968,6 +3968,17 @@
       "deps": [],
       "acceptance": "ODG-accepted 2026-11-08: new-language-families requires installing the hadolint 3rd-party binary (+ sudo to /usr/local/bin) — classified owner-gated (supply-chain + sudo). Per the directive alternative (build a local solution when an external resource is owner-gated), runtime/core/dockerfile-lint.ts is ODG native Dockerfile security linter (subset of the security-critical hadolint rules) with NO 3rd-party binary + NO sudo: DL3007 pin base (no :latest), DL3002 non-root final USER, NO-SUDO in RUN, DL3015 apt --no-install-recommends, DL3008 pin apt versions, DL3020 COPY over ADD for local files, SECRET-IN-ENV. Fail-closed: HIGH findings => not clean. 9 assertions; odg-test-report PASS; project tsc clean. NOT full hadolint parity (which remains owner-gated); this is the native security subset — new-language-families stays BLOCKED for full toolchain parity, honestly.",
       "evidence": "runtime/core/dockerfile-lint.ts; runtime/core/dockerfile-lint.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie18-roadmap-deps-preview-validation",
+      "title": "SÉRIE 18: roadmap-deps preview VALIDATED ready-to-apply (read-only, protected write owner-gated)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: structured-roadmap-deps is blocked on writing the PROTECTED runtime/governance/ROADMAP.json (owner-gated). Non-contournement advance: runtime/core/roadmap-deps-preview-validation.ts validates the PREVIEW (docs/odg/roadmap-dependencies.json) READ-ONLY against ROADMAP.json missions — it writes NOTHING to the protected path. Proves the preview is ready-to-apply: every referenced mission id resolves (DEPLOY_BMAX_DASHBOARD_PROD_V1 + VPS_DEPLOYMENT_READINESS both exist), no self-dependency, and the graph is ACYCLIC (via dep-planner.planLayers, no second graph engine; all nodes incl. to-only nodes). Fail-closed: unknown ref / self-dep / cycle => invalid. LIVE: valid=true, acyclic=true. 7 assertions; odg-test-report PASS; project tsc clean. structured-roadmap-deps stays BLOCKED (owner authorizes the protected ROADMAP.json write), now de-risked with a proven-ready preview.",
+      "evidence": "runtime/core/roadmap-deps-preview-validation.ts; runtime/core/roadmap-deps-preview-validation.test.ts; docs/odg/roadmap-dependencies.json; package.json",
       "staleEvidence": false
     }
   ]
