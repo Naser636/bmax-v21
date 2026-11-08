@@ -813,6 +813,22 @@
         "E-MEASURE"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/performance-observability.ts — duration P50/P95 + CPU + memory + workers + cold-start + suite count record + REPRODUCIBLE before/after comparison (gain credited only if >=minSamples both sides AND variance p95/p50 <= threshold); too-few/high-variance => NOT_REPRODUCIBLE. Reuses gate-instrumentation. 6/6. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "FIED-05-PROVIDER-CONTRACT",
+      "title": "FIED-05 provider capability contract",
+      "program": "FIED",
+      "domain": "CENTRAL_INTELLIGENCE",
+      "phase": "PHASE-1",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "provider-capability-contract.ts",
+        "capability-router.ts"
+      ],
+      "dependsOn": [
+        "PHASE-0"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/provider-capability-contract.ts — a provider must declare capabilities/limits/permissions/side-effects/provenance to be admissible; ODG may use it only if capability declared + permissions granted + side-effects accepted; selfAuthorizes=>REJECTED; declaration untrusted; fail-closed DENY. 10/10. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
@@ -937,5 +953,97 @@
       "suites": 367,
       "doc": "docs/odg/VALIDATION_CHAIN_BASELINE.md"
     }
+  },
+  "fied": {
+    "name": "ODG FRONTIER INTELLIGENCE & ENGINEERING DISCOVERY (FIED)",
+    "integratedInto": "V12.4 + V5 (no concurrent roadmap)",
+    "authority": "ODG (sole arbiter); providers execute; evidence decides",
+    "traceability": [
+      {
+        "cap": "FIED-01 Global Technology Radar",
+        "status": "PRESENT",
+        "existing": [
+          "frontier-radar.ts",
+          "frontier-radar-store.ts",
+          "frontier-weekly-report.ts",
+          "frontier-radar-self-improvement.ts"
+        ],
+        "metiers": "all 15 (tech signals)",
+        "phase": "PHASE-6"
+      },
+      {
+        "cap": "FIED-02 Multi-Source Intelligence",
+        "status": "PARTIAL_EXTEND",
+        "existing": [
+          "frontier-radar.ts (registerSource/collect/provenance)"
+        ],
+        "gap": "multi-source orchestration + per-source provenance registry",
+        "phase": "PHASE-6"
+      },
+      {
+        "cap": "FIED-03 Technology Understanding Engine",
+        "status": "PARTIAL_EXTEND",
+        "existing": [
+          "frontier-radar.compareWithOdg",
+          "capability-map.ts",
+          "meta-intelligence.ts"
+        ],
+        "gap": "deeper capability-extraction",
+        "phase": "PHASE-6"
+      },
+      {
+        "cap": "FIED-04 Reverse Engineering Intelligence",
+        "status": "GAP_STUDY_ONLY",
+        "existing": [
+          "provider-capability-contract.ts (admission contract)"
+        ],
+        "gap": "REA(morluto/rea)/Ghidra EVALUATION only — no auto-install; legal/license/security/maturity/cost/value review owner-gated; decompilation heuristics never truth without independent validation",
+        "phase": "PHASE-7",
+        "ownerGated": true
+      },
+      {
+        "cap": "FIED-05 Multi-Intelligence Orchestrator",
+        "status": "BUILT_THIS_LOT",
+        "existing": [
+          "capability-router.ts (selection)",
+          "provider-capability-contract.ts (BUILT: provider admission + arbitration)"
+        ],
+        "phase": "PHASE-1"
+      },
+      {
+        "cap": "FIED-06 Frontier Experiment Lab",
+        "status": "PRESENT",
+        "existing": [
+          "frontier-lab-experiment.ts",
+          "evolution-loop.ts",
+          "champion-challenger-arbiter.ts"
+        ],
+        "phase": "PHASE-7"
+      },
+      {
+        "cap": "FIED-07 Technology Integration Intelligence",
+        "status": "PARTIAL_EXTEND",
+        "existing": [
+          "technology-adoption (registry)",
+          "reuseMap (manifest)",
+          "change-impact-graph.ts"
+        ],
+        "gap": "discovery=>metier/mission linking",
+        "phase": "PHASE-7"
+      },
+      {
+        "cap": "FIED-08 Continuous Evolution & Compounding",
+        "status": "PRESENT",
+        "existing": [
+          "compounding-loop.ts",
+          "compounding-pattern-library.ts",
+          "frontier-radar-self-improvement.ts"
+        ],
+        "phase": "PHASE-8"
+      }
+    ],
+    "rule": "8 functional responsibilities, not 8 mandatory independent engines; reuse Discovery/World-Model/Cognitive-Loop/Meta-Intelligence/Radar/RCE/Frontier-Lab/Engineering-Intelligence/Compounding; create only on a real gap.",
+    "externalDataRule": "external data is UNTRUSTED — never a privileged instruction for ODG",
+    "legalRule": "no DRM/license/auth/protection bypass; third-party software operations require prior legal-scope review; decompilation heuristics never truth without independent validation"
   }
 }
