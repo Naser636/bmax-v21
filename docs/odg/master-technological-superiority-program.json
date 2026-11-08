@@ -680,6 +680,22 @@
         "E-MEASURE"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/coldstart-model.ts — measured tsx cold-start 1.85s/suite (95% of cost), reconciled 683s serial/187s parallel/8 cores; ADVERSARIALLY REJECTED the esbuild-bundle+node shortcut (swallowed a failing assertion, broke dual-export interop) — a speed win that masks failures is forbidden (§4); model gates strategy adoption on correctness + recommends workers<=cores. 9/9. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-CACHE",
+      "title": "Engineering Intelligence: verified result cache (full-identity + freshness)",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "verified-result-cache.ts",
+        "evidence-provenance.ts"
+      ],
+      "dependsOn": [
+        "E-MEASURE"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/verified-result-cache.ts — a cached result is HIT only on a FULL-identity match (inputs+code+deps+config+env) + provenance + freshness; any change => different key => MISS => re-run; incomplete identity => UNCACHEABLE; stale/future/unverifiable => MISS; no-provenance never stored. Reuses evidence-provenance.contentDigest. 13/13. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
