@@ -80,18 +80,18 @@ module where none is needed would be churn). Each carries a **WATCH** for a live
 
 | Métier | World reference (2026) | ODG capability | Verdict |
 |---|---|---|---|
-| **P3** Cybersecurity | agentic supply-chain (CSA); only ~1/5 AI-suggested deps safe; bash-trick agent bypass | `license-policy` (fail-closed SPDX), `bash-command-governor`+bwrap confinement, P3 SBOM/secret/injection scan | **ALIGNED** — frontier validates ODG (Série-12 radar R3/R4); WATCH: pin-and-verify AI-suggested deps |
-| **P4** Data | data contracts, lineage, schema-evolution | P4 quality+lineage+schema-compat+idempotent-replay | ALIGNED; WATCH: independent labelled dataset (E5) |
+| **P3** Cybersecurity | agentic supply-chain (CSA); only ~1/5 AI-suggested deps safe; bash-trick agent bypass | `license-policy`, bwrap confinement, P3 scan + **`p3-dependency-trust-gate` (SÉRIE 14 BUILT)** | **BUILT** — pre-install trust gate (exact-pin + safe-to-bundle license + integrity + typosquat), fail-closed |
+| **P4** Data | data contracts, lineage, schema-evolution, **PSI drift** | P4 quality+lineage+schema-compat + **`p4-distribution-drift` (SÉRIE 14 BUILT)** | **BUILT** — Population Stability Index drift detection, fail-closed on unseen categories |
 | **P5** Cloud/Platform (IDP) | golden-path IDP, evidence emitters | `deployment-readiness` + `golden-path-evidence-bundle` + `deploy/` package | ALIGNED on the evidence slice; IDP product owner-gated |
 | **P6** Quality/Eval | held-out, contamination, reward-hacking | `benchmark-factory` (leakage/metric-gaming) + P6 held-out + `meta-intelligence` | ALIGNED — frontier validates ODG (R5) |
-| **P8** API/e-invoice | EN 16931, breaking-change detection | `api-contract` (compat) + `einvoice-validator` (EN16931 exact money) | ALIGNED; WATCH: live PDP connector (E5) |
+| **P8** API/e-invoice | EN 16931, **SemVer discipline**, breaking-change detection | `api-contract` + `einvoice-validator` + **`p8-semver-enforcement` (SÉRIE 14 BUILT)** | **BUILT** — breaking change ⇒ major-bump required, else SEMVER_VIOLATION |
 | **P9** FinOps | FOCUS spec, unit economics, AI token cost | P9 OBSERVED/ESTIMATED/SIMULATED separation + budget-stop | ALIGNED on separation; **buildable: AI unit-economics (see P9 below if built)** |
 | **P10** Regulatory | AI-Act role, anti-overclaim | `ai-act-role-classifier` + `regulatory-assurance.assertNotCertified` | ALIGNED; cert is external (NOT_CERTIFIED) |
 | **P11** IDP/Document | Factur-X, OCR pipelines | `einvoice-validator` + parser/extract | ALIGNED on structured; real OCR owner-gated |
-| **P12** Streaming | exactly-once, replay, backpressure | P12 ordering/dedup/replay/backpressure | ALIGNED; real broker (E5) owner-gated |
+| **P12** Streaming | exactly-once, replay, backpressure, **event-time watermarks** | P12 ordering/dedup/replay + **`p12-watermark` (SÉRIE 14 BUILT)** | **BUILT** — Flink/Beam watermarks + late-event policy (ON_TIME/LATE/DROPPED), fail-closed |
 | **P13** AI Infra/GPU | serving throughput, pass^k, cost | `inference-engine` cpu-reference vs gpu-SIMULATED honesty | ALIGNED on honesty; real GPU (E5) owner-gated |
 | **P14** DevEx | golden paths, scaffolding | `golden-path-evidence-bundle` + `deploy/` | ALIGNED on evidence; graduated-CI owner-gated |
-| **P15** Automation/Workflow | durable orchestration, approvals | `workflow-engine` approval/retry/halt | ALIGNED; live enterprise process (E5) owner-gated |
+| **P15** Automation/Workflow | durable orchestration, approvals, **saga compensation** | `workflow-engine` + **`p15-saga-compensation` (SÉRIE 14 BUILT)** | **BUILT** — compensate committed steps in reverse on failure; COMPENSATION_FAILED fail-closed |
 
 ---
 
@@ -112,6 +112,26 @@ module where none is needed would be churn). Each carries a **WATCH** for a live
 
 ---
 
-*Builds this series: **P1** semantic-regression guard, **P2** pass^k reliability, **P7** multi-window burn-rate, **P9**
-unit economics — each grounded in a dated world reference and composing existing ODG modules (no new engine). P3–P6,
-P8, P10–P15 are honestly **ALIGNED/WATCH** (frontier research validates ODG; a module where none is needed = churn).*
+## SÉRIE 15 — deep study of the 6 ALIGNED métiers (P5, P6, P10, P11, P13, P14)
+
+Each was re-researched for a NEW transferable advantage; a prototype was built ONLY where a real gap was established.
+
+| Métier | 2026 world reference | ODG already has | Gap → decision |
+|---|---|---|---|
+| **P5** Cloud/Platform | progressive delivery (canary/blue-green), platform engineering (Backstage) | `canary-decision-pack` (assess + decision pack), `deployment-readiness`, `deploy/` | progressive delivery covered → **ALIGNED**; WATCH live rollout (E5) |
+| **P6** Quality/Eval | **mutation testing** (Stryker/PIT) — a passing suite ≠ bug-catching | held-out eval + metric-gaming (benchmark-factory) | **no test-effectiveness measure → BUILT `p6-mutation-testing`** (kill/survive, fail-closed) |
+| **P10** Regulatory | EU AI-Act staged obligations (GPAI 2025, high-risk 2026/2027) | `ai-act-role-classifier` (+ STANDARDS_OBLIGATIONS_REGISTER timeline), `regulatory-assurance` anti-overclaim | timeline already encoded → **ALIGNED**; cert external (NOT_CERTIFIED) |
+| **P11** Document | RAG/IDP, extraction-confidence, Factur-X | `einvoice-validator`/parser/`factur-x-extract` | structured path covered → **ALIGNED**; real OCR/scanned corpus = E5 owner-gated |
+| **P13** AI Infra/GPU | continuous batching, KV-cache, speculative decoding | `inference-engine` (cpu-reference vs **gpu-SIMULATED honesty**) | honesty gate covered; real GPU serving = **E5 owner-gated** → **ALIGNED** (no synthetic GPU-perf claim) |
+| **P14** DevEx | DORA four keys, SPACE/DX developer-experience | `dora-metrics` (fourKeys), `golden-path-evidence-bundle`, `deploy/` | DORA covered → **ALIGNED**; graduated-CI product = E5 |
+
+### P6 build detail
+`p6-mutation-testing.ts` — inject mutants, measure **kill vs survive** against a test oracle; a surviving mutant = a
+test-suite gap. Fail-closed: no oracle / original-fails-own-suite / **zero mutants ⇒ invalid (NOT a pass)**. Directly
+encodes §4's doctrine *"passing its own tests ≠ excellent"*. 9 assertions. Decision **INTEGRATE**.
+
+---
+
+*Genuine métier builds across Série 13–15: **P1, P2, P3, P4, P6, P7, P8, P9, P12, P15** (10). Honestly **ALIGNED**: P5,
+P10, P11, P13, P14 (5). Each build is grounded in a dated/primary world reference and composes existing ODG modules
+(no new engine); each ALIGNED verdict cites the existing module that already encodes the frontier doctrine.*

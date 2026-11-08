@@ -3821,6 +3821,115 @@
       "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P9. World ref: AI-FinOps decision metric is cost per SUCCESSFUL outcome (unit economics), not total cost — failed/retried attempts burn budget without value (FOCUS spec). ODG P9 separated cost kinds but had no cost-per-success. runtime/core/p9-unit-economics.ts computes cost-per-success on OBSERVED cost ONLY (never SIMULATED); fail-closed: zero successes => costPerSuccess null (undefined, never 0), viable=false; wasteRatio surfaces failed-attempt spend; withinUnitBudget fails closed on no success; successes capped at attempts. Complements P9 reference, no new engine. 9 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real billing E5 owner-gated).",
       "evidence": "runtime/core/p9-unit-economics.ts; runtime/core/p9-unit-economics.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie14-p3-dependency-trust-gate",
+      "title": "SÉRIE 14 P3: AI-suggested dependency trust gate (~1/5 safe finding)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p3-security-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P3. World ref: ~1/5 AI-suggested dependency versions are safe (2026, CSA; Cloudsmith agentic-governance). runtime/core/p3-dependency-trust-gate.ts vets a SUGGESTED dependency BEFORE install, fail-closed, REUSING license-policy.classifyLicense (no second license engine): ADMIT only when version is EXACT-pinned (ranges/tags/latest rejected) + license safe-to-bundle (proprietaryRedistribution===true — GPL/AGPL/unknown rejected) + integrity hash present + not a typosquat (edit-distance 1 from a known popular name). 10 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (live registry E5).",
+      "evidence": "runtime/core/p3-dependency-trust-gate.ts; runtime/core/p3-dependency-trust-gate.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p4-distribution-drift",
+      "title": "SÉRIE 14 P4: distribution drift (Population Stability Index)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p4-data-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P4. World ref: data/feature drift is the dominant silent pipeline failure; PSI is the ML-monitoring/credit-risk standard detector (<0.1 none, 0.1-0.25 moderate, >0.25 significant). runtime/core/p4-distribution-drift.ts adds PSI over binned distributions, fail-closed: an unseen category contributes to drift (never hidden), empty reference => SIGNIFICANT, gate FAILs on SIGNIFICANT. Complements P4 quality/lineage, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real dataset E5).",
+      "evidence": "runtime/core/p4-distribution-drift.ts; runtime/core/p4-distribution-drift.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p8-semver-enforcement",
+      "title": "SÉRIE 14 P8: SemVer enforcement over breaking-change detection",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "p8-api-contract"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P8. World ref: SemVer 2.0.0 — a breaking change MUST bump MAJOR; shipping a breaking API change without a major bump silently breaks consumers. runtime/core/p8-semver-enforcement.ts REUSES api-contract.checkCompatibility (no second diff engine) + schema addition-detection: requiredBump (breaking=>major, addition=>minor, else patch) vs actualBump; actual < required OR no-bump/downgrade for a real change => SEMVER_VIOLATION (fail-closed). 8 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
+      "evidence": "runtime/core/p8-semver-enforcement.ts; runtime/core/p8-semver-enforcement.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p12-watermark",
+      "title": "SÉRIE 14 P12: event-time watermarks + late-event policy (Flink/Beam)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p12-streaming-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P12. World ref: Flink/Beam/Dataflow event-time watermarks bound out-of-orderness; an event below watermark-allowedLateness is late and must be dropped/side-outputted, never folded into a closed window. runtime/core/p12-watermark.ts (processEvents) classifies ON_TIME/LATE/DROPPED against a watermark = maxEventTime - allowedLateness, fail-closed (too-late => DROPPED). Complements P12 seq-ordering/dedup, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real broker E5).",
+      "evidence": "runtime/core/p12-watermark.ts; runtime/core/p12-watermark.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-p15-saga-compensation",
+      "title": "SÉRIE 14 P15: saga compensation (distributed-transaction rollback)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p15-workflow-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P15. World ref: the Saga pattern (Garcia-Molina & Salem 1987; microservices) — on failure at step N, committed steps N-1..1 are UNDONE by compensating actions in REVERSE so the system is never partially applied. runtime/core/p15-saga-compensation.ts (runSaga) runs forward until failure then compensates committed steps in reverse: COMMITTED | COMPENSATED | COMPENSATION_FAILED (fail-closed, a failed compensation is SURFACED not swallowed; a throwing forward = failure). Complements workflow-engine, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
+      "evidence": "runtime/core/p15-saga-compensation.ts; runtime/core/p15-saga-compensation.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie14-global-improvement-engine",
+      "title": "SÉRIE 14 Step-4: ODG-global self-improvement engine (orchestrates existing mechanisms)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie12-codebase-diagnostic",
+        "v124-execution-scorecard",
+        "v124-self-improvement-e2e"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/global-improvement-engine.ts orchestrates the whole-ODG loop GLOBAL_OBSERVATION->DIAGNOSIS->WORLD_RESEARCH->GAP_ANALYSIS->HYPOTHESIS->PROTOTYPE->SANDBOX->BENCHMARK->ADVERSARIAL->INDEPENDENT_EVAL->SHADOW->CANARY->MEASUREMENT->RETAIN/ROLLBACK by COMPOSING existing mechanisms (codebase-diagnostic observe + v124-scorecard state + self-improvement build/verify/retain loop) — NO second engine/governance/registry. observe() returns the REAL diagnostic+scorecard snapshot; analyzeGaps() derives evidence-based targets (empty result => NO_FINDING (SÉRIE 15 §2 honest taxonomy NO_FINDING/NOT_MEASURED/HEALTHY/DEGRADED/UNKNOWN; HEALTHY only with measured checks + integrity + demonstrated controls — an empty result is NEVER auto-healthy)); cycle() RETAINS only on a measured before->after gain with NO regression else ROLLBACK (fail-closed), selfPromoted:false (promotion external). maturity() maps the 14-stage loop to real modules. 10 assertions; odg-test-report PASS; project tsc clean. Step-4 general self-improvement engine PRESENT (reuse-only).",
+      "evidence": "runtime/core/global-improvement-engine.ts; runtime/core/global-improvement-engine.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie15-p6-mutation-testing",
+      "title": "SÉRIE 15 P6: mutation testing (test-suite effectiveness, Stryker/PIT)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p6-eval-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 15 P6 (one genuine build among the 6 ALIGNED métiers; P5/P10/P11/P13/P14 confirmed ALIGNED by existing canary-decision-pack/ai-act-classifier/einvoice/inference-engine/dora-metrics). World ref: mutation testing (Stryker/PIT/mutmut) is the gold standard for TEST-SUITE EFFECTIVENESS — a passing suite proves nothing about bug-catching. runtime/core/p6-mutation-testing.ts injects mutants and measures killed vs survived against a test oracle; a surviving mutant = a test gap; mutationScore=killed/total. FAIL-CLOSED: no oracle / original-fails-own-suite / ZERO mutants => invalid (NOT a pass); effective() fails closed on invalid/low score. Directly encodes the doctrine \"passing its own tests != excellent\". Complements P6 eval reference, no new engine. 9 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
+      "evidence": "runtime/core/p6-mutation-testing.ts; runtime/core/p6-mutation-testing.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie15-metier-benchmark-suite",
+      "title": "SÉRIE 15 Step-4: transversal 15-métier benchmark (detection effectiveness + reproducibility)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie13-p1-semantic-regression-guard",
+        "serie13-p2-passk-reliability",
+        "serie14-p3-dependency-trust-gate",
+        "serie15-p6-mutation-testing"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/metier-benchmark-suite.ts is a cross-cutting comparison that measures each of the 10 métier improvements (P1/P2/P3/P4/P6/P7/P8/P9/P12/P15) by DETECTION EFFECTIVENESS — does the guard CATCH a PLANTED adversarial problem — NOT merely passing its own tests (directly encodes the §4 doctrine). Every probe runs twice to verify reproducibility (identical verdict). Composes the 10 improvement modules (no new engine). Result: detectionRate 1.0 (all 10 catch their planted case, 0 miss), all 10 reproducible. A miss would be a surfaced regression signal. 15 assertions; odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/metier-benchmark-suite.ts; runtime/core/metier-benchmark-suite.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
