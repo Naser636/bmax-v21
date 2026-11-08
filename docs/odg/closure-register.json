@@ -2788,6 +2788,34 @@
         "runtime/core/meta-intelligence.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-mem-08-memory-taxonomy",
+      "title": "WI-MEM-08: memory taxonomy lens (14 §26 families + provenance/temporality/consolidation)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08 on independent evidence: new additive PURE read-only module runtime/core/memory-taxonomy.ts — classifies supplied memory records into the 14 §26 families with §30 quality flags (NO_PROVENANCE/STALE/UNVERIFIED/INVALIDATED/UNKNOWN_FAMILY), §28 consolidation (CONSOLIDATED requires explicit+provenance+not-stale), explicit temporality (validUntil vs asOf), index + retrieve (deterministic id-sort). Creates NO store, duplicates none of the real stores (patch-memory/execution-memory/memory-engine/reuse-ledger/learning-chain). memory-taxonomy.test.ts 21/21; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts 92/92. Advances GM-CI-4 (memory families) from PARTIAL.",
+      "evidence": [
+        "runtime/core/memory-taxonomy.ts",
+        "runtime/core/memory-taxonomy.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-loop-09-cognitive-loop",
+      "title": "WI-LOOP-09: cognitive-loop cycle manager (§16 12-stage loop, append-only, resumable)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08 on independent evidence: new additive PURE state-machine runtime/core/cognitive-loop.ts implements the §16 cycle (PERCEIVE..IMPROVE) with enforced stage order (fail-closed out-of-order), compare-and-set version, APPEND-ONLY context (a resumed cycle never loses validated decisions/evidence), IMPROVE->PERCEIVE iteration wrap, snapshot + isResumable. Records intent only; EXECUTES nothing (real effects remain with the gated Executor — not a second executor). cognitive-loop.test.ts 22/22; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts 92/92. Advances GM-CI-1 (cognitive loop) from ABSENT.",
+      "evidence": [
+        "runtime/core/cognitive-loop.ts",
+        "runtime/core/cognitive-loop.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
