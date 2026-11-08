@@ -3062,6 +3062,50 @@
         "runtime/core/integration-inference-cost.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-p5-26-build-pipeline",
+      "title": "WI-P5-26 (P5): reproducible build pipeline (provenance/drift/recovery)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P5 beyond demonstrator — runtime/core/build-pipeline.ts: reproducible artifact (artifactSha = pure function of content-addressed inputs), provenance (sources/deps/config shas), config validation, drift detection, rollback recovery; NO real build/deploy/VPS (honest). 11/11; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/build-pipeline.ts",
+        "runtime/core/build-pipeline.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p14-27-developer-platform",
+      "title": "WI-P14-27 (P14): local executable developer platform (golden paths)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p5-26-build-pipeline"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: P14 beyond precursor — runtime/core/developer-platform.ts: capability catalog + golden-path templates + deterministic project generation (files+contract+config+provenance via P5) + validation (golden path requires tests); fail-closed on unknown template/missing params/invalid config; EXECUTABLE (concrete project spec, not docs). 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/developer-platform.ts",
+        "runtime/core/developer-platform.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p15-28-workflow-engine",
+      "title": "WI-P15-28 (P15): governed workflow engine (orchestration/approvals/retries/resume)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P15 beyond precursor — runtime/core/workflow-engine.ts: governed process engine with dependency-ordered execution (reuses dep-planner, fail-closed cycle/unknown-dep), idempotent steps (resume from checkpoint), approval gates (PENDING_APPROVAL), retries/timeout/error handling, append-only history+evidence; executes nothing external. 10/10; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/workflow-engine.ts",
+        "runtime/core/workflow-engine.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
