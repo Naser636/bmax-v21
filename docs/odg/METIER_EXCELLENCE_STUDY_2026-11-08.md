@@ -39,4 +39,23 @@
 
 ---
 
-*P2–P15 appended in subsequent lots.*
+## P2 — AI / ML / Agentic
+
+1. **ODG capability.** `profession-p2-ai-reference.ts` — held-out (leakage-free) quality via `benchmark-factory` +
+   prompt-injection resistance via `frontier-radar.sanitizeExternal`; `third-party-agent-gate` (ADMIT/DENY/ESCALATE).
+2. **Baseline.** Held-out accuracy + injection-refusal are deterministic; contamination/metric-gaming flagged.
+3. **World references.** τ-bench **pass^k** across k independent rollouts (single-pass overstates reliability); BFCL
+   (AST / executable / irrelevance tracks); **NIST AI Agent Standards Initiative (Feb 2026)**; OWASP LLM/Agentic Top-10.
+4. **Comparison.** ODG had held-out accuracy but **no reliability-under-repetition** metric; τ-bench's pass^k is the
+   frontier reliability standard. Injection resistance: ODG aligned (sanitizeExternal + quarantine).
+5. **Gap.** No pass^k reliability metric — a single-pass accuracy can hide flakiness.
+6. **Opportunity (built).** `p2-passk-reliability.ts` — pass^k (reliable only if ALL k rollouts pass, fail-closed) +
+   `reliabilityDrop = pass^1 − pass^k` exposing hidden flakiness; names flaky tasks.
+7. **Prototype.** Built + tested (8 assertions). Complements held-out eval; no new engine.
+8. **Tests/benchmarks needed.** A live-model multi-rollout run on τ-bench-style tasks is an owner-gated E5 experiment.
+9. **Results.** Deterministically distinguishes a reliable task set (pass^k=1) from a flaky one (pass^1=1, pass^k<1).
+10. **Decision: INTEGRATE** (the metric) + **WATCH** (live τ-bench E5 — owner-gated).
+
+---
+
+*P3–P15 appended in subsequent lots.*

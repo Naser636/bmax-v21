@@ -3781,6 +3781,20 @@
       "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 per-métier excellence, P1. World research (dated/sourced): SWE-bench Verified is the gold-standard coding benchmark (top agents 85-94% late-May-2026) BUT ~19.78% of solved cases are SEMANTICALLY WRONG — pass the stated test yet functionally incorrect (arXiv 2609.08149; Beyond SWE-Bench 2026). runtime/core/p1-semantic-regression-guard.ts composes the stated-test signal with P1 characterization baseline (reuses refactorPreservesBehaviour, NO new engine): SAFE only when stated-tests-pass AND held-out behaviour preserved; tests-pass+behaviour-changed => SEMANTIC_REGRESSION (the 19.78% case) fail-closed; coverage gap => INCOMPLETE; green stated-test alone is NOT proof. Tests positive/semantic-regression/test-failure/incomplete/anti-overclaim (7 assertions). odg-test-report PASS; project tsc clean. Decision INTEGRATE (local+synthetic) + WATCH (live SWE-bench E5 owner-gated NOT_RUN). Comparison recorded in docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md.",
       "evidence": "runtime/core/p1-semantic-regression-guard.ts; runtime/core/p1-semantic-regression-guard.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie13-p2-passk-reliability",
+      "title": "SÉRIE 13 P2: pass^k reliability metric (tau-bench / NIST AI Agent Standards)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p2-ai-reference",
+        "v124-benchmark-factory"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P2. World ref: tau-bench scores agents with pass^k across k independent rollouts (single-pass overstates reliability; NIST AI Agent Standards Feb-2026; BFCL). ODG P2 had held-out accuracy but no reliability-under-repetition. runtime/core/p2-passk-reliability.ts adds pass^k: a task is reliable ONLY if ALL k rollouts pass (fail-closed); k = min rollout count (never credit unrun rollouts); reliabilityDrop = pass^1 - pass^k exposes flakiness a single-pass score hides; names flaky tasks; reliability judged on pass^k not pass^1. Complements benchmark-factory held-out eval, no new engine. 8 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (live tau-bench E5 owner-gated NOT_RUN). Study entry appended.",
+      "evidence": "runtime/core/p2-passk-reliability.ts; runtime/core/p2-passk-reliability.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
     }
   ]
 }
