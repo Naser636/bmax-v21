@@ -3106,6 +3106,58 @@
         "runtime/core/workflow-engine.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-int-25-parcours-a",
+      "title": "WI-INT-25 (Parcours A): P5->P14->P1 (build/platform/product)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p5-26-build-pipeline",
+        "wi-p14-27-developer-platform"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-build-platform-product.ts composes developer-platform(P14)->build-pipeline(P5)->P1 product readiness; reproducible build + drift + provenance + product-readiness; fail-closed. 6/6; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/parcours-build-platform-product.ts",
+        "runtime/core/parcours-build-platform-product.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-26-parcours-b",
+      "title": "WI-INT-26 (Parcours B): P14->P15->P2 (platform/workflow/agents)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p14-27-developer-platform",
+        "wi-p15-28-workflow-engine",
+        "wi-p2-20-reference-agents"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-platform-workflow-agents.ts composes developer-platform(P14)->workflow-engine(P15)->reference-agents(P2); governed analyze->build->verify->qa workflow (approval gate) delegated to 5 agents (real factory, SIMULATED provider, builder!=verifier); evidence+checkpoint; fail-closed. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/parcours-platform-workflow-agents.ts",
+        "runtime/core/parcours-platform-workflow-agents.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-27-parcours-c",
+      "title": "WI-INT-27 (Parcours C): P15->P12->P7 (workflow/stream/reliability)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p15-28-workflow-engine",
+        "wi-int-23-stream-reliability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-workflow-stream-reliability.ts composes workflow-engine(P15)-> event-stream-engine(P12)->reliability(P7); workflow emits events, stream dedups/replays, reliability measures loss/duplicate/ordering + SLO; workflow failure/breach ⇒ DEGRADED. 5/5; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/parcours-workflow-stream-reliability.ts",
+        "runtime/core/parcours-workflow-stream-reliability.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
