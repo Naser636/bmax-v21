@@ -3449,6 +3449,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p6-eval-reference.ts is a runnable P6 independent-evaluation reference over a CLEARLY-LABELLED SYNTHETIC corpus (never real/client data, never E5). Strict train/test hold-out; confusion-matrix metrics (precision/recall/f1/accuracy) on the HELD-OUT set; adversarial metric-gaming check (train-memorizing model collapses on held-out => FLAGGED; high train score != capability). Reuses meta-intelligence (gaming lens); no second evaluator engine. Demonstrates E2 (reference project executed) + E3 (adversarial); E4 independent-audit separate; E5 external reality OWNER-GATED NOT_RUN (no inflated level). 7 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. First profession E2 lot (Lot C).",
       "evidence": "runtime/core/profession-p6-eval-reference.ts; runtime/core/profession-p6-eval-reference.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-a3-plus-autonomy",
+      "title": "V12.4 §38-§42: A3+ persistent autonomy (demonstrated driver + metrics)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/autonomy-persistence.ts DEMONSTRATES A3+ persistent autonomy (not assumed from the presence of checkpoint-engine/idempotency-guard/odg-resume). Composes campaign-controller (selectNextLot+advance; dep-order, BLOCKED-skip, NO-REPEAT, fail-closed ACCEPTED) with NO second scheduler. Proven behaviors (9 assertions): autonomous dep-ordered selection; BLOCKED isolated while independent lots proceed; NO-REPEAT (completed register => 0 further missions); CONTROLLED INTERRUPTION leaves a recoverable register and resumeAutonomy continues at the right point WITHOUT re-running an ACCEPTED lot; an INCOMPLETE lot is NEVER marked ACCEPTED (fail-closed); executor throw caught, loop continues; honest native-vs-delegated metrics (native counted only when the executor reports native, never for delegated work). Executor injected/external. odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §38-§42 A3+ TO_AUDIT->PRESENT_AND_PROVEN (at the driver level; unattended live operation stays bounded/owner-gated).",
+      "evidence": "runtime/core/autonomy-persistence.ts; runtime/core/autonomy-persistence.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
