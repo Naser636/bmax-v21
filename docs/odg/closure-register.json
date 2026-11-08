@@ -3647,6 +3647,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/dossier-ledger.ts enumerates dossiers A-F (§71-§76) with KNOWN purpose (verbatim marked NOT_RECOVERABLE where index-only — NOT fabricated), the real seeding artifact where one exists, independent verifier, honest status. A (research) seeded by the research-readiness doc + frontier-prep (PARTIAL); E (reality) realized as the Target-to-Reality matrix (PARTIAL); B/C/D/F verbatim NOT_RECOVERABLE => TO_AUDIT with NO fabricated seed. verifyLedger fails closed on an incomplete dossier OR an unsound presence claim (PRESENT without a cited artifact, or TO_AUDIT claiming one). 9 assertions; odg-test-report PASS; CI gated; strict tsc clean. §71-§76 PRESENT (honest dossier ledger).",
       "evidence": "runtime/core/dossier-ledger.ts; runtime/core/dossier-ledger.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-execution-scorecard",
+      "title": "V12.4 §90-§92: execution scorecard (aggregate ledgers, fail-closed readiness)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/v124-scorecard.ts aggregates the REAL state across gates-ledger (A-G) + campaign-closure-ledger (C1-C4) + dossier-ledger (A-F) + failures-register (F01-F40) plus caller-supplied verified facts (primitives present, professions proven, register ACCEPTED) into ONE honest scorecard (§90), applies FAIL-CLOSED readiness thresholds (§91), and emits a transparent forecast (§92). INFLATES NOTHING: overall=READY only when EVERY hard gate is met (primitives>=9, professions>=15 proven, all gates PASS, all campaigns CLOSED, no failure TO_AUDIT); a fact not supplied is UNKNOWN and treated as NOT met; a campaign counts toward closure only when CLOSED (not sub-lot ACCEPTED). With full facts today it honestly reports IN_PROGRESS (campaigns 0 CLOSED, gates not all PASS) — never READY. Composes real ledgers, duplicates none; owner-gated blockers (FR-07/VPS/E5) named. 8 assertions; odg-test-report PASS; CI gated; strict tsc clean. §90-§92 PRESENT (honest scorecard).",
+      "evidence": "runtime/core/v124-scorecard.ts; runtime/core/v124-scorecard.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
