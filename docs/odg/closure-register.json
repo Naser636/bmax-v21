@@ -421,7 +421,7 @@
       "priority": 7,
       "evidence": "",
       "blockReason": "ONLY Dockerfile/lint (hadolint) remains uncovered of 12. PREPARATION DONE (PR this): code-execution Dockerfile adapter WIRED (bin hadolint, argv-array, no-network), honestly UNSUPPORTED today (probe fails, not faked); checksum-verified install runbook docs/odg/deploy/HADOLINT_INSTALL.md (pinned version + sha256sum -c, no blind curl|sh); taxonomy-flip plan + resume-test documented. hadolint is NOT in apt ⇒ external binary from the official GitHub release.",
-      "humanActionRequired": "authorize + run the integrity-verified hadolint install (HADOLINT_INSTALL.md: download pinned hadolint-linux-x86_64 + checksums.sha256, `sha256sum -c` must be OK, sudo install to /usr/local/bin). Downloads a 3rd-party binary + sudo ⇒ owner decision.",
+      "humanActionRequired": "Partial native alternative DELIVERED (serie17-dockerfile-lint: native Dockerfile security linter, no binary/sudo). FULL parity still owner-gated: authorize the integrity-verified hadolint binary install (HADOLINT_INSTALL.md: pinned hadolint-linux-x86_64 + sha256sum -c, user-space OR sudo /usr/local/bin) and/or real Go/Rust toolchains for the other compiled stacks.",
       "resumeTest": "npx tsx -e 'console.log(require(\"./runtime/core/code-execution.js\").detectToolchain().Dockerfile)' ⇒ true; then runSyntaxCheck Dockerfile clean⇒PASS / lint-dirty⇒FAIL",
       "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
@@ -3955,6 +3955,17 @@
       ],
       "acceptance": "ODG-accepted 2026-11-08: network egress is now owner-authorized (CTO Séries 13-17), lifting FR-07 live-collection gate. runtime/core/fr07-live-collection.ts REUSES bounded-http-client (HTTPS-only + host-allowlist BOAMP/TED/data.economie.gouv.fr + SSRF-guard + size cap) + frontier-radar.sanitizeExternal (no 2nd HTTP/radar engine): bounded read-only fetch => treat as UNTRUSTED => injection QUARANTINE => provenance (host+bytes+sha256). LIVE one-shot PROOF executed this session: GET data.economie.gouv.fr DECP/OCDS catalog => statusCode 200, 12400 bytes, untrusted=false, sha256 74daac8f..., decision COLLECTED (REAL network, not synthetic). CI-safe test uses an injected fetcher (6 assertions: clean=>COLLECTED, injection=>QUARANTINE, non-allowlisted=>REJECTED_URL, failed=>FETCH_FAILED). The live-collection CAPABILITY is EXECUTED; the systemd AUTOMATION remains sudo-gated (separate item campaign-runner-systemd-activation). odg-test-report PASS; project tsc clean.",
       "evidence": "runtime/core/fr07-live-collection.ts; runtime/core/fr07-live-collection.test.ts; LIVE proof data.economie.gouv.fr status 200 12400 bytes sha256 74daac8f; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie17-dockerfile-lint",
+      "title": "SÉRIE 17: native Dockerfile security linter (new-language-families alternative, no external binary)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: new-language-families requires installing the hadolint 3rd-party binary (+ sudo to /usr/local/bin) — classified owner-gated (supply-chain + sudo). Per the directive alternative (build a local solution when an external resource is owner-gated), runtime/core/dockerfile-lint.ts is ODG native Dockerfile security linter (subset of the security-critical hadolint rules) with NO 3rd-party binary + NO sudo: DL3007 pin base (no :latest), DL3002 non-root final USER, NO-SUDO in RUN, DL3015 apt --no-install-recommends, DL3008 pin apt versions, DL3020 COPY over ADD for local files, SECRET-IN-ENV. Fail-closed: HIGH findings => not clean. 9 assertions; odg-test-report PASS; project tsc clean. NOT full hadolint parity (which remains owner-gated); this is the native security subset — new-language-families stays BLOCKED for full toolchain parity, honestly.",
+      "evidence": "runtime/core/dockerfile-lint.ts; runtime/core/dockerfile-lint.test.ts; package.json",
       "staleEvidence": false
     }
   ]
