@@ -3460,6 +3460,30 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/autonomy-persistence.ts DEMONSTRATES A3+ persistent autonomy (not assumed from the presence of checkpoint-engine/idempotency-guard/odg-resume). Composes campaign-controller (selectNextLot+advance; dep-order, BLOCKED-skip, NO-REPEAT, fail-closed ACCEPTED) with NO second scheduler. Proven behaviors (9 assertions): autonomous dep-ordered selection; BLOCKED isolated while independent lots proceed; NO-REPEAT (completed register => 0 further missions); CONTROLLED INTERRUPTION leaves a recoverable register and resumeAutonomy continues at the right point WITHOUT re-running an ACCEPTED lot; an INCOMPLETE lot is NEVER marked ACCEPTED (fail-closed); executor throw caught, loop continues; honest native-vs-delegated metrics (native counted only when the executor reports native, never for delegated work). Executor injected/external. odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §38-§42 A3+ TO_AUDIT->PRESENT_AND_PROVEN (at the driver level; unattended live operation stays bounded/owner-gated).",
       "evidence": "runtime/core/autonomy-persistence.ts; runtime/core/autonomy-persistence.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-benchmark-factory",
+      "title": "V12.4 §58: benchmark factory (build/audit/run, integrity-first)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p6-eval-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/benchmark-factory.ts builds evaluation suites (public/private/held-out/synthetic/adversarial), AUDITS each for §58 hazards (leakage/bias/shortcut/incomplete-tests), and runs a candidate on the HELD-OUT split with a contamination probe (train-vs-held-out collapse flagged). Only leakage-free held-out results are capability evidence; a high public/train score is not evidence alone; synthetic suites labelled (never E5). REUSES P6.evaluate + meta-intelligence (gaming lens); no second evaluator engine. 8 assertions (build split, clean audit, leakage HIGH, bias, incomplete HIGH, competent run, memorizer contamination flagged, honesty); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §58 benchmark-factory ABSENT->PRESENT_AND_PROVEN.",
+      "evidence": "runtime/core/benchmark-factory.ts; runtime/core/benchmark-factory.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p3-security-reference",
+      "title": "V12.4 §43 P3: Cybersecurity/DevSecOps reference project (E2 scan + E3 adversarial)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p3-security-reference.ts is a runnable security scan over a CLEARLY-LABELLED SYNTHETIC project: dependency licenses (copyleft GPL/AGPL/SSPL + UNKNOWN denied), secret scan, prompt/command injection detection, unpinned-deps, SBOM presence. Composes license-policy.classifyLicense + bash-command-governor.SECRET_PATTERNS + frontier-radar.sanitizeExternal; no second security engine. E2 (reference scan) + E3 (adversarial planted GPL dep/secret/injection all detected). E5 real pentest OWNER-GATED NOT_RUN (no inflated level). 6 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/profession-p3-security-reference.ts; runtime/core/profession-p3-security-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
