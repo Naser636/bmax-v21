@@ -3754,6 +3754,20 @@
       "acceptance": "ODG-accepted 2026-11-08: the codebase-diagnostic surfaced 5 genuinely-UNCOVERED modules. Investigation found a REAL latent regression: change-impact-graph.moduleNames scanned for .js basenames, but post zero-JS convergence runtime/core is TS-only => buildGraph returned an EMPTY graph on the real codebase (impactOf always exists:false), silently degrading its consumers dep-planner + migration-campaign. FIX: moduleNames now scans the UNION of non-test .ts and .js basenames (deduped); refSource still prefers the .ts port. Added DIRECT unit tests for the 3 testable UNCOVERED modules (change-impact-graph buildGraph/impactOf, fleet-stage resolveConfig, patch-proposal-apply guard paths NO_PROPOSAL/MALFORMED/missing-mission-throws). MEASURED improvement: DIRECT 334->337, UNCOVERED 5->2 (the 2 remaining = execution-planner + knowledge-engine, CLI report-scripts run-on-import, honestly classified NOT forced). Regression: dep-planner.test.ts PASS; odg verify build+typescript+contracts green. A real self-improvement cycle: DIAGNOSE->found bug->FIX->VERIFY->MEASURE.",
       "evidence": "runtime/core/change-impact-graph.ts; runtime/core/change-impact-graph.test.ts; runtime/core/fleet-stage.test.ts; runtime/core/patch-proposal-apply.test.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie12-cross-metier-collaboration",
+      "title": "SÉRIE 12 Step-5: cross-métier collaboration (multi-profession ship gate, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p4-data-reference",
+        "v124-p2-ai-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cross-metier-collaboration.ts demonstrates a complex problem (ship a data-backed API change safely) mobilising FIVE métiers into ONE coherent verdict, COMPOSING existing profession references (NO new engine): P4 data-quality + P8 api-contract.checkCompatibility + P3 security scan + P1 behaviour-preservation + P6 evaluation. FAIL-CLOSED: SHIP only when EVERY métier passes; a single failing métier => HOLD + the métier NAMED. DEMONSTRATED: clean scenario=>SHIP; a data defect=>HOLD(P4); a breaking API change=>HOLD(P8); a planted secret=>HOLD(P3); a behaviour change=>HOLD(P1); poor eval quality=>HOLD(P6); multiple failures=>all named; reproducible (same input=>identical verdict). SYNTHETIC only; real release (E5) owner-gated NOT_RUN. 11 assertions; odg-test-report PASS; project tsc clean. Step-5 multi-métier collaboration PROVEN.",
+      "evidence": "runtime/core/cross-metier-collaboration.ts; runtime/core/cross-metier-collaboration.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
