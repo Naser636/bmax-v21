@@ -3523,6 +3523,42 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/scientific-research.ts composes the existing chain (frontier-radar signal/sanitize/qualify -> frontier-lab hypothesis/experiment/independent-verify -> compounding-loop knowledge) with NO new engine, DEMONSTRATED end-to-end: external content UNTRUSTED (injection => QUARANTINE, no experiment); a hypothesis runs only on a qualified signal; knowledge is VALIDATED only on a REPRODUCIBLE + independently-verified PASS; NEGATIVE results are KEPT (not discarded); provenance preserved. Scenarios: positive (=>validated knowledge), injection (=>quarantine), negative (failing => not integrated, kept), unqualified (zero-reliability => no experiment). 6 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §26 scientific-research runtime ABSENT->PRESENT_AND_PROVEN (E2E).",
       "evidence": "runtime/core/scientific-research.ts; runtime/core/scientific-research.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-p2-ai-reference",
+      "title": "V12.4 §43 P2 (AI/ML/Agentic): E2 reference + E3 prompt-injection",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-benchmark-factory",
+        "wi-fr-01-frontier-radar"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p2-ai-reference.ts composes benchmark-factory (held-out, leakage-free quality) + frontier-radar.sanitizeExternal (prompt-injection detection) with NO second evaluator. DEMONSTRATED over a CLEARLY-SYNTHETIC task set: competent+injection-refusing agent => strong held-out F1, audit-clean, safe, adversarialResisted; an agent that OBEYS a flagged injection => NOT safe (E3 failure surfaced, obeyed>0); a train-memorizing model => contamination flagged via benchmark-factory held-out probe. SYNTHETIC only; live-model/real-data benchmark (E5) owner-gated NOT_RUN. 6 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P2 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p2-ai-reference.ts; runtime/core/profession-p2-ai-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p9-finops-reference",
+      "title": "V12.4 §43 P9 (FinOps/Cloud-Economics): E2 reference + E3 budget/conflation",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p9-finops-reference.ts keeps OBSERVED/ESTIMATED/SIMULATED cost kinds STRICTLY separate (V12.4 F11 doctrine: never conflate measured vs modelled vs simulated). DEMONSTRATED over SYNTHETIC FOCUS-style billing: an unknown/invalid kind is folded into SIMULATED (never OBSERVED) and surfaced as conflation risk; cost-per-mission is computed from OBSERVED spend only; budget-stop is fail-closed on OBSERVED spend (over budget => stop + degraded; within => clean). SYNTHETIC only; real cloud billing (E5) owner-gated NOT_RUN. 7 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P9 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p9-finops-reference.ts; runtime/core/profession-p9-finops-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-p12-streaming-reference",
+      "title": "V12.4 §43 P12 (Real-Time Streaming/Event-Driven): E2 reference + E3 out-of-order/dup/replay",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p12-streaming-reference.ts processes a CLEARLY-SYNTHETIC event stream with ordering by sequence, idempotent DEDUPLICATION by event id, replay consistency from a checkpoint, and bounded backpressure. DEMONSTRATED: an out-of-order, duplicated stream is reordered and the duplicate dropped (idempotent); replay from any checkpoint yields the same processed set; E2 run not degraded. SYNTHETIC only; real broker (Kafka/Pulsar, E5) owner-gated NOT_RUN. 7 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P12 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
+      "evidence": "runtime/core/profession-p12-streaming-reference.ts; runtime/core/profession-p12-streaming-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
