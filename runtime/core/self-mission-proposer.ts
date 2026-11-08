@@ -12,6 +12,8 @@
  * mission system). Fail-closed: no actionable gap ⇒ no proposal. Dual export.
  */
 
+const RADAR = require("./frontier-radar");
+
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 
@@ -34,25 +36,33 @@ function proposeFromGaps(gapAnalysis: any, opts?: any): any {
   const g = isObj(gapAnalysis) ? gapAnalysis : {};
   const o = isObj(opts) ? opts : {};
   const targets = arr(g.targets);
-  const proposals: any[] = []; const ownerDecisions: any[] = [];
+  const proposals: any[] = []; const ownerDecisions: any[] = []; const quarantined: any[] = [];
+  const seen = new Set<string>();   // dedup by (kind|detail) so an identical gap yields ONE proposal
   for (const t of targets) {
+    const detail = isObj(t) && typeof t.detail === "string" ? t.detail : "";
+    // a gap detail is treated as UNTRUSTED data: an injected instruction ⇒ QUARANTINE (never emitted as a mission objective).
+    const meta = RADAR.sanitizeExternal({ title: detail, body: "" });
+    if (meta.untrusted === true) { quarantined.push({ detail: detail.slice(0, 120), injectionFlags: meta.injectionFlags }); continue; }
+    const key = (isObj(t) ? t.kind : "?") + "|" + detail;
+    if (seen.has(key)) continue;    // duplicate ⇒ skip
+    seen.add(key);
     const cls = classifyTarget(t);
     if (cls === "COMPUTER_SIDE") {
       proposals.push(Object.freeze({
         kind: "MISSION_PROPOSAL", status: "PROPOSED",            // PROPOSED ≠ AUTHORIZED ≠ EXECUTING
         grantsNoPermission: true, selfAuthorized: false, linksToCanonicalMissionPath: true,
-        objective: "Improve: " + (t.detail || "discovered gap"),
+        objective: "Improve: " + (detail || "discovered gap"),
         verifiableAcceptance: verifiableAcceptance(t), priority: t.priority || 1, proposedAt: o.now || null,
       }));
     } else {
-      ownerDecisions.push(Object.freeze({ kind: "OWNER_DECISION", detail: t.detail || "owner-gated gap", reason: "requires owner information/authorization or external reality — not self-executable", verifiableAcceptance: verifiableAcceptance(t) }));
+      ownerDecisions.push(Object.freeze({ kind: "OWNER_DECISION", detail: detail || "owner-gated gap", reason: "requires owner information/authorization or external reality — not self-executable", verifiableAcceptance: verifiableAcceptance(t) }));
     }
   }
   return Object.freeze({
     sourceStatus: g.status || null,
-    proposals: Object.freeze(proposals), ownerDecisions: Object.freeze(ownerDecisions),
+    proposals: Object.freeze(proposals), ownerDecisions: Object.freeze(ownerDecisions), quarantined: Object.freeze(quarantined),
     selfAuthorizedAny: false,   // invariant: the proposer never self-authorizes
-    note: "discovered gaps → PROPOSED verifiable missions (canonical gate decides) + owner-routed decisions; never self-authorized; no gap ⇒ no proposal",
+    note: "discovered gaps → PROPOSED verifiable missions (canonical gate decides) + owner-routed decisions; injected details QUARANTINED; duplicates deduped; never self-authorized; no gap ⇒ no proposal",
   });
 }
 
@@ -66,6 +76,7 @@ const SELF_MISSION_PROPOSER_CONTRACT = Object.freeze({
     "every emitted mission is status PROPOSED + grantsNoPermission + selfAuthorized:false — NEVER AUTHORIZED/EXECUTING",
     "each proposal carries a VERIFIABLE acceptance criterion (closes the verification gap) — not just a vague suggestion",
     "owner-gated gaps are routed to OWNER_DECISION (not a self-executable mission); a computer-side gap ⇒ a self-executable proposal",
+    "a gap detail is UNTRUSTED data: an injected instruction ⇒ QUARANTINE (never emitted as a mission objective); identical gaps are deduped",
     "fail-closed: no discovered gap ⇒ no proposal (no manufactured mission); reuses existing mechanisms; no second mission system",
   ]),
 });
