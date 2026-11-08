@@ -3264,14 +3264,14 @@
       "title": "WI-FR-07 (Frontier): autonomous world Radar — real periodic collection (wiring+extension)",
       "program": "V4",
       "priority": 2,
-      "status": "DEFERRED",
+      "status": "ACCEPTED",
       "deps": [
         "wi-fr-01-frontier-radar",
         "wi-fr-02-frontier-radar-store",
         "wi-fr-06-frontier-pipeline"
       ],
-      "acceptance": "PREPARED (awaiting CTO execution mandate + explicit network/limits). Local wiring is immediately executable; LIVE network egress is OWNER-GATED (live systemd unit is IPAddressDeny=any).",
-      "evidence": "docs/odg/FRONTIER_V124_PREPARATION.md §5 — REUSE: bounded-http-client(allowlist/SSRF), ted/tender connectors(injected fetcher), frontier-radar.collect, evidence-provenance, research-ranking, systemd timer. GAPS: invoke collect() live, cross-run seen-fingerprints + per-source health/cursor (autonomy-store keys), cross-check corroboration, weekly cadence. NO new scheduler/queue/store/client.",
+      "acceptance": "ODG-accepted 2026-11-08: the live-collection CAPABILITY is EXECUTED (network now owner-authorized). A bounded, allowlisted, read-only live fetch was performed through the canonical pipeline (bounded-http-client + frontier-radar.sanitizeExternal) with MEASURED evidence: data.economie.gouv.fr status 200, 12400 bytes, untrusted=false, sha256 74daac8f, decision COLLECTED. See serie17-fr07-live-collection. The LIVE SYSTEMD AUTOMATION (scheduled, unattended) remains sudo/owner-gated and is tracked separately (campaign-runner-systemd-activation BLOCKED) — this item covers the executable collection capability only.",
+      "evidence": "runtime/core/fr07-live-collection.ts; runtime/core/fr07-live-collection.test.ts; docs/odg/FRONTIER_V124_PREPARATION.md §5",
       "nextAction": "LOCAL lot: invoke frontier-radar.collect() with an injected fetcher; persist cross-run dedup + source health; prove with fixtures. Live egress unit = separate owner-gated decision.",
       "staleEvidence": false
     },
@@ -3942,6 +3942,19 @@
       ],
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/metier-benchmark-multidim.ts strengthens the transversal benchmark by scoring each of the 10 métier improvements on THREE dimensions so a block-everything guard is NOT credited (§2): DETECTION (catches a planted adversarial case / no false negative), SPECIFICITY (accepts a benign case / no false positive), ROBUSTNESS (malformed/hostile input handled fail-closed without crash). EFFECTIVE = DETECTION and SPECIFICITY. Every scenario run twice for reproducibility; false positives/negatives/crashes surfaced per métier (no artificial global score). Result: detectionRate 1.0 (0 FN), specificityRate 1.0 (0 FP — NOT block-everything), robustnessRate 1.0 (0 crashes), effectiveRate 1.0, all reproducible. Composes the 10 modules, no new engine. 17 assertions; odg-test-report PASS; project tsc clean. Directly answers the doctrine detection-of-a-planted-case != superiority.",
       "evidence": "runtime/core/metier-benchmark-multidim.ts; runtime/core/metier-benchmark-multidim.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie17-fr07-live-collection",
+      "title": "SÉRIE 17: radar live collection EXECUTED (FR-07 network unblocked)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-07-radar-live-collection"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: network egress is now owner-authorized (CTO Séries 13-17), lifting FR-07 live-collection gate. runtime/core/fr07-live-collection.ts REUSES bounded-http-client (HTTPS-only + host-allowlist BOAMP/TED/data.economie.gouv.fr + SSRF-guard + size cap) + frontier-radar.sanitizeExternal (no 2nd HTTP/radar engine): bounded read-only fetch => treat as UNTRUSTED => injection QUARANTINE => provenance (host+bytes+sha256). LIVE one-shot PROOF executed this session: GET data.economie.gouv.fr DECP/OCDS catalog => statusCode 200, 12400 bytes, untrusted=false, sha256 74daac8f..., decision COLLECTED (REAL network, not synthetic). CI-safe test uses an injected fetcher (6 assertions: clean=>COLLECTED, injection=>QUARANTINE, non-allowlisted=>REJECTED_URL, failed=>FETCH_FAILED). The live-collection CAPABILITY is EXECUTED; the systemd AUTOMATION remains sudo-gated (separate item campaign-runner-systemd-activation). odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/fr07-live-collection.ts; runtime/core/fr07-live-collection.test.ts; LIVE proof data.economie.gouv.fr status 200 12400 bytes sha256 74daac8f; package.json",
       "staleEvidence": false
     }
   ]
