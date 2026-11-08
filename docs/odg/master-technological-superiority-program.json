@@ -764,6 +764,23 @@
         "E-VALIDATION-SELECTOR"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/targeted-verify.ts (planner, 7/7) + runtime/bin/odg-targeted-verify.ts (CLI) wired into odg bash as verify-targeted. Computes change-set (git), maps changed runtime/core modules to impacted suites via TRANSITIVE consumer graph, runs only impacted suites via odg-test-report; certification/governance/HIGH-risk/undeterminable/closure-hazard => FULL; unrun NOT_RUN never PASS; targeted never certifies. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-PERSISTENT-GRAPH",
+      "title": "Engineering Intelligence wave-2: persistent file-level impact graph",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "persistent-impact-graph.ts",
+        "change-impact-graph.ts",
+        "evidence-provenance.ts"
+      ],
+      "dependsOn": [
+        "E-TARGETED-VERIFY"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/persistent-impact-graph.ts — persistence + provenance (source digest) + automatic invalidation over change-impact-graph (no concurrent graph); fresh only while source digest matches, any file change => STALE => rebuild; stale/unknown-module/tampered-stamp => FULL; transitive consumers cycle-safe; real fs persistence round-trip. 15/15. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
