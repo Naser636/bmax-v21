@@ -3695,6 +3695,30 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/gate-e-demonstration.ts demonstrates the Gate-E (technical truth, §101) SLICE from REAL already-green evidence — composes the live odg verify snapshot (build+typescript+generated-contracts-valid) with the LIVE preservation invariant — fail-closed DEMONSTRATED_SLICE. E2E-proven against the real odg verify (build+typescript+contracts all true) + live preservation => DEMONSTRATED_SLICE. HONEST scope: a slice is explicitly NOT a global Gate-E PASS (the whole V12.4 technical truth); gateDemonstrationStatus reports only Gate E demonstrable now, gates A/B/C/D/F/G NOT claimed demonstrated (several behind owner-gated FR-07/VPS/E5); flips no gates-ledger status, fabricates no PASS. Tests positive + 2 negative (ts false / preservation violated) + adversarial (empty snapshot) + honesty (9 assertions). odg-test-report PASS; CI gated; strict tsc clean. §101 Gate-E SLICE DEMONSTRATED (global PASS NOT asserted).",
       "evidence": "runtime/core/gate-e-demonstration.ts; runtime/core/gate-e-demonstration.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-radar-realsignal-demonstration",
+      "title": "V12.4 Phase-4: real-external-signal radar/research-loop demonstration (WATCH, no self-promotion)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-scientific-research"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/radar-realsignal-demonstration.ts runs the canonical loop SIGNAL->QUALIFY->EVIDENCE->EXPERIMENT->REPLAY->VERIFY (reusing scientific-research.runResearchCycle = frontier-radar+frontier-lab+compounding-loop, NO new engine) over a REAL signal CAPTURED from authorized live web research 2026-11-08 (tau-bench pass^k reliability metric / BFCL / NIST AI Agent Standards Initiative Feb 2026; provenance-labelled). PROVEN end-to-end: a benign REAL signal flows to DONE/ACCEPT_FOR_EXPERIMENT, reproducible, honestly INCONCLUSIVE when the collector does not meet the success criterion (NO fabricated PASS, negative result KEPT); an injection-laced variant of the SAME signal is QUARANTINED at SIGNAL (no hypothesis). The frontier-gap finding (adopt pass^k reliability) is recorded as a WATCH proposal — observe+propose only, selfPromoted:false, no policy/baseline change. CI-safe (captured fixture, no live network in tests). 9 assertions; odg-test-report PASS; strict tsc clean. Phase-4 radar+research loop VERIFIED on real input.",
+      "evidence": "runtime/core/radar-realsignal-demonstration.ts; runtime/core/radar-realsignal-demonstration.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-section-coverage-fusion",
+      "title": "V12.4 Phase-3: 122-section coverage + two-CTO-outputs fusion verifier (fail-closed, no silent drop)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/v124-section-coverage.ts enumerates the preserved V12.4 structure (Preambule §1-4 + 31 Parts) and PROVES fail-closed that every one of the 122 sections is covered EXACTLY once — no gap, no overlap, no section beyond 122, no silent drop (the CTO no-silent-abandon rule). Records the TWO fused CTO outputs: TARGET = docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md (owner-supplied requirement), REALITY = docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md (per-section status SSOT). HONEST: a DISTINCT second owner-supplied source, if that is what two-outputs means, is NOT in-repo (only one roadmap ingested 2026-11-08) => NOT_RECOVERABLE, not fabricated. Builds NO third roadmap; matrix stays the status SSOT. 11 assertions; odg-test-report PASS; strict tsc clean. Phase-3 exhaustive 122-section correspondence VERIFIED.",
+      "evidence": "runtime/core/v124-section-coverage.ts; runtime/core/v124-section-coverage.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }

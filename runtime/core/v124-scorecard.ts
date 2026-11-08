@@ -59,14 +59,14 @@ function buildScorecard(facts: any): any {
   const remaining: string[] = [];
   if (dimensions.professions.met !== true) remaining.push(`professions: ${professionsProven ?? "UNKNOWN"}/${THRESHOLDS.professionsRequired} proven`);
   if (dimensions.gates.met !== true) remaining.push(`gates: ${g.byStatus.PASS}/${g.count} PASS (rest PARTIAL/TO_AUDIT — require global demonstration §103)`);
-  if (dimensions.campaigns.met !== true) remaining.push(`campaigns: ${c.closedCount}/${c.count} CLOSED (C4 needs FR-07 network — owner-gated; others need end-to-end objective demonstration)`);
+  if (dimensions.campaigns.met !== true) remaining.push(`campaigns: ${c.closedCount}/${c.count} CLOSED (network now owner-authorized; residual blocker = the C1-C4 OBJECTIVE definitions are NOT_RECOVERABLE/index-only — owner must supply them to demonstrate closure end-to-end)`);
   if (dimensions.failures.met !== true) remaining.push(`failures: ${fr.byStatus.TO_AUDIT || 0} of F01–F40 still TO_AUDIT`);
   if (dimensions.primitives.met !== true) remaining.push(`primitives: ${primitivesPresent ?? "UNKNOWN"}/${THRESHOLDS.primitivesRequired} present`);
 
   return Object.freeze({
     source: "V12.4 §90–§92 scorecard (aggregates existing ledgers; inflates nothing)",
     overall, ready, anyUnknown, dimensions, thresholds: THRESHOLDS,
-    forecast: Object.freeze({ remaining: Object.freeze(remaining), note: "READY requires EVERY hard gate met; an UNKNOWN fact is treated as NOT met (fail-closed). Owner-gated blockers (FR-07 network, VPS, E5) cannot be cleared computer-side." }),
+    forecast: Object.freeze({ remaining: Object.freeze(remaining), note: "READY requires EVERY hard gate met; an UNKNOWN fact is treated as NOT met (fail-closed). Network (FR-07) is now owner-authorized; residual blockers are owner-INFORMATION (C1-C4 objective definitions NOT_RECOVERABLE), root-deploy (sudo), and external-reality E4/E5 — none clearable computer-side without owner input." }),
   });
 }
 
