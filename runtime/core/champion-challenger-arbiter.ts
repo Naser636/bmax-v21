@@ -19,6 +19,7 @@ const BASE = require("./improvement-baseline");            // measureDelta — c
 const MI = require("./meta-intelligence");                 // assessIntegrity — metric-gaming/evaluator-capture/contamination
 const CL = require("./compounding-loop");                  // rewardHackingCheck — spec-gaming / leakage / self-cert
 const IND = require("./evaluator-independence");           // auditIndependence — Builder≠Verifier (COMPROMISED ⇒ out)
+const SIG = require("./eval-significance");                 // significanceGate — a directional lift must not be sampling noise
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
@@ -39,6 +40,14 @@ function assessChallenger(champion: any, challenger: any, senseMap: any): any {
   if (indep.verdict === "COMPROMISED") disq.push("evaluator independence COMPROMISED");
   // REGRESSION gate — disqualify any challenger regressing ANY champion metric (champion-challenger invariant).
   if (delta.summary.regressed > 0) disq.push(`regresses ${delta.summary.regressed} champion metric(s)`);
+  // OPTIONAL STATISTICAL-SIGNIFICANCE gate (STREAM 2026): if the challenger carries eval evidence, a directional
+  // lift must ALSO be statistically significant (not sampling noise) to qualify. Backward-compatible: absent evidence
+  // ⇒ the directional lift stands (the caller declared no sampled eval to test).
+  let significance: any = null;
+  if (isObj(challenger.significanceEvidence)) {
+    significance = SIG.significanceGate(challenger.significanceEvidence);
+    if (significance.verdict !== "IMPROVEMENT") disq.push(`lift not statistically significant (${significance.verdict}) — may be sampling noise`);
+  }
   // STRICTLY-BEATS gate — must improve at least one metric with zero regressions.
   const strictlyBeats = delta.summary.improved > 0 && delta.summary.regressed === 0;
   const lift = delta.summary.improved - delta.summary.regressed;   // clean aggregate lift (ACES "Skill Lift")
@@ -47,6 +56,7 @@ function assessChallenger(champion: any, challenger: any, senseMap: any): any {
     qualifies: disq.length === 0 && strictlyBeats,
     strictlyBeats, lift, disqualifiers: Object.freeze(disq),
     delta: delta.summary, integrity: integrity.overall, rewardClean: rh.clean, independence: indep.verdict,
+    significance: significance ? significance.verdict : "NOT_PROVIDED",
   });
 }
 
@@ -78,13 +88,14 @@ function arbitrate(input: any): any {
 const CHAMPION_CHALLENGER_CONTRACT = Object.freeze({
   id: "V124-CHAMPION-CHALLENGER-ARBITER",
   source: "SÉRIE 22 central architecture — champion-challenger / ACES Skill-Lift N-way selection (TELUS 2026; arXiv 2608.14611, 2608.20614)",
-  reuses: Object.freeze(["improvement-baseline.measureDelta", "meta-intelligence.assessIntegrity", "compounding-loop.rewardHackingCheck", "evaluator-independence.auditIndependence", "forwards to evolution-loop.applyExternalPromotion (external)"]),
+  reuses: Object.freeze(["improvement-baseline.measureDelta", "meta-intelligence.assessIntegrity", "compounding-loop.rewardHackingCheck", "evaluator-independence.auditIndependence", "eval-significance.significanceGate (optional noise gate)", "forwards to evolution-loop.applyExternalPromotion (external)"]),
   notAuthority: "selects the best non-regressing challenger to FORWARD; it takes no promotion decision and creates no authorizer",
   invariants: Object.freeze([
     "N-way comparative selection on a FIXED shared metric set (not 1-vs-static-baseline) — closes the gap evolution-loop lacks",
     "a challenger regressing ANY champion metric is disqualified (champion-challenger invariant)",
     "a challenger failing integrity (DETECTED or SUSPECTED), reward-hacking (not clean), or independence (COMPROMISED) is not forwarded — fail-closed, not an accusation (§63)",
     "no surviving challenger strictly beats the champion ⇒ KEEP_CHAMPION (no winner forwarded)",
+    "if a challenger carries sampled eval evidence, its directional lift must be statistically SIGNIFICANT (not noise) to qualify (STREAM 2026); absent evidence ⇒ directional lift stands (backward-compatible)",
     "deterministic selection: largest clean lift, stable id tie-break; no clock/random",
     "grantsNoPromotion:true, selfAuthorized:false — promotion stays EXTERNAL via evolution-loop.applyExternalPromotion",
   ]),
