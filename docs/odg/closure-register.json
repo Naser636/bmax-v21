@@ -3980,6 +3980,19 @@
       "acceptance": "ODG-accepted 2026-11-08: structured-roadmap-deps is blocked on writing the PROTECTED runtime/governance/ROADMAP.json (owner-gated). Non-contournement advance: runtime/core/roadmap-deps-preview-validation.ts validates the PREVIEW (docs/odg/roadmap-dependencies.json) READ-ONLY against ROADMAP.json missions — it writes NOTHING to the protected path. Proves the preview is ready-to-apply: every referenced mission id resolves (DEPLOY_BMAX_DASHBOARD_PROD_V1 + VPS_DEPLOYMENT_READINESS both exist), no self-dependency, and the graph is ACYCLIC (via dep-planner.planLayers, no second graph engine; all nodes incl. to-only nodes). Fail-closed: unknown ref / self-dep / cycle => invalid. LIVE: valid=true, acyclic=true. 7 assertions; odg-test-report PASS; project tsc clean. structured-roadmap-deps stays BLOCKED (owner authorizes the protected ROADMAP.json write), now de-risked with a proven-ready preview.",
       "evidence": "runtime/core/roadmap-deps-preview-validation.ts; runtime/core/roadmap-deps-preview-validation.test.ts; docs/odg/roadmap-dependencies.json; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie19-self-mission-proposer",
+      "title": "SÉRIE 19 §7: self-discovery to verifiable missions (closes the verification gap, under governance)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie14-global-improvement-engine"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 19 §7 — ODG discovers its own improvements and turns them into VERIFIABLE missions. World research (2026 self-improving agents AIDE2/Godel-Agent/AI-Scientist-v2): discovery is easy, VERIFIED-under-governance is the hard part; the frontier convention keeps the HUMAN in problem-selection+authorization while the agent PROPOSES+iterates. runtime/core/self-mission-proposer.ts REUSES global-improvement-engine.analyzeGaps + the canonical PROPOSED mission shape (no 2nd mission system): a COMPUTER_SIDE gap (COVERAGE) => a PROPOSED mission (grantsNoPermission, selfAuthorized:false, linksToCanonicalMissionPath) carrying a VERIFIABLE acceptance criterion (closes the verification gap); an OWNER_GATED gap (SCORECARD/gates/campaigns) => routed to OWNER_DECISION (not self-executable); fail-closed: no gap => no proposal; the proposer NEVER self-authorizes/promotes. LIVE: every proposal PROPOSED, selfAuthorizedAny=false. 9 assertions; odg-test-report PASS; project tsc clean. Completes the autonomy chain: diagnose->analyze->PROPOSE verifiable mission->canonical gate authorizes.",
+      "evidence": "runtime/core/self-mission-proposer.ts; runtime/core/self-mission-proposer.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
