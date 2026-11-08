@@ -35,7 +35,7 @@ const CAMPAIGNS = Object.freeze([
     id: "C4", section: "§86",
     objective: "NOT_RECOVERABLE_VERBATIM. Known framing (matrix §XIX / FRONTIER_V124_PREPARATION §80): depends on 15-profession proofs (now E2/E3) + FR-07/FR-08.",
     mechanism: ["profession P1-P15 E2/E3 references", "benchmark-factory", "campaign-controller"], verifier: "independent profession-proof review + campaign objective demonstration",
-    status: "PARTIAL", closed: false, gap: "profession E2/E3 proofs now PRESENT; FR-07 (network) owner-gated + global objective not yet demonstrated",
+    status: "PARTIAL", closed: false, gap: "profession E2/E3 proofs now PRESENT; network (FR-07) now OWNER-AUTHORIZED + demonstrated (radar real-signal loop). Residual blocker is NOT network: the C1-C4 OBJECTIVE definitions are NOT_RECOVERABLE (index-only) — the owner must supply them before closure can be demonstrated end-to-end (owner-INFORMATION, not owner-permission)",
   },
 ]);
 
