@@ -1,0 +1,27 @@
+# ODG runtime systemd unit TEMPLATE — install requires ROOT (the single human action).
+# The owner reviews, fills <PLACEHOLDERS>, copies to /etc/systemd/system/odg.service, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now odg.service
+# This file is a TEMPLATE only; nothing here is auto-installed (no root available to this agent).
+[Unit]
+Description=ODG runtime (Next app)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=<DEPLOY_USER>
+WorkingDirectory=<REPO_ABS_PATH>
+Environment=NODE_ENV=production
+Environment=PORT=<PORT_NOT_CONFLICTING_WITH_3000_8080_11434>
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=5
+# Hardening (review before enabling): no new privileges, private tmp, read-only home.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=<REPO_ABS_PATH>
+
+[Install]
+WantedBy=multi-user.target
