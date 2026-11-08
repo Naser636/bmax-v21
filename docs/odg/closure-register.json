@@ -3258,6 +3258,37 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-pipeline.ts + runtime/bin/odg-frontier.ts wire the five Frontier lots into the REAL canonical chain RADAR->ODG(integrate)->POLICY/AUTHORITY->campaign-controller selection->LAB+EVOLUTION(real WI-FR-05 bwrap sandbox)->EVIDENCE->DECISION, with NO second queue/scheduler/store/authorizer/orchestration. REUSE: frontier-radar, frontier-radar-store (DEFERRED lot), action-gate.evaluateAction (POLICY; identity principal/verb/target + ANALYZE observational; a consequential WRITE without authority is DENIED), objective-authorization (ODG-autonomy classification), campaign-controller.advance/selectNextLot (the ONLY scheduler), evolution-loop->frontier-lab->frontier-sandbox (Tester), mission-evidence.buildEvidenceRecord + evidence-provenance (canonical EVIDENCE). ODG admission requires POLICY ALLOW AND an EXTERNAL authorization (authorizedBy a non-Radar actor, approved) => the Radar can NEVER self-authorize; a non-admitted proposal stays a DEFERRED lot (traceable, not executed); promotion is NOT performed by the pipeline (external/governed). odg-frontier is the REAL entrypoint: tested by SPAWNING the actual process (like odg-campaign-run), driving the whole chain through the binary (not internal calls) with the real bubblewrap sandbox. 15 chain assertions (valid/invalid signal, POLICY deny, no-authorization, self-authorization refused, admissible, canonical selection, runner failure, contradiction/regression, integrity DETECTED, inconclusive/no-fake-evidence, idempotence, no-parallel-architecture, stages, no-self-promotion) + 8 spawned-entrypoint assertions (authorized full traversal + no-auth refusal). odg-test-report PASS; CI test:report gated (both suites); campaign-controller 36/36; strict tsc clean (incl. the bin); build+typescript OK. Preserves the contracts/interfaces needed for WI-FR-07 (real network/weekly) and WI-FR-08 (compounding) without pretending they are built.",
       "evidence": "runtime/core/frontier-pipeline.ts; runtime/bin/odg-frontier.ts; runtime/core/frontier-pipeline.test.ts; runtime/bin/odg-frontier.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-07-radar-live-collection",
+      "title": "WI-FR-07 (Frontier): autonomous world Radar — real periodic collection (wiring+extension)",
+      "program": "V4",
+      "priority": 2,
+      "status": "DEFERRED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store",
+        "wi-fr-06-frontier-pipeline"
+      ],
+      "acceptance": "PREPARED (awaiting CTO execution mandate + explicit network/limits). Local wiring is immediately executable; LIVE network egress is OWNER-GATED (live systemd unit is IPAddressDeny=any).",
+      "evidence": "docs/odg/FRONTIER_V124_PREPARATION.md §5 — REUSE: bounded-http-client(allowlist/SSRF), ted/tender connectors(injected fetcher), frontier-radar.collect, evidence-provenance, research-ranking, systemd timer. GAPS: invoke collect() live, cross-run seen-fingerprints + per-source health/cursor (autonomy-store keys), cross-check corroboration, weekly cadence. NO new scheduler/queue/store/client.",
+      "nextAction": "LOCAL lot: invoke frontier-radar.collect() with an injected fetcher; persist cross-run dedup + source health; prove with fixtures. Live egress unit = separate owner-gated decision.",
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-08-compounding-loop",
+      "title": "WI-FR-08 (Frontier): Compounding Loop / global learning (compose upper-half)",
+      "program": "V4",
+      "priority": 2,
+      "status": "DEFERRED",
+      "deps": [
+        "wi-fr-03-frontier-lab",
+        "wi-fr-04-evolution-loop"
+      ],
+      "acceptance": "PREPARED (awaiting CTO execution mandate). Fully local-buildable by composing existing modules; no new primitive.",
+      "evidence": "docs/odg/FRONTIER_V124_PREPARATION.md §6 — lower half EXISTS (mission-evidence+provenance, memory-taxonomy, reuse-ledger<->capability-router, learning-loop, mission-reuse-recorder, improvement-baseline, idempotency-guard). GAPS to compose: reusable-asset registry w/ validity domain, positive leakage-free TRANSFER_TEST, VALIDATED_CAPABILITY gate, cross-mission MEASURED_COMPOUNDING aggregate. learning-reuse-proof already has the domain/hold-out concept (proof-only).",
+      "nextAction": "LOCAL lot: promote learning-reuse-proof domain concept to a production asset registry; add transfer-test (no data leakage) + validated-capability gate + compounding aggregate.",
+      "staleEvidence": false
     }
   ]
 }
