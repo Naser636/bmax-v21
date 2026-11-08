@@ -3337,7 +3337,9 @@
       ],
       "acceptance": "BLOCKED on an external (owner/CTO) decision: V12.4 §80/§115 asks to RECOVER the 166 capabilities; the repo records DEC-V60-166-RETIREMENT (ACCEPTED 2026-10-16) retiring them as non-enumerable. These conflict. Per V12.4 §2 truth hierarchy + repo evidence, do NOT reconstruct the 166 without a distinct CTO decision overriding DEC-V60. Awaiting owner arbitration.",
       "evidence": "docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md §0.1; docs/odg-operational/ODG_DECISION_CHANGELOG.md (DEC-V60-166-RETIREMENT)",
-      "staleEvidence": false
+      "staleEvidence": false,
+      "humanActionRequired": "CTO/owner arbitration required: issue a distinct decision either (a) OVERRIDING DEC-V60-166-RETIREMENT to mandate reconstructing the 166 capabilities, or (b) CONFIRMING DEC-V60 stands so V12.4 §115 recover-166 is formally superseded. ODG will not reconstruct the 166 without this explicit decision.",
+      "resumeTest": "After the owner decision is recorded in docs/odg-operational/ODG_DECISION_CHANGELOG.md: grep the new decision id; if (a) open a capabilities-reconstruction campaign and keep BLOCKED until built; if (b) mark this item ACCEPTED citing the confirming decision. Verify register integrity via runtime/core/campaign-controller.test.ts."
     },
     {
       "id": "g0-root-of-trust-tamper-tests",
