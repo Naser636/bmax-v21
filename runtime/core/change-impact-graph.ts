@@ -56,13 +56,19 @@ function refSource(root: string, name: string): string {
   return fs.readFileSync(fs.existsSync(tsPath) ? tsPath : jsPath, "utf8");
 }
 
-/** The runtime/core module node names (basenames of non-test `.js`), sorted. */
+/** The runtime/core module node names (basenames of non-test sources), sorted.
+ * Post zero-JS convergence the sources are `.ts` (the historical `.js` are gone), so the node set is the UNION of
+ * `.ts` and any remaining `.js` basenames (deduplicated). Scanning `.js` alone would return an empty graph on the
+ * TS-only runtime — the latent regression this now fixes. refSource still prefers the `.ts` port when present. */
 function moduleNames(root: string): string[] {
   const dir = coreDir(root);
-  return fs.readdirSync(dir)
-    .filter((f) => f.endsWith(".js") && !f.endsWith(".test.js"))
-    .map((f) => f.slice(0, -3))
-    .sort();
+  const names = new Set<string>();
+  for (const f of fs.readdirSync(dir)) {
+    if (f.endsWith(".test.ts") || f.endsWith(".test.js")) continue;
+    if (f.endsWith(".ts")) names.add(f.slice(0, -3));
+    else if (f.endsWith(".js")) names.add(f.slice(0, -3));
+  }
+  return Array.from(names).sort();
 }
 
 /** Direct internal deps (relative `./x` requires), de-duplicated + sorted. */
