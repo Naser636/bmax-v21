@@ -51,7 +51,8 @@ const existingModules = fs.readdirSync(path.join(__dirname)).filter((f: string) 
 {
   const s = M.summarize(manifest);
   check(s.programs === 4 && s.domains === 8 && s.phases === 11 && s.missions > 0, `summary: 4 programs / 8 domains / 11 phases / ${s.missions} missions`);
-  check(s.byStatus.PROPOSED === s.missions, "all build-missions are PROPOSED (not executed, not validated)");
+  check((s.byStatus.VALIDATED || 0) === 0, "no mission is claimed VALIDATED (nothing over-claimed)");
+  check(s.byStatus.PROPOSED >= 1 && M.validateProgram(manifest, { existingModules }).ok === true, "PROPOSED missions remain + any COMPLETED mission carries evidence (validator INTEGRATED)");
 }
 check(M.MASTER_PROGRAM_INTEGRATION_CONTRACT.invariants.some((i: any) => /EXTENSION/.test(i)), "contract: V12.4 remains directeur, program is an extension");
 
