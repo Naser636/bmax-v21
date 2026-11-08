@@ -4035,6 +4035,28 @@
       "acceptance": "ODG-accepted 2026-11-08: a research agent found a SELF-DECLARED gap — dataset-quality-assertions.ts marked freshness + volume NOT_YET_IMPLEMENTED (requires timestamp+clock). World ref: Monte Carlo/Barr Moses 5 Pillars of Data Observability (freshness/volume/schema/distribution/lineage), reaffirmed 2026. ODG had schema+lineage+distribution(PSI)+quality but NOT freshness/volume. runtime/core/dataset-freshness-volume.ts closes them PURELY (timestamps asOf+lastUpdatedAt as INPUTS, like p7 chaosRecovery — no clock): assessFreshness (staleness>SLA / future-ts / missing => HIGH, fail-closed), assessVolume (drop>maxDropPct / spike>maxSpikePct / 0-rows / missing-baseline => finding), findings in the existing dataset-quality shape (SARIF-ready). The inline registry stays honestly NOT_YET_IMPLEMENTED (scoped to its own point-in-time assertions) but now cross-references this sibling module — no registry-breaking, dataset-quality-assertions regression 14/14. Completes the 5-pillar set. 13 assertions; odg-test-report PASS; project tsc clean.",
       "evidence": "runtime/core/dataset-freshness-volume.ts; runtime/core/dataset-freshness-volume.test.ts; runtime/core/dataset-quality-assertions.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie21-progressive-delivery-gate",
+      "title": "SÉRIE 21 P5/P14: progressive-delivery analysis gate (canary-vs-baseline PROMOTE/HOLD/ROLLBACK)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08 (research-agent-found gap): Argo Rollouts AnalysisRun / Flagger (2026 progressive-delivery standard) run AUTOMATED canary analysis comparing canary SLIs vs baseline, auto-PROMOTE within tolerance / auto-ROLLBACK outside. ODG had canary-decision-pack (authorization) + dora-metrics (read-model) but NOTHING turned canary-vs-baseline into a verdict (grep-verified absent). runtime/core/progressive-delivery-gate.ts COMPOSES dora-metrics.fourKeys (CFR per cohort) + deployment-readiness.evaluateReadiness (admission) — no new engine: PROMOTE when canary CFR within tolerance of baseline AND below absolute ceiling; worse-than-baseline or above-ceiling => ROLLBACK (names deploy/odg-rollback.sh, owner-gated); fail-closed (unobserved CFR or NOT_READY => HOLD, never auto-PROMOTE). TRIGGERS NOTHING. 6 assertions; odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/progressive-delivery-gate.ts; runtime/core/progressive-delivery-gate.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie21-ai-act-in-force",
+      "title": "SÉRIE 21 P10: EU AI-Act obligation in-force tracker (date-aware, injected register)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08 (research-agent-found gap): EU AI Act (Reg 2024/1689) staged application as amended by the Digital Omnibus (Reg 2026/1744, in force 27-Jul-2026): GPAI 2-Aug-2025, Art.50 + general 2-Aug-2026, stand-alone high-risk DEFERRED to 2-Dec-2027, embedded high-risk 2-Aug-2028. ai-act-role-classifier deliberately carries NO dates and defers to a STANDARDS_OBLIGATIONS_REGISTER referenced-but-never-implemented (grep-verified). runtime/core/ai-act-in-force.ts is that consumer: REUSES classifyRole for roles/obligations, then maps each against a CALLER-SUPPLIED register of staged dates (dates are DATA, never hardcoded, so an amended/contested date stays data) and an injected asOf (ISO string, no live clock; YYYY-MM-DD compares chronologically). Fail-closed: register-silent or bad asOf => UNKNOWN_DATE, NEVER asserted IN_FORCE; deny-by-default via the classifier; NOT legal advice / NOT a certification. 7 assertions; odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/ai-act-in-force.ts; runtime/core/ai-act-in-force.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
