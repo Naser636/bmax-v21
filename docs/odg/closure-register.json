@@ -3303,6 +3303,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-collection.ts closes the LOCAL gaps of the autonomous Radar WITHOUT real network and WITHOUT a new scheduler/queue/store/client: invokes frontier-radar.collect() via an INJECTED fetcher (fail-closed AUTH_REQUIRED when none); adds the two durable partitions the Radar lacked — a CROSS-RUN seen-fingerprint set (raw-signal dedup across ticks) and a per-source HEALTH/CURSOR record (lastCollected/errors/cursor) — via autonomy-store; exposes a PURE weekly-cadence predicate (real cadence = the EXISTING systemd timer, not an in-process scheduler); feeds qualified candidates/proposals to frontier-radar-store (canonical DEFERRED-lot integration). LIVE egress stays BLOCKED/owner-gated (live unit IPAddressDeny=any); fixtures prove PROCESSING, never the Internet. SIGNAL != FACT; Radar never self-authorizes (preserved from FR-01/02). 11 assertions (fail-closed no-fetcher, injected collect+qualify+persist, cross-run dedup, source health, BLOCKED_SOURCE on SSRF, cadence predicate, durable seen set); odg-test-report PASS; CI test:report gated; strict tsc clean; build+typescript OK. ODG accepted on proof of processing+dedup+persistence, not module presence.",
       "evidence": "runtime/core/frontier-collection.ts; runtime/core/frontier-collection.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "p5-deployment-readiness",
+      "title": "P5 (Cloud/DevOps): deployment-readiness evaluator (local coherence gap; no deployment)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/deployment-readiness.ts — PURE deny-by-default readiness evaluator over supplied evidence; 11 controls (config, reproducibility, dependencies, artifacts, tests, security, observability, rollback, integrity, traceability, envPrereqs) => READY/NOT_READY + exact blockers. Performs NO deployment, spawns nothing, no network. Integrity reuses evidence-provenance.verifyProvenance (tampered stamp => FAIL). Closes the P5 coherence gap flagged in the research dossier (module was test-only). A readiness verdict is NOT an authorization to deploy (deployment owner-gated). 18 assertions (full=>READY, empty=>11 blockers, each single missing control, provenance-stamp integrity + tamper); odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/deployment-readiness.ts; runtime/core/deployment-readiness-eval.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
