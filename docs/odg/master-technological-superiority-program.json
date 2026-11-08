@@ -729,6 +729,23 @@
         "E-MEASURE"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/engineering-scheduler.ts — LPT scheduling (minimize makespan) + critical-path (longest task = makespan lower bound) + worker cap at cores; unknown-duration task scheduled conservatively not dropped. 7/7. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-OPTEXP",
+      "title": "Engineering Intelligence: optimization experiment + controlled promotion",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "optimization-experiment.ts",
+        "gate-instrumentation.ts",
+        "eval-significance.ts"
+      ],
+      "dependsOn": [
+        "E-MEASURE"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/optimization-experiment.ts — PROMOTE an optimization only if speed reduction >= target AND detection preserved AND correctness preserved AND (if evidence) statistically significant; any quality/detection loss => REJECT regardless of speed; insufficient/non-significant => INCONCLUSIVE; selfAuthorized:false (promotion external). 9/9. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
