@@ -3013,6 +3013,55 @@
         "runtime/core/integration-agent-governance.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-p9-25-cost-engine",
+      "title": "WI-P9-25 (P9): FinOps cost engine (model/attribution/budgets/alerts/anomaly/compare)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P9 beyond a calculator — runtime/core/cost-engine.ts: cost model + attribution (per mission/metier/resource/unit) + budgets + alerts + anomaly (mean+k*std) + scenario comparison (cost then cost/perf); every figure kind OBSERVED|ESTIMATED|SIMULATED, synthetic cost never presented as real spend. 11/11; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/cost-engine.ts",
+        "runtime/core/cost-engine.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-23-stream-reliability",
+      "title": "WI-INT-23: integration P12->P4->P7 (event stream->data quality->reliability)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p12-15-event-stream-engine",
+        "wi-p9-25-cost-engine"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-stream-reliability.ts composes event-stream-engine(P12)->dataset-quality-service(P4)->reliability(P7: duplicate/loss/ordering + SLO); tests interruption/replay/dups/disorder/loss; honest in-memory engine (not a distributed broker); fail-closed DEGRADED. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/integration-stream-reliability.ts",
+        "runtime/core/integration-stream-reliability.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-24-inference-cost",
+      "title": "WI-INT-24: integration P13->P9->P6 (inference->cost->quality)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p13-17-inference-engine",
+        "wi-p9-25-cost-engine",
+        "wi-p6-18-quality-harness"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/integration-inference-cost.ts composes inference-engine(P13)->cost-engine(P9)->quality-harness(P6); CPU real / gpu-sim labelled; cost/perf ranking + budget alerts + latency anomaly; costs ESTIMATED/SIMULATED never real spend; no physical GPU/paid provider invented; fail-closed on failures. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/integration-inference-cost.ts",
+        "runtime/core/integration-inference-cost.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
