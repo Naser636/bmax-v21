@@ -3362,6 +3362,19 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/api-contract.ts closes the P8 gap (contract validation previously inline-only in parcours-secure-api-governance). PURE standalone module: contracts, typed schemas (string/number/boolean/object/array), input/output validation, versioning + backward-COMPATIBILITY (new required input / removed required output / type change / version downgrade => BREAKING; new declared error => non-breaking), IDEMPOTENCY (idempotent op requires idempotencyKey; replay => safe DUPLICATE), an error taxonomy, and AUTH-scope validation of the contract REQUIREMENT. REUSES parcours.validateApiExchange for the base presence/version check (same canonical convention) — NO second contract engine, NO second authorizer (authorization admission stays with action-gate; this validates the contract requirement only). 26 assertions (positive/negative/type/auth/declared-errors/idempotency/breaking-compat/adversarial-extra-fields/determinism/no-2nd-authorizer); parcours non-regression PASS; odg-test-report PASS; CI test:report gated; strict tsc clean; build+typescript OK.",
       "evidence": "runtime/core/api-contract.ts; runtime/core/api-contract.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-execution-launch-readiness",
+      "title": "V12.4 execution launch-readiness dispositif (preparation phase; no execution)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: docs/odg/V12.4_EXECUTION_LAUNCH_READINESS.md prepares the full-execution dispositif WITHOUT executing it (per CTO stop): verified real state + native mechanisms; 122-section execution rollup (references the living matrix, not duplicated); global dependency graph (independent/sequential/owner-gated); batch & parallelization plan; continuation/resume protocol (reuse checkpoint-engine/idempotency-guard/odg-resume/campaign-controller NO-REPEAT); build/test/validation chain VERIFIED (build:runtime, odg verify, strict tsc, odg-test-report=283 suites, campaign-controller); Docker diagnostic (docker v29.1.3 present, host container edg-core observed READ-ONLY + preserved, 8 CPU/22Gi/161G); native orchestration verified (no 2nd brain/queue/scheduler/authorizer; G0 proven); campaigns+15-prof map (refs matrix + FRONTIER_V124_PREPARATION); Radar+self-improvement map (FR-01..08, live egress owner-gated); blockers & owner-decision register; Git/preservation protocol; gap report; launch procedure. NO second roadmap/compass created. Documentation-only (no code, no network, no execution of F01-F40/Gates/15-prof). Register 233 items.",
+      "evidence": "docs/odg/V12.4_EXECUTION_LAUNCH_READINESS.md",
+      "staleEvidence": false
     }
   ]
 }
