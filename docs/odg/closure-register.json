@@ -3245,6 +3245,56 @@
         "runtime/core/primitive-validation.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-a2-33-cognitive-workflow-selection",
+      "title": "WI-A2-33 (A2): cognitive-decision selects authorised workflows for P15",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-cog-30-cognitive-objective-selection",
+        "wi-p15-28-workflow-engine"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-workflow-selection.ts closes A2 — cognitive-objective-selection (under POLICY) selects which workflow P15 runs; P15 owns execution/approval/recovery (no second engine); refused/deferred/contaminated=>no workflow; suspect=>approval-gated. 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/cognitive-workflow-selection.ts",
+        "runtime/core/cognitive-workflow-selection.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-int-34-secure-api-governance",
+      "title": "WI-INT-34: P3+P8 integrated parcours (security/API->P15->P6)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-p15-28-workflow-engine",
+        "wi-p6-18-quality-harness"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/parcours-secure-api-governance.ts integrates P3 (license/security gate, reuses license-policy) + P8 (API-contract validation) into a governed P15 workflow judged by P6; copyleft/denied license or API incompatibility BLOCKS (fail-closed); P3 and P8 now each consumed in one validated inter-metier parcours; synthetic scope (no external scanner claimed). 8/8; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/parcours-secure-api-governance.ts",
+        "runtime/core/parcours-secure-api-governance.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-a5-35-learning-loop",
+      "title": "WI-A5-35 (A5): closed learning loop (measured improvement)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-mem-08-memory-taxonomy"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/learning-loop.ts closes A5 — RESULT->EVIDENCE->EVALUATION->MEMORY->LESSON->IMPROVEMENT->REUSE (reuses memory-taxonomy); only evidenced REAL results count (SIMULATED excluded from facts); improvement demonstrated ONLY by a measured before/after delta; regressions surfaced; only consolidated+provenanced prior lessons reusable. 10/10; tsc clean; build OK; odg verify green.",
+      "evidence": [
+        "runtime/core/learning-loop.ts",
+        "runtime/core/learning-loop.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
