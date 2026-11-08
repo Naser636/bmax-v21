@@ -4485,6 +4485,18 @@
       ],
       "evidence": "ODG-accepted 2026-11-08 (Engineering Intelligence E-FLAKY + Deterministic Replay, section P3/section 4): runtime/core/flaky-replay-gate.ts — flakyGate decides a suite stability from repeated runs and (non-negotiable) a flaky test is NEVER declared PASS: mixed outcomes => FLAKY_QUARANTINE (quarantined, not passed; does not become PASS by repetition or masking); all-pass across >=minRuns => STABLE_PASS; all-fail => STABLE_FAIL (consistent, not flaky); too few runs => INSUFFICIENT (fail-closed). deterministicReplay: runs with the SAME seed must produce identical outputs; a divergence => NON_DETERMINISTIC (never PASS); no replays => cannot assert determinism (fail-closed). REUSES p2-passk-reliability.passAtK (stability) + p2-flaky-root-cause.classifyFlakiness (OD/NOD cause). PROVEN 9/9; tsc clean; in test:report. Decides only (runs no test). COMPLETED, not yet VALIDATED.",
       "acceptance": "ODG-accepted 2026-11-08 (Engineering Intelligence E-FLAKY + Deterministic Replay, section P3/section 4): runtime/core/flaky-replay-gate.ts — flakyGate decides a suite stability from repeated runs and (non-negotiable) a flaky test is NEVER declared PASS: mixed outcomes => FLAKY_QUARANTINE (quarantined, not passed; does not become PASS by repetition or masking); all-pass across >=minRuns => STABLE_PASS; all-fail => STABLE_FAIL (consistent, not flaky); too few runs => INSUFFICIENT (fail-closed). deterministicReplay: runs with the SAME seed must produce identical outputs; a divergence => NON_DETERMINISTIC (never PASS); no replays => cannot assert determinism (fail-closed). REUSES p2-passk-reliability.passAtK (stability) + p2-flaky-root-cause.classifyFlakiness (OD/NOD cause). PROVEN 9/9; tsc clean; in test:report. Decides only (runs no test). COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "serie25-engineering-scheduler",
+      "title": "V5-E Engineering Intelligence: resource-aware scheduler + critical path",
+      "program": "V5",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie25-engineering-intelligence-emeasure"
+      ],
+      "evidence": "ODG-accepted 2026-11-08 (Engineering Intelligence E05/E06/E07): runtime/core/engineering-scheduler.ts schedules measured suite/task durations across workers to minimize makespan (Longest-Processing-Time greedy: longest-first to the least-loaded worker), identifies the critical path (single longest task = makespan lower bound max(longest, total/workers)), and caps workers at cores (no over-subscription). Fail-closed: a task with no valid duration is UNKNOWN and scheduled conservatively (max observed), never dropped; empty => not schedulable. Reuses gate-instrumentation durations. Verified: {100,50,50,30}/2 workers => makespan 130, critical path a(100), lower bound 115. PROVEN 7/7; tsc clean; in test:report. Plans only (runs nothing). COMPLETED, not yet VALIDATED.",
+      "acceptance": "ODG-accepted 2026-11-08 (Engineering Intelligence E05/E06/E07): runtime/core/engineering-scheduler.ts schedules measured suite/task durations across workers to minimize makespan (Longest-Processing-Time greedy: longest-first to the least-loaded worker), identifies the critical path (single longest task = makespan lower bound max(longest, total/workers)), and caps workers at cores (no over-subscription). Fail-closed: a task with no valid duration is UNKNOWN and scheduled conservatively (max observed), never dropped; empty => not schedulable. Reuses gate-instrumentation durations. Verified: {100,50,50,30}/2 workers => makespan 130, critical path a(100), lower bound 115. PROVEN 7/7; tsc clean; in test:report. Plans only (runs nothing). COMPLETED, not yet VALIDATED."
     }
   ]
 }
