@@ -797,6 +797,22 @@
         "E-FLAKY"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/flaky-ci-intelligence.ts — analyzes CI outcome history for flakiness, RECURRENCE (chronic across distinct runs) + ENVIRONMENTAL correlation (fails concentrated in one env); quarantine + PROPOSED prevention (pin-env / deterministic-seed); a flaky/recurrent/env-dependent test is NEVER PASS; insufficient history => INSUFFICIENT. Reuses flaky-replay-gate. 7/7. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-PERF-OBS",
+      "title": "Engineering Intelligence wave-2: performance observability (reproducible before/after)",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "performance-observability.ts",
+        "gate-instrumentation.ts"
+      ],
+      "dependsOn": [
+        "E-MEASURE"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/performance-observability.ts — duration P50/P95 + CPU + memory + workers + cold-start + suite count record + REPRODUCIBLE before/after comparison (gain credited only if >=minSamples both sides AND variance p95/p50 <= threshold); too-few/high-variance => NOT_REPRODUCIBLE. Reuses gate-instrumentation. 6/6. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
