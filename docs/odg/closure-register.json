@@ -2931,6 +2931,38 @@
         "runtime/core/inference-engine.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-p6-18-quality-harness",
+      "title": "WI-P6-18 (P6): integrated quality harness (regression/coverage/eval/contamination)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-meta-07-meta-intelligence"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: P6 industrialisation — new additive PURE runtime/core/quality-harness.ts composes regression-vs-baseline, affected-test coverage (fail-closed), eval metrics (precision/recall/f1), and benchmark-contamination (REUSES meta-intelligence); fail-closed verdict FAIL>REVIEW>PASS; runs no tests (classifies supplied results). quality-harness.test.ts 11/11; tsc strict clean; build:runtime OK; odg verify green.",
+      "evidence": [
+        "runtime/core/quality-harness.ts",
+        "runtime/core/quality-harness.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p10-19-compliance-scenario",
+      "title": "WI-P10-19 (P10): end-to-end synthetic compliance scenario (NOT_CERTIFIED, anti-overclaim)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-meta-07-meta-intelligence"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: P10 industrialisation — new additive PURE runtime/core/compliance-scenario.ts drives identify->classify-risk->obligations->evidence->gaps->anti-overclaim->traceability->report; deny-by-default; required obligation w/o evidence=GAP; REUSES hardened regulatory-assurance.assertNotCertified (certification/accreditation claims refused) + meta-intelligence (verifier independence); verdict ALWAYS NOT_CERTIFIED (software assistance, not certification). compliance-scenario.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify green.",
+      "evidence": [
+        "runtime/core/compliance-scenario.ts",
+        "runtime/core/compliance-scenario.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
