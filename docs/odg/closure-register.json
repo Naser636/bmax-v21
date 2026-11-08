@@ -4008,6 +4008,33 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/self-improvement-chain.ts is ONE integrated entry point that runs the DISCOVERY->PROPOSAL half by COMPOSING the 3 existing modules (no parallel engine): DIAGNOSE (global-improvement-engine.observe = codebase-diagnostic+scorecard) -> ANALYZE (analyzeGaps honest NO_FINDING/NOT_MEASURED/HEALTHY/DEGRADED/UNKNOWN) -> PROPOSE (self-mission-proposer PROPOSED verifiable missions, owner-gated=>OWNER_DECISION). The chain STOPS at the CANONICAL_AUTHORIZATION boundary and NEVER self-authorizes (selfAuthorized always false); the execution half SANDBOX->BUILD->ADVERSARIAL_EVAL->RETAIN/ROLLBACK runs via self-improvement.runSelfImprovement AFTER the canonical gate (referenced, not duplicated). 8-stage chain; chain-wide injection resistance (injected gap detail => quarantined, never a proposal); fail-closed on malformed facts; no actionable gap => nextStage NONE (NO_FINDING is not a mission). 9 assertions; odg-test-report PASS; project tsc clean.",
       "evidence": "runtime/core/self-improvement-chain.ts; runtime/core/self-improvement-chain.test.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie21-lethal-trifecta-gate",
+      "title": "SÉRIE 21 P2/P3: lethal-trifecta session detector (OWASP Agentic 2026 / Five Eyes / CSA)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p3-security-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: TWO independent research agents converged on this gap (both grep-verified trifecta=>0 hits — not duplication). World ref: the lethal trifecta (Willison 2025-06-16; OWASP Top 10 for Agentic Applications 2026 pub 2025-12-09; Five Eyes/CISA agentic-AI guidance May-2026; CSA Jun-2026: 98% of assessed production agents exhibit it). An agent session is exploitable ONLY when 3 legs co-occur in ONE session: private-data access + untrusted-content exposure + external-egress channel. ODG detected each leg in isolation but nothing correlated them across a session. runtime/core/lethal-trifecta-gate.ts REUSES bash-command-governor.analyze (leg1 secrets + leg3 network via predictedEffects) + frontier-radar.sanitizeExternal (leg2 untrusted) — no new engine: all-3=>BLOCK/ESCALATE + severLeg; any single leg=>ALLOW; fail-closed (UNKNOWN/unparseable command conservatively asserts legs 1+3). 8 assertions; odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/lethal-trifecta-gate.ts; runtime/core/lethal-trifecta-gate.test.ts; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie21-dataset-freshness-volume",
+      "title": "SÉRIE 21 P4: dataset freshness + volume detector (Monte Carlo 5 pillars completion)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p4-data-reference",
+        "serie14-p4-distribution-drift"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: a research agent found a SELF-DECLARED gap — dataset-quality-assertions.ts marked freshness + volume NOT_YET_IMPLEMENTED (requires timestamp+clock). World ref: Monte Carlo/Barr Moses 5 Pillars of Data Observability (freshness/volume/schema/distribution/lineage), reaffirmed 2026. ODG had schema+lineage+distribution(PSI)+quality but NOT freshness/volume. runtime/core/dataset-freshness-volume.ts closes them PURELY (timestamps asOf+lastUpdatedAt as INPUTS, like p7 chaosRecovery — no clock): assessFreshness (staleness>SLA / future-ts / missing => HIGH, fail-closed), assessVolume (drop>maxDropPct / spike>maxSpikePct / 0-rows / missing-baseline => finding), findings in the existing dataset-quality shape (SARIF-ready). The inline registry stays honestly NOT_YET_IMPLEMENTED (scoped to its own point-in-time assertions) but now cross-references this sibling module — no registry-breaking, dataset-quality-assertions regression 14/14. Completes the 5-pillar set. 13 assertions; odg-test-report PASS; project tsc clean.",
+      "evidence": "runtime/core/dataset-freshness-volume.ts; runtime/core/dataset-freshness-volume.test.ts; runtime/core/dataset-quality-assertions.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }

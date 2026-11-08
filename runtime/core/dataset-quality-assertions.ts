@@ -34,9 +34,13 @@ const ASSERTION_TYPES = Object.freeze([
   { name: "pattern_match", area: "conformance", status: "IMPLEMENTED", description: "string values match a declared regex (malformed regex ⇒ fail-closed HIGH schema finding)" },
   // Declared-but-not-implemented (Moses's observability dimensions + dbt relationships). Honest GAPS — never
   // silently passed. A caller must NOT treat their absence as a clean result.
-  { name: "freshness", area: "freshness", status: "NOT_YET_IMPLEMENTED", description: "data recency vs an expected window (requires a timestamp + clock — out of the pure, point-in-time scope today)" },
-  { name: "distribution", area: "distribution", status: "NOT_YET_IMPLEMENTED", description: "value distribution vs an expected profile (anomaly/drift)" },
-  { name: "volume", area: "volume", status: "NOT_YET_IMPLEMENTED", description: "row-count vs an expected range" },
+  // Declared-but-not-implemented INLINE here (this registry is scoped to point-in-time single-dataset assertions).
+  // NOTE: freshness + volume are now implemented in the sibling module `dataset-freshness-volume.ts`, and distribution
+  // in `p4-distribution-drift.ts` (PSI) — completing the Monte Carlo 5 pillars across the P4 module set. They remain
+  // NOT_YET_IMPLEMENTED *in this inline registry* (which composes neither a timestamp nor a cross-run baseline).
+  { name: "freshness", area: "freshness", status: "NOT_YET_IMPLEMENTED", description: "data recency vs an expected window — implemented in dataset-freshness-volume.assessFreshness (timestamps as inputs); not inline here" },
+  { name: "distribution", area: "distribution", status: "NOT_YET_IMPLEMENTED", description: "value distribution vs an expected profile — implemented in p4-distribution-drift.assessDrift (PSI); not inline here" },
+  { name: "volume", area: "volume", status: "NOT_YET_IMPLEMENTED", description: "row-count vs an expected range — implemented in dataset-freshness-volume.assessVolume; not inline here" },
   { name: "relationships", area: "referential_integrity", status: "NOT_YET_IMPLEMENTED", description: "referential integrity across datasets (dbt relationships) — single-dataset scope today" },
 ]);
 
