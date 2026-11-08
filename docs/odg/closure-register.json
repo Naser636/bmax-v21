@@ -3625,6 +3625,28 @@
       "acceptance": "ODG-accepted 2026-11-08: profession-p15-workflow-reference.ts REUSES workflow-engine (defineProcess+runProcess, approval-gated, retry-bounded, dep-layered), NO second orchestrator. DEMONSTRATED: an approved process => COMPLETED; an unapproved consequential step => PENDING_APPROVAL (HALTED, release NOT executed - fail-closed); a flaky step recovers within the retry budget; an erroring step with no budget => FAILED. SYNTHETIC only; real enterprise process with live execution (E5) owner-gated NOT_RUN. 4 assertions; odg-test-report PASS; CI gated; strict tsc clean. §43 P15 ABSENT->PRESENT_AND_PROVEN (E2+E3).",
       "evidence": "runtime/core/profession-p15-workflow-reference.ts; runtime/core/profession-p15-workflow-reference.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-campaigns-c1-c4-closure-ledger",
+      "title": "V12.4 §83-§87: four campaigns C1-C4 closure ledger (honest, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/campaign-closure-ledger.ts enumerates C1-C4 (§83-§86) with KNOWN objective (verbatim marked NOT_RECOVERABLE where the preserved V12.4 is index-only — NOT fabricated), real mechanism/evidence, independent verifier, honest status, and a FAIL-CLOSED closed flag. A campaign is closed ONLY when its objective is DEMONSTRATED end-to-end (status CLOSED) — a sub-lot ACCEPTED count is NOT closure; currently 0 closed (C2/C3 DEMONSTRATED_SLICE, C4 PARTIAL now that profession E2/E3 proofs are present, C1 TO_AUDIT). §87 closure gates defer to the A-G gates-ledger (no second gate set). verifyLedger fails closed on an incomplete campaign OR an unsound closure. 10 assertions; odg-test-report PASS; CI gated; strict tsc clean. §83-§87 PRESENT (honest closure ledger; global closure NOT asserted).",
+      "evidence": "runtime/core/campaign-closure-ledger.ts; runtime/core/campaign-closure-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
+    },
+    {
+      "id": "v124-dossiers-a-f-ledger",
+      "title": "V12.4 §71-§76: six CTO dossiers A-F ledger (honest, fail-closed)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/dossier-ledger.ts enumerates dossiers A-F (§71-§76) with KNOWN purpose (verbatim marked NOT_RECOVERABLE where index-only — NOT fabricated), the real seeding artifact where one exists, independent verifier, honest status. A (research) seeded by the research-readiness doc + frontier-prep (PARTIAL); E (reality) realized as the Target-to-Reality matrix (PARTIAL); B/C/D/F verbatim NOT_RECOVERABLE => TO_AUDIT with NO fabricated seed. verifyLedger fails closed on an incomplete dossier OR an unsound presence claim (PRESENT without a cited artifact, or TO_AUDIT claiming one). 9 assertions; odg-test-report PASS; CI gated; strict tsc clean. §71-§76 PRESENT (honest dossier ledger).",
+      "evidence": "runtime/core/dossier-ledger.ts; runtime/core/dossier-ledger.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
