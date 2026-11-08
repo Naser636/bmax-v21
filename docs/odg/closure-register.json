@@ -2847,6 +2847,34 @@
         "runtime/core/engineering-chain-scenario.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-wsconf-12-writeset-scheduler",
+      "title": "WI-WSCONF-12 (§79): write-set-safe parallel scheduler (fixes dep-planner concurrent-write hazard)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: Gate A found a REAL gap — dep-planner.planLayers parallelises by dependencies only, so no-dep + overlapping-write-set items share a parallel layer (violates §79 no-uncoordinated-concurrent-writes). New additive PURE runtime/core/writeset-scheduler.ts composes dep-planner + scope-observer path semantics and refines layers so each sub-layer is BOTH dependency-safe AND write-set-disjoint (conflict = path equality or ancestor-prefix); fail-closed via dep-planner (cycle/unknown-dep/dup). Reuses, does not duplicate (§139). writeset-scheduler.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Reinforces Campaign-3 multi-agent safe parallelisation (§3D/§7).",
+      "evidence": [
+        "runtime/core/writeset-scheduler.ts",
+        "runtime/core/writeset-scheduler.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-auto-13-autonomy-matrix",
+      "title": "WI-AUTO-13 (§4): A1-A5 autonomy evidence matrix (honest, anti-overclaim)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: new additive PURE runtime/core/autonomy-matrix.ts maps demonstrated capabilities (evidence + kind REAL|SIMULATED|DECLARED) to the highest JUSTIFIED autonomy level — GRANTED requires all a level's caps with REAL evidence; SIMULATED ⇒ SIMULATED_ONLY (not granted for A3+, §4); DECLARED/no-evidence ⇒ nothing (§57); monotonic. Assigns no level by fiat. autonomy-matrix.test.ts 12/12; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. HONEST reading of ODG now: A2 on REAL evidence (planning/independent-verify/evidence exist+tested); A3+ NOT granted (persistence real in code but end-to-end only on SIMULATED scenarios; consequential execution D4-gated).",
+      "evidence": [
+        "runtime/core/autonomy-matrix.ts",
+        "runtime/core/autonomy-matrix.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
