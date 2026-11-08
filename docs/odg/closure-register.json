@@ -2875,6 +2875,34 @@
         "runtime/core/autonomy-matrix.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-agent-14-agent-factory",
+      "title": "WI-AGENT-14 (§54): Agent Factory unified seam (define/validate/classify/supervise, permission-confined)",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: Agent Factory was ABSENT/scattered; new additive PURE runtime/core/agent-factory.ts unifies it — defineAgent (contract-bound AgentSpec + sha256 contractSha), validateAgent (permission confinement: writeSet ⊆ contract.authorizedPaths, tools ⊆ allowedTools, budget ≤ contract.budget ⇒ else REJECTED; an agent without a contract gets NO permissions; §9/§54), maturityOf evidence-based (OPERATIONAL only with test evidence; declared≠configured≠testable≠operational), supervise stop on revoke/budget (§71). Composes (not duplicates) third-party-agent-gate/agent-identity/fleet-dispatcher. agent-factory.test.ts 19/19; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. Reinforces Campaign-3 (Agent Factory) from PARTIAL.",
+      "evidence": [
+        "runtime/core/agent-factory.ts",
+        "runtime/core/agent-factory.test.ts"
+      ],
+      "staleEvidence": false
+    },
+    {
+      "id": "wi-p12-15-event-stream-engine",
+      "title": "WI-P12-15 (P12): event-stream engine foundation (order/idempotency/replay/offsets)",
+      "program": "V3",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: P12 (Real-Time Data Streaming) was ABSENT; new additive PURE runtime/core/event-stream-engine.ts is its foundation — in-memory deterministic event log (honestly NOT a distributed broker): append-only total order (monotonic seq), per-key order, IDEMPOTENT publish (repeated idempotencyKey deduped, no re-append), replay from offset, type/key filters, monotonic consumer cursor. Synthetic deterministic load 500->450 appended/50 deduped. event-stream-engine.test.ts 13/13; tsc strict clean; build:runtime OK; odg verify build/typescript/contracts green. P12 moves ABSENT -> tested foundation (not yet operational metier).",
+      "evidence": [
+        "runtime/core/event-stream-engine.ts",
+        "runtime/core/event-stream-engine.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
