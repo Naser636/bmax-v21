@@ -3438,6 +3438,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/evaluator-independence.ts audits whether evaluators are genuinely independent: self-certification (verifier==builder) => COMPROMISED; a shared CRITICAL dimension (model/data/evaluator/evidence access) between builder and verifier => COMPROMISED; shared non-critical => WEAK; none => INDEPENDENT; fail-closed INSUFFICIENT_DATA on missing roles. Independence is DEMONSTRATED, not assumed from using multiple agents (§49). Reuses meta-intelligence (evaluator-capture lens); takes no decision, creates no authorizer. 8 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. §36/§49 evaluator-independence AUDIT TO_AUDIT->PRESENT_AND_PROVEN.",
       "evidence": "runtime/core/evaluator-independence.ts; runtime/core/evaluator-independence.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-p6-eval-reference",
+      "title": "V12.4 §43 P6: Quality/AI-Evaluation reference project (E2 executed + E3 adversarial)",
+      "program": "V4",
+      "priority": 2,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/profession-p6-eval-reference.ts is a runnable P6 independent-evaluation reference over a CLEARLY-LABELLED SYNTHETIC corpus (never real/client data, never E5). Strict train/test hold-out; confusion-matrix metrics (precision/recall/f1/accuracy) on the HELD-OUT set; adversarial metric-gaming check (train-memorizing model collapses on held-out => FLAGGED; high train score != capability). Reuses meta-intelligence (gaming lens); no second evaluator engine. Demonstrates E2 (reference project executed) + E3 (adversarial); E4 independent-audit separate; E5 external reality OWNER-GATED NOT_RUN (no inflated level). 7 assertions; odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK. First profession E2 lot (Lot C).",
+      "evidence": "runtime/core/profession-p6-eval-reference.ts; runtime/core/profession-p6-eval-reference.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
