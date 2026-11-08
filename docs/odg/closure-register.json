@@ -3175,6 +3175,17 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/learning-loop.ts closes A5 — RESULT->EVIDENCE->EVALUATION->MEMORY->LESSON->IMPROVEMENT->REUSE (reuses memory-taxonomy); only evidenced REAL results count (SIMULATED excluded from facts); improvement demonstrated ONLY by a measured before/after delta; regressions surfaced; only consolidated+provenanced prior lessons reusable. 10/10; tsc clean; build OK; odg verify green.",
       "evidence": "runtime/core/learning-loop.ts; runtime/core/learning-loop.test.ts",
       "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-01-frontier-radar",
+      "title": "WI-FR-01 (Frontier Radar foundation): source registry + qualification pipeline + mission proposal",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-radar.ts implements the resumption-mandate §4.1 Frontier Radar FOUNDATION (confirmed ABSENT by independent audit before build): Source Registry + SIGNAL->NORMALIZE->SANITIZE->DEDUP->QUALIFY->DECIDE->TECHNOLOGY-CANDIDATE->COMPARE-WITH-ODG(frontier gap)->MISSION-PROPOSAL. Enforced separations: SIGNAL != FACT (epistemicStatus UNVERIFIED, never auto-promoted); external content UNTRUSTED (prompt-injection => QUARANTINE); the Radar governs nothing and grants NO permission (proposals are PROPOSED, link to canonical mission path). Fail-closed decisions (unknown/zero-reliability source => REJECT; contradiction => ESCALATE). REUSE not duplication: collection reuses bounded-http-client allowlist+SSRF via an INJECTED fetcher (absent => AUTH_REQUIRED; NO new network client; fixtures prove processing, not live Internet); epistemic vocabulary reuses world-model. Pure/deterministic. 23/23 assertions; odg-test-report classifies PASS 1/1; added to CI test:report gate; build OK; typescript OK; odg verify build:true typescript:true. NOT yet wired to an entrypoint (foundation lot) => not in dist closure; wiring is a follow-up lot.",
+      "evidence": "runtime/core/frontier-radar.ts; runtime/core/frontier-radar.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
