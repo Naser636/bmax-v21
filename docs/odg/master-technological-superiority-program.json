@@ -781,6 +781,22 @@
         "E-TARGETED-VERIFY"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/persistent-impact-graph.ts — persistence + provenance (source digest) + automatic invalidation over change-impact-graph (no concurrent graph); fresh only while source digest matches, any file change => STALE => rebuild; stale/unknown-module/tampered-stamp => FULL; transitive consumers cycle-safe; real fs persistence round-trip. 15/15. COMPLETED, not yet VALIDATED."
+    },
+    {
+      "id": "E-FLAKY-CI",
+      "title": "Engineering Intelligence wave-2: Flaky CI Intelligence (history/recurrence/env)",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-10",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "flaky-ci-intelligence.ts",
+        "flaky-replay-gate.ts"
+      ],
+      "dependsOn": [
+        "E-FLAKY"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/flaky-ci-intelligence.ts — analyzes CI outcome history for flakiness, RECURRENCE (chronic across distinct runs) + ENVIRONMENTAL correlation (fails concentrated in one env); quarantine + PROPOSED prevention (pin-env / deterministic-seed); a flaky/recurrent/env-dependent test is NEVER PASS; insufficient history => INSUFFICIENT. Reuses flaky-replay-gate. 7/7. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
