@@ -3768,6 +3768,59 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/cross-metier-collaboration.ts demonstrates a complex problem (ship a data-backed API change safely) mobilising FIVE métiers into ONE coherent verdict, COMPOSING existing profession references (NO new engine): P4 data-quality + P8 api-contract.checkCompatibility + P3 security scan + P1 behaviour-preservation + P6 evaluation. FAIL-CLOSED: SHIP only when EVERY métier passes; a single failing métier => HOLD + the métier NAMED. DEMONSTRATED: clean scenario=>SHIP; a data defect=>HOLD(P4); a breaking API change=>HOLD(P8); a planted secret=>HOLD(P3); a behaviour change=>HOLD(P1); poor eval quality=>HOLD(P6); multiple failures=>all named; reproducible (same input=>identical verdict). SYNTHETIC only; real release (E5) owner-gated NOT_RUN. 11 assertions; odg-test-report PASS; project tsc clean. Step-5 multi-métier collaboration PROVEN.",
       "evidence": "runtime/core/cross-metier-collaboration.ts; runtime/core/cross-metier-collaboration.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "serie13-p1-semantic-regression-guard",
+      "title": "SÉRIE 13 P1: semantic-regression guard (SWE-bench 19.78%-semantically-wrong failure mode)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p1-fullstack-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 per-métier excellence, P1. World research (dated/sourced): SWE-bench Verified is the gold-standard coding benchmark (top agents 85-94% late-May-2026) BUT ~19.78% of solved cases are SEMANTICALLY WRONG — pass the stated test yet functionally incorrect (arXiv 2609.08149; Beyond SWE-Bench 2026). runtime/core/p1-semantic-regression-guard.ts composes the stated-test signal with P1 characterization baseline (reuses refactorPreservesBehaviour, NO new engine): SAFE only when stated-tests-pass AND held-out behaviour preserved; tests-pass+behaviour-changed => SEMANTIC_REGRESSION (the 19.78% case) fail-closed; coverage gap => INCOMPLETE; green stated-test alone is NOT proof. Tests positive/semantic-regression/test-failure/incomplete/anti-overclaim (7 assertions). odg-test-report PASS; project tsc clean. Decision INTEGRATE (local+synthetic) + WATCH (live SWE-bench E5 owner-gated NOT_RUN). Comparison recorded in docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md.",
+      "evidence": "runtime/core/p1-semantic-regression-guard.ts; runtime/core/p1-semantic-regression-guard.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie13-p2-passk-reliability",
+      "title": "SÉRIE 13 P2: pass^k reliability metric (tau-bench / NIST AI Agent Standards)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p2-ai-reference",
+        "v124-benchmark-factory"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P2. World ref: tau-bench scores agents with pass^k across k independent rollouts (single-pass overstates reliability; NIST AI Agent Standards Feb-2026; BFCL). ODG P2 had held-out accuracy but no reliability-under-repetition. runtime/core/p2-passk-reliability.ts adds pass^k: a task is reliable ONLY if ALL k rollouts pass (fail-closed); k = min rollout count (never credit unrun rollouts); reliabilityDrop = pass^1 - pass^k exposes flakiness a single-pass score hides; names flaky tasks; reliability judged on pass^k not pass^1. Complements benchmark-factory held-out eval, no new engine. 8 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (live tau-bench E5 owner-gated NOT_RUN). Study entry appended.",
+      "evidence": "runtime/core/p2-passk-reliability.ts; runtime/core/p2-passk-reliability.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie13-p7-burn-rate-alert",
+      "title": "SÉRIE 13 P7: multi-window multi-burn-rate SLO alerting (Google SRE Workbook Ch.5)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p7-sre-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P7. World ref (primary): Google SRE Workbook Ch.5 multi-window multi-burn-rate alerting (14.4x/6x/3x/1x for 1h/6h/1d/3d) — a page needs a long AND short window to cut false alarms. ODG P7 computed a single-window burn. runtime/core/p7-burn-rate-alert.ts: burnRate=errorRate/(1-SLO) (rounded; zero budget=>Infinity); evaluateAlert fires PAGE only when BOTH windows exceed the burn threshold (fail-closed multi-window); classify maps sustained burn to PAGE/TICKET/OK tiers. Complements P7 SRE reference, no new engine. 10 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real telemetry E5 owner-gated).",
+      "evidence": "runtime/core/p7-burn-rate-alert.ts; runtime/core/p7-burn-rate-alert.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
+    },
+    {
+      "id": "serie13-p9-unit-economics",
+      "title": "SÉRIE 13 P9: AI unit economics (cost per successful outcome, OBSERVED-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p9-finops-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 P9. World ref: AI-FinOps decision metric is cost per SUCCESSFUL outcome (unit economics), not total cost — failed/retried attempts burn budget without value (FOCUS spec). ODG P9 separated cost kinds but had no cost-per-success. runtime/core/p9-unit-economics.ts computes cost-per-success on OBSERVED cost ONLY (never SIMULATED); fail-closed: zero successes => costPerSuccess null (undefined, never 0), viable=false; wasteRatio surfaces failed-attempt spend; withinUnitBudget fails closed on no success; successes capped at attempts. Complements P9 reference, no new engine. 9 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE + WATCH (real billing E5 owner-gated).",
+      "evidence": "runtime/core/p9-unit-economics.ts; runtime/core/p9-unit-economics.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
     }
   ]
 }
