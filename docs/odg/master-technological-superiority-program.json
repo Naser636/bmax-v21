@@ -487,14 +487,15 @@
       "program": "D",
       "domain": "FRONTIER_RADAR",
       "phase": "PHASE-6",
-      "status": "PROPOSED",
+      "status": "COMPLETED",
       "reuseExisting": [
-        "frontier-radar.ts",
-        "frontier-radar-store.ts"
+        "frontier-weekly-report.ts",
+        "frontier-radar.ts"
       ],
       "dependsOn": [
         "PHASE-0"
-      ]
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-weekly-report.ts — §6.7/D-18 structured Weekly Technology-Intelligence Report EXTENDING frontier-radar; reuses sanitizeExternal (untrusted content QUARANTINED) + deduplicate; empty section => NO_FINDING (never fabricated); not a list of links; authorizes nothing; 9/9. COMPLETED, not yet VALIDATED."
     },
     {
       "id": "M-CH4-02",
