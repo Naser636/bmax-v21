@@ -14,12 +14,25 @@ console.log("SÉRIE 14 Step-4 — GLOBAL IMPROVEMENT ENGINE");
 }
 function isObj(v: any) { return v !== null && typeof v === "object" && !Array.isArray(v); }
 
-// analyzeGaps: a coverage gap ⇒ a ranked target; no coverage gap ⇒ healthy.
+// §2 HONEST TAXONOMY: an empty result is NO_FINDING, NOT HEALTHY.
 {
-  const withGap = G.analyzeGaps({ uncoveredLibraries: ["x"], forecast: ["gates: 0/7"] });
-  check(withGap.targets.some((t: any) => t.kind === "COVERAGE") && withGap.healthy === false, "a coverage gap ⇒ COVERAGE target, not healthy");
-  const clean = G.analyzeGaps({ uncoveredLibraries: [], forecast: [] });
-  check(clean.healthy === true && clean.targets.length === 0, "no coverage gap + no forecast ⇒ healthy, no manufactured target");
+  // a measured coverage gap ⇒ DEGRADED + a ranked target.
+  const withGap = G.analyzeGaps({ measured: true, honest: true, uncoveredLibraries: ["x"], forecast: ["gates: 0/7"] });
+  check(withGap.status === "DEGRADED" && withGap.targets.some((t: any) => t.kind === "COVERAGE"), "a measured coverage gap ⇒ DEGRADED + COVERAGE target");
+
+  // measured + no gaps + integrity, but NO demonstrated controls ⇒ NO_FINDING (NOT healthy).
+  const clean = G.analyzeGaps({ measured: true, honest: true, uncoveredLibraries: [], forecast: [] });
+  check(clean.status === "NO_FINDING", "measured + no gaps WITHOUT demonstrated controls ⇒ NO_FINDING (not HEALTHY — §2 correction)");
+
+  // HEALTHY only with demonstrated sufficient controls.
+  const healthy = G.analyzeGaps({ measured: true, honest: true, uncoveredLibraries: [], forecast: [] }, { healthCriteriaMet: true });
+  check(healthy.status === "HEALTHY", "measured + no gaps + demonstrated controls ⇒ HEALTHY");
+
+  // no measurement ⇒ NOT_MEASURED (never HEALTHY by default).
+  check(G.analyzeGaps({ measured: false }).status === "NOT_MEASURED", "no measurement ⇒ NOT_MEASURED (an empty/absent scan is not health)");
+
+  // measured but integrity flag off ⇒ UNKNOWN (cannot trust).
+  check(G.analyzeGaps({ measured: true, honest: false, uncoveredLibraries: [] }).status === "UNKNOWN", "measured but integrity off ⇒ UNKNOWN");
 }
 
 // cycle: RETAIN only on measured gain + no regression; else ROLLBACK (fail-closed).
