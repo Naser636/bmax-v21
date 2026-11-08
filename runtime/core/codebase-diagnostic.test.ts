@@ -17,10 +17,19 @@ console.log("SÉRIE 12 — CODEBASE SELF-DIAGNOSTIC");
 {
   const d = CD.diagnoseCoverage({ modules: ["a", "b", "c"], sameNamedTests: ["a"], refCounts: { a: 2, b: 7, c: 0 } });
   check(d.byCoverage.DIRECT === 1 && d.byCoverage.INDIRECT === 1 && d.byCoverage.UNCOVERED === 1, "aggregate: 1 DIRECT, 1 INDIRECT, 1 UNCOVERED");
-  check(d.uncovered.length === 1 && d.uncovered[0] === "c", "only the zero-reference module is UNCOVERED");
+  check(d.uncovered.length === 1 && d.uncovered[0] === "c", "only the zero-reference library module is UNCOVERED");
   check(!d.uncovered.includes("b"), "a referenced module (b, 7 refs) is NOT in UNCOVERED (honesty gate)");
   check(d.honest === true, "honesty flag true (no referenced module flagged uncovered)");
   check(d.directCoverageGaps.includes("b") && !d.directCoverageGaps.includes("a"), "DIRECT-coverage-gap = referenced-only modules (b), not DIRECT ones (a)");
+}
+
+// CLI_SCRIPT refinement: a module with no export surface + zero refs is CLI_SCRIPT, NOT UNCOVERED (not a false target).
+{
+  const d = CD.diagnoseCoverage({ modules: ["lib", "script"], sameNamedTests: [], refCounts: { lib: 0, script: 0 }, libraries: { lib: true, script: false } });
+  check(d.byCoverage.UNCOVERED === 1 && d.uncovered[0] === "lib", "a LIBRARY module with zero refs ⇒ UNCOVERED (real gap)");
+  check(d.byCoverage.CLI_SCRIPT === 1 && d.cliScripts[0] === "script", "a CLI script (no exports) with zero refs ⇒ CLI_SCRIPT, not a coverage gap");
+  check(!d.uncovered.includes("script"), "a CLI script is NEVER flagged UNCOVERED (no false target / no metric-gaming pressure)");
+  check(d.honest === true, "honesty flag holds with the CLI_SCRIPT refinement");
 }
 
 // LIVE scan of the real runtime/core: honest, and reports real numbers.
@@ -28,8 +37,8 @@ console.log("SÉRIE 12 — CODEBASE SELF-DIAGNOSTIC");
   const s = CD.scanCore();
   check(s.total > 300, `LIVE: scanned ${s.total} core modules`);
   check(s.honest === true, "LIVE: honesty gate holds on the real codebase (no referenced module reported uncovered)");
-  check(s.byCoverage.DIRECT + s.byCoverage.INDIRECT + s.byCoverage.UNCOVERED === s.total, "LIVE: every module classified exactly once");
-  console.log(`  info - LIVE coverage: DIRECT=${s.byCoverage.DIRECT} INDIRECT=${s.byCoverage.INDIRECT} UNCOVERED=${s.byCoverage.UNCOVERED}`);
+  check(s.byCoverage.DIRECT + s.byCoverage.INDIRECT + s.byCoverage.UNCOVERED + s.byCoverage.CLI_SCRIPT === s.total, "LIVE: every module classified exactly once");
+  console.log(`  info - LIVE coverage: DIRECT=${s.byCoverage.DIRECT} INDIRECT=${s.byCoverage.INDIRECT} UNCOVERED=${s.byCoverage.UNCOVERED} CLI_SCRIPT=${s.byCoverage.CLI_SCRIPT}`);
 }
 
 check(CD.CODEBASE_DIAGNOSTIC_CONTRACT.invariants.some((i: any) => /NEVER reported as UNCOVERED/.test(i)), "contract documents the honesty gate");

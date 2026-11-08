@@ -16,15 +16,21 @@ const path = require("path");
 function isStr(v: any): boolean { return typeof v === "string"; }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 
-const COVERAGE = Object.freeze(["DIRECT", "INDIRECT", "UNCOVERED"]);
+const COVERAGE = Object.freeze(["DIRECT", "INDIRECT", "UNCOVERED", "CLI_SCRIPT"]);
 
-/** classifyModule(base, sameNamed:Set, refCount:number) -> { base, coverage, hasSameNamedTest, referenced }. */
-function classifyModule(base: string, sameNamed: Set<string>, refCount: number): any {
+/** classifyModule(base, sameNamed:Set, refCount:number, isLibrary:boolean) -> classification.
+ * A CLI script (no library surface: no module.exports / export) is NOT a coverage gap — it is run via `tsx file.ts`,
+ * not imported; flagging it UNCOVERED would be a false target (and forcing a test onto it would be metric-gaming).
+ * Only a LIBRARY module (exports a surface) with zero test references is genuinely UNCOVERED. */
+function classifyModule(base: string, sameNamed: Set<string>, refCount: number, isLibrary: boolean = true): any {
   const hasSameNamedTest = sameNamed.has(base);
   const referenced = refCount > 0;
-  // HONEST classification: DIRECT (own unit test) > INDIRECT (referenced by some test) > UNCOVERED (zero references).
-  const coverage = hasSameNamedTest ? "DIRECT" : (referenced ? "INDIRECT" : "UNCOVERED");
-  return Object.freeze({ base, coverage, hasSameNamedTest, referenced, refCount });
+  let coverage: string;
+  if (hasSameNamedTest) coverage = "DIRECT";
+  else if (referenced) coverage = "INDIRECT";
+  else if (isLibrary === false) coverage = "CLI_SCRIPT";   // no exports ⇒ not a library unit ⇒ not a coverage gap
+  else coverage = "UNCOVERED";
+  return Object.freeze({ base, coverage, hasSameNamedTest, referenced, refCount, isLibrary: isLibrary !== false });
 }
 
 /** diagnoseCoverage({modules, sameNamedTests, refCounts}) -> aggregate + honest target lists. */
@@ -33,18 +39,21 @@ function diagnoseCoverage(input: any): any {
   const modules = arr(o.modules).filter(isStr);
   const sameNamed = new Set(arr(o.sameNamedTests).filter(isStr));
   const refCounts = o.refCounts && typeof o.refCounts === "object" ? o.refCounts : {};
-  const rows = modules.map((m) => classifyModule(m, sameNamed, Number(refCounts[m]) || 0));
-  const byCoverage: any = { DIRECT: 0, INDIRECT: 0, UNCOVERED: 0 };
+  const libraries = o.libraries && typeof o.libraries === "object" ? o.libraries : {}; // base -> boolean (has export surface)
+  const rows = modules.map((m) => classifyModule(m, sameNamed, Number(refCounts[m]) || 0, libraries[m] !== false));
+  const byCoverage: any = { DIRECT: 0, INDIRECT: 0, UNCOVERED: 0, CLI_SCRIPT: 0 };
   for (const r of rows) byCoverage[r.coverage]++;
-  // Targets, ranked by severity: UNCOVERED (real gap) first, then DIRECT-gaps (INDIRECT-only, weaker).
+  // Targets, ranked by severity: UNCOVERED (real gap: LIBRARY with zero refs) first, then DIRECT-gaps (INDIRECT-only).
   const uncovered = rows.filter((r) => r.coverage === "UNCOVERED").map((r) => r.base);
   const directGaps = rows.filter((r) => r.coverage === "INDIRECT").map((r) => r.base);
+  const cliScripts = rows.filter((r) => r.coverage === "CLI_SCRIPT").map((r) => r.base);
   return Object.freeze({
     total: modules.length, byCoverage: Object.freeze(byCoverage),
-    uncovered: Object.freeze(uncovered),        // genuine gap: zero test references
+    uncovered: Object.freeze(uncovered),        // genuine gap: a LIBRARY module with zero test references
     directCoverageGaps: Object.freeze(directGaps), // weaker: referenced but no same-named unit test
-    // honesty gate: no module that is referenced is ever in `uncovered`.
-    honest: uncovered.every((m: string) => (Number(refCounts[m]) || 0) === 0),
+    cliScripts: Object.freeze(cliScripts),      // not a gap: no library surface (run via `tsx`, not imported)
+    // honesty gate: no referenced module and no CLI script is ever in `uncovered`.
+    honest: uncovered.every((m: string) => (Number(refCounts[m]) || 0) === 0 && libraries[m] !== false),
   });
 }
 
@@ -61,8 +70,14 @@ function scanCore(opts?: any): any {
   // reference count: how many test files mention the module base name (any import form).
   const testBodies = tests.map((t) => ({ t, body: readText(path.join(dir, t)) }));
   const refCounts: any = {};
-  for (const m of modules) refCounts[m] = testBodies.filter((tb) => tb.body.indexOf(m) >= 0).length;
-  return diagnoseCoverage({ modules, sameNamedTests: sameNamed, refCounts });
+  const libraries: any = {};
+  for (const m of modules) {
+    refCounts[m] = testBodies.filter((tb) => tb.body.indexOf(m) >= 0).length;
+    // a LIBRARY module exposes an import surface (module.exports or a named `export`); a CLI script does not.
+    const body = readText(path.join(dir, m + ".ts"));
+    libraries[m] = /module\.exports\s*=|^\s*export\s+(function|const|class|\{)/m.test(body);
+  }
+  return diagnoseCoverage({ modules, sameNamedTests: sameNamed, refCounts, libraries });
 }
 
 const CODEBASE_DIAGNOSTIC_CONTRACT = Object.freeze({
@@ -72,9 +87,9 @@ const CODEBASE_DIAGNOSTIC_CONTRACT = Object.freeze({
   notAuthority: "a read-only observer/proposer; it grants no permission, promotes nothing, and creates no second engine",
   invariants: Object.freeze([
     "a module referenced by ≥1 test is NEVER reported as UNCOVERED (same-named-test absence ≠ untested) — the honesty gate",
-    "UNCOVERED = zero test references (the genuine gap); DIRECT-coverage-gap = referenced but no same-named unit test (weaker)",
-    "observer/proposer only — feeds the existing self-improvement loop; no 2nd engine/registry/scheduler/authorizer",
-    "pure given injected inputs; real fs is isolated to scanCore; fail-closed honesty flag on every report",
+    "UNCOVERED = a LIBRARY module (has an export surface) with zero test references — the genuine gap",
+    "a CLI script (no export surface; run via `tsx file.ts`, not imported) is CLI_SCRIPT, NOT a coverage gap — flagging it would be a false target and forcing a test onto it would be metric-gaming",
+    "observer/proposer only — feeds the existing self-improvement loop; no 2nd engine; fail-closed honesty flag on every report",
   ]),
 });
 
