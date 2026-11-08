@@ -3680,6 +3680,19 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/preservation-invariant.ts behaviourally verifies (READ-ONLY git) the §78 transversal-preservation correction against the LIVE repo — untracked working set (recursive -uall) not deleted, stashes not dropped, working branch unchanged, HEAD resolvable. REUSES truth-lock-gate.gatherGitState (injectable exec seam, no second git reader); runs only read-only git. FAIL-CLOSED: any reduction below baseline (untracked>=404, stashes>=5, branch=excellence/v3-wave3-demonstrators-20261101) is a VIOLATION; adding is fine (only destruction violates). HONEST: preservation != recovery — recoversHistoricalAssets:false, §80 historical assets stay UNKNOWN/TO_AUDIT (no fabricated recovery); edg-core observed read-only. Tests: positive + 2 negative (dropped stash / deleted untracked) + 2 adversarial (branch switch / no-repo) + LIVE non-regression against the real repo (untracked 406>=404, stashes 5) (11 assertions). odg-test-report PASS; CI gated; strict tsc clean. §78/§80-82/§104 preservation invariant PRESENT_AND_PROVEN (behavioural, read-only).",
       "evidence": "runtime/core/preservation-invariant.ts; runtime/core/preservation-invariant.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "v124-gate-e-demonstration",
+      "title": "V12.4 §101: Gate E (technical truth) behavioural slice demonstration",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-invariant"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/gate-e-demonstration.ts demonstrates the Gate-E (technical truth, §101) SLICE from REAL already-green evidence — composes the live odg verify snapshot (build+typescript+generated-contracts-valid) with the LIVE preservation invariant — fail-closed DEMONSTRATED_SLICE. E2E-proven against the real odg verify (build+typescript+contracts all true) + live preservation => DEMONSTRATED_SLICE. HONEST scope: a slice is explicitly NOT a global Gate-E PASS (the whole V12.4 technical truth); gateDemonstrationStatus reports only Gate E demonstrable now, gates A/B/C/D/F/G NOT claimed demonstrated (several behind owner-gated FR-07/VPS/E5); flips no gates-ledger status, fabricates no PASS. Tests positive + 2 negative (ts false / preservation violated) + adversarial (empty snapshot) + honesty (9 assertions). odg-test-report PASS; CI gated; strict tsc clean. §101 Gate-E SLICE DEMONSTRATED (global PASS NOT asserted).",
+      "evidence": "runtime/core/gate-e-demonstration.ts; runtime/core/gate-e-demonstration.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
