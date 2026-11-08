@@ -390,15 +390,15 @@
       "program": "A",
       "domain": "CENTRAL_INTELLIGENCE",
       "phase": "PHASE-1",
-      "status": "PROPOSED",
+      "status": "COMPLETED",
       "reuseExisting": [
-        "self-improvement-chain.ts",
-        "change-impact-graph.ts",
-        "dep-planner.ts"
+        "capability-map.ts",
+        "change-impact-graph.ts"
       ],
       "dependsOn": [
         "PHASE-0"
-      ]
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/capability-map.ts — ODG self-capability graph over the canonical register + manifest: each real capability (ACCEPTED+evidence or VALIDATED) with honest maturity L0-L5 (ACCEPTED+evidence=>L2_INTEGRATED, not L3 without independent validation), dependency edges + dependents, gaps (PROPOSED missions); an ACCEPTED item without evidence is EXCLUDED. Real register => 319 capabilities all L2, 0 L3 (honest). 11/11. COMPLETED, not yet VALIDATED."
     },
     {
       "id": "M-CH1-02",
