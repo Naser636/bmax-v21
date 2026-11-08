@@ -3338,6 +3338,19 @@
       "acceptance": "BLOCKED on an external (owner/CTO) decision: V12.4 §80/§115 asks to RECOVER the 166 capabilities; the repo records DEC-V60-166-RETIREMENT (ACCEPTED 2026-10-16) retiring them as non-enumerable. These conflict. Per V12.4 §2 truth hierarchy + repo evidence, do NOT reconstruct the 166 without a distinct CTO decision overriding DEC-V60. Awaiting owner arbitration.",
       "evidence": "docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md §0.1; docs/odg-operational/ODG_DECISION_CHANGELOG.md (DEC-V60-166-RETIREMENT)",
       "staleEvidence": false
+    },
+    {
+      "id": "g0-root-of-trust-tamper-tests",
+      "title": "V12.4 §10-§11: G0 Root-of-Trust tamper admission + 11-vector tamper tests (compose-only)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-preservation-and-traceability"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/root-of-trust.ts turns V12.4 §11 from TO_AUDIT to PRESENT_AND_PROVEN. Creates NO new authorizer: enumerates the G0 protected perimeter (constitution/policies/governance/ROADMAP.json/CTO-directives/evaluators/baselines/protocol/settings) + composes the EXISTING guards — action-gate (single POLICY authorizer), evidence-provenance (tamper detection), and the protected-governance rule (scope != authority, enforced at the write point by patch-executor/capability-executors) — into one fail-closed admission. A protected G0 change is BLOCKED unless an EXTERNAL elevated authorization (by a non-actor authority, approved) AND a full POLICY admission are both present; self-authorization refused; evidence falsification detected; recovery refused from an unverified state. Every attempt is DETECTABLE + TRACEABLE (audit record). 24 assertions covering the 11 §11.2 tamper vectors (DIRECT/INDIRECT/BY_AGENT/BY_PROVIDER/BY_TOOL/BY_DEPENDENCY/BY_CONFIG/BY_CONTRACT/BY_EVALUATOR/BY_EVIDENCE_FALSIFICATION/BY_UNVERIFIED_RESTORATION) + admitted case + self-auth refusal + invariants. G0 is NOT a tenth primitive. odg-test-report PASS; CI gated; strict tsc clean; build+typescript OK.",
+      "evidence": "runtime/core/root-of-trust.ts; runtime/core/root-of-trust.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
