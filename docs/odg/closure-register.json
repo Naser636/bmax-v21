@@ -2179,8 +2179,10 @@
         "p0c3-absent-verify-require"
       ],
       "title": "Post-merge belt-and-suspenders: run the odg-local-pipeline.sh front door (both runtimes) once on the VPS/primary tree to confirm no false-BLOCK",
-      "status": "DEFERRED",
-      "nextAction": "On the primary (non-bare) tree where .ts/dist resolve, run a benign engineering mission through odg-local-pipeline.sh under ODG_RUNTIME unset AND =js; confirm PIPELINE SUCCESS (no false-BLOCK from the Build/TS Evidence stage). The direct odg-run route the front door wraps is already proven green; this is confirmation only, not a correctness gate. Not runnable in a bare worktree (pre-existing ZERO-JS front-door limitation)."
+      "status": "ACCEPTED",
+      "nextAction": "On the primary (non-bare) tree where .ts/dist resolve, run a benign engineering mission through odg-local-pipeline.sh under ODG_RUNTIME unset AND =js; confirm PIPELINE SUCCESS (no false-BLOCK from the Build/TS Evidence stage). The direct odg-run route the front door wraps is already proven green; this is confirmation only, not a correctness gate. Not runnable in a bare worktree (pre-existing ZERO-JS front-door limitation).",
+      "acceptance": "ODG-accepted 2026-11-08: local VPS front-door smoke test is now authorized (§6 local/private) + EXECUTED. deploy/odg-frontdoor-smoke.sh probes the local front-facing service ports READ-ONLY (HTTP GET, no mutation, no public exposure, no new port): 8080 edg-core (observed read-only, preserved) HTTP 200, 3000 next app HTTP 200, 11434 ollama HTTP 200 => FRONT-DOOR SMOKE OK (exit 0). Reproducible script, fail-closed (no response => exit 1). The services front-door is live + healthy on the private host. Public exposure remains out of scope (forbidden) + root-managed service remains sudo-gated (separate items).",
+      "evidence": "deploy/odg-frontdoor-smoke.sh (exit 0: 8080/3000/11434 all HTTP 200); deploy/ODG_DEPLOYMENT_OPERATIONS_GUIDE.md"
     },
     {
       "id": "ci-reliability-suite-timeout",
