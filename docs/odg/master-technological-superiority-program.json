@@ -633,6 +633,21 @@
         "PHASE-0"
       ],
       "evidence": "CAPABILITY_BUILT: runtime/core/rce-root-cause-intelligence.ts — distinguishes SYMPTOM/TRIGGER/IMMEDIATE/ROOT/SYSTEMIC/dependency/contract/design causal layers, ranks hypotheses by evidence-derived confidence, selects a root cause only if root-layer AND confidence>=threshold AND reproduced AND isolated (else INCONCLUSIVE); reuses causal-graph.causesOf/effectsOf for topology; a symptom is never returned as root; 9/9 tests. COMPLETED (built+tested), not yet VALIDATED. NB: M-CH3-02 isolated-workspace + repair-planner parts remain PROPOSED."
+    },
+    {
+      "id": "E-MEASURE",
+      "title": "Engineering Intelligence: measure the validation chain (P50/P95 + bottleneck)",
+      "program": "E",
+      "domain": "BENCHMARK_COMPOUNDING",
+      "phase": "PHASE-9",
+      "status": "COMPLETED",
+      "reuseExisting": [
+        "gate-instrumentation.ts"
+      ],
+      "dependsOn": [
+        "PHASE-0"
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/gate-instrumentation.ts (P50/P95 decomposition + bottleneck) + measured baseline docs/odg/VALIDATION_CHAIN_BASELINE.md. Bottleneck = per-suite tsx cold-start x367 (~727s, >90% of total). 9/9. COMPLETED, not yet VALIDATED."
     }
   ],
   "registriesToCreateOrExtend": [
@@ -677,5 +692,85 @@
     "DEFERRED"
   ],
   "nonDuplicationRule": "Before building: search existing → examine code+contracts → check tests → check integration → check real state → identify reusable → identify gaps → prefer EXTEND over new. A validated existing component is reused; a competing component is not created without demonstrated technical justification.",
-  "honesty": "Build-missions are PROPOSED, not executed, not validated. A report is not a technical delivery. Never present PROPOSED as operational, executed as validated. No fabricated metric/evidence. Synthetic ≠ real."
+  "honesty": "Build-missions are PROPOSED, not executed, not validated. A report is not a technical delivery. Never present PROPOSED as operational, executed as validated. No fabricated metric/evidence. Synthetic ≠ real.",
+  "engineeringIntelligence": {
+    "name": "ODG ENGINEERING INTELLIGENCE & SELF-OPTIMIZING ENGINEERING",
+    "integratedInto": "V12.4 + V5",
+    "authority": "ODG",
+    "capabilities": [
+      "E01 Engineering Brain",
+      "E02 Dependency & Impact Intelligence",
+      "E03 Predictive Defect Intelligence",
+      "E04 Failure Probability",
+      "E05 Global Scheduler",
+      "E06 Critical Path",
+      "E07 Resource-Aware Execution",
+      "E08 Adaptive Validation Budget",
+      "E09 Test Topology",
+      "E10 Proof-Carrying Engineering",
+      "E11 Evidence Trust & Freshness",
+      "E12 Test Oracle",
+      "E13 Environment Integrity",
+      "E14 Deterministic Replay",
+      "E15 Autonomous Test Generation",
+      "E16 Adversarial & State Space Lab",
+      "E17 Concurrency Intelligence",
+      "E18 Regression Prevention",
+      "E19 Engineering Experimentation",
+      "E20 Learning & Strategy Auto-Tuner"
+    ],
+    "transversal": [
+      "Bottleneck Intelligence",
+      "Incremental Computation",
+      "Verified Evidence Cache",
+      "Flaky Test Intelligence",
+      "Engineering Digital Twin",
+      "Validation Economics"
+    ],
+    "rule": "Not 26 independent engines — one coherent architecture reusing existing components and extending canonical registries.",
+    "reuseMap": [
+      {
+        "cap": "E02 Dependency/Impact",
+        "existing": "change-impact-graph.ts"
+      },
+      {
+        "cap": "Test Impact (E09/Validation Economics)",
+        "existing": "scripts/affected-tests.ts"
+      },
+      {
+        "cap": "Parallel workers",
+        "existing": "odg-test-report ODG_TEST_WORKERS (HYPERSPEED)"
+      },
+      {
+        "cap": "E18 Regression Prevention",
+        "existing": "p1-semantic-regression-guard.ts + rce-assurance-chain.ts"
+      },
+      {
+        "cap": "Flaky Test Intelligence",
+        "existing": "p2-flaky-root-cause.ts + p2-passk-reliability.ts"
+      },
+      {
+        "cap": "E12 Test Oracle / E15 autonomous generation",
+        "existing": "p1-differential-property.ts + p6-mutation-testing.ts"
+      },
+      {
+        "cap": "E11 Evidence Trust/Freshness",
+        "existing": "evidence-provenance.ts + control-evidence-freshness.ts"
+      },
+      {
+        "cap": "Bottleneck Intelligence (E-MEASURE)",
+        "existing": "gate-instrumentation.ts (BUILT)"
+      }
+    ],
+    "firstMission": "MEASURE AND ACCELERATE THE VALIDATION CHAIN",
+    "target": "reduce median validation time 75% (stretch 80%) with no loss of mandatory controls or detection",
+    "measuredBaseline": {
+      "bottleneck": "per-suite tsx cold-start x367 suites (~727s P50 contribution, >90% of total)",
+      "tscNoEmitP50": 6.27,
+      "odgVerify": 35.77,
+      "perSuiteTsxP50": 1.98,
+      "suites": 367,
+      "doc": "docs/odg/VALIDATION_CHAIN_BASELINE.md"
+    }
+  }
 }
