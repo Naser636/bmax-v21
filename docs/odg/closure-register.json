@@ -3886,6 +3886,21 @@
       "acceptance": "ODG-accepted 2026-11-08: SÉRIE 14 P15. World ref: the Saga pattern (Garcia-Molina & Salem 1987; microservices) — on failure at step N, committed steps N-1..1 are UNDONE by compensating actions in REVERSE so the system is never partially applied. runtime/core/p15-saga-compensation.ts (runSaga) runs forward until failure then compensates committed steps in reverse: COMMITTED | COMPENSATED | COMPENSATION_FAILED (fail-closed, a failed compensation is SURFACED not swallowed; a throwing forward = failure). Complements workflow-engine, no new engine. 7 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
       "evidence": "runtime/core/p15-saga-compensation.ts; runtime/core/p15-saga-compensation.test.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie14-global-improvement-engine",
+      "title": "SÉRIE 14 Step-4: ODG-global self-improvement engine (orchestrates existing mechanisms)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie12-codebase-diagnostic",
+        "v124-execution-scorecard",
+        "v124-self-improvement-e2e"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/global-improvement-engine.ts orchestrates the whole-ODG loop GLOBAL_OBSERVATION->DIAGNOSIS->WORLD_RESEARCH->GAP_ANALYSIS->HYPOTHESIS->PROTOTYPE->SANDBOX->BENCHMARK->ADVERSARIAL->INDEPENDENT_EVAL->SHADOW->CANARY->MEASUREMENT->RETAIN/ROLLBACK by COMPOSING existing mechanisms (codebase-diagnostic observe + v124-scorecard state + self-improvement build/verify/retain loop) — NO second engine/governance/registry. observe() returns the REAL diagnostic+scorecard snapshot; analyzeGaps() derives evidence-based targets (empty coverage-gaps => healthy, no manufactured target); cycle() RETAINS only on a measured before->after gain with NO regression else ROLLBACK (fail-closed), selfPromoted:false (promotion external). maturity() maps the 14-stage loop to real modules. 10 assertions; odg-test-report PASS; project tsc clean. Step-4 general self-improvement engine PRESENT (reuse-only).",
+      "evidence": "runtime/core/global-improvement-engine.ts; runtime/core/global-improvement-engine.test.ts; package.json",
+      "staleEvidence": false
     }
   ]
 }
