@@ -3241,6 +3241,23 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-sandbox.ts — the REAL execution boundary for Frontier experiments. OS isolation PROVEN in this environment (bubblewrap 0.11.1, unprivileged user namespace; raw unshare --map-root-user is denied here, bwrap maps the current uid and works). REUSE not duplication: bash-command-governor.detectSandbox + sandboxRun (proven bwrap engine: --unshare-all/--die-with-parent/--clearenv/--as-pid-1, allowlist binds NEVER --ro-bind / /, tmpfs work dir, non-privileged userns, and the --info-fd LAUNCH HANDSHAKE that PROVES isolation was established). This adapter adds prlimit rlimits (cpu/as/nproc/fsize/nofile from the mission budget) and exposes the EXACT Frontier Lab runner interface (async ({config,budget})->{afterSignals,raw,cost,productionTouched}) so it drops in as the real Tester role. FAIL-CLOSED & HONEST: bwrap unavailable OR not launched => NO execution, isolationLevel NONE_FAILCLOSED, the Lab runner THROWS => Lab ABORTS; an INJECTED runner is labelled INJECTED and NEVER isolationProven (a fixture cannot masquerade as real isolation). 15 assertions incl. REAL adversarial proofs under live bwrap: confined echo (isolation proven via --info-fd), enforced controls (no-network/cleared-env/non-privileged/allowlist), host secret NOT readable inside sandbox, NO filesystem escape into the real repo, real runner drives a Frontier Lab experiment end-to-end. odg-test-report PASS 5/5 (real bwrap runs under the gate, as code-execution/bash-command-governor already do); CI test:report gated; campaign-controller 36/36; strict tsc clean; build+typescript OK. Not yet wired into a running entrypoint (adapter lot; runtime wiring = WI-FR-06).",
       "evidence": "runtime/core/frontier-sandbox.ts; runtime/core/frontier-sandbox.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-06-frontier-pipeline",
+      "title": "WI-FR-06 (Frontier): canonical runtime integration (Radar->ODG->POLICY->Lab->Evolution->Evidence->Decision)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store",
+        "wi-fr-03-frontier-lab",
+        "wi-fr-04-evolution-loop",
+        "wi-fr-05-frontier-sandbox"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-pipeline.ts + runtime/bin/odg-frontier.ts wire the five Frontier lots into the REAL canonical chain RADAR->ODG(integrate)->POLICY/AUTHORITY->campaign-controller selection->LAB+EVOLUTION(real WI-FR-05 bwrap sandbox)->EVIDENCE->DECISION, with NO second queue/scheduler/store/authorizer/orchestration. REUSE: frontier-radar, frontier-radar-store (DEFERRED lot), action-gate.evaluateAction (POLICY; identity principal/verb/target + ANALYZE observational; a consequential WRITE without authority is DENIED), objective-authorization (ODG-autonomy classification), campaign-controller.advance/selectNextLot (the ONLY scheduler), evolution-loop->frontier-lab->frontier-sandbox (Tester), mission-evidence.buildEvidenceRecord + evidence-provenance (canonical EVIDENCE). ODG admission requires POLICY ALLOW AND an EXTERNAL authorization (authorizedBy a non-Radar actor, approved) => the Radar can NEVER self-authorize; a non-admitted proposal stays a DEFERRED lot (traceable, not executed); promotion is NOT performed by the pipeline (external/governed). odg-frontier is the REAL entrypoint: tested by SPAWNING the actual process (like odg-campaign-run), driving the whole chain through the binary (not internal calls) with the real bubblewrap sandbox. 15 chain assertions (valid/invalid signal, POLICY deny, no-authorization, self-authorization refused, admissible, canonical selection, runner failure, contradiction/regression, integrity DETECTED, inconclusive/no-fake-evidence, idempotence, no-parallel-architecture, stages, no-self-promotion) + 8 spawned-entrypoint assertions (authorized full traversal + no-auth refusal). odg-test-report PASS; CI test:report gated (both suites); campaign-controller 36/36; strict tsc clean (incl. the bin); build+typescript OK. Preserves the contracts/interfaces needed for WI-FR-07 (real network/weekly) and WI-FR-08 (compounding) without pretending they are built.",
+      "evidence": "runtime/core/frontier-pipeline.ts; runtime/bin/odg-frontier.ts; runtime/core/frontier-pipeline.test.ts; runtime/bin/odg-frontier.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
