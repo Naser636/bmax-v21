@@ -3199,6 +3199,20 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-radar-store.ts makes the WI-FR-01 Radar DURABLE and connects it to the canonical mission path with NO new store/queue/scheduler/authorizer. REUSE: autonomy-store (crash-atomic tmp+rename; readStrict distinguishes ABSENT vs CORRUPT => refuses to clobber a torn store, fail-closed); idempotency-guard (admit/record, keyed by id => dedup + resume with no double-apply); campaign-controller (register lot + selectNextLot); frontier-radar (WI-FR-01). CANONICAL INTEGRATION: a Radar proposal maps ONLY to a DEFERRED lot (authorizationRequired) which selectNextLot NEVER picks; only an EXTERNAL advance(..,{status:READY}) (ODG/owner authorization the Radar cannot perform) admits it => proposition != autorisation, Radar cannot self-authorize or promote. SEPARATIONS kept: SIGNAL != FACT (a candidate persisted as PROVEN/OBSERVED is REJECTED; stays UNVERIFIED), external content UNTRUSTED, Radar != governance. Persistence injectable (default autonomy-store; tests use in-memory => zero disk I/O). 25/25 assertions (unit+integration+resume+security+non-regression); reproducible end-to-end demo (collect->qualify->propose->integrate->selectNextLot before/after auth->resume) green; odg-test-report PASS 2/2 with WI-FR-01; added to CI test:report gate; campaign-controller 36/36; build+typescript OK. Not yet wired into a running entrypoint (foundation+integration lot).",
       "evidence": "runtime/core/frontier-radar-store.ts; runtime/core/frontier-radar-store.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "wi-fr-03-frontier-lab",
+      "title": "WI-FR-03 (Frontier): isolated experimentation engine (Frontier Lab)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-fr-01-frontier-radar",
+        "wi-fr-02-frontier-radar-store"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/frontier-lab.ts — isolated, reproducible, independently-verified experimentation engine (confirmed ABSENT before build). 8 capabilities: experiment registry (unique id, proposalRef to Radar, status + immutable history), hypothesis engine (explicit hypothesis/problem/expected-outcome/refutation-conditions/preregistered success-criteria; unfalsifiable ⇒ REJECTED), baseline engine (immutable, reuses improvement-baseline.captureBaseline), executor (isolated via INJECTED runner, explicit budget maxMs/maxCalls/maxCostEur, over-budget ⇒ ABORTED, no production effect), measurement (reuses improvement-baseline.measureDelta, reproducible), INDEPENDENT verification (SEPARATE from executor, recomputes preregistered criteria + reuses meta-intelligence integrity detectors, never consumes executor verdict; PASS/FAIL/INCONCLUSIVE), evidence bundle (hypothesis/baseline/config/raw/measures/verification/decision/provenance, synthetic:false), decision PROMISING/REJECTED/INCONCLUSIVE/READY_FOR_REVIEW. GUARDRAILS: no POLICY bypass, Lab creates NO authorization, no production access, synthetic/unverified never presented as real/proof, fail-closed on uncertainty (⇒ INCONCLUSIVE), strict executor≠verifier separation, NO experiment can authorize its own promotion (grantsNoPromotion; READY_FOR_REVIEW needs external governance). REUSE not duplication: improvement-baseline, meta-intelligence, idempotency-guard, autonomy-store (crash-atomic, readStrict fail-closed). Persistence = immutable idempotent snapshots + resume. 23 assertions covering the 10 mandated reference experiments + FR-01/FR-02 interactions; reproducible E2E demo (PASS/FAIL/TAMPER/BUDGET) green; odg-test-report PASS 3/3; CI test:report gated; campaign-controller 36/36; strict tsc clean; build+typescript OK. Not wired into a running entrypoint (engine lot).",
+      "evidence": "runtime/core/frontier-lab.ts; runtime/core/frontier-lab.test.ts; package.json (test:report gate)",
+      "staleEvidence": false
     }
   ]
 }
