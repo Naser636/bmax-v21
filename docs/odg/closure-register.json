@@ -3768,6 +3768,19 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/cross-metier-collaboration.ts demonstrates a complex problem (ship a data-backed API change safely) mobilising FIVE métiers into ONE coherent verdict, COMPOSING existing profession references (NO new engine): P4 data-quality + P8 api-contract.checkCompatibility + P3 security scan + P1 behaviour-preservation + P6 evaluation. FAIL-CLOSED: SHIP only when EVERY métier passes; a single failing métier => HOLD + the métier NAMED. DEMONSTRATED: clean scenario=>SHIP; a data defect=>HOLD(P4); a breaking API change=>HOLD(P8); a planted secret=>HOLD(P3); a behaviour change=>HOLD(P1); poor eval quality=>HOLD(P6); multiple failures=>all named; reproducible (same input=>identical verdict). SYNTHETIC only; real release (E5) owner-gated NOT_RUN. 11 assertions; odg-test-report PASS; project tsc clean. Step-5 multi-métier collaboration PROVEN.",
       "evidence": "runtime/core/cross-metier-collaboration.ts; runtime/core/cross-metier-collaboration.test.ts; package.json (test:report gate)",
       "staleEvidence": false
+    },
+    {
+      "id": "serie13-p1-semantic-regression-guard",
+      "title": "SÉRIE 13 P1: semantic-regression guard (SWE-bench 19.78%-semantically-wrong failure mode)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p1-fullstack-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 13 per-métier excellence, P1. World research (dated/sourced): SWE-bench Verified is the gold-standard coding benchmark (top agents 85-94% late-May-2026) BUT ~19.78% of solved cases are SEMANTICALLY WRONG — pass the stated test yet functionally incorrect (arXiv 2609.08149; Beyond SWE-Bench 2026). runtime/core/p1-semantic-regression-guard.ts composes the stated-test signal with P1 characterization baseline (reuses refactorPreservesBehaviour, NO new engine): SAFE only when stated-tests-pass AND held-out behaviour preserved; tests-pass+behaviour-changed => SEMANTIC_REGRESSION (the 19.78% case) fail-closed; coverage gap => INCOMPLETE; green stated-test alone is NOT proof. Tests positive/semantic-regression/test-failure/incomplete/anti-overclaim (7 assertions). odg-test-report PASS; project tsc clean. Decision INTEGRATE (local+synthetic) + WATCH (live SWE-bench E5 owner-gated NOT_RUN). Comparison recorded in docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md.",
+      "evidence": "runtime/core/p1-semantic-regression-guard.ts; runtime/core/p1-semantic-regression-guard.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
     }
   ]
 }
