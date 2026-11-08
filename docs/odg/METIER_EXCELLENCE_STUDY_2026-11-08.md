@@ -112,6 +112,26 @@ module where none is needed would be churn). Each carries a **WATCH** for a live
 
 ---
 
-*Builds this series: **P1** semantic-regression guard, **P2** pass^k reliability, **P7** multi-window burn-rate, **P9**
-unit economics — each grounded in a dated world reference and composing existing ODG modules (no new engine). P3–P6,
-P8, P10–P15 are honestly **ALIGNED/WATCH** (frontier research validates ODG; a module where none is needed = churn).*
+## SÉRIE 15 — deep study of the 6 ALIGNED métiers (P5, P6, P10, P11, P13, P14)
+
+Each was re-researched for a NEW transferable advantage; a prototype was built ONLY where a real gap was established.
+
+| Métier | 2026 world reference | ODG already has | Gap → decision |
+|---|---|---|---|
+| **P5** Cloud/Platform | progressive delivery (canary/blue-green), platform engineering (Backstage) | `canary-decision-pack` (assess + decision pack), `deployment-readiness`, `deploy/` | progressive delivery covered → **ALIGNED**; WATCH live rollout (E5) |
+| **P6** Quality/Eval | **mutation testing** (Stryker/PIT) — a passing suite ≠ bug-catching | held-out eval + metric-gaming (benchmark-factory) | **no test-effectiveness measure → BUILT `p6-mutation-testing`** (kill/survive, fail-closed) |
+| **P10** Regulatory | EU AI-Act staged obligations (GPAI 2025, high-risk 2026/2027) | `ai-act-role-classifier` (+ STANDARDS_OBLIGATIONS_REGISTER timeline), `regulatory-assurance` anti-overclaim | timeline already encoded → **ALIGNED**; cert external (NOT_CERTIFIED) |
+| **P11** Document | RAG/IDP, extraction-confidence, Factur-X | `einvoice-validator`/parser/`factur-x-extract` | structured path covered → **ALIGNED**; real OCR/scanned corpus = E5 owner-gated |
+| **P13** AI Infra/GPU | continuous batching, KV-cache, speculative decoding | `inference-engine` (cpu-reference vs **gpu-SIMULATED honesty**) | honesty gate covered; real GPU serving = **E5 owner-gated** → **ALIGNED** (no synthetic GPU-perf claim) |
+| **P14** DevEx | DORA four keys, SPACE/DX developer-experience | `dora-metrics` (fourKeys), `golden-path-evidence-bundle`, `deploy/` | DORA covered → **ALIGNED**; graduated-CI product = E5 |
+
+### P6 build detail
+`p6-mutation-testing.ts` — inject mutants, measure **kill vs survive** against a test oracle; a surviving mutant = a
+test-suite gap. Fail-closed: no oracle / original-fails-own-suite / **zero mutants ⇒ invalid (NOT a pass)**. Directly
+encodes §4's doctrine *"passing its own tests ≠ excellent"*. 9 assertions. Decision **INTEGRATE**.
+
+---
+
+*Genuine métier builds across Série 13–15: **P1, P2, P3, P4, P6, P7, P8, P9, P12, P15** (10). Honestly **ALIGNED**: P5,
+P10, P11, P13, P14 (5). Each build is grounded in a dated/primary world reference and composes existing ODG modules
+(no new engine); each ALIGNED verdict cites the existing module that already encodes the frontier doctrine.*

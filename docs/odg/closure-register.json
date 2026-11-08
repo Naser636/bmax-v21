@@ -3901,6 +3901,19 @@
       "acceptance": "ODG-accepted 2026-11-08: runtime/core/global-improvement-engine.ts orchestrates the whole-ODG loop GLOBAL_OBSERVATION->DIAGNOSIS->WORLD_RESEARCH->GAP_ANALYSIS->HYPOTHESIS->PROTOTYPE->SANDBOX->BENCHMARK->ADVERSARIAL->INDEPENDENT_EVAL->SHADOW->CANARY->MEASUREMENT->RETAIN/ROLLBACK by COMPOSING existing mechanisms (codebase-diagnostic observe + v124-scorecard state + self-improvement build/verify/retain loop) — NO second engine/governance/registry. observe() returns the REAL diagnostic+scorecard snapshot; analyzeGaps() derives evidence-based targets (empty result => NO_FINDING (SÉRIE 15 §2 honest taxonomy NO_FINDING/NOT_MEASURED/HEALTHY/DEGRADED/UNKNOWN; HEALTHY only with measured checks + integrity + demonstrated controls — an empty result is NEVER auto-healthy)); cycle() RETAINS only on a measured before->after gain with NO regression else ROLLBACK (fail-closed), selfPromoted:false (promotion external). maturity() maps the 14-stage loop to real modules. 10 assertions; odg-test-report PASS; project tsc clean. Step-4 general self-improvement engine PRESENT (reuse-only).",
       "evidence": "runtime/core/global-improvement-engine.ts; runtime/core/global-improvement-engine.test.ts; package.json",
       "staleEvidence": false
+    },
+    {
+      "id": "serie15-p6-mutation-testing",
+      "title": "SÉRIE 15 P6: mutation testing (test-suite effectiveness, Stryker/PIT)",
+      "program": "V4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "v124-p6-eval-reference"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: SÉRIE 15 P6 (one genuine build among the 6 ALIGNED métiers; P5/P10/P11/P13/P14 confirmed ALIGNED by existing canary-decision-pack/ai-act-classifier/einvoice/inference-engine/dora-metrics). World ref: mutation testing (Stryker/PIT/mutmut) is the gold standard for TEST-SUITE EFFECTIVENESS — a passing suite proves nothing about bug-catching. runtime/core/p6-mutation-testing.ts injects mutants and measures killed vs survived against a test oracle; a surviving mutant = a test gap; mutationScore=killed/total. FAIL-CLOSED: no oracle / original-fails-own-suite / ZERO mutants => invalid (NOT a pass); effective() fails closed on invalid/low score. Directly encodes the doctrine \"passing its own tests != excellent\". Complements P6 eval reference, no new engine. 9 assertions; odg-test-report PASS; project tsc clean. Decision INTEGRATE.",
+      "evidence": "runtime/core/p6-mutation-testing.ts; runtime/core/p6-mutation-testing.test.ts; docs/odg/METIER_EXCELLENCE_STUDY_2026-11-08.md; package.json",
+      "staleEvidence": false
     }
   ]
 }
