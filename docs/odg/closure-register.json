@@ -3199,6 +3199,22 @@
         "runtime/core/validation-campaign.test.ts"
       ],
       "staleEvidence": false
+    },
+    {
+      "id": "wi-cog-30-cognitive-objective-selection",
+      "title": "WI-COG-30 (§2): cognitive-decision wired into ODG objective selection under POLICY",
+      "program": "V3",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "wi-cog-28-cognitive-decision"
+      ],
+      "acceptance": "ODG-accepted 2026-11-08: runtime/core/cognitive-objective-selection.ts integrates cognitive-decision into ODG objective selection UNDER POLICY — Discovery proposes, Cognitive analyses, ODG decides. 8 governance assertions proven: inventory change=>proposal change; POLICY allowedKinds/denyList change=>authorised selection change; CONFIRMED unmet dependency (or unsatisfied requireDep vs register)=>DEFERRED_DEPENDENCY; contamination=>REFUSED_INTEGRITY; suspicion=>SELECTED_PENDING_REVIEW; accepted=>traceable mission (executed:false); refused/deferred=>no execution. Cognitive grants no authority, no POLICY bypass; reuses cognitive-decision (no second decision engine). 13/13; tsc clean; build OK; odg verify green; 7-pipeline validation PASS (no regression).",
+      "evidence": [
+        "runtime/core/cognitive-objective-selection.ts",
+        "runtime/core/cognitive-objective-selection.test.ts"
+      ],
+      "staleEvidence": false
     }
   ]
 }
