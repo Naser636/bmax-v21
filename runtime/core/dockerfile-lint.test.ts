@@ -44,7 +44,28 @@ console.log("SÉRIE 17 — DOCKERFILE SECURITY LINTER");
   check(!D.lintDockerfile("FROM node:22.22.1\nADD https://x/y /app\nUSER app\n").findings.some((f: any) => f.rule === "DL3020"), "ADD remote URL is not DL3020");
 }
 
+// repairDockerfile: safe fixes applied, judgment-dependent fixes only SUGGESTED (never guessed).
+{
+  const bad = "FROM node:latest\nRUN sudo apt-get install -y curl\nADD ./x /app\nENV API_KEY=AKIAEXAMPLE123\n";
+  const rep = D.repairDockerfile(bad);
+  // safe fixes applied: sudo removed, --no-install-recommends added, ADD→COPY.
+  check(!/\bsudo\b/.test(rep.repaired), "repair: sudo removed (safe)");
+  check(/--no-install-recommends/.test(rep.repaired), "repair: --no-install-recommends added (safe)");
+  check(/^COPY \.\/x/m.test(rep.repaired) && !/^ADD \.\/x/m.test(rep.repaired), "repair: ADD → COPY for local files (safe)");
+  check(rep.appliedFixes.some((f: any) => f.rule === "NO-SUDO") && rep.appliedFixes.some((f: any) => f.rule === "DL3015") && rep.appliedFixes.some((f: any) => f.rule === "DL3020"), "repair: the 3 safe fixes are recorded as applied");
+  // judgment-dependent fixes are SUGGESTED, never auto-applied (fail-safe).
+  check(/node:latest/.test(rep.repaired), "repair: base version NOT guessed (still :latest) — suggested only");
+  check(/API_KEY=AKIAEXAMPLE123/.test(rep.repaired), "repair: baked secret NOT auto-stripped — suggested only");
+  check(rep.suggestions.some((s: any) => s.rule === "DL3007") && rep.suggestions.some((s: any) => s.rule === "SECRET-IN-ENV") && rep.suggestions.some((s: any) => s.rule === "DL3002"), "repair: DL3007/SECRET/DL3002 are suggestions");
+  // the repaired output genuinely lints cleaner than the input (the eval of the repair).
+  check(D.lintDockerfile(rep.repaired).findingCount < D.lintDockerfile(bad).findingCount, "repair: repaired Dockerfile lints with fewer findings (safe improvement)");
+  // a repair on a clean Dockerfile is a no-op.
+  const clean = "FROM node:22.22.1\nUSER app\n";
+  check(D.repairDockerfile(clean).appliedFixes.length === 0, "repair: clean Dockerfile ⇒ no changes applied");
+}
+
 check(D.DOCKERFILE_LINT_CONTRACT.invariants.some((i: any) => /no 3rd-party binary/.test(i)), "contract: no external binary, no sudo");
+check(D.DOCKERFILE_LINT_CONTRACT.invariants.some((i: any) => /repairDockerfile applies ONLY safe/.test(i)), "contract: repair applies only safe fixes, suggests the rest");
 
 console.log(failures === 0 ? "ALL PASS — SÉRIE 17 DOCKERFILE LINTER" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);

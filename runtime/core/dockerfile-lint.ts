@@ -49,6 +49,38 @@ function lintDockerfile(src: any): any {
   return Object.freeze({ clean: highFindings === 0, highFindings, findingCount: findings.length, findings: Object.freeze(findings), note: "native Dockerfile security lint (subset of hadolint); HIGH findings ⇒ not clean; full hadolint parity needs the owner-gated binary" });
 }
 
+/**
+ * repairDockerfile(src) -> { repaired, appliedFixes, suggestions }. Applies ONLY safe, non-breaking deterministic fixes
+ * (remove `sudo`, add `--no-install-recommends`, ADD→COPY for local files); everything whose correct value cannot be
+ * known mechanically (base-image version, apt pins, adding a USER, removing a baked secret) is SUGGESTED, never guessed
+ * (fail-safe: a repair never invents a version or silently changes runtime identity/privilege).
+ */
+function repairDockerfile(src: any): any {
+  const ls = lines(src);
+  const appliedFixes: any[] = []; const suggestions: any[] = [];
+  const out = ls.map((raw, i) => {
+    const line = i + 1; const t = raw.trim();
+    if (t === "" || t.startsWith("#")) return raw;
+    let fixed = raw;
+    const up = t.toUpperCase();
+    // SAFE: remove `sudo ` from a RUN (build is already root).
+    if (up.startsWith("RUN") && /\bsudo\b/.test(fixed)) { fixed = fixed.replace(/\bsudo\s+/g, ""); appliedFixes.push({ rule: "NO-SUDO", line, change: "removed `sudo`" }); }
+    // SAFE: add --no-install-recommends to apt-get install.
+    if (/\bapt-get\s+install\b/.test(fixed) && !/--no-install-recommends/.test(fixed)) { fixed = fixed.replace(/\bapt-get\s+install\b/, "apt-get install --no-install-recommends"); appliedFixes.push({ rule: "DL3015", line, change: "added --no-install-recommends" }); }
+    // SAFE: ADD → COPY for local files (not remote URLs).
+    if (up.startsWith("ADD ") && !/^ADD\s+https?:\/\//i.test(t)) { fixed = fixed.replace(/^(\s*)ADD\b/i, "$1COPY"); appliedFixes.push({ rule: "DL3020", line, change: "ADD → COPY (local files)" }); }
+    return fixed;
+  });
+  // SUGGEST (never auto-applied): the judgment-dependent findings from the lint.
+  for (const f of lintDockerfile(src).findings) {
+    if (f.rule === "DL3007") suggestions.push({ rule: f.rule, line: f.line, suggestion: "pin the base image to a specific version/digest (value requires human choice)" });
+    if (f.rule === "DL3008") suggestions.push({ rule: f.rule, line: f.line, suggestion: "pin apt package versions (package=version) — versions require human choice" });
+    if (f.rule === "DL3002") suggestions.push({ rule: f.rule, line: f.line, suggestion: "add a non-root USER (adding one may change runtime privilege — human decision)" });
+    if (f.rule === "SECRET-IN-ENV") suggestions.push({ rule: f.rule, line: f.line, suggestion: "remove the baked secret; use build secrets / runtime injection (never auto-stripped)" });
+  }
+  return Object.freeze({ repaired: out.join("\n"), appliedFixes: Object.freeze(appliedFixes), suggestions: Object.freeze(suggestions), note: "only safe non-breaking fixes applied; version/privilege/secret decisions are SUGGESTED, never guessed (fail-safe)" });
+}
+
 const DOCKERFILE_LINT_CONTRACT = Object.freeze({
   id: "V124-DOCKERFILE-LINT",
   source: "SÉRIE 17 — native Dockerfile security linter (new-language-families alternative; no external binary, no sudo)",
@@ -59,10 +91,11 @@ const DOCKERFILE_LINT_CONTRACT = Object.freeze({
     "HIGH findings (unpinned base / root USER / sudo / secret-in-ENV) ⇒ not clean (fail-closed security-first)",
     "surfaces findings with rule + severity + line; a clean Dockerfile passes",
     "full hadolint parity remains owner-gated (binary install); this is the native security subset",
+    "repairDockerfile applies ONLY safe non-breaking fixes (remove sudo / add --no-install-recommends / ADD→COPY); version/privilege/secret fixes are SUGGESTED, never guessed (fail-safe)",
   ]),
 });
 
-module.exports = { lintDockerfile, DOCKERFILE_LINT_CONTRACT };
+module.exports = { lintDockerfile, repairDockerfile, DOCKERFILE_LINT_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...DOCKERFILE_LINT_CONTRACT, demo: lintDockerfile("FROM node:22.22.1\nRUN apt-get install -y --no-install-recommends curl=7.88.1-10\nCOPY . /app\nUSER app\n") }, null, 2) + "\n"); }
 
