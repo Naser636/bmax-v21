@@ -406,15 +406,16 @@
       "program": "A",
       "domain": "CENTRAL_INTELLIGENCE",
       "phase": "PHASE-1",
-      "status": "PROPOSED",
+      "status": "COMPLETED",
       "reuseExisting": [
+        "memory-architecture.ts",
         "memory-trust-gate.ts",
-        "compounding-loop.ts",
-        "calibration-trust-gate.ts"
+        "compounding-pattern-library.ts"
       ],
       "dependsOn": [
         "PHASE-0"
-      ]
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/memory-architecture.ts — Central Intelligence memory ACCESS router composing memory-trust-gate.assessMemoryTrust + compounding-pattern-library.classifyMemory (5 families); only TRUSTED records returned grouped by family, untrusted/stale/unattributed EXCLUDED (never trusted knowledge); deny-by-default. Integration, no reimplementation (anti-gas-factory). 7/7. COMPLETED, not yet VALIDATED."
     },
     {
       "id": "M-CH2-01",
