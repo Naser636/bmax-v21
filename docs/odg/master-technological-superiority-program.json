@@ -1098,5 +1098,35 @@
       "NEEDS_REVIEW"
     ],
     "status": "IN_PROGRESS"
+  },
+  "engineeringThroughput": {
+    "directive": "ODG Engineering Throughput Optimization (integrated into V12.4 as a transversal mission; NOT a concurrent roadmap/engine). Increase validated work per unit time WITHOUT reducing quality/security/traceability.",
+    "baseline": "docs/odg/THROUGHPUT_BASELINE_V12.4.md (reproducible, measured 2026-11-09)",
+    "measuredBottlenecks": [
+      "#1 per-PR serial CI wait ~245s (measured runs #413=246s,#414=244s) — paid once per delivery",
+      "#2 local FULL gate ~187s / 383 suites, ~95% tsx cold-start (mitigated for dev loop by targeted-verify; FULL mandatory at certification)",
+      "#3 per-mission bookkeeping round-trips (scale with #deliveries)"
+    ],
+    "improvement": {
+      "capability": "runtime/core/delivery-batch-coherence.ts",
+      "mechanism": "deliver technically-related missions (shared write-set/deps/impacted module) as one coherent lot ⇒ pay CI once instead of k times; IDENTICAL controls (same FULL gate runs once); fail-closed — independent missions never batched, no-write-set never batched, batch capped",
+      "measuredReuse": [
+        "change-impact-graph",
+        "gate-instrumentation.speedupTarget",
+        "performance-observability.compareReproducible"
+      ]
+    },
+    "honesty": "no global % gain claimed; only arithmetic CI-wait count saved on proven-coherent lots; per-stage planning/context/dev timings NOT_MEASURED (not fabricated); speed from method never from fewer checks; no NOT_RUN as PASS",
+    "instrumentsReused": [
+      "gate-instrumentation",
+      "performance-observability",
+      "validation-selector",
+      "verified-result-cache",
+      "engineering-scheduler",
+      "targeted-verify",
+      "persistent-impact-graph",
+      "flaky-replay-gate"
+    ],
+    "status": "IN_PROGRESS"
   }
 }
