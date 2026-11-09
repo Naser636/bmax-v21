@@ -80,6 +80,60 @@ const METIER_GUARDS: any = Object.freeze({
       return { ok, reason: ok ? `ADMIT independently confirmed: recomputed €${recomputed.toFixed(4)}/success ≤ €${budget}` : "ADMIT contradicts the independent unit-cost recomputation (zero successes or over budget) — assurance FAILED" };
     },
   }),
+  // ----- V20 BATCH 01 -----
+  P1: Object.freeze({
+    metier: "P1", domain: "quality / semantic-regression",
+    resolve: () => require("./p1-semantic-regression-guard.js").assess,
+    inputNote: "payload = { statedTestsPass, before:[{input,observedOutput}], after:[{input,observedOutput}] }",
+    decisionOf: (v: any) => (v && v.safe === true ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: SAFE requires BOTH stated-tests-pass AND behaviour-preserved. Recompute behaviour preservation by a
+    // DIRECT output-set comparison (my own map, not captureBaseline/compareToBaseline) ⇒ catches a SAFE that hides a
+    // changed or missing output.
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT is safe (no assurance burden)" };
+      const p = payload || {}; const key = (s: any) => JSON.stringify(s && s.input); const val = (s: any) => JSON.stringify(s && s.observedOutput);
+      const before = Array.isArray(p.before) ? p.before : []; const after = Array.isArray(p.after) ? p.after : [];
+      const afterMap: any = {}; for (const s of after) afterMap[key(s)] = val(s);
+      const changedOrMissing = before.some((s: any) => !(key(s) in afterMap) || afterMap[key(s)] !== val(s));
+      const ok = p.statedTestsPass === true && before.length > 0 && !changedOrMissing;
+      return { ok, reason: ok ? "ADMIT independently confirmed: tests pass AND every baseline output reproduced" : "ADMIT contradicts the independent output comparison (a baseline output changed/missing, or tests not passing) — assurance FAILED" };
+    },
+  }),
+  P12: Object.freeze({
+    metier: "P12", domain: "resilience / circuit-breaker",
+    resolve: () => require("./p12-circuit-breaker.js").evaluateBreaker,
+    inputNote: "payload = { state, outcomes:[SUCCESS|FAIL|SLOW], config:{ failureThreshold, minSamples } }",
+    decisionOf: (v: any) => (v && v.admit === true ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: recompute failureRate = (FAIL+SLOW)/n by a DIRECT count (not the guard's burnRate path). An ADMIT (the
+    // breaker lets the call through) must NOT coincide with a tripped condition (n ≥ minSamples AND rate ≥ threshold).
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT/OPEN is safe (no assurance burden)" };
+      const p = payload || {}; const o = Array.isArray(p.outcomes) ? p.outcomes : []; const cfg = (p.config && typeof p.config === "object") ? p.config : {};
+      const n = o.length; const fails = o.filter((x: any) => x === "FAIL" || x === "SLOW").length;
+      const rate = n > 0 ? fails / n : 0; const thr = typeof cfg.failureThreshold === "number" ? cfg.failureThreshold : 0.5; const minS = typeof cfg.minSamples === "number" ? cfg.minSamples : 5;
+      const tripped = n >= minS && rate >= thr;
+      return { ok: !tripped, reason: tripped ? `ADMIT contradicts the independent failure-rate check (rate ${rate.toFixed(2)} ≥ ${thr} over ${n} ≥ ${minS} calls — breaker should be OPEN) — assurance FAILED` : `ADMIT independently confirmed: failure rate ${rate.toFixed(2)} not tripping over ${n} calls` };
+    },
+  }),
+  P4: Object.freeze({
+    metier: "P4", domain: "data / distribution drift",
+    // input adapter (legitimate input-contract variation): assessDrift takes (reference, current, opts) positionally.
+    resolve: () => { const G = require("./p4-distribution-drift.js"); return (payload: any) => G.assessDrift(payload && payload.reference, payload && payload.current, payload && payload.opts); },
+    inputNote: "payload = { reference:[...], current:[...], opts? }",
+    decisionOf: (v: any) => (v && v.gate === "PASS" ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: cross-check with a DIFFERENT statistic than PSI — the total-variation distance (max |refFreq−curFreq|)
+    // over the value histograms. An ADMIT (no significant drift) must not coincide with a gross TV distance.
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT is safe (no assurance burden)" };
+      const p = payload || {}; const ref = Array.isArray(p.reference) ? p.reference : []; const cur = Array.isArray(p.current) ? p.current : [];
+      if (ref.length === 0 || cur.length === 0) return { ok: false, reason: "ADMIT with an empty distribution — assurance FAILED" };
+      const hist = (a: any[]) => { const h: any = {}; for (const x of a) h[String(x)] = (h[String(x)] || 0) + 1 / a.length; return h; };
+      const hr = hist(ref); const hc = hist(cur); const keys = new Set([...Object.keys(hr), ...Object.keys(hc)]);
+      let tv = 0; for (const k of keys) tv = Math.max(tv, Math.abs((hr[k] || 0) - (hc[k] || 0)));
+      const ok = tv <= 0.5;   // conservative independent bound; a gross shift (e.g. all-1 → all-9) gives tv=1.0
+      return { ok, reason: ok ? `ADMIT independently confirmed: total-variation ${tv.toFixed(2)} ≤ 0.5 (distinct metric from PSI)` : `ADMIT contradicts the independent total-variation check (TV ${tv.toFixed(2)} > 0.5) — assurance FAILED` };
+    },
+  }),
 });
 
 const STAGE = Object.freeze({ INVALID_REQUEST: "INVALID_REQUEST", UNKNOWN_METIER: "UNKNOWN_METIER", PERMISSION_REFUSED: "PERMISSION_REFUSED", CAPABILITY_UNAVAILABLE: "CAPABILITY_UNAVAILABLE", DUPLICATE: "DUPLICATE", EXECUTION_FAILED: "EXECUTION_FAILED", INVALID_RESULT: "INVALID_RESULT", ASSURANCE_FAILED: "ASSURANCE_FAILED", CLOSURE_FAILED: "CLOSURE_FAILED", CLOSED: "CLOSED" });
