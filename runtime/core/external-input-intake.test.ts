@@ -70,6 +70,15 @@ function mkDeps(over: any = {}): any {
   check(rec.updated === 0 && rec.rolledBack === 1, "no register update; staged effect rolled back");
 }
 
+// (5b) REAL admission applied + proof, but the REGISTER UPDATE fails ⇒ ROLLED_BACK (no partial APPLIED_REAL). [V14 §3.6]
+{
+  const { d, rec } = mkDeps();
+  d.updateRegisters = (eff: any) => { rec.updated++; return { ok: false, reason: "register write failed" }; };
+  const out = T.processIntake({ kind: "EVAL_SET", declaredReal: true, stamped: stamp({ cases: [{ id: "c1" }] }, INDEP), payload: { cases: [{ id: "c1" }] } }, d);
+  check(out.stage === T.OUT.ROLLED_BACK && out.applied === false, "register-update failure ⇒ ROLLED_BACK (not APPLIED_REAL)");
+  check(rec.rolledBack === 1 && out.unblocked.length === 0, "rollback invoked on update failure; nothing unblocked");
+}
+
 // (6) REAL admission applied but independent VERIFY fails ⇒ ROLLED_BACK.
 {
   const { d, rec } = mkDeps({ verifyOk: false });

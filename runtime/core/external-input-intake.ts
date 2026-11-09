@@ -84,8 +84,16 @@ function processIntake(envelope: any, deps: any = {}): any {
     return Object.freeze({ stage: OUT.NO_PROOF, applied: false, unblocked: Object.freeze([]), decision, reason: "no admissible proof from the harness — nothing unblocked (staged effect rolled back)", auditCount: audit.length });
   }
 
-  // Update the affected registers/capabilities (ONLY now, with admissible proof) — then VERIFY independently.
+  // Update the affected registers/capabilities (ONLY now, with admissible proof). A FAILED update is itself a reason to
+  // roll back — the application must not stand if its register effect did not take (else the system reports a success
+  // whose consequence never landed). Fail-closed: no partial APPLIED_REAL on a failed update.
   const upd = fn(deps.updateRegisters) ? safe(() => deps.updateRegisters(applied.effect)) : { ok: true, unblocked: [...decision.unblocks] };
+  if (!upd || upd.ok !== true) {
+    if (applied.rollbackToken && fn(deps.rollback)) safe(() => deps.rollback(applied.rollbackToken));
+    persist(Object.freeze({ at: now, step: "ROLLBACK", reason: (upd && upd.reason) || "register update failed" }));
+    return Object.freeze({ stage: OUT.ROLLED_BACK, applied: false, unblocked: Object.freeze([]), decision, reason: "register update failed — rolled back (no partial application)", auditCount: audit.length });
+  }
+  // …then VERIFY the consequence independently.
   const ver = fn(deps.verify) ? safe(() => deps.verify(applied.effect)) : { ok: true };
   if (!ver || ver.ok !== true) {
     if (applied.rollbackToken && fn(deps.rollback)) safe(() => deps.rollback(applied.rollbackToken));
@@ -108,6 +116,7 @@ const EXTERNAL_INPUT_INTAKE_CONTRACT = Object.freeze({
     "the audit record is persisted for EVERY outcome; a persist failure is fail-closed (no untraceable application)",
     "SYNTHETIC admitted ⇒ SIM only, unblocks NOTHING (a simulation never becomes real proof)",
     "a REAL apply requires canonical permission (canApplyReal) else ESCALATE (not applied); and ADMISSIBLE PROOF to unblock else NO_PROOF (not applied)",
+    "a FAILED register update is ROLLED BACK (no partial APPLIED_REAL whose register effect never landed)",
     "a consequence failing independent verification is ROLLED BACK (traceable + reversible)",
   ]),
 });
