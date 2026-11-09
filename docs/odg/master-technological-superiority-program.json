@@ -1074,5 +1074,29 @@
       "ODG_MASTER_TECHNOLOGICAL_SUPERIORITY_ROADMAP.md"
     ],
     "rule": "all programs are sections/phases/missions of V12.4; no concurrent roadmap; no requirement/decision/validated work lost"
+  },
+  "architectureIntelligence": {
+    "directive": "ODG addendum §3-§5 — Architecture Intelligence & Rationalization (integrated into V12.4 as a transversal mission; NOT a concurrent roadmap/engine)",
+    "scope": "whole ODG infra/architecture/transversal engines/interfaces/registers/controls. EXCLUDES rewriting the 15 métiers internal business logic (shared transversal components may be audited/improved preserving contracts).",
+    "approach": "START read-only audit then execute only demonstrated+authorized consolidations in dependency order. Similarity NEVER authorizes a fusion. Reuses change-impact-graph + capability-map + persistent-impact-graph (no new graph/engine).",
+    "capability": "runtime/core/architecture-audit.ts",
+    "auditsRun": [
+      {
+        "id": "AUDIT-1",
+        "artifact": "docs/odg/ARCHITECTURE_AUDIT_V12.4.md",
+        "findings": "426 core modules: 0 circular deps, 0 exact responsibility duplications; 7 unused flags ALL verified FALSE POSITIVES (static graph under-approximates dynamic/string edges). Nothing merged/retired. Read-only.",
+        "status": "COMPLETED"
+      }
+    ],
+    "decisions": [
+      "KEEP",
+      "MERGE",
+      "REUSE",
+      "ADAPT",
+      "DEPRECATE",
+      "RETIRE",
+      "NEEDS_REVIEW"
+    ],
+    "status": "IN_PROGRESS"
   }
 }
