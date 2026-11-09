@@ -134,6 +134,60 @@ const METIER_GUARDS: any = Object.freeze({
       return { ok, reason: ok ? `ADMIT independently confirmed: total-variation ${tv.toFixed(2)} ≤ 0.5 (distinct metric from PSI)` : `ADMIT contradicts the independent total-variation check (TV ${tv.toFixed(2)} > 0.5) — assurance FAILED` };
     },
   }),
+  // ----- V21 BATCH 02 -----
+  P2: Object.freeze({
+    metier: "P2", domain: "AI / reliability (pass@k)",
+    resolve: () => { const G = require("./p2-passk-reliability.js"); return (payload: any) => G.passAtK(payload && payload.rolloutsByTask); },
+    inputNote: "payload = { rolloutsByTask: { taskId:[bool,…] }, threshold }",
+    decisionOf: (report: any, payload: any) => { const G = require("./p2-passk-reliability.js"); return G.reliable(report, payload && payload.threshold) ? "ADMIT" : "REJECT"; },
+    // INDEPENDENT: recompute pass@k from the RAW rollouts (own loop, not passAtK/reliable). ADMIT ⟹ recomputed ≥ threshold.
+    assure: (report: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT is safe (no assurance burden)" };
+      const p = payload || {}; const m = (p.rolloutsByTask && typeof p.rolloutsByTask === "object") ? p.rolloutsByTask : {};
+      const ids = Object.keys(m).filter((id) => Array.isArray(m[id]) && m[id].length > 0);
+      if (ids.length === 0) return { ok: false, reason: "ADMIT with no rollouts — assurance FAILED" };
+      const k = Math.min(...ids.map((id) => m[id].length));
+      const allPass = ids.filter((id) => m[id].slice(0, k).every((x: any) => x === true)).length;
+      const recomputed = allPass / ids.length; const thr = typeof p.threshold === "number" ? p.threshold : 0.9;
+      const ok = recomputed >= thr;
+      return { ok, reason: ok ? `ADMIT independently confirmed: recomputed pass@${k} ${recomputed.toFixed(3)} ≥ ${thr}` : `ADMIT contradicts the independent pass@k recomputation (${recomputed.toFixed(3)} < ${thr}) — assurance FAILED` };
+    },
+  }),
+  P10: Object.freeze({
+    metier: "P10", domain: "regulatory / serious-incident deadline",
+    resolve: () => require("./p10-serious-incident-deadline.js").assessIncidentDeadline,
+    inputNote: "payload = { incident:{ category, awareDate 'YYYY-MM-DD' }, reportedDate 'YYYY-MM-DD', activities }",
+    decisionOf: (v: any) => (v && v.verdict === "REPORTED_ON_TIME" ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: recompute the due date by DIRECT UTC day arithmetic (Date.UTC + ms — NOT addDaysUTC) and confirm an
+    // ADMIT truly reported on/before it. Deterministic (fixed date strings, no Date.now).
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT/overdue is safe (no assurance burden)" };
+      const p = payload || {}; const incident = (p.incident && typeof p.incident === "object") ? p.incident : {};
+      const parse = (s: any) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || "")); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : NaN; };
+      const aware = parse(incident.awareDate); const reported = parse(p.reportedDate); const days = typeof v.deadlineDays === "number" ? v.deadlineDays : NaN;
+      if (!isFinite(aware) || !isFinite(reported) || !isFinite(days)) return { ok: false, reason: "ADMIT with un-recomputable dates — assurance FAILED" };
+      const due = aware + days * 86400000;
+      const ok = reported <= due;
+      const iso = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+      return { ok, reason: ok ? `ADMIT independently confirmed: reported ${iso(reported)} ≤ recomputed due ${iso(due)} (direct UTC arithmetic)` : `ADMIT contradicts the independent deadline recomputation (reported ${iso(reported)} > due ${iso(due)}) — assurance FAILED` };
+    },
+  }),
+  P13: Object.freeze({
+    metier: "P13", domain: "sustainability / software carbon intensity",
+    resolve: () => require("./p13-software-carbon-intensity.js").carbonIntensity,
+    inputNote: "payload = { benchmark:{ totalUnits, kind }, factors:{ energyPerUnitKWh, pue, gridCarbonIntensityGco2PerKWh, embodiedGco2, lifespanUnits }, maxGco2PerUnit }",
+    decisionOf: (res: any, payload: any) => { const G = require("./p13-software-carbon-intensity.js"); return (res && res.viable === true && G.withinCarbonBudget(res, payload && payload.maxGco2PerUnit).within === true) ? "ADMIT" : "REJECT"; },
+    // INDEPENDENT: recompute SCI/unit from the RAW factors (own arithmetic, NOT carbonIntensity). ADMIT ⟹ recomputed ≤ budget.
+    assure: (res: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT/over-budget is safe (no assurance burden)" };
+      const p = payload || {}; const b = (p.benchmark && typeof p.benchmark === "object") ? p.benchmark : {}; const f = (p.factors && typeof p.factors === "object") ? p.factors : {};
+      const R = Number(b.totalUnits); const e = Number(f.energyPerUnitKWh); const pue = Number(f.pue); const grid = Number(f.gridCarbonIntensityGco2PerKWh); const emb = Number(f.embodiedGco2); const life = Number(f.lifespanUnits); const budget = Number(p.maxGco2PerUnit);
+      if (!(R > 0) || !isFinite(e) || !isFinite(pue) || !isFinite(grid) || !isFinite(emb) || !(life > 0) || !isFinite(budget)) return { ok: false, reason: "ADMIT with un-recomputable carbon factors — assurance FAILED" };
+      const sci = ((R * e * pue) * grid + emb * (R / life)) / R;   // (E×I + M) / R from raw factors
+      const ok = sci <= budget;
+      return { ok, reason: ok ? `ADMIT independently confirmed: recomputed SCI ${sci.toFixed(4)} gCO2/unit ≤ ${budget}` : `ADMIT contradicts the independent SCI recomputation (${sci.toFixed(4)} > ${budget}) — assurance FAILED` };
+    },
+  }),
 });
 
 const STAGE = Object.freeze({ INVALID_REQUEST: "INVALID_REQUEST", UNKNOWN_METIER: "UNKNOWN_METIER", PERMISSION_REFUSED: "PERMISSION_REFUSED", CAPABILITY_UNAVAILABLE: "CAPABILITY_UNAVAILABLE", DUPLICATE: "DUPLICATE", EXECUTION_FAILED: "EXECUTION_FAILED", INVALID_RESULT: "INVALID_RESULT", ASSURANCE_FAILED: "ASSURANCE_FAILED", CLOSURE_FAILED: "CLOSURE_FAILED", CLOSED: "CLOSED" });

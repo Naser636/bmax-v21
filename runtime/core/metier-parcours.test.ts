@@ -93,6 +93,34 @@ const TYPOSQUAT = { name: "reakt", version: "^1.0.0" };
   check(P.runParcours({ metier: "P4", payload: { reference: ref, current: shifted } }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B4 a wrong PASS on a gross shift ⇒ ASSURANCE_FAILED (independent TV metric catches it)");
 }
 
+// ===== V21 BATCH 02: P2, P10, P13 =====
+// (B2) P2 reliability — all-pass over k rollouts ≥ threshold ⇒ ADMIT; a flaky task ⇒ REJECT; inflated pass@k caught.
+{
+  const pos = { rolloutsByTask: { t1: [true, true], t2: [true, true] }, threshold: 0.9 };
+  const neg = { rolloutsByTask: { t1: [true, false], t2: [true, true] }, threshold: 0.9 };
+  check(P.runParcours({ metier: "P2", payload: pos, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B2 P2 pass@k ≥ threshold ⇒ ADMIT");
+  check(P.runParcours({ metier: "P2", payload: neg }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B2 P2 flaky task (pass@k < threshold) ⇒ REJECT");
+  const liar = { P2: { ...P.METIER_GUARDS.P2, resolve: () => () => ({ passAtK: 1.0 }) } };   // guard fakes a perfect score
+  check(P.runParcours({ metier: "P2", payload: neg }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B2 an inflated pass@k on flaky rollouts ⇒ ASSURANCE_FAILED (independent recompute catches it)");
+}
+// (B10) P10 incident deadline — reported within window ⇒ ADMIT; overdue ⇒ REJECT; wrong ON_TIME caught.
+{
+  const onTime = { incident: { category: "DEATH_SERIOUS_HARM", awareDate: "2026-01-01" }, reportedDate: "2026-01-02", activities: { deploysHighRiskAISystem: true } };
+  const overdue = { incident: { category: "DEATH_SERIOUS_HARM", awareDate: "2026-01-01" }, reportedDate: "2026-12-01", activities: { deploysHighRiskAISystem: true } };
+  check(P.runParcours({ metier: "P10", payload: onTime, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B10 P10 reported on time ⇒ ADMIT");
+  check(P.runParcours({ metier: "P10", payload: overdue }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B10 P10 overdue ⇒ REJECT");
+  const liar = { P10: { ...P.METIER_GUARDS.P10, resolve: () => () => ({ verdict: "REPORTED_ON_TIME", deadlineDays: 2 }) } };   // fakes on-time for a late report
+  check(P.runParcours({ metier: "P10", payload: overdue }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B10 a wrong ON_TIME for a late report ⇒ ASSURANCE_FAILED (direct date recompute catches it)");
+}
+// (B13) P13 carbon — SCI/unit ≤ budget ⇒ ADMIT; over budget ⇒ REJECT; under-reported SCI caught.
+{
+  const mk = (epu: number) => ({ benchmark: { totalUnits: 1000, kind: "cpu-reference" }, factors: { energyPerUnitKWh: epu, pue: 1.5, gridCarbonIntensityGco2PerKWh: 400, embodiedGco2: 100000, lifespanUnits: 1000000 }, maxGco2PerUnit: 1.0 });
+  check(P.runParcours({ metier: "P13", payload: mk(0.0001), declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B13 P13 SCI ≤ budget ⇒ ADMIT");
+  check(P.runParcours({ metier: "P13", payload: mk(0.01) }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B13 P13 SCI > budget ⇒ REJECT");
+  const liar = { P13: { ...P.METIER_GUARDS.P13, resolve: () => () => ({ viable: true, sciPerUnit: 0.1 }) } };   // fakes a low SCI
+  check(P.runParcours({ metier: "P13", payload: mk(0.01) }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B13 an under-reported SCI over real budget ⇒ ASSURANCE_FAILED (raw-factor recompute catches it)");
+}
+
 // (C) RÉSILIENCE [§5] — permission refused (deny-by-default) ⇒ PERMISSION_REFUSED, guard never runs.
 {
   const out = P.runParcours({ metier: "P3", payload: CLEAN }, { permissions: { canExecute: () => false }, audit: auditOK, now: "t" });
