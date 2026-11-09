@@ -105,3 +105,39 @@ it must not be self-authorized. Prep: the ladder, scope-containment, and evidenc
 
 Nothing above can be advanced by ODG without the stated authority. The continuous loop remains IDLE_BLOCKED with these
 verifiable reasons and one-step resume tests; it resumes automatically the moment any dependency is satisfied.
+
+---
+
+## Re-verification 2026-11-09 — after the Independent-Validation campaign (28/28 VALIDATED)
+
+**Truth Lock:** `main @ 670759f` (branch `excellence/v3-wave3-demonstrators-20261101` = origin/main), 0 open PRs this
+session (PRs #413–#421 merged). Register **348 items [332 ACCEPTED / 10 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED], 0 stale
+acceptances** (campaign-controller 36/36). Manifest: **28/28 Master-program missions VALIDATED** — each re-derived by
+`runtime/core/mission-independent-validation.test.ts` (adversarial, independent of each module's own test; gate-enforced;
+0 module defects found). Gate `test:report` **389/389**.
+
+**Finding:** every one of the **16 non-ACCEPTED register items is owner/external/environment-gated — none became
+self-clearable.** ODG has driven each to the last non-privileged point. The within-ODG-authority roadmap is at its real
+closure; the remaining work requires an owner/external action below.
+
+| Item | Status | Authority required | The one owner action that unblocks it |
+|---|---|---|---|
+| `dashboard-tls-exposure` | BLOCKED | OWNER-EXEC + exposure decision | confirm public exposure + hostname/TLS cert; run `EXPOSURE_RUNBOOK.md` |
+| `structured-roadmap-deps` | BLOCKED | OWNER-POLICY (protected-path write) | authorize applying `docs/odg/ROADMAP.proposed.json` deps to the governed ROADMAP |
+| `campaign-runner-systemd-activation` | BLOCKED | OWNER-EXEC (systemd on VPS) | install/enable the runner timer (host privileged action) |
+| `broad-it-independent-eval-set` | BLOCKED | THIRD-PARTY (labelled data) | supply a real, independently-labelled broad-IT eval set |
+| `broad-it-corpus-grow` | IN_PROGRESS | THIRD-PARTY (data) | supply/authorize additional representative corpus |
+| `new-language-families` | BLOCKED | OWNER-EXEC (toolchain install) | authorize/install the real toolchain (e.g. hadolint) for the prepared adapter |
+| `p01-demand-validation` | BLOCKED | OWNER-POLICY (lawful experiment) | authorize running the willingness-to-pay experiment |
+| `p01-billing-sandbox` | BLOCKED | THIRD-PARTY (real provider) | provide real (non-sandbox) billing-provider credentials |
+| `p0e-audit-log-keyed-integrity` | BLOCKED | OWNER-POLICY (key decision) | decide HMAC key custody/rotation for a keyed/signed-tail audit log |
+| `adr-166-capabilities-reconciliation` | BLOCKED | OWNER-POLICY (protected decision) | rule on V12.4 §115 recover-166 vs the frozen DEC-V60-166-RETIREMENT |
+| `historical-roadmap-excellence-28jul-recover` | BLOCKED | THIRD-PARTY (source) | supply the original 28-Jul "ROADMAP D'EXCELLENCE" source to recover |
+| `golden-path-scaffolder-poc` | DEFERRED | OWNER-POLICY (productize decision) | decide whether to productize the preserved O8 prototype |
+| `commercial-ops-substrate-h3` | DEFERRED | OWNER-POLICY (scope decision) | decide whether to build out the CRM-mechanics substrate |
+| `p0-autonomy-measure-slice3-delegate-provenance` | DEFERRED | (deep work, not a safe stamp) | authorize the execution-chain-contract + empirical delegate smoke (forensic showed the simple stamp is unsafe) |
+| `eleven-profession-program-definition` | IN_PROGRESS | OWNER-POLICY (program scope) | confirm scope of the additive eleven-profession program |
+| `master-unified-campaign` | IN_PROGRESS | OWNER-POLICY (program scope) | confirm scope of the master unified campaign |
+
+**Nothing above is simulated, bypassed, or self-authorized.** This is a decision/action pack. Until an owner acts on a
+row, that item stays honestly non-ACCEPTED; ODG will not flip it.
