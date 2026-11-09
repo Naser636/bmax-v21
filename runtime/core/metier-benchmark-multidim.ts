@@ -3,13 +3,13 @@
 
 /*
  * SÉRIE 16 (Step 2) — MULTIDIMENSIONAL MÉTIER BENCHMARK. PURE, deterministic. Strengthens metier-benchmark-suite:
- * scoring each of the 10 métier improvements on THREE distinct dimensions so a guard that "blocks everything" is NOT
+ * scoring each of the 15 métier improvements on THREE distinct dimensions so a guard that "blocks everything" is NOT
  * credited (§2):
  *   DETECTION   — catches a planted adversarial case (true positive),
  *   SPECIFICITY — accepts a benign case without flagging it (NO false positive),
  *   ROBUSTNESS  — handles malformed/hostile input fail-closed, WITHOUT crashing or a false pass.
  * A métier is EFFECTIVE only when it DETECTS the bad AND is SPECIFIC on the good. Every scenario is run twice for
- * reproducibility. Composes the 10 modules (no new engine); measures false positives/negatives honestly. Dual export.
+ * reproducibility. Composes the 15 modules (no new engine); measures false positives/negatives honestly. Dual export.
  */
 
 const P1 = require("./p1-semantic-regression-guard");
@@ -22,6 +22,13 @@ const P8 = require("./p8-semver-enforcement");
 const P9 = require("./p9-unit-economics");
 const P12 = require("./p12-watermark");
 const P15 = require("./p15-saga-compensation");
+// The 5 previously-NOT_BENCHMARKED métiers, covered via their EXISTING gate-tested reference capabilities (reuse, not
+// new engines): P5 progressive-delivery (canary), P10 regulatory evidence-prep, P11 document, P13 AI-infra, P14 devex.
+const P5R = require("./canary-decision-pack");
+const P10R = require("./profession-p10-regulatory-reference");
+const P11R = require("./profession-p11-document-reference");
+const P13R = require("./profession-p13-aiinfra-reference");
+const P14R = require("./profession-p14-devex-reference");
 
 // For each métier: an adversarial case (should be caught), a benign case (should NOT be flagged), a malformed input
 // (should be handled fail-closed, no throw). `flagged(r)` = the guard raised a concern on that run.
@@ -66,6 +73,31 @@ const PROBES = Object.freeze([
     adversarial: () => P15.runSaga([{ id: "a", forward: () => true, compensate: () => true }, { id: "b", forward: () => false, compensate: () => true }]),
     benign: () => P15.runSaga([{ id: "a", forward: () => true, compensate: () => true }, { id: "b", forward: () => true, compensate: () => true }]),
     malformed: () => P15.runSaga(null), flagged: (r: any) => r.status !== "COMMITTED" },
+  // P5 Cloud/Platform — progressive-delivery (canary) gate: an engineering/mutating rollout is NOT safe; a read-only one is.
+  { metier: "P5",
+    adversarial: () => P5R.assessCanaryCandidate({ mission: "SOME_ENG", requiresEngineering: true, authorizedPaths: ["src/"] }),
+    benign: () => P5R.assessCanaryCandidate({ mission: "HEALTH_RO", requiresEngineering: false, authorizedPaths: [] }),
+    malformed: () => P5R.assessCanaryCandidate(null), flagged: (r: any) => r.safe !== true },
+  // P10 Regulatory — AI-Act evidence prep: an overclaim ("ISO 27001 certified") is REFUSED; an honest prep statement is not.
+  { metier: "P10",
+    adversarial: () => P10R.buildEvidencePrep({ developsOrPlacesAiSystemUnderOwnName: true }, ["Our product is ISO 27001 certified."]),
+    benign: () => P10R.buildEvidencePrep({ developsOrPlacesAiSystemUnderOwnName: true }, ["We documented ISO 27001-aligned controls and prepared evidence."]),
+    malformed: () => P10R.buildEvidencePrep(null, null), flagged: (r: any) => (r.overclaimsRefused || 0) >= 1 },
+  // P11 Document/IDP — invoice processing: a doc missing a mandatory field (BT-1) is rejected; a well-formed one accepted.
+  { metier: "P11",
+    adversarial: () => P11R.processDocument({ issueDate: "2026-11-08", currency: "EUR", seller: { name: "S" }, buyer: { name: "B" }, lines: [{ id: "l", netMinor: 100 }], totals: { lineNetSumMinor: 100, taxExclusiveMinor: 100, vatMinor: 0, taxInclusiveMinor: 100 } }),
+    benign: () => P11R.processDocument({ id: "I", issueDate: "2026-11-08", currency: "EUR", seller: { name: "S" }, buyer: { name: "B" }, lines: [{ id: "l", netMinor: 100 }], totals: { lineNetSumMinor: 100, taxExclusiveMinor: 100, vatMinor: 0, taxInclusiveMinor: 100 } }),
+    malformed: () => P11R.processDocument(null), flagged: (r: any) => r.accepted !== true },
+  // P13 AI-Infra/GPU — honest serving: a gpu-simulated latency is flagged SIMULATED (never passed as measured hardware); a cpu-reference run is genuinely measured.
+  { metier: "P13",
+    adversarial: () => P13R.serveAndMeasure("gpu-simulated", [{ input: "abc" }], null),
+    benign: () => P13R.serveAndMeasure("cpu-reference", [{ input: "abcdefghij" }], 2),
+    malformed: () => P13R.serveAndMeasure(null, null, null), flagged: (r: any) => r.simulated === true },
+  // P14 DevEx — golden-path scaffold evidence: an incomplete scaffold (missing health) is NOT attested; a complete one is.
+  { metier: "P14",
+    adversarial: () => P14R.scaffoldEvidence({ buildRef: "b@1", sbom: { bomFormat: "CycloneDX", components: [{ name: "a" }] }, confinement: { netOff: true, envCleared: true } }),
+    benign: () => P14R.scaffoldEvidence({ buildRef: "b@1", sbom: { bomFormat: "CycloneDX", components: [{ name: "a" }] }, confinement: { netOff: true, envCleared: true }, health: { available: true } }),
+    malformed: () => P14R.scaffoldEvidence(null), flagged: (r: any) => r.attested !== true },
 ]);
 
 function safeRun(fn: () => any): { ok: boolean; value: any } { try { return { ok: true, value: fn() }; } catch { return { ok: false, value: null }; } }

@@ -8,8 +8,8 @@ console.log("SÉRIE 16 Step-2 — MULTIDIMENSIONAL MÉTIER BENCHMARK");
 
 const s = B.runMultidim();
 
-// all three dimensions measured over 10 métiers.
-check(s.total === 10, "10 métiers across 3 dimensions");
+// all three dimensions measured over all 15 métiers (parity coverage complete).
+check(s.total === 15, "15 métiers across 3 dimensions (P5/P10/P11/P13/P14 added via their real capabilities)");
 
 // DETECTION: every métier catches its planted adversarial case (no false negative).
 check(s.detectionRate === 1 && s.falseNegatives.length === 0, "detectionRate 1.0, 0 false negatives");

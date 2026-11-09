@@ -13,11 +13,11 @@ check(BL.ROSTER_15.length === 15 && BL.ROSTER_15[0] === "P1" && BL.ROSTER_15[14]
 // real rollup over the live multidimensional benchmark.
 const live = BL.baseline({ multidim: M.runMultidim() });
 check(live.summary.roster === 15, "baseline: covers the full roster of 15");
-check(live.summary.benchmarked === 10, "baseline: 10 métiers benchmarked by the live multidim probes");
-check(live.summary.notBenchmarked === 5, "baseline: 5 métiers NOT_BENCHMARKED (honest gap)");
-check(live.gaps.filter((g: any) => g.gap === "NOT_BENCHMARKED").length === 5, "baseline: the 5 uncovered métiers are GAPS, not passes (fail-closed)");
+check(live.summary.benchmarked === 15, "baseline: all 15 métiers benchmarked by the live multidim probes (parity gap closed)");
+check(live.summary.notBenchmarked === 0, "baseline: 0 métiers NOT_BENCHMARKED — full coverage");
+check(live.gaps.filter((g: any) => g.gap === "NOT_BENCHMARKED").length === 0, "baseline: no NOT_BENCHMARKED gap remains (P5/P10/P11/P13/P14 now covered via their real capabilities)");
 const nb = live.perMetier.filter((p: any) => !p.benchmarked).map((p: any) => p.metier).sort();
-check(JSON.stringify(nb) === JSON.stringify(["P10", "P11", "P13", "P14", "P5"]), "baseline: NOT_BENCHMARKED are exactly P5,P10,P11,P13,P14");
+check(JSON.stringify(nb) === JSON.stringify([]), "baseline: every roster métier is benchmarked (no uncovered métier)");
 
 // a NOT_BENCHMARKED métier is never 'effective'.
 check(live.perMetier.filter((p: any) => !p.benchmarked).every((p: any) => p.effective === false), "NOT_BENCHMARKED métier is never effective");
