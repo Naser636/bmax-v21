@@ -390,7 +390,7 @@
       "program": "A",
       "domain": "CENTRAL_INTELLIGENCE",
       "phase": "PHASE-1",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "capability-map.ts",
         "change-impact-graph.ts"
@@ -398,7 +398,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/capability-map.ts — ODG self-capability graph over the canonical register + manifest: each real capability (ACCEPTED+evidence or VALIDATED) with honest maturity L0-L5 (ACCEPTED+evidence=>L2_INTEGRATED, not L3 without independent validation), dependency edges + dependents, gaps (PROPOSED missions); an ACCEPTED item without evidence is EXCLUDED. Real register => 319 capabilities all L2, 0 L3 (honest). 11/11. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/capability-map.ts — ODG self-capability graph over the canonical register + manifest: each real capability (ACCEPTED+evidence or VALIDATED) with honest maturity L0-L5 (ACCEPTED+evidence=>L2_INTEGRATED, not L3 without independent validation), dependency edges + dependents, gaps (PROPOSED missions); an ACCEPTED item without evidence is EXCLUDED. Real register => 319 capabilities all L2, 0 L3 (honest). 11/11. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH1-02",
@@ -406,7 +407,7 @@
       "program": "A",
       "domain": "CENTRAL_INTELLIGENCE",
       "phase": "PHASE-1",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "memory-architecture.ts",
         "memory-trust-gate.ts",
@@ -415,7 +416,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/memory-architecture.ts — Central Intelligence memory ACCESS router composing memory-trust-gate.assessMemoryTrust + compounding-pattern-library.classifyMemory (5 families); only TRUSTED records returned grouped by family, untrusted/stale/unattributed EXCLUDED (never trusted knowledge); deny-by-default. Integration, no reimplementation (anti-gas-factory). 7/7. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/memory-architecture.ts — Central Intelligence memory ACCESS router composing memory-trust-gate.assessMemoryTrust + compounding-pattern-library.classifyMemory (5 families); only TRUSTED records returned grouped by family, untrusted/stale/unattributed EXCLUDED (never trusted knowledge); deny-by-default. Integration, no reimplementation (anti-gas-factory). 7/7. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH2-01",
@@ -423,7 +425,7 @@
       "program": "A",
       "domain": "ENGINEERING_CAPABILITIES",
       "phase": "PHASE-2",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "benchmark-factory.ts",
         "metier-benchmark-multidim.ts"
@@ -431,7 +433,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/metier-baseline.ts — per-métier baseline + honest gap inventory over roster P1..P15. READ-ONLY (no métier internal logic modified). Composes metier-benchmark-multidim.runMultidim (DETECTION/SPECIFICITY/ROBUSTNESS) — no new benchmark engine. LIVE: 10/15 benchmarked & effective (P1-4,6-9,12,15); 5 NOT_BENCHMARKED gaps (P5,P10,P11,P13,P14); a block-everything guard fails SPECIFICITY ⇒ gap; NOT_BENCHMARKED never counted as passing (fail-closed). 11/11. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/metier-baseline.ts — per-métier baseline + honest gap inventory over roster P1..P15. READ-ONLY (no métier internal logic modified). Composes metier-benchmark-multidim.runMultidim (DETECTION/SPECIFICITY/ROBUSTNESS) — no new benchmark engine. LIVE: 10/15 benchmarked & effective (P1-4,6-9,12,15); 5 NOT_BENCHMARKED gaps (P5,P10,P11,P13,P14); a block-everything guard fails SPECIFICITY ⇒ gap; NOT_BENCHMARKED never counted as passing (fail-closed). 11/11. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH3-01",
@@ -439,7 +442,7 @@
       "program": "B",
       "domain": "ROOT_CAUSE_ENGINEERING",
       "phase": "PHASE-3",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "rce-signal-collector.ts",
         "change-impact-graph.ts",
@@ -448,7 +451,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/rce-signal-collector.ts — normalizes heterogeneous defect signals (code/tsc/tests/contracts/deps/incidents) into a canonical typed stream + classifies into the RCE-02 defect taxonomy (16 kinds); fail-closed: no-provenance => UNATTRIBUTED (not confirmed), unrecognized => UNKNOWN_DEFECT (never dropped); feeds rce-root-cause-intelligence; 9/9. Dependency/Impact-Graph part reuses change-impact-graph (no duplication). COMPLETED (built+tested), not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/rce-signal-collector.ts — normalizes heterogeneous defect signals (code/tsc/tests/contracts/deps/incidents) into a canonical typed stream + classifies into the RCE-02 defect taxonomy (16 kinds); fail-closed: no-provenance => UNATTRIBUTED (not confirmed), unrecognized => UNKNOWN_DEFECT (never dropped); feeds rce-root-cause-intelligence; 9/9. Dependency/Impact-Graph part reuses change-impact-graph (no duplication). COMPLETED (built+tested), not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH3-02",
@@ -456,7 +460,7 @@
       "program": "B",
       "domain": "ROOT_CAUSE_ENGINEERING",
       "phase": "PHASE-3",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "repair-workflow.ts",
         "build-recovery-engine.ts"
@@ -464,7 +468,8 @@
       "dependsOn": [
         "M-CH3-01"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/repair-planner.ts — RCE repair planner. Composes rce-signal-collector.classifyDefect + rce-root-cause-intelligence.classifyCausalChain + repair-workflow.makeWriteSetGuard; no reimplementation. Plans a repair ONLY on an established ROOT CAUSE (else NEEDS_INVESTIGATION — never patch a symptom); isolates the workspace to the authorized write-set (empty ⇒ NO_WORKSPACE); REJECTS any change escaping it (WRITE_SET_VIOLATION, no silent scope expansion); ordered plan REPRODUCE→ISOLATE_WORKSPACE→CONFIRM_ROOT_CAUSE→BOUNDED_EDIT→ACCEPTANCE→ROLLBACK_READY. 15/15. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/repair-planner.ts — RCE repair planner. Composes rce-signal-collector.classifyDefect + rce-root-cause-intelligence.classifyCausalChain + repair-workflow.makeWriteSetGuard; no reimplementation. Plans a repair ONLY on an established ROOT CAUSE (else NEEDS_INVESTIGATION — never patch a symptom); isolates the workspace to the authorized write-set (empty ⇒ NO_WORKSPACE); REJECTS any change escaping it (WRITE_SET_VIOLATION, no silent scope expansion); ordered plan REPRODUCE→ISOLATE_WORKSPACE→CONFIRM_ROOT_CAUSE→BOUNDED_EDIT→ACCEPTANCE→ROLLBACK_READY. 15/15. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH3-03",
@@ -472,7 +477,7 @@
       "program": "B",
       "domain": "ROOT_CAUSE_ENGINEERING",
       "phase": "PHASE-4",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "rce-assurance-chain.ts",
         "evaluator-independence.ts",
@@ -482,7 +487,8 @@
       "dependsOn": [
         "M-CH3-02"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/rce-assurance-chain.ts — enforces the §4.4 repair-assurance chain: FAIL-TO-PASS + PASS-TO-PASS + ADVERSARIAL + INDEPENDENT-VERIFY => RETAIN/ROLLBACK/NEEDS_REVIEW; reuses evaluator-independence.auditIndependence (the fix is never its own proof); regression/adversarial-fail => ROLLBACK; incomplete evidence/COMPROMISED => NEEDS_REVIEW; 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/rce-assurance-chain.ts — enforces the §4.4 repair-assurance chain: FAIL-TO-PASS + PASS-TO-PASS + ADVERSARIAL + INDEPENDENT-VERIFY => RETAIN/ROLLBACK/NEEDS_REVIEW; reuses evaluator-independence.auditIndependence (the fix is never its own proof); regression/adversarial-fail => ROLLBACK; incomplete evidence/COMPROMISED => NEEDS_REVIEW; 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH4-01",
@@ -490,7 +496,7 @@
       "program": "D",
       "domain": "FRONTIER_RADAR",
       "phase": "PHASE-6",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "frontier-weekly-report.ts",
         "frontier-radar.ts"
@@ -498,7 +504,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-weekly-report.ts — §6.7/D-18 structured Weekly Technology-Intelligence Report EXTENDING frontier-radar; reuses sanitizeExternal (untrusted content QUARANTINED) + deduplicate; empty section => NO_FINDING (never fabricated); not a list of links; authorizes nothing; 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-weekly-report.ts — §6.7/D-18 structured Weekly Technology-Intelligence Report EXTENDING frontier-radar; reuses sanitizeExternal (untrusted content QUARANTINED) + deduplicate; empty section => NO_FINDING (never fabricated); not a list of links; authorizes nothing; 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH4-02",
@@ -506,7 +513,7 @@
       "program": "D",
       "domain": "FRONTIER_RADAR",
       "phase": "PHASE-6",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "frontier-radar-self-improvement.ts",
         "meta-intelligence.ts",
@@ -515,7 +522,8 @@
       "dependsOn": [
         "M-CH4-01"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-radar-self-improvement.ts — §6.6/D-19 radar self-measurement (relevance/noise/miss-rate vs ground truth + delta vs prior cycle) + PROPOSED classifier/strategy improvements; selfAuthorized:false (radar cannot modify its own authorizations, never self-applies); reuses meta-intelligence (gamed improvement withheld); no ground truth => NOT_MEASURED; 8/8. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-radar-self-improvement.ts — §6.6/D-19 radar self-measurement (relevance/noise/miss-rate vs ground truth + delta vs prior cycle) + PROPOSED classifier/strategy improvements; selfAuthorized:false (radar cannot modify its own authorizations, never self-applies); reuses meta-intelligence (gamed improvement withheld); no ground truth => NOT_MEASURED; 8/8. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH5-01",
@@ -523,7 +531,7 @@
       "program": "D",
       "domain": "FRONTIER_LAB",
       "phase": "PHASE-7",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "frontier-lab-experiment.ts",
         "improvement-baseline.ts",
@@ -533,7 +541,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-lab-experiment.ts — §7.3 experiment-protocol registry (id/hypothesis/reference/baseline/method/expected => VALID else INVALID) + §7.4 baseline-vs-candidate comparison (PROMOTE_CANDIDATE only if measured improvement + no regression + reproducible + statistically significant when evidence supplied; an innovation is never integrated just because newer/popular); reuses improvement-baseline.measureDelta + eval-significance.significanceGate; selfAuthorized:false, promotion external; 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/frontier-lab-experiment.ts — §7.3 experiment-protocol registry (id/hypothesis/reference/baseline/method/expected => VALID else INVALID) + §7.4 baseline-vs-candidate comparison (PROMOTE_CANDIDATE only if measured improvement + no regression + reproducible + statistically significant when evidence supplied; an innovation is never integrated just because newer/popular); reuses improvement-baseline.measureDelta + eval-significance.significanceGate; selfAuthorized:false, promotion external; 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-CH5-02",
@@ -541,7 +550,7 @@
       "program": "D",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-8",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "compounding-pattern-library.ts",
         "memory-taxonomy.ts",
@@ -550,7 +559,8 @@
       "dependsOn": [
         "M-CH5-01"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/compounding-pattern-library.ts — §8.2 pattern library (PROCEDURE only if VALIDATED + provenance + conditions + limits; OBSERVED=>WORKING; missing conditions/limits=>INCOMPLETE) + §8.3 classifyMemory (5 families; an observation is not automatically a fact; an unvalidated result is not an official procedure); reuses memory-taxonomy.qualityOf; 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/compounding-pattern-library.ts — §8.2 pattern library (PROCEDURE only if VALIDATED + provenance + conditions + limits; OBSERVED=>WORKING; missing conditions/limits=>INCOMPLETE) + §8.3 classifyMemory (5 families; an observation is not automatically a fact; an unvalidated result is not an official procedure); reuses memory-taxonomy.qualityOf; 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-C-01",
@@ -558,7 +568,7 @@
       "program": "C",
       "domain": "NATIVE_AUTONOMY",
       "phase": "PHASE-5",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "native-autonomy-scorecard.ts",
         "autonomy-measure.ts",
@@ -568,7 +578,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/native-autonomy-scorecard.ts — §5.5 provider-fallback scenario model (available/unavailable/incorrect/incomplete/timeout => NATIVE_EXECUTION/PROVIDER_EXECUTION/NATIVE_FALLBACK/NEEDS_VALIDATION/BLOCKED; a delegated result is never accepted unvalidated) + §5.6 unified scorecard composing autonomy-measure.measureAutonomy (retrospective) + provider-dependency-projection (forward floor); UNKNOWN never NATIVE; 11/11. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/native-autonomy-scorecard.ts — §5.5 provider-fallback scenario model (available/unavailable/incorrect/incomplete/timeout => NATIVE_EXECUTION/PROVIDER_EXECUTION/NATIVE_FALLBACK/NEEDS_VALIDATION/BLOCKED; a delegated result is never accepted unvalidated) + §5.6 unified scorecard composing autonomy-measure.measureAutonomy (retrospective) + provider-dependency-projection (forward floor); UNKNOWN never NATIVE; 11/11. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-SEC-01",
@@ -576,7 +587,7 @@
       "program": "B",
       "domain": "SECURITY_INDEPENDENT_ASSURANCE",
       "phase": "PHASE-4",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "lethal-trifecta-gate.ts",
         "tool-definition-integrity-gate.ts",
@@ -587,7 +598,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/security-control-plane.ts — consolidates 5 existing security gates (lethal-trifecta, tool-definition-integrity, secret-rotation-hygiene, p8-slsa-level, root-of-trust) into ONE fail-closed verdict. ADMIT only if every evaluated control admits; any DENY sinks the plane; a REQUIRED control with no context = DENY (NOT_EVALUATED never ADMIT); a throwing control = DENY. Reimplements nothing. LIVE: trifecta session DENY, benign ADMIT, protected-governance-write sinks an otherwise-admitting session. 14/14. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/security-control-plane.ts — consolidates 5 existing security gates (lethal-trifecta, tool-definition-integrity, secret-rotation-hygiene, p8-slsa-level, root-of-trust) into ONE fail-closed verdict. ADMIT only if every evaluated control admits; any DENY sinks the plane; a REQUIRED control with no context = DENY (NOT_EVALUATED never ADMIT); a throwing control = DENY. Reimplements nothing. LIVE: trifecta session DENY, benign ADMIT, protected-governance-write sinks an otherwise-admitting session. 14/14. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-BENCH-01",
@@ -595,7 +607,7 @@
       "program": "A",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-9",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "benchmark-factory.ts",
         "eval-significance.ts",
@@ -604,7 +616,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/benchmark-contamination.ts — hidden-eval-set contamination detector + certifier. Composes benchmark-factory (suites) + eval-significance.significanceGate (stats); no new scorer/suite engine. Fingerprints each hidden case (sha256 over normalized content); a fingerprint in the known/public corpus = CONTAMINATED (leaked); a repeat inside the hidden set = DUPLICATE. A benchmark CERTIFIES only if CLEAN AND significant — contamination ⇒ INVALID regardless of score (a high number over leaked data is not evidence, fail-closed). 15/15. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/benchmark-contamination.ts — hidden-eval-set contamination detector + certifier. Composes benchmark-factory (suites) + eval-significance.significanceGate (stats); no new scorer/suite engine. Fingerprints each hidden case (sha256 over normalized content); a fingerprint in the known/public corpus = CONTAMINATED (leaked); a repeat inside the hidden set = DUPLICATE. A benchmark CERTIFIES only if CLEAN AND significant — contamination ⇒ INVALID regardless of score (a high number over leaked data is not evidence, fail-closed). 15/15. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-FIT-01",
@@ -612,7 +625,7 @@
       "program": "A",
       "domain": "SECURITY_INDEPENDENT_ASSURANCE",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "architecture-fitness.ts",
         "campaign-controller.ts",
@@ -621,7 +634,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/architecture-fitness.ts — Architecture Fitness Registry (10 §13.2 invariants) + fail-closed Governance Regression Suite; composes campaign-controller.staleAcceptances + actor-provenance.resolveEntryActor; FIT-01 verified against the real register (299 ACCEPTED carry evidence, 0 stale); no-evidence ⇒ UNVERIFIED (never silent PASS); 11/11 tests. COMPLETED (built+tested), not yet independently VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/architecture-fitness.ts — Architecture Fitness Registry (10 §13.2 invariants) + fail-closed Governance Regression Suite; composes campaign-controller.staleAcceptances + actor-provenance.resolveEntryActor; FIT-01 verified against the real register (299 ACCEPTED carry evidence, 0 stale); no-evidence ⇒ UNVERIFIED (never silent PASS); 11/11 tests. COMPLETED (built+tested), not yet independently VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "M-RCE-04",
@@ -629,7 +643,7 @@
       "program": "B",
       "domain": "ROOT_CAUSE_ENGINEERING",
       "phase": "PHASE-3",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "rce-root-cause-intelligence.ts",
         "causal-graph.ts"
@@ -637,7 +651,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/rce-root-cause-intelligence.ts — distinguishes SYMPTOM/TRIGGER/IMMEDIATE/ROOT/SYSTEMIC/dependency/contract/design causal layers, ranks hypotheses by evidence-derived confidence, selects a root cause only if root-layer AND confidence>=threshold AND reproduced AND isolated (else INCONCLUSIVE); reuses causal-graph.causesOf/effectsOf for topology; a symptom is never returned as root; 9/9 tests. COMPLETED (built+tested), not yet VALIDATED. NB: M-CH3-02 isolated-workspace + repair-planner parts remain PROPOSED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/rce-root-cause-intelligence.ts — distinguishes SYMPTOM/TRIGGER/IMMEDIATE/ROOT/SYSTEMIC/dependency/contract/design causal layers, ranks hypotheses by evidence-derived confidence, selects a root cause only if root-layer AND confidence>=threshold AND reproduced AND isolated (else INCONCLUSIVE); reuses causal-graph.causesOf/effectsOf for topology; a symptom is never returned as root; 9/9 tests. COMPLETED (built+tested), not yet VALIDATED. NB: M-CH3-02 isolated-workspace + repair-planner parts remain PROPOSED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-MEASURE",
@@ -645,14 +660,15 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-9",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "gate-instrumentation.ts"
       ],
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/gate-instrumentation.ts (P50/P95 decomposition + bottleneck) + measured baseline docs/odg/VALIDATION_CHAIN_BASELINE.md. Bottleneck = per-suite tsx cold-start x367 (~727s, >90% of total). 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/gate-instrumentation.ts (P50/P95 decomposition + bottleneck) + measured baseline docs/odg/VALIDATION_CHAIN_BASELINE.md. Bottleneck = per-suite tsx cold-start x367 (~727s, >90% of total). 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-VALIDATION-SELECTOR",
@@ -660,7 +676,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "validation-selector.ts",
         "change-impact-graph.ts"
@@ -668,7 +684,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/validation-selector.ts — targeted validation selection (unrun != PASS; governance/HIGH-risk/undeterminable => FULL; FULL mandatory at certification). DEMONSTRATED: targeted 3-suite run 4.95s vs full ~187s (~97% reduction) with no loss of mandatory controls. 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/validation-selector.ts — targeted validation selection (unrun != PASS; governance/HIGH-risk/undeterminable => FULL; FULL mandatory at certification). DEMONSTRATED: targeted 3-suite run 4.95s vs full ~187s (~97% reduction) with no loss of mandatory controls. 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-COLDSTART",
@@ -676,7 +693,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "coldstart-model.ts",
         "gate-instrumentation.ts"
@@ -684,7 +701,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/coldstart-model.ts — measured tsx cold-start 1.85s/suite (95% of cost), reconciled 683s serial/187s parallel/8 cores; ADVERSARIALLY REJECTED the esbuild-bundle+node shortcut (swallowed a failing assertion, broke dual-export interop) — a speed win that masks failures is forbidden (§4); model gates strategy adoption on correctness + recommends workers<=cores. 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/coldstart-model.ts — measured tsx cold-start 1.85s/suite (95% of cost), reconciled 683s serial/187s parallel/8 cores; ADVERSARIALLY REJECTED the esbuild-bundle+node shortcut (swallowed a failing assertion, broke dual-export interop) — a speed win that masks failures is forbidden (§4); model gates strategy adoption on correctness + recommends workers<=cores. 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-CACHE",
@@ -692,7 +710,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "verified-result-cache.ts",
         "evidence-provenance.ts"
@@ -700,7 +718,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/verified-result-cache.ts — a cached result is HIT only on a FULL-identity match (inputs+code+deps+config+env) + provenance + freshness; any change => different key => MISS => re-run; incomplete identity => UNCACHEABLE; stale/future/unverifiable => MISS; no-provenance never stored. Reuses evidence-provenance.contentDigest. 13/13. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/verified-result-cache.ts — a cached result is HIT only on a FULL-identity match (inputs+code+deps+config+env) + provenance + freshness; any change => different key => MISS => re-run; incomplete identity => UNCACHEABLE; stale/future/unverifiable => MISS; no-provenance never stored. Reuses evidence-provenance.contentDigest. 13/13. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-FLAKY",
@@ -708,7 +727,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "flaky-replay-gate.ts",
         "p2-passk-reliability.ts",
@@ -717,7 +736,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/flaky-replay-gate.ts — flakyGate (mixed outcomes => FLAKY_QUARANTINE, NEVER PASS by repetition/masking; all-pass=>STABLE_PASS; all-fail=>STABLE_FAIL; too-few=>INSUFFICIENT) + deterministicReplay (same seed must give identical output, divergence=>NON_DETERMINISTIC); reuses p2-passk-reliability + p2-flaky-root-cause. 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/flaky-replay-gate.ts — flakyGate (mixed outcomes => FLAKY_QUARANTINE, NEVER PASS by repetition/masking; all-pass=>STABLE_PASS; all-fail=>STABLE_FAIL; too-few=>INSUFFICIENT) + deterministicReplay (same seed must give identical output, divergence=>NON_DETERMINISTIC); reuses p2-passk-reliability + p2-flaky-root-cause. 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-SCHEDULER",
@@ -725,7 +745,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "engineering-scheduler.ts",
         "gate-instrumentation.ts"
@@ -733,7 +753,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/engineering-scheduler.ts — LPT scheduling (minimize makespan) + critical-path (longest task = makespan lower bound) + worker cap at cores; unknown-duration task scheduled conservatively not dropped. 7/7. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/engineering-scheduler.ts — LPT scheduling (minimize makespan) + critical-path (longest task = makespan lower bound) + worker cap at cores; unknown-duration task scheduled conservatively not dropped. 7/7. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-OPTEXP",
@@ -741,7 +762,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "optimization-experiment.ts",
         "gate-instrumentation.ts",
@@ -750,7 +771,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/optimization-experiment.ts — PROMOTE an optimization only if speed reduction >= target AND detection preserved AND correctness preserved AND (if evidence) statistically significant; any quality/detection loss => REJECT regardless of speed; insufficient/non-significant => INCONCLUSIVE; selfAuthorized:false (promotion external). 9/9. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/optimization-experiment.ts — PROMOTE an optimization only if speed reduction >= target AND detection preserved AND correctness preserved AND (if evidence) statistically significant; any quality/detection loss => REJECT regardless of speed; insufficient/non-significant => INCONCLUSIVE; selfAuthorized:false (promotion external). 9/9. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-TARGETED-VERIFY",
@@ -758,7 +780,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "targeted-verify.ts",
         "odg-targeted-verify.ts",
@@ -768,7 +790,8 @@
       "dependsOn": [
         "E-VALIDATION-SELECTOR"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/targeted-verify.ts (planner, 7/7) + runtime/bin/odg-targeted-verify.ts (CLI) wired into odg bash as verify-targeted. Computes change-set (git), maps changed runtime/core modules to impacted suites via TRANSITIVE consumer graph, runs only impacted suites via odg-test-report; certification/governance/HIGH-risk/undeterminable/closure-hazard => FULL; unrun NOT_RUN never PASS; targeted never certifies. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/targeted-verify.ts (planner, 7/7) + runtime/bin/odg-targeted-verify.ts (CLI) wired into odg bash as verify-targeted. Computes change-set (git), maps changed runtime/core modules to impacted suites via TRANSITIVE consumer graph, runs only impacted suites via odg-test-report; certification/governance/HIGH-risk/undeterminable/closure-hazard => FULL; unrun NOT_RUN never PASS; targeted never certifies. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-PERSISTENT-GRAPH",
@@ -776,7 +799,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "persistent-impact-graph.ts",
         "change-impact-graph.ts",
@@ -785,7 +808,8 @@
       "dependsOn": [
         "E-TARGETED-VERIFY"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/persistent-impact-graph.ts — persistence + provenance (source digest) + automatic invalidation over change-impact-graph (no concurrent graph); fresh only while source digest matches, any file change => STALE => rebuild; stale/unknown-module/tampered-stamp => FULL; transitive consumers cycle-safe; real fs persistence round-trip. 15/15. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/persistent-impact-graph.ts — persistence + provenance (source digest) + automatic invalidation over change-impact-graph (no concurrent graph); fresh only while source digest matches, any file change => STALE => rebuild; stale/unknown-module/tampered-stamp => FULL; transitive consumers cycle-safe; real fs persistence round-trip. 15/15. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-FLAKY-CI",
@@ -793,7 +817,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "flaky-ci-intelligence.ts",
         "flaky-replay-gate.ts"
@@ -801,7 +825,8 @@
       "dependsOn": [
         "E-FLAKY"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/flaky-ci-intelligence.ts — analyzes CI outcome history for flakiness, RECURRENCE (chronic across distinct runs) + ENVIRONMENTAL correlation (fails concentrated in one env); quarantine + PROPOSED prevention (pin-env / deterministic-seed); a flaky/recurrent/env-dependent test is NEVER PASS; insufficient history => INSUFFICIENT. Reuses flaky-replay-gate. 7/7. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/flaky-ci-intelligence.ts — analyzes CI outcome history for flakiness, RECURRENCE (chronic across distinct runs) + ENVIRONMENTAL correlation (fails concentrated in one env); quarantine + PROPOSED prevention (pin-env / deterministic-seed); a flaky/recurrent/env-dependent test is NEVER PASS; insufficient history => INSUFFICIENT. Reuses flaky-replay-gate. 7/7. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "E-PERF-OBS",
@@ -809,7 +834,7 @@
       "program": "E",
       "domain": "BENCHMARK_COMPOUNDING",
       "phase": "PHASE-10",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "performance-observability.ts",
         "gate-instrumentation.ts"
@@ -817,7 +842,8 @@
       "dependsOn": [
         "E-MEASURE"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/performance-observability.ts — duration P50/P95 + CPU + memory + workers + cold-start + suite count record + REPRODUCIBLE before/after comparison (gain credited only if >=minSamples both sides AND variance p95/p50 <= threshold); too-few/high-variance => NOT_REPRODUCIBLE. Reuses gate-instrumentation. 6/6. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/performance-observability.ts — duration P50/P95 + CPU + memory + workers + cold-start + suite count record + REPRODUCIBLE before/after comparison (gain credited only if >=minSamples both sides AND variance p95/p50 <= threshold); too-few/high-variance => NOT_REPRODUCIBLE. Reuses gate-instrumentation. 6/6. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "FIED-05-PROVIDER-CONTRACT",
@@ -825,7 +851,7 @@
       "program": "FIED",
       "domain": "CENTRAL_INTELLIGENCE",
       "phase": "PHASE-1",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "provider-capability-contract.ts",
         "capability-router.ts"
@@ -833,7 +859,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/provider-capability-contract.ts — a provider must declare capabilities/limits/permissions/side-effects/provenance to be admissible; ODG may use it only if capability declared + permissions granted + side-effects accepted; selfAuthorizes=>REJECTED; declaration untrusted; fail-closed DENY. 10/10. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/provider-capability-contract.ts — a provider must declare capabilities/limits/permissions/side-effects/provenance to be admissible; ODG may use it only if capability declared + permissions granted + side-effects accepted; selfAuthorizes=>REJECTED; declaration untrusted; fail-closed DENY. 10/10. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     },
     {
       "id": "CONSOLIDATE-V124",
@@ -841,7 +868,7 @@
       "program": "V12.4",
       "domain": "CENTRAL_INTELLIGENCE",
       "phase": "PHASE-0",
-      "status": "COMPLETED",
+      "status": "VALIDATED",
       "reuseExisting": [
         "roadmap-consolidation.ts",
         "master-program-integration.ts"
@@ -849,7 +876,8 @@
       "dependsOn": [
         "PHASE-0"
       ],
-      "evidence": "CAPABILITY_BUILT: runtime/core/roadmap-consolidation.ts (7/7) + docs/odg/ROADMAP_CONSOLIDATION_V12.4.md — V12.4 single directing roadmap; V5/FIED/Engineering-Intelligence/Radar/RCE/Lab/Compounding/15-metiers all integrated as sections/phases/missions; old docs = archives; Boussole = operational interface; addendum 4 transversal responsibilities mapped to existing components (no new system); LIVE check singleSource=true. COMPLETED, not yet VALIDATED."
+      "evidence": "CAPABILITY_BUILT: runtime/core/roadmap-consolidation.ts (7/7) + docs/odg/ROADMAP_CONSOLIDATION_V12.4.md — V12.4 single directing roadmap; V5/FIED/Engineering-Intelligence/Radar/RCE/Lab/Compounding/15-metiers all integrated as sections/phases/missions; old docs = archives; Boussole = operational interface; addendum 4 transversal responsibilities mapped to existing components (no new system); LIVE check singleSource=true. COMPLETED, not yet VALIDATED. [INDEPENDENTLY VALIDATED 2026-11-09: core invariant re-derived in mission-independent-validation.test.ts, 28/28; scope = primary fail-closed property per mission, gate-enforced.]",
+      "independentValidation": "INDEPENDENT: core fail-closed invariant re-derived adversarially (input independent of the module own test), continuously enforced by runtime/core/mission-independent-validation.test.ts (28/28). 4 initial flags were probe-shape errors (investigated via source-read + corrected); 0 module defects."
     }
   ],
   "registriesToCreateOrExtend": [
