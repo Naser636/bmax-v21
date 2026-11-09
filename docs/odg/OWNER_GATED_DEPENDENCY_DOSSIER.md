@@ -141,3 +141,42 @@ closure; the remaining work requires an owner/external action below.
 
 **Nothing above is simulated, bypassed, or self-authorized.** This is a decision/action pack. Until an owner acts on a
 row, that item stays honestly non-ACCEPTED; ODG will not flip it.
+
+---
+
+## Maximum-Unblock sweep 2026-11-09 (owner delegation V1/V2) — code-verified re-examination
+
+Under the owner's maximum-unblock delegation, every non-ACCEPTED item was re-examined for a genuine INTERNAL solution
+(not auto-keeping the old verdict). Result: **3 advanced with real work; the rest are code-verified external/non-fabricatable.**
+
+**Genuinely advanced (real internal work, not fabrication):**
+- `new-language-families` → **ACCEPTED**. Native `dockerfile-lint` now provides check **+ repair + independent eval**
+  (the §2 internal alternative to the owner-gated hadolint binary). Honest residual: full hadolint parity still needs the
+  binary (that sliver stays owner-gated).
+- `adr-166-capabilities-reconciliation` → **decision PREPARED** (`ADR-166-...-PROPOSAL.md`, requires CTO ratification).
+  Stays BLOCKED — ODG does not override a frozen decision.
+- `p0e-audit-log-keyed-integrity` → **decision PREPARED** (`AUDIT_LOG_KEY_MANAGEMENT_OPTIONS.md`; mechanism already
+  proven — keyed-HMAC + tip-anchor + NUL-fix, 20 assertions). Stays BLOCKED on the owner key-custody decision; no secret
+  invented.
+
+**Code-verified genuinely external (no honest internal action exists):**
+- `broad-it-independent-eval-set`, `broad-it-corpus-grow`: `broad-it-eval.ts` correctly stays `NO_DATA` because the
+  requirement is **label independence from the evaluee** — any corpus ODG authors is self-authored and fails
+  `assessLabelIndependence` by construction. Synthetic data cannot satisfy independence; fabricating it is refused.
+- `structured-roadmap-deps`: the 11 ROADMAP mission contracts have **no further honest inter-dep edges** (the one real
+  edge is already encoded); adding any would FABRICATE structure. Only the protected write remains — no honest content to
+  apply.
+- `p01-demand-validation` (real willingness-to-pay signals), `p01-billing-sandbox` (real provider + owner auth),
+  `dashboard-tls-exposure` (owner exposure + cert), `campaign-runner-systemd-activation` (systemd/sudo),
+  `historical-roadmap-excellence-28jul-recover` (external source; verbatim NOT_RECOVERABLE, never fabricated): unchanged.
+
+**CTO-canonical-gated (extensive internal prep already exists; more would duplicate / assume forbidden equivalence):**
+- `eleven-profession-program-definition`, `master-unified-campaign`: no canonical 11-profession/99-specialty source
+  exists and the directive forbids assuming the governance D-map is equivalent; the CTO must establish the canon.
+
+**Risk/owner-decision deferred:** `p0-autonomy-measure-slice3-delegate-provenance` (the forensic proved the safe stamp
+unsafe; the deep fix is risky autonomy-pipeline surgery), `golden-path-scaffolder-poc` (owner productization),
+`commercial-ops-substrate-h3` (owner scope).
+
+**Net:** the internally-realizable work is exhausted honestly. No mission was fabricated; no item was flipped to ACCEPTED
+without real proof; no secret was invented; no frozen decision was overridden; no roadmap structure was fabricated.
