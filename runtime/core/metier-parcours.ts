@@ -18,10 +18,44 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 function fn(v: any): boolean { return typeof v === "function"; }
 
-// Métier → real canonical guard registry. Each entry RESOLVES an EXISTING guard (lazy require — no new logic). Extensible
-// per §4 ("start with one métier, extend per observed gaps"); P3 (supply-chain dependency trust) is wired + demonstrated.
+// Métier → real canonical guard registry. Each entry RESOLVES an EXISTING guard (lazy require — no new logic) and
+// declares the LEGITIMATE per-métier variations (§6): `decisionOf` maps the guard's NATIVE verdict → ADMIT/REJECT, and
+// `assure` is a GENUINELY INDEPENDENT verifier (a necessary-condition cross-check via a DIFFERENT code path than the
+// guard's own verdict — not a re-run of the same guard, which would only prove reproducibility). A métier without its
+// own `assure` falls back to the reproducibility default (weaker — honestly a lower assurance level).
+// Extensible per §4; P3 (supply-chain) + P8 (release/semver) are wired + demonstrated E2E.
+const P8_RANK: any = Object.freeze({ none: 0, patch: 1, minor: 2, major: 3, downgrade: -1, invalid: -2 });
 const METIER_GUARDS: any = Object.freeze({
-  P3: Object.freeze({ metier: "P3", domain: "security / supply-chain", resolve: () => require("./p3-dependency-trust-gate.js").vetDependency, inputNote: "payload = a dependency { name, version, license, integrity }" }),
+  P3: Object.freeze({
+    metier: "P3", domain: "security / supply-chain",
+    resolve: () => require("./p3-dependency-trust-gate.js").vetDependency,
+    inputNote: "payload = a dependency { name, version, license, integrity }",
+    decisionOf: (v: any) => (v && v.decision) || null,
+    // INDEPENDENT: an ADMIT must satisfy the necessary safety conditions, recomputed via the guard module's OTHER
+    // exports (isExactPin / typosquatOf) — a different path than vetDependency's aggregate verdict. REJECT is always safe.
+    assure: (v: any, payload: any) => {
+      if (!v || v.decision !== "ADMIT") return { ok: true, reason: "REJECT is safe (no assurance burden)" };
+      const G = require("./p3-dependency-trust-gate.js"); const p = payload || {};
+      const ok = G.isExactPin(p.version) && !G.typosquatOf(p.name) && typeof p.integrity === "string" && p.integrity.length > 0;
+      return { ok, reason: ok ? "ADMIT satisfies independent necessary conditions (pinned, not typosquat, has integrity)" : "ADMIT contradicts a necessary safety condition (unpinned / typosquat / no integrity) — independent assurance FAILED" };
+    },
+  }),
+  P8: Object.freeze({
+    metier: "P8", domain: "release / SemVer governance",
+    resolve: () => require("./p8-semver-enforcement.js").enforce,
+    inputNote: "payload = { oldContract, newContract } (versions carried inside the contracts)",
+    decisionOf: (v: any) => (v && v.ok === true ? "ADMIT" : (v && (v.verdict === "SEMVER_VIOLATION" || v.verdict === "INVALID_VERSION") ? "REJECT" : null)),
+    // INDEPENDENT: an ADMIT (compliant bump) must satisfy rank(actualBump) >= rank(requiredBump), recomputed via the
+    // module's requiredBump/actualBump exports — a DIFFERENT path than enforce's own verdict branch.
+    assure: (v: any, payload: any) => {
+      if (!v || v.ok !== true) return { ok: true, reason: "REJECT/violation is safe (no assurance burden)" };
+      const G = require("./p8-semver-enforcement.js"); const p = payload || {};
+      const req = G.requiredBump(p.oldContract, p.newContract);
+      const act = G.actualBump(p.oldContract && p.oldContract.version, p.newContract && p.newContract.version);
+      const ok = (P8_RANK[act] || -2) >= (P8_RANK[req] || 0) && P8_RANK[act] > 0;
+      return { ok, reason: ok ? `ADMIT independently confirmed: actual ${act} ≥ required ${req}` : `ADMIT contradicts the independent bump check (actual ${act} < required ${req}) — assurance FAILED` };
+    },
+  }),
 });
 
 const STAGE = Object.freeze({ INVALID_REQUEST: "INVALID_REQUEST", UNKNOWN_METIER: "UNKNOWN_METIER", PERMISSION_REFUSED: "PERMISSION_REFUSED", CAPABILITY_UNAVAILABLE: "CAPABILITY_UNAVAILABLE", DUPLICATE: "DUPLICATE", EXECUTION_FAILED: "EXECUTION_FAILED", INVALID_RESULT: "INVALID_RESULT", ASSURANCE_FAILED: "ASSURANCE_FAILED", CLOSURE_FAILED: "CLOSURE_FAILED", CLOSED: "CLOSED" });
@@ -67,19 +101,24 @@ function runParcours(request: any, deps: any = {}): any {
   if (!exec.ok) return done(STAGE.EXECUTION_FAILED, { reason: `guard threw: ${exec.error}` });
   const verdict = exec.value;
 
-  // (7) RÉSULTAT — well-formed verdict (ADMIT/REJECT).
-  if (!isObj(verdict) || (verdict.decision !== "ADMIT" && verdict.decision !== "REJECT")) return done(STAGE.INVALID_RESULT, { reason: "guard returned no ADMIT/REJECT decision" });
+  // (7) RÉSULTAT — map the guard's NATIVE verdict → ADMIT/REJECT via the métier's decisionOf (default: v.decision).
+  const decisionOf = fn(entry.decisionOf) ? entry.decisionOf : (v: any) => (v && v.decision) || null;
+  const decision = isObj(verdict) ? decisionOf(verdict) : null;
+  if (decision !== "ADMIT" && decision !== "REJECT") return done(STAGE.INVALID_RESULT, { reason: "guard verdict did not map to an ADMIT/REJECT decision" });
 
-  // (8) ASSURANCE INDÉPENDANTE — default: re-run the guard and require an identical decision (reproducibility). A custom
-  //     assurer may apply a stronger independent check. Any failure ⇒ fail-closed.
-  const assurer = fn(deps.assure) ? deps.assure : (v: any) => { const again = safe(() => guard(request.payload)); return { ok: again.ok && isObj(again.value) && again.value.decision === v.decision, reason: again.ok ? "decision reproduced" : `re-run threw: ${again.error}` }; };
-  const assured = safe(() => assurer(verdict, request.metier));
-  if (!assured.ok || !assured.value || assured.value.ok !== true) return done(STAGE.ASSURANCE_FAILED, { reason: (assured.value && assured.value.reason) || "independent assurance failed", decision: verdict.decision });
+  // (8) ASSURANCE INDÉPENDANTE — prefer (a) an explicit injected deps.assure, else (b) the métier's own INDEPENDENT
+  //     assurer (necessary-condition cross-check via a different code path), else (c) the reproducibility default
+  //     (weaker — honestly labelled). Any failure ⇒ fail-closed, never CLOSED.
+  const reproDefault = (v: any) => { const again = safe(() => guard(request.payload)); return { ok: again.ok && isObj(again.value) && decisionOf(again.value) === decision, reason: again.ok ? "decision reproduced" : `re-run threw: ${again.error}`, level: "reproducibility" }; };
+  const chosen = fn(deps.assure) ? deps.assure : (fn(entry.assure) ? entry.assure : reproDefault);
+  const assuranceLevel = fn(deps.assure) ? "injected" : (fn(entry.assure) ? "independent" : "reproducibility");
+  const assured = safe(() => chosen(verdict, request.payload, decision));
+  if (!assured.ok || !assured.value || assured.value.ok !== true) return done(STAGE.ASSURANCE_FAILED, { reason: (assured.value && assured.value.reason) || "independent assurance failed", decision });
 
-  // (9) DÉCISION / CLÔTURE — record the audit; dedup-mark; return the guard decision. (Read-only parcours: no state to
-  //     roll back; a closure whose audit cannot persist is CLOSURE_FAILED, fail-closed.)
+  // (9) DÉCISION / CLÔTURE — record the audit; dedup-mark; return the decision. (Read-only parcours: no state to roll
+  //     back; a closure whose audit cannot persist is CLOSURE_FAILED, fail-closed.)
   if (deps.seenDigests instanceof Set && digest != null) deps.seenDigests.add(digest);
-  return done(STAGE.CLOSED, { decision: verdict.decision, admit: verdict.decision === "ADMIT", verdict, assurance: "reproduced", digest, synthetic: request.declaredSynthetic === true });
+  return done(STAGE.CLOSED, { decision, admit: decision === "ADMIT", verdict, assurance: assuranceLevel, digest, synthetic: request.declaredSynthetic === true });
 }
 
 const METIER_PARCOURS_CONTRACT = Object.freeze({

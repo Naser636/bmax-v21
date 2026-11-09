@@ -12,12 +12,31 @@ const auditOK = () => ({ ok: true });
 const CLEAN = { name: "left-pad", version: "1.3.0", license: "MIT", integrity: "sha512-abc" };
 const TYPOSQUAT = { name: "reakt", version: "^1.0.0" };
 
-// (A) FULL E2E on P3 with the REAL guard: clean dep ⇒ CLOSED/ADMIT; traceable; independent assurance reproduced.
+// (A) FULL E2E on P3 with the REAL guard: clean dep ⇒ CLOSED/ADMIT; traceable; INDEPENDENT assurance (not reproducibility).
 {
   const out = P.runParcours({ metier: "P3", payload: CLEAN, declaredSynthetic: true }, { permissions: allow, audit: auditOK, now: "t", seenDigests: new Set() });
   check(out.stage === "CLOSED" && out.decision === "ADMIT" && out.admit === true, "A clean dep ⇒ CLOSED + ADMIT (full parcours via the real P3 guard)");
-  check(out.assurance === "reproduced" && out.traceable === true, "A independent assurance reproduced + traceable");
+  check(out.assurance === "independent" && out.traceable === true, "A assurance is INDEPENDENT (necessary-condition cross-check, not a re-run) + traceable");
   check(out.auditTrail.length >= 1, "A audit trail recorded");
+}
+
+// (A2) SECOND MÉTIER — FULL E2E on P8 (release/SemVer) with the REAL enforce guard, distinct verdict shape (ok/verdict).
+{
+  const oldC = { version: "1.0.0", inputSchema: { a: { required: true } }, outputSchema: { x: {} } };
+  const newC = (ver: string) => ({ version: ver, inputSchema: { a: { required: true }, b: { required: true } }, outputSchema: { x: {} } });
+  const okRun = P.runParcours({ metier: "P8", payload: { oldContract: oldC, newContract: newC("2.0.0") }, declaredSynthetic: true }, { permissions: allow, audit: auditOK, now: "t" });
+  check(okRun.stage === "CLOSED" && okRun.decision === "ADMIT", "A2 P8 compliant major bump ⇒ CLOSED + ADMIT (native verdict mapped via decisionOf)");
+  check(okRun.assurance === "independent", "A2 P8 uses its INDEPENDENT bump-rank assurer");
+  const badRun = P.runParcours({ metier: "P8", payload: { oldContract: oldC, newContract: newC("1.0.1") }, declaredSynthetic: true }, { permissions: allow, audit: auditOK, now: "t" });
+  check(badRun.stage === "CLOSED" && badRun.decision === "REJECT", "A2 P8 insufficient (patch) bump for a breaking change ⇒ CLOSED + REJECT");
+}
+
+// (A3) INDEPENDENT ASSURANCE CATCHES A BAD ADMIT — a (synthetic) guard that WRONGLY admits an unpinned/typosquat dep must
+// be caught by P3's independent assurer ⇒ ASSURANCE_FAILED, never CLOSED. (Proves assurance ≠ reproducibility.)
+{
+  const badGuard = { P3: { ...P.METIER_GUARDS.P3, resolve: () => () => ({ decision: "ADMIT", reasons: [] }) } };
+  const out = P.runParcours({ metier: "P3", payload: { name: "reakt", version: "^1.0.0" } }, { guards: badGuard, permissions: allow, audit: auditOK });
+  check(out.stage === "ASSURANCE_FAILED", "A3 a wrong ADMIT (unpinned typosquat) ⇒ ASSURANCE_FAILED (independent check catches the guard)");
 }
 // (B) FULL E2E on P3: a typosquat ⇒ CLOSED/REJECT (the parcours surfaces the guard's REJECT, still a governed closure).
 {
