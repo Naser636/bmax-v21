@@ -56,6 +56,30 @@ const METIER_GUARDS: any = Object.freeze({
       return { ok, reason: ok ? `ADMIT independently confirmed: actual ${act} ≥ required ${req}` : `ADMIT contradicts the independent bump check (actual ${act} < required ${req}) — assurance FAILED` };
     },
   }),
+  P9: Object.freeze({
+    metier: "P9", domain: "finops / unit economics",
+    resolve: () => require("./p9-unit-economics.js").unitEconomics,
+    inputNote: "payload = { observedCostEur, attempts, successes, maxCostPerSuccessEur }",
+    // decisionOf needs the budget threshold (in the payload) ⇒ it takes (verdict, payload). ADMIT = a viable unit economic
+    // within the declared budget; else REJECT.
+    decisionOf: (econ: any, payload: any) => {
+      const G = require("./p9-unit-economics.js"); const p = payload || {};
+      if (!econ || typeof econ !== "object") return null;
+      return (econ.viable === true && G.withinUnitBudget(econ, p.maxCostPerSuccessEur)) ? "ADMIT" : "REJECT";
+    },
+    // INDEPENDENT: recompute cost-per-success by RAW arithmetic (observedCostEur / successes) — a different path than
+    // unitEconomics — and confirm an ADMIT truly satisfies successes>0 AND recomputed ≤ budget.
+    assure: (econ: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT is safe (no assurance burden)" };
+      const p = payload || {};
+      const successes = Math.max(0, Math.floor(Number(p.successes) || 0));
+      const cost = Math.max(0, Number(p.observedCostEur) || 0);
+      const budget = Number(p.maxCostPerSuccessEur);
+      const recomputed = successes > 0 ? cost / successes : null;
+      const ok = successes > 0 && recomputed !== null && isFinite(budget) && recomputed <= budget;
+      return { ok, reason: ok ? `ADMIT independently confirmed: recomputed €${recomputed.toFixed(4)}/success ≤ €${budget}` : "ADMIT contradicts the independent unit-cost recomputation (zero successes or over budget) — assurance FAILED" };
+    },
+  }),
 });
 
 const STAGE = Object.freeze({ INVALID_REQUEST: "INVALID_REQUEST", UNKNOWN_METIER: "UNKNOWN_METIER", PERMISSION_REFUSED: "PERMISSION_REFUSED", CAPABILITY_UNAVAILABLE: "CAPABILITY_UNAVAILABLE", DUPLICATE: "DUPLICATE", EXECUTION_FAILED: "EXECUTION_FAILED", INVALID_RESULT: "INVALID_RESULT", ASSURANCE_FAILED: "ASSURANCE_FAILED", CLOSURE_FAILED: "CLOSURE_FAILED", CLOSED: "CLOSED" });
@@ -101,15 +125,16 @@ function runParcours(request: any, deps: any = {}): any {
   if (!exec.ok) return done(STAGE.EXECUTION_FAILED, { reason: `guard threw: ${exec.error}` });
   const verdict = exec.value;
 
-  // (7) RÉSULTAT — map the guard's NATIVE verdict → ADMIT/REJECT via the métier's decisionOf (default: v.decision).
+  // (7) RÉSULTAT — map the guard's NATIVE verdict → ADMIT/REJECT via the métier's decisionOf(verdict, payload) (the
+  //     payload is passed because some métiers decide against a threshold carried in the request, e.g. P9's budget).
   const decisionOf = fn(entry.decisionOf) ? entry.decisionOf : (v: any) => (v && v.decision) || null;
-  const decision = isObj(verdict) ? decisionOf(verdict) : null;
+  const decision = isObj(verdict) ? decisionOf(verdict, request.payload) : null;
   if (decision !== "ADMIT" && decision !== "REJECT") return done(STAGE.INVALID_RESULT, { reason: "guard verdict did not map to an ADMIT/REJECT decision" });
 
   // (8) ASSURANCE INDÉPENDANTE — prefer (a) an explicit injected deps.assure, else (b) the métier's own INDEPENDENT
   //     assurer (necessary-condition cross-check via a different code path), else (c) the reproducibility default
   //     (weaker — honestly labelled). Any failure ⇒ fail-closed, never CLOSED.
-  const reproDefault = (v: any) => { const again = safe(() => guard(request.payload)); return { ok: again.ok && isObj(again.value) && decisionOf(again.value) === decision, reason: again.ok ? "decision reproduced" : `re-run threw: ${again.error}`, level: "reproducibility" }; };
+  const reproDefault = (v: any) => { const again = safe(() => guard(request.payload)); return { ok: again.ok && isObj(again.value) && decisionOf(again.value, request.payload) === decision, reason: again.ok ? "decision reproduced" : `re-run threw: ${again.error}`, level: "reproducibility" }; };
   const chosen = fn(deps.assure) ? deps.assure : (fn(entry.assure) ? entry.assure : reproDefault);
   const assuranceLevel = fn(deps.assure) ? "injected" : (fn(entry.assure) ? "independent" : "reproducibility");
   const assured = safe(() => chosen(verdict, request.payload, decision));

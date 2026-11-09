@@ -44,6 +44,24 @@ const TYPOSQUAT = { name: "reakt", version: "^1.0.0" };
   check(out.stage === "CLOSED" && out.decision === "REJECT" && out.admit === false, "B typosquat/unpinned ⇒ CLOSED + REJECT");
 }
 
+// (A4) THIRD MÉTIER — FULL E2E on P9 (finops/unit-economics), decision against a budget threshold in the payload.
+{
+  const POS = { observedCostEur: 40, attempts: 100, successes: 100, maxCostPerSuccessEur: 0.6 };   // €0.40/success ≤ 0.6
+  const over = { observedCostEur: 80, attempts: 100, successes: 100, maxCostPerSuccessEur: 0.6 };   // €0.80/success > 0.6
+  const zero = { observedCostEur: 40, attempts: 100, successes: 0, maxCostPerSuccessEur: 0.6 };      // not viable
+  const posRun = P.runParcours({ metier: "P9", payload: POS, declaredSynthetic: true }, { permissions: allow, audit: auditOK, now: "t" });
+  check(posRun.stage === "CLOSED" && posRun.decision === "ADMIT" && posRun.assurance === "independent", "A4 P9 viable + within budget ⇒ CLOSED/ADMIT (independent assurer)");
+  check(P.runParcours({ metier: "P9", payload: over }, { permissions: allow, audit: auditOK }).decision === "REJECT", "A4 P9 over budget ⇒ REJECT");
+  check(P.runParcours({ metier: "P9", payload: zero }, { permissions: allow, audit: auditOK }).decision === "REJECT", "A4 P9 zero successes (not viable) ⇒ REJECT");
+}
+// (A5) P9 INDEPENDENT ASSURANCE CATCHES A BAD ADMIT — a synthetic guard that fakes a viable cheap econ for an
+// over-budget/zero-success payload must be caught ⇒ ASSURANCE_FAILED.
+{
+  const liar = { P9: { ...P.METIER_GUARDS.P9, resolve: () => () => ({ viable: true, costPerSuccess: 0.1 }) } };
+  const out = P.runParcours({ metier: "P9", payload: { observedCostEur: 80, attempts: 100, successes: 100, maxCostPerSuccessEur: 0.6 } }, { guards: liar, permissions: allow, audit: auditOK });
+  check(out.stage === "ASSURANCE_FAILED", "A5 a faked-cheap ADMIT over real budget ⇒ ASSURANCE_FAILED (independent recomputation catches it)");
+}
+
 // (C) RÉSILIENCE [§5] — permission refused (deny-by-default) ⇒ PERMISSION_REFUSED, guard never runs.
 {
   const out = P.runParcours({ metier: "P3", payload: CLEAN }, { permissions: { canExecute: () => false }, audit: auditOK, now: "t" });
