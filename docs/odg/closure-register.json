@@ -4811,6 +4811,30 @@
       ],
       "evidence": "ODG 2026-11-09 (CTO Continuation §2 — website audit): docs/odg/WEBSITE_AUDIT_2026-11-09.md — audited the in-repo website (Next.js dashboard auth-gated fail-closed + real data; static marketing site/*.html). Baseline sound: titles/meta-desc/lang=fr/viewport/h1 on all pages, accessible contact form (6 inputs/6 labels), auth-gated dashboard. SAFE LOCAL FIX APPLIED + verified (not published): added Open Graph + canonical + robots + twitter:card to all 7 pages, derived from existing title+description (no fabricated marketing copy); every page keeps exactly one </head>, serving route unchanged, contact form still POSTs same-origin /api/intake. HONEST GAPS flagged for owner (not fabricated/shipped): P1-P15 metier content (must not over-claim E2/E3 as live paid services), conversion funnel, payment/subscription integration (p01-billing-sandbox owner-gated), RGPD retention copy (legal), public exposure (dashboard-tls-exposure owner-gated). Nothing published.",
       "acceptance": "ODG 2026-11-09 (CTO Continuation §2 — website audit): docs/odg/WEBSITE_AUDIT_2026-11-09.md — audited the in-repo website (Next.js dashboard auth-gated fail-closed + real data; static marketing site/*.html). Baseline sound: titles/meta-desc/lang=fr/viewport/h1 on all pages, accessible contact form (6 inputs/6 labels), auth-gated dashboard. SAFE LOCAL FIX APPLIED + verified (not published): added Open Graph + canonical + robots + twitter:card to all 7 pages, derived from existing title+description (no fabricated marketing copy); every page keeps exactly one </head>, serving route unchanged, contact form still POSTs same-origin /api/intake. HONEST GAPS flagged for owner (not fabricated/shipped): P1-P15 metier content (must not over-claim E2/E3 as live paid services), conversion funnel, payment/subscription integration (p01-billing-sandbox owner-gated), RGPD retention copy (legal), public exposure (dashboard-tls-exposure owner-gated). Nothing published."
+    },
+    {
+      "id": "serie28-metier-fiches",
+      "title": "V12.4 Continuation §4: 15 métier realization fiches (technical real, commercial [MARKET-RESEARCH-REQUIRED])",
+      "program": "V12.4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie28-p1-p15-canonical-inventory"
+      ],
+      "evidence": "ODG 2026-11-09 (CTO Continuation §4 — métier realization fiches): docs/odg/METIER_REALIZATION_FICHES_2026-11-09.md — 15 fiches P1-P15. TECHNICAL fields REAL (identity/mission/operational-capabilities/demo/tests from the gate-tested profession+capability modules: runReferenceProject + E3 adversarial per métier). COMMERCIAL fields (clients/sectors/competitor-prices/proposed-prices/margins) explicitly flagged [MARKET-RESEARCH-REQUIRED] — not fabricated (no internet; external research owner-gated). No métier declared commercially operational: each has a VERIFIED TECHNICAL DEMONSTRATION (its gate-tested demo), not a paid delivery.",
+      "acceptance": "ODG 2026-11-09 (CTO Continuation §4 — métier realization fiches): docs/odg/METIER_REALIZATION_FICHES_2026-11-09.md — 15 fiches P1-P15. TECHNICAL fields REAL (identity/mission/operational-capabilities/demo/tests from the gate-tested profession+capability modules: runReferenceProject + E3 adversarial per métier). COMMERCIAL fields (clients/sectors/competitor-prices/proposed-prices/margins) explicitly flagged [MARKET-RESEARCH-REQUIRED] — not fabricated (no internet; external research owner-gated). No métier declared commercially operational: each has a VERIFIED TECHNICAL DEMONSTRATION (its gate-tested demo), not a paid delivery."
+    },
+    {
+      "id": "serie28-opportunity-readiness",
+      "title": "V12.4 Continuation §6: métier capability-readiness ranking (top-5 P3/P6/P1/P10/P4; market dims deferred)",
+      "program": "V12.4",
+      "priority": 1,
+      "status": "ACCEPTED",
+      "deps": [
+        "serie28-metier-fiches"
+      ],
+      "evidence": "ODG 2026-11-09 (CTO Continuation §6 — opportunity prioritization): docs/odg/OPPORTUNITY_CAPABILITY_READINESS_2026-11-09.md — honest CAPABILITY-READINESS ranking from internal evidence only (proof level + automation + owner-gated barrier + time-to-first-technical-delivery); market dimensions (demand/competition/pricing/margin) explicitly EXCLUDED as [MARKET-RESEARCH-REQUIRED]. Top-5 by capability-readiness: P3 Security, P6 Eval, P1 Full-Stack, P10 Regulatory, P4 Data (all E3-proven, zero owner-gated dependency, demo buildable on synthetic data today without a client/spend/publish). The other 10 NOT abandoned. Explicitly NOT a market ranking (readiness != revenue); final §6 ranking pends the §5 external market study.",
+      "acceptance": "ODG 2026-11-09 (CTO Continuation §6 — opportunity prioritization): docs/odg/OPPORTUNITY_CAPABILITY_READINESS_2026-11-09.md — honest CAPABILITY-READINESS ranking from internal evidence only (proof level + automation + owner-gated barrier + time-to-first-technical-delivery); market dimensions (demand/competition/pricing/margin) explicitly EXCLUDED as [MARKET-RESEARCH-REQUIRED]. Top-5 by capability-readiness: P3 Security, P6 Eval, P1 Full-Stack, P10 Regulatory, P4 Data (all E3-proven, zero owner-gated dependency, demo buildable on synthetic data today without a client/spend/publish). The other 10 NOT abandoned. Explicitly NOT a market ranking (readiness != revenue); final §6 ranking pends the §5 external market study."
     }
   ]
 }
