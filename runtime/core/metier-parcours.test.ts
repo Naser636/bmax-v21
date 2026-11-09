@@ -62,6 +62,37 @@ const TYPOSQUAT = { name: "reakt", version: "^1.0.0" };
   check(out.stage === "ASSURANCE_FAILED", "A5 a faked-cheap ADMIT over real budget ⇒ ASSURANCE_FAILED (independent recomputation catches it)");
 }
 
+// ===== V20 BATCH 01: P1, P12, P4 =====
+// (B1) P1 semantic-regression — SAFE (tests pass + behaviour preserved) ⇒ ADMIT; a changed held-out output ⇒ REJECT.
+{
+  const before = [{ input: "x", observedOutput: 1 }, { input: "y", observedOutput: 2 }];
+  const safe = P.runParcours({ metier: "P1", payload: { statedTestsPass: true, before, after: before }, declaredSynthetic: true }, { permissions: allow, audit: auditOK, now: "t" });
+  check(safe.stage === "CLOSED" && safe.decision === "ADMIT" && safe.assurance === "independent", "B1 P1 SAFE ⇒ CLOSED/ADMIT (independent output-compare assurer)");
+  const reg = P.runParcours({ metier: "P1", payload: { statedTestsPass: true, before, after: [{ input: "x", observedOutput: 1 }, { input: "y", observedOutput: 999 }] } }, { permissions: allow, audit: auditOK });
+  check(reg.stage === "CLOSED" && reg.decision === "REJECT", "B1 P1 semantic regression (held-out output changed) ⇒ CLOSED/REJECT");
+  // independent assurance catches a guard that wrongly marks SAFE on a changed output:
+  const liar = { P1: { ...P.METIER_GUARDS.P1, resolve: () => () => ({ verdict: "SAFE", safe: true }) } };
+  const caught = P.runParcours({ metier: "P1", payload: { statedTestsPass: true, before, after: [{ input: "x", observedOutput: 1 }, { input: "y", observedOutput: 999 }] } }, { guards: liar, permissions: allow, audit: auditOK });
+  check(caught.stage === "ASSURANCE_FAILED", "B1 a wrong SAFE (changed output) ⇒ ASSURANCE_FAILED (independent catches it)");
+}
+// (B12) P12 circuit-breaker — healthy CLOSED ⇒ ADMIT; tripped ⇒ REJECT; wrong admit of a tripped breaker caught.
+{
+  const healthy = { state: "CLOSED", outcomes: ["SUCCESS", "SUCCESS", "SUCCESS", "SUCCESS", "SUCCESS"], config: { failureThreshold: 0.5, minSamples: 5 } };
+  const tripped = { state: "CLOSED", outcomes: ["FAIL", "FAIL", "FAIL", "FAIL", "SUCCESS"], config: { failureThreshold: 0.5, minSamples: 5 } };
+  check(P.runParcours({ metier: "P12", payload: healthy, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B12 P12 healthy breaker ⇒ ADMIT");
+  check(P.runParcours({ metier: "P12", payload: tripped }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B12 P12 tripped breaker ⇒ REJECT");
+  const liar = { P12: { ...P.METIER_GUARDS.P12, resolve: () => () => ({ admit: true, nextState: "CLOSED" }) } };
+  check(P.runParcours({ metier: "P12", payload: tripped }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B12 a wrong ADMIT of a tripped breaker ⇒ ASSURANCE_FAILED");
+}
+// (B4) P4 distribution-drift — identical distributions ⇒ ADMIT; gross shift ⇒ REJECT; wrong admit of a gross shift caught.
+{
+  const ref = [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]; const same = ref.slice(); const shifted = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
+  check(P.runParcours({ metier: "P4", payload: { reference: ref, current: same }, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B4 P4 no drift ⇒ ADMIT");
+  check(P.runParcours({ metier: "P4", payload: { reference: ref, current: shifted } }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B4 P4 significant drift ⇒ REJECT");
+  const liar = { P4: { ...P.METIER_GUARDS.P4, resolve: () => () => ({ gate: "PASS", drift: "NONE", psi: 0 }) } };
+  check(P.runParcours({ metier: "P4", payload: { reference: ref, current: shifted } }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B4 a wrong PASS on a gross shift ⇒ ASSURANCE_FAILED (independent TV metric catches it)");
+}
+
 // (C) RÉSILIENCE [§5] — permission refused (deny-by-default) ⇒ PERMISSION_REFUSED, guard never runs.
 {
   const out = P.runParcours({ metier: "P3", payload: CLEAN }, { permissions: { canExecute: () => false }, audit: auditOK, now: "t" });
