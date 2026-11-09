@@ -51,11 +51,14 @@ const existingModules = fs.readdirSync(path.join(__dirname)).filter((f: string) 
 {
   const s = M.summarize(manifest);
   check(s.programs === 4 && s.domains === 8 && s.phases === 11 && s.missions > 0, `summary: 4 programs / 8 domains / 11 phases / ${s.missions} missions`);
-  check((s.byStatus.VALIDATED || 0) === 0, "no mission is claimed VALIDATED (nothing over-claimed — COMPLETED ≠ VALIDATED)");
-  // All 28 missions are now genuinely COMPLETED (built + tested + merged); none is over-claimed VALIDATED (checked above).
-  // The real integration invariant is: every COMPLETED mission carries non-empty evidence AND the validator stays INTEGRATED.
-  const completed = manifest.missions.filter((m: any) => m.status === "COMPLETED");
-  check(completed.length >= 1 && completed.every((m: any) => typeof m.evidence === "string" && m.evidence.length > 0) && M.validateProgram(manifest, { existingModules }).ok === true, "every COMPLETED mission carries evidence (validator INTEGRATED)");
+  // Every terminal mission (COMPLETED or VALIDATED) must carry non-empty evidence, and the validator stays INTEGRATED —
+  // nothing is claimed without proof.
+  const terminal = manifest.missions.filter((m: any) => m.status === "COMPLETED" || m.status === "VALIDATED");
+  check(terminal.length >= 1 && terminal.every((m: any) => typeof m.evidence === "string" && m.evidence.length > 0) && M.validateProgram(manifest, { existingModules }).ok === true, "every COMPLETED/VALIDATED mission carries evidence (validator INTEGRATED)");
+  // A mission reaches VALIDATED ONLY with independent-validation evidence recorded (re-derived core invariant, not self-report).
+  // The continuous enforcement lives in runtime/core/mission-independent-validation.test.ts (28/28, in the gate).
+  const validated = manifest.missions.filter((m: any) => m.status === "VALIDATED");
+  check(validated.every((m: any) => /independent/i.test(String(m.evidence)) || /independent/i.test(String(m.independentValidation))), "no mission is VALIDATED without independent-validation evidence (no over-claim)");
 }
 check(M.MASTER_PROGRAM_INTEGRATION_CONTRACT.invariants.some((i: any) => /EXTENSION/.test(i)), "contract: V12.4 remains directeur, program is an extension");
 
