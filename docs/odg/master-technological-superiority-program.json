@@ -423,14 +423,15 @@
       "program": "A",
       "domain": "ENGINEERING_CAPABILITIES",
       "phase": "PHASE-2",
-      "status": "PROPOSED",
+      "status": "COMPLETED",
       "reuseExisting": [
         "benchmark-factory.ts",
         "metier-benchmark-multidim.ts"
       ],
       "dependsOn": [
         "PHASE-0"
-      ]
+      ],
+      "evidence": "CAPABILITY_BUILT: runtime/core/metier-baseline.ts — per-métier baseline + honest gap inventory over roster P1..P15. READ-ONLY (no métier internal logic modified). Composes metier-benchmark-multidim.runMultidim (DETECTION/SPECIFICITY/ROBUSTNESS) — no new benchmark engine. LIVE: 10/15 benchmarked & effective (P1-4,6-9,12,15); 5 NOT_BENCHMARKED gaps (P5,P10,P11,P13,P14); a block-everything guard fails SPECIFICITY ⇒ gap; NOT_BENCHMARKED never counted as passing (fail-closed). 11/11. COMPLETED, not yet VALIDATED."
     },
     {
       "id": "M-CH3-01",
