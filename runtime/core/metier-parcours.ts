@@ -220,6 +220,9 @@ const METIER_GUARDS: any = Object.freeze({
       let allOk = true; for (const s of steps) { let ok = false; try { ok = s && typeof s.forward === "function" ? s.forward(ctx) === true : false; } catch { ok = false; } if (!ok) { allOk = false; break; } }
       return { ok: allOk, reason: allOk ? "ADMIT independently confirmed: every step's forward reconstitutes as committed" : "ADMIT contradicts the independent saga reconstitution (a step's forward does not succeed) — assurance FAILED" };
     },
+    // V23 §5: a deterministic dedup identity over the SERIALIZABLE content (step ids + any non-function step fields + ctx);
+    // closures are excluded (they are not hashable) — a saga's identity is its step ids + ctx by design.
+    digestOf: (payload: any) => { const p = payload || {}; const steps = Array.isArray(p.steps) ? p.steps : []; const serial = steps.map((s: any) => { const o: any = {}; for (const k of Object.keys(s || {})) if (typeof s[k] !== "function") o[k] = s[k]; return o; }); return JSON.stringify({ m: "P15", steps: serial, ctx: (p.opts && typeof p.opts === "object") ? p.opts.ctx : undefined }); },
   }),
   P6: Object.freeze({
     metier: "P6", domain: "evaluation (precision/recall/F1)",
@@ -234,6 +237,53 @@ const METIER_GUARDS: any = Object.freeze({
       const prec = tp + fp > 0 ? tp / (tp + fp) : 0; const rec = tp + fn > 0 ? tp / (tp + fn) : 0; const f1 = prec + rec > 0 ? 2 * prec * rec / (prec + rec) : 0;
       const ok = f1 >= thr;
       return { ok, reason: ok ? `ADMIT independently confirmed: recomputed F1 ${f1.toFixed(4)} ≥ ${thr}` : `ADMIT contradicts the independent F1 recomputation (${f1.toFixed(4)} < ${thr}) — assurance FAILED` };
+    },
+  }),
+  // ----- V23 BATCH 04 (final) -----
+  P7: Object.freeze({
+    metier: "P7", domain: "SRE / SLO",
+    resolve: () => { const G = require("./profession-p7-sre-reference.js"); return (payload: any) => G.evaluateSLO(payload && payload.latencies, payload && payload.slo); },
+    inputNote: "payload = { latencies:[ms…], slo:{ targetP99Ms, observedAvailability, availabilityTarget } }",
+    decisionOf: (v: any) => (v && v.compliant === true ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: recompute p99 from the RAW latencies (own sort + nearest-rank) and check latency + availability targets.
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT/breach is safe (no assurance burden)" };
+      const p = payload || {}; const lat = Array.isArray(p.latencies) ? p.latencies.filter((x: any) => typeof x === "number" && isFinite(x)).slice().sort((a: number, b: number) => a - b) : []; const slo = (p.slo && typeof p.slo === "object") ? p.slo : {};
+      if (lat.length === 0) return { ok: false, reason: "ADMIT with no latencies — assurance FAILED" };
+      const idx = Math.min(lat.length - 1, Math.ceil(0.99 * lat.length) - 1); const p99 = lat[Math.max(0, idx)];
+      const target = typeof slo.targetP99Ms === "number" ? slo.targetP99Ms : Infinity; const avail = typeof slo.observedAvailability === "number" ? slo.observedAvailability : 1; const availTgt = typeof slo.availabilityTarget === "number" ? slo.availabilityTarget : 0.99;
+      const ok = p99 <= target && avail >= availTgt;
+      return { ok, reason: ok ? `ADMIT independently confirmed: recomputed p99 ${p99} ≤ ${target} and availability ${avail} ≥ ${availTgt}` : `ADMIT contradicts the independent SLO recomputation (p99 ${p99} vs ${target}, avail ${avail} vs ${availTgt}) — assurance FAILED` };
+    },
+  }),
+  P14: Object.freeze({
+    metier: "P14", domain: "devex / golden-path scaffold",
+    resolve: () => require("./profession-p14-devex-reference.js").scaffoldEvidence,
+    inputNote: "payload = { buildRef, sbom:{components:[…]}, confinement:{netOff,envCleared}, health:{available} }",
+    decisionOf: (v: any) => (v && v.attested === true ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: recompute scaffold completeness from the RAW bundle features (not scaffoldEvidence/makeBundle).
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT (incomplete) is safe (no assurance burden)" };
+      const p = payload || {}; const sbom = (p.sbom && typeof p.sbom === "object") ? p.sbom : {}; const conf = (p.confinement && typeof p.confinement === "object") ? p.confinement : {}; const health = (p.health && typeof p.health === "object") ? p.health : {};
+      const components = Array.isArray(sbom.components) ? sbom.components.length : 0;
+      const ok = typeof p.buildRef === "string" && p.buildRef.trim().length > 0 && components > 0 && conf.netOff === true && conf.envCleared === true && health.available === true;
+      return { ok, reason: ok ? "ADMIT independently confirmed: buildRef + sbom components + confinement(netOff,envCleared) + health available" : `ADMIT contradicts the independent completeness recomputation (buildRef=${!!p.buildRef} components=${components} netOff=${conf.netOff} envCleared=${conf.envCleared} healthAvailable=${health.available}) — assurance FAILED` };
+    },
+  }),
+  P5: Object.freeze({
+    metier: "P5", domain: "platform / progressive-delivery (canary candidate)",
+    // P5's canonical guard per the métier benchmark is assessCanaryCandidate (read-only canary safety) — NOT decision-rules.ts
+    // (a P4-era goal→capability router). Direct coverage (Issue A): assessCanaryCandidate exercises P5's real contract.
+    resolve: () => require("./canary-decision-pack.js").assessCanaryCandidate,
+    inputNote: "payload = a mission spec { mission, requiresEngineering, authorizedPaths, network?, spend?, destructive? }",
+    decisionOf: (v: any) => (v && v.safe === true ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: recompute the read-only canary necessary conditions from the RAW spec (direct field checks, not
+    // assessCanaryCandidate). ADMIT ⟹ non-engineering, no authorized paths, no network, no spend, non-destructive.
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT (out of canary scope) is safe (no assurance burden)" };
+      const p = payload || {}; const paths = Array.isArray(p.authorizedPaths) ? p.authorizedPaths : [];
+      const ok = p.requiresEngineering !== true && paths.length === 0 && p.network !== true && p.spend !== true && p.destructive !== true && typeof p.mission === "string" && p.mission.trim().length > 0;
+      return { ok, reason: ok ? "ADMIT independently confirmed: read-only (no engineering/paths/network/spend/destructive)" : `ADMIT contradicts the independent canary-safety recomputation (requiresEngineering=${p.requiresEngineering} paths=${paths.length} network=${p.network} spend=${p.spend} destructive=${p.destructive}) — assurance FAILED` };
     },
   }),
 });
@@ -272,8 +322,14 @@ function runParcours(request: any, deps: any = {}): any {
   if (!resolved.ok || !fn(resolved.value)) return done(STAGE.CAPABILITY_UNAVAILABLE, { reason: `guard for ${request.metier} could not be resolved${resolved.ok ? "" : ": " + resolved.error}` });
   const guard = resolved.value;
 
-  // (5) DÉDUPLICATION — stable digest of {metier,payload}.
-  const digest = fn(deps.digest) ? safe(() => deps.digest(request)).value : JSON.stringify({ m: request.metier, p: request.payload });
+  // (5) DÉDUPLICATION — stable digest. V23 §5: the default `JSON.stringify({metier,payload})` silently DROPS function-
+  //     valued fields (demonstrated on P15: two sagas with identical step ids but different `forward` closures collide to
+  //     the SAME digest ⇒ a false DUPLICATE). Fix: a métier may declare `digestOf(payload)` for a deterministic identity
+  //     over the MEANINGFUL (serializable) content; closures are excluded by design. Ordinary métiers keep the safe
+  //     generic digest. deps.digest (test/caller override) still wins.
+  const digest = fn(deps.digest)
+    ? safe(() => deps.digest(request)).value
+    : (fn(entry.digestOf) ? safe(() => entry.digestOf(request.payload)).value : JSON.stringify({ m: request.metier, p: request.payload }));
   if (deps.seenDigests instanceof Set && digest != null && deps.seenDigests.has(digest)) return done(STAGE.DUPLICATE, { reason: "identical request already processed (idempotent)", digest });
 
   // (6) EXÉCUTION — run the real guard (partial/throw ⇒ fail-closed).

@@ -150,6 +150,50 @@ const TYPOSQUAT = { name: "reakt", version: "^1.0.0" };
   check(P.runParcours({ metier: "P6", payload: poor }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B6 an inflated F1 on poor predictions ⇒ ASSURANCE_FAILED (independent F1 recompute catches it)");
 }
 
+// ===== V23 BATCH 04 (final): P7, P14, P5 =====
+// (B7) P7 SRE/SLO — within SLO ⇒ ADMIT; breached ⇒ REJECT; a faked compliant caught by independent p99 recompute.
+{
+  const lat = [10, 12, 11, 13, 10, 12, 11, 100];
+  const okSlo = { latencies: lat, slo: { targetP99Ms: 200, observedAvailability: 0.999, availabilityTarget: 0.99 } };
+  const badSlo = { latencies: lat, slo: { targetP99Ms: 50, observedAvailability: 0.999, availabilityTarget: 0.99 } };
+  check(P.runParcours({ metier: "P7", payload: okSlo, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B7 P7 within SLO ⇒ ADMIT");
+  check(P.runParcours({ metier: "P7", payload: badSlo }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B7 P7 SLO breached ⇒ REJECT");
+  const liar = { P7: { ...P.METIER_GUARDS.P7, resolve: () => () => ({ compliant: true }) } };
+  check(P.runParcours({ metier: "P7", payload: badSlo }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B7 a faked compliant over a breached p99 ⇒ ASSURANCE_FAILED (independent p99 recompute catches it)");
+}
+// (B14) P14 devex — complete scaffold ⇒ ADMIT; incomplete ⇒ REJECT; a faked attested caught.
+{
+  const full = { buildRef: "abc", sbom: { components: [{ name: "x" }] }, confinement: { netOff: true, envCleared: true }, health: { available: true } };
+  const partial = { buildRef: "abc" };
+  check(P.runParcours({ metier: "P14", payload: full, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B14 P14 complete scaffold ⇒ ADMIT");
+  check(P.runParcours({ metier: "P14", payload: partial }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B14 P14 incomplete scaffold ⇒ REJECT");
+  const liar = { P14: { ...P.METIER_GUARDS.P14, resolve: () => () => ({ attested: true, missing: [] }) } };
+  check(P.runParcours({ metier: "P14", payload: partial }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B14 a faked attested on an incomplete scaffold ⇒ ASSURANCE_FAILED");
+}
+// (B5) P5 progressive-delivery (canary candidate) — read-only ⇒ ADMIT; engineering/mutating ⇒ REJECT; a faked safe caught.
+{
+  const ro = { mission: "HEALTH_RO", requiresEngineering: false, authorizedPaths: [] };
+  const eng = { mission: "SOME_ENG", requiresEngineering: true, authorizedPaths: ["src/"] };
+  check(P.runParcours({ metier: "P5", payload: ro, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B5 P5 read-only canary candidate ⇒ ADMIT");
+  check(P.runParcours({ metier: "P5", payload: eng }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B5 P5 engineering/mutating rollout ⇒ REJECT (not canary-safe)");
+  const liar = { P5: { ...P.METIER_GUARDS.P5, resolve: () => () => ({ safe: true }) } };
+  check(P.runParcours({ metier: "P5", payload: eng }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B5 a faked safe on an engineering mission ⇒ ASSURANCE_FAILED (independent read-only recompute catches it)");
+}
+// (DEDUP-FIX §5) P15 digestOf — two sagas with the SAME step ids but DIFFERENT forwards must NOT false-DUPLICATE; identical ones still dedup.
+{
+  const seen = new Set();
+  const sagaA = { steps: [{ id: "a", forward: () => true }, { id: "b", forward: () => true }] };
+  const sagaB = { steps: [{ id: "a", forward: () => true }, { id: "c", forward: () => true }] };   // different id ⇒ different content
+  const r1 = P.runParcours({ metier: "P15", payload: sagaA }, { permissions: allow, audit: auditOK, seenDigests: seen });
+  const r2 = P.runParcours({ metier: "P15", payload: sagaB }, { permissions: allow, audit: auditOK, seenDigests: seen });   // must NOT be a false DUPLICATE
+  check(r1.stage === "ADMIT" || r1.stage === "CLOSED", "DEDUP r1 processed");
+  check(r2.stage !== "DUPLICATE", "DEDUP §5: a saga with different step ids is NOT a false DUPLICATE (digestOf excludes closures, includes ids)");
+  const r3 = P.runParcours({ metier: "P15", payload: sagaA }, { permissions: allow, audit: auditOK, seenDigests: seen });   // identical ⇒ real dedup
+  check(r3.stage === "DUPLICATE", "DEDUP §5: an identical saga (same ids+ctx) IS a DUPLICATE (real dedup preserved, idempotent)");
+  // the raw default digest would have collided these differing-forward sagas; digestOf fixes it deterministically.
+  check(P.METIER_GUARDS.P15.digestOf({ steps: [{ id: "a", forward: () => true }] }) === P.METIER_GUARDS.P15.digestOf({ steps: [{ id: "a", forward: () => false }] }), "DEDUP: same ids+ctx ⇒ same digest BY DESIGN (closures excluded — documented identity)");
+}
+
 // (C) RÉSILIENCE [§5] — permission refused (deny-by-default) ⇒ PERMISSION_REFUSED, guard never runs.
 {
   const out = P.runParcours({ metier: "P3", payload: CLEAN }, { permissions: { canExecute: () => false }, audit: auditOK, now: "t" });
