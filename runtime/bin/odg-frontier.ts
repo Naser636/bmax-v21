@@ -49,8 +49,27 @@ async function run(opts: any): Promise<any> {
   return result;
 }
 
-module.exports = { run, parseSignals };
-export { run, parseSignals };
+// V15 §2 — DURABLE TRACEABILITY. The weekly Radar previously left no persisted, deduplicated, provenance-stamped proposal
+// record (only an append-only text log). persistFrontierDecision records the run's decision to the EXISTING durable store
+// via frontier-radar-store.recordProposal (which enforces status PROPOSED + grantsNoPermission=true — proposition ≠
+// autorisation — and dedups by candidateId through the idempotency journal). Fail-closed governance: the Radar must NEVER
+// auto-promote, so a `promoted` decision is REFUSED here (never silently recorded as an authorized proposal). PURE given
+// injected seams (recordProposal / stampProvenance); the bin supplies the real store + a real timestamp.
+function persistFrontierDecision(slim: any, deps: any = {}): any {
+  const s = (slim && typeof slim === "object") ? slim : {};
+  const now = typeof deps.now === "string" && deps.now ? deps.now : "unknown";
+  const record = deps.recordProposal || require("../core/frontier-radar-store.js").recordProposal;
+  const stamp = deps.stamp || require("../core/evidence-provenance.js").stampProvenance;
+  // Fail-closed: a promoted decision must never be recorded as a proposal (the Radar cannot self-authorize a promotion).
+  if (s.promoted === true) return Object.freeze({ ok: false, decision: "REFUSED", reason: "radar decision marked promoted — refusing to record (promotion requires external authorization, not the Radar)" });
+  if (typeof s.selected !== "string" || !s.selected) return Object.freeze({ ok: true, decision: "NO_PROPOSAL", reason: "no selected candidate this run — nothing to record (not a failure)" });
+  const proposal = stamp({ candidateId: s.selected, status: "PROPOSED", grantsNoPermission: true, outcome: s.outcome || null, evidencePresent: s.evidencePresent === true, stages: s.stages || [], recordedAt: now }, { runId: now });
+  try { return record(proposal, { now, store: deps.store }); }
+  catch (e: any) { return Object.freeze({ ok: false, decision: "ERROR", reason: String((e && e.message) || e) }); }
+}
+
+module.exports = { run, parseSignals, persistFrontierDecision };
+export { run, parseSignals, persistFrontierDecision };
 
 if (require.main === module) {
   const noAuth = process.env.ODG_FRONTIER_NOAUTH === "1";
@@ -67,7 +86,11 @@ if (require.main === module) {
       evidencePresent: !!out.evidence,
       stages: out.stages || [],
     };
-    process.stdout.write(JSON.stringify(slim, null, 2) + "\n");
+    // V15 §2 — persist the decision to the durable traceable store (deduplicated, provenance-stamped). Uses a real
+    // wall-clock timestamp for the audit trail; the candidate id (dedup key) stays deterministic from the pipeline.
+    let persisted: any = { decision: "SKIPPED" };
+    try { persisted = persistFrontierDecision(slim, { now: new Date().toISOString() }); } catch (e: any) { persisted = { ok: false, decision: "ERROR", reason: String((e && e.message) || e) }; }
+    process.stdout.write(JSON.stringify({ ...slim, persistence: { decision: persisted.decision, added: persisted.added === true } }, null, 2) + "\n");
     process.exit(0);
   })();
 }
