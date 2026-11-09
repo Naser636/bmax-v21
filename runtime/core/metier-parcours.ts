@@ -188,6 +188,54 @@ const METIER_GUARDS: any = Object.freeze({
       return { ok, reason: ok ? `ADMIT independently confirmed: recomputed SCI ${sci.toFixed(4)} gCO2/unit ≤ ${budget}` : `ADMIT contradicts the independent SCI recomputation (${sci.toFixed(4)} > ${budget}) — assurance FAILED` };
     },
   }),
+  // ----- V22 BATCH 03 -----
+  P11: Object.freeze({
+    metier: "P11", domain: "document routing (STP)",
+    resolve: () => require("./p11-document-routing.js").routeDocument,
+    inputNote: "payload = { parser:{ok}, validation:{valid, findings:[{severity}]}, extraction:{status, capped, streamsFailed} }",
+    decisionOf: (v: any) => (v && v.tier === "STRAIGHT_THROUGH" ? "ADMIT" : "REJECT"),   // HUMAN_REVIEW/REJECT ⇒ never auto-admit
+    // INDEPENDENT: recompute straight-through eligibility from the RAW document features (not routeDocument's tier). ADMIT
+    // ⟹ parser ok ∧ validation valid ∧ 0 HIGH ∧ 0 MEDIUM ∧ full extraction ∧ not degraded.
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT/HUMAN_REVIEW is safe (quarantine never becomes admit)" };
+      const p = payload || {}; const ex = (p.extraction && typeof p.extraction === "object") ? p.extraction : {}; const parser = (p.parser && typeof p.parser === "object") ? p.parser : {}; const val = (p.validation && typeof p.validation === "object") ? p.validation : {};
+      const findings = Array.isArray(val.findings) ? val.findings : [];
+      const highs = findings.filter((f: any) => f && f.severity === "HIGH").length; const mediums = findings.filter((f: any) => f && f.severity === "MEDIUM").length;
+      const degraded = ex.capped === true || (typeof ex.streamsFailed === "number" && ex.streamsFailed > 0);
+      const ok = parser.ok === true && val.valid === true && highs === 0 && mediums === 0 && ex.status === "TEXT_EXTRACTED" && !degraded;
+      return { ok, reason: ok ? "ADMIT independently confirmed: parser ok, valid, 0 HIGH/MEDIUM, full non-degraded extraction" : `ADMIT contradicts the independent eligibility recomputation (highs=${highs} mediums=${mediums} parserOk=${parser.ok} valid=${val.valid} extraction=${ex.status} degraded=${degraded}) — assurance FAILED` };
+    },
+  }),
+  P15: Object.freeze({
+    metier: "P15", domain: "workflow / saga compensation",
+    resolve: () => { const G = require("./p15-saga-compensation.js"); return (payload: any) => G.runSaga(payload && payload.steps, payload && payload.opts); },
+    inputNote: "payload = { steps:[{id, forward(ctx)->bool, compensate(ctx)->bool}], opts:{ctx} }  (SYNTHETIC pure fns — no external/destructive ops)",
+    decisionOf: (v: any) => (v && v.status === "COMMITTED" ? "ADMIT" : "REJECT"),
+    // INDEPENDENT: reconstitute the saga state from the steps — re-evaluate each forward(ctx) in a distinct loop. ADMIT
+    // (COMMITTED) ⟹ EVERY step's forward succeeds. (A faked COMMITTED where a forward actually fails is caught.)
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT (compensated/failed) is safe (no assurance burden)" };
+      const p = payload || {}; const steps = Array.isArray(p.steps) ? p.steps : []; const ctx = (p.opts && typeof p.opts === "object") ? p.opts.ctx : {};
+      if (steps.length === 0) return { ok: false, reason: "ADMIT with no steps — assurance FAILED" };
+      let allOk = true; for (const s of steps) { let ok = false; try { ok = s && typeof s.forward === "function" ? s.forward(ctx) === true : false; } catch { ok = false; } if (!ok) { allOk = false; break; } }
+      return { ok: allOk, reason: allOk ? "ADMIT independently confirmed: every step's forward reconstitutes as committed" : "ADMIT contradicts the independent saga reconstitution (a step's forward does not succeed) — assurance FAILED" };
+    },
+  }),
+  P6: Object.freeze({
+    metier: "P6", domain: "evaluation (precision/recall/F1)",
+    resolve: () => { const G = require("./profession-p6-eval-reference.js"); return (payload: any) => G.evaluate(payload && payload.gold, payload && payload.predictions); },
+    inputNote: "payload = { gold:{id:0|1}, predictions:{id:0|1}, threshold }  (decision on F1 ≥ threshold)",
+    decisionOf: (v: any, payload: any) => { const thr = payload && typeof payload.threshold === "number" ? payload.threshold : 0.9; return (v && typeof v.f1 === "number" && v.f1 >= thr) ? "ADMIT" : "REJECT"; },
+    // INDEPENDENT: recompute F1 from the RAW gold/predictions by an own tp/fp/fn count (not evaluate). ADMIT ⟹ F1 ≥ threshold.
+    assure: (v: any, payload: any, decision: any) => {
+      if (decision !== "ADMIT") return { ok: true, reason: "REJECT is safe (no assurance burden)" };
+      const p = payload || {}; const g = (p.gold && typeof p.gold === "object") ? p.gold : {}; const pred = (p.predictions && typeof p.predictions === "object") ? p.predictions : {}; const thr = typeof p.threshold === "number" ? p.threshold : 0.9;
+      let tp = 0, fp = 0, fn = 0; for (const id of Object.keys(g)) { const y = g[id] === 1 ? 1 : 0; const yh = pred[id] === 1 ? 1 : 0; if (y === 1 && yh === 1) tp++; else if (y === 0 && yh === 1) fp++; else if (y === 1 && yh === 0) fn++; }
+      const prec = tp + fp > 0 ? tp / (tp + fp) : 0; const rec = tp + fn > 0 ? tp / (tp + fn) : 0; const f1 = prec + rec > 0 ? 2 * prec * rec / (prec + rec) : 0;
+      const ok = f1 >= thr;
+      return { ok, reason: ok ? `ADMIT independently confirmed: recomputed F1 ${f1.toFixed(4)} ≥ ${thr}` : `ADMIT contradicts the independent F1 recomputation (${f1.toFixed(4)} < ${thr}) — assurance FAILED` };
+    },
+  }),
 });
 
 const STAGE = Object.freeze({ INVALID_REQUEST: "INVALID_REQUEST", UNKNOWN_METIER: "UNKNOWN_METIER", PERMISSION_REFUSED: "PERMISSION_REFUSED", CAPABILITY_UNAVAILABLE: "CAPABILITY_UNAVAILABLE", DUPLICATE: "DUPLICATE", EXECUTION_FAILED: "EXECUTION_FAILED", INVALID_RESULT: "INVALID_RESULT", ASSURANCE_FAILED: "ASSURANCE_FAILED", CLOSURE_FAILED: "CLOSURE_FAILED", CLOSED: "CLOSED" });

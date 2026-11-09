@@ -121,6 +121,35 @@ const TYPOSQUAT = { name: "reakt", version: "^1.0.0" };
   check(P.runParcours({ metier: "P13", payload: mk(0.01) }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B13 an under-reported SCI over real budget ⇒ ASSURANCE_FAILED (raw-factor recompute catches it)");
 }
 
+// ===== V22 BATCH 03: P11, P15, P6 =====
+// (B11) P11 document routing — clean doc ⇒ STRAIGHT_THROUGH/ADMIT; HIGH finding ⇒ REJECT; a quarantine faked as STP caught.
+{
+  const clean = { parser: { ok: true }, validation: { valid: true, findings: [] }, extraction: { status: "TEXT_EXTRACTED" } };
+  const high = { parser: { ok: true }, validation: { valid: true, findings: [{ severity: "HIGH" }] }, extraction: { status: "TEXT_EXTRACTED" } };
+  check(P.runParcours({ metier: "P11", payload: clean, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B11 P11 clean doc ⇒ STRAIGHT_THROUGH/ADMIT");
+  check(P.runParcours({ metier: "P11", payload: high }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B11 P11 HIGH finding ⇒ REJECT (quarantine/reject never admits)");
+  const liar = { P11: { ...P.METIER_GUARDS.P11, resolve: () => () => ({ tier: "STRAIGHT_THROUGH" }) } };
+  check(P.runParcours({ metier: "P11", payload: high }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B11 a wrong STP on a HIGH-finding doc ⇒ ASSURANCE_FAILED (independent eligibility recompute catches it)");
+}
+// (B15) P15 saga — all steps commit ⇒ ADMIT; a step fails (⇒ compensated) ⇒ REJECT; a faked COMMITTED caught.
+{
+  const ok = { steps: [{ id: "a", forward: () => true, compensate: () => true }, { id: "b", forward: () => true, compensate: () => true }] };
+  const fail = { steps: [{ id: "a", forward: () => true, compensate: () => true }, { id: "b", forward: () => false, compensate: () => true }] };
+  check(P.runParcours({ metier: "P15", payload: ok, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B15 P15 all steps commit ⇒ ADMIT");
+  check(P.runParcours({ metier: "P15", payload: fail }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B15 P15 a failed step (compensated) ⇒ REJECT");
+  const liar = { P15: { ...P.METIER_GUARDS.P15, resolve: () => () => ({ status: "COMMITTED" }) } };
+  check(P.runParcours({ metier: "P15", payload: fail }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B15 a faked COMMITTED where a step forward fails ⇒ ASSURANCE_FAILED (saga reconstitution catches it)");
+}
+// (B6) P6 evaluation — F1 ≥ threshold ⇒ ADMIT; below ⇒ REJECT; an inflated F1 caught.
+{
+  const perfect = { gold: { a: 1, b: 1, c: 0, d: 0 }, predictions: { a: 1, b: 1, c: 0, d: 0 }, threshold: 0.8 };
+  const poor = { gold: { a: 1, b: 1, c: 0, d: 0 }, predictions: { a: 0, b: 0, c: 1, d: 1 }, threshold: 0.8 };
+  check(P.runParcours({ metier: "P6", payload: perfect, declaredSynthetic: true }, { permissions: allow, audit: auditOK }).decision === "ADMIT", "B6 P6 F1 ≥ threshold ⇒ ADMIT");
+  check(P.runParcours({ metier: "P6", payload: poor }, { permissions: allow, audit: auditOK }).decision === "REJECT", "B6 P6 F1 < threshold ⇒ REJECT");
+  const liar = { P6: { ...P.METIER_GUARDS.P6, resolve: () => () => ({ f1: 1.0 }) } };
+  check(P.runParcours({ metier: "P6", payload: poor }, { guards: liar, permissions: allow, audit: auditOK }).stage === "ASSURANCE_FAILED", "B6 an inflated F1 on poor predictions ⇒ ASSURANCE_FAILED (independent F1 recompute catches it)");
+}
+
 // (C) RÉSILIENCE [§5] — permission refused (deny-by-default) ⇒ PERMISSION_REFUSED, guard never runs.
 {
   const out = P.runParcours({ metier: "P3", payload: CLEAN }, { permissions: { canExecute: () => false }, audit: auditOK, now: "t" });
