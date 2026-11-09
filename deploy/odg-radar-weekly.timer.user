@@ -1,0 +1,10 @@
+[Unit]
+Description=ODG weekly Radar tick (private)
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+Unit=odg-radar-weekly.service
+
+[Install]
+WantedBy=timers.target

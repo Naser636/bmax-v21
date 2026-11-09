@@ -1,0 +1,12 @@
+[Unit]
+Description=ODG weekly Radar (strictly private, read-only/propose-only; no push/network/privilege)
+ConditionPathExists=/home/ubuntu/bmax-v21/runtime/bin/odg-frontier.ts
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ubuntu/bmax-v21
+Environment=ODG_TRUTH_LOCK_ENFORCE=1
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# read-only/propose-only radar tick; output appended to a private log. odg-frontier is fail-closed (no auth => DEFERRED),
+# emits a PROMOTION_REVIEW (never auto-promotes/executes), does no git push / network / privilege.
+ExecStart=/bin/bash -lc 'printf "\n===== %s =====\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> runtime/logs/radar-weekly.log && npx tsx runtime/bin/odg-frontier.ts >> runtime/logs/radar-weekly.log 2>&1'
