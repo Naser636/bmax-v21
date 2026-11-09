@@ -64,8 +64,13 @@ function persistFrontierDecision(slim: any, deps: any = {}): any {
   if (s.promoted === true) return Object.freeze({ ok: false, decision: "REFUSED", reason: "radar decision marked promoted — refusing to record (promotion requires external authorization, not the Radar)" });
   if (typeof s.selected !== "string" || !s.selected) return Object.freeze({ ok: true, decision: "NO_PROPOSAL", reason: "no selected candidate this run — nothing to record (not a failure)" });
   const proposal = stamp({ candidateId: s.selected, status: "PROPOSED", grantsNoPermission: true, outcome: s.outcome || null, evidencePresent: s.evidencePresent === true, stages: s.stages || [], recordedAt: now }, { runId: now });
-  try { return record(proposal, { now, store: deps.store }); }
+  let res: any;
+  try { res = record(proposal, { now, store: deps.store }); }
   catch (e: any) { return Object.freeze({ ok: false, decision: "ERROR", reason: String((e && e.message) || e) }); }
+  // Normalize a fail-closed store result so the Radar reports a CLEAR incident, never `decision: undefined`. A corrupt
+  // registry refuses BEFORE any write (evidence preserved); surface it as CORRUPT, any other ok:false as BLOCKED.
+  if (!res || res.ok !== true) return Object.freeze({ ok: false, decision: res && res.decision ? res.decision : (res && res.corrupt ? "CORRUPT" : "BLOCKED"), corrupt: !!(res && res.corrupt), reason: (res && res.reason) || "store refused (fail-closed)", added: false });
+  return res;
 }
 
 module.exports = { run, parseSignals, persistFrontierDecision };
