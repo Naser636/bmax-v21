@@ -1,5 +1,8 @@
 # ODG_PROJECT_STATE — operational compass
 
+> **⟢ LATEST (2026-11-09, ODG @ origin/main after PR#414):** Architecture Intelligence audit #1 DELIVERED (426 core modules → 0 cycles, 0 exact responsibility-duplications, 7 unused flags ALL verified FALSE POSITIVES; read-only, nothing merged/retired — `docs/odg/ARCHITECTURE_AUDIT_V12.4.md`, `runtime/core/architecture-audit.ts`). M-CH1-02 memory-architecture DELIVERED (PR#413). **Active mission: Engineering Throughput Optimization** (V12.4 transversal) — reproducible baseline established (`docs/odg/THROUGHPUT_BASELINE_V12.4.md`): #1 bottleneck = per-PR serial CI wait ≈245s (measured, paid once per delivery); justified improvement = coherent delivery lots (`runtime/core/delivery-batch-coherence.ts`, fail-closed — independent missions never batched; same FULL gate; gain is a CI-wait COUNT, not a promised %). Gate 384/384; register ~342. Next per Boussole: V5 M-CH2-01 / M-SEC-01 / M-BENCH-01. npm auto-update warning is a Claude Code CLI issue, UNRELATED to ODG — install perms NOT modified.
+
+
 > **Durable navigation aid, not an authority.** Strategy and sequencing live in
 > `docs/odg-operational/ODG_MASTER_ROADMAP.md` (the active execution program is **§K AUTONOMY FIRST**, phases 00–13; **§Q** is the convergence SSOT + P0–P10 register; §G APEX is future. NB: the file runs sections **A–Z** — §U is a documentary capability archive, NOT the active section. See `docs/odg-operational/ODG_ROADMAP_CROSSWALK.md` for the full traceability map) and the machine
 > manifest `runtime/governance/ROADMAP.json` (never edited without distinct authorization). This file is a
