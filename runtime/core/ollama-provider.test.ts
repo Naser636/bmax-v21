@@ -24,6 +24,11 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   ok("generate ⇒ text", g.ok && g.text === "hello");
   ok("generate requires a prompt", (await O.generate({ post: async () => ({}) })).ok === false);
   ok("generate fail-closed on transport error", (await O.generate({ prompt: "x", post: async () => ({ ok: false, reason: "timeout" }) })).ok === false);
+  // (3b) optional keep_alive passthrough (keeps the model resident across a campaign — avoids reloads) — default omitted.
+  { let cap: any; const cp = async (_p: any, payload: any) => { cap = payload; return { ok: true, json: { response: "x" } }; };
+    await O.generate({ model: "m", prompt: "p", post: cp }); ok("generate: no keep_alive by default (behaviour unchanged)", !("keep_alive" in cap));
+    await O.generate({ model: "m", prompt: "p", keepAlive: "10m", post: cp }); ok("generate: keepAlive passed through to keep_alive", cap.keep_alive === "10m");
+    await O.generate({ model: "m", prompt: "p", keepAlive: "", post: cp }); ok("generate: empty keepAlive ignored (fail-safe)", !("keep_alive" in cap)); }
   ok("generate fail-closed when response field missing", (await O.generate({ prompt: "x", post: async () => ({ ok: true, json: {} }) })).ok === false);
 
   // (4) parseEditsProposal: fenced JSON.

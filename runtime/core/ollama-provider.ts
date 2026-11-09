@@ -79,7 +79,11 @@ async function generate(input: any = {}): Promise<any> {
   const model = typeof input.model === "string" && input.model ? input.model : PREFERRED_MODELS[0];
   if (typeof input.prompt !== "string" || !input.prompt) return { ok: false, reason: "prompt (string) required" };
   const post = typeof input.post === "function" ? input.post : loopbackPost;
-  const payload = { model, prompt: input.prompt, stream: false, options: { temperature: 0, num_predict: Number(input.numPredict) || 512 } };
+  const payload: any = { model, prompt: input.prompt, stream: false, options: { temperature: 0, num_predict: Number(input.numPredict) || 512 } };
+  // Optional keep_alive passthrough (e.g. "10m") so a multi-mission campaign keeps the model RESIDENT between calls,
+  // avoiding a ~reload per mission on CPU. Default omitted ⇒ Ollama's own default; behaviour unchanged when not set.
+  // (Measured: forcing num_thread is NOT exposed — num_thread=8 benchmarked SLOWER than Ollama's default, so rejected.)
+  if (typeof input.keepAlive === "string" && input.keepAlive) payload.keep_alive = input.keepAlive;
   let r: any; try { r = await post("/api/generate", payload, { timeoutMs: input.timeoutMs || 120000 }); } catch (e: any) { r = { ok: false, reason: (e && e.message) || "generate error" }; }
   if (!r || !r.ok) return { ok: false, reason: (r && r.reason) || "generation failed" };
   const text = r.json && typeof r.json.response === "string" ? r.json.response : null;
