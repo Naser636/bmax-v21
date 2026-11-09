@@ -45,7 +45,24 @@ function mkStore() { const recorded: any[] = []; const seen = new Set(); return 
   check(r.decision === "NO_PROPOSAL" && st.recorded.length === 0, "no selected candidate ⇒ NO_PROPOSAL, nothing recorded");
 }
 
-if (failures === 0) process.stdout.write("ALL PASS — odg-frontier persistence (V15 traceability)\n");
+// (5) RESILIENCE [V16 §2/§5] — a CORRUPT proposal registry ⇒ refused BEFORE any write (evidence preserved) and surfaced
+// as a CLEAR "CORRUPT" decision, never `undefined`.
+{
+  let wrote = false;
+  const corruptStore = { readStrict: (k: any) => k === "frontier-proposal-registry" ? { present: true, corrupt: true, value: null } : { present: false, corrupt: false, value: null }, read: () => null, write: () => { wrote = true; } };
+  const r = F.persistFrontierDecision({ selected: "frontier-prop:cand:z", outcome: "PROMOTION_REVIEW", promoted: false }, { store: corruptStore, now: "t" });
+  check(r.ok === false && r.decision === "CORRUPT", "corrupt registry ⇒ decision CORRUPT (clearly surfaced, not undefined)");
+  check(wrote === false, "corrupt registry ⇒ NO write (fail-closed, corrupt evidence not overwritten)");
+}
+
+// (6) RESILIENCE — a write failure (disk full / read-only) ⇒ ERROR, fail-closed, not a crash.
+{
+  const writeFail = { readStrict: () => ({ present: false, corrupt: false, value: null }), read: () => null, write: () => { throw new Error("ENOSPC"); } };
+  const r = F.persistFrontierDecision({ selected: "frontier-prop:cand:w", outcome: "PROMOTION_REVIEW", promoted: false }, { store: writeFail, now: "t" });
+  check(r.ok === false && r.decision === "ERROR", "write failure ⇒ ERROR (fail-closed, surfaced not crashed)");
+}
+
+if (failures === 0) process.stdout.write("ALL PASS — odg-frontier persistence (V15 traceability + V16 resilience)\n");
 process.exit(failures === 0 ? 0 : 1);
 
 export {};
