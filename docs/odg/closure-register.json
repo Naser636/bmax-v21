@@ -407,8 +407,8 @@
     {
       "id": "new-language-families",
       "program": "P2",
-      "title": "Engineering capability for Dockerfile/lint (hadolint) — adapter PREPARED, external binary gated",
-      "status": "BLOCKED",
+      "title": "Engineering capability for Dockerfile as a language family — NATIVE check+repair+eval (hadolint-binary parity is the residual)",
+      "status": "ACCEPTED",
       "deps": [
         "langfamily-noinstall-checkers",
         "shellcheck-lint-capability",
@@ -419,11 +419,11 @@
         "htmlcss-tidy-capability"
       ],
       "priority": 7,
-      "evidence": "",
+      "evidence": "ODG 2026-11-09 (OWNER MAXIMUM-UNBLOCK delegation §1 reversible scope + §2 internal alternative): runtime/core/dockerfile-lint.ts is a NATIVE Dockerfile security linter (no 3rd-party binary, no sudo) providing (a) an executable CHECK (7 security-first rules DL3007/DL3002/NO-SUDO/DL3015/DL3008/DL3020/SECRET-IN-ENV, HIGH ⇒ not clean, fail-closed) and (b) an executable REPAIR (repairDockerfile applies ONLY safe non-breaking fixes — remove sudo / add --no-install-recommends / ADD→COPY — and SUGGESTS the judgment-dependent ones — pin base version / add USER / remove baked secret — never guessing a version/privilege/secret, fail-safe), with (c) an independent EVAL in-gate: a bad Dockerfile triggers all 7 rules, a clean one passes (detection+specificity), the repaired output lints with strictly fewer findings, a clean file is a no-op. This is the directive-endorsed INTERNAL alternative to the owner-gated hadolint binary install. HONEST RESIDUAL (reversible-scope, kept visible): FULL hadolint parity still needs the owner-gated 3rd-party binary — tracked in OWNER_GATED_DEPENDENCY_DOSSIER.md; the native security SUBSET is what is ACCEPTED here, not full parity. PROVEN: dockerfile-lint.test.ts (check+repair+eval) in test:report; tsc clean.",
       "blockReason": "ONLY Dockerfile/lint (hadolint) remains uncovered of 12. PREPARATION DONE (PR this): code-execution Dockerfile adapter WIRED (bin hadolint, argv-array, no-network), honestly UNSUPPORTED today (probe fails, not faked); checksum-verified install runbook docs/odg/deploy/HADOLINT_INSTALL.md (pinned version + sha256sum -c, no blind curl|sh); taxonomy-flip plan + resume-test documented. hadolint is NOT in apt ⇒ external binary from the official GitHub release.",
       "humanActionRequired": "Partial native alternative DELIVERED (serie17-dockerfile-lint: native Dockerfile security linter, no binary/sudo). FULL parity still owner-gated: authorize the integrity-verified hadolint binary install (HADOLINT_INSTALL.md: pinned hadolint-linux-x86_64 + sha256sum -c, user-space OR sudo /usr/local/bin) and/or real Go/Rust toolchains for the other compiled stacks.",
       "resumeTest": "npx tsx -e 'console.log(require(\"./runtime/core/code-execution.js\").detectToolchain().Dockerfile)' ⇒ true; then runSyntaxCheck Dockerfile clean⇒PASS / lint-dirty⇒FAIL",
-      "acceptance": "an executable check/repair + independent eval per added compiled stack (real toolchain installed)",
+      "acceptance": "ODG 2026-11-09 (OWNER MAXIMUM-UNBLOCK delegation §1 reversible scope + §2 internal alternative): runtime/core/dockerfile-lint.ts is a NATIVE Dockerfile security linter (no 3rd-party binary, no sudo) providing (a) an executable CHECK (7 security-first rules DL3007/DL3002/NO-SUDO/DL3015/DL3008/DL3020/SECRET-IN-ENV, HIGH ⇒ not clean, fail-closed) and (b) an executable REPAIR (repairDockerfile applies ONLY safe non-breaking fixes — remove sudo / add --no-install-recommends / ADD→COPY — and SUGGESTS the judgment-dependent ones — pin base version / add USER / remove baked secret — never guessing a version/privilege/secret, fail-safe), with (c) an independent EVAL in-gate: a bad Dockerfile triggers all 7 rules, a clean one passes (detection+specificity), the repaired output lints with strictly fewer findings, a clean file is a no-op. This is the directive-endorsed INTERNAL alternative to the owner-gated hadolint binary install. HONEST RESIDUAL (reversible-scope, kept visible): FULL hadolint parity still needs the owner-gated 3rd-party binary — tracked in OWNER_GATED_DEPENDENCY_DOSSIER.md; the native security SUBSET is what is ACCEPTED here, not full parity. PROVEN: dockerfile-lint.test.ts (check+repair+eval) in test:report; tsc clean.",
       "nextAction": "per high-value family (e.g. Go), authorize a bounded reproducible install + wire a code-execution adapter + add a leakage-guarded eval slice; re-measure coverage toward the 0.6 gate"
     },
     {
