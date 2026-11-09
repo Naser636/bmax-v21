@@ -1131,6 +1131,12 @@
       "persistent-impact-graph",
       "flaky-replay-gate"
     ],
-    "status": "IN_PROGRESS"
+    "status": "IN_PROGRESS",
+    "waveAudit2026_11_09": {
+      "doc": "docs/odg/THROUGHPUT_AUDIT_WAVE_2026-11-09.md",
+      "measured": "CI per PR P50=246s/P95=253s (n=7, range 197-253); local FULL gate ~190s/388 suites; per-suite tsx ~1.7s (~95% startup)",
+      "findings": "#1 bottleneck = per-PR serial CI wait (confirmed w/ distribution). Batching did NOT apply this wave (6 missions independent, disjoint write-sets => MUST_SEPARATE). Dev-loop lever (targeted-verify) applied. No NEW throughput module justified (mission roster complete => no queue to schedule; building one = gas-factory). Honest: do not build unused abstraction.",
+      "multiAgent": "DEFERRED under current governance — background/parallel subagents incompatible with synchronous-foreground-only restriction (§12); sequential execution retained; future pilot prerequisites documented (single owner/non-overlapping scopes/minimal perms/isolation/budget/independent validation/merge-only-by-ODG/no-agent-touches-canonical)."
+    }
   }
 }
