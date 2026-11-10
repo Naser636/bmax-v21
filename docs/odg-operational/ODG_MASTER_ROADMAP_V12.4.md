@@ -156,3 +156,12 @@ canonique présent + une primitive + un programme P1–P10 + un test + une preuv
 (composant+test présents), 0 doublon ; les exigences déjà satisfaites conservent leur preuve. **L'intégration documentaire
 est le POINT DE DÉPART de l'exécution, pas une clôture.** Rattaché principalement aux programmes P1 (gouvernance), P2
 (autonomie), P7 (livraison), P8 (sécurité), P10 (opération). ODG pilote ; fournisseur borné (V61).
+
+## Pilotage natif de la roadmap par ODG (V76, 2026-11-10)
+
+ODG sélectionne lui-même sa prochaine mission via `runtime/core/mission-priority-selector.ts` (moteur de décision PUR,
+déterministe) : score multi-critères (§4) sur les missions candidates réelles des registres (closure-ledger + radar),
+sélection + justification reproductibles, dépendances non satisfaites DÉFÉRÉES, missions ACCEPTED exclues (no-repeat).
+Driver `odg-roadmap-pilot.ts` : la mission choisie passe par la boucle gouvernée et s'ARRÊTE à PROPOSED sans autorisation
+externe (ODG n'auto-autorise jamais). Le fournisseur technique ne choisit pas la mission. Aucun second orchestrateur,
+aucune dixième primitive (V61). Cycle Boussole→Roadmap→sélection ODG→contrat→autorisation→exécution→preuves→clôture.
