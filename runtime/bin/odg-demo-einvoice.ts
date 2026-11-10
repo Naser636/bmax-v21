@@ -79,6 +79,7 @@ const rep = O1.generateReport({
   validationConditions: ["re-run reproduces the 3 verdicts", "evidence digest independently verifiable"],
 });
 fs.writeFileSync(OUT.replace(/\.json$/, ".md"), rep.markdown);
+fs.writeFileSync(OUT, JSON.stringify({ ...artifact, report: rep.json }, null, 2) + "\n");   // embed the O1 report (uniform E4 artifact shape)
 process.stdout.write(`=== P11 e-invoice demonstrator written: ${OUT} (+ PME report ${OUT.replace(/\.json$/, ".md")}) ===\n`);
 process.stdout.write(JSON.stringify({ validVerdict: good.verdict, validValidated: good.summary && good.summary.valid, roundTripEqual: good.summary && good.summary.roundTripEqual, blockedAtHumanGate: good.summary && good.summary.blockedAtHumanGate, invalidVerdict: bad.verdict, invalidCaught: Array.isArray(bad.gaps) && bad.gaps.length > 0 }, null, 2) + "\n");
 

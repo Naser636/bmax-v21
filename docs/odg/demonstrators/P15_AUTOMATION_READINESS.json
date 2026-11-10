@@ -1,0 +1,87 @@
+{
+  "//": "CTO V50 P15 E4 automation readiness. SYNTHETIC workflow. Fail-closed consolidation. Reuses metier-coordinator + O1/O2.",
+  "selected": [
+    "P3",
+    "P7",
+    "P8"
+  ],
+  "verdict": "ADMIT",
+  "report": {
+    "metier": "P15",
+    "title": "Enterprise Automation / Agentic Workflow Readiness",
+    "status": "READINESS — consolidated verdict ADMIT",
+    "summary": "Orchestrated a release-automation workflow: selected 3/15 competency-matching métiers [P3, P7, P8] (never all 15 by reflex), dependency-ordered, and consolidated FAIL-CLOSED ⇒ ADMIT. all selected métiers ADMIT",
+    "controls": [
+      {
+        "name": "Métier selection",
+        "status": "RELEVANT-ONLY",
+        "detail": "selected 3/15 métiers whose competencies match [security, release, slo] — the other 12 are not run (no reflexive 15-métier execution)"
+      },
+      {
+        "name": "Dependency ordering",
+        "status": "ORDERED",
+        "detail": "P3 → P7 → P8"
+      },
+      {
+        "name": "Consolidation (fail-closed)",
+        "status": "ADMIT",
+        "detail": "all selected métiers ADMIT"
+      }
+    ],
+    "findings": [],
+    "recommendations": [
+      "run the selected métiers' real guards on the client's artifacts",
+      "escalate any contradiction to a human (never resolved silently)"
+    ],
+    "limits": [
+      "decisions here are SYNTHETIC inputs to the orchestrator",
+      "a métier never self-authorizes; decision power stays with ODG",
+      "readiness assessment, NOT a delivered automation; ODG maturity L2, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the selection + verdict from the same inputs",
+      "evidence digest independently verifiable"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "3/15 métiers selected by competency match",
+          "basis": "PROVEN",
+          "sourceRef": "P15_AUTOMATION_READINESS.json"
+        },
+        {
+          "claim": "fail-closed consolidation ⇒ ADMIT",
+          "basis": "PROVEN",
+          "sourceRef": "P15_AUTOMATION_READINESS.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 2,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "05af4f6802389b93135d467d0f264bc3caa83ad2a1ab9381653178c8e3a31458",
+        "sourceCommit": "2e3095ddbb6df1ae0d73b0725c542846a895a491",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "05af4f6802389b93135d467d0f264bc3caa83ad2a1ab9381653178c8e3a31458",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 2,
+        "proven": 2,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

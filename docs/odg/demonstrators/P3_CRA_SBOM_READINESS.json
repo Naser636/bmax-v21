@@ -1,7 +1,7 @@
 {
   "//": "CTO V44 Chantier B — P3 CRA-SBOM READINESS demonstrator. REPRODUCIBLE on public inputs. ODG produces readiness EVIDENCE (SBOM + audit), NOT full CRA compliance (owner-side obligations listed). No client data. VERIFIED in-repo != a sold product (L2, 0 clients).",
   "demonstrator": "P3 supply-chain / SBOM — EU Cyber Resilience Act readiness",
-  "generatedAt": "2026-11-10T14:00:31.393Z",
+  "generatedAt": "2026-11-10T14:37:34.670Z",
   "project": "bmax-v21",
   "inputManifests": [
     "package-lock.json"
@@ -76,5 +76,130 @@
     "CE marking + declaration of conformity (owner/legal)",
     "5-year support + 10-year update availability commitments (owner/commercial)"
   ],
-  "honesty": "This is a DEMONSTRATOR on public inputs, not a sold engagement. ODG capability maturity = L2 (locally proven, 0 paying clients). It evidences SBOM + audit readiness; it does NOT certify CRA compliance."
+  "honesty": "This is a DEMONSTRATOR on public inputs, not a sold engagement. ODG capability maturity = L2 (locally proven, 0 paying clients). It evidences SBOM + audit readiness; it does NOT certify CRA compliance.",
+  "report": {
+    "metier": "P3",
+    "title": "CRA / SBOM Readiness",
+    "status": "READINESS (license-clean) — not CRA conformity",
+    "summary": "SBOM: 485 CycloneDX components from package-lock.json; license policy CLEAN; CI gate pass/review-only. Inventory by ecosystem: npm:485.",
+    "controls": [
+      {
+        "name": "Machine-readable SBOM",
+        "status": "PRODUCED",
+        "detail": "485 components (CycloneDX)"
+      },
+      {
+        "name": "License policy",
+        "status": "CLEAN",
+        "detail": "7 findings"
+      },
+      {
+        "name": "Machine-readable SBOM covering (at least) top-level dependencies, kept in the technical documentation",
+        "status": "PREPARED (machine-readable SBOM produced)",
+        "detail": "due 2027-12-11"
+      },
+      {
+        "name": "Component-level visibility — prerequisite for 24h actively-exploited-vuln reporting to ENISA",
+        "status": "PREPARED (inventory available)",
+        "detail": "due 2026-09-11"
+      },
+      {
+        "name": "License / supply-chain hygiene (secure-by-design inputs)",
+        "status": "CLEAN",
+        "detail": "due 2027-12-11"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "MEDIUM",
+        "detail": "56 component(s) under 'UNKNOWN' (unknown) — unknown license ⇒ FAIL-CLOSED (do not adopt until verified) [target=commercial-closed]",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "10 component(s) under 'LGPL-3.0-or-later' (weak-copyleft) — weak-copyleft ⇒ OK only if kept separate/dynamically linked [target=commercial-closed]",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "1 component(s) under 'Apache-2.0 AND LGPL-3.0-or-later AND MIT' (proprietary) — unknown license ⇒ FAIL-CLOSED (do not adopt until verified) [target=commercial-closed]",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "3 component(s) under 'Apache-2.0 AND LGPL-3.0-or-later' (proprietary) — unknown license ⇒ FAIL-CLOSED (do not adopt until verified) [target=commercial-closed]",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "13 component(s) under 'MPL-2.0' (weak-copyleft) — weak-copyleft ⇒ OK only if kept separate/dynamically linked [target=commercial-closed]",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "1 component(s) under 'CC-BY-4.0' (unknown) — unknown license ⇒ FAIL-CLOSED (do not adopt until verified) [target=commercial-closed]",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "1 component(s) under 'BlueOak-1.0.0' (unknown) — unknown license ⇒ FAIL-CLOSED (do not adopt until verified) [target=commercial-closed]",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "keep the SBOM in the technical documentation (CRA 2027-12-11)",
+      "wire the gate into CI to block HIGH findings"
+    ],
+    "limits": [
+      "Full technical documentation file (organisational — owner)",
+      "24h/72h/14-day vulnerability reporting PROCESS to ENISA (owner-operated; ODG supplies the inventory, not the reporting duty)",
+      "CE marking + declaration of conformity (owner/legal)",
+      "5-year support + 10-year update availability commitments (owner/commercial)"
+    ],
+    "validationConditions": [
+      "re-run reproduces the inventory (timestamps aside)",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "485-component machine-readable SBOM",
+          "basis": "PROVEN",
+          "sourceRef": "P3_CRA_SBOM_READINESS.json"
+        },
+        {
+          "claim": "license-policy audit (fail-closed on unknown)",
+          "basis": "PROVEN",
+          "sourceRef": "P3_CRA_SBOM_READINESS.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 2,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "8d6afc0ebb1b857ed38f99577d0f880eefcfdcc94e9922c5db0898754f545767",
+        "sourceCommit": "2e3095ddbb6df1ae0d73b0725c542846a895a491",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "8d6afc0ebb1b857ed38f99577d0f880eefcfdcc94e9922c5db0898754f545767",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 2,
+        "proven": 2,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
 }

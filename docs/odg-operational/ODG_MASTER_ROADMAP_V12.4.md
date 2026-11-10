@@ -82,3 +82,11 @@ Devise : **DISCOVER. UNDERSTAND. INVENT. ENGINEER. VERIFY. IMPROVE. REPEAT.**
 > PARTIALLY_BUILT / ABSENT / UNKNOWN / TO_AUDIT + preuves) est tenue à jour dans
 > `docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md`. Toute évolution de ce fichier conserve un changelog et ne réécrit
 > jamais silencieusement une version historique (V8..V12.3).
+
+---
+
+## Extensions au-delà de §1–§122 (changelog)
+
+> Ces extensions COMPLÈTENT la V12.4 sans réécrire les 31 parties numérotées ni modifier l'invariant de couverture §1–§122 (vérifié par `runtime/core/v124-section-coverage.ts`). Elles portent des §§ au-delà de §122.
+
+- **Partie XXXII — Commercialisation & Acquisition (§123–§130)** — ajoutée V50 (2026-11-10), décidée par les audits V48 (I1/C7) + V49. Détail : `docs/odg/V12_4_PART_XXXII_COMMERCIALIZATION.md`. Comble le constat central V48 (0/31 parties ne traitaient l'acquisition). Réutilise commercial-pipeline / opportunity-* / cost-engine / action-gate / evidence-provenance / O1-O2 ; aucun CRM ni primitive nouvelle. Statut : référentiel directeur proposé ; hypothèses commerciales non prouvées (0 client).

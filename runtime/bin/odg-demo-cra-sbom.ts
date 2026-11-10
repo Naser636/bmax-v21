@@ -72,6 +72,7 @@ const rep = O1.generateReport({
 });
 const MD = OUT.replace(/\.json$/, ".md");
 fs.writeFileSync(MD, rep.markdown);
+fs.writeFileSync(OUT, JSON.stringify({ ...artifact, report: rep.json }, null, 2) + "\n");   // embed the O1 report (uniform E4 artifact shape)
 process.stdout.write(`=== P3 CRA-SBOM demonstrator written: ${OUT} (+ PME report ${MD}) ===\n`);
 process.stdout.write(JSON.stringify({ project: a.name, componentCount, manifests: a.manifests, policyClean: a.policyClean, ciGateExitCode: exitCode }, null, 2) + "\n");
 
