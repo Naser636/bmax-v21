@@ -84,13 +84,13 @@ function main(): void {
   check("§6: engine WITHOUT inspection context ⇒ 0 accepted (isolated mode never operationally accepts)", ENGINE.runCampaign([A("a"), A("b")], {}).metrics.accepted === 0);
   check("§11.1: engine WITH qualified inspection ⇒ accepts Level-A", ENGINE.runCampaign([A("a"), A("b")], { inspection: { inspectorMeta: QUALIFIED, independenceActors: INDEP, evidenceOptsFor: () => goodEvidence } }).metrics.accepted === 2);
 
-  // coverage artifact — honest, source-measured, never a fabricated 100%.
+  // coverage artifact — honest, source-measured, never a fabricated 100% (V87 5-state schema).
   let m: any = null; try { m = JSON.parse(fs.readFileSync(ART, "utf8")); } catch { /* null */ }
   check("coverage artifact exists", !!m);
   if (m) {
-    check("coverage: boundary built; campaign-engine WIRED; coverage measured from SOURCE (not test count)", m.boundaryBuilt === true && m.paths.find((p: any) => p.file === "campaign-engine.ts").wired === true && typeof m.coverageRatio === "number");
-    check("coverage: NOT_WIRED paths reported honestly (no false 100%)", m.notWiredPaths >= 1 && m.coverageRatio < 1 && Array.isArray(m.notWiredList));
-    check("invariant: coverage from source, NOT_WIRED = real bypass risk reported honestly", /measured from source/i.test(m.invariant));
+    check("coverage: campaign-engine WIRED; coverage measured from SOURCE (not test count)", !!m.paths.find((p: any) => p.file === "campaign-engine.ts" && p.wired === true) && typeof m.operationalCoverageRatio === "number");
+    check("coverage: 5-state tally present + residual disclosed (no false 100%)", !!m.tally && /RESIDUAL|residual/i.test(m.residual || ""));
+    check("invariant: coverage from source/registry/test-presence", /measured from source/i.test(m.invariant));
   }
 
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — V86 universal inspection boundary (PRE+POST, fail-closed, no bypass; unqualified/compromised inspectors rejected; honest coverage)" : failures + " FAIL"}\n`);

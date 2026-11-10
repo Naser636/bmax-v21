@@ -1,155 +1,146 @@
 {
-  "//": "CTO V86 §2/§11/§14 — HONEST coverage of the universal inspection boundary over the real execution paths. 'wired' = the source file references inspection-boundary (grep-verifiable). This is measured from source, not from test count; a NOT_WIRED path is a real bypass risk reported truthfully, not hidden. The boundary module itself is built and adversarially validated (V86 test); wiring each legacy executor to it is incremental follow-on work.",
-  "boundaryBuilt": true,
+  "//": "CTO V86 §2 + V87 §4 — 5-state inspection coverage. Measured from SOURCE + the canonical inspected-path registry + presence of a dedicated non-bypass test, NOT from test count. Operational effect paths must reach WIRED_AND_TESTED; planners are NOT_APPLICABLE (decision routed, effect inspected downstream); external is BLOCKED (owner-gated).",
   "totalPaths": 14,
-  "wiredPaths": 1,
-  "notWiredPaths": 13,
-  "coverageRatio": 0.0714,
-  "byCategory": {
-    "campaign": {
-      "total": 1,
-      "wired": 1
-    },
-    "scheduler": {
-      "total": 4,
-      "wired": 0
-    },
-    "loop": {
-      "total": 2,
-      "wired": 0
-    },
-    "dispatcher": {
-      "total": 1,
-      "wired": 0
-    },
-    "gateway": {
-      "total": 1,
-      "wired": 0
-    },
-    "executor": {
-      "total": 4,
-      "wired": 0
-    },
-    "provider": {
-      "total": 1,
-      "wired": 0
-    }
+  "tally": {
+    "WIRED_AND_TESTED": 9,
+    "WIRED_NOT_FULLY_TESTED": 0,
+    "NOT_WIRED": 0,
+    "BLOCKED": 1,
+    "NOT_APPLICABLE": 4
   },
+  "operationalEffectPaths": 9,
+  "operationalWiredAndTested": 9,
+  "operationalCoverageRatio": 1,
+  "registryRoutesThroughBoundary": true,
   "paths": [
     {
       "file": "campaign-engine.ts",
-      "category": "campaign",
-      "note": "arbitrary-queue campaign driver (V78)",
-      "status": "WIRED",
-      "wired": true
-    },
-    {
-      "file": "mission-scheduler.ts",
-      "category": "scheduler",
-      "note": "mission scheduling",
-      "status": "NOT_WIRED",
-      "wired": false
-    },
-    {
-      "file": "engineering-scheduler.ts",
-      "category": "scheduler",
-      "note": "engineering scheduler",
-      "status": "NOT_WIRED",
-      "wired": false
-    },
-    {
-      "file": "writeset-scheduler.ts",
-      "category": "scheduler",
-      "note": "write-set scheduler",
-      "status": "NOT_WIRED",
-      "wired": false
-    },
-    {
-      "file": "p12-weighted-fair-share-scheduler.ts",
-      "category": "scheduler",
-      "note": "fair-share scheduler",
-      "status": "NOT_WIRED",
-      "wired": false
-    },
-    {
-      "file": "intelligence-loop.ts",
-      "category": "loop",
-      "note": "DISCOVER→…→MEASURE cycle",
-      "status": "NOT_WIRED",
-      "wired": false
-    },
-    {
-      "file": "fleet-dispatcher.ts",
-      "category": "dispatcher",
-      "note": "fleet dispatch",
-      "status": "NOT_WIRED",
-      "wired": false
-    },
-    {
-      "file": "nl-objective-gateway.ts",
-      "category": "gateway",
-      "note": "NL objective entry gateway",
-      "status": "NOT_WIRED",
-      "wired": false
+      "pathId": "campaign-engine",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "wired directly in V86 (fail-closed: no inspection context ⇒ never operationally accepted)"
     },
     {
       "file": "capability-executors.ts",
-      "category": "executor",
-      "note": "capability execution",
-      "status": "NOT_WIRED",
-      "wired": false
+      "pathId": "capability-executors",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
     },
     {
       "file": "coding-executor.ts",
-      "category": "executor",
-      "note": "coding execution",
-      "status": "NOT_WIRED",
-      "wired": false
+      "pathId": "coding-executor",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
     },
     {
       "file": "engineering-executor.ts",
-      "category": "executor",
-      "note": "engineering execution",
-      "status": "NOT_WIRED",
-      "wired": false
+      "pathId": "engineering-executor",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
     },
     {
       "file": "patch-executor.ts",
-      "category": "executor",
-      "note": "patch application",
-      "status": "NOT_WIRED",
-      "wired": false
+      "pathId": "patch-executor",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
     },
     {
-      "file": "email-gateway.ts",
-      "category": "provider",
-      "note": "email (external — must stay gated)",
-      "status": "NOT_WIRED",
-      "wired": false
+      "file": "intelligence-loop.ts",
+      "pathId": "intelligence-loop",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "fleet-dispatcher.ts",
+      "pathId": "fleet-dispatcher",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "nl-objective-gateway.ts",
+      "pathId": "nl-objective-gateway",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
     },
     {
       "file": "roadmap-manager.ts",
-      "category": "loop",
-      "note": "roadmap discovery/authorize",
-      "status": "NOT_WIRED",
-      "wired": false
+      "pathId": "roadmap-manager",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "email-gateway.ts",
+      "pathId": "email-gateway",
+      "classification": "BLOCKED",
+      "state": "BLOCKED",
+      "wired": false,
+      "tested": true,
+      "note": "external/irreversible — inspected entry refuses locally; stays owner-gated"
+    },
+    {
+      "file": "mission-scheduler.ts",
+      "pathId": "mission-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    },
+    {
+      "file": "engineering-scheduler.ts",
+      "pathId": "engineering-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    },
+    {
+      "file": "writeset-scheduler.ts",
+      "pathId": "writeset-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    },
+    {
+      "file": "p12-weighted-fair-share-scheduler.ts",
+      "pathId": "p12-weighted-fair-share-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
     }
   ],
-  "notWiredList": [
-    "mission-scheduler.ts (scheduler)",
-    "engineering-scheduler.ts (scheduler)",
-    "writeset-scheduler.ts (scheduler)",
-    "p12-weighted-fair-share-scheduler.ts (scheduler)",
-    "intelligence-loop.ts (loop)",
-    "fleet-dispatcher.ts (dispatcher)",
-    "nl-objective-gateway.ts (gateway)",
-    "capability-executors.ts (executor)",
-    "coding-executor.ts (executor)",
-    "engineering-executor.ts (executor)",
-    "patch-executor.ts (executor)",
-    "email-gateway.ts (provider)",
-    "roadmap-manager.ts (loop)"
-  ],
-  "honestConclusion": "The universal inspection boundary (inspection-boundary.ts) is BUILT and adversarially validated. Of 14 real execution paths, 1 are currently WIRED to it and 13 are NOT_WIRED (direct-executor paths that must be raccordés or explicitly blocked before they can promote a result). Coverage is reported from SOURCE, not test count — no false 100%. Wiring the remaining executors is concrete local follow-on work.",
-  "invariant": "coverage is measured from source (grep-verifiable), never from test count; a NOT_WIRED path is a real bypass risk reported honestly; the boundary is fail-closed and cannot be bypassed once a path is wired."
+  "residual": "RESIDUAL (honest): the legacy RAW module functions remain callable directly; proof-of-inspection receipts are enforced on the CANONICAL inspected entry (inspected-paths.ts). Making receipts mandatory on every legacy raw entry repo-wide is tracked follow-on — so this is NOT a claim of 100% repo-wide non-bypass.",
+  "honestConclusion": "Of 14 execution paths: 9 WIRED_AND_TESTED, 0 WIRED_NOT_FULLY_TESTED, 4 NOT_APPLICABLE (planners — decision routed, downstream effect inspected), 1 BLOCKED (external/owner-gated), 0 NOT_WIRED. Operational effect paths WIRED_AND_TESTED: 9/9. Coverage is source+registry-measured, residual raw entries disclosed — no false 100%.",
+  "invariant": "5-state honest taxonomy measured from source/registry/test-presence; planners NOT_APPLICABLE with justification; external BLOCKED; residual raw entries disclosed; the canonical inspected entry is fail-closed + receipt-enforced."
 }

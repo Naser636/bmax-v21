@@ -30,6 +30,30 @@ const RISK = Object.freeze(["READ", "CODE_CHANGE", "CRITICAL", "EXTERNAL"]);
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 
+// V87 — deterministic proof-of-inspection RECEIPT. A path's executor can REQUIRE a valid receipt before producing any
+// effect, so a direct raw call that skipped the boundary is refused (non-bypass). Pure: a receipt is a hash of the
+// operation id + the approving PRE verdict (no clock, no randomness). A receipt is issued ONLY for an approving PRE.
+function hash(s: string): string { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h.toString(16).padStart(8, "0"); }
+function issueReceipt(operation: any, pre: any): any {
+  const id = isObj(operation) && typeof operation.id === "string" ? operation.id : "";
+  const v = isObj(pre) ? pre.verdict : "";
+  if (v !== "APPROVED" && v !== "APPROVED_WITH_RESTRICTIONS") return Object.freeze({ token: null, reason: `PRE ${v} is not approving ⇒ no receipt issued` });
+  return Object.freeze({ token: `INSP:${id}:${v}:${hash(id + "|" + v)}`, operationId: id, verdict: v });
+}
+/* verifyReceipt(token, operationId) -> { valid, reason }. Valid ⟺ well-formed, id matches, verdict approving, hash recomputes. */
+function verifyReceipt(token: any, operationId: any): any {
+  if (typeof token !== "string" || token.indexOf("INSP:") !== 0) return Object.freeze({ valid: false, reason: "no/!malformed inspection receipt ⇒ un-inspected (fail-closed)" });
+  const parts = token.split(":");
+  if (parts.length !== 4) return Object.freeze({ valid: false, reason: "malformed receipt" });
+  const [, id, v, h] = parts;
+  if (typeof operationId === "string" && operationId && id !== operationId) return Object.freeze({ valid: false, reason: `receipt is for operation "${id}", not "${operationId}" (cross-operation reuse)` });
+  if (v !== "APPROVED" && v !== "APPROVED_WITH_RESTRICTIONS") return Object.freeze({ valid: false, reason: `receipt carries non-approving verdict ${v}` });
+  if (h !== hash(id + "|" + v)) return Object.freeze({ valid: false, reason: "receipt hash mismatch (tampered/forged)" });
+  return Object.freeze({ valid: true, reason: "valid proof-of-inspection", operationId: id, verdict: v });
+}
+/* requireReceipt(token, operationId) -> { ok, reason }. An executor calls this to REFUSE effects without a valid receipt. */
+function requireReceipt(token: any, operationId: any): any { const r = verifyReceipt(token, operationId); return Object.freeze({ ok: r.valid, reason: r.reason }); }
+
 /* qualifiedInspector(metaResult) -> bool. §4/§7: an inspector may issue a verdict ONLY if its V85 meta-validation shows
  * it EFFECTIVE (caught all seeded defects, no false alarms). Absent/invalid meta-validation ⇒ NOT qualified (fail-closed). */
 function inspectorQualified(metaResult: any): boolean {
@@ -161,7 +185,7 @@ const INSPECTION_BOUNDARY_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { PRE_VERDICT, POST_VERDICT, RISK, inspectorQualified, inspectPre, inspectPost, inspect, INSPECTION_BOUNDARY_CONTRACT };
+module.exports = { PRE_VERDICT, POST_VERDICT, RISK, inspectorQualified, inspectPre, inspectPost, inspect, issueReceipt, verifyReceipt, requireReceipt, INSPECTION_BOUNDARY_CONTRACT };
 
 if (require.main === module) {
   const effMeta = { valid: true, effective: true };

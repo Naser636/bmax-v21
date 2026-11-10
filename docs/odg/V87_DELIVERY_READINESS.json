@@ -1,0 +1,75 @@
+{
+  "//": "CTO V87 §8/§9/§10 — HONEST delivery readiness. Read-only: performs NO push/deploy/VPS/SSH. Delivery is launched ONLY when ALL 8 preconditions are met; any unmet ⇒ delivery BLOCKED. Git history, stashes, untracked are PRESERVED (no destructive ops).",
+  "github": {
+    "branch": "excellence/v3-wave3-demonstrators-20261101",
+    "head": "b78d36a",
+    "pushTarget": "origin/excellence/v3-wave3-demonstrators-20261101",
+    "aheadOfPushTarget": 72,
+    "behindPushTarget": 0,
+    "aheadOfMain": 61,
+    "behindMain": 2,
+    "mainNote": "HEAD's branch already merged once via PR#487; origin/main advanced (+#488) ⇒ HEAD is 2 behind main; a fresh PR would be non-fast-forward to main (merge/rebase needed). Push to the feature branch is a clean fast-forward.",
+    "stashes": 5,
+    "untracked": 13,
+    "trackedModified": 6,
+    "ciPresent": true
+  },
+  "vps": {
+    "status": "NOT_INVENTORIED",
+    "note": "VPS audit (§9) not performed this turn; the host/VPS is off-limits for mutation (no systemd/sudo/deploy) absent explicit owner go at the critical gate; inventory + rollback are prerequisites."
+  },
+  "preconditions": [
+    {
+      "id": "inspection-coverage-validated",
+      "met": true,
+      "evidence": "operational WIRED_AND_TESTED 9/9, 0 NOT_WIRED (residual raw entries disclosed)"
+    },
+    {
+      "id": "roadmap-local-work-complete",
+      "met": false,
+      "evidence": "NOT fully complete — V87 §7 exhaustive local-work closure not demonstrated this turn (coverage ≠ completion)"
+    },
+    {
+      "id": "full-gate-green",
+      "met": true,
+      "evidence": "full gate 481/481 PASS (re-run after V87; tsc 0)"
+    },
+    {
+      "id": "github-audit-complete",
+      "met": true,
+      "evidence": "branch excellence/v3-wave3-demonstrators-20261101@b78d36a; push target origin/excellence/v3-wave3-demonstrators-20261101 ff +72/-0; vs origin/main +61/-2 (branch already merged once via PR#487; main advanced via #488); CI present (ci.yml)"
+    },
+    {
+      "id": "vps-audit-complete",
+      "met": false,
+      "evidence": "NOT done — VPS inventory (services/TLS/db/secrets/rollback) not performed this turn; VPS mutation stays owner-gated"
+    },
+    {
+      "id": "backup-and-rollback-prepared",
+      "met": false,
+      "evidence": "NOT done — backup + rollback procedure not prepared/verified this turn"
+    },
+    {
+      "id": "independent-release-inspection-qualified",
+      "met": false,
+      "evidence": "NOT done — the release itself must traverse a qualified independent V86 inspection (§11.1); not yet performed"
+    },
+    {
+      "id": "deploy-and-verification-plan",
+      "met": false,
+      "evidence": "PARTIAL — §11 sequence is enumerated but not an executable, verified plan with VPS specifics"
+    }
+  ],
+  "preconditionsMet": "3/8",
+  "unmet": [
+    "roadmap-local-work-complete",
+    "vps-audit-complete",
+    "backup-and-rollback-prepared",
+    "independent-release-inspection-qualified",
+    "deploy-and-verification-plan"
+  ],
+  "readyToDeliver": false,
+  "decision": "NOT_READY — delivery BLOCKED until the unmet preconditions are satisfied (fail-closed; no push/deploy performed)",
+  "honestConclusion": "3/8 delivery preconditions met. Inspection coverage (operational) and the GitHub audit are DONE; the full gate is re-run separately; VPS audit, backup/rollback, independent release inspection, exhaustive roadmap local-work, and an executable deploy plan are NOT done. Per §10, NO push/deploy is launched. Git history, 5 stashes and untracked files are preserved — no destructive operation performed.",
+  "invariant": "fail-closed delivery: all 8 preconditions must be met before any push/deploy; read-only report; no history/stash/untracked destroyed; push/deploy/VPS remain owner-gated irreversible actions."
+}
