@@ -1,0 +1,158 @@
+{
+  "//": "CTO V71 §8 — global pilot dashboard. One canonical ODG coordination view: open work items + 4 chantiers + P1–P10 + 15 métiers + blockers, evidence-based, typed DONE/PARTIAL/BLOCKED_EXTERNAL/BLOCKED_HUMAN. Aggregated live from existing artifacts; no second orchestrator, no detached process.",
+  "generatedFrom": [
+    "V63_PROGRAM_REGISTER",
+    "V62_METIER_PERFORMANCE_FICHES",
+    "V70_GOVERNANCE_CHANTIER_MATRIX",
+    "V69_P9_WORLD_INTELLIGENCE_MATRIX",
+    "V67_AGENTIC_RISK_COVERAGE",
+    "V68_LONG_TASK_RELIABILITY",
+    "V58_CLOSURE_LEDGER",
+    "V65_SUCCESSOR_ADOPTION"
+  ],
+  "openWorkItems": [
+    {
+      "id": "OPEN-1",
+      "item": "Successor referential canonization (I/IV/XXV)",
+      "state": "BLOCKED_HUMAN",
+      "detail": "ADOPTED operationally (V65); owner must canonize over the FROZEN §105 original",
+      "evidence": "V65_SUCCESSOR_ADOPTION.json"
+    },
+    {
+      "id": "OPEN-2",
+      "item": "Pilots P3/P9/P10 E4→E5",
+      "state": "BLOCKED_HUMAN",
+      "detail": "E4 demonstrated; E5 needs a real authorized client + controller",
+      "evidence": "docs/odg/pilot/*_E5_READINESS_CRITERIA.json"
+    },
+    {
+      "id": "OPEN-3",
+      "item": "World-superiority + P13",
+      "state": "BLOCKED_EXTERNAL",
+      "detail": "head-to-head competitor execution (network/compute/licences) + GPU for P13",
+      "evidence": "V57/V65 benchmark (superiority fail-closed 0)"
+    },
+    {
+      "id": "note",
+      "item": "no dangling LOCAL work item",
+      "state": "INFO",
+      "detail": "all committed lots (V52–V71) are closed+tested; the open threads above are owner/external-gated, prepared decision-ready"
+    }
+  ],
+  "chantiers": [
+    {
+      "id": "C1",
+      "name": "Achèvement global V12.4",
+      "source": "V63 program register",
+      "status": "10 programs mapped, all evidence resolves=true",
+      "gated": "PARTIAL parts owner/controller §-by-§"
+    },
+    {
+      "id": "C2",
+      "name": "Autonomous roadmap execution & completion governance",
+      "source": "V70 chantier matrix",
+      "status": "12 lots A–L, allGrounded=true",
+      "gated": "integration=start of execution (not completion)"
+    },
+    {
+      "id": "C3",
+      "name": "P9 world intelligence & self-improvement",
+      "source": "V69 matrix + V67 radar",
+      "status": "7 PRESENT / 6 PARTIAL / 0 MISSING; source-intelligence built",
+      "gated": "live permanent web crawl = network-gated"
+    },
+    {
+      "id": "C4",
+      "name": "Reliability, security & operational autonomy",
+      "source": "V68 LTR + V67/V71 agentic coverage",
+      "status": "long-task recovery RECOVERED (12/12, no re-run); agentic hazards 8 covered (self-replication now dedicated)",
+      "gated": "duration/cost instrumentation partial"
+    }
+  ],
+  "programs": [
+    {
+      "id": "P1",
+      "title": "Governance & canonical coherence",
+      "status": "ACTIVE (authority rule permanent + coverage matrix live)",
+      "allEvidence": true
+    },
+    {
+      "id": "P2",
+      "title": "Autonomy engineering & self-improvement",
+      "status": "ACTIVE (consolidation invariants verified)",
+      "allEvidence": true
+    },
+    {
+      "id": "P3",
+      "title": "Fifteen-métier excellence",
+      "status": "ACTIVE (14/15 E4; P13 hardware-blocked)",
+      "allEvidence": true
+    },
+    {
+      "id": "P4",
+      "title": "Benchmarks & surpassing world references",
+      "status": "PARTIAL (designed+executed+reproducible ODG-side; superiority fail-closed 0)",
+      "allEvidence": true
+    },
+    {
+      "id": "P5",
+      "title": "Synthetic enterprises & clients",
+      "status": "ACTIVE (24 lifecycles; adversarial honest)",
+      "allEvidence": true
+    },
+    {
+      "id": "P6",
+      "title": "Real cost measurement & optimization",
+      "status": "PARTIAL (SIMULATED/ESTIMATED; real media measurement owner-gated)",
+      "allEvidence": true
+    },
+    {
+      "id": "P7",
+      "title": "Industrialization, operations & delivery",
+      "status": "PARTIAL (9 PREPARED / 10 PLACEHOLDER)",
+      "allEvidence": true
+    },
+    {
+      "id": "P8",
+      "title": "Security, compliance & assurance",
+      "status": "ACTIVE (controls tested; certifications owner/organism-gated)",
+      "allEvidence": true
+    },
+    {
+      "id": "P9",
+      "title": "World radar & weekly improvement",
+      "status": "ACTIVE (12/12 components load; governed loop)",
+      "allEvidence": true
+    },
+    {
+      "id": "P10",
+      "title": "Operational preparation & go-live",
+      "status": "PARTIAL (prepared; awaits human inputs)",
+      "allEvidence": true
+    }
+  ],
+  "metiers": {
+    "count": 15,
+    "e4": 14,
+    "blocked": "P13 (GPU)",
+    "superiority": 0
+  },
+  "blockers": {
+    "BLOCKED_HUMAN": [
+      "successor canonization",
+      "pilot E5 (client+controller)",
+      "company identity/bank/insurance (12 slots)",
+      "§-by-§ DONE sign-off"
+    ],
+    "BLOCKED_EXTERNAL": [
+      "competitor head-to-head (network/compute/licences)",
+      "GPU (P13)",
+      "permanent web crawl (network)",
+      "FROZEN Master original"
+    ]
+  },
+  "singleOrchestrator": "ODG — this dashboard is a read-only view, not a second orchestrator; no detached process",
+  "crossCuttingPriority": "self-replication-guard (C4) now COVERED unblocks the agentic-coverage PARTIAL; successor adoption (OPEN-1) unblocks I/IV/XXV operationally",
+  "honestConclusion": "4 chantiers coordinated under ODG: C1 (10 programs), C2 (12 governance lots grounded), C3 (P9 6 PARTIAL refinements + source-intelligence built), C4 (long-task reliability measured + 8/8 agentic hazards covered). 3 open threads are all owner/external-gated (prepared decision-ready); no dangling LOCAL work item — every committed lot is closed+tested. Blockers typed BLOCKED_HUMAN / BLOCKED_EXTERNAL, none faked DONE.",
+  "invariant": "One ODG orchestrator; every status evidence-based and honestly typed; a blocker in one chantier never stops the others; no local realizable work left merely proposed."
+}

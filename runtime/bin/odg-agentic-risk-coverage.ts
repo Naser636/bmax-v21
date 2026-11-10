@@ -19,7 +19,7 @@ function modExists(m: string): boolean { return fs.existsSync(path.join(ROOT, "r
 const HAZARDS = [
   { hazard: "uncontrolled goal pursuit", source: "Berkeley Agentic Profile", mechanisms: ["action-gate", "mission-contract-factory"], note: "deny-by-default admission + scoped mission contract (no action beyond scope/authority)" },
   { hazard: "privilege escalation", source: "Berkeley Agentic Profile / NIST authz", mechanisms: ["root-of-trust", "action-gate"], note: "self-grant of a protected change BLOCKED; authority dimension required" },
-  { hazard: "self-replication / uncontrolled spawn", source: "Berkeley Agentic Profile", mechanisms: ["action-gate", "third-party-agent-gate"], note: "spawn/consequential actions gated; PARTIAL — no dedicated self-replication detector (flagged)", partial: true },
+  { hazard: "self-replication / uncontrolled spawn", source: "Berkeley Agentic Profile", mechanisms: ["action-gate", "third-party-agent-gate", "self-replication-guard"], note: "dedicated self-replication-guard (V71): deny-by-default; self-copy/clone/unbounded-depth/count/no-auth ⇒ DENY" },
   { hazard: "loss of human control", source: "Berkeley Agentic Profile / Singapore", mechanisms: ["emergency-stop", "self-improvement"], note: "independent emergency-stop + no self-promotion (promotion external) + irreversible⇒ESCALATE" },
   { hazard: "prompt injection", source: "NIST CAISI agent identity", mechanisms: ["scientific-research", "third-party-agent-gate"], note: "untrusted/injection-laced signal ⇒ QUARANTINE; agent gate denies off-scope" },
   { hazard: "agent identity & authentication", source: "NIST CAISI", mechanisms: ["agent-identity"], note: "cryptographic agent identity" },
@@ -27,7 +27,7 @@ const HAZARDS = [
   { hazard: "meaningful human accountability", source: "Singapore agentic dimensions", mechanisms: ["action-gate"], note: "irreversible/high-risk ⇒ ESCALATE unless explicit human authority (V61 authority rule)" },
 ];
 
-const coverage = HAZARDS.map((h) => {
+const coverage = HAZARDS.map((h: any) => {
   const present = h.mechanisms.every(modExists);
   return { ...h, covered: present ? (h.partial ? "PARTIAL" : "COVERED") : "UNCOVERED", mechanismsPresent: present };
 });

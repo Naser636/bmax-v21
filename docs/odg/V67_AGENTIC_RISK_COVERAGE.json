@@ -6,8 +6,8 @@
     "SIG-06 Singapore MGF"
   ],
   "hazardCount": 8,
-  "fullyCovered": 7,
-  "partial": 1,
+  "fullyCovered": 8,
+  "partial": 0,
   "uncovered": 0,
   "coverage": [
     {
@@ -37,11 +37,11 @@
       "source": "Berkeley Agentic Profile",
       "mechanisms": [
         "action-gate",
-        "third-party-agent-gate"
+        "third-party-agent-gate",
+        "self-replication-guard"
       ],
-      "note": "spawn/consequential actions gated; PARTIAL — no dedicated self-replication detector (flagged)",
-      "partial": true,
-      "covered": "PARTIAL",
+      "note": "dedicated self-replication-guard (V71): deny-by-default; self-copy/clone/unbounded-depth/count/no-auth ⇒ DENY",
+      "covered": "COVERED",
       "mechanismsPresent": true
     },
     {
@@ -97,6 +97,6 @@
       "mechanismsPresent": true
     }
   ],
-  "honestConclusion": "Executed radar improvement RAD-M04+M05: 8 agentic hazards mapped to present ODG mechanisms — 7 COVERED, 1 PARTIAL (self-replication: no dedicated detector, flagged), 0 UNCOVERED. All mapped mechanisms verified present. This is readiness evidence, NOT a certification of NIST/Berkeley/Singapore conformity — owner/organism validation required.",
+  "honestConclusion": "Executed radar improvement RAD-M04+M05: 8 agentic hazards mapped to present ODG mechanisms — 8 COVERED, 0 PARTIAL (self-replication: no dedicated detector, flagged), 0 UNCOVERED. All mapped mechanisms verified present. This is readiness evidence, NOT a certification of NIST/Berkeley/Singapore conformity — owner/organism validation required.",
   "invariant": "A hazard is COVERED only if every mapped mechanism is present; absent ⇒ UNCOVERED (never faked). PARTIAL is stated honestly. Readiness mapping ≠ external-standard certification."
 }
