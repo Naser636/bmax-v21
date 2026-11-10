@@ -1,7 +1,7 @@
 {
   "//": "CTO V44 Chantier B — P11 e-invoice validation & STP demonstrator. REPRODUCIBLE on SYNTHETIC public inputs (no client data). ODG does conformance/readiness PREP, NOT a certified PDP transmission. L2 maturity, 0 paying clients.",
   "demonstrator": "P11 document routing / STP — France B2B e-invoicing (EN16931 / Factur-X) readiness",
-  "generatedAt": "2026-11-10T12:46:32.496Z",
+  "generatedAt": "2026-11-10T13:12:40.101Z",
   "marketContext": "France B2B e-invoicing live 2026-09-01 (large/ETI issue + all receive); SMEs 2027-09-01; via certified PDPs; Factur-X/UBL formats.",
   "validCase": {
     "invoiceId": "FR-2026-001",
@@ -23,6 +23,16 @@
     "caught": true,
     "gaps": [
       "invoice fails EN16931-core validation: BR-CO-15.",
+      "commercial-workflow criterion not evidenced (invoice did not fully conform) — workflow did not reach PROPOSAL_AUTHORIZED."
+    ]
+  },
+  "missingFieldsCase": {
+    "invoiceId": "FR-2026-003 (no BT-1/seller/lines)",
+    "verdict": "EINVOICE_WORKFLOW_PREPARED",
+    "validated": false,
+    "caught": true,
+    "gaps": [
+      "invoice fails EN16931-core validation: mandatory:id; mandatory:seller; mandatory:buyer; mandatory:lines.",
       "commercial-workflow criterion not evidenced (invoice did not fully conform) — workflow did not reach PROPOSAL_AUTHORIZED."
     ]
   },
