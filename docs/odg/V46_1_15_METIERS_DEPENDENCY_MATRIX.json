@@ -1,0 +1,620 @@
+{
+  "//": "CTO V46.1 — 15-métiers dependency matrix, PROVEN from real require() imports (read-only). REQUIRED=direct import; USED=transitive closure; NOT_APPLICABLE=no demonstrated dependency; MISSING/UNKNOWN explicit.",
+  "metiers": 15,
+  "sharedComponents": [
+    "agent-identity",
+    "state-transition",
+    "api-contract",
+    "excellence-policy",
+    "coding-mission-resolver",
+    "capability-executors",
+    "evidence-provenance",
+    "build-recovery-engine",
+    "audit-log",
+    "sarif-report",
+    "repair-workflow",
+    "code-execution",
+    "reuse-ledger",
+    "assurance-pilot-runner",
+    "regulatory-assurance",
+    "economic-unit",
+    "einvoice-parser"
+  ],
+  "matrix": {
+    "P1": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "REQUIRED",
+      "code-execution": "REQUIRED",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P2": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P3": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P4": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P5": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P6": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P7": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P8": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "USED",
+      "einvoice-parser": "REQUIRED"
+    },
+    "P9": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P10": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "REQUIRED",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "REQUIRED",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "USED",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P11": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "USED",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "REQUIRED",
+      "einvoice-parser": "REQUIRED"
+    },
+    "P12": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P13": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P14": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "REQUIRED",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    },
+    "P15": {
+      "agent-identity": "NOT_APPLICABLE",
+      "state-transition": "NOT_APPLICABLE",
+      "api-contract": "NOT_APPLICABLE",
+      "excellence-policy": "NOT_APPLICABLE",
+      "coding-mission-resolver": "NOT_APPLICABLE",
+      "capability-executors": "NOT_APPLICABLE",
+      "evidence-provenance": "NOT_APPLICABLE",
+      "build-recovery-engine": "NOT_APPLICABLE",
+      "audit-log": "NOT_APPLICABLE",
+      "sarif-report": "NOT_APPLICABLE",
+      "repair-workflow": "NOT_APPLICABLE",
+      "code-execution": "NOT_APPLICABLE",
+      "reuse-ledger": "NOT_APPLICABLE",
+      "assurance-pilot-runner": "NOT_APPLICABLE",
+      "regulatory-assurance": "NOT_APPLICABLE",
+      "economic-unit": "NOT_APPLICABLE",
+      "einvoice-parser": "NOT_APPLICABLE"
+    }
+  },
+  "evidence": {
+    "P1": {
+      "repair-workflow": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/native-project-builder.ts",
+        "api": "require('./repair-workflow.js')"
+      },
+      "code-execution": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/code-health-service.ts",
+        "api": "require('./code-execution.js')"
+      }
+    },
+    "P2": {},
+    "P3": {},
+    "P4": {},
+    "P5": {},
+    "P6": {},
+    "P7": {},
+    "P8": {
+      "economic-unit": {
+        "relation": "USED",
+        "confidence": "medium (transitive)",
+        "via": "transitive from [api-contract,einvoice-export]",
+        "api": "require('./economic-unit.js')"
+      },
+      "einvoice-parser": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/einvoice-export.ts",
+        "api": "require('./einvoice-parser.js')"
+      }
+    },
+    "P9": {},
+    "P10": {
+      "excellence-policy": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/regulatory-assurance.ts",
+        "api": "require('./excellence-policy.js')"
+      },
+      "evidence-provenance": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/regulatory-assurance.ts",
+        "api": "require('./evidence-provenance.js')"
+      },
+      "regulatory-assurance": {
+        "relation": "USED",
+        "confidence": "medium (transitive)",
+        "via": "transitive from [ai-assurance-assessment,regulatory-assurance,compliance-evidence-pack]",
+        "api": "require('./regulatory-assurance.js')"
+      }
+    },
+    "P11": {
+      "audit-log": {
+        "relation": "USED",
+        "confidence": "medium (transitive)",
+        "via": "transitive from [einvoice-validator,einvoice-workflow-demonstrator,document-pipeline]",
+        "api": "require('./audit-log.js')"
+      },
+      "economic-unit": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/einvoice-validator.ts",
+        "api": "require('./economic-unit.js')"
+      },
+      "einvoice-parser": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/einvoice-workflow-demonstrator.ts",
+        "api": "require('./einvoice-parser.js')"
+      }
+    },
+    "P12": {},
+    "P13": {},
+    "P14": {
+      "evidence-provenance": {
+        "relation": "REQUIRED",
+        "confidence": "high (direct import)",
+        "via": "runtime/core/golden-path-evidence-bundle.ts",
+        "api": "require('./evidence-provenance.js')"
+      }
+    },
+    "P15": {}
+  },
+  "primitives": {
+    "auditedModules": {
+      "IDENTITY": "agent-identity",
+      "STATE": "state-transition",
+      "CONTRACT": "api-contract",
+      "POLICY": "excellence-policy",
+      "RESOLVER": "coding-mission-resolver",
+      "EXECUTOR": "capability-executors",
+      "EVIDENCE": "evidence-provenance",
+      "RECOVERY": "build-recovery-engine",
+      "ALLOCATOR": null
+    },
+    "allocator": {
+      "primitive": "ALLOCATOR",
+      "module": null,
+      "status": "MISSING",
+      "note": "no single canonical allocator module found in runtime/core; allocation logic is dispersed (e.g. economic/budget) — flagged as a primitive gap, not fabricated."
+    }
+  },
+  "crossReuse": [
+    {
+      "component": "evidence-provenance",
+      "consumerCount": 2,
+      "consumers": [
+        "P10",
+        "P14"
+      ],
+      "directConsumers": [
+        "P10",
+        "P14"
+      ]
+    },
+    {
+      "component": "economic-unit",
+      "consumerCount": 2,
+      "consumers": [
+        "P8",
+        "P11"
+      ],
+      "directConsumers": [
+        "P11"
+      ]
+    },
+    {
+      "component": "einvoice-parser",
+      "consumerCount": 2,
+      "consumers": [
+        "P8",
+        "P11"
+      ],
+      "directConsumers": [
+        "P8",
+        "P11"
+      ]
+    },
+    {
+      "component": "excellence-policy",
+      "consumerCount": 1,
+      "consumers": [
+        "P10"
+      ],
+      "directConsumers": [
+        "P10"
+      ]
+    },
+    {
+      "component": "audit-log",
+      "consumerCount": 1,
+      "consumers": [
+        "P11"
+      ],
+      "directConsumers": []
+    },
+    {
+      "component": "repair-workflow",
+      "consumerCount": 1,
+      "consumers": [
+        "P1"
+      ],
+      "directConsumers": [
+        "P1"
+      ]
+    },
+    {
+      "component": "code-execution",
+      "consumerCount": 1,
+      "consumers": [
+        "P1"
+      ],
+      "directConsumers": [
+        "P1"
+      ]
+    },
+    {
+      "component": "regulatory-assurance",
+      "consumerCount": 1,
+      "consumers": [
+        "P10"
+      ],
+      "directConsumers": []
+    },
+    {
+      "component": "agent-identity",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "state-transition",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "api-contract",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "coding-mission-resolver",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "capability-executors",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "build-recovery-engine",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "sarif-report",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "reuse-ledger",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "assurance-pilot-runner",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    }
+  ],
+  "edges": [
+    {
+      "from": "P1",
+      "to": "repair-workflow",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P1",
+      "to": "code-execution",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P8",
+      "to": "economic-unit",
+      "type": "COMPOSES_WITH"
+    },
+    {
+      "from": "P8",
+      "to": "einvoice-parser",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P10",
+      "to": "excellence-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P10",
+      "to": "evidence-provenance",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P10",
+      "to": "regulatory-assurance",
+      "type": "COMPOSES_WITH"
+    },
+    {
+      "from": "P11",
+      "to": "audit-log",
+      "type": "COMPOSES_WITH"
+    },
+    {
+      "from": "P11",
+      "to": "economic-unit",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P11",
+      "to": "einvoice-parser",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P14",
+      "to": "evidence-provenance",
+      "type": "REQUIRES"
+    }
+  ],
+  "graphStats": {
+    "nodes": 32,
+    "edges": 11
+  },
+  "coherence": {
+    "requiredRelationsChecked": 8,
+    "evidenceFailures": 0,
+    "pass": true
+  }
+}

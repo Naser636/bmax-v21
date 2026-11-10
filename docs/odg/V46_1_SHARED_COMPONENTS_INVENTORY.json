@@ -1,0 +1,177 @@
+{
+  "sharedComponents": [
+    "agent-identity",
+    "state-transition",
+    "api-contract",
+    "excellence-policy",
+    "coding-mission-resolver",
+    "capability-executors",
+    "evidence-provenance",
+    "build-recovery-engine",
+    "audit-log",
+    "sarif-report",
+    "repair-workflow",
+    "code-execution",
+    "reuse-ledger",
+    "assurance-pilot-runner",
+    "regulatory-assurance",
+    "economic-unit",
+    "einvoice-parser"
+  ],
+  "crossReuse": [
+    {
+      "component": "evidence-provenance",
+      "consumerCount": 2,
+      "consumers": [
+        "P10",
+        "P14"
+      ],
+      "directConsumers": [
+        "P10",
+        "P14"
+      ]
+    },
+    {
+      "component": "economic-unit",
+      "consumerCount": 2,
+      "consumers": [
+        "P8",
+        "P11"
+      ],
+      "directConsumers": [
+        "P11"
+      ]
+    },
+    {
+      "component": "einvoice-parser",
+      "consumerCount": 2,
+      "consumers": [
+        "P8",
+        "P11"
+      ],
+      "directConsumers": [
+        "P8",
+        "P11"
+      ]
+    },
+    {
+      "component": "excellence-policy",
+      "consumerCount": 1,
+      "consumers": [
+        "P10"
+      ],
+      "directConsumers": [
+        "P10"
+      ]
+    },
+    {
+      "component": "audit-log",
+      "consumerCount": 1,
+      "consumers": [
+        "P11"
+      ],
+      "directConsumers": []
+    },
+    {
+      "component": "repair-workflow",
+      "consumerCount": 1,
+      "consumers": [
+        "P1"
+      ],
+      "directConsumers": [
+        "P1"
+      ]
+    },
+    {
+      "component": "code-execution",
+      "consumerCount": 1,
+      "consumers": [
+        "P1"
+      ],
+      "directConsumers": [
+        "P1"
+      ]
+    },
+    {
+      "component": "regulatory-assurance",
+      "consumerCount": 1,
+      "consumers": [
+        "P10"
+      ],
+      "directConsumers": []
+    },
+    {
+      "component": "agent-identity",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "state-transition",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "api-contract",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "coding-mission-resolver",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "capability-executors",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "build-recovery-engine",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "sarif-report",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "reuse-ledger",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    },
+    {
+      "component": "assurance-pilot-runner",
+      "consumerCount": 0,
+      "consumers": [],
+      "directConsumers": []
+    }
+  ],
+  "primitives": {
+    "auditedModules": {
+      "IDENTITY": "agent-identity",
+      "STATE": "state-transition",
+      "CONTRACT": "api-contract",
+      "POLICY": "excellence-policy",
+      "RESOLVER": "coding-mission-resolver",
+      "EXECUTOR": "capability-executors",
+      "EVIDENCE": "evidence-provenance",
+      "RECOVERY": "build-recovery-engine",
+      "ALLOCATOR": null
+    },
+    "allocator": {
+      "primitive": "ALLOCATOR",
+      "module": null,
+      "status": "MISSING",
+      "note": "no single canonical allocator module found in runtime/core; allocation logic is dispersed (e.g. economic/budget) — flagged as a primitive gap, not fabricated."
+    }
+  }
+}
