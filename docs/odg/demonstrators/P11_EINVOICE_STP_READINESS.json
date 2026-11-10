@@ -1,0 +1,57 @@
+{
+  "//": "CTO V44 Chantier B — P11 e-invoice validation & STP demonstrator. REPRODUCIBLE on SYNTHETIC public inputs (no client data). ODG does conformance/readiness PREP, NOT a certified PDP transmission. L2 maturity, 0 paying clients.",
+  "demonstrator": "P11 document routing / STP — France B2B e-invoicing (EN16931 / Factur-X) readiness",
+  "generatedAt": "2026-11-10T12:46:32.496Z",
+  "marketContext": "France B2B e-invoicing live 2026-09-01 (large/ETI issue + all receive); SMEs 2027-09-01; via certified PDPs; Factur-X/UBL formats.",
+  "validCase": {
+    "invoiceId": "FR-2026-001",
+    "verdict": "EINVOICE_WORKFLOW_PREPARED",
+    "validated": true,
+    "roundTripEqual": true,
+    "reparsedValid": true,
+    "workflowStageReached": "PROPOSAL_AUTHORIZED",
+    "blockedAtHumanGate": "PROPOSAL_SENT",
+    "gapCount": 1,
+    "gaps": [
+      "workflow stopped at human-gated act PROPOSAL_SENT (prepared ≠ sent — explicit owner authorisation required; not self-authorized)."
+    ]
+  },
+  "invalidCase": {
+    "invoiceId": "FR-2026-002",
+    "verdict": "EINVOICE_WORKFLOW_PREPARED",
+    "validated": false,
+    "caught": true,
+    "gaps": [
+      "invoice fails EN16931-core validation: BR-CO-15.",
+      "commercial-workflow criterion not evidenced (invoice did not fully conform) — workflow did not reach PROPOSAL_AUTHORIZED."
+    ]
+  },
+  "craLikeMapping": [
+    {
+      "capability": "EN16931-core mandatory-field + arithmetic (BR-CO-10/13/15/14/17) validation",
+      "odgEvidence": "valid invoice ⇒ true; invalid invoice (BR-CO-15) ⇒ caught=true",
+      "status": "DEMONSTRATED"
+    },
+    {
+      "capability": "Round-trip-verified CII/UBL export + independent re-parse (STP conformance)",
+      "odgEvidence": "roundTripEqual=true, reparsedValid=true",
+      "status": "DEMONSTRATED"
+    },
+    {
+      "capability": "XML security hardening (DOCTYPE/ENTITY reject — XXE protection)",
+      "odgEvidence": "einvoice-parser rejects DOCTYPE/ENTITY declarations (gate-tested)",
+      "status": "DEMONSTRATED (in parser gate tests)"
+    },
+    {
+      "capability": "Governed commercial workflow: prepared ≠ sent ≠ signed ≠ cashed (deny-by-default human gates)",
+      "odgEvidence": "stopped at human gate: PROPOSAL_SENT (prepared ≠ sent — owner authorisation required)",
+      "status": "DEMONSTRATED (honest stage separation)"
+    }
+  ],
+  "notCoveredByOdg_ownerSide": [
+    "Certified Plateforme Agréée (PDP) registration + the actual legal transmission (France mandate) — owner/legal",
+    "Full EN16931 / Factur-X document beyond the SUPPORTED SUBSET",
+    "Connection to the client's ERP/accounting system (integration engagement, authorised + isolated)"
+  ],
+  "honesty": "DEMONSTRATOR on synthetic public inputs; ODG maturity L2, 0 paying clients. It evidences validation + STP-conformance readiness; it does NOT perform a certified PDP transmission."
+}
