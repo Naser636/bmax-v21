@@ -1,0 +1,53 @@
+{
+  "//": "V12.4 gap matrix: proposition→state→gap→2027 impact→priority. Priority from analysis (commercial P0/P1 per V47 vs technical).",
+  "status_tally": {
+    "IMPLEMENTED_NOT_VALIDATED": 5,
+    "PARTIALLY_COMPLETED": 20,
+    "COMPLETED_VERIFIED": 7
+  },
+  "biz2027_tally": {
+    "CREDIBILITY": 13,
+    "AUTOMATION": 5,
+    "DELIVERY": 6,
+    "NONE": 8
+  },
+  "central_finding": "V12.4 is a TECHNICAL-SUPERIORITY roadmap (engineering/autonomy/governance/security). Its 2027 business contribution is DELIVERY-quality + AUTOMATION-cost + CREDIBILITY — NOT ACQUISITION. 0 of 31 parts contribute to ACQUISITION/DEMAND, which is the V47 P0 blocker (reference client, sales motion, channel). ⇒ Completing V12.4 improves how well ODG DELIVERS and its technical CREDIBILITY, but does NOT by itself generate 2027 revenue.",
+  "key_gaps": [
+    {
+      "gap": "Operational closure NOT met (scorecard IN_PROGRESS, campaigns 0 CLOSED)",
+      "parts": "XIX,XXI,XXVII",
+      "priority": "P1-tech",
+      "impact": "CREDIBILITY (certifiable maturity for enterprise buyers)"
+    },
+    {
+      "gap": "15 professions at E2/E3 synthetic; E4/E5 (client-deliverable/operation) NOT reached",
+      "parts": "X,XIII",
+      "priority": "P1-tech",
+      "impact": "DELIVERY (L2→L4 packaging = the V47 'packaged offers' gap)"
+    },
+    {
+      "gap": "166 capabilities CONTRADICTION (vs DEC-V60-166-RETIREMENT)",
+      "parts": "XVIII,XXIX",
+      "priority": "P2 (needs ODG-ADR, owner)",
+      "impact": "NONE (governance hygiene)"
+    },
+    {
+      "gap": "Six dossiers B/C/D/F + 7-step intitulés + A02-A53 NOT_RECOVERABLE",
+      "parts": "XVI,XVII,XVIII",
+      "priority": "P3 (owner-supplied source needed)",
+      "impact": "NONE"
+    },
+    {
+      "gap": "NO commercial/go-to-market chapter in V12.4",
+      "parts": "(absent)",
+      "priority": "P0-biz",
+      "impact": "ACQUISITION — the actual 2027 blocker; V12.4 does not cover it (V47/V47.1 do, outside V12.4's technical scope)"
+    },
+    {
+      "gap": "Consolidated F01-F40 failures register + A-G gate ledger + ODG-ADR register incomplete",
+      "parts": "XXIII,XXV,XXII",
+      "priority": "P2-tech",
+      "impact": "CREDIBILITY"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# V48 — V12.4 SOURCE-OF-TRUTH RECOVERY & GAP — CTO DECISION REPORT
+
+> Read-only audit. No construction, no new roadmap. V12.4 recovered, inventoried, compared to repo reality, aligned to the 2027 objective. All statuses evidence-backed; requirement ≠ implementation.
+
+## §11 — Verdict (the 10 questions)
+1. **Where is the real V12.4?** `docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md` (canonical index of 31 parts, §1–§122; owner-supplied 2026-11-08), with its §-by-§ reality matrix `docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md`, the consolidation `ROADMAP_CONSOLIDATION_V12.4.md`, the detailed program `ODG_MASTER_ROADMAP.md`, the manifest `master-technological-superiority-program.json`, and the register (427 items). **No competing authoritative version; V8..V12.3 preserved.**
+2. **Full structure?** 31 parts (Préambule + I–XXXI), §1–§122 — vision, invariants, G0/Root-of-Trust, 9 primitives, architecture, cognitive loop/World Model, discovery/radar, memory, meta-intelligence, autonomy, 15 métiers, multi-agent, autonomous engineering, experimentation, security, observability, 6 dossiers, 7 steps, 4 campaigns, method, metrics, registers, gates, restrictions, F01–F40, references, 33 deliverables, mandate, final decisions.
+3. **What was planned?** A full technical-superiority program (local-only), ODG as sole authority, the 9 primitives + 15 métiers as invariants.
+4. **What is done (COMPLETED_VERIFIED, 7 parts)?** invariants; source-intel/repair (partial); provenance/SLSA; mission-cycle/Git; local-only; references; final-decisions discipline.
+5. **What is unfinished (PARTIALLY_COMPLETED, 20 parts)?** cognitive loop/World Model, discovery/radar (live gated), memory/consolidation, self-improvement, 15 professions (E2/E3 synthetic), security/resilience, campaigns C1–C4, scorecard, gates, failures register.
+6. **What capabilities truly miss?** operational closure (scorecard IN_PROGRESS; campaigns 0 CLOSED); professions E4/E5 (client-deliverable/operation); consolidated F01–F40 + A–G gate ledger + ODG-ADR register; the full 33 deliverables; live/VPS/E5 (owner-gated).
+7. **Under-exploited existing components?** the self-improvement/evaluator-independence stack, the ledgers (dossier/gates/campaign/scorecard), and O1/O2 report+evidence layer (built V46.2, paused) — all built but not yet turned into client-facing E4 deliverables.
+8. **Which V12.4 parts already answer the V47 commercial gaps?** **DELIVERY & CREDIBILITY only** (parts X/XIII professions, XV provenance, XXI/XXIII scorecard+gates, VIII/IX automation). **NONE answer ACQUISITION** — V12.4 has no commercial/go-to-market chapter. The V47 P0 blocker (reference client, sales motion, channel) is **outside V12.4's current scope**.
+9. **What improvements does V12.4 need?** (register) **I1 add Part XXXII Commercialization & Acquisition (P0-biz)**; I2 explicit E4 client-deliverable gate per profession (P1); I3 scorecard path-to-READY (P1); I4 ODG-ADR for the 166 contradiction (P2); I5 consolidate F01–F40 + gate ledger (P2); I6 request owner source for dossiers B/C/D/F + 7-step intitulés (P3).
+10. **What to resume first?** Technically: **professions → E4** (reuse the paused O1/O2 layer) + **scorecard/gates to closure** (CREDIBILITY). Strategically: **add the missing commercial arm** (I1) so the roadmap serves the 2027 objective; and the true 2027 unlock remains **a reference client** (commercial, not in V12.4).
+
+## Central CTO conclusion
+- **V12.4 is recovered, coherent, and ~mostly PARTIALLY_COMPLETED (20/31), with 7 COMPLETED_VERIFIED, 0 MISSING.** It is a sound **technical-superiority** roadmap.
+- **Its biggest gap relative to the 2027 revenue objective is not technical — it is the ABSENCE of a commercialization arm.** Finishing V12.4 makes ODG deliver better and more credibly; it will not, by itself, produce €5M. The roadmap must be **extended (not rewritten)** with a commercial Part XXXII that binds V47/V47.1 into it.
+- **Next mission (after validation of this audit):** a technical roadmap targeting (a) professions→E4 via the paused O1/O2 layer, (b) scorecard/gates closure, (c) the new commercial Part XXXII — **not started here (audit only).**

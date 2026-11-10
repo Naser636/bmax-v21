@@ -1,0 +1,234 @@
+{
+  "//": "V12.4 full structure: 31 parts, §1-§122. Status per V48 taxonomy, mapped from the existing V12.4_SECTION_TRACEABILITY_MATRIX.md. V12.4 = PROPOSED referential (requirement≠implementation).",
+  "canonical_doc": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md",
+  "traceability": "docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md",
+  "manifest": "docs/odg/master-technological-superiority-program.json",
+  "machine": "runtime/governance/ROADMAP.json",
+  "register": "docs/odg/closure-register.json (427 items)",
+  "parts": [
+    {
+      "part": "Préambule §1-4",
+      "topic": "Object, truth levels, preservation, validation",
+      "status": "IMPLEMENTED_NOT_VALIDATED",
+      "evidence": "V12.4 preserved; truth-discipline practiced",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "I §5-6",
+      "topic": "Vision, fundamental mission (26 caps)",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "discover/verify/learn demonstrated; most 26 at E1-E2",
+      "biz2027": "AUTOMATION"
+    },
+    {
+      "part": "II §7-8",
+      "topic": "24 invariants, conservation",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "9 prim/15 métiers/no-dup verified",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "III §9-15",
+      "topic": "Authority, G0, Root-of-Trust, 9 primitives, R0-R3",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "9 primitives+G0 Root-of-Trust PROVEN; rest partial",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "IV §16-20",
+      "topic": "3-level arch, 12 dims, 10 cognitive resp",
+      "status": "IMPLEMENTED_NOT_VALIDATED",
+      "evidence": "world-model/cognitive-loop present; not all enumerated-tested",
+      "biz2027": "DELIVERY"
+    },
+    {
+      "part": "V §21-23",
+      "topic": "Cognitive loop, World Model, Causal Graph",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "world-model+cognitive-loop; causal graph PARTIAL",
+      "biz2027": "AUTOMATION"
+    },
+    {
+      "part": "VI §24-28",
+      "topic": "Discovery, pipeline, research, competitive intel, tech radar",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "Frontier Radar+live collection EXECUTED; scientific-research PROVEN",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "VII §29-33",
+      "topic": "4 memories, consolidation, integrity, forgetting-prevention",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "memory-taxonomy+learning-loop; full WAKE/DREAM PARTIAL",
+      "biz2027": "AUTOMATION"
+    },
+    {
+      "part": "VIII §34-37",
+      "topic": "Self-improvement, evaluator protection, meta-intelligence",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "E2E self-improvement+self-mission-proposer+evaluator-independence PROVEN",
+      "biz2027": "AUTOMATION"
+    },
+    {
+      "part": "IX §38-42",
+      "topic": "Autonomy A1-A5, mission contract, checkpoints, continuity",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "autonomy-measure/checkpoint; A3+ persistent DEMONSTRATED",
+      "biz2027": "AUTOMATION"
+    },
+    {
+      "part": "X §43-46",
+      "topic": "15 professions, responsibility matrix, recover 11 historical",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "ALL 15 E2/E3 reference projects PROVEN (synthetic); schema-B NOT_ESTABLISHED",
+      "biz2027": "DELIVERY"
+    },
+    {
+      "part": "XI §47-50",
+      "topic": "Multi-agent control plane, validation independence, parallelization",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "agent-factory/identity/gate; Builder≠Tester proven",
+      "biz2027": "DELIVERY"
+    },
+    {
+      "part": "XII §51-56",
+      "topic": "Source intel, defect detect, diagnosis/repair, regression shield, migration",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "discovery/code-health/repair-workflow/build-recovery (partial)",
+      "biz2027": "DELIVERY"
+    },
+    {
+      "part": "XIII §57-61",
+      "topic": "Experimental protocol, benchmark factory, 10 experiments, statistical validity",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "frontier-lab+eval-metrics+benchmark-factory; superiority owner-gated",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XIV §62-65",
+      "topic": "Agentic security, identity/secrets, resilience, emergency stop",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "third-party-agent-gate/bash-governor/lethal-trifecta/emergency-stop PROVEN",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XV §66-70",
+      "topic": "Traceability, proof-carrying change, provenance (SLSA), reproducibility",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "evidence-provenance/supply-chain-attest/sbom; statuses enforced",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XVI §71-76",
+      "topic": "Six dossiers A-F",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "dossier-ledger; B/C/D/F verbatim NOT_RECOVERABLE (TO_AUDIT)",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XVII §77-79",
+      "topic": "Seven steps + ordering correction",
+      "status": "IMPLEMENTED_NOT_VALIDATED",
+      "evidence": "study-steps-ledger; intitulés NOT_RECOVERABLE (index-only)",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XVIII §80-82",
+      "topic": "Historical asset recovery, anti-duplication",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "anti-dup+preservation-invariant PROVEN; assets UNKNOWN/TO_AUDIT",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XIX §83-87",
+      "topic": "Four campaigns C1-C4 + gates",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "campaign-closure-ledger; 0 CLOSED by fiat; C3/C2 slices",
+      "biz2027": "DELIVERY"
+    },
+    {
+      "part": "XX §88-89",
+      "topic": "Mission cycle, Git/integration",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "campaign-controller/loop; local-commit discipline",
+      "biz2027": "DELIVERY"
+    },
+    {
+      "part": "XXI §90-92",
+      "topic": "Scorecard, thresholds, forecasts",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "v124-scorecard honest IN_PROGRESS (campaigns 0 CLOSED)",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XXII §93-96",
+      "topic": "Proof/decision/evidence/change registers",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "closure-register+evidence-provenance; ODG-ADR TO_AUDIT",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XXIII §97-103",
+      "topic": "Gates A-G",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "gates-ledger; Gate-E slice DEMONSTRATED; A/B/C/D/F/G not all",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XXIV §104",
+      "topic": "Local-only restrictions",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "enforced all session; preservation-invariant machine-checkable",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XXV §105",
+      "topic": "Failures register F01-F40",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "many protections exist; consolidated F01-F40 TO_AUDIT",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XXVI §106-107",
+      "topic": "Scientific/technical references",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "research-readiness doc (METR/SWE-bench/OWASP/NIST/DORA/SLSA)",
+      "biz2027": "CREDIBILITY"
+    },
+    {
+      "part": "XXVII §108-110",
+      "topic": "33 deliverables, study/operational closure",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "several deliverables; full 33 TO_AUDIT; operational closure NOT met",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XXVIII §111-112",
+      "topic": "Order of 7 steps / 4 campaigns",
+      "status": "IMPLEMENTED_NOT_VALIDATED",
+      "evidence": "order recorded; execution partial",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XXIX §113-115",
+      "topic": "Execution mandate, method, priorities P0-P8",
+      "status": "IMPLEMENTED_NOT_VALIDATED",
+      "evidence": "authority model matches repo; P0 preservation honored",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XXX §116-119",
+      "topic": "First operational mandate (Dossier A, A1-A10, uncertainty register)",
+      "status": "PARTIALLY_COMPLETED",
+      "evidence": "Dossier A partly seeded; uncertainty register TO_AUDIT",
+      "biz2027": "NONE"
+    },
+    {
+      "part": "XXXI §120-122",
+      "topic": "Final decisions, non-negotiable rules, guiding principle",
+      "status": "COMPLETED_VERIFIED",
+      "evidence": "invariants+no-overclaim+no-bypass practiced throughout",
+      "biz2027": "CREDIBILITY"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "//": "V12.4 components/references ↔ real ODG modules (grounding).",
+  "canonical_components": {
+    "9_primitives": "PRESENT_AND_PROVEN (primitive-validation.ts)",
+    "15_metiers": "P1-P15 modules exist, E2/E3 reference projects",
+    "world_model": "world-model.ts",
+    "self_improvement": "global-improvement-engine/self-improvement/evaluator-independence",
+    "radar": "frontier-radar + fr07-live-collection",
+    "provenance": "evidence-provenance/supply-chain-attest/sbom-audit-service",
+    "scorecard": "v124-scorecard.ts",
+    "root_of_trust": "root-of-trust.ts (G0)",
+    "ledgers": "dossier/study-steps/campaign-closure/gates ledgers"
+  },
+  "external_refs": "METR, SWE-bench Pro, OWASP Agentic, NIST, DORA, SLSA, OTel, AI-Act, CRA (ODG_GLOBAL_RESEARCH_AND_EXECUTION_READINESS.md)",
+  "unrecovered": [
+    "166 capabilities",
+    "A02-A53",
+    "dossiers B/C/D/F verbatim",
+    "7-step intitulés",
+    "historical factory/economic/control-tower assets"
+  ]
+}
