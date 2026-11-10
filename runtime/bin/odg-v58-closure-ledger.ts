@@ -48,12 +48,19 @@ const LEDGER: any = {
   "XXXII": { criterion: "commercialization: offers + acquisition + real clients", gating: "OWNER_GATED", next: "model + pilots prepared (V50–V57); needs real clients/contracts/conversion — 0 observed, owner/market-gated" },
 };
 
+// V59 §3: the 9 LOCALLY_CLOSEABLE parts whose KEY functional invariant is now independently re-verified by the
+// consolidation test (nominal + violation). This RAISES confidence; it does NOT flip the SSOT bucket (full §-by-§
+// closure + controller sign-off remains the matrix maintainer's act — proof before declaration).
+const CONSOLIDATION_VERIFIED = new Set(["III", "V", "VI", "VIII", "IX", "XI", "XIV", "XVIII", "XXII"]);
+
 const open = (cov && cov.parts ? cov.parts : []).filter((p: any) => p.bucket === "PARTIAL" || p.bucket === "NOT_VALIDATED");
 // include Part XXXII (tracked separately in the coverage matrix).
 const rows = open.map((p: any) => {
   const key = p.part.split(/\s/)[0];
   const rec = LEDGER[key] || { criterion: "(closure criterion to define)", gating: "NEEDS_LOCAL_BUILD", next: "define closure criterion" };
-  return { part: p.part, bucket: p.bucket, closureCriterion: rec.criterion, gating: rec.gating, nextAction: rec.next };
+  const cv = CONSOLIDATION_VERIFIED.has(key);
+  return { part: p.part, bucket: p.bucket, closureCriterion: rec.criterion, gating: rec.gating, nextAction: rec.next,
+    consolidationVerified: cv, consolidationTest: cv ? "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)" : null };
 });
 if (cov && cov.partXXXII && !rows.some((r: any) => /XXXII/.test(r.part))) {
   const rec = LEDGER["XXXII"];
@@ -67,6 +74,7 @@ const out = {
   "//": "CTO V58 — remaining-work closure ledger. Every open part gets a closure criterion + gating classification + next action. It does NOT flip buckets to DONE (the SSOT + real proof do that); it states honestly WHY each remaining item is open. Read-only; no new engine.",
   generatedFrom: ["V56_V124_COVERAGE_MATRIX.json"],
   openParts: rows.length,
+  consolidationVerifiedCount: rows.filter((r: any) => r.consolidationVerified).length,
   rows, tally,
   honestConclusion: `${rows.length} open parts: ${tally.LOCALLY_CLOSEABLE} LOCALLY_CLOSEABLE (local assertion tests would close them), ${tally.NEEDS_LOCAL_BUILD} NEEDS_LOCAL_BUILD, ${tally.INHERENTLY_REFERENTIAL} INHERENTLY_REFERENTIAL (doctrine — owner acknowledgement), ${tally.OWNER_GATED} OWNER_GATED (decisions/acceptance), ${tally.EXTERNAL_DEPENDENCY} EXTERNAL_DEPENDENCY (reference/clients/GPU). The locally-closeable parts have their machinery in-repo; full functional closure of the rest is owner/external-gated. No bucket is declared DONE without the SSOT's proof.`,
   invariant: "The ledger classifies and routes; it never closes a part by assertion. Owner-gated and external-dependency parts stay explicitly open — never faked closed. Proof before declaration.",
