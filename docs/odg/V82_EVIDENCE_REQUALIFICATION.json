@@ -1,0 +1,158 @@
+{
+  "//": "CTO V82 §3 — semantic evidence re-qualification of the V81 Level-B evidence. VALID requires resolve+non-empty+markers (+gate-wired for tests); else downgraded. Honest: mere existence no longer counts as done. Reuses evidence-qualifier; no new registry.",
+  "evaluated": 14,
+  "valid": 14,
+  "insufficient": 0,
+  "absent": 0,
+  "results": [
+    {
+      "requirement": "REQ-I",
+      "ref": "docs/odg/V64_SUCCESSOR_REFERENTIAL.json",
+      "expectedMarkers": [
+        "RECONSTRUCTED",
+        "partI"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-IV",
+      "ref": "docs/odg/V64_SUCCESSOR_REFERENTIAL.json",
+      "expectedMarkers": [
+        "RECONSTRUCTED",
+        "partIV"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXV",
+      "ref": "docs/odg/V64_SUCCESSOR_REFERENTIAL.json",
+      "expectedMarkers": [
+        "RECONSTRUCTED",
+        "partXXV",
+        "F01"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XIII",
+      "ref": "docs/odg/V57_15_METIERS_BENCHMARK_PROGRAM.json",
+      "expectedMarkers": [
+        "superiority_demonstrated"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XVI",
+      "ref": "docs/odg/V60_OWNER_GATED_PREP.json",
+      "expectedMarkers": [
+        "ownerDecisionPreFilled"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XIX",
+      "ref": "docs/odg/V55_15_METIERS_GLOBAL_SCORECARD.json",
+      "expectedMarkers": [
+        "superior_to_reference"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXIII",
+      "ref": "runtime/core/v124-section-coverage.ts",
+      "expectedMarkers": [
+        "verifyCoverage"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXVII",
+      "ref": "docs/odg/V56_V124_COVERAGE_MATRIX.json",
+      "expectedMarkers": [
+        "partsParsed",
+        "structuralCoverage"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXX",
+      "ref": "docs/odg/V58_CLOSURE_LEDGER.json",
+      "expectedMarkers": [
+        "LOCALLY_CLOSEABLE"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXXII",
+      "ref": "docs/odg/V60_OWNER_GATED_PREP.json",
+      "expectedMarkers": [
+        "XXXII"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-Préambule",
+      "ref": "ODG_PROJECT_STATE.md",
+      "expectedMarkers": [
+        "LATEST"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XVII",
+      "ref": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md",
+      "expectedMarkers": [
+        "Partie XVII",
+        "Sept étapes"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXVIII",
+      "ref": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md",
+      "expectedMarkers": [
+        "Partie XXVIII"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    },
+    {
+      "requirement": "REQ-XXIX",
+      "ref": "ODG_AUTONOMOUS_WORK_PROTOCOL.json",
+      "expectedMarkers": [
+        "work_item_contract_schema"
+      ],
+      "status": "VALID",
+      "basis": "resolves + non-empty + all expected markers present",
+      "reclass": "ALREADY_DONE (semantically validated)"
+    }
+  ],
+  "deltaVsV81": "V81 counted evidence by existence; V82 re-qualified semantically ⇒ 14/14 VALID, 0 INSUFFICIENT, 0 ABSENT. Downgrades are the honest correction (an existing file with the wrong/absent content is no longer ALREADY_DONE).",
+  "honestConclusion": "Semantic re-qualification of 14 Level-B evidence pointers: 14 VALID (resolve + semantic markers present), 0 INSUFFICIENT (resolve but content does not tie to the requirement) ⇒ NOT_MEASURED/LOCAL_REMAINING, 0 ABSENT. Mere file existence no longer qualifies as done; nothing fabricated.",
+  "invariant": "VALID only with resolving + non-empty + requirement-matching content; file existence alone is INSUFFICIENT; no non-measured evidence upgraded to VALID."
+}
