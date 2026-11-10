@@ -1,0 +1,70 @@
+{
+  "//": "TAM huge everywhere; SAM smaller (FR/EU + client-fit); SOM near-0 for ODG in 2027 from €0 — the real constraint. Never present TAM as reachable revenue.",
+  "matrix": {
+    "P1": {
+      "TAM": "part of global IT/custom-dev services >$500B (EST)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P2": {
+      "TAM": "AI market ~$600-990B by 2027 (SRC); ML ~$80B (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P4": {
+      "TAM": "data-eng services ~$101-116B 2025-26 (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P5": {
+      "TAM": "DevSecOps $11-16B (SRC); cloud svcs huge",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P6": {
+      "TAM": "software testing ~$50-70B (EST); AI-eval emerging niche",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P7": {
+      "TAM": "observability ~$11.8B (SRC); AIOps ~$7B 2027 (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P8": {
+      "TAM": "iPaaS ~$14-20B 2027 (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P9": {
+      "TAM": "cloud-cost-opt ~$6.5B 2027 (SRC); FinOps ~$15-27B (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P10": {
+      "TAM": "GRC $23-39B (SRC); AI-gov emerging",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P12": {
+      "TAM": "event-streaming ~$5-10B (EST, Kafka/Confluent eco)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P13": {
+      "TAM": "AI infra ~$50-100B+ (SRC, hardware-heavy)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P14": {
+      "TAM": "IDP ~$8.9B 2026 (SRC); platform-eng ~$8-70B (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    },
+    "P15": {
+      "TAM": "IPA ~$25.9B 2027 (SRC); RPA ~$7.6B (SRC)",
+      "SAM_FR_EU_EST": "a low-single-digit % of TAM (geography+client-fit), EST",
+      "SOM_2027_ODG": "near-0 to small (€0 clients, no references, L2) — HYP; depends on references+channel"
+    }
+  }
+}

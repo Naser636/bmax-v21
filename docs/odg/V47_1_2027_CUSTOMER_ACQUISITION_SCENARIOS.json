@@ -1,0 +1,8 @@
+{
+  "//": "2027 acquisition scenarios: A identified market / B theoretically-accessible / C realistically-reachable-2027 (explicit HYP). All conversion unknown ⇒ low/central/high hypotheses.",
+  "levels": {
+    "A_identified": "large (TAM, SRC)",
+    "B_accessible": "FR/EU client-fit subset (SAM, EST)",
+    "C_reachable_2027": "HYP: single-digit to low-dozens of clients per métier MAX from €0, gated by references+channel"
+  }
+}

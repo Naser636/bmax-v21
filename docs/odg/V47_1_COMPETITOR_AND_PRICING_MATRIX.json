@@ -1,0 +1,70 @@
+{
+  "//": "competitor+pricing (observed/public where cited; else EST/HYP).",
+  "metiers": {
+    "P1": {
+      "price_eur": "5k-50k",
+      "competition": "very-high (agencies/freelancers)",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P2": {
+      "price_eur": "10k-150k",
+      "competition": "very-high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P4": {
+      "price_eur": "8k-80k",
+      "competition": "high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P5": {
+      "price_eur": "5k-60k",
+      "competition": "high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P6": {
+      "price_eur": "5k-40k",
+      "competition": "high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P7": {
+      "price_eur": "8k-60k",
+      "competition": "high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P8": {
+      "price_eur": "8k-70k",
+      "competition": "high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P9": {
+      "price_eur": "5k-50k + %savings",
+      "competition": "med",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P10": {
+      "price_eur": "10k-150k",
+      "competition": "med-high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P12": {
+      "price_eur": "10k-80k",
+      "competition": "med-high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P13": {
+      "price_eur": "n/a (capex-heavy)",
+      "competition": "very-high (hyperscalers)",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P14": {
+      "price_eur": "10k-80k",
+      "competition": "med-high",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    },
+    "P15": {
+      "price_eur": "10k-100k",
+      "competition": "high (UiPath etc.)",
+      "basis": "EST/HYP unless a public source is cited in the .md"
+    }
+  }
+}

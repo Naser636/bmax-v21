@@ -1,0 +1,140 @@
+{
+  "//": "strategic gaps per métier. P0=viability,P1=first-sales,P2=scale,P3=later. Not to be fixed (research only).",
+  "gaps": {
+    "P1": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "native build demos (3B/7B)",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P2": {
+      "demand": "confirmed-large (market)",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "agent-gov gates, eval; no client demo",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P1"
+    },
+    "P4": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "dataset-quality/PII demos",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P5": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "canary/deployment-readiness",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P6": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "eval-metrics",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P7": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "SLO/latency guard",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P8": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "api-contract, e-invoice(P11)",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P9": {
+      "demand": "confirmed-large (market)",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "cost-engine/unit-economics",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P1"
+    },
+    "P10": {
+      "demand": "confirmed-large (market)",
+      "offer_sellable": "demonstrated",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "ai-assurance/ISO matrices (25 modules)",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P1"
+    },
+    "P12": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "event-stream-engine/stream-reliability",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P13": {
+      "demand": "confirmed-large (market)",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "local-model-generator (CPU only)",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P3 (blocked: ODG owns no GPU infra; not an ODG play)"
+    },
+    "P14": {
+      "demand": "present",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "developer-platform/golden-path",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P2"
+    },
+    "P15": {
+      "demand": "confirmed-large (market)",
+      "offer_sellable": "needs packaging (L2)",
+      "price_validated": "NO (3 quotes needed)",
+      "reference_client": "NO",
+      "tech_proof": "metier-coordinator/campaign-controller",
+      "delivery_capacity": "ODG-automatable, team to scale",
+      "channel": "NO",
+      "priority_gap": "P1"
+    }
+  },
+  "cross_cutting_P0": [
+    "reference client",
+    "enterprise sales motion",
+    "BFR buffer"
+  ]
+}
