@@ -1,0 +1,470 @@
+{
+  "//": "CTO V92 §2 — 14 owner-decision dossiers from the real V90 decomposition. Each has the 12 fields + an ODG recommendation; the owner DECISION is never fabricated (PENDING_OWNER_DECISION). NEEDS_LOCAL_BUILD parents are honestly flagged as local work NOT needing a sign-off. Grouped in lots of 3. No parallel registry.",
+  "dossierCount": 14,
+  "trueOwnerDecisions": 11,
+  "reclassifiedAsLocalWork": 3,
+  "lots": {
+    "1": [
+      "REQ-Préambule",
+      "REQ-I",
+      "REQ-IV"
+    ],
+    "2": [
+      "REQ-XIII",
+      "REQ-XVI",
+      "REQ-XVII"
+    ],
+    "3": [
+      "REQ-XIX",
+      "REQ-XXIII",
+      "REQ-XXV"
+    ],
+    "4": [
+      "REQ-XXVII",
+      "REQ-XXVIII",
+      "REQ-XXIX"
+    ],
+    "5": [
+      "REQ-XXX",
+      "REQ-XXXII"
+    ]
+  },
+  "dossiers": [
+    {
+      "lot": 1,
+      "parentId": "REQ-Préambule",
+      "requirement": "V12.4 Préambule §1–§4 — Object, truth levels, version preservation, validation status",
+      "signoffReason": "gating=INHERENTLY_REFERENTIAL: owner acknowledgement of a referential/truth-level discipline (not an implementation sign-off)",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=NOT_VALIDATED; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "APPROVE",
+      "odgRationale": "already practiced (compass + closure-register + truth-level honesty); acknowledging it carries low risk and no code to build",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 1,
+      "parentId": "REQ-I",
+      "requirement": "V12.4 I §5–§6 — Vision, fundamental mission (26 capabilities)",
+      "signoffReason": "gating=NEEDS_LOCAL_BUILD: LOCAL work executable WITHOUT a sign-off — flagged as NOT a genuine owner decision",
+      "expectedDecision": "owner confirms scope/priority only (local work proceeds under the standing mandate regardless)",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "n/a (not a true owner decision)",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG can build/advance this locally under the standing mandate; the owner need only confirm priority/scope — the gate is scope confirmation, not a blocking legal/organizational decision",
+      "validationAndClosureConditions": "local sub-work closed on valid evidence; owner scope-confirmation recorded",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": false
+    },
+    {
+      "lot": 1,
+      "parentId": "REQ-IV",
+      "requirement": "V12.4 IV §16–§20 — 3-level architecture, physical options, 12 dimensions, 10 cognitive responsibilities, arch contracts",
+      "signoffReason": "gating=NEEDS_LOCAL_BUILD: LOCAL work executable WITHOUT a sign-off — flagged as NOT a genuine owner decision",
+      "expectedDecision": "owner confirms scope/priority only (local work proceeds under the standing mandate regardless)",
+      "technicalWorkDone": "coverage bucket=NOT_VALIDATED; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "n/a (not a true owner decision)",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG can build/advance this locally under the standing mandate; the owner need only confirm priority/scope — the gate is scope confirmation, not a blocking legal/organizational decision",
+      "validationAndClosureConditions": "local sub-work closed on valid evidence; owner scope-confirmation recorded",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": false
+    },
+    {
+      "lot": 2,
+      "parentId": "REQ-XIII",
+      "requirement": "V12.4 XIII §57–§61 — Experimental protocol, benchmark factory, 10 experiments, statistical validity, superiority",
+      "signoffReason": "gating=EXTERNAL_DEPENDENCY: requires a real EXTERNAL resource (e.g. a fair, reproducible head-to-head benchmark / third-party data)",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "authorized external resource / benchmark"
+      ],
+      "odgRecommendation": "APPROVE_WITH_CONDITIONS",
+      "odgRationale": "the local protocol can be prepared now; the comparison itself needs an authorized external resource — no world-superiority claim without it",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 2,
+      "parentId": "REQ-XVI",
+      "requirement": "V12.4 XVI §71–§76 — Six dossiers A–F",
+      "signoffReason": "gating=OWNER_GATED: genuine owner decision (commercial / organizational / governance) with real-world consequences",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=NOT_VALIDATED; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "owner commercial/organizational decision"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG prepares the technical substrate but cannot decide a commercial/organizational commitment; the owner must choose with the risks below in view",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 2,
+      "parentId": "REQ-XVII",
+      "requirement": "V12.4 XVII §77–§79 — Seven steps + operational ordering correction",
+      "signoffReason": "gating=INHERENTLY_REFERENTIAL: owner acknowledgement of a referential/truth-level discipline (not an implementation sign-off)",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=NOT_VALIDATED; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "APPROVE",
+      "odgRationale": "already practiced (compass + closure-register + truth-level honesty); acknowledging it carries low risk and no code to build",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 3,
+      "parentId": "REQ-XIX",
+      "requirement": "V12.4 XIX §83–§87 — Four campaigns C1–C4 + gates",
+      "signoffReason": "gating=OWNER_GATED: genuine owner decision (commercial / organizational / governance) with real-world consequences",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "owner commercial/organizational decision"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG prepares the technical substrate but cannot decide a commercial/organizational commitment; the owner must choose with the risks below in view",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 3,
+      "parentId": "REQ-XXIII",
+      "requirement": "V12.4 XXIII §97–§103 — Gates A–G",
+      "signoffReason": "gating=OWNER_GATED: genuine owner decision (commercial / organizational / governance) with real-world consequences",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "owner commercial/organizational decision"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG prepares the technical substrate but cannot decide a commercial/organizational commitment; the owner must choose with the risks below in view",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 3,
+      "parentId": "REQ-XXV",
+      "requirement": "V12.4 XXV §105 — Failures register F01–F40",
+      "signoffReason": "gating=NEEDS_LOCAL_BUILD: LOCAL work executable WITHOUT a sign-off — flagged as NOT a genuine owner decision",
+      "expectedDecision": "owner confirms scope/priority only (local work proceeds under the standing mandate regardless)",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "n/a (not a true owner decision)",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG can build/advance this locally under the standing mandate; the owner need only confirm priority/scope — the gate is scope confirmation, not a blocking legal/organizational decision",
+      "validationAndClosureConditions": "local sub-work closed on valid evidence; owner scope-confirmation recorded",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": false
+    },
+    {
+      "lot": 4,
+      "parentId": "REQ-XXVII",
+      "requirement": "V12.4 XXVII §108–§110 — 33 deliverables, study/operational closure",
+      "signoffReason": "gating=OWNER_GATED: genuine owner decision (commercial / organizational / governance) with real-world consequences",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "owner commercial/organizational decision"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG prepares the technical substrate but cannot decide a commercial/organizational commitment; the owner must choose with the risks below in view",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 4,
+      "parentId": "REQ-XXVIII",
+      "requirement": "V12.4 XXVIII §111–§112 — Order of 7 steps / 4 campaigns",
+      "signoffReason": "gating=INHERENTLY_REFERENTIAL: owner acknowledgement of a referential/truth-level discipline (not an implementation sign-off)",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=NOT_VALIDATED; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "APPROVE",
+      "odgRationale": "already practiced (compass + closure-register + truth-level honesty); acknowledging it carries low risk and no code to build",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 4,
+      "parentId": "REQ-XXIX",
+      "requirement": "V12.4 XXIX §113–§115 — Execution mandate, method, priorities P0–P8",
+      "signoffReason": "gating=INHERENTLY_REFERENTIAL: owner acknowledgement of a referential/truth-level discipline (not an implementation sign-off)",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=NOT_VALIDATED; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "none blocking local work"
+      ],
+      "odgRecommendation": "APPROVE",
+      "odgRationale": "already practiced (compass + closure-register + truth-level honesty); acknowledging it carries low risk and no code to build",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 5,
+      "parentId": "REQ-XXX",
+      "requirement": "V12.4 XXX §116–§119 — First operational mandate: open Dossier A + preservation + A1–A10 + uncertainty register",
+      "signoffReason": "gating=OWNER_GATED: genuine owner decision (commercial / organizational / governance) with real-world consequences",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "coverage bucket=PARTIAL; structural status tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "owner commercial/organizational decision"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG prepares the technical substrate but cannot decide a commercial/organizational commitment; the owner must choose with the risks below in view",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    },
+    {
+      "lot": 5,
+      "parentId": "REQ-XXXII",
+      "requirement": "V12.4 Part XXXII (commercialization)",
+      "signoffReason": "gating=OWNER_GATED: genuine owner decision (commercial / organizational / governance) with real-world consequences",
+      "expectedDecision": "owner selects APPROVE / REJECT / APPROVE_WITH_CONDITIONS / NEEDS_INFORMATION",
+      "technicalWorkDone": "tracked in V12.4 matrix",
+      "localSubmissionsDoneWithProof": [
+        "(none individually closed yet — see V90 decomposition sub-missions)"
+      ],
+      "localSubmissionsOpen": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "risksPerOption": {
+        "APPROVE": "commits to the requirement's intent; ensure downstream dependencies are ready",
+        "REJECT": "the requirement stays open/parked; no local regression (reversible)",
+        "APPROVE_WITH_CONDITIONS": "proceed with named conditions (e.g. external benchmark, legal review)",
+        "NEEDS_INFORMATION": "ODG continues local work; decision deferred without blocking independent sub-missions"
+      },
+      "dependencies": [
+        "owner commercial/organizational decision"
+      ],
+      "odgRecommendation": "NEEDS_INFORMATION",
+      "odgRationale": "ODG prepares the technical substrate but cannot decide a commercial/organizational commitment; the owner must choose with the risks below in view",
+      "validationAndClosureConditions": "closed only on a recorded owner decision + (if conditional) the named conditions met + evidence",
+      "decisionStatus": "PENDING_OWNER_DECISION",
+      "isTrueOwnerDecision": true
+    }
+  ],
+  "honestConclusion": "14 dossiers prepared, each traceable + directly decidable. 11 are GENUINE owner decisions (owner-gated/referential/external); 3 (NEEDS_LOCAL_BUILD) are honestly reclassified as LOCAL work that proceeds under the standing mandate WITHOUT a sign-off — not inflated into false owner decisions. All decisions PENDING_OWNER_DECISION; ODG recommends but never fabricates the owner's choice. Grouped into 5 lots of ≤3.",
+  "invariant": "14 distinct traceable dossiers; ODG recommends, owner decides (PENDING_OWNER_DECISION, never fabricated); NEEDS_LOCAL_BUILD ≠ a true sign-off; no global imprecise approval; no parallel registry."
+}
