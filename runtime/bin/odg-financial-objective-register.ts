@@ -19,27 +19,27 @@ const OBJECTIVES = [
     provenance: ["V51", "V52", "V55", "V57", "V61"], status: "CANONICAL AMBITION — stable across directives",
     feasibility: "INFEASIBLE from €0 in 12 months (recorded V51/V52); objective kept, not lowered" },
   { id: "MINIMUM_5M", amountEur: 5000000, unit: "NET after all charges + taxes", horizon: "first 12 months",
-    provenance: ["V51", "V55", "V56", "V57"], status: "CANONICAL MINIMUM (as used V51→V61)",
+    provenance: ["V51", "V55", "V56", "V57", "V63 (confirmed canonical floor)"], status: "CANONICAL ABSOLUTE FLOOR — confirmed by V63",
     feasibility: "necessary conditions NOT MET (V57 ledger); recorded, not lowered" },
-  { id: "FLOOR_5K_V62", amountEur: 5000, unit: "NET", horizon: "first 12 months",
-    provenance: ["V62 §12"], status: "NEWLY STATED in V62 §12 — DISCREPANT with MINIMUM_5M (factor 1000)",
-    feasibility: "not assessed; may be a typo for €5M or a genuinely lower floor — OWNER must reconcile" },
+  { id: "FLOOR_5K_V62", amountEur: 5000, unit: "(none — ERROR)", horizon: "n/a",
+    provenance: ["V62 §12 (stated)", "V63 §1 (corrected)"], status: "ERROR — V63 §1 declares the €5,000 figure an ERROR; SUPERSEDED, no longer an objective. Canonical floor = €5,000,000 (MINIMUM_5M).",
+    feasibility: "VOID — not an objective; retained only for historical traceability of the correction" },
 ];
 
 const reconciliation = {
-  discrepancy: "V62 §12 states a €5,000 net floor; V51→V61 used a €5,000,000 net minimum — a 1000× difference.",
-  handling: "BOTH recorded with provenance; NEITHER silently overrides the other. V62 §12 itself asks to keep objective levels and historical hypotheses DISTINCT and reconcile here.",
-  ownerDecisionNeeded: "confirm whether the minimum net-profit floor for year 1 is €5,000 or €5,000,000 (or another value). Until confirmed, both stand as stated; no model result changes.",
-  invariant: "Objectives are recorded at their stated levels with provenance; a discrepancy is surfaced for owner reconciliation, never resolved by fabricating or silently picking a value.",
+  discrepancy: "V62 §12 stated a €5,000 net floor; V51→V61 used a €5,000,000 net minimum — a 1000× difference.",
+  resolution: "RESOLVED by V63 §1 (owner authority): the €5,000 figure is an ERROR and is no longer an objective. The canonical ABSOLUTE FLOOR is €5,000,000 net; the strategic AMBITION is €500,000,000 net (first 12 months). Both kept, neither lowered.",
+  ownerDecisionNeeded: "NONE — resolved by V63 §1. Historical traceability of the €5,000 error is preserved (not erased).",
+  invariant: "Objectives are recorded at their canonical levels with provenance; the €5,000 error is superseded by V63, not silently deleted — the correction is traceable.",
 };
 
 const out = {
   "//": "CTO V62 §12 — canonical financial-objective register. Reconciles €500M ambition / €5M minimum / €5,000 V62-floor by provenance; surfaces the €5M-vs-€5,000 discrepancy for owner decision. No figure fabricated, no feasibility declared. Keeps objective LEVELS distinct from historical HYPOTHESES.",
   objectives: OBJECTIVES,
   reconciliation,
-  distinctLevels: ["AMBITION (€500M)", "MINIMUM (€5M — historical canonical)", "FLOOR (€5,000 — V62 §12, discrepant)"],
+  canonicalLevels: ["ABSOLUTE FLOOR = €5,000,000 net (confirmed V63)", "STRATEGIC AMBITION = €500,000,000 net (12 months)"],
   historicalHypothesesNote: "scenario figures (prudent/central/ambitious) live in V55_ECONOMIC_SCENARIOS.json as HYPOTHESES — they are not objectives and are not reconciled here.",
-  honestConclusion: "Three distinct stated net-profit figures are registered with provenance. The €5M-vs-€5,000 minimum discrepancy (V62 §12) is flagged for OWNER reconciliation — not resolved unilaterally. The €500M ambition is unchanged. No feasibility is declared; no figure invented.",
+  honestConclusion: "V63 §1 resolves the discrepancy: €5,000 was an ERROR and is superseded (no longer an objective). Canonical ABSOLUTE FLOOR = €5,000,000 net; STRATEGIC AMBITION = €500,000,000 net (12 months). Both kept, neither lowered; the error correction is traceable; no feasibility declared.",
 };
 fs.writeFileSync(path.join(D, "V62_FINANCIAL_OBJECTIVE_REGISTER.json"), JSON.stringify(out, null, 2) + "\n");
 process.stdout.write(JSON.stringify({ objectives: OBJECTIVES.map((o) => ({ id: o.id, amountEur: o.amountEur })), discrepancyFlagged: true }, null, 2) + "\n");

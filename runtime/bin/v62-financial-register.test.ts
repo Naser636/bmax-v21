@@ -22,11 +22,11 @@ function main(): void {
   const by: any = {}; for (const o of m.objectives) by[o.id] = o;
   check("€500M ambition recorded with provenance", by.AMBITION && by.AMBITION.amountEur === 500000000 && by.AMBITION.provenance.length >= 1);
   check("€5M minimum recorded (historical canonical)", by.MINIMUM_5M && by.MINIMUM_5M.amountEur === 5000000);
-  check("€5,000 V62 floor recorded as discrepant", by.FLOOR_5K_V62 && by.FLOOR_5K_V62.amountEur === 5000 && /DISCREPANT/i.test(by.FLOOR_5K_V62.status));
-  check("discrepancy flagged for OWNER reconciliation (not resolved)", (m.reconciliation.ownerDecisionNeeded && m.reconciliation.ownerDecisionNeeded.length > 0) && /owner reconciliation/i.test(m.reconciliation.invariant) && /never resolved/i.test(m.reconciliation.invariant));
-  check("three distinct levels kept separate", Array.isArray(m.distinctLevels) && m.distinctLevels.length === 3);
-  check("ambition unchanged / not lowered", /unchanged/i.test(m.honestConclusion) && by.AMBITION.amountEur === 500000000);
-  check("no figure fabricated / no feasibility declared", /No figure fabricated|no figure invented/i.test(m["//"]) || /no figure invented/i.test(m.honestConclusion));
+  check("€5,000 figure recorded as ERROR/SUPERSEDED (V63 correction)", by.FLOOR_5K_V62 && by.FLOOR_5K_V62.amountEur === 5000 && /ERROR|SUPERSEDED/i.test(by.FLOOR_5K_V62.status));
+  check("discrepancy RESOLVED by V63 (€5,000 error, floor=€5M), traceability preserved", /RESOLVED by V63/i.test(m.reconciliation.resolution) && /5,000,000/.test(m.reconciliation.resolution) && /traceab/i.test(m.reconciliation.invariant));
+  check("canonical levels: €5M floor + €500M ambition", Array.isArray(m.canonicalLevels) && m.canonicalLevels.length === 2 && /5,000,000/.test(JSON.stringify(m.canonicalLevels)) && /500,000,000/.test(JSON.stringify(m.canonicalLevels)));
+  check("ambition unchanged / not lowered", /neither lowered|not lowered|unchanged/i.test(m.honestConclusion) && by.AMBITION.amountEur === 500000000);
+  check("€5M is the confirmed canonical floor", by.MINIMUM_5M.amountEur === 5000000 && /CANONICAL ABSOLUTE FLOOR|confirmed/i.test(by.MINIMUM_5M.status));
 
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — V62 financial-objective register (3 levels, provenance, discrepancy flagged for owner)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
