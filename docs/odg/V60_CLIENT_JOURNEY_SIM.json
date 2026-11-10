@@ -1,0 +1,355 @@
+{
+  "//": "CTO V60 §3 — client-journey simulation. Synthetic journeys per métier + scale-up; manual-vs-automated savings via cost-engine; O1 report. SIMULATED only — no real client/sale/saving. Reuses client-journey-sim + cost-engine + O1; no new engine.",
+  "journeyCount": 4,
+  "avgSatisfaction": 0.887,
+  "totalModelledSavingsEur": 21330,
+  "journeys": [
+    {
+      "metier": "P3",
+      "objections": [
+        "is this a certification? (no — readiness evidence)",
+        "who files the CRA report? (you — owner duty)"
+      ],
+      "journey": {
+        "ok": true,
+        "metier": "P3",
+        "basis": "SIMULATED (synthetic client; never a real sale or observed saving)",
+        "revenueEur": 24000,
+        "manualCostEur": 7200,
+        "automatedCostEur": 480,
+        "savingsEur": 6720,
+        "savingsPct": 0.9333,
+        "savingsPerUnitEur": 1680,
+        "slaMet": true,
+        "satisfaction": 0.9,
+        "incidentSeverity": "LOW",
+        "stages": {
+          "profile": {
+            "segment": "IoT manufacturer",
+            "size": "ETI"
+          },
+          "need": {
+            "description": "CRA/SBOM readiness for a device line",
+            "volume": 1
+          },
+          "order": {
+            "units": 4,
+            "unitPriceEur": 6000,
+            "revenueEur": 24000
+          },
+          "subscription": {
+            "model": "one-off"
+          },
+          "delivery": {
+            "manualDeliveryHours": 80,
+            "autoDeliveryHours": 6,
+            "autoDeliveryDays": 0.75,
+            "slaDays": 20,
+            "slaMet": true
+          },
+          "support": {
+            "incidentSeverity": "LOW",
+            "incidentResolvedWithinSla": true
+          },
+          "satisfaction": {
+            "score": 0.9,
+            "qualityScore": 0.9
+          }
+        },
+        "invariant": "SIMULATED: synthetic client, synthetic order; savings are a modelled comparison, never an observed or client-validated saving"
+      },
+      "scaleTo10Clients": {
+        "ok": true,
+        "clients": 10,
+        "basis": "SIMULATED",
+        "totalRevenueEur": 240000,
+        "totalManualCostEur": 72000,
+        "totalAutomatedCostEur": 4800,
+        "totalSavingsEur": 67200,
+        "note": "linear scale over N SYNTHETIC clients — a capacity/economics projection, NOT a demand forecast or observed result"
+      }
+    },
+    {
+      "metier": "P9",
+      "objections": [
+        "are the savings guaranteed? (no — estimated, validate on metering)"
+      ],
+      "journey": {
+        "ok": true,
+        "metier": "P9",
+        "basis": "SIMULATED (synthetic client; never a real sale or observed saving)",
+        "revenueEur": 8000,
+        "manualCostEur": 3800,
+        "automatedCostEur": 200,
+        "savingsEur": 3600,
+        "savingsPct": 0.9474,
+        "savingsPerUnitEur": 3600,
+        "slaMet": true,
+        "satisfaction": 0.88,
+        "incidentSeverity": "NONE",
+        "stages": {
+          "profile": {
+            "segment": "SaaS scale-up",
+            "size": "PME"
+          },
+          "need": {
+            "description": "FinOps cloud-cost audit",
+            "volume": 1
+          },
+          "order": {
+            "units": 1,
+            "unitPriceEur": 8000,
+            "revenueEur": 8000
+          },
+          "subscription": {
+            "model": "one-off"
+          },
+          "delivery": {
+            "manualDeliveryHours": 40,
+            "autoDeliveryHours": 2,
+            "autoDeliveryDays": 0.25,
+            "slaDays": 15,
+            "slaMet": true
+          },
+          "support": {
+            "incidentSeverity": "NONE",
+            "incidentResolvedWithinSla": true
+          },
+          "satisfaction": {
+            "score": 0.88,
+            "qualityScore": 0.88
+          }
+        },
+        "invariant": "SIMULATED: synthetic client, synthetic order; savings are a modelled comparison, never an observed or client-validated saving"
+      },
+      "scaleTo10Clients": {
+        "ok": true,
+        "clients": 10,
+        "basis": "SIMULATED",
+        "totalRevenueEur": 80000,
+        "totalManualCostEur": 38000,
+        "totalAutomatedCostEur": 2000,
+        "totalSavingsEur": 36000,
+        "note": "linear scale over N SYNTHETIC clients — a capacity/economics projection, NOT a demand forecast or observed result"
+      }
+    },
+    {
+      "metier": "P10",
+      "objections": [
+        "is this legal advice? (no — qualified counsel confirms)",
+        "is it certified? (no — NOT_CERTIFIED)"
+      ],
+      "journey": {
+        "ok": true,
+        "metier": "P10",
+        "basis": "SIMULATED (synthetic client; never a real sale or observed saving)",
+        "revenueEur": 21000,
+        "manualCostEur": 9000,
+        "automatedCostEur": 540,
+        "savingsEur": 8460,
+        "savingsPct": 0.94,
+        "savingsPerUnitEur": 2820,
+        "slaMet": true,
+        "satisfaction": 0.85,
+        "incidentSeverity": "MEDIUM",
+        "stages": {
+          "profile": {
+            "segment": "org running AI in prod",
+            "size": "ETI"
+          },
+          "need": {
+            "description": "AI-Act governance readiness",
+            "volume": 1
+          },
+          "order": {
+            "units": 3,
+            "unitPriceEur": 7000,
+            "revenueEur": 21000
+          },
+          "subscription": {
+            "model": "one-off"
+          },
+          "delivery": {
+            "manualDeliveryHours": 90,
+            "autoDeliveryHours": 7.5,
+            "autoDeliveryDays": 0.94,
+            "slaDays": 25,
+            "slaMet": true
+          },
+          "support": {
+            "incidentSeverity": "MEDIUM",
+            "incidentResolvedWithinSla": true
+          },
+          "satisfaction": {
+            "score": 0.85,
+            "qualityScore": 0.85
+          }
+        },
+        "invariant": "SIMULATED: synthetic client, synthetic order; savings are a modelled comparison, never an observed or client-validated saving"
+      },
+      "scaleTo10Clients": {
+        "ok": true,
+        "clients": 10,
+        "basis": "SIMULATED",
+        "totalRevenueEur": 210000,
+        "totalManualCostEur": 90000,
+        "totalAutomatedCostEur": 5400,
+        "totalSavingsEur": 84600,
+        "note": "linear scale over N SYNTHETIC clients — a capacity/economics projection, NOT a demand forecast or observed result"
+      }
+    },
+    {
+      "metier": "P11",
+      "objections": [
+        "does ODG transmit via a PDP? (no — owner/accredited)"
+      ],
+      "journey": {
+        "ok": true,
+        "metier": "P11",
+        "basis": "SIMULATED (synthetic client; never a real sale or observed saving)",
+        "revenueEur": 15000,
+        "manualCostEur": 2800,
+        "automatedCostEur": 250,
+        "savingsEur": 2550,
+        "savingsPct": 0.9107,
+        "savingsPerUnitEur": 255,
+        "slaMet": true,
+        "satisfaction": 0.92,
+        "incidentSeverity": "NONE",
+        "stages": {
+          "profile": {
+            "segment": "B2B supplier",
+            "size": "PME"
+          },
+          "need": {
+            "description": "e-invoicing EN16931 readiness",
+            "volume": 1
+          },
+          "order": {
+            "units": 10,
+            "unitPriceEur": 1500,
+            "revenueEur": 15000
+          },
+          "subscription": {
+            "model": "one-off"
+          },
+          "delivery": {
+            "manualDeliveryHours": 40,
+            "autoDeliveryHours": 3.33,
+            "autoDeliveryDays": 0.42,
+            "slaDays": 10,
+            "slaMet": true
+          },
+          "support": {
+            "incidentSeverity": "NONE",
+            "incidentResolvedWithinSla": true
+          },
+          "satisfaction": {
+            "score": 0.92,
+            "qualityScore": 0.92
+          }
+        },
+        "invariant": "SIMULATED: synthetic client, synthetic order; savings are a modelled comparison, never an observed or client-validated saving"
+      },
+      "scaleTo10Clients": {
+        "ok": true,
+        "clients": 10,
+        "basis": "SIMULATED",
+        "totalRevenueEur": 150000,
+        "totalManualCostEur": 28000,
+        "totalAutomatedCostEur": 2500,
+        "totalSavingsEur": 25500,
+        "note": "linear scale over N SYNTHETIC clients — a capacity/economics projection, NOT a demand forecast or observed result"
+      }
+    }
+  ],
+  "report": {
+    "metier": "COMMERCIAL",
+    "title": "Client-Journey Simulation — manual vs automated (synthetic)",
+    "status": "SIMULATION — 4 synthetic journeys; avg satisfaction 0.887; total modelled saving €21330.00 vs manual",
+    "summary": "Per-métier synthetic journeys (profile→need→order→delivery→support→satisfaction). Each compares manual vs automated production cost (cost-engine), reporting a SIMULATED saving and SLA/satisfaction. No real client, no real sale, no observed saving.",
+    "controls": [
+      {
+        "name": "P3 journey",
+        "status": "OK",
+        "detail": "rev €24000, saving €6720 (93%), satisfaction 0.9"
+      },
+      {
+        "name": "P9 journey",
+        "status": "OK",
+        "detail": "rev €8000, saving €3600 (95%), satisfaction 0.88"
+      },
+      {
+        "name": "P10 journey",
+        "status": "OK",
+        "detail": "rev €21000, saving €8460 (94%), satisfaction 0.85"
+      },
+      {
+        "name": "P11 journey",
+        "status": "OK",
+        "detail": "rev €15000, saving €2550 (91%), satisfaction 0.92"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "LOW",
+        "detail": "P3: incident LOW (resolved within SLA)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "P10: incident MEDIUM (resolved within SLA)",
+        "basis": "SIMULATED"
+      }
+    ],
+    "recommendations": [
+      "validate unit economics on a real authorized pilot (E5) before any commercial claim",
+      "keep objection answers aligned with the honesty limits (no certification/guarantee)"
+    ],
+    "limits": [
+      "ALL clients/orders/incidents are SYNTHETIC",
+      "savings are a modelled manual-vs-automated comparison — never observed or client-validated",
+      "satisfaction is deterministic from declared inputs, not a real NPS"
+    ],
+    "validationConditions": [
+      "re-run reproduces identical journeys (deterministic)",
+      "evidence digest independently verifiable"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "4 reproducible synthetic journeys with manual-vs-automated savings",
+          "basis": "SIMULATED",
+          "sourceRef": "V60_CLIENT_JOURNEY_SIM.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 0,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 1,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "bbd47e170547ddb2bfb29aad9e098351d19d6597ba585ad731c73a0e8593ee8f",
+        "sourceCommit": "1ea734c6504fed68086894c099530f30b7c9ad16",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "bbd47e170547ddb2bfb29aad9e098351d19d6597ba585ad731c73a0e8593ee8f",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 0,
+        "nonProven": 1,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

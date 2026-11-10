@@ -1,0 +1,35 @@
+{
+  "//": "CTO V60 §2 — recovery dossier for the 3 CANONICAL_SOURCE_BLOCKED parts. Documents a genuine search across tracked files, full git history, stashes and legacy master docs. FABRICATES NOTHING: where the canonical V12.4 enumeration is not recoverable, it says so and names the exact source required.",
+  "generatedBy": "odg (search executed by the technical provider under V60)",
+  "parts": [
+    {
+      "part": "I §5–§6",
+      "need": "the enumerated list of the 26 fundamental capabilities",
+      "searched": ["tracked *.md/*.json", "git rev-list --all grep", "5 stashes", "legacy master docs (odg-master-v5, ODG_MASTER_ROADMAP*.md, TEN_PROFESSIONS_MASTER, UNIFIED_REGISTER)"],
+      "found": "references to '26 capabilities' exist (coverage matrix, traceability matrix) but NO enumerated 1..26 list with names/criteria",
+      "verdict": "NOT_RECOVERABLE from available sources",
+      "requiredSource": "the FROZEN Master original (§6) — owner-held; not in this repo",
+      "action": "do NOT fabricate the 26 items; closure of Part I waits on the owner supplying the canonical §6 enumeration"
+    },
+    {
+      "part": "IV §16–§20",
+      "need": "the 12 architectural dimensions (§18) and the 10 cognitive responsibilities (§19), enumerated",
+      "searched": ["ODG_MASTER_ROADMAP.md / _V12.4.md / crosswalk", "git history", "world-model/cognitive-loop source + tests"],
+      "found": "the part HEADINGS name '12 dimensions' and '10 cognitive responsibilities'; the word 'dimension' appears in unrelated prose; NO enumerated 1..12 / 1..10 canonical lists",
+      "verdict": "NOT_RECOVERABLE from available sources",
+      "requiredSource": "the FROZEN Master original (§18/§19) — owner-held",
+      "action": "world-model/cognitive-loop machinery exists and is tested; the ENUMERATION itself must come from the owner — not fabricated"
+    },
+    {
+      "part": "XXV §105",
+      "need": "the fault register F01–F40, enumerated",
+      "searched": ["git grep F0x/F1x/F2x/F3x across all history", "FEUILLE_DE_ROUTE.md", "STANDARDS_OBLIGATIONS_REGISTER_V2.md", "failures-register module + tests"],
+      "found": "DIFFERENT fault namespaces exist — FND-F0..F12 (foundation roadmap), FILM-F10/F11 (film-factory), SEC-F1/F2/F3 (security lots) — these are NOT the V12.4 §105 F01–F40 register; only the range endpoints 'F01'/'F40' appear in the roadmap summary, never F02..F39 as a canonical list",
+      "verdict": "NOT_RECOVERABLE from available sources (the F-IDs present belong to other namespaces, not §105)",
+      "requiredSource": "the FROZEN Master original (§105) — owner-held",
+      "action": "the failures-register MECHANISM exists; the canonical F01–F40 CONTENT must come from the owner — not fabricated from the unrelated F-namespaces"
+    }
+  ],
+  "conclusion": "A serious recovery search (tracked files + full git history + 5 stashes + legacy master docs + cross-references) did NOT surface the canonical V12.4 enumerations for Parts I, IV, XXV. The repo holds the MACHINERY (world-model, cognitive-loop, failures-register) but not the enumerated CONTENT. Per the no-fabrication rule, these three parts remain blocked on the owner-held FROZEN Master; nothing was invented.",
+  "invariant": "Restore only what has a verifiable source. An unrelated F-namespace is never substituted for §105. Absence of a recoverable source is recorded as such, never filled with fabricated items."
+}
