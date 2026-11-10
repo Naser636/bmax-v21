@@ -1,0 +1,50 @@
+{
+  "//": "CTO V91 §2 — independent release inspection across domains A–F from REAL facts, routed through the V86 boundary with a V85-meta-validated inspector + producer≠inspector independence. Technical-readiness only — NOT a delivery go (delivery stays gated on the 8 preconditions + the critical gate). NOT_MEASURED is never turned into PASS; a missing P5 fix ⇒ BLOCKED.",
+  "head": "5b42873",
+  "branch": "excellence/v3-wave3-demonstrators-20261101",
+  "domains": [
+    {
+      "id": "A-architecture-governance",
+      "verdict": "PASS",
+      "facts": "9/9 primitives present, pipeline 23/23 wired; ODG authority (V61) + no parallel registry (prior lots)"
+    },
+    {
+      "id": "B-roadmap-capabilities",
+      "verdict": "PASS",
+      "facts": "15/15 métiers VALIDATED; 29 canonical missions accepted; 14 HUMAN_SIGNOFF dossiers remain (owner)"
+    },
+    {
+      "id": "C-pipeline-execution",
+      "verdict": "PASS",
+      "facts": "operational inspection coverage 9; V86 boundary + V88 incremental wired (V89); no uninspected acceptance path (EXECUTED_UNINSPECTED never accepted)"
+    },
+    {
+      "id": "D-tests-proofs",
+      "verdict": "PASS",
+      "facts": "P5 fix PRESENT — developer-platform.test.ts IS in the gate; full gate green at prior lot (re-confirmed by CI on push); negative/adversarial batteries present (V85/V86/V87/V88)"
+    },
+    {
+      "id": "E-github-ci",
+      "verdict": "CONCERN",
+      "facts": "ci.yml present (push+PR ⇒ npm ci → build:runtime → tsc → classified gate); main protected (enforce_admins + required PR + required check \"build + typecheck + parity + tests\"); HEAD +65/-2 vs origin/main (behind-by-2 ⇒ non-ff to main). No deploy workflow. No secrets referenced in workflows (presence-only check)."
+    },
+    {
+      "id": "F-release-risks",
+      "verdict": "CONCERN",
+      "facts": "behind-main-by-2 ⇒ merge divergence (needs rebase/merge); VPS NOT inventoried ⇒ repo↔target divergence risk (owner-gated); rollback prepared (V89, immutable HEAD + stashes); no destructive migration planned"
+    }
+  ],
+  "inspectorMetaValidation": {
+    "realInspectorEffective": true,
+    "blindControlRejected": true,
+    "qualified": true
+  },
+  "independence": "INDEPENDENT",
+  "boundaryPre": "APPROVED",
+  "boundaryPost": "PASS",
+  "p5FixPresent": true,
+  "technicalVerdict": "READY_WITH_CONCERNS",
+  "deliveryDecision": "NOT_READY — delivery remains gated on the 8 preconditions + the critical gate (this inspection is one of them, not a delivery authorization)",
+  "honestConclusion": "Independent release inspection: 4/6 domains PASS, 2 CONCERN (behind-main divergence, VPS not inventoried), 0 BLOCKED. Inspector qualified=true (blind control rejected), independence=INDEPENDENT. P5 fix present=true. Technical verdict: READY_WITH_CONCERNS. This satisfies the INSPECTION criterion mechanically (qualified + independent + routed through the boundary), but delivery stays NOT_READY on the remaining preconditions.",
+  "invariant": "release inspection is independent (producer≠inspector) + meta-validated (blind rejected) + routed through the V86 boundary; NOT_MEASURED never ⇒ PASS; a missing P5 fix ⇒ BLOCKED; it is NOT a delivery authorization."
+}
