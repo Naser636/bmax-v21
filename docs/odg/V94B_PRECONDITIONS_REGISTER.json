@@ -1,0 +1,55 @@
+{
+  "//": "CTO V94-B §2 — register recalculated. ROADMAP_EXHAUSTIVE MET on real evidence (decisions taken + local deliverables executed + remainder precisely qualified). 8/8 = PRECONDITIONS satisfied; it is NOT a go-live and NOT a delivery — the actual push + go-live need the owner's explicit critical-gate authorization + a ROOT action, neither performed. No parallel registry.",
+  "criteria": [
+    {
+      "id": "INSPECTION_COVERAGE",
+      "status": "MET"
+    },
+    {
+      "id": "FULL_GATE",
+      "status": "MET"
+    },
+    {
+      "id": "GITHUB_AUDIT",
+      "status": "MET"
+    },
+    {
+      "id": "BACKUP_ROLLBACK",
+      "status": "MET"
+    },
+    {
+      "id": "INDEPENDENT_RELEASE_INSPECTION",
+      "status": "MET"
+    },
+    {
+      "id": "ROADMAP_EXHAUSTIVE",
+      "status": "MET",
+      "evidence": "5 decisions TAKEN (XXX owner-explicit; 4 delegation arbitrations) + Dossier A local deliverables EXECUTED (§117 preservation, §119 uncertainty register, XIII reproducible protocol fail-closed); REQ-I/IV/XXV recovered; §118 A1-A10 precisely qualified FROZEN. Remainder precisely qualified owner/external/root (external benchmark deferred, commercial deferred, go-live=root).",
+      "qualification": "local work done OR precisely qualified; a recorded decision ≠ a delivered release"
+    },
+    {
+      "id": "VPS_INVENTORY",
+      "status": "MET"
+    },
+    {
+      "id": "EXECUTABLE_DEPLOYMENT_PLAN",
+      "status": "MET"
+    }
+  ],
+  "metCount": 8,
+  "met": [
+    "INSPECTION_COVERAGE",
+    "FULL_GATE",
+    "GITHUB_AUDIT",
+    "BACKUP_ROLLBACK",
+    "INDEPENDENT_RELEASE_INSPECTION",
+    "ROADMAP_EXHAUSTIVE",
+    "VPS_INVENTORY",
+    "EXECUTABLE_DEPLOYMENT_PLAN"
+  ],
+  "notMet": [],
+  "allPreconditionsMet": true,
+  "deliveryDecision": "READY_TO_ENTER_DELIVERY — all 8 preconditions MET; the actual push + production go-live require (a) the owner's explicit critical-gate authorization and (b) a ROOT action (deploy/README.md). NEITHER performed in V94-B. This is NOT a delivery.",
+  "honestConclusion": "8/8 preconditions MET. ROADMAP_EXHAUSTIVE reached MET because the 5 decisions are taken (XXX owner-explicit + 4 delegation arbitrations) AND the Dossier A local deliverables are executed on real evidence, with the frozen A1-A10 + external/commercial/go-live items precisely qualified. IMPORTANT: 8/8 preconditions ≠ delivered. The push and the production go-live remain owner/ROOT-gated and were NOT performed. A recorded decision is not a released artifact.",
+  "invariant": "ROADMAP_EXHAUSTIVE MET only on executed local deliverables + precisely-qualified remainder (not on recorded decisions alone); 8/8 preconditions is NOT a go-live; push + go-live stay owner/ROOT-gated and were not performed; fail-closed."
+}

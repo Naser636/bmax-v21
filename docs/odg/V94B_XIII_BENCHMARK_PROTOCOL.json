@@ -1,0 +1,34 @@
+{
+  "//": "CTO V94-B §3 — XIII local reproducible benchmark PROTOCOL. Reuses benchmark-factory (buildSuite/auditBenchmark) + eval-significance; no new engine. FAIR+REPRODUCIBLE (fixed spec, contamination-audited). FAIL-CLOSED superiority: a WORLD-superiority claim needs an authorized EXTERNAL comparison (owner-gated) ⇒ NOT_MEASURED. No external claim made.",
+  "protocol": {
+    "spec": {
+      "type": "HELDOUT",
+      "trainSize": 14,
+      "heldoutSize": 6,
+      "seed": "V94B-XIII-internal",
+      "task": "internal reproducible capability benchmark"
+    },
+    "reproducible": true,
+    "reusesExisting": [
+      "benchmark-factory.buildSuite",
+      "benchmark-factory.auditBenchmark",
+      "eval-significance.significanceGate"
+    ]
+  },
+  "contaminationAudit": {
+    "clean": true,
+    "issues": [],
+    "severity": "NONE"
+  },
+  "significanceExample": {
+    "verdict": "NO_DATA",
+    "note": "an internal directional lift must be statistically significant, not sampling noise"
+  },
+  "superiorityClaim": {
+    "worldSuperiority": "NOT_MEASURED",
+    "reason": "requires an authorized fair EXTERNAL comparison (reproducible, equal conditions) — owner-gated; not performed",
+    "failClosed": true
+  },
+  "honestConclusion": "XIII decision executed locally: a FAIR, REPRODUCIBLE benchmark protocol is defined by composing the existing benchmark-factory (contamination audit clean=true) + eval-significance — no new engine, no duplication. WORLD-superiority is FAIL-CLOSED NOT_MEASURED: no external comparison was authorized/run, so no superiority is claimed. The local protocol is ready to run internal-vs-internal; an external head-to-head stays owner-gated.",
+  "invariant": "reuses existing benchmark infra (no duplication); reproducible fixed spec; contamination audited; superiority FAIL-CLOSED (external comparison required ⇒ NOT_MEASURED); no world claim made."
+}
