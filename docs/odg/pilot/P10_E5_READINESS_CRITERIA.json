@@ -1,0 +1,45 @@
+{
+  "//": "CTO V54 — P10 AI-governance E4→E5 transition criteria. P10 STAYS at E4 until EVERY condition below is met=true AND an independent controller signs off. E5 requires a real authorised client, real documented AI systems, a lawful data basis, real execution, observed/verifiable results, written client validation and qualified legal confirmation. ODG prepares readiness evidence; it NEVER certifies, gives legal advice, or guarantees compliance. Nothing here authorises prospecting, contracts, spend or external communication.",
+  "metier": "P10",
+  "title": "AI Governance / AI-Act & GDPR readiness",
+  "p10CurrentStage": "E4",
+  "e5Status": "NOT_STARTED",
+  "e4Evidence": {
+    "readinessArtifact": "docs/odg/demonstrators/P10_AIGOV_READINESS.json",
+    "pilotSimulation": "docs/odg/demonstrators/P10_AI_GOVERNANCE_PILOT_SIM.json",
+    "reproducible": true,
+    "independentlyVerifiable": true,
+    "basis": "SIMULATED classifications/gaps on synthetic declared activities — never OBSERVED, never certified, never legal advice"
+  },
+  "transitionConditions": [
+    { "id": "C1", "condition": "A real client explicitly authorises an engagement (signed scope by the owner).", "met": false, "ownerAction": true, "controller": true },
+    { "id": "C2", "condition": "Perimeter and responsibilities written (AI systems in/out of scope; who owns which obligation).", "met": false, "ownerAction": true },
+    { "id": "C3", "condition": "Lawful basis and data access established (AI-system inventory, technical/vendor docs, risk assessments) — minimised, documented.", "met": false, "ownerAction": true },
+    { "id": "C4", "condition": "Execution on the real context: roles classified from VERIFIED (not merely declared) activities; controls assessed against real evidence.", "met": false },
+    { "id": "C5", "condition": "Observed, verifiable results: each obligation carries real evidence; INSUFFICIENT_EVIDENCE is resolved or explicitly carried with a plan.", "met": false },
+    { "id": "C6", "condition": "Qualified legal confirmation: every LEGAL_OBLIGATION / NEEDS_LEGAL_EXPERTISE item confirmed by competent counsel (ODG does not give legal advice).", "met": false, "controller": true },
+    { "id": "C7", "condition": "Written client validation of the findings and remediation plan.", "met": false, "controller": true },
+    { "id": "C8", "condition": "Independent controller review of the whole engagement (ODG retains authority; Claude Code = technical provider only).", "met": false, "controller": true }
+  ],
+  "acceptanceCriteria": [
+    "Every transitionCondition.met === true.",
+    "At least one OBSERVED/verified-evidence item replaces a SIMULATED classification.",
+    "Each requirement correctly typed (LEGAL_OBLIGATION / CONDITIONAL_REQUIREMENT / GOOD_PRACTICE / RECOMMENDATION / HYPOTHESIS / NEEDS_LEGAL_EXPERTISE) and legal items confirmed by counsel.",
+    "Independent evidence digest verifies (O2.verifyEvidence ok) over the real deliverable.",
+    "Controller sign-off recorded; owner authorisation recorded."
+  ],
+  "rejectionCriteria": [
+    "The report presented as a certification, a legal opinion, or a compliance guarantee.",
+    "Any obligation asserted in force without a dated, sourced basis (register-silent ⇒ UNKNOWN_DATE must stay unknown).",
+    "Data accessed without a documented lawful basis or beyond the agreed perimeter.",
+    "A listed-but-untested control reported as PASS (INSUFFICIENT_EVIDENCE must stay INSUFFICIENT_EVIDENCE).",
+    "No independent controller review, or counsel withholds confirmation, or client does not validate in writing."
+  ],
+  "regulatoryPosture": "ODG prepares AI-Act/GDPR readiness evidence. Dates are injected data to be confirmed against authoritative texts by qualified counsel. NOT a certification, NOT legal advice, NOT a conformity guarantee.",
+  "invariant": "Until all conditions are met=true, P10 remains E4 and e5Status remains NOT_STARTED. Simulated classifications are NEVER presented as observed or certified. ODG keeps authority; an independent controller and qualified legal expertise are mandatory.",
+  "nonGoals": [
+    "No prospecting, no external message, no contract, no spend, no subscription, no hiring.",
+    "No CRM or parallel registry — reuse the nine primitives, P10 guard, O1/O2, ai-act-in-force, existing evidence.",
+    "No push, merge, deployment or VPS access; no background process; no npm privilege escalation."
+  ]
+}

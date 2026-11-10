@@ -1,0 +1,827 @@
+{
+  "//": "CTO V54 — P10 AI-governance SECOND-PILOT internal simulation. SYNTHETIC portfolio. Classifications/gaps/dates SIMULATED — never observed, never a certification, never legal advice. E4 rehearsal; E5=NOT_STARTED. Reuses assessAISystem + ai-act-in-force + O1/O2; no new engine, no parallel registry.",
+  "demonstrator": "P10 AI Governance — second-pilot internal simulation (readiness only)",
+  "generatedAt": "2026-11-10T15:06:43.856Z",
+  "asOf": "2026-11-10",
+  "synthetic": true,
+  "parcours": [
+    "1 scope",
+    "2 AI-system inventory",
+    "3 use & responsibility classification",
+    "4 risk analysis",
+    "5 existing-control evaluation",
+    "6 gap identification",
+    "7 remediation plan",
+    "8 O1 deliverable + O2 evidence",
+    "9 independent controller review (external, owner-gated)"
+  ],
+  "requirementTaxonomy": {
+    "LEGAL": "LEGAL_OBLIGATION",
+    "COND": "CONDITIONAL_REQUIREMENT",
+    "GOOD": "GOOD_PRACTICE",
+    "RECO": "RECOMMENDATION",
+    "HYP": "HYPOTHESIS",
+    "LEGAL_EXPERTISE": "NEEDS_LEGAL_EXPERTISE"
+  },
+  "systems": [
+    {
+      "id": "sys-cv-screener",
+      "name": "CV screening assistant",
+      "ok": true,
+      "roles": [
+        "DEPLOYER"
+      ],
+      "overall": "NOT_ASSURED",
+      "certificationStatus": "NOT_CERTIFIED — ODG prepares documents/controls/evidence; an accredited/independent body is required to certify",
+      "controlCount": 5,
+      "controls": [
+        {
+          "id": "ai-act:DEPLOYER:use per provider instructions",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:DEPLOYER:human oversight in operation",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:DEPLOYER:Art.50 transparency to affected ",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)",
+          "inForce": "IN_FORCE",
+          "requirementType": "LEGAL_OBLIGATION"
+        },
+        {
+          "id": "ai-act:DEPLOYER:monitoring & logging retention",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:DEPLOYER:data-protection/DPIA coordinatio",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        }
+      ],
+      "tally": {
+        "PASS": 0,
+        "FAIL": 0,
+        "INSUFFICIENT_EVIDENCE": 5,
+        "NOT_APPLICABLE": 0
+      },
+      "inForce": {
+        "total": 5,
+        "inForce": 1,
+        "notYet": 0,
+        "unknownDate": 4
+      },
+      "inForceRows": [
+        {
+          "obligation": "use per provider instructions",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "human oversight in operation",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "Art.50 transparency to affected persons where applicable",
+          "status": "IN_FORCE",
+          "applicableFrom": "2026-08-02",
+          "amendingRegulation": "AI-Act Art.50 (general application 2 Aug 2026)",
+          "access": "public-principle"
+        },
+        {
+          "obligation": "monitoring & logging retention",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "data-protection/DPIA coordination where applicable",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        }
+      ],
+      "gaps": [
+        {
+          "id": "ai-act:DEPLOYER:use per provider instructions",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:human oversight in operation",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:Art.50 transparency to affected ",
+          "requirementType": "LEGAL_OBLIGATION",
+          "detail": "DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:monitoring & logging retention",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:data-protection/DPIA coordinatio",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)"
+        }
+      ]
+    },
+    {
+      "id": "sys-support-chatbot",
+      "name": "Customer-support chatbot",
+      "ok": true,
+      "roles": [
+        "DEPLOYER"
+      ],
+      "overall": "NOT_ASSURED",
+      "certificationStatus": "NOT_CERTIFIED — ODG prepares documents/controls/evidence; an accredited/independent body is required to certify",
+      "controlCount": 6,
+      "controls": [
+        {
+          "id": "ai-act:DEPLOYER:use per provider instructions",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:DEPLOYER:human oversight in operation",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:DEPLOYER:Art.50 transparency to affected ",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)",
+          "inForce": "IN_FORCE",
+          "requirementType": "LEGAL_OBLIGATION"
+        },
+        {
+          "id": "ai-act:DEPLOYER:monitoring & logging retention",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:DEPLOYER:data-protection/DPIA coordinatio",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:art50",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "AI-Act transparency obligation: Art.50(1): inform persons they are interacting with an AI system",
+          "inForce": "IN_FORCE",
+          "requirementType": "LEGAL_OBLIGATION"
+        }
+      ],
+      "tally": {
+        "PASS": 0,
+        "FAIL": 0,
+        "INSUFFICIENT_EVIDENCE": 6,
+        "NOT_APPLICABLE": 4
+      },
+      "inForce": {
+        "total": 6,
+        "inForce": 2,
+        "notYet": 0,
+        "unknownDate": 4
+      },
+      "inForceRows": [
+        {
+          "obligation": "use per provider instructions",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "human oversight in operation",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "Art.50 transparency to affected persons where applicable",
+          "status": "IN_FORCE",
+          "applicableFrom": "2026-08-02",
+          "amendingRegulation": "AI-Act Art.50 (general application 2 Aug 2026)",
+          "access": "public-principle"
+        },
+        {
+          "obligation": "monitoring & logging retention",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "data-protection/DPIA coordination where applicable",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "Art.50(1): inform persons they are interacting with an AI system",
+          "status": "IN_FORCE",
+          "applicableFrom": "2026-08-02",
+          "amendingRegulation": "AI-Act Art.50 (general application 2 Aug 2026)",
+          "access": "public-principle"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "ai-act:DEPLOYER:use per provider instructions",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:human oversight in operation",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:Art.50 transparency to affected ",
+          "requirementType": "LEGAL_OBLIGATION",
+          "detail": "DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:monitoring & logging retention",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:DEPLOYER:data-protection/DPIA coordinatio",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:art50",
+          "requirementType": "LEGAL_OBLIGATION",
+          "detail": "AI-Act transparency obligation: Art.50(1): inform persons they are interacting with an AI system"
+        }
+      ]
+    },
+    {
+      "id": "sys-marketing-gen",
+      "name": "Marketing content generator",
+      "ok": true,
+      "roles": [
+        "PROVIDER"
+      ],
+      "overall": "NOT_ASSURED",
+      "certificationStatus": "NOT_CERTIFIED — ODG prepares documents/controls/evidence; an accredited/independent body is required to certify",
+      "controlCount": 8,
+      "controls": [
+        {
+          "id": "ai-act:PROVIDER:risk & quality management propor",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: risk & quality management proportionate to risk tier — applicable, no automated test executed (manual assessment required)",
+          "inForce": "NOT_YET_IN_FORCE",
+          "requirementType": "CONDITIONAL_REQUIREMENT"
+        },
+        {
+          "id": "ai-act:PROVIDER:technical documentation & record",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: technical documentation & record-keeping — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:PROVIDER:transparency / instructions for ",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: transparency / instructions for use — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:PROVIDER:human-oversight design",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: human-oversight design — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:PROVIDER:accuracy/robustness/cybersecurit",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: accuracy/robustness/cybersecurity — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:PROVIDER:post-market monitoring",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: post-market monitoring — applicable, no automated test executed (manual assessment required)",
+          "inForce": "UNKNOWN_DATE",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE"
+        },
+        {
+          "id": "ai-act:PROVIDER:registration where required (hig",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "PROVIDER obligation family: registration where required (high-risk) — applicable, no automated test executed (manual assessment required)",
+          "inForce": "NOT_YET_IN_FORCE",
+          "requirementType": "CONDITIONAL_REQUIREMENT"
+        },
+        {
+          "id": "ai-act:art50",
+          "group": "ai-act",
+          "status": "INSUFFICIENT_EVIDENCE",
+          "detail": "AI-Act transparency obligation: Art.50(2): mark AI-generated/manipulated audio/image/video/text as artificially generated (machine-readable)",
+          "inForce": "IN_FORCE",
+          "requirementType": "LEGAL_OBLIGATION"
+        }
+      ],
+      "tally": {
+        "PASS": 0,
+        "FAIL": 0,
+        "INSUFFICIENT_EVIDENCE": 8,
+        "NOT_APPLICABLE": 0
+      },
+      "inForce": {
+        "total": 8,
+        "inForce": 1,
+        "notYet": 2,
+        "unknownDate": 5
+      },
+      "inForceRows": [
+        {
+          "obligation": "risk & quality management proportionate to risk tier",
+          "status": "NOT_YET_IN_FORCE",
+          "applicableFrom": "2027-12-02",
+          "amendingRegulation": "Annex III high-risk, Omnibus-shifted 2 Dec 2027",
+          "access": "public-principle"
+        },
+        {
+          "obligation": "technical documentation & record-keeping",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "transparency / instructions for use",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "human-oversight design",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "accuracy/robustness/cybersecurity",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "post-market monitoring",
+          "status": "UNKNOWN_DATE",
+          "applicableFrom": null,
+          "amendingRegulation": null,
+          "access": null
+        },
+        {
+          "obligation": "registration where required (high-risk)",
+          "status": "NOT_YET_IN_FORCE",
+          "applicableFrom": "2027-12-02",
+          "amendingRegulation": "Annex III high-risk, Omnibus-shifted 2 Dec 2027",
+          "access": "public-principle"
+        },
+        {
+          "obligation": "Art.50(2): mark AI-generated/manipulated audio/image/video/text as artificially generated (machine-readable)",
+          "status": "IN_FORCE",
+          "applicableFrom": "2026-08-02",
+          "amendingRegulation": "AI-Act Art.50 (general application 2 Aug 2026)",
+          "access": "public-principle"
+        }
+      ],
+      "gaps": [
+        {
+          "id": "ai-act:PROVIDER:risk & quality management propor",
+          "requirementType": "CONDITIONAL_REQUIREMENT",
+          "detail": "PROVIDER obligation family: risk & quality management proportionate to risk tier — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:PROVIDER:technical documentation & record",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "PROVIDER obligation family: technical documentation & record-keeping — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:PROVIDER:transparency / instructions for ",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "PROVIDER obligation family: transparency / instructions for use — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:PROVIDER:human-oversight design",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "PROVIDER obligation family: human-oversight design — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:PROVIDER:accuracy/robustness/cybersecurit",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "PROVIDER obligation family: accuracy/robustness/cybersecurity — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:PROVIDER:post-market monitoring",
+          "requirementType": "NEEDS_LEGAL_EXPERTISE",
+          "detail": "PROVIDER obligation family: post-market monitoring — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:PROVIDER:registration where required (hig",
+          "requirementType": "CONDITIONAL_REQUIREMENT",
+          "detail": "PROVIDER obligation family: registration where required (high-risk) — applicable, no automated test executed (manual assessment required)"
+        },
+        {
+          "id": "ai-act:art50",
+          "requirementType": "LEGAL_OBLIGATION",
+          "detail": "AI-Act transparency obligation: Art.50(2): mark AI-generated/manipulated audio/image/video/text as artificially generated (machine-readable)"
+        }
+      ]
+    }
+  ],
+  "insufficientDataCase": {
+    "input": "system without profile.tenantId",
+    "refused": true,
+    "code": "INVALID_INPUT",
+    "reason": "system.profile.tenantId required (multi-tenant isolation)"
+  },
+  "portfolioSummary": {
+    "systems": 3,
+    "assessed": 3,
+    "openGaps": 19,
+    "byRequirementType": {
+      "NEEDS_LEGAL_EXPERTISE": 13,
+      "LEGAL_OBLIGATION": 4,
+      "CONDITIONAL_REQUIREMENT": 2
+    }
+  },
+  "remediationPlan": [
+    {
+      "system": "sys-cv-screener",
+      "requirementType": "LEGAL_OBLIGATION",
+      "action": "resolve: DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)",
+      "priority": 1
+    },
+    {
+      "system": "sys-support-chatbot",
+      "requirementType": "LEGAL_OBLIGATION",
+      "action": "resolve: DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)",
+      "priority": 2
+    },
+    {
+      "system": "sys-support-chatbot",
+      "requirementType": "LEGAL_OBLIGATION",
+      "action": "resolve: AI-Act transparency obligation: Art.50(1): inform persons they are interacting with an AI system",
+      "priority": 3
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "LEGAL_OBLIGATION",
+      "action": "resolve: AI-Act transparency obligation: Art.50(2): mark AI-generated/manipulated audio/image/video/text as artificially generated (machine-readable)",
+      "priority": 4
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "CONDITIONAL_REQUIREMENT",
+      "action": "resolve: PROVIDER obligation family: risk & quality management proportionate to risk tier — applicable, no automated test executed (manual assessment required)",
+      "priority": 5
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "CONDITIONAL_REQUIREMENT",
+      "action": "resolve: PROVIDER obligation family: registration where required (high-risk) — applicable, no automated test executed (manual assessment required)",
+      "priority": 6
+    },
+    {
+      "system": "sys-cv-screener",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)",
+      "priority": 7
+    },
+    {
+      "system": "sys-cv-screener",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)",
+      "priority": 8
+    },
+    {
+      "system": "sys-cv-screener",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)",
+      "priority": 9
+    },
+    {
+      "system": "sys-cv-screener",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)",
+      "priority": 10
+    },
+    {
+      "system": "sys-support-chatbot",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)",
+      "priority": 11
+    },
+    {
+      "system": "sys-support-chatbot",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)",
+      "priority": 12
+    },
+    {
+      "system": "sys-support-chatbot",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)",
+      "priority": 13
+    },
+    {
+      "system": "sys-support-chatbot",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)",
+      "priority": 14
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: PROVIDER obligation family: technical documentation & record-keeping — applicable, no automated test executed (manual assessment required)",
+      "priority": 15
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: PROVIDER obligation family: transparency / instructions for use — applicable, no automated test executed (manual assessment required)",
+      "priority": 16
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: PROVIDER obligation family: human-oversight design — applicable, no automated test executed (manual assessment required)",
+      "priority": 17
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: PROVIDER obligation family: accuracy/robustness/cybersecurity — applicable, no automated test executed (manual assessment required)",
+      "priority": 18
+    },
+    {
+      "system": "sys-marketing-gen",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "action": "resolve: PROVIDER obligation family: post-market monitoring — applicable, no automated test executed (manual assessment required)",
+      "priority": 19
+    }
+  ],
+  "independentEvidenceVerification": {
+    "ok": true,
+    "reason": "digest matches — evidence integrity verified independently"
+  },
+  "regulatoryPosture": "NOT_CERTIFIED — ODG prepares readiness evidence; dates are injected data; a register-silent obligation is UNKNOWN_DATE; qualified legal expertise required for legal conclusions",
+  "e5Status": "NOT_STARTED — simulation only; no real client, no real systems, no client validation",
+  "report": {
+    "metier": "P10",
+    "title": "AI Governance Audit — PILOT SIMULATION (synthetic portfolio)",
+    "status": "SIMULATION — 3 AI systems assessed, 19 open control gaps; NOT_CERTIFIED, NOT legal advice",
+    "summary": "Synthetic portfolio of 3 AI systems. Roles classified deny-by-default from DECLARED activities; 19 controls are INSUFFICIENT_EVIDENCE/FAIL (open gaps). AI-Act obligations mapped to an INJECTED in-force register (dates = data; register-silent ⇒ UNKNOWN_DATE, fail-closed). Requirement types: CONDITIONAL_REQUIREMENT:2, LEGAL_OBLIGATION:4, NEEDS_LEGAL_EXPERTISE:13. Every result is SIMULATED on synthetic input — NOT observed, NOT a certification, NOT legal advice.",
+    "controls": [
+      {
+        "name": "sys-cv-screener:ai-act:DEPLOYER:use per provider instructions",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-cv-screener:ai-act:DEPLOYER:human oversight in operation",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-cv-screener:ai-act:DEPLOYER:Art.50 transparency to affected ",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[LEGAL_OBLIGATION] DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-cv-screener:ai-act:DEPLOYER:monitoring & logging retention",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-support-chatbot:ai-act:DEPLOYER:use per provider instructions",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-support-chatbot:ai-act:DEPLOYER:human oversight in operation",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-support-chatbot:ai-act:DEPLOYER:Art.50 transparency to affected ",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[LEGAL_OBLIGATION] DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-support-chatbot:ai-act:DEPLOYER:monitoring & logging retention",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-marketing-gen:ai-act:PROVIDER:risk & quality management propor",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[CONDITIONAL_REQUIREMENT] PROVIDER obligation family: risk & quality management proportionate to risk tier — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-marketing-gen:ai-act:PROVIDER:technical documentation & record",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] PROVIDER obligation family: technical documentation & record-keeping — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-marketing-gen:ai-act:PROVIDER:transparency / instructions for ",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] PROVIDER obligation family: transparency / instructions for use — applicable, no automated test executed (manual assessment required)"
+      },
+      {
+        "name": "sys-marketing-gen:ai-act:PROVIDER:human-oversight design",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "detail": "[NEEDS_LEGAL_EXPERTISE] PROVIDER obligation family: human-oversight design — applicable, no automated test executed (manual assessment required)"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-cv-screener: DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-cv-screener: DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "HIGH",
+        "detail": "sys-cv-screener: DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-cv-screener: DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-cv-screener: DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-support-chatbot: DEPLOYER obligation family: use per provider instructions — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-support-chatbot: DEPLOYER obligation family: human oversight in operation — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "HIGH",
+        "detail": "sys-support-chatbot: DEPLOYER obligation family: Art.50 transparency to affected persons where applicable — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-support-chatbot: DEPLOYER obligation family: monitoring & logging retention — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "sys-support-chatbot: DEPLOYER obligation family: data-protection/DPIA coordination where applicable — applicable, no automated test executed (manual assessment required)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "INFO",
+        "detail": "insufficient-data case ⇒ correctly REFUSED (INVALID_INPUT) — not assessed, no fake PASS",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "complete a manual/qualified legal assessment for every NEEDS_LEGAL_EXPERTISE obligation",
+      "prepare Annex IV technical documentation for provider-role systems (reuse ai-act-annex-iv-completeness)",
+      "confirm each AI-Act date against the authoritative text with qualified counsel (dates here are injected data)",
+      "do NOT present this report as a certification, a legal opinion, or a compliance guarantee"
+    ],
+    "limits": [
+      "ALL inputs are SYNTHETIC — no client data; roles from DECLARED (declared-not-verified) activities",
+      "INSUFFICIENT_EVIDENCE ≠ non-compliant and ≠ PASS — manual/qualified assessment required",
+      "in-force dates are INJECTED DATA (repo-documented milestones); a register-silent obligation is UNKNOWN_DATE, never asserted in force",
+      "NOT a certification, NOT legal advice, NOT a conformity guarantee; ODG prepares, an accredited body/qualified counsel decides",
+      "ODG maturity L2 for P10; 0 paying clients; E5 (client-validated) = NOT_STARTED"
+    ],
+    "validationConditions": [
+      "re-run reproduces identical classifications/gaps from identical synthetic inputs (digest stable)",
+      "evidence digest independently verifiable via O2.verifyEvidence",
+      "before E5: real authorized client + real documented systems + qualified legal confirmation + documented client validation"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "3/3 systems assessed; roles classified deny-by-default",
+          "basis": "SIMULATED",
+          "sourceRef": "P10_AI_GOVERNANCE_PILOT_SIM.json"
+        },
+        {
+          "claim": "19 open control gaps classified by requirement type",
+          "basis": "SIMULATED",
+          "sourceRef": "P10_AI_GOVERNANCE_PILOT_SIM.json"
+        },
+        {
+          "claim": "insufficient-data input REFUSED (fail-closed, no fake PASS)",
+          "basis": "PROVEN",
+          "sourceRef": "P10_AI_GOVERNANCE_PILOT_SIM.json"
+        },
+        {
+          "claim": "AI-Act in-force status from injected register; register-silent ⇒ UNKNOWN_DATE",
+          "basis": "SIMULATED",
+          "sourceRef": "P10_AI_GOVERNANCE_PILOT_SIM.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 3,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "fbdcca1217f3554711a19c7b6b5e50ac06312e5801c971fc360ad61af685eeb7",
+        "sourceCommit": "7ac60f54fd4b787784eee1caaf0c539f85fab93b",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "fbdcca1217f3554711a19c7b6b5e50ac06312e5801c971fc360ad61af685eeb7",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 4,
+        "proven": 1,
+        "nonProven": 3,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}
