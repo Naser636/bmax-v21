@@ -1,0 +1,1259 @@
+{
+  "//": "CTO V62 §5/§6 — per-métier performance fiches. Multidimensional card per métier aggregating existing measurements; each dimension carries a basis; no source ⇒ NOT_MEASURED (fail-closed). Five internal reference-baseline types enumerated. NO single artificial cross-métier score. Superiority fail-closed. Read-only; no new engine.",
+  "generatedFrom": [
+    "V50_E4_ASSESSMENT_MATRIX.json",
+    "V57_15_METIERS_BENCHMARK_PROGRAM.json",
+    "V55_COST_SUPERIORITY_PROGRAM.json",
+    "V55_AUTOMATION_MEASUREMENT.json",
+    "V62_SYNTHETIC_ENTERPRISE_SIM.json"
+  ],
+  "metierCount": 15,
+  "referenceBaselineTypes": [
+    "human-professional",
+    "open-source",
+    "public-benchmark",
+    "synthetic",
+    "historical-ODG-version"
+  ],
+  "fiches": [
+    {
+      "metier": "P3",
+      "capability": "SBOM/supply-chain/license",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "readiness-only, NOT_CERTIFIED",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": 0.9,
+          "basis": "SIMULATED (synthetic enterprise)",
+          "source": "V62 enterprise sim"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P11",
+      "capability": "e-invoice EN16931/STP",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "readiness-only, NOT_CERTIFIED",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": 0.9,
+          "basis": "SIMULATED (synthetic enterprise)",
+          "source": "V62 enterprise sim"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P9",
+      "capability": "FinOps cost-engine",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": 0.9,
+          "basis": "SIMULATED (synthetic enterprise)",
+          "source": "V62 enterprise sim"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P10",
+      "capability": "ai-assurance/AI-Act",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "readiness-only, NOT_CERTIFIED",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": 0.9,
+          "basis": "SIMULATED (synthetic enterprise)",
+          "source": "V62 enterprise sim"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P15",
+      "capability": "metier-coordinator orchestration",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P1",
+      "capability": "native build/repair/code-health",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P2",
+      "capability": "agent-gov/eval",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P4",
+      "capability": "dataset-quality/PII",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P5",
+      "capability": "canary/deployment-readiness",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P6",
+      "capability": "eval-metrics",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P7",
+      "capability": "SLO/latency",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P8",
+      "capability": "api-contract",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P12",
+      "capability": "event-stream reliability",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P14",
+      "capability": "developer-platform/golden-path",
+      "e4": "DEMONSTRATED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": null
+    },
+    {
+      "metier": "P13",
+      "capability": "local-model (CPU only)",
+      "e4": "BLOCKED",
+      "dimensions": {
+        "quality": {
+          "value": "EFFECTIVE",
+          "basis": "OBSERVED (ODG-side harness)",
+          "source": "V57 benchmark"
+        },
+        "precision": {
+          "value": "specific (0 false-pos)",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "errorRate": {
+          "value": "fail-closed on malformed",
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "robustness": {
+          "value": true,
+          "basis": "OBSERVED",
+          "source": "V57 benchmark"
+        },
+        "security": {
+          "value": "deny-by-default / fail-closed (see V61 authority rule)",
+          "basis": "OBSERVED (governance)",
+          "source": "V61 separation test"
+        },
+        "compliance": {
+          "value": "n/a",
+          "basis": "DECLARED",
+          "source": "métier guard"
+        },
+        "speed": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "totalCost": {
+          "value": "ODG €386 vs ref €2260 (83% SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 cost"
+        },
+        "resourceUse": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "automation": {
+          "value": "100% eligible / 79% time (SIMULATED)",
+          "basis": "SIMULATED",
+          "source": "V55 automation"
+        },
+        "longTaskReliability": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        },
+        "incidentRecovery": {
+          "value": "rce-assurance / circuit-breaker present",
+          "basis": "OBSERVED (modules)",
+          "source": "guard modules"
+        },
+        "satisfaction": {
+          "value": null,
+          "basis": "NOT_MEASURED",
+          "source": "none"
+        }
+      },
+      "referenceBaselines": [
+        "human-professional",
+        "open-source",
+        "public-benchmark",
+        "synthetic",
+        "historical-ODG-version"
+      ],
+      "superiority": "NOT DEMONSTRATED — requires head-to-head reference execution + independent re-run (V57 §2, fail-closed)",
+      "blocked": "P13 hardware/GPU absent — software/prep done, dependency not satisfied"
+    }
+  ],
+  "perDimensionRanking": [
+    {
+      "dimension": "quality",
+      "measuredCount": 15,
+      "note": "ranked within this dimension only — NEVER combined into a single cross-métier score"
+    },
+    {
+      "dimension": "totalCost",
+      "measuredCount": 15,
+      "note": "ranked within this dimension only — NEVER combined into a single cross-métier score"
+    },
+    {
+      "dimension": "automation",
+      "measuredCount": 15,
+      "note": "ranked within this dimension only — NEVER combined into a single cross-métier score"
+    },
+    {
+      "dimension": "satisfaction",
+      "measuredCount": 4,
+      "note": "ranked within this dimension only — NEVER combined into a single cross-métier score"
+    }
+  ],
+  "honestConclusion": "15 per-métier performance fiches built by aggregating existing measurements. Dimensions carry explicit bases; unmeasured dimensions (speed, resourceUse, longTaskReliability) are NOT_MEASURED (not faked). No single global score. Superiority NOT DEMONSTRATED for any métier (fail-closed). P13 remains hardware-blocked.",
+  "invariant": "No dimension value is fabricated; a missing source ⇒ NOT_MEASURED, never 0/PASS. No cross-métier global score. Superiority requires real head-to-head + independent re-run."
+}
