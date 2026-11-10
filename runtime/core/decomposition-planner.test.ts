@@ -11,10 +11,16 @@ check(D.assessComplexity({ architecture: [{ path: "d.js", role: "detect undefine
 check(D.assessComplexity({ architecture: [{ path: "d.js", role: "parse", contract: "x" }, { path: "e.js", role: "symbol table", contract: "y" }] }).complexity === "META", "multi-file code-analysis ⇒ META");
 check(D.assessComplexity({ architecture: [{ path: "a.js" }, { path: "b.js", dependsOn: ["a.js"] }, { path: "c.js", dependsOn: ["b.js"] }, { path: "d.js", dependsOn: ["c.js"] }] }).complexity === "COMPLEX", "4 interdependent files ⇒ COMPLEX");
 
-// (2) strategy: META ⇒ DECOMPOSED into primitives; a monolithic meta component is split.
+// (2) strategy: a RECOGNISED META shape (identifier/reference analysis) ⇒ DECOMPOSED into CONCRETE primitives (V39 LOT J
+//     improvement over the generic split that produced a false success): a real identifier extractor + a combiner.
 const sMeta = D.chooseStrategy({ name: "symbol detector", architecture: [{ path: "src/detector.js", role: "detect undefined symbols in code", contract: "analyze code for undefined references and token parsing" }] });
-check(sMeta.strategy === "DECOMPOSED" && sMeta.architecture.length === 3, "a META single-file component ⇒ DECOMPOSED into 3 focused primitives (V30 lesson)");
-check(sMeta.architecture[2].dependsOn.length === 2, "the combiner depends on the two extractor primitives");
+check(sMeta.strategy === "DECOMPOSED" && sMeta.architecture.length === 2, "a RECOGNISED META shape ⇒ DECOMPOSED into 2 CONCRETE primitives (extractor + combiner)");
+check(sMeta.architecture[0].path.endsWith("extract-identifiers.js") && /match\(/.test(sMeta.architecture[0].contract), "the extractor primitive has a CONCRETE functional contract (a real tokeniser), not a vague 'first concern'");
+check(sMeta.architecture[1].dependsOn.length === 1 && /extract-identifiers/.test(sMeta.architecture[1].dependsOn[0]), "the combiner depends on the concrete extractor primitive");
+
+// (2b) an UNRECOGNISED META shape ⇒ the generic 3-file split fallback (weaker; the independent verifier must arbitrate).
+const sMetaGen = D.chooseStrategy({ name: "weird meta", architecture: [{ path: "src/w.js", role: "transform an AST into something", contract: "compile and analyze the structure" }] });
+check(sMetaGen.strategy === "DECOMPOSED" && sMetaGen.architecture.length === 3, "an UNRECOGNISED META shape ⇒ generic 3-file split fallback");
 
 // (3) a trivial project ⇒ MONOLITHIC (don't needlessly fragment).
 check(D.chooseStrategy({ name: "add", architecture: [{ path: "src/add.js", role: "add", contract: "a+b" }] }).strategy === "MONOLITHIC", "a trivial project ⇒ MONOLITHIC (no needless fragmentation)");

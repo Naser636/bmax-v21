@@ -1,0 +1,28 @@
+{
+  "//": "CTO V39 LOT K — REAL measured self-improvement of META decomposition. Local qwen2.5-coder:3b via 127.0.0.1:11434. measure(J) -> diagnose -> fix(concrete sub-contracts) -> re-measure(K). NOT synthetic. VERIFIED in-repo != DEPLOYED. n small ⇒ NOT CALIBRATED.",
+  "model": "qwen2.5-coder:3b",
+  "host": "http://127.0.0.1:11434",
+  "mode": "EXPLORE (externally authorized — owner delegation 2026-11-10)",
+  "task": "meta-undefined-detector: module.exports=(code,declared)=> identifier tokens appearing in `code` but not in `declared`",
+  "before": {
+    "decomposition": "GENERIC split (extract-a.js + extract-b.js + combiner) with vague sub-contracts ('first/second concern')",
+    "files": 3,
+    "attempts": 1,
+    "accepted": 0,
+    "rejected": 1,
+    "falseSuccess": 1,
+    "note": "compiled but FAILED the independent functional test — a false success caught by the independent verifier (from native-exploration-live.json)"
+  },
+  "after": {
+    "decomposition": "CONCRETE split (extract-identifiers.js = real tokeniser + detect.js combiner that filters against the declared set)",
+    "files": 2,
+    "attempts": 3,
+    "accepted": 3,
+    "rejected": 0,
+    "falseSuccess": 0,
+    "durationsMs": [21518, 10120, 7722],
+    "note": "3/3 ACCEPT by the independent functional test (identifiers in code not in declared) — reproducible, 0 repairs, no false success"
+  },
+  "finding": "the META false-success measured in LOT J was caused by semantically-empty generic sub-contracts; deriving CONCRETE, functionally-meaningful sub-contracts for the recognised identifier/reference-analysis shape flips REJECT->ACCEPT reproducibly on the local 3B model.",
+  "honesty": "each outcome decided by the INDEPENDENT verifier (not the generator); n=3 after is still small ⇒ native-engineering-readiness still DEFERS (NOT CALIBRATED); the improvement is specific to the recognised META shape and is NOT generalized to other classes or auto-promoted."
+}
