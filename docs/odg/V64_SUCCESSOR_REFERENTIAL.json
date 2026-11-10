@@ -1,0 +1,946 @@
+{
+  "//": "CTO V64 §3/§4 — SUCCESSOR REFERENTIAL for Parts I/IV/XXV. RECONSTRUCTED from present primitives/modules; NOT recovered history. Every entry labelled source=RECONSTRUCTED with confidence + justification + a groundedness-verified backing module. Versioned successor integrated into V12.4; original FROZEN preserved. No parallel roadmap; no new primitive.",
+  "version": "successor-v1",
+  "originalStatus": "FROZEN Master enumerations NOT_RECOVERABLE (see V64_MASTER_RECOVERY_REPORT.json); original preserved untouched",
+  "partI": {
+    "title": "26 capabilities (successor)",
+    "count": 26,
+    "allGrounded": true,
+    "capabilities": [
+      {
+        "id": "CAP-01",
+        "definition": "Mission contract authoring",
+        "backingModule": "mission-contract-factory",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-02",
+        "definition": "State transition integrity",
+        "backingModule": "state-transition",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-03",
+        "definition": "Action admission (deny-by-default)",
+        "backingModule": "action-gate",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-04",
+        "definition": "Capability routing",
+        "backingModule": "capability-router",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-05",
+        "definition": "Governed patch execution",
+        "backingModule": "patch-executor",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-06",
+        "definition": "Evidence provenance",
+        "backingModule": "evidence-provenance",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-07",
+        "definition": "Checkpoint & resume",
+        "backingModule": "checkpoint-engine",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-08",
+        "definition": "Agent identity",
+        "backingModule": "agent-identity",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-09",
+        "definition": "World modelling (epistemic status)",
+        "backingModule": "world-model",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-10",
+        "definition": "Cognitive loop",
+        "backingModule": "cognitive-loop",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-11",
+        "definition": "Self-improvement (governed)",
+        "backingModule": "self-improvement",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-12",
+        "definition": "Evaluator independence",
+        "backingModule": "evaluator-independence",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-13",
+        "definition": "Intelligence loop",
+        "backingModule": "intelligence-loop",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-14",
+        "definition": "Scientific research cycle",
+        "backingModule": "scientific-research",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-15",
+        "definition": "Technology radar",
+        "backingModule": "frontier-radar",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-16",
+        "definition": "Persistent autonomy",
+        "backingModule": "autonomy-persistence",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-17",
+        "definition": "Code health diagnosis",
+        "backingModule": "code-health-service",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-18",
+        "definition": "Code review",
+        "backingModule": "code-review-service",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-19",
+        "definition": "Repair assurance (fix≠proof)",
+        "backingModule": "rce-assurance-chain",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-20",
+        "definition": "Cost modelling (FinOps)",
+        "backingModule": "cost-engine",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-21",
+        "definition": "Métier benchmarking",
+        "backingModule": "metier-benchmark-multidim",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-22",
+        "definition": "Emergency stop",
+        "backingModule": "emergency-stop",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-23",
+        "definition": "Root of trust",
+        "backingModule": "root-of-trust",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-24",
+        "definition": "Memory taxonomy & trust",
+        "backingModule": "memory-taxonomy",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-25",
+        "definition": "Campaign control",
+        "backingModule": "campaign-controller",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      },
+      {
+        "id": "CAP-26",
+        "definition": "Client-presentable reporting (O1)",
+        "backingModule": "shared-report-generator",
+        "grounded": true,
+        "expectedBehaviour": "fail-closed; deterministic where applicable; composes the nine primitives",
+        "validationCriteria": [
+          "backing module present",
+          "its gate-test passes",
+          "invariant holds under violation"
+        ],
+        "source": "RECONSTRUCTED",
+        "confidence": "HIGH (grounded in a present, tested module)",
+        "justification": "capability ODG demonstrably has in-repo; mapped to a 26-slot successor for Part I §6"
+      }
+    ]
+  },
+  "partIV": {
+    "title": "12 dimensions + 10 responsibilities (successor)",
+    "dimensions": [
+      {
+        "id": "DIM-01",
+        "name": "Governance & authority",
+        "backing": "action-gate + root-of-trust",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-02",
+        "name": "Cognition & world model",
+        "backing": "world-model + cognitive-loop",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-03",
+        "name": "Memory & learning",
+        "backing": "memory-taxonomy + learning-loop",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-04",
+        "name": "Autonomy & missions",
+        "backing": "autonomy-persistence + mission-contract-factory",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-05",
+        "name": "Security & resilience",
+        "backing": "root-of-trust + emergency-stop",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-06",
+        "name": "Observability & provenance",
+        "backing": "evidence-provenance + audit-log",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-07",
+        "name": "Economics & cost",
+        "backing": "cost-engine",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-08",
+        "name": "Métier portfolio",
+        "backing": "metier-benchmark-multidim",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-09",
+        "name": "Multi-agent & providers",
+        "backing": "third-party-agent-gate + agent-identity",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-10",
+        "name": "Experimentation & benchmarks",
+        "backing": "benchmark-contamination + eval-significance",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-11",
+        "name": "Recovery & continuity",
+        "backing": "checkpoint-engine + idempotency-guard",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      },
+      {
+        "id": "DIM-12",
+        "name": "Delivery & improvement",
+        "backing": "self-improvement + shared-report-generator",
+        "grounded": true,
+        "source": "RECONSTRUCTED",
+        "control": "each dimension has a fail-closed control module"
+      }
+    ],
+    "responsibilities": [
+      {
+        "id": "RESP-01",
+        "name": "Perceive/collect",
+        "backing": "frontier-radar",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-02",
+        "name": "Model",
+        "backing": "world-model",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-03",
+        "name": "Decide",
+        "backing": "action-gate",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-04",
+        "name": "Plan",
+        "backing": "mission-contract-factory",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-05",
+        "name": "Execute",
+        "backing": "patch-executor",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-06",
+        "name": "Verify",
+        "backing": "evaluator-independence",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-07",
+        "name": "Learn",
+        "backing": "self-improvement",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-08",
+        "name": "Record",
+        "backing": "evidence-provenance",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-09",
+        "name": "Recover",
+        "backing": "checkpoint-engine",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      },
+      {
+        "id": "RESP-10",
+        "name": "Improve",
+        "backing": "intelligence-loop",
+        "grounded": true,
+        "source": "RECONSTRUCTED"
+      }
+    ],
+    "orphans": 0,
+    "duplicateResponsibilities": false,
+    "allGrounded": true
+  },
+  "partXXV": {
+    "title": "F01–F40 successor fault register",
+    "count": 40,
+    "faults": [
+      {
+        "id": "F01",
+        "failureMode": "false-success (green test, wrong behaviour)",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F02",
+        "failureMode": "self-authorization of a protected change",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F03",
+        "failureMode": "self-validation (builder==verifier)",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F04",
+        "failureMode": "self-promotion of a capability",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F05",
+        "failureMode": "evidence falsification / tamper",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F06",
+        "failureMode": "stale verification reused as fresh",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F07",
+        "failureMode": "permission reuse across missions",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F08",
+        "failureMode": "irreversible action without human authority",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F09",
+        "failureMode": "injection-laced untrusted signal",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F10",
+        "failureMode": "benchmark contamination / leaked eval set",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F11",
+        "failureMode": "reward hacking / metric gaming",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F12",
+        "failureMode": "overconfident uncalibrated scorer",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F13",
+        "failureMode": "regression (previously-passing test fails)",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F14",
+        "failureMode": "duplicate/replay without idempotency",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F15",
+        "failureMode": "DLQ poison-pill storm",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F16",
+        "failureMode": "budget breach without burn-rate alert",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F17",
+        "failureMode": "SLA/latency silent breach",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F18",
+        "failureMode": "API contract breaking change undeclared",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F19",
+        "failureMode": "license policy violation (HIGH finding)",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F20",
+        "failureMode": "secret exposure in config/log",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F21",
+        "failureMode": "unattributed memory retrieved as trusted",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F22",
+        "failureMode": "forgetting / knowledge loss",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F23",
+        "failureMode": "provider outage not isolated",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F24",
+        "failureMode": "circuit not opened on repeated failure",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F25",
+        "failureMode": "cost figure SIMULATED presented as OBSERVED",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F26",
+        "failureMode": "superiority claimed without independent benchmark",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F27",
+        "failureMode": "E4 presented as E5",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F28",
+        "failureMode": "fabricated client/authorization",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F29",
+        "failureMode": "fabricated certification/legal validation",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F30",
+        "failureMode": "over-classification blocking valid work",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F31",
+        "failureMode": "under-classification admitting dangerous work",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F32",
+        "failureMode": "scope creep beyond write-set",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F33",
+        "failureMode": "destructive git op / history loss",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F34",
+        "failureMode": "node_modules symlink into worktree build",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F35",
+        "failureMode": "non-deterministic test (order-dependent)",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F36",
+        "failureMode": "capacity/timeout boundary unhandled",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F37",
+        "failureMode": "GPU/hardware dependency assumed satisfied",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F38",
+        "failureMode": "concurrent register write clobber",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F39",
+        "failureMode": "silent truncation (top-N/no-retry)",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      },
+      {
+        "id": "F40",
+        "failureMode": "status flip to DONE without proof",
+        "source": "RECONSTRUCTED (not the historical §105 register — original NOT_RECOVERABLE)",
+        "relatedComponent": "fail-closed guard / governance mechanism in-repo",
+        "test": "covered by the relevant guard suite + V59/V61 invariant tests where applicable",
+        "confidence": "MEDIUM (reconstructed from documented real failure modes; historical mapping unverified)",
+        "validationStillNeeded": "owner confirmation that this successor register adequately replaces §105"
+      }
+    ]
+  },
+  "honestConclusion": "Successor referential built: Part I = 26 capabilities (26 grounded in present modules), Part IV = 12 dimensions + 10 responsibilities (0 orphans, no dup), Part XXV = 40 reconstructed fault entries. ALL labelled RECONSTRUCTED with confidence — none presented as recovered history. Owner validation still needed to canonize the successor over §105.",
+  "invariant": "A reconstruction is never presented as the recovered original. Every entry is grounded in a verified-present module or a documented failure mode, labelled source=RECONSTRUCTED with a confidence level. The FROZEN original is preserved."
+}

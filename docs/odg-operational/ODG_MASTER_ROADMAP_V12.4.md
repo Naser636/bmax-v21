@@ -111,3 +111,14 @@ de preuve vérifié présent). Ils ne remplacent aucune partie §1–§122 ni la
 Objectifs financiers canoniques (corrigés V63) : **PLANCHER ABSOLU €5 000 000 net** · **AMBITION €500 000 000 net (12 mois)**.
 Le montant de €5 000 est une **erreur** (V62 §12), **supprimée comme objectif** (traçabilité conservée dans le registre financier).
 Autorité : ODG seul maître d'œuvre ; le fournisseur technique n'exécute que des tâches explicitement confiées (règle permanente V61).
+
+## Référentiel successeur Parties I / IV / XXV (V64, 2026-11-10) — reconstruction tracée, original FROZEN préservé
+
+Récupération exhaustive **read-only** du Master FROZEN (branches, tags, reflog, `fsck --unreachable`, `cat-file`,
+grep historique) ⇒ résultat **NÉGATIF** pour les énumérations canoniques de I/IV/XXV (`docs/odg/V64_MASTER_RECOVERY_REPORT.json`).
+Original FROZEN **préservé** (aucune opération destructive). Un **référentiel successeur versionné** (`docs/odg/V64_SUCCESSOR_REFERENTIAL.json`,
+`successor-v1`) RECONSTRUIT ces parties À PARTIR des primitives/modules/contrats présents — **jamais présenté comme un document historique retrouvé** :
+- **Partie I** — 26 capacités (CAP-01..26), **toutes ancrées** dans un module présent+testé (groundedness vérifiée).
+- **Partie IV** — 12 dimensions (DIM-01..12) + 10 responsabilités cognitives (RESP-01..10), **0 orpheline, aucune duplication**, chacune liée à une primitive + contrôle.
+- **Partie XXV** — registre successeur F01–F40 reconstruit à partir de modes de défaillance réels documentés ; chaque entrée `source=RECONSTRUCTED`, confiance MEDIUM, **validation owner encore nécessaire** pour canoniser le successeur en remplacement de §105.
+Chaque entrée porte source/justification/confiance ; aucune reconstruction n'est présentée comme l'original. Pas de roadmap parallèle, pas de dixième primitive.
