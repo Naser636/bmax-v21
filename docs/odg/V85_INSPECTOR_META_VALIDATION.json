@@ -1,0 +1,54 @@
+{
+  "//": "CTO V85 §6 — meta-validation of the inspectors themselves. Each real inspector is scored against a battery of SEEDED defects (ground-truth DEFECTIVE) + clean controls; detectionRate = seeded defects caught. Fail-closed: an inspector that misses a seeded defect (false negative) is INEFFECTIVE even if every clean case passes. Two control inspectors prove the harness discriminates. Reuses inspector-meta-validation + the live evidence-qualifier/evaluator-independence; no new engine.",
+  "realInspectors": [
+    {
+      "name": "evidence-qualifier (V82)",
+      "effective": true,
+      "detectionRate": 1,
+      "falseNegativeRate": 0,
+      "falsePositiveRate": 0,
+      "confusion": {
+        "TP": 5,
+        "FP": 0,
+        "TN": 2,
+        "FN": 0
+      },
+      "missed": [],
+      "falseAlarms": []
+    },
+    {
+      "name": "evaluator-independence (§36/§49)",
+      "effective": true,
+      "detectionRate": 1,
+      "falseNegativeRate": 0,
+      "falsePositiveRate": 0,
+      "confusion": {
+        "TP": 4,
+        "FP": 0,
+        "TN": 1,
+        "FN": 0
+      },
+      "missed": [],
+      "falseAlarms": []
+    }
+  ],
+  "realAllEffective": true,
+  "controls": {
+    "blindAlwaysPass": {
+      "effective": false,
+      "detectionRate": 0,
+      "missed": 5,
+      "note": "must be INEFFECTIVE — misses every seeded defect (proves clean-only green ≠ proof)"
+    },
+    "triggerHappyAlwaysFlag": {
+      "effective": false,
+      "falsePositiveRate": 1,
+      "falseAlarms": 2,
+      "note": "must be INEFFECTIVE — false-alarms every clean case (detection without discrimination ≠ proof)"
+    }
+  },
+  "discriminates": true,
+  "weakestInspector": "CONTROL:blind-always-pass",
+  "honestConclusion": "2/2 real inspectors are EFFECTIVE (catch 100% of seeded defects, 0 false alarms). The blind control is correctly INEFFECTIVE and the trigger-happy control is correctly INEFFECTIVE — the meta-validator discriminates between a real inspector and a useless one. A green inspector that cannot catch a known defect is now provably rejected.",
+  "invariant": "the inspector is the system-under-test; a missed seeded defect (false negative) ⇒ INEFFECTIVE; no false alarms; fail-closed on empty/defect-free batteries; a green suite that misses a known defect proves nothing."
+}
