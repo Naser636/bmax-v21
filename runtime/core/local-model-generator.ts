@@ -32,6 +32,7 @@ function buildPrompt(fileSpec: any, builtContracts: any): string {
   ];
   if (deps.length) lines.push("", "This file depends on these already-built modules (require them by relative path):", depLines);
   if (f.buildError) lines.push("", `A previous attempt FAILED to build with this error — fix it:`, `  ${String(f.buildError)}`);
+  if (f.verifyError) lines.push("", `A previous attempt BUILT but FAILED the functional test — fix the LOGIC to satisfy the contract exactly:`, `  ${String(f.verifyError)}`);
   lines.push("", `Now output only the code for ${f.path || base}:`);
   return lines.join("\n");
 }
