@@ -1,0 +1,40 @@
+{
+  "//": "CTO V72 Chantier A — durable multi-mission execution demonstration on the REAL scheduler. Proves operational execution of the governance state machine: multi-mission, dependency-ordered, blocked-dep isolation, induced failure recorded, interrupt + resume with NO re-run. Duration MEASURED (wall-clock); compute-cost NOT_MEASURED. No new scheduler.",
+  "phase1_interrupted": {
+    "iterations": 3,
+    "accepted": [
+      "C1",
+      "I1",
+      "I2"
+    ],
+    "stopped": "MAX_ITER"
+  },
+  "phase2_resumed": {
+    "iterations": 3,
+    "accepted": [
+      "C2",
+      "C3"
+    ],
+    "resumes": 1
+  },
+  "allAccepted": [
+    "C1",
+    "I1",
+    "I2",
+    "C2",
+    "C3"
+  ],
+  "allFailed": [
+    "FX"
+  ],
+  "invariantsObserved": {
+    "blockedDependencyIsolated": true,
+    "dependencyChainRespected": true,
+    "interruptThenResumeNoRepeat": true,
+    "inducedFailureRecorded": true
+  },
+  "durationMs": 28,
+  "computeCost": "NOT_MEASURED (no token/compute meter on the local scheduler)",
+  "honestConclusion": "Durable execution demonstrated on the real scheduler: 5 missions ACCEPTED across an interrupt+resume (resume re-ran 0 ACCEPTED lots), dependency chain C1→C2→C3 respected, BLOCKED lot + its dependent isolated (independents proceeded), induced FX failure recorded (never ACCEPTED). Duration MEASURED=28ms; compute-cost NOT_MEASURED (honest). The governance mechanisms EXECUTE — not merely a dashboard.",
+  "invariant": "The demonstration drives the single canonical scheduler; a BLOCKED dependency isolates only its dependents; an INCOMPLETE mission is failed never ACCEPTED; resume preserves state with no re-run; duration is really measured, compute-cost stays NOT_MEASURED."
+}
