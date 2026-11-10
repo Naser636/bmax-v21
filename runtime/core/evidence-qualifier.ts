@@ -43,7 +43,8 @@ function qualify(ref: any, opts: any = {}): any {
 
   // (d) if it is a test file, it must be wired into the gate (otherwise it is not a running proof).
   if (/\.test\.ts$/.test(ref)) {
-    checks.wiredInGate = gate.some((g) => g === ref || g.endsWith(ref) || ref.endsWith(g.replace(/^.*\//, "")) || gate.includes(ref));
+    const base = (s: string) => String(s).split("/").pop();   // exact basename match — avoids 'unwired' ⊃ 'wired' false-positives
+    checks.wiredInGate = gate.some((g) => g === ref || base(g) === base(ref));
     if (!checks.wiredInGate) return Object.freeze({ status: "INSUFFICIENT", basis: "test file resolves but is NOT wired into the gate ⇒ not a running proof", checks });
   }
 

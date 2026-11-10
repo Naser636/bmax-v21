@@ -15,13 +15,22 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
 const SUB_STATUS = Object.freeze(["ALREADY_DONE", "LOCAL_REMAINING", "SIGN_OFF_GATED"]);
 
 /*
- * decompose(parent, evidenceResolver) -> { parent, subMissions, localRemaining, signOffGated, alreadyDone }.
- * parent: { id, kind("B_human"|"B_external"|"PARTIAL"|...), evidence:{impl?,test?,evidenceRef?,dossier?}, needsSignOff(bool) }.
- * evidenceResolver(ref) -> boolean (does the pointer resolve?). Deterministic.
+ * decompose(parent, control) -> { parent, subMissions, localRemaining, signOffGated, alreadyDone }.
+ * parent: { id, kind, evidence:{impl?,test?,evidenceRef?,dossier?}, needsSignOff(bool) }.
+ * control is EITHER a legacy resolver fn (ref)->bool (ALREADY_DONE on resolve) OR an object { qualify(ref)->"VALID"|
+ * "INSUFFICIENT"|"ABSENT" } — the V82 SEMANTIC control. When qualify is supplied, ALREADY_DONE requires qualify===VALID:
+ * a pointer is never ALREADY_DONE on mere existence (V83 §2). Deterministic.
  */
-function decompose(parent: any, evidenceResolver: any): any {
+function decompose(parent: any, control: any): any {
   const p = isObj(parent) ? parent : {};
-  const resolve = typeof evidenceResolver === "function" ? evidenceResolver : (() => false);
+  const hasQualify = isObj(control) && typeof control.qualify === "function";
+  const resolve = typeof control === "function" ? control : (isObj(control) && typeof control.resolve === "function" ? control.resolve : (() => false));
+  // "done" = semantic VALID when a qualifier is supplied (V82), else legacy resolve (back-compat).
+  const done = (ref: any, fallback?: boolean): boolean => {
+    if (fallback !== undefined && ref === undefined) return fallback;   // boolean flags (ev.impl/ev.dossier) have no ref to qualify
+    if (hasQualify) return control.qualify(ref) === "VALID";
+    return resolve(ref) === true;
+  };
   const ev = isObj(p.evidence) ? p.evidence : {};
   const needsSignOff = p.needsSignOff !== false;   // default: a Level-B/PARTIAL parent needs a final sign-off
   const externalDep = /external/i.test(String(p.kind || ""));
@@ -32,10 +41,10 @@ function decompose(parent: any, evidenceResolver: any): any {
   });
 
   const subMissions = [
-    sub("implementation", "A", ev.impl === true || resolve(ev.implRef), false),
-    sub("tests", "A", resolve(ev.test), false),
-    sub("evidence", "A", resolve(ev.evidenceRef), false),
-    sub("decision-dossier", "A", ev.dossier === true || resolve(ev.dossierRef), false),
+    sub("implementation", "A", ev.impl === true || done(ev.implRef), false),
+    sub("tests", "A", done(ev.test), false),
+    sub("evidence", "A", done(ev.evidenceRef), false),
+    sub("decision-dossier", "A", ev.dossier === true || done(ev.dossierRef), false),
     // the FINAL act is reserved: human sign-off (B) or external execution (C/B_external).
     sub(externalDep ? "external-execution" : "human-sign-off", externalDep ? "C" : "B", false, needsSignOff || externalDep),
   ];
@@ -56,6 +65,7 @@ const MISSION_DECOMPOSER_CONTRACT = Object.freeze({
   subStatuses: SUB_STATUS,
   notAuthority: "splits a parent into sub-missions + classifies by real evidence; it executes nothing itself; ODG/engine execute Level-A sub-missions",
   invariants: Object.freeze([
+    "ALREADY_DONE requires V82 SEMANTIC qualification (qualify===VALID) when a qualifier is supplied — never mere file existence (V83 §2)",
     "a parent gated at the sign-off still exposes its Level-A sub-missions (local work never stalls behind a human lock)",
     "a sub-mission is ALREADY_DONE only when its evidence pointer actually resolves (no fabricated completion)",
     "the final act (human sign-off / external execution) stays SIGN_OFF_GATED — never auto-completed",
