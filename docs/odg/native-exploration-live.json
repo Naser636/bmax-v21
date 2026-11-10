@@ -1,0 +1,237 @@
+{
+  "//": "CTO V39 LOT J — REAL live native-model exploration outcomes. NOT synthetic. Local qwen2.5-coder via 127.0.0.1:11434. VERIFIED in-repo != DEPLOYED. n per class is small ⇒ NOT CALIBRATED (insufficient observations by design).",
+  "model": "qwen2.5-coder:3b",
+  "host": "http://127.0.0.1:11434",
+  "mode": "EXPLORE (externally authorized — owner delegation 2026-11-10)",
+  "startedAt": "2026-11-10T10:17:36.379Z",
+  "finishedAt": "2026-11-10T10:18:44.686Z",
+  "totalDurationMs": 68307,
+  "projects": [
+    {
+      "name": "trivial-add",
+      "complexity": "TRIVIAL",
+      "strategy": "MONOLITHIC",
+      "attempts": 2
+    },
+    {
+      "name": "simple-calc",
+      "complexity": "SIMPLE",
+      "strategy": "MONOLITHIC",
+      "attempts": 2
+    },
+    {
+      "name": "complex-pipeline",
+      "complexity": "COMPLEX",
+      "strategy": "DECOMPOSED",
+      "attempts": 1
+    },
+    {
+      "name": "meta-undefined-detector",
+      "complexity": "META",
+      "strategy": "DECOMPOSED",
+      "attempts": 1
+    }
+  ],
+  "records": [
+    {
+      "project": "trivial-add",
+      "complexity": "TRIVIAL",
+      "strategy": "MONOLITHIC",
+      "attempt": 1,
+      "model": "qwen2.5-coder:3b",
+      "filesPlanned": 1,
+      "filesGenerated": 1,
+      "buildOk": true,
+      "repairs": 0,
+      "independentVerdict": "ACCEPT",
+      "accepted": true,
+      "outcome": "SUCCESS",
+      "falseSuccess": false,
+      "buildError": null,
+      "verifyError": null,
+      "error": null,
+      "evidenceGathering": true,
+      "durationMs": 3255,
+      "at": "2026-11-10T10:17:39.636Z"
+    },
+    {
+      "project": "trivial-add",
+      "complexity": "TRIVIAL",
+      "strategy": "MONOLITHIC",
+      "attempt": 2,
+      "model": "qwen2.5-coder:3b",
+      "filesPlanned": 1,
+      "filesGenerated": 1,
+      "buildOk": true,
+      "repairs": 0,
+      "independentVerdict": "ACCEPT",
+      "accepted": true,
+      "outcome": "SUCCESS",
+      "falseSuccess": false,
+      "buildError": null,
+      "verifyError": null,
+      "error": null,
+      "evidenceGathering": true,
+      "durationMs": 1260,
+      "at": "2026-11-10T10:17:40.896Z"
+    },
+    {
+      "project": "simple-calc",
+      "complexity": "SIMPLE",
+      "strategy": "MONOLITHIC",
+      "attempt": 1,
+      "model": "qwen2.5-coder:3b",
+      "filesPlanned": 2,
+      "filesGenerated": 2,
+      "buildOk": true,
+      "repairs": 0,
+      "independentVerdict": "ACCEPT",
+      "accepted": true,
+      "outcome": "SUCCESS",
+      "falseSuccess": false,
+      "buildError": null,
+      "verifyError": null,
+      "error": null,
+      "evidenceGathering": true,
+      "durationMs": 8328,
+      "at": "2026-11-10T10:17:49.224Z"
+    },
+    {
+      "project": "simple-calc",
+      "complexity": "SIMPLE",
+      "strategy": "MONOLITHIC",
+      "attempt": 2,
+      "model": "qwen2.5-coder:3b",
+      "filesPlanned": 2,
+      "filesGenerated": 2,
+      "buildOk": true,
+      "repairs": 0,
+      "independentVerdict": "ACCEPT",
+      "accepted": true,
+      "outcome": "SUCCESS",
+      "falseSuccess": false,
+      "buildError": null,
+      "verifyError": null,
+      "error": null,
+      "evidenceGathering": true,
+      "durationMs": 6059,
+      "at": "2026-11-10T10:17:55.284Z"
+    },
+    {
+      "project": "complex-pipeline",
+      "complexity": "COMPLEX",
+      "strategy": "DECOMPOSED",
+      "attempt": 1,
+      "model": "qwen2.5-coder:3b",
+      "filesPlanned": 4,
+      "filesGenerated": 4,
+      "buildOk": true,
+      "repairs": 0,
+      "independentVerdict": "ACCEPT",
+      "accepted": true,
+      "outcome": "SUCCESS",
+      "falseSuccess": false,
+      "buildError": null,
+      "verifyError": null,
+      "error": null,
+      "evidenceGathering": true,
+      "durationMs": 23340,
+      "at": "2026-11-10T10:18:18.624Z"
+    },
+    {
+      "project": "meta-undefined-detector",
+      "complexity": "META",
+      "strategy": "DECOMPOSED",
+      "attempt": 1,
+      "model": "qwen2.5-coder:3b",
+      "filesPlanned": 3,
+      "filesGenerated": 3,
+      "buildOk": true,
+      "repairs": 0,
+      "independentVerdict": "REJECT",
+      "accepted": false,
+      "outcome": "FAILURE",
+      "falseSuccess": true,
+      "buildError": null,
+      "verifyError": null,
+      "error": null,
+      "evidenceGathering": true,
+      "durationMs": 26061,
+      "at": "2026-11-10T10:18:44.686Z"
+    }
+  ],
+  "summaryByClass": {
+    "MONOLITHIC:TRIVIAL": {
+      "attempts": 2,
+      "compiled": 2,
+      "accepted": 2,
+      "rejected": 0,
+      "blocked": 0,
+      "falseSuccess": 0,
+      "totalMs": 4515
+    },
+    "MONOLITHIC:SIMPLE": {
+      "attempts": 2,
+      "compiled": 2,
+      "accepted": 2,
+      "rejected": 0,
+      "blocked": 0,
+      "falseSuccess": 0,
+      "totalMs": 14387
+    },
+    "DECOMPOSED:COMPLEX": {
+      "attempts": 1,
+      "compiled": 1,
+      "accepted": 1,
+      "rejected": 0,
+      "blocked": 0,
+      "falseSuccess": 0,
+      "totalMs": 23340
+    },
+    "DECOMPOSED:META": {
+      "attempts": 1,
+      "compiled": 1,
+      "accepted": 0,
+      "rejected": 1,
+      "blocked": 0,
+      "falseSuccess": 1,
+      "totalMs": 26061
+    }
+  },
+  "reliabilityByClass": {
+    "byClass": {
+      "MONOLITHIC:TRIVIAL": {
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "reliability": 1
+      },
+      "MONOLITHIC:SIMPLE": {
+        "attempts": 2,
+        "successes": 2,
+        "failures": 0,
+        "reliability": 1
+      },
+      "DECOMPOSED:COMPLEX": {
+        "attempts": 1,
+        "successes": 1,
+        "failures": 0,
+        "reliability": 1
+      },
+      "DECOMPOSED:META": {
+        "attempts": 1,
+        "successes": 0,
+        "failures": 1,
+        "reliability": 0
+      }
+    },
+    "overall": {
+      "verifiedAttempts": 6,
+      "successes": 5,
+      "failures": 1,
+      "reliability": 0.8333
+    },
+    "note": "native-build reliability measured over 6 VERIFIED attempts (1 failures included — no survivorship bias)"
+  },
+  "honesty": "each outcome decided by the INDEPENDENT verifier (not the generator); rejects recorded as real failures; absence of result ⇒ UNKNOWN; no class generalized to another; native capability NOT auto-promoted; CALIBRATED NOT declared (n insufficient)."
+}
