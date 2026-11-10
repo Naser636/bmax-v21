@@ -4,7 +4,8 @@
     "V56_V124_COVERAGE_MATRIX.json"
   ],
   "openParts": 26,
-  "consolidationVerifiedCount": 9,
+  "consolidationVerifiedCount": 12,
+  "canonicalSourceBlockedCount": 3,
   "rows": [
     {
       "part": "Préambule §1–§4",
@@ -13,7 +14,9 @@
       "gating": "INHERENTLY_REFERENTIAL",
       "nextAction": "owner acknowledgement; already practiced (compass + closure-register); no code to build",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "I §5–§6",
@@ -22,7 +25,9 @@
       "gating": "NEEDS_LOCAL_BUILD",
       "nextAction": "most are E1–E2 via Frontier lots; enumerate the remaining capabilities as individual tested missions",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": true,
+      "canonicalSourceNote": "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden"
     },
     {
       "part": "III §9–§15",
@@ -31,7 +36,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "G0 §11 already PRESENT_AND_PROVEN (root-of-trust + 24-assertion suite); remaining G1/G2/G3 edges have modules — assert each with a focused test",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "IV §16–§20",
@@ -40,7 +47,9 @@
       "gating": "NEEDS_LOCAL_BUILD",
       "nextAction": "world-model/cognitive-loop exist; enumerate the 12/10 as an explicit coverage checklist with per-item tests",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": true,
+      "canonicalSourceNote": "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden"
     },
     {
       "part": "V §21–§23",
@@ -49,7 +58,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "world-model.ts + cognitive-loop.ts present; Causal Graph PARTIAL — add a reproducible causal-graph test",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "VI §24–§28",
@@ -58,7 +69,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "FR-07 live collection + scientific-research already EXECUTED; assert the 18-step pipeline end-to-end in one test",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "VII §29–§33",
@@ -66,8 +79,10 @@
       "closureCriterion": "4 memories + WAKE/CONSOLIDATION/DREAM/VALIDATION + knowledge integrity",
       "gating": "NEEDS_LOCAL_BUILD",
       "nextAction": "memory-taxonomy + compounding-loop present; full WAKE/DREAM cycle PARTIAL — build the missing cycle stage test",
-      "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationVerified": true,
+      "consolidationTest": "v59-consolidation-lot2.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "VIII §34–§37",
@@ -76,7 +91,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "self-improvement + evaluator-independence + champion-challenger already PRESENT_AND_PROVEN; consolidate into one §34–§37 assertion",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "IX §38–§42",
@@ -85,7 +102,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "autonomy-persistence A3+ DEMONSTRATED; add an A4/A5-boundary test to close the ladder",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XI §47–§50",
@@ -94,7 +113,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "agent-factory/identity/third-party-gate present; Builder≠Tester≠Verifier proven; assert parallelization in one test",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XII §51–§56",
@@ -102,8 +123,10 @@
       "closureCriterion": "(closure criterion to define)",
       "gating": "NEEDS_LOCAL_BUILD",
       "nextAction": "define closure criterion",
-      "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationVerified": true,
+      "consolidationTest": "v59-consolidation-lot2.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XIII §57–§61",
@@ -112,7 +135,9 @@
       "gating": "EXTERNAL_DEPENDENCY",
       "nextAction": "benchmark factory + eval-significance PRESENT; SUPERIORITY needs head-to-head reference execution (no competitor product locally) — V57 §2 designed, fail-closed",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XIV §62–§65",
@@ -121,7 +146,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "modules present; assert emergency-stop + secret-handling in a focused security test",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XV §66–§70",
@@ -129,8 +156,10 @@
       "closureCriterion": "(closure criterion to define)",
       "gating": "NEEDS_LOCAL_BUILD",
       "nextAction": "define closure criterion",
-      "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationVerified": true,
+      "consolidationTest": "v59-consolidation-lot2.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XVI §71–§76",
@@ -139,7 +168,9 @@
       "gating": "OWNER_GATED",
       "nextAction": "dossiers are owner-facing deliverables; prepare drafts locally, validation is owner acknowledgement",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XVII §77–§79",
@@ -148,7 +179,9 @@
       "gating": "INHERENTLY_REFERENTIAL",
       "nextAction": "doctrine part; already reflected in the mission cycle — owner acknowledgement, no code",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XVIII §80–§82",
@@ -157,7 +190,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "anti-duplication audited repeatedly; produce a single recovery-completeness assertion",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XIX §83–§87",
@@ -166,7 +201,9 @@
       "gating": "OWNER_GATED",
       "nextAction": "campaigns are operational programs; C2 (15 métiers) advanced; C1/C3/C4 completion needs owner prioritization",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXII §93–§96",
@@ -175,7 +212,9 @@
       "gating": "LOCALLY_CLOSEABLE",
       "nextAction": "closure-register (427) + evidence-provenance present; assert the four registers' coherence in one test",
       "consolidationVerified": true,
-      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)"
+      "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXIII §97–§103",
@@ -184,7 +223,9 @@
       "gating": "OWNER_GATED",
       "nextAction": "gate machinery present (gates-ledger); some gates require owner/controller sign-off to close — document which",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXV §105",
@@ -193,7 +234,9 @@
       "gating": "NEEDS_LOCAL_BUILD",
       "nextAction": "failures-register present; enumerate F01–F40 status individually",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": true,
+      "canonicalSourceNote": "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden"
     },
     {
       "part": "XXVII §108–§110",
@@ -202,7 +245,9 @@
       "gating": "OWNER_GATED",
       "nextAction": "deliverables largely built; final closure is an owner acceptance act",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXVIII §111–§112",
@@ -211,7 +256,9 @@
       "gating": "INHERENTLY_REFERENTIAL",
       "nextAction": "doctrine/ordering part; owner acknowledgement",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXIX §113–§115",
@@ -220,7 +267,9 @@
       "gating": "INHERENTLY_REFERENTIAL",
       "nextAction": "mandate part; reflected in this very execution — owner acknowledgement",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXX §116–§119",
@@ -229,7 +278,9 @@
       "gating": "OWNER_GATED",
       "nextAction": "dossier A buildable locally; A1–A10 validation is owner acceptance",
       "consolidationVerified": false,
-      "consolidationTest": null
+      "consolidationTest": null,
+      "canonicalSourceBlocked": false,
+      "canonicalSourceNote": null
     },
     {
       "part": "XXXII §123–§130",

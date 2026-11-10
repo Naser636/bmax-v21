@@ -51,7 +51,10 @@ const LEDGER: any = {
 // V59 §3: the 9 LOCALLY_CLOSEABLE parts whose KEY functional invariant is now independently re-verified by the
 // consolidation test (nominal + violation). This RAISES confidence; it does NOT flip the SSOT bucket (full §-by-§
 // closure + controller sign-off remains the matrix maintainer's act — proof before declaration).
-const CONSOLIDATION_VERIFIED = new Set(["III", "V", "VI", "VIII", "IX", "XI", "XIV", "XVIII", "XXII"]);
+const CONSOLIDATION_VERIFIED = new Set(["III", "V", "VI", "VIII", "IX", "XI", "XIV", "XVIII", "XXII", "VII", "XII", "XV"]);
+// V59 Lot 2: NEEDS_LOCAL_BUILD parts whose closure is blocked on the FROZEN Master's enumerations (NOT_RECOVERABLE —
+// enumerating the 26 capabilities / 12 dimensions + 10 responsibilities / F01–F40 would be fabrication, forbidden).
+const CANONICAL_SOURCE_BLOCKED = new Set(["I", "IV", "XXV"]);
 
 const open = (cov && cov.parts ? cov.parts : []).filter((p: any) => p.bucket === "PARTIAL" || p.bucket === "NOT_VALIDATED");
 // include Part XXXII (tracked separately in the coverage matrix).
@@ -59,8 +62,10 @@ const rows = open.map((p: any) => {
   const key = p.part.split(/\s/)[0];
   const rec = LEDGER[key] || { criterion: "(closure criterion to define)", gating: "NEEDS_LOCAL_BUILD", next: "define closure criterion" };
   const cv = CONSOLIDATION_VERIFIED.has(key);
+  const csb = CANONICAL_SOURCE_BLOCKED.has(key);
   return { part: p.part, bucket: p.bucket, closureCriterion: rec.criterion, gating: rec.gating, nextAction: rec.next,
-    consolidationVerified: cv, consolidationTest: cv ? "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)" : null };
+    consolidationVerified: cv, consolidationTest: cv ? (["VII", "XII", "XV"].includes(key) ? "v59-consolidation-lot2.test.ts" : "v59-consolidation-s-level.test.ts") + " (key invariant, nominal+violation)" : null,
+    canonicalSourceBlocked: csb, canonicalSourceNote: csb ? "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden" : null };
 });
 if (cov && cov.partXXXII && !rows.some((r: any) => /XXXII/.test(r.part))) {
   const rec = LEDGER["XXXII"];
@@ -75,6 +80,7 @@ const out = {
   generatedFrom: ["V56_V124_COVERAGE_MATRIX.json"],
   openParts: rows.length,
   consolidationVerifiedCount: rows.filter((r: any) => r.consolidationVerified).length,
+  canonicalSourceBlockedCount: rows.filter((r: any) => r.canonicalSourceBlocked).length,
   rows, tally,
   honestConclusion: `${rows.length} open parts: ${tally.LOCALLY_CLOSEABLE} LOCALLY_CLOSEABLE (local assertion tests would close them), ${tally.NEEDS_LOCAL_BUILD} NEEDS_LOCAL_BUILD, ${tally.INHERENTLY_REFERENTIAL} INHERENTLY_REFERENTIAL (doctrine — owner acknowledgement), ${tally.OWNER_GATED} OWNER_GATED (decisions/acceptance), ${tally.EXTERNAL_DEPENDENCY} EXTERNAL_DEPENDENCY (reference/clients/GPU). The locally-closeable parts have their machinery in-repo; full functional closure of the rest is owner/external-gated. No bucket is declared DONE without the SSOT's proof.`,
   invariant: "The ledger classifies and routes; it never closes a part by assertion. Owner-gated and external-dependency parts stay explicitly open — never faked closed. Proof before declaration.",
