@@ -14,6 +14,7 @@ const SEL = require("./mission-priority-selector.js");
 const MANDATE = require("./local-work-mandate.js");
 const LOOP = require("./intelligence-loop.js");
 const BOUNDARY = require("./inspection-boundary.js");   // V86 — universal mandatory inspection (PRE+POST), fail-closed
+const INCR = require("./incremental-assurance.js");      // V88 — impact analysis → targeted invalidation → demonstrated reuse
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 const plans = (id: string) => [{ id, metrics: { Psuccess: 0.9, Vobjective: 0.8, Qquality: 0.8, Ttime: 0.2, Cresources: 0.2, Rrisk: 0.1, Uuncertainty: 0.1 } }];
@@ -37,7 +38,7 @@ function runCampaign(missions: any, opts: any = {}): any {
   const handled = new Set<string>();          // missions removed from candidacy (executed/refused/prepared/quarantined)
   const accepted: string[] = [];              // ACCEPTED (for dep-satisfaction + no-repeat)
   const log: any[] = [];
-  const metrics: any = { discovered: queue.length, selected: 0, authorized: 0, executed: 0, accepted: 0, failed: 0, refusedC: 0, preparedB: 0, quarantined: 0, deferred: 0, retries: 0, iterations: 0, inspectionBlocked: 0, uninspected: 0 };
+  const metrics: any = { discovered: queue.length, selected: 0, authorized: 0, executed: 0, accepted: 0, failed: 0, refusedC: 0, preparedB: 0, quarantined: 0, deferred: 0, retries: 0, iterations: 0, inspectionBlocked: 0, uninspected: 0, evidenceReused: 0 };
   let stopReason = "QUEUE_EXHAUSTED";
 
   let iter = 0;
@@ -68,6 +69,16 @@ function runCampaign(missions: any, opts: any = {}): any {
       if (pre.verdict !== "APPROVED" && pre.verdict !== "APPROVED_WITH_RESTRICTIONS") { metrics.inspectionBlocked++; log.push({ iter, id, decision: "INSPECTION_BLOCKED", preVerdict: pre.verdict, reason: pre.reason }); handled.add(id); continue; }
     }
 
+    // V88 — INCREMENTAL ASSURANCE: when a mission declares a real change, the pipeline computes impact → targeted
+    // invalidation → demonstrated reuse → minimal-sufficient control selection (adaptive L1–L4), BEFORE execution.
+    // Guardrails (§3): a contradictory/stale decision (BLOCKED) is never accepted; reused evidence keeps its provenance;
+    // the selection NEVER drops below the mandatory perimeter (the engine's own fail-closed broadening guarantees this).
+    let assurance: any = null;
+    if (inspection && isObj(mission.change)) {
+      assurance = INCR.assess(mission.change, Array.isArray(mission.priorEvidence) ? mission.priorEvidence : [], mission.assessOpts || {});
+      if (assurance.overall === "BLOCKED") { metrics.inspectionBlocked++; log.push({ iter, id, decision: "BLOCKED_CONTRADICTION", assurance: { overall: assurance.overall, counts: assurance.counts }, reason: "incremental assurance BLOCKED (contradictory evidence) — never accepted (§3)" }); handled.add(id); continue; }
+    }
+
     // Level-A: governed loop end-to-end.
     let report: any; let threw: any = null;
     try { report = execute(mission); } catch (e: any) { threw = e && e.message ? e.message : String(e); }
@@ -84,8 +95,10 @@ function runCampaign(missions: any, opts: any = {}): any {
     // V86 — POST-EXECUTION inspection. "executed" ≠ "accepted": a result is ACCEPTED only on boundary POST PASS.
     const evidenceOpts = typeof inspection.evidenceOptsFor === "function" ? inspection.evidenceOptsFor(mission, report) : null;
     const post = BOUNDARY.inspectPost({ id, objective: id }, { objectiveMet: loopOk, evidenceRef: (report && report.evidenceRef) || `${id}.evidence` }, { inspectorMeta: inspection.inspectorMeta, evidenceOpts });
-    if (loopOk && post.verdict === "PASS") { metrics.accepted++; accepted.push(id); log.push({ iter, id, decision: "EXECUTED_ACCEPTED", outcome: loop.outcome, postVerdict: post.verdict, stages: loop.connected.length }); }
-    else { metrics.failed++; log.push({ iter, id, decision: "FAILED_NOT_ACCEPTED", outcome: loop.outcome || null, postVerdict: post.verdict, reason: post.reason }); }
+    // the V88 assurance decision is recorded on every log entry (traceable: selected controls, depth, reuse — provenance kept).
+    const assuranceLog = assurance ? { overall: assurance.overall, depthLevel: assurance.depthLevel, fullSuite: assurance.fullSuite, testsSelected: assurance.metrics.testsSelected, evidenceReused: assurance.metrics.evidenceReused, evidenceInvalidated: assurance.metrics.evidenceInvalidated } : null;
+    if (loopOk && post.verdict === "PASS") { metrics.accepted++; accepted.push(id); if (assurance && assurance.metrics.evidenceReused > 0) metrics.evidenceReused += assurance.metrics.evidenceReused; log.push({ iter, id, decision: "EXECUTED_ACCEPTED", outcome: loop.outcome, postVerdict: post.verdict, stages: loop.connected.length, assurance: assuranceLog }); }
+    else { metrics.failed++; log.push({ iter, id, decision: "FAILED_NOT_ACCEPTED", outcome: loop.outcome || null, postVerdict: post.verdict, reason: post.reason, assurance: assuranceLog }); }
     handled.add(id);                          // handled either way; a FAILED mission is not re-selected endlessly
   }
   if (iter >= maxIterations) stopReason = "SAFETY_CAP (iterations=" + maxIterations + ", proportional to queue; backstop, not an arbitrary 4/10 limit)";
@@ -94,8 +107,8 @@ function runCampaign(missions: any, opts: any = {}): any {
 
 const CAMPAIGN_ENGINE_CONTRACT = Object.freeze({
   id: "V78-CAMPAIGN-ENGINE", source: "CTO V78 — continuous campaign engine (arbitrary queue, no hardcoded mission cap)",
-  reuses: Object.freeze(["mission-priority-selector", "local-work-mandate", "intelligence-loop", "inspection-boundary (V86)"]),
-  outcomes: Object.freeze(["EXECUTED_ACCEPTED", "FAILED_NOT_ACCEPTED", "INSPECTION_BLOCKED", "EXECUTED_UNINSPECTED", "REFUSED_C", "PREPARED_B", "QUARANTINED", "DEFERRED"]),
+  reuses: Object.freeze(["mission-priority-selector", "local-work-mandate", "intelligence-loop", "inspection-boundary (V86)", "incremental-assurance (V88)"]),
+  outcomes: Object.freeze(["EXECUTED_ACCEPTED", "FAILED_NOT_ACCEPTED", "INSPECTION_BLOCKED", "BLOCKED_CONTRADICTION", "EXECUTED_UNINSPECTED", "REFUSED_C", "PREPARED_B", "QUARANTINED", "DEFERRED"]),
   notAuthority: "drives the canonical mechanisms over the queue; ODG selects, the owner mandate authorizes Level-A, the inspection boundary gates PRE+POST, the loop still runs; no second orchestrator",
   invariants: Object.freeze([
     "consumes an arbitrary-size queue — the only stop conditions are QUEUE_EXHAUSTED / ALL_REMAINING_DEFERRED / BUDGET_LIMIT / SAFETY_CAP (proportional, logged)",
@@ -103,6 +116,7 @@ const CAMPAIGN_ENGINE_CONTRACT = Object.freeze({
     "Level-A executes end-to-end under the owner mandate; Level-C refused; Level-B prepared; no self-authorization",
     "V86: with an inspection context, each Level-A mission traverses the boundary PRE (not executed unless APPROVED) + POST (ACCEPTED only on PASS)",
     "V86 §6: without an inspection context (isolated invocation) a mission may execute but is EXECUTED_UNINSPECTED — NEVER operationally accepted (0 accepted)",
+    "V88: a mission declaring a real change runs incremental assurance (impact→invalidation→reuse→minimal control selection) BEFORE execution; a contradictory decision ⇒ BLOCKED_CONTRADICTION (never accepted); reused evidence keeps provenance; acceptance never granted because fewer tests were selected",
     "no mission re-selected after being handled (no-repeat); deterministic given queue+executor; no new primitive",
   ]),
 });
