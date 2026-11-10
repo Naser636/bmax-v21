@@ -1,0 +1,101 @@
+{
+  "//": "CTO V93 §4 — REAL read-only inventory of the host (which IS the VPS). No sudo, no mutation, no remote connection, no secret value shown (config vars by NAME only). sudo-gated items are OWNER_GATED, never invented. This inventory was PERFORMED (not merely prepared) to the full extent of authorized read-only access.",
+  "performedReadOnly": true,
+  "connectionPerformed": false,
+  "secretsDisclosed": false,
+  "sudoUsed": false,
+  "observed": {
+    "providerInstance": "NOT_MEASURED (cloud metadata not queried; host is the working environment)",
+    "os": "Ubuntu 26.04 LTS",
+    "kernel": "7.0.0-42-generic",
+    "memory": "22Gi total, 21Gi avail",
+    "disk": "193G total, 160G free (18% used)",
+    "cpus": 8,
+    "runtime": {
+      "node": "v22.22.1",
+      "npm": "9.2.0",
+      "matchesCI": true
+    },
+    "ollamaModels": "qwen2.5-coder:7b,qwen2.5-coder:3b,qwen2.5:0.5b,",
+    "localModelService": "ollama listening 127.0.0.1:11434",
+    "listeningPorts": "0.0.0.0:22 127.0.0.1:11434 127.0.0.1:3000 127.0.0.1:44701 127.0.0.1:8080 127.0.0.53%lo:53 127.0.0.54:53 [::]:22",
+    "deployedApp": {
+      "port": 3000,
+      "health": "{\"status\":\"ready\",\"storage\":\"READY\",\"buildId\":\"emLgNDocVzOvu6dN3rA-p\",\"checkedAt\":\"2026-11-10T22:59:44.917Z\"}",
+      "healthOk": true
+    },
+    "releaseMechanism": {
+      "root": "/home/ubuntu/odg-releases",
+      "currentRelease": "/home/ubuntu/odg-releases/rel-20261028T210754Z-e84a0cf2720b-emLgNDocVzOvu6dN3rA-p",
+      "previousRelease": "/home/ubuntu/odg-releases/rel-20261026T170857Z-268be2c666e9-r-lFDoxyDMohywdhPDESc",
+      "releaseCount": 9,
+      "deployScript": "scripts/odg-release.sh (build/verify/activate/rollback/status)"
+    },
+    "deployedVsHead": {
+      "deployedSha": "e84a0cf2720b",
+      "headSha": "c530043d8d84",
+      "deployedIsAncestorOfHead": true,
+      "divergence": "deployed e84a0cf2720b is an ANCESTOR of HEAD c530043d8d84 ⇒ deployed is OLD (HEAD ahead)"
+    },
+    "configVarNames": [
+      "ANTHROPIC_API_KEY",
+      "BF",
+      "CONTRACTONDEMAND_ENABLED",
+      "FLEET_BRIDGE_MOCK",
+      "GH_TOKEN",
+      "HOME",
+      "MISSION",
+      "NODE_ENV",
+      "ODG_ATTEMPTS_LOG",
+      "ODG_CAMPAIGN_EXECUTOR",
+      "ODG_CAMPAIGN_JOURNAL",
+      "ODG_CAMPAIGN_MAX_ITER",
+      "ODG_CANARY_ALLOWLIST",
+      "ODG_CERTIFY",
+      "ODG_CLEAN_CLONE_BASE",
+      "ODG_CLIENT_STORE",
+      "ODG_CODING_EXECUTE",
+      "ODG_CONTRACT_ON_DEMAND",
+      "ODG_DELEGATE_ISOLATION",
+      "ODG_FAKE_SECRET",
+      "ODG_FLEET",
+      "ODG_FRONTIER_NOAUTH",
+      "ODG_FULL_GATE",
+      "ODG_ISOLATED_PROVIDER_CMD",
+      "ODG_ISOLATED_PROVIDER_OFFLINE",
+      "ODG_LOCAL_MODEL",
+      "ODG_LOCAL_MODEL_CMD",
+      "ODG_LOCAL_MODEL_ENV_ALLOW",
+      "ODG_LOCAL_MODEL_KEEPALIVE",
+      "ODG_LOCAL_MODEL_SUPERIOR"
+    ],
+    "rollback": {
+      "mechanism": "repoint 'current' symlink to 'previous' (or any of the prior release dirs) + restart; `odg-release.sh rollback`",
+      "priorReleasesAvailable": 9
+    }
+  },
+  "ownerGatedResiduals": [
+    {
+      "item": "reverse proxy / TLS",
+      "reason": "nginx/caddy not on PATH; a proxy/TLS layer would be sudo-managed ⇒ OWNER_GATED (not observable read-only)"
+    },
+    {
+      "item": "systemd units / service manager",
+      "reason": "systemctl state is sudo-gated ⇒ OWNER_GATED"
+    },
+    {
+      "item": "databases & migrations",
+      "reason": "no db client on PATH; app health reports storage READY (likely file-based) — db engine/migrations NOT confirmed ⇒ OWNER_GATED/NOT_MEASURED"
+    },
+    {
+      "item": "backup policy & retention",
+      "reason": "release dirs provide version rollback; a separate data-backup policy is not observable read-only ⇒ OWNER_GATED"
+    },
+    {
+      "item": "provider/instance identity & firewall",
+      "reason": "cloud metadata + firewall are sudo/owner-scoped ⇒ OWNER_GATED"
+    }
+  ],
+  "honestConclusion": "Read-only VPS=host inventory PERFORMED: Ubuntu 26.04 LTS (7.0.0-42-generic), 8 CPU, 22Gi total, 21Gi avail, node v22.22.1 (CI-match true), ollama models [qwen2.5-coder:7b,qwen2.5-coder:3b,qwen2.5:0.5b,]. Deployed app on :3000 health=READY(200); deployed e84a0cf2720b is OLD vs HEAD c530043d8d84. Release mechanism = /home/ubuntu/odg-releases (9 releases, atomic 'current' symlink, odg-release.sh), rollback = symlink to 'previous'. Residuals OWNER_GATED (sudo-only): TLS/proxy, systemd, db/migrations, backup policy, provider/firewall. Inventory done to the full extent of read-only access; nothing invented.",
+  "invariant": "real read-only inventory performed (no sudo/connection/mutation); secrets by NAME only; sudo-gated items OWNER_GATED not invented; deployed-vs-HEAD divergence recorded."
+}
