@@ -14,9 +14,38 @@ const LEVEL_A = Object.freeze(["read", "analyze", "code_edit_local", "test", "be
 const LEVEL_B = Object.freeze(["human_sign_off", "canonization", "legal_validation", "insurance", "client_validation", "owner_acceptance"]);
 const LEVEL_C = Object.freeze(["push", "merge", "deploy", "vps", "ssh", "sudo", "spend", "subscription", "contract", "prospection", "publish", "dns", "tls", "firewall", "expose_secret", "modify_production", "modify_third_party"]);
 
-const PROVENANCE = "OWNER explicit standing mandate — CTO directives V61–V77 (local reversible work)";
+const PROVENANCE = "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)";
+
+// V84 §2 — the 10 named PERMANENT capability-permissions granted by the owner. Each is bounded to local/public-read-only
+// work and EXCLUDES every Level-C action; revocable; provenance recorded. These map onto the mandate, not a new registry.
+const PERMISSIONS = Object.freeze([
+  "LOCAL_ENGINEERING", "PUBLIC_WEB_RESEARCH", "PUBLIC_DATABASE_READ", "OPEN_DATASET_READ", "PUBLIC_REPOSITORY_RESEARCH",
+  "PUBLIC_BENCHMARK_RESEARCH", "LOCAL_DATA_ANALYSIS", "LOCAL_SIMULATION_AND_BENCHMARK", "LOCAL_CONNECTOR_AND_ADAPTER_BUILD", "LOCAL_CAPABILITY_IMPROVEMENT",
+]);
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
+
+/* permits(capability, opts) -> { permitted, provenance, reason }. The 10 named permanent permissions are granted by the
+ * owner (provenance recorded); revocable via opts.revoked; an unknown capability is NOT permitted (fail-closed); Level-C
+ * is never granted here. ODG checks this itself — the provider cannot widen it. */
+function permits(capability: any, opts: any = {}): any {
+  if (isObj(opts) && opts.revoked === true) return Object.freeze({ permitted: false, capability, reason: "mandate REVOKED (revocable)" });
+  const ok = typeof capability === "string" && PERMISSIONS.includes(capability);
+  return Object.freeze({ permitted: ok, capability, provenance: ok ? PROVENANCE : null, scope: "LOCAL_OR_PUBLIC_READ_ONLY", excludesLevelC: true, reason: ok ? "granted by the owner's permanent mandate (public read-only / local reversible)" : "not a recognized permanent permission ⇒ not granted (fail-closed)" });
+}
+
+// V84 §3 — separate a blocked parent's sub-work into the 7 categories; categories 1–5 PROCEED, 6–7 stay reserved.
+const CATEGORIES = Object.freeze(["LOCAL_DONE", "PUBLIC_RESEARCH", "PUBLIC_DATA", "LOCAL_SIMULATION", "PREP", "HUMAN_DECISION", "EXTERNAL_DEPENDENCY"]);
+function separateBlockedParent(parent: any): any {
+  const p = isObj(parent) ? parent : {};
+  const subs = Array.isArray(p.subWork) ? p.subWork : [];
+  const map: any = { LOCAL_DONE: [], PUBLIC_RESEARCH: [], PUBLIC_DATA: [], LOCAL_SIMULATION: [], PREP: [], HUMAN_DECISION: [], EXTERNAL_DEPENDENCY: [] };
+  for (const s of subs) { const cat = CATEGORIES.includes(s.category) ? s.category : "PREP"; map[cat].push(s.id || s); }
+  const proceed = [].concat(map.LOCAL_DONE, map.PUBLIC_RESEARCH, map.PUBLIC_DATA, map.LOCAL_SIMULATION, map.PREP);
+  const reserved = [].concat(map.HUMAN_DECISION, map.EXTERNAL_DEPENDENCY);
+  return Object.freeze({ parent: p.id || null, byCategory: map, proceedNow: proceed, reservedOnly: reserved,
+    note: `${proceed.length} sub-work item(s) PROCEED now (categories 1–5); ${reserved.length} reserved (human/external) — a gated parent never immobilizes its computable sub-work` });
+}
 
 function classifyAction(a: string): string {
   if (LEVEL_C.includes(a)) return "C";
@@ -54,7 +83,9 @@ const LOCAL_WORK_MANDATE_CONTRACT = Object.freeze({
   id: "V77-LOCAL-WORK-MANDATE", source: "CTO V77 §3/§4 — owner's standing local-work authorization, canonically represented",
   levels: Object.freeze({ A: LEVEL_A, B: LEVEL_B, C: LEVEL_C }), provenance: PROVENANCE,
   notAuthority: "it does NOT create authority — it represents the OWNER's explicit grant; authorizer=owner, selfAuthored=false; revocable + bounded to local reversible work",
+  permanentPermissions: PERMISSIONS,
   invariants: Object.freeze([
+    "10 named permanent owner-permissions (public read-only + local) granted with provenance; revocable; Level-C never granted",
     "authorizes ONLY Level-A (local/reversible); Level-B needs human sign-off (prepare, never accept); Level-C REFUSED",
     "authorizer is the OWNER (provenance = the explicit directive), never ODG (selfAuthored=false) — not self-authorization",
     "revocable (opts.revoked) + verifiable by the action-gate; unknown action ⇒ fail-closed (not authorized)",
@@ -62,6 +93,6 @@ const LOCAL_WORK_MANDATE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { LEVEL_A, LEVEL_B, LEVEL_C, PROVENANCE, classifyAction, authorizeLocalMission, LOCAL_WORK_MANDATE_CONTRACT };
+module.exports = { LEVEL_A, LEVEL_B, LEVEL_C, PERMISSIONS, CATEGORIES, PROVENANCE, classifyAction, authorizeLocalMission, permits, separateBlockedParent, LOCAL_WORK_MANDATE_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(LOCAL_WORK_MANDATE_CONTRACT, null, 2) + "\n"); }
 export {};

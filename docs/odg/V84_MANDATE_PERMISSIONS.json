@@ -1,0 +1,538 @@
+{
+  "//": "CTO V84 §2/§3 — the 10 permanent owner-permissions represented canonically + the 7-category blocked-parent separation applied to the 14 Level-B parents. Categories 1–5 PROCEED; 6–7 (human/external) reserved. Public research is read-only; Level-C never granted. Reuses local-work-mandate; no new registry.",
+  "permanentPermissions": [
+    {
+      "capability": "LOCAL_ENGINEERING",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "PUBLIC_WEB_RESEARCH",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "PUBLIC_DATABASE_READ",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "OPEN_DATASET_READ",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "PUBLIC_REPOSITORY_RESEARCH",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "PUBLIC_BENCHMARK_RESEARCH",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "LOCAL_DATA_ANALYSIS",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "LOCAL_SIMULATION_AND_BENCHMARK",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "LOCAL_CONNECTOR_AND_ADAPTER_BUILD",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    },
+    {
+      "capability": "LOCAL_CAPABILITY_IMPROVEMENT",
+      "permitted": true,
+      "provenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+      "scope": "LOCAL_OR_PUBLIC_READ_ONLY",
+      "excludesLevelC": true,
+      "reason": "granted by the owner's permanent mandate (public read-only / local reversible)"
+    }
+  ],
+  "allPermitted": true,
+  "levelCProbe": [
+    {
+      "action": "spend",
+      "permitted": false
+    },
+    {
+      "action": "deploy",
+      "permitted": false
+    },
+    {
+      "action": "push",
+      "permitted": false
+    },
+    {
+      "action": "sudo",
+      "permitted": false
+    }
+  ],
+  "levelCAllRefused": true,
+  "revocability": {
+    "example": {
+      "permitted": false,
+      "capability": "LOCAL_ENGINEERING",
+      "reason": "mandate REVOKED (revocable)"
+    }
+  },
+  "blockedParentSeparations": [
+    {
+      "parent": "REQ-Préambule",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-Préambule:implementation",
+          "REQ-Préambule:evidence",
+          "REQ-Préambule:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-Préambule:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-Préambule:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-Préambule:implementation",
+        "REQ-Préambule:evidence",
+        "REQ-Préambule:decision-dossier",
+        "REQ-Préambule:tests"
+      ],
+      "reservedOnly": [
+        "REQ-Préambule:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-I",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-I:implementation",
+          "REQ-I:evidence",
+          "REQ-I:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-I:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-I:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-I:implementation",
+        "REQ-I:evidence",
+        "REQ-I:decision-dossier",
+        "REQ-I:tests"
+      ],
+      "reservedOnly": [
+        "REQ-I:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-IV",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-IV:implementation",
+          "REQ-IV:evidence",
+          "REQ-IV:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-IV:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-IV:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-IV:implementation",
+        "REQ-IV:evidence",
+        "REQ-IV:decision-dossier",
+        "REQ-IV:tests"
+      ],
+      "reservedOnly": [
+        "REQ-IV:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XIII",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XIII:implementation",
+          "REQ-XIII:evidence",
+          "REQ-XIII:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XIII:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [],
+        "EXTERNAL_DEPENDENCY": [
+          "REQ-XIII:external-execution"
+        ]
+      },
+      "proceedNow": [
+        "REQ-XIII:implementation",
+        "REQ-XIII:evidence",
+        "REQ-XIII:decision-dossier",
+        "REQ-XIII:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XIII:external-execution"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XVI",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XVI:implementation",
+          "REQ-XVI:evidence",
+          "REQ-XVI:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XVI:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XVI:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XVI:implementation",
+        "REQ-XVI:evidence",
+        "REQ-XVI:decision-dossier",
+        "REQ-XVI:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XVI:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XVII",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XVII:implementation",
+          "REQ-XVII:evidence",
+          "REQ-XVII:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XVII:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XVII:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XVII:implementation",
+        "REQ-XVII:evidence",
+        "REQ-XVII:decision-dossier",
+        "REQ-XVII:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XVII:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XIX",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XIX:implementation",
+          "REQ-XIX:evidence",
+          "REQ-XIX:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XIX:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XIX:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XIX:implementation",
+        "REQ-XIX:evidence",
+        "REQ-XIX:decision-dossier",
+        "REQ-XIX:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XIX:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXIII",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXIII:implementation",
+          "REQ-XXIII:evidence",
+          "REQ-XXIII:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXIII:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XXIII:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XXIII:implementation",
+        "REQ-XXIII:evidence",
+        "REQ-XXIII:decision-dossier",
+        "REQ-XXIII:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXIII:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXV",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXV:implementation",
+          "REQ-XXV:evidence",
+          "REQ-XXV:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXV:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XXV:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XXV:implementation",
+        "REQ-XXV:evidence",
+        "REQ-XXV:decision-dossier",
+        "REQ-XXV:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXV:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXVII",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXVII:implementation",
+          "REQ-XXVII:evidence",
+          "REQ-XXVII:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXVII:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XXVII:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XXVII:implementation",
+        "REQ-XXVII:evidence",
+        "REQ-XXVII:decision-dossier",
+        "REQ-XXVII:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXVII:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXVIII",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXVIII:implementation",
+          "REQ-XXVIII:evidence",
+          "REQ-XXVIII:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXVIII:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XXVIII:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XXVIII:implementation",
+        "REQ-XXVIII:evidence",
+        "REQ-XXVIII:decision-dossier",
+        "REQ-XXVIII:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXVIII:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXIX",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXIX:implementation",
+          "REQ-XXIX:evidence",
+          "REQ-XXIX:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXIX:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XXIX:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XXIX:implementation",
+        "REQ-XXIX:evidence",
+        "REQ-XXIX:decision-dossier",
+        "REQ-XXIX:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXIX:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXX",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXX:implementation",
+          "REQ-XXX:evidence",
+          "REQ-XXX:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXX:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [
+          "REQ-XXX:human-sign-off"
+        ],
+        "EXTERNAL_DEPENDENCY": []
+      },
+      "proceedNow": [
+        "REQ-XXX:implementation",
+        "REQ-XXX:evidence",
+        "REQ-XXX:decision-dossier",
+        "REQ-XXX:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXX:human-sign-off"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    },
+    {
+      "parent": "REQ-XXXII",
+      "byCategory": {
+        "LOCAL_DONE": [
+          "REQ-XXXII:implementation",
+          "REQ-XXXII:evidence",
+          "REQ-XXXII:decision-dossier"
+        ],
+        "PUBLIC_RESEARCH": [],
+        "PUBLIC_DATA": [],
+        "LOCAL_SIMULATION": [
+          "REQ-XXXII:tests"
+        ],
+        "PREP": [],
+        "HUMAN_DECISION": [],
+        "EXTERNAL_DEPENDENCY": [
+          "REQ-XXXII:external-execution"
+        ]
+      },
+      "proceedNow": [
+        "REQ-XXXII:implementation",
+        "REQ-XXXII:evidence",
+        "REQ-XXXII:decision-dossier",
+        "REQ-XXXII:tests"
+      ],
+      "reservedOnly": [
+        "REQ-XXXII:external-execution"
+      ],
+      "note": "4 sub-work item(s) PROCEED now (categories 1–5); 1 reserved (human/external) — a gated parent never immobilizes its computable sub-work"
+    }
+  ],
+  "totalProceedNow": 56,
+  "totalReservedOnly": 14,
+  "honestConclusion": "10 permanent permissions recognized (all granted with provenance; Level-C all refused). Across the 14 Level-B parents, 56 sub-work items PROCEED now (local/done/prep) and 14 stay reserved (human sign-off / external) — proving a gated parent never immobilizes its computable sub-work. Public research is read-only; the mandate is revocable; ODG checks it, the provider cannot widen it.",
+  "invariant": "the 10 permissions are owner-granted (provenance), revocable, Level-C-excluded; a blocked parent's categories 1–5 always proceed; human/external stay reserved; no self-widening."
+}
