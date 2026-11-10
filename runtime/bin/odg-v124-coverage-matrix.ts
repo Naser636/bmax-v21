@@ -17,14 +17,14 @@ const D = path.join(__dirname, "..", "..", "docs", "odg");
 
 // map the matrix's status vocabulary → V56 buckets (DONE/PARTIAL/MISSING/BLOCKED/NOT_VALIDATED). Order matters: test strongest-first.
 function bucketOf(statusCell: string): string {
-  // classify on the PRIMARY status token only (before any ';' or '(' qualifier), stripped of markdown — avoids
-  // false matches like "unblocked" inside a trailing note. Fail-closed: PARTIAL wins over a decorative PROVEN note.
-  const primary = statusCell.replace(/\*\*/g, "").split(/[;(]/)[0].toUpperCase().trim();
-  if (/\bNOT_RECOVERABLE\b|\bBLOCKED\b/.test(primary) && !/UNBLOCKED/.test(primary)) return "BLOCKED";
-  if (/\bNOT_STARTED\b|\bABSENT\b|\bMISSING\b|\bNOT_RECOVERED\b/.test(primary)) return "MISSING";
-  if (/PARTIAL/.test(primary)) return "PARTIAL";
-  if (/PRESENT_AND_PROVEN|PRESENT|DEMONSTRATED|PROVEN/.test(primary)) return "DONE";
-  if (/DOCUMENTED_NOT_VERIFIED|NOT_VERIFIED|PROPOSED|NOT_MEASURED/.test(primary)) return "NOT_VALIDATED";
+  // classify on the whole status cell (markdown stripped). Fail-closed precedence: PARTIAL dominates a decorative
+  // PROVEN sub-note (a part with any "partial" is not DONE); "unblocked" never counts as BLOCKED.
+  const s = statusCell.replace(/\*\*/g, "").toUpperCase();
+  if (/PARTIAL/.test(s)) return "PARTIAL";                                        // "PARTIALLY_BUILT" or "...(partial)"
+  if (/\bNOT_RECOVERABLE\b|\bBLOCKED\b/.test(s) && !/UNBLOCKED/.test(s)) return "BLOCKED";
+  if (/\bNOT_STARTED\b|\bABSENT\b|\bMISSING\b|\bNOT_RECOVERED\b/.test(s)) return "MISSING";
+  if (/PRESENT_AND_PROVEN|PRESENT|DEMONSTRATED|PROVEN/.test(s)) return "DONE";
+  if (/DOCUMENTED_NOT_VERIFIED|NOT_VERIFIED|PROPOSED|NOT_MEASURED/.test(s)) return "NOT_VALIDATED";
   return "NOT_VALIDATED"; // fail-closed: unknown status is never counted as DONE
 }
 

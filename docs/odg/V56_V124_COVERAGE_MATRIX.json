@@ -89,7 +89,7 @@
       "part": "X §43–§46",
       "title": "15 professions, nature, responsibility matrix, **recover 11 historical**",
       "matrixStatus": "ALL 15 (P1–P15) E2/E3 reference projects PRESENT_AND_PROVEN / CONTRADICTION-adja",
-      "bucket": "NOT_VALIDATED",
+      "bucket": "DONE",
       "evidenceExcerpt": "Every profession P1–P15 now has a runnable E2+E3 reference project composing an existing guard (NO duplication): P1 characterization-baseline (behaviour-preserv"
     },
     {
@@ -103,7 +103,7 @@
       "part": "XII §51–§56",
       "title": "Source intelligence, defect detection, diagnosis/repair, regression shield, migration, versioning",
       "matrixStatus": "PRESENT_AND_PROVEN (partial)",
-      "bucket": "DONE",
+      "bucket": "PARTIAL",
       "evidenceExcerpt": "`discovery-engine`, `code-health-service`, `code-review-service`, `repair-workflow`, `build-recovery-engine`, affected-tests"
     },
     {
@@ -124,7 +124,7 @@
       "part": "XV §66–§70",
       "title": "Traceability, proof-carrying change, software provenance (SLSA), reproducibility, result statuses",
       "matrixStatus": "PRESENT_AND_PROVEN (partial)",
-      "bucket": "DONE",
+      "bucket": "PARTIAL",
       "evidenceExcerpt": "`evidence-provenance` (SLSA/in-toto-style), `mission-evidence`, `supply-chain-attest`, `sbom-audit-service`; result statuses enforced"
     },
     {
@@ -152,7 +152,7 @@
       "part": "XIX §83–§87",
       "title": "Four campaigns C1–C4 + gates",
       "matrixStatus": "LEDGERED (honest, fail-closed) / PARTIALLY_BUILT",
-      "bucket": "NOT_VALIDATED",
+      "bucket": "PARTIAL",
       "evidenceExcerpt": "`campaign-closure-ledger.ts` enumerates C1–C4 with fail-closed `closed` flags (0 closed by fiat): C3 canonical chain DEMONSTRATED_SLICE (FR-06), C2 compounding "
     },
     {
@@ -241,12 +241,12 @@
     }
   ],
   "tally": {
-    "DONE": 8,
-    "PARTIAL": 16,
+    "DONE": 7,
+    "PARTIAL": 19,
     "MISSING": 0,
     "BLOCKED": 0,
-    "NOT_VALIDATED": 8
+    "NOT_VALIDATED": 6
   },
-  "honestConclusion": "Of 32 parsed roadmap parts (+ Part XXXII): 8 DONE, 16 PARTIAL, 0 MISSING, 0 BLOCKED, 8 NOT_VALIDATED. Structural §1–§122 coverage is PROVEN exactly-once (122/122); that is structural, not functional completion. Per-section status SSOT remains the traceability matrix. No part is declared DONE merely because a document exists.",
+  "honestConclusion": "Of 32 parsed roadmap parts (+ Part XXXII): 7 DONE, 19 PARTIAL, 0 MISSING, 0 BLOCKED, 6 NOT_VALIDATED. Structural §1–§122 coverage is PROVEN exactly-once (122/122); that is structural, not functional completion. Per-section status SSOT remains the traceability matrix. No part is declared DONE merely because a document exists.",
   "invariant": "Coverage is classified by reading the existing SSOT, never re-asserted. Structural coverage ≠ functional completion. A mission is DONE only when its criteria + evidence + validations hold — a document alone never flips a bucket to DONE."
 }
