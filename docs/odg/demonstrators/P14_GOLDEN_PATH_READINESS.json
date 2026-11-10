@@ -1,0 +1,66 @@
+{
+  "//": "CTO V51 P14 E4 demonstrator. SYNTHETIC inputs. Reuses the P14 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P14",
+    "title": "Developer Platform / Golden-Path Readiness",
+    "status": "READINESS — evidence bundle sealed",
+    "summary": "golden-path evidence bundle assembled + sealed (sbom + confinement + provenance).",
+    "controls": [
+      {
+        "name": "evidence-bundle",
+        "status": "SEALED",
+        "detail": "sbom+confinement+provenance"
+      }
+    ],
+    "findings": [],
+    "recommendations": [
+      "supply every required bundle field for a client golden-path",
+      "verifyBundle independently before handover"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "golden-path bundle sealed",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "0f3ef5f625120be6d63e59b1cba0942995ffbfeb95ade80c26d8456fda93c0d7",
+        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "0f3ef5f625120be6d63e59b1cba0942995ffbfeb95ade80c26d8456fda93c0d7",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

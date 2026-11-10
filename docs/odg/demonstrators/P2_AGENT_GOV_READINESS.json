@@ -1,0 +1,72 @@
+{
+  "//": "CTO V51 P2 E4 demonstrator. SYNTHETIC inputs. Reuses the P2 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P2",
+    "title": "AI/Agent Governance Readiness",
+    "status": "READINESS — execution authorization gate (deny-by-default)",
+    "summary": "agent-governance authorizeExecution on absent evidence ⇒ authorized=false (fail-closed). The guard admits execution ONLY on sealed, independently-verified evidence.",
+    "controls": [
+      {
+        "name": "authorizeExecution (no evidence)",
+        "status": "DENY",
+        "detail": "evidence re-verification failed: provenance: no provenance stamp; invalid transition order (must start at AUTH or GATE)"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "INFO",
+        "detail": "deny-by-default honored: evidence re-verification failed: provenance: no provenance stamp; invalid transition order (must start at AUTH or GATE)",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "supply a sealed evidence bundle for a real agent action",
+      "keep the independent verifier distinct from the agent"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "deny-by-default execution gate demonstrated",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "dd39d347c4bfd786dae5a32b92128111e0140ece17cd655c87d1ba80a7fe36a4",
+        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "dd39d347c4bfd786dae5a32b92128111e0140ece17cd655c87d1ba80a7fe36a4",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

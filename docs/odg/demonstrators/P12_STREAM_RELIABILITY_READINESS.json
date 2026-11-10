@@ -1,0 +1,72 @@
+{
+  "//": "CTO V51 P12 E4 demonstrator. SYNTHETIC inputs. Reuses the P12 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P12",
+    "title": "Real-Time Streaming Reliability Readiness",
+    "status": "READINESS — stream assessed",
+    "summary": "integration-stream-reliability over 4 events ⇒ {\"verdict\":\"DEGRADED\",\"sloVerdict\":\"BREACHES\",\"engine\":\"IN_MEMORY (not a distributed broker)\",\"p12\":{\"attempts\":4,\"appended\":0,\"deduped\":0,\"rejected\":4,\"lastSeq",
+    "controls": [
+      {
+        "name": "stream-reliability",
+        "status": "ASSESSED",
+        "detail": "{\"verdict\":\"DEGRADED\",\"sloVerdict\":\"BREACHES\",\"engine\":\"IN_MEMORY (not a distributed broker)\",\"p12\":{\"attempts\":4,\"appen"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "INFO",
+        "detail": "ordering/dedup/loss assessed against declared SLO (fail-closed)",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "dedup by idempotency key",
+      "quarantine poison-pills to a DLQ (never silent drop)"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "stream reliability assessment",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "14c2a66bae0a7eb38d84da9b092a41a932c5cd5f9f168b0615e6378671514c75",
+        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "14c2a66bae0a7eb38d84da9b092a41a932c5cd5f9f168b0615e6378671514c75",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

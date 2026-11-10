@@ -10,7 +10,7 @@ const D = path.join(__dirname, "..", "..", "docs", "odg", "demonstrators");
 let failures = 0;
 function check(c: any, l: any): void { if (!c) { failures++; process.stderr.write("FAIL: " + l + "\n"); } }
 
-const E4 = { P3: "P3_CRA_SBOM_READINESS.json", P11: "P11_EINVOICE_STP_READINESS.json", P9: "P9_FINOPS_READINESS.json", P10: "P10_AIGOV_READINESS.json", P15: "P15_AUTOMATION_READINESS.json" };
+const E4 = { P3: "P3_CRA_SBOM_READINESS.json", P11: "P11_EINVOICE_STP_READINESS.json", P9: "P9_FINOPS_READINESS.json", P10: "P10_AIGOV_READINESS.json", P15: "P15_AUTOMATION_READINESS.json", P1: "P1_CODE_HEALTH_READINESS.json", P2: "P2_AGENT_GOV_READINESS.json", P4: "P4_DATA_QUALITY_READINESS.json", P5: "P5_RELEASE_READINESS_READINESS.json", P6: "P6_AI_EVAL_READINESS.json", P7: "P7_SRE_LATENCY_READINESS.json", P8: "P8_API_CONFORMANCE_READINESS.json", P12: "P12_STREAM_RELIABILITY_READINESS.json", P14: "P14_GOLDEN_PATH_READINESS.json" };
 for (const [m, f] of Object.entries(E4)) {
   const p = path.join(D, f);
   check(fs.existsSync(p), `${m}: E4 artifact exists (${f})`);
@@ -26,9 +26,9 @@ for (const [m, f] of Object.entries(E4)) {
 }
 // the matrix is honest: exactly 5 DEMONSTRATED, 1 BLOCKED (P13), rest DEFINED_PENDING; none E5.
 const matrix = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "docs", "odg", "V50_E4_ASSESSMENT_MATRIX.json"), "utf8"));
-check(matrix.tally.DEMONSTRATED === 5 && matrix.tally.BLOCKED === 1, "E4 matrix: 5 DEMONSTRATED, 1 BLOCKED (honest)");
+check(matrix.tally.DEMONSTRATED === 14 && matrix.tally.BLOCKED === 1, "E4 matrix: 14 DEMONSTRATED, 1 BLOCKED (honest)");
 check(matrix.metiers.P13.e4 === "BLOCKED", "P13 honestly BLOCKED (no GPU, not simulated)");
 
-if (failures === 0) process.stdout.write("ALL PASS — V50 E4 deliverables sound (P3/P11/P9/P10/P15), evidence verifiable, no overclaim\n");
+if (failures === 0) process.stdout.write("ALL PASS — E4 deliverables sound (14 métiers), evidence verifiable, no overclaim\n");
 process.exit(failures === 0 ? 0 : 1);
 export {};

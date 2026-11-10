@@ -1,0 +1,72 @@
+{
+  "//": "CTO V51 P6 E4 demonstrator. SYNTHETIC inputs. Reuses the P6 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P6",
+    "title": "Quality Engineering / AI-Eval Readiness",
+    "status": "READINESS — classifier eval computed",
+    "summary": "eval-metrics confusion matrix over 5 labelled items ⇒ {\"TP\":2,\"FP\":0,\"FN\":0,\"precision\":1,\"recall\":1,\"f1\":1,\"falsePositives\":[],\"falseNegatives\":[],\"truePositives\":[\"spam\",\"ham\"]}",
+    "controls": [
+      {
+        "name": "confusion-matrix",
+        "status": "COMPUTED",
+        "detail": "{\"TP\":2,\"FP\":0,\"FN\":0,\"precision\":1,\"recall\":1,\"f1\":1,\"falsePositives\":[],\"falseNegatives\":[],\"truePositives\":[\"spam\",\"h"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "INFO",
+        "detail": "precision/recall/F1 computed from held-out labels (no label leakage)",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "report confidence intervals (eval-significance) before claiming an improvement",
+      "use a held-out set, never the training data"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "confusion-matrix / PR-F1 computed",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "3cb0e25e7ca26430a11fe1af888bc2b29ba6ba8cf3b51bd788497e7b1fe663c0",
+        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "3cb0e25e7ca26430a11fe1af888bc2b29ba6ba8cf3b51bd788497e7b1fe663c0",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

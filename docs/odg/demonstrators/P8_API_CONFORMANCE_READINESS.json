@@ -1,0 +1,66 @@
+{
+  "//": "CTO V51 P8 E4 demonstrator. SYNTHETIC inputs. Reuses the P8 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P8",
+    "title": "API / Integration Conformance Readiness",
+    "status": "READINESS — compatibility compatible",
+    "summary": "api-contract checkCompatibility old→new ⇒ 0 breaking, 0 non-breaking changes.",
+    "controls": [
+      {
+        "name": "breaking-changes",
+        "status": "NONE",
+        "detail": ""
+      }
+    ],
+    "findings": [],
+    "recommendations": [
+      "gate breaking changes behind a major version + deprecation window",
+      "validate request/response against the contract"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "contract compatibility checked",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "fb8b1308db42657ff3c19665fbdeb0c51757f92c4daec6769be8c47fa6183710",
+        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "fb8b1308db42657ff3c19665fbdeb0c51757f92c4daec6769be8c47fa6183710",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

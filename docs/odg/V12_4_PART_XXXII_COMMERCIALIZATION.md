@@ -3,7 +3,7 @@
 > **Extension de la V12.4** décidée par les audits V48 (I1/C7) + V49. **Elle COMPLÈTE la V12.4 ; elle ne réécrit aucune des 31 parties numérotées et ne modifie pas l'invariant §1–§122** (cette partie porte des §§ au-delà de §122, hors du périmètre du vérificateur de couverture). Elle **réutilise les mécanismes ODG canoniques** (pas de CRM/moteur commercial/base parallèle). **Toutes les valeurs commerciales restent des HYPOTHÈSES** jusqu'à preuve réelle ; 0 client observé ; aucune prospection/engagement sans autorisation.
 
 ## §123 — Objet & statut
-Donner à la V12.4 — feuille de route de supériorité TECHNIQUE — son bras COMMERCIAL manquant (constat central V48 : 0/31 parties ne traitaient l'acquisition). Statut : **référentiel directeur proposé** ; exigence ≠ vente réalisée. Objectif de rattachement : la cible **5 M€ de CA 2027** (V47) — cible à démontrer, non acquise.
+Donner à la V12.4 — feuille de route de supériorité TECHNIQUE — son bras COMMERCIAL manquant (constat central V48 : 0/31 parties ne traitaient l'acquisition). Statut : **référentiel directeur proposé** ; exigence ≠ vente réalisée. Objectif de rattachement : l'**objectif canonique (V51) : €500,000,000 de BÉNÉFICE NET sur les 12 premiers mois** — cible OFFICIELLE à démontrer. **Évaluation honnête (V51, `V51_500M_NET_FEASIBILITY.md`) : INFEASIBLE depuis l'état actuel (0 client) en 12 mois, par ~1000× (requiert ~€2–5 Md de CA) — l'objectif n'est PAS abaissé ; l'infaisabilité est consignée comme un fait.** Les anciennes cibles (€500k, €5M) sont des scénarios historiques, jamais des prévisions validées.
 
 ## §124 — Stratégie commerciale (réutilise V47.1 ranking + V45.2 pricing)
 - Segments : TPE, PME, ETI, grands comptes, cabinets/experts-comptables, intégrateurs, éditeurs (V47.1).
@@ -22,7 +22,7 @@ Réutiliser le module ODG existant **`commercial-pipeline`** (étapes gouvernée
 Autorisations humaines deny-by-default (action-gate) ; traçabilité (evidence-provenance) ; RGPD ; contrôle des engagements ; **séparation simulation ↔ vente réelle** (une simulation n'est jamais présentée comme une vente). Aucune donnée personnelle traitée sans base légale.
 
 ## §128 — Pilotage économique (réutilise cost-engine + les modèles V45.3/V46)
-CAC · panier moyen · marge · récurrence · capacité commerciale · objectifs mensuels/trimestriels · contribution au 5 M€. Modèles reproductibles : `odg-acquisition-model`, `odg-org-model` (Scénario C = org minimale pour €500k net ; €5M = org élargie, V47). **Toutes hypothèses étiquetées.**
+CAC · panier moyen · marge · récurrence · capacité commerciale · objectifs mensuels/trimestriels · contribution à l'objectif canonique €500M net (cf. V51 — infeasible en 12 mois depuis €0, consigné). Modèles reproductibles : `odg-acquisition-model`, `odg-org-model` (Scénario C = org minimale pour €500k net ; €5M = org élargie, V47). **Toutes hypothèses étiquetées.**
 
 ## §129 — Dépendances & critères de validation
 Dépend de : C2 (métiers→E4, offres vendables) + crédibilité (V49 cert-readiness) + **1 client référence** (verrou P0). Validé quand : offres E4 prêtes, prix validés (3 devis), canal défini, machine commerciale gouvernée opérationnelle en SIMULATION, et ≥1 conversion réelle prouvée (owner-gated).
