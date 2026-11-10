@@ -143,3 +143,16 @@ knowledge-engine, frontier-lab, intelligence-loop, causal-graph…) ; **aucune d
 Gap §4 comblé : `source-intelligence.ts` (grading multi-dimensionnel NON binaire ; typologie 8 niveaux + bandes de
 crédibilité ; non-certifié jamais auto-rejeté, réputé jamais auto-vrai, contradictions conservées ; compose evidence-provenance).
 Contenu externe toujours UNTRUSTED (V61/V67) ; une bande de crédibilité n'autorise jamais l'intégration (ODG décide).
+
+## Chantier « Autonomous Roadmap Execution & Completion Governance » — intégré (2026-11-10)
+
+Intégré comme **formalisation de l'EXISTANT** `ODG_AUTONOMOUS_WORK_PROTOCOL.json` (workflow 0–13, échelle à 9 états
+PROPOSED→AUTHORIZED→EXECUTING→VERIFIED→ACCEPTED, schéma WIC, portes d'approbation) — **pas une nouvelle roadmap, pas de
+dixième primitive**. Matrice de correspondance : `docs/odg/V70_GOVERNANCE_CHANTIER_MATRIX.json`. Les **12 lots A–L** (A compass/continuité,
+B truth-lock, C sélection work-item unique, D contrat WIC, E autorisation externe, F reproduction+cause-racine, G checkpoint,
+H changement minimal confiné write_set, I vérification build+test+régression+runtime+evidence, J rapport structuré, K
+acceptation+commit human-gated, L gouvernance de clôture no-push-sans-approbation) sont chacun rattachés à un composant
+canonique présent + une primitive + un programme P1–P10 + un test + une preuve + un critère de clôture. 12/12 ancrés
+(composant+test présents), 0 doublon ; les exigences déjà satisfaites conservent leur preuve. **L'intégration documentaire
+est le POINT DE DÉPART de l'exécution, pas une clôture.** Rattaché principalement aux programmes P1 (gouvernance), P2
+(autonomie), P7 (livraison), P8 (sécurité), P10 (opération). ODG pilote ; fournisseur borné (V61).
