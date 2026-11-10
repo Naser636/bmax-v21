@@ -1,7 +1,8 @@
 {
   "//": "CTO V44 Chantier B — P3 CRA-SBOM READINESS demonstrator. REPRODUCIBLE on public inputs. ODG produces readiness EVIDENCE (SBOM + audit), NOT full CRA compliance (owner-side obligations listed). No client data. VERIFIED in-repo != a sold product (L2, 0 clients).",
   "demonstrator": "P3 supply-chain / SBOM — EU Cyber Resilience Act readiness",
-  "generatedAt": "2026-11-10T12:44:16.646Z",
+  "generatedAt": "2026-11-10T13:09:21.747Z",
+  "project": "bmax-v21",
   "inputManifests": [
     "package-lock.json"
   ],

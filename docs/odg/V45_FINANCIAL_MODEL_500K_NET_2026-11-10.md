@@ -33,9 +33,12 @@ Founder salary modeled as **€0 in scenarios** (founder paid via dividends post
 | FR overhead/yr | ~€45k | ~€73k | ~€110k |
 | **Total opex/yr** | **~€75k** | **~€183k** | **~€310k** |
 | Target net after IS | ~€120k | ~€300k | **€500k** |
-| ⇒ EBT needed | ~€161k | ~€401k | **~€661k** |
-| **⇒ Revenue HT needed** | **~€236k** | **~€584k** | **~€971k** |
-| IS | ~€41k | ~€100k | ~€161k |
+| ⇒ EBT needed | **~€154k** | **~€394k** | **~€661k** |
+| **⇒ Revenue HT needed** | **~€229k** | **~€577k** | **~€971k** |
+| IS | ~€34k | ~€94k | ~€161k |
+| Owner personal after PFU 30% | ~€84k | ~€210k | **~€350k** |
+
+> **§5 AUDIT RECONCILIATION (2026-11-10):** figures recomputed independently with the exact band formula Net = 0.75·EBT + €4,250 (the €4,250 = the 10% saving on the first €42,500 at 15% vs 25%). This corrected the Prudent/Central EBT down by ~€7k vs the first pass (which omitted the band benefit). Verified: Ambitious EBT €661,000, IS €161,000, revenue €971,000, owner-personal €350,000. **These are reconciled but still ASSUMPTION-dependent** (prices, client counts, opex) — not validated until a real pipeline exists.
 
 **Required revenue for €500k NET = ~€971k HT/yr** (Ambitieux), i.e. **~€660k EBT + ~€310k opex**. (The prior "3× / €1.49M gross" rule is refined down by the leaner Morocco cost base, but the order of magnitude — ~€1M revenue — stands.)
 
@@ -47,6 +50,18 @@ From the market study pricing (verify): P3/P11 **entry audit €5–15k**, **rec
 ## 5. SAS net profit ≠ owner personal cash
 - **€500k net in the SAS** is the company result. If distributed to the owner as dividends: **−30% PFU ⇒ ~€350k personal**; retained in the SAS ⇒ €500k stays as equity/trésorerie (distributable later).
 - Owner may instead take **salary** (deductible expense, lowers EBT, incurs FR social charges ~ high) — a different optimization; modeled here as dividends for simplicity. **The €500k objective is a company metric; personal take-home after distribution ≈ €350k.**
+
+## 5b. Multi-horizon to €500k NET (18 / 24 / 30 months) — target not abandoned
+€500k NET is an annual **run-rate**, not a month-1 outcome. Realistic path to that run-rate:
+- **By month 18:** Central run-rate (~€300k net / ~€577k revenue, team ~6). €500k not yet reached.
+- **By month 24:** approaching Ambitious if ≥1 reference client + channel exist (team ~8). €500k net run-rate plausible only with ~€971k revenue secured.
+- **By month 30:** Ambitious run-rate (~€971k revenue, team ~10) ⇒ €500k NET achievable **if** acquisition scaled to ~90 deals/yr + recurring.
+- **Cumulative vs run-rate:** cumulative net over the first 12–18 months is far below €500k (ramp + hiring + CAC come first); the €500k is a steady-state annual figure, reached ~month 24–30, not before.
+
+## 5c. Working capital, VAT, cash (not profit)
+- **VAT (TVA 20%):** collected on sales, deducted on purchases, remitted — **cash timing only, not a cost**; but it affects **trésorerie** (the SAS fronts VAT between invoice and remittance).
+- **Working capital (BFR):** B2B payment terms 30–60 days ⇒ the SAS funds salaries (Morocco, monthly) **before** client cash arrives — a real cash gap at ramp; needs a buffer ≈ 2–3 months of opex (~€30–80k) or it blocks hiring.
+- **Recruitment/CAC are cash-upfront, revenue-lagging** ⇒ the first months are cash-negative even at a good margin.
 
 ## 6. Honest verdict
 - **€500k NET after IS in year 1 is NOT realistic** from a standing start: it needs **~€971k revenue (~90 PME deals + recurring)** supported by a **~10-person team** that must be hired and ramped first, and a pipeline that doesn't exist yet (**€0 clients, L2 demonstrators**).
