@@ -1,0 +1,454 @@
+{
+  "//": "CTO V55 §3 — 15-métier GLOBAL benchmark scorecard. Each métier vs the best systems OF ITS OWN DOMAIN. Five STRICTLY SEPARATE states; superior_to_reference and commercially_validated are FAIL-CLOSED (false until a reproducible independent benchmark / a real client exists). Read-only aggregation of existing sources; no new engine.",
+  "generatedFrom": [
+    "V50_E4_ASSESSMENT_MATRIX.json",
+    "V49_15_METIERS_BENCHMARK_MATRIX.json",
+    "V52_TRI_STATUS_SCORECARD.json",
+    "closure-register.json"
+  ],
+  "metierCount": 15,
+  "registerItemCount": 427,
+  "methodology": "No artificial cross-métier global score. Each métier is scored only against references in its own domain. World-superiority is claimed for ZERO métiers — it requires a reproducible, independent benchmark that has not been run.",
+  "perMetier": [
+    {
+      "metier": "P3",
+      "capability": "SBOM/supply-chain/license",
+      "demonstrator": "odg-demo-cra-sbom.ts (485 comp, O1)",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Airbus/Boeing:Configuration management, requ",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "Microsoft:Security Development Lifecycle",
+        "NIST:Risk Management Framework SP 8",
+        "ENISA/ISO:ISO 9001/27001/42001; CRA; EU ",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Maersk/Leclerc:Supply-chain visibility, logis",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P11",
+      "capability": "e-invoice EN16931/STP",
+      "demonstrator": "odg-demo-einvoice.ts (3 cases, O1)",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P9",
+      "capability": "FinOps cost-engine",
+      "demonstrator": "odg-e4-p9-finops.ts (O1)",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P10",
+      "capability": "ai-assurance/AI-Act",
+      "demonstrator": "odg-e4-p10-aigov.ts (O1)",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Airbus/Boeing:Configuration management, requ",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NIST:Risk Management Framework SP 8",
+        "ENISA/ISO:ISO 9001/27001/42001; CRA; EU ",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P15",
+      "capability": "metier-coordinator orchestration",
+      "demonstrator": "odg-e4-p15-automation.ts (O1)",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Siemens:Industrial automation, digital",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P1",
+      "capability": "native build/repair/code-health",
+      "demonstrator": "odg-e4-metier.ts(P1) → P1_CODE_HEALTH",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "SpaceX:Rapid iterate-test-to-failure;",
+        "Airbus/Boeing:Configuration management, requ",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NVIDIA:AI infrastructure, GPU/inferen",
+        "NIST:Risk Management Framework SP 8",
+        "ENISA/ISO:ISO 9001/27001/42001; CRA; EU ",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Siemens:Industrial automation, digital",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P2",
+      "capability": "agent-gov/eval",
+      "demonstrator": "odg-e4-metier.ts(P2) → P2_AGENT_GOV",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "Google DeepMind:Rigorous model evaluation, hel",
+        "Tesla:HW-SW integration, data flywhe",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P4",
+      "capability": "dataset-quality/PII",
+      "demonstrator": "odg-e4-metier.ts(P4) → P4_DATA_QUALITY",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "Tesla:HW-SW integration, data flywhe",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P5",
+      "capability": "canary/deployment-readiness",
+      "demonstrator": "odg-e4-metier.ts(P5) → P5_RELEASE_READINESS",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "Amazon:Operational excellence (Well-A",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Siemens:Industrial automation, digital",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P6",
+      "capability": "eval-metrics",
+      "demonstrator": "odg-e4-metier.ts(P6) → P6_AI_EVAL",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "SpaceX:Rapid iterate-test-to-failure;",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "Google DeepMind:Rigorous model evaluation, hel",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P7",
+      "capability": "SLO/latency",
+      "demonstrator": "odg-e4-metier.ts(P7) → P7_SRE_LATENCY",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "SpaceX:Rapid iterate-test-to-failure;",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "Amazon:Operational excellence (Well-A",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P8",
+      "capability": "api-contract",
+      "demonstrator": "odg-e4-metier.ts(P8) → P8_API_CONFORMANCE",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P12",
+      "capability": "event-stream reliability",
+      "demonstrator": "odg-e4-metier.ts(P12) → P12_STREAM_RELIABILITY",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P14",
+      "capability": "developer-platform/golden-path",
+      "demonstrator": "odg-e4-metier.ts(P14) → P14_GOLDEN_PATH",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": true,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": false,
+      "maturity": "L2/L3 — demonstrated, not benchmarked, not sold",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    },
+    {
+      "metier": "P13",
+      "capability": "local-model (CPU only)",
+      "demonstrator": "BLOCKED",
+      "domainReferences": [
+        "NASA:Independent Verification & Val",
+        "NASA/DoD:Technology Readiness Levels (T",
+        "Toyota:Lean/TPS: andon (stop-the-line",
+        "NVIDIA:AI infrastructure, GPU/inferen",
+        "NATO/Defense:Interoperability, C2 coordinat",
+        "Scientific orgs:Reproducibility, independent v"
+      ],
+      "states": {
+        "available": true,
+        "tested": true,
+        "demonstrated": false,
+        "superior_to_reference": false,
+        "commercially_validated": false
+      },
+      "blocked": true,
+      "maturity": "BLOCKED (owner-gated resource)",
+      "gapToReference": "NOT MEASURED — requires a reproducible, independent head-to-head benchmark vs the named domain reference (not yet run)",
+      "evidenceNeededForSuperiority": [
+        "a reproducible benchmark harness vs the named domain reference, same perimeter/quality/SLA",
+        "independent (controller) execution of that benchmark",
+        "published method + inputs so a third party reproduces the result"
+      ]
+    }
+  ],
+  "tally": {
+    "available": 15,
+    "tested": 15,
+    "demonstrated": 14,
+    "superior_to_reference": 0,
+    "commercially_validated": 0,
+    "blocked": 1
+  },
+  "honestConclusion": "Of 15 métiers: 15 available, 15 tested, 14 demonstrated (E4), 1 blocked. superior_to_reference = 0 (NO reproducible independent benchmark exists). commercially_validated = 0 (0 paying clients). ODG has demonstrable capability; it has NOT demonstrated measured world-superiority or commercial validation.",
+  "invariant": "A demonstrated capability is NEVER reported as superior-to-reference or commercially-validated. Superiority requires a reproducible, independent benchmark; commercial validation requires a real paying client. Both stay false until proven."
+}

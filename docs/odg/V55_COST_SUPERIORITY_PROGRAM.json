@@ -1,0 +1,1199 @@
+{
+  "//": "CTO V55 §4 — cost-superiority program. reduction=(ref−odg)/ref per métier, reusing cost-engine. Basis STRICTLY separated; SIMULATED only (0 observed/validated). ≥50% is an OBJECTIVE, not a result. No optimization reduces quality/security/compliance. No new engine.",
+  "generatedFrom": [
+    "V50_E4_ASSESSMENT_MATRIX.json",
+    "cost-engine"
+  ],
+  "target": "≥ 50% reduction of comparable client cost (OBJECTIVE — measured per métier, not declared achieved)",
+  "costCategories": [
+    "software_licenses",
+    "ai_inference",
+    "infrastructure",
+    "storage_transfer",
+    "personnel",
+    "subcontracting",
+    "operations",
+    "control_maintenance",
+    "errors_rework"
+  ],
+  "levers": [
+    "intelligent routing to cheaper models",
+    "specialized/small models",
+    "cache & reuse",
+    "batch processing",
+    "removal of redundant computation",
+    "infrastructure optimization",
+    "task orchestration",
+    "consumption control",
+    "error/rework reduction",
+    "automation of repetitive tasks"
+  ],
+  "perMetier": [
+    {
+      "metier": "P3",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P11",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P9",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P10",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P15",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P1",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P2",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P4",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P5",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P6",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P7",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P8",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P12",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P14",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    },
+    {
+      "metier": "P13",
+      "byCategory": [
+        {
+          "category": "software_licenses",
+          "referenceCost": 120,
+          "odgCost": 20,
+          "delta": 100
+        },
+        {
+          "category": "ai_inference",
+          "referenceCost": 0,
+          "odgCost": 35,
+          "delta": -35
+        },
+        {
+          "category": "infrastructure",
+          "referenceCost": 40,
+          "odgCost": 12,
+          "delta": 28
+        },
+        {
+          "category": "storage_transfer",
+          "referenceCost": 10,
+          "odgCost": 4,
+          "delta": 6
+        },
+        {
+          "category": "personnel",
+          "referenceCost": 1400,
+          "odgCost": 220,
+          "delta": 1180
+        },
+        {
+          "category": "subcontracting",
+          "referenceCost": 300,
+          "odgCost": 0,
+          "delta": 300
+        },
+        {
+          "category": "operations",
+          "referenceCost": 120,
+          "odgCost": 30,
+          "delta": 90
+        },
+        {
+          "category": "control_maintenance",
+          "referenceCost": 90,
+          "odgCost": 40,
+          "delta": 50
+        },
+        {
+          "category": "errors_rework",
+          "referenceCost": 180,
+          "odgCost": 25,
+          "delta": 155
+        }
+      ],
+      "referenceTotal": 2260,
+      "odgTotal": 386,
+      "reduction": 0.8292,
+      "reductionPct": 83,
+      "meetsTargetSimulated": true,
+      "basis": "SIMULATED (synthetic assumptions; not an observed client cost)",
+      "scenarioRank": [
+        {
+          "name": "odg(automated)",
+          "cost": 386
+        },
+        {
+          "name": "reference(human-led)",
+          "cost": 2260
+        }
+      ],
+      "qualitySafetyCompliance": "PRESERVED by assumption — no optimization reduces quality/security/compliance; must be verified per engagement"
+    }
+  ],
+  "avgReductionSimulated": 0.8292,
+  "avgReductionPctSimulated": 83,
+  "savingsByBasis": {
+    "MEASURED": {
+      "count": 0,
+      "note": "measured in a controlled ODG benchmark — none run yet"
+    },
+    "ESTIMATED": {
+      "count": 0,
+      "note": "estimated from declared internal rates — none asserted as a saving here"
+    },
+    "SIMULATED": {
+      "count": 15,
+      "note": "reference-vs-ODG comparison on synthetic assumptions (this program) — illustrative, not a realised saving"
+    },
+    "OBSERVED_CLIENT": {
+      "count": 0,
+      "note": "observed at a real client — 0 (no client)"
+    },
+    "CLIENT_VALIDATED": {
+      "count": 0,
+      "note": "validated in writing by a client — 0 (no client)"
+    }
+  },
+  "honestConclusion": "SIMULATED reduction averages 83% across 15 métiers under synthetic assumptions. This is an ESTIMATE/SIMULATION, NOT a measured or client-validated saving (OBSERVED_CLIENT=0, CLIENT_VALIDATED=0). The ≥50% target is recorded as an objective; it is NOT demonstrated until measured in a controlled benchmark and observed at a real client.",
+  "invariant": "Every saving carries exactly one basis and is never double-counted. A SIMULATED saving is never presented as measured, observed, or client-validated. No optimization is accepted if it reduces quality, security or compliance."
+}
