@@ -69,6 +69,7 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
   let verifyErr: any = null;
   const runVerify = (): boolean => { verifyErr = null; if (build.ok && fn(s.independentTest)) { try { return s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); return false; } } return false; };
   let verified = runVerify();
+  const firstPass = Object.freeze({ buildOk: build.ok === true, verified: build.ok === true && verified === true, error: build.ok ? verifyErr : build.error });  // instrumentation: the pre-repair verdict (no behaviour change)
   let repairs = 0;
   while (!(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
     repairs++;
@@ -90,6 +91,7 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     verified: build.ok && verified,
     verifyError: verifyErr,
     accepted: build.ok === true && verified === true,     // native build accepted ONLY on independent verification
+    firstPass,                                            // the pre-repair verdict (instrumentation for benchmarks)
     fileStatus: Object.freeze(fileStatus),
     files: Object.freeze({ ...files }),                    // retained (valid partial not lost)
   });

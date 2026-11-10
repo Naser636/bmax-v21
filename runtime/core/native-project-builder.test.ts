@@ -39,6 +39,7 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   };
   const rfix = await B.buildProject(spec, { generateFile: fixOnVerify, maxRepair: 1 });
   check(rfix.buildOk === true && rfix.verified === true && rfix.accepted === true && rfix.repairs === 1, "a false success (builds-but-fails-test) is REPAIRED on the verify-failure feedback ⇒ ACCEPTED after 1 repair (independent test still the arbiter)");
+  check(rfix.firstPass && rfix.firstPass.buildOk === true && rfix.firstPass.verified === false, "firstPass instrumentation records the PRE-repair verdict (built but failed the test) — distinct from the final accepted result");
   // and still fail-closed: a generator that STAYS wrong through the repair is NOT accepted.
   const staysWrong = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a-b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
   const rsw = await B.buildProject(spec, { generateFile: staysWrong, maxRepair: 2 });
