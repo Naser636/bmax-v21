@@ -122,3 +122,14 @@ Original FROZEN **préservé** (aucune opération destructive). Un **référenti
 - **Partie IV** — 12 dimensions (DIM-01..12) + 10 responsabilités cognitives (RESP-01..10), **0 orpheline, aucune duplication**, chacune liée à une primitive + contrôle.
 - **Partie XXV** — registre successeur F01–F40 reconstruit à partir de modes de défaillance réels documentés ; chaque entrée `source=RECONSTRUCTED`, confiance MEDIUM, **validation owner encore nécessaire** pour canoniser le successeur en remplacement de §105.
 Chaque entrée porte source/justification/confiance ; aucune reconstruction n'est présentée comme l'original. Pas de roadmap parallèle, pas de dixième primitive.
+
+## Radar auto-amélioration & veille Internet — DIRECTIVE PERMANENTE (V67, 2026-11-10)
+
+Le radar technologique/auto-amélioration (programme P9, parties VI/VIII) est **actif en permanence** jusqu'à l'achèvement
+de V12.4. Recherche Internet autorisée (veille primaire : doc officielle, publications, dépôts, benchmarks) ; contenu
+externe **UNTRUSTED** jusqu'à analyse (licence/sécurité/supply-chain) ; aucune dépense/abonnement/compte privé/publication.
+Boucle : rechercher→détecter lacunes→comparer→prioriser→**mission ODG PROPOSED**→expérimenter isolé→tester→vérifier ODG→
+intégrer (owner/ODG-gated)→mesurer→recommencer. Une recommandation radar devient une mission suivie, jamais un rapport
+perpétuel. Cadence = hebdomadaire minimum + déclenchement à la demande. Le radar ne modifie jamais la gouvernance ni
+n'intègre de code non vérifié (V61). Cycle exécutable : `odg-weekly-improvement-cycle.ts` ; registre de recherche :
+`V67_RADAR_RESEARCH_REGISTER.json` ; couverture risques agentiques : `V67_AGENTIC_RISK_COVERAGE.json`. Aucun moteur parallèle.

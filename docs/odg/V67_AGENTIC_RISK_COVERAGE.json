@@ -1,0 +1,102 @@
+{
+  "//": "CTO V67 (RAD-M04+M05, P8) — agentic-risk coverage map. Hazards from analysed external research mapped to present ODG fail-closed mechanisms; a hazard with no present mechanism is UNCOVERED (fail-closed, flagged). Executed improvement, not a recommendation. ODG prepares readiness; it does NOT certify external-standard conformity (owner validation needed). No new primitive.",
+  "sourceSignals": [
+    "SIG-04 NIST CAISI",
+    "SIG-05 Berkeley Agentic Profile",
+    "SIG-06 Singapore MGF"
+  ],
+  "hazardCount": 8,
+  "fullyCovered": 7,
+  "partial": 1,
+  "uncovered": 0,
+  "coverage": [
+    {
+      "hazard": "uncontrolled goal pursuit",
+      "source": "Berkeley Agentic Profile",
+      "mechanisms": [
+        "action-gate",
+        "mission-contract-factory"
+      ],
+      "note": "deny-by-default admission + scoped mission contract (no action beyond scope/authority)",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "privilege escalation",
+      "source": "Berkeley Agentic Profile / NIST authz",
+      "mechanisms": [
+        "root-of-trust",
+        "action-gate"
+      ],
+      "note": "self-grant of a protected change BLOCKED; authority dimension required",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "self-replication / uncontrolled spawn",
+      "source": "Berkeley Agentic Profile",
+      "mechanisms": [
+        "action-gate",
+        "third-party-agent-gate"
+      ],
+      "note": "spawn/consequential actions gated; PARTIAL — no dedicated self-replication detector (flagged)",
+      "partial": true,
+      "covered": "PARTIAL",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "loss of human control",
+      "source": "Berkeley Agentic Profile / Singapore",
+      "mechanisms": [
+        "emergency-stop",
+        "self-improvement"
+      ],
+      "note": "independent emergency-stop + no self-promotion (promotion external) + irreversible⇒ESCALATE",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "prompt injection",
+      "source": "NIST CAISI agent identity",
+      "mechanisms": [
+        "scientific-research",
+        "third-party-agent-gate"
+      ],
+      "note": "untrusted/injection-laced signal ⇒ QUARANTINE; agent gate denies off-scope",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "agent identity & authentication",
+      "source": "NIST CAISI",
+      "mechanisms": [
+        "agent-identity"
+      ],
+      "note": "cryptographic agent identity",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "auditing & non-repudiation",
+      "source": "NIST CAISI",
+      "mechanisms": [
+        "evidence-provenance"
+      ],
+      "note": "tamper-evident provenance; post-stamp mutation detected",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    },
+    {
+      "hazard": "meaningful human accountability",
+      "source": "Singapore agentic dimensions",
+      "mechanisms": [
+        "action-gate"
+      ],
+      "note": "irreversible/high-risk ⇒ ESCALATE unless explicit human authority (V61 authority rule)",
+      "covered": "COVERED",
+      "mechanismsPresent": true
+    }
+  ],
+  "honestConclusion": "Executed radar improvement RAD-M04+M05: 8 agentic hazards mapped to present ODG mechanisms — 7 COVERED, 1 PARTIAL (self-replication: no dedicated detector, flagged), 0 UNCOVERED. All mapped mechanisms verified present. This is readiness evidence, NOT a certification of NIST/Berkeley/Singapore conformity — owner/organism validation required.",
+  "invariant": "A hazard is COVERED only if every mapped mechanism is present; absent ⇒ UNCOVERED (never faked). PARTIAL is stated honestly. Readiness mapping ≠ external-standard certification."
+}
