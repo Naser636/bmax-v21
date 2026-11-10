@@ -65,7 +65,8 @@ const rows = open.map((p: any) => {
   const csb = CANONICAL_SOURCE_BLOCKED.has(key);
   return { part: p.part, bucket: p.bucket, closureCriterion: rec.criterion, gating: rec.gating, nextAction: rec.next,
     consolidationVerified: cv, consolidationTest: cv ? (["VII", "XII", "XV"].includes(key) ? "v59-consolidation-lot2.test.ts" : "v59-consolidation-s-level.test.ts") + " (key invariant, nominal+violation)" : null,
-    canonicalSourceBlocked: csb, canonicalSourceNote: csb ? "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden" : null };
+    canonicalSourceBlocked: csb, canonicalSourceNote: csb ? "original FROZEN enumeration NOT_RECOVERABLE (V64 exhaustive search); a V64 SUCCESSOR referential reconstructs it (labelled, grounded) — owner validation needed to canonize over the original" : null,
+    successorReconstruction: csb ? "V64_SUCCESSOR_REFERENTIAL.json (RECONSTRUCTED; owner-validation pending)" : null };
 });
 if (cov && cov.partXXXII && !rows.some((r: any) => /XXXII/.test(r.part))) {
   const rec = LEDGER["XXXII"];

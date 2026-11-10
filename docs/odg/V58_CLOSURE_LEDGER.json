@@ -16,7 +16,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "I §5–§6",
@@ -27,7 +28,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": true,
-      "canonicalSourceNote": "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden"
+      "canonicalSourceNote": "original FROZEN enumeration NOT_RECOVERABLE (V64 exhaustive search); a V64 SUCCESSOR referential reconstructs it (labelled, grounded) — owner validation needed to canonize over the original",
+      "successorReconstruction": "V64_SUCCESSOR_REFERENTIAL.json (RECONSTRUCTED; owner-validation pending)"
     },
     {
       "part": "III §9–§15",
@@ -38,7 +40,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "IV §16–§20",
@@ -49,7 +52,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": true,
-      "canonicalSourceNote": "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden"
+      "canonicalSourceNote": "original FROZEN enumeration NOT_RECOVERABLE (V64 exhaustive search); a V64 SUCCESSOR referential reconstructs it (labelled, grounded) — owner validation needed to canonize over the original",
+      "successorReconstruction": "V64_SUCCESSOR_REFERENTIAL.json (RECONSTRUCTED; owner-validation pending)"
     },
     {
       "part": "V §21–§23",
@@ -60,7 +64,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "VI §24–§28",
@@ -71,7 +76,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "VII §29–§33",
@@ -82,7 +88,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-lot2.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "VIII §34–§37",
@@ -93,7 +100,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "IX §38–§42",
@@ -104,7 +112,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XI §47–§50",
@@ -115,7 +124,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XII §51–§56",
@@ -126,7 +136,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-lot2.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XIII §57–§61",
@@ -137,7 +148,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XIV §62–§65",
@@ -148,7 +160,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XV §66–§70",
@@ -159,7 +172,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-lot2.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XVI §71–§76",
@@ -170,7 +184,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XVII §77–§79",
@@ -181,7 +196,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XVIII §80–§82",
@@ -192,7 +208,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XIX §83–§87",
@@ -203,7 +220,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXII §93–§96",
@@ -214,7 +232,8 @@
       "consolidationVerified": true,
       "consolidationTest": "v59-consolidation-s-level.test.ts (key invariant, nominal+violation)",
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXIII §97–§103",
@@ -225,7 +244,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXV §105",
@@ -236,7 +256,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": true,
-      "canonicalSourceNote": "closure needs the FROZEN Master enumeration (NOT_RECOVERABLE); enumerating would be fabrication — forbidden"
+      "canonicalSourceNote": "original FROZEN enumeration NOT_RECOVERABLE (V64 exhaustive search); a V64 SUCCESSOR referential reconstructs it (labelled, grounded) — owner validation needed to canonize over the original",
+      "successorReconstruction": "V64_SUCCESSOR_REFERENTIAL.json (RECONSTRUCTED; owner-validation pending)"
     },
     {
       "part": "XXVII §108–§110",
@@ -247,7 +268,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXVIII §111–§112",
@@ -258,7 +280,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXIX §113–§115",
@@ -269,7 +292,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXX §116–§119",
@@ -280,7 +304,8 @@
       "consolidationVerified": false,
       "consolidationTest": null,
       "canonicalSourceBlocked": false,
-      "canonicalSourceNote": null
+      "canonicalSourceNote": null,
+      "successorReconstruction": null
     },
     {
       "part": "XXXII §123–§130",
