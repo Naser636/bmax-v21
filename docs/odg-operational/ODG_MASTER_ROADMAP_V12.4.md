@@ -133,3 +133,13 @@ intégrer (owner/ODG-gated)→mesurer→recommencer. Une recommandation radar de
 perpétuel. Cadence = hebdomadaire minimum + déclenchement à la demande. Le radar ne modifie jamais la gouvernance ni
 n'intègre de code non vérifié (V61). Cycle exécutable : `odg-weekly-improvement-cycle.ts` ; registre de recherche :
 `V67_RADAR_RESEARCH_REGISTER.json` ; couverture risques agentiques : `V67_AGENTIC_RISK_COVERAGE.json`. Aucun moteur parallèle.
+
+## P9 → World Intelligence (V69, 2026-11-10) — évolution, pas nouvelle roadmap
+
+Le programme P9 (radar, parties VI/VIII) évolue vers un centre d'intelligence/recherche/découverte. Audit préalable
+obligatoire (`V69_P9_WORLD_INTELLIGENCE_MATRIX.json`) : 13 fonctions V69 mappées aux modules existants ⇒ 7 PRESENT /
+6 PARTIAL / 0 MISSING — construit sur les mécanismes canoniques (frontier-radar, scientific-research, world-model,
+knowledge-engine, frontier-lab, intelligence-loop, causal-graph…) ; **aucune dixième primitive, aucun moteur parallèle**.
+Gap §4 comblé : `source-intelligence.ts` (grading multi-dimensionnel NON binaire ; typologie 8 niveaux + bandes de
+crédibilité ; non-certifié jamais auto-rejeté, réputé jamais auto-vrai, contradictions conservées ; compose evidence-provenance).
+Contenu externe toujours UNTRUSTED (V61/V67) ; une bande de crédibilité n'autorise jamais l'intégration (ODG décide).
