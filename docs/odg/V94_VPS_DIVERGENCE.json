@@ -1,0 +1,84 @@
+{
+  "//": "CTO V94 §4 — read-only VPS divergence audit. No activate/rollback/build, no symlink/env/service change, no secret shown. Understands deployed (e84a0cf2) vs HEAD; an old deployment is neither an auto-validation nor an auto-failure — it is a release RISK to analyze.",
+  "releaseRoot": "/home/ubuntu/odg-releases",
+  "releaseCount": 9,
+  "releases": [
+    {
+      "commit": "e84a0cf2720b",
+      "timestamp": "20261028T210754Z"
+    },
+    {
+      "commit": "268be2c666e9",
+      "timestamp": "20261026T170857Z"
+    },
+    {
+      "commit": "5d5a699d83d6",
+      "timestamp": "20261020T201939Z"
+    },
+    {
+      "commit": "c7fdb31cf89b",
+      "timestamp": "20261020T172120Z"
+    },
+    {
+      "commit": "c7fdb31cf89b",
+      "timestamp": "20261020T172120Z"
+    },
+    {
+      "commit": "3487f6e977bd",
+      "timestamp": "20261019T210115Z"
+    },
+    {
+      "commit": "b56fe4bcabe7",
+      "timestamp": "20261019T171124Z"
+    },
+    {
+      "commit": "6836a3dc7f15",
+      "timestamp": "20261019T162145Z"
+    },
+    {
+      "commit": "ac9fa9056d9e",
+      "timestamp": "20261019T161736Z"
+    }
+  ],
+  "currentSymlink": "/home/ubuntu/odg-releases/rel-20261028T210754Z-e84a0cf2720b-emLgNDocVzOvu6dN3rA-p",
+  "previousSymlink": "/home/ubuntu/odg-releases/rel-20261026T170857Z-268be2c666e9-r-lFDoxyDMohywdhPDESc",
+  "deployed": "e84a0cf2720b",
+  "head": "9d709f945f6e",
+  "deployedInLocalHistory": true,
+  "divergence": {
+    "commitsAhead": 879,
+    "filesChanged": 1119,
+    "runtimeCoreFilesChanged": 595,
+    "dependencyCompatibility": "IDENTICAL (6 deps / 9 devDeps unchanged ⇒ no runtime-dep compat risk)",
+    "migrationsDetected": 0,
+    "migrationFiles": []
+  },
+  "rollback": {
+    "feasible": true,
+    "mechanism": "odg-release.sh rollback ⇒ repoint 'current' → 'previous' (or a prior release dir) + restart + health",
+    "priorReleasesAvailable": 9,
+    "previousPresent": true
+  },
+  "preActivationControls": [
+    "build target from HEAD via odg-release.sh build",
+    "verify on staging port (health 200 + buildId)",
+    "diff deployed vs new buildId",
+    "confirm deps identical (done: identical)",
+    "full gate green on HEAD (done)",
+    "backup current symlink (auto 'previous')"
+  ],
+  "stopCriteria": [
+    "staging health≠200",
+    "buildId mismatch",
+    "any migration requiring data change (none detected)",
+    "post-activate health≠ready"
+  ],
+  "risks": [
+    "LARGE delta: deployed is 879 commits / 1119 files behind HEAD (595 runtime/core) — a big jump; stage+verify before activation is essential",
+    "dependencies identical ⇒ no npm/runtime compat risk",
+    "no migration/schema files in the delta ⇒ low data-migration risk",
+    "deployed app is live+healthy (200) ⇒ rollback target is known-good"
+  ],
+  "honestConclusion": "Deployed e84a0cf2720b is 879 commits / 1119 files behind HEAD 9d709f945f6e (595 runtime/core). Dependencies IDENTICAL (no compat risk); no migration files in the delta (low data risk). Rollback feasible: 'previous' symlink present + 9 prior releases. The old deployment is a RELEASE RISK (large jump), not an auto-pass/fail: stage→verify→atomic-swap→health, rollback on any stop criterion. No activation performed.",
+  "invariant": "read-only; old deployment = release risk analyzed, not auto-validated/failed; dependency+migration compatibility assessed from real diff; rollback feasibility confirmed; nothing activated/changed."
+}

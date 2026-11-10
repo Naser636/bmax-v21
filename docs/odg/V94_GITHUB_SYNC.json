@@ -1,0 +1,36 @@
+{
+  "//": "CTO V94 §5 — GitHub sync analysis, read-only. No merge/rebase/push. Preserves all local commits; respects branch protection (enforce_admins + required PR + required check).",
+  "head": "9d709f9",
+  "branch": "excellence/v3-wave3-demonstrators-20261101",
+  "aheadOfMain": 68,
+  "behindMain": 2,
+  "mergeBase": "ed73345",
+  "missingCommits": [
+    "41e377b Merge pull request #488 from Naser636/excellence/v44-demonstrators-study-20261110",
+    "8ffaede Merge pull request #487 from Naser636/excellence/v3-wave3-demonstrators-20261101"
+  ],
+  "conflictAnalysis": {
+    "filesChangedOurs": 311,
+    "filesChangedMain": 0,
+    "overlappingChangedFiles": 0,
+    "overlapSample": [],
+    "conflictRisk": "NONE (0 overlapping changed files ⇒ clean 3-way merge expected)"
+  },
+  "branchProtection": "main: enforce_admins + required PR + required check 'build + typecheck + parity + tests'",
+  "recommendedStrategy": {
+    "approach": "fresh PR of the feature branch to main (NO local rebase/merge during V94)",
+    "steps": [
+      "git fetch origin (read-only, done)",
+      "open PR base=main head=excellence/v3-wave3-demonstrators-20261101",
+      "let CI run the required check",
+      "GitHub performs the 3-way merge at merge time (0 overlap ⇒ expected clean)",
+      "if a conflict surfaces at PR time, resolve in a merge commit (never force-push; preserves all 68 commits)"
+    ],
+    "preservesLocalWork": true,
+    "avoidsRebase": true,
+    "respectsProtection": true
+  },
+  "consequencesOn68Commits": "a PR merge preserves all 68 local commits (append-only); no history rewrite; #487/#488 incorporated by the merge",
+  "honestConclusion": "HEAD +68/-2 vs origin/main (merge-base ed73345). Missing: #488 (v44 study) + #487 (this branch's earlier merge). Overlapping changed files vs main = 0 ⇒ no conflict expected. Least-risky sync = a fresh PR (no rebase/merge now), preserving all 68 commits and respecting protection. NOTHING executed.",
+  "invariant": "read-only analysis; no merge/rebase/push; preserve all local commits (append-only); respect branch protection; conflict risk measured from a real 3-way file diff."
+}
