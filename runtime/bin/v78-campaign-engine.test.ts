@@ -16,33 +16,44 @@ const ART = path.join(__dirname, "..", "..", "docs", "odg", "V78_CAMPAIGN_RUN.js
 let failures = 0;
 function check(name: string, cond: boolean): void { process.stdout.write(`${cond ? "ok" : "NOT OK"} - ${name}\n`); if (!cond) failures++; }
 const A = (id: string, deps: any = []) => ({ id, actions: ["test"], strategicImportance: 0.6, roadmapPriority: 0.6, unblocks: [], risk: 0.1, immediatelyExecutable: true, operationalValue: 0.6, closureWithProof: true, deps, status: "OPEN" });
+// V86 — a valid inspection context (ODG supplies its V85-qualified canonical inspector + independent actors + evidence qualifier).
+const INSP = { inspection: { inspectorMeta: { valid: true, effective: true }, independenceActors: { builder: { id: "P" }, verifier: { id: "I" } }, evidenceOptsFor: () => ({ exists: () => true, read: () => '{"done":1}', expectMarkers: ["done"] }) } };
+const withExec = (execute: any) => ({ ...INSP, execute });
 
 function main(): void {
-  // T2/T12 — long chain of 30 Level-A, no cap
+  // T2/T12 — long chain of 30 Level-A, no cap (with inspection ⇒ accepted)
   const q30 = Array.from({ length: 30 }, (_, i) => A(`m${i + 1}`));
-  const r30 = ENGINE.runCampaign(q30, {});
+  const r30 = ENGINE.runCampaign(q30, INSP);
   check("T2/T12: 30 Level-A missions all executed+accepted (>4, no cap)", r30.metrics.accepted === 30 && r30.stopReason === "QUEUE_EXHAUSTED");
   check("T1: no duplicate — iterations == accepted (each handled once)", r30.metrics.iterations === 30);
 
+  // V86 — the SAME queue WITHOUT an inspection context: executes but accepts NOTHING (§6 isolated mode).
+  const r30uninspected = ENGINE.runCampaign(q30, {});
+  check("V86: uninspected invocation accepts NOTHING (0 accepted, 30 uninspected)", r30uninspected.metrics.accepted === 0 && r30uninspected.metrics.uninspected === 30);
+
   // T5 — dependency order: m2 depends on m1; both accepted, m1 before m2 in log
-  const rdep = ENGINE.runCampaign([A("m2", ["m1"]), A("m1")], {});
+  const rdep = ENGINE.runCampaign([A("m2", ["m1"]), A("m1")], INSP);
   const order = rdep.log.filter((l: any) => l.decision === "EXECUTED_ACCEPTED").map((l: any) => l.id);
   check("T5: dependency respected (m1 before m2)", order.indexOf("m1") < order.indexOf("m2") && rdep.metrics.accepted === 2);
 
   // T3/T7 — Level-C forbidden refused; campaign continues on independents
-  const rmix = ENGINE.runCampaign([A("ok1"), { id: "bad", actions: ["deploy"], strategicImportance: 0.9, roadmapPriority: 0.9, unblocks: [], risk: 0.9, immediatelyExecutable: false, operationalValue: 0.5, closureWithProof: false, deps: [], status: "OPEN" }, A("ok2")], {});
+  const rmix = ENGINE.runCampaign([A("ok1"), { id: "bad", actions: ["deploy"], strategicImportance: 0.9, roadmapPriority: 0.9, unblocks: [], risk: 0.9, immediatelyExecutable: false, operationalValue: 0.5, closureWithProof: false, deps: [], status: "OPEN" }, A("ok2")], INSP);
   check("T3/T7: Level-C refused, independents still executed (campaign continues)", rmix.metrics.refusedC === 1 && rmix.metrics.accepted === 2);
 
   // T6 — local mandate recognized without repeated approval (all Level-A accepted)
-  check("T6: local mandate recognized (all Level-A authorized+accepted)", ENGINE.runCampaign([A("x1"), A("x2"), A("x3")], {}).metrics.accepted === 3);
+  check("T6: local mandate recognized (all Level-A authorized+accepted)", ENGINE.runCampaign([A("x1"), A("x2"), A("x3")], INSP).metrics.accepted === 3);
 
   // failure handling — induced failure not accepted, campaign continues
-  const rfail = ENGINE.runCampaign([A("good"), A("fails"), A("good2")], { execute: (m: any) => m.id === "fails" ? { mission: m.id, validated: false, status: "FAILED" } : { mission: m.id, validated: true, status: "SUCCESS" } });
+  const rfail = ENGINE.runCampaign([A("good"), A("fails"), A("good2")], withExec((m: any) => m.id === "fails" ? { mission: m.id, validated: false, status: "FAILED" } : { mission: m.id, validated: true, status: "SUCCESS" }));
   check("failure handled: failed mission NOT accepted, others proceed", rfail.metrics.failed === 1 && rfail.metrics.accepted === 2);
 
   // T8 — already-ACCEPTED excluded (no repeat)
-  const racc = ENGINE.runCampaign([{ ...A("done"), status: "ACCEPTED" }, A("new")], {});
+  const racc = ENGINE.runCampaign([{ ...A("done"), status: "ACCEPTED" }, A("new")], INSP);
   check("T8/no-repeat: pre-ACCEPTED not re-executed; only new executed", racc.metrics.accepted === 1 && racc.log.every((l: any) => l.id !== "done"));
+
+  // V86 — an UNQUALIFIED inspector (meta-validation not EFFECTIVE) blocks every mission at PRE (fail-closed §4/§7).
+  const rUnqual = ENGINE.runCampaign([A("y1"), A("y2")], { inspection: { inspectorMeta: { valid: true, effective: false }, independenceActors: { builder: { id: "P" }, verifier: { id: "I" } }, evidenceOptsFor: () => ({ exists: () => true, read: () => '{"done":1}', expectMarkers: ["done"] }) } });
+  check("V86: unqualified inspector ⇒ all missions INSPECTION_BLOCKED (0 accepted)", rUnqual.metrics.accepted === 0 && rUnqual.metrics.inspectionBlocked === 2);
 
   // safety cap is proportional + logged (not a silent 4/10)
   check("stop reasons are explicit (never a silent cap)", /QUEUE_EXHAUSTED|ALL_REMAINING_DEFERRED|BUDGET|SAFETY_CAP/.test(r30.stopReason));

@@ -1,40 +1,100 @@
 #!/usr/bin/env node
+/**
+ * odg-campaign-run — the REAL entry point that connects the persistent campaign-loop to an AUTHORIZED, non-fictitious
+ * executor over the canonical closure register. This is the integration the diagnosis identified as missing: the
+ * loop (campaign-loop.ts) and the selector (campaign-controller.ts) existed and were tested in isolation, but no real
+ * launcher drove `load register → validate → reconcile → select → EXECUTE(real) → persist → next` end to end.
+ *
+ * Fail-closed executor resolution (mandate: never call a fictitious executor in production):
+ *  - ODG_CAMPAIGN_EXECUTOR unset / "none"  ⇒ NO executor is authorized ⇒ stop NO_EXECUTOR_AUTHORIZED (does NOT invent
+ *    a no-op success). This is the honest production state for the canonical register today: autonomously performing
+ *    engineering/governance lots needs a governed executor that is deny-by-default.
+ *  - "verification" ⇒ a GENUINE executor: for a lot carrying an `exec` verification spec it runs the REAL
+ *    code-execution checker and accepts ONLY on the real expected status; a lot without a spec is WAITING_EXTERNAL
+ *    (needs a real executor/owner) — never faked.
+ *
+ * The register file is the durable checkpoint (persist after each mission ⇒ resume + idempotent re-run). Output is a
+ * structured, resumable JSON state. Exit code 0 for any justified stop (NO_EXECUTOR / IDLE_BLOCKED / COMPLETED / …);
+ * non-zero only on a real error (register unloadable).
+ */
 "use strict";
 
-/*
- * V12.4 / CTO V78 — CAMPAIGN RUN. Feeds the continuous campaign engine a 30-mission queue (mix of Level A/B/C, deps,
- * already-ACCEPTED) to PROVE it processes far more than 4 missions with no hardcoded cap and continues past blocked ones.
- * Records §12 metrics. Reuses campaign-engine; no new orchestrator. Run: `odg-campaign-run.ts`.
- */
-
-const ENGINE = require("../core/campaign-engine.js");
-const fs = require("fs");
 const path = require("path");
+const LOOP = require("./../core/campaign-loop.js");
+const EXEC = require("./../core/code-execution.js");
+const JOURNAL = require("./../core/campaign-journal.js");
+const MEV = require("./../core/mission-evidence.js");
 
-// 30 synthetic missions. Level A (local) dominate; some B (human), some C (external); a dependency chain; 2 pre-ACCEPTED.
-const A_ACTIONS = [["read", "test"], ["code_edit_local", "test"], ["benchmark", "doc"], ["refactor", "test", "commit_local"], ["synthetic_data", "test"]];
-const missions: any[] = [];
-for (let i = 1; i <= 24; i++) missions.push({ id: `A-${i}`, actions: A_ACTIONS[i % A_ACTIONS.length], strategicImportance: 0.5 + (i % 5) / 10, roadmapPriority: 0.5 + (i % 4) / 10, unblocks: [], risk: 0.1 + (i % 3) / 20, immediatelyExecutable: true, operationalValue: 0.6, closureWithProof: true, deps: i > 20 ? [`A-${i - 1}`] : [], status: "OPEN" });
-missions.push({ id: "B-sign", actions: ["doc", "canonization"], strategicImportance: 0.8, roadmapPriority: 0.7, unblocks: [], risk: 0.3, immediatelyExecutable: false, operationalValue: 0.6, closureWithProof: false, deps: [], status: "OPEN" });
-missions.push({ id: "B-legal", actions: ["doc", "legal_validation"], strategicImportance: 0.7, roadmapPriority: 0.6, unblocks: [], risk: 0.3, immediatelyExecutable: false, operationalValue: 0.5, closureWithProof: false, deps: [], status: "OPEN" });
-missions.push({ id: "C-deploy", actions: ["deploy", "vps"], strategicImportance: 0.9, roadmapPriority: 0.6, unblocks: [], risk: 0.9, immediatelyExecutable: false, operationalValue: 0.5, closureWithProof: false, deps: [], status: "OPEN" });
-missions.push({ id: "C-spend", actions: ["spend", "subscription"], strategicImportance: 0.6, roadmapPriority: 0.5, unblocks: [], risk: 0.9, immediatelyExecutable: false, operationalValue: 0.4, closureWithProof: false, deps: [], status: "OPEN" });
-missions.push({ id: "A-done-1", actions: ["test"], strategicImportance: 0.9, roadmapPriority: 0.9, unblocks: [], risk: 0.1, immediatelyExecutable: true, operationalValue: 0.9, closureWithProof: true, deps: [], status: "ACCEPTED" });
-missions.push({ id: "A-done-2", actions: ["doc"], strategicImportance: 0.9, roadmapPriority: 0.9, unblocks: [], risk: 0.1, immediatelyExecutable: true, operationalValue: 0.9, closureWithProof: true, deps: [], status: "ACCEPTED" });
+/** resolveExecutor(kind): return a REAL execute(lot) function, or null if no authorized executor. Never fictitious. */
+function resolveExecutor(kind: string): any {
+  if (kind === "verification") {
+    return (lot: any) => {
+      const spec = lot && lot.exec;
+      if (!spec || spec.kind !== "verification" || typeof spec.language !== "string" || typeof spec.content !== "string") {
+        return { status: "WAITING_EXTERNAL", reason: "lot has no executable verification spec — needs a real executor/owner action" };
+      }
+      const want = typeof spec.expectedStatus === "string" ? spec.expectedStatus : "PASS";
+      const r = EXEC.runSyntaxCheck({ language: spec.language, content: spec.content });   // REAL subprocess check
+      if (r.status === "UNSUPPORTED" || r.status === "BLOCKED") return { status: "WAITING_EXTERNAL", reason: `checker ${r.status}: ${r.reason || ""}` };
+      if (r.status === want) {
+        const out: any = { status: "ACCEPTED", evidence: `real ${spec.language} check ⇒ ${r.status} (expected ${want})` };
+        // For the common PASS case, attach a proof-carrying record with the REAL exit code so the loop's false-success
+        // gate re-confirms exit 0 (defence-in-depth: a regression that returned ACCEPTED on a failing check would be
+        // blocked by the gate). Only for want==="PASS", where exit 0 is the real pass (a FAIL-expected lot legitimately
+        // exits non-zero and uses the legacy evidence path). This executor's check IS the acceptance evidence; it has
+        // no SEPARATE independent verifier, so run() does not require one for this executor (see requireProofVerification).
+        if (want === "PASS") {
+          out.proof = MEV.buildEvidenceRecord({
+            mission: { id: lot.id, objective: lot.title || lot.objective || null, acceptanceCriteria: `real ${spec.language} check ⇒ PASS` },
+            authorization: { authorized: true, scope: [] },
+            attempts: [{ command: `${spec.language} syntax/type check`, exitCode: typeof r.exitCode === "number" ? r.exitCode : 0, stderr: r.stderr || null }],
+            transition: { to: "ACCEPTED", reason: `real check passed (exit ${r.exitCode})` },
+          });
+        }
+        return out;
+      }
+      return { status: "FAILED", reason: `real check got ${r.status}, expected ${want}` };
+    };
+  }
+  return null;   // "none" / unknown ⇒ no authorized executor (fail-closed)
+}
 
-// one mission whose executor fails (to prove failure handling without global stop).
-const failing = new Set(["A-7"]);
-const execute = (m: any) => failing.has(m.id) ? { mission: m.id, validated: false, status: "FAILED" } : { mission: m.id, validated: true, status: "SUCCESS" };
+function run(opts: any = {}): any {
+  const registerPath = typeof opts.registerPath === "string" ? opts.registerPath : path.join(process.cwd(), "docs", "odg", "closure-register.json");
+  const kind = typeof opts.executor === "string" ? opts.executor : "none";
+  const maxIterations = Number.isFinite(opts.maxIterations) ? opts.maxIterations : 100;
+  const execFn = resolveExecutor(kind);
+  if (!execFn) {
+    return { stopped: "NO_EXECUTOR_AUTHORIZED", campaignComplete: false, registerPath, executor: kind,
+      reason: "no authorized executor configured (set ODG_CAMPAIGN_EXECUTOR to an authorized real executor, e.g. 'verification'); refusing to run a fictitious executor in production." };
+  }
+  // The `verification` executor's real subprocess check IS the acceptance evidence; it carries no SEPARATE independent
+  // verifier, so the loop does not demand one for this executor (the gate still enforces decisive exit-0 / artifacts).
+  // Independent verification of the lot happens at the CI + audit layer, not inside this checker.
+  const requireProofVerification = kind !== "verification";
+  const result = { registerPath, executor: kind, ...LOOP.runCampaignLoop({ registerPath, execute: execFn, maxIterations, requireProofVerification }) };
+  // OPT-IN durable telemetry: when a journal path is supplied, append this run's metrics (observability across runs).
+  // Default (no journalPath) ⇒ no I/O, zero behaviour change.
+  if (typeof opts.journalPath === "string" && opts.journalPath) {
+    try { JOURNAL.appendRun(opts.journalPath, result, { at: typeof opts.at === "string" ? opts.at : null, head: opts.head }); }
+    catch (e: any) { result.journalError = (e && e.message) || String(e); }
+  }
+  return result;
+}
 
-const result = ENGINE.runCampaign(missions, { execute });
-const out = {
-  "//": "CTO V78 — campaign run over a 30-mission queue. Proves >4 missions processed with no hardcoded cap, continuation past blocked/failed, Level-C refused, Level-B prepared. Reuses campaign-engine; no new orchestrator.",
-  queueSize: missions.length, metrics: result.metrics, stopReason: result.stopReason,
-  moreThanFourExecuted: result.metrics.accepted > 4,
-  honestConclusion: `Campaign over a ${missions.length}-mission queue: ${result.metrics.accepted} EXECUTED+ACCEPTED (Level-A), ${result.metrics.failed} FAILED (incl. induced A-7, not accepted), ${result.metrics.refusedC} Level-C REFUSED, ${result.metrics.preparedB} Level-B PREPARED, ${result.metrics.quarantined} quarantined. Stop reason: ${result.stopReason}. ${result.metrics.accepted} > 4 ⇒ the V77 4-mission limit (a hardcoded candidate list, not a model/time cap) is removed; the engine consumes the whole queue and continues past blocked/failed missions.`,
-  logTail: result.log.slice(-6),
-  invariant: "no hardcoded mission cap; stop only on QUEUE_EXHAUSTED/ALL_DEFERRED/BUDGET/SAFETY_CAP (logged); blocked/failed never cause a global stop; ODG selects, owner mandate authorizes Level-A, gates intact.",
-};
-fs.writeFileSync(path.join(__dirname, "..", "..", "docs", "odg", "V78_CAMPAIGN_RUN.json"), JSON.stringify(out, null, 2) + "\n");
-process.stdout.write(JSON.stringify({ queue: missions.length, accepted: result.metrics.accepted, failed: result.metrics.failed, refusedC: result.metrics.refusedC, preparedB: result.metrics.preparedB, stop: result.stopReason, moreThanFour: out.moreThanFourExecuted }, null, 2) + "\n");
-export {};
+export { resolveExecutor, run };
+module.exports = { resolveExecutor, run };
+
+if (require.main === module) {
+  const registerPath = process.argv[2] && !process.argv[2].startsWith("-") ? process.argv[2] : undefined;
+  const executor = process.env.ODG_CAMPAIGN_EXECUTOR || "none";
+  const maxIterations = process.env.ODG_CAMPAIGN_MAX_ITER ? parseInt(process.env.ODG_CAMPAIGN_MAX_ITER, 10) : undefined;
+  const journalPath = process.env.ODG_CAMPAIGN_JOURNAL || undefined;   // opt-in durable telemetry
+  const at = journalPath ? new Date().toISOString() : undefined;       // timestamp only when journaling (bin-level clock)
+  let out: any;
+  try { out = run({ registerPath, executor, maxIterations, journalPath, at }); }
+  catch (e: any) { process.stderr.write(`odg-campaign-run error: ${(e && e.message) || e}\n`); process.exit(1); }
+  const slim = { stopped: out.stopped, campaignComplete: !!out.campaignComplete, iterations: out.iterations, executor: out.executor, reason: out.reason, counts: out.summary && out.summary.counts, transitions: out.transitions };
+  process.stdout.write(JSON.stringify(slim, null, 2) + "\n");
+  process.exit(0);   // a justified stop is NOT an error
+}

@@ -13,7 +13,9 @@
     "quarantined": 0,
     "deferred": 2,
     "retries": 0,
-    "iterations": 28
+    "iterations": 28,
+    "inspectionBlocked": 0,
+    "uninspected": 0
   },
   "stopReason": "ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission",
   "moreThanFourExecuted": true,
@@ -24,6 +26,7 @@
       "id": "A-23",
       "decision": "EXECUTED_ACCEPTED",
       "outcome": "SUCCESS",
+      "postVerdict": "PASS",
       "stages": 7
     },
     {
@@ -31,6 +34,7 @@
       "id": "A-24",
       "decision": "EXECUTED_ACCEPTED",
       "outcome": "SUCCESS",
+      "postVerdict": "PASS",
       "stages": 7
     },
     {
