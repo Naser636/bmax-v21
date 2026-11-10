@@ -1,0 +1,239 @@
+{
+  "//": "CTO V62 §7 — synthetic-enterprise simulation. Virtual companies × all difficulty tiers through the full lifecycle (prospection→…→renewal). SYNTHETIC/FICTIF only — no real client/sale/payment. Reuses synthetic-enterprise + client-journey-sim + cost-engine; no new engine.",
+  "companyCount": 4,
+  "tiers": [
+    "SMALL",
+    "MID",
+    "LARGE",
+    "INTERNATIONAL",
+    "HIGH_VOLUME",
+    "ADVERSARIAL"
+  ],
+  "runCount": 24,
+  "runs": [
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    }
+  ],
+  "outcomeTally": {
+    "RENEWED": 20,
+    "LOST_AT_QUALIFICATION": 4
+  },
+  "renewedCount": 20,
+  "adversarialHandled": "4/4 adversarial runs correctly did NOT renew (pressure honestly degrades the outcome)",
+  "honestConclusion": "24 synthetic lifecycles across 4 virtual companies × 6 difficulty tiers. Outcomes: {\"RENEWED\":20,\"LOST_AT_QUALIFICATION\":4}. Adversarial/high-pressure tiers honestly fail qualification/order/support (no inflated success). All SYNTHETIC/FICTIF — no real client, sale, or payment.",
+  "invariant": "virtual companies and fictif contracts/invoices are clearly labelled synthetic; difficulty pressure honestly degrades outcomes; nothing is presented as a real result."
+}
