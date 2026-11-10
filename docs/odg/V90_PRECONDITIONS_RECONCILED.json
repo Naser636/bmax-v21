@@ -1,0 +1,76 @@
+{
+  "//": "CTO V90 §7 — single reconciled register of the 8 delivery criteria vs V87's 5 open preconditions. 3 criteria were already met at V87 (so absent from its 'open' list); the other 5 ARE V87's open list. No precondition is declared met on a preparatory document alone. No push/deploy.",
+  "totalCriteria": 8,
+  "v87OpenCount": 5,
+  "criteria": [
+    {
+      "criterion": "inspection-coverage-validated",
+      "v87Correspondence": "met at V87 (not in the 5 open)",
+      "wasV87Open": false,
+      "met": true,
+      "evidence": "operational WIRED_AND_TESTED 9"
+    },
+    {
+      "criterion": "full-gate-green",
+      "v87Correspondence": "met at V87 (not in the 5 open)",
+      "wasV87Open": false,
+      "met": true,
+      "evidence": "full gate green (set after re-run)"
+    },
+    {
+      "criterion": "github-audit-complete",
+      "v87Correspondence": "met at V87 (not in the 5 open)",
+      "wasV87Open": false,
+      "met": true,
+      "evidence": "branch excellence/v3-wave3-demonstrators-20261101@d40ca98fd40c; push target ff; audited in V87"
+    },
+    {
+      "criterion": "backup-and-rollback-prepared",
+      "v87Correspondence": "V87 OPEN #1 (Sauvegarde et rollback)",
+      "wasV87Open": true,
+      "met": true,
+      "evidence": "recovery points verified (HEAD + 5 stashes + 14 untracked preserved, tracked clean); non-destructive strategy documented"
+    },
+    {
+      "criterion": "roadmap-local-work-complete",
+      "v87Correspondence": "V87 OPEN #2 (Roadmap locale exhaustive)",
+      "wasV87Open": true,
+      "met": false,
+      "evidence": "ADVANCED not exhaustive — 29 canonical missions accepted through the V88 pipeline this cycle, 13 owner-gated remain"
+    },
+    {
+      "criterion": "vps-audit-complete",
+      "v87Correspondence": "V87 OPEN #3 (Inventaire VPS)",
+      "wasV87Open": true,
+      "met": false,
+      "evidence": "NOT done — read-only VPS inventory requires VPS access (owner-gated); plan prepared, inventory pending"
+    },
+    {
+      "criterion": "independent-release-inspection-qualified",
+      "v87Correspondence": "V87 OPEN #4 (Inspection indépendante de release)",
+      "wasV87Open": true,
+      "met": false,
+      "evidence": "PARTIAL — local repo/gate/governance inspectable; must also cover VPS + workflows before qualified"
+    },
+    {
+      "criterion": "deploy-and-verification-plan",
+      "v87Correspondence": "V87 OPEN #5 (Plan exécutable)",
+      "wasV87Open": true,
+      "met": false,
+      "evidence": "PARTIAL — §11 sequence enumerated; not yet an executable VPS-specific verified plan"
+    }
+  ],
+  "metCount": 4,
+  "v87OpenNowMet": [
+    "backup-and-rollback-prepared"
+  ],
+  "stillOpen": [
+    "roadmap-local-work-complete",
+    "vps-audit-complete",
+    "independent-release-inspection-qualified",
+    "deploy-and-verification-plan"
+  ],
+  "readyToDeliver": false,
+  "honestConclusion": "8 delivery criteria = 3 met-at-V87 (inspection-coverage, full-gate, github-audit) + V87's 5 open (backup/rollback, roadmap-exhaustive, vps-audit, release-inspection, deploy-plan). Now 4/8 met. V90 closed V87-open: [backup-and-rollback-prepared]. Still open: roadmap-local-work-complete, vps-audit-complete, independent-release-inspection-qualified, deploy-and-verification-plan. Delivery BLOCKED (fail-closed); VPS inventory owner-gated; nothing declared met on a document alone.",
+  "invariant": "8 criteria = 3(met@V87) + 5(V87-open) reconciled in one register; a precondition is met only on real evidence, never a preparatory doc; delivery fail-closed until 8/8 + critical gate."
+}

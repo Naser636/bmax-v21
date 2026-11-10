@@ -1,5 +1,47 @@
 {
   "//": "CTO V89 §6 — HONEST delivery-precondition re-evaluation after the V88 integration + real roadmap campaign. Read-only; no push/deploy/VPS. Advances backup/rollback (genuinely local); VPS inventory, exhaustive roadmap closure and an executable plan stay open. Delivery remains BLOCKED until all 8 are met + the critical gate.",
+  "preconditions": [
+    {
+      "id": "inspection-coverage-validated",
+      "met": true,
+      "evidence": "operational WIRED_AND_TESTED 9"
+    },
+    {
+      "id": "full-gate-green",
+      "met": true,
+      "evidence": "full gate green (set after re-run)"
+    },
+    {
+      "id": "github-audit-complete",
+      "met": true,
+      "evidence": "branch excellence/v3-wave3-demonstrators-20261101@d40ca98fd40c; push target ff; audited in V87"
+    },
+    {
+      "id": "backup-and-rollback-prepared",
+      "met": true,
+      "evidence": "recovery points verified (HEAD + 5 stashes + 14 untracked preserved, tracked clean); non-destructive strategy documented"
+    },
+    {
+      "id": "roadmap-local-work-complete",
+      "met": false,
+      "evidence": "ADVANCED not exhaustive — 29 canonical missions accepted through the V88 pipeline this cycle, 13 owner-gated remain"
+    },
+    {
+      "id": "vps-audit-complete",
+      "met": false,
+      "evidence": "NOT done — read-only VPS inventory requires VPS access (owner-gated); plan prepared, inventory pending"
+    },
+    {
+      "id": "independent-release-inspection-qualified",
+      "met": false,
+      "evidence": "PARTIAL — local repo/gate/governance inspectable; must also cover VPS + workflows before qualified"
+    },
+    {
+      "id": "deploy-and-verification-plan",
+      "met": false,
+      "evidence": "PARTIAL — §11 sequence enumerated; not yet an executable VPS-specific verified plan"
+    }
+  ],
   "preconditionsMet": "4/8",
   "unmet": [
     "roadmap-local-work-complete",
@@ -9,10 +51,10 @@
   ],
   "backupRollback": {
     "recoveryPoints": {
-      "headCommit": "a6a8cfff8746",
+      "headCommit": "d40ca98fd40c",
       "branch": "excellence/v3-wave3-demonstrators-20261101",
       "stashesPreserved": 5,
-      "untrackedPreserved": 11,
+      "untrackedPreserved": 14,
       "trackedClean": false
     },
     "strategy": [

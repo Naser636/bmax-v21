@@ -55,7 +55,7 @@ const unmet = preconditions.filter((p) => !p.met).map((p) => p.id);
 
 const out = {
   "//": "CTO V89 §6 — HONEST delivery-precondition re-evaluation after the V88 integration + real roadmap campaign. Read-only; no push/deploy/VPS. Advances backup/rollback (genuinely local); VPS inventory, exhaustive roadmap closure and an executable plan stay open. Delivery remains BLOCKED until all 8 are met + the critical gate.",
-  preconditionsMet: `${metCount}/8`, unmet,
+  preconditions, preconditionsMet: `${metCount}/8`, unmet,
   backupRollback,
   readyToDeliver: unmet.length === 0,
   decision: unmet.length === 0 ? "READY (await explicit owner go at the critical gate)" : "NOT_READY — delivery BLOCKED (fail-closed); no push/deploy performed",

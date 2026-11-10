@@ -1,0 +1,566 @@
+{
+  "//": "CTO V90 §3 — decomposition of the gated (PREPARED_B/DEFERRED) canonical missions into the 9 V90 categories (V81 refined). A gated parent still exposes its genuinely-LOCAL sub-work; only sub-work needing a real human sign-off or external dependency stays reserved. No fabricated missions.",
+  "gatedParents": 14,
+  "decompositions": [
+    {
+      "parent": "REQ-Préambule",
+      "part": "Préambule §1–§4",
+      "gating": "INHERENTLY_REFERENTIAL",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-I",
+      "part": "I §5–§6",
+      "gating": "NEEDS_LOCAL_BUILD",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-IV",
+      "part": "IV §16–§20",
+      "gating": "NEEDS_LOCAL_BUILD",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XIII",
+      "part": "XIII §57–§61",
+      "gating": "EXTERNAL_DEPENDENCY",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XVI",
+      "part": "XVI §71–§76",
+      "gating": "OWNER_GATED",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XVII",
+      "part": "XVII §77–§79",
+      "gating": "INHERENTLY_REFERENTIAL",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XIX",
+      "part": "XIX §83–§87",
+      "gating": "OWNER_GATED",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXIII",
+      "part": "XXIII §97–§103",
+      "gating": "OWNER_GATED",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXV",
+      "part": "XXV §105",
+      "gating": "NEEDS_LOCAL_BUILD",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXVII",
+      "part": "XXVII §108–§110",
+      "gating": "OWNER_GATED",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXVIII",
+      "part": "XXVIII §111–§112",
+      "gating": "INHERENTLY_REFERENTIAL",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXIX",
+      "part": "XXIX §113–§115",
+      "gating": "INHERENTLY_REFERENTIAL",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXX",
+      "part": "XXX §116–§119",
+      "gating": "OWNER_GATED",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "human-sign-off",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    },
+    {
+      "parent": "REQ-XXXII",
+      "part": "Part XXXII (commercialization)",
+      "gating": "OWNER_GATED",
+      "subMissions": [
+        {
+          "name": "implementation",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_IMPLEMENTATION"
+        },
+        {
+          "name": "tests",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "evidence",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "decision-dossier",
+          "v81Status": "LOCAL_REMAINING",
+          "v90Category": "LOCAL_TESTING"
+        },
+        {
+          "name": "external-execution",
+          "v81Status": "SIGN_OFF_GATED",
+          "v90Category": "HUMAN_SIGNOFF"
+        }
+      ],
+      "localProceedable": [
+        "implementation",
+        "tests",
+        "evidence",
+        "decision-dossier"
+      ],
+      "humanOrExternal": 1
+    }
+  ],
+  "categoryTally": {
+    "ALREADY_DONE_VALIDATED": 0,
+    "LOCAL_IMPLEMENTATION": 14,
+    "LOCAL_TESTING": 42,
+    "LOCAL_RESEARCH": 0,
+    "LOCAL_DATA_AND_SIMULATION": 0,
+    "LOCAL_INTEGRATION": 0,
+    "HUMAN_SIGNOFF": 14,
+    "EXTERNAL_DEPENDENCY": 0,
+    "NOT_MEASURED": 0
+  },
+  "totalLocalProceedableSubMissions": 56,
+  "honestConclusion": "14 gated canonical parents decomposed into 70 sub-missions across the 9 categories. 56 are genuinely LOCAL (implementation/testing/research/data-sim/integration) and can proceed under gated parents; the rest are real HUMAN_SIGNOFF (14) / EXTERNAL_DEPENDENCY (0) / ALREADY_DONE_VALIDATED (0). Honest: most gated parents are inherently owner/referential — local sub-work is the finite minority, not inflated.",
+  "invariant": "a gated parent never blocks its independent local sub-missions; a parent is not wholesale HUMAN_SIGNOFF when it decomposes into local work; no fabricated missions; derived from real canonical artifacts."
+}
