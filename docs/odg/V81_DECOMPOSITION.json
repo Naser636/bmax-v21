@@ -1,0 +1,632 @@
+{
+  "//": "CTO V81 — decompose Level-B parents into technical sub-missions + execute the LOCAL_REMAINING ones. ALREADY_DONE only when evidence resolves; sign-off stays GATED. Proves whether genuine local sub-work remains (not a re-count). Reuses mission-decomposer + campaign-engine; no new registry.",
+  "parentsDecomposed": 14,
+  "perParent": [
+    {
+      "parent": "REQ-Préambule",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-Préambule:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-Préambule:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-Préambule:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-Préambule:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-Préambule:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-Préambule:tests"
+      ],
+      "signOffGated": [
+        "REQ-Préambule:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-I",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-I:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-I:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-I:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-I:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-I:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-I:tests"
+      ],
+      "signOffGated": [
+        "REQ-I:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-IV",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-IV:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-IV:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-IV:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-IV:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-IV:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-IV:tests"
+      ],
+      "signOffGated": [
+        "REQ-IV:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XIII",
+      "kind": "B_external",
+      "subMissions": [
+        {
+          "id": "REQ-XIII:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XIII:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XIII:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XIII:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XIII:external-execution",
+          "name": "external-execution",
+          "level": "C",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XIII:tests"
+      ],
+      "signOffGated": [
+        "REQ-XIII:external-execution"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XVI",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XVI:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XVI:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XVI:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XVI:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XVI:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XVI:tests"
+      ],
+      "signOffGated": [
+        "REQ-XVI:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XVII",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XVII:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XVII:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XVII:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XVII:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XVII:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XVII:tests"
+      ],
+      "signOffGated": [
+        "REQ-XVII:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XIX",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XIX:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XIX:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XIX:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XIX:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XIX:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XIX:tests"
+      ],
+      "signOffGated": [
+        "REQ-XIX:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXIII",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XXIII:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXIII:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXIII:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXIII:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXIII:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXIII:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXIII:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXV",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XXV:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXV:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXV:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXV:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXV:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXV:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXV:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXVII",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XXVII:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXVII:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXVII:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXVII:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXVII:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXVII:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXVII:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXVIII",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XXVIII:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXVIII:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXVIII:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXVIII:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXVIII:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXVIII:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXVIII:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXIX",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XXIX:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXIX:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXIX:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXIX:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXIX:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXIX:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXIX:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXX",
+      "kind": "B_human",
+      "subMissions": [
+        {
+          "id": "REQ-XXX:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXX:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXX:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXX:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXX:human-sign-off",
+          "name": "human-sign-off",
+          "level": "B",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXX:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXX:human-sign-off"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    },
+    {
+      "parent": "REQ-XXXII",
+      "kind": "B_human+external",
+      "subMissions": [
+        {
+          "id": "REQ-XXXII:implementation",
+          "name": "implementation",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXXII:tests",
+          "name": "tests",
+          "level": "A",
+          "status": "LOCAL_REMAINING"
+        },
+        {
+          "id": "REQ-XXXII:evidence",
+          "name": "evidence",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXXII:decision-dossier",
+          "name": "decision-dossier",
+          "level": "A",
+          "status": "ALREADY_DONE"
+        },
+        {
+          "id": "REQ-XXXII:external-execution",
+          "name": "external-execution",
+          "level": "C",
+          "status": "SIGN_OFF_GATED"
+        }
+      ],
+      "localRemaining": [
+        "REQ-XXXII:tests"
+      ],
+      "signOffGated": [
+        "REQ-XXXII:external-execution"
+      ],
+      "alreadyDoneCount": 3,
+      "note": "1 local sub-mission(s) executable now; the final act stays gated"
+    }
+  ],
+  "subMissionTally": {
+    "alreadyDone": 42,
+    "localRemaining": 14,
+    "signOffGated": 14
+  },
+  "localRemainingExecuted": 14,
+  "localRemainingFailed": 0,
+  "engineStop": "QUEUE_EXHAUSTED",
+  "honestConclusion": "Decomposed 14 Level-B parents into 70 technical sub-missions: 42 ALREADY_DONE (evidence resolves), 14 LOCAL_REMAINING (executed now: 14 accepted), 14 SIGN_OFF_GATED (reserved human/external — never auto-done). This PROVES V80's ALL_REMAINING_DEFERRED at the sub-mission level: the local technical sub-work of the gated parents is now advanced; only the final sign-offs remain, isolated.",
+  "invariant": "decomposition surfaces hidden local sub-work; ALREADY_DONE requires a resolving evidence pointer (no fabrication); the final sign-off is never auto-completed; a gated parent never blocks its Level-A sub-missions."
+}
