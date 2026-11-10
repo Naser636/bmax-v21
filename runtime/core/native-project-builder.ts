@@ -62,19 +62,23 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     fileStatus.push({ path: fileSpec.path, stage: "GENERATED" });
   }
 
-  // BUILD (assemble + compile). On a build error, attempt bounded repair of the files.
+  // BUILD + INDEPENDENT VERIFICATION, with bounded repair on EITHER a build error OR a verify failure. V40 LOT M: a false
+  // success (the project COMPILES but FAILS the independent test) previously got NO repair — now the test failure is fed
+  // back to the generator, fail-closed. Acceptance is still decided ONLY by the independent test.
   let build = assembleAndLoad(files);
+  let verifyErr: any = null;
+  const runVerify = (): boolean => { verifyErr = null; if (build.ok && fn(s.independentTest)) { try { return s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); return false; } } return false; };
+  let verified = runVerify();
+  const firstPass = Object.freeze({ buildOk: build.ok === true, verified: build.ok === true && verified === true, error: build.ok ? verifyErr : build.error });  // instrumentation: the pre-repair verdict (no behaviour change)
   let repairs = 0;
-  while (!build.ok && repairs < maxRepair && fn(deps.generateFile)) {
+  while (!(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
     repairs++;
-    // regenerate every file with the build error in context (simple whole-project repair pass).
-    for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, buildError: build.error }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; }
+    // regenerate every file with the FAILURE in context: a build error, or a "builds-but-fails-the-test" verify failure.
+    const hint = !build.ok ? { buildError: build.error } : { verifyError: "the project BUILDS but FAILS the independent functional test — the logic does not satisfy the contract; fix the logic" };
+    for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; }
     build = assembleAndLoad(files);
+    verified = runVerify();
   }
-
-  // INDEPENDENT VERIFICATION (the sole arbiter) over the assembled project.
-  let verified = false, verifyErr: any = null;
-  if (build.ok && fn(s.independentTest)) { try { verified = s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); } }
 
   const filesGenerated = Object.keys(files).length;
   return Object.freeze({
@@ -87,6 +91,7 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     verified: build.ok && verified,
     verifyError: verifyErr,
     accepted: build.ok === true && verified === true,     // native build accepted ONLY on independent verification
+    firstPass,                                            // the pre-repair verdict (instrumentation for benchmarks)
     fileStatus: Object.freeze(fileStatus),
     files: Object.freeze({ ...files }),                    // retained (valid partial not lost)
   });

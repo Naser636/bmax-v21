@@ -1,0 +1,47 @@
+{
+  "//": "CTO V42 LOT O — REAL hard COMPLEX benchmark. Local qwen2.5-coder via 127.0.0.1:11434. NOT synthetic. Thresholds unchanged. One build/task/model, maxRepair=1. VERIFIED in-repo != DEPLOYED.",
+  "models": {
+    "3b": "qwen2.5-coder:3b",
+    "7b": "qwen2.5-coder:7b"
+  },
+  "records": [
+    {
+      "taskId": "grade-report",
+      "family": "A-large-dag",
+      "fileCount": 6,
+      "model": "qwen2.5-coder:3b",
+      "firstPassAccepted": false,
+      "firstPassBuildOk": true,
+      "firstPassFalseSuccess": true,
+      "firstPassError": null,
+      "repairs": 3,
+      "finalAccepted": false,
+      "repairedToAccept": false,
+      "persistentFailure": true,
+      "finalFalseSuccess": true,
+      "finalError": null,
+      "filesGenerated": 6,
+      "durationMs": 108382,
+      "at": "2026-11-10T12:01:34.543Z"
+    },
+    {
+      "taskId": "roman-codec",
+      "family": "B-deep-logic",
+      "fileCount": 4,
+      "model": "qwen2.5-coder:3b",
+      "firstPassAccepted": false,
+      "firstPassBuildOk": true,
+      "firstPassFalseSuccess": true,
+      "firstPassError": null,
+      "repairs": 3,
+      "finalAccepted": false,
+      "repairedToAccept": false,
+      "persistentFailure": true,
+      "finalFalseSuccess": true,
+      "finalError": null,
+      "filesGenerated": 4,
+      "durationMs": 159772,
+      "at": "2026-11-10T12:04:14.318Z"
+    }
+  ]
+}
