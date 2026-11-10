@@ -90,3 +90,24 @@ Devise : **DISCOVER. UNDERSTAND. INVENT. ENGINEER. VERIFY. IMPROVE. REPEAT.**
 > Ces extensions COMPLÈTENT la V12.4 sans réécrire les 31 parties numérotées ni modifier l'invariant de couverture §1–§122 (vérifié par `runtime/core/v124-section-coverage.ts`). Elles portent des §§ au-delà de §122.
 
 - **Partie XXXII — Commercialisation & Acquisition (§123–§130)** — ajoutée V50 (2026-11-10), décidée par les audits V48 (I1/C7) + V49. Détail : `docs/odg/V12_4_PART_XXXII_COMMERCIALIZATION.md`. Comble le constat central V48 (0/31 parties ne traitaient l'acquisition). Réutilise commercial-pipeline / opportunity-* / cost-engine / action-gate / evidence-provenance / O1-O2 ; aucun CRM ni primitive nouvelle. Statut : référentiel directeur proposé ; hypothèses commerciales non prouvées (0 client).
+
+## Programmes permanents P1–P10 (intégrés V63, 2026-11-10) — référentiel canonique, non parallèle
+
+Les dix chantiers V62/V63 deviennent des **programmes permanents**, tracés dans `docs/odg/V63_PROGRAM_REGISTER.json`
+(mapping programme → parties V12.4 → livrables → tests → acceptation → statut → condition de clôture ; chaque pointeur
+de preuve vérifié présent). Ils ne remplacent aucune partie §1–§122 ni la Partie XXXII ; ils les référencent.
+
+- **P1 Gouvernance & cohérence canonique** → II/III/XXII/XXIII — autorité ODG (règle permanente V61), matrice de couverture.
+- **P2 Autonomie d'ingénierie & auto-amélioration** → VIII/IX/XII — self-improvement gouverné, invariants de consolidation V59.
+- **P3 Excellence des quinze métiers** → X/XIII — 14/15 E4, fiches de performance multidim V62 ; P13 hardware-bloqué.
+- **P4 Benchmarks & dépassement mondial** → XIII — programme benchmark V57 (ODG-side exécuté+reproductible ; supériorité fail-closed).
+- **P5 Entreprises & clients synthétiques** → X/XXXII — moteurs client-journey-sim + synthetic-enterprise (SYNTHETIC/FICTIF).
+- **P6 Mesure réelle des coûts & optimisation** → XXI/XIII — cost-engine + programmes coût V55 + protocole média V60 (réel owner-gated).
+- **P7 Industrialisation, exploitation & livraison** → XXIV/XXVII — activation-readiness V62, dossiers OWNER_GATED V60.
+- **P8 Sécurité, conformité & assurance** → XIV/XXIII — root-of-trust/emergency-stop/ai-assurance ; certifications organisme-gated.
+- **P9 Radar mondial & amélioration hebdomadaire** → VI/VIII — boucle gouvernée 7 étapes, audit V55 (12/12) ; aucun moteur parallèle.
+- **P10 Préparation opérationnelle & mise en service** → XXVII/XXX/XXXII — checklist go-live, slots humains vides (PENDING_HUMAN).
+
+Objectifs financiers canoniques (corrigés V63) : **PLANCHER ABSOLU €5 000 000 net** · **AMBITION €500 000 000 net (12 mois)**.
+Le montant de €5 000 est une **erreur** (V62 §12), **supprimée comme objectif** (traçabilité conservée dans le registre financier).
+Autorité : ODG seul maître d'œuvre ; le fournisseur technique n'exécute que des tâches explicitement confiées (règle permanente V61).
