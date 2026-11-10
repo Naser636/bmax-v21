@@ -1,7 +1,7 @@
 {
   "//": "CTO V44 Chantier B — P11 e-invoice validation & STP demonstrator. REPRODUCIBLE on SYNTHETIC public inputs (no client data). ODG does conformance/readiness PREP, NOT a certified PDP transmission. L2 maturity, 0 paying clients.",
   "demonstrator": "P11 document routing / STP — France B2B e-invoicing (EN16931 / Factur-X) readiness",
-  "generatedAt": "2026-11-10T14:37:36.716Z",
+  "generatedAt": "2026-11-10T14:49:37.672Z",
   "marketContext": "France B2B e-invoicing live 2026-09-01 (large/ETI issue + all receive); SMEs 2027-09-01; via certified PDPs; Factur-X/UBL formats.",
   "validCase": {
     "invoiceId": "FR-2026-001",
@@ -144,7 +144,7 @@
       "provenance": {
         "schema": "evidence-provenance/1",
         "contentSha256": "17b7c284010052c5de188a8a23df47f3077e5d894246e4f6c1f7c30013c02ade",
-        "sourceCommit": "2e3095ddbb6df1ae0d73b0725c542846a895a491",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
         "treeDirty": true,
         "sourceAvailable": true,
         "capturedAtRun": null

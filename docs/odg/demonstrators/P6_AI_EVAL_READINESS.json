@@ -50,7 +50,7 @@
       "provenance": {
         "schema": "evidence-provenance/1",
         "contentSha256": "3cb0e25e7ca26430a11fe1af888bc2b29ba6ba8cf3b51bd788497e7b1fe663c0",
-        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
         "treeDirty": true,
         "sourceAvailable": true,
         "capturedAtRun": null

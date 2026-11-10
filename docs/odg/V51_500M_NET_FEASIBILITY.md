@@ -28,3 +28,32 @@
 - **Objective (canonical, recorded):** €500M NET / first 12 months.
 - **Assessment:** INFEASIBLE from the current €0-client state in 12 months (shown above). The plausible 12-month range remains ~€0.5–1.5M revenue (far below €500M net). This is stated as a FACT-based finding, not an adjustment of the target.
 - Technical excellence (V12.4) and the E4 deliverables improve delivery/credibility but **do not change this feasibility conclusion** — the gap is commercial scale + capital + time, not technique.
+
+---
+
+## V52 — corrected model (from formulas; CTO pre-tax-margin framing)
+
+> Recomputed from formulas, not the V51 approximate figures. IS 25% (band negligible at scale). **Objective unchanged: €500M NET / first 12 months.** Scenarios are MATHEMATICAL, not forecasts/observed results.
+
+- **NET €500,000,000 ⇒ EBT ≈ €666,666,667 ⇒ IS ≈ €166,666,667.**
+
+### CA required by PRE-TAX margin (matches the CTO table) + contracts per avg basket
+| Pre-tax margin | CA required | @ €8k | @ €25k | @ €120k | @ €500k |
+|---:|---:|---:|---:|---:|---:|
+| 5% | €13.33 Md | 1,666,667 | 533,333 | 111,111 | 26,667 |
+| 10% | €6.67 Md | 833,333 | 266,667 | 55,556 | 13,333 |
+| 15% | €4.44 Md | 555,556 | 177,778 | 37,037 | 8,889 |
+| 20% | €3.33 Md | 416,667 | 133,333 | 27,778 | 6,667 |
+| 25% | €2.67 Md | 333,333 | 106,667 | 22,222 | 5,333 |
+| 30% | €2.22 Md | 277,778 | 88,889 | 18,519 | 4,444 |
+
+### Pace / clients / capacity / WC (least-demanding cell: 30% margin, €500k avg contract)
+- **~4,444 enterprise contracts/yr ⇒ ~370/month ⇒ ~85/week** — from **0 clients**.
+- **Unique clients:** even at several contracts/client, thousands of distinct enterprise accounts.
+- **Sales cycle / cash:** enterprise cycles 3–9 months + 60–90-day payment ⇒ Y1 cash lags Y1 revenue heavily.
+- **Capacity / headcount:** delivering €2.2–13.3 Md of services ⇒ **thousands of FTE** (ODG automation lowers per-deal delivery cost but not the acquisition/relationship labour at this scale).
+- **Working capital (BFR):** at €2–13 Md revenue with 60–90-day terms, **hundreds of M€ to >€1 Md fronted** ⇒ massive financing required.
+- **Tax/legal:** FR IS 25%; at this scale, group structure/international tax + regulated-sector obligations dominate — out of a single SAS's standing-start reach.
+
+### Verdict (corrected, unchanged conclusion)
+**INFEASIBLE from the current €0-client state in 12 months** — the LEAST-demanding cell still needs **~4,444 €500k enterprise contracts/yr + a top-tier global sales+delivery org + hundreds-of-M€ working capital**. Labels: EBT/CA = MATHEMATICAL scenarios; "~€0.5–1.5M plausible Y1" = ESTIMATE; 0 clients / 0 conversion = OBSERVED. **Target NOT lowered; infeasibility recorded as fact.**

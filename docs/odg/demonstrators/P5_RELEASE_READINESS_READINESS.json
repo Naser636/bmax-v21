@@ -110,7 +110,7 @@
       "provenance": {
         "schema": "evidence-provenance/1",
         "contentSha256": "255185c2d9e461874cdcb62f7b0e9869733ff8d3d3db9207b9d1e823c522229e",
-        "sourceCommit": "f03e0ed1390738fab7c6e3c93831aadacf32d5ff",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
         "treeDirty": true,
         "sourceAvailable": true,
         "capturedAtRun": null
