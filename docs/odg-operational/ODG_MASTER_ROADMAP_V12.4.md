@@ -165,3 +165,12 @@ sélection + justification reproductibles, dépendances non satisfaites DÉFÉR�
 Driver `odg-roadmap-pilot.ts` : la mission choisie passe par la boucle gouvernée et s'ARRÊTE à PROPOSED sans autorisation
 externe (ODG n'auto-autorise jamais). Le fournisseur technique ne choisit pas la mission. Aucun second orchestrateur,
 aucune dixième primitive (V61). Cycle Boussole→Roadmap→sélection ODG→contrat→autorisation→exécution→preuves→clôture.
+
+## Pilote exécutif & mandat de travail local (V77, 2026-11-10)
+
+Le mandat EXPLICITE du propriétaire pour le travail local réversible (directives V61–V77) est représenté canoniquement par
+`runtime/core/local-work-mandate.ts` : autorisation bornée/révocable/traçable, **authorizedBy=owner, selfAuthored=false**
+(pas d'auto-autorisation d'ODG). Niveau A (local/réversible) autorisé ; Niveau B (sign-off humain) PRÉPARÉ sans acceptation ;
+Niveau C (push/deploy/VPS/dépense/…) REFUSÉ ; inconnu/révoqué ⇒ fail-closed. Le pilote `odg-executive-pilot.ts` enchaîne :
+ODG sélectionne → mandat autorise Niveau A → boucle gouvernée EXÉCUTE de bout en bout → clôture → mission suivante. Résout
+l'arrêt PROPOSED de V76 sans contourner les gates (V61 intact). Aucun second orchestrateur, aucune dixième primitive.
