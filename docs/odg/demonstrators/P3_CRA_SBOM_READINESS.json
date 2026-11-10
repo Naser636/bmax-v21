@@ -1,0 +1,80 @@
+{
+  "//": "CTO V44 Chantier B — P3 CRA-SBOM READINESS demonstrator. REPRODUCIBLE on public inputs. ODG produces readiness EVIDENCE (SBOM + audit), NOT full CRA compliance (owner-side obligations listed). No client data. VERIFIED in-repo != a sold product (L2, 0 clients).",
+  "demonstrator": "P3 supply-chain / SBOM — EU Cyber Resilience Act readiness",
+  "generatedAt": "2026-11-10T13:09:21.747Z",
+  "project": "bmax-v21",
+  "inputManifests": [
+    "package-lock.json"
+  ],
+  "publicInputs": true,
+  "sbom": {
+    "format": "CycloneDX",
+    "specVersion": "1.5",
+    "componentCount": 485,
+    "sampleComponents": [
+      {
+        "type": "library",
+        "name": "@alloc/quick-lru",
+        "version": "5.2.0",
+        "purl": "pkg:npm/@alloc/quick-lru@5.2.0"
+      },
+      {
+        "type": "library",
+        "name": "@babel/code-frame",
+        "version": "7.29.7",
+        "purl": "pkg:npm/@babel/code-frame@7.29.7"
+      },
+      {
+        "type": "library",
+        "name": "@babel/compat-data",
+        "version": "7.29.7",
+        "purl": "pkg:npm/@babel/compat-data@7.29.7"
+      },
+      {
+        "type": "library",
+        "name": "@babel/core",
+        "version": "7.29.7",
+        "purl": "pkg:npm/@babel/core@7.29.7"
+      },
+      {
+        "type": "library",
+        "name": "@babel/generator",
+        "version": "7.29.7",
+        "purl": "pkg:npm/@babel/generator@7.29.7"
+      }
+    ]
+  },
+  "licenseAudit": {
+    "policyClean": true,
+    "findingsCount": 7,
+    "ciGateExitCode": 0,
+    "ciGateMeaning": "clean / review-only"
+  },
+  "craReadinessMapping": [
+    {
+      "obligation": "Machine-readable SBOM covering (at least) top-level dependencies, kept in the technical documentation",
+      "dueDate": "2027-12-11",
+      "odgEvidence": "SBOM built (485 components across 1 manifest(s): package-lock.json)",
+      "status": "PREPARED (machine-readable SBOM produced)"
+    },
+    {
+      "obligation": "Component-level visibility — prerequisite for 24h actively-exploited-vuln reporting to ENISA",
+      "dueDate": "2026-09-11",
+      "odgEvidence": "per-component inventory + license classification (485 components); feeds a vulnerability-reporting process (owner-operated)",
+      "status": "PREPARED (inventory available)"
+    },
+    {
+      "obligation": "License / supply-chain hygiene (secure-by-design inputs)",
+      "dueDate": "2027-12-11",
+      "odgEvidence": "license-policy audit: policyClean=true, findings=7",
+      "status": "CLEAN"
+    }
+  ],
+  "notCoveredByOdg_ownerSide": [
+    "Full technical documentation file (organisational — owner)",
+    "24h/72h/14-day vulnerability reporting PROCESS to ENISA (owner-operated; ODG supplies the inventory, not the reporting duty)",
+    "CE marking + declaration of conformity (owner/legal)",
+    "5-year support + 10-year update availability commitments (owner/commercial)"
+  ],
+  "honesty": "This is a DEMONSTRATOR on public inputs, not a sold engagement. ODG capability maturity = L2 (locally proven, 0 paying clients). It evidences SBOM + audit readiness; it does NOT certify CRA compliance."
+}
