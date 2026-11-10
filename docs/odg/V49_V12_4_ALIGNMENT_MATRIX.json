@@ -1,0 +1,85 @@
+{
+  "//": "world method ↔ V12.4 part ↔ reuse status. Most map to existing parts (no new roadmap needed).",
+  "alignment": {
+    "NASA": {
+      "v124_part": "III/VIII/XXIII",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "harden gate-ledger to NASA-style milestone reviews"
+    },
+    "NASA/DoD": {
+      "v124_part": "X/XXI",
+      "reuse_status": "EXISTS_VERIFIED",
+      "improvement": "keep; map E-levels↔TRL for buyers"
+    },
+    "SpaceX": {
+      "v124_part": "XIII/XIV",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "add test-to-failure protocol to benchmark-factory"
+    },
+    "Airbus/Boeing": {
+      "v124_part": "XV/XXII",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "extend compliance-evidence-pack to safety-case format"
+    },
+    "Toyota": {
+      "v124_part": "VIII/XII/XIV",
+      "reuse_status": "EXISTS_PARTIAL (strong)",
+      "improvement": "keep; the automation dividend is the TPS analog"
+    },
+    "Google DeepMind": {
+      "v124_part": "XIII",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "harden eval-significance into every métier gate"
+    },
+    "Microsoft": {
+      "v124_part": "XIV",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "add a threat-model template (reuse security modules)"
+    },
+    "Amazon": {
+      "v124_part": "VII/XXI",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "add COE template; keep DORA"
+    },
+    "NVIDIA": {
+      "v124_part": "XII/Part-X P13",
+      "reuse_status": "MISSING_CONFIRMED (not ODG play)",
+      "improvement": "do NOT build; partner/defer"
+    },
+    "Tesla": {
+      "v124_part": "VII/VIII",
+      "reuse_status": "EXISTS_PARTIAL / NOT_APPLICABLE (HW)",
+      "improvement": "keep learning-loop; HW NOT_APPLICABLE"
+    },
+    "NIST": {
+      "v124_part": "XIV/XXIII",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "map ODG controls↔NIST RMF/SSDF (reuse iso-matrices)"
+    },
+    "ENISA/ISO": {
+      "v124_part": "X/XXVI",
+      "reuse_status": "EXISTS_PARTIAL — NOT_CERTIFIED",
+      "improvement": "pursue certification readiness packaging (reuse compliance-evidence-pack)"
+    },
+    "NATO/Defense": {
+      "v124_part": "X/XXV",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "consolidate F01-F40 lessons register"
+    },
+    "Siemens": {
+      "v124_part": "V/XX",
+      "reuse_status": "EXISTS_PARTIAL",
+      "improvement": "keep world-model; no new engine"
+    },
+    "Maersk/Leclerc": {
+      "v124_part": "XV",
+      "reuse_status": "EXISTS_PARTIAL / NOT_APPLICABLE (physical)",
+      "improvement": "keep; physical logistics NOT_APPLICABLE"
+    },
+    "Scientific orgs": {
+      "v124_part": "V/VII/XIII",
+      "reuse_status": "EXISTS_PARTIAL (strong)",
+      "improvement": "keep; strongest alignment"
+    }
+  }
+}

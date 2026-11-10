@@ -1,0 +1,135 @@
+{
+  "//": "world-class methods most relevant per métier (from the benchmark).",
+  "by_metier": {
+    "P1": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "SpaceX:Rapid iterate-test-to-failure;",
+      "Airbus/Boeing:Configuration management, requ",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NVIDIA:AI infrastructure, GPU/inferen",
+      "NIST:Risk Management Framework SP 8",
+      "ENISA/ISO:ISO 9001/27001/42001; CRA; EU ",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Siemens:Industrial automation, digital",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P2": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "Google DeepMind:Rigorous model evaluation, hel",
+      "Tesla:HW-SW integration, data flywhe",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P3": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Airbus/Boeing:Configuration management, requ",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "Microsoft:Security Development Lifecycle",
+      "NIST:Risk Management Framework SP 8",
+      "ENISA/ISO:ISO 9001/27001/42001; CRA; EU ",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Maersk/Leclerc:Supply-chain visibility, logis",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P4": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "Tesla:HW-SW integration, data flywhe",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P5": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "Amazon:Operational excellence (Well-A",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Siemens:Industrial automation, digital",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P6": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "SpaceX:Rapid iterate-test-to-failure;",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "Google DeepMind:Rigorous model evaluation, hel",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P7": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "SpaceX:Rapid iterate-test-to-failure;",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "Amazon:Operational excellence (Well-A",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P8": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P9": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P10": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Airbus/Boeing:Configuration management, requ",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NIST:Risk Management Framework SP 8",
+      "ENISA/ISO:ISO 9001/27001/42001; CRA; EU ",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P11": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P12": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P13": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NVIDIA:AI infrastructure, GPU/inferen",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P14": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Scientific orgs:Reproducibility, independent v"
+    ],
+    "P15": [
+      "NASA:Independent Verification & Val",
+      "NASA/DoD:Technology Readiness Levels (T",
+      "Toyota:Lean/TPS: andon (stop-the-line",
+      "NATO/Defense:Interoperability, C2 coordinat",
+      "Siemens:Industrial automation, digital",
+      "Scientific orgs:Reproducibility, independent v"
+    ]
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "//": "V49 global capability gap register. Priorities justified by reuse_status + biz impact.",
+  "reuse_status_tally": {
+    "EXISTS_PARTIAL": 9,
+    "EXISTS_VERIFIED": 1,
+    "EXISTS_PARTIAL (strong)": 2,
+    "MISSING_CONFIRMED (not ODG play)": 1,
+    "EXISTS_PARTIAL / NOT_APPLICABLE (HW)": 1,
+    "EXISTS_PARTIAL — NOT_CERTIFIED": 1,
+    "EXISTS_PARTIAL / NOT_APPLICABLE (physical)": 1
+  },
+  "gaps": [
+    {
+      "reference": "NASA",
+      "method": "Independent Verification & Validation (IV&V); NASA Systems Engineering Handbook SP-2016-6105; phase-gate reviews",
+      "v124": "III/VIII/XXIII",
+      "component": "evaluator-independence.ts, gates-ledger.ts",
+      "state": "EXISTS_PARTIAL",
+      "gap": "formal phase-gate reviews not all enumerated",
+      "improvement": "harden gate-ledger to NASA-style milestone reviews",
+      "impact": "CREDIBILITY",
+      "priority": "P1"
+    },
+    {
+      "reference": "NASA/DoD",
+      "method": "Technology Readiness Levels (TRL 1-9)",
+      "v124": "X/XXI",
+      "component": "capability-map.ts",
+      "state": "EXISTS_VERIFIED",
+      "gap": "analog present; terminology differs",
+      "improvement": "keep; map E-levels↔TRL for buyers",
+      "impact": "CREDIBILITY",
+      "priority": "P2"
+    },
+    {
+      "reference": "SpaceX",
+      "method": "Rapid iterate-test-to-failure; adversarial testing; vertical integration",
+      "v124": "XIII/XIV",
+      "component": "frontier-lab, adversarial tests",
+      "state": "EXISTS_PARTIAL",
+      "gap": "test-to-failure not systematized per métier",
+      "improvement": "add test-to-failure protocol to benchmark-factory",
+      "impact": "DELIVERY",
+      "priority": "P2"
+    },
+    {
+      "reference": "Airbus/Boeing",
+      "method": "Configuration management, requirements traceability, safety cases, certification",
+      "v124": "XV/XXII",
+      "component": "evidence-provenance.ts, closure-register.json",
+      "state": "EXISTS_PARTIAL",
+      "gap": "safety-case/cert packaging not formalized",
+      "improvement": "extend compliance-evidence-pack to safety-case format",
+      "impact": "CREDIBILITY",
+      "priority": "P1"
+    },
+    {
+      "reference": "Toyota",
+      "method": "Lean/TPS: andon (stop-the-line), jidoka, kaizen, 5-whys root-cause, poka-yoke",
+      "v124": "VIII/XII/XIV",
+      "component": "emergency-stop, rce-root-cause-intelligence, self-improvement",
+      "state": "EXISTS_PARTIAL (strong)",
+      "gap": "continuous kaizen loop not continuously running",
+      "improvement": "keep; the automation dividend is the TPS analog",
+      "impact": "AUTOMATION",
+      "priority": "P2"
+    },
+    {
+      "reference": "Google DeepMind",
+      "method": "Rigorous model evaluation, held-out benchmarks, ablations, reproducibility",
+      "v124": "XIII",
+      "component": "eval-metrics.ts, k-eval.ts, benchmark-factory.ts",
+      "state": "EXISTS_PARTIAL",
+      "gap": "ablations/statistical rigor partial (eval-significance added)",
+      "improvement": "harden eval-significance into every métier gate",
+      "impact": "DELIVERY",
+      "priority": "P2"
+    },
+    {
+      "reference": "Microsoft",
+      "method": "Security Development Lifecycle (SDL); Threat modeling",
+      "v124": "XIV",
+      "component": "bash-command-governor, third-party-agent-gate",
+      "state": "EXISTS_PARTIAL",
+      "gap": "threat-model artifact not standardized",
+      "improvement": "add a threat-model template (reuse security modules)",
+      "impact": "CREDIBILITY",
+      "priority": "P2"
+    },
+    {
+      "reference": "Amazon",
+      "method": "Operational excellence (Well-Architected), COE/blameless post-mortems, DORA",
+      "v124": "VII/XXI",
+      "component": "dora-metrics.ts, incident-recurrence.ts",
+      "state": "EXISTS_PARTIAL",
+      "gap": "post-mortem/COE artifact not standardized",
+      "improvement": "add COE template; keep DORA",
+      "impact": "DELIVERY",
+      "priority": "P2"
+    },
+    {
+      "reference": "NVIDIA",
+      "method": "AI infrastructure, GPU/inference optimization",
+      "v124": "XII/Part-X P13",
+      "component": "local-model-generator.ts, inference-engine.ts",
+      "state": "MISSING_CONFIRMED (not ODG play)",
+      "gap": "ODG owns no GPU; P13 ranked last (V47.1)",
+      "improvement": "do NOT build; partner/defer",
+      "impact": "NONE",
+      "priority": "P3"
+    },
+    {
+      "reference": "Tesla",
+      "method": "HW-SW integration, data flywheel, OTA updates",
+      "v124": "VII/VIII",
+      "component": "learning-loop.ts",
+      "state": "EXISTS_PARTIAL / NOT_APPLICABLE (HW)",
+      "gap": "data flywheel analog only; no HW/OTA",
+      "improvement": "keep learning-loop; HW NOT_APPLICABLE",
+      "impact": "AUTOMATION",
+      "priority": "P3"
+    },
+    {
+      "reference": "NIST",
+      "method": "Risk Management Framework SP 800-37; CSF; Secure SW Dev Framework SP 800-218",
+      "v124": "XIV/XXIII",
+      "component": "regulatory-assurance, supply-chain-attest, sbom-audit-service",
+      "state": "EXISTS_PARTIAL",
+      "gap": "RMF mapping not formalized as a control matrix",
+      "improvement": "map ODG controls↔NIST RMF/SSDF (reuse iso-matrices)",
+      "impact": "CREDIBILITY",
+      "priority": "P1"
+    },
+    {
+      "reference": "ENISA/ISO",
+      "method": "ISO 9001/27001/42001; CRA; EU resilience",
+      "v124": "X/XXVI",
+      "component": "regulatory-assurance.ts, iso-27001-clause-matrix.ts",
+      "state": "EXISTS_PARTIAL — NOT_CERTIFIED",
+      "gap": "no actual certification (credibility gap for enterprise)",
+      "improvement": "pursue certification readiness packaging (reuse compliance-evidence-pack)",
+      "impact": "CREDIBILITY",
+      "priority": "P1"
+    },
+    {
+      "reference": "NATO/Defense",
+      "method": "Interoperability, C2 coordination, lessons-learned, capability management",
+      "v124": "X/XXV",
+      "component": "capability-map.ts, failures-register.ts, campaign-controller.ts",
+      "state": "EXISTS_PARTIAL",
+      "gap": "lessons-learned register (F01-F40) incomplete",
+      "improvement": "consolidate F01-F40 lessons register",
+      "impact": "CREDIBILITY",
+      "priority": "P2"
+    },
+    {
+      "reference": "Siemens",
+      "method": "Industrial automation, digital twin, complex-systems engineering",
+      "v124": "V/XX",
+      "component": "world-model.ts, campaign-controller.ts",
+      "state": "EXISTS_PARTIAL",
+      "gap": "digital-twin analog partial",
+      "improvement": "keep world-model; no new engine",
+      "impact": "AUTOMATION",
+      "priority": "P3"
+    },
+    {
+      "reference": "Maersk/Leclerc",
+      "method": "Supply-chain visibility, logistics/flow coordination, procurement",
+      "v124": "XV",
+      "component": "supply-chain-attest.ts",
+      "state": "EXISTS_PARTIAL / NOT_APPLICABLE (physical)",
+      "gap": "software supply-chain only",
+      "improvement": "keep; physical logistics NOT_APPLICABLE",
+      "impact": "CREDIBILITY",
+      "priority": "P3"
+    },
+    {
+      "reference": "Scientific orgs",
+      "method": "Reproducibility, independent validation, knowledge management, pre-registration",
+      "v124": "V/VII/XIII",
+      "component": "frontier-lab.ts, memory-taxonomy.ts, evaluator-independence.ts",
+      "state": "EXISTS_PARTIAL (strong)",
+      "gap": "knowledge mgmt partial (WAKE/DREAM)",
+      "improvement": "keep; strongest alignment",
+      "impact": "CREDIBILITY",
+      "priority": "P2"
+    }
+  ],
+  "central_finding": "ODG already EMBODIES the PRINCIPLES of most world-class methods at L2-L3 (independent V&V=NASA; stop-the-line=Toyota andon; root-cause=5-whys; provenance=Airbus/SLSA; eval rigor=DeepMind; RMF/SLSA=NIST). 0 methods map to MISSING_CONFIRMED except NVIDIA GPU-infra (not an ODG play). The genuine gaps are NOT new engines but: (a) CERTIFICATION/attestation packaging (credibility for enterprise sales), (b) INDUSTRIAL DELIVERY SCALE proof (the automation dividend unproven at scale), (c) the COMMERCIAL arm (V48). Anti-duplication: improve EXISTING components; do NOT create a component per reference org."
+}
