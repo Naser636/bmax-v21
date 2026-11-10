@@ -1,0 +1,62 @@
+{
+  "//": "CTO V78 — campaign run over a 30-mission queue. Proves >4 missions processed with no hardcoded cap, continuation past blocked/failed, Level-C refused, Level-B prepared. Reuses campaign-engine; no new orchestrator.",
+  "queueSize": 30,
+  "metrics": {
+    "discovered": 30,
+    "selected": 28,
+    "authorized": 24,
+    "executed": 24,
+    "accepted": 23,
+    "failed": 1,
+    "refusedC": 2,
+    "preparedB": 2,
+    "quarantined": 0,
+    "deferred": 2,
+    "retries": 0,
+    "iterations": 28
+  },
+  "stopReason": "ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission",
+  "moreThanFourExecuted": true,
+  "honestConclusion": "Campaign over a 30-mission queue: 23 EXECUTED+ACCEPTED (Level-A), 1 FAILED (incl. induced A-7, not accepted), 2 Level-C REFUSED, 2 Level-B PREPARED, 0 quarantined. Stop reason: ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission. 23 > 4 ⇒ the V77 4-mission limit (a hardcoded candidate list, not a model/time cap) is removed; the engine consumes the whole queue and continues past blocked/failed missions.",
+  "logTail": [
+    {
+      "iter": 23,
+      "id": "A-23",
+      "decision": "EXECUTED_ACCEPTED",
+      "outcome": "SUCCESS",
+      "stages": 7
+    },
+    {
+      "iter": 24,
+      "id": "A-24",
+      "decision": "EXECUTED_ACCEPTED",
+      "outcome": "SUCCESS",
+      "stages": 7
+    },
+    {
+      "iter": 25,
+      "id": "B-sign",
+      "decision": "PREPARED_B",
+      "reason": "Level-B action needs a specific human sign-off — PREPARE locally, do NOT accept/close (sign-off not invented)"
+    },
+    {
+      "iter": 26,
+      "id": "B-legal",
+      "decision": "PREPARED_B",
+      "reason": "Level-B action needs a specific human sign-off — PREPARE locally, do NOT accept/close (sign-off not invented)"
+    },
+    {
+      "iter": 27,
+      "id": "C-deploy",
+      "decision": "REFUSED_C",
+      "reason": "Level-C action (external/irreversible) — REFUSED; outside the local mandate (no push/deploy/VPS/spend/...)"
+    },
+    {
+      "iter": 28,
+      "id": "C-spend",
+      "decision": "REFUSED_C",
+      "reason": "Level-C action (external/irreversible) — REFUSED; outside the local mandate (no push/deploy/VPS/spend/...)"
+    }
+  ],
+  "invariant": "no hardcoded mission cap; stop only on QUEUE_EXHAUSTED/ALL_DEFERRED/BUDGET/SAFETY_CAP (logged); blocked/failed never cause a global stop; ODG selects, owner mandate authorizes Level-A, gates intact."
+}

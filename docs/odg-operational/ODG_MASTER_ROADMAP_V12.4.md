@@ -174,3 +174,12 @@ Le mandat EXPLICITE du propriétaire pour le travail local réversible (directiv
 Niveau C (push/deploy/VPS/dépense/…) REFUSÉ ; inconnu/révoqué ⇒ fail-closed. Le pilote `odg-executive-pilot.ts` enchaîne :
 ODG sélectionne → mandat autorise Niveau A → boucle gouvernée EXÉCUTE de bout en bout → clôture → mission suivante. Résout
 l'arrêt PROPOSED de V76 sans contourner les gates (V61 intact). Aucun second orchestrateur, aucune dixième primitive.
+
+## Moteur de campagne continue (V78, 2026-11-10)
+
+`runtime/core/campaign-engine.ts` consomme une file de missions de taille ARBITRAIRE (plus de plafond codé en dur) :
+ODG sélectionne → mandat propriétaire autorise Niveau A → boucle gouvernée exécute de bout en bout → Niveau C REFUSÉ /
+Niveau B PRÉPARÉ / échec+blocage EN QUARANTAINE → mission suivante. Arrêt uniquement sur QUEUE_EXHAUSTED /
+ALL_REMAINING_DEFERRED / BUDGET_LIMIT / SAFETY_CAP (proportionnel, journalisé). Un blocage isolé n'arrête jamais la
+campagne. Preuve : campagne de 30 missions (`V78_CAMPAIGN_RUN.json`) ⇒ 23 exécutées+acceptées (>4). Réutilise selector +
+mandate + intelligence-loop ; aucun second orchestrateur, aucune dixième primitive ; V61 intact.
