@@ -1,0 +1,8 @@
+# CANDIDATE — NOT installed/enabled. Daily backup + catch-up if missed.
+[Unit]
+Description=ODG durable repo backup (daily)
+[Timer]
+OnCalendar=*-*-* 02:30:00
+Persistent=true
+[Install]
+WantedBy=timers.target
