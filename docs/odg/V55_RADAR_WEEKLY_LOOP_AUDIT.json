@@ -1,0 +1,240 @@
+{
+  "//": "CTO V55 §6 — radar & weekly self-improvement loop AUDIT (read-only). Consolidates EXISTING components; creates no new radar and no new self-improvement engine. The loop is governed: propose→experiment→measure→independent-validation→gated-approval→reversible-integration→post-verify. No autonomous production/security-policy change without the prescribed authorizations.",
+  "componentCount": 12,
+  "loaded": 12,
+  "missing": [],
+  "components": [
+    {
+      "id": "frontier-radar",
+      "capability": "monitor tech/research/models/tools/competitors/regulatory signals",
+      "loop": "watch",
+      "exists": true,
+      "loads": true,
+      "contractExport": "FRONTIER_RADAR_CONTRACT",
+      "exportKeys": [
+        "SOURCE_TYPES",
+        "DECISIONS",
+        "COLLECT_STATE",
+        "FRONTIER_RADAR_CONTRACT",
+        "registerSource",
+        "normalizeSignal",
+        "sanitizeExternal",
+        "deduplicate",
+        "qualify",
+        "decide",
+        "toCandidate",
+        "compareWithOdg",
+        "toMissionProposal",
+        "collect",
+        "runRadar"
+      ]
+    },
+    {
+      "id": "frontier-radar-store",
+      "capability": "persist radar signals (store)",
+      "loop": "watch",
+      "exists": true,
+      "loads": true,
+      "contractExport": "FRONTIER_STORE_CONTRACT",
+      "exportKeys": [
+        "STORE_KEYS",
+        "FRONTIER_STORE_CONTRACT",
+        "loadSources",
+        "persistSources",
+        "loadCandidates",
+        "loadProposals",
+        "loadJournal",
+        "persistCandidate",
+        "recordProposal",
+        "toRegisterLot",
+        "integrateIntoRegister",
+        "resume"
+      ]
+    },
+    {
+      "id": "radar-gap-analysis",
+      "capability": "classify opportunities; propose only demonstrated+useful; never self-authorize",
+      "loop": "propose",
+      "exists": true,
+      "loads": true,
+      "contractExport": "RADAR_GAP_ANALYSIS_CONTRACT",
+      "exportKeys": [
+        "CLASS",
+        "analyzeOpportunity",
+        "toProposal",
+        "radarSelfEvaluation",
+        "RADAR_GAP_ANALYSIS_CONTRACT"
+      ]
+    },
+    {
+      "id": "radar-scenario-benchmark",
+      "capability": "compare before/after scenarios for a proposed change",
+      "loop": "measure",
+      "exists": true,
+      "loads": true,
+      "contractExport": "RADAR_SCENARIO_BENCHMARK_CONTRACT",
+      "exportKeys": [
+        "radarVerdict",
+        "runScenarios",
+        "RADAR_SCENARIO_BENCHMARK_CONTRACT"
+      ]
+    },
+    {
+      "id": "radar-realsignal-demonstration",
+      "capability": "demonstrate radar on real signals",
+      "loop": "watch",
+      "exists": true,
+      "loads": true,
+      "contractExport": "RADAR_REALSIGNAL_CONTRACT",
+      "exportKeys": [
+        "CAPTURED_SIGNAL",
+        "FRONTIER_GAP_PROPOSAL",
+        "runDemonstration",
+        "RADAR_REALSIGNAL_CONTRACT"
+      ]
+    },
+    {
+      "id": "frontier-weekly-report",
+      "capability": "synthesize the weekly watch report (trusted signals only)",
+      "loop": "weekly",
+      "exists": true,
+      "loads": true,
+      "contractExport": "FRONTIER_WEEKLY_REPORT_CONTRACT",
+      "exportKeys": [
+        "section",
+        "filterTrusted",
+        "synthesizeWeeklyReport",
+        "FRONTIER_WEEKLY_REPORT_CONTRACT"
+      ]
+    },
+    {
+      "id": "frontier-radar-self-improvement",
+      "capability": "radar feeds the self-improvement intake",
+      "loop": "propose",
+      "exists": true,
+      "loads": true,
+      "contractExport": "RADAR_SELF_IMPROVEMENT_CONTRACT",
+      "exportKeys": [
+        "assessRadarCycle",
+        "RADAR_SELF_IMPROVEMENT_CONTRACT"
+      ]
+    },
+    {
+      "id": "self-improvement",
+      "capability": "governed cycle; stops at PROMOTION_REVIEW; never self-promotes",
+      "loop": "govern",
+      "exists": true,
+      "loads": true,
+      "contractExport": "SELF_IMPROVEMENT_CONTRACT",
+      "exportKeys": [
+        "STAGE_MODULES",
+        "REQUIRED_STAGES",
+        "SELF_IMPROVEMENT_CONTRACT",
+        "assessCompleteness",
+        "runSelfImprovement"
+      ]
+    },
+    {
+      "id": "self-improvement-chain",
+      "capability": "discovery → proposal chain",
+      "loop": "propose",
+      "exists": true,
+      "loads": true,
+      "contractExport": "SELF_IMPROVEMENT_CHAIN_CONTRACT",
+      "exportKeys": [
+        "CHAIN_STAGES",
+        "runDiscoveryToProposal",
+        "completenessOfExecutionHalf",
+        "SELF_IMPROVEMENT_CHAIN_CONTRACT"
+      ]
+    },
+    {
+      "id": "intelligence-loop",
+      "capability": "DISCOVER→AUTHORIZE(external)→PLAN→EXECUTE→RECORD→LEARN→MEASURE",
+      "loop": "govern",
+      "exists": true,
+      "loads": true,
+      "contractExport": "INTELLIGENCE_LOOP_CONTRACT",
+      "exportKeys": [
+        "runCycle",
+        "INTELLIGENCE_LOOP_CONTRACT"
+      ]
+    },
+    {
+      "id": "intelligence-scorecard",
+      "capability": "per-dimension measured intelligence (no single global score)",
+      "loop": "measure",
+      "exists": true,
+      "loads": true,
+      "contractExport": "INTELLIGENCE_SCORECARD_CONTRACT",
+      "exportKeys": [
+        "DATA_KINDS",
+        "scoreDimension",
+        "buildScorecard",
+        "comparePredictionToOutcome",
+        "INTELLIGENCE_SCORECARD_CONTRACT"
+      ]
+    },
+    {
+      "id": "meta-intelligence",
+      "capability": "meta view over the intelligence dimensions",
+      "loop": "measure",
+      "exists": true,
+      "loads": true,
+      "contractExport": "META_INTELLIGENCE_CONTRACT",
+      "exportKeys": [
+        "VERDICTS",
+        "META_INTELLIGENCE_CONTRACT",
+        "detectBenchmarkContamination",
+        "detectEvaluatorCapture",
+        "detectMetricGaming",
+        "assessIntegrity"
+      ]
+    }
+  ],
+  "governedLoop": [
+    {
+      "stage": "1 proposal",
+      "component": "radar-gap-analysis / self-improvement-chain",
+      "rule": "propose only demonstrated+useful; NEVER self-authorize"
+    },
+    {
+      "stage": "2 isolated experiment",
+      "component": "evolution / frontier-lab (via self-improvement)",
+      "rule": "run in isolation; no production mutation"
+    },
+    {
+      "stage": "3 measure",
+      "component": "radar-scenario-benchmark / intelligence-scorecard",
+      "rule": "before/after, per-dimension; no artificial single score"
+    },
+    {
+      "stage": "4 independent validation",
+      "component": "controller + compounding held-out transfer",
+      "rule": "an independent party validates; builder ≠ validator"
+    },
+    {
+      "stage": "5 gated approval",
+      "component": "intelligence-loop AUTHORIZE (external only)",
+      "rule": "PROPOSED ≠ AUTHORIZED; promotion requires an external authorized decision"
+    },
+    {
+      "stage": "6 reversible integration",
+      "component": "governed pipeline",
+      "rule": "integration must be reversible (rollback path)"
+    },
+    {
+      "stage": "7 post-integration verification",
+      "component": "gates + regression",
+      "rule": "verify after integration; a green build is not sufficient proof"
+    }
+  ],
+  "weeklyLoop": "frontier-weekly-report.synthesizeWeeklyReport consolidates trusted signals; the weekly watch feeds radar-gap-analysis (propose) → self-improvement (govern). This is the single existing weekly loop — NOT a new parallel one.",
+  "governanceInvariants": [
+    "radar/self-improvement NEVER self-authorize or self-promote (promotion is an external authorized decision)",
+    "experiments run isolated; integration is reversible; verification follows integration",
+    "no autonomous change to production or security policy without the prescribed authorizations",
+    "no new radar, no new self-improvement engine — existing components are reused"
+  ],
+  "honestConclusion": "12/12 existing radar/loop components load and expose their governed contracts. The governed 7-stage loop and the weekly watch already exist and are reused. No component missing. No parallel radar or engine was created."
+}

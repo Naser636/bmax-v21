@@ -1,0 +1,164 @@
+{
+  "//": "CTO V76 — roadmap pilot. ODG's native selector CHOOSES the next mission deterministically from real register candidates (provider does NOT hand-pick); the chosen mission runs through the governed loop and HALTS at PROPOSED without external authorization (no self-authorization). Reuses mission-priority-selector + intelligence-loop; no new engine/orchestrator.",
+  "candidateCount": 33,
+  "nativeSelection": {
+    "selected": {
+      "id": "PART-III",
+      "score": 0.574,
+      "factors": {
+        "strategicImportance": 0.6,
+        "roadmapPriority": 0.6,
+        "unblocksNormalized": 0,
+        "immediatelyExecutable": 1,
+        "operationalValue": 0.7,
+        "closureWithProof": 1,
+        "riskPenalty": 0.2
+      }
+    },
+    "selectionJustification": "ODG selected 'PART-III' — highest priority score 0.574 among 26 eligible (eligible: deps met; unblocks 0; executable=true)",
+    "ranking": [
+      {
+        "id": "PART-III",
+        "score": 0.574
+      },
+      {
+        "id": "PART-IX",
+        "score": 0.574
+      },
+      {
+        "id": "PART-V",
+        "score": 0.574
+      },
+      {
+        "id": "PART-VI",
+        "score": 0.574
+      },
+      {
+        "id": "PART-VIII",
+        "score": 0.574
+      },
+      {
+        "id": "PART-XI",
+        "score": 0.574
+      },
+      {
+        "id": "PART-XIV",
+        "score": 0.574
+      },
+      {
+        "id": "PART-XVIII",
+        "score": 0.574
+      },
+      {
+        "id": "PART-XXII",
+        "score": 0.574
+      },
+      {
+        "id": "PART-VII",
+        "score": 0.388
+      },
+      {
+        "id": "PART-XII",
+        "score": 0.388
+      },
+      {
+        "id": "PART-XV",
+        "score": 0.388
+      },
+      {
+        "id": "PART-I",
+        "score": 0.258
+      },
+      {
+        "id": "PART-IV",
+        "score": 0.258
+      },
+      {
+        "id": "PART-Préambule",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XIX",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XVI",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XVII",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXIII",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXIX",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXV",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXVII",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXVIII",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXX",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XXXII",
+        "score": 0.258
+      },
+      {
+        "id": "PART-XIII",
+        "score": 0.198
+      }
+    ],
+    "deferred": [
+      {
+        "id": "RAD-M02",
+        "reason": "already ACCEPTED (no repeat)"
+      },
+      {
+        "id": "RAD-M04",
+        "reason": "already ACCEPTED (no repeat)"
+      },
+      {
+        "id": "RAD-M05",
+        "reason": "already ACCEPTED (no repeat)"
+      },
+      {
+        "id": "RAD-M01",
+        "reason": "already ACCEPTED (no repeat)"
+      },
+      {
+        "id": "RAD-M06",
+        "reason": "already ACCEPTED (no repeat)"
+      },
+      {
+        "id": "RAD-M07",
+        "reason": "already ACCEPTED (no repeat)"
+      },
+      {
+        "id": "RAD-M03",
+        "reason": "already ACCEPTED (no repeat)"
+      }
+    ]
+  },
+  "selectedRanThroughGovernedLoop": {
+    "stage": "AUTHORIZE",
+    "completed": false,
+    "proposedOnly": true
+  },
+  "governanceProof": "HALTED at PROPOSED — ODG does not self-authorize (external authorization required to EXECUTE)",
+  "honestConclusion": "ODG natively selected the next mission from 33 real candidates: ODG selected 'PART-III' — highest priority score 0.574 among 26 eligible (eligible: deps met; unblocks 0; executable=true). The selection is deterministic (reproducible + justifiable); 7 candidates DEFERRED (dependency/accepted). The chosen mission, run through the governed loop, HALTED at PROPOSED without an external authorization — ODG never self-authorizes. The provider did NOT hand-pick the mission.",
+  "invariant": "The next mission is chosen by ODG's deterministic selector, not by the provider; a chosen mission still needs external authorization to EXECUTE (halts at PROPOSED otherwise); no second orchestrator."
+}

@@ -1,0 +1,147 @@
+{
+  "//": "CTO V73 Lot B — 15-axis radar benchmark suite. Each axis mapped to an existing module; executed locally where possible (real pass/measured), else DESIGNED/NETWORK_GATED (honest, never faked). World-superiority FAIL-CLOSED (no external comparison run). Reuses existing modules; no new engine.",
+  "axisCount": 15,
+  "axes": [
+    {
+      "axis": 1,
+      "name": "query decomposition quality",
+      "module": "frontier-pipeline",
+      "executableLocally": false,
+      "status": "DESIGNED (NETWORK_GATED)",
+      "result": null,
+      "baseline": "n/a (needs live multi-query run)"
+    },
+    {
+      "axis": 2,
+      "name": "search coverage",
+      "module": "benchmark-contamination/frontier-collection",
+      "executableLocally": false,
+      "status": "DESIGNED (NETWORK_GATED)",
+      "result": null,
+      "baseline": "n/a"
+    },
+    {
+      "axis": 3,
+      "name": "primary-source discovery",
+      "module": "research-ranking",
+      "executableLocally": false,
+      "status": "DESIGNED (NETWORK_GATED)",
+      "result": null,
+      "baseline": "n/a"
+    },
+    {
+      "axis": 4,
+      "name": "freshness of information",
+      "module": "control-evidence-freshness",
+      "executableLocally": true,
+      "status": "PASS (MEASURED)",
+      "result": true,
+      "baseline": "stale > TTL ⇒ not fresh"
+    },
+    {
+      "axis": 5,
+      "name": "provenance & traceability",
+      "module": "evidence-provenance",
+      "executableLocally": true,
+      "status": "PASS (MEASURED)",
+      "result": true,
+      "baseline": "post-stamp mutation detected (V59/V72)"
+    },
+    {
+      "axis": 6,
+      "name": "non-binary source evaluation",
+      "module": "source-intelligence",
+      "executableLocally": true,
+      "status": "PASS (MEASURED)",
+      "result": true,
+      "baseline": "reputable-weak ≠ STRONG; non-certified not rejected"
+    },
+    {
+      "axis": 7,
+      "name": "contradiction detection",
+      "module": "source-intelligence",
+      "executableLocally": true,
+      "status": "PASS (MEASURED)",
+      "result": true,
+      "baseline": "contradictions kept, not dropped"
+    },
+    {
+      "axis": 8,
+      "name": "resistance to misleading info",
+      "module": "source-intelligence",
+      "executableLocally": false,
+      "status": "DESIGNED (NETWORK_GATED)",
+      "result": null,
+      "baseline": "needs live misleading corpus"
+    },
+    {
+      "axis": 9,
+      "name": "prompt-injection resistance",
+      "module": "scientific-research",
+      "executableLocally": true,
+      "status": "PASS (MEASURED)",
+      "result": true,
+      "baseline": "injection ⇒ QUARANTINE, no hypothesis"
+    },
+    {
+      "axis": 10,
+      "name": "deep search + strategy switch",
+      "module": "frontier-radar",
+      "executableLocally": false,
+      "status": "DESIGNED (NETWORK_GATED)",
+      "result": null,
+      "baseline": "needs live retry strategies"
+    },
+    {
+      "axis": 11,
+      "name": "weak-signal discovery",
+      "module": "radar-gap-analysis",
+      "executableLocally": false,
+      "status": "DESIGNED (NETWORK_GATED)",
+      "result": null,
+      "baseline": "needs live corpus"
+    },
+    {
+      "axis": 12,
+      "name": "cross-domain reasoning",
+      "module": "causal-graph/champion-challenger",
+      "executableLocally": false,
+      "status": "DESIGNED (partial local, full needs live)",
+      "result": null,
+      "baseline": "n/a"
+    },
+    {
+      "axis": 13,
+      "name": "opportunity quality",
+      "module": "radar-gap-analysis",
+      "executableLocally": true,
+      "status": "PASS (MEASURED via V67 missions)",
+      "result": true,
+      "baseline": "7 prioritized PROPOSED missions (V67)"
+    },
+    {
+      "axis": 14,
+      "name": "experiment quality & reproducibility",
+      "module": "frontier-lab + benchmark-contamination",
+      "executableLocally": true,
+      "status": "PASS (MEASURED)",
+      "result": true,
+      "baseline": "hidden set certified non-contaminated (V65)"
+    },
+    {
+      "axis": 15,
+      "name": "real improvement utility",
+      "module": "self-improvement/intelligence-loop",
+      "executableLocally": true,
+      "status": "PASS (MEASURED via V68 RAD-M02)",
+      "result": true,
+      "baseline": "RAD-M02 executed; self-replication-guard built (V71)"
+    }
+  ],
+  "executableLocally": 8,
+  "passedLocal": 8,
+  "designedNetworkGated": 7,
+  "superiorityVsWorld": "NOT DEMONSTRATED — no equitable external comparison executed (fail-closed)",
+  "honestConclusion": "15-axis radar benchmark: 8 axes executed locally (8/8 PASS/MEASURED), 7 DESIGNED/NETWORK_GATED (need live multi-source web — honestly not executed, not faked). Baselines + hidden-set non-contamination recorded. World-superiority NOT demonstrated (no equitable external comparison run).",
+  "invariant": "A locally-executable axis is really run with a baseline; a network-gated axis stays DESIGNED, never reported as executed; no world-superiority without an equitable external comparison."
+}

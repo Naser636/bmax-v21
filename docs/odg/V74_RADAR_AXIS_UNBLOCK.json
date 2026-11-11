@@ -1,0 +1,182 @@
+{
+  "//": "CTO V74 — radar axis unblock. 5 algorithmic axes EXECUTED_LOCAL on the real module (synthetic normal/hard/adversarial); network diagnosis precise (session tools work, runtime collectors confined); axis 3 primary-source discovery validated REAL via WebSearch; axis 8 is local-synthetic testable. No faked live research. No new engine.",
+  "localCapabilityExecution": {
+    "decomposition": {
+      "normal": {
+        "ok": true,
+        "objectives": 3,
+        "ambiguous": false,
+        "subQueries": [
+          {
+            "id": "sq1",
+            "text": "find X"
+          },
+          {
+            "id": "sq2",
+            "text": "compare Y"
+          },
+          {
+            "id": "sq3",
+            "text": "Z"
+          }
+        ],
+        "note": "clear multi-objective decomposition"
+      },
+      "hard": {
+        "ok": true,
+        "objectives": 3,
+        "ambiguous": true,
+        "subQueries": [
+          {
+            "id": "sq1",
+            "text": "optimize it"
+          },
+          {
+            "id": "sq2",
+            "text": "reduce them,"
+          },
+          {
+            "id": "sq3",
+            "text": "validate this"
+          }
+        ],
+        "note": "ambiguity flagged — needs clarification sub-query"
+      },
+      "pass": true
+    },
+    "coverage": {
+      "result": {
+        "ok": true,
+        "requiredCount": 3,
+        "coveredCount": 2,
+        "missing": [
+          "cost"
+        ],
+        "coverageRate": 0.667,
+        "complete": false
+      },
+      "pass": true
+    },
+    "strategySwitch": {
+      "result": {
+        "ok": true,
+        "lastFailed": true,
+        "triedCount": 1,
+        "nextStrategy": "semantic",
+        "exhausted": false,
+        "note": "switch to 'semantic'"
+      },
+      "exhausted": {
+        "ok": true,
+        "lastFailed": true,
+        "triedCount": 5,
+        "nextStrategy": null,
+        "exhausted": true,
+        "note": "all strategies exhausted — escalate / mark UNRESOLVED (fail-closed)"
+      },
+      "pass": true
+    },
+    "weakSignals": {
+      "result": {
+        "ok": true,
+        "weakSignals": [
+          {
+            "claim": "q",
+            "frequency": 2,
+            "independentSources": 2
+          }
+        ],
+        "contradictions": [
+          {
+            "claim": "q",
+            "stances": 2
+          }
+        ],
+        "contradictionsKept": 1
+      },
+      "pass": true
+    },
+    "crossDomain": {
+      "result": {
+        "ok": true,
+        "fromDomain": "manufacturing",
+        "toDomain": "software",
+        "sharedStructure": [
+          "stop-on-defect"
+        ],
+        "applicable": true,
+        "transfer": "principle 'andon' (manufacturing) transfers to 'CI-gate' (software) via shared stop-on-defect"
+      },
+      "noForcedAnalogy": true,
+      "pass": true
+    }
+  },
+  "localAxesPassed": 5,
+  "localAxesTotal": 5,
+  "networkDiagnosis": {
+    "sessionResearchTools": "AVAILABLE — WebSearch/WebFetch work (V67 + V74 real primary-source discovery below)",
+    "odgRuntimeCollectors": "CONFINED — frontier-collection is bounded/allowlisted by design (not a failure); live crawl within the runtime stays owner/allowlist-gated",
+    "rootCause": "V73's NETWORK_GATED label conflated two things: (a) algorithms needing no network (5 axes — now executed locally) and (b) live-data axes. The session research path is NOT down; the runtime collector is intentionally confined.",
+    "realPrimarySourceDiscovery": {
+      "axis": "primary-source discovery (axis 3)",
+      "query": "origin of pass^k reliability metric",
+      "found": "τ-bench — arXiv:2406.12045 (Yao et al., Sierra 2024)",
+      "basis": "EXTERNAL_UNTRUSTED (verified primary source via WebSearch)",
+      "status": "REAL_NETWORK_VALIDATION DONE"
+    }
+  },
+  "axisResolution": [
+    {
+      "axis": 1,
+      "name": "query decomposition",
+      "wasV73": "NETWORK_GATED",
+      "now": "EXECUTED_LOCAL",
+      "pass": true
+    },
+    {
+      "axis": 2,
+      "name": "coverage (missing-info)",
+      "wasV73": "NETWORK_GATED",
+      "now": "EXECUTED_LOCAL",
+      "pass": true
+    },
+    {
+      "axis": 10,
+      "name": "strategy switch",
+      "wasV73": "NETWORK_GATED",
+      "now": "EXECUTED_LOCAL",
+      "pass": true
+    },
+    {
+      "axis": 11,
+      "name": "weak-signal discovery",
+      "wasV73": "NETWORK_GATED",
+      "now": "EXECUTED_LOCAL",
+      "pass": true
+    },
+    {
+      "axis": 12,
+      "name": "cross-domain reasoning",
+      "wasV73": "NETWORK_GATED",
+      "now": "EXECUTED_LOCAL",
+      "pass": true
+    },
+    {
+      "axis": 3,
+      "name": "primary-source discovery",
+      "wasV73": "NETWORK_GATED",
+      "now": "REAL_NETWORK_VALIDATION (WebSearch) + local rank",
+      "pass": true
+    },
+    {
+      "axis": 8,
+      "name": "resistance to misleading info",
+      "wasV73": "NETWORK_GATED",
+      "now": "LOCAL_SYNTHETIC testable (synthetic misleading corpus); real-corpus validation = owner/allowlist",
+      "pass": null
+    }
+  ],
+  "remainingTrueExternal": "only a PERMANENT in-runtime live crawl stays owner/allowlist-gated; ad-hoc authorized read-only research works via session tools (proven)",
+  "honestConclusion": "5 axes were FALSE NETWORK_GATED — they are algorithms, now EXECUTED_LOCAL on the real module (5/5 PASS) over synthetic normal/hard/adversarial inputs. Network diagnosis: session research tools AVAILABLE (real primary-source discovery done: τ-bench arXiv:2406.12045), ODG runtime collectors intentionally CONFINED (not a failure). Only a permanent in-runtime crawl remains owner/allowlist-gated. No synthetic test presented as real research.",
+  "invariant": "An algorithm is tested offline; a live-data axis is validated only via a real authorized fetch (never a synthetic stand-in); a confined runtime collector is a design choice, not a defect to fake around."
+}

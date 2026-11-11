@@ -1,0 +1,425 @@
+{
+  "//": "CTO V79 — real V12.4 roadmap queue connected to the campaign-engine. Missions derived from canonical artifacts (coverage matrix + program register + closure ledger + radar), deduped by id; Level-A local verification executed (executor re-confirms real evidence pointers); owner/external-gated DEFERRED/PREPARED. 100% of requirements carry a verifiable status. No parallel registry, no new orchestrator.",
+  "queueSize": 50,
+  "metrics": {
+    "discovered": 50,
+    "selected": 43,
+    "authorized": 29,
+    "executed": 29,
+    "accepted": 29,
+    "failed": 0,
+    "refusedC": 0,
+    "preparedB": 14,
+    "quarantined": 0,
+    "deferred": 7,
+    "retries": 0,
+    "iterations": 43
+  },
+  "stopReason": "ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission",
+  "traceabilityMatrix": [
+    {
+      "requirement": "REQ-Préambule",
+      "source": "V12.4 Préambule §1–§4",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-I",
+      "source": "V12.4 I §5–§6",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-II",
+      "source": "V12.4 II §7–§8",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-III",
+      "source": "V12.4 III §9–§15",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-IV",
+      "source": "V12.4 IV §16–§20",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-V",
+      "source": "V12.4 V §21–§23",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-VI",
+      "source": "V12.4 VI §24–§28",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-VII",
+      "source": "V12.4 VII §29–§33",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-VIII",
+      "source": "V12.4 VIII §34–§37",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-IX",
+      "source": "V12.4 IX §38–§42",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-X",
+      "source": "V12.4 X §43–§46",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XI",
+      "source": "V12.4 XI §47–§50",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XII",
+      "source": "V12.4 XII §51–§56",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XIII",
+      "source": "V12.4 XIII §57–§61",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XIV",
+      "source": "V12.4 XIV §62–§65",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XV",
+      "source": "V12.4 XV §66–§70",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XVI",
+      "source": "V12.4 XVI §71–§76",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XVII",
+      "source": "V12.4 XVII §77–§79",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XVIII",
+      "source": "V12.4 XVIII §80–§82",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XIX",
+      "source": "V12.4 XIX §83–§87",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XX",
+      "source": "V12.4 XX §88–§89",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XXI",
+      "source": "V12.4 XXI §90–§92",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XXII",
+      "source": "V12.4 XXII §93–§96",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XXIII",
+      "source": "V12.4 XXIII §97–§103",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XXIV",
+      "source": "V12.4 XXIV §104",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XXV",
+      "source": "V12.4 XXV §105",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XXVI",
+      "source": "V12.4 XXVI §106–§107",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XXVII",
+      "source": "V12.4 XXVII §108–§110",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XXVIII",
+      "source": "V12.4 XXVIII §111–§112",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XXIX",
+      "source": "V12.4 XXIX §113–§115",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XXX",
+      "source": "V12.4 XXX §116–§119",
+      "status": "PARTIAL",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "REQ-XXXI",
+      "source": "V12.4 XXXI §120–§122",
+      "status": "DONE",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "REQ-XXXII",
+      "source": "V12.4 Part XXXII",
+      "status": "NOT_VALIDATED",
+      "authLevel": "B_human",
+      "decision": "PREPARED_B",
+      "nextAction": "owner/controller sign-off or dependency"
+    },
+    {
+      "requirement": "PROG-P1",
+      "source": "program P1",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P2",
+      "source": "program P2",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P3",
+      "source": "program P3",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P4",
+      "source": "program P4",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P5",
+      "source": "program P5",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P6",
+      "source": "program P6",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P7",
+      "source": "program P7",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P8",
+      "source": "program P8",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P9",
+      "source": "program P9",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "PROG-P10",
+      "source": "program P10",
+      "status": "PARTIAL",
+      "authLevel": "A",
+      "decision": "EXECUTED_ACCEPTED",
+      "nextAction": "closed-with-evidence"
+    },
+    {
+      "requirement": "RAD-RAD-M02",
+      "source": "radar RAD-M02",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    },
+    {
+      "requirement": "RAD-RAD-M04",
+      "source": "radar RAD-M04",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    },
+    {
+      "requirement": "RAD-RAD-M05",
+      "source": "radar RAD-M05",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    },
+    {
+      "requirement": "RAD-RAD-M01",
+      "source": "radar RAD-M01",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    },
+    {
+      "requirement": "RAD-RAD-M06",
+      "source": "radar RAD-M06",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    },
+    {
+      "requirement": "RAD-RAD-M07",
+      "source": "radar RAD-M07",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    },
+    {
+      "requirement": "RAD-RAD-M03",
+      "source": "radar RAD-M03",
+      "status": "ACCEPTED",
+      "authLevel": "A",
+      "decision": "ALREADY_ACCEPTED",
+      "nextAction": "ALREADY_ACCEPTED"
+    }
+  ],
+  "coveragePct": 100,
+  "coveredRequirements": 50,
+  "honestConclusion": "Real roadmap queue of 50 missions connected to the engine: 29 EXECUTED+ACCEPTED (Level-A local re-verification of evidence pointers), 0 FAILED (evidence pointer absent), 14 Level-B PREPARED (owner sign-off/canonization), 0 refused. Stop: ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission. 100% of requirements carry a verifiable status (DONE/PARTIAL/OPEN/BLOCKED_HUMAN) in the traceability matrix — nothing dropped. Full-queue feed ≠ roadmap completion (honest).",
+  "invariant": "Every requirement is traced to a status + decision (100% coverage, not 100% done); Level-A executes a REAL evidence re-check; owner/external parts DEFERRED not faked; deduped; ACCEPTED never re-run; no parallel registry."
+}

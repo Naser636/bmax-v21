@@ -1,0 +1,173 @@
+{
+  "//": "CTO V92 §4 — VPS read-only inventory FICHE. Prepared, NOT executed (no VPS access this cycle; no remote connection). No host/service/path/db/secret invented — unknown specifics are NOT_MEASURED/OWNER_GATED. Secrets presence-only (values never requested or shown). Preparing this fiche does NOT satisfy VPS_INVENTORY.",
+  "inventoryItems": 17,
+  "itemsWithKnownReadOnlyCommand": 10,
+  "connectionPerformed": false,
+  "secretsDisclosed": false,
+  "inventory": [
+    {
+      "item": "provider & instance",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "provider + instance id/region",
+      "risk": "none (read)",
+      "availability": "OWNER_GATED",
+      "reason": "host identity unknown until access"
+    },
+    {
+      "item": "OS & version",
+      "readOnlyCommand": "cat /etc/os-release; uname -a",
+      "expectedEvidence": "distro + kernel version",
+      "risk": "none",
+      "availability": "OWNER_GATED",
+      "reason": "no VPS access this cycle (read-only access owner-gated)"
+    },
+    {
+      "item": "resources & disk",
+      "readOnlyCommand": "free -h; df -h; nproc",
+      "expectedEvidence": "memory/CPU/disk free",
+      "risk": "none",
+      "availability": "OWNER_GATED",
+      "reason": "no VPS access this cycle (read-only access owner-gated)"
+    },
+    {
+      "item": "active services",
+      "readOnlyCommand": "systemctl list-units --type=service --state=running",
+      "expectedEvidence": "running services (names)",
+      "risk": "none",
+      "availability": "OWNER_GATED",
+      "reason": "no VPS access this cycle (read-only access owner-gated)"
+    },
+    {
+      "item": "processes & ports",
+      "readOnlyCommand": "ps -eo pid,comm,args --sort=-%cpu | head; ss -tlnp",
+      "expectedEvidence": "process + listening ports",
+      "risk": "may reveal service topology",
+      "availability": "OWNER_GATED",
+      "reason": "no VPS access this cycle (read-only access owner-gated)"
+    },
+    {
+      "item": "runtime & deps",
+      "readOnlyCommand": "node -v; npm -v; which tsx",
+      "expectedEvidence": "runtime versions vs repo (node 22 per ci.yml)",
+      "risk": "runtime drift vs repo",
+      "availability": "OWNER_GATED",
+      "reason": "no VPS access this cycle (read-only access owner-gated)"
+    },
+    {
+      "item": "application directories",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "app deploy path + layout",
+      "risk": "none",
+      "availability": "OWNER_GATED",
+      "reason": "path unknown until access"
+    },
+    {
+      "item": "config & env (NO values)",
+      "readOnlyCommand": "printenv | sed 's/=.*/=<redacted>/' ; ls -la <app>/.env* 2>/dev/null",
+      "expectedEvidence": "variable NAMES present (values redacted locally)",
+      "risk": "secret exposure IF values printed — command masks values",
+      "availability": "OWNER_GATED",
+      "reason": "names-only; values never read/shown"
+    },
+    {
+      "item": "databases & versions",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "db engine + version (read-only)",
+      "risk": "none (read)",
+      "availability": "OWNER_GATED",
+      "reason": "db identity unknown until access"
+    },
+    {
+      "item": "migrations & consistency",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "migration ledger + applied state",
+      "risk": "inconsistency risk",
+      "availability": "OWNER_GATED",
+      "reason": "db-specific; unknown until access"
+    },
+    {
+      "item": "certificates & TLS",
+      "readOnlyCommand": "openssl x509 -enddate -noout -in <cert>  # path after access",
+      "expectedEvidence": "cert expiry/issuer",
+      "risk": "none (read)",
+      "availability": "OWNER_GATED",
+      "reason": "cert path unknown until access"
+    },
+    {
+      "item": "reverse proxy & routing",
+      "readOnlyCommand": "nginx -T 2>/dev/null | head  # if nginx",
+      "expectedEvidence": "proxy routes/upstreams",
+      "risk": "config exposure",
+      "availability": "OWNER_GATED",
+      "reason": "proxy stack unknown until access"
+    },
+    {
+      "item": "backups & retention",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "backup location + retention policy + last backup time",
+      "risk": "none (read)",
+      "availability": "OWNER_GATED",
+      "reason": "backup policy unknown until access"
+    },
+    {
+      "item": "logs & monitoring",
+      "readOnlyCommand": "journalctl -n 100 --no-pager  # or app log path",
+      "expectedEvidence": "recent logs + monitoring presence",
+      "risk": "log content may contain data",
+      "availability": "OWNER_GATED",
+      "reason": "no VPS access this cycle (read-only access owner-gated)"
+    },
+    {
+      "item": "restart mechanism",
+      "readOnlyCommand": "systemctl status <service>  # read-only",
+      "expectedEvidence": "restart unit + state",
+      "risk": "none (read)",
+      "availability": "OWNER_GATED",
+      "reason": "unit name unknown until access"
+    },
+    {
+      "item": "rollback procedure",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "documented rollback steps + prior artifact location",
+      "risk": "none",
+      "availability": "OWNER_GATED",
+      "reason": "deploy mechanism unknown until access"
+    },
+    {
+      "item": "GitHub HEAD ↔ deployed version",
+      "readOnlyCommand": "NOT_MEASURED (command form host-specific; fill after access)",
+      "expectedEvidence": "deployed commit sha vs repo HEAD (divergence check)",
+      "risk": "repo↔target divergence",
+      "availability": "OWNER_GATED",
+      "reason": "deployed sha unknown until access"
+    }
+  ],
+  "dependenciesToLift": {
+    "VPS_INVENTORY": {
+      "needs": [
+        "owner-granted read-only access"
+      ],
+      "observedNow": [],
+      "unknown": [
+        "provider & instance",
+        "application directories",
+        "databases & versions",
+        "migrations & consistency",
+        "backups & retention",
+        "rollback procedure",
+        "GitHub HEAD ↔ deployed version"
+      ],
+      "proofNeeded": "captured evidence per item during the real inventory",
+      "remainingValidation": "compare deployed version vs repo HEAD"
+    },
+    "EXECUTABLE_DEPLOYMENT_PLAN": {
+      "githubVerified": "V91 GitHub/CI chain (real commands, push/PR/merge owner-gated) — kept, not redone",
+      "vpsDependent": "all 17 VPS steps + their real commands pending the inventory",
+      "stopCriteria": "any mismatch vs released version",
+      "rollback": "restore prior artifact/commit (owner-gated)",
+      "postDeployVerification": "health + connections + functional tests + independent validation"
+    }
+  },
+  "honestConclusion": "VPS inventory fiche prepared: 17 items, 10 with a generic host-independent read-only command, the rest NOT_MEASURED until access. NO connection performed, NO secret requested/shown (config read is names-only with values redacted). Preparing this fiche does NOT satisfy VPS_INVENTORY (that needs real observed data under owner-gated access). EXECUTABLE_DEPLOYMENT_PLAN's VPS-specific steps stay pending the inventory; the V91 GitHub chain is preserved.",
+  "invariant": "fiche prepared not executed; no remote connection; nothing invented (unknown ⇒ NOT_MEASURED/OWNER_GATED); secrets presence-only values redacted; preparing a fiche ≠ performing an inventory."
+}

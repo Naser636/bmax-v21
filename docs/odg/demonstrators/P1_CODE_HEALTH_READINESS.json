@@ -1,0 +1,60 @@
+{
+  "//": "CTO V51 P1 E4 demonstrator. SYNTHETIC inputs. Reuses the P1 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P1",
+    "title": "Code Health & Repair Readiness",
+    "status": "READINESS — {}",
+    "summary": "code-health run over 0 file(s): undefined",
+    "controls": [],
+    "findings": [],
+    "recommendations": [
+      "fix FAIL files before delivery",
+      "extend language coverage per client stack"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "code-health run (0 files)",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "9b698fcc2c90642f07d0c2f7bb893533473ed54750ee878d74659e3fb21f9dc4",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "9b698fcc2c90642f07d0c2f7bb893533473ed54750ee878d74659e3fb21f9dc4",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

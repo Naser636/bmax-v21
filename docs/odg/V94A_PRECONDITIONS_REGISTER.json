@@ -1,0 +1,89 @@
+{
+  "//": "CTO V94-A §7 — register recalculated after the consolidated sheet. No decision OBTAINED ⇒ ROADMAP_EXHAUSTIVE stays NOT_MET; blockage precisely isolated to the 5 PENDING owner decisions. Delivery BLOCKED until 8/8 + critical gate; no push/deploy.",
+  "criteria": [
+    {
+      "id": "INSPECTION_COVERAGE",
+      "status": "MET"
+    },
+    {
+      "id": "FULL_GATE",
+      "status": "MET"
+    },
+    {
+      "id": "GITHUB_AUDIT",
+      "status": "MET"
+    },
+    {
+      "id": "BACKUP_ROLLBACK",
+      "status": "MET"
+    },
+    {
+      "id": "INDEPENDENT_RELEASE_INSPECTION",
+      "status": "MET"
+    },
+    {
+      "id": "ROADMAP_EXHAUSTIVE",
+      "status": "NOT_MET",
+      "evidence": "REQ-I/IV/XXV RECOVERED (V94). Blocked SOLELY by the 5 owner decisions — now consolidated into ONE decidable sheet (V94A), all PENDING_OWNER_DECISION. Preparing the sheet ≠ obtaining the decisions.",
+      "isolatedBlockage": [
+        {
+          "id": "REQ-XIII",
+          "requiresOwner": true,
+          "recommendedDefault": "DEFER until a resource is authorized — never claim undemonstrated superiority"
+        },
+        {
+          "id": "REQ-XVI",
+          "requiresOwner": true,
+          "recommendedDefault": "Open Dossier A first (earliest operational value) unless the owner has a different priority"
+        },
+        {
+          "id": "REQ-XXVII",
+          "requiresOwner": true,
+          "recommendedDefault": "Accept closure for deliverables with demonstrated evidence; keep the rest open (no blanket closure)"
+        },
+        {
+          "id": "REQ-XXX",
+          "requiresOwner": true,
+          "recommendedDefault": "Issue the mandate — ODG is ready to execute Dossier A locally the moment it is issued"
+        },
+        {
+          "id": "REQ-XXXII",
+          "requiresOwner": true,
+          "recommendedDefault": "Defer commercial commitment; continue local technical preparation only — NO sale/spend/publication/contract"
+        }
+      ],
+      "nextAction": "owner decides the 5 (XIII/XVI/XXVII/XXX/XXXII); ODG continues independent local work meanwhile"
+    },
+    {
+      "id": "VPS_INVENTORY",
+      "status": "MET"
+    },
+    {
+      "id": "EXECUTABLE_DEPLOYMENT_PLAN",
+      "status": "MET"
+    }
+  ],
+  "metCount": 7,
+  "met": [
+    "INSPECTION_COVERAGE",
+    "FULL_GATE",
+    "GITHUB_AUDIT",
+    "BACKUP_ROLLBACK",
+    "INDEPENDENT_RELEASE_INSPECTION",
+    "VPS_INVENTORY",
+    "EXECUTABLE_DEPLOYMENT_PLAN"
+  ],
+  "notMet": [
+    "ROADMAP_EXHAUSTIVE"
+  ],
+  "readyToDeliver": false,
+  "blockageIsolation": {
+    "criterion": "ROADMAP_EXHAUSTIVE",
+    "blockedBy": "5 PENDING_OWNER_DECISION",
+    "everythingElseResolved": true,
+    "sheetReady": true
+  },
+  "deliveryDecision": "NOT_READY — ROADMAP_EXHAUSTIVE (solely the 5 owner decisions)",
+  "honestConclusion": "7/8 MET. ROADMAP_EXHAUSTIVE remains NOT_MET — the consolidated owner-decision sheet is READY + coherent, but NO owner decision was obtained (preparing ≠ deciding). Blockage precisely isolated to the 5 PENDING decisions; all other roadmap work (6 ODG-decided + REQ-I/IV/XXV recovered) is resolved. Delivery NOT_READY; no push/deploy.",
+  "invariant": "status recalculated on real outcomes only; preparing a sheet ≠ obtaining a decision; ROADMAP_EXHAUSTIVE blocked solely by the 5 PENDING owner decisions; fail-closed delivery; ODG recommends, owner decides."
+}

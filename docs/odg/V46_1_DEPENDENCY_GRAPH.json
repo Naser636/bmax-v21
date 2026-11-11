@@ -1,0 +1,67 @@
+{
+  "edges": [
+    {
+      "from": "P1",
+      "to": "repair-workflow",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P1",
+      "to": "code-execution",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P8",
+      "to": "economic-unit",
+      "type": "COMPOSES_WITH"
+    },
+    {
+      "from": "P8",
+      "to": "einvoice-parser",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P10",
+      "to": "excellence-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P10",
+      "to": "evidence-provenance",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P10",
+      "to": "regulatory-assurance",
+      "type": "COMPOSES_WITH"
+    },
+    {
+      "from": "P11",
+      "to": "audit-log",
+      "type": "COMPOSES_WITH"
+    },
+    {
+      "from": "P11",
+      "to": "economic-unit",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P11",
+      "to": "einvoice-parser",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "P14",
+      "to": "evidence-provenance",
+      "type": "REQUIRES"
+    }
+  ],
+  "graphStats": {
+    "nodes": 32,
+    "edges": 11
+  },
+  "relationTypes": [
+    "REQUIRES",
+    "COMPOSES_WITH"
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "//": "CTO V83 §3 — adversarial battery over the integrated evidence-qualifier → mission-decomposer chain. Each adversarial case must yield the correct status with NO abusive closure. Injected readers ⇒ offline/deterministic. Reuses canonical modules; no new primitive.",
+  "caseCount": 13,
+  "passed": 13,
+  "allPass": true,
+  "cases": [
+    {
+      "case": "1 content unrelated",
+      "expected": "INSUFFICIENT",
+      "actual": "INSUFFICIENT",
+      "pass": true
+    },
+    {
+      "case": "2 incomplete markers",
+      "expected": "INSUFFICIENT",
+      "actual": "INSUFFICIENT",
+      "pass": true
+    },
+    {
+      "case": "3 stale/contradictory",
+      "expected": "INSUFFICIENT",
+      "actual": "INSUFFICIENT",
+      "pass": true
+    },
+    {
+      "case": "4 test not gate-wired",
+      "expected": "INSUFFICIENT",
+      "actual": "INSUFFICIENT",
+      "pass": true
+    },
+    {
+      "case": "5 gate-green but wrong requirement",
+      "expected": "INSUFFICIENT",
+      "actual": "INSUFFICIENT",
+      "pass": true
+    },
+    {
+      "case": "7 absent",
+      "expected": "ABSENT",
+      "actual": "ABSENT",
+      "pass": true
+    },
+    {
+      "case": "8 empty",
+      "expected": "INSUFFICIENT",
+      "actual": "INSUFFICIENT",
+      "pass": true
+    },
+    {
+      "case": "valid baseline",
+      "expected": "VALID",
+      "actual": "VALID",
+      "pass": true
+    },
+    {
+      "case": "4b test gate-wired + marker",
+      "expected": "VALID",
+      "actual": "VALID",
+      "pass": true
+    },
+    {
+      "case": "6 partial-composite: evidence VALID, test INSUFFICIENT ⇒ tests LOCAL_REMAINING",
+      "expected": "LOCAL_REMAINING",
+      "actual": "LOCAL_REMAINING",
+      "pass": true
+    },
+    {
+      "case": "6b partial-composite: evidence sub ALREADY_DONE",
+      "expected": "ALREADY_DONE",
+      "actual": "ALREADY_DONE",
+      "pass": true
+    },
+    {
+      "case": "10 gated parent exposes local sub",
+      "expected": "LOCAL_REMAINING",
+      "actual": "LOCAL_REMAINING",
+      "pass": true
+    },
+    {
+      "case": "11 sign-off never auto-completed",
+      "expected": "SIGN_OFF_GATED",
+      "actual": "SIGN_OFF_GATED",
+      "pass": true
+    }
+  ],
+  "honestConclusion": "13/13 adversarial cases produced the correct status: content-mismatch/incomplete/stale/unwired/wrong-requirement/empty ⇒ INSUFFICIENT; absent ⇒ ABSENT; only genuinely-matching evidence ⇒ VALID; a partial-composite advances only its valid sub; a gated parent exposes its local sub but NEVER auto-completes the sign-off. No abusive closure.",
+  "invariant": "no ALREADY_DONE without semantic VALID; contradictory/incomplete/unwired/mismatched evidence downgrades; sign-off never auto-completed; a gated parent never blocks its local sub."
+}

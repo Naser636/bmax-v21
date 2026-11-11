@@ -1,0 +1,235 @@
+{
+  "//": "Chantier 'ODG Autonomous Roadmap Execution & Completion Governance' — the 12 lots A–L formalize the EXISTING ODG_AUTONOMOUS_WORK_PROTOCOL.json (not invented). Each lot mapped to a present canonical component + primitive + program + test + proof + closure criterion. No duplicate; identifiers/history preserved; satisfied requirements keep their proof. Integration = START of execution, NOT completion. No new primitive, no parallel roadmap.",
+  "derivedFrom": "ODG_AUTONOMOUS_WORK_PROTOCOL.json",
+  "protocolPresent": true,
+  "lotCount": 12,
+  "allGrounded": true,
+  "correspondenceMatrix": [
+    {
+      "lot": "A",
+      "name": "Compass start & continuity",
+      "protocolStep": "0,12,13 (compass start/continue/finish)",
+      "components": [
+        "roadmap-manager",
+        "roadmap-consolidation"
+      ],
+      "boussole": "ODG_PROJECT_STATE.md",
+      "primitive": "evidence-provenance",
+      "program": "P1",
+      "test": "runtime/bin/v56-coverage-matrix.test.ts",
+      "proof": "Boussole updated+reconciled every directive V52–V69",
+      "closure": "Boussole matches real HEAD+ledger at start/continue/finish",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "B",
+      "name": "Truth Lock",
+      "protocolStep": "1 (verify HEAD/branch/worktree/origin)",
+      "components": [
+        "truth-lock",
+        "truth-lock-gate"
+      ],
+      "primitive": "state-transition",
+      "program": "P1",
+      "test": "runtime/core/truth-lock-gate.test.ts",
+      "proof": "truth-lock run at the start of every directive",
+      "closure": "HEAD/branch/worktree/origin verified before any change",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "C",
+      "name": "Single work-item selection",
+      "protocolStep": "2 (exactly one work item)",
+      "components": [
+        "campaign-controller"
+      ],
+      "primitive": "capability-router",
+      "program": "P2",
+      "test": "runtime/core/autonomy-persistence.test.ts",
+      "proof": "V68 scheduler: dep-order, one-at-a-time, BLOCKED-skip",
+      "closure": "one active campaign/work-item; dep-ordered selection",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "D",
+      "name": "Work-item contract (PROPOSED)",
+      "protocolStep": "3 (author WIC)",
+      "components": [
+        "mission-contract-factory",
+        "patch-action-contract"
+      ],
+      "primitive": "mission-contract-factory",
+      "program": "P2",
+      "test": "runtime/core/mission-contract-factory.test.ts",
+      "proof": "WIC schema in protocol; contract-on-demand",
+      "closure": "every work item has a PROPOSED contract (objective/scope/write_set/acceptance/evidence)",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "E",
+      "name": "Authorization gate (PROPOSED→AUTHORIZED, external)",
+      "protocolStep": "4 (human authorization)",
+      "components": [
+        "action-gate",
+        "root-of-trust"
+      ],
+      "primitive": "action-gate",
+      "program": "P1/P8",
+      "test": "runtime/bin/v61-odg-authority-separation.test.ts",
+      "proof": "V61 no self-authorization; V66 loop stops at PROPOSED without external auth",
+      "closure": "no EXECUTING before an external AUTHORIZED decision",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "F",
+      "name": "Reproduce + root cause",
+      "protocolStep": "5 (reproduce before edit)",
+      "components": [
+        "rce-root-cause-intelligence",
+        "rce-assurance-chain"
+      ],
+      "primitive": "evidence-provenance",
+      "program": "P2",
+      "test": "runtime/core/rce-assurance-chain.test.ts",
+      "proof": "V59 XII repair assurance: fix≠its-own-proof",
+      "closure": "root cause established + reproduced before modification",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "G",
+      "name": "Checkpoint",
+      "protocolStep": "6 (create checkpoint)",
+      "components": [
+        "checkpoint-engine",
+        "idempotency-guard"
+      ],
+      "primitive": "checkpoint-engine",
+      "program": "P2",
+      "test": "runtime/bin/v68-long-task-reliability.test.ts",
+      "proof": "V68 recovery 12/12 no re-run",
+      "closure": "recoverable checkpoint exists before execution",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "H",
+      "name": "Minimal change in write_set (EXECUTING)",
+      "protocolStep": "7 (minimal change, write-confinement)",
+      "components": [
+        "patch-executor",
+        "patch-action-contract"
+      ],
+      "primitive": "patch-executor",
+      "program": "P2/P8",
+      "test": "runtime/core/patch-executor.test.ts",
+      "proof": "patch-executor write-confinement (symlink/'..'/hardlink escapes closed)",
+      "closure": "only write_set files touched; no scope expansion",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "I",
+      "name": "Verify (build+test+regression+runtime+evidence → VERIFIED)",
+      "protocolStep": "8 (verify)",
+      "components": [
+        "gates-ledger",
+        "mechanical-acceptance",
+        "evidence-provenance"
+      ],
+      "primitive": "evidence-provenance",
+      "program": "P1",
+      "test": "runtime/core/v124-section-coverage.test.ts",
+      "proof": "full gate 462/462 PASS; a green build alone is never sufficient",
+      "closure": "build+test+regression+runtime+evidence_required all pass",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "J",
+      "name": "Structured report",
+      "protocolStep": "9 (report)",
+      "components": [
+        "shared-report-generator"
+      ],
+      "primitive": "evidence-provenance",
+      "program": "P7",
+      "test": "runtime/core/shared-report-evidence.test.ts",
+      "proof": "O1 reports across pilots/benchmarks",
+      "closure": "structured report (truth-lock/contract/diff/verify/evidence/next) produced",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "K",
+      "name": "Acceptance (VERIFIED→ACCEPTED) + commit gate",
+      "protocolStep": "10 (human acceptance + commit)",
+      "components": [
+        "acceptance-facts",
+        "campaign-closure-ledger",
+        "mechanical-acceptance"
+      ],
+      "primitive": "state-transition",
+      "program": "P1",
+      "test": "runtime/core/mechanical-acceptance.test.ts",
+      "proof": "ACCEPTED needs acceptance+evidence; approval_gates",
+      "closure": "VERIFIED→ACCEPTED only on external acceptance; commit human-gated",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    },
+    {
+      "lot": "L",
+      "name": "Closure governance (no push without approval)",
+      "protocolStep": "11,13 (release gate + compass finish)",
+      "components": [
+        "campaign-closure-ledger",
+        "roadmap-consolidation"
+      ],
+      "primitive": "action-gate",
+      "program": "P1/P10",
+      "test": "runtime/bin/v58-closure-ledger.test.ts",
+      "proof": "push/merge/deploy never performed; closure ledger; register",
+      "closure": "push/release only on separate explicit human approval; ledger reflects reality",
+      "componentsPresent": true,
+      "testPresent": true,
+      "grounded": true,
+      "status": "INTEGRATED_SATISFIED (reuse; proof kept)"
+    }
+  ],
+  "programsCovered": [
+    "P1",
+    "P10",
+    "P2",
+    "P7",
+    "P8"
+  ],
+  "honestConclusion": "The 12 governance lots A–L are INTEGRATED into V12.4 by mapping each to an existing canonical component (protocol workflow steps 0–13, 9-state ladder), a primitive, a program, a test and a proof — 12/12 fully grounded (component + test present), 0 duplicates created. Satisfied requirements keep their proof (not rebuilt). Documentary integration is the START of ongoing execution under ODG, NOT a completion claim.",
+  "invariant": "Lots A–L reuse existing mechanisms; a lot is INTEGRATED_SATISFIED only if its component + test are present; none is declared complete by integration alone. ODG owns execution; provider bounded (V61). No tenth primitive, no parallel roadmap."
+}

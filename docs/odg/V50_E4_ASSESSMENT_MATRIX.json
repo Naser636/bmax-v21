@@ -1,0 +1,100 @@
+{
+  "//": "V50 C2 — 15-métier E4 assessment. DEMONSTRATED=reproducible O1 deliverable built+tested; DEFINED_PENDING=deliverable defined, demonstrator to build (reuse existing+O1); BLOCKED=cannot deliver honestly. None E5 (0 clients).",
+  "tally": {
+    "DEMONSTRATED": 14,
+    "BLOCKED": 1
+  },
+  "metiers": {
+    "P3": {
+      "cap": "SBOM/supply-chain/license",
+      "demo": "odg-demo-cra-sbom.ts (485 comp, O1)",
+      "e4": "DEMONSTRATED",
+      "note": "CRA readiness report, evidence digest, limits, client-responsibilities"
+    },
+    "P11": {
+      "cap": "e-invoice EN16931/STP",
+      "demo": "odg-demo-einvoice.ts (3 cases, O1)",
+      "e4": "DEMONSTRATED",
+      "note": "validation + round-trip + human gate; XXE-safe"
+    },
+    "P9": {
+      "cap": "FinOps cost-engine",
+      "demo": "odg-e4-p9-finops.ts (O1)",
+      "e4": "DEMONSTRATED",
+      "note": "cost estimate + budget + anomalies; ESTIMATED not metered"
+    },
+    "P10": {
+      "cap": "ai-assurance/AI-Act",
+      "demo": "odg-e4-p10-aigov.ts (O1)",
+      "e4": "DEMONSTRATED",
+      "note": "AI-Act role + controls; INSUFFICIENT_EVIDENCE never PASS; NOT certified"
+    },
+    "P15": {
+      "cap": "metier-coordinator orchestration",
+      "demo": "odg-e4-p15-automation.ts (O1)",
+      "e4": "DEMONSTRATED",
+      "note": "relevant-subset selection + fail-closed consolidation"
+    },
+    "P1": {
+      "cap": "native build/repair/code-health",
+      "demo": "odg-e4-metier.ts(P1) → P1_CODE_HEALTH",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = code-health/repair audit report; wire existing modules → O1"
+    },
+    "P2": {
+      "cap": "agent-gov/eval",
+      "demo": "odg-e4-metier.ts(P2) → P2_AGENT_GOV",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = agent governance/eval report; crowded market"
+    },
+    "P4": {
+      "cap": "dataset-quality/PII",
+      "demo": "odg-e4-metier.ts(P4) → P4_DATA_QUALITY",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = data-quality/PII readiness report (reuse dataset-quality + O1)"
+    },
+    "P5": {
+      "cap": "canary/deployment-readiness",
+      "demo": "odg-e4-metier.ts(P5) → P5_RELEASE_READINESS",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = release/canary safety report"
+    },
+    "P6": {
+      "cap": "eval-metrics",
+      "demo": "odg-e4-metier.ts(P6) → P6_AI_EVAL",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = AI-eval/test-coverage report (reuse eval-metrics+eval-significance)"
+    },
+    "P7": {
+      "cap": "SLO/latency",
+      "demo": "odg-e4-metier.ts(P7) → P7_SRE_LATENCY",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = SLO/latency readiness report"
+    },
+    "P8": {
+      "cap": "api-contract",
+      "demo": "odg-e4-metier.ts(P8) → P8_API_CONFORMANCE",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = API-contract conformance report"
+    },
+    "P12": {
+      "cap": "event-stream reliability",
+      "demo": "odg-e4-metier.ts(P12) → P12_STREAM_RELIABILITY",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = streaming reliability report"
+    },
+    "P14": {
+      "cap": "developer-platform/golden-path",
+      "demo": "odg-e4-metier.ts(P14) → P14_GOLDEN_PATH",
+      "e4": "DEMONSTRATED",
+      "note": "deliverable = golden-path/DevEx audit"
+    },
+    "P13": {
+      "cap": "local-model (CPU only)",
+      "demo": "BLOCKED",
+      "e4": "BLOCKED",
+      "note": "ODG owns no GPU ⇒ cannot deliver GPU/inference work honestly; NOT simulated (V47.1)"
+    }
+  },
+  "note": "V51 update: 14/15 métiers DEMONSTRATED at E4 (reproducible O1 deliverable + O2 verifiable evidence, each reusing an existing guard — no new engine). P13 BLOCKED (no GPU, not simulated). None E5 (0 clients). E4 != certification != sale. The 9 remaining (P1,P2,P4,P5,P6,P7,P8,P12,P14) built via ONE anti-duplication runner odg-e4-metier.ts."
+}

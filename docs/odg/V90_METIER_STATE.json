@@ -1,0 +1,170 @@
+{
+  "//": "CTO V90 §5 — per-métier state measured from the REAL repo. present=module file exists; wired=inbound non-test caller; tested=a test references it; validated=that test is in the gate. NO global average — each métier individual; the weakest surfaced. present≠wired≠tested≠validated.",
+  "metiers": [
+    {
+      "metier": "P1",
+      "module": "profession-p1-fullstack-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 3,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P2",
+      "module": "profession-p2-ai-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 1,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P3",
+      "module": "profession-p3-security-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 2,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P4",
+      "module": "profession-p4-data-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 2,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P5",
+      "module": "developer-platform",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 3,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P6",
+      "module": "profession-p6-eval-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 4,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P7",
+      "module": "profession-p7-sre-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 2,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P8",
+      "module": "p8-semver-enforcement",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 5,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P9",
+      "module": "profession-p9-finops-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 1,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P10",
+      "module": "profession-p10-regulatory-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 2,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P11",
+      "module": "profession-p11-document-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 2,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P12",
+      "module": "profession-p12-streaming-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 1,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P13",
+      "module": "profession-p13-aiinfra-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 2,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P14",
+      "module": "profession-p14-devex-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 3,
+      "status": "VALIDATED"
+    },
+    {
+      "metier": "P15",
+      "module": "profession-p15-workflow-reference",
+      "present": true,
+      "wired": true,
+      "tested": true,
+      "validated": true,
+      "inboundCallers": 1,
+      "status": "VALIDATED"
+    }
+  ],
+  "byStatus": {
+    "ABSENT": 0,
+    "PRESENT": 0,
+    "WIRED": 0,
+    "TESTED": 0,
+    "VALIDATED": 15
+  },
+  "weakestMetier": {
+    "metier": "P1",
+    "module": "profession-p1-fullstack-reference",
+    "status": "VALIDATED"
+  },
+  "allValidated": true,
+  "honestConclusion": "15 métiers measured individually: 15 VALIDATED, 0 TESTED, 0 WIRED, 0 PRESENT, 0 ABSENT. Weakest: P1 (VALIDATED). No average hides a weak métier; a weaker métier is a concrete local-improvement target, not a masked statistic.",
+  "invariant": "no global average; each métier individual; weakest surfaced; missing module ⇒ ABSENT; measured from source."
+}

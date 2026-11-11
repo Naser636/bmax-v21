@@ -1,0 +1,82 @@
+{
+  "//": "CTO V88 §14 + V88-A §7 — Chain B: the incremental-assurance ENGINE meta-validated as an inspector. Seeded DEFECTS (must re-run/invalidate/widen) + CLEAN (reuse correct). EFFECTIVE ⟺ 100% seeded-defect detection + 0 false alarms. Reuses V85 inspector-meta-validation; the engine does NOT self-certify (an independent mechanism scores it).",
+  "effective": true,
+  "valid": true,
+  "confusion": {
+    "TP": 8,
+    "FP": 0,
+    "TN": 2,
+    "FN": 0
+  },
+  "detectionRate": 1,
+  "falseNegativeRate": 0,
+  "falsePositiveRate": 0,
+  "seededDefects": 8,
+  "cleanCases": 2,
+  "missed": [],
+  "falseAlarms": [],
+  "perCase": [
+    {
+      "id": "forgets-dependency",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "reuses-stale",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "contract-transitive",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "inspector-change",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "masked-semantic",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "unknown-dependency-widen",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "contradictory-blocked",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "drops-mandatory-permission",
+      "label": "DEFECTIVE",
+      "flagged": true,
+      "outcome": "TP"
+    },
+    {
+      "id": "clean-independent-reuse",
+      "label": "CLEAN",
+      "flagged": false,
+      "outcome": "TN"
+    },
+    {
+      "id": "clean-doc-only",
+      "label": "CLEAN",
+      "flagged": false,
+      "outcome": "TN"
+    }
+  ],
+  "honestConclusion": "The incremental-assurance engine is EFFECTIVE: it caught 8/8 seeded defects (forgotten dependency, stale reuse, contract-transitive, inspector-change, masked-semantic, unknown-dependency-widen, contradiction, dropped-mandatory) with 0 false alarms on 2 clean reuse cases. The selector/invalidator does not wrongly reuse stale evidence nor drop mandatory controls, and correctly reuses genuinely-independent intact evidence.",
+  "invariant": "the mechanism that selects controls + invalidates evidence is itself independently meta-validated (V85); EFFECTIVE ⟺ catches all seeded defects + 0 false alarms; it cannot self-certify."
+}

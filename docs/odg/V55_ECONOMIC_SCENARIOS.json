@@ -1,0 +1,103 @@
+{
+  "//": "CTO V55 §7 — global economic model. Scenarios prudent/central/ambitious + min €5M net + ambition €500M net. Reuses the FR tax formula (odg-acquisition/org-model). Figures without evidence are HYPOTHESES; a mathematically-possible scenario is NEVER commercially accessible (0 observed clients). No new engine.",
+  "canonicalObjectives": {
+    "minimum": "€5,000,000 NET after all charges+taxes, first 12 months",
+    "ambition": "€500,000,000 NET after all charges+taxes, first 12 months"
+  },
+  "taxModel": "FR IS 15% up to €42,500 then 25% (identical to odg-acquisition-model / odg-org-model)",
+  "scenarios": {
+    "prudent": {
+      "name": "prudent",
+      "basis": "HYPOTHESIS (conservative demand; 0 observed conversion)",
+      "revenue": 504000,
+      "preTaxMargin": 0.3,
+      "ebt": 151200,
+      "tax": 33550,
+      "net": 117650,
+      "clients": 18,
+      "avgBasket": 28000,
+      "contracts": 18,
+      "saleCycleMonths": 4,
+      "deliveryCapacityContractsPerFTEyear": 18,
+      "headcount": 1,
+      "workingCapital": 84000,
+      "requiredCapital": 99000
+    },
+    "central": {
+      "name": "central",
+      "basis": "HYPOTHESIS (central demand; 0 observed conversion)",
+      "revenue": 2310000,
+      "preTaxMargin": 0.3,
+      "ebt": 693000,
+      "tax": 169000,
+      "net": 524000,
+      "clients": 55,
+      "avgBasket": 42000,
+      "contracts": 55,
+      "saleCycleMonths": 5,
+      "deliveryCapacityContractsPerFTEyear": 18,
+      "headcount": 4,
+      "workingCapital": 481250,
+      "requiredCapital": 541250
+    },
+    "ambitious": {
+      "name": "ambitious",
+      "basis": "HYPOTHESIS (ambitious demand; 0 observed conversion)",
+      "revenue": 8400000,
+      "preTaxMargin": 0.32,
+      "ebt": 2688000,
+      "tax": 667750,
+      "net": 2020250,
+      "clients": 140,
+      "avgBasket": 60000,
+      "contracts": 140,
+      "saleCycleMonths": 6,
+      "deliveryCapacityContractsPerFTEyear": 22,
+      "headcount": 7,
+      "workingCapital": 2100000,
+      "requiredCapital": 2205000
+    },
+    "min_5M_net": {
+      "name": "min-5M-net",
+      "basis": "OBJECTIVE (minimum) — reverse-engineered, HYPOTHESIS",
+      "targetNet": 5000000,
+      "revenue": 22203333,
+      "preTaxMargin": 0.3,
+      "ebt": 6661000,
+      "tax": 1661000,
+      "net": 5000000,
+      "avgBasket": 50000,
+      "contracts": 445,
+      "contractsPerWeek": 9,
+      "deliveryCapacityContractsPerFTEyear": 22,
+      "headcount": 21,
+      "workingCapital": 5550833,
+      "requiredCapital": 5865833,
+      "feasibilityFromZero": "HYPOTHESIS ONLY — observed conversion = 0 clients; mathematically defined ≠ commercially accessible"
+    },
+    "ambition_500M_net": {
+      "name": "ambition-500M-net",
+      "basis": "OBJECTIVE (ambition) — reverse-engineered; INFEASIBLE in 12 months from €0 (per V51/V52)",
+      "targetNet": 500000000,
+      "revenue": 2222203333,
+      "preTaxMargin": 0.3,
+      "ebt": 666661000,
+      "tax": 166661000,
+      "net": 500000000,
+      "avgBasket": 500000,
+      "contracts": 4445,
+      "contractsPerWeek": 85,
+      "deliveryCapacityContractsPerFTEyear": 22,
+      "headcount": 203,
+      "workingCapital": 555550833,
+      "requiredCapital": 558595833,
+      "feasibilityFromZero": "INFEASIBLE in 12 months from €0 clients (~1000× the plausible range, per V51/V52); objective recorded, NOT lowered; mathematically defined ≠ commercially accessible"
+    }
+  },
+  "reconciliation": {
+    "min5M": "€5M net ⇒ EBT ≈ €6,661,000, revenue ≈ €22,203,333 at 30% margin ⇒ ~445 contracts (~9/wk), ~21 FTE. HYPOTHESIS from €0 clients.",
+    "ambition500M": "€500M net ⇒ EBT ≈ €666,661,000, revenue ≈ €2,222,203,333 at 30% margin ⇒ ~4445 contracts (~85/wk), ~203 FTE. INFEASIBLE in 12 months from €0 (per V51/V52); recorded, not lowered."
+  },
+  "honestConclusion": "The prudent/central/ambitious scenarios are HYPOTHESES (observed conversion = 0). €5M net is the minimum objective; €500M net is the ambition — both reverse-engineered and, from a €0-client standing start, NOT demonstrated commercially accessible in 12 months (€500M net INFEASIBLE per V51/V52). Objectives recorded, not lowered.",
+  "invariant": "Figures without proof are HYPOTHESES. A mathematically-possible scenario is never presented as commercially accessible. Objectives are recorded with their honest feasibility, never silently lowered."
+}

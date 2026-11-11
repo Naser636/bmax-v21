@@ -1,0 +1,132 @@
+{
+  "//": "CTO V51 P5 E4 demonstrator. SYNTHETIC inputs. Reuses the P5 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P5",
+    "title": "Cloud / Release Readiness",
+    "status": "READINESS — state NOT_READY (ready=false)",
+    "summary": "deployment-readiness over 11 controls ⇒ ready=false, 3 blockers.",
+    "controls": [
+      {
+        "name": "config",
+        "status": "PASS",
+        "detail": "all required config keys present"
+      },
+      {
+        "name": "reproducibility",
+        "status": "PASS",
+        "detail": "reproducible build + pinned lockfile"
+      },
+      {
+        "name": "dependencies",
+        "status": "PASS",
+        "detail": "all dependencies resolved"
+      },
+      {
+        "name": "artifacts",
+        "status": "PASS",
+        "detail": "artifacts present + digested"
+      },
+      {
+        "name": "tests",
+        "status": "PASS",
+        "detail": "tests passed (exit 0)"
+      },
+      {
+        "name": "security",
+        "status": "PASS",
+        "detail": "SBOM + secrets scan + license policy"
+      },
+      {
+        "name": "observability",
+        "status": "PASS",
+        "detail": "traces + metrics + logs wired"
+      },
+      {
+        "name": "rollback",
+        "status": "PASS",
+        "detail": "rollback plan present + tested"
+      },
+      {
+        "name": "integrity",
+        "status": "FAIL",
+        "detail": "provenance verified / integrity attested"
+      },
+      {
+        "name": "traceability",
+        "status": "FAIL",
+        "detail": "source commit + evidence refs"
+      },
+      {
+        "name": "envPrereqs",
+        "status": "FAIL",
+        "detail": "environment prerequisites present"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "HIGH",
+        "detail": "integrity",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "HIGH",
+        "detail": "traceability",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "HIGH",
+        "detail": "envPrereqs",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "clear every blocker before a real deploy",
+      "deploy remains a root/owner action (out of scope)"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "readiness evaluation (ready=false)",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "255185c2d9e461874cdcb62f7b0e9869733ff8d3d3db9207b9d1e823c522229e",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "255185c2d9e461874cdcb62f7b0e9869733ff8d3d3db9207b9d1e823c522229e",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

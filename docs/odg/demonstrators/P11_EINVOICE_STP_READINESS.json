@@ -1,7 +1,7 @@
 {
   "//": "CTO V44 Chantier B — P11 e-invoice validation & STP demonstrator. REPRODUCIBLE on SYNTHETIC public inputs (no client data). ODG does conformance/readiness PREP, NOT a certified PDP transmission. L2 maturity, 0 paying clients.",
   "demonstrator": "P11 document routing / STP — France B2B e-invoicing (EN16931 / Factur-X) readiness",
-  "generatedAt": "2026-11-10T13:12:40.101Z",
+  "generatedAt": "2026-11-10T14:49:37.672Z",
   "marketContext": "France B2B e-invoicing live 2026-09-01 (large/ETI issue + all receive); SMEs 2027-09-01; via certified PDPs; Factur-X/UBL formats.",
   "validCase": {
     "invoiceId": "FR-2026-001",
@@ -63,5 +63,104 @@
     "Full EN16931 / Factur-X document beyond the SUPPORTED SUBSET",
     "Connection to the client's ERP/accounting system (integration engagement, authorised + isolated)"
   ],
-  "honesty": "DEMONSTRATOR on synthetic public inputs; ODG maturity L2, 0 paying clients. It evidences validation + STP-conformance readiness; it does NOT perform a certified PDP transmission."
+  "honesty": "DEMONSTRATOR on synthetic public inputs; ODG maturity L2, 0 paying clients. It evidences validation + STP-conformance readiness; it does NOT perform a certified PDP transmission.",
+  "report": {
+    "metier": "P11",
+    "title": "E-invoicing (EN16931 / Factur-X) Validation & STP Readiness",
+    "status": "PREPARED — conformance prep, NOT a certified PDP transmission",
+    "summary": "3 synthetic cases: valid ⇒ EINVOICE_WORKFLOW_PREPARED (round-trip true, re-parsed true); BR-CO-15 arithmetic error ⇒ caught=true; missing mandatory fields ⇒ caught=true.",
+    "controls": [
+      {
+        "name": "Mandatory fields (EN16931-core)",
+        "status": "APPLIED",
+        "detail": "BT-1/2/5 + seller/buyer + ≥1 line"
+      },
+      {
+        "name": "Arithmetic rules",
+        "status": "APPLIED",
+        "detail": "BR-CO-10/13/15/14/17"
+      },
+      {
+        "name": "Round-trip CII/UBL + independent re-parse",
+        "status": "OK",
+        "detail": "a model must survive its own serialization"
+      },
+      {
+        "name": "XML security (XXE)",
+        "status": "APPLIED",
+        "detail": "parser rejects DOCTYPE/ENTITY"
+      },
+      {
+        "name": "Governance prepared≠sent",
+        "status": "human gate: PROPOSAL_SENT",
+        "detail": "deny-by-default; nothing sent without owner authorization"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "INFO",
+        "detail": "valid invoice FR-2026-001 ⇒ EINVOICE_WORKFLOW_PREPARED",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "arithmetic error FR-2026-002 ⇒ caught",
+        "basis": "PROVEN"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "missing fields FR-2026-003 ⇒ caught",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "route valid invoices via a certified PDP (owner/accredited)",
+      "keep the human gate before any transmission"
+    ],
+    "limits": [
+      "Certified Plateforme Agréée (PDP) registration + the actual legal transmission (France mandate) — owner/legal",
+      "Full EN16931 / Factur-X document beyond the SUPPORTED SUBSET",
+      "Connection to the client's ERP/accounting system (integration engagement, authorised + isolated)"
+    ],
+    "validationConditions": [
+      "re-run reproduces the 3 verdicts",
+      "evidence digest independently verifiable"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "3-case validation (valid/arith-error/missing-fields)",
+          "basis": "PROVEN",
+          "sourceRef": "P11_EINVOICE_STP_READINESS.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "17b7c284010052c5de188a8a23df47f3077e5d894246e4f6c1f7c30013c02ade",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "17b7c284010052c5de188a8a23df47f3077e5d894246e4f6c1f7c30013c02ade",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
 }

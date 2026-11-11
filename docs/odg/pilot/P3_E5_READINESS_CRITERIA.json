@@ -1,0 +1,45 @@
+{
+  "//": "CTO V55 — P3 CRA/SBOM E4→E5 transition criteria. P3 STAYS at E4 until EVERY condition below is met=true AND an independent controller signs off. E5 requires a real authorised client, real product manifests, a lawful access basis, a REAL CVE scan (the guard performs license audit only), observed/verifiable results, written client validation and qualified legal confirmation. ODG prepares readiness evidence; it NEVER certifies CRA conformity, gives legal advice, or guarantees compliance.",
+  "metier": "P3",
+  "title": "CRA / SBOM supply-chain readiness",
+  "p3CurrentStage": "E4",
+  "e5Status": "NOT_STARTED",
+  "e4Evidence": {
+    "readinessArtifact": "docs/odg/demonstrators/P3_CRA_SBOM_READINESS.json",
+    "pilotSimulation": "docs/odg/demonstrators/P3_CRA_SBOM_PILOT_SIM.json",
+    "reproducible": true,
+    "independentlyVerifiable": true,
+    "basis": "SBOM/gate/sealed-bundle are real composition over SYNTHETIC manifests; vulnerabilities/incidents/timelines SIMULATED (cveScan NOT_PERFORMED) — never observed, never conformity, never certification"
+  },
+  "transitionConditions": [
+    { "id": "C1", "condition": "A real client/manufacturer explicitly authorises an engagement (signed scope by the owner).", "met": false, "ownerAction": true, "controller": true },
+    { "id": "C2", "condition": "Product perimeter and responsibilities written (which product/version; who owns reporting/CE/conformity).", "met": false, "ownerAction": true },
+    { "id": "C3", "condition": "Lawful basis and access to the real software inventory (manifests/lockfiles/tech doc) established — minimised, documented.", "met": false, "ownerAction": true },
+    { "id": "C4", "condition": "Real execution: SBOM over REAL manifests + a REAL CVE scan against an offline feed (the guard performs license audit only).", "met": false },
+    { "id": "C5", "condition": "Observed, verifiable results: real vulnerabilities (not simulated), sealed+signed evidence pack, tamper-evidence re-verified.", "met": false },
+    { "id": "C6", "condition": "Qualified legal confirmation of CRA obligations, reporting duties and dates (ODG does not give legal advice).", "met": false, "controller": true },
+    { "id": "C7", "condition": "Written client validation of the findings and remediation plan.", "met": false, "controller": true },
+    { "id": "C8", "condition": "Independent controller review of the whole engagement (ODG retains authority; Claude Code = technical provider only).", "met": false, "controller": true }
+  ],
+  "acceptanceCriteria": [
+    "Every transitionCondition.met === true.",
+    "A REAL CVE scan replaces the SIMULATED vulnerability set; at least one OBSERVED-basis evidence item present.",
+    "Sealed evidence pack signed and tamper-evidence re-verified (bundle + pack).",
+    "Independent evidence digest verifies (O2.verifyEvidence ok) over the real deliverable.",
+    "Controller sign-off + qualified legal confirmation + written client validation recorded."
+  ],
+  "rejectionCriteria": [
+    "The report presented as CRA conformity, certification, or a legal opinion.",
+    "Any vulnerability claimed without a real CVE scan (SIMULATED must stay SIMULATED).",
+    "A recommendation presented as a legal obligation.",
+    "An UNKNOWN/conditional license assumed safe (must stay needsReview).",
+    "Data/code accessed without a documented lawful basis, or no independent controller review."
+  ],
+  "regulatoryPosture": "ODG prepares CRA/SBOM readiness evidence (SBOM + license gate + sealed pack). CRA reporting (24h/72h/14-day from 2026-09-11) and main obligations (2027-12-11) are owner-operated legal duties; dates are data to be confirmed by qualified counsel. NOT a certification, NOT legal advice, NOT a CVE scan.",
+  "invariant": "Until all conditions are met=true, P3 remains E4 and e5Status remains NOT_STARTED. Simulated vulnerabilities/timelines are NEVER presented as observed or conformity. ODG keeps authority; an independent controller and qualified legal expertise are mandatory.",
+  "nonGoals": [
+    "No prospecting, no external message, no contract, no spend, no subscription, no hiring.",
+    "No CRM or parallel registry — reuse the nine primitives, P3 guard, O1/O2, evidence-provenance, existing evidence.",
+    "No push, merge, deployment or VPS access; no background process; no npm privilege escalation."
+  ]
+}

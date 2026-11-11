@@ -1,0 +1,146 @@
+{
+  "//": "CTO V86 §2 + V87 §4 — 5-state inspection coverage. Measured from SOURCE + the canonical inspected-path registry + presence of a dedicated non-bypass test, NOT from test count. Operational effect paths must reach WIRED_AND_TESTED; planners are NOT_APPLICABLE (decision routed, effect inspected downstream); external is BLOCKED (owner-gated).",
+  "totalPaths": 14,
+  "tally": {
+    "WIRED_AND_TESTED": 9,
+    "WIRED_NOT_FULLY_TESTED": 0,
+    "NOT_WIRED": 0,
+    "BLOCKED": 1,
+    "NOT_APPLICABLE": 4
+  },
+  "operationalEffectPaths": 9,
+  "operationalWiredAndTested": 9,
+  "operationalCoverageRatio": 1,
+  "registryRoutesThroughBoundary": true,
+  "paths": [
+    {
+      "file": "campaign-engine.ts",
+      "pathId": "campaign-engine",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "wired directly in V86 (fail-closed: no inspection context ⇒ never operationally accepted)"
+    },
+    {
+      "file": "capability-executors.ts",
+      "pathId": "capability-executors",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "coding-executor.ts",
+      "pathId": "coding-executor",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "engineering-executor.ts",
+      "pathId": "engineering-executor",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "patch-executor.ts",
+      "pathId": "patch-executor",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "intelligence-loop.ts",
+      "pathId": "intelligence-loop",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "fleet-dispatcher.ts",
+      "pathId": "fleet-dispatcher",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "nl-objective-gateway.ts",
+      "pathId": "nl-objective-gateway",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "roadmap-manager.ts",
+      "pathId": "roadmap-manager",
+      "classification": "WIRED",
+      "state": "WIRED_AND_TESTED",
+      "wired": true,
+      "tested": true,
+      "note": "canonical inspected entry routes PRE+POST + receipt-enforced"
+    },
+    {
+      "file": "email-gateway.ts",
+      "pathId": "email-gateway",
+      "classification": "BLOCKED",
+      "state": "BLOCKED",
+      "wired": false,
+      "tested": true,
+      "note": "external/irreversible — inspected entry refuses locally; stays owner-gated"
+    },
+    {
+      "file": "mission-scheduler.ts",
+      "pathId": "mission-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    },
+    {
+      "file": "engineering-scheduler.ts",
+      "pathId": "engineering-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    },
+    {
+      "file": "writeset-scheduler.ts",
+      "pathId": "writeset-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    },
+    {
+      "file": "p12-weighted-fair-share-scheduler.ts",
+      "pathId": "p12-weighted-fair-share-scheduler",
+      "classification": "PLANNING",
+      "state": "NOT_APPLICABLE",
+      "wired": true,
+      "tested": true,
+      "note": "planning/selection, no direct effect — decision routed through boundary (READ); downstream effect inspected at its own WIRED executor"
+    }
+  ],
+  "residual": "RESIDUAL (honest): the legacy RAW module functions remain callable directly; proof-of-inspection receipts are enforced on the CANONICAL inspected entry (inspected-paths.ts). Making receipts mandatory on every legacy raw entry repo-wide is tracked follow-on — so this is NOT a claim of 100% repo-wide non-bypass.",
+  "honestConclusion": "Of 14 execution paths: 9 WIRED_AND_TESTED, 0 WIRED_NOT_FULLY_TESTED, 4 NOT_APPLICABLE (planners — decision routed, downstream effect inspected), 1 BLOCKED (external/owner-gated), 0 NOT_WIRED. Operational effect paths WIRED_AND_TESTED: 9/9. Coverage is source+registry-measured, residual raw entries disclosed — no false 100%.",
+  "invariant": "5-state honest taxonomy measured from source/registry/test-presence; planners NOT_APPLICABLE with justification; external BLOCKED; residual raw entries disclosed; the canonical inspected entry is fail-closed + receipt-enforced."
+}

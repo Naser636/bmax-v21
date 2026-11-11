@@ -82,3 +82,104 @@ Devise : **DISCOVER. UNDERSTAND. INVENT. ENGINEER. VERIFY. IMPROVE. REPEAT.**
 > PARTIALLY_BUILT / ABSENT / UNKNOWN / TO_AUDIT + preuves) est tenue à jour dans
 > `docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md`. Toute évolution de ce fichier conserve un changelog et ne réécrit
 > jamais silencieusement une version historique (V8..V12.3).
+
+---
+
+## Extensions au-delà de §1–§122 (changelog)
+
+> Ces extensions COMPLÈTENT la V12.4 sans réécrire les 31 parties numérotées ni modifier l'invariant de couverture §1–§122 (vérifié par `runtime/core/v124-section-coverage.ts`). Elles portent des §§ au-delà de §122.
+
+- **Partie XXXII — Commercialisation & Acquisition (§123–§130)** — ajoutée V50 (2026-11-10), décidée par les audits V48 (I1/C7) + V49. Détail : `docs/odg/V12_4_PART_XXXII_COMMERCIALIZATION.md`. Comble le constat central V48 (0/31 parties ne traitaient l'acquisition). Réutilise commercial-pipeline / opportunity-* / cost-engine / action-gate / evidence-provenance / O1-O2 ; aucun CRM ni primitive nouvelle. Statut : référentiel directeur proposé ; hypothèses commerciales non prouvées (0 client).
+
+## Programmes permanents P1–P10 (intégrés V63, 2026-11-10) — référentiel canonique, non parallèle
+
+Les dix chantiers V62/V63 deviennent des **programmes permanents**, tracés dans `docs/odg/V63_PROGRAM_REGISTER.json`
+(mapping programme → parties V12.4 → livrables → tests → acceptation → statut → condition de clôture ; chaque pointeur
+de preuve vérifié présent). Ils ne remplacent aucune partie §1–§122 ni la Partie XXXII ; ils les référencent.
+
+- **P1 Gouvernance & cohérence canonique** → II/III/XXII/XXIII — autorité ODG (règle permanente V61), matrice de couverture.
+- **P2 Autonomie d'ingénierie & auto-amélioration** → VIII/IX/XII — self-improvement gouverné, invariants de consolidation V59.
+- **P3 Excellence des quinze métiers** → X/XIII — 14/15 E4, fiches de performance multidim V62 ; P13 hardware-bloqué.
+- **P4 Benchmarks & dépassement mondial** → XIII — programme benchmark V57 (ODG-side exécuté+reproductible ; supériorité fail-closed).
+- **P5 Entreprises & clients synthétiques** → X/XXXII — moteurs client-journey-sim + synthetic-enterprise (SYNTHETIC/FICTIF).
+- **P6 Mesure réelle des coûts & optimisation** → XXI/XIII — cost-engine + programmes coût V55 + protocole média V60 (réel owner-gated).
+- **P7 Industrialisation, exploitation & livraison** → XXIV/XXVII — activation-readiness V62, dossiers OWNER_GATED V60.
+- **P8 Sécurité, conformité & assurance** → XIV/XXIII — root-of-trust/emergency-stop/ai-assurance ; certifications organisme-gated.
+- **P9 Radar mondial & amélioration hebdomadaire** → VI/VIII — boucle gouvernée 7 étapes, audit V55 (12/12) ; aucun moteur parallèle.
+- **P10 Préparation opérationnelle & mise en service** → XXVII/XXX/XXXII — checklist go-live, slots humains vides (PENDING_HUMAN).
+
+Objectifs financiers canoniques (corrigés V63) : **PLANCHER ABSOLU €5 000 000 net** · **AMBITION €500 000 000 net (12 mois)**.
+Le montant de €5 000 est une **erreur** (V62 §12), **supprimée comme objectif** (traçabilité conservée dans le registre financier).
+Autorité : ODG seul maître d'œuvre ; le fournisseur technique n'exécute que des tâches explicitement confiées (règle permanente V61).
+
+## Référentiel successeur Parties I / IV / XXV (V64, 2026-11-10) — reconstruction tracée, original FROZEN préservé
+
+Récupération exhaustive **read-only** du Master FROZEN (branches, tags, reflog, `fsck --unreachable`, `cat-file`,
+grep historique) ⇒ résultat **NÉGATIF** pour les énumérations canoniques de I/IV/XXV (`docs/odg/V64_MASTER_RECOVERY_REPORT.json`).
+Original FROZEN **préservé** (aucune opération destructive). Un **référentiel successeur versionné** (`docs/odg/V64_SUCCESSOR_REFERENTIAL.json`,
+`successor-v1`) RECONSTRUIT ces parties À PARTIR des primitives/modules/contrats présents — **jamais présenté comme un document historique retrouvé** :
+- **Partie I** — 26 capacités (CAP-01..26), **toutes ancrées** dans un module présent+testé (groundedness vérifiée).
+- **Partie IV** — 12 dimensions (DIM-01..12) + 10 responsabilités cognitives (RESP-01..10), **0 orpheline, aucune duplication**, chacune liée à une primitive + contrôle.
+- **Partie XXV** — registre successeur F01–F40 reconstruit à partir de modes de défaillance réels documentés ; chaque entrée `source=RECONSTRUCTED`, confiance MEDIUM, **validation owner encore nécessaire** pour canoniser le successeur en remplacement de §105.
+Chaque entrée porte source/justification/confiance ; aucune reconstruction n'est présentée comme l'original. Pas de roadmap parallèle, pas de dixième primitive.
+
+## Radar auto-amélioration & veille Internet — DIRECTIVE PERMANENTE (V67, 2026-11-10)
+
+Le radar technologique/auto-amélioration (programme P9, parties VI/VIII) est **actif en permanence** jusqu'à l'achèvement
+de V12.4. Recherche Internet autorisée (veille primaire : doc officielle, publications, dépôts, benchmarks) ; contenu
+externe **UNTRUSTED** jusqu'à analyse (licence/sécurité/supply-chain) ; aucune dépense/abonnement/compte privé/publication.
+Boucle : rechercher→détecter lacunes→comparer→prioriser→**mission ODG PROPOSED**→expérimenter isolé→tester→vérifier ODG→
+intégrer (owner/ODG-gated)→mesurer→recommencer. Une recommandation radar devient une mission suivie, jamais un rapport
+perpétuel. Cadence = hebdomadaire minimum + déclenchement à la demande. Le radar ne modifie jamais la gouvernance ni
+n'intègre de code non vérifié (V61). Cycle exécutable : `odg-weekly-improvement-cycle.ts` ; registre de recherche :
+`V67_RADAR_RESEARCH_REGISTER.json` ; couverture risques agentiques : `V67_AGENTIC_RISK_COVERAGE.json`. Aucun moteur parallèle.
+
+## P9 → World Intelligence (V69, 2026-11-10) — évolution, pas nouvelle roadmap
+
+Le programme P9 (radar, parties VI/VIII) évolue vers un centre d'intelligence/recherche/découverte. Audit préalable
+obligatoire (`V69_P9_WORLD_INTELLIGENCE_MATRIX.json`) : 13 fonctions V69 mappées aux modules existants ⇒ 7 PRESENT /
+6 PARTIAL / 0 MISSING — construit sur les mécanismes canoniques (frontier-radar, scientific-research, world-model,
+knowledge-engine, frontier-lab, intelligence-loop, causal-graph…) ; **aucune dixième primitive, aucun moteur parallèle**.
+Gap §4 comblé : `source-intelligence.ts` (grading multi-dimensionnel NON binaire ; typologie 8 niveaux + bandes de
+crédibilité ; non-certifié jamais auto-rejeté, réputé jamais auto-vrai, contradictions conservées ; compose evidence-provenance).
+Contenu externe toujours UNTRUSTED (V61/V67) ; une bande de crédibilité n'autorise jamais l'intégration (ODG décide).
+
+## Chantier « Autonomous Roadmap Execution & Completion Governance » — intégré (2026-11-10)
+
+Intégré comme **formalisation de l'EXISTANT** `ODG_AUTONOMOUS_WORK_PROTOCOL.json` (workflow 0–13, échelle à 9 états
+PROPOSED→AUTHORIZED→EXECUTING→VERIFIED→ACCEPTED, schéma WIC, portes d'approbation) — **pas une nouvelle roadmap, pas de
+dixième primitive**. Matrice de correspondance : `docs/odg/V70_GOVERNANCE_CHANTIER_MATRIX.json`. Les **12 lots A–L** (A compass/continuité,
+B truth-lock, C sélection work-item unique, D contrat WIC, E autorisation externe, F reproduction+cause-racine, G checkpoint,
+H changement minimal confiné write_set, I vérification build+test+régression+runtime+evidence, J rapport structuré, K
+acceptation+commit human-gated, L gouvernance de clôture no-push-sans-approbation) sont chacun rattachés à un composant
+canonique présent + une primitive + un programme P1–P10 + un test + une preuve + un critère de clôture. 12/12 ancrés
+(composant+test présents), 0 doublon ; les exigences déjà satisfaites conservent leur preuve. **L'intégration documentaire
+est le POINT DE DÉPART de l'exécution, pas une clôture.** Rattaché principalement aux programmes P1 (gouvernance), P2
+(autonomie), P7 (livraison), P8 (sécurité), P10 (opération). ODG pilote ; fournisseur borné (V61).
+
+## Pilotage natif de la roadmap par ODG (V76, 2026-11-10)
+
+ODG sélectionne lui-même sa prochaine mission via `runtime/core/mission-priority-selector.ts` (moteur de décision PUR,
+déterministe) : score multi-critères (§4) sur les missions candidates réelles des registres (closure-ledger + radar),
+sélection + justification reproductibles, dépendances non satisfaites DÉFÉRÉES, missions ACCEPTED exclues (no-repeat).
+Driver `odg-roadmap-pilot.ts` : la mission choisie passe par la boucle gouvernée et s'ARRÊTE à PROPOSED sans autorisation
+externe (ODG n'auto-autorise jamais). Le fournisseur technique ne choisit pas la mission. Aucun second orchestrateur,
+aucune dixième primitive (V61). Cycle Boussole→Roadmap→sélection ODG→contrat→autorisation→exécution→preuves→clôture.
+
+## Pilote exécutif & mandat de travail local (V77, 2026-11-10)
+
+Le mandat EXPLICITE du propriétaire pour le travail local réversible (directives V61–V77) est représenté canoniquement par
+`runtime/core/local-work-mandate.ts` : autorisation bornée/révocable/traçable, **authorizedBy=owner, selfAuthored=false**
+(pas d'auto-autorisation d'ODG). Niveau A (local/réversible) autorisé ; Niveau B (sign-off humain) PRÉPARÉ sans acceptation ;
+Niveau C (push/deploy/VPS/dépense/…) REFUSÉ ; inconnu/révoqué ⇒ fail-closed. Le pilote `odg-executive-pilot.ts` enchaîne :
+ODG sélectionne → mandat autorise Niveau A → boucle gouvernée EXÉCUTE de bout en bout → clôture → mission suivante. Résout
+l'arrêt PROPOSED de V76 sans contourner les gates (V61 intact). Aucun second orchestrateur, aucune dixième primitive.
+
+## Moteur de campagne continue (V78, 2026-11-10)
+
+`runtime/core/campaign-engine.ts` consomme une file de missions de taille ARBITRAIRE (plus de plafond codé en dur) :
+ODG sélectionne → mandat propriétaire autorise Niveau A → boucle gouvernée exécute de bout en bout → Niveau C REFUSÉ /
+Niveau B PRÉPARÉ / échec+blocage EN QUARANTAINE → mission suivante. Arrêt uniquement sur QUEUE_EXHAUSTED /
+ALL_REMAINING_DEFERRED / BUDGET_LIMIT / SAFETY_CAP (proportionnel, journalisé). Un blocage isolé n'arrête jamais la
+campagne. Preuve : campagne de 30 missions (`V78_CAMPAIGN_RUN.json`) ⇒ 23 exécutées+acceptées (>4). Réutilise selector +
+mandate + intelligence-loop ; aucun second orchestrateur, aucune dixième primitive ; V61 intact.

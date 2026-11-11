@@ -1,0 +1,78 @@
+{
+  "//": "CTO ADDENDUM V93-C — V44/V93 reconciliation, read-only. STAGING (V44, user-space, non-disruptive, PASS) is NOT production. V93 was CORRECT that :3000 serves the Oct 28 release; V93-C adds the V44 staging mechanism. Go-live = one root action, NOT done. Augments V93/V93-B; secrets redacted; nothing changed.",
+  "vpsInstance": "vps-6d919042 (CONFIRMED matches owner)",
+  "stagingScript": {
+    "present": true,
+    "path": "deploy/odg-stage-and-verify.sh",
+    "nonDisruptive": true,
+    "createsRelease": false,
+    "readmePresent": true,
+    "what": "builds + verifies (build/tsc/contracts) + health (Runtime/Foundation/Pipeline/Brain); restarts nothing; creates no release; activates nothing"
+  },
+  "v44Commit": "NOT_MEASURED exactly (script writes no timestamped report); .next build mtime 2026-11-10 13:22:22 UTC corroborates a Nov 10 staging build of the working tree (HEAD-era)",
+  "liveState": {
+    "nextOn3000": "listening (serves Oct 28 release)",
+    "edgCoreOn8080": "listening (loopback-only)",
+    "edgCorePidReadable": false,
+    "servedBuildId": "emLgNDocVzOvu6dN3rA-p"
+  },
+  "lifecycle": {
+    "stagingValidated": {
+      "happened": true,
+      "proof": "deploy/odg-stage-and-verify.sh (user-space: build:runtime + odg verify[build/tsc/contracts] + odg health[Runtime/Foundation/Pipeline/Brain]); .next built 2026-11-10 13:22:22 UTC; owner-reported PASS",
+      "confidence": "HIGH"
+    },
+    "releasePrepared": {
+      "happened": false,
+      "proof": "the staging script creates NO release dir / NO symlink (non-disruptive); newest release stays Oct 28",
+      "confidence": "HIGH"
+    },
+    "releaseActivated": {
+      "happened": false,
+      "proof": "'current' symlink mtime Oct 28; no activation",
+      "confidence": "HIGH"
+    },
+    "applicationServed": {
+      "happened": true,
+      "which": "the Oct 28 release (e84a0cf2)",
+      "proof": ":3000 health buildId=emLgNDocVzOvu6dN3rA-p = current(Oct28)",
+      "confidence": "HIGH"
+    },
+    "productionGoLive": {
+      "happened": false,
+      "proof": "go-live = the ONE root action (deploy/README.md); needs ROOT; owner reports AWAITING; no root used",
+      "confidence": "HIGH"
+    }
+  },
+  "security": {
+    "publicListeners": "0.0.0.0:22 [::]:22",
+    "onlySshPublic": true,
+    "loopbackOnly": {
+      "edgCore8080": true,
+      "next3000": true,
+      "ollama11434": true
+    },
+    "rootActionsNotDone": [
+      "SSH hardening (root) — NOT done",
+      "production go-live / final activation (root) — NOT done"
+    ],
+    "noChange": [
+      "no firewall change",
+      "no SSH/TLS/domain change",
+      "no production service restart"
+    ]
+  },
+  "v93Reconciliation": {
+    "v93ProductionClaim": "deployed :3000 = Oct 28 (e84a0cf2)",
+    "verdict": "CONFIRMED CORRECT — not a confusion",
+    "augmentation": "V93/V93-B did not surface the V44 STAGING-VERIFY run (user-space PASS, Nov 10). Added here. No correction to the production=Oct28 conclusion; the staging PASS does NOT imply go-live.",
+    "oldEvidencePreserved": true
+  },
+  "impact": {
+    "runbook": "STRENGTHENED — the stage-and-verify step is a known, tested, PASSING user-space gate; go-live remains the ONE root action (OWNER_GATED)",
+    "preconditions": "no flip — EXECUTABLE_DEPLOYMENT_PLAN already MET; this confirms the staging step; go-live stays owner/root-gated",
+    "security": "only SSH:22 public; edg-core/next/ollama loopback-only; no firewall/SSH/TLS/domain change; root hardening + go-live NOT done"
+  },
+  "honestConclusion": "vps-6d919042 confirmed. V44 (Nov 10) ran deploy/odg-stage-and-verify.sh → PASS: a USER-SPACE, NON-DISRUPTIVE staging verify (build+tsc+contracts+Runtime/Foundation/Pipeline/Brain health) that created NO release, swapped NO symlink and restarted NO service. Production (:3000) still serves the Oct 28 release emLgNDocVzOvu6dN3rA-p; edg-core:8080 is loopback-only. Go-live and SSH hardening both need ROOT and were NOT done. V93's production=Oct28 was CORRECT (not a confusion); V93-C augments it with the staging run. The Oct 28 gap is explained: all Nov work was user-space (dev + staging-verify + timer); production activation awaits one root action. Nothing was changed on the VPS.",
+  "invariant": "staging ≠ release ≠ activation ≠ served-app ≠ production go-live; a staging PASS does not imply go-live; read-only; secrets redacted; V93 production conclusion confirmed (not erased); go-live + SSH hardening remain ROOT/owner-gated and NOT done."
+}

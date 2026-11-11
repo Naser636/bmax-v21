@@ -1,0 +1,73 @@
+{
+  "//": "CTO V88 §7/§10/§15 — incremental test selection on REAL repo changes. test-COUNT reduction is measured deterministically from change-impact-graph; wall-clock is NOT_MEASURED (would require executing both sets). A transversal/critical change (permission/inspector/contract) escalates depth and selects a broader set — correctly NOT minimized below the mandatory perimeter.",
+  "fullGateSuites": 482,
+  "cases": [
+    {
+      "file": "runtime/core/resource-meter.ts",
+      "kind": "function",
+      "desc": "isolated leaf function change (L1) — expect genuine reduction",
+      "depthLevel": 1,
+      "widened": false,
+      "fullSuite": false,
+      "affectedTests": 1,
+      "selectorRecommendation": "TARGETED",
+      "selectorSpeedup": 985,
+      "testsSelected": 1,
+      "fullGate": 482,
+      "reductionRatio": 0.9979,
+      "overall": "VALIDATED_NOW"
+    },
+    {
+      "file": "runtime/core/action-gate.ts",
+      "kind": "permission",
+      "desc": "permission/authority (critical, L4)",
+      "depthLevel": 4,
+      "widened": true,
+      "fullSuite": true,
+      "affectedTests": 985,
+      "selectorRecommendation": "FULL_SUITE",
+      "selectorSpeedup": null,
+      "testsSelected": 482,
+      "fullGate": 482,
+      "reductionRatio": 0,
+      "overall": "VALIDATED_NOW"
+    },
+    {
+      "file": "runtime/core/inspector-meta-validation.ts",
+      "kind": "inspector",
+      "desc": "inspector change ⇒ re-meta-validate (L4)",
+      "depthLevel": 4,
+      "widened": true,
+      "fullSuite": true,
+      "affectedTests": 1,
+      "selectorRecommendation": "TARGETED",
+      "selectorSpeedup": 985,
+      "testsSelected": 482,
+      "fullGate": 482,
+      "reductionRatio": 0,
+      "overall": "VALIDATED_NOW"
+    },
+    {
+      "file": "runtime/core/inspection-boundary.ts",
+      "kind": "contract",
+      "desc": "shared contract (transversal, L3)",
+      "depthLevel": 3,
+      "widened": true,
+      "fullSuite": true,
+      "affectedTests": 2,
+      "selectorRecommendation": "TARGETED",
+      "selectorSpeedup": 492.5,
+      "testsSelected": 482,
+      "fullGate": 482,
+      "reductionRatio": 0,
+      "overall": "VALIDATED_NOW"
+    }
+  ],
+  "measuredReduction": "test-COUNT only (deterministic from the dependency graph)",
+  "notMeasured": [
+    "wall-clock duration before/after (requires executing both sets)",
+    "compute cost in tokens/CPU for a live run"
+  ],
+  "honestConclusion": "For an ISOLATED function change, incremental selection runs the impacted-test set (far below the 482-suite gate). For TRANSVERSAL/CRITICAL changes (permission/inspector/contract), depth escalates to L3/L4 and the selected set is deliberately broader — the engine never minimizes below the mandatory perimeter. Reduction is measured by test COUNT from the real dependency graph; wall-clock is honestly NOT_MEASURED here.",
+  "invariant": "only affected tests selected; transversal/critical changes keep the broad mandatory perimeter (no under-minimization); reduction measured from the graph, not fabricated; wall-clock declared NOT_MEASURED."
+}

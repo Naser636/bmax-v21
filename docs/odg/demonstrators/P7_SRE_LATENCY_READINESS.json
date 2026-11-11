@@ -1,0 +1,72 @@
+{
+  "//": "CTO V51 P7 E4 demonstrator. SYNTHETIC inputs. Reuses the P7 guard + O1/O2. E4 != cert != sale.",
+  "report": {
+    "metier": "P7",
+    "title": "SRE / Performance Readiness",
+    "status": "READINESS — latency summarized (n=25)",
+    "summary": "latency-measure over 25 samples ⇒ {\"measurable\":true,\"reason\":null,\"n\":25,\"minMs\":50,\"medianMs\":70,\"p95Ms\":93.99999999999999,\"maxMs\":95,\"uncertainty\":{\"minSampleN\":20,\"generalizable\":true}}",
+    "controls": [
+      {
+        "name": "latency-summary",
+        "status": "COMPUTED",
+        "detail": "{\"measurable\":true,\"reason\":null,\"n\":25,\"minMs\":50,\"medianMs\":70,\"p95Ms\":93.99999999999999,\"maxMs\":95,\"uncertainty\":{\"mi"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "INFO",
+        "detail": "p50/p95/p99 computed; a sample below minN is refused (fail-closed)",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "compare p99 to the SLO target",
+      "collect ≥ minN samples before trusting percentiles"
+    ],
+    "limits": [
+      "SYNTHETIC inputs (no client data)",
+      "readiness assessment, NOT a certification / sale / client-validated (E5)",
+      "ODG maturity L2/L3, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the result from the same inputs",
+      "evidence digest independently verifiable via evidence-provenance"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "latency percentiles computed",
+          "basis": "PROVEN",
+          "sourceRef": null
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 0,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "d5ec5517462ac66f2f0b34dcf70b6000f417bea82ef0d8f1b231c89285ba4458",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "d5ec5517462ac66f2f0b34dcf70b6000f417bea82ef0d8f1b231c89285ba4458",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 1,
+        "proven": 1,
+        "nonProven": 0,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

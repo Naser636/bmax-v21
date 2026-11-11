@@ -1,0 +1,256 @@
+{
+  "//": "CTO V87 §5/§6 — architecture census from the REAL repo. present=file exists; wired=has an inbound non-test caller; tested=a .test.ts references it. present≠wired≠tested≠validated (a doc reference is not integration). This is a presence+wiring census, NOT per-component functional validation (that is each suite's job).",
+  "coreModuleCount": 486,
+  "coreTestCount": 602,
+  "pipeline": {
+    "components": [
+      {
+        "module": "action-gate",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 20,
+        "tested": true
+      },
+      {
+        "module": "inspection-boundary",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 3,
+        "tested": true
+      },
+      {
+        "module": "inspected-execution",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 2,
+        "tested": true
+      },
+      {
+        "module": "inspected-paths",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 2,
+        "tested": true
+      },
+      {
+        "module": "local-work-mandate",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 5,
+        "tested": true
+      },
+      {
+        "module": "evidence-qualifier",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 5,
+        "tested": true
+      },
+      {
+        "module": "inspector-meta-validation",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 3,
+        "tested": true
+      },
+      {
+        "module": "evaluator-independence",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 6,
+        "tested": true
+      },
+      {
+        "module": "champion-challenger-arbiter",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 2,
+        "tested": true
+      },
+      {
+        "module": "regulatory-assurance",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 11,
+        "tested": true
+      },
+      {
+        "module": "excellence-gate",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 6,
+        "tested": true
+      },
+      {
+        "module": "excellence-policy",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 15,
+        "tested": true
+      },
+      {
+        "module": "audit-log",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 15,
+        "tested": true
+      },
+      {
+        "module": "mission-scheduler",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 7,
+        "tested": true
+      },
+      {
+        "module": "campaign-engine",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 6,
+        "tested": true
+      },
+      {
+        "module": "intelligence-loop",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 12,
+        "tested": true
+      },
+      {
+        "module": "capability-executors",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 9,
+        "tested": true
+      },
+      {
+        "module": "coding-executor",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 3,
+        "tested": true
+      },
+      {
+        "module": "engineering-executor",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 2,
+        "tested": true
+      },
+      {
+        "module": "patch-executor",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 11,
+        "tested": true
+      },
+      {
+        "module": "checkpoint-engine",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 11,
+        "tested": true
+      },
+      {
+        "module": "campaign-closure-ledger",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 3,
+        "tested": true
+      },
+      {
+        "module": "roadmap-manager",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 4,
+        "tested": true
+      }
+    ],
+    "present": 23,
+    "wired": 23,
+    "tested": 23,
+    "total": 23
+  },
+  "primitives": {
+    "components": [
+      {
+        "primitive": "IDENTITY",
+        "module": "root-of-trust",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 11,
+        "tested": true
+      },
+      {
+        "primitive": "STATE",
+        "module": "runtime-model",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 4,
+        "tested": true
+      },
+      {
+        "primitive": "CONTRACT",
+        "module": "mission-contract-factory",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 11,
+        "tested": true
+      },
+      {
+        "primitive": "POLICY",
+        "module": "action-gate",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 20,
+        "tested": true
+      },
+      {
+        "primitive": "RESOLVER",
+        "module": "capability-executors",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 9,
+        "tested": true
+      },
+      {
+        "primitive": "EXECUTOR",
+        "module": "engineering-executor",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 2,
+        "tested": true
+      },
+      {
+        "primitive": "EVIDENCE",
+        "module": "evidence-provenance",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 46,
+        "tested": true
+      },
+      {
+        "primitive": "RECOVERY",
+        "module": "checkpoint-engine",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 11,
+        "tested": true
+      },
+      {
+        "primitive": "ALLOCATOR",
+        "module": "p12-weighted-fair-share-scheduler",
+        "present": true,
+        "wired": true,
+        "inboundCallers": 2,
+        "tested": true
+      }
+    ],
+    "present": 9,
+    "total": 9
+  },
+  "metierModulesPresent": 23,
+  "absentComponents": [],
+  "honestConclusion": "Pipeline (§6): 23/23 present, 23 wired (inbound caller), 23 tested. 9 primitives: 9/9 present. No essential pipeline/primitive component is absent. Present≠wired≠validated — each component's functional validation remains its own suite's responsibility; this census proves integration wiring, not operational correctness.",
+  "invariant": "census from source (present/wired/tested distinguished); a documentary reference is never counted as integration; absence reported honestly."
+}

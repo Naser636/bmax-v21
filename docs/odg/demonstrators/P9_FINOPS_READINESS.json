@@ -1,0 +1,91 @@
+{
+  "//": "CTO V50 P9 E4 FinOps readiness. SYNTHETIC inputs. ESTIMATED costs, not OBSERVED. Reuses cost-engine + O1/O2.",
+  "total": 1770,
+  "budget": 2500,
+  "withinBudget": true,
+  "report": {
+    "metier": "P9",
+    "title": "FinOps / Cloud-Cost Readiness",
+    "status": "READINESS — monthly estimate €1770 vs budget €2500 (within)",
+    "summary": "Estimated monthly cloud cost €1770 across 3 resources (compute/storage/egress) from DECLARED rates (ESTIMATED, not metered). Budget €2500 ⇒ within budget.",
+    "controls": [
+      {
+        "name": "Cost estimate (cost-engine)",
+        "status": "COMPUTED",
+        "detail": "compute_hr:€250, egress_gb:€720, storage_gb:€800"
+      },
+      {
+        "name": "Budget check",
+        "status": "WITHIN",
+        "detail": "€1770 vs €2500"
+      },
+      {
+        "name": "Anomaly scan",
+        "status": "RUN",
+        "detail": "0 flagged"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "MEDIUM",
+        "detail": "storage_gb is €800 (>30% of budget) — optimization candidate",
+        "basis": "ESTIMATED"
+      }
+    ],
+    "recommendations": [
+      "right-size the largest cost driver",
+      "set a budget alert at 80% run-rate (cost-engine.checkBudget)",
+      "re-run on OBSERVED metering for a precise figure"
+    ],
+    "limits": [
+      "costs are ESTIMATED from DECLARED rates, not OBSERVED metering",
+      "readiness assessment, NOT a certified cost audit",
+      "ODG maturity L2, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the estimate from the same inputs",
+      "evidence digest independently verifiable"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "monthly estimate €1770 (3 resources)",
+          "basis": "ESTIMATED",
+          "sourceRef": "P9_FINOPS_READINESS.json"
+        },
+        {
+          "claim": "budget check vs €2500",
+          "basis": "SIMULATED",
+          "sourceRef": "P9_FINOPS_READINESS.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 0,
+        "OBSERVED": 0,
+        "ESTIMATED": 1,
+        "SIMULATED": 1,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "0780290e505bdd63eea01505b08cebf51bdb8d0b1bdbdd8ddee51c1532fe8418",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "0780290e505bdd63eea01505b08cebf51bdb8d0b1bdbdd8ddee51c1532fe8418",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 2,
+        "proven": 0,
+        "nonProven": 2,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

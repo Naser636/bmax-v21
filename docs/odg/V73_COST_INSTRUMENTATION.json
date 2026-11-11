@@ -1,0 +1,58 @@
+{
+  "//": "CTO V73 Lot A — cost instrumentation on a real scheduler run. OBSERVED: wall/cpu/memory. NOT_MEASURED: model-calls/tokens/monetary (no local meter — not fabricated). Lifts the duration dimension of RAD-M02 from NOT_MEASURED to OBSERVED. Reuses resource-meter + scheduler; no new engine.",
+  "measuredRun": "autonomy-persistence.runAutonomyCycle over a 12-mission dependency chain, 5 repetitions",
+  "observed": {
+    "wallMs": {
+      "value": 2,
+      "unit": "ms",
+      "basis": "OBSERVED"
+    },
+    "cpuUserMs": {
+      "value": 1.639,
+      "unit": "ms",
+      "basis": "OBSERVED"
+    },
+    "cpuSystemMs": {
+      "value": 0.094,
+      "unit": "ms",
+      "basis": "OBSERVED"
+    },
+    "rssBytes": {
+      "value": 113422336,
+      "unit": "bytes",
+      "basis": "OBSERVED"
+    },
+    "heapUsedDeltaBytes": {
+      "value": 282232,
+      "unit": "bytes",
+      "basis": "OBSERVED"
+    }
+  },
+  "reproducibility": {
+    "wallMsMin": 1,
+    "wallMsMedian": 2,
+    "wallMsMax": 7,
+    "runs": 5,
+    "note": "wall-clock varies run-to-run (OS scheduling); the MEASUREMENT is reproducible, the value is a bounded range"
+  },
+  "notMeasured": {
+    "modelCalls": {
+      "value": null,
+      "basis": "NOT_MEASURED",
+      "reason": "no model-call meter in a local pure-compute run"
+    },
+    "tokens": {
+      "value": null,
+      "basis": "NOT_MEASURED",
+      "reason": "no token meter locally"
+    },
+    "monetaryEur": {
+      "value": null,
+      "basis": "NOT_MEASURED",
+      "reason": "no measured consumption × reliable tariff ⇒ never fabricated"
+    }
+  },
+  "liftsNotMeasured": "RAD-M02/V68 duration dimension: NOT_MEASURED → OBSERVED (wall/cpu/memory). Compute-cost in tokens/€ stays NOT_MEASURED (honest).",
+  "honestConclusion": "Real resource instrumentation applied to the scheduler: wall-clock (1–7ms over 5 runs), CPU and memory OBSERVED; model-calls/tokens/monetary remain NOT_MEASURED (no local meter — never fabricated). Only genuinely-measurable dimensions were lifted from NOT_MEASURED.",
+  "invariant": "OBSERVED only where the OS reports a real value; tokens/€ never fabricated (NOT_MEASURED with cause); a measured value may vary while the measurement stays reproducible."
+}

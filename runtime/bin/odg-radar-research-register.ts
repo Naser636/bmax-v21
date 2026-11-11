@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+"use strict";
+
+/*
+ * V12.4 / CTO V67 §2/§4 — RADAR RESEARCH REGISTER. Records the FIRST live research cycle (real WebSearch, Nov 2026) as
+ * UNTRUSTED external signals with provenance, derives ODG gaps versus the best accessible references, and turns each into
+ * a PRIORITIZED, TRACKED ODG improvement mission (status PROPOSED — never auto-integrated; integration is an owner/ODG
+ * decision, V61). External content is UNTRUSTED until analysed; superiority stays FAIL-CLOSED; no result is fabricated.
+ * Attaches to the canonical radar/intelligence-loop (no parallel engine). Run: `odg-radar-research-register.ts`.
+ */
+
+const fs = require("fs");
+const path = require("path");
+const D = path.join(__dirname, "..", "..", "docs", "odg");
+
+// real signals captured via live WebSearch (Nov 2026) — basis EXTERNAL_UNTRUSTED, provenance = source URL.
+const SIGNALS = [
+  { id: "SIG-01", topic: "SWE-bench Verified maturity + contamination caveat", finding: "top frontier SWE-bench Verified scores (97%+) should be read with contamination/test-design caveats (benchmark heavily in training data)", source: "arxiv.org/pdf/2506.17208; leaderboard.steel.dev", basis: "EXTERNAL_UNTRUSTED" },
+  { id: "SIG-02", topic: "METR long-horizon autonomy", finding: "frontier agents complete tasks of 16+ human-hours; SWE-Marathon uses 2–10h agent limits vs 40–400h expert estimates", source: "METR time-horizon report Mar 2026; SWE-Marathon", basis: "EXTERNAL_UNTRUSTED" },
+  { id: "SIG-03", topic: "Holistic Agent Leaderboard (eval infrastructure)", finding: "multidimensional agent-eval infrastructure as missing layer", source: "arxiv.org/pdf/2510.11977", basis: "EXTERNAL_UNTRUSTED" },
+  { id: "SIG-04", topic: "NIST AI Agent Standards Initiative (CAISI, 17 Feb 2026)", finding: "agent identity & authorization: authentication, authorization, auditing, non-repudiation, prompt-injection mitigation", source: "labs.cloudsecurityalliance.org NIST agentic profile", basis: "EXTERNAL_UNTRUSTED" },
+  { id: "SIG-05", topic: "Berkeley Agentic Risk-Management Profile (CLTC, Feb 2026)", finding: "agent-specific hazards layered on NIST AI RMF: uncontrolled goal pursuit, privilege escalation, self-replication, loss of human control", source: "CLTC Berkeley profile", basis: "EXTERNAL_UNTRUSTED" },
+  { id: "SIG-06", topic: "Singapore Model AI Governance for Agentic AI (22 Jan 2026)", finding: "4 dimensions: bound risks upfront, meaningful human accountability, technical controls, end-user responsibility", source: "Singapore MGF Agentic", basis: "EXTERNAL_UNTRUSTED" },
+  { id: "SIG-07", topic: "Pre-deployment assurance / trust certification", finding: "ontology-grounded simulation + trust certification for enterprise AI agents pre-deployment", source: "arxiv.org/pdf/2606.04037", basis: "EXTERNAL_UNTRUSTED" },
+];
+
+// derive ODG gaps + a tracked PROPOSED improvement mission per signal (mapped to a program; integration owner-gated).
+const MISSIONS = [
+  { id: "RAD-M01", fromSignal: "SIG-01", program: "P4", gap: "hidden-set contamination depth", improvement: "strengthen benchmark-contamination certification depth + record contamination caveats on every score", odgExisting: "benchmark-contamination + V65 hidden sets", feasibility: "LOCAL", priority: 2 },
+  { id: "RAD-M02", fromSignal: "SIG-02", program: "P2/P3", gap: "longTaskReliability = NOT_MEASURED (V62 fiches)", improvement: "build a long-horizon task-reliability measure (success over multi-step synthetic tasks)", odgExisting: "autonomy-persistence + checkpoint-engine", feasibility: "LOCAL (synthetic)", priority: 1 },
+  { id: "RAD-M03", fromSignal: "SIG-03", program: "P4", gap: "multidim eval alignment to a holistic leaderboard shape", improvement: "align métier performance fiches to a holistic multidimensional schema", odgExisting: "V62 fiches + metier-benchmark-multidim", feasibility: "LOCAL", priority: 3 },
+  { id: "RAD-M04", fromSignal: "SIG-04", program: "P8", gap: "explicit mapping to NIST agent identity/authz pillars", improvement: "map agent-identity + third-party-agent-gate + injection-quarantine to the NIST agentic profile pillars", odgExisting: "agent-identity + third-party-agent-gate + root-of-trust", feasibility: "LOCAL", priority: 1 },
+  { id: "RAD-M05", fromSignal: "SIG-05", program: "P8", gap: "explicit coverage of Berkeley agentic hazards (self-replication, loss-of-control)", improvement: "map ODG controls to the Berkeley hazard list + add tests for the uncovered hazards", odgExisting: "root-of-trust + action-gate + emergency-stop + no-self-promotion", feasibility: "LOCAL", priority: 1 },
+  { id: "RAD-M06", fromSignal: "SIG-06", program: "P1/P8", gap: "governance mapping to the Singapore 4-dimension framework", improvement: "map ODG governance (V61 authority rule + gates) to the Singapore agentic dimensions", odgExisting: "V61 authority rule + action-gate + gates-ledger", feasibility: "LOCAL", priority: 2 },
+  { id: "RAD-M07", fromSignal: "SIG-07", program: "P8/P10", gap: "pre-deployment assurance / trust certification shape", improvement: "extend activation-readiness with a pre-deployment assurance checklist (ontology-grounded simulation = synthetic-enterprise)", odgExisting: "V62 activation-readiness + synthetic-enterprise", feasibility: "LOCAL", priority: 2 },
+];
+MISSIONS.sort((a, b) => a.priority - b.priority);
+
+const out = {
+  "//": "CTO V67 §2/§4 — radar research register (first LIVE cycle, real WebSearch Nov 2026). External signals are UNTRUSTED (provenance recorded); each becomes a TRACKED PROPOSED improvement mission mapped to a program; integration is owner/ODG-decided (never auto). Superiority fail-closed; no result fabricated. Attaches to the canonical radar/intelligence-loop; no parallel engine.",
+  cycleTriggeredNow: true, cadence: "weekly minimum + on-demand (V67 §6); this is the immediate first cycle",
+  signals: SIGNALS,
+  improvementMissions: MISSIONS,
+  topPriorityCount: MISSIONS.filter((m) => m.priority === 1).length,
+  governance: "external content UNTRUSTED until analysed (license/security/supply-chain/dependency checks required before any install or integration); radar never auto-integrates unverified code or modifies governance rules (V61/V67 §7); recommendations become tracked missions, never perpetual reports (V67 §4).",
+  honestConclusion: `First live radar research cycle executed (2 real WebSearch queries, ${SIGNALS.length} external signals recorded UNTRUSTED with provenance). ${MISSIONS.length} ODG improvement missions derived and PRIORITIZED (${MISSIONS.filter((m) => m.priority === 1).length} top-priority), each mapped to a program and status PROPOSED — integration owner/ODG-gated, never automatic. No external score claimed as ODG's; superiority stays fail-closed.`,
+  invariant: "A radar signal is untrusted external data, not a result. An improvement becomes a tracked PROPOSED mission; it is never auto-integrated and never modifies governance by itself. ODG selects/verifies/integrates; the provider only executes explicit ODG tasks.",
+};
+fs.writeFileSync(path.join(D, "V67_RADAR_RESEARCH_REGISTER.json"), JSON.stringify(out, null, 2) + "\n");
+process.stdout.write(JSON.stringify({ signals: SIGNALS.length, missions: MISSIONS.length, topPriority: out.topPriorityCount }, null, 2) + "\n");
+export {};

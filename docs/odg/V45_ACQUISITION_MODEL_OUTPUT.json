@@ -1,0 +1,449 @@
+{
+  "//": "V45.3 reproducible acquisition+profit model. ALL rates SIMULATED (no authorized prospecting ⇒ observedConversion=0). Tests: NET>=500k AND revenue<1M in year 1.",
+  "scenarios": {
+    "prudent": {
+      "assumptionsOnly": true,
+      "observedConversion": 0,
+      "yearRevenue": 133008,
+      "oneOffRev": 115200,
+      "recurringRev": 17808,
+      "newClients": 14,
+      "deliveryDaysDemand": 58,
+      "deliveryFTEneeded": 1,
+      "teamFTE": 2,
+      "opex": 159280,
+      "teamCost": 49000,
+      "marketing": 17280,
+      "frOverhead": 73000,
+      "ebt": -26272,
+      "is": 0,
+      "net": -26272,
+      "ownerPersonalAfterPFU": -26272,
+      "constraint_net500k": false,
+      "constraint_revUnder1M": true,
+      "bothSatisfied": false,
+      "deliveryFeasible": true,
+      "monthly": [
+        {
+          "month": 1,
+          "leads": 40,
+          "qualified": 8,
+          "closed": 0.6,
+          "newClients": 0.6,
+          "oneOff": 4800,
+          "mrr": 0,
+          "revenue": 4800
+        },
+        {
+          "month": 2,
+          "leads": 47,
+          "qualified": 9.5,
+          "closed": 0.71,
+          "newClients": 0.71,
+          "oneOff": 5673,
+          "mrr": 168,
+          "revenue": 5841
+        },
+        {
+          "month": 3,
+          "leads": 55,
+          "qualified": 10.9,
+          "closed": 0.82,
+          "newClients": 0.82,
+          "oneOff": 6545,
+          "mrr": 367,
+          "revenue": 6912
+        },
+        {
+          "month": 4,
+          "leads": 62,
+          "qualified": 12.4,
+          "closed": 0.93,
+          "newClients": 0.93,
+          "oneOff": 7418,
+          "mrr": 596,
+          "revenue": 8014
+        },
+        {
+          "month": 5,
+          "leads": 69,
+          "qualified": 13.8,
+          "closed": 1.04,
+          "newClients": 1.04,
+          "oneOff": 8291,
+          "mrr": 855,
+          "revenue": 9146
+        },
+        {
+          "month": 6,
+          "leads": 76,
+          "qualified": 15.3,
+          "closed": 1.15,
+          "newClients": 1.15,
+          "oneOff": 9164,
+          "mrr": 1145,
+          "revenue": 10309
+        },
+        {
+          "month": 7,
+          "leads": 84,
+          "qualified": 16.7,
+          "closed": 1.25,
+          "newClients": 1.25,
+          "oneOff": 10036,
+          "mrr": 1466,
+          "revenue": 11503
+        },
+        {
+          "month": 8,
+          "leads": 91,
+          "qualified": 18.2,
+          "closed": 1.36,
+          "newClients": 1.36,
+          "oneOff": 10909,
+          "mrr": 1817,
+          "revenue": 12727
+        },
+        {
+          "month": 9,
+          "leads": 98,
+          "qualified": 19.6,
+          "closed": 1.47,
+          "newClients": 1.47,
+          "oneOff": 11782,
+          "mrr": 2199,
+          "revenue": 13981
+        },
+        {
+          "month": 10,
+          "leads": 105,
+          "qualified": 21.1,
+          "closed": 1.58,
+          "newClients": 1.58,
+          "oneOff": 12655,
+          "mrr": 2612,
+          "revenue": 15266
+        },
+        {
+          "month": 11,
+          "leads": 113,
+          "qualified": 22.5,
+          "closed": 1.69,
+          "newClients": 1.69,
+          "oneOff": 13527,
+          "mrr": 3055,
+          "revenue": 16582
+        },
+        {
+          "month": 12,
+          "leads": 120,
+          "qualified": 24,
+          "closed": 1.8,
+          "newClients": 1.8,
+          "oneOff": 14400,
+          "mrr": 3528,
+          "revenue": 17928
+        }
+      ]
+    },
+    "central": {
+      "assumptionsOnly": true,
+      "observedConversion": 0,
+      "yearRevenue": 584341,
+      "oneOffRev": 507387,
+      "recurringRev": 76954,
+      "newClients": 63,
+      "deliveryDaysDemand": 254,
+      "deliveryFTEneeded": 2,
+      "teamFTE": 2,
+      "opex": 218108,
+      "teamCost": 49000,
+      "marketing": 76108,
+      "frOverhead": 73000,
+      "ebt": 366233,
+      "is": 87308,
+      "net": 278924,
+      "ownerPersonalAfterPFU": 195247,
+      "constraint_net500k": false,
+      "constraint_revUnder1M": true,
+      "bothSatisfied": false,
+      "deliveryFeasible": true,
+      "monthly": [
+        {
+          "month": 1,
+          "leads": 120,
+          "qualified": 26.4,
+          "closed": 2.44,
+          "newClients": 2.44,
+          "oneOff": 19515,
+          "mrr": 0,
+          "revenue": 19515
+        },
+        {
+          "month": 2,
+          "leads": 145,
+          "qualified": 32,
+          "closed": 2.96,
+          "newClients": 2.96,
+          "oneOff": 23654,
+          "mrr": 683,
+          "revenue": 24337
+        },
+        {
+          "month": 3,
+          "leads": 171,
+          "qualified": 37.6,
+          "closed": 3.47,
+          "newClients": 3.47,
+          "oneOff": 27794,
+          "mrr": 1511,
+          "revenue": 29305
+        },
+        {
+          "month": 4,
+          "leads": 196,
+          "qualified": 43.2,
+          "closed": 3.99,
+          "newClients": 3.99,
+          "oneOff": 31933,
+          "mrr": 2484,
+          "revenue": 34417
+        },
+        {
+          "month": 5,
+          "leads": 222,
+          "qualified": 48.8,
+          "closed": 4.51,
+          "newClients": 4.51,
+          "oneOff": 36073,
+          "mrr": 3601,
+          "revenue": 39674
+        },
+        {
+          "month": 6,
+          "leads": 247,
+          "qualified": 54.4,
+          "closed": 5.03,
+          "newClients": 5.03,
+          "oneOff": 40212,
+          "mrr": 4864,
+          "revenue": 45076
+        },
+        {
+          "month": 7,
+          "leads": 273,
+          "qualified": 60,
+          "closed": 5.54,
+          "newClients": 5.54,
+          "oneOff": 44352,
+          "mrr": 6271,
+          "revenue": 50623
+        },
+        {
+          "month": 8,
+          "leads": 298,
+          "qualified": 65.6,
+          "closed": 6.06,
+          "newClients": 6.06,
+          "oneOff": 48492,
+          "mrr": 7824,
+          "revenue": 56315
+        },
+        {
+          "month": 9,
+          "leads": 324,
+          "qualified": 71.2,
+          "closed": 6.58,
+          "newClients": 6.58,
+          "oneOff": 52631,
+          "mrr": 9521,
+          "revenue": 62152
+        },
+        {
+          "month": 10,
+          "leads": 349,
+          "qualified": 76.8,
+          "closed": 7.1,
+          "newClients": 7.1,
+          "oneOff": 56771,
+          "mrr": 11363,
+          "revenue": 68134
+        },
+        {
+          "month": 11,
+          "leads": 375,
+          "qualified": 82.4,
+          "closed": 7.61,
+          "newClients": 7.61,
+          "oneOff": 60910,
+          "mrr": 13350,
+          "revenue": 74260
+        },
+        {
+          "month": 12,
+          "leads": 400,
+          "qualified": 88,
+          "closed": 8.13,
+          "newClients": 8.13,
+          "oneOff": 65050,
+          "mrr": 15482,
+          "revenue": 80531
+        }
+      ]
+    },
+    "ambitieux": {
+      "assumptionsOnly": true,
+      "observedConversion": 0,
+      "yearRevenue": 1886430,
+      "oneOffRev": 1638000,
+      "recurringRev": 248430,
+      "newClients": 205,
+      "deliveryDaysDemand": 819,
+      "deliveryFTEneeded": 5,
+      "teamFTE": 5,
+      "opex": 461200,
+      "teamCost": 122500,
+      "marketing": 245700,
+      "frOverhead": 73000,
+      "ebt": 1425230,
+      "is": 352058,
+      "net": 1073173,
+      "ownerPersonalAfterPFU": 751221,
+      "constraint_net500k": true,
+      "constraint_revUnder1M": false,
+      "bothSatisfied": false,
+      "deliveryFeasible": true,
+      "monthly": [
+        {
+          "month": 1,
+          "leads": 300,
+          "qualified": 75,
+          "closed": 7.88,
+          "newClients": 7.88,
+          "oneOff": 63000,
+          "mrr": 0,
+          "revenue": 63000
+        },
+        {
+          "month": 2,
+          "leads": 364,
+          "qualified": 90.9,
+          "closed": 9.55,
+          "newClients": 9.55,
+          "oneOff": 76364,
+          "mrr": 2205,
+          "revenue": 78569
+        },
+        {
+          "month": 3,
+          "leads": 427,
+          "qualified": 106.8,
+          "closed": 11.22,
+          "newClients": 11.22,
+          "oneOff": 89727,
+          "mrr": 4878,
+          "revenue": 94605
+        },
+        {
+          "month": 4,
+          "leads": 491,
+          "qualified": 122.7,
+          "closed": 12.89,
+          "newClients": 12.89,
+          "oneOff": 103091,
+          "mrr": 8018,
+          "revenue": 111109
+        },
+        {
+          "month": 5,
+          "leads": 555,
+          "qualified": 138.6,
+          "closed": 14.56,
+          "newClients": 14.56,
+          "oneOff": 116455,
+          "mrr": 11626,
+          "revenue": 128081
+        },
+        {
+          "month": 6,
+          "leads": 618,
+          "qualified": 154.5,
+          "closed": 16.23,
+          "newClients": 16.23,
+          "oneOff": 129818,
+          "mrr": 15702,
+          "revenue": 145520
+        },
+        {
+          "month": 7,
+          "leads": 682,
+          "qualified": 170.5,
+          "closed": 17.9,
+          "newClients": 17.9,
+          "oneOff": 143182,
+          "mrr": 20246,
+          "revenue": 163428
+        },
+        {
+          "month": 8,
+          "leads": 745,
+          "qualified": 186.4,
+          "closed": 19.57,
+          "newClients": 19.57,
+          "oneOff": 156545,
+          "mrr": 25257,
+          "revenue": 181803
+        },
+        {
+          "month": 9,
+          "leads": 809,
+          "qualified": 202.3,
+          "closed": 21.24,
+          "newClients": 21.24,
+          "oneOff": 169909,
+          "mrr": 30736,
+          "revenue": 200645
+        },
+        {
+          "month": 10,
+          "leads": 873,
+          "qualified": 218.2,
+          "closed": 22.91,
+          "newClients": 22.91,
+          "oneOff": 183273,
+          "mrr": 36683,
+          "revenue": 219956
+        },
+        {
+          "month": 11,
+          "leads": 936,
+          "qualified": 234.1,
+          "closed": 24.58,
+          "newClients": 24.58,
+          "oneOff": 196636,
+          "mrr": 43098,
+          "revenue": 239734
+        },
+        {
+          "month": 12,
+          "leads": 1000,
+          "qualified": 250,
+          "closed": 26.25,
+          "newClients": 26.25,
+          "oneOff": 210000,
+          "mrr": 49980,
+          "revenue": 259980
+        }
+      ]
+    }
+  },
+  "solverNet500k": {
+    "leadsEndNeeded": 650,
+    "newClients": 107,
+    "yearRevenue": 989156,
+    "net": 524972,
+    "revUnder1M": true,
+    "teamFTE": 3,
+    "deliveryFeasible": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "//": "CTO V66 §7 — weekly governed improvement cycle, EXECUTED end-to-end (functional, not documentation). Reuses the single canonical intelligence-loop + radar-gap-analysis; no parallel loop, no new engine. Proves the governance invariant at runtime: no external authorization ⇒ stops at PROPOSED (no self-promotion); with external authorization ⇒ completes 7 stages with a recorded outcome.",
+  "discoveryIntake": {
+    "title": "weekly improvement candidate"
+  },
+  "tickA_unauthorized": {
+    "stoppedAtProposed": true,
+    "stage": "AUTHORIZE",
+    "reason": "not authorized — the cycle stops at PROPOSED (discovery ≠ authorization, no self-promotion)"
+  },
+  "tickB_authorized": {
+    "completed": true,
+    "stagesConnected": [
+      "DISCOVER",
+      "AUTHORIZE",
+      "PLAN",
+      "EXECUTE",
+      "RECORD",
+      "LEARN",
+      "MEASURE"
+    ],
+    "outcome": "SUCCESS",
+    "calibrationQuality": "DEGRADED"
+  },
+  "governanceInvariantHeld": true,
+  "ranEndToEnd": true,
+  "honestConclusion": "The single canonical governed improvement cycle was EXECUTED end-to-end (not described): without external authorization it STOPPED at PROPOSED (no self-promotion = true); with an owner/CTO authorization it completed all 7 stages (true) with outcome SUCCESS. This is the existing intelligence-loop + radar-gap-analysis running — no parallel engine. The weekly cadence is a governed owner-authorized decision, not an automatic self-trigger.",
+  "invariant": "ODG never self-authorizes or self-promotes an improvement: the cycle halts at PROPOSED without an external authorization; integration/validation stays an owner/controller decision. One canonical loop, reused."
+}

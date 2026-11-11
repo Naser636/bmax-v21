@@ -1,0 +1,266 @@
+{
+  "//": "CTO V65 §3/§4 — benchmark execution per métier. ODG-side executed+reproducible via the existing harness over CERTIFIED non-contaminated hidden adversarial sets; ODG-version progression tracked. External competitor benchmarks NAMED but NOT installed/run (no network/spend) — recorded as external dependency, not skipped. World-superiority fail-closed. Reuses metier-benchmark-multidim + benchmark-contamination; no new engine.",
+  "metierCount": 15,
+  "externalReferences": [
+    "SWE-bench",
+    "Terminal-Bench",
+    "OSWorld",
+    "BrowserGym",
+    "GAIA",
+    "BrowseComp",
+    "METR",
+    "HELM",
+    "MLCommons"
+  ],
+  "externalReferenceStatus": "NOT_EXECUTABLE_LOCALLY (no network/no spend) — recorded as EXTERNAL dependency per §3; install only when authorized+compatible",
+  "harnessSummary": {
+    "effectiveRate": 1,
+    "reproducible": true
+  },
+  "results": [
+    {
+      "metier": "P3",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P11",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P9",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P10",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P15",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P1",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P2",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P4",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P5",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P6",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P7",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P8",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P12",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P14",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    },
+    {
+      "metier": "P13",
+      "current": {
+        "effective": true,
+        "reproducible": true,
+        "robust": true
+      },
+      "hiddenSet": {
+        "cases": 4,
+        "nonContaminated": true,
+        "contaminationRate": 0
+      },
+      "progression": "BASELINE_ESTABLISHED (no prior ODG version recorded)",
+      "externalReferenceExecuted": false,
+      "superiorityVsWorld": "NOT DEMONSTRATED — external reference not executed (no network/spend); fail-closed"
+    }
+  ],
+  "hiddenSetsClean": 15,
+  "superiorityDemonstrated": 0,
+  "honestConclusion": "15 métier benchmarks executed ODG-side (effectiveRate 1, reproducible true) over 15/15 CERTIFIED non-contaminated hidden adversarial sets; ODG-version progression = BASELINE_ESTABLISHED (first recorded run). Named external references (SWE-bench/OSWorld/GAIA/METR/HELM/MLCommons…) are NOT installable here (no network/spend) — recorded as external dependency, not skipped. World-superiority NOT demonstrated for any métier (fail-closed).",
+  "invariant": "ODG-side reproducible quality is never world-superiority. Hidden sets are certified non-contaminated before use. An unrunnable external reference is recorded as a dependency, never silently skipped nor substituted as a commercial comparison."
+}

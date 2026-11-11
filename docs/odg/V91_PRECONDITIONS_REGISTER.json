@@ -1,0 +1,108 @@
+{
+  "//": "CTO V91 §4 — canonical 8-precondition register (single source of truth). Fail-closed: nothing declared met on a preparatory document; VPS and 14 owner sign-offs are genuinely owner-gated. Delivery BLOCKED until 8/8 + the critical gate.",
+  "criteria": [
+    {
+      "id": "ROADMAP_EXHAUSTIVE",
+      "definition": "all applicable V12.4 requirements + sub-missions + dependencies covered and local work done or precisely qualified",
+      "evidence": "15/15 métiers VALIDATED; gated parents decomposed (56 local, 14 HUMAN_SIGNOFF)",
+      "inspector": "metier-state + roadmap-decompose",
+      "status": "NOT_MET",
+      "dependencies": [
+        "14 HUMAN_SIGNOFF dossiers (owner)"
+      ],
+      "humanAuth": true,
+      "nextAction": "owner sign-off on the 14 HUMAN_SIGNOFF dossiers; finish remaining LOCAL_TESTING sub-work — NOT met merely because 49 reqs found"
+    },
+    {
+      "id": "INSPECTION_COVERAGE",
+      "definition": "every operational execution path inspected (PRE/POST, fail-closed)",
+      "evidence": "operational WIRED_AND_TESTED 9; residual disclosed",
+      "inspector": "inspection-coverage audit (V86/V87)",
+      "status": "MET",
+      "dependencies": [],
+      "humanAuth": false,
+      "nextAction": "none (met); keep residual raw-entry closure tracked"
+    },
+    {
+      "id": "FULL_GATE",
+      "definition": "full classified test gate green (no FAIL/BLOCKED/NOT_RUN)",
+      "evidence": "full gate green (re-run this cycle); CI re-confirms on push",
+      "inspector": "odg-test-report classifier + CI ci.yml",
+      "status": "MET",
+      "dependencies": [],
+      "humanAuth": false,
+      "nextAction": "none (met); CI enforces on push"
+    },
+    {
+      "id": "GITHUB_AUDIT",
+      "definition": "branch/HEAD/sync/protection/CI/workflows/secrets-presence audited",
+      "evidence": "V87 audit; main protected (enforce_admins + required PR + required check); no deploy workflow; no secrets in workflows",
+      "inspector": "github audit (V87) + release inspection domain E",
+      "status": "MET",
+      "dependencies": [],
+      "humanAuth": false,
+      "nextAction": "none (met)"
+    },
+    {
+      "id": "BACKUP_ROLLBACK",
+      "definition": "backup scope + integrity + PROVEN restorability + rollback order/triggers",
+      "evidence": "recovery point HEAD immutable; 5 stashes + 6 untracked preserved; restorability drill (git worktree checkout verified, non-destructive) PROVEN=true",
+      "inspector": "deployment-plan backup/rollback + restorability drill",
+      "status": "MET",
+      "dependencies": [],
+      "humanAuth": false,
+      "nextAction": "none for git scope (VPS/db restorability stays owner-gated)"
+    },
+    {
+      "id": "VPS_INVENTORY",
+      "definition": "real read-only inventory of services/config/db/TLS/secrets-presence/logs/backups/rollback on the target",
+      "evidence": "NOT performed — no VPS access this cycle; nothing invented (all VPS specifics OWNER_GATED)",
+      "inspector": "deployment-plan VPS chain (all OWNER_GATED)",
+      "status": "NOT_MET",
+      "dependencies": [
+        "owner-granted read-only VPS access"
+      ],
+      "humanAuth": true,
+      "nextAction": "owner grants read-only VPS access ⇒ run the 17-step inventory"
+    },
+    {
+      "id": "INDEPENDENT_RELEASE_INSPECTION",
+      "definition": "a qualified, independent, meta-validated inspection (routed through the V86 boundary) evaluated the release",
+      "evidence": "technicalVerdict=READY_WITH_CONCERNS; inspector qualified=true (blind control rejected); independence=INDEPENDENT; routed through boundary (PRE APPROVED)",
+      "inspector": "release-inspection-v91 (independent) + inspector-meta-validation (V85)",
+      "status": "MET",
+      "dependencies": [],
+      "humanAuth": false,
+      "nextAction": "none (the qualified independent inspection ran); its CONCERNS feed VPS_INVENTORY + ROADMAP_EXHAUSTIVE"
+    },
+    {
+      "id": "EXECUTABLE_DEPLOYMENT_PLAN",
+      "definition": "GitHub/CI→VPS plan from real commands; no invented essential step",
+      "evidence": "GitHub chain 6 locally-executable + 5 owner-gated (real commands); VPS chain all OWNER_GATED (nothing invented)",
+      "inspector": "deployment-plan-v91",
+      "status": "NOT_MET",
+      "dependencies": [
+        "VPS_INVENTORY (for VPS-specific commands)"
+      ],
+      "humanAuth": false,
+      "nextAction": "complete VPS-specific commands after VPS_INVENTORY — GitHub chain is already real/executable"
+    }
+  ],
+  "metCount": 5,
+  "met": [
+    "INSPECTION_COVERAGE",
+    "FULL_GATE",
+    "GITHUB_AUDIT",
+    "BACKUP_ROLLBACK",
+    "INDEPENDENT_RELEASE_INSPECTION"
+  ],
+  "notMet": [
+    "ROADMAP_EXHAUSTIVE",
+    "VPS_INVENTORY",
+    "EXECUTABLE_DEPLOYMENT_PLAN"
+  ],
+  "readyToDeliver": false,
+  "deliveryDecision": "NOT_READY — 3 criteria open: ROADMAP_EXHAUSTIVE, VPS_INVENTORY, EXECUTABLE_DEPLOYMENT_PLAN",
+  "honestConclusion": "5/8 preconditions MET (INSPECTION_COVERAGE, FULL_GATE, GITHUB_AUDIT, BACKUP_ROLLBACK, INDEPENDENT_RELEASE_INSPECTION). Open: ROADMAP_EXHAUSTIVE, VPS_INVENTORY, EXECUTABLE_DEPLOYMENT_PLAN — ROADMAP_EXHAUSTIVE needs the 14 owner sign-offs + remaining local work; VPS_INVENTORY needs owner-gated access; EXECUTABLE_DEPLOYMENT_PLAN completes after the VPS inventory. INDEPENDENT_RELEASE_INSPECTION is MET because a qualified, independent, meta-validated inspection actually ran (not a mere report). Delivery stays BLOCKED; no push/deploy.",
+  "invariant": "8 stable criteria; MET only on real evidence + a qualified independent inspector; VPS + owner sign-offs owner-gated; fail-closed delivery until 8/8 + critical gate."
+}

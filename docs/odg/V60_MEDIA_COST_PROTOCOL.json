@@ -1,0 +1,80 @@
+{
+  "//": "CTO V60 §4 — reproducible media cost-comparison PROTOCOL + an ESTIMATED ranking. NO paid call executed, no spend. REAL measurement is owner-gated (existing credits only). Reuses inference-engine + cost-engine; no new cost model. ESTIMATED is never presented as OBSERVED.",
+  "protocol": [
+    "1 fix the perimeter: same prompt/shot spec, same target resolution/duration, same acceptance bar (usable result)",
+    "2 enumerate candidate providers/models + their DECLARED unit pricing (per second / per clip / per image)",
+    "3 define 'usable result' quality gate (independent review; a failed generation is re-run ⇒ counts toward cost)",
+    "4 REAL measurement (OWNER-GATED, existing credits only): meter each provider via live-cost-metering.meterProviderCall with an injected execute — records OBSERVED cost + time per usable result",
+    "5 compute cost-per-usable-result = total spend / accepted outputs (re-runs included)",
+    "6 compare at EQUIVALENT quality (never trade quality for a cheaper number)",
+    "7 rank via inference-engine.compareProviders + cost-engine.compareScenarios (deterministic)",
+    "8 record basis per figure (REAL/RECORDED vs ESTIMATED/SIMULATED); never present ESTIMATED as OBSERVED"
+  ],
+  "basisLegend": {
+    "REAL": "metered OBSERVED spend via a live authorized call (existing credits)",
+    "RECORDED": "from a prior real test log",
+    "ESTIMATED": "from declared public pricing (this run)",
+    "SIMULATED": "modelled, no pricing source"
+  },
+  "estimatedRanking": [
+    {
+      "provider": "provider-A-video",
+      "unitCostEur": 0.5,
+      "usableYield": 0.8,
+      "grossCalls": 13,
+      "estTotalEur": 6.5,
+      "costPerUsableEur": 0.65,
+      "quality": 0.85,
+      "latencyMs": 60000,
+      "basis": "ESTIMATED"
+    },
+    {
+      "provider": "provider-B-video",
+      "unitCostEur": 0.3,
+      "usableYield": 0.7,
+      "grossCalls": 15,
+      "estTotalEur": 4.5,
+      "costPerUsableEur": 0.45,
+      "quality": 0.8,
+      "latencyMs": 90000,
+      "basis": "ESTIMATED"
+    },
+    {
+      "provider": "provider-C-video",
+      "unitCostEur": 0.9,
+      "usableYield": 0.95,
+      "grossCalls": 11,
+      "estTotalEur": 9.9,
+      "costPerUsableEur": 0.99,
+      "quality": 0.92,
+      "latencyMs": 45000,
+      "basis": "ESTIMATED"
+    }
+  ],
+  "rankedByCostPerUsableAtEquivalentQuality": [
+    {
+      "provider": "provider-B-video",
+      "costPerUsable": 0.45,
+      "quality": 0.8
+    },
+    {
+      "provider": "provider-A-video",
+      "costPerUsable": 0.65,
+      "quality": 0.85
+    },
+    {
+      "provider": "provider-C-video",
+      "costPerUsable": 0.99,
+      "quality": 0.92
+    }
+  ],
+  "cheapestAtQualityBar_0_85": {
+    "provider": "provider-A-video",
+    "costPerUsableEur": 0.65,
+    "quality": 0.85,
+    "basis": "ESTIMATED"
+  },
+  "ownerGatedRealMeasurement": "steps 4–6 require executing paid generations within already-available credits under explicit owner authorization — NOT performed here (no spend, no new API call)",
+  "honestConclusion": "A reproducible cost-per-usable-result protocol is defined and run on ESTIMATED declared pricing (illustrative ranking). No real measurement, no spend, no paid call. Converting ESTIMATED→REAL requires owner-authorized execution within existing credits; ESTIMATED figures are never presented as observed.",
+  "invariant": "Quality is never traded for a cheaper number (comparison at equivalent quality). REAL/RECORDED/ESTIMATED/SIMULATED strictly separated; ESTIMATED never reported as OBSERVED; no spend without owner authorization."
+}

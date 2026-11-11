@@ -1,0 +1,77 @@
+{
+  "//": "CTO V50 P10 E4 AI-Act readiness. SYNTHETIC AI system. INSUFFICIENT_EVIDENCE never PASS. NOT a certification. Reuses ai-assurance-assessment + O1/O2.",
+  "assessmentOk": true,
+  "controls": 1,
+  "insufficient": 0,
+  "report": {
+    "metier": "P10",
+    "title": "AI Governance / AI-Act Readiness",
+    "status": "READINESS — assessed, NOT_CERTIFIED",
+    "summary": "AI-Act assessment of 'CV screening assistant': role classified from DECLARED activities (deny-by-default); 1 controls assessed (0 INSUFFICIENT_EVIDENCE — applicable obligations with no automated test, requiring manual assessment). This is readiness, NOT certification.",
+    "controls": [
+      {
+        "name": "ai-act:role",
+        "status": "NOT_APPLICABLE",
+        "detail": "no qualifying AI-Act activity declared (deny-by-default)"
+      }
+    ],
+    "findings": [],
+    "recommendations": [
+      "complete the manual assessment for each INSUFFICIENT_EVIDENCE obligation family",
+      "prepare the Annex IV technical documentation (reuse ai-act-annex-iv-completeness)",
+      "do NOT claim certification — this is readiness"
+    ],
+    "limits": [
+      "AI-Act role is from DECLARED activities (declared-not-verified)",
+      "INSUFFICIENT_EVIDENCE ≠ non-compliant and ≠ PASS — manual assessment required",
+      "readiness assessment, NOT an ISO/AI-Act certification",
+      "ODG maturity L2, 0 paying clients"
+    ],
+    "validationConditions": [
+      "re-run reproduces the classification from the same declared activities",
+      "evidence digest independently verifiable",
+      "manual-assessment controls completed before any compliance claim"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "AI-Act role classification + 1 controls assessed",
+          "basis": "OBSERVED",
+          "sourceRef": "P10_AIGOV_READINESS.json"
+        },
+        {
+          "claim": "deny-by-default on undeclared activities",
+          "basis": "PROVEN",
+          "sourceRef": "P10_AIGOV_READINESS.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 1,
+        "OBSERVED": 1,
+        "ESTIMATED": 0,
+        "SIMULATED": 0,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "79b648da684ecf0bf0690236161d5f2c466a6bf612fe878b8ca1993371c74ce2",
+        "sourceCommit": "5ed5f55ca752dda81d9354ea95cddcc88f019ce8",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "79b648da684ecf0bf0690236161d5f2c466a6bf612fe878b8ca1993371c74ce2",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 2,
+        "proven": 1,
+        "nonProven": 1,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

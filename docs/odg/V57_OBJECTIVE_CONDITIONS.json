@@ -1,0 +1,168 @@
+{
+  "//": "CTO V57 §8 — objective necessary-conditions ledger. REQUIRED (from the V55 economic model) vs OBSERVED (0 clients/conversion/cash). Each condition carries a basis and whether it is owner/external-gated. Reuses V55 scenarios; no new engine. Objectives recorded with gaps, never lowered; a math requirement is never a commercial result.",
+  "generatedFrom": [
+    "V55_ECONOMIC_SCENARIOS.json",
+    "V55_15_METIERS_GLOBAL_SCORECARD.json"
+  ],
+  "canonicalObjectives": {
+    "minimum": "€5,000,000 NET (12 months)",
+    "ambition": "€500,000,000 NET (12 months)"
+  },
+  "observedReality": {
+    "payingClients": 0,
+    "observedConversionRate": 0,
+    "signedContracts": 0,
+    "cashCollected": 0,
+    "externalFinancing": 0,
+    "references": 0
+  },
+  "minimum_5M_net": {
+    "objective": "min-5M-net",
+    "targetNet": 5000000,
+    "requiredRevenue": 22203333,
+    "requiredContracts": 445,
+    "requiredHeadcount": 21,
+    "requiredWorkingCapital": 5550833,
+    "requiredCapital": 5865833,
+    "feasibility": "HYPOTHESIS ONLY — observed conversion = 0 clients; mathematically defined ≠ commercially accessible",
+    "conditions": [
+      {
+        "condition": "paying clients signed",
+        "required": 445,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner/market (requires real sales — prospecting NOT authorized here)"
+      },
+      {
+        "condition": "observed conversion rate > 0",
+        "required": ">0 (sustained)",
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "market (no conversion observed yet)"
+      },
+      {
+        "condition": "signed contracts",
+        "required": 445,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner (contracts NOT authorized here)"
+      },
+      {
+        "condition": "average basket (€)",
+        "required": 50000,
+        "observed": null,
+        "basis": "HYPOTHESIS",
+        "gated": "market (pricing unvalidated — 0 quotes accepted)"
+      },
+      {
+        "condition": "delivery capacity (FTE)",
+        "required": 21,
+        "observed": "ODG-native automation (no payroll FTE)",
+        "basis": "HYPOTHESIS",
+        "gated": "owner (hiring NOT authorized; automation must cover the gap)"
+      },
+      {
+        "condition": "working capital (€)",
+        "required": 5550833,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner/financing (no cash collected; financing NOT authorized here)"
+      },
+      {
+        "condition": "required capital (€)",
+        "required": 5865833,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner/financing"
+      },
+      {
+        "condition": "demonstrated world-superiority (credibility lever)",
+        "required": "independent benchmark per métier",
+        "observed": "0 demonstrated",
+        "basis": "OBSERVED",
+        "gated": "controller + head-to-head reference execution (V57 §2: designed+executed ODG-side, superiority fail-closed 0)"
+      }
+    ],
+    "openObservedGaps": 6,
+    "verdict": "NOT MET — necessary conditions are unmet (0 clients / 0 conversion / 0 cash); objective recorded, NOT lowered; mathematically-defined ≠ commercially-accessible"
+  },
+  "ambition_500M_net": {
+    "objective": "ambition-500M-net",
+    "targetNet": 500000000,
+    "requiredRevenue": 2222203333,
+    "requiredContracts": 4445,
+    "requiredHeadcount": 203,
+    "requiredWorkingCapital": 555550833,
+    "requiredCapital": 558595833,
+    "feasibility": "INFEASIBLE in 12 months from €0 clients (~1000× the plausible range, per V51/V52); objective recorded, NOT lowered; mathematically defined ≠ commercially accessible",
+    "conditions": [
+      {
+        "condition": "paying clients signed",
+        "required": 4445,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner/market (requires real sales — prospecting NOT authorized here)"
+      },
+      {
+        "condition": "observed conversion rate > 0",
+        "required": ">0 (sustained)",
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "market (no conversion observed yet)"
+      },
+      {
+        "condition": "signed contracts",
+        "required": 4445,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner (contracts NOT authorized here)"
+      },
+      {
+        "condition": "average basket (€)",
+        "required": 500000,
+        "observed": null,
+        "basis": "HYPOTHESIS",
+        "gated": "market (pricing unvalidated — 0 quotes accepted)"
+      },
+      {
+        "condition": "delivery capacity (FTE)",
+        "required": 203,
+        "observed": "ODG-native automation (no payroll FTE)",
+        "basis": "HYPOTHESIS",
+        "gated": "owner (hiring NOT authorized; automation must cover the gap)"
+      },
+      {
+        "condition": "working capital (€)",
+        "required": 555550833,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner/financing (no cash collected; financing NOT authorized here)"
+      },
+      {
+        "condition": "required capital (€)",
+        "required": 558595833,
+        "observed": 0,
+        "basis": "OBSERVED",
+        "gated": "owner/financing"
+      },
+      {
+        "condition": "demonstrated world-superiority (credibility lever)",
+        "required": "independent benchmark per métier",
+        "observed": "0 demonstrated",
+        "basis": "OBSERVED",
+        "gated": "controller + head-to-head reference execution (V57 §2: designed+executed ODG-side, superiority fail-closed 0)"
+      }
+    ],
+    "openObservedGaps": 6,
+    "verdict": "NOT MET — necessary conditions are unmet (0 clients / 0 conversion / 0 cash); objective recorded, NOT lowered; mathematically-defined ≠ commercially-accessible"
+  },
+  "concreteLevers": [
+    "convert the 3 prepared pilots (P3/P9/P10) into real E5 engagements (owner authorization + real client required)",
+    "run head-to-head reference benchmarks (V57 §2) to earn a credible superiority claim (controller-confirmed)",
+    "validate pricing with real accepted quotes (currently 0) to replace the HYPOTHESIS basket",
+    "cover delivery capacity by automation (V55 §5) rather than hiring (hiring not authorized)",
+    "secure working capital / financing (owner-gated) before scaling contract volume"
+  ],
+  "honestConclusion": "Neither objective's necessary conditions are met: 0 paying clients, 0 observed conversion, 0 cash, 0 demonstrated superiority. €5M net needs ~445 contracts; €500M net needs ~4445 (INFEASIBLE in 12 months from €0). Objectives recorded with explicit gaps and concrete levers; NOT lowered, NOT declared feasible.",
+  "invariant": "A required value is never an observed value. Objectives are confronted with observed reality (0) and kept at their canonical level with documented gaps. No client/contract/conversion is fabricated."
+}

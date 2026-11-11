@@ -1,0 +1,252 @@
+{
+  "//": "CTO V56 §2 — V12.4 FULL COVERAGE MATRIX. Read-only aggregation: structural §1–§122 coverage proof (v124-section-coverage) + the per-part status SSOT (V12.4_SECTION_TRACEABILITY_MATRIX.md) classified into V56 buckets. NO re-derivation of section status (matrix remains SSOT); NO parallel roadmap.",
+  "structuralCoverage": {
+    "ok": true,
+    "totalSections": 122,
+    "blocks": 32,
+    "covered": 122,
+    "note": "§1–§122 covered exactly once (fail-closed) — structural completeness, NOT per-section functional completion"
+  },
+  "partXXXII": {
+    "part": "XXXII §123–§130",
+    "title": "Commercialisation & Acquisition",
+    "bucket": "NOT_VALIDATED",
+    "note": "proposed directing referential (V50); commercial hypotheses unproven (0 clients)"
+  },
+  "partsParsed": 32,
+  "parts": [
+    {
+      "part": "Préambule §1–§4",
+      "title": "Object, truth levels, version preservation, validation status",
+      "matrixStatus": "DOCUMENTED_NOT_VERIFIED",
+      "bucket": "NOT_VALIDATED",
+      "evidenceExcerpt": "V12.4 now preserved in-repo; truth-level discipline already practiced (compass, closure-register)"
+    },
+    {
+      "part": "I §5–§6",
+      "title": "Vision, fundamental mission (26 capabilities)",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "discover/experiment/verify/learn/consolidate demonstrated via Frontier lots (FR-01..08); most of the 26 are E1–E2"
+    },
+    {
+      "part": "II §7–§8",
+      "title": "24 absolute invariants, conservation rule",
+      "matrixStatus": "PRESENT_AND_PROVEN (structural)",
+      "bucket": "DONE",
+      "evidenceExcerpt": "9 primitives / 15 métiers / 4 campaigns / no-duplication verified (`primitive-validation.ts`, coherence audit)"
+    },
+    {
+      "part": "III §9–§15",
+      "title": "Authority, **G0**, Root of Trust, G1/G2/G3, 9 primitives, permissions R0–R3, decisional autonomy",
+      "matrixStatus": "PARTIALLY_BUILT; G0 §11 now PRESENT_AND_PROVEN",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "9 primitives PRESENT_AND_PROVEN; `action-gate` = POLICY. G0 Root-of-Trust §11.1/§11.2 tamper tests: PRESENT_AND_PROVEN — `runtime/core/root-of-trust.ts` + 24-as"
+    },
+    {
+      "part": "IV §16–§20",
+      "title": "3-level architecture, physical options, 12 dimensions, 10 cognitive responsibilities, arch contracts",
+      "matrixStatus": "DOCUMENTED_NOT_VERIFIED",
+      "bucket": "NOT_VALIDATED",
+      "evidenceExcerpt": "world-model/cognitive-loop/cognitive-decision/meta-intelligence present; 12 dimensions/10 responsibilities = conceptual coverage, not all enumerated as tested"
+    },
+    {
+      "part": "V §21–§23",
+      "title": "Cognitive loop, World Model (epistemic statuses), Causal Graph",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`world-model.ts` (FACT/HYPOTHESIS/SIMULATION/UNKNOWN statuses, graph), `cognitive-loop.ts`; Causal Graph PARTIAL"
+    },
+    {
+      "part": "VI §24–§28",
+      "title": "Autonomous discovery, discovery pipeline (18 steps), scientific research, competitive intel, tech radar",
+      "matrixStatus": "PARTIALLY_BUILT; LIVE collection now EXECUTED (FR-07 unblocked)",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "Frontier Radar (FR-01) + collection (FR-07 local) + research-ranking; live network now authorized — `radar-realsignal-demonstration.ts` runs a REAL captured web"
+    },
+    {
+      "part": "VII §29–§33",
+      "title": "4 memories, WAKE/CONSOLIDATION/DREAMING/VALIDATION, knowledge integrity, confidentiality, forgetting-prevention",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`memory-taxonomy` (14 families/consolidation/protection), `learning-loop`; reward-gated consolidation added in FR-08 `compounding-loop.ts`; full WAKE/DREAM cycl"
+    },
+    {
+      "part": "VIII §34–§37",
+      "title": "Self-improvement, improvement loop, **evaluator protection**, meta-intelligence",
+      "matrixStatus": "PARTIALLY_BUILT; E2E self-improvement + self-discovery→verifiable-mission PRESEN",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "Série 14-19: `global-improvement-engine` (honest NO_FINDING/NOT_MEASURED/HEALTHY/DEGRADED/UNKNOWN taxonomy) + `self-mission-proposer` (discovered gaps → PROPOSE"
+    },
+    {
+      "part": "IX §38–§42",
+      "title": "Autonomy A1–A5, autonomy measure, mission contract, checkpoints/idempotence, replacement/continuity",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`autonomy-matrix`/`autonomy-measure`, `checkpoint-engine`, `idempotency-guard`, `campaign-controller`; A3+ persistent autonomy DEMONSTRATED (`autonomy-persisten"
+    },
+    {
+      "part": "X §43–§46",
+      "title": "15 professions, nature, responsibility matrix, **recover 11 historical**",
+      "matrixStatus": "ALL 15 (P1–P15) E2/E3 reference projects PRESENT_AND_PROVEN / CONTRADICTION-adja",
+      "bucket": "DONE",
+      "evidenceExcerpt": "Every profession P1–P15 now has a runnable E2+E3 reference project composing an existing guard (NO duplication): P1 characterization-baseline (behaviour-preserv"
+    },
+    {
+      "part": "XI §47–§50",
+      "title": "Multi-agent control plane, roles, validation independence, parallelization",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`agent-factory`/`agent-identity`/`third-party-agent-gate`/`reference-agents`; Builder≠Tester≠Verifier≠Challenger proven in FR-03/04"
+    },
+    {
+      "part": "XII §51–§56",
+      "title": "Source intelligence, defect detection, diagnosis/repair, regression shield, migration, versioning",
+      "matrixStatus": "PRESENT_AND_PROVEN (partial)",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`discovery-engine`, `code-health-service`, `code-review-service`, `repair-workflow`, `build-recovery-engine`, affected-tests"
+    },
+    {
+      "part": "XIII §57–§61",
+      "title": "Experimental protocol, benchmark factory, 10 experiments, statistical validity, superiority",
+      "matrixStatus": "PARTIALLY_BUILT; transversal métier benchmark PRESENT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`frontier-lab` (preregistered hypothesis/baseline), `eval-metrics`/`k-eval`; benchmark factory §58 PRESENT_AND_PROVEN; Série 13-16: 10 genuine métier improvemen"
+    },
+    {
+      "part": "XIV §62–§65",
+      "title": "Agentic security, identity/secrets, resilience, **emergency stop**",
+      "matrixStatus": "PARTIALLY_BUILT; lethal-trifecta session gate PRESENT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`third-party-agent-gate` (OWASP Agentic 2026), `bash-command-governor` (bwrap), `frontier-sandbox` (real OS isolation, FR-05); `lethal-trifecta-gate.ts` (SÉRIE "
+    },
+    {
+      "part": "XV §66–§70",
+      "title": "Traceability, proof-carrying change, software provenance (SLSA), reproducibility, result statuses",
+      "matrixStatus": "PRESENT_AND_PROVEN (partial)",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`evidence-provenance` (SLSA/in-toto-style), `mission-evidence`, `supply-chain-attest`, `sbom-audit-service`; result statuses enforced"
+    },
+    {
+      "part": "XVI §71–§76",
+      "title": "Six dossiers A–F",
+      "matrixStatus": "LEDGERED (honest, fail-closed)",
+      "bucket": "NOT_VALIDATED",
+      "evidenceExcerpt": "`dossier-ledger.ts` enumerates A–F: A (research) seeded by `ODG_GLOBAL_RESEARCH_AND_EXECUTION_READINESS.md`+frontier-prep (PARTIAL); E (reality) = this matrix ("
+    },
+    {
+      "part": "XVII §77–§79",
+      "title": "Seven steps + operational ordering correction",
+      "matrixStatus": "LEDGERED (honest, fail-closed) / DOCUMENTED_NOT_VERIFIED",
+      "bucket": "NOT_VALIDATED",
+      "evidenceExcerpt": "`study-steps-ledger.ts` enumerates 7 steps in contiguous official order 1..7 (§77); records + makes checkable the §78 correction (preservation is TRANSVERSAL — "
+    },
+    {
+      "part": "XVIII §80–§82",
+      "title": "Historical asset recovery, recovery protocol, anti-duplication",
+      "matrixStatus": "PARTIALLY_BUILT / UNKNOWN",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "anti-duplication PRESENT (coherence audit); preservation INVARIANT now behaviourally PROVEN — `preservation-invariant.ts` (read-only) verifies untracked≥404 + s"
+    },
+    {
+      "part": "XIX §83–§87",
+      "title": "Four campaigns C1–C4 + gates",
+      "matrixStatus": "LEDGERED (honest, fail-closed) / PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`campaign-closure-ledger.ts` enumerates C1–C4 with fail-closed `closed` flags (0 closed by fiat): C3 canonical chain DEMONSTRATED_SLICE (FR-06), C2 compounding "
+    },
+    {
+      "part": "XX §88–§89",
+      "title": "Mission cycle, Git/integration",
+      "matrixStatus": "PRESENT_AND_PROVEN",
+      "bucket": "DONE",
+      "evidenceExcerpt": "`campaign-controller`/`campaign-loop`/`odg-campaign-run`; local-commit discipline, no push"
+    },
+    {
+      "part": "XXI §90–§92",
+      "title": "Scorecard, thresholds, forecasts (Brier)",
+      "matrixStatus": "PRESENT (honest, fail-closed)",
+      "bucket": "DONE",
+      "evidenceExcerpt": "`v124-scorecard.ts` aggregates gates-ledger + campaign-closure-ledger + dossier-ledger + failures-register + verified facts into ONE scorecard (§90) with fail-c"
+    },
+    {
+      "part": "XXII §93–§96",
+      "title": "Proof/decision/evidence/change registers",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "closure-register (status), evidence-provenance; ODG-ADR decision register = TO_AUDIT"
+    },
+    {
+      "part": "XXIII §97–§103",
+      "title": "Gates A–G",
+      "matrixStatus": "PARTIALLY_BUILT (ledger present; Gate E slice DEMONSTRATED)",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "`gates-ledger.ts` enumerates A–G (criteria+mechanism+independent-verifier+honest status; no premature PASS). `gate-e-demonstration.ts` (§101) now behaviourally "
+    },
+    {
+      "part": "XXIV §104",
+      "title": "Local-only restrictions",
+      "matrixStatus": "PRESENT_AND_PROVEN",
+      "bucket": "DONE",
+      "evidenceExcerpt": "enforced all session (no VPS/push/sudo/network/secrets); now also machine-checkable via `preservation-invariant.ts` (read-only git, fail-closed)"
+    },
+    {
+      "part": "XXV §105",
+      "title": "Failures register F01–F40",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "many protections exist (F01 independent-verify, F02 Root-of-Trust TO_AUDIT, F09 regression shield, F11 simulation≠real, F14 preservation, F24 provenance, F25 ro"
+    },
+    {
+      "part": "XXVI §106–§107",
+      "title": "Scientific/technical references",
+      "matrixStatus": "PRESENT (research)",
+      "bucket": "DONE",
+      "evidenceExcerpt": "`ODG_GLOBAL_RESEARCH_AND_EXECUTION_READINESS.md` (METR, SWE-bench Pro, OWASP, NIST, DORA, SLSA, OTel, AlphaEvolve, scoring rules) with reliability flags"
+    },
+    {
+      "part": "XXVII §108–§110",
+      "title": "33 deliverables, study/operational closure",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "several deliverables exist (research dossier, this matrix, FRONTIER_V124_PREPARATION, deployment package `deploy/` + ops guide); the full 33 = TO_AUDIT; operati"
+    },
+    {
+      "part": "XXVIII §111–§112",
+      "title": "Order of 7 steps / 4 campaigns",
+      "matrixStatus": "DOCUMENTED_NOT_VERIFIED",
+      "bucket": "NOT_VALIDATED",
+      "evidenceExcerpt": "order recorded; execution partial"
+    },
+    {
+      "part": "XXIX §113–§115",
+      "title": "Execution mandate, method, priorities P0–P8",
+      "matrixStatus": "DOCUMENTED",
+      "bucket": "NOT_VALIDATED",
+      "evidenceExcerpt": "authority model matches repo (ODG orchestrator / Claude provider); P0 preservation honored"
+    },
+    {
+      "part": "XXX §116–§119",
+      "title": "First operational mandate: open Dossier A + preservation + A1–A10 + uncertainty register",
+      "matrixStatus": "PARTIALLY_BUILT",
+      "bucket": "PARTIAL",
+      "evidenceExcerpt": "Dossier A partly seeded (research dossier); uncertainty register = TO_AUDIT (this matrix lists knowns/unknowns)"
+    },
+    {
+      "part": "XXXI §120–§122",
+      "title": "Final decisions, non-negotiable rules, guiding principle",
+      "matrixStatus": "PRESENT_AND_PROVEN (as discipline)",
+      "bucket": "DONE",
+      "evidenceExcerpt": "invariants + no-overclaim + no-G0-bypass + no-self-elevation practiced throughout"
+    }
+  ],
+  "tally": {
+    "DONE": 7,
+    "PARTIAL": 19,
+    "MISSING": 0,
+    "BLOCKED": 0,
+    "NOT_VALIDATED": 6
+  },
+  "honestConclusion": "Of 32 parsed roadmap parts (+ Part XXXII): 7 DONE, 19 PARTIAL, 0 MISSING, 0 BLOCKED, 6 NOT_VALIDATED. Structural §1–§122 coverage is PROVEN exactly-once (122/122); that is structural, not functional completion. Per-section status SSOT remains the traceability matrix. No part is declared DONE merely because a document exists.",
+  "invariant": "Coverage is classified by reading the existing SSOT, never re-asserted. Structural coverage ≠ functional completion. A mission is DONE only when its criteria + evidence + validations hold — a document alone never flips a bucket to DONE."
+}

@@ -1,0 +1,155 @@
+{
+  "//": "CTO V93 §5 — operational runbook. GitHub chain preserved from V91; VPS chain now uses the repo's REAL deploy script scripts/odg-release.sh (verified present) backed by the real V93 inventory. Nothing executed: push/PR/merge + build/verify/activate/rollback are all OWNER_GATED (Level-C). The deploy/rollback mechanism (atomic 'current' symlink + 'previous') is real and observed.",
+  "head": "c530043",
+  "branch": "excellence/v3-wave3-demonstrators-20261101",
+  "releaseScriptPresent": true,
+  "inventoryBacked": true,
+  "github": [
+    {
+      "phase": "github",
+      "step": 1,
+      "name": "state & sync",
+      "precondition": "clean tree on feature branch",
+      "command": "git status --porcelain; git fetch origin; git rev-list --count HEAD..origin/main",
+      "beforeControl": "tree clean",
+      "afterControl": "know behind-main (currently 2 ⇒ rebase/merge before PR to main)",
+      "expectedEvidence": "git status + divergence count",
+      "stopCriterion": "unexpected divergence",
+      "rollbackAction": "none (read-only)",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "phase": "github",
+      "step": 2,
+      "name": "release gate",
+      "precondition": "sync known",
+      "command": "npm run test:report",
+      "beforeControl": "prior gate green",
+      "afterControl": "all suites PASS",
+      "expectedEvidence": "classified gate output (490/490)",
+      "stopCriterion": "any FAIL/BLOCKED/NOT_RUN",
+      "rollbackAction": "none (read-only)",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "phase": "github",
+      "step": 3,
+      "name": "typecheck+build",
+      "precondition": "gate green",
+      "command": "npx tsc --noEmit -p tsconfig.json; npm run build:runtime",
+      "beforeControl": "tsc baseline",
+      "afterControl": "tsc 0 + dist closure built",
+      "expectedEvidence": "tsc exit 0 + dist-closure-manifest",
+      "stopCriterion": "tsc error / build fail",
+      "rollbackAction": "none",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "phase": "github",
+      "step": 4,
+      "name": "push feature branch",
+      "precondition": "gate+tsc+build green",
+      "command": "git push origin excellence/v3-wave3-demonstrators-20261101",
+      "beforeControl": "ff check",
+      "afterControl": "remote branch updated",
+      "expectedEvidence": "push confirmation (ff)",
+      "stopCriterion": "non-ff/rejected",
+      "rollbackAction": "no force-push; investigate",
+      "status": "OWNER_GATED (Level-C)"
+    },
+    {
+      "phase": "github",
+      "step": 5,
+      "name": "PR + CI + merge",
+      "precondition": "pushed",
+      "command": "gh pr create --base main --head excellence/v3-wave3-demonstrators-20261101; (CI ci.yml required) ; gh pr merge",
+      "beforeControl": "main protected (enforce_admins + required PR + required check)",
+      "afterControl": "CI green + merged",
+      "expectedEvidence": "PR checks + merge sha",
+      "stopCriterion": "CI red / protection unmet",
+      "rollbackAction": "close PR; keep main untouched",
+      "status": "OWNER_GATED (Level-C)"
+    }
+  ],
+  "vps": [
+    {
+      "phase": "vps",
+      "step": 1,
+      "name": "build immutable release",
+      "precondition": "merged/target commit chosen",
+      "command": "scripts/odg-release.sh build --commit <sha>",
+      "beforeControl": "disk space (160G free observed)",
+      "afterControl": "immutable release dir under /home/ubuntu/odg-releases",
+      "expectedEvidence": "release id + build log (npm ci→build:runtime→next build)",
+      "stopCriterion": "any build step fails",
+      "rollbackAction": "discard the release dir (no activation)",
+      "status": "OWNER_GATED (Level-C)"
+    },
+    {
+      "phase": "vps",
+      "step": 2,
+      "name": "verify on staging port",
+      "precondition": "release built",
+      "command": "scripts/odg-release.sh verify <releaseId>",
+      "beforeControl": "staging port free",
+      "afterControl": "staging boot health=200 + buildId matches",
+      "expectedEvidence": "/api/health 200 + buildId",
+      "stopCriterion": "health≠200 or buildId mismatch",
+      "rollbackAction": "discard release; keep current",
+      "status": "OWNER_GATED (Level-C)"
+    },
+    {
+      "phase": "vps",
+      "step": 3,
+      "name": "activate (atomic swap)",
+      "precondition": "verify OK",
+      "command": "scripts/odg-release.sh activate <releaseId>",
+      "beforeControl": "record 'previous'=current (auto)",
+      "afterControl": "atomic 'current' symlink swap + restart + health",
+      "expectedEvidence": "health 200 on :3000 + new buildId",
+      "stopCriterion": "post-activate health≠200",
+      "rollbackAction": "scripts/odg-release.sh rollback (symlink→previous)",
+      "status": "OWNER_GATED (Level-C)"
+    },
+    {
+      "phase": "vps",
+      "step": 4,
+      "name": "post-deploy health & connections",
+      "precondition": "activated",
+      "command": "curl -s http://127.0.0.1:3000/api/health",
+      "beforeControl": "pre-deploy health captured",
+      "afterControl": "status ready + storage READY + new buildId",
+      "expectedEvidence": "health JSON",
+      "stopCriterion": "status≠ready / storage≠READY",
+      "rollbackAction": "rollback",
+      "status": "OWNER_GATED (Level-C)"
+    },
+    {
+      "phase": "vps",
+      "step": 5,
+      "name": "independent validation + keep/rollback",
+      "precondition": "health ok",
+      "command": "scripts/odg-release.sh status; (functional checks)",
+      "beforeControl": "baseline recorded",
+      "afterControl": "current/previous + listener confirmed",
+      "expectedEvidence": "status output + functional evidence",
+      "stopCriterion": "any functional regression",
+      "rollbackAction": "scripts/odg-release.sh rollback",
+      "status": "OWNER_GATED (Level-C)"
+    }
+  ],
+  "rollback": {
+    "mechanism": "scripts/odg-release.sh rollback — repoint 'current' symlink to 'previous' + restart + health",
+    "priorReleasesObserved": 9,
+    "atomicSwap": true
+  },
+  "deployedVsTarget": {
+    "deployedSha": "e84a0cf2720b",
+    "headSha": "c530043d8d84",
+    "deployedIsAncestorOfHead": true,
+    "divergence": "deployed e84a0cf2720b is an ANCESTOR of HEAD c530043d8d84 ⇒ deployed is OLD (HEAD ahead)"
+  },
+  "executableReady": true,
+  "honestConclusion": "Runbook operational: GitHub chain (real commands, push/PR/merge OWNER_GATED) + VPS chain backed by the REAL scripts/odg-release.sh (build/verify/activate/rollback/status) and the real V93 inventory. Deploy = atomic 'current' symlink swap, rollback = symlink to 'previous' (9 prior releases observed). Health = /api/health (verified 200 on the live deployed release). NOTHING executed (all Level-C owner-gated). The VPS steps are now REAL (not fictional) because a real inventory + the real deploy script back them.",
+  "invariant": "every step has precondition/real-command/before-after/evidence/stop/rollback; VPS commands are the repo's real odg-release.sh backed by a real inventory; nothing executed (Level-C owner-gated); rollback is the observed symlink mechanism."
+}

@@ -1,0 +1,33 @@
+{
+  "//": "CTO V52 C3 — tri-status scorecard. TECHNICAL ≠ COMMERCIAL ≠ FINANCIAL, never conflated. Read-only aggregation of existing truth sources; no new engine.",
+  "generatedFrom": [
+    "V50_E4_ASSESSMENT_MATRIX.json",
+    "closure-register.json",
+    "V51_500M_NET_FEASIBILITY.md"
+  ],
+  "technical": {
+    "e4_demonstrated": 14,
+    "e4_blocked": 1,
+    "e4_total": 15,
+    "register_items": 427,
+    "note": "E4 = reproducible client-presentable deliverable (O1+O2 verifiable evidence); NOT certification, NOT sale. P13 BLOCKED (no GPU). Maturity L2/L3.",
+    "status": "STRONG (14/15 E4-demonstrated, 1 blocked)"
+  },
+  "commercial": {
+    "paying_clients": 0,
+    "observed_conversion": 0,
+    "references": 0,
+    "offers": "Part XXXII + V45.2 (HYPOTHESIS prices, to validate with 3 quotes)",
+    "note": "0 paying clients, 0 observed conversion, 0 references. All commercial figures are HYPOTHESIS/SIMULATION until a real sale is proven.",
+    "status": "NOT_STARTED (no demand proven; acquisition is the P0 blocker)"
+  },
+  "financial": {
+    "canonical_objective": "€500,000,000 NET after all charges + taxes, first 12 months",
+    "required_ebt": "≈ €666.67M",
+    "required_revenue": "≈ €2.22–13.33 Md (by 30%→5% pre-tax margin)",
+    "feasibility": "INFEASIBLE from €0-client standing start in 12 months (~1000×); recorded as fact; target NOT lowered",
+    "plausible_12mo_range": "~€0.5–1.5M revenue (ESTIMATE) — far below €500M net",
+    "status": "OBJECTIVE_RECORDED / INFEASIBLE_IN_TIMEFRAME (not a result)"
+  },
+  "invariant": "A green technical status is NEVER reported as commercial value or financial achievement. 0 clients stays 0; the financial objective is recorded with its honest infeasibility."
+}

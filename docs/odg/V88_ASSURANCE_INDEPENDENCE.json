@@ -1,0 +1,30 @@
+{
+  "//": "CTO V88-A §8 — Chain A / Chain B independence + circularity. Each assurance relation is audited by evaluator-independence; a self-certifying control must be COMPROMISED (detector works). No mechanism inspects itself or validates its own meta-validator.",
+  "relations": [
+    {
+      "relation": "producer vs inspector (Chain A)",
+      "verdict": "INDEPENDENT"
+    },
+    {
+      "relation": "inspector vs meta-validator (Chain B)",
+      "verdict": "INDEPENDENT"
+    },
+    {
+      "relation": "incremental-engine vs its meta-validator",
+      "verdict": "INDEPENDENT"
+    },
+    {
+      "relation": "boundary vs independence-auditor",
+      "verdict": "INDEPENDENT"
+    }
+  ],
+  "selfCertControl": {
+    "relation": "CONTROL self-certification",
+    "verdict": "COMPROMISED"
+  },
+  "allChainsIndependent": true,
+  "controlCorrectlyCompromised": true,
+  "circularityDetected": false,
+  "honestConclusion": "4/4 assurance relations are INDEPENDENT (distinct mechanisms: producer≠inspector, inspector≠meta-validator, incremental-engine≠its meta-validator, boundary≠independence-auditor). The self-certification control is correctly COMPROMISED — the detector works. No mechanism validates itself or its own meta-validator.",
+  "invariant": "producer≠inspector; a mechanism never qualifies itself; the meta-validator is a distinct mechanism from the inspector it scores; self-certification ⇒ COMPROMISED (promotion blocked)."
+}

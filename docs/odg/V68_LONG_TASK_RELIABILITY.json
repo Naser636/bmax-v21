@@ -1,0 +1,56 @@
+{
+  "//": "CTO V68 RAD-M02 — long-task reliability measurement. Real metrics from the canonical autonomy scheduler over synthetic NORMAL/COMPLEX/ADVERSARIAL multi-step missions + interrupt/resume. No invented score; unmeasurable ⇒ NOT_MEASURED. No new scheduler (reuses autonomy-persistence → campaign-controller).",
+  "radarMission": "RAD-M02 (program P2/P3)",
+  "previousStatus": "longTaskReliability = NOT_MEASURED (V62 fiches)",
+  "scenarios": [
+    {
+      "difficulty": "NORMAL",
+      "steps": 8,
+      "accepted": 8,
+      "failed": 0,
+      "endToEnd": true,
+      "correctClosure": true,
+      "duplicationOnRerun": 0,
+      "iterations": 8
+    },
+    {
+      "difficulty": "COMPLEX",
+      "steps": 20,
+      "accepted": 20,
+      "failed": 0,
+      "endToEnd": true,
+      "correctClosure": true,
+      "duplicationOnRerun": 0,
+      "iterations": 20
+    },
+    {
+      "difficulty": "ADVERSARIAL",
+      "steps": 6,
+      "accepted": 0,
+      "failed": 1,
+      "endToEnd": true,
+      "correctClosure": true,
+      "duplicationOnRerun": 0,
+      "iterations": 1
+    }
+  ],
+  "interruptRecovery": {
+    "interruptedAfter": 5,
+    "resumedAccepted": 7,
+    "totalAccepted": 12,
+    "allTwelveDone": true,
+    "noRepeatOnResume": true,
+    "resumesCounted": true
+  },
+  "metrics": {
+    "endToEndSuccessRate": 1,
+    "correctClosureRate": 1,
+    "recoveryAfterInterrupt": "RECOVERED (12/12, no re-run)",
+    "stateLossRate": 0,
+    "duplicationRate": 0,
+    "governanceViolations": 0,
+    "durationCostLocal": "NOT_MEASURED (no wall-clock/cost instrumentation on the scheduler; deterministic pure run)"
+  },
+  "honestConclusion": "RAD-M02 EXECUTED: long-task reliability measured on the real scheduler — end-to-end success 1 (incl. adversarial correctly 0-accepted), correct-closure 1, recovery-after-interrupt RECOVERED (12/12, no re-run), state-loss 0, duplication 0, governance-violations 0. Duration/cost = NOT_MEASURED (no instrumentation). The V62 'longTaskReliability NOT_MEASURED' gap is now measured for the scheduler layer (synthetic missions).",
+  "invariant": "Metrics are read from the real cycle results; an INCOMPLETE lot accepted would be a governance violation (measured = 0); recovery preserves state with NO re-run; unmeasurable metrics stay NOT_MEASURED, never faked."
+}

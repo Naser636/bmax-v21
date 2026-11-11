@@ -1,0 +1,833 @@
+{
+  "//": "CTO V62 §7 — synthetic-enterprise simulation. Virtual companies × all difficulty tiers through the full lifecycle (prospection→…→renewal). SYNTHETIC/FICTIF only — no real client/sale/payment. Reuses synthetic-enterprise + client-journey-sim + cost-engine; no new engine.",
+  "companyCount": 15,
+  "tiers": [
+    "SMALL",
+    "MID",
+    "LARGE",
+    "INTERNATIONAL",
+    "HIGH_VOLUME",
+    "ADVERSARIAL"
+  ],
+  "runCount": 90,
+  "runs": [
+    {
+      "metier": "P1",
+      "company": "CodeKeeper (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P1",
+      "company": "CodeKeeper (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P1",
+      "company": "CodeKeeper (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P1",
+      "company": "CodeKeeper (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P1",
+      "company": "CodeKeeper (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P1",
+      "company": "CodeKeeper (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P2",
+      "company": "AgentGov (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P2",
+      "company": "AgentGov (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P2",
+      "company": "AgentGov (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P2",
+      "company": "AgentGov (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P2",
+      "company": "AgentGov (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P2",
+      "company": "AgentGov (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P3",
+      "company": "Acme-IoT (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P4",
+      "company": "DataTrust (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P4",
+      "company": "DataTrust (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P4",
+      "company": "DataTrust (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P4",
+      "company": "DataTrust (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P4",
+      "company": "DataTrust (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P4",
+      "company": "DataTrust (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P5",
+      "company": "ShipRight (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P5",
+      "company": "ShipRight (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P5",
+      "company": "ShipRight (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P5",
+      "company": "ShipRight (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P5",
+      "company": "ShipRight (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P5",
+      "company": "ShipRight (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P6",
+      "company": "EvalWorks (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P6",
+      "company": "EvalWorks (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P6",
+      "company": "EvalWorks (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P6",
+      "company": "EvalWorks (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P6",
+      "company": "EvalWorks (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P6",
+      "company": "EvalWorks (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P7",
+      "company": "UptimeCo (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P7",
+      "company": "UptimeCo (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P7",
+      "company": "UptimeCo (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P7",
+      "company": "UptimeCo (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P7",
+      "company": "UptimeCo (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P7",
+      "company": "UptimeCo (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P8",
+      "company": "APIForge (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P8",
+      "company": "APIForge (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P8",
+      "company": "APIForge (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P8",
+      "company": "APIForge (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P8",
+      "company": "APIForge (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P8",
+      "company": "APIForge (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P9",
+      "company": "NimbusSaaS (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P10",
+      "company": "AuroraAI (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P11",
+      "company": "TradeCorp (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P12",
+      "company": "Streamline (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P12",
+      "company": "Streamline (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P12",
+      "company": "Streamline (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P12",
+      "company": "Streamline (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P12",
+      "company": "Streamline (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P12",
+      "company": "Streamline (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P13",
+      "company": "InferHaus (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P13",
+      "company": "InferHaus (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P13",
+      "company": "InferHaus (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P13",
+      "company": "InferHaus (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P13",
+      "company": "InferHaus (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P13",
+      "company": "InferHaus (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P14",
+      "company": "GoldenPath (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P14",
+      "company": "GoldenPath (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P14",
+      "company": "GoldenPath (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P14",
+      "company": "GoldenPath (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P14",
+      "company": "GoldenPath (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P14",
+      "company": "GoldenPath (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    },
+    {
+      "metier": "P15",
+      "company": "FlowOps (synthetic)",
+      "tier": "SMALL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 780,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P15",
+      "company": "FlowOps (synthetic)",
+      "tier": "MID",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 3120,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P15",
+      "company": "FlowOps (synthetic)",
+      "tier": "LARGE",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 15600,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P15",
+      "company": "FlowOps (synthetic)",
+      "tier": "INTERNATIONAL",
+      "outcome": "RENEWED",
+      "stagesCompleted": 9,
+      "savingsEur": 31200,
+      "satisfaction": 0.9
+    },
+    {
+      "metier": "P15",
+      "company": "FlowOps (synthetic)",
+      "tier": "HIGH_VOLUME",
+      "outcome": "RENEWED",
+      "stagesCompleted": 8,
+      "savingsEur": 156000,
+      "satisfaction": 0.7
+    },
+    {
+      "metier": "P15",
+      "company": "FlowOps (synthetic)",
+      "tier": "ADVERSARIAL",
+      "outcome": "LOST_AT_QUALIFICATION",
+      "stagesCompleted": 1,
+      "savingsEur": 0,
+      "satisfaction": null
+    }
+  ],
+  "outcomeTally": {
+    "RENEWED": 75,
+    "LOST_AT_QUALIFICATION": 15
+  },
+  "renewedCount": 75,
+  "adversarialHandled": "15/15 adversarial runs correctly did NOT renew (pressure honestly degrades the outcome)",
+  "honestConclusion": "90 synthetic lifecycles across 15 virtual companies × 6 difficulty tiers. Outcomes: {\"RENEWED\":75,\"LOST_AT_QUALIFICATION\":15}. Adversarial/high-pressure tiers honestly fail qualification/order/support (no inflated success). All SYNTHETIC/FICTIF — no real client, sale, or payment.",
+  "invariant": "virtual companies and fictif contracts/invoices are clearly labelled synthetic; difficulty pressure honestly degrades outcomes; nothing is presented as a real result."
+}

@@ -1,0 +1,47 @@
+{
+  "//": "CTO V65 §2 — ODG-controlled successor adoption. Independent re-verification of V64_SUCCESSOR_REFERENTIAL.json; ADOPTED as operational base for I/IV/XXV only if ALL checks pass. Original FROZEN + RECONSTRUCTED provenance + recovery history preserved; original-vs-successor distinction kept. Read-only; no new engine.",
+  "verifiedArtifact": "V64_SUCCESSOR_REFERENTIAL.json (successor-v1)",
+  "checks": [
+    {
+      "check": "partI-26-capabilities",
+      "ok": true,
+      "detail": "26 caps; 0 ungrounded"
+    },
+    {
+      "check": "partI-all-reconstructed-labelled",
+      "ok": true,
+      "detail": "every cap source=RECONSTRUCTED"
+    },
+    {
+      "check": "partIV-12-dimensions-grounded",
+      "ok": true,
+      "detail": "12 dims; 0 ungrounded; 0 orphans"
+    },
+    {
+      "check": "partIV-10-responsibilities-distinct-grounded",
+      "ok": true,
+      "detail": "10 resps; 0 ungrounded; distinct=true"
+    },
+    {
+      "check": "partXXV-F01-F40-reconstructed",
+      "ok": true,
+      "detail": "40 faults; sequence+distinct=true"
+    },
+    {
+      "check": "nine-primitive-links",
+      "ok": true,
+      "detail": "8/8 native primitives linked"
+    }
+  ],
+  "allChecksPassed": true,
+  "decision": "ADOPTED — successor referential is the OPERATIONAL BASE for Parts I/IV/XXV",
+  "preserved": [
+    "FROZEN Master original (intact)",
+    "RECONSTRUCTED provenance on every entry",
+    "V64_MASTER_RECOVERY_REPORT.json history",
+    "original-vs-successor distinction"
+  ],
+  "ownerNote": "adoption is OPERATIONAL (lets ODG use the referential); it does NOT claim the reconstruction is the historical original. Owner may still supply the FROZEN Master to supersede the successor.",
+  "honestConclusion": "All ODG verification checks PASSED: 26 capabilities grounded, 12 dimensions + 10 responsibilities distinct/grounded (0 orphan), F01–F40 reconstructed, nine-primitive links coherent. The successor referential is ADOPTED as the operational base for I/IV/XXV; the FROZEN original and RECONSTRUCTED provenance are preserved.",
+  "invariant": "Adoption requires ALL independent checks to pass; the successor is operational, never relabelled as the recovered original; the FROZEN original is preserved and can supersede the successor if provided."
+}

@@ -1,0 +1,181 @@
+{
+  "//": "CTO V53 — P9 FinOps FIRST-PILOT internal simulation. SYNTHETIC inputs. Costs ESTIMATED, savings SIMULATED (hypotheses explicit) — NEVER realised. E4 rehearsal; E5=NOT_STARTED. Reuses cost-engine + O1/O2; no new engine, no CRM.",
+  "demonstrator": "P9 FinOps — first-pilot internal simulation (readiness only)",
+  "generatedAt": "2026-11-10T14:59:03.365Z",
+  "synthetic": true,
+  "parcours": [
+    "1 synthetic input",
+    "2 cost attribution",
+    "3 anomaly detection",
+    "4 recommendations + SIMULATED savings (explicit hypotheses)",
+    "5 O1 deliverable",
+    "6 independent O2 evidence verification"
+  ],
+  "analysis": {
+    "total": 2659,
+    "budgetTotal": 2300,
+    "byMission": {
+      "svc-api": 1070,
+      "svc-worker": 395,
+      "data-lake": 1194
+    },
+    "byResource": {
+      "compute_hr": 415,
+      "egress_gb": 1044,
+      "storage_gb": 1200
+    },
+    "overBudget": [
+      {
+        "id": "svc-api",
+        "spent": 1070,
+        "budget": 700,
+        "overBy": 370
+      },
+      {
+        "id": "data-lake",
+        "spent": 1194,
+        "budget": 1100,
+        "overBy": 94
+      }
+    ]
+  },
+  "anomalies": [],
+  "savingsHypotheses": {
+    "storage_cold_tiering_pct": 0.4,
+    "storage_cold_discount": 0.6,
+    "compute_rightsize_pct": 0.15,
+    "egress_cache_pct": 0.2
+  },
+  "simulatedMonthlySaving": 559.05,
+  "simulatedPostTotal": 2099.95,
+  "scenarios": [
+    {
+      "name": "optimized(SIMULATED)",
+      "cost": 2099.95,
+      "throughput": 1000,
+      "costPerUnit": 2.09995,
+      "kind": "SIMULATED"
+    },
+    {
+      "name": "current",
+      "cost": 2659,
+      "throughput": 1000,
+      "costPerUnit": 2.659,
+      "kind": "ESTIMATED"
+    }
+  ],
+  "independentEvidenceVerification": {
+    "ok": true,
+    "reason": "digest matches — evidence integrity verified independently"
+  },
+  "e5Status": "NOT_STARTED — simulation only; no real client, no real data, no client validation",
+  "report": {
+    "metier": "P9",
+    "title": "FinOps Cloud-Cost Audit — PILOT SIMULATION (synthetic)",
+    "status": "SIMULATION — estimated spend €2659/mo vs declared budgets €2300; 2 service(s) over budget; simulated optimization −€559.05/mo (HYPOTHESIS)",
+    "summary": "Synthetic monthly cloud bill €2659 attributed across 3 services and 3 resources (ESTIMATED from declared rates). 2 service(s) over declared budget. Simulated optimization of €559.05/mo (21%) under explicit hypotheses → simulated run-rate €2099.95. Figures are ESTIMATED/SIMULATED, never OBSERVED or realised.",
+    "controls": [
+      {
+        "name": "Cost attribution (cost-engine.attribute)",
+        "status": "COMPUTED",
+        "detail": "compute_hr:€415, egress_gb:€1044, storage_gb:€1200"
+      },
+      {
+        "name": "Budget alerts (cost-engine.alerts, fail-closed)",
+        "status": "OVER",
+        "detail": "svc-api+€370, data-lake+€94"
+      },
+      {
+        "name": "Anomaly scan (detectAnomalies k=1.0)",
+        "status": "RUN",
+        "detail": "0 flagged"
+      },
+      {
+        "name": "Scenario compare (current vs optimized)",
+        "status": "RANKED",
+        "detail": "optimized(SIMULATED):€2099.95 < current:€2659"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "HIGH",
+        "detail": "svc-api over declared budget by €370 (€1070 vs €700)",
+        "basis": "ESTIMATED"
+      },
+      {
+        "severity": "HIGH",
+        "detail": "data-lake over declared budget by €94 (€1194 vs €1100)",
+        "basis": "ESTIMATED"
+      },
+      {
+        "severity": "INFO",
+        "detail": "simulated saving €559.05/mo is a HYPOTHESIS (H1 cold-tiering 40%, H2 right-size 15%, H3 egress-cache 20%) — NOT a realised saving",
+        "basis": "SIMULATED"
+      }
+    ],
+    "recommendations": [
+      "tier cold storage (H1): simulated −€288/mo — validate cold-data ratio against OBSERVED access logs first",
+      "right-size over-provisioned compute (H2): simulated −€62.25/mo — validate against OBSERVED utilization",
+      "cache/CDN removable egress (H3): simulated −€208.8/mo — validate against OBSERVED traffic",
+      "set budget alerts at 80% run-rate per service (cost-engine.alerts)",
+      "re-run on OBSERVED metering + client sign-off before stating any real figure (E5 precondition)"
+    ],
+    "limits": [
+      "ALL inputs are SYNTHETIC — no client data; no real cloud account was read",
+      "costs are ESTIMATED from declared rates; savings are SIMULATED under stated hypotheses — never OBSERVED or realised",
+      "a FinOps readiness rehearsal, NOT a certified cost audit and NOT a sold engagement",
+      "ODG maturity L2 for P9; 0 paying clients; E5 (client-validated) = NOT_STARTED"
+    ],
+    "validationConditions": [
+      "re-run reproduces identical figures from identical synthetic inputs (digest stable)",
+      "evidence digest independently verifiable via O2.verifyEvidence (no producer trust needed)",
+      "before E5: replace SIMULATED hypotheses with OBSERVED metering and obtain documented client validation"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "attributed monthly spend €2659 across 3 resources",
+          "basis": "ESTIMATED",
+          "sourceRef": "P9_FINOPS_PILOT_SIM.json"
+        },
+        {
+          "claim": "2 over-budget service(s) via fail-closed alerts",
+          "basis": "ESTIMATED",
+          "sourceRef": "P9_FINOPS_PILOT_SIM.json"
+        },
+        {
+          "claim": "simulated optimization €559.05/mo under explicit hypotheses",
+          "basis": "SIMULATED",
+          "sourceRef": "P9_FINOPS_PILOT_SIM.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 0,
+        "OBSERVED": 0,
+        "ESTIMATED": 2,
+        "SIMULATED": 1,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "a2e81d27b66913cd4750d702c2f96af56d3808b8688296177a2f42dab7f28fd2",
+        "sourceCommit": "1b94254fee057f84808d28062242d7349a04a380",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "a2e81d27b66913cd4750d702c2f96af56d3808b8688296177a2f42dab7f28fd2",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 3,
+        "proven": 0,
+        "nonProven": 3,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "//": "CTO ADDENDUM V93-B — read-only VPS forensic timeline. AUGMENTS (never erases) the V93 inventory. Resolves the contradiction: the DEPLOYED app (:3000) is genuinely Oct 28 (V93 correct), while the Nov 9-10 VPS work is intensive git development in this repo + a systemd radar timer — NEITHER deployed. Secrets redacted; nothing changed.",
+  "vpsTime": {
+    "nowUtc": "2026-11-10 23:14:31 UTC",
+    "timezone": "Etc/UTC (UTC, +0000)",
+    "ntpSynchronized": true,
+    "allDatesInUtc": true
+  },
+  "deployment": {
+    "processPid": "1002",
+    "processStart": "Sat Nov  7 21:58:06 2026 UTC",
+    "processCwd": "<current Oct-28 release>/app",
+    "servedBuildId": "emLgNDocVzOvu6dN3rA-p",
+    "currentSymlink": "rel-...Oct28 (e84a0cf2)",
+    "currentSymlinkMtime": "2026-10-28 20:15:43.936055041 +0000 UTC",
+    "previousSymlink": "rel-...Oct26",
+    "releaseCount": 9,
+    "newestReleaseMtime": "2026-10-28 20:14:06.604926961 +0000 UTC",
+    "deployedCommit": "e84a0cf2720b"
+  },
+  "recentWorkNov9to10": {
+    "repoCommits": 243,
+    "repoFilesModified": 581,
+    "releaseFilesModified": 1,
+    "releaseContentFilesModified": 0,
+    "systemdUnitsInstalled": "odg-radar-weekly.service,odg-radar-weekly.timer,",
+    "systemdInstallMtime": "2026-11-09 15:32:25.097174454 +0000 UTC",
+    "note": ".health-fails is a live health-counter file (value redacted), not deployment work"
+  },
+  "chronology": [
+    {
+      "event": "release creation (newest)",
+      "dateTz": "2026-10-28 20:14:06.604926961 +0000 UTC",
+      "proof": "stat mtime of newest rel- dir (Oct 28)",
+      "reliability": "HIGH"
+    },
+    {
+      "event": "release activation (current symlink set)",
+      "dateTz": "2026-10-28 20:15:43.936055041 +0000 (UTC)",
+      "proof": "stat mtime of 'current' symlink",
+      "reliability": "HIGH"
+    },
+    {
+      "event": "deployed process start / last restart",
+      "dateTz": "Sat Nov  7 21:58:06 2026 (UTC)",
+      "proof": "ps lstart pid 1002",
+      "reliability": "HIGH"
+    },
+    {
+      "event": "last repo development work (Nov 9-10)",
+      "dateTz": "2026-11-09..10 (UTC)",
+      "proof": "243 git commits + 581 files modified in /home/ubuntu/bmax-v21",
+      "reliability": "HIGH"
+    },
+    {
+      "event": "systemd radar timer installed",
+      "dateTz": "2026-11-09 15:32:25.097174454 +0000 (UTC)",
+      "proof": "mtime of ~/.config/systemd/user/odg-radar-weekly.timer",
+      "reliability": "HIGH"
+    },
+    {
+      "event": "build currently SERVED on :3000",
+      "dateTz": "(Oct 28 release)",
+      "proof": "/api/health buildId=emLgNDocVzOvu6dN3rA-p = current release",
+      "reliability": "HIGH"
+    },
+    {
+      "event": "repo HEAD",
+      "dateTz": "2026-11-10 (UTC)",
+      "proof": "HEAD 9d709f945f6e",
+      "reliability": "HIGH"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "text": "VPS received recent work WITHOUT a new release activation",
+      "verdict": "CONFIRMED",
+      "evidence": "243 repo commits + 581 files (Nov 9-10) + systemd radar timer installed 2026-11-09 15:32:25.097174454 +0000; release content unchanged (0 release files modified since Nov 9)",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "H2",
+      "text": "a recent release exists but was missed in V93",
+      "verdict": "REJECTED",
+      "evidence": "newest release dir is Oct 28; 9 releases, none newer",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "H3",
+      "text": "'current' is old but the process uses another dir",
+      "verdict": "REJECTED",
+      "evidence": "process cwd = the current (Oct 28) release; served buildId = current release",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "H4",
+      "text": "report date matched an old metadata (not the live deploy)",
+      "verdict": "REJECTED",
+      "evidence": "V93 'deployed=Oct 28' matches the real symlink + buildId + process cwd",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "H5",
+      "text": "a direct modification was made on the VPS",
+      "verdict": "PARTIAL",
+      "evidence": "yes — a systemd user timer was installed Nov 9 + intensive git dev; but NO release CONTENT was modified (0 files)",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "H6",
+      "text": "scope distinction: dev-host work ≠ deployment",
+      "verdict": "CONFIRMED (the resolution)",
+      "evidence": "this host is the VPS/dev env; the Nov 9-10 work is development + a timer, NOT a deployment to :3000 (which stays Oct 28)",
+      "confidence": "HIGH"
+    }
+  ],
+  "v93Correction": {
+    "v93Claim": "deployed release = Oct 28 (e84a0cf2)",
+    "verdict": "CONFIRMED CORRECT for the deployment",
+    "augmentation": "V93 was incomplete: it did not surface that (a) the process last restarted Nov 7, (b) a systemd radar timer was installed Nov 9, (c) the dev repo had ~243 Nov 9-10 commits. These are now recorded. The deployed app is 879 commits behind HEAD — a large UNDEPLOYED gap.",
+    "oldEvidencePreserved": true
+  },
+  "impact": {
+    "runbook": "unchanged (commands valid); the divergence is LARGE (879 commits) ⇒ stage+verify before any activation",
+    "preconditions": "no status flip — this is clarification, not a new pass/fail; VPS_INVENTORY augmented with the forensic timeline",
+    "deliveryRisk": "the running deployment is Oct 28; deploying HEAD is a big jump — rollback target (previous=Oct 26, or keep Oct 28) is known-good and healthy"
+  },
+  "honestConclusion": "RESOLVED: the deployed app on :3000 is genuinely the Oct 28 release (e84a0cf2) — V93 was CORRECT. The owner's Nov 9-10 'VPS work' is REAL and refers to intensive git development in /home/ubuntu/bmax-v21 (243 commits, 581 files) + a systemd radar timer installed 2026-11-09 15:32:25.097174454 +0000 — this host IS the VPS/dev environment, but NONE of that work was deployed to :3000. H1+H6 CONFIRMED, H2/H3/H4 REJECTED, H5 PARTIAL. The running version is emLgNDocVzOvu6dN3rA-p (Oct 28), 879 commits behind HEAD 9d709f945f6e. No delivery decision rests on an unverified timeline. Nothing was changed.",
+  "invariant": "read-only forensic (no file/symlink/service/release change, no sudo); secrets redacted; old V93 evidence preserved + augmented; deployment-vs-dev-work distinction established from real metadata (ps/stat/git/find); hypotheses kept only with evidence + confidence."
+}

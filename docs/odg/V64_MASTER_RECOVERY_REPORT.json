@@ -1,0 +1,20 @@
+{
+  "//": "CTO V64 §2 — exhaustive Master-FROZEN recovery report. Documents a read-only forensic search (no destructive op). Result is NEGATIVE for the canonical enumerations of Parts I/IV/XXV; the original FROZEN status and history are preserved untouched. Nothing fabricated as 'recovered'.",
+  "method": "read-only: git branch -a, tags, worktrees, reflog, fsck --full --unreachable, cat-file on all unreachable blobs, git grep across git rev-list --all --reflog, precise enumerated-list pattern search in historical master docs",
+  "scannedScope": {
+    "localBranches": "all excellence/* branches enumerated",
+    "tags": 31,
+    "worktrees": 1,
+    "unreachableObjects": { "blobs": 15, "commits": 23, "trees": 46 },
+    "allHistoryDocsGrepped": true
+  },
+  "targets": [
+    { "part": "I §5–§6", "need": "26 capabilities enumerated", "found": "NONE — references to '26 capabilities' exist but no enumerated 1..26 list in any ref/blob/history", "verdict": "NOT_RECOVERABLE" },
+    { "part": "IV §16–§20", "need": "12 dimensions + 10 cognitive responsibilities enumerated", "found": "NONE — part headings name them; unrelated 'dimension' prose only (e.g. fairness-eval 8 protected dimensions = different concept)", "verdict": "NOT_RECOVERABLE" },
+    { "part": "XXV §105", "need": "F01–F40 fault register enumerated", "found": "OTHER namespaces only — FND-F0..F12 / FILM-F10,11 / SEC-F1..3; max 3 distinct F-ids per doc; never an F02..F39 definition list", "verdict": "NOT_RECOVERABLE" }
+  ],
+  "falsePositivesExcluded": ["fairness-eval '8 protected dimensions / 4 disparity metrics'", "dataset-quality 'conformance dimension'", "ROADMAP_CROSSWALK F-namespace discussion (FND/SEC)"],
+  "preservation": "the original FROZEN Master status, history and fingerprints are PRESERVED untouched; no git gc/prune/reset was run; recovery was strictly read-only.",
+  "conclusion": "Exhaustive read-only recovery did NOT surface the canonical V12.4 enumerations for Parts I, IV, XXV from any accessible source. Per V64 §4, a clearly-labelled SUCCESSOR referential is built (reconstruction FROM present primitives/modules/contracts/tests), never presented as recovered history.",
+  "invariant": "Recovery restores only what has a verifiable source. A negative result is recorded honestly; reconstruction is separate, labelled, and confidence-rated — never passed off as the original."
+}

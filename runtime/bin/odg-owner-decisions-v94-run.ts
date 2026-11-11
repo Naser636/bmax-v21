@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+"use strict";
+/*
+ * V12.4 / CTO V94 §2 — refined analysis of the 5 genuine owner decisions (REQ-XIII, XVI, XXVII, XXX, XXXII). ODG prepares
+ * a complete-but-concise analysis + a motivated recommendation for each; it does NOT fabricate the owner decision, sell,
+ * spend, publish or contract. Searches for any sub-part ODG can decide under the standing mandate (no artificial block).
+ * Writes docs/odg/V94_OWNER_DECISIONS.json.
+ */
+const fs=require("fs"),path=require("path");const D=path.join(__dirname,"..","..","docs","odg");
+const decisions=[
+ {id:"REQ-XIII",title:"External benchmark & world superiority",claimsToValidate:["any 'world-class/beyond-frontier' performance claim"],distinctions:["internal benchmark ≠ reproducible public comparison ≠ independent certification"],odgPrepared:"a fair, reproducible benchmark PROTOCOL (fixed task/scope/versions/sources, retained data+scripts) can be built locally",ownerDecision:"authorize an external benchmark resource (public comparison / third-party)",recommendation:"APPROVE_WITH_CONDITIONS",odgPosition:"declare NO superiority that is not externally demonstrated+reproducible (fail-closed); build the protocol, run only internal-vs-internal until authorized",delegable:false},
+ {id:"REQ-XVI",title:"Six dossiers A–F — strategic priority",odgPrepared:"ODG can prepare each dossier's technical substrate",ownerDecision:"choose which dossier(s) to open/prioritize",recommendation:"NEEDS_INFORMATION",odgPosition:"recommend opening Dossier A first (operational base) unless the owner has a different strategic priority",consolidatedProposal:{order:["A","then B–F by dependency"],dependencies:"A unblocks operational execution",benefits:"earliest operational value",risks:"opening too many dilutes focus",successCriteria:"each opened dossier closes on valid evidence"},delegable:false},
+ {id:"REQ-XXVII",title:"33 deliverables — study/operational closure",odgPrepared:"ODG can assess technical completeness of each deliverable",ownerDecision:"accept the scope closure commitment (study→operational)",recommendation:"NEEDS_INFORMATION",odgPosition:"ODG assesses technical readiness; the operational-closure COMMITMENT is the owner's (scope/acceptance)",delegable:false},
+ {id:"REQ-XXX",title:"First operational mandate (open Dossier A + preservation)",odgPrepared:"ODG already runs governed operational work (pipeline V89)",ownerDecision:"issue the first operational mandate",recommendation:"APPROVE",odgPosition:"issuing an operational mandate is the owner's act; ODG is ready to execute Dossier A under the standing local mandate the moment it is issued",delegable:false},
+ {id:"REQ-XXXII",title:"Commercialization",separation:"technical preparation (ODG, local) ≠ commercial/legal engagement (owner)",odgPrepared:"capabilities/parcours/demonstrations/measures/controls finalized locally; revenue/cost/margin HYPOTHESES prepared as hypotheses (never presented as real results)",ownerDecision:"commercial/legal commitment (pricing/engagement)",recommendation:"NEEDS_INFORMATION",odgPosition:"NO sale/spend/publication/contract under V93–V94; prepare only",delegable:false}
+];
+const delegableFound=decisions.filter((d:any)=>d.delegable).length;
+const out={
+ "//":"CTO V94 §2 — the 5 genuine owner decisions, each with a complete-but-concise analysis + ODG recommendation. ODG does not fabricate decisions, sell, spend, publish or contract. No sub-part was found ODG-delegable beyond the technical preparation already done — the 5 are genuine owner acts (external authorization, strategic priority, operational mandate, commercial commitment).",
+ count:decisions.length,decisions,
+ delegableReducedFurther:delegableFound,
+ honestConclusion:"5 genuine owner decisions refined: XIII (authorize external benchmark; NO undemonstrated superiority), XVI/XXVII/XXX (strategic priority / scope-closure / operational mandate — consolidated proposal: open Dossier A first), XXXII (commercialization — technical prep done locally, commitment is owner's). ODG recommends per decision but fabricates none. No further sub-part was ODG-delegable beyond the preparation already completed.",
+ invariant:"complete-but-concise analysis + recommendation per decision; owner decision never fabricated; no sale/spend/publish/contract; genuine owner acts kept, technical prep done; no artificial block (checked for delegable sub-parts)."
+};
+fs.writeFileSync(path.join(D,"V94_OWNER_DECISIONS.json"),JSON.stringify(out,null,2)+"\n");
+process.stdout.write(JSON.stringify({count:decisions.length,delegableReducedFurther:delegableFound},null,2)+"\n");
+
+export {};

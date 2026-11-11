@@ -1,0 +1,180 @@
+{
+  "//": "CTO V62 §10/§11 — activation-readiness scaffold. Operational capability areas tagged PREPARED/PLACEHOLDER; human-info slots left EXPLICITLY EMPTY (PENDING_HUMAN). NO fabricated number/document/identity/certification/insurance/legal validation. Read-only; no new engine.",
+  "capabilityAreaCount": 19,
+  "prepared": 9,
+  "placeholder": 10,
+  "capabilityAreas": [
+    {
+      "area": "organization management",
+      "status": "PLACEHOLDER",
+      "backing": "multi-tenant isolation primitives present (profile.tenantId)"
+    },
+    {
+      "area": "users & roles",
+      "status": "PLACEHOLDER",
+      "backing": "agent-identity / authorization seam present"
+    },
+    {
+      "area": "onboarding",
+      "status": "PLACEHOLDER",
+      "backing": "client-journey-sim models the flow (synthetic)"
+    },
+    {
+      "area": "métier configuration",
+      "status": "PREPARED",
+      "backing": "15 métier guards + E4 demonstrators"
+    },
+    {
+      "area": "mission management",
+      "status": "PREPARED",
+      "backing": "mission-contract-factory + autonomy-persistence + checkpoint-engine"
+    },
+    {
+      "area": "quoting & pricing",
+      "status": "PLACEHOLDER",
+      "backing": "synthetic-enterprise quote stage; pricing HYPOTHESIS (owner-set)"
+    },
+    {
+      "area": "contracts & templates",
+      "status": "PLACEHOLDER",
+      "backing": "document templates slot (empty — owner/legal)"
+    },
+    {
+      "area": "invoicing",
+      "status": "PLACEHOLDER",
+      "backing": "synthetic-enterprise invoicing TEST-mode; real billing owner-gated"
+    },
+    {
+      "area": "payments (test mode)",
+      "status": "PLACEHOLDER",
+      "backing": "prepared≠sent≠cashed discipline; no real gateway credentials"
+    },
+    {
+      "area": "accounting & exports",
+      "status": "PLACEHOLDER",
+      "backing": "cost-engine attribution; export format slot"
+    },
+    {
+      "area": "dashboards",
+      "status": "PREPARED",
+      "backing": "scorecards / tri-status / performance fiches"
+    },
+    {
+      "area": "support & incident mgmt",
+      "status": "PREPARED",
+      "backing": "synthetic-enterprise support stage + rce-assurance + circuit-breaker"
+    },
+    {
+      "area": "monitoring & logging",
+      "status": "PREPARED",
+      "backing": "evidence-provenance + audit-log + metric-window-integrity"
+    },
+    {
+      "area": "backup & restore",
+      "status": "PREPARED",
+      "backing": "operational-backup snapshots + recovery-drill-benchmark"
+    },
+    {
+      "area": "continuity",
+      "status": "PREPARED",
+      "backing": "checkpoint-engine + idempotency-guard + autonomy-persistence resume"
+    },
+    {
+      "area": "access & data management",
+      "status": "PREPARED",
+      "backing": "action-gate deny-by-default + root-of-trust + confinement"
+    },
+    {
+      "area": "security controls",
+      "status": "PREPARED",
+      "backing": "emergency-stop + third-party-agent-gate + secret-rotation-hygiene"
+    },
+    {
+      "area": "delivery & maintenance procedures",
+      "status": "PLACEHOLDER",
+      "backing": "pilot delivery packagers; procedures slot"
+    },
+    {
+      "area": "user & admin documentation",
+      "status": "PLACEHOLDER",
+      "backing": "doc generation present; per-deploy content slot"
+    }
+  ],
+  "humanInfoSlots": [
+    {
+      "slot": "company legal identity (name, registration number)",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "registered address",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "bank account / IBAN",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "professional insurance (policy)",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "VAT number",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "model-provider accounts & API credentials",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "payment gateway credentials",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "signed client contracts",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "regulatory/compliance certifications",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "supplier contracts",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "supporting documents (justificatifs)",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    },
+    {
+      "slot": "authorized signatories",
+      "value": null,
+      "status": "PENDING_HUMAN",
+      "note": "left empty — to be supplied/validated by the owner; never fabricated"
+    }
+  ],
+  "allHumanSlotsEmpty": true,
+  "honestConclusion": "19 operational areas scaffolded: 9 PREPARED (built/tested locally), 10 PLACEHOLDER (mechanism present, awaits config). 12 human-info slots left EXPLICITLY EMPTY (PENDING_HUMAN). After the owner supplies the indispensable human inputs, activation is config-only. Nothing fabricated.",
+  "invariant": "A human-info slot is never filled with a fabricated value; identities, numbers, documents, certifications, insurance and legal validations are the owner's to supply. PREPARED means built+tested locally; PLACEHOLDER means the mechanism exists but awaits config."
+}

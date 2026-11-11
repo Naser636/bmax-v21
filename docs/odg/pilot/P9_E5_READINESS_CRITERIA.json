@@ -1,0 +1,41 @@
+{
+  "//": "CTO V53 — P9 FinOps E4→E5 transition criteria. P9 STAYS at E4 until EVERY condition below is met=true AND a controller signs off. E5 is NOT a technical switch ODG can flip; it requires a real authorised client, real data, real execution and documented client validation. Nothing here authorises prospecting, contracts, spend, push, deploy or VPS access.",
+  "metier": "P9",
+  "title": "FinOps / Cloud-Cost audit",
+  "p9CurrentStage": "E4",
+  "e5Status": "NOT_STARTED",
+  "e4Evidence": {
+    "readinessArtifact": "docs/odg/demonstrators/P9_FINOPS_READINESS.json",
+    "pilotSimulation": "docs/odg/demonstrators/P9_FINOPS_PILOT_SIM.json",
+    "reproducible": true,
+    "independentlyVerifiable": true,
+    "basis": "ESTIMATED costs + SIMULATED savings — never OBSERVED or realised"
+  },
+  "transitionConditions": [
+    { "id": "C1", "condition": "A real client explicitly authorises an engagement (signed scope agreement by the owner).", "met": false, "ownerAction": true, "controller": true },
+    { "id": "C2", "condition": "Real cloud-cost/billing data is made legally accessible (lawful basis, minimal scope, documented access conditions).", "met": false, "ownerAction": true },
+    { "id": "C3", "condition": "Explicit agreement on the audit perimeter (services/accounts/period in scope and out of scope).", "met": false, "ownerAction": true },
+    { "id": "C4", "condition": "Real execution of the audit parcours on the real data (not synthetic), producing OBSERVED figures via metering.", "met": false },
+    { "id": "C5", "condition": "Measured results: OBSERVED spend and MEASURED (not simulated) savings after an implemented change, with before/after evidence.", "met": false },
+    { "id": "C6", "condition": "Documented client validation: the client confirms, in writing, that the findings and realised results are correct and accepted.", "met": false, "controller": true },
+    { "id": "C7", "condition": "Independent controller review of the whole engagement (ODG retains authority; Claude Code = technical provider only).", "met": false, "controller": true }
+  ],
+  "acceptanceCriteria": [
+    "Every transitionCondition.met === true.",
+    "At least one OBSERVED-basis evidence item replaces the SIMULATED savings figure.",
+    "Independent evidence digest verifies (O2.verifyEvidence ok) over the real deliverable.",
+    "Controller sign-off recorded; owner authorisation recorded."
+  ],
+  "rejectionCriteria": [
+    "Any figure presented as realised while basis is ESTIMATED/SIMULATED.",
+    "Data accessed without a documented lawful basis or beyond the agreed perimeter.",
+    "No independent controller review, or controller withholds sign-off.",
+    "Client does not validate the results in writing."
+  ],
+  "invariant": "Until all conditions are met=true, P9 remains E4 and e5Status remains NOT_STARTED. Simulated savings are NEVER presented as real. ODG keeps authority; a controller is mandatory.",
+  "nonGoals": [
+    "No prospecting, no external message, no contract, no spend.",
+    "No CRM or parallel system — reuse the nine primitives, P9 guard, O1/O2, existing evidence.",
+    "No push, merge, deployment or VPS access."
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "//": "CTO V69 §15 — P9 world-intelligence coverage matrix. Maps V69 capability functions to EXISTING modules (PRESENT/PARTIAL/MISSING); reuse-first, no tenth primitive, no parallel engine. Each mapped module verified present. Read-only audit; implementation targets only the PARTIAL/MISSING gaps.",
+  "functionCount": 13,
+  "tally": {
+    "PRESENT": 7,
+    "PARTIAL": 6,
+    "MISSING": 0
+  },
+  "integrityOk": true,
+  "matrix": [
+    {
+      "fn": "§3 world-scanner (deep web exploration)",
+      "modules": [
+        "frontier-radar",
+        "frontier-collection",
+        "frontier-pipeline",
+        "source-registry"
+      ],
+      "status": "PARTIAL",
+      "gap": "bounded/allowlisted live collection exists; multi-strategy query decomposition + recursive deepening is partial (WebSearch is session-tool, not a confined module)",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§4 source-intelligence (multi-dim, non-binary)",
+      "modules": [
+        "source-registry",
+        "research-ranking",
+        "evidence-provenance"
+      ],
+      "status": "PARTIAL",
+      "gap": "scoreSource + composite ranking exist; the full V69 typology (verified/published/unverified/hypothesis/opinion/rumor/experiment/reproduced) + independence/contradiction/plausibility dimensions are NOT consolidated — BUILD (V69 Lot 2)",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§5 freshness engine",
+      "modules": [
+        "control-evidence-freshness",
+        "dataset-freshness-volume",
+        "metric-window-integrity"
+      ],
+      "status": "PRESENT",
+      "gap": "age/TTL/last-verified present; crawl-date≠publish-date + per-domain renewal cadence = minor refinement",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§6 cognitive reasoning (combine ideas, counter-hypotheses)",
+      "modules": [
+        "scientific-research",
+        "causal-graph",
+        "champion-challenger-arbiter",
+        "world-model"
+      ],
+      "status": "PARTIAL",
+      "gap": "hypothesis→experiment→eval + causal graph + adversarial arbiter present; cross-domain analogy recombination is partial",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§7 opportunity radar (autonomous detection)",
+      "modules": [
+        "radar-gap-analysis",
+        "frontier-radar-self-improvement",
+        "self-mission-proposer"
+      ],
+      "status": "PRESENT",
+      "gap": "gap classification + proposal (grantsNoPermission, owner-gated) present",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§8 experiment lab (isolated, reproducible)",
+      "modules": [
+        "frontier-lab",
+        "frontier-lab-experiment",
+        "frontier-sandbox"
+      ],
+      "status": "PRESENT",
+      "gap": "preregistered hypothesis/baseline + sandbox present; never auto-integrates",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§9 knowledge graph (cumulative memory)",
+      "modules": [
+        "knowledge-engine",
+        "world-model",
+        "causal-graph",
+        "memory-taxonomy",
+        "evidence-provenance"
+      ],
+      "status": "PRESENT",
+      "gap": "entities/relations/epistemic status present; no parallel DB (composes STATE/EVIDENCE/MEMORY)",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§10 deep-web research (hard questions)",
+      "modules": [
+        "frontier-radar",
+        "research-ranking",
+        "scientific-research"
+      ],
+      "status": "PARTIAL",
+      "gap": "ranking + re-strategy exist; strategy-switch-on-failure is partial",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§11 performance (parallel/cache/dedup/early-stop)",
+      "modules": [
+        "frontier-pipeline",
+        "benchmark-contamination"
+      ],
+      "status": "PARTIAL",
+      "gap": "dedup/contamination present; query parallelization + caching metrics partial",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§12 fifteen-métier application",
+      "modules": [
+        "metier-benchmark-multidim",
+        "radar-gap-analysis"
+      ],
+      "status": "PRESENT",
+      "gap": "per-métier probes + gap analysis; cross-métier transfer evaluation partial",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§13 learning & continuous improvement",
+      "modules": [
+        "self-improvement",
+        "intelligence-loop",
+        "calibration",
+        "meta-intelligence"
+      ],
+      "status": "PRESENT",
+      "gap": "governed learning loop runs end-to-end (V66); calibration over outcomes present",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§14 governance & security (untrusted external)",
+      "modules": [
+        "scientific-research",
+        "third-party-agent-gate",
+        "root-of-trust",
+        "evidence-provenance"
+      ],
+      "status": "PRESENT",
+      "gap": "injection⇒QUARANTINE, deny-by-default, no governance mutation from external content (V61/V67)",
+      "allModulesPresent": true,
+      "missingModules": []
+    },
+    {
+      "fn": "§16 radar benchmarks (15 eval axes)",
+      "modules": [
+        "metier-benchmark-multidim",
+        "benchmark-contamination",
+        "eval-significance"
+      ],
+      "status": "PARTIAL",
+      "gap": "contamination + significance + multidim present; a dedicated 15-axis radar benchmark suite is partial",
+      "allModulesPresent": true,
+      "missingModules": []
+    }
+  ],
+  "priorityGaps": [
+    {
+      "fn": "§3 world-scanner (deep web exploration)",
+      "gap": "bounded/allowlisted live collection exists; multi-strategy query decomposition + recursive deepening is partial (WebSearch is session-tool, not a confined module)"
+    },
+    {
+      "fn": "§4 source-intelligence (multi-dim, non-binary)",
+      "gap": "scoreSource + composite ranking exist; the full V69 typology (verified/published/unverified/hypothesis/opinion/rumor/experiment/reproduced) + independence/contradiction/plausibility dimensions are NOT consolidated — BUILD (V69 Lot 2)"
+    },
+    {
+      "fn": "§6 cognitive reasoning (combine ideas, counter-hypotheses)",
+      "gap": "hypothesis→experiment→eval + causal graph + adversarial arbiter present; cross-domain analogy recombination is partial"
+    },
+    {
+      "fn": "§10 deep-web research (hard questions)",
+      "gap": "ranking + re-strategy exist; strategy-switch-on-failure is partial"
+    },
+    {
+      "fn": "§11 performance (parallel/cache/dedup/early-stop)",
+      "gap": "dedup/contamination present; query parallelization + caching metrics partial"
+    },
+    {
+      "fn": "§16 radar benchmarks (15 eval axes)",
+      "gap": "contamination + significance + multidim present; a dedicated 15-axis radar benchmark suite is partial"
+    }
+  ],
+  "honestConclusion": "P9 world-intelligence audit: 7 functions PRESENT, 6 PARTIAL, 0 MISSING — the radar is already substantially built on existing mechanisms. No tenth primitive needed. V69 implementation targets the PARTIAL gaps (notably §4 source-intelligence typology — BUILD) by COMPOSING existing modules; it does not rebuild what is PRESENT.",
+  "invariant": "A function is PRESENT only if its mapped modules all exist; gaps are filled by composing existing modules, never by a new primitive or parallel engine. External content stays untrusted (V61/V67)."
+}

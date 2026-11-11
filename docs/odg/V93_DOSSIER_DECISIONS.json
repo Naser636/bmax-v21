@@ -1,0 +1,192 @@
+{
+  "//": "CTO V93 §3 — dossier decisions under owner delegation. ODG ACTUALLY DECIDED the delegable referential/method/governance dossiers (recording a motivated position + existing proof); NEEDS_LOCAL_BUILD handled honestly (NOT_MEASURED where Master-content is required — never fabricated); only genuinely non-delegable (external/commercial/owner-priority) remain, consolidated into one owner sheet. ODG recommends; it never fabricates an owner signature.",
+  "total": 14,
+  "odgDecidedCount": 6,
+  "localVerifyCount": 3,
+  "trulyNonDelegableCount": 5,
+  "odgDecided": [
+    {
+      "parentId": "REQ-Préambule",
+      "requirement": "V12.4 Préambule §1–§4 — Object, truth levels, version preservation, validation status",
+      "class": "ODG_DECIDED",
+      "odgDecision": "ADOPT truth-level discipline + version preservation as the standing technical position",
+      "rationale": "already practiced + enforced by the closure-register, truth-level typing, and the honesty gates — a referential acknowledgement, not an owner personal/legal change",
+      "evidence": "closure-register + truth-level discipline (V12.4 matrix) + honesty invariants (tested across V82–V92)",
+      "closureStatus": "DECIDED_CLOSED_ON_EXISTING_PROOF",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "APPROVE"
+    },
+    {
+      "parentId": "REQ-XVII",
+      "requirement": "V12.4 XVII §77–§79 — Seven steps + operational ordering correction",
+      "class": "ODG_DECIDED",
+      "odgDecision": "ADOPT the seven-step operational ordering (with the ordering correction) as the method",
+      "rationale": "pure method/ordering decision delegated to ODG; the campaign-engine + scheduler already enact an ordered pipeline",
+      "evidence": "campaign-engine + mission-scheduler + intelligence-loop (tested)",
+      "closureStatus": "DECIDED_CLOSED_ON_EXISTING_PROOF",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "APPROVE"
+    },
+    {
+      "parentId": "REQ-XIX",
+      "requirement": "V12.4 XIX §83–§87 — Four campaigns C1–C4 + gates",
+      "class": "ODG_DECIDED",
+      "odgDecision": "ODG runs campaigns C1–C4 through the canonical pipeline with the appropriate gates",
+      "rationale": "campaign execution + gating is exactly ODG's delegated technical remit (V78/V86/V88/V89)",
+      "evidence": "campaign-engine (V78) + inspection boundary (V86) + incremental assurance (V88) + real roadmap run (V89)",
+      "closureStatus": "DECIDED_CLOSED_ON_EXISTING_PROOF",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "NEEDS_INFORMATION"
+    },
+    {
+      "parentId": "REQ-XXIII",
+      "requirement": "V12.4 XXIII §97–§103 — Gates A–G",
+      "class": "ODG_DECIDED",
+      "odgDecision": "ADOPT gates A–G as the canonical gate set enforced by the pipeline",
+      "rationale": "gate definitions/enforcement are delegated technical governance; action-gate + inspection-boundary + the test gate enforce them",
+      "evidence": "action-gate + inspection-boundary + test:report gate (490 suites)",
+      "closureStatus": "DECIDED_CLOSED_ON_EXISTING_PROOF",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "NEEDS_INFORMATION"
+    },
+    {
+      "parentId": "REQ-XXVIII",
+      "requirement": "V12.4 XXVIII §111–§112 — Order of 7 steps / 4 campaigns",
+      "class": "ODG_DECIDED",
+      "odgDecision": "ADOPT the ordering of the 7 steps / 4 campaigns",
+      "rationale": "referential ordering, delegated; consistent with XVII/XIX",
+      "evidence": "same pipeline ordering as XVII/XIX",
+      "closureStatus": "DECIDED_CLOSED_ON_EXISTING_PROOF",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "APPROVE"
+    },
+    {
+      "parentId": "REQ-XXIX",
+      "requirement": "V12.4 XXIX §113–§115 — Execution mandate, method, priorities P0–P8",
+      "class": "ODG_DECIDED",
+      "odgDecision": "ADOPT the execution mandate + method + P0–P8 priorities as ODG's operating method",
+      "rationale": "this IS ODG's delegated operating remit — priorities are selected by mission-priority-selector + campaign-engine",
+      "evidence": "mission-priority-selector (V76) + local-work-mandate (V77/V84) + campaign-engine (V78)",
+      "closureStatus": "DECIDED_CLOSED_ON_EXISTING_PROOF",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "APPROVE"
+    }
+  ],
+  "localVerify": [
+    {
+      "parentId": "REQ-I",
+      "requirement": "V12.4 I §5–§6 — Vision, fundamental mission (26 capabilities)",
+      "class": "LOCAL_VERIFY",
+      "odgDecision": "position: the 26-capability vision is PARTIAL; local capability substrate exists but the full enumeration is Master-owned",
+      "rationale": "the capabilities present are built+tested, but enumerating/closing all 26 needs the FROZEN Master content (NOT_RECOVERABLE) — not fabricated",
+      "evidence": "architecture audit 23/23 wired + 15/15 métiers; coverage bucket=PARTIAL",
+      "closureStatus": "NOT_MEASURED (partial; owner-referential enumeration)",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "NEEDS_INFORMATION"
+    },
+    {
+      "parentId": "REQ-IV",
+      "requirement": "V12.4 IV §16–§20 — 3-level architecture, physical options, 12 dimensions, 10 cognitive responsibilities, arch contracts",
+      "class": "LOCAL_VERIFY",
+      "odgDecision": "position: the 3-level architecture + 12 dimensions are referential; the local architecture is coherent and tested",
+      "rationale": "ODG adopts the coherent local architecture position; the full 12-dimension validation is Master-referential",
+      "evidence": "9/9 primitives + 23/23 pipeline wired",
+      "closureStatus": "NOT_MEASURED (referential dimensions)",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "NEEDS_INFORMATION"
+    },
+    {
+      "parentId": "REQ-XXV",
+      "requirement": "V12.4 XXV §105 — Failures register F01–F40",
+      "class": "LOCAL_VERIFY",
+      "odgDecision": "position: a failures register (F01–F40) is a real local artifact; ODG maintains a closure/incident discipline but the F01–F40 enumeration is Master-owned",
+      "rationale": "incident-lifecycle + closure-register exist; fabricating 40 specific failure entries would be dishonest",
+      "evidence": "closure-register + incident-resolution-lifecycle",
+      "closureStatus": "NOT_MEASURED (enumeration Master-owned)",
+      "ownerQuestion": null,
+      "options": null,
+      "ownerAction": null,
+      "odgRecommendation": "NEEDS_INFORMATION"
+    }
+  ],
+  "consolidatedOwnerSheet": {
+    "count": 5,
+    "decisions": [
+      {
+        "parentId": "REQ-XIII",
+        "question": "authorize a fair, reproducible EXTERNAL head-to-head benchmark (world-level comparison)?",
+        "options": [
+          "authorize external benchmark resource",
+          "defer (no world-superiority claim)"
+        ],
+        "ownerAction": "grant/deny an authorized external benchmark resource",
+        "odgRecommendation": "APPROVE_WITH_CONDITIONS",
+        "status": "PENDING_OWNER_DECISION"
+      },
+      {
+        "parentId": "REQ-XVI",
+        "question": "which of the six dossiers A–F to open/prioritize?",
+        "options": [
+          "open Dossier A first",
+          "another order",
+          "defer"
+        ],
+        "ownerAction": "choose dossier priority",
+        "odgRecommendation": "NEEDS_INFORMATION",
+        "status": "PENDING_OWNER_DECISION"
+      },
+      {
+        "parentId": "REQ-XXVII",
+        "question": "accept study/operational closure of the 33 deliverables scope?",
+        "options": [
+          "accept scope closure",
+          "revise scope"
+        ],
+        "ownerAction": "confirm deliverable scope",
+        "odgRecommendation": "NEEDS_INFORMATION",
+        "status": "PENDING_OWNER_DECISION"
+      },
+      {
+        "parentId": "REQ-XXX",
+        "question": "issue the first operational mandate (open Dossier A + preservation)?",
+        "options": [
+          "issue mandate",
+          "defer"
+        ],
+        "ownerAction": "issue/decline the operational mandate",
+        "odgRecommendation": "APPROVE",
+        "status": "PENDING_OWNER_DECISION"
+      },
+      {
+        "parentId": "REQ-XXXII",
+        "question": "commercialization commitment (pricing/engagement)?",
+        "options": [
+          "approve commercialization",
+          "reject",
+          "defer"
+        ],
+        "ownerAction": "make the commercial decision",
+        "odgRecommendation": "NEEDS_INFORMATION",
+        "status": "PENDING_OWNER_DECISION"
+      }
+    ]
+  },
+  "honestConclusion": "From 14 blocked dossiers, ODG DECIDED 6 (referential/method/governance — motivated position + existing proof, DECIDED_CLOSED_ON_EXISTING_PROOF); 3 NEEDS_LOCAL_BUILD are honestly NOT_MEASURED (require FROZEN-Master enumerations — never fabricated); ONLY 5 remain as genuine owner decisions (XIII external benchmark, XVI/XXVII/XXX owner priority, XXXII commercial), consolidated into ONE sheet. Not 14 blocks — 6 decided + 5 real owner decisions. ODG recommends but never fabricates the owner's signature.",
+  "invariant": "ODG decides all delegable technical/referential dossiers (position + existing proof); NEEDS_LOCAL_BUILD NOT_MEASURED not fabricated; only genuine owner decisions remain, consolidated; no invented approval; DECIDED ≠ CLOSED unless existing proof supports it."
+}

@@ -1,0 +1,82 @@
+{
+  "//": "CTO V69 §4 — source-intelligence applied to the real V67 radar signals. NON-binary: each signal gets an epistemic typology + credibility band. Non-certified sources graded (never auto-rejected); contradictions kept; reputable≠auto-true. Reuses source-intelligence; no new engine.",
+  "gradedSignals": [
+    {
+      "signal": "SIG-01",
+      "topic": "SWE-bench Verified maturity + contamination caveat",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "PUBLISHED_RESULT",
+      "credibilityBand": "SUBSTANTIAL",
+      "score": 0.588,
+      "rejected": false,
+      "contradictionsKept": false
+    },
+    {
+      "signal": "SIG-02",
+      "topic": "METR long-horizon autonomy",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "UNVERIFIED_CLAIM",
+      "credibilityBand": "MODERATE",
+      "score": 0.387,
+      "rejected": false,
+      "contradictionsKept": false
+    },
+    {
+      "signal": "SIG-03",
+      "topic": "Holistic Agent Leaderboard (eval infrastructure)",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "PUBLISHED_RESULT",
+      "credibilityBand": "SUBSTANTIAL",
+      "score": 0.522,
+      "rejected": false,
+      "contradictionsKept": false
+    },
+    {
+      "signal": "SIG-04",
+      "topic": "NIST AI Agent Standards Initiative (CAISI, 17 Feb 2026)",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "PUBLISHED_RESULT",
+      "credibilityBand": "SUBSTANTIAL",
+      "score": 0.631,
+      "rejected": false,
+      "contradictionsKept": false
+    },
+    {
+      "signal": "SIG-05",
+      "topic": "Berkeley Agentic Risk-Management Profile (CLTC, Feb 2026)",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "PUBLISHED_RESULT",
+      "credibilityBand": "SUBSTANTIAL",
+      "score": 0.631,
+      "rejected": false,
+      "contradictionsKept": false
+    },
+    {
+      "signal": "SIG-06",
+      "topic": "Singapore Model AI Governance for Agentic AI (22 Jan 2026)",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "PUBLISHED_RESULT",
+      "credibilityBand": "SUBSTANTIAL",
+      "score": 0.564,
+      "rejected": false,
+      "contradictionsKept": false
+    },
+    {
+      "signal": "SIG-07",
+      "topic": "Pre-deployment assurance / trust certification",
+      "basis": "EXTERNAL_UNTRUSTED",
+      "typology": "PUBLISHED_RESULT",
+      "credibilityBand": "SUBSTANTIAL",
+      "score": 0.522,
+      "rejected": false,
+      "contradictionsKept": false
+    }
+  ],
+  "bandDistribution": {
+    "SUBSTANTIAL": 6,
+    "MODERATE": 1
+  },
+  "anyAutoRejected": false,
+  "honestConclusion": "7 external radar signals graded multi-dimensionally (bands {\"SUBSTANTIAL\":6,\"MODERATE\":1}); NONE auto-rejected (non-certified ≠ rejected); contradictions kept where present. External signals remain UNTRUSTED data feeding owner/ODG-gated missions — a credibility band is not an integration decision.",
+  "invariant": "Grading is NON-binary (typology + band); no source auto-rejected for being non-certified, none auto-true for being reputable; a band never authorizes integration (ODG decides)."
+}

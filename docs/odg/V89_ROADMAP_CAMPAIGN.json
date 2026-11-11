@@ -1,0 +1,88 @@
+{
+  "//": "CTO V89 §5 — the REAL canonical V12.4 roadmap queue run through the V88-wired pipeline (V86 inspection PRE/POST + V88 incremental assurance per mission). Missions from canonical artifacts (coverage/program/ledger/radar); Level-A = real evidence re-verification; owner/external PREPARED/DEFERRED. Proof that V88 is executed automatically by the campaign, not just by demonstrators.",
+  "queueSize": 49,
+  "levelAMissions": 36,
+  "missionsWithIncrementalAssurance": 29,
+  "metrics": {
+    "discovered": 49,
+    "selected": 42,
+    "authorized": 29,
+    "executed": 29,
+    "accepted": 29,
+    "failed": 0,
+    "refusedC": 0,
+    "preparedB": 13,
+    "quarantined": 0,
+    "deferred": 7,
+    "retries": 0,
+    "iterations": 42,
+    "inspectionBlocked": 0,
+    "uninspected": 0,
+    "evidenceReused": 0
+  },
+  "stopReason": "ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission",
+  "sampleAssuranceLog": [
+    {
+      "id": "PROG-P1",
+      "decision": "EXECUTED_ACCEPTED",
+      "assurance": {
+        "overall": "VALIDATED_NOW",
+        "depthLevel": 1,
+        "fullSuite": false,
+        "testsSelected": 1,
+        "evidenceReused": 0,
+        "evidenceInvalidated": 0
+      }
+    },
+    {
+      "id": "PROG-P10",
+      "decision": "EXECUTED_ACCEPTED",
+      "assurance": {
+        "overall": "VALIDATED_NOW",
+        "depthLevel": 1,
+        "fullSuite": false,
+        "testsSelected": 1,
+        "evidenceReused": 0,
+        "evidenceInvalidated": 0
+      }
+    },
+    {
+      "id": "PROG-P2",
+      "decision": "EXECUTED_ACCEPTED",
+      "assurance": {
+        "overall": "VALIDATED_NOW",
+        "depthLevel": 1,
+        "fullSuite": false,
+        "testsSelected": 1,
+        "evidenceReused": 0,
+        "evidenceInvalidated": 0
+      }
+    },
+    {
+      "id": "PROG-P3",
+      "decision": "EXECUTED_ACCEPTED",
+      "assurance": {
+        "overall": "VALIDATED_NOW",
+        "depthLevel": 1,
+        "fullSuite": false,
+        "testsSelected": 1,
+        "evidenceReused": 0,
+        "evidenceInvalidated": 0
+      }
+    },
+    {
+      "id": "PROG-P4",
+      "decision": "EXECUTED_ACCEPTED",
+      "assurance": {
+        "overall": "VALIDATED_NOW",
+        "depthLevel": 1,
+        "fullSuite": false,
+        "testsSelected": 1,
+        "evidenceReused": 0,
+        "evidenceInvalidated": 0
+      }
+    }
+  ],
+  "honestConclusion": "Real roadmap queue of 49 canonical missions run THROUGH the V88-wired pipeline: 29 EXECUTED+ACCEPTED, 0 FAILED (evidence pointer absent), 13 PREPARED_B (owner), 0 inspection-blocked, 0 evidence reused. 29 missions carried a per-mission incremental-assurance decision (impact→selection) INSIDE the campaign. Stop: ALL_REMAINING_DEFERRED (deps/human/external) — no eligible local mission. Full-queue feed through the pipeline ≠ roadmap completion (honest): acceptance required a real evidence re-check + PRE/POST inspection, never a reduced test count alone.",
+  "invariant": "the real canonical queue runs through V86 inspection + V88 incremental assurance per mission; acceptance requires real evidence + PRE/POST, never a reduced selection; owner/external stay gated; no fabricated missions; feed ≠ completion."
+}

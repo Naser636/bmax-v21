@@ -1,0 +1,273 @@
+{
+  "//": "CTO V55 §5 — automation measurement. TWO DISTINCT ratios: % of ELIGIBLE tasks automated vs % of TIME saved. The 80% objective applies ONLY to eligible tasks; legally/humanly reserved decisions keep mandatory human validation. SIMULATED on synthetic inventories; no new engine.",
+  "generatedFrom": [
+    "V50_E4_ASSESSMENT_MATRIX.json"
+  ],
+  "objective": "up to 80% of ELIGIBLE tasks automated (NOT of all tasks; NOT of reserved decisions)",
+  "taxonomy": {
+    "AUTO": "AUTOMATABLE",
+    "HUMAN": "HUMAN_VALIDATION_REQUIRED",
+    "RESERVED": "RESERVED_DECISION"
+  },
+  "perMetier": [
+    {
+      "metier": "P3",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P11",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P9",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P10",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P15",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P1",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P2",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P4",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P5",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P6",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P7",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P8",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P12",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P14",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    },
+    {
+      "metier": "P13",
+      "totalTasks": 7,
+      "eligibleTasks": 4,
+      "humanValidationTasks": 1,
+      "reservedDecisions": 2,
+      "pctEligibleAutomated": 100,
+      "pctEligibleOfTotal": 57,
+      "pctTimeSaved": 79,
+      "autonomousSuccessRateSimulated": 0.938,
+      "reworkRateSimulated": 0.062,
+      "reservedKeepMandatoryValidation": [
+        "client-facing sign-off / acceptance",
+        "legal/compliance conclusion"
+      ],
+      "basis": "SIMULATED (synthetic task inventory; not observed production)"
+    }
+  ],
+  "avgEligibleAutomatedPctSimulated": 100,
+  "avgTimeSavedPctSimulated": 79,
+  "honestConclusion": "SIMULATED: on synthetic inventories, 100% of ELIGIBLE tasks are automated and 79% of TIME is saved on average. These are DISTINCT ratios. Legally/humanly reserved decisions (client sign-off, legal/compliance conclusions) ALWAYS keep mandatory human validation and are excluded from the 80% objective. Figures are SIMULATED, not observed in production.",
+  "invariant": "% tasks automated ≠ % time saved — reported separately, never conflated. The 80% objective never includes legally/humanly reserved decisions. Sensitive decisions keep their mandatory validations. No autonomous production/security-policy change without the prescribed authorizations."
+}

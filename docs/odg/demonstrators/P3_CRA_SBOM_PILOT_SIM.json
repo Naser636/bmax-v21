@@ -1,0 +1,275 @@
+{
+  "//": "CTO V55 — P3 CRA/SBOM THIRD-PILOT internal simulation. SYNTHETIC product. SBOM/gate/bundle are real composition over synthetic manifests; vulns/incidents/timelines SIMULATED (no CVE scan). READINESS, NOT CRA conformity/certification/legal advice. E4 rehearsal; E5=NOT_STARTED. Reuses cra-evidence-demonstrator + O1/O2; no new engine.",
+  "demonstrator": "P3 CRA/SBOM — third-pilot internal simulation (readiness only)",
+  "generatedAt": "2026-11-10T15:18:21.701Z",
+  "synthetic": true,
+  "parcours": [
+    "1 scope",
+    "2 software inventory",
+    "3 SBOM + provenance",
+    "4 vulnerabilities (SIMULATED)",
+    "5 risk analysis",
+    "6 prioritization",
+    "7 remediation plan",
+    "8 O1 deliverable + O2 evidence",
+    "9 reporting obligations",
+    "10 independent controller review (external, owner-gated)"
+  ],
+  "craEvidence": {
+    "verdict": "CRA_EVIDENCE_PREPARED",
+    "basis": "EVIDENCE_PREP_NOT_CONFORMITY",
+    "ciGate": 0,
+    "summary": {
+      "componentCount": 5,
+      "packSbomComponents": 0,
+      "policyClean": true,
+      "needsReview": true,
+      "bundleAttested": true,
+      "interopExport": true,
+      "cveScan": "NOT_PERFORMED",
+      "gapCount": 1
+    },
+    "gaps": [
+      "license-policy: UNKNOWN/conditional license(s) require manual review (not assumed safe)."
+    ]
+  },
+  "tamperEvidenceVerification": {
+    "ok": false,
+    "checks": {
+      "bundle": {
+        "ok": true,
+        "reason": "content digest verified (sha256 ef91f8aec19a39ab4baeb0993f54b1da7cbee756bb28c64881249ac4930b4aa6); source UNATTRIBUTED",
+        "attested": true,
+        "buildRef": "synthetic-build-ref"
+      },
+      "pack": {
+        "ok": false,
+        "reason": "unsigned pack + no artifactBytes ⇒ not verifiable"
+      }
+    },
+    "basis": "EVIDENCE_PREP_NOT_CONFORMITY",
+    "note": "Re-verifies tamper-evidence of the sealed bundle + pack attestation. Verification of evidence integrity, NOT of CRA conformity."
+  },
+  "simulatedVulnerabilities": [
+    {
+      "id": "SIM-VULN-002",
+      "component": "node-forge@1.3.1",
+      "severity": "HIGH",
+      "cwe": "CWE-310 (crypto handling)",
+      "note": "SIMULATED — illustrative high-severity to exercise 24h/72h reporting rehearsal",
+      "exploited": true,
+      "riskScore": 6
+    },
+    {
+      "id": "SIM-VULN-003",
+      "component": "express@4.18.2",
+      "severity": "MEDIUM",
+      "cwe": "CWE-400 (resource exhaustion)",
+      "note": "SIMULATED — illustrative medium",
+      "exploited": false,
+      "riskScore": 2
+    },
+    {
+      "id": "SIM-VULN-001",
+      "component": "left-pad@1.3.0",
+      "severity": "LOW",
+      "cwe": "N/A",
+      "note": "SIMULATED — trivial dependency, illustrative only",
+      "exploited": false,
+      "riskScore": 1
+    }
+  ],
+  "remediationPlan": [
+    {
+      "priority": 1,
+      "vuln": "SIM-VULN-002",
+      "component": "node-forge@1.3.1",
+      "severity": "HIGH",
+      "basis": "SIMULATED",
+      "action": "SIMULATED: patch/upgrade immediately; prepare CRA actively-exploited reporting rehearsal (24h early warning / 72h notification / 14-day report — owner-operated)"
+    },
+    {
+      "priority": 2,
+      "vuln": "SIM-VULN-003",
+      "component": "express@4.18.2",
+      "severity": "MEDIUM",
+      "basis": "SIMULATED",
+      "action": "SIMULATED: schedule upgrade of express@4.18.2"
+    },
+    {
+      "priority": 3,
+      "vuln": "SIM-VULN-001",
+      "component": "left-pad@1.3.0",
+      "severity": "LOW",
+      "basis": "SIMULATED",
+      "action": "SIMULATED: schedule upgrade of left-pad@1.3.0"
+    }
+  ],
+  "activelyExploited": 1,
+  "craReportingObligations": [
+    {
+      "obligation": "Actively-exploited-vuln reporting to ENISA/CSIRT — early warning",
+      "deadline": "24h",
+      "applicableFrom": "2026-09-11",
+      "requirementType": "LEGAL_OBLIGATION",
+      "owner": "manufacturer (owner-operated process)"
+    },
+    {
+      "obligation": "Vulnerability notification",
+      "deadline": "72h",
+      "applicableFrom": "2026-09-11",
+      "requirementType": "LEGAL_OBLIGATION",
+      "owner": "manufacturer"
+    },
+    {
+      "obligation": "Final report",
+      "deadline": "14 days",
+      "applicableFrom": "2026-09-11",
+      "requirementType": "LEGAL_OBLIGATION",
+      "owner": "manufacturer"
+    },
+    {
+      "obligation": "Machine-readable SBOM in technical documentation + main CRA obligations",
+      "deadline": "N/A",
+      "applicableFrom": "2027-12-11",
+      "requirementType": "LEGAL_OBLIGATION",
+      "owner": "manufacturer"
+    },
+    {
+      "obligation": "CE marking + declaration of conformity",
+      "deadline": "N/A",
+      "applicableFrom": "2027-12-11",
+      "requirementType": "NEEDS_LEGAL_EXPERTISE",
+      "owner": "manufacturer/legal"
+    }
+  ],
+  "independentEvidenceVerification": {
+    "ok": true,
+    "reason": "digest matches — evidence integrity verified independently"
+  },
+  "e5Status": "NOT_STARTED — simulation only; no real client, no real product, no CVE scan, no client validation",
+  "report": {
+    "metier": "P3",
+    "title": "CRA / SBOM Audit — PILOT SIMULATION (synthetic product)",
+    "status": "SIMULATION — 5-component SBOM; CRA evidence CRA_EVIDENCE_PREPARED; ciGate=0; 3 SIMULATED vulns (1 actively-exploited). READINESS, NOT CRA conformity/certification.",
+    "summary": "Synthetic digital product 'demo-iot-gateway'. Composed CRA evidence run: SBOM (5 components), license-policy gate (ciGate=0: clean/review-only), sealed golden-path bundle (attested=true), OSCAL-interop export (true). CVE scanning NOT_PERFORMED by the tool; 3 SIMULATED vulns drive a remediation rehearsal (1 would trigger the 24h/72h/14-day owner-operated reporting process). Every vuln/incident/timeline is SIMULATED — NOT a real scan, NOT conformity, NOT legal advice.",
+    "controls": [
+      {
+        "name": "Machine-readable SBOM",
+        "status": "PRODUCED",
+        "detail": "5 components"
+      },
+      {
+        "name": "License-policy CI gate",
+        "status": "CLEAN/REVIEW",
+        "detail": "ciGate=0; policyClean=true; needsReview=true"
+      },
+      {
+        "name": "Tamper-evident evidence bundle",
+        "status": "ATTESTED",
+        "detail": "sealed-bundle digest re-verified=true; pack-signature owner-gated (no signer in synthetic run)"
+      },
+      {
+        "name": "OSCAL-interop export",
+        "status": "OK",
+        "detail": "downstream GRC shape"
+      },
+      {
+        "name": "CVE scan",
+        "status": "NOT_PERFORMED",
+        "detail": "guard performs license audit, not CVE scanning — SIMULATED vulns are illustrative"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "HIGH",
+        "detail": "[SIMULATED] SIM-VULN-002 node-forge@1.3.1 (actively-exploited → reporting rehearsal)",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "[SIMULATED] SIM-VULN-003 express@4.18.2",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "LOW",
+        "detail": "[SIMULATED] SIM-VULN-001 left-pad@1.3.0",
+        "basis": "SIMULATED"
+      },
+      {
+        "severity": "MEDIUM",
+        "detail": "evidence gap: license-policy: UNKNOWN/conditional license(s) require manual review (not assumed safe).",
+        "basis": "PROVEN"
+      }
+    ],
+    "recommendations": [
+      "run a REAL CVE scan against an offline feed before any vulnerability claim (tool does license audit only)",
+      "keep the machine-readable SBOM in the technical documentation (CRA main obligations 2027-12-11)",
+      "operate the 24h/72h/14-day reporting PROCESS (owner duty; ODG supplies inventory/evidence, not the legal filing)",
+      "do NOT present this as CRA conformity, certification, or legal advice"
+    ],
+    "limits": [
+      "ALL inputs are SYNTHETIC — no client product, no client data",
+      "vulnerabilities/incidents/timelines are SIMULATED and illustrative — NOT a real CVE scan (cveScan=NOT_PERFORMED)",
+      "technical EVIDENCE/READINESS only — NOT CRA conformity, NOT certification, NOT legal advice",
+      "CRA reporting is an owner-operated legal PROCESS; ODG supplies the inventory/evidence, not the reporting duty",
+      "ODG maturity L2 for P3; 0 paying clients; E5 (client-validated) = NOT_STARTED"
+    ],
+    "validationConditions": [
+      "re-run reproduces the SBOM + gate + evidence digest from identical synthetic inputs",
+      "evidence digest independently verifiable via O2.verifyEvidence; bundle tamper-evidence via verifyCraEvidence",
+      "before E5: real authorized client + real product manifests + a real CVE scan + documented client validation"
+    ],
+    "evidence": {
+      "items": [
+        {
+          "claim": "5-component machine-readable SBOM + license-policy gate (ciGate=0)",
+          "basis": "PROVEN",
+          "sourceRef": "P3_CRA_SBOM_PILOT_SIM.json"
+        },
+        {
+          "claim": "sealed golden-path bundle tamper-evidence re-verified: true",
+          "basis": "PROVEN",
+          "sourceRef": "P3_CRA_SBOM_PILOT_SIM.json"
+        },
+        {
+          "claim": "3 SIMULATED vulnerabilities + prioritized remediation",
+          "basis": "SIMULATED",
+          "sourceRef": "P3_CRA_SBOM_PILOT_SIM.json"
+        },
+        {
+          "claim": "CRA reporting obligations mapped (dates are data; owner-operated)",
+          "basis": "ESTIMATED",
+          "sourceRef": "P3_CRA_SBOM_PILOT_SIM.json"
+        }
+      ],
+      "counts": {
+        "PROVEN": 2,
+        "OBSERVED": 0,
+        "ESTIMATED": 1,
+        "SIMULATED": 1,
+        "UNKNOWN": 0
+      },
+      "provenance": {
+        "schema": "evidence-provenance/1",
+        "contentSha256": "43c0db8d218096260be8344034373675c5ca871cb2c3a09954bf721ef9afca9e",
+        "sourceCommit": "1d69549415e28969776d5c1f0f668e4b66f0233d",
+        "treeDirty": true,
+        "sourceAvailable": true,
+        "capturedAtRun": null
+      },
+      "integrity": {
+        "digest": "43c0db8d218096260be8344034373675c5ca871cb2c3a09954bf721ef9afca9e",
+        "primitive": "evidence-provenance"
+      },
+      "summary": {
+        "total": 4,
+        "proven": 2,
+        "nonProven": 2,
+        "note": "basis is never upgraded; an absence of proof is UNKNOWN, never PROVEN; provenance via the canonical evidence-provenance primitive (not duplicated)"
+      }
+    },
+    "generator": "shared-report-generator (O1)",
+    "missingRequired": []
+  }
+}
