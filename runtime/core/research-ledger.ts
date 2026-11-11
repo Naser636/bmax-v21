@@ -77,8 +77,21 @@ function tally(arr: string[]): Record<string, number> {
 }
 
 /** summarize(ledger): a FROZEN observability read-model over the subsystem's recorded behaviour. Pure. */
+/** D4 FIX — detectContradictions(ledger): surface CONFLICTING evidence instead of silently accepting it. Groups well-formed
+ * findings by (source|date) and flags any group whose findings carry materially DIFFERENT content — a contradiction the
+ * governor/caller must resolve before treating the newest as settled fact. Pure; never throws. */
+function detectContradictions(ledger: any): any {
+  const l = ensure(ledger);
+  const findings = (Object.values(l.findings).filter(isObj) as any[]).filter((f) => Number.isInteger(f.count) && f.count >= 1 && isStr(f.source) && isStr(f.date));
+  const byKey: Record<string, Set<string>> = {};
+  for (const f of findings) { const k = s(f.source).toLowerCase() + "|" + s(f.date); (byKey[k] = byKey[k] || new Set()).add(isStr(f.content) ? s(f.content).trim() : ""); }
+  const conflicts = Object.keys(byKey).filter((k) => byKey[k].size > 1).sort().map((k) => Object.freeze({ key: k, distinctClaims: byKey[k].size, claims: Object.freeze(Array.from(byKey[k]).sort().map((c) => c.slice(0, 120))) }));
+  return Object.freeze({ contradictions: Object.freeze(conflicts), hasContradictions: conflicts.length > 0, note: "same source+date, materially different content ⇒ conflicting evidence surfaced (never silently settled as the newest)." });
+}
+
 function summarize(ledger: any): any {
   const l = ensure(ledger);
+  const contra = detectContradictions(l);
   const allow = l.decisions.filter((d: any) => isObj(d) && d.decision === DECISIONS.ALLOW);
   const deny = l.decisions.filter((d: any) => isObj(d) && d.decision === DECISIONS.DENY);
   // Only real ALLOW/DENY count toward the denominator — a corrupted persisted ledger padded with non-decision junk
@@ -109,8 +122,9 @@ function summarize(ledger: any): any {
       repeated: totalObservations - findings.length,   // observations deduped away (anti-repeat evidence)
       byConfidence: Object.freeze(byConfidence),
     }),
+    contradictions: Object.freeze({ count: contra.contradictions.length, hasContradictions: contra.hasContradictions, groups: contra.contradictions }),
   });
 }
 
-module.exports = { DECISIONS, SCHEMA_VERSION, emptyLedger, findingKey, recordDecision, recordFinding, summarize };
+module.exports = { DECISIONS, SCHEMA_VERSION, emptyLedger, findingKey, recordDecision, recordFinding, summarize, detectContradictions };
 export {};

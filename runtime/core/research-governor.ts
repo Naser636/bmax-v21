@@ -17,6 +17,8 @@
  * LIVE ACTIVATION is an owner/EXT-AUTH frontier: a real grant is issued out-of-band; this module only enforces policy.
  */
 
+const RADAR = require("./frontier-radar.js");   // D5: reuse the canonical injection-quarantine (sanitizeExternal)
+const SOURCE_CLASSES = Object.freeze(["LIVE_SOURCE", "INTERNAL_EVIDENCE", "FIXTURE", "HYPOTHESIS"]);
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 function isNum(v: any): boolean { return typeof v === "number" && Number.isFinite(v); }
 function hostOf(u: any): string | null { if (!isStr(u)) return null; const m = String(u).match(/^https?:\/\/([^/:?#]+)/i); return m ? m[1].toLowerCase() : null; }
@@ -54,8 +56,13 @@ function govern(request: any, grant: any, nowMs: any): any {
     if (!ok) reasons.push("DOMAIN_NOT_ALLOWED:" + h);
     else planDomains.push(h);
   }
-  // fail-closed: with a grant but an empty allowlist, nothing is fetchable
-  if (g.authorized === true && urls.length > 0 && allowed.length === 0) reasons.push("NO_ALLOWED_DOMAINS");
+  // D1 FIX — the domain allowlist must bound EVERY authorized request, including a QUERY-ONLY one (the shape the radar emits).
+  // Previously the allowlist was consulted only for url-bearing requests, so a query-only request with any authorized grant
+  // was ALLOWed with an empty, unscoped plan (allowlist = dead code for the whole radar→govern path). Now: an authorized
+  // request (query OR urls) with an empty allowlist is fail-closed; and a query-only ALLOW carries the grant's domains in the
+  // plan so the downstream search is RESTRICTED to them (never an unbounded free-text search).
+  if (g.authorized === true && allowed.length === 0 && (urls.length > 0 || isStr(req.query))) reasons.push("NO_ALLOWED_DOMAINS");
+  if (urls.length === 0 && isStr(req.query) && allowed.length > 0) for (const d of allowed) planDomains.push(d);
   const decision = reasons.length ? "DENY" : "ALLOW";
   return Object.freeze({ decision, reasons: Object.freeze(reasons.slice()), plan: Object.freeze({ domains: Object.freeze(Array.from(new Set(planDomains)).sort()), query: isStr(req.query) ? req.query : null }) });
 }
@@ -66,14 +73,33 @@ function stampFinding(content: any, source: any): any {
   if (!isStr(content)) reasons.push("NO_CONTENT");
   if (!isStr(s.url) && !isStr(s.name)) reasons.push("NO_SOURCE");                 // anti-fabrication: a finding needs a source
   if (!isIsoDate(s.date)) reasons.push("NO_DATED_SOURCE");                        // and a real date
+  // D5 — external content is DATA. Best-effort injection screen via the canonical sanitizeExternal (a KNOWN-pattern denylist:
+  // "ignore previous instructions", "system prompt", "<script", etc.) — NOT a universal guarantee. A matched payload is
+  // quarantined (untrusted ⇒ HYPOTHESIS, confidence floored); novel phrasings may pass, so downstream consumers must still
+  // treat finding.content as data, never as an instruction.
+  const sanitized = RADAR.sanitizeExternal({ title: content, body: isStr(s.url) ? s.url : (isStr(s.name) ? s.name : "") });
+  const untrusted = sanitized.untrusted === true;
   if (reasons.length) return Object.freeze({ ok: false, reason: Object.freeze(reasons) });
+  // D2 — LIVE_SOURCE is gated on fetch EVIDENCE (liveFetched AND a 2xx httpStatus), not a bare boolean. NOTE: this is a pure
+  // stamper — it cannot itself witness a fetch, so the evidence pair is still caller-supplied; the LOAD-BEARING guarantee
+  // lives in the runner (odg-v138-live-research), which passes the REAL bounded-http-client statusCode and yields
+  // LIVE_UNAVAILABLE on res.ok===false. Here: a bare sourceClass:"LIVE_SOURCE" (no evidence) ⇒ FIXTURE; httpStatus not 2xx
+  // ⇒ FIXTURE; a quarantined (untrusted) finding ⇒ HYPOTHESIS. Default class is FIXTURE (never silently "live").
+  const httpOk = isNum(s.httpStatus) && s.httpStatus >= 200 && s.httpStatus < 300;
+  const declared = typeof s.sourceClass === "string" && SOURCE_CLASSES.includes(s.sourceClass) ? s.sourceClass : "FIXTURE";
+  let sourceClass: string;
+  if (untrusted) sourceClass = "HYPOTHESIS";
+  else if (s.liveFetched === true && httpOk) sourceClass = "LIVE_SOURCE";
+  else if (declared === "LIVE_SOURCE") sourceClass = "FIXTURE";                   // a LIVE claim without fetch proof is NOT honored
+  else sourceClass = declared;
   return Object.freeze({
     ok: true,
     finding: Object.freeze({
       content, source: isStr(s.url) ? s.url : s.name, date: s.date,
-      confidence: credName(s.credibility),
-      provenance: `${isStr(s.url) ? s.url : s.name} @ ${s.date} [${credName(s.credibility)}]`,
-      liveFetched: s.liveFetched === true,                                        // only true if the caller actually fetched under an ALLOW grant
+      confidence: untrusted ? "LOW" : credName(s.credibility),                    // untrusted ⇒ confidence floored
+      provenance: `${isStr(s.url) ? s.url : s.name} @ ${s.date} [${untrusted ? "LOW" : credName(s.credibility)}] {${sourceClass}}`,
+      sourceClass, untrusted,
+      liveFetched: sourceClass === "LIVE_SOURCE",                                  // now DERIVED (fetch-evidence-gated), not trusted
     }),
   });
 }

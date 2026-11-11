@@ -49,6 +49,9 @@ const CORPUS: ReadonlyArray<any> = deepFreeze([
   Object.freeze({ id: "gov-expired", property: "GOVERN_FAILCLOSED", request: REQ, grant: { authorized: true, allowedDomains: ["example.com"], expiresMs: NOW - 1 }, nowMs: NOW }),
   Object.freeze({ id: "gov-no-expiry", property: "GOVERN_FAILCLOSED", request: REQ, grant: { authorized: true, allowedDomains: ["example.com"] }, nowMs: NOW }),
   Object.freeze({ id: "gov-bad-domain", property: "GOVERN_FAILCLOSED", request: { urls: ["https://evil.com/x"] }, grant: OK_GRANT, nowMs: NOW }),
+  // D1 regression — a QUERY-ONLY request must ALSO be domain-scoped: an authorized grant with an empty allowlist must DENY
+  // (previously ALLOWed with an unscoped plan — the allowlist was dead code for the radar's query-only shape).
+  Object.freeze({ id: "gov-query-only-empty-allowlist", property: "GOVERN_FAILCLOSED", request: { query: "q" }, grant: { authorized: true, allowedDomains: [], expiresMs: NOW + 9999 }, nowMs: NOW }),
   Object.freeze({ id: "gov-bad-time", property: "GOVERN_FAILCLOSED", request: REQ, grant: OK_GRANT, nowMs: "nope" }),
   // BUDGET_MONOTONIC — govern DENY must stay DENY under any budget
   Object.freeze({ id: "mono-no-grant-huge-budget", property: "BUDGET_MONOTONIC", request: REQ, grant: { budget: { maxCalls: 1e9 } }, nowMs: NOW, usage: { calls: 0 } }),

@@ -1,0 +1,143 @@
+{
+  "//": "V138 live research — DISCOVER→VALIDATE→ASSESS→RECORD→PROPOSE→GOVERN over REAL primary sources under a canonical scoped+expiring+budgeted grant. bounded-http-client is the only egress; canonical ALLOWLIST unmutated (per-call allowlist). Discovery ≠ authorization.",
+  "mode": "LIVE",
+  "grant": {
+    "authorized": true,
+    "allowedDomains": [
+      "www.rfc-editor.org",
+      "standards.nasa.gov",
+      "csrc.nist.gov"
+    ],
+    "scope": "READ_ONLY_PUBLIC_RESEARCH",
+    "issuedBy": "owner (CTO V138 §4)",
+    "expiresInMin": 10,
+    "budget": {
+      "maxCalls": 8,
+      "maxBytes": 1000000
+    }
+  },
+  "egressDecisions": [
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "decision": "ALLOW",
+      "reasons": []
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9114.txt",
+      "decision": "ALLOW",
+      "reasons": []
+    },
+    {
+      "url": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+      "decision": "ALLOW",
+      "reasons": []
+    },
+    {
+      "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "decision": "ALLOW",
+      "reasons": []
+    }
+  ],
+  "findings": [
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9000.txt",
+      "classification": "LIVE_UNAVAILABLE",
+      "code": "RESPONSE_TOO_LARGE"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9114.txt",
+      "classification": "LIVE_UNAVAILABLE",
+      "code": "RESPONSE_TOO_LARGE"
+    },
+    {
+      "url": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+      "authority": "NASA",
+      "topic": "software assurance / reliability",
+      "classification": "LIVE_SOURCE",
+      "nature": "STANDARD",
+      "httpStatus": 200,
+      "bytes": 26344,
+      "claim": "Software Assurance and Software Safety Standard | Standards",
+      "retrievedAt": "2026-11-11",
+      "confidence": "HIGH",
+      "provenance": "https://standards.nasa.gov/standard/nasa/nasa-std-87398 @ 2026-11-11 [HIGH] {LIVE_SOURCE}",
+      "untrusted": false,
+      "stamped": true
+    },
+    {
+      "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "authority": "NIST",
+      "topic": "secure software development (SSDF)",
+      "classification": "LIVE_SOURCE",
+      "nature": "STANDARD_OR_GUIDELINE",
+      "httpStatus": 200,
+      "bytes": 48473,
+      "claim": "SP 800-218, Secure Software Development Framework (SSDF) Version 1.1: Recommendations for Mitigating the Risk of Software Vulnerabilities | CSRC",
+      "retrievedAt": "2026-11-11",
+      "confidence": "HIGH",
+      "provenance": "https://csrc.nist.gov/pubs/sp/800/218/final @ 2026-11-11 [HIGH] {LIVE_SOURCE}",
+      "untrusted": false,
+      "stamped": true
+    }
+  ],
+  "classificationLegend": {
+    "LIVE_SOURCE": "really fetched this run (fetch-evidence-gated)",
+    "INTERNAL_EVIDENCE": "from the repo/ledger",
+    "FIXTURE": "test double",
+    "HYPOTHESIS": "unproven / quarantined claim"
+  },
+  "ledgerSummary": {
+    "version": 1,
+    "decisions": {
+      "total": 0,
+      "allow": 0,
+      "deny": 0,
+      "allowRate": null,
+      "denyReasons": {},
+      "allowByDomain": {}
+    },
+    "findings": {
+      "distinct": 2,
+      "totalObservations": 2,
+      "repeated": 0,
+      "byConfidence": {
+        "HIGH": 2
+      }
+    },
+    "contradictions": {
+      "count": 0,
+      "hasContradictions": false,
+      "groups": []
+    }
+  },
+  "summary": {
+    "targets": 4,
+    "liveSources": 2,
+    "denied": 0,
+    "unavailable": 2,
+    "proposals": 2
+  },
+  "proposals": [
+    {
+      "kind": "MISSION_PROPOSAL",
+      "status": "PROPOSED",
+      "selfAuthored": false,
+      "grantsNoPermission": true,
+      "objective": "Read-only: compare ODG's capability against NASA primary source (software assurance / reliability)",
+      "source": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+      "nature": "STANDARD",
+      "verifiableAcceptance": "an evidence-based gap report vs the cited source; no implementation authorized"
+    },
+    {
+      "kind": "MISSION_PROPOSAL",
+      "status": "PROPOSED",
+      "selfAuthored": false,
+      "grantsNoPermission": true,
+      "objective": "Read-only: compare ODG's capability against NIST primary source (secure software development (SSDF))",
+      "source": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "nature": "STANDARD_OR_GUIDELINE",
+      "verifiableAcceptance": "an evidence-based gap report vs the cited source; no implementation authorized"
+    }
+  ],
+  "honesty": "LIVE_SOURCE findings were fetched this run via the canonical bounded egress under an owner-authorized scoped+expiring+budgeted grant; URLs/status/bytes are real and sourceClass is set from the runner's real bounded-http-client statusCode (res.ok===false ⇒ LIVE_UNAVAILABLE, never a fabricated LIVE). 'confidence: HIGH' denotes SOURCE-AUTHORITY trust (NASA/NIST/IETF primary standards bodies), NOT an independent content-credibility assessment. Injection screening is a best-effort known-pattern denylist (sanitizeExternal), not universal — finding.content is always treated as data. Nature (STANDARD/DRAFT) is classified from fetched content. No finding is promoted to fact; every proposal is PROPOSED (discovery ≠ authorization); no paid API; no credential."
+}

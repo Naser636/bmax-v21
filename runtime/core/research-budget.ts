@@ -57,11 +57,14 @@ function reqBytesOf(req: any): { bytes: number; corrupt: boolean } {
   } catch { return { bytes: 0, corrupt: true }; }
 }
 
-/** withinBudget(grant, usage, req?): would ONE more egress (1 call + req.bytes) stay inside the grant's quota? Never throws. */
-function withinBudget(grant: any, usage: any, req: any = {}): any {
+/** withinBudget(grant, usage, req?, opts?): would ONE more egress (1 call + req.bytes) stay inside the grant's quota? Never
+ * throws. D3 FIX — opts.requireBudget===true makes a quota MANDATORY: an authorized grant with no declared budget is then
+ * fail-closed (BUDGET_REQUIRED), closing the "unlimited egress by omission" gap. Default (non-strict) is unchanged. */
+function withinBudget(grant: any, usage: any, req: any = {}, opts: any = {}): any {
   const { maxCalls, maxBytes, declared, invalid } = budgetOf(grant);
   if (!declared) {
-    // No quota declared — not this gate's job to invent one, but surface the unbounded state (security signal).
+    // No quota declared. STRICT mode ⇒ fail-closed (a grant MUST be volume-bounded). Default ⇒ surface the unbounded state.
+    if (opts && opts.requireBudget === true) return Object.freeze({ ok: false, declared: false, unbounded: false, reasons: Object.freeze(["BUDGET_REQUIRED"]), remaining: Object.freeze({ calls: null, bytes: null }) });
     return Object.freeze({ ok: true, declared: false, unbounded: true, reasons: Object.freeze([]), remaining: Object.freeze({ calls: null, bytes: null }) });
   }
   const u = usageOf(usage);
@@ -89,11 +92,11 @@ function withinBudget(grant: any, usage: any, req: any = {}): any {
  * govern() DENY ⇒ returned untouched (never loosened). govern() ALLOW + quota ok ⇒ ALLOW (+budget view). govern()
  * ALLOW + quota exhausted/invalid/error ⇒ DOWNGRADED to DENY with govern()'s reasons preserved and QUOTA_* appended.
  */
-function governWithBudget(request: any, grant: any, nowMs: any, usage: any, req: any = {}): any {
+function governWithBudget(request: any, grant: any, nowMs: any, usage: any, req: any = {}, opts: any = {}): any {
   const g = GOV.govern(request, grant, nowMs);
   if (!g || g.decision !== "ALLOW") return g;                                     // monotonic: never upgrade a DENY
   let b: any;
-  try { b = withinBudget(grant, usage, req); }
+  try { b = withinBudget(grant, usage, req, opts); }
   catch { b = Object.freeze({ ok: false, declared: true, unbounded: false, reasons: Object.freeze(["BUDGET_EVAL_ERROR"]), remaining: Object.freeze({ calls: null, bytes: null }) }); }
   if (b.ok) return Object.freeze({ decision: "ALLOW", reasons: g.reasons, plan: g.plan, budget: b });
   const reasons = Object.freeze([...(Array.isArray(g.reasons) ? g.reasons : []), ...b.reasons]);
