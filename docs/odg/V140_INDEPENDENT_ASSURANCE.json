@@ -1,0 +1,102 @@
+{
+  "//": "V140 final independent assurance — critical V136-V139 proofs RE-RUN on current main (not trusting dossiers) + the final acceptance matrix separating VALIDATED_LOCAL/ACTIVE_IN_PRODUCTION/TESTED/SIMULATED/BLOCKED/NOT_MEASURED. Hermetic (V138 fetcher injected). Honest: only the deployed VPS release is ACTIVE_IN_PRODUCTION; the V136-V140 improvements are VALIDATED_LOCAL, not yet deployed.",
+  "reproductions": [
+    {
+      "id": "V136_self_origination",
+      "reproduced": true,
+      "detail": "self-originated SELF_AUDIT_COVERAGE_16 (canary-safe, PROPOSED)"
+    },
+    {
+      "id": "V137_15_metiers",
+      "reproduced": true,
+      "detail": "15/15 VALIDATED_LOCAL, safetyGaps=0"
+    },
+    {
+      "id": "V139_fault_injection",
+      "reproduced": true,
+      "detail": "12/12 safety held, tamperDetected=true"
+    },
+    {
+      "id": "V138_research_pipeline",
+      "reproduced": true,
+      "detail": "LIVE_SOURCE=1, poisoned⇒HYPOTHESIS (quarantined)"
+    },
+    {
+      "id": "V138_grant_expiry",
+      "reproduced": true,
+      "detail": "expired grant ⇒ all DENIED"
+    }
+  ],
+  "reproducedCount": "5/5",
+  "acceptanceMatrix": [
+    {
+      "capability": "VPS production release (odg-preprod supervised, 5jBqWOtAeCIi7XKiD5Yxp)",
+      "state": "ACTIVE_IN_PRODUCTION",
+      "evidence": "V107 systemd-supervised cutover (prior); NOTE: the V136-V140 local improvements are NOT on this release"
+    },
+    {
+      "capability": "V136 autonomous self-originated read-only mission + lesson reuse",
+      "state": "VALIDATED_LOCAL",
+      "evidence": "enforced 14/14-stage execution on main (V136_SELF_ORIGINATION.enforcedProof); re-derived here"
+    },
+    {
+      "capability": "V137 15 métiers (45 nominal/boundary/failure scenarios)",
+      "state": "VALIDATED_LOCAL",
+      "evidence": "15/15 VALIDATED_LOCAL re-run here; scenarios SIMULATED (synthetic inputs)"
+    },
+    {
+      "capability": "V138 research governance + live-source provenance",
+      "state": "VALIDATED_LOCAL",
+      "evidence": "2 real LIVE_SOURCE (NASA/NIST) in V138_LIVE_RESEARCH; pipeline reproduced hermetically here"
+    },
+    {
+      "capability": "V139 resilience / 12 fault scenarios + recovery + rollback + audit integrity",
+      "state": "VALIDATED_LOCAL",
+      "evidence": "12/12 safety held re-run here; faults SIMULATED (no prod path)"
+    },
+    {
+      "capability": "9 primitives + 4 programs (governance/traceability/FMEA/action-gate/grant-map)",
+      "state": "VALIDATED_LOCAL",
+      "evidence": "V135 A+B+C+D + V137 four-programs reconciliation"
+    },
+    {
+      "capability": "Full test gate",
+      "state": "TESTED",
+      "evidence": "552/552 suites green on main @80781dc"
+    },
+    {
+      "capability": "Fault-injection / métier scenarios / commercial pipeline",
+      "state": "SIMULATED",
+      "evidence": "synthetic inputs / €0 clients; not real workload"
+    },
+    {
+      "capability": "Full 150-reference competitive study + per-métier improvements",
+      "state": "BLOCKED",
+      "evidence": "multi-cycle weekly-radar work; 13/15 métiers NOT_YET_RESEARCHED"
+    },
+    {
+      "capability": "5 FMEA MEDIUM+ residuals (incl. HIGH recovery-loop)",
+      "state": "BLOCKED",
+      "evidence": "require explicit OWNER ACCEPTANCE (surfaced in V135 grant map); preserved, not cleared"
+    },
+    {
+      "capability": "VPS deployment of V136-V140 improvements",
+      "state": "BLOCKED",
+      "evidence": "OWNER-GATED (no deploy during local qualification)"
+    },
+    {
+      "capability": "Real production telemetry (E5) / prolonged autonomy / real client outcomes / revenue",
+      "state": "NOT_MEASURED",
+      "evidence": "no production workload; €0 clients; none R4+"
+    }
+  ],
+  "maturityTally": {
+    "ACTIVE_IN_PRODUCTION": 1,
+    "VALIDATED_LOCAL": 5,
+    "TESTED": 1,
+    "SIMULATED": 1,
+    "BLOCKED": 3,
+    "NOT_MEASURED": 1
+  },
+  "honesty": "Independent reproduction re-executes the real harnesses; a dossier is never the sole proof. VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION. The HIGH recovery-loop + 5 MEDIUM+ FMEA residuals remain owner-acceptance-required (preserved). No fabricated customer/revenue; no production deploy."
+}
