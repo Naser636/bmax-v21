@@ -1,9 +1,16 @@
-# ODG-ADR (PROPOSAL) — Reconcile V12.4 §80/§115 "recover 166 capabilities" vs DEC-V60-166-RETIREMENT
+# ODG-ADR — Reconcile V12.4 §80/§115 "recover 166 capabilities" vs DEC-V60-166-RETIREMENT
 
-**Status: PROPOSED — requires CTO ratification.** This document *prepares* the decision per the owner's maximum-unblock
-delegation (§2 "préparer une proposition de décision sans falsifier l'ancien historique"; §3 "appliquer la procédure
-officielle… conserver l'ancien historique"). It **does not** modify the frozen `DEC-V60-166-RETIREMENT`, and ODG does
-**not** self-authorize an override. The conflict stays `BLOCKED` on a recorded CTO decision until this ADR is ratified.
+**Status: RATIFIED (2026-11-11) under CTO Directive V123-4B → recorded as `DEC-166-RECONCILED`
+(ACCEPTED) in `docs/odg-operational/ODG_DECISION_CHANGELOG.md`.** The recommended resolution below (affirm
+`DEC-V60-166-RETIREMENT` as governing; deliver §115's coverage intent via the enumerable substitutes DEC-008 a–d +
+P1–P15 + `capability-map`) is the ratified decision. This **confirms** a standing ACCEPTED CTO decision rather than
+overriding it, so it introduces no new owner authority; it **does not** modify the frozen `DEC-V60-166-RETIREMENT`
+(preserved verbatim, superseded-by relation only). The register item `adr-166-capabilities-reconciliation` is now
+ACCEPTED citing `DEC-166-RECONCILED`.
+
+> Historical note — this document was authored as a PROPOSAL ("prepares the decision… does not self-authorize an
+> override; stays BLOCKED until ratified"). It was ratified on 2026-11-11 per V123-4B, which delegated recording the
+> safest technically-justified decision within governance. The original proposal text is preserved below unchanged.
 
 ## The contradiction (both sides stated faithfully)
 

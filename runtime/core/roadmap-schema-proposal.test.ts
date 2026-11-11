@@ -36,9 +36,18 @@ ok("no dependencies map ⇒ INVALID_INPUT", P.buildProposal({ roadmap: rm(["A"])
 const real = P.proposeFromRepo(process.cwd());
 ok("real governed roadmap ⇒ VALID (11 missions, cited DEPLOY<-VPS, 2 layers)", real.verdict === "VALID" && real.missionCount === 11 && real.edgesApplied === 1 && real.diff.some((d) => d.mission === "DEPLOY_BMAX_DASHBOARD_PROD_V1" && d.addsDependsOn.includes("VPS_DEPLOYMENT_READINESS")) && real.layers.length === 2);
 
-// (7) NON-MUTATING: the protected ROADMAP.json is untouched — it has NO dependsOn field (the proposal is a preview only).
+// (7) OWNER-AUTHORIZED APPLY (CTO V123 Phase-4C): the owner authorized applying the ONE cited edge
+// DEPLOY_BMAX_DASHBOARD_PROD_V1 <- VPS_DEPLOYMENT_READINESS into the governed ROADMAP.json (previously preview-only).
+// Lock the authorized reality AND that nothing extra was fabricated: EXACTLY that one mission carries dependsOn, with
+// EXACTLY the cited VPS edge, and NO other mission has a dependsOn. The governed file stays consistent with the proposal.
 const governed = JSON.parse(fs.readFileSync(path.join(process.cwd(), "runtime", "governance", "ROADMAP.json"), "utf8"));
 const governedMissions = governed.missions || governed.roadmap || [];
-ok("governed ROADMAP.json NOT mutated (no dependsOn written there)", governedMissions.every((m) => !("dependsOn" in m)) && real.proposed["//"].includes("NOT the governed file"));
+const withDep = governedMissions.filter((m) => "dependsOn" in m);
+ok("governed ROADMAP.json carries EXACTLY the one owner-authorized edge (DEPLOY_BMAX<-VPS), no fabricated extras",
+  withDep.length === 1 &&
+  withDep[0].id === "DEPLOY_BMAX_DASHBOARD_PROD_V1" &&
+  JSON.stringify(withDep[0].dependsOn) === JSON.stringify(["VPS_DEPLOYMENT_READINESS"]) &&
+  governedMissions.filter((m) => m.id !== "DEPLOY_BMAX_DASHBOARD_PROD_V1").every((m) => !("dependsOn" in m)) &&
+  real.proposed["//"].includes("NOT the governed file"));
 
-console.log(`\nROADMAP-SCHEMA-PROPOSAL suite — ${pass} assertions passed. (non-mutating preview; dep-planner-validated; fail-closed on unknown/uncited/cycle; governed file untouched)`);
+console.log(`\nROADMAP-SCHEMA-PROPOSAL suite — ${pass} assertions passed. (dep-planner-validated; fail-closed on unknown/uncited/cycle; governed file now carries EXACTLY the one owner-authorized DEPLOY_BMAX<-VPS edge, V123-4C)`);

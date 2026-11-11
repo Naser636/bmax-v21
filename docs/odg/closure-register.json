@@ -445,18 +445,20 @@
       "id": "structured-roadmap-deps",
       "program": "P1",
       "title": "Apply structured inter-mission deps to the GOVERNED ROADMAP.json",
-      "status": "BLOCKED",
+      "status": "ACCEPTED",
       "deps": [
         "roadmap-deps-proposal-preview"
       ],
       "priority": 8,
-      "evidence": " [2026-10-30 companion-enrichment no-op confirmed: the 11 ROADMAP.json mission contracts declare NO explicit inter-deps (no dependsOn/dependencies/prose mission-refs) beyond the ONE already encoded in roadmap-dependencies.json (DEPLOY_BMAX←VPS_DEPLOYMENT_READINESS). No further honest edges to add — adding any would FABRICATE roadmap structure. Only the apply INTO the protected ROADMAP.json remains, which is owner-gated. Stays BLOCKED on the owner action; companion is complete for stated deps.]",
-      "blockReason": "NARROWED: the validated, cited proposal preview is DONE (roadmap-deps-proposal-preview; docs/odg/ROADMAP.proposed.json). What remains is writing to runtime/governance/ROADMAP.json — a PROTECTED governance path — which requires explicit owner authorization. The companion docs/odg/roadmap-dependencies.json keeps the deps machine-checkable meanwhile.",
+      "evidence": "APPLIED+VERIFIED 2026-11-11 (CHG-V123-4C): the one cited edge DEPLOY_BMAX_DASHBOARD_PROD_V1 <- VPS_DEPLOYMENT_READINESS is now written into the PROTECTED runtime/governance/ROADMAP.json (dependsOn[]) under CTO V123-4C. roadmap-schema-proposal.proposeFromRepo => VALID, edgesApplied=1, 2 acyclic layers, 0 uncited/0 unknown; roadmap-dep-check => OK; independent adversarial validation => ACCEPT; recoverable original preserved (git HEAD + backup); regression lock roadmap-schema-proposal.test.ts case (7) now asserts EXACTLY the one authorized edge (strictly stronger).",
       "acceptance": "structured deps present in the governed file + validated by dep-planner, owner-authorized",
       "nextAction": "owner authorizes amending the governed ROADMAP.json schema with the previewed dependsOn[] fields",
       "humanActionRequired": "PREVIEW now VALIDATED ready-to-apply (serie18-roadmap-deps-preview-validation: refs resolve + acyclic, read-only). ONLY remaining step: owner authorizes writing the previewed dependsOn[] into the PROTECTED runtime/governance/ROADMAP.json (ask-gated protected path).",
       "resumeTest": "roadmap-schema-proposal.proposeFromRepo ⇒ VALID AND governed ROADMAP.json carries the dependsOn[] AND roadmap-dep-check ⇒ OK.",
-      "note": "V7.1 §4: DÉJÀ SATISFAIT — no honest inter-dep edge to add (the one real edge exists); nothing to apply; stays non-ACCEPTED only because the protected write of an empty-delta is pointless."
+      "note": "V7.1 §4: DÉJÀ SATISFAIT — no honest inter-dep edge to add (the one real edge exists); nothing to apply; stays non-ACCEPTED only because the protected write of an empty-delta is pointless.",
+      "staleEvidence": false,
+      "resolvedUnder": "CTO-V123",
+      "priorBlockReason": "NARROWED: the validated, cited proposal preview is DONE (roadmap-deps-proposal-preview; docs/odg/ROADMAP.proposed.json). What remains is writing to runtime/governance/ROADMAP.json — a PROTECTED governance path — which requires explicit owner authorization. The companion docs/odg/roadmap-dependencies.json keeps the deps machine-checkable meanwhile."
     },
     {
       "id": "p01-demand-experiment-prep",
@@ -1942,11 +1944,13 @@
       "priority": 0,
       "deps": [],
       "title": "Recover the ORIGINAL 'ODG MASTER ROADMAP D'EXCELLENCE OPÉRATIONNELLE' (28 July 2026) — historical source, not yet located",
-      "status": "BLOCKED",
-      "blockedBy": "original artifact NOT LOCATED in working tree or full git history (owner/external: the authentic 28-July-2026 document must be supplied or its location confirmed)",
-      "evidence": "Phase-0 historical recovery (continuity lot, main @ 1ed65c5). The original is confirmed ABSENT (ODG_ROADMAP_CROSSWALK.md §5.4 L105; grep over working tree + full git history → only references-to-absence). CTO supplied a WORK RECONSTRUCTION V1 (docs/odg-operational/ODG_MASTER_ROADMAP_EXCELLENCE_OPERATIONNELLE_RECONSTRUCTION_V1.md) — explicitly labelled NOT the retrieved original. Reconciliation of the reconstruction onto the canonical SSOT (P1/P2, D1-D8, H1-H3, axes A/B/C) drafted in EXCELLENCE_ROADMAP_RECONCILIATION_V1.md: introduces NO new requirement not already canonical; no competing strategic roadmap created. CONTRADICTION recorded (not resolved by overwrite): the '28 July 2026' date maps in-repo to the MACHINE roadmap runtime/governance/ROADMAP.json commit 072a114 (ODG_OPERATIONAL_MANIFEST.json:34), not to a found French excellence doc — possible conflation. BLOCKED on owner supplying/locating the authentic original; if found it supersedes the reconstruction (reality wins, no observation overwritten without proof). No code, no protected-path edit, no VPS.",
+      "status": "ACCEPTED",
+      "evidence": "ACCEPTED-as-RECONSTRUCTION 2026-11-11 as DEC-HIST-28JUL-RECON-ACCEPT under CTO V123-4A: the CTO work-reconstruction (ODG_MASTER_ROADMAP_EXCELLENCE_OPERATIONNELLE_RECONSTRUCTION_V1.md, reconciled by EXCELLENCE_ROADMAP_RECONCILIATION_V1.md) accepted as the historical SUBSTITUTE. HONEST LIMIT: the authentic 28-July-2026 ORIGINAL remains UNLOCATED (absent from working tree + full git history); not claimed found. Reopens if the original is later supplied (authenticate -> reconcile -> update banner; reality wins).",
       "humanActionRequired": "Owner to supply or confirm the location of the authentic 28-July-2026 original (absent from working tree + full git history). Detail: docs/odg-operational/EXCELLENCE_ROADMAP_RECONCILIATION_V1.md §2.",
-      "resumeTest": "On receipt: authenticate, reconcile vs EXCELLENCE_ROADMAP_RECONCILIATION_V1.md, then update the reconstruction provenance banner (cite found path/commit/sha). Reality wins; no overwrite without proof."
+      "resumeTest": "On receipt: authenticate, reconcile vs EXCELLENCE_ROADMAP_RECONCILIATION_V1.md, then update the reconstruction provenance banner (cite found path/commit/sha). Reality wins; no overwrite without proof.",
+      "staleEvidence": false,
+      "resolvedUnder": "CTO-V123",
+      "priorBlockedBy": "original artifact NOT LOCATED in working tree or full git history (owner/external: the authentic 28-July-2026 document must be supplied or its location confirmed)"
     },
     {
       "id": "p0-autonomy-measure-slice2",
@@ -3336,16 +3340,17 @@
       "title": "ODG-ADR: reconcile V12.4 §115 recover-166 vs DEC-V60-166-RETIREMENT (owner decision)",
       "program": "V4",
       "priority": 2,
-      "status": "BLOCKED",
+      "status": "ACCEPTED",
       "deps": [
         "v124-preservation-and-traceability"
       ],
       "acceptance": "BLOCKED on an external (owner/CTO) decision: V12.4 §80/§115 asks to RECOVER the 166 capabilities; the repo records DEC-V60-166-RETIREMENT (ACCEPTED 2026-10-16) retiring them as non-enumerable. These conflict. Per V12.4 §2 truth hierarchy + repo evidence, do NOT reconstruct the 166 without a distinct CTO decision overriding DEC-V60. Awaiting owner arbitration.",
-      "evidence": "docs/odg/V12.4_SECTION_TRACEABILITY_MATRIX.md §0.1; docs/odg-operational/ODG_DECISION_CHANGELOG.md (DEC-V60-166-RETIREMENT)",
+      "evidence": "RATIFIED 2026-11-11 as DEC-166-RECONCILED (ACCEPTED) under CTO V123-4B: affirm DEC-V60-166-RETIREMENT as governing (preserved verbatim, superseded-by only); literal V12.4 §80/§115 \"recover 166\" formally superseded (unsatisfiable without an enumerable source; no fabrication); §115 coverage intent delivered via enumerable substitutes DEC-008 a-d + P1-P15 + capability-map. ADR doc flipped PROPOSED->RATIFIED. Evidence: docs/odg-operational/ODG_DECISION_CHANGELOG.md (DEC-166-RECONCILED); docs/odg/ADR-166-CAPABILITIES-RECONCILIATION-PROPOSAL.md.",
       "staleEvidence": false,
       "humanActionRequired": "CTO/owner arbitration required: issue a distinct decision either (a) OVERRIDING DEC-V60-166-RETIREMENT to mandate reconstructing the 166 capabilities, or (b) CONFIRMING DEC-V60 stands so V12.4 §115 recover-166 is formally superseded. ODG will not reconstruct the 166 without this explicit decision.",
       "resumeTest": "After the owner decision is recorded in docs/odg-operational/ODG_DECISION_CHANGELOG.md: grep the new decision id; if (a) open a capabilities-reconstruction campaign and keep BLOCKED until built; if (b) mark this item ACCEPTED citing the confirming decision. Verify register integrity via runtime/core/campaign-controller.test.ts.",
-      "note": "DECISION PREPARED 2026-11-09: docs/odg/ADR-166-CAPABILITIES-RECONCILIATION-PROPOSAL.md (PROPOSED, preserves DEC-V60-166 verbatim, recommends affirming retirement + delivering §115 coverage intent via enumerable DEC-008 a-d + P1-P15 + capability-map). STAYS BLOCKED on CTO ratification — ODG does not self-authorize an override of a frozen decision."
+      "note": "DECISION PREPARED 2026-11-09: docs/odg/ADR-166-CAPABILITIES-RECONCILIATION-PROPOSAL.md (PROPOSED, preserves DEC-V60-166 verbatim, recommends affirming retirement + delivering §115 coverage intent via enumerable DEC-008 a-d + P1-P15 + capability-map). STAYS BLOCKED on CTO ratification — ODG does not self-authorize an override of a frozen decision.",
+      "resolvedUnder": "CTO-V123"
     },
     {
       "id": "g0-root-of-trust-tamper-tests",
