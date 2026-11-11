@@ -6,7 +6,9 @@
 #   Do:   stop the session process holding :3000  ->  wait port free  ->  systemctl start odg-preprod  ->  health-gate.
 #   Post: verify ready/READY + buildId + systemd MainPID ownership.  On failure -> ROLLBACK (relaunch unsupervised, healthy).
 set -u
-PORT=3000; HEALTH="http://127.0.0.1:$PORT/api/health"; EXPECT_BUILD="WEyqonrDYirNE0T99qGGC"
+# EXPECT_BUILD defaults DYNAMICALLY to the buildId of the current release (the suffix of the `current` symlink target),
+# so the runbook verifies "live == current release" for ANY production (reusable), not a single hardcoded release.
+PORT=3000; HEALTH="http://127.0.0.1:$PORT/api/health"; EXPECT_BUILD="${EXPECT_BUILD:-$(basename "$(readlink /home/ubuntu/odg-releases/current 2>/dev/null)" 2>/dev/null | sed 's/.*-//')}"
 LAUNCH=/home/ubuntu/bmax-v21/scripts/odg-app-launch.sh; ROLLBACK_LOG=/home/ubuntu/odg-releases/pathA-rollback.log
 MODE=check; [ "${1:-}" = "--execute" ] && MODE=execute
 # EXACT port match: ":3000" followed by a non-digit/end, so :3000 never matches :30000/:3001x (substring over-match).

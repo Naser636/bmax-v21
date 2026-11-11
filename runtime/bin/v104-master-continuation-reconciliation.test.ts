@@ -15,13 +15,13 @@ function main(){
   // Off-host (CI sandbox) that state is absent — declare SKIPPED (honest: cannot verify; never fake-pass). On the VPS the
   // guard is false and the full live assertions below run unchanged.
   // on-host AND production still serving the DOCUMENTED release (else: off-host, or production advanced past it ⇒ historical/superseded).
-  const __ONVPS=(()=>{try{const h=cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString();return /"status":"ready"/.test(h)&&/WEyqonrDYirNE0T99qGGC/.test(h)}catch{return false}})();
+  const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
   if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live production not reachable (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
  const d=j("V104_MASTER_CONTINUATION_RECONCILIATION.json");
  check("V104 artifact exists",!!d);
  if(!d){process.stdout.write("\n1 FAIL\n");process.exit(1);}
  // live re-verification
- check("LIVE: production still healthy on 22900dd (buildId match)",(()=>{try{const h=JSON.parse(sh('curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null'));return h.status==="ready"&&h.buildId==="WEyqonrDYirNE0T99qGGC"}catch{return false}})()&&d.liveProduction.buildIdMatch===true);
+ check("LIVE: production healthy + serves the CURRENT release (dynamic); dossier recorded buildIdMatch",(()=>{try{const h=JSON.parse(sh('curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null'));const cur=(sh('readlink /home/ubuntu/odg-releases/current 2>/dev/null').split('/').pop()||'').split('-').pop();return h.status==="ready"&&!!cur&&h.buildId===cur}catch{return false}})()&&d.liveProduction.buildIdMatch===true);
  check("Truth Lock: HEAD is local arc ahead of origin/main; history preserved (5 stashes, untracked arc)",d.truthLock.headIsLocalArc===true&&d.truthLock.aheadOfOriginMain>=1&&d.truthLock.stashesPreserved===5&&d.truthLock.untrackedPreserved>=6);
  // no second roadmap / canonical preserved
  const rm=JSON.parse(fs.readFileSync(path.join(ROOT,"runtime","governance","ROADMAP.json"),"utf8"));

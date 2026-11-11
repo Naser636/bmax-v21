@@ -14,11 +14,11 @@ function main(){
   // CI/off-host hermetic guard (see v101-golive): asserts LIVE production :3000 state only present on the VPS. Off-host ⇒
   // SKIPPED (honest; never fake-pass). On the VPS the guard is false and the full assertions run unchanged.
   // on-host AND production still serving the DOCUMENTED release (else: off-host, or production advanced past it ⇒ historical/superseded).
-  const __ONVPS=(()=>{try{const h=cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString();return /"status":"ready"/.test(h)&&/WEyqonrDYirNE0T99qGGC/.test(h)}catch{return false}})();
+  const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
   if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live production attach state not present (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
  const d=j("V103_SYSTEMD_ATTACH.json");
  check("dossier exists",!!d);
- check("LIVE: production still serving 22900dd buildId WEyqonrDYirNE0T99qGGC (read-only)",(()=>{try{return JSON.parse(sh('curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null')).buildId==="WEyqonrDYirNE0T99qGGC"}catch{return false}})());
+ check("LIVE: production serves the CURRENT release (read-only, dynamic)",(()=>{try{const b=JSON.parse(sh('curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null')).buildId;const cur=(sh('readlink /home/ubuntu/odg-releases/current 2>/dev/null').split('/').pop()||'').split('-').pop();return !!cur&&b===cur}catch{return false}})());
  if(d){
   check("§1 pre-checks: current=22900dd, previous=e84a0cf2 preserved, process serves 22900dd, buildId match, recovery ready",d.step1_preChecks.currentIs22900dd===true&&d.step1_preChecks.previousIsOct28===true&&d.step1_preChecks.processServes22900dd===true&&d.step1_preChecks.buildIdMatch===true&&d.recoveryReady===true);
   check("§1 odg-preprod enabled; current process session-scoped (unsupervised)",d.step1_preChecks.unitEnabled===true&&d.step1_preChecks.sessionScoped===true);

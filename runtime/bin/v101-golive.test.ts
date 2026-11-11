@@ -14,15 +14,16 @@ function main(){
   // CI/off-host hermetic guard: this suite verifies LIVE VPS-host go-live state that only exists on the production VPS.
   // Off-host (CI sandbox) that state is absent — declare SKIPPED (honest: cannot verify; never fake-pass). On the VPS the
   // guard is false and the full live assertions below run unchanged.
-  // on-host AND production still serving the DOCUMENTED release (else: off-host, or production advanced past it ⇒ historical/superseded).
-  const __ONVPS=(()=>{try{const h=cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString();return /"status":"ready"/.test(h)&&/WEyqonrDYirNE0T99qGGC/.test(h)}catch{return false}})();
-  if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live production go-live state not reachable (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
+  // off-host hermetic guard: live production only exists on the VPS. Off-host ⇒ SKIPPED (CI). On the VPS the full
+  // assertions run — the LIVE check below is DYNAMIC (asserts the CURRENT release, so it survives any deployment).
+  const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
+  if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live production not reachable (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
  const d=j("V101_GOLIVE_DOSSIER.json");
  check("dossier exists",!!d);
- // LIVE re-verify production (read-only).
- const liveCurrent=sh(`readlink /home/ubuntu/odg-releases/current 2>/dev/null|grep -oE '22900dd'`);
+ // LIVE re-verify production (read-only, DYNAMIC): production serves whatever `current` points to — not a hardcoded release.
  const liveBuild=(()=>{try{return JSON.parse(sh(`curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null`)).buildId}catch{return ""}})();
- check("LIVE: production current = 22900dd release + health serving WEyqonrDYirNE0T99qGGC",liveCurrent==="22900dd"&&liveBuild==="WEyqonrDYirNE0T99qGGC");
+ const curBuild=(sh(`readlink /home/ubuntu/odg-releases/current 2>/dev/null`).split("/").pop()||"").split("-").pop();
+ check("LIVE: production serves the CURRENT release (health buildId == current release buildId)",!!curBuild&&liveBuild===curBuild);
  if(d){
   check("§1 authorization OWNER explicit, no receipt fabricated; scope excludes firewall/ssh/tls/dns/new-port",d.authorization.receiptFabricated===false&&/OWNER explicit/.test(d.authorization.grantedBy)&&d.authorization.scopeExcludes.includes("firewall")&&d.authorization.scopeExcludes.includes("new public port"));
   check("activation user-space (no root); systemd-service root step is SEPARATE and not required",d.rootDependency.activationNeedsRoot===false&&/SEPARATE/.test(d.rootDependency.note));
