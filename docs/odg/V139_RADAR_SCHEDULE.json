@@ -1,0 +1,42 @@
+{
+  "//": "V139 §7 radar operating schedule — a single bounded, governed weekly night cycle validated by radar-schedule.validateSchedule. No always-on polling, no overlap, declared budget + bounded retries + backoff. Integrates the global benchmark into the existing radar cadence; reuses canonical mechanisms (no new scheduler/service). A 2nd weekly cycle requires measured-value justification (none yet).",
+  "schedule": {
+    "dayOfWeek": "SUN",
+    "timezone": "Europe/Paris",
+    "startHour": 2,
+    "endHour": 5,
+    "maxDurationMs": 10800000,
+    "alwaysOn": false,
+    "continuousPolling": false,
+    "overlapPolicy": "SKIP_IF_RUNNING",
+    "budget": {
+      "maxCalls": 50,
+      "maxBytes": 5000000
+    },
+    "retry": {
+      "maxRetries": 2,
+      "backoffMs": 30000
+    },
+    "deduplicate": true,
+    "cyclesPerWeek": 1,
+    "secondCycleJustification": null
+  },
+  "validation": {
+    "valid": true,
+    "violations": [],
+    "normalized": {
+      "window": {
+        "day": "SUN",
+        "tz": "Europe/Paris",
+        "startHour": 2,
+        "endHour": 5,
+        "maxDurationMs": 10800000
+      },
+      "cyclesPerWeek": 1,
+      "budgetDeclared": true,
+      "overlapPrevented": true
+    },
+    "note": "a single bounded Sunday 02:00–05:00 Europe/Paris cycle; no always-on polling; no overlap; declared budget + bounded retries + backoff; a 2nd cycle only with measured-value justification."
+  },
+  "status": "SCHEDULE_CONFORMING"
+}

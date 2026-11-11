@@ -1,0 +1,169 @@
+{
+  "//": "V139 §3 global excellence benchmark — reproducible ODG baselines (V137 VALIDATED_LOCAL maturity) compared against world-class references. ANTI-FABRICATION: only the 2 genuinely-fetched V138 primary-source references (NASA-STD-8739.8 for P7-SRE, NIST SP 800-218 for P3-security) are admitted; the other 13 métiers are honestly NOT_YET_RESEARCHED (next weekly radar cycles) — NO invented ranking/relevance. 10 reference ecosystems (NASA/ESA/JPL/Airbus/Boeing/SpaceX/Tesla/Google/Microsoft/Toyota) + Musk principles + GPL/OSS are the research WATCHLIST, not fabricated findings.",
+  "matrix": [
+    {
+      "metier": "P1-fullstack",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P10-regulatory",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P11-document",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P12-streaming",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P13-aiinfra",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P14-devex",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P15-workflow",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P2-ai",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P3-security",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://csrc.nist.gov/pubs/sp/800/218/final",
+          "date": "2026-11-11",
+          "nature": "STANDARD_OR_GUIDELINE",
+          "authority": "NIST",
+          "capability": "SSDF v1.1 — secure software development practices (supply-chain, secure build)",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs NIST STANDARD_OR_GUIDELINE: SSDF v1.1 — secure software development practices (supply-chain, secure build)"
+      ],
+      "note": "comparative baseline established from cited reference(s)"
+    },
+    {
+      "metier": "P4-data",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P5-golden-path",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P6-eval",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P7-sre",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+          "date": "2026-11-11",
+          "nature": "STANDARD",
+          "authority": "NASA",
+          "capability": "Software Assurance & Software Safety Standard — assurance process rigor, reliability",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs NASA STANDARD: Software Assurance & Software Safety Standard — assurance process rigor, reliability"
+      ],
+      "note": "comparative baseline established from cited reference(s)"
+    },
+    {
+      "metier": "P8-semver",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    },
+    {
+      "metier": "P9-finops",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking"
+    }
+  ],
+  "coverage": {
+    "metiers": 15,
+    "benchmarked": 2,
+    "notYetResearched": 13,
+    "realReferences": 2
+  },
+  "honesty": "ODG baseline = reproducible V137 VALIDATED_LOCAL maturity (not production). Only cited, dated references are admitted; métiers without a researched reference are NOT_YET_RESEARCHED — NO fabricated ranking, relevance, or score. Benchmark established BEFORE any improvement claim."
+}
