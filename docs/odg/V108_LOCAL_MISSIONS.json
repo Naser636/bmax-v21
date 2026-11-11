@@ -1,0 +1,33 @@
+{
+  "//": "V108 — ODG local missions M1(Phase 2/3), M2(Phase 5), M3(Phase 7). Each PURE/deterministic/fail-closed, independently (adversarially) validated, every finding remediated + locked by a regression test. Evidence FOR ODG closure.",
+  "missions": [
+    {
+      "id": "M1", "phase": "2/3", "title": "capability attribution to 9 primitives + 15 métiers",
+      "module": "runtime/core/capability-attribution.ts", "artifact": "docs/odg/V108_CAPABILITY_ATTRIBUTION.json",
+      "result": "45 capabilities attributed; 9/9 primitives covered (0 orphan), 15/15 métiers covered; IDENTITY surfaced as a critical singleton (single point of failure). All cited modules exist on disk. NOT a parallel registry.",
+      "independentValidation": "adversarial agent: no fail-open in the qualifier; real dossier integrity re-derived true, all 45 modules exist, IDENTITY singleton accurate. FOUND: byPrimitive/byMetier inner arrays not frozen; one unverifiable ACTIVE_IN_PRODUCTION status.",
+      "remediation": "inner arrays now Object.freeze; recovery-engine status downgraded VALIDATED (liveness not verifiable by this pure layer — RECOVERY-as-primitive operational evidence lives in incidents.jsonl, not asserted here).",
+      "state": "VALIDATED"
+    },
+    {
+      "id": "M2", "phase": "5", "title": "Golden Evaluation Set + shadow mode + regression detection",
+      "module": "runtime/core/golden-evaluation.ts (composes benchmark-baseline)", "test": "runtime/core/golden-evaluation.test.ts",
+      "result": "evaluate() scores a golden set with provenance+digest; shadowCompare() runs candidate vs reference WITHOUT acting (acted:false structural) and flags regressionsVsReference + safeToPromote; detectRegression() finds pass->fail regressions by per-case vector.",
+      "independentValidation": "adversarial agent, 49 probes: 0 defects — shadow genuinely non-acting (candidate outputs never surfaced), safeToPromote/STABLE cannot be wrongly produced when a regression exists, externalComparison always NOT_MEASURED. Note: empty golden set was vacuously safe.",
+      "remediation": "empty golden set ⇒ safeToPromote=false (no vacuous promotion).",
+      "state": "VALIDATED"
+    },
+    {
+      "id": "M3", "phase": "7", "title": "15 métiers orchestrated via O1 waves + G1 caps (SYNTHETIC, capped)",
+      "module": "runtime/core/metier-orchestration.ts (composes O1 + G1)", "artifact": "docs/odg/V108_METIER_ORCHESTRATION.json",
+      "result": "15 métiers scheduled into 5 dependency-respecting parallel waves; 14 executed with SYNTHETIC output; P12-streaming cap-DENIED by G1 (MISSION_CAP, cost 7 > per-mission 5). acted:false, synthetic:true. Orchestration real; work synthetic (NO real clients/revenue/production).",
+      "independentValidation": "adversarial agent, 34 probes: genuinely fail-closed on caps (denied métier never executes/spends; intra-wave running log; no ordering bypass; uncapped-provider refused), dependency-correct (strict wave barrier), non-acting, honest synthetic-vs-real. FOUND: a dependent of a cap-denied métier still executed (undisclosed inconsistency).",
+      "remediation": "exec-time dependency closure: a métier whose dep was cap-denied/skipped is SKIPPED (DEP_DENIED, propagates downstream) ⇒ `executed` never implies an unsatisfied dependency; documented + regression-tested.",
+      "state": "VALIDATED"
+    }
+  ],
+  "method": "ODG selected by dependency order (Phase 2/3 → 5 → 7). Each mission: build (PURE module) → adversarial test → INDEPENDENT adversarial validator → remediate EVERY finding → re-test. Real code + proofs, not plans.",
+  "honesty": "capability implemented + gate-tested + independently-validated — distinct from real-world activity. M3 métier work is SYNTHETIC (labeled). No real clients/revenue/internet claimed.",
+  "allValidated": true,
+  "status": "M1_M2_M3_VALIDATED"
+}

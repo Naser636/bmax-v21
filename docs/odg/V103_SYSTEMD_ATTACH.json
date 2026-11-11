@@ -1,0 +1,78 @@
+{
+  "//": "CTO V103 — attach production to systemd. BLOCKED: starting the system unit odg-preprod needs ROOT and no root mechanism is available (polkit denies non-root systemctl start; sudo denied by session policy). Transition STOPPED without degrading production (session process untouched). Reboot-survival remains CONFIGURED. Success criterion NOT achieved — no false PASS. NO production/network/release change.",
+  "step1_preChecks": {
+    "currentIs22900dd": true,
+    "current": "rel-20261111T020508Z-22900dd501f8",
+    "previousIsOct28": true,
+    "previous": "rel-20261028T210754Z-e84a0cf2720b",
+    "port3000Pid": "74768",
+    "port3000Cwd": "rel-20261111T020508Z-22900dd501f8",
+    "processServes22900dd": true,
+    "sessionScoped": true,
+    "health": "ready",
+    "storage": "READY",
+    "buildIdServed": "WEyqonrDYirNE0T99qGGC",
+    "buildIdExpected": "WEyqonrDYirNE0T99qGGC",
+    "buildIdMatch": true,
+    "unitEnabled": true,
+    "unitActiveBeforeTransition": ""
+  },
+  "recoveryReady": true,
+  "step2_transition": {
+    "attempted": false,
+    "reason": "root unavailable — would require stopping the session process first, but odg-preprod cannot be started without root; stopping it would degrade production",
+    "rootBlockage": {
+      "requiredAction": "systemctl start odg-preprod.service (system unit) — needs ROOT",
+      "mechanism1_polkit": {
+        "command": "systemctl start odg-preprod.service",
+        "result": "Failed to start odg-preprod.service: Access denied as the requested operation requires interactive authentication. However, interactive authentication has not been enabled by the calling program.",
+        "denied": true
+      },
+      "mechanism2_sudo": {
+        "command": "sudo systemctl start odg-preprod.service",
+        "result": "DENIED by the session policy — the harness refuses to execute any 'sudo' command",
+        "available": false
+      },
+      "rootAvailable": false,
+      "transitionExecuted": false,
+      "productionDegraded": false,
+      "note": "Per §2: root refused/unavailable ⇒ STOP at this point. The session-scoped process was NOT stopped (stopping it without being able to start odg-preprod would take production down). Production stays live on 22900dd."
+    },
+    "twoConcurrentServersAvoided": true
+  },
+  "step3_supervisionRestartTest": {
+    "performed": false,
+    "reason": "requires odg-preprod to be active (root-blocked)"
+  },
+  "step4_rebootSurvival": {
+    "configured": true,
+    "rebootTestPerformed": false,
+    "status": "NOT PERFORMED (requires a controlled reboot with rescue access + recovery verification; §4 forbids rebooting production here)"
+  },
+  "protections": {
+    "productionStillLive": true,
+    "sessionProcessUntouched": true,
+    "previousReleasePreserved": true,
+    "networkSshTlsDnsPortsUnchanged": true,
+    "releasesDeleted": false,
+    "noSecondServerOn3000": true,
+    "noRootBypass": true
+  },
+  "successCriterion": {
+    "target": "odg-preprod.service enabled AND active AND owns the 22900dd process AND survives a controlled service restart AND serves the expected buildId",
+    "achieved": false,
+    "achievedParts": [
+      "enabled ✓",
+      "config correct ✓ (V102)",
+      "reboot-survival configured ✓"
+    ],
+    "blockedParts": [
+      "active ✗ (root)",
+      "owns-process ✗ (root)",
+      "service-restart test ✗ (root)"
+    ]
+  },
+  "status": "TRANSITION_ROOT_BLOCKED_production_preserved",
+  "honestConclusion": "Pre-checks PASS: current=22900dd, previous=e84a0cf2 (preserved), :3000 served by pid 74768 (session-scoped, cwd=22900dd), health ready/READY buildId WEyqonrDYirNE0T99qGGC (match), odg-preprod enabled. TRANSITION BLOCKED: starting the system unit odg-preprod requires ROOT — polkit denies the non-root user (\"Access denied ... requires interactive authentication\") and sudo is denied by the session policy. No root mechanism is available. Per §2, the transition was STOPPED at exactly this frontier WITHOUT degrading production (the session-scoped process was NOT stopped; :3000 keeps serving 22900dd). The success criterion (odg-preprod ACTIVE + owning the process + restart test) is NOT achieved — not claimed. Reboot-survival remains CONFIGURED (enabled unit). Reboot test: NOT PERFORMED. No network/release/port change; no root bypass; no false PASS.",
+  "invariant": "no PASS without proof; root refused/unavailable ⇒ stop without degrading production; never two servers on :3000; session process untouched; reboot-survival configured (enabled unit) but runtime activation root-blocked; reboot test NOT PERFORMED until actually run; no network/release change; no root bypass."
+}

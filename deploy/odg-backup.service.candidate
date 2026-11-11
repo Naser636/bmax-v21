@@ -1,0 +1,10 @@
+# CANDIDATE — NOT installed/enabled (installation is an owner/operator decision). Daily real repo backup.
+# Install: copy to /etc/systemd/system/, `systemctl enable --now odg-backup.timer`. User-space, no sudo at runtime.
+[Unit]
+Description=ODG durable repo backup (git bundle → /var/backups/odg-vault)
+[Service]
+Type=oneshot
+User=ubuntu
+ExecStart=/bin/bash /home/ubuntu/bmax-v21/scripts/odg-backup-vault.sh
+Nice=10
+IOSchedulingClass=idle

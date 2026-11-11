@@ -1,0 +1,61 @@
+{
+  "//": "Mission P1-R3 — real backups + verified restoration. All local + non-disruptive (read-only source; restore to isolated targets only; no production change, no deploy, no sudo). Evidence FOR ODG to close.",
+  "mission": {
+    "id": "P1-R3",
+    "source": "V104 proposed-mission register",
+    "family": "F7-RESILIENCE",
+    "level": "L2-local",
+    "trigger": "live BACKUP_STALE maintenance WARN + Phase-1 restore-test gap"
+  },
+  "existingVault": {
+    "dir": "/var/backups/odg-vault",
+    "backupsRetained": 5,
+    "newest": "/var/backups/odg-vault/20261111T030258Z/",
+    "newestBundleValid": true,
+    "note": "vault holds complete, verifiable git bundles of main"
+  },
+  "realRestoreTest": {
+    "method": "git bundle create HEAD → git bundle verify → git clone (restore) to isolated target → compare",
+    "bundleVerifyOk": true,
+    "sourceHead": "e5754bf516a533390cc9b923783c9f2dc13c2724",
+    "restoredHead": "e5754bf516a533390cc9b923783c9f2dc13c2724",
+    "headsMatch": true,
+    "fsckClean": true,
+    "sourceFiles": 3533,
+    "restoredFiles": 3533,
+    "fileCountsMatch": true,
+    "verdict": "RESTORE_VERIFIED on real repo data (not an in-memory drill)"
+  },
+  "clientStoreBackup": {
+    "cli": "runtime/dist/bin/odg-backup.js (backup --out / restore --manifest --target)",
+    "sourceReadOnly": true,
+    "restoreRefusesProductionAndNonEmpty": true,
+    "integrityTamperDetection": "already gate-tested in runtime/core/client-store-backup.test.ts (verify() ⇒ INTEGRITY_MISMATCH on tamper)",
+    "currentStore": "/var/lib/odg/clients (empty — €0 clients; round-trip ok, 0 files)"
+  },
+  "stalenessFix": {
+    "before": "newest vault backup 15d old ⇒ BACKUP_STALE WARN",
+    "mechanism": "scripts/odg-backup-vault.sh (read-only repo → verified git bundle in vault, prune-to-KEEP)",
+    "freshBackupProduced": true,
+    "backupStaleAfter": false,
+    "maintenanceLine": "Maintenance: OK  (CRIT=0 WARN=0 INFO=0)",
+    "durableScheduling": "PREPARED, NOT enabled — deploy/odg-backup.{service,timer}.candidate; enabling a recurring backup is an operational decision for ODG/owner (belongs to the VPS continuity chantier)"
+  },
+  "protections": {
+    "readOnlyOnSource": true,
+    "restoreToIsolatedTargetsOnly": true,
+    "productionProcessUntouched": true,
+    "noDeploy": true,
+    "noSudo": true,
+    "noTimerEnabledAutonomously": true
+  },
+  "closureCriteria": {
+    "existingBackupsVerified": true,
+    "realRestoreTestPassed": true,
+    "stalenessCleared": true,
+    "reproducibleBackupMechanism": true,
+    "durableCandidatePrepared": true
+  },
+  "status": "BACKUPS_REAL_and_RESTORE_VERIFIED_pending_ODG_closure",
+  "invariant": "real backup + verified restore on real data (not in-memory); existing vault bundle verified restorable; read-only on source; restore only to isolated targets; staleness cleared by a fresh real backup; durable scheduling PREPARED not enabled (owner decision); no production change, no deploy, no sudo; ODG closes on proof."
+}

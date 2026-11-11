@@ -1,0 +1,704 @@
+{
+  "//": "V108 M1 (Phase 2/3) — capability attribution to 9 primitives + 15 métiers. NOT a parallel registry; qualification layer over the canonical register; every entry cites a real module (existence verified).",
+  "moduleExistenceVerified": true,
+  "missingOnDisk": [],
+  "byPrimitive": {
+    "IDENTITY": [
+      "identity"
+    ],
+    "STATE": [
+      "capability-attribution",
+      "state-model",
+      "state-transition"
+    ],
+    "CONTRACT": [
+      "contract",
+      "metier-P8-semver",
+      "mission-contract"
+    ],
+    "POLICY": [
+      "action-gate",
+      "emergency-stop",
+      "evaluator-independence",
+      "inspection-boundary",
+      "local-work-mandate",
+      "metier-P10-regulatory",
+      "regulatory-assurance",
+      "security-control-plane",
+      "spend-governor"
+    ],
+    "RESOLVER": [
+      "decision-engine",
+      "market-intelligence",
+      "mission-resolver",
+      "parallel-execution-planner"
+    ],
+    "EXECUTOR": [
+      "engineering-executor",
+      "executor",
+      "metier-P1-fullstack",
+      "metier-P10-regulatory",
+      "metier-P11-document",
+      "metier-P12-streaming",
+      "metier-P13-aiinfra",
+      "metier-P14-devex",
+      "metier-P15-workflow",
+      "metier-P2-ai",
+      "metier-P3-security",
+      "metier-P4-data",
+      "metier-P5-devplatform",
+      "metier-P6-eval",
+      "metier-P7-sre",
+      "metier-P8-semver",
+      "metier-P9-finops"
+    ],
+    "EVIDENCE": [
+      "audit-log",
+      "benchmark-baseline",
+      "budget-ledger",
+      "capability-attribution",
+      "evaluator-independence",
+      "evidence-provenance",
+      "incremental-assurance",
+      "inspection-boundary",
+      "metier-P6-eval"
+    ],
+    "RECOVERY": [
+      "checkpoint-engine",
+      "emergency-stop",
+      "fdir-engine",
+      "metier-P7-sre",
+      "recovery-engine",
+      "self-diagnostic"
+    ],
+    "ALLOCATOR": [
+      "budget-ledger",
+      "fair-share-allocator",
+      "metier-P12-streaming",
+      "metier-P9-finops",
+      "parallel-execution-planner",
+      "spend-governor"
+    ]
+  },
+  "byMetier": {
+    "P1": [
+      "contract",
+      "engineering-executor",
+      "executor",
+      "metier-P1-fullstack",
+      "mission-resolver"
+    ],
+    "P2": [
+      "executor",
+      "market-intelligence",
+      "metier-P2-ai"
+    ],
+    "P3": [
+      "metier-P3-security",
+      "security-control-plane"
+    ],
+    "P4": [
+      "metier-P4-data"
+    ],
+    "P5": [
+      "contract",
+      "engineering-executor",
+      "executor",
+      "metier-P5-devplatform"
+    ],
+    "P6": [
+      "benchmark-baseline",
+      "evaluator-independence",
+      "incremental-assurance",
+      "inspection-boundary",
+      "metier-P6-eval"
+    ],
+    "P7": [
+      "fdir-engine",
+      "metier-P7-sre",
+      "recovery-engine",
+      "self-diagnostic"
+    ],
+    "P8": [
+      "metier-P8-semver"
+    ],
+    "P9": [
+      "budget-ledger",
+      "metier-P9-finops",
+      "spend-governor"
+    ],
+    "P10": [
+      "metier-P10-regulatory",
+      "regulatory-assurance"
+    ],
+    "P11": [
+      "metier-P11-document"
+    ],
+    "P12": [
+      "fair-share-allocator",
+      "metier-P12-streaming"
+    ],
+    "P13": [
+      "metier-P13-aiinfra"
+    ],
+    "P14": [
+      "metier-P14-devex"
+    ],
+    "P15": [
+      "metier-P15-workflow"
+    ]
+  },
+  "integrity": {
+    "ok": true,
+    "unattributed": [],
+    "unknownPrimitive": [],
+    "unknownMetier": [],
+    "invalidStatus": [],
+    "missingModule": [],
+    "orphanPrimitives": [],
+    "criticalSingletons": [
+      "IDENTITY"
+    ]
+  },
+  "stats": {
+    "capabilities": 45,
+    "primitivesCovered": 9,
+    "metiersCovered": 15,
+    "sharedCapabilities": 3
+  },
+  "byCapability": [
+    {
+      "id": "action-gate",
+      "primitives": [
+        "POLICY"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/action-gate.ts",
+      "shared": false
+    },
+    {
+      "id": "audit-log",
+      "primitives": [
+        "EVIDENCE"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/audit-log.ts",
+      "shared": false
+    },
+    {
+      "id": "benchmark-baseline",
+      "primitives": [
+        "EVIDENCE"
+      ],
+      "metiers": [
+        "P6"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/benchmark-baseline.ts",
+      "shared": false
+    },
+    {
+      "id": "budget-ledger",
+      "primitives": [
+        "ALLOCATOR",
+        "EVIDENCE"
+      ],
+      "metiers": [
+        "P9"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/budget-ledger.ts",
+      "shared": false
+    },
+    {
+      "id": "capability-attribution",
+      "primitives": [
+        "EVIDENCE",
+        "STATE"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/capability-attribution.ts",
+      "shared": false
+    },
+    {
+      "id": "checkpoint-engine",
+      "primitives": [
+        "RECOVERY"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/checkpoint-engine.ts",
+      "shared": false
+    },
+    {
+      "id": "contract",
+      "primitives": [
+        "CONTRACT"
+      ],
+      "metiers": [
+        "P1",
+        "P5"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/api-contract.ts",
+      "shared": true
+    },
+    {
+      "id": "decision-engine",
+      "primitives": [
+        "RESOLVER"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/decision-engine.ts",
+      "shared": false
+    },
+    {
+      "id": "emergency-stop",
+      "primitives": [
+        "POLICY",
+        "RECOVERY"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/emergency-stop.ts",
+      "shared": false
+    },
+    {
+      "id": "engineering-executor",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P1",
+        "P5"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/engineering-executor.ts",
+      "shared": true
+    },
+    {
+      "id": "evaluator-independence",
+      "primitives": [
+        "EVIDENCE",
+        "POLICY"
+      ],
+      "metiers": [
+        "P6"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/evaluator-independence.ts",
+      "shared": false
+    },
+    {
+      "id": "evidence-provenance",
+      "primitives": [
+        "EVIDENCE"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/evidence-provenance.ts",
+      "shared": false
+    },
+    {
+      "id": "executor",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P1",
+        "P2",
+        "P5"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/capability-executors.ts",
+      "shared": true
+    },
+    {
+      "id": "fair-share-allocator",
+      "primitives": [
+        "ALLOCATOR"
+      ],
+      "metiers": [
+        "P12"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/p12-weighted-fair-share-scheduler.ts",
+      "shared": false
+    },
+    {
+      "id": "fdir-engine",
+      "primitives": [
+        "RECOVERY"
+      ],
+      "metiers": [
+        "P7"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/fdir-engine.ts",
+      "shared": false
+    },
+    {
+      "id": "identity",
+      "primitives": [
+        "IDENTITY"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/actor-provenance.ts",
+      "shared": false
+    },
+    {
+      "id": "incremental-assurance",
+      "primitives": [
+        "EVIDENCE"
+      ],
+      "metiers": [
+        "P6"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/incremental-assurance.ts",
+      "shared": false
+    },
+    {
+      "id": "inspection-boundary",
+      "primitives": [
+        "EVIDENCE",
+        "POLICY"
+      ],
+      "metiers": [
+        "P6"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/inspection-boundary.ts",
+      "shared": false
+    },
+    {
+      "id": "local-work-mandate",
+      "primitives": [
+        "POLICY"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/local-work-mandate.ts",
+      "shared": false
+    },
+    {
+      "id": "market-intelligence",
+      "primitives": [
+        "RESOLVER"
+      ],
+      "metiers": [
+        "P2"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/market-intelligence.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P1-fullstack",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P1"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p1-fullstack-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P10-regulatory",
+      "primitives": [
+        "EXECUTOR",
+        "POLICY"
+      ],
+      "metiers": [
+        "P10"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p10-regulatory-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P11-document",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P11"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p11-document-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P12-streaming",
+      "primitives": [
+        "ALLOCATOR",
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P12"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p12-streaming-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P13-aiinfra",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P13"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p13-aiinfra-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P14-devex",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P14"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p14-devex-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P15-workflow",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P15"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p15-workflow-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P2-ai",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P2"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p2-ai-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P3-security",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P3"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p3-security-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P4-data",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P4"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p4-data-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P5-devplatform",
+      "primitives": [
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P5"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/developer-platform.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P6-eval",
+      "primitives": [
+        "EVIDENCE",
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P6"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p6-eval-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P7-sre",
+      "primitives": [
+        "EXECUTOR",
+        "RECOVERY"
+      ],
+      "metiers": [
+        "P7"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p7-sre-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P8-semver",
+      "primitives": [
+        "CONTRACT",
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P8"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/p8-semver-enforcement.ts",
+      "shared": false
+    },
+    {
+      "id": "metier-P9-finops",
+      "primitives": [
+        "ALLOCATOR",
+        "EXECUTOR"
+      ],
+      "metiers": [
+        "P9"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/profession-p9-finops-reference.ts",
+      "shared": false
+    },
+    {
+      "id": "mission-contract",
+      "primitives": [
+        "CONTRACT"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/mission-contract-factory.ts",
+      "shared": false
+    },
+    {
+      "id": "mission-resolver",
+      "primitives": [
+        "RESOLVER"
+      ],
+      "metiers": [
+        "P1"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/coding-mission-resolver.ts",
+      "shared": false
+    },
+    {
+      "id": "parallel-execution-planner",
+      "primitives": [
+        "ALLOCATOR",
+        "RESOLVER"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/parallel-execution-planner.ts",
+      "shared": false
+    },
+    {
+      "id": "recovery-engine",
+      "primitives": [
+        "RECOVERY"
+      ],
+      "metiers": [
+        "P7"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/build-recovery-engine.ts",
+      "shared": false
+    },
+    {
+      "id": "regulatory-assurance",
+      "primitives": [
+        "POLICY"
+      ],
+      "metiers": [
+        "P10"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/regulatory-assurance.ts",
+      "shared": false
+    },
+    {
+      "id": "security-control-plane",
+      "primitives": [
+        "POLICY"
+      ],
+      "metiers": [
+        "P3"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/security-control-plane.ts",
+      "shared": false
+    },
+    {
+      "id": "self-diagnostic",
+      "primitives": [
+        "RECOVERY"
+      ],
+      "metiers": [
+        "P7"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/self-diagnostic.ts",
+      "shared": false
+    },
+    {
+      "id": "spend-governor",
+      "primitives": [
+        "ALLOCATOR",
+        "POLICY"
+      ],
+      "metiers": [
+        "P9"
+      ],
+      "status": "VALIDATED",
+      "module": "runtime/core/spend-governor.ts",
+      "shared": false
+    },
+    {
+      "id": "state-model",
+      "primitives": [
+        "STATE"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/runtime-model.ts",
+      "shared": false
+    },
+    {
+      "id": "state-transition",
+      "primitives": [
+        "STATE"
+      ],
+      "metiers": [],
+      "status": "VALIDATED",
+      "module": "runtime/core/state-transition.ts",
+      "shared": false
+    }
+  ],
+  "status": "ATTRIBUTION_COMPLETE_integrity_OK",
+  "invariant": "every capability attached to >=1 of the 9 primitives; no unknown primitive/métier; valid ladder status; module anchors exist on disk; all 9 primitives covered (no orphan); no parallel registry; criticalSingletons surfaced."
+}

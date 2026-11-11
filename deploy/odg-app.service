@@ -1,0 +1,13 @@
+[Unit]
+Description=ODG app (preprod) — user-supervised, reboot-surviving via linger (root-free; replaces root-blocked system odg-preprod.service)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/ubuntu/bmax-v21/scripts/odg-app-launch.sh
+Restart=on-failure
+RestartSec=3
+TimeoutStartSec=60
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,84 @@
+{
+  "//": "VPS continuity & supervision chantier. Root-free supervision path (user systemd + linger) found + DEMONSTRATED live on an alt port (equivalent healthy replacement) without touching :3000. Intrusive live cutover PREPARED (dry-run default, auto-rollback) but NOT executed autonomously. No root bypass, no reboot, production untouched.",
+  "realState": {
+    "current": "rel-20261111T020508Z-22900dd501f8",
+    "previous": "rel-20261028T210754Z-e84a0cf2720b",
+    "port3000Pid": "74768",
+    "cwd": "rel-20261111T020508Z-22900dd501f8",
+    "sessionScoped": true,
+    "supervisedBySystemdNow": false,
+    "health": "ready",
+    "storage": "READY",
+    "buildId": "WEyqonrDYirNE0T99qGGC",
+    "buildIdMatch": true
+  },
+  "v103RootBlockage": {
+    "exact": "odg-preprod is a SYSTEM unit; non-root 'systemctl start odg-preprod' ⇒ polkit 'Access denied ... requires interactive authentication'; sudo denied by session policy.",
+    "legitimatePaths": {
+      "A_preferred_one_root_action": "stop the session process + 'systemctl start odg-preprod' (blessed system unit; supervises now AND at boot). Requires ONE root action via the normal mechanism.",
+      "B_root_free_prepared_demonstrated": "scripts/odg-app-cutover.sh --execute ⇒ user odg-app.service supervises :3000 now (NO root). Boot survival stays with the enabled odg-preprod. Interrupts :3000 briefly ⇒ owner go-ahead."
+    }
+  },
+  "rootFreePath": {
+    "userSystemd": "running",
+    "linger": "Linger=yes",
+    "unitInstalled": true,
+    "unitSource": "deploy/odg-app.service → ~/.config/systemd/user/odg-app.service",
+    "launcher": "scripts/odg-app-launch.sh (forces HOSTNAME=127.0.0.1 loopback; sets ODG_CLIENT_STORE/ODG_RUNTIME_STATE_DIR ⇒ storage READY; release-agnostic via current symlink)",
+    "loopbackBugFixed": "HOSTNAME was pre-set to the machine hostname; :- default never applied ⇒ app bound the public hostname; now forced to 127.0.0.1"
+  },
+  "liveDemonstration": {
+    "attempted": true,
+    "port": 3998,
+    "httpCode": "200",
+    "status": "ready",
+    "storage": "READY",
+    "buildId": "WEyqonrDYirNE0T99qGGC",
+    "loopbackOnly": true,
+    "supervisedByUserSystemd": true,
+    "productionHealthyDuringDemo": true,
+    "replacementImmediatelyPossible": true,
+    "note": "point 8 satisfied: a fully-equivalent healthy replacement (storage READY, loopback-only, same buildId) is DEMONSTRATED immediately possible, with production untouched during the demo"
+  },
+  "cutover": {
+    "script": "scripts/odg-app-cutover.sh",
+    "dryRunDefault": true,
+    "autoRollback": "on health/ownership failure: stop odg-app + nohup replacement + health-gate (restores production)",
+    "executedAutonomously": false,
+    "reason": "intrusive to production (brief interruption) — directive point 5 scopes autonomous execution to NON-intrusive; executes only with owner go-ahead (Path B) or via Path A root"
+  },
+  "rebootPersistence": {
+    "linger": "Linger=yes",
+    "bootSupervisor": "odg-preprod.service (system, enabled) — starts at boot AS ROOT (no polkit) ⇒ reboot-survival CONFIGURED (V102)",
+    "appEnabledForBoot": "disabled",
+    "bootConflictAvoided": "odg-app is intentionally NOT enabled ⇒ will not auto-start at boot ⇒ NO :3000 conflict with odg-preprod",
+    "rebootTestPerformed": false,
+    "rebootTestStatus": "NOT PERFORMED — a real reboot needs rescue access + a verified recovery procedure + specific authorization (directive point 9); not done"
+  },
+  "backupsRestore": {
+    "status": "DELIVERED in R3 (docs/odg/R3_BACKUP_RESTORE.json): real backup + verified restore on real data; staleness cleared; durable candidate prepared"
+  },
+  "protections": {
+    "productionUntouched": true,
+    "noRootBypass": true,
+    "noReboot": true,
+    "noTwoServersOn3000": true,
+    "noStrayDemoUnits": true
+  },
+  "successCriterion": {
+    "target": "odg app supervised by systemd (owns the live process) + health OK + controlled service-restart + reboot-survival + verified backups/restore",
+    "achieved": {
+      "rootFreeSupervisionMechanismDemonstrated": true,
+      "backupsRestoreVerified": true,
+      "rebootSurvivalConfigured": true,
+      "cutoverPreparedWithRollback": true
+    },
+    "pending": {
+      "liveProcessSupervision": "PENDING the intrusive cutover (owner go-ahead / Path A root) — NOT done autonomously",
+      "controlledServiceRestartTest": "PENDING cutover",
+      "rebootTest": "NOT PERFORMED (point 9)"
+    }
+  },
+  "status": "SUPERVISION_MECHANISM_DEMONSTRATED_cutover_prepared_pending_owner_or_root",
+  "invariant": "root-free supervision path found (user systemd + linger) + equivalent healthy replacement DEMONSTRATED live on an alt port (storage READY, loopback, same buildId) with production untouched; intrusive live cutover PREPARED (dry-run default + auto-rollback) but NOT executed autonomously (owner go-ahead / Path A root); reboot-survival configured via enabled odg-preprod; reboot test NOT PERFORMED (needs rescue+authorization); no root/polkit/sudo bypass; no reboot; no two servers on :3000; production pristine; ODG closes on proof."
+}

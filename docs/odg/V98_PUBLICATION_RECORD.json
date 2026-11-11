@@ -17,8 +17,8 @@
   },
   "push": {
     "branch": "excellence/v3-wave3-demonstrators-20261101",
-    "localHead": "8118fb0bc7fa",
-    "remoteHead": "8118fb0bc7fa",
+    "localHead": "f2c887b0aa47",
+    "remoteHead": "f2c887b0aa47",
     "matched": true,
     "fastForward": true,
     "forced": false,
@@ -30,11 +30,16 @@
     "state": "OPEN",
     "source": "excellence/v3-wave3-demonstrators-20261101",
     "target": "main",
-    "headSha": "8118fb0bc7fa",
-    "commits": 75,
+    "headSha": "f2c887b0aa47",
+    "commits": 76,
     "mergeable": "MERGEABLE"
   },
-  "ciChecks": [],
+  "ciChecks": [
+    {
+      "name": "build + typecheck + parity + tests",
+      "status": "pass"
+    }
+  ],
   "branchProtection": {
     "requiredCheck": [
       "build + typecheck + parity + tests"
@@ -43,13 +48,13 @@
     "prRequired": true
   },
   "mergedOrDeployed": false,
-  "commitsPublished": 75,
+  "commitsPublished": 76,
   "verdict": "PUBLISHED_OK",
   "residualRisks": [
     "CI check on the PR may still be running/pending — merge must await a green required check",
     "PR is BEHIND main by 2 commits — GitHub resolves this at merge (0 file-conflict overlap measured in V95/V97)",
     "merge + go-live remain OWNER-gated (separate step; not authorized by V98)"
   ],
-  "honestConclusion": "Owner-authorized publication executed: branch excellence/v3-wave3-demonstrators-20261101 pushed (fast-forward af2eaba→8118fb0bc7fa, no force; remote==local) and PR #489 opened to main (75 commits, state OPEN, mergeable MERGEABLE). CI required check 'build + typecheck + parity + tests' triggered. Branch protection UNCHANGED (enforce_admins true + PR required). NO merge, NO deploy, NO VPS change. Authorization = owner explicit (V98); no receipt fabricated.",
+  "honestConclusion": "Owner-authorized publication executed: branch excellence/v3-wave3-demonstrators-20261101 pushed (fast-forward af2eaba→f2c887b0aa47, no force; remote==local) and PR #489 opened to main (76 commits, state OPEN, mergeable MERGEABLE). CI required check 'build + typecheck + parity + tests' triggered (build + typecheck + parity + tests:pass). Branch protection UNCHANGED (enforce_admins true + PR required). NO merge, NO deploy, NO VPS change. Authorization = owner explicit (V98); no receipt fabricated.",
   "invariant": "push + PR only (owner explicit authorization, provenance recorded); fast-forward no-force; remote==local verified; PR opened not merged; protections untouched; CI awaited for merge; no merge/deploy/VPS; no fabricated receipt."
 }

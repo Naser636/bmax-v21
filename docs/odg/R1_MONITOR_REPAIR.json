@@ -1,0 +1,64 @@
+{
+  "//": "Mission P0-R1 — repair odg-monitor MODULE_NOT_FOUND. Canonical-source fix (TS CLIs recreated + build-config + script/README rewired). NO production deploy. Evidence FOR ODG to close; Claude Code does not self-close.",
+  "mission": {
+    "id": "P0-R1",
+    "source": "V104 proposed-mission register (docs/odg/V104_MASTER_CONTINUATION_RECONCILIATION.json)",
+    "family": "F7-RESILIENCE",
+    "level": "L2-local-reversible"
+  },
+  "rootCause": {
+    "exact": "The zero-JS convergence (commit fba76c7 'remove the 148 source .js ports') RETIRED runtime/bin/odg-exposure-check.js and runtime/bin/odg-maintenance-check.js WITHOUT creating TS replacements. The pure core logic survived (runtime/core/exposure-audit.ts, maintenance-alerts.ts, both still gate-tested) but the thin CLI entrypoints odg-monitor.sh invokes were deleted. scripts/odg-monitor.sh still hard-coded the dead runtime/bin/*.js paths ⇒ MODULE_NOT_FOUND every ~10-min tick.",
+    "originalShippedIn": "6bbb851 (exposure/P3), ee6e42c (maintenance/P5)",
+    "retiredIn": "fba76c7 (zero-JS)",
+    "priorV104Imprecision": "V104 guessed the binaries lived in runtime/dist/bin/*.js; the true cause is they existed NOWHERE as source after retirement (corrected here)."
+  },
+  "fix": {
+    "canonicalSourceAdded": [
+      "runtime/bin/odg-exposure-check.ts",
+      "runtime/bin/odg-maintenance-check.ts"
+    ],
+    "importsCoreNotDuplicated": "CLIs import classifyExposure / evaluateMaintenance+newAlerts from the surviving core modules — NO classification/threshold logic duplicated",
+    "buildConfig": "tsconfig.runtime-dist.json include += the 2 bin CLIs + the 2 core modules ⇒ build:runtime emits runtime/dist/bin/odg-*-check.js + runtime/dist/core/*.js",
+    "rewired": [
+      "scripts/odg-monitor.sh → runtime/dist/bin/odg-*-check.js",
+      "deploy/README-systemd.md → dist path"
+    ],
+    "statusWritesRestored": "both ports also write runtime/generated/{exposure,maintenance}-status.json every run (the single source odg-health §G Supervision reads) — faithful restoration of the retired behavior",
+    "regressionTest": "runtime/bin/odg-monitor-entrypoints.test.ts (behavioral: runs both entrypoints via tsx AND the compiled dist via node, asserts no MODULE_NOT_FOUND + verdict line + fresh status files; guards the dead path, the dropped-status regression, and the tsx-vs-dist gap); wired into package.json test:report"
+  },
+  "independentValidation": {
+    "validator": "separate adversarial agent (general-purpose)",
+    "verdict": "FIX REAL but initially INCOMPLETE — confirmed root cause, canonical source, build, clean run, no deploy; REFUTED 'faithful' claim: the first port DROPPED the status-file writes feeding odg-health §G (reproduced live: §G STALE).",
+    "remediation": "status-file writes re-added to both ports; regression test extended to assert status freshness + exercise the dist/node artifact. Re-verified: §G now reports 'monitor fresh'."
+  },
+  "evidence": {
+    "monitorTickModuleNotFoundCount": 0,
+    "monitorTickExposure": "Exposure   : UNKNOWN  (odg-loopback=1 drift=0 foreign-public=2)",
+    "monitorTickMaintenance": "Maintenance: ATTENTION  (CRIT=0 WARN=1 INFO=0)",
+    "sourceCLIsPresent": true,
+    "compiledDistPresent": true,
+    "deadPathGone": true,
+    "tscClean": "verified separately (tsc=0)",
+    "supervisionGFresh": "Supervision: exposure=UNKNOWN(odg=1,drift=0) maintenance=ATTENTION(C0/W1/I0) — monitor fresh",
+    "statusFilesPresent": true,
+    "liveProductionUndisturbed": true
+  },
+  "noProductionDeploy": {
+    "serviceRestarted": false,
+    "odgReleaseShRun": false,
+    "odgReleasesTouched": false,
+    "note": "monitor runs read-only from the repo working tree; it will pick up the repaired dist on its next normal tick — no deploy/activation performed"
+  },
+  "closureCriteria": {
+    "rootCauseFound": true,
+    "canonicalSourceFixed": true,
+    "buildReproducesDist": true,
+    "regressionTestAdded": true,
+    "noMODULE_NOT_FOUND": true,
+    "supervisionGFresh": true,
+    "productionUndisturbed": true,
+    "independentValidationPassed": "adversarial validator ran; found defect (dropped §G status writes) REMEDIATED + re-verified"
+  },
+  "status": "FIXED_independently_validated_pending_ODG_closure",
+  "invariant": "root cause found + reproduced; canonical SOURCE fixed (not a generated file); core logic reused not duplicated; build:runtime reproduces the compiled dist; behavioral regression test guards the dead path; no production deploy/restart/odg-releases change; live app undisturbed; ODG closes on proof, Claude Code does not self-close."
+}

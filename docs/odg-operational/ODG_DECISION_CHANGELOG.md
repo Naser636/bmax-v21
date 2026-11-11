@@ -592,3 +592,96 @@
 - Decisions from conversations PRIOR to the commit history visible in this repo are **not fully recoverable**;
   only repo-verifiable checkpoints and this session's CTO decisions are recorded. Earlier periods = UNVERIFIED.
 - No dates are asserted beyond those verifiable from Git (`git log`) or the current session date (2026-10-09).
+
+## CTO decisions — V123 maximum-unblock delegation (2026-11-11)
+
+> These three entries are recorded under **CTO Directive V123** ("UNBLOCK EVERYTHING, COMPLETE THE WORK AND DEPLOY"),
+> which explicitly delegated — within governance — resolving the specified blockers. None overrides a frozen Master
+> rule or a standing ACCEPTED CTO decision; DEC-V60-166-RETIREMENT is preserved verbatim. Git holds the exact diffs.
+
+### DEC-166-RECONCILED — Reconcile V12.4 §80/§115 "recover 166" vs DEC-V60-166-RETIREMENT [CTO-DECISION via V123-4B delegation] — ACCEPTED (2026-11-11)
+- Decision: **Affirm `DEC-V60-166-RETIREMENT` as governing.** The literal V12.4 §80/§115 "recover the 166 capabilities"
+  is **formally SUPERSEDED** — it is unsatisfiable without an authoritative enumerable source (the canonical set is
+  NON-ENUMERABLE by construction: only `A01`/`A54` endpoints occur in the FROZEN Master; "166" is a conceptual
+  appendix heading), and ODG will **not fabricate** an enumeration. §115's underlying value — demonstrable capability
+  COVERAGE — is delivered via the EXISTING enumerable substitutes: `DEC-008` a–d per-category coverage, the P1–P15
+  profession modules, and the register-derived `capability-map`. **No number is substituted for 166.**
+- Authorization basis: V123-4B delegated recording "the safest technically-justified decision within governance (don't
+  invent an owner decision not required by contract)." This decision **CONFIRMS** a standing ACCEPTED decision
+  (DEC-V60-166) rather than overriding it, so it introduces **no new owner authority**; per the V12.4 §2 truth
+  hierarchy a frozen ACCEPTED CTO decision governs until a *new* CTO decision overrides it, and none was issued — so
+  this records the contractually-determined resolution. Alternatives (B) override-and-reinstate and (C) supply an
+  external canonical-166 source are documented in the ADR; (B) is rejected (would require forbidden fabrication), (C)
+  stays the only path that makes literal "recover 166" real.
+- Preserves: `DEC-V60-166-RETIREMENT` cited verbatim (superseded-by relation only; never deleted). A01–A54/166 stays
+  NOT_ENUMERABLE; the nine primitives and fifteen métiers are untouched; nothing fabricated.
+- Reopen condition: a DISTINCT future CTO mission supplying an authoritative machine-enumerable canonical-166 manifest
+  + capability→canonical mapping (then alternative C becomes real and the gate becomes provable).
+- Evidence: `docs/odg/ADR-166-CAPABILITIES-RECONCILIATION-PROPOSAL.md` (now RATIFIED, citing this id); V12.4 §80/§115;
+  `DEC-V60-166-RETIREMENT`. Affects: register item `adr-166-capabilities-reconciliation` ⇒ ACCEPTED.
+
+### DEC-HIST-28JUL-RECON-ACCEPT — Accept the work-reconstruction as historical substitute for the 28-July-2026 original [CTO-DECISION via V123-4A delegation] — ACCEPTED (2026-11-11)
+- Decision: **Accept the CTO-supplied WORK RECONSTRUCTION** (`ODG_MASTER_ROADMAP_EXCELLENCE_OPERATIONNELLE_RECONSTRUCTION_V1.md`,
+  reconciled onto the canonical sources by `docs/odg-operational/EXCELLENCE_ROADMAP_RECONCILIATION_V1.md`) as the
+  **historical SUBSTITUTE** for the not-located 28-July-2026 original "ODG MASTER ROADMAP D'EXCELLENCE OPÉRATIONNELLE."
+  Recorded explicitly **AS A RECONSTRUCTION, NOT the original.**
+- Honest limit (no false recovery): the authentic 28-July-2026 original remains **UNLOCATED** — confirmed ABSENT from
+  the working tree and the full git history (`ODG_ROADMAP_CROSSWALK.md` §5.4; grep ⇒ only references-to-absence). This
+  acceptance does **not** claim the original was found; it accepts the reconstruction as the working substitute so the
+  campaign is not blocked on an artifact that may be unrecoverable. The single operational SSOT is unchanged
+  (`ODG_MASTER_ROADMAP.md §Q` + `runtime/governance/ROADMAP.json` + ledger + register); no second roadmap is created.
+- Authorization basis: V123-4A ("accept reconstruction as historical substitute (record as reconstruction, not original)").
+- Reopen/supersede: if the authentic original is later supplied or located — authenticate it, reconcile vs
+  `EXCELLENCE_ROADMAP_RECONCILIATION_V1.md`, and update the provenance banner (cite found path/commit/sha). Reality
+  wins; no overwrite without proof. Evidence: `EXCELLENCE_ROADMAP_RECONCILIATION_V1.md` §2; `ODG_ROADMAP_CROSSWALK.md`
+  §5.4. Affects: register item `historical-roadmap-excellence-28jul-recover` ⇒ ACCEPTED (as reconstruction-substitute).
+
+### CHG-V123-4C — Apply the one owner-authorized structured-dependency edge into the protected ROADMAP.json [TECH-CHANGE under CTO V123-4C] — VERIFIED (2026-11-11)
+- Change: `runtime/governance/ROADMAP.json` mission `DEPLOY_BMAX_DASHBOARD_PROD_V1` gains
+  `dependsOn: ["VPS_DEPLOYMENT_READINESS"]` — the single cited edge previously held only in the non-protected companion
+  `docs/odg/roadmap-dependencies.json` and previewed (non-mutating) by `roadmap-schema-proposal`. Exactly one mission
+  carries `dependsOn`; `roadmapContractVersion` unchanged (1.1.0); no other mission touched.
+- Authorization basis: V123-4C explicitly authorized "the exact structured-roadmap-deps edge proposed in the V121
+  dossier." Evidence it is the canonical change: the mission's OWN contract declares `"dependencies":
+  ["VPS_DEPLOYMENT_READINESS"]`; `roadmap-schema-proposal.proposeFromRepo` ⇒ VALID, edgesApplied=1, 2 acyclic layers,
+  0 uncited/0 unknown edges; `roadmap-dep-check` ⇒ OK; independent adversarial validation ⇒ ACCEPT (all 5 claims held;
+  `root-of-trust` does not content-hash the file, no integrity check breaks). Recoverable original preserved (git HEAD
+  + out-of-tree backup). The preview-only regression lock `roadmap-schema-proposal.test.ts` case (7) was transitioned
+  to assert EXACTLY the one authorized edge and NO fabricated extras (strictly stronger). Affects: register item
+  `structured-roadmap-deps` ⇒ ACCEPTED.
+
+## CTO decision — V127 push & deployment authorization (2026-11-11)
+
+### DEC-V127-PUSH-AND-DEPLOY-AUTH — Owner authorizes repository push + controlled VPS deployment [CTO-DECISION] — ACCEPTED (2026-11-11)
+- **Provenance:** CTO Directive V127 ("COMPLETE ODG · CLOSE ALL POSSIBLE WORK · PUSH · VPS PREPARATION · CONTROLLED
+  DEPLOYMENT"), verbatim: "The owner has authorized push and VPS deployment as part of this mandate." and "The owner
+  explicitly authorizes pushing this campaign's validated work." and "The owner explicitly authorizes deployment as
+  part of this campaign, subject to the mandatory deployment contract and safety gates."
+- **Scope (exact, bounded):** (1) a **non-force** push of branch `excellence/v3-wave3-demonstrators-20261101` to its
+  own remote branch (NOT `main`, no history rewrite, no force); (2) controlled deployment to `vps-6d919042` **only when
+  every mandatory deployment-contract condition is independently verified**. The same directive instructs: "Do not
+  fabricate a named operator's acceptance, credentials, secrets, external evidence or other independent contractual
+  approvals," and "If any mandatory condition is missing, do not bypass it."
+- **Outcome — PUSH: PREPARED + VERIFIED, but BLOCKED by the Claude Code auto-mode permission classifier (NOT executed).**
+  All contractual/technical conditions for a safe push are satisfied: the full gate passed (`TOTAL 537 · PASS 537 ·
+  FAIL 0`, exit 0; `tsc` both configs = 0), a clean secret/artifact scan of the payload, and fast-forward verification
+  (remote branch at the merge-base `f2c887b`, an ancestor of HEAD ⇒ non-force FF; `main` untouched). The actual
+  `git push origin HEAD:excellence/v3-wave3-demonstrators-20261101` was **denied by the Claude Code auto-mode
+  permission classifier** — a harness-level guard, independent of the owner's V127 authorization and of every
+  deployment/contract gate. Per the tool's instruction this is NOT worked around; it requires the user to approve the
+  push (add a `git push` Bash permission rule, or run it themselves, e.g. `! git push origin
+  HEAD:excellence/v3-wave3-demonstrators-20261101`). The owner authorization stands; execution awaits permission.
+- **Outcome — DEPLOYMENT: NOT EXECUTED (mandatory conditions unmet; not bypassed, not fabricated).** This host IS the
+  target VPS `vps-6d919042` (verified: hostname `vps-6d919042.vps.ovh.net`, OVH; `odg-releases/current`, `/etc/odg`,
+  `odg-preprod.service` active). The CTO deployment authorization (contract precondition #1) is hereby recorded, but
+  the DEPLOY_BMAX contract's remaining mandatory preconditions are ABSENT: (a) a **named Release-Manager/operator
+  acceptance** (V127 is CTO authorization, not an operator's recorded acceptance — not fabricated); (b) **off-host
+  backup + restore proof** (off-host destination undefined — `DEPLOYMENT.md` BLOCKED-BY-HOST); (c) a **real-host
+  rollback drill** (only the local mechanism is proven); (d) **DNS/TLS/reverse-proxy + monitoring/SLO** for a public
+  cutover (public exposure additionally requires its OWN distinct authorization — `dashboard-tls-exposure`, not granted
+  here). Per the directive, deployment is not bypassed. Operational observations recorded for the owner:
+  `odg-mission-runner.service` = failed, `fleet-bridge.service` = activating/auto-restart (read-only; not modified).
+- **This records the owner's real V127 authorization with its provenance and scope; it does NOT fabricate an owner or
+  operator decision.** Affects: no register status change (DEPLOY_BMAX stays PROPOSED; `dashboard-tls-exposure`,
+  `campaign-runner-systemd-activation` stay BLOCKED); delivery is committed locally and push-ready but the push is
+  pending user permission approval (not yet executed).

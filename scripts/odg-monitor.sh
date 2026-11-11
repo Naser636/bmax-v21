@@ -13,9 +13,10 @@ cd "$REPO" || { echo "odg-monitor: repo $REPO unavailable"; exit 0; }
 echo "== odg-monitor tick $(date -u +%Y-%m-%dT%H:%M:%SZ) =="
 
 # Exposure drift (ODG-owned listeners must be loopback; foreign public = informational, never touched).
-"$NODE" "$REPO/runtime/bin/odg-exposure-check.js" || true
+# ZERO-JS: the sole runtime is the compiled dist (runtime/bin/*.js rollback entrypoints are retired).
+"$NODE" "$REPO/runtime/dist/bin/odg-exposure-check.js" || true
 
 # Maintenance alerts (health/disk/mem/NRestarts/backup-age/release-current → CRIT/WARN/INFO, deduped).
-"$NODE" "$REPO/runtime/bin/odg-maintenance-check.js" || true
+"$NODE" "$REPO/runtime/dist/bin/odg-maintenance-check.js" || true
 
 exit 0

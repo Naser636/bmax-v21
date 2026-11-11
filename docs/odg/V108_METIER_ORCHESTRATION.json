@@ -1,0 +1,246 @@
+{
+  "//": "V108 M3 (Phase 7) — 15 métiers orchestrated via O1 parallel waves + G1 resource caps on SYNTHETIC data. acted:false, synthetic:true. Demonstrates real ORCHESTRATION; payloads are synthetic (NO real clients/revenue/production).",
+  "scenario": "cross-métier: data/aiinfra→ai→eval→{regulatory,document}; fullstack→{devplatform→workflow,semver}; +independent security/sre/finops/streaming/devex",
+  "waves": [
+    [
+      "P1-fullstack",
+      "P12-streaming",
+      "P13-aiinfra"
+    ],
+    [
+      "P14-devex",
+      "P3-security",
+      "P4-data",
+      "P5-devplatform"
+    ],
+    [
+      "P15-workflow",
+      "P2-ai",
+      "P7-sre",
+      "P8-semver"
+    ],
+    [
+      "P6-eval",
+      "P9-finops"
+    ],
+    [
+      "P10-regulatory",
+      "P11-document"
+    ]
+  ],
+  "executed": [
+    {
+      "id": "P1-fullstack",
+      "wave": 0,
+      "provider": "local",
+      "cost": 2,
+      "admitted": true,
+      "output": {
+        "metier": "P1-fullstack",
+        "artifact": "SYNTHETIC:P1-fullstack",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P13-aiinfra",
+      "wave": 0,
+      "provider": "local",
+      "cost": 2,
+      "admitted": true,
+      "output": {
+        "metier": "P13-aiinfra",
+        "artifact": "SYNTHETIC:P13-aiinfra",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P14-devex",
+      "wave": 1,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P14-devex",
+        "artifact": "SYNTHETIC:P14-devex",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P3-security",
+      "wave": 1,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P3-security",
+        "artifact": "SYNTHETIC:P3-security",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P4-data",
+      "wave": 1,
+      "provider": "local",
+      "cost": 2,
+      "admitted": true,
+      "output": {
+        "metier": "P4-data",
+        "artifact": "SYNTHETIC:P4-data",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P5-devplatform",
+      "wave": 1,
+      "provider": "local",
+      "cost": 2,
+      "admitted": true,
+      "output": {
+        "metier": "P5-devplatform",
+        "artifact": "SYNTHETIC:P5-devplatform",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P15-workflow",
+      "wave": 2,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P15-workflow",
+        "artifact": "SYNTHETIC:P15-workflow",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P2-ai",
+      "wave": 2,
+      "provider": "anthropic",
+      "cost": 3,
+      "admitted": true,
+      "output": {
+        "metier": "P2-ai",
+        "artifact": "SYNTHETIC:P2-ai",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P7-sre",
+      "wave": 2,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P7-sre",
+        "artifact": "SYNTHETIC:P7-sre",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P8-semver",
+      "wave": 2,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P8-semver",
+        "artifact": "SYNTHETIC:P8-semver",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P6-eval",
+      "wave": 3,
+      "provider": "anthropic",
+      "cost": 2,
+      "admitted": true,
+      "output": {
+        "metier": "P6-eval",
+        "artifact": "SYNTHETIC:P6-eval",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P9-finops",
+      "wave": 3,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P9-finops",
+        "artifact": "SYNTHETIC:P9-finops",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P10-regulatory",
+      "wave": 4,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P10-regulatory",
+        "artifact": "SYNTHETIC:P10-regulatory",
+        "ok": true
+      },
+      "synthetic": true
+    },
+    {
+      "id": "P11-document",
+      "wave": 4,
+      "provider": "local",
+      "cost": 1,
+      "admitted": true,
+      "output": {
+        "metier": "P11-document",
+        "artifact": "SYNTHETIC:P11-document",
+        "ok": true
+      },
+      "synthetic": true
+    }
+  ],
+  "capDenied": [
+    {
+      "id": "P12-streaming",
+      "wave": 0,
+      "provider": "local",
+      "cost": 7,
+      "reasons": [
+        "MISSION_CAP"
+      ]
+    }
+  ],
+  "skippedDueToDep": [],
+  "unschedulable": [],
+  "totalSpend": 21,
+  "stats": {
+    "metiers": 15,
+    "scheduled": 15,
+    "executed": 14,
+    "capDenied": 1,
+    "skippedDueToDep": 0,
+    "waveCount": 5,
+    "maxConcurrency": 4,
+    "resourceBudget": 6
+  },
+  "dependencyClosure": "a dependent of a cap-denied métier is SKIPPED (DEP_DENIED), not executed ⇒ `executed` always had its deps satisfied. In this scenario the denied métier (P12) is a leaf, so skippedDueToDep is empty.",
+  "demonstratesCapEnforcement": true,
+  "synthetic": true,
+  "acted": false,
+  "honesty": "ORCHESTRATION is real (O1 waves + G1 caps composed); métier WORK is SYNTHETIC stub output. This is NOT real paid métier delivery. 14 métiers executed (synthetic), P12 cap-denied by G1 (cost 7 > per-mission 5).",
+  "status": "METIERS_ORCHESTRATED_SYNTHETIC_capped",
+  "invariant": "15 métiers scheduled into dependency-respecting parallel waves (O1) under concurrency+resource caps; per-métier spend gated by G1 (a métier breaching per-mission cap is DENIED, not executed); outputs SYNTHETIC + clearly labeled; acted:false; no real client/revenue/production; structural orchestration real, work synthetic."
+}

@@ -165,6 +165,10 @@
     "runtime/core/mission-attempt-log.ts",
     "runtime/core/latency-measure.ts",
     "runtime/bin/odg-schedule-tick.ts",
-    "runtime/bin/odg-integration-preflight.ts"
+    "runtime/bin/odg-integration-preflight.ts",
+    "runtime/bin/odg-exposure-check.ts",
+    "runtime/bin/odg-maintenance-check.ts",
+    "runtime/core/exposure-audit.ts",
+    "runtime/core/maintenance-alerts.ts"
   ]
 }

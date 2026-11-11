@@ -49,8 +49,9 @@ Until executed in a window, the reboot result is **NOT RUN**.
 `deploy/odg-monitor.service.candidate` / `deploy/odg-monitor.timer.candidate` (source of truth).
 
 Runs `scripts/odg-monitor.sh` every 10 min (`OnUnitActiveSec=600`, 120s boot grace) as **user `ubuntu`** — a
-oneshot that invokes the two shipped read-only detectors (`runtime/bin/odg-exposure-check.js` +
-`runtime/bin/odg-maintenance-check.js`). Output → systemd journal; each CLI keeps its own deduped alert file
+oneshot that invokes the two shipped read-only detectors (`runtime/dist/bin/odg-exposure-check.js` +
+`runtime/dist/bin/odg-maintenance-check.js` — ZERO-JS: compiled dist is the sole runtime; TS source under
+`runtime/bin/*.ts`). Output → systemd journal; each CLI keeps its own deduped alert file
 under `runtime/generated/`. **No remediation** (no restart/rollback/config/firewall/bind change, no sudo, NO
 `OnFailure`, no business-data write); bounded (`TimeoutStartSec=45`, `MemoryMax=256M`, `CPUQuota=50%`,
 `NoNewPrivileges=yes`, `PrivateTmp=yes`). Distinct from `odg-healthcheck.timer` (30s, failure→bounded recovery).
