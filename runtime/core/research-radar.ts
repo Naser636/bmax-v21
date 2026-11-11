@@ -141,7 +141,10 @@ function planRadar(watchlist: any, findings: any, opts: any = {}): any {
 /** proposeRequest(target): map a radar target to a research-governor.govern() request shape. Pure; no egress. */
 function proposeRequest(target: any): any {
   const t = target && typeof target === "object" ? target : {};
-  return Object.freeze({ query: isStr(t.topic) ? t.topic : null, urls: Object.freeze([]), allowedDomains: Object.freeze(Array.isArray(t.allowedDomains) ? t.allowedDomains.slice() : []) });
+  // D6 FIX — emit ONLY {query, urls}. The request never carried scoping authority (govern reads grant.allowedDomains, not the
+  // request); a request-level allowedDomains was INERT and gave a false sense of scoping. Scope lives in the grant. With the
+  // D1 fix, a query-only request is now domain-scoped by the grant's allowedDomains (fail-closed if the grant has none).
+  return Object.freeze({ query: isStr(t.topic) ? t.topic : null, urls: Object.freeze([]) });
 }
 
 module.exports = { planRadar, proposeRequest, latestFinding, DEFAULT_REFRESH_MS, DEFAULT_MAX_TARGETS };

@@ -45,10 +45,14 @@ function validateUrl(url: any, allowlist: readonly string[] = ALLOWLIST): any {
   return { ok: true, host: u.hostname, href: u.href };
 }
 
-/** validateContentType(ct): accept JSON content types only (read-only data feeds). */
-function validateContentType(ct: any): boolean {
+const JSON_CONTENT_TYPES = Object.freeze(["application/json", "text/json", "application/vnd.api+json"]);
+/** validateContentType(ct, allowed?): default = JSON-only (read-only data feeds). A caller may widen PER-CALL (same pattern
+ * as the host allowlist) to read e.g. public standards documents (text/plain, text/html) — the default is unchanged, so
+ * procurement feeds stay JSON-only while an owner-authorized research grant can declare the text types it expects. */
+function validateContentType(ct: any, allowed: readonly string[] = JSON_CONTENT_TYPES): boolean {
   const s = String(ct || "").toLowerCase();
-  return s.includes("application/json") || s.includes("text/json") || s.includes("application/vnd.api+json");
+  const list = Array.isArray(allowed) && allowed.length ? allowed : JSON_CONTENT_TYPES;
+  return list.some((a) => s.includes(String(a).toLowerCase()));
 }
 
 /** enforceSize(received, maxBytes): true if within cap. */
@@ -65,6 +69,7 @@ function get(url: any, opts: any = {}): Promise<any> {
   if (!v.ok) return Promise.resolve({ ok: false, code: v.code, host: v.host });
   const timeoutMs = Number.isInteger(opts.timeoutMs) && opts.timeoutMs > 0 ? opts.timeoutMs : 8000;
   const maxBytes = Number.isInteger(opts.maxBytes) && opts.maxBytes > 0 ? opts.maxBytes : 2_000_000;
+  const contentTypes = Array.isArray(opts.contentTypes) && opts.contentTypes.length ? opts.contentTypes : JSON_CONTENT_TYPES;
   const httpImpl = typeof opts.httpImpl === "function" ? opts.httpImpl : https.get;
   const headers = Object.assign({ "user-agent": "ODG-discovery/1.0 (+Licence-Ouverte-reuse)", "accept": "application/json", "accept-encoding": "identity" }, opts.headers || {});
 
@@ -76,7 +81,7 @@ function get(url: any, opts: any = {}): Promise<any> {
         // Redirects: only to an allowlisted https location, bounded (default 0 — public APIs don't need it).
         if (status >= 300 && status < 400) { finish({ ok: false, code: "REDIRECT_BLOCKED", statusCode: status }); try { res.destroy(); } catch {} return; }
         const ct = res.headers && res.headers["content-type"];
-        if (status >= 200 && status < 300 && !validateContentType(ct)) { finish({ ok: false, code: "BAD_CONTENT_TYPE", contentType: ct || null, statusCode: status }); try { res.destroy(); } catch {} return; }
+        if (status >= 200 && status < 300 && !validateContentType(ct, contentTypes)) { finish({ ok: false, code: "BAD_CONTENT_TYPE", contentType: ct || null, statusCode: status }); try { res.destroy(); } catch {} return; }
         let received = 0; const chunks: any[] = [];
         res.on("data", (c: any) => { received += c.length; if (!enforceSize(received, maxBytes)) { finish({ ok: false, code: "RESPONSE_TOO_LARGE", statusCode: status }); try { res.destroy(); } catch {} } else chunks.push(c); });
         res.on("end", () => finish({ ok: true, statusCode: status, contentType: ct || null, body: Buffer.concat(chunks).toString("utf8") }));
@@ -101,6 +106,7 @@ function post(url: any, bodyObj: any, opts: any = {}): Promise<any> {
   try { body = JSON.stringify(bodyObj === undefined ? {} : bodyObj); } catch { return Promise.resolve({ ok: false, code: "BAD_REQUEST_BODY" }); }
   const timeoutMs = Number.isInteger(opts.timeoutMs) && opts.timeoutMs > 0 ? opts.timeoutMs : 8000;
   const maxBytes = Number.isInteger(opts.maxBytes) && opts.maxBytes > 0 ? opts.maxBytes : 2_000_000;
+  const contentTypes = Array.isArray(opts.contentTypes) && opts.contentTypes.length ? opts.contentTypes : JSON_CONTENT_TYPES;
   const httpImpl = typeof opts.httpImpl === "function" ? opts.httpImpl : https.request;
   const headers = Object.assign({ "user-agent": "ODG-discovery/1.0 (+public-reuse)", "accept": "application/json", "content-type": "application/json", "accept-encoding": "identity", "content-length": Buffer.byteLength(body) }, opts.headers || {});
 
@@ -111,7 +117,7 @@ function post(url: any, bodyObj: any, opts: any = {}): Promise<any> {
         const status = res.statusCode;
         if (status >= 300 && status < 400) { finish({ ok: false, code: "REDIRECT_BLOCKED", statusCode: status }); try { res.destroy(); } catch {} return; }
         const ct = res.headers && res.headers["content-type"];
-        if (status >= 200 && status < 300 && !validateContentType(ct)) { finish({ ok: false, code: "BAD_CONTENT_TYPE", contentType: ct || null, statusCode: status }); try { res.destroy(); } catch {} return; }
+        if (status >= 200 && status < 300 && !validateContentType(ct, contentTypes)) { finish({ ok: false, code: "BAD_CONTENT_TYPE", contentType: ct || null, statusCode: status }); try { res.destroy(); } catch {} return; }
         let received = 0; const chunks: any[] = [];
         res.on("data", (c: any) => { received += c.length; if (!enforceSize(received, maxBytes)) { finish({ ok: false, code: "RESPONSE_TOO_LARGE", statusCode: status }); try { res.destroy(); } catch {} } else chunks.push(c); });
         res.on("end", () => finish({ ok: true, statusCode: status, contentType: ct || null, body: Buffer.concat(chunks).toString("utf8") }));
