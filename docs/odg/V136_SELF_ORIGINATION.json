@@ -1,0 +1,152 @@
+{
+  "//": "V136 self-originated autonomy loop. ODG discovers a real discrepancy + formulates a canary-safe read-only mission (the repaired step). Admission + execution stay operator/Truth-Lock-gated (deny-by-default). Reuses canonical mechanisms; no new queue/primitive; no fabricated mission (fail-closed from real evidence).",
+  "discovery": {
+    "uncoveredLibraries": 16,
+    "sample": [
+      "campaign-engine",
+      "client-journey-sim",
+      "evidence-qualifier",
+      "incremental-assurance",
+      "inspected-execution",
+      "inspected-paths",
+      "inspection-boundary",
+      "inspector-meta-validation"
+    ],
+    "honest": true,
+    "analyzeStatus": "DEGRADED"
+  },
+  "formulatedMission": {
+    "id": "SELF_AUDIT_COVERAGE_16",
+    "mode": "AUDIT",
+    "authorizedPaths": 0,
+    "selfAuthored": false,
+    "status": "PROPOSED",
+    "canarySafe": true
+  },
+  "materialized": "runtime/missions/SELF_AUDIT_COVERAGE_16.json",
+  "execution": {
+    "status": "SUCCESS",
+    "validated": true,
+    "mode": "AUDIT",
+    "verified": true,
+    "note": "machine-verified verdict from the canonical mission-report (odg-run governed pipeline)"
+  },
+  "interventionLedger": [
+    {
+      "step": 1,
+      "name": "DISCOVER discrepancy",
+      "actor": "ODG",
+      "mechanism": "codebase-diagnostic.scanCore",
+      "evidence": "16 uncovered library modules (honest=true)"
+    },
+    {
+      "step": 2,
+      "name": "ANALYSE gap",
+      "actor": "ODG",
+      "mechanism": "global-improvement-engine.analyzeGaps",
+      "evidence": "status=DEGRADED, COVERAGE target=true"
+    },
+    {
+      "step": 3,
+      "name": "FORMULATE read-only mission",
+      "actor": "ODG",
+      "mechanism": "self-readonly-mission.formulateReadOnlyMission (NEW — repaired step)",
+      "evidence": "SELF_AUDIT_COVERAGE_16"
+    },
+    {
+      "step": 4,
+      "name": "MATERIALISE canonical spec",
+      "actor": "PROVIDER(Claude)",
+      "mechanism": "write runtime/missions/<id>.json",
+      "evidence": "runtime/missions/SELF_AUDIT_COVERAGE_16.json"
+    },
+    {
+      "step": 5,
+      "name": "ADMIT to canary allowlist",
+      "actor": "OPERATOR(owner)",
+      "mechanism": "ODG_CANARY_ALLOWLIST (deny-by-default, Truth-Lock-gated)",
+      "evidence": "OPERATOR-GATED — ODG does NOT self-admit (boundary preserved)"
+    },
+    {
+      "step": 6,
+      "name": "TRUTH-LOCK startup gate",
+      "actor": "ODG",
+      "mechanism": "truth-lock-gate.truthLockGate",
+      "evidence": "enforced at odg-schedule-tick on main"
+    },
+    {
+      "step": 7,
+      "name": "SELECT eligible mission",
+      "actor": "ODG",
+      "mechanism": "mission-scheduler.selectNext",
+      "evidence": "first eligible PENDING in the allowlist-derived queue"
+    },
+    {
+      "step": 8,
+      "name": "AUTHORISE read-only safety",
+      "actor": "ODG",
+      "mechanism": "canary-decision-pack.assessCanaryCandidate",
+      "evidence": "canarySafe=true"
+    },
+    {
+      "step": 9,
+      "name": "DEDUP (proven-gate)",
+      "actor": "ODG",
+      "mechanism": "mission-ledger proven set",
+      "evidence": "already-proven ⇒ IDLE (idempotence)"
+    },
+    {
+      "step": 10,
+      "name": "DISPATCH to governed pipeline",
+      "actor": "ODG",
+      "mechanism": "odg-run (13 stages)",
+      "evidence": "spawned by the tick with enforcement env"
+    },
+    {
+      "step": 11,
+      "name": "EXECUTE stages",
+      "actor": "ODG",
+      "mechanism": "governed pipeline",
+      "evidence": "read-only mission → report artifact"
+    },
+    {
+      "step": 12,
+      "name": "VERIFY verdict",
+      "actor": "ODG",
+      "mechanism": "validation-engine",
+      "evidence": "validated===true required for PASS (fail-closed)"
+    },
+    {
+      "step": 13,
+      "name": "AUDIT decision",
+      "actor": "ODG",
+      "mechanism": "audit-log chain + mission-attempt-log",
+      "evidence": "tamper-evident canary decision chain"
+    },
+    {
+      "step": 14,
+      "name": "LESSON REUSE",
+      "actor": "ODG",
+      "mechanism": "proven-ledger dedup on re-run",
+      "evidence": "a proven mission is not re-run (idempotent lesson reuse)"
+    }
+  ],
+  "autonomyAttribution": {
+    "totalSteps": 14,
+    "odgLed": 12,
+    "providerSteps": [
+      4
+    ],
+    "operatorSteps": [
+      5
+    ]
+  },
+  "autonomyVerdict": "SELF_ORIGINATION_REPAIRED — ODG now originates its own eligible read-only mission from real evidence (step 3 was the missing responsibility). Admission (5, operator) + execution remain governance boundaries by design.",
+  "missingResponsibilityRepaired": "ODG could not ORIGINATE an eligible read-only mission (pure-read-only canary queue exhausted). Repaired via self-readonly-mission: discover→formulate, canary-safe, selfAuthored:false, fail-closed.",
+  "boundariesPreserved": [
+    "deny-by-default (ODG cannot self-admit to the allowlist)",
+    "Truth-Lock (enforced at the tick)",
+    "no fabrication (spec only from real evidence; owner-gated/empty/injected ⇒ none)",
+    "no self-authorization (selfAuthored:false, PROPOSED)"
+  ]
+}
