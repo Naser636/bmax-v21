@@ -30,8 +30,11 @@ function main(){
   // REAL RECOVERY dossier validates against the real repo
   const d=JSON.parse(fs.readFileSync(path.join(__dirname,"..","..","docs","odg","V135_RECOVERY_TRACEABILITY.json"),"utf8"));
   const real=T.validateTrace(d.trace,{root:path.join(__dirname,"..","..")});
-  check("REAL RECOVERY traceability: complete + all refs resolve (0 missing, 0 broken)", real.ok===true && real.missingLinks.length===0 && real.brokenRefs.length===0 && real.resolvedRefs>=9);
-  check("RECOVERY observation backed by REAL incidents.jsonl recover events (not fixtures)", d.recoverEventsInIncidents>=1 && /ACTIVE_IN_PRODUCTION/.test(d.trace.links.observation));
+  // PORTABLE: all file refs (incl. incidents) are repo-relative and resolve in CI AND on-host — re-validated here against the real repo.
+  check("REAL RECOVERY traceability: complete + all refs resolve (0 missing, 0 broken, portable)", real.ok===true && real.missingLinks.length===0 && real.brokenRefs.length===0 && real.resolvedRefs>=9);
+  // observation is backed by the runtime incidents ledger, recorded as CAPTURED-ON-HOST provenance (the ledger is a host artifact,
+  // legitimately absent off-host; the dossier records the host path + recover-class count stamped at on-host build time).
+  check("RECOVERY observation backed by on-host incidents-ledger provenance (recorded, not a portable file; not fixtures)", /ACTIVE_IN_PRODUCTION/.test(d.trace.links.observation) && d.incidentsLedger && typeof d.incidentsLedger.hostPath==="string" && d.incidentsLedger.recoverClassEvents>=1 && d.recoverEventsInIncidents===d.incidentsLedger.recoverClassEvents);
   process.stdout.write("\n"+(failures===0?"ALL PASS — capability-traceability (fail-closed chain validation; missing-link + broken-ref REJECTED; real RECOVERY chain resolves)":failures+" FAIL")+"\n");
   process.exit(failures===0?0:1);
 }
