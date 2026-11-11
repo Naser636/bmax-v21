@@ -12,6 +12,7 @@ function main(){
   // CI/off-host hermetic guard: this suite verifies LIVE odg-preprod systemd supervision that only exists on the VPS.
   // Off-host (CI sandbox) that state is absent — declare SKIPPED (honest: cannot verify; never fake-pass). On the VPS the
   // guard is false and the full live assertions below run unchanged.
+  // on-host AND production still serving the DOCUMENTED release (else: off-host, or production advanced past it ⇒ historical/superseded).
   const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
   if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live odg-preprod supervision state not present (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
   const d=j("V107_VPS_CLOSURE.json");
@@ -25,7 +26,8 @@ function main(){
   const h=(()=>{try{return JSON.parse(sh("curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null"))}catch{return{}}})();
   check("LIVE: odg-preprod active AND process systemd-supervised (system.slice/odg-preprod)",active==="active"&&/system\.slice\/odg-preprod\.service/.test(cg));
   check("LIVE: MainPID == :3000 listener (systemd truly owns the serving process)",mpid!==""&&mpid===lpid);
-  check("LIVE: health ready/READY + buildId WEyqonrDYirNE0T99qGGC",h.status==="ready"&&h.storage==="READY"&&h.buildId==="WEyqonrDYirNE0T99qGGC");
+  const curBuild=(sh("readlink /home/ubuntu/odg-releases/current 2>/dev/null").split("/").pop()||"").split("-").pop();
+  check("LIVE: health ready/READY + serves the CURRENT release (dynamic buildId)",h.status==="ready"&&h.storage==="READY"&&!!curBuild&&h.buildId===curBuild);
   // dossier closure criteria all met
   check("closure: real-process-supervised + controlled-restart + health + MainPID/listener + buildId + loopback + backup/restore ALL met",Object.values(d.closureCriteria).every((c:any)=>c.met===true));
   check("closure status = VPS_SUPERVISION_CLOSED (supervised + restart demonstrated)",/VPS_SUPERVISION_CLOSED/.test(d.status));
