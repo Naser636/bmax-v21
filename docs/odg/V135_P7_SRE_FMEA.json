@@ -1,0 +1,246 @@
+{
+  "//": "V135 seed B — P7-SRE FMEA via canonical safety-fmea. Conservative: residual = raw RPN (no mitigation credit claimed, fail-closed). Safeguards documented separately (not in the math). Residuals fully re-derivable from scoredFailureModes (tested). No invented scores.",
+  "metier": "P7-SRE (profession-p7-sre-reference)",
+  "policySource": "runtime/core/safety-fmea.ts (RPN=S×O×D 1-10; CRITICAL≥200; HIGH≥100; MEDIUM≥40; fail-closed worst-case=10)",
+  "scoredFailureModes": [
+    {
+      "mode": "production service outage (odg-preprod down)",
+      "cause": "process crash / OOM",
+      "effect": "dashboard unavailable",
+      "severity": 8,
+      "occurrence": 3,
+      "detection": 2
+    },
+    {
+      "mode": "restart storm (unit loops on a start failure)",
+      "cause": "stale unit path / MODULE_NOT_FOUND",
+      "effect": "journal/disk/CPU churn",
+      "severity": 6,
+      "occurrence": 4,
+      "detection": 2
+    },
+    {
+      "mode": "recovery loop cannot recover",
+      "cause": "release artifact corrupt",
+      "effect": "prolonged outage",
+      "severity": 9,
+      "occurrence": 2,
+      "detection": 3
+    },
+    {
+      "mode": "stale/false health evidence",
+      "cause": "buildId drift vs current release",
+      "effect": "false-healthy signal",
+      "severity": 5,
+      "occurrence": 3,
+      "detection": 3
+    },
+    {
+      "mode": "storage unavailable / disk full",
+      "cause": "journal/log growth",
+      "effect": "service degradation",
+      "severity": 6,
+      "occurrence": 3,
+      "detection": 4
+    },
+    {
+      "mode": "interrupted / bad deployment",
+      "cause": "build or activate failure",
+      "effect": "degraded or down release",
+      "severity": 7,
+      "occurrence": 2,
+      "detection": 2
+    }
+  ],
+  "safeguards": [
+    {
+      "mode": "production service outage (odg-preprod down)",
+      "safeguard": "systemd Restart=on-failure + odg-healthcheck 3-strike + odg-recover.sh",
+      "basis": "detection=2: healthcheck polls ~10s + systemd supervision"
+    },
+    {
+      "mode": "restart storm (unit loops on a start failure)",
+      "safeguard": "StartLimitBurst=5/300s bounds the loop (corrected fleet-bridge unit) + odg-monitor",
+      "basis": "occurrence=4: observed (fleet-bridge); detection=2: NRestarts+monitor"
+    },
+    {
+      "mode": "recovery loop cannot recover",
+      "safeguard": "odg-recover HARD ATTEMPT CAP (CAP_EXCEEDED, exit 3, no self-OnFailure) + rollback to verified previous release",
+      "basis": "severity=9: prolonged down; attempt-cap prevents infinite loop"
+    },
+    {
+      "mode": "stale/false health evidence",
+      "safeguard": "dynamic buildId==current-release check (post-deploy-regression) + odg-maintenance-check",
+      "basis": "detection=3: dynamic check added V134"
+    },
+    {
+      "mode": "storage unavailable / disk full",
+      "safeguard": "odg-maintenance-check DISK/backup-age alerts + release pruning (keep-N)",
+      "basis": "detection=4: maintenance-check cadence"
+    },
+    {
+      "mode": "interrupted / bad deployment",
+      "safeguard": "odg-release.sh staging verify + atomic swap + health-gated auto-rollback",
+      "basis": "detection=2: staging health-check before activation"
+    }
+  ],
+  "fmea": {
+    "components": [
+      {
+        "id": "P7-SRE",
+        "failureModes": [
+          {
+            "mode": "production service outage (odg-preprod down)",
+            "cause": "process crash / OOM",
+            "effect": "dashboard unavailable",
+            "severity": 8,
+            "occurrence": 3,
+            "detection": 2,
+            "rpn": 48,
+            "risk": "MEDIUM",
+            "mitigated": false,
+            "detectable": true,
+            "residualRpn": 48,
+            "residualRisk": "MEDIUM",
+            "note": "within analyzed bounds"
+          },
+          {
+            "mode": "restart storm (unit loops on a start failure)",
+            "cause": "stale unit path / MODULE_NOT_FOUND",
+            "effect": "journal/disk/CPU churn",
+            "severity": 6,
+            "occurrence": 4,
+            "detection": 2,
+            "rpn": 48,
+            "risk": "MEDIUM",
+            "mitigated": false,
+            "detectable": true,
+            "residualRpn": 48,
+            "residualRisk": "MEDIUM",
+            "note": "within analyzed bounds"
+          },
+          {
+            "mode": "recovery loop cannot recover",
+            "cause": "release artifact corrupt",
+            "effect": "prolonged outage",
+            "severity": 9,
+            "occurrence": 2,
+            "detection": 3,
+            "rpn": 54,
+            "risk": "HIGH",
+            "mitigated": false,
+            "detectable": true,
+            "residualRpn": 54,
+            "residualRisk": "HIGH",
+            "note": "HIGH/CRITICAL failure with NO declared mitigation — must be mitigated or accepted as residual risk by the owner"
+          },
+          {
+            "mode": "stale/false health evidence",
+            "cause": "buildId drift vs current release",
+            "effect": "false-healthy signal",
+            "severity": 5,
+            "occurrence": 3,
+            "detection": 3,
+            "rpn": 45,
+            "risk": "MEDIUM",
+            "mitigated": false,
+            "detectable": true,
+            "residualRpn": 45,
+            "residualRisk": "MEDIUM",
+            "note": "within analyzed bounds"
+          },
+          {
+            "mode": "storage unavailable / disk full",
+            "cause": "journal/log growth",
+            "effect": "service degradation",
+            "severity": 6,
+            "occurrence": 3,
+            "detection": 4,
+            "rpn": 72,
+            "risk": "MEDIUM",
+            "mitigated": false,
+            "detectable": true,
+            "residualRpn": 72,
+            "residualRisk": "MEDIUM",
+            "note": "within analyzed bounds"
+          },
+          {
+            "mode": "interrupted / bad deployment",
+            "cause": "build or activate failure",
+            "effect": "degraded or down release",
+            "severity": 7,
+            "occurrence": 2,
+            "detection": 2,
+            "rpn": 28,
+            "risk": "LOW",
+            "mitigated": false,
+            "detectable": true,
+            "residualRpn": 28,
+            "residualRisk": "LOW",
+            "note": "within analyzed bounds"
+          }
+        ],
+        "worstResidual": "HIGH",
+        "criticalCount": 0,
+        "unmitigatedHigh": 1
+      }
+    ],
+    "residualRegister": [
+      {
+        "component": "P7-SRE",
+        "mode": "recovery loop cannot recover",
+        "residualRisk": "HIGH",
+        "residualRpn": 54,
+        "mitigated": false,
+        "detectable": true
+      }
+    ],
+    "summary": {
+      "components": 1,
+      "failureModes": 6,
+      "criticalResidual": 0,
+      "highResidual": 1,
+      "unmitigatedHighOrCritical": 1,
+      "note": "residual CRITICAL/HIGH risks require explicit owner acceptance or further mitigation — never silently cleared (fail-closed worst-case on missing factors)"
+    }
+  },
+  "residualRegister": [
+    {
+      "component": "P7-SRE",
+      "mode": "recovery loop cannot recover",
+      "residualRisk": "HIGH",
+      "residualRpn": 54,
+      "mitigated": false,
+      "detectable": true
+    }
+  ],
+  "ownerReviewRequired": [
+    {
+      "mode": "production service outage (odg-preprod down)",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 48
+    },
+    {
+      "mode": "restart storm (unit loops on a start failure)",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 48
+    },
+    {
+      "mode": "recovery loop cannot recover",
+      "residualRisk": "HIGH",
+      "residualRpn": 54
+    },
+    {
+      "mode": "stale/false health evidence",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 45
+    },
+    {
+      "mode": "storage unavailable / disk full",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 72
+    }
+  ],
+  "honesty": "residuals = raw RPN (NO mitigation reduction claimed ⇒ conservative, never under-stated); safeguards are documented separately with a stated basis and are NOT credited in the RPN math; every residual is re-derivable via analyzeFailureMode(scoredFailureModes[i]) (regression-tested). criticalResidual=0, highResidual=1.",
+  "status": "FMEA_BUILT_conservative_reproducible"
+}
