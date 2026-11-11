@@ -38,7 +38,11 @@ function main(): void {
 
   // §6 selection by explicit criteria, not automatic.
   check("§6 ≥3 candidates compared on explicit criteria (deployed / staging / HEAD)", Array.isArray(d.releaseCandidates) && d.releaseCandidates.length >= 3 && d.releaseCandidates.every((c: any) => c.criteria && c.criteria.completeness && c.criteria.vpsCompat && c.criteria.restorability));
-  check("§6 selected = HEAD with explicit justification (dominant + stage+verify concern)", d.selectedRelease.includes(git(["rev-parse", "--short", "HEAD"])) && /justified|dominant|no intermediate/.test(d.selectionJustification) && /stage\+verify/.test(d.selectionJustification));
+  // the selected release is HEAD-based and is an ancestor-or-equal of the current HEAD (the artifact records the HEAD at
+  // selection time, which a later governance commit extends — not a brittle exact-SHA match to a mutating HEAD).
+  const selSha = (d.selectedRelease.match(/[0-9a-f]{7,}/) || [""])[0];
+  const selIsAncestorOrEqual = selSha ? (git(["merge-base", "--is-ancestor", selSha, "HEAD"]) === "" && (() => { try { cp.execFileSync("git", ["merge-base", "--is-ancestor", selSha, "HEAD"], { cwd: ROOT }); return true; } catch { return false; } })()) : false;
+  check("§6 selected = HEAD-based (ancestor-or-equal of current HEAD) with explicit justification (dominant + stage+verify)", /^HEAD /.test(d.selectedRelease) && selIsAncestorOrEqual && /justified|dominant|no intermediate/.test(d.selectionJustification) && /stage\+verify/.test(d.selectionJustification));
   check("§6 performance honestly NOT_MEASURED (not overclaimed)", d.releaseCandidates.some((c: any) => /NOT_MEASURED/.test(c.criteria.performance)) && d.residualRisks.some((r: string) => /performance.*NOT_MEASURED/.test(r)));
 
   // §8 delivery procedure — commands real, go-live gated.
