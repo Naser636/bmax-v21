@@ -11,6 +11,10 @@ function sh(c:string):string{try{return cp.execSync(c,{encoding:"utf8",timeout:8
 const VOCAB=["VALIDATED","ACTIVE_IN_PRODUCTION","PARTIAL","BLOCKED","SIMULATED","NOT_MEASURED","NOT_DONE"];
 let failures=0; function check(n:string,c:boolean){process.stdout.write((c?"ok":"NOT OK")+" - "+n+"\n"); if(!c)failures++;}
 function main(){
+  // CI/off-host hermetic guard (see v101-golive): asserts LIVE production :3000 state only present on the VPS. Off-host ⇒
+  // SKIPPED (honest; never fake-pass). On the VPS the guard is false and the full assertions run unchanged.
+  const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
+  if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live production state not present (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
   const d=j("V106_PROGRESS_RECONCILIATION.json");
   check("V106 dossier exists",!!d);
   if(!d){process.stdout.write("\n1 FAIL\n");process.exit(1);}

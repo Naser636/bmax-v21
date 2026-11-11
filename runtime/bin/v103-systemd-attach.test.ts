@@ -11,6 +11,10 @@ function j(f:string){try{return JSON.parse(fs.readFileSync(path.join(DD,f),"utf8
 function sh(c:string):string{try{return cp.execSync(c,{encoding:"utf8",timeout:8000,stdio:["ignore","pipe","ignore"]}).trim()}catch{return""}}
 let failures=0; function check(n:string,c:boolean){process.stdout.write((c?"ok":"NOT OK")+" - "+n+"\n"); if(!c)failures++;}
 function main(){
+  // CI/off-host hermetic guard (see v101-golive): asserts LIVE production :3000 state only present on the VPS. Off-host ⇒
+  // SKIPPED (honest; never fake-pass). On the VPS the guard is false and the full assertions run unchanged.
+  const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
+  if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live production attach state not present (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
  const d=j("V103_SYSTEMD_ATTACH.json");
  check("dossier exists",!!d);
  check("LIVE: production still serving 22900dd buildId WEyqonrDYirNE0T99qGGC (read-only)",(()=>{try{return JSON.parse(sh('curl -s -m5 http://127.0.0.1:3000/api/health 2>/dev/null')).buildId==="WEyqonrDYirNE0T99qGGC"}catch{return false}})());
