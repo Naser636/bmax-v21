@@ -17,6 +17,7 @@ const ROOT = path.join(__dirname, "..", ".."), D = path.join(ROOT, "docs", "odg"
 const GOV = require(path.join(ROOT, "runtime", "core", "research-governor.js"));
 const CYCLE = require(path.join(ROOT, "runtime", "core", "research-cycle.js"));
 const HTTP = require(path.join(ROOT, "runtime", "core", "bounded-http-client.js"));
+const BRIDGE = require(path.join(ROOT, "runtime", "core", "research-to-mission.js"));   // V140: canonical discovery→governed-mission conversion
 
 // Owner-authorized scope (CTO V138 §4: "the owner authorizes read-only public research"). Minimum required scope: the
 // specific public primary-source hosts named in the directive. Represented as the canonical grant shape. Expiry MANDATORY.
@@ -72,13 +73,11 @@ async function runResearch(targets: any[], grant: any, now: number, live: boolea
     findings.push(rec);
     if (stamp.ok) { const r = CYCLE.recordFinding(ledger, stamp.finding, retrievedAt); if (r && r.ledger) ledger = r.ledger; }
   }
-  // PROPOSE (not authorize): each validated LIVE_SOURCE ⇒ a PROPOSED read-only audit mission (discovery ≠ authorization).
-  const proposals = findings.filter((f) => f.classification === "LIVE_SOURCE").map((f) => ({
-    kind: "MISSION_PROPOSAL", status: "PROPOSED", selfAuthored: false, grantsNoPermission: true,
-    objective: "Read-only: compare ODG's capability against " + f.authority + " primary source (" + f.topic + ")",
-    source: f.url, nature: f.nature, verifiableAcceptance: "an evidence-based gap report vs the cited source; no implementation authorized",
-  }));
-  return { findings, egressDecisions, ledger, proposals };
+  // V140 improvement — CONVERT discoveries to governed missions via the CANONICAL self-mission-proposer (not ad-hoc objects):
+  // injection-quarantined, deduped, PROPOSED≠AUTHORIZED, external benchmarks routed to OWNER_DECISION (discovery ≠ authorization).
+  const liveFindings = findings.filter((f: any) => f.classification === "LIVE_SOURCE");
+  const conversion = BRIDGE.researchToMissions(liveFindings, { now: retrievedAt, componentByFinding: (f: any) => `ODG ${f.topic} (vs ${f.authority})` });
+  return { findings, egressDecisions, ledger, conversion };
 }
 
 async function main() {
@@ -87,7 +86,7 @@ async function main() {
   // The scoped, expiring grant — the canonical representation of the owner's authorization (expires in 10 minutes) + a budget
   // (D3: a grant MUST be volume-bounded). Egress is bounded to the owner-named domains + 8 calls / 1MB.
   const grant = { authorized: true, allowedDomains: ALLOWED_DOMAINS, expiresMs: now + 10 * 60 * 1000, budget: { maxCalls: 8, maxBytes: 1_000_000 }, issuedBy: "owner (CTO V138 §4)", scope: "READ_ONLY_PUBLIC_RESEARCH" };
-  const { findings, egressDecisions, ledger, proposals } = await runResearch(TARGETS, grant, now, live, HTTP.get);
+  const { findings, egressDecisions, ledger, conversion } = await runResearch(TARGETS, grant, now, live, HTTP.get);
   const LEDGER = require(path.join(ROOT, "runtime", "core", "research-ledger.js"));
   const liveCount = findings.filter((f: any) => f.classification === "LIVE_SOURCE").length;
   const out = {
@@ -97,8 +96,10 @@ async function main() {
     egressDecisions, findings,
     classificationLegend: { LIVE_SOURCE: "really fetched this run (fetch-evidence-gated)", INTERNAL_EVIDENCE: "from the repo/ledger", FIXTURE: "test double", HYPOTHESIS: "unproven / quarantined claim" },
     ledgerSummary: LEDGER.summarize(ledger),
-    summary: { targets: TARGETS.length, liveSources: liveCount, denied: findings.filter((f: any) => f.classification === "DENIED").length, unavailable: findings.filter((f: any) => f.classification === "LIVE_UNAVAILABLE").length, proposals: proposals.length },
-    proposals,
+    summary: { targets: TARGETS.length, liveSources: liveCount, denied: findings.filter((f: any) => f.classification === "DENIED").length, unavailable: findings.filter((f: any) => f.classification === "LIVE_UNAVAILABLE").length, governedMissions: conversion.ownerDecisions.length, quarantined: conversion.quarantined.length },
+    // V140: discoveries CONVERTED to governed missions via the canonical self-mission-proposer (not ad-hoc) — injection-
+    // quarantined, deduped, PROPOSED≠AUTHORIZED; external benchmark findings are OWNER_DECISIONs (discovery ≠ authorization).
+    governedConversion: conversion,
     honesty: "LIVE_SOURCE findings were fetched this run via the canonical bounded egress under an owner-authorized scoped+expiring+budgeted grant; URLs/status/bytes are real and sourceClass is set from the runner's real bounded-http-client statusCode (res.ok===false ⇒ LIVE_UNAVAILABLE, never a fabricated LIVE). 'confidence: HIGH' denotes SOURCE-AUTHORITY trust (NASA/NIST/IETF primary standards bodies), NOT an independent content-credibility assessment. Injection screening is a best-effort known-pattern denylist (sanitizeExternal), not universal — finding.content is always treated as data. Nature (STANDARD/DRAFT) is classified from fetched content. No finding is promoted to fact; every proposal is PROPOSED (discovery ≠ authorization); no paid API; no credential.",
   };
   fs.writeFileSync(path.join(D, "V138_LIVE_RESEARCH.json"), JSON.stringify(out, null, 2) + "\n");

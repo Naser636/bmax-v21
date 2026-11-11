@@ -115,29 +115,40 @@
     "liveSources": 2,
     "denied": 0,
     "unavailable": 2,
-    "proposals": 2
+    "governedMissions": 2,
+    "quarantined": 0
   },
-  "proposals": [
-    {
-      "kind": "MISSION_PROPOSAL",
-      "status": "PROPOSED",
-      "selfAuthored": false,
-      "grantsNoPermission": true,
-      "objective": "Read-only: compare ODG's capability against NASA primary source (software assurance / reliability)",
-      "source": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
-      "nature": "STANDARD",
-      "verifiableAcceptance": "an evidence-based gap report vs the cited source; no implementation authorized"
-    },
-    {
-      "kind": "MISSION_PROPOSAL",
-      "status": "PROPOSED",
-      "selfAuthored": false,
-      "grantsNoPermission": true,
-      "objective": "Read-only: compare ODG's capability against NIST primary source (secure software development (SSDF))",
-      "source": "https://csrc.nist.gov/pubs/sp/800/218/final",
-      "nature": "STANDARD_OR_GUIDELINE",
-      "verifiableAcceptance": "an evidence-based gap report vs the cited source; no implementation authorized"
-    }
-  ],
+  "governedConversion": {
+    "eligibleCount": 2,
+    "droppedUntrusted": 0,
+    "proposals": [],
+    "ownerDecisions": [
+      {
+        "kind": "OWNER_DECISION",
+        "detail": "Software Assurance and Software Safety Standard | Standards — compare vs ODG software assurance / reliability (vs NASA)",
+        "reason": "requires owner information/authorization or external reality — not self-executable",
+        "verifiableAcceptance": "the named dimension is independently DEMONSTRATED (not merely documented) per §103 — requires owner information/authorization",
+        "provenance": {
+          "source": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+          "confidence": "HIGH",
+          "component": "ODG software assurance / reliability (vs NASA)"
+        }
+      },
+      {
+        "kind": "OWNER_DECISION",
+        "detail": "SP 800-218, Secure Software Development Framework (SSDF) Version 1.1: Recommendations for Mitigating the Risk of Software Vulnerabilities | CSRC — compare vs ODG secure software development (SSDF) (vs NIST)",
+        "reason": "requires owner information/authorization or external reality — not self-executable",
+        "verifiableAcceptance": "the named dimension is independently DEMONSTRATED (not merely documented) per §103 — requires owner information/authorization",
+        "provenance": {
+          "source": "https://csrc.nist.gov/pubs/sp/800/218/final",
+          "confidence": "HIGH",
+          "component": "ODG secure software development (SSDF) (vs NIST)"
+        }
+      }
+    ],
+    "quarantined": [],
+    "selfAuthorizedAny": false,
+    "note": "research findings → CANONICAL governed proposals via self-mission-proposer (injection-quarantined, deduped, PROPOSED≠AUTHORIZED); external benchmark findings are OWNER-GATED (discovery ≠ authorization); provenance carried."
+  },
   "honesty": "LIVE_SOURCE findings were fetched this run via the canonical bounded egress under an owner-authorized scoped+expiring+budgeted grant; URLs/status/bytes are real and sourceClass is set from the runner's real bounded-http-client statusCode (res.ok===false ⇒ LIVE_UNAVAILABLE, never a fabricated LIVE). 'confidence: HIGH' denotes SOURCE-AUTHORITY trust (NASA/NIST/IETF primary standards bodies), NOT an independent content-credibility assessment. Injection screening is a best-effort known-pattern denylist (sanitizeExternal), not universal — finding.content is always treated as data. Nature (STANDARD/DRAFT) is classified from fetched content. No finding is promoted to fact; every proposal is PROPOSED (discovery ≠ authorization); no paid API; no credential."
 }
