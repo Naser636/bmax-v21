@@ -1,0 +1,69 @@
+{
+  "//": "CTO V96 — final release-gate decision. The critical gate is BLOCKED: the permanent mandate EXCLUDES Level-C and the action-gate DENIES push/deploy without an explicit per-operation human authority (not provided; not fabricable §2). The dossier is technically READY; delivery stops exactly at the gate. NO push/merge/build/activate/rollback performed.",
+  "truthLock": {
+    "head": "9a2edad",
+    "headUnchangedSinceV95": true,
+    "aheadMain": 73,
+    "behindMain": 2,
+    "stashes": 5,
+    "untracked": 7,
+    "worktrees": 1
+  },
+  "criticalGateContract": {
+    "levelCOperations": [
+      "push",
+      "merge",
+      "deploy",
+      "vps",
+      "ssh",
+      "sudo"
+    ],
+    "permanentMandateGrantsLevelC": false,
+    "mandateVerdictForPush": "Level-C action (external/irreversible) — REFUSED; outside the local mandate (no push/deploy/VPS/spend/...)",
+    "actionGatePushDecision": "DENY",
+    "actionGateEscalationReasons": [
+      "action class IRREVERSIBLE requires human authority",
+      "reversibility R4 requires human authority",
+      "criticality CRITICAL requires human authority"
+    ],
+    "requiresForLevelC": "explicit per-operation human authority (authority.human === true) + valid STATE/CONTRACT/POLICY/AUTHORITY admission",
+    "explicitHumanAuthorityProvided": false
+  },
+  "technicalReadiness": {
+    "github": {
+      "conflictOverlap": 0,
+      "prPackage": "PREPARED (fresh PR)",
+      "mainProtected": true,
+      "state": "READY (blocked only by the gate)"
+    },
+    "releaseCandidate": {
+      "sourceCommit": "9a2edadafb5eeca6277f29ce2cd2e38cd6269060",
+      "buildCommand": "scripts/odg-release.sh build --commit <SHA>",
+      "diskFree": "160G",
+      "depsVsDeployed": "IDENTICAL",
+      "migrations": 0,
+      "stagingVerified": true,
+      "state": "READY (blocked only by the gate)"
+    },
+    "rollback": {
+      "mechanism": "scripts/odg-release.sh rollback (current→previous)",
+      "currentHealthy": true,
+      "priorReleases": 9,
+      "state": "READY"
+    }
+  },
+  "deployed": "e84a0cf2 (Oct 28)",
+  "verdict": {
+    "GATE_CRITICAL": "BLOCKED",
+    "GitHub": "READY",
+    "releaseCandidate": "READY",
+    "rollback": "READY",
+    "exactExecutableOperationNow": "NONE — all delivery ops (push/PR/build/verify/activate/rollback) are Level-C/ROOT; stop exactly at the gate. Only local preparation (already complete) is permitted.",
+    "missingAuthorization": {
+      "part1_github": "the owner's EXPLICIT per-operation authorization to `git push origin excellence/v3-wave3-demonstrators-20261101` + open a PR to main (Level-C push/merge). The permanent mandate excludes Level-C; a general delegation does NOT satisfy the action-gate (authority.human===true required).",
+      "part2_vps_golive": "the ROOT privilege + the owner's EXPLICIT go for the VPS go-live: `scripts/odg-release.sh build --commit 9a2edad` → `verify` → `activate` (atomic current-symlink swap). Requires ROOT (not held) AND an explicit owner fire."
+    }
+  },
+  "honestConclusion": "GATE_CRITICAL = BLOCKED. Proven against the REAL contract: the permanent mandate EXCLUDES Level-C (push/merge/deploy) and the action-gate DENIES a push without explicit human authority (reasons: action class IRREVERSIBLE requires human authority; reversibility R4 requires human authority; criticality CRITICAL requires human authority). That explicit per-operation authority (authority.human===true) was NOT provided in V96 and MUST NOT be fabricated (§2). GitHub + release candidate + rollback are all technically READY (0 conflict, deps IDENTICAL, 0 migrations, current healthy, 9-release rollback). The exact operation executable now = NONE (all delivery ops are Level-C/ROOT) — ODG stops exactly at the gate. Missing: (1) the owner's explicit fire for push+PR, (2) ROOT + explicit go for the VPS go-live. No push/deploy/build/activate/rollback performed; nothing changed.",
+  "invariant": "critical gate read from the REAL contract (mandate excludes Level-C; action-gate DENIES push without authority.human===true); explicit per-operation authority not provided ⇒ BLOCKED; never fabricate a receipt (§2); stop exactly at the gate; technical readiness ≠ gate authorization; nothing pushed/deployed/changed."
+}
