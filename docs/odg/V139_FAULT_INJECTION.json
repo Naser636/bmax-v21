@@ -1,0 +1,135 @@
+{
+  "//": "V139 controlled fault-injection — 10 named fault scenarios + unpermitted/unverified recovery + evidence-integrity, driven through the canonical fdir-engine (hermetic, injected deps). Each asserts a SAFETY INVARIANT: recovery PASS only if permitted+executed+independently-verified; failed restore never operational; incoherent state w/o verified reference ⇒ safe mode; persistent ⇒ bounded breaker; tamper-evident recovery evidence. Reuses canonical mechanisms only.",
+  "results": [
+    {
+      "id": "disk-exhaustion",
+      "fault": "RESOURCE_ANOMALY",
+      "status": "RECOVERED",
+      "action": "BOUNDED_RETRY",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "bounded retry, recovered ONLY after independent verify",
+      "trailSteps": 5
+    },
+    {
+      "id": "provider-outage",
+      "fault": "SERVICE_DOWN",
+      "status": "RECOVERED",
+      "action": "CIRCUIT_BREAK",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "dependency down ⇒ circuit-break (bounded), recover+verify",
+      "trailSteps": 5
+    },
+    {
+      "id": "model-timeout",
+      "fault": "TIMEOUT",
+      "status": "RECOVERED",
+      "action": "BOUNDED_RETRY",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "transient timeout ⇒ bounded retry (≤max)",
+      "trailSteps": 5
+    },
+    {
+      "id": "interrupted-mission",
+      "fault": "STATE_INCOHERENCE",
+      "status": "RECOVERED",
+      "action": "VERIFIED_ROLLBACK",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "incoherent state + verified reference ⇒ verified rollback",
+      "trailSteps": 5
+    },
+    {
+      "id": "partial-execution",
+      "fault": "STATE_INCOHERENCE",
+      "status": "SAFE_MODE",
+      "operational": false,
+      "safetyHeld": true,
+      "expect": "incoherent state with NO verified reference ⇒ SAFE_MODE (no blind rollback)",
+      "trailSteps": 4
+    },
+    {
+      "id": "stale-corrupted-evidence",
+      "fault": "DATA_CORRUPTION",
+      "status": "RECOVERED",
+      "action": "VERIFIED_ROLLBACK",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "corrupt evidence ⇒ rollback to the verified reference (corrupt data never trusted)",
+      "trailSteps": 5
+    },
+    {
+      "id": "network-interruption",
+      "fault": "SERVICE_DOWN",
+      "status": "RECOVERED",
+      "action": "CIRCUIT_BREAK",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "network down ⇒ circuit-break + reconnect (bounded)",
+      "trailSteps": 5
+    },
+    {
+      "id": "repeated-recovery-failure",
+      "fault": "REPEATED_FAILURE",
+      "status": "RECOVERY_FAILED",
+      "action": "CIRCUIT_BREAK",
+      "operational": false,
+      "safetyHeld": true,
+      "expect": "persistent + recovery fails ⇒ RECOVERY_FAILED, NOT operational (no loop, fail-closed)",
+      "trailSteps": 4
+    },
+    {
+      "id": "restart-storm",
+      "fault": "REPEATED_FAILURE",
+      "status": "RECOVERED",
+      "action": "CIRCUIT_BREAK",
+      "operational": true,
+      "safetyHeld": true,
+      "expect": "restart storm (persistent) ⇒ breaker opens (bounded); cf. odg-recover.sh attempt-cap + unit StartLimitBurst",
+      "trailSteps": 5
+    },
+    {
+      "id": "failed-backup-restoration",
+      "fault": "STATE_INCOHERENCE",
+      "status": "RECOVERY_FAILED",
+      "action": "VERIFIED_ROLLBACK",
+      "operational": false,
+      "safetyHeld": true,
+      "expect": "backup RESTORE FAILS ⇒ RECOVERY_FAILED, NEVER declared operational (the critical safety property)",
+      "trailSteps": 4
+    },
+    {
+      "id": "unpermitted-recovery",
+      "fault": "RESOURCE_ANOMALY",
+      "status": "ESCALATED",
+      "action": "BOUNDED_RETRY",
+      "operational": false,
+      "safetyHeld": true,
+      "expect": "consequential recovery WITHOUT permission ⇒ ESCALATE (no self-authorized recovery)",
+      "trailSteps": 4
+    },
+    {
+      "id": "unverified-recovery",
+      "fault": "TIMEOUT",
+      "status": "UNVERIFIED",
+      "action": "BOUNDED_RETRY",
+      "operational": false,
+      "safetyHeld": true,
+      "expect": "recovery runs but INDEPENDENT verify FAILS ⇒ UNVERIFIED, NOT operational (verify is the sole arbiter)",
+      "trailSteps": 5
+    }
+  ],
+  "evidenceIntegrity": {
+    "sealed": 5,
+    "intactVerified": true,
+    "tamperDetected": true
+  },
+  "summary": {
+    "scenarios": 12,
+    "safetyHeld": 12,
+    "allSafe": true
+  },
+  "honesty": "SYNTHETIC injected faults against the REAL fdir-engine + audit-log (no real disk/network/process mutation; no production recovery path touched). Proves fail-closed resilience LOCALLY; real production telemetry (E5) remains owner-gated NOT_RUN."
+}
