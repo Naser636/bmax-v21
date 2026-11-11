@@ -37,6 +37,9 @@ function main(){
   check("unknown credibility ⇒ LOW (fail-closed)", R.stampFinding("c", {url:"https://x.com", date:"2026-10-01", credibility:"BOGUS"}).finding.confidence==="LOW");
   check("liveFetched defaults false unless explicitly set (no false 'real internet' claim)", R.stampFinding("c",{url:"https://x.com",date:"2026-10-01"}).finding.liveFetched===false);
   check("invalid ISO date rejected (not just any string)", R.isIsoDate("yesterday")===false && R.isIsoDate("2026-10-01")===true);
+  // hardenings (independent-validator): mandatory grant expiry + rolled-over calendar dates rejected
+  check("authorized grant with NO expiry ⇒ DENY GRANT_EXPIRED (expiry mandatory)", R.govern({urls:["https://example.com/a"]}, {authorized:true,allowedDomains:["example.com"]}, NOW).reasons.includes("GRANT_EXPIRED"));
+  check("rolled-over calendar date (2026-02-30) rejected", R.isIsoDate("2026-02-30")===false && R.isIsoDate("2026-04-31")===false && R.isIsoDate("2026-02-28")===true);
   // purity/frozen
   check("outputs frozen", Object.isFrozen(dA) && Object.isFrozen(okF) && Object.isFrozen(okF.finding));
   check("deterministic", JSON.stringify(R.govern({urls:["https://example.com/a"]},grant,NOW))===JSON.stringify(R.govern({urls:["https://example.com/a"]},grant,NOW)));
