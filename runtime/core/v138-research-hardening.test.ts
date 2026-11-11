@@ -57,13 +57,13 @@ function main() {
     const byClass: any = {}; for (const f of res.findings) byClass[f.classification] = (byClass[f.classification] || 0) + 1;
     check("§5: a good source ⇒ LIVE_SOURCE; an unavailable source ⇒ LIVE_UNAVAILABLE (never fabricated)", byClass.LIVE_SOURCE === 1 && byClass.LIVE_UNAVAILABLE === 1);
     check("§5: a POISONED source (injection in content) is NOT recorded as LIVE — quarantined to HYPOTHESIS", (res.findings.find((f: any) => /poison/.test(f.url)) || {}).classification === "HYPOTHESIS");
-    check("§5: only validated LIVE_SOURCE ⇒ a PROPOSED mission (discovery ≠ authorization; selfAuthored:false)", res.proposals.length === 1 && res.proposals[0].status === "PROPOSED" && res.proposals[0].selfAuthored === false);
+    check("§5: only validated LIVE_SOURCE ⇒ a CANONICAL governed OWNER_DECISION (discovery ≠ authorization; never self-authorized)", res.conversion.ownerDecisions.length === 1 && res.conversion.selfAuthorizedAny === false && res.conversion.proposals.length === 0);
     // interrupted cycle: a fetcher that THROWS ⇒ fail-closed LIVE_UNAVAILABLE, never a crash/false success.
     const thrown = await RUN.runResearch([{ url: "https://x.nist.gov/boom", topic: "t", authority: "NIST" }], bgrant, NOW, true, async () => { throw new Error("network blip"); });
     check("§5: fetcher throws (interrupted) ⇒ LIVE_UNAVAILABLE fail-closed (no crash, no false LIVE)", thrown.findings[0].classification === "LIVE_UNAVAILABLE");
     // grant expiry: an expired grant ⇒ every target DENIED, nothing fetched.
     const expired = await RUN.runResearch(targets, { ...bgrant, expiresMs: NOW - 1 }, NOW, true, stubFetch);
-    check("§5: expired grant ⇒ all DENIED, zero LIVE (stale/expired authorization fail-closed)", expired.findings.every((f: any) => f.classification === "DENIED") && expired.proposals.length === 0);
+    check("§5: expired grant ⇒ all DENIED, zero LIVE, zero governed missions (stale/expired authorization fail-closed)", expired.findings.every((f: any) => f.classification === "DENIED") && expired.conversion.ownerDecisions.length === 0);
 
     process.stdout.write("\n" + (failures === 0 ? "ALL PASS — V138 research hardening (D1-D6 repaired) + pipeline (poisoning/unavailable/expiry/interruption fail-closed; LIVE fetch-evidence-gated; discovery ≠ authorization)" : failures + " FAIL") + "\n");
     process.exit(failures === 0 ? 0 : 1);
