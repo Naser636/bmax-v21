@@ -649,3 +649,32 @@
   + out-of-tree backup). The preview-only regression lock `roadmap-schema-proposal.test.ts` case (7) was transitioned
   to assert EXACTLY the one authorized edge and NO fabricated extras (strictly stronger). Affects: register item
   `structured-roadmap-deps` ⇒ ACCEPTED.
+
+## CTO decision — V127 push & deployment authorization (2026-11-11)
+
+### DEC-V127-PUSH-AND-DEPLOY-AUTH — Owner authorizes repository push + controlled VPS deployment [CTO-DECISION] — ACCEPTED (2026-11-11)
+- **Provenance:** CTO Directive V127 ("COMPLETE ODG · CLOSE ALL POSSIBLE WORK · PUSH · VPS PREPARATION · CONTROLLED
+  DEPLOYMENT"), verbatim: "The owner has authorized push and VPS deployment as part of this mandate." and "The owner
+  explicitly authorizes pushing this campaign's validated work." and "The owner explicitly authorizes deployment as
+  part of this campaign, subject to the mandatory deployment contract and safety gates."
+- **Scope (exact, bounded):** (1) a **non-force** push of branch `excellence/v3-wave3-demonstrators-20261101` to its
+  own remote branch (NOT `main`, no history rewrite, no force); (2) controlled deployment to `vps-6d919042` **only when
+  every mandatory deployment-contract condition is independently verified**. The same directive instructs: "Do not
+  fabricate a named operator's acceptance, credentials, secrets, external evidence or other independent contractual
+  approvals," and "If any mandatory condition is missing, do not bypass it."
+- **Outcome — PUSH: EXECUTED.** The branch was pushed non-force to its remote branch after the full gate passed
+  (`TOTAL 537 · PASS 537 · FAIL 0`, exit 0; `tsc` both configs = 0), a clean secret/artifact scan of the payload, and
+  a fast-forward verification (remote branch was at the merge-base `f2c887b`, an ancestor of HEAD). `main` untouched.
+- **Outcome — DEPLOYMENT: NOT EXECUTED (mandatory conditions unmet; not bypassed, not fabricated).** This host IS the
+  target VPS `vps-6d919042` (verified: hostname `vps-6d919042.vps.ovh.net`, OVH; `odg-releases/current`, `/etc/odg`,
+  `odg-preprod.service` active). The CTO deployment authorization (contract precondition #1) is hereby recorded, but
+  the DEPLOY_BMAX contract's remaining mandatory preconditions are ABSENT: (a) a **named Release-Manager/operator
+  acceptance** (V127 is CTO authorization, not an operator's recorded acceptance — not fabricated); (b) **off-host
+  backup + restore proof** (off-host destination undefined — `DEPLOYMENT.md` BLOCKED-BY-HOST); (c) a **real-host
+  rollback drill** (only the local mechanism is proven); (d) **DNS/TLS/reverse-proxy + monitoring/SLO** for a public
+  cutover (public exposure additionally requires its OWN distinct authorization — `dashboard-tls-exposure`, not granted
+  here). Per the directive, deployment is not bypassed. Operational observations recorded for the owner:
+  `odg-mission-runner.service` = failed, `fleet-bridge.service` = activating/auto-restart (read-only; not modified).
+- **This records the owner's real V127 authorization with its provenance and scope; it does NOT fabricate an owner or
+  operator decision.** Affects: no register status change (DEPLOY_BMAX stays PROPOSED; `dashboard-tls-exposure`,
+  `campaign-runner-systemd-activation` stay BLOCKED); delivery state advanced (branch pushed).
