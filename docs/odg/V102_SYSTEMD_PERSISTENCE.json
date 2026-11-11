@@ -1,0 +1,60 @@
+{
+  "//": "CTO V102 — systemd boot-persistence. The canonical supervisor odg-preprod.service is ENABLED + correctly configured to serve the ACTIVE release at boot (reboot-survival CONFIGURED). But V101's activate left the CURRENT process session-scoped (unsupervised until reboot); making odg-preprod active NOW needs ROOT (polkit-denied). NO reboot, NO conflicting unit, releases/config/network preserved.",
+  "supervisorUnit": {
+    "name": "odg-preprod.service",
+    "fragmentPath": "/etc/systemd/system/odg-preprod.service",
+    "type": "system unit",
+    "isEnabled": "enabled",
+    "isActive": "",
+    "execStart": "{ path=/usr/bin/node ; argv[]=/usr/bin/node /home/ubuntu/odg-releases/current/app/server.js ; ignore_errors=no ; start_t",
+    "execServesActiveRelease": true,
+    "restartPolicy": "on-failure",
+    "restartSec": "3s",
+    "user": "ubuntu",
+    "wantedBy": "multi-user.target",
+    "systemdAnalyzeClean": true,
+    "analyzeErrors": "none"
+  },
+  "activeRelease": {
+    "current": "rel-20261111T020508Z-22900dd501f8",
+    "buildIdServed": "WEyqonrDYirNE0T99qGGC",
+    "health": "ready"
+  },
+  "currentProcess": {
+    "pid": "74768",
+    "cgroup": "0::/user.slice/user-1000.slice/session-81.scope",
+    "sessionScoped": true,
+    "supervisedByServiceNow": false,
+    "note": "V101 activate used nohup after SIGTERM-killing odg-preprod's pid 1002 (clean stop => Restart=on-failure did NOT re-run it) — current process is session-scoped, unsupervised until reboot"
+  },
+  "rebootSurvival": {
+    "configured": true,
+    "mechanism": "enabled system unit (WantedBy=multi-user.target) starts at boot and serves current=22900dd on :3000; no linger needed for a system unit",
+    "lingerEnabled": "Linger=yes",
+    "lingerNote": "enabled (benign, reversible) — benefits the existing USER odg-radar-weekly.timer; NOT required for the app system unit"
+  },
+  "verificationDone": {
+    "unitEnabled": true,
+    "configCorrectForActiveRelease": true,
+    "systemdAnalyzeClean": true,
+    "execTargetExists": true
+  },
+  "rootBlockage": {
+    "description": "making odg-preprod the ACTIVE supervisor NOW (and the controlled service-restart test, §3) requires ROOT",
+    "exactCommand": "sudo systemctl start odg-preprod.service  (stop the session process first to avoid a :3000 conflict) — OR restart; polkit DENIES this to the non-root user",
+    "observedDenial": "Failed to start: Access denied as the requested operation requires interactive authentication",
+    "alsoVerifiableAt": "the next controlled reboot (odg-preprod auto-starts) — NOT performed (§4 forbids rebooting production in this mission)"
+  },
+  "otherOdgUnits": "odg-healthcheck.service=dead ●=failed odg-monitor.service=dead odg-preprod.service=dead odg-recover.service=dead",
+  "protections": {
+    "previousReleasePreserved": "Oct-28 e84a0cf2 (previous symlink) + all releases intact",
+    "firewallSshTlsDnsChanged": false,
+    "newPortExposed": false,
+    "releaseDeleted": false,
+    "noConflictingUnitInstalled": true,
+    "noReboot": true
+  },
+  "status": "REBOOT_SURVIVAL_CONFIGURED_runtime_activation_ROOT_BLOCKED",
+  "honestConclusion": "The canonical app supervisor odg-preprod.service is ENABLED (system unit, WantedBy=multi-user.target), systemd-analyze clean, User=ubuntu, Restart=on-failure, and its ExecStart serves the ACTIVE release (current=rel-20261111T020508Z-22900dd501f8 = 22900dd) on :3000 — so REBOOT-SURVIVAL IS CONFIGURED (at boot it serves 22900dd). HOWEVER, V101's go-live left the CURRENT live process SESSION-SCOPED (pid 74768, 0::/user.slice/user-1000.slice/session-81.scope) and unsupervised, because activate killed odg-preprod's pid 1002 with SIGTERM (a clean stop => Restart=on-failure did not re-run it). Making odg-preprod the ACTIVE supervisor now — and the controlled service-restart test — requires ROOT (systemctl start/restart odg-preprod), which polkit DENIES to the non-root user (observed). This is the precise blockage. NO reboot was performed; no conflicting unit was installed; Oct-28 release, config and network are preserved. Linger was enabled (benign, helps the user radar timer).",
+  "invariant": "reboot-survival verified CONFIGURED read-only (enabled system unit serves the active release); runtime activation + service-restart test are ROOT-blocked (polkit); precise root command identified; no conflicting unit; no reboot; no firewall/SSH/TLS/DNS/port change; no release deleted; failure/limit never masked."
+}
