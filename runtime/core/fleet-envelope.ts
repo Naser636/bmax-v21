@@ -41,19 +41,37 @@ function writeJson(file: any, obj: any): void {
   fs.writeFileSync(file, JSON.stringify(obj, null, 2));
 }
 
+// A request id must be a SAFE file basename: a non-empty string of [A-Za-z0-9._-] with no path separator and no
+// traversal. Fail-CLOSED: anything else throws (prevents writing/reading outside the requests/responses dirs, and
+// prevents garbage ids like "[object Object]-NNN" from an object mission).
+function safeSegment(requestId: any): string {
+  if (typeof requestId !== "string" || !/^[A-Za-z0-9._-]+$/.test(requestId) || requestId === "." || requestId === "..") {
+    throw new Error("fleet-envelope: unsafe requestId (path-safety): " + JSON.stringify(requestId));
+  }
+  return requestId;
+}
+
+// Sanitize a mission into a safe id prefix — a non-string or path-unsafe mission can NEVER produce "[object Object]"
+// or a traversal segment; unsafe characters/leading dots become "_"; an empty result becomes "UNNAMED".
+function missionKey(mission: any): string {
+  const s = (typeof mission === "string" ? mission : String(mission)).trim().replace(/[^A-Za-z0-9._-]/g, "_").replace(/^\.+/, "_");
+  return s.length ? s : "UNNAMED";
+}
+
 function requestPath(requestId: any): string {
-  return path.join(REQUESTS_DIR, requestId + ".json");
+  return path.join(REQUESTS_DIR, safeSegment(requestId) + ".json");
 }
 
 function responsePath(requestId: any): string {
-  return path.join(RESPONSES_DIR, requestId + ".json");
+  return path.join(RESPONSES_DIR, safeSegment(requestId) + ".json");
 }
 
-// Deterministic, collision-free id: <mission>-<NNN> based on existing requests.
+// Deterministic, collision-free id: <missionKey>-<NNN> based on existing requests (mission sanitized, path-safe).
 function makeRequestId(mission: any): string {
+  const key = missionKey(mission);
   let seq = 1;
   if (fs.existsSync(REQUESTS_DIR)) {
-    const prefix = mission + "-";
+    const prefix = key + "-";
     const used = fs
       .readdirSync(REQUESTS_DIR)
       .filter((f: any) => f.startsWith(prefix) && f.endsWith(".json"))
@@ -61,7 +79,7 @@ function makeRequestId(mission: any): string {
       .filter((n: any) => Number.isFinite(n));
     if (used.length) seq = Math.max(...used) + 1;
   }
-  return mission + "-" + String(seq).padStart(3, "0");
+  return key + "-" + String(seq).padStart(3, "0");
 }
 
 function buildRequest({ mission, agent, brief, instruction }: any): any {
@@ -102,6 +120,8 @@ module.exports = {
   requestPath,
   responsePath,
   makeRequestId,
+  missionKey,
+  safeSegment,
   buildRequest,
   validateRequest,
   validateResponse,
