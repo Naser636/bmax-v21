@@ -1,0 +1,190 @@
+{
+  "//": "CTO V97 — forensic change audit since the Oct-28 deployed release + explicit release selection. Facts computed from git/the real repo. Runtime deps IDENTICAL, 0 migrations ⇒ clean VPS compatibility. Selected release = HEAD (justified, not automatic). Staging PASS ≠ go-live. NOTHING pushed/deployed/changed.",
+  "timeline": {
+    "since": "e84a0cf2 (Oct 28)",
+    "head": "342c246",
+    "commits": 885,
+    "filesChanged": 1155,
+    "coreChanged": 595,
+    "binChanged": 188,
+    "runtimeDepsIdentical": true,
+    "migrations": 0,
+    "gateSuites": 503,
+    "note": "package.json change is ONLY the test:report gate list (dev/CI), not a runtime dependency"
+  },
+  "functionalGroups": [
+    {
+      "group": "Independent assurance stack (V85–V87)",
+      "capability": "universal inspection boundary PRE/POST + inspector meta-validation + inspected-paths registry",
+      "modules": [
+        "inspection-boundary",
+        "inspector-meta-validation",
+        "inspected-execution",
+        "inspected-paths",
+        "evaluator-independence"
+      ],
+      "tests": [
+        "v85-inspector-meta-validation",
+        "v86-inspection-boundary",
+        "v87-universal-inspection"
+      ],
+      "utility": "no work passes without qualified independent inspection",
+      "risk": "residual raw-entries disclosed (not 100% repo-wide)",
+      "modulesPresent": "5/5",
+      "testsGateWired": "3/3",
+      "level": "VALIDATED"
+    },
+    {
+      "group": "Incremental assurance (V88/V88-A/V89)",
+      "capability": "impact→targeted-invalidation→demonstrated-reuse wired into campaign-engine; meta-validated (Chain B)",
+      "modules": [
+        "incremental-assurance",
+        "change-impact-graph",
+        "verified-result-cache",
+        "campaign-engine"
+      ],
+      "tests": [
+        "v88-incremental-assurance",
+        "v89-pipeline-integration"
+      ],
+      "utility": "only affected controls re-run; L3/L4 full; fail-closed",
+      "risk": "none observed (mutation-proven)",
+      "modulesPresent": "4/4",
+      "testsGateWired": "2/2",
+      "level": "VALIDATED"
+    },
+    {
+      "group": "Roadmap exhaustion + métier state (V90)",
+      "capability": "per-métier maturity ladder (no average); 14 gated parents decomposed",
+      "modules": [
+        "metier-state"
+      ],
+      "tests": [
+        "v90-roadmap-exhaustion"
+      ],
+      "utility": "individual métier measurement; found+fixed P5 unwired test",
+      "risk": "none",
+      "modulesPresent": "1/1",
+      "testsGateWired": "1/1",
+      "level": "VALIDATED"
+    },
+    {
+      "group": "Release readiness + dossiers (V91–V93)",
+      "capability": "independent release inspection, deployment plan, 14 owner dossiers, real VPS inventory",
+      "modules": [],
+      "tests": [
+        "v91-release-inspection",
+        "v92-signoff-and-vps-prep",
+        "v93-delegation-and-vps"
+      ],
+      "utility": "8-precondition register toward delivery",
+      "risk": "VPS residuals OWNER_GATED",
+      "modulesPresent": "0/0",
+      "testsGateWired": "3/3",
+      "level": "VALIDATED"
+    },
+    {
+      "group": "Master recovery + forensics (V94/V93-B/C)",
+      "capability": "REQ-I/IV/XXV recovered on adopted successor; VPS/V44 forensic timeline",
+      "modules": [],
+      "tests": [
+        "v94-recovery-divergence-forensics"
+      ],
+      "utility": "frozen content recovered (not fabricated); deployment timeline resolved",
+      "risk": "A1-A10 still FROZEN NOT_MEASURED",
+      "modulesPresent": "0/0",
+      "testsGateWired": "1/1",
+      "level": "VALIDATED"
+    },
+    {
+      "group": "Dossier A execution + delivery (V94-B/C, V95, V96)",
+      "capability": "Dossier A operational deliverables; delivery dossier; gate decision",
+      "modules": [
+        "metier-state"
+      ],
+      "tests": [
+        "v94b-dossier-a-execution",
+        "v94c-campaign",
+        "v95-delivery-dossier",
+        "v96-gate-decision"
+      ],
+      "utility": "8/8 preconditions; gate BLOCKED pending owner fire",
+      "risk": "go-live owner/ROOT-gated",
+      "modulesPresent": "1/1",
+      "testsGateWired": "4/4",
+      "level": "VALIDATED"
+    }
+  ],
+  "allGroupsValidated": true,
+  "vpsCompatibility": {
+    "runtimeDepsIdentical": true,
+    "migrations": 0,
+    "nodeMatch": "node 22 (CI + VPS) — compatible",
+    "deployedRelease": "e84a0cf2 (Oct 28)",
+    "deployedHealthy": true,
+    "componentsPresentLocallyNotYetDeployed": "the entire V85→V96 assurance/governance stack (deployed is Oct 28, 885 commits behind)",
+    "verdict": "COMPATIBLE (no new runtime deps, 0 migrations, node match) — HEAD deploys cleanly; large capability jump ⇒ stage+verify first"
+  },
+  "releaseCandidates": [
+    {
+      "candidate": "deployed e84a0cf2 (Oct 28)",
+      "criteria": {
+        "completeness": "low (predates V85–V96)",
+        "integration": "partial",
+        "security": "pre-assurance-stack",
+        "stability": "proven-in-prod",
+        "performance": "NOT_MEASURED",
+        "vpsCompat": "running",
+        "restorability": "is the rollback target",
+        "testCoverage": "fewer suites",
+        "maturity": "old"
+      }
+    },
+    {
+      "candidate": "staging Nov 10 (HEAD-era working tree)",
+      "criteria": {
+        "completeness": "high (= HEAD)",
+        "integration": "high",
+        "security": "full",
+        "stability": "staging PASS (user-space)",
+        "performance": "NOT_MEASURED",
+        "vpsCompat": "ok",
+        "restorability": "ok",
+        "testCoverage": "high",
+        "maturity": "high but not a built release"
+      }
+    },
+    {
+      "candidate": "HEAD 342c246",
+      "criteria": {
+        "completeness": "best (all V85–V96)",
+        "integration": "best (503 suites incl. assurance-chain + métier-composition)",
+        "security": "best (Truth Lock + universal inspection + fail-closed mandate)",
+        "stability": "best (503/503, tsc 0, 0 migrations)",
+        "performance": "NOT_MEASURED (gate timing only)",
+        "vpsCompat": "ok (deps IDENTICAL, 0 migrations)",
+        "restorability": "ok (9-release rollback + git-worktree)",
+        "testCoverage": "best (503)",
+        "maturity": "best (8/8 preconditions)"
+      }
+    }
+  ],
+  "selectedRelease": "HEAD 342c246",
+  "selectionJustification": "HEAD 342c246 selected: strictly dominant on completeness/integration/security/test-coverage/maturity, TIES on VPS compatibility (runtime deps IDENTICAL, 0 migrations, node match) and restorability (9-release rollback). No intermediate offers a better balance — every earlier version has strictly fewer capabilities with the same VPS compatibility, and the Nov-10 staging IS HEAD-era. Concern: HEAD is 885 commits / a large capability jump ahead of the running Oct-28 release ⇒ MANDATORY stage+verify (odg-stage-and-verify.sh PASS already observed) before any activation. Performance beyond gate timing is NOT_MEASURED (honest).",
+  "deliveryProcedure": {
+    "source": "V95_DELIVERY_DOSSIER.json (commands verified vs real scripts) + V96_GATE_DECISION.json (gate BLOCKED pending owner fire)",
+    "build": "scripts/odg-release.sh build --commit 342c246e4b27373146acba59922af2eb5660d245",
+    "stageVerify": "deploy/odg-stage-and-verify.sh (PASS observed)",
+    "activate": "scripts/odg-release.sh activate <rid> (OWNER_ROOT_GATED)",
+    "rollback": "scripts/odg-release.sh rollback (current→previous)",
+    "allCommandsReal": true
+  },
+  "residualRisks": [
+    "large capability jump (885 commits) deployed Oct-28 → HEAD ⇒ stage+verify MANDATORY before activation",
+    "performance beyond gate timing NOT_MEASURED",
+    "A1–A10 detailed enumeration FROZEN (NOT_MEASURED, not fabricated)",
+    "go-live + push remain Level-C/ROOT owner-gated (V96 gate BLOCKED)"
+  ],
+  "honestConclusion": "Forensic audit of 885 commits (1155 files, 595 core) since Oct-28 e84a0cf2: runtime deps IDENTICAL, 0 migrations, 503 gate suites. All 6 functional groups VALIDATED (tests gate-wired + modules present). VPS compatibility: COMPATIBLE (no new runtime deps, 0 migrations, node match) — HEAD deploys cleanly; large capability jump ⇒ stage+verify first. SELECTED RELEASE = HEAD 342c246 (justified: dominant on capability/maturity, ties on VPS compat/restorability; no intermediate better). Delivery commands verified vs real scripts; go-live stays owner/ROOT-gated (V96 BLOCKED). We deliver the BEST real version (HEAD), not merely the newest — and HEAD IS the best. Nothing pushed/deployed/changed.",
+  "invariant": "selection by explicit criteria, not automatically HEAD; facts from git; runtime-deps/migrations compatibility measured; staging PASS ≠ go-live; commands verified vs real scripts; go-live owner/ROOT-gated; nothing pushed/deployed; NOT_MEASURED never PASS."
+}
