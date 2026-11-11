@@ -19,6 +19,9 @@ function main(){
   check("url outside allowed domains ⇒ DENY DOMAIN_NOT_ALLOWED", R.govern({urls:["https://evil.com/x"]}, grant, NOW).reasons.some((r:string)=>/DOMAIN_NOT_ALLOWED/.test(r)));
   // expired grant ⇒ DENY
   check("expired grant ⇒ DENY GRANT_EXPIRED", R.govern({urls:["https://example.com/a"]}, {authorized:true,allowedDomains:["example.com"],expiresMs:NOW-1}, NOW).reasons.includes("GRANT_EXPIRED"));
+  // Hardening (surfaced by the M5 radar validator, adopted by ODG): expiry is MANDATORY — an authorized grant with no
+  // (or non-numeric) expiry is an UNBOUNDED grant ⇒ DENY. deny-by-default: a grant must be time-bounded.
+  check("authorized grant with NO expiry ⇒ DENY GRANT_EXPIRED (no unbounded grant)", (()=>{const d=R.govern({urls:["https://example.com/a"]}, {authorized:true,allowedDomains:["example.com"]}, NOW); return d.decision==="DENY" && d.reasons.includes("GRANT_EXPIRED");})());
   // grant but empty allowlist ⇒ nothing fetchable
   check("authorized but empty allowlist + urls ⇒ DENY NO_ALLOWED_DOMAINS", R.govern({urls:["https://example.com/a"]}, {authorized:true,allowedDomains:[]}, NOW).reasons.includes("NO_ALLOWED_DOMAINS"));
   // malformed url

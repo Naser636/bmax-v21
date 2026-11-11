@@ -41,6 +41,8 @@ function govern(request: any, grant: any, nowMs: any): any {
   if (!isStr(req.query) && urls.length === 0) reasons.push("INVALID_REQUEST");
   if (!isNum(nowMs)) reasons.push("INVALID_TIME");
   if (g.authorized !== true) reasons.push("EGRESS_NOT_AUTHORIZED");
+  // Expiry is MANDATORY: an authorized grant with no (or non-numeric) expiry is rejected — a grant must be time-bounded.
+  if (g.authorized === true && !isNum(g.expiresMs)) reasons.push("GRANT_EXPIRED");
   if (g.authorized === true && isNum(g.expiresMs) && isNum(nowMs) && nowMs > g.expiresMs) reasons.push("GRANT_EXPIRED");
   const allowed: string[] = Array.isArray(g.allowedDomains) ? g.allowedDomains.filter(isStr).map((d: string) => d.toLowerCase()) : [];
   const planDomains: string[] = [];
