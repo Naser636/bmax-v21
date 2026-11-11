@@ -1,0 +1,219 @@
+{
+  "//": "V135 seed D — grant/permission/owner-gate map, validated against the owner's standing mandate (local-work-mandate). Completes the canonical V135 governance set (A traceability + B FMEA + C action tests + D THIS map). No new registry/authority; reuses canonical sources. Source provenance cited per item.",
+  "ok": true,
+  "counts": {
+    "granted": 10,
+    "ownerGated": 14,
+    "levelCDenied": 17,
+    "riskGates": 5,
+    "violations": 0
+  },
+  "violations": [],
+  "granted": [
+    "LOCAL_ENGINEERING",
+    "PUBLIC_WEB_RESEARCH",
+    "PUBLIC_DATABASE_READ",
+    "OPEN_DATASET_READ",
+    "PUBLIC_REPOSITORY_RESEARCH",
+    "PUBLIC_BENCHMARK_RESEARCH",
+    "LOCAL_DATA_ANALYSIS",
+    "LOCAL_SIMULATION_AND_BENCHMARK",
+    "LOCAL_CONNECTOR_AND_ADAPTER_BUILD",
+    "LOCAL_CAPABILITY_IMPROVEMENT"
+  ],
+  "grantedProvenance": "OWNER explicit standing mandate — CTO directives V61–V84 (local reversible work + public read-only research)",
+  "levelCDenied": [
+    "push",
+    "merge",
+    "deploy",
+    "vps",
+    "ssh",
+    "sudo",
+    "spend",
+    "subscription",
+    "contract",
+    "prospection",
+    "publish",
+    "dns",
+    "tls",
+    "firewall",
+    "expose_secret",
+    "modify_production",
+    "modify_third_party"
+  ],
+  "levelCNote": "the owner never grants these here — a Level-C leak would be a critical authority bypass (validated: none).",
+  "ownerGated": [
+    {
+      "id": "OG-01",
+      "unblocks": [
+        "D02",
+        "D03",
+        "D07",
+        "D09"
+      ],
+      "requiredOwnerAction": "Provision ODG_AUDIT_HMAC_KEY (secret)",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "keyed-HMAC evidence authenticity (keyless tamper-evidence exists; keyed variant designed not provisioned)"
+    },
+    {
+      "id": "OG-02",
+      "unblocks": [
+        "D03"
+      ],
+      "requiredOwnerAction": "Decision + paid/managed CVE feed (owner-authorized new scope)",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "CVE/vulnerability scanning (NVD/OSV) — not performed today"
+    },
+    {
+      "id": "OG-03",
+      "unblocks": [
+        "D04",
+        "D05"
+      ],
+      "requiredOwnerAction": "Supply/authorize an independently-labelled broad-IT corpus",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "independent eval dataset (broad-it-eval returns NO_DATA until admitted)"
+    },
+    {
+      "id": "OG-04",
+      "unblocks": [
+        "D06",
+        "D07"
+      ],
+      "requiredOwnerAction": "Owner VPS privileged action (systemd/sudo/deploy + prod smoke)",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "private-VPS mutation / durable self-wake + production front-door smoke"
+    },
+    {
+      "id": "OG-05",
+      "unblocks": [
+        "D08",
+        "D09"
+      ],
+      "requiredOwnerAction": "Engage an accredited body (external/paid)",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "accredited certification pathway (ODG prepares evidence, is NOT a certifier)"
+    },
+    {
+      "id": "OG-06",
+      "unblocks": [
+        "D01"
+      ],
+      "requiredOwnerAction": "Install the hadolint binary in the build env",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "hadolint toolchain (new-language-families BLOCKED today)"
+    },
+    {
+      "id": "OG-07",
+      "unblocks": [
+        "D09"
+      ],
+      "requiredOwnerAction": "CTO confirm roster expansion + per-person primary evidence",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "engineering-side expert additions to rebalance D09 law↔engineering"
+    },
+    {
+      "id": "OG-08",
+      "unblocks": [
+        "D10",
+        "D11"
+      ],
+      "requiredOwnerAction": "Owner commercial/legal + paid provider (PDP/Peppol)",
+      "provenance": "CAPABILITY_GAP_REGISTER_V1.md §B (OG-01..OG-08) — owner-gated inputs, recorded not worked-around",
+      "what": "real billing provider / certified fiscal transmission (ISO 27001 mandatory for Peppol SPs 2027-07-01)"
+    },
+    {
+      "id": "LVLB-human_sign_off",
+      "unblocks": [
+        "(governance acceptance)"
+      ],
+      "requiredOwnerAction": "owner human sign off",
+      "provenance": "local-work-mandate LEVEL_B (owner-decision)",
+      "what": "Level-B human decision: human_sign_off"
+    },
+    {
+      "id": "LVLB-canonization",
+      "unblocks": [
+        "(governance acceptance)"
+      ],
+      "requiredOwnerAction": "owner canonization",
+      "provenance": "local-work-mandate LEVEL_B (owner-decision)",
+      "what": "Level-B human decision: canonization"
+    },
+    {
+      "id": "LVLB-legal_validation",
+      "unblocks": [
+        "(governance acceptance)"
+      ],
+      "requiredOwnerAction": "owner legal validation",
+      "provenance": "local-work-mandate LEVEL_B (owner-decision)",
+      "what": "Level-B human decision: legal_validation"
+    },
+    {
+      "id": "LVLB-insurance",
+      "unblocks": [
+        "(governance acceptance)"
+      ],
+      "requiredOwnerAction": "owner insurance",
+      "provenance": "local-work-mandate LEVEL_B (owner-decision)",
+      "what": "Level-B human decision: insurance"
+    },
+    {
+      "id": "LVLB-client_validation",
+      "unblocks": [
+        "(governance acceptance)"
+      ],
+      "requiredOwnerAction": "owner client validation",
+      "provenance": "local-work-mandate LEVEL_B (owner-decision)",
+      "what": "Level-B human decision: client_validation"
+    },
+    {
+      "id": "LVLB-owner_acceptance",
+      "unblocks": [
+        "(governance acceptance)"
+      ],
+      "requiredOwnerAction": "owner owner acceptance",
+      "provenance": "local-work-mandate LEVEL_B (owner-decision)",
+      "what": "Level-B human decision: owner_acceptance"
+    }
+  ],
+  "riskGates": [
+    {
+      "mode": "production service outage (odg-preprod down)",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 48,
+      "acceptance": "REQUIRED",
+      "source": "V135_P7_SRE_FMEA.json (P7-SRE)"
+    },
+    {
+      "mode": "restart storm (unit loops on a start failure)",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 48,
+      "acceptance": "REQUIRED",
+      "source": "V135_P7_SRE_FMEA.json (P7-SRE)"
+    },
+    {
+      "mode": "recovery loop cannot recover",
+      "residualRisk": "HIGH",
+      "residualRpn": 54,
+      "acceptance": "REQUIRED",
+      "source": "V135_P7_SRE_FMEA.json (P7-SRE)"
+    },
+    {
+      "mode": "stale/false health evidence",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 45,
+      "acceptance": "REQUIRED",
+      "source": "V135_P7_SRE_FMEA.json (P7-SRE)"
+    },
+    {
+      "mode": "storage unavailable / disk full",
+      "residualRisk": "MEDIUM",
+      "residualRpn": 72,
+      "acceptance": "REQUIRED",
+      "source": "V135_P7_SRE_FMEA.json (P7-SRE)"
+    }
+  ],
+  "honesty": "Every grant is backed by the owner's standing mandate (self-authorization would FAIL validation — tested). Level-C actions are denied, not granted. Owner-gates and FMEA MEDIUM+ residuals are SURFACED with their required owner action/acceptance — none silently cleared.",
+  "status": "GRANT_MAP_CONSISTENT_authority_backed"
+}
