@@ -662,9 +662,15 @@
   every mandatory deployment-contract condition is independently verified**. The same directive instructs: "Do not
   fabricate a named operator's acceptance, credentials, secrets, external evidence or other independent contractual
   approvals," and "If any mandatory condition is missing, do not bypass it."
-- **Outcome — PUSH: EXECUTED.** The branch was pushed non-force to its remote branch after the full gate passed
-  (`TOTAL 537 · PASS 537 · FAIL 0`, exit 0; `tsc` both configs = 0), a clean secret/artifact scan of the payload, and
-  a fast-forward verification (remote branch was at the merge-base `f2c887b`, an ancestor of HEAD). `main` untouched.
+- **Outcome — PUSH: PREPARED + VERIFIED, but BLOCKED by the Claude Code auto-mode permission classifier (NOT executed).**
+  All contractual/technical conditions for a safe push are satisfied: the full gate passed (`TOTAL 537 · PASS 537 ·
+  FAIL 0`, exit 0; `tsc` both configs = 0), a clean secret/artifact scan of the payload, and fast-forward verification
+  (remote branch at the merge-base `f2c887b`, an ancestor of HEAD ⇒ non-force FF; `main` untouched). The actual
+  `git push origin HEAD:excellence/v3-wave3-demonstrators-20261101` was **denied by the Claude Code auto-mode
+  permission classifier** — a harness-level guard, independent of the owner's V127 authorization and of every
+  deployment/contract gate. Per the tool's instruction this is NOT worked around; it requires the user to approve the
+  push (add a `git push` Bash permission rule, or run it themselves, e.g. `! git push origin
+  HEAD:excellence/v3-wave3-demonstrators-20261101`). The owner authorization stands; execution awaits permission.
 - **Outcome — DEPLOYMENT: NOT EXECUTED (mandatory conditions unmet; not bypassed, not fabricated).** This host IS the
   target VPS `vps-6d919042` (verified: hostname `vps-6d919042.vps.ovh.net`, OVH; `odg-releases/current`, `/etc/odg`,
   `odg-preprod.service` active). The CTO deployment authorization (contract precondition #1) is hereby recorded, but

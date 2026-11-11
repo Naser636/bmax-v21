@@ -1,7 +1,8 @@
-# V127 — Execution Completion Report (push EXECUTED; deployment OWNER-GATED, not executed)
+# V127 — Execution Completion Report (gate 537/537 GREEN; push PREPARED but permission-blocked; deployment OWNER-GATED, not executed)
 
 **Date:** 2026-11-11 · **Authority:** ODG governs; Claude Code is a bounded technical supplier under CTO Directive
-V127. **This report documents EXECUTED work** (full gate, push) and the honest status of the deployment gates. No
+V127. **This report documents EXECUTED work** (full gate 537/537, governance commit) and the honest status of the push
+(prepared, permission-blocked) and deployment gates. No
 owner/operator decision, credential, secret, external label, or production evidence was fabricated.
 
 ## 1. Start / final HEAD
@@ -48,8 +49,11 @@ backup/restore + real-host rollback drill**; canonical eleven-profession definit
 
 ## 8. Commit hashes + push verification
 - Governance commit: _see the compass + the commit referenced in §1 final HEAD_.
-- Push: `git push origin HEAD:excellence/v3-wave3-demonstrators-20261101` (non-force, fast-forward). Remote verified
-  after push (see the report's final section / compass).
+- Push: **PREPARED + verified FF-safe (remote branch `f2c887b` is an ancestor of HEAD; non-force), but NOT executed —
+  the `git push origin HEAD:excellence/v3-wave3-demonstrators-20261101` was DENIED by the Claude Code auto-mode
+  permission classifier** (a harness guard, independent of the owner's V127 authorization and all contract gates). Not
+  worked around. **Awaits user approval:** add a `git push` Bash permission rule, or run `! git push origin
+  HEAD:excellence/v3-wave3-demonstrators-20261101`. The committed branch is ready; the remote is unchanged until then.
 
 ## 9. VPS preparation evidence
 - **Target identity VERIFIED:** this host IS `vps-6d919042` (`vps-6d919042.vps.ovh.net`, OVH; `/home/ubuntu/odg-releases/current`,
@@ -94,8 +98,9 @@ its remote; `main` untouched; recovery refs intact.
   drill, no SLO monitoring).
 - **PUBLICLY OPERATIONAL:** **NO** (no public TLS/DNS; exposure separately gated and not authorized here).
 - **OWNER-GATED:** Parts A–G; DEPLOY_BMAX operator acceptance + backup/rollback/monitoring.
-- **NOT EXECUTED:** VPS deployment/cutover, public exposure, systemd campaign-runner activation, paid calls, secret
-  creation. (Push WAS executed under explicit V127 authorization.)
+- **NOT EXECUTED:** the **push** (owner-authorized + fully verified, but denied by the Claude Code permission
+  classifier — awaits user approval); VPS deployment/cutover; public exposure; systemd campaign-runner activation;
+  paid calls; secret creation.
 
 **ODG is NOT claimed production-operational** — the production-host and public-operation evidence does not support that
 claim. The branch's validated engineering is delivered (pushed); deployment awaits its remaining mandatory owner inputs.
