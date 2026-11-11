@@ -87,8 +87,9 @@ Reason deployment stopped: per V127 "If any mandatory condition is missing, do n
 named operator's acceptance." Several conditions are genuinely absent; proceeding would violate the deployment contract.
 
 ## 13. Final worktree + remote status
-See §8 / the compass V127 entry: working tree clean (only pre-existing foreign untracked preserved); branch pushed to
-its remote; `main` untouched; recovery refs intact.
+See §8 / the compass V127 entry: working tree clean (only pre-existing foreign untracked preserved); the branch is
+committed and ready but **NOT yet pushed** (the push was permission-blocked — see §8); the remote branch is unchanged
+at `f2c887b`; `main` untouched (`22900dd`); recovery refs intact.
 
 ## 14. Separation of claims
 - **VALIDATED IN REPOSITORY:** 537/537 gate + tsc(both)=0; register 415/6/3/3=427 integrity-clean; clean push payload.

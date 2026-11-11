@@ -683,4 +683,5 @@
   `odg-mission-runner.service` = failed, `fleet-bridge.service` = activating/auto-restart (read-only; not modified).
 - **This records the owner's real V127 authorization with its provenance and scope; it does NOT fabricate an owner or
   operator decision.** Affects: no register status change (DEPLOY_BMAX stays PROPOSED; `dashboard-tls-exposure`,
-  `campaign-runner-systemd-activation` stay BLOCKED); delivery state advanced (branch pushed).
+  `campaign-runner-systemd-activation` stay BLOCKED); delivery is committed locally and push-ready but the push is
+  pending user permission approval (not yet executed).
