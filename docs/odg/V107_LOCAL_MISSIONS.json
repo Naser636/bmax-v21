@@ -1,0 +1,42 @@
+{
+  "//": "V107 §3 — ODG local missions G1/O1/B1/I1, each built/tested/independently-validated/remediated/recorded. All PURE, deterministic, fail-closed, local. Evidence FOR ODG closure.",
+  "missions": [
+    {
+      "id": "G1", "title": "spend caps (per-provider/per-day/per-mission/global) + anti-loop guard",
+      "module": "runtime/core/spend-governor.ts", "test": "runtime/core/spend-governor.test.ts",
+      "closes": "V104/F6 gaps: per-provider cap, daily cap, repeated-action/loop guard (all were ABSENT)",
+      "independentValidation": "adversarial agent: no attacker bypass, purity + prototype-pollution safe, UTC boundary + loop off-by-one correct. FOUND: malformed-but-present caps failed OPEN for global/day/mission/loop (inconsistent with provider fail-closed).",
+      "remediation": "caps-config validation added ⇒ a present-but-malformed cap now DENIES (INVALID_*_CAP/INVALID_LOOP_CONFIG), fully fail-closed; contract note on actionKey stability. Re-tested.",
+      "state": "VALIDATED"
+    },
+    {
+      "id": "O1", "title": "controlled parallel-execution planner (dependency-respecting concurrency+resource waves)",
+      "module": "runtime/core/parallel-execution-planner.ts", "test": "runtime/core/parallel-execution-planner.test.ts",
+      "closes": "V104/F4 gap: parallel-execution ABSENT (campaign-engine was a sequential loop) — prerequisite for Phase-7 simultaneous métiers",
+      "independentValidation": "adversarial agent, 1000 random DAGs + targeted cases: ZERO dep-barrier violations / over-concurrency / over-budget / duplicated / dropped / infinite-loop; input-immutable; deep-frozen. FOUND: D1 invalid-opts unscheduled not sorted (non-deterministic on that path); D2 transitive dangling dep mislabeled CYCLE.",
+      "remediation": "D1: invalid-opts unscheduled now sorted. D2: transitive unknown-dep fixpoint ⇒ UNKNOWN_DEP (not CYCLE). Re-tested incl. mixed cycle+unknown graph.",
+      "state": "VALIDATED"
+    },
+    {
+      "id": "B1", "title": "reproducible benchmark baseline (deterministic digest; honest NOT_MEASURED external)",
+      "module": "runtime/core/benchmark-baseline.ts", "test": "runtime/core/benchmark-baseline.test.ts",
+      "closes": "Phase-14 gap: no reproducible baseline capability (external ranking stays NOT_MEASURED)",
+      "independentValidation": "adversarial agent: fail-closed, honest (externalComparison cannot be overridden to a ranking), pure. FOUND 3 real defects: (1) digest collision via unescaped id delimiters (confirmed sha256 collision); (2) digest order-dependence under duplicate ids; (3) deepEq fail-open conflating null/undefined/NaN/Infinity.",
+      "remediation": "(1) digest now built from canon() of sorted (id,pass) pairs — injection-safe; (2) duplicate case ids now FATAL (reject suite); (3) canon tags null/undefined/NaN/±Infinity/-0 as DISTINCT sentinels. Re-tested with injection + sentinel regressions.",
+      "state": "VALIDATED",
+      "concreteBaseline": "O1 parallel-execution-planner measured on golden graphs (reproducible passRate + sha256 digest); INTERNAL baseline only."
+    },
+    {
+      "id": "I1", "title": "competitive + market intelligence (anti-fabrication, source-bounded confidence)",
+      "module": "runtime/core/market-intelligence.ts", "test": "runtime/core/market-intelligence.test.ts",
+      "closes": "V104/F1 gaps: competitive-analysis + market-analysis ABSENT",
+      "independentValidation": "adversarial agent, 47 assertions + edge probes: 0 defects — cannot be made to fabricate a market figure or overstate confidence; never fetches live data; pure + frozen. Cosmetic notes: dead code (removed).",
+      "remediation": "removed the two dead-code lines (minCred, HIGHESTIfAny) flagged by the validator.",
+      "state": "VALIDATED"
+    }
+  ],
+  "method": "ODG selected per V104 register priority after VPS closure; each mission = build (PURE module) → adversarial test → INDEPENDENT adversarial validator → remediate found defects → re-test. Not plans — real code + proofs.",
+  "allValidated": true,
+  "invariant": "each mission independently (adversarially) validated; EVERY finding remediated + locked by a regression test (G1 fail-closed caps, O1 D1/D2, B1 digest/duplicate/deepEq); PURE/deterministic/fail-closed; no production/VPS touch; ODG closes on proof.",
+  "status": "G1_O1_B1_I1_VALIDATED"
+}
