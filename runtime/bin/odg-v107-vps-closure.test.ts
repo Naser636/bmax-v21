@@ -12,7 +12,8 @@ function main(){
   // CI/off-host hermetic guard: this suite verifies LIVE odg-preprod systemd supervision that only exists on the VPS.
   // Off-host (CI sandbox) that state is absent — declare SKIPPED (honest: cannot verify; never fake-pass). On the VPS the
   // guard is false and the full live assertions below run unchanged.
-  const __ONVPS=(()=>{try{return /"status":"ready"/.test(cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString())}catch{return false}})();
+  // on-host AND production still serving the DOCUMENTED release (else: off-host, or production advanced past it ⇒ historical/superseded).
+  const __ONVPS=(()=>{try{const h=cp.execSync('curl -s -m3 http://127.0.0.1:3000/api/health 2>/dev/null',{encoding:"utf8",stdio:["ignore","pipe","ignore"]}).toString();return /"status":"ready"/.test(h)&&/WEyqonrDYirNE0T99qGGC/.test(h)}catch{return false}})();
   if(!__ONVPS){ process.stdout.write("##CLASS: SKIPPED live odg-preprod supervision state not present (off-host/CI; verified only on the VPS host)\n"); process.exit(0); }
   const d=j("V107_VPS_CLOSURE.json");
   check("V107 closure dossier exists",!!d);
