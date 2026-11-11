@@ -1,0 +1,35 @@
+{
+  "//": "V137 §4 — reconcile V137 (15-métier qualification) + V136 (self-originated autonomy) + V135 (governance/recovery) against the 4 canonical programs (A-D, ODG_MASTER_TECHNOLOGICAL_SUPERIORITY_ROADMAP.md). Identifies operational connections + honest missing connections WITHOUT creating any duplicate service/architecture. Analysis artifact; reuses existing mechanisms.",
+  "programs": {
+    "A_Global_Intelligence": {
+      "scope": "Central intelligence + 15 métiers via reference study + superior ODG-adapted capabilities",
+      "connection": "REALIZED (local): V137 qualified 15/15 métiers VALIDATED_LOCAL (nominal/boundary/controlled-failure, each fail-closed) — the reference-study layer is machine-verified.",
+      "missingConnection": "production operation: NONE of the 15 is ACTIVE_IN_PRODUCTION (no real operational telemetry). Connection needed = real operational evidence per métier (owner-gated: real workload/clients).",
+      "ownerGated": true
+    },
+    "B_RootCause_Engineering_Assurance": {
+      "scope": "Detection, causal diagnosis, repair, independent validation, recovery, recurrence prevention",
+      "connection": "REALIZED: V137 controlled-failure scenarios prove fail-closed detection per métier; V135 §2 recovery-loop regression (odg-recover.sh bounded/fail-closed) + P7-SRE FMEA + independent adversarial validation realize diagnosis/recovery/validation.",
+      "missingConnection": "live recurrence-prevention telemetry (incidents→learning in production). Local mechanisms exist (incident-recurrence, recovery-effectiveness); the missing link is production incident flow (owner-gated VPS).",
+      "ownerGated": true
+    },
+    "C_Native_Autonomy": {
+      "scope": "Grow native capabilities, reduce avoidable provider dependency, measure NATIVE/PROVIDER/HUMAN/UNKNOWN",
+      "connection": "ADVANCED by V136: ODG self-originated AND executed a read-only mission through its own pipeline (validated=true), leading 12/14 steps. Self-origination (the missing responsibility) is repaired.",
+      "missingConnection": "steps 4 (materialise=PROVIDER) + 5 (admit=OPERATOR) remain non-ODG BY DESIGN (deny-by-default + Truth-Lock). An authorized standing canary-allowlist policy would let ODG lead admission — owner-gated (NOT a new service).",
+      "ownerGated": true
+    },
+    "D_Continuous_Technology_Evolution": {
+      "scope": "Radar + Frontier Lab + evolution loop as a permanent research/experiment/improve system",
+      "connection": "PRESENT (local): radar/frontier-lab/evolution-loop modules exist + gated; V136 self-mission formulation feeds improvement targets into the loop.",
+      "missingConnection": "live external research cycle (V138) — needs the scoped, expiring EGRESS GRANT for read-only public research. Owner-gated; no paid APIs.",
+      "ownerGated": true
+    }
+  },
+  "invariant": "No duplicate service/architecture created; reconciliation reuses existing mechanisms. Every missing connection is an owner-gated operational input (production evidence / canary policy / egress grant), NOT a missing ODG module. Local qualification (VALIDATED_LOCAL) is distinct from production operation (ACTIVE_IN_PRODUCTION), which none has.",
+  "summary": {
+    "programsWithLocalConnection": 4,
+    "programsFullyProductionConnected": 0,
+    "allMissingConnectionsOwnerGated": true
+  }
+}

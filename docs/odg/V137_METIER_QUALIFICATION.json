@@ -1,0 +1,424 @@
+{
+  "//": "V137 15-métier qualification — each canonical module driven through nominal/boundary/controlled-failure, classified by the PURE metier-qualification evaluator. Maturity is LOCAL/test-scoped; ACTIVE_IN_PRODUCTION is NOT asserted (no real operational evidence). Reuses canonical modules only.",
+  "summary": {
+    "total": 15,
+    "qualifiedCount": 15,
+    "byMaturity": {
+      "VALIDATED_LOCAL": 15,
+      "PARTIAL_LOCAL": 0,
+      "NOT_FAIL_CLOSED": 0,
+      "NOT_QUALIFIED": 0
+    },
+    "safetyGaps": [],
+    "allQualified": true,
+    "note": "ACTIVE_IN_PRODUCTION is NOT assertable from this matrix (local tests only); production operation requires real operational evidence."
+  },
+  "matrix": [
+    {
+      "metier": "P1-fullstack",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":true,\"verdict\":\"BEHAVIOR_PRESERVED\",\"changed\":0,\"missing\":0}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":true,\"verdict\":\"BEHAVIOR_PRESERVED\",\"changed\":0,\"missing\":0}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":false,\"verdict\":\"BEHAVIOR_CHANGED\",\"changed\":1,\"missing\":0}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p1-fullstack-reference.ts",
+      "fn": "refactorPreservesBehaviour"
+    },
+    {
+      "metier": "P2-ai",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"flagged\":1,\"refused\":1,\"obeyed\":0,\"resistance\":1}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"flagged\":0,\"refused\":0,\"obeyed\":0,\"resistance\":1}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"flagged\":1,\"refused\":0,\"obeyed\":1,\"resistance\":0}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p2-ai-reference.ts",
+      "fn": "injectionResistance"
+    },
+    {
+      "metier": "P3-security",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"synthetic\":true,\"profession\":\"P3\",\"findings\":{\"licenseViolations\":[],\"secretsFound\":[],\"injectionVulns\":[],\"unpinnedDeps\":[],\"sbomPresent\""
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"synthetic\":true,\"profession\":\"P3\",\"findings\":{\"licenseViolations\":[],\"secretsFound\":[],\"injectionVulns\":[],\"unpinnedDeps\":[],\"sbomPresent\""
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"synthetic\":true,\"profession\":\"P3\",\"findings\":{\"licenseViolations\":[{\"name\":\"evil\",\"license\":\"GPL-3.0\",\"severity\":\"HIGH\"}],\"secretsFound\":["
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p3-security-reference.ts",
+      "fn": "scanProject"
+    },
+    {
+      "metier": "P4-data",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"rows\":2,\"nulls\":0,\"typeErrors\":0,\"rangeErrors\":0,\"duplicates\":0,\"defects\":0,\"score\":1,\"clean\":true}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"rows\":0,\"nulls\":0,\"typeErrors\":0,\"rangeErrors\":0,\"duplicates\":0,\"defects\":0,\"score\":0,\"clean\":true}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"rows\":3,\"nulls\":1,\"typeErrors\":0,\"rangeErrors\":1,\"duplicates\":1,\"defects\":3,\"score\":0.5,\"clean\":false}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p4-data-reference.ts",
+      "fn": "assessDataQuality"
+    },
+    {
+      "metier": "P5-golden-path",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":true,\"bundle\":{\"schema\":\"odg.golden-path-evidence-bundle.v1\",\"basis\":\"EVIDENCE_PREP_NOT_CONFORMITY\",\"buildRef\":\"run-1@abc\",\"attested\":"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":true,\"bundle\":{\"schema\":\"odg.golden-path-evidence-bundle.v1\",\"basis\":\"EVIDENCE_PREP_NOT_CONFORMITY\",\"buildRef\":\"run-1@abc\",\"attested\":"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":false,\"code\":\"INCOMPLETE_BUNDLE\",\"missing\":[\"buildRef\",\"sbom(components[])\",\"confinement\",\"health\"],\"basis\":\"EVIDENCE_PREP_NOT_CONFORM"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/golden-path-evidence-bundle.ts",
+      "fn": "makeBundle"
+    },
+    {
+      "metier": "P6-eval",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"tp\":2,\"fp\":0,\"fn\":0,\"tn\":2,\"precision\":1,\"recall\":1,\"f1\":1,\"accuracy\":1}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"tp\":0,\"fp\":0,\"fn\":0,\"tn\":0,\"precision\":0,\"recall\":0,\"f1\":0,\"accuracy\":0}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"tp\":0,\"fp\":0,\"fn\":2,\"tn\":0,\"precision\":0,\"recall\":0,\"f1\":0,\"accuracy\":0}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p6-eval-reference.ts",
+      "fn": "evaluate"
+    },
+    {
+      "metier": "P7-sre",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"compliant\":true,\"latencyOk\":true,\"availabilityOk\":true,\"p99\":10,\"availability\":0.999,\"errorBudgetBurn\":0.1}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"compliant\":false,\"latencyOk\":false,\"availabilityOk\":true,\"p99\":null,\"availability\":0.999,\"errorBudgetBurn\":0.1}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"compliant\":false,\"latencyOk\":false,\"availabilityOk\":false,\"p99\":500,\"availability\":0.9,\"errorBudgetBurn\":10}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p7-sre-reference.ts",
+      "fn": "evaluateSLO"
+    },
+    {
+      "metier": "P8-semver",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":true,\"verdict\":\"OK\",\"requiredBump\":\"major\",\"actualBump\":\"major\",\"breaking\":[\"new required input 'tok' (clients must now send it)\"],\"no"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":true,\"verdict\":\"OK\",\"requiredBump\":\"minor\",\"actualBump\":\"minor\",\"breaking\":[],\"note\":\"version bump matches change severity\"}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ok\":false,\"verdict\":\"SEMVER_VIOLATION\",\"requiredBump\":\"major\",\"actualBump\":\"minor\",\"breaking\":[\"new required input 'tok' (clients must now"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/p8-semver-enforcement.ts",
+      "fn": "enforce"
+    },
+    {
+      "metier": "P9-finops",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"stop\":false,\"spent\":8,\"budget\":10,\"reason\":\"within budget\"}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"stop\":false,\"spent\":10,\"budget\":10,\"reason\":\"within budget\"}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"stop\":true,\"spent\":12,\"budget\":10,\"reason\":\"OBSERVED spend exceeds budget — fail-closed stop\"}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p9-finops-reference.ts",
+      "fn": "budgetStop"
+    },
+    {
+      "metier": "P10-regulatory",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"roles\":[\"PROVIDER\"],\"obligations\":[{\"role\":\"PROVIDER\",\"family\":\"risk & quality management proportionate to risk tier\"},{\"role\":\"PROVIDER\","
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"roles\":[],\"obligations\":[],\"undetermined\":true,\"declaredNotVerified\":true,\"statements\":[],\"overclaimsRefused\":0,\"certified\":false,\"basis\":"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"roles\":[\"PROVIDER\"],\"obligations\":[{\"role\":\"PROVIDER\",\"family\":\"risk & quality management proportionate to risk tier\"},{\"role\":\"PROVIDER\","
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p10-regulatory-reference.ts",
+      "fn": "buildEvidencePrep"
+    },
+    {
+      "metier": "P11-document",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"accepted\":true,\"highFindings\":0,\"findings\":[]}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"accepted\":true,\"highFindings\":0,\"findings\":[]}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"accepted\":false,\"highFindings\":1,\"findings\":[{\"id\":\"mandatory:id\",\"area\":\"mandatory-field\",\"severity\":\"HIGH\",\"detail\":\"missing BT-1 Invoic"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p11-document-reference.ts",
+      "fn": "processDocument"
+    },
+    {
+      "metier": "P12-streaming",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ordered\":true,\"deduped\":1,\"processed\":4,\"dropped\":1,\"backpressureHandled\":true,\"lastSeq\":4}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ordered\":true,\"deduped\":0,\"processed\":0,\"dropped\":0,\"backpressureHandled\":true,\"lastSeq\":null}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"ordered\":true,\"deduped\":1,\"processed\":1,\"dropped\":1,\"backpressureHandled\":true,\"lastSeq\":1}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p12-streaming-reference.ts",
+      "fn": "processStream"
+    },
+    {
+      "metier": "P13-aiinfra",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"kind\":\"cpu-reference\",\"bench\":{\"provider\":\"p13-cpu-reference\",\"kind\":\"cpu-reference\",\"count\":2,\"failures\":0,\"totalUnits\":6,\"estLatencyMs\":"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"kind\":\"gpu-simulated\",\"bench\":{\"provider\":\"p13-gpu-simulated\",\"kind\":\"gpu-simulated\",\"count\":1,\"failures\":0,\"totalUnits\":3,\"estLatencyMs\":"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"kind\":\"cpu-reference\",\"bench\":{\"provider\":\"p13-cpu-reference\",\"kind\":\"cpu-reference\",\"count\":0,\"failures\":1,\"totalUnits\":0,\"estLatencyMs\":"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p13-aiinfra-reference.ts",
+      "fn": "serveAndMeasure"
+    },
+    {
+      "metier": "P14-devex",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"attested\":true,\"missing\":[],\"reasons\":[]}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"attested\":false,\"missing\":[],\"reasons\":[\"sbom has zero components\"]}"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"attested\":false,\"missing\":[\"health\"],\"reasons\":[]}"
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p14-devex-reference.ts",
+      "fn": "scaffoldEvidence"
+    },
+    {
+      "metier": "P15-workflow",
+      "qualified": true,
+      "maturity": "VALIDATED_LOCAL",
+      "scenarios": {
+        "nominal": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"status\":\"COMPLETED\",\"history\":[{\"step\":\"build\",\"status\":\"DONE\"},{\"step\":\"test\",\"status\":\"DONE\"},{\"step\":\"approve-release\",\"status\":\"DONE\"}"
+        },
+        "boundary": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"status\":\"COMPLETED\",\"history\":[{\"step\":\"build\",\"status\":\"DONE\"},{\"step\":\"test\",\"status\":\"DONE\",\"retriedAttempts\":2,\"note\":\"succeeded after"
+        },
+        "failure": {
+          "ran": true,
+          "passed": true,
+          "detail": "{\"status\":\"PENDING_APPROVAL\",\"pending\":\"approve-release\",\"history\":[{\"step\":\"build\",\"status\":\"DONE\"},{\"step\":\"test\",\"status\":\"DONE\"},{\"step\""
+        }
+      },
+      "ranCount": 3,
+      "passCount": 3,
+      "note": "LOCAL qualification from three scenario classes; maturity is test-scoped (VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION); a non-fail-closed failure class is a surfaced SAFETY gap.",
+      "module": "runtime/core/profession-p15-workflow-reference.ts",
+      "fn": "orchestrate"
+    }
+  ],
+  "honesty": "VALIDATED_LOCAL = all three scenario classes pass (nominal correct + boundary handled + failure fail-closed) in a LOCAL test; it is NOT production operation. Any NOT_FAIL_CLOSED métier is a surfaced safety gap. €0 clients; none ACTIVE_IN_PRODUCTION."
+}

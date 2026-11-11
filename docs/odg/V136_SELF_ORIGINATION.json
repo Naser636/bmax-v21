@@ -148,5 +148,13 @@
     "Truth-Lock (enforced at the tick)",
     "no fabrication (spec only from real evidence; owner-gated/empty/injected ⇒ none)",
     "no self-authorization (selfAuthored:false, PROPOSED)"
-  ]
+  ],
+  "enforcedProof": {
+    "env": "ODG_TRUTH_LOCK_ENFORCE=1",
+    "branch": "main==origin/main",
+    "pipeline": "14/14 stages SUCCESS",
+    "validated": true,
+    "mode": "AUDIT",
+    "note": "self-originated read-only mission executed through the full governed pipeline under Truth-Lock enforcement on reconciled main; scheduler dedup-IDLEs it on re-run (lesson reuse / idempotence, step 14)."
+  }
 }
