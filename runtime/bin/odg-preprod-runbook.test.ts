@@ -18,6 +18,10 @@ function main(){
   check("pre-checks present: healthy current + release intact + unit verify + odg-app boot-conflict guard",/health_ok \|\| fail/.test(R)&&/BUILD_ID/.test(R)&&/systemd-analyze verify/.test(R)&&/default\.target\.wants\/odg-app\.service/.test(R));
   check("health-gated AUTO-ROLLBACK present (restores service on failure)",/rollback\(\)/.test(R)&&/odg-app-launch\.sh/.test(R)&&/ROLLBACK OK/.test(R));
   check("post-check verifies ready/READY + buildId + systemd MainPID ownership",/MainPID/.test(R)&&/EXPECT_BUILD/.test(R)&&/health_ok && build_ok/.test(R));
+  // V106-audit hardenings (must not regress):
+  check("HARDENING: exact port match (no :3000 substring over-match of :30000)",/127\\\.0\\\.0\\\.1:\$\{PORT\}\(\[\^0-9\]\|\$\)/.test(R)&&!/grep "127\.0\.0\.1:\$PORT"/.test(R));
+  check("HARDENING: systemd availability gated before start (is-system-running running|degraded)",/is-system-running/.test(R)&&/running\|degraded/.test(R));
+  check("HARDENING: TOCTOU — PID re-derived + re-health-checked immediately before kill",/PID=\$\(cur_pid\)[\s\S]*kill "\$PID"/.test(R)&&/ABORT at cutover/.test(R));
   check("bash syntax valid",sh("bash -n "+path.join(ROOT,"scripts/odg-preprod-cutover-runbook.sh")+" && echo OK")==="OK");
   // behavioral: the --check path is non-mutating (production pid unchanged before/after)
   const before=sh("ss -tlnpH 2>/dev/null | grep 127.0.0.1:3000 | grep -oE 'pid=[0-9]+' | cut -d= -f2 || true");

@@ -8,7 +8,7 @@ HEALTH="http://127.0.0.1:$PORT/api/health"
 LAUNCH=/home/ubuntu/bmax-v21/scripts/odg-app-launch.sh
 ROLLBACK_LOG=/home/ubuntu/odg-releases/cutover-rollback.log
 DRY=1; [ "${1:-}" = "--execute" ] && DRY=0
-cur_pid(){ ss -tlnpH 2>/dev/null | grep "127.0.0.1:$PORT" | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2; }
+cur_pid(){ ss -tlnpH 2>/dev/null | grep -E "127\.0\.0\.1:${PORT}([^0-9]|$)" | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2; }
 health_ok(){ local h; h=$(curl -s -m3 "$HEALTH" 2>/dev/null); echo "$h" | grep -q '"status":"ready"' && echo "$h" | grep -q '"storage":"READY"'; }
 PID=$(cur_pid)
 echo "current :3000 pid=${PID:-none}"
