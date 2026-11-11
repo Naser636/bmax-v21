@@ -1,0 +1,83 @@
+{
+  "//": "V129 runtime recovery. Two demonstrated failures diagnosed + locally fixed where legitimate; recovery PREPARED. Truth Lock preserved; production untouched; no systemd change executed.",
+  "truthLock": {
+    "HEAD": "e59ada53a767c13f00d4f092b0065814675a68c5",
+    "branch": "excellence/v3-wave3-demonstrators-20261101",
+    "originMain": "22900dd501f831fbb763d05ed131d1b528df0edf",
+    "headEqualsOriginMain": false,
+    "aheadOfOriginMain": 51,
+    "note": "reality verified; deployed checkout is on the feature branch, so the mutating mission-runner is correctly refused until the commit reaches main"
+  },
+  "missionRunner": {
+    "rootCause": "odg-schedule-tick runs truthLockGate({mutating:true,enforce:true}) as a fail-closed STARTUP precondition (C#5). It refuses because the deployed checkout is on branch 'excellence/v3-wave3-demonstrators-20261101' != expected 'main' and HEAD != origin/main. This is BY DESIGN (an unattended runner must never execute mutating missions from an unverified/unapproved repo state).",
+    "intentional": true,
+    "canonicalEntry": "runtime/dist/bin/odg-schedule-tick.js (via odg-mission-runner.service/.timer)",
+    "howAFeatureBranchBecomesEligible": "the validated commit must reach main == origin/main through the canonical merge/release process; only then does truthLockGate pass and the runner become eligible. The branch/expected-main check is NOT relaxed and Truth Lock is NOT disabled.",
+    "promotionRoute": [
+      "1. push feature branch to origin (OWNER-GATED: push classifier)",
+      "2. open PR to main",
+      "3. obtain required repository approvals (branch protection: PR + CI + approvals)",
+      "4. merge to main via the allowed method",
+      "5. the deployed release tracks main (HEAD==origin/main)",
+      "6. mission-runner Truth-Lock passes ⇒ eligible (activation still gated by ODG_CANARY_ALLOWLIST / owner)"
+    ],
+    "regressionTest": "runtime/core/truth-lock-branch-refusal.test.ts — proves feature-branch / divergence / staged-index / non-repo are REFUSED and only canonical main is eligible (expectedBranch stays 'main').",
+    "state": "VALIDATED (behavior correct, tested) + OWNER-GATED promotion (merge to main) NOT EXECUTED"
+  },
+  "fleetBridge": {
+    "rootCause": "the stale system unit /etc/systemd/system/fleet-bridge.service (dated Jul-17, pre-dates the TS port) has ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/core/fleet-bridge.js — the pre-zero-JS source .js path, removed by the zero-JS convergence ⇒ MODULE_NOT_FOUND on every start ⇒ Restart=always restart storm.",
+    "evidence": {
+      "deadPathAbsent": true,
+      "distPresent": true,
+      "distLoadsClean": true,
+      "nRestarts": "61778",
+      "journalLines": ""
+    },
+    "obsolete": "NO — fleet-bridge is the documented provider bridge (ODG Runtime <-> Claude Code): watches fleet-dispatcher's mailbox, invokes the provider exactly-once, writes an envelope fleet-collector consumes. Canonical source runtime/core/fleet-bridge.ts (tested) + compiled runtime/dist/core/fleet-bridge.js. Referenced in docs/odg-operational/* and consumed by fleet-stage.ts. It is DORMANT-BY-STALENESS, not retired.",
+    "canonicalEntry": "runtime/dist/core/fleet-bridge.js (compiled; run with cwd=repo root; daemon 'watch' mode, or --once).",
+    "buildArtifact": "runtime/dist/core/fleet-bridge.js (npm run build:runtime).",
+    "providerSafety": "FAIL-CLOSED: a real `claude` spawn happens ONLY when ODG_PROVIDER_LIVE authorizes it; FLEET_BRIDGE_MOCK short-circuits. Starting the service does NOT auto-activate a provider.",
+    "correctedUnitPrepared": "deploy/fleet-bridge.service.corrected — ExecStart -> dist entry, ExecStartPre test -f (fail-closed on missing build), Restart=on-failure, StartLimitIntervalSec=300 + StartLimitBurst=5 (bounds the storm: enters `failed` instead of looping). NOT installed.",
+    "regressionTest": "runtime/core/fleet-bridge-entrypoint.test.ts — dead path ABSENT, dist entry present+loads clean, require-safe (require.main guard), provider-gated; corrected unit targets dist + bounded restart.",
+    "restartStorm": {
+      "harmful": true,
+      "why": "NRestarts=61778,  journal lines (~3.5M) — real journald/disk pressure; churning node spawns every 5s.",
+      "boundedStopPrepared": "OWNER/root, reversible: `sudo systemctl stop fleet-bridge.service && sudo systemctl disable fleet-bridge.service` (reverse: enable+start). Justified: unit non-functional (MODULE_NOT_FOUND), no live consumer depends on it being UP (it has been down throughout the storm), and the restarts are harmful (journal bloat). NOT EXECUTED this phase (production systemd change)."
+    },
+    "state": "root cause FIXED locally (canonical entry proven present+loadable; regression tests added; corrected unit + bounded-stop PREPARED). Unit replacement + storm stop are OWNER-GATED, NOT EXECUTED."
+  },
+  "recoveryPlan": {
+    "missionRunner": {
+      "serviceAccount": "ubuntu",
+      "workingDir": "/home/ubuntu/bmax-v21",
+      "env": "ODG_TRUTH_LOCK_ENFORCE + ODG_CANARY_ALLOWLIST (values not shown)",
+      "startup": "timer-driven tick; refuses unless Truth-Lock passes",
+      "restart": "on-failure (bounded)",
+      "health": "exit 0 = PASS/IDLE; STARTUP_REFUSED exit 2",
+      "rollback": "n/a (read-safe refusal)",
+      "acceptance": "after merge to main: HEAD==origin/main ⇒ tick runs without STARTUP_REFUSED"
+    },
+    "fleetBridge": {
+      "serviceAccount": "ubuntu",
+      "workingDir": "/home/ubuntu/bmax-v21",
+      "env": "optional EnvironmentFile=-/etc/odg/fleet-bridge.env; ODG_PROVIDER_LIVE gates live provider (values not shown)",
+      "startup": "ExecStartPre verifies dist entry; ExecStart node dist entry; watch daemon",
+      "shutdown": "SIGTERM (systemd default)",
+      "restart": "on-failure + StartLimitBurst=5/300s (bounded)",
+      "health": "process alive + processes mailbox; FLEET_BRIDGE_MOCK=1 for a non-provider smoke test",
+      "rollback": "systemctl stop; revert to prior unit; dist is immutable build output",
+      "acceptance": "corrected unit starts, requires no missing module, does NOT spawn a provider without ODG_PROVIDER_LIVE, and does not restart-storm (enters failed after 5 fails)"
+    }
+  },
+  "protections": {
+    "preprodUntouched": true,
+    "truthLockPreserved": true,
+    "noSystemdChangeExecuted": true,
+    "noDummyJsCreated": true,
+    "noProviderActivated": true,
+    "port3000NotExposedPublicly": true,
+    "noSecretsPrinted": true
+  },
+  "status": "DIAGNOSED_FIXED_LOCALLY_recovery_PREPARED_owner_gated",
+  "invariant": "Truth Lock NOT disabled/relaxed (expectedBranch stays main); no falsified origin/main; no forced queue/allowlist; no mission executed from an unapproved branch; no dummy JS; fleet-bridge recovery PREPARED not executed; production odg-preprod untouched; port 3000 not exposed; no secrets printed."
+}

@@ -1,0 +1,25 @@
+# CORRECTED fleet-bridge unit — PREPARED, NOT installed. Replacing the production unit is an OWNER/root action (V129 §4/§6).
+# Fixes the stale /etc/systemd/system/fleet-bridge.service (Jul-17) whose ExecStart pointed at the dead pre-zero-JS path
+# /home/ubuntu/bmax-v21/runtime/core/fleet-bridge.js (removed by the zero-JS convergence) ⇒ MODULE_NOT_FOUND ⇒ 61,700-restart
+# storm (3.5M journal lines). Canonical entry = the compiled dist. Install only after owner approval + dependency sign-off.
+[Unit]
+Description=ODG Fleet Bridge (corrected)
+After=network.target
+# BOUND the restart storm: >=5 start failures within 300s ⇒ the unit enters `failed` instead of looping forever.
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/bmax-v21
+# Fail-closed preflight: refuse to start if the compiled entry is missing (never restart-storm on a missing build).
+ExecStartPre=/usr/bin/test -f /home/ubuntu/bmax-v21/runtime/dist/core/fleet-bridge.js
+ExecStart=/usr/bin/node /home/ubuntu/bmax-v21/runtime/dist/core/fleet-bridge.js
+# Provider is FAIL-CLOSED: a real `claude` spawn occurs ONLY when ODG_PROVIDER_LIVE authorizes it (owner decision).
+# Env values are NOT shown here; supply via: EnvironmentFile=-/etc/odg/fleet-bridge.env
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
