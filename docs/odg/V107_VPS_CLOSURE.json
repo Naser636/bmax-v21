@@ -1,0 +1,61 @@
+{
+  "//": "CTO V107 VPS CLOSURE — Path A cutover + controlled service restart VERIFIED live. Reboot test stays NOT_DONE (distinct). No mutation.",
+  "verifiedLiveState": {
+    "isActive": "active",
+    "isEnabled": "enabled",
+    "mainPid": "350215",
+    "listener": "350215",
+    "ownershipOk": true,
+    "cgroup": "0::/system.slice/odg-preprod.service",
+    "supervised": true,
+    "health": "ready",
+    "storage": "READY",
+    "buildId": "WEyqonrDYirNE0T99qGGC",
+    "loopbackOnly": true,
+    "oldSessionPidGone": true,
+    "previousReleasePreserved": true,
+    "odgAppNotConflicting": true,
+    "restartPolicy": "on-failure",
+    "nRestarts": "0"
+  },
+  "closureCriteria": {
+    "realProcessSupervisedBySystemd": {
+      "met": true,
+      "evidence": "cgroup=0::/system.slice/odg-preprod.service; is-active=active; MainPID=350215"
+    },
+    "controlledServiceRestart": {
+      "met": true,
+      "evidence": "journal: node[350001] 04:01:12 (cutover 74768->350001) -> node[350215] 04:02:19 (controlled restart), clean Ready each; current MainPID=350215"
+    },
+    "healthAndStorage": {
+      "met": true,
+      "evidence": "status=ready storage=READY buildId=WEyqonrDYirNE0T99qGGC"
+    },
+    "mainPidListenerConsistency": {
+      "met": true,
+      "evidence": "MainPID=350215 == listener=350215"
+    },
+    "buildId": {
+      "met": true,
+      "evidence": "WEyqonrDYirNE0T99qGGC"
+    },
+    "loopbackOnly": {
+      "met": true,
+      "evidence": "127.0.0.1:3000"
+    },
+    "backupRestore": {
+      "met": true,
+      "evidence": "R3_BACKUP_RESTORE.json — real git-bundle restore round-trip verified + staleness cleared"
+    }
+  },
+  "remainingControl": {
+    "realRebootTest": "NOT_DONE — distinct from the service restart; requires verified rescue access + recovery procedure + specific authorization before execution. Does NOT block other local missions."
+  },
+  "cutoverEvidence": {
+    "method": "owner executed Path A via root: scripts/odg-preprod-cutover-runbook.sh (audited V106)",
+    "pidChain": "74768 (session-scoped) -> 350001 (cutover) -> 350215 (controlled restart)",
+    "journalReadyCount": "57"
+  },
+  "status": "VPS_SUPERVISION_CLOSED_reboot_test_NOT_DONE",
+  "invariant": "VPS closure recorded from VERIFIED live state (systemd-supervised process, service restart demonstrated, health/storage/buildId OK, MainPID==listener, loopback-only, backups/restore R3); reboot test honestly NOT_DONE; no fabricated proof; no mutation; does not block other local missions."
+}
