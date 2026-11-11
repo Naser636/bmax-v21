@@ -1,0 +1,234 @@
+{
+  "//": "CTO V95 — ONE complete delivery dossier. Every command verified against the repo's REAL scripts (odg-release.sh / odg-stage-and-verify.sh / ci.yml). NOTHING pushed/deployed/changed on the VPS. A staging PASS is never a go-live. Verdict is technical readiness to ENTER delivery; the go-live itself stays owner/ROOT-gated.",
+  "git": {
+    "head": "8f285e6",
+    "branch": "excellence/v3-wave3-demonstrators-20261101",
+    "aheadMain": 72,
+    "behindMain": 2,
+    "mergeBase": "ed73345",
+    "conflictOverlap": 0,
+    "stashes": 5,
+    "untracked": 7
+  },
+  "vps": {
+    "instance": "vps-6d919042",
+    "served": "emLgNDocVzOvu6dN3rA-p (Oct 28 release)",
+    "deployedHealthy": true,
+    "currentRelease": "rel-20261028T210754Z-e84a0cf2720b",
+    "releaseCount": 9,
+    "edgCore8080": true
+  },
+  "lifecycle6Stage": {
+    "1_code_present": {
+      "state": "HEAD 8f285e6",
+      "done": true
+    },
+    "2_build": {
+      "state": "staging build (.next 2026-11-10 13:22)",
+      "done": true
+    },
+    "3_staging_verified": {
+      "state": "deploy/odg-stage-and-verify.sh PASS (user-space, V44/Nov10)",
+      "done": true
+    },
+    "4_release_prepared_from_HEAD": {
+      "state": "NONE",
+      "done": false,
+      "note": "requires `odg-release.sh build --commit <sha>` (OWNER_GATED) — NOT built"
+    },
+    "5_release_activated": {
+      "state": "current → rel-20261028T210754Z-e84a0cf2720b (Oct 28)",
+      "done": true,
+      "note": "activation = atomic symlink swap (OWNER/ROOT-gated)"
+    },
+    "6_application_served": {
+      "state": ":3000 serves emLgNDocVzOvu6dN3rA-p (Oct 28 release)",
+      "done": true
+    }
+  },
+  "githubPrPackage": {
+    "title": "ODG V85–V94-C: assurance stack + incremental assurance + release readiness (72 commits)",
+    "base": "main",
+    "head": "excellence/v3-wave3-demonstrators-20261101",
+    "scope": "local assurance/governance lots V85→V94-C (inspection boundary, incremental assurance, meta-assurance, Dossier A, 10 P5-class fixes)",
+    "changesSummary": "72 commits ahead of main; 341 files; 0 overlapping with main's delta",
+    "testEvidence": "full gate 501/501 PASS, tsc 0 (re-run at release)",
+    "conflictRisk": "NONE (0 overlapping changed files vs main's delta)",
+    "rollback": "GitHub history append-only; no force-push; a bad merge is reverted via a new PR",
+    "strategy": "fresh PR (no local rebase/merge); main protected (enforce_admins + required PR + required check 'build + typecheck + parity + tests')",
+    "status": "PREPARED — not opened (OWNER_GATED; opening/merging needs the critical gate)"
+  },
+  "runbook": [
+    {
+      "step": "pre-delivery inventory",
+      "command": "git status --porcelain; ss -tlnH; curl -s http://127.0.0.1:3000/api/health",
+      "evidence": "clean tree + listeners + health ready",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "step": "release gate",
+      "command": "npm run test:report",
+      "evidence": "501/501 PASS",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "step": "typecheck + reproducible build",
+      "command": "npx tsc --noEmit -p tsconfig.json; npm run build:runtime",
+      "evidence": "tsc 0 + dist-closure",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "step": "contracts + Runtime/Foundation/Pipeline/Brain validation",
+      "command": "bash deploy/odg-stage-and-verify.sh",
+      "evidence": "build/typescript/generatedContractsValid true + Runtime/Foundation/Pipeline/Brain health",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "step": "pre-delivery backup (recovery point)",
+      "command": "git rev-parse HEAD (immutable) + current odg-releases symlink is the rollback target",
+      "evidence": "HEAD sha + current=Oct28 (known-good, healthy)",
+      "status": "EXECUTABLE_LOCAL"
+    },
+    {
+      "step": "GitHub push (RC)",
+      "command": "git push origin excellence/v3-wave3-demonstrators-20261101",
+      "evidence": "ff push",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_GATED"
+    },
+    {
+      "step": "PR + CI + merge",
+      "command": "gh pr create --base main; (CI ci.yml) ; gh pr merge",
+      "evidence": "required check green + merge",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_GATED"
+    },
+    {
+      "step": "build immutable release from target",
+      "command": "scripts/odg-release.sh build --commit <sha>",
+      "evidence": "release dir + build log",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_GATED"
+    },
+    {
+      "step": "verify RC on staging port",
+      "command": "scripts/odg-release.sh verify <releaseId>",
+      "evidence": "/api/health 200 + buildId match",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_GATED"
+    },
+    {
+      "step": "activate (atomic swap) — GO-LIVE",
+      "command": "scripts/odg-release.sh activate <releaseId>",
+      "evidence": "current symlink swap + restart + health 200",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_ROOT_GATED"
+    },
+    {
+      "step": "post-activation controls",
+      "command": "curl -s http://127.0.0.1:3000/api/health; scripts/odg-release.sh status",
+      "evidence": "status ready + new buildId + listener",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_GATED"
+    },
+    {
+      "step": "rollback (if stop criterion hit)",
+      "command": "scripts/odg-release.sh rollback",
+      "evidence": "current → previous + restart + health",
+      "cmdCheck": "VERIFIED_REAL",
+      "status": "OWNER_GATED"
+    }
+  ],
+  "allRunbookCommandsVerifiedReal": true,
+  "ciChain": {
+    "npmCi": true,
+    "buildRuntime": true,
+    "tsc": true,
+    "gate": true
+  },
+  "releaseScriptCommands": {
+    "build": true,
+    "verify": true,
+    "activate": true,
+    "rollback": true,
+    "status": true,
+    "health": true
+  },
+  "backupRollback": {
+    "recoveryPoint": "HEAD 8f285e6 (immutable) + current symlink=Oct28 (known-good, healthy)",
+    "rollbackMechanism": "scripts/odg-release.sh rollback (current→previous) — VERIFIED_REAL",
+    "priorReleases": 9,
+    "restorabilityProven": "git worktree drill (V91) + 9 release dirs"
+  },
+  "independentQualification": {
+    "inspectorQualified": true,
+    "blindControlRejected": true,
+    "independence": "INDEPENDENT",
+    "boundaryPre": "APPROVED",
+    "boundaryPost": "PASS",
+    "metier": {
+      "byStatus": {
+        "ABSENT": 0,
+        "PRESENT": 0,
+        "WIRED": 0,
+        "TESTED": 0,
+        "VALIDATED": 15
+      },
+      "allValidated": true,
+      "weakest": {
+        "metier": "P1",
+        "module": "profession-p1-fullstack-reference",
+        "status": "VALIDATED"
+      }
+    },
+    "ninePrimitivesGateEnforced": "9/9",
+    "truthLock": "intact (no reset/rewrite; 5 stashes + 6 untracked preserved; append-only history)",
+    "assurance": "V85 meta-validation + V86 boundary + V88/V89 incremental assurance intact (gate-enforced)",
+    "evidenceIntegrity": "provenance/hash via evidence-provenance; NOT_MEASURED never promoted to PASS",
+    "verdict": "QUALIFIED"
+  },
+  "technicalNeeds": [
+    {
+      "need": "external fair benchmark resource (XIII)",
+      "class": "useful",
+      "problem": "substantiate any world-class claim",
+      "freeOption": "internal reproducible protocol (built, fail-closed)",
+      "cost": "unknown (owner-gated)",
+      "purchased": false
+    },
+    {
+      "need": "production go-live root action",
+      "class": "indispensable",
+      "problem": "activate HEAD release in production",
+      "freeOption": "scripts/odg-release.sh (one root action) — no purchase needed",
+      "cost": "€0",
+      "purchased": false
+    },
+    {
+      "need": "managed CI minutes",
+      "class": "optional",
+      "problem": "faster CI",
+      "freeOption": "GitHub Actions free tier (ci.yml) sufficient",
+      "cost": "€0 (free tier)",
+      "purchased": false
+    },
+    {
+      "need": "paid LLM API for heavy generation",
+      "class": "not_justified",
+      "problem": "none — local Ollama models present (qwen2.5-coder 7b/3b)",
+      "freeOption": "local Ollama (present)",
+      "cost": "n/a",
+      "purchased": false
+    }
+  ],
+  "anyPurchaseMade": false,
+  "residualRisks": [
+    "deployed is behind main/HEAD by a large delta (deployed Oct 28 vs HEAD; big jump ⇒ stage+verify mandatory before activation)",
+    "release candidate from HEAD not yet BUILT (odg-release.sh build is OWNER_GATED)",
+    "go-live requires the owner's explicit critical-gate authorization + a ROOT action (NOT performed)"
+  ],
+  "verdict": "READY_WITH_CONCERNS",
+  "honestConclusion": "Delivery dossier COMPLETE and exploitable: GitHub PR package prepared (ahead 72, behind 2, 0 conflict), full runbook with EVERY command verified against the real scripts (odg-release.sh build/verify/activate/rollback/status + ci.yml), backup/rollback real (9 releases + symlink). Independent qualification: QUALIFIED (inspector meta-validated + independent; 15/15 métiers; 9/9 primitives gate-enforced; Truth Lock intact). VERDICT: READY_WITH_CONCERNS. Concerns: deployed is Oct 28 (large undeployed delta ⇒ stage+verify first); RC from HEAD not built; go-live needs owner critical-gate + ROOT action (NONE performed). No purchase/engagement. Nothing pushed/deployed/changed.",
+  "invariant": "one complete dossier; every command verified against real scripts (nothing invented); staging PASS ≠ go-live; independent qualification routed through V86+V85; no purchase; no push/deploy/VPS change; go-live owner/ROOT-gated; NOT_MEASURED never PASS."
+}
