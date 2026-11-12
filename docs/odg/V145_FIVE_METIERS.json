@@ -92,14 +92,14 @@
     },
     {
       "metier": "M5-ACCESSIBILITY",
-      "state": "GAP_IDENTIFIED (no module)",
+      "state": "BUILDING (automated-check DEMO_READY)",
       "maturity": "NOT BUILT",
       "demand": {
         "driver": "EAA/RGAA: obligation extended to PMEs >10 employees OR >2M€ CA with a digital service; WCAG 2.1 AA via RGAA 4.1.2 / EN 301 549 v3.2.1; sanctions up to 50k€/service; DGCCRF/Arcom control since Jan 2026",
         "source": "https://accessio.pro/obligations-accessibilite",
         "verified": true
       },
-      "odgCapability": "NONE — new build (automated checks: contrast/structure/forms/ARIA; manual checks required too)",
+      "odgCapability": "NEW accessibility-check.ts — automated RGAA 4.1.2/WCAG 2.1 AA subset (img-alt, input-label, title, link, lang, button-name, heading-order, dup-id); manual review ALWAYS required",
       "competitors": [
         "axe (OSS)",
         "WAVE",
@@ -148,7 +148,8 @@
     }
   },
   "builtThisLot": [
-    "M2 order-coherence-check (devis↔facture incoherence detection) — BUILT + 11-test + demonstrable on synthetic data"
+    "M2 order-coherence-check (devis↔facture incoherence detection) — BUILT + 11-test + demonstrable on synthetic data",
+    "M5 accessibility-check (automated RGAA/WCAG subset) — BUILT + 13-test; automated scan != full conformance (manual required)"
   ],
   "honesty": "1 métier COMMERCIALISABLE (M1 CRA, R3, R4 owner-gated); M2 one differentiating capability BUILT (coherence) but full suite NOT_YET in a crowded market; M3/M5 GAP_IDENTIFIED (M5 high-demand new build); M4 VALIDATED_LOCAL. The 5M€ net year-1 target is NOT substantiated and owner-gated."
 }
