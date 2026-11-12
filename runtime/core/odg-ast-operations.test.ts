@@ -12,7 +12,7 @@ let failures = 0; function check(n: string, c: boolean) { process.stdout.write((
 const ord = (src: string) => A.runAstOp("import-ordering@1", { source: src });
 
 function main() {
-  check("registry: 4 canonical ops (1 transform + 3 diagnostics), NO faulty fixtures", A.CANONICAL_OPS.length === 4 && A.OP_IDS.indexOf("import-ordering@1") >= 0);
+  check("registry: ≥4 canonical ops incl. import-ordering (V155 adds consolidation ⇒ 5), NO faulty fixtures", A.CANONICAL_OPS.length >= 4 && A.OP_IDS.indexOf("import-ordering@1") >= 0 && A.OP_IDS.every((id: string) => id.indexOf(".faulty") < 0));
 
   // ---- A. import-ordering TRANSFORM ----
   const r = ord('import { z } from "./zebra";\nimport { a } from "./apple";\nimport { m } from "./mango";\n\nconst x = 1;\n');

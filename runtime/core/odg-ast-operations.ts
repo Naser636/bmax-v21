@@ -38,6 +38,26 @@ function moduleSpec(imp: any): string | null { const m = imp.moduleSpecifier; re
 function isSideEffectImport(imp: any): boolean { return !imp.importClause; }   // `import "x";` has no import clause
 function hasLeadingComment(sf: any, node: any): boolean { const r = ts.getLeadingCommentRanges(sf.text, node.getFullStart()); return Array.isArray(r) && r.length > 0; }
 
+// classify an ImportDeclaration for SAFE same-specifier consolidation. Returns the admissibility verdict for one import.
+function classifyNamedImport(imp: any): any {
+  const clause = imp.importClause;
+  if (!clause) return { admissible: false, reason: "side-effect import (no import clause) ⇒ never merge" };
+  if (clause.name) return { admissible: false, reason: "default import ⇒ refuse" };
+  if (clause.isTypeOnly) return { admissible: false, reason: "type-only import ⇒ refuse (by default)" };
+  const nb = clause.namedBindings;
+  if (!nb || !ts.isNamedImports(nb)) return { admissible: false, reason: "namespace import or no named bindings ⇒ refuse" };
+  if (imp.attributes || imp.assertClause) return { admissible: false, reason: "import attributes/assertions ⇒ unsupported, refuse" };
+  const names: any[] = [];
+  for (const el of nb.elements) {
+    if (el.isTypeOnly) return { admissible: false, reason: "inline type-only specifier ⇒ refuse" };
+    if (el.propertyName) return { admissible: false, reason: "aliased import specifier ⇒ refuse" };
+    names.push(el.name.text);
+  }
+  return { admissible: true, names };
+}
+function startsLineAlone(sf: any, node: any): boolean { const start = node.getStart(sf); const lineStart = sf.text.lastIndexOf("\n", start - 1) + 1; return sf.text.slice(lineStart, start).trim().length === 0; }
+function removeLineRange(source: string, start: number, end: number): { from: number; to: number } { const from = source.lastIndexOf("\n", start - 1) + 1; let to = source.indexOf("\n", end); to = to < 0 ? source.length : to + 1; return { from, to }; }
+
 // count AST identifier references to `name` excluding the declaration node range.
 function countIdentifierRefs(sf: any, name: string, declStart: number, declEnd: number): number {
   let count = 0;
@@ -81,6 +101,62 @@ const OPS: Record<string, any> = {
       return { outcome: OUTCOME.TRANSFORMED, changed: true, before: source, after, patchSummary: { imports: block.length }, reversible: true, postconditions: { reparsed: true, sameImportSet: true, sorted: true } };
     },
     idempotentCheck: (afterSource: string) => { const r = OPS["import-ordering@1"].run(afterSource); return r.outcome === OUTCOME.GREEN; },
+  },
+
+  // A2. duplicate-import-consolidation (TRANSFORM) — merge CONTIGUOUS same-specifier NAMED-ONLY imports into one; refuse ALL
+  // ambiguity (alias/default/namespace/type/side-effect/attributes/comment/collision/non-contiguous/malformed). All-or-nothing.
+  "duplicate-import-consolidation@1": {
+    kind: "TRANSFORM", version: 1, description: "consolidate contiguous same-specifier named-only imports (safe subset of organizeImports); refuse everything else",
+    run: (source: string) => {
+      const p = parse(source); if (!p.ok) return { outcome: OUTCOME.REFUSED, reason: `malformed source (${p.syntaxErrors} syntax error(s))` };
+      const stmts = p.sf.statements;
+      const imports: any[] = []; for (let i = 0; i < stmts.length; i++) if (stmts[i].kind === ts.SyntaxKind.ImportDeclaration) imports.push({ node: stmts[i], index: i });
+      // group by specifier
+      const bySpec: Record<string, any[]> = {};
+      for (const im of imports) { const s = moduleSpec(im.node); if (s === null) continue; (bySpec[s] = bySpec[s] || []).push(im); }
+      const dupSpecs = Object.keys(bySpec).filter((s: string) => bySpec[s].length > 1);
+      if (dupSpecs.length === 0) return { outcome: OUTCOME.GREEN, changed: false, reason: "no duplicate-specifier import group" };
+
+      const edits: any[] = [];   // { start, end, replacement }
+      const beforePairs = new Set<string>();   // (specifier   name) across ALL imports, for postcondition
+      for (const im of imports) { const s = moduleSpec(im.node); const c = classifyNamedImport(im.node); if (s !== null && c.admissible) for (const n of c.names) beforePairs.add(s + " " + n); }
+
+      for (const spec of dupSpecs) {
+        const group = bySpec[spec].slice().sort((a: any, b: any) => a.index - b.index);
+        // CONTIGUITY: the group's statement indices must be consecutive (no other statement between them).
+        for (let k = 1; k < group.length; k++) if (group[k].index !== group[k - 1].index + 1) return { outcome: OUTCOME.REFUSED, reason: `non-contiguous duplicate group for '${spec}' (execution-order safety not proven) ⇒ refuse` };
+        const mergedNames: string[] = []; const seen = new Set<string>();
+        for (const im of group) {
+          const c = classifyNamedImport(im.node);
+          if (!c.admissible) return { outcome: OUTCOME.REFUSED, reason: `'${spec}': ${c.reason}` };
+          if (hasLeadingComment(p.sf, im.node)) return { outcome: OUTCOME.REFUSED, reason: `'${spec}': import carries a leading comment (ambiguous preservation) ⇒ refuse` };
+          if (!startsLineAlone(p.sf, im.node)) return { outcome: OUTCOME.REFUSED, reason: `'${spec}': import is not alone on its line ⇒ refuse` };
+          for (const n of c.names) { if (seen.has(n)) return { outcome: OUTCOME.REFUSED, reason: `'${spec}': local-name collision on '${n}' ⇒ refuse` }; seen.add(n); mergedNames.push(n); }
+        }
+        const first = group[0].node;
+        const quote = source.slice(first.moduleSpecifier.getStart(p.sf), first.moduleSpecifier.getEnd());   // preserve the original quote style
+        const mergedText = `import { ${mergedNames.join(", ")} } from ${quote};`;
+        edits.push({ start: first.getStart(p.sf), end: first.getEnd(), replacement: mergedText });
+        for (let k = 1; k < group.length; k++) { const r = removeLineRange(source, group[k].node.getStart(p.sf), group[k].node.getEnd()); edits.push({ start: r.from, end: r.to, replacement: "" }); }
+      }
+      // apply edits right-to-left
+      edits.sort((a: any, b: any) => b.start - a.start);
+      let after = source; for (const e of edits) after = after.slice(0, e.start) + e.replacement + after.slice(e.end);
+
+      // POSTCONDITIONS (independent of the edit logic): re-parse; same (specifier,name) multiset-as-set; no dup specifier; same non-import statements.
+      const p2 = parse(after); if (!p2.ok) return { outcome: OUTCOME.VALIDATION_FAILED, reason: "post-transform source does not re-parse" };
+      const afterImports: any[] = []; const afterPairs = new Set<string>(); const afterSpecCount: Record<string, number> = {};
+      for (const st of p2.sf.statements) if (st.kind === ts.SyntaxKind.ImportDeclaration) { afterImports.push(st); const s = moduleSpec(st); const c = classifyNamedImport(st); if (s !== null) { afterSpecCount[s] = (afterSpecCount[s] || 0) + 1; if (c.admissible) for (const n of c.names) afterPairs.add(s + " " + n); } }
+      const sameSymbols = beforePairs.size === afterPairs.size && Array.from(beforePairs).every((x: string) => afterPairs.has(x));
+      const noDupSpec = Object.keys(afterSpecCount).every((s: string) => afterSpecCount[s] === 1 || dupSpecs.indexOf(s) < 0);
+      const beforeNonImport = stmts.filter((s: any) => s.kind !== ts.SyntaxKind.ImportDeclaration).map((s: any) => s.kind).join(",");
+      const afterNonImport = p2.sf.statements.filter((s: any) => s.kind !== ts.SyntaxKind.ImportDeclaration).map((s: any) => s.kind).join(",");
+      if (!sameSymbols) return { outcome: OUTCOME.VALIDATION_FAILED, reason: "postcondition: imported-symbol set changed" };
+      if (!noDupSpec) return { outcome: OUTCOME.VALIDATION_FAILED, reason: "postcondition: a consolidated specifier is still duplicated" };
+      if (beforeNonImport !== afterNonImport) return { outcome: OUTCOME.VALIDATION_FAILED, reason: "postcondition: non-import statements changed" };
+      return { outcome: OUTCOME.TRANSFORMED, changed: true, before: source, after, patchSummary: { specifiersConsolidated: dupSpecs.length }, reversible: true, postconditions: { reparsed: true, sameImportedSymbols: true, noDuplicateSpecifier: true, nonImportStatementsPreserved: true } };
+    },
+    idempotentCheck: (afterSource: string) => { const r = OPS["duplicate-import-consolidation@1"].run(afterSource); return r.outcome === OUTCOME.GREEN; },
   },
 
   // B. duplicate-import-analysis (DIAGNOSTIC) — report module specifiers imported more than once; never consolidate here.

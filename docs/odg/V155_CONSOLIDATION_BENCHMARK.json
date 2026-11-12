@@ -1,0 +1,39 @@
+{
+  "//": "V155 §9 — ODG AST-lite catalogue benchmark V154→V155 + duplicate-import-consolidation@1 contract. Delta dossier referenced from the Boussole; no competing SSOT; governed ROADMAP.json UNTOUCHED. Honest: canonical ops counted apart from faulty fixtures (0); transforms distinguished from diagnostics; no simulation counted as real capability; unmeasured = NOT_MEASURED.",
+  "headCommit": "e3c210f (main @ V154) → V155 branch",
+  "operationDelivered": {
+    "id": "duplicate-import-consolidation@1", "kind": "TRANSFORM", "version": 1,
+    "scope": "merge CONTIGUOUS same-specifier NAMED-ONLY import declarations into one (safe subset of ts organizeImports)",
+    "admissibility_§4": "ALL must hold: same exact specifier; named-only; contiguous statements; no alias; no default; no namespace; no type-only (inline or declaration); no side-effect; no attached comment; no import attributes/assertions; no local-name collision; valid syntax; import alone on its line. ANY failure ⇒ NATIVE_REFUSED with a precise reason (all-or-nothing).",
+    "transformer_§5": "ts.createSourceFile AST → identify duplicate-specifier groups → verify admissibility → build candidate (merge named bindings into the FIRST occurrence, preserve original quote style, remove later members' lines) → RE-PARSE → AST postconditions → candidate patch.",
+    "postconditions": ["re-parses", "imported-symbol SET preserved (independent (specifier,name) comparison)", "no consolidated specifier still duplicated", "non-import statements preserved (kind sequence)", "idempotent"],
+    "preserves": ["imported names", "exact module specifier + quote style", "LF and CRLF line endings", "all other declarations/statements", "evaluation order (module stays at its first position)"],
+    "candidateOnly": "real-repo write OWNER_GATED; closed deny-by-default registry is the only execution path; no eval/new Function."
+  },
+  "admissibleCases": ["2 equivalent named imports", "3+ named imports of one module", "multiple distinct symbols", "LF", "CRLF", "unrelated imports/statements preserved"],
+  "refusedCases": ["different specifier (⇒ GREEN no-op)", "alias", "default import", "namespace import", "type-only (declaration or inline)", "side-effect import", "attached/between comment", "local-name collision", "non-contiguous group", "import attributes/assertions", "malformed source", "import not alone on its line"],
+  "escalatedCases": ["(none required at the syntactic tier for this op; semantic cases are out of scope and were never attempted)"],
+  "antiRewardHacking_§7": {
+    "independentVerifier": "the test extracts the imported-symbol set via its OWN ts walk (not the op's internals) and asserts before==after.",
+    "mutationDetection": "a deliberately symbol-dropping mutant of the op's output is CAUGHT by the independent verifier ⇒ TESTS_NON_VACUOUS; a result is never 'valid' merely because the op claims success.",
+    "preserved": "V152 anti-reward-hacking discipline carried forward."
+  },
+  "benchmark_V154_V155_§9": {
+    "reproducible": true,
+    "v154": { "canonicalOps": 4, "transforms": 1, "diagnostics": 3, "faultyFixtures": 0 },
+    "v155": { "canonicalOps": 5, "transforms": 2, "diagnostics": 3, "faultyFixtures": 0,
+      "transformsList": ["import-ordering@1", "duplicate-import-consolidation@1"], "diagnosticsList": ["duplicate-import-analysis@1", "dead-require-analysis@1", "contract-test-consistency@1"],
+      "admissibleConsolidated": "2/3/multi-symbol same-specifier groups (LF+CRLF)", "refused": "11 refusal classes (see refusedCases)", "escalated": 0,
+      "mutationsDetected": true, "regressions": 0, "idempotent": true, "deterministic": true, "resourceMetrics": "NOT_MEASURED (ops trivial; no CPU/memory instrumentation)" },
+    "honestDelta": "catalogue grew by exactly ONE canonical TRANSFORM (4→5), proven safe + idempotent + symbol-preserving, with hard refusal of all ambiguity. No inflation (0 fixtures counted); no provider step relabelled; novel/semantic reasoning remains CLAUDE_CODE_EXECUTION."
+  },
+  "guaranteesPreserved": ["V153 closed deny-by-default (no eval/new Function/code-strings)", "V154 real-AST syntactic tier + candidate-only + owner-gated", "V152 pre/postconditions + idempotence + anti-reward-hacking", "NATIVE_GREEN/NATIVE_REPAIRED_GREEN/NATIVE_REFUSED/ESCALATED_TO_PROVIDER/VALIDATION_FAILED/DIAGNOSED"],
+  "limits": [
+    "contiguous same-specifier groups only (non-contiguous REFUSED — execution-order safety not proven at the syntactic tier)",
+    "named-only; alias/type/default/namespace/side-effect/attributes all REFUSED (no type-checker in scope — directive §13)",
+    "file-local; no cross-file Program; CPU/memory NOT_MEASURED",
+    "candidate patch only — real-repo write OWNER_GATED"
+  ],
+  "ownerGated": ["real-repo patch application", "a type-checker-backed tier for alias/type-aware consolidation", "registry expansion into governed scope"],
+  "honesty": "One real, small, provably-safe TRANSFORM added. VALIDATED_LOCAL / TESTED; not SIMULATED, not COMMERCIALISABLE. €0 clients; synthetic ≠ real; no VPS/spend/deploy; no new primitive/second engine/dependency."
+}

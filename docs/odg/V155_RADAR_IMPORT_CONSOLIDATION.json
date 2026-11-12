@@ -1,0 +1,17 @@
+{
+  "//": "V155 §10 — radar for safe duplicate-import consolidation, under the valid owner grant (verified valid to 2026-11-19, budget 200/20MB). READ-ONLY public research. fact ≠ editor-claim ≠ demonstrated-ODG-capability.",
+  "grant": { "ref": "docs/odg/V141_RESEARCH_GRANT.json", "verifiedValid": true, "usedCallsThisLot": 1, "budgetMaxCalls": 200 },
+  "capturedAtIso": "2026-11-12",
+  "queries": ["TypeScript import declaration semantics merging named imports side effect order AST safe consolidation 2026"],
+  "sources": [
+    { "url": "https://github.com/microsoft/TypeScript/blob/main/src/services/organizeImports.ts", "title": "TypeScript organizeImports.ts (microsoft/TypeScript)", "provenance": "official source", "nature": "fact(reference impl)", "freshness": "2026", "confidence": "HIGH", "technique": "the compiler's own import-organization service: merges same-module named imports, preserves side-effect imports", "applicability": "authoritative rules for safe merging", "limits": "full service; V155 implements a narrow safe subset" },
+    { "url": "https://github.com/manaflow-ai/cmux/pull/41432", "title": "Merge driver: imports merge per name; side-effect imports kept in moved positions", "provenance": "engineering PR", "nature": "fact(safety rule)", "freshness": "2026", "confidence": "MEDIUM", "technique": "side-effect imports execute the module for side effects ⇒ never reorder/merge; keep in position", "applicability": "refuse side-effect imports", "limits": "merge-driver context" },
+    { "url": "https://github.com/azmeenafandi/brl-subagent/issues/476", "title": "Normalise import blocks (18/48 modules import the same specifier twice)", "provenance": "issue", "nature": "fact(real duplicate-specifier prevalence)", "freshness": "2026", "confidence": "LOW-MEDIUM", "technique": "same-specifier duplicate imports are common; consolidation is a real need", "applicability": "the exact V155 case", "limits": "single project" }
+  ],
+  "findings": [
+    { "kind": "fact", "statement": "Merging two NAMED imports of the SAME specifier is runtime-safe: an ES module is evaluated once at its FIRST import position regardless; consolidating the named bindings into the first occurrence does not change module-evaluation order.", "appliedInV155": "consolidate ONLY same-specifier named-only groups; place the merged import at the FIRST occurrence; refuse if a side-effect import of any module sits between group members." },
+    { "kind": "fact", "statement": "Value imports of DIFFERENT specifiers must NOT be reordered/merged (changes ESM evaluation order); side-effect imports must be kept in position; namespace/default/attribute/type imports have distinct semantics.", "appliedInV155": "hard refusals: different specifier / default / namespace / side-effect / alias / type-only / import-attributes / attached-comment / name-collision / non-contiguous group / malformed — NATIVE_REFUSED with a precise reason." },
+    { "kind": "principle", "statement": "The TS compiler's own organizeImports merges same-module imports but preserves side-effect ordering — the authoritative safety model.", "appliedInV155": "V155 implements a NARROW, provable subset of that model (contiguous same-specifier named-only), refusing everything it cannot prove safe (SafeRepair 'never a wrong patch')." }
+  ],
+  "honesty": "Reference techniques; V155 implements only the demonstrably-safe subset at the syntactic tier (no type-checker). No paid API/credential/external write. €0 clients."
+}
