@@ -1,0 +1,32 @@
+{
+  "//": "V168 (§3 grant-verify + §4/§5 radar + §16 OWASP Agentic T1–T17 coverage matrix over ODG's REAL controls with EXECUTED threat tests). Delta dossier; no competing SSOT. Composes existing control modules — NO parallel security engine. Reports a matrix; changes no mission status; ODG decides remediation. No register/audit-log/ROADMAP/runtime-generated mutation.",
+  "baseline": { "head": "f7635dc (main @ V167+AddendumA)", "branch": "excellence/v168-owasp-agentic-matrix-20261112", "gateBefore": "591/591", "tsc": 0 },
+  "grantVerified_§3": { "source": "docs/odg/V141_RESEARCH_GRANT.json (canonical)", "authorized": true, "expiry": "2026-11-19T00:00:00Z (exact)", "nowValid": true, "budget": { "maxCalls": 200, "maxBytes": 20000000 }, "callsThisLot": "1 read-only WebFetch (OWASP Agentic T1–T17 reference)" },
+  "radar_§4_§5": "OWASP Agentic AI Threats & Mitigations T1–T17 (OWASP GenAI Security Project / Agentic Security Initiative): T1 Memory Poisoning, T2 Tool Misuse, T3 Privilege Compromise, T4 Resource Overload, T5 Cascading Hallucination, T6 Intent Breaking & Goal Manipulation, T7 Misaligned & Deceptive Behaviors, T8 Repudiation & Untraceability, T9 Identity Spoofing, T10 Overwhelming Human-in-the-Loop, T11 Unexpected RCE, T12 Agent Communication Poisoning, T13 Rogue Agents in MAS, T14 Human Attacks on MAS, T15 Human Manipulation, T16 Insecure Inter-Agent Protocol Abuse, T17 Supply Chain Compromise.",
+  "capabilityBuilt_§16": {
+    "module": "runtime/core/odg-owasp-agentic-matrix.ts (+test, 16 checks)",
+    "what": "maps every threat T1–T17 to ODG's REAL enforcing control module(s), classifies coverage honestly, and EXECUTES a verified subset against real attacks (per-control evidence).",
+    "executedThreatTests": [
+      "T8 Repudiation → audit-log: clean chain verifies, tampered payload detected (ok true→false)",
+      "T9 Identity Spoofing → agent-identity: real Ed25519 keypair, valid auth OK, REPLAYED nonce rejected (single-use)",
+      "T11 Unexpected RCE → odg-closed-executor: code-string op + unregistered op both REFUSED (deny-by-default, ok:false)",
+      "T17 Supply Chain → p8-slsa-level-gate: self-declared level 3 w/o evidence adjudicated to achieved=0 (claim NOT trusted)"
+    ]
+  },
+  "scorecard": { "totalThreats": 17, "COVERED": 8, "PARTIAL": 8, "GAP": 0, "OUT_OF_SCOPE": 1, "executedVerified": "4/4 all enforced", "honest": "COVERED (a real enforcing control exists) ≠ executedVerified (the control was RUN against an attack and blocked it). PARTIAL = real but incomplete controls. OUT_OF_SCOPE = T15 Human Manipulation (social engineering of humans is not a technical control ODG enforces). NO inflated full-agentic-security claim." },
+  "coverageMap": {
+    "COVERED": { "T1": "memory-trust-gate", "T2": "third-party-agent-gate + lethal-trifecta-gate", "T3": "capability-authorization + patch-executor confinement", "T4": "spend-governor + bash-command-governor", "T8*": "audit-log + otel-execution-trace", "T9*": "agent-identity (Ed25519 + nonce)", "T11*": "odg-closed-executor + bash-command-governor + patch-executor symlink confinement", "T17*": "p8-slsa-level-gate + supply-chain-attest + SBOM + license-policy (* = executed-verified)" },
+    "PARTIAL": { "T5": "evaluator-independence + independent re-derivation", "T6": "objective-authorization + action-gate", "T7": "autonomy-claim-guard + honesty taxonomy", "T10": "action-gate humanMandatory + owner-gate", "T12": "agent-governance-harness sealed evidence", "T13": "provider-capability-contract no-self-auth + evaluator-independence + mission-orchestrator", "T14": "agent-identity + Truth-Lock", "T16": "agent-identity + agent-governance-harness" },
+    "OUT_OF_SCOPE": { "T15": "Human Manipulation — social, not an ODG technical control" }
+  },
+  "gaps_§16": "0 hard GAPs; 8 PARTIAL controls flagged for strengthening (future governed lots): e.g. T5 cascading-hallucination needs broader cross-mission re-derivation; T10 human-in-the-loop overwhelm needs rate/fatigue controls; T13 rogue-agent needs the real multi-worker isolation (orchestrator currently routes/schedules, OS-worker spawning bwrap-gated).",
+  "honesty": "A real security-coverage MECHANISM (not an audit): T1–T17 mapped to ODG's actual controls, with 4 threats EXECUTED against the real controls and blocked (per-control evidence), honest coverage (8 COVERED / 8 PARTIAL / 0 GAP / 1 OUT_OF_SCOPE; executedVerified 4 ≠ full coverage). Composes existing controls, no parallel security engine, reports-only (ODG decides remediation). No status falsified, no register/audit-log/ROADMAP/runtime-generated mutation, no simulated deployment, €0 clients. HIGH recovery-loop + 5 FMEA residuals preserved.",
+  "globalStatus_§37": {
+    "weeklyScheduler_§23": "NOT_MEASURED — no real Sun 02:00–05:00 Europe/Paris run observed (candidate next lot: build window/budget/dedup/backoff/resume logic + controlled-trigger test, status stays NOT_MEASURED until a scheduled run is observed).",
+    "osWorkers_§8": "V167A orchestrator routes/schedules; true OS-isolated worker spawning is delegate-isolation's domain (bwrap-gated here) — honest limit, not simulated.",
+    "hmac_p0e_§26": "owner-held production key + out-of-band anchor OWNER_GATED (mechanism proven V162).",
+    "vps_§28_§29": "OWNER_GATED (systemd/root, TLS/domain/cert/secrets); NOT simulated; no deployment performed.",
+    "grantExpiry_§25": "V141 grant expires 2026-11-19T00:00Z — after expiry, this authorization must not be used; alternative legitimate sources/connectors to be qualified, no invented access."
+  },
+  "verification": { "gate": "expected 592/592 (591 + 1 new suite)", "tsc": "0 errors", "newChecks": "16", "registerByteIdentical": true, "auditLogUnmodified": true, "roadmapJsonUntouched": true }
+}
