@@ -1,0 +1,48 @@
+{
+  "//": "V156 — ODG autonomy-completion campaign: autonomy loop (§11/§13/§14/§26), capability inventory (§7/§10), fifteen-métier + five-commercial status (§8/§9), roadmap reconciliation (§16, extends V151_CONSOLIDATION — not a competing SSOT). Honest statuses; counts VERIFIED against real canonical records (not assumed from reported totals). Governed ROADMAP.json UNTOUCHED. €0 clients.",
+  "headCommit": "fb5d0ed (main @ V155) → V156 branch",
+  "authorityModel_§2_§3": {
+    "owner_grant": "V141 research grant (issuedBy owner) — verified valid to 2026-11-19, budget 200 calls/20MB; the grant file carries NO consumption counter ⇒ exact calls-used = NOT_MEASURED (my dossiers estimate ~9 across V147–V156).",
+    "odg_issued_authorization": "runtime/core/odg-autonomy-loop.ts issueAuthorization() — issuedBy ODG_GOVERNANCE, scoped + expiring, DISTINCT from the owner grant (directive §3: the two are never conflated).",
+    "bootstrap_finding": "ODG already has authorization/attribution machinery (capability-authorization.ts authorizeCapability, agent-governance-harness.ts authorizeExecution with sealed-evidence contract/tenant binding, capability-attribution.ts). V156 COMPOSES these (cited, not duplicated) into the native-first loop; it did NOT invent an ODG authorization event. The owner campaign grant ≠ an ODG-internal authorization — both are represented distinctly.",
+    "honest_boundary": "odg-autonomy-loop.ts was BUILT by Claude Code; it lets ODG EXECUTE the loop deterministically. The §26 journey's native steps really run via the closed registries (ODG_NATIVE_EXECUTION); the provider round is SIMULATED/labelled — never a real production run."
+  },
+  "autonomyLoop_§11_§13_§14_§26": {
+    "module": "runtime/core/odg-autonomy-loop.ts (+test)",
+    "nativeFirstDecision": "partitions a mission's requiredOps into native (closed-executor + AST ops) / provider (novel:) / missing; delegates ONLY the smallest provider component.",
+    "providerContract": "a deliverable is EVIDENCE not a verdict; ACCEPTED only after ODG INDEPENDENTLY reproduces the result; REJECTED on wrong-claim / forbidden-op / out-of-scope-file / expired / authorizationId-mismatch / missing-evidence / bare-unverifiable-claim.",
+    "independentValidators": "V1..V9 responsibilities mapped to checks that RE-DERIVE (never repeat the producer's claim); unmeasured ⇒ NOT_MEASURED (never promoted to PASS).",
+    "endToEndJourney": "§26 A..O executable (15 steps): receive→decompose→identify caps→select native→authorize→execute→detect injected failure→repair→independent verify→reject invalid supplier deliverable→request provider for missing cap only→refuse scope violation→record evidence→update state→continue. All native steps genuinely execute; proven in the test.",
+    "status": "VALIDATED_LOCAL / TESTED (synthetic). NOT a demonstration on a real customer system."
+  },
+  "capabilityInventory_§7_§10_statusLegend": "NATIVE_VALIDATED / NATIVE_TESTED / PARTIALLY_NATIVE / PROVIDER_DEPENDENT / SIMULATED / OWNER_GATED / BLOCKED / NOT_MEASURED / MISSING",
+  "capabilityInventory_highlights": {
+    "nativeEngineering_B": {
+      "closed-executor ops": "NATIVE_VALIDATED (10 ops, deny-by-default, no eval — V153)",
+      "AST-lite ops (import-ordering + duplicate-import-consolidation + 3 diagnostics)": "NATIVE_VALIDATED (V154/V155)",
+      "transform catalog (5 source-text)": "NATIVE_VALIDATED (V152)",
+      "value-fn generate/test/repair cycle": "NATIVE_VALIDATED (V151, now on the closed executor)",
+      "novel code/solution design": "PROVIDER_DEPENDENT (frontier LLM — never relabelled native)",
+      "type-aware analysis (ts.Program tier)": "OWNER_GATED (proposal only; not enabled — directive §12)"
+    },
+    "executionOrchestration_C": { "closed deny-by-default execution": "NATIVE_VALIDATED", "ODG-issued provider authorization + inspection": "NATIVE_TESTED (V156)", "mission queue/scheduler": "PARTIALLY_NATIVE (existing harnesses; weekly radar scheduler = documented, operational-proof NOT_MEASURED)" },
+    "globalIntelligence_D": { "internet research under grant": "NATIVE_TESTED (WebSearch/WebFetch, owner-gated grant)", "research→mission conversion": "PARTIALLY_NATIVE", "weekly radar operational scheduler": "NOT_MEASURED (documented Sun 02:00–05:00 Paris; a schedule is not a running scheduler)" },
+    "securityGovernance_E": { "9 primitives + Truth Lock + branch protection + CI": "NATIVE_VALIDATED", "independent assurance": "NATIVE_TESTED (ai-assurance-*, agent-governance-harness)" },
+    "productBusiness_F": { "cost/margin/déboursé/forecast (M2)": "VALIDATED_LOCAL (synthetic)", "real customer outcome / revenue": "NOT_MEASURED (€0 clients)" }
+  },
+  "fifteenMetiers_§8": "P1–P15 référentiels exist as profession-p* modules (13 module files cover the P1–P15 set; naming consolidates some). Each VALIDATED_LOCAL via its gate suite. Per-métier benchmark + native-autonomy depth = PROPOSED. VERIFIED: no 16th métier; no new primitive. HONEST: '166 capabilities' and '28 V12.4 missions' are HISTORICAL reported totals — the governed runtime/governance/ROADMAP.json currently holds 11 missions; the 28 were validated in a separate historical record (v124-28-missions). Reported totals are NOT re-asserted as current governed facts without the record.",
+  "fiveCommercialMetiers_§9": {
+    "M1-CRA-SBOM": "VALIDATED_LOCAL (detection V143 + remediation V147); R4/real-repo OWNER_GATED",
+    "M2-BTP-TP": "VALIDATED_LOCAL/DEMO_READY (order-coherence + document-intelligence + chantier-profitability + parc-stock + workforce-labour + chantier-cockpit, V145–V151; all 11 engines present). Full perimeter preserved. plan-métré/regulatory OWNER_GATED. Not commercialisable from synthetic.",
+    "M3-FINOPS": "VALIDATED_LOCAL (finops-analyzer V146)",
+    "M4-DATA-ENGINEERING": "VALIDATED_LOCAL (data-connector V146)",
+    "M5-ACCESSIBILITY": "VALIDATED_LOCAL (accessibility-check + applicability V145/V146; manual review mandatory)"
+  },
+  "roadmapReconciliation_§16": "extends docs/odg/V151_CONSOLIDATION.json (the canonical reconciliation matrix). VERIFIED counts: ROADMAP.json=11 governed missions; ~13 profession modules (P1–P15 set); 11/11 commercial engines; gate=577 suites. No historical mission dropped; no competing roadmap; governed ROADMAP.json UNTOUCHED (integration of V148 proposals remains owner-gated).",
+  "grant_§19": { "verifiedValid": true, "expiry": "2026-11-19", "budget": { "maxCalls": 200, "maxBytes": 20000000 }, "consumedCalls": "NOT_MEASURED (grant file has no counter; ~9 estimated across V147–V156)", "revocation": "none observed", "note": "no renewal attempted; renewal would be an owner-controlled action." },
+  "weeklyRadar_§20": "schedule documented (Sun 02:00–05:00 Europe/Paris, bounded, no permanent worker). OPERATIONAL scheduler = NOT_MEASURED (a documented cron window is not proof of a running, tested scheduler in this environment).",
+  "economicModel_§21": "ambition 5M€ net = objective to investigate, NOT a result. Scenarios (prudent ~150k€ / central ~298k€ / ambitious ~900k€ gross) from V145; 5M€ NOT substantiated. €0 clients; no customers/revenue/contracts invented; no prospecting.",
+  "deliveryChain_§25": "Claude Code cannot self-authorize commit/push/PR/merge/deploy in principle; in THIS environment the owner campaign authorization permits local implementation + tests + the standard PR→CI→merge flow used across V146–V155. Protected merges go through branch protection + CI (ODG-governed). No deployment.",
+  "ownerGated_residuals_§24": "preserved unchanged: HIGH recovery-loop (severity 9) + 5 FMEA MEDIUM+ residuals NOT accepted/closed; VPS deploy; type-checker tier; M1 R4; real-repo patch application; buyer contact.",
+  "honesty": "V156 adds ONE real module (the autonomy loop) that COMPOSES existing engines into a tested native-first authority/provider/validation loop, plus an honest verified inventory/reconciliation. It does NOT claim autonomy beyond the synthetic, tested journey; novel reasoning stays CLAUDE_CODE_EXECUTION; no status exceeds its evidence. No new primitive/second orchestrator; no VPS/spend/deploy/governed-path edit."
+}
