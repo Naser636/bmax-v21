@@ -1,0 +1,22 @@
+{
+  "//": "V147 §4 — RADAR research evidence for M2 BTP/TP, under the valid owner grant (V141_RESEARCH_GRANT, expires 2026-11-19). READ-ONLY public research. Each source carries URL/title/provenance/nature/freshness/confidence/scope/limits. fact ≠ estimate ≠ hypothesis ≠ recommendation. No discovery is auto-applied to the system — missions are PROPOSED to ODG governance only.",
+  "grant": { "ref": "docs/odg/V141_RESEARCH_GRANT.json", "validatedExpiryMs": 1795046400000, "usedCalls": 2, "budgetMaxCalls": 200 },
+  "capturedAtIso": "2026-11-12",
+  "queries": [
+    "logiciel gestion chantier BTP France 2026 devis facturation suivi tarif",
+    "logiciel métré quantité plan BTP travaux publics France takeoff étude de prix 2026"
+  ],
+  "sources": [
+    { "url": "https://www.obat.fr/blog/logiciel-batiment/", "title": "Logiciel de gestion BTP : lequel choisir en 2026 ? — Obat", "provenance": "vendor blog (comparatif)", "nature": "fact(competitor-exists)+estimate(pricing)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR SME construction management", "limits": "vendor-authored; prices are published list prices, not negotiated/real revenue" },
+    { "url": "https://costructor.co/blog/comparatif-logiciel-devis-facture-btp/", "title": "Logiciel devis facture BTP : comparatif 2026 (11 logiciels testés)", "provenance": "third-party comparison blog", "nature": "fact(market-density)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR devis/facture BTP", "limits": "11 solutions listed ⇒ crowded market; editorial, not primary registry" },
+    { "url": "https://www.kalitics-btp.com/meilleurs-logiciels-metre-btp", "title": "Meilleurs logiciels de métré BTP : le comparatif 2026", "provenance": "third-party comparison", "nature": "fact(quantity-takeoff market mature)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR métré/quantity-takeoff", "limits": "editorial ranking" },
+    { "url": "https://planaliz.fr/logiciel-metres-BTP-automatiques", "title": "Logiciel de métrés BTP automatiques par IA — Plans PDF & DWG", "provenance": "vendor", "nature": "fact(AI plan-extraction competitor exists: Planaliz, Kreo, Togal.AI)", "freshness": "2026", "confidence": "MEDIUM", "scope": "automatic quantity extraction from PDF/DWG/BIM plans", "limits": "vendor claims; AI-metré is an established, competitive space with specialised players" }
+  ],
+  "findings": [
+    { "kind": "fact", "statement": "The FR BTP devis/facture/chantier-management segment is CROWDED (Obat, Trustup Pro, EBP, Evoliz, BatUp, OrgaVision, Axonaut, Sellsy… 11+ compared), list prices ~25–43 €/mo, most now Factur-X / e-invoice compliant.", "implication": "M2 cannot differentiate on basic devis/facturation alone — V145/V147 differentiator (cross-document coherence + BTP document intelligence) is the correct wedge." },
+    { "kind": "fact", "statement": "Quantity takeoff / métré from plans (PDF/DWG/BIM) is a MATURE, specialised market with AI entrants (Kreo, Togal.AI, Planaliz) and incumbents (JustBIM, PriMus, Bluebeam Revu).", "implication": "§3.1 plan-reading/métré is a HARD, competitive capability requiring real geometry/BIM tooling — must be roadmapped as FUTURE/owner-gated, NEVER faked; the engine must refuse to invent a scale/dimension/métré and ask for human measurement." },
+    { "kind": "recommendation", "statement": "Prioritise document-intelligence + coherence (built V147) and chantier-level profitability reconciliation as the near-term vertical; defer plan-métré and regulatory-conformance engines to owner-gated phases with expert validation.", "implication": "feeds the progressive BTP roadmap priorities (V147_BTP_ROADMAP)." }
+  ],
+  "governanceNote": "Radar output is advisory: comparison + gaps + opportunities + PROPOSED missions for ODG. No discovery was transformed into a system change. Grant valid and not exhausted; if it were expired/exhausted, the block would be recorded and only local work continued.",
+  "honesty": "Prices are published list prices (HYPOTHESES for any ODG pricing), not realized sales. Competitor capabilities are vendor/editorial claims, not independently audited. €0 clients. No buyer contacted."
+}
