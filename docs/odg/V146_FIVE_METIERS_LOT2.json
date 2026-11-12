@@ -1,0 +1,69 @@
+{
+  "//": "V146 — five-métier PRODUCT ENGINEERING, LOT 2. Delta over V145_FIVE_METIERS.json (not a re-duplication). Turns validated capabilities into more complete, demonstrable products. States: RESEARCHED/GAP_IDENTIFIED/BUILDING/VALIDATED_LOCAL/DEMO_READY/COMMERCIALISABLE/OWNER_GATED/NOT_YET_DELIVERABLE. Strict separation real/synthetic/simulated/estimated. No client/contract/revenue/profit invented; prices=HYPOTHESES; €0 clients. VALIDATED_LOCAL ≠ ACTIVE_IN_PRODUCTION.",
+  "campaign": "V146 FIVE-MÉTIER PRODUCT ENGINEERING LOT 2",
+  "builtThisLot": [
+    {
+      "metier": "M3-FINOPS",
+      "artifact": "runtime/core/finops-analyzer.ts (+ .test.ts)",
+      "stateBefore": "GAP_IDENTIFIED",
+      "stateAfter": "VALIDATED_LOCAL",
+      "capability": "READ-ONLY analyzer over IMPORTED cost records (synthetic/labelled): normalises, groups byService/byPeriod, detects duplicate charges, unused (paid-zero-usage) resources, and period-over-period spend spikes (≥spikeRatio, default 1.5×). Emits optimisation OPPORTUNITIES with confidence=ESTIMATE.",
+      "honestyControls": [
+        "estimated savings are NEVER presented as realized — a realized saving requires measureSavings(before,after) over two ACTUAL period totals",
+        "integer-minor arithmetic (no float drift); malformed records dropped (fail-closed)",
+        "NO write to infra/subscriptions/spend; works on imported records only"
+      ],
+      "reuses": "integer-minor convention (shared with invoicing/einvoice); FinOps unit-economics concepts (finops.org)",
+      "measure": "before/after proven: measureSavings({totalMinor:450000},{totalMinor:350000}) ⇒ realizedMinor 100000, pct 22.2 (measured, not estimated)",
+      "notCommercialisable": "one analyzer module ≠ a FinOps product. No multi-cloud cost-export parsers, no continuous ingestion, no reconciliation with billing APIs. DEMO on synthetic data only."
+    },
+    {
+      "metier": "M4-DATA-ENGINEERING",
+      "artifact": "runtime/core/data-connector.ts (+ .test.ts)",
+      "stateBefore": "VALIDATED_LOCAL (quality engine only)",
+      "stateAfter": "VALIDATED_LOCAL (controlled import slice added)",
+      "capability": "READ-ONLY CSV/JSON connector (CSV priority): deterministic quoted-field parser, field mapping, exact number coercion, dedup by key, then schema+quality via the EXISTING profession-p4-data-reference.assessDataQuality (6-dim incl. timeliness) → anomaly report (MISSING_REQUIRED/TYPE_MISMATCH/OUT_OF_RANGE/STALE/DUPLICATE) + provenance note.",
+      "honestyControls": [
+        "fail-closed: empty / header-only / ragged-CSV-row-dropped / invalid-JSON / not-an-array ⇒ {ok:false, code} (never a silent partial import)",
+        "feeds the EXISTING data-quality engine — NO parallel integration architecture, no new primitive",
+        "READ-ONLY: parses text, never writes/fetches; synthetic/labelled data only"
+      ],
+      "reuses": "profession-p4-data-reference.assessDataQuality (no duplication of the quality engine)",
+      "notCommercialisable": "an import+quality slice ≠ a data-engineering platform. No warehouse connectors, no scheduling, no live sources."
+    },
+    {
+      "metier": "M5-ACCESSIBILITY",
+      "artifact": "runtime/core/accessibility-applicability.ts (+ .test.ts)",
+      "type": "LEGAL-RULE CORRECTION (directive §6, explicit)",
+      "stateBefore": "V145 over-simplified exemption model",
+      "stateAfter": "VALIDATED_LOCAL (corrected applicability model)",
+      "correction": {
+        "wrongRuleRemoved": "the naive universal '>10 salariés OU >2 M€ CA ⇒ obligé' condition",
+        "correctRule": "EAA microenterprise SERVICE exemption = employees < 10 AND (turnoverEur ≤ 2 M€ OR balanceSheetEur ≤ 2 M€). The financial criterion is an OR (turnover OR balance sheet).",
+        "productVsService": "the microenterprise exemption applies ONLY to SERVICE providers; PRODUCT_OPERATOR / BOTH ⇒ OBLIGATED regardless of size (products are not covered by the service exemption)",
+        "failClosed": "unknown headcount OR unknown financials OR unknown role ⇒ NEEDS_DETERMINATION (never an assumed obligation or assumed exemption)",
+        "noCertification": "manualReviewRequired stays true; verdict cites source; explicitly NOT legal advice / NOT a certification"
+      },
+      "sources": [
+        "Directive (EU) 2019/882 (EAA) Art. 4(5) — microenterprises providing services exempt from accessibility requirements",
+        "Commission Recommendation 2003/361/EC — microenterprise = <10 persons AND (turnover ≤ €2M OR balance sheet ≤ €2M)",
+        "FR Code de la consommation L.412-13 — French transposition of the EAA obligations/exemptions"
+      ],
+      "sourceVerificationNote": "legal thresholds encoded from the cited instruments; the applicability verdict is decision-support, NOT a legal determination or certification. Official-source/version verification remains an owner responsibility before any real use.",
+      "edgeCasesLocked": "16 tests: <10&turnover≤2M; <10&balance≤2M (turnover high/unknown); ≥10 emp; both financials exceeded; service not in scope; product operator; BOTH; unknown emp/financials/role; garbage; and the specific V145-correction case (turnover 2.5M but balance ≤2M + <10 emp ⇒ EXEMPT)."
+    }
+  ],
+  "synergiesWithoutMerging": "§7 respected — métiers share PRIMITIVES, not identities: M3 & M2(einvoice/invoicing) share integer-minor arithmetic; M4 reuses the P4 data-quality engine; M5 applicability is standalone decision-support. No métier merged, no 16th métier created.",
+  "notBuiltThisLot": [
+    "M2 full document-intelligence vertical slice (photo/doc → extraction → reconciliation) — larger; order-coherence-check (V145) remains the built reconciliation core; extraction demo DEFERRED to next lot",
+    "M1 CRA remediation engine (prioritisation→fix-proposal→applied→verified + before/after SBOM diff) — DEFERRED to next lot; detection (V143) unchanged; no auto-fix on real repos"
+  ],
+  "maturityDelta": {
+    "M1-CRA-SBOM": "COMMERCIALISABLE (R3 own-repo); remediation engine still to build; R4 owner-gated",
+    "M2-BUSINESS-OPS": "BUILDING — coherence reconciliation DEMO_READY; extraction slice not yet built",
+    "M3-FINOPS": "GAP_IDENTIFIED → VALIDATED_LOCAL (analyzer built, synthetic demo)",
+    "M4-DATA-ENGINEERING": "VALIDATED_LOCAL (quality + controlled import slice)",
+    "M5-ACCESSIBILITY": "VALIDATED_LOCAL — automated check (V145) + corrected applicability model (V146); full conformance ALWAYS needs manual review"
+  },
+  "honesty": "This lot added real, tested capabilities (M3 analyzer, M4 import slice, M5 legal-rule correction), each read-only, fail-closed, on synthetic/labelled data. NO métier is declared commercialisable on the strength of a working module. Estimated savings ≠ realized savings. No external source verification was treated as a certification. €0 clients; all prices/volumes remain HYPOTHESES (see V145 economic model; 5M€ net year-1 NOT substantiated). No VPS deploy, no spend, no buyer contact."
+}
