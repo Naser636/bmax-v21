@@ -1,0 +1,37 @@
+{
+  "//": "V150 — M2 workforce/labour hours + chantier labour cost engine. Delta dossier (not a competing SSOT). The governed ROADMAP.json is UNCHANGED; V148_ROADMAP_INTEGRATION_PROPOSAL stays non-integrated. States: VALIDATED_LOCAL/TESTED/SIMULATED/DEMO_READY/COMMERCIALISABLE/BLOCKED/NOT_MEASURED/OWNER_GATED. Synthetic (technical ids) ≠ real staff/payroll. €0 clients.",
+  "campaign": "V150 M2 WORKFORCE / LABOUR HOURS / CHANTIER LABOUR COST",
+  "builtThisLot": {
+    "module": "runtime/core/workforce-labour-engine.ts (+ .test.ts)",
+    "state": "VALIDATED_LOCAL / DEMO_READY",
+    "functions": {
+      "buildWorkforce": "extensible registry (6 roles; technical ids, no PII); qualifications carry provenance+validity+verification (VERIFIED/DOCUMENTED_UNVERIFIED/DECLARED_NO_PROOF — never 'qualified' without proof); costSource HOURS vs INVOICE",
+      "processTimesheets": "status DRAFT/SUBMITTED/APPROVED/REJECTED/CORRECTED; detects POINTAGE_DUPLIQUE/CHEVAUCHEMENT/AFFECTATION_SIMULTANEE/DUREE_IMPOSSIBLE/POINTAGE_INCOMPLET/TEMPS_NON_RATTACHE/ECART_PLANNING_POINTAGE/MODIFICATION_SANS_HISTORIQUE; approved hours never silently modified",
+      "computeLabourCost": "APPROVED hours × SUPPLIED loaded hourly rate (integer-minor); employer cost NEVER derived from a salary; majoration only from an explicit versioned param; no rate ⇒ COST_NOT_MEASURED; exact-duplicate approved entries skipped (no double count)",
+      "imputeLabourToChantier": "§5 — imputes ONLY approved own/interim hours (LABOR) + subcontract invoices (SUBCONTRACT, from documents) + travel (TRANSPORT); INVOICE-sourced staff hours NOT re-counted; a resource with BOTH hours and a subcontract invoice ⇒ DOUBLE_IMPUTATION (hours skipped); feeds chantier-profitability.computeChantier",
+      "labourAnalytics": "§6 — hours/coût per chantier & activity, avg hourly cost (NOT_MEASURED without a valid denominator), labour weight in déboursé sec; NO individual performance ranking; activities not compared across different scopes/units"
+    }
+  },
+  "costModel": "radar-grounded (V150_RADAR_LABOUR): DS(MO) = heures × taux horaire chargé. The loaded rate is a SUPPLIED versioned parameter, never derived from a salary; no cotisation/convention encoded.",
+  "antiDoubleCount": "PROVEN in test: (a) exact-duplicate approved timesheet skipped; (b) INVOICE-sourced staff hours not imputed; (c) a resource with both hours and a subcontract invoice ⇒ DOUBLE_IMPUTATION, hours skipped; (d) §7 consolidated déboursé sec (LABOR 65400 + MATERIAL 40000 + EQUIPMENT 48000 + SUBCONTRACT 200000 + TRANSPORT 5000 = 358400) excludes a 999999 stock purchase (commitment, not a charge).",
+  "consolidatedDebourseSec": "demonstrated across V148 (chantier-profitability) + V149 (parc-stock-engine) + V150 (labour): matériaux consommés + utilisation équipements + main-d'œuvre + sous-traitance, fed as distinct `expenses` into computeChantier — no double counting.",
+  "demonstrators": "5 §8 parcours (maison fondations/maçonnerie/second œuvre; terrassement/TP équipe+engins; extérieur béton/revêtements; salariés+intérimaires+sous-traitants; avenants+heures supp+dépassement budget) + adversarial (pointage dupliqué, chevauchement, temps négatif, coût horaire absent, devise différente, heure non approuvée, facture sous-traitant doublon, correction non tracée, affectation simultanée, absence preuve, écart prévu/réel, coût imputé deux fois) — in the test.",
+  "dependencies": ["chantier-profitability (V148)", "parc-stock-engine (V149)", "document-intelligence (V147)", "integer-minor arithmetic", "single-currency guard"],
+  "reuseNoParallelArch": "feeds chantier-profitability via its `expenses` shape; no parallel payroll/finance system; no 16th métier; no new primitive.",
+  "radar": "docs/odg/V150_RADAR_LABOUR.json — 1 dated FR query under valid grant (expires 2026-11-19, grant budget 200 calls). No payroll rule / cotisation / convention encoded.",
+  "odgAutonomyAssessment_§10": {
+    "honest": "This engine, its scenarios, and its tests were AUTHORED and EXECUTED by Claude Code (the bounded technical provider). ODG did NOT natively generate or run them. ODG is the GOVERNANCE authority: it governs via the gate (test:report), Truth Lock, branch protection + CI, the register and owner-gates. No Claude-Code-run test is presented as a native ODG execution.",
+    "whatOdgCouldDoLater": "analyse these contracts, formulate read-only mission scenarios, design/execute AUTHORIZED tests, analyse failures, propose corrections, and produce evidence — all within deny-by-default + Truth-Lock + owner-gates. That remains a PROPOSED autonomy capability, not demonstrated this lot.",
+    "humanValidationMandatory": "payroll data, real hours, employer cost, and any engaging écriture remain human-validated owner-gates."
+  },
+  "measures": { "fullGate": "571/571", "tsc": 0, "newSuites": 1, "antiDoubleCountProven": true },
+  "limits": [
+    "SYNTHETIC data (technical ids) only — never real staff/payroll/hours measurement",
+    "NO payroll calculation; loaded rate must be supplied + validated; COST_NOT_MEASURED otherwise",
+    "qualifications/habilitations signalled, not decided — provenance+validity+verification only",
+    "no real hours/planning/assignment/payroll mutation; no payment; no external contact",
+    "apparent productivity ≠ individual performance evaluation"
+  ],
+  "ownerGated": ["payroll data + real hours + employer cost validation", "engaging écritures", "P3 plan-métré", "P4 regulatory engines", "governed ROADMAP.json integration (V148 proposal)"],
+  "honesty": "M2 labour is VALIDATED_LOCAL/DEMO_READY, NOT commercialisable from synthetic tests. Differentiator = reconciliation-grounded, anti-double-count consolidated déboursé sec across labour + equipment + materials + subcontract. €0 clients; radar rates = HYPOTHESES unless a real validated rate is supplied."
+}

@@ -1,0 +1,18 @@
+{
+  "//": "V150 §1 — RADAR research for the M2 workforce/labour-cost path, under the valid owner grant (V141_RESEARCH_GRANT, expires 2026-11-19). READ-ONLY public research. Each source carries URL/title/country/provenance/nature/freshness/confidence/scope/limits. fact ≠ éditeur-claim ≠ estimate ≠ verified. No payroll rule/cotisation invented; no discovery auto-applied; proposals go to ODG governance only.",
+  "grant": { "ref": "docs/odg/V141_RESEARCH_GRANT.json", "validatedExpiryMs": 1795046400000, "usedCallsThisLot": 1, "budgetMaxCalls": 200 },
+  "capturedAtIso": "2026-11-12",
+  "queries": ["BTP coût horaire chargé main d'oeuvre déboursé sec calcul suivi heures pointage chantier 2026 France"],
+  "sources": [
+    { "url": "https://www.renalto.fr/blog/methode-debourses-secs-devis-batiment", "country": "FR", "title": "Déboursé sec BTP : calcul, exemple chiffré et méthode (2026)", "provenance": "vendor blog", "nature": "fact(labour formula: DS(MO)=temps unitaire×taux horaire chargé)+editor-claim", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR déboursé-sec labour", "limits": "editorial; method, not a binding payroll rule" },
+    { "url": "https://www.bm3e.fr/debourse-sec-btp-methode-exemple/", "country": "FR", "title": "Déboursé sec BTP : méthode et exemple", "provenance": "vendor guide", "nature": "fact(coût horaire chargé = brut + charges patronales + CP + primes + indemnités)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR loaded hourly cost composition", "limits": "editorial; the % charges are indicative, NOT encoded as a rule here" },
+    { "url": "https://altagem.com/blog/calculer-et-suivre-le-d%C3%A9bours%C3%A9-sec-sur-chantier-btp-en-2026", "country": "FR", "title": "Calculer et suivre le déboursé sec sur chantier BTP en 2026", "provenance": "vendor", "nature": "fact(pointage réel des heures feeds the déboursé sec)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR chantier hour tracking", "limits": "vendor" }
+  ],
+  "findings": [
+    { "kind": "fact", "statement": "Labour imputation formula = DS(MO) = heures × TAUX HORAIRE CHARGÉ. The loaded hourly cost composes salaire brut + charges patronales + congés payés + primes + indemnités (déplacement/panier).", "implication": "the engine takes the taux horaire chargé as a SUPPLIED, versioned PARAMETER (not derived); hours × rate = labour cost. If no loaded rate ⇒ COST_NOT_MEASURED. NEVER derive the employer cost from a brut/net salary (directive §4)." },
+    { "kind": "editor-claim", "statement": "Indicative FR loaded hourly rates ~28-48 €/h by qualification (manœuvre/N2-N3/N4).", "implication": "treated as a NON-BINDING reference only; NOT encoded as a rule, NOT used to fabricate a cost — a real rate must be supplied + validated." },
+    { "kind": "recommendation", "statement": "Impute ONLY approved hours × supplied loaded rate as LABOR cost; subcontractor work comes from its INVOICE (SUBCONTRACT), never double-counted as hourly cost.", "implication": "feeds the anti-double-count rule in workforce-labour-engine + V150 dossier." }
+  ],
+  "governanceNote": "Advisory only. No discovery transformed into a system change. No payroll rule / cotisation rate / convention collective encoded. Grant valid+not exhausted.",
+  "honesty": "Vendor rates/methods are editorial, not audited; the % charges are indicative and NOT encoded. No binding regulatory/payroll calc performed. €0 clients; no contact. Prices/rates = HYPOTHESES unless a real validated rate is supplied."
+}
