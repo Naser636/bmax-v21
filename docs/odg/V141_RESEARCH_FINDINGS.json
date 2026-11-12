@@ -1,0 +1,52 @@
+{
+  "//": "V141 — REAL internet research executed this session (WebSearch+WebFetch, owner-authorized read-only). Each finding compared to ODG, converted to governed missions via the canonical research-to-mission bridge (OWNER_DECISION; discovery ≠ authorization).",
+  "findings": [
+    {
+      "content": "SLSA v1.0 build track Levels 0-3 (L1 provenance exists, L2 signed+hosted builder, L3 hardened/isolated+unforgeable). ODG p8-slsa-level-gate ALREADY CONFORMANT (monotone L0-3, anti level-inflation, adjudicates claim). No gap — monitor the future source/common track.",
+      "source": "https://slsa.dev/spec/v1.0/levels",
+      "date": "2026-11-12",
+      "sourceClass": "LIVE_SOURCE",
+      "confidence": "HIGH",
+      "metier": "P8-supply-chain"
+    },
+    {
+      "content": "OWASP LLM01:2025 — string/semantic injection filters are EVADED via other languages/encodings (Base64). ODG sanitizeExternal missed base64-encoded injection. GAP CLOSED this session (decode+rescan, additive).",
+      "source": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+      "date": "2026-11-12",
+      "sourceClass": "LIVE_SOURCE",
+      "confidence": "HIGH",
+      "metier": "P2-ai/security"
+    }
+  ],
+  "governedMissions": [
+    {
+      "kind": "OWNER_DECISION",
+      "detail": "SLSA v1.0 build track Levels 0-3 (L1 provenance exists, L2 signed+hosted builder, L3 hardened/isolated+unforgeable). ODG p8-slsa-level-gate ALREADY CONFORMANT (monotone L0-3, anti level-inflation, adjudicates claim). No gap — monitor the future source/common track. — compare vs ODG P8-supply-chain",
+      "reason": "requires owner information/authorization or external reality — not self-executable",
+      "verifiableAcceptance": "the named dimension is independently DEMONSTRATED (not merely documented) per §103 — requires owner information/authorization",
+      "provenance": {
+        "source": "https://slsa.dev/spec/v1.0/levels",
+        "confidence": "HIGH",
+        "component": "ODG P8-supply-chain"
+      }
+    },
+    {
+      "kind": "OWNER_DECISION",
+      "detail": "OWASP LLM01:2025 — string/semantic injection filters are EVADED via other languages/encodings (Base64). ODG sanitizeExternal missed base64-encoded injection. GAP CLOSED this session (decode+rescan, additive). — compare vs ODG P2-ai/security",
+      "reason": "requires owner information/authorization or external reality — not self-executable",
+      "verifiableAcceptance": "the named dimension is independently DEMONSTRATED (not merely documented) per §103 — requires owner information/authorization",
+      "provenance": {
+        "source": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+        "confidence": "HIGH",
+        "component": "ODG P2-ai/security"
+      }
+    }
+  ],
+  "quarantined": 0,
+  "appliedImprovements": [
+    "sanitizeExternal: base64-encoded injection detection (OWASP LLM01) — measured before/after, 0 false positives"
+  ],
+  "conformantNoChange": [
+    "p8-slsa-level-gate conforms to SLSA v1.0 — no artificial change"
+  ]
+}

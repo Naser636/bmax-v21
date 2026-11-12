@@ -101,11 +101,28 @@ function normalizeSignal(raw: any, opts: any): any {
 }
 
 /** sanitizeExternal(signal) -> { untrusted, injectionFlags }. External content is DATA, never an instruction. */
+// V141 (OWASP-LLM01: string filters are EVADED via encodings, e.g. Base64) — decode suspicious base64 blobs and re-scan, so
+// an injection hidden as base64 can no longer slip past the plain-text denylist. PURELY ADDITIVE: it can only ADD flags
+// (more untrusted), never clear one. Bounded (blob length 16–4096, max 20 blobs) so it stays cheap and cannot be abused to hang.
+function decodeB64Matches(hay: string): number[] {
+  const flags: number[] = [];
+  const blobs = String(hay).match(/[A-Za-z0-9+/]{16,4096}={0,2}/g) || [];
+  for (const b of blobs.slice(0, 20)) {
+    if (b.length % 4 !== 0 && !/=+$/.test(b)) continue;                          // skip obviously non-base64 runs
+    let dec = "";
+    try { dec = Buffer.from(b, "base64").toString("utf8"); } catch { continue; }
+    if (!dec || !/[ -~]/.test(dec)) continue;                                    // ignore binary-looking decodes
+    INJECTION_PATTERNS.forEach((re: RegExp, i: number) => { if (re.test(dec)) flags.push(100 + i); });   // 100+ = encoded-injection
+  }
+  return flags;
+}
 function sanitizeExternal(signal: any): any {
   const s = isObj(signal) ? signal : {};
   const hay = [s.title, s.body].concat(arr(s.claims)).filter(isStr).join("\n");
-  const flags = INJECTION_PATTERNS.map((re: RegExp, i: number) => (re.test(hay) ? i : -1)).filter((i: number) => i >= 0);
-  return Object.freeze({ untrusted: flags.length > 0, injectionFlags: Object.freeze(flags) });
+  const plain = INJECTION_PATTERNS.map((re: RegExp, i: number) => (re.test(hay) ? i : -1)).filter((i: number) => i >= 0);
+  const encoded = decodeB64Matches(hay);                                         // OWASP-LLM01: catch base64-encoded injection
+  const flags = plain.concat(encoded);
+  return Object.freeze({ untrusted: flags.length > 0, injectionFlags: Object.freeze(flags), encodedInjection: encoded.length > 0 });
 }
 
 /** deduplicate(signals) -> unique by fingerprint (stable, keeps first occurrence). Pure. */
