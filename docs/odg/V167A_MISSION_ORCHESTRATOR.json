@@ -1,0 +1,39 @@
+{
+  "//": "V167 Addendum-A — multi-worker orchestrator BUILT and USED on the REAL open-mission inventory. Delta dossier; no competing SSOT. COMPOSES ODG's existing canonical mechanisms (dep-planner / provider-capability-contract / evaluator-independence / delegate-isolation / odg-open-mission-recovery) — NO parallel engine, NO duplicate register/scheduler/validator. Changes no status; executes nothing; ODG alone accepts. No register/audit-log/ROADMAP/runtime-generated mutation.",
+  "baseline": { "head": "5e2cb25 (main @ V167 OTel)", "branch": "excellence/v167b-mission-orchestrator-20261112", "gateBefore": "590/590", "tsc": 0 },
+  "addendumCompliance": "built the orchestration capabilities AND used them immediately on the REAL canonical missions (§2/§20) — not a theoretical engine separate from the roadmap.",
+  "module": "runtime/core/odg-mission-orchestrator.ts (+test, 17 checks)",
+  "composedMechanisms_§2_§26": {
+    "dep-planner.schedule": "dependency-layered parallel schedule (§3/§5/§11 — parallelisable layers + maxParallelism)",
+    "provider-capability-contract.canUse": "provider capability registry + least-privilege permission (§8/§13/§19)",
+    "evaluator-independence.auditIndependence": "independent quality gate — producer ≠ validator, self-cert/shared-critical ⇒ COMPROMISED (§14/§15)",
+    "delegate-isolation.validateScope": "worker scope isolation / git-collision guard (§10/§12/§22)",
+    "odg-open-mission-recovery.inventoryOpenMissions": "the REAL open-mission inventory it dispatches over (§2/§20)"
+  },
+  "usedOnRealRoadmap_§20_§21": {
+    "totalOpen": 12,
+    "routing": "every real open mission routed: ODG_NATIVE / DELEGATE_PROVIDER / SEQUENCED / NOT_DISPATCHABLE, grounded in the V164 classification.",
+    "dispatchableNow": "exactly the realizable work — slice-3 (ODG_NATIVE, bounded next-action); owner/external/definition/umbrella/unspecified ⇒ NOT_DISPATCHABLE (honest: a worker cannot do owner work); dependency-blocked ⇒ SEQUENCED.",
+    "parallelism": "dep-planner produces the dependency-layered schedule (layers + maxParallelism) over the dispatchable set; honest gain is bounded by how little is dispatchable now (most open work is owner/external-gated)."
+  },
+  "adversarialTests_§22": [
+    "self-certification (producer validates own work) ⇒ REJECT (COMPROMISED)",
+    "shared CRITICAL dependency (same model between builder/verifier) ⇒ REJECT (COMPROMISED)",
+    "incomplete/empty evidence (fake provider result) ⇒ REJECT",
+    "worker writes OUTSIDE its authorized scope (git collision) ⇒ REFUSED (delegate-isolation)",
+    "excessive permission (capability used without grant) ⇒ DENIED (provider-capability-contract)",
+    "blocked dependency ⇒ SEQUENCED, never parallelised"
+  ],
+  "delegationContract_§9_§11": "delegationContract() emits per-provider-task scope + authorized files + minimal permissions + acceptance criteria + evidence required + prohibitions (incl. no status self-promotion/closure — ODG decides).",
+  "evidenceAggregator_§13": "aggregateEvidence() counts a result as ODG-accepted ONLY if it passed the independent gate — a producer's self-claim is never counted.",
+  "honesty": "A real multi-worker DISPATCHER/COORDINATOR composed from ODG's existing mechanisms and applied to the real 12-open-mission inventory, with adversarial robustness (self-cert, fake evidence, excessive permission, git collision, blocked dep all handled). Honest limits: (1) it routes and schedules — it does not itself spawn OS-level parallel workers (true multi-process worker spawning with worktree isolation remains delegate-isolation's domain and is bwrap-gated in this environment); (2) most open missions are owner/external-gated ⇒ genuinely dispatchable parallelism is currently small (1 realizable) — reported honestly, not inflated. Changes NO mission status; executes nothing; ODG alone accepts.",
+  "globalStatus_§30": {
+    "orchestrationProof": "dispatch plan + parallel schedule + independent gate + adversarial robustness demonstrated on real missions (17 checks).",
+    "weeklyScheduler": "NOT_MEASURED (unchanged).",
+    "vps": "OWNER_GATED (not simulated).",
+    "hmac_p0e": "owner-gated (mechanism proven V162)."
+  },
+  "preservedRisks": "HIGH recovery-loop severity 9 + the five FMEA MEDIUM+ residuals preserved.",
+  "verification": { "gate": "expected 591/591 (590 + 1 new suite)", "tsc": "0 errors", "newChecks": "17", "registerByteIdentical": true, "auditLogUnmodified": true, "roadmapJsonUntouched": true },
+  "note": "Second lot of the V167 campaign (Addendum-A), landing after the V167 OTel lot (#530). The orchestrator CONSUMES the real inventory and composes existing mechanisms; it does not replace the roadmap with a parallelism demo."
+}
