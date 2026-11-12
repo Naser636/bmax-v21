@@ -18,8 +18,9 @@ function round(n: number): number { return Number(n.toFixed(4)); }
 function typeOf(v: any): string { return Array.isArray(v) ? "array" : (v === null ? "null" : typeof v); }
 
 /** assessDataQuality(rows, schema) -> quality findings + score. schema: { field: {type, min?, max?, required?} }. */
-function assessDataQuality(rows: any, schema: any): any {
+function assessDataQuality(rows: any, schema: any, opts?: any): any {
   const rs = arr(rows).filter(isObj); const sc = isObj(schema) ? schema : {};
+  const o = isObj(opts) ? opts : {};
   let nulls = 0, typeErrors = 0, rangeErrors = 0;
   for (const row of rs) {
     for (const f of Object.keys(sc)) {
@@ -32,10 +33,24 @@ function assessDataQuality(rows: any, schema: any): any {
   }
   const seen = new Set(); let duplicates = 0;
   for (const row of rs) { const k = isStr(row.id) ? row.id : JSON.stringify(row); if (seen.has(k)) duplicates++; else seen.add(k); }
+  // V143 — TIMELINESS dimension (standard 6-dimension data quality: accuracy/completeness/consistency/TIMELINESS/validity/
+  // uniqueness; research-backed). OPT-IN (opts.timeliness={field, maxAgeMs, nowMs}) so default behaviour is unchanged: a row
+  // whose timestamp field is older than nowMs − maxAgeMs (or missing/unparseable) is STALE — a timeliness defect. Fail-closed.
+  let stale = 0; let timelinessChecked = false;
+  const tl = isObj(o.timeliness) ? o.timeliness : null;
+  if (tl && isStr(tl.field) && typeof tl.maxAgeMs === "number" && tl.maxAgeMs >= 0 && typeof tl.nowMs === "number" && isFinite(tl.nowMs)) {
+    timelinessChecked = true;
+    for (const row of rs) {
+      const raw = row[tl.field];
+      const ts = typeof raw === "number" ? raw : (isStr(raw) ? Date.parse(raw) : NaN);
+      if (!isFinite(ts) || (tl.nowMs - ts) > tl.maxAgeMs) stale++;   // missing/unparseable OR older than maxAge ⇒ stale (fail-closed)
+    }
+  }
+  const dimsChecked = 3 + (timelinessChecked ? 1 : 0);   // completeness, validity, uniqueness (+ timeliness when configured)
   const totalChecks = rs.length * Math.max(1, Object.keys(sc).length);
-  const defects = nulls + typeErrors + rangeErrors + duplicates;
+  const defects = nulls + typeErrors + rangeErrors + duplicates + stale;
   const score = totalChecks > 0 ? round(1 - defects / totalChecks) : 0;
-  return Object.freeze({ rows: rs.length, nulls, typeErrors, rangeErrors, duplicates, defects, score, clean: defects === 0 });
+  return Object.freeze({ rows: rs.length, nulls, typeErrors, rangeErrors, duplicates, stale, timelinessChecked, dimsChecked, defects, score, clean: defects === 0 });
 }
 
 /** checkLineage(dataset) -> { ok, reason }. Fail-closed: a dataset without source+transform provenance is not trusted. */
