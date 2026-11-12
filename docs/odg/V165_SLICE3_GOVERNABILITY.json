@@ -1,0 +1,37 @@
+{
+  "//": "V165 (§2 reconcile + §8 slice-3 governability) — delta dossier; no competing SSOT. Determined whether p0-autonomy-measure-slice3-delegate-provenance is now governable, and executed + INDEPENDENTLY REPRODUCED the AUTHORIZED part (live governed-apply provider attribution) over the REAL patch-proposal-apply → patch-executor → actor-provenance chain. The canonical register, audit-log.ts, governed ROADMAP.json, and runtime/generated/ are UNMODIFIED. NO mission status changed (a provider cannot promote/close). Mission stays DEFERRED.",
+  "directive": "V165 — permanent global mandate (ODG authority; provider subordinate). This lot advances §8 (the one REALIZABLE_LOCAL open mission per the V164 inventory) with a bounded, safe write-set; other branches (radar, scheduler, P6, métiers, VPS, other blocked missions) remain owner/external/governance-gated and are reported, not falsified.",
+  "baseline": { "head": "8cb3dcb (main @ V164)", "branch": "excellence/v165-slice3-governability-20261112", "gateBefore": "587/587", "gateAfter": "588/588 (+1 suite)", "tsc": 0 },
+  "reconcile_§2": { "registerTotal": 427, "counts": { "ACCEPTED": 415, "BLOCKED": 6, "IN_PROGRESS": 3, "DEFERRED": 3 }, "staleAcceptances": 0, "registerLastModified": "V123 (V124–V165 never mutated it)", "openMissions": 12, "realizableLocal": ["p0-autonomy-measure-slice3-delegate-provenance (per the V164 read-only inventory)"] },
+  "governabilityVerdict_§8": {
+    "missionId": "p0-autonomy-measure-slice3-delegate-provenance",
+    "liveGovernedApply": {
+      "verdict": "GOVERNABLE — ALREADY CORRECT (executed + independently reproduced here)",
+      "realSeams": ["patch-proposal-apply.ts applyProposal stamps authoredBy=\"PROVIDER\"", "patch-executor.ts carries plannedAuthor(patch) into each patch-execution.json entry (defaults UNKNOWN); mission-lifecycle EXECUTED probe is independent of authoredBy (0 refs)", "actor-provenance.ts resolveMissionActor: authoredBy∈{PROVIDER,LOCAL_PROVIDER} ⇒ TECHNICAL_PROVIDER (author governs — ODG applying does NOT promote to ODG)"],
+      "reproduction": "reproduceGovernedApply() drives the REAL provider seam end-to-end in a scratch cwd ⇒ entry {status:APPLIED, authoredBy:PROVIDER, appliedBy:ODG_EXECUTOR} ⇒ actor TECHNICAL_PROVIDER. reproduceByAuthor() discriminates over real executor output: ODG_RULES ⇒ ODG, PROVIDER ⇒ TECHNICAL_PROVIDER, UNKNOWN ⇒ no attribution (ambiguous, honest)."
+    },
+    "historicalOutOfBand": {
+      "verdict": "NOT BOUNDED-GOVERNABLE — stays DEFERRED",
+      "why": ["the delegate-isolation/odg-delegate path writes no patch-execution.json", "the subsequent convergence pipeline's own patch-executor OVERWRITES runtime/generated/patch-execution.json before recordMission reads it (confirmed: autonomy-runtime-adapter spawns the pipeline + mission-ledger)", "making authoredBy=PROVIDER survive a HISTORICAL delegation requires changing the CONSEQUENTIAL convergence/patch-executor execution path, which also flips mission-lifecycle.buildEvidence's EXECUTED probe from 'no execution entries' to ok:true (archival-semantics change) ⇒ owner/governance review"],
+      "currentBehaviourHonest": "a historical delegation resolves UNKNOWN actor — already HONEST (no false ODG credit); no defect open; a measurement ENHANCEMENT, not a bug.",
+      "acceptanceWhenAttempted": ["authoredBy=PROVIDER survives the convergence/patch-executor chain for a HISTORICAL delegation", "mission-lifecycle.buildEvidence EXECUTED probe UNCHANGED for non-delegated missions", "an end-to-end delegate smoke demonstrates PROVIDER vs ODG-native attribution"]
+    }
+  },
+  "deliverable": {
+    "module": "runtime/core/odg-slice3-governability.ts (+test, 16 checks)",
+    "reuses": ["patch-proposal-apply.ts (real provider seam)", "patch-executor.ts (compiled dist — real executor)", "actor-provenance.ts (real executor-attribution authority) — NO parallel engine, NO new primitive"],
+    "safety": "writes only to ephemeral/caller scratch cwds (mkdtemp, auto-removed); the repo's runtime/generated/ is NEVER touched (verified clean post-test)."
+  },
+  "globalRoadmapStatus_§37_§38": {
+    "openMissions": "12 (per the V164 inventory, re-verified): 1 REALIZABLE_LOCAL (this lot — slice-3, partially governable, DEFERRED retained), 5 OWNER_GATED (systemd-activation, tls-exposure, demand-validation, golden-path, commercial-ops-h3), 2 EXTERNAL_BLOCKED (broad-it eval/corpus), 1 DEPENDENCY_BLOCKED (billing-sandbox←demand-validation), 1 DEFINITION_BLOCKED (eleven-profession), 1 UMBRELLA (master-unified), 1 UNSPECIFIED_IN_REGISTER (p0e-audit-log-keyed-integrity).",
+    "radar": "grant valid→2026-11-19; consumed NOT_MEASURED; no external research this lot (governability is local).",
+    "weeklyScheduler": "NOT_MEASURED — unchanged; no real Sun 02:00–05:00 Europe/Paris run observed; no worker/polling added.",
+    "fiveCommercialMetiers": "VALIDATED_LOCAL; €0 clients (real demand/billing OWNER_GATED).",
+    "deliveryChainAndVPS": "OWNER_GATED (systemd/root, TLS/domain/cert/secrets); NOT simulated; no deployment performed.",
+    "p6AndMetierBenchmarks": "not advanced this lot (write-set bounded to §8); deferred to a dedicated governed lot."
+  },
+  "preservedRisks_§14": "HIGH recovery-loop severity 9 + the five FMEA MEDIUM+ residuals preserved (untouched).",
+  "honestyTaxonomy_§28": "NATIVE_EXECUTED + INDEPENDENTLY_REPRODUCED here = the live governed-apply provider attribution path (real chain, scratch-cwd reproduction). NOT claimed: ACTIVE_IN_PRODUCTION, ACCEPTED_BY_ODG (ODG — not the provider — accepts), or closure of the register mission. Historical-delegation attribution = NOT_IMPLEMENTED (consequential, owner-gated).",
+  "verification": { "gate": "588/588 PASS (587 + 1 new suite)", "tsc": "0 errors", "newChecks": "16", "registerByteIdentical": true, "runtimeGeneratedUntouched": true, "auditLogUnmodified": true, "roadmapJsonUntouched": true },
+  "honesty": "V165 determined slice-3's governability honestly: the live governed-apply provider-attribution path is GOVERNABLE and already correct — executed and independently reproduced end-to-end over the REAL patch-proposal-apply → patch-executor → actor-provenance chain (provider ⇒ TECHNICAL_PROVIDER, ODG-native ⇒ ODG, unknown ⇒ no attribution); the historical out-of-band delegation path is NOT bounded-governable (consequential execution-path change + owner review) and the register mission STAYS DEFERRED. No status falsified, no register/audit-log/ROADMAP/runtime-generated mutation, no parallel engine, no simulated deployment, €0 clients. The 11 non-realizable open missions keep their unsatisfied dependencies explicit and are surfaced to ODG, which selects and closes."
+}
