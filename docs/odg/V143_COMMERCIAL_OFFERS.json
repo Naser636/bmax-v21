@@ -1,0 +1,121 @@
+{
+  "//": "V143 §5 — commercial offers built from V142 verified-demand opportunities via commercial-offer-builder (reuses pricing-grid + p9-unit-economics). COMMERCIALISABLE ⟺ built+validated capability + proof + valid pricing; else NOT_YET_DELIVERABLE with exact gaps. No client/sale/revenue/margin invented; prices are HYPOTHESES; €0 clients.",
+  "offers": [
+    {
+      "offerId": "OFFER-CRA-SBOM",
+      "segment": "EU software publishers / manufacturers in CRA scope (Reg 2024/2847)",
+      "problem": "CRA machine-readable SBOM + technical-documentation + evidence obligations (vuln-reporting 2026-09-11; full 2027-12-11)",
+      "service": "CRA SBOM + evidence dossier (per product/release)",
+      "deliverables": [
+        "machine-readable SBOM (CycloneDX/SPDX) + audit",
+        "CRA evidence dossier (tech-doc inputs)",
+        "SLSA build-level assessment"
+      ],
+      "limits": [
+        "EVIDENCE PREPARATION, not legal certification",
+        "R3 own-repo synthetic; no paid client yet (R4 needs a first real engagement)"
+      ],
+      "requiredCapabilities": [
+        "P3",
+        "P8",
+        "P10"
+      ],
+      "missingWork": [],
+      "proof": [
+        "p3-cra-evidence-demonstrator",
+        "sbom-audit-service",
+        "p8-slsa-level-gate (SLSA-v1.0-conformant)",
+        "V137 P3 VALIDATED_LOCAL"
+      ],
+      "capabilityMaturity": "VALIDATED_LOCAL",
+      "priceScenarios": {
+        "low": 5000,
+        "high": 8000,
+        "impliedDayRate": {
+          "min": 1000,
+          "max": 1600
+        },
+        "marginHypothesisPct": 70,
+        "basis": "HYPOTHESIS — price band + cost are assumptions; no realized sale/revenue/margin"
+      },
+      "risks": [
+        "crowded market (anchore/finitestate/sbomify)",
+        "R4 production proof pending (owner-gated first engagement)"
+      ],
+      "proofRequiredToAnnounce": [],
+      "status": "COMMERCIALISABLE",
+      "blockers": [],
+      "honesty": "An offer is COMMERCIALISABLE only when the capability is genuinely built+validated with proof and valid pricing; otherwise NOT_YET_DELIVERABLE with the exact missing work. No client/contract/sale/revenue/realized-margin invented; all prices/margins are HYPOTHESES."
+    },
+    {
+      "offerId": "OFFER-FR-EINVOICE",
+      "segment": "French businesses under the e-invoicing mandate (2026-09 receive; 2027-09 SME issue)",
+      "problem": "EN 16931 / Factur-X structured e-invoice validation + conformance",
+      "service": "Factur-X / EN 16931 validation service",
+      "deliverables": [
+        "EN 16931 conformance report",
+        "BR-CO rule validation + remediation hints"
+      ],
+      "limits": [
+        "VALIDATION only; NOT a certified PDP/transmission platform"
+      ],
+      "requiredCapabilities": [
+        "P11",
+        "P10"
+      ],
+      "missingWork": [
+        "certified PDP connectivity (DGFiP-approved platform)",
+        "ISO 27001 certification for PDP operation (OG-05, OWNER-GATED)"
+      ],
+      "proof": [
+        "einvoice-validator (EN 16931 BR-CO-10/13/14/15/17 + BR-CO-18 strict)",
+        "factur-x-extract"
+      ],
+      "capabilityMaturity": "VALIDATED_LOCAL",
+      "priceScenarios": {
+        "low": 1500,
+        "high": 3000,
+        "impliedDayRate": {
+          "min": 500,
+          "max": 1000
+        },
+        "marginHypothesisPct": 40,
+        "basis": "HYPOTHESIS — price band + cost are assumptions; no realized sale/revenue/margin"
+      },
+      "risks": [
+        "PDP certification owner-gated (ISO 27001)",
+        "established platforms (Esker/Pennylane)"
+      ],
+      "proofRequiredToAnnounce": [
+        "built+validated capability",
+        "no missing work",
+        "evidence/proof",
+        "valid pricing"
+      ],
+      "status": "NOT_YET_DELIVERABLE",
+      "blockers": [
+        "missing work before deliverable: certified PDP connectivity (DGFiP-approved platform); ISO 27001 certification for PDP operation (OG-05, OWNER-GATED)"
+      ],
+      "honesty": "An offer is COMMERCIALISABLE only when the capability is genuinely built+validated with proof and valid pricing; otherwise NOT_YET_DELIVERABLE with the exact missing work. No client/contract/sale/revenue/realized-margin invented; all prices/margins are HYPOTHESES."
+    }
+  ],
+  "shortlist": {
+    "ranked": [
+      {
+        "rank": 1,
+        "offerId": "OFFER-CRA-SBOM",
+        "status": "COMMERCIALISABLE",
+        "segment": "EU software publishers / manufacturers in CRA scope (Reg 2024/2847)"
+      },
+      {
+        "rank": 2,
+        "offerId": "OFFER-FR-EINVOICE",
+        "status": "NOT_YET_DELIVERABLE",
+        "segment": "French businesses under the e-invoicing mandate (2026-09 receive; 2027-09 SME issue)"
+      }
+    ],
+    "commercialisable": 1,
+    "notYetDeliverable": 1,
+    "note": "ranked deliverable-first then price midpoint; NOT_YET_DELIVERABLE offers are honest, not hidden; no revenue implied."
+  }
+}
