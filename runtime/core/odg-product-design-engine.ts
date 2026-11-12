@@ -47,14 +47,14 @@ function designProduct(opp: any): any {
   const price = num(o.proposedPrice);
   const deliveryCost = num(o.estDeliveryCostPerCustomer);
   const supportCost = num(o.estSupportDaysPerCustomer) * HUMAN_DAY_RATE;
-  const netMarginPerCustomer = Math.round(price - deliveryCost - supportCost);
-  const economicsBroken = !(price > 0) || netMarginPerCustomer <= 0 || num(o.estBuildDays) > 600; // 600d build > 300-day plan ⇒ unrealistic
+  const contributiveMarginPerCustomer = Math.round(price - deliveryCost - supportCost); // CONTRIBUTIVE margin (price - variable delivery/support) — NOT net profit (which needs volume, fixed opex, CAC, tax). See odg-product-economics-audit.
+  const economicsBroken = !(price > 0) || contributiveMarginPerCustomer <= 0 || num(o.estBuildDays) > 600; // 600d build > 300-day plan ⇒ unrealistic
 
   const certBlocks = o.regulatory === "MANDATORY" && o.regCertObtainableInWindow !== true;
 
   // verdict precedence: broken economics > insufficient demand evidence > mandatory-cert-not-in-window > buildable.
   let verdict: string, rationale: string;
-  if (economicsBroken) { verdict = VERDICT.DO_NOT_BUILD; rationale = `economics not defensible (net margin/customer = €${netMarginPerCustomer}; build ${num(o.estBuildDays)}d)`; }
+  if (economicsBroken) { verdict = VERDICT.DO_NOT_BUILD; rationale = `economics not defensible (contributive margin/customer = €${contributiveMarginPerCustomer}; build ${num(o.estBuildDays)}d)`; }
   else if (!evidenceSufficient) { verdict = VERDICT.EVIDENCE_INSUFFICIENT; rationale = `demand=${demand}, hardBuySignal=${hardSignal} — a hypothesis/market-size is NOT validated demand; needs OBSERVED budget + a hard buy-signal`; }
   else if (certBlocks) { verdict = VERDICT.BUILD_PENDING_CERT; rationale = "mandatory certification not obtainable in the planning window — build + prepare, commercialize after cert (owner-gated)"; }
   else { verdict = VERDICT.BUILDABLE_NOW; rationale = "observed demand + hard buy-signal + defensible economics + no blocking mandatory cert"; }
@@ -65,7 +65,7 @@ function designProduct(opp: any): any {
     evidenceSufficient, demandEvidence: demand, hardBuySignal: hardSignal,
     valueProposition: evidenceSufficient ? `measurable outcome for ${o.targetClient || "target"}: address "${o.problem || "problem"}"` : "NOT asserted — evidence insufficient",
     features, competitors: Object.freeze(Array.isArray(o.competitors) ? o.competitors.slice() : []),
-    economics: Object.freeze({ price, deliveryCost, supportCost, netMarginPerCustomer, estBuildDays: num(o.estBuildDays) }),
+    economics: Object.freeze({ price, deliveryCost, supportCost, contributiveMarginPerCustomer, estBuildDays: num(o.estBuildDays), marginKind: "CONTRIBUTIVE_NOT_NET" }),
     regulatory: o.regulatory || "NONE",
     verdict, rationale,
     productDesignStatus: "PARTIAL", // NEVER AUTONOMOUS without end-to-end proof
@@ -84,15 +84,15 @@ function compareDesigns(opp: any, variants: any): any {
     const valueSum = (Array.isArray(v.candidateFeatures) ? v.candidateFeatures : []).filter((f: any) => feats.mvp.includes(f.name)).reduce((a: number, f: any) => a + num(f.value), 0);
     const buildDays = num(v.estBuildDays, 1);
     const efficiency = Math.round((valueSum / Math.max(1, buildDays)) * 1000) / 1000; // value per build-day
-    return { name: v.name, verdict: d.verdict, netMargin: d.economics.netMarginPerCustomer, mvpCount: feats.mvp.length, dropped: feats.doNotBuild, valueSum, efficiency };
+    return { name: v.name, verdict: d.verdict, contributiveMargin: d.economics.contributiveMarginPerCustomer, mvpCount: feats.mvp.length, dropped: feats.doNotBuild, valueSum, efficiency };
   });
   const viable = scored.filter((s: any) => s.verdict === VERDICT.BUILDABLE_NOW || s.verdict === VERDICT.BUILD_PENDING_CERT);
   const pool = viable.length ? viable : scored;
-  pool.sort((a: any, b: any) => b.efficiency - a.efficiency || b.netMargin - a.netMargin);
+  pool.sort((a: any, b: any) => b.efficiency - a.efficiency || b.contributiveMargin - a.contributiveMargin);
   const preferred = pool[0];
   return Object.freeze({
     ok: true, variants: Object.freeze(scored), preferred: preferred.name,
-    justification: `"${preferred.name}" maximises value-per-build-day (${preferred.efficiency}) at net margin €${preferred.netMargin} with ${preferred.mvpCount} MVP features; drops ${preferred.dropped.length} low-value feature(s)`,
+    justification: `"${preferred.name}" maximises value-per-build-day (${preferred.efficiency}) at contributive margin €${preferred.contributiveMargin} with ${preferred.mvpCount} MVP features; drops ${preferred.dropped.length} low-value feature(s)`,
     featuresNotToBuild: preferred.dropped,
     note: "preferred by value/build-day then net margin; low-value features explicitly dropped (not everything requested is worth building).",
   });

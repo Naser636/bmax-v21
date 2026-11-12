@@ -1,0 +1,29 @@
+{
+  "//": "V178 (§5 — audit + correct the V177 product-design economics). Delta dossier; no competing SSOT. Self-correction of V177: the per-customer figure was mislabelled 'netMargin' but is CONTRIBUTIVE margin. Corrected the V177 module + built the proper 3-level breakdown. REUSES odg-economic-model.COST (no duplicate). No register/audit-log/ROADMAP/canonical-source mutation; no fabricated demand; €0 clients.",
+  "baseline": { "head": "14c310e (main @ V177)", "branch": "excellence/v178-product-economics-audit-20261112", "gateBefore": "604/604", "tsc": 0, "grant": "V141 VALID→2026-11-19 (re-checked; no live calls this lot — this is a correctness audit of existing work)" },
+  "v177Correction_§5": {
+    "defectFound": "odg-product-design-engine.ts labelled the per-customer figure `netMarginPerCustomer`, but the formula (price − variable delivery − variable support) is the CONTRIBUTIVE MARGIN, NOT net profit. §5 explicitly requires distinguishing marge contributive / bénéfice opérationnel / bénéfice net.",
+    "fixApplied": "renamed netMarginPerCustomer → contributiveMarginPerCustomer across odg-product-design-engine.ts (economics object + rationale + compareDesigns) + its test; added marginKind: 'CONTRIBUTIVE_NOT_NET'. The NUMBER (€26,500) was arithmetically correct — only the LABEL was overstated.",
+    "v177Retest": "the corrected V177 engine still passes its 17 tests."
+  },
+  "nis2ExampleVerified_§5": {
+    "v177Figure": 26500,
+    "formula": "price €30,000 − variable delivery €2,000 − variable support (3 days × €500/day = €1,500) = €26,500",
+    "recomputedContributiveMargin": 26500, "matches": true,
+    "v177LabelWas": "netMarginPerCustomer (OVERSTATED)", "correctedLabel": "contributiveMarginPerCustomer",
+    "assumptions_provenance": ["price €30k = HYPOTHESIS (vs GRC competitors; NOT a confirmed quote)", "delivery €2k/customer = HYPOTHESIS", "support 3 days/customer/yr = HYPOTHESIS", "€500/day loaded rate = HYPOTHESIS (FR)", "customers/CAC/cert/infra = SIMULATED volume, NOT validated demand"]
+  },
+  "capabilityBuilt_§5": {
+    "module": "runtime/core/odg-product-economics-audit.ts (+test, 12 checks)",
+    "threeLevelBreakdown": {
+      "level1_contributiveMarginPerCustomer": "price − variable delivery − variable support (= €26,500 for NIS2)",
+      "level2_operatingProfit": "Σ contributive − salaries − infra − certification − CAC total",
+      "level3_netProfit": "operating profit × (1 − corporate tax 25%)"
+    },
+    "workedExample_100simulatedCustomers": { "contributivePerCustomer": 26500, "totalContributive": 2650000, "fixedCosts": 335000, "cacTotal": 300000, "operatingProfit": 2015000, "tax": 503750, "netProfit": 1511250, "note": "at 100 SIMULATED NIS2 customers the MODELLED net profit is ~€1.51M — far below the €5M target and nowhere near the per-customer €26.5k figure. Volume-dependent; NOT a forecast; NOT validated demand." }
+  },
+  "honesty_§5": "BUILDABLE_NOW means only 'buildable per the engine' — NOT validated demand, NOT a guaranteed sale. The €26,500 is CONTRIBUTIVE margin per customer, not net profit (corrected). Net profit is volume-dependent and tax-adjusted; the 100-customer figure is a SIMULATED model, not a forecast. Every input is provenance-tagged; no confirmed prices; €0 real clients; €5M NOT guaranteed.",
+  "deferredBranches": "§2 (30-capability cross-audit — recover canonical list), §3/§4 (world + 15-métier ranking incl. NIS2/CRA/EAA), §6/§7 (offers + demand-validation plan), §8 (commercial-function hardening), §9 (full economic refresh with real observed prices), §10 (ISO 27001 completion), §11 (300-day critical path) remain next governed branches.",
+  "verification": { "gate": "expected 605/605 (604 + 1 new suite; V177 engine corrected in place, still green)", "tsc": "0 errors", "newChecks": "12", "canonicalSourcesUntouched": true },
+  "honesty": "V178 audited my own V177 product-design economics and found + corrected a real mislabel: the per-customer €26,500 NIS2 figure is CONTRIBUTIVE margin (price − variable costs), NOT net profit. Fixed the field name in V177 (number unchanged, label corrected) and built a proper 3-level breakdown (contributive → operating → net) showing net profit is volume-dependent and tax-adjusted (~€1.51M at 100 SIMULATED customers, not €26.5k and not €5M). Every assumption provenance-tagged; BUILDABLE_NOW ≠ sale; no confirmed prices; SYNTHETIC; €0 clients; €5M NOT guaranteed. No status falsified, no register/audit-log/ROADMAP/canonical-source mutation, no simulated deployment."
+}

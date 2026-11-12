@@ -12,7 +12,7 @@ const STRONG = { id: "nis2", metier: "P3", problem: "NIS2 risk-mgmt + 24-72h inc
 function main() {
   // ---- strong opportunity ⇒ BUILDABLE_NOW + MVP + features-not-to-build ----
   const s = D.designProduct(STRONG);
-  check("STRONG opportunity (observed demand + hard buy-signal + economics) ⇒ BUILDABLE_NOW", s.verdict === "BUILDABLE_NOW" && s.economics.netMarginPerCustomer > 0);
+  check("STRONG opportunity (observed demand + hard buy-signal + economics) ⇒ BUILDABLE_NOW", s.verdict === "BUILDABLE_NOW" && s.economics.contributiveMarginPerCustomer > 0);
   check("MVP keeps essential + high-value-low-cost; explicitly drops a low-value feature (NOT to build)", s.features.mvp.includes("incident-reporting") && s.features.mvp.includes("sbom-tracking") && s.features.doNotBuild.includes("fancy-3d-dashboard"));
 
   // ---- weak / no-budget / market-size-not-demand ----
