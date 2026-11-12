@@ -1,0 +1,43 @@
+{
+  "//": "V161 (§2 P0) — ODG reads + reconciles the REAL canonical closure register (docs/odg/closure-register.json) and proves the V160 crash-atomic persistence is LOSSLESS on its real schema. Delta dossier; no competing SSOT; the production register is NOT mutated (read-only). Governed ROADMAP.json UNTOUCHED.",
+  "headCommit": "f65d4ed (main @ V160) → V161 branch",
+  "realRegisterAudit_§2": {
+    "path": "docs/odg/closure-register.json",
+    "schema": "{ //, version, items:[{ id, program, title, status, deps, priority, evidence, acceptance, staleEvidence }] } — campaign-controller-compatible (loadRegister ok).",
+    "total": 427,
+    "statusCounts": { "ACCEPTED": 415, "BLOCKED": 6, "IN_PROGRESS": 3, "DEFERRED": 3 },
+    "acceptedWithEvidence": "415/415 (every acceptance is evidence-backed)",
+    "staleAcceptances": 0,
+    "historicalVsCurrent": "CONFIRMED: the real register holds 427 missions — the historical '28 missions' total is NOT the current count; this lot measures the real number from the canonical file.",
+    "nextEligibleLot": "master-unified-campaign (P2, IN_PROGRESS)"
+  },
+  "openMissionsReconciled": {
+    "owner_gated_or_external": ["broad-it-independent-eval-set (BLOCKED)", "campaign-runner-systemd-activation (BLOCKED — root/systemd owner-gated)", "dashboard-tls-exposure (BLOCKED — TLS/domain owner-gated)", "p01-demand-validation (BLOCKED — business/owner)", "p01-billing-sandbox (BLOCKED — billing/owner)", "p0e-audit-log-keyed-integrity (BLOCKED — governance)"],
+    "active": ["broad-it-corpus-grow (IN_PROGRESS)", "eleven-profession-program-definition (IN_PROGRESS)", "master-unified-campaign (IN_PROGRESS)"],
+    "deferred": ["golden-path-scaffolder-poc", "commercial-ops-substrate-h3", "p0-autonomy-measure-slice3-delegate-provenance"],
+    "note": "12 of 427 open; 6 owner-gated/external, 3 active, 3 deferred. Closing them needs their real work + ODG/owner authorization — NOT fabricated here."
+  },
+  "deliverable": {
+    "module": "runtime/core/odg-closure-register-ops.ts (+test)",
+    "auditClosureRegister": "READ-ONLY summary + open reconciliation of the real register (campaign-controller.loadRegister/summary/selectNextLot/staleAcceptances).",
+    "reconcileRemaining": "classifies open missions (owner-gated/dependency/active/deferred) for governed selection.",
+    "verifyRegisterRoundTrip": "PROVES the V160 crash-atomic persistence round-trips the REAL 427-item register LOSSLESSLY to a SNAPSHOT (ids + evidence + stale-check preserved) — the production register is NEVER written."
+  },
+  "validationPointsProven_§2": {
+    "1_load_real_register": "DONE (427 items via campaign-controller)",
+    "2_preserve_history": "DONE (round-trip lossless: all ids + evidence preserved)",
+    "3_select_eligible": "DONE (selectNextLot returns a real lot)",
+    "4-6_governed_execution_acceptance_persist": "the MECHANISM is proven on a controlled register (V160); running the REAL open missions through the generic journey + marking them ACCEPTED would FABRICATE closure ⇒ NOT done. Real closure = governance-gated.",
+    "7-8_restart_resume_no_double_exec": "V160 proven; on the real register, ACCEPTED lots are never re-selected (selectNextLot excludes terminal states) ⇒ no double execution across restart.",
+    "9_blocked_handling": "DONE (BLOCKED missions classify owner-gated/external, not runnable)",
+    "10_register_evidence_consistency": "DONE (415/415 ACCEPTED carry evidence; staleAcceptances 0)"
+  },
+  "honestBoundary": {
+    "proven": "ODG READS + reconciles the real register; the V160 atomic persistence is lossless on its real schema; production file byte-identical after all ops (sha256 unchanged in the test).",
+    "governanceGated": "closing the 12 open missions (6 owner-gated incl. systemd-activation/tls-exposure/billing, 3 active, 3 deferred) requires real work + ODG/owner authorization via the canonical procedure — NOT fabricated, NOT provider-declared.",
+    "noMutation": "this module never writes the production register; a provider cannot change a mission's closure status."
+  },
+  "grant_§4": { "verifiedValid": true, "expiry": "2026-11-19", "consumedCalls": "NOT_MEASURED", "researchThisLot": "none (the real register was read directly)." },
+  "unchangedBlockers": ["VPS deploy OWNER_GATED/BLOCKED (cutover owner+root-gated, not simulated)", "live external transport OWNER_GATED", "weekly-radar operational scheduler NOT_MEASURED", "type-checker tier / real-repo apply / M1 R4 OWNER_GATED"],
+  "honesty": "V161 connects ODG's V160 persistent lifecycle to its REAL closure register (read + reconcile + lossless round-trip), confirming 427 real missions (415 ACCEPTED with evidence, 12 open/governance-gated). It does NOT overwrite the register, does NOT fabricate closure of real missions, does NOT deploy VPS. HIGH recovery-loop + 5 FMEA residuals preserved. €0 clients; no VPS/spend/deploy/governed-path edit."
+}
