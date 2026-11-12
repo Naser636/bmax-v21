@@ -1,0 +1,34 @@
+{
+  "//": "V149 — M2 P2 parc matériel/flotte/stocks + chantier cost integration. Delta dossier (not a competing SSOT). The governed ROADMAP.json is UNCHANGED and docs/odg/V148_ROADMAP_INTEGRATION_PROPOSAL.json remains a non-integrated owner-gated proposal (now with P2 DELIVERED_LOCAL). States: VALIDATED_LOCAL/TESTED/SIMULATED/DEMO_READY/COMMERCIALISABLE/BLOCKED/NOT_MEASURED/OWNER_GATED. Synthetic ≠ real parc. €0 clients.",
+  "campaign": "V149 M2 PARC/FLOTTE/STOCKS P2",
+  "roadmapPhase": "P2 (from V148_ROADMAP_INTEGRATION_PROPOSAL) — DELIVERED_LOCAL this lot",
+  "builtThisLot": {
+    "module": "runtime/core/parc-stock-engine.ts (+ .test.ts)",
+    "state": "VALIDATED_LOCAL / DEMO_READY",
+    "functions": {
+      "buildRegistry": "common extensible equipment model (14 categories + category-specific `attributes`); unknown category ⇒ SPECIALIZED (flagged); NO_ID/DUPLICATE_ID rejected",
+      "checkAvailability": "assignment overlap (DOUBLE_AFFECTATION), RETOUR_MANQUANT, AFFECTATION_INCOHERENTE; recommends only, changes no real assignment",
+      "maintenanceAlerts": "maintenance/contrôle/assurance échue|proche, COMPTEUR_INCOHERENT, COUT_MAINTENANCE_INHABITUEL (vs median), HISTORIQUE_INCOMPLET; NEVER declares conforme from a document's presence",
+      "fuelIndicators": "cost-per-unit ONLY when meter delta>0 (else NOT_MEASURED); CONSOMMATION_SANS_JUSTIF/DOUBLON, COMPTEUR_INCOHERENT",
+      "computeStock": "théorique/disponible/réservé/consommé/en-transit; STOCK_NEGATIF (unless allowed), UNITE_INCOHERENTE, MOUVEMENT_SANS_JUSTIF, TRANSFERT_NON_RECU, RUPTURE_POTENTIELLE; explicit signed adjustments (history never silently modified)",
+      "reconcileSupply": "besoin→commande→livraison→réception→facture via document-intelligence (no duplicate logic)",
+      "imputeToChantier": "§8 CENTRAL — imputes ONLY equipment USAGE (hours×rate) + stock CONSUMPTION (qty×unitCost) as chantier expenses; purchases/receptions are COMMITMENTS, never charges (anti-double-count); feeds chantier-profitability.computeChantier"
+    }
+  },
+  "costModel": "radar-grounded (V149_RADAR_PARC_STOCK): coût de revient horaire/journalier = amortissement + maintenance + carburant + location → valorisé par imputation chantier (hours×rate).",
+  "antiDoubleCount": "PROVEN in test: a 500000 purchase recorded as a commitment does NOT inflate chantier cost (280000 = usage 200000 + consumption 80000); a stock RECEPTION is never imputed as a consumed charge.",
+  "demonstrators": "5 §9 parcours (maison pelle/camion/béton; terrassement/TP engins/carburant/enrobés; transfert dépôts; livraison partielle/stock réservé/consommation; panne/immobilisation/maintenance/location) + adversarial (double affectation, compteur régressif, consommation dupliquée, stock négatif, transfert non reçu, livraison excédentaire, pièce sans équipement, contrôle expiré, assurance manquante, dépense sans chantier, unité incompatible, double comptabilisation achat/consommation, données manquantes/devises mélangées) — in the test.",
+  "dependencies": ["document-intelligence (V147)", "chantier-profitability (V148)", "integer-minor arithmetic", "single-currency guard"],
+  "reuseNoParallelArch": "feeds chantier-profitability via its `expenses` shape; no parallel fleet/stock/finance system; no 16th métier; no new primitive.",
+  "radar": "docs/odg/V149_RADAR_PARC_STOCK.json — 1 dated FR query under valid grant (expires 2026-11-19). Confirmed coût-de-revient + chantier imputation model and the parc availability/maintenance/stock scope.",
+  "measures": { "fullGate": "570/570", "tsc": 0, "newSuites": 1, "antiDoubleCountProven": true },
+  "limits": [
+    "SYNTHETIC data only — never a real parc/fleet/stock measurement",
+    "no telematics / GPS / real meter feeds; meters are supplied inputs",
+    "regulatory conformity (contrôles/assurances) is signalled, NOT decided — precise requirements remain sourced + expert-validated",
+    "indicators are NOT_MEASURED without a valid denominator (no fabricated rate)",
+    "no real stock/order/planning/assignment mutation; no supplier contact/order/payment"
+  ],
+  "ownerGated": ["real stock/order/payment writes", "critical real assignments", "supplier contact", "P3 plan-métré", "P4 regulatory engines", "governed ROADMAP.json integration (V148 proposal)"],
+  "honesty": "P2 is VALIDATED_LOCAL/DEMO_READY, NOT commercialisable from synthetic tests. Reconciliation-grounded chantier cost integration (anti-double-count) is the differentiator. €0 clients; radar prices = HYPOTHESES."
+}

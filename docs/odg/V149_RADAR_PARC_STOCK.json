@@ -1,0 +1,19 @@
+{
+  "//": "V149 §1 — RADAR research for the M2 parc-matériel/flotte/stocks path, under the valid owner grant (V141_RESEARCH_GRANT, expires 2026-11-19). READ-ONLY public research. Each source carries URL/title/provenance/nature/freshness/confidence/scope/limits. fact ≠ éditeur-claim ≠ estimate ≠ hypothesis. No discovery auto-applied; proposals go to ODG governance only.",
+  "grant": { "ref": "docs/odg/V141_RESEARCH_GRANT.json", "validatedExpiryMs": 1795046400000, "usedCallsThisLot": 1, "budgetMaxCalls": 200 },
+  "capturedAtIso": "2026-11-12",
+  "queries": ["logiciel gestion parc matériel engins BTP flotte maintenance coût horaire immobilisation 2026"],
+  "sources": [
+    { "url": "https://www.irium-software.fr/logiciels-erp/logiciel-gestion-flotte", "title": "Logiciel de gestion de flotte et de parc matériel — Irium", "provenance": "vendor (ERP)", "nature": "fact(parc model: prix achat/immobilisation + mouvements + réparations)+editor-claim", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR parc matériel BTP", "limits": "vendor; ERP-scale" },
+    { "url": "https://www.enearis.com/la-gestion-du-parc-materiel-face-aux-enjeux-des-entreprises-du-btp/", "title": "Gestion du parc matériel — enjeux BTP (pertes/pannes/retards)", "provenance": "vendor article", "nature": "fact(pain points: disponibilité, pannes, retards, immobilisation)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR parc availability/breakdown", "limits": "editorial" },
+    { "url": "https://www.ixbat.com/logiciel-de-gestion-de-parc/", "title": "Logiciel de gestion de parc matériel BTP — iXbat", "provenance": "vendor", "nature": "fact(coût de revient journalier/horaire + valorisation lors des imputations sur chantier)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR equipment cost rate + chantier imputation", "limits": "vendor claims (automatic rentability)" },
+    { "url": "https://www.substock.co/fonctionnalites/gestion-vehicules-btp", "title": "Logiciel de gestion de flotte BTP : véhicules et engins — Substock", "provenance": "vendor", "nature": "fact(fleet: km, contrôles, entretiens, immobilisations)", "freshness": "2026", "confidence": "MEDIUM", "scope": "FR fleet tracking", "limits": "vendor" }
+  ],
+  "findings": [
+    { "kind": "fact", "statement": "Canonical equipment cost model = COÛT DE REVIENT journalier/horaire = amortissement journalier + maintenance + carburant + (location éventuelle); the per-hour/day rate is then VALORISÉ when imputed to a chantier (hours/days used × rate).", "implication": "the engine must compute a per-equipment rate and impute usage to chantiers via hours×rate — feeding chantier-profitability as EQUIPMENT expenses; NOT_MEASURED when the denominator (hours/km) is missing." },
+    { "kind": "fact", "statement": "Core features: parc availability + affectation, km/heures moteur, contrôles/entretiens/immobilisations, réparations history, stock of matériaux/pièces, maintenance préventive/corrective. Pain points: pertes, pannes, retards, immobilisation.", "implication": "matches directive §2–§7 scope; the differentiator stays the chantier-cost integration (§8) without double-counting purchase vs consumption." },
+    { "kind": "recommendation", "statement": "Attach equipment usage + stock CONSUMPTION (not purchase/reception) to chantiers so margin reflects real imputed cost; a stock entry must never auto-become a chantier charge.", "implication": "feeds the anti-double-count imputation rule in parc-stock-engine + V149 dossier." }
+  ],
+  "governanceNote": "Advisory only. No discovery transformed into a system change. Grant valid+not exhausted; an expired/exhausted grant would be recorded and only local work continued.",
+  "honesty": "Vendor 'automatic rentability / real-time' claims are editor claims, not audited. No verified public price captured this query. €0 clients; no supplier/buyer contacted. Prices remain HYPOTHESES."
+}
