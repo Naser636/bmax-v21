@@ -1,0 +1,42 @@
+{
+  "//": "V147 §3 — CANONICAL M2 BTP/TP PERIMETER + PROGRESSIVE ROADMAP. This dossier is a GOVERNED PROPOSAL feeding the canonical referentials (ODG_PROJECT_STATE.md Boussole points here). It is NOT a competing source of truth: the governed ROADMAP.json (runtime/governance, protected) is unchanged — integrating these phases into it is an owner-gated mission-proposal step. M2 is NOT reduced to invoicing/admin/ERP. Honest state taxonomy: VALIDATED_LOCAL/TESTED/SIMULATED/DEMO_READY/COMMERCIALISABLE/BLOCKED/NOT_MEASURED/OWNER_GATED/PROPOSED/FUTURE.",
+  "metier": "M2 — Intelligence BTP général & Travaux Publics",
+  "architectureNote": "Reuses the 9 ODG primitives + existing engines (order-coherence-check, einvoice-validator, document-intelligence, data-connector quality). No parallel architecture, no 16th métier, no métier merge.",
+  "perimeterCoverage": {
+    "construction_renovation": ["étude", "plans", "terrassement", "fondations", "gros œuvre", "maçonnerie", "charpente", "toiture", "étanchéité", "isolation", "menuiseries", "électricité", "plomberie", "chauffage", "climatisation", "ventilation", "photovoltaïque", "placo", "peinture", "carrelage", "finitions"],
+    "amenagements_exterieurs": ["piscines", "filtration", "étanchéité", "terrasses", "jardins", "paysagisme", "espaces verts", "arrosage", "clôtures", "pavage", "dallage", "béton décoratif", "résines", "revêtements"],
+    "travaux_publics": ["terrassements", "routes", "chaussées", "goudronnage/enrobés", "réseaux eau potable", "assainissement", "drainage", "réseaux électriques/télécoms", "fibre", "ponts", "tunnels", "ouvrages d'art"],
+    "parc_materiel_flotte": ["excavatrices", "goudronneuses", "engins", "machines", "véhicules", "carburant", "maintenance", "disponibilité", "contrôles", "assurances", "contrats", "sinistres", "échéances"],
+    "gestion_operationnelle": ["équipes", "salariés", "sous-traitants", "fournisseurs", "stocks", "achats", "livraisons", "commandes", "planning", "rendez-vous", "devis", "budgets", "factures", "paiements", "trésorerie", "rentabilité par chantier"],
+    "intelligence_documentaire_chantier": ["plans", "photos", "PDF", "factures", "tickets", "bons de livraison", "documents techniques", "suivi d'avancement"]
+  },
+  "builtToday": [
+    { "capability": "cross-document coherence (devis↔commande↔facture)", "module": "order-coherence-check.ts", "state": "VALIDATED_LOCAL / DEMO_READY", "since": "V145" },
+    { "capability": "document extraction + devis→commande→facture→BL reconciliation (synthetic, provenance+confidence, no faked OCR)", "module": "document-intelligence.ts", "state": "VALIDATED_LOCAL / DEMO_READY", "since": "V147" },
+    { "capability": "e-invoice EN 16931 arithmetic validity (Factur-X basis)", "module": "einvoice-validator.ts", "state": "VALIDATED_LOCAL", "since": "earlier" },
+    { "capability": "data import/quality (CSV/JSON → 6-dim quality)", "module": "data-connector.ts + profession-p4-data-reference.ts", "state": "VALIDATED_LOCAL", "since": "V146" }
+  ],
+  "plans_metres_calculs_§3.1": {
+    "state": "FUTURE / OWNER_GATED",
+    "radarEvidence": "docs/odg/V147_RADAR_BTP.json — plan-based métré (PDF/DWG/BIM) is a MATURE, specialised, competitive market (Kreo, Togal.AI, Planaliz, JustBIM, PriMus, Bluebeam). Real geometry/BIM tooling required.",
+    "honestyRule": "NEVER invent a scale, a dimension or a métré. If plan data is insufficient ⇒ request a human measurement/validation. Quantity/price/stock/margin/amount calculations must be deterministic, traceable, testable (the existing integer-minor + quality engines are the substrate).",
+    "targetVerticals": ["maisons", "électricité", "plomberie", "chauffage", "photovoltaïque", "routes", "réseaux", "ouvrages d'art"],
+    "decision": "roadmapped only; not built this lot; requires a real plan-parsing/geometry engine + expert validation before any métré claim."
+  },
+  "normes_reglementation_§3.2": {
+    "state": "FUTURE / OWNER_GATED",
+    "model": "versioned regulatory knowledge keyed by country/jurisdiction/activity/effective-date; distinguish legal obligation / voluntary standard / contractual requirement / internal procedure / recommendation; keep source+version+date+scope+applicability conditions.",
+    "honestyRule": "uncertain conclusions escalate to an expert; NO certification or legal guarantee is simulated (same doctrine as M5 accessibility-applicability.ts: cite source, manualReview, not legal advice).",
+    "reuse": "accessibility-applicability.ts is the reference pattern for fail-closed, source-cited, non-certifying applicability determination."
+  },
+  "progressivePriorities_§3.3": [
+    { "phase": "P1 (near-term, buildable locally)", "focus": "document intelligence + coherence + chantier-level profitability reconciliation (devis↔commande↔facture↔BL↔coûts)", "rationale": "radar shows basic devis/facturation is CROWDED; the coherence + document-intelligence wedge is the differentiator and is already VALIDATED_LOCAL", "state": "IN_PROGRESS (V145+V147)" },
+    { "phase": "P2", "focus": "parc matériel/flotte + stocks/achats + planning operational data models (reusing data-connector quality + integer-minor)", "rationale": "high operational value, feasible with existing primitives, no new architecture", "state": "PROPOSED" },
+    { "phase": "P3 (owner-gated)", "focus": "plan reading + métré extraction (§3.1)", "rationale": "hard, competitive, needs real geometry/BIM tooling + expert validation", "state": "FUTURE/OWNER_GATED" },
+    { "phase": "P4 (owner-gated)", "focus": "versioned BTP/TP norms & regulatory applicability (§3.2)", "rationale": "needs expert legal validation; no simulated certification", "state": "FUTURE/OWNER_GATED" }
+  ],
+  "prioritisationCriteria": ["besoins & preuves de marché (radar)", "valeur opérationnelle/économique", "faisabilité technique avec les primitives existantes", "dépendances", "réutilisation", "risques & validations expertes"],
+  "scaleTrajectory": "artisan seul → TPE → PME → grande entreprise multi-sites — WITHOUT presuming all functions are immediately available; each phase is explicitly gated.",
+  "canonicalIntegration": "This dossier is referenced from ODG_PROJECT_STATE.md (Boussole). The governed ROADMAP.json (runtime/governance, PROTECTED) is intentionally NOT edited here — formal integration of P2–P4 is an owner-gated governed mission-proposal. No parallel SSOT is created.",
+  "honesty": "M2 is NOT commercialisable as a full BTP/TP suite. Two differentiating capabilities are VALIDATED_LOCAL/DEMO_READY (coherence + document-intelligence) in a crowded market. Plan-métré and regulatory engines are FUTURE/OWNER_GATED and must never be faked. €0 clients; prices (radar) are published list prices = HYPOTHESES."
+}
