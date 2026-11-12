@@ -1,0 +1,58 @@
+{
+  "//": "V153 — ODG native execution hardening: eliminate the residual new Function surface in the native engineering cycle. Threat matrix (§3) + closed-executor architecture (§4) + V151/V152/V153 benchmark (§7). Delta dossier referenced from the Boussole; no competing SSOT; governed ROADMAP.json UNTOUCHED. Honest: no simulation counted as proof; unproven properties = NOT_MEASURED.",
+  "headCommit": "89054b4 (main @ V152) → V153 branch",
+  "dynamicExecutionAudit_§1": {
+    "productionCoreScanned": "runtime/core/*.ts (excluding *.test.ts)",
+    "findings": "the ONLY executable dynamic-execution surface in the native engine was odg-native-engineering.ts compile(): `new Function(\"return (\"+code+\")\")()` running V151 catalog value-function STRINGS.",
+    "afterV153": "0 executable `new Function(` calls in production core (verified by grep). Mentions remaining are COMMENTS documenting the removal.",
+    "otherEvalLikeSurfaces": "none in the ODG native perimeter (no eval/vm/dynamic import in production core). bash-command-governor.test.ts contains an 'eval' string only as a DENY-test fixture (shell escalator), not an execution."
+  },
+  "removedKeptWhy_§2": {
+    "removed": "new Function in odg-native-engineering.ts — replaced (option A) by a CLOSED deny-by-default native operation registry (odg-closed-executor.ts). No code strings are ever executed.",
+    "kept_bounded": "odg-transform-catalog.proveTestsDetectMutation executes CALLER-SUPPLIED pure CLOSURES (not code strings / not eval) to prove tests catch a mutation — a test-authoring helper. This is in-process execution of supplied functions, NOT string→code conversion; documented, not hidden.",
+    "kept_bounded_2": "the V151 value-function SEMANTICS are preserved exactly; only the EXECUTION mechanism changed (string→registered native op).",
+    "notIntroduced": "no worker/process/VM isolation added — the analysis showed a closed operation surface is sufficient for the bounded O(1) catalog; a real sandbox remains a PROPOSED owner-gated hardening if/when untrusted execution is ever required."
+  },
+  "threatMatrix_§3": [
+    { "threat": "mission/user-controllable code injected as an op", "control": "executeOp takes (opId, typed args); a code-string-shaped opId ⇒ CODE_STRING_REJECTED; unknown opId ⇒ UNREGISTERED_OP (deny-by-default)", "proof": "odg-closed-executor.test.ts cases [1][2][5][6][7][8][17]", "residualRisk": "none for the native cycle (no string path)" },
+    { "threat": "type confusion / precondition bypass", "control": "strict arity + argKind (number/integer) validation before execution", "proof": "cases [3][4][12]", "residualRisk": "catalog limited to numeric ops (by design)" },
+    { "threat": "resource blow-up (size/recursion/loops)", "control": "numeric magnitude bound (VALUE_TOO_LARGE/RESULT_TOO_LARGE); ops are pre-registered O(1) (no loops/recursion expressible)", "proof": "cases [9][10][11][13]", "residualRisk": "NOT_MEASURED for CPU/wallclock (ops are trivial)" },
+    { "threat": "filesystem/network/secret access", "control": "registered ops are pure arithmetic — no fs/net/process/secret references; no module loading from an op", "proof": "cases [7][8]; op bodies are fixed native arithmetic", "residualRisk": "none in the registry" },
+    { "threat": "falsifiable validation (reward-hacking)", "control": "transform verification is STRUCTURAL (V152); test-gen expectations come from the CONTRACT; a mutation must be caught", "proof": "cases [19][20]", "residualRisk": "bounded to the mutation set exercised" },
+    { "threat": "non-determinism", "control": "no clock/random; same (opId,args) ⇒ identical result+trace", "proof": "cases [14] + reproducibility (3 runs identical)", "residualRisk": "none" },
+    { "threat": "interruption corrupting state", "control": "errors returned not thrown; stateless registry; a bad call cannot affect the next", "proof": "cases [15][16]", "residualRisk": "none" }
+  ],
+  "executionClassification_§3": {
+    "sourceAnalysedStructurally": "V152 transforms (postconditions on text; NEVER executed)",
+    "transformedButNeverExecuted": "V152 transform outputs",
+    "preRegisteredNativeFunctions": "V153 closed-executor ops (sum/max/clampNonNegative/isEven/absMinor + .faulty siblings)",
+    "executedInODGProcess": "the closed-executor ops + proveTestsDetectMutation caller closures (bounded, pure, no untrusted strings)",
+    "executedInRealIsolation": "NONE — no process/VM isolation claimed; we never call the closed executor a sandbox",
+    "unauthorized": "any code string / unregistered op ⇒ rejected"
+  },
+  "closedExecutorArchitecture_§4": {
+    "module": "runtime/core/odg-closed-executor.ts",
+    "entryPoint": "executeOp(opId, typedArgs[]) — the ONLY execution path",
+    "registry": "closed, deny-by-default; 10 registered ops (5 canonical + 5 explicit .faulty siblings for repair fixtures)",
+    "guarantees": ["no eval/new Function/dynamic import/vm", "no code strings accepted", "strict arity+type", "size bounds", "deterministic+traceable", "reproducible"],
+    "notASandbox": "a CLOSED OPERATION SURFACE, not isolation; honest labelling.",
+    "noNewPrimitive": "reuses deny-by-default doctrine; no second orchestrator; public API of odg-native-engineering preserved (runNativeCycle/auditEngineeringPipeline/NATIVE_KINDS/EXEC)."
+  },
+  "benchmark_§7": {
+    "reproducible": true,
+    "v151": { "executionMechanism": "new Function on generated value-fn strings", "dynamicExecSurface": "1 (new Function)", "nativeCycleGreen": true },
+    "v152": { "added": "5 source-text transforms, STRUCTURAL verification (no exec of transformed code)", "dynamicExecSurface": "1 (V151 new Function still present)", "transformsGreen": true },
+    "v153": { "executionMechanism": "CLOSED deny-by-default native op registry (executeOp)", "dynamicExecSurfaceInNativeEngine": 0, "newFunctionCallsInProductionCore": 0, "capabilitiesPreserved": "V151 native cycle (NATIVE_GREEN/NATIVE_REPAIRED_GREEN) + V152 ten transforms + anti-reward-hacking mutation detection", "migrated": "5 value-function kinds (string templates → registered native ops)", "refused": "code-string/unregistered opIds", "escalated": "novel kinds (unchanged)", "regressions": 0, "adversarialCasesPassed": 20, "deterministic": true, "idempotent": true, "resourceMetrics": "NOT_MEASURED (ops trivial O(1))" },
+    "honestDelta": "the native engine's dynamic-execution surface went 1 → 0 (new Function eliminated). Capability count UNCHANGED (no inflation); the win is SAFETY/determinism/governability, exactly as the directive prioritised over adding transformations."
+  },
+  "guaranteesPreserved_§5": ["NATIVE_GREEN", "NATIVE_REPAIRED_GREEN", "NATIVE_REFUSED", "ESCALATED_TO_PROVIDER", "VALIDATION_FAILED", "NOT_MEASURED", "V152 structural verification (no exec)", "pre/postconditions + idempotence + reversibility", "anti-reward-hacking (contract-derived tests + mutation detection)", "13-step map unchanged (10 native, no provider step relabelled)"],
+  "limits": [
+    "closed registry limited to numeric O(1) ops (by design); novel ops ⇒ ESCALATED",
+    "residual bounded in-process execution of caller-supplied closures in proveTestsDetectMutation (no untrusted strings)",
+    "NOT a sandbox: no process/VM isolation (not claimed)",
+    "CPU/wallclock/memory resource metrics NOT_MEASURED (ops trivial)",
+    "novel semantic reasoning remains CLAUDE_CODE_EXECUTION"
+  ],
+  "ownerGated": ["real-repo transform application", "registry expansion into governed scope", "a true execution sandbox if untrusted execution is ever required", "provider-boundary steps"],
+  "honesty": "V153 makes ODG's native engine SAFER (new Function eliminated) and more governable WITHOUT inflating capability counts or claiming isolation it does not provide. €0 clients; synthetic ≠ real; no VPS/spend/deploy."
+}

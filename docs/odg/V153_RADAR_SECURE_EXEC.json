@@ -1,0 +1,17 @@
+{
+  "//": "V153 §8 — worldwide radar for secure/deterministic execution + capability security, under the valid owner grant (verified valid to 2026-11-19, budget 200/20MB). READ-ONLY public research. fact ≠ claim ≠ demonstrated-ODG-capability.",
+  "grant": { "ref": "docs/odg/V141_RESEARCH_GRANT.json", "verifiedValid": true, "usedCallsThisLot": 1, "budgetMaxCalls": 200 },
+  "capturedAtIso": "2026-11-12",
+  "queries": ["capability-based security closed interpreter deny-by-default operation registry avoid eval new Function safe deterministic execution 2026"],
+  "sources": [
+    { "url": "https://www.sitepoint.com/securing-ai-agent-extensions-signed-registries-ast-gates/", "title": "Securing AI Agent Extensions: Registry Verification & Permissions", "provenance": "engineering article", "nature": "fact(design principle)", "freshness": "2026", "confidence": "MEDIUM", "technique": "defense-in-depth: signed tool registry + AST static gates + runtime capability sandbox; REJECT extensions containing eval()/new Function()/dynamic import()/undeclared module access", "applicability": "directly justifies eliminating new Function + a deny-by-default registry", "limits": "editorial" },
+    { "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10474812", "title": "System and method for secure execution of script files", "provenance": "patent", "nature": "fact(default-deny design)", "freshness": "n/a", "confidence": "MEDIUM", "technique": "default-deny: interpreters get an explicit allow-set; all disallowed actions blocked", "applicability": "closed registry, deny-by-default", "limits": "patent" },
+    { "url": "https://arxiv.org/pdf/2603.20953", "title": "Before the Tool Call: Deterministic Pre-Action Authorization for Autonomous AI Agents", "provenance": "arXiv", "nature": "fact", "freshness": "2026", "confidence": "MEDIUM", "technique": "tool calls DENIED by default without a valid authorization decision; deterministic pre-action authorization", "applicability": "deny-by-default execution authorization", "limits": "research" },
+    { "url": "https://arxiv.org/pdf/2606.22504", "title": "Lingering Authority: Revocable Resource-and-Effect Capabilities for Coding Agents", "provenance": "arXiv", "nature": "fact", "freshness": "2026", "confidence": "MEDIUM", "technique": "capability-based, revocable resource/effect grants for coding agents", "applicability": "capability-scoped execution (future owner-gated extension)", "limits": "research" }
+  ],
+  "findings": [
+    { "kind": "principle", "statement": "The consensus secure pattern: REJECT eval()/new Function()/dynamic import, use a deny-by-default registry of allowed operations, and authorize deterministically before execution.", "appliedInV153": "odg-closed-executor: no eval/new Function; executeOp takes (opId, typed args); unknown/code-string opId ⇒ rejected; the native engine now routes ALL execution through it." },
+    { "kind": "principle", "statement": "Defense-in-depth (registry + AST gates + runtime capability) and revocable capability grants are the frontier; a closed operation surface is a valid first layer.", "appliedInV153": "a closed operation surface is implemented now; full capability/isolation layers remain PROPOSED owner-gated hardening — honestly scoped, not claimed." }
+  ],
+  "honesty": "Reference techniques, NOT demonstrated ODG capabilities beyond what V153 actually builds (a closed registry). No process/VM isolation is claimed. No paid API/credential/external write. €0 clients."
+}

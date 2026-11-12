@@ -4,8 +4,8 @@
  * V151 — ODG NATIVE ENGINEERING AUTONOMY (priority §3). PURE, deterministic, fail-closed, BOUNDED + LOCAL + IN-MEMORY.
  * This is a HONEST, real advance on ODG doing engineering ITSELF (not merely orchestrating a provider): for a BOUNDED class
  * of DETERMINISTIC specs, ODG natively (no LLM) runs the full cycle — consult context → plan → select write-set → GENERATE
- * code → GENERATE tests → EXECUTE tests (really, via new Function) → analyse → propose mechanical correction → verify
- * regression → produce evidence. It writes NO real repo file (in-memory, with rollback); any real-repo write stays owner-gated.
+ * code → GENERATE tests → EXECUTE tests (V153: via the CLOSED executor odg-closed-executor, NO new Function/eval) → analyse
+ * → propose mechanical correction → verify regression → produce evidence. Writes NO real repo file; real-repo write owner-gated.
  *
  * HONESTY TAXONOMY (directive §3) — every step is tagged with who actually did it:
  *   ODG_NATIVE_EXECUTION  — ODG performed it itself, deterministically, no LLM.
@@ -20,14 +20,16 @@
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 
-// Native deterministic codegen catalog: kind → { correct(fnName) code, faulty(fnName) code (a seeded bug for repair demos) }.
-// These are TEMPLATES ODG emits mechanically — genuinely native, no reasoning/LLM. Deliberately a small, honest class.
+// V153: the native codegen catalog now maps each kind to CLOSED-REGISTRY op ids (odg-closed-executor) instead of executable
+// code strings. The op's canonical `repr` is used as the emitted-code EVIDENCE string (display only, NEVER executed); all
+// execution goes through CEX.executeOp (no new Function / eval). `faulty` is an explicit REGISTERED op, not injected code.
+const CEX = require("./odg-closed-executor.js");
 const CATALOG: Record<string, any> = {
-  sum: { correct: () => "(a, b) => a + b", faulty: () => "(a, b) => a - b" },
-  max: { correct: () => "(a, b) => (a > b ? a : b)", faulty: () => "(a, b) => (a < b ? a : b)" },
-  clampNonNegative: { correct: () => "(x) => (x < 0 ? 0 : x)", faulty: () => "(x) => x" },
-  isEven: { correct: () => "(n) => n % 2 === 0", faulty: () => "(n) => n % 2 === 1" },
-  absMinor: { correct: () => "(x) => (x < 0 ? -x : x)", faulty: () => "(x) => x" },
+  sum: { correctOp: "sum@1", faultyOp: "sum.faulty@1" },
+  max: { correctOp: "max@1", faultyOp: "max.faulty@1" },
+  clampNonNegative: { correctOp: "clampNonNegative@1", faultyOp: "clampNonNegative.faulty@1" },
+  isEven: { correctOp: "isEven@1", faultyOp: "isEven.faulty@1" },
+  absMinor: { correctOp: "absMinor@1", faultyOp: "absMinor.faulty@1" },
 };
 const NATIVE_KINDS = Object.freeze(Object.keys(CATALOG));
 
@@ -43,7 +45,7 @@ function auditEngineeringPipeline(): any {
     { step: "code generation (novel)", nativeToday: false, executor: EXEC.CLAUDE, missing: "generative reasoning (frontier LLM)" },
     { step: "controlled file modification", nativeToday: true, executor: EXEC.NATIVE, note: "patch-executor write-confinement (owner-gated for real repos)" },
     { step: "test creation (from examples)", nativeToday: true, executor: EXEC.NATIVE, note: "deterministic example→assertion generation (this module)" },
-    { step: "test execution", nativeToday: true, executor: EXEC.NATIVE, note: "odg-test-report harness; in-memory new Function here" },
+    { step: "test execution", nativeToday: true, executor: EXEC.NATIVE, note: "odg-test-report harness; in-process CLOSED executor (V153, no new Function)" },
     { step: "error analysis", nativeToday: true, executor: EXEC.NATIVE, note: "deterministic pass/fail + fault-pattern match" },
     { step: "correction proposal (known pattern)", nativeToday: true, executor: EXEC.NATIVE, note: "mechanical repair for the catalog class" },
     { step: "correction proposal (novel)", nativeToday: false, executor: EXEC.CLAUDE, missing: "generative reasoning (frontier LLM)" },
@@ -58,19 +60,18 @@ function auditEngineeringPipeline(): any {
   });
 }
 
-function genTestAssertions(fn: any, examples: any[]): any {
+// V153: assertions run through the CLOSED EXECUTOR (opId + typed args) — no new Function, no code execution of strings.
+function genTestAssertions(opId: string, examples: any[]): any {
   const results: any[] = []; let pass = 0;
   for (const ex of examples) {
     if (!isObj(ex) || !Array.isArray(ex.args)) { results.push({ ok: false, reason: "malformed example" }); continue; }
-    let actual: any, ok: boolean, err: string | null = null;
-    try { actual = fn.apply(null, ex.args); ok = actual === ex.expect; } catch (e: any) { ok = false; actual = null; err = (e && e.message) || String(e); }
+    const r = CEX.executeOp(opId, ex.args);
+    const ok = r.ok === true && r.result === ex.expect;
     if (ok) pass++;
-    results.push(Object.freeze({ args: ex.args, expect: ex.expect, actual, ok, err }));
+    results.push(Object.freeze({ args: ex.args, expect: ex.expect, actual: r.ok ? r.result : null, ok, err: r.ok ? null : r.code }));
   }
   return { results, pass, total: examples.length, allPass: pass === examples.length && examples.length > 0 };
 }
-
-function compile(code: string): any { try { /* bounded: a tiny pure arrow string from our own catalog, not user code */ return { ok: true, fn: new Function("return (" + code + ")")() }; } catch (e: any) { return { ok: false, err: (e && e.message) || String(e) }; } }
 
 /** runNativeCycle(mission): ODG performs a bounded deterministic engineering cycle itself. Returns the full tagged trace. */
 function runNativeCycle(mission: any): any {
@@ -94,28 +95,27 @@ function runNativeCycle(mission: any): any {
     return Object.freeze({ ok: true, missionId: m.id, verdict: "ESCALATED_TO_PROVIDER", nativeCycle: false, steps: Object.freeze(steps), executorSummary: summarise(steps), rollback: "nothing written (in-memory); no real-repo change", note: "ODG natively planned + scoped, but NOVEL code synthesis is a frontier-LLM step (honestly tagged CLAUDE_CODE_EXECUTION) — not presented as native." });
   }
 
-  // NATIVE codegen (optionally seed a fault to demonstrate the native repair loop).
+  // NATIVE codegen: SELECT a registered closed-executor op (optionally the faulty sibling to seed the repair loop). The
+  // emitted `code` is the op's canonical repr — EVIDENCE only, NEVER executed. Execution goes through CEX.executeOp.
   const faulty = m.injectFault === true;
-  let code = faulty ? cat.faulty(spec.fnName) : cat.correct(spec.fnName);
-  record("generate_code", EXEC.NATIVE, `emitted ${spec.kind} template${faulty ? " WITH a seeded fault (repair demo)" : ""}`, { code });
+  let opId = faulty ? cat.faultyOp : cat.correctOp;
+  let code = CEX.getRepr(opId);
+  record("generate_code", EXEC.NATIVE, `selected closed-registry op '${opId}'${faulty ? " (seeded-fault sibling, repair demo)" : ""}`, { code, opId, executedCodeString: false });
   const examples = Array.isArray(spec.examples) ? spec.examples : [];
   record("generate_tests", EXEC.NATIVE, `${examples.length} example assertion(s) from the spec`, { exampleCount: examples.length });
 
-  let comp = compile(code);
-  if (!comp.ok) return Object.freeze({ ok: true, missionId: m.id, verdict: "COMPILE_ERROR", nativeCycle: true, steps: Object.freeze(steps), error: comp.err });
-  let run = genTestAssertions(comp.fn, examples);
-  record("execute_tests", EXEC.NATIVE, `ran ${run.total} assertion(s): ${run.pass}/${run.total} pass`, { pass: run.pass, total: run.total });
+  let run = genTestAssertions(opId, examples);
+  record("execute_tests", EXEC.NATIVE, `ran ${run.total} assertion(s) via the CLOSED executor (no eval/new Function): ${run.pass}/${run.total} pass`, { pass: run.pass, total: run.total });
   record("analyse", EXEC.NATIVE, run.allPass ? "all assertions pass" : `${run.total - run.pass} failing — fault-pattern = seeded ${spec.kind} defect`);
 
   let corrected = false;
   if (!run.allPass) {
-    // native mechanical correction: regenerate from the canonical (non-faulty) template.
-    const fixedCode = cat.correct(spec.fnName);
-    record("propose_correction", EXEC.NATIVE, `mechanical repair: regenerate canonical ${spec.kind} template`, { code: fixedCode });
-    comp = compile(fixedCode);
-    run = genTestAssertions(comp.fn, examples);
-    record("verify_regression", EXEC.NATIVE, `re-ran ${run.total} assertion(s): ${run.pass}/${run.total} pass`, { pass: run.pass, total: run.total });
-    code = fixedCode; corrected = true;
+    // native mechanical correction: switch to the canonical (non-faulty) registered op.
+    opId = cat.correctOp; code = CEX.getRepr(opId);
+    record("propose_correction", EXEC.NATIVE, `mechanical repair: switch to canonical registered op '${opId}'`, { code, opId });
+    run = genTestAssertions(opId, examples);
+    record("verify_regression", EXEC.NATIVE, `re-ran ${run.total} assertion(s) via the CLOSED executor: ${run.pass}/${run.total} pass`, { pass: run.pass, total: run.total });
+    corrected = true;
   } else {
     record("verify_regression", EXEC.NATIVE, "no correction needed; assertions already green");
   }
