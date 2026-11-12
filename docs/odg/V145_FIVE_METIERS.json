@@ -1,0 +1,154 @@
+{
+  "//": "V145 — five-métier commercial construction maturity + competitor map + honest economic model. Real market research (WebSearch, owner grant). States: RESEARCHED/GAP_IDENTIFIED/BUILDING/VALIDATED_LOCAL/DEMO_READY/COMMERCIALISABLE/OWNER_GATED/NOT_YET_DELIVERABLE. No client/contract/revenue/profit invented; prices=HYPOTHESES; €0 clients. VALIDATED_LOCAL ≠ production.",
+  "metiers": [
+    {
+      "metier": "M1-CRA-SBOM",
+      "state": "COMMERCIALISABLE",
+      "maturity": "R3 own-repo (V143 offer)",
+      "demand": {
+        "driver": "EU CRA Reg 2024/2847 (SBOM mandatory, 2027-12-11)",
+        "source": "https://anchore.com/sbom/eu-cra/",
+        "verified": true
+      },
+      "odgCapability": "p3-cra-evidence-demonstrator + sbom-audit-service + p8-slsa-level-gate (SLSA v1.0)",
+      "competitors": [
+        "anchore",
+        "finitestate",
+        "sbomify"
+      ],
+      "gap": "R4 (real engagement) owner-gated",
+      "differentiators": [
+        "evidence traceability + explainability",
+        "SLSA-level adjudication (anti level-inflation)",
+        "change-over-time re-assessment"
+      ]
+    },
+    {
+      "metier": "M2-BUSINESS-OPS",
+      "state": "BUILDING (coherence-check DEMO_READY)",
+      "maturity": "VALIDATED_LOCAL slice (order-coherence-check built+tested this lot)",
+      "demand": {
+        "driver": "France e-invoicing mandate 2026-09/2027-09 + SME admin-cost reduction",
+        "source": "https://qonto.com/fr/blog/gestion-entreprise/facturation/logiciel-facturation-pme",
+        "verified": true
+      },
+      "odgCapability": "quote + invoicing + client-intake + einvoice-validator + NEW order-coherence-check (devis↔facture incoherence detection)",
+      "competitors": [
+        "Pennylane (7-79€/mo)",
+        "Sellsy (29€/user/mo)",
+        "Axonaut",
+        "Evoliz (29€/mo)",
+        "Orizen (8.99€/mo)"
+      ],
+      "gap": "CROWDED market — NOT a full ERP. ODG niche = validation/coherence/compliance DEPTH, not a general accounting suite. Full suite NOT_YET_DELIVERABLE.",
+      "differentiators": [
+        "cross-document coherence (devis↔commande↔facture) — margin-leak/dispute prevention (BUILT)",
+        "EN 16931 BR-CO depth incl. BR-CO-18 (BUILT)",
+        "integer-minor no-float-drift arithmetic"
+      ]
+    },
+    {
+      "metier": "M3-FINOPS",
+      "state": "GAP_IDENTIFIED",
+      "maturity": "RESEARCHED (p9-unit-economics + spend-governor exist; cloud/SaaS/AI cost analysis NOT built)",
+      "demand": {
+        "driver": "cloud/SaaS/AI cost control (FinOps)",
+        "source": "https://www.finops.org/pro/unit-economics-playbook-calculate-the-unit-cost/",
+        "verified": true
+      },
+      "odgCapability": "p9-unit-economics (cost/unit) + spend-governor (budget) — read-only cost analysis to BUILD",
+      "competitors": [
+        "cloud-native cost tools",
+        "finout",
+        "cloudaura"
+      ],
+      "gap": "cost-export ingestion + unused-resource detection NOT built (read-only; no infra change)",
+      "differentiators": [
+        "cross cloud+SaaS+AI analysis",
+        "verifiable before/after savings measurement (reuse p9)"
+      ]
+    },
+    {
+      "metier": "M4-DATA-QUALITY",
+      "state": "VALIDATED_LOCAL",
+      "maturity": "p4-data-reference (6-dim incl. timeliness V143) + lineage + idempotent-replay",
+      "demand": {
+        "driver": "data reliability / ERP-CRM reconciliation",
+        "source": "https://www.ibm.com/think/topics/data-quality-dimensions",
+        "verified": true
+      },
+      "odgCapability": "assessDataQuality (completeness/validity/uniqueness/timeliness) + checkLineage + schemaCompatibility",
+      "competitors": [
+        "Great Expectations (OSS)",
+        "Monte Carlo",
+        "dbt tests"
+      ],
+      "gap": "consistency/accuracy dimensions + connectors NOT built",
+      "differentiators": [
+        "fail-closed honesty flag",
+        "timeliness dimension",
+        "provenance/lineage gating"
+      ]
+    },
+    {
+      "metier": "M5-ACCESSIBILITY",
+      "state": "GAP_IDENTIFIED (no module)",
+      "maturity": "NOT BUILT",
+      "demand": {
+        "driver": "EAA/RGAA: obligation extended to PMEs >10 employees OR >2M€ CA with a digital service; WCAG 2.1 AA via RGAA 4.1.2 / EN 301 549 v3.2.1; sanctions up to 50k€/service; DGCCRF/Arcom control since Jan 2026",
+        "source": "https://accessio.pro/obligations-accessibilite",
+        "verified": true
+      },
+      "odgCapability": "NONE — new build (automated checks: contrast/structure/forms/ARIA; manual checks required too)",
+      "competitors": [
+        "axe (OSS)",
+        "WAVE",
+        "Tanaguru",
+        "accessibility consultancies"
+      ],
+      "gap": "ENTIRE module to build (automated-check engine + report + re-check); automated scan NEVER establishes full conformance (manual required). High-demand mandate-driven opportunity (like CRA).",
+      "differentiators": [
+        "combined automated+manual workflow",
+        "per-criterion traceability (RGAA 4.1.2)",
+        "regression tracking over time"
+      ]
+    }
+  ],
+  "economicModel": {
+    "team": "founder + 0.5 senior engineer + 1 sales + 1 admin (as envisaged)",
+    "currency": "EUR",
+    "assumptionsNote": "ALL prices/volumes are HYPOTHESES from market research, NOT realized sales. €0 clients today.",
+    "scenarios": {
+      "prudent": {
+        "model": "CRA/SBOM audits + data-quality diagnostics",
+        "avgDealEur": 6000,
+        "dealsYear1": 25,
+        "grossEur": 150000,
+        "note": "solo delivery capacity-bound; ~R4 pending"
+      },
+      "central": {
+        "model": "audits + a SaaS validation subscription (e-invoice/coherence)",
+        "subscribers": 120,
+        "avgMonthlyEur": 40,
+        "subsGrossEur": 57600,
+        "auditGrossEur": 240000,
+        "grossEur": 297600,
+        "note": "requires first real engagements + a shipped SaaS slice"
+      },
+      "ambitious": {
+        "model": "multi-métier audits + SaaS + accessibility audits (EAA wave)",
+        "grossEur": 900000,
+        "note": "needs hiring + sales engine + built M5 — NOT solo-feasible year-1"
+      }
+    },
+    "fiveMEurGap": {
+      "targetNetEur": 5000000,
+      "bestScenarioGrossEur": 900000,
+      "note": "Even the ambitious GROSS (~0.9M€) is ~5.5× below the 5M€ NET target. 5M€ net year-1 is NOT substantiated with this team/capacity. Realistic year-1 is six-figure (prudent ~150k€ gross). Reaching 5M€ net needs a scalable SaaS at ~10k+ paying customers OR a large services team — both multi-year + owner-gated (hiring, capital, real pipeline). Not inflating prices/volumes to fake the target."
+    }
+  },
+  "builtThisLot": [
+    "M2 order-coherence-check (devis↔facture incoherence detection) — BUILT + 11-test + demonstrable on synthetic data"
+  ],
+  "honesty": "1 métier COMMERCIALISABLE (M1 CRA, R3, R4 owner-gated); M2 one differentiating capability BUILT (coherence) but full suite NOT_YET in a crowded market; M3/M5 GAP_IDENTIFIED (M5 high-demand new build); M4 VALIDATED_LOCAL. The 5M€ net year-1 target is NOT substantiated and owner-gated."
+}

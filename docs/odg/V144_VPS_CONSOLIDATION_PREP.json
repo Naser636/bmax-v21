@@ -1,12 +1,13 @@
 {
-  "//": "V144 §13 — VPS consolidation PREP (local only; NO deploy; VPS/systemd/production untouched). Delta between local main and the deployed VPS release lineage.",
+  "//": "V144 §13 — VPS consolidation PREP (local only; NO deploy; VPS/systemd/production untouched). Delta between local main and the deployed VPS release lineage. [V145 §1: localMain reconciled to the merged campaign-closing commit 1867eb2.]",
   "deployedRelease": {
     "id": "5jBqWOtAeCIi7XKiD5Yxp",
     "commit": "95661e1",
     "supervised": "odg-preprod.service (V107)"
   },
   "localMain": {
-    "commit": "aabfed6"
+    "commit": "1867eb2",
+    "note": "updated post-squash-merge of PR #507 (campaign-closing commit); the earlier aabfed6 was the pre-merge branch tip. No deploy; VPS untouched."
   },
   "delta": {
     "commitsAhead": 19,
