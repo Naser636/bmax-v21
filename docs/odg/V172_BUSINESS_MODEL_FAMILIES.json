@@ -1,0 +1,38 @@
+{
+  "//": "V172 (§3/§4 — business-model family comparison + product selection + the €5M path). Delta dossier; no competing SSOT. REUSES odg-economic-model.COST (no duplicate cost model). READ-ONLY calculator; mutates nothing. §2 market research + §5 commercial engine + §6 product construction reported honestly as next governed branches (no fabricated demand/customers/contracts).",
+  "baseline": { "head": "337153d (main @ V171)", "branch": "excellence/v172-business-model-families-20261112", "gateBefore": "596/596", "tsc": 0 },
+  "grantRecheck_§2": { "source": "docs/odg/V141_RESEARCH_GRANT.json", "authorized": true, "expiry": "2026-11-19T00:00:00Z", "valid": true, "note": "no live market-research calls spent this lot; families use PROVENANCE-tagged assumptions, not live demand (no fabricated demand). Real EU-by-country market research is the next governed branch." },
+  "capabilityBuilt_§3_§4": {
+    "module": "runtime/core/odg-business-model-families.ts (+test, 14 checks)",
+    "reuses": "odg-economic-model.COST (tax/salary/opex) — NO duplicate cost model",
+    "method": "for each family, solve the EXACT customer count N for €5M net (perCustomerContribution = arpu·GM − cac; N = (preTaxNeeded + fixed)/contribution), then test ≤5-person+ODG-automation delivery capacity (N·deliveryDays ≤ people·210·leverage) + capital runway."
+  },
+  "familyComparison_§4": {
+    "frontier": "5 people, aggressive ODG-automation leverage (2.2), capacity = 2310 delivery-days",
+    "human_services": { "customersFor5M": 684, "deliveryDaysNeeded": 6156, "feasible": false, "verdict": "INFEASIBLE within ≤5 people (6156 ≫ 2310) — confirms V170" },
+    "productized_odg": { "customersFor5M": 341, "deliveryDaysNeeded": 1023, "feasible": true, "capitalEUR": 363750 },
+    "saas": { "customersFor5M": 424, "deliveryDaysNeeded": 254, "feasible": true, "capitalEUR": 727500, "note": "LOWEST delivery burden (ODG automation)" },
+    "licensing_api": { "customersFor5M": 792, "deliveryDaysNeeded": 238, "feasible": true, "capitalEUR": 606250 },
+    "platform_marketplace": { "customersFor5M": 1169, "deliveryDaysNeeded": 468, "feasible": true, "capitalEUR": 1212500, "note": "highest capital + customer bar — capital-heavy ambition" },
+    "hybrid": { "customersFor5M": 259, "deliveryDaysNeeded": 1036, "feasible": true, "capitalEUR": 485000, "note": "LOWEST customer bar (highest ARPU €40k)" }
+  },
+  "productSelection_§3": {
+    "primaryProduct": "hybrid (recurring software + premium services)",
+    "justification": "reaches €5M net within ≤5 people (1036 delivery-days ≤ 2310 capacity) at the LOWEST customer bar (259 customers) ⇒ least demand-validation risk; recurring share 65%; capital ≈ €485k.",
+    "servicesOnlyRejected": "human-services needs 6156 delivery-days ≫ 2310 capacity ⇒ INFEASIBLE within ≤5 people (confirms V170).",
+    "secondaryCandidates": ["productized_odg", "saas", "licensing_api", "platform_marketplace"],
+    "exact5MCondition": "acquire ~259 hybrid customers at €40k ARPU / 78% GM (or ~424 SaaS @ €24k / 85% GM) in year 1 — a MODELLED requirement under SIMULATED demand, NOT validated demand."
+  },
+  "€500M_§4": "handled separately (odg-economic-model.ambition500M) — platform-scale, not confused with the €5M yr-1 commitment.",
+  "honesty_§4": "all demand SIMULATED (customer counts = modelled requirements, NOT real); real EU demand is OWNER_GATED (p01-demand-validation); €5M NOT guaranteed; €0 real clients; no fabricated customers/contracts/revenue; every family PROVENANCE-tagged (HYPOTHESIS).",
+  "nextBranches": {
+    "marketResearch_§2": "real EU-by-country/sector market research (demand/WTP/pricing/competition/procurement) using the V141 grant while valid — next governed branch; no live calls this lot.",
+    "commercialEngine_§5": "prospect-ID/qualification/proposal/pricing/pipeline/onboarding/delivery/support mechanisms — next branches; real customer contact + spend remain OWNER_GATED.",
+    "productConstruction_§6": "audit the hybrid product against ODG's existing capabilities; build missing engineering/billing/support/localization/monitoring natively — next branches.",
+    "weeklyScheduler_§8": "V171 scheduler built; real scheduled run NOT_MEASURED (owner/root timer-gated).",
+    "historical_§7": "V170 crosswalk stands (10 LINKED/1 ORPHAN/218 orphan-history); deep Git/V-series parsing pending.",
+    "security_vps_§9": "OWASP 8 PARTIAL + HMAC + VPS OWNER_GATED; recovery-loop sev-9 + 5 FMEA residuals preserved."
+  },
+  "verification": { "gate": "expected 597/597 (596 + 1 new suite)", "tsc": "0 errors", "newChecks": "14", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true },
+  "honesty": "V172 built the business-model-family comparison + product selection that finds the €5M path services-only (V170) could not reach: 6 families with exact customer/capacity/capital conditions; human-services INFEASIBLE (confirms V170); hybrid selected as primary (259 customers, €485k capital) with SaaS/productized/licensing/platform as feasible secondaries. All demand SIMULATED (never real), real EU demand OWNER_GATED, €5M NOT guaranteed, €500M separate, €0 real clients. Reuses the canonical cost model (no duplicate). No status falsified, no register/audit-log/ROADMAP/canonical-source mutation, no fabricated demand, no simulated deployment."
+}
