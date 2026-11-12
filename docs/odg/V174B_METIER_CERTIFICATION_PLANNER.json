@@ -1,0 +1,32 @@
+{
+  "//": "V174 Addendum-B (§2–§10 — 15-métier certification/readiness planner + 300-calendar-day plan). Additive to V174/V174-A (no interruption). Delta dossier; no competing SSOT. Canonical 15 métiers recovered from profession-p*-reference + P5/P8 module identities (NOT invented). NO certification declared obtained; external regulatory delays reported as-is. No register/audit-log/ROADMAP/canonical-source mutation.",
+  "baseline": { "head": "622e5a7 (main @ V174-A)", "branch": "excellence/v174b-metier-certification-planner-20261112", "gateBefore": "600/600", "tsc": 0 },
+  "canonicalMetiers_§2": "P1 Fullstack, P2 AI, P3 Security, P4 Data, P5 Cloud/DevOps/Platform, P6 Eval, P7 SRE, P8 API/Integration, P9 FinOps, P10 Regulatory, P11 Document, P12 Streaming, P13 AI-Infra, P14 DevEx, P15 Workflow — recovered from runtime/core/profession-p*-reference.ts + P5/P8 module identities; NOT invented/renamed.",
+  "capabilityBuilt": {
+    "module": "runtime/core/odg-metier-certification-planner.ts (+test, 15 checks)",
+    "classification_§2": "4 categories (A legally-mandatory / B activity-qualification / C voluntary-commercial / D not-required) + distinct requirementKind (COMPANY_CERT / PRODUCT_CONFORMITY / PERSON_QUALIFICATION / BODY_ACCREDITATION / REGULATORY_CONFORMITY / NONE) — §2's five senses never conflated.",
+    "statusTaxonomy_§8": ["NOT_STARTED", "IN_PROGRESS", "READY_FOR_APPLICATION", "SUBMITTED", "CERTIFIED", "BLOCKED", "NOT_REQUIRED"]
+  },
+  "classification_§4": {
+    "A_legallyMandatory": { "count": 2, "metiers": ["P4 Data (GDPR conformity — self-assessed, no body decision)", "P11 Document (GDPR when personal data)"] },
+    "B_activityQualification": { "count": 0, "note": "ODG sells software TOOLING, not regulated professional acts ⇒ no person-qualification required (e.g. PASSI only if performing regulated security-audit acts)" },
+    "C_voluntaryCommercial": { "count": 5, "metiers": ["P2 (ISO 42001)", "P3 (ISO 27001)", "P5 (SOC2/ISO 27001)", "P10 (ISO 27001/42001)", "P13 (ISO 27001/SOC2)"], "note": "voluntary but market-access-improving" },
+    "D_notRequired": { "count": 8, "metiers": ["P1", "P6", "P7", "P8", "P9", "P12", "P14", "P15"] },
+    "canStartNowWithoutCert": 10,
+    "honestFinding": "cybersecurity is NOT automatically mandatory-cert; 10/15 métiers can commercialize immediately; only 2 have a legally-mandatory requirement (GDPR, self-assessed)."
+  },
+  "mutualization_§4": [
+    { "cert": "ISO/IEC 27001", "covers": ["P3", "P4", "P5", "P10", "P13"], "note": "ONE company cert unlocks 5 métiers — highest leverage, start FIRST" },
+    { "cert": "ISO/IEC 42001 (AI mgmt)", "covers": ["P2", "P10", "P13"] },
+    { "cert": "GDPR conformity (company-wide)", "covers": ["P4", "P11"], "note": "mandatory, self-assessed + documented (no body decision)" },
+    { "cert": "CRA product conformity", "covers": ["P1", "P3", "P5", "P13"], "note": "per-PRODUCT; external deadline 2027-12-11 is BEYOND 300 days (reported as-is)" },
+    { "cert": "EAA accessibility conformity", "covers": ["P1", "P11"], "note": "per-PRODUCT; in force 2025-06-28; self-declared + audit" }
+  ],
+  "capacity300Days_§5": { "calendarDays": 300, "workingDays": 205, "personDays_3people": 480, "deductions": "weekends + ~9 FR holidays + 22% leave/admin/direction", "principle": "300 CALENDAR days ≠ 300 person-days (≠ 300/person). Total cert-PREP human-days = 101 ≪ 480 capacity ⇒ preparation fits; the binding constraint is EXTERNAL audit/decision wait (ISO ~150–180d), not internal capacity." },
+  "timelineHonesty_§3_§9": "each métier carries optimistic/central/prudent CALENDAR timelines including external wait; all central timelines ≤ 300 days for in-scope certs; BUT the CRA PRODUCT conformity deadline (2027-12-11) is a REGULATORY date BEYOND 300 days — reported as-is, NEVER shortened. The AI métier (P2) keeps EU-AI-Act conformity scope-dependent (A only if high-risk) — no over-claim.",
+  "statusHonesty_§8": "ALL métiers status = NOT_STARTED. NO certification declared obtained (CERTIFIED requires a real competent-body decision). NO fabricated evidence; certifications requiring real operation/audit cannot be claimed satisfied in advance.",
+  "criticalFirst_§9": ["ISO/IEC 27001 FIRST (unlocks P3/P4/P5/P10/P13)", "GDPR conformity (company-wide, A, fast — no external decision)", "EAA + CRA product conformity per shipped product (CRA 2027 beyond 300 days)"],
+  "integration_§1_§9": "additive to V174 (support/renewal engine) + V174-A (opportunity radar); consistent with V172/V173 economics + V12.4 strategic authority. The V174-A finding (regulatory-compliance products rank highest) aligns: those métiers (P3 security/CRA, M5 accessibility/EAA) need the ISO 27001 + product-conformity work this planner schedules. Operational missions to be integrated under V12.4 governance.",
+  "verification": { "gate": "expected 601/601 (600 + 1 new suite)", "tsc": "0 errors", "newChecks": "15", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true },
+  "honesty": "V174-B recovered the canonical 15 métiers (not invented), classified each into the 4 certification categories + 5 requirement-kinds (never conflated), and built a 300-calendar-day preparation plan distinguishing calendar/working/person-days/external-wait with ISO 27001 mutualization. Honest findings: 10/15 métiers can start without certification; only 2 are legally-mandatory (GDPR, self-assessed); the binding constraint is external audit wait not capacity; the CRA 2027 deadline is beyond 300 days and reported as-is. NO certification declared obtained (all NOT_STARTED), no fabricated evidence, no regulatory delay shortened, €0 clients, €5M NOT guaranteed. No status falsified, no register/audit-log/ROADMAP/canonical-source mutation."
+}
