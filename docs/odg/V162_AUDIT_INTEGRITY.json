@@ -1,0 +1,40 @@
+{
+  "//": "V162 (§5 P3) — advanced the REALIZABLE portion of the BLOCKED mission p0e-audit-log-keyed-integrity: an adversarial forgery-resistance proof over the EXISTING canonical audit-log. Delta dossier; no competing SSOT; audit-log.ts + closure-register.json UNMODIFIED; governed ROADMAP.json UNTOUCHED. The mission stays BLOCKED/owner-gated — NOT closed by a provider.",
+  "headCommit": "fd280b9 (main @ V161) → V162 branch",
+  "registerReVerified_§1": { "total": 427, "counts": { "ACCEPTED": 415, "BLOCKED": 6, "IN_PROGRESS": 3, "DEFERRED": 3 }, "staleAcceptances": 0, "note": "re-read from the canonical file, not copied from V161." },
+  "missionTargeted_§5": {
+    "id": "p0e-audit-log-keyed-integrity",
+    "title": "P0-E SEC#3 follow-on (OWNER-GATED): keyed HMAC / signed-tail + tip-anchor to close full-rewrite & tail-truncation forgery of the audit chain",
+    "status": "BLOCKED (owner-gated) — UNCHANGED (not closed here)",
+    "whyOwnerGated": "production activation needs an OWNER-held HMAC key + an out-of-band anchor STORE for the live audit log + governance to make keyed+anchored the DEFAULT for the canonical mechanism. None of these can be fabricated by a provider."
+  },
+  "keyFinding": "The keyed-HMAC + tip-anchor MECHANISM already EXISTS in audit-log.ts (entryHash(seq,prevHash,payload,key) ⇒ HMAC-SHA256 when keyed; chainTip ⇒ out-of-band anchor; verifyChain({key,expectedTip}) ⇒ keyed + tip-anchored verification). The mission is blocked on DEPLOYMENT (owner key + anchor store + governance), not on missing code.",
+  "deliverable": {
+    "module": "runtime/core/odg-audit-integrity-analysis.ts (+test)",
+    "what": "an ADVERSARIAL forgery-resistance proof REUSING audit-log.ts (appendEntry/verifyChain/chainTip/entryHash) — builds NO second integrity mechanism, modifies audit-log.ts NOT AT ALL.",
+    "forgeryResistanceMatrix": "proves, per configuration, which of {payload-tamper, reorder, full-rewrite, tail-truncation} each detects.",
+    "auditExistingMechanism": "honest characterization: present guarantees / realizable-here / owner-gated-for-production."
+  },
+  "provenMatrix_§5": {
+    "UNKEYED_UNANCHORED": "detects payload-tamper + reorder; MISSES full-rewrite + tail-truncation (the gap the mission targets)",
+    "KEYED": "CLOSES full-rewrite (an attacker without the key cannot reforge HMACs); still misses tail-truncation",
+    "KEYED_TIP_ANCHORED": "CLOSES full-rewrite AND tail-truncation (all four attack classes detected)",
+    "keyRotation": "a chain sealed with key K fails verification under a rotated key K2, and vice-versa (key binding proven)",
+    "ephemeralKeysOnly": "the test uses crypto.randomBytes ephemeral keys — NO production secret embedded."
+  },
+  "honestBoundary": {
+    "realizableDone": "the adversarial proof + crypto verification of keyed links + tip-anchor + key-rotation behaviour (this module + its test).",
+    "ownerGated": "owner-held production HMAC key; out-of-band anchor store for the live audit log; governance to make keyed+anchored the canonical default.",
+    "missionNotClosed": "a provider cannot mark the register mission ACCEPTED; the mission stays BLOCKED. This lot builds the realizable EVIDENCE a future owner-authorized activation would need."
+  },
+  "otherBlockedMissionsReconciled": {
+    "campaign-runner-systemd-activation": "OWNER_GATED (root/systemd privileges) — realizable prep exists (root-free supervision proven); real activation needs owner+root.",
+    "dashboard-tls-exposure": "OWNER_GATED (TLS cert / domain / secrets owner-held) — not fabricated.",
+    "p01-demand-validation": "OWNER_GATED (needs real users/clients) — no fabricated demand.",
+    "p01-billing-sandbox": "OWNER_GATED (real payment/billing authorization) — synthetic-only perimeter.",
+    "broad-it-independent-eval-set": "realizable from public references + synthetic scenarios (future lot); not built here."
+  },
+  "grant_§6": { "verifiedValid": true, "expiry": "2026-11-19", "consumedCalls": "NOT_MEASURED", "researchThisLot": "none (audit-log mechanism read directly from the repo)." },
+  "unchangedBlockers": ["VPS deploy OWNER_GATED (systemd-activation + tls-exposure, not simulated)", "live external transport OWNER_GATED", "weekly-radar operational scheduler NOT_MEASURED", "type-checker tier / real-repo apply / M1 R4 OWNER_GATED"],
+  "honesty": "V162 advanced the ONE purely-technical blocked mission's realizable portion (audit-log forgery-resistance proof), honestly leaving the mission BLOCKED and the production activation OWNER_GATED. audit-log.ts (NUL-containing, binary-sensitive) was NOT modified; no second integrity system; no production secret. HIGH recovery-loop + 5 FMEA residuals preserved. €0 clients; no VPS/spend/deploy/register-mutation/governed-path edit."
+}
