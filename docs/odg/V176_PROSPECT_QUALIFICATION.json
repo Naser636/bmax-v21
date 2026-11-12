@@ -1,0 +1,23 @@
+{
+  "//": "V176 (§2/§7 — harden V173's 6 PARTIAL functions: prospect qualification/scoring for needs_budget + prospecting, + honest hardening ledger over all 6). Delta dossier; no competing SSOT. Local-only; no real contact/send/spend. Reuses V174-A buy-signal discipline + V174 support-renewal. No register/audit-log/ROADMAP/canonical-source mutation.",
+  "baseline": { "head": "1a35242 (main @ V175)", "branch": "excellence/v176-prospect-qualification-20261112", "gateBefore": "602/602", "tsc": 0, "grant": "V141 VALID→2026-11-19 (re-checked; no live calls this lot — qualification is deterministic over supplied signals)" },
+  "recovered6Partial_§2": { "from": "runtime/core/odg-autonomous-operating-model.ts (V173) FUNCTIONS filter status=PARTIAL", "functions": ["needs_budget", "product_design", "prospecting", "onboarding_delivery", "retention", "finance"], "note": "recovered programmatically, not guessed" },
+  "capabilityBuilt_§2_§7": {
+    "module": "runtime/core/odg-prospect-qualification.ts (+test, 14 checks)",
+    "qualification": "qualifyProspect scores from OBSERVABLE signals only (ICP fit + budgetEvidence OBSERVED/HYPOTHESIS/NONE + hard buy-signal REGULATORY_DEADLINE/TENDER/BUDGET_OBSERVED + regulatory urgency) → QUALIFIED / NURTURE / DISQUALIFIED. QUALIFIED requires fit≥3 AND budget≠NONE AND a hard buy-signal — market size alone NEVER qualifies (§4).",
+    "reuses": "V174-A opportunity-radar buy-signal vocabulary + V174 support-renewal-engine (retention/onboarding hardening)"
+  },
+  "hardeningLedger": {
+    "needs_budget": "HARDENED_LOCAL — qualification scores budget-evidence tier, reduces human triage",
+    "prospecting": "HARDENED_LOCAL (SEND still OWNER_GATED) — ranks prospects before any outreach",
+    "retention": "PARTIALLY_HARDENED_V174 — support-renewal churn-risk + renewal drafts",
+    "onboarding_delivery": "PARTIALLY_HARDENED_V174 — support-renewal post-onboarding support",
+    "product_design": "STILL_PARTIAL — already ODG-native (bounded), no change this lot",
+    "finance": "OWNER_GATED — payment execution (computation already automated)",
+    "hardenedLocal": 4, "stillPartial": 6, "flippedToAutonomous": 0
+  },
+  "honesty_§2": "NO PARTIAL function flipped to AUTONOMOUS — a status change to AUTONOMOUS requires end-to-end real-traffic proof (not available). All remain PARTIAL; local hardening MEASURED; owner-gates preserved (prospecting SEND, finance payment). Prospects are SYNTHETIC; a QUALIFIED prospect is NOT a client (outreach/contract/payment OWNER_GATED); a prospect is not a sale; no fabricated demand; €0 clients; €5M NOT guaranteed.",
+  "deferredBranches": "§3 (30-capability cross-audit — recover canonical list, don't invent), §4/§5/§6 (deeper world + CRA/EAA + beyond-M1–M5 research), §7 (full product build), §8 (economic refresh), §9 ISO 27001 crosswalk completion, §10 (300-day critical path) remain next governed branches — reported, not faked.",
+  "verification": { "gate": "expected 603/603 (602 + 1 new suite)", "tsc": "0 errors", "newChecks": "14", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true },
+  "honesty": "V176 recovered V173's exact 6 PARTIAL functions and hardened the acquisition front (needs_budget + prospecting) with a deterministic prospect-qualification engine that NEVER qualifies on market size alone (requires budget evidence + a hard buy-signal), while a hardening ledger honestly records V174's retention/onboarding gains and keeps owner-gates (prospecting SEND, finance payment). NO function flipped to AUTONOMOUS (no e2e real-traffic proof); SYNTHETIC prospects; QUALIFIED ≠ client; no real contact/send/spend; €0 clients; €5M NOT guaranteed. No status falsified, no register/audit-log/ROADMAP/canonical-source mutation, no simulated deployment."
+}
