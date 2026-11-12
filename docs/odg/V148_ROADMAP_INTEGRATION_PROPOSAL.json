@@ -1,0 +1,87 @@
+{
+  "//": "V148 §5 — GOVERNED ROADMAP INTEGRATION PROPOSAL for the BTP/TP (M2) path. This is a PROPOSAL ONLY. It is NOT integrated: the governed source of truth runtime/governance/ROADMAP.json (PROTECTED) is UNCHANGED, and no runtime/missions/*.json contract is created here. Integrating P2–P4 requires explicit OWNER authorization + the canonical governance procedure. This dossier is NOT a competing source of truth — ODG_PROJECT_STATE.md (Boussole) references it as a proposal; the authoritative roadmap remains ROADMAP.json.",
+  "status": "PROPOSED — AWAITING OWNER AUTHORIZATION (owner-gated)",
+  "basedOn": ["docs/odg/V147_BTP_TP_ROADMAP.json", "docs/odg/V147_RADAR_BTP.json", "docs/odg/V148_RADAR_CHANTIER.json", "real repo state @c2504b3 + V148 chantier-profitability.ts"],
+  "consolidatedPerimeter": "Full BTP général + TP (unchanged from V147): construction, rénovation, réseaux, routes, ouvrages d'art, piscines, espaces verts, béton, résines, revêtements, équipements, flotte, maintenance. Strategic scope NOT reduced to invoicing/ERP.",
+  "builtAndIntegratedAlready": [
+    { "capability": "order-coherence-check", "state": "VALIDATED_LOCAL", "since": "V145" },
+    { "capability": "document-intelligence (extraction + devis→cmd→facture→BL reconciliation)", "state": "VALIDATED_LOCAL/DEMO_READY", "since": "V147" },
+    { "capability": "chantier-profitability (déboursé-sec cost/margin + budget-vs-réel + anomalies + EAC forecast)", "state": "VALIDATED_LOCAL/DEMO_READY", "since": "V148 (this lot)" }
+  ],
+  "proposedMissions": [
+    {
+      "proposedId": "M-BTP-P1-CHANTIER-PROFITABILITY",
+      "title": "M2 BTP/TP — Chantier profitability (cost/margin/budget-vs-réel/forecast) consolidation",
+      "proposedContractPath": "runtime/missions/M-BTP-P1-CHANTIER-PROFITABILITY.json (TO BE CREATED ON APPROVAL — not created here)",
+      "requiresEngineering": true,
+      "phase": "P1 (priority path)",
+      "state": "DELIVERED_LOCAL (chantier-profitability.ts) — proposed for governed registration",
+      "dependencies": ["order-coherence-check", "document-intelligence", "finops-analyzer", "data-connector"],
+      "value": "HIGH — margin-per-chantier + budget-vs-réel is the core competitive feature (radar); reconciliation-grounded is the differentiator",
+      "feasibility": "DONE locally (VALIDATED_LOCAL this lot)",
+      "risks": "synthetic data only; real adoption needs real cost feeds + human validation; gross margin ≠ net profit must stay explicit",
+      "researchNeeds": "none further to build; pilot data needed to measure real benefit",
+      "validationCriteria": "deterministic calcs verifiable (done), anomalies explainable (done), owner review of commercial positioning"
+    },
+    {
+      "proposedId": "M-BTP-P2-PARC-STOCKS",
+      "title": "M2 BTP/TP — Parc matériel/flotte + stocks/achats + planning data models",
+      "proposedContractPath": "runtime/missions/M-BTP-P2-PARC-STOCKS.json (TO BE CREATED ON APPROVAL)",
+      "requiresEngineering": true,
+      "phase": "P2",
+      "state": "PROPOSED",
+      "dependencies": ["data-connector quality engine", "integer-minor arithmetic", "chantier-profitability (cost attribution)"],
+      "value": "HIGH operational value (engin availability, fuel, maintenance, stock reconciliation)",
+      "feasibility": "feasible with existing primitives; no new architecture",
+      "risks": "scope breadth; must stay read/calculate; no real fleet/telematics integration this phase",
+      "researchNeeds": "fleet/maintenance data-model conventions; equipment cost allocation practices",
+      "validationCriteria": "synthetic fleet/stock dossiers reconcile; cost attribution traceable; tests + adversarial"
+    },
+    {
+      "proposedId": "M-BTP-P3-PLAN-METRE",
+      "title": "M2 BTP/TP — Plan reading + métré/quantity extraction",
+      "proposedContractPath": "runtime/missions/M-BTP-P3-PLAN-METRE.json (TO BE CREATED ON APPROVAL)",
+      "requiresEngineering": true,
+      "phase": "P3",
+      "state": "FUTURE / OWNER_GATED",
+      "dependencies": ["a real plan-parsing / geometry / BIM engine (NOT present)", "expert validation"],
+      "value": "HIGH but commoditising (radar: Kreo/Togal.AI/Planaliz/PriMus already strong)",
+      "feasibility": "BLOCKED locally — requires real geometry/BIM tooling; must NEVER fake a scale/dimension/métré",
+      "risks": "fabrication risk is HIGH if attempted without real tooling ⇒ hard owner-gate; competitive market",
+      "researchNeeds": "plan-parsing tech evaluation; buy-vs-build; accuracy benchmarks with expert ground truth",
+      "validationCriteria": "measured extraction accuracy vs expert métré; refuse-on-insufficient-data behaviour"
+    },
+    {
+      "proposedId": "M-BTP-P4-NORMES-REGLEMENTATION",
+      "title": "M2 BTP/TP — Versioned norms & regulatory applicability",
+      "proposedContractPath": "runtime/missions/M-BTP-P4-NORMES-REGLEMENTATION.json (TO BE CREATED ON APPROVAL)",
+      "requiresEngineering": true,
+      "phase": "P4",
+      "state": "FUTURE / OWNER_GATED",
+      "dependencies": ["accessibility-applicability.ts doctrine (source-cited, fail-closed, non-certifying)", "legal/expert validation"],
+      "value": "MEDIUM-HIGH (compliance differentiation like CRA/EAA waves)",
+      "feasibility": "pattern exists (M5 applicability) but content requires expert-validated versioned sources",
+      "risks": "no simulated certification/guarantee; uncertain conclusions MUST escalate to an expert",
+      "researchNeeds": "versioned regulatory corpus by country/jurisdiction/activity/effective-date",
+      "validationCriteria": "every verdict cites source+version; manualReview preserved; expert sign-off"
+    }
+  ],
+  "crossMetierReuse": {
+    "note": "Reusable primitives/engines across the 5 métiers WITHOUT merging them:",
+    "integer-minor + single-currency": ["M2 chantier-profitability", "M2 einvoice/order-coherence", "M3 finops-analyzer"],
+    "data-quality engine (assessDataQuality)": ["M4 data-connector", "M2 parc/stocks (proposed P2)"],
+    "finops duplicate/spike detection": ["M3 finops-analyzer", "M2 chantier-profitability (expense anomalies)"],
+    "source-cited fail-closed applicability doctrine": ["M5 accessibility-applicability", "M2 regulatory (proposed P4)"],
+    "document extraction + reconciliation": ["M2 document-intelligence", "M2 chantier-profitability (dossiers)"]
+  },
+  "fiveMetiersContinuity": {
+    "M1-CRA-SBOM": "detection (V143) + remediation planning + before/after verification (V147) — VALIDATED_LOCAL; R4/real-repo owner-gated",
+    "M2-BTP-TP": "coherence + document-intelligence + chantier-profitability VALIDATED_LOCAL/DEMO_READY; P2–P4 proposed/owner-gated",
+    "M3-FINOPS": "analyzer VALIDATED_LOCAL (V146)",
+    "M4-DATA-ENGINEERING": "connector + quality VALIDATED_LOCAL (V146)",
+    "M5-ACCESSIBILITY": "automated check + corrected applicability VALIDATED_LOCAL (V145/V146); manual review required"
+  },
+  "governanceProcedure": "To integrate: owner authorizes → create runtime/missions/<id>.json contracts → add {id,title,contract,requiresEngineering} entries to runtime/governance/ROADMAP.json via the governed path with human approval. NONE of this is done here. This dossier is the proposal payload only.",
+  "prohibitions": "No direct ROADMAP.json edit; no competing source of truth; no claim of canonical integration until owner authorization + governance procedure are satisfied.",
+  "honesty": "M2 is not commercialisable as a full suite. Three capabilities are VALIDATED_LOCAL/DEMO_READY in a crowded market. P3/P4 are owner-gated and must never be faked. €0 clients; radar prices are published list prices = HYPOTHESES."
+}
