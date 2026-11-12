@@ -1,0 +1,27 @@
+{
+  "//": "V141 — owner-authorized read-only public research grant (CTO V141 §1), materialised in the canonical research-governor grant shape. govern() enforces domain+expiry+budget at point of use. Not self-issued: authorizer=owner, scoped+expiring+budgeted.",
+  "grant": {
+    "authorized": true,
+    "issuedBy": "owner (CTO V141 §1 — explicit read-only public research authorization)",
+    "scope": "READ_ONLY_PUBLIC_RESEARCH + SOURCE/DOMAIN DISCOVERY",
+    "allowedCapabilities": [
+      "WebSearch (public)",
+      "WebFetch (public, read-only)",
+      "bounded-http-client (allowlisted hosts)"
+    ],
+    "expiresMs": 1795046400000,
+    "budget": {
+      "maxCalls": 200,
+      "maxBytes": 20000000
+    },
+    "constraints": [
+      "no private credentials",
+      "no external writes",
+      "no paid API",
+      "no spend",
+      "no deploy"
+    ],
+    "materializedBy": "canonical research-governor grant shape (govern() enforces domain+expiry+budget at use)"
+  },
+  "note": "a real search-connector GRANT beyond allowlisted hosts is represented here; actual egress stays bounded by govern()+bounded-http-client at use; WebSearch/WebFetch were used read-only this session under this authorization."
+}
