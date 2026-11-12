@@ -1,0 +1,50 @@
+{
+  "//": "V151 — consolidation dossier: roadmap reconciliation matrix (§5), ODG native-autonomy map (§3), 15 métiers + 5 commercial métiers status (§9), VPS trajectory (§10), economic model (§11). This is a DELTA/PROPOSAL dossier referenced from ODG_PROJECT_STATE.md (Boussole). It is NOT a competing source of truth: the governed runtime/governance/ROADMAP.json is UNCHANGED. States: COMPLETED/VALIDATED/PROPOSED/ACTIVE/BLOCKED/OWNER_GATED/NOT_MEASURED. No unfinished historical mission is dropped. €0 clients; synthetic ≠ real.",
+  "headCommit": "9a313af (main @ V150)",
+  "roadmapReconciliationMatrix_§5": [
+    { "stream": "Historical roadmap + V12.4 (28 Master missions)", "canonicalRef": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md", "observedState": "VALIDATED", "proof": "v124-28-missions-validated (gate-enforced independent validation)", "deps": [], "gaps": "none open from that set", "priority": "maintain", "authz": "n/a", "nextStep": "keep as validated baseline" },
+    { "stream": "9 primitives", "canonicalRef": "runtime/governance + core", "observedState": "VALIDATED", "proof": "per-commit gate 571/571", "deps": [], "gaps": "none", "priority": "maintain", "authz": "n/a", "nextStep": "none" },
+    { "stream": "15 métiers P1–P15", "canonicalRef": "runtime/core/profession-*", "observedState": "VALIDATED (local)", "proof": "métier test suites in the gate", "deps": [], "gaps": "commercial maturity per métier below", "priority": "maintain", "authz": "n/a", "nextStep": "see fifteenMetiers" },
+    { "stream": "5 commercial métiers (M1–M5)", "canonicalRef": "V145–V151 dossiers", "observedState": "VALIDATED_LOCAL", "proof": "V145–V151 modules+tests", "deps": [], "gaps": "none commercialisable yet (€0 clients)", "priority": "ACTIVE", "authz": "owner for R4/clients", "nextStep": "see fiveCommercialMetiers" },
+    { "stream": "ODG native engineering autonomy", "canonicalRef": "runtime/core/odg-native-engineering.ts (V151)", "observedState": "ACTIVE (partial, honest)", "proof": "native deterministic generate→test→execute→repair cycle proven; novel synthesis escalates to CLAUDE_CODE", "deps": ["frontier LLM for novel reasoning"], "gaps": "novel code reasoning is NOT native", "priority": "ACTIVE", "authz": "owner for real-repo writes", "nextStep": "grow the native deterministic catalog; keep novel = provider" },
+    { "stream": "Worldwide radar", "canonicalRef": "V151_RADAR_WORLDWIDE.json + weekly schedule", "observedState": "ACTIVE (bounded)", "proof": "2 international queries this lot under valid grant", "deps": ["grant validity"], "gaps": "coverage breadth", "priority": "ACTIVE", "authz": "owner grant", "nextStep": "continue bounded weekly radar (Sun 02:00–05:00 Paris)" },
+    { "stream": "Benchmarks / excellence", "canonicalRef": "V139 excellence-benchmark", "observedState": "PROPOSED/partial", "proof": "2 BENCHMARKED, 13 NOT_YET_RESEARCHED", "deps": ["radar"], "gaps": "most métiers un-benchmarked", "priority": "medium", "authz": "n/a", "nextStep": "benchmark per métier via radar" },
+    { "stream": "Security / recovery", "canonicalRef": "HIGH recovery-loop + 5 FMEA MEDIUM+", "observedState": "OWNER_GATED (preserved, not accepted)", "proof": "V135/V139 residuals", "deps": [], "gaps": "residuals open by design", "priority": "preserve", "authz": "owner", "nextStep": "do not accept/remove without owner" },
+    { "stream": "GitHub/CI/delivery", "canonicalRef": "branch protection + CI", "observedState": "VALIDATED", "proof": "PRs #509–#513 merged via CI", "deps": [], "gaps": "none", "priority": "maintain", "authz": "n/a", "nextStep": "none" },
+    { "stream": "M2 BTP/TP", "canonicalRef": "V145/V147/V148/V149/V150/V151 + V147/V148 proposals", "observedState": "VALIDATED_LOCAL / DEMO_READY", "proof": "coherence+document-intelligence+chantier-profitability+parc-stock+workforce+cockpit", "deps": [], "gaps": "plan-métré/regulatory (P3/P4) owner-gated", "priority": "ACTIVE", "authz": "owner for P3/P4 + governed integration", "nextStep": "governed ROADMAP integration of P1/P2 (owner)" },
+    { "stream": "VPS / deployment", "canonicalRef": "V91/V92/V93B/V105/V107/V144 dossiers", "observedState": "OWNER_GATED (prepared, not deployed)", "proof": "see vpsTrajectory", "deps": ["owner authorization"], "gaps": "no production deploy performed", "priority": "mandatory future phase", "authz": "owner", "nextStep": "owner go/no-go" },
+    { "stream": "Economic model (5M€ net ambition)", "canonicalRef": "V145 economic model", "observedState": "NOT_MEASURED (ambition, not result)", "proof": "scenarios; €0 clients", "deps": ["real pipeline"], "gaps": "5M€ net NOT substantiated", "priority": "ambition", "authz": "owner", "nextStep": "see economicModel" }
+  ],
+  "nativeAutonomyMap_§3": {
+    "module": "runtime/core/odg-native-engineering.ts",
+    "nativeToday_ODG_NATIVE_EXECUTION": ["repo indexing", "file/dep selection", "deterministic codegen (catalog class)", "controlled file modification (owner-gated for real repos)", "test creation from examples", "test execution", "error analysis", "mechanical correction (known pattern)", "regression verification", "independent validation + evidence"],
+    "needsProvider_CLAUDE_CODE_EXECUTION": ["novel solution design", "novel code generation", "novel correction reasoning"],
+    "humanValidation_HUMAN_VALIDATION": ["real-repo writes", "payroll/real-hours/employer-cost", "protected-path/ROADMAP integration", "VPS deploy"],
+    "provenThisLot": "ODG natively generated + tested + repaired a bounded deterministic function and ran the tests itself (NATIVE_GREEN / NATIVE_REPAIRED_GREEN). Novel synthesis honestly tagged CLAUDE_CODE_EXECUTION (ESCALATED_TO_PROVIDER).",
+    "honesty": "no Claude-Code work is counted as ODG_NATIVE. The V151 engine CODE itself was written by Claude Code (CLAUDE_CODE_EXECUTION); ODG natively EXECUTES the bounded engineering cycle the engine encodes."
+  },
+  "fifteenMetiers_§9": "P1–P15 VALIDATED_LOCAL (gate suites). Per-métier benchmark + native-autonomy depth = PROPOSED (radar-driven). No 16th métier, no new primitive.",
+  "fiveCommercialMetiers_§9": {
+    "M1-CRA-SBOM": { "state": "VALIDATED_LOCAL", "built": "detection (V143) + remediation planning + before/after verification (V147)", "gap": "R4/real-repo owner-gated", "next": "governed pilot (owner)" },
+    "M2-BTP-TP": { "state": "VALIDATED_LOCAL/DEMO_READY", "built": "coherence+document-intelligence+chantier-profitability+parc-stock+workforce+cockpit (V145–V151)", "gap": "plan-métré/regulatory owner-gated; not commercialisable from synthetic", "next": "governed ROADMAP integration P1/P2 (owner)" },
+    "M3-FINOPS": { "state": "VALIDATED_LOCAL", "built": "finops-analyzer (V146)", "gap": "real cost-export ingestion", "next": "pilot data" },
+    "M4-DATA-ENGINEERING": { "state": "VALIDATED_LOCAL", "built": "data-connector + quality (V146)", "gap": "real sources", "next": "pilot data" },
+    "M5-ACCESSIBILITY": { "state": "VALIDATED_LOCAL", "built": "automated check + corrected applicability (V145/V146)", "gap": "manual review mandatory; no certification", "next": "expert partnership (owner)" }
+  },
+  "vpsTrajectory_§10": {
+    "prepared": "inventory (V92), deployment plan (V91), forensics (V93B), supervision (V105), closure (V107), consolidation prep (V144); host IS the VPS; USER systemd + linger needs no root (root-free supervision proven); R1 monitor + R3 backups/restore done; app replacement DEMONSTRATED on alt port (loopback), cutover prepared.",
+    "audited": "secret-exposure/egress audit SOUND; edg-core exposure closed to 127.0.0.1; SSH key-only.",
+    "remaining": "owner go/no-go for production cutover; domain/TLS; real backups rotation on prod path.",
+    "securityPrereqs": "no root mutation; deny-by-default; Truth-Lock; confined compilers (bwrap).",
+    "ownerValidationsNeeded": "cutover authorization, domain/TLS, any secret.",
+    "v151Status": "NO deploy performed; trajectory preserved + reconciled; remains a mandatory future owner-gated phase."
+  },
+  "economicModel_§11": {
+    "ambition": "5 M€ net annual — AMBITION to demonstrate, NEVER a guaranteed result.",
+    "deliveryCapacityHonest": "ODG can locally model intake→delivery→support, but real client onboarding, delivery, maintenance, support and human-time are NOT_MEASURED (no real client).",
+    "scenarios": { "prudent": "~150k€ gross (audits/diagnostics, solo capacity-bound)", "central": "~298k€ gross (audits + a SaaS slice, needs first real engagements)", "ambitious": "~900k€ gross (multi-métier + SaaS + accessibility wave, needs hiring+sales)" },
+    "fiveMEurGap": "even ambitious gross (~0.9M€) is ~5.5× below 5M€ NET; needs a scalable SaaS (~10k+ paying) OR a large services team — multi-year + owner-gated. Prices = verified-or-HYPOTHESIS; €0 clients; no revenue/benefit invented."
+  },
+  "prohibitions": "No parallel ROADMAP.json; no competing SSOT; no protected-path edit without the canonical authorized procedure; no proposal presented as validated; no Claude-Code work presented as native ODG.",
+  "honesty": "V151 advances ODG's own native engineering (bounded, honest), reconciles the roadmap, and consolidates M2 — without inflating maturity. VALIDATED_LOCAL ≠ commercialisable; €0 clients; synthetic ≠ real; 5M€ NOT substantiated."
+}
