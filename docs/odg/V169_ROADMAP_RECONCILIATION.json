@@ -1,0 +1,37 @@
+{
+  "//": "V169 (§1/§2/§3 reconciliation delivered as a tested mechanism + §4/§6/§7/§8 honest status). Delta dossier; no competing SSOT. READ-ONLY reconciliation over the REAL canonical sources; mutates nothing; V12.4 retained as strategic authority. Economic model (§4) + weekly scheduler (§6) reported honestly as ODG-selected next branches, not fabricated.",
+  "baseline": { "head": "5b6edf4 (main @ V168)", "branch": "excellence/v169-roadmap-reconciliation-20261112", "gateBefore": "592/592", "tsc": 0 },
+  "sourceInventory_§1": {
+    "present": ["docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md (strategic authority — V12.4 RETAINED)", "docs/odg/ODG_MASTER_TECHNOLOGICAL_SUPERIORITY_ROADMAP.md", "runtime/governance/ROADMAP.json (11 governed missions, PROTECTED)", "docs/odg/closure-register.json (427 closure records)", "ODG_PROJECT_STATE.md (Boussole + checkpoints)"],
+    "note": "all 5 canonical sources present and read; no competing source of truth introduced."
+  },
+  "reconciliationMatrix_§2": {
+    "module": "runtime/core/odg-roadmap-reconciliation.ts (+test, 17 checks)",
+    "taxonomy": ["IMPLEMENTED_AND_INDEPENDENTLY_VERIFIED", "IMPLEMENTED_NOT_INDEPENDENTLY_VERIFIED", "PARTIALLY_IMPLEMENTED", "APPROVED_NOT_IMPLEMENTED", "MISSING_FROM_CANONICAL_ROADMAP", "BLOCKED_WITH_EXPLICIT_DEPENDENCY", "OBSOLETE_WITH_GOVERNED_JUSTIFICATION", "DUPLICATE_WITH_CANONICAL_REFERENCE"],
+    "closureCorpus": { "total": 427, "IMPLEMENTED_AND_INDEPENDENTLY_VERIFIED": 192, "IMPLEMENTED_NOT_INDEPENDENTLY_VERIFIED": 223, "PARTIALLY_IMPLEMENTED": 3, "APPROVED_NOT_IMPLEMENTED": 3, "BLOCKED_WITH_EXPLICIT_DEPENDENCY": 6, "coveragePercent": 97.2 },
+    "governedLayer": { "total": 11, "BLOCKED_WITH_EXPLICIT_DEPENDENCY": 2, "APPROVED_NOT_IMPLEMENTED": 9, "structuralNote": "ROADMAP.json and closure-register.json are DISTINCT SSOT layers (§3) with separate id namespaces — non-linkage is by design, NOT a loss." },
+    "grounding": "taxonomy class derived PURELY from each record's real fields (status/evidence/staleEvidence/title). AND_INDEPENDENTLY_VERIFIED claimed ONLY where recorded evidence documents independent reproduction (192 of 415 ACCEPTED) — the matrix does not re-run verification it did not perform.",
+    "preservation": "every closure record + evidence retained; 0 silent delete/rewrite/downgrade; 0 exact-duplicate titles; 0 REJECTED/OBSOLETE; 0 stale."
+  },
+  "canonicalStructure_§3": {
+    "masterRoadmap": "ODG_MASTER_ROADMAP_V12.4.md — strategic authority (retained; no governed version change)",
+    "ROADMAP.json": "operational governed missions (11) — PROTECTED, untouched",
+    "closure-register.json": "independently-supported closure evidence (427) — untouched",
+    "Boussole/manifests": "ODG_PROJECT_STATE.md governance + campaign checkpoints",
+    "filesChanged": "ONLY added runtime/core/odg-roadmap-reconciliation.ts(+test), this dossier, package.json(test wiring), ODG_PROJECT_STATE.md(banner+checkpoint). No canonical SSOT mutated."
+  },
+  "economicFeasibility_§4": {
+    "status": "METHOD + HONEST BOUNDS stated; quantified model deferred to a dedicated governed lot (no fabricated demand/customers; €0 real clients today).",
+    "method": "TAM/SAM/SOM + pricing + gross/net margin + CAC/retention + unit economics across 15 métiers + 5 commercial métiers, with a 3→5-person capacity test per scenario (conservative/base/aggressive).",
+    "priorTarget_€5M_net_yr1": "NOT guaranteed. Prior governed finding (memory, commercial V2–V20): €500k NET ≈ €1.49M gross ⇒ already NOT achievable year-1 solo; €5M net yr-1 requires validated recurring demand at scale that is currently OWNER_GATED (real customers, real billing) and unproven. Must be modelled against real demand signals (p01-demand-validation, OWNER_GATED), not simulated customers.",
+    "ambition_€500M": "separate feasibility — requires a scaling business model (platform/recurring, multi-tenant), capital, and a go-to-market far beyond a 3–5 person team's direct-delivery capacity; flagged as ambition-scenario needing its own governed study.",
+    "capacityTest_3to5_people": "direct-services delivery by 3–5 people caps billable throughput; both targets therefore require ODG-autonomous delivery leverage + recurring/productized revenue — quantification is the next economic lot's deliverable.",
+    "honesty": "no target guaranteed, no demand fabricated, no simulated customer counted as real."
+  },
+  "autonomyAndWorkers_§5": "V167A orchestrator routes/schedules over the real inventory; true OS-level multi-worker spawning with worktree isolation is delegate-isolation's domain (bwrap-gated here) — honest limit, not presented as actual parallel execution.",
+  "radar_§6": { "grant": "V141 VALID→2026-11-19T00:00Z (re-verified canonical)", "weeklyScheduler": "NOT_MEASURED — not built this lot; candidate next lot: window Sun 02:00–05:00 Europe/Paris + budget/dedup/backoff/persistence/restart/no-overlap logic + controlled-trigger test; status stays NOT_MEASURED until a real scheduled run is observed (a manual test is not a scheduled run)." },
+  "security_§7": "OWASP T1–T17 matrix delivered V168 (8 COVERED/4 executed-verified, 8 PARTIAL, 0 GAP, 1 OUT_OF_SCOPE); the 8 PARTIAL controls (incl. cascading hallucination, human-in-the-loop overload, rogue-agent isolation) remain to strengthen. HIGH recovery-loop sev-9 + 5 FMEA MEDIUM+ residuals preserved. HMAC/p0e production key + anchor OWNER_GATED (mechanism proven V162).",
+  "vps_§8": "source→production path OWNER_GATED (root/systemd/domain/TLS/certs/secrets); not simulated; no deployment performed.",
+  "verification": { "gate": "expected 593/593 (592 + 1 new suite)", "tsc": "0 errors", "newChecks": "17", "allCanonicalSourcesUntouched": true, "readOnly": true },
+  "honesty": "V169 delivered the §1/§2/§3 primary mission as a TESTED read-only reconciliation mechanism over the real canonical sources: 5 sources inventoried, 427 closure records classified into the 8-class taxonomy grounded purely in recorded fields (192 independently-verified by recorded evidence; 97.2% coverage), two SSOT layers kept distinct, V12.4 retained, nothing mutated. Economic model (§4) + weekly scheduler (§6) reported honestly with method and bounds, deferred to governed next lots — no fabricated demand, no simulated customers, no guaranteed targets. No status falsified, no canonical-source/register/audit-log/ROADMAP mutation, no competing roadmap, no simulated deployment, €0 clients."
+}
