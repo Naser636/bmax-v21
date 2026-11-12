@@ -1,0 +1,43 @@
+{
+  "//": "V173 (§4 rebuild around autonomous production + §5 commercial functions + §6 capability-gap register + §12.6 autonomous-vs-human breakdown). Delta dossier; no competing SSOT. REUSES odg-economic-model.COST + V172 hybrid target; maps to REAL existing commercial modules. READ-ONLY calculator; mutates nothing. No fabricated demand/customers/revenue; €0 real clients.",
+  "baseline": { "head": "ac0e45a (main @ V172)", "branch": "excellence/v173-autonomous-operating-model-20261112", "gateBefore": "597/597", "tsc": 0, "grant": "V141 VALID→2026-11-19T00:00Z (no live calls this lot)" },
+  "mandate_§1": "ODG as the operational engine of a European business targeting ≥€5M net yr-1 with 3 (max 5) humans — humans must NOT be ODG's production workforce.",
+  "capabilityBuilt": {
+    "module": "runtime/core/odg-autonomous-operating-model.ts (+test, 15 checks)",
+    "reuses": "odg-economic-model.COST + V172 hybrid customer target (259) + maps 13 commercial/operating functions to ODG's REAL existing modules (prospection-registry, niche-scoring, demand-experiment, customer-outcome-intelligence, pricing-grid, proposal-generator, proposal-pipeline, quote, commercial-pipeline, first-cash-activation, client-intake, revenue-dashboard, commercial-portfolio, invoicing, payments, email-gateway, prospection-compliance/send-gate)"
+  },
+  "rebuiltOperatingModel_§4": {
+    "principle": "the 4,945 pure-human delivery-day model (V170) is NOT the target. Delivery is re-based around MAXIMUM autonomous production.",
+    "residualHumanDaysPerCustomer": 1.9,
+    "pureHumanBaselinePerCustomer": 4.0,
+    "autonomousSharePercent": 53.3,
+    "hybridTarget": "259 customers (V172) ⇒ ~484 residual HUMAN-days",
+    "feasibility": { "3people": "capacity 630 days, residual 484 ⇒ FEASIBLE (77% util)", "4people": "FEASIBLE (58%)", "5people": "FEASIBLE (46%)" },
+    "minTeamFeasible": 3,
+    "conclusion": "with ODG automating ~53% of production, the hybrid €5M target is CAPACITY-feasible with a 3-person team. The real bottleneck is DEMAND (OWNER_GATED, unvalidated), NOT human delivery capacity."
+  },
+  "autonomousVsHuman_§12.6": {
+    "byAutonomy": { "ODG_AUTONOMOUS": 5, "ODG_ASSISTED": 5, "OWNER_GATED": 2, "HUMAN_REQUIRED": 1 },
+    "odgDoesMaximum": "research/pricing (radar+pricing-grid), demos/proposals (proposal-generator+quote), pipeline (commercial-pipeline), reporting (revenue-dashboard) = ODG_AUTONOMOUS; discover/qualify, needs/budget, product-design, onboarding, retention, support = ODG_ASSISTED (human reviews).",
+    "humanReserved": "binding negotiation + signature = HUMAN_REQUIRED; prospecting SEND/real-contact + payment execution = OWNER_GATED (never auto-executed).",
+    "principle": "ODG is the operational engine; humans handle only negotiation/signature/owner-gated — not production."
+  },
+  "capabilityGapRegister_§6": {
+    "totalGaps": 7, "missing": 1, "partial": 6,
+    "missingGap": "support + renewals — no dedicated autonomous support/renewal engine (GAP); manual handling caps customer volume / raises residual human-days.",
+    "partialGaps": "needs/budget, product-design, prospecting (SEND owner-gated), onboarding/delivery, retention, finance (payment owner-gated) — each partially automated via a real module, needs hardening for throughput.",
+    "prioritization": "by (economic impact × feasibility); each gap carries why-it-blocks-economics, acceptance test, owner-gated dependency, and €5M contribution.",
+    "topPriority": "needs_budget + product_design + others (score 6): extend existing modules for real throughput."
+  },
+  "honesty_§9": "models WORK ALLOCATION + capability gaps, NOT revenue. Residual human-days are HYPOTHESIS. Demand is unvalidated (OWNER_GATED = p01-demand-validation); €5M NOT guaranteed; €500M separate; NO fabricated customers/sales/demand/revenue; €0 real clients. Separates hypothesis/simulation from (absent) validated demand/signed contracts/invoiced revenue/collected cash.",
+  "canonicalRoadmap_§7": "V12.4 remains the strategic authority; ROADMAP.json / closure-register.json / Boussole kept distinct + traceable (V169/V170); no competing roadmap introduced. This lot adds the autonomous-operating + gap layer, not a new SSOT.",
+  "nextBranches_§8": {
+    "topGap_support_renewals": "build a deterministic autonomous support/renewal engine (the 1 MISSING capability) — next governed branch; acceptance = batch processed with evidence + independent verification.",
+    "marketDemand_§3_§10": "real EU-by-country market research + demand validation (grant valid→2026-11-19; p01-demand-validation OWNER_GATED) — the true bottleneck.",
+    "commercialHardening_§5": "harden the 6 PARTIAL functions for throughput.",
+    "radar_§10": "V171 scheduler built; real scheduled run NOT_MEASURED (owner/root timer).",
+    "vps_§11": "OWNER_GATED (root/systemd/TLS/domain/certs/secrets); not simulated."
+  },
+  "verification": { "gate": "expected 598/598 (597 + 1 new suite)", "tsc": "0 errors", "newChecks": "15", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true },
+  "honesty": "V173 rebuilt the operating model around maximum autonomous production (ODG ~53% of delivery ⇒ the hybrid €5M target is capacity-feasible with a 3-person team, NOT the 4,945 pure-human day model), grounded the autonomous-vs-human split + capability-gap register in ODG's REAL existing commercial modules (1 MISSING = support/renewals honestly flagged), and showed the real bottleneck is DEMAND (OWNER_GATED), not human capacity. No revenue claimed, no fabricated demand/customers, €5M NOT guaranteed, €0 real clients. No status falsified, no register/audit-log/ROADMAP/canonical-source mutation, no simulated deployment."
+}
