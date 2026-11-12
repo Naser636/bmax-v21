@@ -1,0 +1,29 @@
+{
+  "//": "V167 (§4 grant-verify + §5/§6 radar + §16/§17 OTel wired to real execution paths + collector-safe exporter). Delta dossier; no competing SSOT. Builds on V166. Reuses odg-otel-genai-trace emitter (no parallel engine). No register/audit-log/ROADMAP/runtime-generated mutation; no status changed; no real network egress; no simulated deployment.",
+  "baseline": { "head": "26c36b4 (main @ V166)", "branch": "excellence/v167-otel-execution-trace-20261112", "gateBefore": "589/589", "tsc": 0 },
+  "grantVerified_§4": { "source": "docs/odg/V141_RESEARCH_GRANT.json (canonical)", "authorized": true, "expiry": "2026-11-19T00:00:00Z (exact, from expiresMs 1795046400000)", "nowValid": true, "budget": { "maxCalls": 200, "maxBytes": 20000000 }, "callsThisLot": "2 read-only (1 WebSearch OTLP/JSON + 1 WebFetch opentelemetry-proto example)", "constraints": "no credentials / no external writes / no paid API / no spend / no deploy — honored" },
+  "radar_§5_§6": {
+    "researched": "OTLP/JSON wire format (opentelemetry.io/docs/specs/otlp 1.11.x + open-telemetry/opentelemetry-proto examples/trace.json): resourceSpans → resource + scopeSpans → scope + spans; span {traceId:32hex, spanId:16hex, parentSpanId, name, kind:int (INTERNAL=1,SERVER=2,CLIENT=3), startTimeUnixNano/endTimeUnixNano:decimal-string, status:{code} (UNSET=0,OK=1,ERROR=2)}; attributes=[{key,value:{stringValue|intValue|boolValue}}].",
+    "provenance": "primary sources (OTel spec + official proto repo); freshness 2026; limitation: GenAI agent/tool conventions still settling (noted V166) — the OTLP envelope itself is stable."
+  },
+  "capabilityBuilt_§16_§17": {
+    "module": "runtime/core/odg-otel-execution-trace.ts (+test, 21 checks)",
+    "§16_wireRealPaths": "composeExecutionTrace() builds a FULL OTel trace from ODG's REAL artifacts: the patch-execution report (missions/tools/errors via the V166 emitter) + the V157 provider sealed-evidence bundle (execId/contractSha/agentId) → an honest ODG→provider HANDOFF span (provider.name='technical_provider', NOT ODG/LLM); execute_tool spans re-parented under the handoff (delegated scope); durations carried ONLY when the artifacts contain timing (never fabricated — no Date.now).",
+    "§17_collectorSafeExport": "toOtlp() emits OTLP/JSON (resourceSpans/scopeSpans; kind INTERNAL=1; status OK=1/ERROR=2; typed keyValue attrs). exportTrace() is GOVERNED + collector-safe: NO collector ⇒ NO egress (returns the redacted payload); REDACTS sensitive opt-in content (gen_ai.input.messages/output.messages/system_instructions/prompt + odg.secret/token/credential/key) BEFORE export; bounds payload size (cost); performs NO real network egress (default deny; no fabricated endpoint/credential; a test-only _post seam injects transport).",
+    "reuses": ["odg-otel-genai-trace.ts emitGenAiTrace (V166) — the REAL span emitter; validateConformance confirms composed spans still conform"]
+  },
+  "honesty_§35": "provider handoff labelled technical_provider (not ODG); durations never fabricated; export never egresses without a real governed collector; secrets redacted. No status changed; closure-register.json byte-identical (last-modified @V123); register re-verified 427 (415 ACCEPTED/6 BLOCKED/3 IN_PROGRESS/3 DEFERRED, stale 0).",
+  "globalStatus_§39": {
+    "parallelism": "this lot is one bounded provider deliverable; ODG's multi-mission orchestrator (§8) + OWASP T1–T17 matrix (§18) + P6 deepening (§21) remain open branches for subsequent lots — reported honestly, not claimed done.",
+    "radar": "USED (grant verified at canonical source; 2 real read-only calls).",
+    "weeklyScheduler": "NOT_MEASURED — no real Sun 02:00–05:00 Europe/Paris run observed (no worker/polling added).",
+    "hmac_p0e": "owner-held production key + out-of-band anchor OWNER_GATED (mechanism proven V162).",
+    "slice3": "governability reproduced V165 (live governed-apply correct; historical out-of-band owner-gated) — DEFERRED retained; this lot's handoff span consumes the same provider-evidence provenance.",
+    "fiveCommercialMetiers": "VALIDATED_LOCAL; €0 clients (real demand/billing OWNER_GATED).",
+    "deliveryChainAndVPS": "OWNER_GATED (systemd/root, TLS/domain/cert/secrets); NOT simulated; no deployment performed.",
+    "personalInterventionsRemaining_§33": "owner: systemd/root authorization, TLS hostname/cert + token, real demand signals + WTP experiment, audit-integrity production key + anchor store, real billing — preserved, none fabricated."
+  },
+  "preservedRisks_§26": "HIGH recovery-loop severity 9 + the five FMEA MEDIUM+ residuals preserved.",
+  "verification": { "gate": "expected 590/590 (589 + 1 new suite)", "tsc": "0 errors", "newChecks": "21", "registerByteIdentical": true, "runtimeGeneratedUntouched": true, "auditLogUnmodified": true, "roadmapJsonUntouched": true, "noNetworkEgress": true },
+  "honesty": "V167 verified the V141 grant at its canonical source (VALID→2026-11-19), ran real radar on the OTLP wire format, and wired OpenTelemetry to ODG's REAL execution paths (missions + provider handoff from V157 sealed evidence) with a collector-safe, secret-redacting, cost-bounded governed exporter that performs NO real network egress. Built + executed (real patch-executor) + independently validated (V166 conformance) + integrated. Not an audit/bibliography/parallelism-demo: a real observability capability. ODG's multi-mission orchestrator, OWASP matrix, P6 deepening, HMAC activation, and VPS delivery remain open branches, reported honestly. No status falsified, no register/audit-log/ROADMAP/runtime-generated mutation, no parallel engine, no simulated deployment, €0 clients. HIGH recovery-loop + 5 FMEA residuals preserved."
+}
