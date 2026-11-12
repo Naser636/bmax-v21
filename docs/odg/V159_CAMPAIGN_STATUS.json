@@ -1,0 +1,39 @@
+{
+  "//": "V159 — CTO Final-Autonomy campaign: executed the highest-value dependency-ordered deliverable (Phase 1+2: mission scheduler bridging the V158 real governed journey). HONEST all-phase status with PRECISE blockers for phases that are owner-gated or multi-lot (the directive forbids simulating a deployment or fabricating results). No competing SSOT; governed ROADMAP.json UNTOUCHED.",
+  "headCommit": "1b1fc64 (main @ V158) → V159 branch",
+  "delivered_this_lot_§3_§4": {
+    "module": "runtime/core/odg-mission-scheduler.ts (+test)",
+    "what": "makes the V158 REAL governed journey CONSUMABLE by a canonical mission list: classifyMission (READY/READY_WITHIN_CAMPAIGN_GRANT/DEPENDENCY_BLOCKED/OWNER_GATED/ALREADY_COMPLETED/ALREADY_ACTIVE/AUTH_EXPIRED/SECURITY_BLOCKED/NOT_MEASURABLE) + scheduleEligible (dependency-aware, dedup) + runMission (executes the REAL governed journey, bounded retry ≤3, ODG close/reject) + runScheduler (dependency unlock, NO double execution, precise residual blockers, termination backstop).",
+    "proven": "M-A unlocks M-B (both CLOSED_BY_ODG via the real Ed25519 sealed-evidence journey); duplicate deduped; owner-gated + missing-dep are precise residual blockers; no double execution; deterministic; fail-closed.",
+    "reuses": "odg-real-autonomy-journey (real execution); cites campaign-controller.selectNextLot/advance + engineering-scheduler.schedule as the production orchestrators it complements (NOT duplicates); no new primitive, no parallel queue, no hidden worker."
+  },
+  "phaseStatus": {
+    "P0_truth_preservation_§2": "DONE — HEAD 1b1fc64 = origin/main verified; PR #521 merged; V145–V158 intact; governed ROADMAP.json = 11 missions (historical 28/166 NOT re-asserted); grant valid→2026-11-19 consumed NOT_MEASURED.",
+    "P1_v158_journey_operational_§3": "DONE — odg-mission-scheduler makes runRealAutonomyJourney mission-consumable; V157/V158 guarantees preserved (Ed25519/nonce/replay/revocation/binding/sealed-evidence/independent-reproduction/ODG accept-reject).",
+    "P2_mission_queue_scheduler_§4": "DONE (bridge) — dependency-aware eligibility + dedup + no-double-exec + bounded recovery + close-after-acceptance, tested adversarially. FULL wiring into the live campaign-controller register = PROPOSED next lot (the scheduler is the consumable bridge; binding it to the register's persisted lifecycle is a further governed step).",
+    "P3_worldwide_radar_§5": "PARTIAL — real research executed across V147–V155 (international sources recorded with provenance); grant VERIFIED valid→2026-11-19, consumed NOT_MEASURED (no counter). Weekly-radar OPERATIONAL scheduler = NOT_MEASURED (documented Sun 02:00–05:00 Paris; a running/tested scheduler not demonstrated in this environment).",
+    "P4_fifteen_metiers_§6": "VALIDATED_LOCAL (P1–P15 référentiels + gate suites). Per-métier benchmark depth + full functional parcours = PROPOSED multi-lot (not re-asserted as commercialisable).",
+    "P5_five_commercial_metiers_§7": "VALIDATED_LOCAL — M1 (detection+remediation+verification; R4 OWNER_GATED), M2 (11/11 engines V145–V151, full BTP/TP perimeter, cockpit), M3 (finops-analyzer), M4 (data-connector), M5 (accessibility+applicability). NONE commercialisable from synthetic; €0 clients.",
+    "P6_intelligence_memory_§8": "PRESENT (existing memory/trust/provenance/root-cause/learning engines); consolidation into this lot's outcomes DONE via canonical memory (no parallel memory).",
+    "P7_validators_risks_§9": "V1–V9 responsibilities exercised (V156/V157); HIGH recovery-loop (sev 9) + 5 FMEA MEDIUM+ residuals PRESERVED (not accepted/closed — require correction+proof).",
+    "P8_github_ci_§10": "DONE per-lot — branch protection + required CI; PRs #509–#521 merged via CI; this lot follows the same flow.",
+    "P9_vps_deploy_§11": "OWNER_GATED / BLOCKED — VPS prep dossiers present (V91/V92/V93B/V105/V107/V144); host IS the VPS; USER-systemd supervision proven root-free; BUT production cutover/deploy is OWNER + root-gated per standing policy (vps-rootfree-supervision). NO deploy performed; NOT simulated. Missing to proceed: explicit owner cutover authorization (+ domain/TLS/secrets which are owner-held). Documented, not bypassed.",
+    "npm_§12": "AUDITED (no system change): npm 9.2.0 / node v22.22.1 functional; global prefix /usr/local not writable by this user ⇒ auto-update warning is cosmetic; update NOT necessary; prefix/permissions UNCHANGED (no sudo, no global-prefix edit)."
+  },
+  "blockers_precise": [
+    { "item": "VPS production deploy", "status": "OWNER_GATED", "missing": "explicit owner cutover authorization + domain/TLS/secrets (owner-held); root for system-level cutover", "prepared": "deployment plan + inventory + forensics + root-free supervision + backups/restore (R3) + rollback drill", "notSimulated": true },
+    { "item": "live external Claude Code provider transport", "status": "OWNER_GATED", "missing": "an authorized bounded external transport binding; current provider executor is hermetic (REAL_HARNESS_HERMETIC)" },
+    { "item": "weekly-radar operational scheduler proof", "status": "NOT_MEASURED", "missing": "an observed scheduled run + its evidence in this environment" },
+    { "item": "type-checker (ts.Program) tier", "status": "OWNER_GATED", "missing": "explicit owner authorization" },
+    { "item": "real-repo patch application", "status": "OWNER_GATED" },
+    { "item": "M1 R4", "status": "OWNER_GATED" }
+  ],
+  "resumeCheckpoint_§15": {
+    "head": "V159 branch @ this commit (main after merge)",
+    "completedThisLot": "P0, P1, P2-bridge, npm audit, all-phase reconciliation",
+    "nextPriorities": ["bind odg-mission-scheduler to the campaign-controller persisted register lifecycle", "measure the weekly-radar scheduler operationally", "owner-gate review for VPS cutover + live transport", "per-métier benchmark deepening"],
+    "doNotRedo": "V145–V159 modules are merged + tested; reuse them."
+  },
+  "statusLegend": ["NATIVE_EXECUTED", "VALIDATED_LOCAL", "TESTED", "SIMULATED", "PROVIDER_DELIVERED", "CRYPTOGRAPHICALLY_VERIFIED", "INDEPENDENTLY_REPRODUCED", "ACCEPTED_BY_ODG", "REJECTED_BY_ODG", "OWNER_GATED", "BLOCKED", "NOT_MEASURED", "COMMERCIALISABLE(none)", "ACTIVE_IN_PRODUCTION(none)"],
+  "honesty": "V159 completed the dependency-ordered maximum genuinely-executable work (the mission-scheduler bridge over the REAL governed journey) and reconciled ALL phases with precise, verifiable blockers. It did NOT simulate a VPS deployment, did NOT claim a live external transport, did NOT re-assert historical totals, and did NOT accept/close the HIGH recovery-loop or FMEA residuals. €0 clients; no métier commercialisable from synthetic tests. No VPS/spend/deploy/governed-path edit."
+}
