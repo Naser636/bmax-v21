@@ -1,0 +1,67 @@
+{
+  "//": "V142 §4 — documented commercial opportunities from REAL market research (WebSearch, this session). STRICT separation: OPPORTUNITY (verified market demand) ≠ LEAD ≠ CLIENT ≠ REVENUE ≠ PROFIT. Demand is VERIFIED (regulation+date+source); economics are HYPOTHESES (not estimated without real data); €0 clients, none fabricated. Owner-gated barriers flagged (ISO 27001 PDP certification).",
+  "opportunities": [
+    {
+      "id": "OPP-CRA-SBOM",
+      "state": "OPPORTUNITY",
+      "metier": "P3-security (cra-evidence / sbom-audit)",
+      "demandDriver": "EU Cyber Resilience Act (Regulation (EU) 2024/2847): machine-readable SBOM mandatory for every product with digital elements; vuln-reporting 2026-09-11 (24h to ENISA); FULL compliance 2027-12-11 (SBOM, secure-by-design, CE marking, tech docs).",
+      "demandEvidence": {
+        "verified": true,
+        "sources": [
+          "https://anchore.com/sbom/eu-cra/",
+          "https://www.ogtechnologies.co/insights/cyber-resilience-act-cra-guide/"
+        ],
+        "regulation": "Reg (EU) 2024/2847",
+        "deadline": "2027-12-11",
+        "consultedAt": "2026-11-12"
+      },
+      "odgCapability": "P3 CRA/SBOM evidence demonstrator + sbom-audit-service + p8-slsa-level-gate (SLSA-v1.0-conformant) — ODG strength (R3 own-repo synthetic).",
+      "problemValue": "HIGH (regulatory mandate, EU-wide, hard deadline, penalties).",
+      "competition": "anchore/finitestate/sbomify etc. (established) — crowded but mandate expands TAM.",
+      "reuse": "reuses across P3/P8 (SBOM+SLSA) + P10 (regulatory evidence).",
+      "economics": {
+        "basis": "HYPOTHESIS (no client/price data)",
+        "note": "unit economics NOT estimated without real cost/price data — not fabricated."
+      },
+      "maturity": "OPPORTUNITY (verified demand); NOT a lead (no specific buyer), NOT a client, €0 revenue."
+    },
+    {
+      "id": "OPP-FR-EINVOICE",
+      "state": "OPPORTUNITY",
+      "metier": "P11-document (einvoice-validator / factur-x)",
+      "demandDriver": "France e-invoicing mandate: 2026-09-01 all businesses must RECEIVE structured e-invoices (large/mid also issue); 2027-09-01 SMEs/micro must issue. Certified PDP/PA platform required; formats UBL/CII/Factur-X; near-real-time e-reporting.",
+      "demandEvidence": {
+        "verified": true,
+        "sources": [
+          "https://www.invoicenavigator.eu/country/france",
+          "https://www.e-invoice.app/blog/france-pdp-facturation-electronique"
+        ],
+        "deadline": "2026-09-01 / 2027-09-01",
+        "consultedAt": "2026-11-12"
+      },
+      "odgCapability": "P11 einvoice-validator (EN 16931 BR-CO-10/13/14/15/17 + NEW opt-in BR-CO-18 strict this session) + factur-x-extract + einvoice-parser — ODG strength (R2-R3).",
+      "problemValue": "HIGH (national mandate, phased, every French business).",
+      "competition": "PDPs/platforms (Esker, Pennylane, etc.) require certification (ISO 27001 — OG-05 owner-gated) — ODG can supply VALIDATION, not be a certified PDP.",
+      "reuse": "reuses across P11 + P10 (regulatory) + P9 (finops).",
+      "economics": {
+        "basis": "HYPOTHESIS",
+        "note": "not estimated without real cost/price data."
+      },
+      "maturity": "OPPORTUNITY (verified demand); NOT a lead/client; €0 revenue; becoming a certified PDP is OWNER-GATED (ISO 27001, OG-05)."
+    }
+  ],
+  "ranking": [
+    {
+      "id": "OPP-CRA-SBOM",
+      "rank": 1,
+      "why": "verified EU-wide mandate + ODG P3/P8 R3 strength + cross-métier reuse; validation (not certification) is non-owner-gated"
+    },
+    {
+      "id": "OPP-FR-EINVOICE",
+      "rank": 2,
+      "why": "verified national mandate + ODG P11 R2-R3; VALIDATION slice non-owner-gated, but PDP certification is OWNER-GATED (ISO 27001)"
+    }
+  ],
+  "honesty": "These are DETECTED market-demand opportunities, not leads/clients. No customer, contract, revenue, margin, or competitor price fabricated. Economics left as HYPOTHESIS (insufficient real data). The commercial-intelligence-chain classifies such signals as OPPORTUNITY (no buyer provenance ⇒ never QUALIFIED_LEAD)."
+}

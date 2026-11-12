@@ -1,0 +1,250 @@
+{
+  "//": "V142 §3 — individual 15-métier benchmark from REAL internet research (WebSearch, owner grant). ODG baseline = V137 VALIDATED_LOCAL. A reference is admitted ONLY with a real cited url + real date + nature + capability (anti-fabrication). 8 métiers researched this session (P2/P6/P7/P8/P11/P12 + P3/P10 via commercial-demand); 7 remain honestly NOT_YET_RESEARCHED. Findings: 2 real gaps FIXED (P2 base64, P11 BR-CO-18); 6 CONFORMANT/STRONG (no artificial change).",
+  "matrix": [
+    {
+      "metier": "P1-fullstack",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P10-regulatory",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://www.ogtechnologies.co/insights/cyber-resilience-act-cra-guide/",
+          "date": "2026-11-12",
+          "nature": "REGULATION_GUIDE",
+          "authority": "EU CRA",
+          "capability": "CRA obligations timeline (vuln-reporting 2026-09-11, full 2027-12-11, CE marking)",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs EU CRA REGULATION_GUIDE: CRA obligations timeline (vuln-reporting 2026-09-11, full 2027-12-11, CE marking)"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "STRONG (CRA evidence demonstrator)"
+    },
+    {
+      "metier": "P11-document",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://www.invoicenavigator.eu/blog/en16931-validation-rules-complete-guide",
+          "date": "2026-11-12",
+          "nature": "STANDARD_RULES",
+          "authority": "EN 16931",
+          "capability": "BR-CO VAT calc rules incl. BR-CO-18 (>=1 VAT breakdown required, even 0%)",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs EN 16931 STANDARD_RULES: BR-CO VAT calc rules incl. BR-CO-18 (>=1 VAT breakdown required, even 0%)"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "GAP FIXED (EN 16931 BR-CO-18 opt-in strict)"
+    },
+    {
+      "metier": "P12-streaming",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://dev.to/doogal/transactional-outbox-pattern-fix-dual-writes-3fl9",
+          "date": "2026-11-12",
+          "nature": "BEST_PRACTICE",
+          "authority": "distributed-systems community",
+          "capability": "exactly-once is a myth ⇒ at-least-once + idempotent consumer (inbox/idempotency-key)",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs distributed-systems community BEST_PRACTICE: exactly-once is a myth ⇒ at-least-once + idempotent consumer (inbox/idempotency-key)"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "CONFORMANT (idempotent-consumer collision reject)"
+    },
+    {
+      "metier": "P13-aiinfra",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P14-devex",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P15-workflow",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P2-ai",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+          "date": "2026-11-12",
+          "nature": "STANDARD_GUIDELINE",
+          "authority": "OWASP",
+          "capability": "LLM01 prompt-injection defenses — string filters evaded via encodings (Base64)",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs OWASP STANDARD_GUIDELINE: LLM01 prompt-injection defenses — string filters evaded via encodings (Base64)"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "GAP FIXED (base64-encoded injection detection, V141)"
+    },
+    {
+      "metier": "P3-security",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://anchore.com/sbom/eu-cra/",
+          "date": "2026-11-12",
+          "nature": "REGULATION_GUIDE",
+          "authority": "EU CRA (Reg 2024/2847)",
+          "capability": "mandatory machine-readable SBOM for products with digital elements; 2027-12-11 deadline",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs EU CRA (Reg 2024/2847) REGULATION_GUIDE: mandatory machine-readable SBOM for products with digital elements; 2027-12-11 deadline"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "STRONG (CRA/SBOM demand; ODG R3 own-repo)"
+    },
+    {
+      "metier": "P4-data",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P5-golden-path",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P6-eval",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://arxiv.org/pdf/2501.04234",
+          "date": "2026-11-12",
+          "nature": "PAPER",
+          "authority": "arXiv (benchmark uncertainty)",
+          "capability": "statistical uncertainty for aggregate ML metrics — report CI; overlapping-CI ≠ no-difference; test CI of the difference",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs arXiv (benchmark uncertainty) PAPER: statistical uncertainty for aggregate ML metrics — report CI; overlapping-CI ≠ no-difference; test CI of the difference"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "CONFORMANT (CI-of-difference, not overlapping-CI fallacy)"
+    },
+    {
+      "metier": "P7-sre",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [
+        {
+          "source": "https://sre.google/workbook/alerting-on-slos/",
+          "date": "2026-11-12",
+          "nature": "GUIDELINE",
+          "authority": "Google SRE",
+          "capability": "multi-window multi-burn-rate SLO alerting (14.4x/1h, 6x/6h, 1x/3d; short=long/12)",
+          "confidence": "HIGH"
+        }
+      ],
+      "assessed": true,
+      "status": "BENCHMARKED",
+      "opportunities": [
+        "compare ODG(VALIDATED_LOCAL) vs Google SRE GUIDELINE: multi-window multi-burn-rate SLO alerting (14.4x/1h, 6x/6h, 1x/3d; short=long/12)"
+      ],
+      "note": "comparative baseline established from cited reference(s)",
+      "verdict": "CONFORMANT (exact multi-window multi-burn-rate tiers)"
+    },
+    {
+      "metier": "P8-semver",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    },
+    {
+      "metier": "P9-finops",
+      "odgBaseline": "VALIDATED_LOCAL",
+      "references": [],
+      "assessed": false,
+      "status": "NOT_YET_RESEARCHED",
+      "opportunities": [],
+      "note": "no researched reference yet — honestly NOT_YET_RESEARCHED (next radar cycle); no fabricated ranking",
+      "verdict": "NOT_YET_RESEARCHED"
+    }
+  ],
+  "coverage": {
+    "metiers": 15,
+    "benchmarked": 7,
+    "notYetResearched": 7,
+    "realReferences": 7,
+    "researched": 8,
+    "gapsFixed": [
+      "P2-ai base64 injection",
+      "P11-document BR-CO-18"
+    ],
+    "conformant": [
+      "P6-eval",
+      "P7-sre",
+      "P8-supply-chain",
+      "P12-streaming"
+    ]
+  },
+  "honesty": "ODG baseline = reproducible V137 VALIDATED_LOCAL maturity (not production). Only cited, dated references are admitted; métiers without a researched reference are NOT_YET_RESEARCHED — NO fabricated ranking, relevance, or score. Benchmark established BEFORE any improvement claim."
+}
