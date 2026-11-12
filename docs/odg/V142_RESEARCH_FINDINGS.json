@@ -1,0 +1,75 @@
+{
+  "//": "V142 — REAL multi-metier internet research (WebSearch, owner-authorized grant). Each finding compared to ODG + converted to governed missions via research-to-mission. P7/P8 CONFORMANT (no artificial change); P2(base64)/P11(BR-CO-18) gaps CLOSED + measured.",
+  "metierCoverage": {
+    "researchedThisSession": [
+      "P7-sre (conformant)",
+      "P11-document (BR-CO-18 applied)",
+      "P8-supply-chain (SLSA conformant, V141)",
+      "P2-ai (base64 injection fixed, V141)"
+    ],
+    "stillNotYetResearched": [
+      "P1",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P9",
+      "P10",
+      "P12",
+      "P13",
+      "P14",
+      "P15"
+    ],
+    "note": "P3/P10 indirectly covered by commercial-opportunity research (CRA/e-invoice demand)."
+  },
+  "findings": [
+    {
+      "content": "Google SRE multi-window multi-burn-rate alerting (page 2%/1h=14.4x, 5%/6h=6x; ticket 10%/3d=1x; short=long/12). ODG p7-burn-rate-alert ALREADY CONFORMANT (exact tiers, fail-closed both-windows). No change.",
+      "source": "https://sre.google/workbook/alerting-on-slos/",
+      "date": "2026-11-12",
+      "sourceClass": "LIVE_SOURCE",
+      "confidence": "HIGH",
+      "metier": "P7-sre"
+    },
+    {
+      "content": "EN 16931 BR-CO-18: an invoice SHALL have >=1 VAT breakdown group (BG-23), even at 0%. ODG einvoice-validator treated absence as non-error. GAP CLOSED this session: opt-in enforceBR_CO_18 (default lenient preserved).",
+      "source": "https://www.invoicenavigator.eu/blog/en16931-validation-rules-complete-guide",
+      "date": "2026-11-12",
+      "sourceClass": "LIVE_SOURCE",
+      "confidence": "HIGH",
+      "metier": "P11-document"
+    }
+  ],
+  "governedMissions": [
+    {
+      "kind": "OWNER_DECISION",
+      "detail": "Google SRE multi-window multi-burn-rate alerting (page 2%/1h=14.4x, 5%/6h=6x; ticket 10%/3d=1x; short=long/12). ODG p7-burn-rate-alert ALREADY CONFORMANT (exact tiers, fail-closed both-windows). No change. — compare vs ODG P7-sre",
+      "reason": "requires owner information/authorization or external reality — not self-executable",
+      "verifiableAcceptance": "the named dimension is independently DEMONSTRATED (not merely documented) per §103 — requires owner information/authorization",
+      "provenance": {
+        "source": "https://sre.google/workbook/alerting-on-slos/",
+        "confidence": "HIGH",
+        "component": "ODG P7-sre"
+      }
+    },
+    {
+      "kind": "OWNER_DECISION",
+      "detail": "EN 16931 BR-CO-18: an invoice SHALL have >=1 VAT breakdown group (BG-23), even at 0%. ODG einvoice-validator treated absence as non-error. GAP CLOSED this session: opt-in enforceBR_CO_18 (default lenient preserved). — compare vs ODG P11-document",
+      "reason": "requires owner information/authorization or external reality — not self-executable",
+      "verifiableAcceptance": "the named dimension is independently DEMONSTRATED (not merely documented) per §103 — requires owner information/authorization",
+      "provenance": {
+        "source": "https://www.invoicenavigator.eu/blog/en16931-validation-rules-complete-guide",
+        "confidence": "HIGH",
+        "component": "ODG P11-document"
+      }
+    }
+  ],
+  "quarantined": 0,
+  "appliedImprovements": [
+    "einvoice-validator: opt-in EN 16931 BR-CO-18 strict (>=1 VAT breakdown) — default lenient preserved, measured before/after"
+  ],
+  "conformantNoChange": [
+    "p7-burn-rate-alert conforms to Google SRE multi-window multi-burn-rate",
+    "p8-slsa-level-gate conforms to SLSA v1.0 (V141)"
+  ]
+}

@@ -39,10 +39,18 @@ const MANDATORY = [
  *   totals:{ lineNetSumMinor (BT-106), taxExclusiveMinor (BT-109), vatMinor (BT-110), taxInclusiveMinor (BT-112) } }.
  * Amounts are integer MINOR units (cents). Returns { ok, report:{ findings, summary, valid } }. Fail-closed.
  */
-function validateInvoice(inv: any): any {
+function validateInvoice(inv: any, opts?: any): any {
   if (!isObj(inv)) return { ok: false, code: "INVALID_INPUT", reason: "invoice object required" };
+  const o = isObj(opts) ? opts : {};
   const findings: any[] = [];
   const add = (id: string, area: string, severity: string, detail: string, remediation: string, evidence: string) => findings.push({ id, area, severity, detail, remediation, evidence });
+
+  // V142 (EN 16931 BR-CO-18, confirmed via real research invoicenavigator.eu / infinite-it.com 2026) — an invoice SHALL have
+  // at least one VAT breakdown group (BG-23), even at 0%. The default slice treats absence as non-error (documented lenient
+  // scope); opts.enforceBR_CO_18===true enforces full conformance (absence ⇒ HIGH), WITHOUT changing the default (back-compat).
+  if (o.enforceBR_CO_18 === true && (!Array.isArray(inv.vatBreakdown) || inv.vatBreakdown.length === 0)) {
+    add("BR-CO-18", "calculation", "HIGH", "EN 16931 BR-CO-18: an Invoice shall have at least one VAT breakdown group (BG-23) — none present", "supply at least one BG-23 VAT breakdown (category, rate, taxable, tax), even at 0%", "inv.vatBreakdown absent/empty");
+  }
 
   // ---- mandatory business terms ----
   for (const [field, bt] of MANDATORY) if (inv[field] === undefined || inv[field] === null || inv[field] === "") add(`mandatory:${field}`, "mandatory-field", "HIGH", `missing ${bt}`, `supply ${bt}`, `field '${field}' absent`);
