@@ -1,0 +1,55 @@
+{
+  "//": "V154 §8 — ODG native engineering benchmark V151→V154 + AST-lite operation inventory. Delta dossier referenced from the Boussole; no competing SSOT; governed ROADMAP.json UNTOUCHED. Honest: canonical ops counted separately from faulty fixtures; diagnostics distinguished from transforms; no simulation counted as real capability; unproven properties = NOT_MEASURED.",
+  "headCommit": "6aab85e (main @ V153) → V154 branch",
+  "astChoice_§3": {
+    "mechanism": "TypeScript Compiler API ts.createSourceFile (syntactic tier, setParentNodes, no type-checker/Program/build)",
+    "dependency": "typescript@5.9.3 — ALREADY a repo dependency (node_modules/typescript); NO new external dependency added; licence/maintenance already accepted by the repo",
+    "honest": "REAL AST (not regex-pretending-to-be-AST): parse errors via parseDiagnostics ⇒ NATIVE_REFUSED; positions/nodes used for identification; text reconstruction verified by RE-PARSE postconditions",
+    "boundary": "syntactic tier only — semantic/type-resolution tasks (true type/import alignment) need a Program/type-checker and are REFUSED/ESCALATED, not faked",
+    "security": "ts is loaded statically and used ONLY to PARSE text — no code execution, no eval/new Function/dynamic import of mission input (V153 continuity)"
+  },
+  "operationsDelivered_§4": {
+    "canonicalTotal": 4,
+    "transforms": [
+      { "id": "import-ordering@1", "kind": "TRANSFORM", "scope": "A — sort the LEADING contiguous top-level import block by module specifier", "preconditions": "≥2 leading imports; all string-literal specifiers", "refuses": "side-effect import in block / leading comment on an import / non-string specifier / malformed source", "postconditions": "re-parses + same import multiset + sorted + same count", "idempotent": true, "reversible": true, "note": "alias/type-only/namespace imports sort safely (still import declarations)" }
+    ],
+    "diagnostics": [
+      { "id": "duplicate-import-analysis@1", "kind": "DIAGNOSTIC", "scope": "B — report module specifiers imported >1; consolidation REFUSED (alias/type/namespace/side-effect ambiguity)", "modifiesText": false },
+      { "id": "dead-require-analysis@1", "kind": "DIAGNOSTIC", "scope": "C — file-local; `const X=require(...)` with 0 AST references ⇒ safeToRemove; destructuring/namespace ⇒ NOT safe; never auto-removes", "modifiesText": false },
+      { "id": "contract-test-consistency@1", "kind": "DIAGNOSTIC", "scope": "D — compare a declared contract (params/outputs/errors/edge cases) to existing test kinds; report gaps; NEVER adapts the contract to the implementation", "modifiesText": false }
+    ],
+    "refusedOrEscalated": [
+      { "op": "E — type/import alignment (semantic)", "decision": "REFUSED/ESCALATED — needs type resolution (Program/type-checker) unavailable at the syntactic tier; not faked (directive §4.E)" },
+      { "op": "B — duplicate-import CONSOLIDATION (vs analysis)", "decision": "transform REFUSED; only the DIAGNOSTIC shipped — safe consolidation of alias/type/namespace is not demonstrable deterministically (directive §4.B 'refuser les cas complexes')" }
+    ],
+    "honestSizing": "deliberately SMALL (1 transform + 3 diagnostics) — real utility over an inflated count; faulty fixtures: 0 in this registry (directive §8: never count fixtures as capabilities)."
+  },
+  "benchmark_V151_V154_§8": {
+    "reproducible": true,
+    "v151": { "nativeCapability": "5 value-function templates", "executionSurface": "new Function (eliminated in V153)" },
+    "v152": { "added": "5 source-text transforms (structural verification, no exec)", "verification": "pre/postconditions + anti-reward-hacking mutation testing" },
+    "v153": { "change": "CLOSED deny-by-default executor; new Function dynamic-exec surface 1→0; 20 adversarial cases" },
+    "v154": {
+      "added": "4 AST-lite ops (1 transform import-ordering + 3 diagnostics) via REAL ts AST",
+      "registeredExecutableCanonicalOps": 4, "diagnosticOps": 3, "transformOps": 1, "faultyFixtures": 0,
+      "transformsSucceeded": "import-ordering: sorts+idempotent+postcondition-verified",
+      "transformsRefused": "side-effect/comment/malformed/non-string-specifier",
+      "providerEscalations": "semantic type alignment (E) — refused at syntactic tier",
+      "ambiguousCorrectlyRefused": "duplicate consolidation, destructured require removal",
+      "mutationDetection": "V152 anti-reward-hacking preserved (TESTS_NON_VACUOUS)",
+      "idempotence": true, "deterministic": true, "regressions": 0, "adversarialCasesCovered": "alias/type/namespace/side-effect/comment/dup/collision/dynamic/malformed/empty/large/EOL/idempotence/pre-post/unknown/mistyped/injection/refusal-bypass",
+      "dynamicExecSurface": 0, "resourceMetrics": "NOT_MEASURED (ops trivial; no CPU/memory instrumentation)"
+    },
+    "honestDelta": "ODG can now ANALYSE + safely TRANSFORM real TS artefacts (imports) at the syntactic tier, with hard refusal + AST-verified postconditions + candidate patches (real write owner-gated). Capability growth is REAL and small; no inflation; novel/semantic reasoning remains CLAUDE_CODE_EXECUTION."
+  },
+  "guaranteesPreserved": ["V153 closed deny-by-default (no eval/new Function/code-strings)", "V152 pre/postconditions + idempotence + anti-reward-hacking mutation testing", "NATIVE_GREEN/NATIVE_REPAIRED_GREEN/NATIVE_REFUSED/ESCALATED_TO_PROVIDER/VALIDATION_FAILED/NOT_MEASURED + DIAGNOSED", "13-step map unchanged (no provider step relabelled)", "candidate patches only; real-repo write OWNER_GATED"],
+  "limits": [
+    "syntactic tier only — no type resolution; semantic transforms refused/escalated",
+    "import-ordering scoped to the LEADING contiguous import block (safest); mid-file imports untouched",
+    "dead-require/duplicate-import are DIAGNOSTIC (no auto-removal/consolidation)",
+    "file-local analysis only (no cross-file Program); string/comment/dynamic references not analysable ⇒ never auto-remove",
+    "CPU/memory resource metrics NOT_MEASURED; novel semantic reasoning remains provider-dependent"
+  ],
+  "ownerGated": ["real-repo patch application", "semantic (type-aware) operations if a Program is ever introduced", "registry expansion into governed scope", "provider-boundary steps"],
+  "honesty": "A small, genuinely-useful AST-lite set with hard refusal, verified postconditions, and honest syntactic-tier boundaries. €0 clients; synthetic ≠ real; no VPS/spend/deploy; no new primitive/second engine."
+}

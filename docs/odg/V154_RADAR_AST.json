@@ -1,0 +1,18 @@
+{
+  "//": "V154 §9 — worldwide radar for AST-based safe refactoring / dead-code / contract testing, under the valid owner grant (verified valid to 2026-11-19, budget 200/20MB). READ-ONLY public research. fact ≠ editor-claim ≠ demonstrated-ODG-capability.",
+  "grant": { "ref": "docs/odg/V141_RESEARCH_GRANT.json", "verifiedValid": true, "usedCallsThisLot": 1, "budgetMaxCalls": 200 },
+  "capturedAtIso": "2026-11-12",
+  "queries": ["TypeScript compiler API createSourceFile AST import organization dead code detection safe refactoring deterministic 2026"],
+  "sources": [
+    { "url": "https://learning-notes.mistermicheels.com/javascript/typescript/compiler-api/", "title": "Compiler API (TypeScript)", "provenance": "technical notes", "nature": "fact(API usage)", "freshness": "n/a", "confidence": "MEDIUM", "technique": "ts.createSourceFile parses a single in-memory string into a SourceFile AST; for syntactic-only codemods/formatting use createSourceFile with setParentNodes to read positions", "applicability": "exactly the AST-lite tier ODG needs — no Program/build/type-checker", "limits": "syntactic tier = no type resolution (semantic checks out of scope)" },
+    { "url": "https://deepwiki.com/microsoft/TypeScript/7-public-compiler-api", "title": "Public Compiler API (microsoft/TypeScript)", "provenance": "docs", "nature": "fact", "freshness": "2026", "confidence": "MEDIUM", "technique": "SourceFile/Node AST; parseDiagnostics surface syntax errors", "applicability": "parse-error detection ⇒ refuse malformed input", "limits": "official API surface" },
+    { "url": "https://www.jameslmilner.com/posts/ts-ast-and-ts-morph-intro/", "title": "Getting Started With Handling TypeScript ASTs", "provenance": "engineering blog", "nature": "fact", "freshness": "2026", "confidence": "MEDIUM", "technique": "dead code = unexported symbols never referenced within their own file (file-local search space)", "applicability": "dead-require analysis must be file-local + conservative", "limits": "file-local only; cross-file needs a Program" }
+  ],
+  "findings": [
+    { "kind": "fact", "statement": "ts.createSourceFile (syntactic tier, setParentNodes, no type-checker/build) is the standard, fast, safe way to parse TS for codemods; parseDiagnostics expose syntax errors.", "appliedInV154": "odg-ast-operations uses ts.createSourceFile for REAL AST parsing (static, NO code execution); parse errors ⇒ NATIVE_REFUSED; honest AST-lite (not regex-pretending-to-be-AST)." },
+    { "kind": "fact", "statement": "Dead-code analysis without a full Program is FILE-LOCAL (unexported/local symbols, references within the same file).", "appliedInV154": "dead-require-analysis is file-local, DIAGNOSTIC-only, conservative: safeToRemove only when the binding has 0 AST references and is unambiguous; destructuring/side-effect/dynamic ⇒ NOT safeToRemove." },
+    { "kind": "principle", "statement": "Semantic tasks (type alignment) need a type-checker/Program; the syntactic tier cannot resolve types.", "appliedInV154": "type/import alignment that needs semantic understanding is REFUSED/ESCALATED — not faked at the syntactic tier." }
+  ],
+  "dependencyNote": "typescript@5.9.3 is ALREADY a repo dev dependency (node_modules/typescript); NO new external dependency added. It is loaded statically at module top and used ONLY to PARSE text (no code execution, no eval, no dynamic import of mission input).",
+  "honesty": "Reference techniques, NOT demonstrated ODG capabilities beyond what V154 builds. Syntactic-tier only; semantic transforms refused. No paid API/credential/external write. €0 clients."
+}
