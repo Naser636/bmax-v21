@@ -1,0 +1,61 @@
+{
+  "//": "V157 — real provider authority & sealed-evidence integration. §3 contract map (actual files/functions, no invention) + §12 benchmark (V156 synthetic → V157 real harness). Delta dossier; no competing SSOT; governed ROADMAP.json UNTOUCHED. Honest statuses; crypto ≠ correctness kept explicit; private keys never recorded.",
+  "headCommit": "59888b1 (main @ V156) → V157 branch",
+  "contractMap_§3": {
+    "harness": "runtime/core/agent-governance-harness.ts",
+    "authorizeExecution(evidence, expected)": "re-verifies the sealed bundle (verifyEvidenceBundle) + requires verdict∈{ADMIT,ESCALATE} + executed:true + authBound:true (authenticated+contract/tenant-bound) + exact contractSha/tenantId/agentId binding ⇒ {authorized, reason}. A bare/unauthenticated ADMIT can NEVER authorize execution.",
+    "verifyEvidenceBundle(bundle, opts)": "INDEPENDENT provenance re-verification (sha256 stamp integrity) + execId/tenant binding + transition-order invariants ⇒ {ok, reasons}; fail-closed.",
+    "runStep(proposal, contract, state, deps)": "AUTH (identity.verifyAuth, nonce replay-protected) → contract/tenant bind → gate.evaluateAgentAction → governed execution (createGovernedExecutor) → INDEPENDENT verifier (binds resultDigest + boundExecId) → sealed evidence bundle. Outcomes incl. AUTH_DENIED/DENIED/EXECUTION_DENIED/ERROR_RECOVERED/ADMITTED_VERIFIED/ADMITTED_UNVERIFIED.",
+    "contractShaOf(contract)": "sha256 over canonical contract fields (binds a session to its exact contract).",
+    "identity": "runtime/core/agent-identity.ts — createRegistry/register/openSession/issueChallenge/verifyAuth/revoke; REAL Ed25519 (node:crypto generateKeyPairSync('ed25519') + crypto.sign over ID.canon(challenge)); nonce single-use (replay ⇒ AUTH_DENIED).",
+    "provenance": "runtime/core/evidence-provenance.ts (prov.stampProvenance) — tamper-evident sha256 sealing.",
+    "gate": "runtime/core/third-party-agent-gate.ts (evaluateAgentAction) — tool/scope/limits admission.",
+    "existingTests": "agent-governance-harness.test.ts (canonical setup reused: Ed25519 keypair, register, openSession, issueChallenge, sign).",
+    "noInvention": "V157 adds NO new crypto, NO second authorization mechanism, NO mock verifier; it only COMPOSES the above."
+  },
+  "bridge": {
+    "module": "runtime/core/odg-provider-governance.ts (+test)",
+    "createProviderAuthority": "ODG trust root (registry) + enrolled provider Ed25519 identity + scoped contract; private key held in-object, NEVER serialized into evidence/reports.",
+    "runGovernedProviderMission": "mints a FRESH Ed25519-signed challenge, drives H.runStep, then re-verifies via verifyEvidenceBundle + authorizeExecution, then ODG INDEPENDENTLY reproduces the functional result.",
+    "acceptProviderDeliverable": "ACCEPT only if harness outcome is an independently-VERIFIED admission AND the crypto chain is authorized AND ODG reproduced the result; else REJECTED_BY_ODG.",
+    "authorityLayers_§4": "OWNER grant (global scope) ≠ ODG mission authorization (registry+contract+challenge) ≠ PROVIDER execution (the signed proposal) — three distinct layers preserved."
+  },
+  "cryptoVsCorrectness_§6": "PROVEN: a cryptographically VALID execution whose functional result ODG cannot independently reproduce is REJECTED ([AA]). Cryptographic authenticity = provenance + integrity; functional correctness = a SEPARATE independent ODG reproduction. A valid signature is never a correct program.",
+  "adversarialResults_§7": {
+    "exercisedAgainst": "the REAL harness (no mock signature verifier)",
+    "cases": {
+      "A/B valid authorized execution + sealed evidence verified": "ADMITTED_VERIFIED, cryptoBundleOk, authorized",
+      "AI accept after crypto + reproduction": "ACCEPTED_BY_ODG",
+      "AA crypto-valid but functionally-unreproduced": "REJECTED_BY_ODG",
+      "C missing authorization": "EXECUTION_DENIED → REJECTED",
+      "D/Q invalid/tampered signature": "AUTH_DENIED",
+      "F revoked identity": "AUTH_DENIED",
+      "T/U replay (consumed nonce)": "first VERIFIED, replay AUTH_DENIED",
+      "G/H/I/J cross-authority binding mismatch": "authorizeExecution rejects under a different authority",
+      "K/L out-of-scope file": "DENIED → REJECTED",
+      "M unauthorized tool": "DENIED",
+      "N/O/P altered sealed evidence / forged digest": "verifyEvidenceBundle fails",
+      "X foreign execId": "bundle verification fails",
+      "Y/Z wrong/foreign resultDigest (bound by verifier)": "ADMITTED_UNVERIFIED → REJECTED",
+      "AB correct result + no crypto chain": "REJECTED (accept requires crypto)",
+      "AC interrupted execution": "ERROR_RECOVERED (no false success)",
+      "AE/AF provider self-approval / state tamper": "structurally impossible (authBound/verdict/execId sealed by harness)",
+      "AG out-of-scope result refused": "DENIED"
+    }
+  },
+  "benchmark_V156_V157_§12": {
+    "v156": { "providerRound": "SIMULATED (odg-autonomy-loop: authorizationId string + re-run check)", "crypto": "none" },
+    "v157": { "providerRound": "REAL harness (Ed25519 auth + sha256 sealed evidence)", "crypto": "REAL (node:crypto Ed25519 + sha256 provenance)", "cryptographicChainVerified": true, "independentReproduction": true, "adversarialCasesPassed": "A..AI via the real harness", "replayRefused": true, "scopeViolationRefused": true, "tamperDetected": true, "cryptoValidButWrongRejected": true, "regressions": 0, "resourceMetrics": "NOT_MEASURED (no CPU/latency/throughput instrumentation — not fabricated)" },
+    "honestDelta": "the V156 synthetic provider round is replaced by the REAL cryptographic sealed-evidence path for the provider-control demonstration. V156 odg-autonomy-loop.ts is PRESERVED (its journey remains honestly labelled SIMULATED); the REAL path lives in odg-provider-governance.ts."
+  },
+  "grant_§13": { "verifiedValid": true, "expiry": "2026-11-19", "consumedCalls": "NOT_MEASURED (grant file has no counter)", "researchThisLot": "none used (the real contract was read directly from the repo; no external query needed)." },
+  "statusLegend": ["NATIVE_EXECUTED", "NATIVE_VALIDATED", "PROVIDER_DELIVERED", "CRYPTOGRAPHICALLY_VERIFIED", "INDEPENDENTLY_REPRODUCED", "ACCEPTED_BY_ODG", "REJECTED_BY_ODG", "SIMULATED", "OWNER_GATED", "NOT_MEASURED", "BLOCKED"],
+  "limits": [
+    "the real harness's executor is a hermetic stand-in for ODG's EXECUTOR — the provider operation here is a bounded native op / supplied deliverable, not a live external Claude Code process (that transport is an owner-gated integration)",
+    "resource/latency metrics NOT_MEASURED (no instrumentation)",
+    "no external secret/signing-key/service required beyond node:crypto (self-contained Ed25519)",
+    "owner-gated unchanged: type-checker tier, real-repo patch application, VPS deploy, M1 R4"
+  ],
+  "ownerGated": ["live external provider transport binding", "real-repo patch application", "type-checker tier", "VPS deploy"],
+  "honesty": "V157 proves ODG controls the REAL cryptographic provider-execution path (authorize → sealed evidence → verify → independently reproduce → accept/reject) with the repo's actual Ed25519/sha256 implementation. No mock passed off as real; crypto ≠ correctness kept explicit; provider cannot self-approve. €0 clients; no VPS/spend/deploy/governed-path edit."
+}
