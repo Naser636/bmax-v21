@@ -1,0 +1,43 @@
+{
+  "//": "V158 (CTO Final Autonomy campaign §4.1) — the autonomy journey's provider round now GENUINELY executes the V157 sealed-evidence harness (not a relabel). Delta dossier; no competing SSOT; governed ROADMAP.json UNTOUCHED; existing harness + odg-provider-governance + odg-autonomy-loop UNMODIFIED (composed). Honest statuses.",
+  "headCommit": "3df59f5 (main @ V157) → V158 branch",
+  "deliverable_§4.1": {
+    "module": "runtime/core/odg-real-autonomy-journey.ts (+test)",
+    "what": "replaces V156's SYNTHETIC provider round with a REAL governed provider round that actually runs odg-provider-governance.runGovernedProviderMission (real Ed25519 auth + sha256 sealed evidence + authorizeExecution + ODG independent reproduction).",
+    "notARelabel": "the provider step EXECUTES the harness — it is tagged PROVIDER_GOVERNED_REAL_HARNESS and carries a REAL sealed-evidence execId; it is NOT the V156 string 'SIMULATED' renamed.",
+    "reuses": ["odg-autonomy-loop (native-first decision + executeNative)", "odg-provider-governance (V157 real harness bridge)", "odg-closed-executor (independent reproduction)"],
+    "preserved": "V156 odg-autonomy-loop.ts + V157 odg-provider-governance.ts are UNMODIFIED; the real journey is a new composing module."
+  },
+  "path_executed": "ODG mission → native-first decision → native execution (closed registries) → ODG-scoped authorization → REAL governed provider execution (Ed25519 signed challenge → runStep → sealed evidence) → verifyEvidenceBundle + authorizeExecution → ODG INDEPENDENT functional reproduction → ACCEPT/REJECT → continue.",
+  "results": {
+    "validProviderStep": "ADMITTED_VERIFIED · cryptographicallyVerified=true · independentlyReproduced=true ⇒ ACCEPTED_BY_ODG (real execId sealed)",
+    "adversarial": {
+      "wrongResult (crypto-valid, ODG cannot reproduce)": "REJECTED_BY_ODG (crypto ≠ correctness)",
+      "scopeViolation": "real gate DENIED ⇒ REJECTED",
+      "missingAuthorization": "EXECUTION_DENIED ⇒ REJECTED",
+      "replay (consumed nonce)": "AUTH_DENIED ⇒ REJECTED"
+    },
+    "journey": "§26 A..O complete (15 steps); 3 PROVIDER_GOVERNED_REAL_HARNESS steps (J valid, K reject-unreproduced, L reject-scope) + 12 ODG_NATIVE_EXECUTION; step J carries a real sealed execId."
+  },
+  "honestBoundary": {
+    "real": "the authorization, Ed25519 signature verification, nonce/replay protection, sealed evidence sha256 integrity, contract/tenant/agent binding, crypto-chain re-verification, and ODG independent functional reproduction are ALL real (the repo's actual implementation).",
+    "hermetic": "the provider's work executor is a HERMETIC stand-in (a local bounded native-op call), NOT a live external Claude Code process. providerRound = REAL_HARNESS_HERMETIC.",
+    "ownerGated": "a LIVE external Claude Code transport remains OWNER_GATED and is NOT claimed operational; real-repo patch application, type-checker tier, VPS deploy also owner-gated."
+  },
+  "v156_v157_v158_progression": {
+    "v156": "provider round SIMULATED (string authorizationId + synthetic inspection).",
+    "v157": "REAL harness bridge built + adversarially tested (odg-provider-governance).",
+    "v158": "the AUTONOMY JOURNEY's provider step now ACTUALLY executes that real bridge end-to-end (§4.1 'le parcours doit réellement exécuter le mécanisme intégré')."
+  },
+  "grant_§7.1": { "verifiedValid": true, "expiry": "2026-11-19", "budget": { "maxCalls": 200, "maxBytes": 20000000 }, "consumedCalls": "NOT_MEASURED (grant file has no consumption counter)", "researchThisLot": "none (no external query needed; real integration read from the repo)." },
+  "stateReconciliation_§2": "VERIFIED: HEAD 3df59f5 = origin/main; PR #520 merged; V145–V157 intact; governed ROADMAP.json holds 11 missions (historical 28/166 NOT re-asserted); 15 métiers + 5 commercial métiers unchanged; grant valid. No historical total promoted to a current fact.",
+  "limits": [
+    "provider transport hermetic (live external Claude Code = OWNER_GATED)",
+    "resource/latency metrics NOT_MEASURED (no instrumentation)",
+    "weekly radar operational scheduler NOT_MEASURED (documented ≠ running)",
+    "novel design/synthesis remains CLAUDE_CODE_EXECUTION (provider-required)"
+  ],
+  "ownerGated": ["live external provider transport", "real-repo patch application", "type-checker tier", "VPS deploy", "M1 R4"],
+  "statusDistinctions": ["NATIVE_EXECUTED", "PROVIDER_DELIVERED", "CRYPTOGRAPHICALLY_VERIFIED", "INDEPENDENTLY_REPRODUCED", "ACCEPTED_BY_ODG", "REJECTED_BY_ODG", "OWNER_GATED", "NOT_MEASURED", "SIMULATED", "COMMERCIALISABLE(none)", "ACTIVE_IN_PRODUCTION(none)"],
+  "honesty": "V158 proves the autonomy journey now controls the REAL cryptographic provider-execution path (not a synthetic round). HIGH recovery-loop + 5 FMEA residuals preserved (not accepted). €0 clients; no métier commercialisable from synthetic tests. No VPS/spend/deploy/governed-path edit; no new primitive/crypto."
+}
