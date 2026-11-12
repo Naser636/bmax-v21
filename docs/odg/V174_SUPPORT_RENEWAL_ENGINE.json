@@ -1,0 +1,28 @@
+{
+  "//": "V174 (§5/§11.F — built the MISSING autonomous support & renewal engine flagged by V173's capability-gap register). Delta dossier; no competing SSOT. Local-only (no external paid dep, no real customer contact); reuses audit-log. §1 recovered V172/V173 outputs from the repo (not re-asked). No register/audit-log(prod)/ROADMAP/canonical-source mutation; no fabricated demand/customers.",
+  "baseline": { "head": "88f1d46 (main @ V173)", "branch": "excellence/v174-support-renewal-engine-20261112", "gateBefore": "598/598", "tsc": 0, "grant": "V141 VALID→2026-11-19T00:00Z, budget 200 (no live calls this lot)" },
+  "recovery_§1": {
+    "v172Output": "docs/odg/V172_BUSINESS_MODEL_FAMILIES.json + runtime/core/odg-business-model-families.ts (recovered from repo): 6 families, hybrid PRIMARY (259 cust, €485k), human-services INFEASIBLE.",
+    "v173Output": "docs/odg/V173_AUTONOMOUS_OPERATING_MODEL.json + runtime/core/odg-autonomous-operating-model.ts (recovered from repo): ~53% ODG-automated ⇒ hybrid €5M target feasible with 3 people; 7 gaps (1 MISSING = support/renewals = THIS lot's build); autonomous-vs-human split 5/5/2/1.",
+    "autonomousRoadmap": "the autonomous roadmap is expressed across V169 (reconciliation) + V170 (crosswalk/economic) + V171 (scheduler) + V172 (families) + V173 (operating model) dossiers; V12.4 remains the strategic authority. No separate competing roadmap document was produced (consistent with §2 — no competing authority).",
+    "reconciliationMatrix": "V172 (families) ↔ V173 (operating model) ↔ V12.4 are consistent: same €5M-net objective; hybrid product (V172) delivered by the autonomous operating engine (V173) whose MISSING support/renewals gap is closed here (V174); the demand bottleneck (OWNER_GATED) is shared across all three — not double-counted."
+  },
+  "capabilityBuilt_§5_§11F": {
+    "module": "runtime/core/odg-support-renewal-engine.ts (+test, 17 checks)",
+    "closes": "V173 capability-gap register's #1 MISSING gap (autonomous support/renewals engine)",
+    "functions": "reception+classification (classifyRequest), client/contract/product identification (resolveContext), diagnosis+qualification (diagnose), AUTHORIZED traceable responses (ONLY from a validated KB), human-escalation detection, incident+deadline tracking, churn-risk detection, renewal preparation (DRAFT only), satisfaction/outcome measurement (metrics), idempotency, auditability (audit-log chain).",
+    "safetyInvariants": ["NEVER invents a response/commitment/discount/refund/contract-change — responses ONLY from a validated KB; no KB match ⇒ escalate", "sensitive intents (refund/discount/contract-change/cancellation) ALWAYS OWNER_GATED (blocked, never executed) regardless of request wording — adversarial-resistant (injection text cannot flip authorization)", "deterministic + idempotent (same request id ⇒ no double action) + auditable (tamper-evident audit-log chain) + fail-closed (unknown client ⇒ escalate)", "renewal proposals are DRAFTS only; send/sign/collect OWNER_GATED; no real customer contact"],
+    "tests": "17 checks: classification (sensitive wins), KB-only responses, no-KB⇒escalate, refund/discount/cancellation⇒owner-gated+blocked, ADVERSARIAL injection still gated, high-severity incident + unknown-client⇒escalate, idempotent replay, auditable verifiable chain, renewal drafts (send owner-gated), churn detection, metrics, fail-closed."
+  },
+  "honesty_§0_§3": "SYNTHETIC scenarios only — NO real customers/contracts/revenue; the engine executes NO sensitive action (all owner-gated); autonomy rates are HYPOTHESES until measured on real traffic. Market research (§3), six-model audit (§4), PARTIAL-function hardening (§6), autonomy measurement (§7) and commercial plan (§8) remain next governed branches — reported, not faked. No contact/send/signature/payment performed.",
+  "deferredBranches": {
+    "marketResearch_§3": "EU-by-country/sector demand research on M1–M5 (grant valid→2026-11-19) — next; distinguishes théorique/accessible/intention/budget/solvable/qualified/signed/encaissé; a study is NOT a validated sale.",
+    "sixModelAudit_§4": "re-audit V172 formulas/assumptions (hybrid 259 cust / 1036 days / €485k / 65% recurring) with prudent/central/aggressive + sensitivity — next.",
+    "partialHardening_§6": "harden V173's 6 PARTIAL functions (needs/budget, product-design, prospecting, onboarding, retention, finance) — next.",
+    "autonomyMeasurement_§7": "the 1.9 human-days/customer stays a HYPOTHESIS until a reproducible measurement confirms it.",
+    "radar_§9": "V171 scheduler built; real scheduled run NOT_MEASURED (owner/root timer).",
+    "ownerGated_§10": "VPS/sudo/systemd/deploy/secrets/HMAC/TLS/payment/real-contact — all OWNER_GATED; none performed or simulated."
+  },
+  "verification": { "gate": "expected 599/599 (598 + 1 new suite)", "tsc": "0 errors", "newChecks": "17", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true },
+  "honesty": "V174 built V173's #1 MISSING capability — an autonomous support & renewal engine — local-only, deterministic, idempotent, auditable, with sensitive actions ALWAYS owner-gated + blocked (adversarial-resistant), responses only from a validated KB (never invented), renewal drafts only (send owner-gated). 17 tests incl. adversarial + idempotency + auditability pass. SYNTHETIC scenarios, no real customers, no sensitive action executed. Market validation + six-model audit + PARTIAL hardening remain next governed branches, honestly deferred. No status falsified, no register/audit-log/ROADMAP/canonical-source mutation, no simulated deployment, €0 clients, €5M NOT guaranteed."
+}
