@@ -1,0 +1,40 @@
+{
+  "//": "V160 (§2/§3) — ODG owns the FULL campaign lifecycle with REAL persistence: the V159 scheduler/real-journey now drive the canonical crash-atomic register (campaign-controller), with real file-based resume-after-interruption. Delta dossier; no competing SSOT; no parallel register/file; governed ROADMAP.json UNTOUCHED.",
+  "headCommit": "a636a1c (main @ V159) → V160 branch",
+  "deliverable_§2_§3": {
+    "module": "runtime/core/odg-campaign-lifecycle.ts (+test)",
+    "what": "ODG reads the PERSISTED canonical register (campaign-controller.loadRegister) → selects the next dependency-eligible lot (selectNextLot) → runs it through the REAL governed journey (odg-real-autonomy-journey: Ed25519 sealed evidence + independent reproduction) → ODG ACCEPT (requires execId evidence) / REJECT (advance) → PERSISTS after EVERY mission (saveRegister, crash-atomic temp+rename) → selects the next.",
+    "reuses": "campaign-controller (THE canonical crash-atomic register: loadRegister/saveRegister/selectNextLot/advance/summary — NO parallel file) + odg-real-autonomy-journey (real governed execution). No new register/queue, no new primitive.",
+    "resume": "REAL file-based: a restart reloads the register from disk and skips ACCEPTED lots (selectNextLot excludes terminal states) ⇒ no double execution across interruption. Proven with a real temp file + separate load calls (NOT in-memory)."
+  },
+  "persistenceProof_§2": {
+    "method": "the test writes a real register JSON to os.tmpdir(), runs one step (closes A, persists), then re-loads the FILE (simulating a restart) and runs the next step ⇒ picks B (A already ACCEPTED on disk), never re-runs A.",
+    "onDiskVerified": "A persisted as ACCEPTED with 'governed:<execId>' evidence; after step 2 both A and B ACCEPTED; a dependent-on-BLOCKED lot stays unrun; the BLOCKED lot is untouched.",
+    "crashAtomic": "saveRegister uses temp-file + atomic rename (POSIX) ⇒ a crash/SIGKILL mid-write can never leave a torn register; loadRegister resumes cleanly.",
+    "notInMemoryOnly": "the directive's requirement — persistence is proven via the real file across separate load/save cycles, not a single in-process object."
+  },
+  "lifecycleCapabilities": {
+    "read_state": "loadRegister (persisted)",
+    "select_next": "selectNextLot (dependency-aware, no-repeat fingerprint)",
+    "execute": "REAL governed journey (crypto chain + independent reproduction)",
+    "accept_reject": "ODG via advance (ACCEPTED requires non-empty execId evidence)",
+    "persist": "saveRegister after every mission (durable resume point)",
+    "resume": "resumeCampaign = reload + continue; skips ACCEPTED (no double execution)",
+    "recover": "a non-accepted run records a no-repeat attempt (attemptFailed fingerprint) ⇒ no infinite retry on the same unchanged lot",
+    "terminate": "bounded by maxSteps + 'no eligible lot'; no hidden worker/infinite loop"
+  },
+  "testedScenarios": ["run→persist→restart-resume (no re-run of ACCEPTED)", "dependency chain X→Y→Z in order", "blocked lot gates its dependents, independent lot still runs", "crash-before-save leaves the prior persisted resume point intact", "ACCEPTED requires execId evidence", "fail-closed on missing path / unreadable register"],
+  "phaseProgress_vsV159": {
+    "P2_mission_queue_scheduler": "ADVANCED from 'bridge' (V159) to 'ODG owns the full persistent lifecycle on the canonical register' (V160). Real resume-after-interruption demonstrated.",
+    "remaining_on_P2": "driving the ACTUAL production closure-register file (docs/odg/closure-register.json) is an owner/governance step — this lot proves the mechanism on a controlled register; wiring it to the live governed register advances under governance."
+  },
+  "grant_§5": { "verifiedValid": true, "expiry": "2026-11-19", "consumedCalls": "NOT_MEASURED (no counter)", "researchThisLot": "none (campaign-controller contract read directly from the repo)." },
+  "unchangedBlockers": [
+    { "item": "VPS production deploy", "status": "OWNER_GATED/BLOCKED", "reason": "cutover owner+root-gated; needs owner authorization + domain/TLS/secrets; NOT simulated" },
+    { "item": "live external Claude Code transport", "status": "OWNER_GATED" },
+    { "item": "weekly-radar operational scheduler proof", "status": "NOT_MEASURED" },
+    { "item": "type-checker tier / real-repo patch application / M1 R4", "status": "OWNER_GATED" }
+  ],
+  "metiersStatus": "15 métiers VALIDATED_LOCAL; 5 commercial métiers VALIDATED_LOCAL (M2 11/11 engines, full BTP/TP perimeter); none commercialisable; €0 clients (unchanged from V159 — not re-asserted beyond evidence).",
+  "honesty": "V160 makes ODG the real owner of the campaign lifecycle on the CANONICAL persistent register, with file-based resume proven (not in-memory). It does NOT deploy VPS (owner-gated, not simulated), does NOT claim a live external transport, and preserves the HIGH recovery-loop + 5 FMEA residuals (not accepted/closed). No new primitive/queue/file; no VPS/spend/deploy/governed-path edit."
+}
