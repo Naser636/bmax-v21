@@ -1,0 +1,33 @@
+{
+  "//": "V174 Addendum-A (§6/§7/§11 — global opportunity-ranking engine, radar-driven). Additive to V174 (no interruption/restart). Delta dossier; no competing SSOT. Grounded in a REAL radar sweep (grant V141 valid→2026-11-19, read-only public, 3 WebSearch calls on 2026-11-12). HONEST: no fabricated demand/customers; a validated MARKET signal ≠ a validated sale. No register/audit-log/ROADMAP/canonical-source mutation.",
+  "baseline": { "head": "2ba8e38 (main @ V174 support-renewal)", "branch": "excellence/v174a-global-opportunity-radar-20261112", "gateBefore": "599/599", "tsc": 0 },
+  "grant_§3": { "source": "docs/odg/V141_RESEARCH_GRANT.json", "authorized": true, "expiry": "2026-11-19T00:00:00Z", "valid": true, "budget": "200 calls", "callsThisLot": "3 read-only WebSearch (EAA accessibility enforcement, CRA/SBOM deadlines) — provenance explicitly WebSearch, not claimed as a scheduled radar run" },
+  "realRadarFindings_§3_§5": [
+    { "metier": "M5 accessibility", "finding": "European Accessibility Act in force 28 Jun 2025; real enforcement (Carrefour daily fines FR; Norway/Germany/Sweden/NL/Ireland); penalties €5k (EE) to €1.26M (HU); ~30–40% of EU ecommerce pages pass WCAG 2.1 AA", "buySignal": "REGULATORY_DEADLINE", "sources": ["alokai.com", "disabilityworld.org"], "date": "2026-11-12", "confidence": "HIGH" },
+    { "metier": "M1 security/supply-chain", "finding": "EU Cyber Resilience Act — vuln reporting to ENISA within 24h (11 Sep 2026) + SBOM/Annex-I for market placement (11 Dec 2027); fines up to €15M or 2.5% of worldwide turnover; SBOM private-to-authorities", "buySignal": "REGULATORY_DEADLINE", "sources": ["finitestate.io", "ogtechnologies.co"], "date": "2026-11-12", "confidence": "HIGH" }
+  ],
+  "capabilityBuilt_§6_§7": {
+    "module": "runtime/core/odg-global-opportunity-radar.ts (+test, 15 checks)",
+    "method": "explicit weighted scoring grid (13 dims, weights exported + sum to 1.0) over opportunity records; each tagged provenance (OBSERVED_EVIDENCE source+url+date+confidence | HYPOTHESIS) + buySignal (REGULATORY_DEADLINE/TENDER/BUDGET_OBSERVED/NONE).",
+    "validationTiers": "VALIDATED_MARKET_SIGNAL (observed buy-signal + observed evidence) vs INSUFFICIENTLY_VALIDATED (hypothesis/no buy-signal) — the latter are NOT inflated and must not be treated as solvent demand."
+  },
+  "ranking_§6": {
+    "scored": [
+      { "id": "eaa-accessibility-eu", "score": 81.6, "tier": "VALIDATED_MARKET_SIGNAL", "provenance": "OBSERVED" },
+      { "id": "cra-sbom-eu", "score": 79.6, "tier": "VALIDATED_MARKET_SIGNAL", "provenance": "OBSERVED" },
+      { "id": "reg-compliance-automation-cross", "score": 75.6, "tier": "VALIDATED_MARKET_SIGNAL", "provenance": "OBSERVED (derived from EAA+CRA)" },
+      { "id": "finops-cloud-global", "score": 64, "tier": "INSUFFICIENTLY_VALIDATED", "provenance": "HYPOTHESIS" },
+      { "id": "btp-saas-eu", "score": 51.2, "tier": "INSUFFICIENTLY_VALIDATED", "provenance": "HYPOTHESIS" },
+      { "id": "data-eng-global", "score": 50.2, "tier": "INSUFFICIENTLY_VALIDATED", "provenance": "HYPOTHESIS" }
+    ],
+    "validatedCount": 3, "insufficientCount": 3,
+    "top10Global": ["eaa-accessibility-eu", "cra-sbom-eu", "reg-compliance-automation-cross", "finops-cloud-global", "btp-saas-eu", "data-eng-global"],
+    "top5OdgDeliverable": "led by the regulatory-compliance opportunities (high ODG automation: ODG already has supply-chain-attest/p8-slsa/SBOM + accessibility modules)"
+  },
+  "commercialRecommendation_§11I_§12": "the strongest globally-accessible, ODG-automatable, recurring opportunities are REGULATORY-COMPLIANCE-DRIVEN: (1) EAA accessibility compliance (in force, real enforcement, automatable WCAG audit+remediation+monitoring), (2) CRA/SBOM supply-chain compliance (hard 2026/2027 deadlines, €15M fines, ODG already has the core tech), (3) a CROSS-sector reusable regulatory-compliance-automation product spanning both (§4 transversal). These have HARD buy-signals (deadlines+penalties), high recurrence (continuous monitoring/renewal), and high ODG-automation — aligning with the V172 hybrid/recurring model and the V173 autonomous operating engine. HYPOTHESIS opportunities (FinOps/BTP/data) need their own sourced buy-signals before selection.",
+  "economicLink_§9_§10": "consistent with V172 (recurring/hybrid primary) + V173 (ODG automates ~53%+ of delivery) + V174 (support/renewal engine built). A compliance-automation product is high-recurrence + high-ODG-automation ⇒ fits the €5M path; but the €5M target remains conditional on CONVERTING these market signals into signed, invoiced, collected revenue — OWNER_GATED (real contact/contract/payment). A validated market signal is NOT a sale.",
+  "honesty": "3 radar calls (WebSearch, provenance-labelled, NOT claimed as a scheduled radar run); OBSERVED opportunities carry real sources+dates; HYPOTHESIS ones flagged INSUFFICIENTLY_VALIDATED and NOT inflated; a VALIDATED_MARKET_SIGNAL ≠ a validated sale/customer; NO fabricated demand/customers/revenue; NO real contact/send/spend; €5M NOT guaranteed. Additive to V174 — no campaign interruption, no competing roadmap.",
+  "deferredBranches_§7_§11": "full global per-country comparison (tax/sanctions/data-protection/payment-cost), the complete 30+ capability cross-audit (§7), and real demand validation remain next governed branches; owner-gated items (contact/contract/payment/VPS/deploy) unchanged.",
+  "verification": { "gate": "expected 600/600 (599 + 1 new suite)", "tsc": "0 errors", "newChecks": "15", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true },
+  "note": "Second lot of the V174 campaign (Addendum-A), integrated without interrupting V174. The opportunity-ranking engine CONSUMES real radar findings + explicit scoring; it does not fabricate demand or declare any sale."
+}
