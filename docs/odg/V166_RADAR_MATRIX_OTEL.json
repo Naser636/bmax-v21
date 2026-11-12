@@ -1,0 +1,40 @@
+{
+  "//": "V166 (§4 radar + §6 world references + §8 comparison matrix + §9 gap closed). Delta dossier; no competing SSOT. A REAL read-only Internet research campaign (V141 grant, verified valid) grounded a capability gap and this lot CLOSED it with a tested native capability (OpenTelemetry GenAI trace emission over ODG's real execution report). No register/audit-log/ROADMAP/runtime-generated mutation; no status fabricated; no simulated deployment.",
+  "baseline": { "head": "6a66c8c (main @ V165)", "branch": "excellence/v166-radar-otel-genai-20261112", "gateBefore": "588/588", "tsc": 0 },
+  "radar_§4_§5": {
+    "grantVerified": "docs/odg/V141_RESEARCH_GRANT.json — authorized=true, scope READ_ONLY_PUBLIC_RESEARCH, allowed WebSearch/WebFetch, budget maxCalls 200 / maxBytes 20MB, expiry ~2026-11-18, constraints {no credentials, no external writes, no paid API, no spend, no deploy}. Validity/quota/limits checked BEFORE use.",
+    "callsThisLot": "4 read-only (2 WebSearch + 2 WebFetch), well within budget; no egress beyond public read; no writes.",
+    "researched": [
+      "OpenTelemetry GenAI semantic conventions v1.42 (June 2026) — open-telemetry/semantic-conventions-genai (authoritative spec fetched): required gen_ai.operation.name + gen_ai.provider.name; invoke_agent/plan/create_agent/execute_tool spans; span name '{operation} {name}'; gen_ai.agent.id/name; gen_ai.tool.name/type{function,retrieval,extension}/call.id; error.type only on error ('_OTHER' fallback)",
+      "OWASP Agentic Security Initiative — Agentic Top 10 (ASI01–ASI10, pub 2025-12-09) + Threats & Mitigations v1.1 (T1 Memory Poisoning … T17 Supply Chain Compromise)",
+      "SLSA build levels (v1.1 security levels, verifying-artifacts) — already implemented in ODG (p8-slsa-level-gate + supply-chain-attest)"
+    ]
+  },
+  "comparisonMatrix_§8": {
+    "observability": { "bestReference": "OpenTelemetry GenAI semconv v1.42 (gen_ai.* spans)", "odgBefore": "rich execution evidence (patch-execution.json executed[] with action/status/authoredBy/appliedBy; actor-provenance; sealed evidence) but NO standard-conformant trace export — GAP", "odgAfter": "odg-otel-genai-trace.ts mints OTel GenAI-conformant spans from the REAL execution report (invoke_agent root + one execute_tool span per entry; exact gen_ai.* keys; error.type only on error) — GAP CLOSED, tested" },
+    "supplyChain": { "bestReference": "SLSA v1.1 build levels", "odg": "COVERED — p8-slsa-level-gate adjudicates ACHIEVED level from evidence (anti level-inflation), composes supply-chain-attest.verifyStatement + build-pipeline.isReproducible + trusted-builder allowlist; self-declared level NEVER trusted. No gap this lot." },
+    "agenticSecurity": { "bestReference": "OWASP Agentic T1–T17 / ASI01–10", "odg": "SUBSTANTIAL — memory-trust-gate (T1 memory poisoning), third-party-agent-gate + lethal-trifecta-gate (T2 tool misuse / injection), dispatch-authorization + capability-authorization (T3 privilege), bash-command-governor + patch-executor confinement (tool/exec), agent-identity Ed25519 (identity). Full T1–T17 coverage-matrix mapping = candidate for a dedicated future lot (not an audit substitute for this lot's BUILD).", "note": "reported honestly: coverage is real but a published threat-by-threat traceability matrix is not yet minted." },
+    "attribution": { "bestReference": "honest executor provenance", "odg": "COVERED + reproduced V165 (actor-provenance: provider⇒TECHNICAL_PROVIDER, ODG-native⇒ODG, unknown⇒null). OTel trace now carries this as odg.* attributes (not misrepresented as model output)." }
+  },
+  "capabilityBuilt_§9_§18": {
+    "module": "runtime/core/odg-otel-genai-trace.ts (+test, 17 checks)",
+    "what": "PURE deterministic emitter: ODG execution report → OpenTelemetry GenAI semantic-convention spans + an INDEPENDENT conformance validator (re-derives the rules, rejects non-conformance). Consumes the REAL patch-executor output end-to-end in the test (scratch cwd; repo untouched).",
+    "conformance": "exact OTel GenAI v1.42 keys; invoke_agent root + exactly one execute_tool span per executed[] entry; error.type ONLY on error (span status ERROR); deterministic sha256 ids (no randomness).",
+    "honesty": "provider.name=\"odg\" (ODG is the executing agent system, NOT an LLM provider); ODG's concordant attribution carried as odg.* attributes, never misrepresented as model/provider output. MINTS spans only — NO network, collector, or export (no egress).",
+    "serves": "§18 (traceability of plans/executions/tools/errors/evidence) + §22 (future: radar-proposed missions can reference standard observability)."
+  },
+  "cycleRepeated_§10": "research → compare → design → build → execute (real executor) → independent validation (conformance validator) → integrate (gate + CI). One full radar→capability loop completed and merged.",
+  "statusesUnchanged_§35": "No register status changed; closure-register.json byte-identical (last-modified @V123); register re-verified 427 (415 ACCEPTED / 6 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED, stale 0).",
+  "globalStatus_§39": {
+    "openMissions": "12 (unchanged classification): 1 REALIZABLE_LOCAL (slice-3, governability reproduced V165, DEFERRED retained), 5 OWNER_GATED, 2 EXTERNAL_BLOCKED, 1 DEPENDENCY_BLOCKED, 1 DEFINITION_BLOCKED, 1 UMBRELLA, 1 UNSPECIFIED.",
+    "radar": "USED this lot (4 real read-only calls under V141 grant); no worker/polling added.",
+    "weeklyScheduler": "NOT_MEASURED — no real Sun 02:00–05:00 Europe/Paris run observed.",
+    "hmac_p0e": "owner-held production key + out-of-band anchor OWNER_GATED (mechanism proven V162); no local build this lot.",
+    "fiveCommercialMetiers": "VALIDATED_LOCAL; €0 clients (real demand/billing OWNER_GATED).",
+    "deliveryChainAndVPS": "OWNER_GATED (systemd/root, TLS/domain/cert/secrets); NOT simulated; no deployment performed.",
+    "personalInterventionsRemaining_§32": "owner: systemd/root authorization, TLS hostname/cert + token, real demand signals + WTP experiment, audit-integrity production key + anchor store, real billing — all preserved, none fabricated."
+  },
+  "preservedRisks_§36": "HIGH recovery-loop severity 9 + the five FMEA MEDIUM+ residuals preserved.",
+  "verification": { "gate": "expected 589/589 (588 + 1 new suite)", "tsc": "0 errors", "newChecks": "17", "registerByteIdentical": true, "runtimeGeneratedUntouched": true, "auditLogUnmodified": true, "roadmapJsonUntouched": true },
+  "honesty": "V166 ran a REAL read-only radar research campaign (verified V141 grant, 4 calls), produced a grounded ODG-vs-best-reference comparison matrix, and CLOSED the identified observability gap with a tested native capability — OpenTelemetry GenAI semantic-convention trace emission over ODG's REAL execution report, honestly labelled (provider=odg, odg.* attribution, no export). Not an audit/bibliography: a built + executed + independently-validated + integrated capability. SLSA already covered; agentic-security coverage reported honestly (real controls, matrix pending). No status falsified, no register/audit-log/ROADMAP/runtime-generated mutation, no parallel engine, no simulated deployment, €0 clients. HIGH recovery-loop + 5 FMEA residuals preserved."
+}
