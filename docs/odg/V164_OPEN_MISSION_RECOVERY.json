@@ -1,0 +1,46 @@
+{
+  "//": "V164 (§0/§1) — OPEN-MISSION RECOVERY & NATIVE CAPABILITY DEEPENING. Delta dossier; no competing SSOT. READ-ONLY truth inventory of the 12 open register missions + the realizable Gate-A portion of the single REALIZABLE_LOCAL mission (slice-3 delegate provenance). The canonical register (docs/odg/closure-register.json), audit-log.ts, and governed ROADMAP.json are UNMODIFIED. NO mission status changed (a provider cannot promote DEFERRED→IN_PROGRESS, IN_PROGRESS→ACCEPTED, nor close a mission).",
+  "baseline": { "head": "7e05a5a (main @ V163)", "branch": "excellence/v164-open-mission-recovery-20261112", "gateBefore": "585/585", "gateAfter": "587/587", "tsc": 0 },
+  "truthInventory_§0": {
+    "registerTotal": 427,
+    "counts": { "ACCEPTED": 415, "BLOCKED": 6, "IN_PROGRESS": 3, "DEFERRED": 3 },
+    "staleAcceptances": 0,
+    "openMissions": 12,
+    "method": "read-only classification GROUNDED in the real register's dep statuses (odg-open-mission-recovery.ts). No status mutated; no acceptance fabricated; no duplicate; no reset.",
+    "classification": {
+      "REALIZABLE_LOCAL": ["p0-autonomy-measure-slice3-delegate-provenance"],
+      "OWNER_GATED": ["campaign-runner-systemd-activation (systemd/root/privileged)", "dashboard-tls-exposure (TLS/cert/hostname/owner)", "p01-demand-validation (owner authorizes + real signals)", "golden-path-scaffolder-poc (productization owner decision)", "commercial-ops-substrate-h3 (OWNER DECISION: keep substrate vs productize CRM)"],
+      "EXTERNAL_BLOCKED": ["broad-it-independent-eval-set (external public corpus)", "broad-it-corpus-grow (independently-labelled DEV/HELDOUT corpus)"],
+      "DEPENDENCY_BLOCKED": ["p01-billing-sandbox (unmet dep: p01-demand-validation)"],
+      "DEFINITION_BLOCKED": ["eleven-profession-program-definition (no canonical definition)"],
+      "UMBRELLA": ["master-unified-campaign (meta-campaign; no concrete acceptance)"],
+      "UNSPECIFIED_IN_REGISTER": ["p0e-audit-log-keyed-integrity (register record carries NO acceptance/next text; V162 dossier establishes its owner-held production HMAC key + out-of-band anchor gate)"]
+    },
+    "honestFinding": "of the 12 open missions, EXACTLY ONE (slice-3 delegate provenance) has genuinely-realizable LOCAL technical work this lot; its deps (p0-autonomy-measure-slice2 + -r1-hardening) are both ACCEPTED. The other 11 are owner-gated (5), external-corpus-blocked (2), dependency-blocked (1), definition-blocked (1), umbrella (1), or unspecified-in-register (1). This is surfaced to ODG — the provider does NOT select or close."
+  },
+  "deliverables": [
+    {
+      "module": "runtime/core/odg-open-mission-recovery.ts (+test, 16 checks)",
+      "purpose": "§0 'inventaire de vérité AVANT toute modification' — reads the REAL register, classifies every open mission (blocker + next-action) grounded in real dep statuses, surfaces the REALIZABLE_LOCAL subset for ODG to select.",
+      "invariants": ["READ-ONLY (never writes/mutates the register; statusChangeAllowed=false on every mission)", "grounded (unmet deps resolved against the real file)", "honest precedence (DEPENDENCY_BLOCKED > EXTERNAL_BLOCKED > DEFINITION_BLOCKED > OWNER_GATED > REALIZABLE_LOCAL > UMBRELLA)"]
+    },
+    {
+      "module": "runtime/core/odg-delegate-provenance-smoke.ts (+test, 14 checks)",
+      "mission": "p0-autonomy-measure-slice3-delegate-provenance (DEFERRED — status UNCHANGED)",
+      "realizablePortion": "the mission's OWN nextAction: 'Gate-A refined contract + isolated delegate-flow smoke BEFORE any implementation'. Delivered: (1) gateARefinedContract() — the structured enhancement contract (thread authoredBy=PROVIDER through the convergence/patch-executor chain for HISTORICAL delegations; why a simple conformance-point stamp is CLOBBERED + COLLIDES; current behaviour already HONEST); (2) delegateFlowSmoke() — an empirical smoke over the CANONICAL delegate-isolation.ts confirming the PROVENANCE GAP (the delegate flow emits NO patch-execution.json ⇒ a HISTORICAL delegation resolves UNKNOWN actor, honest, no false ODG credit) + WRITE-SCOPE ISOLATION (an out-of-scope provider edit is REFUSED by validateScope).",
+      "empiricalConfirmation": "delegate-isolation.ts has 0 references to patch-execution (independently grepped) — the mission's core diagnosis, now confirmed by the provider, not only asserted from history.",
+      "outOfScope": "the authoredBy=PROVIDER threading through the convergence/patch-executor chain is a LARGER consequential execution-path change and remains a future governed mission. The register mission stays DEFERRED (a provider cannot close it).",
+      "reuses": ["delegate-isolation.ts (resolveWriteSet/materializeWorkingCopy/diffWorkingCopy/validateScope/runIsolated) — THE canonical delegate flow; NO parallel engine; NO new primitive"]
+    }
+  ],
+  "statusesUnchanged_§1": "No DEFERRED→IN_PROGRESS, no IN_PROGRESS→ACCEPTED, no BLOCKED→anything. The closure-register.json file is byte-identical. The provider delivered the realizable portions and kept every unsatisfied dependency EXPLICIT.",
+  "p6Benchmark_§2": "NOT advanced in this lot (V163 already delivered the broad-IT independently-labelled harness; the remaining broad-IT missions are EXTERNAL_BLOCKED on a public corpus). P6 (profession-p6-eval-reference / p6-mutation-testing) deepening is deferred to a dedicated lot; not touched here to keep the write-set bounded to the §0/§1 recovery scope.",
+  "radar_§3": { "grantVerifiedValid": true, "expiry": "2026-11-19", "consumedCalls": "NOT_MEASURED", "researchThisLot": "none (inventory + delegate smoke are local; no external corpus imported)", "weeklyScheduler": "NOT_MEASURED — unchanged; status stays NOT_MEASURED until a real Sun 02:00–05:00 Europe/Paris scheduled run is observed; no permanent worker/polling added." },
+  "blockedMissions_§4": { "p0e-audit-log-keyed-integrity": "UNSPECIFIED_IN_REGISTER (register text empty); V162 proved the keyed-HMAC + tip-anchor MECHANISM with EPHEMERAL keys; production activation still needs an owner-held key + out-of-band anchor store — never injected as a test key. Stays BLOCKED.", "broad-it-independent-eval-set": "EXTERNAL_BLOCKED; V163 built the realizable independently-labelled harness; the public labelled corpus remains the blocker. Stays BLOCKED." },
+  "continuity_§5": "V157–V163 modules remain wired into the canonical lifecycle (odg-campaign-lifecycle → campaign-controller persistent register). This lot adds two READ-ONLY/constructive modules; no checkpoint lost, no duplicate created. The provider session ending does NOT end the ODG campaign.",
+  "ownerGatedBlockers_§6": ["systemd/root host activation (campaign-runner-systemd-activation)", "TLS/domain/cert/secret exposure (dashboard-tls-exposure)", "real demand signals + owner-run WTP experiment (p01-demand-validation) ⇒ p01-billing-sandbox", "productization decisions (golden-path, commercial-ops-h3)", "audit-integrity production key + out-of-band anchor (p0e)", "external public labelled IT corpus (broad-it)"],
+  "preservedRisks_§6": "HIGH recovery-loop severity 9 + the five FMEA MEDIUM+ residuals are preserved (untouched).",
+  "noSimulatedDeployment_§8": "No VPS/systemd/sudo/secrets/production/DB/TLS/domain change. No deployment simulated. The Claude Code transport is NOT declared operational (no real governed verifiable exchange performed).",
+  "verification": { "gate": "587/587 PASS (was 585; +2 new suites)", "tsc": "0 errors", "newChecks": "16 (recovery inventory) + 14 (delegate-provenance smoke) = 30", "registerByteIdentical": true, "auditLogUnmodified": true, "roadmapJsonUntouched": true },
+  "honesty": "V164 produced a read-only truth inventory of all 12 open missions BEFORE any modification, and advanced the single genuinely-realizable mission (slice-3 delegate provenance) via its own-prescribed Gate-A evidence (refined contract + isolated delegate-flow smoke confirming the provenance gap + scope isolation over the canonical delegate-isolation). No status falsified, no acceptance fabricated, no register/audit-log/ROADMAP mutation, no new parallel engine, no simulated deployment, €0 clients. The 11 non-realizable missions keep their unsatisfied dependencies explicit and are surfaced to ODG — which (not the provider) selects and closes."
+}
