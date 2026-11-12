@@ -1,0 +1,29 @@
+{
+  "//": "V144 §13 — VPS consolidation PREP (local only; NO deploy; VPS/systemd/production untouched). Delta between local main and the deployed VPS release lineage.",
+  "deployedRelease": {
+    "id": "5jBqWOtAeCIi7XKiD5Yxp",
+    "commit": "95661e1",
+    "supervised": "odg-preprod.service (V107)"
+  },
+  "localMain": {
+    "commit": "aabfed6"
+  },
+  "delta": {
+    "commitsAhead": 19,
+    "filesChanged": 74,
+    "coreModulesChanged": 39
+  },
+  "artifactProvenance": "all changes are committed on main, green-CI-merged via PR; reproducible from git",
+  "dependencies": "no new runtime dependency added (pure TS modules; dual-export); tsx/node runtime unchanged",
+  "compatibility": "additive/opt-in improvements (base64 detection, BR-CO-18 opt-in, timeliness opt-in, commercial modules) — back-compat preserved (full gate 561/561)",
+  "backup": "odg-release.sh backup + incidents.jsonl ledger (V135 recovery-loop regression-locked)",
+  "rollback": "odg-release.sh rollback --no-serve to verified-good previous (regression-locked; attempt-capped)",
+  "healthChecks": "/api/health ready/READY + buildId match (V107 runbook, dynamic)",
+  "deployCriteria": [
+    "full local qualification complete (gate green, tsc 0, independent assurance reproduced)",
+    "owner authorization of the consolidated deploy",
+    "5 FMEA MEDIUM+ + HIGH recovery-loop accepted or mitigated",
+    "no intermediate deploy"
+  ],
+  "status": "PREP_ONLY — NOT DEPLOYED; deployment owner-gated and deferred until after the commercial chantier + roadmap completion."
+}
