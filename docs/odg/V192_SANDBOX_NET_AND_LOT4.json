@@ -1,0 +1,25 @@
+{
+  "//": "V192 — sandbox network-viability review (§2) + radar lot-4 P7/P8/P13 (§4) + CTO build-authorization recorded on the 5 improvement contracts (§3). READ-ONLY/preparation; NO provider construction of improvements (session not isolated); canonical registers untouched @V123; extension PARKED.",
+  "directive": "CTO V192 — sandbox activation, radar-to-build & full continuity",
+  "baseline": { "head": "dc0f069 (main @ V191)", "branch": "excellence/v192-sandbox-net-lot4-20261113", "gateBefore": "628/628", "tsc": 0 },
+  "§1_reconciliation": "HEAD verified @dc0f069 (V191 merged; the V191 report's final HEAD, not the V190 d138bb8 its banner referenced). Boussole HEAD reference corrected in this lot. Register 427 + ROADMAP.json @V123 byte-identical; V188-V191 merged.",
+  "§2_networkViability_CRITICAL": {
+    "finding": "PROVEN by real bwrap probes (2026-11-13): the V190 `--unshare-all` launchSpec TEARS DOWN the network namespace (0 non-loopback interfaces) ⇒ a LIVE Claude Code session cannot authenticate/operate under it. It is valid ONLY for a non-interactive batch build.",
+    "liveSessionSpec": "filesystem confinement WITHOUT --unshare-net keeps network reachable (resolv.conf inherited) AND still blocks the canonical repo (canonical-visible=NO, write=BLOCKED, proven). Built as odg-isolation-network-review.liveSessionLaunchSpec (binds work-copy + ro system code + TLS roots + resolv.conf; canonical repo/.git NEVER mounted).",
+    "secureTarget": "filesystem-confined + egress ALLOWLIST restricted to the provider API host only (slirp4netns allowlist / netns+nftables). This is a harness/system network-policy change ⇒ OWNER_GATED; the provider cannot configure it and modified no security config.",
+    "modes": ["A batch (no net, maximal isolation, NOT live-viable)", "B live (fs-confined, general net — owner must accept general egress)", "C live (fs-confined, provider-API allowlist — secure target, OWNER_GATED)"],
+    "sessionOsIsolation": "OWNER_GATED (unchanged) — no real isolated session launched/proven yet; no retroactive isolation of the current session claimed."
+  },
+  "§3_ctoBuildAuthorization": "RECORDED on odg-improvement-contracts.ts: ctoBuildAuthorization = GRANTED (V192 §3). The construction gate's ONLY remaining condition is validated real isolation (OWNER_GATED). All 5 (P1/P3/P5/P9/P11) stay BLOCKED_AWAITING_ISOLATION — no provider writing in the canonical repo until a real isolated session is launched + proven.",
+  "§4_radarLot4": {
+    "module": "runtime/core/odg-metier-benchmark-lot4.ts (+test, 11 checks)",
+    "executed": "3 REAL WebSearch collections (grant V141, 2026-11-13) for P7/P8/P13, fed THROUGH the V187 radar adapter (injected provider; radar owns the path): 3 COLLECTED_REAL, all PROPOSED, 0 canonical writes/executions. Autonomous radar egress NOT_MEASURED.",
+    "benchmark": "P7 SRE→Google SRE (SLO/error-budget, 4 golden signals, multi-burn-rate alerting); P8 API→OWASP API Security Top 10 2026 (positive security model, rate-limit headers, versioning); P13 AI-infra→KServe/vLLM (continuous batching, scale on concurrent-requests/KV-cache, scale-to-zero).",
+    "constructionContracts": "3 prepared (IMP-P7-SLO-VIEW / IMP-P8-API-POSTURE / IMP-P13-SERVING-REF), each objective+write-set+acceptance, status BLOCKED_AWAITING_ISOLATION. P13 = method-only reference (provisioning REJECTED, ODG spec-only).",
+    "remaining": "8 métiers remain (P6/P12/P14/P15 + M1/M3/M4/M5); 12 studied across lots 1-4."
+  },
+  "honesty": "the current session is NOT isolated (not claimed otherwise); the live-session isolation spec is network-corrected + proven; the secure egress-allowlist is OWNER_GATED (no security config modified). CTO build-auth granted but all improvements (5 + lot-4's 3) stay BLOCKED_AWAITING_ISOLATION — no provider construction in the canonical repo. Radar research real + through the adapter; external untrusted; benchmarks reused not re-run; register+ROADMAP byte-identical @V123; extension PARKED; €0 clients; no deploy/root/secret/payment/trading.",
+  "ownerDecisionsStillNeeded": ["launch a real isolated provider session with the live-session spec (Mode B) + ideally an egress allowlist (Mode C, OWNER_GATED) — unblocks all 8 improvement contracts", "radar autonomous egress runtime binding", "ROADMAP.json extension integration", "BMAX assets"],
+  "nextLotAfterIsolation": "build the 5 (P1/P3/P5/P9/P11) + 3 (P7/P8/P13) prepared contracts under V188 delegation inside the isolated session (disjoint write-sets ⇒ parallel-eligible; simultaneity NOT_MEASURED until proven), with ODG importGate-controlled DIFF import. Plus radar lot-5 on 3 of the 8 remaining métiers.",
+  "verification": { "gate": "expected 630/630 (628 + 2 new suites)", "tsc": "0 errors", "newChecks": "14+11 = 25", "radarCallsUsed": 3, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "securityConfigModified": false, "improvementsBuilt": 0, "readOnly_exceptNewModules": true }
+}
