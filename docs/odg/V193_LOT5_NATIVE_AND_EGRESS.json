@@ -1,0 +1,42 @@
+{
+  "//": "V193 — radar lot-5 (M1/P6/P12) + ODG+Ollama native-autonomy audit (§5) + egress-allowlist/activation (§2) + VPS migration inventory (§6). READ-ONLY/preparation; NO provider construction of the 8 improvements (session not isolated); canonical registers untouched @V123; extension PARKED.",
+  "directive": "CTO V193 — radar lot-5, ODG native engineering & eight improvements construction",
+  "baseline": { "head": "682b29a (main @ V192)", "branch": "excellence/v193-lot5-native-egress-20261113", "gateBefore": "630/630", "tsc": 0 },
+  "§1_reconciliation": "HEAD @682b29a verified; PR #562 merged; gate 630/630; register 427 + ROADMAP.json @V123 byte-identical. The 8 prepared contracts (P1/P3/P5/P9/P11 + P7/P8/P13) preserved, BLOCKED_AWAITING_ISOLATION; no validated study re-run.",
+  "§2_egressAllowlist": {
+    "module": "runtime/core/odg-isolation-egress-allowlist.ts (+test, 8 checks)",
+    "allowlist": "only the indispensable provider endpoints — api.anthropic.com + DNS (names, not secrets)",
+    "networkStatus": "NOT_SECURED — no allowlist enforced here; proven modes are only (A) --unshare-all=no-net or (B) general-net. The network MUST NOT be qualified 'secured' until the allowlist is EFFECTIVELY imposed.",
+    "enforcementOptions": "slirp4netns allowlist / nftables egress / forward-proxy allowlist — ALL OWNER_GATED; provider imposes none, modifies no system/security config",
+    "authWithoutSecrets": "Claude Code uses its OWN credential (user config/harness), NOT a project secret; no token exported; work copy = write-set only",
+    "activation": "reproducible 5-step procedure (ODG prepares write-set copy → OWNER sets allowlist → bwrap launch → post-checks incl. egress-allowlisted-only + provider-auth-OK + canonical-write-BLOCKED → ODG importGate import). SESSION_OS_ISOLATION stays OWNER_GATED."
+  },
+  "§3_eightImprovements": "CTO build authorization MAINTAINED (V192 §3). All 8 stay BLOCKED_AWAITING_ISOLATION; no provider writing in the canonical repo. Dependencies + write-sets prepared; disjoint ⇒ up-to-5-lane parallel-eligible once isolation is validated (real simultaneity NOT_MEASURED until proven).",
+  "§4_radarLot5": {
+    "module": "runtime/core/odg-metier-benchmark-lot5.ts (+test, 8 checks)",
+    "metiersChosen": "ODG selected M1 (CRA/SBOM — regulatory value), P6 (Eval/quality — closes ODG's own eval gap V163), P12 (Streaming/realtime)",
+    "executed": "3 REAL WebSearch collections (grant V141, 2026-11-13) fed THROUGH the V187 adapter: 3 COLLECTED_REAL, all PROPOSED (M1 VALIDATED_MARKET_SIGNAL), 0 writes. Autonomous radar egress NOT_MEASURED.",
+    "benchmark": "M1→EU CRA (11 Sep 2026 Art.14 24h reporting; 11 Dec 2027 machine-readable SBOM top-level deps; €15M/2.5%); P6→HELM + contamination-resistance (private held-out, version-by-date, judge calibration); P12→Kafka/Flink exactly-once (2-phase commit), event-time watermarks, backpressure.",
+    "constructionContracts": "3 prepared (IMP-M1-CRA-TRACKER / IMP-P6-EVAL-HELDOUT / IMP-P12-STREAM-REF), BLOCKED_AWAITING_ISOLATION. M1 nothing certified; P6 full run BLOCKED on owner corpus; P12 streaming runtime REJECTED (ODG not a stream processor).",
+    "remaining": "5 métiers remain (P14/P15 + M3/M4/M5); 15 studied across lots 1-5."
+  },
+  "§5_nativeAutonomy": {
+    "module": "runtime/core/odg-native-autonomy-audit.ts (+test, 9 checks)",
+    "v192a": "the directive references addendum V192-A whose results were to be presented; V192-A was NOT delivered to this provider (no such directive/doc in this session) — stated honestly; this audit reads the real repo + live env instead.",
+    "liveEnv": "Ollama daemon LISTENING on 127.0.0.1:11434 (reachable); model qwen2.5-coder (ollama-provider V50).",
+    "pipeline": "the §5 8-step loop maps to REAL modules (mission-context-builder, ollama-provider+control-plane, generative-repair-adapter, odg-native-engineering→odg-closed-executor, evaluator-independence) and is EXISTING_VALIDATED (present + gate-tested).",
+    "honesty": "end-to-end autonomous construction of a REAL improvement is NOT_MEASURED this session (construction awaits isolation). Code generation ≠ demonstrated engineering autonomy; novel reasoning escalates to CLAUDE_CODE (odg-native-engineering taxonomy — never a fabricated ODG_NATIVE). Ollama confinement is at the OUTPUT boundary (client/server daemon), not process-sandboxed.",
+    "improvementRouting": "HYPOTHESIS: P9/P7/M1/P1 views = ODG_NATIVE candidates; P3/P5 = MIXED; P8/P11 = CLAUDE_CODE likely. Confirmed at build time via the native-engineering escalation; all 8 remain BLOCKED_AWAITING_ISOLATION."
+  },
+  "§6_vpsMigration": {
+    "status": "READ-ONLY inventory only (no VPS connection/modification; no deploy/sudo/systemd/secret/DB change).",
+    "migrated": "the canonical ODG app = the working tree bmax-v21 on the host (the host IS the VPS); git-tracked + CI-gated.",
+    "notResidentRuntime": "no resident ODG service observed (V189) — cutover to a running service = OWNER_GATED (root-free USER systemd + linger prepared historically; owner decision).",
+    "odgDoable": "repo-side prep (service unit drafts, reboot-drill runbooks, backup/restore scripts) — read-only authoring.",
+    "providerOrOwnerGated": "actual service install/start, network exposure, TLS/domain = OWNER_GATED. No change performed."
+  },
+  "honesty": "session NOT isolated → no improvement built; network NOT qualified secured (allowlist OWNER_GATED); V192-A not-delivered stated; ODG+Ollama pipeline present but end-to-end autonomy NOT_MEASURED; radar research real + through the adapter; benchmarks reused not re-run; VPS inventory read-only; register+ROADMAP byte-identical @V123; extension PARKED; €0 clients; no deploy/root/secret/payment/trading.",
+  "ownerDecisionsStillNeeded": ["establish the egress allowlist + launch the isolated session (unblocks all 8 improvements)", "VPS resident-runtime cutover", "radar autonomous egress binding", "ROADMAP.json extension integration", "BMAX assets"],
+  "nextLotAfterIsolation": "build the 8 improvements under V188 delegation inside the isolated session, routing ODG_NATIVE-candidate views to ODG+Ollama and novel logic to Claude Code, ODG importGate-controlled DIFF import; + radar lot-6 on the final 5 métiers (P14/P15 + M3/M4/M5), then the consolidated 20-métier economic model.",
+  "verification": { "gate": "expected 633/633 (630 + 3 new suites)", "tsc": "0 errors", "newChecks": "8+9+8 = 25", "radarCallsUsed": 3, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "securityConfigModified": false, "improvementsBuilt": 0, "readOnly_exceptNewModules": true }
+}
