@@ -1,0 +1,24 @@
+{
+  "//": "V188 §1/§2/§3 — PROVIDER_CONTRACT_ACCEPTED + native ODG→provider delegation chain + bounded provider contract + §3.1 enforcement audit. READ-ONLY apart from the new module; composes existing components (NO 2nd orchestrator); ROADMAP.json + closure-register.json ALWAYS_PROTECTED and untouched; extension PARKED.",
+  "directive": "CTO V188 — sovereign orchestration, provider contract & global engineering campaign",
+  "providerContract_§1.1": "PROVIDER_CONTRACT_ACCEPTED — Claude Code = TECHNICAL_PROVIDER_ONLY; NOT authority for CTO/roadmap/mission/authorization/radar/memory/registers/closure/self-authorization/self-independence; decides only HOW within a bounded contract; may signal impossibility, may NOT change the mandate.",
+  "baseline": { "head": "9a64c11 (main @ V187)", "branch": "excellence/v188-sovereign-delegation-20261113", "gateBefore": "624/624", "tsc": 0 },
+  "reconciliation_§6.1": "verified HEAD still @9a64c11 (did NOT assume); register 427 @V123 + ROADMAP.json @V123 untouched; delegation components all present (mission-orchestrator, mission-scheduler, campaign-lifecycle, delegate-isolation, provider-sandbox, evaluator-independence, provider-governance, provider-capability-contract).",
+  "built_§2": {
+    "module": "runtime/core/odg-sovereign-delegation.ts (+test, 24 checks)",
+    "chain": "ODG_MISSION_CREATED → AUTHORIZED → CONTRACT_ISSUED → PROVIDER_ACCEPTED → EXECUTION → RESULT_RETURNED → ODG_VERIFIED → INDEPENDENT_REVIEWED → ODG_ACCEPTED → CANONICAL_CLOSED (+ REFUSED / CORRECTION_REQUESTED). Each transition actor-checked (deny-by-default).",
+    "authoritySeparation": "ODG authorizes/verifies/accepts/closes; PROVIDER only accepts+executes+returns within the contract; INDEPENDENT reviews (distinct actor or NOT_AVAILABLE). Provider CANNOT self-authorize, expand scope, self-accept or self-close.",
+    "contractFields_§2.3": "objective/scope/writeSet/protectedPaths/permissions/requiredTests/acceptanceCriteria/stopConditions enforced; incomplete ⇒ REFUSED.",
+    "deliverableFields_§2.4": "summary/files/diff/testsRun/testOutputs/risks/limits/commit/reproEvidence enforced; incomplete ⇒ REFUSED (cannot be verified).",
+    "scopeEnforcement": "execute() refuses any change outside writeSet (OUT_OF_WRITE_SET) or on ALWAYS_PROTECTED (ROADMAP.json, closure-register.json) — no silent scope expansion."
+  },
+  "enforcementAudit_§3.1": {
+    "ENFORCED": ["no write outside write_set", "no write to ROADMAP.json/closure-register.json", "provider cannot authorize/accept/close", "independent review ≠ provider", "no auto-acceptance"],
+    "NON_ENFORCED_with_compensating": ["no internet research bypassing the radar (compensating: V187 radar-adapter owns the path + provider discipline + audit)", "no real deploy/systemd/secret/payment (compensating: sandbox + owner-gates + Truth-Lock + this contract)"],
+    "honesty": "rules that cannot be code-enforced at module level are declared NON_ENFORCED with their compensating control, not pretended to be enforced."
+  },
+  "scope_honesty": "This lot builds the AUTHORITY keystone (§1/§2/§3) — the delegation chain + provider contract + enforcement audit. The large follow-on branches are reported, NOT faked: §6.3 eleven remaining métiers (P6/P7/P8/P12/P13/P14/P15 + M1/M3/M4/M5) = next radar-driven lots; §6.4 five prepared improvements (P1/P3/P5/P9/P11) = still PREPARED (construction lot next); §6.5 consolidated 20-métier economic model = after métier coverage (reuse odg-economic-model.COST + odg-three-person-economic-model, NO 2nd engine); §5 real 5-way simultaneity = NOT_MEASURED (components exist, not demonstrated, not simulated); §7 V12.4 extension = PARKED (reconciliation only). §VIII independent review = evaluator-independence exists; separate model reviewer NOT_AVAILABLE in a single synchronous context.",
+  "§IX_permanentMethod": "the provider-contract + delegation discipline is encoded as a reusable module + reflected in CTO_CONTINUITY_PROTOCOL.md intent (ODG authority / provider bounded / radar-owned intelligence / reconcile-before-resume), so future sessions apply it without the owner re-stating it. No new governance system created.",
+  "honesty": "PROVIDER_CONTRACT_ACCEPTED; authority separation enforced in code; no 2nd orchestrator/radar/registry; ROADMAP.json+closure-register.json ALWAYS_PROTECTED (byte-identical @V123); non-code-enforceable rules declared NON_ENFORCED with compensating controls; follow-on campaign branches reported not faked; €0 clients; extension PARKED; no deploy/root/secret/payment/trading/commercial-contact.",
+  "verification": { "gate": "expected 625/625 (624 + 1 new suite)", "tsc": "0 errors", "newChecks": "24", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewModule": true }
+}
