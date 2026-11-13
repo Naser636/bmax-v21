@@ -29,7 +29,7 @@ function main() {
   check("real simultaneity NOT_MEASURED (not simulated)", /NOT_MEASURED/.test(C.parallelLot().simultaneity) && /not simulated/.test(C.parallelLot().simultaneity));
 
   // construction gate + contract + determinism
-  check("construction gate requires ODG authorization AND validated isolation (V189-A §4)", /NO provider technical writing/.test(r.constructionGate) && /real isolation is validated/.test(r.constructionGate));
+  check("CTO build-authorization GRANTED (V192 §3); gate now isolation-only", /GRANTED/.test(r.ctoBuildAuthorization) && /V192 §3/.test(r.ctoBuildAuthorization) && /VALIDATED REAL ISOLATION/.test(r.constructionGate) && /BLOCKED_AWAITING_ISOLATION/.test(r.constructionGate));
   check("contract invariants: preparation-only, nothing built, write-sets disjoint, gated", C.IMPROVEMENT_CONTRACTS_CONTRACT.invariants.some((i: string) => /NO improvement built/.test(i)) && C.IMPROVEMENT_CONTRACTS_CONTRACT.invariants.some((i: string) => /validated isolation required/.test(i)));
   check("deterministic + frozen", JSON.stringify(C.contracts().count) === JSON.stringify(r.count) && Object.isFrozen(r) && Object.isFrozen(C.CONTRACTS));
 

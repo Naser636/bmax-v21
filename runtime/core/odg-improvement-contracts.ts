@@ -72,7 +72,8 @@ function contracts(): any {
   return Object.freeze({
     count: rows.length, contracts: Object.freeze(rows),
     allWriteSetsDisjoint: (() => { const all = rows.flatMap((r: any) => r.writeSet); return new Set(all).size === all.length; })(),
-    constructionGate: "NO provider technical writing of these improvements until ODG authorizes AND real isolation is validated (V189-A §4). All 5 = BLOCKED_AWAITING_ISOLATION.",
+    ctoBuildAuthorization: "GRANTED (CTO V192 §3 — authorization to build the 5 improvements inside isolated worktrees via the V188 chain; no per-improvement re-authorization needed within the existing contracts + security limits)",
+    constructionGate: "CTO authorization is GRANTED (V192 §3); the ONLY remaining condition is VALIDATED REAL ISOLATION of the provider session (OWNER_GATED, V190/V192). Until a real isolated session is launched + proven, all 5 stay BLOCKED_AWAITING_ISOLATION — no provider writing in the canonical repo.",
   });
 }
 
