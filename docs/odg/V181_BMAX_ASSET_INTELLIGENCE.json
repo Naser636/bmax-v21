@@ -1,0 +1,30 @@
+{
+  "//": "V181 — BMAX asset intelligence / technical forensics / native capability integration. Delta dossier; no competing SSOT. READ-ONLY; no register/audit-log/ROADMAP/canonical-source mutation.",
+  "directive": "CTO V181 — BMAX asset intelligence, technical forensics & native capability integration",
+  "baseline": { "head": "243f78e (main @ V180-A)", "branch": "excellence/v181-bmax-capability-mapping-20261113", "gateBefore": "608/608", "tsc": 0, "grant": "V141 VALID→2026-11-18; 3 radar calls used this lot" },
+  "truthLock_§1": {
+    "head": "243f78e on main, tree clean (known untracked docs/* + tsx placeholders only)",
+    "register": "427 (@V123) byte-identical; V175–V180-A all merged; gate last green 608/608",
+    "CRITICAL_FINDING": "the two candidate source assets — BMAX HFT Core Engine V1.5.0 and BMAX AO Risk Engine V1.5.0 — are ABSENT from this environment. Searched the working tree, all of /home/ubuntu, every archive, and every file type: NO Rust, NO Cargo.toml, NO Terraform (.tf), NO BMAX dossier. The only HFT/Terraform text hits are the repo name and an unrelated expert-synthesis doc.",
+    "consequence": "§2 (HFT forensic audit) and §3 (AO forensic audit) — deliverables #1 and #2 — are HARD-BLOCKED. Per §8 a forensic audit of absent code would be fabrication and is refused. BMAX-side maturity is UNVERIFIABLE; no TRL 8/9 accepted."
+  },
+  "userDecision": "User chose 'Proceed on asset-independent parts now' — §7 radar + §4/§6 capability-category mapping delivered; §2/§3 code audits wait for the assets.",
+  "built": {
+    "module": "runtime/core/odg-bmax-capability-mapping.ts (+test, 16 checks, ALL PASS)",
+    "§4_mapping": "21 directive-named capability categories → ODG primitive + métier + REAL existing component + honest ODG maturity + verdict. Distribution: REUSE 11 / IMPROVE 5 / BUILD 1 / DEFER 0 / REJECT 4 (terraform infra-provisioning, trading order-book, trading account-binding, unsafe-binary-memory).",
+    "§4_antiDuplication": "memory/scheduler/governance/economic-model/evidence families are REUSE/IMPROVE, NEVER BUILD — no second canonical system (enforced by test).",
+    "§2§3_criteria": "forensic rubrics as reproducible CRITERIA (grounded in real WAL-durability references), status BLOCKED_ASSET_ABSENT — ready to run against the real code; no result fabricated. Includes the §3 CRITICAL invariant: NO payment-unlock may bypass a CONFIRMED transaction.",
+    "§6_btpStudy": "BTP tender-analysis (DCE/CCAP/CCTP) market — REAL radar competitors OBSERVED with provenance; prices as RANGES; archive KPIs NOT treated as confirmed."
+  },
+  "verdictDistribution": "REUSE (deterministic_logging, idempotence, event_integrity, observability_metrics, document_intelligence, document_integrity_hash, prompt_injection_resistance, margin_protection, rgpd_contractual, incident_runbooks_recovery, secrets_management) ; IMPROVE (wal_durability_recovery, benchmarks_percentiles, concurrency_throttle, multi_tenant_isolation, billing_reconciliation) ; BUILD (btp_dce_contract_analyzer — the ONE genuine new product, on the doc-intel base) ; REJECT (terraform_infra_provisioning [ODG spec-only], order_book_matching, trading_account_binding [no real money/Binance], unsafe_binary_memory_layout).",
+  "§6_findings": {
+    "frCompetitors": ["KALAO (IA audit DCE/CCTP/CCAP/DPGF; abusive penalties, compte prorata)", "MarchéClair (penalties/variants/deadlines; claims ~98% penalty-clause detection — UNVERIFIED vendor claim)", "BTP Copilot", "TenderCrunch", "Aristote/AGORA BTP", "SmartBTP"],
+    "intlPriceRanges": "Nomic $20-40/user/mo, BuildingConnected(Autodesk) ~$199-399/mo, Quotr.ai $249-500/mo, STACK ~$2.6-3k/yr/user, Altura ~£24k/yr — OBSERVED ranges, not confirmed quotes",
+    "assessment": "the FR BTP-tender-analysis market is REAL and already competitive (≥6 FR incumbents). ODG's differentiator would be evidence-provenance + page-reference citations + governed no-fabrication, reusing document-intelligence + chantier-profitability + product-design. A full product-design + demand-validation pass is required before any BUILD commitment. Demand UNVALIDATED (OWNER_GATED).",
+    "sources": ["kalao-solution.fr", "marcheclair.fr", "btpcopilot.fr", "tendercrunch.com", "agorabtp.com", "smartbtp.ai", "nomic.ai", "quotr.ai", "buildvisionai.com"]
+  },
+  "§7_walReferences": "fsync-before-ack (durability) + per-record CRC32C checksum (torn-write/bit-flip) + recovery truncates at first checksum mismatch + checkpointing bounds replay + group-commit vs per-write fsync trade-off — these ground the HFT WAL audit criteria and the wal_durability_recovery IMPROVE verdict.",
+  "honesty": "Truth-Lock honest: both BMAX assets ABSENT ⇒ forensic audits refused not faked; BMAX maturity UNVERIFIABLE; no TRL 8/9. §4 maps named capabilities to REAL ODG components; NO second canonical system; trading + infra-provisioning REJECTED; payment-unlock invariant preserved; §6 competitors/prices OBSERVED not confirmed. READ-ONLY; deterministic; €0 clients; no deploy/root/secret/payment/trading/commercial-contact.",
+  "remainingMissions_§9": "§2 HFT forensic audit + §3 AO forensic audit — BLOCKED until the BMAX dossiers are provided (unzip into the repo or a named path). On arrival: run AUDIT_CRITERIA against the real code, produce severity-ranked defects + reproduction tests, then revisit §4 verdicts with VERIFIED BMAX maturity, and (if justified) the §5 integration builds + §6 BTP product-design.",
+  "verification": { "gate": "expected 609/609 (608 + 1 new suite)", "tsc": "0 errors", "newChecks": "16", "registerByteIdentical": "427 @V123", "readOnly_exceptNewModule": true, "radarCallsUsed": 3 }
+}
