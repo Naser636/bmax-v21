@@ -1,0 +1,35 @@
+{
+  "//": "V183 — continuity, consolidation & governance of the single ODG. Four READ-ONLY governance VIEWS over canonical sources (Livrables A/B/C/D) + §6 V12.4 integration proposal. No new canonical system; no runtime; no deployment; ROADMAP.json NOT modified. Delta dossier.",
+  "directive": "CTO V183 — continuité, consolidation et gouvernance de l'ODG principal",
+  "baseline": { "head": "c3a1700 (main @ V12.4-extension-PARKED)", "branch": "excellence/v183-governance-views-20261113", "gateBefore": "613/613", "tsc": 0 },
+  "reconciliation_§1": "HEAD @c3a1700 clean; register 427 @V123 byte-stable; ROADMAP.json @V123 (11 governed missions) untouched; V180–V182 + extension dossiers+modules present; 9 primitives + 15-métier roster confirmed. No change vs the 2026-11-13 audit.",
+  "livrables": {
+    "A_metier_business_matrix": {
+      "module": "runtime/core/odg-metier-business-matrix.ts (+test, 12 checks)",
+      "what": "exhaustive P1..P15 business matrix over the canonical roster (reuses planner.METIERS): mission, users, reusable components, PARTIAL functions, DEMONSTRATED gaps, regulatory/cert, owner-gates, technical + métier validation criteria.",
+      "honesty": "SIX levels never conflated — TECHNICAL_EXISTENCE ≠ TESTED ≠ INTEGRATED ≠ METIER_QUALIFIED ≠ COMMERCIALLY_AUTHORIZED ≠ REAL_COMMERCIAL_RESULT. For every métier integrated/qualified/authorized/real-result = FALSE; operational proof = NOT_MEASURED. No client/demand/revenue/certification invented; €0 clients."
+    },
+    "B_primitive_metier_matrix": {
+      "module": "runtime/core/odg-primitive-metier-matrix.ts (+test, 14 checks)",
+      "what": "9 primitives × 15 métiers = 135 intersections, each classified REUSE / IMPROVE / BUILD_CONDITIONAL / NOT_APPLICABLE / OWNER_GATED with a code/contract reference.",
+      "principle": "REUSE default (each primitive implemented ONCE, reused by all métiers — anti-duplication); overrides = real known exceptions (FinOps payment OWNER_GATED, regulatory cert OWNER_GATED, document/security/SRE/AI-infra IMPROVE, data-layer tenancy BUILD_CONDITIONAL). NO construction engaged (directive §3): BUILD_CONDITIONAL is a label only."
+    },
+    "C_cto_dashboard": {
+      "module": "runtime/core/odg-cto-dashboard.ts (+test, 13 checks)",
+      "what": "READ-ONLY pilot projection over canonical sources (reads the REAL register via odg-closure-register-ops → total 427; reuses roster + matrices A/B). Every indicator carries provenance + method + confidence; a missing value renders NOT_MEASURED/UNKNOWN/NOT_AVAILABLE.",
+      "honesty": "NOT a new source of truth; mutates no canonical status; invents no result. Runtime = NOT_MEASURED (no resident process observed 2026-11-13); gate NOT re-run here (verify live)."
+    },
+    "D_continuity_protocol": {
+      "module": "runtime/core/odg-cto-continuity-protocol.ts (+test, 14 checks) + docs/odg/CTO_CONTINUITY_PROTOCOL.md",
+      "what": "self-contained cross-conversation continuity protocol with all 12 mandatory elements (single-ODG identity, V12.4 single master, canonical sources, 9 primitives, 15 métiers, existing components, finished campaigns, open/blocked/deferred missions, PARKED extension state, restrictions/owner-gates, last-commit/next, mandatory reconciliation-before-resume).",
+      "rule": "an old report NEVER replaces a live check; reuse→improve→build-only-on-demonstrated-absence; never create a second ODG."
+    }
+  },
+  "§6_integration_proposal": {
+    "recommendedLocation": "a governed doctrine note referenced BY V12.4 (docs/odg dossier + Boussole pointer) — NOT a new roadmap and NOT an edit to ROADMAP.json",
+    "roadmapJson": "action NONE, status OWNER_GATED — PROTECTED path; proposal prepared + ready + NOT applied",
+    "integrityControl": "on owner approval: preserve the 11 governed ROADMAP.json missions + 427-item register byte-identity; add only a doctrine reference; reopen no closed mission."
+  },
+  "honesty": "four READ-ONLY governance views over the single ODG; reuse the canonical roster + register + matrices; NO second memory/scheduler/registry/economic/security/document engine; NO runtime started; NO deployment; owner-gates + Truth-Lock intact. Register 427 byte-identical (@V123); ROADMAP.json untouched; €0 clients. All claims testable; unproven runtime = NOT_MEASURED.",
+  "verification": { "gate": "expected 617/617 (613 + 4 new suites)", "tsc": "0 errors", "newChecks": "12+14+13+14 = 53", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewModules": true }
+}
