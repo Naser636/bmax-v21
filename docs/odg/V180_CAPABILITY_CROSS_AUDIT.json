@@ -1,0 +1,25 @@
+{
+  "//": "V180 (§2 — business-operation capability cross-audit; the long-deferred 30-capability audit). Delta dossier; no competing SSOT. READ-ONLY; recovered from the CANONICAL CTO V174-A §7 enumeration (28 items) — NOT fabricated to hit 30. Maps to REAL modules or honest MISSING. No register/audit-log/ROADMAP/canonical-source mutation.",
+  "baseline": { "head": "b1df0de (main @ V179)", "branch": "excellence/v180-capability-cross-audit-20261113", "gateBefore": "606/606", "tsc": 0, "grant": "V141 VALID→2026-11-19 (re-checked; no live calls this lot)" },
+  "recovery_§1_§2": {
+    "canonicalSource": "CTO V174-A §7 enumeration of the capabilities needed to run a company operated mainly by ODG",
+    "enumeratedCount": 28,
+    "directiveRoundNumber": 30,
+    "honesty": "the canonical §7 list contains 28 distinct capability categories; the directive's '30' is a round-number framing. Per the explicit rule 'ne jamais fabriquer une liste de 30 pour satisfaire le nombre', NO filler capability was invented to reach 30 — the real 28 are reported as-is.",
+    "registerVerified": "427 (415 ACCEPTED / 6 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED, stale 0; @V123) — unmutated; 606/606 reproducible."
+  },
+  "capabilityBuilt_§2": {
+    "module": "runtime/core/odg-capability-cross-audit.ts (+test, 13 checks)",
+    "crossAudit": "each of the 28 V174-A §7 capabilities mapped to its REAL existing ODG module (or MISSING) + primitive + honest 6-level status + gap + acceptance test.",
+    "statusDistribution": { "EXISTING_AND_VALIDATED": 7, "EXISTING_BUT_PARTIAL": 16, "MISSING": 3, "OWNER_GATED": 2, "NOT_REQUIRED": 0, "NOT_MEASURED": 0 }
+  },
+  "validated_7": ["prospect_research_qualification (prospection-registry + prospect-qualification V176)", "proposal_generation (proposal-generator + product-design-engine V177)", "sales_pipeline (commercial-pipeline)", "support (support-renewal-engine V174)", "renewal (support-renewal-engine V174)", "quality_control (evaluator-independence + mission-independent-validation)", "supplier_management (provider-capability-contract + supply-chain-attest)"],
+  "missing_3": ["language_management (i18n/localization — no module)", "digital_distribution (download/licence-delivery — no module)", "marketing (content/campaign — no module)"],
+  "ownerGated_2": ["payment_tracking (computation exists; payment execution OWNER_GATED)", "cancellation (support-renewal computes; committing cancellation OWNER_GATED)"],
+  "partial_16": "commercial_intelligence, international_segmentation, competitive_intelligence, multi_currency_pricing (EUR-only), crm, onboarding (V173 PARTIAL), subscription_management, billing_invoicing, customer_outcome_analysis, analytical_accounting, cash_flow_tracking, international_taxation (V179 per-jurisdiction HYPOTHESIS), data_protection (GDPR DOCUMENTED), security (OWASP 8 PARTIAL controls), cac_measurement (HYPOTHESIS inputs), satisfaction_churn_monitoring",
+  "mutualization_§2": ["odg-support-renewal-engine serves support + renewal + cancellation + churn-monitoring", "odg-economic-scaling-model serves analytical-accounting + taxation + CAC", "customer-outcome-intelligence serves outcome-analysis + satisfaction/churn"],
+  "prioritizedGaps_§2": { "total": 21, "missing": 3, "topMissing": ["digital_distribution", "language_management", "marketing"], "note": "MISSING ranked highest (blocks a function outright); 16 PARTIAL need hardening/breadth/real-traffic proof; 2 OWNER_GATED preserved." },
+  "honesty": "V180 recovered the canonical V174-A §7 capability list (28 items, NOT fabricated to 30), cross-audited each against ODG's REAL modules with honest 6-level status, identified mutualization (support-renewal serves 4; scaling-model serves 3), and prioritized the real gaps (3 MISSING: language/distribution/marketing; 16 PARTIAL; 2 OWNER_GATED). No module fabricated; no capability declared autonomous/validated without end-to-end proof; payment + cancellation stay owner-gated. READ-ONLY; no register/audit-log/ROADMAP/canonical-source mutation; €0 clients; €5M NOT guaranteed.",
+  "deferredBranches": "§3 (world 15-métier study), §4 (offer selection + product dossiers), §5 (commercial-chain integration), §6 (documented prospect portfolio, no fabrication), §7 (ISO 27001 completion), §8 (economic robustness incl. 350-customer scenario + effective tax), §9 (300-day critical path), §10 (autonomy/multi-worker/security audit) remain next governed branches. The 3 MISSING capabilities (language/distribution/marketing) are concrete next builds.",
+  "verification": { "gate": "expected 607/607 (606 + 1 new suite)", "tsc": "0 errors", "newChecks": "13", "canonicalSourcesUntouched": true, "readOnly_exceptNewModule": true }
+}
