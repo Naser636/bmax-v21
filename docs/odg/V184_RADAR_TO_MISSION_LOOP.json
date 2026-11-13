@@ -1,0 +1,24 @@
+{
+  "//": "V184 — close the radar → opportunity → governed-mission loop by COMPOSING existing components. READ-ONLY, synchronous. No second radar/scheduler/registry/intelligence/mission system; no canonical register write; no execution; ROADMAP.json untouched; V12.4 extension stays PARKED.",
+  "directive": "CTO V184 — fermeture de la boucle radar → opportunité → mission gouvernée",
+  "baseline": { "head": "60ae5b0 (main @ V183-C)", "branch": "excellence/v184-radar-to-mission-20261113", "gateBefore": "618/618", "tsc": 0 },
+  "reconciliation_§1": "HEAD @60ae5b0 clean; PR #551/#552 merged; register 427 @V123 + ROADMAP.json @V123 untouched; reused modules present (odg-global-opportunity-radar V174-A, odg-weekly-radar-scheduler V171, odg-prospect-qualification V176, V183 matrices + V183-C commercial roster). No component rebuilt.",
+  "built": {
+    "module": "runtime/core/odg-radar-to-mission-loop.ts (+test, 24 checks)",
+    "nature": "COMPOSITION/orchestration VIEW threading a SYNTHETIC signal through the existing path: detect → provenance+freshness → reliability (radar.validationTier) → qualification (prospect-qualification) → 20-métier attachment (V183-C roster) → dedup → mission PROPOSAL → deny-by-default governance gate → {PROPOSED | OWNER_GATED | REFUSED}. Composes real modules; builds NO second system."
+  },
+  "§2_pathMap": "11 steps A..L each mapped to the EXISTING owning module + honest state; K (canonical mission creation) = OWNER_GATED (NOT performed — PROPOSED only); G (capability/gap) = EXISTING_PARTIAL (static matrices).",
+  "§3_integrationTests": {
+    "scenarios": "12 synthetic signals: valid+documented⇒PROPOSED; expired⇒REFUSED; no-provenance⇒REFUSED; contradictory⇒REFUSED; duplicate⇒first PROPOSED/second REFUSED_DUPLICATE; multi-métier⇒attaches 2; no-attachable-métier⇒REFUSED; owner-auth-required⇒OWNER_GATED; low-fit⇒DISQUALIFIED⇒REFUSED; hostile-injection⇒REFUSED (content≠instruction); hypothesis-as-fact⇒REFUSED (INSUFFICIENTLY_VALIDATED); admissible⇒PROPOSED but executed=false/authorized=false.",
+    "invariantsProven": "hypothesis≠fact; VALIDATED_MARKET_SIGNAL≠client; score≠authorization; expired⇒no mission; no owner-gate bypass; dedup enforced; refused≠executed; loop performs 0 canonical writes + 0 executions. All signals tagged SYNTHETIC."
+  },
+  "§4_twentyMetiers": "opportunities attach to the canonical 20-métier roster (15 principal P1–P15 + 5 commercial M1–M5 from V183-C); unknown ids are NOT invented into new métiers (⇒ NO_METIER_ATTACHED refusal). Distinguishes detected opportunity ≠ validated demand ≠ realized revenue.",
+  "§6_scheduler": "weekly scheduler (V171) audited read-only: resident run NOT_AUTHORIZED (on-demand only, per directive); realScheduledRun = NOT_MEASURED (no systemd/timer installed, no service). A real weekly execution is NOT claimed. Tests prepared for future qualification without activating a timer.",
+  "honesty": "composition-only; no second radar/scheduler/registry/intelligence/mission system; synthetic signals never presented as real commercial results; PROPOSED ≠ AUTHORIZED ≠ EXECUTED; deny-by-default gate; owner-gates + Truth-Lock preserved; register 427 byte-identical (@V123); ROADMAP.json untouched; extension PARKED; €0 clients; no deploy/root/secret/payment/trading/commercial-contact.",
+  "closureConditions_§9": {
+    "signalToProposalTraceable": true, "qualificationBeforeMission": true, "noDuplication": true, "ninePrimitivesPreserved": true,
+    "attachedTo20Metiers": true, "refusalsAndAuthHandled": true, "simulationVsRealDistinct": true, "dashboardCoherent": "V183 dashboard already projects signals/proposals honestly; loop verdicts feed it as NOT_MEASURED-until-run",
+    "loopDeclaredComplete": "the composition chain is demonstrated end-to-end in the authorized (synthetic, read-only) perimeter; step K (real canonical mission creation) remains OWNER_GATED and is honestly NOT claimed as executed."
+  },
+  "verification": { "gate": "expected 619/619 (618 + 1 new suite)", "tsc": "0 errors", "newChecks": "24", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewModule": true }
+}
