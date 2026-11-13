@@ -1,0 +1,27 @@
+{
+  "//": "V186 LOT 2 of the 20-métier worldwide excellence campaign — P1/P5/P11: real radar research, multidimensional benchmark, diagnostic, improvement plan, P11↔M2 correspondence. READ-ONLY; no new canonical engine; ROADMAP.json untouched; extension PARKED.",
+  "directive": "CTO V186 — campagne mondiale d'excellence — LOT 2 (P1/P5/P11)",
+  "baseline": { "head": "405a4dc (main @ V185 lot1)", "branch": "excellence/v186-lot2-intelligence-20261113", "gateBefore": "621/621", "tsc": 0 },
+  "reconciliation_§1": "HEAD @405a4dc clean; V184+V185 merged; lot1 benchmark + program-matrix present; register 427 @V123 + ROADMAP.json @V123 untouched; grant V141 valid→2026-11-18. P3/P9 improvements from lot1 preserved as distinct candidate missions (not duplicated, not declared built).",
+  "radarResearch_§2": "REAL WebSearch pass under grant V141 (2026-11-13, 3 métier-SPECIFIC queries — DORA / CNCF platform-eng / IDP benchmarks; NOT a generic list reused). External content UNTRUSTED (no page alters governance).",
+  "built": {
+    "module": "runtime/core/odg-metier-benchmark-lot2.ts (+test, 19 checks)",
+    "benchmark_§3": "12-dimension multidimensional benchmark for P1/P5/P11; each dimension MEASURED-with-method (from code/tests) or NOT_MEASURED (no runtime proof) — NEVER a blanket 1.0; operational_maturity NOT_MEASURED for all 3 (no resident runtime).",
+    "p11m2_§6": "P11↔M2 correspondence: P11 = PRINCIPAL horizontal document-intelligence engine; M2 = COMMERCIAL vertical (BTP DCE/CCAP/CCTP) that REUSES P11's engine. DISTINCT_BUT_COMPLEMENTARY (partial overlap); shared component document-intelligence.ts + evidence-provenance built once; both ids retained; DCE analyzer NOT rebuilt (V185 demand-validation pending); no second doc engine."
+  },
+  "worldReferences": {
+    "P1": "DORA / State of DevOps 2026 — 4 keys (deploy freq / lead time / change-fail / failed-deploy recovery); elite = on-demand / <1d / 0-5% / <1h; only 19% elite",
+    "P5": "CNCF Platform Engineering Maturity Model v2 — Provisional/Operational/Scalable/Optimizing × Investment/Adoption/Interfaces/Operations/Measurement; golden paths; most orgs L2→L3",
+    "P11": "IDP benchmarks (arxiv/extend.ai/nutrient.io) — best-in-class 99%+ field accuracy vs OCR 80-85%; field-level provenance (page+confidence+reviewer-action); calibrated confidence; 0.90 STP threshold; tables = structure not OCR"
+  },
+  "diagnosisAndPlan_§4§5": {
+    "P1": "gap = no DORA delivery metrics tracked; operational maturity NOT_MEASURED. PLAN: IMPROVE — DORA-metrics view from REAL patch-execution/lifecycle events (reuse audit-log+otel; no new engine); deploy-frequency NOT_MEASURED until runtime intent decided (OWNER_GATED).",
+    "P5": "gap = no CNCF maturity self-rating; ODG spec-only (provisions no infra). PLAN: IMPROVE — CNCF-aspect self-rating + golden-path catalog metadata over existing contract scaffolding; infra provisioning stays OWNER_GATED/REJECTED (V181).",
+    "P11": "gap = no OCR; accuracy + confidence calibration NOT_MEASURED (no labelled corpus); table per-cell provenance + 0.90 STP logic absent. PLAN: IMPROVE — confidence-calibration + STP-threshold + reproducible labelled-corpus benchmark harness on document-intelligence (reuse; no second doc engine); OCR a separate BUILD_CONDITIONAL."
+  },
+  "construction": "This lot delivers research + reproducible benchmark + diagnostic + improvement PLAN (prepared missions). No new module built beyond the benchmark/plan view — the IMPROVE items (DORA view, CNCF self-rating, IDP calibration harness) are concrete next-lot missions, not declared built. Honest: code built ≠ capability integrated ≠ capability qualified in real operation.",
+  "primitivesPrograms_§7": "P1/P5/P11 primitive+program impact reuses V183-C (9×20) and V185 (9-programs×20) matrices — not rebuilt. No 10th primitive; no second intelligence/memory/security/scheduler/registry engine.",
+  "honesty": "real métier-specific research (grant V141, 3 WebSearch); external untrusted; 12-dim benchmark MEASURED-or-NOT_MEASURED (no blanket 1.0); gaps identified not invented; REUSE/IMPROVE-first; P11↔M2 no duplicate engine, DCE not rebuilt; register 427 byte-identical (@V123); ROADMAP.json untouched; extension PARKED; €5M = objective-to-model not guaranteed, ≤3-person cap retained; €0 clients; no deploy/root/secret/payment/trading/ad-spend/commercial-contact.",
+  "remaining_§9": "campaign NOT complete: lot1 (P3/P9/M2) + lot2 (P1/P5/P11) done; 14 métiers remain (P2/P4/P6/P7/P8/P10/P12/P13/P14/P15 + M1/M3/M4/M5), ≈3/lot. Consolidated 20-métier economic model + 3 scenarios AFTER full coverage (reuse odg-economic-model.COST + odg-three-person-economic-model, NO 2nd engine).",
+  "verification": { "gate": "expected 622/622 (621 + 1 new suite)", "tsc": "0 errors", "newChecks": "19", "radarCallsUsed": 3, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewModule": true }
+}
