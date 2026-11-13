@@ -1,0 +1,33 @@
+{
+  "//": "V182 §4 — construction of the three MISSING capabilities V180 identified (language_management, digital_distribution, marketing). Delta dossier; no competing SSOT. READ-ONLY apart from the 3 new modules; no register/audit-log/ROADMAP/canonical-source mutation.",
+  "directive": "CTO V182 — consolidation V180+V181: autonomous capability build, 15 métiers, radar, economic execution & governance",
+  "baseline": { "head": "44e536e (main @ V181)", "branch": "excellence/v182-missing-capabilities-20261113", "gateBefore": "609/609", "tsc": 0 },
+  "reconciliation_§1": {
+    "head": "44e536e on main, tree clean (only known untracked docs/* + tsx)",
+    "artifacts": "V180_CAPABILITY_CROSS_AUDIT.json, V180A_THREE_PERSON_ECONOMIC_MODEL.json, V181_BMAX_ASSET_INTELLIGENCE.json all present; their modules (odg-capability-cross-audit, odg-three-person-economic-model, odg-bmax-capability-mapping) all present",
+    "register": "427 (@V123) byte-identical; gate last green 609/609 reproducible",
+    "missingVerified": "language_management / digital_distribution / marketing confirmed genuinely absent (no i18n/localization/distribution/marketing module anywhere); V180's MISSING classification is accurate."
+  },
+  "scope": "This lot executes the §4 CONSTRUCTION core — the three MISSING capabilities — which is the directive's clearest 'real progression of the system'. The analysis/matrix sections (§2 15-métier matrix, §6 9×15 use-matrix, §9 CTO dashboard) and the already-built areas (§3 cert planner V174-B, §5 radar V171/V174-A, §8 economics V180-A, §7 BTP V181) are reported as reproduced/verified or next governed branches — not rebuilt (directive: do not re-run finished campaigns).",
+  "built": {
+    "§4.1_language_management": {
+      "module": "runtime/core/odg-language-management.ts (+test, 14 checks)",
+      "capability": "deny-by-default locale selection (exact→lang-fallback→refuse), supported-locale + RTL registry, translation-unit preparation preserving protected tokens (numbers/units/currency/placeholders/dates), cross-locale consistency flagging, human-certification gating",
+      "keyInvariant": "legal/contractual/regulatory ⇒ NEEDS_HUMAN_CERTIFICATION; a machine translation is NEVER presented as legally certified; certify() requires a NAMED human certifier"
+    },
+    "§4.2_digital_distribution": {
+      "module": "runtime/core/odg-digital-distribution.ts (+test, 15 checks)",
+      "capability": "package manifest + semver validation + deterministic sha256 content/manifest checksums, metadata-completeness enforcement, rights/licence verification (deny-by-default), channel-compatibility checks, version ledger with traceability + governed retract",
+      "keyInvariant": "real external publication / account / contractual commitment / spend is OWNER_GATED — publishDecision NEVER publishes autonomously; distribution denied without an explicit licence"
+    },
+    "§4.3_marketing": {
+      "module": "runtime/core/odg-marketing-engine.ts (+test, 16 checks)",
+      "capability": "transparent weighted segmentation (fit≠demand), evidence-grounded positioning (abstains without evidenced differentiators), content generation with an UNPROVEN-CLAIM detector (EN/FR superlatives/guarantees/numeric claims), campaign preparation, CAC + contribution measurement",
+      "keyInvariant": "generating content/campaigns does NOT authorize publishing, buying ads, or contacting prospects (all OWNER_GATED); unproven claims BLOCK publishability; CAC ≠ contribution ≠ margin ≠ net"
+    }
+  },
+  "maturity": "each capability is now EXISTING + VALIDATED-by-representative-tests (unit/contract/permission/adversarial/abstention/determinism). NOT yet 'authorized for real commercial use' — external publication/ad-spend/prospect-contact/legal-certification remain OWNER_GATED. Honest 3-level distinction (present ≠ tested ≠ authorized-for-real-use) preserved.",
+  "honesty": "the three MISSING capabilities are built on canonical disciplines (crypto checksums, evidence/abstention, economic non-conflation) — NO parallel memory/scheduler/registry/economic-model. All external-effect paths are deny-by-default / OWNER_GATED. Machine translation never auto-certified; publication never autonomous; unproven marketing claims blocked. READ-ONLY apart from the new modules; €0 clients; no deploy/root/secret/payment/trading/ad-spend/commercial-contact.",
+  "deferredBranches": "§2 exhaustive 15-métier matrix, §6 9×15 capability-USE matrix (extends V181 mapping), §9 canonical CTO dashboard = next governed branches (analysis/aggregation over canonical sources, no new canonical system). §5 radar→mission loop end-to-end + §7 BTP product-design/benchmark = further branches. §10 BMAX HFT/AO audits remain BLOCKED_ASSET_ABSENT (unchanged from V181).",
+  "verification": { "gate": "expected 612/612 (609 + 3 new suites)", "tsc": "0 errors", "newChecks": "14+15+16 = 45", "registerByteIdentical": "427 @V123", "readOnly_exceptNewModules": true }
+}
