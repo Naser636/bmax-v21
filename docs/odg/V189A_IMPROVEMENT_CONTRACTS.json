@@ -1,0 +1,18 @@
+{
+  "//": "V189-A addendum — PREPARE the 5 improvement mission-contracts (allowed by §3/§4); do NOT build them (§4 gates provider technical writing on validated isolation, which V189 found is OWNER_GATED). READ-ONLY preparation; ROADMAP.json+closure-register.json untouched @V123; extension PARKED.",
+  "directive": "CTO ADDENDUM V189-A — continuous execution, radar benchmark & improvement construction",
+  "baseline": { "head": "8aa9856 (main @ V189)", "branch": "excellence/v189a-improvement-contracts-20261113", "gateBefore": "626/626", "tsc": 0 },
+  "additivity": "V189 NOT interrupted — landed first (PR #558 @8aa9856). This is the additive follow-on per V189-A.",
+  "§1_priorWorkReused": "benchmarks + gaps already proven (NOT re-run): lot1 P3/P9/M2 (V185), lot2 P1/P5/P11 (V186), lot3 P2/P4/P10 (V187). The 5 prepared improvements come from those lots. 11 métiers remain (P6/P7/P8/P12/P13/P14/P15 + M1/M3/M4/M5).",
+  "§3§4_built": {
+    "module": "runtime/core/odg-improvement-contracts.ts (+test, 15 checks)",
+    "what": "5 mission-contracts (P1 DORA-view / P3 SSDF-SLSA / P5 CNCF-rating / P9 FinOps-KPIs / P11 confidence-calibration), each with the §3 seven parts (gap, benchmark ref, measurable objective, bounded write-set, acceptance criteria, deps, evidence plan) + protectedPaths + requiredTests + stopConditions — shaped to feed odg-sovereign-delegation (V188) once authorized.",
+    "status": "ALL 5 = BLOCKED_AWAITING_ISOLATION — NOTHING built. Per V189-A §4 + V189 finding, no provider technical writing of the improvements until the sandbox is verified really isolated or rebuilt+validated (OWNER_GATED)."
+  },
+  "§5_parallelism": "the 5 write-sets are DISJOINT ⇒ eligible for a single 5-lane parallel lot ONCE isolation is authorized; real simultaneity remains NOT_MEASURED (not simulated).",
+  "constructionGate": "two conditions, both required before any improvement is built: (1) ODG authorizes the specific contract; (2) real isolation of the provider session is validated (V189 proposed mechanism: delegate-isolation bwrap worktree, diff-imported) — currently OWNER_GATED.",
+  "honesty_per_contract": "P1 keeps deploy-freq NOT_MEASURED until a runtime binding; P3 claims no unproven SLSA tier; P5 keeps infra provisioning REJECTED/OWNER_GATED (ODG spec-only); P9 preserves estimated≠realized; P11 flags the 0.90 STP threshold as a HYPOTHESIS and keeps OCR a separate BUILD_CONDITIONAL.",
+  "honesty": "preparation/analysis only (explicitly allowed by V189-A §4); no improvement constructed; no métier re-studied; no canonical register touched; benchmarks reused not re-run; simultaneity NOT_MEASURED; extension PARKED; €0 clients; no deploy/root/secret/payment/trading.",
+  "nextOwnerDecisions": ["authorize real provider isolation (run session in delegate-isolation bwrap worktree) — THEN the 5 prepared contracts can be built under V188 delegation", "remaining 11 métiers radar lots", "radar autonomous egress runtime binding", "ROADMAP.json extension integration", "BMAX assets"],
+  "verification": { "gate": "expected 627/627 (626 + 1 new suite)", "tsc": "0 errors", "newChecks": "15", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "nothingBuilt": true, "readOnly_exceptNewModule": true }
+}
