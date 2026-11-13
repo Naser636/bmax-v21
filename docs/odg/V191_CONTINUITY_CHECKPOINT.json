@@ -1,0 +1,40 @@
+{
+  "//": "V191 — resume V190, complete continuity & prepare secure execution. READ-ONLY verification + doc-only continuity checkpoint. No code built, no métier construction (session not isolated), no canonical register touched, no npm/global/security change.",
+  "directive": "CTO V191 — resume V190, complete continuity & prepare secure execution",
+  "date": "2026-11-13",
+  "§1_gitState_verified": {
+    "head": "d138bb8 (matches reported V190 base; verified, not assumed)",
+    "branch": "main", "worktree": "clean (only known untracked docs/{action-film,ecommerce,film-factory,market-research} + tsx placeholders — preserved, not ours)",
+    "merges": "V188 @01184cf / V189 @8aa9856 (#558) / V189-A @2ca5563 (#559) / V190 @d138bb8 (#560) all present",
+    "canonicalSources": "closure-register.json + ROADMAP.json last-touched @V123 2382665 — byte-identical, untouched",
+    "activeProcesses": "none orphaned; prior gate runs completed"
+  },
+  "§2_memoryConsolidation_COMPLETE": {
+    "finding": "the interrupted consolidation DID complete last session — MEMORY.md = 17499 bytes (UNDER the 17510 limit), integrity OK.",
+    "consolidatedEntry": "a SINGLE 'ISOLATION ARC' entry now covers V189 + V189-A + V190 (provider contract, sandbox audit, direct-write finding, 11≠12, 5 BLOCKED contracts, V190 bwrap launchSpec proven, OWNER_GATED activation). No CTO decision or resume point lost; only redundancy removed.",
+    "index": "MEMORY.md index + topic files (v189-sandbox-audit.md, v190-provider-session-isolation.md) present and referenced."
+  },
+  "§3_boussole_reconciled": {
+    "v189_v190_merged": true, "head": "d138bb8", "pr": "#560", "gate": "628/628 (confirmed this session)",
+    "sandboxAudit": "done (odg-sandbox-isolation-audit.ts)",
+    "delegationIsolation_vs_sessionIsolation": "DISTINCT — delegate-isolation.ts (bwrap) confines provider-DELIVERED code; it does NOT confine the live Claude Code session",
+    "directCanonicalWrite": "CONFIRMED by probe (V189) — the live session can write the canonical repo directly",
+    "osSessionConfinement": "OWNER_GATED until really activated (V190 launchSpec ready + proven; owner must launch the next session)",
+    "fiveImprovements": "P1/P3/P5/P9/P11 PREPARED, NOT built (BLOCKED_AWAITING_ISOLATION)",
+    "elevenMetiersRemaining": "P6/P7/P8/P12/P13/P14/P15 + M1/M3/M4/M5 (distinct dimension from the 12 open closure-register missions)",
+    "twelveOpenMissions": "6 BLOCKED + 3 IN_PROGRESS + 3 DEFERRED (closure-register)",
+    "radarAutonomousEgress": "NOT_MEASURED", "realSimultaneity": "NOT_MEASURED", "independentModelReview": "NOT_AVAILABLE",
+    "extensionV124": "PARKED"
+  },
+  "§4_isolatedSessionLaunch_READY": "V190 odg-provider-session-isolation.ts holds the reproducible bwrap launchSpec (PROVEN by real probe: canonical NOT visible/writable, no net), handoff (exact command + pre/post checks + proofs), and importGate (ODG-only DIFF import, ⊆write-set & ∉ALWAYS_PROTECTED). Isolated worktree path = a disposable copy of ONLY the write-set; canonical repo + .git never mounted; no network; no secrets. ACTIVATION = OWNER_GATED (owner launches the next provider session with the command; Claude Code cannot relaunch itself and modifies no harness/security config).",
+  "§5_npmAutoUpdateWarning": {
+    "cause": "/usr/local/lib/node_modules not writable by uid 1000 — this is Claude Code's OWN global self-update, NOT the project",
+    "projectImpact": "NONE — the project uses LOCAL tooling (node_modules/.bin/tsx); the gate runs via local tsx; tsc clean; gate 628/628",
+    "action": "documented as an independent advisory. NO sudo/chmod/chown/global-prefix change (forbidden). No bypass attempted."
+  },
+  "§6_improvementProgram_preserved": "the 5 contracts (odg-improvement-contracts.ts) remain BLOCKED_AWAITING_ISOLATION; benchmarks (V185/V186/V187) preserved, not re-run; 11 métiers prepared for next radar lots. NO provider technical construction in the canonical repo before real isolation is validated.",
+  "§7_authority": "ODG = sole authority; Claude Code = TECHNICAL_PROVIDER_ONLY; explicit contract per mission; no self-authorize/accept/close; external research via the radar; no 2nd orchestrator; no detached work; no false PASS/ISOLATED; protected sources untouched; deploy/secret/VPS/systemd/sudo/spend restrictions respected.",
+  "ownerDecisionsStillNeeded": ["launch a real isolated provider session via the V190 handoff command (unblocks the 5 improvements)", "radar autonomous egress runtime binding", "ROADMAP.json extension integration", "BMAX assets"],
+  "nextImmediatelyExecutableLot": "AFTER owner authorizes real isolation: build the 5 prepared contracts under V188 delegation inside the isolated session (disjoint write-sets ⇒ parallel-eligible; simultaneity still NOT_MEASURED), with ODG importGate-controlled DIFF import. In parallel (read-only, allowed now): radar lot-4 benchmark on 3 of the 11 remaining métiers.",
+  "verification": { "gate": "628/628 confirmed", "tsc": "0", "memoryBytes": 17499, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "codeBuilt": false, "metierConstructionStarted": false, "securityOrNpmConfigModified": false }
+}
