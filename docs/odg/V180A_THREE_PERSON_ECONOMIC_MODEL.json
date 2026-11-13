@@ -1,0 +1,28 @@
+{
+  "//": "V180-A (§1 three-person cap + §4 economic demonstration). Delta dossier; no competing SSOT. Lever+constraint layer OVER odg-economic-scaling-model.scaleAtVolume (which reuses odg-economic-model.COST) — NO second economic formula. READ-ONLY; no register/audit-log/ROADMAP/canonical-source mutation.",
+  "addendum": "CTO V180-A — three-person autonomous business / €5M net / €500M scale / all 15 métiers",
+  "baseline": { "head": "adeda94 (main @ V180 §2)", "branch": "excellence/v180a-three-person-economic-model-20261113", "gateBefore": "607/607", "tsc": 0 },
+  "bindingChange_§1": "Human cap tightened from 5 to **3 (ABSOLUTE)**. All prior ≤5 assumptions superseded for the year-one target. The model AUTO-REJECTS any trajectory needing >3 people (verdict TEAM_CAP_EXCEEDED) — never silently allowed.",
+  "built": {
+    "module": "runtime/core/odg-three-person-economic-model.ts (+test, 17 checks, ALL PASS)",
+    "reuses": "odg-economic-scaling-model.scaleAtVolume (reuses odg-economic-model.COST). Levers transform the opp+scenario inputs BEFORE scaleAtVolume; the €-formula and per-jurisdiction tax stay in that one model. Coupling guarded by a test asserting automationLevel=0.6 reproduces scaleAtVolume's own people/net exactly.",
+    "levers": "priceFactor (mid-market / cross-sell ARPU), automationLevel (support automation 0..0.95; higher ⇒ more customers per person), cacPerCustomer, jurisdiction (FR/IE/UK/US/AE). Tested in COMBINATION, not in isolation.",
+    "functions": "evaluateCombination (full §4 field list + verdict), scenarioSet (pessimistic/central/optimistic lever combos), sensitivity (one-lever-at-a-time Δnet, ranked), searchFor5M (grid search over combinations×volumes), fiveHundredMTrajectories (5 distinct €500M metrics)."
+  },
+  "findings_§4": {
+    "baseline_259_FR": "net €3,373,294 within 3 people (matches V179 exactly) — BELOW the €5M target (verdict NET_BELOW_TARGET).",
+    "search": "672 lever combinations evaluated; 269 feasible within 3 people; 216 AUTO-REJECTED (TEAM_CAP_EXCEEDED); 187 within-cap-but-below-target.",
+    "reachable": "€5M net within 3 people IS reachable in the MODEL — but ONLY via lever COMBINATIONS beyond the demonstrated baseline.",
+    "leastStretchPath": "price×1.0 (no price increase), support automation 70% (above the DEMONSTRATED 60% V174 baseline), CAC €1,500, FR, ~350 customers → net €5,076,562, people=3.",
+    "topSensitivityLever": "priceFactor (Δnet €1.89M between ×0.8 and ×1.2 at 259 customers) — price is the single most powerful lever; automation is the one that unlocks volume within the 3-person cap.",
+    "honestConclusion": "The 3-person cap does NOT by itself block €5M — the binding constraints become (a) support automation actually DEMONSTRATED (60% today; the €5M path needs ~70%+), and (b) ~350 customers of REAL demand, which is UNVALIDATED (OWNER_GATED). €5M is a MODEL CONDITION, not a forecast; €0 clients."
+  },
+  "fiveHundredM_§5": {
+    "treatment": "€500M = a SEPARATE strategic ambition, NOT conflated with the €5M-net year-one target, and must not divert year-one resources.",
+    "distinctMetrics": ["annual_revenue_CA (~20,000 cust @ €25k or 10,000 @ €50k — CA ≠ profit)", "annual_net_profit (~€2B+ CA @ 25% margin — ~100× the €5M target)", "enterprise_valuation (~€50-100M ARR @ 5-10× — exit metric, not operating)", "cumulative_revenue (multi-year compounding, NOT single-year)", "transaction_volume / GMV (€500M GMV @ ~10% take = €50M revenue — volume ≠ own revenue)"],
+    "note": "Paths are STRUCTURAL illustrations (orders of magnitude), NOT forecasts and NOT validated demand. Every scenario must state WHICH metric it targets."
+  },
+  "honesty": "TEAM_CAP=3 ABSOLUTE and auto-rejects >3 people; no second economic model (thin layer over scaleAtVolume, coupling guarded); levers tested in combination + sensitivity; €5M = MODEL CONDITION reachable only via automation>60% + ~350 unvalidated customers; €500M kept as 5 distinct never-conflated metrics. READ-ONLY; deterministic; €0 clients; €5M NOT guaranteed; demand OWNER_GATED.",
+  "deferredBranches_V180A": "§2 (15-métier full-dossier matrix — all métiers mandatory, none abandoned), §3 (certification calendar → autumn 2027, prep ≠ obtention), §6 (radar permanent decision loop: observe→research→detect→verify→value→gap→design→build→test→measure→accept/reject→reprioritize), §7 (cross-cutting capability-USE audit over 9 primitives + 15 métiers: existence/contract/permissions/deps/invocation/result/proof/reusability), §9 (single CTO dashboard wired to canonical sources, every indicator carries its proof level). Each = next governed branch; none faked.",
+  "verification": { "gate": "expected 608/608 (607 + 1 new suite)", "tsc": "0 errors", "newChecks": "17", "registerByteIdentical": "427 @V123", "readOnly_exceptNewModule": true }
+}
