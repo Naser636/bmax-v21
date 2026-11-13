@@ -1,0 +1,29 @@
+{
+  "//": "V179 (§4 — deepen V178's economic audit: multi-volume + volume-dependent costs + per-jurisdiction tax; §5 real competitor prices). Delta dossier; no competing SSOT. REUSES odg-economic-model.COST (no second model). §14 strict non-conflation. SYNTHETIC; €0 clients; €5M a MODEL CONDITION not a forecast. No register/audit-log/ROADMAP/canonical-source mutation.",
+  "baseline": { "head": "3a4c882 (main @ V178)", "branch": "excellence/v179-economic-scaling-model-20261112", "gateBefore": "605/605", "tsc": 0, "grant": "V141 VALID→2026-11-19 (re-checked)" },
+  "freshRadar_§1_§5": { "newResearch": "GRC/compliance-SaaS competitor pricing (Vanta/Drata) — NOT reusing EAA/CRA/NIS2 as a signal, used to ground a REAL price band", "observedPriceBand": { "lowEUR": 7000, "medianEUR": 20000, "growthTierEUR": [15000, 25000], "midMarketEUR": [50000, 150000], "isoCertFeeExtra": "$6k-40k" }, "sources": ["underdefense.com/blog/grc-platform-pricing", "tech-insider.org/vanta-vs-drata-vs-secureframe-2026"], "date": "2026-11-12", "note": "OBSERVED RANGES only — negotiated not public list; never a single invented competitor price. Confirms V177's €30k NIS2 price is in a real market band (upper-SMB)." },
+  "capabilityBuilt_§4": {
+    "module": "runtime/core/odg-economic-scaling-model.ts (+test, 16 checks)",
+    "corrects_V178_limitations": ["costs are NOT constant with volume (V178 used a single volume): support staff STEP within the ≤5-person cap (ODG-automated ~60%), infra tiers (+€15k/100 customers), CAC + working capital scale", "the blanket 25% tax is replaced by a PER-JURISDICTION corporate-tax model (FR 25% / IE 12.5% / UK 25% / US 25.8% / AE 9%) — sourced/hypothesis-tagged, NOT a tax opinion"]
+  },
+  "scaleCurve_FR_€25kPrice": {
+    "10": { "people": 3, "net": -147250, "note": "below break-even" },
+    "25": { "people": 3, "net": 100781 },
+    "50": { "people": 3, "net": 452812 },
+    "100": { "people": 3, "net": 1145625 },
+    "259": { "people": 3, "net": 3373294, "note": "V172 hybrid target — €3.37M net, BELOW the €5M target" },
+    "500": { "people": 5, "net": 6605625, "teamCapExceeded": true, "note": "net > €5M BUT support demand exceeds the ≤5-person cap" },
+    "1000": { "people": 5, "net": 13590000, "teamCapExceeded": true }
+  },
+  "jurisdictionComparison_at259": { "FR": 3373294, "IE": 3935509, "UK": 3373294, "US": 3337312, "AE": 4092930, "note": "headline corporate tax only; VAT/withholding/permanent-establishment/distributions NOT modelled; NOT a tax opinion." },
+  "conditionsFor5M_§4_§14": {
+    "target": "€5,000,000 net profit yr-1",
+    "reachableWithin5People": false,
+    "finding": "at €25k price / 60% ODG support-automation / FR tax: 259 customers ⇒ €3.37M net (people=3, within cap); €5M would need ~350-500 customers, but at 500 the support demand EXCEEDS the ≤5-person cap ⇒ NOT reachable within ≤5 people. Reaching €5M requires a HIGHER price, HIGHER automation, LOWER CAC, a lower-tax jurisdiction, OR more staff (violating the cap) — AND the customer volume is UNVALIDATED demand (OWNER_GATED).",
+    "honest": "a MODEL CONDITION, not a forecast; customers are SIMULATED, not validated demand; a prospect is not a client; no cash collected; €0 real clients; €5M NOT guaranteed."
+  },
+  "nonConflation_§14": "the model keeps STRICTLY distinct: contributive margin (L1/customer) ≠ operating profit (L2) ≠ net profit (L3) ≠ market potential ≠ observed demand ≠ qualified prospect ≠ signed client ≠ collected cash. Each volume row carries all three levels separately.",
+  "honesty": "V179 deepened the V178 economic audit into a multi-volume (10..1000), volume-dependent-cost, per-jurisdiction-tax model — correcting the constant-cost and blanket-25%-tax limitations. Honest headline: at a market-grounded €25k price with ~60% ODG support-automation, net profit reaches €3.37M at 259 customers (FR) and the €5M target is NOT reachable within the ≤5-person cap at the tested price/automation (500 customers would exceed €5M net but breaches the support cap). Competitor prices are OBSERVED RANGES; volumes SIMULATED; €5M a MODEL CONDITION not a forecast; strict §14 non-conflation; €0 clients; €5M NOT guaranteed. No status falsified, no register/audit-log/ROADMAP/canonical-source mutation, no simulated deployment.",
+  "deferredBranches": "§2 (30-capability cross-audit — recover canonical list), §3 (world 15-métier study), §6 (offer selection + dossiers), §7 (product-design reinforcement), §8 (commercial-function hardening), §9 (ISO 27001 completion), §10 (documented prospect portfolio — no fabrication), §11 (300-day critical path) remain next governed branches.",
+  "verification": { "gate": "expected 606/606 (605 + 1 new suite)", "tsc": "0 errors", "newChecks": "16", "canonicalSourcesUntouched": true }
+}
