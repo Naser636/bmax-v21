@@ -18,8 +18,10 @@ Il existe **un seul ODG** : l'application principale dans le dépôt `bmax-v21` 
 ## 4. Neuf primitives
 IDENTITY, STATE, CONTRACT, POLICY, RESOLVER, EXECUTOR, EVIDENCE, RECOVERY, ALLOCATOR. **Aucune 10ᵉ.**
 
-## 5. Quinze métiers
-P1 Fullstack · P2 AI/ML · P3 Security · P4 Data · P5 Cloud/DevOps · P6 Eval · P7 SRE · P8 API · P9 FinOps · P10 Regulatory · P11 Document · P12 Streaming · P13 AI-Infra · P14 DevEx · P15 Workflow. Voir **Livrable A** (matrice business) + **Livrable B** (matrice 9×15).
+## 5. Vingt métiers (15 principaux + 5 commerciaux)
+**15 principaux :** P1 Fullstack · P2 AI/ML · P3 Security · P4 Data · P5 Cloud/DevOps · P6 Eval · P7 SRE · P8 API · P9 FinOps · P10 Regulatory · P11 Document · P12 Streaming · P13 AI-Infra · P14 DevEx · P15 Workflow.
+**5 commerciaux (réconciliés depuis V151) :** M1 CRA/SBOM · M2 BTP/TP · M3 FinOps · M4 Data-engineering · M5 Accessibility.
+Total **20**. Voir **Livrable A** (matrice business), **Livrable B** (9×15) et le **complément V183** (9×20 = 180 intersections, `odg-commercial-metier-matrix.ts`). Les 5 commerciaux ne sont ni des primitives ni une 2ᵉ architecture métier.
 
 ## 6. Composants existants (réutiliser avant de construire)
 audit-log · odg-mission-scheduler · odg-campaign-lifecycle · odg-closure-register-ops · document-intelligence · odg-global-opportunity-radar + odg-weekly-radar-scheduler · delegate-isolation + provider-sandbox · evidence-provenance · truth-lock · memory-trust-gate · modules V180–V183.

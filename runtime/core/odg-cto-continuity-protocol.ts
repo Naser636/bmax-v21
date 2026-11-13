@@ -20,7 +20,7 @@ const PROTOCOL = Object.freeze({
     memory: "the auto-memory MEMORY.md index + topic files",
   }),
   primitives: Object.freeze(["IDENTITY", "STATE", "CONTRACT", "POLICY", "RESOLVER", "EXECUTOR", "EVIDENCE", "RECOVERY", "ALLOCATOR"]),
-  metiers: "P1..P15 canonical roster (odg-metier-certification-planner.METIERS); see Livrable A business matrix + Livrable B 9×15 use-matrix",
+  metiers: "20 métiers = 15 principal (P1..P15, planner roster) + 5 commercial (M1..M5, reconciled from V151: M1-CRA/SBOM, M2-BTP/TP, M3-FinOps, M4-Data, M5-Accessibility). See Livrable A business matrix, Livrable B 9×15, and the V183 complement 9×20 (180) use-matrix.",
   existingComponents: "reuse before build: audit-log, odg-mission-scheduler, odg-campaign-lifecycle, odg-closure-register-ops, document-intelligence, odg-global-opportunity-radar + odg-weekly-radar-scheduler, delegate-isolation + provider-sandbox, evidence-provenance, truth-lock, memory-trust-gate, the V180–V182 + V183 modules",
   finishedCampaigns: "V180 (#546) / V180-A (#547) / V181 (#548) / V182 (#549) / V12.4-extension PARKED (#550) — DONE; do not re-run. Proofs in docs/odg/V18*.json + V124_EXTENSION_PARKED_ROADMAP.json",
   openMissions: "register: 6 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED (@V123). BMAX HFT/AO forensic audits = BLOCKED_ASSET_ABSENT (assets not provided).",
