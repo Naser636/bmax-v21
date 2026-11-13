@@ -1,0 +1,38 @@
+{
+  "//": "V183 COMPLEMENT — reconcile the 5 additional COMMERCIAL métiers and extend the métier scope to 20 (15 principal + 5 commercial). ADDITIVE to V183 (#551, merged); does NOT re-run it. READ-ONLY; no new canonical system; ROADMAP.json untouched.",
+  "directive": "COMPLÉMENT CTO V183 — prise en compte des 5 métiers commerciaux supplémentaires",
+  "baseline": { "head": "05bf00d (main @ V183)", "branch": "excellence/v183c-twenty-metiers-20261113", "gateBefore": "617/617", "tsc": 0 },
+  "reconciliation_§3": {
+    "principal": "15 métiers P1..P15 (canonical roster, odg-metier-certification-planner.METIERS)",
+    "commercial": "5 métiers M1..M5, RECONCILED from docs/odg/V151_CONSOLIDATION.json ('5 commercial métiers (M1–M5)')",
+    "commercialRoster": [
+      "M1 = CRA / SBOM remediation → cra-remediation-engine.ts",
+      "M2 = BTP / TP document intelligence → document-intelligence.ts",
+      "M3 = FinOps → finops-analyzer.ts",
+      "M4 = Data engineering → data-connector.ts",
+      "M5 = Accessibility → accessibility-applicability.ts"
+    ],
+    "total": 20,
+    "notReconciled": [],
+    "evidence": "each commercial métier found in the V151 canonical dossier AND maps to a REAL existing module (all 5 verified present). Names/ids NOT invented."
+  },
+  "built": {
+    "module": "runtime/core/odg-commercial-metier-matrix.ts (+test, 16 checks, ALL PASS)",
+    "livrable_A_extension": "5 commercial métiers added with mission + canonical source + real module (business matrix now covers 20).",
+    "livrable_B_extension": "useMatrix20() = 9 primitives × 20 métiers = 180 intersections. REUSES the 135 principal from odg-primitive-metier-matrix (no duplication) + ADDS 45 commercial. Each classified REUSE/IMPROVE/BUILD_CONDITIONAL/NOT_APPLICABLE/OWNER_GATED with a ref. NO construction engaged.",
+    "livrable_C_extension": "dashboard scope note: PRINCIPAL (15) + COMMERCIAL (5) shown distinctly, total 20, no duplicates (category tag on every cell).",
+    "livrable_D_extension": "odg-cto-continuity-protocol.ts métiers field + CTO_CONTINUITY_PROTOCOL.md §5 updated to the 20-métier scope (15+5); the V12.4 integration proposal now covers 20."
+  },
+  "commercialOverrides": "EXECUTOR×M3 (FinOps payment) OWNER_GATED; CONTRACT×M1 (CRA conformity) OWNER_GATED; EVIDENCE×M3 + EVIDENCE×M2 + POLICY×M1 IMPROVE; EXECUTOR×M2 IMPROVE (BTP DCE = known BUILD candidate, not built); POLICY×M4 BUILD_CONDITIONAL (data-layer tenancy, not built). Everything else REUSE.",
+  "antiDuplication_§5": "the 5 commercial métiers are NOT turned into new primitives, NOT a second métier architecture, and do NOT duplicate common capabilities — each reuses an existing module. The 135 principal intersections are REUSED, not recomputed.",
+  "honesty": "20-métier scope reconciled from canonical sources (15 planner + 5 V151); nothing invented; distinguishes DEFINED ≠ STUDIED ≠ CAPABILITY_TESTED ≠ OPERATIONAL ≠ COMMERCIALLY_AUTHORIZED. READ-ONLY; no new canonical system; register 427 byte-identical (@V123); ROADMAP.json untouched; €0 clients; no deploy/root/secret/payment/trading/commercial-contact.",
+  "closureConditions_§6": {
+    "principal15": "identified (P1..P15, planner roster)",
+    "commercial5": "identified (M1..M5, V151 dossier + real modules)",
+    "total": 20,
+    "canonicalRefs": "V151_CONSOLIDATION.json for M1..M5; odg-metier-certification-planner.METIERS for P1..P15",
+    "updatedLivrables": "A (business matrix +5), B (9×20=180), C (dashboard categories), D (continuity protocol + V12.4 proposal)",
+    "notReconciled": "none"
+  },
+  "verification": { "gate": "expected 618/618 (617 + 1 new suite)", "tsc": "0 errors", "newChecks": "16", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewAndContinuityModule": true }
+}
