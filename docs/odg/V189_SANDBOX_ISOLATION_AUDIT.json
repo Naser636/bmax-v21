@@ -1,0 +1,36 @@
+{
+  "//": "V189 — sandbox-first forensic audit + V188 enforcement validation + Boussole V12.4 reconciliation. READ-ONLY (no security config modified); honest about what is / is not OS-isolated. ROADMAP.json + closure-register.json untouched @V123.",
+  "directive": "CTO V189 — sandbox first, provider enforcement & Boussole V12.4 reconciliation",
+  "providerContract_§1": "PROVIDER_CONTRACT_ACCEPTED_V189 — ODG decides objectives/priorities/missions/authorizations/acceptance; Claude Code executes only assigned technical tasks, never changes the mandate, never self-assigns, never bypasses the radar, never edits protected registers, never self-accepts/closes.",
+  "baseline": { "head": "01184cf (main @ V188)", "branch": "excellence/v189-sandbox-audit-20261113", "gateBefore": "625/625", "tsc": 0 },
+  "§2_forensicAudit": {
+    "oldSandbox": "FOUND (isolation primitives present) BUT NOT applied to Claude Code's own session",
+    "processIdentity": "ubuntu (uid 1000)",
+    "directWriteToCanonicalRepo": "POSSIBLE (write-probe to /home/ubuntu/bmax-v21 succeeded then removed)",
+    "primitives": "delegate-isolation.ts (opt-in fail-closed bwrap, disposable copy of only authorized files, diff-observed — PROVIDER_ISOLATION_E1_E4) + provider-sandbox.ts (local-model binary) + frontier-sandbox.ts (untrusted compilers); bwrap + unshare available",
+    "v188": "odg-sovereign-delegation.ts is PURE LOGIC — enforces write-set/protected-path ONLY for changes routed through execute(); does NOT intercept Claude Code's direct Edit/Write/Bash tools"
+  },
+  "§2.5_decisiveAnswer": "YES — Claude Code (uid 1000) CAN write the canonical repo directly; there is NO OS-level sandbox confining its own tool use. Therefore the V188 write-set/protected-path controls ENFORCE only module-routed changes; direct tool access is DECLARATIVE discipline (provider contract + Truth-Lock + diff review), NOT a technical confinement.",
+  "§4_controlClassification": {
+    "ENFORCED": ["write-set/protected-path for module-routed changes (V188 execute)", "authority separation provider≠authorize/accept/close (V188)", "provider-DELIVERED code runs in real bwrap (delegate-isolation, opt-in)"],
+    "NON_ENFORCED": ["Claude Code's OWN tool writes confined to a sandbox — direct repo write possible; discipline-only"],
+    "BLOCKED": ["OS-level confinement of the running Claude Code session — requires a harness/environment change (run the session inside delegate-isolation's bwrap worktree or a container); provider cannot reconfigure its own harness and must not alter security config to fake it — OWNER_GATED"],
+    "NOT_MEASURED": []
+  },
+  "§3_proposedMechanism": "route provider edits through delegate-isolation.ts: disposable worktree/copy of ONLY the contract write-set (no canonical .git, no network, no secrets), output observed as a DIFF, ODG validates + imports. Reuses delegate-isolation + bwrap + V188 contract (NO 2nd orchestrator). STATUS OWNER_GATED — activation on the LIVE session is a harness decision the owner must make; building blocks exist, not self-applied. Compensating controls meanwhile: V188 in-code enforcement, ALWAYS_PROTECTED paths, git-diff review, Truth-Lock, per-session provider contract.",
+  "§5_boussoleReconciliation": {
+    "head": "01184cf (main @ V188); PR #557 merged; gate 625/625; CI green on merge",
+    "register": "closure-register.json 427 (415 ACCEPTED / 6 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED); openCount 12; byte-identical @V123",
+    "roadmap": "ROADMAP.json 11 governed missions; @V123; PROTECTED — untouched",
+    "11_vs_12": "RESOLVED — NO CONTRADICTION: 11 = remaining MÉTIERS in the 20-métier campaign (P6/P7/P8/P12/P13/P14/P15 + M1/M3/M4/M5); 12 = open MISSIONS in the closure-register (6 BLOCKED + 3 IN_PROGRESS + 3 DEFERRED). Different dimensions; métiers ≠ closure-register missions.",
+    "extension": "V12.4 extension PARKED (started=false)",
+    "preparedImprovements": "P1/P3/P5/P9/P11 PREPARED, not built",
+    "radar": "collection via V187 adapter (injected authorized provider); autonomous radar egress NOT_MEASURED/OWNER_GATED",
+    "simultaneity": "real 5-way parallel NOT_MEASURED",
+    "independentReview": "distinct model reviewer NOT_AVAILABLE (evaluator-independence = deterministic checks)"
+  },
+  "built": "runtime/core/odg-sandbox-isolation-audit.ts (+test, 15 checks) encoding the findings + classification + mechanism + reconciliation deterministically.",
+  "honesty": "no security configuration modified; no isolation claimed that does not exist; direct-write capability reported as-is; OS confinement of the live session declared BLOCKED/OWNER_GATED with a concrete proposed mechanism; 11-vs-12 reconciled without touching any register. Per the final rule: NO métier/improvement work started.",
+  "nextOwnerDecisions": ["authorize running the Claude Code session inside delegate-isolation's bwrap worktree (real OS isolation)", "then the 5 prepared improvements construction lot + remaining 11 métiers", "radar autonomous egress runtime binding", "ROADMAP.json extension integration", "BMAX assets"],
+  "verification": { "gate": "expected 626/626 (625 + 1 new suite)", "tsc": "0 errors", "newChecks": "15", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "securityConfigModified": false, "readOnly_exceptNewModule": true }
+}
