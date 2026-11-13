@@ -1,0 +1,25 @@
+{
+  "//": "V185 LOT 1 — worldwide intelligence & improvement campaign for the 20 métiers. This lot delivers the one-time 9-programs×20-métiers matrix (§4/§8) + a genuinely-executed radar/Internet research pass & world benchmark for the first métier lot (P3/P9/M2, §2/§3.2). Remaining 17 métiers + consolidated economic model = subsequent governed lots (§9). READ-ONLY; no new canonical system; ROADMAP.json untouched; extension PARKED.",
+  "directive": "CTO V185 — campagne mondiale d'intelligence et d'amélioration des 20 métiers",
+  "baseline": { "head": "4c8d828 (main @ V184)", "branch": "excellence/v185-lot1-intelligence-20261113", "gateBefore": "619/619", "tsc": 0 },
+  "reconciliation_§1": "HEAD @4c8d828 clean; V184 radar-loop present; register 427 @V123 + ROADMAP.json (11 missions) @V123 untouched; grant V141 VALID→2026-11-18 (budget 200 calls/20MB). No campaign re-run.",
+  "axes": "AXE A (finish V12.4 main roadmap) + AXE B (20-métier intelligence) pursued together: this lot advances AXE B lot-1 + the one-time cross-matrix; AXE A open items (6 BLOCKED/3 IN_PROGRESS/3 DEFERRED @V123, incl. BMAX BLOCKED_ASSET_ABSENT) reported, not faked.",
+  "radarResearch_§2": {
+    "executed": "REAL WebSearch pass under grant V141 on 2026-11-13 (3 calls; read-only public). NOT a pre-prepared site list.",
+    "provenance": "external content treated as UNTRUSTED (no web page alters ODG governance); each reference tagged org/url/reliability.",
+    "limit": "the radar module composes sources; live internet egress is via the authorized WebSearch tool (grant V141), distinct from radar's own (no-egress) seam — stated honestly."
+  },
+  "built": {
+    "programMetierMatrix_§4§8": "runtime/core/odg-program-metier-matrix.ts (+test, 14 checks): 9 strategic programs (V124 extension) × 20 métiers = 180 intersections, each classified REUSE/IMPROVE/BUILD_CONDITIONAL/NOT_APPLICABLE/OWNER_GATED/NOT_MEASURED + basis. REUSE default (programs = common clusters built once); P9 applies to all; payment (P2×P9/M3) OWNER_GATED; M2×P3 (BTP DCE) BUILD_CONDITIONAL. NO construction engaged.",
+    "benchmarkLot1_§2§3.2": "runtime/core/odg-metier-benchmark-lot1.ts (+test, 13 checks): world benchmark for P3/P9/M2 from the real pass — P3→NIST SSDF(PO/PS/PW/RV)+SLSA(L2 baseline/L3 high-assurance)+OWASP Top10-2026 A03; P9→FinOps Foundation Inform/Optimize/Operate + Crawl/Walk/Run (Run=20-30% cost cut, <10% unallocated, 85-95% forecast); M2→ISO 19650 BIM info-mgmt (2026 revision). ODG-current MEASURED-via-gate vs world-documented vs honest gap."
+  },
+  "findings": {
+    "P3_security": "gap = no formal SLSA-tier self-assessment + SSDF group mapping; tamper-evidence still blocked on owner key/anchor (V162). Recommend IMPROVE (map existing controls, claim a concrete SLSA tier) — no new engine.",
+    "P9_finops": "gap = finops-analyzer lacks the FinOps KPI set (allocation coverage/tagging/forecast-accuracy) + Crawl/Walk/Run self-rating. Recommend IMPROVE (reuse, no new engine).",
+    "M2_btp": "gap = no ISO-19650-aware DCE/CCAP/CCTP analyzer; remains a V181 BUILD candidate behind demand-validation (BUILD_CONDITIONAL, not built)."
+  },
+  "economic_§6": "NOT in this lot — the consolidated 20-métier economic model + 3 scenarios (prudent/central/ambitious toward €5M net, 3-person org) is the next governed lot, building on odg-economic-model.COST + odg-three-person-economic-model (V180-A) WITHOUT a second economic engine. Control identity retained: 50% net⇒€10M CA / 25%⇒€20M / 10%⇒€50M (conditional calcs, not forecasts).",
+  "honesty": "real research executed (grant V141, 3 WebSearch, sources verifiable); external untrusted; MEASURED only where proven else NOT_MEASURED/NOT_AVAILABLE; gaps identified not invented; REUSE/IMPROVE-first; no 2nd radar/scheduler/registry/economic/document engine; register 427 byte-identical (@V123); ROADMAP.json untouched; extension PARKED; realScheduledRun NOT_MEASURED (no timer); €0 clients; no deploy/root/secret/payment/trading/ad-spend/commercial-contact.",
+  "remaining_§9": "16 métiers remain (P1/P2/P4/P5/P6/P7/P8/P10/P12/P13/P14/P15 + M1/M3/M4/M5) for subsequent ≈3-métier lots: each = radar research + benchmark + diagnostic + improvement plan + authorized construction. Then the consolidated economic model (§6) + 3 scenarios.",
+  "verification": { "gate": "expected 621/621 (619 + 2 new suites)", "tsc": "0 errors", "newChecks": "14+13 = 27", "radarCallsUsed": 3, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewModules": true }
+}
