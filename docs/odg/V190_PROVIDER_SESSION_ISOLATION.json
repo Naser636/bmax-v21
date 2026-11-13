@@ -1,0 +1,24 @@
+{
+  "//": "V190 — real provider-session isolation launch spec + safe handoff. Confinement DEMONSTRATED by a real bwrap subprocess probe (not claimed). Does NOT isolate the current session; live activation OWNER_GATED. No harness/security-config modified. READ-ONLY apart from the new module; ROADMAP.json+closure-register.json untouched @V123.",
+  "directive": "CTO V190 — real provider session isolation & safe handoff",
+  "baseline": { "head": "2ca5563 (main @ V189-A)", "branch": "excellence/v190-provider-isolation-20261113", "gateBefore": "627/627", "tsc": 0 },
+  "mission1_isolationArchitecture": {
+    "module": "runtime/core/odg-provider-session-isolation.ts (+test, 15 checks)",
+    "spec": "bwrap --unshare-all --die-with-parent --ro-bind {/usr,/bin,/lib,/lib64} --proc /proc --dev /dev --bind <WORKCOPY> /work --chdir /work -- <provider-session-cmd>. Binds ONLY ro system code + a disposable rw copy of the mission write-set. The canonical repo and its .git are NEVER mounted; no network (--unshare-all); no secrets.",
+    "reuses": "delegate-isolation.ts + provider-sandbox.ts + bwrap (no 2nd mechanism)",
+    "PROVEN": "REAL subprocess probe on 2026-11-13: inside the sandbox canonical-repo-visible=NO, canonical-write=BLOCKED, home-visible=NO, work-write=OK. Confinement DEMONSTRATED, not merely declared. The probe changed neither this session nor any security config."
+  },
+  "mission2_handoff": {
+    "exactCommand": "bwrap --unshare-all --die-with-parent --ro-bind /usr /usr --ro-bind /bin /bin --ro-bind /lib /lib --ro-bind /lib64 /lib64 --proc /proc --dev /dev --bind <WORKCOPY> /work --chdir /work -- <provider-session-cmd>",
+    "prerequisites": ["bwrap installed (verified present)", "ODG-prepared work copy of ONLY the authorized write-set", "ODG-issued bounded V188 contract"],
+    "preLaunchChecks": ["bwrap on PATH", "work copy = write-set only, no canonical .git", "no rw/ro bind of the canonical repo", "ODG authorization"],
+    "postLaunchChecks": ["ls /home/ubuntu/bmax-v21 fails", "touch canonical fails", "ls /home/ubuntu fails", "touch /work ok", "network fails"],
+    "diffImport": "provider edits inside /work only → export git diff → ODG runs importGate(changedPaths, writeSet): ACCEPT only if all ⊆ write-set and ∉ ALWAYS_PROTECTED → ODG applies to canonical. Provider NEVER writes/imports canonical directly.",
+    "activation": "OWNER_GATED — the owner launches the next provider session with the command above (e.g. `claude` inside the bwrap). Claude Code cannot relaunch itself into the sandbox and must not modify the harness/security config."
+  },
+  "mission3_continuity": "benchmarks (V185/V186/V187) preserved, not re-run; the 5 improvement contracts remain BLOCKED_AWAITING_ISOLATION; Boussole V12.4 reconciliation (V189) preserved; NO métier construction started in this non-isolated session.",
+  "honesty": "the CURRENT session is NOT isolated (V189 proved direct canonical write) — not claimed otherwise. The isolation mechanism is PREPARED + PROVEN by a real probe; LIVE activation is OWNER_GATED. No false isolation declaration; no direct canonical access granted to a future provider (only a disposable write-set copy); ODG keeps import + acceptance authority. No harness/security config modified; register+ROADMAP byte-identical @V123; extension PARKED; €0 clients; no deploy/root/secret/payment/trading.",
+  "mission4_ownerActionNeeded": "to unblock the 5 improvements: OWNER launches the next provider session via the mission-2 command (work copy = that improvement's write-set); provider builds inside /work; ODG importGate-validates + imports the DIFF. Until then all 5 stay BLOCKED_AWAITING_ISOLATION.",
+  "nextLotAfterIsolation": "build the 5 prepared contracts (P1 DORA-view / P3 SSDF-SLSA / P5 CNCF-rating / P9 FinOps-KPIs / P11 confidence-calibration) under V188 delegation inside the isolated session; disjoint write-sets ⇒ parallel-eligible (simultaneity still NOT_MEASURED until demonstrated). Plus radar lot-4 on 3 of the 11 remaining métiers.",
+  "verification": { "gate": "expected 628/628 (627 + 1 new suite)", "tsc": "0 errors", "newChecks": "15", "realProbe": "bwrap confinement demonstrated", "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "harnessOrSecurityConfigModified": false, "readOnly_exceptNewModule": true }
+}
