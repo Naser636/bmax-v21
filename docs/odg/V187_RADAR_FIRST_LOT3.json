@@ -1,0 +1,33 @@
+{
+  "//": "V187 — radar-first intelligence: give the EXISTING radar a governed collection ADAPTER it owns, run a REAL campaign THROUGH it for P2/P4/P10 (lot 3), + honest status of §13 prepared improvements and §9/§11 parallelism/independent-expert. READ-ONLY; no second radar/engine; ROADMAP.json untouched; extension PARKED.",
+  "directive": "CTO V187 — ODG intelligence, radar-first, parallel engineering & global excellence",
+  "baseline": { "head": "7b0fdfd (main @ V186)", "branch": "excellence/v187-radar-first-lot3-20261113", "gateBefore": "622/622", "tsc": 0 },
+  "reconciliation_§1": "HEAD @7b0fdfd clean; register 427 @V123 + ROADMAP.json @V123 untouched; grant V141 valid→2026-11-18 (budget 200). V184-V186 merged; lot1/lot2 benchmarks + matrices present.",
+  "radarAudit_§4": {
+    "finding": "the radar OWNS the pipeline (provenance/qualification/opportunity in odg-global-opportunity-radar + V184 loop) but had NO governed COLLECTION ADAPTER: odg-weekly-radar-scheduler's doUnit seam is explicitly NO-egress, and OPPORTUNITIES are static records from a prior pass. V185/V186 ran WebSearch DIRECTLY via the technical provider — exactly what §3 says to stop.",
+    "blocker": "the radar has no runtime egress binding of its own; the only authorized egress here is the grant-V141 WebSearch tool operated by the technical provider."
+  },
+  "built_§3§5§6": {
+    "adapter": "runtime/core/odg-radar-collection-adapter.ts (+test, 16 checks): the radar-OWNED collection interface. validateGrant (expiry+budget) + collect(query, {injected fetcher}) deny-by-default (no provider ⇒ BLOCKED; autonomous egress NOT_MEASURED) + runCampaign (radar pipeline: collect→provenance→qualify[radar.validationTier]→dedup→opportunity→V184 gate). §6 state taxonomy COLLECTED_REAL/ANALYZED_REAL/QUALIFIED_REAL/PROPOSED/OWNER_GATED/REFUSED/NOT_MEASURED/BLOCKED. NOT a second radar.",
+    "honestBoundary": "the adapter performs NO network egress itself; the authorized provider (grant-V141 WebSearch) is INJECTED through one controlled seam; the radar owns provenance/qualification/proposal. Fully-autonomous radar self-egress = NOT_MEASURED (OWNER_GATED runtime binding). Injected/synthetic never presented as autonomous egress."
+  },
+  "realCampaign_§6": {
+    "module": "runtime/core/odg-metier-benchmark-lot3.ts (+test, 13 checks)",
+    "executed": "3 REAL WebSearch collections (grant V141, 2026-11-13) for P2/P4/P10, fed THROUGH the adapter as the injected provider → runCampaign: 3 COLLECTED_REAL, callsUsed 3. P10 = VALIDATED_MARKET_SIGNAL (EU AI Act regulatory deadline + OBSERVED); P2/P4 = INSUFFICIENTLY_VALIDATED (no hard buy-signal). All opportunities PROPOSED (admissible, NOT authorized); 0 canonical writes / 0 executions.",
+    "autonomousEgress": "NOT_MEASURED (radar self-egress OWNER_GATED; provider injected)"
+  },
+  "benchmark_lot3": {
+    "P2": "world: ISO/IEC 42001 (AIMS) + NIST AI RMF (GOVERN/MAP/MEASURE/MANAGE); ODG: agent-governance-harness + evaluator-independence + eval-set (BLOCKED on corpus); gap: no 42001/RMF mapping, no model-cards/risk-tiers; IMPROVE (reuse).",
+    "P4": "world: DAMA-DMBOK (11 KA, 6 quality dims) + data-contracts + maturity L1→L5; ODG: data-connector (assessDataQuality) + document-intelligence; gap: no 6-dim quality scoring / data-contract YAML / maturity self-rating; IMPROVE (reuse).",
+    "P10": "world: EU AI Act (2 Aug 2026 / 2 Dec 2026 / 2 Dec 2027; €35M/7% & €15M/3%) + NIS2/DORA in force; ODG: iso27001-crosswalk + cra-remediation + regulatory-assurance + p10-incident-deadline; gap: no AI-Act deadline/obligation tracker + convergence matrix; IMPROVE (source-cited, no cert claimed)."
+  },
+  "preparedImprovements_§13": "P1/P3/P5/P9/P11 improvements from lots 1-2 remain PREPARED candidate missions — NOT built this lot, none declared built. Building them is the next construction lot once ODG authorizes.",
+  "parallelism_expert_§9§11": {
+    "orchestrationComponentsAudited": ["odg-mission-orchestrator (V167)", "odg-mission-scheduler", "odg-campaign-lifecycle", "delegate-isolation", "provider-sandbox", "evaluator-independence"],
+    "nativeParallelExecution": "NOT_MEASURED — components exist but a real 5-way simultaneous ODG/Claude-Code execution (distinct task-ids/timestamps) was NOT demonstrated in this synchronous lot; not simulated.",
+    "independentExpert": "evaluator-independence EXISTS (deterministic independence checks); a separate qualified MODEL reviewer distinct from the builder is NOT_AVAILABLE in a single synchronous context (§11) — declared NOT_AVAILABLE, not passed off as a self-check; no paid provider added."
+  },
+  "honesty": "radar-first respected: the collection interface is radar-OWNED; external access only via one injected authorized seam; the real WebSearch provider is injected into the radar (NOT presented as radar autonomous egress, which stays NOT_MEASURED/OWNER_GATED). métier-specific real refs; REUSE/IMPROVE-first; no cert claimed; prepared improvements NOT built; parallelism NOT_MEASURED; independent model-review NOT_AVAILABLE. Register 427 byte-identical (@V123); ROADMAP.json untouched; extension PARKED; €0 clients; no deploy/root/secret/payment/trading/ad-spend/commercial-contact.",
+  "remaining": "11 métiers remain (P6/P7/P8/P12/P13/P14/P15 + M1/M3/M4/M5); then the 5 prepared improvements as a construction lot; then the consolidated 20-métier economic model. realScheduledRun NOT_MEASURED (no timer installed).",
+  "verification": { "gate": "expected 624/624 (622 + 2 new suites)", "tsc": "0 errors", "newChecks": "16+13 = 29", "radarCallsUsed": 3, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "readOnly_exceptNewModules": true }
+}
