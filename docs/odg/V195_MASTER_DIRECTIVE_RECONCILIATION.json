@@ -1,0 +1,31 @@
+{
+  "//": "V195 / V12.4 MASTER CTO DIRECTIVE — consolidation + continuity. READ-ONLY reconciliation + attachment VIEW. NO 2nd ODG/Radar/engine, NO new primitive/métier/campaign, Extension PARKED, registers byte-identical @V123. No capability declared operational.",
+  "directive": "CTO V12.4 Master — continuité, consolidation, M&BI, Speed Marketing, 20 métiers, 4 campagnes, objectifs économiques, VPS",
+  "date": "2026-11-15",
+  "§2_truthLock": {
+    "head": "b70fa41 (main, V193 merged)",
+    "sandboxExec": "the owner ran `exec $HOME/bin/odg-claude-sandbox`; probe shows it did NOT isolate this session (cwd=/home/ubuntu/bmax-v21, user=ubuntu, /work ABSENT, canonical .git ACCESSIBLE+WRITABLE, no proxy, ANTHROPIC_API_KEY SET, ollama :11434 LISTENING) — SAME non-isolated host session.",
+    "canonicalSources": {
+      "ROADMAP.json": "runtime/governance/ROADMAP.json — contract 1.1.0, 11 missions (M0000..DEPLOY_BMAX_DASHBOARD_PROD_V1) [VERIFIED]",
+      "closure-register.json": "docs/odg/closure-register.json — {//, version, items[427]} [VERIFIED]",
+      "master-roadmap-md": "docs/odg-operational/ODG_MASTER_ROADMAP_V12.4.md EXISTS (owner-supplied 2026-11-08) — canonical path; NO duplicate created"
+    }
+  },
+  "§4_referenceReconciliation": "directive historical counts reconciled, NOT recopied: 9 primitives VERIFIED (no 10th), 20 métiers VERIFIED_STRUCTURE (15 P + 5 M), 4 campaigns DOCUMENTED (no 5th), 166 caps HISTORICAL_DOCUMENTED (full re-count NOT claimed this turn), 54 arch-points + 7 CTO studies HISTORICAL_UNVERIFIED (not confirmed verbatim), 6 dossiers DOCUMENTED, 11 missions + 427 closure items VERIFIED.",
+  "§F_sandboxBlocker": {
+    "state": "NOT_ACTIVE — the exec did not isolate; consistent with V189/V190/V192/V193",
+    "governs": ["V195 sandbox-closure criteria cannot be met from inside", "8+ improvement contracts stay BLOCKED_AWAITING_ISOLATION", "egress allowlist OWNER_GATED, network NOT qualified secured"],
+    "ownerAction": "launch the isolated session via the V193 reproducible procedure (ODG write-set copy → owner egress allowlist → bwrap → post-checks → importGate)."
+  },
+  "§4.6_newDimensionAttachment": {
+    "marketAndBusinessIntelligence": "ATTACHED to the EXISTING Radar (odg-global-opportunity-radar + odg-radar-collection-adapter + odg-radar-to-mission-loop); primitive RESOLVER/EVIDENCE (no new primitive); cross-cutting over existing métiers (no new métier); §3.2 traceability recorded; status DOCUMENTED, NOT operational — real B2B collection needs real connectors + owner-gated API access + proven runs (§8.15). Anti-duplication: single Radar + provenance/dedup/qualification/governance; no 2nd radar/registry.",
+    "speedMarketing": "ATTACHED to the EXISTING commercial engine + economic model (client-intake-seam / commercial-operating-system / odg-economic-model) + experiment/learning loops; primitive POLICY/EXECUTOR (no new primitive); status DOCUMENTED, NOT operational — needs a really-executed + measured campaign (§9.17); all sends/spend OWNER_GATED. Anti-duplication: no 2nd commercial engine, no 2nd CRM, no parallel memory.",
+    "noFifthCampaign": true, "noNewMetier": true, "noNewPrimitive": true
+  },
+  "§8_mbiSourceCatalog": "6 CANDIDATE sources recorded (sec-edgar, opencorporates, crunchbase, github-api, builtwith/wappalyzer, public-tender-ocds). Pricing + rights NOT_VERIFIED for paid ones; every paid call/subscription OWNER_GATED. A real pricing/rights WebSearch sweep (grant V141) is a prepared next step, not performed this turn (Value-of-Information + cost discipline §6.8/§16.3).",
+  "artifact": "runtime/core/odg-master-directive-reconciliation.ts (+test, 12 checks)",
+  "honesty": "sandbox NOT active (exec did not isolate) — stated plainly; historical counts reconciled not recopied; M&BI + Speed Marketing attached but NOT operational (no real collection, no real campaign); no new primitive/métier/campaign/radar/engine/memory; Extension PARKED; registers + ROADMAP.json byte-identical @V123; €0 clients; no deploy/sudo/systemd/secret/payment; no paid API activated.",
+  "ownerDecisionsStillNeeded": ["launch the isolated session (unblocks the 8+ improvements AND V195 closure)", "authorize owner-gated B2B API access for real M&BI collection", "authorize a governed Speed Marketing experiment budget", "ROADMAP.json extension integration (Extension stays PARKED)", "VPS resident-runtime cutover", "BMAX assets"],
+  "nextExecutable": "Once isolation is owner-activated: build the ODG_NATIVE-candidate improvement views (P9/P7/M1/P1) via ODG+Ollama and the novel ones (P8/P11) via Claude Code, importGate-controlled; and run a real M&BI pricing/rights sweep to turn CANDIDATE sources into connector specs. Until then: reconciliation + attachment only (this artifact).",
+  "verification": { "gate": "expected 634/634 (633 + 1 new suite)", "tsc": "0 errors", "newChecks": 12, "registerByteIdentical": "427 @V123", "roadmapJsonUntouched": true, "securityConfigModified": false, "capabilitiesDeclaredOperational": 0, "paidApiActivated": false }
+}
