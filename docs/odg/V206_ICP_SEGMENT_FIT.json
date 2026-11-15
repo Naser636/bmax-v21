@@ -1,0 +1,26 @@
+{
+  "//": "V206 (post-V205) §3 Speed Marketing — ICP segment definition + explainable offer↔segment fit (MODEL-ONLY). Fills the one gap in the existing Speed-Marketing chain; no new engine/CRM/pipeline; registers byte-identical @V123.",
+  "directive": "CTO continuation post-V205 — select next eligible canonical mission; §3 examine Speed Marketing",
+  "startHead": "49e7ad6 (V205 merged)",
+  "step1_forensic": "HEAD 49e7ad6, branch main, worktree clean; registers + ROADMAP byte-identical @V123; PRs #569-#572 preserved; no ACCEPTED mission reopened; no redundant audit re-run.",
+  "step2_selection": {
+    "mission": "Speed Marketing chain — ICP segmentation + offer↔segment fit (§3)",
+    "attach": "commercial métiers / Speed Marketing capability (V12.4 §IX / V204 §8B)",
+    "objective": "an explainable ICP-segment definition + offer↔segment fit scorer feeding buildOffer (opp.segment) and odg-jetspeed-funnel-economics (segmentFit)",
+    "existingComponents": "commercial-offer-builder (buildOffer — requires an OPAQUE opp.segment string), enterprise-qualification (qualify by DIMENSIONS — no segment classification), odg-prospect-qualification (V176), commercial-pipeline (funnel), odg-jetspeed-funnel-economics (V204 CAC/LTV), opportunity-axis-router (opportunity↔CAPABILITY fit, NOT offer↔segment)",
+    "demonstratedGap": "NO module defines ICP segments with auditable criteria and scores an offer's FIT to a segment — the §3 'segmentation ICP / adéquation offre-segment' step. opportunity-axis-router does opportunity↔capability fit (different concept).",
+    "eligibleNow": "local, deterministic, authorized, no isolation/owner-gating; composes existing pieces; MODEL-ONLY (no real campaign/spend)."
+  },
+  "build": {
+    "module": "runtime/core/odg-icp-segment-fit.ts (+test, 12 checks)",
+    "defineSegment": "validated ICP segment {id, sector, needs[], budgetBand?, urgency, requiredCapabilities[], decisionMaker?}; missing budgetBand ⇒ that dimension UNDETERMINED (not fabricated)",
+    "scoreOfferSegmentFit": "explainable weighted fit 0-100 (needAlignment 30 / maturity 25 / budgetFit 25 / urgency 10 / capabilityCoverage 10) → band STRONG/MODERATE/WEAK/NO_FIT + per-dimension breakdown",
+    "failClosed": "un-built offer ⇒ NO_FIT (hard disqualifier); price above segment budget ⇒ NO_FIT; missing criterion ⇒ UNDETERMINED (never fabricated)",
+    "honesty": "a fit score is a HYPOTHESIS, never validated demand / a qualified client / a sale; segment ≠ real customer; score ≠ authorization. MODEL-ONLY; nothing sent/committed."
+  },
+  "notDuplicated": "NOT a new commercial engine/CRM/pipeline/marketing engine — the missing segmentation/fit LAYER composing the existing offer/qualification/economics modules.",
+  "statusLadder": "BUILT + COMPILED + TESTED (12/12) + INTEGRATED (gate) + deterministic; NOT a real campaign, NOT a qualified client, NOT OPERATIONAL in the real-world sense (MODEL-ONLY).",
+  "frontiersPreserved": "16 contracts BLOCKED_AWAITING_ISOLATION; sandbox OWNER_GATED (launcher unmodified, relay not under /run); no sudo/systemd/TLS/secret/DB/deploy; no spend/paid-API/real campaign.",
+  "verification": { "gate": "expected 642/642 (641 + 1 new suite)", "tsc": "0", "newChecks": 12, "registerByteIdentical": "427 @V123", "newEngine": false, "realCampaign": false },
+  "nextEligible": "wire ICP-fit into a Speed-Marketing end-to-end MODEL path (offer→segment-fit→funnel-economics) if a genuine integration gap remains; else the construction frontier (16 contracts / sandbox cert / VPS deploy / live M&BI+campaign) stays OWNER_GATED pending owner activation."
+}
