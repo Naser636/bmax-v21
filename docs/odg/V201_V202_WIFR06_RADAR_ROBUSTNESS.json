@@ -1,0 +1,28 @@
+{
+  "//": "V201+V202 — WI-FR-06 runtime-integration failure/security coverage + Radar robustness improvement. Composes existing canonical components; no new engine/queue/scheduler/radar; registers byte-identical @V123; sandbox boundary preserved.",
+  "directive": "CTO V201 (WI-FR-06) + V202 (WI-FR-06 continuation + Radar improvement + WI-FR-08)",
+  "startHead": "c8225cc (V200 merged)",
+  "§1_truthLock": "HEAD c8225cc, branch main, worktree clean; gate 636 before. No active operation interrupted; no V198/V199/V200 rework.",
+  "WI_FR_06": {
+    "status": "runtime-integration chain already built (frontier-pipeline.ts WI-FR-06): RADAR→admit(POLICY action-gate + EXTERNAL authorization, Radar can't self-authorize)→DEFERRED lot→DEFERRED→READY→campaign-controller.selectNextLot→evolution-loop(→frontier-lab+WI-FR-05 sandbox runner+independent verifier)→mission-evidence→external promotion. Audited, NOT rebuilt (would duplicate).",
+    "gapClosed": "§5 failure/security test coverage. Existing frontier-pipeline.test.ts covers A(dup)/C(unauthorized-Lab)/D(no-self-promotion)/F(idempotent)/J(injection→QUARANTINE)/K(policy-deny)/N(verifier-disagreement)/O(rollback). Added wi-fr-06-runtime-failpaths.test.ts (15 checks) for the REMAINING: B(DEFERRED never selected)/M(dependency not satisfied)/H(scheduler no-admissible-lot)/P(invalid registry transition rejected + register unchanged)/I(missing-evidence not acceptable)/G(corrupt store detected — file + evolution-loop level)/E(crash→checkpoint resume + idempotent). L(budget) covered at the lab-abort level by the existing pipeline test.",
+    "entrypointsExercised": "campaign-controller.selectNextLot + advance; mission-evidence.buildEvidenceRecord + assertAcceptable; autonomy-store.readStrict; evolution-loop.startCycle/persistCycle/resume — all REAL.",
+    "honesty": "these are LOCAL deterministic negative-path tests; they do NOT prove real isolated Frontier-Lab execution (OWNER_GATED/unproven until the 8 in-session sandbox certification tests pass). WI-FR-06 NOT declared fully validated — the real Lab execution boundary remains unproven.",
+    "acceptanceVsReality": "orchestration/authorization/evidence/recovery paths DEMONSTRATED locally; full E2E through the real sandbox = BLOCKED on WI-FR-05 certification."
+  },
+  "RADAR_improvement": {
+    "audit": "odg-radar-collection-adapter.ts (V187) is the single radar collection seam: deny-by-default (no injected provider ⇒ BLOCKED), grant validation (expiry + maxCalls), synthetic-vs-real tagging, provenance, dedup, autonomousEgress NOT_MEASURED/OWNER_GATED. Existing test covered grant/deny/synthetic/dedup.",
+    "realGapFound": "collect() called the injected fetcher with NO try/catch (line 38) — a failing/unavailable source (fetcher throws) would CRASH the radar instead of failing closed.",
+    "sourceFix": "wrapped the injected-provider call in try/catch ⇒ BLOCKED SOURCE_UNAVAILABLE (fail-closed). Minimal; deterministic; preserves all existing behavior (non-throwing fetchers unaffected — adapter test + lot5/lot6 regression green).",
+    "beforeAfter": "BEFORE: throwing source ⇒ uncaught exception (campaign crash). AFTER: throwing source ⇒ BLOCKED SOURCE_UNAVAILABLE, campaign survives and other items proceed.",
+    "robustnessTests": "odg-radar-collection-adapter.robustness.test.ts (8 checks, §5.7): source-unavailable fail-closed; budget/quota BLOCKED (collect + campaign level); throwing-source doesn't crash a campaign; garbage (non-array) return handled; synthetic≠real; cross-campaign dedup; autonomous egress NOT_MEASURED throughout.",
+    "notDuplicated": "no second radar; improved the existing adapter in place; weekly-radar-scheduler / radar-to-mission-loop / frontier-radar untouched."
+  },
+  "WI_FR_08_readiness": {
+    "status": "ELIGIBLE next (audit) — memory mechanisms present (knowledge-engine/learning-chain/learning-loop/patch-memory/decision-precedent/reuse-proof/verified-result-cache). A measured before/after compounding transfer with independent verification is the acceptance bar; deferred to the next lot to keep this checkpoint bounded (resource economy §6).",
+    "dependency": "not blocked by isolation; next turn's eligible work."
+  },
+  "§8_isolationBoundary": "V198 patch + 12/12 preserved; host launcher unmodified; sandbox NOT certified; relay NOT installed under /run; no sudo/systemd/VPS/deploy. 16 contracts stay BLOCKED_AWAITING_ISOLATION (none requalified).",
+  "verification": { "gate": "expected 638/638 (636 + 2 new suites)", "tsc": "0", "newChecks": "15 (WI-FR-06) + 8 (radar) = 23", "radarSourceEdit": "1 fail-closed guard (SOURCE_UNAVAILABLE)", "registerByteIdentical": "427 @V123", "noParallelEngine": true },
+  "nextEligible": "WI-FR-08 Compounding Loop — demonstrate one real before/after reuse with measured gain + independent verification through the existing memory/learning mechanisms (no parallel memory)."
+}

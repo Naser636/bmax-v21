@@ -34,8 +34,11 @@ function collect(query: string, opts: any): any {
   const g = validateGrant(o.grant, Number(o.nowEpochMs));
   if (!g.ok) return Object.freeze({ query, state: "BLOCKED", reason: g.code, records: Object.freeze([]), autonomousEgress: "NOT_MEASURED" });
   if (typeof o.fetcher !== "function") return Object.freeze({ query, state: "BLOCKED", reason: "NO_INJECTED_PROVIDER", note: "external access must go through an injected authorized provider; the radar does not self-egress here", records: Object.freeze([]), autonomousEgress: "NOT_MEASURED" });
-  if (o.callsUsed != null && o.callsUsed >= g.maxCalls) return Object.freeze({ query, state: "BLOCKED", reason: "BUDGET_EXHAUSTED", records: Object.freeze([]) });
-  const raw = o.fetcher(query) || [];
+  if (o.callsUsed != null && o.callsUsed >= g.maxCalls) return Object.freeze({ query, state: "BLOCKED", reason: "BUDGET_EXHAUSTED", records: Object.freeze([]), autonomousEgress: "NOT_MEASURED" });
+  // fail-closed if the injected source is unavailable/errors (V202 §5.7): never let a throwing provider crash the radar.
+  let raw: any;
+  try { raw = o.fetcher(query) || []; }
+  catch { return Object.freeze({ query, state: "BLOCKED", reason: "SOURCE_UNAVAILABLE", records: Object.freeze([]), autonomousEgress: "NOT_MEASURED" }); }
   const records = (Array.isArray(raw) ? raw : []).map((r: any) => Object.freeze({
     org: r.org, url: r.url, title: r.title, consultedDate: r.consultedDate, provenance: r.provenance || "OBSERVED_EVIDENCE",
     providerTag: r.providerTag || "grant-V141-websearch (injected authorized provider)",
