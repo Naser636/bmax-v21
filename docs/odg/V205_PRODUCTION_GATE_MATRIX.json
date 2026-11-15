@@ -1,0 +1,25 @@
+{
+  "//": "V205 (post-V204) — consolidated production-gate matrix. READ-ONLY reconciliation composing the existing fail-closed gates; no new primitive/engine; deploys/certifies nothing; changes no status; registers byte-identical @V123.",
+  "directive": "CTO — reprise intégrale + achèvement continu V12.4 post-V204; préproduction + gates de production identifiées",
+  "startHead": "11d9b7f (V204 merged)",
+  "step1_forensic": "HEAD 11d9b7f, branch main, worktree clean (removed a stray scripts/__pycache__); registers + ROADMAP byte-identical @V123; last merges V201/V202 #569, V203 #570, V204 #571. No active op interrupted; no ACCEPTED mission reopened.",
+  "step3_reconciliation": "WI-FR-04 (evolution-loop + blocked-contracts-register V200), WI-FR-06 (frontier-pipeline + failpaths V201/202), WI-FR-07 (odg-weekly-radar-scheduler — MATURE: DST window/dedup/budget/backoff/lock/checkpoint-resume/owner-gated-skip; realScheduledRun NOT_MEASURED = owner/root timer), WI-FR-08 (compounding-loop + real transfer V203) all substantially built+tested. The 16 improvement contracts remain BLOCKED_AWAITING_ISOLATION. VPS/deploy tooling + readiness modules + dossiers ALREADY EXIST (certification-readiness, deploy-package-check, dashboard-exposure-readiness, 15 ops scripts, multiple VPS dossiers) ⇒ not rebuilt.",
+  "gapBuilt": {
+    "finding": "the individual production gates exist but are NOT consolidated — there was no single view answering 'which production gates are satisfied vs what precise action remains'. That is exactly the directive's end-criterion (préproduction complète + gates identifiées + blocages documentés).",
+    "module": "runtime/core/odg-production-gate-matrix.ts (+test, 11 checks)",
+    "composes": "odg-blocked-contracts-register (16 contracts) + deploy-package-check + dashboard-exposure-readiness + certification-readiness — NO new primitive/engine/registry; read-only VIEW like V200.",
+    "gates": {
+      "improvement-contracts": "BLOCKED_AWAITING_ISOLATION (16 disjoint, unbuilt) ⇒ owner-activate isolated session",
+      "sandbox-certification": "OWNER_GATED (V198 patch PREPARED+VALIDATED 12/12; host launcher UNMODIFIED; 8 in-session tests NOT run)",
+      "deploy-package": "READY|NOT_READY via deploy-package-check (deploys nothing; flips READY when artifacts present+safe — local/buildable)",
+      "dashboard-exposure": "NOT_READY deny-by-default ⇒ controls + OWNER TLS activation",
+      "iso-certification": "NOT_READY ⇒ operational evidence (local) then external audit (OWNER_GATED)"
+    },
+    "verdict": "deny-by-default: NOT production-ready; the matrix enumerates every gate's exact remaining action (local vs OWNER_GATED). Deploys/certifies nothing; changes no status."
+  },
+  "honestyLadder": "DOCUMENTED ≠ BUILT ≠ TESTED ≠ ACCEPTED ≠ OPERATIONAL ≠ DEPLOYED; SIMULATION ≠ REAL; PREPARATION ≠ CERTIFICATION — enforced in the matrix + every result.",
+  "step7_sandbox": "unchanged: V198 patch preserved; host launcher unmodified; relay NOT installed under /run; no sudo/systemd/VPS/deploy/secrets; BLOCKED_AWAITING_ISOLATION preserved.",
+  "step8_vps": "read-only reconciliation only; no VPS mutation; the matrix identifies the production gates the preproduction dossier needs. Actual deploy/TLS/systemd/root = OWNER_GATED, prepared not executed.",
+  "verification": { "gate": "expected 641/641 (640 + 1 new suite)", "tsc": "0", "newChecks": 11, "registerByteIdentical": "427 @V123", "newEngine": false, "deployedAnything": false, "statusChanged": false },
+  "nextEligible": "owner actions unblock the frontier: (1) isolated session ⇒ 16 contracts + sandbox certification; (2) VPS controlled local deploy (audit→prepare→backup→rollback→validate); (3) B2B API access / governed campaign budget for M&BI + Speed Marketing live. Absent those, remaining local work is reconciliation/strengthening of already-mature mechanisms (diminishing returns — avoid duplication)."
+}
