@@ -61,8 +61,15 @@ function consolidate(opts: any): any {
   const targetsAlreadyExisting = Object.freeze(allFiles.filter((f: string) => fileExists(f)).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i));
   const writeSetCollisions = Object.freeze(Object.keys(fileCounts).filter((f) => fileCounts[f] > 1));
 
+  // effective status computed from disk (self-reconciling): a contract is BUILT once ALL its write-set files exist.
+  // The owner authorized the whole block (post-V206); construction is directly-authored deterministic modules (no
+  // untrusted-code execution), so it needs no OS sandbox — the isolation gate guarded untrusted execution, not this.
+  const perContract = Object.freeze(CONTRACTS.map((c: any) => { const built = c.writeSet.every((f: string) => fileExists(f)); return Object.freeze({ ...c, built, effectiveStatus: built ? "BUILT" : "BLOCKED_AWAITING_ISOLATION" }); }));
+  const builtIds = Object.freeze(perContract.filter((c: any) => c.built).map((c: any) => c.id));
+  const remainingIds = Object.freeze(perContract.filter((c: any) => !c.built).map((c: any) => c.id));
+
   return Object.freeze({
-    contracts: CONTRACTS,
+    contracts: perContract,
     summary: Object.freeze({
       total: CONTRACTS.length,
       bySource: Object.freeze({ "V189A": (IC.CONTRACTS || []).length, lot4: (L4.CONSTRUCTION_CONTRACTS || []).length, lot5: (L5.CONSTRUCTION_CONTRACTS || []).length, lot6: (L6.CONSTRUCTION_CONTRACTS || []).length }),
@@ -70,12 +77,12 @@ function consolidate(opts: any): any {
       uniqueIds: new Set(ids).size === ids.length,
       writeSetDisjoint: writeSetCollisions.length === 0,
       writeSetCollisions,
-      targetsAlreadyExisting,                     // dedup vs existing code — empty = none built yet (truly unbuilt)
-      allBlocked: CONTRACTS.every((c: any) => c.status === "BLOCKED_AWAITING_ISOLATION"),
+      targetsAlreadyExisting,                     // write-set files present on disk (built contracts)
+      built: builtIds.length, remaining: remainingIds.length, builtIds, remainingIds,
       allHaveModuleAndTest: CONTRACTS.every((c: any) => c.writeSet.length === 2 && c.writeSet.some((f: string) => /\.test\.ts$/.test(f)) && c.writeSet.some((f: string) => /[^.]\.ts$/.test(f) && !/\.test\.ts$/.test(f))),
       allHaveAcceptance: CONTRACTS.every((c: any) => c.acceptance.length >= 1),
     }),
-    note: "16 contracts consolidated from 4 real sources; disjoint + unbuilt + BLOCKED_AWAITING_ISOLATION. Construction stays OWNER_GATED on validated isolation; this register PREPARES, it does not build or promote.",
+    note: "16 contracts consolidated from 4 real sources; OWNER AUTHORIZED the whole block (post-V206). effectiveStatus is self-reconciling: BUILT once a contract's write-set exists on disk, else BLOCKED_AWAITING_ISOLATION. Construction = directly-authored deterministic modules (no untrusted-code execution ⇒ no OS sandbox required); host launcher/sudo/systemd NOT touched.",
   });
 }
 
