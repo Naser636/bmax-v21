@@ -1,0 +1,26 @@
+{
+  "//": "V200 — WI-FR-04 continuation + §4 consolidated blocked-contracts register. READ-ONLY view composing 4 existing sources; no new primitive/engine/registry; builds nothing; registers byte-identical @V123; all 16 contracts stay BLOCKED_AWAITING_ISOLATION.",
+  "directive": "CTO V200 — next eligible canonical workstream; prioritize WI-FR-04",
+  "startHead": "1350f3e (V199 merged)",
+  "§1_liveState": "HEAD 1350f3e, branch main, worktree clean; gate 635; V198 #566 + V199 #567 merged; no active operation interrupted; no V198/V199 rework.",
+  "§2_workstreamSelection": {
+    "WI-FR-04_evolutionLoop": "ELIGIBLE (local) — evolution-loop.ts EXISTS and is mature (OBSERVE→…→MEASURED, role-separated, reuses frontier-lab/baseline/canary, NEVER self-promotes; callers: cognitive-loop, self-improvement, frontier-pipeline). Native spec/proposal producers already exist (proposal-generator, radar-gap-analysis, mission-context-builder, odg-improvement-contracts). No gap requiring a new engine — building one would DUPLICATE.",
+    "chosenEligibleTask": "§4 — consolidate + dedup-audit the 16 BLOCKED_AWAITING_ISOLATION construction contracts (explicitly authorized, local, non-owner-gated, non-duplicative). Serves WI-FR-04's bounded-mission/write-set/acceptance discipline.",
+    "dependencyNote": "the ODG→Claude-Code dependency in the loop is the injected BUILDER role (candidate generation); transferring it is the ODG+Ollama native-engineering path, which stays BLOCKED_AWAITING_ISOLATION (V193 audit). Not transferable this turn without isolation."
+  },
+  "§4_blockedContractsRegister": {
+    "module": "runtime/core/odg-blocked-contracts-register.ts (+test, 9 checks)",
+    "recovered": "16 contracts from 4 real sources: 5 (V189-A improvement-contracts P1/P3/P5/P9/P11) + 3 (lot4 P7/P8/P13) + 3 (lot5 M1/P6/P12) + 5 (lot6 P14/P15/M3/M4/M5)",
+    "audit": {
+      "uniqueIds": true, "writeSetDisjoint": true, "writeSetCollisions": 0,
+      "dedupVsExistingCode": "REAL on-disk check — none of the 16 write-set target modules exist yet (truly unbuilt); the detector also proven to flag an injected already-existing target",
+      "allBlocked": true, "allHaveModuleAndTest": true, "allHaveAcceptance": true,
+      "metiersCovered": 16
+    },
+    "honesty": "recovers/consolidates only — invents no contract, builds nothing, promotes nothing, changes no status. Composes the existing definitions (no new primitive/engine/registry). Shaped to feed sovereign-delegation/evolution-loop once construction is OWNER-authorized (still OWNER_GATED on validated isolation)."
+  },
+  "§4_sandbox": "V198 patch + 12/12 validation preserved; host launcher unmodified; sandbox NOT certified; relay NOT installed under /run; no sudo/systemd/deploy. All owner-gated steps unchanged.",
+  "notDuplicated": "did NOT rebuild evolution-loop / proposal-generator / mission-context-builder / radar / scheduler / memory; no 10th primitive; no new campaign/métier; Extension PARKED.",
+  "verification": { "gate": "expected 636/636 (635 + 1 new suite)", "tsc": "0", "newChecks": 9, "registerByteIdentical": "427 @V123", "contractsBuilt": 0, "contractsStatus": "16 BLOCKED_AWAITING_ISOLATION (unchanged)" },
+  "nextEligible": "WI-FR-06 Runtime Integration audit (local, deterministic/synthetic) and WI-FR-08 Compounding Loop audit are the next canonical candidates; the construction frontier (16 contracts + sandbox certification + M&BI live collection + Speed Marketing spend) stays OWNER_GATED."
+}
