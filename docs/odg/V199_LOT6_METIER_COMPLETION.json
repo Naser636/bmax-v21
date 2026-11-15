@@ -1,0 +1,31 @@
+{
+  "//": "V199 continuation — radar LOT 6 (final 5 métiers) completes the 20/20 métier study. READ-ONLY; composes the existing radar (no new primitive/métier/campaign/radar); registers byte-identical @V123; construction contracts prepared, BLOCKED_AWAITING_ISOLATION.",
+  "directive": "CTO V199 — full ODG continuation; continue from live state; complete eligible V12.4 roadmap",
+  "continuityNote": "V198 sandbox/Ollama workstream completed to its PREPARATION+VALIDATION natural end (PR #566 merged @59f52e0); its only remainder is owner-gated (apply patch, start host relay, run 8 in-session certification tests). Per §12 a blocker in one workstream does not stop unrelated eligible work → continued to the next eligible lot.",
+  "baseline": { "startHead": "59f52e0 (V198 merged)", "branch": "main", "grant": "V141 WebSearch, valid to 2026-11-18" },
+  "lot6": {
+    "metiers": ["P14 DevEx", "P15 Workflow/orchestration", "M3 FinOps", "M4 Data Engineering", "M5 Accessibility"],
+    "canonicalIdentities": "verified from real modules (not invented): P14=developer experience & tooling, P15=workflow/orchestration (odg-metier-business-matrix); M3=FinOps, M4=Data Engineering, M5=Accessibility (directive §13.1)",
+    "collection": "5 REAL WebSearches (grant V141, 2026-11-15) fed THROUGH the V187 radar adapter: 5 COLLECTED_REAL, all PROPOSED, 0 writes, autonomous egress NOT_MEASURED. M5 → VALIDATED_MARKET_SIGNAL (EAA regulatory).",
+    "worldRefs": {
+      "P14": "golden paths (scaffold+CI+progressive-delivery+observability+on-call) opinionated-but-escapable; Backstage=framework not product; measure DORA+SPACE+DevEx/onboarding/%golden-paths/NPS",
+      "P15": "Temporal durable execution (event-history+replay); exactly-once=workflow logic only (activities at-least-once+idempotency); saga compensation in code; Airflow-on-top/Temporal-underneath",
+      "M3": "FinOps 4 domains; FOCUS vendor-neutral cost+usage schema; showback/chargeback, unit economics; 2026 governance/forecasting",
+      "M4": "lakehouse (Iceberg/Delta/Hudi ACID); data contracts pre-merge (dbt/schema registry); medallion Bronze/Silver/Gold per-layer quality; OpenLineage/Great Expectations",
+      "M5": "WCAG 2.2 (POUR); EN 301 549 v4.1.1 (Sep 2026), OJEU citation expected Nov 2026 ⇒ presumed EAA standard (as of Oct 2026 none harmonised); automated catches ~30% ⇒ hybrid; ARIA only where native insufficient"
+    },
+    "constructionContracts": "5 prepared (IMP-P14-DEVEX-GOLDENPATH / IMP-P15-SAGA-REF / IMP-M3-FOCUS-UNIT-ECON / IMP-M4-DATA-CONTRACTS / IMP-M5-WCAG-EVIDENCE), all BLOCKED_AWAITING_ISOLATION. P15 durable-execution runtime + M4 external data platform REJECTED/OWNER_GATED; M5 nothing declared conformant (EAA sourced not invented); M3 no cloud-billing integration.",
+    "milestone": "ALL 20 métiers studied (15 P + 5 M) across lots 1-6; 0 remain."
+  },
+  "module": "runtime/core/odg-metier-benchmark-lot6.ts (+test, 11 checks)",
+  "honesty": "benchmarks are research refs (external = untrusted, sourced); REUSE/IMPROVE-first; nothing built for the métiers themselves (construction awaits isolation); no new primitive/métier/campaign/radar/engine/memory; M5 nothing conformant; runtimes/platforms REJECTED where ODG is not that system; registers + ROADMAP.json byte-identical @V123; €0 clients; no deploy/sudo/secret/payment/paid-API.",
+  "verification": { "gate": "expected 635/635 (634 + 1 new suite)", "tsc": "0", "newChecks": 11, "radarCallsUsed": 5, "registerByteIdentical": "427 @V123", "capabilitiesDeclaredOperational": 0 },
+  "roadmapStatusSnapshot": {
+    "metiers": "20/20 studied (lots 1-6); construction of improvements BLOCKED_AWAITING_ISOLATION",
+    "sandbox": "relay hardened (V197) + launcher integration patch prepared+validated (V198); certification owner-gated",
+    "mbi_speedMarketing": "ATTACHED to existing architecture (V195), DOCUMENTED not operational; real collection/campaign owner-gated",
+    "economicModel": "modeled (V179/V180-A): €5M in 3 people MODEL-ONLY via automation>60% + ~350 UNVALIDATED customers; €100M/€500M horizons reconciled; not achieved",
+    "extension": "PARKED"
+  },
+  "nextEligible": "owner activations (isolated session → unblocks all improvement contracts incl. the 11 prepared across lots 4-6; B2B API access for M&BI; governed Speed Marketing budget). Absent those, remaining local work is reconciliation/preparation only — the construction frontier is gated on validated isolation."
+}
