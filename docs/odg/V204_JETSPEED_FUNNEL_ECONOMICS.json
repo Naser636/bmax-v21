@@ -1,0 +1,18 @@
+{
+  "//": "V204 §8 — JetSpeed Marketing funnel + unit-economics (MODEL-ONLY) built into the existing commercial/economic stack. No new engine/CRM/economic model; no real campaign/send/spend; registers byte-identical @V123.",
+  "directive": "CTO V204 — global construction program; §8 JetSpeed Marketing (local build)",
+  "startHead": "bea7389 (V203/WI-FR-08 merged)",
+  "continuity": "V204 arrived mid-turn during PR #570 CI; per §4/§17 the active WI-FR-08 checkpoint was NOT interrupted — it landed first (@bea7389), then this §8 lot continued.",
+  "§8_jetspeed": {
+    "antiDup": "audited the existing commercial/economic stack: commercial-pipeline (B2B funnel stages + funnelTotals), economic-unit (unit-safe money), odg-economic-model (scenarios/sensitivity), odg-business-model-families (arpu/GM/churn/cac baselines). The funnel STAGES + CAC-as-INPUT exist; the genuine GAP = deriving acquisition metrics (CTR/CAC/LTV/payback/ROMI) from conversion rates + §8E adversarial guards. Built only that.",
+    "module": "runtime/core/odg-jetspeed-funnel-economics.ts (+test, 13 checks)",
+    "§8C_metrics": "over a SYNTHETIC funnel: CTR + per-stage conversion (lead/qual/win) + CAC (DERIVED = spend/won, not assumed) + LTV (arpu·GM/churn) + LTV:CAC + payback(months) + ROMI + contribution. Reuses odg-business-model-families baselines.",
+    "§8E_adversarial": "fail-closed verdicts — NEGATIVE_MARGIN / CAC≥LTV / NO_CONVERSIONS ⇒ NOT_VIABLE; LTV_CAC_BELOW_THRESHOLD(<3) / LOW_CONVERSION / FORGOTTEN_COSTS ⇒ NEEDS_REVIEW; non-monotonic or negative counts ⇒ INVALID. Missing cost components are FLAGGED, never silently zeroed; CAC null (not fabricated) when won=0.",
+    "§8D_scenarios": "low/central/high as DECLARED assumption multipliers over the synthetic funnel (not forecasts).",
+    "§8F_limits": "MODEL-ONLY — no send, no spend, no contact, no real campaign, no payment account; EUR-only (no implicit FX); a projection is NEVER a realized profit. Enforced in the contract + every result's honesty field."
+  },
+  "notDuplicated": "no second commercial engine/CRM/economic model; no new primitive/metier/campaign; composes odg-business-model-families + mirrors commercial-pipeline staging.",
+  "otherV204Scope": "the full V204 program (20-metier construction sweep, VPS local deployment §11, final sandbox certification §12) is multi-lot and staged; §17 orders sandbox certification LAST and keeps VPS deploy behind audit→prepare→backup→rollback gates. This checkpoint delivers the §8 JetSpeed build; remaining lots continue next, with the construction frontier (16 contracts + sandbox cert) still OWNER_GATED on real isolation.",
+  "verification": { "gate": "expected 640/640 (639 + 1 new suite)", "tsc": "0", "newChecks": 13, "registerByteIdentical": "427 @V123", "newEngine": false, "realCampaign": false, "spend": 0 },
+  "nextEligible": "continue JetSpeed (offer/segmentation-ICP layers if a real gap exists vs commercial-offer-builder/enterprise-qualification) OR the 20-metier construction sweep (§6) picking real gaps; VPS local deploy (§11) begins with a read-only audit; sandbox certification (§12) stays LAST + OWNER_GATED."
+}
