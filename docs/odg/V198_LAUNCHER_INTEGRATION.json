@@ -1,0 +1,44 @@
+{
+  "//": "V198 — EXACT Ollama-relay launcher integration patch, PREPARED + VALIDATED only. Host launcher NOT modified; no /run service started; no sudo/deploy; registers byte-identical @V123.",
+  "directive": "CTO V198 — exact Ollama relay launcher integration patch",
+  "baseline": { "head": "2d5ac6a (V197 merged)", "launcher": "$HOME/bin/odg-claude-sandbox (264 lines, unchanged since V196, md5 verified untouched)", "relay": "scripts/odg-ollama-relay.py (V197 hardened, 9/9)" },
+  "phase1_forensic": "Re-read both files fresh (no assumed line numbers). Launcher = host broker (Unix-socket HTTP CONNECT proxy, allowlist api.anthropic.com/platform.claude.com) + inlined in-sandbox bridge.py + bwrap --unshare-all. Relay = host/bridge modes over a Unix socket; validation lives host-side. Confirmed: NO existing Ollama wiring (only 'OLLAMA: NOT YET CONNECTED'). Pre-existing latent bug found: bridge.py uses sys.exit but did not import sys (NameError at exit) — fixed as a side-effect of adding 'sys' to the bridge imports.",
+  "phase2_patch": {
+    "file": "docs/odg/V198_launcher_ollama_integration.patch (exact unified diff; applies cleanly, dry-run p1 verified)",
+    "A_host_socket": "add OLLAMA_SOCK=/run/odg-ollama.sock + RELAY=~/bin/odg-ollama-relay.py; FAIL-CLOSED prereqs (relay file must exist; socket must exist AND be stat.S_ISSOCK) before any sandbox start; add two ro-binds: --ro-bind OLLAMA_SOCK /run/odg-ollama.sock and --ro-bind RELAY /opt/odg-ollama-relay.py. Existing broker isolation preserved.",
+    "B_bridge": "in-sandbox: start 'python3 /opt/odg-ollama-relay.py bridge' (listens 127.0.0.1:11434 in the netns, forwards ONLY through /run/odg-ollama.sock). Route allowlist + non-streaming + JSON/path validation are preserved because they execute host-side behind the socket; the bridge is a pure tunnel. No other host service exposed.",
+    "C_lifecycle": "deterministic single bridge start; health verification loop (real GET /api/tags round-trip, status matched regardless of HTTP version); duplicate prevented by allow_reuse_address=False (second bind fails); claude run wrapped in try/finally that terminate()s then kill()s the bridge child → clean shutdown, no orphans; --die-with-parent retained.",
+    "D_status": "replace 'OLLAMA: NOT YET CONNECTED' with 'OLLAMA: CONNECTED (restricted Unix relay)' printed ONLY after a successful real socket health check, else 'OLLAMA: UNAVAILABLE (relay health check failed)'."
+  },
+  "phase3_security": {
+    "no_canonical_mount": "PASS — no repo mount added; only the relay socket + the single relay tool file (ro)",
+    "no_unrestricted_egress": "PASS — netns has 0 interfaces (item 10 proven); egress only via Unix socket -> allowlisted host relay",
+    "no_api_key_exposure": "PASS — env unchanged (clearenv + explicit env without ANTHROPIC_API_KEY)",
+    "no_extra_host_fs": "PASS — exactly two ro-binds (socket + relay script); nothing else",
+    "no_model_mgmt_routes": "PASS — /api/pull -> 403 proven (item 8)",
+    "no_arbitrary_forwarding": "PASS — relay target hardcoded 127.0.0.1:11434 + V197 path normalization",
+    "no_socket_priv_escalation": "PASS — ro-bind only; host relay chmod 0o660; patch adds no chmod",
+    "no_broker_weakening": "PASS — existing proxy broker untouched; additions only"
+  },
+  "phase4_tests": {
+    "harness": "scripts/odg-ollama-launcher-integration.test.py (executed; host-side validation + bwrap netns end-to-end; local-only; no host launcher modification)",
+    "results": "12/12 PASS",
+    "items": {
+      "1_missing_socket": "PASS (fail-closed)", "2_invalid_socket": "PASS (regular file rejected)", "3_valid_socket": "PASS (validation + real bridge health 200)",
+      "4_bridge_startup_failure": "PASS (no upstream socket -> health False, not CONNECTED)", "5_bridge_shutdown": "PASS (child terminated cleanly)",
+      "6_duplicate_startup": "PASS (second bind rejected)", "7_allowed_generation": "PASS (real qwen2.5-coder:7b through relay)", "8_forbidden_mgmt_routes": "PASS (/api/pull 403)",
+      "9_nonstreaming": "PASS (single JSON done=true)", "10_network_isolation": "PASS (direct egress blocked in netns)"
+    },
+    "bug_caught": "the health check initially matched 'HTTP/1.1 200' but BaseHTTPRequestHandler replies 'HTTP/1.0 200' -> would have made the launcher ALWAYS print UNAVAILABLE; fixed in both patch and test to match the status code regardless of HTTP version."
+  },
+  "deployment_prerequisites_owner_gated": [
+    "install scripts/odg-ollama-relay.py to ~/bin/odg-ollama-relay.py",
+    "start the host relay: python3 ~/bin/odg-ollama-relay.py host  (creates /run/odg-ollama.sock; writing /run is the one host-privilege step — owner/root or a tmpfiles/service unit)",
+    "apply docs/odg/V198_launcher_ollama_integration.patch to ~/bin/odg-claude-sandbox",
+    "launch the sandbox as the OUTER process from an owner TTY (V196 root cause: a running host agent cannot self-isolate)"
+  ],
+  "rollback": "the patch is a clean unified diff -> 'patch -R -p1 -d /' reverts it (or restore a backup of the launcher). Host relay: Ctrl-C; the socket is removed on exit. No persistent host state beyond the ephemeral /run/odg-ollama.sock.",
+  "remaining_blockers": "owner must (a) start the host relay under /run, (b) apply the patch to the host launcher, (c) run the 8 in-session certification tests inside the REAL isolated session. V195/V196 sandbox remain NOT certified until that in-session evidence exists.",
+  "authorization_boundary_respected": "preparation + validation ONLY: host launcher NOT modified (md5 unchanged), no /run service started, no sudo, no systemd, no secret/auth change, no deploy, no canonical roadmap/closure change.",
+  "verification": { "patch_applies": "dry-run p1 CLEAN", "patched_launcher_compiles": true, "inlined_bridge_compiles": true, "tests": "12/12 PASS", "host_launcher_md5_unchanged": true, "registers_byte_identical": "427 @V123", "tsc": "0 (additive python only)" }
+}

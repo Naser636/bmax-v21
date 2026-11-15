@@ -1,0 +1,118 @@
+--- a/home/ubuntu/bin/odg-claude-sandbox
++++ b/home/ubuntu/bin/odg-claude-sandbox
+@@ -1,11 +1,13 @@
+ #!/usr/bin/env python3
+ import os, sys, socket, tempfile, subprocess, threading
+-import shutil, select, ipaddress, signal
++import shutil, select, ipaddress, signal, stat
+ 
+ REPO = os.path.realpath("/home/ubuntu/bmax-v21")
+ AUTH = os.path.realpath(os.path.expanduser("~/.odg-claude-sandbox-config"))
+ WORK = os.path.realpath(os.path.expanduser("~/odg-sandbox-work"))
+ CLAUDE = "/usr/local/bin/claude"
++OLLAMA_SOCK = "/run/odg-ollama.sock"
++RELAY = os.path.realpath(os.path.expanduser("~/bin/odg-ollama-relay.py"))
+ 
+ if not os.path.isfile(os.path.join(AUTH, ".credentials.json")):
+     sys.exit("STOP: OAuth sandbox credentials missing")
+@@ -22,6 +24,16 @@
+ if not os.path.isdir(AUTH):
+     sys.exit("STOP: authentication directory missing")
+ 
++if not os.path.isfile(RELAY):
++    sys.exit("STOP: Ollama relay missing at " + RELAY)
++
++try:
++    if not stat.S_ISSOCK(os.stat(OLLAMA_SOCK).st_mode):
++        sys.exit("STOP: " + OLLAMA_SOCK + " is not a Unix socket")
++except FileNotFoundError:
++    sys.exit("STOP: Ollama host relay socket missing: " + OLLAMA_SOCK
++             + " (start it with: odg-ollama-relay.py host)")
++
+ ALLOWED = {
+     ("api.anthropic.com", 443),
+     ("platform.claude.com", 443),
+@@ -140,7 +152,7 @@
+ threading.Thread(target=accept_loop, daemon=True).start()
+ 
+ bridge = r'''
+-import socket, threading, subprocess, os, select
++import socket, threading, subprocess, os, select, time, sys
+ 
+ def tunnel(client):
+     upstream = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+@@ -193,20 +205,59 @@
+     "LANG": "C.UTF-8"
+ }
+ 
++# ODG Ollama relay bridge: 127.0.0.1:11434 (sandbox netns) -> /run/odg-ollama.sock (host relay)
++ollama_proc = subprocess.Popen(
++    ["/usr/bin/python3", "/opt/odg-ollama-relay.py", "bridge"]
++)
++
++def _ollama_healthy():
++    try:
++        c = socket.create_connection(("127.0.0.1", 11434), timeout=5)
++    except OSError:
++        return False
++    try:
++        c.sendall(b"GET /api/tags HTTP/1.1\r\nHost: x\r\nConnection: close\r\n\r\n")
++        data = b""
++        while b"\r\n\r\n" not in data and len(data) < 65536:
++            chunk = c.recv(4096)
++            if not chunk:
++                break
++            data += chunk
++        return b" 200 " in data.split(b"\r\n", 1)[0]
++    except OSError:
++        return False
++    finally:
++        c.close()
++
++_ollama_ok = False
++for _ in range(100):
++    if _ollama_healthy():
++        _ollama_ok = True
++        break
++    time.sleep(0.1)
++
+ print("ODG SANDBOX: INTERACTIVE CLAUDE CODE")
+ print("WORK DIRECTORY: /work")
+ print("CANONICAL REPOSITORY: NOT MOUNTED")
+ print("NETWORK: RESTRICTED PROXY")
+ print("CLAUDEAI MCP CONNECTORS: DISABLED")
+-print("OLLAMA: NOT YET CONNECTED")
++print("OLLAMA: CONNECTED (restricted Unix relay)" if _ollama_ok
++      else "OLLAMA: UNAVAILABLE (relay health check failed)")
+ print("Type /exit to leave Claude Code.")
+ print()
+ 
+-result = subprocess.run(
+-    ["/usr/local/bin/claude"],
+-    cwd="/work",
+-    env=env
+-)
++try:
++    result = subprocess.run(
++        ["/usr/local/bin/claude"],
++        cwd="/work",
++        env=env
++    )
++finally:
++    ollama_proc.terminate()
++    try:
++        ollama_proc.wait(timeout=5)
++    except Exception:
++        ollama_proc.kill()
+ sys.exit(result.returncode)
+ '''
+ 
+@@ -236,6 +287,8 @@
+     "--bind", WORK, "/work",
+     "--ro-bind", sockpath, "/run/odg-broker.sock",
+     "--ro-bind", bridgepath, "/opt/bridge.py",
++    "--ro-bind", OLLAMA_SOCK, "/run/odg-ollama.sock",
++    "--ro-bind", RELAY, "/opt/odg-ollama-relay.py",
+     "--chdir", "/work",
+     "--clearenv",
+     "--setenv", "PATH", "/usr/local/bin:/usr/bin:/bin",
