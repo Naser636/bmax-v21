@@ -23,9 +23,10 @@ const WCAG22_CHECKS = Object.freeze([
 ]);
 
 const EAA_STATUS = Object.freeze({
-  standard: "EN 301 549 v4.1.1 (published Sep 2026, incl. WCAG 2.2)",
-  note: "OJEU citation expected Nov 2026 ⇒ would become the presumed EAA standard; as of Oct 2026 NO harmonised standard yet cited",
-  source: "EN 301 549 v4.1.1 / EAA (Directive (EU) 2019/882)",
+  standard: "EN 301 549 v4.1.1 — adopted by CEN/CENELEC/ETSI 24 Aug 2026, published 2 Sep 2026 (incl. WCAG 2.2)",
+  note: "national standards-bodies announcement deadline 30 Nov 2026; OJEU citation still PENDING (expected late-Nov–mid-Dec 2026); as of Nov 2026 NO edition is cited under the EAA, and v3.2.1 remains the edition cited for the Web Accessibility Directive — so v4.1.1 does NOT yet confer an EAA presumption of conformity",
+  source: "EN 301 549 v4.1.1 / EAA (Directive (EU) 2019/882); radar refresh 2026-11-16",
+  asOf: "2026-11-16",
 });
 
 /* evidence({observed}) -> checklist status + automated-coverage honesty + EAA note. observed: {<id>:boolean}. */
