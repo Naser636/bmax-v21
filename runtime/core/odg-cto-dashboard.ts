@@ -51,7 +51,7 @@ function build(opts?: any): any {
   const vac = VAC.analyzeDesignatedVideos();    // V220: multimodal capability for the designated videos (toolchain absent ⇒ NOT_ANALYZED)
   // V221: corroborate the radar's EAA regulatory claim with the REAL retrieved official EUR-Lex source (2026-11-16).
   const eaaOpp = GOR.OPPORTUNITIES.find((o: any) => /eaa|accessibility/i.test(o.id || ""));
-  const cor = eaaOpp ? COR.corroborateOpportunity(eaaOpp, [{ url: "https://eur-lex.europa.eu/eli/dir/2019/882/oj/eng", stance: "SUPPORTS" }]) : null;
+  const cor = eaaOpp ? COR.corroborateOpportunity(eaaOpp, [{ url: "https://eur-lex.europa.eu/eli/dir/2019/882/oj/eng", stance: "SUPPORTS", date: "2026-11-16" }], Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : undefined) : null;
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -88,7 +88,7 @@ function build(opts?: any): any {
 
     multimodalVideo: ind(Object.freeze({ verdict: vac.capability.verdict, analyzable: vac.capability.analyzable, designatedVideos: vac.count, designatedNotAnalyzed: vac.videos.filter((v: any) => v.determination === "NOT_ANALYZED").length, missingTools: vac.capability.missingTools, ownerGatedInstall: vac.capability.ownerGatedInstall }), "odg-video-analysis-chain (V220 §3) → odg-radar-video-sources", "local multimodal toolchain ABSENT (ffmpeg/yt-dlp/whisper/tesseract + vision model) ⇒ NOT_ANALYZABLE; the 2 designated videos stay NOT_ANALYZED — content never fabricated; install is OWNER_GATED; a text LLM cannot understand video", "HIGH"),
 
-    claimCorroboration: cor ? ind(Object.freeze({ opportunity: cor.id, level: cor.level, confidence: cor.confidence, independentSupportCount: cor.independentSupportCount, officialCorroboration: cor.officialCorroboration }), "odg-claim-corroboration (V221 §2.1/§5.3) → odg-radar-source-provenance + REAL EUR-Lex retrieval 2026-11-16", "radar EAA claim corroborated by ≥2 INDEPENDENT sources incl. official EUR-Lex (Dir (EU) 2019/882, applies 28 Jun 2025); a single source is NOT corroboration; ANY contradiction ⇒ CONTESTED; still a MODEL conclusion, not an absolute fact", "MEDIUM") : ind(null, "odg-claim-corroboration (V221)", "no EAA opportunity found to corroborate", "NONE"),
+    claimCorroboration: cor ? ind(Object.freeze({ opportunity: cor.id, level: cor.level, confidence: cor.confidence, independentSupportCount: cor.independentSupportCount, officialCorroboration: cor.officialCorroboration, freshness: cor.freshness, superseded: cor.supersededByNewerContradiction }), "odg-claim-corroboration (V221/V222) → odg-radar-source-provenance + REAL EUR-Lex retrieval 2026-11-16", "radar EAA claim corroborated by ≥2 INDEPENDENT sources incl. official EUR-Lex (Dir (EU) 2019/882, applies 28 Jun 2025); V222 TEMPORAL: freshness from injected asOf + consultedDate; a single source is NOT corroboration; ANY contradiction ⇒ CONTESTED; STALE/SUPERSEDED surfaced; still a MODEL conclusion, not an absolute fact", "MEDIUM") : ind(null, "odg-claim-corroboration (V221/V222)", "no EAA opportunity found to corroborate", "NONE"),
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 

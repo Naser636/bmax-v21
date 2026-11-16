@@ -16,20 +16,33 @@
 const RSP = require("./odg-radar-source-provenance.js");  // host() + classifySource() (reused, not duplicated)
 
 const STANCES = Object.freeze(["SUPPORTS", "CONTRADICTS", "NEUTRAL"]);
+const DAY_MS = 86400000;
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function stanceOf(v: any): string { const s = typeof v === "string" ? v.toUpperCase() : ""; return STANCES.indexOf(s) >= 0 ? s : "NEUTRAL"; }
+/* parseDate — ISO "YYYY-MM-DD" or epoch ms → epoch ms (deterministic; Date.UTC, never Date.now). */
+function parseDate(d: any): number | null {
+  if (typeof d === "number" && isFinite(d)) return d;
+  if (typeof d === "string") { const m = d.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return Date.UTC(+m[1], (+m[2]) - 1, +m[3]); }
+  return null;
+}
 
-/* corroborate({claim, evidence}) — evidence: [{url, stance}]. Returns a frozen corroboration verdict. */
+/* corroborate({claim, evidence, asOfEpochMs?, freshnessDays?}) — evidence: [{url, stance, date?}]. asOfEpochMs is INJECTED
+ * (no clock) so freshness is deterministic. Returns a frozen corroboration verdict incl. temporal qualification. */
 function corroborate(opts: any): any {
   const o = isObj(opts) ? opts : {};
   const claim = typeof o.claim === "string" ? o.claim : null;
   const ev = Array.isArray(o.evidence) ? o.evidence : [];
+  const asOf = Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null;           // injected reference time (null ⇒ freshness UNDATED)
+  const freshnessDays = Number.isFinite(o.freshnessDays) ? o.freshnessDays : 365;
 
   const items = ev.map((e: any) => {
     const url = e && typeof e.url === "string" ? e.url : null;
     const cls = RSP.classifySource(url);
+    const date = parseDate(e && e.date);
+    const ageDays = (asOf != null && date != null) ? Math.floor((asOf - date) / DAY_MS) : null;
     return Object.freeze({ url, host: RSP.host(url), stance: stanceOf(e && e.stance),
-      registered: cls.registered, provenanceClass: cls.provenanceClass, sourceId: cls.sourceId });
+      registered: cls.registered, provenanceClass: cls.provenanceClass, sourceId: cls.sourceId,
+      date, ageDays, fresh: ageDays != null ? ageDays <= freshnessDays : null });
   });
 
   const supports = items.filter((i: any) => i.stance === "SUPPORTS");
@@ -51,31 +64,52 @@ function corroborate(opts: any): any {
     : level === "SINGLE_SOURCE" ? "LOW"
     : "NONE";
 
+  // ---- TEMPORAL qualification (§2: dates de consultation, affirmations obsolètes, contradictions temporelles) ----
+  const datedSupports = supports.filter((i: any) => i.date != null);
+  const freshness = (asOf == null || datedSupports.length === 0) ? "UNDATED"
+    : datedSupports.some((i: any) => i.fresh === true) ? "FRESH"
+    : "STALE";
+  const newestSupport = datedSupports.reduce((a: number | null, i: any) => (a == null || i.date > a ? i.date : a), null as number | null);
+  const datedContradicts = contradicts.filter((i: any) => i.date != null);
+  const newestContradict = datedContradicts.reduce((a: number | null, i: any) => (a == null || i.date > a ? i.date : a), null as number | null);
+  // a CONTRADICTS strictly NEWER than the newest SUPPORT ⇒ the claim may be SUPERSEDED (a later retraction/update).
+  const supersededByNewerContradiction = newestContradict != null && newestSupport != null && newestContradict > newestSupport;
+
+  const baseNote = level === "CONTESTED"
+    ? "CONTESTED — at least one source contradicts; the claim is NOT presented as corroborated and the conflict is surfaced."
+    : level === "CORROBORATED"
+      ? "CORROBORATED by ≥2 INDEPENDENT sources" + (officialSupport.length ? " incl. ≥1 official" : " (none official — independent but not officially confirmed)") + "; still a MODEL conclusion, not an absolute fact."
+      : level === "SINGLE_SOURCE"
+        ? "SINGLE_SOURCE — one source only (even if official) is NOT corroboration; treat as a declared claim."
+        : "UNCORROBORATED — no supporting independent source; never presented as a fact.";
+  const temporalNote = freshness === "STALE"
+    ? " TEMPORAL: all supporting sources are older than the freshness window (" + freshnessDays + "d) — possibly OUTDATED; re-verify before relying."
+    : freshness === "UNDATED" ? " TEMPORAL: no injected asOf/dates — freshness NOT assessed."
+    : "";
+  const supersedeNote = supersededByNewerContradiction ? " TEMPORAL: a NEWER source contradicts the supports — the claim may be SUPERSEDED." : "";
+
   return Object.freeze({
     claim, level, confidence,
     independentSupportCount: supportHosts.length, independentSupportHosts: Object.freeze(supportHosts),
     officialCorroboration: officialSupport.length >= 1 && level === "CORROBORATED",
     contradictions: Object.freeze(contradicts.map((i: any) => ({ url: i.url, provenanceClass: i.provenanceClass }))),
     contradictionHostCount: contradictHosts.length,
+    freshness, supersededByNewerContradiction, asOfEpochMs: asOf, freshnessDays,
     evidence: Object.freeze(items),
-    note: level === "CONTESTED"
-      ? "CONTESTED — at least one source contradicts; the claim is NOT presented as corroborated and the conflict is surfaced."
-      : level === "CORROBORATED"
-        ? "CORROBORATED by ≥2 INDEPENDENT sources" + (officialSupport.length ? " incl. ≥1 official" : " (none official — independent but not officially confirmed)") + "; still a MODEL conclusion, not an absolute fact."
-        : level === "SINGLE_SOURCE"
-          ? "SINGLE_SOURCE — one source only (even if official) is NOT corroboration; treat as a declared claim."
-          : "UNCORROBORATED — no supporting independent source; never presented as a fact.",
+    note: baseNote + temporalNote + supersedeNote,
   });
 }
 
 /* corroborateOpportunity(opp, extraEvidence?) — composes a radar opportunity's cited sources (treated as SUPPORTS by
  * default: they are cited AS evidence for the opportunity) with any extra retrieved evidence (e.g., an official source). */
-function corroborateOpportunity(opp: any, extraEvidence?: any): any {
+function corroborateOpportunity(opp: any, extraEvidence?: any, asOfEpochMs?: any): any {
   const srcs = Array.isArray(opp && opp.sources) ? opp.sources : [];
-  const base = srcs.map((u: any) => ({ url: u, stance: "SUPPORTS" }));
+  // the radar's consultedDate (previously dropped) is carried through as each cited source's date for freshness.
+  const base = srcs.map((u: any) => ({ url: u, stance: "SUPPORTS", date: opp && opp.consultedDate }));
   const extra = Array.isArray(extraEvidence) ? extraEvidence : [];
-  const r = corroborate({ claim: opp && opp.id ? ("opportunity:" + opp.id) : null, evidence: base.concat(extra) });
-  return Object.freeze(Object.assign({ id: opp && opp.id, declaredProvenance: opp && opp.provenance }, r));
+  const r = corroborate({ claim: opp && opp.id ? ("opportunity:" + opp.id) : null, evidence: base.concat(extra),
+    asOfEpochMs: Number.isFinite(asOfEpochMs) ? asOfEpochMs : undefined });
+  return Object.freeze(Object.assign({ id: opp && opp.id, declaredProvenance: opp && opp.provenance, consultedDate: opp && opp.consultedDate }, r));
 }
 
 const CLAIM_CORROBORATION_CONTRACT = Object.freeze({
@@ -86,7 +120,8 @@ const CLAIM_CORROBORATION_CONTRACT = Object.freeze({
     "ANY contradicting source ⇒ CONTESTED (never silently corroborated); the conflict is surfaced",
     "NEUTRAL/UNKNOWN stance never counts as support; a non-URL host is never independent",
     "confidence is bounded by independence + official backing; it NEVER asserts an absolute verified fact",
-    "REUSES odg-radar-source-provenance (host + classification); deterministic; no second provenance/registry model",
+    "TEMPORAL: freshness (FRESH/STALE/UNDATED) from INJECTED asOfEpochMs + dates; a newer contradiction ⇒ SUPERSEDED flag",
+    "REUSES odg-radar-source-provenance (host + classification); deterministic (Date.UTC only); no second provenance/registry model",
   ]),
 });
 
