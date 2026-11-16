@@ -16,6 +16,7 @@ const PMX = require("./odg-primitive-metier-matrix.js");
 const IDX = require("./odg-metier-improvement-index.js");         // V208 — consumer of the 16 V207 improvements
 const GM = require("./odg-production-gate-matrix.js");            // V205 — consolidated production gates
 const VID = require("./odg-radar-video-sources.js");             // V213 — owner-designated radar video sources
+const SCH = require("./odg-sandbox-certification-harness.js");   // V215 — 8-test sandbox-certification preparation harness
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -37,6 +38,7 @@ function build(opts?: any): any {
   const idx = IDX.integrate();                 // V208: 16 improvement capabilities — built/integrated reconciliation
   const gm = GM.productionGateMatrix({});      // V205: consolidated production-gate status
   const vid = VID.register();                  // V213: owner-designated radar videos (content NOT_ANALYZED)
+  const sch = SCH.certify();                    // V215: 8-test sandbox certification readiness (certifies NOTHING here)
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -62,6 +64,8 @@ function build(opts?: any): any {
     speedMarketingChain: ind("MODEL-ONLY E2E (defineSegment→scoreOfferSegmentFit→funnelMetrics); verdicts STRONG/MODERATE/WEAK/NO_FIT + STOPPED_NO_FIT/INVALID_SEGMENT/MODEL_PROMISING/NOT_VIABLE; UNDETERMINED propagated", "odg-speed-marketing-chain (V209)", "composed chain; score ≠ qualified client ≠ sale; no real campaign", "HIGH"),
 
     productionGates: ind(Object.freeze({ productionReady: gm.productionReady, byStatus: gm.byStatus, ownerGatedActions: gm.ownerGatedActions.length }), "odg-production-gate-matrix (V205)", "5 consolidated gates, deny-by-default; contracts/sandbox/exposure/iso OWNER_GATED or BLOCKED", "HIGH"),
+
+    sandboxCertification: ind(Object.freeze({ certified: sch.certified, totalTests: sch.total, locallyProvenMechanism: sch.locallyProvenMechanism, inSessionRequired: sch.inSessionRequired, v198Patch: sch.v198Patch }), "odg-sandbox-certification-harness (V215 §9)", "8 tests enumerated; certified:false — mechanisms 1/7/8 locally proven, 2/3/4/5/6 require the owner-launched isolated session (OWNER_GATED); certifies NOTHING here", "HIGH"),
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 
