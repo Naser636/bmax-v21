@@ -20,6 +20,7 @@ const SCH = require("./odg-sandbox-certification-harness.js");   // V215 — 8-t
 const OB = require("./odg-opportunity-5m-bridge.js");            // V216 — opportunity × €5M-net bridge (aggregate target)
 const DCA = require("./odg-data-chain-audit.js");               // V217 — data-chain qualification matrix (§6 audit)
 const RSP = require("./odg-radar-source-provenance.js");        // V218 — radar source-provenance resolver (source-registry consumer)
+const VAC = require("./odg-video-analysis-chain.js");           // V220 — multimodal video-analysis chain gate (§3)
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -45,6 +46,7 @@ function build(opts?: any): any {
   const ob = OB.compare({ opportunities: [] }); // V216: aggregate €5M-net revenue-required (MODEL condition, not a forecast)
   const dca = DCA.audit();                      // V217: §6 data-chain qualification matrix (dated audit snapshot)
   const rsp = RSP.audit();                      // V218: radar-cited sources cross-checked vs canonical source-registry
+  const vac = VAC.analyzeDesignatedVideos();    // V220: multimodal capability for the designated videos (toolchain absent ⇒ NOT_ANALYZED)
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -78,6 +80,8 @@ function build(opts?: any): any {
     dataChains: ind(Object.freeze({ total: dca.total, integrated: dca.summary.integratedCount, notIntegrated: dca.summary.notIntegratedIds, findings: dca.findings.map((f: any) => f.id), asOf: dca.asOf }), "odg-data-chain-audit (V217 §6)", "§6 qualification matrix (dated snapshot, not a live checker); " + dca.summary.integratedCount + "/" + dca.total + " chains integrated; findings OWNER_GATED (D8 not activated; no xlsx dep) — synthetic test PASS ≠ real data quality", "MEDIUM"),
 
     radarSourceProvenance: ind(Object.freeze({ opportunities: rsp.total, allOfficial: rsp.byVerification.ALL_OFFICIAL.length, partial: rsp.byVerification.PARTIAL.length, noneRegistered: rsp.byVerification.NONE_REGISTERED.length, noSources: rsp.byVerification.NO_SOURCES.length, registrySources: rsp.registry.count }), "odg-radar-source-provenance (V218 §2/§3) → source-registry", "radar-cited source URLs cross-checked vs the canonical source-registry (wires the previously-unconsumed registry); UNREGISTERED provenance stays AS-DECLARED, never upgraded; REGISTERED_OFFICIAL ≠ a true claim or a real opportunity", "MEDIUM"),
+
+    multimodalVideo: ind(Object.freeze({ verdict: vac.capability.verdict, analyzable: vac.capability.analyzable, designatedVideos: vac.count, designatedNotAnalyzed: vac.videos.filter((v: any) => v.determination === "NOT_ANALYZED").length, missingTools: vac.capability.missingTools, ownerGatedInstall: vac.capability.ownerGatedInstall }), "odg-video-analysis-chain (V220 §3) → odg-radar-video-sources", "local multimodal toolchain ABSENT (ffmpeg/yt-dlp/whisper/tesseract + vision model) ⇒ NOT_ANALYZABLE; the 2 designated videos stay NOT_ANALYZED — content never fabricated; install is OWNER_GATED; a text LLM cannot understand video", "HIGH"),
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 
