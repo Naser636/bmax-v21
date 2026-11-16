@@ -1,0 +1,12 @@
+[Unit]
+Description=ODG resident driver L0 wake tick (private) — periodic light observe; the timer selects NO mission and holds NO authority
+
+[Timer]
+# Conservative cadence: a light read-only L0 observe every 30 min + shortly after boot. No aggressive polling.
+OnBootSec=2min
+OnUnitInactiveSec=30min
+Persistent=true
+Unit=odg-resident-driver.service
+
+[Install]
+WantedBy=timers.target
