@@ -24,6 +24,7 @@ const VAC = require("./odg-video-analysis-chain.js");           // V220 — mult
 const COR = require("./odg-claim-corroboration.js");            // V221 — cross-source claim corroboration (§2.1/§5.3)
 const GOR = require("./odg-global-opportunity-radar.js");       // radar opportunities (for corroboration demonstration)
 const KAQ = require("./odg-knowledge-acquisition.js");          // V227 — autonomous knowledge acquisition (real cycle)
+const DEP = require("./odg-deployment-dossier.js");             // V228 — deployment protocol dossier (DRAFT, computed GO/NO-GO)
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -54,6 +55,7 @@ function build(opts?: any): any {
   const eaaOpp = GOR.OPPORTUNITIES.find((o: any) => /eaa|accessibility/i.test(o.id || ""));
   const cor = eaaOpp ? COR.corroborateOpportunity(eaaOpp, [{ url: "https://eur-lex.europa.eu/eli/dir/2019/882/oj/eng", stance: "SUPPORTS", date: "2026-11-16" }], Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : undefined) : null;
   const kaq = KAQ.acquire(KAQ.REAL_CYCLE);     // V227: the REAL executed autonomous research cycle (SWE-bench, corroborated)
+  const dep = DEP.assess({});                  // V228: deployment dossier (DRAFT) — computed GO/NO-GO from the real gates
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -93,6 +95,8 @@ function build(opts?: any): any {
     claimCorroboration: cor ? ind(Object.freeze({ opportunity: cor.id, level: cor.level, confidence: cor.confidence, independentSupportCount: cor.independentSupportCount, officialCorroboration: cor.officialCorroboration, freshness: cor.freshness, superseded: cor.supersededByNewerContradiction }), "odg-claim-corroboration (V221/V222) → odg-radar-source-provenance + REAL EUR-Lex retrieval 2026-11-16", "radar EAA claim corroborated by ≥2 INDEPENDENT sources incl. official EUR-Lex (Dir (EU) 2019/882, applies 28 Jun 2025); V222 TEMPORAL: freshness from injected asOf + consultedDate; a single source is NOT corroboration; ANY contradiction ⇒ CONTESTED; STALE/SUPERSEDED surfaced; still a MODEL conclusion, not an absolute fact", "MEDIUM") : ind(null, "odg-claim-corroboration (V221/V222)", "no EAA opportunity found to corroborate", "NONE"),
 
     knowledgeAcquisition: ind(Object.freeze({ query: kaq.query, capability: kaq.capability, accessible: kaq.accessibleCount, inaccessible: kaq.inaccessibleCount, verifiedFacts: kaq.verifiedCount }), "odg-knowledge-acquisition (V227 §2) → odg-claim-corroboration", "REAL autonomous cycle (WebSearch+WebFetch, 2026-11-16): discover→access→extract→corroborate→classify; SWE-bench '500 tasks' FACT_CORROBORATED by 2 INDEPENDENT accessible sources (official primary was 403, not circumvented); a retrieved page is NOT verified knowledge; 403 recorded/not counted; opinion≠fact", "MEDIUM"),
+
+    deploymentDossier: ind(Object.freeze({ dossierStatus: dep.dossierStatus, goNoGo: dep.goNoGo, sections: dep.totalSections, deployPackageOk: dep.deployPackageOk, productionReady: dep.productionReady, ownerGatedInterventions: dep.ownerGatedInterventions.length }), "odg-deployment-dossier (V228 §6) → deploy-package-check + odg-production-gate-matrix", "DRAFT dossier: 20 sections mapped to REAL artifacts; goNoGo COMPUTED = NO_GO (production gates not green); deploy package ok but nothing DEPLOYED/READY; owner-gated interventions (secrets/TLS/systemd/VPS) listed, never done", "HIGH"),
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 
