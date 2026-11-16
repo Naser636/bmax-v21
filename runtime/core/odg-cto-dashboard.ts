@@ -18,6 +18,7 @@ const GM = require("./odg-production-gate-matrix.js");            // V205 — co
 const VID = require("./odg-radar-video-sources.js");             // V213 — owner-designated radar video sources
 const SCH = require("./odg-sandbox-certification-harness.js");   // V215 — 8-test sandbox-certification preparation harness
 const OB = require("./odg-opportunity-5m-bridge.js");            // V216 — opportunity × €5M-net bridge (aggregate target)
+const DCA = require("./odg-data-chain-audit.js");               // V217 — data-chain qualification matrix (§6 audit)
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -41,6 +42,7 @@ function build(opts?: any): any {
   const vid = VID.register();                  // V213: owner-designated radar videos (content NOT_ANALYZED)
   const sch = SCH.certify();                    // V215: 8-test sandbox certification readiness (certifies NOTHING here)
   const ob = OB.compare({ opportunities: [] }); // V216: aggregate €5M-net revenue-required (MODEL condition, not a forecast)
+  const dca = DCA.audit();                      // V217: §6 data-chain qualification matrix (dated audit snapshot)
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -70,6 +72,8 @@ function build(opts?: any): any {
     sandboxCertification: ind(Object.freeze({ certified: sch.certified, totalTests: sch.total, locallyProvenMechanism: sch.locallyProvenMechanism, inSessionRequired: sch.inSessionRequired, v198Patch: sch.v198Patch }), "odg-sandbox-certification-harness (V215 §9)", "8 tests enumerated; certified:false — mechanisms 1/7/8 locally proven, 2/3/4/5/6 require the owner-launched isolated session (OWNER_GATED); certifies NOTHING here", "HIGH"),
 
     economicTarget: ind(Object.freeze({ targetNet: ob.targetNet, revenueRequiredFor5MNet: ob.aggregate.conditions ? ob.aggregate.conditions.revenueNeededFor5MNet : null, customersNeeded: ob.aggregate.conditions ? ob.aggregate.conditions.customersNeeded_atBlendedAvgPrice : null, feasibleWith5: ob.aggregate.conditions ? ob.aggregate.conditions.feasibleWith5People_servicesOnly : null }), "odg-opportunity-5m-bridge (V216 §5) → odg-economic-model.targetConditions", "€5M-net is a TARGET, not a forecast/result; blended-métier MODEL condition; demand UNVALIDATED + OWNER_GATED; €0 real clients; CA ≠ net", "MEDIUM"),
+
+    dataChains: ind(Object.freeze({ total: dca.total, integrated: dca.summary.integratedCount, notIntegrated: dca.summary.notIntegratedIds, findings: dca.findings.map((f: any) => f.id), asOf: dca.asOf }), "odg-data-chain-audit (V217 §6)", "§6 qualification matrix (dated snapshot, not a live checker); " + dca.summary.integratedCount + "/" + dca.total + " chains integrated; findings OWNER_GATED (D8 not activated; no xlsx dep) — synthetic test PASS ≠ real data quality", "MEDIUM"),
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 
