@@ -13,6 +13,8 @@ const { auditClosureRegister } = require("./odg-closure-register-ops.js");
 const { METIERS } = require("./odg-metier-certification-planner.js");
 const BIZ = require("./odg-metier-business-matrix.js");
 const PMX = require("./odg-primitive-metier-matrix.js");
+const IDX = require("./odg-metier-improvement-index.js");         // V208 — consumer of the 16 V207 improvements
+const GM = require("./odg-production-gate-matrix.js");            // V205 — consolidated production gates
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -31,6 +33,8 @@ function build(opts?: any): any {
 
   const bizM = BIZ.matrix();
   const pmx = PMX.matrix();
+  const idx = IDX.integrate();                 // V208: 16 improvement capabilities — built/integrated reconciliation
+  const gm = GM.productionGateMatrix({});      // V205: consolidated production-gate status
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -50,6 +54,12 @@ function build(opts?: any): any {
     metiers: ind(Object.freeze(bizM.metiers.map((m: any) => ({ id: m.id, name: m.name, technical: m.maturity.tested ? "TESTED" : "NOT_MEASURED", integrated: m.maturity.integrated, commercialResult: m.maturity.realCommercialResult }))), "Livrable A business matrix", "maturity levels (honest)", "HIGH"),
 
     useMatrix: ind(pmx.byClass, "Livrable B 9×15 matrix", "135-intersection classification", "HIGH"),
+
+    improvements: ind(Object.freeze({ total: idx.total, built: idx.registerReconciliation.built, integrated: idx.integrated, allIntegrated: idx.allIntegrated, byMetier: idx.byMetier }), "odg-metier-improvement-index (V208) + odg-blocked-contracts-register", "16 V207 improvement capabilities: BUILT+TESTED+INTEGRATED (consumer wired); NOT REAL_WORLD_VALIDATED", "HIGH"),
+
+    speedMarketingChain: ind("MODEL-ONLY E2E (defineSegment→scoreOfferSegmentFit→funnelMetrics); verdicts STRONG/MODERATE/WEAK/NO_FIT + STOPPED_NO_FIT/INVALID_SEGMENT/MODEL_PROMISING/NOT_VIABLE; UNDETERMINED propagated", "odg-speed-marketing-chain (V209)", "composed chain; score ≠ qualified client ≠ sale; no real campaign", "HIGH"),
+
+    productionGates: ind(Object.freeze({ productionReady: gm.productionReady, byStatus: gm.byStatus, ownerGatedActions: gm.ownerGatedActions.length }), "odg-production-gate-matrix (V205)", "5 consolidated gates, deny-by-default; contracts/sandbox/exposure/iso OWNER_GATED or BLOCKED", "HIGH"),
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 

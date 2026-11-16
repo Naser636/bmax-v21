@@ -28,6 +28,12 @@ function main() {
   check("use-matrix class tally present (135 classified)", d.useMatrix.value && typeof d.useMatrix.value.REUSE === "number");
   check("owner-gates include ROADMAP.json integration + BMAX assets + payment", d.ownerGates.value.some((x: string) => /ROADMAP\.json/.test(x)) && d.ownerGates.value.some((x: string) => /BMAX/.test(x)) && d.ownerGates.value.some((x: string) => /payment/.test(x)));
 
+  // ---- V210: the 16 V207 improvements + V208 integration + V209 chain are now VISIBLE in the canonical dashboard ----
+  check("improvements section surfaces built=16/integrated=16 (V208 consumer wired)", d.improvements.value.total === 16 && d.improvements.value.built === 16 && d.improvements.value.integrated === 16 && d.improvements.value.allIntegrated === true);
+  check("improvements honesty: BUILT+TESTED+INTEGRATED but NOT REAL_WORLD_VALIDATED", /BUILT\+TESTED\+INTEGRATED/.test(d.improvements.method) && /NOT REAL_WORLD_VALIDATED/.test(d.improvements.method) && hasProvenance(d.improvements));
+  check("Speed-Marketing chain visible with all verdict states + score≠client", /STOPPED_NO_FIT/.test(d.speedMarketingChain.value) && /MODEL_PROMISING/.test(d.speedMarketingChain.value) && /UNDETERMINED/.test(d.speedMarketingChain.value) && /score ≠ qualified client/.test(d.speedMarketingChain.method));
+  check("production gates visible: deny-by-default NOT production-ready + owner-gated count", d.productionGates.value.productionReady === false && d.productionGates.value.ownerGatedActions >= 2 && hasProvenance(d.productionGates));
+
   // ---- contract + determinism ----
   check("contract: read-only, provenance-tagged, NOT_MEASURED-on-missing, runtime unmeasured", D.CTO_DASHBOARD_CONTRACT.invariants.some((i: string) => /never mutates a canonical status/.test(i)) && D.CTO_DASHBOARD_CONTRACT.invariants.some((i: string) => /missing ⇒ NOT_MEASURED/.test(i)));
   check("deterministic given same injected asOfEpochMs", JSON.stringify(D.build({ asOfEpochMs: 1763000000000 }).missions) === JSON.stringify(d.missions));
